@@ -23,12 +23,18 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.EScopeKind;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICExternalBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexManager;
@@ -36,7 +42,6 @@ import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
@@ -45,6 +50,7 @@ import org.eclipse.cdt.internal.corext.util.CModelUtil;
 import org.eclipse.cdt.internal.ui.actions.OpenActionUtil;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.cdt.internal.ui.util.StatusLineHandler;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 
 public class CallHierarchyUI {
@@ -158,6 +164,19 @@ public class CallHierarchyUI {
 				IASTName name= IndexUI.getSelectedName(editorInput, sel);
 				if (name != null) {
 					IBinding binding= name.resolveBinding();
+					if (!CallHierarchyUI.isRelevantForCallHierarchy(binding)) {
+						for (IASTNode parent= name; parent != null; parent= parent.getParent()) {
+							if (parent.getPropertyInParent() == IASTFunctionCallExpression.FUNCTION_NAME) {
+								ICPPASTFunctionCallExpression fcall= (ICPPASTFunctionCallExpression) parent.getParent();
+								if (fcall != null) {
+									IASTImplicitName[] implicit = fcall.getImplicitNames();
+									if (implicit.length > 0)
+										binding= implicit[0].resolveBinding();
+								}
+								break;
+							}
+						}
+					}
 					if (CallHierarchyUI.isRelevantForCallHierarchy(binding)) {
 						if (name.isDefinition()) {
 							ICElement elem= IndexUI.getCElementForName(project, index, name);
@@ -270,8 +289,15 @@ public class CallHierarchyUI {
 	public static boolean isRelevantForCallHierarchy(IBinding binding) {
 		if (binding instanceof ICExternalBinding ||
 				binding instanceof IEnumerator ||
-				binding instanceof IFunction ||
-				binding instanceof IVariable) {
+				binding instanceof IFunction)
+			return true;
+		
+		if (binding instanceof IVariable) {
+			try {
+				if (binding.getScope().getKind() == EScopeKind.eLocal)
+					return false;
+			} catch (DOMException e) {
+			}
 			return true;
 		}
 		return false;

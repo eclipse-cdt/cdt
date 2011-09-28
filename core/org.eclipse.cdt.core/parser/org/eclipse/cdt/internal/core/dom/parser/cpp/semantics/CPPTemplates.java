@@ -605,12 +605,17 @@ public class CPPTemplates {
 			//functions are instantiated as part of the resolution process
 			IBinding result= CPPVisitor.createBinding(id);
 			IASTName templateName = id.getTemplateName();
-			if (result instanceof ICPPTemplateInstance) {
-				templateName.setBinding(((ICPPTemplateInstance) result).getTemplateDefinition());
-			} else {
+			if (result instanceof ICPPClassTemplate) {
 				templateName.setBinding(result);
+				id.setBinding(null);
+			} else {
+				if (result instanceof ICPPTemplateInstance) {
+					templateName.setBinding(((ICPPTemplateInstance) result).getTemplateDefinition());
+				} else {
+					templateName.setBinding(result);
+				}
+				return result;
 			}
-			return result;
 		}
 		
 		IASTNode parentOfName = id.getParent();

@@ -87,6 +87,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
@@ -2551,9 +2552,12 @@ public class AST2CPPTests extends AST2BaseTest {
 		ICPPConstructor T1_ctor = (ICPPConstructor) col.getName(6)
 		.resolveBinding();
 		ICPPClassType T1 = (ICPPClassType) col.getName(0).resolveBinding();
-		
-		assertInstances(col, T1_ctor, 2);
-		assertInstances(col, T1, 2);
+		assertInstances(col, T1_ctor, 1);
+		assertInstances(col, T1, 3);
+
+		ICPPASTFunctionCallExpression fc= (ICPPASTFunctionCallExpression) col.getName(4).getParent().getParent();
+		IBinding ctor2 = fc.getImplicitNames()[0].resolveBinding();
+		assertSame(T1_ctor, ctor2);
 	}
 	
 	// struct S { int i; };    

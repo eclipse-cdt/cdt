@@ -71,8 +71,10 @@ import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.IMethodDeclaration;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.IStructureDeclaration;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -487,13 +489,24 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 				if (uniqueElements.size() == 1) {
 					target= (ISourceReference) uniqueElements.get(0);
 				} else {
-					if (OpenDeclarationsAction.sIsJUnitTest) {
-						throw new RuntimeException("ambiguous input: " + uniqueElements.size()); //$NON-NLS-1$
+					if (uniqueElements.size() == 2) {
+						final ICElement e0 = uniqueElements.get(0);
+						final ICElement e1 = uniqueElements.get(1);
+						if (e0 instanceof IStructureDeclaration && e1 instanceof IMethodDeclaration) {
+							target= (ISourceReference) e1;
+						} else if (e1 instanceof IStructureDeclaration && e0 instanceof IMethodDeclaration) {
+							target= (ISourceReference) e0;
+						}
 					}
-					ICElement[] elemArray= uniqueElements.toArray(new ICElement[uniqueElements.size()]);
-					target = (ISourceReference) OpenActionUtil.selectCElement(elemArray, fAction.getSite().getShell(),
-							CEditorMessages.OpenDeclarationsAction_dialog_title, CEditorMessages.OpenDeclarationsAction_selectMessage,
-							CElementLabels.ALL_DEFAULT | CElementLabels.ALL_FULLY_QUALIFIED | CElementLabels.MF_POST_FILE_QUALIFIED, 0);
+					if (target == null) {
+						if (OpenDeclarationsAction.sIsJUnitTest) {
+							throw new RuntimeException("ambiguous input: " + uniqueElements.size()); //$NON-NLS-1$
+						}
+						ICElement[] elemArray= uniqueElements.toArray(new ICElement[uniqueElements.size()]);
+						target = (ISourceReference) OpenActionUtil.selectCElement(elemArray, fAction.getSite().getShell(),
+								CEditorMessages.OpenDeclarationsAction_dialog_title, CEditorMessages.OpenDeclarationsAction_selectMessage,
+								CElementLabels.ALL_DEFAULT | CElementLabels.ALL_FULLY_QUALIFIED | CElementLabels.MF_POST_FILE_QUALIFIED, 0);
+					}
 				}
 				if (target != null) {
 					ITranslationUnit tu= target.getTranslationUnit();

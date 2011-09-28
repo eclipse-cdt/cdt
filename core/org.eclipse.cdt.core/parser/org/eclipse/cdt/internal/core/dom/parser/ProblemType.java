@@ -20,6 +20,8 @@ import org.eclipse.core.runtime.CoreException;
  * Implementation of problem types.
  */
 public class ProblemType implements IProblemType, ISerializableType {
+	public static final IType UNRESOLVED_NAME = new ProblemType(TYPE_UNRESOLVED_NAME);
+	
 	private final int fID;
 
 	public ProblemType(int id) {

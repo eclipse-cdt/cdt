@@ -49,6 +49,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
@@ -1725,8 +1726,13 @@ public class AST2TemplateTests extends AST2BaseTest {
 		ICPPConstructor ctor = (ICPPConstructor) col.getName(2).resolveBinding();
 		ICPPFunction f = (ICPPFunction) col.getName(5).resolveBinding();
 		
-		ICPPSpecialization spec = (ICPPSpecialization) col.getName(11).resolveBinding();
-		assertSame(spec.getSpecializedBinding(), ctor);
+		final IASTName typeConversion = col.getName(11);
+		ICPPSpecialization spec = (ICPPSpecialization) typeConversion.resolveBinding();
+		assertSame(ctor.getOwner(), spec.getSpecializedBinding());
+		
+		final ICPPASTFunctionCallExpression fcall = (ICPPASTFunctionCallExpression) typeConversion.getParent().getParent();
+		final IBinding ctorSpec = fcall.getImplicitNames()[0].resolveBinding();
+		assertSame(ctor, (((ICPPSpecialization) ctorSpec).getSpecializedBinding()));
 		
 		assertSame(f, col.getName(10).resolveBinding());
 	}
@@ -1750,9 +1756,14 @@ public class AST2TemplateTests extends AST2BaseTest {
 		ICPPConstructor ctor = (ICPPConstructor) col.getName(3).resolveBinding();
 		ICPPMethod add = (ICPPMethod) col.getName(9).resolveBinding();
 		
-		ICPPSpecialization spec = (ICPPSpecialization) col.getName(20).resolveBinding();
-		assertSame(spec.getSpecializedBinding(), ctor);
+		final IASTName typeConversion = col.getName(20);
+		ICPPSpecialization spec = (ICPPSpecialization) typeConversion.resolveBinding();
+		assertSame(ctor.getOwner(), spec.getSpecializedBinding());
 		
+		final ICPPASTFunctionCallExpression fcall = (ICPPASTFunctionCallExpression) typeConversion.getParent().getParent();
+		final IBinding ctorSpec = fcall.getImplicitNames()[0].resolveBinding();
+		assertSame(ctor, (((ICPPSpecialization) ctorSpec).getSpecializedBinding()));
+
 		assertSame(add, col.getName(19).resolveBinding());
 	}
 	
@@ -1772,9 +1783,14 @@ public class AST2TemplateTests extends AST2BaseTest {
 		ICPPConstructor ctor = (ICPPConstructor) col.getName(2).resolveBinding();
 		ICPPMethod add = (ICPPMethod) col.getName(7).resolveBinding();
 		
-		ICPPSpecialization spec = (ICPPSpecialization) col.getName(17).resolveBinding();
-		assertSame(spec.getSpecializedBinding(), ctor);
+		final IASTName typeConversion = col.getName(17);
+		ICPPSpecialization spec = (ICPPSpecialization) typeConversion.resolveBinding();
+		assertSame(ctor.getOwner(), spec.getSpecializedBinding());
 		
+		final ICPPASTFunctionCallExpression fcall = (ICPPASTFunctionCallExpression) typeConversion.getParent().getParent();
+		final IBinding ctorSpec = fcall.getImplicitNames()[0].resolveBinding();
+		assertSame(ctor, (((ICPPSpecialization) ctorSpec).getSpecializedBinding()));
+
 		assertSame(add, col.getName(16).resolveBinding());
 	}
 	

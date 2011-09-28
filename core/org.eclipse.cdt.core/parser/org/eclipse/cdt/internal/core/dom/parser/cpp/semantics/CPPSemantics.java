@@ -309,6 +309,15 @@ public class CPPSemantics {
         	}
         }
 
+        // Explicit type conversion in functional notation
+		if (binding instanceof ICPPClassTemplate && data.astName instanceof ICPPASTTemplateId) {
+			final IASTNode parent = data.astName.getParent();
+			if (parent instanceof IASTIdExpression && 
+					parent.getPropertyInParent() == IASTFunctionCallExpression.FUNCTION_NAME) {
+				return binding;
+			}
+		}
+
         /* 14.6.1-1: 
          * Within the scope of a class template, when the name of the template is neither qualified nor 
          * followed by <, it is equivalent to the name followed by the template parameters enclosed in <>.
@@ -442,15 +451,15 @@ public class CPPSemantics {
 	        	} 
 	        } else if (namePropertyInParent == IASTIdExpression.ID_NAME) {
 	        	if (binding instanceof IType) {
-		        	IASTNode parent= name.getParent().getParent();
-		        	if (parent instanceof ICPPASTTemplatedTypeTemplateParameter) {
-			        	// default for template template parameter is an id-expression, which is a type.
-					} else if (parent instanceof ICPPASTUnaryExpression
-							&& ((ICPPASTUnaryExpression) parent).getOperator() == IASTUnaryExpression.op_sizeofParameterPack) {
-						// argument of sizeof... can be a type
-					} else if ((binding instanceof ICPPUnknownType || binding instanceof ITypedef || binding instanceof IEnumeration)
-							&& convertClassToConstructor(data.astName)) {
-						// constructor or simple-type constructor
+		        	final IASTNode idExpr = name.getParent();
+					ASTNodeProperty pip = idExpr.getPropertyInParent();
+		        	if (pip == ICPPASTTemplatedTypeTemplateParameter.DEFAULT_VALUE) {
+			        	// Default for template template parameter is a type.
+					} else if (pip == IASTFunctionCallExpression.FUNCTION_NAME) {
+						// Explicit type conversion in functional notation.
+					} else if (pip == IASTUnaryExpression.OPERAND 
+							&& ((ICPPASTUnaryExpression) idExpr.getParent()).getOperator() == IASTUnaryExpression.op_sizeofParameterPack) {
+						// Argument of sizeof... can be a type
 					} else {
 		        		binding= new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_INVALID_TYPE,
 		        				data.getFoundBindings());
@@ -523,20 +532,7 @@ public class CPPSemantics {
 		if (parent instanceof ICPPASTConstructorChainInitializer) {
 			return true;
 		}
-		if (parent instanceof IASTExpression) {
-			ASTNodeProperty propInParent= parent.getPropertyInParent();
-			if (parent instanceof IASTIdExpression) {
-				parent= parent.getParent();
-			}
-			while (parent instanceof IASTUnaryExpression
-					&& ((IASTUnaryExpression) parent).getOperator() == IASTUnaryExpression.op_bracketedPrimary) {
-				propInParent = parent.getPropertyInParent();
-				parent= parent.getParent();
-			}
-			if (parent instanceof IASTFunctionCallExpression && propInParent == IASTFunctionCallExpression.FUNCTION_NAME) {
-				return true;
-			}
-		} else if (parent instanceof ICPPASTNamedTypeSpecifier) {
+		if (parent instanceof ICPPASTNamedTypeSpecifier) {
 			parent= parent.getParent();
 			if (parent instanceof IASTTypeId && parent.getParent() instanceof ICPPASTNewExpression) {
 				IASTDeclarator dtor = ((IASTTypeId) parent).getAbstractDeclarator();
@@ -2339,7 +2335,7 @@ public class CPPSemantics {
 		return false;
 	}
 	
-	static IBinding resolveFunction(LookupData data, ICPPFunction[] fns, boolean allowUDC) throws DOMException {
+	public static IBinding resolveFunction(LookupData data, ICPPFunction[] fns, boolean allowUDC) throws DOMException {
 	    fns= (ICPPFunction[]) ArrayUtil.trim(ICPPFunction.class, fns);
 	    if (fns == null || fns.length == 0)
 	        return null;

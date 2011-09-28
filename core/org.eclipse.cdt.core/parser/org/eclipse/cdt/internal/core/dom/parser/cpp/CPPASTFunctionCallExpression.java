@@ -13,21 +13,18 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.prvalueType;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.typeFromFunctionCall;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.typeFromReturnType;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.valueCategoryFromFunctionCall;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.valueCategoryFromReturnType;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.*;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.ExpansionOverlapsBoundaryException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
@@ -38,7 +35,6 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.parser.IToken;
@@ -47,6 +43,7 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.LookupData;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 
@@ -124,7 +121,17 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
     public IASTImplicitName[] getImplicitNames() {
     	if (implicitNames == null) {
     		ICPPFunction overload = getOperator();
-			if (overload == null || overload instanceof CPPImplicitFunction) {
+			if (overload == null)
+				return implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
+			
+			if (isExplicitTypeConversion() != null) {
+				CPPASTImplicitName n1 = new CPPASTImplicitName(overload.getNameCharArray(), this);
+				n1.setOffsetAndLength((ASTNode) functionName);
+				n1.setBinding(overload);
+				return implicitNames= new IASTImplicitName[] {n1};
+			}
+			
+			if (overload instanceof CPPImplicitFunction) {
 				if (!(overload instanceof ICPPMethod) || ((ICPPMethod) overload).isImplicit()) {
 					return implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
 				}
@@ -190,7 +197,7 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
 				return false;
 		}
 
-		if (implicits != null && implicits.length > 0 && !implicits[1].accept(action))
+		if (implicits != null && implicits.length > 1 && !implicits[1].accept(action))
 			return false;
         
 		if (action.shouldVisitExpressions && action.leave(this) == ASTVisitor.PROCESS_ABORT)
@@ -217,35 +224,40 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
     public ICPPFunction getOperator() {
     	if (overload == UNINITIALIZED_FUNCTION) {
     		overload= null;
-    		IType t= functionName.getExpressionType();
-    		t= SemanticUtil.getNestedType(t, TDEF | REF | CVTYPE);
-    		if (t instanceof ICPPClassType) {
-    			overload = CPPSemantics.findOverloadedOperator(this, (ICPPClassType)t);
+    		IType t= isExplicitTypeConversion();
+    		if (t != null) {
+    			t = getNestedType(t, TDEF|CVTYPE|REF);
+    			if (t instanceof ICPPClassType && !(t instanceof ICPPUnknownBinding)) {
+    				ICPPClassType cls= (ICPPClassType) t;
+    				LookupData data= CPPSemantics.createLookupData(((IASTIdExpression) functionName).getName());
+					try {
+						IBinding b= CPPSemantics.resolveFunction(data, cls.getConstructors(), true);
+	    				if (b instanceof ICPPFunction)
+	    					overload= (ICPPFunction) b;
+					} catch (DOMException e) {
+					}
+    			}
+    		} else {
+    			t= SemanticUtil.getNestedType(functionName.getExpressionType(), TDEF|REF|CVTYPE);
+    			if (t instanceof ICPPClassType) {
+    				overload = CPPSemantics.findOverloadedOperator(this, (ICPPClassType)t);
+    			}
     		}
 		}
     	return overload;
     }
     
     public IType getExpressionType() {
-    	if (functionName instanceof IASTIdExpression) {
-			// Handle misused id-expression in functional type conversions or simple type initializers.
-			final IBinding binding= ((IASTIdExpression) functionName).getName().resolvePreBinding();
-			if (binding instanceof ICPPConstructor) {
-				IBinding owner= binding.getOwner();
-				if (owner instanceof ICPPClassType) {
-					return (ICPPClassType) owner;
-				} 
-				return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
-			} 
-			if (binding instanceof IProblemBinding) {
-				return new ProblemType(ISemanticProblem.TYPE_UNRESOLVED_NAME);
+		// Handle explicit type conversion in functional notation.
+    	IType t= isExplicitTypeConversion();
+    	if (t != null) {
+			if (t instanceof IProblemBinding) {
+				return ProblemType.UNRESOLVED_NAME;
 			}
-			if (binding instanceof IType) {
-				return prvalueType((IType) binding);
-			} 
+			return prvalueType(t);
 		} 
 		
-		IType t= SemanticUtil.getNestedType(functionName.getExpressionType(), TDEF|REF|CVTYPE);
+		t= SemanticUtil.getNestedType(functionName.getExpressionType(), TDEF|REF|CVTYPE);
 		if (t instanceof ICPPClassType) {
 			if (overload == UNINITIALIZED_FUNCTION) {
 				overload = CPPSemantics.findOverloadedOperator(this, (ICPPClassType)t);
@@ -268,11 +280,24 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
 		return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
     }
     
-    public boolean isLValue() {
+	private IType isExplicitTypeConversion() {
+		if (functionName instanceof IASTIdExpression) {
+			final IASTName name = ((IASTIdExpression) functionName).getName();
+			IBinding b= name.resolvePreBinding();
+			if (b instanceof IType)
+				return (IType) b;
+		}
+		return null;
+	}
+
+	public boolean isLValue() {
     	return getValueCategory() == LVALUE;
 	}
     
 	public ValueCategory getValueCategory() {
+		if (isExplicitTypeConversion() != null) 
+			return PRVALUE;
+		
 		IType t= functionName.getExpressionType();
 		if (t instanceof ICPPClassType) {
 			if (overload == UNINITIALIZED_FUNCTION) {

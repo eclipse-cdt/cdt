@@ -118,7 +118,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		};
 
 	private static final Comparator<Object> comp = CDTListComparator.getInstance();
-	private static String selectedLanguageId;
+	private static String selectedLanguage;
 
 	private final static Image IMG_FOLDER = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_FOLDER);
 	private final static Image IMG_INCLUDES_FOLDER = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_INCLUDES_FOLDER);
@@ -291,7 +291,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 					ICLanguageSetting langSetting = (ICLanguageSetting) items[0].getData();
 					if (langSetting != null) {
 						lang = langSetting;
-						selectedLanguageId = getLanguageId(lang);
+						selectedLanguage = getLanguageName(lang);
 						update();
 					}
 				}
@@ -380,11 +380,11 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 			for (ICLanguageSetting langSetting : ls) {
 				if ((langSetting.getSupportedEntryKinds() & getKind()) != 0) {
 					TreeItem t = new TreeItem(langTree, SWT.NONE);
-					String langId = getLanguageId(langSetting);
+					String langId = getLanguageName(langSetting);
 					t.setText(0, langId);
 					t.setData(langSetting);
 					if (selectedItem == null
-							|| (selectedLanguageId != null && selectedLanguageId.equals(langId))) {
+							|| (selectedLanguage != null && selectedLanguage.equals(langId))) {
 						selectedItem = t;
 						lang = langSetting;
 					}
@@ -398,19 +398,20 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		update();
 	}
 
-	private String getLanguageId(ICLanguageSetting langSetting) {
+	private String getLanguageName(ICLanguageSetting langSetting) {
 		String langId = langSetting.getLanguageId();
-		if (langId != null && !langId.equals(EMPTY_STR)) {
+		String langName = null;
+		if (langId != null && !langId.isEmpty()) {
 			// Bug #178033: get language name via LangManager.
 			ILanguageDescriptor langDes = LanguageManager.getInstance().getLanguageDescriptor(langId);
-			if (langDes == null)
-				langId = null;
-			else
-				langId = langDes.getName();
+			if (langDes != null)
+				langName = langDes.getName();
 		}
-		if (langId == null || langId.equals(EMPTY_STR))
-			langId = langSetting.getName();
-		return langId;
+		if (langName == null || langName.isEmpty())
+			langName = langSetting.getName();
+		if (langName == null || langName.isEmpty())
+			langName = langId;
+		return langName;
 	}
 
 	private void updateExport() {

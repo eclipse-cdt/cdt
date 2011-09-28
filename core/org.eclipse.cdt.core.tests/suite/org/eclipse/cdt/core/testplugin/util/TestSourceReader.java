@@ -6,10 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *    Andrew Ferguson (Symbian)
+ *     Markus Schorn - initial API and implementation
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/ 
-
 package org.eclipse.cdt.core.testplugin.util;
 
 import java.io.BufferedReader;
@@ -69,21 +68,22 @@ public class TestSourceReader {
 	 * test in the source code. 
 	 * @throws IOException
 	 */
-	public static StringBuilder[] getContentsForTest(Bundle bundle, String srcRoot, Class clazz, final String testName, int sections) throws IOException {
+	public static StringBuilder[] getContentsForTest(Bundle bundle, String srcRoot, Class clazz,
+			final String testName, int sections) throws IOException {
 		String fqn = clazz.getName().replace('.', '/');
-		fqn = fqn.indexOf("$")==-1 ? fqn : fqn.substring(0,fqn.indexOf("$"));
+		fqn = fqn.indexOf("$") == -1 ? fqn : fqn.substring(0, fqn.indexOf("$"));
 		String classFile = fqn + ".java";
 		IPath filePath= new Path(srcRoot + '/' + classFile);
 	
 		InputStream in;
 		try {
-			if (bundle != null)
+			if (bundle != null) {
 				in = FileLocator.openStream(bundle, filePath, false);
-			else {
-				in = clazz.getResourceAsStream('/'+classFile);
+			} else {
+				in = clazz.getResourceAsStream('/' + classFile);
 			}
-		} catch(IOException e) {
-			if(clazz.getSuperclass()!=null && !clazz.equals(TestCase.class)) {
+		} catch (IOException e) {
+			if (clazz.getSuperclass() != null && !clazz.equals(TestCase.class)) {
 		    	return getContentsForTest(bundle, srcRoot, clazz.getSuperclass(), testName, sections);
 		    }
 			throw e;
@@ -91,30 +91,30 @@ public class TestSourceReader {
 	    
 	    BufferedReader br = new BufferedReader(new InputStreamReader(in));
 	    
-	    List contents = new ArrayList();
+	    List<StringBuilder> contents = new ArrayList<StringBuilder>();
 	    StringBuilder content = new StringBuilder();
-	    for(String line = br.readLine(); line!=null; line = br.readLine()) {
+	    for (String line = br.readLine(); line != null; line = br.readLine()) {
 	    	line = line.replaceFirst("^\\s*", ""); // replace leading whitespace, preserve trailing
-	    	if(line.startsWith("//")) {
-	    		content.append(line.substring(2)+"\n");
+	    	if (line.startsWith("//")) {
+	    		content.append(line.substring(2) + "\n");
 	    	} else {
-	    		if(content.length()>0) {
+	    		if (content.length() > 0) {
 	    			contents.add(content);
-	    			if(contents.size()==sections+1)
+	    			if (contents.size() == sections + 1)
 	    				contents.remove(0);
 	    			content = new StringBuilder();
 	    		}
 	    		int idx= line.indexOf(testName);
-	    		if( idx != -1 && !Character.isJavaIdentifierPart(line.charAt(idx+testName.length()))) {
-	    			return (StringBuilder[]) contents.toArray(new StringBuilder[contents.size()]);
+	    		if (idx != -1 && !Character.isJavaIdentifierPart(line.charAt(idx + testName.length()))) {
+	    			return contents.toArray(new StringBuilder[contents.size()]);
 	    		}
 	    	}
 	    }
 	    
-	    if(clazz.getSuperclass()!=null && !clazz.equals(TestCase.class)) {
+	    if (clazz.getSuperclass() != null && !clazz.equals(TestCase.class)) {
 	    	return getContentsForTest(bundle, srcRoot, clazz.getSuperclass(), testName, sections);
 	    }
-	    throw new IOException("Test data not found for "+clazz+" "+testName);	
+	    throw new IOException("Test data not found for " + clazz + " " + testName);	
 	}
 	
 	/**
@@ -139,15 +139,15 @@ public class TestSourceReader {
 				if (c == '\n') {
 					int idx= buf.indexOf(lookfor);
 					if (idx >= 0) {
-						return idx+offset;
+						return idx + offset;
 					}
-					offset+=buf.length();
+					offset += buf.length();
 					buf.setLength(0);
 				}
 			}
 			int idx= buf.indexOf(lookfor);
 			if (idx >= 0) {
-				return idx+offset;
+				return idx + offset;
 			}
 			return -1;
 		} finally {
@@ -196,8 +196,8 @@ public class TestSourceReader {
 	                } else {
 	                    line= line.trim();
 	                    if (line.startsWith("{" + tag)) {
-	                        if (line.length() == tag.length()+1 ||
-	                                !Character.isJavaIdentifierPart(line.charAt(tag.length()+1))) {
+	                        if (line.length() == tag.length() + 1 ||
+	                                !Character.isJavaIdentifierPart(line.charAt(tag.length() + 1))) {
 	                            found= true;
 	                        }
 	                    }
@@ -207,8 +207,7 @@ public class TestSourceReader {
 	            }
 	            line= reader.readLine();
 	        }
-	    }
-	    finally {
+	    } finally {
 	        reader.close();
 	    }
 	    Assert.assertTrue("Tag '" + tag + "' is not defined inside of '" + filePath + "'.", found);
@@ -239,7 +238,7 @@ public class TestSourceReader {
 					long timestamp= file.getLocalTimeStamp();
 					file.setContents(stream, false, false, new NullProgressMonitor());
 					if (file.getLocalTimeStamp() == timestamp) {
-						file.setLocalTimeStamp(timestamp+1000);
+						file.setLocalTimeStamp(timestamp + 1000);
 					}
 				} else {
 					createFolders(file);

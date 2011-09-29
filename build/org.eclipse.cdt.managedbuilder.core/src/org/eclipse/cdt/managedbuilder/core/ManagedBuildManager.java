@@ -4825,7 +4825,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 					if (detector.getLanguageScope()==null || detector.getLanguageScope().contains(languageId)) {
 						try {
 							if (isWorkspaceProvider) {
-								detector.run(project, languageId, workingDirectory, env, monitor);
+								detector.run((IProject)null, languageId, workingDirectory, env, monitor);
 							} else {
 								detector.run(cfgDescription, languageId, workingDirectory, env, monitor);
 							}

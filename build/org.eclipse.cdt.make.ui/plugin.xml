@@ -563,4 +563,11 @@
             class="org.eclipse.cdt.make.internal.ui.scannerconfig.ScannerDiscoveryConsole">
       </CBuildConsole>
    </extension>
+   <extension
+         point="org.eclipse.cdt.core.CBuildConsole">
+      <CBuildConsole
+            id="org.eclipse.cdt.make.internal.ui.scannerconfig.ScannerDiscoveryGlobalConsole"
+            class="org.eclipse.cdt.make.internal.ui.scannerconfig.ScannerDiscoveryGlobalConsole">
+      </CBuildConsole>
+   </extension>
 </plugin>

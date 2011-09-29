@@ -423,7 +423,7 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 
 		if(clParserList.size() != 0){
 			IConsoleParser[] parsers = clParserList.toArray(new IConsoleParser[clParserList.size()]);
-			return new ConsoleOutputSniffer(outputStream, errorStream, parsers, epm);
+			return new ConsoleOutputSniffer(outputStream, errorStream, parsers);
 		}
 
 		return null;

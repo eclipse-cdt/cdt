@@ -123,7 +123,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		};
 
 	private static final Comparator<Object> comp = CDTListComparator.getInstance();
-	private static String selectedLanguageId;
+	private static String selectedLanguage;
 
 	private static final int[] DEFAULT_SASH_WEIGHTS = new int[] { 10, 30 };
 
@@ -312,7 +312,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 					ICLanguageSetting langSetting = (ICLanguageSetting) items[0].getData();
 					if (langSetting != null) {
 						lang = langSetting;
-						selectedLanguageId = lang.getLanguageId();
+						selectedLanguage = getLanguageName(lang);
 						update();
 					}
 				}
@@ -402,20 +402,11 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 			for (ICLanguageSetting langSetting : ls) {
 				if ((langSetting.getSupportedEntryKinds() & getKind()) != 0) {
 					TreeItem t = new TreeItem(langTree, SWT.NONE);
-					String langId = langSetting.getLanguageId();
-					if (langId != null && !langId.equals(EMPTY_STR)) {
-						// Bug #178033: get language name via LangManager.
-						ILanguageDescriptor langDes = LanguageManager.getInstance().getLanguageDescriptor(langId);
-						if (langDes == null)
-							langId = null;
-						else
-							langId = langDes.getName();
-					}
-					if (langId == null || langId.equals(EMPTY_STR))
-						langId = langSetting.getName();
+					String langId = getLanguageName(langSetting);
 					t.setText(0, langId);
 					t.setData(langSetting);
-					if (selectedItem == null || langSetting.getLanguageId().equals(selectedLanguageId)) {
+					if (selectedItem == null
+							|| (selectedLanguage != null && selectedLanguage.equals(langId))) {
 						selectedItem = t;
 						lang = langSetting;
 					}
@@ -427,6 +418,22 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 			}
 		}
 		update();
+	}
+
+	private String getLanguageName(ICLanguageSetting langSetting) {
+		String langId = langSetting.getLanguageId();
+		String langName = null;
+		if (langId != null && !langId.isEmpty()) {
+			// Bug #178033: get language name via LangManager.
+			ILanguageDescriptor langDes = LanguageManager.getInstance().getLanguageDescriptor(langId);
+			if (langDes != null)
+				langName = langDes.getName();
+		}
+		if (langName == null || langName.isEmpty())
+			langName = langSetting.getName();
+		if (langName == null || langName.isEmpty())
+			langName = langId;
+		return langName;
 	}
 
 	private void updateExport() {

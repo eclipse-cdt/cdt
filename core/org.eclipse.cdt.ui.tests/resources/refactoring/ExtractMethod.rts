@@ -2189,7 +2189,7 @@ public:
 	virtual ~Test();
 private:
 	void test();
-    RetValueType exp();
+    RetType exp();
 };
 
 #endif /* TEST_H_ */
@@ -2218,7 +2218,7 @@ Test::Test() {
 Test::~Test() {
 }
 
-RetValueType Test::exp()
+RetType Test::exp()
 {
     return RetType();
 }

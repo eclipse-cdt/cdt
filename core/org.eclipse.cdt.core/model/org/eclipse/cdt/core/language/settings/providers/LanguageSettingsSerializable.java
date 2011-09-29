@@ -277,12 +277,13 @@ public class LanguageSettingsSerializable extends LanguageSettingsBaseProvider {
 
 	/**
 	 * Serialize the provider under parent XML element.
-	 *
+	 * This is convenience method not intended to be overridden on purpose.
+	 * 
 	 * @param parentElement - element where to serialize.
 	 * @return - newly created <provider> element. That element will already be
 	 *    attached to the parent element.
 	 */
-	public Element serialize(Element parentElement) {
+	final public Element serialize(Element parentElement) {
 		/*
 		<provider id="provider.id" ...>
 			<language-scope id="lang.id"/>

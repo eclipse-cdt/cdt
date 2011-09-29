@@ -457,8 +457,8 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	}
 
 	@Override
-	public Element serialize(Element parentElement) {
-		Element elementProvider = super.serialize(parentElement);
+	public Element serializeAttributes(Element parentElement) {
+		Element elementProvider = super.serializeAttributes(parentElement);
 		elementProvider.setAttribute(ATTR_RUN_ONCE, Boolean.toString(runOnce));
 		elementProvider.setAttribute(ATTR_CONSOLE, Boolean.toString(isConsoleEnabled));
 		return elementProvider;

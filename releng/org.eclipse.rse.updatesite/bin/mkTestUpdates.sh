@@ -42,7 +42,7 @@ fi
 
 # get newest plugins and features: to be done manually on real update site
 TPVERSION="Target Management"
-VERSION=3.3.x
+VERSION=3.4.x
 DO_STATS=0
 DO_CATEGORIES=0
 TYPE=none
@@ -59,10 +59,12 @@ esac
 case ${SITEDIR} in
   3.2*)  VERSION=3.2 ; DO_CATEGORIES=1 ;;
   3.3*)  VERSION=3.3 ; DO_CATEGORIES=1 ;;
+  3.4*)  VERSION=3.4 ; DO_CATEGORIES=1 ;;
 esac
 case ${SITEDIR} in
   3.2) DO_STATS=1 ;;
   3.3) DO_STATS=1 ;;
+  3.4) DO_STATS=1 ;;
 esac
 case ${SITEPARENT} in
   staging) SITEDIR=staging/${SITEDIR} ;;
@@ -87,7 +89,7 @@ if [ ${TYPE} = test ]; then
     # Major version updates are not allowed.
     #MINOR_UPDATE_OK=1
     # Minor/major version updates are not allowed.
-    MINOR_UPDATE_OK=0
+    MINOR_UPDATE_OK=1
     # Update of "qualifier" requires also updating "micro"
     echo "VERIFYING VERSION CORRECTNESS: Features against ../updates/3.3"
     ls features/*.jar | sed -e 's,^.*features/,,' | sort > f1.$$.txt
@@ -308,7 +310,7 @@ elif [ ${TYPE} = milestone ]; then
     	-e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	-e '\,</h1>,a\
 This site contains Target Management Milestones (I-, S- and M- builds) which are \
-being contributed to the Eclipse Indigo coordinated release train (Eclipse 3.7.x).' \
+being contributed to the Eclipse Juno coordinated release train (Eclipse 4.2.x).' \
     	index.html > index.html.new
     mv -f index.html.new index.html
     ## keep 3.0.x features in site.xml
@@ -448,6 +450,32 @@ being contributed to the Eclipse Indigo coordinated release train (Eclipse 3.7.x
     sed -e "s,/tm/updates/2.0,/tm/updates/${SITEDIR},g" \
         -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
     	-e '/<!-- BEGIN_2_0 -->/,/<!-- BEGIN_3_3 -->/d' \
+    	-e '/<!-- BEGIN_3_4 -->/,/<!-- END_ALL -->/d' \
+        site.xml > site.xml.new
+    mv -f site.xml.new site.xml
+    sed -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
+    	web/site.xsl > web/site.xsl.new
+    mv -f web/site.xsl.new web/site.xsl
+elif [ `basename $SITE` = 3.4 ]; then
+    TPTYPE="3.4"
+    TPVERSION="${TPVERSION} ${TPTYPE}"
+    TYPE=official
+    echo "Working on ${TPVERSION} update site"
+    echo "Expect that you copied your features and plugins yourself"
+    stamp=`date +'%Y%m%d-%H%M'`
+    rm index.html site.xml web/site.xsl
+    cvs -q update -dPR
+    sed -e "s,/tm/updates/2.0,/tm/updates/${SITEDIR},g" \
+    	-e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
+    	-e '\,</h1>,a\
+This site contains Target Management 3.4 Releases and Updates (R- builds) which are \
+being contributed to the Eclipse Juno coordinated release train (Eclipse 4.2.x).' \
+    	index.html > index.html.new
+    mv -f index.html.new index.html
+    ## dont keep 2.0.x features in site.xml
+    sed -e "s,/tm/updates/2.0,/tm/updates/${SITEDIR},g" \
+        -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \
+    	-e '/<!-- BEGIN_2_0 -->/,/<!-- BEGIN_3_4 -->/d' \
         site.xml > site.xml.new
     mv -f site.xml.new site.xml
     sed -e "s,Project 2.0 Update,Project ${TPTYPE} Update,g" \

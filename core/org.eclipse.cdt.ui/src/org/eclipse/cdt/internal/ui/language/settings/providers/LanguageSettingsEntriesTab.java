@@ -80,7 +80,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 	private Tree treeLanguages;
 	private Tree treeEntries;
 	private TreeViewer treeEntriesViewer;
-	private String currentLanguageId = null;
+	private static String currentLanguageId = null;
 	
 	private Button builtInCheckBox;
 	private Button enableProvidersCheckBox;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@
  *                                contained in the reference was not found.
  * David Dykstal (IBM) - [192122] extended search to look for filter pools in
  *   profile during getReferencedFilterPool() rather than returning broken reference
+ * David McKnight (IBM) - [358999] Deleting multiple connections takes long time
  *******************************************************************************/
 
 package org.eclipse.rse.internal.core.filters;
@@ -195,13 +196,17 @@ public class SystemFilterPoolReference extends SystemPersistableReferencingObjec
 					}
 				}
 			}
+	
+			
+			// bug 358999 - this was originally outside of the first if but then it created tons of unnecessary references
+			if (filterPool != null) {
+				setReferenceToFilterPool(filterPool);
+				setReferenceBroken(false);
+			} else {
+				setReferenceBroken(true);
+			}
 		}
-		if (filterPool != null) {
-			setReferenceToFilterPool(filterPool);
-			setReferenceBroken(false);
-		} else {
-			setReferenceBroken(true);
-		}
+
 		return filterPool;
 	}
 	

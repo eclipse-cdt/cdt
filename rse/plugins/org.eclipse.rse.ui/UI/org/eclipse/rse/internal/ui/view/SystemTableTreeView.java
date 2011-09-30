@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 IBM Corporation and others.
+ * Copyright (c) 2002, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@
  * Xuan Chen   (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
  * David McKnight   (IBM)        - [224313] [api] Create RSE Events for MOVE and COPY holding both source and destination fields
  * David McKnight   (IBM)        - [296877] Allow user to choose the attributes for remote search result
+ * David McKnight   (IBM)        - [357587] Custom sorter is changed to SystemTableViewSorter
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -217,16 +218,21 @@ public class SystemTableTreeView
 			    TreeColumn tcolumn = (TreeColumn)e.widget;
 				int column = table.indexOf(tcolumn);
 				SystemTableViewSorter oldSorter = (SystemTableViewSorter) getSorter();
-				if (oldSorter != null && column == oldSorter.getColumnNumber())
+				if (oldSorter != null)
 				{
-					oldSorter.setReversed(!oldSorter.isReversed());
-					if (tcolumn.getImage() == _upI)
-					{
-					    tcolumn.setImage(_downI);
+					if (column == oldSorter.getColumnNumber()){
+						oldSorter.setReversed(!oldSorter.isReversed());
+						if (tcolumn.getImage() == _upI)
+						{
+						    tcolumn.setImage(_downI);
+						}
+						else
+						{
+						    tcolumn.setImage(_upI);
+						}
 					}
-					else
-					{
-					    tcolumn.setImage(_upI);
+					else {
+						oldSorter.setColumnNumber(column);
 					}
 				} 
 				else

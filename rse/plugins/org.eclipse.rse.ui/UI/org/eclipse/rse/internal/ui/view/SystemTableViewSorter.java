@@ -14,6 +14,7 @@
  * Contributors:
  * David McKnight   (IBM)        - [331986] Sort in Remote System Details view shows wrong results
  * David McKnight   (IBM)        - [355467] The result of sorting resources that contains null blank cells is not correct in Remote System Details view.
+ * David McKnight   (IBM)        - [357587] Custom sorter is changed to SystemTableViewSorter
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -51,6 +52,10 @@ public class SystemTableViewSorter extends ViewerSorter
 		_columnNumber = columnNumber; 
 		_view = view;
 		_columnManager = columnManager;
+	}
+	
+	public void setColumnNumber(int columnNumber){
+		_columnNumber = columnNumber;
 	}
 
 	public boolean isSorterProperty(java.lang.Object element, java.lang.Object property)

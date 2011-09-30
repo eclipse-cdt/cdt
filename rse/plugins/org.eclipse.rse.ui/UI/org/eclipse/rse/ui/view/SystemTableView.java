@@ -29,6 +29,7 @@
  * David McKnight   (IBM)        - [308783] Value in Properties view remains "Pending..."
  * David McKnight   (IBM)        - [215814] [performance] Duplicate Queries between Table and Remote Systems View
  * David McKnight   (IBM)        - [340912] inconsistencies with columns in RSE table viewers
+ * David McKnight   (IBM)        - [357587] Custom sorter is changed to SystemTableViewSorter
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -224,18 +225,23 @@ public class SystemTableView
 			    TableColumn tcolumn = (TableColumn)e.widget;
 				int column = table.indexOf(tcolumn);
 				SystemTableViewSorter oldSorter = (SystemTableViewSorter) getSorter();
-				if (oldSorter != null && column == oldSorter.getColumnNumber())
+				if (oldSorter != null)
 				{
-					oldSorter.setReversed(!oldSorter.isReversed());
-					if (tcolumn.getImage() == _upI)
-					{
-					    tcolumn.setImage(_downI);
+					if (column == oldSorter.getColumnNumber()){
+						oldSorter.setReversed(!oldSorter.isReversed());
+						if (tcolumn.getImage() == _upI)
+						{
+						    tcolumn.setImage(_downI);
+						}
+						else
+						{
+						    tcolumn.setImage(_upI);
+						}
 					}
-					else
-					{
-					    tcolumn.setImage(_upI);
+					else {
+						oldSorter.setColumnNumber(column);
 					}
-				}
+				} 
 				else
 				{
 					setSorter(new SystemTableViewSorter(column, SystemTableView.this, _columnManager));

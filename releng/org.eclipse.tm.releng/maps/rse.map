@@ -60,5 +60,5 @@ plugin@org.eclipse.rse.subsystems.terminals.ssh=v201101042155,:pserver:anonymous
 plugin@org.eclipse.rse.terminals.ui=v201101042155,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.rse/plugins/org.eclipse.rse.terminals.ui
 plugin@org.eclipse.rse.tests=v201105311250,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.rse/tests/org.eclipse.rse.tests
 plugin@org.eclipse.rse.tests.framework=v201101042155,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.rse/tests/org.eclipse.rse.tests.framework
-plugin@org.eclipse.rse.ui=R33x_v201109141647,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.rse/plugins/org.eclipse.rse.ui
+plugin@org.eclipse.rse.ui=v201109301900,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.rse/plugins/org.eclipse.rse.ui
 plugin@org.eclipse.rse.useractions=v201101042155,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.rse/plugins/org.eclipse.rse.useractions

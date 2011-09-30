@@ -222,26 +222,29 @@ public class CPPVisitor extends ASTQueries {
 		IASTNode parent = name.getParent();
 		IBinding binding = null;
 		if (parent instanceof IASTNamedTypeSpecifier ||
-			    parent instanceof ICPPASTQualifiedName ||
 				parent instanceof ICPPASTBaseSpecifier ||
 				parent instanceof ICPPASTConstructorChainInitializer ||
 				name.getPropertyInParent() == ICPPASTNamespaceAlias.MAPPING_NAME) {
 		    if (name.getLookupKey().length == 0)
 		    	return null;
-		    
-			binding = CPPSemantics.resolveBinding(name); 
-			if (binding instanceof IProblemBinding && parent instanceof ICPPASTQualifiedName && 
-					!(parent.getParent() instanceof ICPPASTNamespaceAlias)) {
-				final ICPPASTQualifiedName qname = (ICPPASTQualifiedName) parent;
-			    final IASTName[] ns = qname.getNames();
-			    if (ns[ns.length - 1] != name) 
-			    	return binding;
-				
-			    if (ns.length > 1 && ns[ns.length - 2].getBinding() instanceof IProblemBinding)
-			    	return binding;
-			    
-				parent = parent.getParent();
-			    if (((IProblemBinding) binding).getID() == IProblemBinding.SEMANTIC_MEMBER_DECLARATION_NOT_FOUND) {
+		  
+			return CPPSemantics.resolveBinding(name); 
+		} else if (parent instanceof ICPPASTQualifiedName) {
+		    if (name.getLookupKey().length == 0)
+		    	return null;
+
+			final ICPPASTQualifiedName qname = (ICPPASTQualifiedName) parent;
+			if (name != qname.getLastName())
+				return CPPSemantics.resolveBinding(name);
+			
+			parent = parent.getParent();
+			binding = CPPSemantics.resolveBinding(name);
+			if (binding instanceof IProblemBinding && !(parent instanceof ICPPASTNamespaceAlias)) {
+				final IASTName[] ns = qname.getNames();
+				if (ns.length > 1 && ns[ns.length - 2].getBinding() instanceof IProblemBinding)
+					return binding;
+
+				if (((IProblemBinding) binding).getID() == IProblemBinding.SEMANTIC_MEMBER_DECLARATION_NOT_FOUND) {
 					IASTNode node = getContainingBlockItem(name.getParent());
 					ASTNodeProperty prop= node.getPropertyInParent();
 					while (prop == ICPPASTTemplateDeclaration.OWNED_DECLARATION) {
@@ -264,8 +267,13 @@ public class CPPVisitor extends ASTQueries {
 				        return binding;
 				}
 			} else {
-				if (binding instanceof ICPPClassType && binding instanceof IIndexBinding && name.isDefinition()) {
-					parent= parent.getParent(); // need to create an ast binding.
+				if (parent instanceof IASTCompositeTypeSpecifier) {
+					if (binding instanceof IIndexBinding) {
+						// Need to create an AST binding
+					} else {
+						ASTInternal.addDefinition(binding, parent);
+						return binding;
+					}
 				} else {
 					return binding;
 				}
@@ -428,7 +436,7 @@ public class CPPVisitor extends ASTQueries {
 	    		(elabType.getName() instanceof ICPPASTQualifiedName || elabType.getKind() == IASTElaboratedTypeSpecifier.k_enum)) {
 	    	return binding;
 	    }
-
+	    
         try {
         	boolean template = false;
         	ICPPScope scope = (ICPPScope) getContainingScope(name);
@@ -457,21 +465,46 @@ public class CPPVisitor extends ASTQueries {
     				}
     			}
         	}
-            if (!(binding instanceof ICPPInternalBinding) || !(binding instanceof ICPPClassType) && name.isActive()) {
-    			if (elabType.getKind() != IASTElaboratedTypeSpecifier.k_enum) {
-					if (template)
-	            		binding = new CPPClassTemplate(name);
-	            	else
-						binding = new CPPClassType(name, binding);
-					// name may live in a different scope, so make sure to add it to the owner scope, as well.
-    				ASTInternal.addName(scope,  elabType.getName());
-    			}
-    		} else {
-				if ((binding instanceof ICPPClassTemplate) == template) {
-					ASTInternal.addDeclaration(binding, elabType);
-				} else {
-    				binding = new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION);
-    			}
+        	if (binding instanceof ICPPInternalBinding) {
+        		if (!name.isActive())
+        			return binding;
+        		
+        		if (binding instanceof ICPPClassType) {
+        			final ICPPInternalBinding ib = (ICPPInternalBinding) binding;
+        			if ((binding instanceof ICPPClassTemplate) == template) {
+        				ib.addDeclaration(elabType);
+        				return binding;
+        			}
+        			if (CPPSemantics.declaredBefore(binding, name, false)) {
+        				return new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION);
+        			}
+
+        			// Mark the other declarations as problem and create the binding
+        			final IASTNode[] decls = ib.getDeclarations();
+        			if (decls != null) {
+        				for (IASTNode decl : decls) {
+        					if (decl instanceof IASTName) {
+        						final IASTName n = (IASTName) decl;
+        						n.setBinding(new ProblemBinding(n, IProblemBinding.SEMANTIC_INVALID_REDECLARATION));
+        					}
+        				}
+        			}
+        			IASTNode decl= ib.getDefinition();
+        			if (decl instanceof IASTName) {
+        				final IASTName n = (IASTName) decl;
+        				n.setBinding(new ProblemBinding(n, IProblemBinding.SEMANTIC_INVALID_REDEFINITION));
+        			}
+        		} 
+        	}
+        	
+        	// Create a binding
+        	if (elabType.getKind() != IASTElaboratedTypeSpecifier.k_enum) {
+        		if (template)
+        			binding = new CPPClassTemplate(name);
+        		else
+        			binding = new CPPClassType(name, binding);
+        		// name may live in a different scope, so make sure to add it to the owner scope, as well.
+        		ASTInternal.addName(scope,  elabType.getName());
     		}
         } catch (DOMException e) {
             binding = e.getProblem();
@@ -2314,7 +2347,7 @@ public class CPPVisitor extends ASTQueries {
 	}
 
 	public static IBinding findNameOwner(IASTName name, boolean allowFunction) {
-		IASTNode node= name;
+		IASTNode node= name.getLastName();
 		while (node instanceof IASTName) {
 			if (node instanceof ICPPASTQualifiedName) {
 				IASTName[] qn= ((ICPPASTQualifiedName) node).getNames();

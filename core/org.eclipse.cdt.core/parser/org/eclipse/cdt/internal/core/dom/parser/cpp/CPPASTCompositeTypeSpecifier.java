@@ -30,12 +30,13 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
 
     private int fKey;
     private IASTName fName;
-    private ICPPClassScope fScope;
+    private CPPClassScope fScope;
 	private IASTDeclaration[] fAllDeclarations;
 	private IASTDeclaration[] fActiveDeclarations;
     private int fDeclarationsPos=-1;
 	private ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier[] baseSpecs = null;
 	private int baseSpecsPos = -1;
+	private boolean fAmbiguitiesResolved= false;
 
 
     public CPPASTCompositeTypeSpecifier() {
@@ -46,6 +47,13 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
 		setName(n);
 	}
 
+	public void setAmbiguitiesResolved() {
+		if (!fAmbiguitiesResolved && fScope != null) {
+			fScope.createImplicitMembers();
+		}
+		fAmbiguitiesResolved= true;
+	}
+	
 	public CPPASTCompositeTypeSpecifier copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
@@ -140,15 +148,15 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
     }
 
 	public ICPPClassScope getScope() {
-		if (fScope == null)
+		if (fScope == null) {
 			fScope = new CPPClassScope(this);
+			if (fAmbiguitiesResolved) {
+				fScope.createImplicitMembers();
+			}
+		}
 		return fScope;
 	}
-    
-    public void setScope(ICPPClassScope scope) {
-        this.fScope = scope;
-    }
-
+    	
     @Override
 	public boolean accept(ASTVisitor action) {
 		if (action.shouldVisitDeclSpecifiers) {

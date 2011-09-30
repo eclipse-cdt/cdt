@@ -9526,4 +9526,16 @@ public class AST2CPPTests extends AST2BaseTest {
 		ICPPClassType c= bh.assertNonProblem("A", 1);
 		assertEquals(0, ClassTypeHelper.getPureVirtualMethods(c).length);
 	}
+	
+	//	template <typename T> struct CT1 {};
+	//	template <typename T> struct CT2 {};
+	//	typedef char Tdef;
+	//	template<> struct CT1< CT2<int> > {
+	//		CT1<Tdef> x;			   // Ambiguity causes lookup in CT1< CT2<int> >
+	//	};
+	//	template<> struct CT2<Tdef> {  // Accessed before ambiguity is resolved
+	//	};
+	public void testAmbiguityResolution_Bug359364() throws Exception {
+		parseAndCheckBindings();
+	}
 }

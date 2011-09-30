@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import java.util.HashSet;
 import java.util.LinkedList;
 
+import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -29,7 +30,10 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
@@ -101,6 +105,14 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 	public int leave(IASTDeclSpecifier declSpec) {
 		if (declSpec instanceof ICPPASTCompositeTypeSpecifier) {
 			fDeferFunctions--;
+			
+			// Resolve class type definitions, such that the scope is available
+			// during ambiguity resolution.
+			((ICPPASTCompositeTypeSpecifier) declSpec).getName().resolveBinding();
+			
+			// Trigger computation of implicit members.
+			if (declSpec instanceof CPPASTCompositeTypeSpecifier)
+				((CPPASTCompositeTypeSpecifier) declSpec).setAmbiguitiesResolved();
 		}
 		return PROCESS_CONTINUE;
 	}
@@ -128,16 +140,29 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 		if (fRepopulate.remove(declaration)) {
 			repopulateScope(declaration);
 		}
-		// Explicit and partial class template specializations need to be resolved right away, 
-		// otherwise we fail to correctly resolve qualified names that depend on a partial specialization. 
+		// We need to create class bindings for all definitions and for the specializations.
+		// Otherwise, name resolution cannot access members or correct specialization.
 		if (declaration instanceof IASTSimpleDeclaration) {
 			IASTSimpleDeclaration sdecl= (IASTSimpleDeclaration) declaration;
+			IASTName name= null;
 			IASTDeclSpecifier declspec = sdecl.getDeclSpecifier();
-			if (declspec instanceof IASTCompositeTypeSpecifier && sdecl.getDeclarators().length == 0) {
-				IASTName name= ((IASTCompositeTypeSpecifier) declspec).getName().getLastName();
-				if (name instanceof ICPPASTTemplateId) {
-					name.resolveBinding();
+			if (declspec instanceof IASTCompositeTypeSpecifier) {
+				// Definition of a class[template[specialization]]
+				name= ((IASTCompositeTypeSpecifier) declspec).getName().getLastName();
+			} else if (declspec instanceof ICPPASTElaboratedTypeSpecifier
+					&& sdecl.getDeclarators().length == 0) {
+				ASTNodeProperty prop = declaration.getPropertyInParent();
+				if (prop == ICPPASTTemplateDeclaration.OWNED_DECLARATION 
+						|| prop == ICPPASTTemplateSpecialization.OWNED_DECLARATION) {
+					ICPPASTElaboratedTypeSpecifier elab= (ICPPASTElaboratedTypeSpecifier) declspec;
+					if (!elab.isFriend()) {
+						// Declaration of a class template specialization.
+						name= elab.getName().getLastName();
+					}
 				}
+			}
+			if (name instanceof ICPPASTTemplateId) {
+				name.resolveBinding();
 			}
 		}
 		return PROCESS_CONTINUE;

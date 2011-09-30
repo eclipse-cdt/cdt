@@ -1432,5 +1432,36 @@ public class IndexUpdateTests extends IndexTestBase {
 			fIndex.releaseReadLock();
 		}
 	}
+	
+	// struct S {};
+	
+	// struct S {S(int){}};
+	public void testImplicitDefaultCtor_Bug359376() throws Exception {
+		setupFile(2, true);
+		fIndex.acquireReadLock();
+		try { 
+			final ICPPClassType s = (ICPPClassType) findBinding("S");
+			assertNotNull(s);
+			final ICPPConstructor[] ctors = s.getConstructors();
+			assertEquals(2, ctors.length); // 2 implicit ctors
+			assertTrue(ctors[0].isImplicit());
+			assertTrue(ctors[1].isImplicit());
+		} finally {
+			fIndex.releaseReadLock();
+		}
+		updateFile();
+		
+		fIndex.acquireReadLock();
+		try { 
+			final ICPPClassType s = (ICPPClassType) findBinding("S");
+			assertNotNull(s);
+			final ICPPConstructor[] ctors = s.getConstructors();
+			assertEquals(2, ctors.length); // 1 explicit and one implicit ctor
+			assertTrue(ctors[0].isImplicit() != ctors[1].isImplicit());
+		} finally {
+			fIndex.releaseReadLock();
+		}
+	}
+	
 }
 

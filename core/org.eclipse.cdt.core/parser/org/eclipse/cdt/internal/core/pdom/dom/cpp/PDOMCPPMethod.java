@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 QNX Software Systems and others.
+ * Copyright (c) 2006, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -80,7 +80,7 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 	}
 
 	@Override
-	public void update(final PDOMLinkage linkage, IBinding newBinding) throws CoreException {
+	public final void update(final PDOMLinkage linkage, IBinding newBinding) throws CoreException {
 		if (newBinding instanceof ICPPMethod) {
 			ICPPMethod method= (ICPPMethod) newBinding;
 			super.update(linkage, newBinding);
@@ -92,6 +92,11 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 			} catch (DOMException e) {
 				throw new CoreException(Util.createStatus(e));
 			}
+		} else if (newBinding == null && isImplicit()) {
+			// Clear the implicit flag, such that the binding will no longer be picked up.
+			byte annot= (byte) (getAnnotation1() ^ (1 << PDOMCPPAnnotation.IMPLICIT_METHOD_OFFSET));
+			getDB().putByte(record + ANNOTATION1, annot);
+			annotation1= annot;
 		}
 	}
 

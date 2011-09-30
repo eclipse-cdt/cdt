@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.rse.sdk"
       label="%featureName"
-      version="3.3.1.qualifier"
+      version="3.4.0.qualifier"
       provider-name="%providerName"
       image="eclipse_update_120.jpg">
 

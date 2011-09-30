@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2011 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -60,6 +60,7 @@
  * David McKnight   (IBM)        - [254590] When disconnecting a subsystem with COLLAPSE option, subsystems of other connector services also get collapsed
  * Martin Oberhuber (Wind River) - [245154][api] add getSubSystemConfigurationProxiesBySystemType()
  * Zhou Renjian     (Kortide)    - [282238] NPE when copying host and overwrite itself
+ * Martin Oberhuber (Wind River) - [359554] Avoid disconnect when changing default user id only
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.model;
@@ -1965,12 +1966,17 @@ public class SystemRegistry implements ISystemRegistry
 			ISubSystem[] subsystems = getSubSystems(conn); // get list of related subsystems
 			for (int idx = 0; idx < subsystems.length; idx++)
 			{
-				if (hostNameChanged || (subsystems[idx].getLocalUserId() == null))
+				//Need to clear caches if host name changed or user ID is inherited from default
+				if (hostNameChanged || (subsystems[idx].getConnectorService().supportsUserId() && subsystems[idx].getLocalUserId() == null))
 				{
 					try
 					{
-						if (subsystems[idx].isConnected()) subsystems[idx].disconnect(); // MJB: added conditional for defect 45754
-						if (defaultUserIdChanged)
+						//MOB - Bug 359554: There is no reason for disconnecting subsystems just because a default user ID changed
+						if (hostNameChanged && subsystems[idx].isConnected())
+						{
+							subsystems[idx].disconnect(); // MJB: added conditional for defect 45754
+						}
+						if (defaultUserIdChanged && !subsystems[idx].isConnected())
 						{
 							subsystems[idx].getConnectorService().clearCredentials();
 						}

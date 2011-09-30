@@ -1,12 +1,12 @@
 !***************  PROJECT CONTRIBUTION  ******************************************************** 
 !*** Project's plugins, features and fragments
-feature@org.eclipse.rse=R33x_v201109141647,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.rse/features/org.eclipse.rse-feature
-feature@org.eclipse.rse.core=R33x_v201109141647,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.rse/features/org.eclipse.rse.core-feature
+feature@org.eclipse.rse=v201109301448,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.rse/features/org.eclipse.rse-feature
+feature@org.eclipse.rse.core=v201109301448,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.rse/features/org.eclipse.rse.core-feature
 feature@org.eclipse.rse.dstore=R33x_v201109141647,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.rse/features/org.eclipse.rse.dstore-feature
 feature@org.eclipse.rse.examples=v201103142315,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.rse/examples/org.eclipse.rse.examples-feature
 feature@org.eclipse.rse.ftp=R33x_v201109141647,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.rse/features/org.eclipse.rse.ftp-feature
 feature@org.eclipse.rse.local=v201103142315,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.rse/features/org.eclipse.rse.local-feature
-feature@org.eclipse.rse.sdk=R33x_v201109141647,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.rse/features/org.eclipse.rse.sdk-feature
+feature@org.eclipse.rse.sdk=v201109301448,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.rse/features/org.eclipse.rse.sdk-feature
 feature@org.eclipse.rse.ssh=R33x_v201109141647,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.rse/features/org.eclipse.rse.ssh-feature
 feature@org.eclipse.rse.telnet=v201106011538,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.rse/features/org.eclipse.rse.telnet-feature
 feature@org.eclipse.rse.terminals=R33x_v201109141647,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.rse/features/org.eclipse.rse.terminals-feature
@@ -22,7 +22,7 @@ plugin@org.eclipse.rse.connectorservice.dstore=v201103141607,:pserver:anonymous:
 plugin@org.eclipse.rse.connectorservice.local=v201101042155,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.rse/plugins/org.eclipse.rse.connectorservice.local
 plugin@org.eclipse.rse.connectorservice.ssh=v201101042155,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.rse/plugins/org.eclipse.rse.connectorservice.ssh
 plugin@org.eclipse.rse.connectorservice.telnet=v201101042155,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.rse/plugins/org.eclipse.rse.connectorservice.telnet
-plugin@org.eclipse.rse.core=R33x_v201109141647,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.rse/plugins/org.eclipse.rse.core
+plugin@org.eclipse.rse.core=v201109301448,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.rse/plugins/org.eclipse.rse.core
 plugin@org.eclipse.rse.doc.isv=v201101042155,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.rse/doc/org.eclipse.rse.doc.isv
 plugin@org.eclipse.rse.doc.user=R33x_v201107181530,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.rse/doc/org.eclipse.rse.doc.user
 plugin@org.eclipse.rse.dstore.security=v201103141607,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.rse/plugins/org.eclipse.rse.dstore.security

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/org.eclipse.rse_3.3.1.qualifier.jar" id="org.eclipse.rse" version="3.3.1.qualifier">
+   <feature url="features/org.eclipse.rse_3.4.0.qualifier.jar" id="org.eclipse.rse" version="3.4.0.qualifier">
       <category name="tm_34_main"/>
    </feature>
-   <feature url="features/org.eclipse.rse.sdk_3.3.1.qualifier.jar" id="org.eclipse.rse.sdk" version="3.3.1.qualifier">
+   <feature url="features/org.eclipse.rse.sdk_3.4.0.qualifier.jar" id="org.eclipse.rse.sdk" version="3.4.0.qualifier">
       <category name="tm_34_main"/>
    </feature>
    <feature url="features/org.eclipse.rse.useractions_1.1.300.qualifier.jar" id="org.eclipse.rse.useractions" version="1.1.300.qualifier">

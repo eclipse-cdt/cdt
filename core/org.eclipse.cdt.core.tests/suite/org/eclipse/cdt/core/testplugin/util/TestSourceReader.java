@@ -63,9 +63,10 @@ public class TestSourceReader {
 	 * @param srcRoot the directory inside the bundle containing the packages
 	 * @param clazz the name of the class containing the test
 	 * @param testName the name of the test
-	 * @param sections the number of comment sections preceding the named test to return
+	 * @param sections the number of comment sections preceding the named test to return. Pass zero
+	 *     to get all available sections.
 	 * @return an array of StringBuilder objects for each comment section found preceding the named
-	 * test in the source code. 
+	 *     test in the source code. 
 	 * @throws IOException
 	 */
 	public static StringBuilder[] getContentsForTest(Bundle bundle, String srcRoot, Class clazz,
@@ -100,7 +101,7 @@ public class TestSourceReader {
 	    	} else {
 	    		if (content.length() > 0) {
 	    			contents.add(content);
-	    			if (contents.size() == sections + 1)
+	    			if (sections > 0 && contents.size() == sections + 1)
 	    				contents.remove(0);
 	    			content = new StringBuilder();
 	    		}

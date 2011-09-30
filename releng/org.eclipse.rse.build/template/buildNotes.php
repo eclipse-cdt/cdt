@@ -29,8 +29,8 @@
   Platform Runtime is the minimum requirement for core RSE and Terminal.
   Local Terminal needs CDT Core.</li>
 
+<li>Highlights of Fixes and Features since <a href="http://archive.eclipse.org/tm/downloads/drops/R-3.3.1-201109141310/">TM 3.3.1</a>:
 <!--
-<li>Highlights of Fixes and Features since <a href="http://download.eclipse.org/tm/downloads/drops/S-3.3M7-201105022200/index.php">TM 3.3M7</a>:
 <ul>
   <li>Performance improvements were made to reduce the number of queries when an RSE Tableview is open
       [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=215814">215814</a>]
@@ -38,13 +38,13 @@
 </ul>
 </li>
 -->
-<li>At least 4 bugs were resolved: Use 
-  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?type0-0-4=regexp;negate0=1;field0-0-0=target_milestone;type0-0-1=regexp;field0-0-1=target_milestone;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;field0-0-4=target_milestone;value0-0-2=backport;chfieldto=2011-09-30;chfield=resolution;query_format=advanced;type0-0-3=regexp;field0-0-3=target_milestone;value0-0-3=3\.3%20M[34567];chfieldfrom=2011-06-01;value0-0-4=3\.3%20RC[1234];field0-0-2=short_desc;value0-0-1=3\.2\.[12];type0-0-0=regexp;value0-0-0=[23]\.[01]\..*;component=Core;component=RSE;component=Terminal;product=Target%20Management;type0-0-2=substring"> -->
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced;component=Core;component=RSE;component=Terminal;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;target_milestone=3.3.1;product=Target%20Management">
+<li>At least 2 bugs were resolved: Use 
+  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?type0-0-4=regexp;negate0=1;field0-0-0=target_milestone;type0-0-1=regexp;field0-0-1=target_milestone;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;field0-0-4=target_milestone;value0-0-2=backport;chfieldfrom=2011-09-27;chfieldto=2011-11-11;chfield=resolution;query_format=advanced;type0-0-3=regexp;field0-0-3=target_milestone;value0-0-3=3\.4%20M[4567];value0-0-4=3\.4%20RC[1234];field0-0-2=short_desc;value0-0-1=3\.2\.[12];type0-0-0=regexp;value0-0-0=[23]\.[0123]\..*;component=Core;component=RSE;component=Terminal;product=Target%20Management;type0-0-2=substring"> -->
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced;component=Core;component=RSE;component=Terminal;resolution=FIXED;resolution=WONTFIX;resolution=WORKSFORME;target_milestone=3.4%20M3;product=Target%20Management">
   this query</a> to show the list of bugs fixed since
-  <a href="http://download.eclipse.org/tm/downloads/drops/R-3.3-201106080935/">
-  TM 3.3</a>
-  [<a href="http://download.eclipse.org/tm/downloads/drops/R-3.3-201106080935/buildNotes.php">build notes</a>].</li>
+  <a href="http://archive.eclipse.org/tm/downloads/drops/R-3.3.1-201109141310/">
+  TM 3.3.1</a>
+  [<a href="http://archive.eclipse.org/tm/downloads/drops/R-3.3.1-201109141310/buildNotes.php">build notes</a>].</li>
 <li>For details on checkins, see the
   <a href="http://download.eclipse.org/tm/downloads/drops/N-changelog/index.html">
   RSE CVS changelog</a>, and the
@@ -66,7 +66,7 @@
 </table>
 <table><tbody><tr><td>
 <p>The RSE User Documentation has a
-<a href="http://help.eclipse.org/helios/index.jsp?topic=/org.eclipse.rse.doc.user/gettingstarted/g_start.html">
+<a href="http://help.eclipse.org/indigo/index.jsp?topic=/org.eclipse.rse.doc.user/gettingstarted/g_start.html">
 Tutorial</a> that guides you through installation, first steps,
 connection setup and important tasks.</p>
 <p>
@@ -123,11 +123,11 @@ Use
   <!-- 
   <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bapi&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WORKSFORME&chfieldfrom=2011-06-20&chfieldto=2012-09-25&chfield=resolution&cmdtype=doit">
    -->
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bapi&product=Target+Management&component=Core&component=RSE&component=Terminal&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WORKSFORME&target_milestone=3.4&cmdtype=doit">
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced;short_desc=[api;field0-0-0=target_milestone;bug_status=RESOLVED;bug_status=VERIFIED;bug_status=CLOSED;short_desc_type=allwordssubstr;type0-0-0=regexp;value0-0-0=3\.4.*;component=Core;component=RSE;component=Terminal;resolution=FIXED;resolution=WORKSFORME;product=Target%20Management">
   this query</a> to show the full list of API related updates since TM 3.3
   , and
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bapi%5D&product=Target+Management&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&cmdtype=doit">
-  this query</a> to show the list of additional API changes proposed for TM 3.4 or later
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced;short_desc=[api;field0-0-0=target_milestone;short_desc_type=allwordssubstr;type0-0-0=regexp;value0-0-0=3\.4.*;component=Core;component=RSE;component=Terminal;resolution=---;product=Target%20Management">
+  this query</a> to show the list of additional API changes proposed for TM 3.4.
   .
 </td></tr></tbody></table>
 

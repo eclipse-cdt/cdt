@@ -18,14 +18,14 @@
 		User Agreement</a>.</p>
 		
 		<p><font size="+1"><strong>
-<!--
-		  <a href="buildNotes.php">New and Noteworthy / Build Notes</a>
- -->
 <!-- -->
+		  <a href="buildNotes.php">New and Noteworthy / Build Notes</a>
+<!-- -->
+<!-- 
 		  <p><a href="http://www.eclipse.org/tm/development/relnotes/3.3/tm-news-3.3.html">New and Noteworthy</a></p>
 		  <p><a href="http://www.eclipse.org/tm/development/relnotes/3.3/readme_tm_3.3.html">TM 3.3 Readme / Release Notes</a></p>
 		  <p><a href="buildNotes.php">Build Notes</a></p>
-<!-- -->
+-->
 		</strong></font></p>
 		
 		To view the map file entries for this build, click
@@ -99,6 +99,11 @@
 		<td>All</td>
 		<td><a href="http://www.eclipse.org/downloads/download.php?file=/tm/downloads/drops/@dropDir@/RSE-SDK-@buildId@.zip">RSE-SDK-@buildId@.zip</a></td>
 	</tr>
+	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>
+		<td>All</td>
+		<td><a href="http://www.eclipse.org/downloads/download.php?file=/tm/downloads/drops/@dropDir@/TM-repo-@buildId@.zip">TM-repo-@buildId@.zip</a>
+		    (Downloadable p2 repository including all features)</td>
+	</tr>
 </table>
 
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
@@ -149,8 +154,6 @@
         </td>
     </tr>
 </table>
-<b>Note:</b> As of TM 3.3 (Eclipse Indigo / June 2011), the <b>TM-discovery</b> component is discontinued. See
-<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=330337">bug 330337</a> for details.
 
 <table border="0" cellspacing="5" cellpadding="2" width="100%">
 	<tr><td colspan="2">&nbsp;</td></tr>
@@ -252,9 +255,9 @@
 	</tr>
 	<tr>
 	    <td>The RSE test suite requires the JUnit plug-in, which is included in the 
-        <a href="http://archive.eclipse.org/eclipse/downloads/drops/R-3.3-200706251500/index.php#EclipseSDK">
+        <a href="http://download.eclipse.org/eclipse/downloads/">
         Eclipse SDK</a> or available as<br/>
-        <a href="http://archive.eclipse.org/eclipse/downloads/drops/R-3.3-200706251500/index.php#JUnitPlugin">
+        <a href="http://download.eclipse.org/eclipse/downloads/">
         eclipse-test-framework download</a> for users of the Eclipse Platform Runtime Binary. 
 	    </td>
 	</tr>

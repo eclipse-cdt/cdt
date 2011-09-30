@@ -2736,4 +2736,17 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//enum SomeEnum {
+	//FirstValue,  // first value comment
+	//SecondValue  // second value comment
+	//};
+
+	//enum SomeEnum {
+	//    FirstValue,  // first value comment
+	//    SecondValue  // second value comment
+	//};
+	public void _testEnum() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		assertFormatterResult();
+	}
 }

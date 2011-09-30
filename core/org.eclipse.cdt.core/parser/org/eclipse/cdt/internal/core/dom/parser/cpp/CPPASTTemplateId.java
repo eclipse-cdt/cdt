@@ -15,8 +15,10 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
@@ -128,7 +130,11 @@ public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateI
     		if (needComma)
     			buf.append(", "); //$NON-NLS-1$
     		needComma= true;
-    		if (arg instanceof IASTExpression) {
+    		IASTNodeLocation[] nodeLocs = arg.getNodeLocations();
+    		if (nodeLocs.length == 1 && nodeLocs[0] instanceof IASTFileLocation) {
+    			buf.append(arg.getRawSignature());
+    			cleanupWhitespace= true;
+    		} else if (arg instanceof IASTExpression) {
     			IValue value= Value.create((IASTExpression) arg, Value.MAX_RECURSION_DEPTH);
     			if (value != Value.UNKNOWN && !Value.isDependentValue(value)) {
         			buf.append(value.getSignature());

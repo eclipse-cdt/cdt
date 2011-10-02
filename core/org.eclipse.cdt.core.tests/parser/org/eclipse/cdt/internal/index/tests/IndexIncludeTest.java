@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.index.tests;
 
@@ -48,8 +48,8 @@ public class IndexIncludeTest extends IndexTestBase {
 		return suite;
 	}
 
-	private ICProject fProject= null;
-	private IIndex fIndex= null;
+	private ICProject fProject;
+	private IIndex fIndex;
 	
 	public IndexIncludeTest(String name) {
 		super(name);
@@ -61,8 +61,8 @@ public class IndexIncludeTest extends IndexTestBase {
 		if (fProject == null) {
 			fProject= createProject(true, "resources/indexTests/includes");
 			IPathEntry[] entries= new IPathEntry[] {
-					CoreModel.newIncludeEntry(fProject.getPath(),
-							null, fProject.getResource().getLocation())};
+					CoreModel.newIncludeEntry(fProject.getPath(), null,
+							fProject.getResource().getLocation()) };
 			fProject.setRawPathEntries(entries, npm());
 		}
 		fIndex= CCorePlugin.getIndexManager().getIndex(fProject);
@@ -141,7 +141,7 @@ public class IndexIncludeTest extends IndexTestBase {
 	// #include <system20061107.h>
 	public void testIncludeProperties() throws Exception {
 		waitForIndexer();
-		TestScannerProvider.sIncludes= new String[]{fProject.getProject().getLocation().toOSString()};
+		TestScannerProvider.sIncludes= new String[] { fProject.getProject().getLocation().toOSString() };
 		String content= readTaggedComment("source20061107");
 		TestSourceReader.createFile(fProject.getProject(), "user20061107.h", "");
 		TestSourceReader.createFile(fProject.getProject(), "system20061107.h", "");
@@ -163,7 +163,7 @@ public class IndexIncludeTest extends IndexTestBase {
 	}
 	
 	public void testIncludeProperties_2() throws Exception {
-		TestScannerProvider.sIncludes= new String[]{fProject.getProject().getLocation().toOSString()};
+		TestScannerProvider.sIncludes= new String[] { fProject.getProject().getLocation().toOSString() };
 		TestSourceReader.createFile(fProject.getProject(), "header20061107.h", "");
 		String content = "// comment \n#include \"header20061107.h\"\n";
 		IFile file= TestSourceReader.createFile(fProject.getProject(), "intermed20061107.h", content);
@@ -186,7 +186,7 @@ public class IndexIncludeTest extends IndexTestBase {
 	}
 
 	public void testInactiveInclude() throws Exception {
-		TestScannerProvider.sIncludes= new String[]{fProject.getProject().getLocation().toOSString()};
+		TestScannerProvider.sIncludes= new String[] { fProject.getProject().getLocation().toOSString() };
 		String content = "#if 0\n#include \"inactive20070213.h\"\n#endif\n";
 		IFile file= TestSourceReader.createFile(fProject.getProject(), "source20070213.cpp", content);
 		CCorePlugin.getIndexManager().reindex(fProject);
@@ -207,7 +207,7 @@ public class IndexIncludeTest extends IndexTestBase {
 	}
 
 	public void testUnresolvedInclude() throws Exception {
-		TestScannerProvider.sIncludes= new String[]{fProject.getProject().getLocation().toOSString()};
+		TestScannerProvider.sIncludes= new String[] { fProject.getProject().getLocation().toOSString() };
 		String content = "#include \"unresolved20070213.h\"\n";
 		IFile file= TestSourceReader.createFile(fProject.getProject(), "source20070214.cpp", content);
 		CCorePlugin.getIndexManager().reindex(fProject);
@@ -318,7 +318,7 @@ public class IndexIncludeTest extends IndexTestBase {
 	
 	// #include "resolved20070426.h"
 	public void testFixedContext() throws Exception {
-		TestScannerProvider.sIncludes= new String[]{fProject.getProject().getLocation().toOSString()};
+		TestScannerProvider.sIncludes= new String[] { fProject.getProject().getLocation().toOSString() };
 		String source= getContentsForTest(1)[0].toString();
 		IFile header= TestSourceReader.createFile(fProject.getProject(), "resolved20070426.h", "");
 		IFile s1= TestSourceReader.createFile(fProject.getProject(), "s1.cpp", source);
@@ -404,7 +404,7 @@ public class IndexIncludeTest extends IndexTestBase {
 	// #include "unesolved20070427.h"
 	public void testUpdateIncludes() throws Exception {
 		waitForIndexer();
-		TestScannerProvider.sIncludes= new String[]{fProject.getProject().getLocation().toOSString()};
+		TestScannerProvider.sIncludes= new String[] { fProject.getProject().getLocation().toOSString() };
 		CharSequence[] source= getContentsForTest(4);
 		IFile header= TestSourceReader.createFile(fProject.getProject(), "resolved20070427.h", "");
 		IFile s1= TestSourceReader.createFile(fProject.getProject(), "s20070427.cpp", 
@@ -446,7 +446,6 @@ public class IndexIncludeTest extends IndexTestBase {
 				source[0].toString() + "\nint h20070427;");
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_WAIT_TIME);
 		standardCheckUpdateIncludes(header, s1, "h20070427");
-
 	}
 
 	private void standardCheckUpdateIncludes(IFile header, IFile s1, String tag) throws Exception {

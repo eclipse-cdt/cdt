@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 
 package org.eclipse.cdt.internal.ui.includebrowser;
@@ -39,7 +39,7 @@ public class IncludeBrowserUI {
         	ITranslationUnit tu= convertToTranslationUnit(input);
         	if (tu != null) {
         		IWorkbenchPage page= window.getActivePage();
-        		IBViewPart result= (IBViewPart)page.showView(CUIPlugin.ID_INCLUDE_BROWSER);
+        		IBViewPart result= (IBViewPart) page.showView(CUIPlugin.ID_INCLUDE_BROWSER);
         		result.setInput(tu);
         	}
         } catch (CoreException e) {
@@ -52,7 +52,7 @@ public class IncludeBrowserUI {
 	public static void open(final ITextEditor editor, final ITextSelection sel) {
 		if (editor != null) {
 			ICElement inputCElement = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput());
-			open (editor.getSite().getWorkbenchWindow(), inputCElement);
+			open(editor.getSite().getWorkbenchWindow(), inputCElement);
 		}
     }
 
@@ -80,8 +80,7 @@ public class IncludeBrowserUI {
 						return CoreModelUtil.findTranslationUnitForLocation(loc, project);
 					}
 				}
-			}
-			finally {
+			} finally {
 				index.releaseReadLock();
 			}
 		}

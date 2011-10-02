@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.includebrowser;
 
@@ -34,7 +34,6 @@ import org.eclipse.cdt.internal.ui.viewsupport.AsyncTreeContentProvider;
  * This is the content provider for the include browser.
  */
 public class IBContentProvider extends AsyncTreeContentProvider {
-
 	private static final IProgressMonitor NPM = new NullProgressMonitor();
 	private boolean fComputeIncludedBy = true;
 
@@ -66,7 +65,7 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 				return NO_CHILDREN;
 			}
 		}
-		// allow for async computation
+		// Allow for asynchronous computation
 		return null;
 	}
 
@@ -98,8 +97,7 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 				IIndexInclude[] includes;
 				if (fComputeIncludedBy) {
 					includes= findIncludedBy(index, ifl, NPM);
-				}
-				else {
+				} else {
 					includes= findIncludesTo(index, ifl, NPM);
 					directiveFile= node.getRepresentedFile();
 				}
@@ -110,13 +108,11 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 						try {
 							if (fComputeIncludedBy) {
 								directiveFile= targetFile= new IBFile(project, include.getIncludedByLocation());
-							}
-							else {
+							} else {
 								IIndexFileLocation includesPath= include.getIncludesLocation();
 								if (includesPath == null) {
 									targetFile= new IBFile(include.getFullName());
-								}
-								else {
+								} else {
 									targetFile= new IBFile(project, includesPath);
 								}
 							}
@@ -127,24 +123,20 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 							newnode.setIsActiveCode(include.isActive());
 							newnode.setIsSystemInclude(include.isSystemInclude());
 							result.add(newnode);
-						}
-						catch (CoreException e) {
+						} catch (CoreException e) {
 							CUIPlugin.log(e);
 						}
 					}
 
 					return result.toArray();
 				}
-			}
-			finally {
+			} finally {
 				index.releaseReadLock();
 			}
 		}
 		return NO_CHILDREN;
 	}
 
-	
-	
 	public void setComputeIncludedBy(boolean value) {
 		fComputeIncludedBy = value;
 	}
@@ -152,8 +144,7 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 	public boolean getComputeIncludedBy() {
 		return fComputeIncludedBy;
 	}
-	
-	
+
 	private IIndexInclude[] findIncludedBy(IIndex index, IIndexFileLocation ifl, IProgressMonitor pm) {
 		try {
 			if (ifl != null) {
@@ -176,8 +167,7 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 					return list.toArray(new IIndexInclude[list.size()]);
 				}
 			}
-		}
-		catch (CoreException e) {
+		} catch (CoreException e) {
 			CUIPlugin.log(e);
 		} 
 		return new IIndexInclude[0];
@@ -205,8 +195,7 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 					return list.toArray(new IIndexInclude[list.size()]);
 				}
 			}
-		}
-		catch (CoreException e) {
+		} catch (CoreException e) {
 			CUIPlugin.log(e);
 		} 
 		return new IIndexInclude[0];

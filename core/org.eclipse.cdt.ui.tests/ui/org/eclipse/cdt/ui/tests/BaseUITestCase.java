@@ -317,7 +317,7 @@ public class BaseUITestCase extends BaseTestCase {
 
 	final protected TreeItem checkTreeNode(Tree tree, int i0, String label) {
 		TreeItem root= null;
-		for (int millis=0; millis < 5000; millis= millis==0 ? 1 : millis*2) {
+		for (int millis= 0; millis < 5000; millis= millis == 0 ? 1 : millis * 2) {
 			runEventQueue(millis);
 			try {
 				root= tree.getItem(i0);
@@ -340,7 +340,7 @@ public class BaseUITestCase extends BaseTestCase {
 		String itemText= null;
 		SWTException ex= null;
 		String firstItemText= null;
-		for (int millis=0; millis < 5000; millis= millis==0 ? 1 : millis*2) {
+		for (int millis= 0; millis < 5000; millis= millis == 0 ? 1 : millis * 2) {
 			runEventQueue(millis);
 			TreeItem root= tree.getItem(i0);
 			if (!root.getExpanded()) {

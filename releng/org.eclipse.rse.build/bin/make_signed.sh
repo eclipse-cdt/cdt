@@ -219,11 +219,13 @@ echo "ls ${OUTPUT}"
 ls ${OUTPUT}
 echo ""
 cd "${DROPDIR}"
-if [ ! -d ${DROPDIR}.unsigned ]; then
-  DROPBASE=`basename "${DROPDIR}"`
-  mkdir ../${DROPBASE}.unsigned
-  tar cf - . | (cd ../${DROPBASE}.unsigned ; tar xf -) 
-  chmod -R g+w ../${DROPBASE}.unsigned
-fi
-echo "cp -f ${OUTPUT}/* ."
-echo "rm -rf ${tmpdir}"
+#if [ ! -d ${DROPDIR}.unsigned ]; then
+#  DROPBASE=`basename "${DROPDIR}"`
+#  mkdir ../${DROPBASE}.unsigned
+#  tar cf - . | (cd ../${DROPBASE}.unsigned ; tar xf -) 
+#  chmod -R g+w ../${DROPBASE}.unsigned
+#fi
+#echo "cp -f ${OUTPUT}/* ."
+#echo "rm -rf ${tmpdir}"
+cp -f ${OUTPUT}/* .
+rm -rf ${tmpdir}

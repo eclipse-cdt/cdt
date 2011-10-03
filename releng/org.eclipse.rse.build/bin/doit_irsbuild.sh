@@ -179,11 +179,13 @@ if [ -f package.count -a "$FILES" != "" ]; then
          cd $HOME/ws2/publish
          cd $DIRS
          cp $HOME/downloads-tm/signedUpdates/TM-repo-${realstamp}.zip .
-         count=`cat package.count`
-         count=`expr $count + 1`
-         rm package.count
-         echo $count > package.count
          echo "Successfully created TM-repo-${realstamp}.zip" 
+         if [ -f package.count ]; then
+           count=`cat package.count`
+           count=`expr $count + 1`
+           rm package.count
+           echo $count > package.count
+         fi
 
          echo "Making signed..."
          UPDATE_SITE=$HOME/downloads-tm/signedUpdates

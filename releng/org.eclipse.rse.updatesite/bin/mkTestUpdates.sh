@@ -51,7 +51,7 @@ SITEPARENT=`dirname ${SITE}`
 SITEPARENT=`basename ${SITEPARENT}`
 case ${SITEDIR} in
   test*Updates)   TYPE=test ;;
-  signed*Updates) TYPE=testSigned ;;
+  signed*Updates) TYPE=testSigned ; DO_CATEGORIES=1 ;;
   *milestones)    TYPE=milestone ;;
   *interim)       TYPE=interim ;;
   *)              TYPE=unknown ;;

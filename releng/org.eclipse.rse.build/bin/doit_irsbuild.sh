@@ -170,6 +170,9 @@ if [ -f package.count -a "$FILES" != "" ]; then
          cd ..
          rm -rf bin CVS .cvsignore web/CVS
          rm ../TM-repo-*.zip > /dev/null 2>&1
+         cp $HOME/ws2/org.eclipse.rse.build/template/epl-v10.html .
+         cp $HOME/ws2/org.eclipse.rse.build/template/notice.html .
+         chgrp tools.tm epl-v10.html notice.html
          zip -r ../TM-repo-${realstamp}.zip .
          chgrp tools.tm ../TM-repo-${realstamp}.zip
          cd ..

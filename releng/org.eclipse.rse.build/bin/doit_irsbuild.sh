@@ -29,10 +29,7 @@ mydir=`pwd`
 echo ${mydir}
 
 #Use Java5 on build.eclipse.org
-#export PATH=/shared/tools/tm/jdk-1.5/bin:$PATH
 export PATH=/shared/tools/tm/jdk-1.5/jre/bin:/shared/tools/tm/jdk-1.5/bin:$PATH
-#export PATH=/shared/tools/tm/jdk-1.6/jre/bin:/shared/tools/tm/jdk-1.6/bin:$PATH
-#export PATH=${HOME}/ws2/IBMJava2-ppc-142/bin:$PATH
 
 
 #Get parameters
@@ -172,19 +169,22 @@ if [ -f package.count -a "$FILES" != "" ]; then
          ./mkTestUpdates.sh
          cd ..
          rm -rf bin CVS .cvsignore web/CVS
-         rm ../TM-repo-*.zip
+         rm ../TM-repo-*.zip > /dev/null 2>&1
          zip -r ../TM-repo-${realstamp}.zip .
+         chgrp tools.tm ../TM-repo-${realstamp}.zip
          cd ..
          rm -rf ${ISITE}
          cd $HOME/ws2/publish
          cd $DIRS
          cp $HOME/downloads-tm/signedUpdates/TM-repo-${realstamp}.zip .
+         chgrp tools.tm TM-repo-${realstamp}.zip
          echo "Successfully created TM-repo-${realstamp}.zip" 
          if [ -f package.count ]; then
            count=`cat package.count`
            count=`expr $count + 1`
            rm package.count
            echo $count > package.count
+           chgrp tools.tm package.count
          fi
 
          echo "Making signed..."

@@ -41,6 +41,7 @@ buildType=$1
 buildId=$2
 case x$buildType in
   xP|xN|xI|xS|xR) ok=1 ;;
+  xH) mapTag=R3_3_maintenance ; ok=1 ;;
   xM) mapTag=R3_2_maintenance ; ok=1 ;;
   xJ) mapTag=R3_1_maintenance ; ok=1 ;;
   xK|xL) mapTag=R3_0_maintenance ; ok=1 ;;
@@ -116,6 +117,7 @@ FILES=`ls RSE-SDK-*.zip 2>/dev/null`
 echo "FILES=$FILES"
 if [ -f package.count -a "$FILES" != "" ]; then
   echo "package.count found, release seems ok"
+  realstamp=`echo $FILES | sed -e 's,RSE-SDK-,,g' -e 's,.zip,,g'`
   if [ ${buildType} = S -o ${buildType} = R ]; then
     #hide the release for now until it is tested
     #mirrors will still pick it up
@@ -154,6 +156,41 @@ if [ -f package.count -a "$FILES" != "" ]; then
       cd $HOME/downloads-tm/signedUpdates/bin
       cvs update
       ./mkTestUpdates.sh
+      
+      echo "Creating TM-repo-${realstamp}.zip"
+      cd ..
+      ISITE=3.4interim
+      if [ -d ${ISITE} ]; then
+        rm -rf ${ISITE}
+      fi
+      FILES=`ls`
+      tar cf - ${FILES} | (mkdir ${ISITE} ; cd ${ISITE} ; tar xf -)
+      if [ -d ${ISITE} ]; then
+         cd ${ISITE}
+         rm -rf plugins/*.pack.gz features/*.pack.gz
+         cd bin
+         ./mkTestUpdates.sh
+         cd ..
+         rm -rf bin CVS .cvsignore web/CVS
+         rm ../TM-repo-*.zip
+         zip -r ../TM-repo-${realstamp}.zip .
+         cd ..
+         rm -rf ${ISITE}
+         cd $HOME/ws2/publish
+         cd $DIRS
+         cp $HOME/downloads-tm/signedUpdates/TM-repo-${realstamp}.zip .
+         count=`cat package.count`
+         count=`expr $count + 1`
+         rm package.count
+         echo $count > package.count
+         echo "Successfully created TM-repo-${realstamp}.zip" 
+
+         echo "Making signed..."
+         UPDATE_SITE=$HOME/downloads-tm/signedUpdates
+         export UPDATE_SITE
+         $HOME/ws2/org.eclipse.rse.build/bin/make_signed.sh -go
+         echo "Made signed."
+      fi
   fi
   
   cd "$curdir"

@@ -48,11 +48,11 @@ esac
 
 # prepare the base Eclipse installation in folder "eclipse"
 ep_rel="R-"
-ep_ver=3.7
-ep_date="-201106131736"
+ep_ver=3.7.1
+ep_date="-201109091335"
 P2_disabled=false
 P2_no_dropins=false
-if [ ! -f eclipse/plugins/org.eclipse.swt_3.7.0.v3735b.jar ]; then
+if [ ! -f eclipse/plugins/org.eclipse.swt_3.7.1.v3738a.jar ]; then
   curdir2=`pwd`
   if [ ! -d eclipse -o -h eclipse ]; then
     if [ -d eclipse-${ep_ver}-${ep_arch} ]; then
@@ -133,11 +133,13 @@ if [ ! -f ${DROPIN}/org.sonatype.tycho.p2.updatesite_0.9.0.201005191712.jar ]; t
 fi
 
 # CDT Runtime
-CDTREL=8.0.0
+CDTREL=8.0.1
 CDTFEAT=8.0.0
-CDTVER=201106081058
-CDTNAME=cdt-master-${CDTREL}-I${CDTVER}.zip
-CDTLOC=builds/${CDTREL}/I.I${CDTVER}/${CDTNAME}
+CDTVER=201109151620
+#CDTNAME=cdt-master-${CDTREL}-I${CDTVER}.zip
+#CDTLOC=builds/${CDTREL}/I.I${CDTVER}/${CDTNAME}
+CDTNAME=cdt-master-${CDTREL}.zip
+CDTLOC=releases/indigo/dist/${CDTNAME}
 if [ ! -f eclipse/plugins/org.eclipse.cdt_${CDTFEAT}.${CDTVER}.jar ]; then
   echo "Getting CDT Runtime..."
   wget "http://download.eclipse.org/tools/cdt/${CDTLOC}"

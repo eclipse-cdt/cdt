@@ -114,8 +114,8 @@ public class IndexIncludeTest extends IndexTestBase {
 		
 		ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				file.setContents(new ByteArrayInputStream( "int included; int CONTEXT;\n".getBytes()), false, false, npm());
-				file.setLocalTimeStamp(timestamp+1000); 
+				file.setContents(new ByteArrayInputStream("int included; int CONTEXT;\n".getBytes()), false, false, npm());
+				file.setLocalTimeStamp(timestamp + 1000); 
 			}
 		}, npm());
 		assertTrue("Timestamp was not increased", file.getLocalTimeStamp() >= timestamp);
@@ -123,7 +123,7 @@ public class IndexIncludeTest extends IndexTestBase {
 		fIndex.acquireReadLock();
 		try {
 			IIndexFile ifile= getIndexFile(file);
-			assertTrue("timestamp not ok", ifile.getTimestamp() >= timestamp);
+			assertTrue("Timestamp not ok", ifile.getTimestamp() >= timestamp);
 
 			IIndexBinding[] result= fIndex.findBindings(Pattern.compile("testInclude_cpp"), true, IndexFilter.ALL, npm());
 			assertEquals(1, result.length);
@@ -448,6 +448,60 @@ public class IndexIncludeTest extends IndexTestBase {
 				source[0].toString() + "\nint h20070427;");
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_WAIT_TIME);
 		standardCheckUpdateIncludes(header, s1, "h20070427");
+	}
+
+	// #static const int X = 0;
+
+	// #define X a
+	// #include "h1.h"
+	// #define X b
+	// #include "h1.h"
+
+	// #include "h2.h"
+
+	// #define X c
+	// #include "h1.h"
+	public void _testMultiVariantHeaderUpdate() throws Exception {
+		waitForIndexer();
+		TestScannerProvider.sIncludes= new String[] { fProject.getProject().getLocation().toOSString() };
+		StringBuilder[] contents= getContentsForTest(4);
+		final StringBuilder h1Contents = contents[0];
+		final IFile h1= TestSourceReader.createFile(fProject.getProject(), "h1.h", h1Contents.toString());
+		IFile h2= TestSourceReader.createFile(fProject.getProject(), "h2.h", contents[1].toString());
+		IFile s1= TestSourceReader.createFile(fProject.getProject(), "s1.cpp", contents[2].toString());
+		IFile s2= TestSourceReader.createFile(fProject.getProject(), "s2.cpp", contents[3].toString());
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_WAIT_TIME);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, s2, INDEXER_WAIT_TIME);
+
+		fIndex.acquireReadLock();
+		try {
+			IIndexFile[] indexFiles = fIndex.getFiles(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(h1));
+			assertEquals(3, indexFiles.length);
+		} finally {
+			fIndex.releaseReadLock();
+		}
+
+		final long timestamp= System.currentTimeMillis();
+		int pos = h1Contents.indexOf("int");
+		h1Contents.replace(pos, pos + "int".length(), "float");
+		ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				h1.setContents(new ByteArrayInputStream(h1Contents.toString().getBytes()), false, false, npm());
+				h1.setLocalTimeStamp(timestamp + 1000); 
+			}
+		}, npm());
+		waitForIndexer();
+
+		fIndex.acquireReadLock();
+		try {
+			IIndexFile[] indexFiles = fIndex.getFiles(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(h1));
+			assertEquals(3, indexFiles.length);
+			for (IIndexFile indexFile : indexFiles) {
+				assertTrue("Timestamp not ok", indexFile.getTimestamp() >= timestamp);
+			}
+		} finally {
+			fIndex.releaseReadLock();
+		}
 	}
 
 	private void standardCheckUpdateIncludes(IFile header, IFile s1, String tag) throws Exception {

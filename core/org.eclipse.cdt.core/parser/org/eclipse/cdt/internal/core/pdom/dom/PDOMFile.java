@@ -63,7 +63,7 @@ public class PDOMFile implements IIndexFragmentFile {
 	private final PDOMLinkage fLinkage;
 	private final long record;
 	private IIndexFileLocation location;  // No need to make volatile, all fields of IndexFileLocation are final.
-	private ISignificantMacros sigMacros;  // No need to make volatile, all fields of FileContentsKey are either final or volatile.
+	private ISignificantMacros sigMacros;  // No need to make volatile, all fields of SignificantMacros are either final or atomically updated.
 
 	private static final int FIRST_NAME = 0;
 	private static final int FIRST_INCLUDE = FIRST_NAME + Database.PTR_SIZE;

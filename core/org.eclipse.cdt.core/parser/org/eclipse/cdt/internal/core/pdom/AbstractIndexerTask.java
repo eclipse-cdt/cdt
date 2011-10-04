@@ -131,7 +131,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			fc= new FileVersionTask(ifile, fAddRequested);
 			fAddRequested= false;
 
-			switch(fVersionTasks.size()) {
+			switch (fVersionTasks.size()) {
 			case 0:
 				fVersionTasks= Collections.singletonList(fc);
 				break;
@@ -804,7 +804,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 				// Additional version tasks may be added while parsing a file,
 				// use an integer to iterate over the list.
 				final List<FileVersionTask> versionTasks = locTask.fVersionTasks;
-				for (int i=0; i<versionTasks.size(); i++) {
+				for (int i= 0; i < versionTasks.size(); i++) {
 					FileVersionTask versionTask = versionTasks.get(i);
 					if (versionTask.fUpdateRequested) {
 						if (monitor.isCanceled() || hasUrgentTasks())

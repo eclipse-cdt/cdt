@@ -43,6 +43,7 @@
  * David McKnight   (IBM)        - [325502] The default editor for a file is not updated when opened in RSE explorer
  * David McKnight   (IBM)        - [334839] File Content Conflict is not handled properly
  * David McKnight   (IBM)        - [249031] Last used editor should be set to SystemEditableRemoteFile
+ * David McKnight   (IBM)        - [359704] SystemEditableRemoteFile does not release reference to editor
  *******************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -1761,19 +1762,16 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 	 */
 	public void partClosed(IWorkbenchPart part)
 	{
-		/*
-		        if (editor == part)
-		        {
-		            delete();
-		        }
-		*/
-		SystemUniversalTempFileListener.getListener().unregisterEditedFile(this);
+		if (editor == part){
+			//delete();
+		       
+			SystemUniversalTempFileListener.getListener().unregisterEditedFile(this);
 
-		IWorkbenchPage page = SystemBasePlugin.getActiveWorkbenchWindow().getActivePage();
-
-		if (page != null)
-		{
-			page.removePartListener(this);
+			IWorkbenchPage page = SystemBasePlugin.getActiveWorkbenchWindow().getActivePage();			
+			if (page != null){
+				page.removePartListener(this);
+				editor = null;
+			}
 		}
 	}
 
@@ -1954,6 +1952,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 					{
 						this.setLocalResourceProperties();
 						this.upload(progressMonitor);
+						systemEditor.setInput(newInput);
 					} catch (SystemMessageException e) {
 						SystemMessageDialog dialog = new SystemMessageDialog(SystemBasePlugin.getActiveWorkbenchShell(), e.getSystemMessage());
 						dialog.open();

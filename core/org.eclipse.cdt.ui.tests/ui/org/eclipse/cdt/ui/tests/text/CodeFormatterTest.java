@@ -2737,16 +2737,25 @@ public class CodeFormatterTest extends BaseUITestCase {
 	}
 
 	//enum SomeEnum {
-	//FirstValue,  // first value comment
-	//SecondValue  // second value comment
+	//FirstValue,// first value comment
+	//SecondValue// second value comment
+	//};
+	//enum OtherEnum {
+	//First,// first value comment
+	//Second,// second value comment
 	//};
 
 	//enum SomeEnum {
 	//    FirstValue,  // first value comment
 	//    SecondValue  // second value comment
 	//};
-	public void _testEnum() throws Exception {
+	//enum OtherEnum {
+	//    First,  // first value comment
+	//    Second,  // second value comment
+	//};
+	public void testEnum() throws Exception {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_MIN_DISTANCE_BETWEEN_CODE_AND_LINE_COMMENT, "2");
 		assertFormatterResult();
 	}
 }

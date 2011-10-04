@@ -2032,6 +2032,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				scribe.space();
 			}
 		}
+		scribe.printTrailingComment();
 
         if (enumIndent > braceIndent) {
             scribe.unIndent();

@@ -801,7 +801,11 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			if (locTask == null || locTask.isCompleted()) {
 				it.remove();
 			} else {
-				for (FileVersionTask versionTask : locTask.fVersionTasks) {
+				// Additional version tasks may be added while parsing a file,
+				// use an integer to iterate over the list.
+				final List<FileVersionTask> versionTasks = locTask.fVersionTasks;
+				for (int i=0; i<versionTasks.size(); i++) {
+					FileVersionTask versionTask = versionTasks.get(i);
 					if (versionTask.fUpdateRequested) {
 						if (monitor.isCanceled() || hasUrgentTasks())
 							return;

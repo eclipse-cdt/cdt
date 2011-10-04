@@ -1084,12 +1084,14 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		assert monitor != null;
 		Thread th= null;
 		if (waitMaxMillis != FOREVER) {
+			final Thread callingThread= Thread.currentThread();
 			th= new Thread() {
 				@Override
 				public void run() {
 					try {
 						Thread.sleep(waitMaxMillis);
 						monitor.setCanceled(true);
+						callingThread.interrupt();
 					} catch (InterruptedException e) {
 					}
 				}

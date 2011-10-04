@@ -613,7 +613,7 @@ public class IndexIncludeTest extends IndexTestBase {
 		IndexerPreferences.set(fProject.getProject(), IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, "false");
 		waitForIndexer();
 		TestScannerProvider.sIncludes= new String[] { fProject.getProject().getLocation().toOSString() };
-		CharSequence[] contents= getContentsForTest(4);
+		CharSequence[] contents= getContentsForTest(5);
 		final CharSequence h1Contents = contents[0];
 		final IFile h1= TestSourceReader.createFile(fProject.getProject(), "h1.h", h1Contents.toString());
 		IFile h2= TestSourceReader.createFile(fProject.getProject(), "h2.h", contents[1].toString());
@@ -626,6 +626,10 @@ public class IndexIncludeTest extends IndexTestBase {
 		try {
 			IIndexFile[] indexFiles = fIndex.getFiles(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(h1));
 			assertEquals(3, indexFiles.length);
+			for (IIndexFile indexFile : indexFiles) {
+				assertFalse(indexFile.hasPragmaOnceSemantics());
+				assertEquals(1, fIndex.findIncludedBy(indexFile).length);
+			}
 		} finally {
 			fIndex.releaseReadLock();
 		}
@@ -647,6 +651,9 @@ public class IndexIncludeTest extends IndexTestBase {
 			assertEquals(1, indexFiles.length);
 			for (IIndexFile indexFile : indexFiles) {
 				assertTrue("Timestamp not ok", indexFile.getTimestamp() >= t1);
+				assertTrue(indexFile.hasPragmaOnceSemantics());
+				// Included twice by h2.h and once by s1.cpp
+				assertEquals(2, fIndex.findIncludedBy(indexFile).length);
 			}
 		} finally {
 			fIndex.releaseReadLock();
@@ -669,6 +676,8 @@ public class IndexIncludeTest extends IndexTestBase {
 			assertEquals(3, indexFiles.length);
 			for (IIndexFile indexFile : indexFiles) {
 				assertTrue("Timestamp not ok", indexFile.getTimestamp() >= t2);
+				assertFalse(indexFile.hasPragmaOnceSemantics());
+				assertEquals(1, fIndex.findIncludedBy(indexFile).length);
 			}
 		} finally {
 			fIndex.releaseReadLock();

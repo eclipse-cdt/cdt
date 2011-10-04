@@ -224,9 +224,9 @@ public class PDOMFile implements IIndexFragmentFile {
 			}
 			PDOMInclude last= getFirstIncludedBy();
 			if (last == null) {
-				setFirstInclude(include);
+				setFirstIncludedBy(include);
 			} else {
-				for (PDOMInclude i=include; i != null; i= i.getNextInIncludedBy()) {
+				for (PDOMInclude i=last; i != null; i= i.getNextInIncludedBy()) {
 					last= i;
 				}
 				last.setNextInIncludedBy(include);
@@ -529,7 +529,6 @@ public class PDOMFile implements IIndexFragmentFile {
 			m.delete();
 		}
 		setFirstMacroReference(null);
-		setPragmaOnceSemantics(false);
 		setTimestamp(-1);
 	}
 

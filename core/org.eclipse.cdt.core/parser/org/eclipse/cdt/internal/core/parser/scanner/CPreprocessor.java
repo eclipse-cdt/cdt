@@ -49,6 +49,7 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
 import org.eclipse.cdt.core.parser.util.CharArrayMap;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
+import org.eclipse.cdt.core.parser.util.CharArraySet;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.IIncludeFileResolutionHeuristics;
 import org.eclipse.cdt.internal.core.parser.EmptyFilesProvider;
@@ -232,6 +233,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     private final CharArrayMap<PreprocessorMacro> fMacroDictionary = new CharArrayMap<PreprocessorMacro>(512);
 	private final IMacroDictionary fMacroDictionaryFacade = new MacroDictionary();
     private final LocationMap fLocationMap;
+	private CharArraySet fPreventInclusion= new CharArraySet(0); 
 
 	private final Lexer fRootLexer;
 	private final ScannerContext fRootContext;
@@ -296,7 +298,6 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         	fPreIncludedFiles= new String[][] { einfo.getMacroFiles(), einfo.getIncludeFiles() };
         }
         fFileContentProvider.resetForTranslationUnit();
-        detectIncludeGuard(filePath, fRootContent.getSource(), fRootContext);
     }
     
 	private char[] detectIncludeGuard(String filePath, AbstractCharArray source, ScannerContext ctx) {
@@ -442,15 +443,18 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     }
 
 	private void beforeFirstFetchToken() {
+		if (fPreIncludedFiles != null) {
+			handlePreIncludedFiles();
+			fPreIncludedFiles= null;
+		}
         final String location = fLocationMap.getTranslationUnitPath();
 		InternalFileContent content= fFileContentProvider.getContentForContextToHeaderGap(location,
 				fMacroDictionaryFacade);
 		if (content != null && content.getKind() == InclusionKind.FOUND_IN_INDEX) {
-			processInclusionFromIndex(0, location, content);
-			fPreIncludedFiles= null;
-		} else if (fPreIncludedFiles != null) {
-			handlePreIncludedFiles();
+			processInclusionFromIndex(0, location, content, false);
 		}
+		
+        detectIncludeGuard(location, fRootContent.getSource(), fRootContext);
 		fLocationMap.parsingFile(fFileContentProvider, fRootContent);
 		fRootContent= null;		
 	}
@@ -1359,9 +1363,10 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			return;
 		}
 		
-		if (active && fCurrentContext.getDepth() == MAX_INCLUSION_DEPTH) {
+		if (active && fCurrentContext.getDepth() == MAX_INCLUSION_DEPTH || fPreventInclusion.containsKey(headerName)) {
 			handleProblem(IProblem.PREPROCESSOR_EXCEEDS_MAXIMUM_INCLUSION_DEPTH,
             		lexer.getInputChars(poundOffset, condEndOffset), poundOffset, condEndOffset);
+			fPreventInclusion.put(headerName);
 			return;
 		}
 		
@@ -1432,7 +1437,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			} catch (CoreException e) {
 			}
 			
-			processInclusionFromIndex(poundOffset, path, fi);
+			processInclusionFromIndex(poundOffset, path, fi, true);
 			break;
 		case USE_SOURCE:
 			// Will be parsed
@@ -1445,7 +1450,6 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 				fctx.setFoundOnPath(fi.getFoundOnPath(), includeDirective);
 				detectIncludeGuard(path, source, fctx);
 				fCurrentContext= fctx;
-				fLocationMap.parsingFile(fFileContentProvider, fi);
 				stmt= ctx.getInclusionStatement();
 				stmt.setContentsHash(source.getContentsHash());
 				if (!fCurrentContext.isPragmaOnce()) {
@@ -1472,11 +1476,12 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		}
 	}
 
-	private void processInclusionFromIndex(int offset, String path, InternalFileContent fi) {
+	private void processInclusionFromIndex(int offset, String path, InternalFileContent fi, boolean updateContext) {
 		List<IIndexMacro> mdefs= fi.getMacroDefinitions();
 		for (IIndexMacro macro : mdefs) {
 			addMacroDefinition(macro);
-			fCurrentContext.internalModification(macro.getNameCharArray());
+			if (updateContext)
+				fCurrentContext.internalModification(macro.getNameCharArray());
 		}
 		for (FileVersion version : fi.getNonPragmaOnceVersions()) {
 			fFileContentProvider.addLoadedVersions(version.fPath, Integer.MAX_VALUE, version.fSigMacros);

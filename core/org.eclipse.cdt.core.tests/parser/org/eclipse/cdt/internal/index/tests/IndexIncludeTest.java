@@ -450,18 +450,89 @@ public class IndexIncludeTest extends IndexTestBase {
 		standardCheckUpdateIncludes(header, s1, "h20070427");
 	}
 
-	// #static const int X = 0;
+	// #ifdef A
+	// static const int a = 0;
+	// #endif
+	// #ifdef B
+	// static const int b = 0;
+	// #endif
+	// #ifdef C
+	// static const int c = 0;
+	// #endif
 
-	// #define X a
+	// #define A
 	// #include "h1.h"
-	// #define X b
+	// #undef A
+	// #define B
+	// #include "h1.h"
+	// #undef B
+
+	// #define C
 	// #include "h1.h"
 
 	// #include "h2.h"
+	public void testMultiVariantHeaderUpdate_1() throws Exception {
+		IndexerPreferences.set(fProject.getProject(), IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, "false");
+		waitForIndexer();
+		TestScannerProvider.sIncludes= new String[] { fProject.getProject().getLocation().toOSString() };
+		StringBuilder[] contents= getContentsForTest(4);
+		final StringBuilder h1Contents = contents[0];
+		final IFile h1= TestSourceReader.createFile(fProject.getProject(), "h1.h", h1Contents.toString());
+		IFile h2= TestSourceReader.createFile(fProject.getProject(), "h2.h", contents[1].toString());
+		IFile s1= TestSourceReader.createFile(fProject.getProject(), "s1.cpp", contents[2].toString());
+		IFile s2= TestSourceReader.createFile(fProject.getProject(), "s2.cpp", contents[3].toString());
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_WAIT_TIME);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, s2, INDEXER_WAIT_TIME);
+
+		fIndex.acquireReadLock();
+		try {
+			IIndexFile[] indexFiles = fIndex.getFiles(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(h1));
+			assertEquals(3, indexFiles.length);
+		} finally {
+			fIndex.releaseReadLock();
+		}
+
+		final long timestamp= System.currentTimeMillis();
+		while (true) {
+			int pos = h1Contents.indexOf("int");
+			if (pos < 0)
+				break;
+			h1Contents.replace(pos, pos + "int".length(), "float");
+		}
+		ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				h1.setContents(new ByteArrayInputStream(h1Contents.toString().getBytes()), false, false, npm());
+				h1.setLocalTimeStamp(timestamp + 1000); 
+			}
+		}, npm());
+		waitForIndexer();
+
+		fIndex.acquireReadLock();
+		try {
+			IIndexFile[] indexFiles = fIndex.getFiles(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(h1));
+			assertEquals(3, indexFiles.length);
+			for (IIndexFile indexFile : indexFiles) {
+				assertTrue("Timestamp not ok", indexFile.getTimestamp() >= timestamp);
+			}
+		} finally {
+			fIndex.releaseReadLock();
+		}
+	}
+
+	// static const int X = 0;
+
+	// #define X a
+	// #include "h1.h"
+	// #undef X
+	// #define X b
+	// #include "h1.h"
 
 	// #define X c
 	// #include "h1.h"
-	public void _testMultiVariantHeaderUpdate() throws Exception {
+
+	// #include "h2.h"
+	public void testMultiVariantHeaderUpdate_2() throws Exception {
+		IndexerPreferences.set(fProject.getProject(), IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, "false");
 		waitForIndexer();
 		TestScannerProvider.sIncludes= new String[] { fProject.getProject().getLocation().toOSString() };
 		StringBuilder[] contents= getContentsForTest(4);
@@ -498,6 +569,106 @@ public class IndexIncludeTest extends IndexTestBase {
 			assertEquals(3, indexFiles.length);
 			for (IIndexFile indexFile : indexFiles) {
 				assertTrue("Timestamp not ok", indexFile.getTimestamp() >= timestamp);
+			}
+		} finally {
+			fIndex.releaseReadLock();
+		}
+	}
+
+	// #ifdef A
+	// static const int a = 0;
+	// #endif
+	// #ifdef B
+	// static const int b = 0;
+	// #endif
+	// #ifdef C
+	// static const int c = 0;
+	// #endif
+
+	// #define A
+	// #include "h1.h"
+	// #undef A
+	// #define B
+	// #include "h1.h"
+	// #undef B
+
+	// #define C
+	// #include "h1.h"
+
+	// #include "h2.h"
+
+	// #ifndef H1_H_
+	// #define H1_H_
+	// #ifdef A
+	// static const int a = 0;
+	// #endif
+	// #ifdef B
+	// static const int b = 0;
+	// #endif
+	// #ifdef C
+	// static const int c = 0;
+	// #endif
+	// #endif // H1_H_
+	public void testPragmaOnceChange() throws Exception {
+		IndexerPreferences.set(fProject.getProject(), IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, "false");
+		waitForIndexer();
+		TestScannerProvider.sIncludes= new String[] { fProject.getProject().getLocation().toOSString() };
+		CharSequence[] contents= getContentsForTest(4);
+		final CharSequence h1Contents = contents[0];
+		final IFile h1= TestSourceReader.createFile(fProject.getProject(), "h1.h", h1Contents.toString());
+		IFile h2= TestSourceReader.createFile(fProject.getProject(), "h2.h", contents[1].toString());
+		IFile s1= TestSourceReader.createFile(fProject.getProject(), "s1.cpp", contents[2].toString());
+		IFile s2= TestSourceReader.createFile(fProject.getProject(), "s2.cpp", contents[3].toString());
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_WAIT_TIME);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, s2, INDEXER_WAIT_TIME);
+
+		fIndex.acquireReadLock();
+		try {
+			IIndexFile[] indexFiles = fIndex.getFiles(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(h1));
+			assertEquals(3, indexFiles.length);
+		} finally {
+			fIndex.releaseReadLock();
+		}
+
+		// Change h1.h so that it has the pragma-once semantics. 
+		final long t1= System.currentTimeMillis();
+		final String changedContents = contents[4].toString();
+		ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				h1.setContents(new ByteArrayInputStream(changedContents.getBytes()), false, false, npm());
+				h1.setLocalTimeStamp(t1 + 1000); 
+			}
+		}, npm());
+		waitForIndexer();
+
+		fIndex.acquireReadLock();
+		try {
+			IIndexFile[] indexFiles = fIndex.getFiles(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(h1));
+			assertEquals(1, indexFiles.length);
+			for (IIndexFile indexFile : indexFiles) {
+				assertTrue("Timestamp not ok", indexFile.getTimestamp() >= t1);
+			}
+		} finally {
+			fIndex.releaseReadLock();
+		}
+
+
+		// Change h1.h back to the original state without the pragma-once semantics. 
+		final long t2= System.currentTimeMillis();
+		ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				h1.setContents(new ByteArrayInputStream(h1Contents.toString().getBytes()), false, false, npm());
+				h1.setLocalTimeStamp(t2 + 1000); 
+			}
+		}, npm());
+		waitForIndexer();
+
+		fIndex.acquireReadLock();
+		try {
+			IIndexFile[] indexFiles = fIndex.getFiles(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(h1));
+			assertEquals(3, indexFiles.length);
+			for (IIndexFile indexFile : indexFiles) {
+				assertTrue("Timestamp not ok", indexFile.getTimestamp() >= t2);
 			}
 		} finally {
 			fIndex.releaseReadLock();

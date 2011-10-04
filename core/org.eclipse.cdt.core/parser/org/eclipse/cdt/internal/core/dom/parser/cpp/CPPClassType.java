@@ -143,7 +143,7 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 	public ICPPASTCompositeTypeSpecifier getCompositeTypeSpecifier() {
 		if (definition != null) {
 			IASTNode node = definition;
-			while(node instanceof IASTName)
+			while (node instanceof IASTName)
 				node = node.getParent();
 			if (node instanceof ICPPASTCompositeTypeSpecifier)
 				return (ICPPASTCompositeTypeSpecifier)node;
@@ -154,7 +154,7 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 	private ICPPASTElaboratedTypeSpecifier getElaboratedTypeSpecifier() {
 		if (declarations != null) {
 			IASTNode node = declarations[0];
-			while(node instanceof IASTName)
+			while (node instanceof IASTName)
 				node = node.getParent();
 			if (node instanceof ICPPASTElaboratedTypeSpecifier)
 				return (ICPPASTElaboratedTypeSpecifier)node;
@@ -180,7 +180,7 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 					&& !getElaboratedTypeSpecifier().isFriend()) {
 				// 3.3.1.5 class-key identifier ;
 			} else {
-				while(scope instanceof ICPPClassScope || scope instanceof ICPPFunctionScope) {
+				while (scope instanceof ICPPClassScope || scope instanceof ICPPFunctionScope) {
 					try {
 						scope = scope.getParent();
 					} catch (DOMException e1) {

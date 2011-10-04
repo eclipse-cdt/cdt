@@ -26,6 +26,7 @@ public class AllLanguageSettingsProvidersTests {
 		suite.addTest(LanguageSettingsManagerTests.suite());
 		suite.addTest(LanguageSettingsSerializableTests.suite());
 		suite.addTest(LanguageSettingsPersistenceProjectTests.suite());
+		suite.addTest(LanguageSettingsListenersTests.suite());
 		suite.addTest(LanguageSettingsScannerInfoProviderTests.suite());
 		return suite;
 	}

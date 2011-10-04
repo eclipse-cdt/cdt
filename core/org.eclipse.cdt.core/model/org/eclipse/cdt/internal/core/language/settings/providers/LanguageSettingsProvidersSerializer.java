@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.language.settings.providers.ICListenerRegisterer;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializable;
@@ -33,10 +34,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -66,13 +63,22 @@ public class LanguageSettingsProvidersSerializer {
 	private static Map<String, ILanguageSettingsProvider> rawGlobalWorkspaceProviders = new HashMap<String, ILanguageSettingsProvider>();
 	private static Map<String, ILanguageSettingsProvider> globalWorkspaceProviders = new HashMap<String, ILanguageSettingsProvider>();
 
-	private static class LanguageSettingsWorkspaceProvider implements ILanguageSettingsProvider, IResourceChangeListener {
-		private String providerId;
-		private int registrationCount = 0;
+	private static class ListenerAssociation {
+		private ICListenerRegisterer listener;
+		private ICConfigurationDescription cfgDescription;
+		
+		public ListenerAssociation(ICListenerRegisterer li, ICConfigurationDescription cfgd) {
+			listener = li;
+			cfgDescription = cfgd;
+		}
+	}
 
-		public LanguageSettingsWorkspaceProvider(String id) {
+	private static class LanguageSettingsWorkspaceProvider implements ILanguageSettingsProvider, ICListenerRegisterer {
+		private String providerId;
+		private int projectCount = 0;
+
+		private LanguageSettingsWorkspaceProvider(String id) {
 			Assert.isNotNull(id);
-			Assert.isTrue(id.length()>0);
 			providerId = id;
 		}
 
@@ -117,22 +123,38 @@ public class LanguageSettingsProvidersSerializer {
 		}
 
 		/**
-		 * {@inheritDoc}
-		 * 
-		 * LanguageSettingsWorkspaceProvider delegates event handling to raw provider.
-		 * 
+		 * We count number of times <b>workspace</b> provider (not the raw one!) associated
+		 * with a <b>project</b>. If a project includes it multiple times via different configurations
+		 * it still counts as 1.
 		 */
-		public void resourceChanged(IResourceChangeEvent event) {
-			// keep in mind that type of rawProvider can change
-			ILanguageSettingsProvider rawProvider = getRawProvider();
-			if (rawProvider instanceof IResourceChangeListener) {
-				((IResourceChangeListener) rawProvider).resourceChanged(event);
-			}
+		private int getProjectCount() {
+			return projectCount;
 		}
 		
-		synchronized int incrementListenerCount(int inc) {
-			registrationCount += inc;
-			return registrationCount;
+		private synchronized int incrementProjectCount() {
+			projectCount++;
+			return projectCount;
+		}
+
+		private synchronized int decrementProjectCount() {
+			projectCount--;
+			return projectCount;
+		}
+		
+		public void registerListener(ICConfigurationDescription cfgDescription) {
+			// keep in mind that rawProvider can change
+			ILanguageSettingsProvider rawProvider = getRawProvider();
+			if (rawProvider instanceof ICListenerRegisterer) {
+				((ICListenerRegisterer) rawProvider).registerListener(null);
+			}
+		}
+
+		public void unregisterListener() {
+			// keep in mind that rawProvider can change
+			ILanguageSettingsProvider rawProvider = getRawProvider();
+			if (rawProvider instanceof ICListenerRegisterer) {
+				((ICListenerRegisterer) rawProvider).unregisterListener();
+			}
 		}
 	}
 
@@ -142,9 +164,8 @@ public class LanguageSettingsProvidersSerializer {
 		try {
 			loadLanguageSettingsWorkspace();
 		} catch (Throwable e) {
+			// log and swallow any exception
 			CCorePlugin.log("Error loading workspace language settings providers", e); //$NON-NLS-1$
-		} finally {
-			// swallow any exception
 		}
 	}
 
@@ -195,8 +216,8 @@ public class LanguageSettingsProvidersSerializer {
 			}
 		}
 
+		List<ILanguageSettingsProvider> rawProviders = new ArrayList<ILanguageSettingsProvider>();
 		if (providers!=null) {
-			List<ILanguageSettingsProvider> rawProviders = new ArrayList<ILanguageSettingsProvider>();
 			for (ILanguageSettingsProvider provider : providers) {
 				if (isWorkspaceProvider(provider)) {
 					provider = rawGlobalWorkspaceProviders.get(provider.getId());
@@ -210,6 +231,27 @@ public class LanguageSettingsProvidersSerializer {
 			}
 		}
 
+		List<ICListenerRegisterer> oldListeners = selectListeners(rawGlobalWorkspaceProviders.values());
+		List<ICListenerRegisterer> newListeners = selectListeners(rawProviders);
+		
+		for (ICListenerRegisterer oldListener : oldListeners) {
+			if (!isObjectInTheList(newListeners, oldListener)) {
+				LanguageSettingsWorkspaceProvider wspProvider = (LanguageSettingsWorkspaceProvider) globalWorkspaceProviders.get(((ILanguageSettingsProvider)oldListener).getId());
+				if (wspProvider != null && wspProvider.getProjectCount() > 0) {
+					oldListener.unregisterListener();
+				}
+			}
+		}
+		
+		for (ICListenerRegisterer newListener : newListeners) {
+			if (!isObjectInTheList(oldListeners, newListener)) {
+				LanguageSettingsWorkspaceProvider wspProvider = (LanguageSettingsWorkspaceProvider) globalWorkspaceProviders.get(((ILanguageSettingsProvider)newListener).getId());
+				if (wspProvider != null && wspProvider.getProjectCount() > 0) {
+					newListener.registerListener(null);
+				}
+			}
+		}
+		
 		rawGlobalWorkspaceProviders = rawWorkspaceProviders;
 	}
 
@@ -654,41 +696,73 @@ public class LanguageSettingsProvidersSerializer {
 		}
 	}
 
-	/**
-	 * TODO - remove me
-	 * Temporary method to report inconsistency in log.
-	 */
-	@Deprecated
-	public static void assertConsistency(ICConfigurationDescription cfgDescription) {
-		List<ILanguageSettingsProvider> listeners = new ArrayList<ILanguageSettingsProvider>();
-		List<ILanguageSettingsProvider> providers = cfgDescription.getLanguageSettingProviders();
-		for (ILanguageSettingsProvider provider : providers) {
-			if (isObjectInTheList(listeners, provider)) {
-				IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "Inconsistent state, duplicate LSP in project description " + provider);
-				CoreException e = new CoreException(status);
-				CCorePlugin.log(e);
-			}
-			listeners.add(provider);
+	private static <T> boolean  isObjectInTheList(Collection<T> list, T element) {
+		// list.contains(element) won't do it as we are interested in exact object, not in equal object
+		for (T elem : list) {
+			if (elem == element)
+				return true;
 		}
+		return false;
 	}
-	
+
+	private static boolean isListenerInTheListOfAssociations(Collection<ListenerAssociation> list, ICListenerRegisterer element) {
+		// list.contains(element) won't do it as we are interested in exact object, not in equal object
+		for (ListenerAssociation la : list) {
+			if (la.listener == element)
+				return true;
+		}
+		return false;
+	}
+
 	/**
-	 * Get a providers list including only providers of type IResourceChangeListener
+	 * Get a providers list including only providers of type ICListenerRegisterer
 	 * for a given project description - collecting from all configurations.
 	 */
-	private static List<IResourceChangeListener> getResourceChangeListeners(ICProjectDescription prjDescription) {
-		List<IResourceChangeListener> listeners = new ArrayList<IResourceChangeListener>();
+	private static List<ICListenerRegisterer> getListeners(ICProjectDescription prjDescription) {
+		List<ICListenerRegisterer> listeners = new ArrayList<ICListenerRegisterer>();
 		if (prjDescription != null) {
 			for (ICConfigurationDescription cfgDescription : prjDescription.getConfigurations()) {
 				List<ILanguageSettingsProvider> providers = cfgDescription.getLanguageSettingProviders();
 				for (ILanguageSettingsProvider provider : providers) {
-					if (provider instanceof IResourceChangeListener) {
-						listeners.add((IResourceChangeListener) provider);
+					if (provider instanceof ICListenerRegisterer) {
+						ICListenerRegisterer listener = (ICListenerRegisterer) provider;
+						if (!isObjectInTheList(listeners, listener)) {
+							listeners.add(listener);
+						}
 					}
 				}
 			}
 		}
 		return listeners;
+	}
+	
+	private static List<ICListenerRegisterer> selectListeners(Collection<ILanguageSettingsProvider> values) {
+		List<ICListenerRegisterer> listeners = new ArrayList<ICListenerRegisterer>();
+		for (ILanguageSettingsProvider provider : values) {
+			if (provider instanceof ICListenerRegisterer)
+				listeners.add((ICListenerRegisterer) provider);
+		}
+		return listeners;
+	}
+
+	/**
+	 * Get a providers list including only providers of type IResourceChangeListener
+	 * for a given project description - collecting from all configurations.
+	 */
+	private static List<ListenerAssociation> getListenersAssociations(ICProjectDescription prjDescription) {
+		List<ListenerAssociation> associations = new ArrayList<ListenerAssociation>();
+		if (prjDescription != null) {
+			for (ICConfigurationDescription cfgDescription : prjDescription.getConfigurations()) {
+				List<ILanguageSettingsProvider> providers = cfgDescription.getLanguageSettingProviders();
+				List<ICListenerRegisterer> listeners = selectListeners(providers);
+				for (ICListenerRegisterer listener : listeners) {
+					if (!isListenerInTheListOfAssociations(associations, listener)) {
+						associations.add(new ListenerAssociation(listener, cfgDescription));
+					}
+				}
+			}
+		}
+		return associations;
 	}
 	
 	/**
@@ -706,52 +780,44 @@ public class LanguageSettingsProvidersSerializer {
 		assertConsistency(oldPrjDescription); // TODO - remove me
 		assertConsistency(newPrjDescription); // TODO - remove me
 		
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		List<ICListenerRegisterer> oldListeners = getListeners(oldPrjDescription);
+		List<ListenerAssociation> newAssociations = getListenersAssociations(newPrjDescription);
 		
-		List<IResourceChangeListener> oldListeners = getResourceChangeListeners(oldPrjDescription);
-		List<IResourceChangeListener> newListeners = getResourceChangeListeners(newPrjDescription);
-		
-		for (IResourceChangeListener listener : oldListeners) {
-			if (!isObjectInTheList(newListeners, listener)) {
+		for (ICListenerRegisterer oldListener : oldListeners) {
+			if (!isListenerInTheListOfAssociations(newAssociations, oldListener)) {
 				int count = 0;
-				if (listener instanceof LanguageSettingsWorkspaceProvider) {
-					count = ((LanguageSettingsWorkspaceProvider) listener).incrementListenerCount(-1);
+				if (oldListener instanceof LanguageSettingsWorkspaceProvider) {
+					count = ((LanguageSettingsWorkspaceProvider) oldListener).decrementProjectCount();
 				}
 				if (count == 0) {
-					workspace.removeResourceChangeListener(listener);
-					// TODO - remove me
-					CCorePlugin.log(new Status(IStatus.WARNING,CCorePlugin.PLUGIN_ID, oldPrjDescription.getProject() + ": Removed IResourceChangeListener "
-							+ "[" + System.identityHashCode(listener) + "] "
-							+ listener));
+					try {
+						oldListener.unregisterListener();
+					} catch (Throwable e) {
+						// protect from any exceptions from implementers
+						CCorePlugin.log(e);
+					}
 				}
 			}
 		}
 		
-		for (IResourceChangeListener listener : newListeners) {
-			if (!isObjectInTheList(oldListeners, listener)) {
+		for (ListenerAssociation newListenerAssociation : newAssociations) {
+			ICListenerRegisterer newListener = newListenerAssociation.listener;
+			if (!isObjectInTheList(oldListeners, newListener)) {
 				int count = 1;
-				if (listener instanceof LanguageSettingsWorkspaceProvider) {
-					count = ((LanguageSettingsWorkspaceProvider) listener).incrementListenerCount(1);
+				if (newListener instanceof LanguageSettingsWorkspaceProvider) {
+					count = ((LanguageSettingsWorkspaceProvider) newListener).incrementProjectCount();
 				}
 				if (count == 1) {
-					workspace.addResourceChangeListener(listener);
-					// TODO - remove me
-					CCorePlugin.log(new Status(IStatus.WARNING,CCorePlugin.PLUGIN_ID, newPrjDescription.getProject() + ": Added IResourceChangeListener "
-							+ "[" + System.identityHashCode(listener) + "] "
-							+ listener));
+					try {
+						newListener.registerListener(newListenerAssociation.cfgDescription);
+					} catch (Throwable e) {
+						// protect from any exceptions from implementers
+						CCorePlugin.log(e);
+					}
 				}
 			}
 		}
 		
-	}
-
-	private static <T> boolean  isObjectInTheList(Collection<T> list, T element) {
-		// list.contains(element) won't do it as we are interested in exact object, not in equal object
-		for (T elem : list) {
-			if (elem == element)
-				return true;
-		}
-		return false;
 	}
 
 	/**

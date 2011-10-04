@@ -44,7 +44,7 @@ public class LanguageSettingsManagerTests extends TestCase {
 	// Should match id of extension point defined in plugin.xml
 	private static final String EXTENSION_BASE_PROVIDER_ID = "org.eclipse.cdt.core.tests.language.settings.base.provider";
 	private static final String EXTENSION_EDITABLE_PROVIDER_ID = "org.eclipse.cdt.core.tests.custom.editable.language.settings.provider";
-	private static final String EXTENSION_EDITABLE_PROVIDER_NAME = "Test Plugin Editable Language Settings Provider";
+	private static final String EXTENSION_EDITABLE_PROVIDER_NAME = "Test Plugin Mock Editable Language Settings Provider";
 
 	private static final IFile FILE_0 = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path("/project/path0"));
 	private static final String CFG_ID = "test.configuration.id";

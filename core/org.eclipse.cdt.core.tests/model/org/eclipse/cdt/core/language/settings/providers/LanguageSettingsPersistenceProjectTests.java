@@ -43,9 +43,9 @@ import org.w3c.dom.Element;
 public class LanguageSettingsPersistenceProjectTests extends TestCase {
 	private static final String LANGUAGE_SETTINGS_PROJECT_XML = ".settings/language.settings.xml";
 	private static final String LANGUAGE_SETTINGS_WORKSPACE_XML = "language.settings.xml";
-	// Should match id of extension point defined in plugin.xml
+	// Should match extension points defined in plugin.xml
 	private static final String EXTENSION_PROVIDER_ID = "org.eclipse.cdt.core.tests.language.settings.base.provider.subclass";
-	private static final String EXTENSION_PROVIDER_NAME = "Test Plugin Base Provider Subclass";
+	private static final String EXTENSION_PROVIDER_NAME = "Test Plugin Mock Base Provider Subclass";
 	private static final String EXTENSION_SERIALIZABLE_PROVIDER_ID = "org.eclipse.cdt.core.tests.custom.serializable.language.settings.provider";
 
 	private static final String CFG_ID = "test.configuration.id.0";

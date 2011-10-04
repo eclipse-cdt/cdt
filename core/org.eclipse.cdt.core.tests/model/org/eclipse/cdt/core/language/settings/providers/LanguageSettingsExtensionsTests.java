@@ -37,11 +37,11 @@ import org.eclipse.core.runtime.Path;
 public class LanguageSettingsExtensionsTests extends TestCase {
 	// These should match corresponding entries defined in plugin.xml
 	private static final String EXTENSION_BASE_PROVIDER_ID = "org.eclipse.cdt.core.tests.language.settings.base.provider";
-	private static final String EXTENSION_BASE_PROVIDER_NAME = "Test Plugin Language Settings Base Provider";
+	private static final String EXTENSION_BASE_PROVIDER_NAME = "Test Plugin Mock Language Settings Base Provider";
 	private static final String EXTENSION_BASE_PROVIDER_LANG_ID = "org.eclipse.cdt.core.tests.language.id";
 	private static final String EXTENSION_BASE_PROVIDER_PARAMETER = "custom parameter";
 	private static final String EXTENSION_CUSTOM_PROVIDER_ID = "org.eclipse.cdt.core.tests.custom.language.settings.provider";
-	private static final String EXTENSION_CUSTOM_PROVIDER_NAME = "Test Plugin Language Settings Provider";
+	private static final String EXTENSION_CUSTOM_PROVIDER_NAME = "Test Plugin Mock Language Settings Provider";
 	private static final String EXTENSION_BASE_SUBCLASS_PROVIDER_ID = "org.eclipse.cdt.core.tests.language.settings.base.provider.subclass";
 	private static final String EXTENSION_BASE_SUBCLASS_PROVIDER_PARAMETER = "custom parameter subclass";
 	private static final String EXTENSION_SERIALIZABLE_PROVIDER_ID = "org.eclipse.cdt.core.tests.custom.serializable.language.settings.provider";

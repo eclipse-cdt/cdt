@@ -15,16 +15,11 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ILinkage;
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -33,8 +28,6 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
@@ -46,7 +39,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
@@ -103,58 +95,6 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 		}
 	}
 
-	private class FindDefinitionAction extends ASTVisitor {
-		private char[] nameArray = CPPClassType.this.getNameCharArray();
-		public IASTName result = null;
-
-		{
-			shouldVisitNames          = true;
-			shouldVisitDeclarations   = true;
-			shouldVisitDeclSpecifiers = true;
-			shouldVisitDeclarators    = true;
-		}
-
-		@Override
-		public int visit(IASTName name) {
-			if (name instanceof ICPPASTTemplateId)
-				return PROCESS_SKIP;
-			if (name instanceof ICPPASTQualifiedName)
-				return PROCESS_CONTINUE;
-			char[] c = name.getLookupKey();
-
-			if (name.getParent() instanceof ICPPASTQualifiedName) {
-				IASTName[] ns = ((ICPPASTQualifiedName) name.getParent()).getNames();
-				if (ns[ns.length - 1] != name)
-					return PROCESS_CONTINUE;
-				name = (IASTName) name.getParent();
-			}
-
-			if (name.getParent() instanceof ICPPASTCompositeTypeSpecifier && CharArrayUtils.equals(c, nameArray)) {
-				IBinding binding = name.resolveBinding();
-				if (binding == CPPClassType.this) {
-					result= name.getLastName();
-					return PROCESS_ABORT;
-				}
-			}
-			return PROCESS_CONTINUE; 
-		}
-
-		@Override
-		public int visit(IASTDeclaration declaration) { 
-			if (declaration instanceof IASTSimpleDeclaration || declaration instanceof ICPPASTTemplateDeclaration)
-				return PROCESS_CONTINUE;
-			return PROCESS_SKIP; 
-		}
-		@Override
-		public int visit(IASTDeclSpecifier declSpec) {
-			return (declSpec instanceof ICPPASTCompositeTypeSpecifier) ? PROCESS_CONTINUE : PROCESS_SKIP; 
-		}
-		@Override
-		public int visit(IASTDeclarator declarator) {
-			return PROCESS_SKIP;
-		}
-	}
-
 	private IASTName definition;
 	private IASTName[] declarations;
 	private boolean checked = false;
@@ -188,30 +128,16 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 	}
 
 	public void checkForDefinition() {
-		if (!checked && definition == null) {
-			FindDefinitionAction action = new FindDefinitionAction();
-			IASTNode node = CPPVisitor.getContainingBlockItem(getPhysicalNode()).getParent();
-
-			if (node instanceof ICPPASTCompositeTypeSpecifier)
-				node = CPPVisitor.getContainingBlockItem(node.getParent());
-			while(node instanceof ICPPASTTemplateDeclaration)
-				node = node.getParent();
-			node.accept(action);
-			definition = action.result;
-
-			if (definition == null) {
-				final IASTTranslationUnit translationUnit = node.getTranslationUnit();
-				translationUnit.accept(action);
-				definition = action.result;
-				if (definition == null && typeInIndex == null) {
-					IIndex index= translationUnit.getIndex();
-					if (index != null) {
-						typeInIndex= (ICPPClassType) index.adaptBinding(this);
-					}
+		// Ambiguity resolution ensures that definitions are resolved.
+		if (!checked) {
+			if (definition == null && typeInIndex == null) {
+				IIndex index= getPhysicalNode().getTranslationUnit().getIndex();
+				if (index != null) {
+					typeInIndex= (ICPPClassType) index.adaptBinding(this);
 				}
 			}
+			checked = true;
 		}
-		checked = true;
 	}
 
 	public ICPPASTCompositeTypeSpecifier getCompositeTypeSpecifier() {
@@ -291,26 +217,30 @@ public class CPPClassType extends PlatformObject implements ICPPInternalClassTyp
 	}
 
 	public void addDefinition(IASTNode node) {
-		if (node instanceof ICPPASTCompositeTypeSpecifier)
+		if (node instanceof ICPPASTCompositeTypeSpecifier) {
 			definition = ((ICPPASTCompositeTypeSpecifier)node).getName();
+		} else {
+			assert false;
+		}
 	}
 	
 	public void addDeclaration(IASTNode node) {
-		if (!(node instanceof ICPPASTElaboratedTypeSpecifier))
-			return;
+		if (node instanceof ICPPASTElaboratedTypeSpecifier) {
+			IASTName name = ((ICPPASTElaboratedTypeSpecifier) node).getName();
 
-		IASTName name = ((ICPPASTElaboratedTypeSpecifier) node).getName();
+			if (declarations == null) {
+				declarations = new IASTName[] { name };
+				return;
+			}
 
-		if (declarations == null) {
-			declarations = new IASTName[] { name };
-			return;
-		}
-
-		// Keep the lowest offset declaration in [0]
-		if (declarations.length > 0 && ((ASTNode)node).getOffset() < ((ASTNode) declarations[0]).getOffset()) {
-			declarations = (IASTName[]) ArrayUtil.prepend(IASTName.class, declarations, name);
+			// Keep the lowest offset declaration in [0]
+			if (declarations.length > 0 && ((ASTNode)node).getOffset() < ((ASTNode) declarations[0]).getOffset()) {
+				declarations = (IASTName[]) ArrayUtil.prepend(IASTName.class, declarations, name);
+			} else {
+				declarations = (IASTName[]) ArrayUtil.append(IASTName.class, declarations, name);
+			}
 		} else {
-			declarations = (IASTName[]) ArrayUtil.append(IASTName.class, declarations, name);
+			assert false;
 		}
 	}
 

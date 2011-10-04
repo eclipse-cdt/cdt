@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.ui.tests;
 
@@ -125,7 +125,7 @@ public class BaseUITestCase extends BaseTestCase {
 		while (firstTime || System.currentTimeMillis() < endTime) {
 			if (!firstTime) {
 				Thread.sleep(sleep);
-				sleep= Math.min(250, sleep*2);
+				sleep= Math.min(250, sleep * 2);
 			}
 			firstTime= false;
 			
@@ -143,7 +143,7 @@ public class BaseUITestCase extends BaseTestCase {
 				}
 			} finally {
 				index.releaseReadLock();
-				int time= (int) (endTime- System.currentTimeMillis());
+				int time= (int) (endTime - System.currentTimeMillis());
 				if (time > 0) {
 					CCorePlugin.getIndexManager().joinIndexer(time, npm());
 				}
@@ -153,10 +153,11 @@ public class BaseUITestCase extends BaseTestCase {
 	}
 	
 	protected void runEventQueue(int time) {
-		final long endTime= System.currentTimeMillis()+time;
-		while(true) {
-			while (Display.getCurrent().readAndDispatch());
-			long diff= endTime-System.currentTimeMillis();
+		final long endTime= System.currentTimeMillis() + time;
+		while (true) {
+			while (Display.getCurrent().readAndDispatch())
+				;
+			long diff= endTime - System.currentTimeMillis();
 			if (diff <= 0) {
 				break;
 			}
@@ -169,18 +170,18 @@ public class BaseUITestCase extends BaseTestCase {
 	}
 
 	protected void expandTreeItem(Tree tree, int idx) {
-		expandTreeItem(tree, new int[] {idx});
+		expandTreeItem(tree, new int[] { idx });
 	}
 
 	protected void expandTreeItem(Tree tree, int idx1, int idx2) {
-		expandTreeItem(tree, new int[] {idx1, idx2});
+		expandTreeItem(tree, new int[] { idx1, idx2 });
 	}
 
 	protected void expandTreeItem(Tree tree, int[] idxs) {
 		TreeItem item= tree.getItem(idxs[0]);
 		assertNotNull(item);
 		expandTreeItem(item);
-		for (int i=1; i < idxs.length; i++) {
+		for (int i= 1; i < idxs.length; i++) {
 			item= item.getItem(idxs[i]);
 			assertNotNull(item);
 			expandTreeItem(item);
@@ -206,7 +207,7 @@ public class BaseUITestCase extends BaseTestCase {
 	protected void selectTreeItem(Tree tree, int[] idxs) {
 		TreeItem item= tree.getItem(idxs[0]);
 		assertNotNull(item);
-		for (int i=1; i < idxs.length; i++) {
+		for (int i= 1; i < idxs.length; i++) {
 			item= item.getItem(idxs[i]);
 			assertNotNull(item);
 		}
@@ -317,7 +318,7 @@ public class BaseUITestCase extends BaseTestCase {
 
 	final protected TreeItem checkTreeNode(Tree tree, int i0, String label) {
 		TreeItem root= null;
-		for (int millis=0; millis < 5000; millis= millis==0 ? 1 : millis*2) {
+		for (int millis= 0; millis < 5000; millis= millis == 0 ? 1 : millis * 2) {
 			runEventQueue(millis);
 			try {
 				root= tree.getItem(i0);
@@ -340,7 +341,7 @@ public class BaseUITestCase extends BaseTestCase {
 		String itemText= null;
 		SWTException ex= null;
 		String firstItemText= null;
-		for (int millis=0; millis < 5000; millis= millis==0 ? 1 : millis*2) {
+		for (int millis= 0; millis < 5000; millis= millis == 0 ? 1 : millis * 2) {
 			runEventQueue(millis);
 			TreeItem root= tree.getItem(i0);
 			if (!root.getExpanded()) {

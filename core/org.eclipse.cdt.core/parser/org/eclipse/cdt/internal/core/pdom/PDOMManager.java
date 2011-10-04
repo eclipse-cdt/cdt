@@ -85,6 +85,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -481,6 +482,8 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		String newid= IndexerPreferences.get(prj, IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_NO_INDEXER);
 		Properties props= IndexerPreferences.getProperties(prj);
 		
+		// Workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=359485
+		synchronized (new ProjectScope(prj).getNode(CCorePlugin.PLUGIN_ID)) {
 		synchronized (fUpdatePolicies) {
 			if (fClosingProjects.contains(prj.getName())) {
 				return;
@@ -504,7 +507,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 				}
 				enqueue(new PDOMRebuildTask(indexer));
 			}
-		}
+		}}
 		
 		if (oldIndexer != null) {
 			stopIndexer(oldIndexer);
@@ -537,6 +540,8 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		
 		assert !Thread.holdsLock(fProjectToPDOM);
 		try {
+			// Workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=359485
+			synchronized (new ProjectScope(prj).getNode(CCorePlugin.PLUGIN_ID)) {
 			synchronized (fUpdatePolicies) {
 				if (fClosingProjects.contains(name)) {
 					if (fTraceIndexerSetup) 
@@ -586,12 +591,14 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 					}
 					return;
 				}
-			}
+			}}
 
 			// rebuild is required, try import first.
 			TeamPDOMImportOperation operation= new TeamPDOMImportOperation(project);
 			operation.run(pm);
 
+			// Workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=359485
+			synchronized (new ProjectScope(prj).getNode(CCorePlugin.PLUGIN_ID)) {
 			synchronized (fUpdatePolicies) {
 				if (fClosingProjects.contains(name)) {
 					if (fTraceIndexerSetup) 
@@ -618,7 +625,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 					task= new PDOMRebuildTask(indexer);
 				}
 				enqueue(task);
-			}
+			}}
 		} catch (CoreException e) {
 			// Ignore if project is no longer open
 			if (prj.isOpen()) {

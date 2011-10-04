@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 
 package org.eclipse.cdt.ui.tests.includebrowser;
@@ -34,13 +34,12 @@ public class BasicIncludeBrowserTest extends IncludeBrowserBaseTest {
 		return suite(BasicIncludeBrowserTest.class);
 	}
 
-
 	// // source
 	// #include "user.h"
 	// #include <system.h>
 	
 	public void testSimpleInclusion() throws Exception {
-		TestScannerProvider.sIncludes= new String[]{getProject().getProject().getLocation().toOSString()};
+		TestScannerProvider.sIncludes= new String[] { getProject().getProject().getLocation().toOSString() };
 
 		StringBuilder[] contents= getContentsForTest(1);
 		IProject project= getProject().getProject();
@@ -55,7 +54,7 @@ public class BasicIncludeBrowserTest extends IncludeBrowserBaseTest {
 		checkTreeNode(tree, 0, 0, "user.h");
 		checkTreeNode(tree, 0, 1, "system.h");
 		
-		// the tree has to be reversed
+		// The tree has to be reversed
 		openIncludeBrowser(user, true);
 		checkTreeNode(tree, 0, "user.h");
 		checkTreeNode(tree, 0, 0, "source.cpp");
@@ -72,9 +71,9 @@ public class BasicIncludeBrowserTest extends IncludeBrowserBaseTest {
 	public void testInclusionAccrossProjects() throws Exception {
 		ICProject op= CProjectHelper.createCCProject("__ibTest_other__", "bin", IPDOMManager.ID_FAST_INDEXER);
 		try {
-			fIndex= CCorePlugin.getIndexManager().getIndex(new ICProject[] {getProject(), op});
+			fIndex= CCorePlugin.getIndexManager().getIndex(new ICProject[] { getProject(), op });
 			
-			TestScannerProvider.sIncludes= new String[]{op.getProject().getLocation().toOSString()};
+			TestScannerProvider.sIncludes= new String[] { op.getProject().getLocation().toOSString() };
 
 			StringBuilder[] contents= getContentsForTest(1);
 			IFile user= createFile(op.getProject(), "user.h", "");
@@ -89,7 +88,7 @@ public class BasicIncludeBrowserTest extends IncludeBrowserBaseTest {
 			checkTreeNode(tree, 0, 0, "user.h");
 			checkTreeNode(tree, 0, 1, "system.h");
 			
-			// the tree has to be reversed
+			// The tree has to be reversed
 			openIncludeBrowser(user, true);
 			checkTreeNode(tree, 0, "user.h");
 			checkTreeNode(tree, 0, 0, "source.cpp");
@@ -97,10 +96,8 @@ public class BasicIncludeBrowserTest extends IncludeBrowserBaseTest {
 			openIncludeBrowser(system);
 			checkTreeNode(tree, 0, "system.h");
 			checkTreeNode(tree, 0, 0, "source.cpp");
-
 		} finally {
 			CProjectHelper.delete(op);
 		}
 	}
-	
 }

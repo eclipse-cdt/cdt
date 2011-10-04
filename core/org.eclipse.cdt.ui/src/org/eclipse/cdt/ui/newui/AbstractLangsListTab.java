@@ -423,15 +423,15 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	private String getLanguageName(ICLanguageSetting langSetting) {
 		String langId = langSetting.getLanguageId();
 		String langName = null;
-		if (langId != null && !langId.isEmpty()) {
+		if (langId != null && langId.length() != 0) {
 			// Bug #178033: get language name via LangManager.
 			ILanguageDescriptor langDes = LanguageManager.getInstance().getLanguageDescriptor(langId);
 			if (langDes != null)
 				langName = langDes.getName();
 		}
-		if (langName == null || langName.isEmpty())
+		if (langName == null || langName.length() == 0)
 			langName = langSetting.getName();
-		if (langName == null || langName.isEmpty())
+		if (langName == null || langName.length() == 0)
 			langName = langId;
 		return langName;
 	}

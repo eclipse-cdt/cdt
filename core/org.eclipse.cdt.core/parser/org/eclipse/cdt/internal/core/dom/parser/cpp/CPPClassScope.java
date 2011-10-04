@@ -71,18 +71,18 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 
 	public CPPClassScope(ICPPASTCompositeTypeSpecifier physicalNode) {
 		super(physicalNode);
-		((CPPASTCompositeTypeSpecifier) physicalNode).setScope(this);
-		createImplicitMembers();
 	}
 
 	public EScopeKind getKind() {
 		return EScopeKind.eClassType;
 	}
 
-	// 12.1 The default constructor, copy constructor, copy assignment operator, and destructor are
-	//special member functions.  The implementation will implicitly declare these member functions
-	//for a class type when the program does not declare them.
-	private void createImplicitMembers() {
+	/**
+	 * Add in default constructor, copy constructor, copy assignment operator and destructor,
+	 * if appropriate.
+	 * Method will be called after ambiguity resolution.
+	 */
+	public void createImplicitMembers() {
 	    //create bindings for the implicit members, if the user declared them then those declarations
 	    //will resolve to these bindings.
 	    ICPPASTCompositeTypeSpecifier compTypeSpec = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();

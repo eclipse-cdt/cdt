@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -473,6 +475,13 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			final long fileLocalRec= type.getLocalToFileRec();
 			IScope scope = binding.getCompositeScope();
 			if (scope instanceof ICPPClassScope) {
+				List<ICPPMethod> old= new ArrayList<ICPPMethod>();
+				if (type instanceof ICPPClassType) {
+					IScope oldScope = ((ICPPClassType)type).getCompositeScope();
+					if (oldScope instanceof ICPPClassScope) {
+						old.addAll(Arrays.asList(((ICPPClassScope) oldScope).getImplicitMethods()));
+					}
+				}
 				ICPPMethod[] implicit= ((ICPPClassScope) scope).getImplicitMethods();
 				for (ICPPMethod method : implicit) {
 					if (!(method instanceof IProblemBinding)) {
@@ -481,8 +490,13 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 							pdomBinding = createBinding(type, method, fileLocalRec);
 						} else if (!getPDOM().hasLastingDefinition(pdomBinding)) {
 							pdomBinding.update(this, method);
+							old.remove(pdomBinding);
 						}
 					}
+				}
+				for (ICPPMethod method : old) {
+					if (method instanceof PDOMBinding)
+						((PDOMBinding) method).update(this, null);
 				}
 			}
 		} catch (DOMException e) {

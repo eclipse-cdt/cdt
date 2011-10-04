@@ -71,8 +71,8 @@ final class DeltaProcessor {
 				CModelInfo rootInfo = (CModelInfo)manager.peekAtInfo(root);
 				if (rootInfo != null) {
 					ICElement[] celements = rootInfo.getChildren();
-					for (int i = 0; i < celements.length; i++) {
-						IResource r = celements[i].getResource();
+					for (ICElement celement : celements) {
+						IResource r = celement.getResource();
 						if (project.equals(r)) {
 							shouldProcess = true;
 						}
@@ -97,10 +97,10 @@ final class DeltaProcessor {
 					IBinaryContainer bin = cproj.getBinaryContainer();
 					if (bin.isOpen()) {
 						children = ((CElement)bin).getElementInfo().getChildren();
-						for (int i = 0; i < children.length; i++) {
-							IResource res = children[i].getResource();
+						for (ICElement element : children) {
+							IResource res = element.getResource();
 							if (resource.equals(res)) {
-								celement = children[i];
+								celement = element;
 								break;
 							}
 						}
@@ -116,10 +116,10 @@ final class DeltaProcessor {
 					IArchiveContainer ar = cproj.getArchiveContainer();
 					if (ar.isOpen()) {
 						children = ((CElement)ar).getElementInfo().getChildren();
-						for (int i = 0; i < children.length; i++) {
-							IResource res = children[i].getResource();
+						for (ICElement element : children) {
+							IResource res = element.getResource();
 							if (resource.equals(res)) {
-								celement = children[i];
+								celement = element;
 								break;
 							}
 						}
@@ -192,8 +192,8 @@ final class DeltaProcessor {
 			if (pinfo != null && pinfo.vBin != null) {
 				if (factory.peekAtInfo(pinfo.vBin) != null) {
 					ICElement[] bins = pinfo.vBin.getChildren();
-					for (int i = 0; i < bins.length; i++) {
-						if (celement.getPath().isPrefixOf(bins[i].getPath())) {
+					for (ICElement bin : bins) {
+						if (celement.getPath().isPrefixOf(bin.getPath())) {
 							fCurrentDelta.changed(pinfo.vBin, ICElementDelta.CHANGED);
 						}
 					}
@@ -202,8 +202,8 @@ final class DeltaProcessor {
 			if (pinfo != null && pinfo.vLib != null) {
 				if (factory.peekAtInfo(pinfo.vLib) != null) {
 					ICElement[] ars = pinfo.vLib.getChildren();
-					for (int i = 0; i < ars.length; i++) {
-						if (celement.getPath().isPrefixOf(ars[i].getPath())) {
+					for (ICElement ar : ars) {
+						if (celement.getPath().isPrefixOf(ar.getPath())) {
 							fCurrentDelta.changed(pinfo.vBin, ICElementDelta.CHANGED);
 						}
 					}
@@ -468,8 +468,8 @@ final class DeltaProcessor {
 		}
 		if (updateChildren){
 			IResourceDelta [] children = delta.getAffectedChildren();
-			for (int i = 0; i < children.length; i++) {
-				traverseDelta(parent, children[i]);
+			for (IResourceDelta element : children) {
+				traverseDelta(parent, element);
 			}
 		}
 	}
@@ -506,10 +506,10 @@ final class DeltaProcessor {
 					}
 					// deal with project == sourceroot.  For that case the parent could have been the sourceroot
 					// so we must update the sourceroot nonCResource array also.
-					for (int i = 0; i < roots.length; i++) {
-						IResource r = roots[i].getResource();
+					for (ISourceRoot root : roots) {
+						IResource r = root.getResource();
 						if (r instanceof IProject) {
-							CElementInfo cinfo = (CElementInfo) CModelManager.getDefault().peekAtInfo(roots[i]);
+							CElementInfo cinfo = (CElementInfo) CModelManager.getDefault().peekAtInfo(root);
 							if (cinfo instanceof CContainerInfo) {
 								((CContainerInfo)cinfo).setNonCResources(null);
 							}
@@ -546,8 +546,8 @@ final class DeltaProcessor {
 		if (delta.getKind() == IResourceDelta.ADDED)
 			return true;
 		IResourceDelta[] children= delta.getAffectedChildren();
-		for (int i = 0; i < children.length; i++) {
-			if (isFolderAddition(children[i])) {
+		for (IResourceDelta element : children) {
+			if (isFolderAddition(element)) {
 				return true;
 			}
 		}
@@ -571,14 +571,18 @@ final class DeltaProcessor {
 					if (element instanceof ICContainer) {
 						ICContainer container = (ICContainer) element;
 						ICProject cProject = container.getCProject();
+						// Always check whether the container is open.
+						if (container.isOpen())
+							return true;
+						
+						// Check binary container, if the new folder is on an output entry,
+						// there may be new binaries to add
 						if (cProject.isOnOutputEntry(resource)) {
-							// if new folder is on output entry there might be new binaries to add
 							IBinaryContainer bin = cProject.getBinaryContainer();
 							IArchiveContainer archive = cProject.getArchiveContainer();
-							// traverse further if a binary container is open
 							return bin.isOpen() || archive.isOpen();
 						}
-						return container.isOpen();
+						return false;
 					} else if (element instanceof ICProject) {
 						return ((ICProject) element).isOpen();
 					} else if (element instanceof IBinary) {

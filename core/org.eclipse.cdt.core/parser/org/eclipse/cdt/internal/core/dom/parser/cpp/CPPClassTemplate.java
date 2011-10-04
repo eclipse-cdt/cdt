@@ -14,14 +14,9 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
@@ -31,8 +26,6 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
@@ -46,9 +39,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
  * Represents a class template.
@@ -58,56 +49,7 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClass
 
 	private ICPPClassTemplate fIndexBinding= null;
 	private boolean checkedIndex= false;
-	private boolean checkedDefinition= false;
 	
-	private class FindDefinitionAction extends ASTVisitor {
-		private char[] nameArray = CPPClassTemplate.this.getNameCharArray();
-		public IASTName result = null;
-
-		FindDefinitionAction() {
-			shouldVisitNames          = true;
-			shouldVisitDeclarations   = true;
-			shouldVisitDeclSpecifiers = true;
-			shouldVisitDeclarators    = true;
-		}
-
-		@Override
-		public int visit(IASTName name) {
-			if (name instanceof ICPPASTTemplateId || name instanceof ICPPASTQualifiedName)
-				return PROCESS_CONTINUE;
-			char[] c = name.getLookupKey();
-			if (name.getParent() instanceof ICPPASTTemplateId)
-				name = (IASTName) name.getParent();
-			if (name.getParent() instanceof ICPPASTQualifiedName) {
-				IASTName[] ns = ((ICPPASTQualifiedName) name.getParent()).getNames();
-				if (ns[ns.length - 1] != name)
-					return PROCESS_CONTINUE;
-				name = (IASTName) name.getParent();
-			}
-
-			if (name.getParent() instanceof ICPPASTCompositeTypeSpecifier && CharArrayUtils.equals(c, nameArray)) {
-				IBinding binding = name.resolveBinding();
-				if (binding == CPPClassTemplate.this) {
-					result = name.getLastName();
-					return PROCESS_ABORT;
-				}
-			}
-			return PROCESS_CONTINUE; 
-		}
-
-		@Override
-		public int visit(IASTDeclaration declaration) { 
-			if (declaration instanceof IASTSimpleDeclaration || declaration instanceof ICPPASTTemplateDeclaration)
-				return PROCESS_CONTINUE;
-			return PROCESS_SKIP; 
-		}
-		@Override
-		public int visit(IASTDeclSpecifier declSpec) {
-			return (declSpec instanceof ICPPASTCompositeTypeSpecifier) ? PROCESS_CONTINUE : PROCESS_SKIP; 
-		}
-		@Override
-		public int visit(IASTDeclarator declarator) { return PROCESS_SKIP; }
-	}
 
 	private ICPPClassTemplatePartialSpecialization[] partialSpecializations = null;
 	private ICPPDeferredClassInstance fDeferredInstance;
@@ -117,24 +59,7 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClass
 	}
 
 	public void checkForDefinition() {
-		if (checkedDefinition)
-			return;
-	
-		checkedDefinition= true;
-		if (definition != null)
-			return;
-	
-		FindDefinitionAction action = new FindDefinitionAction();
-		IASTNode node = CPPVisitor.getContainingBlockItem(declarations[0]).getParent();
-		while (node instanceof ICPPASTTemplateDeclaration)
-			node = node.getParent();
-		node.accept(action);
-		definition = action.result;
-
-		if (definition == null) {
-			node.getTranslationUnit().accept(action);
-			definition = action.result;
-		}
+		// Ambiguity resolution ensures that definitions are resolved.
 	}
 	
 	public void addPartialSpecialization(ICPPClassTemplatePartialSpecialization spec) {

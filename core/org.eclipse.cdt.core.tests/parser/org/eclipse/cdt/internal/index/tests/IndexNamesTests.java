@@ -6,9 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.index.tests;
 
 import java.io.IOException;
@@ -129,8 +128,7 @@ public class IndexNamesTests extends BaseTestCase {
 			enclosing= enclosed[1].getEnclosingDefinition();
 			assertNotNull(enclosing);
 			assertName("main", enclosing);			
-		}
-		finally {
+		} finally {
 			fIndex.releaseReadLock();
 		}
 	}
@@ -223,8 +221,7 @@ public class IndexNamesTests extends BaseTestCase {
 			enclosing= enclosed[2].getEnclosingDefinition();
 			assertNotNull(enclosing);
 			assertName("func", enclosing);			
-		}
-		finally {
+		} finally {
 			fIndex.releaseReadLock();
 		}
 	}
@@ -274,8 +271,7 @@ public class IndexNamesTests extends BaseTestCase {
 					assertEquals(couldbepolymorphic[j], indexName.couldBePolymorphicMethodCall());
 					assertEquals(container[j], CPPVisitor.getQualifiedName(fIndex.findBinding(indexName))[0]);
 					j++;
-				}
-				else {
+				} else {
 					assertEquals(false, indexName.couldBePolymorphicMethodCall());
 				}
 			}
@@ -285,7 +281,6 @@ public class IndexNamesTests extends BaseTestCase {
 		}
 	}
 
-	
 	//	int _i, ri, wi, rwi;
 	//  int* rp; int* wp; int* rwp;
 	//  const int* cip= &ri;
@@ -339,14 +334,12 @@ public class IndexNamesTests extends BaseTestCase {
 					assertEquals("Read access for " + msg, isRead, indexName.isReadAccess());
 					assertEquals("Write access for " + msg, isWrite, indexName.isWriteAccess());
 					j++;
-				}
-				else {
+				} else {
 					assertEquals(false, indexName.couldBePolymorphicMethodCall());
 				}
 			}
 			assertEquals(count, j);
-		}
-		finally {
+		} finally {
 			fIndex.releaseReadLock();
 		}
 	}

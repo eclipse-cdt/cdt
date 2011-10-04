@@ -18,6 +18,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 
 /**
  * Tests for header files included in multiple variants.
+ *
+ * The first line of each comment section preceding a test contains the name of the file
+ * to put the contents of the section to. To request the AST of a file, put an asterisk after
+ * the file name.
  */
 public class IndexMultiVariantHeaderTest extends IndexBindingResolutionTestBase {
 

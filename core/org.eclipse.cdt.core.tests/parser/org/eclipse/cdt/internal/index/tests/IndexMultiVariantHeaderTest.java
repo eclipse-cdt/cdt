@@ -14,6 +14,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 
 /**
  * Tests for header files included in multiple variants.
@@ -101,5 +102,34 @@ public class IndexMultiVariantHeaderTest extends IndexBindingResolutionTestBase 
 	public void testExampleFromBug197989_Comment73() throws Exception {
 		getBindingFromASTName("f1(NULL)", 2, ICPPFunction.class);
 		getBindingFromASTName("f2(NULL, 1)", 2, ICPPFunction.class);
+	}
+
+	// a.h
+	//	external int X;
+
+	// b.h
+	//	#define X y
+	//	#include "a.h"
+	//	#undef X
+	//	#define X z
+	//	#include "a.h"
+
+	// a.cpp *
+	//	#define X x
+	//	#include "a.h"
+	//  static void test() {
+	//	  x = 0;
+	//	}
+
+	// b.cpp *
+	//	#include "b.h"
+	//  static void test() {
+	//	  y = 0;
+	//	  z = 0;
+	//	}
+	public void testSignificantMacroDetection() throws Exception {
+		getBindingFromASTName("x = 0", 1, ICPPVariable.class);
+		getBindingFromASTName("y = 0", 1, ICPPVariable.class);
+		getBindingFromASTName("z = 0", 1, ICPPVariable.class);
 	}
 }

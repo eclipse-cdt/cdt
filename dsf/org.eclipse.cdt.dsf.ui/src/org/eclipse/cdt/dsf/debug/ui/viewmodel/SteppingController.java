@@ -431,7 +431,7 @@ public final class SteppingController {
 		getRunControl().step(execCtx, stepType, new RequestMonitor(getExecutor(), null) {
 		    @Override
 		    protected void handleSuccess() {
-	            fTimedOutFlags.put(execCtx, Boolean.FALSE);
+	            fTimedOutFlags.remove(execCtx);
 	            ScheduledFuture<?> currentTimeOutFuture = fTimedOutFutures.get(execCtx);
 	            if (currentTimeOutFuture != null) {
 	            	currentTimeOutFuture.cancel(false);
@@ -625,10 +625,16 @@ public final class SteppingController {
             }
         }
         
+        // Cancel all time-out futures related to the event context.  I.e.
+        // - If event is on a container, all child threads are suspended and 
+        // should not issue a stepping time-out event.
+        // - If event is on a thread, and resumed event was on a container then 
+        // stepping timeout for container should be canceled as it would affect
+        // suspended thread.
         for (Iterator<Map.Entry<IExecutionDMContext, ScheduledFuture<?>>> itr = fTimedOutFutures.entrySet().iterator(); itr.hasNext();) {
             Map.Entry<IExecutionDMContext, ScheduledFuture<?>> entry = itr.next();
             IExecutionDMContext nextDmc = entry.getKey();
-            if (nextDmc.equals(dmc) || DMContexts.isAncestorOf(entry.getKey(), dmc)) {
+            if (nextDmc.equals(dmc) || DMContexts.isAncestorOf(nextDmc, dmc) || DMContexts.isAncestorOf(dmc, nextDmc)) {
                 entry.getValue().cancel(false);
                 itr.remove();
             }            
@@ -647,20 +653,22 @@ public final class SteppingController {
     public void eventDispatched(final IResumedDMEvent e) {
         if (e.getReason().equals(StateChangeReason.STEP)) {
             final IExecutionDMContext dmc = e.getDMContext();
-            fTimedOutFlags.put(dmc, Boolean.FALSE);
+            fTimedOutFlags.remove(dmc);
             
             
             // Find any time-out futures for contexts that are children of the 
             // resumed context, and cancel them as they'll be replaced.
-            for (Iterator<Map.Entry<IExecutionDMContext, ScheduledFuture<?>>> itr = fTimedOutFutures.entrySet().iterator(); itr.hasNext();) {
-                Map.Entry<IExecutionDMContext, ScheduledFuture<?>> entry = itr.next();
-                if (DMContexts.isAncestorOf(entry.getKey(), dmc) && !dmc.equals(entry.getKey())) {
-                    entry.getValue().cancel(false);
-                    itr.remove();
-                }            
+            if (!fTimedOutFutures.containsKey(dmc)) {
+	            for (Iterator<Map.Entry<IExecutionDMContext, ScheduledFuture<?>>> itr = fTimedOutFutures.entrySet().iterator(); itr.hasNext();) {
+	                Map.Entry<IExecutionDMContext, ScheduledFuture<?>> entry = itr.next();
+	                if (DMContexts.isAncestorOf(entry.getKey(), dmc)) {
+	                    entry.getValue().cancel(false);
+	                    itr.remove();
+	                }            
+	            }
+	            
+	            fTimedOutFutures.put(dmc, getExecutor().schedule(new TimeOutRunnable(dmc), fStepTimeout, TimeUnit.MILLISECONDS));
             }
-            
-            fTimedOutFutures.put(dmc, getExecutor().schedule(new TimeOutRunnable(dmc), fStepTimeout, TimeUnit.MILLISECONDS));
         } 
     }    
 }

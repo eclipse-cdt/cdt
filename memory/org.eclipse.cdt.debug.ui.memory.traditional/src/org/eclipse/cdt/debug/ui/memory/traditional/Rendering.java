@@ -562,6 +562,8 @@ public class Rendering extends Composite implements IDebugEventSetListener
     
     static int suspendCount = 0;
 
+    static int counter = 0;
+
     public void handleDebugEvents(DebugEvent[] events)
     {
     	if(this.isDisposed())
@@ -570,6 +572,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
     	boolean isChangeOnly = false;
     	boolean isSuspend = false;
     	boolean isBreakpointHit = false;
+    	boolean isContinue = false;
     	
     	for(int i = 0; i < events.length; i++)
         {	
@@ -583,6 +586,8 @@ public class Rendering extends Composite implements IDebugEventSetListener
                 if(source.getDebugTarget() == getMemoryBlock()
                         .getDebugTarget())
                 {
+                    if ((detail & DebugEvent.RESUME) != 0)
+                        isContinue = true;
                 	if((detail & DebugEvent.BREAKPOINT) != 0)
                 		isBreakpointHit = true;
                 	if(kind == DebugEvent.SUSPEND)
@@ -599,6 +604,15 @@ public class Rendering extends Composite implements IDebugEventSetListener
             }
         }
     	
+        if (isContinue)
+            Display.getDefault().asyncExec(new Runnable()
+            {
+                public void run()
+                {
+                    archiveDeltas();
+                }
+            });
+
     	if(isSuspend)
     		handleSuspend(isBreakpointHit);
     	else if(isChangeOnly)
@@ -963,22 +977,17 @@ public class Rendering extends Composite implements IDebugEventSetListener
                     	{
 	                        if(fHistoryCache[historyIndex] != null && fHistoryCache[historyIndex].isValid())
 	                        {
-	                            BigInteger maxStart = startAddress
-	                                .max(fHistoryCache[historyIndex].start);
-	                            BigInteger minEnd = endAddress
-	                                .min(fHistoryCache[historyIndex].end).subtract(
-	                                    BigInteger.valueOf(1));
 	
-	                            BigInteger overlapLength = minEnd
-	                                .subtract(maxStart);
+	                            BigInteger maxStart = startAddress.max(fHistoryCache[historyIndex].start);
+	                            BigInteger minEnd = endAddress.min(fHistoryCache[historyIndex].end).subtract(BigInteger.valueOf(1));
+	                            BigInteger overlapLength = minEnd.subtract(maxStart);
+
 	                            if(overlapLength.compareTo(BigInteger.valueOf(0)) > 0)
 	                            {
 	                                // there is overlap
 	
-	                                int offsetIntoOld = maxStart.subtract(
-	                                    fHistoryCache[historyIndex].start).intValue();
-	                                int offsetIntoNew = maxStart.subtract(
-	                                    startAddress).intValue();
+	                                int offsetIntoOld = maxStart.subtract(fHistoryCache[historyIndex].start).intValue();
+	                                int offsetIntoNew = maxStart.subtract(startAddress).intValue();
 	
 	                                for(int i = overlapLength.intValue(); i >= 0; i--)
 	                                {
@@ -988,12 +997,171 @@ public class Rendering extends Composite implements IDebugEventSetListener
 	                                            + i].getValue());
 	                                }
 	                            }
+
+	                            // There are several scenarios where the history cache must be updated from the data cache, so that when a
+	                            // cell is edited the font color changes appropriately. The following code deals with the different cases.
+
+	                            if (historyIndex != 0) continue;
+
+                                int dataStart     = fCache.start.intValue();
+                                int dataEnd       = fCache.end.intValue();
+                                int dataLength    = fCache.bytes.length;
+
+                                int historyStart  = fHistoryCache[0].start.intValue();
+                                int historyEnd    = fHistoryCache[0].end.intValue();
+                                int historyLength = fHistoryCache[0].bytes.length;
+
+                                // Case 1: The data cache is smaller than the history cache; the data cache's
+                                //         address range is fully covered by the history cache.  Do nothing.
+
+                                if ((dataStart >= historyStart) && (dataEnd <= historyEnd))
+                                {
+                                    continue;
+                                }
+
+                                // Case 2: The data and history cache's do not overlap at all
+
+                                if (((dataStart < historyStart) && (dataEnd < historyStart)) || (dataStart > historyEnd))
+                                {
+                                    // Create a new history cache: Copy the data cache bytes to the history cache
+
+                                    MemoryUnit newHistoryCache = new MemoryUnit();
+
+                                    newHistoryCache.start   = fCache.start;
+                                    newHistoryCache.end     = fCache.end;
+                                    int newHistoryCacheSize = fCache.bytes.length;
+                                    newHistoryCache.bytes   = new TraditionalMemoryByte[newHistoryCacheSize];
+
+                                    for (int index = 0; index < newHistoryCacheSize; index++)
+                                        newHistoryCache.bytes[index] = new TraditionalMemoryByte(fCache.bytes[index].getValue());
+
+                                    fHistoryCache[0] = newHistoryCache;
+
+                                    continue;
+                                }
+
+                                // Case 3: The data cache starts at a lower address than the history cache, but overlaps the history cache
+
+                                if ((dataStart < historyStart) && ((dataEnd >= historyStart) && (dataEnd <= historyEnd)))
+                                {
+                                    // Create a new history cache with the missing data from the main cache and append the old history to it.
+
+                                    int missingDataByteCount = historyStart - dataStart;
+                                    int historyCacheSize     = historyLength;
+                                    int newHistoryCacheSize  = missingDataByteCount + historyLength;
+
+                                    if (missingDataByteCount <= 0 && historyCacheSize <= 0) break;
+
+                                    MemoryUnit newHistoryCache = new MemoryUnit();
+
+                                    newHistoryCache.start = fCache.start;
+                                    newHistoryCache.end   = fHistoryCache[0].end;
+                                    newHistoryCache.bytes = new TraditionalMemoryByte[newHistoryCacheSize];
+
+                                    // Copy the missing bytes from the beginning of the main cache to the history cache.
+
+                                    for (int index = 0; index < missingDataByteCount; index++)
+                                        newHistoryCache.bytes[index] = new TraditionalMemoryByte(fCache.bytes[index].getValue());
+
+                                    // Copy the remaining bytes from the old history cache to the new history cache
+
+                                    for (int index = 0; index < historyCacheSize; index++)
+                                        newHistoryCache.bytes[index + missingDataByteCount] =
+                                            new TraditionalMemoryByte(fHistoryCache[0].bytes[index].getValue());
+
+                                    fHistoryCache[0] = newHistoryCache;
+
+                                    continue;
+                                }
+
+                                // Case 4: The data cache starts at a higher address than the history cache
+
+                                if (((dataStart >= historyStart) && (dataStart <= historyEnd)) && (dataEnd > historyEnd))
+                                {
+                                    // Append the missing main cache bytes to the history cache.
+
+                                    int missingDataByteCount = dataEnd - historyEnd;
+                                    int historyCacheSize     = historyEnd - historyStart;
+                                    int newHistoryCacheSize  = missingDataByteCount + historyLength;
+
+                                    if (missingDataByteCount > 0 && historyCacheSize > 0)
+                                    {
+                                        MemoryUnit newHistoryCache = new MemoryUnit();
+
+                                        newHistoryCache.start = fHistoryCache[0].start;
+                                        newHistoryCache.end   = fCache.end;
+                                        newHistoryCache.bytes = new TraditionalMemoryByte[newHistoryCacheSize];
+
+                                        // Copy the old history bytes to the new history cache
+
+                                        System.arraycopy(fHistoryCache[0].bytes, 0, newHistoryCache.bytes, 0, historyLength);
+
+                                        // Copy the bytes from the main cache that are not in the history cache to the end of the new history cache.
+
+                                        for (int index = 0; index < missingDataByteCount; index++)
+                                        {
+                                            int srcIndex = dataLength - missingDataByteCount + index;
+                                            int dstIndex = historyLength + index;
+                                            newHistoryCache.bytes[dstIndex] = new TraditionalMemoryByte(fCache.bytes[srcIndex].getValue());
+                                        }
+
+                                        fHistoryCache[0] = newHistoryCache;
+
+                                        continue;
+                                    }
+                                }
+
+                                // Case 5 - The data cache is greater than the history cache and fully covers it
+
+                                if (dataStart < historyStart && dataEnd > historyEnd)
+                                {
+                                    int start = 0;
+                                    int end   = 0;
+
+                                    // Create a new history cache to reflect the entire data cache
+
+                                    MemoryUnit newHistoryCache = new MemoryUnit();
+
+                                    newHistoryCache.start   = fCache.start;
+                                    newHistoryCache.end     = fCache.end;
+                                    int newHistoryCacheSize = fCache.bytes.length;
+                                    newHistoryCache.bytes   = new TraditionalMemoryByte[newHistoryCacheSize];
+
+                                    int topByteCount    = historyStart - dataStart;
+                                    int bottomByteCount = dataEnd - historyEnd;
+
+                                    // Copy the bytes from the beginning of the data cache to the new history cache
+
+                                    for (int index = 0; index < topByteCount; index++)
+                                        newHistoryCache.bytes[index] = new TraditionalMemoryByte(fCache.bytes[index].getValue());
+
+                                    // Copy the history bytes from the old history cache to the new history cache
+
+                                    start = topByteCount;
+                                    end   = topByteCount + historyLength;
+
+                                    for (int index = start; index < end; index++)
+                                        newHistoryCache.bytes[index] = new TraditionalMemoryByte(fCache.bytes[index].getValue());
+
+                                    // Copy the bytes from the end of the data cache to the new history cache
+
+                                    start = topByteCount + historyLength;
+                                    end   = topByteCount + historyLength + bottomByteCount;
+
+                                    for (int index = start; index < end; index++)
+                                        newHistoryCache.bytes[index] = new TraditionalMemoryByte(fCache.bytes[index].getValue());
+
+                                    fHistoryCache[0] = newHistoryCache;
+
+                                    continue;
+                                }
 	                        }
                     	}
                         
-                        // If the history does not exist, populate the history with the just populated cache. This solves the
-                        // use case of 1) connect to target; 2) edit memory before the first suspend debug event; 3) paint
-                        // differences in changed color.
+                        // If the history does not exist, populate the history with the just-populated
+                    	// cache.  This solves the use case of 1) connecting to a target; 2) editing memory
+                    	// before the first suspend debug event; 3) painting the differences in changed color.
+
                         if(fHistoryCache[0] == null)
                         	fHistoryCache[0] = fCache.clone();
 

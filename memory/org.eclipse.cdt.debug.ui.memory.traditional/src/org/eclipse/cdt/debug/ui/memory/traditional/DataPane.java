@@ -291,7 +291,7 @@ public class DataPane extends AbstractPane
                             cellWidth, cellHeight);
                         
                         // Allow subclasses to override this method to do their own coloring
-                        applyCustomColor(gc, bytes, col);
+                        applyCustomColor(gc, cellAddress, bytes, col);
                     }
 
                     gc.drawText(getCellText(bytes), cellWidth * col
@@ -335,7 +335,7 @@ public class DataPane extends AbstractPane
     }
 
    // Allow subclasses to override this method to do their own coloring
-   protected  void applyCustomColor(GC gc, TraditionalMemoryByte bytes[], int col)
+   protected  void applyCustomColor(GC gc, BigInteger cellAddress, TraditionalMemoryByte bytes[], int col)
     {
 	   // TODO consider adding finer granularity?
        boolean anyByteEditing = false;

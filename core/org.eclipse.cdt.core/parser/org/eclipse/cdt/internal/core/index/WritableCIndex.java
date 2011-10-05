@@ -46,7 +46,11 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 			ISignificantMacros macroDictionary) throws CoreException {
 		return fWritableFragment.getFile(linkageID, location, macroDictionary);
 	}
-	
+
+	public IIndexFragmentFile[] getWritableFiles(int linkageID, IIndexFileLocation location) throws CoreException {
+		return fWritableFragment.getFiles(linkageID, location);
+	}
+
 	public IIndexFragmentFile[] getWritableFiles(IIndexFileLocation location) throws CoreException {
 		return fWritableFragment.getFiles(location);
 	}
@@ -184,5 +188,13 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 		if (source.equals(target))
 			return;
 		target.transferIncluders(source);
+	}
+	
+	public void transferContext(IIndexFragmentFile source, IIndexFragmentFile target) throws CoreException {
+		if (source == null || target == null || !isWritableFile(source) || !isWritableFile(target))
+			throw new IllegalArgumentException();
+		if (source.equals(target))
+			return;
+		target.transferContext(source);
 	}
 }

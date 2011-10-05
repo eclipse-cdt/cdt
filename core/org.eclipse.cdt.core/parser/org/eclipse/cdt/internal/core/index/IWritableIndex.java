@@ -60,6 +60,12 @@ public interface IWritableIndex extends IIndex {
 			ISignificantMacros macroDictionary) throws CoreException;
 
 	/**
+	 * Returns the writable files for the given location and linkage. This method
+	 * returns file objects without content, also.
+	 */
+	IIndexFragmentFile[] getWritableFiles(int linkageID, IIndexFileLocation location) throws CoreException;
+
+	/**
 	 * Returns the writable files for the given location in any linkage. This method
 	 * returns file objects without content, also.
 	 */
@@ -178,4 +184,10 @@ public interface IWritableIndex extends IIndex {
 	 * Both files must belong to the writable fragment.
 	 */
 	void transferIncluders(IIndexFragmentFile source, IIndexFragmentFile target) throws CoreException;
+
+	/**
+	 * Changes the inclusion from the context of 'source' to point to 'target', instead. 
+	 * Both files must belong to the writable fragment.
+	 */
+	void transferContext(IIndexFragmentFile source, IIndexFragmentFile target) throws CoreException;
 }

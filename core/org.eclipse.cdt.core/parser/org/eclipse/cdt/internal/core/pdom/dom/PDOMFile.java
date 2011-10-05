@@ -219,9 +219,13 @@ public class PDOMFile implements IIndexFragmentFile {
 		PDOMFile source= (PDOMFile) sourceFile;
 		PDOMInclude include = source.getFirstIncludedBy();
 		if (include != null) {
+			// Detach the includes
+			source.setFirstIncludedBy(null);
+			// Adjust the includes
 			for (PDOMInclude i=include; i != null; i= i.getNextInIncludedBy()) {
 				i.setIncludes(this);
 			}
+			// Append the includes
 			PDOMInclude last= getFirstIncludedBy();
 			if (last == null) {
 				setFirstIncludedBy(include);
@@ -233,7 +237,25 @@ public class PDOMFile implements IIndexFragmentFile {
 				include.setPrevInIncludedBy(last);
 			}
 		}
-		source.setFirstIncludedBy(null);
+	}
+
+	public void transferContext(IIndexFragmentFile sourceFile) throws CoreException {
+		PDOMFile source= (PDOMFile) sourceFile;
+		PDOMInclude include = source.getFirstIncludedBy();
+		if (include != null) {
+			// Detach the include
+			final PDOMInclude next = include.getNextInIncludedBy();
+			include.setNextInIncludedBy(null);
+			source.setFirstIncludedBy(next);
+			if (next != null)
+				next.setPrevInIncludedBy(null);
+			
+			// Adjust the include
+			include.setIncludes(this);
+
+			// Insert the include
+			addIncludedBy(include, false);
+		}
 	}
 
 	/**

@@ -87,6 +87,19 @@ abstract public class PDOMWriter {
 			return fFileContentKey.toString();
 		}
 	}
+	
+	public static class FileContext {
+		final IIndexFragmentFile fContext;
+		final IIndexFragmentFile fOldFile;
+		IIndexFragmentFile fNewFile;
+		public boolean fLostPragmaOnceSemantics;
+		
+		public FileContext(IIndexFragmentFile context, IIndexFragmentFile oldFile) {
+			fContext= context;
+			fOldFile= oldFile;
+			fNewFile= null;
+		}
+	}
 
 	public static int SKIP_ALL_REFERENCES= -1;
 	public static int SKIP_TYPE_REFERENCES= 1;
@@ -174,7 +187,7 @@ abstract public class PDOMWriter {
 	 * the index after your last write operation.
 	 */
 	final protected void addSymbols(IASTTranslationUnit ast, FileInAST[] selectedFiles,
-			IWritableIndex index, boolean flushIndex, IIndexFragmentFile replaceFile,
+			IWritableIndex index, boolean flushIndex, FileContext ctx,
 			ITodoTaskUpdater taskUpdater, IProgressMonitor pm) throws InterruptedException,
 			CoreException {
 		if (fShowProblems) {
@@ -196,7 +209,7 @@ abstract public class PDOMWriter {
 		resolveNames(data, pm);
 
 		// Index update
-		storeSymbolsInIndex(data, replaceFile, flushIndex, pm);
+		storeSymbolsInIndex(data, ctx, flushIndex, pm);
 
 		// Tasks update
 		if (taskUpdater != null) {
@@ -228,8 +241,9 @@ abstract public class PDOMWriter {
 		}
 	}
 
-	private void storeSymbolsInIndex(final Data data, IIndexFragmentFile replaceFile, boolean flushIndex, IProgressMonitor pm)
+	private void storeSymbolsInIndex(final Data data, FileContext ctx, boolean flushIndex, IProgressMonitor pm)
 			throws InterruptedException, CoreException {
+		final IIndexFragmentFile newFile= ctx == null ? null : ctx.fNewFile;
 		final int linkageID= data.fAST.getLinkage().getLinkageID();
 		for (int i= 0; i < data.fSelectedFiles.length; i++) {
 			if (pm.isCanceled())
@@ -244,14 +258,27 @@ abstract public class PDOMWriter {
 				YieldableIndexLock lock = new YieldableIndexLock(data.fIndex, flushIndex);
 				lock.acquire();
 				try {
-					IIndexFragmentFile ifile= storeFileInIndex(data, fileInAST, linkageID, lock);
-					if (fileInAST.fIncludeStatement == null && replaceFile != null && !replaceFile.equals(ifile)) {
-						data.fIndex.transferIncluders(replaceFile, ifile);
+					final boolean isReplacement= ctx != null && fileInAST.fIncludeStatement == null;
+					IIndexFragmentFile ifile= null;
+					if (!isReplacement || newFile == null) {
+						ifile= storeFileInIndex(data, fileInAST, linkageID, lock);
 						reportFileWrittenToIndex(fileInAST, ifile);
-					} else {
-						reportFileWrittenToIndex(fileInAST, ifile);
-					}
-				} catch (RuntimeException e) {
+					} 
+					
+					if (isReplacement) {
+						if (ifile == null)
+							ifile= newFile;
+						if (ctx != null && !ctx.fOldFile.equals(ifile) && ifile != null) {
+							if (ctx.fOldFile.hasPragmaOnceSemantics() &&
+									!ifile.hasPragmaOnceSemantics()) {
+								data.fIndex.transferContext(ctx.fOldFile, ifile);
+								ctx.fLostPragmaOnceSemantics= true;
+							} else {
+								data.fIndex.transferIncluders(ctx.fOldFile, ifile);
+							}
+						}
+					} 
+					} catch (RuntimeException e) {
 					th= e;
 				} catch (StackOverflowError e) {
 					th= e;

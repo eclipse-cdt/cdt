@@ -61,4 +61,10 @@ public interface IIndexFragmentFile extends IIndexFile {
 	 * The file 'source' must belong to the same fragment as this file.
 	 */
 	void transferIncluders(IIndexFragmentFile source) throws CoreException;
+
+	/**
+	 * Changes the inclusion from the context of 'source' to point to this file, instead. 
+	 * The file 'source' must belong to the same fragment as this file.
+	 */
+	void transferContext(IIndexFragmentFile source) throws CoreException;
 }

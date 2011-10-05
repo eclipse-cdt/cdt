@@ -15,7 +15,7 @@
 	<name>CDT Parent</name>
 
 	<properties>
-		<tycho-version>0.13.0-SNAPSHOT</tycho-version>
+		<tycho-version>0.13.0</tycho-version>
 		<platform-version>3.7</platform-version>
 		<platform-site>http://download.eclipse.org/eclipse/updates/${platform-version}</platform-site>
 		<orbit-version>R20110523182458</orbit-version>
@@ -182,19 +182,6 @@
 			<layout>p2</layout>
 		</repository>
 	</repositories>
-
-	<pluginRepositories>
-		<pluginRepository>
-			<id>sonatype</id>
-			<url>https://repository.sonatype.org/content/repositories/public</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-		</pluginRepository>
-	</pluginRepositories>
 
 	<build>
 		<plugins>

@@ -609,6 +609,7 @@ public final class SteppingController {
     @DsfServiceEventHandler 
     public void eventDispatched(final ISuspendedDMEvent e) {
         // Take care of the stepping time out
+    	boolean timedOut = false;
         IExecutionDMContext dmc = e.getDMContext();
         for (Iterator<Map.Entry<IExecutionDMContext, Boolean>> itr = fTimedOutFlags.entrySet().iterator(); itr.hasNext();) {
             Map.Entry<IExecutionDMContext,Boolean> entry = itr.next();
@@ -617,6 +618,7 @@ public final class SteppingController {
                 if (entry.getValue()) {
                     // after step timeout do not process queued steps
                     fStepQueues.remove(dmc);
+                    timedOut = true;
                 }
                 itr.remove();
             }
@@ -634,7 +636,7 @@ public final class SteppingController {
         if (e.getReason() != StateChangeReason.STEP) {
         	// after any non-step suspend reason do not process queued steps for given context
         	fStepQueues.remove(dmc);
-        } else {
+        } else if (!timedOut){
         	// Check if there's a step pending, if so execute it
         	processStepQueue(dmc);
         }

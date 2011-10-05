@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.index.tests;
 
@@ -601,7 +602,6 @@ public class IndexIncludeTest extends IndexTestBase {
 		} finally {
 			fIndex.releaseReadLock();
 		}
-
 
 		// Change h1.h back to the original state without the pragma-once semantics. 
 		final long t2= System.currentTimeMillis();

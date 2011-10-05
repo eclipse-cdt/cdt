@@ -432,9 +432,10 @@ public final class SteppingController {
 		    @Override
 		    protected void handleSuccess() {
 	            fTimedOutFlags.put(execCtx, Boolean.FALSE);
-	            // We shouldn't have a stepping timeout running unless 
-	            // running/stopped events are out of order.
-	            assert !fTimedOutFutures.containsKey(execCtx);
+	            ScheduledFuture<?> currentTimeOutFuture = fTimedOutFutures.get(execCtx);
+	            if (currentTimeOutFuture != null) {
+	            	currentTimeOutFuture.cancel(false);
+	            }
 	            fTimedOutFutures.put(execCtx, getExecutor().schedule(new TimeOutRunnable(execCtx), fStepTimeout, TimeUnit.MILLISECONDS));
 		    }
 		    

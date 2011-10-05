@@ -99,7 +99,8 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	}
 
 	private static class LocationTask {
-		private boolean fAddRequested;
+		private boolean fCountedUnknownVersion;
+		private boolean fStoredAVersion;
 		Object fTu;
 		UpdateKind fKind= UpdateKind.OTHER_HEADER;
 		private List<FileVersionTask> fVersionTasks= Collections.emptyList();
@@ -115,21 +116,28 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			
 			if (ifile == null) {
 				assert fVersionTasks.isEmpty();
-				final boolean count= !fAddRequested;
-				fAddRequested= true;
-				return count;
+				final boolean countRequest= !fCountedUnknownVersion;
+				fCountedUnknownVersion= true;
+				return countRequest;
 			}
 
-			return addVersionTask(ifile).requestUpdate();
+			return addVersionTask(ifile);
 		}
 
-		private FileVersionTask addVersionTask(IIndexFragmentFile ifile) {
+		/**
+		 * Return whether the task needs to be counted.
+		 */
+		private boolean addVersionTask(IIndexFragmentFile ifile) {
 			FileVersionTask fc= findVersion(ifile);
 			if (fc != null) 
-				return fc;
+				return false;
 
-			fc= new FileVersionTask(ifile, fAddRequested);
-			fAddRequested= false;
+			fc= new FileVersionTask(ifile);
+			boolean countRequest= true;
+			if (fCountedUnknownVersion) {
+				fCountedUnknownVersion= false;
+				countRequest= false;
+			}
 
 			switch (fVersionTasks.size()) {
 			case 0:
@@ -145,7 +153,15 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 				fVersionTasks.add(fc);
 				break;
 			}
-			return fc;
+			return countRequest;
+		}
+		
+		void removeVersionTask(Iterator<FileVersionTask> it) {
+			if (fVersionTasks.size() == 1) {
+				fVersionTasks= Collections.emptyList();
+			} else {
+				it.remove();
+			}
 		}
 
 		private FileVersionTask findVersion(IIndexFile ifile) {
@@ -165,44 +181,35 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		}
 
 		boolean isCompleted() {
-			if (fVersionTasks.isEmpty())
-				return !fAddRequested;
-			
 			for (FileVersionTask fc : fVersionTasks) {
-				if (fc.fUpdateRequested)
+				if (fc.fOutdated)
 					return false;
 			}
-			return true;
+			if (fKind == UpdateKind.OTHER_HEADER)
+				return true;
+			
+			return fStoredAVersion;
 		}
 
 		public boolean needsVersion() {
 			if (fKind == UpdateKind.OTHER_HEADER)
 				return false;
-			for (FileVersionTask fc : fVersionTasks) {
-				if (fc.fUpdateRequested)
-					return true;
-			}
-			return fVersionTasks.isEmpty() && fAddRequested;
+
+			return !fStoredAVersion;
 		}
 	}
 
 	public static class FileVersionTask {
 		private final IIndexFragmentFile fIndexFile;
-		private boolean fUpdateRequested;
+		private boolean fOutdated;
 
-		FileVersionTask(IIndexFragmentFile file, boolean requestUpdate) {
+		FileVersionTask(IIndexFragmentFile file) {
 			fIndexFile= file;
-			fUpdateRequested= requestUpdate;
+			fOutdated= true;
 		}
 		
-		boolean requestUpdate() {
-			boolean result= !fUpdateRequested;
-			fUpdateRequested= true;
-			return result;
-		}
-
 		void setUpdated() {
-			fUpdateRequested= false;
+			fOutdated= false;
 		}
 	}
 		
@@ -428,8 +435,8 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		}
 	}
 	
-	private final void reportFile(boolean requested, UpdateKind kind) {
-		if (requested) {
+	private final void reportFile(boolean wasCounted, UpdateKind kind) {
+		if (wasCounted) {
 			if (kind == UpdateKind.REQUIRED_SOURCE) {
 				updateFileCount(1, 0, 0);
 			} else {
@@ -704,41 +711,30 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	}
 	
 	@Override
-	protected void reportFileWrittenToIndex(FileInAST file, IIndexFragmentFile ifile,
-			IIndexFragmentFile replaces) throws CoreException {
+	protected void reportFileWrittenToIndex(FileInAST file, IIndexFragmentFile ifile) throws CoreException {
 		final FileContentKey fck = file.fFileContentKey;
-		boolean wasRequested= false;
+		boolean wasCounted= false;
 		UpdateKind kind= UpdateKind.OTHER_HEADER;
 		LinkageTask map = findRequestMap(fck.getLinkageID());
 		if (map != null) {
 			LocationTask locTask = map.find(fck.getLocation());
 			if (locTask != null) {
 				kind= locTask.fKind;
-				FileVersionTask v = locTask.addVersionTask(ifile);
-				wasRequested= v.fUpdateRequested;
-				v.setUpdated();
+				FileVersionTask v = locTask.findVersion(ifile);
+				if (v != null) {
+					wasCounted= v.fOutdated;
+					v.setUpdated();
+				} else {
+					// We have added a version, the request is fulfilled.
+					wasCounted= locTask.fCountedUnknownVersion;
+					locTask.fCountedUnknownVersion= false;
+				}
+				locTask.fStoredAVersion= true;
 			}
 		}
 		fIndexContentCache.remove(ifile);
 		fIndexFilesCache.remove(file.fFileContentKey.getLocation());
-		reportFile(wasRequested, kind);
-			
-		if (replaces != null) {
-			if (map != null) {
-				LocationTask locTask = map.find(fck.getLocation());
-				if (locTask != null) {
-					kind= locTask.fKind;
-					FileVersionTask v = locTask.findVersion(ifile);
-					if (v != null) {
-						if (v.fUpdateRequested) {
-							reportFile(true, locTask.fKind);
-							v.setUpdated();
-						}
-					}
-				}
-			}
-			fIndexContentCache.remove(replaces);
-		}
+		reportFile(wasCounted, kind);
 	}
 
 	private void removeFilesInIndex(List<Object> filesToRemove, List<IIndexFragmentFile> indexFilesToRemove,
@@ -801,12 +797,8 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			if (locTask == null || locTask.isCompleted()) {
 				it.remove();
 			} else {
-				// Additional version tasks may be added while parsing a file,
-				// use an integer to iterate over the list.
-				final List<FileVersionTask> versionTasks = locTask.fVersionTasks;
-				for (int i= 0; i < versionTasks.size(); i++) {
-					FileVersionTask versionTask = versionTasks.get(i);
-					if (versionTask.fUpdateRequested) {
+				for (FileVersionTask versionTask : locTask.fVersionTasks) {
+					if (versionTask.fOutdated) {
 						if (monitor.isCanceled() || hasUrgentTasks())
 							return;
 						parseVersionInContext(linkageID, map, ifl, versionTask, locTask.fTu,
@@ -845,10 +837,15 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 					if (!locTask.needsVersion()) {
 						if (monitor.isCanceled() || hasUrgentTasks())
 							return;
-						for (FileVersionTask v : locTask.fVersionTasks) {
-							if (v.fUpdateRequested) {
+						Iterator<FileVersionTask> it= locTask.fVersionTasks.iterator();	
+						while (it.hasNext()) {
+							FileVersionTask v = it.next();
+							if (v.fOutdated) {
 								fIndex.clearFile(v.fIndexFile);
 								reportFile(true, locTask.fKind);
+								locTask.removeVersionTask(it);
+								fIndexContentCache.remove(v.fIndexFile);
+								fIndexFilesCache.remove(ifl);
 							}
 						}
 					}
@@ -877,12 +874,12 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			LocationTask ctxTask= map.find(ctxIfl);
 			if (ctxTask != null) {
 				FileVersionTask ctxVersionTask = ctxTask.findVersion(nextCtx);
-				if (ctxVersionTask != null && ctxVersionTask.fUpdateRequested) {
+				if (ctxVersionTask != null && ctxVersionTask.fOutdated) {
 					// Handle the context first.
 					parseVersionInContext(linkageID, map, ctxIfl, ctxVersionTask, ctxTask.fTu,
 							safeGuard, monitor);
-					if (ctxVersionTask.fUpdateRequested 		// This is unexpected.
-							|| !versionTask.fUpdateRequested) 	// Our file was parsed.
+					if (ctxVersionTask.fOutdated 		// This is unexpected.
+							|| !versionTask.fOutdated) 	// Our file was parsed.
 						return;
 					
 					// The file is no longer a context, look for a different one.
@@ -1115,7 +1112,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			if (locTask != null) {
 				FileVersionTask task = locTask.findVersion(sigMacros);
 				if (task != null) {
-					return task.fUpdateRequested;
+					return task.fOutdated;
 				}
 			}
 		}
@@ -1139,12 +1136,12 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			for (FileInAST fileKey : fileKeys) {
 				LocationTask locTask = map.find(fileKey.fFileContentKey.getLocation());
 				if (locTask != null) {
-					if (locTask.fAddRequested) {
-						locTask.fAddRequested= false;
+					if (locTask.fCountedUnknownVersion) {
+						locTask.fCountedUnknownVersion= false;
 						reportFile(true, locTask.fKind);
 					} else {
 						for (FileVersionTask fc : locTask.fVersionTasks) {
-							if (fc.fUpdateRequested) {
+							if (fc.fOutdated) {
 								reportFile(true, locTask.fKind);
 								fc.setUpdated();
 							}
@@ -1162,7 +1159,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			LocationTask request= map.find(ifl);
 			if (request != null) {
 				FileVersionTask task= request.findVersion(file);
-				if (task != null && task.fUpdateRequested)
+				if (task != null && task.fOutdated)
 					return null;
 			}
 		}
@@ -1182,7 +1179,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 				for (FileVersionTask fileVersion : request.fVersionTasks) {
 					final IIndexFile indexFile = fileVersion.fIndexFile;
 					if (md.satisfies(indexFile.getSignificantMacros())) {
-						if (fileVersion.fUpdateRequested)
+						if (fileVersion.fOutdated)
 							return null;
 						return indexFile;
 					}

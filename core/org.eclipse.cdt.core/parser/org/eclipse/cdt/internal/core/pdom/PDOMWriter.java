@@ -247,9 +247,9 @@ abstract public class PDOMWriter {
 					IIndexFragmentFile ifile= storeFileInIndex(data, fileInAST, linkageID, lock);
 					if (fileInAST.fIncludeStatement == null && replaceFile != null && !replaceFile.equals(ifile)) {
 						data.fIndex.transferIncluders(replaceFile, ifile);
-						reportFileWrittenToIndex(fileInAST, ifile, replaceFile);
+						reportFileWrittenToIndex(fileInAST, ifile);
 					} else {
-						reportFileWrittenToIndex(fileInAST, ifile, null);
+						reportFileWrittenToIndex(fileInAST, ifile);
 					}
 				} catch (RuntimeException e) {
 					th= e;
@@ -556,8 +556,7 @@ abstract public class PDOMWriter {
 	/**
 	 * Informs the subclass that a file has been stored in the index.
 	 */
-	protected abstract void reportFileWrittenToIndex(FileInAST file, IIndexFragmentFile iFile,
-			IIndexFragmentFile replacesFile) throws CoreException;
+	protected abstract void reportFileWrittenToIndex(FileInAST file, IIndexFragmentFile iFile) throws CoreException;
 
 	private String getLocationInfo(String filename, int lineNumber) {
 		return " at " + filename + "(" + lineNumber + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

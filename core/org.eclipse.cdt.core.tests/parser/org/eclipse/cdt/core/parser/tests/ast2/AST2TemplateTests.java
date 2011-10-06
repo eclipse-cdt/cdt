@@ -5529,4 +5529,13 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testReferenceToParameterOfTemplateTemplateParameter_357308() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <typename...> void f() {}
+	//	void test() {
+	//	     f();      
+	//	     f<>();    
+	//	}
+	public void testInstantiationWithoutParameters_358654() throws Exception {
+		parseAndCheckBindings();
+	}
 }

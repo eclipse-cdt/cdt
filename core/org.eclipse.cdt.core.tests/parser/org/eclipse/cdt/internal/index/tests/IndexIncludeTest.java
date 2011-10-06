@@ -608,7 +608,7 @@ public class IndexIncludeTest extends IndexTestBase {
 		ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				h1.setContents(new ByteArrayInputStream(h1Contents.toString().getBytes()), false, false, npm());
-				h1.setLocalTimeStamp(t2 + 1000); 
+				h1.setLocalTimeStamp(t2 + 2000); 
 			}
 		}, npm());
 		waitForIndexer();

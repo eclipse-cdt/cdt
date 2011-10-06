@@ -156,6 +156,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFieldReference;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionCallExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
@@ -200,12 +201,14 @@ public class CPPVisitor extends ASTQueries {
 	private static final CPPBasicType UNSIGNED_LONG = new CPPBasicType(Kind.eInt, IBasicType.IS_LONG | IBasicType.IS_UNSIGNED);
 	private static final CPPBasicType INT_TYPE = new CPPBasicType(Kind.eInt, 0);
 
-	static final char[] BEGIN = "begin".toCharArray(); //$NON-NLS-1$
+	private static final String BEGIN_STR = "begin"; //$NON-NLS-1$
+	static final char[] BEGIN = BEGIN_STR.toCharArray(); 
 	static final String STD = "std"; //$NON-NLS-1$
 	private static final char[] SIZE_T = "size_t".toCharArray(); //$NON-NLS-1$
 	private static final char[] PTRDIFF_T = "ptrdiff_t".toCharArray(); //$NON-NLS-1$
 	private static final char[] TYPE_INFO= "type_info".toCharArray(); //$NON-NLS-1$
 	private static final char[] INITIALIZER_LIST = "initializer_list".toCharArray(); //$NON-NLS-1$
+	private static final IASTInitializerClause[] NO_ARGS = {};
 
 	// Thread-local set of DeclSpecifiers for which auto types are being created.
 	// Used to prevent infinite recursion while processing invalid self-referencing
@@ -1854,14 +1857,23 @@ public class CPPVisitor extends ASTQueries {
 					} 
 				}
 			} else if (parent instanceof ICPPASTRangeBasedForStatement) {
+				// See 6.5.4 The range-based for statement [stmt.ranged]
 				ICPPASTRangeBasedForStatement forStmt= (ICPPASTRangeBasedForStatement) parent;
 				IASTInitializerClause forInit = forStmt.getInitializerClause();
 				IASTExpression beginExpr= null;
 				if (forInit instanceof IASTExpression) {
 					final IASTExpression expr = (IASTExpression) forInit;
-					IType type= expr.getExpressionType();
+					IType type= SemanticUtil.getNestedType(expr.getExpressionType(), TDEF|CVTYPE);
 					if (type instanceof IArrayType) {
 						beginExpr= expr.copy();
+					} else if (type instanceof ICPPClassType) {
+						ICPPClassType ct= (ICPPClassType) type;
+						if (ct.getCompositeScope().find(BEGIN_STR).length > 0) {
+							final CPPASTName name = new CPPASTName(BEGIN);
+							name.setOffset(((ASTNode) forInit).getOffset());
+							beginExpr= new CPPASTFunctionCallExpression(
+									new CPPASTFieldReference(name, expr.copy()), NO_ARGS);
+						}
 					}
 				}
 				if (beginExpr == null) {

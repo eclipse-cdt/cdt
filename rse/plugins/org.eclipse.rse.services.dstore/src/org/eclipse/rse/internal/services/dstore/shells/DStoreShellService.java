@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@
  * Martin Oberhuber (Wind River) - [226262] Make IService IAdaptable and add Javadoc
  * Martin Oberhuber (Wind River) - [226301][api] IShellService should throw SystemMessageException on error
  * David McKnight   (IBM)        - [244898] [dstore] IRemoteCmdSubSystem.getHostEnvironmentVariables() call does not always work
+ * David McKnight   (IBM)        - [356658] [dstore] getHostEnvironment returns an empty array immediately after connecting
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.shells;
@@ -105,6 +106,10 @@ public class DStoreShellService extends AbstractDStoreService implements IShellS
 	{
 		if (_envVars == null || _envVars.length == 0)
 		{
+			if (!isInitialized()){
+				waitForInitialize(null);
+			}
+			
 			List envVars = new ArrayList();
 			DataStore ds = getDataStore();
 			DataElement envMinerData = ds.findMinerInformation(getEnvSystemMinerId());

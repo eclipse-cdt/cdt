@@ -5535,7 +5535,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	     f();      
 	//	     f<>();    
 	//	}
-	public void testInstantiationWithoutParameters_358654() throws Exception {
+	public void testTemplateArgumentDeductionWithoutParameters_358654() throws Exception {
 		parseAndCheckBindings();
 	}
 }

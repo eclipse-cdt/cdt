@@ -9351,6 +9351,22 @@ public class AST2CPPTests extends AST2BaseTest {
 		parseAndCheckBindings();
 	}
 	
+	//	struct S {
+	//	    void f();
+	//	};
+	//	struct Vector {
+	//		S* begin();
+	//	};
+	//	void test() {
+	//		Vector v;
+	//	    for (auto e : v) {
+	//			e.f();
+	//	    }
+	//	}
+	public void testAutoTypeInRangeBasedFor_359653() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	typedef int T;
 	//	struct B {
 	//	    int a, b;

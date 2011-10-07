@@ -20,6 +20,8 @@ import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -203,6 +205,9 @@ public class NewClassCodeGenerator {
 	            		new SubProgressMonitor(monitor, 50));
 	            if (headerFile != null) {
 	                headerTU = (ITranslationUnit) CoreModel.getDefault().create(headerFile);
+	                if (headerTU == null) {
+	                    throw new CodeGeneratorException("Failed to create " + headerFile); //$NON-NLS-1$
+	                }
 	
 	                // Create a working copy with a new owner
 	                headerWorkingCopy = headerTU.getWorkingCopy();
@@ -246,6 +251,9 @@ public class NewClassCodeGenerator {
 		            		new SubProgressMonitor(monitor, 50));
 		            if (sourceFile != null) {
 		                sourceTU = (ITranslationUnit) CoreModel.getDefault().create(sourceFile);
+		                if (sourceTU == null) {
+		                    throw new CodeGeneratorException("Failed to create " + sourceFile); //$NON-NLS-1$
+		                }
 		                monitor.worked(50);
 
 		                // Create a working copy with a new owner
@@ -279,6 +287,9 @@ public class NewClassCodeGenerator {
 	            		new SubProgressMonitor(monitor, 50));
 	            if (testFile != null) {
 	                testTU = (ITranslationUnit) CoreModel.getDefault().create(testFile);
+	                if (testTU == null) {
+	                    throw new CodeGeneratorException("Failed to create " + testFile); //$NON-NLS-1$
+	                }
 	                monitor.worked(50);
 
 	                // Create a working copy with a new owner
@@ -300,6 +311,8 @@ public class NewClassCodeGenerator {
 	
 	            fCreatedTestTU = testTU;
             }
+        } catch (CodeGeneratorException e) {
+        	deleteAllCreatedFiles();
         } finally {
             if (headerWorkingCopy != null) {
                 headerWorkingCopy.destroy();
@@ -315,6 +328,19 @@ public class NewClassCodeGenerator {
 
         return fCreatedClass;
     }
+
+	private void deleteAllCreatedFiles() {
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		for (IPath path : new IPath[] { fHeaderPath, fSourcePath, fSourcePath }) {
+			if (path != null) {
+				try {
+					IFile file = root.getFile(path);
+					file.delete(true, null);
+				} catch (CoreException e) {
+				}
+			}
+		}
+	}
 
     /**
      * Format given source content according to the project's code style options.

@@ -444,8 +444,12 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 	
 	private void handleUnsupportedSelection() {
 		fStackLayout.topControl = fUnsupportedLabel;
-		fGotoAddressBarControl.setVisible(false);
-		fGotoMemorySpaceControl.setVisible(false);
+		if(!fGotoAddressBarControl.isDisposed()) {
+			fGotoAddressBarControl.setVisible(false);
+		}
+		if(!fGotoMemorySpaceControl.isDisposed()) {
+			fGotoMemorySpaceControl.setVisible(false);
+		}
 	}
 	
 	private void performGo(boolean inNewTab) {
@@ -932,7 +936,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 		// GUI activity must be on the main thread
 		runOnUIThread(new Runnable(){
 			public void run() {
-				if (fGotoAddressBarControl.isDisposed()) {
+				if (fGotoAddressBarControl.isDisposed() || fGotoMemorySpaceControl.isDisposed()) {
 					return;
 				}
 				

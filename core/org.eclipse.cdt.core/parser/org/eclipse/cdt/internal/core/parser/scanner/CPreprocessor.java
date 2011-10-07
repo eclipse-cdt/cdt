@@ -101,11 +101,12 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     private static final DynamicMacro __LINE__ = new LineMacro("__LINE__".toCharArray()); //$NON-NLS-1$
 	private static final char[] ONCE = "once".toCharArray(); //$NON-NLS-1$
 
-	private static final int NO_EXPANSION 		 = 0x01;
-	private static final int PROTECT_DEFINED 	 = 0x02;
-	private static final int STOP_AT_NL 		 = 0x04;
-	private static final int CHECK_NUMBERS 		 = 0x08;
-	private static final int REPORT_SIGNIFICANT_MACROS = 0x10;
+	static final int NO_EXPANSION 		 					= 0x01;
+	static final int PROTECT_DEFINED 	 					= 0x02;
+	static final int STOP_AT_NL 		 					= 0x04;
+	static final int CHECK_NUMBERS 		 					= 0x08;
+	static final int REPORT_SIGNIFICANT_MACROS 				= 0x10;
+	static final int IGNORE_UNDEFINED_SIGNIFICANT_MACROS 	= 0x20;
 
 	private static final int MAX_INCLUSION_DEPTH = 200;
 
@@ -1821,7 +1822,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		}
         PreprocessorMacro macro= fMacroDictionary.get(name);
         if (macro == null) {
-        	if (reportSignificant) 
+        	if ((options & IGNORE_UNDEFINED_SIGNIFICANT_MACROS) == 0) 
         		fCurrentContext.significantMacroUndefined(name);
         	return false;
         }
@@ -1843,9 +1844,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         final ITokenSequence input= stopAtNewline ? fLineInputToMacroExpansion : fInputToMacroExpansion;
 		final MacroExpander expander = withinExpansion ? new MacroExpander(this, fMacroDictionary,
 				fLocationMap, fLexOptions) : fMacroExpander;
-        TokenList replacement= expander.expand(input, (options & PROTECT_DEFINED) != 0, macro,
-        		identifier, contentAssist, 
-        		reportSignificant ? fCurrentContext : null);
+        TokenList replacement= expander.expand(input, options, macro, identifier, contentAssist, fCurrentContext);
     	final IASTName[] expansions= expander.clearImplicitExpansions();
     	final ImageLocationInfo[] ili= expander.clearImageLocationInfos();
     	final Token last= replacement.last();

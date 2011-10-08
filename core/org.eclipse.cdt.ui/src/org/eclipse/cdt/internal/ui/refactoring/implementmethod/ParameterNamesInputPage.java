@@ -218,4 +218,12 @@ public class ParameterNamesInputPage extends UserInputWizardPage {
 		}
 		delayedPreviewUpdater.schedule(PREVIEW_UPDATE_DELAY);
 	}
+	
+	@Override
+	public boolean isPageComplete() {
+		if (!config.isChecked()) {
+			return true;
+		}
+		return super.isPageComplete();
+	}
 }

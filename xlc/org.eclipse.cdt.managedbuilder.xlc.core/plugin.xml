@@ -28,7 +28,7 @@
          <!-- The compiler command used will be always a C compiler command -->
          <!-- The output for C or C++ projects will be different as the ScannerInfoProvider substitute the ${specs_file} variable below with a dummy "c" file or "cpp" file -->
          <run
-               arguments="-E -v ${plugin_state_location}/${specs_file}"
+               arguments="-E -v &quot;${plugin_state_location}/${specs_file}&quot;"
                command="${XL_compilerRoot}/xlc"
                class="org.eclipse.cdt.make.xlc.core.scannerconfig.XlCSpecsRunSIProvider">
          </run>
@@ -65,7 +65,7 @@
          <!-- The compiler command used will be always a C compiler command -->
          <!-- The output for C or C++ projects will be different as the ScannerInfoProvider substitute the ${specs_file} variable below with a dummy "c" file or "cpp" file -->
          <run
-               arguments="-E -v ${plugin_state_location}/${specs_file}"
+               arguments="-E -v &quot;${plugin_state_location}/${specs_file}&quot;"
                command="${XL_compilerRoot}/xlC"
                class="org.eclipse.cdt.make.xlc.core.scannerconfig.XlCSpecsRunSIProvider">
          </run>

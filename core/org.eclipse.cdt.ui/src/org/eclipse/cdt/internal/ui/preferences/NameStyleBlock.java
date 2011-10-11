@@ -405,7 +405,7 @@ public class NameStyleBlock extends OptionsConfigurationBlock {
 	@Override
 	protected void validateSettings(Key changedKey, String oldValue, String newValue) {
 		StatusInfo status = new StatusInfo();
-		if (selectedCategory != null) {
+		if (selectedCategory != null && changedKey != null) {
 			NameValidator validator = selectedCategory.getNameValidator();
 			if (changedKey.equals(selectedCategory.getPrefixKey()) ||
 					changedKey.equals(selectedCategory.getAlternativePrefixKey())) {

@@ -57,14 +57,16 @@ public class RefactoringExecutionHelper {
 	private final int fSaveMode;
 
 	private class Operation implements IWorkspaceRunnable {
-		public Change fChange;
-		public PerformChangeOperation fPerformChangeOperation;
-		private final boolean fForked;
-		private final boolean fForkChangeExecution;
+		Change fChange;
+		PerformChangeOperation fPerformChangeOperation;
+		final boolean fForked;
+		final boolean fForkChangeExecution;
+		final boolean fCancelable;
 
-		public Operation(boolean forked, boolean forkChangeExecution) {
+		public Operation(boolean forked, boolean forkChangeExecution, boolean cancelable) {
 			fForked= forked;
 			fForkChangeExecution= forkChangeExecution;
+			this.fCancelable = cancelable;
         }
 
 		public void run(IProgressMonitor pm) throws CoreException {
@@ -72,7 +74,8 @@ public class RefactoringExecutionHelper {
 				pm.beginTask("", fForked && !fForkChangeExecution ? 7 : 11); //$NON-NLS-1$
 				pm.subTask(""); //$NON-NLS-1$
 
-				final RefactoringStatus status= fRefactoring.checkAllConditions(new SubProgressMonitor(pm, 4, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+				final RefactoringStatus status= fRefactoring.checkAllConditions(
+						new SubProgressMonitor(pm, 4, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 				if (status.getSeverity() >= fStopSeverity) {
 					final boolean[] canceled= { false };
 					if (fForked) {
@@ -92,10 +95,7 @@ public class RefactoringExecutionHelper {
 				fChange= fRefactoring.createChange(new SubProgressMonitor(pm, 2, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 				fChange.initializeValidationData(new SubProgressMonitor(pm, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 
-				fPerformChangeOperation= new PerformChangeOperation(fChange);//RefactoringUI.createUIAwareChangeOperation(fChange);
-				fPerformChangeOperation.setUndoManager(RefactoringCore.getUndoManager(), fRefactoring.getName());
-				if (fRefactoring instanceof IScheduledRefactoring)
-					fPerformChangeOperation.setSchedulingRule(((IScheduledRefactoring) fRefactoring).getSchedulingRule());
+				fPerformChangeOperation = createPerformChangeOperation(fChange);
 
 				if (!fForked || fForkChangeExecution)
 					fPerformChangeOperation.run(new SubProgressMonitor(pm, 4, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
@@ -157,15 +157,31 @@ public class RefactoringExecutionHelper {
 	 * @throws InterruptedException thrown when the operation is canceled
 	 * @throws InvocationTargetException thrown when the operation failed to execute
 	 */
-	public void perform(boolean fork, boolean forkChangeExecution, boolean cancelable) throws InterruptedException, InvocationTargetException {
+	public void perform(boolean fork, boolean forkChangeExecution, boolean cancelable)
+			throws InterruptedException, InvocationTargetException {
+		Operation operation = new Operation(fork, forkChangeExecution, cancelable);
+		performOperation(operation, null, fork);
+	}
+
+	public void performChange(Change change, boolean fork)
+			throws InterruptedException, InvocationTargetException {
+		PerformChangeOperation operation = createPerformChangeOperation(change);
+		performOperation(null, operation, fork);
+	}
+
+	/**
+	 * Executes either a complete refactoring operation or a change operation. 
+	 * @param operation The refactoring operation. Can be <code>null</code>.
+	 * @param changeOperation The change operation. Has to be <code>null</code> if {@code operation}
+	 *     is not <code>null</code> and not <code>null</code> otherwise.
+	 * @param fork If set, the execution will be forked.
+	 */
+	private void performOperation(Operation operation, PerformChangeOperation changeOperation, boolean fork)
+			throws InterruptedException, InvocationTargetException {
+		Assert.isTrue((operation == null) != (changeOperation == null));
 		Assert.isTrue(Display.getCurrent() != null);
 		final IJobManager manager= Job.getJobManager();
-		final ISchedulingRule rule;
-		if (fRefactoring instanceof IScheduledRefactoring) {
-			rule= ((IScheduledRefactoring) fRefactoring).getSchedulingRule();
-		} else {
-			rule= ResourcesPlugin.getWorkspace().getRoot();
-		}
+		final ISchedulingRule rule = getSchedulingRule();
 		try {
 			try {
 				Runnable r= new Runnable() {
@@ -179,17 +195,22 @@ public class RefactoringExecutionHelper {
 			}
 
 			RefactoringSaveHelper saveHelper= new RefactoringSaveHelper(fSaveMode);
-			if (!saveHelper.saveEditors(fParent))
-				throw new InterruptedException();
-			final Operation op= new Operation(fork, forkChangeExecution);
+			if (operation != null) {
+				if (!saveHelper.saveEditors(fParent))
+					throw new InterruptedException();
+			}
 			fRefactoring.setValidationContext(fParent);
 			try {
-				fExecContext.run(fork, cancelable, new WorkbenchRunnableAdapter(op, rule, true));
-				if (fork && !forkChangeExecution && op.fPerformChangeOperation != null)
-					fExecContext.run(false, false, new WorkbenchRunnableAdapter(op.fPerformChangeOperation, rule, true));
-
-				if (op.fPerformChangeOperation != null) {
-					RefactoringStatus validationStatus= op.fPerformChangeOperation.getValidationStatus();
+				if (operation != null) {
+					fExecContext.run(fork, operation.fCancelable, new WorkbenchRunnableAdapter(operation, rule, true));
+					changeOperation = operation.fPerformChangeOperation;
+					fork = fork && !operation.fForkChangeExecution;
+				}
+	
+				if (changeOperation != null) {
+					if (fork)
+						fExecContext.run(false, false, new WorkbenchRunnableAdapter(changeOperation, rule, true));
+					RefactoringStatus validationStatus= changeOperation.getValidationStatus();
 					if (validationStatus != null && validationStatus.hasFatalError()) {
 						MessageDialog.openError(fParent, fRefactoring.getName(),
 								NLS.bind(Messages.RefactoringExecutionHelper_cannot_execute,
@@ -198,14 +219,13 @@ public class RefactoringExecutionHelper {
 					}
 				}
 			} catch (InvocationTargetException e) {
-				PerformChangeOperation pco= op.fPerformChangeOperation;
-				if (pco != null && pco.changeExecutionFailed()) {
+				if (changeOperation != null && changeOperation.changeExecutionFailed()) {
 					ChangeExceptionHandler handler= new ChangeExceptionHandler(fParent, fRefactoring);
 					Throwable inner= e.getTargetException();
 					if (inner instanceof RuntimeException) {
-						handler.handle(pco.getChange(), (RuntimeException)inner);
+						handler.handle(changeOperation.getChange(), (RuntimeException)inner);
 					} else if (inner instanceof CoreException) {
-						handler.handle(pco.getChange(), (CoreException)inner);
+						handler.handle(changeOperation.getChange(), (CoreException)inner);
 					} else {
 						throw e;
 					}
@@ -221,5 +241,21 @@ public class RefactoringExecutionHelper {
 			manager.endRule(rule);
 			fRefactoring.setValidationContext(null);
 		}
+	}
+
+	private ISchedulingRule getSchedulingRule() {
+		if (fRefactoring instanceof IScheduledRefactoring) {
+			return ((IScheduledRefactoring) fRefactoring).getSchedulingRule();
+		} else {
+			return ResourcesPlugin.getWorkspace().getRoot();
+		}
+	}
+
+	private PerformChangeOperation createPerformChangeOperation(Change change) {
+		PerformChangeOperation operation = new PerformChangeOperation(change);
+		operation.setUndoManager(RefactoringCore.getUndoManager(), fRefactoring.getName());
+		if (fRefactoring instanceof IScheduledRefactoring)
+			operation.setSchedulingRule(((IScheduledRefactoring) fRefactoring).getSchedulingRule());
+		return operation;
 	}
 }

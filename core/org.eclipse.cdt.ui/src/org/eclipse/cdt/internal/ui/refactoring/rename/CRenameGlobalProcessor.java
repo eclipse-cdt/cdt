@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.ui.refactoring.rename;
 
 import org.eclipse.cdt.internal.ui.refactoring.RefactoringSaveHelper;
 
-
 /**
  * Rename processor that sets up the input page for renaming a global entity.
  */
@@ -21,11 +20,11 @@ public class CRenameGlobalProcessor extends CRenameProcessorDelegate {
 
     public CRenameGlobalProcessor(CRenameProcessor processor, String name) {
         super(processor, name);
-        setAvailableOptions(CRefactory.OPTION_ASK_SCOPE |
-        		CRefactory.OPTION_EXHAUSTIVE_FILE_SEARCH |
-                CRefactory.OPTION_IN_CODE |
+        setAvailableOptions(
+        		CRefactory.OPTION_IN_CODE_REFERENCES |
                 CRefactory.OPTION_IN_COMMENT | 
-                CRefactory.OPTION_IN_MACRO_DEFINITION);
+                CRefactory.OPTION_IN_MACRO_DEFINITION |
+                CRefactory.OPTION_EXHAUSTIVE_FILE_SEARCH);
     }
 
 	@Override

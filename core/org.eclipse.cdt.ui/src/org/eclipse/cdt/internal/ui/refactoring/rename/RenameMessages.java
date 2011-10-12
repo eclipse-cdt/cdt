@@ -77,7 +77,6 @@ public class RenameMessages extends NLS {
 	public static String CRenameRefactoringInputPage_button_workingSet;
 	public static String CRenameRefactoringInputPage_errorInvalidIdentifier;
 	public static String CRenameRefactoringInputPage_label_newName;
-	public static String CRenameRefactoringInputPage_label_scope;
 	public static String CRenameRefactoringInputPage_label_updateWithin;
 	public static String CRenameRefactoringInputPage_renameBaseAndDerivedMethods;
 	public static String CRenameTopProcessor_enumerator;

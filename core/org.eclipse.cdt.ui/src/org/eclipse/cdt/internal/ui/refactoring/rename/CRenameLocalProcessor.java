@@ -40,13 +40,11 @@ public class CRenameLocalProcessor extends CRenameProcessorDelegate {
         setOptionsForcingPreview(0);
     }
     
-    // overrider
     @Override
 	protected int getAcceptedLocations(int selectedOptions) {
-        return CRefactory.OPTION_IN_CODE | CRefactory.OPTION_IN_MACRO_DEFINITION | selectedOptions;
+        return CRefactory.OPTION_IN_CODE_REFERENCES | CRefactory.OPTION_IN_MACRO_DEFINITION | selectedOptions;
     }
     
-    // overrider
     @Override
 	protected int getSearchScope() {
         return TextSearchWrapper.SCOPE_FILE;

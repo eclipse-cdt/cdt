@@ -45,6 +45,11 @@ public class CRenameRefactoringPreferences {
 		return fDialogSettings.getBoolean(key);
 	}
 
+	public boolean getBoolean(String key, boolean defaultValue) {
+		String value = fDialogSettings.get(key);
+		return value != null ? Boolean.parseBoolean(value) : defaultValue;
+	}
+
 	public void put(String key, int value) {
 		fDialogSettings.put(key, value);
 	}
@@ -74,7 +79,9 @@ public class CRenameRefactoringPreferences {
         if (!getBoolean(KEY_IGNORE_VIRTUAL))
         	options |= CRefactory.OPTION_DO_VIRTUAL;
         if (!getBoolean(KEY_REFERENCES_INV))
-        	options |= CRefactory.OPTION_IN_CODE;
+        	options |= CRefactory.OPTION_IN_CODE_REFERENCES;
+        if (getBoolean(KEY_INACTIVE))
+        	options |= CRefactory.OPTION_IN_INACTIVE_CODE;
         if (getBoolean(KEY_COMMENT))
         	options |= CRefactory.OPTION_IN_COMMENT;
         if (getBoolean(KEY_STRING))
@@ -85,8 +92,6 @@ public class CRenameRefactoringPreferences {
         	options |= CRefactory.OPTION_IN_MACRO_DEFINITION;
         if (getBoolean(KEY_PREPROCESSOR))
         	options |= CRefactory.OPTION_IN_PREPROCESSOR_DIRECTIVE;
-        if (getBoolean(KEY_INACTIVE))
-        	options |= CRefactory.OPTION_IN_INACTIVE_CODE;
         if (getBoolean(KEY_EXHAUSTIVE_FILE_SEARCH))
         	options |= CRefactory.OPTION_EXHAUSTIVE_FILE_SEARCH;
         return options;

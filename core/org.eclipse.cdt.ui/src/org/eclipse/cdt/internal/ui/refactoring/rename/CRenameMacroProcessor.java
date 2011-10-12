@@ -26,13 +26,13 @@ public class CRenameMacroProcessor extends CRenameGlobalProcessor {
 
     public CRenameMacroProcessor(CRenameProcessor processor, String name) {
         super(processor, name);
-        setAvailableOptions(CRefactory.OPTION_ASK_SCOPE | 
-        		CRefactory.OPTION_EXHAUSTIVE_FILE_SEARCH |
-                CRefactory.OPTION_IN_CODE |
+        setAvailableOptions(
+        		CRefactory.OPTION_IN_CODE_REFERENCES |
                 CRefactory.OPTION_IN_COMMENT | 
-                CRefactory.OPTION_IN_PREPROCESSOR_DIRECTIVE);
+                CRefactory.OPTION_IN_PREPROCESSOR_DIRECTIVE |
+                CRefactory.OPTION_EXHAUSTIVE_FILE_SEARCH);
     }
-    
+
     @Override
 	protected int getAcceptedLocations(int selectedOptions) {
         return selectedOptions | CRefactory.OPTION_IN_MACRO_DEFINITION;

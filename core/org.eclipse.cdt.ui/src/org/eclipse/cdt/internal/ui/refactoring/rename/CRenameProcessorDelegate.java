@@ -47,7 +47,6 @@ import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.ui.refactoring.CTextFileChange;
 
-
 /**
  * Abstract base for all different rename processors used by the top processor.
  */
@@ -55,23 +54,21 @@ public abstract class CRenameProcessorDelegate {
     private CRenameProcessor fTopProcessor;
     private ArrayList<CRefactoringMatch> fMatches;
     protected String fProcessorBaseName;
-    private int fAvailableOptions=         
-	        CRefactory.OPTION_ASK_SCOPE | 
-	        CRefactory.OPTION_EXHAUSTIVE_FILE_SEARCH | 
-	        CRefactory.OPTION_IN_CODE |
+    private int fAvailableOptions=
+    		CRefactory.OPTION_IN_CODE_REFERENCES |
 	        CRefactory.OPTION_IN_COMMENT | 
 	        CRefactory.OPTION_IN_MACRO_DEFINITION |
-	        CRefactory.OPTION_IN_STRING_LITERAL;
+	        CRefactory.OPTION_IN_STRING_LITERAL |
+    		CRefactory.OPTION_EXHAUSTIVE_FILE_SEARCH; 
 
     private int fOptionsForcingPreview=
-	        CRefactory.OPTION_IN_INACTIVE_CODE |
-	        CRefactory.OPTION_IN_COMMENT | 
+    		CRefactory.OPTION_IN_COMMENT | 
 	        CRefactory.OPTION_IN_MACRO_DEFINITION |
 	        CRefactory.OPTION_IN_PREPROCESSOR_DIRECTIVE |
 	        CRefactory.OPTION_IN_STRING_LITERAL;
-    
-    private int fOptionsEnablingScope= fOptionsForcingPreview;        
 
+    private int fOptionsEnablingExhaustiveSearch= fOptionsForcingPreview |
+    		CRefactory.OPTION_IN_INACTIVE_CODE | CRefactory.OPTION_IN_CODE_REFERENCES;
 
     protected CRenameProcessorDelegate(CRenameProcessor topProcessor, String name) {
         fTopProcessor= topProcessor;
@@ -87,7 +84,7 @@ public abstract class CRenameProcessorDelegate {
     }
 
     final public int getSelectedScope() {
-        return fTopProcessor.getScope();
+        return fTopProcessor.getExhaustiveSearchScope();
     }
 
     final public int getSelectedOptions() {
@@ -95,7 +92,7 @@ public abstract class CRenameProcessorDelegate {
     }
 
     final public String getSelectedWorkingSet() {
-        return fTopProcessor.getWorkingSet();
+        return fTopProcessor.getWorkingSetName();
     }
 
     final public CRefactory getManager() {
@@ -142,15 +139,20 @@ public abstract class CRenameProcessorDelegate {
     }
 
     /**
-     * The options that need the scope definition. When one of them is 
-     * selected, the scope options are enabled.
+     * Sets the options that enable exhaustive file search.
+     * @see #getOptionsEnablingExhaustiveSearch()
      */
-    public void setOptionsEnablingScope(int options) {
-        fOptionsEnablingScope= options;
+    void setOptionsEnablingExhaustiveSearch(int options) {
+        fOptionsEnablingExhaustiveSearch= options;
     }
-    
-    final int getOptionsEnablingScope() {
-        return fOptionsEnablingScope;
+
+    /**
+     * The options that may need exhaustive file search since index lookup is not guaranteed to
+     * return all files participating in refactoring. When one of these options is selected,
+     * the exhaustive file search is enabled.
+     */
+    final int getOptionsEnablingExhaustiveSearch() {
+        return fOptionsEnablingExhaustiveSearch;
     }
 
     protected int getSearchScope() {
@@ -159,17 +161,15 @@ public abstract class CRenameProcessorDelegate {
 
     /**
      * Builds an index-based file filter for the name search.
+     * 
      * @param bindings bindings being renamed
-     * @return A set of files containing references to the bindings, or <code>null</code> if
-     * exhaustive file search is requested.
+     * @return A set of files containing references to the bindings.
      */
-    private Collection<IResource> getFileFilter(IBinding[] bindings) {
-    	if ((getSelectedOptions() & CRefactory.OPTION_EXHAUSTIVE_FILE_SEARCH) != 0) {
-    		return null;
-    	}
+    private Collection<IFile> getReferringFiles(IBinding[] bindings) {
+		ArrayList<IFile> files = new ArrayList<IFile>();
     	IIndex index = getIndex();
     	if (index == null) {
-    		return null;
+    		return files;
     	}
 		Set<IIndexFileLocation> locations = new HashSet<IIndexFileLocation>();
     	try {
@@ -182,21 +182,21 @@ public abstract class CRenameProcessorDelegate {
 				}
         	}
 		} catch (InterruptedException e) {
-			return null;
+			return files;
 		} catch (CoreException e) {
-			return null;
+			return files;
 		} finally {
     		index.releaseReadLock();
     	}
 
-		ArrayList<IResource> files = new ArrayList<IResource>(locations.size());
+    	files.ensureCapacity(locations.size());
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		for (IIndexFileLocation location : locations) {
 			String fullPath= location.getFullPath();
 			if (fullPath != null) {
 				IResource file= workspaceRoot.findMember(fullPath);
-				if (file != null) {
-					files.add(file);
+				if (file instanceof IFile) {
+					files.add((IFile) file);
 				}
 			}
 		}
@@ -220,13 +220,12 @@ public abstract class CRenameProcessorDelegate {
         // perform text-search
         fMatches= new ArrayList<CRefactoringMatch>();
         TextSearchWrapper txtSearch= getManager().getTextSearch();
-        Collection<IResource> fileFilter = getFileFilter(renameBindings);
-        if (fileFilter != null && !fileFilter.contains(file)) {
-        	fileFilter.add(file);
+        Collection<IFile> filesToSearch = getReferringFiles(renameBindings);
+        if (!filesToSearch.contains(file)) {
+        	filesToSearch.add(file);
         }
-        IStatus stat= txtSearch.searchWord(getSearchScope(), file, getSelectedWorkingSet(), 
-        		fileFilter != null ? fileFilter.toArray(new IResource[fileFilter.size()]) : null,
-        		getManager().getCCppPatterns(),
+        IStatus stat= txtSearch.searchWord(filesToSearch.toArray(new IFile[filesToSearch.size()]),
+        		getSearchScope(), file, getSelectedWorkingSet(), getManager().getCCppPatterns(),
         		getArgument().getName(), new SubProgressMonitor(monitor, 1), fMatches);
         if (monitor.isCanceled()) {
             throw new OperationCanceledException();
@@ -354,7 +353,7 @@ public abstract class CRenameProcessorDelegate {
             }
             if (match.getAstInformation() != CRefactoringMatch.AST_REFERENCE_OTHER) {
                 IFile mfile= match.getFile();
-                if (file==null || !file.equals(mfile) || fileEdit == null || fileChange == null) {
+                if (file == null || !file.equals(mfile) || fileEdit == null || fileChange == null) {
                     file= mfile;
                     fileEdit= new MultiTextEdit();
                     fileChange = new CTextFileChange(file.getName(), file);

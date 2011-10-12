@@ -74,7 +74,7 @@ public class RenameTests extends RefactoringTests {
         CRenameProcessor proc= new CRenameProcessor(CRefactory.getInstance(), arg);
         proc.setReplacementText( newName );
         proc.setSelectedOptions(-1);
-        proc.setScope(TextSearchWrapper.SCOPE_WORKSPACE);
+        proc.setExhaustiveSearchScope(TextSearchWrapper.SCOPE_WORKSPACE);
         return new CRenameRefactoring(proc);
     }
 
@@ -124,8 +124,7 @@ public class RenameTests extends RefactoringTests {
         ((CRenameProcessor) proc.getProcessor()).lockIndex();
         try {
         	RefactoringStatus rs = checkConditions(proc);
-
-        	return (rs.getSeverity());
+        	return rs.getSeverity();
         } finally {
             ((CRenameProcessor) proc.getProcessor()).unlockIndex();
         }
@@ -134,7 +133,7 @@ public class RenameTests extends RefactoringTests {
     protected int countOccurrences(String contents, String lookup) {
         int idx= contents.indexOf(lookup);
         int count= 0;
-        while (idx >=0) {
+        while (idx >= 0) {
             count++;
             idx= contents.indexOf(lookup, idx+lookup.length());
         }

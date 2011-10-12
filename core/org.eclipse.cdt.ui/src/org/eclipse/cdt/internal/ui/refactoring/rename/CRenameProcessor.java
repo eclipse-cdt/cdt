@@ -54,13 +54,16 @@ public class CRenameProcessor extends RenameProcessor {
     private final CRefactoringArgument fArgument;
     private CRenameProcessorDelegate fDelegate;
     private String fReplacementText;
-    private String fWorkingSet;
-    private int fScope;
+    private String fWorkingSetName;
+    private int fExhaustiveSearchScope;
     private int fSelectedOptions;
     private final CRefactory fManager;
     private final ASTManager fAstManager;
 	private IIndex fIndex;
+	private int indexLockCount;
 	private RefactoringStatus fInitialConditionsStatus;
+
+	private Change fChange;
     
     public CRenameProcessor(CRefactory refactoringManager, CRefactoringArgument arg) {
         fManager= refactoringManager;
@@ -72,13 +75,11 @@ public class CRenameProcessor extends RenameProcessor {
         return fArgument;
     }
 
-    // overrider
     @Override
 	public Object[] getElements() {
         return new Object[] { fArgument.getBinding() };
     }
 
-    // overrider
     @Override
 	public String getProcessorName() {
         String result= null;
@@ -141,15 +142,15 @@ public class CRenameProcessor extends RenameProcessor {
     private CRenameProcessorDelegate createDelegate() {
         switch (fArgument.getArgumentKind()) {
         	case CRefactory.ARGUMENT_LOCAL_VAR: 
-                return new CRenameLocalProcessor(this, 
+                return new CRenameLocalProcessor(this,
                         RenameMessages.CRenameTopProcessor_localVar,
                         fArgument.getScope());
         	case CRefactory.ARGUMENT_PARAMETER:
-                return new CRenameLocalProcessor(this, 
+                return new CRenameLocalProcessor(this,
                         RenameMessages.CRenameTopProcessor_parameter,
                         fArgument.getScope());
         	case CRefactory.ARGUMENT_FILE_LOCAL_VAR:
-                return new CRenameLocalProcessor(this, 
+                return new CRenameLocalProcessor(this,
                         RenameMessages.CRenameTopProcessor_filelocalVar,
                         null);
         	case CRefactory.ARGUMENT_GLOBAL_VAR:
@@ -159,7 +160,7 @@ public class CRenameProcessor extends RenameProcessor {
         	case CRefactory.ARGUMENT_FIELD:
                 return new CRenameGlobalProcessor(this, RenameMessages.CRenameTopProcessor_field);
         	case CRefactory.ARGUMENT_FILE_LOCAL_FUNCTION:
-                return new CRenameLocalProcessor(this, 
+                return new CRenameLocalProcessor(this,
                         RenameMessages.CRenameTopProcessor_filelocalFunction,
                         null);
         	case CRefactory.ARGUMENT_GLOBAL_FUNCTION:
@@ -191,10 +192,18 @@ public class CRenameProcessor extends RenameProcessor {
 
     @Override
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
-        return fDelegate.createChange(pm);
+        fChange = fDelegate.createChange(pm);
+        return fChange;
     }
 
-    @Override
+    /**
+     * @return the change if it has been created, or <code>null</code> otherwise.
+     */
+	Change getChange() {
+        return fChange;
+    }
+
+	@Override
 	public RefactoringParticipant[] loadParticipants(RefactoringStatus status,
             SharableParticipants sharedParticipants) throws CoreException {
         RenameArguments arguments= new RenameArguments(getReplacementText(), true);
@@ -208,7 +217,9 @@ public class CRenameProcessor extends RenameProcessor {
         return result.toArray(new RefactoringParticipant[result.size()]);
     }
 
-    // options for the input page in the refactoring wizard
+    /**
+     * Options for the input page in the refactoring wizard
+     */
     public int getAvailableOptions() {
         if (fDelegate == null) {
             return 0;
@@ -216,7 +227,9 @@ public class CRenameProcessor extends RenameProcessor {
         return fDelegate.getAvailableOptions();
     }
 
-    // options for the input page that trigger the preview
+    /**
+     * Options for the input page that trigger the preview
+     */
     public int getOptionsForcingPreview() {
         if (fDelegate == null) {
             return 0;
@@ -224,12 +237,16 @@ public class CRenameProcessor extends RenameProcessor {
         return fDelegate.getOptionsForcingPreview();
     }
 
-    // options for the input page that trigger the preview
-    public int getOptionsEnablingScope() {
+    /**
+     * The options that may need exhaustive file search since index lookup is not guaranteed to
+     * return all files participating in refactoring. When one of these options is selected,
+     * the exhaustive file search is enabled.
+     */
+    public int getOptionsEnablingExhaustiveSearch() {
         if (fDelegate == null) {
             return 0;
         }
-        return fDelegate.getOptionsEnablingScope();
+        return fDelegate.getOptionsEnablingExhaustiveSearch();
     }
 
     @Override
@@ -237,12 +254,13 @@ public class CRenameProcessor extends RenameProcessor {
         return IDENTIFIER;
     }
 
-    public int getScope() {
-        return fScope;
+    public int getExhaustiveSearchScope() {
+        return (fSelectedOptions & CRefactory.OPTION_EXHAUSTIVE_FILE_SEARCH) != 0 ?
+        		fExhaustiveSearchScope : TextSearchWrapper.SCOPE_FILE;
     }
 
-    public void setScope(int scope) {
-        fScope = scope;
+    public void setExhaustiveSearchScope(int scope) {
+        fExhaustiveSearchScope = scope;
     }
 
     public int getSelectedOptions() {
@@ -253,16 +271,20 @@ public class CRenameProcessor extends RenameProcessor {
         fSelectedOptions = selectedOptions;
     }
 
-    public String getWorkingSet() {
-        return fWorkingSet;
+    public boolean isPreviewRequired() {
+    	return (fSelectedOptions & getOptionsForcingPreview()) != 0;
+    }
+
+    public String getWorkingSetName() {
+        return fWorkingSetName;
     }
 
     /**
      * Sets the name of the working set. If the name of the working set is invalid,
      * it's set to an empty string. 
      */
-    public void setWorkingSet(String workingSet) {
-        fWorkingSet = checkWorkingSet(workingSet);
+    public void setWorkingSetName(String workingSet) {
+        fWorkingSetName = checkWorkingSet(workingSet);
     }
 
     public String getReplacementText() {
@@ -282,21 +304,26 @@ public class CRenameProcessor extends RenameProcessor {
     }
 
 	public void lockIndex() throws CoreException, InterruptedException {
-		if (fIndex == null) {
-			ICProject[] projects= CoreModel.getDefault().getCModel().getCProjects();
-			fIndex= CCorePlugin.getIndexManager().getIndex(projects);
+		if (indexLockCount == 0) {
+			if (fIndex == null) {
+				ICProject[] projects= CoreModel.getDefault().getCModel().getCProjects();
+				fIndex= CCorePlugin.getIndexManager().getIndex(projects);
+			}
+			fIndex.acquireReadLock();
 		}
-		fIndex.acquireReadLock();
+		indexLockCount++;
 	}
 	
 	public void unlockIndex() {
-		if (fAstManager != null) {
-			fAstManager.dispose();
+		if (--indexLockCount <= 0) {
+			if (fAstManager != null) {
+				fAstManager.dispose();
+			}
+			if (fIndex != null) {
+				fIndex.releaseReadLock();
+			}
+			fIndex= null;
 		}
-		if (fIndex != null) {
-			fIndex.releaseReadLock();
-		}
-		fIndex= null;
 	}
 
 	public IIndex getIndex() {
@@ -312,7 +339,7 @@ public class CRenameProcessor extends RenameProcessor {
 		}
 		return fDelegate.getSaveMode();
 	}
-	
+
     private String checkWorkingSet(String workingSet) {
 		if (workingSet != null && workingSet.length() > 0) {
 		    IWorkingSetManager wsManager= PlatformUI.getWorkbench().getWorkingSetManager();

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- *    Markus Schorn - initial API and implementation 
+ *     Markus Schorn - initial API and implementation 
  ******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
@@ -39,8 +39,8 @@ import org.eclipse.cdt.ui.CUIPlugin;
  * can be calculated from the AST.
  */
 public class CRefactoringArgument {
-    private int fOffset= 0;
-    private int fLength= 0;
+    private int fOffset;
+    private int fLength;
     private String fText= ""; //$NON-NLS-1$
     private int fKind= CRefactory.ARGUMENT_UNKNOWN;
     private IFile fFile;
@@ -72,22 +72,18 @@ public class CRefactoringArgument {
         }
     }
         
-    // overrider
     public String getName() {
         return fText;
     }
 
-    // overrider
     public IFile getSourceFile() {
         return fFile;
     }
 
-    // overrider
     public int getArgumentKind() {
         return fKind;
     }
 
-    // overrider
     public int getOffset() {
         return fOffset;
     }

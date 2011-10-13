@@ -24,6 +24,8 @@ package org.eclipse.dstore.internal.core.util;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
@@ -197,9 +199,21 @@ public class Sender implements ISender
 		for (int i = 0; i < loaders.size(); i++)
 		{
 			ClassLoader loader = (ClassLoader) loaders.get(i);
-			
+		
 			classInStream = loader.getResourceAsStream(className);
 			classLocation = loader.getResource(className);
+			
+			if (classInStream == null && classLocation != null){
+				try {
+					String file = classLocation.getFile();
+					File f = new File(file);
+					if (f.exists()){
+						classInStream = new FileInputStream(f);
+					}
+				} catch (Exception e) {
+					_dataStore.trace(e);
+				}
+			}
 			if (classInStream != null && classLocation != null) break;
 		}
 		if (classLocation == null || classInStream == null) 

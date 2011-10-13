@@ -158,6 +158,9 @@ public class ClassByteStreamHandler implements IClassByteStreamHandler
 		 */
 		public void run()
 		{
+			_dataStore.trace("receiving class bytes"); //$NON-NLS-1$
+			_dataStore.trace("\tsize="+_size); //$NON-NLS-1$
+			_dataStore.trace("\tbuffer="+_buffer); //$NON-NLS-1$
 			try
 			{
 				PipedInputStream ins = new PipedInputStream();
@@ -168,7 +171,10 @@ public class ClassByteStreamHandler implements IClassByteStreamHandler
 				outStream.close();				
 
 				IRemoteClassInstance instance = loadInstance(ins);
-				runInstance(instance);
+				if (instance != null){
+					_dataStore.trace("running class instance "+instance); //$NON-NLS-1$
+					runInstance(instance);
+				}
 				
 			}
 			catch (Exception e)
@@ -204,7 +210,13 @@ public class ClassByteStreamHandler implements IClassByteStreamHandler
 			else
 			{
 				// on server run and update client
-				instance.arrivedOnServer();			
+				_dataStore.trace("calling arrived on server"); //$NON-NLS-1$
+				try {
+					instance.arrivedOnServer();			
+				}
+				catch (Exception e){
+					_dataStore.trace(e);
+				}
 				_dataStore.updateRemoteClassInstance(instance, getIdentifier());
 			}
 		}

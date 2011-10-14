@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 IBM Corporation and others.
+ * Copyright (c) 2002, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@
  * Martin Oberhuber (Wind River) - [199854][api] Improve error reporting for archive handlers
  * David McKnight    (IBM)  - [232004] [dstore][multithread] some miner finish() is not terminated sometimes
  * David McKnight    (IBM)  - [328060] [dstore] command queue in Miner should be synchronized
+ * David McKnight    (IBM)  - [358301] [DSTORE] Hang during debug source look up
  *******************************************************************************/
 
 package org.eclipse.dstore.core.miners;
@@ -324,6 +325,9 @@ implements ISchemaExtender
 				else
 					exc = "Exception"; //$NON-NLS-1$
 				_dataStore.createObject(status, DataStoreResources.model_error, exc);
+			}
+			catch (OutOfMemoryError e){
+				System.exit(-1);
 			}
 			catch (Error er)
 			{

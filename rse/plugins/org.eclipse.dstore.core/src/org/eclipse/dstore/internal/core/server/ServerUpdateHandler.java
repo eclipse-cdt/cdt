@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others.
+ * Copyright (c) 2002, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@
  * David McKnight  (IBM)   [222168][dstore] Buffer in DataElement is not sent
  * David McKnight   (IBM) - [225507][api][breaking] RSE dstore API leaks non-API types
  * David McKnight  (IBM)   [246826][dstore] KeepAlive does not work correctly
+ * David McKnight    (IBM)  - [358301] [DSTORE] Hang during debug source look up
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.server;
@@ -261,7 +262,12 @@ public class ServerUpdateHandler extends UpdateHandler
 	{
 		if (!_dataObjects.isEmpty() || _pendingKeepAliveConfirmation != null || _pendingKeepAliveRequest != null || !_classesToSend.isEmpty())
 		{
-			sendUpdates();
+			try {
+				sendUpdates();
+			}
+			catch (OutOfMemoryError e){
+				System.exit(-1);
+			}
 		}
 	}
 

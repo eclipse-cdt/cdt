@@ -24,6 +24,7 @@
  * David McKnight   (IBM) - [282364] [dstore][multithread] timer-threads stay active after disconnect
  * David McKnight  (IBM)   [343939][dstore][windows] DBCS3.7 DBCS characters are corrupted in Files
  * David McKnight  (IBM)   [350315][dstore] regress change made for bug 305218
+ * David McKnight    (IBM)  - [358301] [DSTORE] Hang during debug source look up
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.util;
@@ -556,6 +557,7 @@ public class XMLparser
 		String matchTag = null;
 
 		boolean done = false;
+		try {
 		while (!done)
 		{
 			String xmlTag = readLine(reader, socket);
@@ -789,6 +791,10 @@ public class XMLparser
 
 			if (_panic)
 				return null;
+		}
+		}
+		catch (OutOfMemoryError e){
+			System.exit(-1);
 		}
 
 		DataElement result = _rootDataElement;

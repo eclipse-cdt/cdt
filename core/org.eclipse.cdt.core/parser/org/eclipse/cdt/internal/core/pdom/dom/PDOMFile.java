@@ -222,7 +222,7 @@ public class PDOMFile implements IIndexFragmentFile {
 			// Detach the includes
 			source.setFirstIncludedBy(null);
 			// Adjust the includes
-			for (PDOMInclude i=include; i != null; i= i.getNextInIncludedBy()) {
+			for (PDOMInclude i= include; i != null; i= i.getNextInIncludedBy()) {
 				i.setIncludes(this);
 			}
 			// Append the includes
@@ -230,7 +230,7 @@ public class PDOMFile implements IIndexFragmentFile {
 			if (last == null) {
 				setFirstIncludedBy(include);
 			} else {
-				for (PDOMInclude i=last; i != null; i= i.getNextInIncludedBy()) {
+				for (PDOMInclude i= last; i != null; i= i.getNextInIncludedBy()) {
 					last= i;
 				}
 				last.setNextInIncludedBy(include);

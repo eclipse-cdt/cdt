@@ -14,4 +14,5 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.cdt.debug.ui;bundle-version="7.0.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
-Export-Package: org.eclipse.cdt.debug.ui.memory.memorybrowser
+Export-Package: org.eclipse.cdt.debug.ui.memory.memorybrowser,
+ org.eclipse.cdt.debug.ui.memory.memorybrowser.api

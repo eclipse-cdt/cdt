@@ -45,6 +45,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 
 public class Binary extends Openable implements IBinary {
 
@@ -273,20 +274,19 @@ public class Binary extends Openable implements IBinary {
 			if (obj != null) {
 				// First check if we can get the list of source
 				// files used to build the binary from the symbol
-				// information.  if not, fall back on information from the binary parser.
-				boolean showSourceFiles = CCorePlugin.getDefault().getPluginPreferences().getBoolean( CCorePreferenceConstants.SHOW_SOURCE_FILES_IN_BINARIES );
-				if (!showSourceFiles ||
-						!addSourceFiles(info, obj, hash))
-				{
+				// information.  If not, fall back on information from the binary parser.
+				boolean showSourceFiles = Platform.getPreferencesService().getBoolean(CCorePlugin.PLUGIN_ID,
+						CCorePreferenceConstants.SHOW_SOURCE_FILES_IN_BINARIES, false, null);
+				if (!showSourceFiles || !addSourceFiles(info, obj, hash)) {
 					ISymbol[] symbols = obj.getSymbols();
 					for (ISymbol symbol : symbols) {
 						switch (symbol.getType()) {
-							case ISymbol.FUNCTION :
-								addFunction(info, symbol, hash);
+						case ISymbol.FUNCTION:
+							addFunction(info, symbol, hash);
 							break;
 
-							case ISymbol.VARIABLE :
-								addVariable(info, symbol, hash);
+						case ISymbol.VARIABLE:
+							addVariable(info, symbol, hash);
 							break;
 						}
 					}

@@ -1822,7 +1822,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		}
         PreprocessorMacro macro= fMacroDictionary.get(name);
         if (macro == null) {
-        	if ((options & IGNORE_UNDEFINED_SIGNIFICANT_MACROS) == 0) 
+        	if (reportSignificant && (options & IGNORE_UNDEFINED_SIGNIFICANT_MACROS) == 0) 
         		fCurrentContext.significantMacroUndefined(name);
         	return false;
         }

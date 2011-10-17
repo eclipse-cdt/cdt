@@ -12,6 +12,7 @@
  *     Anton Leherbauer (Wind River Systems)
  *     Warren Paul (Nokia) - Bug 218266
  *     James Blackburn (Broadcom Corp.)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
@@ -655,18 +656,26 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 
 	public boolean isHeaderUnit() {
-		return CCorePlugin.CONTENT_TYPE_CHEADER.equals(contentTypeId)
-				|| CCorePlugin.CONTENT_TYPE_CXXHEADER.equals(contentTypeId);
+		return isHeaderContentType(contentTypeId);
 	}
 
 	public boolean isSourceUnit() {
-		if (isHeaderUnit())
+		return isSourceContentType(contentTypeId);
+	}
+
+	private static boolean isHeaderContentType(String contentType) {
+		return CCorePlugin.CONTENT_TYPE_CHEADER.equals(contentType)
+				|| CCorePlugin.CONTENT_TYPE_CXXHEADER.equals(contentType);
+	}
+
+	private static boolean isSourceContentType(String contentType) {
+		if (isHeaderContentType(contentType))
 			return false;
 
-		return CCorePlugin.CONTENT_TYPE_CSOURCE.equals(contentTypeId)
-				|| CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(contentTypeId)
-				|| CCorePlugin.CONTENT_TYPE_ASMSOURCE.equals(contentTypeId)
-				|| LanguageManager.getInstance().isContributedContentType(contentTypeId);
+		return CCorePlugin.CONTENT_TYPE_CSOURCE.equals(contentType)
+				|| CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(contentType)
+				|| CCorePlugin.CONTENT_TYPE_ASMSOURCE.equals(contentType)
+				|| LanguageManager.getInstance().isContributedContentType(contentType);
 	}
 
 	public boolean isCLanguage() {
@@ -847,31 +856,27 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 				fLanguageOfContext= null;
 				final IIndexFileLocation ifl = IndexLocationFactory.getIFL(this);
 				if (ifl != null) {
-					IIndexFile best= null;
-					int mostContent= -1;
+					IIndexFile best = null;
+					IIndexFile contextOfBest = null;
+					int bestScore= -1;
+					// Find file variant that has the most content and preferably was parsed in
+					// context of a source file.
 					for (int linkageID : CTX_LINKAGES) {
 						for (IIndexFile indexFile : index.getFiles(linkageID, ifl)) {
-							int count= indexFile.getMacros().length;
-							if (count > mostContent) {
-								mostContent= count;
+							int score= indexFile.getMacros().length * 2;
+							IIndexFile context= getParsedInContext(indexFile);
+							if (isSourceFile(context))
+								score++;
+							if (score > bestScore) {
+								bestScore= score;
 								best= indexFile;
+								contextOfBest = context;
 							}
 						}
 					}
 					
-					if (best != null) {
-						IIndexFile context= best;
-						HashSet<IIndexFile> visited= new HashSet<IIndexFile>();
-						// Bug 199412, may recurse.
-						while (visited.add(context)) {
-							IIndexFile next= getParsedInContext(context);
-							if (next == null)
-								break;
-							context= next;
-						}
-						if (context != best) {
-							return new IIndexFile[] {context, best};
-						}
+					if (best != null && contextOfBest != best) {
+						return new IIndexFile[] { contextOfBest, best };
 					}
 				}
 			} catch (CoreException e) {
@@ -881,18 +886,35 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return null;
 	}
 
-	private IIndexFile getParsedInContext(IIndexFile indexFile)
-			throws CoreException {
-		IIndexInclude include= indexFile.getParsedInContext();
-		if (include != null) {
-			return include.getIncludedBy();
+	private IIndexFile getParsedInContext(IIndexFile indexFile) throws CoreException {
+		HashSet<IIndexFile> visited= new HashSet<IIndexFile>();
+		// Bug 199412, may recurse.
+		while (visited.add(indexFile)) {
+			IIndexInclude include= indexFile.getParsedInContext();
+			if (include == null)
+				break;
+			indexFile = include.getIncludedBy();
 		}
-		return null;
+		return indexFile;
 	}
 	
+	/**
+	 * Returns <code>true</code> if the given file was parsed in a context of a source file.
+	 * @throws CoreException 
+	 */
+	private boolean isSourceFile(IIndexFile indexFile) throws CoreException {
+		String path = indexFile.getLocation().getURI().getPath();
+		IContentType cType = CCorePlugin.getContentType(getCProject().getProject(), path);
+		if (cType == null)
+			return false;
+
+		return isSourceContentType(cType.getId());
+	}
+
 	private ITranslationUnit getConfigureWith(IIndexFile[] contextToHeader) throws CoreException {
 		if (contextToHeader != null) { 
-			ITranslationUnit configureWith = CoreModelUtil.findTranslationUnitForLocation(contextToHeader[0].getLocation(), getCProject());
+			ITranslationUnit configureWith = CoreModelUtil.findTranslationUnitForLocation(
+					contextToHeader[0].getLocation(), getCProject());
 			if (configureWith != null) 
 				return configureWith;
 		}

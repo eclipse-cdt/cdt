@@ -677,20 +677,20 @@ public class PDOMFile implements IIndexFragmentFile {
 		return result.toArray(new IIndexName[result.size()]);
 	}
 
-	public static PDOMFile[] findFiles(PDOMLinkage linkage, BTree btree, IIndexFileLocation location,
+	public static IIndexFragmentFile[] findFiles(PDOMLinkage linkage, BTree btree, IIndexFileLocation location,
 			IIndexLocationConverter strategy) throws CoreException {
 		String internalRepresentation= strategy.toInternalFormat(location);
 		if (internalRepresentation != null) {
 			Finder finder = new Finder(linkage.getDB(), internalRepresentation, linkage.getLinkageID(), null);
 			btree.accept(finder);
 			long[] records= finder.getRecords();
-			PDOMFile[] result= new PDOMFile[records.length];
+			IIndexFragmentFile[] result= new IIndexFragmentFile[records.length];
 			for (int i = 0; i < result.length; i++) {
 				result[i]= new PDOMFile(linkage, records[i]);
 			}
 			return result;
 		}
-		return null;
+		return IIndexFragmentFile.EMPTY_ARRAY;
 	}
 
 	/**

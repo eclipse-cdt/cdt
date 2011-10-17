@@ -680,7 +680,7 @@ public class CCorePlugin extends Plugin {
 	public IBinaryParser getDefaultBinaryParser() throws CoreException {
 		IBinaryParser parser = null;
 		String id = getPluginPreferences().getDefaultString(PREF_BINARY_PARSER);
-		if (id == null || id.length() == 0) {
+		if (id == null || id.isEmpty()) {
 			id = DEFAULT_BINARY_PARSER_UNIQ_ID;
 		}
         IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, BINARY_PARSER_SIMPLE_ID);

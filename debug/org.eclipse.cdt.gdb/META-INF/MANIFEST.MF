@@ -6,7 +6,7 @@ Bundle-Version: 7.0.0.qualifier
 Bundle-Activator: org.eclipse.cdt.gdb.internal.Activator
 Require-Bundle: org.eclipse.core.runtime;bundle-version="3.6.0"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.cdt.gdb.eventbkpts,

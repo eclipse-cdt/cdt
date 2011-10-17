@@ -374,11 +374,11 @@ public class CDebugCorePlugin extends Plugin {
 			fCommonSourceLookupDirector = new CommonSourceLookupDirector();
 			boolean convertingFromLegacyFormat = false;
 			String newMemento = CDebugCorePlugin.getDefault().getPluginPreferences().getString(ICDebugInternalConstants.PREF_DEFAULT_SOURCE_CONTAINERS);
-			if (newMemento.length() == 0) {
+			if (newMemento.isEmpty()) {
 				newMemento = CDebugCorePlugin.getDefault().getPluginPreferences().getString(ICDebugInternalConstants.PREF_COMMON_SOURCE_CONTAINERS);
 				convertingFromLegacyFormat = true;
 			}
-			if (newMemento.length() == 0) {
+			if (newMemento.isEmpty()) {
 				// Add the participant(s). This happens as part of
 				// initializeFromMemento(), but since we're not calling it, we
 				// need to do this explicitly. See 299583.

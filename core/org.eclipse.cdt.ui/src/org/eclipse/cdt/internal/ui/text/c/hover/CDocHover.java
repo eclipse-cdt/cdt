@@ -52,7 +52,7 @@ public class CDocHover extends AbstractCEditorTextHover {
 		try {
 			expression = viewer.getDocument().get(region.getOffset(), region.getLength());
 			expression = expression.trim();
-			if (expression.length() == 0)
+			if (expression.isEmpty())
 				return null; 
 
 			StringBuilder buffer = new StringBuilder();

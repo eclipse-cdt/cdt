@@ -528,7 +528,7 @@ public final class CIndenter {
 		StringBuilder reference= getLeadingWhitespace(offset);
 		IRegion line= fDocument.getLineInformationOfOffset(offset);
 		String string= fDocument.get(line.getOffset(), offset - line.getOffset());
-		if (string.trim().length() == 0)
+		if (string.trim().isEmpty())
 			return reference;
 		// Add additional indent
 		return createReusingIndent(reference, fPrefs.prefContinuationIndent, 0);

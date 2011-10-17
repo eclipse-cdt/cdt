@@ -18,4 +18,4 @@ Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.cdt.debug.gdbjtag.core,
  org.eclipse.cdt.debug.gdbjtag.core.jtagdevice
 Bundle-Vendor: %providerName
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

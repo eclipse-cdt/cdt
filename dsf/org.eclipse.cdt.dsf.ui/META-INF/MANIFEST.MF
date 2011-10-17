@@ -76,5 +76,5 @@ Export-Package: org.eclipse.cdt.dsf.debug.internal.ui;x-internal:=true,
    org.eclipse.cdt.examples.dsf.pda.ui,
    org.eclipse.cdt.debug.edc.ui",
  org.eclipse.cdt.dsf.ui.viewmodel.update;x-friends:="org.eclipse.cdt.dsf.gdb.ui,org.eclipse.cdt.examples.dsf,org.eclipse.cdt.examples.dsf.pda.ui"
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: com.ibm.icu.text

@@ -26,6 +26,11 @@ public interface IIndexFragmentFileSet {
 	void add(IIndexFragmentFile fragFile);
 
 	/**
+	 * Removes the fragment file from the file-set.
+	 */
+	void remove(IIndexFragmentFile fragFile);
+
+	/**
 	 * Returns whether the file set contains the given file.
 	 */
 	boolean contains(IIndexFragmentFile file) throws CoreException;

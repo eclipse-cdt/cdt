@@ -136,6 +136,8 @@ public class MacroExpander {
 	private String fFixedCurrentFilename;
 	private int fFixedLineNumber;
 	private char[] fFixedInput;
+	private ScannerContext fReportMacros;
+	private boolean fReportUndefined;
 	
 	public MacroExpander(ILexerLog log, CharArrayMap<PreprocessorMacro> macroDictionary, LocationMap locationMap, LexerOptions lexOptions) {
 		fDictionary= macroDictionary;
@@ -147,8 +149,19 @@ public class MacroExpander {
 	
 	/** 
 	 * Expects that the identifier has been consumed, stores the result in the list provided.
+	 * @param scannerContext 
 	 */
-	public TokenList expand(ITokenSequence lexer, final boolean isPPCondition, PreprocessorMacro macro, Token identifier, boolean completionMode) throws OffsetLimitReachedException {
+	public TokenList expand(ITokenSequence lexer, final int ppOptions,
+			PreprocessorMacro macro, Token identifier, boolean completionMode,
+			ScannerContext scannerContext) throws OffsetLimitReachedException {
+		final boolean protectDefined= (ppOptions & CPreprocessor.PROTECT_DEFINED) != 0;
+		if ((ppOptions & CPreprocessor.REPORT_SIGNIFICANT_MACROS) != 0) {
+			fReportMacros= scannerContext;
+			fReportUndefined= (ppOptions & CPreprocessor.IGNORE_UNDEFINED_SIGNIFICANT_MACROS) == 0;
+		} else {
+			fReportMacros= null;
+		}
+		
 		fImplicitMacroExpansions.clear();
 		fImageLocationInfos.clear();
 		
@@ -170,7 +183,7 @@ public class MacroExpander {
 
 			input.prepend(firstExpansion);
 
-			result= expandAll(input, forbidden, isPPCondition, null);
+			result= expandAll(input, forbidden, protectDefined, null);
 		} catch (CompletionInMacroExpansionException e) {
 			// for content assist in macro expansions, we return the list of tokens of the 
 			// parameter at the current cursor position and hope that they make sense if 
@@ -180,6 +193,7 @@ public class MacroExpander {
 			result= e.getParameterTokens().cloneTokens();
 		}
 		postProcessTokens(result);
+		fReportMacros= null;
 		return result;
 	}
 
@@ -193,6 +207,7 @@ public class MacroExpander {
 		fFixedInput= beforeExpansion.toCharArray();
 		fFixedCurrentFilename= filePath;
 		fFixedLineNumber= lineNumber;
+		fReportMacros= null;
 		Lexer lexer= new Lexer(fFixedInput, fLexOptions, fLog, this);
 		
 		try {
@@ -240,6 +255,9 @@ public class MacroExpander {
 			IdentityHashMap<PreprocessorMacro, PreprocessorMacro> forbidden, TokenSource input, TokenList result,
 			MacroExpansionTracker tracker) 
 			throws OffsetLimitReachedException {
+		if (fReportMacros != null)
+			fReportMacros.significantMacro(macro);
+		
 		if (macro.isFunctionStyle()) {
 			final int paramCount = macro.getParameterPlaceholderList().length;
 			final TokenSource[] argInputs= new TokenSource[paramCount];
@@ -351,6 +369,13 @@ public class MacroExpander {
 					protect= true;
 				} else if (macro == null || (macro.isFunctionStyle() && !input.findLParenthesis())) {
 					// Tricky: Don't mark function-style macros if you don't find the left parenthesis
+					if (fReportMacros != null) {
+						if (macro != null) {
+							fReportMacros.significantMacro(macro);
+						} else if (fReportUndefined){
+							fReportMacros.significantMacroUndefined(image);
+						}
+					}
 					result.append(t);
 				} else if (forbidden.containsKey(macro)) {
 					t.setType(CPreprocessor.tEXPANDED_IDENTIFIER); // prevent any further expansion

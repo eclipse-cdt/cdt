@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.parser.FileContent;
+import org.eclipse.cdt.core.parser.ISignificantMacros;
 
 /**
  * Instructs the preprocessor on how to handle a file-inclusion.
@@ -38,11 +39,21 @@ public class InternalFileContent extends FileContent {
 		USE_SOURCE
 	}
 
+	public static class FileVersion {
+		public final String fPath;
+		public final ISignificantMacros fSigMacros;
+		public FileVersion(String path, ISignificantMacros sig) {
+			fPath= path;
+			fSigMacros= sig;
+		}
+	}
+	
 	private final InclusionKind fKind;
 	private final AbstractCharArray fSource;
 	private final List<IIndexMacro> fMacroDefinitions;
 	private final List<ICPPUsingDirective> fUsingDirectives;
 	private final String fFileLocation;
+	private final List<FileVersion> fNonPragmaOnceFiles;
 	private boolean fHeuristic;
 	private boolean fIsSource= false;
 	private List<IIndexFile> fFiles;
@@ -64,6 +75,7 @@ public class InternalFileContent extends FileContent {
 		fMacroDefinitions= null;
 		fUsingDirectives= null;
 		fSource= null;
+		fNonPragmaOnceFiles= null;
 	}
 
 	/**
@@ -79,6 +91,7 @@ public class InternalFileContent extends FileContent {
 		fSource= content;
 		fMacroDefinitions= null;
 		fUsingDirectives= null;
+		fNonPragmaOnceFiles= null;
 		if (fFileLocation == null) {
 			throw new IllegalArgumentException();
 		}
@@ -92,13 +105,14 @@ public class InternalFileContent extends FileContent {
 	 * @throws IllegalArgumentException in case the fileLocation or the macroDefinitions are <code>null</code>.
 	 */
 	public InternalFileContent(String fileLocation, List<IIndexMacro> macroDefinitions, List<ICPPUsingDirective> usingDirectives,
-			List<IIndexFile> files) {
+			List<IIndexFile> files, List<FileVersion> nonPragmaOnceVersions) {
 		fKind= InclusionKind.FOUND_IN_INDEX;
 		fFileLocation= fileLocation;
 		fSource= null;
 		fUsingDirectives= usingDirectives;
 		fMacroDefinitions= macroDefinitions;
 		fFiles= files;
+		fNonPragmaOnceFiles= nonPragmaOnceVersions;
 	}
 
 	/**
@@ -154,6 +168,10 @@ public class InternalFileContent extends FileContent {
 	 */
 	public List<IIndexFile> getFilesIncluded() {
 		return fFiles;
+	}
+	
+	public List<FileVersion> getNonPragmaOnceVersions() {
+		return fNonPragmaOnceFiles;
 	}
 
 	/**

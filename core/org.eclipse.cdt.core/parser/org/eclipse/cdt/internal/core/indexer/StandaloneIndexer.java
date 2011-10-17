@@ -358,12 +358,12 @@ public abstract class StandaloneIndexer {
 	private void clearIndex() throws CoreException, InterruptedException {
 		IWritableIndex index= getIndex();
 		// First clear the pdom
-		index.acquireWriteLock(0);
+		index.acquireWriteLock();
 		try {
 			index.clear();
 		}
 		finally {
-			index.releaseWriteLock(0);
+			index.releaseWriteLock();
 		}
 	}
 	

@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 
 /**
@@ -47,26 +48,30 @@ public class IncludesTests extends PDOMTestBase {
 		index.releaseReadLock();
 	}
 	
+	private IIndexFile getIndexFile(IFile file) throws CoreException {
+		IIndexFile[] files = index.getFiles(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file));
+		assertTrue("Can't find " + file.getLocation(), files.length > 0);
+		assertEquals("Found " + files.length + " files for " + file.getLocation() + " instead of one", 1, files.length);
+		return files[0];
+	}			
+	
 	public void testIncludedBy() throws Exception {
 		IResource loc = project.getProject().findMember("I2.h");
-		IIndexFile file = index.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL((IFile) loc));
-		assertNotNull(file);
+		IIndexFile file = getIndexFile((IFile) loc);
 		IIndexInclude[] allIncludedBy = index.findIncludedBy(file, -1);
 		assertEquals(9, allIncludedBy.length); // i.e. all of them
 	}
-	
+
 	public void testIncludes() throws Exception {
 		IResource loc = project.getProject().findMember("I1.cpp");
-		IIndexFile file = index.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL((IFile) loc));
-		assertNotNull(file);
+		IIndexFile file = getIndexFile((IFile) loc);
 		IIndexInclude[] allIncludesTo= index.findIncludes(file, -1);
 		assertEquals(2, allIncludesTo.length); // i.e. I1.h, I2.h
 	}
 	
 	public void testIncludeName() throws Exception {
 		IResource loc = project.getProject().findMember("a/b/I6.h");
-		IIndexFile file = index.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL((IFile) loc));
-		assertNotNull(file);
+		IIndexFile file = getIndexFile((IFile) loc);
 		IIndexInclude[] allIncludedBy = index.findIncludedBy(file, -1);
 		assertEquals(2, allIncludedBy.length);
 		for (IIndexInclude include : allIncludedBy) {

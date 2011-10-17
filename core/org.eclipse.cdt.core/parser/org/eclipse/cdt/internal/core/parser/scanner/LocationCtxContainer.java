@@ -259,4 +259,9 @@ class LocationCtxContainer extends LocationCtx {
 		}
 		return result;
 	}
+	
+	@Override
+	public String toString() {
+		return "<synthetic>"; //$NON-NLS-1$
+	}
 }

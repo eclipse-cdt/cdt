@@ -15,11 +15,13 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -42,6 +44,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
@@ -55,12 +58,14 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexInclude;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
-import org.eclipse.cdt.core.parser.IScannerInfoProvider;
+import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
@@ -76,6 +81,7 @@ import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 
 @SuppressWarnings("nls")
 public class CreateParserLogAction implements IObjectActionDelegate {
+	private static final String INDENT = "   ";
 
 	private static final class MyVisitor extends ASTVisitor {
 		List<IASTProblem> fProblems= new ArrayList<IASTProblem>();
@@ -118,6 +124,8 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 
 	private ISelection fSelection;
 	private IWorkbenchPartSite fSite;
+
+	private boolean fWroteUnresolvedTitle;
 	
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		fSite= targetPart.getSite();
@@ -209,79 +217,88 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 		IStatus status = Status.OK_STATUS;
 		final ICProject cproject = tu.getCProject();
 		final String projectName= cproject == null ? null : cproject.getElementName();
-		String scannerInfoProvider= "null";
-		if (cproject != null) {
-			IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(cproject.getProject());
-			if (provider != null) {
-				scannerInfoProvider= provider.getClass().getName();
-			}
-		}	
-		
-		ITranslationUnit ctx= tu;
+		final IIndex index = ast.getIndex();
+
+		ITranslationUnit configureWith = tu;
+		int ctxLinkage= 0;
+		ISignificantMacros ctxSigMacros= null;
 		if (tu instanceof TranslationUnit) {
 			TranslationUnit itu= (TranslationUnit) tu;
-			ctx= itu.getSourceContextTU(ast.getIndex(), ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT);
+			IIndexFile[] ctxToHeader = itu.getContextToHeader(index, ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT);
+			if (ctxToHeader != null) {
+				try {
+					final IIndexFile ctxFile = ctxToHeader[0];
+					ctxLinkage= ctxToHeader[0].getLinkageID();
+					ctxSigMacros= ctxFile.getSignificantMacros();
+					configureWith = CoreModelUtil.findTranslationUnitForLocation(ctxFile.getLocation(), cproject);
+				} catch (CoreException e) {
+				}
+				if (configureWith == null) {
+					configureWith= tu;
+					ctxToHeader= null;
+				}
+			}
 		}
-		final ExtendedScannerInfo scfg= new ExtendedScannerInfo(ctx.getScannerInfo(true));
-		final String indent= "   "; 
+
+		final ExtendedScannerInfo scfg= new ExtendedScannerInfo(configureWith.getScannerInfo(true));
 		final MyVisitor visitor= new MyVisitor();
 		ast.accept(visitor);
 		
 		out.println("Project:               " + projectName); 
+		out.println("File:                  " + tu.getLocationURI()); 
+		out.println("Language:              " + lang.getName()); 
 		out.println("Index Version:         " + PDOM.versionString(PDOM.getDefaultVersion())); 
-		out.println("Scanner Info Provider: " + scannerInfoProvider);
 		out.println("Build Configuration:   " + getBuildConfig(cproject));
-		out.println("File:      " + tu.getLocationURI()); 
-		out.println("Context:   " + ctx.getLocationURI()); 
-		out.println("Language:  " + lang.getName()); 
-		out.println();
-		out.println("Include Search Path (option -I):");  
-		output(out, indent, scfg.getIncludePaths());
-		out.println();
-		out.println("Local Include Search Path (option -iquote):"); 
-		output(out, indent, scfg.getLocalIncludePath());
-		out.println();
-		out.println("Preincluded files (option -include):"); 
-		output(out, indent, scfg.getIncludeFiles());
-		out.println();
-		out.println("Preincluded macro files (option -imacros):"); 
-		output(out, indent, scfg.getMacroFiles());
-		out.println();
-		out.println("Macro definitions (option -D):"); 
-		HashSet<String> reported= new HashSet<String>();
-		output(out, indent, scfg.getDefinedSymbols(), reported);
-		out.println();
-		out.println("Macro definitions (from configuration + headers in index):"); 
-		output(out, indent, ast.getBuiltinMacroDefinitions(), reported);
-		out.println();
-		out.println("Macro definitions (from files actually parsed):"); 
-		output(out, indent, ast.getMacroDefinitions(), reported);
-
-		out.println();
-		out.println("Unresolved includes (from headers in index):"); 
+		if (configureWith == tu) {
+			out.println("Context:               none");
+		} else {
+			out.println("Context:               " + configureWith.getLocationURI());
+			out.println(INDENT + getLinkageName(ctxLinkage) + ", " + ctxSigMacros);
+		}
+		
 		try {
-			outputUnresolvedIncludes(cproject, ast.getIndex(), out, indent, ast.getIncludeDirectives(), ast.getLinkage().getLinkageID());
+			IIndexFile[] versions= index.getFiles(IndexLocationFactory.getIFL(tu));
+			out.println("Versions in Index:     " + versions.length);
+			for (IIndexFile f : versions) {
+				out.println(INDENT + getLinkageName(f.getLinkageID()) + ": " + f.getSignificantMacros());
+			}
 		} catch (CoreException e) {
 			status= e.getStatus();
 		}
+		out.println();
+
+		output(out, "Include Search Path (option -I):", scfg.getIncludePaths());
+		output(out, "Local Include Search Path (option -iquote):", scfg.getLocalIncludePath());
+		output(out, "Preincluded files (option -include):", scfg.getIncludeFiles());
+		output(out, "Preincluded macro files (option -imacros):", scfg.getMacroFiles());
 		
-		out.println();
-		out.println("Scanner problems:"); 
-		output(out, indent, ast.getPreprocessorProblems());
+		HashSet<String> reported= new HashSet<String>();
+		output(out, "Macro definitions (option -D):", scfg.getDefinedSymbols(), reported);
+		output(out, "Macro definitions (from language + headers in index):", ast.getBuiltinMacroDefinitions(), reported);
+		output(out, "Macro definitions (from files actually parsed):", ast.getMacroDefinitions(), reported);
 
-		out.println();
-		out.println("Parser problems:"); 
-		output(out, indent, visitor.fProblems.toArray(new IASTProblem[visitor.fProblems.size()]));
-		
-		out.println();
-		out.println("Unresolved names:"); 
-		output(out, indent, visitor.fProblemBindings);
-
-		out.println();
-		out.println("Exceptions in name resolution:"); 
-		output(out, visitor.fExceptions);
-
+		try {
+			outputUnresolvedIncludes(cproject, ast.getIndex(), out, ast.getIncludeDirectives(), ast.getLinkage().getLinkageID());
+		} catch (CoreException e) {
+			status= e.getStatus();
+		}
+		output(out, "Scanner problems:", ast.getPreprocessorProblems());
+		output(out, "Parser problems:", visitor.fProblems.toArray(new IASTProblem[0]));
+		output(out, "Unresolved names:", visitor.fProblemBindings.toArray(new IProblemBinding[0]));
+		output(out, "Exceptions in name resolution:", visitor.fExceptions);
+		out.println("Written on " + new Date().toString());
 		return status;
+	}
+
+	private String getLinkageName(int linkageID) {
+		switch(linkageID) {
+		case ILinkage.NO_LINKAGE_ID: return ILinkage.NO_LINKAGE_NAME;
+		case ILinkage.C_LINKAGE_ID: return ILinkage.C_LINKAGE_NAME;
+		case ILinkage.CPP_LINKAGE_ID: return ILinkage.CPP_LINKAGE_NAME;
+		case ILinkage.FORTRAN_LINKAGE_ID: return ILinkage.FORTRAN_LINKAGE_NAME;
+		case ILinkage.OBJC_LINKAGE_ID: return ILinkage.OBJC_LINKAGE_NAME;
+		}
+		return String.valueOf(linkageID);
 	}
 
 	private String getBuildConfig(ICProject cproject) {
@@ -295,35 +312,37 @@ public class CreateParserLogAction implements IObjectActionDelegate {
     	return "unknown";
 	}
 
-	private void outputUnresolvedIncludes(ICProject prj, IIndex index, PrintStream out, String indent, 
+	private void outputUnresolvedIncludes(ICProject prj, IIndex index, PrintStream out, 
 			IASTPreprocessorIncludeStatement[] includeDirectives, int linkageID) throws CoreException {
+		fWroteUnresolvedTitle= false;
 		ASTFilePathResolver resolver= new ProjectIndexerInputAdapter(prj);
-		HashSet<IIndexFileLocation> handled= new HashSet<IIndexFileLocation>();
+		HashSet<IIndexFile> handled= new HashSet<IIndexFile>();
 		for (IASTPreprocessorIncludeStatement include : includeDirectives) {
-			if (include.isActive() && include.isResolved()) {
-				outputUnresolvedIncludes(index, out, indent, resolver.resolveASTPath(include.getPath()), linkageID, handled);
+			if (include.isResolved()) {
+				IIndexFileLocation ifl = resolver.resolveASTPath(include.getPath());
+				IIndexFile ifile= index.getFile(linkageID, ifl, include.getSignificantMacros());
+				outputUnresolvedIncludes(index, out, ifl, ifile, handled);
 			}
 		}
+		if (fWroteUnresolvedTitle)
+			out.println();
 	}
 
-	private void outputUnresolvedIncludes(IIndex index, PrintStream out, String indent, 
-			IIndexFileLocation ifl, int linkageID, HashSet<IIndexFileLocation> handled) throws CoreException {
-		if (!handled.add(ifl)) {
-			return;
-		}
-		IIndexFile ifile= index.getFile(linkageID, ifl);
+	private void outputUnresolvedIncludes(IIndex index, PrintStream out,  
+			IIndexFileLocation ifl, IIndexFile ifile, Set<IIndexFile> handled) throws CoreException {
 		if (ifile == null) {
-			out.println(indent + ifl.getURI() + " is not indexed"); 
-		}
-		else {
+			writeUnresolvedTitle(out);
+			out.println(INDENT + ifl.getURI() + " is not indexed"); 
+		} else if (handled.add(ifile)) {
 			IIndexInclude[] includes = ifile.getIncludes();
 			for (IIndexInclude inc : includes) {
 				if (inc.isActive()) {
 					if (inc.isResolved()) {
-						outputUnresolvedIncludes(index, out, indent, inc.getIncludesLocation(), linkageID, handled);
-					}
-					else {
-						out.println(indent + "Unresolved inclusion: " + inc.getFullName() + " in file " +  
+						IIndexFile next = index.resolveInclude(inc);
+						outputUnresolvedIncludes(index, out, inc.getIncludesLocation(), next, handled);
+					} else {
+						writeUnresolvedTitle(out);
+						out.println(INDENT + "Unresolved inclusion: " + inc.getFullName() + " in file " +  
 								inc.getIncludedByLocation().getURI());
 					}
 				}
@@ -331,53 +350,85 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 		}
 	}
 
-	private void output(PrintStream out, String indent, String[] list) {
-		for (String line : list) {
-			out.println(indent + line);
+	public void writeUnresolvedTitle(PrintStream out) {
+		if (!fWroteUnresolvedTitle) {
+			fWroteUnresolvedTitle= true;
+			out.println("Unresolved includes (from headers in index):");
 		}
 	}
 
-	private void output(PrintStream out, String indent, Map<String, String> definedSymbols, HashSet<String> reported) {
-		SortedMap<String, String> sorted= new TreeMap<String, String>(COMP_INSENSITIVE);
-		sorted.putAll(definedSymbols);
-		for (Entry<String, String> entry : sorted.entrySet()) {
-			final String macro = entry.getKey() + '=' + entry.getValue();
-			if (reported.add(macro)) {
-				out.println(indent + macro);
+	private void output(PrintStream out, String label, String[] list) {
+		if (list.length > 0) {
+			out.println(label);
+			for (String line : list) {
+				out.println(INDENT + line);
 			}
+			out.println();
+		}
+	}
+
+	private void output(PrintStream out, String label, Map<String, String> definedSymbols, HashSet<String> reported) {
+		if (!definedSymbols.isEmpty()) {
+			out.println(label);
+
+			SortedMap<String, String> sorted= new TreeMap<String, String>(COMP_INSENSITIVE);
+			sorted.putAll(definedSymbols);
+			for (Entry<String, String> entry : sorted.entrySet()) {
+				final String macro = entry.getKey() + '=' + entry.getValue();
+				if (reported.add(macro)) {
+					out.println(INDENT + macro);
+				}
+			}
+			out.println();
 		}
 	}
 	
-	private void output(PrintStream out, String indent,	IASTPreprocessorMacroDefinition[] defs, HashSet<String> reported) {
-		SortedSet<String> macros= new TreeSet<String>(COMP_INSENSITIVE);
-		for (IASTPreprocessorMacroDefinition def : defs) {
-			macros.add(def.toString());
+	private void output(PrintStream out, String label, IASTPreprocessorMacroDefinition[] defs, HashSet<String> reported) {
+		if (defs.length > 0) {
+			out.println(label);
+			SortedSet<String> macros= new TreeSet<String>(COMP_INSENSITIVE);
+			for (IASTPreprocessorMacroDefinition def : defs) {
+				macros.add(def.toString());
+			}
+
+			for (String macro : macros) {
+				if (reported.add(macro)) {
+					out.println(INDENT + macro);
+				}
+			}
+			out.println();
 		}
+	}
+	
+	private void output(PrintStream out, String label, IASTProblem[] preprocessorProblems) {
+		if (preprocessorProblems.length > 0) {
+			out.println(label);
+			for (IASTProblem problem : preprocessorProblems) {
+				out.println(INDENT + problem.getMessageWithLocation());
+			}
+			out.println();
+		}
+	}
 		
-		for (String macro : macros) {
-			if (reported.add(macro)) {
-				out.println(indent + macro);
+	private void output(PrintStream out, String label, IProblemBinding[] list) {
+		if (list.length > 0) {
+			out.println(label);
+			for (IProblemBinding problem : list) {
+				String file= problem.getFileName();
+				int line = problem.getLineNumber();
+				out.println(INDENT + problem.getMessage() + " in file " + file + ':' + line); 
 			}
-		}
-	}
-	
-	private void output(PrintStream out, String indent,	IASTProblem[] preprocessorProblems) {
-		for (IASTProblem problem : preprocessorProblems) {
-			out.println(indent + problem.getMessageWithLocation());
-		}
-	}
-	
-	private void output(PrintStream out, String indent, List<IProblemBinding> list) {
-		for (IProblemBinding problem : list) {
-	        String file= problem.getFileName();
-	        int line = problem.getLineNumber();
-			out.println(indent + problem.getMessage() + " in file " + file + ':' + line); 
+			out.println();
 		}
 	}
 
-	private void output(PrintStream out, List<Exception> list) {
-		for (Exception problem : list) {
-			problem.printStackTrace(out);
+	private void output(PrintStream out, String label, List<Exception> list) {
+		if (!list.isEmpty()) {
+			out.println(label);
+			for (Exception problem : list) {
+				problem.printStackTrace(out);
+			}
+			out.println();
 		}
 	}
 }

@@ -88,7 +88,7 @@ public class PDOMRebuildTask implements IPDOMIndexerTask {
 	
 	private void clearIndex(ICProject project, IWritableIndex index) throws CoreException, InterruptedException {
 		// First clear the pdom
-		index.acquireWriteLock(0);
+		index.acquireWriteLock();
 		try {
 			index.clear();
 			IWritableIndexFragment wf= index.getWritableFragment();
@@ -96,7 +96,7 @@ public class PDOMRebuildTask implements IPDOMIndexerTask {
 				PDOMManager.writeProjectPDOMProperties((WritablePDOM) wf, project.getProject());
 			}
 		} finally {
-			index.releaseWriteLock(0);
+			index.releaseWriteLock();
 		}
 	}
 

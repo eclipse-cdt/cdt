@@ -56,6 +56,7 @@ import org.eclipse.cdt.core.index.IIndexLocationConverter;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IIndexMacroContainer;
 import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.Linkage;
@@ -210,10 +211,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  CDT 8.1 development (versions not supported on teh 8.0.x branch)
 	 *  120.0 - Enumerators in global index, bug 356235
 	 *  120.1 - Specializations of using declarations, bug 357293.
+	 *  121.0 - Multiple variants of included header file, bug 197989.
 	 */
-	private static final int MIN_SUPPORTED_VERSION= version(120, 0);
-	private static final int MAX_SUPPORTED_VERSION= version(120, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(120, 1);
+	private static final int MIN_SUPPORTED_VERSION= version(121, 0);
+	private static final int MAX_SUPPORTED_VERSION= version(121, Short.MAX_VALUE);
+	private static final int DEFAULT_VERSION = version(121, 0);
 
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;
@@ -419,6 +421,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		return fileIndex;
 	}
 
+	@Deprecated
 	public PDOMFile getFile(int linkageID, IIndexFileLocation location) throws CoreException {
 		PDOMLinkage linkage= getLinkage(linkageID);
 		if (linkage == null)
@@ -426,8 +429,25 @@ public class PDOM extends PlatformObject implements IPDOM {
 		return PDOMFile.findFile(linkage, getFileIndex(), location, locationConverter);
 	}
 
-	public PDOMFile getFile(PDOMLinkage linkage, IIndexFileLocation location) throws CoreException {
-		return PDOMFile.findFile(linkage, getFileIndex(), location, locationConverter);
+	public PDOMFile getFile(int linkageID, IIndexFileLocation location,
+			ISignificantMacros macroDictionary) throws CoreException {
+		PDOMLinkage linkage= getLinkage(linkageID);
+		if (linkage == null)
+			return null;
+		return PDOMFile.findFile(linkage, getFileIndex(), location, locationConverter,
+				macroDictionary);
+	}
+
+	public PDOMFile getFile(PDOMLinkage linkage, IIndexFileLocation location,
+			ISignificantMacros macroDictionary) throws CoreException {
+		return PDOMFile.findFile(linkage, getFileIndex(), location, locationConverter, macroDictionary);
+	}
+
+	public IIndexFragmentFile[] getFiles(int linkageID, IIndexFileLocation location) throws CoreException {
+		PDOMLinkage linkage= getLinkage(linkageID);
+		if (linkage == null)
+			return IIndexFragmentFile.EMPTY_ARRAY;
+		return PDOMFile.findFiles(linkage, getFileIndex(), location, locationConverter);
 	}
 
 	public IIndexFragmentFile[] getFiles(IIndexFileLocation location) throws CoreException {
@@ -436,7 +456,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 
 	public IIndexFragmentFile[] getAllFiles() throws CoreException {
 		final List<PDOMFile> locations = new ArrayList<PDOMFile>();
-		getFileIndex().accept(new IBTreeVisitor(){
+		getFileIndex().accept(new IBTreeVisitor() {
 			public int compare(long record) throws CoreException {
 				return 0;
 			}
@@ -449,11 +469,12 @@ public class PDOM extends PlatformObject implements IPDOM {
 		return locations.toArray(new IIndexFragmentFile[locations.size()]);
 	}
 
-	protected IIndexFragmentFile addFile(int linkageID, IIndexFileLocation location) throws CoreException {
+	protected IIndexFragmentFile addFile(int linkageID, IIndexFileLocation location,
+			ISignificantMacros sigMacros) throws CoreException {
 		PDOMLinkage linkage= createLinkage(linkageID);
-		IIndexFragmentFile file = getFile(linkage, location);
+		IIndexFragmentFile file = getFile(linkage, location, sigMacros);
 		if (file == null) {
-			PDOMFile pdomFile = new PDOMFile(linkage, location, linkageID);
+			PDOMFile pdomFile = new PDOMFile(linkage, location, linkageID, sigMacros);
 			getFileIndex().insert(pdomFile.getRecord());
 			file= pdomFile;
 			fEvent.setHasNewFiles();
@@ -1077,7 +1098,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 			return (PDOMFile) file;
 		}
 
-		return getFile(file.getLinkageID(), file.getLocation());
+		return getFile(file.getLinkageID(), file.getLocation(), file.getSignificantMacros());
 	}
 
 	public File getPath() {

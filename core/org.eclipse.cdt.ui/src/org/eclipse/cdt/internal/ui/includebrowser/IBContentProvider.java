@@ -12,6 +12,8 @@ package org.eclipse.cdt.internal.ui.includebrowser;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -102,7 +104,7 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 					directiveFile= node.getRepresentedFile();
 				}
 				if (includes.length > 0) {
-					ArrayList<IBNode> result= new ArrayList<IBNode>(includes.length);
+					Set<IBNode> result= new LinkedHashSet<IBNode>(includes.length);
 					for (int i = 0; i < includes.length; i++) {
 						IIndexInclude include = includes[i];
 						try {
@@ -122,7 +124,8 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 									include.getIncludedBy().getTimestamp());
 							newnode.setIsActiveCode(include.isActive());
 							newnode.setIsSystemInclude(include.isSystemInclude());
-							result.add(newnode);
+							if (!result.contains(newnode) || newnode.isActiveCode())
+								result.add(newnode);
 						} catch (CoreException e) {
 							CUIPlugin.log(e);
 						}

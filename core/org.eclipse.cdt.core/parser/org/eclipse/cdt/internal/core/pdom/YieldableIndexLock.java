@@ -19,14 +19,12 @@ import org.eclipse.cdt.internal.core.index.IWritableIndex;
  */
 public class YieldableIndexLock {
 	private final IWritableIndex index;
-	private final int readlockCount;
 	private final boolean flushIndex;
 	private long lastLockTime;
 	private long cumulativeLockTime;
 
-	public YieldableIndexLock(IWritableIndex index, int readlockCount, boolean flushIndex) {
+	public YieldableIndexLock(IWritableIndex index, boolean flushIndex) {
 		this.index = index;
-		this.readlockCount = readlockCount;
 		this.flushIndex = flushIndex;
 	}
 
@@ -36,7 +34,7 @@ public class YieldableIndexLock {
 	 * @throws InterruptedException
 	 */
 	public void acquire() throws InterruptedException {
-		index.acquireWriteLock(readlockCount);
+		index.acquireWriteLock();
 		lastLockTime = System.currentTimeMillis();
 	}
 
@@ -45,7 +43,7 @@ public class YieldableIndexLock {
 	 */
 	public void release() {
 		if (lastLockTime != 0) {
-			index.releaseWriteLock(readlockCount, flushIndex);
+			index.releaseWriteLock(flushIndex);
 			cumulativeLockTime += System.currentTimeMillis() - lastLockTime;
 			lastLockTime = 0;
 		}
@@ -58,7 +56,7 @@ public class YieldableIndexLock {
 	 */
 	public void yield() throws InterruptedException {
 		if (index.hasWaitingReaders()) {
-			index.releaseWriteLock(readlockCount, false);
+			index.releaseWriteLock(false);
 			cumulativeLockTime += System.currentTimeMillis() - lastLockTime;
 			lastLockTime = 0;
 			acquire();

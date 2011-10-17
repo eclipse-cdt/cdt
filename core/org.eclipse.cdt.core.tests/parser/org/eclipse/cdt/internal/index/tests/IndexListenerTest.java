@@ -101,9 +101,11 @@ public class IndexListenerTest extends BaseTestCase {
 		assertTrue(im.joinIndexer(10000, npm()));
 		IIndexChangeListener listener = new IIndexChangeListener() {
 			public void indexChanged(IIndexChangeEvent event) {
-				synchronized (mutex) {
-					projects.add(event.getAffectedProject());
-					mutex.notify();
+				if (!event.getFilesWritten().isEmpty()) {
+					synchronized (mutex) {
+						projects.add(event.getAffectedProject());
+						mutex.notify();
+					}
 				}
 			}
 		};
@@ -118,7 +120,6 @@ public class IndexListenerTest extends BaseTestCase {
 			assertEquals(1, projects.size());
 			assertTrue(projects.contains(fProject1));
 			projects.clear();
-
 
 			IFile file1= TestSourceReader.createFile(fProject1.getProject(), "test.cpp", "int b;");
 			IFile file2= TestSourceReader.createFile(fProject2.getProject(), "test.cpp", "int c;");

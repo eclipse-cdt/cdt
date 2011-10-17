@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -133,16 +134,53 @@ public interface IIndex {
 	public long getLastWriteAccess();
 
 	/**
-	 * Returns the file-object for the given location and linkage or returns
-	 * <code>null</code> if the file was not indexed in this linkage.
+	 * Returns the file object for the given location and linkage or <code>null</code> if the file
+	 * was not indexed in this linkage.
+	 * <p>
+	 * When a header file is stored in the index in multiple variants for different sets of macro
+	 * definitions, this method will return an arbitrary one of these variants.
 	 * @param location an IIndexFileLocation representing the location of the file
 	 * @return the file in the index or <code>null</code>
 	 * @throws CoreException
+	 * @deprecated Use {@link #getFile(int, IIndexFileLocation, ISignificantMacros)} or
+	 *     {@link #getFiles(int, IIndexFileLocation)}.
 	 */
+	@Deprecated
 	public IIndexFile getFile(int linkageID, IIndexFileLocation location) throws CoreException;
 
 	/**
-	 * Returns the file-objects for the given location in any linkage.
+	 * Returns the file for the given location, linkage, and significant macros
+	 * May return <code>null</code>, if no such file exists.
+	 *  
+	 * @param linkageID the id of the linkage in which the file has been parsed.
+	 * @param location the IIndexFileLocation representing the location of the file
+	 * @param macroDictionary The names and definitions of the macros used to disambiguate between
+	 *     variants of the file contents corresponding to different inclusion points.
+	 * @return the file for the location, or <code>null</code> if the file is not present in
+	 *     the index
+	 * @throws CoreException
+	 * @since 5.4
+	 */
+	IIndexFile getFile(int linkageID, IIndexFileLocation location, ISignificantMacros significantMacros)
+			throws CoreException;
+
+	/**
+	 * Returns the file objects for the given location and linkage.
+	 * Multiple files are returned when a header file is stored in the index in multiple variants
+	 * for different sets of macro definitions.
+	 * This method may only return files that are actually managed by this fragment.
+	 * This method returns files without content, also.
+	 *  
+	 * @param linkageID the id of the linkage in which the file has been parsed.
+	 * @param location the IIndexFileLocation representing the location of the file
+	 * @return the files for the location and the linkage.
+	 * @throws CoreException
+	 * @since 5.4
+	 */
+	IIndexFile[] getFiles(int linkageID, IIndexFileLocation location) throws CoreException;
+
+	/**
+	 * Returns the file objects for the given location in any linkage.
 	 * @param location an IIndexFileLocation representing the location of the file
 	 * @return an array of file-objects.
 	 * @throws CoreException

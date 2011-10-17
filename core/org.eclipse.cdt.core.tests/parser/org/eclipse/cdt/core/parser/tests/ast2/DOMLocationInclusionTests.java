@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.dom.SavedCodeReaderFactory;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -70,9 +71,9 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTest {
         String code = "int main() { return BEAST * sizeof( Include ); } "; //$NON-NLS-1$
         for (ParserLanguage p : ParserLanguage.values()) {
             String filename = (p == ParserLanguage.CPP) ? "main.cc" : "main.c"; //$NON-NLS-1$ //$NON-NLS-2$
-            IFile c = importFile(filename, code); //$NON-NLS-1$ //$NON-NLS-2$
+            IFile c = importFile(filename, code); 
 
-            IASTTranslationUnit tu = parse(c, scannerInfo); //$NON-NLS-1$
+            IASTTranslationUnit tu = parse(c, scannerInfo); 
             IASTFunctionDefinition fd = (IASTFunctionDefinition) tu.getDeclarations()[3];
             IASTFileLocation floc = fd.getFileLocation();
             assertEquals(floc.getNodeOffset(),
@@ -102,11 +103,11 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTest {
 
             for (ParserLanguage p : ParserLanguage.values()) {
                 String filename = (p == ParserLanguage.CPP) ? "blah.cc" : "blah.c"; //$NON-NLS-1$ //$NON-NLS-2$
-                IFile source = importFile(filename, code); //$NON-NLS-1$
-                IASTTranslationUnit tu = parse(source); //$NON-NLS-1$
+                IFile source = importFile(filename, code); 
+                IASTTranslationUnit tu = parse(source); 
                 IASTSimpleDeclaration declaration = (IASTSimpleDeclaration) tu.getDeclarations()[0];
                 assertSoleFileLocation(declaration.getDeclarators()[0], filename,
-                        code.indexOf("SomeStructure"), "SomeStructure".length()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                        code.indexOf("SomeStructure"), "SomeStructure".length()); //$NON-NLS-1$ //$NON-NLS-2$ 
             }
         }
     }
@@ -206,13 +207,13 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTest {
 
         for (ParserLanguage p : ParserLanguage.values()) {
             String filename = (p == ParserLanguage.CPP) ? "code.cc" : "code.c"; //$NON-NLS-1$ //$NON-NLS-2$
-            IFile cpp = importFile(filename, code); //$NON-NLS-1$
-            IASTTranslationUnit tu = parse(cpp); //$NON-NLS-1$
+            IFile cpp = importFile(filename, code); 
+            IASTTranslationUnit tu = parse(cpp); 
             IASTDeclaration[] declarations = tu.getDeclarations();
             assertEquals(declarations.length, 2);
             IASTSimpleDeclaration bar = (IASTSimpleDeclaration) declarations[0];
             IASTSimpleDeclaration FOO = (IASTSimpleDeclaration) declarations[1];
-            assertSoleFileLocation(bar, filename, code.indexOf("int"), code.indexOf(";") + 1); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            assertSoleFileLocation(bar, filename, code.indexOf("int"), code.indexOf(";") + 1); //$NON-NLS-1$ //$NON-NLS-2$ 
 
             assertSoleFileLocation(FOO, "foo.h", foo.indexOf("int"), foo.indexOf(";") + 1); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             IASTPreprocessorIncludeStatement[] incs = tu.getIncludeDirectives();
@@ -243,8 +244,8 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTest {
 
         for (ParserLanguage p : ParserLanguage.values()) {
             String filename = (p == ParserLanguage.CPP) ? "code.cc" : "code.c"; //$NON-NLS-1$ //$NON-NLS-2$
-            IFile cpp = importFile(filename, code); //$NON-NLS-1$
-            IASTTranslationUnit tu = parse(cpp); //$NON-NLS-1$
+            IFile cpp = importFile(filename, code); 
+            IASTTranslationUnit tu = parse(cpp); 
             IASTDeclaration[] declarations = tu.getDeclarations();
             assertEquals(declarations.length, 3);
             IASTSimpleDeclaration bar = (IASTSimpleDeclaration) declarations[0];
@@ -253,21 +254,21 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTest {
             assertSoleFileLocation(
                     bar,
                     filename,
-                    code.indexOf("int"), code.indexOf("r;") + 2 - code.indexOf("int")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                    code.indexOf("int"), code.indexOf("r;") + 2 - code.indexOf("int")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
             assertSoleFileLocation(
                     FOO,
                     "foo.h", foo.indexOf("int"), foo.indexOf(";") + 1 - foo.indexOf("int")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
             assertSoleFileLocation(
                     byob,
                     filename,
-                    code.indexOf("float"), code.indexOf("b;") + 2 - code.indexOf("float")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                    code.indexOf("float"), code.indexOf("b;") + 2 - code.indexOf("float")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
             IASTPreprocessorIncludeStatement[] incs = tu.getIncludeDirectives();
             assertNotNull(incs);
             assertEquals(incs.length, 1);
             assertSoleFileLocation(
                     incs[0],
                     filename,
-                    code.indexOf("#inc"), code.indexOf(".h\"\n") + ".h\"".length() - code.indexOf("#inc")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+                    code.indexOf("#inc"), code.indexOf(".h\"\n") + ".h\"".length() - code.indexOf("#inc")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ 
         }
     }
 
@@ -278,8 +279,8 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTest {
 
         for (ParserLanguage p : ParserLanguage.values()) {
             String filename = (p == ParserLanguage.CPP) ? "blah.cc" : "blah.c"; //$NON-NLS-1$ //$NON-NLS-2$
-            IFile c_file = importFile(filename, c_file_code); //$NON-NLS-1$    
-            IASTTranslationUnit tu = parse(c_file); //$NON-NLS-1$
+            IFile c_file = importFile(filename, c_file_code); 
+            IASTTranslationUnit tu = parse(c_file); 
             assertEquals(tu.getDeclarations().length, 0);
             IASTPreprocessorMacroDefinition[] macroDefinitions = tu
                     .getMacroDefinitions();
@@ -288,9 +289,9 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTest {
             assertSoleFileLocation(
                     macroDefinitions[0],
                     filename,
-                    c_file_code.indexOf("#define"), c_file_code.indexOf("4") + 1 - c_file_code.indexOf("#define")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                    c_file_code.indexOf("#define"), c_file_code.indexOf("4") + 1 - c_file_code.indexOf("#define")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
             assertSoleFileLocation(macroDefinitions[0].getName(), filename,
-                    c_file_code.indexOf("X"), 1); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                    c_file_code.indexOf("X"), 1); //$NON-NLS-1$ 
             assertSoleFileLocation(
                     macroDefinitions[1],
                     "blarg.h", h_file_code.indexOf("#define _BLARG_H_"), "#define _BLARG_H_".length()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -299,17 +300,17 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTest {
                     "blarg.h", h_file_code.indexOf("e _BLARG_H_") + 2, "_BLARG_H_".length()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             assertSoleFileLocation(
                     macroDefinitions[2],
-                    "blarg.h", h_file_code.indexOf("#define PRINT(s,m)  printf(s,m)\r"), "#define PRINT(s,m)  printf(s,m)".length()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                    "blarg.h", h_file_code.indexOf("#define PRINT(s,m)  printf(s,m)\r"), "#define PRINT(s,m)  printf(s,m)".length()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
             assertSoleFileLocation(macroDefinitions[2].getName(),
-                    "blarg.h", h_file_code.indexOf("PRINT"), "PRINT".length()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                    "blarg.h", h_file_code.indexOf("PRINT"), "PRINT".length()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
             assertSoleFileLocation(
                     macroDefinitions[3],
                     filename,
-                    c_file_code.indexOf("#define POST_INCLUDE"), "#define POST_INCLUDE".length()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                    c_file_code.indexOf("#define POST_INCLUDE"), "#define POST_INCLUDE".length()); //$NON-NLS-1$ //$NON-NLS-2$ 
             assertSoleFileLocation(
                     macroDefinitions[3].getName(),
                     filename,
-                    c_file_code.indexOf("POST_INCLUDE"), "POST_INCLUDE".length()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                    c_file_code.indexOf("POST_INCLUDE"), "POST_INCLUDE".length()); //$NON-NLS-1$ //$NON-NLS-2$ 
         }
     }
 
@@ -322,7 +323,7 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTest {
 
         for (ParserLanguage p : ParserLanguage.values()) {
             String filename = (p == ParserLanguage.CPP) ? "source.cc" : "source.c"; //$NON-NLS-1$ //$NON-NLS-2$
-            IFile f = importFile(filename, cpp_code); //$NON-NLS-1$
+            IFile f = importFile(filename, cpp_code); 
             IASTTranslationUnit tu = parse(f);
             IASTDeclaration[] declarations = tu.getDeclarations();
             IASTPreprocessorIncludeStatement[] includeDirectives = tu
@@ -330,7 +331,7 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTest {
             assertSoleFileLocation(
                     includeDirectives[0],
                     filename,
-                    cpp_code.indexOf("#include \"header1.h\""), "#include \"header1.h\"".length()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                    cpp_code.indexOf("#include \"header1.h\""), "#include \"header1.h\"".length()); //$NON-NLS-1$ //$NON-NLS-2$ 
             assertSoleFileLocation(declarations[0],
                     "header1.h", 0, "int x;".length()); //$NON-NLS-1$ //$NON-NLS-2$
             assertSoleFileLocation(declarations[1],
@@ -338,9 +339,9 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTest {
             assertSoleFileLocation(
                     includeDirectives[1],
                     filename,
-                    cpp_code.indexOf("#include \"header2.h\""), "#include \"header2.h\"".length()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                    cpp_code.indexOf("#include \"header2.h\""), "#include \"header2.h\"".length()); //$NON-NLS-1$ //$NON-NLS-2$ 
             assertSoleFileLocation(declarations[2], filename, cpp_code
-                    .indexOf("int z;"), "int z;".length()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                    .indexOf("int z;"), "int z;".length()); //$NON-NLS-1$ //$NON-NLS-2$ 
 
             IASTTranslationUnit.IDependencyTree tree = tu.getDependencyTree();
             assertEquals(tree.getInclusions().length, 2);
@@ -357,8 +358,8 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTest {
 
         for (ParserLanguage p : ParserLanguage.values()) {
             String filename = (p == ParserLanguage.CPP) ? "blah.cc" : "blah.c"; //$NON-NLS-1$ //$NON-NLS-2$
-            IFile c_file = importFile(filename, c_file_code); //$NON-NLS-1$
-            IASTTranslationUnit tu = parse(c_file); //$NON-NLS-1$
+            IFile c_file = importFile(filename, c_file_code); 
+            IASTTranslationUnit tu = parse(c_file); 
             assertEquals(tu.getDeclarations().length, 0);
             IASTPreprocessorMacroDefinition[] macroDefinitions = tu.getMacroDefinitions();
             assertNotNull(macroDefinitions);
@@ -366,9 +367,9 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTest {
             assertSoleFileLocation(
                     macroDefinitions[0],
                     filename,
-                    c_file_code.indexOf("#define"), c_file_code.indexOf("4") + 1 - c_file_code.indexOf("#define")); //$NON-NLS-1$ //$NON-NLS-2$    //$NON-NLS-3$ //$NON-NLS-4$
+                    c_file_code.indexOf("#define"), c_file_code.indexOf("4") + 1 - c_file_code.indexOf("#define")); //$NON-NLS-1$ //$NON-NLS-2$    //$NON-NLS-3$ 
             assertSoleFileLocation(macroDefinitions[0].getName(), filename,
-                    c_file_code.indexOf("X"), 1); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$    //$NON-NLS-4$
+                    c_file_code.indexOf("X"), 1); //$NON-NLS-1$ 
             assertSoleFileLocation(
                     macroDefinitions[1],
                     "blarg.h", h_file_code.indexOf("#define _BLARG_H_"), "#define _BLARG_H_".length()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -377,24 +378,24 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTest {
                     "blarg.h", h_file_code.indexOf("e _BLARG_H_") + 2, "_BLARG_H_".length()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             assertSoleFileLocation(
                     macroDefinitions[2],
-                    "blarg.h", h_file_code.indexOf("#define PRINT(s,m) printf(s,m)\r"), "#define PRINT(s,m) printf(s,m)".length()); //$NON-NLS-1$ //$NON-NLS-2$    //$NON-NLS-3$ //$NON-NLS-4$
+                    "blarg.h", h_file_code.indexOf("#define PRINT(s,m) printf(s,m)\r"), "#define PRINT(s,m) printf(s,m)".length()); //$NON-NLS-1$ //$NON-NLS-2$    //$NON-NLS-3$ 
             assertSoleFileLocation(macroDefinitions[2].getName(),
-                    "blarg.h", h_file_code.indexOf("PRINT"), "PRINT".length()); //$NON-NLS-1$    //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                    "blarg.h", h_file_code.indexOf("PRINT"), "PRINT".length()); //$NON-NLS-1$    //$NON-NLS-2$ //$NON-NLS-3$ 
             assertSoleFileLocation(
                     macroDefinitions[3],
                     filename,
-                    c_file_code.indexOf("#define POST_INCLUDE"), "#define POST_INCLUDE".length()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                    c_file_code.indexOf("#define POST_INCLUDE"), "#define POST_INCLUDE".length()); //$NON-NLS-1$ //$NON-NLS-2$ 
             assertSoleFileLocation(
                     macroDefinitions[3].getName(),
                     filename,
-                    c_file_code.indexOf("POST_INCLUDE"), "POST_INCLUDE".length()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                    c_file_code.indexOf("POST_INCLUDE"), "POST_INCLUDE".length()); //$NON-NLS-1$ //$NON-NLS-2$ 
             assertSoleFileLocation(
                     macroDefinitions[4],
                     "second.h", h_file2_code.indexOf("#define _SECOND_H_"), "#define _SECOND_H_".length()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             assertSoleFileLocation(
                     macroDefinitions[5],
                     filename,
-                    c_file_code.indexOf("#define POST_SECOND"), "#define POST_SECOND".length()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$    //$NON-NLS-4$
+                    c_file_code.indexOf("#define POST_SECOND"), "#define POST_SECOND".length()); //$NON-NLS-1$ //$NON-NLS-2$ 
 
         }
     }
@@ -411,15 +412,15 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTest {
         buffer.append("};\n"); //$NON-NLS-1$
         buffer.append("#endif /*_INCLUDE_H_*/\n"); //$NON-NLS-1$
         final String inc_file_code = buffer.toString();
-        IFile include_file = importFile("include.h", inc_file_code); //$NON-NLS-1$ //$NON-NLS-2$
+        IFile include_file = importFile("include.h", inc_file_code); //$NON-NLS-1$ 
         String[] macros = { imacro_file.getLocation().toOSString() };
         String[] includes = { include_file.getLocation().toOSString() };
         IExtendedScannerInfo scannerInfo = new ExtendedScannerInfo(Collections.EMPTY_MAP, EMPTY_STRING_ARRAY, macros, includes);
         
         for (ParserLanguage p : ParserLanguage.values()) {
             String filename = (p == ParserLanguage.CPP) ? "main.cc" : "main.c"; //$NON-NLS-1$ //$NON-NLS-2$
-            IFile code = importFile(filename, "int main() { return BEAST * sizeof( Include ); } "); //$NON-NLS-1$ //$NON-NLS-2$
-            IASTTranslationUnit tu = parse(code, scannerInfo); //$NON-NLS-1$
+            IFile code = importFile(filename, "int main() { return BEAST * sizeof( Include ); } "); //$NON-NLS-1$ 
+            IASTTranslationUnit tu = parse(code, scannerInfo); 
             IASTPreprocessorMacroDefinition[] macro_defs = tu.getMacroDefinitions();
             assertEquals(macro_defs.length, 2);
             IASTPreprocessorMacroDefinition BEAST = macro_defs[0];
@@ -443,8 +444,8 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTest {
 
         for (ParserLanguage p : ParserLanguage.values()) {
             String filename = (p == ParserLanguage.CPP) ? "blah.cc" : "blah.c"; //$NON-NLS-1$ //$NON-NLS-2$
-            IFile f = importFile(filename, code); //$NON-NLS-1$
-            IASTTranslationUnit tu = parse(f); //$NON-NLS-1$
+            IFile f = importFile(filename, code); 
+            IASTTranslationUnit tu = parse(f); 
             IASTProblem[] prbs = tu.getPreprocessorProblems();
             assertEquals(prbs.length, 1);
             IASTNodeLocation[] locs = prbs[0].getNodeLocations();
@@ -474,16 +475,16 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTest {
         buffer.append("};\n"); //$NON-NLS-1$
         buffer.append("#endif /*_INCLUDE_H_*/\n"); //$NON-NLS-1$
         final String inc_file_code = buffer.toString();
-        IFile include_file = importFile("include.h", inc_file_code); //$NON-NLS-1$ //$NON-NLS-2$
+        IFile include_file = importFile("include.h", inc_file_code); //$NON-NLS-1$ 
         String[] macros = { imacro_file.getLocation().toOSString() };
         String[] includes = { include_file.getLocation().toOSString() };
         IExtendedScannerInfo scannerInfo = new ExtendedScannerInfo(
                 Collections.EMPTY_MAP, EMPTY_STRING_ARRAY, macros, includes);
         for (ParserLanguage p : ParserLanguage.values()) {
             String filename = (p == ParserLanguage.CPP) ? "main.cc" : "main.c"; //$NON-NLS-1$ //$NON-NLS-2$
-            IFile code = importFile(filename, "int main() { return BEAST * sizeof( Include ); } "); //$NON-NLS-1$ //$NON-NLS-2$
+            IFile code = importFile(filename, "int main() { return BEAST * sizeof( Include ); } "); //$NON-NLS-1$ 
 
-            IASTTranslationUnit tu = parse(code, scannerInfo); //$NON-NLS-1$
+            IASTTranslationUnit tu = parse(code, scannerInfo); 
             IASTPreprocessorMacroDefinition[] macro_defs = tu.getMacroDefinitions();
             assertEquals(macro_defs.length, 4);
             IASTPreprocessorMacroDefinition BEAST = macro_defs[0];
@@ -515,14 +516,14 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTest {
         buffer.append("};\n"); //$NON-NLS-1$
         buffer.append("#endif /*_INCLUDE_H_*/\n"); //$NON-NLS-1$
         final String inc_file_code = buffer.toString();
-        IFile include_file = importFile("include.h", inc_file_code); //$NON-NLS-1$ //$NON-NLS-2$
+        IFile include_file = importFile("include.h", inc_file_code); //$NON-NLS-1$ 
         String[] macros = { imacro_file1.getLocation().toOSString(), imacro_file2.getLocation().toOSString() };
         String[] includes = { include_file.getLocation().toOSString() };
         IExtendedScannerInfo scannerInfo = new ExtendedScannerInfo(Collections.EMPTY_MAP, EMPTY_STRING_ARRAY, macros, includes);
         
         for (ParserLanguage p : ParserLanguage.values()) {
             String filename = (p == ParserLanguage.CPP) ? "main.cc" : "main.c"; //$NON-NLS-1$ //$NON-NLS-2$
-            IFile code = importFile(filename, "int main() { return BEAST * sizeof( Include ); } "); //$NON-NLS-1$ //$NON-NLS-2$
+            IFile code = importFile(filename, "int main() { return BEAST * sizeof( Include ); } "); //$NON-NLS-1$ 
 
             IASTTranslationUnit tu = parse(code, scannerInfo); 
             IASTPreprocessorMacroDefinition[] macro_defs = tu.getMacroDefinitions();
@@ -611,4 +612,182 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTest {
     		tmpFile.getParentFile().delete();
     	}
     }
+    
+    // // comment
+    //  
+    // #ifndef guard
+    // #define guard
+    //  bla bla
+    // #if 1
+    // #endif
+    //  bla bla
+    // #endif
+    // //comment
+
+    // // comment
+    //  
+    // #if !defined(guard)
+    // #define guard
+    //  bla bla
+    // #if 1
+    // #endif
+    //  bla bla
+    // #endif
+    // //comment
+
+    // // comment
+    //  
+    // #if ((!defined guard))
+    // #define guard
+    //  bla bla
+    // #if 1
+    // #endif
+    //  bla bla
+    // #endif
+    // //comment
+    
+    // // comment
+    // #pragma once
+    
+    //    // Some comment
+    //
+    //    #ifndef AN_UNIQUE_INCLUDE_GUARD_H_
+    //    #define AN_UNIQUE_INCLUDE_GUARD_H_
+    //
+    //    #include <string>
+    //
+    //    Some code without any macro references
+    //
+    //    #endif  // AN_UNIQUE_INCLUDE_GUARD_H_
+    public void testPragmaOnceDetection_197989a() throws Exception {    
+    	CharSequence[] contents= getContents(5);
+    	
+    	int i= 0;
+    	for (CharSequence content : contents) {
+    		String headerName = i + ".h";
+			IFile base = importFile("base" + headerName, "#include \"" + headerName + "\"");
+    		importFile(headerName, content.toString());
+			IASTTranslationUnit tu = parse(base, new ScannerInfo()); 
+			IASTPreprocessorIncludeStatement[] incs = tu.getIncludeDirectives();
+			assertTrue(incs.length > 0);
+			assertTrue(incs[0].hasPragmaOnceSemantics());
+		}
+    }
+
+    // #ifndef guard
+    // #define guard2
+    // #endif
+
+    // #if !defined guard
+    // #define guard2
+    // #endif
+
+    // #if !defined(guard) && !defined(guard2)
+    // #define guard
+    // #endif
+
+    // #if (0)
+    // #pragma once
+    // #endif
+
+    // leading
+    // #ifndef guard
+    // #define guard2
+    // #endif
+
+    // #ifndef guard
+    // #define guard2
+    // #endif
+    // #ifdef xx
+    // trailing
+    // #endif
+    public void testPragmaOnceDetection_197989b() throws Exception {    
+    	CharSequence[] contents= getContents(6);
+    	
+    	int i= 0;
+    	for (CharSequence content : contents) {
+    		String headerName = i + ".h";
+			IFile base = importFile("base" + headerName, "#include \"" + headerName + "\"");
+    		importFile(headerName, content.toString());
+			IASTTranslationUnit tu = parse(base, new ScannerInfo()); 
+			IASTPreprocessorIncludeStatement[] incs = tu.getIncludeDirectives();
+			assertEquals(1, incs.length);
+			assertFalse(incs[0].hasPragmaOnceSemantics());
+		}
+    }
+    
+    
+    // // header.h
+    // #ifdef AH
+    // #endif
+    // #ifndef BH 
+    // #endif
+    // #define h
+    // #if CH || DH
+    // #elif EH==1
+    // #endif
+    
+    // #define BH
+    // #define DH 0
+    // #define EH 1
+    // #include "header.h"
+    // #ifdef h // defined in header
+    // #endif
+    // #ifdef A 
+    //    #ifdef a  // inactive
+    //    #endif
+    // #else
+    //   #ifndef B	 
+    //   #endif
+    // #endif
+    // #if defined C
+    // #elif ((!((defined(D)))))
+    // #endif
+    // #define A
+    // #define B
+    // #define AH
+    // #define h
+    // #undef u
+    // #ifdef h  // locally defined
+    // #endif    
+    // #ifndef u // locally undefined
+    // #endif
+    public void testSignificantMacros_197989a() throws Exception {    
+    	CharSequence[] contents= getContents(2);
+
+    	IFile h = importFile("header.h", contents[0].toString());
+    	IFile c = importFile("source.c", contents[1].toString());
+
+    	IASTTranslationUnit tu = parse(c, new ScannerInfo()); 
+    	IASTPreprocessorIncludeStatement[] incs = tu.getIncludeDirectives();
+    	assertEquals(1, incs.length);
+    	assertEquals("{AH=null,BH=*,CH=null,DH=0,EH=1}",
+    			incs[0].getSignificantMacros().toString());
+    	assertEquals("{A=null,AH=null,B=null,C=null,CH=null,D=null}",
+    			tu.getSignificantMacros().toString());
+    }
+    
+    // // header.h
+    // #if EQ(A,B)
+    // #endif
+    
+    // #define EQ(x,y) x==y
+    // #define A A1
+    // #define B 1
+    // #include "header.h"
+        public void testSignificantMacros_197989b() throws Exception {    
+    	CharSequence[] contents= getContents(2);
+
+    	IFile h = importFile("header.h", contents[0].toString());
+    	IFile c = importFile("source.c", contents[1].toString());
+
+    	IASTTranslationUnit tu = parse(c, new ScannerInfo()); 
+    	IASTPreprocessorIncludeStatement[] incs = tu.getIncludeDirectives();
+    	assertEquals(1, incs.length);
+    	assertEquals("{A=A1,A1=null,B=1,EQ=x==y}",
+    			incs[0].getSignificantMacros().toString());
+    	assertEquals("{A1=null}",
+    			tu.getSignificantMacros().toString());
+    }
+
 }

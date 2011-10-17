@@ -105,4 +105,9 @@ class LocationCtxMacroExpansion extends LocationCtx {
 	public ASTPreprocessorName[] getNestedMacroReferences() {
 		return fLocationMap.getNestedMacroReferences((ASTMacroExpansion) fExpansionName.getParent());
 	}
+	
+	@Override
+	public String toString() {
+		return "Expansion of " + fExpansionName.toString(); //$NON-NLS-1$
+	}
 }

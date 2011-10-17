@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
@@ -40,11 +40,15 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree.IASTInclusionNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IFileNomination;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
+import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNodeSpecification;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * Models various AST-constructs obtained from the preprocessor.
@@ -188,7 +192,7 @@ class ASTIfndef extends ASTDirectiveWithCondition implements IASTPreprocessorIfn
 }
 
 class ASTIfdef extends ASTDirectiveWithCondition implements IASTPreprocessorIfdefStatement {
-	ASTMacroReferenceName fMacroRef;
+	private ASTMacroReferenceName fMacroRef;
 	public ASTIfdef(IASTTranslationUnit parent, int startNumber, int condNumber, int condEndNumber, boolean taken, IMacroBinding macro) {
 		super(parent, startNumber, condNumber, condEndNumber, taken);
 		if (macro != null) {
@@ -253,21 +257,33 @@ class ASTPragmaOperator extends ASTPragma {
 }
 
 class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreprocessorIncludeStatement {
+	private static final ISignificantMacros[] NO_VERSIONS = {};
+	
 	private final ASTPreprocessorName fName;
 	private final String fPath;
 	private final boolean fIsResolved;
 	private final boolean fIsSystemInclude;
 	private final boolean fFoundByHeuristics;
+	private final IFileNomination fNominationDelegate;
+	private boolean fPragmaOnce;
+	private boolean fCreatesAST;
+	private ISignificantMacros fSignificantMacros;
+	private ISignificantMacros[] fLoadedVersions = NO_VERSIONS;
+	private long fContentsHash;
 
 	public ASTInclusionStatement(IASTTranslationUnit parent, 
 			int startNumber, int nameStartNumber, int nameEndNumber, int endNumber,
-			char[] headerName, String filePath, boolean userInclude, boolean active, boolean heuristic) {
+			char[] headerName, String filePath, boolean userInclude, boolean active, boolean heuristic, 
+			IFileNomination nominationDelegate) {
 		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, startNumber, endNumber);
-		fName= new ASTPreprocessorName(this, IASTPreprocessorIncludeStatement.INCLUDE_NAME, nameStartNumber, nameEndNumber, headerName, null);
+		fName= new ASTPreprocessorName(this, IASTPreprocessorIncludeStatement.INCLUDE_NAME,
+				nameStartNumber, nameEndNumber, headerName, null);
 		fPath= filePath == null ? "" : filePath; //$NON-NLS-1$
 		fIsResolved= filePath != null;
 		fIsSystemInclude= !userInclude;
 		fFoundByHeuristics= heuristic;
+		fSignificantMacros= ISignificantMacros.NONE;
+		fNominationDelegate= nominationDelegate;
 		if (!active) {
 			setInactive();
 		}
@@ -297,6 +313,69 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 
 	public boolean isResolvedByHeuristics() {
 		return fFoundByHeuristics;
+	}
+
+	public boolean hasPragmaOnceSemantics() {
+		if (fNominationDelegate != null) {
+			try {
+				return fNominationDelegate.hasPragmaOnceSemantics();
+			} catch (CoreException e) {
+			}
+		} 	
+		return fPragmaOnce;
+	}
+	
+	public void setPragamOnceSemantics(boolean value) {
+		assert fNominationDelegate == null;
+		fPragmaOnce= value;
+	}
+
+	public ISignificantMacros getSignificantMacros() {
+		if (fNominationDelegate != null) {
+			try {
+				return fNominationDelegate.getSignificantMacros();
+			} catch (CoreException e) {
+			}
+		} 	
+		return fSignificantMacros;
+	}
+	
+	public void setSignificantMacros(ISignificantMacros sig) {
+		assert sig != null;
+		assert fNominationDelegate == null;
+		fSignificantMacros= sig;
+	}
+
+	public void setLoadedVersions(ISignificantMacros[] versions) {
+		fLoadedVersions= versions;
+	}
+
+	public ISignificantMacros[] getLoadedVersions() {
+		return fLoadedVersions;
+	}
+	
+	public long getContentsHash() {
+		if (fNominationDelegate != null) {
+			return 0;
+		} 	
+		return fContentsHash;
+	}
+	
+	public void setContentsHash(long hash) {
+		assert fNominationDelegate == null;
+		fCreatesAST= true;
+		fContentsHash= hash;
+	}
+
+	public boolean createsAST() {
+		return fCreatesAST;
+	}
+	
+	public IIndexFile getImportedIndexFile() {
+		if (fNominationDelegate instanceof IIndexFile)
+			return (IIndexFile) fNominationDelegate;
+		
+		return null;
 	}
 }
 
@@ -579,6 +658,10 @@ class ASTFileLocation implements IASTFileLocation {
 	public LocationCtxFile getLocationContext() {
 		return fLocationCtx;
 	}
+
+	public IASTPreprocessorIncludeStatement getContextInclusionStatement() {
+		return fLocationCtx.getInclusionStatement();
+	}
 }
 
 class ASTMacroExpansion extends ASTPreprocessorNode implements IASTPreprocessorMacroExpansion {
@@ -708,6 +791,10 @@ class ASTFileLocationForBuiltins implements IASTFileLocation {
 	public int getStartingLineNumber() {
 		return 0;
 	}
+
+	public IASTPreprocessorIncludeStatement getContextInclusionStatement() {
+		return null;
+	}
 }
 
 
@@ -723,4 +810,3 @@ class ASTImageLocation extends ASTFileLocationForBuiltins implements IASTImageLo
 		return fKind;
 	}
 }
-

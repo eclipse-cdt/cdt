@@ -40,6 +40,15 @@ public class IndexFileSet implements IIndexFileSet {
 		subSet.add(fragFile);
 	}
 
+	public void remove(IIndexFile indexFile) {
+		final IIndexFragmentFile fragFile = (IIndexFragmentFile) indexFile;
+		final IIndexFragment frag= fragFile.getIndexFragment();
+		IIndexFragmentFileSet subSet= fSubSets.get(frag);		
+		if (subSet != null) {
+			subSet.remove(fragFile);
+		}
+	}
+
 	public boolean containsDeclaration(IIndexBinding binding) {
 		return containsDeclaration(binding, false);
 	}
@@ -161,6 +170,10 @@ public class IndexFileSet implements IIndexFileSet {
 				}
 				
 				public void add(IIndexFile indexFile) {
+					Assert.isLegal(false);
+				}
+
+				public void remove(IIndexFile indexFile) {
 					Assert.isLegal(false);
 				}
 			};

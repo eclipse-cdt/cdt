@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexLinkage;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFileSet;
@@ -53,6 +54,7 @@ public class PDOMProxy implements IPDOM {
 			fLockDebugging= new HashMap<Thread, DebugLockInfo>();
 		}
 	}
+
 	public synchronized void acquireReadLock() throws InterruptedException {
 		if (fDelegate != null) {
 			fDelegate.acquireReadLock();
@@ -152,11 +154,28 @@ public class PDOMProxy implements IPDOM {
 		return 0;
 	}
 
+	@Deprecated
 	public synchronized IIndexFragmentFile getFile(int linkageID, IIndexFileLocation location) throws CoreException {
 		if (fDelegate != null)
 			return fDelegate.getFile(linkageID, location);
 
 		return null;
+	}
+
+	public IIndexFragmentFile getFile(int linkageID, IIndexFileLocation location,
+			ISignificantMacros sigMacros) throws CoreException {
+		if (fDelegate != null)
+			return fDelegate.getFile(linkageID, location, sigMacros);
+
+		return null;
+	}
+
+	public IIndexFragmentFile[] getFiles(int linkageID, IIndexFileLocation location)
+			throws CoreException {
+		if (fDelegate != null)
+			return fDelegate.getFiles(linkageID, location);
+
+		return IIndexFragmentFile.EMPTY_ARRAY;
 	}
 
 	public synchronized IIndexFragmentFile[] getFiles(IIndexFileLocation location) throws CoreException {
@@ -289,10 +308,12 @@ public class PDOMProxy implements IPDOM {
 	public Object putCachedResult(Object key, Object value, boolean replace) {
 		return value;
 	}
+
 	public void clearResultCache() {
 		if (fDelegate != null)
 			fDelegate.clearResultCache();
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.index.IIndexFragment#getInlineNamespaces()
 	 */

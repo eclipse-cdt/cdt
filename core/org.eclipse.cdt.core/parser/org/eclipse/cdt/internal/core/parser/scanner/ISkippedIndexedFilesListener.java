@@ -28,5 +28,5 @@ public interface ISkippedIndexedFilesListener {
 	/**
 	 * Notifies the listeners that a file is being parsed.
 	 */
-	void replacingFile(InternalFileContentProvider fileContentProvider, InternalFileContent fileContent);
+	void parsingFile(InternalFileContentProvider fileContentProvider, InternalFileContent fileContent);
 }

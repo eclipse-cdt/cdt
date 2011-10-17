@@ -15,19 +15,16 @@ import java.text.NumberFormat;
 import java.util.Collection;
 import java.util.Iterator;
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.cdt.core.dom.ILinkage;
-import org.eclipse.cdt.core.model.AbstractLanguage;
-import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.IParserLogService;
-import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask;
 import org.eclipse.cdt.internal.core.pdom.IndexerProgress;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * A task for index updates.
@@ -111,15 +108,6 @@ public abstract class StandaloneIndexerTask extends AbstractIndexerTask {
 		return getIndexer().getIndexAllFiles();
 	}
 
-	@Override
-	final protected AbstractLanguage[] getLanguages(String filename) {
-		ILanguage l = fIndexer.getLanguageMapper().getLanguage(filename);
-		if (l instanceof AbstractLanguage) {
-			return new AbstractLanguage[] {(AbstractLanguage) l};
-		}
-		return new AbstractLanguage[0];
-	}
-	
 	@Override
 	protected final IWritableIndex createIndex() {
 		return fIndexer.getIndex();
@@ -248,20 +236,6 @@ public abstract class StandaloneIndexerTask extends AbstractIndexerTask {
 	@Override
 	protected void logException(Throwable e) {
 		trace(e.getMessage());
-	}
-
-	@SuppressWarnings("deprecation")
-	@Override
-	protected IScannerInfo createDefaultScannerConfig(int linkageID) {
-		IStandaloneScannerInfoProvider provider = fIndexer.getScannerInfoProvider();
-		if(provider != null)
-			return provider.getDefaultScannerInformation(linkageID);
-		
-		IScannerInfo scannerInfo = fIndexer.getScannerInfo();
-		if(scannerInfo != null)
-			return scannerInfo;
-		
-		return super.createDefaultScannerConfig(linkageID);
 	}
 	
 	/* (non-Javadoc)

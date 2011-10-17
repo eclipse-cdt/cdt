@@ -85,10 +85,14 @@ final public class Lexer implements ITokenSequence {
 	private Token fToken;
 	private Token fLastToken;
 	
-	// for the few cases where we have to lookahead more than one character
+	// For the few cases where we have to lookahead more than one character
 	private int fMarkOffset;
 	private int fMarkEndOffset;
 	private int fMarkPrefetchedChar;
+	// To store the entire state.
+	private boolean fMarkInsideIncludeDirective;
+	private Token fMarkToken;
+	private Token fMarkLastToken;
 	
 	public Lexer(char[] input, LexerOptions options, ILexerLog log, Object source) {
 		this(new CharArray(input), 0, input.length, options, log, source);
@@ -1255,5 +1259,23 @@ final public class Lexer implements ITokenSequence {
 		}
 		restorePhase3();
 		return result;
+	}
+
+	public void saveState() {
+		fMarkOffset= fOffset;
+		fMarkEndOffset= fEndOffset;
+		fMarkPrefetchedChar= fCharPhase3;
+		fMarkInsideIncludeDirective= fInsideIncludeDirective;
+		fMarkToken= fToken;
+		fMarkLastToken= fLastToken;
+	}
+
+	public void restoreState() {
+		fOffset= fMarkOffset;
+		fEndOffset= fMarkEndOffset;
+		fCharPhase3= fMarkPrefetchedChar;
+		fInsideIncludeDirective= fMarkInsideIncludeDirective;
+		fToken= fMarkToken;
+		fLastToken= fMarkLastToken;
 	}
 }

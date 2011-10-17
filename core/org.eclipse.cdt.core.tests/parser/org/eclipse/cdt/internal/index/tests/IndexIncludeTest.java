@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.index.tests;
 
@@ -64,6 +65,7 @@ public class IndexIncludeTest extends IndexTestBase {
 					CoreModel.newIncludeEntry(fProject.getPath(), null,
 							fProject.getResource().getLocation()) };
 			fProject.setRawPathEntries(entries, npm());
+			IndexerPreferences.set(fProject.getProject(), IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG, "false");
 		}
 		fIndex= CCorePlugin.getIndexManager().getIndex(fProject);
 	}
@@ -114,17 +116,16 @@ public class IndexIncludeTest extends IndexTestBase {
 		
 		ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				file.setContents(new ByteArrayInputStream( "int included; int CONTEXT;\n".getBytes()), false, false, npm());
-				file.setLocalTimeStamp(timestamp+1000); 
+				file.setContents(new ByteArrayInputStream("int included; int CONTEXT;\n".getBytes()), false, false, npm());
+				file.setLocalTimeStamp(timestamp + 1000); 
 			}
 		}, npm());
 		assertTrue("Timestamp was not increased", file.getLocalTimeStamp() >= timestamp);
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, 4000);
 		fIndex.acquireReadLock();
 		try {
-			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file));
-			assertNotNull("Can't find " + file.getLocation(), ifile);
-			assertTrue("timestamp not ok", ifile.getTimestamp() >= timestamp);
+			IIndexFile ifile= getIndexFile(file);
+			assertTrue("Timestamp not ok", ifile.getTimestamp() >= timestamp);
 
 			IIndexBinding[] result= fIndex.findBindings(Pattern.compile("testInclude_cpp"), true, IndexFilter.ALL, npm());
 			assertEquals(1, result.length);
@@ -134,6 +135,13 @@ public class IndexIncludeTest extends IndexTestBase {
 		} finally {
 			fIndex.releaseReadLock();
 		}
+	}
+
+	private IIndexFile getIndexFile(IFile file) throws CoreException {
+		IIndexFile[] files = fIndex.getFiles(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file));
+		assertTrue("Can't find " + file.getLocation(), files.length > 0);
+		assertEquals("Found " + files.length + " files for " + file.getLocation() + " instead of one", 1, files.length);
+		return files[0];
 	}			
 
 	// {source20061107}
@@ -150,8 +158,7 @@ public class IndexIncludeTest extends IndexTestBase {
 
 		fIndex.acquireReadLock();
 		try {
-			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file));
-			assertNotNull(ifile);
+			IIndexFile ifile= getIndexFile(file);
 			IIndexInclude[] includes= ifile.getIncludes();
 			assertEquals(2, includes.length);
 
@@ -174,8 +181,7 @@ public class IndexIncludeTest extends IndexTestBase {
 
 		fIndex.acquireReadLock();
 		try {
-			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file));
-			assertNotNull(ifile);
+			IIndexFile ifile= getIndexFile(file);
 			IIndexInclude[] includes= ifile.getIncludes();
 			assertEquals(1, includes.length);
 
@@ -194,8 +200,7 @@ public class IndexIncludeTest extends IndexTestBase {
 
 		fIndex.acquireReadLock();
 		try {
-			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file));
-			assertNotNull(ifile);
+			IIndexFile ifile= getIndexFile(file);
 			IIndexInclude[] includes= ifile.getIncludes();
 			assertEquals(1, includes.length);
 
@@ -215,8 +220,7 @@ public class IndexIncludeTest extends IndexTestBase {
 
 		fIndex.acquireReadLock();
 		try {
-			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file));
-			assertNotNull(ifile);
+			IIndexFile ifile= getIndexFile(file);
 			IIndexInclude[] includes= ifile.getIncludes();
 			assertEquals(1, includes.length);
 
@@ -238,7 +242,10 @@ public class IndexIncludeTest extends IndexTestBase {
 	public void testUpdateOfIncluded() throws Exception {
 		String content1 = "int CONTEXT_20070404(x);\n";
 		String content2 = "int CONTEXT_20070404(y);\n";
-		String content3 = "#define CONTEXT_20070404(x) ctx_20070404##x\n #include \"included_20070404.h\"\n int source_20070404;\n";
+		String content3 =
+				"#define CONTEXT_20070404(x) ctx_20070404##x\n" +
+				"#include \"included_20070404.h\"\n" +
+				"int source_20070404;\n";
 		TestSourceReader.createFile(fProject.getProject(), "included_20070404.h", content1);
 		TestSourceReader.createFile(fProject.getProject(), "notIncluded_20070404.h", "int notIncluded_20070404\n;");
 		TestSourceReader.createFile(fProject.getProject(), "includer_20070404.cpp", content3);
@@ -332,8 +339,7 @@ public class IndexIncludeTest extends IndexTestBase {
 
 		fIndex.acquireReadLock();
 		try {
-			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(header));
-			assertNotNull(ifile);
+			IIndexFile ifile= getIndexFile(header);
 			IIndexInclude[] includes= fIndex.findIncludedBy(ifile);
 			assertEquals(2, includes.length);
 			
@@ -352,8 +358,7 @@ public class IndexIncludeTest extends IndexTestBase {
 		fIndex.acquireReadLock();
 		try {
 			assertEquals(1, fIndex.findBindings("a20070426".toCharArray(), IndexFilter.ALL_DECLARED, npm()).length);
-			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(header));
-			assertNotNull(ifile);
+			IIndexFile ifile= getIndexFile(header);
 			IIndexInclude[] includes= fIndex.findIncludedBy(ifile);
 			assertEquals(2, includes.length);
 			assertEquals(s1.getFullPath().toString(), includes[0].getIncludedByLocation().getFullPath());
@@ -370,8 +375,7 @@ public class IndexIncludeTest extends IndexTestBase {
 		fIndex.acquireReadLock();
 		try {
 			assertEquals(1, fIndex.findBindings("b20070426".toCharArray(), IndexFilter.ALL_DECLARED, npm()).length);
-			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(header));
-			assertNotNull(ifile);
+			IIndexFile ifile= getIndexFile(header);
 			IIndexInclude[] includes= fIndex.findIncludedBy(ifile);
 			assertEquals(2, includes.length);
 			assertEquals(s1.getFullPath().toString(), includes[0].getIncludedByLocation().getFullPath());
@@ -448,14 +452,188 @@ public class IndexIncludeTest extends IndexTestBase {
 		standardCheckUpdateIncludes(header, s1, "h20070427");
 	}
 
+	// #ifdef A
+	// static const int a = 0;
+	// #endif
+	// #ifdef B
+	// static const int b = 0;
+	// #endif
+	// #ifdef C
+	// static const int c = 0;
+	// #endif
+
+	// #define A
+	// #include "h1.h"
+	// #undef A
+	// #define B
+	// #include "h1.h"
+	// #undef B
+
+	// #define C
+	// #include "h1.h"
+
+	// #include "h2.h"
+	public void testMultiVariantHeaderUpdate() throws Exception {
+		waitForIndexer();
+		TestScannerProvider.sIncludes= new String[] { fProject.getProject().getLocation().toOSString() };
+		StringBuilder[] contents= getContentsForTest(4);
+		final StringBuilder h1Contents = contents[0];
+		final IFile h1= TestSourceReader.createFile(fProject.getProject(), "h1.h", h1Contents.toString());
+		IFile h2= TestSourceReader.createFile(fProject.getProject(), "h2.h", contents[1].toString());
+		IFile s1= TestSourceReader.createFile(fProject.getProject(), "s1.cpp", contents[2].toString());
+		IFile s2= TestSourceReader.createFile(fProject.getProject(), "s2.cpp", contents[3].toString());
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_WAIT_TIME);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, s2, INDEXER_WAIT_TIME);
+
+		fIndex.acquireReadLock();
+		try {
+			IIndexFile[] indexFiles = fIndex.getFiles(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(h1));
+			assertEquals(3, indexFiles.length);
+		} finally {
+			fIndex.releaseReadLock();
+		}
+
+		final long timestamp= System.currentTimeMillis();
+		while (true) {
+			int pos = h1Contents.indexOf("int");
+			if (pos < 0)
+				break;
+			h1Contents.replace(pos, pos + "int".length(), "float");
+		}
+		ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				h1.setContents(new ByteArrayInputStream(h1Contents.toString().getBytes()), false, false, npm());
+				h1.setLocalTimeStamp(timestamp + 1000); 
+			}
+		}, npm());
+		waitForIndexer();
+
+		fIndex.acquireReadLock();
+		try {
+			IIndexFile[] indexFiles = fIndex.getFiles(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(h1));
+			assertEquals(3, indexFiles.length);
+			for (IIndexFile indexFile : indexFiles) {
+				assertTrue("Timestamp not ok", indexFile.getTimestamp() >= timestamp);
+			}
+		} finally {
+			fIndex.releaseReadLock();
+		}
+	}
+
+	// #ifdef A
+	// static const int a = 0;
+	// #endif
+	// #ifdef B
+	// static const int b = 0;
+	// #endif
+	// #ifdef C
+	// static const int c = 0;
+	// #endif
+
+	// #define A
+	// #include "h1.h"
+	// #undef A
+	// #define B
+	// #include "h1.h"
+	// #undef B
+
+	// #define C
+	// #include "h1.h"
+
+	// #include "h2.h"
+
+	// #ifndef H1_H_
+	// #define H1_H_
+	// #ifdef A
+	// static const int a = 0;
+	// #endif
+	// #ifdef B
+	// static const int b = 0;
+	// #endif
+	// #ifdef C
+	// static const int c = 0;
+	// #endif
+	// #endif // H1_H_
+	public void testPragmaOnceChange() throws Exception {
+		waitForIndexer();
+		TestScannerProvider.sIncludes= new String[] { fProject.getProject().getLocation().toOSString() };
+		CharSequence[] contents= getContentsForTest(5);
+		final CharSequence h1Contents = contents[0];
+		final IFile h1= TestSourceReader.createFile(fProject.getProject(), "h1.h", h1Contents.toString());
+		IFile h2= TestSourceReader.createFile(fProject.getProject(), "h2.h", contents[1].toString());
+		IFile s1= TestSourceReader.createFile(fProject.getProject(), "s1.cpp", contents[2].toString());
+		IFile s2= TestSourceReader.createFile(fProject.getProject(), "s2.cpp", contents[3].toString());
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, s1, INDEXER_WAIT_TIME);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, s2, INDEXER_WAIT_TIME);
+
+		fIndex.acquireReadLock();
+		try {
+			IIndexFile[] indexFiles = fIndex.getFiles(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(h1));
+			assertEquals(3, indexFiles.length);
+			for (IIndexFile indexFile : indexFiles) {
+				assertFalse(indexFile.hasPragmaOnceSemantics());
+				assertEquals(1, fIndex.findIncludedBy(indexFile).length);
+			}
+		} finally {
+			fIndex.releaseReadLock();
+		}
+
+		// Change h1.h so that it has the pragma-once semantics. 
+		final long t1= System.currentTimeMillis();
+		final String changedContents = contents[4].toString();
+		ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				h1.setContents(new ByteArrayInputStream(changedContents.getBytes()), false, false, npm());
+				h1.setLocalTimeStamp(t1 + 1000); 
+			}
+		}, npm());
+		waitForIndexer();
+
+		fIndex.acquireReadLock();
+		try {
+			IIndexFile[] indexFiles = fIndex.getFiles(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(h1));
+			assertEquals(1, indexFiles.length);
+			for (IIndexFile indexFile : indexFiles) {
+				assertTrue("Timestamp not ok", indexFile.getTimestamp() >= t1);
+				assertTrue(indexFile.hasPragmaOnceSemantics());
+				// Included twice by h2.h and once by s1.cpp
+				assertEquals(2, fIndex.findIncludedBy(indexFile).length);
+			}
+		} finally {
+			fIndex.releaseReadLock();
+		}
+
+		// Change h1.h back to the original state without the pragma-once semantics. 
+		final long t2= System.currentTimeMillis();
+		ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				h1.setContents(new ByteArrayInputStream(h1Contents.toString().getBytes()), false, false, npm());
+				h1.setLocalTimeStamp(t2 + 2000); 
+			}
+		}, npm());
+		waitForIndexer();
+
+		fIndex.acquireReadLock();
+		try {
+			IIndexFile[] indexFiles = fIndex.getFiles(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(h1));
+			assertEquals(3, indexFiles.length);
+			for (IIndexFile indexFile : indexFiles) {
+				assertTrue("Timestamp not ok", indexFile.getTimestamp() >= t2);
+				assertFalse(indexFile.hasPragmaOnceSemantics());
+				assertEquals(1, fIndex.findIncludedBy(indexFile).length);
+			}
+		} finally {
+			fIndex.releaseReadLock();
+		}
+	}
+
 	private void standardCheckUpdateIncludes(IFile header, IFile s1, String tag) throws Exception {
 		fIndex.acquireReadLock();
 		try {
 			assertEquals(1, fIndex.findBindings(tag.toCharArray(), IndexFilter.ALL_DECLARED, npm()).length);
 
-			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(header));
-			IIndexFile sfile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(s1));
-			assertNotNull(ifile);
+			IIndexFile ifile= getIndexFile(header);
+			IIndexFile sfile= getIndexFile(s1);
 			IIndexInclude[] includes= fIndex.findIncludedBy(ifile);
 			assertEquals(1, includes.length);
 			assertEquals(s1.getFullPath().toString(), includes[0].getIncludedByLocation().getFullPath());
@@ -464,7 +642,6 @@ public class IndexIncludeTest extends IndexTestBase {
 			assertTrue(includes[0].isResolved());
 			assertFalse(includes[0].isSystemInclude());
 
-			assertNotNull(sfile);
 			includes= fIndex.findIncludes(sfile);
 			assertEquals(3, includes.length);
 			assertEquals(header.getFullPath().toString(), includes[0].getIncludesLocation().getFullPath());
@@ -494,13 +671,11 @@ public class IndexIncludeTest extends IndexTestBase {
 		try {
 			assertEquals(1, fIndex.findBindings(tag.toCharArray(), IndexFilter.ALL_DECLARED, npm()).length);
 
-			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(header));
-			IIndexFile sfile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(s1));
-			assertNotNull(ifile);
+			IIndexFile ifile= getIndexFile(header);
+			IIndexFile sfile= getIndexFile(s1);
 			IIndexInclude[] includes= fIndex.findIncludedBy(ifile);
 			assertEquals(0, includes.length);
 
-			assertNotNull(sfile);
 			includes= fIndex.findIncludes(sfile);
 			assertEquals(2, includes.length);
 
@@ -525,9 +700,8 @@ public class IndexIncludeTest extends IndexTestBase {
 		try {
 			assertEquals(1, fIndex.findBindings(tag.toCharArray(), IndexFilter.ALL_DECLARED, npm()).length);
 
-			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(header));
-			IIndexFile sfile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(s1));
-			assertNotNull(ifile);
+			IIndexFile ifile= getIndexFile(header);
+			IIndexFile sfile= getIndexFile(s1);
 			IIndexInclude[] includes= fIndex.findIncludedBy(ifile);
 			assertEquals(1, includes.length);
 			assertEquals(s1.getFullPath().toString(), includes[0].getIncludedByLocation().getFullPath());
@@ -536,7 +710,6 @@ public class IndexIncludeTest extends IndexTestBase {
 			assertTrue(includes[0].isResolved());
 			assertTrue(includes[0].isSystemInclude());
 
-			assertNotNull(sfile);
 			includes= fIndex.findIncludes(sfile);
 			assertEquals(2, includes.length);
 			assertEquals(header.getFullPath().toString(), includes[0].getIncludesLocation().getFullPath());
@@ -560,9 +733,8 @@ public class IndexIncludeTest extends IndexTestBase {
 		try {
 			assertEquals(1, fIndex.findBindings(tag.toCharArray(), IndexFilter.ALL_DECLARED, npm()).length);
 
-			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(header));
-			IIndexFile sfile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(s1));
-			assertNotNull(ifile);
+			IIndexFile ifile= getIndexFile(header);
+			IIndexFile sfile= getIndexFile(s1);
 			IIndexInclude[] includes= fIndex.findIncludedBy(ifile);
 			assertEquals(1, includes.length);
 			assertEquals(s1.getFullPath().toString(), includes[0].getIncludedByLocation().getFullPath());
@@ -571,7 +743,6 @@ public class IndexIncludeTest extends IndexTestBase {
 			assertTrue(includes[0].isResolved());
 			assertFalse(includes[0].isSystemInclude());
 
-			assertNotNull(sfile);
 			includes= fIndex.findIncludes(sfile);
 			assertEquals(2, includes.length);
 			assertEquals(header.getFullPath().toString(), includes[0].getIncludesLocation().getFullPath());

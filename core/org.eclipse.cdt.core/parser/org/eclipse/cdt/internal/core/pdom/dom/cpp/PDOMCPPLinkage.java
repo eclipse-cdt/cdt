@@ -6,10 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Doug Schaefer (QNX) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    Andrew Ferguson (Symbian)
- *    Sergey Prigogin (Google)
+ *     Doug Schaefer (QNX) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Andrew Ferguson (Symbian)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -127,10 +127,12 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		super(pdom, CPP_LINKAGE_NAME, CPP_LINKAGE_NAME.toCharArray());
 	}
 
+	@Override
 	public String getLinkageName() {
 		return CPP_LINKAGE_NAME;
 	}
 
+	@Override
 	public int getLinkageID() {
 		return CPP_LINKAGE_ID;
 	}
@@ -156,6 +158,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			postProcesses.add(this);
 		}
 		
+		@Override
 		public void run() {
 			for (int i = 0; i < fOriginal.length; i++) {
 				final IPDOMCPPTemplateParameter tp = fPersisted[i];
@@ -176,6 +179,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			postProcesses.add(this);
 		}
 		
+		@Override
 		public void run() {
 			try {
 				ICPPTemplateArgument[] args = binding.getTemplateArguments();
@@ -209,6 +213,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			postProcesses.add(this);
 		}
 		
+		@Override
 		public void run() {
 			for (int i = 0; i < fOriginalTemplateParameters.length; i++) {
 				final IPDOMCPPTemplateParameter tp = fTemplateParameters[i];

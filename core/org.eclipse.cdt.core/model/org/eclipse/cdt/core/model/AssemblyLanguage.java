@@ -60,9 +60,7 @@ public class AssemblyLanguage extends AbstractLanguage implements IAsmLanguage, 
 		return DEFAULT_INSTANCE;
 	}
 
-	/*
-	 * @see org.eclipse.cdt.core.model.ILanguage#createModelBuilder(org.eclipse.cdt.core.model.ITranslationUnit)
-	 */
+	@Override
 	public IContributedModelBuilder createModelBuilder(ITranslationUnit tu) {
 		IContributedModelBuilder modelBuilder= null;
 		IContributedModelBuilder.Factory modelBuilderFactory= (IContributedModelBuilder.Factory)getAdapter(IContributedModelBuilder.Factory.class);
@@ -78,75 +76,57 @@ public class AssemblyLanguage extends AbstractLanguage implements IAsmLanguage, 
 		return modelBuilder;
 	}
 
-	/*
-	 * @see org.eclipse.cdt.core.model.ILanguage#getASTTranslationUnit(org.eclipse.cdt.core.parser.CodeReader, org.eclipse.cdt.core.parser.IScannerInfo, org.eclipse.cdt.core.dom.ICodeReaderFactory, org.eclipse.cdt.core.index.IIndex, org.eclipse.cdt.core.parser.IParserLogService)
-	 */
 	@Deprecated
+	@Override
 	public IASTTranslationUnit getASTTranslationUnit(org.eclipse.cdt.core.parser.CodeReader reader,
 			IScannerInfo scanInfo, org.eclipse.cdt.core.dom.ICodeReaderFactory fileCreator, IIndex index,
 			IParserLogService log) throws CoreException {
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.cdt.core.model.ILanguage#getCompletionNode(org.eclipse.cdt.core.parser.CodeReader, org.eclipse.cdt.core.parser.IScannerInfo, org.eclipse.cdt.core.dom.ICodeReaderFactory, org.eclipse.cdt.core.index.IIndex, org.eclipse.cdt.core.parser.IParserLogService, int)
-	 */
 	@Deprecated
+	@Override
 	public IASTCompletionNode getCompletionNode(org.eclipse.cdt.core.parser.CodeReader reader,
 			IScannerInfo scanInfo, org.eclipse.cdt.core.dom.ICodeReaderFactory fileCreator, IIndex index,
 			IParserLogService log, int offset) throws CoreException {
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.cdt.core.model.ILanguage#getId()
-	 */
+	@Override
 	public String getId() {
 		return fId;
 	}
 
-	/*
-	 * @see org.eclipse.cdt.core.model.ILanguage#getSelectedNames(org.eclipse.cdt.core.dom.ast.IASTTranslationUnit, int, int)
-	 */
+	@Override
 	public IASTName[] getSelectedNames(IASTTranslationUnit ast, int start, int length) {
 		return null;
 	}
 
 	// IAsmLanguage
 	
-	/*
-	 * @see org.eclipse.cdt.core.model.IAsmLanguage#getLineCommentCharacters()
-	 */
+	@Override
 	public char[] getLineCommentCharacters() {
 		return fLineCommentCharacters;
 	}
 
-	/*
-	 * @see org.eclipse.cdt.core.model.IAsmLanguage#getLineSeparatorCharacter()
-	 */
+	@Override
 	public char getLineSeparatorCharacter() {
 		return '\0';
 	}
 
-	/*
-	 * @see org.eclipse.cdt.core.model.IAsmLanguage#getDirectiveKeywords()
-	 */
+	@Override
 	public String[] getDirectiveKeywords() {
 		return DIRECTIVE_KEYWORDS;
 	}
 
-	/*
-	 * @see org.eclipse.cdt.core.model.IAsmLanguage#getPreprocessorKeywords()
-	 */
+	@Override
 	public String[] getPreprocessorKeywords() {
 		Set<String> ppDirectives= ParserFactory.getKeywordSet(KeywordSetKey.PP_DIRECTIVE, ParserLanguage.C);
 		String[] result= ppDirectives.toArray(new String[ppDirectives.size()]);
 		return result;
 	}
 
-	/*
-	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
-	 */
+	@Override
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
 		if (data instanceof String) {
 			fLineCommentCharacters= ((String)data).toCharArray();
@@ -154,6 +134,7 @@ public class AssemblyLanguage extends AbstractLanguage implements IAsmLanguage, 
 		fId= CCorePlugin.PLUGIN_ID + '.' + config.getAttribute("id"); //$NON-NLS-1$
 	}
 
+	@Override
 	public int getLinkageID() {
 		return ILinkage.NO_LINKAGE_ID;
 	}

@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *    Anton Leherbauer (Wind River Systems)
+ *     Markus Schorn - initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.model;
 
@@ -27,9 +27,7 @@ import org.eclipse.core.runtime.PlatformObject;
  * @since 4.0
  */
 public abstract class AbstractLanguage extends PlatformObject implements ILanguage {
-	/*
-	 * @see org.eclipse.cdt.core.model.ILanguage#getName()
-	 */
+	@Override
 	public String getName() {
 		ILanguageDescriptor languageDescriptor= LanguageManager.getInstance().getLanguageDescriptor(getId());
 		if (languageDescriptor != null) {
@@ -43,6 +41,7 @@ public abstract class AbstractLanguage extends PlatformObject implements ILangua
 	 * IncludeFileContentProvider, IIndex, int, IParserLogService)}
 	 */
 	@Deprecated
+	@Override
 	public IASTTranslationUnit getASTTranslationUnit(org.eclipse.cdt.core.parser.CodeReader reader, 
 			IScannerInfo scanInfo,
 			org.eclipse.cdt.core.dom.ICodeReaderFactory fileCreator, IIndex index, int options, IParserLogService log)
@@ -54,6 +53,7 @@ public abstract class AbstractLanguage extends PlatformObject implements ILangua
 	/**
 	 * @since 5.2
 	 */
+	@Override
 	@SuppressWarnings("deprecation")
 	public IASTTranslationUnit getASTTranslationUnit(FileContent content, IScannerInfo scanInfo,
 			IncludeFileContentProvider fileCreator, IIndex index, int options, IParserLogService log)
@@ -67,6 +67,7 @@ public abstract class AbstractLanguage extends PlatformObject implements ILangua
 	/**
 	 * @since 5.2
 	 */
+	@Override
 	@SuppressWarnings("deprecation")
 	public IASTCompletionNode getCompletionNode(FileContent reader, IScannerInfo scanInfo,
 			IncludeFileContentProvider fileCreator, IIndex index, IParserLogService log, int offset)

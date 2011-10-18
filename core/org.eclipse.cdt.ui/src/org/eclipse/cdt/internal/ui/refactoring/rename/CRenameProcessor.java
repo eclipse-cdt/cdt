@@ -42,8 +42,6 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 
-import org.eclipse.cdt.internal.ui.refactoring.RefactoringSaveHelper;
-
 /**
  * This is the processor used for the rename. It decides which of the delegates to
  * use and forwards further calls to the delegate.
@@ -334,9 +332,6 @@ public class CRenameProcessor extends RenameProcessor {
 	 * @return a save mode from {@link org.eclipse.cdt.internal.ui.refactoring.RefactoringSaveHelper}
 	 */
 	public int getSaveMode() {
-		if (fDelegate == null) {
-			return RefactoringSaveHelper.SAVE_NOTHING;
-		}
 		return fDelegate.getSaveMode();
 	}
 

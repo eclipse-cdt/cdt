@@ -191,7 +191,11 @@ public class RenameSupport {
 			CRenameProcessor processor = (CRenameProcessor) refactoring.getProcessor();
         	processor.lockIndex();
         	try {
-        		processor.checkInitialConditions(new NullProgressMonitor());
+        		RefactoringStatus status = processor.checkInitialConditions(new NullProgressMonitor());
+        		if (status.hasFatalError()) {
+					showInformation(shell, status);
+        			return DialogResult.CANCELED;
+        		}
         		if (starter.activate(wizard, shell, RenameMessages.CRefactory_title_rename,
         				processor.getSaveMode())) {
         			return DialogResult.OK;
@@ -298,7 +302,7 @@ public class RenameSupport {
 		}
 	}
 
-	private void showInformation(Shell parent, RefactoringStatus status) {
+	private static void showInformation(Shell parent, RefactoringStatus status) {
 		String message= status.getMessageMatchingSeverity(RefactoringStatus.FATAL);
 		MessageDialog.openInformation(parent, RenameMessages.RenameSupport_dialog_title, message);
 	}

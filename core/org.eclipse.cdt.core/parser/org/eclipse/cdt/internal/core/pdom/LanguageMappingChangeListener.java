@@ -28,19 +28,14 @@ import org.eclipse.core.runtime.CoreException;
  *	This class handles changes in language mappings for the PDOM by reindexing the appropriate projects.
  *  This class is a a work in progress and will be changed soon to be smarter about the resources it reindexes.
  */
-public class LanguageMappingChangeListener implements
-		ILanguageMappingChangeListener {
-
+public class LanguageMappingChangeListener implements ILanguageMappingChangeListener {
 	private IIndexManager fManager;
 	
 	public LanguageMappingChangeListener(IIndexManager manager) {
 		fManager = manager;
 	}
 	
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.ILanguageMappingChangeListener#handleLanguageMappingChangeEvent(org.eclipse.cdt.core.model.ILanguageMappingsChangeEvent)
-	 */
+	@Override
 	public void handleLanguageMappingChangeEvent(ILanguageMappingChangeEvent event) {
 		CModelManager manager = CModelManager.getDefault();
 		if (event.getType() == ILanguageMappingChangeEvent.TYPE_WORKSPACE) {

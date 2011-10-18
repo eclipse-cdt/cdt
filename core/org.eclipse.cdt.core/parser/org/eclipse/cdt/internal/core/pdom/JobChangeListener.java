@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom;
 
@@ -25,12 +25,15 @@ class JobChangeListener implements IJobChangeListener {
 		fPDomManager= pdomManager;
 	}
 	
+	@Override
 	public void aboutToRun(IJobChangeEvent event) {
 	}
 
+	@Override
 	public void awake(IJobChangeEvent event) {
 	}
 
+	@Override
 	public void done(IJobChangeEvent event) {
 		if (event.getJob().belongsTo(fPDomManager)) {
 			if (Job.getJobManager().find(fPDomManager).length == 0) {
@@ -39,15 +42,18 @@ class JobChangeListener implements IJobChangeListener {
 		}
 	}
 
+	@Override
 	public void running(IJobChangeEvent event) {
 	}
 
+	@Override
 	public void scheduled(IJobChangeEvent event) {
 		if (event.getJob().belongsTo(fPDomManager)) {
 			fPDomManager.fireStateChange(IndexerStateEvent.STATE_BUSY);
 		}
 	}
+
+	@Override
 	public void sleeping(IJobChangeEvent event) {
 	}
-
 }

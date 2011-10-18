@@ -122,6 +122,8 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		public PCL(ICProject prj) {
 			fProject= prj;
 		}
+
+		@Override
 		public void preferenceChange(PreferenceChangeEvent event) {
 			if (fProject.getProject().isOpen()) {
 				onPreferenceChange(fProject, event);
@@ -191,6 +193,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		fProjectDescriptionListener= new CProjectDescriptionListener(this);
 		fJobChangeListener= new JobChangeListener(this);
 		fPreferenceChangeListener= new IPreferenceChangeListener() {
+			@Override
 			public void preferenceChange(PreferenceChangeEvent event) {
 				onPreferenceChange(event);
 			}
@@ -422,20 +425,24 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		return project.getElementName() + "." + time + ".pdom";  //$NON-NLS-1$//$NON-NLS-2$
 	}
 
+	@Override
 	public String getDefaultIndexerId() {
 		return getIndexerId(null);
 	}
 
+	@Override
 	public void setDefaultIndexerId(String indexerId) {
 		IndexerPreferences.setDefaultIndexerId(indexerId);
 	}
 	
-    public String getIndexerId(ICProject project) {
+    @Override
+	public String getIndexerId(ICProject project) {
     	IProject prj= project != null ? project.getProject() : null;
     	return IndexerPreferences.get(prj, IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_NO_INDEXER);
     }
 
-    public void setIndexerId(final ICProject project, String indexerId) {
+    @Override
+	public void setIndexerId(final ICProject project, String indexerId) {
     	IProject prj= project.getProject();
     	IndexerPreferences.set(prj, IndexerPreferences.KEY_INDEXER_ID, indexerId);
     	CCoreInternals.savePreferences(prj, IndexerPreferences.getScope(prj) == IndexerPreferences.SCOPE_PROJECT_SHARED);
@@ -733,7 +740,8 @@ public class PDOMManager implements IWritableIndexManager, IListener {
     	}
     }
         
-    public boolean isIndexerIdle() {
+    @Override
+	public boolean isIndexerIdle() {
     	return Job.getJobManager().find(this).length == 0;
     }
 
@@ -944,6 +952,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		}
 	}
 
+	@Override
 	public void reindex(final ICProject project) {
 		Job job= new Job(Messages.PDOMManager_notifyJob_label) { 
 			@Override
@@ -977,18 +986,22 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		job.schedule();
 	}
 
+	@Override
 	public void addIndexChangeListener(IIndexChangeListener listener) {
 		fChangeListeners.add(listener);
 	}
 
+	@Override
 	public void removeIndexChangeListener(IIndexChangeListener listener) {
 		fChangeListeners.remove(listener);
 	}
 	
+	@Override
 	public void addIndexerStateListener(IIndexerStateListener listener) {
 		fStateListeners.add(listener);
 	}
 
+	@Override
 	public void removeIndexerStateListener(IIndexerStateListener listener) {
 		fStateListeners.remove(listener);
 	}
@@ -1034,16 +1047,19 @@ public class PDOMManager implements IWritableIndexManager, IListener {
     			return;
     		}
     		Runnable notify= new Runnable() {
-    			public void run() {
+    			@Override
+				public void run() {
     				fIndexerStateEvent.setState(state);
     				Object[] listeners= fStateListeners.getListeners();
     				for (Object listener2 : listeners) {
     					final IIndexerStateListener listener = (IIndexerStateListener) listener2;
     					SafeRunner.run(new ISafeRunnable(){
-    						public void handleException(Throwable exception) {
+    						@Override
+							public void handleException(Throwable exception) {
     							CCorePlugin.log(exception);
     						}
-    						public void run() throws Exception {
+    						@Override
+							public void run() throws Exception {
     							listener.indexChanged(fIndexerStateEvent);
     						}
     					});
@@ -1054,6 +1070,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
     	}
 	}
 
+	@Override
 	public void handleChange(PDOM pdom, final PDOM.ChangeEvent e) {
 		if (fChangeListeners.isEmpty()) {
 			return;
@@ -1067,15 +1084,18 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		if (project != null) {
 			final ICProject finalProject= project;
 			Runnable notify= new Runnable() {
+				@Override
 				public void run() {
 					fIndexChangeEvent.setAffectedProject(finalProject, e);
 					Object[] listeners= fChangeListeners.getListeners();
 					for (Object listener2 : listeners) {
 						final IIndexChangeListener listener = (IIndexChangeListener) listener2;
 						SafeRunner.run(new ISafeRunnable(){
+							@Override
 							public void handleException(Throwable exception) {
 								CCorePlugin.log(exception);
 							}
+							@Override
 							public void run() throws Exception {
 								listener.indexChanged(fIndexChangeEvent);
 							}
@@ -1087,6 +1107,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		}
 	}
 
+	@Override
 	public boolean joinIndexer(final int waitMaxMillis, final IProgressMonitor monitor) {
 		assert monitor != null;
 		Thread th= null;
@@ -1169,22 +1190,27 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		return currentTicks;
 	}
 
+	@Override
 	public IWritableIndex getWritableIndex(ICProject project) throws CoreException {
 		return fIndexFactory.getWritableIndex(project);
 	}
 
+	@Override
 	public IIndex getIndex(ICProject project) throws CoreException {
 		return fIndexFactory.getIndex(new ICProject[] {project}, 0);
 	}
 
+	@Override
 	public IIndex getIndex(ICProject[] projects) throws CoreException {
 		return fIndexFactory.getIndex(projects, 0);
 	}
 
+	@Override
 	public IIndex getIndex(ICProject project, int options) throws CoreException {
 		return fIndexFactory.getIndex(new ICProject[] {project}, options);
 	}
 
+	@Override
 	public IIndex getIndex(ICProject[] projects, int options) throws CoreException {
 		return fIndexFactory.getIndex(projects, options);
 	}
@@ -1294,6 +1320,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		}
 	}
 	
+	@Override
 	public void export(ICProject project, String location, int options, IProgressMonitor monitor) throws CoreException {
 		TeamPDOMExportOperation operation= new TeamPDOMExportOperation(project);
 		operation.setTargetLocation(location);
@@ -1313,16 +1340,19 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		pdom.setProperty(IIndexFragment.PROPERTY_FRAGMENT_ID, id);
 	}
 
+	@Override
 	public boolean isProjectIndexed(ICProject proj) {
 		return !IPDOMManager.ID_NO_INDEXER.equals(getIndexerId(proj));
 	}
 
+	@Override
 	public boolean isIndexerSetupPostponed(ICProject proj) {
 		synchronized (fSetupParticipants) {
 			return fPostponedProjects.contains(proj);
 		}
 	}
 
+	@Override
 	public void update(ICElement[] tuSelection, int options) throws CoreException {
 		Map<ICProject, List<ICElement>> projectsToElements= splitSelection(tuSelection);
 		for (Map.Entry<ICProject, List<ICElement>> entry : projectsToElements.entrySet()) {
@@ -1427,12 +1457,15 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			fPostponedProjects.remove(cproject);
 			final IndexerSetupParticipant[] participants= fSetupParticipants.toArray(new IndexerSetupParticipant[fSetupParticipants.size()]);
 			Runnable notify= new Runnable() {
+				@Override
 				public void run() {
 					for (final IndexerSetupParticipant p : participants) {
 						SafeRunner.run(new ISafeRunnable(){
+							@Override
 							public void handleException(Throwable exception) {
 								CCorePlugin.log(exception);
 							}
+							@Override
 							public void run() throws Exception {
 								p.onIndexerSetup(cproject);
 							}
@@ -1459,12 +1492,14 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		}		
 	}
 
+	@Override
 	public void addIndexerSetupParticipant(IndexerSetupParticipant participant) {
 		synchronized (fSetupParticipants) {
 			fSetupParticipants.add(participant);
 		}
 	}
 
+	@Override
 	public void removeIndexerSetupParticipant(IndexerSetupParticipant participant) {
 		synchronized (fSetupParticipants) {
 			fSetupParticipants.remove(participant);

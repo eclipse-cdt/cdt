@@ -44,8 +44,8 @@ public interface IIndexBinding extends IBinding {
 	IIndexFile getLocalToFile() throws CoreException;
 	
 	/**
-	 * {@inheritDoc}
 	 * @since 5.1
 	 */
+	@Override
 	IIndexBinding getOwner();
 }

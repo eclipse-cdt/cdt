@@ -390,12 +390,14 @@ public class PDOM extends PlatformObject implements IPDOM {
 		}
 	}
 
+	@Override
 	public void addListener(IListener listener) {
 		if (listeners == null)
 			listeners = new LinkedList<IListener>();
 		listeners.add(listener);
 	}
 
+	@Override
 	public void removeListener(IListener listener) {
 		if (listeners == null)
 			return;
@@ -422,6 +424,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	}
 
 	@Deprecated
+	@Override
 	public PDOMFile getFile(int linkageID, IIndexFileLocation location) throws CoreException {
 		PDOMLinkage linkage= getLinkage(linkageID);
 		if (linkage == null)
@@ -429,6 +432,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		return PDOMFile.findFile(linkage, getFileIndex(), location, locationConverter);
 	}
 
+	@Override
 	public PDOMFile getFile(int linkageID, IIndexFileLocation location,
 			ISignificantMacros macroDictionary) throws CoreException {
 		PDOMLinkage linkage= getLinkage(linkageID);
@@ -443,6 +447,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		return PDOMFile.findFile(linkage, getFileIndex(), location, locationConverter, macroDictionary);
 	}
 
+	@Override
 	public IIndexFragmentFile[] getFiles(int linkageID, IIndexFileLocation location) throws CoreException {
 		PDOMLinkage linkage= getLinkage(linkageID);
 		if (linkage == null)
@@ -450,16 +455,20 @@ public class PDOM extends PlatformObject implements IPDOM {
 		return PDOMFile.findFiles(linkage, getFileIndex(), location, locationConverter);
 	}
 
+	@Override
 	public IIndexFragmentFile[] getFiles(IIndexFileLocation location) throws CoreException {
 		return PDOMFile.findFiles(this, getFileIndex(), location, locationConverter);
 	}
 
+	@Override
 	public IIndexFragmentFile[] getAllFiles() throws CoreException {
 		final List<PDOMFile> locations = new ArrayList<PDOMFile>();
 		getFileIndex().accept(new IBTreeVisitor() {
+			@Override
 			public int compare(long record) throws CoreException {
 				return 0;
 			}
+			@Override
 			public boolean visit(long record) throws CoreException {
 				PDOMFile file = PDOMFile.recreateFile(PDOM.this, record);
 				locations.add(file);
@@ -516,6 +525,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		return getFirstLinkageRecord() == 0;
 	}
 
+	@Override
 	public IIndexFragmentBinding findBinding(IASTName name) throws CoreException {
 		IBinding binding= name.resolveBinding();
 		if (binding != null) {
@@ -553,6 +563,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 			matchStack.add(matchesUpToLevel);
 		}
 
+		@Override
 		public boolean visit(IPDOMNode node) throws CoreException {
 			if (monitor.isCanceled())
 				throw new CoreException(Status.OK_STATUS);
@@ -600,6 +611,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 			return false;
 		}
 
+		@Override
 		public void leave(IPDOMNode node) throws CoreException {
 			final int idx= currentPath.size()-1;
 			if (idx >= 0 && currentPath.get(idx) == node) {
@@ -617,7 +629,9 @@ public class PDOM extends PlatformObject implements IPDOM {
 		return findBindings(new Pattern[] { pattern }, isFullyQualified, filter, monitor);
 	}
 
-	public IIndexFragmentBinding[] findBindings(Pattern[] patterns, boolean isFullyQualified, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+	@Override
+	public IIndexFragmentBinding[] findBindings(Pattern[] patterns, boolean isFullyQualified,
+			IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		if (monitor == null) {
 			monitor= new NullProgressMonitor();
 		}
@@ -710,7 +724,9 @@ public class PDOM extends PlatformObject implements IPDOM {
 		return null;
 	}
 
-	public IIndexFragmentBinding[] findMacroContainers(Pattern pattern, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+	@Override
+	public IIndexFragmentBinding[] findMacroContainers(Pattern pattern, IndexFilter filter,
+			IProgressMonitor monitor) throws CoreException {
 		if (monitor == null) {
 			monitor= new NullProgressMonitor();
 		}
@@ -747,7 +763,9 @@ public class PDOM extends PlatformObject implements IPDOM {
 		return  result.toArray(new IIndexFragmentBinding[result.size()]);
 	}
 
-	public IIndexFragmentBinding[] findBindings(char[][] names, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+	@Override
+	public IIndexFragmentBinding[] findBindings(char[][] names, IndexFilter filter,
+			IProgressMonitor monitor) throws CoreException {
 		return findBindings(names, true, filter, monitor);
 	}
 
@@ -797,11 +815,13 @@ public class PDOM extends PlatformObject implements IPDOM {
 		return db.getRecPtr(LINKAGES);
 	}
 
+	@Override
 	public IIndexLinkage[] getLinkages() {
 		Collection<PDOMLinkage> values = getLinkageList();
 		return values.toArray(new IIndexLinkage[values.size()]);
 	}
 
+	@Override
 	public PDOMLinkage[] getLinkageImpls() {
 		Collection<PDOMLinkage> values = getLinkageList();
 		return values.toArray(new PDOMLinkage[values.size()]);
@@ -822,6 +842,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	private long lastReadAccess= 0;
 	private long timeWriteLockAcquired;
 
+	@Override
 	public void acquireReadLock() throws InterruptedException {
 		long t = sDEBUG_LOCKS ? System.nanoTime() : 0;
 		synchronized (mutex) {
@@ -845,6 +866,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		}
 	}
 
+	@Override
 	public void releaseReadLock() {
 		boolean clearCache= false;
 		synchronized (mutex) {
@@ -948,12 +970,14 @@ public class PDOM extends PlatformObject implements IPDOM {
 		fireChange(event);
 	}
 
+	@Override
 	public boolean hasWaitingReaders() {
 		synchronized (mutex) {
 			return waitingReaders > 0;
 		}
 	}
 
+	@Override
 	public long getLastWriteAccess() {
 		return lastWriteAccess;
 	}
@@ -966,6 +990,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		return fLinkageIDCache.get(linkage.getLinkageID());
 	}
 
+	@Override
 	public IIndexFragmentBinding adaptBinding(IBinding binding) throws CoreException {
 		if (binding == null) {
 			return null;
@@ -997,6 +1022,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		return null;
 	}
 
+	@Override
 	public IIndexFragmentName[] findNames(IBinding binding, int options) throws CoreException {
 		ArrayList<IIndexFragmentName> names= new ArrayList<IIndexFragmentName>();
 		IIndexFragmentBinding myBinding= adaptBinding(binding);
@@ -1079,6 +1105,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		return true;
 	}
 
+	@Override
 	public IIndexFragmentInclude[] findIncludedBy(IIndexFragmentFile file) throws CoreException {
 		PDOMFile pdomFile= adaptFile(file);
 		if (pdomFile != null) {
@@ -1105,6 +1132,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		return fPath;
 	}
 
+	@Override
 	public IIndexFragmentBinding[] findBindingsForPrefix(char[] prefix, boolean filescope, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		return findBindingsForPrefix(prefix, filescope, false, filter, monitor);
 	}
@@ -1113,6 +1141,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		return findBindingsForPrefixOrContentAssist(prefix, filescope, false, caseSensitive, filter, monitor);
 	}
 
+	@Override
 	public IIndexFragmentBinding[] findBindingsForContentAssist(char[] prefix, boolean filescope, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		return findBindingsForPrefixOrContentAssist(prefix, filescope, true, false, filter, monitor);
 	}
@@ -1143,11 +1172,14 @@ public class PDOM extends PlatformObject implements IPDOM {
 		return result.toArray(new IIndexFragmentBinding[result.size()]);
 	}
 
-	public IIndexFragmentBinding[] findBindings(char[] name, boolean filescope, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+	@Override
+	public IIndexFragmentBinding[] findBindings(char[] name, boolean filescope, IndexFilter filter,
+			IProgressMonitor monitor) throws CoreException {
 		return findBindings(name, filescope, true, filter, monitor);
 	}
 
-	public IIndexFragmentBinding[] findBindings(char[] name, boolean filescope, boolean isCaseSensitive, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+	public IIndexFragmentBinding[] findBindings(char[] name, boolean filescope,
+			boolean isCaseSensitive, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		ArrayList<IIndexFragmentBinding> result= new ArrayList<IIndexFragmentBinding>();
 		try {
 			for (PDOMLinkage linkage : getLinkageList()) {
@@ -1203,7 +1235,9 @@ public class PDOM extends PlatformObject implements IPDOM {
 		return result.toArray(new IIndexFragmentBinding[result.size()]);
 	}
 
-	public IIndexMacro[] findMacros(char[] prefix, boolean isPrefix, boolean isCaseSensitive, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+	@Override
+	public IIndexMacro[] findMacros(char[] prefix, boolean isPrefix, boolean isCaseSensitive,
+			IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		ArrayList<IIndexMacro> result= new ArrayList<IIndexMacro>();
 		try {
 			for (PDOMLinkage linkage : getLinkageList()) {
@@ -1221,6 +1255,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		return result.toArray(new IIndexMacro[result.size()]);
 	}
 
+	@Override
 	public String getProperty(String propertyName) throws CoreException {
 		if (IIndexFragment.PROPERTY_FRAGMENT_FORMAT_ID.equals(propertyName)) {
 			return FRAGMENT_PROPERTY_VALUE_FORMAT_ID;
@@ -1250,20 +1285,24 @@ public class PDOM extends PlatformObject implements IPDOM {
 		clearResultCache();
 	}
 
+	@Override
 	public void clearResultCache() {
 		synchronized (fResultCache) {
 			fResultCache.clear();
 		}
 	}
 
+	@Override
 	public long getCacheHits() {
 		return db.getCacheHits();
 	}
 
+	@Override
 	public long getCacheMisses() {
 		return db.getCacheMisses();
 	}
 
+	@Override
 	public void resetCacheCounters() {
 		db.resetCacheCounters();
 	}
@@ -1272,6 +1311,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		db.flush();
 	}
 
+	@Override
 	public Object getCachedResult(Object key) {
 		synchronized (fResultCache) {
 			return fResultCache.get(key);
@@ -1282,6 +1322,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		putCachedResult(key, result, true);
 	}
 
+	@Override
 	public Object putCachedResult(Object key, Object result, boolean replace) {
 		synchronized (fResultCache) {
 			Object old= fResultCache.put(key, result);
@@ -1445,6 +1486,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		return PDOMBinding.EMPTY_PDOMBINDING_ARRAY;
 	}
 
+	@Override
 	public IIndexFragmentFileSet createFileSet() {
 		return new PDOMFileSet();
 	}
@@ -1589,6 +1631,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		}
 	}
 
+	@Override
 	public IIndexScope[] getInlineNamespaces() throws CoreException {
 		PDOMLinkage linkage = getLinkage(ILinkage.CPP_LINKAGE_ID);
 		if (linkage == null) {

@@ -14,7 +14,6 @@ package org.eclipse.cdt.core.index;
 
 import org.eclipse.cdt.core.dom.ast.IFileNomination;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
-import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -35,13 +34,6 @@ public interface IIndexFile extends IFileNomination {
 	 */
 	IIndexFileLocation getLocation() throws CoreException;
 
-	/**
-	 * Returns the significant macros for this version of the file.
-	 * @throws CoreException 
-	 * @since 5.4
-	 */
-	ISignificantMacros getSignificantMacros() throws CoreException;
-	
 	/**
 	 * Returns all includes found in this file.
 	 * @return an array of all includes found in this file
@@ -101,13 +93,6 @@ public interface IIndexFile extends IFileNomination {
 	 * Returns the include that was used to parse this file, may be <code>null</code>.
 	 */
 	IIndexInclude getParsedInContext() throws CoreException;
-
-	/**
-	 * Returns <code>true</code> if the file is a header with #pragma once statement or an include
-	 * guard, or if it is a source file.
-	 * @since 5.4
-	 */
-	public boolean hasPragmaOnceSemantics() throws CoreException;
 
 	/**
 	 * Returns the id of the linkage this file was parsed in.

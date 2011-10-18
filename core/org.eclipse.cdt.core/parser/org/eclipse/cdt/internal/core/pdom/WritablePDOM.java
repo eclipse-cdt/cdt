@@ -73,6 +73,7 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		return super.addFile(linkageID, location, sigMacros);
 	}
 
+	@Override
 	public IIndexFragmentFile addUncommittedFile(int linkageID, IIndexFileLocation location,
 			ISignificantMacros significantMacros) throws CoreException {
 		uncommittedKey = new FileContentKey(linkageID, location, significantMacros);
@@ -82,6 +83,7 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		return uncommittedFile;
 	}
 
+	@Override
 	public IIndexFragmentFile commitUncommittedFile() throws CoreException {
 		if (uncommittedFile == null)
 			return null;
@@ -102,6 +104,7 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		return file;
 	}
 
+	@Override
 	public void clearUncommittedFile() throws CoreException {
 		if (uncommittedFile != null) {
 			try {
@@ -115,6 +118,7 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		}
 	}
 
+	@Override
 	public void addFileContent(IIndexFragmentFile sourceFile, IncludeInformation[] includes, 
 			IASTPreprocessorStatement[] macros, IASTName[][] names, ASTFilePathResolver pathResolver,
 			YieldableIndexLock lock) throws CoreException, InterruptedException {
@@ -139,6 +143,7 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		}
 	}
 
+	@Override
 	public void clearFile(IIndexFragmentFile file) throws CoreException {
 		assert file.getIndexFragment() == this;
 		IIndexFileLocation location = file.getLocation();
@@ -158,10 +163,7 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		super.flush();
 	}
 		
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.index.IWritableIndexFragment#setProperty(java.lang.String, java.lang.String)
-	 */
+	@Override
 	public void setProperty(String propertyName, String value) throws CoreException {
 		if (IIndexFragment.PROPERTY_FRAGMENT_FORMAT_ID.equals(propertyName) 
 				|| IIndexFragment.PROPERTY_FRAGMENT_FORMAT_VERSION.equals(propertyName)) {
@@ -183,9 +185,11 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 	public void rewriteLocations(final IIndexLocationConverter newConverter) throws CoreException {
 		final List<PDOMFile> pdomfiles = new ArrayList<PDOMFile>();
 		getFileIndex().accept(new IBTreeVisitor() {
+			@Override
 			public int compare(long record) throws CoreException {
 				return 0;
 			}
+			@Override
 			public boolean visit(long record) throws CoreException {
 				PDOMFile file = PDOMFile.recreateFile(WritablePDOM.this, record);
 				pdomfiles.add(file);

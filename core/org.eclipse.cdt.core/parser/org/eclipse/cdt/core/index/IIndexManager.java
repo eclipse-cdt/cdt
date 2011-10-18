@@ -207,12 +207,14 @@ public interface IIndexManager extends IPDOMManager {
 	 * Returns the id of the indexer working on the project.
 	 * @since 4.0
 	 */
+	@Override
 	public String getIndexerId(ICProject project);
 
 	/**
 	 * Changes the indexer working on the project.
 	 * @since 4.0
 	 */
+	@Override
 	public void setIndexerId(ICProject project, String indexerId);
 	
 	/**

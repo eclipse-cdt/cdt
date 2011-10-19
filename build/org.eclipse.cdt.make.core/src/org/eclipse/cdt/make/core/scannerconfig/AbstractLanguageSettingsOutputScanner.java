@@ -25,7 +25,10 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ErrorParserManager;
+import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
+import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializable;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -449,7 +452,14 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		}
 	
 		if (buildDirURI == null && currentCfgDescription != null) {
-			IPath builderCWD = currentCfgDescription.getBuildSetting().getBuilderCWD();
+			String builderCWD = currentCfgDescription.getBuildSetting().getBuilderCWD().toString();
+			try {
+				// TODO - here is a hack to overcome ${workspace_loc:/prj-name} returned by builder
+				ICdtVariableManager vmanager = CCorePlugin.getDefault().getCdtVariableManager();
+				builderCWD = vmanager.resolveValue(builderCWD, "", null, currentCfgDescription);
+			} catch (CdtVariableException e) {
+				MakeCorePlugin.log(e);
+			}
 			buildDirURI = org.eclipse.core.filesystem.URIUtil.toURI(builderCWD);
 		}
 		

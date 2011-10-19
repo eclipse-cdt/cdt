@@ -15,6 +15,7 @@
  * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  * David McKnight  (IBM)  - [251650] [dstore] Multiple copies of symbolic link file show in Table view
  * David McKnight  (IBM)  - [251729][dstore] problems querying symbolic link folder
+ * David McKnight  (IBM)  - [358301] [DSTORE] Hang during debug source look up
  *******************************************************************************/
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
 
@@ -369,7 +370,11 @@ public class FileQueryThread extends QueryThread
 					}
 				}
 
-		} catch (Exception e) {
+		} 
+		catch (OutOfMemoryError e){
+			System.exit(-1);
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 			UniversalServerUtilities.logError(UniversalFileSystemMiner.CLASSNAME,
 					"createDataElement failed with exception - isFile ", e, _dataStore); //$NON-NLS-1$

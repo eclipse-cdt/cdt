@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  * Contributors:
  * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
  * Martin Oberhuber (Wind River) - [199854][api] Improve error reporting for archive handlers
+ * David McKnight  (IBM)  - [358301] [DSTORE] Hang during debug source look up
  *******************************************************************************/
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
 
@@ -113,6 +114,7 @@ public class QueryThread extends SecuredThread implements ICancellableHandler {
 		else
 			expandedSize = size;
 
+		try {
 		buffer.append(version).append(IServiceConstants.TOKEN_SEPARATOR).append(date).append(
 				IServiceConstants.TOKEN_SEPARATOR).append(size).append(IServiceConstants.TOKEN_SEPARATOR);
 		buffer.append(hidden).append(IServiceConstants.TOKEN_SEPARATOR).append(canWrite).append(
@@ -126,7 +128,10 @@ public class QueryThread extends SecuredThread implements ICancellableHandler {
 						IServiceConstants.TOKEN_SEPARATOR);
 		buffer.append(compressionRatio).append(IServiceConstants.TOKEN_SEPARATOR).append(
 				expandedSize);
-
+		}
+		catch (OutOfMemoryError e){
+			System.exit(-1);
+		}
 
 		String buf = buffer.toString();
 		return buf;

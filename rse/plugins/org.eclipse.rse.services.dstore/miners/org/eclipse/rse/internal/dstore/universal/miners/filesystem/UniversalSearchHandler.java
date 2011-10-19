@@ -26,6 +26,7 @@
  * David McKnight  (IBM)  - [299568] Remote search only shows result in the symbolic linked file
  * David McKnight  (IBM]  - [330989] [dstore] OutOfMemoryError occurs when searching for a text in a large remote file
  * David McKnight   (IBM) - [283613] [dstore] Create a Constants File for all System Properties we support
+ * David McKnight  (IBM)  - [358301] [DSTORE] Hang during debug source look up
  ********************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
@@ -35,6 +36,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.HashSet;
+import java.util.Iterator;
 
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
@@ -56,6 +58,7 @@ import org.eclipse.rse.services.clientserver.archiveutils.VirtualChild;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.clientserver.search.SystemSearchFileNameMatcher;
 import org.eclipse.rse.services.clientserver.search.SystemSearchLineMatch;
+import org.eclipse.rse.services.clientserver.search.SystemSearchMatch;
 import org.eclipse.rse.services.clientserver.search.SystemSearchStringMatchLocator;
 import org.eclipse.rse.services.clientserver.search.SystemSearchStringMatcher;
 
@@ -504,11 +507,22 @@ public class UniversalSearchHandler extends SecuredThread implements ICancellabl
 		
 		for (int i = 0; i < lineMatches.length; i++) {
 			match = lineMatches[i];
+
 			DataElement obj = _dataStore.createObject(deObj, _deGrep, match.getLine(), absPath);
-			obj.setAttribute(DE.A_SOURCE, obj.getSource() + ':'+ match.getLineNumber());
-	
+			String sourceString = obj.getSource() + ':'+ match.getLineNumber();
+						
+			Iterator iter = match.getMatches();
+			StringBuffer offsets = new StringBuffer();
+			while (iter.hasNext()){
+				SystemSearchMatch m = (SystemSearchMatch)iter.next();
+				int start = m.getStartOffset();
+				int end = m.getEndOffset();
+				offsets.append("(" + start + "," + end + ")");				
+			}
+			obj.setAttribute(DE.A_SOURCE, sourceString + offsets.toString());
 		}
 		_dataStore.disconnectObjects(deObj);	
+		_dataStore.refresh(deObj);
 	}
 	
 	public void checkAndClearupMemory()

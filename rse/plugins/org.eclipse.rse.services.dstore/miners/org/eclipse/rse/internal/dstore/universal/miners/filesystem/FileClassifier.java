@@ -22,6 +22,7 @@
  * David McKnight   (IBM) - [283613] [dstore] Create a Constants File for all System Properties we support
  * David McKnight   (IBM)        - [153635] [dstore-linux] dangling symbolic links are not classified properly
  * David McKnight   (IBM)        - [350581] [dstore] FileClassifier should default to English
+ * David McKnight  (IBM)  - [358301] [DSTORE] Hang during debug source look up
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
@@ -272,7 +273,10 @@ public class FileClassifier extends SecuredThread
     	super.run();
         if (!_systemSupportsClassify)
             return;
-        init();
+        
+        try {
+        	init();
+
 
         // get full path
         String filePath = null;
@@ -337,6 +341,10 @@ public class FileClassifier extends SecuredThread
         }
         _dataStore.disconnectObject(_subject);
         _dataStore.refresh(_subject);
+        }
+        catch (OutOfMemoryError e){
+        	System.exit(-1);
+        }
     }
 
     /**
@@ -656,12 +664,18 @@ public class FileClassifier extends SecuredThread
 	                    	}
 	                    }
 	                }
+	         catch (OutOfMemoryError e){
+	        	 System.exit(-1);
+	         }
 	         catch (Exception e)
 	         {
 	           e.printStackTrace();
 	          }
 	            available = stream.available();
             }
+        }
+        catch (OutOfMemoryError e){
+       	 System.exit(-1);
         }
         catch (Exception e)
         {
@@ -728,8 +742,14 @@ public class FileClassifier extends SecuredThread
             	envVars = new String[] {langVar};
             }
 
-            // run command with the working directory being the parent file
-            Process theProcess = Runtime.getRuntime().exec(args, envVars, parentFile);
+            // run command with the working directory being the parent file            
+            Process theProcess = null;
+            try {
+            	theProcess = Runtime.getRuntime().exec(args, envVars, parentFile);
+            }
+            catch (OutOfMemoryError e){
+                System.exit(-1);
+            }
 
             BufferedReader reader = null;
             DataInputStream stream = null;
@@ -754,6 +774,9 @@ public class FileClassifier extends SecuredThread
                     line = reader.readLine();
                 else
                     line = readLine(stream, _specialEncoding);//reader.readLine();
+            }
+            catch (OutOfMemoryError e){
+            	System.exit(-1);
             }
             catch (Exception e)
             {
@@ -911,6 +934,9 @@ public class FileClassifier extends SecuredThread
                     else
                         line = readLine(stream, _specialEncoding);
                 }
+                catch (OutOfMemoryError e){
+                	System.exit(-1);
+                }
                 catch (Exception e)
                 {
                     e.printStackTrace();
@@ -953,6 +979,9 @@ public class FileClassifier extends SecuredThread
                     }
                 }
             }
+        }
+        catch (OutOfMemoryError e){
+        	System.exit(-1);
         }
         catch (Exception e)
         {
@@ -1068,5 +1097,14 @@ public class FileClassifier extends SecuredThread
         {
             // TODO: log error
         }
+    }
+    
+    public void start(){
+    	try {
+    		super.start();
+    	}
+    	catch (OutOfMemoryError e){
+    		System.exit(-1);
+    	}
     }
 }

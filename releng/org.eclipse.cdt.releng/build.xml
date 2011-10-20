@@ -22,7 +22,7 @@
 		<tstamp/>
 		<property name="eclipseDist" value="/home/data/httpd/download.eclipse.org/eclipse/downloads/drops/S-3.7RC3-201105261708/eclipse-SDK-3.7RC3-linux-gtk.tar.gz"/>
 		<property name="rseDist" value="/home/data/httpd/download.eclipse.org/tm/downloads/drops/S-3.3RC3-201106011145/RSE-SDK-3.3RC3.zip"/>
-		<property name="branchVersion" value="8.0.0"/>
+		<property name="branchVersion" value="8.1.0"/>
 		<property name="timestamp" value="${DSTAMP}${TSTAMP}" />
 		<property name="forceContextQualifier" value="${timestamp}"/>
 		<property name="buildingOSGi" value="true"/>
@@ -37,7 +37,7 @@
 		<property name="zipsdir" value="${buildDirectory}/${buildType}.${buildId}"/>
 		<property name="masterFile" value="cdt-master-${branchVersion}-${buildId}.zip"/>
 		<property name="masterFeature" value="org.eclipse.cdt.master_${branchVersion}.jar"/>
-		<property name="cdtTest" value="org.eclipse.cdt.testing_8.0.0.${timestamp}"/>
+		<property name="cdtTest" value="org.eclipse.cdt.testing_8.1.0.${timestamp}"/>
 		<property name="eclipseTest" value="org.eclipse.test_3.3.100"/>
 		<property name="messagefile" value="message.in"/>
 		<property name="mailto" value="vivkong@ca.ibm.com"/>

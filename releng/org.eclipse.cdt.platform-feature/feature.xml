@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.platform"
       label="%featureName"
-      version="8.0.0.qualifier"
+      version="8.1.0.qualifier"
       provider-name="%providerName">
 
    <description>

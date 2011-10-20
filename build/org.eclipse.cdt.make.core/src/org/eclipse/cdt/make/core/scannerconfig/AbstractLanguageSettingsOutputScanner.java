@@ -452,15 +452,18 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		}
 	
 		if (buildDirURI == null && currentCfgDescription != null) {
-			String builderCWD = currentCfgDescription.getBuildSetting().getBuilderCWD().toString();
-			try {
-				// TODO - here is a hack to overcome ${workspace_loc:/prj-name} returned by builder
-				ICdtVariableManager vmanager = CCorePlugin.getDefault().getCdtVariableManager();
-				builderCWD = vmanager.resolveValue(builderCWD, "", null, currentCfgDescription);
-			} catch (CdtVariableException e) {
-				MakeCorePlugin.log(e);
+			IPath pathBuilderCWD = currentCfgDescription.getBuildSetting().getBuilderCWD();
+			if (pathBuilderCWD != null) {
+				String builderCWD = pathBuilderCWD.toString();
+				try {
+					// TODO - here is a hack to overcome ${workspace_loc:/prj-name} returned by builder
+					ICdtVariableManager vmanager = CCorePlugin.getDefault().getCdtVariableManager();
+					builderCWD = vmanager.resolveValue(builderCWD, "", null, currentCfgDescription);
+				} catch (CdtVariableException e) {
+					MakeCorePlugin.log(e);
+				}
+				buildDirURI = org.eclipse.core.filesystem.URIUtil.toURI(builderCWD);
 			}
-			buildDirURI = org.eclipse.core.filesystem.URIUtil.toURI(builderCWD);
 		}
 		
 		if (buildDirURI == null && currentProject != null) {

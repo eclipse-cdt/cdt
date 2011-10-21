@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser;
 
@@ -69,7 +69,7 @@ public class Value implements IValue {
 		new Value(new char[] {'5'}, ICPPUnknownBinding.EMPTY_UNKNOWN_BINDING_ARRAY), 
 		new Value(new char[] {'6'}, ICPPUnknownBinding.EMPTY_UNKNOWN_BINDING_ARRAY)};
 
-	
+
 	private static class Reevaluation {
 		public final char[] fExpression;
 		private int fPackOffset;
@@ -99,6 +99,7 @@ public class Value implements IValue {
 			pos= idx;
 		}
 	}
+
 	private static class UnknownValueException extends Exception {}
 	private static UnknownValueException UNKNOWN_EX= new UnknownValueException();
 	private static int sUnique=0;
@@ -130,7 +131,7 @@ public class Value implements IValue {
 				buf.append(fExpression);
 				buf.append('[');
 				for (int i = 0; i < fUnknownBindings.length; i++) {
-					if (i>0)
+					if (i > 0)
 						buf.append(',');
 					buf.append(getSignatureForUnknown(fUnknownBindings[i]));
 				}
@@ -451,10 +452,9 @@ public class Value implements IValue {
 			case IASTLiteralExpression.lk_char_constant:
 				try {
 					final char[] image= litEx.getValue();
-					if (image.length > 1)
-						if (image[0] == 'L') 
-							return ExpressionEvaluator.getChar(image, 2);
-						return ExpressionEvaluator.getChar(image, 1);
+					if (image.length > 1 && image[0] == 'L') 
+						return ExpressionEvaluator.getChar(image, 2);
+					return ExpressionEvaluator.getChar(image, 1);
 				} catch (EvalException e1) {
 					throw UNKNOWN_EX;
 				}
@@ -481,7 +481,7 @@ public class Value implements IValue {
 			
 		IValue value= null;
 		if (b instanceof IInternalVariable) {
-			value= ((IInternalVariable) b).getInitialValue(maxdepth-1);
+			value= ((IInternalVariable) b).getInitialValue(maxdepth - 1);
 		} else if (b instanceof IVariable) {
 			value= ((IVariable) b).getInitialValue();
 		} else if (b instanceof IEnumerator) {
@@ -523,7 +523,7 @@ public class Value implements IValue {
 			final char c= expr[i];
 			switch(c) {
 			case REFERENCE_CHAR: {
-				int idx= parseNonNegative(expr, i+1);
+				int idx= parseNonNegative(expr, i + 1);
 				if (idx >= oldUnknowns.length)
 					throw UNKNOWN_EX;
 				final IBinding old = oldUnknowns[idx];
@@ -570,7 +570,7 @@ public class Value implements IValue {
 			case IASTUnaryExpression.op_prefixIncr:
 			case IASTUnaryExpression.op_postFixIncr:
 				return ++v;
-			case IASTUnaryExpression.op_prefixDecr :
+			case IASTUnaryExpression.op_prefixDecr:
 			case IASTUnaryExpression.op_postFixDecr:
 				return --v;
 			case IASTUnaryExpression.op_minus:
@@ -586,7 +586,7 @@ public class Value implements IValue {
 		switch (unaryOp) {
 		case IASTUnaryExpression.op_prefixIncr:
 		case IASTUnaryExpression.op_postFixIncr:
-		case IASTUnaryExpression.op_prefixDecr :
+		case IASTUnaryExpression.op_prefixDecr:
 		case IASTUnaryExpression.op_postFixDecr:
 		case IASTUnaryExpression.op_minus:
 		case IASTUnaryExpression.op_tilde:
@@ -611,7 +611,7 @@ public class Value implements IValue {
 			long v2= ((Number) o2).longValue();
 			switch(op) {
 			case IASTBinaryExpression.op_multiply:
-				return v1*v2;
+				return v1 * v2;
 			case IASTBinaryExpression.op_divide:
 				if (v2 == 0)
 					throw UNKNOWN_EX;
@@ -732,13 +732,13 @@ public class Value implements IValue {
 		final char c= buf[idx];
 		switch(c) {
 		case BINARY_OP_CHAR: 
-			int op= parseNonNegative(buf, idx+1);
+			int op= parseNonNegative(buf, idx + 1);
 			reeval.nextSeperator();
 			Object o1= reevaluate(reeval, maxdepth);
 			Object o2= reevaluate(reeval, maxdepth);
 			return combineBinary(op, o1, o2);
 		case UNARY_OP_CHAR: 
-			op= parseNonNegative(buf, idx+1);
+			op= parseNonNegative(buf, idx + 1);
 			reeval.nextSeperator();
 			o1= reevaluate(reeval, maxdepth);
 			return combineUnary(op, o1);
@@ -756,7 +756,7 @@ public class Value implements IValue {
 			}
 			return "" + CONDITIONAL_CHAR + SEPARATOR + cond.toString() + SEPARATOR + po.toString() + SEPARATOR + neg.toString(); //$NON-NLS-1$
 		case REFERENCE_CHAR: 
-			int num= parseNonNegative(buf, idx+1);
+			int num= parseNonNegative(buf, idx + 1);
 			final IBinding[] resolvedUnknowns= reeval.fResolvedUnknown;
 			if (num >= resolvedUnknowns.length)
 				throw UNKNOWN_EX;
@@ -764,7 +764,7 @@ public class Value implements IValue {
 			return evaluateBinding(resolvedUnknowns[num], reeval.fUnknownSigs, reeval.fUnknowns, maxdepth);
 
 		case TEMPLATE_PARAM_CHAR:
-			num= parseHex(buf, idx+1);
+			num= parseHex(buf, idx + 1);
 			reeval.nextSeperator();
 			ICPPTemplateArgument arg = reeval.fMap.getArgument(num);
 			if (arg != null) {
@@ -776,7 +776,7 @@ public class Value implements IValue {
 			return createTemplateParamExpression(num, false);
 			
 		case TEMPLATE_PARAM_PACK_CHAR:
-			num= parseHex(buf, idx+1);
+			num= parseHex(buf, idx + 1);
 			reeval.nextSeperator();
 			arg= null;
 			if (reeval.fPackOffset >= 0) {
@@ -807,14 +807,14 @@ public class Value implements IValue {
 		final int len= value.length;
 		int result = 0;
 		boolean ok= false;
-		for(; offset< len; offset++) {
-			final int digit= (value[offset]- '0');
+		for(; offset < len; offset++) {
+			final int digit= (value[offset] - '0');
 			if (digit < 0 || digit > 9)
 				break;
 			if (result > maxvalue)
 				return -1;
 			
-			result= result*10 + digit;
+			result= result * 10 + digit;
 			ok= true;
 		}
 		if (!ok)
@@ -829,12 +829,12 @@ public class Value implements IValue {
 		int result = 0;
 		boolean ok= false;
 		final int len= value.length;
-		for(; offset< len; offset++) {
-			int digit= (value[offset]- '0');
+		for(; offset < len; offset++) {
+			int digit= (value[offset] - '0');
 			if (digit < 0 || digit > 9) {
-				digit += '0'-'a'+10;
+				digit += '0' - 'a' + 10;
 				if (digit < 10 || digit > 15) {
-					digit += 'a'-'A';
+					digit += 'a' - 'A';
 					if (digit < 10 || digit > 15) {
 						break;
 					}
@@ -867,14 +867,14 @@ public class Value implements IValue {
 			offset++;
 		}
 		for(; offset < len; offset++) {
-			final int digit= (value[offset]- '0');
+			final int digit= (value[offset] - '0');
 			if (digit < 0 || digit > 9)
 				break;
 			
 			if (result > maxvalue)
 				throw UNKNOWN_EX;
 			
-			result= result*10 + digit;
+			result= result * 10 + digit;
 			ok= true;
 		}
 		if (!ok)
@@ -897,17 +897,17 @@ public class Value implements IValue {
 			negative = true;
 			i++;
 		}
-		if (i==len)
+		if (i == len)
 			return null;
 		
-		for(; i< len; i++) {
+		for(; i < len; i++) {
 			if (result > maxvalue)
 				return null;
 			
-			final int digit= (value[i]- '0');
+			final int digit= (value[i] - '0');
 			if (digit < 0 || digit > 9)
 				return null;
-			result= result*10 + digit;
+			result= result * 10 + digit;
 		}
 		return negative ? -result : result;
 	}
@@ -924,7 +924,6 @@ public class Value implements IValue {
 		}
 		return binding.getName();
 	}
-	
 
 	/**
 	 * Converts long to a char array

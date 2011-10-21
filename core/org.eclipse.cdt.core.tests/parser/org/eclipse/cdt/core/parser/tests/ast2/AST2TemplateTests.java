@@ -5470,4 +5470,26 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testTemplateTemplateParameterMatching_352859() throws Exception {
 		parseAndCheckBindings();
 	}
+
+	//	template<bool V, typename T>
+	//	struct C {
+	//	  typedef int s;
+	//	};
+	//
+	//	template<typename T>
+	//	struct C<false, T> {
+	//	  typedef T s;
+	//	};
+	//
+	//	struct B {
+	//	  typedef B u;
+	//	};
+	//
+	//	typedef C<sizeof(char) == sizeof(int), B> r;
+	//	typedef r::s t;
+	//	t::u x;
+	public void _testBoolExpressionAsTemplateArgument_361604() throws Exception {
+		final String code= getAboveComment();
+		parseAndCheckBindings(code);
+	}
 }

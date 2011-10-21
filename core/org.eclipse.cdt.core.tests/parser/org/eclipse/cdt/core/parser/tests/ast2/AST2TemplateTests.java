@@ -5470,7 +5470,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testTemplateTemplateParameterMatching_352859() throws Exception {
 		parseAndCheckBindings();
 	}
-	
+
 	//	template<typename T> T f();
 	//	template<> int f() { 
 	//	    return 0;
@@ -5482,7 +5482,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 		ICPPTemplateInstance inst= bh.assertNonProblem("f() {", 1);
 		assertSame(template, inst.getTemplateDefinition());
 	}
-	
+
 	//	template<typename T1,typename T2> class A{};
 	//	template<typename T1> class A<T1, int>{};
 	//	template<typename T2> class A<int, T2>{};
@@ -5497,7 +5497,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testExplicitSpecializationOfForbiddenAsImplicit_356818() throws Exception {
 		parseAndCheckBindings();
 	}
-	
+
 	//	struct A {
 	//		void f() { }
 	//	};
@@ -5522,14 +5522,14 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testSpecializationOfUsingDeclaration_357293() throws Exception {
 		parseAndCheckBindings();
 	}
-	
+
 	//	template<typename T> struct SS {};
 	//	template<template<typename T, typename S = SS<T> > class Cont> 
 	//   	   Cont<int> f() {}
 	public void testReferenceToParameterOfTemplateTemplateParameter_357308() throws Exception {
 		parseAndCheckBindings();
 	}
-	
+
 	//	template <typename...> void f() {}
 	//	void test() {
 	//	     f();      
@@ -5537,5 +5537,27 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	}
 	public void testTemplateArgumentDeductionWithoutParameters_358654() throws Exception {
 		parseAndCheckBindings();
+	}
+
+	//	template<bool V, typename T>
+	//	struct C {
+	//	  typedef int s;
+	//	};
+	//
+	//	template<typename T>
+	//	struct C<false, T> {
+	//	  typedef T s;
+	//	};
+	//
+	//	struct B {
+	//	  typedef B u;
+	//	};
+	//
+	//	typedef C<sizeof(char) == sizeof(int), B> r;
+	//	typedef r::s t;
+	//	t::u x;
+	public void _testBoolExpressionAsTemplateArgument_361604() throws Exception {
+		final String code= getAboveComment();
+		parseAndCheckBindings(code);
 	}
 }

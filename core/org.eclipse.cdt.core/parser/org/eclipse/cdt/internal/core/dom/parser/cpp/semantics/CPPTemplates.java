@@ -6,10 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
- *    Bryan Wilkinson (QNX)
- *    Markus Schorn (Wind River Systems)
- *    Sergey Prigogin (Google)
+ *     IBM - Initial API and implementation
+ *     Bryan Wilkinson (QNX)
+ *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
@@ -151,7 +151,7 @@ public class CPPTemplates {
 	private static final int PACK_SIZE_FAIL = -2;
 	private static final int PACK_SIZE_NOT_FOUND = Integer.MAX_VALUE;
 	private static final ICPPFunction[] NO_FUNCTIONS = {};
-	static enum TypeSelection {PARAMETERS, RETURN_TYPE, PARAMETERS_AND_RETURN_TYPE}
+	static enum TypeSelection { PARAMETERS, RETURN_TYPE, PARAMETERS_AND_RETURN_TYPE }
 	
 	/**
 	 * Instantiates a class template with the given arguments. May return <code>null</code>.
@@ -171,8 +171,7 @@ public class CPPTemplates {
 			if (template instanceof ICPPClassTemplatePartialSpecialization) {
 				return instantiatePartialSpecialization((ICPPClassTemplatePartialSpecialization) template, arguments, isDef, null);
 			}
-		
-			
+
 			final ICPPTemplateParameter[] parameters= template.getTemplateParameters();
 			final int numArgs = arguments.length;
 			final int numParams= parameters.length;

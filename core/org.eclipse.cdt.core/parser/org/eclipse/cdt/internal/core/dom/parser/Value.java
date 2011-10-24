@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser;
 
@@ -23,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
+import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
@@ -33,7 +35,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator.SizeAndAlignment;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator.EvalException;
 import org.eclipse.cdt.internal.core.pdom.db.TypeMarshalBuffer;
@@ -460,6 +464,19 @@ public class Value implements IValue {
 				}
 			}
 		}
+		if (e instanceof IASTTypeIdExpression) {
+			IASTTypeIdExpression typeIdEx = (IASTTypeIdExpression) e;
+			switch (typeIdEx.getOperator()) {
+			case IASTTypeIdExpression.op_sizeof:
+				IType type = CPPVisitor.createType(typeIdEx.getTypeId());
+				ASTTranslationUnit ast = (ASTTranslationUnit) typeIdEx.getTranslationUnit();
+				SizeofCalculator calculator = ast.getSizeofCalculator();
+				SizeAndAlignment info = calculator.sizeAndAlignment(type);
+				if (info == null)
+					throw UNKNOWN_EX;
+				return info.size;
+			}
+		}
 		throw UNKNOWN_EX;
 	}
 	
@@ -521,7 +538,7 @@ public class Value implements IValue {
 		boolean skipToSeparator= false;
 		for (int i = 0; i < expr.length; i++) {
 			final char c= expr[i];
-			switch(c) {
+			switch (c) {
 			case REFERENCE_CHAR: {
 				int idx= parseNonNegative(expr, i + 1);
 				if (idx >= oldUnknowns.length)
@@ -549,9 +566,21 @@ public class Value implements IValue {
 	
 	private static Object evaluateUnaryExpression(IASTUnaryExpression ue, Map<String, Integer> unknownSigs, List<ICPPUnknownBinding> unknowns, int maxdepth) throws UnknownValueException {
 		final int unaryOp= ue.getOperator();
+
+		if (unaryOp == IASTUnaryExpression.op_sizeof) {
+			IType type = ue.getExpressionType();
+			ASTTranslationUnit ast = (ASTTranslationUnit) ue.getTranslationUnit();
+			SizeofCalculator calculator = ast.getSizeofCalculator();
+			SizeAndAlignment info = calculator.sizeAndAlignment(type);
+			if (info == null)
+				throw UNKNOWN_EX;
+			return info.size;
+		}
+
 		if (unaryOp == IASTUnaryExpression.op_amper || unaryOp == IASTUnaryExpression.op_star ||
-				unaryOp == IASTUnaryExpression.op_sizeof || unaryOp == IASTUnaryExpression.op_sizeofParameterPack) 
+				unaryOp == IASTUnaryExpression.op_sizeofParameterPack) {
 			throw UNKNOWN_EX;
+		}
 			
 		final Object value= evaluate(ue.getOperand(), unknownSigs, unknowns, maxdepth);
 		return combineUnary(unaryOp, value); 
@@ -563,10 +592,10 @@ public class Value implements IValue {
 		case IASTUnaryExpression.op_plus:
 			return value;
 		}
-		
+
 		if (value instanceof Number) {
 			long v= ((Number) value).longValue();
-			switch(unaryOp) {
+			switch (unaryOp) {
 			case IASTUnaryExpression.op_prefixIncr:
 			case IASTUnaryExpression.op_postFixIncr:
 				return ++v;
@@ -609,21 +638,21 @@ public class Value implements IValue {
 		if (o1 instanceof Number && o2 instanceof Number) {
 			long v1= ((Number) o1).longValue();
 			long v2= ((Number) o2).longValue();
-			switch(op) {
+			switch (op) {
 			case IASTBinaryExpression.op_multiply:
 				return v1 * v2;
 			case IASTBinaryExpression.op_divide:
 				if (v2 == 0)
 					throw UNKNOWN_EX;
-				return v1/v2;
+				return v1 / v2;
 			case IASTBinaryExpression.op_modulo:
 				if (v2 == 0)
 					throw UNKNOWN_EX;
 				return v1 % v2;
 			case IASTBinaryExpression.op_plus:
-				return v1+v2;
+				return v1 + v2;
 			case IASTBinaryExpression.op_minus:
-				return v1-v2;
+				return v1 - v2;
 			case IASTBinaryExpression.op_shiftLeft:
 				return v1 << v2;
 			case IASTBinaryExpression.op_shiftRight:
@@ -637,11 +666,11 @@ public class Value implements IValue {
 			case IASTBinaryExpression.op_greaterEqual:
 				return v1 >= v2 ? 1 : 0;
 			case IASTBinaryExpression.op_binaryAnd:
-				return v1&v2;
+				return v1 & v2;
 			case IASTBinaryExpression.op_binaryXor:
-				return v1^v2;
+				return v1 ^ v2;
 			case IASTBinaryExpression.op_binaryOr:
-				return v1|v2;
+				return v1 | v2;
 			case IASTBinaryExpression.op_logicalAnd:
 				return v1 != 0 && v2 != 0 ? 1 : 0;
 			case IASTBinaryExpression.op_logicalOr:
@@ -730,7 +759,7 @@ public class Value implements IValue {
 			throw UNKNOWN_EX;
 		
 		final char c= buf[idx];
-		switch(c) {
+		switch (c) {
 		case BINARY_OP_CHAR: 
 			int op= parseNonNegative(buf, idx + 1);
 			reeval.nextSeperator();

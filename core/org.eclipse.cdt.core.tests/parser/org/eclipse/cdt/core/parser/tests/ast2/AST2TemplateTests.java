@@ -5553,10 +5553,12 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	  typedef B u;
 	//	};
 	//
-	//	typedef C<sizeof(char) == sizeof(int), B> r;
+	//  struct C8 { char c[8]; }; 
+	//
+	//	typedef C<sizeof(char) == sizeof(C8), B> r;
 	//	typedef r::s t;
 	//	t::u x;
-	public void _testBoolExpressionAsTemplateArgument_361604() throws Exception {
+	public void testBoolExpressionAsTemplateArgument_361604() throws Exception {
 		final String code= getAboveComment();
 		parseAndCheckBindings(code);
 	}

@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -180,7 +181,10 @@ public class SizeofCalculator {
 	}
 
 	private SizeAndAlignment sizeAndAlignment(IArrayType type) {
-		Long numElements = type.getSize().numericalValue();
+		IValue value = type.getSize();
+		if (value == null)
+			return null;
+		Long numElements = value.numericalValue();
 		if (numElements == null)
 			return null;
 		IType elementType = type.getType();
@@ -194,7 +198,7 @@ public class SizeofCalculator {
 
 	private SizeAndAlignment sizeAndAlignment(ICompositeType type) {
 		/* TODO(sprigogin): May produce incorrect result for structures containing bit fields.
-		 * Unfortunately widths of bit fields is not preserved in the AST. */
+		 * Unfortunately widths of bit fields are not preserved in the AST. */
 		long size = 0;
 		int maxAlignment = 1;
 		IField[] fields;

@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser;
 
@@ -71,6 +72,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	private INodeFactory fNodeFactory;
 	private boolean fForContentAssist;
 	private ITranslationUnit fOriginatingTranslationUnit;
+	private SizeofCalculator fSizeofCalculator;
 	/** The semaphore controlling exclusive access to the AST. */
 	private final Semaphore fSemaphore= new Semaphore(1);
 
@@ -460,5 +462,12 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 
 	public void endExclusiveAccess() {
 		fSemaphore.release();
+	}
+
+	public SizeofCalculator getSizeofCalculator() {
+		if (fSizeofCalculator == null) {
+			fSizeofCalculator = new SizeofCalculator(this);
+		}
+		return fSizeofCalculator;
 	}
 }

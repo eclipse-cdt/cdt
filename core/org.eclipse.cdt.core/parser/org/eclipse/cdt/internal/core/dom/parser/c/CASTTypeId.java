@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
- * Yuan Zhang / Beth Tibbitts (IBM Research)
+ *     IBM Rational Software - Initial API and implementation
+ *     Yuan Zhang / Beth Tibbitts (IBM Research)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -21,7 +21,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
  * @author jcamelon
  */
 public class CASTTypeId extends ASTNode implements IASTTypeId {
-
     private IASTDeclSpecifier declSpecifier;
     private IASTDeclarator declarator;
 
@@ -72,27 +71,26 @@ public class CASTTypeId extends ASTNode implements IASTTypeId {
 			abstractDeclarator.setParent(this);
 			abstractDeclarator.setPropertyInParent(ABSTRACT_DECLARATOR);
 		}
-
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitTypeIds ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitTypeIds) {
+		    switch (action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         
-        if( declSpecifier != null ) if( !declSpecifier.accept( action ) ) return false;
-        if( declarator != null ) if( !declarator.accept( action ) ) return false;
+        if (declSpecifier != null && !declSpecifier.accept(action)) return false;
+        if (declarator != null && !declarator.accept(action)) return false;
 
-        if( action.shouldVisitTypeIds ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+        if (action.shouldVisitTypeIds) {
+		    switch (action.leave(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         return true;

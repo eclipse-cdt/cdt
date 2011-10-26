@@ -12,20 +12,16 @@
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
 /**
- * 
- * This class is responsible for the string concatination and the management of
+ * This class is responsible for the string concatenation and the management of
  * the indentations.
  * 
  * @since 5.0
  * @author Emanuel Graf IFS
- * 
  */
 public class Scribe {
-	
-	
 	private int indentationLevel = 0;
 	private int indentationSize = 4; //HSR tcorbat: could be a tab character too - this is not a very elegant solution
-	private StringBuffer buffer = new StringBuffer();
+	private StringBuilder buffer = new StringBuilder();
 	private boolean isAtLineBeginning = true;
 	private String newLine = System.getProperty("line.separator"); //$NON-NLS-1$
 	private String givenIndentation = null;
@@ -33,32 +29,32 @@ public class Scribe {
 	private boolean noNewLine = false;
 	private boolean noSemicolon = false;
 	
-	public void newLine(){
-		if(!noNewLine) {
+	public void newLine() {
+		if (!noNewLine) {
 			isAtLineBeginning = true;
 			buffer.append(getNewline());
 		}
 	}
 	
-	private void indent(){
-		if( givenIndentation != null ){
-			buffer.append( givenIndentation );
+	private void indent() {
+		if (givenIndentation != null) {
+			buffer.append(givenIndentation);
 		}
 		printSpaces(indentationLevel * indentationSize);
 	}
 	
-	private void indentIfNewLine(){
-		if(isAtLineBeginning){
+	private void indentIfNewLine() {
+		if (isAtLineBeginning) {
 			isAtLineBeginning = false;
 			indent();
 		}
 	}
 	
-	private String getNewline(){
+	private String getNewline() {
 		return newLine;
 	}
 	
-	public void print(String code){
+	public void print(String code) {
 		indentIfNewLine();
 		buffer.append(code);
 	}
@@ -78,15 +74,15 @@ public class Scribe {
 		newLine();
 	}
 	
-	public void println(String code , char[] code2) {
+	public void println(String code, char[] code2) {
 		print(code);
 		buffer.append(code2);
 		newLine();
 	}
 	
-	public void printSpaces(int number){
+	public void printSpaces(int number) {
 		indentIfNewLine();
-		for(int i = 0; i < number; ++i){
+		for (int i = 0; i < number; ++i) {
 			printSpace();
 		}
 	}
@@ -95,18 +91,17 @@ public class Scribe {
 		noSemicolon = true;
 	}
 	
-	public void printSemicolon(){
-		if(!noSemicolon) {
+	public void printSemicolon() {
+		if (!noSemicolon) {
 			indentIfNewLine();
 			buffer.append(';');
-		}
-		else {
+		} else {
 			noSemicolon = false;
 		}
 	}
 	
 	@Override
-	public String toString(){
+	public String toString() {
 		return buffer.toString();
 	}
 	
@@ -125,13 +120,13 @@ public class Scribe {
 		newLine();
 	}
 	
-	public void printStringSpace(String code){
+	public void printStringSpace(String code) {
 		print(code);
 		printSpace();
 	}
 
 	/**
-	 * Prints a { to the Buffer an increases the Indentationlevel.
+	 * Prints a { to the Buffer an increases the indentation level.
 	 */
 	public void printLBrace() {
 		print('{');
@@ -139,33 +134,33 @@ public class Scribe {
 	}
 
 	/**
-	 * Prints a } to the Buffer an decrease the Indentationlevel.
+	 * Prints a } to the Buffer an decrease the indentation level.
 	 */
 	public void printRBrace() {
 		--indentationLevel;
 		print('}');
 	}
 	
-	public void incrementIndentationLevel(){
+	public void incrementIndentationLevel() {
 		++indentationLevel;
 	}
 	
-	public void decrementIndentationLevel(){
-		if(indentationLevel>0) {
+	public void decrementIndentationLevel() {
+		if (indentationLevel > 0) {
 			--indentationLevel;
 		}
 	}
 	
-	protected void noNewLines(){
+	protected void noNewLines() {
 		noNewLine = true;
 	}
 	
-	protected void newLines(){
+	protected void newLines() {
 		noNewLine = false;
 	}
 	
 	public void newLine(int i) {
-		while(i > 0) {
+		while (i > 0) {
 			newLine();
 			--i;
 		}
@@ -184,6 +179,6 @@ public class Scribe {
 	}
 
 	public void cleanCache() {
-		buffer = new StringBuffer();	
+		buffer = new StringBuilder();	
 	}
 }

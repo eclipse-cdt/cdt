@@ -13,6 +13,7 @@ package org.eclipse.cdt.codan.internal.ui.preferences;
 
 import java.text.MessageFormat;
 
+import org.eclipse.cdt.codan.core.CodanRuntime;
 import org.eclipse.cdt.codan.core.PreferenceConstants;
 import org.eclipse.cdt.codan.core.model.CodanSeverity;
 import org.eclipse.cdt.codan.core.model.IProblem;
@@ -332,16 +333,18 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 	@Override
 	protected void doLoadDefault() {
 		if (getTreeControl() != null) {
+			CodanPreferencesLoader defaultPreferences = new CodanPreferencesLoader(CodanRuntime.getInstance().getCheckersRegistry().getDefaultProfile());
 			IProblem[] probs = codanPreferencesLoader.getProblems();
 			for (int i = 0; i < probs.length; i++) {
 				String id = probs[i].getId();
 				String s = getPreferenceStore().getDefaultString(id);
 				if (s == null || s.length() == 0) {
-					s = codanPreferencesLoader.getProperty(id);
+					s = defaultPreferences.getProperty(id);
 				}
 				codanPreferencesLoader.setProperty(id, s);
 			}
 			getViewer().setInput(codanPreferencesLoader.getInput());
+			setPresentsDefaultValue(true);
 		}
 	}
 

@@ -27,6 +27,7 @@
  * David McKnight  (IBM]  - [330989] [dstore] OutOfMemoryError occurs when searching for a text in a large remote file
  * David McKnight   (IBM) - [283613] [dstore] Create a Constants File for all System Properties we support
  * David McKnight  (IBM)  - [358301] [DSTORE] Hang during debug source look up
+ * Noriaki Takatsu  (IBM) - [362025] [dstore] Search for text hung in encountering a device definition
  ********************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
@@ -210,7 +211,9 @@ public class UniversalSearchHandler extends SecuredThread implements ICancellabl
 	protected void internalSearch(File theFile, int depth) throws SystemMessageException {
 		
 		if (!hasSearched(theFile)) {
-			
+			if (!theFile.isDirectory() && !theFile.isFile()) {
+				return;
+			}
 			if (!_searchOnlyUniqueFolders){
 				_alreadySearched.add(theFile.getAbsolutePath());
 			}

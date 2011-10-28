@@ -448,7 +448,7 @@ public class StatementWriter extends NodeWriter{
 	}
 
 	protected int writeMixedStatement(IASTStatement statement) {
-		IFile file = FileHelper.getIFilefromIASTNode(statement);
+		IFile file = FileHelper.getFileFromNode(statement);
 		int offset = statement.getFileLocation().getNodeOffset();
 		int length = statement.getFileLocation().getNodeLength();
 		String code =FileContentHelper.getContent(file, offset, length);

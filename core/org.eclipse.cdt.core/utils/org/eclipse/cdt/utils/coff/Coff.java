@@ -441,12 +441,35 @@ public class Coff {
 		public int n_type;   /* Unsigned short. Symbolic type.  */
 		public byte n_sclass; /* char, Storage class.  */
 		public byte n_numaux; /* char. Number of auxiliary enties.  */
+		/** @since 5.4 */
+		public short n_aux_lnno; /* short, line number in auxiliary entry */
+		/** @since 5.4 */
+		public short n_aux_size; /* short, size in bytes in auxiliary entry */
+		/** @since 5.4 */
+		public int n_aux_fcn_size; /* long, size of function in bytes found in auxiliary entry */
+		
+		private boolean is64Bit;
 
 		public Symbol(RandomAccessFile file) throws IOException {
-			this(file, file.getFilePointer());
+			this(file, file.getFilePointer(), false);
 		}
 
 		public Symbol(RandomAccessFile file, long offset) throws IOException {
+			this(file, offset, false);
+		}
+		
+		/**
+		 * @since 5.4
+		 */
+		public Symbol(RandomAccessFile file, boolean is64Bit) throws IOException {
+			this(file, file.getFilePointer(), is64Bit);
+		}
+
+		/**
+		 * @since 5.4
+		 */
+		public Symbol(RandomAccessFile file, long offset, boolean is64Bit) throws IOException {
+			this.is64Bit = is64Bit;
 			file.seek(offset);
 			byte[] bytes = new byte[SYMSZ];
 			file.readFully(bytes);
@@ -457,6 +480,20 @@ public class Coff {
 			n_type = memory.getUnsignedShort();
 			n_sclass = memory.getByte();
 			n_numaux = memory.getByte();
+			if (n_numaux > 0) {
+				// read auxiliary section
+				byte[] bytes2 = new byte[SYMSZ * n_numaux];
+				file.readFully(bytes2);
+				memory = new ReadMemoryAccess(bytes2, true);
+				memory.getInt(); // ignore first 4 bytes - tag index
+				n_aux_lnno = memory.getShort();
+				n_aux_size = memory.getShort();
+				// function size is unioned with lnno and size so we must rewind and
+				// reread
+				memory = new ReadMemoryAccess(bytes2, true);
+				memory.getInt(); // ignore first 4 bytes - tag index
+				n_aux_fcn_size = memory.getInt();
+			}
 		}
 
 		public boolean isLongName() {
@@ -509,6 +546,48 @@ public class Coff {
 			return (n_type & N_TMASK) == (DT_ARY << N_BTSHFT);
 		}
 
+		/**
+		 * @since 5.4
+		 */
+		public int getSize() {
+			if (n_type <= T_LNGDBL) {
+				switch (n_type) {
+				case T_CHAR:
+				case T_UCHAR:
+					return 1;
+				case T_SHORT:
+				case T_USHORT:
+					return 2;
+				case T_LONG:
+				case T_ULONG:
+					return 4;
+				case T_INT:
+				case T_UINT:
+					return 4;
+				case T_FLOAT:
+					return 4;
+				case T_DOUBLE:
+					return 8;
+				case T_MOE:
+					return 4;
+				case T_LNGDBL:
+					return 16;
+				case T_ENUM:
+				case T_STRUCT:
+				case T_UNION:
+					return n_aux_size;
+				}
+			}
+			else if (isFunction()) {
+				return n_aux_fcn_size;
+			} else if (isArray()) {
+				return n_aux_size;
+			} else if (isPointer()) {
+				return is64Bit ? 8 : 4;
+			} 
+			return 1;
+		}
+		
 		@Override
 		public String toString() {
 			return getName();
@@ -541,7 +620,7 @@ public class Coff {
 			rfile.seek(offset);
 			symbols = new Symbol[getFileHeader().f_nsyms];
 			for (int i = 0; i < symbols.length; i++) {
-				symbols[i] = new Symbol(rfile); 
+				symbols[i] = new Symbol(rfile, (getFileHeader().f_flags & FileHeader.F_AR32WR) == 0); 
 			}
 		}
 		return symbols;

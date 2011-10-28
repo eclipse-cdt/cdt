@@ -11,8 +11,8 @@
 
 package org.eclipse.cdt.internal.ui.language.settings.providers;
 
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditableProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializable;
-import org.eclipse.cdt.core.settings.model.ILanguageSettingsEditableProvider;
 
 /**
  * Provider to support user interface for language settings. The important difference with

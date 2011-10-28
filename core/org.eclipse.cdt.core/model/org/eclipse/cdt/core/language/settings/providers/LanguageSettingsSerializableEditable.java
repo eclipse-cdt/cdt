@@ -12,7 +12,6 @@
 package org.eclipse.cdt.core.language.settings.providers;
 
 // TODO: move ILanguageSettingsEditableProvider here 
-import org.eclipse.cdt.core.settings.model.ILanguageSettingsEditableProvider;
 
 public class LanguageSettingsSerializableEditable extends LanguageSettingsSerializable implements ILanguageSettingsEditableProvider {
 	@Override

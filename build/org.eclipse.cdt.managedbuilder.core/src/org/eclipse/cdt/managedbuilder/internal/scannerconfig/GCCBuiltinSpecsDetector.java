@@ -14,9 +14,10 @@ package org.eclipse.cdt.managedbuilder.internal.scannerconfig;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditableProvider;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
-import org.eclipse.cdt.core.settings.model.ILanguageSettingsEditableProvider;
+import org.eclipse.cdt.make.core.scannerconfig.AbstractBuiltinSpecsDetector;
 import org.eclipse.core.runtime.CoreException;
 
 /**

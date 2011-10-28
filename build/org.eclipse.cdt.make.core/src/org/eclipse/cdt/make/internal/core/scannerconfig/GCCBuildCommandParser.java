@@ -8,12 +8,13 @@
  * Contributors:
  *     Andrew Gvozdev - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.make.core.scannerconfig;
+package org.eclipse.cdt.make.internal.core.scannerconfig;
 
 
 import org.eclipse.cdt.core.errorparsers.RegexErrorPattern;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditableProvider;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
-import org.eclipse.cdt.core.settings.model.ILanguageSettingsEditableProvider;
+import org.eclipse.cdt.make.core.scannerconfig.AbstractBuildCommandParser;
 
 public class GCCBuildCommandParser extends AbstractBuildCommandParser implements
 		ILanguageSettingsEditableProvider {

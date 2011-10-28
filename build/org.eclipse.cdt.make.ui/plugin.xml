@@ -543,17 +543,14 @@
    <extension
          point="org.eclipse.cdt.ui.LanguageSettingsProviderAssociation">
       <class-association
-            class="org.eclipse.cdt.make.core.scannerconfig.ILanguageSettingsBuiltinSpecsDetector"
-            icon="icons/obj16/inspect_system.gif">
-      </class-association>
-      <class-association
-            icon="icons/obj16/log_obj.gif"
-            class="org.eclipse.cdt.make.core.scannerconfig.ILanguageSettingsBuildOutputScanner">
-      </class-association>
-      <class-association
             class="org.eclipse.cdt.make.core.scannerconfig.AbstractBuildCommandParser"
             icon="icons/obj16/log_obj.gif"
             page="org.eclipse.cdt.make.internal.ui.preferences.GCCBuildCommandParserOptionPage">
+      </class-association>
+      <class-association
+            class="org.eclipse.cdt.make.core.scannerconfig.AbstractBuiltinSpecsDetector"
+            icon="icons/obj16/inspect_system.gif"
+            page="org.eclipse.cdt.make.internal.ui.scannerconfig.BuiltinSpecsDetectorOptionPage">
       </class-association>
    </extension>
    <extension

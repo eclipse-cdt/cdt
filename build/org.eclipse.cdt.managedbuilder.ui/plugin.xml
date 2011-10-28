@@ -654,10 +654,6 @@
             id="org.eclipse.cdt.managedbuilder.core.LanguageSettingsProvider"
             icon="icons/obj16/mbs.gif">
       </id-association>
-      <class-association
-            class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.AbstractBuiltinSpecsDetector"
-            page="org.eclipse.cdt.managedbuilder.ui.preferences.BuiltinSpecsDetectorOptionPage">
-      </class-association>
    </extension>
    
 </plugin>

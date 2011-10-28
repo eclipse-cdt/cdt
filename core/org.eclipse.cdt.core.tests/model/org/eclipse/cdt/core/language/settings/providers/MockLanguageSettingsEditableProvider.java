@@ -12,7 +12,6 @@
 package org.eclipse.cdt.core.language.settings.providers;
 
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializable;
-import org.eclipse.cdt.core.settings.model.ILanguageSettingsEditableProvider;
 
 
 public class MockLanguageSettingsEditableProvider extends LanguageSettingsSerializable implements ILanguageSettingsEditableProvider {

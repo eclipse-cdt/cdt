@@ -17,14 +17,22 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.ErrorParserManager;
+import org.eclipse.cdt.core.ICConsoleParser;
+import org.eclipse.cdt.core.IErrorParser;
 import org.eclipse.cdt.core.IErrorParser2;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.errorparsers.RegexErrorParser;
 import org.eclipse.cdt.core.errorparsers.RegexErrorPattern;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 
-public abstract class AbstractBuildCommandParser extends AbstractLanguageSettingsOutputScanner implements
-		ILanguageSettingsBuildOutputScanner {
+/**
+ * TODO - class description
+ * 
+ * Note: IErrorParser interface is used here to work around {@link ConsoleOutputSniffer} having
+ * no access from CDT core to build packages. TODO - elaborate?
+ */
+public abstract class AbstractBuildCommandParser extends AbstractLanguageSettingsOutputScanner
+		implements ICConsoleParser, IErrorParser {
 
 	private static final String LEADING_PATH_PATTERN = "\\S+[/\\\\]"; //$NON-NLS-1$
 	private static final Pattern OPTIONS_PATTERN = Pattern.compile("-[^\\s\"']*(\\s*((\".*?\")|('.*?')|([^-\\s][^\\s]+)))?"); //$NON-NLS-1$

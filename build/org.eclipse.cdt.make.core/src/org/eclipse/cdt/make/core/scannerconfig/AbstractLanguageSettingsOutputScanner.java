@@ -55,8 +55,7 @@ import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.w3c.dom.Element;
 
-public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSettingsSerializable implements
-		ILanguageSettingsOutputScanner {
+public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSettingsSerializable {
 
 	protected static final String ATTR_EXPAND_RELATIVE_PATHS = "expand-relative-paths"; //$NON-NLS-1$
 

@@ -29,7 +29,7 @@ import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
-import org.eclipse.cdt.make.core.scannerconfig.ILanguageSettingsBuildOutputScanner;
+import org.eclipse.cdt.make.core.scannerconfig.AbstractBuildCommandParser;
 import org.eclipse.cdt.managedbuilder.buildmodel.BuildDescriptionManager;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildDescription;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.BuildDescription;
@@ -164,7 +164,7 @@ public class InternalBuildRunner extends AbstractBuildRunner {
 
 				List<ILanguageSettingsProvider> providers = cfgDescription.getLanguageSettingProviders();
 				for (ILanguageSettingsProvider provider : providers) {
-					if (provider instanceof ILanguageSettingsBuildOutputScanner) {
+					if (provider instanceof AbstractBuildCommandParser) {
 						buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
 						String msg = ManagedMakeMessages.getFormattedString("BOP Language Settings Provider [{0}] is not supported by Internal Builder.", provider.getName());
 						buf.append("**** "+msg+" ****");

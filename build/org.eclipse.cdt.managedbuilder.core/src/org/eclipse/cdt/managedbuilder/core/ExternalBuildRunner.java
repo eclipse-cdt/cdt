@@ -42,7 +42,6 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.internal.core.ConsoleOutputSniffer;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
-import org.eclipse.cdt.make.core.scannerconfig.ILanguageSettingsBuiltinSpecsDetector;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
@@ -409,7 +408,7 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 		List<ILanguageSettingsProvider> lsProviders = cfgDescription.getLanguageSettingProviders();
 		for (ILanguageSettingsProvider lsProvider : lsProviders) {
 			ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(lsProvider);
-			if (rawProvider instanceof ICConsoleParser && !(rawProvider instanceof ILanguageSettingsBuiltinSpecsDetector)) {
+			if (rawProvider instanceof ICConsoleParser) {
 				ICConsoleParser consoleParser = (ICConsoleParser) rawProvider;
 				try {
 					consoleParser.startup(cfgDescription);

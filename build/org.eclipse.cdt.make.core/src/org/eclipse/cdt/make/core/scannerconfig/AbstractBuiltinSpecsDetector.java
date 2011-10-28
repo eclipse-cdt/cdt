@@ -60,7 +60,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.w3c.dom.Element;
 
-public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSettingsOutputScanner implements ILanguageSettingsBuiltinSpecsDetector {
+public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSettingsOutputScanner {
 	private static final String NEWLINE = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 	private static final String PLUGIN_CDT_MAKE_UI_ID = "org.eclipse.cdt.make.ui"; //$NON-NLS-1$
 	private static final String GMAKE_ERROR_PARSER_ID = "org.eclipse.cdt.core.GmakeErrorParser"; //$NON-NLS-1$

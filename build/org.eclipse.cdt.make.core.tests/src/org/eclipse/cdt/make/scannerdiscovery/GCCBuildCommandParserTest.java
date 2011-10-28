@@ -40,7 +40,6 @@ import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.cdt.make.core.scannerconfig.AbstractBuildCommandParser;
-import org.eclipse.cdt.make.core.scannerconfig.ILanguageSettingsBuildOutputScanner;
 import org.eclipse.cdt.make.internal.core.scannerconfig.GCCBuildCommandParser;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -255,7 +254,7 @@ public class GCCBuildCommandParserTest extends TestCase {
 		final IFile file=ResourceHelper.createFile(project, "file.cpp");
 
 		// create test class
-		ILanguageSettingsBuildOutputScanner parser = new MockBuildCommandParser() {
+		AbstractBuildCommandParser parser = new MockBuildCommandParser() {
 			@Override
 			public boolean processLine(String line, ErrorParserManager epm) {
 				// pretending that we parsed the line

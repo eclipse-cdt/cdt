@@ -31,7 +31,7 @@ import org.eclipse.jface.text.TextUtilities;
 public class FileHelper {
 	private static final String DEFAULT_LINE_DELIMITTER = "\n"; //$NON-NLS-1$
 
-	public static IFile getIFilefromIASTNode(IASTNode node) {
+	public static IFile getFileFromNode(IASTNode node) {
 		IPath implPath = new Path(node.getContainingFilename());
 		return ResourceLookup.selectFileForLocation(implPath, null);
 	}

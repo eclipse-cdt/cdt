@@ -211,11 +211,11 @@ public class ChangeGenerator extends ASTVisitor {
 				if (modification.getTargetNode() instanceof IASTTranslationUnit &&
 						((IASTTranslationUnit)modification.getTargetNode()).getDeclarations().length > 0) {
 					IASTTranslationUnit tu = (IASTTranslationUnit)modification.getTargetNode();
-					IASTDeclaration lastDecl = tu.getDeclarations()[tu.getDeclarations().length -1];
+					IASTDeclaration lastDecl = tu.getDeclarations()[tu.getDeclarations().length - 1];
 					targetLocation = lastDecl.getFileLocation();
 				}
 				String lineDelimiter = FileHelper.determineLineDelimiter(
-						FileHelper.getIFilefromIASTNode(modification.getTargetNode()));
+						FileHelper.getFileFromNode(modification.getTargetNode()));
 				edit.addChild(new InsertEdit(targetLocation.getNodeOffset() + targetLocation.getNodeLength(),
 						lineDelimiter + lineDelimiter + newNodeCode));
 				break;
@@ -224,7 +224,7 @@ public class ChangeGenerator extends ASTVisitor {
 	}
 
 	private void createChange(IASTNode synthNode, String synthSource) {
-		IFile relevantFile = FileHelper.getIFilefromIASTNode(synthNode);
+		IFile relevantFile = FileHelper.getFileFromNode(synthNode);
 
 		String originalCode = originalCodeOfNode(synthNode);
 		CodeComparer codeComparer = new CodeComparer(originalCode, synthSource);
@@ -242,7 +242,7 @@ public class ChangeGenerator extends ASTVisitor {
 
 	public String originalCodeOfNode(IASTNode node) {
 		if (node.getFileLocation() != null) {
-			IFile sourceFile = FileHelper.getIFilefromIASTNode(node);
+			IFile sourceFile = FileHelper.getFileFromNode(node);
 			int nodeOffset = getOffsetIncludingComments(node);
 			int nodeLength = getNodeLengthIncludingComments(node);
 
@@ -294,7 +294,7 @@ public class ChangeGenerator extends ASTVisitor {
 		IASTFileLocation fileLocation = nextNode.getFileLocation();
 		int length = fileLocation.getNodeOffset() - getOffsetForNodeFile(nextNode);
 
-		String originalSource = FileContentHelper.getContent(FileHelper.getIFilefromIASTNode(nextNode),
+		String originalSource = FileContentHelper.getContent(FileHelper.getFileFromNode(nextNode),
 				getOffsetForNodeFile(nextNode), length);
 		StringBuilder indent = new StringBuilder(originalSource);
 		indent.reverse();

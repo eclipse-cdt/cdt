@@ -16,8 +16,7 @@ import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditabl
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.make.core.scannerconfig.AbstractBuildCommandParser;
 
-public class GCCBuildCommandParser extends AbstractBuildCommandParser implements
-		ILanguageSettingsEditableProvider {
+public class GCCBuildCommandParser extends AbstractBuildCommandParser implements ILanguageSettingsEditableProvider {
 	@SuppressWarnings("nls")
 	static final AbstractOptionParser[] optionParsers = {
 			new IncludePathOptionParser("-I\\s*([\"'])(.*)\\1", "$2"),
@@ -51,7 +50,7 @@ public class GCCBuildCommandParser extends AbstractBuildCommandParser implements
 	}
 
 	public static class GCCBuildCommandPatternHighlighter extends AbstractBuildCommandParser.AbstractBuildCommandPatternHighlighter {
-		// ID of the parser taken from the extension point
+		// ID of the parser taken from the existing extension point
 		private static final String GCC_BUILD_COMMAND_PARSER_EXT = "org.eclipse.cdt.make.core.build.command.parser.gcc"; //$NON-NLS-1$
 
 		public GCCBuildCommandPatternHighlighter() {

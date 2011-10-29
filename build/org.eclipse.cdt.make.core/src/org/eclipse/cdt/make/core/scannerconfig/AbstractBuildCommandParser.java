@@ -24,6 +24,18 @@ import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.errorparsers.RegexErrorParser;
 import org.eclipse.cdt.core.errorparsers.RegexErrorPattern;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.internal.core.ConsoleOutputSniffer;
+import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
+import org.eclipse.cdt.make.core.MakeCorePlugin;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * TODO - class description
@@ -103,10 +115,61 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 		return options;
 	}
 
+	public boolean processLine(String line) {
+		return processLine(line, null);
+	}
+
 	// This is redundant but let us keep it here to navigate in java code easier
 	@Override
 	public boolean processLine(String line, ErrorParserManager epm) {
 		return super.processLine(line, epm);
+	}
+
+	@Override
+	public void shutdown() {
+		scheduleSerializingJob(currentCfgDescription);
+		super.shutdown();
+	}
+	
+
+	private void scheduleSerializingJob(final ICConfigurationDescription cfgDescription) {
+		Job job = new Job("Serialize CDT language settings entries") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				// FIXME - remove thread name reassigning
+				Thread thread = getThread();
+				String oldName = thread.getName();
+				thread.setName("CDT LSP Serializer,BOP");
+				
+				IStatus status = null;
+				try {
+					if (cfgDescription != null) {
+						LanguageSettingsProvidersSerializer.serializeLanguageSettings(cfgDescription.getProjectDescription());
+					} else {
+						LanguageSettingsProvidersSerializer.serializeLanguageSettingsWorkspace();
+					}
+				} catch (CoreException e) {
+					status = new Status(IStatus.ERROR, MakeCorePlugin.PLUGIN_ID, IStatus.ERROR, "Error serializing language settings", e);
+					MakeCorePlugin.log(status);
+				}
+
+				if (status == null)
+					status = Status.OK_STATUS;
+				
+				thread.setName(oldName);
+				return status;
+			}
+		};
+		
+		ISchedulingRule rule = null;
+		if (currentProject != null) {
+			rule = currentProject.getFile(".settings/language.settings.xml");
+		}
+		if (rule == null) {
+			rule = ResourcesPlugin.getWorkspace().getRoot();
+		}
+		job.setRule(rule);
+		job.schedule();
 	}
 
 	/**

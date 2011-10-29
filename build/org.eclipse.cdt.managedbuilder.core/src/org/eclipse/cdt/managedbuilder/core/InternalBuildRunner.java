@@ -23,7 +23,6 @@ import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
-import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager_TBD;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -159,9 +158,8 @@ public class InternalBuildRunner extends AbstractBuildRunner {
 			}
 
 			if (kind!=IncrementalProjectBuilder.CLEAN_BUILD) {
+				// TODO - AG - sanity check? elaborate
 				ICConfigurationDescription cfgDescription = ManagedBuildManager.getDescriptionForConfiguration(configuration);
-				ManagedBuildManager.runBuiltinSpecsDetectors(cfgDescription, workingDirectory, env, monitor);
-
 				List<ILanguageSettingsProvider> providers = cfgDescription.getLanguageSettingProviders();
 				for (ILanguageSettingsProvider provider : providers) {
 					if (provider instanceof AbstractBuildCommandParser) {
@@ -248,11 +246,6 @@ public class InternalBuildRunner extends AbstractBuildRunner {
 				consoleOutStream.flush();
 				epmOutputStream.close();
 				epmOutputStream = null;
-				if (kind!=IncrementalProjectBuilder.CLEAN_BUILD) {
-					LanguageSettingsManager_TBD.serializeWorkspaceProviders();
-					ICProjectDescription prjDescription = CCorePlugin.getDefault().getProjectDescription(project, false);
-					LanguageSettingsProvidersSerializer.serializeLanguageSettings(prjDescription);
-				}
 
 				// Generate any error markers that the build has discovered
 				monitor.subTask(ManagedMakeMessages

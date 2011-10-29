@@ -226,10 +226,6 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		currentProject = cfgDescription != null ? cfgDescription.getProjectDescription().getProject() : null;
 	}
 
-	public boolean processLine(String line) {
-		return processLine(line, null);
-	}
-
 	public void shutdown() {
 		// release resources for garbage collector
 		currentCfgDescription = null;
@@ -307,12 +303,26 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		return false;
 	}
 
+	// TODO - remove me
+	@Deprecated
+	protected String getPrefixForLog() {
+		String str;
+		if (currentCfgDescription!= null) {
+			IProject ownerProject = currentCfgDescription.getProjectDescription().getProject();
+			str = ownerProject + ":" + currentCfgDescription.getName();
+		} else {
+			str = "[global]";
+		}
+		return str + ": ";
+	}
+	
+
 	protected void setSettingEntries(List<ICLanguageSettingEntry> entries) {
 		setSettingEntries(currentCfgDescription, currentResource, currentLanguageId, entries);
 		
 		// TODO - for debugging only, eventually remove
-		IStatus status = new Status(IStatus.INFO, MakeCorePlugin.PLUGIN_ID, getClass().getSimpleName()
-				+ " collected " + (entries!=null ? ("" + entries.size()) : "null") + " entries for " + currentResource);
+		IStatus status = new Status(IStatus.INFO, MakeCorePlugin.PLUGIN_ID, getPrefixForLog()
+				+ getClass().getSimpleName() + " collected " + (entries!=null ? ("" + entries.size()) : "null") + " entries for " + currentResource);
 		MakeCorePlugin.log(status);
 	}
 

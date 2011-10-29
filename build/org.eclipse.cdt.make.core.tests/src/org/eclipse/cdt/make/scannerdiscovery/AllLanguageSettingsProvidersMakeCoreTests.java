@@ -22,5 +22,6 @@ public class AllLanguageSettingsProvidersMakeCoreTests extends TestSuite {
 		super(AllLanguageSettingsProvidersMakeCoreTests.class.getName());
 
 		addTestSuite(GCCBuildCommandParserTest.class);
+		addTestSuite(BuiltinSpecsDetectorTest.class);
 	}
 }

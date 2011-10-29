@@ -44,8 +44,6 @@ public final class BuiltinSpecsDetectorOptionPage extends AbstractLanguageSettin
 	private Text inputCommand;
 	
 	private StatusMessageLine fStatusLine;
-	private Button runOnceRadioButton;
-	private Button runEveryBuildRadioButton;
 	private Button allocateConsoleCheckBox;
 
 	/*
@@ -58,7 +56,7 @@ public final class BuiltinSpecsDetectorOptionPage extends AbstractLanguageSettin
 //		Composite optionsPageComposite = new Composite(composite, SWT.NULL);
 		fEditable = parent.isEnabled();
 
-		final Composite composite = new Composite(parent, SWT.NONE);
+		Composite composite = new Composite(parent, SWT.NONE);
 		{
 			GridLayout layout = new GridLayout();
 			layout.numColumns = 2;
@@ -74,69 +72,7 @@ public final class BuiltinSpecsDetectorOptionPage extends AbstractLanguageSettin
 			composite.setLayoutData(gd);
 		}
 
-
-		Group groupRun = new Group(composite, SWT.SHADOW_ETCHED_IN);
-//		groupRun.setText("Language Settings Provider Options");
-
-		GridLayout gridLayoutRun = new GridLayout();
-//		GridLayout gridLayoutRun = new GridLayout(2, true);
-//		gridLayoutRun.makeColumnsEqualWidth = false;
-//		gridLayoutRun.marginRight = -10;
-//		gridLayoutRun.marginLeft = -4;
-		groupRun.setLayout(gridLayoutRun);
-//		GridData gdRun = new GridData(GridData.FILL_HORIZONTAL);
-//		gdRun.horizontalSpan = 2;
-//		groupRun.setLayoutData(gdRun);
-
 		AbstractBuiltinSpecsDetector provider = getRawProvider();
-		{
-			runOnceRadioButton = new Button(groupRun, SWT.RADIO);
-			runOnceRadioButton.setText("Run only once"); //$NON-NLS-1$
-			//		    b1.setToolTipText(UIMessages.getString("EnvironmentTab.3")); //$NON-NLS-1$
-			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.horizontalSpan = 3;
-			runOnceRadioButton.setLayoutData(gd);
-			runOnceRadioButton.setSelection(provider.isRunOnce());
-			runOnceRadioButton.setEnabled(fEditable);
-			runOnceRadioButton.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent evt) {
-					boolean runOnceEnabled = runOnceRadioButton.getSelection();
-					if (runOnceEnabled) {
-						AbstractBuiltinSpecsDetector provider = getRawProvider();
-						if (runOnceEnabled != provider.isRunOnce()) {
-							AbstractBuiltinSpecsDetector selectedProvider = getWorkingCopy(providerId);
-							selectedProvider.setRunOnce(runOnceEnabled);
-							providerTab.refreshItem(selectedProvider);
-						}
-					}
-				}
-
-			});
-		}
-		{
-			runEveryBuildRadioButton = new Button(groupRun, SWT.RADIO);
-			runEveryBuildRadioButton.setText("Activate on every build"); //$NON-NLS-1$
-			runEveryBuildRadioButton.setSelection(!provider.isRunOnce());
-			runEveryBuildRadioButton.setEnabled(fEditable);
-			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.horizontalSpan = 3;
-			runEveryBuildRadioButton.setLayoutData(gd);
-			runEveryBuildRadioButton.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent evt) {
-					boolean runEveryBuildEnabled = runEveryBuildRadioButton.getSelection();
-					if (runEveryBuildEnabled) {
-						AbstractBuiltinSpecsDetector provider = getRawProvider();
-						if (runEveryBuildEnabled != !provider.isRunOnce()) {
-							AbstractBuiltinSpecsDetector selectedProvider = getWorkingCopy(providerId);
-							selectedProvider.setRunOnce(!runEveryBuildEnabled);
-							providerTab.refreshItem(selectedProvider);
-						}
-					}
-				}
-			});
-		}
 
 		// Compiler specs command
 		{

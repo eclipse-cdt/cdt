@@ -49,14 +49,11 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.cdt.core.AbstractCExtension;
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager_TBD;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.CoreModelUtil;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -66,7 +63,6 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.XmlStorageUtil;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
-import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildProperty;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyManager;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentBuildPathsChangeListener;
@@ -4802,54 +4798,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * TODO - better home?
-	 */
-	static public void runBuiltinSpecsDetectors(ICConfigurationDescription cfgDescription, IPath workingDirectory,
-			String[] env, IProgressMonitor monitor) {
-		IProject project = cfgDescription.getProjectDescription().getProject();
-		List<String> languageIds = LanguageSettingsManager.getLanguages(project, cfgDescription);
-		if (languageIds.isEmpty()) {
-			return;
-		}
-
-		for (ILanguageSettingsProvider provider : cfgDescription.getLanguageSettingProviders()) {
-			ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(provider);
-			if (rawProvider instanceof ILanguageSettingsBuiltinSpecsDetector) {
-				ILanguageSettingsBuiltinSpecsDetector detector = (ILanguageSettingsBuiltinSpecsDetector)rawProvider;
-				boolean isWorkspaceProvider = LanguageSettingsManager.isWorkspaceProvider(provider);
-				for (String languageId : languageIds) {
-					if (detector.getLanguageScope()==null || detector.getLanguageScope().contains(languageId)) {
-						try {
-							if (isWorkspaceProvider) {
-								detector.run((IProject)null, languageId, workingDirectory, env, monitor);
-							} else {
-								detector.run(cfgDescription, languageId, workingDirectory, env, monitor);
-							}
-							// detector.shutdown() is called from ConsoleOutputSniffer
-						} catch (Throwable e) {
-							IStatus status = new Status(IStatus.ERROR, MakeCorePlugin.PLUGIN_ID, "Internal error in BuiltinSpecsDetector "+detector.getId(), e);
-							MakeCorePlugin.log(status);
-						}
-					}
-				}
-			}
-		}
-
-
-		// AG: FIXME
-//		LanguageSettingsManager.serialize(cfgDescription);
-		// AG: FIXME - rather send event that ls settings changed
-		ICProject icProject = CoreModel.getDefault().create(project);
-		ICElement[] tuSelection = new ICElement[] {icProject};
-			try {
-				CCorePlugin.getIndexManager().update(tuSelection, IIndexManager.UPDATE_ALL | IIndexManager.UPDATE_EXTERNAL_FILES_FOR_PROJECT);
-			} catch (CoreException e) {
-				IStatus status = new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, "Error updating CDT index", e);
-				ManagedBuilderCorePlugin.log(status);
-			}
 	}
 
 }

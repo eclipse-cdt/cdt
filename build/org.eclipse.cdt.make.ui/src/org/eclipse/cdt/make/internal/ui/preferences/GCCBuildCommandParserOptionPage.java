@@ -30,7 +30,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
@@ -76,69 +75,7 @@ public final class GCCBuildCommandParserOptionPage extends AbstractLanguageSetti
 			composite.setLayoutData(gd);
 		}
 
-
-//		Group groupRun = new Group(composite, SWT.SHADOW_ETCHED_IN);
-////		groupRun.setText("Language Settings Provider Options");
-//
-//		GridLayout gridLayoutRun = new GridLayout();
-////		GridLayout gridLayoutRun = new GridLayout(2, true);
-////		gridLayoutRun.makeColumnsEqualWidth = false;
-////		gridLayoutRun.marginRight = -10;
-////		gridLayoutRun.marginLeft = -4;
-//		groupRun.setLayout(gridLayoutRun);
-////		GridData gdRun = new GridData(GridData.FILL_HORIZONTAL);
-////		gdRun.horizontalSpan = 2;
-////		groupRun.setLayoutData(gdRun);
-
 		AbstractBuildCommandParser provider = getRawProvider();
-//		{
-//			runOnceRadioButton = new Button(groupRun, SWT.RADIO);
-//			runOnceRadioButton.setText("Run only once"); //$NON-NLS-1$
-//			//		    b1.setToolTipText(UIMessages.getString("EnvironmentTab.3")); //$NON-NLS-1$
-//			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-//			gd.horizontalSpan = 3;
-//			runOnceRadioButton.setLayoutData(gd);
-//			runOnceRadioButton.setSelection(provider.isRunOnce());
-//			runOnceRadioButton.setEnabled(fEditable);
-//			runOnceRadioButton.addSelectionListener(new SelectionAdapter() {
-//				@Override
-//				public void widgetSelected(SelectionEvent evt) {
-//					boolean runOnceEnabled = runOnceRadioButton.getSelection();
-//					if (runOnceEnabled) {
-//						AbstractBuildCommandParser provider = getRawProvider();
-//						if (runOnceEnabled != provider.isRunOnce()) {
-//							AbstractBuildCommandParser selectedProvider = getWorkingCopy(providerId);
-//							selectedProvider.setRunOnce(runOnceEnabled);
-//							providerTab.refreshItem(selectedProvider);
-//						}
-//					}
-//				}
-//
-//			});
-//		}
-//		{
-//			runEveryBuildRadioButton = new Button(groupRun, SWT.RADIO);
-//			runEveryBuildRadioButton.setText("Activate on every build"); //$NON-NLS-1$
-//			runEveryBuildRadioButton.setSelection(!provider.isRunOnce());
-//			runEveryBuildRadioButton.setEnabled(fEditable);
-//			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-//			gd.horizontalSpan = 3;
-//			runEveryBuildRadioButton.setLayoutData(gd);
-//			runEveryBuildRadioButton.addSelectionListener(new SelectionAdapter() {
-//				@Override
-//				public void widgetSelected(SelectionEvent evt) {
-//					boolean runEveryBuildEnabled = runEveryBuildRadioButton.getSelection();
-//					if (runEveryBuildEnabled) {
-//						AbstractBuildCommandParser provider = getRawProvider();
-//						if (runEveryBuildEnabled != !provider.isRunOnce()) {
-//							AbstractBuildCommandParser selectedProvider = getWorkingCopy(providerId);
-//							selectedProvider.setRunOnce(!runEveryBuildEnabled);
-//							providerTab.refreshItem(selectedProvider);
-//						}
-//					}
-//				}
-//			});
-//		}
 
 		// Compiler specs command
 		{
@@ -187,90 +124,6 @@ public final class GCCBuildCommandParserOptionPage extends AbstractLanguageSetti
 //
 //			});
 //
-//		}
-
-//		{
-//			final Button button = new Button(composite, SWT.PUSH);
-//			button.setFont(parent.getFont());
-//			String text = fProvider.isEmpty() ? "Run Now (TODO)" : "Clear";
-//			button.setText(text);
-////			button.addSelectionListener(this);
-//			GridData data = new GridData();
-//			data.horizontalSpan = 2;
-////			data.horizontalAlignment = GridData.BEGINNING;
-////			data.widthHint = 60;
-//			button.setLayoutData(data);
-//			// TODO
-//			button.setEnabled(fEditable && !fProvider.isEmpty());
-//
-//			button.addSelectionListener(new SelectionAdapter() {
-//
-//				@Override
-//				public void widgetSelected(SelectionEvent evt) {
-//					if (fProvider.isEmpty()) {
-//						// TODO
-//					} else {
-//						fProvider.clear();
-//					}
-//					// TODO
-//					button.setEnabled(fEditable && !fProvider.isEmpty());
-//					String text = fProvider.isEmpty() ? "Run Now (TODO)" : "Clear";
-//					button.setText(text);
-//					button.pack();
-//				}
-//
-//			});
-//
-//		}
-
-//		// Compiler specs command
-//		{
-//			Label label = ControlFactory.createLabel(composite, "Parsing rules:");
-//			GridData gd = new GridData();
-//			gd.horizontalSpan = 2;
-//			label.setLayoutData(gd);
-////		Label newLabel = new Label(composite, SWT.NONE);
-//////		((GridData) newLabel.getLayoutData()).horizontalSpan = 1;
-////		newLabel.setText("Command to get compiler specs:");
-//		}
-
-
-//		createPatternsTable(group, composite);
-
-
-
-
-
-
-
-
-//		Group group = new Group(parent, SWT.SHADOW_ETCHED_IN);
-//		group.setText(DialogsMessages.RegexErrorParserOptionPage_Title);
-//
-//		GridLayout gridLayout = new GridLayout(2, true);
-//		gridLayout.makeColumnsEqualWidth = false;
-//		gridLayout.marginRight = -10;
-//		gridLayout.marginLeft = -4;
-//		group.setLayout(gridLayout);
-//		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-//
-//		Composite composite = new Composite(group, SWT.NONE);
-//		GridLayout layout = new GridLayout();
-//		layout.numColumns = 2;
-//		layout.marginWidth = 1;
-//		layout.marginHeight = 1;
-//		layout.marginRight = 1;
-//		composite.setLayout(layout);
-//		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-//		Dialog.applyDialogFont(composite);
-//
-//		if (!fEditable)
-//			createLinkToPreferences(composite);
-//
-//		createPatternsTable(group, composite);
-//
-//		if (fEditable) {
-//			createButtons(composite);
 //		}
 
 		{

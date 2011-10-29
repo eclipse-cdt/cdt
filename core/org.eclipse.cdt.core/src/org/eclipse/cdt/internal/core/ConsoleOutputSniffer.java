@@ -130,6 +130,8 @@ public class ConsoleOutputSniffer {
 	private OutputStream consoleErrorStream;
 	private IConsoleParser[] parsers;
 	
+	private ErrorParserManager errorParserManager = null;
+
 	public ConsoleOutputSniffer(IConsoleParser[] parsers) {
 		this.parsers = parsers;
 	}
@@ -140,6 +142,11 @@ public class ConsoleOutputSniffer {
 		this.consoleErrorStream = errorStream;
 	}
 	
+	public ConsoleOutputSniffer(OutputStream outputStream, OutputStream errorStream, IConsoleParser[] parsers, ErrorParserManager epm) {
+		this(outputStream, errorStream, parsers);
+		this.errorParserManager = epm;
+	}
+
 	/**
 	 * Returns an output stream that will be sniffed.
 	 * This stream should be hooked up so the command
@@ -188,10 +195,10 @@ public class ConsoleOutputSniffer {
 	private synchronized void processLine(String line) {
 		for (IConsoleParser parser : parsers) {
 			try {
-				if (consoleOutputStream instanceof ErrorParserManager && parser instanceof IErrorParser ) {
+				if (parser instanceof IErrorParser) {
 					// IErrorParser interface is used here only with purpose to pass ErrorParserManager
 					// which keeps track of CWD and provides useful methods for locating files
-					((IErrorParser)parser).processLine(line, (ErrorParserManager) consoleOutputStream);
+					((IErrorParser)parser).processLine(line, errorParserManager);
 				} else {
 					parser.processLine(line);
 				}

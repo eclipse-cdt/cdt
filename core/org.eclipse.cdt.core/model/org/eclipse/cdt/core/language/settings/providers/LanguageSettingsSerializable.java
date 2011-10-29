@@ -584,13 +584,10 @@ public class LanguageSettingsSerializable extends LanguageSettingsBaseProvider {
 	}
 
 	/**
-	 * Shallow clone of the provider. "Shallow" is defined here as the exact copy except that
-	 * the copy will have zero language settings entries.
-	 *
-	 * @return shallow copy of the provider.
-	 * @throws CloneNotSupportedException in case {@link #clone()} throws the exception.
+	 * See {@link #cloneShallow()}. This method is extracted
+	 * to avoid expressing {@link #clone()} via {@link #cloneShallow()}.
 	 */
-	protected LanguageSettingsSerializable cloneShallow() throws CloneNotSupportedException {
+	private LanguageSettingsSerializable cloneShallowInternal() throws CloneNotSupportedException {
 		LanguageSettingsSerializable clone = (LanguageSettingsSerializable)super.clone();
 		if (languageScope!=null)
 			clone.languageScope = new ArrayList<String>(languageScope);
@@ -599,9 +596,20 @@ public class LanguageSettingsSerializable extends LanguageSettingsBaseProvider {
 		return clone;
 	}
 
+	/**
+	 * Shallow clone of the provider. "Shallow" is defined here as the exact copy except that
+	 * the copy will have zero language settings entries.
+	 *
+	 * @return shallow copy of the provider.
+	 * @throws CloneNotSupportedException in case {@link #clone()} throws the exception.
+	 */
+	protected LanguageSettingsSerializable cloneShallow() throws CloneNotSupportedException {
+		return cloneShallowInternal();
+	}
+
 	@Override
 	protected LanguageSettingsSerializable clone() throws CloneNotSupportedException {
-		LanguageSettingsSerializable clone = cloneShallow();
+		LanguageSettingsSerializable clone = cloneShallowInternal();
 		clone.fStorage = cloneStorage();
 		return clone;
 	}

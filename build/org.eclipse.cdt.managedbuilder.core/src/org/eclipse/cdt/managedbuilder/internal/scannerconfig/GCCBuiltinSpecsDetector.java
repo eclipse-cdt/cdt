@@ -17,7 +17,7 @@ import java.util.List;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditableProvider;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
-import org.eclipse.cdt.make.core.scannerconfig.AbstractBuiltinSpecsDetector;
+import org.eclipse.cdt.managedbuilder.scannerconfig.ToolchainBuiltinSpecsDetector;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -25,8 +25,8 @@ import org.eclipse.core.runtime.CoreException;
  * to GCC toolchain {@code cdt.managedbuild.toolchain.gnu.base}.
  *
  */
-public class GCCBuiltinSpecsDetector extends AbstractBuiltinSpecsDetector implements ILanguageSettingsEditableProvider {
-	// must match the toolchain definition in org.eclipse.cdt.managedbuilder.core.buildDefinitions extension point
+public class GCCBuiltinSpecsDetector extends ToolchainBuiltinSpecsDetector implements ILanguageSettingsEditableProvider {
+	// ID must match the toolchain definition in org.eclipse.cdt.managedbuilder.core.buildDefinitions extension point
 	private static final String GCC_TOOLCHAIN_ID = "cdt.managedbuild.toolchain.gnu.base";  //$NON-NLS-1$
 	
 	private enum State {NONE, EXPECTING_LOCAL_INCLUDE, EXPECTING_SYSTEM_INCLUDE, EXPECTING_FRAMEWORKS}
@@ -37,8 +37,8 @@ public class GCCBuiltinSpecsDetector extends AbstractBuiltinSpecsDetector implem
 			new IncludePathOptionParser("#include \"(\\S.*)\"", "$1", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY | ICSettingEntry.LOCAL),
 			new IncludePathOptionParser("#include <(\\S.*)>", "$1", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
 			new IncludePathOptionParser("#framework <(\\S.*)>", "$1", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY | ICSettingEntry.FRAMEWORKS_MAC),
-			new MacroOptionParser("#define (\\S*\\(.*?\\)) *(.*)", "$1", "$2", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
-			new MacroOptionParser("#define (\\S*) *(.*)", "$1", "$2", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
+			new MacroOptionParser("#define\\s+(\\S*\\(.*?\\))\\s*(.*)", "$1", "$2", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
+			new MacroOptionParser("#define\\s+(\\S*)\\s*(\\S*)", "$1", "$2", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY),
 	};
 
 	@Override

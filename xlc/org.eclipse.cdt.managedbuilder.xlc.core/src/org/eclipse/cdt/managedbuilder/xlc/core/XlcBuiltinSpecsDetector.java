@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditableProvider;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
-import org.eclipse.cdt.make.core.scannerconfig.AbstractBuiltinSpecsDetector;
+import org.eclipse.cdt.managedbuilder.scannerconfig.ToolchainBuiltinSpecsDetector;
 
 
 /**
@@ -38,7 +38,7 @@ rm /tmp/xlcW2lt4Jic
  * to GCC toolchain {@code cdt.managedbuild.toolchain.gnu.base}.
  *
  */
-public class XlcBuiltinSpecsDetector extends AbstractBuiltinSpecsDetector implements ILanguageSettingsEditableProvider {
+public class XlcBuiltinSpecsDetector extends ToolchainBuiltinSpecsDetector implements ILanguageSettingsEditableProvider {
 	// must match the toolchain definition in org.eclipse.cdt.managedbuilder.core.buildDefinitions extension point
 	// FIXME - ill defined XLC toolchain
 //	private static final String XLC_TOOLCHAIN_ID = "cdt.managedbuild.toolchain.xlc.exe.debug";  //$NON-NLS-1$

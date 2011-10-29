@@ -33,7 +33,6 @@ import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariableManager;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
-import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager_TBD;
 import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.IConsole;
@@ -134,11 +133,6 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 				Map<String, String> envMap = getEnvironment(builder);
 				String[] env = getEnvStrings(envMap);
 
-				ICConfigurationDescription cfgDescription = ManagedBuildManager.getDescriptionForConfiguration(configuration);
-				if (kind!=IncrementalProjectBuilder.CLEAN_BUILD) {
-					ManagedBuildManager.runBuiltinSpecsDetectors(cfgDescription, workingDirectory, env, monitor);
-				}
-
 				consoleHeader[1] = configuration.getName();
 				consoleHeader[2] = project.getName();
 				buf.append(NEWLINE);
@@ -213,14 +207,6 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 						errMsg = launcher.getErrorMessage();
 					monitor.subTask(ManagedMakeMessages.getResourceString("MakeBuilder.Updating_project")); //$NON-NLS-1$
 
-					// AG: FIXME
-//					try {
-//						LanguageSettingsManager.serialize(cfgDescription);
-//					} catch (CoreException e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
-
 					try {
 						// Do not allow the cancel of the refresh, since the builder is external
 						// to Eclipse, files may have been created/modified and we will be out-of-sync.
@@ -273,11 +259,6 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 				consoleOut.close();
 				consoleErr.close();
 				cos.close();
-				if (kind!=IncrementalProjectBuilder.CLEAN_BUILD) {
-					LanguageSettingsManager_TBD.serializeWorkspaceProviders();
-					ICProjectDescription prjDescription = CCorePlugin.getDefault().getProjectDescription(project, false);
-					LanguageSettingsProvidersSerializer.serializeLanguageSettings(prjDescription);
-				}
 			}
 		} catch (Exception e) {
 			ManagedBuilderCorePlugin.log(e);
@@ -422,7 +403,7 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 
 		if(clParserList.size() != 0){
 			IConsoleParser[] parsers = clParserList.toArray(new IConsoleParser[clParserList.size()]);
-			return new ConsoleOutputSniffer(outputStream, errorStream, parsers);
+			return new ConsoleOutputSniffer(outputStream, errorStream, parsers, epm);
 		}
 
 		return null;

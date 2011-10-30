@@ -49,9 +49,6 @@ import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -70,8 +67,7 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.w3c.dom.Element;
 
-public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSettingsOutputScanner
-		implements ICListenerRegisterer, IResourceChangeListener {
+public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSettingsOutputScanner implements ICListenerRegisterer {
 	private static final int TICKS_STREAM_MONITOR = 100;
 	private static final int TICKS_CLEAN_MARKERS = 1;
 	private static final int TICKS_RUN_FOR_ONE_LANGUAGE = 10;
@@ -241,54 +237,18 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 
 	public void registerListener(ICConfigurationDescription cfgDescription) {
 		currentCfgDescription = cfgDescription;
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_BUILD);
 		// TODO - remove me
 		CCorePlugin.log(new Status(IStatus.INFO,CCorePlugin.PLUGIN_ID,
 				getPrefixForLog() + "Added listener [" + System.identityHashCode(this) + "] " + this));
+		
+		execute();
 	}
 
 	public void unregisterListener() {
-		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 		// TODO - remove me
 		CCorePlugin.log(new Status(IStatus.INFO,CCorePlugin.PLUGIN_ID,
 				getPrefixForLog() + "Removed listener [" + System.identityHashCode(this) + "] " + this));
 	}
-
-	private String eventToString(IResourceChangeEvent event) {
-		String strType = null;
-		IResource rc = null;
-		if (event != null) {
-			int type = event.getType();
-			switch (type) {
-			case IResourceChangeEvent.POST_CHANGE: strType = "POST_CHANGE";break;
-			case IResourceChangeEvent.PRE_CLOSE: strType = "PRE_CLOSE";break;
-			case IResourceChangeEvent.PRE_DELETE: strType = "PRE_DELETE";break;
-			case IResourceChangeEvent.PRE_BUILD: strType = "PRE_BUILD";break;
-			case IResourceChangeEvent.POST_BUILD: strType = "POST_BUILD";break;
-			case IResourceChangeEvent.PRE_REFRESH: strType = "PRE_REFRESH";break;
-			default: strType = "unknown";break;
-			}
-			strType += "=" + Integer.toHexString(type);
-			
-			IResourceDelta delta = event.getDelta();
-			rc = delta!=null ? delta.getResource() : null;
-		}
-		String result = "Event " + strType + ", " + rc;
-		return result;
-	}
-
-	public void resourceChanged(IResourceChangeEvent event) {
-			System.out.println(eventToString(event));
-			
-	//		if (event.getType() != IResourceChangeEvent.PRE_BUILD)
-	//			return;
-	//		
-	//		IResourceDelta delta = event.getDelta();
-	//		delta.getKind();
-	//		delta.getFlags();
-			
-			execute();
-		}
 
 	protected void execute() {
 		if (isExecuted) {

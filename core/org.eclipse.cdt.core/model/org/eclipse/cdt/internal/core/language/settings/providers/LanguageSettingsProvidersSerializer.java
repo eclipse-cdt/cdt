@@ -41,12 +41,15 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class LanguageSettingsProvidersSerializer {
+	private static final String PREFERENCE_WORSPACE_PROVIDERS_SET = "language.settings.providers.set.for.workspace";
 	private static final String STORAGE_WORKSPACE_LANGUAGE_SETTINGS = "language.settings.xml"; //$NON-NLS-1$
 	private static final String SETTINGS_FOLDER_NAME = ".settings/"; //$NON-NLS-1$
 	private static final String STORAGE_PROJECT_LANGUAGE_SETTINGS = "language.settings.xml"; //$NON-NLS-1$
@@ -199,6 +202,9 @@ public class LanguageSettingsProvidersSerializer {
 		public static void setWorkspaceProviders(List<ILanguageSettingsProvider> providers) throws CoreException {
 			setWorkspaceProvidersInternal(providers);
 			serializeLanguageSettingsWorkspace();
+			// generate preference change event
+			IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID);
+			prefs.putBoolean(PREFERENCE_WORSPACE_PROVIDERS_SET, ! prefs.getBoolean(PREFERENCE_WORSPACE_PROVIDERS_SET, false));
 		}
 
 	/**

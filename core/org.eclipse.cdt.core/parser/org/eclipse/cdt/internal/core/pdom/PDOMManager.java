@@ -60,6 +60,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.settings.model.CProjectDescriptionEvent;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionListener;
+import org.eclipse.cdt.core.settings.model.util.LanguageSettingEntriesSerializer;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
@@ -68,6 +69,7 @@ import org.eclipse.cdt.internal.core.index.IndexChangeEvent;
 import org.eclipse.cdt.internal.core.index.IndexFactory;
 import org.eclipse.cdt.internal.core.index.IndexerStateEvent;
 import org.eclipse.cdt.internal.core.index.provider.IndexProviderManager;
+import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.cdt.internal.core.pdom.PDOM.IListener;
 import org.eclipse.cdt.internal.core.pdom.db.ChunkCache;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
@@ -163,6 +165,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 	private CModelListener fCModelListener= new CModelListener(this);
 	private ILanguageMappingChangeListener fLanguageChangeListener = new LanguageMappingChangeListener(this);
+	private LanguageSettingsChangeListener fLanguageSettingsChangeListener = new LanguageSettingsChangeListener(this);
 	private final ICProjectDescriptionListener fProjectDescriptionListener;
 	private final JobChangeListener fJobChangeListener;
 	private final IPreferenceChangeListener fPreferenceChangeListener;
@@ -235,6 +238,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(fCModelListener, IResourceChangeEvent.POST_BUILD);
 		model.addElementChangedListener(fCModelListener);
 		LanguageManager.getInstance().registerLanguageChangeListener(fLanguageChangeListener);
+		LanguageSettingsProvidersSerializer.registerLanguageSettingsChangeListener(fLanguageSettingsChangeListener);
 		final int types= CProjectDescriptionEvent.DATA_APPLIED;
 		CCorePlugin.getDefault().getProjectDescriptionManager().addCProjectDescriptionListener(fProjectDescriptionListener, types);
 
@@ -255,6 +259,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		final CoreModel model = CoreModel.getDefault();
 		model.removeElementChangedListener(fCModelListener);
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(fCModelListener);
+		LanguageSettingsProvidersSerializer.unregisterLanguageSettingsChangeListener(fLanguageSettingsChangeListener);
 		LanguageManager.getInstance().unregisterLanguageChangeListener(fLanguageChangeListener);
 		PDOMIndexerJob jobToCancel= null;
 		synchronized (fTaskQueue) {

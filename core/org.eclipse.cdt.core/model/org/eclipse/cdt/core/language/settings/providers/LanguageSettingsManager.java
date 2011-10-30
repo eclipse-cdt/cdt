@@ -54,7 +54,7 @@ public class LanguageSettingsManager {
 	 *     although individual providers return {@code null} if no settings defined.
 	 */
 	public static List<ICLanguageSettingEntry> getSettingEntriesUpResourceTree(ILanguageSettingsProvider provider, ICConfigurationDescription cfgDescription, IResource rc, String languageId) {
-		return LanguageSettingsExtensionManager.getSettingEntriesUpResourceTree(provider, cfgDescription, rc, languageId);
+		return LanguageSettingsProvidersSerializer.getSettingEntriesUpResourceTree(provider, cfgDescription, rc, languageId);
 	}
 
 	/**
@@ -71,7 +71,7 @@ public class LanguageSettingsManager {
 	 * @param project - the project which is considered the root of the resource tree.
 	 */
 	public static void buildResourceTree(LanguageSettingsSerializable provider, ICConfigurationDescription cfgDescription, String languageId, IProject project) {
-		LanguageSettingsExtensionManager.buildResourceTree(provider, cfgDescription, languageId, project);
+		LanguageSettingsProvidersSerializer.buildResourceTree(provider, cfgDescription, languageId, project);
 	}
 
 	
@@ -93,7 +93,7 @@ public class LanguageSettingsManager {
 	 */
 	// FIXME: get rid of callers PathEntryTranslator and DescriptionScannerInfoProvider 
 	public static List<ICLanguageSettingEntry> getSettingEntriesByKind(ICConfigurationDescription cfgDescription, IResource rc, String languageId, int kind) {
-		return LanguageSettingsExtensionManager.getSettingEntriesByKind(cfgDescription, rc, languageId, kind);
+		return LanguageSettingsProvidersSerializer.getSettingEntriesByKind(cfgDescription, rc, languageId, kind);
 	}
 
 	/**

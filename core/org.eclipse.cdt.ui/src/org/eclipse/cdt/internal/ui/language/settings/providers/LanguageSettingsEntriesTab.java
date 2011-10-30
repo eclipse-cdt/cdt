@@ -21,7 +21,6 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.IDecoration;
@@ -47,7 +46,6 @@ import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditabl
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsBaseProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
-import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager_TBD;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializable;
 import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.ILanguage;
@@ -1019,14 +1017,6 @@ providers:	for (ILanguageSettingsProvider provider : providers) {
 			ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(page.getProject(), enabled);
 			enableProvidersCheckBox.setSelection(enabled);
 		}
-		
-		try {
-			LanguageSettingsManager_TBD.serializeWorkspaceProviders();
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			throw new UnsupportedOperationException("Internal Error");
-		}
 
 		trackInitialSettings();
 		updateData(getResDesc());
@@ -1061,21 +1051,6 @@ providers:	for (ILanguageSettingsProvider provider : providers) {
 		IResource rc = getResource();
 		if (currentLanguageId!=null)
 			provider.setSettingEntries(cfgDescription, rc, currentLanguageId, entries);
-	}
-
-	@Override
-	protected boolean isIndexerAffected() {
-//		List<ILanguageSettingsProvider> newProvidersList = null;
-//		ICConfigurationDescription cfgDescription = getConfigurationDescription();
-//		if (cfgDescription!=null) {
-//			newProvidersList = cfgDescription.getLanguageSettingProviders();
-//		}
-//		boolean newEnablement = LanguageSettingsManager.isLanguageSettingsProvidersEnabled(page.getProject());
-//		
-//		boolean isEqualList = (newProvidersList==initialProvidersList) || (newProvidersList!=null && newProvidersList.equals(initialProvidersList));
-//		return newEnablement!=initialEnablement || (newEnablement==true && !isEqualList);
-		// FIXME
-		return true;
 	}
 
 }

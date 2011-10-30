@@ -20,7 +20,6 @@ import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSetting
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 
 /**
  * This temporary class keeps the utility methods being looking for better home
@@ -51,11 +50,6 @@ public class LanguageSettingsManager_TBD {
 		}
 
 		return false;
-	}
-
-	@Deprecated // Shouldn't be API
-	public static void serializeWorkspaceProviders() throws CoreException {
-		LanguageSettingsProvidersSerializer.serializeLanguageSettingsWorkspace();
 	}
 
 	public static boolean isReconfigured(ILanguageSettingsProvider provider) {

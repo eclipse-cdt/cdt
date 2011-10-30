@@ -13,7 +13,8 @@ package org.eclipse.cdt.core.language.settings.providers;
 
 // TODO: move ILanguageSettingsEditableProvider here 
 
-public class LanguageSettingsSerializableEditable extends LanguageSettingsSerializable implements ILanguageSettingsEditableProvider {
+// TODO this one is unused - remove
+final public class LanguageSettingsSerializableEditable extends LanguageSettingsSerializable implements ILanguageSettingsEditableProvider {
 	@Override
 	public LanguageSettingsSerializableEditable clone() throws CloneNotSupportedException {
 		return (LanguageSettingsSerializableEditable) super.clone();

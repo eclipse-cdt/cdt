@@ -25,19 +25,29 @@ import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvide
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializable;
 import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.internal.core.XmlUtil;
+import org.eclipse.cdt.internal.core.settings.model.CConfigurationSpecSettings;
+import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
+import org.eclipse.cdt.internal.core.settings.model.IInternalCCfgInfo;
 import org.eclipse.core.filesystem.URIUtil;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.core.runtime.jobs.Job;
@@ -61,10 +71,14 @@ public class LanguageSettingsProvidersSerializer {
 	private static final String ELEM_CONFIGURATION = "configuration"; //$NON-NLS-1$
 	private static final String ELEM_PROVIDER = "provider"; //$NON-NLS-1$
 	private static final String ELEM_PROVIDER_REFERENCE = "provider-reference"; //$NON-NLS-1$
+	
 	private static ILock serializingLock = Job.getJobManager().newLock();
+	
 	/** Cache of globally available providers to be consumed by calling clients */
 	private static Map<String, ILanguageSettingsProvider> rawGlobalWorkspaceProviders = new HashMap<String, ILanguageSettingsProvider>();
 	private static Map<String, ILanguageSettingsProvider> globalWorkspaceProviders = new HashMap<String, ILanguageSettingsProvider>();
+
+	private static ListenerList fLanguageSettingsChangeListeners = new ListenerList(ListenerList.IDENTITY);
 
 	private static class ListenerAssociation {
 		private ICListenerRegisterer listener;
@@ -161,6 +175,75 @@ public class LanguageSettingsProvidersSerializer {
 		}
 	}
 
+	private static class LanguageSettingsChangeEvent implements ILanguageSettingsChangeEvent {
+		private String projectName = null;
+		private Map<String /*cfg*/, LanguageSettingsDelta> deltaMap = new HashMap<String, LanguageSettingsDelta>();
+		
+		private IResource[] resources = null;
+
+		/**
+		 * The act of creating event resets internal delta count in configuration state.
+		 * That implies that when the event is retrieved it must be fired or delta will go missing.
+		 * That side effect is here to ensure atomic processing of firing & resetting the delta.
+		 */
+		public LanguageSettingsChangeEvent(ICProjectDescription prjDescription) {
+			Assert.isTrue(prjDescription.isReadOnly());
+
+			projectName = prjDescription.getName();
+			ICConfigurationDescription[] cfgDescriptions = prjDescription.getConfigurations();
+			for (ICConfigurationDescription cfgDescription : cfgDescriptions) {
+				if (cfgDescription instanceof IInternalCCfgInfo) {
+					CConfigurationSpecSettings specSettings = null;
+					try {
+						specSettings = ((IInternalCCfgInfo) cfgDescription).getSpecSettings();
+					} catch (CoreException e) {
+						CCorePlugin.log(e);
+					}
+					if (specSettings != null) {
+						LanguageSettingsDelta delta = specSettings.dropDelta();
+						if (delta != null)
+							deltaMap.put(cfgDescription.getId(), delta);
+					} else {
+						IStatus ss = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "Internal error: Missing specSettings for " + cfgDescription.getClass().getSimpleName());
+						CCorePlugin.log(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, ss.getMessage(), new CoreException(ss)));
+					}
+				}
+				
+			}
+		}
+
+		public String getProjectName() {
+			return projectName;
+		}
+
+		public String[] getConfigurationDescriptionIds() {
+			String[] ids = deltaMap.keySet().toArray(new String[deltaMap.size()]);
+			return ids;
+		}
+
+		public IResource[] getResources(String cfgDescriptionId) {
+			if (resources == null) {
+				LanguageSettingsDelta delta = deltaMap.get(cfgDescriptionId);
+				if (delta == null) {
+					resources = new IResource[0];
+				} else {
+					IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+					ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
+					ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
+					resources = delta.getChangedResources(project, cfgDescription).toArray(new IResource[0]);
+				}
+			}
+			
+			return resources;
+		}
+		
+		@Override
+		public String toString() {
+			return "LanguageSettingsChangeEvent for project=[" + getProjectName() + "]"
+					+ ", configurations=" + deltaMap.keySet()
+				;
+		}
+	}
 
 	/** static initializer */
 	static {
@@ -261,24 +344,66 @@ public class LanguageSettingsProvidersSerializer {
 		rawGlobalWorkspaceProviders = rawWorkspaceProviders;
 	}
 
+	private static List<LanguageSettingsChangeEvent> createLanguageLettingsChangeEvents(List<LanguageSettingsSerializable> serializableProviders) {
+		List<LanguageSettingsChangeEvent> events = new ArrayList<LanguageSettingsProvidersSerializer.LanguageSettingsChangeEvent>();
+		
+		List<String> serializableIds = new ArrayList<String>();
+		for (LanguageSettingsSerializable provider : serializableProviders) {
+			serializableIds.add(provider.getId());
+		}
+
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		IProject[] projects = root.getProjects();
+projects:
+		for (IProject project : projects) {
+			if (project.isAccessible()) {
+				ICProjectDescription prjDescription = CCorePlugin.getDefault().getProjectDescription(project, false);
+				if (prjDescription != null) {
+					ICConfigurationDescription[] cfgDescriptions = prjDescription.getConfigurations();
+					for (ICConfigurationDescription cfgDescription : cfgDescriptions) {
+						for (ILanguageSettingsProvider provider : cfgDescription.getLanguageSettingProviders()) {
+							if (isWorkspaceProvider(provider) && serializableIds.contains(provider.getId())) {
+								LanguageSettingsChangeEvent event = new LanguageSettingsChangeEvent(prjDescription);
+								if (event.getConfigurationDescriptionIds().length > 0) {
+									events.add(event);
+								}
+								continue projects;
+							}
+						}
+					}
+				}
+			}
+			
+		}
+		
+		return events;
+	}
+
 	public static void serializeLanguageSettingsWorkspace() throws CoreException {
+		// AG TODO - remove the log
+		CCorePlugin.log(new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, IStatus.OK,
+				"LanguageSettingsProvidersSerializer.serializeLanguageSettingsWorkspace()", new Exception()));
+		
 		URI uriStoreWsp = getStoreInWorkspaceArea(STORAGE_WORKSPACE_LANGUAGE_SETTINGS);
-		List<LanguageSettingsSerializable> serializableExtensionProviders = new ArrayList<LanguageSettingsSerializable>();
+		List<LanguageSettingsSerializable> serializableWorkspaceProviders = new ArrayList<LanguageSettingsSerializable>();
 		for (ILanguageSettingsProvider provider : rawGlobalWorkspaceProviders.values()) {
 			if (provider instanceof LanguageSettingsSerializable) {
 				// serialize all editable providers which are different from corresponding extension
 				// and serialize all serializable ones that are not editable (those are singletons and we don't know whether they changed)
 				if (!(provider instanceof ILanguageSettingsEditableProvider) || !LanguageSettingsExtensionManager.equalsExtensionProvider(provider)) {
-					serializableExtensionProviders.add((LanguageSettingsSerializable)provider);
+					serializableWorkspaceProviders.add((LanguageSettingsSerializable)provider);
 				}
 			}
 		}
 		try {
-			if (serializableExtensionProviders.isEmpty()) {
+			List<LanguageSettingsChangeEvent> events = null;
+			if (serializableWorkspaceProviders.isEmpty()) {
 				java.io.File fileStoreWsp = new java.io.File(uriStoreWsp);
-				serializingLock.acquire();
 				try {
+					serializingLock.acquire();
 					fileStoreWsp.delete();
+					// manufacture events while inside the lock
+					events = createLanguageLettingsChangeEvents(serializableWorkspaceProviders);
 				} finally {
 					serializingLock.release();
 				}
@@ -287,16 +412,22 @@ public class LanguageSettingsProvidersSerializer {
 				Element rootElement = XmlUtil.appendElement(doc, ELEM_PLUGIN);
 				Element elementExtension = XmlUtil.appendElement(rootElement, ELEM_EXTENSION, new String[] {ATTR_POINT, LanguageSettingsExtensionManager.PROVIDER_EXTENSION_FULL_ID});
 	
-				for (LanguageSettingsSerializable provider : serializableExtensionProviders) {
+				for (LanguageSettingsSerializable provider : serializableWorkspaceProviders) {
 					provider.serialize(elementExtension);
 				}
 	
-				serializingLock.acquire();
 				try {
+					serializingLock.acquire();
 					XmlUtil.serializeXml(doc, uriStoreWsp);
+					// manufacture events while inside the lock
+					events = createLanguageLettingsChangeEvents(serializableWorkspaceProviders);
 				} finally {
 					serializingLock.release();
 				}
+			}
+			// notify the listeners outside the lock
+			for (LanguageSettingsChangeEvent event : events) {
+				notifyLanguageSettingsChangeListeners(event);
 			}
 
 		} catch (Exception e) {
@@ -414,6 +545,10 @@ public class LanguageSettingsProvidersSerializer {
 
 	public static void serializeLanguageSettings(ICProjectDescription prjDescription) throws CoreException {
 		IProject project = prjDescription.getProject();
+		// AG TODO - remove the log
+		CCorePlugin.log(new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, IStatus.OK,
+				"LanguageSettingsProvidersSerializer.serializeLanguageSettings() for " + project, new Exception()));
+		
 		try {
 			// Document to store in project area
 			Document docStorePrj = XmlUtil.newDocument();
@@ -422,25 +557,36 @@ public class LanguageSettingsProvidersSerializer {
 			Document docStoreWsp = XmlUtil.newDocument();
 			Element projectElementStoreWsp = XmlUtil.appendElement(docStoreWsp, ELEM_PROJECT);
 
-			serializeLanguageSettingsInternal(projectElementStorePrj, projectElementStoreWsp, prjDescription);
-
-			IFile fileStorePrj = getStoreInProjectArea(project);
 			// The project store should not be absent. Absent store means legacy project, not 0 providers.
-			XmlUtil.serializeXml(docStorePrj, fileStorePrj);
+			IFile fileStorePrj = getStoreInProjectArea(project);
+			
+			URI uriStoreWsp = getStoreInWorkspaceArea(project.getName()+'.'+STORAGE_WORKSPACE_LANGUAGE_SETTINGS);
+			LanguageSettingsChangeEvent event = null;
 
-			URI uriStoreWsp = null;
-			boolean isWorkspaceStoreEmpty = projectElementStoreWsp.getChildNodes().getLength() == 0;
-			uriStoreWsp = getStoreInWorkspaceArea(project.getName()+'.'+STORAGE_WORKSPACE_LANGUAGE_SETTINGS);
-			serializingLock.acquire();
 			try {
+				serializingLock.acquire();
+
+				// Note that need for serialization may exist even if LSE event delta is empty,
+				// as number or properties of providers may differ
+				serializeLanguageSettingsInternal(projectElementStorePrj, projectElementStoreWsp, prjDescription);
+				XmlUtil.serializeXml(docStorePrj, fileStorePrj);
+
 				// project-specific location in workspace area
+				boolean isWorkspaceStoreEmpty = projectElementStoreWsp.getChildNodes().getLength() == 0;
 				if (!isWorkspaceStoreEmpty) {
 					XmlUtil.serializeXml(docStoreWsp, uriStoreWsp);
 				} else {
 					new java.io.File(uriStoreWsp).delete();
 				}
+				
+				// manufacture the event only if serialization was successful
+				event = new LanguageSettingsChangeEvent(prjDescription);
 			} finally {
 				serializingLock.release();
+			}
+			// notify the listeners outside the lock
+			if (event.getConfigurationDescriptionIds().length > 0) {
+				notifyLanguageSettingsChangeListeners(event);
 			}
 
 		} catch (Exception e) {
@@ -510,8 +656,16 @@ public class LanguageSettingsProvidersSerializer {
 			}
 
 			ICConfigurationDescription cfgDescription = prjDescription.getConfigurationById(cfgId);
-			if (cfgDescription!=null)
+			if (cfgDescription!=null) {
 				cfgDescription.setLanguageSettingProviders(providers);
+				if (cfgDescription instanceof IInternalCCfgInfo) {
+					try {
+						((IInternalCCfgInfo) cfgDescription).getSpecSettings().dropDelta();
+					} catch (CoreException e) {
+						CCorePlugin.log(e);
+					}
+				}
+			}
 		}
 	}
 
@@ -839,8 +993,9 @@ public class LanguageSettingsProvidersSerializer {
 				try {
 					provider = ((ILanguageSettingsEditableProvider) provider).clone();
 				} catch (CloneNotSupportedException e) {
-					IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "Not able to clone provider " + provider.getClass());
-					CCorePlugin.log(new CoreException(status));
+					IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, Status.OK,
+							"Not able to clone provider " + provider.getClass(), e);
+					CCorePlugin.log(status);
 				}
 			}
 			newProviders.add(provider);
@@ -848,4 +1003,300 @@ public class LanguageSettingsProvidersSerializer {
 		return new ArrayList<ILanguageSettingsProvider>(newProviders);
 	}
 	
+	/**
+	 * Adds a listener that will be notified of changes in language settings.
+	 * 
+	 * @param listener the ILanguageMappingChangeListener to add
+	 */
+	public static void registerLanguageSettingsChangeListener(ILanguageSettingsChangeListener listener) {
+		fLanguageSettingsChangeListeners.add(listener);
+	}
+	
+	/**
+	 * Removes a language settings change listener.
+	 * 
+	 * @param listener the ILanguageMappingChangeListener to remove.
+	 */
+	public static void unregisterLanguageSettingsChangeListener(ILanguageSettingsChangeListener listener) {
+		fLanguageSettingsChangeListeners.remove(listener);
+	}
+
+	/**
+	 * Notifies all language settings change listeners of a change.
+	 * 
+	 * @param event the ILanguageSettingsChangeEvent event to be broadcast.
+	 */
+	public static void notifyLanguageSettingsChangeListeners(ILanguageSettingsChangeEvent event) {
+		// AG TODO - remove the log
+		CCorePlugin.log(new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, IStatus.OK,
+				"Firing " + event, new Exception()));
+
+		Object[] listeners = fLanguageSettingsChangeListeners.getListeners();
+		for (Object obj : listeners) {
+			ILanguageSettingsChangeListener listener = (ILanguageSettingsChangeListener) obj;
+			listener.handleEvent(event);
+		}
+	}
+
+	private static List<ICLanguageSettingEntry> safeGetSettingEntries(ILanguageSettingsProvider provider,
+			ICConfigurationDescription cfgDescription, IResource rc, String languageId) {
+		
+		try {
+			return provider.getSettingEntries(cfgDescription, rc, languageId);
+		} catch (Throwable e) {
+			String cfgId = cfgDescription!=null ? cfgDescription.getId() : null;
+			String msg = "Exception in provider "+provider.getId()+": getSettingEntries("+cfgId+", "+rc+", "+languageId+")";
+			CCorePlugin.log(msg, e);
+			// return empty array to prevent climbing up the resource tree 
+			return new ArrayList<ICLanguageSettingEntry>(0);
+		}
+	}
+
+	/**
+	 * Returns the list of setting entries of the given provider
+	 * for the given configuration description, resource and language.
+	 * This method reaches to the parent folder of the resource recursively
+	 * in case the resource does not define the entries for the given provider.
+	 * 
+	 * @param provider - language settings provider.
+	 * @param cfgDescription - configuration description.
+	 * @param rc - resource such as file or folder.
+	 * @param languageId - language id.
+	 * 
+	 * @return the list of setting entries. Never returns {@code null}
+	 *     although individual providers mandated to return {@code null} if no settings defined.
+	 */
+	public static List<ICLanguageSettingEntry> getSettingEntriesUpResourceTree(ILanguageSettingsProvider provider, ICConfigurationDescription cfgDescription, IResource rc, String languageId) {
+		Assert.isTrue( !(rc instanceof IWorkspaceRoot) );
+		if (provider!=null) {
+			List<ICLanguageSettingEntry> entries = safeGetSettingEntries(provider, cfgDescription, rc, languageId);
+			if (entries!=null) {
+				return new ArrayList<ICLanguageSettingEntry>(entries);
+			}
+			if (rc!=null) {
+				IResource parentFolder = (rc instanceof IProject) ? null : rc.getParent();
+				if (parentFolder!=null) {
+					return getSettingEntriesUpResourceTree(provider, cfgDescription, parentFolder, languageId);
+				}
+				// if out of parent resources - get default entries for the applicable language scope
+				entries = safeGetSettingEntries(provider, null, null, languageId);
+				if (entries!=null) {
+					return new ArrayList<ICLanguageSettingEntry>(entries);
+				}
+			}
+		}
+	
+		return new ArrayList<ICLanguageSettingEntry>(0);
+	}
+
+	/**
+	 * Builds for the provider a nice looking resource tree to present hierarchical view to the user.
+	 * Note that it is not advisable to "compact" the tree because of potential loss of information
+	 * which is especially important during partial or incremental builds.
+	 * 
+	 * @param provider - language settings provider to build the tree for.
+	 * @param cfgDescription - configuration description.
+	 * @param languageId - language ID.
+	 * @param folder - container where the tree roots.
+	 */
+	public static void buildResourceTree(LanguageSettingsSerializable provider, ICConfigurationDescription cfgDescription, String languageId, IContainer folder) {
+		IResource[] members = null;
+		try {
+			members = folder.members();
+		} catch (Exception e) {
+			CCorePlugin.log(e);
+		}
+		if (members==null)
+			return;
+		
+		for (IResource rc : members) {
+			if (rc instanceof IContainer) {
+				buildResourceTree(provider, cfgDescription, languageId, (IContainer) rc);
+			}
+		}
+	
+		int rcNumber = members.length;
+		
+		Map<List<ICLanguageSettingEntry>, Integer> listMap = new HashMap<List<ICLanguageSettingEntry>, Integer>();
+		
+		// on the first pass find majority entries
+		List<ICLanguageSettingEntry> majorityEntries = null;
+		List<ICLanguageSettingEntry> candidate = null;
+		int candidateCount = 0;
+		for (IResource rc : members) {
+			if (!isLanguageInScope(rc, cfgDescription, languageId)) {
+				rcNumber--;
+			} else {
+				List<ICLanguageSettingEntry> entries = provider.getSettingEntries(null, rc, languageId);
+				if (entries==null && rc instanceof IContainer) {
+					rcNumber--;
+				} else {
+					Integer count = listMap.get(entries);
+					if (count==null) {
+						count = 0;
+					}
+					count++;
+					
+					if (count>candidateCount) {
+						candidateCount = count;
+						candidate = entries;
+					}
+					
+					listMap.put(entries, count);
+				}
+			}
+	
+			if (candidateCount > rcNumber/2) {
+				majorityEntries = candidate;
+				break;
+			}
+		}
+		
+		if (majorityEntries!=null) {
+			provider.setSettingEntries(cfgDescription, folder, languageId, majorityEntries);
+		}
+		
+		// second pass - assign the entries to the folders
+		for (IResource rc : members) {
+			List<ICLanguageSettingEntry> entries = provider.getSettingEntries(null, rc, languageId);
+			if (entries!=null && entries==majorityEntries) {
+				if (!(rc instanceof IFile)) { // preserve information which files were collected
+					provider.setSettingEntries(cfgDescription, rc, languageId, null);
+				}
+			}
+		}
+	}
+
+	private static boolean isLanguageInScope(IResource rc, ICConfigurationDescription cfgDescription, String languageId) {
+		if (rc instanceof IFile) {
+			ILanguage lang = null;
+			try {
+				lang = LanguageManager.getInstance().getLanguageForFile((IFile) rc, cfgDescription);
+			} catch (CoreException e) {
+				CCorePlugin.log("Error loading language settings providers extensions", e); //$NON-NLS-1$
+			}
+			if (lang==null || (languageId!=null && !languageId.equals(lang.getId()))) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private static boolean checkBit(int flags, int bit) {
+		return (flags & bit) == bit;
+	}
+
+	/**
+	 * Returns the list of setting entries of a certain kind (such as include paths)
+	 * for the given configuration description, resource and language. This is a
+	 * combined list for all providers taking into account settings of parent folder
+	 * if settings for the given resource are not defined.
+	 * 
+	 * @param cfgDescription - configuration description.
+	 * @param rc - resource such as file or folder.
+	 * @param languageId - language id.
+	 * @param kind - kind of language settings entries, such as
+	 *     {@link ICSettingEntry#INCLUDE_PATH} etc. This is a binary flag
+	 *     and it is possible to specify composite kind.
+	 *     Use {@link ICSettingEntry#ALL} to get all kinds.
+	 * @param checkLocality - specifies if parameter {@code isLocal} should be considered.
+	 * @param isLocal - {@code true} if "local" entries should be provided and
+	 *     {@code false} for "system" entries. This makes sense for include paths where
+	 *     [#include "..."] is "local" and [#include <...>] is system.
+	 * 
+	 * @return the list of setting entries found.
+	 */
+	private static List<ICLanguageSettingEntry> getSettingEntriesByKind(ICConfigurationDescription cfgDescription,
+			IResource rc, String languageId, int kind, boolean checkLocality, boolean isLocal) {
+	
+		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		List<String> alreadyAdded = new ArrayList<String>();
+	
+		List<ILanguageSettingsProvider> providers = cfgDescription.getLanguageSettingProviders();
+		for (ILanguageSettingsProvider provider: providers) {
+			List<ICLanguageSettingEntry> providerEntries = getSettingEntriesUpResourceTree(provider, cfgDescription, rc, languageId);
+			for (ICLanguageSettingEntry entry : providerEntries) {
+				if (entry!=null) {
+					String entryName = entry.getName();
+					boolean isRightKind = (entry.getKind() & kind) != 0;
+					// Only first entry is considered
+					// Entry flagged as "UNDEFINED" prevents adding entry with the same name down the line
+					if (isRightKind && !alreadyAdded.contains(entryName)) {
+						int flags = entry.getFlags();
+						boolean isRightLocal = !checkLocality || (checkBit(flags, ICSettingEntry.LOCAL) == isLocal);
+						if (isRightLocal) {
+							if (!checkBit(flags, ICSettingEntry.UNDEFINED)) {
+								entries.add(entry);
+							}
+							alreadyAdded.add(entryName);
+						}
+					}
+				}
+			}
+		}
+	
+		return entries;
+	}
+
+	/**
+	 * Returns the list of setting entries of a certain kind (such as include paths)
+	 * for the given configuration description, resource and language. This is a
+	 * combined list for all providers taking into account settings of parent folder
+	 * if settings for the given resource are not defined. For include paths both
+	 * local (#include "...") and system (#include <...>) entries are returned.
+	 * 
+	 * @param cfgDescription - configuration description.
+	 * @param rc - resource such as file or folder.
+	 * @param languageId - language id.
+	 * @param kind - kind of language settings entries, such as
+	 *     {@link ICSettingEntry#INCLUDE_PATH} etc. This is a binary flag
+	 *     and it is possible to specify composite kind.
+	 *     Use {@link ICSettingEntry#ALL} to get all kinds.
+	 * 
+	 * @return the list of setting entries.
+	 */
+	public static List<ICLanguageSettingEntry> getSettingEntriesByKind(ICConfigurationDescription cfgDescription, IResource rc, String languageId, int kind) {
+		return getSettingEntriesByKind(cfgDescription, rc, languageId, kind, /* checkLocality */ false, /* isLocal */ false);
+	}
+
+	/**
+	 * Returns the list of "system" (such as [#include <...>]) setting entries of a certain kind 
+	 * for the given configuration description, resource and language. This is a
+	 * combined list for all providers taking into account settings of parent folder
+	 * if settings for the given resource are not defined.
+	 * 
+	 * @param cfgDescription - configuration description.
+	 * @param rc - resource such as file or folder.
+	 * @param languageId - language id.
+	 * @param kind - kind of language settings entries, such as
+	 *     {@link ICSettingEntry#INCLUDE_PATH} etc. This is a binary flag
+	 *     and it is possible to specify composite kind.
+	 *     Use {@link ICSettingEntry#ALL} to get all kinds.
+	 * 
+	 * @return the list of setting entries.
+	 */
+	public static List<ICLanguageSettingEntry> getSystemSettingEntriesByKind(ICConfigurationDescription cfgDescription, IResource rc, String languageId, int kind) {
+		return getSettingEntriesByKind(cfgDescription, rc, languageId, kind, /* checkLocality */ true, /* isLocal */ false);
+	}
+
+	/**
+	 * Returns the list of "local" (such as [#include "..."]) setting entries of a certain kind 
+	 * for the given configuration description, resource and language. This is a
+	 * combined list for all providers taking into account settings of parent folder
+	 * if settings for the given resource are not defined.
+	 * 
+	 * @param cfgDescription - configuration description.
+	 * @param rc - resource such as file or folder.
+	 * @param languageId - language id.
+	 * @param kind - kind of language settings entries, such as
+	 *     {@link ICSettingEntry#INCLUDE_PATH} etc. This is a binary flag
+	 *     and it is possible to specify composite kind.
+	 *     Use {@link ICSettingEntry#ALL} to get all kinds.
+	 * 
+	 * @return the list of setting entries.
+	 */
+	public static List<ICLanguageSettingEntry> getLocalSettingEntriesByKind(ICConfigurationDescription cfgDescription, IResource rc, String languageId, int kind) {
+		return getSettingEntriesByKind(cfgDescription, rc, languageId, kind, /* checkLocality */ true, /* isLocal */ true);
+	}
+
 }

@@ -28,7 +28,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.testplugin.CModelMock;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
-import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsExtensionManager;
+import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.cdt.internal.core.settings.model.CConfigurationDescription;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -561,7 +561,7 @@ public class LanguageSettingsManagerTests extends TestCase {
 
 		{
 			// retrieve local entries
-			List<ICLanguageSettingEntry> includes = LanguageSettingsExtensionManager
+			List<ICLanguageSettingEntry> includes = LanguageSettingsProvidersSerializer
 				.getLocalSettingEntriesByKind(cfgDescription, FILE_0, LANG_ID, ICSettingEntry.INCLUDE_PATH);
 			assertEquals(localIncludeEntry, includes.get(0));
 			assertEquals(1, includes.size());
@@ -569,7 +569,7 @@ public class LanguageSettingsManagerTests extends TestCase {
 
 		{
 			// retrieve system entries
-			List<ICLanguageSettingEntry> includes = LanguageSettingsExtensionManager
+			List<ICLanguageSettingEntry> includes = LanguageSettingsProvidersSerializer
 				.getSystemSettingEntriesByKind(cfgDescription, FILE_0, LANG_ID, ICSettingEntry.INCLUDE_PATH);
 			assertEquals(systemIncludeEntry, includes.get(0));
 			assertEquals(1, includes.size());
@@ -577,7 +577,7 @@ public class LanguageSettingsManagerTests extends TestCase {
 
 		{
 			// retrieve both local and system
-			List<ICLanguageSettingEntry> includes = LanguageSettingsExtensionManager
+			List<ICLanguageSettingEntry> includes = LanguageSettingsProvidersSerializer
 				.getSettingEntriesByKind(cfgDescription, FILE_0, LANG_ID, ICSettingEntry.INCLUDE_PATH);
 			assertEquals(entries.get(0), includes.get(0));
 			assertEquals(entries.get(1), includes.get(1));
@@ -799,7 +799,7 @@ public class LanguageSettingsManagerTests extends TestCase {
 		LanguageSettingsSerializable provider = new LanguageSettingsSerializable(PROVIDER_1, PROVIDER_NAME_1);
 		provider.setSettingEntries(null, file, null, entries);
 		// build the hierarchy
-		LanguageSettingsExtensionManager.buildResourceTree(provider, null, null, project);
+		LanguageSettingsProvidersSerializer.buildResourceTree(provider, null, null, project);
 		
 		// check that entries go to highest possible level
 		assertEquals(entries, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, file, null));

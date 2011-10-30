@@ -51,21 +51,14 @@ import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager_TBD;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializable;
 import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
-import org.eclipse.cdt.core.model.ILanguageDescriptor;
-import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICFileDescription;
-import org.eclipse.cdt.core.settings.model.ICFolderDescription;
-import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
-import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.dialogs.ICOptionPage;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
-
 
 import org.eclipse.cdt.internal.ui.newui.Messages;
 import org.eclipse.cdt.internal.ui.newui.StatusMessageLine;
@@ -983,13 +976,6 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 			}
 		}
 
-		try {
-			LanguageSettingsManager_TBD.serializeWorkspaceProviders();
-		} catch (CoreException e) {
-			CUIPlugin.log("Internal Error", e);
-			throw new UnsupportedOperationException("Internal Error");
-		}
-
 		trackInitialSettings();
 		updateData(getResDesc());
 	}
@@ -1000,21 +986,6 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 			return false;
 
 		return page.isForPrefs() || page.isForProject();
-	}
-
-	@Override
-	protected boolean isIndexerAffected() {
-		List<ILanguageSettingsProvider> newProvidersList = null;
-		ICConfigurationDescription cfgDescription = getConfigurationDescription();
-		if (cfgDescription!=null) {
-			newProvidersList = cfgDescription.getLanguageSettingProviders();
-		}
-		boolean newEnablement = ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(page.getProject());
-
-		// TODO
-		boolean isEqualList = false;
-//		boolean isEqualList = (newProvidersList==initialProvidersMap) || (newProvidersList!=null && newProvidersList.equals(initialProvidersMap));
-		return newEnablement!=initialEnablement || (newEnablement==true && !isEqualList);
 	}
 
 	private ILanguageSettingsProvider findRawProvider(String id, List<ILanguageSettingsProvider> providers) {

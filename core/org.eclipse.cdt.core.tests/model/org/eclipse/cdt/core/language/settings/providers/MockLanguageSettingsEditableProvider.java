@@ -19,6 +19,10 @@ public class MockLanguageSettingsEditableProvider extends LanguageSettingsSerial
 		super();
 	}
 	
+	public MockLanguageSettingsEditableProvider(String id, String name) {
+		super(id, name);
+	}
+	
 	public MockLanguageSettingsEditableProvider cloneShallow() throws CloneNotSupportedException {
 		return (MockLanguageSettingsEditableProvider) super.cloneShallow();
 	}

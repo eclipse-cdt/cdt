@@ -80,23 +80,23 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 		LinkedHashSet<ICLanguageSettingEntry> macroEntries = new LinkedHashSet<ICLanguageSettingEntry>();
 
 		for (String langId : languageIds) {
-			List<ICLanguageSettingEntry> incSys = LanguageSettingsExtensionManager.getSystemSettingEntriesByKind(cfgDescription, rc, langId,
+			List<ICLanguageSettingEntry> incSys = LanguageSettingsProvidersSerializer.getSystemSettingEntriesByKind(cfgDescription, rc, langId,
 					ICSettingEntry.INCLUDE_PATH);
 			includePathEntries.addAll(incSys);
 
-			List<ICLanguageSettingEntry> incLocal = LanguageSettingsExtensionManager.getLocalSettingEntriesByKind(cfgDescription, rc, langId,
+			List<ICLanguageSettingEntry> incLocal = LanguageSettingsProvidersSerializer.getLocalSettingEntriesByKind(cfgDescription, rc, langId,
 					ICSettingEntry.INCLUDE_PATH);
 			includePathLocalEntries.addAll(incLocal);
 
-			List<ICLanguageSettingEntry> incFiles = LanguageSettingsExtensionManager.getSettingEntriesByKind(cfgDescription, rc, langId,
+			List<ICLanguageSettingEntry> incFiles = LanguageSettingsProvidersSerializer.getSettingEntriesByKind(cfgDescription, rc, langId,
 					ICSettingEntry.INCLUDE_FILE);
 			includeFileEntries.addAll(incFiles);
 
-			List<ICLanguageSettingEntry> macroFiles = LanguageSettingsExtensionManager.getSettingEntriesByKind(cfgDescription, rc, langId,
+			List<ICLanguageSettingEntry> macroFiles = LanguageSettingsProvidersSerializer.getSettingEntriesByKind(cfgDescription, rc, langId,
 					ICSettingEntry.MACRO_FILE);
 			macroFileEntries.addAll(macroFiles);
 
-			List<ICLanguageSettingEntry> macros = LanguageSettingsExtensionManager.getSettingEntriesByKind(cfgDescription, rc, langId,
+			List<ICLanguageSettingEntry> macros = LanguageSettingsProvidersSerializer.getSettingEntriesByKind(cfgDescription, rc, langId,
 					ICSettingEntry.MACRO);
 			macroEntries.addAll(macros);
 		}

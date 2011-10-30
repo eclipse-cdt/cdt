@@ -395,6 +395,8 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	 * or preprocessor macros.
 	 * 
 	 * @param providers the list of providers to assign to the configuration description.
+	 *    Warning: the providers will be cloned before actual addition to the project model
+	 *    due to TODO - very important reason but I forgot why by now.
 	 * 
 	 * @since 6.0
 	 */

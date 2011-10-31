@@ -68,14 +68,17 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 		this.candidateBindings = candidateBindings;
     }
     
+	@Override
 	public EScopeKind getKind() {
 		return EScopeKind.eLocal;
 	}
 
-    public IASTNode getASTNode() {
+    @Override
+	public IASTNode getASTNode() {
         return node;
     }
 
+	@Override
 	public IBinding[] getCandidateBindings() {
 		return candidateBindings != null ? candidateBindings : IBinding.EMPTY_BINDING_ARRAY;
 	}
@@ -87,14 +90,16 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IProblemBinding#getID()
      */
-    public int getID() {
+    @Override
+	public int getID() {
         return id;
     }
     
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IProblemBinding#getMessage()
      */
-    public String getMessage() {
+    @Override
+	public String getMessage() {
         if (message != null)
             return message;
 
@@ -115,28 +120,32 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
      */
-    public String getName() {
+    @Override
+	public String getName() {
         return node instanceof IASTName ? new String(((IASTName) node).getSimpleID()) : CPPSemantics.EMPTY_NAME;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
      */
-    public char[] getNameCharArray() {
+    @Override
+	public char[] getNameCharArray() {
         return node instanceof IASTName ? ((IASTName) node).getSimpleID() : CharArrayUtils.EMPTY;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
      */
-    public IScope getScope() throws DOMException {
+    @Override
+	public IScope getScope() throws DOMException {
         throw new DOMException(this);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getPhysicalNode()
      */
-    public IASTNode getPhysicalNode() {
+    @Override
+	public IASTNode getPhysicalNode() {
         return getASTNode();
     }
 
@@ -150,20 +159,23 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#getParent()
      */
-    public IScope getParent() throws DOMException {
+    @Override
+	public IScope getParent() throws DOMException {
         throw new DOMException(this);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
      */
-    public IBinding[] find(String name) {
+    @Override
+	public IBinding[] find(String name) {
         return IBinding.EMPTY_BINDING_ARRAY;
     }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IScope#getScopeName()
 	 */
+	@Override
 	public IName getScopeName() {
 		return null;
 	}
@@ -171,16 +183,19 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#addName(org.eclipse.cdt.core.dom.ast.IASTName)
      */
-    public void addName(IASTName name) {
+    @Override
+	public void addName(IASTName name) {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#getBinding(org.eclipse.cdt.core.dom.ast.IASTName, boolean)
      */
-    public IBinding getBinding(IASTName name, boolean resolve) {
+    @Override
+	public IBinding getBinding(IASTName name, boolean resolve) {
         return null;
     }
 
+	@Override
 	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix) {
         return IBinding.EMPTY_BINDING_ARRAY;
 	}
@@ -188,24 +203,28 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#getBinding(org.eclipse.cdt.core.dom.ast.IASTName, boolean)
      */
-    public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) {
+    @Override
+	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) {
         return null;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#getBinding(org.eclipse.cdt.core.dom.ast.IASTName, boolean)
      */
-    public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
+    @Override
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
         return IBinding.EMPTY_BINDING_ARRAY;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
      */
-    public boolean isSameType(IType type) {
+    @Override
+	public boolean isSameType(IType type) {
         return type == this;
     }
 
+	@Override
 	public String getFileName() {
 		if (node != null)
 			return node.getContainingFilename();
@@ -213,6 +232,7 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 		return ""; //$NON-NLS-1$
 	}
 
+	@Override
 	public int getLineNumber() {
 		if (node != null) {
 			IASTFileLocation fileLoc = node.getFileLocation();
@@ -222,9 +242,11 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 		return -1;
 	}
 
+	@Override
 	public void addBinding(IBinding binding) {
 	}
 
+	@Override
 	public ILinkage getLinkage() {
 		return Linkage.NO_LINKAGE;
 	}
@@ -234,6 +256,7 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 		return getMessage();
 	}
 
+	@Override
 	public IBinding getOwner() {
 		if (node instanceof IASTName) {
 			IASTTranslationUnit tu= node.getTranslationUnit();
@@ -251,10 +274,13 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
 		}
 	}
 
+	@Override
 	public void populateCache() {
 	}
-	
-	
+
+	@Override
+	public void removeNestedFromCache(IASTNode container) {}
+
 	// Dummy methods for derived classes
     public IType getType() {
     	return new ProblemType(getID());

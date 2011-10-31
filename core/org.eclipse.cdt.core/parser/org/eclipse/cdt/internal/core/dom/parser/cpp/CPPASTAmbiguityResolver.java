@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -85,8 +84,6 @@ final class CPPASTAmbiguityResolver extends ASTVisitor {
 				} 
 				node= node.getParent();
 			}
-		} else if (node instanceof IASTDeclarationStatement) {
-			repopulateScope(((IASTDeclarationStatement) node).getDeclaration());
 		} else if (node instanceof IASTDeclaration) {
 			repopulateScope((IASTDeclaration) node);
 		}

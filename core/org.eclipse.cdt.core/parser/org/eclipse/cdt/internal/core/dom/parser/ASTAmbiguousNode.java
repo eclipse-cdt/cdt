@@ -83,11 +83,11 @@ public abstract class ASTAmbiguousNode extends ASTNode  {
 		
 		int minIssues = Integer.MAX_VALUE;
 		for (IASTNode alternative : alternatives) {
-			beforeAlternative(alternative);
-			
-			// setup the ast to use the alternative
+			// Setup the ast to use the alternative
 			owner.replace(nodeToReplace, alternative);
 			nodeToReplace= alternative;
+
+			beforeAlternative(alternative);
 
 			// handle nested ambiguities first, otherwise we cannot visit the alternative
 			alternative.accept(resolver);

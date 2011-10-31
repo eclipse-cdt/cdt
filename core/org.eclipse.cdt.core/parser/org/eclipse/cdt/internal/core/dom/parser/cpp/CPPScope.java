@@ -60,7 +60,7 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 	
     private IASTNode physicalNode;
 	private boolean isCached = false;
-	protected CharArrayObjectMap bindings = null;
+	protected CharArrayObjectMap<Object> bindings = null;
 	private ICPPNamespace fIndexNamespace= UNINITIALIZED;
 
 	public static class CPPScopeProblem extends ProblemBinding implements ICPPScope {
@@ -76,14 +76,17 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 		this.physicalNode = physicalNode;
 	}
 
+	@Override
 	public IScope getParent() throws DOMException {
 		return CPPVisitor.getContainingNonTemplateScope(physicalNode);
 	}
 
+	@Override
 	public IASTNode getPhysicalNode() {
 		return physicalNode;
 	}
 
+	@Override
 	@SuppressWarnings({ "unchecked" })
 	public void addName(IASTName name) {
 		// don't add inactive names to the scope
@@ -91,7 +94,7 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 			return;
 		
 		if (bindings == null)
-			bindings = new CharArrayObjectMap(1);
+			bindings = new CharArrayObjectMap<Object>(1);
 		if (name instanceof ICPPASTQualifiedName) {
 			if (!(physicalNode instanceof ICPPASTCompositeTypeSpecifier) &&
 					!(physicalNode instanceof ICPPASTNamespaceDefinition)) {
@@ -144,6 +147,7 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 		}
 	}
 
+	@Override
 	public IBinding getBinding(IASTName name, boolean forceResolve, IIndexFileSet fileSet) {
 		IBinding binding= getBindingInAST(name, forceResolve);
 		if (binding == null && forceResolve) {
@@ -198,10 +202,12 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 		return CPPSemantics.resolveAmbiguities(name, bs);
 	}
 
+	@Override
 	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
 		return getBindings(name, resolve, prefixLookup, fileSet, true);
 	}
 	
+	@Override
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet,
 			boolean checkPointOfDecl) {
 		IBinding[] result = getBindingsInAST(name, resolve, prefixLookup, checkPointOfDecl);
@@ -316,24 +322,63 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 		return (IBinding[]) ArrayUtil.append(IBinding.class, result, binding);
 	}
 	
+	@Override
 	public final void populateCache() {
 		if (!isCached) {
 			CPPSemantics.populateCache(this);
 			isCached= true;
 		}
 	}
+	
+	@Override
+	public void removeNestedFromCache(IASTNode container) {
+		if (bindings != null) {
+			removeFromMap(bindings, container);
+		}
+	}
+	
+	private void removeFromMap(CharArrayObjectMap<Object> map, IASTNode container) {
+		for (int i = 0; i < map.size(); i++) {
+			Object o= map.getAt(i);
+			if (o instanceof IASTName) {
+				if (container.contains((IASTNode) o)) {
+					final char[] key = map.keyAt(i);
+					map.remove(key, 0, key.length);
+					i--;
+				}
+			} else if (o instanceof ObjectSet) {
+				@SuppressWarnings("unchecked")
+				final ObjectSet<Object> set = (ObjectSet<Object>) o;
+				removeFromSet(set, container);
+			}
+		}
+	}
+
+	private void removeFromSet(ObjectSet<Object> set, IASTNode container) {
+		for (int i = 0; i < set.size(); i++) {
+			Object o= set.keyAt(i);
+			if (o instanceof IASTName) {
+				if (container.contains((IASTNode) o)) {
+					set.remove(o);
+					i--;
+				}
+			} 
+		}
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
 	 */
+	@Override
 	public IBinding[] find(String name) {
 	    return CPPSemantics.findBindings(this, name, false);
 	}
 
+	@Override
 	@SuppressWarnings({ "unchecked" })
     public void addBinding(IBinding binding) {
         if (bindings == null)
-            bindings = new CharArrayObjectMap(1);
+            bindings = new CharArrayObjectMap<Object>(1);
         char[] c = binding.getNameCharArray();
         if (c.length == 0) {
         	return;
@@ -353,14 +398,17 @@ abstract public class CPPScope implements ICPPASTInternalScope {
         }
     }
 
+	@Override
 	public final IBinding getBinding(IASTName name, boolean resolve) {
 		return getBinding(name, resolve, IIndexFileSet.EMPTY);
 	}
 
+	@Override
 	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix) {
 		return getBindings(name, resolve, prefix, IIndexFileSet.EMPTY, true);
 	}
 
+	@Override
 	public IName getScopeName() {
 		return null;
 	}

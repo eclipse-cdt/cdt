@@ -34,9 +34,6 @@ public class SimpleScanner {
 	private boolean fSplitPreprocessor;
 	private final StringBuilder fUniversalCharBuffer= new StringBuilder();
 
-	/**
-	 * 
-	 */
 	public SimpleScanner() {
 		super();
 	}
@@ -736,8 +733,7 @@ public class SimpleScanner {
 	                        matchStringLiteral();
 	                        c= getChar();
 	                        break;
-	                    }
-	                    else {
+	                    } else {
 	                        ungetChar(c);
 	                        return newPreprocessorToken();
 	                    }
@@ -752,8 +748,7 @@ public class SimpleScanner {
 	                        ungetChar(next);
 	                        ungetChar(c);
 	                        result= newPreprocessorToken();
-	                    }
-	                    else {
+	                    } else {
 	                        matchSinglelineComment();
 	                        result= newToken(Token.tLINECOMMENT);
 	                    }

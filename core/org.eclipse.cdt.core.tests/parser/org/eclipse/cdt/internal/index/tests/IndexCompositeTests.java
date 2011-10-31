@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
@@ -458,9 +459,10 @@ class ProjectBuilder {
 				CProjectHelper.createCCProject(name, "bin", IPDOMManager.ID_NO_INDEXER) :
 				CProjectHelper.createCCProject(name, "bin", IPDOMManager.ID_NO_INDEXER);
 
+		IFile lastFile= null;
 		for (Iterator i = path2content.entrySet().iterator(); i.hasNext();) {
 			Map.Entry entry = (Map.Entry) i.next();
-			TestSourceReader.createFile(result.getProject(), new Path((String)entry.getKey()), (String) entry.getValue());
+			lastFile= TestSourceReader.createFile(result.getProject(), new Path((String)entry.getKey()), (String) entry.getValue());
 		}
 
 		IProjectDescription desc = result.getProject().getDescription();
@@ -468,6 +470,10 @@ class ProjectBuilder {
 		result.getProject().setDescription(desc, new NullProgressMonitor());
 
 		CCorePlugin.getIndexManager().setIndexerId(result, IPDOMManager.ID_FAST_INDEXER);
+		if (lastFile != null) {
+			IIndex index= CCorePlugin.getIndexManager().getIndex(result);
+			TestSourceReader.waitUntilFileIsIndexed(index, lastFile, 2000);
+		} 
 		BaseTestCase.waitForIndexer(result);
 		return result;
 	}

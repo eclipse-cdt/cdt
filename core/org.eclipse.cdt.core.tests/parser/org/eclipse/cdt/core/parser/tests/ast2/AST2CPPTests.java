@@ -9554,4 +9554,32 @@ public class AST2CPPTests extends AST2BaseTest {
 	public void testAmbiguityResolution_Bug359364() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template<typename T> struct C {
+	//		C(const C<T>& c) {}
+	//	};
+	//	struct D {
+	//      typedef const D& TD;
+	//		D(TD c) {}
+	//	};
+	//  struct E {
+	//     E();
+	//  };
+	//  typedef E F;
+	//  F::E(){}
+	public void testImplicitCtors_360223() throws Exception {
+		BindingAssertionHelper bh= getAssertionHelper();
+		ICPPClassType c= bh.assertNonProblem("C", 0);
+		ICPPConstructor[] ctors = c.getConstructors();
+		assertEquals(1, ctors.length);
+		assertFalse(ctors[0].isImplicit());
+
+		c= bh.assertNonProblem("D", 0);
+		ctors = c.getConstructors();
+		assertEquals(1, ctors.length);
+		assertFalse(ctors[0].isImplicit());
+		
+		IBinding ctor= bh.assertNonProblem("E(){}", 1);
+		assertTrue(ctor instanceof ICPPConstructor);
+	}
 }

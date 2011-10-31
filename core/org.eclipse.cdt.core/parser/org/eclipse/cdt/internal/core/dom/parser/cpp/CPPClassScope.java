@@ -15,6 +15,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,10 +43,9 @@ import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
@@ -51,6 +54,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
@@ -106,7 +110,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 		ICPPParameter[] ps = new ICPPParameter[] { new CPPParameter(pType, 0) };
 
 		int i= 0;
-		ImplicitsAnalysis ia= new ImplicitsAnalysis(compTypeSpec);
+		ImplicitsAnalysis ia= new ImplicitsAnalysis(compTypeSpec, clsType);
 		implicits= new ICPPMethod[ia.getImplicitsToDeclareCount()];
 
 		if (!ia.hasUserDeclaredConstructor()) {
@@ -405,10 +409,12 @@ class ImplicitsAnalysis {
 	private boolean hasUserDeclaredCopyConstructor;
 	private boolean hasUserDeclaredCopyAssignmentOperator;
 	private boolean hasUserDeclaredDestructor;
+	private ICPPClassType classType;
 
-	ImplicitsAnalysis(ICPPASTCompositeTypeSpecifier compSpec) {
+	ImplicitsAnalysis(ICPPASTCompositeTypeSpecifier compSpec, ICPPClassType clsType) {
+		classType= clsType;
+		
 		ICPPASTFunctionDeclarator[] ctors= getUserDeclaredCtorOrDtor(compSpec, true);
-
 		hasUserDeclaredConstructor= ctors.length> 0;
 		hasUserDeclaredCopyConstructor= false;
 		hasUserDeclaredCopyAssignmentOperator= false;
@@ -418,7 +424,7 @@ class ImplicitsAnalysis {
 			ICPPASTFunctionDeclarator dcltor= ctors[i];
 			IASTParameterDeclaration[] ps = dcltor.getParameters();
         	if (ps.length >= 1) {
-        		if (paramHasTypeReferenceToTheAssociatedClassType(ps[0], compSpec.getName().getRawSignature())) {
+        		if (hasTypeReferenceToClassType(ps[0])) {
             		// and all remaining arguments have initializers
         			for (int j = 1; j < ps.length; j++) {
             			if (ps[j].getDeclarator().getInitializer() == null) {
@@ -441,7 +447,7 @@ class ImplicitsAnalysis {
 			+ (!hasUserDeclaredCopyAssignmentOperator ? 1 : 0);
 	}
 
-	private static ICPPASTFunctionDeclarator[] getUserDeclaredCtorOrDtor(ICPPASTCompositeTypeSpecifier compSpec, boolean constructor) {
+	private ICPPASTFunctionDeclarator[] getUserDeclaredCtorOrDtor(ICPPASTCompositeTypeSpecifier compSpec, boolean constructor) {
 		List<ICPPASTFunctionDeclarator> result= new ArrayList<ICPPASTFunctionDeclarator>();
 		IASTDeclaration[] members = compSpec.getMembers();
 		char[] name = compSpec.getName().getLookupKey();
@@ -483,7 +489,7 @@ class ImplicitsAnalysis {
         return result.toArray(new ICPPASTFunctionDeclarator[result.size()]);
 	}
 
-	private static ICPPASTFunctionDeclarator[] getUserDeclaredCopyAssignmentOperators(ICPPASTCompositeTypeSpecifier compSpec) {
+	private ICPPASTFunctionDeclarator[] getUserDeclaredCopyAssignmentOperators(ICPPASTCompositeTypeSpecifier compSpec) {
 		List<ICPPASTFunctionDeclarator> result= new ArrayList<ICPPASTFunctionDeclarator>();
 		IASTDeclaration[] members = compSpec.getMembers();
 		IASTDeclarator dcltor = null;
@@ -504,7 +510,7 @@ class ImplicitsAnalysis {
 	        	continue;
 			
 			IASTParameterDeclaration[] ps = ((ICPPASTFunctionDeclarator)dcltor).getParameters();
-        	if (ps.length != 1 || !paramHasTypeReferenceToTheAssociatedClassType(ps[0], null))
+        	if (ps.length != 1 || !hasTypeReferenceToClassType(ps[0]))
         		continue;
 
 			result.add((ICPPASTFunctionDeclarator)dcltor);
@@ -512,25 +518,20 @@ class ImplicitsAnalysis {
         return result.toArray(new ICPPASTFunctionDeclarator[result.size()]);
 	}
 
-	/**
-	 * @param compSpec the name the parameter must have in order to match, or null for any name
-	 * @param dec
-	 * @return whether the specified parameter is a reference to the associated class type, and
-     * (optionally) if it has the specified name
-	 */
-	private static boolean paramHasTypeReferenceToTheAssociatedClassType(IASTParameterDeclaration dec, String name) {
-		boolean result= false;
-		IASTDeclarator pdtor= ASTQueries.findTypeRelevantDeclarator(dec.getDeclarator());
-		if (pdtor != null && pdtor.getPointerOperators().length == 1 &&
-				pdtor.getPointerOperators()[0] instanceof ICPPASTReferenceOperator &&
-				pdtor.getParent() == dec &&
-				dec.getDeclSpecifier() instanceof ICPPASTNamedTypeSpecifier) {
-			ICPPASTNamedTypeSpecifier nts= (ICPPASTNamedTypeSpecifier) dec.getDeclSpecifier();
-			if (name == null || name.equals(nts.getName().getRawSignature())) {
-				result= true;
+	private boolean hasTypeReferenceToClassType(IASTParameterDeclaration dec) {
+		if (dec instanceof ICPPASTParameterDeclaration) {
+			IType t= CPPVisitor.createType((ICPPASTParameterDeclaration) dec, false);
+			if (t != null) {
+				t= SemanticUtil.getNestedType(t, TDEF);
+				if (t instanceof ICPPReferenceType) {
+					if (!((ICPPReferenceType) t).isRValueReference()) {
+						t= SemanticUtil.getNestedType(t, TDEF|REF|CVTYPE);
+						return classType.isSameType(t);
+					}
+				}
 			}
 		}
-		return result;
+		return false;
 	}
 
 	public boolean hasUserDeclaredConstructor() {

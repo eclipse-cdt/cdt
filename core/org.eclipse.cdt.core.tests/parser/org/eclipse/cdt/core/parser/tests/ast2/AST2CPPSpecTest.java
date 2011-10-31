@@ -524,7 +524,8 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// struct Base::Datum; // error: Datum undefined
 	// struct Base::Data* pBase; // OK: refers to nested Data
 	public void test3_4_4s3() throws Exception {
-		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
+		String[] problems= {"::Glob", "Glob", "Base::Datum", "Datum"}; 
+		parse(getAboveComment(), ParserLanguage.CPP, problems);
 	}
 
 	// static void f();

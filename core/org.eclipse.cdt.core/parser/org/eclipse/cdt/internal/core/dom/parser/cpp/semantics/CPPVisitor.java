@@ -241,35 +241,8 @@ public class CPPVisitor extends ASTQueries {
 				return CPPSemantics.resolveBinding(name);
 			
 			parent = parent.getParent();
-			binding = CPPSemantics.resolveBinding(name);
-			if (binding instanceof IProblemBinding && !(parent instanceof ICPPASTNamespaceAlias)) {
-				final IASTName[] ns = qname.getNames();
-				if (ns.length > 1 && ns[ns.length - 2].getBinding() instanceof IProblemBinding)
-					return binding;
-
-				if (((IProblemBinding) binding).getID() == IProblemBinding.SEMANTIC_MEMBER_DECLARATION_NOT_FOUND) {
-					IASTNode node = getContainingBlockItem(name.getParent());
-					ASTNodeProperty prop= node.getPropertyInParent();
-					while (prop == ICPPASTTemplateDeclaration.OWNED_DECLARATION) {
-						node= node.getParent();
-						prop= node.getPropertyInParent();
-					}
-					if (prop != IASTCompositeTypeSpecifier.MEMBER_DECLARATION &&
-							prop != ICPPASTNamespaceDefinition.OWNED_DECLARATION) {
-						return binding;
-					}
-					IScope scope= getContainingScope(qname);
-					while (scope instanceof ICPPTemplateScope) {
-						try {
-							scope= scope.getParent();
-						} catch (DOMException e) {
-							return binding;
-						}
-					}
-				    if (scope != getContainingScope(name))
-				        return binding;
-				}
-			} else {
+			if (!declaresMemberInClassOrNamespace(qname)) {
+				binding = CPPSemantics.resolveBinding(name);
 				if (parent instanceof IASTCompositeTypeSpecifier) {
 					if (binding instanceof IIndexBinding) {
 						// Need to create an AST binding
@@ -319,6 +292,52 @@ public class CPPVisitor extends ASTQueries {
 		return null;
 	}
 	
+	private static boolean declaresMemberInClassOrNamespace(ICPPASTQualifiedName qname) {
+		IASTName[] names= qname.getNames();
+		if (names.length < 2)
+			return false;
+		
+		IBinding pb= names[names.length-2].resolvePreBinding();
+		if (pb instanceof IProblemBinding) 
+			return false;
+		
+		IScope scope= null;
+		if (pb instanceof IType) {
+			IType t= SemanticUtil.getNestedType((IType) pb, TDEF);
+			if (t instanceof ICPPClassType) {
+				scope= ((ICPPClassType) t).getCompositeScope();
+			}
+		} else if (pb instanceof ICPPNamespace) {
+			scope= ((ICPPNamespace)pb).getNamespaceScope();
+		} 
+		if (scope == null)
+			return false;
+
+		IASTNode parent= qname.getParent();
+		IASTNode decl= null;
+		if (parent instanceof IASTCompositeTypeSpecifier) {
+			decl= parent.getParent();
+		} else if (parent instanceof IASTDeclarator) {
+			decl= ASTQueries.findOutermostDeclarator((IASTDeclarator) parent).getParent();
+		}
+		while (decl != null) {
+			ASTNodeProperty prop = decl.getPropertyInParent();
+			if (prop == IASTCompositeTypeSpecifier.MEMBER_DECLARATION) {
+				return scope == ((ICPPASTCompositeTypeSpecifier) decl.getParent()).getScope();
+			} 
+			if (prop == ICPPASTNamespaceDefinition.OWNED_DECLARATION) {
+				return scope == ((ICPPASTNamespaceDefinition) decl.getParent()).getScope();
+			} 
+			
+			if (prop == ICPPASTTemplateDeclaration.OWNED_DECLARATION) { 
+				decl= decl.getParent();
+			} else {
+				return false;
+			}			
+		} 
+		return false;
+	}
+
 	private static IBinding createBinding(IASTGotoStatement gotoStatement) {
 	    ICPPFunctionScope functionScope = (ICPPFunctionScope) getContainingScope(gotoStatement.getName());
 	    IASTName name = gotoStatement.getName();
@@ -801,21 +820,12 @@ public class CPPVisitor extends ASTQueries {
 	}
 
 	public static boolean isConstructor(IScope containingScope, IASTDeclarator declarator) {
-	    if (containingScope == null || !(containingScope instanceof ICPPClassScope))
-	        return false;
-	    
-        IASTNode node = ASTInternal.getPhysicalNodeOfScope(containingScope);
-		if (!(node instanceof ICPPASTCompositeTypeSpecifier)) {
-			return false;
+		if (containingScope instanceof ICPPClassScope && isConstructorDtor(declarator)) {
+			ICPPClassType classType= ((ICPPClassScope) containingScope).getClassType();
+		    final char[] dtorName = findInnermostDeclarator(declarator).getName().getLookupKey();
+			return CharArrayUtils.equals(dtorName, classType.getNameCharArray());
 		}
-
-		ICPPASTCompositeTypeSpecifier clsTypeSpec = (ICPPASTCompositeTypeSpecifier) node;
-        IASTName clsName = clsTypeSpec.getName();
-        if (clsName instanceof ICPPASTQualifiedName) {
-	        IASTName[] names = ((ICPPASTQualifiedName) clsName).getNames(); 
-	        clsName = names[names.length - 1];
-	    }
-        return isConstructor(clsName, declarator);
+		return false;
 	}
 
 	public static boolean isConstructorDeclaration(IASTName name) {
@@ -836,35 +846,39 @@ public class CPPVisitor extends ASTQueries {
 			parent= name.getParent();
 		}
 		if (parent instanceof IASTDeclarator) {
-			IASTDeclarator dtor= findTypeRelevantDeclarator((IASTDeclarator) parent);
-			if (dtor instanceof ICPPASTFunctionDeclarator) {
+			if (isConstructorDtor((IASTDeclarator) parent)) {
 				if (name instanceof ICPPASTQualifiedName) {
 					IASTName[] names = ((ICPPASTQualifiedName) name).getNames();
 					if (names.length >= 2) {
-						return CPPVisitor.isConstructor(names[names.length - 2], dtor);
+						IBinding b= names[names.length-2].resolvePreBinding();
+						if (b instanceof IType) {
+							IType classType= getNestedType((IType) b, TDEF);
+							if (classType instanceof ICPPClassType) {
+							    final char[] dtorName = names[names.length-1].getLookupKey();
+								final char[] className = ((ICPPClassType) classType).getNameCharArray();
+								return CharArrayUtils.equals(dtorName, className);
+							}
+						}
 					}
-				} else {
-					while (parent != null && !(parent instanceof ICPPASTCompositeTypeSpecifier)) {
-						parent= parent.getParent();
-					}
+					return false;
+				}			
+				while (parent != null) {
 					if (parent instanceof ICPPASTCompositeTypeSpecifier) {
-						IASTName compName= ((ICPPASTCompositeTypeSpecifier) parent).getName().getLastName();
-						return CPPVisitor.isConstructor(compName, dtor);
+						final char[] className= ((ICPPASTCompositeTypeSpecifier) parent).getName().getLastName().getLookupKey();
+					    final char[] dtorName = name.getLookupKey();
+						return CharArrayUtils.equals(dtorName, className);
 					}
+					parent= parent.getParent();
 				}
 			}
 		}
 		return false;
 	}
 	
-	public static boolean isConstructor(IASTName parentName, IASTDeclarator declarator) {
+	private static boolean isConstructorDtor(IASTDeclarator declarator) {
 		if (declarator == null || !(declarator instanceof IASTFunctionDeclarator))
 			return false;
         
-	    IASTName name = findInnermostDeclarator(declarator).getName();
-	    if (!CharArrayUtils.equals(name.getLookupKey(), parentName.getLookupKey()))
-	        return false;
-	    
 	    IASTDeclSpecifier declSpec = null;
 	    IASTNode parent = findOutermostDeclarator(declarator).getParent();
 	    if (parent instanceof IASTSimpleDeclaration) {
@@ -877,7 +891,6 @@ public class CPPVisitor extends ASTQueries {
 	    }
 	    
 	    return false;
-	    
 	}
 	
 	public static IScope getContainingNonTemplateScope(final IASTNode inputNode) {
@@ -1072,21 +1085,7 @@ public class CPPVisitor extends ASTQueries {
 		}
 		return null;
 	}
-	
-	/**
-	 * Returns enclosing function definition, or <code>null</code> if the given node
-	 * is not part of a function definition.
-	 */
-	public static ICPPASTFunctionDefinition findEnclosingFunctionDefinition(IASTNode node) {
-		while (node != null) {
-			if (node instanceof ICPPASTFunctionDefinition) {
-				return (ICPPASTFunctionDefinition) node;
-			}
-			node= node.getParent();
-		}
-		return null;
-	}
-	
+		
 	public static IScope getContainingScope(IASTName name) {
 		return getContainingScope(name, null);
 	}

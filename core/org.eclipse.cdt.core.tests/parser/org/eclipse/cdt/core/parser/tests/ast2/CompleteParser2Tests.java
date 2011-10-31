@@ -655,7 +655,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 	
 	public void testNestedClassname() throws Exception
 	{
-		IASTTranslationUnit tu = parse( "namespace A { } \n class A::B { };"); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse( "namespace A {  \n class A::B { };}"); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
         tu.accept( col );
         

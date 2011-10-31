@@ -1222,10 +1222,10 @@ public class CPPSemantics {
 			// For index scopes the point of declaration is ignored.
 			bindings= scope.getBindings(data.astName, true, data.prefixLookup, fileSet);
 		}
-		return expandUsingDeclarationsAndRemoveObjects(bindings, data.typesOnly);
+		return expandUsingDeclarationsAndRemoveObjects(bindings, data);
 	}
 
-	private static IBinding[] expandUsingDeclarationsAndRemoveObjects(final IBinding[] bindings, boolean removeObjects) {
+	private static IBinding[] expandUsingDeclarationsAndRemoveObjects(final IBinding[] bindings, LookupData data) {
 		if (bindings == null || bindings.length == 0)
 			return IBinding.EMPTY_BINDING_ARRAY;
 		
@@ -1233,9 +1233,9 @@ public class CPPSemantics {
 			if (b == null) 
 				break;
 				
-			if (b instanceof ICPPUsingDeclaration || (removeObjects && isObject(b))) {
+			if (b instanceof ICPPUsingDeclaration || (data.typesOnly && isObject(b))) {
 				List<IBinding> result= new ArrayList<IBinding>(bindings.length);
-				expandUsingDeclarations(bindings, removeObjects, result);
+				expandUsingDeclarations(bindings, data, result);
 				return result.toArray(new IBinding[result.size()]);
 			}
 		}
@@ -1246,18 +1246,21 @@ public class CPPSemantics {
 		return !(b instanceof IType || b instanceof ICPPNamespace);
 	}
 
-	private static void expandUsingDeclarations(IBinding[] bindings, boolean removeObjects, List<IBinding> result) {
+	private static void expandUsingDeclarations(IBinding[] bindings, LookupData data, List<IBinding> result) {
 		if (bindings != null) {
 			for (IBinding b : bindings) {
 				if (b == null)
 					return;
+				// Lookup for a declaration shall ignore the using declarations.
 				if (b instanceof ICPPUsingDeclaration) {
-					for (IBinding d : ((ICPPUsingDeclaration) b).getDelegates()) {
-						if (d != null && !(removeObjects && isObject(d))) {
-							result.add(d);
+					if (data.forDeclaration() == null) {
+						for (IBinding d : ((ICPPUsingDeclaration) b).getDelegates()) {
+							if (d != null && !(data.typesOnly && isObject(d))) {
+								result.add(d);
+							}
 						}
 					}
-				} else if (!(removeObjects && isObject(b))) {
+				} else if (!(data.typesOnly && isObject(b))) {
 					result.add(b);
 				}
 			}

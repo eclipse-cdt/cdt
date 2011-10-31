@@ -3761,17 +3761,17 @@ public class AST2TemplateTests extends AST2BaseTest {
     //    	~DumbPtr<T> ();
     //    };
     //    template <class T>
-    //    DumbPtr<T>::DumbPtr<T>/**/ (const DumbPtr<T>& aObj) {
+    //    DumbPtr<T>::DumbPtr/**/ (const DumbPtr<T>& aObj) {
     //    }
     //    template <class T>
-    //    DumbPtr<T>::~DumbPtr<T>/**/ () {
+    //    DumbPtr<T>::~DumbPtr/**/ () {
     //    }
     public void testCtorWithTemplateID_259600() throws Exception {
 		final String code = getAboveComment();
 		parseAndCheckBindings(code); 
         BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
-        ICPPConstructor ctor= bh.assertNonProblem("DumbPtr<T>/**/", 10);
-        ICPPMethod dtor= bh.assertNonProblem("~DumbPtr<T>/**/", 11);
+        ICPPConstructor ctor= bh.assertNonProblem("DumbPtr/**/", 7);
+        ICPPMethod dtor= bh.assertNonProblem("~DumbPtr/**/", 8);
     }
     
     //    template <class T> class XT {
@@ -5561,5 +5561,17 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testBoolExpressionAsTemplateArgument_361604() throws Exception {
 		final String code= getAboveComment();
 		parseAndCheckBindings(code);
+	}
+	
+	//	template<typename T> struct B {
+	//		void m();
+	//	};
+	//	template<typename T> struct C : B<T> {
+	//		using B<T*>::m;
+	//		void m();
+	//	};
+	//	template<typename T> void C<T>::m() {}
+	public void testDependentUsingDeclaration() throws Exception {
+		parseAndCheckBindings();
 	}
 }

@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
@@ -20,18 +20,14 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
-
 /**
- * 
- * This class serves as a container to pass several nodes to the
- * <code>ASTWriter</code>. This container is used if source code for several sibling nodes but 
- * for their common parent node should be generated. 
+ * This class serves as a container to pass several nodes to the <code>ASTWriter</code>.
+ * This container is used if source code for several sibling nodes but for their common parent
+ * node should be generated. 
  * 
  * @author Emanuel Graf IFS
- * 
  */
 public class ContainerNode extends ASTNode {
-	
 	private final IASTTranslationUnit tu = null;
 	
 	private final ArrayList<IASTNode> nodes = new ArrayList<IASTNode>();
@@ -42,10 +38,12 @@ public class ContainerNode extends ASTNode {
 		}
 	}
 	
+	@Override
 	public ContainerNode copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public ContainerNode copy(CopyStyle style) {
 		ContainerNode copy = new ContainerNode();
 		for (IASTNode node : getNodes())
@@ -59,7 +57,7 @@ public class ContainerNode extends ASTNode {
 
 	public void addNode(IASTNode node) {
 		nodes.add(node);
-		if(node.getParent() == null) {
+		if (node.getParent() == null) {
 			node.setParent(tu);
 		}
 	}
@@ -80,5 +78,4 @@ public class ContainerNode extends ASTNode {
 	public List<IASTNode> getNodes(){
 		return Collections.unmodifiableList(nodes);
 	}
-
 }

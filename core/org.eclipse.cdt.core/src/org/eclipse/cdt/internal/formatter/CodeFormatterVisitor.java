@@ -187,7 +187,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		}
 	}
 
-	/*
+	/**
 	 * Formats a given token at a given position.
 	 * @see #formatList(List, ListOptions, boolean, boolean, Runnable)
 	 */
@@ -211,6 +211,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 					spaceBeforeToken, spaceAfterToken);
 		}
 
+		@Override
 		public void run() {
 			int offset = scribe.scanner.getCurrentPosition();
 			if (tokenPosition < 0 || offset > tokenPosition)
@@ -229,7 +230,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		}
 	}
 
-	/*
+	/**
 	 * Formats a trailing semicolon.
 	 * @see #formatList(List, ListOptions, boolean, boolean, Runnable)
 	 */
@@ -242,7 +243,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		}
 	}
 
-	/*
+	/**
 	 * Formats the part of a function declaration following the parameter list.
 	 * @see #formatList(List, ListOptions, boolean, boolean, Runnable)
 	 */
@@ -256,6 +257,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			this.continuationFormatter = tailFormatter;
 		}
 
+		@Override
 		public void run() {
 			boolean needSpace = skipConstVolatileRestrict();
 			int token = peekNextToken();
@@ -303,6 +305,10 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		}
 	}
 
+	/**
+	 * Formats a trailing semicolon.
+	 * @see #formatList(List, ListOptions, boolean, boolean, Runnable)
+	 */
 	private class ClosingParensesisTailFormatter implements Runnable {
 		private final boolean spaceBeforeClosingParen;
 		private final Runnable continuationFormatter;
@@ -315,6 +321,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			this.parenPosition = scribe.findToken(Token.tRPAREN);
 		}
 
+		@Override
 		public void run() {
 			int offset = scribe.scanner.getCurrentPosition();
 			if (parenPosition >= 0 && offset <= parenPosition) {

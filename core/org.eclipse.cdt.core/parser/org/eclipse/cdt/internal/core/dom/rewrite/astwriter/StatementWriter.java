@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
@@ -46,17 +46,14 @@ import org.eclipse.cdt.internal.core.dom.rewrite.util.FileHelper;
 import org.eclipse.core.resources.IFile;
 
 /**
- * 
  * Generates source code of statement nodes. The actual string operations are delegated
  * to the <code>Scribe</code> class.
  * 
  * @see Scribe
  * @see IASTStatement
  * @author Emanuel Graf IFS
- * 
  */
-public class StatementWriter extends NodeWriter{
-
+public class StatementWriter extends NodeWriter {
 	private static final String DEFAULT = "default:"; //$NON-NLS-1$
 	private static final String CASE = "case "; //$NON-NLS-1$
 	private static final String WHILE = "while("; //$NON-NLS-1$
@@ -85,7 +82,7 @@ public class StatementWriter extends NodeWriter{
 	/**
 	 * 
 	 * @param statement
-	 * @param newLine if true print a newline if statment usually have one.
+	 * @param newLine if true print a newline if statement usually have one.
 	 * @return {@link ASTVisitor#PROCESS_SKIP}
 	 */
 	protected int writeStatement(IASTStatement statement, boolean newLine) {
@@ -114,14 +111,14 @@ public class StatementWriter extends NodeWriter{
 		} else if (statement instanceof IASTCaseStatement) {
 			writeCaseStatement((IASTCaseStatement) statement);
 //			usually newLine			
-		}else if (statement instanceof IASTDefaultStatement) {
+		} else if (statement instanceof IASTDefaultStatement) {
 			writeDefaultStatement((IASTDefaultStatement)statement);
-		} else if (statement instanceof IASTContinueStatement){
+		} else if (statement instanceof IASTContinueStatement) {
 			writeContinueStatement((IASTContinueStatement)statement);
 //			usually newLine
 		} else if (statement instanceof IASTCompoundStatement) {
 			writeCompoundStatement((IASTCompoundStatement) statement);
-			if(compoundNoNewLine){
+			if (compoundNoNewLine) {
 				newLine = false;
 				compoundNoNewLine = false;
 			}
@@ -156,13 +153,10 @@ public class StatementWriter extends NodeWriter{
 			throw new ProblemRuntimeException((IASTProblemStatement)statement);
 		} 
 		
-		if(hasTrailingComments(statement)) {
+		if (hasTrailingComments(statement)) {
 			writeTrailingComments(statement, newLine);			
-		}
-		else{
-			if(newLine){
-				scribe.newLine();
-			}
+		} else if (newLine) {
+			scribe.newLine();
 		}
 		
 		return ASTVisitor.PROCESS_SKIP;
@@ -186,15 +180,14 @@ public class StatementWriter extends NodeWriter{
 		if (forStatment instanceof ICPPASTForStatement) {
 			ICPPASTForStatement cppForStatment = (ICPPASTForStatement) forStatment;
 			IASTDeclaration cppConditionDeclaration = cppForStatment.getConditionDeclaration();
-			if(cppConditionDeclaration == null) {
+			if (cppConditionDeclaration == null) {
 				visitNodeIfNotNull(cppForStatment.getConditionExpression());
 				scribe.printSemicolon();
 			} else {
 				cppConditionDeclaration.accept(visitor);
 			}
-			
 		} else {
-			if(forStatment.getConditionExpression() != null) {
+			if (forStatment.getConditionExpression() != null) {
 				forStatment.getConditionExpression().accept(visitor);
 				scribe.printSemicolon();
 			}
@@ -225,7 +218,7 @@ public class StatementWriter extends NodeWriter{
 		if (ifStatement instanceof ICPPASTIfStatement) {
 			ICPPASTIfStatement cppIfStatment = (ICPPASTIfStatement) ifStatement;
 
-			if(cppIfStatment.getConditionDeclaration() == null) {
+			if (cppIfStatment.getConditionDeclaration() == null) {
 				cppIfStatment.getConditionExpression().accept(visitor);
 			} else {
 				writeDeclarationWithoutSemicolon(cppIfStatment.getConditionDeclaration());
@@ -238,17 +231,16 @@ public class StatementWriter extends NodeWriter{
 		scribe.newLines();
 		nextCompoundNoNewLine();
 		IASTStatement elseClause = ifStatement.getElseClause();
-		writeBodyStatement(ifStatement.getThenClause(), elseClause != null ? true : false);
+		writeBodyStatement(ifStatement.getThenClause(), elseClause != null);
 		
-		if(elseClause != null){
+		if (elseClause != null) {
 			scribe.print(ELSE);
 			nextCompoundNoNewLine();
 			writeBodyStatement(elseClause, false);
 		}
 	}
 
-	protected void writeDeclarationWithoutSemicolon(
-			IASTDeclaration declaration) {
+	protected void writeDeclarationWithoutSemicolon(IASTDeclaration declaration) {
 		declWriter.writeDeclaration(declaration, false);
 	}
 
@@ -279,7 +271,7 @@ public class StatementWriter extends NodeWriter{
 		scribe.noNewLines();
 		scribe.print(RETURN);
 		IASTExpression returnValue = returnStatement.getReturnValue();
-		if(returnValue != null){
+		if (returnValue != null) {
 			scribe.printSpaces(1);
 			returnValue.accept(visitor);
 		}
@@ -327,7 +319,7 @@ public class StatementWriter extends NodeWriter{
 		scribe.noNewLines();
 		if (whileStatment instanceof ICPPASTWhileStatement) {
 			ICPPASTWhileStatement cppWhileStatment = (ICPPASTWhileStatement) whileStatment;
-			if(cppWhileStatment.getConditionDeclaration() == null) {
+			if (cppWhileStatment.getConditionDeclaration() == null) {
 				cppWhileStatment.getCondition().accept(visitor);
 			} else {
 				writeDeclarationWithoutSemicolon(cppWhileStatment.getConditionDeclaration());
@@ -344,7 +336,7 @@ public class StatementWriter extends NodeWriter{
 	private void writeCaseStatement(IASTCaseStatement caseStatement) {
 		nextCompoundIndentationLevelOneMore();
 		
-		if(!switchIsNew){
+		if (!switchIsNew) {
 			scribe.decrementIndentationLevel();
 		}
 		scribe.print(CASE);
@@ -361,7 +353,7 @@ public class StatementWriter extends NodeWriter{
 		scribe.noNewLines();
 		if (switchStatement instanceof ICPPASTSwitchStatement) {
 			ICPPASTSwitchStatement cppSwitchStatement = (ICPPASTSwitchStatement) switchStatement;
-			if(cppSwitchStatement.getControllerDeclaration() == null) {
+			if (cppSwitchStatement.getControllerDeclaration() == null) {
 				cppSwitchStatement.getControllerExpression().accept(visitor);
 			} else {
 				declWriter.writeDeclaration(cppSwitchStatement.getControllerDeclaration(), false);
@@ -380,7 +372,7 @@ public class StatementWriter extends NodeWriter{
 	private void writeDefaultStatement(IASTDefaultStatement defaultStatement) {
 		nextCompoundIndentationLevelOneMore();
 		
-		if(!switchIsNew){
+		if (!switchIsNew) {
 			scribe.decrementIndentationLevel();
 		}
 		scribe.print(DEFAULT);
@@ -395,11 +387,11 @@ public class StatementWriter extends NodeWriter{
 			statements.accept(visitor);
 		}
 		
-		if(hasFreestandingComments(compoundStatement)) {
+		if (hasFreestandingComments(compoundStatement)) {
 			writeFreeStandingComments(compoundStatement);			
 		}
 		
-		if(decrementIndentationLevelOneMore){
+		if (decrementIndentationLevelOneMore) {
 			scribe.decrementIndentationLevel();
 			decrementIndentationLevelOneMore = false;
 		}
@@ -411,14 +403,14 @@ public class StatementWriter extends NodeWriter{
 	}	
 	
 	protected void writeBodyStatement(IASTStatement statement, boolean isDoStatement) {
-		if (statement instanceof IASTCompoundStatement){
+		if (statement instanceof IASTCompoundStatement) {
 			//TODO hsr existiert noch eine methode
 			statement.accept(visitor);
-			if(!isDoStatement){
+			if (!isDoStatement) {
 				scribe.newLine();
 			}
 			compoundNoNewLine = false;
-		} else if (statement instanceof IASTNullStatement){
+		} else if (statement instanceof IASTNullStatement) {
 			statement.accept(visitor);
 			scribe.newLine();
 		} else {
@@ -432,18 +424,16 @@ public class StatementWriter extends NodeWriter{
 	
 	/**
 	 * Write no new Line after the next Compound-Statement 
-	 *
 	 */
-	protected void nextCompoundNoNewLine(){
+	protected void nextCompoundNoNewLine() {
 		compoundNoNewLine = true;
 	}
 	
 	/**
 	 * Indent one time more at the end (before the closing Brackets) 
 	 * of a Compound-Statement 
-	 *
 	 */
-	protected void nextCompoundIndentationLevelOneMore(){
+	protected void nextCompoundIndentationLevelOneMore() {
 		decrementIndentationLevelOneMore = true;
 	}
 
@@ -451,7 +441,7 @@ public class StatementWriter extends NodeWriter{
 		IFile file = FileHelper.getFileFromNode(statement);
 		int offset = statement.getFileLocation().getNodeOffset();
 		int length = statement.getFileLocation().getNodeLength();
-		String code =FileContentHelper.getContent(file, offset, length);
+		String code = FileContentHelper.getContent(file, offset, length);
 		
 		scribe.println(code);
 		return ASTVisitor.PROCESS_SKIP;

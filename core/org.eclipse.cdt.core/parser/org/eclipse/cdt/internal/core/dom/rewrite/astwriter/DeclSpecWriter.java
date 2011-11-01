@@ -217,14 +217,13 @@ public class DeclSpecWriter extends NodeWriter {
 		scribe.print('{');
 		scribe.printSpace();
 		IASTEnumerator[] enums = enumSpec.getEnumerators();
-		for (int i = 0; i< enums.length;++i) {
+		for (int i = 0; i < enums.length; ++i) {
 			writeEnumerator(enums[i]);
-			if (i+1< enums.length) {
+			if (i + 1 < enums.length) {
 				scribe.print(NodeWriter.COMMA_SPACE);
 			}
 		}
 		scribe.print('}');
-		
 	}
 
 	private void writeEnumerator(IASTEnumerator enumerator) {
@@ -246,9 +245,9 @@ public class DeclSpecWriter extends NodeWriter {
 			ICPPASTBaseSpecifier[] baseSpecifiers = cppComp.getBaseSpecifiers();
 			if (baseSpecifiers.length > 0) {
 				scribe.print(SPACE_COLON_SPACE);
-				for (int i = 0; i < baseSpecifiers.length;++i) {
+				for (int i = 0; i < baseSpecifiers.length; ++i) {
 					writeBaseSpecifiers(baseSpecifiers[i]);
-					if (i+1 < baseSpecifiers.length) {
+					if (i + 1 < baseSpecifiers.length) {
 						scribe.print(COMMA_SPACE);
 					}
 				}

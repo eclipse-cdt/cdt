@@ -41,10 +41,6 @@ public class ExtractFunctionRefactoringTest extends RefactoringTest {
 	private boolean virtual;
 	private static int nr = 1;
 
-	/**
-	 * @param name
-	 * @param files
-	 */
 	public ExtractFunctionRefactoringTest(String name, Collection<TestSourceFile> files) {
 		super(name, files);
 	}

@@ -7,8 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Institute for Software - initial API and implementation
- * Tom Ball (Google)
+ *     Institute for Software - initial API and implementation
+ *     Tom Ball (Google)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring;
 

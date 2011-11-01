@@ -84,10 +84,8 @@ public class ChangeGeneratorWriterVisitor extends ASTWriterVisitor {
 		this.fileScope = fileScope;
 		this.shouldVisitTranslationUnit = true;
 		this.stack = new ModificationScopeStack(modificationStore);
-		declaratorWriter = new ModifiedASTDeclaratorWriter(scribe, this,
-				stack, commentMap);
-		expWriter = new ModifiedASTExpressionWriter(scribe, this, macroHandler,
-				stack, commentMap);
+		declaratorWriter = new ModifiedASTDeclaratorWriter(scribe, this, stack, commentMap);
+		expWriter = new ModifiedASTExpressionWriter(scribe, this, macroHandler,	stack, commentMap);
 		statementWriter = new ModifiedASTStatementWriter(scribe, this, stack, commentMap);
 		declSpecWriter = new ModifiedASTDeclSpecWriter(scribe, this, stack, commentMap);
 		declarationWriter = new ModifiedASTDeclarationWriter(scribe, this, stack, commentMap);

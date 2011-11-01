@@ -26,7 +26,6 @@ import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
  * @author Emanuel Graf
  */
 public class ASTWriter {
-	private ChangeGeneratorWriterVisitor transformationVisitor;
 	private ASTModificationStore modificationStore = new ASTModificationStore();
 	private String givenIndentation = ""; //$NON-NLS-1$
 
@@ -76,14 +75,12 @@ public class ASTWriter {
 	 */
 	public String write(IASTNode rootNode, String fileScope, NodeCommentMap commentMap)
 			throws ProblemRuntimeException {
-		transformationVisitor = new ChangeGeneratorWriterVisitor(modificationStore, givenIndentation,
-				fileScope, commentMap);
+		ChangeGeneratorWriterVisitor transformationVisitor = new ChangeGeneratorWriterVisitor(
+				modificationStore, givenIndentation, fileScope, commentMap);
 		if (rootNode != null) {
 			rootNode.accept(transformationVisitor);
 		}
-		String str = transformationVisitor.toString();
-		transformationVisitor.cleanCache();
-		return str;
+		return transformationVisitor.toString();
 	}
 
 	public void setModificationStore(ASTModificationStore modificationStore) {

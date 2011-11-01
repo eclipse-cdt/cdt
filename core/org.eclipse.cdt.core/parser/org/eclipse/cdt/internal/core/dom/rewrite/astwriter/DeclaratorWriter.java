@@ -7,8 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- *    Institute for Software - initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     Institute for Software - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
@@ -32,23 +32,18 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
-
 /**
- * 
  * Generates source code of declarator nodes. The actual string operations are delegated
- * to the <code>Scribe</code> class.
+ * to the {@link Scribe} class.
  * 
- * @see Scribe
  * @see IASTDeclarator
  * @author Emanuel Graf IFS
- * 
  */
 public class DeclaratorWriter extends NodeWriter {
-
 	private static final String AMPERSAND_SPACE = "& "; //$NON-NLS-1$
 	private static final String AMPERSAND__AMPERSAND_SPACE = "&& "; //$NON-NLS-1$
 	private static final String STAR_SPACE = "* "; //$NON-NLS-1$
-	private static final String PURE_VIRTUAL = " =0"; //$NON-NLS-1$
+	private static final String PURE_VIRTUAL = " = 0"; //$NON-NLS-1$
 	private static final String MUTABLE = "mutable"; //$NON-NLS-1$
 	private static final String ARROW_OPERATOR = "->"; //$NON-NLS-1$
 	
@@ -59,17 +54,17 @@ public class DeclaratorWriter extends NodeWriter {
 	protected void writeDeclarator(IASTDeclarator declarator) {
 		if (declarator instanceof IASTStandardFunctionDeclarator) {
 			writeFunctionDeclarator((IASTStandardFunctionDeclarator) declarator);
-		}else if (declarator instanceof IASTArrayDeclarator) {
+		} else if (declarator instanceof IASTArrayDeclarator) {
 			writeArrayDeclarator((IASTArrayDeclarator) declarator);
-		}else if (declarator instanceof IASTFieldDeclarator) {
+		} else if (declarator instanceof IASTFieldDeclarator) {
 			writeFieldDeclarator((IASTFieldDeclarator) declarator);
-		}else if (declarator instanceof ICASTKnRFunctionDeclarator) {
+		} else if (declarator instanceof ICASTKnRFunctionDeclarator) {
 			writeCKnRFunctionDeclarator((ICASTKnRFunctionDeclarator) declarator);
-		}else{
+		} else {
 			writeDefaultDeclarator(declarator);
 		}
 		
-		if(hasTrailingComments(declarator)) {
+		if (hasTrailingComments(declarator)) {
 			writeTrailingComments(declarator, false);			
 		}	
 	}
@@ -81,7 +76,7 @@ public class DeclaratorWriter extends NodeWriter {
 		name.accept(visitor);
 		writeNestedDeclarator(declarator);
 		IASTInitializer init = getInitializer(declarator);
-		if(init!= null) {
+		if (init != null) {
 			init.accept(visitor);
 		}
 	}
@@ -109,7 +104,7 @@ public class DeclaratorWriter extends NodeWriter {
 
 	private void writeInitializer(IASTStandardFunctionDeclarator funcDec) {
 		IASTInitializer init = getInitializer(funcDec);
-		if(init != null) {
+		if (init != null) {
 			init.accept(visitor);
 		}
 	}
@@ -123,7 +118,7 @@ public class DeclaratorWriter extends NodeWriter {
 
 	private void writeNestedDeclarator(IASTDeclarator funcDec) {
 		IASTDeclarator nestedDeclarator = funcDec.getNestedDeclarator();
-		if(nestedDeclarator != null) {
+		if (nestedDeclarator != null) {
 			scribe.print('(');
 			nestedDeclarator.accept(visitor);
 			scribe.print(')');
@@ -143,7 +138,7 @@ public class DeclaratorWriter extends NodeWriter {
 			scribe.printSpace();
 			scribe.print(MUTABLE);
 		}
-		if(funcDec.isPureVirtual()) {
+		if (funcDec.isPureVirtual()) {
 			scribe.print(PURE_VIRTUAL);
 		}
 		writeExceptionSpecification(funcDec, funcDec.getExceptionSpecification());
@@ -167,8 +162,8 @@ public class DeclaratorWriter extends NodeWriter {
 
 	protected void writeParameterDeclarations(IASTStandardFunctionDeclarator funcDec, IASTParameterDeclaration[] paraDecls) {
 		writeNodeList(paraDecls);
-		if(funcDec.takesVarArgs()){
-			if(paraDecls.length > 0){
+		if (funcDec.takesVarArgs()) {
+			if (paraDecls.length > 0) {
 				scribe.print(COMMA_SPACE);
 			}
 			scribe.print(VAR_ARGS);
@@ -178,15 +173,14 @@ public class DeclaratorWriter extends NodeWriter {
 	private void writePointer(IASTPointer operator) {
 		if (operator instanceof ICPPASTPointerToMember) {
 			ICPPASTPointerToMember pointerToMemberOp = (ICPPASTPointerToMember) operator;
-			if(pointerToMemberOp.getName() != null){
+			if (pointerToMemberOp.getName() != null) {
 				pointerToMemberOp.getName().accept(visitor);
 				scribe.print(STAR_SPACE);
 			}
 		} else {
 			scribe.print('*');
 		}
-		
-		
+
 		if (operator.isConst()) {
 			scribe.printStringSpace(CONST);
 		}
@@ -222,7 +216,7 @@ public class DeclaratorWriter extends NodeWriter {
 		IASTArrayModifier[] arrMods = arrDecl.getArrayModifiers();
 		writeArrayModifiers(arrDecl, arrMods);
 		IASTInitializer initializer = getInitializer(arrDecl);
-		if(initializer != null) {
+		if (initializer != null) {
 			initializer.accept(visitor);
 		}
 	}
@@ -255,7 +249,7 @@ public class DeclaratorWriter extends NodeWriter {
 		scribe.printSpace();
 		fieldDecl.getBitFieldSize().accept(visitor);
 		IASTInitializer initializer = getInitializer(fieldDecl);
-		if(initializer != null) {
+		if (initializer != null) {
 			initializer.accept(visitor);
 		}
 	}
@@ -267,17 +261,15 @@ public class DeclaratorWriter extends NodeWriter {
 		scribe.print(')');
 		scribe.newLine();
 		writeKnRParameterDeclarations(knrFunct, knrFunct.getParameterDeclarations());
-		
-
 	}
 
-	protected void writeKnRParameterDeclarations(
-			ICASTKnRFunctionDeclarator knrFunct, IASTDeclaration[] knrDeclarations) {
+	protected void writeKnRParameterDeclarations(ICASTKnRFunctionDeclarator knrFunct,
+			IASTDeclaration[] knrDeclarations) {
 		for (int i = 0; i < knrDeclarations.length;  ++i) {
 			scribe.noNewLines();
 			knrDeclarations[i].accept(visitor);
 			scribe.newLines();
-			if(i + 1 < knrDeclarations.length) {
+			if (i + 1 < knrDeclarations.length) {
 				scribe.newLine();
 			}
 		}

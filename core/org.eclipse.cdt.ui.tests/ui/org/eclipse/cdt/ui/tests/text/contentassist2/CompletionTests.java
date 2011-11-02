@@ -29,7 +29,6 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
-import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 
 /**
  * A collection of code completion tests.
@@ -959,8 +958,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 		createFile(fProject, "header191315.h", content[0].toString());
 		createFile(fProject, "source191315.c", content[1].toString());
 		createFile(fProject, "source191315.cpp", content[1].toString());
-		IFile dfile= createFile(fProject, "header191315.h", content[0].toString());
-		TestSourceReader.waitUntilFileIsIndexed(CCorePlugin.getIndexManager().getIndex(fCProject), dfile, 8000);
+		waitForIndexer(fCProject);
 		final String[] expected= {
 			"c_linkage()"
 		};

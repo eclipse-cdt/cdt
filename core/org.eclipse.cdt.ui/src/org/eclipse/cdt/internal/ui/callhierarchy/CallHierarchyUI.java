@@ -71,6 +71,7 @@ public class CallHierarchyUI {
         			final ICElement[] elems= findDefinitions(input);
 					if (elems != null && elems.length > 0) {
 						display.asyncExec(new Runnable() {
+							@Override
 							public void run() {
 								internalOpen(window, elems);
 							}});
@@ -134,6 +135,7 @@ public class CallHierarchyUI {
 							final ICElement[] elems= findDefinitions(project, editorInput, sel);
 							if (elems.length > 0) {
 								display.asyncExec(new Runnable() {
+									@Override
 									public void run() {
 										internalOpen(editor.getSite().getWorkbenchWindow(), elems);
 									}});
@@ -145,6 +147,10 @@ public class CallHierarchyUI {
 						} catch (CoreException e) {
 							return e.getStatus();
 						}
+					}
+					@Override
+					public boolean belongsTo(Object family) {
+						 return family == CallHierarchyUI.class;
 					}
 				};
 				job.setUser(true);

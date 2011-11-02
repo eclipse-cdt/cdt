@@ -147,6 +147,7 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 		return defaultLabel;
 	}
 
+	@Override
 	public String getLabel() {
 		String type;
 		if ((flags & FIND_REFERENCES) != 0) {
@@ -197,14 +198,17 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 		return label + " " + countLabel; //$NON-NLS-1$
 	}
 
+	@Override
 	public boolean canRerun() {
 		return true;
 	}
 
+	@Override
 	public boolean canRunInBackground() {
 		return true;
 	}
 
+	@Override
 	public ISearchResult getSearchResult() {
 		return result;
 	}
@@ -344,7 +348,7 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 		if ((flags & FIND_REFERENCES) != 0) {
 			for (IBinding binding : bindings) {
 				if (binding != null) {
-					List<? extends IBinding> specializations = IndexUI.findSpecializations(binding);
+					List<? extends IBinding> specializations = IndexUI.findSpecializations(index, binding);
 					for (IBinding spec : specializations) {
 						if (spec != null && handled.add(spec)) {
 							createMatches1(index, spec, names);
@@ -481,6 +485,7 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 		return preferred;
 	}
 
+	@Override
 	public final IStatus run(IProgressMonitor monitor) throws OperationCanceledException {
 		PDOMSearchResult result= (PDOMSearchResult) getSearchResult();
 		result.removeAll();

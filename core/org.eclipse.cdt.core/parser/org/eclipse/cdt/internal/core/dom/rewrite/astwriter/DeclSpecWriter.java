@@ -168,7 +168,7 @@ public class DeclSpecWriter extends NodeWriter {
 	}
 
 	private String getElabTypeString(int kind) {
-		switch(kind) {
+		switch (kind) {
 		case IASTElaboratedTypeSpecifier.k_enum:
 			return ENUM;
 		case IASTElaboratedTypeSpecifier.k_struct:
@@ -284,7 +284,7 @@ public class DeclSpecWriter extends NodeWriter {
 	}
 
 	private void writeBaseSpecifiers(ICPPASTBaseSpecifier specifier) {
-		switch(specifier.getVisibility()) {
+		switch (specifier.getVisibility()) {
 		case ICPPASTBaseSpecifier.v_public:
 			scribe.printStringSpace(PUBLIC);
 			break;
@@ -327,7 +327,7 @@ public class DeclSpecWriter extends NodeWriter {
 		if (declSpec.isInline()) {
 			scribe.print(INLINE);
 		}
-		switch(declSpec.getStorageClass()) {
+		switch (declSpec.getStorageClass()) {
 		case IASTDeclSpecifier.sc_typedef:
 			scribe.print(TYPEDEF);
 			break;

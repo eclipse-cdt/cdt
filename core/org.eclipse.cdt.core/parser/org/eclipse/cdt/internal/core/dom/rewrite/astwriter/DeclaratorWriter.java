@@ -41,7 +41,7 @@ import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
  */
 public class DeclaratorWriter extends NodeWriter {
 	private static final String AMPERSAND_SPACE = "& "; //$NON-NLS-1$
-	private static final String AMPERSAND__AMPERSAND_SPACE = "&& "; //$NON-NLS-1$
+	private static final String AMPERSAND_AMPERSAND_SPACE = "&& "; //$NON-NLS-1$
 	private static final String STAR_SPACE = "* "; //$NON-NLS-1$
 	private static final String PURE_VIRTUAL = " = 0"; //$NON-NLS-1$
 	private static final String MUTABLE = "mutable"; //$NON-NLS-1$
@@ -198,7 +198,7 @@ public class DeclaratorWriter extends NodeWriter {
 			writePointer(pointOp);
 		} else if (operator instanceof ICPPASTReferenceOperator) {
 			if (((ICPPASTReferenceOperator) operator).isRValueReference()) {
-				scribe.print(AMPERSAND__AMPERSAND_SPACE);
+				scribe.print(AMPERSAND_AMPERSAND_SPACE);
 			} else {
 				scribe.print(AMPERSAND_SPACE);
 			}

@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.internal.core.XmlUtil;
+import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsLogger;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.utils.EFSExtensionManager;
 import org.eclipse.core.filesystem.EFS;
@@ -47,10 +48,8 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.w3c.dom.Element;
@@ -315,15 +314,12 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		}
 		return str + ": ";
 	}
-	
 
 	protected void setSettingEntries(List<ICLanguageSettingEntry> entries) {
 		setSettingEntries(currentCfgDescription, currentResource, currentLanguageId, entries);
 		
-		// TODO - for debugging only, eventually remove
-		IStatus status = new Status(IStatus.INFO, MakeCorePlugin.PLUGIN_ID, getPrefixForLog()
+		LanguageSettingsLogger.logInfo(getPrefixForLog()
 				+ getClass().getSimpleName() + " collected " + (entries!=null ? ("" + entries.size()) : "null") + " entries for " + currentResource);
-		MakeCorePlugin.log(status);
 	}
 
 	protected String determineLanguage() {

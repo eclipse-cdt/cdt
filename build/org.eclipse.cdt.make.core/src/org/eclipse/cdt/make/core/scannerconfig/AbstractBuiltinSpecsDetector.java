@@ -40,6 +40,7 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.internal.core.ConsoleOutputSniffer;
 import org.eclipse.cdt.internal.core.XmlUtil;
+import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsLogger;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.internal.core.MakeMessages;
@@ -236,18 +237,14 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	}
 
 	public void registerListener(ICConfigurationDescription cfgDescription) {
-		currentCfgDescription = cfgDescription;
-		// TODO - remove me
-		CCorePlugin.log(new Status(IStatus.INFO,CCorePlugin.PLUGIN_ID,
-				getPrefixForLog() + "Added listener [" + System.identityHashCode(this) + "] " + this));
+		LanguageSettingsLogger.logInfo(getPrefixForLog() + "registerListener [" + System.identityHashCode(this) + "] " + this);
 		
+		currentCfgDescription = cfgDescription;
 		execute();
 	}
 
 	public void unregisterListener() {
-		// TODO - remove me
-		CCorePlugin.log(new Status(IStatus.INFO,CCorePlugin.PLUGIN_ID,
-				getPrefixForLog() + "Removed listener [" + System.identityHashCode(this) + "] " + this));
+		LanguageSettingsLogger.logInfo(getPrefixForLog() + "unregisterListener [" + System.identityHashCode(this) + "] " + this);
 	}
 
 	protected void execute() {
@@ -284,9 +281,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		job.schedule();
 		
 		// TODO - remove me
-		CCorePlugin.log(new Status(IStatus.INFO,CCorePlugin.PLUGIN_ID,
-				getPrefixForLog() + "Execution scheduled [" + System.identityHashCode(this) + "] " + this));
-	
+		LanguageSettingsLogger.logInfo(getPrefixForLog() + "Execution scheduled [" + System.identityHashCode(this) + "] " + this);
 	}
 
 	/**
@@ -428,9 +423,8 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		if (detectedSettingEntries != null && detectedSettingEntries.size() > 0) {
 			collected = detectedSettingEntries.size();
 			
-			IStatus status = new Status(IStatus.INFO, MakeCorePlugin.PLUGIN_ID, getPrefixForLog()
+			LanguageSettingsLogger.logInfo(getPrefixForLog()
 					+ getClass().getSimpleName() + " collected " + detectedSettingEntries.size() + " entries" + " for language " + currentLanguageId);
-			MakeCorePlugin.log(status);
 			
 			setSettingEntries(currentCfgDescription, currentResource, currentLanguageId, detectedSettingEntries);
 		}

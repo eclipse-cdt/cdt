@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.ChangeGeneratorTest;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTArrayModifier;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLiteralExpression;
@@ -51,13 +52,14 @@ public class ArrayModifierTest extends ChangeGeneratorTest {
 					IASTArrayDeclarator arrayDeclarator = (IASTArrayDeclarator)declarator;
 					arrayDeclarator.getArrayModifiers();
 					IASTArrayModifier newModifier = new CPPASTArrayModifier();
-					IASTExpression expr = new CPPASTLiteralExpression(0, "3"); //$NON-NLS-1$
+					IASTExpression expr = new CPPASTLiteralExpression(
+							IASTLiteralExpression.lk_integer_constant, "3".toCharArray()); //$NON-NLS-1$
 					newModifier.setConstantExpression(expr);
 					ASTModification modification = new ASTModification(ModificationKind.APPEND_CHILD, declarator, newModifier, null);
 					modStore.storeModification(null, modification);
 				}
 				return PROCESS_CONTINUE;
-			}	
+			}
 		};
 	}
 	

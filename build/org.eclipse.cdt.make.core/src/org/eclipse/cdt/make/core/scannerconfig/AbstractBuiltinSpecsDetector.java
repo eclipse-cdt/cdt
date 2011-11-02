@@ -69,6 +69,8 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.w3c.dom.Element;
 
 public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSettingsOutputScanner implements ICListenerRegisterer {
+	public static final Object JOB_FAMILY_BUILTIN_SPECS_DETECTOR = "org.eclipse.cdt.make.core.scannerconfig.AbstractBuiltinSpecsDetector";
+
 	private static final int TICKS_STREAM_MONITOR = 100;
 	private static final int TICKS_CLEAN_MARKERS = 1;
 	private static final int TICKS_RUN_FOR_ONE_LANGUAGE = 10;
@@ -102,11 +104,13 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		protected static final String SCANNER_DISCOVERY_PROBLEM_MARKER = MakeCorePlugin.PLUGIN_ID + ".scanner.discovery.problem"; //$NON-NLS-1$
 		protected static final String PROVIDER = "provider"; //$NON-NLS-1$
 
+		@Override
 		public void addMarker(IResource file, int lineNumber, String errorDesc, int severity, String errorVar) {
 			ProblemMarkerInfo info = new ProblemMarkerInfo(file, lineNumber, errorDesc, severity, errorVar);
 			addMarker(info);
 		}
 
+		@Override
 		public void addMarker(final ProblemMarkerInfo problemMarkerInfo) {
 			final String providerName = getName();
 			final String providerId = getId();
@@ -164,12 +168,15 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	 *
 	 */
 	private class ConsoleParser implements ICConsoleParser {
+		@Override
 		public void startup(ICConfigurationDescription cfgDescription) throws CoreException {
 			// not used here, see instead startupForLanguage() in AbstractBuiltinSpecsDetector.runForEachLanguage(...)
 		}
+		@Override
 		public boolean processLine(String line) {
 			return AbstractBuiltinSpecsDetector.this.processLine(line, errorParserManager);
 		}
+		@Override
 		public void shutdown() {
 			// not used here, see instead shutdownForLanguage() in AbstractBuiltinSpecsDetector.runForEachLanguage(...)
 		}
@@ -236,6 +243,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		return buildDirURI;
 	}
 
+	@Override
 	public void registerListener(ICConfigurationDescription cfgDescription) {
 		LanguageSettingsLogger.logInfo(getPrefixForLog() + "registerListener [" + System.identityHashCode(this) + "] " + this);
 		
@@ -243,6 +251,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		execute();
 	}
 
+	@Override
 	public void unregisterListener() {
 		LanguageSettingsLogger.logInfo(getPrefixForLog() + "unregisterListener [" + System.identityHashCode(this) + "] " + this);
 	}
@@ -260,6 +269,10 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				return runForEachLanguage(currentCfgDescription, null, null, monitor);
+			}
+			@Override
+			public boolean belongsTo(Object family) {
+				return family == JOB_FAMILY_BUILTIN_SPECS_DETECTOR;
 			}
 		};
 		

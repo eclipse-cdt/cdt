@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.model.ILanguage;
@@ -32,6 +31,7 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsScannerInfoProvider;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.core.resources.IFile;
@@ -46,7 +46,7 @@ import org.eclipse.core.runtime.Path;
 /**
  * Test cases testing LanguageSettingsProvider functionality
  */
-public class LanguageSettingsScannerInfoProviderTests extends TestCase {
+public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 	private static final IFile FAKE_FILE = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path("/project/path0"));
 	private static final String PROVIDER_ID = "test.provider.id";
 	private static final String PROVIDER_ID_2 = "test.provider.id.2";
@@ -81,11 +81,12 @@ public class LanguageSettingsScannerInfoProviderTests extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
+		super.setUp();
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
-		ResourceHelper.cleanUp();
+		super.tearDown();
 	}
 
 	/**
@@ -176,6 +177,9 @@ public class LanguageSettingsScannerInfoProviderTests extends TestCase {
 			assertNotNull(cfgDescription);
 			ILanguage language = LanguageManager.getInstance().getLanguageForFile(file, cfgDescription);
 			assertNull(language);
+
+			// AG FIXME - temporarily ignore the entry in the log
+			setExpectedNumberOfLoggedNonOKStatusObjects(1);
 
 			ExtendedScannerInfo info = scannerInfoProvider.getScannerInformation(file);
 			assertEquals(0, info.getIncludePaths().length);

@@ -14,7 +14,6 @@ package org.eclipse.cdt.core.language.settings.providers;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.AbstractExecutableExtensionBase;
@@ -28,6 +27,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.testplugin.CModelMock;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.cdt.internal.core.settings.model.CConfigurationDescription;
 import org.eclipse.core.resources.IFile;
@@ -40,7 +40,7 @@ import org.eclipse.core.runtime.Path;
 /**
  * Test cases testing LanguageSettingsProvider functionality
  */
-public class LanguageSettingsManagerTests extends TestCase {
+public class LanguageSettingsManagerTests extends BaseTestCase {
 	// Those should match ids of plugin extensions defined in plugin.xml
 	private static final String EXTENSION_BASE_PROVIDER_ID = "org.eclipse.cdt.core.tests.language.settings.base.provider";
 	private static final String EXTENSION_EDITABLE_PROVIDER_ID = "org.eclipse.cdt.core.tests.custom.editable.language.settings.provider";
@@ -82,6 +82,7 @@ public class LanguageSettingsManagerTests extends TestCase {
 			this.entries = entries;
 		}
 
+		@Override
 		public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId) {
 			return entries;
 		}
@@ -99,12 +100,13 @@ public class LanguageSettingsManagerTests extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
+		super.setUp();
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
 		LanguageSettingsManager.setWorkspaceProviders(null);
-		ResourceHelper.cleanUp();
+		super.tearDown();
 	}
 
 	/**
@@ -231,6 +233,8 @@ public class LanguageSettingsManagerTests extends TestCase {
 		
 		// use careless provider causing an exception
 		{
+			setExpectedNumberOfLoggedNonOKStatusObjects(1);
+			
 			ILanguageSettingsProvider providerNPE = new MockProvider(PROVIDER_1, PROVIDER_NAME_1, null) {
 				@Override
 				public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId) {
@@ -270,14 +274,14 @@ public class LanguageSettingsManagerTests extends TestCase {
 
 		};
 		providers.add(providerYes);
-		// define provider returning null when configuration id matches and some entries otherwise
+		// define provider returning entries when configuration id does NOT match and null otherwise
 		ILanguageSettingsProvider providerNo = new MockProvider(PROVIDER_1, PROVIDER_NAME_1, null)  {
 			@Override
 			public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId) {
-				if (cfgDescription.getId().equals(modelCfgDescription.getId())) {
-					return null;
+				if (cfgDescription!= null && !cfgDescription.getId().equals(modelCfgDescription.getId())) {
+					return entries;
 				}
-				return entries;
+				return null;
 			}
 
 		};
@@ -376,10 +380,10 @@ public class LanguageSettingsManagerTests extends TestCase {
 		ILanguageSettingsProvider provider = new MockProvider(PROVIDER_0, PROVIDER_NAME_0, null)  {
 			@Override
 			public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId) {
-				if (rc.equals(parentFolder)) {
+				if (rc!=null && rc.equals(parentFolder)) {
 					return entries;
 				}
-				if (rc.equals(emptySettingsPath)) {
+				if (rc!=null && rc.equals(emptySettingsPath)) {
 					return new ArrayList<ICLanguageSettingEntry>(0);
 				}
 				return null;

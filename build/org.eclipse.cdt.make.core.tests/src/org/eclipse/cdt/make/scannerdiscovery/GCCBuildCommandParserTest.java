@@ -18,8 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
@@ -37,6 +35,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.cdt.make.core.scannerconfig.AbstractBuildCommandParser;
@@ -51,10 +50,11 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.content.IContentTypeSettings;
+import org.eclipse.core.runtime.jobs.Job;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-public class GCCBuildCommandParserTest extends TestCase {
+public class GCCBuildCommandParserTest extends BaseTestCase {
 	// ID of the parser taken from the extension point
 	private static final String GCC_BUILD_COMMAND_PARSER_EXT = "org.eclipse.cdt.make.core.build.command.parser.gcc"; //$NON-NLS-1$
 	
@@ -81,18 +81,20 @@ public class GCCBuildCommandParserTest extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
+		super.setUp();
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
-		ResourceHelper.cleanUp();
+		Job.getJobManager().join(AbstractBuildCommandParser.JOB_FAMILY_BUILD_COMMAND_PARSER, null);
+		super.tearDown();
 	}
 
 	private ICConfigurationDescription[] getConfigurationDescriptions(IProject project) {
 		CoreModel coreModel = CoreModel.getDefault();
 		ICProjectDescriptionManager mngr = coreModel.getProjectDescriptionManager();
 		// project description
-		ICProjectDescription projectDescription = mngr.getProjectDescription(project);
+		ICProjectDescription projectDescription = mngr.getProjectDescription(project, false);
 		assertNotNull(projectDescription);
 		assertEquals(1, projectDescription.getConfigurations().length);
 		// configuration description

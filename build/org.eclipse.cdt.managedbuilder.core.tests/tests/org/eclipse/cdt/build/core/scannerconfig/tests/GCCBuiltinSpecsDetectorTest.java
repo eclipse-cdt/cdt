@@ -13,8 +13,6 @@
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
@@ -25,6 +23,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.managedbuilder.internal.scannerconfig.GCCBuiltinSpecsDetector;
 import org.eclipse.cdt.managedbuilder.internal.scannerconfig.GCCBuiltinSpecsDetectorCygwin;
 import org.eclipse.core.resources.IProject;
@@ -32,7 +31,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
-public class GCCBuiltinSpecsDetectorTest extends TestCase {
+public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 	private static final String LANGUAGE_ID_C = GCCLanguage.ID;
 	
 	class MockGCCBuiltinSpecsDetector extends GCCBuiltinSpecsDetector {
@@ -59,11 +58,12 @@ public class GCCBuiltinSpecsDetectorTest extends TestCase {
 	
 	@Override
 	protected void setUp() throws Exception {
+		super.setUp();
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
-		ResourceHelper.cleanUp();
+		super.tearDown();
 	}
 
 	private ICConfigurationDescription[] getConfigurationDescriptions(IProject project) {

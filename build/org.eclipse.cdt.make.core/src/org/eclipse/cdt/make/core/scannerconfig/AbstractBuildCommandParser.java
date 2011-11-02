@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.ICConsoleParser;
 import org.eclipse.cdt.core.IErrorParser;
@@ -25,10 +26,10 @@ import org.eclipse.cdt.core.errorparsers.RegexErrorParser;
 import org.eclipse.cdt.core.errorparsers.RegexErrorPattern;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.internal.core.ConsoleOutputSniffer;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -45,6 +46,8 @@ import org.eclipse.core.runtime.jobs.Job;
  */
 public abstract class AbstractBuildCommandParser extends AbstractLanguageSettingsOutputScanner
 		implements ICConsoleParser, IErrorParser {
+
+	public static final Object JOB_FAMILY_BUILD_COMMAND_PARSER = "org.eclipse.cdt.make.core.scannerconfig.AbstractBuildCommandParser";
 
 	private static final String LEADING_PATH_PATTERN = "\\S+[/\\\\]"; //$NON-NLS-1$
 	private static final Pattern OPTIONS_PATTERN = Pattern.compile("-[^\\s\"']*(\\s*((\".*?\")|('.*?')|([^-\\s][^\\s]+)))?"); //$NON-NLS-1$
@@ -115,6 +118,7 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 		return options;
 	}
 
+	@Override
 	public boolean processLine(String line) {
 		return processLine(line, null);
 	}
@@ -159,11 +163,24 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 				thread.setName(oldName);
 				return status;
 			}
+			@Override
+			public boolean belongsTo(Object family) {
+				return family == JOB_FAMILY_BUILD_COMMAND_PARSER;
+			}
 		};
 		
 		ISchedulingRule rule = null;
 		if (currentProject != null) {
-			rule = currentProject.getFile(".settings/language.settings.xml");
+			IFolder settingsFolder = currentProject.getFolder(".settings");
+			if (!settingsFolder.exists()) {
+				try {
+					settingsFolder.create(true, true, null);
+					if (settingsFolder.isAccessible())
+						rule = currentProject.getFile(".settings/language.settings.xml");
+				} catch (CoreException e) {
+					CCorePlugin.log(e);
+				}
+			}
 		}
 		if (rule == null) {
 			rule = ResourcesPlugin.getWorkspace().getRoot();
@@ -193,6 +210,7 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 			}
 		}
 
+		@Override
 		public int getProcessLineBehaviour() {
 			return KEEP_LONGLINES;
 		}

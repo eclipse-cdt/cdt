@@ -14,7 +14,6 @@ package org.eclipse.cdt.core.language.settings.providers;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.settings.model.CIncludeFileEntry;
@@ -25,6 +24,7 @@ import org.eclipse.cdt.core.settings.model.CMacroEntry;
 import org.eclipse.cdt.core.settings.model.CMacroFileEntry;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsExtensionManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -33,7 +33,7 @@ import org.eclipse.core.runtime.Path;
 /**
  * Test cases testing LanguageSettingsProvider functionality
  */
-public class LanguageSettingsExtensionsTests extends TestCase {
+public class LanguageSettingsExtensionsTests extends BaseTestCase {
 	// These should match corresponding entries defined in plugin.xml
 	private static final String EXTENSION_BASE_PROVIDER_ID = "org.eclipse.cdt.core.tests.language.settings.base.provider";
 	private static final String EXTENSION_BASE_PROVIDER_NAME = "Test Plugin Mock Language Settings Base Provider";
@@ -63,10 +63,12 @@ public class LanguageSettingsExtensionsTests extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
+		super.setUp();
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
+		super.tearDown();
 	}
 
 	/**

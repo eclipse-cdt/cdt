@@ -14,7 +14,6 @@ package org.eclipse.cdt.core.language.settings.providers;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.model.CoreModel;
@@ -23,6 +22,7 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.language.settings.providers.ILanguageSettingsChangeEvent;
 import org.eclipse.cdt.internal.core.language.settings.providers.ILanguageSettingsChangeListener;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
@@ -31,7 +31,7 @@ import org.eclipse.core.resources.IProject;
 /**
  * Test cases testing LanguageSettingsProvider functionality
  */
-public class LanguageSettingsListenersTests extends TestCase {
+public class LanguageSettingsListenersTests extends BaseTestCase {
 	// Must match provider id defined as extension point 
 	private static final String EXTENSION_REGISTERER_PROVIDER_ID = "org.eclipse.cdt.core.tests.language.settings.listener.registerer.provider";
 	private static final String EXTENSION_EDITABLE_PROVIDER_ID = "org.eclipse.cdt.core.tests.custom.editable.language.settings.provider";
@@ -46,6 +46,7 @@ public class LanguageSettingsListenersTests extends TestCase {
 		private int count = 0;
 		private ILanguageSettingsChangeEvent lastEvent = null;
 		
+		@Override
 		public void handleEvent(ILanguageSettingsChangeEvent event) {
 			count++;
 			lastEvent = event;
@@ -77,13 +78,14 @@ public class LanguageSettingsListenersTests extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
+		super.setUp();
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
 		LanguageSettingsProvidersSerializer.unregisterLanguageSettingsChangeListener(mockLseListener);
 		LanguageSettingsManager.setWorkspaceProviders(null);
-		ResourceHelper.cleanUp();
+		super.tearDown();
 	}
 
 	/**

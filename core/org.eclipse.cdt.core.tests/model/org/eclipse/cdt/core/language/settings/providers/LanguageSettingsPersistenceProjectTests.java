@@ -14,7 +14,6 @@ package org.eclipse.cdt.core.language.settings.providers;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -27,6 +26,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.WriteAccessException;
 import org.eclipse.cdt.core.testplugin.CModelMock;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
@@ -39,7 +39,7 @@ import org.w3c.dom.Element;
 /**
  * Test cases testing LanguageSettingsProvider functionality
  */
-public class LanguageSettingsPersistenceProjectTests extends TestCase {
+public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	private static final String LANGUAGE_SETTINGS_PROJECT_XML = ".settings/language.settings.xml";
 	private static final String LANGUAGE_SETTINGS_WORKSPACE_XML = "language.settings.xml";
 	// Should match extension points defined in plugin.xml
@@ -128,12 +128,13 @@ public class LanguageSettingsPersistenceProjectTests extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
+		super.setUp();
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
 		LanguageSettingsManager.setWorkspaceProviders(null);
-		ResourceHelper.cleanUp();
+		super.tearDown();
 	}
 
 	/**

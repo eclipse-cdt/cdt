@@ -15,8 +15,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.CIncludeFileEntry;
@@ -31,6 +29,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.cdt.make.core.scannerconfig.AbstractBuiltinSpecsDetector;
 import org.eclipse.core.resources.IProject;
@@ -39,10 +38,11 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.jobs.Job;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-public class BuiltinSpecsDetectorTest extends TestCase {
+public class BuiltinSpecsDetectorTest extends BaseTestCase {
 	private static final String PROVIDER_ID = "provider.id";
 	private static final String PROVIDER_NAME = "provider name";
 	private static final String LANGUAGE_ID = "language.test.id";
@@ -119,18 +119,20 @@ public class BuiltinSpecsDetectorTest extends TestCase {
 	
 	@Override
 	protected void setUp() throws Exception {
+		super.setUp();
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
-		ResourceHelper.cleanUp();
+		Job.getJobManager().join(AbstractBuiltinSpecsDetector.JOB_FAMILY_BUILTIN_SPECS_DETECTOR, null);
+		super.tearDown();
 	}
 
 	private ICConfigurationDescription[] getConfigurationDescriptions(IProject project) {
 		CoreModel coreModel = CoreModel.getDefault();
 		ICProjectDescriptionManager mngr = coreModel.getProjectDescriptionManager();
 		// project description
-		ICProjectDescription projectDescription = mngr.getProjectDescription(project);
+		ICProjectDescription projectDescription = mngr.getProjectDescription(project, false);
 		assertNotNull(projectDescription);
 		assertEquals(1, projectDescription.getConfigurations().length);
 		// configuration description

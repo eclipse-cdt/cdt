@@ -14,7 +14,6 @@ package org.eclipse.cdt.core.language.settings.providers;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.settings.model.CIncludeFileEntry;
@@ -28,6 +27,7 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.testplugin.CModelMock;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -41,7 +41,7 @@ import org.w3c.dom.Element;
 /**
  * Test cases testing LanguageSettingsProvider functionality
  */
-public class LanguageSettingsSerializableTests extends TestCase {
+public class LanguageSettingsSerializableTests extends BaseTestCase {
 	private static final String CFG_ID = "test.configuration.id";
 	private static final ICConfigurationDescription MOCK_CFG = new CModelMock.DummyCConfigurationDescription(CFG_ID);
 	private static final IResource MOCK_RC = ResourcesPlugin.getWorkspace().getRoot();
@@ -70,11 +70,12 @@ public class LanguageSettingsSerializableTests extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
+		super.setUp();
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
-		ResourceHelper.cleanUp();
+		super.tearDown();
 	}
 
 	/**

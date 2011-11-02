@@ -193,7 +193,10 @@ public class LanguageSettingsProvidersSerializer {
 		 * That side effect is here to ensure atomic processing of firing & resetting the delta.
 		 */
 		public LanguageSettingsChangeEvent(ICProjectDescription prjDescription) {
-			Assert.isTrue(prjDescription.isReadOnly());
+			if (!prjDescription.isReadOnly()) {
+				String msg = "Project description " + prjDescription.getName() + " is expected to be read-only";
+				CCorePlugin.log(new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, msg, new Exception(msg)));
+			}
 
 			projectName = prjDescription.getName();
 			ICConfigurationDescription[] cfgDescriptions = prjDescription.getConfigurations();

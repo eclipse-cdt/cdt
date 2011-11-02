@@ -1,13 +1,13 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2011 IBM Corporation and others.
- *  All rights reserved. This program and the accompanying materials
- *  are made available under the terms of the Eclipse Public License v1.0
- *  which accompanies this distribution, and is available at
- *  http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  * 
- *  Contributors:
- *    Doug Schaefer (IBM) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ * Contributors:
+ *     Doug Schaefer (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -18,7 +18,6 @@ package org.eclipse.cdt.core.dom.ast;
  * @noextend This interface is not intended to be extended by clients.
  */
 public interface IASTLiteralExpression extends IASTExpression {
-
 	/**
 	 * An integer literal e.g. 5
 	 */
@@ -79,6 +78,7 @@ public interface IASTLiteralExpression extends IASTExpression {
 	 * Returns the value of the literal as string.
 	 * @since 5.1
 	 */
+	@Override
 	public String toString();
 	
 	/**
@@ -95,11 +95,13 @@ public interface IASTLiteralExpression extends IASTExpression {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IASTLiteralExpression copy();
 	
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public IASTLiteralExpression copy(CopyStyle style);
 
 	/**

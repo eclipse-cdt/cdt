@@ -2736,4 +2736,45 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//enum SomeEnum {
+	//FirstValue,// first value comment
+	//SecondValue// second value comment
+	//};
+	//enum OtherEnum {
+	//First,// first value comment
+	//Second,// second value comment
+	//};
+
+	//enum SomeEnum {
+	//    FirstValue,  // first value comment
+	//    SecondValue  // second value comment
+	//};
+	//enum OtherEnum {
+	//    First,  // first value comment
+	//    Second,  // second value comment
+	//};
+	public void testEnum() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_MIN_DISTANCE_BETWEEN_CODE_AND_LINE_COMMENT, "2");
+		assertFormatterResult();
+	}
+
+	//#define TESTING(m) ;do{}while(0)
+	//void f() {
+	//	TESTING(1);
+	//	if(Test(a) != 1) {
+	//		status = ERROR;
+	//	}
+	//}
+
+	//#define TESTING(m) ;do{}while(0)
+	//void f() {
+	//	TESTING(1);
+	//	if (Test(a) != 1) {
+	//		status = ERROR;
+	//	}
+	//}
+	public void testDoWhileInMacro_Bug359658() throws Exception {
+		assertFormatterResult();
+	}
 }

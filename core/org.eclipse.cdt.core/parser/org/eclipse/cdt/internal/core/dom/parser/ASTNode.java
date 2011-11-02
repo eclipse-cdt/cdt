@@ -35,7 +35,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.Token;
  */
 public abstract class ASTNode implements IASTNode {
 	protected static final ICPPFunction UNINITIALIZED_FUNCTION = new CPPFunction(null);
-    private static final IASTNodeLocation[] EMPTY_LOCATION_ARRAY = new IASTNodeLocation[0];
+    private static final IASTNodeLocation[] EMPTY_LOCATION_ARRAY = {};
 
     private IASTNode parent;
     private ASTNodeProperty property;
@@ -184,7 +184,8 @@ public abstract class ASTNode implements IASTNode {
     public IASTFileLocation getFileLocation() {
         if (fileLocation != null)
             return fileLocation;
-        if (offset <= 0 && (length == 0 || offset < 0)) {
+        // TODO(sprigogin): The purpose of offset == 0 && length == 0 condition is not clear to me.
+        if (offset < 0 || (offset == 0 && length == 0 && !(this instanceof IASTTranslationUnit))) {
         	return null;
         }
         IASTTranslationUnit ast = getTranslationUnit();
@@ -193,7 +194,7 @@ public abstract class ASTNode implements IASTNode {
         	if (lr != null) {
         		fileLocation= lr.getMappedFileLocation(offset, length);
         	} else {
-        		// support for old location map
+        		// Support for old location map
         		fileLocation= ast.flattenLocationsToFile(getNodeLocations());
         	}
         }

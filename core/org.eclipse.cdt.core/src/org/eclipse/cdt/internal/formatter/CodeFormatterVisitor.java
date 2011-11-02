@@ -2032,6 +2032,7 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				scribe.space();
 			}
 		}
+		scribe.printTrailingComment();
 
         if (enumIndent > braceIndent) {
             scribe.unIndent();
@@ -3032,22 +3033,24 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 		final IASTStatement action = node.getBody();
 		formatAction(line, action, preferences.brace_position_for_block);
 
-		if (peekNextToken() == Token.t_while) {
-			if (preferences.insert_new_line_before_while_in_do_statement) {
-				scribe.startNewLine();
+		if (scribe.scanner.getCurrentPosition() < getNodeEndLocation(node)) {
+			if (peekNextToken() == Token.t_while) {
+				if (preferences.insert_new_line_before_while_in_do_statement) {
+					scribe.startNewLine();
+				}
+				scribe.printNextToken(Token.t_while, preferences.insert_space_after_closing_brace_in_block);
+				scribe.printNextToken(Token.tLPAREN, preferences.insert_space_before_opening_paren_in_while);
+	
+				if (preferences.insert_space_after_opening_paren_in_while) {
+					scribe.space();
+				}
+	
+				node.getCondition().accept(this);
+	
+				scribe.printNextToken(Token.tRPAREN, preferences.insert_space_before_closing_paren_in_while);
 			}
-			scribe.printNextToken(Token.t_while, preferences.insert_space_after_closing_brace_in_block);
-			scribe.printNextToken(Token.tLPAREN, preferences.insert_space_before_opening_paren_in_while);
-
-			if (preferences.insert_space_after_opening_paren_in_while) {
-				scribe.space();
-			}
-
-			node.getCondition().accept(this);
-
-			scribe.printNextToken(Token.tRPAREN, preferences.insert_space_before_closing_paren_in_while);
+			scribe.printNextToken(Token.tSEMI, preferences.insert_space_before_semicolon);
 		}
-		scribe.printNextToken(Token.tSEMI, preferences.insert_space_before_semicolon);
 		scribe.printTrailingComment();
 		return PROCESS_SKIP;
 	}
@@ -4018,6 +4021,11 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	 */
 	private static boolean doNodesHaveSameOffset(IASTNode node1, IASTNode node2) {
 		return node1.getFileLocation().getNodeOffset() == node2.getFileLocation().getNodeOffset();
+	}
+
+	private static int getNodeEndLocation(IASTNode node) {
+		IASTFileLocation loc = node.getFileLocation();
+		return loc.getNodeOffset() + loc.getNodeLength();
 	}
 
 	private void formatBlock(IASTCompoundStatement block, String block_brace_position,

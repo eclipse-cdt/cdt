@@ -289,6 +289,17 @@ public class IndexBugsTests extends BaseTestCase {
     	return TestSourceReader.createFile(container, new Path(fileName), contents);
     }
 
+	private IIndexFile getIndexFile(IFile file) throws CoreException {
+		return getIndexFile(fIndex, file);
+	}			
+
+	private IIndexFile getIndexFile(IIndex index, IFile file) throws CoreException {
+		IIndexFile[] files = index.getFiles(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file));
+		assertTrue("Can't find " + file.getLocation(), files.length > 0);
+		assertEquals("Found " + files.length + " files for " + file.getLocation() + " instead of one", 1, files.length);
+		return files[0];
+	}			
+
 	private void waitForIndexer() throws InterruptedException {
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
 		assertTrue(indexManager.joinIndexer(INDEX_WAIT_TIME, npm()));
@@ -459,8 +470,7 @@ public class IndexBugsTests extends BaseTestCase {
 
 		fIndex.acquireReadLock();
 		try {
-			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file));
-			assertNotNull(ifile);
+			IIndexFile ifile= getIndexFile(file);
 			IIndexInclude[] includes= ifile.getIncludes();
 			assertEquals(1, includes.length);
 			IIndexInclude i= includes[0];
@@ -484,8 +494,7 @@ public class IndexBugsTests extends BaseTestCase {
 
 		fIndex.acquireReadLock();
 		try {
-			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file));
-			assertNotNull(ifile);
+			IIndexFile ifile= getIndexFile(file);
 			IIndexInclude[] includes= ifile.getIncludes();
 			assertEquals(1, includes.length);
 			IIndexInclude i= includes[0];
@@ -561,8 +570,7 @@ public class IndexBugsTests extends BaseTestCase {
 
 		fIndex.acquireReadLock();
 		try {
-			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file));
-			assertNotNull(ifile);
+			IIndexFile ifile= getIndexFile(file);
 			IIndexInclude[] includes= ifile.getIncludes();
 			assertEquals(1, includes.length);
 			IIndexInclude i= includes[0];
@@ -585,8 +593,7 @@ public class IndexBugsTests extends BaseTestCase {
 
 		fIndex.acquireReadLock();
 		try {
-			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file));
-			assertNotNull(ifile);
+			IIndexFile ifile= getIndexFile(file);
 			IIndexInclude[] includes= ifile.getIncludes();
 			assertEquals(1, includes.length);
 			IIndexInclude i= includes[0];
@@ -612,8 +619,7 @@ public class IndexBugsTests extends BaseTestCase {
 
 		fIndex.acquireReadLock();
 		try {
-			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file));
-			assertNotNull(ifile);
+			IIndexFile ifile= getIndexFile(file);
 			IIndexMacro[] macros= ifile.getMacros();
 			assertEquals(3, macros.length);
 			IIndexMacro m= macros[0];
@@ -1116,7 +1122,7 @@ public class IndexBugsTests extends BaseTestCase {
 	// #endif
 
 	// #ifndef _h1
-	// #include "header1.h"
+	// #include "header1.h"   // is inactive, but must be resolved
 	// #endif
 
 	// #include "header1.h"
@@ -1127,7 +1133,7 @@ public class IndexBugsTests extends BaseTestCase {
 
 	// #include "header2.h"
 	// #ifndef _h1
-	// #include "header1.h"
+	// #include "header1.h"   // inactive but resolved.
 	// #endif
 	public void testIncludeGuardsOutsideOfHeader_Bug167100() throws Exception {
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
@@ -1152,13 +1158,15 @@ public class IndexBugsTests extends BaseTestCase {
 			assertEquals(1, names.length);
 			assertEquals(f4.getFullPath().toString(), names[0].getFile().getLocation().getFullPath());
 
-			IIndexFile idxFile= index.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(f5));
+			IIndexFile[] idxFiles= index.getFiles(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(f5));
+			assertEquals(1, idxFiles.length);
+			IIndexFile idxFile= idxFiles[0];
 			IIndexInclude[] includes= idxFile.getIncludes();
 			assertEquals(2, includes.length);
 			assertTrue(includes[0].isActive());
 			assertTrue(includes[0].isResolved());
 			assertFalse(includes[1].isActive());
-			assertTrue(includes[1].isResolved());
+			// includes[1].isResolved()); May or may not be resolved.
 		} finally {
 			index.releaseReadLock();
 		}
@@ -1658,11 +1666,11 @@ public class IndexBugsTests extends BaseTestCase {
 		waitForIndexer();
 		fIndex.acquireReadLock();
 		try {
-			IIndexFile f= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(f1));
+			IIndexFile f= getIndexFile(f1);
 			IIndexInclude i= f.getIncludes()[0];
 			assertTrue(i.isResolvedByHeuristics());
 
-			f= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(f2));
+			f= getIndexFile(f2);
 			i= f.getIncludes()[0];
 			assertFalse(i.isResolvedByHeuristics());
 		} finally {
@@ -1683,7 +1691,7 @@ public class IndexBugsTests extends BaseTestCase {
 		waitForIndexer();
 		fIndex.acquireReadLock();
 		try {
-			IIndexFile f= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(f1));
+			IIndexFile f= getIndexFile(f1);
 			IIndexInclude[] is= f.getIncludes();
 			assertFalse(is[0].isResolved());
 			assertTrue(is[1].isResolvedByHeuristics());
@@ -1702,12 +1710,12 @@ public class IndexBugsTests extends BaseTestCase {
 	// int aOK;
 	// #endif /* A_H_ */
 
+	// #ifndef B_H_
+	// #define B_H_
 	// #ifndef A_H_
 	// #include "a.h"
 	// #endif
 	//
-	// #ifndef B_H_
-	// #define B_H_
 	// int bOK;
 	// #endif
 
@@ -2125,7 +2133,7 @@ public class IndexBugsTests extends BaseTestCase {
 		IIndex index= indexManager.getIndex(fCProject);
 		index.acquireReadLock();
 		try {
-			IIndexFile file= index.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(f));
+			IIndexFile file= getIndexFile(index, f);
 			// check order of includes
 			IIndexInclude[] incs = file.getIncludes();
 			assertEquals(2, incs.length);
@@ -2157,7 +2165,7 @@ public class IndexBugsTests extends BaseTestCase {
 		IIndex index= indexManager.getIndex(fCProject);
 		index.acquireReadLock();
 		try {
-			IIndexFile file= index.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(f));
+			IIndexFile file= getIndexFile(index, f);
 			int idx= testData.indexOf("f(");
 			IIndexName[] names = file.findNames(idx, idx+1);
 			assertEquals(1, names.length);

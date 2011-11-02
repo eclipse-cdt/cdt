@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -54,8 +55,18 @@ final public class EmptyCIndex implements IIndex {
 		return IIndexFragmentName.EMPTY_NAME_ARRAY;
 	}
 
+	@Deprecated
 	public IIndexFile getFile(int linkageID, IIndexFileLocation location) {
 		return null;
+	}
+
+	public IIndexFile getFile(int linkageID, IIndexFileLocation location,
+			ISignificantMacros significantFiles) throws CoreException {
+		return null;
+	}
+
+	public IIndexFile[] getFiles(int linkageID, IIndexFileLocation location) throws CoreException {
+		return IIndexFile.EMPTY_FILE_ARRAY;
 	}
 
 	public IIndexFile[] getFiles(IIndexFileLocation location) {

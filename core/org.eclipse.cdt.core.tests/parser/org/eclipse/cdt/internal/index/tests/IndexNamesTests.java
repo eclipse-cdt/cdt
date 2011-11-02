@@ -88,6 +88,13 @@ public class IndexNamesTests extends BaseTestCase {
 		return result;
 	}
 
+	private IIndexFile getIndexFile(int linkageID, IFile file) throws CoreException {
+		IIndexFile[] files = fIndex.getFiles(linkageID, IndexLocationFactory.getWorkspaceIFL(file));
+		assertTrue("Can't find " + file.getLocation(), files.length > 0);
+		assertEquals("Found " + files.length + " files for " + file.getLocation() + " instead of one", 1, files.length);
+		return files[0];
+	}
+
 	protected void waitUntilFileIsIndexed(IFile file, int time) throws Exception {
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, time);
 	}
@@ -263,7 +270,7 @@ public class IndexNamesTests extends BaseTestCase {
 
 		fIndex.acquireReadLock();
 		try {
-			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file));
+			IIndexFile ifile= getIndexFile(ILinkage.CPP_LINKAGE_ID, file);
 			IIndexName[] names= ifile.findNames(0, content.length());
 			int j= 0;
 			for (IIndexName indexName : names) {
@@ -321,7 +328,7 @@ public class IndexNamesTests extends BaseTestCase {
 			CoreException {
 		fIndex.acquireReadLock();
 		try {
-			IIndexFile ifile= fIndex.getFile(linkageID, IndexLocationFactory.getWorkspaceIFL(file));
+			IIndexFile ifile= getIndexFile(linkageID, file);
 			IIndexName[] names= ifile.findNames(0, Integer.MAX_VALUE);
 			int j= 0;
 			for (IIndexName indexName : names) {

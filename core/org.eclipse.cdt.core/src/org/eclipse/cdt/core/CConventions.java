@@ -371,7 +371,7 @@ public class CConventions {
 	}
 	
 	private static boolean isLegalFilename(String name) {
-		if (name == null || name.length() == 0) {
+		if (name == null || name.isEmpty()) {
 			return false;
 		}
 

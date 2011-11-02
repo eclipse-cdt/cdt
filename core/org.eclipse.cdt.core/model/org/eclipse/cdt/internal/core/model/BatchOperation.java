@@ -56,6 +56,4 @@ public class BatchOperation extends CModelOperation {
 		// cannot verify user defined operation
 		return CModelStatus.VERIFIED_OK;
 	}
-
-	
 }

@@ -13,5 +13,5 @@ Export-Package: org.eclipse.cdt.codan.core.cxx,
  org.eclipse.cdt.codan.core.cxx.internal.model;x-friends:="org.eclipse.cdt.codan.checkers.ui,org.eclipse.cdt.codan.ui,org.eclipse.cdt.codan.ui.cxx",
  org.eclipse.cdt.codan.core.cxx.internal.model.cfg;x-friends:="org.eclipse.cdt.codan.core.test",
  org.eclipse.cdt.codan.core.cxx.model
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: %Bundle-Vendor

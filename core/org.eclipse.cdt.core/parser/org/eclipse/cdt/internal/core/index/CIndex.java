@@ -17,13 +17,12 @@ package org.eclipse.cdt.internal.core.index;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.BitSet;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -42,6 +41,7 @@ import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.index.composite.CompositingNotImplementedError;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
@@ -64,6 +64,14 @@ public class CIndex implements IIndex {
 	private int fReadLock;
 	private ICompositesFactory cppCF, cCF, fCF;
 
+	/**
+	 * Creates an index consisting of one or more fragments.
+	 * 
+	 * @param fragments Fragments constituting the index. If there are extended fragments,
+	 * they are located in the array after the PDOM fragments for the same project. 
+	 * @param primaryFragmentCount The number of primary index fragments. This number may include
+	 *     extended fragments.
+	 */
 	public CIndex(IIndexFragment[] fragments, int primaryFragmentCount) {
 		fFragments= fragments;
 		fPrimaryFragmentCount= primaryFragmentCount;
@@ -108,7 +116,8 @@ public class CIndex implements IIndex {
 					IIndexFragmentBinding[][] fragmentBindings = new IIndexFragmentBinding[fPrimaryFragmentCount][];
 					for (int i = 0; i < fPrimaryFragmentCount; i++) {
 						try {
-							IBinding[] part = fFragments[i].findBindings(patterns, isFullyQualified, retargetFilter(linkage, filter), monitor);
+							IBinding[] part = fFragments[i].findBindings(patterns, isFullyQualified,
+									retargetFilter(linkage, filter), monitor);
 							fragmentBindings[i] = new IIndexFragmentBinding[part.length];
 							System.arraycopy(part, 0, fragmentBindings[i], 0, part.length);
 						} catch (CoreException e) {
@@ -170,29 +179,47 @@ public class CIndex implements IIndex {
 			binding= bindings[0];
 		}
 
-		int fragCount= 0;
+		// Maps a file location to -1 if the file belongs to an earlier index fragment,
+		// or to the index of the last checked index fragment plus one, if the file doesn't belong
+		// to any of the index fragments up to the last checked one.
+		HashMap<IIndexFileLocation, Integer> fileCheckCache = new HashMap<IIndexFileLocation, Integer>();
 		for (int i = 0; i < fPrimaryFragmentCount; i++) {
-			final IIndexFragmentName[] names = fFragments[i].findNames(binding, flags);
-			if (names.length > 0) {
-				result.addAll(Arrays.asList(names));
-				fragCount++;
-			}
-		}
-		// bug 192352, files can reside in multiple fragments, remove duplicates
-		if (fragCount > 1 || (flags & IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES) != 0) {
-			HashMap<String, IIndexFile> fileMap= new HashMap<String, IIndexFile>();
-			for (Iterator<IIndexFragmentName> iterator = result.iterator(); iterator.hasNext();) {
-				final IIndexFragmentName name = iterator.next();
-				final IIndexFile file= name.getFile();
-				final String fileKey= name.getFile().getLocation().getURI().toString();
-				final IIndexFile otherFile= fileMap.get(fileKey);
-				if (otherFile == null) {
-					fileMap.put(fileKey, file);
-				} else if (!otherFile.equals(file)) { // same file in another fragment
-					iterator.remove();
+			IIndexFragment fragment = fFragments[i];
+			final IIndexFragmentName[] names = fragment.findNames(binding, flags);
+			for (IIndexFragmentName name : names) {
+				IIndexFileLocation location = name.getFile().getLocation();
+				Integer checkState = fileCheckCache.get(location);
+				int checkOffset = checkState == null ? 0 : checkState.intValue();
+				if (checkOffset >= 0) {
+					for (; checkOffset < i; checkOffset++) {
+						IIndexFragment fragment2 = fFragments[checkOffset];
+						if (fragment2.getFiles(location).length != 0) {
+							checkOffset = -1;
+							break;
+						}
+					}
+					fileCheckCache.put(location, Integer.valueOf(checkOffset));
+				}
+				if (checkOffset == i) {
+					result.add(name);
 				}
 			}
 		}
+//		// bug 192352, files can reside in multiple fragments, remove duplicates
+//		if (fragCount > 1 || (flags & IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES) != 0) {
+//			HashMap<String, IIndexFile> fileMap= new HashMap<String, IIndexFile>();
+//			for (Iterator<IIndexFragmentName> iterator = result.iterator(); iterator.hasNext();) {
+//				final IIndexFragmentName name = iterator.next();
+//				final IIndexFile file= name.getFile();
+//				final String fileKey= name.getFile().getLocation().getURI().toString();
+//				final IIndexFile otherFile= fileMap.get(fileKey);
+//				if (otherFile == null) {
+//					fileMap.put(fileKey, file);
+//				} else if (!otherFile.equals(file)) { // same file in another fragment
+//					iterator.remove();
+//				}
+//			}
+//		}
 		return result.toArray(new IIndexName[result.size()]);
 	}
 
@@ -208,6 +235,7 @@ public class CIndex implements IIndex {
 		return findNames(binding, FIND_REFERENCES);
 	}
 
+	@Deprecated
 	public IIndexFile getFile(int linkageID, IIndexFileLocation location) throws CoreException {
 		for (int i = 0; i < fPrimaryFragmentCount; i++) {
 			IIndexFragmentFile candidate= fFragments[i].getFile(linkageID, location);
@@ -218,19 +246,53 @@ public class CIndex implements IIndex {
 		return null;
 	}
 
+	public IIndexFile getFile(int linkageID, IIndexFileLocation location,
+			ISignificantMacros significantMacros) throws CoreException {
+		for (int i = 0; i < fPrimaryFragmentCount; i++) {
+			IIndexFragmentFile candidate= fFragments[i].getFile(linkageID, location, significantMacros);
+			if (candidate != null && candidate.hasContent()) {
+				return candidate;
+			}
+		}
+		return null;
+	}
+
+	public IIndexFile[] getFiles(int linkageID, IIndexFileLocation location) throws CoreException {
+		if (location == null) {
+			return IIndexFile.EMPTY_FILE_ARRAY;
+		}
+		Set<ISignificantMacros> handled = new HashSet<ISignificantMacros>();
+		ArrayList<IIndexFragmentFile> result= new ArrayList<IIndexFragmentFile>();
+		for (int i = 0; i < fPrimaryFragmentCount; i++) {
+			IIndexFragmentFile[] candidates= fFragments[i].getFiles(linkageID, location);
+			for (IIndexFragmentFile candidate : candidates) {
+				if (candidate.hasContent()) {
+					ISignificantMacros macroKey = candidate.getSignificantMacros();
+					if (handled.add(macroKey)) {
+						result.add(candidate);
+					}
+				}
+			}
+		}
+		if (result.isEmpty()) {
+			return IIndexFile.EMPTY_FILE_ARRAY;
+		}
+		return result.toArray(new IIndexFile[result.size()]);
+	}
+
 	public IIndexFile[] getFiles(IIndexFileLocation location) throws CoreException {
 		if (location == null) {
 			return IIndexFile.EMPTY_FILE_ARRAY;
 		}
+		Set<FileContentKey> keys = new HashSet<FileContentKey>();
 		ArrayList<IIndexFragmentFile> result= new ArrayList<IIndexFragmentFile>();
-		BitSet linkages= new BitSet();
 		for (int i = 0; i < fPrimaryFragmentCount; i++) {
 			IIndexFragmentFile[] candidates= fFragments[i].getFiles(location);
 			for (IIndexFragmentFile candidate : candidates) {
-				int linkage= candidate.getLinkageID();
-				if (!linkages.get(linkage) && candidate.hasContent()) {
-					result.add(candidate);
-					linkages.set(linkage);
+				if (candidate.hasContent()) {
+					if (keys.add(new FileContentKey(candidate.getLinkageID(), candidate.getLocation(), candidate.getSignificantMacros()))) {
+						result.add(candidate);
+					}
 				}
 			}
 		}
@@ -241,16 +303,16 @@ public class CIndex implements IIndex {
 	}
 
 	public IIndexFile resolveInclude(IIndexInclude include) throws CoreException {
-		if (!include.isResolved()) {
-			return null;
-		}
 		IIndexFragmentInclude fragmentInclude = (IIndexFragmentInclude) include;
 		IIndexFragmentFile result= fragmentInclude.getIncludes();
-		if (result != null && result.hasContent()) {
+		if (result == null)
+			return null;
+		
+		if (result.hasContent()) {
 			return result;
 		}
 
-		return getFile(include.getIncludedBy().getLinkageID(), include.getIncludesLocation());
+		return getFile(result.getLinkageID(), result.getLocation(), result.getSignificantMacros());
 	}
 
 	public IIndexInclude[] findIncludedBy(IIndexFile file) throws CoreException {
@@ -259,22 +321,25 @@ public class CIndex implements IIndex {
 
 	public IIndexInclude[] findIncludedBy(IIndexFile file, int depth) throws CoreException {
 		List<IIndexInclude> result= new ArrayList<IIndexInclude>();
-		findIncludedBy(Collections.singletonList(file), result, depth, new HashSet<IIndexFileLocation>());
+		findIncludedBy(file.getLinkageID(), Collections.singletonList(file), result, depth,
+				new HashSet<FileContentKey>());
 		return result.toArray(new IIndexInclude[result.size()]);
 	}
 
-	public void findIncludedBy(List<IIndexFile> in, List<IIndexInclude> out, int depth,
-			HashSet<IIndexFileLocation> handled) throws CoreException {
+	public void findIncludedBy(int linkageID, List<IIndexFile> in, List<IIndexInclude> out, int depth,
+			HashSet<FileContentKey> handled) throws CoreException {
 		List<IIndexFile> nextLevel= depth != 0 ? new LinkedList<IIndexFile>() : null;
 		for (IIndexFile iIndexFile : in) {
 			IIndexFragmentFile file = (IIndexFragmentFile) iIndexFile;
 			for (int j = 0; j < fPrimaryFragmentCount; j++) {
 				IIndexInclude[] includedBy= fFragments[j].findIncludedBy(file);
 				for (IIndexInclude include : includedBy) {
-					if (handled.add(include.getIncludedByLocation())) {
+					final IIndexFile includer = include.getIncludedBy();
+					FileContentKey key= new FileContentKey(linkageID, includer.getLocation(), includer.getSignificantMacros());
+					if (handled.add(key)) {
 						out.add(include);
 						if (nextLevel != null) {
-							nextLevel.add(include.getIncludedBy());
+							nextLevel.add(includer);
 						}
 					}
 				}
@@ -286,9 +351,8 @@ public class CIndex implements IIndex {
 		if (depth > 0) {
 			depth--;
 		}
-		findIncludedBy(nextLevel, out, depth, handled);
+		findIncludedBy(linkageID, nextLevel, out, depth, handled);
 	}
-
 
 	public IIndexInclude[] findIncludes(IIndexFile file) throws CoreException {
 		return findIncludes(file, 0);
@@ -398,8 +462,8 @@ public class CIndex implements IIndex {
 					IIndexFragmentBinding[][] fragmentBindings = new IIndexFragmentBinding[fPrimaryFragmentCount][];
 					for (int i = 0; i < fPrimaryFragmentCount; i++) {
 						try {
-							IBinding[] part = fFragments[i].findBindings(names, retargetFilter(linkage, filter),
-									new SubProgressMonitor(monitor, 1));
+							IBinding[] part = fFragments[i].findBindings(names,
+									retargetFilter(linkage, filter), new SubProgressMonitor(monitor, 1));
 							fragmentBindings[i] = new IIndexFragmentBinding[part.length];
 							System.arraycopy(part, 0, fragmentBindings[i], 0, part.length);
 						} catch (CoreException e) {

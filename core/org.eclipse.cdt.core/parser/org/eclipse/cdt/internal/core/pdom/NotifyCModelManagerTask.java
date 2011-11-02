@@ -31,14 +31,17 @@ public class NotifyCModelManagerTask implements IPDOMIndexerTask {
 		fProject= project;
 	}
 
+	@Override
 	public IPDOMIndexer getIndexer() {
 		return null;
 	}
 
+	@Override
 	public IndexerProgress getProgressInformation() {
 		return new IndexerProgress();
 	}
 
+	@Override
 	public void run(IProgressMonitor monitor) throws InterruptedException {
 		IContentType ct1= Platform.getContentTypeManager().getContentType(CCorePlugin.CONTENT_TYPE_CXXHEADER);
 		IContentType ct2= Platform.getContentTypeManager().getContentType(CCorePlugin.CONTENT_TYPE_CXXSOURCE);
@@ -51,6 +54,7 @@ public class NotifyCModelManagerTask implements IPDOMIndexerTask {
 		}
 	}
 
+	@Override
 	public boolean acceptUrgentTask(IPDOMIndexerTask task) {
 		return false;
 	}

@@ -6,13 +6,16 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Ferguson (Symbian) - Initial implementation
- *    IBM Corporation
- *    Markus Schorn (Wind River Systems)
+ *     Andrew Ferguson (Symbian) - Initial implementation
+ *     IBM Corporation
+ *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
@@ -81,14 +84,19 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	}
 	
 	protected IASTName findName(String section, int len) {
-		IASTTranslationUnit ast = strategy.getAst();
-		final IASTNodeSelector nodeSelector = ast.getNodeSelector(null);
-		final int offset = strategy.getTestData()[1].indexOf(section);
-		IASTName name= nodeSelector.findName(offset, len);
-		if (name == null)
-			name= nodeSelector.findImplicitName(offset, len);
+		for (int i = 0; i < strategy.getAstCount(); i++) {
+			IASTTranslationUnit ast = strategy.getAst(i);
+			final IASTNodeSelector nodeSelector = ast.getNodeSelector(null);
+			final int offset = strategy.getAstSource(i).indexOf(section);
+			if (offset >= 0) {
+				IASTName name= nodeSelector.findName(offset, len);
+				if (name == null)
+					name= nodeSelector.findImplicitName(offset, len);
+				return name;
+			}
+		}
 		
-		return name;
+		return null;
 	}
 	
 	/**
@@ -210,7 +218,9 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		IIndex getIndex();
 		void setUp() throws Exception;
 		void tearDown() throws Exception;
-		public IASTTranslationUnit getAst();
+		public int getAstCount();
+		public IASTTranslationUnit getAst(int index);
+		public StringBuilder getAstSource(int index);
 		public StringBuilder[] getTestData();
 		public ICProject getCProject();
 		public boolean isCompositeIndex();
@@ -258,13 +268,25 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 			return testData;
 		}
 
-		public IASTTranslationUnit getAst() {
+		public int getAstCount() {
+			return 1;
+		}
+
+		public IASTTranslationUnit getAst(int index) {
+			if (index != 0)
+				throw new IllegalArgumentException();
 			return ast;
 		}
 
+		public StringBuilder getAstSource(int index) {
+			if (index != 0)
+				throw new IllegalArgumentException();
+			return testData[1];
+		}
+
 		public void setUp() throws Exception {
-			cproject = cpp ? CProjectHelper.createCCProject(getName()+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER) 
-					: CProjectHelper.createCProject(getName()+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
+			cproject = cpp ? CProjectHelper.createCCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER) 
+					: CProjectHelper.createCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
 			Bundle b = CTestPlugin.getDefault().getBundle();
 			testData = TestSourceReader.getContentsForTest(b, "parser", IndexBindingResolutionTestBase.this.getClass(), getName(), 2);
 
@@ -275,7 +297,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 			assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
 
 			if (DEBUG) {
-				System.out.println("Project PDOM: "+getName());
+				System.out.println("Project PDOM: " + getName());
 				((PDOM)CCoreInternals.getPDOMManager().getPDOM(cproject)).accept(new PDOMPrettyPrinter());
 			}
 
@@ -304,7 +326,6 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		}
 	}
 
-
 	class SinglePDOMTestStrategy implements ITestStrategy {
 		private IIndex index;
 		private ICProject cproject;
@@ -324,8 +345,20 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 			return testData;
 		}
 
-		public IASTTranslationUnit getAst() {
+		public int getAstCount() {
+			return 1;
+		}
+
+		public IASTTranslationUnit getAst(int index) {
+			if (index != 0)
+				throw new IllegalArgumentException();
 			return ast;
+		}
+
+		public StringBuilder getAstSource(int index) {
+			if (index != 0)
+				throw new IllegalArgumentException();
+			return testData[1];
 		}
 
 		public void setUp() throws Exception {
@@ -350,6 +383,108 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 
 			index.acquireReadLock();
 			ast = TestSourceReader.createIndexBasedAST(index, cproject, cppfile);
+		}
+
+		public void tearDown() throws Exception {
+			if (index != null) {
+				index.releaseReadLock();
+			}
+			if (cproject != null) {
+				cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+			}
+		}
+
+		public IIndex getIndex() {
+			return index;
+		}
+		
+		public boolean isCompositeIndex() {
+			return false;
+		}
+	}
+
+	/**
+	 * This strategy allows tests to create an arbitrary number of header and source files
+	 * and to obtain ASTs of any subset of the created files.
+	 *
+	 * The first line of each comment section preceding the test contains the name of the file
+	 * to put the contents of the section to. To request the AST of a file, put an asterisk after
+	 * the file name.
+	 */
+	class SinglePDOMTestNamedFilesStrategy implements ITestStrategy {
+		private IIndex index;
+		private ICProject cproject;
+		private StringBuilder[] testData;
+		private final List<StringBuilder> astSources;
+		private final List<IASTTranslationUnit> asts;
+		private final boolean cpp;
+
+		public SinglePDOMTestNamedFilesStrategy(boolean cpp) {
+			this.cpp = cpp;
+			astSources = new ArrayList<StringBuilder>();
+			asts = new ArrayList<IASTTranslationUnit>();
+		}
+
+		public ICProject getCProject() {
+			return cproject;
+		}
+
+		public StringBuilder[] getTestData() {
+			return testData;
+		}
+
+		public int getAstCount() {
+			return asts.size();
+		}
+
+		public IASTTranslationUnit getAst(int index) {
+			return asts.get(index);
+		}
+
+		public StringBuilder getAstSource(int index) {
+			return astSources.get(index);
+		}
+
+		public void setUp() throws Exception {
+			cproject = cpp ? CProjectHelper.createCCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER) 
+					: CProjectHelper.createCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
+			Bundle b = CTestPlugin.getDefault().getBundle();
+			testData = TestSourceReader.getContentsForTest(b, "parser", IndexBindingResolutionTestBase.this.getClass(), getName(), 0);
+
+			List<IFile> astFiles = new ArrayList<IFile>();
+			for (int i = 0; i < testData.length; i++) {
+				StringBuilder contents = testData[i];
+				int endOfLine = contents.indexOf("\n");
+				if (endOfLine >= 0)
+					endOfLine++;
+				else
+					endOfLine = contents.length();
+				String filename = contents.substring(0, endOfLine).trim();
+				contents.delete(0, endOfLine);  // Remove first line from the file contents
+				boolean astRequested = filename.endsWith("*");
+				if (astRequested) {
+					filename = filename.substring(0, filename.length() - 1).trim();
+				}
+				IFile file = TestSourceReader.createFile(cproject.getProject(), new Path(filename), contents.toString());
+				if (astRequested || (i == testData.length - 1 && astFiles.isEmpty())) {
+					astSources.add(contents);
+					astFiles.add(file);
+				}
+			}
+			CCorePlugin.getIndexManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);
+			assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
+			
+			if (DEBUG) {
+				System.out.println("Project PDOM: "+getName());
+				((PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject)).accept(new PDOMPrettyPrinter());
+			}
+
+			index= CCorePlugin.getIndexManager().getIndex(cproject);
+
+			index.acquireReadLock();
+			for (IFile file : astFiles) {
+				asts.add(TestSourceReader.createIndexBasedAST(index, cproject, file));
+			}
 		}
 
 		public void tearDown() throws Exception {
@@ -445,8 +580,20 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 			return referenced;
 		}
 
-		public IASTTranslationUnit getAst() {
+		public int getAstCount() {
+			return 1;
+		}
+
+		public IASTTranslationUnit getAst(int index) {
+			if (index != 0)
+				throw new IllegalArgumentException();
 			return ast;
+		}
+
+		public StringBuilder getAstSource(int index) {
+			if (index != 0)
+				throw new IllegalArgumentException();
+			return testData[1];
 		}
 
 		public IIndex getIndex() {

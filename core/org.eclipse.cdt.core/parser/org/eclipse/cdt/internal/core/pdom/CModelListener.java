@@ -50,6 +50,7 @@ public class CModelListener implements IElementChangedListener, IResourceChangeL
 		fManager= manager;
 	}
 
+	@Override
 	public void elementChanged(ElementChangedEvent event) {
 		// Only respond to post change events
 		if (event.getType() != ElementChangedEvent.POST_CHANGE)
@@ -151,6 +152,7 @@ public class CModelListener implements IElementChangedListener, IResourceChangeL
 		}
 	}
 
+	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		if (event.getType() == IResourceChangeEvent.POST_BUILD) {
 			fManager.handlePostBuildEvent();

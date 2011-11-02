@@ -27,7 +27,8 @@ public class EmptyFilesProvider extends InternalFileContentProvider {
 	}
 
 	@Override
-	public InternalFileContent getContentForInclusion(String path) {
+	public InternalFileContent getContentForInclusion(String path, 
+			IMacroDictionary macroDictionary) {
 		if (!getInclusionExists(path))
 			return null;
 		

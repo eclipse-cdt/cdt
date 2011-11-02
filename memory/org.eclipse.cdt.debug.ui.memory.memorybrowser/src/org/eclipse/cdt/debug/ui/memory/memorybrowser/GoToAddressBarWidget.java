@@ -62,7 +62,6 @@ public class GoToAddressBarWidget {
 	private Button fOKButton;
 	private Button fOKNewTabButton;
 	private Composite fComposite;
-	private Object fCurrentDebugContext;
 	
 	protected static int ID_GO_NEW_TAB = 2000;
 	
@@ -268,22 +267,20 @@ public class GoToAddressBarWidget {
 	 */
 	public void loadSavedExpressions(Object context, String memorySpace)
 	{
-		if ( context != null && ! context.equals( fCurrentDebugContext ) ) {
-			try {
-				String[] expressions = getSavedExpressions(context, memorySpace);
-				String currentExpression = fExpression.getText(); 
-				fExpression.removeAll();
-				for (String expression : expressions) {
-					fExpression.add(expression);
-				}
-				if (currentExpression != null) {
-					fExpression.setText(currentExpression);
-				}
-				fCurrentDebugContext = context;
-			} catch (CoreException e) {
-				// Unexpected snag dealing with launch configuration
-				MemoryBrowserPlugin.log(e);
+		try {
+			String[] expressions = getSavedExpressions(context, memorySpace);
+			String currentExpression = fExpression.getText(); 
+			fExpression.removeAll();
+			for (String expression : expressions) {
+				fExpression.add(expression);
 			}
+			if (currentExpression != null) {
+				fExpression.setText(currentExpression);
+			}
+			System.out.println("GoToAddressBarWidget: set context field to " + context);
+		} catch (CoreException e) {
+			// Unexpected snag dealing with launch configuration
+			MemoryBrowserPlugin.log(e);
 		}
 	}
 	

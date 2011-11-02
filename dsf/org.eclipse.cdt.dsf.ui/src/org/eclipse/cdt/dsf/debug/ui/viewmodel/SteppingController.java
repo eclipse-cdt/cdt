@@ -13,6 +13,7 @@ package org.eclipse.cdt.dsf.debug.ui.viewmodel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -117,6 +118,28 @@ public final class SteppingController {
         }
     }
 
+	private class TimeOutRunnable extends DsfRunnable{
+		
+		TimeOutRunnable(IExecutionDMContext dmc) {
+			fDmc = dmc;
+		}
+		
+		private final IExecutionDMContext fDmc;
+		
+		public void run() {
+			fTimedOutFutures.remove(fDmc);
+
+            if (getSession().isActive()) {
+                fTimedOutFlags.put(fDmc, Boolean.TRUE);
+                enableStepping(fDmc);
+                // Issue the stepping time-out event.
+                getSession().dispatchEvent(
+                    new SteppingTimedOutEvent(fDmc), 
+                    null);
+            }
+        }
+	}
+	
 	private final DsfSession fSession;
 	private final DsfServicesTracker fServicesTracker;
 
@@ -407,6 +430,16 @@ public final class SteppingController {
         
 		getRunControl().step(execCtx, stepType, new RequestMonitor(getExecutor(), null) {
 		    @Override
+		    protected void handleSuccess() {
+	            fTimedOutFlags.remove(execCtx);
+	            ScheduledFuture<?> currentTimeOutFuture = fTimedOutFutures.get(execCtx);
+	            if (currentTimeOutFuture != null) {
+	            	currentTimeOutFuture.cancel(false);
+	            }
+	            fTimedOutFutures.put(execCtx, getExecutor().schedule(new TimeOutRunnable(execCtx), fStepTimeout, TimeUnit.MILLISECONDS));
+		    }
+		    
+		    @Override
 		    protected void handleFailure() {
 		    	// in case of a failed step - enable stepping again (bug 265267)
 		    	enableStepping(execCtx);
@@ -577,15 +610,40 @@ public final class SteppingController {
     @DsfServiceEventHandler 
     public void eventDispatched(final ISuspendedDMEvent e) {
         // Take care of the stepping time out
+    	boolean timedOut = false;
         IExecutionDMContext dmc = e.getDMContext();
-		boolean timedout = fTimedOutFlags.remove(dmc) == Boolean.TRUE;
-        ScheduledFuture<?> future = fTimedOutFutures.remove(dmc); 
-        if (future != null) future.cancel(false);
+        for (Iterator<Map.Entry<IExecutionDMContext, Boolean>> itr = fTimedOutFlags.entrySet().iterator(); itr.hasNext();) {
+            Map.Entry<IExecutionDMContext,Boolean> entry = itr.next();
+            IExecutionDMContext nextDmc = entry.getKey();
+            if (nextDmc.equals(dmc) || DMContexts.isAncestorOf(nextDmc, dmc)) {
+                if (entry.getValue()) {
+                    // after step timeout do not process queued steps
+                    fStepQueues.remove(dmc);
+                    timedOut = true;
+                }
+                itr.remove();
+            }
+        }
         
-        if (timedout || e.getReason() != StateChangeReason.STEP) {
-        	// after step timeout or any other suspend reason do not process queued steps
+        // Cancel all time-out futures related to the event context.  I.e.
+        // - If event is on a container, all child threads are suspended and 
+        // should not issue a stepping time-out event.
+        // - If event is on a thread, and resumed event was on a container then 
+        // stepping timeout for container should be canceled as it would affect
+        // suspended thread.
+        for (Iterator<Map.Entry<IExecutionDMContext, ScheduledFuture<?>>> itr = fTimedOutFutures.entrySet().iterator(); itr.hasNext();) {
+            Map.Entry<IExecutionDMContext, ScheduledFuture<?>> entry = itr.next();
+            IExecutionDMContext nextDmc = entry.getKey();
+            if (nextDmc.equals(dmc) || DMContexts.isAncestorOf(nextDmc, dmc) || DMContexts.isAncestorOf(dmc, nextDmc)) {
+                entry.getValue().cancel(false);
+                itr.remove();
+            }            
+        }
+        
+        if (e.getReason() != StateChangeReason.STEP) {
+        	// after any non-step suspend reason do not process queued steps for given context
         	fStepQueues.remove(dmc);
-        } else {
+        } else if (!timedOut){
         	// Check if there's a step pending, if so execute it
         	processStepQueue(dmc);
         }
@@ -595,29 +653,22 @@ public final class SteppingController {
     public void eventDispatched(final IResumedDMEvent e) {
         if (e.getReason().equals(StateChangeReason.STEP)) {
             final IExecutionDMContext dmc = e.getDMContext();
-            fTimedOutFlags.put(dmc, Boolean.FALSE);
-            // We shouldn't have a stepping timeout running unless we get two 
-            // stepping events in a row without a suspended, which would be a 
-            // protocol error.
-            assert !fTimedOutFutures.containsKey(dmc);
-            fTimedOutFutures.put(
-                dmc, 
-                getExecutor().schedule(
-                    new DsfRunnable() { public void run() {
-						fTimedOutFutures.remove(dmc);
-
-                        if (getSession().isActive()) {
-                            fTimedOutFlags.put(dmc, Boolean.TRUE);
-                            enableStepping(dmc);
-                            // Issue the stepping time-out event.
-                            getSession().dispatchEvent(
-                                new SteppingTimedOutEvent(dmc), 
-                                null);
-                        }
-                    }},
-                    fStepTimeout, TimeUnit.MILLISECONDS)
-                );
+            fTimedOutFlags.remove(dmc);
             
+            
+            // Find any time-out futures for contexts that are children of the 
+            // resumed context, and cancel them as they'll be replaced.
+            if (!fTimedOutFutures.containsKey(dmc)) {
+	            for (Iterator<Map.Entry<IExecutionDMContext, ScheduledFuture<?>>> itr = fTimedOutFutures.entrySet().iterator(); itr.hasNext();) {
+	                Map.Entry<IExecutionDMContext, ScheduledFuture<?>> entry = itr.next();
+	                if (DMContexts.isAncestorOf(entry.getKey(), dmc)) {
+	                    entry.getValue().cancel(false);
+	                    itr.remove();
+	                }            
+	            }
+	            
+	            fTimedOutFutures.put(dmc, getExecutor().schedule(new TimeOutRunnable(dmc), fStepTimeout, TimeUnit.MILLISECONDS));
+            }
         } 
     }    
 }

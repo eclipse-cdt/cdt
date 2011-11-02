@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,11 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Andrew Ferguson (Symbian)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.core.index;
 
+import org.eclipse.cdt.core.dom.ast.IFileNomination;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.core.runtime.CoreException;
 
@@ -22,7 +24,7 @@ import org.eclipse.core.runtime.CoreException;
  * 
  * @since 4.0
  */
-public interface IIndexFile {
+public interface IIndexFile extends IFileNomination {
 	IIndexFile[] EMPTY_FILE_ARRAY = {};
 
 	/**
@@ -69,11 +71,9 @@ public interface IIndexFile {
 	long getContentsHash() throws CoreException;
 
 	/**
-	 * Returns the hash-code of the scanner configuration that was used to parse the file.
-	 * <code>0</code> will be returned in case the hash-code is unknown.
-	 * @return the hash-code of the scanner configuration or <code>0</code>.
-	 * @throws CoreException 
+	 * @deprecated Returns 0. 
 	 */
+	@Deprecated
 	int getScannerConfigurationHashcode() throws CoreException;
 
 	/**
@@ -93,7 +93,7 @@ public interface IIndexFile {
 	 * Returns the include that was used to parse this file, may be <code>null</code>.
 	 */
 	IIndexInclude getParsedInContext() throws CoreException;
-	
+
 	/**
 	 * Returns the id of the linkage this file was parsed in.
 	 * @since 5.0

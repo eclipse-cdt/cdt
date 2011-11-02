@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.core.pdom.dom;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
@@ -214,6 +215,10 @@ public final class PDOMMacroReferenceName implements IIndexFragmentName, IASTFil
 
 	public int getEndingLineNumber() {
 		return 0;
+	}
+
+	public IASTPreprocessorIncludeStatement getContextInclusionStatement() {
+		return null;
 	}
 
 	public IASTFileLocation asFileLocation() {

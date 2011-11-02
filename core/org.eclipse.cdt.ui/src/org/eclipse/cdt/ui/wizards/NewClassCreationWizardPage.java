@@ -1010,27 +1010,14 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
     }
 
     /**
-     * handles changes to the source folder field
+     * Handles changes to the source folder field
      */
     private final class SourceFolderFieldAdapter implements IStringButtonAdapter, IDialogFieldListener {
 		public void changeControlPressed(DialogField field) {
 		    IPath oldFolderPath = getSourceFolderFullPath();
 			IPath newFolderPath = chooseSourceFolder(oldFolderPath);
 			if (newFolderPath != null) {
-				IPath headerPath = getHeaderFileFullPath();
-				IPath sourcePath = getSourceFileFullPath();
 				setSourceFolderFullPath(newFolderPath, false);
-				if (oldFolderPath != null && oldFolderPath.matchingFirstSegments(newFolderPath) == 0) {
-				    if (headerPath != null) {
-				        headerPath = newFolderPath.append(headerPath.lastSegment());
-				    }
-				    if (sourcePath != null) {
-				        sourcePath = newFolderPath.append(sourcePath.lastSegment());
-				    }
-				}
-			    // adjust the relative paths
-			    setHeaderFileFullPath(headerPath, false);
-			    setSourceFileFullPath(sourcePath, false);
 				handleFieldChanged(SOURCE_FOLDER_ID|ALL_FIELDS);
 			}
 		}
@@ -1541,7 +1528,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 					}
 					status.setWarning(NewClassWizardMessages.NewClassCreationWizardPage_warning_NotInACProject);
 				}
-			    if (NewClassWizardUtil.getSourceFolder(res) == null) {
+			    if (!NewClassWizardUtil.isOnSourceRoot(res)) {
 					status.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_NotASourceFolder, folderPath));
 					return status;
 				}
@@ -1787,7 +1774,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		}
 		
 		// Make sure the file location is under a source root
-		if (NewClassWizardUtil.getSourceFolder(path) == null) {
+		if (!NewClassWizardUtil.isOnSourceRoot(path)) {
 			status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_HeaderFileNotInSourceFolder);
 			return status;
 		}
@@ -1867,7 +1854,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		}
 		
 		// Make sure the file location is under a source root
-		if (NewClassWizardUtil.getSourceFolder(path) == null) {
+		if (!NewClassWizardUtil.isOnSourceRoot(path)) {
 			status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_SourceFileNotInSourceFolder);
 			return status;
 		}
@@ -1951,7 +1938,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		}
 		
 		// Make sure the file location is under a source root
-		if (NewClassWizardUtil.getSourceFolder(path) == null) {
+		if (!NewClassWizardUtil.isOnSourceRoot(path)) {
 			status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_TestFileNotInSourceFolder);
 			return status;
 		}
@@ -2036,7 +2023,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
     		fDialogSettings.put(KEY_STUB_SELECTED + i, fMethodStubsDialogField.isChecked(stub));
         }
 
-		fCreatedClass = null;
+        fCreatedClass = null;
         fCreatedHeaderFile = null;
         fCreatedSourceFile = null;
         fCreatedTestFile = null;
@@ -2044,28 +2031,10 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
         IPath headerPath = getHeaderFileFullPath();
         IPath sourcePath = getSourceFileFullPath();
         IPath testPath = getTestFileFullPath();
-        createClass(
-        		headerPath != null ? getCanonicalPath(headerPath) : null,
-        		sourcePath != null ? getCanonicalPath(sourcePath) : null,
-                testPath != null ? getCanonicalPath(testPath) : null,
-                getClassName(),
-                namespace,
-                getBaseClasses(),
-                getSelectedMethodStubs(), monitor);
+        createClass(headerPath, sourcePath, testPath, getClassName(), namespace, getBaseClasses(),
+        		getSelectedMethodStubs(), monitor);
 	}
     
-    private IPath getCanonicalPath(IPath path) throws CoreException {
-    	IWorkspaceRoot root = NewClassWizardUtil.getWorkspaceRoot();
-    	IFile file = root.getFile(path);
-    	URI location = file.getLocationURI();
-    	URI canonicalLocation = EFS.getStore(location).toURI();
-    	IFile[] files = root.findFilesForLocationURI(canonicalLocation);
-    	if (files.length > 0) {
-    		return files[0].getFullPath();
-    	}
-    	return null;
-	}
-
 	/**
      * Returns whether the generated header and source files should be
      * opened in editors after the finish button is pressed.

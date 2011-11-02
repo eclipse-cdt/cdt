@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.core.parser.tests.scanner;
 
@@ -37,10 +37,10 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorUndefStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree.IASTInclusionNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
@@ -49,8 +49,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 import org.eclipse.cdt.internal.core.parser.scanner.CharArray;
 import org.eclipse.cdt.internal.core.parser.scanner.ILocationCtx;
 import org.eclipse.cdt.internal.core.parser.scanner.ImageLocationInfo;
-import org.eclipse.cdt.internal.core.parser.scanner.LocationMap;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
+import org.eclipse.cdt.internal.core.parser.scanner.LocationMap;
 
 public class LocationMapTests extends BaseTestCase {
 	public class Loc implements IASTFileLocation {
@@ -79,6 +79,9 @@ public class LocationMapTests extends BaseTestCase {
 		}
 		public IASTFileLocation asFileLocation() {
 			return this;
+		}
+		public IASTPreprocessorIncludeStatement getContextInclusionStatement() {
+			return null;
 		}
 	}
 
@@ -336,8 +339,8 @@ public class LocationMapTests extends BaseTestCase {
 
 	public void testIncludes() {
 		init(DIGITS);
-		fLocationMap.encounterPoundInclude(0, 0, 0, 0, "n1".toCharArray(), null, true, false, false);
-		fLocationMap.encounterPoundInclude(0, 1, 3, 16, "n2".toCharArray(), "f2", false , true, false);
+		fLocationMap.encounterPoundInclude(0, 0, 0, 0, "n1".toCharArray(), null, true, false, false, null);
+		fLocationMap.encounterPoundInclude(0, 1, 3, 16, "n2".toCharArray(), "f2", false , true, false, null);
 		IASTPreprocessorIncludeStatement[] includes= fLocationMap.getIncludeDirectives();
 		assertEquals(2, includes.length);
 		checkInclude(includes[0], "", "", "n1", "", true, false, FN, 0, 0, 1, 0, 0);

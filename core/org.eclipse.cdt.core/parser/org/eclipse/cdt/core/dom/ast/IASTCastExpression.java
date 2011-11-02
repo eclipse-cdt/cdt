@@ -87,10 +87,12 @@ public interface IASTCastExpression extends IASTExpression {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IASTCastExpression copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public IASTCastExpression copy(CopyStyle style);
 }

@@ -305,7 +305,7 @@ public class PDOMProviderTests extends PDOMTestBase {
 		for(int i=0; i<3; i++) {
 			// try several times in order to test the status is logged only once
 			ICProjectDescription pd= CCorePlugin.getDefault().getProjectDescription(cproject2.getProject(), false);
-			assertEquals(0, ipm.getProvidedIndexFragments(pd.getActiveConfiguration()).length);
+			assertEquals(0, ipm.getProvidedIndexFragments(pd.getActiveConfiguration(), true).length);
 		}
 
 	}

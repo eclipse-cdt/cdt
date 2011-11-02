@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *     QNX - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
@@ -183,6 +183,11 @@ public class DefDeclTests extends PDOMTestBase {
 		checkReference(binding, "ref" + testNum, ref);
 	}
 
+	private IIndexFile getSingleFile(IIndexFileLocation ifl) throws CoreException {
+		IIndexFile[] files= pdom.getFiles(ILinkage.C_LINKAGE_ID, ifl);
+		assertEquals(1, files.length);
+		return files[0];
+	}
 	/* ------------------ Tests Started Here ------------------------ */
 	public void testInit() {
 		// will fail if setUp fails, maybe timelimit is too small for warm-up
@@ -237,7 +242,7 @@ public class DefDeclTests extends PDOMTestBase {
 		String elName = "foo" + "08";
 
 		IIndexFileLocation ifl= IndexLocationFactory.getIFL((ITranslationUnit) cproject.findElement(new Path("func.c")));
-		IIndexFile file= pdom.getFile(ILinkage.C_LINKAGE_ID, ifl);
+		IIndexFile file= getSingleFile(ifl);
 		int offset= TestSourceReader.indexOfInFile("foo08();", new Path(ifl.getFullPath()));
 		IIndexName[] names= file.findNames(offset, 5);
 		assertEquals(1, names.length);
@@ -249,7 +254,7 @@ public class DefDeclTests extends PDOMTestBase {
 
 		// check the other file
 		ifl= IndexLocationFactory.getIFL((ITranslationUnit) cproject.findElement(new Path("second.c")));
-		file= pdom.getFile(ILinkage.C_LINKAGE_ID, ifl);
+		file= getSingleFile(ifl);
 		offset= TestSourceReader.indexOfInFile("foo08();", new Path(ifl.getFullPath()));
 		names= file.findNames(offset, 5);
 		assertEquals(1, names.length);

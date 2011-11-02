@@ -131,4 +131,9 @@ class LocationCtxFile extends LocationCtxContainer {
 	public boolean isSourceFile() {
 		return fIsSource;
 	}
+	
+	@Override
+	public String toString() {
+		return fFilename;
+	}
 }

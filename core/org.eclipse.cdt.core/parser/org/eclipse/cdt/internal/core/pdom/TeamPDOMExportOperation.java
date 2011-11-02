@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom;
 
@@ -50,7 +50,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 public class TeamPDOMExportOperation implements IWorkspaceRunnable {
-
 	/**
 	 * Option constant (value:1) to indicate that a resource snapshot
 	 * should be saved along with the exported PDOM.
@@ -84,6 +83,7 @@ public class TeamPDOMExportOperation implements IWorkspaceRunnable {
 		fMessageDigest= md;
 	}
 
+	@Override
 	public void run(IProgressMonitor monitor) throws CoreException {
 		getMessageDigest();
 		getTargetLocation();

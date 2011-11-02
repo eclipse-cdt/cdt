@@ -6,10 +6,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     IBM - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
+
+import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.parser.ISignificantMacros;
+
 
 /**
  * This interface represent a preprocessor #include statement.
@@ -17,9 +21,7 @@ package org.eclipse.cdt.core.dom.ast;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IASTPreprocessorIncludeStatement extends
-		IASTPreprocessorStatement {
-
+public interface IASTPreprocessorIncludeStatement extends IASTPreprocessorStatement, IFileNomination {
 	/**
 	 * <code>INCLUDE_NAME</code> describes the relationship between an include directive and
 	 * it's name.
@@ -64,4 +66,33 @@ public interface IASTPreprocessorIncludeStatement extends
 	 * @since 5.1
 	 */
 	public boolean isResolvedByHeuristics();
+
+	/**
+	 * Returns the list of versions of the target file, each of which is 
+	 * identified by its significant macros, that had been included 
+	 * in this translation-unit prior to this statement.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public ISignificantMacros[] getLoadedVersions();
+
+	/**
+	 * Returns a hash-code for the contents of the file included, or <code>0</code>
+	 * if the content has not been parsed.
+	 * @since 5.4
+	 */
+	public long getContentsHash();
+
+	/**
+	 * Returns true, if an attempt will be or has been made to create AST for the target
+	 * of this inclusion.
+	 * @since 5.4
+	 */
+	public boolean createsAST();
+	
+	/**
+	 * Returns the file from the index that this include statement has pulled in, or <code>null</code>
+	 * if the include creates AST or is unresolved or skipped.
+	 * @since 5.4
+	 */
+	public IIndexFile getImportedIndexFile(); 
 }

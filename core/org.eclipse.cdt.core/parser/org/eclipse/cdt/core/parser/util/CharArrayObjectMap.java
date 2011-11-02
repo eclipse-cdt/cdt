@@ -19,8 +19,8 @@ import java.util.List;
 /**
  * @author Doug Schaefer
  */
-public class CharArrayObjectMap extends CharTable {
-    public static final CharArrayObjectMap EMPTY_MAP = new CharArrayObjectMap(0) {
+public class CharArrayObjectMap <T> extends CharTable {
+    public static final CharArrayObjectMap<Object> EMPTY_MAP = new CharArrayObjectMap<Object>(0) {
         @Override
 		public Object clone() { return this; }
         @Override
@@ -30,6 +30,14 @@ public class CharArrayObjectMap extends CharTable {
         	throw new UnsupportedOperationException();
         }
     };
+	/**
+	 * @since 5.4
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> CharArrayObjectMap<T> emptyMap() {
+		return (CharArrayObjectMap<T>) EMPTY_MAP;
+	}
+
 
 	private Object[] valueTable;
 
@@ -38,40 +46,44 @@ public class CharArrayObjectMap extends CharTable {
 		valueTable = new Object[capacity()];
 	}
 	
-	public Object put(char[] key, int start, int length, Object value) {
+	public T put(char[] key, int start, int length, T value) {
 		int i = addIndex(key, start, length);
-		Object oldvalue = valueTable[i];
+		@SuppressWarnings("unchecked")
+		T oldvalue = (T) valueTable[i];
 		valueTable[i] = value;
 		return oldvalue;
 	}
 
-	final public Object put(char[] key, Object value) {
+	final public T put(char[] key, T value) {
 		return put(key, 0, key.length, value);
 	}
 	
-	final public Object get(char[] key, int start, int length) {
+	@SuppressWarnings("unchecked")
+	final public T get(char[] key, int start, int length) {
 		int i = lookup(key, start, length);
 		if (i >= 0)
-			return valueTable[i];
+			return (T) valueTable[i];
 		return null;
 	}
 	
-	final public Object get(char[] key) {
+	final public T get(char[] key) {
 		return get(key, 0, key.length);
 	}
 	
-	final public Object getAt(int i) {
+	@SuppressWarnings("unchecked")
+	final public T getAt(int i) {
 	    if (i < 0 || i > currEntry)
 	        return null;
-	    return valueTable[i];
+	    return (T) valueTable[i];
 	}
 	
-	final public Object remove(char[] key, int start, int length) {
+	final public T remove(char[] key, int start, int length) {
 		int i = lookup(key, start, length);
 		if (i < 0)
 			return null;
 
-		Object value = valueTable[i];
+		@SuppressWarnings("unchecked")
+		T value = (T) valueTable[i];
 
 	    if (i < currEntry)
 			System.arraycopy(valueTable, i + 1, valueTable, i, currEntry - i);
@@ -85,7 +97,8 @@ public class CharArrayObjectMap extends CharTable {
 	
 	@Override
 	public Object clone() {
-        CharArrayObjectMap newTable = (CharArrayObjectMap) super.clone();
+        @SuppressWarnings("unchecked")
+		CharArrayObjectMap<T> newTable = (CharArrayObjectMap<T>) super.clone();
         newTable.valueTable = new Object[capacity()];
 	    System.arraycopy(valueTable, 0, newTable.valueTable, 0, valueTable.length);
 
@@ -149,4 +162,5 @@ public class CharArrayObjectMap extends CharTable {
 	    System.arraycopy(valueTable, 0, values, 0, values.length);
 	    return values;
 	}
+
 }

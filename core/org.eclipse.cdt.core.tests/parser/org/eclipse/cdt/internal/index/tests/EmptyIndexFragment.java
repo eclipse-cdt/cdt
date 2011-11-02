@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexLinkage;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
@@ -100,13 +101,24 @@ public class EmptyIndexFragment implements IIndexFragment {
 		return 0;
 	}
 
+	@Deprecated
 	public IIndexFragmentFile getFile(int linkageID, IIndexFileLocation location)
 			throws CoreException {
 		return null;
 	}
 
+	public IIndexFragmentFile getFile(int linkageID, IIndexFileLocation location,
+			ISignificantMacros sigMacros) throws CoreException {
+		return null;
+	}
+
+	public IIndexFragmentFile[] getFiles(int linkageID, IIndexFileLocation location)
+			throws CoreException {
+		return IIndexFragmentFile.EMPTY_ARRAY;
+	}
+	
 	public IIndexFragmentFile[] getFiles(IIndexFileLocation location) throws CoreException {
-		return new IIndexFragmentFile[0];
+		return IIndexFragmentFile.EMPTY_ARRAY;
 	}
 
 	public long getLastWriteAccess() {

@@ -10,10 +10,12 @@
  *     IBM Corporation
  *     Markus Schorn (Wind River Systems)
  *     Warren Paul (Nokia) - 174238
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.classwizard;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -114,31 +116,55 @@ public class NewClassWizardUtil {
         }
         return null;
     }
+
+    //XXX Remove
+//    /**
+//     * Returns the parent source folder for the given resource. If the given
+//     * resource is already a source folder, the corresponding C element is returned.
+//     * 
+//     * @param resource the resource
+//     * @return the source folder
+//     */
+//    public static ICContainer getSourceFolder(IResource resource) {
+//        if (resource != null && resource.exists()) {
+//            int resType = resource.getType();
+//            if (resType == IResource.PROJECT || resType == IResource.FOLDER) {
+//                ICElement elem = CoreModel.getDefault().create(resource.getFullPath());
+//                if (elem != null) {
+//                    ICContainer sourceFolder = getSourceFolder(elem);
+//                    if (sourceFolder != null)
+//                        return sourceFolder;
+//                }
+//            } else {
+//                return getSourceFolder(resource.getParent());
+//            }
+//        }
+//        return null;
+//    }
     
     /**
-     * Returns the parent source folder for the given resource. If the given
-     * resource is already a source folder, the corresponding C element is returned.
+     * Checks if a given resource is under a source root.
      * 
      * @param resource the resource
-     * @return the source folder
+     * @return <code>true</code> if the resource is under one of the project source roots
      */
-    public static ICContainer getSourceFolder(IResource resource) {
-        if (resource != null && resource.exists()) {
-            int resType = resource.getType();
-            if (resType == IResource.PROJECT || resType == IResource.FOLDER) {
-                ICElement elem = CoreModel.getDefault().create(resource.getFullPath());
-                if (elem != null) {
-                    ICContainer sourceFolder = getSourceFolder(elem);
-                    if (sourceFolder != null)
-                        return sourceFolder;
-                }
-            } else {
-                return getSourceFolder(resource.getParent());
-            }
-        }
-        return null;
+    public static boolean isOnSourceRoot(IResource resource) {
+    	IProject project = resource.getProject();
+    	ICProject cProject = CoreModel.getDefault().create(project);
+    	return cProject.isOnSourceRoot(resource);
     }
-    
+
+    /**
+     * Checks if a given file path is under a source root.
+     * 
+     * @param path the file path
+     * @return <code>true</code> if the resource is under one of the project source roots
+     */
+    public static boolean isOnSourceRoot(IPath path) {
+    	IFile file = getWorkspaceRoot().getFile(path);
+    	return isOnSourceRoot(file);
+    }
+
     /**
      * Returns the first source root in the given project. If the project has
      * no source roots as children, the project itself is returned.

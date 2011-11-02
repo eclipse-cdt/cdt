@@ -45,7 +45,7 @@ public class CodeReaderFactoryAdapter extends AbstractCodeReaderFactory {
 	}
 
 	public org.eclipse.cdt.core.parser.CodeReader createCodeReaderForInclusion(String path) {
-		return CodeReaderAdapter.adapt(fDelegate.getContentForInclusion(path));
+		return CodeReaderAdapter.adapt(fDelegate.getContentForInclusion(path, null));
 	}
 
 	@Override
@@ -55,7 +55,7 @@ public class CodeReaderFactoryAdapter extends AbstractCodeReaderFactory {
 	}
 
 	public org.eclipse.cdt.core.parser.CodeReader createCodeReaderForTranslationUnit(String path) {
-		return CodeReaderAdapter.adapt(fDelegate.getContentForInclusion(path));
+		return CodeReaderAdapter.adapt(fDelegate.getContentForInclusion(path, null));
 	}
 
 	@Deprecated

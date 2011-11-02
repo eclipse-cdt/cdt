@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.pdom;
 
@@ -82,6 +82,7 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 		fShowActivity= PDOMIndexerTask.checkDebugOption(IPDOMIndexerTask.TRACE_ACTIVITY, "true"); //$NON-NLS-1$
 	}
 
+	@Override
 	public void run(IProgressMonitor pm) {
 		if (fShowActivity) {
 			System.out.println("Indexer: PDOMImporter start"); //$NON-NLS-1$
@@ -264,7 +265,7 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 			for (IIndexFragmentFile ifile : filesToDelete) {
 				if (ifile != null) {
 					checkMonitor(monitor);
-					pdom.clearFile(ifile, null);
+					pdom.clearFile(ifile);
 				}
 			}
 			for (FileAndChecksum fc : updateTimestamps) {
@@ -275,7 +276,6 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 					IResource r= fc.fFile.getResource();
 					if (r != null) {
 						file.setTimestamp(r.getLocalTimeStamp());
-						file.setScannerConfigurationHashcode(0);
 					}
 				}
 			}

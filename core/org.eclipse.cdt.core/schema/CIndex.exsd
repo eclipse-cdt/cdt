@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.cdt.core">
+<schema targetNamespace="org.eclipse.cdt.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.cdt.core" id="CIndex" name="CIndex"/>
@@ -11,10 +11,16 @@
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
       <complexType>
          <choice minOccurs="1" maxOccurs="unbounded">
             <element ref="ExportProjectProvider"/>
             <element ref="ReadOnlyPDOMProvider"/>
+            <element ref="ReadOnlyIndexFragmentProvider"/>
          </choice>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -156,15 +162,50 @@ public class AcmeSDKProvider implements IReadOnlyPDOMProvider {
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  the fully qualified name of the IReadOnlyPDOMProvider implementation to register
+                  The fully qualified name of the IReadOnlyPDOMProvider implementation to register
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.core.index.provider.IReadOnlyPDOMProvider"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.core.index.provider.IReadOnlyPDOMProvider"/>
                </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
+
+   <element name="ReadOnlyIndexFragmentProvider">
+      <annotation>
+         <documentation>
+            &lt;h2&gt;ReadOnlyIndexFragmentProvider&lt;/h2&gt;
+&lt;p&gt;
+This subelement of CIndex allows ISVs to contribute read-only index fragments to the CDT Index. This extension point imposes no limitations on how the index information is collected and stored. The index fragments may, for example, be based on data dynamically fetched from a remote server.
+&lt;p&gt;
+The only information needed for this extension point is the fully qualified name of a class implementing the org.eclipse.cdt.core.index.IIndexFragmentProvider interface. This class will be consulted during the eclipse session for the appropriate read-only content to add to the logical index. The logical index is accessible via the org.eclipse.core.index.IIndex API.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The fully qualified name of a class implementing IIndexFragmentProvider interface.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.internal.core.index.provider.IIndexFragmentProvider"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         Index content provided by ISVs under this extension point will be accessible via the logical index org.eclipse.core.index.IIndex API
+
+For export functionality, see package org.eclipse.cdt.core.index.export
+      </documentation>
+   </annotation>
 
    <annotation>
       <appInfo>
@@ -186,21 +227,10 @@ public class AcmeSDKProvider implements IReadOnlyPDOMProvider {
 
    <annotation>
       <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         Index content provided by ISVs under this extension point will be accessible via the logical index org.eclipse.core.index.IIndex API
-
-For export functionality, see package org.eclipse.cdt.core.index.export
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         See subelement documentation
       </documentation>
    </annotation>
 
@@ -209,7 +239,7 @@ For export functionality, see package org.eclipse.cdt.core.index.export
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2007 Symbian Software Systems and others.
+         Copyright (c) 2007, 2011 Symbian Software Systems and others.
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License v1.0
 which accompanies this distribution, and is available at

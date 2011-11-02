@@ -13,19 +13,25 @@ package org.eclipse.cdt.internal.ui.refactoring.rename;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchWindow;
 
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.refactoring.RefactoringExecutionHelper;
+import org.eclipse.cdt.internal.ui.refactoring.RefactoringStarter;
 
 /**
  * Central access point to execute rename refactorings.
@@ -49,6 +55,13 @@ public class RenameSupport {
 	/** Flag indicating that the setter method is to be updated as well. */
 	public static final int UPDATE_SETTER_METHOD= 1 << 5;
 
+    /** @see #openDialog(Shell, CRenameRefactoring, DialogMode) */
+    private enum DialogMode { ALL_PAGES, PREVIEW_ONLY, CONDITIONAL_PREVIEW }
+    /** @see #openDialog(Shell, CRenameRefactoring, DialogMode) */
+    private enum DialogResult { OK, CANCELED, SKIPPED }
+    // Same as org.eclipse.ltk.internal.ui.refactoring.IErrorWizardPage#PAGE_NAME
+    private static final String ERROR_PAGE_NAME = "ErrorPage"; //$NON-NLS-1$
+
 	private CRenameRefactoring fRefactoring;
 	private RefactoringStatus fPreCheckStatus;
 
@@ -67,7 +80,7 @@ public class RenameSupport {
 	 * @throws CoreException if an unexpected exception occurs while performing the checking.
 	 *
 	 * @see #openDialog(Shell)
-	 * @see #perform(Shell, IRunnableContext)
+	 * @see #perform(Shell, IWorkbenchWindow)
 	 */
 	public IStatus preCheck() throws CoreException {
 		ensureChecked();
@@ -80,14 +93,13 @@ public class RenameSupport {
 	/**
 	 * Opens the refactoring dialog for this rename support.
 	 *
-	 * @param parent a shell used as a parent for the refactoring dialog.
-	 * @throws CoreException if an unexpected exception occurs while opening the
-	 * dialog.
+	 * @param shell a shell used as a parent for the refactoring dialog.
+	 * @throws CoreException if an unexpected exception occurs while opening the dialog.
 	 *
 	 * @see #openDialog(Shell, boolean)
 	 */
-	public void openDialog(Shell parent) throws CoreException {
-		openDialog(parent, false);
+	public boolean openDialog(Shell shell) throws CoreException {
+        return openDialog(shell, false);
 	}
 
 	/**
@@ -116,7 +128,88 @@ public class RenameSupport {
 			return false;
 		}
 
-        return CRefactory.openDialog(shell, fRefactoring, showPreviewOnly);
+		DialogMode mode = showPreviewOnly ?	DialogMode.PREVIEW_ONLY : DialogMode.ALL_PAGES; 
+        return openDialog(shell, fRefactoring, mode) == DialogResult.OK;
+	}
+
+	/**
+	 * Opens the refactoring dialog for a given rename refactoring.
+	 *
+	 * @param shell a shell used as a parent for the refactoring dialog.
+	 * @param refactoring the refactoring object.
+	 *
+	 * @see #openDialog(Shell, boolean)
+	 */
+	public static void openDialog(Shell shell, CRenameRefactoring refactoring) {
+        openDialog(shell, refactoring, DialogMode.ALL_PAGES);
+	}
+
+	/**
+	 * Opens the refactoring dialog.
+	 *
+	 * <p>
+	 * This method has to be called from within the UI thread.
+	 * </p>
+	 *
+	 * @param shell A shell used as a parent for the refactoring, preview, or error dialog
+	 * @param refactoring The refactoring.
+	 * @param mode One of DialogMode values. ALL_PAGES opens wizard with all pages shown;
+	 *     PREVIEW_ONLY opens the preview page only; CONDITIONAL_PREVIEW opens the wizard with
+	 *     preview page only and only if a warning was generated during the final conditions check.
+	 * @return One of DialogResult values. OK is returned if the dialog was shown and
+	 *     the refactoring change was applied; CANCELED is returned if the refactoring was
+	 *     cancelled. SKIPPED is returned if the dialog was skipped in CONDITIONAL_PREVIEW mode and
+	 *     the refactoring change has not been applied yet.
+	 */
+	static DialogResult openDialog(Shell shell, CRenameRefactoring refactoring, final DialogMode mode) {
+		try {
+			final boolean[] dialogSkipped = new boolean[1];
+    		CRenameRefactoringWizard wizard;
+    		if (mode == DialogMode.ALL_PAGES) {
+    			wizard = new CRenameRefactoringWizard(refactoring);
+    		} else {
+    			wizard = new CRenameRefactoringWizard(refactoring) {
+					@Override
+					protected void addUserInputPages() {
+    					// Nothing to add
+    				}
+
+					@Override
+					public IWizardPage getStartingPage() {
+						IWizardPage startingPage = super.getStartingPage();
+						if (mode == DialogMode.CONDITIONAL_PREVIEW &&
+								!startingPage.getName().equals(ERROR_PAGE_NAME)) {
+							dialogSkipped[0] = true;
+							return null;
+						}
+						return startingPage;
+					}
+    			};
+    			wizard.setForcePreviewReview(mode != DialogMode.ALL_PAGES);
+    		}
+    		RefactoringStarter starter = new RefactoringStarter();
+			CRenameProcessor processor = (CRenameProcessor) refactoring.getProcessor();
+        	processor.lockIndex();
+        	try {
+        		RefactoringStatus status = processor.checkInitialConditions(new NullProgressMonitor());
+        		if (status.hasFatalError()) {
+					showInformation(shell, status);
+        			return DialogResult.CANCELED;
+        		}
+        		if (starter.activate(wizard, shell, RenameMessages.CRefactory_title_rename,
+        				processor.getSaveMode())) {
+        			return DialogResult.OK;
+        		}
+        		return dialogSkipped[0] ? DialogResult.SKIPPED : DialogResult.CANCELED;
+        	} finally {
+        		processor.unlockIndex();
+        	}
+        } catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+        } catch (CoreException e) {
+        	CUIPlugin.log(e);
+		}
+        return DialogResult.CANCELED;
 	}
 
 	/**
@@ -139,26 +232,38 @@ public class RenameSupport {
 	 * @see #openDialog(Shell)
 	 * @see IRunnableContext#run(boolean, boolean, org.eclipse.jface.operation.IRunnableWithProgress)
 	 */
-	public void perform(Shell parent, IRunnableContext context) throws InterruptedException, InvocationTargetException {
+	public boolean perform(Shell parent, IWorkbenchWindow context) throws InterruptedException, InvocationTargetException {
 		try {
 			ensureChecked();
 			if (fPreCheckStatus.hasFatalError()) {
 				showInformation(parent, fPreCheckStatus);
-				return;
+				return false;
 			}
 
 			CRenameProcessor renameProcessor = getRenameProcessor();
+			renameProcessor.lockIndex();
 			try {
-				renameProcessor.lockIndex();
 				fPreCheckStatus = renameProcessor.checkInitialConditions(new NullProgressMonitor());
 				if (fPreCheckStatus.hasFatalError()) {
 					showInformation(parent, fPreCheckStatus);
-					return;
+					return false;
 				}
-				RefactoringExecutionHelper helper= new RefactoringExecutionHelper(fRefactoring,
-						RefactoringCore.getConditionCheckingFailedSeverity(), renameProcessor.getSaveMode(),
-						parent, context);
-				helper.perform(true, true);
+				DialogResult result = openDialog(context.getShell(), fRefactoring,
+						DialogMode.CONDITIONAL_PREVIEW);
+				switch (result) {
+				case OK:
+					return true;
+				case SKIPPED:
+					RefactoringExecutionHelper helper= new RefactoringExecutionHelper(fRefactoring,
+							RefactoringCore.getConditionCheckingFailedSeverity(),
+							renameProcessor.getSaveMode(), parent, context);
+					Change change = renameProcessor.getChange();
+					Assert.isNotNull(change);
+					helper.performChange(change, true);
+					return true;
+				default:
+					return false;
+				}
 			} finally {
 				renameProcessor.unlockIndex();
 			}
@@ -197,7 +302,7 @@ public class RenameSupport {
 		}
 	}
 
-	private void showInformation(Shell parent, RefactoringStatus status) {
+	private static void showInformation(Shell parent, RefactoringStatus status) {
 		String message= status.getMessageMatchingSeverity(RefactoringStatus.FATAL);
 		MessageDialog.openInformation(parent, RenameMessages.RenameSupport_dialog_title, message);
 	}

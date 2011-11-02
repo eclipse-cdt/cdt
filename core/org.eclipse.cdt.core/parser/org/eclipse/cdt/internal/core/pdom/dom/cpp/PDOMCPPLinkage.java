@@ -6,10 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Doug Schaefer (QNX) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    Andrew Ferguson (Symbian)
- *    Sergey Prigogin (Google)
+ *     Doug Schaefer (QNX) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Andrew Ferguson (Symbian)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -127,10 +127,12 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		super(pdom, CPP_LINKAGE_NAME, CPP_LINKAGE_NAME.toCharArray());
 	}
 
+	@Override
 	public String getLinkageName() {
 		return CPP_LINKAGE_NAME;
 	}
 
+	@Override
 	public int getLinkageID() {
 		return CPP_LINKAGE_ID;
 	}
@@ -156,6 +158,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			postProcesses.add(this);
 		}
 		
+		@Override
 		public void run() {
 			for (int i = 0; i < fOriginal.length; i++) {
 				final IPDOMCPPTemplateParameter tp = fPersisted[i];
@@ -176,6 +179,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			postProcesses.add(this);
 		}
 		
+		@Override
 		public void run() {
 			try {
 				ICPPTemplateArgument[] args = binding.getTemplateArguments();
@@ -209,6 +213,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			postProcesses.add(this);
 		}
 		
+		@Override
 		public void run() {
 			for (int i = 0; i < fOriginalTemplateParameters.length; i++) {
 				final IPDOMCPPTemplateParameter tp = fTemplateParameters[i];
@@ -890,7 +895,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				long rec= file.getLastUsingDirectiveRec();
 				PDOMCPPUsingDirective ud= new PDOMCPPUsingDirective(this, rec, containerNS,
 						pdomName.getBinding(), pdomName.getFileLocation().getNodeOffset());
-				file.setFirstUsingDirectiveRec(ud.getRecord());
+				file.setLastUsingDirective(ud.getRecord());
 			}
 		} else if (parentNode instanceof ICPPASTElaboratedTypeSpecifier) {
 			ICPPASTElaboratedTypeSpecifier elaboratedSpecifier = (ICPPASTElaboratedTypeSpecifier)parentNode;
@@ -983,23 +988,23 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			final WritablePDOM wpdom= (WritablePDOM) pdom;
 			PDOMFile file= null;
 			if (binding instanceof ICPPUsingDeclaration) {
-				String path= ASTInternal.getDeclaredInOneFileOnly(binding);
-				if (path != null) {
-					file= wpdom.getFileForASTPath(getLinkageID(), path);
+				IASTNode node= ASTInternal.getDeclaredInOneFileOnly(binding);
+				if (node != null) {
+					file= wpdom.getFileForASTNode(getLinkageID(), node);
 				}
 			} else if (binding instanceof ICPPNamespaceAlias) {
-				String path= ASTInternal.getDeclaredInSourceFileOnly(binding, false, glob);
-				if (path != null) {
-					file= wpdom.getFileForASTPath(getLinkageID(), path);
+				IASTNode node= ASTInternal.getDeclaredInSourceFileOnly(binding, false, glob);
+				if (node != null) {
+					file= wpdom.getFileForASTNode(getLinkageID(), node);
 				}
 			}
 			if (file == null && !(binding instanceof IIndexBinding)) {
 				IBinding owner= binding.getOwner();
 				if (owner instanceof ICPPNamespace) {
 					if (owner.getNameCharArray().length == 0) {
-						String path= ASTInternal.getDeclaredInSourceFileOnly(owner, false, glob);
-						if (path != null) {
-							file= wpdom.getFileForASTPath(getLinkageID(), path);
+						IASTNode node= ASTInternal.getDeclaredInSourceFileOnly(owner, false, glob);
+						if (node != null) {
+							file= wpdom.getFileForASTNode(getLinkageID(), node);
 						}
 					}
 				}

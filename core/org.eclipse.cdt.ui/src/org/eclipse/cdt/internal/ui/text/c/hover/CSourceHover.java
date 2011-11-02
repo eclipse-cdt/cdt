@@ -268,10 +268,18 @@ public class CSourceHover extends AbstractCEditorTextHover {
 			LocationKind locationKind= LocationKind.LOCATION;
 			if (name instanceof IASTName && !name.isReference()) {
 				IASTName astName= (IASTName)name;
-				if (astName.getTranslationUnit().getFilePath().equals(fileName) && fTU.getResource() != null) {
-					// reuse editor buffer for names local to the translation unit
-					location= fTU.getResource().getFullPath();
-					locationKind= LocationKind.IFILE;
+				if (astName.getTranslationUnit().getFilePath().equals(fileName)) {
+					int hoverOffset = fTextRegion.getOffset();
+					if (hoverOffset <= nodeOffset && nodeOffset < hoverOffset + fTextRegion.getLength() ||
+							hoverOffset >= nodeOffset && hoverOffset < nodeOffset + nodeLength) {
+						// bug 359352 - don't show source if its the same we are hovering on
+						return null;
+					}
+					if (fTU.getResource() != null) {
+						// reuse editor buffer for names local to the translation unit
+						location= fTU.getResource().getFullPath();
+						locationKind= LocationKind.IFILE;
+					}
 				}
 			} else {
 				// try to resolve path to a resource for proper encoding (bug 221029)

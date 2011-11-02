@@ -655,7 +655,7 @@ public class PE {
 			long offset = fileHeader.f_symptr;
 			symbolTable = new Symbol[fileHeader.f_nsyms];
 			for (int i = 0; i < symbolTable.length; i++, offset += Symbol.SYMSZ) {
-				Symbol newSym = new Symbol(accessFile, offset);
+				Symbol newSym = new Symbol(accessFile, offset, (fileHeader.f_flags & FileHeader.F_AR32WR) == 0);
 				
 				// Now convert section offset of the symbol to image offset.
 				if (newSym.n_scnum >= 1 && newSym.n_scnum <= secHeaders.length)	// valid section #

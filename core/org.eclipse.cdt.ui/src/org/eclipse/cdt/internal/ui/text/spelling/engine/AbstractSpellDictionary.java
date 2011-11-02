@@ -608,7 +608,7 @@ public abstract class AbstractSpellDictionary implements ISpellDictionary {
 	 */
 	protected String getEncoding() {
 		String encoding= SpellingPreferences.getSpellingUserDictionaryEncoding();
-		if (encoding == null || encoding.length() == 0)
+		if (encoding == null || encoding.isEmpty())
 			encoding= ResourcesPlugin.getEncoding();
 		return encoding;
 	}

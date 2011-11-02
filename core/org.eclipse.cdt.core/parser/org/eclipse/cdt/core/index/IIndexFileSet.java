@@ -54,4 +54,10 @@ public interface IIndexFileSet {
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	void add(IIndexFile indexFile);
+
+	/**
+	 * Removes a file from this set.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	void remove(IIndexFile indexFile);
 }

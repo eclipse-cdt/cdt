@@ -414,7 +414,17 @@ public class FinalLaunchSequence extends ReflectionSequence {
 			// Even if binary is null, we must call this to do all the other steps
 			// necessary to create a process.  It is possible that the binary is not needed
 			fProcService.debugNewProcess(fCommandControl.getContext(), binary, fAttributes, 
-					new DataRequestMonitor<IDMContext>(getExecutor(), rm));
+					new DataRequestMonitor<IDMContext>(getExecutor(), rm) {
+				@Override
+				protected void handleCancel() {
+					// If this step is cancelled, cancel the current sequence.
+					// This is to allow the user to press the cancel button
+					// when prompted for a post-mortem file.
+					// Bug 362105
+					rm.cancel();
+        			rm.done();
+				}
+			});
 		} else {
 			rm.done();
 		}

@@ -112,7 +112,7 @@ public class CScope implements ICScope, IASTInternalScope {
     private IASTNode physicalNode = null;
     private boolean isCached = false;
     
-    private CharArrayObjectMap[] mapsToNameOrBinding = { CharArrayObjectMap.EMPTY_MAP, CharArrayObjectMap.EMPTY_MAP };
+    private CharArrayObjectMap<?> mapsToNameOrBinding[] = { CharArrayObjectMap.EMPTY_MAP, CharArrayObjectMap.EMPTY_MAP };
 	private final EScopeKind kind;
     
 	public CScope(IASTNode physical, EScopeKind eKind) {
@@ -120,6 +120,7 @@ public class CScope implements ICScope, IASTInternalScope {
         kind= eKind;
     }
     
+	@Override
 	public EScopeKind getKind() {
 		return kind;
 	}
@@ -127,7 +128,8 @@ public class CScope implements ICScope, IASTInternalScope {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#getParent()
      */
-    public IScope getParent() {
+    @Override
+	public IScope getParent() {
         return CVisitor.getContainingScope(physicalNode);
     }
 
@@ -167,6 +169,7 @@ public class CScope implements ICScope, IASTInternalScope {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
      */
+	@Override
 	public IBinding[] find(String name) {
 		return CVisitor.findBindings(this, name);
 	}
@@ -188,19 +191,22 @@ public class CScope implements ICScope, IASTInternalScope {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#getPhysicalNode()
      */
-    public IASTNode getPhysicalNode() {
+    @Override
+	public IASTNode getPhysicalNode() {
         return physicalNode;
     }
 
+	@Override
 	public void addName(IASTName name) {
 		final char[] nchars = name.toCharArray();
 		if (nchars.length == 0)
 			return;
 
 		int type = getNamespaceType(name);
-		CharArrayObjectMap map = mapsToNameOrBinding[type];
+		@SuppressWarnings("unchecked")
+		CharArrayObjectMap<Object> map = (CharArrayObjectMap<Object>) mapsToNameOrBinding[type];
 		if (map == CharArrayObjectMap.EMPTY_MAP)
-			map = mapsToNameOrBinding[type] = new CharArrayObjectMap(1);
+			mapsToNameOrBinding[type] = map = new CharArrayObjectMap<Object>(1);
 
 		Object o= map.get(nchars);
 		if (o instanceof IASTName) {
@@ -234,14 +240,17 @@ public class CScope implements ICScope, IASTInternalScope {
         
         return NAMESPACE_TYPE_OTHER;
     }
-    public final IBinding getBinding(IASTName name, boolean resolve) {
+    @Override
+	public final IBinding getBinding(IASTName name, boolean resolve) {
     	return getBinding(name, resolve, IIndexFileSet.EMPTY);
     }
     
+	@Override
 	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix) {
 		return getBindings(name, resolve, prefix, IIndexFileSet.EMPTY);
 	}
 
+	@Override
 	public final IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) {
 		char[] c = name.toCharArray();
 	    if (c.length == 0) {
@@ -323,12 +332,13 @@ public class CScope implements ICScope, IASTInternalScope {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.c.ICScope#getBinding(org.eclipse.cdt.core.dom.ast.IASTName, boolean)
      */
+	@Override
 	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
         char[] c = name.toCharArray();
         Object[] obj = null;
 
         populateCache();
-        for (CharArrayObjectMap map : mapsToNameOrBinding) {
+        for (CharArrayObjectMap<?> map : mapsToNameOrBinding) {
         	if (prefixLookup) {
         		IContentAssistMatcher matcher = ContentAssistMatcherFactory.getInstance().createMatcher(c);
         		Object[] keys = map.keyArray();
@@ -405,7 +415,8 @@ public class CScope implements ICScope, IASTInternalScope {
     	return bindings[0];
     }
         
-    public void populateCache() {
+    @Override
+	public void populateCache() {
     	if (isCached)
     		return;
     	
@@ -413,6 +424,45 @@ public class CScope implements ICScope, IASTInternalScope {
     	isCached= true;
     }
     
+	@Override
+	public void removeNestedFromCache(IASTNode container) {
+		if (mapsToNameOrBinding != null) {
+			removeFromMap(mapsToNameOrBinding[0], container);
+			removeFromMap(mapsToNameOrBinding[1], container);
+		}
+	}
+	
+	private void removeFromMap(CharArrayObjectMap<?> map, IASTNode container) {
+		for (int i = 0; i < map.size(); i++) {
+			Object o= map.getAt(i);
+			if (o instanceof IASTName) {
+				if (container.contains((IASTNode) o)) {
+					final char[] key = map.keyAt(i);
+					map.remove(key, 0, key.length);
+					i--;
+				}
+			} else if (o instanceof IASTName[]) {
+				final IASTName[] set = (IASTName[]) o;
+				removeFromSet(set, container);
+			}
+		}
+	}
+
+	private void removeFromSet(IASTName[] set, IASTNode container) {
+		int j= 0;
+		for (int i = 0; i < set.length; i++) {
+			IASTName n= set[i];
+			if (n == null)
+				break;
+			if (container.contains(n)) {
+				set[i]= null;
+			} else if (i != j) {
+				set[j++]= n;
+				set[i]= null;
+			}
+		}
+	}
+
 	protected void doPopulateCache() {
 		final IASTNode scopeNode = physicalNode;
 		IASTNode[] nodes = null;
@@ -569,6 +619,7 @@ public class CScope implements ICScope, IASTInternalScope {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IScope#getScopeName()
 	 */
+	@Override
 	public IName getScopeName() {
 		if (physicalNode instanceof IASTCompositeTypeSpecifier) {
 			return ((IASTCompositeTypeSpecifier) physicalNode).getName();
@@ -576,15 +627,17 @@ public class CScope implements ICScope, IASTInternalScope {
 		return null;
 	}
 
+	@Override
 	public void addBinding(IBinding binding) {
 		int type = NAMESPACE_TYPE_OTHER;
 		if (binding instanceof ICompositeType || binding instanceof IEnumeration) {
 			type = NAMESPACE_TYPE_TAG;
 		}
 
-		CharArrayObjectMap map = mapsToNameOrBinding[type];
+		@SuppressWarnings("unchecked")
+		CharArrayObjectMap<Object> map = (CharArrayObjectMap<Object>) mapsToNameOrBinding[type];
 		if (map == CharArrayObjectMap.EMPTY_MAP)
-			map = mapsToNameOrBinding[type] = new CharArrayObjectMap(2);
+			mapsToNameOrBinding[type] = map= new CharArrayObjectMap<Object>(2);
 
 		map.put(binding.getNameCharArray(), binding);
 	}

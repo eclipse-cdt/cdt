@@ -12,12 +12,11 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.index;
 
-import java.util.Collection;
-
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.internal.core.pdom.ASTFilePathResolver;
 import org.eclipse.cdt.internal.core.pdom.YieldableIndexLock;
 import org.eclipse.core.runtime.CoreException;
@@ -43,20 +42,27 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 		return fWritableFragment;
 	}
 	
-	public IIndexFragmentFile getWritableFile(int linkageID, IIndexFileLocation location) throws CoreException {
-		return fWritableFragment.getFile(linkageID, location);
+	public IIndexFragmentFile getWritableFile(int linkageID, IIndexFileLocation location,
+			ISignificantMacros macroDictionary) throws CoreException {
+		return fWritableFragment.getFile(linkageID, location, macroDictionary);
 	}
-	
+
+	public IIndexFragmentFile[] getWritableFiles(int linkageID, IIndexFileLocation location) throws CoreException {
+		return fWritableFragment.getFiles(linkageID, location);
+	}
+
 	public IIndexFragmentFile[] getWritableFiles(IIndexFileLocation location) throws CoreException {
 		return fWritableFragment.getFiles(location);
 	}
 
-	public IIndexFragmentFile addFile(int linkageID, IIndexFileLocation location) throws CoreException {
-		return fWritableFragment.addFile(linkageID, location);
+	public IIndexFragmentFile addFile(int linkageID, IIndexFileLocation location,
+			ISignificantMacros macroDictionary) throws CoreException {
+		return fWritableFragment.addFile(linkageID, location, macroDictionary);
 	}
 
-	public IIndexFragmentFile addUncommittedFile(int linkageID, IIndexFileLocation location) throws CoreException {
-		return fWritableFragment.addUncommittedFile(linkageID, location);
+	public IIndexFragmentFile addUncommittedFile(int linkageID, IIndexFileLocation location,
+			ISignificantMacros macroDictionary) throws CoreException {
+		return fWritableFragment.addUncommittedFile(linkageID, location, macroDictionary);
 	}
 
 	public IIndexFragmentFile commitUncommittedFile() throws CoreException {
@@ -78,9 +84,10 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 		if (!isWritableFragment(indexFragment)) {
 			assert false : "Attempt to update file of read-only fragment"; //$NON-NLS-1$
 		} else {
-			for (IncludeInformation ii : includes) {
-				if (ii.fLocation != null) {
-					ii.fTargetFile= addFile(linkageID, ii.fLocation);
+			for (IncludeInformation include : includes) {
+				if (include.fLocation != null) {
+					include.fTargetFile= addFile(linkageID, include.fLocation,
+							include.fSignificantMacros);
 				}
 			}
 			((IWritableIndexFragment) indexFragment).addFileContent(file, includes, macros, names, resolver, lock);
@@ -96,12 +103,12 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 				isWritableFragment(((IIndexFragmentFile)file).getIndexFragment());
 	}
 	
-	public void clearFile(IIndexFragmentFile file, Collection<IIndexFileLocation> clearedContexts) throws CoreException {
+	public void clearFile(IIndexFragmentFile file) throws CoreException {
 		IIndexFragment indexFragment = file.getIndexFragment();
 		if (!isWritableFragment(indexFragment)) {
 			assert false : "Attempt to clear file of read-only fragment"; //$NON-NLS-1$
 		} else {
-			((IWritableIndexFragment) indexFragment).clearFile(file, clearedContexts);
+			((IWritableIndexFragment) indexFragment).clearFile(file);
 		}
 	}
 
@@ -121,25 +128,25 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 			fThread= null;
 	}
 
-	public void acquireWriteLock(int giveupReadlockCount) throws InterruptedException {
+	public void acquireWriteLock() throws InterruptedException {
 		checkThread();
 		assert !fIsWriteLocked: "Multiple write locks is not allowed"; //$NON-NLS-1$
-		assert giveupReadlockCount == getReadLockCount(): "Unexpected read lock is not allowed"; //$NON-NLS-1$
 		
-		fWritableFragment.acquireWriteLock(giveupReadlockCount);
+		fWritableFragment.acquireWriteLock(getReadLockCount());
 		fIsWriteLocked= true;
 	}
 
-	public void releaseWriteLock(int establishReadlockCount) {
-		releaseWriteLock(establishReadlockCount, true);
+	public void releaseWriteLock() {
+		releaseWriteLock(true);
 	}
 
-	public void releaseWriteLock(int establishReadlockCount, boolean flush) {
+	public void releaseWriteLock(boolean flush) {
 		checkThread();
 		assert fIsWriteLocked: "No write lock to be released"; //$NON-NLS-1$
-		assert establishReadlockCount == getReadLockCount(): "Unexpected read lock is not allowed"; //$NON-NLS-1$
+		
 
 		// Bug 297641: Result cache of read only providers needs to be cleared.
+		int establishReadlockCount = getReadLockCount();
 		if (establishReadlockCount == 0) {
 			clearResultCache();
 		}
@@ -171,10 +178,23 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 		fWritableFragment.flush();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.index.IWritableIndex#getDatabaseSizeBytes()
-	 */
 	public long getDatabaseSizeBytes() {
 		return fWritableFragment.getDatabaseSizeBytes();
+	}
+
+	public void transferIncluders(IIndexFragmentFile source, IIndexFragmentFile target) throws CoreException {
+		if (source == null || target == null || !isWritableFile(source) || !isWritableFile(target))
+			throw new IllegalArgumentException();
+		if (source.equals(target))
+			return;
+		target.transferIncluders(source);
+	}
+	
+	public void transferContext(IIndexFragmentFile source, IIndexFragmentFile target) throws CoreException {
+		if (source == null || target == null || !isWritableFile(source) || !isWritableFile(target))
+			throw new IllegalArgumentException();
+		if (source.equals(target))
+			return;
+		target.transferContext(source);
 	}
 }

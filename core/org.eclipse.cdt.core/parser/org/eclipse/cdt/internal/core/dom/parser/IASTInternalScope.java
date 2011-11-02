@@ -41,4 +41,11 @@ public interface IASTInternalScope extends IScope {
 	 * the ambiguities have been resolved.
 	 */
 	public void populateCache();
+	
+	/**
+	 * Can be called during ambiguity resolution to remove the names within the given
+	 * node from the cache.
+	 */
+	public void removeNestedFromCache(IASTNode container);
+
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
@@ -53,7 +54,7 @@ class THHierarchyModel {
 	static final int END_OF_COMPUTATION = 0;
 	
 	private static final ISchedulingRule RULE = new THSchedulingRule();
-	private static final Object[] NO_CHILDREN= new Object[0];
+	private static final Object[] NO_CHILDREN= {};
 
 	private ICElement fInput;
 	private int fHierarchyKind;
@@ -148,7 +149,7 @@ class THHierarchyModel {
 		THGraph graph= new THGraph();
 		try {
 			ICProject[] scope= CoreModel.getDefault().getCModel().getCProjects();
-			IIndex index= CCorePlugin.getIndexManager().getIndex(scope);
+			IIndex index= CCorePlugin.getIndexManager().getIndex(scope, IIndexManager.ADD_EXTENSION_FRAGMENTS);
 			index.acquireReadLock();
 			try {
 				if (monitor.isCanceled()) 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser;
 
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -71,7 +72,7 @@ public class ASTInternal {
 		}
 	}
 
-	public static String getDeclaredInSourceFileOnly(IBinding binding, boolean requireDefinition, PDOMBinding nonLocal) {
+	public static IASTNode getDeclaredInSourceFileOnly(IBinding binding, boolean requireDefinition, PDOMBinding nonLocal) {
 		IASTNode[] decls;
 		IASTNode def;
 		if (binding instanceof ICPPInternalBinding) {
@@ -88,18 +89,19 @@ public class ASTInternal {
 		if (requireDefinition && def == null) {
 			return null;
 		}
-		String filePath= null;
+		IASTNode result= null;
 		if (def != null) {
-			if ((filePath= isPartOfSource(filePath, def)) == null) {
+			if (!isPartOfSource(def))
 				return null;
-			}
+			result= def;
 		}
 		if (decls != null) {
 			for (final IASTNode node : decls) {
 				if (node != null) {
-					if ((filePath= isPartOfSource(filePath, node)) == null) {
+					if (!isPartOfSource(node))
 						return null;
-					}
+					if ((result= resolveConflict(result, node)) == null) 
+						return null;
 				}
 			}
 		}
@@ -110,23 +112,29 @@ public class ASTInternal {
 			} catch (CoreException e) {
 			}
 		}
-		return filePath;
+		return result;
 	}
 
-	private static String isPartOfSource(String filePath, IASTNode decl) {
-		if (decl instanceof ASTNode) {
-			if (((ASTNode) decl).isPartOfSourceFile()) {
-				if (filePath == null)
-					return decl.getContainingFilename();
-				
-				if (filePath.equals(decl.getContainingFilename()))
-					return filePath;
-			}
-		}
-		return null;
+	private static boolean isPartOfSource(IASTNode decl) {
+		return decl instanceof ASTNode && ((ASTNode) decl).isPartOfSourceFile();
 	}
 
-	public static String getDeclaredInOneFileOnly(IBinding binding) {
+	private static IASTNode resolveConflict(IASTNode n1, IASTNode n2) {
+		if (n1 == null)
+			return n2;
+		
+		IASTFileLocation loc1= n1.getFileLocation();
+		if (loc1 == null)
+			return n2;
+		
+		IASTFileLocation loc2= n2.getFileLocation();
+		if (loc2 != null && loc1.getContextInclusionStatement() != loc2.getContextInclusionStatement()) 
+			return null;
+
+		return n1;
+	}
+
+	public static IASTNode getDeclaredInOneFileOnly(IBinding binding) {
 		IASTNode[] decls;
 		IASTNode def;
 		if (binding instanceof ICPPInternalBinding) {
@@ -140,23 +148,19 @@ public class ASTInternal {
 		} else {
 			return null;
 		}
-		String filePath= null;
+		IASTNode result= null;
 		if (def != null) {
-			filePath= def.getContainingFilename();
+			result= def;
 		}
 		if (decls != null) {
 			for (final IASTNode node : decls) {
 				if (node != null) {
-					final String fn = node.getContainingFilename();
-					if (filePath == null) {
-						filePath= fn;
-					} else if (!filePath.equals(fn)) {
+					if ((result= resolveConflict(result, node)) == null) 
 						return null;
-					}
 				}
 			}
 		}
-		return filePath;
+		return result;
 	}
 
 	public static void addDeclaration(IBinding b, IASTNode declaration) {

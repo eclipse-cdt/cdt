@@ -334,8 +334,7 @@ public class RenameLinkedMode {
 			if (fShowPreview) { // could have been updated by undoAndCreateRenameSupport(..)
 				executed= renameSupport.openDialog(shell, true);
 			} else {
-				renameSupport.perform(shell, fEditor.getSite().getWorkbenchWindow());
-				executed= true;
+				executed= renameSupport.perform(shell, fEditor.getSite().getWorkbenchWindow());
 			}
 			if (executed) {
 				restoreFullSelection();
@@ -429,10 +428,9 @@ public class RenameLinkedMode {
         processor.setReplacementText(newName);
         CRenameRefactoringPreferences preferences = new CRenameRefactoringPreferences();
         processor.setSelectedOptions(preferences.getOptions());
-        processor.setScope(preferences.getScope());
-        processor.setWorkingSet(preferences.getWorkingSet());
-		RenameSupport renameSupport= RenameSupport.create(processor);
-		return renameSupport;
+        processor.setExhaustiveSearchScope(preferences.getScope());
+        processor.setWorkingSetName(preferences.getWorkingSet());
+		return RenameSupport.create(processor);
 	}
 
 	private void reconcile() throws CModelException {

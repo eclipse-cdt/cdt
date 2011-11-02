@@ -16,6 +16,7 @@ import junit.framework.Test;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
@@ -37,6 +38,7 @@ public class BasicIncludeBrowserTest extends IncludeBrowserBaseTest {
 	// // source
 	// #include "user.h"
 	// #include <system.h>
+	// #include "user.h"
 	
 	public void testSimpleInclusion() throws Exception {
 		TestScannerProvider.sIncludes= new String[] { getProject().getProject().getLocation().toOSString() };
@@ -50,9 +52,10 @@ public class BasicIncludeBrowserTest extends IncludeBrowserBaseTest {
 
 		openIncludeBrowser(source);
 		Tree tree = getIBTree();
-		checkTreeNode(tree, 0, "source.cpp");
+		TreeItem node = checkTreeNode(tree, 0, "source.cpp");
 		checkTreeNode(tree, 0, 0, "user.h");
 		checkTreeNode(tree, 0, 1, "system.h");
+		assertEquals(2, node.getItemCount());
 		
 		// The tree has to be reversed
 		openIncludeBrowser(user, true);

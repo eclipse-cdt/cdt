@@ -15,7 +15,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.cdt.codan.core,
  org.eclipse.cdt.codan.checkers
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: %Bundle-Vendor
 Export-Package: org.eclipse.cdt.codan.internal.checkers.ui;x-internal:=true,
  org.eclipse.cdt.codan.internal.checkers.ui.quickfix;x-internal:=true

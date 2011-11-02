@@ -138,7 +138,13 @@ public class AST2Tests extends AST2BaseTest {
 	public AST2Tests(String name) {
 		super(name);
 	}
-	
+
+	private void parseAndCheckBindings() throws Exception {
+		String code= getAboveComment();
+		parseAndCheckBindings(code, ParserLanguage.C);
+		parseAndCheckBindings(code, ParserLanguage.CPP);
+	}
+
 	protected IASTTranslationUnit parseAndCheckBindings(String code) throws Exception {
 		return parseAndCheckBindings(code, ParserLanguage.C);
 	}
@@ -7360,4 +7366,13 @@ public class AST2Tests extends AST2BaseTest {
 		es= getStatement(a, 2);
 		assertEquals("unsigned long int", ASTTypeUtil.getType(es.getExpression().getExpressionType()));
 	}
+	
+	//	void foo(){
+	//	    typedef int foobar_t;
+	//	    foobar_t *a = 0, *b = a;
+	//	}
+	public void testAmbiguousStatement_Bug360541() throws Exception {
+		parseAndCheckBindings();
+	}		
+		
 }

@@ -14,7 +14,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.cdt.launch;bundle-version="6.1.0",
  org.eclipse.cdt.gdb;bundle-version="7.0.0"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: .
 Fragment-Host: org.eclipse.cdt.dsf.gdb
 

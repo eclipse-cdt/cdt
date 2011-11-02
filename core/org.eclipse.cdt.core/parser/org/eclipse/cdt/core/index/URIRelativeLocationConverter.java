@@ -39,6 +39,7 @@ public class URIRelativeLocationConverter implements IIndexLocationConverter {
 		this.baseURI = baseURI;
 	}
 	
+	@Override
 	public IIndexFileLocation fromInternalFormat(String raw) {
 		String rawPath = URIUtil.toURI(raw).getRawPath();
 		if (rawPath.length() > 0 && rawPath.charAt(0) == '/')
@@ -47,6 +48,7 @@ public class URIRelativeLocationConverter implements IIndexLocationConverter {
 		return new IndexFileLocation(uri, null);
 	}
 	
+	@Override
 	public String toInternalFormat(IIndexFileLocation location) {
 		URI relative = baseURI.relativize(location.getURI());
 		return relative.isAbsolute() ? null : relative.getPath();

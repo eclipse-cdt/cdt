@@ -40,7 +40,6 @@ import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ProblemRuntimeExcepti
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 import org.eclipse.cdt.internal.core.dom.rewrite.util.FileContentHelper;
 import org.eclipse.cdt.internal.core.dom.rewrite.util.FileHelper;
-import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
@@ -136,31 +135,9 @@ public class ChangeGenerator extends ASTVisitor {
 		if (hasChangedChild(translationUnit)) {
 			synthTreatment(translationUnit);
 		}
-		IASTFileLocation location = getFileLocationOfEmptyTranslationUnit(translationUnit);
+		IASTFileLocation location = translationUnit.getFileLocation();
 		sourceOffsets.put(location.getFileName(), Integer.valueOf(location.getNodeOffset()));
 		return super.visit(translationUnit);
-	}
-
-	/**
-	 * This is a workaround for a known but not jet solved problem in IASTNode. If you get
-	 * the FileFocation of a translation unit that was built on an empty file you will get null
-	 * because there it explicitly returns null if the index and length is 0.
-	 * To get to the filename and other information, the location is never the less needed.
-	 * @param node
-	 * @return a hopefully non-{@code null} FileLocation
-	 */
-	public IASTFileLocation getFileLocationOfEmptyTranslationUnit(IASTNode node) {
-		IASTFileLocation fileLocation = node.getFileLocation();
-		if (fileLocation == null) {
-			ILocationResolver lr = (ILocationResolver) node.getTranslationUnit().getAdapter(ILocationResolver.class);
-			if (lr != null) {
-				fileLocation = lr.getMappedFileLocation(0, 0);
-			} else {
-				// Support for old location map
-				fileLocation = node.getTranslationUnit().flattenLocationsToFile(node.getNodeLocations());
-			}
-		}
-		return fileLocation;
 	}
 
 	@Override
@@ -205,8 +182,7 @@ public class ChangeGenerator extends ASTVisitor {
 		synthWriter.setModificationStore(modificationStore);
 
 		for (ASTModification modification : modificationParent.get(synthTU)) {
-			IASTFileLocation targetLocation =
-					getFileLocationOfEmptyTranslationUnit(modification.getTargetNode());
+			IASTFileLocation targetLocation = modification.getTargetNode().getFileLocation();
 			String currentFile = targetLocation.getFileName();
 			IPath implPath = new Path(currentFile);
 			IFile relevantFile= ResourceLookup.selectFileForLocation(implPath, null);
@@ -604,8 +580,8 @@ public class ChangeGenerator extends ASTVisitor {
 
 		private String getReplacementCode(int lastCommonPositionInSynth, int firstOfCommonEndInSynth) {
 			int replacementStart = Math.max(lastCommonPositionInSynth, 0);
-			int replacementEnd = (firstOfCommonEndInSynth >= 0 ?
-					firstOfCommonEndInSynth : synthCode.length());
+			int replacementEnd = firstOfCommonEndInSynth >= 0 ?
+					firstOfCommonEndInSynth : synthCode.length();
 			if (replacementStart < replacementEnd) {
 				return synthCode.substring(replacementStart, replacementEnd);
 			}

@@ -1057,6 +1057,11 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 	}
 	
 	private String addCmd(String args, String cmd){
+		// Don't modify the args parameter if the cmd to add is emtpy.
+		// Bug 360846
+		if(cmd.length() == 0)
+			return args;
+		
 		if(getCmdIndex(args, cmd) == -1){
 			if(args.length() != 0){
 				args += ' ';

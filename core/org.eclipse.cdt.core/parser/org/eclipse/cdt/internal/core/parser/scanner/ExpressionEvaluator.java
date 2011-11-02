@@ -299,11 +299,13 @@ public class ExpressionEvaluator {
     	if (LA() != IToken.tIDENTIFIER) {
     		throw new EvalException(IProblem.SCANNER_ILLEGAL_IDENTIFIER, null);
     	}
-    	PreprocessorMacro macro= fDictionary.get(fTokens.getCharImage());
-    	if (macro != null) {
-    		fMacrosInDefinedExpressions.add(fLocationMap.encounterDefinedExpression(macro, fTokens.getOffset(), fTokens.getEndOffset()));
-    	}
+    	final char[] macroName = fTokens.getCharImage();
+		PreprocessorMacro macro= fDictionary.get(macroName);
     	int result= macro != null ? 1 : 0;
+    	if (macro == null)
+    		macro= new UndefinedMacro(macroName);
+
+    	fMacrosInDefinedExpressions.add(fLocationMap.encounterDefinedExpression(macro, fTokens.getOffset(), fTokens.getEndOffset()));
     	consume();
     	if (parenthesis) {
     		if (LA() != IToken.tRPAREN) {

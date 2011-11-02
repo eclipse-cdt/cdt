@@ -184,7 +184,7 @@ public class PEBinaryObject extends BinaryObjectAdapter {
 					continue;
 				}
 				int type = peSym.isFunction() ? ISymbol.FUNCTION : ISymbol.VARIABLE;
-				list.add(new Symbol(this, name, type, new Addr32(peSym.n_value), 1));
+				list.add(new Symbol(this, name, type, new Addr32(peSym.n_value), peSym.getSize()));
 			}
 		}
 	}

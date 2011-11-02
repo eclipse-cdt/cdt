@@ -6,9 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
-
+ *     Markus Schorn - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
 import org.eclipse.cdt.core.index.IndexerSetupParticipant;
@@ -22,7 +21,6 @@ import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.core.resources.IProject;
 
 public class CProjectDescriptionListener implements	ICProjectDescriptionListener {
-
 	private PDOMManager fIndexManager;
 	private IndexerSetupParticipant fIndexerSetupParticipant;
 
@@ -41,6 +39,7 @@ public class CProjectDescriptionListener implements	ICProjectDescriptionListener
 		};
 	}
 
+	@Override
 	public void handleEvent(CProjectDescriptionEvent event) {
 		ICProjectDescription old= event.getOldCProjectDescription();
 		ICProjectDescription act= event.getNewCProjectDescription();

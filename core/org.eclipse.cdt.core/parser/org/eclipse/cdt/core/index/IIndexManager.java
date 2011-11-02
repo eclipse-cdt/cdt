@@ -43,12 +43,22 @@ public interface IIndexManager extends IPDOMManager {
 	public final static int ADD_DEPENDENT    = 0x2;
 	
 	/**
-	 * Constant for passing to getIndex methods. This constant, when set, indicates
-	 * that index content provided via the CIndex extension point should not be included
-	 * in the resulting index, as it would have done otherwise.
+	 * Constant for passing to getIndex methods. This constant, when set, indicates that the index
+	 * content provided via the CIndex extension point should not be included in the resulting
+	 * index, as it would have done otherwise.
 	 */
 	public final static int SKIP_PROVIDED    = 0x4;
 	
+	/**
+	 * Constant for passing to getIndex methods. This constant, when set, indicates that the index
+	 * content provided via the ReadOnlyIndexFragmentProvider element of the CIndex extension point
+	 * should be included in the resulting index. By default such index content is not included.
+	 * This flag is ignored if SKIP_PROVIDED flag is set.
+	 *
+	 * @since 5.4
+	 */
+	public final static int ADD_EXTENSION_FRAGMENTS = 0x8;
+
 	/**
 	 * Constant for indicating there is no time out period for joining the indexer job. 
 	 * @see IIndexManager#joinIndexer(int, IProgressMonitor)
@@ -197,12 +207,14 @@ public interface IIndexManager extends IPDOMManager {
 	 * Returns the id of the indexer working on the project.
 	 * @since 4.0
 	 */
+	@Override
 	public String getIndexerId(ICProject project);
 
 	/**
 	 * Changes the indexer working on the project.
 	 * @since 4.0
 	 */
+	@Override
 	public void setIndexerId(ICProject project, String indexerId);
 	
 	/**

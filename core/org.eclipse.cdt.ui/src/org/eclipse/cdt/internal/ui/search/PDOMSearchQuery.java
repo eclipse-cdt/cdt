@@ -56,6 +56,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -487,7 +488,8 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 		result.setIndexerBusy(!CCorePlugin.getIndexManager().isIndexerIdle());
 
 		try {
-			IIndex index= CCorePlugin.getIndexManager().getIndex(projects, 0);
+			IIndex index= CCorePlugin.getIndexManager().getIndex(projects,
+					IIndexManager.ADD_EXTENSION_FRAGMENTS);
 			try {
 				index.acquireReadLock();
 			} catch (InterruptedException e) {

@@ -1447,26 +1447,55 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
      */
     private void clearBreakpointStatus(final ICBreakpoint[] bps, final IBreakpointsTargetDMContext ctx)
     {
+        IWorkspaceRunnable wr = new IWorkspaceRunnable() {
+            public void run(IProgressMonitor monitor) throws CoreException {
+            	// For every platform breakpoint that has at least one target breakpoint installed
+            	// we must decrement the install count, for every target breakpoint.
+            	// Note that we cannot simply call resetInstallCount() because another
+            	// launch may be using the same platform breakpoint.
+            	Map<ICBreakpoint, Vector<IBreakpointDMContext>> breakpoints = fBreakpointIDs.get(ctx);
+            	for (ICBreakpoint breakpoint : breakpoints.keySet()) {
+            		Vector<IBreakpointDMContext> targetBps = breakpoints.get(breakpoint);
+            		for (IBreakpointDMContext targetBp : targetBps) {
+                        decrementInstallCount(targetBp, breakpoint, new RequestMonitor(getExecutor(), null));
+            		}
+                }
+            }
+        };
+
+        // Create the scheduling rule to clear all bp planted.
+        ISchedulingRule rule = null;
+        List<ISchedulingRule> markerRules = new ArrayList<ISchedulingRule>();
+        for (ICBreakpoint bp : bps) {
+            IMarker marker = bp.getMarker();
+            if (marker != null) {
+                ISchedulingRule markerRule =
+                    ResourcesPlugin.getWorkspace().getRuleFactory().markerRule(
+                            marker.getResource());
+                if (markerRule == null) {
+                    markerRules = null;
+                    break;
+                } else {
+                    markerRules.add(markerRule);
+                }
+            }
+        }
+        if (markerRules != null) {
+            rule = MultiRule.combine(markerRules.toArray(new ISchedulingRule[markerRules.size()]));
+        }
+
+        try {
+        	// Will run the workspace runnable on the current thread, which
+        	// is the DSF executor.
+            ResourcesPlugin.getWorkspace().run(wr, rule, 0, null);
+        } catch (CoreException e) {
+        	GdbPlugin.getDefault().getLog().log(e.getStatus());
+        }
+
         new Job("Clear Breakpoints Status") { //$NON-NLS-1$
             @Override
             protected IStatus run(IProgressMonitor monitor) {
-                IWorkspaceRunnable wr = new IWorkspaceRunnable() {
-                    public void run(IProgressMonitor monitor) throws CoreException {
-                    	// For every platform breakpoint that has at least one target breakpoint installed
-                    	// we must decrement the install count, for every target breakpoint.
-                    	// Note that we cannot simply call resetInstallCount() because another
-                    	// launch may be using the same platform breakpoint.
-                    	Map<ICBreakpoint, Vector<IBreakpointDMContext>> breakpoints = fBreakpointIDs.get(ctx);
-                    	for (ICBreakpoint breakpoint : breakpoints.keySet()) {
-                    		Vector<IBreakpointDMContext> targetBps = breakpoints.get(breakpoint);
-                    		for (IBreakpointDMContext targetBp : targetBps) {
-                                decrementInstallCount(targetBp, breakpoint, new RequestMonitor(getExecutor(), null));
-                    		}
-                        }
-                    }
-                };
-
-                // First clear any problem markers
+                // Clear any problem markers
                 for (IMarker marker : fBreakpointMarkerProblems.values()) {
                 	if (marker != null) {
                 		try {
@@ -1477,32 +1506,6 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
                 }
                 fBreakpointMarkerProblems.clear();
                 
-                // Create the scheduling rule to clear all bp planted.
-                ISchedulingRule rule = null;
-                List<ISchedulingRule> markerRules = new ArrayList<ISchedulingRule>();
-                for (ICBreakpoint bp : bps) {
-                    IMarker marker = bp.getMarker();
-                    if (marker != null) {
-                        ISchedulingRule markerRule =
-                            ResourcesPlugin.getWorkspace().getRuleFactory().markerRule(
-                                    marker.getResource());
-                        if (markerRule == null) {
-                            markerRules = null;
-                            break;
-                        } else {
-                            markerRules.add(markerRule);
-                        }
-                    }
-                }
-                if (markerRules != null) {
-                    rule = MultiRule.combine(markerRules.toArray(new ISchedulingRule[markerRules.size()]));
-                }
-
-                try {
-                    ResourcesPlugin.getWorkspace().run(wr, rule, 0, null);
-                } catch (CoreException e) {
-                    return e.getStatus();
-                }
                 return Status.OK_STATUS;
             }
         }.schedule();

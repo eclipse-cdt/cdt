@@ -24,6 +24,7 @@ import java.util.Map;
 import org.eclipse.cdt.debug.core.model.provisional.IMemoryRenderingViewportProvider;
 import org.eclipse.cdt.debug.core.model.provisional.IMemorySpaceAwareMemoryBlockRetrieval;
 import org.eclipse.cdt.debug.internal.core.CRequest;
+import org.eclipse.cdt.debug.ui.memory.memorybrowser.api.IMemoryBrowser;
 import org.eclipse.cdt.debug.ui.provisional.IRepositionableMemoryRendering2;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -125,8 +126,9 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * 
  */
 
-@SuppressWarnings("restriction")
-public class MemoryBrowser extends ViewPart implements IDebugContextListener, IMemoryRenderingSite, IDebugEventSetListener
+@SuppressWarnings("restriction") /* Debug Platform's Flexibile hierarchy is still provisional */
+
+public class MemoryBrowser extends ViewPart implements IDebugContextListener, IMemoryRenderingSite, IDebugEventSetListener, IMemoryBrowser
 {
 	public static final String ID = "org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser";  //$NON-NLS-1$
 	
@@ -444,8 +446,12 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 	
 	private void handleUnsupportedSelection() {
 		fStackLayout.topControl = fUnsupportedLabel;
-		fGotoAddressBarControl.setVisible(false);
-		fGotoMemorySpaceControl.setVisible(false);
+		if(!fGotoAddressBarControl.isDisposed()) {
+			fGotoAddressBarControl.setVisible(false);
+		}
+		if(!fGotoMemorySpaceControl.isDisposed()) {
+			fGotoMemorySpaceControl.setVisible(false);
+		}
 	}
 	
 	private void performGo(boolean inNewTab) {
@@ -470,6 +476,17 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 			fGotoAddressBar.addExpressionToHistory(context, expression, memorySpace);
 			performGo(inNewTab, expression, memorySpace);	
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.ui.memory.memorybrowser.api.IMemoryBrowser#getActiveRetrieval()
+	 */
+	public IMemoryBlockRetrieval getActiveRetrieval() {
+		final CTabFolder activeFolder = (CTabFolder) fStackLayout.topControl;
+		if (activeFolder == null)
+			return null;
+		
+		return (IMemoryBlockRetrieval) activeFolder.getData(KEY_RETRIEVAL);		
 	}
 	
 	public void performGo(boolean inNewTab, final String expression, final String memorySpaceId) {
@@ -932,7 +949,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 		// GUI activity must be on the main thread
 		runOnUIThread(new Runnable(){
 			public void run() {
-				if (fGotoAddressBarControl.isDisposed()) {
+				if (fGotoAddressBarControl.isDisposed() || fGotoMemorySpaceControl.isDisposed()) {
 					return;
 				}
 				
@@ -1288,5 +1305,57 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 			job.setSystem(true);
 			job.schedule();
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.ui.memory.memorybrowser.api.IMemoryBrowser#go(java.lang.String, java.lang.String, boolean)
+	 */
+	public void go(String expression, String memorySpaceId, boolean inNewTab)
+			throws CoreException {
+		if (expression == null) {
+			throw new IllegalArgumentException("expression cannot be null");
+		}
+		expression = expression.trim();
+		if (expression.length() == 0) {
+			throw new IllegalArgumentException("expression cannot be empty");
+		}
+		if (!fGotoMemorySpaceControl.isDisposed() && fGotoMemorySpaceControl.isVisible()) {
+			if (memorySpaceId == null) {
+				// if caller passed null, use whatever memory space is selected in the control
+				memorySpaceId = fGotoMemorySpaceControl.getText();
+				if (memorySpaceId.equals(NA_MEMORY_SPACE_ID)) {
+					memorySpaceId = null;
+				}
+			}
+			else {
+				// if caller passed empty string, it means n/a (same as "----" in the selector)			
+				memorySpaceId = memorySpaceId.trim();
+				if (memorySpaceId.length() == 0) {
+					memorySpaceId = null;
+				}
+				else {
+					// Check that the ID requested by the user is a valid one
+					if (fGotoMemorySpaceControl.indexOf(memorySpaceId) == -1) {
+						throw new IllegalArgumentException("unrecognized memory space ID");
+					}
+				}
+				
+				fGotoMemorySpaceControl.setText(memorySpaceId == null ? NA_MEMORY_SPACE_ID : memorySpaceId);
+			}
+		}
+		
+		fGotoAddressBar.setExpressionText(expression);
+		performGo(inNewTab, expression, memorySpaceId);		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.ui.memory.memorybrowser.api.IMemoryBrowser#getSelectedMemorySpace()
+	 */
+	public String getSelectedMemorySpace() {
+		if (!fGotoMemorySpaceControl.isDisposed() && fGotoMemorySpaceControl.isVisible()) {
+			String id = fGotoMemorySpaceControl.getText();
+			return id.equals(NA_MEMORY_SPACE_ID) ? null : id; 
+		}
+		return null;
 	}
 }

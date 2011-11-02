@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorUndefStatement;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
@@ -278,10 +279,6 @@ public class PDOMMacro implements IIndexMacro, IPDOMBinding, IASTFileLocation {
 		fLinkage.getDB().putRecPtr(fRecord + FILE, file != null ? file.getRecord() : 0);
 	}
 
-	public int getEndingLineNumber() {
-		return 0;
-	}
-
 	public String getFileName() {
 		try {
 			IIndexFile file = getFile();
@@ -301,6 +298,14 @@ public class PDOMMacro implements IIndexMacro, IPDOMBinding, IASTFileLocation {
 
 	public int getStartingLineNumber() {
 		return 0;
+	}
+
+	public int getEndingLineNumber() {
+		return 0;
+	}
+
+	public IASTPreprocessorIncludeStatement getContextInclusionStatement() {
+		return null;
 	}
 
 	public IASTFileLocation asFileLocation() {

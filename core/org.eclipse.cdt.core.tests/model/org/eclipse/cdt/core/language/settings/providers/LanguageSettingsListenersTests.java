@@ -635,8 +635,6 @@ public class LanguageSettingsListenersTests extends TestCase {
 			assertEquals(project.getName(), event.getProjectName());
 			assertEquals(1, event.getConfigurationDescriptionIds().length);
 			assertEquals(cfgDescriptionId, event.getConfigurationDescriptionIds()[0]);
-			assertEquals(1, event.getResources(cfgDescriptionId).length);
-			assertEquals(project, event.getResources(cfgDescriptionId)[0]);
 		}
 	}
 	
@@ -701,9 +699,6 @@ public class LanguageSettingsListenersTests extends TestCase {
 			assertEquals(project.getName(), event.getProjectName());
 			assertEquals(1, event.getConfigurationDescriptionIds().length);
 			assertEquals(cfgDescriptionId, event.getConfigurationDescriptionIds()[0]);
-			assertEquals(1, event.getResources(cfgDescriptionId).length);
-			assertEquals(project, event.getResources(cfgDescriptionId)[0]);
-			// TODO - drill to the entries
 		}
 	}
 	
@@ -774,9 +769,6 @@ public class LanguageSettingsListenersTests extends TestCase {
 			assertEquals(project.getName(), event.getProjectName());
 			assertEquals(1, event.getConfigurationDescriptionIds().length);
 			assertEquals(cfgDescriptionId, event.getConfigurationDescriptionIds()[0]);
-			assertEquals(1, event.getResources(cfgDescriptionId).length);
-			assertEquals(project, event.getResources(cfgDescriptionId)[0]);
-			// TODO - drill to the entries
 		}
 		{
 			ICConfigurationDescription[] cfgDescriptions = prjDescription_2.getConfigurations();
@@ -935,8 +927,6 @@ public class LanguageSettingsListenersTests extends TestCase {
 			assertEquals(project.getName(), event.getProjectName());
 			assertEquals(1, event.getConfigurationDescriptionIds().length);
 			assertEquals(cfgDescriptionId, event.getConfigurationDescriptionIds()[0]);
-			assertEquals(1, event.getResources(cfgDescriptionId).length);
-			assertEquals(project, event.getResources(cfgDescriptionId)[0]);
 		}
 	}
 	
@@ -1014,9 +1004,6 @@ public class LanguageSettingsListenersTests extends TestCase {
 			assertEquals(project.getName(), event.getProjectName());
 			assertEquals(1, event.getConfigurationDescriptionIds().length);
 			assertEquals(cfgDescriptionId, event.getConfigurationDescriptionIds()[0]);
-			assertEquals(1, event.getResources(cfgDescriptionId).length);
-			assertEquals(project, event.getResources(cfgDescriptionId)[0]);
-			// TODO - drill to the entries
 		}
 		// Change the provider's entries back (bug was found for this case)
 		{
@@ -1052,9 +1039,6 @@ public class LanguageSettingsListenersTests extends TestCase {
 			assertEquals(project.getName(), event.getProjectName());
 			assertEquals(1, event.getConfigurationDescriptionIds().length);
 			assertEquals(cfgDescriptionId, event.getConfigurationDescriptionIds()[0]);
-			assertEquals(1, event.getResources(cfgDescriptionId).length);
-			assertEquals(project, event.getResources(cfgDescriptionId)[0]);
-			// TODO - drill to the entries
 		}
 	}
 

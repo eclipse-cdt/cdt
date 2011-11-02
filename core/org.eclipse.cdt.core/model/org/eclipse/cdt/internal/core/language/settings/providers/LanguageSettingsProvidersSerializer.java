@@ -33,7 +33,6 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.cdt.internal.core.settings.model.CConfigurationSpecSettings;
-import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.cdt.internal.core.settings.model.IInternalCCfgInfo;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IContainer;
@@ -179,8 +178,6 @@ public class LanguageSettingsProvidersSerializer {
 		private String projectName = null;
 		private Map<String /*cfg*/, LanguageSettingsDelta> deltaMap = new HashMap<String, LanguageSettingsDelta>();
 		
-		private IResource[] resources = null;
-
 		/**
 		 * The act of creating event resets internal delta count in configuration state.
 		 * That implies that when the event is retrieved it must be fired or delta will go missing.
@@ -208,7 +205,6 @@ public class LanguageSettingsProvidersSerializer {
 						CCorePlugin.log(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, ss.getMessage(), new CoreException(ss)));
 					}
 				}
-				
 			}
 		}
 
@@ -217,26 +213,9 @@ public class LanguageSettingsProvidersSerializer {
 		}
 
 		public String[] getConfigurationDescriptionIds() {
-			String[] ids = deltaMap.keySet().toArray(new String[deltaMap.size()]);
-			return ids;
+			return deltaMap.keySet().toArray(new String[deltaMap.size()]);
 		}
 
-		public IResource[] getResources(String cfgDescriptionId) {
-			if (resources == null) {
-				LanguageSettingsDelta delta = deltaMap.get(cfgDescriptionId);
-				if (delta == null) {
-					resources = new IResource[0];
-				} else {
-					IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-					ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
-					ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
-					resources = delta.getChangedResources(project, cfgDescription).toArray(new IResource[0]);
-				}
-			}
-			
-			return resources;
-		}
-		
 		@Override
 		public String toString() {
 			return "LanguageSettingsChangeEvent for project=[" + getProjectName() + "]"

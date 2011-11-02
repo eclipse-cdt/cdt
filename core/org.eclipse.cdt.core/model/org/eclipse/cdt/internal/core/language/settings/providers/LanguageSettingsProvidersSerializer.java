@@ -98,16 +98,19 @@ public class LanguageSettingsProvidersSerializer {
 			providerId = id;
 		}
 
+		@Override
 		public String getId() {
 			return providerId;
 		}
 
+		@Override
 		public String getName() {
 			ILanguageSettingsProvider rawProvider = getRawProvider();
 			String name = rawProvider!=null ? rawProvider.getName() : null;
 			return name;
 		}
 
+		@Override
 		public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId) {
 			ILanguageSettingsProvider rawProvider = getRawProvider();
 			List<ICLanguageSettingEntry> entries = rawProvider!=null ? rawProvider.getSettingEntries(cfgDescription, rc, languageId) : null;
@@ -157,6 +160,7 @@ public class LanguageSettingsProvidersSerializer {
 			return projectCount;
 		}
 		
+		@Override
 		public void registerListener(ICConfigurationDescription cfgDescription) {
 			// keep in mind that rawProvider can change
 			ILanguageSettingsProvider rawProvider = getRawProvider();
@@ -165,6 +169,7 @@ public class LanguageSettingsProvidersSerializer {
 			}
 		}
 
+		@Override
 		public void unregisterListener() {
 			// keep in mind that rawProvider can change
 			ILanguageSettingsProvider rawProvider = getRawProvider();
@@ -212,10 +217,12 @@ public class LanguageSettingsProvidersSerializer {
 			}
 		}
 
+		@Override
 		public String getProjectName() {
 			return projectName;
 		}
 
+		@Override
 		public String[] getConfigurationDescriptionIds() {
 			return deltaMap.keySet().toArray(new String[deltaMap.size()]);
 		}
@@ -363,9 +370,7 @@ projects:
 	}
 
 	public static void serializeLanguageSettingsWorkspace() throws CoreException {
-		// AG TODO - remove the log
-		CCorePlugin.log(new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, IStatus.OK,
-				"LanguageSettingsProvidersSerializer.serializeLanguageSettingsWorkspace()", new Exception()));
+		LanguageSettingsLogger.logWarning("LanguageSettingsProvidersSerializer.serializeLanguageSettingsWorkspace()");
 		
 		URI uriStoreWsp = getStoreInWorkspaceArea(STORAGE_WORKSPACE_LANGUAGE_SETTINGS);
 		List<LanguageSettingsSerializable> serializableWorkspaceProviders = new ArrayList<LanguageSettingsSerializable>();
@@ -528,9 +533,7 @@ projects:
 
 	public static void serializeLanguageSettings(ICProjectDescription prjDescription) throws CoreException {
 		IProject project = prjDescription.getProject();
-		// AG TODO - remove the log
-		CCorePlugin.log(new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, IStatus.OK,
-				"LanguageSettingsProvidersSerializer.serializeLanguageSettings() for " + project, new Exception()));
+		LanguageSettingsLogger.logWarning("LanguageSettingsProvidersSerializer.serializeLanguageSettings() for " + project);
 		
 		try {
 			// Document to store in project area
@@ -1010,9 +1013,7 @@ projects:
 	 * @param event the ILanguageSettingsChangeEvent event to be broadcast.
 	 */
 	public static void notifyLanguageSettingsChangeListeners(ILanguageSettingsChangeEvent event) {
-		// AG TODO - remove the log
-		CCorePlugin.log(new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, IStatus.OK,
-				"Firing " + event, new Exception()));
+		LanguageSettingsLogger.logWarning("Firing " + event);
 
 		Object[] listeners = fLanguageSettingsChangeListeners.getListeners();
 		for (Object obj : listeners) {

@@ -10,10 +10,10 @@ import org.eclipse.core.runtime.Status;
 @Deprecated
 public class LanguageSettingsLogger {
 
-	/**
-	 * 
-	 */
-	private static final boolean ENABLED = false;
+	public static boolean isEnabled() {
+		return false;
+//		return true;
+	}
 
 	// AG FIXME
 	/**
@@ -22,7 +22,7 @@ public class LanguageSettingsLogger {
 	 */
 	@Deprecated
 	public static void logInfo(String msg) {
-		if (ENABLED) {
+		if (isEnabled()) {
 			Exception e = new Exception(msg);
 			IStatus status = new Status(IStatus.INFO, CCorePlugin.PLUGIN_ID, msg, e);
 			CCorePlugin.log(status);
@@ -36,7 +36,7 @@ public class LanguageSettingsLogger {
 	 */
 	@Deprecated
 	public static void logWarning(String msg) {
-		if (ENABLED) {
+		if (isEnabled()) {
 			Exception e = new Exception(msg);
 			IStatus status = new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, msg, e);
 			CCorePlugin.log(status);
@@ -50,7 +50,7 @@ public class LanguageSettingsLogger {
 	 */
 	@Deprecated
 	public static void logError(String msg) {
-		if (ENABLED) {
+		if (isEnabled()) {
 			Exception e = new Exception(msg);
 			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, msg, e);
 			CCorePlugin.log(status);
@@ -65,7 +65,7 @@ public class LanguageSettingsLogger {
 	 */
 	@Deprecated
 	public static void logScannerInfoProvider(IResource rc, Object who) {
-		if (ENABLED) {
+		if (isEnabled()) {
 			String msg = "rc="+rc+" <-- "+who.getClass().getSimpleName();
 			if (rc instanceof IFile) {
 				LanguageSettingsLogger.logInfo(msg);

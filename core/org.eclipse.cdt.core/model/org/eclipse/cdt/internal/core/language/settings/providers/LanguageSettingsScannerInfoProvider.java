@@ -50,8 +50,8 @@ import org.eclipse.osgi.util.NLS;
 public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider {
 	private static final ExtendedScannerInfo DUMMY_SCANNER_INFO = new ExtendedScannerInfo();
 
+	@Override
 	public ExtendedScannerInfo getScannerInformation(IResource rc) {
-		// AG FIXME
 		LanguageSettingsLogger.logScannerInfoProvider(rc, this);
 		
 		IProject project = rc.getProject();
@@ -250,10 +250,12 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 		return (flags & bit) == bit;
 	}
 
+	@Override
 	public void subscribe(IResource resource, IScannerInfoChangeListener listener) {
 		// Handled by ScannerInfoProviderProxy for the moment
 	}
 
+	@Override
 	public void unsubscribe(IResource resource, IScannerInfoChangeListener listener) {
 		// Handled by ScannerInfoProviderProxy for the moment
 	}

@@ -134,14 +134,13 @@ public class MacroExpansionHandler {
 						PDOMMacroReferenceName mName = (PDOMMacroReferenceName) iIndexName;
 						int eOff = mName.getFileLocation().getNodeOffset();
 						int eLength = mName.getFileLocation().getNodeLength();
-						if (eOff < nOff && Math.abs((eOff+eLength-nOff)) < 3) {
+						if (eOff < nOff && Math.abs((eOff + eLength - nOff)) < 3) {
 							scribe.print(mName.toString() + " "); //$NON-NLS-1$
 						}
 					}
 				}
 			}
 		}
-
 	}
 
 	private IASTFileLocation getFileLocation(IASTNode node) {
@@ -180,7 +179,7 @@ public class MacroExpansionHandler {
 								IIndexName[] refs = index.findReferences(macroBinding[0]);
 								for (IIndexName iIndexName : refs) {
 									String filename2 = iIndexName.getFileLocation().getFileName();
-									List<IIndexName>fileList = macroExpansion.get(filename2);
+									List<IIndexName> fileList = macroExpansion.get(filename2);
 									if (paths.contains(filename2)) {
 										if (fileList == null) {
 											fileList = new ArrayList<IIndexName>();

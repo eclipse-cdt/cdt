@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
- *     Vadimir Prus (vladimir@codesourcery.com) - bug 156114: GDB options layout 
+ *     Vladimir Prus (vladimir@codesourcery.com) - bug 156114: GDB options layout 
  *     problem
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.internal.ui;

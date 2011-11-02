@@ -65,6 +65,7 @@ import org.eclipse.cdt.dsf.mi.service.command.events.MIBreakpointHitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MICatchpointHitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIErrorEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIEvent;
+import org.eclipse.cdt.dsf.mi.service.command.events.MIFunctionFinishedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIInferiorExitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIRunningEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MISharedLibEvent;
@@ -156,6 +157,8 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 			} else if (getMIEvent() instanceof MIBreakpointHitEvent) {
 				return StateChangeReason.BREAKPOINT;
 			} else if (getMIEvent() instanceof MISteppingRangeEvent) {
+				return StateChangeReason.STEP;
+			} else if (getMIEvent() instanceof MIFunctionFinishedEvent) {
 				return StateChangeReason.STEP;
 			} else if (getMIEvent() instanceof MISharedLibEvent) {
 				return StateChangeReason.SHAREDLIB;

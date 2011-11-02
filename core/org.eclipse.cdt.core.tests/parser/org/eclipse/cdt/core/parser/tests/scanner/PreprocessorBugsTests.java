@@ -341,4 +341,17 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 		validateProblem(0, IProblem.PREPROCESSOR_MACRO_PASTING_ERROR, "foo");
 		validateProblemCount(1);
 	}
+	
+	//	#define PR ""
+	//	A
+	//	#ifdef _DEBUG
+	//	        PR"";
+	//	#endif
+	//	B
+	public void testRawString_Bug362562() throws Exception {
+		initializeScanner();
+		validateIdentifier("A");
+		validateIdentifier("B");
+		validateProblemCount(0);
+	}
 }

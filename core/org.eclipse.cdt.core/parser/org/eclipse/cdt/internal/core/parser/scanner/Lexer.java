@@ -155,6 +155,7 @@ final public class Lexer implements ITokenSequence {
 	/** 
 	 * Returns the current preprocessor token, does not advance.
 	 */
+	@Override
 	public Token currentToken() {
 		return fToken;
 	}
@@ -162,6 +163,7 @@ final public class Lexer implements ITokenSequence {
 	/**
 	 * Returns the endoffset of the token before the current one.
 	 */
+	@Override
 	public int getLastEndOffset() {
 		return fLastToken.getEndOffset();
 	}
@@ -170,6 +172,7 @@ final public class Lexer implements ITokenSequence {
 	 * Advances to the next token, skipping whitespace other than newline.
 	 * @throws OffsetLimitReachedException when completion is requested in a literal or a header-name.
 	 */
+	@Override
 	public Token nextToken() throws OffsetLimitReachedException {
 		fLastToken= fToken;
 		return fToken= fetchToken();
@@ -222,124 +225,22 @@ final public class Lexer implements ITokenSequence {
 	 * @throws OffsetLimitReachedException when completion is requested in a literal or an header-name.
 	 */
 	public Token nextDirective() throws OffsetLimitReachedException {
-		fInsideIncludeDirective= false;
-		final Token t= fToken;
-		boolean haveNL= t==null || t.getType() == tNEWLINE;
-		while (true) {
-			final boolean hadNL= haveNL;
-			haveNL= false;
-			final int start= fOffset;
-			final int c= fCharPhase3;
-			
-			// optimization avoids calling nextCharPhase3
-			int d;
-			final int pos= fEndOffset;
-			if (!isValidOffset(pos+1)) {
-				d= nextCharPhase3();
-			} else {
-				d= fInput.get(pos);
-				switch(d) {
-				case '\\': 
-					d= nextCharPhase3();
+		Token t0;
+		Token t1= fToken;
+		for(;;) {
+			t0= t1;
+			t1= fetchToken();
+			final int tt1 = t1.getType();
+			if (tt1 == IToken.tEND_OF_INPUT)
+				break;
+			if (tt1 == IToken.tPOUND) {
+				final int tt0= t0.getType();
+				if (tt0 == tNEWLINE || tt0 == tBEFORE_INPUT)
 					break;
-				case '?':
-					if (fInput.get(pos+1) == '?') {
-						d= nextCharPhase3();
-						break;
-					}
-					fOffset= pos;
-					fCharPhase3= d;
-					fEndOffset= pos+1;
-					break;
-				default:
-					fOffset= pos;
-					fCharPhase3= d;
-					fEndOffset= pos+1;
-					break;
-				}
-			}
-
-			switch(c) {
-			case END_OF_INPUT:
-				fLastToken= fToken= newToken(IToken.tEND_OF_INPUT, start);
-				return fToken;
-			case '\n':
-				haveNL= true;
-				continue;
-			case ' ':
-			case '\t':
-			case 0xb:  // vertical tab
-			case '\f': 
-			case '\r':
-				haveNL= hadNL;
-				continue;
-				
-			case 'R':
-				if (d == '"') {
-					nextCharPhase3();
-					rawStringLiteral(start, 2, IToken.tSTRING);
-				}
-				continue;
-				
-			case '"':
-				stringLiteral(start, 1, IToken.tSTRING);
-				continue;
-
-			case '\'':
-				charLiteral(start, IToken.tCHAR);
-				continue;
-
-			case '/':
-				switch (d) {
-				case '/':
-					nextCharPhase3();
-					lineComment(start);
-					continue; 
-				case '*':
-					blockComment(start, '*');
-					haveNL= hadNL;
-					continue;
-				case '%':
-					if (fOptions.fSupportSlashPercentComments) {
-						blockComment(start, '%');
-					}
-					continue;
-				}
-				continue;
-			
-			case '%':
-				if (hadNL) {
-					if (d == ':') {
-						// found at least '#'
-						final int e= nextCharPhase3();
-						if (e == '%') {
-							markPhase3();
-							if (nextCharPhase3() == ':') {
-								// found '##'
-								nextCharPhase3();
-								continue;
-							}
-							restorePhase3();
-						}
-						fLastToken= new Token(tNEWLINE, fSource, 0, start); // offset not significant
-						fToken= newDigraphToken(IToken.tPOUND, start);
-						return fToken;
-					}
-				}
-				continue;
-
-			case '#':
-				if (hadNL && d != '#') {
-					fLastToken= new Token(tNEWLINE, fSource, 0, start); // offset not significant
-					fToken= newToken(IToken.tPOUND, start);
-					return fToken;
-				}
-				continue;
-
-			default:
-				continue;
 			}
 		}
+		fLastToken= t0;
+		return fToken=t1;
 	}
 	
 	/**

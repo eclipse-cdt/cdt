@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2011 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * David McKnight   (IBM)        - [362700] SystemTableTreeViewProvider should not use context object in adapter call to get subsystem
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -185,7 +186,7 @@ public class SystemTableTreeViewProvider implements ILabelProvider, ITableLabelP
 	{
 		
     	
-		Object[] results = null;
+ 		Object[] results = null;
 		if (object == _lastObject && _lastResults != null)
 		{
 			return _lastResults;
@@ -211,14 +212,10 @@ public class SystemTableTreeViewProvider implements ILabelProvider, ITableLabelP
 			    	{
 				        if (manager != null) 
 				        {
-				            ISubSystem ss = adapter.getSubSystem(object);
+				            ISubSystem ss = adapter.getSubSystem(element); // should be element (not object) - since object could be context
 				            if (ss != null && adapter.supportsDeferredQueries(ss))
 				            {
-				               // if (ss.isConnected())
-				                {
-						            
-									results = manager.getChildren(object);
-				                }
+				            	results = manager.getChildren(object);				                
 				            }
 						}
 			    	}
@@ -258,6 +255,7 @@ public class SystemTableTreeViewProvider implements ILabelProvider, ITableLabelP
 			return new Object[0];
 		}
 
+		
 		return results;
 	}
 

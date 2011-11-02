@@ -219,7 +219,7 @@ public class SystemTableTreeViewProvider implements ILabelProvider, ITableLabelP
 				            }
 						}
 			    	}
-					else
+					if (results == null)
 					{
 						  if (object instanceof IContextObject)
 				    	  {

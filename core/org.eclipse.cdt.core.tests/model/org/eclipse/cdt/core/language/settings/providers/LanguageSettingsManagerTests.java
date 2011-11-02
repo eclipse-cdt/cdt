@@ -41,7 +41,7 @@ import org.eclipse.core.runtime.Path;
  * Test cases testing LanguageSettingsProvider functionality
  */
 public class LanguageSettingsManagerTests extends TestCase {
-	// Should match id of extension point defined in plugin.xml
+	// Those should match ids of plugin extensions defined in plugin.xml
 	private static final String EXTENSION_BASE_PROVIDER_ID = "org.eclipse.cdt.core.tests.language.settings.base.provider";
 	private static final String EXTENSION_EDITABLE_PROVIDER_ID = "org.eclipse.cdt.core.tests.custom.editable.language.settings.provider";
 	private static final String EXTENSION_EDITABLE_PROVIDER_NAME = "Test Plugin Mock Editable Language Settings Provider";

@@ -1041,7 +1041,5 @@ public class LanguageSettingsListenersTests extends TestCase {
 			assertEquals(cfgDescriptionId, event.getConfigurationDescriptionIds()[0]);
 		}
 	}
-
 }
-
 

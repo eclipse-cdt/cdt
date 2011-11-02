@@ -1023,7 +1023,7 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 	}
 
 	/**
-	 * Returns delta and atomically updates last persisted state to the new state.
+	 * Returns delta and updates last persisted state to the new state.
 	 * That implies that the delta needs to be used to fire an event of it will
 	 * be lost.
 	 */

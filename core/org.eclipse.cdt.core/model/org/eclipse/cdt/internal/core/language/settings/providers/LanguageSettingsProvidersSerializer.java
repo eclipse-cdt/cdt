@@ -174,6 +174,10 @@ public class LanguageSettingsProvidersSerializer {
 		}
 	}
 
+	/**
+	 * Language Settings Change Event implementation.
+	 *
+	 */
 	private static class LanguageSettingsChangeEvent implements ILanguageSettingsChangeEvent {
 		private String projectName = null;
 		private Map<String /*cfg*/, LanguageSettingsDelta> deltaMap = new HashMap<String, LanguageSettingsDelta>();

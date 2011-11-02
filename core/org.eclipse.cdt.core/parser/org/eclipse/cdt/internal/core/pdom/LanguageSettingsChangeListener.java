@@ -20,10 +20,9 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 
 /**
- *	This class handles changes in language settings for the PDOM by reindexing the appropriate resources.
+ *	This class handles changes in language settings for the PDOM.
  */
 public class LanguageSettingsChangeListener implements ILanguageSettingsChangeListener {
-
 	private PDOMManager fManager;
 	
 	public LanguageSettingsChangeListener(PDOMManager manager) {
@@ -31,9 +30,8 @@ public class LanguageSettingsChangeListener implements ILanguageSettingsChangeLi
 	}
 	
 	public void handleEvent(ILanguageSettingsChangeEvent event) {
-		String projectName = event.getProjectName();
 		IWorkspaceRoot wspRoot = ResourcesPlugin.getWorkspace().getRoot();
-		IProject project = wspRoot.getProject(projectName);
+		IProject project = wspRoot.getProject(event.getProjectName());
 		
 		if (project != null) {
 			ICProjectDescription prjDescription = CCorePlugin.getDefault().getProjectDescription(project);

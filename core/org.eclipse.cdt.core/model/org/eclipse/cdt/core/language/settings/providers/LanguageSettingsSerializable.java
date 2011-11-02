@@ -13,14 +13,9 @@ package org.eclipse.cdt.core.language.settings.providers;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
-import org.eclipse.cdt.core.settings.model.ICSettingEntry;
-import org.eclipse.cdt.core.settings.model.util.CDataUtil;
-import org.eclipse.cdt.core.settings.model.util.LanguageSettingEntriesSerializer;
 import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsStorage;
 import org.eclipse.core.resources.IResource;
@@ -166,19 +161,15 @@ public class LanguageSettingsSerializable extends LanguageSettingsBaseProvider {
 	public void setSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId, List<ICLanguageSettingEntry> entries) {
 		String rcProjectPath = rc!=null ? rc.getProjectRelativePath().toString() : null;
 		fStorage.setSettingEntries(rcProjectPath, languageId, entries);
-		
-//		// TODO - not sure what is more efficient, to do that or not to do that?
-//		if (fStorage.equals(lastPersistedState)) {
-//			lastPersistedState = null;
-//		}
 	}
 
 	/**
 	 * {@inheritDoc}
-	 * <br> Note that this list is <b>unmodifiable</b>. To modify the list copy it, change and use
+	 * <br>
+	 * Note that this list is <b>unmodifiable</b>. To modify the list copy it, change and use
 	 * {@link #setSettingEntries(ICConfigurationDescription, IResource, String, List)}.
-	 * 
-	 * <br/> Note also that <b>you can compare these lists with simple equality operator ==</b>,
+	 * <br>
+	 * Note also that <b>you can compare these lists with simple equality operator ==</b>,
 	 * as lists themselves are backed by WeakHashSet<List<ICLanguageSettingEntry>> where
 	 * identical copies (deep comparison is used) are replaced with the same one instance.
 	 */

@@ -99,6 +99,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     private static final DynamicMacro __DATE__= new DateMacro("__DATE__".toCharArray()); //$NON-NLS-1$
     private static final DynamicMacro __TIME__ = new TimeMacro("__TIME__".toCharArray()); //$NON-NLS-1$
     private static final DynamicMacro __LINE__ = new LineMacro("__LINE__".toCharArray()); //$NON-NLS-1$
+    private static final char[] __COUNTER__ = "__COUNTER__".toCharArray(); //$NON-NLS-1$
 	private static final char[] ONCE = "once".toCharArray(); //$NON-NLS-1$
 
 	static final int NO_EXPANSION 		 					= 0x01;
@@ -114,18 +115,22 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 
 
 	private final class MacroDictionary implements IMacroDictionary, ISignificantMacros.IVisitor {
+		@Override
 		public boolean satisfies(ISignificantMacros significantMacros) {
 			return significantMacros.accept(this);
 		}
 		
+		@Override
 		public boolean visitDefined(char[] macro) {
 			return isDefined(macro);
 		}
 
+		@Override
 		public boolean visitUndefined(char[] macro) {
 			return !isDefined(macro);
 		}
 
+		@Override
 		public boolean visitValue(char[] macro, char[] value) {
 			PreprocessorMacro m = fMacroDictionary.get(macro);
 			return m != null && CharArrayUtils.equals(m.getExpansion(), value);
@@ -141,7 +146,8 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     }
 
 	final private IIncludeFileTester<InternalFileContent> createCodeReaderTester= new IIncludeFileTester<InternalFileContent>() {
-    	public InternalFileContent checkFile(String path, boolean isHeuristicMatch, IncludeSearchPathElement onPath) {
+    	@Override
+		public InternalFileContent checkFile(String path, boolean isHeuristicMatch, IncludeSearchPathElement onPath) {
 			final InternalFileContent fc;
 			IFileNomination once= fFileContentProvider.isIncludedWithPragmaOnceSemantics(path);
 			if (once != null) {
@@ -163,7 +169,8 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     }
 
     final private IIncludeFileTester<IncludeResolution> createPathTester= new IIncludeFileTester<IncludeResolution>() {
-    	public IncludeResolution checkFile(String path, boolean isHeuristicMatch, IncludeSearchPathElement onPath) {
+    	@Override
+		public IncludeResolution checkFile(String path, boolean isHeuristicMatch, IncludeSearchPathElement onPath) {
     		if (fFileContentProvider.getInclusionExists(path)) {
     			IncludeResolution res= new IncludeResolution();
     			res.fHeuristic= isHeuristicMatch;
@@ -181,6 +188,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			fStopAtNewline= stopAtNewline;
 		}
 
+		@Override
 		public Token nextToken() throws OffsetLimitReachedException {
        		final Lexer lexer= fCurrentContext.getLexer();
        		Token t= lexer.nextToken();
@@ -194,10 +202,12 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
        		return t;
 		}
 
+		@Override
 		public int getLastEndOffset() {
 			return fCurrentContext.getLexer().getLastEndOffset();
 		}
 
+		@Override
 		public Token currentToken() {
 			Token t= fCurrentContext.currentLexerToken();
        		if (fStopAtNewline && t.getType() == Lexer.tNEWLINE)
@@ -323,14 +333,17 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		return null;
 	}
 
+	@Override
 	public void setSplitShiftROperator(boolean val) {
     	fSplitShiftRightOperator= val;
     }
 
+	@Override
 	public void setComputeImageLocations(boolean val) {
     	fLexOptions.fCreateImageLocations= val;
     }
 
+	@Override
 	public void setContentAssistMode(int offset) {
 		fContentAssistLimit= offset;
 		fRootLexer.setContentAssistMode(offset);
@@ -340,13 +353,16 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		return fRootLexer.isContentAssistMode();
 	}
 
+	@Override
 	public void setProcessInactiveCode(boolean val) {
 		fRootContext.setParseInactiveCode(val);
 	}
 
+	@Override
 	public void setScanComments(boolean val) {
 	}
 
+	@Override
 	public ILocationResolver getLocationResolver() {
 		return fLocationMap;
 	}
@@ -413,7 +429,8 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         fMacroDictionary.put(__DATE__.getNameCharArray(), __DATE__);
         fMacroDictionary.put(__TIME__.getNameCharArray(), __TIME__);
         fMacroDictionary.put(__LINE__.getNameCharArray(), __LINE__);
-
+        fMacroDictionary.put(__COUNTER__,  new CounterMacro(__COUNTER__));
+        
         if (lang == ParserLanguage.CPP) {
             fMacroDictionary.put(__cplusplus.getNameCharArray(), __cplusplus);
         } else {
@@ -520,7 +537,8 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     	}
     }
 
-    public Map<String, IMacroBinding> getMacroDefinitions() {
+    @Override
+	public Map<String, IMacroBinding> getMacroDefinitions() {
         Map<String, IMacroBinding> hashMap = new HashMap<String, IMacroBinding>(fMacroDictionary.size());
         for (char[] key : fMacroDictionary.keys()) {
             hashMap.put(String.valueOf(key), fMacroDictionary.get(key));
@@ -528,7 +546,8 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         return hashMap;
     }
 
-    public boolean isOnTopContext() {
+    @Override
+	public boolean isOnTopContext() {
     	ScannerContext ctx= fCurrentContext;
     	while (ctx != null && ctx.getLocationCtx() instanceof LocationCtxMacroExpansion) {
     		ctx= ctx.getParent();
@@ -536,7 +555,8 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     	return ctx == fRootContext;
     }
 
-    public void cancel() {
+    @Override
+	public void cancel() {
     	isCancelled= true;
     }
 
@@ -648,7 +668,8 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
      * @throws EndOfFileException when the end of the translation unit has been reached.
      * @throws OffsetLimitReachedException see {@link Lexer}.
      */
-    public IToken nextToken() throws EndOfFileException {
+    @Override
+	public IToken nextToken() throws EndOfFileException {
         if (isCancelled) {
             throw new ParseError(ParseError.ParseErrorKind.TIMEOUT_OR_CANCELLED);
         }
@@ -746,7 +767,8 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     	return t1;
     }
 
-    public void skipInactiveCode() throws OffsetLimitReachedException {
+    @Override
+	public void skipInactiveCode() throws OffsetLimitReachedException {
     	final Lexer lexer= fCurrentContext.getLexer();
     	if (lexer != null) {
     		CodeState state= fCurrentContext.getCodeState();
@@ -758,6 +780,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	}
 
 
+	@Override
 	public int getCodeBranchNesting() {
 		return fCurrentContext.getCodeBranchNesting();
 	}
@@ -1142,11 +1165,13 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     	return fLocationMap;
     }
 
+	@Override
 	public void handleComment(boolean isBlockComment, int offset, int endOffset) {
 		fLocationMap.encounteredComment(offset, endOffset, isBlockComment);
 	}
 
-    public void handleProblem(int id,  char[] arg, int offset, int endOffset) {
+    @Override
+	public void handleProblem(int id,  char[] arg, int offset, int endOffset) {
         fLocationMap.encounterProblem(id, arg, offset, endOffset);
     }
     	
@@ -1856,6 +1881,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         return true;
 	}
 
+	@Override
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Object getAdapter(Class adapter) {
 		if (adapter.isAssignableFrom(fMacroExpander.getClass())) {

@@ -22,7 +22,6 @@ import org.eclipse.jface.text.IDocument;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
-import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 
 /**
  * Completion tests for plain C.
@@ -313,8 +312,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 		createFile(fProject, "header191315.h", content[0].toString());
 		createFile(fProject, "source191315.c", content[1].toString());
 		createFile(fProject, "source191315.cpp", content[1].toString());
-		IFile dfile= createFile(fProject, "header191315.h", content[0].toString());
-		TestSourceReader.waitUntilFileIsIndexed(CCorePlugin.getIndexManager().getIndex(fCProject), dfile, 8000);
+		waitForIndexer(fCProject);
 		final String[] expected= {
 			"c_linkage(void)"
 		};
@@ -360,6 +358,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 				"DEBUG",
 				"XMacro(x, y)",
 				"__CDT_PARSER__",
+				"__COUNTER__",
 				"__DATE__",
 				"__FILE__",
 				"__LINE__",

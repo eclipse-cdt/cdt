@@ -12,6 +12,7 @@ package org.eclipse.cdt.ui.tests.callhierarchy;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWTException;
@@ -81,24 +82,21 @@ public class CallHierarchyBaseTest extends BaseUITestCase {
 		return editor;
 	}	
 
-	protected void openCallHierarchy(CEditor editor) {
+	protected void openCallHierarchy(CEditor editor) throws InterruptedException {
 		CallHierarchyUI.open(editor, (ITextSelection) editor.getSelectionProvider().getSelection());
+		for (Job job : Job.getJobManager().find(CallHierarchyUI.class)) {
+			job.join();
+		}
+		runEventQueue(0);
 	}
 
-	protected void openCallHierarchy(CEditor editor, boolean showReferencedBy) {
-		CallHierarchyUI.setIsJUnitTest(true);
-		CallHierarchyUI.open(editor, (ITextSelection) editor.getSelectionProvider().getSelection());
-		runEventQueue(0);
-		CHViewPart ch= null;
+	protected void openCallHierarchy(CEditor editor, boolean showReferencedBy) throws InterruptedException {
+		openCallHierarchy(editor);
 		IWorkbenchPage page = editor.getSite().getPage();
-		for (int i = 0; i < 400; i++) {
-			ch= (CHViewPart)page.findView(CUIPlugin.ID_CALL_HIERARCHY);
-			if (ch != null) 
-				break;
-			runEventQueue(10);
-		}
+		CHViewPart ch= (CHViewPart)page.findView(CUIPlugin.ID_CALL_HIERARCHY);
 		assertNotNull(ch);
 		ch.onSetShowReferencedBy(showReferencedBy);
+		runEventQueue(0);
 	}
 
 	protected TreeViewer getCHTreeViewer() {
@@ -111,8 +109,7 @@ public class CallHierarchyBaseTest extends BaseUITestCase {
 				break;
 			runEventQueue(10);
 		}
-		assertNotNull(ch);
-		return ch.getTreeViewer();
+ 		return ch.getTreeViewer();
 	}
 	
 	protected TreeItem checkTreeNode(TreeItem root, int i1, String label) {

@@ -12,8 +12,6 @@ package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.util.Calendar;
 
-import com.ibm.icu.text.DateFormatSymbols;
-
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
@@ -23,6 +21,8 @@ import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
+
+import com.ibm.icu.text.DateFormatSymbols;
 
 /**
  * Models macros used by the preprocessor
@@ -35,38 +35,47 @@ abstract class PreprocessorMacro implements IMacroBinding {
 		fName= name;
 	}
 	
+	@Override
 	final public ILinkage getLinkage() {
 		return Linkage.NO_LINKAGE;
 	}
 
+	@Override
 	final public char[] getNameCharArray() {
 		return fName;
 	}
 
+	@Override
 	final public String getName() {
 		return new String(fName);
 	}
 
+	@Override
 	public IScope getScope() {
 		return null;
 	}
 	
+	@Override
 	public IBinding getOwner() {
 		return null;
 	}
 
+	@Override
 	public boolean isFunctionStyle() {
 		return false;
 	}
 	
+	@Override
 	public char[][] getParameterList() {
 		return null;
 	}
 	
+	@Override
 	public char[][] getParameterPlaceholderList() {
 		return null;
 	}
 
+	@Override
 	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class clazz) {
 		return null;
@@ -139,10 +148,12 @@ class ObjectStyleMacro extends PreprocessorMacro {
 		}
 	}
 
+	@Override
 	public char[] getExpansion() {
 		return MacroDefinitionParser.getExpansion(fExpansion, fExpansionOffset, fEndOffset);
 	}
 
+	@Override
 	public char[] getExpansionImage() {
 		final int length = fEndOffset - fExpansionOffset;
 		char[] result= new char[length];
@@ -164,6 +175,7 @@ class ObjectStyleMacro extends PreprocessorMacro {
 		return fExpansionTokens;
 	}
 
+	@Override
 	public final boolean isDynamic() {
 		return false;
 	}
@@ -283,14 +295,17 @@ final class UndefinedMacro extends PreprocessorMacro {
 		return null;
 	}
 
+	@Override
 	public char[] getExpansion() {
 		return null;
 	}
 
+	@Override
 	public char[] getExpansionImage() {
 		return null;
 	}
 
+	@Override
 	public boolean isDynamic() {
 		return false;
 	}
@@ -301,6 +316,7 @@ abstract class DynamicMacro extends PreprocessorMacro {
 	public DynamicMacro(char[] name) {
 		super(name);
 	}
+	@Override
 	public final char[] getExpansion() {
 		return getExpansionImage();
 	}
@@ -319,6 +335,7 @@ abstract class DynamicMacro extends PreprocessorMacro {
         buffer.append(value);
     }
 
+	@Override
 	public final boolean isDynamic() {
 		return true;
 	}
@@ -349,6 +366,7 @@ final class DateMacro extends DynamicMacro {
 		return charArray;
 	}
 
+	@Override
 	public char[] getExpansionImage() {
 		return createDate();
 	}
@@ -367,6 +385,7 @@ final class FileMacro extends DynamicMacro {
         return new TokenWithImage(IToken.tSTRING, null, 0, 0, buffer.toString().toCharArray());
     }
 
+	@Override
 	public char[] getExpansionImage() {
 		return "\"file\"".toCharArray(); //$NON-NLS-1$
 	}
@@ -383,6 +402,7 @@ final class LineMacro extends DynamicMacro {
         return new TokenWithImage(IToken.tINTEGER, null, 0, 0, Long.toString(lineNumber).toCharArray());
     }
 
+	@Override
 	public char[] getExpansionImage() {
 		return new char[] {'1'};
 	}
@@ -410,7 +430,27 @@ final class TimeMacro extends DynamicMacro {
         return buffer.toString().toCharArray();
     }
 
+	@Override
 	public char[] getExpansionImage() {
 		return createDate();
+	}
+}
+
+final class CounterMacro extends DynamicMacro {
+	private static final char[] ZERO = {'0'};
+	
+	private long fValue= 0;
+	CounterMacro(char[] name) {
+		super(name);
+	}
+	
+	@Override
+	public Token execute(MacroExpander expander) {
+		return new TokenWithImage(IToken.tINTEGER, null, 0, 0, String.valueOf(fValue++).toCharArray());
+	}
+	
+	@Override
+	public char[] getExpansionImage() {
+		return ZERO;
 	}
 }

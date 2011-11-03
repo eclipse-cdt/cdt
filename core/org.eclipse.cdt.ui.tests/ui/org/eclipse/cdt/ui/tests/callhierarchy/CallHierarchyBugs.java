@@ -479,4 +479,30 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 		checkTreeNode(chTree, 0, 1, "Derived::dosomething() : void");
 		checkTreeNode(chTree, 0, 2, null);
 	}
+	
+	//	template<typename T> struct Array {
+	//	      template<typename TIterator> void erase(TIterator it) {}
+	//	};
+	//
+	//	int main() {
+	//		Array<int> test;
+	//		test.erase(1); 
+	//	}
+	public void testCallsToInstanceofSpecializedTemplate_361999() throws Exception {
+		final String content = getAboveComment();
+		IFile f2= createFile(getProject(), "testCallsToInstanceofSpecializedTemplate_361999.cpp", content);
+		waitForIndexer(fIndex, f2, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
+
+		final CHViewPart ch= (CHViewPart) activateView(CUIPlugin.ID_CALL_HIERARCHY);
+
+		// open editor, check outline
+		CEditor editor= openEditor(f2);
+		int idx = content.indexOf("erase(TIterator it)");
+		editor.selectAndReveal(idx, 0);
+		openCallHierarchy(editor, true);
+
+		Tree chTree= checkTreeNode(ch, 0, "Array<T>::erase(TIterator) : void").getParent();
+		TreeItem ti= checkTreeNode(chTree, 0, 0, "main() : int");
+		checkTreeNode(chTree, 0, 1, null);
+	}
 }

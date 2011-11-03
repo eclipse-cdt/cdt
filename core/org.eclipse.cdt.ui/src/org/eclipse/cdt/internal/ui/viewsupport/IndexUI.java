@@ -409,6 +409,7 @@ public class IndexUI {
 		
 		final IASTName[] result= {null};
 		ASTProvider.getASTProvider().runOnAST(workingCopy, ASTProvider.WAIT_ACTIVE_ONLY, null, new ASTRunnable() {
+			@Override
 			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
 				if (ast != null) {
 					final IASTNodeSelector nodeSelector = ast.getNodeSelector(null);
@@ -490,36 +491,51 @@ public class IndexUI {
 	/**
 	 * Searches for all specializations that depend on the definition of the given binding.
 	 */
-	public static List<? extends IBinding> findSpecializations(IBinding binding) throws CoreException {
+	public static List<? extends IBinding> findSpecializations(IIndex index, IBinding binding) throws CoreException {
 		List<IBinding> result= null;
 
-		IBinding owner = binding.getOwner();
-		if (owner != null) {
-			List<? extends IBinding> specializedOwners= findSpecializations(owner);
-			if (!specializedOwners.isEmpty()) {
-				result= new ArrayList<IBinding>(specializedOwners.size());
-
-				for (IBinding specOwner : specializedOwners) {
-					if (specOwner instanceof ICPPClassSpecialization) {
-						result.add(((ICPPClassSpecialization) specOwner).specializeMember(binding));
-					}
-				}
-			}
-		}
-		
+		// Check for instances of the given binding
 		if (binding instanceof ICPPInstanceCache) {
 			final List<ICPPTemplateInstance> instances= Arrays.asList(((ICPPInstanceCache) binding).getAllInstances());
 			if (!instances.isEmpty()) {
-				if (result == null)
-					result= new ArrayList<IBinding>(instances.size());
-
 				for (ICPPTemplateInstance inst : instances) {
 					if (!ASTInternal.hasDeclaration(inst)) {
+						if (result == null)
+							result= new ArrayList<IBinding>(instances.size());
 						result.add(inst);
 					}
 				}
 			}
 		}
+
+		// Check for specializations of the owner
+		IBinding owner = binding.getOwner();
+		if (owner != null) {
+			for (IBinding specOwner : findSpecializations(index, owner)) {
+				if (specOwner instanceof ICPPClassSpecialization) {
+					// Add the specialized member
+					IBinding specializedMember = ((ICPPClassSpecialization) specOwner).specializeMember(binding);
+					specializedMember= index.adaptBinding(specializedMember);
+					if (specializedMember != null) {
+						if (result == null)
+							result= new ArrayList<IBinding>(findSpecializations(index, owner).size());
+						result.add(specializedMember);
+						// Also add instances of the specialized member
+						if (specializedMember instanceof ICPPInstanceCache) {
+							final List<ICPPTemplateInstance> instances= Arrays.asList(((ICPPInstanceCache) specializedMember).getAllInstances());
+							if (!instances.isEmpty()) {
+								for (ICPPTemplateInstance inst : instances) {
+									if (!ASTInternal.hasDeclaration(inst)) {
+										result.add(inst);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
 		
 		if (result != null) {
 			return result;

@@ -93,7 +93,7 @@ public class CHQueries {
 	private static void findCalledBy1(IIndex index, IBinding callee, boolean includeOrdinaryCalls,
 			ICProject project, CalledByResult result) throws CoreException {
 		findCalledBy2(index, callee, includeOrdinaryCalls, project, result);
-		List<? extends IBinding> specializations = IndexUI.findSpecializations(callee);
+		List<? extends IBinding> specializations = IndexUI.findSpecializations(index, callee);
 		for (IBinding spec : specializations) {
 			findCalledBy2(index, spec, includeOrdinaryCalls, project, result);
 		}

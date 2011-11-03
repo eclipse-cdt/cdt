@@ -54,6 +54,7 @@ import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.index.IndexBasedFileContentProvider;
 import org.eclipse.cdt.internal.core.parser.IMacroDictionary;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider;
+import org.eclipse.cdt.internal.core.parser.util.LRUCache;
 import org.eclipse.cdt.utils.EFSExtensionManager;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -270,15 +271,15 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			return Integer.MAX_VALUE;
 		}
 	}
-
+	
 	protected enum MessageKind { parsingFileTask, errorWhileParsing, tooManyIndexProblems }
 	
 	private int fUpdateFlags= IIndexManager.UPDATE_ALL;
 	private UnusedHeaderStrategy fIndexHeadersWithoutContext= UnusedHeaderStrategy.useDefaultLanguage;
 	private boolean fIndexFilesWithoutConfiguration= true;
 	private List<LinkageTask> fRequestsPerLinkage= new ArrayList<LinkageTask>();
-	private Map<IIndexFile, IndexFileContent> fIndexContentCache= new HashMap<IIndexFile, IndexFileContent>();
-	private Map<IIndexFileLocation, IIndexFile[]> fIndexFilesCache= new HashMap<IIndexFileLocation, IIndexFile[]>();
+	private Map<IIndexFile, IndexFileContent> fIndexContentCache= new LRUCache<IIndexFile, IndexFileContent>(500);
+	private Map<IIndexFileLocation, IIndexFile[]> fIndexFilesCache= new LRUCache<IIndexFileLocation, IIndexFile[]>(5000);
 	
 	private Object[] fFilesToUpdate;
 	private List<Object> fFilesToRemove = new ArrayList<Object>();

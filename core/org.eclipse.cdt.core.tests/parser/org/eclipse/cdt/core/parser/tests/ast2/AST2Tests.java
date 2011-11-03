@@ -7375,4 +7375,16 @@ public class AST2Tests extends AST2BaseTest {
 		parseAndCheckBindings();
 	}		
 		
+	// typedef int T[sizeof(int)];
+	public void testSizeofExpression_Bug362464() throws Exception {
+		String code= getAboveComment();
+		for (ParserLanguage l : ParserLanguage.values()) {
+			IASTTranslationUnit tu= parseAndCheckBindings(code, l);
+			IASTSimpleDeclaration sdecl= getDeclaration(tu, 0);
+			ITypedef tdef= (ITypedef) sdecl.getDeclarators()[0].getName().resolveBinding();
+			IArrayType at= (IArrayType) tdef.getType();
+			IValue v= at.getSize();
+			assertTrue(v.numericalValue() == 4);
+		}
+	}		
 }

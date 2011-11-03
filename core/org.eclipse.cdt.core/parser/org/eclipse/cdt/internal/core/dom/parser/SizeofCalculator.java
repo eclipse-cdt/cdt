@@ -26,7 +26,6 @@ import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -111,7 +110,7 @@ public class SizeofCalculator {
 	public SizeAndAlignment sizeAndAlignment(IType type) {
 		type = SemanticUtil.getNestedType(type, SemanticUtil.CVTYPE | SemanticUtil.TDEF);
 
-		if (type instanceof ICPPBasicType) {
+		if (type instanceof IBasicType) {
 			return sizeAndAlignment((IBasicType) type);
 		}
 		if (type instanceof IPointerType || type instanceof ICPPReferenceType) {

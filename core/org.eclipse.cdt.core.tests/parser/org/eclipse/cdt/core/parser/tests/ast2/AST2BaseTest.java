@@ -100,12 +100,19 @@ public class AST2BaseTest extends BaseTestCase {
     protected static boolean sValidateCopy;
 
     private static final ScannerInfo GNU_SCANNER_INFO = new ScannerInfo(getGnuMap());
-	private static final ScannerInfo SCANNER_INFO = new ScannerInfo();
+	private static final ScannerInfo SCANNER_INFO = new ScannerInfo(getStdMap());
 
 	private static Map<String, String> getGnuMap() {
 		Map<String, String> map= new HashMap<String, String>();
 		map.put("__GNUC__", "4");
 		map.put("__GNUC_MINOR__", "5");
+		map.put("__SIZEOF_INT__", "4");
+		return map;
+	}
+
+	private static Map<String, String> getStdMap() {
+		Map<String, String> map= new HashMap<String, String>();
+		map.put("__SIZEOF_INT__", "4");
 		return map;
 	}
 

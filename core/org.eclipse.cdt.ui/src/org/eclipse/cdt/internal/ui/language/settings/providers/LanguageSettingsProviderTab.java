@@ -302,6 +302,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 		tableProvidersViewer.setLabelProvider(new ProvidersTableLabelProvider());
 
 		tableProvidersViewer.addCheckStateListener(new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent e) {
 				saveCheckedProviders(e.getElement());
 				tableProvidersViewer.update(e.getElement(), null);
@@ -320,6 +321,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 		link.setLayoutData(gd);
 
 		link.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				// Use event.text to tell which link was used
 				PreferencesUtil.createPreferenceDialogOn(parent.getShell(), WORKSPACE_PREFERENCE_PAGE, null, null).open();
@@ -521,6 +523,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 
 		// ensure sorting by name all unchecked providers
 		Set<ILanguageSettingsProvider> allAvailableProvidersSet = new TreeSet<ILanguageSettingsProvider>(new Comparator<ILanguageSettingsProvider>() {
+			@Override
 			public int compare(ILanguageSettingsProvider prov1, ILanguageSettingsProvider prov2) {
 				Boolean isTest1 = prov1.getId().matches(TEST_PLUGIN_ID_PATTERN);
 				Boolean isTest2 = prov2.getId().matches(TEST_PLUGIN_ID_PATTERN);
@@ -679,9 +682,10 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 		ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(provider);
 		boolean canClear = false;
 		if (rawProvider instanceof ILanguageSettingsEditableProvider) {
-			if (!((ILanguageSettingsEditableProvider) rawProvider).isEmpty()) {
+			// TODO - commented out because we need the means to restart failed Spec Detectors
+//			if (!((ILanguageSettingsEditableProvider) rawProvider).isEmpty()) {
 				canClear = canForWorkspace || canForProject;
-			}
+//			}
 		}
 
 		boolean canReset = false;

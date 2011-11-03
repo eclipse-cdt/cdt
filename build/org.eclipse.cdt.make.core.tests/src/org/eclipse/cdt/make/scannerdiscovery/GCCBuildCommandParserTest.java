@@ -952,6 +952,46 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 
 	/**
 	 */
+	public void testFileIgnoreWrongBuildDir() throws Exception {
+		// Create model project and accompanied descriptions
+		String projectName = getName();
+		IProject project = ResourceHelper.createCDTProjectWithConfig(projectName);
+		IFolder folder1=ResourceHelper.createFolder(project, "Folder1");
+		IFile file=ResourceHelper.createFile(project, "Folder1/Folder2/file.cpp");
+		ICConfigurationDescription[] cfgDescriptions = getConfigurationDescriptions(project);
+		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
+		
+		ICLanguageSetting ls = cfgDescription.getLanguageSettingForFile(file.getProjectRelativePath(), true);
+		String languageId = ls.getLanguageId();
+		
+		// create GCCBuildCommandParser
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
+		ErrorParserManager epm = new ErrorParserManager(project, null);
+		// Shift build directory, that could happen if Make Target from folder1 was run
+		IFolder buildDir = folder1;
+		epm.pushDirectoryURI(buildDir.getLocationURI());
+		
+		// parse line
+		parser.startup(cfgDescription);
+		parser.processLine("gcc "
+				+ "-I/path0 "
+				+ "-I. "
+				+ "Folder1/Folder2/file.cpp",
+				epm);
+		parser.shutdown();
+		
+		// check entries
+		IPath path0 = new Path("/path0").setDevice(project.getLocation().getDevice());
+		{
+			List<ICLanguageSettingEntry> entries = parser.getSettingEntries(cfgDescription, file, languageId);
+			assertEquals(new CIncludePathEntry(path0, 0), entries.get(0));
+			// Information from build output should take precedence over build dir
+			assertEquals(new CIncludePathEntry(project.getFullPath(), ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED), entries.get(1));
+		}
+	}
+	
+	/**
+	 */
 	public void testEndOfLine() throws Exception {
 		// Create model project and accompanied descriptions
 		String projectName = getName();

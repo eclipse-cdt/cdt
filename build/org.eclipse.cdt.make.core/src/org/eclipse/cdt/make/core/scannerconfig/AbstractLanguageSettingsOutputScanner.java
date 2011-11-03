@@ -271,6 +271,8 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		List<String> options = parseForOptions(line);
 		if (options!=null) {
 			for (String option : options) {
+				@SuppressWarnings("unused")
+				int i =0;
 				for (AbstractOptionParser optionParser : getOptionParsers()) {
 					try {
 						if (optionParser.parseOption(option)) {
@@ -647,7 +649,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 					return null;
 				} else {
 					if (path.endsWith("/" + lastSegment)) { //$NON-NLS-1$
-						int pos = path.lastIndexOf(lastSegment);
+						int pos = path.lastIndexOf("/" + lastSegment); //$NON-NLS-1$
 						path = path.substring(0, pos);
 						continue;
 					} else {
@@ -660,7 +662,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	
 		try {
 			cwdURI = new URI(fileURI.getScheme(), fileURI.getUserInfo(), fileURI.getHost(),
-					fileURI.getPort(), path, fileURI.getQuery(), fileURI.getFragment());
+					fileURI.getPort(), path + '/', fileURI.getQuery(), fileURI.getFragment());
 		} catch (URISyntaxException e) {
 			// It should be valid URI here or something is wrong
 			MakeCorePlugin.log(e);

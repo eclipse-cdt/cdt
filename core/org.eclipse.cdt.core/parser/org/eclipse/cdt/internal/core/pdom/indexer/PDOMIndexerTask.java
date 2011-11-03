@@ -100,6 +100,7 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 		union.addAll(Arrays.asList(changed));
 		final ITranslationUnit[] result = union.toArray(new ITranslationUnit[union.size()]);
 		Arrays.sort(result, new Comparator<ITranslationUnit>() {
+			@Override
 			public int compare(ITranslationUnit o1, ITranslationUnit o2) {
 				IResource res1= o1.getResource();
 				IResource res2= o2.getResource();
@@ -125,14 +126,12 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 		return result;
 	}
 	
-	public final void setParseUpFront() {
-		setParseUpFront(fIndexer.getFilesToParseUpFront());
-	}
-
+	@Override
 	public final IPDOMIndexer getIndexer() {
 		return fIndexer;
 	}
 	
+	@Override
 	public final void run(IProgressMonitor monitor) throws InterruptedException {
 		long start = System.currentTimeMillis();
 		runTask(monitor);

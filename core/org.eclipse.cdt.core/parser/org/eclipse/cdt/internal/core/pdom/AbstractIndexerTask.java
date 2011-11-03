@@ -328,10 +328,6 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		fUpdateFlags= flags;
 	}
 
-	// TODO(197989) remove
-	public final void setParseUpFront(String[] astFilePaths) {
-	}
-
 	public final void setForceFirstFiles(int number) {
 		fForceNumberFiles= number;
 	}

@@ -90,15 +90,7 @@ public abstract class StandaloneIndexerTask extends AbstractIndexerTask {
 	final public IndexerProgress getProgressInformation() {
 		return super.getProgressInformation();
 	}
-		
-	
-	/**
-	 * Tells the parser which files to parse first
-	 */
-	final public void setParseUpFront() {
-		setParseUpFront(fIndexer.getFilesToParseUpFront());
-	}
-	
+			
 	/**
 	 * Figures out whether all files (sources without config, headers not included)
 	 * should be parsed.

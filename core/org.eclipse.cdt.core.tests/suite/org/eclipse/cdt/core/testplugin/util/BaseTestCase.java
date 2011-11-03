@@ -37,7 +37,6 @@ import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.pdom.CModelListener;
 import org.eclipse.cdt.internal.core.pdom.PDOMManager;
-import org.eclipse.cdt.internal.core.pdom.indexer.AbstractPDOMIndexer;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILogListener;
@@ -67,7 +66,6 @@ public class BaseTestCase extends TestCase {
 		CPPASTNameBase.sAllowRecursionBindings= false;
 		CPPASTNameBase.sAllowNameComputation= false;
 		CModelListener.sSuppressUpdateOfLastRecentlyUsed= true;
-		AbstractPDOMIndexer.noFilesUpFront= true;
 	}
 	
 	@Override
@@ -132,6 +130,7 @@ public class BaseTestCase extends TestCase {
 	public void runBare() throws Throwable {
 		final List<IStatus> statusLog= Collections.synchronizedList(new ArrayList());
 		ILogListener logListener= new ILogListener() {
+			@Override
 			public void logging(IStatus status, String plugin) {
 				if (!status.isOK() && status.getSeverity() != IStatus.INFO) {
 					switch (status.getCode()) {
@@ -274,6 +273,7 @@ public class BaseTestCase extends TestCase {
 			CoreModel.getDefault().removeElementChangedListener(this);
 		}
 		
+		@Override
 		public void elementChanged(ElementChangedEvent event) {
 			// Only respond to post change events
 			if (event.getType() != ElementChangedEvent.POST_CHANGE)

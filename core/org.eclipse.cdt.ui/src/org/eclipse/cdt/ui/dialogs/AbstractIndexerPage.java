@@ -28,7 +28,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
@@ -51,13 +50,13 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 	private Button fIndexOnOpen;
 	private Button fIncludeHeuristics;
 	private IntegerFieldEditor fFileSizeLimit;
-	private Text fFilesToParseUpFront;
 	private Button fSkipReferences;
 	private Button fSkipImplicitReferences;
 	private Button fSkipMacroAndTypeReferences;
 
     private IPropertyChangeListener validityChangeListener = new IPropertyChangeListener() {
-        public void propertyChange(PropertyChangeEvent event) {
+        @Override
+		public void propertyChange(PropertyChangeEvent event) {
             if (event.getProperty().equals(FieldEditor.IS_VALID)) {
 				updateValidState();
 			}
@@ -116,8 +115,6 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 		fSkipReferences= createSkipReferencesButton(group);
 		fSkipImplicitReferences= createSkipImplicitReferencesButton(group);
 		fSkipMacroAndTypeReferences= createSkipMacroAndTypeReferencesButton(group);
-		
-		fFilesToParseUpFront= createParseUpFrontTextField(page);
 		
 		final SelectionAdapter selectionListener = new SelectionAdapter() {
 			@Override
@@ -184,10 +181,6 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 			boolean skipMacroReferences= TRUE.equals(properties.get(IndexerPreferences.KEY_SKIP_MACRO_REFERENCES));
 			fSkipMacroAndTypeReferences.setSelection(skipTypeReferences && skipMacroReferences);
 		}		
-		if (fFilesToParseUpFront != null) {
-			String files = getNotNull(properties, IndexerPreferences.KEY_FILES_TO_PARSE_UP_FRONT);
-			fFilesToParseUpFront.setText(files);
-		}
 		updateEnablement();
 	}
 
@@ -214,9 +207,6 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 		}
 		if (fFileSizeLimit != null) {
 			props.put(IndexerPreferences.KEY_SKIP_FILES_LARGER_THAN_MB, String.valueOf(fFileSizeLimit.getIntValue()));
-		}
-		if (fFilesToParseUpFront != null) {
-			props.put(IndexerPreferences.KEY_FILES_TO_PARSE_UP_FRONT, fFilesToParseUpFront.getText());
 		}
 		if (fSkipReferences != null) {
 			props.put(IndexerPreferences.KEY_SKIP_ALL_REFERENCES, String.valueOf(fSkipReferences.getSelection()));
@@ -273,20 +263,6 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
         }
     }
     
-	private String getNotNull(Properties properties, String key) {
-		String files= (String) properties.get(key);
-		if (files == null) {
-			files= ""; //$NON-NLS-1$
-		}
-		return files;
-	}
-
-	private Text createParseUpFrontTextField(Composite page) {
-		Label l= ControlFactory.createLabel(page, DialogsMessages.AbstractIndexerPage_indexUpFront);
-		((GridData) l.getLayoutData()).verticalIndent= 5;
-		return ControlFactory.createTextField(page);
-	} 
-
 	private Button createAllFilesButton(Composite page) {
 		Button result= ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_indexAllFiles);
 		((GridData) result.getLayoutData()).horizontalSpan= 3;
@@ -348,17 +324,9 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 	}
 	
 	/**
-	 * Enable or disable support for parsing files up front. Essentially the according widget will be 
-	 * enabled or disabled.
-	 * There will be no effect by calling this function before the IndexerPage is created 
-	 * (by {@link #createControl(Composite)}). 
-	 * <p> By default, support for parsing files up front is enabled.
-	 * 
-	 * @since 5.3
+	 * @deprecated parsing files up-front is no longer necessary.
 	 */
+	@Deprecated
 	protected void setSupportForFilesParsedUpFront(boolean enable){
-		if(fFilesToParseUpFront!=null){
-			fFilesToParseUpFront.setEnabled(enable);
-		}
 	}
 }

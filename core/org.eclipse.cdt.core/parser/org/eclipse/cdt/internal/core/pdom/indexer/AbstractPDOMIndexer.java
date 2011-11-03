@@ -21,9 +21,6 @@ import org.eclipse.cdt.core.model.ICProject;
  * Abstract base class for all indexers.
  */
 public abstract class AbstractPDOMIndexer implements IPDOMIndexer {
-	// For testing purposes
-	public static boolean noFilesUpFront= false;
-	
 	protected ICProject project;
 	protected Properties fProperties= new Properties();
 		
@@ -34,25 +31,28 @@ public abstract class AbstractPDOMIndexer implements IPDOMIndexer {
 		fProperties.put(IndexerPreferences.KEY_INDEX_ON_OPEN, String.valueOf(false));
 		fProperties.put(IndexerPreferences.KEY_INCLUDE_HEURISTICS, String.valueOf(true));
 		fProperties.put(IndexerPreferences.KEY_SKIP_FILES_LARGER_THAN_MB, String.valueOf(IndexerPreferences.DEFAULT_FILE_SIZE_LIMIT));
-		fProperties.put(IndexerPreferences.KEY_FILES_TO_PARSE_UP_FRONT, ""); //$NON-NLS-1$
 		fProperties.put(IndexerPreferences.KEY_SKIP_ALL_REFERENCES, String.valueOf(false)); 
 		fProperties.put(IndexerPreferences.KEY_SKIP_IMPLICIT_REFERENCES, String.valueOf(false)); 
 		fProperties.put(IndexerPreferences.KEY_SKIP_TYPE_REFERENCES, String.valueOf(false)); 
 		fProperties.put(IndexerPreferences.KEY_SKIP_MACRO_REFERENCES, String.valueOf(false)); 
 	}
 
+	@Override
 	public ICProject getProject() {
 		return project;
 	}
 		
+	@Override
 	public void setProject(ICProject project) {
 		this.project = project;
 	}
 		
+	@Override
 	public String getProperty(String key) {
 		return fProperties.getProperty(key);
 	}
 
+	@Override
 	public boolean needsToRebuildForProperties(Properties props) {
 		for (Map.Entry<Object,Object> entry : fProperties.entrySet()) {
 			String key = (String) entry.getKey();
@@ -72,6 +72,7 @@ public abstract class AbstractPDOMIndexer implements IPDOMIndexer {
 		return fProperties;
 	}
 
+	@Override
 	public void setProperties(Properties props) {
 		// only set relevant properties as initialized in the constructor
 		for (Map.Entry<Object,Object> entry : props.entrySet()) {
@@ -82,18 +83,5 @@ public abstract class AbstractPDOMIndexer implements IPDOMIndexer {
 				fProperties.put(key, val);
 			}
 		}
-	}
-
-	public String[] getFilesToParseUpFront() {
-		if (!noFilesUpFront) {
-			String prefSetting= getProperty(IndexerPreferences.KEY_FILES_TO_PARSE_UP_FRONT);
-			if (prefSetting != null) {
-				prefSetting= prefSetting.trim();
-				if (prefSetting.length() > 0) {
-					return prefSetting.split(","); //$NON-NLS-1$
-				}
-			}
-		}
-		return new String[0];
 	}
 }

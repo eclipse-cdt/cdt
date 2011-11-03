@@ -148,17 +148,13 @@ public abstract class StandaloneIndexer {
 	 */
 	protected FilenameFilter fExclusionFilter;
 	
-	/**
-	 * Files to parse up front.
-	 */
-	protected String[] fFilesToParseUpFront = new String[0];
-	
 	protected int fUpdateOptions = UPDATE_ALL;
 	
 	private IndexerProgress fProgress = null;
 	private volatile StandaloneIndexerTask fDelegate;
 	
 	private static FilenameFilter DEFAULT_FILTER = new FilenameFilter() {
+		@Override
 		public boolean accept(File dir, String name) {
 			return true;
 		}
@@ -403,7 +399,6 @@ public abstract class StandaloneIndexer {
 			clearIndex();
 			fDelegate= createTask(getFilesAdded(tus), NO_TUS, NO_TUS);
 			fDelegate.setUpdateFlags(fUpdateOptions);
-			fDelegate.setParseUpFront();
 			
 			if (fDelegate != null) {
 				fDelegate.run(monitor);
@@ -489,21 +484,6 @@ public abstract class StandaloneIndexer {
 		fSkipReferences = skipReferences;
 	}
 
-	/**
-	 * Returns an array of files that should be parsed up front.
-	 */
-	public String[] getFilesToParseUpFront() {
-		return fFilesToParseUpFront;
-	}
-	
-	/**
-	 * Sets an array of files that should be parsed up front.
-	 * @param filesToParseUpFront
-	 */
-	public void setFilesToParseUpFront(String[] filesToParseUpFront) {
-		fFilesToParseUpFront = filesToParseUpFront;
-	}
-	
 	/**
 	 * Returns the exclusion filter for this indexer.
 	 */

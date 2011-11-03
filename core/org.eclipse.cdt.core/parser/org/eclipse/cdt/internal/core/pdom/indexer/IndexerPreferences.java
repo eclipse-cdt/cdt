@@ -25,9 +25,9 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
@@ -50,7 +50,6 @@ public class IndexerPreferences {
 	public static final String KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG= "indexUnusedHeadersWithAlternateLang"; //$NON-NLS-1$
 	public static final String KEY_INDEX_ON_OPEN= "indexOnOpen"; //$NON-NLS-1$
 	public static final String KEY_INCLUDE_HEURISTICS= "useHeuristicIncludeResolution"; //$NON-NLS-1$
-	public static final String KEY_FILES_TO_PARSE_UP_FRONT= "filesToParseUpFront"; //$NON-NLS-1$
 	public static final String KEY_SKIP_ALL_REFERENCES= "skipReferences"; //$NON-NLS-1$
 	public static final String KEY_SKIP_IMPLICIT_REFERENCES= "skipImplicitReferences"; //$NON-NLS-1$
 	public static final String KEY_SKIP_TYPE_REFERENCES= "skipTypeReferences"; //$NON-NLS-1$
@@ -62,18 +61,6 @@ public class IndexerPreferences {
 	private static final String KEY_INDEX_IMPORT_LOCATION = "indexImportLocation"; //$NON-NLS-1$
 
 	private static final String DEFAULT_INDEX_IMPORT_LOCATION = ".settings/cdt-index.zip"; //$NON-NLS-1$
-	// See http://bugs.eclipse.org/bugs/show_bug.cgi?id=259843,
-	//     http://bugs.eclipse.org/bugs/show_bug.cgi?id=294180 and
-	//     http://bugs.eclipse.org/bugs/show_bug.cgi?id=295518 for the rationale.
-	private static final String DEFAULT_FILES_TO_PARSE_UP_FRONT=
-		"cstdarg, " +          // configures stdarg.h for c++ 								//$NON-NLS-1$
-		"stdarg.h, " +         // can be fragmented											//$NON-NLS-1$
-		"stddef.h, " +         // can be fragmented											//$NON-NLS-1$
-		"sys/resource.h, " +   // configures bits/time.h, !! fragments stddef.h !!			//$NON-NLS-1$
-		"ctime, " +            // configures time.h for c++									//$NON-NLS-1$
-		"sys/types.h, " +      // can be fragmented,      !! fragments bits/time.h !!		//$NON-NLS-1$
-		"signal.h, " +         // configures bits/signum.h									//$NON-NLS-1$
-		"cstdio";              // configures stdio.h for c++ !! fragments bits/signum.h !!	//$NON-NLS-1$
 	private static final int DEFAULT_UPDATE_POLICY= 0;
 	public static final int DEFAULT_FILE_SIZE_LIMIT = 8;
 
@@ -340,7 +327,6 @@ public class IndexerPreferences {
 		prefs.putBoolean(KEY_SKIP_TYPE_REFERENCES, false);
 		prefs.putBoolean(KEY_SKIP_MACRO_REFERENCES, false);
 		prefs.put(KEY_INDEX_IMPORT_LOCATION, DEFAULT_INDEX_IMPORT_LOCATION);
-		prefs.put(KEY_FILES_TO_PARSE_UP_FRONT, DEFAULT_FILES_TO_PARSE_UP_FRONT);
 	}
 
 	public static void setDefaultIndexerId(String defaultId) {

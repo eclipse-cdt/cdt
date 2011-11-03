@@ -562,6 +562,8 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			info= createFileInfo(key, null);
 		}
 		info.fIndexFile= ifile;
+		info.fDirectives= null;
+		info.fPreprocessingDirectives= null;
 		info.fRequestUpdate= true;
 		info.fIsUpdated= false;
 	}

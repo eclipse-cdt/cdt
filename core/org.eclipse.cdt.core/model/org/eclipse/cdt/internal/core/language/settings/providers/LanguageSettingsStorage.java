@@ -83,6 +83,7 @@ public class LanguageSettingsStorage {
 			/**
 			 * This comparator sorts by kinds first and the macros are sorted additionally by name.
 			 */
+			@Override
 			public int compare(ICLanguageSettingEntry entry0, ICLanguageSettingEntry entry1) {
 				int kind0 = entry0.getKind();
 				int kind1 = entry1.getKind();
@@ -318,13 +319,6 @@ public class LanguageSettingsStorage {
 		}
 	}
 
-	/**
-	 * @noreference This method is not intended to be referenced by clients.
-	 * Warning: but if you use it make sure you synchronize on it while traversing.
-	 */
-	Map<String, Map<String, List<ICLanguageSettingEntry>>> getMapInternal() {
-		return fStorage;
-	}
 	/**
 	 * Clone storage for the entries. Copies references for lists of entries as a whole.
 	 * Note that is OK as the lists kept in storage are unmodifiable.

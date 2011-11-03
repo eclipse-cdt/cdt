@@ -358,6 +358,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 				"DEBUG",
 				"XMacro(x, y)",
 				"__CDT_PARSER__",
+				"__COUNTER__",
 				"__DATE__",
 				"__FILE__",
 				"__LINE__",

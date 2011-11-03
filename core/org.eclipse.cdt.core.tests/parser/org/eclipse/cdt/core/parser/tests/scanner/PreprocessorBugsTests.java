@@ -354,4 +354,13 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 		validateIdentifier("B");
 		validateProblemCount(0);
 	}
+	
+	// __COUNTER__
+	// __COUNTER__
+	public void testCounter_Bug362148() throws Exception {
+		initializeScanner();
+		validateInteger("0");
+		validateInteger("1");
+		validateProblemCount(0);
+	}
 }

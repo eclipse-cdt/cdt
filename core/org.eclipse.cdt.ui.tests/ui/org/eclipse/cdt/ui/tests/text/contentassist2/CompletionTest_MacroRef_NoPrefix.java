@@ -31,6 +31,7 @@ public class CompletionTest_MacroRef_NoPrefix  extends CompletionProposalsBaseTe
 			"DEBUG",
 			"XMacro(x, y)",
 			"__CDT_PARSER__",
+			"__COUNTER__",
 			"__DATE__",
 			"__FILE__",
 			"__LINE__",

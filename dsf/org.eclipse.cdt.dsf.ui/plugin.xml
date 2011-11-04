@@ -422,21 +422,6 @@
       </propertyTester>
 
       <propertyTester
-            class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.UpdateScopesPropertyTester"
-            id="org.eclipse.cdt.dsf.debug.ui.selectionUpdateScopesTester"
-            namespace="org.eclipse.cdt.dsf.debug.ui"
-            properties="areUpdateScopesSupported,isUpdateScopeAvailable,isUpdateScopeActive"
-            type="org.eclipse.cdt.dsf.ui.viewmodel.IVMContext">
-      </propertyTester>
-      <propertyTester
-            class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.UpdateScopesPropertyTester"
-            id="org.eclipse.cdt.dsf.debug.ui.partUpdateScopesTester"
-            namespace="org.eclipse.cdt.dsf.debug.ui"
-            properties="areUpdateScopesSupported,isUpdateScopeAvailable,isUpdateScopeActive"
-            type="org.eclipse.debug.ui.IDebugView">
-      </propertyTester>
-
-      <propertyTester
             class="org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.NumberFormatsPropertyTester"
             id="org.eclipse.cdt.dsf.debug.ui.selectionNumberFormatsTester"
             namespace="org.eclipse.cdt.dsf.debug.ui"

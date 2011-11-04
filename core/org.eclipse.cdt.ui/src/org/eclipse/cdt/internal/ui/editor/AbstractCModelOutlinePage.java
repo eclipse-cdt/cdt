@@ -315,6 +315,7 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 	/*
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@Override
 	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class key) {
 		if (key == IShowInSource.class) {
@@ -322,6 +323,7 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 		}
 		if (key == IShowInTargetList.class) {
 			return new IShowInTargetList() {
+				@Override
 				public String[] getShowInTargetIds() {
 					return new String[] { ProjectExplorer.VIEW_ID };
 				}
@@ -340,6 +342,7 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 	 */
 	protected IShowInSource getShowInSource() {
 		return new IShowInSource() {
+			@Override
 			public ShowInContext getShowInContext() {
 				return new ShowInContext(
 					null,
@@ -355,6 +358,7 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 	 */
 	protected IShowInTarget getShowInTarget() {
 		return new IShowInTarget() {
+			@Override
 			public boolean show(ShowInContext context) {
 				ISelection sel= context.getSelection();
 				if (sel instanceof ITextSelection) {
@@ -457,13 +461,13 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 	}
 
 	protected ProblemTreeViewer createTreeViewer(Composite parent) {
-		fTreeViewer = new OutlineTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		fTreeViewer.setContentProvider(createContentProvider(fTreeViewer));
-		fTreeViewer.setLabelProvider(new DecoratingCLabelProvider(createLabelProvider(), true));
-		fTreeViewer.setAutoExpandLevel(3);
-		fTreeViewer.setUseHashlookup(true);
-		fTreeViewer.addSelectionChangedListener(this);
-		return fTreeViewer;
+		ProblemTreeViewer treeViewer = new OutlineTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		treeViewer.setContentProvider(createContentProvider(treeViewer));
+		treeViewer.setLabelProvider(new DecoratingCLabelProvider(createLabelProvider(), true));
+		treeViewer.setAutoExpandLevel(3);
+		treeViewer.setUseHashlookup(true);
+		treeViewer.addSelectionChangedListener(this);
+		return treeViewer;
 	}
 
 	private CUILabelProvider createLabelProvider() {
@@ -478,6 +482,7 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 		MenuManager manager= new MenuManager(fContextMenuId);
 		manager.setRemoveAllWhenShown(true);
 		manager.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 				contextMenuAboutToShow(manager);
 			}
@@ -487,6 +492,7 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 		control.setMenu(fMenu);
 	
 		fTreeViewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				if (fOpenIncludeAction != null) {
 					fOpenIncludeAction.run();
@@ -660,6 +666,7 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 		return null;
 	}
 
+	@Override
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
 		fSelectionChangedListeners.add(listener);
 	}
@@ -696,6 +703,7 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 		return fTreeViewer.getControl();
 	}
 
+	@Override
 	public ISelection getSelection() {
 		if (fTreeViewer == null)
 			return StructuredSelection.EMPTY;
@@ -712,10 +720,12 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 		return fTreeViewer;
 	}
 
+	@Override
 	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
 		fSelectionChangedListeners.remove(listener);
 	}
 
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		fireSelectionChanged(event.getSelection());
 	}
@@ -728,6 +738,7 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 		fTreeViewer.getControl().setFocus();
 	}
 
+	@Override
 	public void setSelection(ISelection selection) {
 		if (fTreeViewer != null) 
 			fTreeViewer.setSelection(selection);

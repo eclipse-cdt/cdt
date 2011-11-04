@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -58,7 +59,7 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 		return copy;
 	}
 
-    public CPPNamespaceScope getScope() {
+	public CPPNamespaceScope getScope() {
         if (fScope == null) {
             fScope = new CPPNamespaceScope(this);
 			addBuiltinOperators(fScope);
@@ -179,5 +180,10 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 	@Override
 	public void resolveAmbiguities() {
 		accept(new CPPASTAmbiguityResolver()); 
+	}
+	
+	@Override
+	protected IType createType(IASTTypeId typeid) {
+		return CPPVisitor.createType(typeid);
 	}
 }

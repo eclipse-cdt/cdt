@@ -37,7 +37,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator.SizeAndAlignment;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator.EvalException;
 import org.eclipse.cdt.internal.core.pdom.db.TypeMarshalBuffer;
@@ -468,8 +467,9 @@ public class Value implements IValue {
 			IASTTypeIdExpression typeIdEx = (IASTTypeIdExpression) e;
 			switch (typeIdEx.getOperator()) {
 			case IASTTypeIdExpression.op_sizeof:
-				IType type = CPPVisitor.createType(typeIdEx.getTypeId());
+				final IType type;
 				ASTTranslationUnit ast = (ASTTranslationUnit) typeIdEx.getTranslationUnit();
+				type = ast.createType(typeIdEx.getTypeId());
 				SizeofCalculator calculator = ast.getSizeofCalculator();
 				SizeAndAlignment info = calculator.sizeAndAlignment(type);
 				if (info == null)

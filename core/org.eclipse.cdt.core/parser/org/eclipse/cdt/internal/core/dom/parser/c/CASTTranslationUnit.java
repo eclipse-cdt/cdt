@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
@@ -113,5 +114,10 @@ public class CASTTranslationUnit extends ASTTranslationUnit implements IASTAmbig
 	 */
 	public IType mapToASTType(ICompositeType type) {
 		return fStructMapper.mapToAST(type);
+	}
+	
+	@Override
+	protected IType createType(IASTTypeId typeid) {
+		return CVisitor.createType(typeid.getAbstractDeclarator());
 	}
 }

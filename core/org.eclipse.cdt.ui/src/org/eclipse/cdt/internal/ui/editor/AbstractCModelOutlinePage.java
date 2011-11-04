@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -457,13 +457,13 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 	}
 
 	protected ProblemTreeViewer createTreeViewer(Composite parent) {
-		fTreeViewer = new OutlineTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		fTreeViewer.setContentProvider(createContentProvider(fTreeViewer));
-		fTreeViewer.setLabelProvider(new DecoratingCLabelProvider(createLabelProvider(), true));
-		fTreeViewer.setAutoExpandLevel(3);
-		fTreeViewer.setUseHashlookup(true);
-		fTreeViewer.addSelectionChangedListener(this);
-		return fTreeViewer;
+		ProblemTreeViewer treeViewer = new OutlineTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		treeViewer.setContentProvider(createContentProvider(treeViewer));
+		treeViewer.setLabelProvider(new DecoratingCLabelProvider(createLabelProvider(), true));
+		treeViewer.setAutoExpandLevel(3);
+		treeViewer.setUseHashlookup(true);
+		treeViewer.addSelectionChangedListener(this);
+		return treeViewer;
 	}
 
 	private CUILabelProvider createLabelProvider() {

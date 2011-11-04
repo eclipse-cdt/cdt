@@ -8,36 +8,4 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eclipse/cdt/dsf/debug/internal/ui/disassembly/provisional/DisassemblySelection.java" type="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.DisassemblySelection">
-        <filter id="305365105">
-            <message_arguments>
-                <message_argument value="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.DisassemblySelection"/>
-                <message_argument value="org.eclipse.cdt.dsf.ui_2.2.0"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/cdt/dsf/debug/internal/ui/disassembly/provisional/IBreakpointLocationProvider.java" type="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.IBreakpointLocationProvider">
-        <filter id="305365105">
-            <message_arguments>
-                <message_argument value="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.IBreakpointLocationProvider"/>
-                <message_argument value="org.eclipse.cdt.dsf.ui_2.2.0"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/cdt/dsf/debug/internal/ui/disassembly/provisional/IDisassemblyPart.java" type="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.IDisassemblyPart">
-        <filter id="305365105">
-            <message_arguments>
-                <message_argument value="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.IDisassemblyPart"/>
-                <message_argument value="org.eclipse.cdt.dsf.ui_2.2.0"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/cdt/dsf/debug/internal/ui/disassembly/provisional/IDisassemblySelection.java" type="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.IDisassemblySelection">
-        <filter id="305365105">
-            <message_arguments>
-                <message_argument value="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.IDisassemblySelection"/>
-                <message_argument value="org.eclipse.cdt.dsf.ui_2.2.0"/>
-            </message_arguments>
-        </filter>
-    </resource>
 </component>

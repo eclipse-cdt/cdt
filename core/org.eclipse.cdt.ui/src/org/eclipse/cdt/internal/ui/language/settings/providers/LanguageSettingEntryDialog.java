@@ -230,10 +230,12 @@ public class LanguageSettingEntryDialog extends AbstractPropertyDialog {
 		comboKind.setText(comboKindItems[kindToComboIndex]);
 
 		comboKind.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateImages();
 				setButtons();
 			}
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				widgetSelected(e);
 
@@ -276,10 +278,12 @@ public class LanguageSettingEntryDialog extends AbstractPropertyDialog {
 		comboPathCategory.setLayoutData(gd);
 
 		comboPathCategory.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateImages();
 				setButtons();
 			}
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				widgetSelected(e);
 
@@ -302,6 +306,7 @@ public class LanguageSettingEntryDialog extends AbstractPropertyDialog {
 		gd.widthHint = 200;
 		inputName.setLayoutData(gd);
 		inputName.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				setButtons();
 			}});
@@ -369,11 +374,13 @@ public class LanguageSettingEntryDialog extends AbstractPropertyDialog {
 		checkBoxBuiltIn.setLayoutData(gd);
 		checkBoxBuiltIn.addSelectionListener(new SelectionListener() {
 			
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateImages();
 				setButtons();
 			}
 			
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				widgetSelected(e);
 			}
@@ -387,11 +394,13 @@ public class LanguageSettingEntryDialog extends AbstractPropertyDialog {
 		checkBoxFramework.setLayoutData(gd);
 		checkBoxFramework.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateImages();
 				setButtons();
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				widgetSelected(e);
 			}
@@ -530,7 +539,7 @@ public class LanguageSettingEntryDialog extends AbstractPropertyDialog {
 			int kind = comboKind.getSelectionIndex();
 			boolean isProjectPath = indexPathKind==COMBO_PATH_INDEX_PROJECT;
 			boolean isWorkspacePath = (kind!=COMBO_INDEX_MACRO) && (isProjectPath || indexPathKind==COMBO_PATH_INDEX_WORKSPACE);
-			int flagWorkspace = isWorkspacePath ? ICSettingEntry.VALUE_WORKSPACE_PATH : 0;
+			int flagWorkspace = isWorkspacePath ? ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED : 0;
 			int flags = flagBuiltIn | flagWorkspace | flagFramework;
 
 			ICLanguageSettingEntry entry=null;
@@ -631,7 +640,7 @@ public class LanguageSettingEntryDialog extends AbstractPropertyDialog {
 		int flagBuiltin = checkBoxBuiltIn.getSelection() ? ICSettingEntry.BUILTIN : 0;
 		int flagFramework = checkBoxFramework.getSelection() ? ICSettingEntry.FRAMEWORKS_MAC : 0;
 		boolean isWorkspacePath = indexPathKind==COMBO_PATH_INDEX_PROJECT || indexPathKind==COMBO_PATH_INDEX_WORKSPACE;
-		int flagWorkspace = isWorkspacePath ? ICSettingEntry.VALUE_WORKSPACE_PATH : 0;
+		int flagWorkspace = isWorkspacePath ? ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED : 0;
 		int flags = flagBuiltin | flagWorkspace | flagFramework;
 		Image image = LanguageSettingsImages.getImage(kind, flags, indexPathKind==COMBO_PATH_INDEX_PROJECT);
 

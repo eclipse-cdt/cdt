@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX Software Systems (Alena Laskavaia)  - initial API and implementation
+ *     QNX Software Systems (Alena Laskavaia)  - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers.ui.quickfix;
 
@@ -17,7 +17,6 @@ import org.eclipse.cdt.codan.core.test.CheckerTestCase;
 import org.eclipse.cdt.codan.core.test.TestUtils;
 import org.eclipse.cdt.codan.internal.ui.CodanUIActivator;
 import org.eclipse.cdt.codan.ui.AbstractCodanCMarkerResolution;
-import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -27,19 +26,19 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * TODO: add description
+ * Abstract base class for Quck Fix tests.
  */
+@SuppressWarnings("restriction")
 public abstract class QuickFixTestCase extends CheckerTestCase {
 	AbstractCodanCMarkerResolution quickFix;
 	Display display;
 
 	/**
 	 * Dispatch ui events for at least msec - milliseconds
-	 * 
+	 *
 	 * @param msec -
 	 *        milliseconds delay
 	 * @param display -
@@ -60,7 +59,7 @@ public abstract class QuickFixTestCase extends CheckerTestCase {
 			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 			IWorkbenchPage activePage = window.getActivePage();
 			IWorkbenchPart activePart = activePage.getActivePart();
-			if (activePart.getTitle().equals("Welcome")) {
+			if (activePart.getTitle().equals("Welcome")) { //$NON-NLS-1$
 				//activePage.close();
 				activePart.dispose();
 			}
@@ -69,7 +68,6 @@ public abstract class QuickFixTestCase extends CheckerTestCase {
 		}
 	}
 
-	@SuppressWarnings("restriction")
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
@@ -77,7 +75,7 @@ public abstract class QuickFixTestCase extends CheckerTestCase {
 		display = PlatformUI.getWorkbench().getDisplay();
 		closeWelcome();
 		IPreferenceStore store = CodanUIActivator.getDefault().getPreferenceStore(cproject.getProject());
-		// turn off editor reconsiler
+		// turn off editor reconciler
 		store.setValue(PreferenceConstants.P_RUN_IN_EDITOR, false);
 	}
 
@@ -105,31 +103,15 @@ public abstract class QuickFixTestCase extends CheckerTestCase {
 		return new TextSelection(code.indexOf(string), string.length());
 	}
 
-	/**
-	 * @return
-	 * @throws CModelException
-	 * @throws PartInitException
-	 * @throws IOException
-	 * @throws CoreException
-	 */
-	public String runQuickFixOneFile() {
+	public String runQuickFixOneFile() throws IOException, CoreException {
 		// need to load before running codan because otherwise marker is lost when doing quick fix 8[]
-		try {
-			runCodan();
-			doRunQuickFix();
-			dispatch(500);
-			String result = TestUtils.loadFile(currentIFile.getContents());
-			return result;
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail(e.getMessage());
-			return null;
-		}
+		runCodan();
+		doRunQuickFix();
+		dispatch(500);
+		String result = TestUtils.loadFile(currentIFile.getContents());
+		return result;
 	}
 
-	/**
-	 * 
-	 */
 	public void doRunQuickFix() {
 		for (int i = 0; i < markers.length; i++) {
 			IMarker marker = markers[i];

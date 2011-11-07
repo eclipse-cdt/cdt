@@ -28,7 +28,7 @@ public class CaseBreakQuickFixTest extends QuickFixTestCase {
 	//     case 2:
 	//	 }
 	// }
-	public void testMiddleCase() {
+	public void testMiddleCase() throws Exception {
 		loadcode(getAboveComment());
 		String result = runQuickFixOneFile();
 		assertContainedIn("break;     case 2:", result);
@@ -41,7 +41,7 @@ public class CaseBreakQuickFixTest extends QuickFixTestCase {
 	//	     hello();
 	//	 }
 	// }
-	public void testLastCase() {
+	public void testLastCase() throws Exception {
 		loadcode(getAboveComment());
 		String result = runQuickFixOneFile();
 		assertContainedIn("break;	 }", result);
@@ -55,9 +55,9 @@ public class CaseBreakQuickFixTest extends QuickFixTestCase {
 	//     }
 	//	 }
 	// }
-	public void testLastCaseComp() {
+	public void testLastCaseComp() throws Exception {
 		loadcode(getAboveComment());
 		String result = runQuickFixOneFile();
-		assertContainedIn("hello();\n\nbreak;", result);
+		assertContainedIn("hello();\t\tbreak;", result);
 	}
 }

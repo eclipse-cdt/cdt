@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Tomasz Wesolowski - initial API and implementation
+ *     Tomasz Wesolowski - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers.ui.quickfix;
 
@@ -93,5 +93,4 @@ public class CatchByReferenceQuickFixTest extends QuickFixTestCase {
 		String result = runQuickFixOneFile();
 		assertContainedIn("catch (const C &)", result); //$NON-NLS-1$
 	}
-
 }

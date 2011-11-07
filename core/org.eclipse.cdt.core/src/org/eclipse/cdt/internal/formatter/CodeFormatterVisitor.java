@@ -790,17 +790,18 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 				}
 			}
 			IASTName name= node.getName();
-			if (name != null && name.getSimpleID().length != 0) {
+			IASTDeclarator nestedDecl= node.getNestedDeclarator();
+			if (name != null && name.getSimpleID().length != 0 || nestedDecl != null) {
 				if (node.getPropertyInParent() != IASTDeclarator.NESTED_DECLARATOR &&
 						isFirstDeclarator(node)) {
-					// Preserve non-space between pointer operator and name
+					// Preserve non-space between pointer operator and name or nested declarator.
 					if (pointerOperators.length == 0 || scribe.printComment()) {
 						scribe.space();
 					}
 				}
-				name.accept(this);
+				if (name != null)
+					name.accept(this);
 			}
-			IASTDeclarator nestedDecl= node.getNestedDeclarator();
 			if (nestedDecl != null) {
 				scribe.printNextToken(Token.tLPAREN, false);
 				nestedDecl.accept(this);

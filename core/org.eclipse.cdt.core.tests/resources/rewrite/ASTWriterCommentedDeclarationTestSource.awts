@@ -76,42 +76,51 @@ extern "C" typedef void FUNC(); /*TEST 2*/
 //!Commented NamespaceAlias 1
 //%CPP
 //TEST 1
-namespace kurz = ziemlichlangernamespace; //TEST 2
+namespace kurz = somenamespace; //TEST 2
 
 //!Commented NamespaceAlias 2
 //%CPP
 /*TEST 1*/
-namespace kurz = ziemlichlangernamespace; /*TEST 2*/
+namespace kurz = somenamespace; /*TEST 2*/
 
 //!Commented NamespaceDefinition 1
 //%CPP
 //TEST 1
-namespace ziemlichlangernamespace
+namespace namespace1
 {
-    //TEST 2
+
+//TEST 2
+
 } //TEST 3
 
 //!Commented NamespaceDefinition 2
 //%CPP
 /*TEST 1*/
-namespace ziemlichlangernamespace
+namespace namespace2
 {
-    /*TEST 2*/
+
+/*TEST 2*/
+
 } /*TEST 3*/
 
 //!Commented NamespaceDefinition 3
 //%CPP
-namespace ziemlichlangernamespace
+namespace namespace3
 {
-    //TEST
+
+//TEST
+
 }
 
 //!Commented NamespaceDefinition 4
 //%CPP
-namespace ziemlichlangernamespace
+namespace namespace4
 {
-    //TEST
+
+//TEST
+
 }
+
 void doIt()
 {
     int i = 0;
@@ -158,8 +167,9 @@ template<> class MyQueue<double> //TEST 2
 {
     //TEST 3
     std::vector<double> data;
+
 public:
-    void Add(const double& );
+    void Add(const double&);
     void Remove();
     void Print();
     //TEST 4
@@ -173,8 +183,9 @@ template<> class MyQueue<double> /*TEST 2*/
 {
     /*TEST 3*/
     std::vector<double> data;
+
 public:
-    void Add(const double& );
+    void Add(const double&);
     void Remove();
     void Print();
     /*TEST 4*/
@@ -214,9 +225,11 @@ class A
     //TEST 1
 public: //TEST 2
     int hallo();
+
     /*TEST 3*/
 protected: /*TEST 4*/
     int b, c;
+
 private:
     int p;
 };
@@ -231,13 +244,13 @@ int i = 2; //TEST 2
 /*TEST 1*/
 int i = 2; /*TEST 2*/
 
-//!Commented typename qualfier 1
+//!Commented typename qualifier 1
 //%CPP
 //TEST 1
-typename T::A *a6; //TEST 2
+typename T::A* a6; //TEST 2
 
-//!Commented typename qualfier 2
+//!Commented typename qualifier 2
 //%CPP
 /*TEST 1*/
-typename T::A *a6; /*TEST 2*/
+typename T::A* a6; /*TEST 2*/
 

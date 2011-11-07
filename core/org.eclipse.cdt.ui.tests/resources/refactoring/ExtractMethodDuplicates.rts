@@ -6,13 +6,12 @@ replaceduplicates=true
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
 };
@@ -23,16 +22,15 @@ private:
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
-    void exp(int & i);
+	void exp(int& i);
 };
 
 #endif /*A_H_*/
@@ -40,56 +38,51 @@ private:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 	int i = 2;
 	++i;
 	help();
-}int A::foo()
-{
+}
+
+int A::foo() {
 	int i = 2;
 	/*$*/++i;
 	help();/*$$*/
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 	int i = 2;
-    exp(i);
-}void A::exp(int & i)
-{
-    ++i;
-    help();
+	exp(i);
 }
 
-int A::foo()
-{
+void A::exp(int& i) {
+	++i;
+	help();
+}
+
+int A::foo() {
 	int i = 2;
-    exp(i);
+	exp(i);
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //!ExtractFunctionRefactoringTest duplicates with different Names
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
@@ -99,13 +92,12 @@ replaceduplicates=true
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
 };
@@ -116,16 +108,15 @@ private:
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
-    void exp(int & i);
+	void exp(int& i);
 };
 
 #endif /*A_H_*/
@@ -133,56 +124,51 @@ private:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 	int oo = 99;
 	++oo;
 	help();
-}int A::foo()
-{
+}
+
+int A::foo() {
 	int i = 2;
 	/*$*/++i;
 	help();/*$$*/
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 	int oo = 99;
-    exp(oo);
-}void A::exp(int & i)
-{
-    ++i;
-    help();
+	exp(oo);
 }
 
-int A::foo()
-{
+void A::exp(int& i) {
+	++i;
+	help();
+}
+
+int A::foo() {
 	int i = 2;
-    exp(i);
+	exp(i);
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //!ExtractFunctionRefactoringTest dublicate with field
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
@@ -193,14 +179,13 @@ returnvalue=true
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	void foo();
 	int i;
-	
+
 private:
 	int help();
 };
@@ -211,17 +196,16 @@ private:
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	void foo();
 	int i;
-	
+
 private:
 	int help();
-    int exp(int j, int & a);
+	int exp(int j, int& a);
 };
 
 #endif /*A_H_*/
@@ -229,18 +213,17 @@ private:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 	int j = 0;
 	i++;
 	j++;
 	help();
-}void A::foo()
-{
+}
+
+void A::foo() {
 	int j = 0;
 	int a = 1;
 	/*$*/j++;
@@ -250,32 +233,29 @@ A::~A()
 	j++;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 	int j = 0;
 	i = exp(i, j);
-}int A::exp(int j, int & a)
-{
-    j++;
-    a++;
-    help();
-    return j;
 }
 
-void A::foo()
-{
+int A::exp(int j, int& a) {
+	j++;
+	a++;
+	help();
+	return j;
+}
+
+void A::foo() {
 	int j = 0;
 	int a = 1;
 	j = exp(j, a);
@@ -283,10 +263,9 @@ void A::foo()
 	j++;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //!ExtractFunctionRefactoringTest dublicate with field in marked scope
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
@@ -297,15 +276,14 @@ returnvalue=true
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	void foo();
 	int i;
 	int field;
-	
+
 private:
 	int help();
 };
@@ -316,18 +294,17 @@ private:
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	void foo();
 	int i;
 	int field;
-	
+
 private:
 	int help();
-    int exp(int j);
+	int exp(int j);
 };
 
 #endif /*A_H_*/
@@ -335,19 +312,18 @@ private:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 	int j = 0;
 	int a = 1;
 	a++;
 	j++;
 	help();
-}void A::foo()
-{
+}
+
+void A::foo() {
 	int j = 0;
 
 	/*$*/field++;
@@ -357,45 +333,41 @@ A::~A()
 	j++;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 	int j = 0;
 	int a = 1;
 	a++;
 	j++;
 	help();
-}int A::exp(int j)
-{
-    field++;
-    j++;
-    help();
-    return j;
 }
 
-void A::foo()
-{
+int A::exp(int j) {
+	field++;
+	j++;
+	help();
+	return j;
+}
+
+void A::foo() {
 	int j = 0;
-    j = exp(j);
+	j = exp(j);
 	field++;
 	j++;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //!ExtractFunctionRefactoringTest duplicates with different Names and return type
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
@@ -406,13 +378,12 @@ returnvalue=true
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
 };
@@ -423,16 +394,15 @@ private:
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
-    int exp(int i, float & j);
+	int exp(int i, float& j);
 };
 
 #endif /*A_H_*/
@@ -440,20 +410,19 @@ private:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 	int oo = 99;
 	float blabla = 0;
 	++oo;
 	blabla += 1;
 	help();
 	blabla += 1;
-}int A::foo()
-{
+}
+
+int A::foo() {
 	int i = 2;
 	float j = 8989;
 	/*$*/++i;
@@ -463,45 +432,41 @@ A::~A()
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 	int oo = 99;
 	float blabla = 0;
-    oo = exp(oo, blabla);
+	oo = exp(oo, blabla);
 	blabla += 1;
-}int A::exp(int i, float & j)
-{
-    ++i;
-    j += 1;
-    help();
-    return i;
 }
 
-int A::foo()
-{
+int A::exp(int i, float& j) {
+	++i;
+	j += 1;
+	help();
+	return i;
+}
+
+int A::foo() {
 	int i = 2;
 	float j = 8989;
-    i = exp(i, j);
+	i = exp(i, j);
 	j++;
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //!ExtractFunctionRefactoringTest duplicates with a lot of different Names an variable not used afterwards in the duplicate
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
@@ -511,13 +476,12 @@ replaceduplicates=true
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
 };
@@ -528,16 +492,15 @@ private:
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
-    void exp(int & i, float j);
+	void exp(int& i, float j);
 };
 
 #endif /*A_H_*/
@@ -545,19 +508,18 @@ private:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 	int oo = 99;
 	float blabla = 0;
 	++oo;
 	blabla += 1;
 	help();
-}int A::foo()
-{
+}
+
+int A::foo() {
 	int i = 2;
 	float j = 8989;
 	/*$*/++i;
@@ -566,42 +528,38 @@ A::~A()
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 	int oo = 99;
 	float blabla = 0;
-    exp(oo, blabla);
-}void A::exp(int & i, float j)
-{
-    ++i;
-    j += 1;
-    help();
+	exp(oo, blabla);
 }
 
-int A::foo()
-{
+void A::exp(int& i, float j) {
+	++i;
+	j += 1;
+	help();
+}
+
+int A::foo() {
 	int i = 2;
 	float j = 8989;
-    exp(i, j);
+	exp(i, j);
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //!ExtractFunctionRefactoringTest with duplicates name used afterwards in duplicate but not in original selection this is no dublicate
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
@@ -611,13 +569,12 @@ replaceduplicates=true
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	void foo();
-	
+
 private:
 	int help();
 };
@@ -628,16 +585,15 @@ private:
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	void foo();
-	
+
 private:
 	int help();
-    void exp(int i);
+	void exp(int i);
 };
 
 #endif /*A_H_*/
@@ -645,57 +601,52 @@ private:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 	int i = 2;
 	++i;// No Duplicate
 	help();
 	++i;// this is the reason
-}void A::foo()
-{
+}
+
+void A::foo() {
 	int i = 2;
 	/*$*/++i;
 	help();/*$$*/
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 	int i = 2;
 	++i;// No Duplicate
 	help();
 	++i;// this is the reason
-}void A::exp(int i)
-{
-    ++i;
-    help();
 }
 
-void A::foo()
-{
+void A::exp(int i) {
+	++i;
+	help();
+}
+
+void A::foo() {
 	int i = 2;
-    exp(i);
+	exp(i);
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //!ExtractFunctionRefactoringTest with Return Value and a lot Ref Parameter and a method call
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
@@ -708,13 +659,12 @@ returnvalue=true
 
 #include "B.h"
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
 };
@@ -727,16 +677,15 @@ private:
 
 #include "B.h"
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
-    int exp(int i, B *& b, int & y, float & x);
+	int exp(int i, B*& b, int& y, float& x);
 };
 
 #endif /*A_H_*/
@@ -744,12 +693,10 @@ private:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 	int i = 2;
 	float x = i;
 	B* b = new B();
@@ -761,8 +708,9 @@ A::~A()
 	b->hello(y);
 	++x;
 	i++;
-}int A::foo()
-{
+}
+
+int A::foo() {
 	int i = 2;
 	float x = i;
 	B* b = new B();
@@ -776,53 +724,49 @@ A::~A()
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 	int i = 2;
 	float x = i;
 	B* b = new B();
 	int y = x + i;
-    i = exp(i, b, y, x);
+	i = exp(i, b, y, x);
 	b->hello(y);
 	++x;
 	i++;
-}int A::exp(int i, B *& b, int & y, float & x)
-{
-    ++i;
-    b->hello(y);
-    i = i + x;
-    help();
-    return i;
 }
 
-int A::foo()
-{
+int A::exp(int i, B*& b, int& y, float& x) {
+	++i;
+	b->hello(y);
+	i = i + x;
+	help();
+	return i;
+}
+
+int A::foo() {
 	int i = 2;
 	float x = i;
 	B* b = new B();
 	int y = x + i;
-    i = exp(i, b, y, x);
+	i = exp(i, b, y, x);
 	b->hello(y);
 	++x;
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //@B.h
 #ifndef B_H_
@@ -849,13 +793,12 @@ returnvalue=true
 
 #include "B.h"
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
 };
@@ -868,16 +811,15 @@ private:
 
 #include "B.h"
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
-    int exp(int i, B *& b, int & y, float x);
+	int exp(int i, B*& b, int& y, float x);
 };
 
 #endif /*A_H_*/
@@ -885,12 +827,10 @@ private:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 	int i = 2;
 	float x = i;
 	B* b = new B();
@@ -902,8 +842,9 @@ A::~A()
 	b->hello(y);
 	++x;
 	i++;
-}int A::foo()
-{
+}
+
+int A::foo() {
 	int i = 2;
 	float x = i;
 	B* b = new B();
@@ -916,20 +857,17 @@ A::~A()
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 	int i = 2;
 	float x = i;
 	B* b = new B();
@@ -941,30 +879,29 @@ A::~A()
 	b->hello(y);
 	++x;
 	i++;
-}int A::exp(int i, B *& b, int & y, float x)
-{
-    ++i;
-    b->hello(y);
-    i = i + x;
-    help();
-    return i;
 }
 
-int A::foo()
-{
+int A::exp(int i, B*& b, int& y, float x) {
+	++i;
+	b->hello(y);
+	i = i + x;
+	help();
+	return i;
+}
+
+int A::foo() {
 	int i = 2;
 	float x = i;
 	B* b = new B();
 	int y = x + i;
-    i = exp(i, b, y, x);
+	i = exp(i, b, y, x);
 	b->hello(y);
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //@B.h
 #ifndef B_H_
@@ -988,13 +925,12 @@ replaceduplicates=true
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
 };
@@ -1005,16 +941,15 @@ private:
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
-    void exp(int & i);
+	void exp(int& i);
 };
 
 #endif /*A_H_*/
@@ -1022,54 +957,49 @@ private:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 	int i = 2;
 	++i;
 	help();
-}int A::foo()
-{
+}
+
+int A::foo() {
 	int i = 2;
 	/*$*/++i;
 	help();/*$$*/
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 	int i = 2;
-    exp(i);
-}void A::exp(int & i)
-{
-    ++i;
-    help();
+	exp(i);
 }
 
-int A::foo()
-{
+void A::exp(int& i) {
+	++i;
+	help();
+}
+
+int A::foo() {
 	int i = 2;
-    exp(i);
+	exp(i);
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 

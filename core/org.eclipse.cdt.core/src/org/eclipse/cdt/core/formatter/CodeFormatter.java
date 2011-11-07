@@ -107,7 +107,7 @@ public abstract class CodeFormatter {
 	 *     if set to <code>null</code>, then the platform default one will be used.
 	 * @return the text edits, one per region.
 	 * @throws IllegalArgumentException if any of the regions is invalid.
-	 * @since 5.4
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public TextEdit[] format(int kind, String source, IRegion[] regions, String lineSeparator) {
 		TextEdit[] edits = new TextEdit[regions.length];

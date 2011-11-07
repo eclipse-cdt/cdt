@@ -7,24 +7,28 @@ filename=A.h
 #include <exception>
 
 namespace N {
-    class A {
-        void /*$*/foo/*$$*/() {
-            return;
-        }
-    };
+
+class A {
+	void /*$*/foo/*$$*/() {
+		return;
+	}
+};
+
 }
 //=
 #include <iostream>
 #include <exception>
 
 namespace N {
-    class A {
-        void foo();
-    };
-    inline void A::foo()
-    {
-        return;
-    }
+
+class A {
+	void foo();
+};
+
+inline void A::foo() {
+	return;
+}
+
 }
 //!TestSimpleNamespaceInHeaderToImplementationWithinNSDefinition
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
@@ -35,42 +39,45 @@ filename=A.h
 #include <exception>
 
 namespace N {
-    class A {
-        void foo();
-    };
-    inline void A::/*$*/foo/*$$*/()
-    {
-        return;
-    }
+
+class A {
+	void foo();
+};
+
+inline void A::/*$*/foo/*$$*/() {
+	return;
+}
+
 }
 //=
 #include <iostream>
 #include <exception>
 
 namespace N {
-    class A {
-        void foo();
-    };
+
+class A {
+	void foo();
+};
+
 }
 //@A.cpp
 #include "A.h"
 
 int main() {
-    return 0;
+	return 0;
 }
 //=
 #include "A.h"
 
 int main() {
-    return 0;
+	return 0;
 }
 
-namespace N
-{
-    void A::foo()
-    {
-        return;
-    }
+namespace N {
+
+void A::foo() {
+	return;
+}
 
 }
 
@@ -83,13 +90,14 @@ filename=A.h
 #include <exception>
 
 namespace N {
-    class A {
-        void foo();
-    };
-    inline void A::/*$*/foo/*$$*/()
-    {
-        return;
-    }
+
+class A {
+	void foo();
+};
+
+inline void A::/*$*/foo/*$$*/() {
+	return;
+}
 
 }
 //=
@@ -97,34 +105,33 @@ namespace N {
 #include <exception>
 
 namespace N {
-    class A {
-        void foo();
-    };
+
+class A {
+	void foo();
+};
 
 }
 //@A.cpp
 #include "A.h"
 
 int main() {
-    return 0;
+	return 0;
 }
 
-namespace N
-{
+namespace N {
 }
 //=
 #include "A.h"
 
 int main() {
-    return 0;
+	return 0;
 }
 
-namespace N
-{
-    void A::foo()
-    {
-        return;
-    }
+namespace N {
+
+void A::foo() {
+	return;
+}
 }
 //!TestSimpleNamespaceInHeaderToImplementationWithNamespaceQualifiedName
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
@@ -135,23 +142,26 @@ filename=A.h
 #include <exception>
 
 namespace N {
-    class A {
-        void foo();
-    };
+
+class A {
+	void foo();
+};
+
 }
 
-inline void /*$*/N::A::foo/*$$*/()
-{
-    return;
+inline void /*$*/N::A::foo/*$$*/() {
+	return;
 }
 //=
 #include <iostream>
 #include <exception>
 
 namespace N {
-    class A {
-        void foo();
-    };
+
+class A {
+	void foo();
+};
+
 }
 
 
@@ -159,21 +169,20 @@ namespace N {
 #include "A.h"
 
 int main() {
-    return 0;
+	return 0;
 }
 //=
 #include "A.h"
 
 int main() {
-    return 0;
+	return 0;
 }
 
-namespace N
-{
-    void A::foo()
-    {
-        return;
-    }
+namespace N {
+
+void A::foo() {
+	return;
+}
 
 }
 
@@ -184,42 +193,42 @@ filename=A.cpp
 //@A.cpp
 #include "A.h"
 
-void /*$*/N::A::foo/*$$*/()
-{
-    return;
+void /*$*/N::A::foo/*$$*/() {
+	return;
 }
 
-int main()
-{
-    return 0;
+int main() {
+	return 0;
 }
 //=
 #include "A.h"
 
 
 
-int main()
-{
-    return 0;
+int main() {
+	return 0;
 }
 //@A.h
 #include <iostream>
 
 namespace N {
-    class A {
-        void foo();
-    };
+
+class A {
+	void foo();
+};
+
 }
 //=
 #include <iostream>
 
 namespace N {
-    class A {
-        void foo()
-        {
-            return;
-        }
-    };
+
+class A {
+	void foo() {
+		return;
+	}
+};
+
 }
 //!TestRemoveEmptyNamespaceFromImplentation
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
@@ -229,10 +238,11 @@ filename=A.cpp
 #include "A.h"
 
 namespace N {
-    void /*$*/A::foo/*$$*/() 
-    {
-        return;
-    }
+
+void /*$*/A::foo/*$$*/() {
+	return;
+}
+
 }
 //=
 #include "A.h"
@@ -242,18 +252,21 @@ namespace N {
 #include <iostream>
 
 namespace N {
-    class A {
-        void foo();
-    };
+
+class A {
+	void foo();
+};
+
 }
 //=
 #include <iostream>
 
 namespace N {
-    class A {
-        void foo()
-        {
-            return;
-        }
-    };
+
+class A {
+	void foo() {
+		return;
+	}
+};
+
 }

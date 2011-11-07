@@ -4,13 +4,12 @@
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
 };
@@ -21,16 +20,15 @@ private:
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
-    int exp();
+	int exp();
 };
 
 #endif /*A_H_*/
@@ -38,62 +36,55 @@ private:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
-int A::foo()
-{
+
+int A::foo() {
 	int i = 2;
 	++i;
 	help();
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
-}
-int A::exp()
-{
-    int i = 2;
-    ++i;
-    help();
-    return i;
+A::~A() {
 }
 
-int A::foo()
-{
+int A::exp() {
+	int i = 2;
+	++i;
+	help();
+	return i;
+}
+
+int A::foo() {
 	int i = exp();
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //@refScript.xml
 <?xml version="1.0" encoding="UTF-8"?>
 <session version="1.0">
-<refactoring comment="Create method exp" description="Extract Method Refactoring" 
-  fileName="file:$$projectPath$$/A.cpp" 
-  flags="4" id="org.eclipse.cdt.internal.ui.refactoring.extractfunction.ExtractFunctionRefactoring" 
-  name="exp" project="RegressionTestProject" selection="56,25" visibility="private"/>
+<refactoring comment="Create method exp" description="Extract Method Refactoring"
+  fileName="file:$$projectPath$$/A.cpp"
+  flags="4" id="org.eclipse.cdt.internal.ui.refactoring.extractfunction.ExtractFunctionRefactoring"
+  name="exp" project="RegressionTestProject" selection="57,25" visibility="private"/>
 </session>
 
 
@@ -103,13 +94,12 @@ int A::help()
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
 };
@@ -120,16 +110,15 @@ private:
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
-    void exp(int & i);
+	void exp(int& i);
 };
 
 #endif /*A_H_*/
@@ -137,15 +126,13 @@ private:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
-int A::foo()
-{
+
+int A::foo() {
 	int i = 2;
 	//comment
 	++i;
@@ -153,40 +140,35 @@ int A::foo()
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
-}
-void A::exp(int & i)
-{
-    //comment
-    ++i;
-    help();
+A::~A() {
 }
 
-int A::foo()
-{
+void A::exp(int& i) {
+	//comment
+	++i;
+	help();
+}
+
+int A::foo() {
 	int i = 2;
 	//comment
-    exp(i);
+	exp(i);
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //@refScript.xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -194,32 +176,29 @@ int A::help()
 <refactoring comment="Create method exp" description="Extract Method Refactoring"
  fileName="file:$$projectPath$$/A.cpp"
   flags="4" id="org.eclipse.cdt.internal.ui.refactoring.extractfunction.ExtractFunctionRefactoring"
-  name="exp" project="RegressionTestProject" selection="79,13" visibility="private"/>
+  name="exp" project="RegressionTestProject" selection="69,24" visibility="private"/>
 </session>
 
 //!Extract Function History first extracted statement with leading comment
 //#org.eclipse.cdt.ui.tests.refactoring.RefactoringHistoryTest
 //@main.cpp
-int main(){
-	
+int main() {
 	int i;
 	// Comment
-	i= 7;
+	i = 7;
 	return i;
 }
 
 //=
-void exp(int & i)
-{
-    // Comment
-    i = 7;
+void exp(int& i) {
+	// Comment
+	i = 7;
 }
 
-int main(){
-	
+int main() {
 	int i;
 	// Comment
-    exp(i);
+	exp(i);
 	return i;
 }
 
@@ -229,29 +208,26 @@ int main(){
 <refactoring comment="Create method exp" description="Extract Method Refactoring"
  fileName="file:$$projectPath$$/main.cpp"
  flags="4" id="org.eclipse.cdt.internal.ui.refactoring.extractfunction.ExtractFunctionRefactoring"
- name="exp" project="RegressionTestProject" selection="35,5" visibility="private"/>
+ name="exp" project="RegressionTestProject" selection="34,6" visibility="private"/>
 </session>
 
 //!Extract Function History extracted statement with trailling comment
 //#org.eclipse.cdt.ui.tests.refactoring.RefactoringHistoryTest
 //@main.cpp
-int main(){
-	
+int main() {
 	int i;
-	i= 7; // Comment
+	i = 7; // Comment
 	return i;
 }
 
 //=
-void exp(int & i)
-{
-    i = 7; // Comment
+void exp(int& i) {
+	i = 7; // Comment
 }
 
-int main(){
-	
+int main() {
 	int i;
-    exp(i); // Comment
+	exp(i); // Comment
 	return i;
 }
 
@@ -261,7 +237,7 @@ int main(){
 <refactoring comment="Create method exp" description="Extract Method Refactoring"
  fileName="file:$$projectPath$$/main.cpp"
  flags="4" id="org.eclipse.cdt.internal.ui.refactoring.extractfunction.ExtractFunctionRefactoring"
- name="exp" project="RegressionTestProject" selection="23,5" visibility="private"/>
+ name="exp" project="RegressionTestProject" selection="22,6" visibility="private"/>
 </session>
 
 //!ExtractFunctionRefactoringTest duplicates with different Names History Test
@@ -270,13 +246,12 @@ int main(){
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
 };
@@ -287,16 +262,15 @@ private:
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
-    void exp(int & i);
+	void exp(int& i);
 };
 
 #endif /*A_H_*/
@@ -304,61 +278,56 @@ private:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 	int oo = 99;
 	++oo;
 	help();
-}int A::foo()
-{
+}
+
+int A::foo() {
 	int i = 2;
 	++i;
 	help();
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 	int oo = 99;
-    exp(oo);
-}void A::exp(int & i)
-{
-    ++i;
-    help();
+	exp(oo);
 }
 
-int A::foo()
-{
+void A::exp(int& i) {
+	++i;
+	help();
+}
+
+int A::foo() {
 	int i = 2;
-    exp(i);
+	exp(i);
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //@refScript.xml
 <?xml version="1.0" encoding="UTF-8"?>
 <session version="1.0">
-<refactoring comment="Create method exp" description="Extract Method Refactoring" 
+<refactoring comment="Create method exp" description="Extract Method Refactoring"
  fileName="file:$$projectPath$$/A.cpp" flags="4" id="org.eclipse.cdt.internal.ui.refactoring.extractfunction.ExtractFunctionRefactoring"
- name="exp" project="RegressionTestProject" replaceDuplicates="true" selection="97,13" visibility="private"/>
+ name="exp" project="RegressionTestProject" replaceDuplicates="true" selection="99,13" visibility="private"/>
 </session>

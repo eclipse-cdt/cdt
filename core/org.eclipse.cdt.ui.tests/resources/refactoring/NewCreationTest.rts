@@ -6,7 +6,7 @@ newfilecreation=true
 newfiles=A.cpp
 //@A.h
 void /*$*/freefunction/*$$*/() {
-    return;
+	return;
 }
 //=
 void freefunction();
@@ -17,9 +17,8 @@ void freefunction();
 
 #include "A.h"
 
-void freefunction()
-{
-    return;
+void freefunction() {
+	return;
 }
 //!FreefunctionFromImplToHeader
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
@@ -28,9 +27,8 @@ filename=A.cpp
 newfilecreation=true
 newfiles=A.h
 //@A.cpp
-void /*$*/freefunction/*$$*/()
-{
-    return;
+void /*$*/freefunction/*$$*/() {
+	return;
 }
 //=
 #include "A.h"
@@ -40,8 +38,7 @@ void /*$*/freefunction/*$$*/()
 //=
 
 
-void freefunction()
-{
-    return;
+void freefunction() {
+	return;
 }
 

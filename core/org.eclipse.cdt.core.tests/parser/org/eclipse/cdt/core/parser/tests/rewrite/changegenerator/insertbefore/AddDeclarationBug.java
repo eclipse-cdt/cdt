@@ -7,18 +7,18 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- * Institute for Software (IFS)- initial API and implementation 
+ *     Institute for Software (IFS)- initial API and implementation 
  ******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.insertbefore;
 
 import junit.framework.Test;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.ChangeGeneratorTest;
@@ -29,26 +29,26 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTParameterDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification;
-import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification.ModificationKind;
+import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
 
 /**
  * @author Emanuel Graf IFS
- *
  */
 public class AddDeclarationBug extends ChangeGeneratorTest {
-	
-	
-	
-	
-	public AddDeclarationBug() {
-		super("Add Declaration Bug Test");
+
+	AddDeclarationBug() {
+		super("AddDeclarationBug");
+	}
+
+	public static Test suite() {		
+		return new AddDeclarationBug();
 	}
 
 	@Override
 	protected void setUp() throws Exception {
 		source = "class A\n{\npublic:\n	A();\n	virtual ~A();\n	int foo();\n	\nprivate:\n	int help();\n};"; //$NON-NLS-1$
-		expectedSource = "class A\n{\npublic:\n	A();\n	virtual ~A();\n	int foo();\n	\nprivate:\n	int help();\n    int exp(int i);\n};"; //$NON-NLS-1$
+		expectedSource = "class A\n{\npublic:\n	A();\n	virtual ~A();\n	int foo();\n	\nprivate:\n	int help();\n\tint exp(int i);\n};"; //$NON-NLS-1$
 		super.setUp();
 	}
 
@@ -83,9 +83,5 @@ public class AddDeclarationBug extends ChangeGeneratorTest {
 				return PROCESS_CONTINUE;
 			}
 		};
-	}
-	
-	public static Test suite() {
-		return new AddDeclarationBug();
 	}
 }

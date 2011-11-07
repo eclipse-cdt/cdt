@@ -7,27 +7,31 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.insertbefore;
 
 import junit.framework.Test;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.ChangeGeneratorTest;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTPointer;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification;
-import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification.ModificationKind;
+import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
 
 public class PointerParameterTest extends ChangeGeneratorTest {
 
-	public PointerParameterTest(){
-		super("Insert Pointer for Parameter"); //$NON-NLS-1$
+	PointerParameterTest() {
+		super("PointerParameterTest");
+	}
+
+	public static Test suite() {		
+		return new PointerParameterTest();
 	}
 
 	@Override
@@ -38,8 +42,7 @@ public class PointerParameterTest extends ChangeGeneratorTest {
 	}
 	
 	@Override
-	protected ASTVisitor createModificator(
-			final ASTModificationStore modStore) {
+	protected ASTVisitor createModificator(final ASTModificationStore modStore) {
 		return new ASTVisitor() {
 			{
 				shouldVisitDeclarators = true;
@@ -62,10 +65,5 @@ public class PointerParameterTest extends ChangeGeneratorTest {
 				return PROCESS_CONTINUE;
 			}
 		};
-	}
-	
-	public static Test suite() {
-		return new PointerParameterTest();
-		
 	}
 }

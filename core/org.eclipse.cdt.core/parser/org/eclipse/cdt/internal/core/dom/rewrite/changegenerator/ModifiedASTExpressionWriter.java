@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.changegenerator;
 
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
@@ -20,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification.ModificationKind;
+import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ASTWriterVisitor;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ExpressionWriter;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.MacroExpansionHandler;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.Scribe;
@@ -28,7 +28,7 @@ import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 public class ModifiedASTExpressionWriter extends ExpressionWriter {
 	private final ASTModificationHelper modificationHelper;
 
-	public ModifiedASTExpressionWriter(Scribe scribe, ASTVisitor visitor, MacroExpansionHandler macroHandler,
+	public ModifiedASTExpressionWriter(Scribe scribe, ASTWriterVisitor visitor, MacroExpansionHandler macroHandler,
 			ModificationScopeStack stack, NodeCommentMap commentMap) {
 		super(scribe, visitor, macroHandler, commentMap);
 		this.modificationHelper = new ASTModificationHelper(stack);

@@ -4,13 +4,12 @@
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
 };
@@ -21,16 +20,15 @@ private:
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
-    int exp();
+	int exp();
 };
 
 #endif /*A_H_*/
@@ -38,54 +36,47 @@ private:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
-int A::foo()
-{
+
+int A::foo() {
 	/*$*/int i = 2;
 	++i;
 	help();/*$$*/
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
-}
-int A::exp()
-{
-    int i = 2;
-    ++i;
-    help();
-    return i;
+A::~A() {
 }
 
-int A::foo()
-{
+int A::exp() {
+	int i = 2;
+	++i;
+	help();
+	return i;
+}
+
+int A::foo() {
 	int i = exp();
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //!ExtractFunctionRefactoringTest with comment
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
@@ -93,13 +84,12 @@ int A::help()
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
 };
@@ -110,16 +100,15 @@ private:
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
-    void exp(int & i);
+	void exp(int& i);
 };
 
 #endif /*A_H_*/
@@ -127,15 +116,13 @@ private:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
-int A::foo()
-{
+
+int A::foo() {
 	int i = 2;
 	//comment
 	/*$*/++i;
@@ -143,40 +130,35 @@ int A::foo()
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
-}
-void A::exp(int & i)
-{
-    //comment
-    ++i;
-    help();
+A::~A() {
 }
 
-int A::foo()
-{
+void A::exp(int& i) {
+	//comment
+	++i;
+	help();
+}
+
+int A::foo() {
 	int i = 2;
 	//comment
-    exp(i);
+	exp(i);
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //@.config
 filename=A.cpp
@@ -188,8 +170,7 @@ returnparameterindex=0
 //!Extract Function first extracted statement with leading comment
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@main.cpp
-int main(){
-	
+int main() {
 	int i;
 	// Comment
 	/*$*/i= 7;/*$$*/
@@ -197,17 +178,15 @@ int main(){
 }
 
 //=
-void exp(int & i)
-{
-    // Comment
-    i = 7;
+void exp(int& i) {
+	// Comment
+	i = 7;
 }
 
-int main(){
-	
+int main() {
 	int i;
 	// Comment
-    exp(i);
+	exp(i);
 	return i;
 }
 
@@ -221,23 +200,20 @@ returnparameterindex=0
 //!Extract Function last extracted statement with trailling comment
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@main.cpp
-int main(){
-	
+int main() {
 	int i;
 	/*$*/i= 7;/*$$*/ // Comment
 	return i;
 }
 
 //=
-void exp(int & i)
-{
-    i = 7; // Comment
+void exp(int& i) {
+	i = 7; // Comment
 }
 
-int main(){
-	
+int main() {
 	int i;
-    exp(i); // Comment
+	exp(i); // Comment
 	return i;
 }
 
@@ -256,13 +232,12 @@ fatalerror=true
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
 };
@@ -272,16 +247,13 @@ private:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
 
-int A::foo()
-{
+int A::foo() {
 	/*$*/int o = 1;
 	int i = 2;
 	++i;
@@ -289,10 +261,11 @@ int A::foo()
 	help();/*$$*/
 	o++;
 	return i;
-}int A::help()
-{
+}
+
+int A::help() {
 	return 42;
-}	
+}
 
 //!ExtractFunctionRefactoringTest with named typed field
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
@@ -302,14 +275,13 @@ int A::foo()
 
 #include "B.h"
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	void foo();
 	B b;
-	
+
 private:
 	int help();
 };
@@ -322,17 +294,16 @@ private:
 
 #include "B.h"
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	void foo();
 	B b;
-	
+
 private:
 	int help();
-    void exp();
+	void exp();
 };
 
 #endif /*A_H_*/
@@ -340,56 +311,48 @@ private:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
-void A::foo()
-{
+
+void A::foo() {
 	/*$*/b = new B();
 	help();/*$$*/
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
-}
-void A::exp()
-{
-    b = new B();
-    help();
+A::~A() {
 }
 
-void A::foo()
-{
-    exp();
+void A::exp() {
+	b = new B();
+	help();
 }
 
-int A::help()
-{
+void A::foo() {
+	exp();
+}
+
+int A::help() {
 	return 42;
-}	
+}
 
 //@B.h
 #ifndef B_H_
 #define B_H_
 
-class B
-{
+class B {
 public:
 	B();
 	virtual ~B();
@@ -405,14 +368,13 @@ public:
 
 #include "B.h"
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	void foo();
 	B b;
-	
+
 private:
 	int help();
 };
@@ -425,17 +387,16 @@ private:
 
 #include "B.h"
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	void foo();
 	B b;
-	
+
 private:
 	int help();
-    void exp();
+	void exp();
 };
 
 #endif /*A_H_*/
@@ -443,56 +404,48 @@ private:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
-void A::foo()
-{
+
+void A::foo() {
 	/*$*/b = new B();
 	help();/*$$*/
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
-}
-void A::exp()
-{
-    b = new B();
-    help();
+A::~A() {
 }
 
-void A::foo()
-{
-    exp();
+void A::exp() {
+	b = new B();
+	help();
 }
 
-int A::help()
-{
+void A::foo() {
+	exp();
+}
+
+int A::help() {
 	return 42;
-}	
+}
 
 //@B.h
 #ifndef B_H_
 #define B_H_
 
-class B
-{
+class B {
 public:
 	B();
 	virtual ~B();
@@ -506,13 +459,12 @@ public:
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
 };
@@ -523,16 +475,15 @@ private:
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
-    void exp(int & i);
+	void exp(int& i);
 };
 
 #endif /*A_H_*/
@@ -542,15 +493,13 @@ private:
 
 #define ZWO 2
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
-int A::foo()
-{
+
+int A::foo() {
 	int i = 2;
 	/*$*/++i;
 	i += ZWO;
@@ -558,41 +507,36 @@ int A::foo()
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //=
 #include "A.h"
 
 #define ZWO 2
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
-}
-void A::exp(int & i)
-{
-    ++i;
-    i += ZWO;
-    help();
+A::~A() {
 }
 
-int A::foo()
-{
+void A::exp(int& i) {
+	++i;
+	i += ZWO;
+	help();
+}
+
+int A::foo() {
 	int i = 2;
-    exp(i);
+	exp(i);
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //!ExtractFunctionRefactoringTest with FunctionStyleMacro
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
@@ -600,13 +544,12 @@ int A::help()
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
 };
@@ -617,16 +560,15 @@ private:
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
-    void exp(int & i);
+	void exp(int& i);
 };
 
 #endif /*A_H_*/
@@ -636,15 +578,13 @@ private:
 
 #define ADD(a,b) a + b + 2
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
-int A::foo()
-{
+
+int A::foo() {
 	int i = 2;
 	/*$*/++i;
 	i = ADD(i, 42);
@@ -652,41 +592,36 @@ int A::foo()
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //=
 #include "A.h"
 
 #define ADD(a,b) a + b + 2
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
-}
-void A::exp(int & i)
-{
-    ++i;
-    i = ADD(i, 42);
-    help();
+A::~A() {
 }
 
-int A::foo()
-{
+void A::exp(int& i) {
+	++i;
+	i = ADD(i, 42);
+	help();
+}
+
+int A::foo() {
 	int i = 2;
-    exp(i);
+	exp(i);
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //!ExtractMethod with Pointer
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
@@ -694,13 +629,12 @@ int A::help()
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
 };
@@ -711,16 +645,15 @@ private:
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
-    void exp(int *& i);
+	void exp(int*& i);
 };
 
 #endif /*A_H_*/
@@ -728,51 +661,44 @@ private:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
-int A::foo()
-{
+
+int A::foo() {
 	int* i = new int(2);
 	/*$*/++*i;
 	help();/*$$*/
 	return *i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
 }
 
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
-}
-void A::exp(int *& i)
-{
-    ++*i;
-    help();
+A::~A() {
 }
 
-int A::foo()
-{
+void A::exp(int*& i) {
+	++*i;
+	help();
+}
+
+int A::foo() {
 	int* i = new int(2);
-    exp(i);
+	exp(i);
 	return *i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
 }
 
@@ -782,13 +708,12 @@ int A::help()
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
 };
@@ -799,16 +724,15 @@ private:
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
-    void exp(int *& i);
+	void exp(int*& i);
 };
 
 #endif /*A_H_*/
@@ -816,15 +740,13 @@ private:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
-int A::foo()
-{
+
+int A::foo() {
 	int* i = new int(2);
 	/*$*/++*i;
 	help();
@@ -832,37 +754,32 @@ int A::foo()
 	return *i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
 }
 
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
-}
-void A::exp(int *& i)
-{
-    ++*i;
-    help();
+A::~A() {
 }
 
-int A::foo()
-{
+void A::exp(int*& i) {
+	++*i;
+	help();
+}
+
+int A::foo() {
 	int* i = new int(2);
-    exp(i);
+	exp(i);
 	//A end-comment
 	return *i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
 }
 
@@ -872,13 +789,12 @@ int A::help()
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
 };
@@ -889,16 +805,15 @@ private:
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
-    void exp(int *& i);
+	void exp(int*& i);
 };
 
 #endif /*A_H_*/
@@ -906,15 +821,13 @@ private:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
-int A::foo()
-{
+
+int A::foo() {
 	//A beautiful comment
 	int* i = new int(2);
 	/*$*/++*i;
@@ -922,37 +835,32 @@ int A::foo()
 	return *i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
 }
 
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
-}
-void A::exp(int *& i)
-{
-    ++*i;
-    help();
+A::~A() {
 }
 
-int A::foo()
-{
+void A::exp(int*& i) {
+	++*i;
+	help();
+}
+
+int A::foo() {
 	//A beautiful comment
 	int* i = new int(2);
-    exp(i);
+	exp(i);
 	return *i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
 }
 
@@ -965,13 +873,12 @@ returnvalue=true
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
 };
@@ -982,16 +889,15 @@ private:
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
-    int exp(int i);
+	int exp(int i);
 };
 
 #endif /*A_H_*/
@@ -999,54 +905,47 @@ private:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
-int A::foo()
-{
+
+int A::foo() {
 	int i = 2;
 	/*$*/++i;
 	help();/*$$*/
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
-}
-int A::exp(int i)
-{
-    ++i;
-    help();
-    return i;
+A::~A() {
 }
 
-int A::foo()
-{
-	int i = 2;
-    i = exp(i);
+int A::exp(int i) {
+	++i;
+	help();
 	return i;
 }
 
-int A::help()
-{
+int A::foo() {
+	int i = 2;
+	i = exp(i);
+	return i;
+}
+
+int A::help() {
 	return 42;
-}	
+}
 
 //!ExtractFunctionRefactoringTest with Return Value and Ref Parameter
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
@@ -1057,13 +956,12 @@ returnvalue=true
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
 };
@@ -1074,16 +972,15 @@ private:
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
-    int exp(int i, int & b);
+	int exp(int i, int& b);
 };
 
 #endif /*A_H_*/
@@ -1091,15 +988,13 @@ private:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
-int A::foo()
-{
+
+int A::foo() {
 	int i = 2;
 	int b = i;
 	/*$*/++i;
@@ -1109,42 +1004,37 @@ int A::foo()
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
-}
-int A::exp(int i, int & b)
-{
-    ++i;
-    i = i + b;
-    help();
-    return i;
+A::~A() {
 }
 
-int A::foo()
-{
+int A::exp(int i, int& b) {
+	++i;
+	i = i + b;
+	help();
+	return i;
+}
+
+int A::foo() {
 	int i = 2;
 	int b = i;
-    i = exp(i, b);
+	i = exp(i, b);
 	++b;
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //!ExtractFunctionRefactoringTest with Return Value and Ref Parameter and some more not used aferwards
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
@@ -1155,13 +1045,12 @@ returnvalue=true
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
 };
@@ -1172,16 +1061,15 @@ private:
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
-    int exp(int i, B *b, int y, float & x);
+	int exp(int i, B* b, int y, float& x);
 };
 
 #endif /*A_H_*/
@@ -1189,15 +1077,13 @@ private:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
-int A::foo()
-{
+
+int A::foo() {
 	int i = 2;
 	float x = i;
 	B* b = new B();
@@ -1210,45 +1096,40 @@ int A::foo()
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
-}
-int A::exp(int i, B *b, int y, float & x)
-{
-    ++i;
-    b->hello(y);
-    i = i + x;
-    help();
-    return i;
+A::~A() {
 }
 
-int A::foo()
-{
+int A::exp(int i, B* b, int y, float& x) {
+	++i;
+	b->hello(y);
+	i = i + x;
+	help();
+	return i;
+}
+
+int A::foo() {
 	int i = 2;
 	float x = i;
 	B* b = new B();
 	int y = x + i;
-    i = exp(i, b, y, x);
+	i = exp(i, b, y, x);
 	++x;
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //!ExtractFunctionRefactoringTest with Return Value take the second and Ref Parameter and some more not used aferwards
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
@@ -1261,13 +1142,12 @@ returnvalue=true
 
 #include "B.h"
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
 };
@@ -1280,16 +1160,15 @@ private:
 
 #include "B.h"
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
-    float exp(int & i, B *b, int y, float x);
+	float exp(int& i, B* b, int y, float x);
 };
 
 #endif /*A_H_*/
@@ -1297,15 +1176,13 @@ private:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
-int A::foo()
-{
+
+int A::foo() {
 	int i = 2;
 	float x = i;
 	B* b = new B();
@@ -1318,52 +1195,46 @@ int A::foo()
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
-}
-float A::exp(int & i, B *b, int y, float x)
-{
-    ++i;
-    b->hello(y);
-    i = i + x;
-    help();
-    return x;
+A::~A() {
 }
 
-int A::foo()
-{
+float A::exp(int& i, B* b, int y, float x) {
+	++i;
+	b->hello(y);
+	i = i + x;
+	help();
+	return x;
+}
+
+int A::foo() {
 	int i = 2;
 	float x = i;
 	B* b = new B();
 	int y = x + i;
-    x = exp(i, b, y, x);
+	x = exp(i, b, y, x);
 	++x;
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //@B.h
 #ifndef B_H_
 #define B_H_
 
-class B
-{
+class B {
 public:
 	B();
 	virtual ~B();
@@ -1383,13 +1254,12 @@ returnvalue=true
 
 #include "B.h"
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
 };
@@ -1402,16 +1272,15 @@ private:
 
 #include "B.h"
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
-    int exp(int i, B *& b, int & y, float & x);
+	int exp(int i, B*& b, int& y, float& x);
 };
 
 #endif /*A_H_*/
@@ -1419,15 +1288,13 @@ private:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
-int A::foo()
-{
+
+int A::foo() {
 	int i = 2;
 	float x = i;
 	B* b = new B();
@@ -1441,53 +1308,47 @@ int A::foo()
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
-}
-int A::exp(int i, B *& b, int & y, float & x)
-{
-    ++i;
-    b->hello(y);
-    i = i + x;
-    help();
-    return i;
+A::~A() {
 }
 
-int A::foo()
-{
+int A::exp(int i, B*& b, int& y, float& x) {
+	++i;
+	b->hello(y);
+	i = i + x;
+	help();
+	return i;
+}
+
+int A::foo() {
 	int i = 2;
 	float x = i;
 	B* b = new B();
 	int y = x + i;
-    i = exp(i, b, y, x);
+	i = exp(i, b, y, x);
 	b->hello(y);
 	++x;
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //@B.h
 #ifndef B_H_
 #define B_H_
 
-class B
-{
+class B {
 public:
 	B();
 	virtual ~B();
@@ -1507,13 +1368,12 @@ returnvalue=true
 
 #include "B.h"
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
 };
@@ -1526,16 +1386,15 @@ private:
 
 #include "B.h"
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
-    B *exp(int & i, B *b, int & y, float & x);
+	B* exp(int& i, B* b, int& y, float& x);
 };
 
 #endif /*A_H_*/
@@ -1543,15 +1402,13 @@ private:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
-int A::foo()
-{
+
+int A::foo() {
 	int i = 2;
 	float x = i;
 	B* b = new B();
@@ -1565,53 +1422,47 @@ int A::foo()
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
-}
-B *A::exp(int & i, B *b, int & y, float & x)
-{
-    ++i;
-    b->hello(y);
-    i = i + x;
-    help();
-    return b;
+A::~A() {
 }
 
-int A::foo()
-{
+B* A::exp(int& i, B* b, int& y, float& x) {
+	++i;
+	b->hello(y);
+	i = i + x;
+	help();
+	return b;
+}
+
+int A::foo() {
 	int i = 2;
 	float x = i;
 	B* b = new B();
 	int y = x + i;
-    b = exp(i, b, y, x);
+	b = exp(i, b, y, x);
 	b->hello(y);
 	++x;
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //@B.h
 #ifndef B_H_
 #define B_H_
 
-class B
-{
+class B {
 public:
 	B();
 	virtual ~B();
@@ -1626,13 +1477,12 @@ public:
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
 };
@@ -1643,17 +1493,17 @@ private:
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
+
 protected:
-    void exp(int & i);
+	void exp(int& i);
 };
 
 #endif /*A_H_*/
@@ -1661,53 +1511,46 @@ protected:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
-int A::foo()
-{
+
+int A::foo() {
 	int i = 2;
 	/*$*/++i;
 	help();/*$$*/
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
-}
-void A::exp(int & i)
-{
-    ++i;
-    help();
+A::~A() {
 }
 
-int A::foo()
-{
+void A::exp(int& i) {
+	++i;
+	help();
+}
+
+int A::foo() {
 	int i = 2;
-    exp(i);
+	exp(i);
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //@.config
 filename=A.cpp
@@ -1723,13 +1566,12 @@ visibility=protected
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
 };
@@ -1740,14 +1582,13 @@ private:
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-    void exp(int & i);
-	
+	void exp(int& i);
+
 private:
 	int help();
 };
@@ -1757,53 +1598,46 @@ private:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
-int A::foo()
-{
+
+int A::foo() {
 	int i = 2;
 	/*$*/++i;
 	help();/*$$*/
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
-}
-void A::exp(int & i)
-{
-    ++i;
-    help();
+A::~A() {
 }
 
-int A::foo()
-{
+void A::exp(int& i) {
+	++i;
+	help();
+}
+
+int A::foo() {
 	int i = 2;
-    exp(i);
+	exp(i);
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //@.config
 filename=A.cpp
@@ -1819,13 +1653,12 @@ visibility=public
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo() const;
-	
+
 private:
 	int help();
 };
@@ -1836,16 +1669,15 @@ private:
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo() const;
-	
+
 private:
 	int help();
-    void exp(int & i) const;
+	void exp(int& i) const;
 };
 
 #endif /*A_H_*/
@@ -1853,53 +1685,46 @@ private:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
-int A::foo() const
-{
+
+int A::foo() const {
 	int i = 2;
 	/*$*/++i;
 	help();/*$$*/
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
-}
-void A::exp(int & i) const
-{
-    ++i;
-    help();
+A::~A() {
 }
 
-int A::foo() const
-{
+void A::exp(int& i) const {
+	++i;
+	help();
+}
+
+int A::foo() const {
 	int i = 2;
-    exp(i);
+	exp(i);
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //@.config
 filename=A.cpp
@@ -1908,59 +1733,53 @@ replaceduplicates=false
 returnvalue=false
 returnparameterindex=0
 
-//!don't return variables that aren't used 
+//!Don't return variables that aren't used
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
 filename=main.h
 methodname=loop
 //@main.h
 
-void method()
-{
+void method() {
 	/*$*/for (int var = 0; var < 100; ++var) {
-		if(var < 50)
+		if (var < 50)
 			continue;
 	}/*$$*/
 }
 //=
 
-void loop()
-{
-    for(int var = 0;var < 100;++var){
-        if(var < 50)
-            continue;
-
-    }
+void loop() {
+	for (int var = 0; var < 100; ++var) {
+		if (var < 50)
+			continue;
+	}
 }
 
-void method()
-{
-    loop();
+void method() {
+	loop();
 }
-//!don't extract code that contains 'return'
+//!Don't extract code that contains 'return'
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
 filename=main.h
 fatalerror=true
 //@main.h
 
-void method()
-{
-	/*$*/if(true)
+void method() {
+	/*$*/if (true)
 		return;/*$$*/
 	//unreachable
 }
-//!test if we don't allow to extract 'continue' Bug #53
+//!Test if we don't allow to extract 'continue' Bug #53
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
 fatalerror=true
 filename=A.h
 //@A.h
 
-void function()
-{
+void function() {
 	for (int var = 0; var < 100; ++var) {
-		/*$*/if(var < 50)
+		/*$*/if (var < 50)
 			continue;/*$$*/
 	}
 }
@@ -1974,31 +1793,30 @@ methodname=runTest
 #define ASSERTM(msg,cond) if (!(cond)) throw cute::test_failure((msg),__FILE__,__LINE__)
 #define ASSERT(cond) ASSERTM(#cond, cond)
 
-void testFuerRainer(){
-        int i=int();
-        /*$*/++i;
-        //Leading Comment
-        ASSERT (i);
-        //Trailling Comment
-        --i;/*$$*/
+void testFuerRainer() {
+	int i = int();
+	/*$*/++i;
+	//Leading Comment
+	ASSERT(i);
+	//Trailling Comment
+	--i;/*$$*/
 }
 
 //=
 #define ASSERTM(msg,cond) if (!(cond)) throw cute::test_failure((msg),__FILE__,__LINE__)
 #define ASSERT(cond) ASSERTM(#cond, cond)
 
-void runTest(int i)
-{
-    ++i;
-    //Leading Comment
-    ASSERT (i);
-    //Trailling Comment
-    --i;
+void runTest(int i) {
+	++i;
+	//Leading Comment
+	ASSERT(i);
+	//Trailling Comment
+	--i;
 }
 
-void testFuerRainer(){
-        int i=int();
-    runTest(i);
+void testFuerRainer() {
+	int i = int();
+	runTest(i);
 }
 
 //! Bug #124 with comments Extract Function with a Macro call in selected code "forgets" the macro
@@ -2010,27 +1828,26 @@ methodname=runTest
 #define ASSERTM(msg,cond) if (!(cond)) throw cute::test_failure((msg),__FILE__,__LINE__)
 #define ASSERT(cond) ASSERTM(#cond, cond)
 
-void testFuerRainer(){
-        int i=int();
-        /*$*/++i;
-        ASSERT (i);
-        --i;/*$$*/
+void testFuerRainer() {
+	int i = int();
+	/*$*/++i;
+	ASSERT(i);
+	--i;/*$$*/
 }
 
 //=
 #define ASSERTM(msg,cond) if (!(cond)) throw cute::test_failure((msg),__FILE__,__LINE__)
 #define ASSERT(cond) ASSERTM(#cond, cond)
 
-void runTest(int i)
-{
-    ++i;
-    ASSERT (i);
-    --i;
+void runTest(int i) {
+	++i;
+	ASSERT(i);
+	--i;
 }
 
-void testFuerRainer(){
-        int i=int();
-    runTest(i);
+void testFuerRainer() {
+	int i = int();
+	runTest(i);
 }
 
 //! Bug #137 String Array problem in Extract Function
@@ -2045,7 +1862,7 @@ using namespace std;
 
 int const INITIAL_CAPACITY = 10;
 
-int main(){
+int main() {
 	int m_capacity;
 	/*$*/m_capacity += INITIAL_CAPACITY;
 	string* newElements = new string[m_capacity];/*$$*/
@@ -2059,16 +1876,15 @@ using namespace std;
 
 int const INITIAL_CAPACITY = 10;
 
-string *runTest(int m_capacity)
-{
-    m_capacity += INITIAL_CAPACITY;
-    string *newElements = new string[m_capacity];
-    return newElements;
+string* runTest(int m_capacity) {
+	m_capacity += INITIAL_CAPACITY;
+	string* newElements = new string[m_capacity];
+	return newElements;
 }
 
-int main(){
+int main() {
 	int m_capacity;
-    string *newElements = runTest(m_capacity);
+	string* newElements = runTest(m_capacity);
 	newElements[0] = "s";
 }
 
@@ -2081,13 +1897,11 @@ returnparameterindex=0
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo(int& a);
-
 };
 
 #endif /*A_H_*/
@@ -2096,15 +1910,14 @@ public:
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo(int& a);
-private:
-    void exp(int & a, int b, int c);
 
+private:
+	void exp(int& a, int b, int c);
 };
 
 #endif /*A_H_*/
@@ -2112,15 +1925,13 @@ private:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
-int A::foo(int& a)
-{
+
+int A::foo(int& a) {
 	int b = 7;
 	int c = 8;
 	/*$*/a = b + c;/*$$*/
@@ -2129,26 +1940,23 @@ int A::foo(int& a)
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
-}
-void A::exp(int & a, int b, int c)
-{
-    a = b + c;
+A::~A() {
 }
 
-int A::foo(int& a)
-{
+void A::exp(int& a, int b, int c) {
+	a = b + c;
+}
+
+int A::foo(int& a) {
 	int b = 7;
 	int c = 8;
-    exp(a, b, c);
+	exp(a, b, c);
 	return a;
 }
-//!Bug 241717: Typdef causes void as return type
+//!Bug 241717: Typedef causes void as return type
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
 filename=Test.cpp
@@ -2156,9 +1964,7 @@ filename=Test.cpp
 #ifndef TEST_H_
 #define TEST_H_
 
-class RetValueType{
-
-
+class RetValueType {
 };
 
 typedef RetValueType RetType;
@@ -2176,9 +1982,7 @@ private:
 #ifndef TEST_H_
 #define TEST_H_
 
-class RetValueType{
-
-
+class RetValueType {
 };
 
 typedef RetValueType RetType;
@@ -2189,7 +1993,7 @@ public:
 	virtual ~Test();
 private:
 	void test();
-    RetType exp();
+	RetType exp();
 };
 
 #endif /* TEST_H_ */
@@ -2197,14 +2001,12 @@ private:
 #include "Test.h"
 
 Test::Test() {
-
 }
 
 Test::~Test() {
 }
 
-void Test::test()
-{
+void Test::test() {
 	RetType v = /*$*/RetType()/*$$*/;
 }
 
@@ -2212,19 +2014,16 @@ void Test::test()
 #include "Test.h"
 
 Test::Test() {
-
 }
 
 Test::~Test() {
 }
 
-RetType Test::exp()
-{
-    return RetType();
+RetType Test::exp() {
+	return RetType();
 }
 
-void Test::test()
-{
+void Test::test() {
 	RetType v = exp();
 }
 
@@ -2235,22 +2034,19 @@ filename=Test.cpp
 methodname=startTag
 //@testString.h
 
-namespace test{
+namespace test {
 
-	class string{
-	public:
+class string {
+public:
+	friend string operator+(const string& lhs, const string& rhs) {
+		return rhs;
+	}
 
-		friend string operator+(const string& lhs, const string& rhs)
-		{
-		        return rhs;
-		}
+	string operator+(const string& rhs) { return rhs; }
+	string(char* cp) {}
+	string() {};
+};
 
-
-		string operator+(const string& rhs){return rhs;}
-		string(char* cp){}
-		string(){};
-
-	};
 }
 
 //@Test.cpp
@@ -2269,9 +2065,8 @@ int main() {
 //=
 #include "testString.h"
 
-test::string startTag(test::string & name)
-{
-    return "<" + name + ">";
+test::string startTag(test::string& name) {
+	return "<" + name + ">";
 }
 
 test::string toXML() {
@@ -2291,24 +2086,22 @@ filename=Test.cpp
 methodname=startTag
 //@testString.h
 
-namespace test{
+namespace test {
 
-class string2{
-	public:
+class string2 {
+public:
+	friend string2 operator+(const string2& lhs, const string2& rhs) {
+		return rhs;
+	}
 
-		friend string2 operator+(const string2& lhs, const string2& rhs)
-		{
-		        return rhs;
-		}
+	string2 operator+(const string2& rhs) { return rhs; }
+	string2(char* cp) {}
+	string2() {};
 
+};
 
-		string2 operator+(const string2& rhs){return rhs;}
-		string2(char* cp){}
-		string2(){};
+typedef string2 string;
 
-	};
-
-	typedef string2 string;
 }
 
 //@Test.cpp
@@ -2327,9 +2120,8 @@ int main() {
 //=
 #include "testString.h"
 
-test::string startTag(test::string & name)
-{
-    return "<" + name + ">";
+test::string startTag(test::string& name) {
+	return "<" + name + ">";
 }
 
 test::string toXML() {
@@ -2349,22 +2141,19 @@ filename=Test.cpp
 methodname=endTag
 //@testString.h
 
-namespace test{
+namespace test {
 
-	class string{
-	public:
+class string {
+public:
+	friend string operator+(const string& lhs, const string& rhs) {
+		return rhs;
+	}
 
-		friend string operator+(const string& lhs, const string& rhs)
-		{
-		        return rhs;
-		}
+	string operator+(const string& rhs) { return rhs; }
+	string(char* cp) {}
+	string() {};
+};
 
-
-		string operator+(const string& rhs){return rhs;}
-		string(char* cp){}
-		string(){};
-
-	};
 }
 
 //@Test.cpp
@@ -2383,9 +2172,8 @@ int main() {
 //=
 #include "testString.h"
 
-const char endTag(test::string name)
-{
-    return "</" + name + ">";
+const char endTag(test::string name) {
+	return "</" + name + ">";
 }
 
 test::string toXML() {
@@ -2405,22 +2193,19 @@ filename=Test.cpp
 methodname=exp
 //@testString.h
 
-namespace test{
+namespace test {
 
-	class string{
-	public:
+class string {
+public:
+	friend string operator+(const string& lhs, const string& rhs) {
+		return rhs;
+	}
 
-		friend string operator+(const string& lhs, const string& rhs)
-		{
-		        return rhs;
-		}
+	string operator+(const string& rhs) { return rhs; }
+	string(char* cp) {}
+	string() {};
+};
 
-
-		string operator+(const string& rhs){return rhs;}
-		string(char* cp){}
-		string(){};
-
-	};
 }
 
 //@Test.cpp
@@ -2439,9 +2224,8 @@ int main() {
 //=
 #include "testString.h"
 
-const char exp()
-{
-    return ">" + "</";
+const char exp() {
+	return ">" + "</";
 }
 
 test::string toXML() {
@@ -2461,22 +2245,19 @@ filename=Test.cpp
 methodname=endTag
 //@testString.h
 
-namespace test{
+namespace test {
 
-	class string{
-	public:
+class string {
+public:
+	friend string operator+(const string& lhs, const string& rhs) {
+		return rhs;
+	}
 
-		friend string operator+(const string& lhs, const string& rhs)
-		{
-		        return rhs;
-		}
+	string operator+(const string& rhs) { return rhs; }
+	string(char* cp) {}
+	string() {};
+};
 
-
-		string operator+(const string& rhs){return rhs;}
-		string(char* cp){}
-		string(){};
-
-	};
 }
 
 //@Test.cpp
@@ -2495,9 +2276,8 @@ int main() {
 //=
 #include "testString.h"
 
-const char endTag(test::string name)
-{
-    return "</" + name + ">";
+const char endTag(test::string name) {
+	return "</" + name + ">";
 }
 
 test::string toXML() {
@@ -2517,22 +2297,19 @@ filename=Test.cpp
 methodname=exp
 //@testString.h
 
-namespace test{
+namespace test {
 
-	class string{
-	public:
+class string {
+public:
+	friend string operator+(const string& lhs, const string& rhs) {
+		return rhs;
+	}
 
-		friend string operator+(const string& lhs, const string& rhs)
-		{
-		        return rhs;
-		}
+	string operator+(const string& rhs) { return rhs; }
+	string(char* cp) {}
+	string() {};
+};
 
-
-		string operator+(const string& rhs){return rhs;}
-		string(char* cp){}
-		string(){};
-
-	};
 }
 
 //@Test.cpp
@@ -2551,9 +2328,8 @@ int main() {
 //=
 #include "testString.h"
 
-const char exp()
-{
-    return ">" + "</";
+const char exp() {
+	return ">" + "</";
 }
 
 test::string toXML() {
@@ -2572,27 +2348,23 @@ int main() {
 filename=main.cpp
 methodname=exp
 //@main.cpp
-int main(int argc, char **argv) {
-
+int main(int argc, char** argv) {
 	/*$*/int a = 0;
 	{
 		a++;
 	}/*$$*/
-
 }
 
 //=
-void exp()
-{
-    int a = 0;
-    {
-        a++;
-    }
+void exp() {
+	int a = 0;
+	{
+		a++;
+	}
 }
 
-int main(int argc, char **argv) {
-    exp();
-
+int main(int argc, char** argv) {
+	exp();
 }
 
 //!Bug#264712 Refactor extract function deletes comments in header
@@ -2619,26 +2391,23 @@ methodname=exp
 
 #include "classhelper.h"
 
-class Test
-{
+class Test {
   public:
-
 	/**
 	 * Small class with some comments
 	 */
 	Test();
 
-    /** Calculate important things.
-     * @returns the result of the calculation
-     */
-    int calculateStuff();
+	/** Calculate important things.
+	 * @returns the result of the calculation
+	 */
+	int calculateStuff();
 
   private:
 	/**
 	 * Retain a value for something.
 	 */
-    int m_value;
-
+	int m_value;
 };
 
 #endif
@@ -2652,27 +2421,24 @@ class Test
 
 #include "classhelper.h"
 
-class Test
-{
+class Test {
   public:
-
 	/**
 	 * Small class with some comments
 	 */
 	Test();
 
-    /** Calculate important things.
-     * @returns the result of the calculation
-     */
-    int calculateStuff();
+	/** Calculate important things.
+	 * @returns the result of the calculation
+	 */
+	int calculateStuff();
 
   private:
 	/**
 	 * Retain a value for something.
 	 */
-    int m_value;
-    int exp();
-
+	int m_value;
+	int exp();
 };
 
 #endif
@@ -2695,13 +2461,12 @@ int Test::calculateStuff() {
 
 Test::Test() {}
 
-int Test::exp()
-{
-    // refactor these lines to a new method:
-    int result = m_value;
-    result += 10;
-    result *= 10;
-    return result;
+int Test::exp() {
+	// refactor these lines to a new method:
+	int result = m_value;
+	result += 10;
+	result *= 10;
+	return result;
 }
 
 int Test::calculateStuff() {
@@ -2718,42 +2483,37 @@ methodname=exp
 //@main.cpp
 
 int myFunc() {
-return 5;
+	return 5;
 }
 
 int main() {
-
-int a = 0;
+	int a = 0;
 /*$*/try {
-        a = myFunc();
-    }
-    catch(const int & ){
-        a = 3;
-    }/*$$*/
-    return a;
+		a = myFunc();
+	} catch (const int&) {
+		a = 3;
+	}/*$$*/
+	return a;
 }
 
 //=
 
 int myFunc() {
-return 5;
+	return 5;
 }
 
-void exp(int & a)
-{
-    try {
-        a = myFunc();
-    }
-    catch(const int & ){
-        a = 3;
-    }
+void exp(int& a) {
+	try {
+		a = myFunc();
+	} catch (const int&) {
+		a = 3;
+	}
 }
 
 int main() {
-
-int a = 0;
-    exp(a);
-    return a;
+	int a = 0;
+	exp(a);
+	return a;
 }
 
 //!Bug#282004 Refactor->Extract Function in C Project (not C++) won't extract parameters
@@ -2762,24 +2522,21 @@ int a = 0;
 filename=main.c
 methodname=exp
 //@main.c
-int main()
-{
-    int a,b;
-    /*$*/b=a*2;/*$$*/
-    return a;
+int main() {
+	int a,b;
+	/*$*/b=a*2;/*$$*/
+	return a;
 }
 
 //=
-void exp(int b, int *a)
-{
-    b = a * 2;
+void exp(int b, int* a) {
+	b = a * 2;
 }
 
-int main()
-{
-    int a,b;
-    exp(b, a);
-    return a;
+int main() {
+	int a,b;
+	exp(b, a);
+	return a;
 }
 
 //!ExtractFunctionRefactoringTest virtual
@@ -2788,13 +2545,12 @@ int main()
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
 };
@@ -2805,14 +2561,13 @@ private:
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-    virtual void exp(int & i);
-	
+	virtual void exp(int& i);
+
 private:
 	int help();
 };
@@ -2822,15 +2577,13 @@ private:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
-int A::foo()
-{
+
+int A::foo() {
 	int i = 2;
 	//comment
 	/*$*/++i;
@@ -2838,40 +2591,35 @@ int A::foo()
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
-}
-void A::exp(int & i)
-{
-    //comment
-    ++i;
-    help();
+A::~A() {
 }
 
-int A::foo()
-{
+void A::exp(int& i) {
+	//comment
+	++i;
+	help();
+}
+
+int A::foo() {
 	int i = 2;
 	//comment
-    exp(i);
+	exp(i);
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //@.config
 filename=A.cpp
@@ -2885,24 +2633,21 @@ visibility=public
 //!Bug 288268: c-refactoring creates c++-parameters
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@main.c
-int main()
-{
-    int a,b;
-    /*$*/a = b*2;/*$$*/
-    return a;
+int main() {
+	int a,b;
+	/*$*/a = b*2;/*$$*/
+	return a;
 }
 
 //=
-void test(int *a, int b)
-{
-    a = b * 2;
+void test(int* a, int b) {
+	a = b * 2;
 }
 
-int main()
-{
-    int a,b;
-    test(a, b);
-    return a;
+int main() {
+	int a,b;
+	test(a, b);
+	return a;
 }
 
 //@.config

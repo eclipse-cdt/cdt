@@ -56,17 +56,17 @@ import org.eclipse.core.resources.IFile;
 public class StatementWriter extends NodeWriter {
 	private static final String DEFAULT = "default:"; //$NON-NLS-1$
 	private static final String CASE = "case "; //$NON-NLS-1$
-	private static final String WHILE = "while("; //$NON-NLS-1$
+	private static final String WHILE = "while ("; //$NON-NLS-1$
 	private static final String TRY = "try "; //$NON-NLS-1$
-	private static final String CATCH = "catch("; //$NON-NLS-1$
+	private static final String CATCH = "catch ("; //$NON-NLS-1$
 	private static final String RETURN = "return"; //$NON-NLS-1$
 	private static final String GOTO = "goto "; //$NON-NLS-1$
 	private static final String CONTINUE = "continue"; //$NON-NLS-1$
 	private static final String BREAK = "break"; //$NON-NLS-1$
 	private static final String ELSE = "else"; //$NON-NLS-1$
-	private static final String IF = "if("; //$NON-NLS-1$
-	private static final String FOR = "for("; //$NON-NLS-1$
-	private static final String DO_WHILE = " while("; //$NON-NLS-1$
+	private static final String IF = "if ("; //$NON-NLS-1$
+	private static final String FOR = "for ("; //$NON-NLS-1$
+	private static final String DO_WHILE = " while ("; //$NON-NLS-1$
 	private static final String DO = "do"; //$NON-NLS-1$
 	private static final String SWITCH_BRACKET = "switch ("; //$NON-NLS-1$
 	private boolean compoundNoNewLine = false;
@@ -74,14 +74,15 @@ public class StatementWriter extends NodeWriter {
 	private boolean decrementIndentationLevelOneMore = false;
 	private final DeclarationWriter declWriter;
 
-	public StatementWriter(Scribe scribe, ASTVisitor visitor, NodeCommentMap commentMap) {
+	public StatementWriter(Scribe scribe, ASTWriterVisitor visitor, NodeCommentMap commentMap) {
 		super(scribe, visitor, commentMap);
 		declWriter = new DeclarationWriter(scribe, visitor, commentMap);
 	}
 	
 	/**
+	 * Prints a statement.
 	 * 
-	 * @param statement
+	 * @param statement the statement
 	 * @param newLine if true print a newline if statement usually have one.
 	 * @return {@link ASTVisitor#PROCESS_SKIP}
 	 */
@@ -132,7 +133,7 @@ public class StatementWriter extends NodeWriter {
 			writeIfStatement((IASTIfStatement) statement);			
 			newLine = false;
 		} else if (statement instanceof IASTWhileStatement) {
-			writeWhileStatement( (IASTWhileStatement) statement );
+			writeWhileStatement((IASTWhileStatement) statement);
 			newLine = false;
 		} else if (statement instanceof IASTForStatement) {
 			writeForStatement((IASTForStatement) statement);
@@ -173,12 +174,12 @@ public class StatementWriter extends NodeWriter {
 		scribe.printSemicolon();
 	}
 
-	private void writeForStatement(IASTForStatement forStatment) {
+	private void writeForStatement(IASTForStatement forStatement) {
 		scribe.noNewLines();
 		scribe.print(FOR);
-		writeStatement(forStatment.getInitializerStatement(),false);
-		if (forStatment instanceof ICPPASTForStatement) {
-			ICPPASTForStatement cppForStatment = (ICPPASTForStatement) forStatment;
+		writeStatement(forStatement.getInitializerStatement(),false);
+		if (forStatement instanceof ICPPASTForStatement) {
+			ICPPASTForStatement cppForStatment = (ICPPASTForStatement) forStatement;
 			IASTDeclaration cppConditionDeclaration = cppForStatment.getConditionDeclaration();
 			if (cppConditionDeclaration == null) {
 				visitNodeIfNotNull(cppForStatment.getConditionExpression());
@@ -187,17 +188,17 @@ public class StatementWriter extends NodeWriter {
 				cppConditionDeclaration.accept(visitor);
 			}
 		} else {
-			if (forStatment.getConditionExpression() != null) {
-				forStatment.getConditionExpression().accept(visitor);
+			if (forStatement.getConditionExpression() != null) {
+				forStatement.getConditionExpression().accept(visitor);
 				scribe.printSemicolon();
 			}
 		}
 		
-		visitNodeIfNotNull(forStatment.getIterationExpression());
+		visitNodeIfNotNull(forStatement.getIterationExpression());
 		scribe.print(')');
 		scribe.newLines();
 		nextCompoundNoNewLine();
-		writeBodyStatement(forStatment.getBody(), false);
+		writeBodyStatement(forStatement.getBody(), false);
 	}
 
 	private void writeForStatement(ICPPASTRangeBasedForStatement forStatment) {
@@ -418,10 +419,9 @@ public class StatementWriter extends NodeWriter {
 			scribe.newLine();	
 			statement.accept(visitor);
 			scribe.decrementIndentationLevel();	
-			scribe.newLine();
 		}
 	}
-	
+
 	/**
 	 * Write no new Line after the next Compound-Statement 
 	 */

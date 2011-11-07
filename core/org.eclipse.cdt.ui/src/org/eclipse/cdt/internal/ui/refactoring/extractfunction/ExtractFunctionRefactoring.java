@@ -885,7 +885,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		arguments.put(CRefactoringDescription.SELECTION, region.getOffset() + "," + region.getLength()); //$NON-NLS-1$
 		arguments.put(ExtractFunctionRefactoringDescription.NAME, info.getMethodName());
 		arguments.put(ExtractFunctionRefactoringDescription.VISIBILITY, info.getVisibility().toString());
-		arguments.put(ExtractFunctionRefactoringDescription.REPLACE_DUBLICATES, Boolean.toString(info.isReplaceDuplicates()));
+		arguments.put(ExtractFunctionRefactoringDescription.REPLACE_DUPLICATES, Boolean.toString(info.isReplaceDuplicates()));
 		return arguments;
 	}
 }

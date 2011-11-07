@@ -148,6 +148,7 @@ class Klasse0
 public:
     Klasse0();   //Comment
     std::string toString();
+
 private:
     int i;
 };
@@ -170,6 +171,7 @@ class Klasse0
 public:
     Klasse1();
     std::string toString();
+
 private:
     int i;
 };
@@ -182,6 +184,7 @@ class Klasse0
 public:
     Klasse1();
     std::string toString();
+
 private:
     int i;
 }; = //Comment1
@@ -2779,26 +2782,26 @@ int foo = bar; = //Zweiteilig
 //#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
 //@Klasse1.h
 //TEST 1
-namespace ziemlichlangernamespace
+namespace somenamespace
 {
     //TEST 2
 } //TEST 3
 
 //=
 =>leading
-namespace ziemlichlangernamespace
+namespace somenamespace
 {
     //TEST 2
 } = //TEST 1
 
 =>trailing
-namespace ziemlichlangernamespace
+namespace somenamespace
 {
     //TEST 2
 } = //TEST 3
 
 =>freestanding
-namespace ziemlichlangernamespace
+namespace somenamespace
 {
     //TEST 2
 } = //TEST 2
@@ -2807,7 +2810,7 @@ namespace ziemlichlangernamespace
 //!CommentRecognition215 - von ASTWriter NamesapceDefinition
 //#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
 //@Klasse1.h
-namespace ziemlichlangernamespace
+namespace somenamespace
 {
     //TEST
 }
@@ -2822,7 +2825,7 @@ void doIt(){
 =>trailing
 
 =>freestanding
-namespace ziemlichlangernamespace
+namespace somenamespace
 {
     //TEST
 } = //TEST
@@ -2830,7 +2833,7 @@ namespace ziemlichlangernamespace
 //!CommentRecognition216 - von ASTWriter NamesapceDefinition
 //#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
 //@Klasse1.h
-namespace ziemlichlangernamespace
+namespace somenamespace
 {
     int i = 0;
     //TEST
@@ -2846,7 +2849,7 @@ void doIt(){
 =>trailing
 
 =>freestanding
-namespace ziemlichlangernamespace
+namespace somenamespace
 {
     int i = 0;
     //TEST

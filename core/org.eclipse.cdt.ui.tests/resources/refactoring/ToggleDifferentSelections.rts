@@ -6,18 +6,17 @@ filename=A.cpp
 #include "A.h"
 
 int main() {
-    return 0;
+	return 0;
 }
 
-void N::A::/*$*/foo/*$$*/()
-{
-    return;
+void N::A::/*$*/foo/*$$*/() {
+	return;
 }
 //=
 #include "A.h"
 
 int main() {
-    return 0;
+	return 0;
 }
 
 
@@ -26,21 +25,24 @@ int main() {
 #include <exception>
 
 namespace N {
-    class A {
-        void foo();
-    };
+
+class A {
+	void foo();
+};
+
 }
 //=
 #include <iostream>
 #include <exception>
 
 namespace N {
-    class A {
-        void foo()
-        {
-            return;
-        }
-    };
+
+class A {
+	void foo() {
+		return;
+	}
+};
+
 }
 //!TestImplementationToClassWithDeclarationSelected
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
@@ -51,9 +53,11 @@ filename=A.h
 #include <exception>
 
 namespace N {
-    class A {
-        void /*$*/foo/*$$*/();
-    };
+
+class A {
+	void /*$*/foo/*$$*/();
+};
+
 }
 
 //=
@@ -61,28 +65,30 @@ namespace N {
 #include <exception>
 
 namespace N {
-    class A {
-        void foo()
-        {
-            return;
-        }
-    };
+
+class A {
+	void foo() {
+		return;
+	}
+};
+
 }
 
 //@A.cpp
 #include "A.h"
 
 int main() {
-    return 0;
+	return 0;
 }
-void N::A::foo()
-{
-    return;
+
+void N::A::foo() {
+	return;
 }
 //=
 #include "A.h"
 
 int main() {
-    return 0;
+	return 0;
 }
+
 

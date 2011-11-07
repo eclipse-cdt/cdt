@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.insertbefore;
 
@@ -21,31 +21,25 @@ import org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.ChangeGenerator
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
 
-
-
-
-
 public class SelfInsertionTest extends ChangeGeneratorTest {
 
-	public SelfInsertionTest(){
-		super("Self Insertion Test"); //$NON-NLS-1$
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		source = "void foo(){\r\n\r\n  for(int i = 0; i < 10; i++){\r\n  }\r\n}\r\n"; //$NON-NLS-1$
-		expectedSource = "void foo(){\r\n\r\n  for(int i = 0; i < 10; i++){\r\n    for(int i = 0;i < 10;i++){\r\n    }\r\n  }\r\n}\r\n"; //$NON-NLS-1$
-		super.setUp();
+	SelfInsertionTest() {
+		super("SelfInsertionTest");
 	}
 
 	public static Test suite() {		
 		return new SelfInsertionTest();
 	}
 
+	@Override
+	protected void setUp() throws Exception {
+		source = "void foo() {\r\n\r\n\tfor (int i = 0; i < 10; i++) {\r\n\t}\r\n}\r\n"; //$NON-NLS-1$
+		expectedSource = "void foo() {\r\n\r\n\tfor (int i = 0; i < 10; i++) {\r\n\t\tfor (int i = 0; i < 10; i++) {\r\n\t\t}\r\n\t}\r\n}\r\n"; //$NON-NLS-1$
+		super.setUp();
+	}
 
 	@Override
-	protected ASTVisitor createModificator(
-			final ASTModificationStore modStore) {
+	protected ASTVisitor createModificator(final ASTModificationStore modStore) {
 		return new ASTVisitor() {
 			{
 				shouldVisitStatements = true;

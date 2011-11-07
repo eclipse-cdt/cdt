@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -40,14 +39,12 @@ import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
  * @author Emanuel Graf IFS
  */
 public class DeclaratorWriter extends NodeWriter {
-	private static final String AMPERSAND_SPACE = "& "; //$NON-NLS-1$
-	private static final String AMPERSAND_AMPERSAND_SPACE = "&& "; //$NON-NLS-1$
-	private static final String STAR_SPACE = "* "; //$NON-NLS-1$
+	private static final String AMPERSAND_AMPERSAND = "&&"; //$NON-NLS-1$
 	private static final String PURE_VIRTUAL = " = 0"; //$NON-NLS-1$
 	private static final String MUTABLE = "mutable"; //$NON-NLS-1$
 	private static final String ARROW_OPERATOR = "->"; //$NON-NLS-1$
 	
-	public DeclaratorWriter(Scribe scribe, ASTVisitor visitor, NodeCommentMap commentMap) {
+	public DeclaratorWriter(Scribe scribe, ASTWriterVisitor visitor, NodeCommentMap commentMap) {
 		super(scribe, visitor, commentMap);
 	}
 	
@@ -63,7 +60,8 @@ public class DeclaratorWriter extends NodeWriter {
 		} else {
 			writeDefaultDeclarator(declarator);
 		}
-		
+
+		visitor.setSpaceNeededBeforeName(false);
 		if (hasTrailingComments(declarator)) {
 			writeTrailingComments(declarator, false);			
 		}	
@@ -119,6 +117,10 @@ public class DeclaratorWriter extends NodeWriter {
 	private void writeNestedDeclarator(IASTDeclarator funcDec) {
 		IASTDeclarator nestedDeclarator = funcDec.getNestedDeclarator();
 		if (nestedDeclarator != null) {
+			if (visitor.isSpaceNeededBeforeName()) {
+				scribe.printSpace();
+				visitor.setSpaceNeededBeforeName(false);
+			}
 			scribe.print('(');
 			nestedDeclarator.accept(visitor);
 			scribe.print(')');
@@ -160,10 +162,10 @@ public class DeclaratorWriter extends NodeWriter {
 		}
 	}
 
-	protected void writeParameterDeclarations(IASTStandardFunctionDeclarator funcDec, IASTParameterDeclaration[] paraDecls) {
-		writeNodeList(paraDecls);
+	protected void writeParameterDeclarations(IASTStandardFunctionDeclarator funcDec, IASTParameterDeclaration[] paramDecls) {
+		writeNodeList(paramDecls);
 		if (funcDec.takesVarArgs()) {
-			if (paraDecls.length > 0) {
+			if (paramDecls.length > 0) {
 				scribe.print(COMMA_SPACE);
 			}
 			scribe.print(VAR_ARGS);
@@ -175,7 +177,7 @@ public class DeclaratorWriter extends NodeWriter {
 			ICPPASTPointerToMember pointerToMemberOp = (ICPPASTPointerToMember) operator;
 			if (pointerToMemberOp.getName() != null) {
 				pointerToMemberOp.getName().accept(visitor);
-				scribe.print(STAR_SPACE);
+				scribe.print('*');
 			}
 		} else {
 			scribe.print('*');
@@ -198,9 +200,9 @@ public class DeclaratorWriter extends NodeWriter {
 			writePointer(pointOp);
 		} else if (operator instanceof ICPPASTReferenceOperator) {
 			if (((ICPPASTReferenceOperator) operator).isRValueReference()) {
-				scribe.print(AMPERSAND_AMPERSAND_SPACE);
+				scribe.print(AMPERSAND_AMPERSAND);
 			} else {
-				scribe.print(AMPERSAND_SPACE);
+				scribe.print('&');
 			}
 		}
 	}

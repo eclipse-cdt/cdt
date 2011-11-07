@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.insertbefore;
 
@@ -16,12 +16,11 @@ import junit.framework.TestSuite;
 
 /**
  * @author Thomas Corbat
- *
  */
-public class InsertBeforeTestSuite{
+public class InsertBeforeTestSuite {
 
 	public static Test suite() throws Exception {
-		TestSuite suite = new TestSuite("Changegenerator InsertBefore Tests");
+		TestSuite suite = new TestSuite("ChangeGenerator InsertBefore Tests");
 
 		suite.addTest(FirstParameterTest.suite());
 		suite.addTest(PointerParameterTest.suite());

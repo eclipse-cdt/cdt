@@ -7,11 +7,10 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -36,7 +35,7 @@ public class NameWriter extends NodeWriter {
 	 * @param scribe
 	 * @param visitor
 	 */
-	public NameWriter(Scribe scribe, ASTVisitor visitor, NodeCommentMap commentMap) {
+	public NameWriter(Scribe scribe, ASTWriterVisitor visitor, NodeCommentMap commentMap) {
 		super(scribe, visitor, commentMap);
 	}
 	
@@ -45,7 +44,7 @@ public class NameWriter extends NodeWriter {
 			writeTempalteId((ICPPASTTemplateId) name);
 		} else if (name instanceof ICPPASTConversionName) {
 			scribe.print(OPERATOR);
-			((ICPPASTConversionName)name).getTypeId().accept(visitor);
+			((ICPPASTConversionName) name).getTypeId().accept(visitor);
 		} else if (name instanceof ICPPASTQualifiedName){
 			writeQualifiedName((ICPPASTQualifiedName) name);
 		} else {

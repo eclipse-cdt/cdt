@@ -70,11 +70,12 @@ public class ASTWriterTest extends RewriteBaseTest {
 	}
 	
 	@Override
-	protected void compareFiles(Map<String,TestSourceFile> testResourceFiles) throws Exception {
+	protected void compareFiles(Map<String, TestSourceFile> testResourceFiles) throws Exception {
 		for (String fileName : testResourceFiles.keySet()) {
 			TestSourceFile testFile = testResourceFiles.get(fileName);
 			String code = generateSource(testFile);
-			assertEquals(TestHelper.unifyNewLines(testFile.getExpectedSource()), TestHelper.unifyNewLines(code + System.getProperty("line.separator"))); //$NON-NLS-1$
+			assertEquals(TestHelper.unifyNewLines(testFile.getExpectedSource()),
+					TestHelper.unifyNewLines(code + System.getProperty("line.separator"))); //$NON-NLS-1$
 		}
 	}
 	

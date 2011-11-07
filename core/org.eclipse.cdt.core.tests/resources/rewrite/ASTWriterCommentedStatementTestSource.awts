@@ -2,7 +2,7 @@
 //%CPP
 void foo()
 {
-    while(true){
+    while (true){
         //TEST  1
         break; //TEST 2
     }
@@ -13,7 +13,7 @@ void foo()
 //%CPP
 void foo()
 {
-    while(true){
+    while (true){
         /*TEST 1*/
         break; /*TEST 2*/
     }
@@ -62,7 +62,7 @@ void foo()
 //%CPP
 void foo()
 {
-    while(true){
+    while (true){
         //TEST 1
         continue; //TEST 2
     }
@@ -73,7 +73,7 @@ void foo()
 //%CPP
 void foo()
 {
-    while(true){
+    while (true){
         /*TEST 1*/
         continue; /*TEST 2*/
     }
@@ -112,7 +112,7 @@ void foo()
     do{ //TEST 2
         continue; //TEST 3
         //TEST 4
-    } while(true); //TEST 5
+    } while (true); //TEST 5
 }
 
 
@@ -124,7 +124,7 @@ void foo()
         //TEST 2
         continue; //TEST 3
         //TEST 4
-    } while(true); //TEST 5
+    } while (true); //TEST 5
 }
 
 
@@ -136,7 +136,7 @@ void foo()
     do{ /*TEST 2*/
         continue; /*TEST 3*/
         /*TEST 4*/
-    } while(true); /*TEST 5*/
+    } while (true); /*TEST 5*/
 }
 
 
@@ -148,7 +148,7 @@ void foo()
         /*TEST 2*/
         continue; /*TEST 3*/
         /*TEST 4*/
-    } while(true); /*TEST 5*/
+    } while (true); /*TEST 5*/
 }
 
 
@@ -158,7 +158,7 @@ void foo()
 {
     do{
         continue;
-    } while(true); /*TEST 1*/
+    } while (true); /*TEST 1*/
 }
 
 
@@ -197,7 +197,7 @@ void foo()
 void foo()
 {
     //TEST 1
-    for(int i = 0;i < 1;++i){ //TEST 2
+    for (int i = 0;i < 1;++i){ //TEST 2
         break; //TEST 3
     } //TEST 4
 }
@@ -207,7 +207,7 @@ void foo()
 void foo()
 {
     //TEST 1
-    for(int i = 0;i < 1;++i){
+    for (int i = 0;i < 1;++i){
         //TEST 2
         break; //TEST 3
     } //TEST 4
@@ -219,7 +219,7 @@ void foo()
 void foo()
 {
     /*TEST 1*/
-    for(int i = 0;i < 1;++i){ /*TEST 2*/
+    for (int i = 0;i < 1;++i){ /*TEST 2*/
         break; /*TEST 3*/
     } /*TEST 4*/
 }
@@ -229,7 +229,7 @@ void foo()
 void foo()
 {
     /*TEST 1*/
-    for(int i = 0;i < 1;++i){
+    for (int i = 0;i < 1;++i){
         /*TEST 2*/
         break; /*TEST 3*/
     } /*TEST 4*/
@@ -240,7 +240,7 @@ void foo()
 //%CPP
 void foo()
 {
-    for(int i = 0;i < 1;++i){
+    for (int i = 0;i < 1;++i){
         break;
     } /*TEST 4*/
 }
@@ -385,7 +385,7 @@ void foo()
 //%CPP
 int f()
 {
-    if(int c = f()){
+    if (int c = f()){
         c++;
     } //TEST 1
     return i;
@@ -398,7 +398,7 @@ int f()
 {
     int i = 0;
     //TEST 1
-    if(i < 1){
+    if (i < 1){
         //TEST 3
         ++i;
         //TEST 4
@@ -407,7 +407,7 @@ int f()
         --i;
         //TEST 6
     } //TEST 7
-    if(int c = f()){
+    if (int c = f()){
         c++;
     } //TEST 8
     return i;
@@ -420,7 +420,7 @@ int f()
 {
     int i = 0;
     /*TEST 1*/
-    if(i < 1){
+    if (i < 1){
         /*TEST 1*/
         ++i;
         /*TEST 1*/
@@ -429,7 +429,7 @@ int f()
         --i;
         /*TEST 1*/
     } /*TEST 1*/
-    if(int c = f()){
+    if (int c = f()){
         c++;
     } /*TEST 1*/
     return i;
@@ -440,7 +440,7 @@ int f()
 //%CPP
 int g()
 {
-    if(10 > 5) //TEST 1
+    if (10 > 5) //TEST 1
         return 1; //TEST 2
 
     return 0;
@@ -449,7 +449,7 @@ int g()
 //=
 int g()
 {
-    if(10 > 5)
+    if (10 > 5)
         //TEST 1
         return 1; //TEST 2
 
@@ -460,7 +460,7 @@ int g()
 //%CPP
 int g()
 {
-    if(10 > 5) /*TEST 1*/
+    if (10 > 5) /*TEST 1*/
         return 1; /*TEST 2*/
 
     return 0;
@@ -469,7 +469,7 @@ int g()
 //=
 int g()
 {
-    if(10 > 5)
+    if (10 > 5)
         /*TEST 1*/
         return 1; /*TEST 2*/
 
@@ -583,7 +583,7 @@ void foo()
 void foo()
 {
     //TEST 1
-    while(true){ //TEST 2
+    while (true){ //TEST 2
         //TEST 3
         break; //TEST 4
         //TEST 5
@@ -595,7 +595,7 @@ void foo()
 void foo()
 {
     //TEST 1
-    while(true){
+    while (true){
         //TEST 2
         //TEST 3
         break; //TEST 4
@@ -609,7 +609,7 @@ void foo()
 void foo()
 {
     /*TEST 1*/
-    while(true){ /*TEST 2*/
+    while (true){ /*TEST 2*/
         /*TEST 3*/
         break; /*TEST 4*/
         /*TEST 5*/
@@ -621,7 +621,7 @@ void foo()
 void foo()
 {
     /*TEST 1*/
-    while(true){
+    while (true){
         /*TEST 2*/
         /*TEST 3*/
         break; /*TEST 4*/
@@ -634,7 +634,7 @@ void foo()
 //%CPP
 void foo()
 {
-    while(true){
+    while (true){
         break;
     } /*TEST 6*/
 }
@@ -650,10 +650,10 @@ int foo()
             ++i;
             return i;
         }
-        catch(...){
+        catch (...){
         }
     }
-    catch(...){
+    catch (...){
     }
 }
 

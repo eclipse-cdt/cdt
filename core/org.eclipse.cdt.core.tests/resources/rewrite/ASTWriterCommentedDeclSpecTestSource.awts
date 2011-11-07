@@ -11,11 +11,12 @@ const int a = 1;
 //Test3
 volatile int b = 3;
 //Test4
-typedef int *intp;
+typedef int* intp;
 //Test5
 extern int b;
 //Test6
 static int c;
+
 //Test7
 int foo()
 {
@@ -59,7 +60,7 @@ public:
 //!Commented ElaboratedTypeSpecifier 1
 //%CPP
 //Test1
-class A *A; //Test2
+class A* A; //Test2
 //Test3
 enum Status{ good, bad}; //Test4
 //Test5

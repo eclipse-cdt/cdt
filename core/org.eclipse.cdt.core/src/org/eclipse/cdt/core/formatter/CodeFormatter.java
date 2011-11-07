@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.formatter;
 
 import java.util.Map;
 
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.text.edits.TextEdit;
 
 /**
@@ -64,15 +65,15 @@ public abstract class CodeFormatter {
 	public static final int K_MULTI_LINE_COMMENT = 0x20;
 
 	/**
-	 * Format <code>source</code>,
-	 * and returns a text edit that correspond to the difference between the given string and
-	 * the formatted string. It returns null if the given string cannot be formatted.
+	 * Formats <code>source</code>, and returns a text edit that correspond to the difference
+	 * between the given string and the formatted string. It returns null if the given string cannot
+	 * be formatted.
 	 * 
 	 * If the offset position is matching a whitespace, the result can include whitespaces.
 	 * It would be up to the caller to get rid of preceding whitespaces.
 	 * 
 	 * @param kind Use to specify the kind of the code snippet to format. It can be any of these:
-	 * 		  K_EXPRESSION, K_STATEMENTS, K_CLASS_BODY_DECLARATIONS, K_TRANSLATION_UNIT, K_UNKNOWN
+	 * 	   K_EXPRESSION, K_STATEMENTS, K_CLASS_BODY_DECLARATIONS, K_TRANSLATION_UNIT, K_UNKNOWN
 	 * @param source the document to format
 	 * @param offset the given offset to start recording the edits (inclusive).
 	 * @param length the given length to stop recording the edits (exclusive).
@@ -87,7 +88,36 @@ public abstract class CodeFormatter {
 	 */
 	public abstract TextEdit format(int kind, String source, int offset, int length,
 			int indentationLevel, String lineSeparator);
-	
+
+	/**
+	 * Formats one or more regions of <code>source</code>, and returns an array of edits, one edit
+	 * per region. If some of the regions cannot be formatted, the corresponding elements of
+	 * the returned array will be <code>null</code>.
+	 * 
+	 * If the offset of a region is matching a whitespace, the result can include whitespaces.
+	 * It would be up to the caller to get rid of preceding whitespaces.
+	 * 
+	 * Subclasses may override this method to provide a more efficient implementation.
+	 * 
+	 * @param kind Use to specify the kind of the code snippet to format. It can be any of these:
+	 * 	   K_EXPRESSION, K_STATEMENTS, K_CLASS_BODY_DECLARATIONS, K_TRANSLATION_UNIT, K_UNKNOWN.
+	 * @param source the document to format.
+	 * @param regions regions of the source to be formatted.
+	 * @param lineSeparator the line separator to use in formatted source,
+	 *     if set to <code>null</code>, then the platform default one will be used.
+	 * @return the text edits, one per region.
+	 * @throws IllegalArgumentException if any of the regions is invalid.
+	 * @since 5.4
+	 */
+	public TextEdit[] format(int kind, String source, IRegion[] regions, String lineSeparator) {
+		TextEdit[] edits = new TextEdit[regions.length];
+		for (int i = 0; i < regions.length; i++) {
+			IRegion region = regions[i];
+			edits[i] = format(kind, source, region.getOffset(), region.getLength(), 0, lineSeparator);
+		}
+		return edits;
+	}
+
 	/**
 	 * @param options - general formatter options
 	 */

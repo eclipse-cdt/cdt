@@ -57,7 +57,7 @@ public class CPPASTTemplateIDAmbiguity extends ASTAmbiguousNode implements IASTA
 	}
 
 	@Override
-	public IASTNode resolveAmbiguity(ASTVisitor resolver) {
+	protected final IASTNode doResolveAmbiguity(ASTVisitor resolver) {
 		final IASTAmbiguityParent owner= (IASTAmbiguityParent) getParent();
 		IASTNode nodeToReplace= this;
 		
@@ -77,10 +77,7 @@ public class CPPASTTemplateIDAmbiguity extends ASTAmbiguousNode implements IASTA
 
 					// Setup the ast to use the alternative
 					owner.replace(nodeToReplace, expression);
-					nodeToReplace= expression;
-
-					// Handle nested ambiguities first
-					expression.accept(resolver);
+					nodeToReplace= resolveNestedAmbiguities(expression, resolver);
 
 					int count= checkNames(templateNames);
 					if (count > bestCount) {
@@ -163,18 +160,22 @@ public class CPPASTTemplateIDAmbiguity extends ASTAmbiguousNode implements IASTA
 		return fNodes;
 	}
 
+	@Override
 	public IASTExpression copy() {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public IASTExpression copy(CopyStyle style) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public void addExpression(IASTExpression e) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public IASTExpression[] getExpressions() {
 		throw new UnsupportedOperationException();
 	}

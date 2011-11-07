@@ -40,15 +40,18 @@ public abstract class ASTAmbiguousBinaryVsCastExpression extends ASTAmbiguousNod
     	fCastExpression= castExpression;
     }
         
-    public final IASTExpression copy() {
+    @Override
+	public final IASTExpression copy() {
     	throw new UnsupportedOperationException();
     }
     
+	@Override
 	public final IASTExpression copy(CopyStyle style) {
 		throw new UnsupportedOperationException();
 	}
 
-    public final void addExpression(IASTExpression e) {
+    @Override
+	public final void addExpression(IASTExpression e) {
     	throw new UnsupportedOperationException();
     }
     
@@ -57,12 +60,13 @@ public abstract class ASTAmbiguousBinaryVsCastExpression extends ASTAmbiguousNod
 		return getExpressions();
 	}
 
+	@Override
 	public IASTExpression[] getExpressions() {
 		return new IASTExpression[] {fBinaryExpression, fCastExpression};
 	}
 
 	@Override
-	public final IASTNode resolveAmbiguity(ASTVisitor visitor) {
+	protected final IASTNode doResolveAmbiguity(ASTVisitor visitor) {
 		final IASTAmbiguityParent owner= (IASTAmbiguityParent) getParent();
 		IASTNode nodeToReplace= this;
 

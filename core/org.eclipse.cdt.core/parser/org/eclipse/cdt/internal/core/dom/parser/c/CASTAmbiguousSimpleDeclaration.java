@@ -56,39 +56,45 @@ public class CASTAmbiguousSimpleDeclaration extends ASTAmbiguousNode implements 
         return new IASTNode[] {fSimpleDecl, fAltDeclSpec, fAltDtor};
     }
 
+	@Override
 	public IASTSimpleDeclaration copy() {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public IASTSimpleDeclaration copy(CopyStyle style) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public void addDeclarator(IASTDeclarator declarator) {
 		fSimpleDecl.addDeclarator(declarator);
 	}
 
+	@Override
 	public IASTDeclSpecifier getDeclSpecifier() {
 		return fSimpleDecl.getDeclSpecifier();
 	}
 
+	@Override
 	public IASTDeclarator[] getDeclarators() {
 		return fSimpleDecl.getDeclarators();
 	}
 
+	@Override
 	public void setDeclSpecifier(IASTDeclSpecifier declSpec) {
 		fSimpleDecl.setDeclSpecifier(declSpec);
 	}
 	
 	@Override
-	public final IASTNode resolveAmbiguity(ASTVisitor visitor) {
+	protected final IASTNode doResolveAmbiguity(ASTVisitor resolver) {
 		final IASTAmbiguityParent owner= (IASTAmbiguityParent) getParent();
 		IASTNode nodeToReplace= this;
 
 		// handle nested ambiguities first
 		owner.replace(nodeToReplace, fSimpleDecl);
 		IASTDeclSpecifier declSpec= fSimpleDecl.getDeclSpecifier();
-		declSpec.accept(visitor);
+		declSpec.accept(resolver);
 		
 
 		// find nested names
@@ -118,7 +124,7 @@ public class CASTAmbiguousSimpleDeclaration extends ASTAmbiguousNode implements 
 		}
 			
 		// resolve further nested ambiguities
-		fSimpleDecl.accept(visitor);
+		fSimpleDecl.accept(resolver);
 		return fSimpleDecl;
 	}
 }

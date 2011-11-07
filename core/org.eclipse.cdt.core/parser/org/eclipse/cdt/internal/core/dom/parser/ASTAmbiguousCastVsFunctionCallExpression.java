@@ -49,24 +49,28 @@ public abstract class ASTAmbiguousCastVsFunctionCallExpression extends ASTAmbigu
 		return getExpressions();
 	}
 
-    public final IASTExpression copy() {
+    @Override
+	public final IASTExpression copy() {
 		throw new UnsupportedOperationException();
 	}
     
+	@Override
 	public final IASTExpression copy(CopyStyle style) {
 		throw new UnsupportedOperationException();
 	}
 
-    public void addExpression(IASTExpression e) {
+    @Override
+	public void addExpression(IASTExpression e) {
 		throw new UnsupportedOperationException();
     }
     
+	@Override
 	public IASTExpression[] getExpressions() {
 		return new IASTExpression[] {fCastExpression, fFunctionCallExpression};
 	}
 
 	@Override
-	public final IASTNode resolveAmbiguity(ASTVisitor visitor) {
+	protected final IASTNode doResolveAmbiguity(ASTVisitor visitor) {
 		final IASTAmbiguityParent owner= (IASTAmbiguityParent) getParent();
 		IASTNode nodeToReplace= this;
 

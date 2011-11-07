@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Tomasz Wesolowski - initial API and implementation
+ *     Tomasz Wesolowski - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers.ui.quickfix;
 
@@ -30,7 +30,7 @@ public class CreateLocalVariableQuickFixTest extends QuickFixTestCase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.codan.core.test.CodanTestCase#setUp()
 	 */
 	@Override
@@ -64,7 +64,7 @@ public class CreateLocalVariableQuickFixTest extends QuickFixTestCase {
 	public void testString() {
 		loadcode(getAboveComment());
 		String result = runQuickFixOneFile();
-		assertContainedIn("const char *aString;", result); //$NON-NLS-1$
+		assertContainedIn("const char* aString;", result); //$NON-NLS-1$
 	}
 
 	// void func() {
@@ -73,7 +73,7 @@ public class CreateLocalVariableQuickFixTest extends QuickFixTestCase {
 	public void testWString() {
 		loadcode(getAboveComment());
 		String result = runQuickFixOneFile();
-		assertContainedIn("const wchar_t *aWString;", result); //$NON-NLS-1$
+		assertContainedIn("const wchar_t* aWString;", result); //$NON-NLS-1$
 	}
 
 	// void func() {

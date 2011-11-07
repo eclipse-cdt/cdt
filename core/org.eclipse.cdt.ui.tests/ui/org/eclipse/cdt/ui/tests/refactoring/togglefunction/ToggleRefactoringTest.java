@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.togglefunction;
 
@@ -26,7 +26,6 @@ import org.eclipse.cdt.ui.tests.refactoring.RefactoringTest;
 import org.eclipse.cdt.ui.tests.refactoring.TestSourceFile;
 
 public class ToggleRefactoringTest extends RefactoringTest {
-
 	private boolean fatalError;
 	private boolean newFileCreation;
 	private String[] newfiles;
@@ -117,5 +116,4 @@ public class ToggleRefactoringTest extends RefactoringTest {
 		changes.perform(NULL_PROGRESS_MONITOR);
 		compareFiles(fileMap);		
 	}
-
 }

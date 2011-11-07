@@ -19,10 +19,8 @@ import org.eclipse.cdt.internal.ui.refactoring.togglefunction.ToggleNodeHelper;
 
 /**
  * @author egraf
- *
  */
 public class ToggleNodeHelperTest extends TestCase {
-
 	/**
 	 * Test method for {@link org.eclipse.cdt.internal.ui.refactoring.togglefunction.ToggleNodeHelper#getFilenameWithoutExtension(java.lang.String)}.
 	 */
@@ -38,5 +36,4 @@ public class ToggleNodeHelperTest extends TestCase {
 	public void testGetFilenameWithoutExtension2() {
 		assertEquals("My.Class", ToggleNodeHelper.getFilenameWithoutExtension("My.Class.h"));
 	}
-
 }

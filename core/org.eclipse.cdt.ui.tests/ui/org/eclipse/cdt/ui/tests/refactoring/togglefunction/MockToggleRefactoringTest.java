@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.togglefunction;
 
@@ -21,8 +21,7 @@ import org.eclipse.cdt.internal.ui.refactoring.togglefunction.ToggleRefactoringC
 
 public class MockToggleRefactoringTest extends ToggleRefactoring {
 
-	public MockToggleRefactoringTest(IFile file, TextSelection selection,
-			ICProject proj) {
+	public MockToggleRefactoringTest(IFile file, TextSelection selection, ICProject proj) {
 		super(file, selection, proj);
 	}
 

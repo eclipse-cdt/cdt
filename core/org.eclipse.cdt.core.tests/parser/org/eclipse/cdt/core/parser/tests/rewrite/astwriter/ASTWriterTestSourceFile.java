@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- * Institute for Software - initial API and implementation 
+ *     Institute for Software - initial API and implementation 
  ******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.astwriter;
 
@@ -16,7 +16,6 @@ import org.eclipse.cdt.core.parser.tests.rewrite.TestSourceFile;
 
 /**
  * @author Guido Zgraggen IFS
- *
  */
 public class ASTWriterTestSourceFile extends TestSourceFile {
 	private ParserLanguage parserLanguage = ParserLanguage.CPP;

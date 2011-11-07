@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.togglefunction;
 
@@ -32,7 +32,7 @@ public class ToggleRefactoringTestSuite extends TestSuite {
 				"resources/refactoring/ToggleSimpleFunctionRefactoring.rts"));
 		suite.addTest(RefactoringTester.suite("ToggleTemplateRefactoringTest",
 				"resources/refactoring/ToggleTemplateRefactoring.rts"));
-		suite.addTest(RefactoringTester.suite("ToggleNamespaceRefacotringTest",
+		suite.addTest(RefactoringTester.suite("ToggleNamespaceRefactoringTest",
 				"resources/refactoring/ToggleNamespaceRefactoring.rts"));
 		suite.addTest(RefactoringTester.suite("ToggleTryCatchRefactoringTest",
 				"resources/refactoring/ToggleTryCatchRefactoring.rts"));
@@ -49,7 +49,7 @@ public class ToggleRefactoringTestSuite extends TestSuite {
 				"resources/refactoring/ToggleFreeFunction.rts"));
 		suite.addTest(RefactoringTester.suite("ToggleVirtualFunctionTest",
 				"resources/refactoring/ToggleVirtualFunction.rts"));
-		suite.addTest(RefactoringTester.suite("ToggleOrderintTest",
+		suite.addTest(RefactoringTester.suite("ToggleOrderingTest",
 				"resources/refactoring/ToggleOrdering.rts"));
 		suite.addTest(RefactoringTester.suite("ToggleCommentsClassToHeader",
 				"resources/refactoring/ToggleCommentsClassToHeader.rts"));
@@ -62,5 +62,4 @@ public class ToggleRefactoringTestSuite extends TestSuite {
 		suite.addTestSuite(ToggleNodeHelperTest.class);
 		return suite;
 	}
-
 }

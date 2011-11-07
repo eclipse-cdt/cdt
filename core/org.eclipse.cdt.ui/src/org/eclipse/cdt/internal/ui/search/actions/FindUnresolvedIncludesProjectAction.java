@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.search.actions;
 
@@ -35,13 +35,13 @@ import org.eclipse.cdt.internal.ui.util.StatusLineHandler;
  * Could be extended to work on resource selections.
  */
 public class FindUnresolvedIncludesProjectAction implements IObjectActionDelegate {
-
 	private ISelection fSelection;
 	private IWorkbenchSite fSite;
 
 	public FindUnresolvedIncludesProjectAction() {
 	}
 
+	@Override
 	public void run(IAction action) {
 		List<ICProject> projects= new ArrayList<ICProject>();
 		IStructuredSelection cElements= SelectionConverter.convertSelectionToCElements(fSelection);
@@ -64,10 +64,12 @@ public class FindUnresolvedIncludesProjectAction implements IObjectActionDelegat
 		NewSearchUI.runQueryInBackground(searchJob);
 	}
 
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		fSite= targetPart.getSite();
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		fSelection= selection;
 	}

@@ -19,6 +19,7 @@
  * Noriaki Takatsu (IBM)  - [226237] [dstore] Move the place where the ServerLogger instance is made
  * David McKnight  (IBM)  - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
  * David McKnight   (IBM) - [283613] [dstore] Create a Constants File for all System Properties we support
+ * David McKnight  (IBM)  - [358301] [DSTORE] Hang during debug source look up
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -239,6 +240,9 @@ public class EnvironmentMiner extends Miner
 		_dataStore.refresh(_system);
 		
 	    }
+	catch (OutOfMemoryError err){
+		System.exit(-1);
+	}
 	catch (IOException e) 
 	    {
 		System.err.println("Error getting System Environment Variables\n" + e.getMessage()); //$NON-NLS-1$

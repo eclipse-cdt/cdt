@@ -132,22 +132,29 @@ public class Scribe {
 	}
 
 	private final void addDeleteEdit(int start, int end) {
-		if (edits.length == editsIndex) {
-			resize();
-		}
 		addOptimizedReplaceEdit(start, end - start + 1, EMPTY_STRING);
 	}
 
 	public final void addInsertEdit(int insertPosition, CharSequence insertedString) {
-		if (edits.length == editsIndex) {
-			resize();
-		}
 		addOptimizedReplaceEdit(insertPosition, 0, insertedString);
 	}
 
+	/**
+	 * Adds a replace edit.
+	 * @param start  start offset (inclusive)
+	 * @param end  end offset (inclusive)
+	 * @param replacement  the replacement string
+	 */
+	public final void addReplaceEdit(int start, int end, CharSequence replacement) {
+		addOptimizedReplaceEdit(start, end - start + 1, replacement);
+	}
+
 	private final void addOptimizedReplaceEdit(int offset, int length, CharSequence replacement) {
+		if (edits.length == editsIndex) {
+			resize();
+		}
 		if (editsIndex > 0) {
-			// try to merge last two edits
+			// Try to merge last two edits
 			final OptimizedReplaceEdit previous= edits[editsIndex - 1];
 			final int previousOffset= previous.offset;
 			final int previousLength= previous.length;
@@ -170,7 +177,8 @@ public class Scribe {
 			if (endOffsetOfPreviousEdit == offset) {
 				if (length != 0) {
 					if (replacementLength != 0) {
-						edits[editsIndex - 1]= new OptimizedReplaceEdit(previousOffset, previousLength + length,
+						editsIndex--;
+						appendOptimizedReplaceEdit(previousOffset, previousLength + length,
 								previousReplacement + replacement);
 					} else if (previousLength + length == previousReplacementLength) {
 						// Check the characters. If they are identical,
@@ -178,8 +186,9 @@ public class Scribe {
 						boolean canBeRemoved= true;
 						loop: for (int i= previousOffset; i < previousOffset + previousReplacementLength; i++) {
 							if (scanner.source[i] != previousReplacement.charAt(i - previousOffset)) {
-								edits[editsIndex - 1]= new OptimizedReplaceEdit(previousOffset,
-										previousReplacementLength, previousReplacement);
+								editsIndex--;
+								appendOptimizedReplaceEdit(previousOffset, previousReplacementLength,
+										previousReplacement);
 								canBeRemoved= false;
 								break loop;
 							}
@@ -195,35 +204,45 @@ public class Scribe {
 							editsIndex--;
 						}
 					} else {
-						edits[editsIndex - 1]= new OptimizedReplaceEdit(previousOffset, previousLength + length,
+						editsIndex--;
+						appendOptimizedReplaceEdit(previousOffset, previousLength + length,
 								previousReplacement);
 					}
 				} else {
 					if (replacementLength != 0) {
-						edits[editsIndex - 1]= new OptimizedReplaceEdit(previousOffset, previousLength,
+						editsIndex--;
+						appendOptimizedReplaceEdit(previousOffset, previousLength,
 								previousReplacement + replacement);
 					}
 				}
 			} else {
 				assert endOffsetOfPreviousEdit < offset;
-				edits[editsIndex++]= new OptimizedReplaceEdit(offset, length, replacement);
+				appendOptimizedReplaceEdit(offset, length, replacement);
 			}
 		} else {
-			edits[editsIndex++]= new OptimizedReplaceEdit(offset, length, replacement);
+			appendOptimizedReplaceEdit(offset, length, replacement);
 		}
 	}
 
 	/**
-	 * Add a replace edit.
-	 * @param start  start offset (inclusive)
-	 * @param end  end offset (inclusive)
-	 * @param replacement  the replacement string
+	 * Trims redundant prefix from a replacement edit and, if there is anything left, appends
+	 * the replacement edit to the edits array.   
 	 */
-	public final void addReplaceEdit(int start, int end, String replacement) {
-		if (edits.length == editsIndex) {
-			resize();
+	private void appendOptimizedReplaceEdit(int offset, int length, CharSequence replacement) {
+		int replacementLength = replacement.length();
+		int i;
+		for (i = 0; i < length && i < replacementLength; i++, offset++) {
+			if (scanner.source[offset] != replacement.charAt(i))
+				break;
 		}
-		addOptimizedReplaceEdit(start, end - start + 1, replacement);
+		length -= i;
+		if (i > 0) {
+			replacement = i == replacementLength ?
+					 EMPTY_STRING : replacement.subSequence(i, replacementLength);
+		}
+		if (length > 0 || replacement.length() > 0) {
+			edits[editsIndex++]= new OptimizedReplaceEdit(offset, length, replacement);
+		}
 	}
 
 	public void alignFragment(Alignment alignment, int fragmentIndex) {
@@ -562,7 +581,7 @@ public class Scribe {
 				edit= new MultiTextEdit(0, textRegionEnd + 1);
 			}
 		} else {
-			edit= new MultiTextEdit(textRegionStart, textRegionEnd - textRegionStart + 1);
+			edit= new MultiTextEdit(textRegionStart, length);
 		}
 		for (int i= 0, max= editsIndex; i < max; i++) {
 			OptimizedReplaceEdit currentEdit= edits[i];
@@ -1452,17 +1471,18 @@ public class Scribe {
 
 	private void printEmptyLines(int linesNumber, int insertPosition) {
 		final String buffer= getEmptyLines(linesNumber);
-		if (EMPTY_STRING == buffer)
-			return;
-
-		addInsertEdit(insertPosition, buffer);
+		if (!buffer.isEmpty()) {
+			addInsertEdit(insertPosition, buffer);
+		}
 	}
 
 	void printIndentationIfNecessary() {
+		if (column > indentationLevel)
+			return;
 		StringBuilder buffer= new StringBuilder();
 		printIndentationIfNecessary(buffer);
 		if (buffer.length() > 0) {
-			addInsertEdit(scanner.getCurrentTokenStartPosition(), buffer.toString());
+			addInsertEdit(scanner.getCurrentTokenStartPosition(), buffer);
 			pendingSpace= false;
 		}
 	}

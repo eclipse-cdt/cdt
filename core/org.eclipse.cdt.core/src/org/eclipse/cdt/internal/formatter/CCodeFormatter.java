@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
- *     Sergey Prigogin, Google
+ *     Sergey Prigogin (Google)
  *     Anton Leherbauer (Wind River Systems)
  *     IBM Corporation
  *******************************************************************************/
@@ -34,6 +34,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.text.edits.TextEdit;
+import org.eclipse.jface.text.IRegion;
 
 public class CCodeFormatter extends CodeFormatter {
 	private DefaultCodeFormatterOptions preferences;
@@ -117,9 +118,6 @@ public class CCodeFormatter extends CodeFormatter {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.cdt.core.formatter.CodeFormatter#format(int, java.lang.String, int, int, int, java.lang.String)
-	 */
 	@Override
 	public TextEdit format(int kind, String source, int offset, int length, int indentationLevel, String lineSeparator) {
 		TextEdit edit= null;
@@ -187,5 +185,81 @@ public class CCodeFormatter extends CodeFormatter {
 			}
 		}
 		return edit;
+	}
+
+	@Override
+	public TextEdit[] format(int kind, String source, IRegion[] regions, String lineSeparator) {
+		TextEdit[] edits= new TextEdit[regions.length];
+		ITranslationUnit tu= (ITranslationUnit) options.get(DefaultCodeFormatterConstants.FORMATTER_TRANSLATION_UNIT);
+		if (tu == null) {
+			IFile file= (IFile) options.get(DefaultCodeFormatterConstants.FORMATTER_CURRENT_FILE);
+			if (file != null) {
+				tu= (ITranslationUnit) CoreModel.getDefault().create(file);
+			}
+		}
+		if (lineSeparator != null) {
+			preferences.line_separator = lineSeparator;
+		} else {
+			preferences.line_separator = System.getProperty("line.separator"); //$NON-NLS-1$
+		}
+
+		if (tu != null) {
+			IIndex index;
+			try {
+				index = CCorePlugin.getIndexManager().getIndex(tu.getCProject());
+				index.acquireReadLock();
+			} catch (CoreException e) {
+				throw new AbortFormatting(e);
+			} catch (InterruptedException e) {
+				return null;
+			}
+			IASTTranslationUnit ast;
+			try {
+				try {
+					ast= tu.getAST(index, ITranslationUnit.AST_SKIP_ALL_HEADERS);
+				} catch (CoreException exc) {
+					throw new AbortFormatting(exc);
+				}
+				for (int i = 0; i < regions.length; i++) {
+					IRegion region = regions[i];
+					CodeFormatterVisitor codeFormatter =
+							new CodeFormatterVisitor(preferences, region.getOffset(), region.getLength());
+					edits[i] = codeFormatter.format(source, ast);
+					IStatus status= codeFormatter.getStatus();
+					if (!status.isOK()) {
+						CCorePlugin.log(status);
+					}
+				}
+			} finally {
+				index.releaseReadLock();
+			}
+		} else {
+			IncludeFileContentProvider contentProvider = IncludeFileContentProvider.getSavedFilesProvider();
+			IScannerInfo scanInfo = new ScannerInfo();
+			FileContent content = FileContent.create("<text>", source.toCharArray()); //$NON-NLS-1$
+			
+			ILanguage language= (ILanguage) options.get(DefaultCodeFormatterConstants.FORMATTER_LANGUAGE);
+			if (language == null) {
+				language= GPPLanguage.getDefault();
+			}
+			IASTTranslationUnit ast;
+			try {
+				ast= language.getASTTranslationUnit(content, scanInfo, contentProvider, null, 0,
+						ParserUtil.getParserLogService());
+				for (int i = 0; i < regions.length; i++) {
+					IRegion region = regions[i];
+					CodeFormatterVisitor codeFormatter =
+							new CodeFormatterVisitor(preferences, region.getOffset(), region.getLength());
+					edits[i]= codeFormatter.format(source, ast);
+					IStatus status= codeFormatter.getStatus();
+					if (!status.isOK()) {
+						CCorePlugin.log(status);
+					}
+				}
+			} catch (CoreException e) {
+				throw new AbortFormatting(e);
+			}
+		}
+		return edits;
 	}
 }

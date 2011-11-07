@@ -13,8 +13,6 @@ void foo();
 //@A.cpp
 #include "A.h"
 
-void foo()
-{
-
+void foo() {
 }
 

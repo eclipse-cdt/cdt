@@ -5,10 +5,9 @@ filename=A.cpp
 //@A.cpp
 #include "A.h"
 
-void A::/*$*/member/*$$*/()
-{
-    // body comment
-    return;
+void A::/*$*/member/*$$*/() {
+	// body comment
+	return;
 }
 //=
 #include "A.h"
@@ -16,15 +15,14 @@ void A::/*$*/member/*$$*/()
 
 //@A.h
 class A {
-    void member();
+	void member();
 };
 //=
 class A {
-    void member()
-    {
-        // body comment
-        return;
-    }
+	void member() {
+		// body comment
+		return;
+	}
 };
 //!ImplToHeaderTopComment
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
@@ -34,9 +32,8 @@ filename=A.cpp
 #include "A.h"
 
 // Definition comment
-void A::/*$*/member/*$$*/()
-{
-    return;
+void A::/*$*/member/*$$*/() {
+	return;
 }
 //=
 #include "A.h"
@@ -45,15 +42,14 @@ void A::/*$*/member/*$$*/()
 
 //@A.h
 class A {
-    void member();
+	void member();
 };
 //=
 class A {
-    // Definition comment
-    void member()
-    {
-        return;
-    }
+	// Definition comment
+	void member() {
+		return;
+	}
 };
 //!ImplToHeaderTryCatchComment
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
@@ -63,9 +59,8 @@ filename=A.cpp
 #include "A.h"
 
 // Definition comment
-void A::/*$*/member/*$$*/() try
-{
-    return;
+void A::/*$*/member/*$$*/() try {
+	return;
 } /*1*/ catch (int e) { /*2*/ } /*3*/ catch (int e) { /*4*/ }
 //=
 #include "A.h"
@@ -74,22 +69,21 @@ void A::/*$*/member/*$$*/() try
 
 //@A.h
 class A {
-    void member();
+	void member();
 };
 //=
 class A {
-    // Definition comment
-    void member()
-    try
-    {
-        return;
-    } /*1*/
-    catch(int e){
-        /*2*/
-    }
-     /*3*/catch(int e){
-        /*4*/
-    }
+	// Definition comment
+	void member()
+	try {
+		return;
+	} /*1*/
+	catch (int e) {
+		/*2*/
+	}
+	/*3*/catch (int e) {
+		/*4*/
+	}
 };
 //!ImplToHeaderBodyCommentWithoutDeclaration
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
@@ -98,10 +92,9 @@ filename=A.cpp
 //@A.cpp
 #include "A.h"
 
-void /*$*/member/*$$*/()
-{
-    // body comment
-    return;
+void /*$*/member/*$$*/() {
+	// body comment
+	return;
 }
 //=
 #include "A.h"
@@ -111,14 +104,10 @@ void /*$*/member/*$$*/()
 
 //=
 
-
-
-void member()
-{
-    // body comment
-    return;
+void member() {
+	// body comment
+	return;
 }
-
 //!ImplToHeaderTopCommentWithoutDeclaration
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
@@ -127,10 +116,9 @@ filename=A.cpp
 #include "A.h"
 
 // Top comment
-void /*$*/member/*$$*/()
-{
-    // body comment
-    return;
+void /*$*/member/*$$*/() {
+	// body comment
+	return;
 }
 //=
 #include "A.h"
@@ -141,12 +129,8 @@ void /*$*/member/*$$*/()
 
 //=
 
-
-
 // Top comment
-void member()
-{
-    // body comment
-    return;
+void member() {
+	// body comment
+	return;
 }
-

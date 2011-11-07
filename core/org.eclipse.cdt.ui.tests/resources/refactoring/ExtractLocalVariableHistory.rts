@@ -1,14 +1,16 @@
 //!extract local variable from for loop
 //#org.eclipse.cdt.ui.tests.refactoring.RefactoringHistoryTest
 //@main.cpp
-void foo(){
-	for(int n = 5 + 2; n < 10; ++n);
+void foo() {
+	for (int n = 5 + 2; n < 10; ++n)
+		;
 }
 
 //=
-void foo(){
-    int i = 5 + 2;
-    for(int n = i; n < 10; ++n);
+void foo() {
+	int i = 5 + 2;
+	for (int n = i; n < 10; ++n)
+		;
 }
 
 //@refScript.xml
@@ -17,5 +19,5 @@ void foo(){
 <refactoring comment="Extract 5 + 2" description="Extract Local Variable Refactoring"
  fileName="file:$$projectPath$$/main.cpp" flags="4"
  id="org.eclipse.cdt.internal.ui.refactoring.extractlocalvariable.ExtractLocalVariableRefactoring"
- name="i" project="RegressionTestProject" selection="25,5"/>
+ name="i" project="RegressionTestProject" selection="27,5"/>
 </session>

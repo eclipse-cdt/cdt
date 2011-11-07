@@ -8,11 +8,12 @@ filename=A.h
 
 #include <iostream>
 
-class A{
+class A {
 public:
-    A();
-    /*$*/void method2();/*$$*/
-    std::string toString();
+	A();
+	/*$*/void method2();/*$$*/
+	std::string toString();
+
 private:
 	int i;
 };
@@ -25,13 +26,14 @@ private:
 
 #include <iostream>
 
-class A{
+class A {
 public:
-    A();
-    std::string toString();
+	A();
+	std::string toString();
+
 private:
-    int i;
-    void method2();
+	int i;
+	void method2();
 };
 
 #endif /*A_H_*/
@@ -46,14 +48,15 @@ filename=A.h
 
 #include <iostream>
 
-class A{
+class A {
 public:
-    A();
-    //Kommentar
-    /*$*/void method2();/*$$*/
-    std::string toString();
+	A();
+	//Comment
+	/*$*/void method2();/*$$*/
+	std::string toString();
+
 private:
-    int i;
+	int i;
 };
 
 #endif /*A_H_*/
@@ -64,14 +67,15 @@ private:
 
 #include <iostream>
 
-class A{
+class A {
 public:
-    A();
-    std::string toString();
+	A();
+	std::string toString();
+
 private:
-    int i;
-    //Kommentar
-    void method2();
+	int i;
+	//Comment
+	void method2();
 };
 
 #endif /*A_H_*/
@@ -86,15 +90,15 @@ filename=A.h
 
 #include <iostream>
 
-class A{
+class A {
 public:
-    A();
-    /*Kommentar*/
-    /*$*/void method2();/*$$*/
-    std::string toString();
+	A();
+	/*Comment*/
+	/*$*/void method2();/*$$*/
+	std::string toString();
 
 private:
-    int i;
+	int i;
 };
 
 #endif /*A_H_*/
@@ -105,14 +109,15 @@ private:
 
 #include <iostream>
 
-class A{
+class A {
 public:
-    A();
-    std::string toString();
+	A();
+	std::string toString();
+
 private:
-    int i;
-    /*Kommentar*/
-    void method2();
+	int i;
+	/*Comment*/
+	void method2();
 };
 
 #endif /*A_H_*/
@@ -127,13 +132,14 @@ filename=A.h
 
 #include <iostream>
 
-class A{
+class A {
 public:
-    A();
-    /*$*/void method2();/*$$*///Kommentar
-    std::string toString();
+	A();
+	/*$*/void method2();/*$$*///Comment
+	std::string toString();
+
 private:
-    int i;
+	int i;
 };
 
 #endif /*A_H_*/
@@ -144,13 +150,14 @@ private:
 
 #include <iostream>
 
-class A{
+class A {
 public:
-    A();
-    std::string toString();
+	A();
+	std::string toString();
+
 private:
-    int i;
-    void method2(); //Kommentar
+	int i;
+	void method2(); //Comment
 };
 
 #endif /*A_H_*/
@@ -165,13 +172,14 @@ filename=A.h
 
 #include <iostream>
 
-class A{
+class A {
 public:
-    A();
-    /*$*/void method2();/*$$*//*Kommentar*/
-    std::string toString();
+	A();
+	/*$*/void method2();/*$$*//*Comment*/
+	std::string toString();
+
 private:
-    int i;
+	int i;
 };
 
 #endif /*A_H_*/
@@ -182,13 +190,14 @@ private:
 
 #include <iostream>
 
-class A{
+class A {
 public:
-    A();
-    std::string toString();
+	A();
+	std::string toString();
+
 private:
-    int i;
-    void method2(); /*Kommentar*/
+	int i;
+	void method2(); /*Comment*/
 };
 
 #endif /*A_H_*/
@@ -203,15 +212,16 @@ filename=A.h
 
 #include <iostream>
 
-class A{
+class A {
 public:
-    A();
-		
-    //Kommentar
-    /*$*/void method2();/*$$*/
-    std::string toString();
+	A();
+
+	//Comment
+	/*$*/void method2();/*$$*/
+	std::string toString();
+
 private:
-    int i;
+	int i;
 };
 
 #endif /*A_H_*/
@@ -222,14 +232,15 @@ private:
 
 #include <iostream>
 
-class A{
+class A {
 public:
-    A();
-    std::string toString();
+	A();
+	std::string toString();
+
 private:
-    int i;
-    //Kommentar
-    void method2();
+	int i;
+	//Comment
+	void method2();
 };
 
 #endif /*A_H_*/
@@ -244,15 +255,16 @@ filename=A.h
 
 #include <iostream>
 
-class A{
+class A {
 public:
-    A();
+	A();
 
-    /*Kommentar*/
-    /*$*/void method2();/*$$*/
-    std::string toString();
+	/*Comment*/
+	/*$*/void method2();/*$$*/
+	std::string toString();
+
 private:
-    int i;
+	int i;
 };
 
 #endif /*A_H_*/
@@ -263,14 +275,15 @@ private:
 
 #include <iostream>
 
-class A{
+class A {
 public:
-    A();
-    std::string toString();
+	A();
+	std::string toString();
+
 private:
-    int i;
-    /*Kommentar*/
-    void method2();
+	int i;
+	/*Comment*/
+	void method2();
 };
 
 #endif /*A_H_*/
@@ -285,13 +298,14 @@ filename=A.h
 
 #include <iostream>
 
-class A{
+class A {
 public:
-    A();
-    /*$*/void method2();/*$$*///Kommentar
-    std::string toString();
+	A();
+	/*$*/void method2();/*$$*///Comment
+	std::string toString();
+
 private:
-    int i;
+	int i;
 };
 
 #endif /*A_H_*/
@@ -302,13 +316,14 @@ private:
 
 #include <iostream>
 
-class A{
+class A {
 public:
-    A();
-    std::string toString();
+	A();
+	std::string toString();
+
 private:
-    int i;
-    void method2(); //Kommentar
+	int i;
+	void method2(); //Comment
 };
 
 #endif /*A_H_*/
@@ -323,14 +338,15 @@ filename=A.h
 
 #include <iostream>
 
-class A{
+class A {
 public:
-    A();
-    /*$*/void method2();/*$$*//*Kommentar*/
+	A();
+	/*$*/void method2();/*$$*//*Comment*/
 
-    std::string toString();
+	std::string toString();
+
 private:
-    int i;
+	int i;
 };
 #endif /*A_H_*/
 
@@ -340,13 +356,14 @@ private:
 
 #include <iostream>
 
-class A{
+class A {
 public:
-    A();
-    std::string toString();
+	A();
+	std::string toString();
+
 private:
-    int i;
-    void method2(); /*Kommentar*/
+	int i;
+	void method2(); /*Comment*/
 };
 #endif /*A_H_*/
 
@@ -360,16 +377,17 @@ filename=A.h
 
 #include <iostream>
 
-class A{
+class A {
 public:
-    A();
-    /*
-         * Kommentar
-         */
-    /*$*/void method2();/*$$*/
-    std::string toString();
+	A();
+	/*
+	 * Comment
+	 */
+	/*$*/void method2();/*$$*/
+	std::string toString();
+
 private:
-    int i;
+	int i;
 };
 #endif /*A_H_*/
 
@@ -379,16 +397,17 @@ private:
 
 #include <iostream>
 
-class A{
+class A {
 public:
-    A();
-    std::string toString();
+	A();
+	std::string toString();
+
 private:
-    int i;
-    /*
-         * Kommentar
-         */
-    void method2();
+	int i;
+	/*
+	 * Comment
+	 */
+	void method2();
 };
 #endif /*A_H_*/
 
@@ -402,15 +421,16 @@ filename=A.h
 
 #include <iostream>
 
-class A{
+class A {
 public:
-    A();
+	A();
 	/*$*/void method2();/*$$*/		/*
-							 * Kommentar
+							 * Comment
 							 */
-    std::string toString();
+	std::string toString();
+
 private:
-    int i;
+	int i;
 };
 
 #endif /*A_H_*/
@@ -421,15 +441,16 @@ private:
 
 #include <iostream>
 
-class A{
+class A {
 public:
-    A();
-    std::string toString();
+	A();
+	std::string toString();
+
 private:
-    int i;
-    void method2(); /*
-							 * Kommentar
-							 */
+	int i;
+	void method2(); /*
+	 * Comment
+	 */
 };
 
 #endif /*A_H_*/
@@ -444,18 +465,19 @@ filename=A.h
 
 #include <iostream>
 
-class A{
+class A {
 public:
-    A();
-    /*
-     * Davor
-     */
-    /*$*/void method2();/*$$*/		/*
-							 * Kommentar
+	A();
+	/*
+	 * Davor
+	 */
+	/*$*/void method2();/*$$*/		/*
+							 * Comment
 							 */
-    std::string toString();
+	std::string toString();
+
 private:
-    int i;
+	int i;
 };
 
 #endif /*A_H_*/
@@ -466,18 +488,19 @@ private:
 
 #include <iostream>
 
-class A{
+class A {
 public:
-    A();
-    std::string toString();
+	A();
+	std::string toString();
+
 private:
-    int i;
-    /*
-     * Davor
-     */
-    void method2(); /*
-							 * Kommentar
-							 */
+	int i;
+	/*
+	 * Davor
+	 */
+	void method2(); /*
+	 * Comment
+	 */
 };
 
 #endif /*A_H_*/
@@ -492,14 +515,15 @@ filename=A.h
 
 #include <iostream>
 
-class A{
+class A {
 public:
-    A();
-    /*123*/
-    /*$*/void method2();/*$$*///TEST
-    std::string toString();
+	A();
+	/*123*/
+	/*$*/void method2();/*$$*///TEST
+	std::string toString();
+
 private:
-    int i;
+	int i;
 };
 
 #endif /*A_H_*/
@@ -510,14 +534,15 @@ private:
 
 #include <iostream>
 
-class A{
+class A {
 public:
-    A();
-    std::string toString();
+	A();
+	std::string toString();
+
 private:
-    int i;
-    /*123*/
-    void method2(); //TEST
+	int i;
+	/*123*/
+	void method2(); //TEST
 };
 
 #endif /*A_H_*/
@@ -532,14 +557,15 @@ filename=A.h
 
 #include <iostream>
 
-class A{
+class A {
 public:
-    A();
-    /*123*/
-    /*$*/void method2();/*$$*//*TEST*/
-    std::string toString();
+	A();
+	/*123*/
+	/*$*/void method2();/*$$*//*TEST*/
+	std::string toString();
+
 private:
-    int i;
+	int i;
 };
 #endif /*A_H_*/
 
@@ -549,14 +575,15 @@ private:
 
 #include <iostream>
 
-class A{
+class A {
 public:
-    A();
-    std::string toString();
+	A();
+	std::string toString();
+
 private:
-    int i;
-    /*123*/
-    void method2(); /*TEST*/
+	int i;
+	/*123*/
+	void method2(); /*TEST*/
 };
 #endif /*A_H_*/
 
@@ -571,9 +598,9 @@ errors=1
 
 #include <iostream>
 
-class A{
+class A {
 private:
-    /*$*/void method2();/*$$*/
+	/*$*/void method2();/*$$*/
 };
 
 #endif /*A_H_*/
@@ -584,9 +611,9 @@ private:
 
 #include <iostream>
 
-class A{
+class A {
 private:
-    void method2();
+	void method2();
 };
 
 #endif /*A_H_*/
@@ -601,10 +628,10 @@ filename=A.h
 
 #include <iostream>
 
-class A{
+class A {
 public:
-    /*$*/void method1();/*$$*/
-    void method2();
+	/*$*/void method1();/*$$*/
+	void method2();
 };
 
 #endif /*A_H_*/
@@ -615,11 +642,12 @@ public:
 
 #include <iostream>
 
-class A{
+class A {
 public:
-    void method2();
+	void method2();
+
 private:
-    void method1();
+	void method1();
 };
 
 #endif /*A_H_*/
@@ -634,9 +662,9 @@ filename=A.h
 
 #include <iostream>
 
-class A{
+class A {
 public:
-    /*$*/void method1();/*$$*/void method2();
+	/*$*/void method1();/*$$*/void method2();
 };
 
 #endif /*A_H_*/
@@ -647,11 +675,12 @@ public:
 
 #include <iostream>
 
-class A{
+class A {
 public:
-    void method2();
+	void method2();
+
 private:
-    void method1();
+	void method1();
 };
 
 #endif /*A_H_*/
@@ -666,11 +695,11 @@ filename=A.h
 
 #include <iostream>
 
-class A{
+class A {
 public:
-    //Kommentar
-    /*$*/void method1();/*$$*/
-    void method2();
+	//Comment
+	/*$*/void method1();/*$$*/
+	void method2();
 };
 
 #endif /*A_H_*/
@@ -681,12 +710,13 @@ public:
 
 #include <iostream>
 
-class A{
+class A {
 public:
-    void method2();
+	void method2();
+
 private:
-    //Kommentar
-    void method1();
+	//Comment
+	void method1();
 };
 
 #endif /*A_H_*/
@@ -701,10 +731,10 @@ filename=A.h
 
 #include <iostream>
 
-class A{
+class A {
 public:
-    //Kommentar
-    /*$*/void method1();/*$$*/void method2();
+	//Comment
+	/*$*/void method1();/*$$*/void method2();
 };
 
 #endif /*A_H_*/
@@ -715,12 +745,13 @@ public:
 
 #include <iostream>
 
-class A{
+class A {
 public:
-    void method2();
+	void method2();
+
 private:
-    //Kommentar
-    void method1();
+	//Comment
+	void method1();
 };
 
 #endif /*A_H_*/
@@ -733,13 +764,14 @@ private:
 
 #include <iostream>
 
-class A{
+class A {
 public:
-    A();
-    void method2();
-    std::string toString();
+	A();
+	void method2();
+	std::string toString();
+
 private:
-    int i;
+	int i;
 };
 
 #endif /*A_H_*/
@@ -750,13 +782,14 @@ private:
 
 #include <iostream>
 
-class A{
+class A {
 public:
-    A();
-    std::string toString();
+	A();
+	std::string toString();
+
 private:
-    int i;
-    void method2();
+	int i;
+	void method2();
 };
 
 #endif /*A_H_*/
@@ -776,14 +809,15 @@ void A::/*$*/method2/*$$*/()
 
 #include <iostream>
 
-class A{
+class A {
 public:
-    A();
-    //TEST 1
-    void method2(); //TEST 2
-    std::string toString();
+	A();
+	//TEST 1
+	void method2(); //TEST 2
+	std::string toString();
+
 private:
-    int i;
+	int i;
 };
 
 #endif /*A_H_*/
@@ -794,14 +828,15 @@ private:
 
 #include <iostream>
 
-class A{
+class A {
 public:
-    A();
-    std::string toString();
+	A();
+	std::string toString();
+
 private:
-    int i;
-    //TEST 1
-    void method2(); //TEST 2
+	int i;
+	//TEST 1
+	void method2(); //TEST 2
 };
 
 #endif /*A_H_*/
@@ -823,14 +858,12 @@ filename=HideMethod.h
 
 class HideMethod {
 public:
-    HideMethod();
-    virtual ~HideMethod();
-    void /*$*/methode2/*$$*/();
-    void methode3()
-    {
-        methode2();
-    }
-
+	HideMethod();
+	virtual ~HideMethod();
+	void /*$*/methode2/*$$*/();
+	void methode3() {
+		methode2();
+	}
 };
 
 #endif /* HIDEMETHOD_H_ */
@@ -841,16 +874,14 @@ public:
 
 class HideMethod {
 public:
-    HideMethod();
-    virtual ~HideMethod();
-    void methode3()
-    {
-        methode2();
-    }
+	HideMethod();
+	virtual ~HideMethod();
+	void methode3() {
+		methode2();
+	}
 
 private:
-    void methode2();
-
+	void methode2();
 };
 
 #endif /* HIDEMETHOD_H_ */
@@ -865,10 +896,10 @@ filename=HideMethod.h
 
 class HideMethod {
 public:
-    HideMethod();
-    virtual ~HideMethod();
-    void /*$*/methode2/*$$*/();
-    void methode3();
+	HideMethod();
+	virtual ~HideMethod();
+	void /*$*/methode2/*$$*/();
+	void methode3();
 };
 
 #endif /* HIDEMETHOD_H_ */
@@ -879,11 +910,12 @@ public:
 
 class HideMethod {
 public:
-    HideMethod();
-    virtual ~HideMethod();
-    void methode3();
+	HideMethod();
+	virtual ~HideMethod();
+	void methode3();
+
 private:
-    void methode2();
+	void methode2();
 };
 
 #endif /* HIDEMETHOD_H_ */
@@ -947,7 +979,7 @@ public:
 
 class test{
 public:
-	void call(){
+	void call() {
 		HideMethod hm;
 		hm.methode2();
 	}
@@ -964,13 +996,14 @@ public:
 	HideMethod();
 	virtual ~HideMethod();
 	void methode3();
+
 private:
-    void methode2();
+	void methode2();
 };
 
 class test{
 public:
-	void call(){
+	void call() {
 		HideMethod hm;
 		hm.methode2();
 	}
@@ -989,10 +1022,10 @@ warnings=1
 
 class HideMethod {
 public:
-    HideMethod();
-    virtual ~HideMethod();
-    void /*$*/methode2/*$$*/();
-    void methode3();
+	HideMethod();
+	virtual ~HideMethod();
+	void /*$*/methode2/*$$*/();
+	void methode3();
 };
 
 #endif /* HIDEMETHOD_H_ */
@@ -1003,11 +1036,12 @@ public:
 
 class HideMethod {
 public:
-    HideMethod();
-    virtual ~HideMethod();
-    void methode3();
+	HideMethod();
+	virtual ~HideMethod();
+	void methode3();
+
 private:
-    void methode2();
+	void methode2();
 };
 
 #endif /* HIDEMETHOD_H_ */
@@ -1032,7 +1066,7 @@ void HideMethod::methode3() {
 	//do nothing
 }
 
-int main(){
+int main() {
 	HideMethod hm;
 	hm.methode2();
 }
@@ -1058,7 +1092,7 @@ void HideMethod::methode3() {
 	//do nothing
 }
 
-int main(){
+int main() {
 	HideMethod hm;
 	hm.methode2();
 }
@@ -1073,10 +1107,10 @@ filename=HideMethod.h
 
 class HideMethod {
 public:
-    HideMethod();
-    virtual ~HideMethod();
-    void methode2();
-    void methode3();
+	HideMethod();
+	virtual ~HideMethod();
+	void methode2();
+	void methode3();
 };
 
 #endif /* HIDEMETHOD_H_ */
@@ -1087,11 +1121,12 @@ public:
 
 class HideMethod {
 public:
-    HideMethod();
-    virtual ~HideMethod();
-    void methode3();
+	HideMethod();
+	virtual ~HideMethod();
+	void methode3();
+
 private:
-    void methode2();
+	void methode2();
 };
 
 #endif /* HIDEMETHOD_H_ */
@@ -1146,7 +1181,7 @@ filename=A.h
 
 #include <iostream>
 
-class A{
+class A {
 public:
 	/*$*/void method2();/*$$*/
 };
@@ -1159,7 +1194,7 @@ public:
 
 #include <iostream>
 
-class A{
+class A {
 public:
 private:
 	void method2();
@@ -1178,7 +1213,7 @@ errors=1
 
 #include <iostream>
 
-class A{
+class A {
 	/*$*/void method2();/*$$*/
 };
 
@@ -1190,7 +1225,7 @@ class A{
 
 #include <iostream>
 
-class A{
+class A {
 	void method2();
 };
 
@@ -1206,7 +1241,7 @@ filename=A.h
 
 #include <iostream>
 
-struct A{
+struct A {
 	/*$*/void method2();/*$$*/
 };
 
@@ -1218,7 +1253,7 @@ struct A{
 
 #include <iostream>
 
-struct A{
+struct A {
 private:
 	void method2();
 };
@@ -1230,40 +1265,33 @@ private:
 //@.config
 filename=A.cpp
 //@A.cpp
-struct other
-{
-  bool value() {return true;}
+struct other {
+	bool value() { return true; }
 };
 
-class Klass
-{
+class Class {
 public:
-	void /*$*/set/*$$*/(bool b){}
-	void test()
-	{
-	  other o;
-	  this->set(o.value());
+	void /*$*/set/*$$*/(bool b) {}
+	void test() {
+		other o;
+		this->set(o.value());
 	}
 };
 
 //=
-struct other
-{
-  bool value() {return true;}
+struct other {
+	bool value() { return true; }
 };
 
-class Klass
-{
+class Class {
 public:
-	void test()
-    {
-        other o;
-        this->set(o.value());
-    }
+	void test() {
+		other o;
+		this->set(o.value());
+	}
 
 private:
-    void set(bool b)
-    {
+	void set(bool b) {
 	}
 };
 
@@ -1272,40 +1300,35 @@ private:
 //@.config
 filename=A.cpp
 //@A.cpp
-struct other
-{
-  bool value() {return true;}
+struct other {
+	bool value() { return true; }
 };
 
-class Klass
-{
+class Class {
 public:
-	void set(bool b){}
-	void test()
-	{
-	  other o;
-	  this->/*$*/set/*$$*/(o.value());
+	void set(bool b) {
+	}
+
+	void test() {
+		other o;
+		this->/*$*/set/*$$*/(o.value());
 	}
 };
 
 //=
-struct other
-{
-  bool value() {return true;}
+struct other {
+	bool value() { return true; }
 };
 
-class Klass
-{
+class Class {
 public:
-	void test()
-    {
-        other o;
-        this->set(o.value());
-    }
+	void test() {
+		other o;
+		this->set(o.value());
+	}
 
 private:
-    void set(bool b)
-    {
+	void set(bool b) {
 	}
 };
 
@@ -1315,37 +1338,31 @@ private:
 filename=A.cpp
 warnings=1
 //@A.cpp
-struct other
-{
-  bool /*$*/value/*$$*/() {return true;}
+struct other {
+	bool /*$*/value/*$$*/() { return true; }
 };
 
-class Klass
-{
+class Class {
 public:
-	void set(bool b){}
-	void test()
-	{
-	  other o;
-	  this->set(o.value());
+	void set(bool b) {}
+	void test() {
+		other o;
+		this->set(o.value());
 	}
 };
 
 //=
-struct other
-{
+struct other {
 private:
-  bool value() {return true;}
+	bool value() { return true; }
 };
 
-class Klass
-{
+class Class {
 public:
-	void set(bool b){}
-	void test()
-	{
-	  other o;
-	  this->set(o.value());
+	void set(bool b) {}
+	void test() {
+		other o;
+		this->set(o.value());
 	}
 };
 
@@ -1354,38 +1371,36 @@ public:
 //@.config
 filename=A.cpp
 //@A.cpp
-struct other
-{
-  bool value() {return true;}
+struct other {
+	bool value() { return true; }
 };
 
-class Klass
-{
+class Class {
 public:
-	void set(bool b){}
-	void /*$*/test/*$$*/()
-	{
-	  other o;
-	  this->set(o.value());
+	void set(bool b) {
+	}
+
+	void /*$*/test/*$$*/() {
+		other o;
+		this->set(o.value());
 	}
 };
 
 //=
-struct other
-{
-  bool value() {return true;}
+struct other {
+	bool value() { return true; }
 };
 
-class Klass
-{
+class Class {
 public:
-	void set(bool b){}
+	void set(bool b) {
+	}
 
 private:
-	void test()
-	{
-	  other o;
-	  this->set(o.value());
+
+	void test() {
+		other o;
+		this->set(o.value());
 	}
 };
 
@@ -1395,14 +1410,14 @@ private:
 filename=A.cpp
 fatalerrors=1
 //@A.cpp
-int /*$*/main/*$$*/(){
+int /*$*/main/*$$*/() {
 	int i = 2;
 	i++;
 	return 0;
 }
 
 //=
-int main(){
+int main() {
 	int i = 2;
 	i++;
 	return 0;
@@ -1413,22 +1428,20 @@ int main(){
 //@.config
 filename=A.h
 //@A.h
-class Klass
-{
+class Class {
 public:
-    void /*$*/to_move()/*$$*/;
+	void /*$*/to_move()/*$$*/;
 
 private:
-    void just_private();
+	void just_private();
 };
 
 //=
-class Klass
-{
+class Class {
 public:
 private:
-    void just_private();
-    void to_move();
+	void just_private();
+	void to_move();
 };
 
 //!HideMethod several private sections
@@ -1436,23 +1449,23 @@ private:
 //@.config
 filename=A.h
 //@A.h
-class Klass
-{
+class Class {
 public:
-    void /*$*/to_move()/*$$*/;
+	void /*$*/to_move()/*$$*/;
 
 private:
-    void just_private();
+	void just_private();
+
 private:
 };
 
 //=
-class Klass
-{
+class Class {
 public:
 private:
-    void just_private();
-    void to_move();
+	void just_private();
+	void to_move();
+
 private:
 };
 

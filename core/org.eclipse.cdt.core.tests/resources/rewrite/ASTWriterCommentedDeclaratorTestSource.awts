@@ -8,7 +8,7 @@ void foo()
     {
         int f();
     };
-    int (B::* pb)() = &B::f;
+    int (B::*pb)() = &B::f;
 }
 
 
@@ -22,13 +22,14 @@ void foo()
     {
         int f();
     };
-    int (B::* pb)() = &B::f;
+    int (B::*pb)() = &B::f;
 }
 
 
 //!Commented CPPFunctionDeclaratorTest 1
 //%CPP
-char & operator [](unsigned int);
+char& operator [](unsigned int);
+
 //TEST 1
 TestClass::TestClass(int a) //TEST 2
 {
@@ -38,7 +39,8 @@ TestClass::TestClass(int a) //TEST 2
 
 //!Commented CPPFunctionDeclaratorTest 2
 //%CPP
-char & operator [](unsigned int);
+char& operator [](unsigned int);
+
 /*TEST 1*/
 TestClass::TestClass(int a) /*TEST 2*/
 {
@@ -48,7 +50,8 @@ TestClass::TestClass(int a) /*TEST 2*/
 
 //!Commented CPPFunctionDeclaratorTest 3
 //%CPP
-char & operator [](unsigned int);
+char& operator [](unsigned int);
+
 //TEST 1
 TestClass::TestClass(int a)
 :alpha(a) //TEST 2
@@ -59,7 +62,8 @@ TestClass::TestClass(int a)
 
 //!Commented CPPFunctionDeclaratorTest 4
 //%CPP
-char & operator [](unsigned int);
+char& operator [](unsigned int);
+
 /*TEST 1*/
 TestClass::TestClass(int a)
 :alpha(a) /*TEST 3*/
@@ -76,7 +80,7 @@ void foo()
     try {
         i++;
     }
-    catch(...){
+    catch (...){
     }
 }
 
@@ -90,7 +94,7 @@ void foo()
     try {
         i++;
     }
-    catch(...){
+    catch (...){
     }
 }
 
@@ -104,7 +108,7 @@ void foo()
         //Test
         i++;
     }
-    catch(...){
+    catch (...){
     }
 }
 
@@ -118,7 +122,7 @@ void foo()
     {
         i++;
     }
-    catch(...){
+    catch (...){
     }
 }
 
@@ -132,7 +136,7 @@ void foo()
         //Test
         i++;
     }
-    catch(...){
+    catch (...){
     }
 }
 
@@ -145,7 +149,7 @@ void foo()
     try {
         i++; //Test
     }
-    catch(...){
+    catch (...){
     }
 }
 
@@ -159,7 +163,7 @@ void foo()
         i++;
         //Test
     }
-    catch(...){
+    catch (...){
     }
 }
 
@@ -172,7 +176,7 @@ void foo()
     try {
         i++;
     } //Test
-    catch(...){
+    catch (...){
     }
 }
 
@@ -185,7 +189,7 @@ void foo()
     try {
         i++;
     }
-    catch(...){
+    catch (...){
         //Test
     }
 }
@@ -199,7 +203,7 @@ void foo()
     try {
         i++;
     }
-    catch(...){
+    catch (...){
         //Test
     }
 }
@@ -213,7 +217,7 @@ void foo()
     try {
         i++;
     }
-    catch(...){
+    catch (...){
     }
     //Test
 }
@@ -227,9 +231,9 @@ void foo()
     try {
         i++;
     }
-    catch(Overflow oo){
+    catch (Overflow oo){
     }
-    catch(Matherr mm){
+    catch (Matherr mm){
     }
 }
 
@@ -242,9 +246,9 @@ void foo()
     try {
         i++;
     }
-    catch(Overflow oo){
+    catch (Overflow oo){
     }
-    catch(Matherr mm){
+    catch (Matherr mm){
         //Test
     }
 }

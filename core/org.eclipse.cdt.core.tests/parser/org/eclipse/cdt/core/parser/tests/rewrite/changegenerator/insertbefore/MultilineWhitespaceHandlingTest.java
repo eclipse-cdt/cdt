@@ -7,50 +7,44 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.insertbefore;
 
 import junit.framework.Test;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.ChangeGeneratorTest;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNodeFactory;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
 
-
-
-
-
 public class MultilineWhitespaceHandlingTest extends ChangeGeneratorTest {
 
-	public MultilineWhitespaceHandlingTest(){
-		super("Multiline Whitespace Handling"); //$NON-NLS-1$
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		source = "void foo(){\r\n\r\n  for(int i = 0; i < 10; i++){\r\n\r\n  }\r\n}\r\n"; //$NON-NLS-1$
-		expectedSource = "void foo(){\r\n\r\n  for(int i = 0; i < 10; i++){\r\n    int i;\r\n    int j;\r\n\r\n  }\r\n}\r\n"; //$NON-NLS-1$
-		super.setUp();
+	MultilineWhitespaceHandlingTest() {
+		super("MultilineWhitespaceHandlingTest");
 	}
 
 	public static Test suite() {		
 		return new MultilineWhitespaceHandlingTest();
 	}
 
+	@Override
+	protected void setUp() throws Exception {
+		source = "void foo() {\r\n\r\n\tfor(int i = 0; i < 10; i++) {\r\n\r\n\t}\r\n}\r\n"; //$NON-NLS-1$
+		expectedSource = "void foo() {\r\n\r\n\tfor(int i = 0; i < 10; i++) {\r\n\t\tint i;\r\n\t\tint j;\r\n\r\n\t}\r\n}\r\n"; //$NON-NLS-1$
+		super.setUp();
+	}
 
 	@Override
-	protected ASTVisitor createModificator(
-			final ASTModificationStore modStore) {
+	protected ASTVisitor createModificator(final ASTModificationStore modStore) {
 		return new ASTVisitor() {
 			{
 				shouldVisitStatements = true;

@@ -7,16 +7,14 @@ filename=A.h
 using namespace std;
 
 class A {
-    int /*$*/member/*$$*/();
+	int /*$*/member/*$$*/();
 };
 //=
 #include<iostream>
 using namespace std;
 
 class A {
-    int member()
-    {
-        return int();
-    }
-
+	int member() {
+		return int();
+	}
 };

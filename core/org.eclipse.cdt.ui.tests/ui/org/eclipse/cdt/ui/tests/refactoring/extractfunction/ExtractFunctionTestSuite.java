@@ -29,7 +29,7 @@ public class ExtractFunctionTestSuite extends TestSuite {
 		suite.addTest(RefactoringTester.suite("ExtractMethodPreprocessorRefactoringTests", "resources/refactoring/ExtractMethodPreprocessor.rts"));
 		suite.addTest(RefactoringTester.suite("Extract Function Templates Tests", "resources/refactoring/ExtractFunctionTemplates.rts"));
 		suite.addTest(RefactoringTester.suite("Extract Method History Test", "resources/refactoring/ExtractMethodHistory.rts"));
-		suite.addTest(RefactoringTester.suite("Extract Function Dublicates Test", "resources/refactoring/ExtractMethodDuplicates.rts"));
+		suite.addTest(RefactoringTester.suite("Extract Function Duplicates Test", "resources/refactoring/ExtractMethodDuplicates.rts"));
 		return suite;
 	}
 }

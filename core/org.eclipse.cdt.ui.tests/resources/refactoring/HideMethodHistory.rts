@@ -6,11 +6,12 @@
 
 #include <iostream>
 
-class A{
+class A {
 public:
-    A();
-    void method2();
-    std::string toString();
+	A();
+	void method2();
+	std::string toString();
+
 private:
 	int i;
 };
@@ -23,13 +24,14 @@ private:
 
 #include <iostream>
 
-class A{
+class A {
 public:
-    A();
-    std::string toString();
+	A();
+	std::string toString();
+
 private:
-    int i;
-    void method2();
+	int i;
+	void method2();
 };
 
 #endif /*A_H_*/
@@ -40,5 +42,5 @@ private:
 <refactoring comment="Hide Method method2" description="Hide Method Refactoring"
  fileName="file:$$projectPath$$/A.h" flags="2"
  id="org.eclipse.cdt.internal.ui.refactoring.hidemethod.HideMethodRefactoring"
- project="RegressionTestProject" selection="83,7"/>
+ project="RegressionTestProject" selection="78,7"/>
 </session>

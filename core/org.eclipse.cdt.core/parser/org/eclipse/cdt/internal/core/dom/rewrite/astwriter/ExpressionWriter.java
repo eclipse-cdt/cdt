@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
@@ -115,7 +114,7 @@ public class ExpressionWriter extends NodeWriter{
 	private static final String THIS = "this"; //$NON-NLS-1$
 	private final MacroExpansionHandler macroHandler;
 	
-	public ExpressionWriter(Scribe scribe, ASTVisitor visitor, MacroExpansionHandler macroHandler, NodeCommentMap commentMap) {
+	public ExpressionWriter(Scribe scribe, ASTWriterVisitor visitor, MacroExpansionHandler macroHandler, NodeCommentMap commentMap) {
 		super(scribe, visitor, commentMap);
 		this.macroHandler = macroHandler;
 	}

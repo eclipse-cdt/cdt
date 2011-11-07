@@ -4,10 +4,10 @@ int i = (int)'A';
 
 //!CPPCastExpression
 //%CPP
-TestClass *i = dynamic_cast<TestClass*>(tc);
-TestClass *i = static_cast<TestClass*>(tc);
-TestClass *i = reinterpret_cast<TestClass*>(tc);
-TestClass *i = const_cast<TestClass*>(tc);
+TestClass* i = dynamic_cast<TestClass*>(tc);
+TestClass* i = static_cast<TestClass*>(tc);
+TestClass* i = reinterpret_cast<TestClass*>(tc);
+TestClass* i = const_cast<TestClass*>(tc);
 
 //!ArraySubscrition
 //%C GNU
@@ -33,6 +33,7 @@ int i = 1 | x;
 bool b = 1 && x;
 bool b = 1 || x;
 int i = x;
+
 void foo()
 {
     i *= x;
@@ -131,7 +132,7 @@ string s = "abc";
 
 //!CPPLiteralExpression
 //%CPP
-TestClass *tc = this;
+TestClass* tc = this;
 bool b = true;
 bool b = false;
 
@@ -141,7 +142,7 @@ int i = ++a;
 int i = --a;
 int i = +a;
 int i = -a;
-int *b = &a;
+int* b = &a;
 int i = *b;
 int i = ~b;
 bool b = !false;
@@ -167,7 +168,7 @@ void rethrow()
         int i = 1;
         throw i;
     }
-    catch(int j){
+    catch (int j){
         throw ;
     }
 }
@@ -191,7 +192,7 @@ void f()
 
 //!CPPNewExpression
 //%CPP
-TestClass *tc = new TestClass();
+TestClass* tc = new TestClass();
 
 //!CPPSimpleTypeConstructorExpression
 //%CPP

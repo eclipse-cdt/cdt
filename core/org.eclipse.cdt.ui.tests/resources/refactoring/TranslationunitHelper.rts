@@ -7,8 +7,7 @@ offset=27
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	void foo();
@@ -25,8 +24,7 @@ offset=0
 //@A.h
 typedef int nummere;
 
-class A
-{
+class A {
 public:
 	A();
 };

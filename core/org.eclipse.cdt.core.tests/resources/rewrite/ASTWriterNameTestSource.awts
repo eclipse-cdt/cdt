@@ -11,7 +11,7 @@ int TestClass::Hallo;
 class Foo
 {
 public:
-    char & operator [](unsigned int);
+    char& operator [](unsigned int);
 };
 
 //!ConversionName

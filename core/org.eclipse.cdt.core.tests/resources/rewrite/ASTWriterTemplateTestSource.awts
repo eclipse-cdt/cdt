@@ -1,10 +1,11 @@
 //![temp.names] examples abschnitt 4/1
 //%CPP
-T *p1 = p->template alloc<100>();
+T* p1 = p->template alloc<100>();
 
 //![temp.names] examples abschnitt 4/2, didn't work cause of Bug# 164482
 //%CPP
-template<class T> void f(T *p)
+template<class T> 
+void f(T* p)
 {
     T::template adjust<100>();
 }

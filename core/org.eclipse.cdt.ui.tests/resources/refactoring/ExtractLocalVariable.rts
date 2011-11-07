@@ -4,12 +4,11 @@
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
-  A();
-  virtual ~A();
-  int foo();
+	A();
+	virtual ~A();
+	int foo();
 };
 
 #endif /*A_H_*/
@@ -18,12 +17,11 @@ public:
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
-  A();
-  virtual ~A();
-  int foo();
+	A();
+	virtual ~A();
+	int foo();
 };
 
 #endif /*A_H_*/
@@ -31,34 +29,28 @@ public:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
 
-int A::foo()
-{
-  return /*$*/42/*$$*/;
+int A::foo() {
+	return /*$*/42/*$$*/;
 }
 
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
 
-int A::foo()
-{
-    int i = 42;
-    return i;
+int A::foo() {
+	int i = 42;
+	return i;
 }
 
 //!ExtractLocalVariableRefactoringTest char
@@ -67,12 +59,11 @@ int A::foo()
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
-  A();
-  virtual ~A();
-  int foo();
+	A();
+	virtual ~A();
+	int foo();
 };
 
 #endif /*A_H_*/
@@ -81,12 +72,11 @@ public:
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
-  A();
-  virtual ~A();
-  int foo();
+	A();
+	virtual ~A();
+	int foo();
 };
 
 #endif /*A_H_*/
@@ -94,34 +84,28 @@ public:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
 
-int A::foo()
-{
-  return /*$*/'c'/*$$*/;
+int A::foo() {
+	return /*$*/'c'/*$$*/;
 }
 
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
 
-int A::foo()
-{
-    char temp = 'c';
-    return temp;
+int A::foo() {
+	char temp = 'c';
+	return temp;
 }
 
 //!ExtractLocalVariableRefactoringTest float
@@ -130,12 +114,11 @@ int A::foo()
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
-  A();
-  virtual ~A();
-  float foo();
+	A();
+	virtual ~A();
+	float foo();
 };
 
 #endif /*A_H_*/
@@ -144,12 +127,11 @@ public:
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
-  A();
-  virtual ~A();
-  float foo();
+	A();
+	virtual ~A();
+	float foo();
 };
 
 #endif /*A_H_*/
@@ -157,34 +139,28 @@ public:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
 
-float A::foo()
-{
-  return /*$*/42.0f/*$$*/;
+float A::foo() {
+	return /*$*/42.0f/*$$*/;
 }
 
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
 
-float A::foo()
-{
-    float f = 42.0f;
-    return f;
+float A::foo() {
+	float f = 42.0f;
+	return f;
 }
 
 //!ExtractLocalVariableRefactoringTest double
@@ -193,12 +169,11 @@ float A::foo()
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
-  A();
-  virtual ~A();
-  float foo();
+	A();
+	virtual ~A();
+	float foo();
 };
 
 #endif /*A_H_*/
@@ -207,12 +182,11 @@ public:
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
-  A();
-  virtual ~A();
-  float foo();
+	A();
+	virtual ~A();
+	float foo();
 };
 
 #endif /*A_H_*/
@@ -220,34 +194,28 @@ public:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
 
-float A::foo()
-{
-  return /*$*/42.0/*$$*/;
+float A::foo() {
+	return /*$*/42.0/*$$*/;
 }
 
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
 
-float A::foo()
-{
-    double f = 42.0;
-    return f;
+float A::foo() {
+	double f = 42.0;
+	return f;
 }
 
 //!ExtractLocalVariableRefactoringTest parentheses
@@ -256,12 +224,11 @@ float A::foo()
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
-  A();
-  virtual ~A();
-  int foo();
+	A();
+	virtual ~A();
+	int foo();
 };
 
 #endif /*A_H_*/
@@ -270,12 +237,11 @@ public:
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
-  A();
-  virtual ~A();
-  int foo();
+	A();
+	virtual ~A();
+	int foo();
 };
 
 #endif /*A_H_*/
@@ -283,34 +249,28 @@ public:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
 
-int A::foo()
-{
-  return /*$*/(42)/*$$*/;
+int A::foo() {
+	return /*$*/(42)/*$$*/;
 }
 
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
 
-int A::foo()
-{
-    int i = 42;
-    return i;
+int A::foo() {
+	int i = 42;
+	return i;
 }
 
 //!ExtractLocalVariableRefactoringTest proposed name in scope
@@ -319,12 +279,11 @@ int A::foo()
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
-  A();
-  virtual ~A();
-  int foo();
+	A();
+	virtual ~A();
+	int foo();
 };
 
 #endif /*A_H_*/
@@ -333,12 +292,11 @@ public:
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
-  A();
-  virtual ~A();
-  int foo();
+	A();
+	virtual ~A();
+	int foo();
 };
 
 #endif /*A_H_*/
@@ -346,96 +304,94 @@ public:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
 
-int A::foo()
-{
-  int x = 3;
-  return /*$*/(x + 2)/*$$*/ * 15;
+int A::foo() {
+	int x = 3;
+	return /*$*/(x + 2)/*$$*/ * 15;
 }
 
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
 
-int A::foo()
-{
-  int x = 3;
-    int i = x + 2;
-    return i * 15;
+int A::foo() {
+	int x = 3;
+	int i = x + 2;
+	return i * 15;
 }
 
 //!Bug #277065 extract local variable fails to extract from for loop
 //#org.eclipse.cdt.ui.tests.refactoring.extractlocalvariable.ExtractLocalVariableRefactoringTest
 //@A.cpp
-void foo(){
-	for(int n = /*$*/5 + 2/*$$*/; n < 10; ++n);
+void foo() {
+	for (int n = /*$*/5 + 2/*$$*/; n < 10; ++n)
+		;
 }
 
 //=
-void foo(){
-    int i = 5 + 2;
-    for(int n = i; n < 10; ++n);
+void foo() {
+	int i = 5 + 2;
+	for (int n = i; n < 10; ++n)
+		;
 }
 
 //!ExtractLocalVariableRefactoringTest expression
 //#org.eclipse.cdt.ui.tests.refactoring.extractlocalvariable.ExtractLocalVariableRefactoringTest
 //@A.cpp
-void foo(){
-    int a = 0;
-    float b = 0.1f;
-    double c = /*$*/(a + b)/*$$*/ * 0.2;
+void foo() {
+	int a = 0;
+	float b = 0.1f;
+	double c = /*$*/(a + b)/*$$*/ * 0.2;
 }
 
 //=
-void foo(){
-    int a = 0;
-    float b = 0.1f;
-    float a0 = a + b;
-    double c = a0 * 0.2;
+void foo() {
+	int a = 0;
+	float b = 0.1f;
+	float a0 = a + b;
+	double c = a0 * 0.2;
 }
 
 //!ExtractLocalVariableRefactoringTest pointer
 //#org.eclipse.cdt.ui.tests.refactoring.extractlocalvariable.ExtractLocalVariableRefactoringTest
 //@A.cpp
-void foo(){
-    int a[2];
-    int b = */*$*/(a + 1)/*$$*/;
+void foo() {
+	int a[2];
+	int b = */*$*/(a + 1)/*$$*/;
 }
 
 //=
-void foo(){
-    int a[2];
-    int *i = a + 1;
-    int b = *i;
+void foo() {
+	int a[2];
+	int* i = a + 1;
+	int b = *i;
 }
 
 //!ExtractLocalVariableRefactoringTest qualifiers
 //#org.eclipse.cdt.ui.tests.refactoring.extractlocalvariable.ExtractLocalVariableRefactoringTest
 //@A.cpp
-const volatile int *k;
-void foo(){
-    /*$*/k;/*$$*/
+const volatile int* k;
+
+void foo() {
+	/*$*/k;/*$$*/
 }
 
 //=
-const volatile int *k;
-void foo(){
-    const volatile int *k0 = k;
-    k0;
+const volatile int* k;
+
+void foo() {
+	const volatile int* k0 = k;
+	k0;
 }
 
 //!ExtractLocalVariableRefactoringTest overloaded operators
@@ -443,24 +399,24 @@ void foo(){
 //@A.cpp
 class K {
 public:
-    bool operator+(int b) {return true;}
-    float operator+(unsigned u) {return 1.0f;}
+	bool operator+(int b) { return true; }
+	float operator+(unsigned u) { return 1.0f; }
 };
-void foo(){
-    K k;
-    /*$*/k+3u/*$$*/;
+void foo() {
+	K k;
+	/*$*/k+3u/*$$*/;
 }
 
 //=
 class K {
 public:
-    bool operator+(int b) {return true;}
-    float operator+(unsigned u) {return 1.0f;}
+	bool operator+(int b) { return true; }
+	float operator+(unsigned u) { return 1.0f; }
 };
-void foo(){
-    K k;
-    float i = k + 3u;
-    i;
+void foo() {
+	K k;
+	float i = k + 3u;
+	i;
 }
 
 //!Bug 318784 DeclarationGenerator fails for some cases
@@ -468,16 +424,16 @@ void foo(){
 //@A.cpp
 
 void func() {
-    int *(*a)[2];
-    /*$*/a/*$$*/;
+	int* (*a)[2];
+	/*$*/a/*$$*/;
 }
 
 //=
 
 void func() {
-    int *(*a)[2];
-    int *(*a0)[2] = a;
-    a0;
+	int* (*a)[2];
+	int* (*a0)[2] = a;
+	a0;
 }
 
 //!Bug 331963 Extract local variable doesn't put template type parameters
@@ -491,10 +447,8 @@ class Foo {
 Foo<int> getFoo();
 
 int main() {
-
-    /*$*/getFoo()/*$$*/;
-
-    return 0;
+	/*$*/getFoo()/*$$*/;
+	return 0;
 }
 
 //=
@@ -506,163 +460,163 @@ class Foo {
 Foo<int> getFoo();
 
 int main() {
-    Foo<int> foo = getFoo();
-    foo;
-
-    return 0;
+	Foo<int> foo = getFoo();
+	foo;
+	return 0;
 }
 
 //!Bug 331963 Extract local variable doesn't put template type parameters Namespace
 //#org.eclipse.cdt.ui.tests.refactoring.extractlocalvariable.ExtractLocalVariableRefactoringTest
 //@A.cpp
-namespace bar{
+namespace bar {
+
 template<class T>
 class Foo {
 };
+
 }
 
 bar::Foo<int> getFoo();
 
 int main() {
-
-    /*$*/getFoo()/*$$*/;
-
-    return 0;
+	/*$*/getFoo()/*$$*/;
+	return 0;
 }
 
 //=
-namespace bar{
+namespace bar {
+
 template<class T>
 class Foo {
 };
+
 }
 
 bar::Foo<int> getFoo();
 
 int main() {
-    bar::Foo<int> foo = getFoo();
-    foo;
-
-    return 0;
+	bar::Foo<int> foo = getFoo();
+	foo;
+	return 0;
 }
 
 //!Bug 330693 Improve suggested variable name in Extract Local Variable
 //#org.eclipse.cdt.ui.tests.refactoring.extractlocalvariable.ExtractLocalVariableRefactoringTest
 //@A.cpp
 
-struct Foo{
+struct Foo {
 	int getVarWithLongName();
 };
 
-void bar(){
+void bar() {
 	Foo f;
 	/*$*/f.getVarWithLongName()/*$$*/;
 }
 
 //=
 
-struct Foo{
+struct Foo {
 	int getVarWithLongName();
 };
 
-void bar(){
+void bar() {
 	Foo f;
-    int varWithLongName = f.getVarWithLongName();
-    varWithLongName;
+	int varWithLongName = f.getVarWithLongName();
+	varWithLongName;
 }
 
 //!Bug 330693 Improve suggested variable name in Extract Local Variable: name == prefix
 //#org.eclipse.cdt.ui.tests.refactoring.extractlocalvariable.ExtractLocalVariableRefactoringTest
 //@A.cpp
 
-struct Foo{
+struct Foo {
 	int get();
 };
 
-void bar(){
+void bar() {
 	Foo f;
 	/*$*/f.get()/*$$*/;
 }
 
 //=
 
-struct Foo{
+struct Foo {
 	int get();
 };
 
-void bar(){
+void bar() {
 	Foo f;
-    int get = f.get();
-    get;
+	int get = f.get();
+	get;
 }
 
 //!Bug 335202 Suggested name is wrong for nested function calls - outer function call
 //#org.eclipse.cdt.ui.tests.refactoring.extractlocalvariable.ExtractLocalVariableRefactoringTest
 //@A.cpp
 
-int getA(){
-    return 0;
+int getA() {
+	return 0;
 };
 
-int getB(int a){
-    return a;
+int getB(int a) {
+	return a;
 }
 
-void bar(){
-    /*$*/getB(getA())/*$$*/;
+void bar() {
+	/*$*/getB(getA())/*$$*/;
 }
 
 //=
 
-int getA(){
-    return 0;
+int getA() {
+	return 0;
 };
 
-int getB(int a){
-    return a;
+int getB(int a) {
+	return a;
 }
 
-void bar(){
-    int b = getB(getA());
-    b;
+void bar() {
+	int b = getB(getA());
+	b;
 }
 
 //!Bug 335202 Suggested name is wrong for nested function calls - inner function call
 //#org.eclipse.cdt.ui.tests.refactoring.extractlocalvariable.ExtractLocalVariableRefactoringTest
 //@A.cpp
 
-int getA(){
-    return 0;
+int getA() {
+	return 0;
 };
 
-int getB(int a){
-    return a;
+int getB(int a) {
+	return a;
 }
 
-int getC(int a){
-    return a;
+int getC(int a) {
+	return a;
 }
 
-void bar(){
-    getB(/*$*/getC(getA())/*$$*/);
+void bar() {
+	getB(/*$*/getC(getA())/*$$*/);
 }
 
 //=
 
-int getA(){
-    return 0;
+int getA() {
+	return 0;
 };
 
-int getB(int a){
-    return a;
+int getB(int a) {
+	return a;
 }
 
-int getC(int a){
-    return a;
+int getC(int a) {
+	return a;
 }
 
-void bar(){
-    int c = getC(getA());
-    getB(c);
+void bar() {
+	int c = getC(getA());
+	getB(c);
 }
 

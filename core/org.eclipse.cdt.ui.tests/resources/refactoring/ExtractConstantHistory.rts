@@ -4,8 +4,7 @@
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
@@ -19,14 +18,13 @@ public:
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
 	void bar();
-    static const int theAnswer = 42;
+	static const int theAnswer = 42;
 };
 
 #endif /*A_H_*/
@@ -34,21 +32,17 @@ public:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
 
-int A::foo()
-{
-	return 42; //Hallo
+int A::foo() {
+	return 42; // Hello
 }
 
-void A::bar()
-{
+void A::bar() {
 	int a = 42;
 	int b = 42;
 }
@@ -56,21 +50,17 @@ void A::bar()
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
 
-int A::foo()
-{
-	return theAnswer; //Hallo
+int A::foo() {
+	return theAnswer; // Hello
 }
 
-void A::bar()
-{
+void A::bar() {
 	int a = theAnswer;
 	int b = theAnswer;
 }
@@ -91,8 +81,7 @@ project="RegressionTestProject" selection="64,2" visibility="public"/>
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
@@ -105,14 +94,14 @@ public:
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
+
 protected:
-    static const int theAnswer = 42;
+	static const int theAnswer = 42;
 };
 
 #endif /*A_H_*/
@@ -120,32 +109,26 @@ protected:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
 
-int A::foo()
-{
+int A::foo() {
 	return 42;
 }
 
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
 
-int A::foo()
-{
+int A::foo() {
 	return theAnswer;
 }
 
@@ -164,8 +147,7 @@ project="RegressionTestProject" selection="64,2" visibility="protected"/>
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
@@ -178,14 +160,14 @@ public:
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
+
 private:
-    static const int theAnswer = 42;
+	static const int theAnswer = 42;
 };
 
 #endif /*A_H_*/
@@ -193,32 +175,26 @@ private:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
 
-int A::foo()
-{
+int A::foo() {
 	return 42;
 }
 
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
 
-int A::foo()
-{
+int A::foo() {
 	return theAnswer;
 }
 

@@ -56,7 +56,7 @@ public class SourceRewriteTester extends TestSuite {
 		TestSuite suite = new TestSuite(name);
 		Iterator<RewriteBaseTest> it = testCases.iterator();
 		while (it.hasNext()) {
-			RewriteBaseTest subject =it.next();
+			RewriteBaseTest subject = it.next();
 			suite.addTest(subject);
 		}
 		return suite;
@@ -88,11 +88,11 @@ public class SourceRewriteTester extends TestSuite {
 	}
 
 	private static ArrayList<RewriteBaseTest> createTests(BufferedReader inputReader) throws Exception {
-		String line;
 		ASTWriterTestSourceFile file = null;
 		MatcherState matcherState = MatcherState.skip;
 		ArrayList<RewriteBaseTest> testCases = new ArrayList<RewriteBaseTest>();
 		
+		String line;
 		while ((line = inputReader.readLine()) != null) {
 			if (lineMatchesBeginOfTest(line)) {
 				matcherState = MatcherState.inTest;
@@ -156,7 +156,7 @@ public class SourceRewriteTester extends TestSuite {
 	}
 	
 	private static RewriteBaseTest createTestClass(String testName, ASTWriterTestSourceFile file) throws Exception {
-		ASTWriterTest test = new ASTWriterTest(testName,file);
+		ASTWriterTest test = new ASTWriterTest(testName, file);
 		TextSelection sel = file.getSelection();
 		if (sel != null) {
 			test.setFileWithSelection(file.getName());

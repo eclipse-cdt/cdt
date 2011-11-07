@@ -7,46 +7,38 @@ filename=A.h
 
 class A {
 public:
-    void func1();
-    void /*$*/func2/*$$*/()
-    {
-    }
-    void func3();
-    void func4()
-    {
-    }
+	void func1();
+	void /*$*/func2/*$$*/() {
+	}
+	void func3();
+	void func4() {
+	}
 };
 
-inline void A::func1()
-{
+inline void A::func1() {
 }
 
-inline void A::func3()
-{
+inline void A::func3() {
 }
 //=
 #include <iostream>
 
 class A {
 public:
-    void func1();
-    void func2();
-    void func3();
-    void func4()
-    {
-    }
+	void func1();
+	void func2();
+	void func3();
+	void func4() {
+	}
 };
 
-inline void A::func1()
-{
+inline void A::func1() {
 }
 
-inline void A::func2()
-{
+inline void A::func2() {
 }
 
-inline void A::func3()
-{
+inline void A::func3() {
 }
 //!TestCorrectOrderingInHeaderToImplementation
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
@@ -57,17 +49,15 @@ filename=A.h
 
 class A {
 public:
-    void func1();
-    void func2();
-    void func3();
-    void func4()
-    {
-    }
+	void func1();
+	void func2();
+	void func3();
+	void func4() {
+	}
 };
 
-inline void A::/*$*/func2/*$$*/()
-{
-    return;
+inline void A::/*$*/func2/*$$*/() {
+	return;
 }
 
 //=
@@ -75,12 +65,11 @@ inline void A::/*$*/func2/*$$*/()
 
 class A {
 public:
-    void func1();
-    void func2();
-    void func3();
-    void func4()
-    {
-    }
+	void func1();
+	void func2();
+	void func3();
+	void func4() {
+	}
 };
 
 
@@ -88,41 +77,34 @@ public:
 //@A.cpp
 #include "A.h"
 
-int main()
-{
-    return 0;
+int main() {
+	return 0;
 }
 
-void A::func1()
-{
-    return;
+void A::func1() {
+	return;
 }
 
-void A::func3()
-{
-    return;
+void A::func3() {
+	return;
 }
 //=
 #include "A.h"
 
-int main()
-{
-    return 0;
+int main() {
+	return 0;
 }
 
-void A::func1()
-{
-    return;
+void A::func1() {
+	return;
 }
 
-void A::func2()
-{
-    return;
+void A::func2() {
+	return;
 }
 
-void A::func3()
-{
-    return;
+void A::func3() {
+	return;
 }
 //!TestCorrectTemplateOrderingInClassToInHeader
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
@@ -134,21 +116,20 @@ filename=A.h
 template <typename T>
 class A {
 public:
-    void func1();
-    void /*$*/func2/*$$*/()
-    {
-    }
-    void func3();
-    void func4()
-    {
-    }
+	void func1();
+	void /*$*/func2/*$$*/() {
+	}
+	void func3();
+	void func4() {
+	}
 };
 
-template<typename T> inline void A<T>::func1()
-{
+template<typename T>
+inline void A<T>::func1() {
 }
-template<typename T> inline void A<T>::func3()
-{
+
+template<typename T>
+inline void A<T>::func3() {
 }
 //=
 #include <iostream>
@@ -156,23 +137,23 @@ template<typename T> inline void A<T>::func3()
 template <typename T>
 class A {
 public:
-    void func1();
-    void func2();
-    void func3();
-    void func4()
-    {
-    }
+	void func1();
+	void func2();
+	void func3();
+	void func4() {
+	}
 };
 
-template<typename T> inline void A<T>::func1()
-{
-}
-template<typename T> inline void A<T>::func2()
-{
+template<typename T>
+inline void A<T>::func1() {
 }
 
-template<typename T> inline void A<T>::func3()
-{
+template<typename T>
+inline void A<T>::func2() {
+}
+
+template<typename T>
+inline void A<T>::func3() {
 }
 //!TestCorrectTemplateOrderingInHeaderToInClass
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
@@ -184,22 +165,23 @@ filename=A.h
 template <typename T>
 class A {
 public:
-    void func1();
-    void func2();
-    void func3();
-    void func4()
-    {
-    }
+	void func1();
+	void func2();
+	void func3();
+	void func4() {
+	}
 };
 
-template<typename T> inline void A<T>::func1()
-{
+template<typename T>
+inline void A<T>::func1() {
 }
-template<typename T> inline void A<T>::/*$*/func2/*$$*/()
-{
+
+template<typename T>
+inline void A<T>::/*$*/func2/*$$*/() {
 }
-template<typename T> inline void A<T>::func3()
-{
+
+template<typename T>
+inline void A<T>::func3() {
 }
 //=
 #include <iostream>
@@ -207,20 +189,20 @@ template<typename T> inline void A<T>::func3()
 template <typename T>
 class A {
 public:
-    void func1();
-    void func2()
-    {
-    }
-    void func3();
-    void func4()
-    {
-    }
+	void func1();
+	void func2() {
+	}
+	void func3();
+	void func4() {
+	}
 };
 
-template<typename T> inline void A<T>::func1()
-{
+template<typename T>
+inline void A<T>::func1() {
 }
 
-template<typename T> inline void A<T>::func3()
-{
+
+
+template<typename T>
+inline void A<T>::func3() {
 }

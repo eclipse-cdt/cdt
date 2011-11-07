@@ -7,32 +7,29 @@ filename=A.h
 #include <exception>
 
 class A {
-    void /*$*/member/*$$*/(int a, int b)
-    try 
-    {
-        return;
-    } catch (std::exception & e1) 
-    {
-        return;
-    }
+	void /*$*/member/*$$*/(int a, int b)
+	try {
+		return;
+	}
+	catch (std::exception& e1){
+		return;
+	}
 };
 //=
 #include <iostream>
 #include <exception>
 
 class A {
-    void member(int a, int b);
+	void member(int a, int b);
 };
 
 inline void A::member(int a, int b)
-try
-{
-    return;
+try {
+	return;
 }
-catch(std::exception & e1){
-    return;
+catch (std::exception& e1) {
+	return;
 }
-
 
 //!TestTryCatchFromInHeaderToImplementation
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
@@ -43,23 +40,22 @@ filename=A.h
 #include <exception>
 
 class A {
-    void member(int a, int b);
+	void member(int a, int b);
 };
 
 inline void /*$*/A::member/*$$*/(int a, int b)
-try
-{
-    return;
+try {
+	return;
 }
-catch(std::exception & e1){
-    return;
+catch (std::exception& e1) {
+	return;
 }
 //=
 #include <iostream>
 #include <exception>
 
 class A {
-    void member(int a, int b);
+	void member(int a, int b);
 };
 
 
@@ -67,24 +63,22 @@ class A {
 #include "A.h"
 
 int main() {
-    return 0;
+	return 0;
 }
 //=
 #include "A.h"
 
 int main() {
-    return 0;
+	return 0;
 }
 
 void A::member(int a, int b)
-try
-{
-    return;
+try {
+	return;
 }
-catch(std::exception & e1){
-    return;
+catch (std::exception& e1) {
+	return;
 }
-
 
 //!TestTryCatchFromInImplementationToClass
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
@@ -95,18 +89,15 @@ filename=A.cpp
 #include "A.h"
 
 void A::/*$*/member/*$$*/()
-try
-{
-    return;
+try {
+	return;
 }
-catch(std::exception & e1)
-{
-    return;
+catch (std::exception& e1) {
+	return;
 }
 
-int main()
-{
-    return 0;
+int main() {
+	return 0;
 }
 //=
 #include <exception>
@@ -114,28 +105,26 @@ int main()
 
 
 
-int main()
-{
-    return 0;
+int main() {
+	return 0;
 }
 //@A.h
 #include <iostream>
 
 class A {
-    void member();
+	void member();
 };
 //=
 #include <iostream>
 
 class A {
-    void member()
-    try
-    {
-        return;
-    }
-    catch(std::exception & e1){
-        return;
-    }
+	void member()
+	try {
+		return;
+	}
+	catch (std::exception& e1) {
+		return;
+	}
 };
 //!TestMultipleTryCatchFromInClassToInHeader
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
@@ -146,38 +135,35 @@ filename=A.h
 #include <exception>
 
 class A {
-    void /*$*/member/*$$*/(int a, int b)
-    try 
-    {
-        return;
-    } catch (std::exception & e1) 
-    {
-        return;
-    } catch (std::exception & e2)
-    {
-        return;
-    }
+	void /*$*/member/*$$*/(int a, int b)
+	try {
+		return;
+	}
+	catch (std::exception& e1) {
+		return;
+	}
+	catch (std::exception& e2) {
+		return;
+	}
 };
 //=
 #include <iostream>
 #include <exception>
 
 class A {
-    void member(int a, int b);
+	void member(int a, int b);
 };
 
 inline void A::member(int a, int b)
-try
-{
-    return;
+try {
+	return;
 }
-catch(std::exception & e1){
-    return;
+catch (std::exception& e1) {
+	return;
 }
-catch(std::exception & e2){
-    return;
+catch (std::exception& e2) {
+	return;
 }
-
 
 //!TestMultipleTryCatchFromInHeaderToImplementation
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
@@ -188,26 +174,25 @@ filename=A.h
 #include <exception>
 
 class A {
-    void member(int a, int b);
+	void member(int a, int b);
 };
 
 inline void /*$*/A::member/*$$*/(int a, int b)
-try
-{
-    return;
+try {
+	return;
 }
-catch(std::exception & e1){
-    return;
+catch (std::exception& e1) {
+	return;
 }
-catch(std::exception & e2){
-    return;
+catch (std::exception& e2) {
+	return;
 }
 //=
 #include <iostream>
 #include <exception>
 
 class A {
-    void member(int a, int b);
+	void member(int a, int b);
 };
 
 
@@ -215,27 +200,25 @@ class A {
 #include "A.h"
 
 int main() {
-    return 0;
+	return 0;
 }
 //=
 #include "A.h"
 
 int main() {
-    return 0;
+	return 0;
 }
 
 void A::member(int a, int b)
-try
-{
-    return;
+try {
+	return;
 }
-catch(std::exception & e1){
-    return;
+catch (std::exception& e1) {
+	return;
 }
-catch(std::exception & e2){
-    return;
+catch (std::exception& e2) {
+	return;
 }
-
 
 //!TestMultipleTryCatchFromInImplementationToClass
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
@@ -246,22 +229,18 @@ filename=A.cpp
 #include "A.h"
 
 void A::/*$*/member/*$$*/()
-try
-{
-    return;
+try {
+	return;
 }
-catch(std::exception & e1)
-{
-    return;
+catch (std::exception& e1) {
+	return;
 }
-catch(std::exception & e2)
-{
-    return;
+catch (std::exception& e2) {
+	return;
 }
 
-int main()
-{
-    return 0;
+int main() {
+	return 0;
 }
 //=
 #include <exception>
@@ -269,29 +248,27 @@ int main()
 
 
 
-int main()
-{
-    return 0;
+int main() {
+	return 0;
 }
 //@A.h
 #include <iostream>
 
 class A {
-    void member();
+	void member();
 };
 //=
 #include <iostream>
 
 class A {
-    void member()
-    try
-    {
-        return;
-    }
-    catch(std::exception & e1){
-        return;
-    }
-    catch(std::exception & e2){
-        return;
-    }
+	void member()
+	try {
+		return;
+	}
+	catch (std::exception& e1) {
+		return;
+	}
+	catch (std::exception& e2) {
+		return;
+	}
 };

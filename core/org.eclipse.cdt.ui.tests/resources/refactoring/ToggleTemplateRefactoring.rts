@@ -7,28 +7,26 @@ filename=A.h
 
 template <typename T, typename U>
 class A {
-  class B {
-    T /*$*/member/*$$*/()
-    {
-        return T();
-    }
-  };
+	class B {
+		T /*$*/member/*$$*/() {
+			return T();
+		}
+	};
 };
 //=
 #include <iostream>
 
 template <typename T, typename U>
 class A {
-  class B {
-    T member();
-  };
+	class B {
+		T member();
+	};
 };
 
-template<typename T, typename U> inline T A<T,U>::B::member()
-{
-    return T();
+template<typename T, typename U>
+inline T A<T, U>::B::member() {
+	return T();
 }
-
 
 //!TestTemplateFunctionInHeaderToInClass
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
@@ -39,28 +37,25 @@ filename=A.h
 
 template <typename T>
 class A {
-    class B {
-        T member();
-    };
-
+	class B {
+		T member();
+	};
 };
 
-template<typename T> inline T A<T>::B::/*$*/member/*$$*/()
-{
-    return T();
+template<typename T>
+inline T A<T>::B::/*$*/member/*$$*/() {
+	return T();
 }
 //=
 #include <iostream>
 
 template <typename T>
 class A {
-    class B {
-        T member()
-        {
-            return T();
-        }
-    };
-
+	class B {
+		T member() {
+			return T();
+		}
+	};
 };
 
 
@@ -70,23 +65,22 @@ class A {
 filename=A.h
 //@A.h
 class A {
-    tem/*$*/plate/*$$*/<typename T>
-    T foo() {
-        return T();
-    }
+	tem/*$*/plate/*$$*/<typename T>
+	T foo() {
+		return T();
+	}
 };
 //=
 class A {
-    template<typename T>
-    T foo();
+	template<typename T>
+	T foo();
 
 };
 
-template<typename T> inline T A::foo()
-{
-    return T();
+template<typename T>
+inline T A::foo() {
+	return T();
 }
-
 
 //!TestComplexTemplateFunctionFromInClassToInheader
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
@@ -94,30 +88,27 @@ template<typename T> inline T A::foo()
 filename=A.h
 //@A.h
 template<typename T, typename S>
-class A 
-{
+class A {
 public:
-    template<typename U, typename V>
-    void /*$*/foo/*$$*/(const U & u, const V &v)
-    {
-        return;
-    }
+	template<typename U, typename V>
+	void /*$*/foo/*$$*/(const U& u, const V& v) {
+		return;
+	}
 };
 //=
 template<typename T, typename S>
-class A 
-{
+class A {
 public:
-    template<typename U, typename V>
-    void foo(const U & u, const V &v);
+	template<typename U, typename V>
+	void foo(const U& u, const V& v);
 
 };
 
-template<typename T, typename S> template<typename U, typename V> inline void A<T,S>::foo(const U & u, const V & v)
-{
-    return;
+template<typename T, typename S>
+template<typename U, typename V>
+inline void A<T, S>::foo(const U& u, const V& v) {
+	return;
 }
-
 
 //!TestComplexTemplateFunctionFromInHeaderToInClass
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
@@ -125,30 +116,25 @@ template<typename T, typename S> template<typename U, typename V> inline void A<
 filename=A.h
 //@A.h
 template<typename T, typename S>
-class A 
-{
+class A {
 public:
-    template<typename U, typename V>
-    void /*$*/foo/*$$*/(const U & u, const V &v);
-
+	template<typename U, typename V>
+	void /*$*/foo/*$$*/(const U& u, const V& v);
 };
 
-template<typename T, typename S> template<typename U, typename V> inline void A<T,S>::foo(const U & u, const V & v)
-{
-    return;
+template<typename T, typename S>
+template<typename U, typename V>
+inline void A<T,S>::foo(const U& u, const V& v) {
+	return;
 }
 //=
 template<typename T, typename S>
-class A 
-{
+class A {
 public:
-    template<typename U, typename V>
-    void foo(const U & u, const V &v)
-    {
-        return;
-    }
-
-
+	template<typename U, typename V>
+	void foo(const U& u, const V& v) {
+		return;
+	}
 
 };
 

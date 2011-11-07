@@ -4,13 +4,12 @@
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
 };
@@ -21,16 +20,15 @@ private:
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
-	
+
 private:
 	int help();
-    void exp(int & ii);
+	void exp(int& ii);
 };
 
 #endif /*A_H_*/
@@ -40,15 +38,13 @@ private:
 
 #define ADD(a,ab) a + ab + 2 + a
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
-int A::foo()
-{
+
+int A::foo() {
 	int ii = 2;
 	/*$*/++ii;
 	ii = ADD(ii, 42);
@@ -56,41 +52,36 @@ int A::foo()
 	return ii;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //=
 #include "A.h"
 
 #define ADD(a,ab) a + ab + 2 + a
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
-}
-void A::exp(int & ii)
-{
-    ++ii;
-    ii = ADD(ii, 42);
-    help();
+A::~A() {
 }
 
-int A::foo()
-{
+void A::exp(int& ii) {
+	++ii;
+	ii = ADD(ii, 42);
+	help();
+}
+
+int A::foo() {
 	int ii = 2;
-    exp(ii);
+	exp(ii);
 	return ii;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //!Extract Method return value assinged to Macrocall Bug
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
@@ -101,14 +92,14 @@ returnparameterindex=1
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
+
 private:
-    int help();
+	int help();
 };
 
 #endif /*A_H_*/
@@ -117,15 +108,15 @@ private:
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
+
 private:
-    int help();
-    int exp(int & i, int b);
+	int help();
+	int exp(int& i, int b);
 };
 
 #endif /*A_H_*/
@@ -135,62 +126,55 @@ private:
 
 #define ADD(b) b = b + 2
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
-int A::foo()
-{
+
+int A::foo() {
 	int i = 2;
 	int b = 42;
 	/*$*/++i;
-    help();
-    ADD(b);/*$$*/
+	help();
+	ADD(b);/*$$*/
 	b += 2;
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //=
 #include "A.h"
 
 #define ADD(b) b = b + 2
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
-}
-int A::exp(int & i, int b)
-{
-    ++i;
-    help();
-    ADD(b);
-    return b;
+A::~A() {
 }
 
-int A::foo()
-{
+int A::exp(int& i, int b) {
+	++i;
+	help();
+	ADD(b);
+	return b;
+}
+
+int A::foo() {
 	int i = 2;
 	int b = 42;
-    b = exp(i, b);
+	b = exp(i, b);
 	b += 2;
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //!Extract Method Methodlength with more than 1 Macrocall Bug
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
@@ -202,14 +186,14 @@ replaceduplicates=true
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
+
 private:
-    int help();
+	int help();
 };
 
 #endif /*A_H_*/
@@ -218,15 +202,15 @@ private:
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	virtual ~A();
 	int foo();
+
 private:
-    int help();
-    int exp(int bb);
+	int help();
+	int exp(int bb);
 };
 
 #endif /*A_H_*/
@@ -236,60 +220,53 @@ private:
 
 #define ADD(b) b = b + 2
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
-int A::foo()
-{
+
+int A::foo() {
 	int i = 2;
 	int bb = 42;
 	++i;
-    /*$*/ADD(bb);
-    ADD(bb);/*$$*/
+	/*$*/ADD(bb);
+	ADD(bb);/*$$*/
 	bb += 2;
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 
 //=
 #include "A.h"
 
 #define ADD(b) b = b + 2
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
-}
-int A::exp(int bb)
-{
-    ADD(bb);
-    ADD(bb);
-    return bb;
+A::~A() {
 }
 
-int A::foo()
-{
+int A::exp(int bb) {
+	ADD(bb);
+	ADD(bb);
+	return bb;
+}
+
+int A::foo() {
 	int i = 2;
 	int bb = 42;
 	++i;
-    bb = exp(bb);
+	bb = exp(bb);
 	bb += 2;
 	return i;
 }
 
-int A::help()
-{
+int A::help() {
 	return 42;
-}	
+}
 

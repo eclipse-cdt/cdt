@@ -4,23 +4,20 @@
 filename=A.h
 //@A.h
 class A {
-    void /*$*/member/*$$*/()
-    {
-        // return comment
-        return;
-    }
+	void /*$*/member/*$$*/() {
+		// return comment
+		return;
+	}
 };
 //=
 class A {
-    void member();
+	void member();
 };
 
-inline void A::member()
-{
-    // return comment
-    return;
+inline void A::member() {
+	// return comment
+	return;
 }
-
 
 //!ClassToHeaderTopCommentOrder
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
@@ -28,25 +25,22 @@ inline void A::member()
 filename=A.h
 //@A.h
 class A {
-    // First Top Comment
-    // Second Top Comment
-    void /*$*/member/*$$*/()
-    {
-        return;
-    }
+	// First Top Comment
+	// Second Top Comment
+	void /*$*/member/*$$*/() {
+		return;
+	}
 };
 //=
 class A {
-    // First Top Comment
-    // Second Top Comment
-    void member();
+	// First Top Comment
+	// Second Top Comment
+	void member();
 };
 
-inline void A::member()
-{
-    return;
+inline void A::member() {
+	return;
 }
-
 
 //!ClassToHeaderCatchComment
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
@@ -54,27 +48,26 @@ inline void A::member()
 filename=A.h
 //@A.h
 class A {
-    void /*$*/member/*$$*/() try
-    {
-        return;
-    } catch (int i) {
-        // catch comment
-    }
+	void /*$*/member/*$$*/() try
+	{
+		return;
+	}
+	catch (int i) {
+		// catch comment
+	}
 };
 //=
 class A {
-    void member();
+	void member();
 };
 
 inline void A::member()
-try
-{
-    return;
+try {
+	return;
 }
-catch(int i){
-    // catch comment
+catch (int i) {
+	// catch comment
 }
-
 
 //!ClassToHeaderTopComment
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
@@ -82,23 +75,20 @@ catch(int i){
 filename=A.h
 //@A.h
 class A {
-    // Top comment
-    void /*$*/member/*$$*/()
-    {
-        return;
-    }
+	// Top comment
+	void /*$*/member/*$$*/() {
+		return;
+	}
 };
 //=
 class A {
-    // Top comment
-    void member();
+	// Top comment
+	void member();
 };
 
-inline void A::member()
-{
-    return;
+inline void A::member() {
+	return;
 }
-
 
 //!ClassToHeaderTemplateTopComment
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
@@ -106,27 +96,25 @@ inline void A::member()
 filename=A.h
 //@A.h
 class A {
-    // Top comment
-    template<typename T>
-    T /*$*/member/*$$*/()
-    {
-        return T();
-    }
+	// Top comment
+	template<typename T>
+	T /*$*/member/*$$*/() {
+		return T();
+	}
 };
 //=
 class A {
-    // Top comment
-    template<typename T>
-    T member();
+	// Top comment
+	template<typename T>
+	T member();
 
 };
 
 // Top comment
-template<typename T> inline T A::member()
-{
-    return T();
+template<typename T>
+inline T A::member() {
+	return T();
 }
-
 
 //!ClassToHeaderTrailingComment
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
@@ -134,21 +122,18 @@ template<typename T> inline T A::member()
 filename=A.h
 //@A.h
 class A {
-    void /*$*/member/*$$*/()
-    {
-        return;
-    } // Trailing comment
+	void /*$*/member/*$$*/() {
+		return;
+	} // Trailing comment
 };
 //=
 class A {
-    void member();
+	void member();
 };
 
-inline void A::member()
-{
-    return;
+inline void A::member() {
+	return;
 } // Trailing comment
-
 
 //!ClassToHeaderTrailingCommentWithTryBlock
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
@@ -156,56 +141,53 @@ inline void A::member()
 filename=A.h
 //@A.h
 class A {
-    void /*$*/member/*$$*/() try
-    {
-        return;
-    } catch (int e) {
-    } // Trailing comment
+	void /*$*/member/*$$*/()
+	try {
+		return;
+	}
+	catch (int e) {
+	} // Trailing comment
 };
 //=
 class A {
-    void member();
+	void member();
 };
 
 inline void A::member()
-try
-{
-    return;
+try {
+	return;
 }
-catch(int e){
+catch (int e) {
 }
- // Trailing comment
-
+// Trailing comment
 //!ClassToHeaderTrailingMultipleCommentsInTryBlock
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
 filename=A.h
 //@A.h
 class A {
-    int /*$*/member/*$$*/() try
-    {
-        // aans
-    } /* one */ catch (int i) {
-        // zwaa
-    } /* two */ catch (int j) {
-        // draa
-    } /* three */
+	int /*$*/member/*$$*/()
+	try {
+		// aans
+	} /* one */ catch (int i) {
+		// zwaa
+	} /* two */ catch (int j) {
+		// draa
+	} /* three */
 };
 //=
 class A {
-    int member();
+	int member();
 };
 
 inline int A::member()
-try
-{
-    // aans
+try {
+	// aans
 } /* one */
-catch(int i){
-    // zwaa
+catch (int i) {
+	// zwaa
 }
- /* two */catch(int j){
-    // draa
+/* two */catch (int j) {
+	// draa
 }
- /* three */
-
+/* three */

@@ -4,21 +4,18 @@
 filename=A.h
 //@A.h
 class A {
-    void me/*$*//*$$*/mber()
-    {
-        return;
-    }
+	void me/*$*//*$$*/mber() {
+		return;
+	}
 };
 //=
 class A {
-    void member();
+	void member();
 };
 
-inline void A::member()
-{
-    return;
+inline void A::member() {
+	return;
 }
-
 
 //!TestSubstringSelection
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
@@ -26,21 +23,18 @@ inline void A::member()
 filename=A.h
 //@A.h
 class A {
-    void m/*$*/e/*$$*/mber()
-    {
-        return;
-    }
+	void m/*$*/e/*$$*/mber() {
+		return;
+	}
 };
 //=
 class A {
-    void member();
+	void member();
 };
 
-inline void A::member()
-{
-    return;
+inline void A::member() {
+	return;
 }
-
 
 //!TestBodySelection
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
@@ -48,21 +42,18 @@ inline void A::member()
 filename=A.h
 //@A.h
 class A {
-    void member()
-    {
-        r/*$*//*$$*/eturn;
-    }
+	void member() {
+		r/*$*//*$$*/eturn;
+	}
 };
 //=
 class A {
-    void member();
+	void member();
 };
 
-inline void A::member()
-{
-    return;
+inline void A::member() {
+	return;
 }
-
 
 //!TestBodySelectionWithConfusingName
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
@@ -70,23 +61,20 @@ inline void A::member()
 filename=A.h
 //@A.h
 class A {
-    void member()
-    {
-        int /*$*/abcd/*$$*/ = 42;
-        return;
-    }
+	void member() {
+		int /*$*/abcd/*$$*/ = 42;
+		return;
+	}
 };
 //=
 class A {
-    void member();
+	void member();
 };
 
-inline void A::member()
-{
-    int abcd = 42;
-    return;
+inline void A::member() {
+	int abcd = 42;
+	return;
 }
-
 
 //!TestLeftBorderSelection
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
@@ -94,21 +82,18 @@ inline void A::member()
 filename=A.h
 //@A.h
 class A {
-    /*$*//*$$*/void member()
-    {
-        return;
-    }
+	/*$*//*$$*/void member() {
+		return;
+	}
 };
 //=
 class A {
-    void member();
+	void member();
 };
 
-inline void A::member()
-{
-    return;
+inline void A::member() {
+	return;
 }
-
 
 //!TestRightBorderSelection
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
@@ -116,21 +101,18 @@ inline void A::member()
 filename=A.h
 //@A.h
 class A {
-    void member()
-    {
-        return;
-    }/*$*//*$$*/
+	void member() {
+		return;
+	}/*$*//*$$*/
 };
 //=
 class A {
-    void member();
+	void member();
 };
 
-inline void A::member()
-{
-    return;
+inline void A::member() {
+	return;
 }
-
 
 //!TestOverlappingSelection
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
@@ -138,19 +120,16 @@ inline void A::member()
 filename=A.h
 //@A.h
 class A {
-    vo/*$*/id member()
-    {
-        ret/*$$*/urn;
-    }
+	vo/*$*/id member() {
+		ret/*$$*/urn;
+	}
 };
 //=
 class A {
-    void member();
+	void member();
 };
 
-inline void A::member()
-{
-    return;
+inline void A::member() {
+	return;
 }
-
 

@@ -15,10 +15,8 @@ public:
 	bool a(int = 100) const;
 };
 
-inline bool X::a(int int1) const
-{
+inline bool X::a(int int1) const {
 }
-
 
 
 //!Param const and reference and pointer two params
@@ -38,10 +36,8 @@ public:
 	bool xy(int, int i) const;
 };
 
-inline bool X::xy(int int1, int i) const
-{
+inline bool X::xy(int int1, int i) const {
 }
-
 
 
 //!Test if TemplateMethod stays in header
@@ -50,23 +46,22 @@ inline bool X::xy(int int1, int i) const
 filename=A.h
 infos=1
 //@A.h
-template<class T> class A
-{
+template<class T>
+class A {
 public:
-        /*$*/void test();/*$$*/
+	/*$*/void test();/*$$*/
 };
 
 //=
-template<class T> class A
-{
+template<class T>
+class A {
 public:
-        void test();
+	void test();
 };
 
-template<class T> inline void A<T>::test()
-{
+template<class T>
+inline void A<T>::test() {
 }
-
 
 
 //@A.cpp
@@ -81,33 +76,32 @@ template<class T> inline void A<T>::test()
 filename=A.h
 infos=1
 //@A.h
-template<class T> class A
-{
+template<class T>
+class A {
 public:
-        A();
-        /*$*/void test();/*$$*/
+    A();
+    /*$*/void test();/*$$*/
 };
 
-template<class T> A<T>::A()
-{
+template<class T>
+A<T>::A() {
 }
 
 //=
-template<class T> class A
-{
+template<class T>
+class A {
 public:
-        A();
-        void test();
+    A();
+    void test();
 };
 
-template<class T> A<T>::A()
-{
+template<class T>
+A<T>::A() {
 }
 
-template<class T> inline void A<T>::test()
-{
+template<class T>
+inline void A<T>::test() {
 }
-
 
 
 //!member class
@@ -116,10 +110,8 @@ template<class T> inline void A<T>::test()
 filename=A.h
 //@A.h
 
-class Demo
-{
-	class SubClass 
-	{
+class Demo {
+	class SubClass {
 		/*$*/void test();/*$$*/
 	};
 };
@@ -131,102 +123,88 @@ class Demo
 //=
 #include "A.h"
 
-
-
-void Demo::SubClass::test()
-{
+void Demo::SubClass::test() {
 }
-
-//!method declared in otherwise empty class without cpp file
+//!Method declared in otherwise empty class without cpp file
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
 filename=A.h
 infos=1
 //@A.h
-class A
-{
+class A {
 public:
-        /*$*/void test();/*$$*/
+	/*$*/void test();/*$$*/
 };
 
 //=
-class A
-{
+class A {
 public:
-        void test();
+	void test();
 };
 
-inline void A::test()
-{
+inline void A::test() {
 }
 
 
-
-//!method declared in otherwise empty class
+//!Method declared in otherwise empty class
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
 filename=A.h
 //@A.h
-class A
-{
+class A {
 public:
-        /*$*/void test();/*$$*/
+	/*$*/void test();/*$$*/
 };
 
 //=
-class A
-{
+class A {
 public:
-        void test();
+	void test();
 };
 
 //@A.cpp
 
 //=
 
-
-
-void A::test()
-{
+void A::test() {
 }
-
-//!implement in existing namespace
+//!Implement in existing namespace
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
 filename=A.h
 //@A.h
-namespace NameSpace 
-{
-	class ClassInNamespace 
-	{
-	public:
-		int test();
-		/*$*/void test2();/*$$*/
-	};
+namespace Namespace {
+
+class ClassInNamespace {
+public:
+	int test();
+	/*$*/void test2();/*$$*/
+};
+
 }
 
 //@A.cpp
 #include "A.h"
 
-namespace NameSpace
-{
-	int ClassInNamespace::test()
-	{
-		return 5;
-	}
+namespace Namespace {
+
+int ClassInNamespace::test() {
+	return 5;
+}
+
 }
 //=
 #include "A.h"
 
-namespace NameSpace
-{
-	int ClassInNamespace::test()
-	{
-		return 5;
-	}
+namespace Namespace {
 
-    void ClassInNamespace::test2()
-    {}
+int ClassInNamespace::test() {
+	return 5;
+}
+
+void ClassInNamespace::test2() {
+}
+
 }
 //!virtual method in the middle of con/destructor, without parameters and void return value
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
@@ -236,8 +214,7 @@ filename=A.h
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	/*$*/virtual void foo();/*$$*/
@@ -248,30 +225,25 @@ public:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-A::~A()
-{
+A::~A() {
 }
 
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-void A::foo()
-{
+void A::foo() {
 }
 
-A::~A()
-{
+A::~A() {
 }
 
-//!implement a function at start of source file
+//!Implement a function at start of source file
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
 filename=A.h
@@ -279,18 +251,15 @@ filename=A.h
 /*$*/void function();/*$$*/
 void function_with_impl();
 //@A.cpp
-void function_with_impl()
-{
+void function_with_impl() {
 }
 //=
-void function()
-{
+void function() {
 }
 
-void function_with_impl()
-{
+void function_with_impl() {
 }
-//!method at end, without parameters and void return value
+//!Method at end, without parameters and void return value
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
 filename=A.h
@@ -298,8 +267,7 @@ filename=A.h
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	/*$*/void foo();/*$$*/
@@ -309,24 +277,20 @@ public:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-void A::foo()
-{
+void A::foo() {
 }
 
 
-
-//!method at beginning, without parameters, void return value and const
+//!Method at beginning, without parameters, void return value and const
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
 filename=A.h
@@ -334,8 +298,7 @@ filename=A.h
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	/*$*/void foo() const;/*$$*/
 	A();
@@ -345,22 +308,19 @@ public:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
 //=
 #include "A.h"
 
-void A::foo() const
-{
+void A::foo() const {
 }
 
-A::A()
-{
+A::A() {
 }
 
-//!method with int return value
+//!Method with int return value
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
 filename=A.h
@@ -368,8 +328,7 @@ filename=A.h
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	/*$*/int foo();/*$$*/
@@ -379,24 +338,20 @@ public:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-int A::foo()
-{
+int A::foo() {
 }
 
 
-
-//!method with two int parameters
+//!Method with two int parameters
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
 filename=A.h
@@ -404,8 +359,7 @@ filename=A.h
 #ifndef A_H_
 #define A_H_
 
-class A
-{
+class A {
 public:
 	A();
 	/*$*/int foo(int param1, int param2);/*$$*/
@@ -415,59 +369,49 @@ public:
 //@A.cpp
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
 //=
 #include "A.h"
 
-A::A()
-{
+A::A() {
 }
 
-int A::foo(int param1, int param2)
-{
+int A::foo(int param1, int param2) {
 }
 
 
-
-//!method defined in header
+//!Method defined in header
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
 filename=A.h
 infos=1
 //@A.h
-class A
-{
+class A {
 public:
-        A();
-        /*$*/void test();/*$$*/
+	A();
+	/*$*/void test();/*$$*/
 };
 
-A::A()
-{
+A::A() {
 }
 
 //=
-class A
-{
+class A {
 public:
-        A();
-        void test();
+	A();
+	void test();
 };
 
-A::A()
-{
+A::A() {
 }
 
-inline void A::test()
-{
+inline void A::test() {
 }
 
 
-
-//!implement a function at end of source file
+//!Implement a function at end of source file
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
 filename=A.h
@@ -475,113 +419,111 @@ filename=A.h
 void function_with_impl();
 /*$*/void function();/*$$*/
 //@A.cpp
-void function_with_impl()
-{
+void function_with_impl() {
 }
 //=
-void function_with_impl()
-{
+void function_with_impl() {
 }
 
-void function()
-{
+void function() {
 }
 
-
-//!implement with namespace
+//!Implement with namespace
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
 filename=A.h
 //@A.h
-namespace NameSpace 
-{
-	class ClassInNamespace 
-	{
-	public:
-		int other_test();
-		/*$*/void test();/*$$*/
-	};
+namespace Namespace  {
+
+class ClassInNamespace {
+public:
+	int other_test();
+	/*$*/void test();/*$$*/
+};
+
 }
 
 //@A.cpp
 #include "A.h"
-void NameSpace::ClassInNamespace::other_test()
-{
+void Namespace::ClassInNamespace::other_test() {
 }
 //=
 #include "A.h"
-void NameSpace::ClassInNamespace::other_test()
-{
+void Namespace::ClassInNamespace::other_test() {
 }
 
-void NameSpace::ClassInNamespace::test()
-{
+void Namespace::ClassInNamespace::test() {
 }
 
-
-//!implement function within namespace
+//!Implement function within namespace
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
 filename=A.h
 //@A.h
 namespace OuterSpace {
-	namespace NameSpace 
-	{
-		int test();
-		/*$*/int test2();/*$$*/
-	}
+namespace Namespace {
+
+int test();
+/*$*/int test2();/*$$*/
+
+}
 }
 
 //@A.cpp
 #include "A.h"
 namespace OuterSpace {
-	int NameSpace::test()
-	{	
-	}
+
+int Namespace::test() {	
+}
+
 }
 //=
 #include "A.h"
 namespace OuterSpace {
-	int NameSpace::test()
-	{	
-	}
 
-    int NameSpace::test2()
-    {}
+int Namespace::test() {	
 }
-//!implement function within namespaces
+
+int Namespace::test2() {
+}
+
+}
+//!Implement function within namespaces
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
 filename=A.h
 //@A.h
 namespace OuterSpace {
-	namespace NameSpace
-	{
-		int test();
-		/*$*/int test2();/*$$*/
-	}
+namespace Namespace	{
+
+int test();
+/*$*/int test2();/*$$*/
+
+}
 }
 
 //@A.cpp
 #include "A.h"
 namespace OuterSpace {
-	namespace NameSpace {
-		int test()
-		{	
-		}
-	}
+namespace Namespace {
+
+int test() {	
+}
+
+}
 }
 //=
 #include "A.h"
 namespace OuterSpace {
-	namespace NameSpace {
-		int test()
-		{	
-		}
+namespace Namespace {
 
-	    int test2()
-	    {}
-	}
+int test() {	
+}
+
+int test2() {
+}
+
+}
 }
 //!class template member functions with multiple templates
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
@@ -589,33 +531,32 @@ namespace OuterSpace {
 filename=A.h
 infos=1
 //@A.h
-template<class T, class U> class A
-{
+template<class T, class U>
+class A {
 public:
-        A();
-        /*$*/void test();/*$$*/
+    A();
+    /*$*/void test();/*$$*/
 };
 
-template<class T, class U> A<T,U>::A()
-{
+template<class T, class U>
+A<T,U>::A() {
 }
 
 //=
-template<class T, class U> class A
-{
+template<class T, class U>
+class A {
 public:
-        A();
-        void test();
+    A();
+    void test();
 };
 
-template<class T, class U> A<T,U>::A()
-{
+template<class T, class U>
+A<T,U>::A() {
 }
 
-template<class T, class U> inline void A<T,U>::test()
-{
+template<class T, class U>
+inline void A<T, U>::test() {
 }
-
 
 
 //!with default parameters
@@ -624,8 +565,7 @@ template<class T, class U> inline void A<T,U>::test()
 filename=A.h
 //@A.h
 
-class Class
-{
+class Class {
 public:
 	/*$*/void test(int param1, int param2 = 5, int param3 = 10);/*$$*/
 };
@@ -637,20 +577,15 @@ public:
 //=
 #include "A.h"
 
-
-
-void Class::test(int param1, int param2, int param3)
-{
+void Class::test(int param1, int param2, int param3) {
 }
-
 //!static method
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
 filename=A.h
 //@A.h
 
-class Class
-{
+class Class {
 public:
 	/*$*/static void test();/*$$*/
 };
@@ -662,12 +597,8 @@ public:
 //=
 #include "A.h"
 
-
-
-void Class::test()
-{
+void Class::test() {
 }
-
 //! Bug 238253 Pointer refence of the return value lost
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
@@ -686,21 +617,16 @@ public:
 //=
 #include "A.h"
 
-
-
-int *TestClass::get(char *val)
-{
+int* TestClass::get(char* val) {
 }
-
 //! Bug 238554 void parameters
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
 filename=A.h
 //@A.h
 
-class Test
-{
-    public:
+class Test {
+public:
 	/*$*/void doNothing(void);/*$$*/
 };
 
@@ -711,12 +637,8 @@ class Test
 //=
 #include "A.h"
 
-
-
-void Test::doNothing(void)
-{
+void Test::doNothing(void) {
 }
-
 //! Bug 282989 Refactor->Implement method option doesn't qualify the name in the method definition with a fully qualified container class name
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
@@ -726,10 +648,12 @@ infos=1
 #ifndef TESTCLASS_H_
 #define TESTCLASS_H_
 
-namespace nspace{
+namespace nspace {
+
 class TestClass {
-void /*$*/testMethod()/*$$*/;
+	void /*$*/testMethod()/*$$*/;
 };
+
 }
 
 #endif /* TESTCLASS_H_ */
@@ -738,16 +662,16 @@ void /*$*/testMethod()/*$$*/;
 #ifndef TESTCLASS_H_
 #define TESTCLASS_H_
 
-namespace nspace{
+namespace nspace {
+
 class TestClass {
-void testMethod();
+	void testMethod();
 };
+
 }
 
-inline void nspace::TestClass::testMethod()
-{
+inline void nspace::TestClass::testMethod() {
 }
-
 
 
 #endif /* TESTCLASS_H_ */
@@ -768,6 +692,7 @@ public:
 	A();
 	~A();
 	void testmethod(int x);
+
 protected:
 	class B {
 	public:
@@ -810,10 +735,8 @@ A::~A() {
 }
 }
 
-void n1::n2::A::B::testmethod2()
-{
+void n1::n2::A::B::testmethod2() {
 }
-
 
 
 //!Bug 337040 - Insert definition in empty implementation file (.cxx)
@@ -832,12 +755,8 @@ public:
 
 //=
 
-
-
-void TestClass::foo()
-{
+void TestClass::foo() {
 }
-
 //!Bug 355006 - NPE implementing template function
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
@@ -845,15 +764,14 @@ filename=A.h
 infos=1
 //@A.h
 
-/*$*/template<typename T> void func(T&);/*$$*/
-
+/*$*/template<typename T>
+void func(T&);/*$$*/
 //=
 
-template<typename T> void func(T&);
+template<typename T>
+void func(T&);
 
-template<typename T> inline void func(T& )
-{
+template<typename T>
+inline void func(T&) {
 }
-
-
 

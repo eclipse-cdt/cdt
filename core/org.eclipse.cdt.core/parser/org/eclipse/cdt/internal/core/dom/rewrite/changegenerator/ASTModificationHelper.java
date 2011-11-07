@@ -44,8 +44,7 @@ public class ASTModificationHelper {
 				T appendedTNode = cast(newNode, clazz);
 				if (appendedTNode != null) {
 					modifiedChildren.add(appendedTNode);
-				}
-				else if (newNode instanceof ContainerNode) {
+				} else if (newNode instanceof ContainerNode) {
 					ContainerNode nodeContainer = (ContainerNode) newNode;
 					for (IASTNode currentNode : nodeContainer.getNodes()) {
 						T tnode= cast(currentNode, clazz);

@@ -7,56 +7,54 @@ filename=A.h
 
 class A {
 private:
-    int a;
-    int b;
+	int a;
+	int b;
+
 public:
-    A(int x, int y)
-    :a(x), b(y)
-    {}
-    ~A()
-    {
-    }
+	A(int x, int y) :
+			a(x), b(y) {
+	}
+	~A() {
+	}
 };
 
-int /*$*/freeFunction/*$$*/(int *a, int & b) {
-    return 42;
+int /*$*/freeFunction/*$$*/(int* a, int& b) {
+	return 42;
 }
 //=
 #include <iostream>
 
 class A {
 private:
-    int a;
-    int b;
+	int a;
+	int b;
+
 public:
-    A(int x, int y)
-    :a(x), b(y)
-    {}
-    ~A()
-    {
-    }
+	A(int x, int y) :
+			a(x), b(y) {
+	}
+	~A() {
+	}
 };
 
-int freeFunction(int *a, int & b);
+int freeFunction(int* a, int& b);
 
 //@A.cpp
 #include "A.h"
 
 int main() {
-    return 0;
+	return 0;
 }
 //=
 #include "A.h"
 
 int main() {
-    return 0;
+	return 0;
 }
 
-int freeFunction(int *a, int & b)
-{
-    return 42;
+int freeFunction(int* a, int& b) {
+	return 42;
 }
-
 
 //!TestFreeFunctionToggleFromImplementationToHeaderWithDeclaration
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
@@ -66,18 +64,17 @@ filename=A.cpp
 #include "A.h"
 
 int main() {
-    return 0;
+	return 0;
 }
 
-int /*$*/freeFunction/*$$*/(int *a, int & b)
-{
-    return 42;
+int /*$*/freeFunction/*$$*/(int* a, int& b) {
+	return 42;
 }
 //=
 #include "A.h"
 
 int main() {
-    return 0;
+	return 0;
 }
 
 
@@ -86,39 +83,37 @@ int main() {
 
 class A {
 private:
-    int a;
-    int b;
+	int a;
+	int b;
+
 public:
-    A(int x, int y)
-    :a(x), b(y)
-    {}
-    ~A()
-    {
-    }
+	A(int x, int y) :
+			a(x), b(y) {
+	}
+	~A() {
+	}
 };
 
-int freeFunction(int *a, int & b);
+int freeFunction(int* a, int& b);
 //=
 #include <iostream>
 
 class A {
 private:
-    int a;
-    int b;
+	int a;
+	int b;
+
 public:
-    A(int x, int y)
-    :a(x), b(y)
-    {}
-    ~A()
-    {
-    }
+	A(int x, int y) :
+			a(x), b(y) {
+	}
+	~A() {
+	}
 };
 
-int freeFunction(int *a, int & b)
-{
-    return 42;
+int freeFunction(int* a, int& b) {
+	return 42;
 }
-
 
 //!TestFreeFunctionToggleFromImplementationToHeaderWithOutDeclaration
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
@@ -128,20 +123,20 @@ filename=A.cpp
 #include "A.h"
 
 int main() {
-    return 0;
+	return 0;
 }
 
-int /*$*/freeFunction/*$$*/(int *a, int & b)
+int /*$*/freeFunction/*$$*/(int* a, int& b)
 try {
-    return 42;
-} catch (std::exception & e) 
-{
+	return 42;
+}
+catch (std::exception& e) {
 }
 //=
 #include "A.h"
 
 int main() {
-    return 0;
+	return 0;
 }
 
 
@@ -150,15 +145,15 @@ int main() {
 
 class A {
 private:
-    int a;
-    int b;
+	int a;
+	int b;
+
 public:
-    A(int x, int y)
-    :a(x), b(y)
-    {}
-    ~A()
-    {
-    }
+	A(int x, int y) :
+			a(x), b(y) {
+	}
+	~A() {
+	}
 };
 
 //=
@@ -166,25 +161,23 @@ public:
 
 class A {
 private:
-    int a;
-    int b;
+	int a;
+	int b;
+
 public:
-    A(int x, int y)
-    :a(x), b(y)
-    {}
-    ~A()
-    {
-    }
+	A(int x, int y) :
+			a(x), b(y) {
+	}
+	~A() {
+	}
 };
 
-int freeFunction(int *a, int & b)
-try
-{
-    return 42;
+int freeFunction(int* a, int& b)
+try {
+	return 42;
 }
-catch(std::exception & e){
+catch (std::exception& e) {
 }
-
 
 
 //!TestFreeFunction
@@ -192,9 +185,8 @@ catch(std::exception & e){
 //@.config
 filename=A.h
 //@A.h
-int /*$*/freeFunction/*$$*/()
-{
-    return 42;
+int /*$*/freeFunction/*$$*/() {
+	return 42;
 }
 //=
 int freeFunction();
@@ -204,12 +196,9 @@ int freeFunction();
 //=
 #include "A.h"
 
-
-int freeFunction()
-{
-    return 42;
+int freeFunction() {
+	return 42;
 }
-
 //!TestQualifiedNameToggle
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
@@ -218,18 +207,15 @@ fatalerror=true
 //@A.cpp
 #include "A.h"
 
-int /*$*/A::freefunction/*$$*/()
-{
-    return 42;
+int /*$*/A::freefunction/*$$*/() {
+	return 42;
 }
 //=
 #include "A.h"
 
-int A::freefunction()
-{
-    return 42;
+int A::freefunction() {
+	return 42;
 }
-
 //!TestNamespacedFreeFunction
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
@@ -241,10 +227,11 @@ filename=A.h
 #include <iostream>
 
 namespace N {
-    void /*$*/freefunction/*$$*/()
-    {
-        return;
-    }
+
+void /*$*/freefunction/*$$*/() {
+	return;
+}
+
 }
 
 #endif /* A_H_ */
@@ -255,7 +242,9 @@ namespace N {
 #include <iostream>
 
 namespace N {
-    void freefunction();
+
+void freefunction();
+
 }
 
 #endif /* A_H_ */
@@ -263,21 +252,20 @@ namespace N {
 #include "A.h"
 
 int main() {
-    return 0;
+	return 0;
 }
 //=
 #include "A.h"
 
 int main() {
-    return 0;
+	return 0;
 }
 
-namespace N
-{
-    void freefunction()
-    {
-        return;
-    }
+namespace N {
+
+void freefunction() {
+	return;
+}
 
 }
 

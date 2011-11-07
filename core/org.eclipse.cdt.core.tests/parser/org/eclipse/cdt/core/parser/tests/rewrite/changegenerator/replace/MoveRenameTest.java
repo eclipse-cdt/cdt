@@ -7,16 +7,16 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.replace;
 
 import junit.framework.Test;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.ChangeGeneratorTest;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompositeTypeSpecifier;
@@ -25,32 +25,25 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
 
-
-
-
-
 public class MoveRenameTest extends ChangeGeneratorTest {
 
-	public MoveRenameTest(){
-		super("Swap Rename Declarations"); //$NON-NLS-1$
-	}
-	
-	@Override
-	protected void setUp() throws Exception {
-		
-		source = "#ifndef A_H_\r\n#define A_H_\r\n\r\nclass A {\r\n\r\nprivate:\r\n    int b;\r\n    int a;\r\n};\r\n\r\n#endif /*A_H_*/\r\n\r\n"; //$NON-NLS-1$
-		expectedSource = "#ifndef A_H_\r\n#define A_H_\r\n\r\nclass A {\r\n\r\nprivate:\r\n    int d;\r\n    int b;\r\n};\r\n\r\n#endif /*A_H_*/\r\n\r\n"; //$NON-NLS-1$
-		super.setUp();
+	MoveRenameTest() {
+		super("MoveRenameTest");
 	}
 
-
-	public static Test suite() {
+	public static Test suite() {		
 		return new MoveRenameTest();
 	}
 
 	@Override
-	protected ASTVisitor createModificator(
-			final ASTModificationStore modStore) {
+	protected void setUp() throws Exception {
+		source = "#ifndef A_H_\r\n#define A_H_\r\n\r\nclass A {\r\n\r\nprivate:\r\n\tint b;\r\n\tint a;\r\n};\r\n\r\n#endif /*A_H_*/\r\n\r\n"; //$NON-NLS-1$
+		expectedSource = "#ifndef A_H_\r\n#define A_H_\r\n\r\nclass A {\r\n\r\nprivate:\r\n\tint d;\r\n\tint b;\r\n};\r\n\r\n#endif /*A_H_*/\r\n\r\n"; //$NON-NLS-1$
+		super.setUp();
+	}
+
+	@Override
+	protected ASTVisitor createModificator(final ASTModificationStore modStore) {
 		return new ASTVisitor() {
 			{
 				shouldVisitDeclSpecifiers = true;
@@ -70,8 +63,6 @@ public class MoveRenameTest extends ChangeGeneratorTest {
 				}
 				return super.visit(declSpec);
 			}
-			
 		};
 	}
-	
 }

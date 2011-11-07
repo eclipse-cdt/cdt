@@ -49,7 +49,7 @@ public abstract class ChangeGeneratorTest extends BaseTestFramework {
 	}
 
 	@Override
-	public void runTest() throws Exception{
+	public void runTest() throws Exception {
 		final ASTModificationStore modStore = new ASTModificationStore();
 		IFile testFile = importFile("source.h", source); //$NON-NLS-1$			
 

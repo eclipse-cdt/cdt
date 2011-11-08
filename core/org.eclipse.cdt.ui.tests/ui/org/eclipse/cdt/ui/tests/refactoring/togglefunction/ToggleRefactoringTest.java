@@ -76,7 +76,7 @@ public class ToggleRefactoringTest extends RefactoringTest {
 		assertConditionsOk(refactoring.checkFinalConditions(NULL_PROGRESS_MONITOR));
 		changes.perform(NULL_PROGRESS_MONITOR);
 		filesDoExist();
-		for(String fileName: fileMap.keySet()) {			
+		for (String fileName: fileMap.keySet()) {			
 			IFile iFile = project.getFile(new Path(fileName));
 			String code = getCodeFromIFile(iFile);
 			String expectedSource = fileMap.get(fileName).getExpectedSource();
@@ -90,21 +90,21 @@ public class ToggleRefactoringTest extends RefactoringTest {
 	}
 
 	private void filesDoExist() {
-		for(String fileName: newfiles) {
+		for (String fileName: newfiles) {
 			IFile file = project.getFile(new Path(fileName));
 			assertTrue(file.exists());
 		}
 	}
 
 	private void filesDoNotExist() {
-		for(String fileName: newfiles) {
+		for (String fileName: newfiles) {
 			IFile file = project.getFile(new Path(fileName));
 			assertFalse(file.exists());
 		}
 	}
 
 	private void removeFiles() throws CoreException {
-		for(String fileName: newfiles) {
+		for (String fileName: newfiles) {
 			IFile file = project.getFile(new Path(fileName));
 			file.delete(true, NULL_PROGRESS_MONITOR);
 		}

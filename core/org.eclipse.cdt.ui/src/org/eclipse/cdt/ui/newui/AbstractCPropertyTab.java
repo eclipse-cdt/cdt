@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Intel Corporation and others.
+ * Copyright (c) 2007, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -130,6 +130,7 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	
 	protected boolean visible;
 
+	@Override
 	public void createControls(Composite _parent, ICPropertyProvider _provider) {
 		page = _provider;
 		createControls(_parent);
@@ -144,12 +145,12 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	 */
 	protected void createControls(Composite parent) {
 		parent.setLayout(new FillLayout());
-        pageBook = new PageBook(parent, SWT.NULL);
+		pageBook = new PageBook(parent, SWT.NULL);
 
 		background = new CLabel(pageBook, SWT.CENTER | SWT.SHADOW_NONE);
 		background.setText(EMPTY_STR);
 
-        GridData gd;
+		GridData gd;
 		userdata= new Composite(pageBook, SWT.NONE);
 		userdata.setLayout(new GridLayout(2, false));
 		
@@ -165,7 +166,7 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		
 		pageBook.showPage(userdata);
 		
-	    PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, helpId);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, helpId);
 	}
 	
 	/**
@@ -192,7 +193,7 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	protected void initButtons(Composite c, String[] names, int width) {
 		if (names == null || names.length == 0) return;
 		c.setLayoutData(new GridData(GridData.FILL_VERTICAL));
-	    c.setLayout(new GridLayout(1, false));
+		c.setLayout(new GridLayout(1, false));
 		buttons = new Button[names.length];
 		for (int i=0; i<names.length; i++) {
 			buttons[i] = new Button(c, SWT.PUSH);
@@ -211,10 +212,11 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 			
 			buttons[i].setLayoutData(gdb);
 			buttons[i].addSelectionListener(new SelectionAdapter() {
-		        @Override
+				@Override
 				public void widgetSelected(SelectionEvent event) {
-		        	buttonPressed(event);
-		        }});
+					buttonPressed(event);
+				}
+			});
 		}
 	}
 	
@@ -226,32 +228,32 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		if (visible) updateData(cfg);
 	}
 	
-    /**
-     * Disposes the SWT resources allocated by this
-     * dialog page.
-     */
-    public void dispose() {}
+	/**
+	 * Disposes the SWT resources allocated by this dialog page.
+	 */
+	public void dispose() {
+	}
 
-    /**
-     * Sets the visibility of this property tab.
-     *
-     * @param _visible <code>true</code> to make this tab visible,
-     *  and <code>false</code> to hide it
-     */
-    public void setVisible(boolean _visible) {
-    	visible = _visible;
-    	if (visible) updateData(page.getResDesc());
-    }
+	/**
+	 * Sets the visibility of this property tab.
+	 *
+	 * @param _visible <code>true</code> to make this tab visible,
+	 *  and <code>false</code> to hide it
+	 */
+	public void setVisible(boolean _visible) {
+		visible = _visible;
+		if (visible) updateData(page.getResDesc());
+	}
 	
-    /**
-     * Descendant tabs should implement this method so 
-     * that it copies it's data from one description 
-     * to another. Only data affected by given tab
-     * should be copied.
-     * 
-     * @param src
-     * @param dst
-     */
+	/**
+	 * Descendant tabs should implement this method so 
+	 * that it copies it's data from one description 
+	 * to another. Only data affected by given tab
+	 * should be copied.
+	 * 
+	 * @param src
+	 * @param dst
+	 */
 	protected abstract void performApply(ICResourceDescription src, ICResourceDescription dst);
 	protected abstract void performDefaults();
 	protected abstract void updateData(ICResourceDescription cfg);
@@ -260,7 +262,6 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	protected void performOK() {}
 
 	/**
-	 * 
 	 * @param e - event to be handled
 	 */
 	private void buttonPressed(SelectionEvent e) {
@@ -360,16 +361,17 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	}
 	
 	protected Button setupCheck(Composite c, String name, int span, int mode) {
-		 Button b = new Button(c, SWT.CHECK);
-		 b.setText(name);
-		 setupControl(b, span, mode);
-		 b.addSelectionListener(new SelectionAdapter() {
-		    @Override
+		Button b = new Button(c, SWT.CHECK);
+		b.setText(name);
+		setupControl(b, span, mode);
+		b.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
-		    	setGrayed((Button)event.widget, false);
-		    	checkPressed(event);
-		 }});
-		 return b;
+				((Button) event.widget).setGrayed(false);
+				checkPressed(event);
+			}
+		});
+		return b;
 	}
 
 	/**
@@ -384,8 +386,9 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	 *   	else if (b.equals(mySecondCheckbox) { ... }
 	 *   ... } 
 	 */
-    protected void checkPressed(SelectionEvent e) {}
-    
+	protected void checkPressed(SelectionEvent e) {
+	}
+
 	protected void setupControl(Control c, int span, int mode) {
 		// although we use GridLayout usually,
 		// exceptions can occur: do nothing. 
@@ -477,16 +480,17 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 			}
 			dialog.setInitialSelection(container);
 			dialog.setValidator(new ISelectionStatusValidator() {
-			    public IStatus validate(Object[] selection) {
-			    	if (selection != null)
-			    		if (selection.length > 0)
-			    			if ((selection[0] instanceof IFile))
-			    				return new StatusInfo(IStatus.ERROR, WORKSPACE_DIR_DIALOG_ERR);
-			    	return new StatusInfo();
-			    }
+				@Override
+				public IStatus validate(Object[] selection) {
+					if (selection != null)
+						if (selection.length > 0)
+							if ((selection[0] instanceof IFile))
+								return new StatusInfo(IStatus.ERROR, WORKSPACE_DIR_DIALOG_ERR);
+					return new StatusInfo();
+				}
 			});
-			dialog.setTitle(WORKSPACE_DIR_DIALOG_TITLE); 
-            dialog.setMessage(WORKSPACE_DIR_DIALOG_MSG); 
+			dialog.setTitle(WORKSPACE_DIR_DIALOG_TITLE);
+			dialog.setMessage(WORKSPACE_DIR_DIALOG_MSG);
 		} else {
 			IResource resource = null;
 			if(path.isAbsolute()){
@@ -494,16 +498,17 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 			}
 			dialog.setInitialSelection(resource);
 			dialog.setValidator(new ISelectionStatusValidator() {
-			    public IStatus validate(Object[] selection) {
-			    	if (selection != null)
-			    		if (selection.length > 0)
-			    			if (!(selection[0] instanceof IFile))
-			    				return new StatusInfo(IStatus.ERROR, WORKSPACE_FILE_DIALOG_ERR);
-			    	return new StatusInfo();
-			    }
+				@Override
+				public IStatus validate(Object[] selection) {
+					if (selection != null)
+						if (selection.length > 0)
+							if (!(selection[0] instanceof IFile))
+								return new StatusInfo(IStatus.ERROR, WORKSPACE_FILE_DIALOG_ERR);
+					return new StatusInfo();
+				}
 			});
-			dialog.setTitle(WORKSPACE_FILE_DIALOG_TITLE); 
-            dialog.setMessage(WORKSPACE_FILE_DIALOG_MSG); 
+			dialog.setTitle(WORKSPACE_FILE_DIALOG_TITLE);
+			dialog.setMessage(WORKSPACE_FILE_DIALOG_MSG);
 		}
 		if (dialog.open() == Window.OK) {
 			IResource resource = (IResource) dialog.getFirstResult();
@@ -523,6 +528,7 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	/**
 	 * Common event handler: called by parent for each tab
 	 */
+	@Override
 	public void handleTabEvent (int kind, Object data) {
 		switch(kind) {
 		case ICPropertyTab.OK:
@@ -560,8 +566,9 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		}
 	}
 	
-    // By default, returns true (no visibility restriction)
-    // But several pages should rewrite this functionality.
+	// By default, returns true (no visibility restriction)
+	// But several pages should rewrite this functionality.
+	@Override
 	public boolean canBeVisible() {
 		return true;
 	}
@@ -598,16 +605,16 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	public static void setTriSelection(Button b, int state) {
 		switch (state) {
 		case TRI_NO:
-			setGrayed(b, false);
+			b.setGrayed(false);
 			b.setSelection(false);
 			break;
 		case TRI_YES:
-			setGrayed(b, false);
+			b.setGrayed(false);
 			b.setSelection(true);
 			break;
 		case TRI_UNKNOWN:
+			b.setGrayed(true);
 			b.setSelection(true);
-			setGrayed(b, true);
 			break;
 		}
 	}

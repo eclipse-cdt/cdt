@@ -1471,7 +1471,7 @@ public class Scribe {
 
 	private void printEmptyLines(int linesNumber, int insertPosition) {
 		final String buffer= getEmptyLines(linesNumber);
-		if (!buffer.isEmpty()) {
+		if (buffer.length() != 0) {
 			addInsertEdit(insertPosition, buffer);
 		}
 	}

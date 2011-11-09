@@ -209,7 +209,7 @@ public class ChangeBuildConfigActionBase {
 							project = null;
 						else {
 							ICConfigurationDescription[] tmp = getCfgs(project);
-							if (tmp == null || tmp.length == 0)	project = null;
+							if (tmp.length == 0)	project = null;
 						}
 					}
 					if (project != null) {
@@ -282,11 +282,13 @@ public class ChangeBuildConfigActionBase {
 	
 	private ICConfigurationDescription[] getCfgs(IProject prj) {
 		ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(prj, false);
-		if (prjd == null) return null;
-		ICConfigurationDescription[] tmp = prjd.getConfigurations();
-		if (tmp == null) return null;
-		return prjd.getConfigurations(); 
+		if (prjd != null) { 
+			ICConfigurationDescription[] cfgs = prjd.getConfigurations();
+			if (cfgs != null) {
+				return cfgs;
+			}
+		}
+		
+		return new ICConfigurationDescription[0];
 	}
-	
-	
 }

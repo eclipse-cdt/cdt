@@ -19,6 +19,7 @@
  * David McKnight   (IBM)        - [224313] [api] Create RSE Events for MOVE and COPY holding both source and destination fields
  * David McKnight   (IBM)        - [296877] Allow user to choose the attributes for remote search result
  * David McKnight   (IBM)        - [357587] Custom sorter is changed to SystemTableViewSorter
+ * David McKnight   (IBM)        - [363392] system table views shows open view actions when they shouldn't
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -1661,10 +1662,13 @@ public class SystemTableTreeView
 				SystemShowInTableAction showInTableAction = getShowInTableAction();
 				openToPerspectiveAction.setSelection(selection);
 				showInTableAction.setSelection(selection);
-				//menu.appendToGroup(ISystemContextMenuConstants.GROUP_OPEN, openToAction.getSubMenu());
-				menu.appendToGroup(ISystemContextMenuConstants.GROUP_OPEN, openToPerspectiveAction);
-				menu.appendToGroup(ISystemContextMenuConstants.GROUP_OPEN, showInTableAction);
 
+				
+				if (_selectionShowOpenViewActions){		
+					//menu.appendToGroup(ISystemContextMenuConstants.GROUP_OPEN, openToAction.getSubMenu());
+					menu.appendToGroup(ISystemContextMenuConstants.GROUP_OPEN, openToPerspectiveAction);
+					menu.appendToGroup(ISystemContextMenuConstants.GROUP_OPEN, showInTableAction);
+				}
 			}
 
 

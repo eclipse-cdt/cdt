@@ -195,10 +195,15 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 	
 	/**
 	 * Property we attach to a CTabItem to track the expression we used to
-	 * create memory blocks on the tab's behalf. Value is an
-	 * {@link String}
+	 * create memory blocks on the tab's behalf. Value is a String.
 	 */
-	private final static String KEY_EXPRESSION    = "EXPRESSION"; //$NON-NLS-1$
+	private final static String KEY_EXPRESSION = "EXPRESSION"; //$NON-NLS-1$
+
+	/**
+	 * Property we attach to a CTabItem to track the address associated with 
+	 * KEY_EXPRESSION. Value is a BigInteger
+	 */
+	private final static String KEY_EXPRESSION_ADDRESS = "EXPRESSION_ADDRESS"; //$NON-NLS-1$
 
 	public static final String PREF_DEFAULT_RENDERING = "org.eclipse.cdt.debug.ui.memory.memorybrowser.defaultRendering";  //$NON-NLS-1$
 	
@@ -547,7 +552,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 					@Override
 					public void run() {
 						try {
-							BigInteger newBase = getExpressionAddress(retrieval, expression, context, memorySpaceId);
+							final BigInteger newBase = getExpressionAddress(retrieval, expression, context, memorySpaceId);
 							IMemoryBlockExtension block = (IMemoryBlockExtension) renderingFinal.getMemoryBlock();
 							if (block.supportBaseAddressModification()) {
 								block.setBaseAddress(newBase);
@@ -563,6 +568,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 								public void run() {
 									CTabItem selection = activeFolder.getSelection();
 									selection.setData(KEY_EXPRESSION, expression);
+									selection.setData(KEY_EXPRESSION_ADDRESS, newBase);											
 									fGotoAddressBar.handleExpressionStatus(Status.OK_STATUS);
 									updateLabel(selection, renderingFinal);
 								}
@@ -609,12 +615,35 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 			if (memorySpaceID != null) {
 				IMemoryBlockRetrieval retrieval = (IMemoryBlockRetrieval) tab.getParent().getData(KEY_RETRIEVAL);
 				if (retrieval instanceof IMemorySpaceAwareMemoryBlockRetrieval) {
-					label = ((IMemorySpaceAwareMemoryBlockRetrieval)retrieval).encodeAddress("0x" + viewportAddress.toString(16), memorySpaceID) + ' ' + renderingType;
+					label = ((IMemorySpaceAwareMemoryBlockRetrieval)retrieval).encodeAddress("0x" + viewportAddress.toString(16), memorySpaceID);
 				}
 			}
 			if (label == null) {
-				label = "0x" + viewportAddress.toString(16) + ' ' + renderingType;
+				label = "0x" + viewportAddress.toString(16);
 			}
+			
+			// If the expression that was went to ("Go") is not a hex address,
+			// or it is but the user has scrolled/paged, then show the
+			// expression after the viewport hex address. Additionally, if some
+			// scrolling/paging has moved the viewport, also show the relative
+			// displacement. E.g.,
+			// 		"0x10020 - gSomeVar(+20) <Traditional>"
+			// (for a tab where the user did a "Go" to "gSomeVar" then paged
+			// down, and where gSomeVar is at 0x10000)
+			//
+			String expression = (String)tab.getData(KEY_EXPRESSION);
+			BigInteger evaluatedAddress = (BigInteger)tab.getData(KEY_EXPRESSION_ADDRESS);	
+			if(expression != null && !expression.equals("0x" + viewportAddress.toString(16))) {
+				label += " - " + expression;
+				BigInteger delta = evaluatedAddress.subtract(viewportAddress);
+				if (!delta.equals(BigInteger.ZERO)) {
+					label += "(";
+					label += delta.signum() < 0 ? '+' : '-';
+					label += "0x" + delta.abs().toString(16) +")";				
+				}
+			}
+			
+			label += ' ' + renderingType;;
 			
 			// Allow the memory block to customize the label. The platform's
 			// Memory view support this (it was done in the call to
@@ -969,7 +998,6 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 						public void widgetDefaultSelected(SelectionEvent e) {}
 						public void widgetSelected(SelectionEvent e) {
 							CTabItem tabItem = (CTabItem)e.item;
-							updateExpression(tabItem);
 							updateMemorySpaceControlSelection(tabItem);
 					        fGotoAddressBar.loadSavedExpressions(context, fGotoMemorySpaceControl.isVisible() ? fGotoMemorySpaceControl.getText() : null);
 							getSite().getSelectionProvider().setSelection(new StructuredSelection(tabItem.getData(KEY_RENDERING)));
@@ -980,9 +1008,6 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 					tabFolder.setData(KEY_RETRIEVAL, retrieval);
 					fContextFolders.put(retrieval, tabFolder);
 					fStackLayout.topControl = tabFolder;
-					// set empty initial expression 
-					fGotoAddressBar.setExpressionText(""); //$NON-NLS-1$
-					fGotoAddressBar.loadSavedExpressions(context, fGotoMemorySpaceControl.isVisible() ? fGotoMemorySpaceControl.getText() : null);
 				}
 				// update debug context to the new selection
 				tabFolder.setData(KEY_CONTEXT, context);
@@ -1015,7 +1040,6 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 					setMemorySpaceControlVisible(false);					
 				}
 
-				updateExpression(activeFolder.getSelection());
 				updateMemorySpaceControlSelection(activeFolder.getSelection());
 		        fGotoAddressBar.loadSavedExpressions(context, fGotoMemorySpaceControl.isVisible() ? fGotoMemorySpaceControl.getText() : null);
 				
@@ -1172,8 +1196,9 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 		tab.setData(KEY_MEMORY_SPACE, memorySpaceId);
 		tab.setData(KEY_CONTAINER, container);
 		tab.setData(KEY_RENDERING_TYPE, type);
+		tab.setData(KEY_EXPRESSION, expression);
+		tab.setData(KEY_EXPRESSION_ADDRESS, ((IMemoryBlockExtension)rendering.getMemoryBlock()).getBigBaseAddress());
 		getSite().getSelectionProvider().setSelection(new StructuredSelection(tab.getData(KEY_RENDERING)));
-		updateLabel(tab, rendering);
 		
 		return rendering;
 	}

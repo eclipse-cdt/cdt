@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -179,47 +180,18 @@ public class CIndex implements IIndex {
 			binding= bindings[0];
 		}
 
-		// Maps a file location to -1 if the file belongs to an earlier index fragment,
-		// or to the index of the last checked index fragment plus one, if the file doesn't belong
-		// to any of the index fragments up to the last checked one.
-		HashMap<IIndexFileLocation, Integer> fileCheckCache = new HashMap<IIndexFileLocation, Integer>();
+		// Collect the names from all fragments. Since the same file may be represented by multiple
+		// variants in one or more index fragments, we need to filter out duplicate names.
+		// See bug 192352.
+		HashSet<NameKey> encounteredNames = new HashSet<NameKey>();
 		for (int i = 0; i < fPrimaryFragmentCount; i++) {
-			IIndexFragment fragment = fFragments[i];
-			final IIndexFragmentName[] names = fragment.findNames(binding, flags);
+			final IIndexFragmentName[] names = fFragments[i].findNames(binding, flags);
 			for (IIndexFragmentName name : names) {
-				IIndexFileLocation location = name.getFile().getLocation();
-				Integer checkState = fileCheckCache.get(location);
-				int checkOffset = checkState == null ? 0 : checkState.intValue();
-				if (checkOffset >= 0) {
-					for (; checkOffset < i; checkOffset++) {
-						IIndexFragment fragment2 = fFragments[checkOffset];
-						if (fragment2.getFiles(location).length != 0) {
-							checkOffset = -1;
-							break;
-						}
-					}
-					fileCheckCache.put(location, Integer.valueOf(checkOffset));
-				}
-				if (checkOffset == i) {
+				if (encounteredNames.add(new NameKey(name))) {
 					result.add(name);
 				}
 			}
 		}
-//		// bug 192352, files can reside in multiple fragments, remove duplicates
-//		if (fragCount > 1 || (flags & IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES) != 0) {
-//			HashMap<String, IIndexFile> fileMap= new HashMap<String, IIndexFile>();
-//			for (Iterator<IIndexFragmentName> iterator = result.iterator(); iterator.hasNext();) {
-//				final IIndexFragmentName name = iterator.next();
-//				final IIndexFile file= name.getFile();
-//				final String fileKey= name.getFile().getLocation().getURI().toString();
-//				final IIndexFile otherFile= fileMap.get(fileKey);
-//				if (otherFile == null) {
-//					fileMap.put(fileKey, file);
-//				} else if (!otherFile.equals(file)) { // same file in another fragment
-//					iterator.remove();
-//				}
-//			}
-//		}
 		return result.toArray(new IIndexName[result.size()]);
 	}
 
@@ -774,5 +746,45 @@ public class CIndex implements IIndex {
 			result[i]= (IIndexScope) ((ICPPNamespace) compBinding[i]).getNamespaceScope();
 		}
 		return result;
+	}
+
+	/**
+	 * A key used to uniquely identify an IIndexFragmentName object. Uniqueness is guaranteed only
+	 * for names corresponding to the same binding.
+	 */
+	private static final class NameKey {
+		private final IIndexFileLocation location;
+		private final int linkageID;
+		private final int offset;
+
+		NameKey(IIndexFragmentName name) throws CoreException {
+			IIndexFile file = name.getFile();
+			location = file.getLocation();
+			linkageID = file.getLinkageID();
+			offset = name.getNodeOffset();
+		}
+
+		@Override
+		public int hashCode() {
+			return (location.hashCode() * 31 + linkageID) * 31 + offset;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			NameKey other = (NameKey) obj;
+			if (offset != other.offset)
+				return false;
+			if (linkageID != other.linkageID)
+				return false;
+			if (!location.equals(other.location))
+				return false;
+			return true;
+		}
 	}
 }

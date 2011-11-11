@@ -237,7 +237,8 @@ public class ImplementMethodRefactoring extends CRefactoring2 {
 		IASTNode declarationParent = methodDeclaration.getParent();
 		
 		if (declSpecifier instanceof ICPPASTDeclSpecifier) {
-			((ICPPASTDeclSpecifier) declSpecifier).setVirtual(false); 
+			((ICPPASTDeclSpecifier) declSpecifier).setVirtual(false);
+			((ICPPASTDeclSpecifier) declSpecifier).setExplicit(false);
 		}
 		
 		String currentFileName = declarationParent.getNodeLocations()[0].asFileLocation().getFileName();

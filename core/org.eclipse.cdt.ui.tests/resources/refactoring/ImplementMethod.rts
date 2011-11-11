@@ -775,3 +775,21 @@ template<typename T>
 inline void func(T&) {
 }
 
+//!Bug 363111 - Remove explicit in constructor definition
+//#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
+//@.config
+filename=A.h
+//@A.h
+
+class TestClass {
+public:
+	/*$*/explicit TestClass();/*$$*/
+};
+
+
+//@A.cpp
+
+//=
+
+TestClass::TestClass() {
+}

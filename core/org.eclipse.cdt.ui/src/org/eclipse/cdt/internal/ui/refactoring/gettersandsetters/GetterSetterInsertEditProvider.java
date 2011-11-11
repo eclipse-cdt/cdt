@@ -103,6 +103,7 @@ public class GetterSetterInsertEditProvider implements Comparable<GetterSetterIn
 		return kind;
 	}
 
+	@Override
 	public int compareTo(GetterSetterInsertEditProvider o) {
 		return toString().compareTo(o.toString());
 	}

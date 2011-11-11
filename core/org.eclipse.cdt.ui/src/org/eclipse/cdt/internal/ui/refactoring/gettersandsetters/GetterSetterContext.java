@@ -35,6 +35,7 @@ public class GetterSetterContext implements ITreeContentProvider {
 	private ArrayList<FieldWrapper> wrappedFields;
 	private boolean implementationInHeader = false;
 
+	@Override
 	public Object[] getChildren(Object parentElement) {
 		ArrayList<GetterSetterInsertEditProvider> children = new ArrayList<GetterSetterInsertEditProvider>();
 		if (parentElement instanceof FieldWrapper) {
@@ -63,10 +64,12 @@ public class GetterSetterContext implements ITreeContentProvider {
 		return new GetterSetterInsertEditProvider(fieldName, simpleDeclaration, AccessorKind.SETTER);
 	}
 
+	@Override
 	public Object getParent(Object element) {
 		return null;
 	}
 
+	@Override
 	public boolean hasChildren(Object element) {
 		if (element instanceof FieldWrapper) {
 			FieldWrapper wrapper = (FieldWrapper) element;
@@ -75,6 +78,7 @@ public class GetterSetterContext implements ITreeContentProvider {
 		return false;
 	}
 
+	@Override
 	public Object[] getElements(Object inputElement) {
 		return getWrappedFields().toArray();
 	}
@@ -90,9 +94,11 @@ public class GetterSetterContext implements ITreeContentProvider {
 		}
 	}
 
+	@Override
 	public void dispose() {
 	}
 
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 	}
 	

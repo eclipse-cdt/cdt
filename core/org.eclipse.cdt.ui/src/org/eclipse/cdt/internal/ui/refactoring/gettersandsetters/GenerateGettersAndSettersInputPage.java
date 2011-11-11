@@ -52,6 +52,7 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 		node.addPreferenceChangeListener(this);
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
 		
@@ -206,7 +207,7 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 			}
 		}
 		variableSelectionView.addCheckStateListener(new ICheckStateListener() {
-
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				Set<GetterSetterInsertEditProvider> checkedFunctions = context.selectedFunctions;
 				for (Object currentElement : variableSelectionView.getCheckedElements()) {
@@ -219,6 +220,7 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 		});
 	}
 
+	@Override
 	public void preferenceChange(PreferenceChangeEvent event) {
 		if (variableSelectionView.getTree().isDisposed()) {
 			return;

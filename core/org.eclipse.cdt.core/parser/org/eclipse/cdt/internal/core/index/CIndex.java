@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -82,6 +81,7 @@ public class CIndex implements IIndex {
 		this(fragments, fragments.length);
 	}
 
+	@Override
 	public IIndexBinding findBinding(IName name) throws CoreException {
 		if (name instanceof IIndexFragmentName) {
 			return adaptBinding(((IIndexFragmentName) name).getBinding());
@@ -100,11 +100,13 @@ public class CIndex implements IIndex {
 		return null;
 	}
 
+	@Override
 	public IIndexBinding[] findBindings(Pattern pattern, boolean isFullyQualified, IndexFilter filter,
 			IProgressMonitor monitor) throws CoreException {
 		return findBindings(new Pattern[] { pattern }, isFullyQualified, filter, monitor);
 	}
 
+	@Override
 	public IIndexBinding[] findBindings(Pattern[] patterns, boolean isFullyQualified, IndexFilter filter,
 			IProgressMonitor monitor) throws CoreException {
 		if (SPECIALCASE_SINGLES && fFragments.length == 1) {
@@ -134,6 +136,7 @@ public class CIndex implements IIndex {
 		}
 	}
 
+	@Override
 	public IIndexBinding[] findMacroContainers(Pattern pattern, IndexFilter filter, IProgressMonitor monitor)
 			throws CoreException {
 		if (SPECIALCASE_SINGLES && fFragments.length == 1) {
@@ -163,6 +166,7 @@ public class CIndex implements IIndex {
 		}
 	}
 
+	@Override
 	public IIndexName[] findNames(IBinding binding, int flags) throws CoreException {
 		LinkedList<IIndexFragmentName> result= new LinkedList<IIndexFragmentName>();
 		if (binding instanceof ICPPUsingDeclaration) {
@@ -195,18 +199,22 @@ public class CIndex implements IIndex {
 		return result.toArray(new IIndexName[result.size()]);
 	}
 
+	@Override
 	public IIndexName[] findDeclarations(IBinding binding) throws CoreException {
 		return findNames(binding, FIND_DECLARATIONS_DEFINITIONS);
 	}
 
+	@Override
 	public IIndexName[] findDefinitions(IBinding binding) throws CoreException {
 		return findNames(binding, FIND_DEFINITIONS);
 	}
 
+	@Override
 	public IIndexName[] findReferences(IBinding binding) throws CoreException {
 		return findNames(binding, FIND_REFERENCES);
 	}
 
+	@Override
 	@Deprecated
 	public IIndexFile getFile(int linkageID, IIndexFileLocation location) throws CoreException {
 		for (int i = 0; i < fPrimaryFragmentCount; i++) {
@@ -218,6 +226,7 @@ public class CIndex implements IIndex {
 		return null;
 	}
 
+	@Override
 	public IIndexFile getFile(int linkageID, IIndexFileLocation location,
 			ISignificantMacros significantMacros) throws CoreException {
 		for (int i = 0; i < fPrimaryFragmentCount; i++) {
@@ -229,6 +238,7 @@ public class CIndex implements IIndex {
 		return null;
 	}
 
+	@Override
 	public IIndexFile[] getFiles(int linkageID, IIndexFileLocation location) throws CoreException {
 		if (location == null) {
 			return IIndexFile.EMPTY_FILE_ARRAY;
@@ -252,6 +262,7 @@ public class CIndex implements IIndex {
 		return result.toArray(new IIndexFile[result.size()]);
 	}
 
+	@Override
 	public IIndexFile[] getFiles(IIndexFileLocation location) throws CoreException {
 		if (location == null) {
 			return IIndexFile.EMPTY_FILE_ARRAY;
@@ -274,6 +285,7 @@ public class CIndex implements IIndex {
 		return result.toArray(new IIndexFile[result.size()]);
 	}
 
+	@Override
 	public IIndexFile resolveInclude(IIndexInclude include) throws CoreException {
 		IIndexFragmentInclude fragmentInclude = (IIndexFragmentInclude) include;
 		IIndexFragmentFile result= fragmentInclude.getIncludes();
@@ -287,10 +299,12 @@ public class CIndex implements IIndex {
 		return getFile(result.getLinkageID(), result.getLocation(), result.getSignificantMacros());
 	}
 
+	@Override
 	public IIndexInclude[] findIncludedBy(IIndexFile file) throws CoreException {
 		return findIncludedBy(file, 0);
 	}
 
+	@Override
 	public IIndexInclude[] findIncludedBy(IIndexFile file, int depth) throws CoreException {
 		List<IIndexInclude> result= new ArrayList<IIndexInclude>();
 		findIncludedBy(file.getLinkageID(), Collections.singletonList(file), result, depth,
@@ -326,10 +340,12 @@ public class CIndex implements IIndex {
 		findIncludedBy(linkageID, nextLevel, out, depth, handled);
 	}
 
+	@Override
 	public IIndexInclude[] findIncludes(IIndexFile file) throws CoreException {
 		return findIncludes(file, 0);
 	}
 
+	@Override
 	public IIndexInclude[] findIncludes(IIndexFile file, int depth) throws CoreException {
 		List<IIndexInclude> result= new ArrayList<IIndexInclude>();
 		findIncludes(Collections.singletonList(file), result, depth, new HashSet<Object>());
@@ -365,6 +381,7 @@ public class CIndex implements IIndex {
 		findIncludes(nextLevel, out, depth, handled);
 	}
 
+	@Override
 	public synchronized void acquireReadLock() throws InterruptedException {
 		if (++fReadLock == 1) {
 			int i= 0;
@@ -384,6 +401,7 @@ public class CIndex implements IIndex {
 		}
 	}
 
+	@Override
 	public synchronized void releaseReadLock() {
 		if (--fReadLock == 0) {
 			for (IIndexFragment fragment : fFragments) {
@@ -396,6 +414,7 @@ public class CIndex implements IIndex {
 		return fReadLock;
 	}
 
+	@Override
 	public boolean hasWaitingReaders() {
 		for (IIndexFragment fragment : fFragments) {
 			if (fragment.hasWaitingReaders()) {
@@ -405,6 +424,7 @@ public class CIndex implements IIndex {
 		return false;
 	}
 
+	@Override
 	public long getLastWriteAccess() {
 		long result= 0;
 		for (IIndexFragment fragment : fFragments) {
@@ -413,6 +433,7 @@ public class CIndex implements IIndex {
 		return result;
 	}
 
+	@Override
 	public IIndexBinding[] findBindings(char[][] names, IndexFilter filter, IProgressMonitor monitor)
 			throws CoreException {
 		if (SPECIALCASE_SINGLES && fFragments.length == 1) {
@@ -449,10 +470,10 @@ public class CIndex implements IIndex {
 			}
 			monitor.done();
 			return flatten(result);
-
 		}
 	}
 
+	@Override
 	public IIndexBinding adaptBinding(IBinding binding) {
 		try {
 			if (SPECIALCASE_SINGLES && fFragments.length == 1) {
@@ -471,6 +492,7 @@ public class CIndex implements IIndex {
 		return null;
 	}
 
+	@Override
 	public IIndexBinding[] findBindings(char[] name, IndexFilter filter, IProgressMonitor monitor)
 			throws CoreException {
 		return findBindings(name, true, filter, monitor);
@@ -550,6 +572,7 @@ public class CIndex implements IIndex {
 		};
 	}
 
+	@Override
 	public IIndexBinding[] findBindingsForPrefix(char[] prefix, boolean filescope, IndexFilter filter,
 			IProgressMonitor monitor) throws CoreException {
 		if (SPECIALCASE_SINGLES && fFragments.length == 1) {
@@ -579,6 +602,7 @@ public class CIndex implements IIndex {
 		}
 	}
 
+	@Override
 	public IIndexBinding[] findBindingsForContentAssist(char[] prefix, boolean filescope,
 			IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		if (SPECIALCASE_SINGLES && fFragments.length == 1) {
@@ -608,6 +632,7 @@ public class CIndex implements IIndex {
 		}
 	}
 
+	@Override
 	public IIndexBinding[] findBindings(char[] name, boolean filescope, IndexFilter filter, IProgressMonitor monitor)
 			throws CoreException {
 		if (SPECIALCASE_SINGLES && fFragments.length == 1) {
@@ -637,10 +662,12 @@ public class CIndex implements IIndex {
 		}
 	}
 
+	@Override
 	public IIndexMacro[] findMacros(char[] name, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		return findMacros(name, false, true, filter, monitor);
 	}
 
+	@Override
 	public IIndexMacro[] findMacrosForPrefix(char[] name, IndexFilter filter, IProgressMonitor monitor)
 			throws CoreException {
 		return findMacros(name, true, false, filter, monitor);
@@ -648,7 +675,7 @@ public class CIndex implements IIndex {
 
 	private IIndexMacro[] findMacros(char[] name, boolean isPrefix, boolean caseSensitive,
 			IndexFilter filter, IProgressMonitor monitor) throws CoreException {
-		// macros can be represented multiple times when a header is parsed in c- and c++ context,
+		// Macros can be represented multiple times when a header is parsed in c- and c++ context,
 		// so there is no special case for indexes with single fragments.
 		if (monitor == null) {
 			monitor= new NullProgressMonitor();
@@ -708,10 +735,12 @@ public class CIndex implements IIndex {
 		}
 	}
 
+	@Override
 	public IIndexFileSet createFileSet() {
 		return new IndexFileSet();
 	}
 
+	@Override
 	public IIndexFile[] getAllFiles() throws CoreException {
 		HashMap<IIndexFileLocation, IIndexFile> result= new HashMap<IIndexFileLocation, IIndexFile>();
 		for (IIndexFragment fragment : fFragments) {
@@ -724,9 +753,7 @@ public class CIndex implements IIndex {
 		return result.values().toArray(new IIndexFile[result.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.index.IIndex#getInlineNamespaces()
-	 */
+	@Override
 	public IIndexScope[] getInlineNamespaces() throws CoreException {
 		if (SPECIALCASE_SINGLES && fFragments.length == 1) {
 			return fFragments[0].getInlineNamespaces();
@@ -740,7 +767,8 @@ public class CIndex implements IIndex {
 				arr[j]= (IIndexFragmentBinding) raw[j].getScopeBinding();
 			}
 		}
-		IIndexBinding[] compBinding = getCompositesFactory(ILinkage.CPP_LINKAGE_ID).getCompositeBindings(preresult);
+		IIndexBinding[] compBinding =
+				getCompositesFactory(ILinkage.CPP_LINKAGE_ID).getCompositeBindings(preresult);
 		IIndexScope[] result = new IIndexScope[compBinding.length];
 		for (int i = 0; i < result.length; i++) {
 			result[i]= (IIndexScope) ((ICPPNamespace) compBinding[i]).getNamespaceScope();

@@ -89,6 +89,7 @@ public class PDOMFile implements IIndexFragmentFile {
 			this.db = db;
 		}
 
+		@Override
 		public int compare(long record1, long record2) throws CoreException {
 			IString name1 = db.getString(db.getRecPtr(record1 + LOCATION_REPRESENTATION));
 			IString name2 = db.getString(db.getRecPtr(record2 + LOCATION_REPRESENTATION));
@@ -215,6 +216,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		sourceFile.delete();
 	}
 
+	@Override
 	public void transferIncluders(IIndexFragmentFile sourceFile) throws CoreException {
 		PDOMFile source= (PDOMFile) sourceFile;
 		PDOMInclude include = source.getFirstIncludedBy();
@@ -239,6 +241,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		}
 	}
 
+	@Override
 	public void transferContext(IIndexFragmentFile sourceFile) throws CoreException {
 		PDOMFile source= (PDOMFile) sourceFile;
 		PDOMInclude include = source.getFirstIncludedBy();
@@ -288,49 +291,59 @@ public class PDOMFile implements IIndexFragmentFile {
 		location= null;
 	}
 
+	@Override
 	public int getLinkageID() throws CoreException {
 		Database db = fLinkage.getDB();
 		return db.get3ByteUnsignedInt(record + LINKAGE_ID);
 	}
 
+	@Override
 	public long getTimestamp() throws CoreException {
 		Database db = fLinkage.getDB();
 		return db.getLong(record + TIME_STAMP);
 	}
 
+	@Override
 	public void setTimestamp(long timestamp) throws CoreException {
 		Database db= fLinkage.getDB();
 		db.putLong(record + TIME_STAMP, timestamp);
 	}
 
+	@Override
 	public long getContentsHash() throws CoreException {
 		Database db = fLinkage.getDB();
 		return db.getLong(record + CONTENT_HASH);
 	}
 
+	@Override
 	public void setContentsHash(long hash) throws CoreException {
 		Database db= fLinkage.getDB();
 		db.putLong(record + CONTENT_HASH, hash);
 	}
 
+	@Override
 	public int getScannerConfigurationHashcode() throws CoreException {
 		return 0;
 	}
 
+	@Override
 	public int getEncodingHashcode() throws CoreException {
 		Database db = fLinkage.getDB();
 		return db.getInt(record + ENCODING_HASH);
 	}
 
+	@Override
 	public void setEncodingHashcode(int hashcode) throws CoreException {
 		Database db= fLinkage.getDB();
 		db.putInt(record + ENCODING_HASH, hashcode);
 	}
 
+	@Override
 	public boolean hasPragmaOnceSemantics() throws CoreException {
 		return (fLinkage.getDB().getByte(record + FLAGS) & FLAG_PRAGMA_ONCE_SEMANTICS) != 0;
 	}
 
+	@Override
 	public void setPragmaOnceSemantics(boolean value) throws CoreException {
 		Database db = fLinkage.getDB();
 		byte flags = db.getByte(record + FLAGS);
@@ -377,6 +390,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		return rec != 0 ? new PDOMInclude(fLinkage, rec) : null;
 	}
 
+	@Override
 	public IIndexInclude getParsedInContext() throws CoreException {
 		return getFirstIncludedBy();
 	}
@@ -613,6 +627,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		}
 	}
 
+	@Override
 	public IIndexInclude[] getIncludes() throws CoreException {
 		List<PDOMInclude> result= new ArrayList<PDOMInclude>();
 		PDOMInclude include = getFirstInclude();
@@ -623,6 +638,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		return result.toArray(new IIndexInclude[result.size()]);
 	}
 
+	@Override
 	public IIndexMacro[] getMacros() throws CoreException {
 		List<PDOMMacro> result= new ArrayList<PDOMMacro>();
 		PDOMMacro macro = getFirstMacro();
@@ -633,10 +649,12 @@ public class PDOMFile implements IIndexFragmentFile {
 		return result.toArray(new IIndexMacro[result.size()]);
 	}
 
+	@Override
 	public IIndexFragment getIndexFragment() {
 		return fLinkage.getPDOM();
 	}
 
+	@Override
 	public IIndexName[] findNames(int offset, int length) throws CoreException {
 		ArrayList<IIndexName> result= new ArrayList<IIndexName>();
 		for (PDOMName name= getFirstName(); name != null; name= name.getNextInFile()) {
@@ -788,6 +806,7 @@ public class PDOMFile implements IIndexFragmentFile {
 			return records;
 		}
 
+		@Override
 		public int compare(long record) throws CoreException {
 			IString name = db.getString(db.getRecPtr(record + PDOMFile.LOCATION_REPRESENTATION));
 			int cmp= name.compare(rawKey, true);
@@ -810,6 +829,7 @@ public class PDOMFile implements IIndexFragmentFile {
 			return rec != 0 ? db.getString(rec) : null;
 		}
 
+		@Override
 		public boolean visit(long record) throws CoreException {
 			if (rawSignificantMacros != null) {
 				this.record = record;
@@ -836,6 +856,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		}
 	}
 
+	@Override
 	public IIndexFileLocation getLocation() throws CoreException {
 		if (location == null) {
 			Database db = fLinkage.getDB();
@@ -856,6 +877,7 @@ public class PDOMFile implements IIndexFragmentFile {
 	}
 
 	
+	@Override
 	public ISignificantMacros getSignificantMacros() throws CoreException {
 		if (sigMacros == null) {
 			Database db= fLinkage.getDB();
@@ -865,6 +887,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		return sigMacros;
 	}
 
+	@Override
 	public boolean hasContent() throws CoreException {
 		return getTimestamp() != -1;
 	}
@@ -890,9 +913,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		fLinkage.getDB().putRecPtr(record + LAST_USING_DIRECTIVE, rec);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.index.IIndexFile#getUsingDirectives()
-	 */
+	@Override
 	public ICPPUsingDirective[] getUsingDirectives() throws CoreException {
 		return fLinkage.getUsingDirectives(this);
 	}

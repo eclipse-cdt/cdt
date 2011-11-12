@@ -11,8 +11,6 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 
 import org.eclipse.jface.action.Action;
@@ -47,8 +45,11 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPartListener2;
+import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PartInitException;
@@ -91,7 +92,6 @@ import org.eclipse.cdt.internal.ui.viewsupport.WorkingSetFilterUI;
  * The view part for the include browser.
  */
 public class CHViewPart extends ViewPart {
-	private static final int MAX_HISTORY_SIZE = 10;
     private static final String TRUE = String.valueOf(true);
     private static final String KEY_WORKING_SET_FILTER = "workingSetFilter"; //$NON-NLS-1$
     private static final String KEY_FILTER_VARIABLES = "variableFilter"; //$NON-NLS-1$
@@ -101,8 +101,6 @@ public class CHViewPart extends ViewPart {
     private boolean fShowsMessage;
     private CHNode fNavigationNode;
     private int fNavigationDetail;
-    
-	private ArrayList<ICElement> fHistoryEntries= new ArrayList<ICElement>(MAX_HISTORY_SIZE);
 
     // widgets
     private PageBook fPagebook;
@@ -131,6 +129,7 @@ public class CHViewPart extends ViewPart {
 	private Action fHistoryAction;
 	private Action fShowReference;
 	private Action fOpenElement;
+	private Action fPinViewAction;
 	private CopyTreeAction fCopyAction;
 	
 	// action groups
@@ -138,6 +137,8 @@ public class CHViewPart extends ViewPart {
 	private SelectionSearchGroup fSelectionSearchGroup;
 	private CRefactoringActionGroup fRefactoringActionGroup;
 	private IContextActivation fContextActivation;
+	private boolean fIsPinned = false;
+	private IPartListener2 fPartListener;
     
     @Override
 	public void setFocus() {
@@ -171,7 +172,7 @@ public class CHViewPart extends ViewPart {
         fTreeViewer.setInput(input);
         fPagebook.showPage(fViewerPage);
         updateDescription();
-    	updateHistory(input);
+    	CallHierarchyUI.updateHistory(input);
     	updateActionEnablement();
     }
 
@@ -218,8 +219,48 @@ public class CHViewPart extends ViewPart {
     	}
 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(fPagebook, ICHelpContextIds.CALL_HIERARCHY_VIEW);
+		addPartListener();
 	}
 	
+	private void addPartListener() {
+		fPartListener= new IPartListener2() {
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
+			 */
+			@Override
+			public void partActivated(IWorkbenchPartReference partRef) {
+				if (isThisView(partRef))
+					CallHierarchyUI.callHierarchyViewActivated(CHViewPart.this);
+			}
+
+			@Override
+			public void partBroughtToTop(IWorkbenchPartReference partRef) { }
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
+			 */
+			@Override
+			public void partClosed(IWorkbenchPartReference partRef) {
+				if (isThisView(partRef)) {
+					CallHierarchyUI.callHierarchyViewClosed(CHViewPart.this);
+				}
+			}
+
+			@Override
+			public void partDeactivated(IWorkbenchPartReference partRef) {}
+			@Override
+			public void partOpened(IWorkbenchPartReference partRef) { }
+			@Override
+			public void partHidden(IWorkbenchPartReference partRef) { }
+			@Override
+			public void partVisible(IWorkbenchPartReference partRef) { }
+			@Override
+			public void partInputChanged(IWorkbenchPartReference partRef) { }
+		};
+		getViewSite().getPage().addPartListener(fPartListener);
+		
+	}
+
 	@Override
 	public void dispose() {
 		if (fContextActivation != null) {
@@ -244,6 +285,10 @@ public class CHViewPart extends ViewPart {
 		if (fWorkingSetFilterUI != null) {
 			fWorkingSetFilterUI.dispose();
 			fWorkingSetFilterUI= null;
+		}
+		if (fPartListener != null) {
+			getViewSite().getPage().removePartListener(fPartListener);
+			fPartListener= null;
 		}
 		super.dispose();
 	}
@@ -276,6 +321,19 @@ public class CHViewPart extends ViewPart {
         super.init(site, memento);
     }
 
+	/**
+	 * Tells whether the given part reference references this view.
+	 * 
+	 * @param partRef the workbench part reference
+	 * @return <code>true</code> if the given part reference references this view
+	 */
+	private boolean isThisView(IWorkbenchPartReference partRef) {
+		if (!CUIPlugin.ID_CALL_HIERARCHY.equals(partRef.getId()))
+			return false;
+		String partRefSecondaryId = ((IViewReference)partRef).getSecondaryId();
+		String thisSecondaryId = getViewSite().getSecondaryId();
+		return thisSecondaryId == null && partRefSecondaryId == null || thisSecondaryId != null && thisSecondaryId.equals(partRefSecondaryId);
+	}
 
     @Override
 	public void saveState(IMemento memento) {
@@ -291,7 +349,8 @@ public class CHViewPart extends ViewPart {
         MenuManager manager = new MenuManager();
         manager.setRemoveAllWhenShown(true);
         manager.addMenuListener(new IMenuListener() {
-            public void menuAboutToShow(IMenuManager m) {
+            @Override
+			public void menuAboutToShow(IMenuManager m) {
                 onContextMenuAboutToShow(m);
             }
         });
@@ -315,6 +374,7 @@ public class CHViewPart extends ViewPart {
         fTreeViewer.setLabelProvider(new DecoratingCLabelProvider(fLabelProvider));
         fTreeViewer.setAutoExpandLevel(2);     
         fTreeViewer.addOpenListener(new IOpenListener() {
+			@Override
 			public void open(OpenEvent event) {
             	onShowSelectedReference(event.getSelection());
             }
@@ -484,6 +544,7 @@ public class CHViewPart extends ViewPart {
         fHistoryAction = new CHHistoryDropDownAction(this);
 
         fCopyAction= new CopyCallHierarchyAction(this, fTreeViewer);
+        fPinViewAction= new CHPinAction(this);
 
         // setup action bar
         // global action hooks
@@ -509,6 +570,7 @@ public class CHViewPart extends ViewPart {
         tm.add(fMakesReferenceToAction);
 		tm.add(fHistoryAction);
         tm.add(fRefreshAction);
+        tm.add(fPinViewAction);
 
         // local menu
         IMenuManager mm = actionBars.getMenuManager();
@@ -608,16 +670,6 @@ public class CHViewPart extends ViewPart {
         fTreeViewer.refresh();
     }
 
-    private void updateHistory(ICElement input) {
-    	if (input != null) {
-    		fHistoryEntries.remove(input);
-    		fHistoryEntries.add(0, input);
-    		if (fHistoryEntries.size() > MAX_HISTORY_SIZE) {
-    			fHistoryEntries.remove(MAX_HISTORY_SIZE-1);
-    		}
-    	}
-	}
-
     private void updateSorter() {
         if (fReferencedByAction.isChecked()) {
             fTreeViewer.setComparator(fSorterAlphaNumeric);
@@ -662,7 +714,7 @@ public class CHViewPart extends ViewPart {
     }
     
 	private void updateActionEnablement() {
-		fHistoryAction.setEnabled(!fHistoryEntries.isEmpty());
+		fHistoryAction.setEnabled(CallHierarchyUI.getHistoryEntries().length > 0);
 		fNextAction.setEnabled(!fShowsMessage);
 		fPreviousAction.setEnabled(!fShowsMessage);
 		fRefreshAction.setEnabled(!fShowsMessage);
@@ -782,16 +834,7 @@ public class CHViewPart extends ViewPart {
 	public Control getPageBook() {
 		return fPagebook;
 	}
-
-	public ICElement[] getHistoryEntries() {
-		return fHistoryEntries.toArray(new ICElement[fHistoryEntries.size()]);
-	}
-
-	public void setHistoryEntries(ICElement[] remaining) {
-		fHistoryEntries.clear();
-		fHistoryEntries.addAll(Arrays.asList(remaining));
-	}
-
+	
 	public ICElement getInput() {
         Object input= fTreeViewer.getInput();
         if (input instanceof ICElement) {
@@ -808,5 +851,23 @@ public class CHViewPart extends ViewPart {
 		public CopyCallHierarchyAction(ViewPart view, TreeViewer viewer) {
 			super(CHMessages.CHViewPart_CopyCallHierarchy_label, view, viewer);
 		}
+	}
+	
+	/**
+	 * Marks the view as pinned.
+	 * 
+	 * @param pinned if <code>true</code> the view is marked as pinned
+	 */
+	void setPinned(boolean pinned) {
+		fIsPinned= pinned;
+	}
+	
+	/**
+	 * Indicates whether the Call Hierarchy view is pinned.
+	 * 
+	 * @return <code>true</code> if the view is pinned, <code>false</code> otherwise
+	 */
+	boolean isPinned() {
+		return fIsPinned;
 	}
 }

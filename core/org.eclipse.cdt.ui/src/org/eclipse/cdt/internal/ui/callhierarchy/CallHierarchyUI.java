@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -18,6 +23,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -57,6 +63,15 @@ public class CallHierarchyUI {
 	private static final ICElement[] NO_ELEMENTS = {};
 	private static boolean sIsJUnitTest= false;
 
+	/**
+	 * List of the Call Hierarchy views in LRU order, where the most recently used view is at index 0.
+	 */
+	private static List<CHViewPart> fLRUCallHierarchyViews= new ArrayList<CHViewPart>();
+	private static int fViewCount = 0;
+	
+	private static final int MAX_HISTORY_SIZE = 10;
+	private static List<ICElement> fHistoryEntries= new ArrayList<ICElement>(MAX_HISTORY_SIZE);
+	
 	public static void setIsJUnitTest(boolean val) {
 		sIsJUnitTest= val;
 	}
@@ -87,9 +102,19 @@ public class CallHierarchyUI {
     private static CHViewPart internalOpen(IWorkbenchWindow window, ICElement input) {
         IWorkbenchPage page= window.getActivePage();
         try {
-            CHViewPart result= (CHViewPart) page.showView(CUIPlugin.ID_CALL_HIERARCHY);
-            result.setInput(input);
-            return result;
+        	CHViewPart viewPart = findLRUCallHierarchyViewPart(page); //find the first view which is not pinned
+        	String secondaryId = null;
+			if (viewPart == null) {
+				if (page.findViewReference(CUIPlugin.ID_CALL_HIERARCHY) != null) { //all the current views are pinned, open a new instance
+					secondaryId = String.valueOf(++fViewCount);
+				}
+			} else {
+				secondaryId = viewPart.getViewSite().getSecondaryId();
+			}
+        	
+			viewPart = (CHViewPart) page.showView(CUIPlugin.ID_CALL_HIERARCHY, secondaryId, IWorkbenchPage.VIEW_ACTIVATE);
+			viewPart.setInput(input);
+            return viewPart;
         } catch (CoreException e) {
             ExceptionHandler.handle(e, window.getShell(), CHMessages.OpenCallHierarchyAction_label, null);
         }
@@ -331,4 +356,88 @@ public class CallHierarchyUI {
 		}
 		return false;
 	}
+	
+		
+	/**
+	 * Adds the activated view part to the head of the list.
+	 * 
+	 * @param view the Call Hierarchy view part
+	 */
+	static void callHierarchyViewActivated(CHViewPart view) {
+		fLRUCallHierarchyViews.remove(view);
+		fLRUCallHierarchyViews.add(0, view);
+	}
+
+	/**
+	 * Removes the closed view part from the list.
+	 * 
+	 * @param view the closed view part
+	 */
+	static void callHierarchyViewClosed(CHViewPart view) {
+		fLRUCallHierarchyViews.remove(view);
+	}
+	
+	/**
+	 * Clears the history and updates all the open views.
+	 */
+	static void clearHistory() {
+		setHistoryEntries(new ICElement[0]);
+		for (Iterator<CHViewPart> iter= fLRUCallHierarchyViews.iterator(); iter.hasNext();) {
+			CHViewPart part= iter.next();
+			part.setInput(null);
+		}
+	}
+	
+	/**
+	 * Finds the first Call Hierarchy view part instance that is not pinned.
+	 * 
+	 * @param page the active page
+	 * @return the Call Hierarchy view part to open or <code>null</code> if none found
+	 */
+	private static CHViewPart findLRUCallHierarchyViewPart(IWorkbenchPage page) {
+		boolean viewFoundInPage= false;
+		for (Iterator<CHViewPart> iter= fLRUCallHierarchyViews.iterator(); iter.hasNext();) {
+			CHViewPart view= iter.next();
+			if (page.equals(view.getSite().getPage())) {
+				if (!view.isPinned()) {
+					return view;
+				}
+				viewFoundInPage= true;
+			}
+		}
+		if (!viewFoundInPage) {
+			// find unresolved views
+			IViewReference[] viewReferences= page.getViewReferences();
+			for (int i= 0; i < viewReferences.length; i++) {
+				IViewReference curr= viewReferences[i];
+				if (CUIPlugin.ID_CALL_HIERARCHY.equals(curr.getId()) && page.equals(curr.getPage())) {
+					CHViewPart view= (CHViewPart)curr.getView(true);
+					if (view != null && !view.isPinned()) {
+						return view;
+					}
+				}
+			}
+		}
+		return null;
+	}
+	
+	static public ICElement[] getHistoryEntries() {
+		return fHistoryEntries.toArray(new ICElement[fHistoryEntries.size()]);
+	}
+	
+	static public void setHistoryEntries(ICElement[] remaining) {
+		fHistoryEntries.clear();
+		fHistoryEntries.addAll(Arrays.asList(remaining));
+	}
+	
+	static public void updateHistory(ICElement input) {
+    	if (input != null) {
+    		fHistoryEntries.remove(input);
+    		fHistoryEntries.add(0, input);
+    		if (fHistoryEntries.size() > MAX_HISTORY_SIZE) {
+    			fHistoryEntries.remove(MAX_HISTORY_SIZE-1);
+    		}
+    	}
+	}
+
 }

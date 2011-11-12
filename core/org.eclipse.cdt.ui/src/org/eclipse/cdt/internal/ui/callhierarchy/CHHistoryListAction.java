@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,13 +53,16 @@ public class CHHistoryListAction extends Action {
 			};
 					
 			IListAdapter<ICElement> adapter= new IListAdapter<ICElement>() {
+				@Override
 				public void customButtonPressed(ListDialogField<ICElement> field, int index) {
 					doCustomButtonPressed();
 				}
+				@Override
 				public void selectionChanged(ListDialogField<ICElement> field) {
 					doSelectionChanged();
 				}
 				
+				@Override
 				public void doubleClicked(ListDialogField<ICElement> field) {
 					doDoubleClicked();
 				}				
@@ -171,10 +174,10 @@ public class CHHistoryListAction extends Action {
 	 */
 	@Override
 	public void run() {
-		ICElement[] historyEntries= fView.getHistoryEntries();
+		ICElement[] historyEntries= CallHierarchyUI.getHistoryEntries();
 		HistoryListDialog dialog= new HistoryListDialog(fView.getSite().getShell(), historyEntries);
 		if (dialog.open() == Window.OK) {
-			fView.setHistoryEntries(dialog.getRemaining());
+			CallHierarchyUI.setHistoryEntries(dialog.getRemaining());
 			fView.setInput(dialog.getResult());
 		}
 	}

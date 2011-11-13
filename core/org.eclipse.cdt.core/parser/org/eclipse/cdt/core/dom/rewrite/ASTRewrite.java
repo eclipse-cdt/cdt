@@ -200,8 +200,8 @@ public final class ASTRewrite {
 	 * the resulting text edit object will accurately reflect the net cumulative affect of all those changes.
 	 * </p>
 	 * 
-	 * @return Change object describing the changes to the
-	 * document corresponding to the changes recorded by this rewriter
+	 * @return Change object describing the changes to the document corresponding to the changes
+	 *     recorded by this rewriter
 	 * @since 5.0
 	 */
 	public Change rewriteAST() {

@@ -68,6 +68,7 @@ public class ASTModificationHelper {
 				break;	
 				
 			case REPLACE:
+				break;
 			}
 		}
 		

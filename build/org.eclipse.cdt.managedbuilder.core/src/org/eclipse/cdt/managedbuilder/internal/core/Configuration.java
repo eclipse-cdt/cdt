@@ -2268,12 +2268,9 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	
 	/**
 	 * Sets maximum number of parallel threads/jobs to be used by builder.
-	 * Note that the number will be set only if the builder is in "parallel"
-	 * mode.
 	 * 
-	 * @param jobs - maximum number of jobs or threads. If the number is 0
-	 *    or negative, "optimal" number will be set,
-	 *    see {@link Builder#getOptimalParallelJobNum()}.
+	 * @param jobs - maximum number of jobs or threads. For details how
+	 *    the number is interpreted see {@link Builder#setParallelizationNum(int)}.
 	 */
 	public void setParallelNumber(int jobs){
 		try {

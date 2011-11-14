@@ -80,12 +80,12 @@ public interface IBuilder extends IHoldsOptions, IMakeBuilderInfo {
 	static final String ATTRIBUTE_STOP_ON_ERR = "stopOnErr"; //$NON-NLS-1$
 	
 	static final String ATTRIBUTE_PARALLEL_BUILD_CMD = "parallelBuildCmd"; //$NON-NLS-1$
+	static final String ATTRIBUTE_PARALLEL_BUILD_ON = "parallelBuildOn"; //$NON-NLS-1$
 	static final String ATTRIBUTE_PARALLELIZATION_NUMBER = "parallelizationNumber"; //$NON-NLS-1$
 	/** @since 8.1 */
 	static final String VALUE_OPTIMAL = "optimal"; //$NON-NLS-1$
 	/** @since 8.1 */
 	static final String VALUE_UNLIMITED = "unlimited"; //$NON-NLS-1$
-	static final String ATTRIBUTE_PARALLEL_BUILD_ON = "parallelBuildOn"; //$NON-NLS-1$
 	static final String PARALLEL_PATTERN_NUM = "*"; //$NON-NLS-1$
 	static final String PARALLEL_PATTERN_NUM_START = "["; //$NON-NLS-1$
 	static final String PARALLEL_PATTERN_NUM_END = "]"; //$NON-NLS-1$

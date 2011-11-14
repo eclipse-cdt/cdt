@@ -53,6 +53,7 @@ import org.eclipse.swt.widgets.Widget;
  */
 public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 	private static final int SPINNER_MAX_VALUE = 10000;
+	private static final int SPINNER_MIN_VALUE = 2;
 	
 	private static final int TRI_STATES_SIZE = 4;
 	// Widgets
@@ -153,7 +154,7 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 
 		s_parallelNumber = new Spinner(c3, SWT.BORDER);
 		setupControl(s_parallelNumber, 1, GridData.BEGINNING);
-		s_parallelNumber.setValues(cpuNumber, 1, SPINNER_MAX_VALUE, 0, 1, 10);
+		s_parallelNumber.setValues(cpuNumber, SPINNER_MIN_VALUE, SPINNER_MAX_VALUE, 0, 1, 10);
 		s_parallelNumber.addSelectionListener(new SelectionAdapter () {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -299,7 +300,7 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 					bldr.supportsStopOnError(true) &&
 					bldr.supportsStopOnError(false));
 		}
-		
+
 
 		updateParallelBlock();
 		

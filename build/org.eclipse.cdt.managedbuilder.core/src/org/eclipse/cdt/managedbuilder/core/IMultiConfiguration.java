@@ -49,11 +49,8 @@ public interface IMultiConfiguration extends IConfiguration, ICMultiItemsHolder 
 
 	/**
 	 * Sets maximum number of parallel threads/jobs to be used by each builder.
-	 * Note that the number will be set only if the builder is in "parallel"
-	 * mode.
 	 * 
-	 * @param jobs - maximum number of jobs or threads. If the number is 0
-	 *    or negative, negative "optimal" number will be set, see
+	 * @param jobs - maximum number of jobs or threads, see for more details
 	 *    {@link Builder#getOptimalParallelJobNum()}.
 	 */
 	void setParallelNumber(int jobs);

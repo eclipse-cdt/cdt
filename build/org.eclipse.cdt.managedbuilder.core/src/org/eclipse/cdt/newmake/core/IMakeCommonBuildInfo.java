@@ -50,12 +50,10 @@ public interface IMakeCommonBuildInfo {
 
 	/**
 	 * Sets maximum number of parallel threads/jobs to be used by builder.
-	 * Note that the number will be set only if the builder is in "parallel"
-	 * mode.
+	 * Note that this number can be interpreted by builder in a special way.
+	 * @see Builder#setParallelizationNum(int)
 	 * 
 	 * @param jobs - maximum number of jobs.
-	 *    Any number <=0 is treated as setting "optimal" property,
-	 *    the value of the number itself is ignored in this case.
 	 */
 	void setParallelizationNum(int jobs) throws CoreException;
 

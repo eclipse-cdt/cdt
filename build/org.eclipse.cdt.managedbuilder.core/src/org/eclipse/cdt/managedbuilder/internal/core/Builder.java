@@ -567,7 +567,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 			isParallelBuildEnabled = Boolean.valueOf(tmp);
 			if (isParallelBuildEnabled) {
 				tmp = element.getAttribute(ATTRIBUTE_PARALLELIZATION_NUMBER);
-				decodeParallelizationNumber(element.getAttribute(ATTRIBUTE_PARALLELIZATION_NUMBER));
+				setParallelizationNumAttribute(decodeParallelizationNumber(element.getAttribute(ATTRIBUTE_PARALLELIZATION_NUMBER)));
 			}
 		}
 
@@ -630,29 +630,31 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return jobsNumber.toString();
 	}
 
-	private void decodeParallelizationNumber(String value) {
+	private int decodeParallelizationNumber(String value) {
+		int parallelNumber = -1;
 		if (VALUE_OPTIMAL.equals(value)) {
-			parallelNumberAttribute = -getOptimalParallelJobNum();
+			parallelNumber = -getOptimalParallelJobNum();
 		} else if (VALUE_UNLIMITED.equals(value)) {
-			parallelNumberAttribute = UNLIMITED_JOBS;
+			parallelNumber = UNLIMITED_JOBS;
 		} else {
 			try {
-				parallelNumberAttribute = Integer.decode(value);
+				parallelNumber = Integer.decode(value);
 			} catch (NumberFormatException e) {
 				ManagedBuilderCorePlugin.log(e);
-				parallelNumberAttribute = getOptimalParallelJobNum();
+				parallelNumber = getOptimalParallelJobNum();
 			}
-			if (parallelNumberAttribute <= 0) {
+			if (parallelNumber <= 0) {
 				// compatibility with legacy representation - it was that inconsistent
 				if (isInternalBuilder()) {
 					// "optimal" for Internal Builder
-					parallelNumberAttribute = -getOptimalParallelJobNum();
+					parallelNumber = -getOptimalParallelJobNum();
 				} else {
 					// unlimited for External Builder
-					parallelNumberAttribute = UNLIMITED_JOBS;
+					parallelNumber = UNLIMITED_JOBS;
 				}
 			}
 		}
+		return parallelNumber;
 	}
 
 	/**
@@ -798,7 +800,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 			isParallelBuildEnabled = Boolean.valueOf(tmp);
 			if (isParallelBuildEnabled) {
 				tmp = element.getAttribute(ATTRIBUTE_PARALLELIZATION_NUMBER);
-				decodeParallelizationNumber(element.getAttribute(ATTRIBUTE_PARALLELIZATION_NUMBER));
+				setParallelizationNumAttribute(decodeParallelizationNumber(element.getAttribute(ATTRIBUTE_PARALLELIZATION_NUMBER)));
 			}
 		}
 
@@ -2526,7 +2528,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 	/**
 	 * Returns the internal representation of maximum number of parallel jobs
 	 * to be used for a build.
-	 * Note that "optimal" value is represented by negative number.
+	 * Note that negative number represents "optimal" value.
 	 * 
 	 * The value of the number is encoded as follows:
 	 * <pre>
@@ -2549,15 +2551,36 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		}
 		return parallelNumberAttribute.intValue();
 	}
-	
+
+	private void setParallelizationNumAttribute(int parallelNumber) {
+		isParallelBuildEnabled = (parallelNumber != 1);
+		if (parallelNumber > 0) {
+			parallelNumberAttribute = parallelNumber;
+		} else {
+			// "optimal"
+			parallelNumberAttribute = -getOptimalParallelJobNum();
+		}
+	}
+
 	@Override
 	public int getParallelizationNum() {
 		return Math.abs(getParallelizationNumAttribute());
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @param jobs - maximum number of jobs. There are 2 special cases:
+	 *    <br>- any number <=0 is interpreted as setting "optimal" property,
+	 *    the value of the number itself is ignored in this case
+	 *    <br>- value 1 will turn parallel mode off.
+	 */
 	@Override
 	public void setParallelizationNum(int jobs) throws CoreException {
-		if (isParallelBuildOn() && (parallelNumberAttribute == null || parallelNumberAttribute != jobs)) {
+		if (!supportsParallelBuild())
+			return;
+
+		if (parallelNumberAttribute == null || parallelNumberAttribute != jobs) {
 			String curCmd = getParallelizationCmd(getParallelizationNum());
 			String args = getArgumentsAttribute();
 			String updatedArgs = removeCmd(args, curCmd);
@@ -2565,12 +2588,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 				setArgumentsAttribute(updatedArgs);
 			}
 
-			if (jobs > 0) {
-				parallelNumberAttribute = jobs;
-			} else {
-				// "optimal"
-				parallelNumberAttribute = -getOptimalParallelJobNum();
-			}
+			setParallelizationNumAttribute(jobs);
 			setDirty(true);
 		}
 	}
@@ -2620,6 +2638,9 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 
 	@Override
 	public boolean isParallelBuildOn() {
+		if (!supportsParallelBuild()) {
+			return false;
+		}
 		if (isParallelBuildEnabled == null) {
 			if (superClass != null) {
 				return getSuperClass().isParallelBuildOn();
@@ -2639,27 +2660,12 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 	 */
 	@Override
 	public void setParallelBuildOn(boolean on) throws CoreException {
-		if (isParallelBuildOn() == on)
-			return;
-		if (on && !supportsParallelBuild())
-			return;
-
-		String curCmd = getParallelizationCmd(getParallelizationNum());
-		String args = getArgumentsAttribute();
-		String updatedArgs = removeCmd(args, curCmd);
-		if (!updatedArgs.equals(args)) {
-			setArgumentsAttribute(updatedArgs);
-		}
-
-		isParallelBuildEnabled = on;
-
-		if (isParallelBuildEnabled) {
-			// "optimal"
-			parallelNumberAttribute = -getOptimalParallelJobNum();
+		if (on) {
+			// set "optimal" jobs by default when enabling parallel build
+			setParallelizationNum(-1);
 		} else {
-			parallelNumberAttribute = 1;
+			setParallelizationNum(1);
 		}
-		setDirty(true);
 	}
 
 	public Set<String> contributeErrorParsers(Set<String> set){

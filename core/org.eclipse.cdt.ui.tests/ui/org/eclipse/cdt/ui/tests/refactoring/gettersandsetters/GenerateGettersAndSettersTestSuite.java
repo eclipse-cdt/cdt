@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Tom Ball (Google) - initial API and implementation
+ *     Tom Ball (Google) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.gettersandsetters;
 

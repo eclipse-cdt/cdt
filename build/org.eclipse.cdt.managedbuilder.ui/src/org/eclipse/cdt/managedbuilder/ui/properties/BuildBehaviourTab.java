@@ -172,7 +172,7 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 			public void widgetSelected(SelectionEvent event) {
 				if (b_parallelUnlimited.getSelection()) {
 					setParallelDef(true);
-					setParallelNumber(Integer.MAX_VALUE);
+					setParallelNumber(Builder.UNLIMITED_JOBS);
 					updateButtons();
 				}
 		 }});
@@ -347,9 +347,6 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 	private void updateParallelBlock() {
 		// note: for multi-config selection bldr is from Active cfg
 
-		boolean isAnyInternalBuilder = bldr.isInternalBuilder();
-		boolean isAnyExternalBuilder = ! bldr.isInternalBuilder();
-
 		boolean isParallelSupported = bldr.supportsParallelBuild();
 		boolean isParallelOn = bldr.isParallelBuildOn();
 		int triSelection = isParallelOn ? TRI_YES : TRI_NO;
@@ -357,7 +354,6 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 		int parallelizationNumInternal = bldr.getParallelizationNumAttribute();
 		int optimalParallelNumber = bldr.getOptimalParallelJobNum();
 		int parallelNumber = bldr.getParallelizationNum();
-		boolean isUnlimited = parallelizationNumInternal == Integer.MAX_VALUE;
 
 		if (icfg instanceof ICMultiItemsHolder) { 
 			IConfiguration[] cfgs = (IConfiguration[])((ICMultiItemsHolder)icfg).getItems();
@@ -372,19 +368,15 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 				
 				isAnyParallelOn = isAnyParallelOn || builder.isParallelBuildOn();
 				isAnyParallelSupported = isAnyParallelSupported || builder.supportsParallelBuild();
-				isAnyInternalBuilder = isAnyInternalBuilder || builder.isInternalBuilder();
-				isAnyExternalBuilder = isAnyExternalBuilder || !builder.isInternalBuilder();
 			}
 
 			// reset initial display to "optimal" to enhance user experience:
 			if ((!isParallelSupported && isAnyParallelSupported) // parallel is supported by other than Active cfg
-				|| (!isParallelOn && isAnyParallelOn) // prevent showing the 1 job as parallel in the spinner
-				|| (isUnlimited && isAnyInternalBuilder) // can't show "unlimited" as it won't be selectable if Internal Builder present
+					|| (!isParallelOn && isAnyParallelOn) // prevent showing the 1 job as parallel in the spinner
 				) {
 				isParallelSupported = true;
 				parallelizationNumInternal = -optimalParallelNumber;
 				parallelNumber = optimalParallelNumber;
-				isUnlimited = false;
 			}
 			if (isParallelSupported && isParallelDiffers) {
 				triSelection = TRI_UNKNOWN;
@@ -394,7 +386,7 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 		b_parallel.setVisible(isParallelSupported);
 		b_parallelOptimal.setVisible(isParallelSupported);
 		b_parallelSpecific.setVisible(isParallelSupported);
-		b_parallelUnlimited.setVisible(isParallelSupported && isAnyExternalBuilder);
+		b_parallelUnlimited.setVisible(isParallelSupported);
 		s_parallelNumber.setVisible(isParallelSupported);
 
 		if (isParallelSupported) {
@@ -404,10 +396,11 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 			b_parallelOptimal.setText(MessageFormat.format(Messages.BuilderSettingsTab_UseOptimalJobs, optimalParallelNumber));
 			b_parallelOptimal.setEnabled(isParallelSelected);
 			b_parallelSpecific.setEnabled(isParallelSelected);
-			b_parallelUnlimited.setEnabled(isParallelSelected && !isAnyInternalBuilder);
+			b_parallelUnlimited.setEnabled(isParallelSelected);
 	
 			if (isParallelSelected) {
 				boolean isOptimal = parallelizationNumInternal <= 0;
+				boolean isUnlimited = parallelizationNumInternal == Builder.UNLIMITED_JOBS;
 				
 				b_parallelOptimal.setSelection(isOptimal);
 				b_parallelSpecific.setSelection(!isOptimal && !isUnlimited);

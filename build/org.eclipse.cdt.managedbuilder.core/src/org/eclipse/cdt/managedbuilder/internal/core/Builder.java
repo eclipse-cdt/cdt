@@ -64,7 +64,6 @@ import org.eclipse.cdt.managedbuilder.macros.IReservedMacroNameSupplier;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator2;
 import org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator;
-import org.eclipse.cdt.newmake.core.IMakeCommonBuildInfo;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.Assert;
@@ -81,6 +80,7 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.osgi.framework.Version;
 
 public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider<Builder>, IRealBuildObjectAssociation  {
+	public static final int UNLIMITED_JOBS = Integer.MAX_VALUE;
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	//  Superclass
@@ -624,7 +624,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		if (jobsNumber <= 0)
 			return VALUE_OPTIMAL;
 		
-		if (jobsNumber.equals(Integer.MAX_VALUE))
+		if (jobsNumber.equals(UNLIMITED_JOBS))
 			return VALUE_UNLIMITED;
 		
 		return jobsNumber.toString();
@@ -634,12 +634,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		if (VALUE_OPTIMAL.equals(value)) {
 			parallelNumberAttribute = -getOptimalParallelJobNum();
 		} else if (VALUE_UNLIMITED.equals(value)) {
-			if (!isInternalBuilder()) {
-				parallelNumberAttribute = Integer.MAX_VALUE;
-			} else {
-				ManagedBuilderCorePlugin.error("'unlimited' number of jobs is not allowed for Internal Builder, switching to 'optimal'");
-				parallelNumberAttribute = -getOptimalParallelJobNum();
-			}
+			parallelNumberAttribute = UNLIMITED_JOBS;
 		} else {
 			try {
 				parallelNumberAttribute = Integer.decode(value);
@@ -654,7 +649,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 					parallelNumberAttribute = -getOptimalParallelJobNum();
 				} else {
 					// unlimited for External Builder
-					parallelNumberAttribute = Integer.MAX_VALUE;
+					parallelNumberAttribute = UNLIMITED_JOBS;
 				}
 			}
 		}
@@ -1176,7 +1171,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		}
 		// "unlimited" number of jobs results in not adding the number to parallelization cmd
 		// that behavior corresponds that of "make" flag "-j".
-		return processParallelPattern(pattern, num == Integer.MAX_VALUE, num);
+		return processParallelPattern(pattern, num == UNLIMITED_JOBS, num);
 	}
 	
 	/**
@@ -2537,9 +2532,9 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 	 * <pre>
 	 *  Status       Returns
 	 * No parallel      1       
-	 * Optimal       -CPU#       (negative number of processors) 
-	 * Specific        >0        (positive number)
-	 * Unlimited    Integer.MAX  (N/A for Internal Builder)
+	 * Optimal       -CPU# (negative number of processors) 
+	 * Specific        >0  (positive number)
+	 * Unlimited    Builder.UNLIMITED_JOBS
 	 * </pre>
 	 */
 	public int getParallelizationNumAttribute() {
@@ -2570,10 +2565,6 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 				setArgumentsAttribute(updatedArgs);
 			}
 
-			if (jobs == Integer.MAX_VALUE && isInternalBuilder()) {
-				// Internal Builder does not support "unlimited" jobs, switching to "optimal"
-				jobs = -1;
-			}
 			if (jobs > 0) {
 				parallelNumberAttribute = jobs;
 			} else {

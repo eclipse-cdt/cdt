@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Vector;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildCommand;
@@ -212,9 +213,10 @@ public class ParallelBuilder {
 		builder.enqueueAll(des);
 		builder.sortQueue();
 		monitor.beginTask("", builder.queue.size()); //$NON-NLS-1$
-		builder.dispatch(new BuildProcessManager(out, err, true, threads));
+		BuildProcessManager buildProcessManager = new BuildProcessManager(out, err, true, threads);
+		builder.dispatch(buildProcessManager);
+		lastThreadsUsed = buildProcessManager.getThreadsUsed();
 		monitor.done();
-		lastThreadsUsed = threads;
 		return IBuildModelBuilder.STATUS_OK;
 	}
 	
@@ -293,10 +295,8 @@ public class ParallelBuilder {
 	 * Dispatches the build queue and returns build status
 	 */
 	protected int dispatch(BuildProcessManager mgr) {
-		ActiveBuildStep[] active = new ActiveBuildStep[mgr.getMaxProcesses()];
-		for (int i = 0; i < active.length; i++) {
-			active[i] = null; // new ActiveBuildStep();
-		}
+		int maxProcesses = mgr.getMaxProcesses();
+		Vector<ActiveBuildStep> active = new Vector<ActiveBuildStep>(Math.min(maxProcesses, 10), 10);
 		
 		int activeCount = 0;
 		int maxLevel = 0;
@@ -330,9 +330,8 @@ public class ParallelBuilder {
 				proceed = false;
 			} else {
 				// Check "active steps" list for completed ones
-				for (int i = 0; i < active.length; i++) {
-					if (active[i] == null) continue;
-					ProcessLauncher pl = active[i].getLauncher();
+				for (ActiveBuildStep buildStep : active) {
+					ProcessLauncher pl = buildStep.getLauncher();
 					if (pl == null) continue; 
 					if (pl.queryState() == ProcessLauncher.STATE_DONE) {
 						// If process has terminated with error, break loop
@@ -343,8 +342,8 @@ public class ParallelBuilder {
 							break main_loop;
 						}
 						// Try to launch next command for the current active step
-						if (active[i].isDone()) continue;
-						if (active[i].launchNextCmd(mgr)) {
+						if (buildStep.isDone()) continue;
+						if (buildStep.launchNextCmd(mgr)) {
 							// Command has been launched. Check if process pool is not maximized yet
 							if (!mgr.hasEmpty()) {
 								proceed = false;
@@ -352,7 +351,7 @@ public class ParallelBuilder {
 							}
 						} else {
 							// Command has not been launched: step complete
-							refreshOutputs(active[i].getStep());
+							refreshOutputs(buildStep.getStep());
 							activeCount--;
 							monitor.worked(1);
 						}
@@ -371,7 +370,7 @@ public class ParallelBuilder {
 			}
 			
 			// Check if we need to schedule another process
-			if (queue.size() != 0 && activeCount < active.length) {
+			if (queue.size() != 0 && activeCount < maxProcesses) {
 				// Need to schedule another process 
 				Iterator<BuildQueueElement> iter = queue.iterator();
 
@@ -379,8 +378,8 @@ public class ParallelBuilder {
 				while (iter.hasNext()) {
 					BuildQueueElement elem = iter.next();
 					
-					// If "active steps" list is full, then break loop
-					if (activeCount == active.length)
+					// If "active steps" list reaches maximum, then break loop
+					if (activeCount == maxProcesses)
 						break;
 					
 					// If current element's level exceeds maximum level of currently built
@@ -389,14 +388,13 @@ public class ParallelBuilder {
 						break;
 
 					//Check if all prerequisites are built
-					IBuildResource[] res = elem.getStep().getInputResources();
 					boolean prereqBuilt = true;
-					for (int j = 0; j < res.length; j++) {
-						IBuildStep stp = res[j].getProducerStep(); // step which produces input for curr
+					for (IBuildResource bldRes : elem.getStep().getInputResources()) {
+						IBuildStep step = bldRes.getProducerStep(); // step which produces input for curr
 						boolean built = true;
-						if (stp != stp.getBuildDescription().getInputStep()) {
-							for (int k = 0; k < active.length; k++) {
-								if (active[k] != null && active[k].getStep().equals(stp) && !active[k].isDone()) {
+						if (step != step.getBuildDescription().getInputStep()) {
+							for (ActiveBuildStep buildStep : active) {
+								if (buildStep != null && buildStep.getStep().equals(step) && !buildStep.isDone()) {
 									built = false;
 									break;
 								}
@@ -415,10 +413,21 @@ public class ParallelBuilder {
 						// Remove element from the build queue and add it to the
 						// "active steps" list.
 						iter.remove();
-						for (int i = 0; i < active.length; i++) {
-							if (active[i] == null || active[i].isDone()) {
-								active[i] = new ActiveBuildStep(step);
-								if (active[i].launchNextCmd(mgr)) activeCount++;
+						for (int i = 0; i < maxProcesses; i++) {
+							if (i >= active.size()) {
+								// add new item
+								ActiveBuildStep buildStep = new ActiveBuildStep(step);
+								active.add(buildStep);
+								if (buildStep.launchNextCmd(mgr))
+									activeCount++;
+								break;
+							}
+							if (active.get(i).isDone()) {
+								// replace old item
+								ActiveBuildStep buildStep = new ActiveBuildStep(step);
+								active.set(i, buildStep);
+								if (buildStep.launchNextCmd(mgr))
+									activeCount++;
 								break;
 							}
 						}

@@ -75,27 +75,11 @@ public class DefaultFileServiceCodePageConverter implements
 					bufInputStream.read(buffer, 0, fileLength);
 					bufInputStream.close();
 					inputStream.close();
-					
-					ByteBuffer rmtBuf = ByteBuffer.wrap(buffer, 0, fileLength);
-						
-					// convert from the remote encoding
-					CharBuffer decodedBuf = null;
-					decodedBuf = rmtDecoder.decode(rmtBuf);
-					// for conversion to the local encoding
-					Charset charset = Charset.forName(localEncoding);
-					CharsetEncoder encoder = charset.newEncoder();
-					byte[] localBuffer = null;
-					// convert to the specified local encoding
-					ByteBuffer lclBuf = encoder.encode(decodedBuf);
-					localBuffer = lclBuf.array();
-
-					// use the limit rather than the array length to avoid unwanted nulls
 					outStream = new FileOutputStream(file);
-					outStream.write(localBuffer, 0, lclBuf.limit());
+					convertBuffer(buffer, rmtDecoder, fileLength, localEncoding, outStream);
 				}
 				else { // read and write sections of file at a time
 					int inOffset = 0;
-					int outOffset = 0;
 					
 					File altFile = new File(file.getAbsolutePath() + "~"); //$NON-NLS-1$
 					outStream = new FileOutputStream(altFile); // using alternate file because we're writing while reading
@@ -104,28 +88,10 @@ public class DefaultFileServiceCodePageConverter implements
 						if (inOffset +  MAX_READ > fileLength){
 							readSize = fileLength - inOffset;
 						}
-						
 						byte[] buffer = new byte[readSize];
 						inputStream.read(buffer, 0, readSize);
 						inOffset += readSize;
-						ByteBuffer rmtBuf = ByteBuffer.wrap(buffer, 0, readSize);		
-						
-						// convert from the remote encoding
-						CharBuffer decodedBuf = null;
-						decodedBuf = rmtDecoder.decode(rmtBuf);
-
-						// for conversion to the local encoding
-						Charset charset = Charset.forName(localEncoding);
-						CharsetEncoder encoder = charset.newEncoder();
-						byte[] localBuffer = null;
-						// convert to the specified local encoding
-						ByteBuffer lclBuf = encoder.encode(decodedBuf);
-						localBuffer = lclBuf.array();
-											
-						// use the limit rather than the array length to avoid unwanted nulls
-						int writeSize = lclBuf.limit();
-						outStream.write(localBuffer, 0, writeSize);
-						outOffset += writeSize;
+						convertBuffer(buffer, rmtDecoder, readSize, localEncoding, outStream);
 					}
 					inputStream.close();	
 					outStream.close();
@@ -150,6 +116,27 @@ public class DefaultFileServiceCodePageConverter implements
 				}
 			}
 		}
+	}
+	
+	private void convertBuffer(byte[] buffer, CharsetDecoder rmtDecoder, int readSize, String localEncoding, FileOutputStream outStream) throws Exception{
+		ByteBuffer rmtBuf = ByteBuffer.wrap(buffer, 0, readSize);		
+		
+		// convert from the remote encoding
+		CharBuffer decodedBuf = null;
+		decodedBuf = rmtDecoder.decode(rmtBuf);
+
+		// for conversion to the local encoding
+		Charset charset = Charset.forName(localEncoding);
+		CharsetEncoder encoder = charset.newEncoder();
+		byte[] localBuffer = null;
+		
+		// convert to the specified local encoding
+		ByteBuffer lclBuf = encoder.encode(decodedBuf);
+		localBuffer = lclBuf.array();
+							
+		// use the limit rather than the array length to avoid unwanted nulls
+		int writeSize = lclBuf.limit();
+		outStream.write(localBuffer, 0, writeSize);
 	}
 
 	public boolean isServerEncodingSupported(String remoteEncoding,

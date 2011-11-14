@@ -14,7 +14,6 @@ import org.eclipse.cdt.core.settings.model.ICMultiItemsHolder;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildProperty;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
 import org.eclipse.cdt.managedbuilder.internal.core.Builder;
-import org.eclipse.cdt.newmake.core.IMakeCommonBuildInfo;
 
 /**
  * This class is to combine multiple configurations to one to support
@@ -26,12 +25,13 @@ import org.eclipse.cdt.newmake.core.IMakeCommonBuildInfo;
 public interface IMultiConfiguration extends IConfiguration, ICMultiItemsHolder {
 	
 	/**
-	 * Check if the configuration's builder is operating in parallel mode.
-	 * @return {@code true} if parallel mode is enabled, {@code false} otherwise.
+	 * Check if all configurations' builders are operating in parallel mode.
+	 * @return {@code true} if parallel mode is enabled for all configurations,
+	 *    {@code false} otherwise.
 	 */
 	boolean getParallelDef();
 	/**
-	 * Set parallel execution mode for the configuration's builder.
+	 * Set same parallel execution mode for all configurations' builders.
 	 * @see Builder#setParallelBuildOn(boolean)
 	 * 
 	 * @param parallel - the flag to enable or disable parallel mode.
@@ -39,18 +39,16 @@ public interface IMultiConfiguration extends IConfiguration, ICMultiItemsHolder 
 	void setParallelDef(boolean parallel);
 
 	/**
-	 * Returns maximum number of parallel threads/jobs used by the configuration's builder.
-	 * Note that this function can return negative value to indicate  "optimal" number.
-	 * 
+	 * Returns maximum number of parallel threads/jobs used by the configurations' builders.
 	 * @see #setParallelDef(boolean)
-	 * @see Builder#getParallelizationNum()
 	 * 
-	 * @return - maximum number of parallel threads or jobs used by the builder or negative number.
-	 *    For exact interpretation see table in {@link IMakeCommonBuildInfo#getParallelizationNum()}
+	 * @return - maximum number of parallel threads or jobs used by each builder or 0 if the numbers
+	 *    don't match. 
 	 */
 	int getParallelNumber();
+
 	/**
-	 * Sets maximum number of parallel threads/jobs to be used by builder.
+	 * Sets maximum number of parallel threads/jobs to be used by each builder.
 	 * Note that the number will be set only if the builder is in "parallel"
 	 * mode.
 	 * 
@@ -61,10 +59,9 @@ public interface IMultiConfiguration extends IConfiguration, ICMultiItemsHolder 
 	void setParallelNumber(int jobs);
 	
 	/**
-	 * returns the Internal Builder parallel mode
-	 * if true, internal builder will work in parallel mode 
-	 * otherwise it will use only one thread
-	 * @return boolean
+	 * Check if all configurations' internal builders are operating in parallel mode.
+	 * @return {@code true} if parallel mode is enabled for all configurations,
+	 *    {@code false} otherwise.
 	 * 
 	 * @deprecated since CDT 9.0. Use {@link #getParallelDef()}
 	 */

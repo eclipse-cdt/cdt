@@ -206,7 +206,7 @@ public class ParallelBuilder {
 		if(cwd == null)  cwd = des.getDefaultBuildDirLocation();
 		int threads = 1;
 		if (cfg instanceof Configuration) {
-			threads = Math.abs(((Configuration)cfg).getParallelNumber());
+			threads = ((Configuration)cfg).getParallelNumber();
 		}
 		ParallelBuilder builder = new ParallelBuilder(cwd, dirs, out, err, monitor, resumeOnErrors, buildIncrementally);
 		builder.enqueueAll(des);

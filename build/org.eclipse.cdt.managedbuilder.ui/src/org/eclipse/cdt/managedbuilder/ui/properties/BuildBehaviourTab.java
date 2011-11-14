@@ -25,7 +25,6 @@ import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.MultiConfiguration;
 import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.cdt.newmake.core.IMakeBuilderInfo;
-import org.eclipse.cdt.newmake.core.IMakeCommonBuildInfo;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.cdt.ui.newui.ICPropertyProvider;
 import org.eclipse.core.runtime.CoreException;
@@ -231,12 +230,12 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 	 *    0: isStopOnError
 	 *    1: supportsStopOnError(true)
 	 *    2: bld.supportsStopOnError(false)  
-	 *    3: cfg.getParallelDef()
+	 *    3: N/A
 	 * Mode 2:
 	 *    0: b.isAutoBuildEnable()
 	 *    1: b.isIncrementalBuildEnabled()
 	 *    2: b.isCleanBuildEnabled()
-	 *    3: getParallelDef()   
+	 *    3: N/A   
 	 */
 	 static int[] calc3states(ICPropertyProvider p, IConfiguration mcfg, int mode) {
 		if (p.isMultiCfg() && mcfg instanceof ICMultiItemsHolder) { 
@@ -253,8 +252,7 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 				(m1 ? bldr0.supportsStopOnError(true) : bldr0.isIncrementalBuildEnabled() );
 			b[2] = m0 ? bldr0.canKeepEnvironmentVariablesInBuildfile() : 
 				(m1 ? bldr0.supportsStopOnError(false) : bldr0.isCleanBuildEnabled());
-			b[3] = m0 ? bldr0.keepEnvironmentVariablesInBuildfile() : 
-				(m1 ? ((Configuration)cfgs[0]).getParallelDef() : getParallelDef(mcfg));
+			b[3] = m0 ? bldr0.keepEnvironmentVariablesInBuildfile() : false;
 			for (int i=1; i<cfgs.length; i++) {
 				IBuilder bldr = cfgs[i].getBuilder();
 				if (b[0] != (m0 ? bldr.isManagedBuildOn() : 
@@ -266,9 +264,7 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 				if (b[2] != (m0 ? bldr.canKeepEnvironmentVariablesInBuildfile() : 
 						(m1 ? bldr.supportsStopOnError(false) : bldr.isCleanBuildEnabled())))
 					res[2] = TRI_UNKNOWN;
-				if ((b[3] != (m0 ? bldr.keepEnvironmentVariablesInBuildfile() : 
-						(m1 ? ((Configuration)cfgs[i]).getParallelDef() : getParallelDef(mcfg))))
-						|| ((IMultiConfiguration) mcfg).getParallelNumber() == 0) {
+				if (b[3] != (m0 ? bldr.keepEnvironmentVariablesInBuildfile() : false)) {
 					res[3] = TRI_UNKNOWN;
 				}
 			}
@@ -304,60 +300,22 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 					bldr.supportsStopOnError(false));
 		}
 		
-		// Parallel build
-		boolean isParallelSupported = bldr.supportsParallelBuild();
-		boolean isExternalBuilder = ! isInternalBuilderEnabled();
 
-		b_parallel.setVisible(isParallelSupported);
-		b_parallelOptimal.setVisible(isParallelSupported);
-		b_parallelSpecific.setVisible(isParallelSupported);
-		b_parallelUnlimited.setVisible(isParallelSupported && isExternalBuilder);
-		s_parallelNumber.setVisible(isParallelSupported);
-
-		if (isParallelSupported) {
-			if (extStates == null) {
-				setTriSelection(b_parallel, getParallelDef());
-			} else {
-				setTriSelection(b_parallel, extStates[3]);
-			}
-			boolean isParallelSelected = b_parallel.getSelection();
-			int optimalParallelNumber = bldr.getOptimalParallelJobNum();
-
-			b_parallelOptimal.setText(MessageFormat.format(Messages.BuilderSettingsTab_UseOptimalJobs, optimalParallelNumber));
-			b_parallelOptimal.setEnabled(isParallelSelected);
-			b_parallelSpecific.setEnabled(isParallelSelected);
-			b_parallelUnlimited.setEnabled(isParallelSelected && isExternalBuilder);
-	
-			extStates = calc3states(page, icfg, 2);
-			if (extStates == null) {
-				setTriSelection(b_autoBuild, bldr.isAutoBuildEnable());
-				setTriSelection(b_cmdBuild, bldr.isIncrementalBuildEnabled());
-				setTriSelection(b_cmdClean, bldr.isCleanBuildEnabled());
-			} else { // multiple configurations selected
-				setTriSelection(b_autoBuild, extStates[0]);
-				setTriSelection(b_cmdBuild, extStates[1]);
-				setTriSelection(b_cmdClean, extStates[2]);
-			}
-			if ((extStates == null || extStates[3] != TRI_UNKNOWN) && isParallelSelected) {
-				// single configuration or matching multiple configurations here
-				int parallelNumber = getParallelNumber();
-				boolean isOptimal = parallelNumber <= 0;
-				boolean isUnlimited = parallelNumber == Integer.MAX_VALUE;
-				b_parallelOptimal.setSelection(isOptimal);
-				b_parallelSpecific.setSelection(!isOptimal && !isUnlimited);
-				b_parallelUnlimited.setSelection(isUnlimited);
-				s_parallelNumber.setEnabled(b_parallelSpecific.getEnabled() && b_parallelSpecific.getSelection());
-				s_parallelNumber.setSelection(s_parallelNumber.isEnabled() ? parallelNumber : optimalParallelNumber);
-			} else {
-				b_parallelOptimal.setSelection(true);
-				b_parallelSpecific.setSelection(false);
-				b_parallelUnlimited.setSelection(false);
-				s_parallelNumber.setEnabled(false);
-				s_parallelNumber.setSelection(optimalParallelNumber);
-			}
-		}
+		updateParallelBlock();
 		
 		// Build commands
+		extStates = calc3states(page, icfg, 2);
+		if (extStates != null) {
+			// multiple configurations selected
+			setTriSelection(b_autoBuild, extStates[0]);
+			setTriSelection(b_cmdBuild, extStates[1]);
+			setTriSelection(b_cmdClean, extStates[2]);
+		} else {
+			setTriSelection(b_autoBuild, bldr.isAutoBuildEnable());
+			setTriSelection(b_cmdBuild, bldr.isIncrementalBuildEnabled());
+			setTriSelection(b_cmdClean, bldr.isCleanBuildEnabled());
+		}
+
 		if (page.isMultiCfg()) {
 			MultiConfiguration mc = (MultiConfiguration)icfg;
 			t_autoBuild.setText(mc.getBuildAttribute(IBuilder.BUILD_TARGET_AUTO, EMPTY_STR));
@@ -377,7 +335,7 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 		((Control)t_cmdBuild.getData()).setVisible(external);
 		t_cmdClean.setVisible(external);
 		((Control)t_cmdClean.getData()).setVisible(external);
-		
+	
 		if (external) {
 			checkPressed(b_autoBuild, false);
 			checkPressed(b_cmdBuild, false);
@@ -386,6 +344,86 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 		canModify = true;
 	}
 	
+	private void updateParallelBlock() {
+		// note: for multi-config selection bldr is from Active cfg
+
+		boolean isAnyInternalBuilder = bldr.isInternalBuilder();
+		boolean isAnyExternalBuilder = ! bldr.isInternalBuilder();
+
+		boolean isParallelSupported = bldr.supportsParallelBuild();
+		boolean isParallelOn = bldr.isParallelBuildOn();
+		int triSelection = isParallelOn ? TRI_YES : TRI_NO;
+
+		int parallelizationNumInternal = bldr.getParallelizationNumAttribute();
+		int optimalParallelNumber = bldr.getOptimalParallelJobNum();
+		int parallelNumber = bldr.getParallelizationNum();
+		boolean isUnlimited = parallelizationNumInternal == Integer.MAX_VALUE;
+
+		if (icfg instanceof ICMultiItemsHolder) { 
+			IConfiguration[] cfgs = (IConfiguration[])((ICMultiItemsHolder)icfg).getItems();
+			boolean isAnyParallelOn = isParallelOn;
+			boolean isAnyParallelSupported = isParallelSupported;
+			boolean isParallelDiffers = false;
+			for (IConfiguration cfg : cfgs) {
+				Builder builder = (Builder) cfg.getBuilder();
+				isParallelDiffers = isParallelDiffers
+						|| builder.isParallelBuildOn() != isParallelOn
+						|| builder.getParallelizationNumAttribute() != parallelizationNumInternal;
+				
+				isAnyParallelOn = isAnyParallelOn || builder.isParallelBuildOn();
+				isAnyParallelSupported = isAnyParallelSupported || builder.supportsParallelBuild();
+				isAnyInternalBuilder = isAnyInternalBuilder || builder.isInternalBuilder();
+				isAnyExternalBuilder = isAnyExternalBuilder || !builder.isInternalBuilder();
+			}
+
+			// reset initial display to "optimal" to enhance user experience:
+			if ((!isParallelSupported && isAnyParallelSupported) // parallel is supported by other than Active cfg
+				|| (!isParallelOn && isAnyParallelOn) // prevent showing the 1 job as parallel in the spinner
+				|| (isUnlimited && isAnyInternalBuilder) // can't show "unlimited" as it won't be selectable if Internal Builder present
+				) {
+				isParallelSupported = true;
+				parallelizationNumInternal = -optimalParallelNumber;
+				parallelNumber = optimalParallelNumber;
+				isUnlimited = false;
+			}
+			if (isParallelSupported && isParallelDiffers) {
+				triSelection = TRI_UNKNOWN;
+			}
+		}
+		
+		b_parallel.setVisible(isParallelSupported);
+		b_parallelOptimal.setVisible(isParallelSupported);
+		b_parallelSpecific.setVisible(isParallelSupported);
+		b_parallelUnlimited.setVisible(isParallelSupported && isAnyExternalBuilder);
+		s_parallelNumber.setVisible(isParallelSupported);
+
+		if (isParallelSupported) {
+			setTriSelection(b_parallel, triSelection);
+			boolean isParallelSelected = b_parallel.getSelection();
+	
+			b_parallelOptimal.setText(MessageFormat.format(Messages.BuilderSettingsTab_UseOptimalJobs, optimalParallelNumber));
+			b_parallelOptimal.setEnabled(isParallelSelected);
+			b_parallelSpecific.setEnabled(isParallelSelected);
+			b_parallelUnlimited.setEnabled(isParallelSelected && !isAnyInternalBuilder);
+	
+			if (isParallelSelected) {
+				boolean isOptimal = parallelizationNumInternal <= 0;
+				
+				b_parallelOptimal.setSelection(isOptimal);
+				b_parallelSpecific.setSelection(!isOptimal && !isUnlimited);
+				b_parallelUnlimited.setSelection(isUnlimited);
+				s_parallelNumber.setEnabled(b_parallelSpecific.getEnabled() && b_parallelSpecific.getSelection());
+				s_parallelNumber.setSelection(s_parallelNumber.isEnabled() ? parallelNumber : optimalParallelNumber);
+			} else {
+				b_parallelOptimal.setSelection(true);
+				b_parallelSpecific.setSelection(false);
+				b_parallelUnlimited.setSelection(false);
+				s_parallelNumber.setEnabled(false);
+				s_parallelNumber.setSelection(optimalParallelNumber);
+			}
+		}
+	}
+
 	/**
 	 * Sets up text + corresponding button
 	 * Checkbox can be implemented either by Button or by TriButton
@@ -489,7 +527,7 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 			}
 			b2.setStopOnError(b1.isStopOnError());
 			b2.setParallelBuildOn(b1.isParallelBuildOn());
-			b2.setParallelizationNum(b1.getParallelizationNum());
+			b2.setParallelizationNum(((Builder) b1).getParallelizationNumAttribute());
 			if (b2.canKeepEnvironmentVariablesInBuildfile())
 				b2.setKeepEnvironmentVariablesInBuildfile(b1.keepEnvironmentVariablesInBuildfile());
 			((Builder)b2).setBuildPath(((Builder)b1).getBuildPathAttribute());
@@ -531,22 +569,6 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 		updateData(getResDesc());
 	}
 	
-	private static boolean getParallelDef(IConfiguration cfg) {
-		if (cfg instanceof Configuration) 
-			return ((Configuration)cfg).getParallelDef();
-		if (cfg instanceof IMultiConfiguration)
-			return ((IMultiConfiguration)cfg).getParallelDef();
-		return false;
-	}
-	
-	private boolean getParallelDef() {
-		if (icfg instanceof Configuration) 
-			return ((Configuration)icfg).getParallelDef();
-		if (icfg instanceof IMultiConfiguration)
-			return ((IMultiConfiguration)icfg).getParallelDef();
-		return false;
-	}
-	
 	private void setParallelDef(boolean def) {
 		if (icfg instanceof Configuration) 
 			((Configuration)icfg).setParallelDef(def);
@@ -554,16 +576,6 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 			((IMultiConfiguration)icfg).setParallelDef(def);
 	}
 	
-	/**
-	 * @see IMakeCommonBuildInfo#getParallelizationNum() for interpretation of the number.
-	 */
-	private int getParallelNumber() {
-		if (icfg instanceof Configuration) 
-			return ((Configuration)icfg).getParallelNumber();
-		if (icfg instanceof IMultiConfiguration)
-			return ((IMultiConfiguration)icfg).getParallelNumber();
-		return 0;
-	}
 	private void setParallelNumber(int num) {
 		if (icfg instanceof Configuration) 
 			((Configuration)icfg).setParallelNumber(num);

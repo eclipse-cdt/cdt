@@ -67,6 +67,7 @@ import org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator;
 import org.eclipse.cdt.newmake.core.IMakeCommonBuildInfo;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -123,7 +124,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 	// parallelization
 	private String parallelBuildCmd;
 	private Boolean isParallelBuildEnabled;
-	private Integer parallelJobsNumber; // negative number denotes "optimal" value, see getOptimalParallelJobNum()
+	private Integer parallelNumberAttribute; // negative number denotes "optimal" value, see getOptimalParallelJobNum()
 
 	private boolean isTest;
 	
@@ -331,7 +332,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		ignoreErrCmd = builder.ignoreErrCmd;
 
 		isParallelBuildEnabled = builder.isParallelBuildEnabled;
-		parallelJobsNumber = builder.parallelJobsNumber;
+		parallelNumberAttribute = builder.parallelNumberAttribute;
 		parallelBuildCmd = builder.parallelBuildCmd;
 
 		if(builder.outputEntries != null){
@@ -381,9 +382,9 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 			} catch (CoreException e) {
 			}
 		}
-		if (getParallelizationNum() != builder.getParallelizationNum() && supportsParallelBuild()) {
+		if (getParallelizationNumAttribute() != builder.getParallelizationNumAttribute() && supportsParallelBuild()) {
 			try {
-				setParallelizationNum(builder.getParallelizationNum());
+				setParallelizationNum(builder.getParallelizationNumAttribute());
 			} catch (CoreException e) {
 			}
 		}
@@ -631,29 +632,29 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 
 	private void decodeParallelizationNumber(String value) {
 		if (VALUE_OPTIMAL.equals(value)) {
-			parallelJobsNumber = -getOptimalParallelJobNum();
+			parallelNumberAttribute = -getOptimalParallelJobNum();
 		} else if (VALUE_UNLIMITED.equals(value)) {
 			if (!isInternalBuilder()) {
-				parallelJobsNumber = Integer.MAX_VALUE;
+				parallelNumberAttribute = Integer.MAX_VALUE;
 			} else {
 				ManagedBuilderCorePlugin.error("'unlimited' number of jobs is not allowed for Internal Builder, switching to 'optimal'");
-				parallelJobsNumber = -getOptimalParallelJobNum();
+				parallelNumberAttribute = -getOptimalParallelJobNum();
 			}
 		} else {
 			try {
-				parallelJobsNumber = Integer.decode(value);
+				parallelNumberAttribute = Integer.decode(value);
 			} catch (NumberFormatException e) {
 				ManagedBuilderCorePlugin.log(e);
-				parallelJobsNumber = getOptimalParallelJobNum();
+				parallelNumberAttribute = getOptimalParallelJobNum();
 			}
-			if (parallelJobsNumber <= 0) {
+			if (parallelNumberAttribute <= 0) {
 				// compatibility with legacy representation - it was that inconsistent
 				if (isInternalBuilder()) {
 					// "optimal" for Internal Builder
-					parallelJobsNumber = -getOptimalParallelJobNum();
+					parallelNumberAttribute = -getOptimalParallelJobNum();
 				} else {
 					// unlimited for External Builder
-					parallelJobsNumber = Integer.MAX_VALUE;
+					parallelNumberAttribute = Integer.MAX_VALUE;
 				}
 			}
 		}
@@ -918,8 +919,8 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 
 		if (isParallelBuildEnabled != null)
 			element.setAttribute(ATTRIBUTE_PARALLEL_BUILD_ON, isParallelBuildEnabled.toString());
-		if (isParallelBuildOn() && parallelJobsNumber != null)
-			element.setAttribute(ATTRIBUTE_PARALLELIZATION_NUMBER, encodeParallelizationNumber(parallelJobsNumber));
+		if (isParallelBuildOn() && parallelNumberAttribute != null)
+			element.setAttribute(ATTRIBUTE_PARALLELIZATION_NUMBER, encodeParallelizationNumber(parallelNumberAttribute));
 
 		// Note: build file generator cannot be specified in a project file because
 		//       an IConfigurationElement is needed to load it!
@@ -1016,8 +1017,8 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 
 		if (isParallelBuildEnabled != null)
 			element.setAttribute(ATTRIBUTE_PARALLEL_BUILD_ON, isParallelBuildEnabled.toString());
-		if (isParallelBuildOn() && parallelJobsNumber != null)
-			element.setAttribute(ATTRIBUTE_PARALLELIZATION_NUMBER, encodeParallelizationNumber(parallelJobsNumber));
+		if (isParallelBuildOn() && parallelNumberAttribute != null)
+			element.setAttribute(ATTRIBUTE_PARALLELIZATION_NUMBER, encodeParallelizationNumber(parallelNumberAttribute));
 
 		// Note: build file generator cannot be specified in a project file because
 		//       an IConfigurationElement is needed to load it!
@@ -1095,10 +1096,11 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 	public String getArguments() {
 		String args = getArgumentsAttribute(); 
 		String stopOnErrCmd = getStopOnErrCmd(isStopOnError());
-		String parallelCmd = isParallelBuildOn() ? getParallelizationCmd(getParallelizationNum()) : EMPTY_STRING;
+		int parallelNum = getParallelizationNum();
+		String parallelCmd = isParallelBuildOn() ? getParallelizationCmd(parallelNum) : EMPTY_STRING;
 		
 		String reversedStopOnErrCmd = getStopOnErrCmd(!isStopOnError());
-		String reversedParallelBuildCmd = !isParallelBuildOn() ? getParallelizationCmd(getParallelizationNum()) : EMPTY_STRING;
+		String reversedParallelBuildCmd = !isParallelBuildOn() ? getParallelizationCmd(parallelNum) : EMPTY_STRING;
 		
 		args = removeCmd(args, reversedStopOnErrCmd);
 		args = removeCmd(args, reversedParallelBuildCmd);
@@ -1167,16 +1169,14 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return index;
 	}
 	
-	public String getParallelizationCmd(int num){
+	public String getParallelizationCmd(int num) {
 		String pattern = getParrallelBuildCmd();
-		if(pattern.length() == 0){
-			return EMPTY_STRING;
-		}if(num == 0){
+		if (pattern.length() == 0 || num == 0) {
 			return EMPTY_STRING;
 		}
 		// "unlimited" number of jobs results in not adding the number to parallelization cmd
 		// that behavior corresponds that of "make" flag "-j".
-		return processParallelPattern(pattern, num == Integer.MAX_VALUE, Math.abs(num));
+		return processParallelPattern(pattern, num == Integer.MAX_VALUE, num);
 	}
 	
 	/**
@@ -1188,6 +1188,8 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 	 * <br>Where # is num or empty if {@code empty} is {@code true})
 	 */
 	private String processParallelPattern(String pattern, boolean empty, int num){
+		Assert.isTrue(num > 0);
+		
 		int start = pattern.indexOf(PARALLEL_PATTERN_NUM_START);
 		int end = -1;
 		boolean hasStartChar = false;
@@ -2527,46 +2529,40 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 	}
 	
 	/**
-	 * {@inheritDoc}
-	 * 
-	 * Returns the number of parallel jobs to be used for a build.
+	 * Returns the internal representation of maximum number of parallel jobs
+	 * to be used for a build.
 	 * Note that "optimal" value is represented by negative number.
-	 * See the table at {@link IMakeCommonBuildInfo#getParallelizationNum()}. 
+	 * 
+	 * The value of the number is encoded as follows:
+	 * <pre>
+	 *  Status       Returns
+	 * No parallel      1       
+	 * Optimal       -CPU#       (negative number of processors) 
+	 * Specific        >0        (positive number)
+	 * Unlimited    Integer.MAX  (N/A for Internal Builder)
+	 * </pre>
 	 */
-	@Override
-	public int getParallelizationNum() {
+	public int getParallelizationNumAttribute() {
 		if (!isParallelBuildOn())
 			return 1;
-
-		if(parallelJobsNumber == null){
-			if(superClass != null){
-				return ((Builder)superClass).getParallelizationNum();
-			}
-			return 1;
-		}
-		return parallelJobsNumber.intValue();
-	}
-
-	public int getParallelizationNumAttribute(){
-		if(parallelJobsNumber == null){
+		
+		if(parallelNumberAttribute == null){
 			if(superClass != null){
 				return ((Builder)superClass).getParallelizationNumAttribute();
 			}
 			return 1;
 		}
-		return parallelJobsNumber.intValue();
+		return parallelNumberAttribute.intValue();
+	}
+	
+	@Override
+	public int getParallelizationNum() {
+		return Math.abs(getParallelizationNumAttribute());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @param jobs - maximum number of jobs or threads. If the number is 0
-	 *    or negative, negative "optimal" number will be set, see
-	 *    {@link #getOptimalParallelJobNum()}.
-	 */
 	@Override
 	public void setParallelizationNum(int jobs) throws CoreException {
-		if (isParallelBuildOn() && (parallelJobsNumber == null || parallelJobsNumber != jobs)) {
+		if (isParallelBuildOn() && (parallelNumberAttribute == null || parallelNumberAttribute != jobs)) {
 			String curCmd = getParallelizationCmd(getParallelizationNum());
 			String args = getArgumentsAttribute();
 			String updatedArgs = removeCmd(args, curCmd);
@@ -2579,10 +2575,10 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 				jobs = -1;
 			}
 			if (jobs > 0) {
-				parallelJobsNumber = jobs;
+				parallelNumberAttribute = jobs;
 			} else {
 				// "optimal"
-				parallelJobsNumber = -getOptimalParallelJobNum();
+				parallelNumberAttribute = -getOptimalParallelJobNum();
 			}
 			setDirty(true);
 		}
@@ -2647,7 +2643,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 	 * 
 	 * @param on - the flag to enable or disable parallel mode.
 	 *    <br>{@code true} to enable, in this case the maximum number of jobs
-	 *      will be set to negative "optimal" number, see {@link #getOptimalParallelJobNum()}.
+	 *      will be set to "optimal" number, see {@link #getOptimalParallelJobNum()}.
 	 *    <br>{@code false} to disable, the number of jobs will be set to 1.
 	 */
 	@Override
@@ -2668,9 +2664,9 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 
 		if (isParallelBuildEnabled) {
 			// "optimal"
-			parallelJobsNumber = -getOptimalParallelJobNum();
+			parallelNumberAttribute = -getOptimalParallelJobNum();
 		} else {
-			parallelJobsNumber = 1;
+			parallelNumberAttribute = 1;
 		}
 		setDirty(true);
 	}

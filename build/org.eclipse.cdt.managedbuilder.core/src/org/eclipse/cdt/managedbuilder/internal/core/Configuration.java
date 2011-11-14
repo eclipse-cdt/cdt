@@ -2273,8 +2273,8 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	 * mode.
 	 * 
 	 * @param jobs - maximum number of jobs or threads. If the number is 0
-	 *    or negative, negative "optimal" number will be set, see
-	 *    {@link Builder#getOptimalParallelJobNum()}.
+	 *    or negative, "optimal" number will be set,
+	 *    see {@link Builder#getOptimalParallelJobNum()}.
 	 */
 	public void setParallelNumber(int jobs){
 		try {
@@ -2286,13 +2286,9 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	
 	/**
 	 * Returns maximum number of parallel threads/jobs used by the configuration's builder.
-	 * Note that this function can return negative value to indicate  "optimal" number.
-	 * 
 	 * @see #setParallelDef(boolean)
-	 * @see Builder#getParallelizationNum()
 	 * 
-	 * @return - maximum number of parallel threads or jobs used by the builder or negative number.
-	 *    For exact interpretation see table in {@link IMakeCommonBuildInfo#getParallelizationNum()}
+	 * @return - maximum number of parallel threads or jobs used by the builder.
 	 */
 	public int getParallelNumber(){
 		return getBuilder().getParallelizationNum();

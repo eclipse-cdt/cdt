@@ -44,15 +44,7 @@ public interface IMakeCommonBuildInfo {
 	boolean supportsStopOnError(boolean on);
 
 	/**
-	 * @return the current number of parallel jobs.
-	 * The value of the number is encoded as follows:
-	 * <pre>
-	 *  Status       Returns
-	 * No parallel      1       
-	 * Unlimited    Integer.MAX  (N/A for Internal Builder)
-	 * Optimal       -CPU#       (negative number of processors) 
-	 * Specific        >0        (positive number)
-	 * </pre>
+	 * @return the maximum number of parallel jobs to be used for build.
 	 */
 	int getParallelizationNum();
 
@@ -61,21 +53,25 @@ public interface IMakeCommonBuildInfo {
 	 * Note that the number will be set only if the builder is in "parallel"
 	 * mode.
 	 * 
-	 * @param jobs - number of jobs according table {@link #getParallelizationNum()}.
+	 * @param jobs - maximum number of jobs.
 	 *    Any number <=0 is treated as setting "optimal" property,
-	 *    the value of the number itself is ignored.
+	 *    the value of the number itself is ignored in this case.
 	 */
 	void setParallelizationNum(int jobs) throws CoreException;
+
 	/**
 	 * @return {@code true} if builder supports parallel build,
 	 *    {@code false} otherwise.
 	 */
+
 	boolean supportsParallelBuild();
+
 	/**
 	 * @return {@code true} if builder support for parallel build is enabled,
 	 *    {@code false} otherwise.
 	 */
 	boolean isParallelBuildOn();
+
 	/**
 	 * Set parallel execution mode for the builder.
 	 * @see Builder#setParallelBuildOn(boolean)

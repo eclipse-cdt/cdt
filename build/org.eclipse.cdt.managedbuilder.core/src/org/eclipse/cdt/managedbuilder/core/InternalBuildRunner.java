@@ -65,7 +65,7 @@ public class InternalBuildRunner extends AbstractBuildRunner {
 	public boolean invokeBuild(int kind, IProject project, IConfiguration configuration,
 			IBuilder builder, IConsole console, IMarkerGenerator markerGenerator,
 			IncrementalProjectBuilder projectBuilder, IProgressMonitor monitor) throws CoreException {
-		boolean isParallel = builder.isParallelBuildOn() && builder.getParallelizationNum() > 1;
+		boolean isParallel = Math.abs(builder.getParallelizationNum()) > 1;
 //		boolean buildIncrementaly = true;
 		boolean resumeOnErr = !builder.isStopOnError();
 

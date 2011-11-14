@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Intel Corporation and others.
+ * Copyright (c) 2006, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -91,6 +91,7 @@ public class ParallelBuilder {
 			return step.hashCode();
 		}
 		
+		@Override
 		public int compareTo(BuildQueueElement elem) {
 			if (elem == null)
 				throw new NullPointerException();
@@ -205,10 +206,7 @@ public class ParallelBuilder {
 		if(cwd == null)  cwd = des.getDefaultBuildDirLocation();
 		int threads = 1;
 		if (cfg instanceof Configuration) {
-			if (((Configuration)cfg).getParallelDef())
-				threads = BuildProcessManager.checkCPUNumber();
-			else
-				threads = ((Configuration)cfg).getParallelNumber();  
+			threads = Math.abs(((Configuration)cfg).getParallelNumber());
 		}
 		ParallelBuilder builder = new ParallelBuilder(cwd, dirs, out, err, monitor, resumeOnErrors, buildIncrementally);
 		builder.enqueueAll(des);

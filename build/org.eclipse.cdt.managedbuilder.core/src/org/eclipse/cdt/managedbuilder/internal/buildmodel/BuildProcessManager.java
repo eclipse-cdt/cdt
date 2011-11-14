@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Intel Corporation and others.
+ * Copyright (c) 2006, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,10 +11,6 @@
 
 package org.eclipse.cdt.managedbuilder.internal.buildmodel;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,9 +19,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildCommand;
-import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
-import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -41,11 +34,6 @@ public class BuildProcessManager {
 	protected boolean show;
 	protected ProcessLauncher[] processes;
 	protected int maxProcesses;  
-	
-//	 Number of CPUs is not dependent of object instance.
-//   But user can change UI settings for processes number.
-//   So we cannot set procNumber directly to maxProcesses. 	
-	static int procNumber = 0;
 	
 	/**
 	 * Initializes process manager
@@ -152,40 +140,10 @@ public class BuildProcessManager {
 	
 	/**
 	 * @return Number of processors detected
+	 * @deprecated since CDT 9.0 - just use Runtime.getRuntime().availableProcessors()
 	 */
+	@Deprecated
 	static public int checkCPUNumber() {
-		if (procNumber > 0) return procNumber;
-		
-		procNumber = 1;
-		int x = 0;
-		String os = System.getProperty("os.name"); //$NON-NLS-1$
-		if (os != null) {
-			if (os.startsWith("Win")) { //$NON-NLS-1$
-				IEnvironmentVariableProvider evp = ManagedBuildManager.getEnvironmentVariableProvider();
-				if (evp != null) {
-					IBuildEnvironmentVariable var = evp.getVariable("NUMBER_OF_PROCESSORS", null, false, false); //$NON-NLS-1$
-					if (var != null) {
-						try {
-							x = new Integer(var.getValue()).intValue();
-							if (x > 0) { procNumber = x; }
-						} catch (NumberFormatException e) {} // fallthrough and return default
-					}
-				}
-			} else { // linux
-				String p = "/proc/cpuinfo"; //$NON-NLS-1$
-				try {
-					BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream(p)));
-					String s;
-					while ((s = r.readLine() ) != null ) 
-					   { if (s.startsWith("processor\t:")) x++; } //$NON-NLS-1$
-					r.close();
-					if (x > 0) { procNumber = x; }
-				} 
-				catch (IOException e) {} // fallthrough and return default
-			}
-		}
-		if(DbgUtil.DEBUG)
-			DbgUtil.trace("Number of processors detected: " + procNumber);	//$NON-NLS-1$
-		return procNumber;
+		return Runtime.getRuntime().availableProcessors();
 	}
 }

@@ -81,6 +81,7 @@ import org.eclipse.cdt.managedbuilder.internal.macros.OptionContextData;
 import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.macros.IConfigurationBuildMacroSupplier;
+import org.eclipse.cdt.newmake.core.IMakeCommonBuildInfo;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
@@ -752,7 +753,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	 *  E L E M E N T   A T T R I B U T E   R E A D E R S   A N D   W R I T E R S
 	 */
 	
-	/* (non-Javadoc)
+	/**
 	 * Initialize the configuration information from an element in the 
 	 * manifest file or provided by a dynamicElementProvider
 	 * 
@@ -803,7 +804,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
         	isTest = Boolean.valueOf(tmp).booleanValue();
 	}
 	
-	/* (non-Javadoc)
+	/**
 	 * Initialize the configuration information from the XML element 
 	 * specified in the argument
 	 * 
@@ -874,8 +875,8 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		if (element.getAttribute(CLEAN_COMMAND) != null) {
 			cleanCommand = SafeStringInterner.safeIntern(element.getAttribute(CLEAN_COMMAND));
 		}
-               
-        // Get the pre-build and post-build commands
+
+		// Get the pre-build and post-build commands
 		if (element.getAttribute(PREBUILD_STEP) != null) {
 			prebuildStep = SafeStringInterner.safeIntern(element.getAttribute(PREBUILD_STEP));
 		}
@@ -891,7 +892,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 
 		if (element.getAttribute(POSTANNOUNCEBUILD_STEP) != null) {
 			postannouncebuildStep = SafeStringInterner.safeIntern(element.getAttribute(POSTANNOUNCEBUILD_STEP));
-		}               
+		}
 	}
 
 	/**
@@ -970,6 +971,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getParent()
 	 */
+	@Override
 	public IConfiguration getParent() {
 		return parent;
 	}
@@ -977,6 +979,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getOwner()
 	 */
+	@Override
 	public IResource getOwner() {
 		if (managedProject != null)
 			return managedProject.getOwner();
@@ -988,6 +991,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getProjectType()
 	 */
+	@Override
 	public IProjectType getProjectType() {
 		return projectType;
 	}
@@ -995,6 +999,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getManagedProject()
 	 */
+	@Override
 	public IManagedProject getManagedProject() {
 		return managedProject;
 	}
@@ -1002,6 +1007,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getToolChain(IToolChain, String, String, boolean)
 	 */
+	@Override
 	public IToolChain createToolChain(IToolChain superClass, String Id, String name, boolean isExtensionElement) {
 		if(rootFolderInfo == null){
 			createRootFolderInfo();
@@ -1030,6 +1036,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getToolChain()
 	 */
+	@Override
 	public IToolChain getToolChain() {
 		return rootFolderInfo.getToolChain();
 	}
@@ -1037,6 +1044,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getResourceConfigurations()
 	 */
+	@Override
 	public IResourceConfiguration[] getResourceConfigurations() {
 		return (IResourceConfiguration[])rcInfos.getResourceInfos(ICSettingBase.SETTING_FILE, IResourceConfiguration.class);
 	}
@@ -1044,6 +1052,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getResourceConfiguration(java.lang.String)
 	 */
+	@Override
 	public IResourceConfiguration getResourceConfiguration(String resPath) {
 		return rcInfos.getFileInfo(new Path(resPath).removeFirstSegments(1));
 	}
@@ -1051,6 +1060,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getFilteredTools()
 	 */
+	@Override
 	public ITool[] getFilteredTools() {
 		return rootFolderInfo.getFilteredTools();
 	}
@@ -1058,6 +1068,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getTools()
 	 */
+	@Override
 	public ITool[] getTools() {
 		return rootFolderInfo.getTools();
 	}
@@ -1065,6 +1076,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getTool(java.lang.String)
 	 */
+	@Override
 	public ITool getTool(String id) {
 		return rootFolderInfo.getTool(id);
 	}
@@ -1072,6 +1084,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getToolsBySuperClassId(java.lang.String) 
 	 */
+	@Override
 	public ITool[] getToolsBySuperClassId(String id) {
 		return rootFolderInfo.getToolsBySuperClassId(id);
 	}
@@ -1079,6 +1092,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getTargetTool()
 	 */
+	@Override
 	public ITool getTargetTool() {
 		String[] targetToolIds = rootFolderInfo.getToolChain().getTargetToolList();
 		if (targetToolIds == null || targetToolIds.length == 0) return null;
@@ -1106,6 +1120,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#setToolCommand(org.eclipse.cdt.managedbuilder.core.ITool, java.lang.String)
 	 */
+	@Override
 	public String getToolCommand(ITool tool) {
 		// TODO:  Do we need to verify that the tool is part of the configuration?
 		return tool.getToolCommand();
@@ -1114,6 +1129,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#setToolCommand(org.eclipse.cdt.managedbuilder.core.ITool, java.lang.String)
 	 */
+	@Override
 	public void setToolCommand(ITool tool, String command) {
 		// TODO:  Do we need to verify that the tool is part of the configuration?
 		tool.setToolCommand(command);
@@ -1122,6 +1138,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#setOption(org.eclipse.cdt.core.build.managed.IOption, boolean)
 	 */
+	@Override
 	public IOption setOption(IHoldsOptions holder, IOption option, boolean value) throws BuildException {
 		return getRootFolderInfo().setOption(holder, option, value);
 	}
@@ -1129,6 +1146,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#setOption(org.eclipse.cdt.core.build.managed.IOption, java.lang.String)
 	 */
+	@Override
 	public IOption setOption(IHoldsOptions holder, IOption option, String value) throws BuildException {
 		return getRootFolderInfo().setOption(holder, option, value);
 	}
@@ -1136,6 +1154,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#setOption(org.eclipse.cdt.core.build.managed.IOption, java.lang.String[])
 	 */
+	@Override
 	public IOption setOption(IHoldsOptions holder, IOption option, String[] value) throws BuildException {
 		return getRootFolderInfo().setOption(holder, option, value);
 	}
@@ -1153,6 +1172,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 //		rebuildNeeded = true;
 	}
 
+	@Override
 	public void removeResourceConfiguration(IResourceInfo resConfig) {
 		ManagedBuildManager.performValueHandlerEvent(resConfig, 
  					IManagedOptionValueHandler.EVENT_CLOSE);
@@ -1178,6 +1198,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getArtifactExtension()
 	 */
+	@Override
 	public String getArtifactExtension() {
 		String ext = getArtifactExtensionAttribute(true);
 		return ext != null ? ext : EMPTY_STRING;
@@ -1197,6 +1218,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getArtifactName()
 	 */
+	@Override
 	public String getArtifactName() {
 		if (artifactName == null) {
 			// If I have a parent, ask it
@@ -1214,6 +1236,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getBuildArguments()
 	 */
+	@Override
 	public String getBuildArguments() {
 		IToolChain tc = getToolChain();
 		IBuilder builder = tc.getBuilder();
@@ -1226,6 +1249,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getBuildCommand()
 	 */
+	@Override
 	public String getBuildCommand() {
 		IToolChain tc = getToolChain();
 		IBuilder builder = tc.getBuilder();
@@ -1240,6 +1264,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	 * 
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getPrebuildStep()
 	 */
+	@Override
 	public String getPrebuildStep() {
 		if (prebuildStep == null) {
 			// If I have a parent, ask it
@@ -1259,6 +1284,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	 * 
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getPostbuildStep()
 	 */
+	@Override
 	public String getPostbuildStep() {
 		if (postbuildStep == null) {
 			// If I have a parent, ask it
@@ -1278,6 +1304,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	 * 
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getPreannouncebuildStep()
 	 */
+	@Override
 	public String getPreannouncebuildStep() {
 		if (preannouncebuildStep == null) {
 			// If I have a parent, ask it
@@ -1297,6 +1324,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	 * 
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getPostannouncebuildStep()
 	 */
+	@Override
 	public String getPostannouncebuildStep() {
 		if (postannouncebuildStep == null) {
 			// If I have a parent, ask it
@@ -1316,6 +1344,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	 * 
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getCleanCommand()
 	 */
+	@Override
 	public String getCleanCommand() {
 		// Return the command used to remove files
 		if (cleanCommand == null) {
@@ -1338,6 +1367,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getDescription()
 	 */
+	@Override
 	public String getDescription() {
 		if (description == null) {
 			// If I have a parent, ask it
@@ -1357,6 +1387,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	 * 
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getErrorParserIds()
 	 */
+	@Override
 	public String getErrorParserIds() {
 		if (errorParserIds != null) {
 			return errorParserIds;
@@ -1392,6 +1423,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getErrorParserList()
 	 */
+	@Override
 	public String[] getErrorParserList() {
 		Set<String> set = contributeErrorParsers(null, true);
 		if(set != null){
@@ -1428,6 +1460,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#setArtifactExtension(java.lang.String)
 	 */
+	@Override
 	public void setArtifactExtension(String extension) {
 		if (extension == null && artifactExtension == null) return;
 		if (artifactExtension == null || extension == null || !artifactExtension.equals(extension)) {
@@ -1449,6 +1482,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#setArtifactName(java.lang.String)
 	 */
+	@Override
 	public void setArtifactName(String name) {
 		if (name == null && artifactName == null) return;
 		if (artifactName == null || name == null || !artifactName.equals(name)) {
@@ -1490,6 +1524,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#setErrorParserIds()
 	 */
+	@Override
 	public void setErrorParserIds(String ids) {
 		String currentIds = getErrorParserIds();
 		if (ids == null && currentIds == null) return;
@@ -1502,6 +1537,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#setCleanCommand()
 	 */
+	@Override
 	public void setCleanCommand(String command) {
 		if (command == null && cleanCommand == null) return;
 		if (cleanCommand == null || command == null || !cleanCommand.equals(command)) {
@@ -1513,6 +1549,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#setDescription(java.lang.String)
 	 */
+	@Override
 	public void setDescription(String description) {
 		 if (description == null && this.description == null) return; 
 	        if (this.description == null || description == null || !description.equals(this.description)) { 
@@ -1524,6 +1561,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#setBuildArguments()
 	 */
+	@Override
 	public void setBuildArguments(String makeArgs) {
 		IToolChain tc = getToolChain();
 		IBuilder builder = tc.getBuilder();
@@ -1546,6 +1584,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#setBuildCommand()
 	 */
+	@Override
 	public void setBuildCommand(String command) {
 		IToolChain tc = getToolChain();
 		IBuilder builder = tc.getBuilder();
@@ -1568,7 +1607,8 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
     /* (non-Javadoc) 
      * @see org.eclipse.cdt.core.build.managed.IConfiguration#setPrebuildStep(java.lang.String) 
      */ 
-    public void setPrebuildStep(String step) { 
+    @Override
+	public void setPrebuildStep(String step) { 
         if (step == null && prebuildStep == null) return; 
         if (prebuildStep == null || step == null || !prebuildStep.equals(step)) { 
             prebuildStep = step; 
@@ -1581,7 +1621,8 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
     /* (non-Javadoc) 
      * @see org.eclipse.cdt.core.build.managed.IConfiguration#setPostbuildStep(java.lang.String) 
      */ 
-    public void setPostbuildStep(String step) { 
+    @Override
+	public void setPostbuildStep(String step) { 
         if (step == null && postbuildStep == null) return; 
         if (postbuildStep == null || step == null || !postbuildStep.equals(step)) { 
             postbuildStep = step; 
@@ -1593,7 +1634,8 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
     /* (non-Javadoc) 
      * @see org.eclipse.cdt.core.build.managed.IConfiguration#setPreannouncebuildStep(java.lang.String) 
      */ 
-    public void setPreannouncebuildStep(String announceStep) { 
+    @Override
+	public void setPreannouncebuildStep(String announceStep) { 
         if (announceStep == null && preannouncebuildStep == null) return; 
         if (preannouncebuildStep == null || announceStep == null || !preannouncebuildStep.equals(announceStep)) {
             preannouncebuildStep = announceStep; 
@@ -1605,7 +1647,8 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
     /* (non-Javadoc) 
      * @see org.eclipse.cdt.core.build.managed.IConfiguration#setPostannouncebuildStep(java.lang.String) 
      */ 
-    public void setPostannouncebuildStep(String announceStep) { 
+    @Override
+	public void setPostannouncebuildStep(String announceStep) { 
         if (announceStep == null && postannouncebuildStep == null) return; 
         if (postannouncebuildStep == null || announceStep == null || !postannouncebuildStep.equals(announceStep)) {
             postannouncebuildStep = announceStep; 
@@ -1617,6 +1660,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#isSupported()
 	 */
+	@Override
 	public boolean isSupported(){
 		IFolderInfo foInfo = getRootFolderInfo();
 		if(foInfo != null)
@@ -1627,6 +1671,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#isHeaderFile(java.lang.String)
 	 */
+	@Override
 	public boolean isHeaderFile(String ext) {
 		return getRootFolderInfo().isHeaderFile(ext);
 	}
@@ -1638,6 +1683,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#isExtensionElement()
 	 */
+	@Override
 	public boolean isExtensionElement() {
 		return isExtensionConfig;
 	}
@@ -1645,6 +1691,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#isDirty()
 	 */
+	@Override
 	public boolean isDirty() {
 		// This shouldn't be called for an extension configuration
  		if (isExtensionConfig) return false;
@@ -1665,10 +1712,12 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#needsRebuild()
 	 */
+	@Override
 	public boolean needsRebuild() {
 		return needsRebuild(true);
 	}
 	
+	@Override
 	public boolean needsFullRebuild() {
 		return needsRebuild(false);
 	}
@@ -1692,6 +1741,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#setDirty(boolean)
 	 */
+	@Override
 	public void setDirty(boolean isDirty) {
 		// Override the dirty flag
 		this.isDirty = isDirty;
@@ -1708,6 +1758,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#setRebuildState(boolean)
 	 */
+	@Override
 	public void setRebuildState(boolean rebuild) {
 		if(isExtensionElement() && rebuild)
 			return;
@@ -1731,6 +1782,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#hasOverriddenBuildCommand()
 	 */
+	@Override
 	public boolean hasOverriddenBuildCommand() {
 		IBuilder builder = getToolChain().getBuilder();
 		if (builder != null) {
@@ -1785,21 +1837,24 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		((FolderInfo)getRootFolderInfo()).resetOptionSettings();
 	}
 
-	/*
+	/**
 	 *  Create a resource configuration object for the passed-in file
 	 */
+	@Override
 	public IResourceConfiguration createResourceConfiguration(IFile file)
 	{
 		return createFileInfo(file.getFullPath().removeFirstSegments(1));
 		 
 	}
 
+	@Override
 	public IFileInfo createFileInfo(IPath path){
 		String resourceName = path.lastSegment();
 		String id = ManagedBuildManager.calculateChildId(getId(), path.toString());
 		return createFileInfo(path, id, resourceName);
 	}
 
+	@Override
 	public IFileInfo createFileInfo(IPath path, String id, String name){
 		IResourceInfo info = getResourceInfo(path, false);
 		IFileInfo fileInfo = null;
@@ -1812,6 +1867,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return fileInfo;
 	}
 	
+	@Override
 	public IFileInfo createFileInfo(IPath path, IFolderInfo base, ITool baseTool, String id, String name){
 		if(base.getPath().equals(path))
 			return null;
@@ -1823,6 +1879,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return fileInfo;
 	}
 
+	@Override
 	public IFileInfo createFileInfo(IPath path, IFileInfo base, String id, String name){
 		if(base.getPath().equals(path))
 			return null;
@@ -1837,6 +1894,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getEnvironmentVariableSupplier()
 	 */
+	@Override
 	public IConfigurationEnvironmentVariableSupplier getEnvironmentVariableSupplier(){
 		IToolChain toolChain = getToolChain();
 		if(toolChain != null)
@@ -1865,6 +1923,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getBuildMacroSupplier()
 	 */
+	@Override
 	public IConfigurationBuildMacroSupplier getBuildMacroSupplier(){
 		IToolChain toolChain = getToolChain();
 		if(toolChain != null)
@@ -1876,6 +1935,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#isTemporary()
 	 */
+	@Override
 	public boolean isTemporary(){
 		return isTemporary;
 	}
@@ -1902,6 +1962,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		}		
 	}
 	
+	@Override
 	public ITool calculateTargetTool(){
 		ITool tool = getTargetTool();
 		
@@ -1924,15 +1985,17 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return tool;
 	}
 	
+	@Override
 	public ITool getToolFromOutputExtension(String extension) {
 		return getRootFolderInfo().getToolFromOutputExtension(extension);
 	}
 	
+	@Override
 	public ITool getToolFromInputExtension(String sourceExtension) {
 		return getRootFolderInfo().getToolFromInputExtension(sourceExtension);
 	}
 
-	/*
+	/**
 	 * The resource delta passed to the builder is not always up-to-date
 	 * for the given configuration because between two builds of the same configuration
 	 * any number of other configuration builds may occur
@@ -2004,7 +2067,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 				prefs.getBoolean(pref, false) : defaultValue;
 	}
 */	
-	/*
+	/**
 	 * this method is used for enabling/disabling the internal builder
 	 * for the given configuration
 	 * 
@@ -2121,7 +2184,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return null;
 	}
 
-	/*
+	/**
 	 * returns whether the internal builder is enabled
 	 * @return boolean
 	 */
@@ -2129,7 +2192,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return getBuilder().isInternalBuilder(); 
 	}
 	
-	/*
+	/**
 	 * 
 	 * sets the Internal Builder mode
 	 * 
@@ -2144,7 +2207,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		}
 	}
 
-	/*
+	/**
 	 * returns the Internal Builder mode
 	 * if true, internal builder will ignore build errors while building,
 	 * otherwise it will stop at the first build error
@@ -2156,73 +2219,80 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	}
 	
 	/**
-	 * 
 	 * sets the Internal Builder Parallel mode
-	 * 
 	 * @param parallel if true, internal builder will use parallel mode 
+	 * 
+	 * @deprecated since CDT 9.0. Use {@link #setParallelDef(boolean)}
 	 */
+	@Deprecated
 	public void setInternalBuilderParallel(boolean parallel){
-		if(getInternalBuilderParallel() == parallel)
-			return;
-		
-		try {
-			getEditableBuilder().setParallelBuildOn(parallel);
-		} catch (CoreException e) {
-		}
+		setParallelDef(parallel);
 	}
 	
 	/**
 	 * returns the Internal Builder parallel mode
 	 * if true, internal builder will work in parallel mode 
 	 * otherwise it will use only one thread
-	 * 
 	 * @return boolean
+	 * 
+	 * @deprecated since CDT 9.0. Use {@link #getParallelDef()}
 	 */
+	@Deprecated
 	public boolean getInternalBuilderParallel(){
-		return getBuilder().isParallelBuildOn();
+		return getParallelDef();
 	}
 	
 	/**
-	 * @param parallel if true, internal builder will use parallel mode 
+	 * Set parallel execution mode for the configuration's builder.
+	 * @see Builder#setParallelBuildOn(boolean)
+	 * 
+	 * @param parallel - the flag to enable or disable parallel mode.
 	 */
 	public void setParallelDef(boolean parallel){
 		if(getParallelDef() == parallel)
 			return;
 		
-		int num = getParallelNumber();
-		if(num != 0){
-			setParallelNumber(-num);
-		} else {
-			if(parallel){
-				setParallelNumber(-1);
-			} else {
-				setParallelNumber(1);
-			}
+		try {
+			getEditableBuilder().setParallelBuildOn(parallel);
+		} catch (CoreException e) {
+			ManagedBuilderCorePlugin.log(e);
 		}
 	}
 	
 	/**
-	 * @return boolean
+	 * Check if the configuration's builder is operating in parallel mode.
+	 * @return {@code true} if parallel mode is enabled, {@code false} otherwise.
 	 */
 	public boolean getParallelDef(){
-		int num = getBuilder().getParallelizationNum();
-		return num <= 0;
+		return getBuilder().isParallelBuildOn();
 	}
 	
 	/**
-	 * sets number of Parallel threads
+	 * Sets maximum number of parallel threads/jobs to be used by builder.
+	 * Note that the number will be set only if the builder is in "parallel"
+	 * mode.
+	 * 
+	 * @param jobs - maximum number of jobs or threads. If the number is 0
+	 *    or negative, negative "optimal" number will be set, see
+	 *    {@link Builder#getOptimalParallelJobNum()}.
 	 */
-	public void setParallelNumber(int n){
+	public void setParallelNumber(int jobs){
 		try {
-			getEditableBuilder().setParallelizationNum(n);
+			getEditableBuilder().setParallelizationNum(jobs);
 		} catch (CoreException e) {
+			ManagedBuilderCorePlugin.log(e);
 		}
 	}
 	
 	/**
-	 * returns number of Parallel threads
+	 * Returns maximum number of parallel threads/jobs used by the configuration's builder.
+	 * Note that this function can return negative value to indicate  "optimal" number.
 	 * 
-	 * @return int
+	 * @see #setParallelDef(boolean)
+	 * @see Builder#getParallelizationNum()
+	 * 
+	 * @return - maximum number of parallel threads or jobs used by the builder or negative number.
+	 *    For exact interpretation see table in {@link IMakeCommonBuildInfo#getParallelizationNum()}
 	 */
 	public int getParallelNumber(){
 		return getBuilder().getParallelizationNum();
@@ -2246,14 +2316,17 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 //		return prefs;
 //	}
 
+	@Override
 	public IResourceInfo[] getResourceInfos() {
 		return rcInfos.getResourceInfos();
 	}
 
+	@Override
 	public IResourceInfo getResourceInfo(IPath path, boolean exactPath) {
 		return rcInfos.getResourceInfo(path, exactPath);
 	}
 
+	@Override
 	public IResourceInfo getResourceInfoById(String id) {
 		IResourceInfo infos[] = rcInfos.getResourceInfos();
 		for(int i = 0; i < infos.length; i++){
@@ -2263,6 +2336,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return null;
 	}
 
+	@Override
 	public IFolderInfo getRootFolderInfo() {
 		return rootFolderInfo;
 	}
@@ -2272,22 +2346,26 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return new ResourceInfoContainer(cr, false);
 	}
 	
+	@Override
 	public CConfigurationData getConfigurationData(){
 		return fCfgData;
 	}
 
+	@Override
 	public void removeResourceInfo(IPath path) {
 		IResourceInfo info = getResourceInfo(path, true);
 		if(info != null)
 			removeResourceConfiguration(info);
 	}
 
+	@Override
 	public IFolderInfo createFolderInfo(IPath path) {
 		String resourceName = path.lastSegment();
 		String id = ManagedBuildManager.calculateChildId(getId(), path.toString());
 		return createFolderInfo(path, id, resourceName);
 	}
 
+	@Override
 	public IFolderInfo createFolderInfo(IPath path, String id, String name) {
 		IResourceInfo info = getResourceInfo(path, false);
 		IFolderInfo folderInfo = null;
@@ -2300,6 +2378,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return folderInfo;
 	}
 
+	@Override
 	public IFolderInfo createFolderInfo(IPath path, IFolderInfo base, String id, String name) {
 		if(base.getPath().equals(path))
 			return null;
@@ -2312,6 +2391,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return folderInfo;
 	}
 
+	@Override
 	public ICSourceEntry[] getSourceEntries() {
 		if(sourceEntries == null || sourceEntries.length == 0){
 			if(parent != null && sourceEntries == null)
@@ -2322,6 +2402,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return sourceEntries.clone();
 	}
 
+	@Override
 	public void setSourceEntries(ICSourceEntry[] entries) {
 		setSourceEntries(entries, true);
 	}
@@ -2355,6 +2436,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		}
 	}
 
+	@Override
 	public void setErrorParserList(String[] ids) {
 		if(ids == null){
 			//reset
@@ -2394,10 +2476,12 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		}
 	}
 
+	@Override
 	public CBuildData getBuildData() {
 		return getEditableBuilder().getBuildData();
 	}
 	
+	@Override
 	public IBuilder getEditableBuilder(){
 		IToolChain tc = getToolChain();
 		IBuilder builder = tc.getBuilder();
@@ -2409,10 +2493,12 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return builder;
 	}
 	
+	@Override
 	public IBuilder getBuilder(){
 		return getToolChain().getBuilder();
 	}
 	
+	@Override
 	public String getOutputPrefix(String outputExtension) {
 		// Treat null extensions as empty string
 		String ext = outputExtension == null ? new String() : outputExtension;
@@ -2437,6 +2523,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		fCfgDes = cfgDes;
 	}
 
+	@Override
 	public IBuildObjectProperties getBuildProperties() {
 		if(buildProperties == null){
 			BuildObjectProperties parentProps = findBuildProperties();
@@ -2467,6 +2554,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return supportsValue(type.getId(), value.getId());
 	}
 
+	@Override
 	public void propertiesChanged() {
 		if(isExtensionConfig)
 			return;
@@ -2490,6 +2578,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return booleanExpressionCalculator;
 	}
 
+	@Override
 	public boolean isSystemObject() {
 		if(isTest)
 			return true;
@@ -2500,10 +2589,12 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return false;
 	}
 
+	@Override
 	public String getOutputExtension(String resourceExtension) {
 		return getRootFolderInfo().getOutputExtension(resourceExtension);
 	}
 
+	@Override
 	public String getOutputFlag(String outputExt) {
 		// Treat null extension as an empty string
 		String ext = outputExt == null ? new String() : outputExt;
@@ -2521,6 +2612,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return flags;
 	}
 	
+	@Override
 	public IManagedCommandLineInfo generateToolCommandLineInfo( String sourceExtension, String[] flags, 
 			String outputFlag, String outputPrefix, String outputName, String[] inputResources, IPath inputLocation, IPath outputLocation ){
 		ITool[] tools = getFilteredTools();
@@ -2573,6 +2665,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return null;
 	}
 	
+	@Override
 	public String[] getUserObjects(String extension) {
 		Vector<String> objs = new Vector<String>();
 		ITool tool = calculateTargetTool();
@@ -2614,6 +2707,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return objs.toArray(new String[objs.size()]);
 	}
 	
+	@Override
 	public String[] getLibs(String extension) {
 		Vector<String> libs = new Vector<String>();
 		ITool tool = calculateTargetTool();
@@ -2668,6 +2762,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return libs.toArray(new String[libs.size()]);
 	}
 
+	@Override
 	public boolean buildsFileType(String srcExt) {
 		return getRootFolderInfo().buildsFileType(srcExt);
 	}
@@ -2735,6 +2830,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		}
 	}
 
+	@Override
 	public boolean supportsBuild(boolean managed) {
 		return supportsBuild(managed, true);
 	}
@@ -2755,6 +2851,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return true;
 	}
 
+	@Override
 	public boolean supportsType(String typeId) {
 		SupportedProperties props = findSupportedProperties();
 		boolean supports = false;
@@ -2768,6 +2865,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return supports;
 	}
 
+	@Override
 	public boolean supportsValue(String typeId, String valueId) {
 		SupportedProperties props = findSupportedProperties();
 		boolean supports = false;
@@ -2794,6 +2892,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		supportedProperties = new SupportedProperties(el);
 	}
 
+	@Override
 	public String[] getRequiredTypeIds() {
 		SupportedProperties props = findSupportedProperties();
 		List<String> list = new ArrayList<String>();
@@ -2806,6 +2905,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return list.toArray(new String[list.size()]);
 	}
 
+	@Override
 	public String[] getSupportedTypeIds() {
 		SupportedProperties props = findSupportedProperties();
 		List<String> list = new ArrayList<String>();
@@ -2818,6 +2918,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return list.toArray(new String[list.size()]);
 	}
 
+	@Override
 	public String[] getSupportedValueIds(String typeId) {
 		SupportedProperties props = findSupportedProperties();
 		List<String> list = new ArrayList<String>();
@@ -2830,6 +2931,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return list.toArray(new String[list.size()]);
 	}
 
+	@Override
 	public boolean requiresType(String typeId) {
 		SupportedProperties props = findSupportedProperties();
 		boolean requires = false;
@@ -2843,10 +2945,12 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return requires;
 	}
 
+	@Override
 	public boolean isManagedBuildOn() {
 		return getBuilder().isManagedBuildOn();
 	}
 
+	@Override
 	public void setManagedBuildOn(boolean on) throws BuildException {
 		try {
 			getEditableBuilder().setManagedBuildOn(on);
@@ -2855,6 +2959,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		}
 	}
 
+	@Override
 	public void changeBuilder(IBuilder newBuilder, String id, String name){
 		changeBuilder(newBuilder, id, name, false);
 	}
@@ -2884,6 +2989,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		}
 	}
 	
+	@Override
 	public boolean isBuilderCompatible(IBuilder builder){
 		return builder.supportsBuild(isManagedBuildOn());
 	}
@@ -2964,6 +3070,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return isPreferenceConfig;
 	}
 	
+	@Override
 	public IBuildPropertyValue getBuildArtefactType() {
 		IBuildObjectProperties props = findBuildProperties();
 		if(props != null){
@@ -2974,6 +3081,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return null;
 	}
 	
+	@Override
 	public void setBuildArtefactType(String id) throws BuildException {
 		IBuildObjectProperties props = getBuildProperties();
 		try {
@@ -3026,34 +3134,42 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		}
 	}
 
+	@Override
 	public IRealBuildObjectAssociation getExtensionObject() {
 		return isExtensionConfig ? this : (Configuration)getParent();
 	}
 
+	@Override
 	public IRealBuildObjectAssociation[] getIdenticBuildObjects() {
 		return new Configuration[]{(Configuration)getExtensionObject()};
 	}
 
+	@Override
 	public IRealBuildObjectAssociation getRealBuildObject() {
 		return getExtensionObject();
 	}
 
+	@Override
 	public IRealBuildObjectAssociation getSuperClassObject() {
 		return (IRealBuildObjectAssociation)getParent();
 	}
 
+	@Override
 	public int getType() {
 		return OBJECT_CONFIGURATION;
 	}
 
+	@Override
 	public boolean isRealBuildObject() {
 		return getRealBuildObject() == this;
 	}
 
+	@Override
 	public String getUniqueRealName() {
 		return getName();
 	}
 
+	@Override
 	public boolean isExtensionBuildObject() {
 		return isExtensionElement();
 	}

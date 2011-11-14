@@ -171,7 +171,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 				canEnableInternalBuilder(true) &&
 				canEnableInternalBuilder(false));
 		
-		t_buildCmd.setText(getMC());
+		t_buildCmd.setText(getMakeCommand());
 		
 		if (page.isMultiCfg()) {
 			group_dir.setVisible(false);
@@ -293,11 +293,14 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 	/**
 	 * @return make command
 	 */
-	private String getMC() {
-		String makeCommand = bldr.getCommand();
-		String makeArgs = bldr.getArguments();
-		if (makeArgs != null) {	makeCommand += " " + makeArgs; } //$NON-NLS-1$
-		return makeCommand;
+	private String getMakeCommand() {
+		String makeCommand = icfg.getBuildCommand();
+		String makeArgs = icfg.getBuildArguments();
+
+		if (!makeCommand.isEmpty() && makeArgs != null) {
+			return makeCommand + " " + makeArgs; //$NON-NLS-1$
+		}
+		return EMPTY_STR;
 	}
 	/**
 	 * Performs common settings for all controls

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 QNX Software Systems and others.
+ * Copyright (c) 2004, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.cdt.newmake.core;
 
 import java.util.Map;
 
+import org.eclipse.cdt.managedbuilder.internal.core.Builder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
@@ -42,10 +43,45 @@ public interface IMakeCommonBuildInfo {
 	void setStopOnError(boolean on) throws CoreException;
 	boolean supportsStopOnError(boolean on);
 
+	/**
+	 * @return the current number of parallel jobs.
+	 * The value of the number is encoded as follows:
+	 * <pre>
+	 *  Status       Returns
+	 * No parallel      1       
+	 * Unlimited    Integer.MAX  (N/A for Internal Builder)
+	 * Optimal       -CPU#       (negative number of processors) 
+	 * Specific        >0        (positive number)
+	 * </pre>
+	 */
 	int getParallelizationNum();
-	void setParallelizationNum(int num) throws CoreException;
+
+	/**
+	 * Sets maximum number of parallel threads/jobs to be used by builder.
+	 * Note that the number will be set only if the builder is in "parallel"
+	 * mode.
+	 * 
+	 * @param jobs - number of jobs according table {@link #getParallelizationNum()}.
+	 *    Any number <=0 is treated as setting "optimal" property,
+	 *    the value of the number itself is ignored.
+	 */
+	void setParallelizationNum(int jobs) throws CoreException;
+	/**
+	 * @return {@code true} if builder supports parallel build,
+	 *    {@code false} otherwise.
+	 */
 	boolean supportsParallelBuild();
+	/**
+	 * @return {@code true} if builder support for parallel build is enabled,
+	 *    {@code false} otherwise.
+	 */
 	boolean isParallelBuildOn();
+	/**
+	 * Set parallel execution mode for the builder.
+	 * @see Builder#setParallelBuildOn(boolean)
+	 * 
+	 * @param on - the flag to enable or disable parallel mode.
+	 */
 	void setParallelBuildOn(boolean on) throws CoreException;
 
 	boolean isDefaultBuildCmd();

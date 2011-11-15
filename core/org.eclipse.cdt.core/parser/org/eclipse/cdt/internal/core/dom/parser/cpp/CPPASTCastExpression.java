@@ -44,10 +44,12 @@ public class CPPASTCastExpression extends ASTNode implements ICPPASTCastExpressi
 		setTypeId(typeId);
 	}
     
+	@Override
 	public CPPASTCastExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
     
+	@Override
 	public CPPASTCastExpression copy(CopyStyle style) {
 		CPPASTCastExpression copy = new CPPASTCastExpression();
 		copy.setOperator(getOperator());
@@ -61,6 +63,7 @@ public class CPPASTCastExpression extends ASTNode implements ICPPASTCastExpressi
 		return copy;
 	}
 
+	@Override
 	public void setTypeId(IASTTypeId typeId) {
         assertNotFrozen();
         this.typeId = typeId;
@@ -70,24 +73,29 @@ public class CPPASTCastExpression extends ASTNode implements ICPPASTCastExpressi
 		}
     }
 
-    public IASTTypeId getTypeId() {
+    @Override
+	public IASTTypeId getTypeId() {
         return typeId;
     }
     
+	@Override
 	public int getOperator() {
         return op;
     }
 
-    public void setOperator(int operator) {
+    @Override
+	public void setOperator(int operator) {
         assertNotFrozen();
         op = operator;
     }
 
-    public IASTExpression getOperand() {
+    @Override
+	public IASTExpression getOperand() {
         return operand;
     }
 
-    public void setOperand(IASTExpression expression) {
+    @Override
+	public void setOperand(IASTExpression expression) {
         assertNotFrozen();
         operand = expression;
         if (expression != null) {
@@ -120,7 +128,8 @@ public class CPPASTCastExpression extends ASTNode implements ICPPASTCastExpressi
         return true;
     }
 
-    public void replace(IASTNode child, IASTNode other) {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
         if (child == operand) {
             other.setPropertyInParent(child.getPropertyInParent());
             other.setParent(child.getParent());
@@ -128,6 +137,7 @@ public class CPPASTCastExpression extends ASTNode implements ICPPASTCastExpressi
         }
     }
     
+	@Override
 	public IType getExpressionType() {
 		if (fType == null) {
 			IType t= CPPVisitor.createType(typeId.getAbstractDeclarator());
@@ -137,6 +147,7 @@ public class CPPASTCastExpression extends ASTNode implements ICPPASTCastExpressi
 		return fType;
 	}
 
+	@Override
 	public ValueCategory getValueCategory() {
 		if (fValueCategory == null) {
 			getExpressionType(); // as a side effect fValueCategory is computed
@@ -144,6 +155,7 @@ public class CPPASTCastExpression extends ASTNode implements ICPPASTCastExpressi
 		return fValueCategory;
 	}
 
+	@Override
 	public boolean isLValue() {
 		return getValueCategory() == LVALUE;
 	}

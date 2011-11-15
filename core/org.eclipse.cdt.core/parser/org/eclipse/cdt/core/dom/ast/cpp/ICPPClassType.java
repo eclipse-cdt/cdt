@@ -33,19 +33,20 @@ public interface ICPPClassType extends ICompositeType, ICPPBinding {
 	public ICPPBase[] getBases();
 
 	/**
-	 * Get fields is restated here just to point out that this method returns a
-	 * list of ICPPField objects representing all fields, declared or inherited.
+	 * Get fields is restated here just to point out that this method returns a list of ICPPField
+	 * objects representing all fields, declared or inherited.
 	 */
+	@Override
 	public IField[] getFields();
 
 	/**
-	 * findField is restated here to point out that this method looks through
-	 * the inheritance tree of this class while looking for a field with the
-	 * given name If no field is found, null is returned, if the name is found
-	 * to be ambiguous a IProblemBinding is returned.
+	 * findField is restated here to point out that this method looks through the inheritance tree
+	 * of this class while looking for a field with the given name If no field is found, null is
+	 * returned, if the name is found to be ambiguous a IProblemBinding is returned.
 	 * 
 	 * @param name
 	 */
+	@Override
 	public IField findField(String name);
 
 	/**

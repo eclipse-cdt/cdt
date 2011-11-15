@@ -75,6 +75,7 @@
  * David McKnight   (IBM)        - [215814] [performance] Duplicate Queries between Table and Remote Systems View
  * David McKnight   (IBM)        - [249031] Last used editor should be set to SystemEditableRemoteFile
  * David McKnight   (IBM)        - [341244] folder selection input to unlocked Remote Systems Details view sometimes fails
+ * David McKnight   (IBM)        - [363490] PHP files opening in system editor (Dreamweaver)
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -3425,14 +3426,22 @@ public class SystemViewRemoteFileAdapter
 				if (editable instanceof SystemEditableRemoteFile){
 					SystemEditableRemoteFile edit = (SystemEditableRemoteFile)editable;
 					IEditorDescriptor oldDescriptor = edit.getEditorDescriptor();
-					IEditorDescriptor curDescriptor;
-					try {
-						curDescriptor = IDE.getEditorDescriptor(editable.getLocalResource());
-						if (oldDescriptor != curDescriptor){
-							edit.setEditorDescriptor(curDescriptor);
+					IEditorDescriptor curDescriptor = null;
+					IFile file = editable.getLocalResource();
+					
+					if (file == null || !file.exists()){
+						curDescriptor = registry.getDefaultEditor(remoteFile.getName());						
+					}
+					if (curDescriptor == null){
+						try {
+							curDescriptor = IDE.getEditorDescriptor(file);
+						} catch (PartInitException e) {
+							curDescriptor = IDE.getDefaultEditor(file);
 						}
-					} catch (PartInitException e) {
-					}					
+					}
+					if (oldDescriptor != curDescriptor){
+						edit.setEditorDescriptor(curDescriptor);
+					}								
 				}
 				
 				try

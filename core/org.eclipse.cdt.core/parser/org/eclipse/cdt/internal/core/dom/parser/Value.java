@@ -91,11 +91,12 @@ public class Value implements IValue {
 			fResolvedUnknown= resolvedUnknowns;
 			fMap= map;
 		}
+
 		public void nextSeperator() throws UnknownValueException {
 			final char[] expression = fExpression;
 			final int len = expression.length;
 			int idx = pos;
-			while(idx < len) {
+			while (idx < len) {
 				if (expression[idx++] == SEPARATOR)
 					break;
 			}
@@ -105,7 +106,7 @@ public class Value implements IValue {
 
 	private static class UnknownValueException extends Exception {}
 	private static UnknownValueException UNKNOWN_EX= new UnknownValueException();
-	private static int sUnique=0;
+	private static int sUnique= 0;
 
 	private final char[] fExpression;
 	private final ICPPUnknownBinding[] fUnknownBindings;
@@ -404,7 +405,8 @@ public class Value implements IValue {
 	 * Returns a {@code Number} for numerical values or a {@code String}, otherwise.
 	 * @throws UnknownValueException
 	 */
-	private static Object evaluate(IASTExpression e, Map<String, Integer> unknownSigs, List<ICPPUnknownBinding> unknowns, int maxdepth) throws UnknownValueException {
+	private static Object evaluate(IASTExpression e, Map<String, Integer> unknownSigs,
+			List<ICPPUnknownBinding> unknowns, int maxdepth) throws UnknownValueException {
 		if (maxdepth < 0 || e == null)
 			throw UNKNOWN_EX;
 		
@@ -437,7 +439,8 @@ public class Value implements IValue {
 			final IASTExpression pe = cexpr.getPositiveResultExpression();
 			Object po= pe == null ? o : evaluate(pe, unknownSigs, unknowns, maxdepth);
 			Object neg= evaluate(cexpr.getNegativeResultExpression(), unknownSigs, unknowns, maxdepth);
-			return "" + CONDITIONAL_CHAR + SEPARATOR + o.toString() + SEPARATOR + po.toString() + SEPARATOR + neg.toString(); //$NON-NLS-1$
+			return "" + CONDITIONAL_CHAR + SEPARATOR + o.toString() + SEPARATOR + po.toString() + //$NON-NLS-1$
+					SEPARATOR + neg.toString();
 		}
 		if (e instanceof IASTIdExpression) {
 			IBinding b= ((IASTIdExpression) e).getName().resolvePreBinding();
@@ -487,7 +490,8 @@ public class Value implements IValue {
 	/**
 	 * Extract a value off a binding.
 	 */
-	private static Object evaluateBinding(IBinding b, Map<String, Integer> unknownSigs, List<ICPPUnknownBinding> unknowns, int maxdepth) throws UnknownValueException {
+	private static Object evaluateBinding(IBinding b, Map<String, Integer> unknownSigs,
+			List<ICPPUnknownBinding> unknowns, int maxdepth) throws UnknownValueException {
 		if (b instanceof IType) {
 			throw UNKNOWN_EX;
 		}
@@ -514,7 +518,8 @@ public class Value implements IValue {
 		throw UNKNOWN_EX;
 	}
 
-	private static Object createReference(ICPPUnknownBinding unknown, Map<String, Integer> unknownSigs, List<ICPPUnknownBinding> unknowns) {
+	private static Object createReference(ICPPUnknownBinding unknown,
+			Map<String, Integer> unknownSigs, List<ICPPUnknownBinding> unknowns) {
 		String sig= getSignatureForUnknown(unknown);
 		Integer idx= unknownSigs.get(sig);
 		if (idx == null) {
@@ -525,7 +530,8 @@ public class Value implements IValue {
 		return "" + REFERENCE_CHAR + idx.toString();  //$NON-NLS-1$
 	}
 	
-	private static Object evaluateValue(IValue cv, Map<String, Integer> unknownSigs, List<ICPPUnknownBinding> unknowns) throws UnknownValueException {
+	private static Object evaluateValue(IValue cv, Map<String, Integer> unknownSigs,
+			List<ICPPUnknownBinding> unknowns) throws UnknownValueException {
 		if (cv == Value.UNKNOWN) 
 			throw UNKNOWN_EX;
 		
@@ -568,7 +574,9 @@ public class Value implements IValue {
 		return buf.toString();
 	}
 	
-	private static Object evaluateUnaryExpression(IASTUnaryExpression ue, Map<String, Integer> unknownSigs, List<ICPPUnknownBinding> unknowns, int maxdepth) throws UnknownValueException {
+	private static Object evaluateUnaryExpression(IASTUnaryExpression ue,
+			Map<String, Integer> unknownSigs, List<ICPPUnknownBinding> unknowns, int maxdepth)
+			throws UnknownValueException {
 		final int unaryOp= ue.getOperator();
 
 		if (unaryOp == IASTUnaryExpression.op_sizeof) {
@@ -630,7 +638,8 @@ public class Value implements IValue {
 	}
 
 	private static Object evaluateBinaryExpression(IASTBinaryExpression be, 
-			Map<String, Integer> unknownSigs, List<ICPPUnknownBinding> unknowns, int maxdepth) throws UnknownValueException {
+			Map<String, Integer> unknownSigs, List<ICPPUnknownBinding> unknowns, int maxdepth)
+			throws UnknownValueException {
 		final Object o1= evaluate(be.getOperand1(), unknownSigs, unknowns, maxdepth);
 		final Object o2= evaluate(be.getOperand2(), unknownSigs, unknowns, maxdepth);
 
@@ -638,7 +647,8 @@ public class Value implements IValue {
 		return combineBinary(op, o1, o2);
 	}
 	
-	private static Object combineBinary(final int op, final Object o1, final Object o2) throws UnknownValueException {
+	private static Object combineBinary(final int op, final Object o1, final Object o2)
+			throws UnknownValueException {
 		if (o1 instanceof Number && o2 instanceof Number) {
 			long v1= ((Number) o1).longValue();
 			long v2= ((Number) o2).longValue();
@@ -725,7 +735,8 @@ public class Value implements IValue {
 		return "" + BINARY_OP_CHAR + op + SEPARATOR + o1.toString() + SEPARATOR + o2.toString(); //$NON-NLS-1$
 	}
 	
-	public static IValue reevaluate(IValue val, int packOffset, IBinding[] resolvedUnknowns, ICPPTemplateParameterMap map, int maxdepth) {
+	public static IValue reevaluate(IValue val, int packOffset, IBinding[] resolvedUnknowns,
+			ICPPTemplateParameterMap map, int maxdepth) {
 		try {
 			Map<String, Integer> unknownSigs= new HashMap<String, Integer>();
 			List<ICPPUnknownBinding> unknown= new ArrayList<ICPPUnknownBinding>();
@@ -787,7 +798,8 @@ public class Value implements IValue {
 				}
 				return po;
 			}
-			return "" + CONDITIONAL_CHAR + SEPARATOR + cond.toString() + SEPARATOR + po.toString() + SEPARATOR + neg.toString(); //$NON-NLS-1$
+			return "" + CONDITIONAL_CHAR + SEPARATOR + cond.toString() + SEPARATOR + //$NON-NLS-1$
+					po.toString() +	SEPARATOR + neg.toString();
 		case REFERENCE_CHAR: 
 			int num= parseNonNegative(buf, idx + 1);
 			final IBinding[] resolvedUnknowns= reeval.fResolvedUnknown;
@@ -889,7 +901,7 @@ public class Value implements IValue {
 	 * Parses a long.
 	 */
 	private static long parseLong(char[] value, int offset) throws UnknownValueException {
-		final long maxvalue= Long.MAX_VALUE/10;
+		final long maxvalue= Long.MAX_VALUE / 10;
 		final int len= value.length;
 		boolean negative= false;
 		long result = 0;
@@ -920,7 +932,7 @@ public class Value implements IValue {
 	 * Parses a long, returns <code>null</code> if not possible
 	 */
 	private static Long parseLong(char[] value) {
-		final long maxvalue= Long.MAX_VALUE/10;
+		final long maxvalue= Long.MAX_VALUE / 10;
 		final int len= value.length;
 		boolean negative= false;
 		long result = 0;

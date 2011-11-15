@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- * Institute for Software - initial API and implementation 
+ *     Institute for Software - initial API and implementation 
  ******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.util;
 
@@ -19,7 +19,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
  * @author Emanuel Graf IFS
- *
  */
 public class OffsetHelper {
 	
@@ -32,10 +31,11 @@ public class OffsetHelper {
 				if (location instanceof IASTMacroExpansionLocation) {
 					IASTMacroExpansionLocation macroLoc = (IASTMacroExpansionLocation) location;
 					offset = macroLoc.asFileLocation().getNodeOffset();
-				}else {
+				} else {
 					offset = location.asFileLocation().getNodeOffset();
 				}
-				if(offset < nodeStart) nodeStart = offset;
+				if (offset < nodeStart)
+					nodeStart = offset;
 			}
 		} else {
 			nodeStart = node.getFileLocation().getNodeOffset();
@@ -55,14 +55,13 @@ public class OffsetHelper {
 					IASTMacroExpansionLocation macroLoc = (IASTMacroExpansionLocation) location;
 					fileOffset = macroLoc.asFileLocation().getNodeOffset();
 					length = macroLoc.asFileLocation().getNodeLength();
-				}else {
+				} else {
 					fileOffset = location.asFileLocation().getNodeOffset();
 					length = location.asFileLocation().getNodeLength();
 				}
 			}
 		} else {
 			IASTFileLocation loc = node.getFileLocation();
-			
 			fileOffset = loc.getNodeOffset();
 			length = loc.getNodeLength();
 		}
@@ -75,7 +74,7 @@ public class OffsetHelper {
 	}
 	
 	public static int getLengthIncludingComment(IASTNode node) {
-		return OffsetHelper.getEndOffsetIncludingComments(node) - OffsetHelper.getOffsetIncludingComment(node);
+		return getEndOffsetIncludingComments(node) - getOffsetIncludingComment(node);
 	}
 
 	public static int getNodeOffset(ASTNode node) {
@@ -92,6 +91,5 @@ public class OffsetHelper {
 
 	public static int getEndingLineNumber(IASTNode node) {
 		return node.getFileLocation().getEndingLineNumber();
-	}	
-	
+	}
 }

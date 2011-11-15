@@ -16,7 +16,7 @@ import org.eclipse.osgi.util.NLS;
 public final class Messages extends NLS {
 	public static String GenerateGettersAndSettersInputPage_DeselectAll;
 	public static String GenerateGettersAndSettersInputPage_header;
-	public static String GenerateGettersAndSettersInputPage_PlaceImplHeader;
+	public static String GenerateGettersAndSettersInputPage_SeparateDefinition;
 	public static String GenerateGettersAndSettersInputPage_SelectAll;
 	public static String GenerateGettersAndSettersInputPage_SelectGetters;
 	public static String GenerateGettersAndSettersInputPage_SelectSetters;

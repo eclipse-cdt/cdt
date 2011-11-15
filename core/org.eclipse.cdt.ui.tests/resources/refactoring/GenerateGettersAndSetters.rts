@@ -3,7 +3,6 @@
 //@.config
 filename=C.h
 getters=name
-inHeader=true
 //@C.cpp
 #include "C.h"
 
@@ -104,7 +103,6 @@ int gooo = 1;
 //@.config
 filename=C.h
 getters=name
-inHeader=true
 //@C.cpp
 #include "C.h"
 
@@ -215,7 +213,6 @@ int gooo = 1;
 //@.config
 filename=C.h
 setters=name
-inHeader=true
 //@C.cpp
 #include "C.h"
 
@@ -319,7 +316,6 @@ int gooo = 1;
 filename=C.h
 setters=name
 getters=name
-inHeader=true
 //@C.cpp
 #include "C.h"
 
@@ -427,7 +423,6 @@ int gooo = 1;
 filename=C.h
 getters=name,systemId
 setters=name,systemId
-inHeader=true
 //@C.cpp
 #include "C.h"
 
@@ -527,7 +522,6 @@ int gooo = 1;
 filename=GaS.h
 getters=i,ok
 setters=i,ok
-inHeader=true
 //@GaS.cpp
 #include "Getters.h"
 
@@ -593,7 +587,6 @@ private:
 filename=C.h
 getters=id
 setters=id
-inHeader=true
 //@C.h
 #ifndef C_H_
 #define C_H_
@@ -631,7 +624,6 @@ public:
 filename=C.h
 getters=i
 setters=i
-inHeader=true
 //@C.h
 /*
  * test.h
@@ -705,19 +697,19 @@ class test {
 #define TEST_H_
 
 //comment1
-class test
-{
+class test {
 	void test();
 	//comment3
 };
 
 #endif /* TEST_H_ */
 
-//!Generate Getters and Setters One Getter Selection Implementation in CPP
+//!Generate Getters and Setters One Getter Selection Separate Definition
 //#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
 //@.config
 filename=C.h
 getters=name
+definitionSeparate=true
 //@C.cpp
 #include "C.h"
 
@@ -815,11 +807,12 @@ public:
 int gooo = 1;
 
 #endif /*C_H_*/
-//!Generate Getters and Setters One Getter Selection with Namespace Implementation in CPP
+//!Generate Getters and Setters One Getter Selection with Namespace Separate Definition
 //#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
 //@.config
 filename=C.h
 getters=name
+definitionSeparate=true
 //@C.cpp
 #include "C.h"
 
@@ -943,11 +936,12 @@ int gooo = 1;
 
 #endif /*C_H_*/
 
-//!Generate Getters and Setters One Setter Selection Implementation in CPP
+//!Generate Getters and Setters One Setter Selection Separate Definition
 //#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
 //@.config
 filename=C.h
 setters=name
+definitionSeparate=true
 //@C.cpp
 #include "C.h"
 
@@ -1057,12 +1051,13 @@ public:
 int gooo = 1;
 
 #endif /*C_H_*/
-//!Getter and Setter Selection Implementation in CPP
+//!Getter and Setter Selection Separate Definition
 //#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
 //@.config
 filename=C.h
 setters=name
 getters=name
+definitionSeparate=true
 //@C.cpp
 #include "C.h"
 
@@ -1177,13 +1172,13 @@ int gooo = 1;
 
 #endif /*C_H_*/
 
-//!Generate Getters and Setters no Methods Implementation in CPP
+//!Generate Getters and Setters no Methods Separate Definition
 //#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
 //@.config
 filename=C.h
 getters=id
 setters=id
-infos=1
+definitionSeparate=true
 //@C.h
 #ifndef C_H_
 #define C_H_
@@ -1208,24 +1203,24 @@ public:
 	void setId(int id);
 };
 
-int Person::getId() const {
+inline int Person::getId() const {
 	return id;
 }
 
-void Person::setId(int id) {
+inline void Person::setId(int id) {
 	this->id = id;
 }
 
 
 #endif /*C_H_*/
 
-//!No Methods Implementation in CPP
+//!No Methods Separate Definition
 //#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
 //@.config
 filename=C.h
 getters=i
 setters=i
-infos=1
+definitionSeparate=true
 //@C.h
 /*
  * test.h
@@ -1262,11 +1257,11 @@ public:
 	void setI(int i);
 };
 
-int test::getI() const {
+inline int test::getI() const {
 	return i;
 }
 
-void test::setI(int i) {
+inline void test::setI(int i) {
 	this->i = i;
 }
 
@@ -1279,6 +1274,7 @@ void test::setI(int i) {
 filename=Test.h
 getters=testField
 setters=testField
+definitionSeparate=true
 
 //@Test.h
 #ifndef TEST_H_
@@ -1346,6 +1342,7 @@ void Test::foo() {
 filename=Test.h
 getters=testField
 setters=testField
+definitionSeparate=true
 
 //@Test.h
 #ifndef TEST_H_
@@ -1386,6 +1383,7 @@ void Test::setTestField(int testField) {
 filename=component_b/public_headers/Test.h
 getters=testField
 setters=testField
+definitionSeparate=true
 
 //@component_b/public_headers/Test.h
 #ifndef TEST_H_

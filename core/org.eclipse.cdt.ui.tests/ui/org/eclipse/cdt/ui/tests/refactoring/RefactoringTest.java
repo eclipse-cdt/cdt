@@ -109,7 +109,7 @@ public abstract class RefactoringTest extends RefactoringBaseTest {
 
 	protected void assertConditionsInfo(RefactoringStatus status, int number) {
 		if (number > 0) {
-			assertTrue("Info in Condition expected", status.hasInfo()); //$NON-NLS-1$
+			assertTrue("Info in condition expected", status.hasInfo()); //$NON-NLS-1$
 		}
 		RefactoringStatusEntry[] entries = status.getEntries();
 		int count = 0;
@@ -123,7 +123,7 @@ public abstract class RefactoringTest extends RefactoringBaseTest {
 
 	protected void assertConditionsError(RefactoringStatus status, int number) {
 		if (number > 0) {
-			assertTrue("Error in Condition expected", status.hasError()); //$NON-NLS-1$
+			assertTrue("Error in condition expected", status.hasError()); //$NON-NLS-1$
 		}
 		RefactoringStatusEntry[] entries = status.getEntries();
 		int count = 0;

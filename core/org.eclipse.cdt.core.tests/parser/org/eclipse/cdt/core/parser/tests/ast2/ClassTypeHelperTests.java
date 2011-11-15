@@ -39,45 +39,31 @@ public class ClassTypeHelperTests extends AST2BaseTest {
 		return new BindingAssertionHelper(code, true);
 	}
 
-	//	class A {
-	//	public:
-	//	  A();
-	//	  int x;
-	//	  A* y;
-	//	  const A& z;
-	//	};
-	public void testHasTrivialCopyCtor_1() throws Exception {
-		BindingAssertionHelper helper = getAssertionHelper();
-		ICPPClassType classType = helper.assertNonProblem("A {", 1, ICPPClassType.class);
-		assertTrue(ClassTypeHelper.hasTrivialCopyCtor(classType));
-	}
-
 	//	struct A {
 	//	  A(const A& a);
 	//	};
 	//
 	//	class B {
 	//	public:
-	//	  A a;
-	//	};
-	public void testHasTrivialCopyCtor_2() throws Exception {
-		BindingAssertionHelper helper = getAssertionHelper();
-		ICPPClassType classType = helper.assertNonProblem("B {", 1, ICPPClassType.class);
-		assertFalse(ClassTypeHelper.hasTrivialCopyCtor(classType));
-	}
-
-	//	class A {
-	//	public:
-	//	  A();
-	//	  A(const A& a);
+	//	  B();
 	//	  int x;
 	//	  A* y;
 	//	  const A& z;
+	//    static A s;
 	//	};
-	public void testHasTrivialDesctructor_1() throws Exception {
+	//
+	//	class C {
+	//	public:
+	//	  A a;
+	//	};
+	public void testHasTrivialCopyCtor() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
-		ICPPClassType classType = helper.assertNonProblem("A {", 1, ICPPClassType.class);
-		assertTrue(ClassTypeHelper.hasTrivialDestructor(classType));
+		ICPPClassType classA = helper.assertNonProblem("A {", 1, ICPPClassType.class);
+		assertFalse(ClassTypeHelper.hasTrivialCopyCtor(classA));
+		ICPPClassType classB = helper.assertNonProblem("B {", 1, ICPPClassType.class);
+		assertTrue(ClassTypeHelper.hasTrivialCopyCtor(classB));
+		ICPPClassType classC = helper.assertNonProblem("C {", 1, ICPPClassType.class);
+		assertFalse(ClassTypeHelper.hasTrivialCopyCtor(classC));
 	}
 
 	//	struct A {
@@ -86,38 +72,51 @@ public class ClassTypeHelperTests extends AST2BaseTest {
 	//
 	//	class B {
 	//	public:
+	//	  B();
+	//	  B(const B& a);
+	//	  int x;
+	//	  B* y;
+	//	  const B& z;
+	//	  static A s;
+	//	};
+	//
+	//	class C {
+	//	public:
 	//	  A a;
 	//	};
-	public void testHasTrivialDesctructor_2() throws Exception {
+	public void testHasTrivialDestructor() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
-		ICPPClassType classType = helper.assertNonProblem("B {", 1, ICPPClassType.class);
-		assertFalse(ClassTypeHelper.hasTrivialDestructor(classType));
-	}
-
-	//	class A {
-	//	public:
-	//	  A();
-	//	  A(const A& a);
-	//	  void m();
-	//	  int x;
-	//	  A* y;
-	//	  const A& z;
-	//	};
-	public void testIsPolymorphic_1() throws Exception {
-		BindingAssertionHelper helper = getAssertionHelper();
-		ICPPClassType classType = helper.assertNonProblem("A {", 1, ICPPClassType.class);
-		assertFalse(ClassTypeHelper.isPolymorphic(classType));
+		ICPPClassType classA = helper.assertNonProblem("A {", 1, ICPPClassType.class);
+		assertFalse(ClassTypeHelper.hasTrivialDestructor(classA));
+		ICPPClassType classB = helper.assertNonProblem("B {", 1, ICPPClassType.class);
+		assertTrue(ClassTypeHelper.hasTrivialDestructor(classB));
+		ICPPClassType classC = helper.assertNonProblem("C {", 1, ICPPClassType.class);
+		assertFalse(ClassTypeHelper.hasTrivialDestructor(classC));
 	}
 
 	//	struct A {
 	//	  virtual void m();
 	//	};
 	//
-	//	class B : public A {
+	//	class B {
+	//	public:
+	//	  B();
+	//	  B(const B& a);
+	//	  void m();
+	//	  int x;
+	//	  B* y;
+	//	  const B& z;
 	//	};
-	public void testIsPolymorphic_2() throws Exception {
+	//
+	//	class C : public A {
+	//	};
+	public void testIsPolymorphic() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
-		ICPPClassType classType = helper.assertNonProblem("B", 1, ICPPClassType.class);
-		assertTrue(ClassTypeHelper.isPolymorphic(classType));
+		ICPPClassType classA = helper.assertNonProblem("A {", 1, ICPPClassType.class);
+		assertTrue(ClassTypeHelper.isPolymorphic(classA));
+		ICPPClassType classB = helper.assertNonProblem("B {", 1, ICPPClassType.class);
+		assertFalse(ClassTypeHelper.isPolymorphic(classB));
+		ICPPClassType classC = helper.assertNonProblem("C", 1, ICPPClassType.class);
+		assertTrue(ClassTypeHelper.isPolymorphic(classC));
 	}
 }

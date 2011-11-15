@@ -33,7 +33,7 @@ public class GetterSetterContext implements ITreeContentProvider {
 	public SortedSet<GetterSetterInsertEditProvider> selectedFunctions = new TreeSet<GetterSetterInsertEditProvider>();
 	public IASTName selectedName;
 	private ArrayList<FieldWrapper> wrappedFields;
-	private boolean implementationInHeader = false;
+	private boolean definitionSeparate;
 
 	public Object[] getChildren(Object parentElement) {
 		ArrayList<GetterSetterInsertEditProvider> children = new ArrayList<GetterSetterInsertEditProvider>();
@@ -80,9 +80,11 @@ public class GetterSetterContext implements ITreeContentProvider {
 	}
 	
 	public void refresh() {
-		// We only recreate the function declarations instead of recreating GetterSetterInsertEditProviders.
-		// That way, selectedFunctions is still valid. Also, the objects inside the TreeViewer are still the same
-		// which is convenient because that way we don't need to save then restore the collapsed/expanded+checked/unchecked state of the TreeViewer.
+		// We only recreate the function declarations instead of recreating
+		// GetterSetterInsertEditProviders. That way, selectedFunctions is still valid.
+		// Also, the objects inside the TreeViewer are still the same, which is convenient because
+		// that way we don't need to save then restore the collapsed/expanded+checked/unchecked
+		// state of the TreeViewer.
 		for (FieldWrapper wrapper : wrappedFields) {
 			for (GetterSetterInsertEditProvider provider : wrapper.childNodes) {
 				provider.createFunctionDeclaration();
@@ -96,12 +98,12 @@ public class GetterSetterContext implements ITreeContentProvider {
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 	}
 	
-	public boolean isImplementationInHeader() {
-		return implementationInHeader;
+	public boolean isDefinitionSeparate() {
+		return definitionSeparate;
 	}
 
-	public void setImplementationInHeader(boolean implementationInHeader) {
-		this.implementationInHeader = implementationInHeader;
+	public void setDefinitionSeparate(boolean definitionSeparate) {
+		this.definitionSeparate = definitionSeparate;
 	}
 
 	private ArrayList<FieldWrapper> getWrappedFields() {

@@ -4,7 +4,7 @@
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html  
+ * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors: 
  * 	   Emanuel Graf & Leo Buettiker - initial API and implementation 
@@ -41,7 +41,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTest {
 	private List<String> selectedGetters;
 	private List<String> selectedSetters;
 	private GenerateGettersAndSettersRefactoring refactoring;
-	private boolean keepInHeader;
+	private boolean definitionSeparate;
 	private int infos;
 
 	/**
@@ -70,7 +70,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTest {
 
 	private void executeRefactoring() throws CoreException, Exception {
 		selectFields();
-		refactoring.getContext().setImplementationInHeader(keepInHeader);
+		refactoring.getContext().setDefinitionSeparate(definitionSeparate);
 		RefactoringStatus finalConditions = refactoring.checkFinalConditions(NULL_PROGRESS_MONITOR);
 		Change createChange = refactoring.createChange(NULL_PROGRESS_MONITOR);
 		if (warnings > 0) {
@@ -109,7 +109,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTest {
 		infos = new Integer(refactoringProperties.getProperty("infos", "0"));
 		String getters = refactoringProperties.getProperty("getters", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		String setters = refactoringProperties.getProperty("setters", ""); //$NON-NLS-1$ //$NON-NLS-2$
-		keepInHeader = Boolean.valueOf(refactoringProperties.getProperty("inHeader", "false"));
+		definitionSeparate = Boolean.valueOf(refactoringProperties.getProperty("definitionSeparate", "false"));
 		
 		selectedGetters = new ArrayList<String>();	
 		for (String getterName : getters.split(",")) { //$NON-NLS-1$

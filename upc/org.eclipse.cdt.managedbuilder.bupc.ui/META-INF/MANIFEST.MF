@@ -16,6 +16,6 @@ Require-Bundle: org.eclipse.cdt.ui,
 Import-Package: org.eclipse.cdt.ui.wizards,
  org.eclipse.ui.wizards.newresource
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: %Bundle-Vendor
 Bundle-Localization: plugin

@@ -14,5 +14,5 @@ Require-Bundle: org.eclipse.cdt.managedbuilder.core,
  org.eclipse.ui
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.eclipse.cdt.managedbuilder.xlc.core.XLCCorePlugin
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.eclipse.cdt.managedbuilder.xlc.core

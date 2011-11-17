@@ -55,8 +55,8 @@ public class LanguageSettingsStorage {
 	};
 
 	/**
-	 * <br> Note that this list is <b>unmodifiable</b>. To modify the list copy it, change and use
-	 * {@link #setSettingEntries(ICConfigurationDescription, IResource, String, List)}.
+	 * TODO
+	 * <br> Note that this list is <b>unmodifiable</b>.
 	 *
 	 */
 	public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId) {
@@ -98,7 +98,7 @@ public class LanguageSettingsStorage {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void setSettingEntries(String rcProjectPath, String languageId, List<ICLanguageSettingEntry> entries) {
 		synchronized (fStorage) {
@@ -108,7 +108,7 @@ public class LanguageSettingsStorage {
 					langMap = new HashMap<String, List<ICLanguageSettingEntry>>();
 					fStorage.put(languageId, langMap);
 				}
-				List<ICLanguageSettingEntry> sortedEntries = listPool.add(Collections.unmodifiableList(sortEntries(entries)));
+				List<ICLanguageSettingEntry> sortedEntries = getPooledList(sortEntries(entries), false);
 				langMap.put(rcProjectPath, sortedEntries);
 			} else {
 				// do not keep nulls in the tables
@@ -129,7 +129,7 @@ public class LanguageSettingsStorage {
 	public boolean isEmpty() {
 		return fStorage.isEmpty();
 	}
-	
+
 	/**
 	 * Clear all the entries for all configurations, all resources and all languages.
 	 */
@@ -239,20 +239,20 @@ public class LanguageSettingsStorage {
 	private ICLanguageSettingEntry loadSettingEntry(Node parentElement) {
 		String settingKind = XmlUtil.determineAttributeValue(parentElement, ATTR_KIND);
 		String settingName = XmlUtil.determineAttributeValue(parentElement, ATTR_NAME);
-	
+
 		NodeList flagNodes = parentElement.getChildNodes();
 		int flags = 0;
 		for (int i=0;i<flagNodes.getLength();i++) {
 			Node flagNode = flagNodes.item(i);
 			if(flagNode.getNodeType() != Node.ELEMENT_NODE || !ELEM_FLAG.equals(flagNode.getNodeName()))
 				continue;
-	
+
 			String settingFlags = XmlUtil.determineAttributeValue(flagNode, ATTR_VALUE);
 			int bitFlag = LanguageSettingEntriesSerializer.composeFlags(settingFlags);
 			flags |= bitFlag;
-	
+
 		}
-	
+
 		String settingValue = null;
 		int kind = LanguageSettingEntriesSerializer.stringToKind(settingKind);
 		if (kind == ICSettingEntry.MACRO)
@@ -317,6 +317,53 @@ public class LanguageSettingsStorage {
 		if (settings.size()>0) {
 			setSettingEntries(rcProjectPath, langId, settings);
 		}
+	}
+
+	/**
+	 * Returns the equal list of entries from the pool to conserve the memory.
+	 *
+	 * @param entries - list of entries to pool.
+	 * @param copy - specify {@code true} to copy the list in order to prevent
+	 *    back-door modification on the original list changes.
+	 * @return returns the list of entries from the pool.
+	 */
+	private static List<ICLanguageSettingEntry> getPooledList(List<ICLanguageSettingEntry> entries, boolean copy) {
+		if (entries == null)
+			return null;
+
+		List<ICLanguageSettingEntry> pooledList = listPool.get(entries);
+		if (pooledList != null) {
+			return pooledList;
+		}
+
+		if (entries.size() == 0) {
+			return getPooledEmptyList();
+		}
+
+		if (copy) {
+			entries = new ArrayList<ICLanguageSettingEntry>(entries);
+		}
+		pooledList = Collections.unmodifiableList(entries);
+		return listPool.add(pooledList);
+	}
+
+	/**
+	 * Returns the equal list of entries from the pool to conserve the memory.
+	 *
+	 * @param entries - list of entries to pool.
+	 * @return returns the list of entries from the pool.
+	 */
+	public static List<ICLanguageSettingEntry> getPooledList(List<ICLanguageSettingEntry> entries) {
+		return getPooledList(entries, true);
+	}
+
+	/**
+	 * @return the empty immutable list which is pooled. Use this call rather than creating
+	 * new empty array to ensure that operator '==' can be used instead of deep equals().
+	 */
+	public static List<ICLanguageSettingEntry> getPooledEmptyList() {
+		List<ICLanguageSettingEntry> pooledEmptyList = Collections.emptyList();
+		return listPool.add(pooledEmptyList);
 	}
 
 	/**

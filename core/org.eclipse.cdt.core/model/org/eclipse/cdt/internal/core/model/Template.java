@@ -18,7 +18,7 @@ public class Template implements ITemplate {
 	protected String[] fTemplateParameterTypes;
 	protected String[] fTemplateArgs;
 	protected String fName;
-	
+
 	public Template(String name) {
 		fName = name;
 		fTemplateParameterTypes= fgEmptyList;
@@ -29,10 +29,12 @@ public class Template implements ITemplate {
 	 * @see org.eclipse.cdt.core.model.ITemplate#getTemplateParameterTypes()
 	 * @return String[]
 	 */
+	@Override
 	public String[] getTemplateParameterTypes() {
 		return fTemplateParameterTypes;
 	}
 
+	@Override
 	public String[] getTemplateArguments() {
 		return fTemplateArgs;
 	}
@@ -48,13 +50,15 @@ public class Template implements ITemplate {
 		}
 	}
 
+	@Override
 	public int getNumberOfTemplateParameters() {
 		return fTemplateParameterTypes == null ? 0 : fTemplateParameterTypes.length;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.core.model.ITemplate#getTemplateSignature()
-	 */	
+	 */
+	@Override
 	public String getTemplateSignature() {
 		StringBuffer sig = new StringBuffer(fName);
 		if(getNumberOfTemplateParameters() > 0){

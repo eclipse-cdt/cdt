@@ -61,14 +61,14 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 		private static final String EXTENSION_POINT_ID = "org.eclipse.cdt.ui.CDTWizard"; //$NON-NLS-1$
 		private static final String ELEMENT_NAME = "wizard"; //$NON-NLS-1$
 		private static final String CLASS_NAME = "class"; //$NON-NLS-1$
-		public static final String DESC = "EntryDescriptor"; //$NON-NLS-1$ 
+		public static final String DESC = "EntryDescriptor"; //$NON-NLS-1$
 
 	    // widgets
 	    private Tree tree;
 	    private Composite right;
 	    private Button show_sup;
 	    private Label right_label;
-   
+
 	    public CWizardHandler h_selected = null;
 		private Label categorySelectedLabel;
 
@@ -88,8 +88,8 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 	    @Override
 		public void createControl(Composite parent) {
 	    	super.createControl(parent);
-	    	
-	    	createDynamicGroup((Composite)getControl()); 
+
+	    	createDynamicGroup((Composite)getControl());
 			switchTo(updateData(tree, right, show_sup, CDTMainWizardPage.this, getWizard()),
 					getDescriptor(tree));
 
@@ -97,21 +97,21 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 	        setErrorMessage(null);
 	        setMessage(null);
 	    }
-	    
+
 	    private void createDynamicGroup(Composite parent) {
 	        Composite c = new Composite(parent, SWT.NONE);
 	        c.setLayoutData(new GridData(GridData.FILL_BOTH));
 	    	c.setLayout(new GridLayout(2, true));
-	    	
+
 	        Label l1 = new Label(c, SWT.NONE);
-	        l1.setText(Messages.CMainWizardPage_0); 
+	        l1.setText(Messages.CMainWizardPage_0);
 	        l1.setFont(parent.getFont());
 	        l1.setLayoutData(new GridData(GridData.BEGINNING));
-	        
+
 	        right_label = new Label(c, SWT.NONE);
 	        right_label.setFont(parent.getFont());
 	        right_label.setLayoutData(new GridData(GridData.BEGINNING));
-	    	
+
 	        tree = new Tree(c, SWT.SINGLE | SWT.BORDER);
 	        tree.setLayoutData(new GridData(GridData.FILL_BOTH));
 	        tree.addSelectionListener(new SelectionAdapter() {
@@ -123,14 +123,14 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 					setPageComplete(validatePage());
 				}});
 	        tree.getAccessible().addAccessibleListener(
-					 new AccessibleAdapter() {                       
+					 new AccessibleAdapter() {
 		                 @Override
 						public void getName(AccessibleEvent e) {
 		                	 for (int i = 0; i < tree.getItemCount(); i++) {
 		                		 if (tree.getItem(i).getText().equals(e.result))
 		                			 return;
 		                	 }
-	                         e.result = Messages.CMainWizardPage_0; 
+	                         e.result = Messages.CMainWizardPage_0;
 		                 }
 		             }
 				 );
@@ -139,7 +139,7 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 	        right.setLayout(new PageLayout());
 
 	        show_sup = new Button(c, SWT.CHECK);
-	        show_sup.setText(Messages.CMainWizardPage_1); 
+	        show_sup.setText(Messages.CMainWizardPage_1);
 	        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 	        gd.horizontalSpan = 2;
 	        show_sup.setLayoutData(gd);
@@ -155,18 +155,18 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 	        // restore settings from preferences
 			show_sup.setSelection(!CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOSUPP));
 	    }
-	    
+
 	    @Override
 		public IWizardPage getNextPage() {
 			return (h_selected == null) ? null : h_selected.getSpecificPage();
-	    }		
+	    }
 
 	    public URI getProjectLocation() {
 	    	return useDefaults() ? null : getLocationURI();
 	    }
 
 	    /**
-	     * Returns whether this page's controls currently all contain valid 
+	     * Returns whether this page's controls currently all contain valid
 	     * values.
 	     *
 	     * @return <code>true</code> if all controls are valid, and
@@ -179,12 +179,12 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 	    		return false;
 
 	        if (getProjectName().indexOf('#') >= 0) {
-	            setErrorMessage(Messages.CDTMainWizardPage_0);	             
+	            setErrorMessage(Messages.CDTMainWizardPage_0);
 	            return false;
 	        }
-	        
+
 	        boolean bad = true; // should we treat existing project as error
-	        
+
 	        IProject handle = getProjectHandle();
 	        if (handle.exists()) {
 	        	if (getWizard() instanceof IWizardWithMemory) {
@@ -192,13 +192,13 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 	        		if (w.getLastProjectName() != null && w.getLastProjectName().equals(getProjectName()))
 	        			bad = false;
 	        	}
-	        	if (bad) { 
-	        		setErrorMessage(Messages.CMainWizardPage_10); 
+	        	if (bad) {
+	        		setErrorMessage(Messages.CMainWizardPage_10);
 	        	    return false;
 	        	}
 	        }
 
-	        if (bad) { // skip this check if project already created 
+	        if (bad) { // skip this check if project already created
 	        	try {
 	        		IFileStore fs;
 		        	URI p = getProjectLocation();
@@ -210,9 +210,9 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 	        		IFileInfo f = fs.fetchInfo();
 		        	if (f.exists()) {
 		        		if (f.isDirectory()) {
-		        			setMessage(Messages.CMainWizardPage_7, IMessageProvider.WARNING); 
+		        			setMessage(Messages.CMainWizardPage_7, IMessageProvider.WARNING);
 		        		} else {
-		        			setErrorMessage(Messages.CMainWizardPage_6); 
+		        			setErrorMessage(Messages.CMainWizardPage_6);
 		        			return false;
 		        		}
 		        	}
@@ -220,7 +220,7 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 	        		CUIPlugin.log(e.getStatus());
 	        	}
 	        }
-	        
+
 	        if (!useDefaults()) {
 	            IStatus locationStatus = ResourcesPlugin.getWorkspace().validateProjectLocationURI(handle,
 	            		getLocationURI());
@@ -231,28 +231,28 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 	        }
 
 	        if (tree.getItemCount() == 0) {
-	        	setErrorMessage(Messages.CMainWizardPage_3); 
+	        	setErrorMessage(Messages.CMainWizardPage_3);
 	        	return false;
 	        }
-	        
+
 	        // it is not an error, but we cannot continue
 	        if (h_selected == null) {
 	            setErrorMessage(null);
-		        return false;	        	
+		        return false;
 	        }
 
-	        String s = h_selected.getErrorMessage(); 
+	        String s = h_selected.getErrorMessage();
 			if (s != null) {
         		setErrorMessage(s);
         		return false;
 	        }
-	        
+
             setErrorMessage(null);
 	        return true;
 	    }
 
 	    /**
-	     * 
+	     *
 	     * @param tree
 	     * @param right
 	     * @param show_sup
@@ -263,17 +263,17 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 		public static CWizardHandler updateData(Tree tree, Composite right, Button show_sup, IWizardItemsListListener ls, IWizard wizard) {
 			// remember selected item
 			TreeItem[] selection = tree.getSelection();
-			TreeItem selectedItem = selection.length>0 ? selection[0] : null; 
+			TreeItem selectedItem = selection.length>0 ? selection[0] : null;
 			String savedLabel = selectedItem!=null ? selectedItem.getText() : null;
 			String savedParentLabel = getParentText(selectedItem);
-			
+
 			tree.removeAll();
 			IExtensionPoint extensionPoint =
 				    Platform.getExtensionRegistry().getExtensionPoint(EXTENSION_POINT_ID);
 			if (extensionPoint == null) return null;
 			IExtension[] extensions = extensionPoint.getExtensions();
 			if (extensions == null) return null;
-			
+
 			List<EntryDescriptor> items = new ArrayList<EntryDescriptor>();
 			for (int i = 0; i < extensions.length; ++i)	{
 				IConfigurationElement[] elements = extensions[i].getConfigurationElements();
@@ -283,17 +283,17 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 						try {
 							w = (CNewWizard) element.createExecutableExtension(CLASS_NAME);
 						} catch (CoreException e) {
-							System.out.println(Messages.CMainWizardPage_5 + e.getLocalizedMessage()); 
-							return null; 
+							System.out.println(Messages.CMainWizardPage_5 + e.getLocalizedMessage());
+							return null;
 						}
 						if (w == null) return null;
 						w.setDependentControl(right, ls);
-						for (EntryDescriptor ed : w.createItems(show_sup.getSelection(), wizard))	
+						for (EntryDescriptor ed : w.createItems(show_sup.getSelection(), wizard))
 							items.add(ed);
 					}
 				}
 			}
-			// If there is a EntryDescriptor which is default for category, make sure it 
+			// If there is a EntryDescriptor which is default for category, make sure it
 			// is in the front of the list.
 			for (int i = 0; i < items.size(); ++i)
 			{
@@ -303,14 +303,14 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 					items.remove(i);
 					items.add(0, ed);
 					break;
-				}				
+				}
 			}
-			
+
 			// bug # 211935 : allow items filtering.
 			if (ls != null) // NULL means call from prefs
 				items = ls.filterItems(items);
 			addItemsToTree(tree, items);
-			
+
 			if (tree.getItemCount() > 0) {
 				TreeItem target = null;
 				// try to search item which was selected before
@@ -346,7 +346,7 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 		private static TreeItem findTreeItem(TreeItem item, String label, String parentLabel) {
 			if (item.getText().equals(label) && getParentText(item).equals(parentLabel))
 				return item;
-			
+
 			for (TreeItem child : item.getItems()) {
 				TreeItem foundItem = findTreeItem(child, label, parentLabel);
 				if (foundItem!=null)
@@ -356,9 +356,9 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 		}
 
 		private static void addItemsToTree(Tree tree, List<EntryDescriptor> items) {
-		//  Sorting is disabled because of users requests	
+		//  Sorting is disabled because of users requests
 		//	Collections.sort(items, CDTListComparator.getInstance());
-			
+
 			ArrayList<TreeItem> placedTreeItemsList = new ArrayList<TreeItem>(items.size());
 			ArrayList<EntryDescriptor> placedEntryDescriptorsList = new ArrayList<EntryDescriptor>(items.size());
 			for (EntryDescriptor wd : items) {
@@ -401,7 +401,7 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 								if (!h.isApplicable(wd1))
 									break;
 							}
-							
+
 							TreeItem p = placedTreeItemsList.get(i);
 							TreeItem ti = new TreeItem(p, SWT.NONE);
 							ti.setText(wd1.getName());
@@ -421,17 +421,17 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 		}
 
 		private void switchTo(CWizardHandler h, EntryDescriptor ed) {
-			if (h == null) 
+			if (h == null)
 				h = ed.getHandler();
 			if (ed.isCategory())
 				h = null;
 			try {
-				if (h != null) 
+				if (h != null)
 					h.initialize(ed);
-			} catch (CoreException e) { 
+			} catch (CoreException e) {
 				h = null;
 			}
-			if (h_selected != null) 
+			if (h_selected != null)
 				h_selected.handleUnSelection();
 			h_selected = h;
 			if (h == null) {
@@ -439,7 +439,7 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 					if (categorySelectedLabel == null) {
 						categorySelectedLabel = new Label(right, SWT.WRAP);
 						categorySelectedLabel.setText(
-								Messages.CDTMainWizardPage_1);  
+								Messages.CDTMainWizardPage_1);
 						right.layout();
 					}
 					categorySelectedLabel.setVisible(true);
@@ -456,24 +456,27 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 
 		public static EntryDescriptor getDescriptor(Tree _tree) {
 			TreeItem[] sel = _tree.getSelection();
-			if (sel == null || sel.length == 0) 
+			if (sel == null || sel.length == 0)
 				return null;
 			return (EntryDescriptor)sel[0].getData(DESC);
 		}
-		
+
+		@Override
 		public void toolChainListChanged(int count) {
 			setPageComplete(validatePage());
 			getWizard().getContainer().updateButtons();
 		}
 
+		@Override
 		public boolean isCurrent() { return isCurrentPage(); }
-		
+
 		private static Image calcImage(EntryDescriptor ed) {
 			if (ed.getImage() != null) return ed.getImage();
 			if (ed.isCategory()) return IMG_CATEGORY;
 			return IMG_ITEM;
 		}
 
+		@Override
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		public List filterItems(List items) {
 			return items;

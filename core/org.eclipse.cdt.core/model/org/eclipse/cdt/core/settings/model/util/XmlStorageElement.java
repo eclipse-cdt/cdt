@@ -58,14 +58,14 @@ public class XmlStorageElement implements ICStorageElement {
 		fElement = element;
 		fParent = parent;
 		fParentRefAlowed = alowReferencingParent;
-		
+
 		if(attributeFilters != null && attributeFilters.length != 0)
 			fAttributeFilters = attributeFilters.clone();
-		
+
 		if(childFilters != null && childFilters.length != 0)
 			fChildFilters = childFilters.clone();
 	}
-	
+
 //	public String[] getAttributeFilters(){
 //		if(fAttributeFilters != null)
 //			return (String[])fAttributeFilters.clone();
@@ -77,7 +77,7 @@ public class XmlStorageElement implements ICStorageElement {
 //			return (String[])fChildFilters.clone();
 //		return null;
 //	}
-//	
+//
 //	public boolean isParentRefAlowed(){
 //		return fParentRefAlowed;
 //	}
@@ -85,7 +85,7 @@ public class XmlStorageElement implements ICStorageElement {
 	private void createChildren(){
 		if(fChildrenCreated)
 			return;
-		
+
 		fChildrenCreated = true;
 		NodeList list = fElement.getChildNodes();
 		int size = list.getLength();
@@ -97,16 +97,16 @@ public class XmlStorageElement implements ICStorageElement {
 			}
 		}
 	}
-	
+
 	private XmlStorageElement createAddChild(Element element,
 			boolean alowReferencingParent,
 			String[] attributeFilters,
 			String[] childFilters){
 		XmlStorageElement child = createChild(element, alowReferencingParent, attributeFilters, childFilters);
 		fChildList.add(child);
-		return child; 
+		return child;
 	}
-	
+
 	protected XmlStorageElement createChild(Element element,
 			boolean alowReferencingParent,
 			String[] attributeFilters,
@@ -114,6 +114,7 @@ public class XmlStorageElement implements ICStorageElement {
 		return new XmlStorageElement(element, this, alowReferencingParent, attributeFilters, childFilters);
 	}
 
+	@Override
 	public ICStorageElement[] getChildren() {
 		return getChildren(XmlStorageElement.class);
 	}
@@ -136,16 +137,18 @@ public class XmlStorageElement implements ICStorageElement {
 		return fChildList.toArray(children);
 	}
 
+	@Override
 	public ICStorageElement getParent() {
 		return fParentRefAlowed ? fParent : null;
 	}
 
+	@Override
 	public String getAttribute(String name) {
 		if(isPropertyAlowed(name) && fElement.hasAttribute(name))
 			return fElement.getAttribute(name);
 		return null;
 	}
-	
+
 	private boolean isPropertyAlowed(String name){
 		if(fAttributeFilters != null){
 			return checkString(name, fAttributeFilters);
@@ -173,15 +176,16 @@ public class XmlStorageElement implements ICStorageElement {
 //	protected void childRemoved(ICStorageElement child) {
 //		fChildList.remove(child);
 //	}
-	
+
 	protected void removed(){
 //		fElement.getParentNode().removeChild(fElement);
 		fElement = null;
 //		if(fParent != null)
 //			((XmlStorageElement)fParent).childRemoved(this);
 	}
-	
 
+
+	@Override
 	public void removeChild(ICStorageElement el) {
 		if(el instanceof XmlStorageElement){
 			ICStorageElement[] children = getChildren();
@@ -202,19 +206,22 @@ public class XmlStorageElement implements ICStorageElement {
 				}
 			}
 		}
-		
+
 	}
 
+	@Override
 	public void removeAttribute(String name) {
 		if(isPropertyAlowed(name))
 			fElement.removeAttribute(name);
 	}
 
+	@Override
 	public void setAttribute(String name, String value) {
 		if(isPropertyAlowed(name))
 			fElement.setAttribute(name, value);
 	}
-	
+
+	@Override
 	public void clear(){
 		createChildren();
 
@@ -222,14 +229,14 @@ public class XmlStorageElement implements ICStorageElement {
 		for(int i = 0; i < children.length; i++){
 			removeChild(children[i]);
 		}
-		
+
 		NamedNodeMap map = fElement.getAttributes();
 		for(int i = 0; i < map.getLength(); i++){
 			Node attr = map.item(i);
 			if(isPropertyAlowed(attr.getNodeName()))
 				map.removeNamedItem(attr.getNodeName());
 		}
-		
+
 		NodeList list = fElement.getChildNodes();
 		for(int i = 0; i < list.getLength(); i++){
 			Node node = list.item(i);
@@ -237,8 +244,8 @@ public class XmlStorageElement implements ICStorageElement {
 				fElement.removeChild(node);
 		}
 	}
-	
-	public ICStorageElement createChild(String name, 
+
+	public ICStorageElement createChild(String name,
 			boolean alowReferencingParent,
 			String[] attributeFilters,
 			String[] childFilters) {
@@ -249,14 +256,17 @@ public class XmlStorageElement implements ICStorageElement {
 		return createAddChild(childElement, alowReferencingParent, attributeFilters, childFilters);
 	}
 
+	@Override
 	public String getName() {
 		return fElement.getNodeName();
 	}
 
+	@Override
 	public ICStorageElement createChild(String name) {
 		return createChild(name, true, null, null);
 	}
 
+	@Override
 	public String getValue() {
 		Text text = getTextChild();
 		if(text != null)
@@ -264,6 +274,7 @@ public class XmlStorageElement implements ICStorageElement {
 		return null;
 	}
 
+	@Override
 	public void setValue(String value) {
 		Text text = getTextChild();
 		if(value != null){
@@ -279,7 +290,7 @@ public class XmlStorageElement implements ICStorageElement {
 			}
 		}
 	}
-	
+
 	private Text getTextChild(){
 		NodeList nodes = fElement.getChildNodes();
 		Text text = null;
@@ -293,16 +304,17 @@ public class XmlStorageElement implements ICStorageElement {
 
 		return text;
 	}
-	
+
+	@Override
 	public ICStorageElement importChild(ICStorageElement el) throws UnsupportedOperationException {
 		return addChild(el, true, null, null);
 	}
 
-	public ICStorageElement addChild(ICStorageElement el, 
+	public ICStorageElement addChild(ICStorageElement el,
 			boolean alowReferencingParent,
 			String[] attributeFilters,
 			String[] childFilters) throws UnsupportedOperationException {
-		
+
 		if(!isChildAlowed(el.getName()))
 			return null;
 
@@ -316,14 +328,14 @@ public class XmlStorageElement implements ICStorageElement {
 			} else {
 				xmlEl = (Element)xmlEl.cloneNode(true);
 			}
-			
+
 			xmlEl = (Element)fElement.appendChild(xmlEl);
 			return createAddChild(xmlEl, alowReferencingParent, attributeFilters, childFilters);
 		} else {
 			throw new UnsupportedOperationException();
 		}
 	}
-	
+
 	public String[] getAttributeFilters(){
 		if(fAttributeFilters != null)
 			return fAttributeFilters.clone();
@@ -339,20 +351,20 @@ public class XmlStorageElement implements ICStorageElement {
 	public boolean isParentRefAlowed(){
 		return fParentRefAlowed;
 	}
-	
+
 	public boolean matches(ICStorageElement el){
 		if(!getName().equals(el.getName()))
 			return false;
-		
+
 		if (!valuesMatch(getValue(), el.getValue()))
 			return false;
 
-		
+
 		String[] attrs = getAttributeNames();
 		String[] otherAttrs = el.getAttributeNames();
 		if(attrs.length != otherAttrs.length)
 			return false;
-		
+
 		if(attrs.length != 0){
 			Set<String> set = new HashSet<String>(Arrays.asList(attrs));
 			set.removeAll(Arrays.asList(otherAttrs));
@@ -365,21 +377,21 @@ public class XmlStorageElement implements ICStorageElement {
 			}
 
 		}
-		
-		
+
+
 		XmlStorageElement[] children = (XmlStorageElement[])getChildren();
 		ICStorageElement[] otherChildren = el.getChildren();
-		
+
 		if(children.length != otherChildren.length)
 			return false;
-		
+
 		if(children.length != 0){
 			for(int i = 0; i < children.length; i++){
 				if(!children[i].matches(otherChildren[i]))
 					return false;
 			}
 		}
-		
+
 		return true;
 	}
 
@@ -393,6 +405,7 @@ public class XmlStorageElement implements ICStorageElement {
 		}
 	}
 
+	@Override
 	public String[] getAttributeNames() {
 		NamedNodeMap nodeMap = fElement.getAttributes();
 		int length = nodeMap.getLength();
@@ -409,6 +422,7 @@ public class XmlStorageElement implements ICStorageElement {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICStorageElement createCopy() throws UnsupportedOperationException, CoreException {
 		// todo Auto-generated method stub
 		return null;
@@ -417,6 +431,7 @@ public class XmlStorageElement implements ICStorageElement {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public boolean equals(ICStorageElement other) {
 		// todo Auto-generated method stub
 		return false;
@@ -425,6 +440,7 @@ public class XmlStorageElement implements ICStorageElement {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICStorageElement[] getChildrenByName(String name) {
 		// todo Auto-generated method stub
 		return null;
@@ -433,6 +449,7 @@ public class XmlStorageElement implements ICStorageElement {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public boolean hasAttribute(String name) {
 		// todo Auto-generated method stub
 		return false;
@@ -441,6 +458,7 @@ public class XmlStorageElement implements ICStorageElement {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public boolean hasChildren() {
 		// todo Auto-generated method stub
 		return false;

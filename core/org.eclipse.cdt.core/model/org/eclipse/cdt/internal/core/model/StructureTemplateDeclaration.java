@@ -25,10 +25,12 @@ public class StructureTemplateDeclaration extends StructureDeclaration implement
 		fTemplate = new Template(name);
 	}
 
+	@Override
 	public String[] getTemplateParameterTypes() {
 		return fTemplate.getTemplateParameterTypes();
 	}
 
+	@Override
 	public String[] getTemplateArguments() {
 		return  fTemplate.getTemplateArguments();
 	}
@@ -37,10 +39,12 @@ public class StructureTemplateDeclaration extends StructureDeclaration implement
 		fTemplate.setTemplateInfo(templateParameterTypes, null);
 	}
 
+	@Override
 	public String getTemplateSignature() throws CModelException {
 		return fTemplate.getTemplateSignature();
 	}
 
+	@Override
 	public int getNumberOfTemplateParameters() {
 		return fTemplate.getNumberOfTemplateParameters();
 	}

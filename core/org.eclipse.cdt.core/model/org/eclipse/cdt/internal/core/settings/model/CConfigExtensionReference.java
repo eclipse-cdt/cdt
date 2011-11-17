@@ -33,10 +33,12 @@ public class CConfigExtensionReference implements ICConfigExtensionReference {
 		fId = base.fId;
 	}
 
+	@Override
 	public String getExtensionPoint() {
 		return fExtPoint;
 	}
 
+	@Override
 	public String getID() {
 		return fId;
 	}
@@ -64,15 +66,18 @@ public class CConfigExtensionReference implements ICConfigExtensionReference {
 		return fExtPoint.hashCode() + fId.hashCode();
 	}
 
+	@Override
 	public void setExtensionData(String key, String value) throws CoreException {
 		getInfo().setAttribute(key, value);
 		fCfgSettings.setModified();
 	}
 
+	@Override
 	public String getExtensionData(String key) {
 		return getInfo().getAttribute(key);
 	}
 
+	@Override
 	public ICConfigurationDescription getConfiguration() {
 		return fCfgSettings.getConfigurarion();
 	}

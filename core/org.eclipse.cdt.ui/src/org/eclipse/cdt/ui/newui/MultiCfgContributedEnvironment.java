@@ -23,17 +23,18 @@ import org.eclipse.cdt.core.settings.model.MultiItemsHolder;
 import org.eclipse.cdt.internal.core.envvar.ContributedEnvironment;
 
 /**
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class MultiCfgContributedEnvironment implements IContributedEnvironment {
 	private static final IContributedEnvironment ice = CCorePlugin.getDefault().getBuildEnvironmentManager().getContributedEnvironment();
 	private boolean isMulti = false;
 	private ICConfigurationDescription[] mono = new ICConfigurationDescription[1];
-	private static final EnvCmp comparator = new EnvCmp(); 
-	
+	private static final EnvCmp comparator = new EnvCmp();
+
 	private static class EnvCmp implements Comparator<Object> {
-		
+
+		@Override
 		public int compare(Object a0, Object a1) {
 			if (a0 == null || a1 == null)
 				return 0;
@@ -52,11 +53,12 @@ public class MultiCfgContributedEnvironment implements IContributedEnvironment {
 			return 0;
 		}
 	}
-	
+
 	public void setMulti(boolean val) {
 		isMulti = val;
 	}
-	
+
+	@Override
 	public IEnvironmentVariable addVariable(String name, String value,
 			int op, String delimiter, ICConfigurationDescription des) {
 		IEnvironmentVariable v = null;
@@ -67,7 +69,7 @@ public class MultiCfgContributedEnvironment implements IContributedEnvironment {
 	}
 
 	private void doReplace(ICConfigurationDescription des) {
-		if (isMulti && ! isModifyMode()) { 
+		if (isMulti && ! isModifyMode()) {
 			IEnvironmentVariable[] vars = getVariables(des);
 			for (int i=0; i<vars.length; i++)
 				if (! ice.isUserVariable(des, vars[i]))
@@ -80,7 +82,8 @@ public class MultiCfgContributedEnvironment implements IContributedEnvironment {
 			}
 		}
 	}
-	
+
+	@Override
 	public boolean appendEnvironment(ICConfigurationDescription des) {
 		for (ICConfigurationDescription c : getCfs(des))
 			if (! ice.appendEnvironment(c))
@@ -88,12 +91,13 @@ public class MultiCfgContributedEnvironment implements IContributedEnvironment {
 		return true;
 	}
 
+	@Override
 	public IEnvironmentVariable getVariable(String name,
 			ICConfigurationDescription des) {
 		if (!isMulti)
 			return ice.getVariable(name, des);
-		// should we show ANY vars, even if they exist not in all cfgs ? 
-		boolean any = (getDispMode(des) == CDTPrefUtil.DMODE_DISJUNCTION);	
+		// should we show ANY vars, even if they exist not in all cfgs ?
+		boolean any = (getDispMode(des) == CDTPrefUtil.DMODE_DISJUNCTION);
 		ICConfigurationDescription[] cfs = getCfs(des);
 		IEnvironmentVariable v = ice.getVariable(name, cfs[0]);
 		// if ((any && v != null) || (! any && v == null))
@@ -110,6 +114,7 @@ public class MultiCfgContributedEnvironment implements IContributedEnvironment {
 		return v;
 	}
 
+	@Override
 	public IEnvironmentVariable[] getVariables(
 			ICConfigurationDescription des) {
 		if (!isMulti)
@@ -119,14 +124,15 @@ public class MultiCfgContributedEnvironment implements IContributedEnvironment {
 		int i = 0;
 		for (ICConfigurationDescription c : cfs)
 			 evs[i++] = ice.getVariables(c);
-		
-		Object[] obs = CDTPrefUtil.getListForDisplay(evs, comparator); 
+
+		Object[] obs = CDTPrefUtil.getListForDisplay(evs, comparator);
 		IEnvironmentVariable[] ev = new IEnvironmentVariable[obs.length];
 		System.arraycopy(obs, 0, ev, 0, obs.length);
 		return ev;
-		           
+
 	}
 
+	@Override
 	public boolean isUserVariable(ICConfigurationDescription des,
 			IEnvironmentVariable var) {
 		for (ICConfigurationDescription c : getCfs(des))
@@ -135,6 +141,7 @@ public class MultiCfgContributedEnvironment implements IContributedEnvironment {
 		return true; // only if for each cfg
 	}
 
+	@Override
 	public IEnvironmentVariable removeVariable(String name,
 			ICConfigurationDescription des) {
 		IEnvironmentVariable res = null;
@@ -144,16 +151,18 @@ public class MultiCfgContributedEnvironment implements IContributedEnvironment {
 		return res;
 	}
 
+	@Override
 	public void restoreDefaults(ICConfigurationDescription des) {
 		for (ICConfigurationDescription c : getCfs(des))
 			ice.restoreDefaults(c);
 	}
 
+	@Override
 	public void setAppendEnvironment(boolean append,ICConfigurationDescription des) {
 		for (ICConfigurationDescription c : getCfs(des))
 			ice.setAppendEnvironment(append, c);
 	}
-	
+
 	private ICConfigurationDescription[] getCfs(ICConfigurationDescription des) {
 		if (isMulti && des instanceof ICMultiConfigDescription) {
 			return (ICConfigurationDescription[])((ICMultiConfigDescription)des).getItems();
@@ -161,18 +170,19 @@ public class MultiCfgContributedEnvironment implements IContributedEnvironment {
 		mono[0] = des;
 		return mono;
 	}
-	
+
 	private int getDispMode(ICConfigurationDescription des) {
 		if (isMulti && des instanceof MultiItemsHolder)
 			return CDTPrefUtil.getMultiCfgStringListDisplayMode();
-		return 0;	
+		return 0;
 	}
-	
+
 	private boolean isModifyMode() {
 		int wmode = CDTPrefUtil.getMultiCfgStringListWriteMode();
 		return (wmode == CDTPrefUtil.WMODE_MODIFY);
 	}
 
+	@Override
 	public IEnvironmentVariable addVariable(IEnvironmentVariable var,
 			ICConfigurationDescription des) {
 		IEnvironmentVariable v = null;
@@ -182,13 +192,14 @@ public class MultiCfgContributedEnvironment implements IContributedEnvironment {
 		return v;
 	}
 
+	@Override
 	public void addVariables(IEnvironmentVariable[] vars,
 			ICConfigurationDescription des) {
 		for (ICConfigurationDescription c : getCfs(des))
 			ice.addVariables(vars, c);
 		doReplace(des);
 	}
-	
+
 	public String getOrigin(IEnvironmentVariable var) {
 		if (ice instanceof ContributedEnvironment)
 			return ((ContributedEnvironment)ice).getOrigin(var);

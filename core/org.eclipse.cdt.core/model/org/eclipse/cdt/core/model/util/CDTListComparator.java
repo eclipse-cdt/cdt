@@ -25,19 +25,20 @@ public class CDTListComparator implements Comparator<Object> {
 			comparator = new CDTListComparator();
 		return comparator;
 	}
+	@Override
 	public int compare(Object a, Object b) {
-		if (a == null || b == null) 
+		if (a == null || b == null)
 			return 0;
 		if (a instanceof ICLanguageSetting) {
 			ICLanguageSetting c1 = (ICLanguageSetting)a;
 			ICLanguageSetting c2 = (ICLanguageSetting)b;
 			return c1.getName().compareToIgnoreCase(c2.getName());
-		} 
+		}
 		if (a instanceof ICLanguageSettingEntry) {
 			ICLanguageSettingEntry c1 = (ICLanguageSettingEntry)a;
 			ICLanguageSettingEntry c2 = (ICLanguageSettingEntry)b;
 			return c1.getName().compareToIgnoreCase(c2.getName());
-		} 
+		}
 		if (a instanceof ICConfigurationDescription) {
 			ICConfigurationDescription c1 = (ICConfigurationDescription)a;
 			ICConfigurationDescription c2 = (ICConfigurationDescription)b;
@@ -46,7 +47,7 @@ public class CDTListComparator implements Comparator<Object> {
 		if (a instanceof ICdtVariable) {
 			ICdtVariable c1 = (ICdtVariable) a;
 			ICdtVariable c2 = (ICdtVariable) b;
-			return c1.getName().compareToIgnoreCase(c2.getName());			
+			return c1.getName().compareToIgnoreCase(c2.getName());
 		}
 		return a.toString().compareTo(b.toString());
 	}

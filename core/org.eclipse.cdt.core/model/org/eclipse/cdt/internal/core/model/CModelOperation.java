@@ -198,6 +198,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	/**
 	 * @see IProgressMonitor
 	 */
+	@Override
 	public void beginTask(String name, int totalWork) {
 		if (fMonitor != null) {
 			fMonitor.beginTask(name, totalWork);
@@ -320,6 +321,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	/**
 	 * @see IProgressMonitor
 	 */
+	@Override
 	public void done() {
 		if (fMonitor != null) {
 			fMonitor.done();
@@ -436,7 +438,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	}
 
 	/**
-	 * Returns the scheduling rule for this operation (i.e. the resource that needs to be locked 
+	 * Returns the scheduling rule for this operation (i.e. the resource that needs to be locked
 	 * while this operation is running.
 	 * Subclasses can override.
 	 */
@@ -477,6 +479,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 		return !this.isReadOnly() && this.hasModifiedResource;
 	}
 
+	@Override
 	public void internalWorked(double work) {
 		if (fMonitor != null) {
 			fMonitor.internalWorked(work);
@@ -486,6 +489,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	/**
 	 * @see IProgressMonitor
 	 */
+	@Override
 	public boolean isCanceled() {
 		if (fMonitor != null) {
 			return fMonitor.isCanceled();
@@ -543,7 +547,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 
 	/*
 	 * Returns the stack of operations running in the current thread.
-	 * Returns an empty stack if no operations are currently running in this thread. 
+	 * Returns an empty stack if no operations are currently running in this thread.
 	 */
 	protected ArrayList<CModelOperation> getCurrentOperationStack() {
 		ArrayList<CModelOperation> stack = operationStacks.get();
@@ -562,7 +566,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 		ArrayList<CModelOperation> stack = getCurrentOperationStack();
 		int size = stack.size();
 		if (size > 0) {
-			if (size == 1) { // top level operation 
+			if (size == 1) { // top level operation
 				operationStacks.set(null); // release reference (see http://bugs.eclipse.org/bugs/show_bug.cgi?id=33927)
 			}
 			return stack.remove(size-1);
@@ -593,6 +597,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	 * @see IWorkspaceRunnable
 	 * @exception CoreException if the operation fails
 	 */
+	@Override
 	public void run(IProgressMonitor monitor) throws CoreException {
 		CModelManager manager= CModelManager.getDefault();
 		int previousDeltaCount = manager.fCModelDeltas.size();
@@ -649,6 +654,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	/**
 	 * @see IProgressMonitor
 	 */
+	@Override
 	public void setCanceled(boolean b) {
 		if (fMonitor != null) {
 			fMonitor.setCanceled(b);
@@ -666,6 +672,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	/**
 	 * @see IProgressMonitor
 	 */
+	@Override
 	public void setTaskName(String name) {
 		if (fMonitor != null) {
 			fMonitor.setTaskName(name);
@@ -675,6 +682,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	/**
 	 * @see IProgressMonitor
 	 */
+	@Override
 	public void subTask(String name) {
 		if (fMonitor != null) {
 			fMonitor.subTask(name);
@@ -698,6 +706,7 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 	/**
 	 * @see IProgressMonitor
 	 */
+	@Override
 	public void worked(int work) {
 		if (fMonitor != null) {
 			fMonitor.worked(work);

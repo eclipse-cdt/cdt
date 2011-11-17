@@ -90,7 +90,7 @@ public class TemplateInputDialog extends Dialog {
 
 	/**
 	 * JFace Dialog Constructor, constructs controls of the super class
-	 * 
+	 *
 	 * @param parentShell
 	 */
 
@@ -101,7 +101,7 @@ public class TemplateInputDialog extends Dialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
 
@@ -114,7 +114,7 @@ public class TemplateInputDialog extends Dialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 
@@ -131,7 +131,7 @@ public class TemplateInputDialog extends Dialog {
 
 	/**
 	 * Opens the Dialog to accept user input for shared values.
-	 * 
+	 *
 	 * @param myDialog
 	 * @param dataOption
 	 */
@@ -155,7 +155,7 @@ public class TemplateInputDialog extends Dialog {
 
 	/**
 	 * Creates control under the parent composite
-	 * 
+	 *
 	 * @param composite
 	 */
 
@@ -209,12 +209,13 @@ public class TemplateInputDialog extends Dialog {
 
 	/**
 	 * Adds Modify listeners to the Text fields
-	 * 
+	 *
 	 * @param aText
 	 */
 	public void addTextListener(final Text aText) {
 
 		ModifyListener mListener = new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				String nameField = aText.getText();
 				textChanged(nameField);
@@ -226,7 +227,7 @@ public class TemplateInputDialog extends Dialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed() This method is
 	 *      overridden to perform custom events on OK button.
 	 */
@@ -267,7 +268,7 @@ public class TemplateInputDialog extends Dialog {
 	/**
 	 * Pops up Message dialog if duplicate entry is found and returns
 	 * confirmation.
-	 * 
+	 *
 	 * @return result
 	 */
 
@@ -283,7 +284,7 @@ public class TemplateInputDialog extends Dialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.Dialog#cancelPressed()
 	 */
 	@Override
@@ -293,9 +294,9 @@ public class TemplateInputDialog extends Dialog {
 	}
 
 	/**
-	 * 
+	 *
 	 * Implements the modify listener for the text field Name and Value fields.
-	 * 
+	 *
 	 * @param textField
 	 */
 

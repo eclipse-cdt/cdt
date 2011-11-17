@@ -30,7 +30,7 @@ import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 public class Page_head_general extends PropertyPage implements ICOptionContainer {
 	private DocCommentOwnerBlock fDocBlock;
 	private boolean isProjectLevel;
-	
+
 	@Override
 	protected Control createContents(Composite parent) {
 		isProjectLevel= getProject() != null;
@@ -42,7 +42,7 @@ public class Page_head_general extends PropertyPage implements ICOptionContainer
 		noDefaultAndApplyButton();
 		return parent;
 	}
-	
+
 	@Override
 	protected void performDefaults() {
 		if(isProjectLevel) {
@@ -50,7 +50,7 @@ public class Page_head_general extends PropertyPage implements ICOptionContainer
 		}
 		super.performDefaults();
 	}
-	
+
 	@Override
 	public boolean performOk() {
 		if(isProjectLevel) {
@@ -63,6 +63,7 @@ public class Page_head_general extends PropertyPage implements ICOptionContainer
 		return true;
 	}
 
+	@Override
 	public IProject getProject(){
 		IProject project= null;
 		IAdaptable elem = getElement();
@@ -74,10 +75,12 @@ public class Page_head_general extends PropertyPage implements ICOptionContainer
 		return project;
 	}
 
+	@Override
 	public Preferences getPreferences() {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public void updateContainer() {
 	}
 }

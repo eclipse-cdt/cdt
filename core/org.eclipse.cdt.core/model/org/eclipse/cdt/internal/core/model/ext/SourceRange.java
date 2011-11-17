@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.model.ext;
 
@@ -23,26 +23,32 @@ public class SourceRange implements ISourceRange {
 		fLength= length;
 	}
 
+	@Override
 	public int getEndLine() {
 		return -1;
 	}
 
+	@Override
 	public int getIdLength() {
 		return fLength;
 	}
 
+	@Override
 	public int getIdStartPos() {
 		return fOffset;
 	}
 
+	@Override
 	public int getLength() {
 		return fLength;
 	}
 
+	@Override
 	public int getStartLine() {
 		return -1;
 	}
 
+	@Override
 	public int getStartPos() {
 		return fOffset;
 	}

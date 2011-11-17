@@ -40,6 +40,7 @@ public class LibraryTab extends AbstractLangsListTab implements IPathEntryStoreL
 		langTree.setVisible(false);
 	}
 
+	@Override
 	public void pathEntryStoreChanged(PathEntryStoreChangedEvent event) {
 		updateData(getResDesc());
 	}
@@ -79,12 +80,12 @@ public class LibraryTab extends AbstractLangsListTab implements IPathEntryStoreL
 		}
 		return null;
 	}
-	
+
 	@Override
-	public int getKind() { 
-		return ICSettingEntry.LIBRARY_FILE; 
+	public int getKind() {
+		return ICSettingEntry.LIBRARY_FILE;
 	}
-	
+
 	@Override
 	protected boolean isHeaderVisible() {
 		return false;

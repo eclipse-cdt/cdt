@@ -26,6 +26,7 @@ public class PathEntryVariableResolver implements IDynamicVariableResolver {
 		super();
 	}
 
+	@Override
 	public String resolveValue(IDynamicVariable variable, String argument) throws CoreException {
 		if (argument == null) {
 			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, CCorePlugin.getResourceString("PathEntryVariableResolver.0"), null)); //$NON-NLS-1$

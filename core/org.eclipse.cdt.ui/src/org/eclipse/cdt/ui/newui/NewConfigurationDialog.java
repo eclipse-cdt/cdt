@@ -51,12 +51,12 @@ public class NewConfigurationDialog extends Dialog implements INewCfgDialog {
 	/** Default configurations defined in the toolchain description */
 	private ICProjectDescription des;
 	private ICConfigurationDescription[] cfgds;
-	private ICConfigurationDescription parentConfig; 
+	private ICConfigurationDescription parentConfig;
 	private String newName;
 	private String newDescription;
 	private String title;
 
-	
+
 	/**
 	 */
 	protected NewConfigurationDialog(Shell parentShell) {
@@ -65,19 +65,21 @@ public class NewConfigurationDialog extends Dialog implements INewCfgDialog {
 		newName = new String();
 		newDescription = new String();
 	}
-	
+
+	@Override
 	public void setProject(ICProjectDescription prj) {
 		des = prj;
 		cfgds = des.getConfigurations();
 	}
 
+	@Override
 	public void setTitle(String _title) {
 		title = _title;
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared on Dialog. Cache the name and base config selections.
-	 * We don't have to worry that the index or name is wrong because we 
+	 * We don't have to worry that the index or name is wrong because we
 	 * enable the OK button IFF those conditions are met.
 	 */
 	@Override
@@ -86,14 +88,14 @@ public class NewConfigurationDialog extends Dialog implements INewCfgDialog {
 			String description = new String();
 			String nameAndDescription = new String();
 			String baseConfigNameAndDescription = new String();
-			
+
 			newName = configName.getText().trim();
 			newDescription = configDescription.getText().trim();
-			
-			baseConfigNameAndDescription = cloneConfigSelector.getItem(cloneConfigSelector.getSelectionIndex());				
+
+			baseConfigNameAndDescription = cloneConfigSelector.getItem(cloneConfigSelector.getSelectionIndex());
 			for (int i = 0; i < cfgds.length; i++) {
 				description = cfgds[i].getDescription();
-					
+
 				if( (description == null) || (description.equals("")) ){	//$NON-NLS-1$
 					nameAndDescription = cfgds[i].getName();
 				} else {
@@ -101,7 +103,7 @@ public class NewConfigurationDialog extends Dialog implements INewCfgDialog {
 				}
 				if (nameAndDescription.equals(baseConfigNameAndDescription)) {
 					parentConfig = cfgds[i];
-					break;				
+					break;
 				}
 			}
 			newConfiguration();
@@ -157,16 +159,16 @@ public class NewConfigurationDialog extends Dialog implements INewCfgDialog {
 		// as a directory name in the filesystem.
 		Label warningLabel = new Label(group1, SWT.BEGINNING | SWT.WRAP);
 		warningLabel.setFont(parent.getFont());
-		warningLabel.setText(Messages.NewConfiguration_label_warning); 
+		warningLabel.setText(Messages.NewConfiguration_label_warning);
 		gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false, 3, 1);
 		gd.widthHint = 300;
 		warningLabel.setLayoutData(gd);
-		
+
 		// Add a label and a text widget for Configuration's name
 		final Label nameLabel = new Label(group1, SWT.LEFT);
 		nameLabel.setFont(parent.getFont());
 		nameLabel.setText(Messages.NewConfiguration_label_name);
-				
+
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 1;
 		gd.grabExcessHorizontalSpace = false;
@@ -181,11 +183,12 @@ public class NewConfigurationDialog extends Dialog implements INewCfgDialog {
 		gd.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		configName.setLayoutData(gd);
 		configName.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				validateState();
 			}
 		});
-		
+
 //		 Add a label and a text widget for Configuration's description
         final Label descriptionLabel = new Label(group1, SWT.LEFT);
         descriptionLabel.setFont(parent.getFont());
@@ -199,12 +202,12 @@ public class NewConfigurationDialog extends Dialog implements INewCfgDialog {
         configDescription.setFont(group1.getFont());
 		configDescription.setText(getNewDescription());
 		configDescription.setFocus();
-		
+
         gd = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL);
         gd.horizontalSpan = 2;
         gd.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
         configDescription.setLayoutData(gd);
-		
+
 		final Group group = new Group(composite, SWT.NONE);
 		group.setFont(composite.getFont());
 		group.setText(Messages.NewConfiguration_label_group);
@@ -224,9 +227,9 @@ public class NewConfigurationDialog extends Dialog implements INewCfgDialog {
 		cloneConfigSelector.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				validateState();		
+				validateState();
 			}
-		});	
+		});
 
 		statusLabel = new Label(composite, SWT.CENTER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -241,7 +244,7 @@ public class NewConfigurationDialog extends Dialog implements INewCfgDialog {
 
 	/*
 	 * Returns the array of configuration names defined for this managed project.
-	 * This list will be used to populate the list of configurations to 
+	 * This list will be used to populate the list of configurations to
 	 * clone.
 	 */
 	private String [] getDefinedConfigNamesAndDescriptions() {
@@ -252,7 +255,7 @@ public class NewConfigurationDialog extends Dialog implements INewCfgDialog {
 			else
 				namesAndDescriptions[i] = cfgds[i].getName() + "( " + cfgds[i].getDescription() +" )";	//$NON-NLS-1$	//$NON-NLS-2$
 		}
-		return namesAndDescriptions; 
+		return namesAndDescriptions;
 	}
 
 	/**
@@ -262,10 +265,10 @@ public class NewConfigurationDialog extends Dialog implements INewCfgDialog {
 	public String getNewName() {
 		return newName;
 	}
-	
+
 	protected boolean isDuplicateName(String newName) {
 		for (int i = 0; i < cfgds.length; i++) {
-			if (cfgds[i].getName().equals(newName)) 
+			if (cfgds[i].getName().equals(newName))
 				return true;
 		}
 		return false;
@@ -280,7 +283,7 @@ public class NewConfigurationDialog extends Dialog implements INewCfgDialog {
 	}
 
 	/* (non-Javadoc)
-	 * Checks the argument for leading whitespaces and invalid directory name characters. 
+	 * Checks the argument for leading whitespaces and invalid directory name characters.
 	 * @param name
 	 * @return <I>true</i> is the name is a valid directory name with no whitespaces
 	 */
@@ -288,7 +291,7 @@ public class NewConfigurationDialog extends Dialog implements INewCfgDialog {
 		// Names must be at least one character in length
 		if (name.trim().length() == 0)
 			return false;
-		
+
 		// Iterate over the name checking for bad characters
 		char[] chars = name.toCharArray();
 		// No whitespaces at the start of a name
@@ -318,11 +321,11 @@ public class NewConfigurationDialog extends Dialog implements INewCfgDialog {
 	/* (non-Javadoc)
 	 * Update the status message and button state based on the input selected
 	 * by the user
-	 * 
+	 *
 	 */
 	private void validateState() {
 		String s = null;
-		String currentName = configName.getText(); 
+		String currentName = configName.getText();
 		// Trim trailing whitespace
 		while (currentName.length() > 0 && Character.isWhitespace(currentName.charAt(currentName.length()-1))) {
 			currentName = currentName.substring(0, currentName.length()-1);
@@ -341,7 +344,7 @@ public class NewConfigurationDialog extends Dialog implements INewCfgDialog {
 		} else if (!validateName(currentName)) {
 			// TODO Create a decent I18N string to describe this problem
 			s = NLS.bind(Messages.NewConfiguration_error_invalidName, currentName);
-		} 
+		}
 		if (statusLabel == null) return;
 		Button b = getButton(IDialogConstants.OK_ID);
 		if (s != null) {
@@ -359,11 +362,11 @@ public class NewConfigurationDialog extends Dialog implements INewCfgDialog {
     }
 
 	/**
-	 * Create a new configuration, using the values currently set in 
+	 * Create a new configuration, using the values currently set in
 	 * the dialog.
 	 */
 	private void newConfiguration() {
-		String id = CDataUtil.genId(parentConfig.getId());		
+		String id = CDataUtil.genId(parentConfig.getId());
 		try {
 			ICConfigurationDescription newcfg = des.createConfiguration(id, newName, parentConfig);
 			newcfg.setDescription(newDescription);
@@ -371,7 +374,8 @@ public class NewConfigurationDialog extends Dialog implements INewCfgDialog {
 			System.out.println("Cannot create config\n"+ e.getLocalizedMessage()); //$NON-NLS-1$
 		}
 	}
-	
+
 	// useless in our case
+	@Override
 	public void setShell(Shell shell) {}
 }

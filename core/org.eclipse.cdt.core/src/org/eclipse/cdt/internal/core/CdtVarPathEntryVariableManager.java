@@ -55,13 +55,15 @@ public class CdtVarPathEntryVariableManager implements
 			super(new VarContextInfo(), "", " "); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
-	
+
 	private class VarContextInfo implements IVariableContextInfo {
 
+		@Override
 		public IVariableContextInfo getNext() {
 			return null;
 		}
 
+		@Override
 		public ICdtVariableSupplier[] getSuppliers() {
 			return new ICdtVariableSupplier[]{fVarSupplier};
 		}
@@ -70,17 +72,18 @@ public class CdtVarPathEntryVariableManager implements
 		public boolean equals(Object obj) {
 			if(obj == this)
 				return true;
-			
+
 			if(!(obj instanceof VarContextInfo))
 				return false;
-			
+
 			return true;
 		}
-		
+
 	}
-	
+
 	private class VarSupplier implements ICdtVariableSupplier {
 
+		@Override
 		public ICdtVariable getVariable(String macroName,
 				IVariableContextInfo context) {
 			ICdtVariable var = fUserVarSupplier.getMacro(macroName, ICoreVariableContextInfo.CONTEXT_WORKSPACE, null);
@@ -89,6 +92,7 @@ public class CdtVarPathEntryVariableManager implements
 			return null;
 		}
 
+		@Override
 		public ICdtVariable[] getVariables(IVariableContextInfo context) {
 			ICdtVariable vars[] = fUserVarSupplier.getMacros(ICoreVariableContextInfo.CONTEXT_WORKSPACE, null);
 			List<ICdtVariable> list = new ArrayList<ICdtVariable>();
@@ -98,21 +102,22 @@ public class CdtVarPathEntryVariableManager implements
 			}
 			return list.toArray(new ICdtVariable[list.size()]);
 		}
-		
+
 	}
-	
-	
-	
+
+
+
 	public CdtVarPathEntryVariableManager(){
 		fListeners = Collections.synchronizedSet(new HashSet<IPathEntryVariableChangeListener>());
 		fUserVarSupplier.addListener(this);
 	}
 
+	@Override
 	public IPath getValue(String name) {
 		ICdtVariable var = fUserVarSupplier.getMacro(name, ICoreVariableContextInfo.CONTEXT_WORKSPACE, null);
 		return getVariablePath(var);
 	}
-	
+
 	public static IPath getVariablePath(ICdtVariable var){
 		if(var != null){
 			switch(var.getValueType()){
@@ -139,16 +144,17 @@ public class CdtVarPathEntryVariableManager implements
 	public static boolean isPathEntryVariable(ICdtVariable var, ICConfigurationDescription cfg, ICdtVariableManager mngr){
 		if(mngr.isUserVariable(var, cfg))
 			return false;
-		
+
 		if(!mngr.isUserVariable(var, null))
 			return false;
-		
+
 		if(getVariablePath(var) == null)
 			return false;
-		
+
 		return true;
 	}
 
+	@Override
 	public String[] getVariableNames() {
 		ICdtVariable[] vars = fUserVarSupplier.getMacros(ICoreVariableContextInfo.CONTEXT_WORKSPACE, null);
 		ArrayList<String> list = new ArrayList<String>();
@@ -159,38 +165,41 @@ public class CdtVarPathEntryVariableManager implements
 		return list.toArray(new String[list.size()]);
 	}
 
+	@Override
 	public boolean isDefined(String name) {
 		return getValue(name) != null;
 	}
 
+	@Override
 	public IPath resolvePath(IPath path) {
 		if(path == null)
 			return null;
-		
+
 		String str = path.toPortableString();
-		
+
 		try {
 			str = CdtVariableResolver.resolveToString(str, fSubstitutor);
 		} catch (CdtVariableException e) {
 			CCorePlugin.log(e);
 		}
-		
+
 		return new Path(str);
 	}
 
+	@Override
 	public void setValue(String name, IPath value) throws CoreException {
 		if(value != null)
 			fUserVarSupplier.createMacro(name, ICdtVariable.VALUE_PATH_ANY, value.toString(), ICoreVariableContextInfo.CONTEXT_WORKSPACE, null);
 		else
 			fUserVarSupplier.deleteMacro(name, ICoreVariableContextInfo.CONTEXT_WORKSPACE, null);
-		
+
 		fUserVarSupplier.storeWorkspaceVariables(false);
 	}
-	
+
 	/**
 	 * Fires a property change event corresponding to a change to the
 	 * current value of the variable with the given name.
-	 * 
+	 *
 	 * @param name the name of the variable, to be used as the variable
 	 *      in the event object
 	 * @param value the current value of the path variable or <code>null</code> if
@@ -206,16 +215,18 @@ public class CdtVarPathEntryVariableManager implements
 	private void fireVariableChangeEvent(String name, IPath value, int type) {
 		if (this.fListeners.size() == 0)
 			return;
-		// use a separate collection to avoid interference of simultaneous additions/removals 
+		// use a separate collection to avoid interference of simultaneous additions/removals
 		Object[] listenerArray = this.fListeners.toArray();
 		final PathEntryVariableChangeEvent pve = new PathEntryVariableChangeEvent(this, name, value, type);
 		for (int i = 0; i < listenerArray.length; ++i) {
 			final IPathEntryVariableChangeListener l = (IPathEntryVariableChangeListener) listenerArray[i];
 			ISafeRunnable job = new ISafeRunnable() {
+				@Override
 				public void handleException(Throwable exception) {
 					// already being logged in Platform#run()
 				}
 
+				@Override
 				public void run() throws Exception {
 					l.pathVariableChanged(pve);
 				}
@@ -223,10 +234,11 @@ public class CdtVarPathEntryVariableManager implements
 			SafeRunner.run(job);
 		}
 	}
-	
+
 	/**
 	 * @see org.eclipse.cdt.core.resources.IPathEntryVariableManager#addChangeListener(IPathEntryVariableChangeListener)
 	 */
+	@Override
 	public void addChangeListener(IPathEntryVariableChangeListener listener) {
 		fListeners.add(listener);
 	}
@@ -235,37 +247,39 @@ public class CdtVarPathEntryVariableManager implements
 	 * @see org.eclipse.cdt.core.resources.
 	 * IPathEntryVariableManager#removeChangeListener(IPathEntryVariableChangeListener)
 	 */
+	@Override
 	public void removeChangeListener(IPathEntryVariableChangeListener listener) {
 		fListeners.remove(listener);
 	}
 
+	@Override
 	public void variablesChanged(VariableChangeEvent event) {
 		ICdtVariable[] added = event.getAddedVariables();
 		ICdtVariable[] removed = event.getRemovedVariables();
 		ICdtVariable[] changed = event.getChangedVariables();
-		
+
 		if(added.length != 0){
 			fireEvent(added, PathEntryVariableChangeEvent.VARIABLE_CREATED);
 		}
-		
+
 		if(removed.length != 0){
 			fireEvent(removed, PathEntryVariableChangeEvent.VARIABLE_DELETED);
 		}
-		
+
 		if(changed.length != 0){
 			fireEvent(changed, PathEntryVariableChangeEvent.VARIABLE_CHANGED);
 		}
 	}
-	
+
 	private void fireEvent(ICdtVariable vars[], int type){
 		for (ICdtVariable var : vars) {
 			IPath path = getVariablePath(var);
 			if(path != null)
 				fireVariableChangeEvent(var.getName(), path, type);
 		}
-		
+
 	}
-	
+
 	public void startup(){
 	}
 

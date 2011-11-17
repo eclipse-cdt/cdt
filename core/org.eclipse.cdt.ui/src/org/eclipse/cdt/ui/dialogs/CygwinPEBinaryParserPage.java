@@ -61,7 +61,7 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performApply(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
@@ -75,7 +75,7 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 		String cygpath = fCygPathCommandText.getText().trim();
 		String nm = fNMCommandText.getText().trim();
 
-		monitor.beginTask(CUIMessages.BinaryParserPage_task_savingAttributes, 1); 
+		monitor.beginTask(CUIMessages.BinaryParserPage_task_savingAttributes, 1);
 		IProject proj = getContainer().getProject();
 		if (proj != null) {
 			String parserID = ""; //$NON-NLS-1$
@@ -134,7 +134,7 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
 	 */
 	@Override
@@ -166,19 +166,19 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
 	public void createControl(Composite composite) {
 		Group comp = new Group(composite, SWT.SHADOW_ETCHED_IN);
-		comp.setText(CUIMessages.BinaryParserBlock_binaryParserOptions); 
-		
+		comp.setText(CUIMessages.BinaryParserBlock_binaryParserOptions);
+
 		comp.setLayout(new GridLayout(2, true));
 		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		((GridLayout) comp.getLayout()).makeColumnsEqualWidth = false;
 
-		Label label = ControlFactory.createLabel(comp, CUIMessages.BinaryParserPage_label_addr2lineCommand); 
+		Label label = ControlFactory.createLabel(comp, CUIMessages.BinaryParserPage_label_addr2lineCommand);
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -186,12 +186,13 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 		fAddr2LineCommandText = ControlFactory.createTextField(comp, SWT.SINGLE | SWT.BORDER);
 		fAddr2LineCommandText.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(ModifyEvent evt) {
 				//updateLaunchConfigurationDialog();
 			}
 		});
 
-		Button button = ControlFactory.createPushButton(comp, CUIMessages.BinaryParserPage_label_browse); 
+		Button button = ControlFactory.createPushButton(comp, CUIMessages.BinaryParserPage_label_browse);
 		button.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -202,7 +203,7 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 
 			private void handleAddr2LineButtonSelected() {
 				FileDialog dialog = new FileDialog(getShell(), SWT.NONE);
-				dialog.setText(CUIMessages.BinaryParserPage_label_addr2lineCommand); 
+				dialog.setText(CUIMessages.BinaryParserPage_label_addr2lineCommand);
 				String command = fAddr2LineCommandText.getText().trim();
 				int lastSeparatorIndex = command.lastIndexOf(File.separator);
 				if (lastSeparatorIndex != -1) {
@@ -216,7 +217,7 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 			}
 		});
 
-		label = ControlFactory.createLabel(comp, CUIMessages.BinaryParserPage_label_cppfiltCommand); 
+		label = ControlFactory.createLabel(comp, CUIMessages.BinaryParserPage_label_cppfiltCommand);
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -226,11 +227,12 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 		fCPPFiltCommandText.setLayoutData(gd);
 		fCPPFiltCommandText.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(ModifyEvent evt) {
 				//updateLaunchConfigurationDialog();
 			}
 		});
-		button = ControlFactory.createPushButton(comp, CUIMessages.BinaryParserPage_label_browse1); 
+		button = ControlFactory.createPushButton(comp, CUIMessages.BinaryParserPage_label_browse1);
 		button.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -241,7 +243,7 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 
 			private void handleCPPFiltButtonSelected() {
 				FileDialog dialog = new FileDialog(getShell(), SWT.NONE);
-				dialog.setText(CUIMessages.BinaryParserPage_label_cppfiltCommand); 
+				dialog.setText(CUIMessages.BinaryParserPage_label_cppfiltCommand);
 				String command = fCPPFiltCommandText.getText().trim();
 				int lastSeparatorIndex = command.lastIndexOf(File.separator);
 				if (lastSeparatorIndex != -1) {
@@ -255,7 +257,7 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 			}
 		});
 
-		label = ControlFactory.createLabel(comp, CUIMessages.BinaryParserPage_label_cygpathCommand); 
+		label = ControlFactory.createLabel(comp, CUIMessages.BinaryParserPage_label_cygpathCommand);
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -265,11 +267,12 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 		fCygPathCommandText.setLayoutData(gd);
 		fCygPathCommandText.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(ModifyEvent evt) {
 				//updateLaunchConfigurationDialog();
 			}
 		});
-		button = ControlFactory.createPushButton(comp, CUIMessages.BinaryParserPage_label_browse2); 
+		button = ControlFactory.createPushButton(comp, CUIMessages.BinaryParserPage_label_browse2);
 		button.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -280,7 +283,7 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 
 			private void handleCygPathButtonSelected() {
 				FileDialog dialog = new FileDialog(getShell(), SWT.NONE);
-				dialog.setText(CUIMessages.BinaryParserPage_label_cygpathCommand); 
+				dialog.setText(CUIMessages.BinaryParserPage_label_cygpathCommand);
 				String command = fCygPathCommandText.getText().trim();
 				int lastSeparatorIndex = command.lastIndexOf(File.separator);
 				if (lastSeparatorIndex != -1) {
@@ -295,7 +298,7 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 		});
 
 
-		label = ControlFactory.createLabel(comp, CUIMessages.BinaryParserPage_label_nmCommand); 
+		label = ControlFactory.createLabel(comp, CUIMessages.BinaryParserPage_label_nmCommand);
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -305,11 +308,12 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 		fNMCommandText.setLayoutData(gd);
 		fNMCommandText.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(ModifyEvent evt) {
 				//updateLaunchConfigurationDialog();
 			}
 		});
-		button = ControlFactory.createPushButton(comp, CUIMessages.BinaryParserPage_label_browse2); 
+		button = ControlFactory.createPushButton(comp, CUIMessages.BinaryParserPage_label_browse2);
 		button.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -320,7 +324,7 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 
 			private void handleCygPathButtonSelected() {
 				FileDialog dialog = new FileDialog(getShell(), SWT.NONE);
-				dialog.setText(CUIMessages.BinaryParserPage_label_nmCommand); 
+				dialog.setText(CUIMessages.BinaryParserPage_label_nmCommand);
 				String command = fNMCommandText.getText().trim();
 				int lastSeparatorIndex = command.lastIndexOf(File.separator);
 				if (lastSeparatorIndex != -1) {

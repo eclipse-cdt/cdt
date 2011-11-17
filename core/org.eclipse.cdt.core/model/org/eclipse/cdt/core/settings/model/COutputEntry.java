@@ -27,6 +27,7 @@ public final class COutputEntry extends ACExclusionFilterEntry implements ICOutp
 		super(value, exclusionPatterns, flags | VALUE_WORKSPACE_PATH);
 	}
 
+	@Override
 	public final int getKind() {
 		return OUTPUT_PATH;
 	}

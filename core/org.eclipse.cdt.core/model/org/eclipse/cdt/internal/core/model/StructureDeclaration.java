@@ -24,6 +24,7 @@ public class StructureDeclaration extends SourceManipulation implements IStructu
 		super(parent, name, kind);
 	}
 
+	@Override
 	public String getTypeName() throws CModelException {
 		return getStructureInfo().getTypeName();
 	}
@@ -32,14 +33,17 @@ public class StructureDeclaration extends SourceManipulation implements IStructu
 		getStructureInfo().setTypeName(type);
 	}
 
+	@Override
 	public boolean isUnion() throws CModelException {
 		return getStructureInfo().isUnion();
 	}
 
+	@Override
 	public boolean isClass() throws CModelException {
 		return getStructureInfo().isClass();
 	}
 
+	@Override
 	public boolean isStruct() throws CModelException {
 		return getStructureInfo().isStruct();
 	}
@@ -56,6 +60,7 @@ public class StructureDeclaration extends SourceManipulation implements IStructu
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.IDeclaration#isStatic()
 	 */
+	@Override
 	public boolean isStatic() throws CModelException {
 		return getStructureInfo().isStatic();
 	}
@@ -63,6 +68,7 @@ public class StructureDeclaration extends SourceManipulation implements IStructu
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.IDeclaration#isConst()
 	 */
+	@Override
 	public boolean isConst() throws CModelException {
 		return getStructureInfo().isConst();
 	}
@@ -70,6 +76,7 @@ public class StructureDeclaration extends SourceManipulation implements IStructu
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.IDeclaration#isVolatile()
 	 */
+	@Override
 	public boolean isVolatile() throws CModelException {
 		return getStructureInfo().isVolatile();
 	}

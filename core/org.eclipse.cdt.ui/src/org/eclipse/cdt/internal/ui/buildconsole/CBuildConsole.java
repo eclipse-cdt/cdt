@@ -29,13 +29,14 @@ import org.eclipse.cdt.internal.core.ICConsole;
 public class CBuildConsole implements ICConsole {
 	IProject project;
 	IBuildConsoleManager fConsoleManager;
-	
+
 	/**
 	 * Constructor for BuildConsole.
 	 */
 	public CBuildConsole() {
 	}
 
+	@Override
 	public void init(String contextId, String name, URL iconUrl) {
 		if (contextId==null)
 			fConsoleManager = CUIPlugin.getDefault().getConsoleManager();
@@ -45,28 +46,32 @@ public class CBuildConsole implements ICConsole {
 
 	/**
 	 * Start the console for a given project.
-	 * 
+	 *
 	 * @param project - the project to start the console.
 	 */
+	@Override
 	public void start(IProject project) {
 		this.project = project;
 		fConsoleManager.getConsole(project).start(project);
 	}
-	
+
 	/**
 	 * @throws CoreException
 	 * @see org.eclipse.cdt.core.resources.IConsole#getOutputStream()
 	 */
+	@Override
 	public ConsoleOutputStream getOutputStream() throws CoreException {
 		Assert.isNotNull(project, ConsoleMessages.CBuildConsole_Console_Must_Be_Started_First);
 		return fConsoleManager.getConsole(project).getOutputStream();
 	}
 
+	@Override
 	public ConsoleOutputStream getInfoStream() throws CoreException {
 		Assert.isNotNull(project, ConsoleMessages.CBuildConsole_Console_Must_Be_Started_First);
 		return fConsoleManager.getConsole(project).getInfoStream();
 	}
 
+	@Override
 	public ConsoleOutputStream getErrorStream() throws CoreException {
 		Assert.isNotNull(project, ConsoleMessages.CBuildConsole_Console_Must_Be_Started_First);
 		return fConsoleManager.getConsole(project).getErrorStream();

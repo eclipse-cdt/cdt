@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.IPath;
 public class ResourceDescriptionHolder {
 	private PathSettingsContainer fPathSettingContainer;
 	private boolean fIncludeCurrent;
-	
+
 	public ResourceDescriptionHolder(PathSettingsContainer pathContainer,
 			boolean includeCurrent){
 		fPathSettingContainer = pathContainer;
@@ -37,11 +37,11 @@ public class ResourceDescriptionHolder {
 			return (ICResourceDescription)container.getValue();
 		return null;
 	}
-	
+
 	public IPath getCurrentPath(){
 		return fPathSettingContainer.getPath();
 	}
-	
+
 	public void setCurrentPath(IPath path){
 		//TODO: do we need to move children here?
 		fPathSettingContainer.setPath(path, true);
@@ -51,11 +51,12 @@ public class ResourceDescriptionHolder {
 		PathSettingsContainer container = fPathSettingContainer.getChildContainer(path, true, true);
 		container.setValue(des);
 	}
-	
+
 	public ICResourceDescription[] getResourceDescriptions(final int kind){
 		final List<ICResourceDescription> list = new ArrayList<ICResourceDescription>();
 		fPathSettingContainer.accept(new IPathSettingsContainerVisitor(){
 
+			@Override
 			public boolean visit(PathSettingsContainer container) {
 				ICResourceDescription des = (ICResourceDescription)container.getValue();
 				if((container != fPathSettingContainer || fIncludeCurrent)
@@ -64,14 +65,14 @@ public class ResourceDescriptionHolder {
 				}
 				return true;
 			}
-			
+
 		});
-		
+
 		if(kind == ICSettingBase.SETTING_FILE)
 			return list.toArray(new ICFileDescription[list.size()]);
 		else if(kind == ICSettingBase.SETTING_FOLDER)
 			return list.toArray(new ICFolderDescription[list.size()]);
-			
+
 		return list.toArray(new ICResourceDescription[list.size()]);
 	}
 
@@ -79,11 +80,12 @@ public class ResourceDescriptionHolder {
 		final List<Object> list = new ArrayList<Object>();
 		fPathSettingContainer.accept(new IPathSettingsContainerVisitor(){
 
+			@Override
 			public boolean visit(PathSettingsContainer container) {
 				list.add(container.getValue());
 				return true;
 			}
-			
+
 		});
 		return list.toArray(new ICResourceDescription[list.size()]);
 	}
@@ -91,32 +93,32 @@ public class ResourceDescriptionHolder {
 	public void removeResurceDescription(IPath path){
 		fPathSettingContainer.removeChildContainer(path);
 	}
-	
+
 	public ICResourceDescription getCurrentResourceDescription(){
 		return (ICResourceDescription)fPathSettingContainer.getValue();
 	}
-	
+
 	public ICResourceDescription[] getDirectChildren(){
 		PathSettingsContainer dc[] = fPathSettingContainer.getDirectChildren();
 		ICResourceDescription rcDess[] = new ICResourceDescription[dc.length];
-		
+
 		for(int i = 0; i < dc.length; i++){
 			rcDess[i] = (ICResourceDescription)dc[i].getValue();
 		}
-		
+
 		return rcDess;
 	}
-	
+
 //	public ICSourceEntry[] calculateSourceEntriesFromPaths(IProject project, IPath paths[]){
 //		if(paths == null || paths.length == 0)
 //			paths = new IPath[]{new Path("")}; //$NON-NLS-1$
-//		
+//
 ////		Set set = new HashSet(paths.length);
 //		PathSettingsContainer cr = PathSettingsContainer.createRootContainer();
 //		IPath pi, pj;
 //		List entriesList = new ArrayList(paths.length);
 //		IPath projPath = project != null ? project.getFullPath() : null;
-//		
+//
 //		for(int i = 0; i < paths.length; i++){
 //			pi = paths[i];
 ////			set.clear();
@@ -129,7 +131,7 @@ public class ResourceDescriptionHolder {
 //					cr.getChildContainer(pj, true, true);
 //				}
 //			}
-//			
+//
 //			PathSettingsContainer children[] = fPathSettingContainer.getDirectChildrenForPath(pi);
 //			for(int k = 0; k < children.length; k++){
 //				PathSettingsContainer child = children[k];
@@ -138,14 +140,14 @@ public class ResourceDescriptionHolder {
 //				IPath parentExclusionPath = parentExclusion.getPath();
 //				if(parentExclusionPath.segmentCount() > 0 && !parentExclusionPath.equals(childPath) && parentExclusionPath.isPrefixOf(childPath))
 //					continue;
-//				
+//
 //				ICResourceDescription rcDes = (ICResourceDescription)child.getValue();
 //				if(rcDes.isExcluded()){
 ////					set.add(rcDes.getPath());
 //					cr.getChildContainer(childPath, true, true);
 //				}
 //			}
-//			
+//
 //			PathSettingsContainer exclusions[] = cr.getChildren(false);
 ////			IPath exlusionPaths[] = new IPath[set.size()];
 //			IPath exlusionPaths[] = new IPath[exclusions.length];
@@ -165,14 +167,14 @@ public class ResourceDescriptionHolder {
 //
 //		return (ICSourceEntry[])entriesList.toArray(new ICSourceEntry[entriesList.size()]);
 //	}
-	
+
 	public ICFolderDescription getParentFolderDescription(){
 		PathSettingsContainer parent = fPathSettingContainer.getParentContainer();
 		if(parent != null)
 			return (ICFolderDescription)parent.getValue();
 		return null;
 	}
-	
+
 	public static IPath normalizePath(IPath path){
 		return path.makeRelative();
 	}

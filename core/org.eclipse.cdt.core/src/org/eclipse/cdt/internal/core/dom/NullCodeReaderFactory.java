@@ -36,11 +36,12 @@ public class NullCodeReaderFactory extends AbstractCodeReaderFactory {
 	/*
 	 * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#createCodeReaderForInclusion(java.lang.String)
 	 */
+	@Override
 	public CodeReader createCodeReaderForInclusion(String path) {
 		return new CodeReader(path, EMPTY_CHARS);
 	}
 
-	
+
 	@Override
 	public CodeReader createCodeReaderForInclusion(IIndexFileLocation ifl, String astPath) {
 		return new CodeReader(astPath, EMPTY_CHARS);
@@ -49,6 +50,7 @@ public class NullCodeReaderFactory extends AbstractCodeReaderFactory {
 	/*
 	 * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#createCodeReaderForTranslationUnit(java.lang.String)
 	 */
+	@Override
 	public CodeReader createCodeReaderForTranslationUnit(String path) {
 		return new CodeReader(path, EMPTY_CHARS);
 	}
@@ -56,6 +58,7 @@ public class NullCodeReaderFactory extends AbstractCodeReaderFactory {
 	/*
 	 * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#getCodeReaderCache()
 	 */
+	@Override
 	public ICodeReaderCache getCodeReaderCache() {
 		return null;
 	}
@@ -63,6 +66,7 @@ public class NullCodeReaderFactory extends AbstractCodeReaderFactory {
 	/*
 	 * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#getUniqueIdentifier()
 	 */
+	@Override
 	public int getUniqueIdentifier() {
 		// is this used somewhere?
 		return 7;

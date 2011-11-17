@@ -31,19 +31,22 @@ public class LanguageDescriptor extends CExtensionDescriptor implements
 	private String fContentTypeIds[];
 	private String fId;
 	private IContentType[] fContentTypes;
-	
+
 
 	public LanguageDescriptor(IConfigurationElement el) {
 		super(el);
 	}
 
+	@Override
 	public ILanguage getLanguage() {
 		if(fLanguage == null){
 			SafeRunner.run(new ISafeRunnable(){
+				@Override
 				public void handleException(Throwable exception) {
 					CCorePlugin.log(exception);
 				}
 
+				@Override
 				public void run() throws Exception {
 					fLanguage = (ILanguage)getConfigurationElement().createExecutableExtension(ATTRIBUTE_CLASS);
 				}
@@ -52,13 +55,14 @@ public class LanguageDescriptor extends CExtensionDescriptor implements
 		return fLanguage;
 	}
 
+	@Override
 	public String[] getContentTypeIds() {
 		if(fContentTypeIds == null){
 			fContentTypeIds = calculateCintentTypeIds();
 		}
 		return fContentTypeIds;
 	}
-	
+
 	private String[] calculateCintentTypeIds(){
 		IConfigurationElement el = getConfigurationElement();
 		IConfigurationElement children[] = el.getChildren();
@@ -80,10 +84,10 @@ public class LanguageDescriptor extends CExtensionDescriptor implements
 				ids = t;
 			}
 		}
-		
+
 		return ids;
 	}
-	
+
 	@Override
 	public String getId(){
 		if(fId == null)
@@ -91,26 +95,27 @@ public class LanguageDescriptor extends CExtensionDescriptor implements
 		return fId;
 	}
 
+	@Override
 	public IContentType[] getContentTypes() {
 		if(fContentTypes == null){
 			fContentTypes = calculateContentTypes(getContentTypeIds());
 		}
 		return fContentTypes;
 	}
-	
+
 	private IContentType[] calculateContentTypes(String ids[]){
 		IContentType cTypes[] = new IContentType[ids.length];
 
 		if(ids.length > 0){
 			int num = 0;
-			IContentTypeManager manager = Platform.getContentTypeManager(); 
-			
+			IContentTypeManager manager = Platform.getContentTypeManager();
+
 			for (int k = 0; k < ids.length; ++k) {
 				IContentType langContType = manager.getContentType(ids[k]);
 				if(langContType != null)
 					cTypes[num++] = langContType;
 			}
-			
+
 			if(num < ids.length){
 				IContentType tmp[] = new IContentType[num];
 				System.arraycopy(cTypes, 0, tmp, 0, num);

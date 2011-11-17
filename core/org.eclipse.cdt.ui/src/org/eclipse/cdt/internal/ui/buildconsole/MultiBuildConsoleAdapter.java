@@ -56,6 +56,7 @@ class MultiBuildConsoleAdapter implements IConsole {
 			two.write(b, off, len);
 	    }
 
+		@Override
 		public void write(String s, ProblemMarkerInfo marker) throws IOException {
 			one.write(s, marker);
 			two.write(s, marker);
@@ -76,18 +77,22 @@ class MultiBuildConsoleAdapter implements IConsole {
 		fGlobalConsole = globalConsole;
 	}
 
+	@Override
 	public void start(IProject project) {
 		fProjectConsole.start(project);
 	}
 
+	@Override
 	public ConsoleOutputStream getOutputStream() throws CoreException {
 		return new BuildOutputStreamAdapter((BuildOutputStream)fProjectConsole.getOutputStream(), (BuildOutputStream)fGlobalConsole.getOutputStream());
 	}
 
+	@Override
 	public ConsoleOutputStream getInfoStream() throws CoreException {
 		return new BuildOutputStreamAdapter((BuildOutputStream)fProjectConsole.getInfoStream(), (BuildOutputStream)fGlobalConsole.getInfoStream());
 	}
 
+	@Override
 	public ConsoleOutputStream getErrorStream() throws CoreException {
 		return new BuildOutputStreamAdapter((BuildOutputStream)fProjectConsole.getErrorStream(), (BuildOutputStream)fGlobalConsole.getErrorStream());
 	}

@@ -175,6 +175,7 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	/**
 	 * Returns whether or not the configuration description was modified
 	 */
+	@Override
 	boolean isModified();
 
 	/**

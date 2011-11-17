@@ -33,7 +33,7 @@ import org.eclipse.core.runtime.SafeRunner;
 
 
 /**
- * Core's implementation of IPathEntryVariableManager. 
+ * Core's implementation of IPathEntryVariableManager.
  */
 public class PathEntryVariableManager implements IPathEntryVariableManager {
 
@@ -44,16 +44,16 @@ public class PathEntryVariableManager implements IPathEntryVariableManager {
 
 	/**
 	 * Constructor for the class.
-	 * 
+	 *
 	 * The current manager implementation is not used any more
 	 * Instead the CdtVarPathEntryVariableManager is used that actually wraps the CdtVariables contributed at workspace level
-	 * 
+	 *
 	 * NOTE: all PathEntryVariableManager functionality remains workable with the new
-	 * CdtVarPathEntryVariableManager. We could either remove this class or copy the contents of the 
+	 * CdtVarPathEntryVariableManager. We could either remove this class or copy the contents of the
 	 * CdtVarPathEntryVariableManager to this class to preserve internal class name for better backward compatibility.
-	 * 
-	 * 
-	 */ 
+	 *
+	 *
+	 */
 	private PathEntryVariableManager() {
 		this.listeners = Collections.synchronizedSet(new HashSet<IPathEntryVariableChangeListener>());
 		this.preferences = CCorePlugin.getDefault().getPluginPreferences();
@@ -64,9 +64,10 @@ public class PathEntryVariableManager implements IPathEntryVariableManager {
 	 * and then calls #getValue using that key, they will get the value back for
 	 * that. But then if they try and call #setValue using the same key it will throw
 	 * an exception. We may want to revisit this behaviour in the future.
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.resources.IPathEntryVariableManager#getValue(String)
 	 */
+	@Override
 	public IPath getValue(String varName) {
 		String key = getKeyForName(varName);
 		String value = preferences.getString(key);
@@ -76,13 +77,14 @@ public class PathEntryVariableManager implements IPathEntryVariableManager {
 	/**
 	 * @see org.eclipse.cdt.core.resources.IPathEntryVariableManager#setValue(String, IPath)
 	 */
+	@Override
 	public void setValue(String varName, IPath newValue) throws CoreException {
 		//if the location doesn't have a device, see if the OS will assign one
 		if (newValue != null && newValue.isAbsolute() && newValue.getDevice() == null) {
 			newValue = new Path(newValue.toFile().getAbsolutePath());
 		}
 		int eventType;
-		// read previous value and set new value atomically in order to generate the right event		
+		// read previous value and set new value atomically in order to generate the right event
 		synchronized (this) {
 			IPath currentValue = getValue(varName);
 			boolean variableExists = currentValue != null;
@@ -115,6 +117,7 @@ public class PathEntryVariableManager implements IPathEntryVariableManager {
 	/**
 	 * @see org.eclipse.cdt.core.resources.IPathEntryVariableManager#resolvePath(IPath)
 	 */
+	@Override
 	public IPath resolvePath(IPath path) {
 		if (path == null || path.segmentCount() == 0) {
 			return path;
@@ -130,7 +133,7 @@ public class PathEntryVariableManager implements IPathEntryVariableManager {
 	/**
 	 * Fires a property change event corresponding to a change to the
 	 * current value of the variable with the given name.
-	 * 
+	 *
 	 * @param name the name of the variable, to be used as the variable
 	 *      in the event object
 	 * @param value the current value of the path variable or <code>null</code> if
@@ -146,16 +149,18 @@ public class PathEntryVariableManager implements IPathEntryVariableManager {
 	private void fireVariableChangeEvent(String name, IPath value, int type) {
 		if (this.listeners.size() == 0)
 			return;
-		// use a separate collection to avoid interference of simultaneous additions/removals 
+		// use a separate collection to avoid interference of simultaneous additions/removals
 		Object[] listenerArray = this.listeners.toArray();
 		final PathEntryVariableChangeEvent pve = new PathEntryVariableChangeEvent(this, name, value, type);
 		for (int i = 0; i < listenerArray.length; ++i) {
 			final IPathEntryVariableChangeListener l = (IPathEntryVariableChangeListener) listenerArray[i];
 			ISafeRunnable job = new ISafeRunnable() {
+				@Override
 				public void handleException(Throwable exception) {
 					// already being logged in Platform#run()
 				}
 
+				@Override
 				public void run() throws Exception {
 					l.pathVariableChanged(pve);
 				}
@@ -167,6 +172,7 @@ public class PathEntryVariableManager implements IPathEntryVariableManager {
 	/**
 	 * @see org.eclipse.core.resources.IPathVariableManager#getPathVariableNames()
 	 */
+	@Override
 	public String[] getVariableNames() {
 		List<String> result = new LinkedList<String>();
 		String[] names = preferences.propertyNames();
@@ -183,6 +189,7 @@ public class PathEntryVariableManager implements IPathEntryVariableManager {
 	 * @see org.eclipse.cdt.core.resources.
 	 * IPathEntryVariableManager#addChangeListener(IPathEntryVariableChangeListener)
 	 */
+	@Override
 	public void addChangeListener(IPathEntryVariableChangeListener listener) {
 		listeners.add(listener);
 	}
@@ -191,6 +198,7 @@ public class PathEntryVariableManager implements IPathEntryVariableManager {
 	 * @see org.eclipse.cdt.core.resources.
 	 * IPathEntryVariableManager#removeChangeListener(IPathEntryVariableChangeListener)
 	 */
+	@Override
 	public void removeChangeListener(IPathEntryVariableChangeListener listener) {
 		listeners.remove(listener);
 	}
@@ -198,6 +206,7 @@ public class PathEntryVariableManager implements IPathEntryVariableManager {
 	/**
 	 * @see org.eclipse.core.resources.IPathVariableManager#isDefined(String)
 	 */
+	@Override
 	public boolean isDefined(String varName) {
 		return getValue(varName) != null;
 	}
@@ -221,7 +230,7 @@ public class PathEntryVariableManager implements IPathEntryVariableManager {
 		char ch = prev;
 		boolean inMacro = false;
 		boolean inSingleQuote = false;
-		
+
 		for (int i = 0; i < variable.length(); i++) {
 			ch = variable.charAt(i);
 			switch (ch) {
@@ -230,7 +239,7 @@ public class PathEntryVariableManager implements IPathEntryVariableManager {
 					inSingleQuote = !inSingleQuote;
 				}
 				break;
-				
+
 			case '$' :
 				if (!inSingleQuote && prev != '\\') {
 					if (i < variable.length() && variable.indexOf('}', i) > 0) {
@@ -244,7 +253,7 @@ public class PathEntryVariableManager implements IPathEntryVariableManager {
 					}
 				}
 				break;
-				
+
 			case '}' :
 				if (inMacro) {
 					inMacro = false;
@@ -263,7 +272,7 @@ public class PathEntryVariableManager implements IPathEntryVariableManager {
 				}
 				break;
 			} /* switch */
-			
+
 			if (!inMacro) {
 				sb.append(ch);
 			} else {

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     IBM Corporation
@@ -50,7 +50,7 @@ public class CProjectNature implements IProjectNature {
 
 	/**
 	 * Utility method for adding a nature to a project.
-	 * 
+	 *
 	 * @param project
 	 *            the project to add the nature
 	 * @param natureId
@@ -58,7 +58,7 @@ public class CProjectNature implements IProjectNature {
 	 * @param monitor
 	 *            a progress monitor to indicate the duration of the operation,
 	 *            or <code>null</code> if progress reporting is not required.
-	 *  
+	 *
 	 */
 	public static void addNature(IProject project, String natureId, IProgressMonitor monitor) throws CoreException {
 	    try {
@@ -77,11 +77,11 @@ public class CProjectNature implements IProjectNature {
     		description.setNatureIds(newNatures);
     		project.setDescription(description, monitor);
 		}
-		
+
 		catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
-		
+
 		finally {
 			monitor.done();
 		}
@@ -89,7 +89,7 @@ public class CProjectNature implements IProjectNature {
 
 	/**
 	 * Utility method for removing a project nature from a project.
-	 * 
+	 *
 	 * @param project
 	 *            the project to remove the nature from
 	 * @param natureId
@@ -110,18 +110,21 @@ public class CProjectNature implements IProjectNature {
 	/**
 	 * @see IProjectNature#configure
 	 */
+	@Override
 	public void configure() throws CoreException {
 	}
 
 	/**
 	 * @see IProjectNature#deconfigure
 	 */
+	@Override
 	public void deconfigure() throws CoreException {
 	}
 
 	/**
 	 * @see IProjectNature#getProject
 	 */
+	@Override
 	public IProject getProject() {
 		return fProject;
 	}
@@ -129,6 +132,7 @@ public class CProjectNature implements IProjectNature {
 	/**
 	 * @see IProjectNature#setProject
 	 */
+	@Override
 	public void setProject(IProject project) {
 		fProject = project;
 	}

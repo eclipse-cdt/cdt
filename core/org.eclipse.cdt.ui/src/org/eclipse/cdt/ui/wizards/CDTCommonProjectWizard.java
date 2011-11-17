@@ -54,29 +54,29 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.internal.ui.newui.Messages;
 import org.eclipse.cdt.internal.ui.wizards.ICDTCommonProjectWizard;
 
-public abstract class CDTCommonProjectWizard extends BasicNewResourceWizard 
+public abstract class CDTCommonProjectWizard extends BasicNewResourceWizard
 implements IExecutableExtension, IWizardWithMemory, ICDTCommonProjectWizard
 {
 	private static final String PREFIX= "CProjectWizard"; //$NON-NLS-1$
 	private static final String OP_ERROR= "CProjectWizard.op_error"; //$NON-NLS-1$
 	private static final String title= CUIPlugin.getResourceString(OP_ERROR + ".title"); //$NON-NLS-1$
 	private static final String message= CUIPlugin.getResourceString(OP_ERROR + ".message"); //$NON-NLS-1$
-	private static final String[] EMPTY_ARR = new String[0]; 
-	
+	private static final String[] EMPTY_ARR = new String[0];
+
 	protected IConfigurationElement fConfigElement;
 	protected CDTMainWizardPage fMainPage;
-	
+
 	protected IProject newProject;
 	private String wz_title;
 	private String wz_desc;
-	
+
 	private boolean existingPath = false;
 	private String lastProjectName = null;
 	private URI lastProjectLocation = null;
 	private CWizardHandler savedHandler = null;
 
 	public CDTCommonProjectWizard() {
-		this(Messages.NewModelProjectWizard_0,Messages.NewModelProjectWizard_1); 
+		this(Messages.NewModelProjectWizard_0,Messages.NewModelProjectWizard_1);
 	}
 
 	public CDTCommonProjectWizard(String title, String desc) {
@@ -88,7 +88,7 @@ implements IExecutableExtension, IWizardWithMemory, ICDTCommonProjectWizard
 		wz_title = title;
 		wz_desc = desc;
 	}
-	
+
 	@Override
 	public void addPages() {
 		fMainPage= new CDTMainWizardPage(CUIPlugin.getResourceString(PREFIX));
@@ -106,30 +106,32 @@ implements IExecutableExtension, IWizardWithMemory, ICDTCommonProjectWizard
 
 		if (!fMainPage.getProjectName().equals(lastProjectName))
 			return true;
-			
+
 		URI projectLocation = fMainPage.getProjectLocation();
 		if (projectLocation == null) {
 			if (lastProjectLocation != null)
 				return true;
 		} else if (!projectLocation.equals(lastProjectLocation))
 			return true;
-		
-		return savedHandler.isChanged(); 
+
+		return savedHandler.isChanged();
 	}
 
+	@Override
 	public IProject getProject(boolean defaults) {
 		return getProject(defaults, true);
 	}
 
+	@Override
 	public IProject getProject(boolean defaults, boolean onFinish) {
-		if (newProject != null && isChanged()) 
-			clearProject(); 
+		if (newProject != null && isChanged())
+			clearProject();
 		if (newProject == null)	{
             existingPath = false;
 		  	try {
 		  		IFileStore fs;
 				URI p = fMainPage.getProjectLocation();
-			  	if (p == null) { 
+			  	if (p == null) {
 			  		fs = EFS.getStore(ResourcesPlugin.getWorkspace().getRoot().getLocationURI());
 				    fs = fs.getChild(fMainPage.getProjectName());
 			  	} else
@@ -150,14 +152,14 @@ implements IExecutableExtension, IWizardWithMemory, ICDTCommonProjectWizard
 			lastProjectName = fMainPage.getProjectName();
 			lastProjectLocation = fMainPage.getProjectLocation();
 			// start creation process
-			invokeRunnable(getRunnable(defaults, onFinish)); 
-		} 
+			invokeRunnable(getRunnable(defaults, onFinish));
+		}
 		return newProject;
 	}
 
 	/**
 	 * Remove created project either after error
-	 * or if user returned back from config page. 
+	 * or if user returned back from config page.
 	 */
 	private void clearProject() {
 		if (lastProjectName == null) return;
@@ -168,7 +170,7 @@ implements IExecutableExtension, IWizardWithMemory, ICDTCommonProjectWizard
 		lastProjectName = null;
 		lastProjectLocation = null;
 	}
-	
+
 	private boolean invokeRunnable(IRunnableWithProgress runnable) {
 		IRunnableWithProgress op= new WorkspaceModifyDelegatingOperation(runnable);
 		try {
@@ -188,7 +190,7 @@ implements IExecutableExtension, IWizardWithMemory, ICDTCommonProjectWizard
 	public boolean performFinish() {
 		boolean needsPost = (newProject != null && !isChanged());
 		// create project if it is not created yet
-		if (getProject(fMainPage.isCurrent(), true) == null) 
+		if (getProject(fMainPage.isCurrent(), true) == null)
 			return false;
 		fMainPage.h_selected.postProcess(newProject, needsPost);
 		try {
@@ -201,16 +203,16 @@ implements IExecutableExtension, IWizardWithMemory, ICDTCommonProjectWizard
 		selectAndReveal(newProject);
 		return true;
 	}
-	
+
 	protected boolean setCreated() throws CoreException {
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
-		
+
 		ICProjectDescription des = mngr.getProjectDescription(newProject, false);
-		
+
 		if(des == null ) {
 			return false;
 		}
-		
+
 		if(des.isCdtProjectCreating()){
 			des = mngr.getProjectDescription(newProject, true);
 			des.setCdtProjectCreated();
@@ -219,13 +221,14 @@ implements IExecutableExtension, IWizardWithMemory, ICDTCommonProjectWizard
 		}
 		return false;
 	}
-	
+
     @Override
 	public boolean performCancel() {
     	clearProject();
         return true;
     }
 
+	@Override
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
 		fConfigElement= config;
 	}
@@ -233,11 +236,14 @@ implements IExecutableExtension, IWizardWithMemory, ICDTCommonProjectWizard
 	private IRunnableWithProgress getRunnable(boolean _defaults, final boolean onFinish) {
 		final boolean defaults = _defaults;
 		return new IRunnableWithProgress() {
+			@Override
 			public void run(IProgressMonitor imonitor) throws InvocationTargetException, InterruptedException {
 				final Exception except[] = new Exception[1];
 				getShell().getDisplay().syncExec(new Runnable() {
+					@Override
 					public void run() {
 						IRunnableWithProgress op= new WorkspaceModifyDelegatingOperation(new IRunnableWithProgress() {
+							@Override
 							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 								final IProgressMonitor fMonitor;
 								if (monitor == null) {
@@ -247,9 +253,9 @@ implements IExecutableExtension, IWizardWithMemory, ICDTCommonProjectWizard
 								}
 								fMonitor.beginTask(CUIPlugin.getResourceString("CProjectWizard.op_description"), 100); //$NON-NLS-1$
 								fMonitor.worked(10);
-								try {							
+								try {
 									newProject = createIProject(lastProjectName, lastProjectLocation, new SubProgressMonitor(fMonitor, 40));
-									if (newProject != null) 
+									if (newProject != null)
 										fMainPage.h_selected.createProject(newProject, defaults, onFinish, new SubProgressMonitor(fMonitor, 40));
 									fMonitor.worked(10);
 								} catch (CoreException e) {	CUIPlugin.log(e); }
@@ -275,35 +281,37 @@ implements IExecutableExtension, IWizardWithMemory, ICDTCommonProjectWizard
 						throw (InterruptedException)except[0];
 					}
 					throw new InvocationTargetException(except[0]);
-				}					
+				}
 			}
 		};
 	}
-	
+
+	@Override
 	public IProject createIProject(final String name, final URI location) throws CoreException{
 		return createIProject(name, location, new NullProgressMonitor());
 	}
-	
+
 	/**
 	 * @since 5.1
 	 */
 	protected IProgressMonitor continueCreationMonitor;
 
 	/**
-	 * @param monitor 
+	 * @param monitor
 	 * @since 5.1
-	 * 
-	 */	
+	 *
+	 */
+	@Override
 	public IProject createIProject(final String name, final URI location, IProgressMonitor monitor) throws CoreException{
-		
-		monitor.beginTask(Messages.CDTCommonProjectWizard_creatingProject, 100); 
-		
+
+		monitor.beginTask(Messages.CDTCommonProjectWizard_creatingProject, 100);
+
 		if (newProject != null)	return newProject;
-		
+
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
 		final IProject newProjectHandle = root.getProject(name);
-		
+
 		if (!newProjectHandle.exists()) {
 //			IWorkspaceDescription workspaceDesc = workspace.getDescription();
 //			workspaceDesc.setAutoBuilding(false);
@@ -314,6 +322,7 @@ implements IExecutableExtension, IWizardWithMemory, ICDTCommonProjectWizard
 			newProject = CCorePlugin.getDefault().createCDTProject(description, newProjectHandle, new SubProgressMonitor(monitor,25));
 		} else {
 			IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					newProjectHandle.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 				}
@@ -321,28 +330,29 @@ implements IExecutableExtension, IWizardWithMemory, ICDTCommonProjectWizard
 			workspace.run(runnable, root, IWorkspace.AVOID_UPDATE, new SubProgressMonitor(monitor,25));
 			newProject = newProjectHandle;
 		}
-        
+
 		// Open the project if we have to
 		if (!newProject.isOpen()) {
 			newProject.open(new SubProgressMonitor(monitor,25));
 		}
-		
+
 		continueCreationMonitor = new SubProgressMonitor(monitor,25);
 		IProject proj = continueCreation(newProject);
-		
+
 		monitor.done();
-		
-		return proj;	
+
+		return proj;
 	}
-	
-	protected abstract IProject continueCreation(IProject prj); 
+
+	protected abstract IProject continueCreation(IProject prj);
+	@Override
 	public abstract String[] getNatures();
-	
+
 	@Override
 	public void dispose() {
 		fMainPage.dispose();
 	}
-	
+
     @Override
 	public boolean canFinish() {
     	if (fMainPage.h_selected != null) {
@@ -356,19 +366,23 @@ implements IExecutableExtension, IWizardWithMemory, ICDTCommonProjectWizard
     /**
      * Returns last project name used for creation
      */
+	@Override
 	public String getLastProjectName() {
 		return lastProjectName;
 	}
 
+	@Override
 	public URI getLastProjectLocation() {
 		return lastProjectLocation;
 	}
 
+	@Override
 	public IProject getLastProject() {
 		return newProject;
 	}
 
 	// Methods below should provide data for language check
+	@Override
 	public String[] getLanguageIDs (){
 		String[] contentTypeIds = getContentTypeIDs();
 		if(contentTypeIds.length > 0) {
@@ -387,9 +401,11 @@ implements IExecutableExtension, IWizardWithMemory, ICDTCommonProjectWizard
 		}
 		return EMPTY_ARR;
 	}
+	@Override
 	public String[] getContentTypeIDs (){
 		return EMPTY_ARR;
 	}
+	@Override
 	public String[] getExtensions (){
 		String[] contentTypeIds = getContentTypeIDs();
 		if(contentTypeIds.length > 0) {
@@ -406,5 +422,5 @@ implements IExecutableExtension, IWizardWithMemory, ICDTCommonProjectWizard
 		}
 		return EMPTY_ARR;
 	}
-	
+
 }

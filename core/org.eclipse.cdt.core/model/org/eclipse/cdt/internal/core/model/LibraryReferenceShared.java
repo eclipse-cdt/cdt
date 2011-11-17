@@ -9,7 +9,7 @@
  * QNX Software Systems - Initial API and implementation
  * Created on Apr 2, 2003
  *
- * To change this generated comment go to 
+ * To change this generated comment go to
  * Window>Preferences>Java>Code Generation>Code Template
  * /
  *******************************************************************************/
@@ -79,6 +79,7 @@ public class LibraryReferenceShared extends Binary implements ILibraryReference 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ILibraryReference#getLibraryEntry()
 	 */
+	@Override
 	public ILibraryEntry getLibraryEntry() {
 		return entry;
 	}

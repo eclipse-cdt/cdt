@@ -55,7 +55,7 @@ public class MachOBinaryParserPage extends AbstractCOptionPage {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performApply(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
@@ -66,7 +66,7 @@ public class MachOBinaryParserPage extends AbstractCOptionPage {
 
 		String cppfilt = fCPPFiltCommandText.getText().trim();
 
-		monitor.beginTask(CUIMessages.BinaryParserPage_task_savingAttributes, 1); 
+		monitor.beginTask(CUIMessages.BinaryParserPage_task_savingAttributes, 1);
 		IProject proj = getContainer().getProject();
 		if (proj != null) {
 			String parserID = ""; //$NON-NLS-1$
@@ -119,7 +119,7 @@ public class MachOBinaryParserPage extends AbstractCOptionPage {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
 	 */
 	@Override
@@ -139,18 +139,18 @@ public class MachOBinaryParserPage extends AbstractCOptionPage {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
 	public void createControl(Composite parent) {
 		Group comp = new Group(parent, SWT.SHADOW_ETCHED_IN);
-		comp.setText(CUIMessages.BinaryParserBlock_binaryParserOptions); 
+		comp.setText(CUIMessages.BinaryParserBlock_binaryParserOptions);
 		comp.setLayout(new GridLayout(2, true));
 		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		((GridLayout) comp.getLayout()).makeColumnsEqualWidth = false;
-		
-		Label label = ControlFactory.createLabel(comp, CUIMessages.BinaryParserPage_label_cppfiltCommand); 
+
+		Label label = ControlFactory.createLabel(comp, CUIMessages.BinaryParserPage_label_cppfiltCommand);
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -160,11 +160,12 @@ public class MachOBinaryParserPage extends AbstractCOptionPage {
 		fCPPFiltCommandText.setLayoutData(gd);
 		fCPPFiltCommandText.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(ModifyEvent evt) {
 				//updateLaunchConfigurationDialog();
 			}
 		});
-		Button button = ControlFactory.createPushButton(comp, CUIMessages.BinaryParserPage_label_browse); 
+		Button button = ControlFactory.createPushButton(comp, CUIMessages.BinaryParserPage_label_browse);
 		button.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -175,7 +176,7 @@ public class MachOBinaryParserPage extends AbstractCOptionPage {
 
 			private void handleCPPFiltButtonSelected() {
 				FileDialog dialog = new FileDialog(getShell(), SWT.NONE);
-				dialog.setText(CUIMessages.BinaryParserPage_label_cppfiltCommand); 
+				dialog.setText(CUIMessages.BinaryParserPage_label_cppfiltCommand);
 				String command = fCPPFiltCommandText.getText().trim();
 				int lastSeparatorIndex = command.lastIndexOf(File.separator);
 				if (lastSeparatorIndex != -1) {
@@ -192,7 +193,7 @@ public class MachOBinaryParserPage extends AbstractCOptionPage {
 		setControl(comp);
 		initialziedValues();
 	}
-	
+
 	private void initialziedValues() {
 		String cppfilt = null;
 		IProject proj = getContainer().getProject();

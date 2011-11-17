@@ -94,7 +94,7 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 /**
  * Instances of this class allow the user to add, remove, delete, moveup and movedown
  * the items in the list control.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class FileListControl {
@@ -103,7 +103,7 @@ public class FileListControl {
 	 * Constant copied from ManagedBuild IOption indicating that the entries in this
 	 * FileListControl are neither files nor directories -- they're treated as a plain
 	 * String list.
-	 * 
+	 *
 	 * #see org.eclipse.cdt.managedbuilder.core.IOption#BROWSE_NONE
 	 * @since 5.2
 	 */
@@ -111,7 +111,7 @@ public class FileListControl {
 	/**
 	 * Constant copied from ManagedBuild IOption indicating that the entries in this
 	 * FileListControl are Files.
-	 * 
+	 *
 	 * #see org.eclipse.cdt.managedbuilder.core.IOption#BROWSE_FILE
 	 * @since 5.2
 	 */
@@ -119,7 +119,7 @@ public class FileListControl {
 	/**
 	 * Constant copied from ManagedBuild IOption indicating that the entries in this
 	 * FileListControl are Directories.
-	 * 
+	 *
 	 * #see org.eclipse.cdt.managedbuilder.core.IOption#BROWSE_DIR
 	 * @since 5.2
 	 */
@@ -247,7 +247,8 @@ public class FileListControl {
 						} else {
 							dialog.setInitialSelection(resource);
 							dialog.setValidator(new ISelectionStatusValidator() {
-							    public IStatus validate(Object[] selection) {
+							    @Override
+								public IStatus validate(Object[] selection) {
 							    	if (selection != null)
 						    			for (Object sel : selection)
 							    			if (!(sel instanceof IFile))
@@ -259,7 +260,7 @@ public class FileListControl {
 			                dialog.setMessage(WORKSPACE_FILE_DIALOG_MSG);
 						}
 
-						/* Open dialog and process result. 
+						/* Open dialog and process result.
 						 * If a resource has been selected we create a workspace relative path for it.
 						 * Use ${ProjName} if the full path is relative to the context's location */
 						if (dialog.open() == Window.OK) {
@@ -400,7 +401,7 @@ public class FileListControl {
 			} catch (ExecutionException e) {
 				CUIPlugin.log(e);
 			}
-		}		
+		}
 		private Clipboard getClipboard() {
 			if (clipboard == null)
 				clipboard = new Clipboard(Display.getDefault());
@@ -432,27 +433,27 @@ public class FileListControl {
 	private static final IPath PROJECTNAME_PATH = new Path(VariablesPlugin.getDefault().getStringVariableManager().generateVariableExpression(PROJECTNAME_VAR, null));
 
 	/* Names, messages and titles */
-	private static final String WORKSPACEBUTTON_NAME = Messages.FileListControl_button_workspace; 
-	private static final String FILESYSTEMBUTTON_NAME = Messages.FileListControl_button_fs; 
+	private static final String WORKSPACEBUTTON_NAME = Messages.FileListControl_button_workspace;
+	private static final String FILESYSTEMBUTTON_NAME = Messages.FileListControl_button_fs;
 
-	private static final String ADD_STR = Messages.FileListControl_add; 
-	private static final String DEL_STR = Messages.FileListControl_delete; 
-	private static final String EDIT_STR = Messages.FileListControl_edit; 
-	private static final String MOVEUP_STR = Messages.FileListControl_moveup; 
-	private static final String MOVEDOWN_STR = Messages.FileListControl_movedown; 
-	private static final String FILE_TITLE_ADD = Messages.BrowseEntryDialog_file_title_add;	
-	private static final String DIR_TITLE_ADD = Messages.BrowseEntryDialog_dir_title_add;	
-	private static final String FILE_TITLE_EDIT = Messages.BrowseEntryDialog_file_title_edit;	
-	private static final String DIR_TITLE_EDIT = Messages.BrowseEntryDialog_dir_title_edit;	
-	private static final String WORKSPACE_DIR_DIALOG_TITLE = Messages.BrowseEntryDialog_wsp_dir_dlg_title;	
-	private static final String WORKSPACE_FILE_DIALOG_TITLE = Messages.BrowseEntryDialog_wsp_file_dlg_title;	
-	private static final String WORKSPACE_DIR_DIALOG_MSG = Messages.FileListControl_BrowseEntryDialog_wsp_dir_dlg_msg;	
-	private static final String WORKSPACE_FILE_DIALOG_MSG = Messages.FileListControl_BrowseEntryDialog_wsp_file_dlg_msg;	
-	private static final String WORKSPACE_FILE_DIALOG_ERR = Messages.FileListControl_BrowseEntryDialog_wsp_file_dlg_err;	
-	private static final String FILESYSTEM_DIR_DIALOG_MSG = Messages.BrowseEntryDialog_fs_dir_dlg_msg;	
-	private static final String FILE_MSG = Messages.BrowseEntryDialog_message_file;	
-	private static final String DIR_MSG = Messages.BrowseEntryDialog_message_directory;	
-	private static final String TITLE = Messages.BuildPropertyCommon_label_title;	
+	private static final String ADD_STR = Messages.FileListControl_add;
+	private static final String DEL_STR = Messages.FileListControl_delete;
+	private static final String EDIT_STR = Messages.FileListControl_edit;
+	private static final String MOVEUP_STR = Messages.FileListControl_moveup;
+	private static final String MOVEDOWN_STR = Messages.FileListControl_movedown;
+	private static final String FILE_TITLE_ADD = Messages.BrowseEntryDialog_file_title_add;
+	private static final String DIR_TITLE_ADD = Messages.BrowseEntryDialog_dir_title_add;
+	private static final String FILE_TITLE_EDIT = Messages.BrowseEntryDialog_file_title_edit;
+	private static final String DIR_TITLE_EDIT = Messages.BrowseEntryDialog_dir_title_edit;
+	private static final String WORKSPACE_DIR_DIALOG_TITLE = Messages.BrowseEntryDialog_wsp_dir_dlg_title;
+	private static final String WORKSPACE_FILE_DIALOG_TITLE = Messages.BrowseEntryDialog_wsp_file_dlg_title;
+	private static final String WORKSPACE_DIR_DIALOG_MSG = Messages.FileListControl_BrowseEntryDialog_wsp_dir_dlg_msg;
+	private static final String WORKSPACE_FILE_DIALOG_MSG = Messages.FileListControl_BrowseEntryDialog_wsp_file_dlg_msg;
+	private static final String WORKSPACE_FILE_DIALOG_ERR = Messages.FileListControl_BrowseEntryDialog_wsp_file_dlg_err;
+	private static final String FILESYSTEM_DIR_DIALOG_MSG = Messages.BrowseEntryDialog_fs_dir_dlg_msg;
+	private static final String FILE_MSG = Messages.BrowseEntryDialog_message_file;
+	private static final String DIR_MSG = Messages.BrowseEntryDialog_message_directory;
+	private static final String TITLE = Messages.BuildPropertyCommon_label_title;
 
 	/** flag which prevents us from resetting the prompt for delete flag */
 	private boolean neverPromptForDelete;
@@ -484,7 +485,7 @@ public class FileListControl {
 	/** Undo support */
 	IUndoContext undoContext;
 	IOperationHistory operationHistory = OperationHistoryFactory.getOperationHistory();
-	
+
 	private java.util.List<IFileListChangeListener> listeners = new ArrayList<IFileListChangeListener>();
 	private String[] oldValue;
 
@@ -647,7 +648,7 @@ public class FileListControl {
 
 		selectionChanged();
 	}
-	
+
 	/**
 	 * Set list values
 	 *
@@ -685,7 +686,7 @@ public class FileListControl {
 		if(oldValue != null) {
 			if (Arrays.equals(oldValue, items))
 				return;
-	
+
 			// Add some context to the undo history
 			IUndoableOperation op = new AbstractOperation("") { //$NON-NLS-1$
 				final String[] previousValue = oldValue;
@@ -700,7 +701,7 @@ public class FileListControl {
 				@Override
 				public IStatus redo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
 					list.setItems(newValue);
-					notifyListeners(previousValue, newValue);				
+					notifyListeners(previousValue, newValue);
 					oldValue = newValue;
 					return Status.OK_STATUS;
 				}
@@ -819,8 +820,8 @@ public class FileListControl {
 			return;
 		boolean delDir = true;
 		if (promptForDelete) {
-			String quest = Messages.FileListControl_deletedialog_message; 
-			String title = Messages.FileListControl_deletedialog_title; 
+			String quest = Messages.FileListControl_deletedialog_message;
+			String title = Messages.FileListControl_deletedialog_title;
 			delDir = MessageDialog.openQuestion(list.getShell(), title, quest);
 		}
 		if (delDir){
@@ -883,7 +884,7 @@ public class FileListControl {
 					}
 					dialog =  new SelectPathInputDialog(getListControl().getShell(), title, message, selItem, null, browseType);
 				} else {
-					String title = Messages.FileListControl_editdialog_title; 
+					String title = Messages.FileListControl_editdialog_title;
 					dialog = new InputDialog(null, title, compTitle, selItem, null);
 				}
 
@@ -963,23 +964,23 @@ public class FileListControl {
 	/**
 	 * Sets the default filter-path for the underlying Browse dialog. Only applies when browseType is 'file' or 'dir'.
 	 * @param filterPath
-	 * 
+	 *
 	 * @since 5.2
 	 */
 	public void setFilterPath(String filterPath) {
 		this.filterPath = filterPath;
 	}
-	
+
 	/**
 	 * Sets the filter-extensions for the underlying Browse dialog. Only applies when browseType is 'file'.
 	 * @param filterExtensions
-	 * 
+	 *
 	 * @since 5.2
 	 */
 	public void setFilterExtensions(String[] filterExtensions) {
 		this.filterExtensions = filterExtensions;
 	}
-	
+
 	/**
 	 * Enable/Disable workspace support. If enabled, the workspace browse button
 	 * will be visible in the SelectPathInputDialog.

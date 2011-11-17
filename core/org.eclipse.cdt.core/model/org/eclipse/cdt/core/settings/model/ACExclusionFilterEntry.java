@@ -40,11 +40,12 @@ public abstract class ACExclusionFilterEntry extends ACPathEntry implements ICEx
 	protected final boolean isFile() {
 		return false;
 	}
-	
+
 	/**
 	 * Returns the exclusion patterns
 	 * @return IPath[]
 	 */
+	@Override
 	public IPath[] getExclusionPatterns() {
 		return exclusionPatterns.length != 0 ? (IPath[])exclusionPatterns.clone() : exclusionPatterns;
 	}
@@ -52,6 +53,7 @@ public abstract class ACExclusionFilterEntry extends ACPathEntry implements ICEx
 	/**
 	 * Returns a char based representation of the exclusions patterns full path.
 	 */
+	@Override
 	public char[][] fullExclusionPatternChars() {
 		if (this.fullCharExclusionPatterns == UNINIT_PATTERNS) {
 			int length = this.exclusionPatterns.length;
@@ -61,18 +63,18 @@ public abstract class ACExclusionFilterEntry extends ACPathEntry implements ICEx
 				path = getLocation();
 			IPath prefixPath = path.removeTrailingSeparator();
 			for (int i = 0; i < length; i++) {
-				this.fullCharExclusionPatterns[i] = 
+				this.fullCharExclusionPatterns[i] =
 					prefixPath.append(this.exclusionPatterns[i]).toString().toCharArray();
 			}
 		}
 		return this.fullCharExclusionPatterns;
 	}
-	
+
 	@Override
 	public boolean equals(Object other) {
 		if(!super.equals(other))
 			return false;
-		
+
 		ACExclusionFilterEntry otherEntry = (ACExclusionFilterEntry)other;
 		return Arrays.equals(exclusionPatterns, otherEntry.exclusionPatterns);
 	}
@@ -86,7 +88,7 @@ public abstract class ACExclusionFilterEntry extends ACPathEntry implements ICEx
 	public boolean equalsByContents(ICSettingEntry entry) {
 		if(!super.equalsByContents(entry))
 			return false;
-		
+
 		ACExclusionFilterEntry otherEntry = (ACExclusionFilterEntry)entry;
 		return Arrays.equals(exclusionPatterns, otherEntry.exclusionPatterns);
 	}

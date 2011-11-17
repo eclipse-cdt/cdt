@@ -71,10 +71,10 @@ import org.eclipse.cdt.internal.ui.util.SWTUtil;
  * defined by all subclasses.<br> Subclasses provide the methods that
  * determine what files are displayed and what action is performed on them as
  * well as the labels for the Wizard.</p>
- * 
+ *
  * Note: Only Projects that are open will be considered for conversion.
- * 
- * 
+ *
+ *
  * @author Judy N. Green
  * @since Aug 6, 2002 <p>
  */
@@ -89,19 +89,19 @@ public abstract class ConvertProjectWizardPage
     protected boolean convertToCC = true;
     protected Button cRadioButton;
     protected Button ccRadioButton;
-   
+
     // The Main widget containing the table and its list of candidate open projects
     protected CheckboxTableViewer tableViewer;
-    
+
     protected Button selectAllButton;
     protected Button deselectAllButton;
-    
+
     // We only need to calculate this once per instantiation of this wizard
     protected Object[] listItems = null;
 
     /**
      * Constructor for ConvertProjectWizardPage.
-     * 
+     *
      * @param pageName
      */
     public ConvertProjectWizardPage(String pageName) {
@@ -117,7 +117,7 @@ public abstract class ConvertProjectWizardPage
 
     /**
      * Returns the elements that the user has checked
-     * 
+     *
      * @return Object[]
      */
     protected Object[] getCheckedElements() {
@@ -127,65 +127,67 @@ public abstract class ConvertProjectWizardPage
 
     /**
      * Creates the main wizard page.
-     * 
+     *
      * @see org.eclipse.jface.dialogs.IDialogPage#createControl(Composite)
      */
-    public void createControl(Composite parent) {
+    @Override
+	public void createControl(Composite parent) {
 
         Composite  container = new Composite(parent, SWT.NONE);
-        
+
         GridLayout layout = new GridLayout();
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         container.setLayout(layout);
-        setControl(createAvailableProjectsGroup(container));  
-        addToMainPage(container);      
+        setControl(createAvailableProjectsGroup(container));
+        addToMainPage(container);
         // will default to false until a selection is made
         setPageComplete(validatePage());
         PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ICHelpContextIds.CONVERT_TO_CCPP_WIZARD_PAGE);
     }
-    
+
     /**
-     * Method addToMainPage allows subclasses to add 
-     * elements to the main page. 
-     * 
+     * Method addToMainPage allows subclasses to add
+     * elements to the main page.
+     *
      */
     protected void addToMainPage(Composite container){
-       
+
 		// Add convert to C or C/C++ buttons
-		Composite area = ControlFactory.createGroup(container, CUIMessages.ConvertProjectWizardPage_convertTo, 2); 
-		
+		Composite area = ControlFactory.createGroup(container, CUIMessages.ConvertProjectWizardPage_convertTo, 2);
+
 
 		SelectionListener cListener =  new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent event) {				
+			public void widgetSelected(SelectionEvent event) {
 				convertToC = cRadioButton.getSelection();
-				convertToCC = ccRadioButton.getSelection();	
+				convertToCC = ccRadioButton.getSelection();
 				validatePage();
 			}
 		};
-		cRadioButton = ControlFactory.createRadioButton(area, 
-							  CUIMessages.ConvertProjectWizardPage_CProject, 
+		cRadioButton = ControlFactory.createRadioButton(area,
+							  CUIMessages.ConvertProjectWizardPage_CProject,
 							  "C ", //$NON-NLS-1$
 			  			      cListener);
-		cRadioButton.setSelection(convertToC);			  			      
-		ccRadioButton = ControlFactory.createRadioButton(area, 
-							  CUIMessages.ConvertProjectWizardPage_CppProject, 
+		cRadioButton.setSelection(convertToC);
+		ccRadioButton = ControlFactory.createRadioButton(area,
+							  CUIMessages.ConvertProjectWizardPage_CppProject,
 							  "C++", //$NON-NLS-1$
-			  			      cListener);	
-		ccRadioButton.setSelection(convertToCC);			  			      
-				
+			  			      cListener);
+		ccRadioButton.setSelection(convertToCC);
+
 		area.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent event) {
 				cRadioButton = null;
 				ccRadioButton = null;
 			}
-		});      
+		});
     }
 
     /**
      * Creates a list of projects that can be selected by the user.
-     * 
+     *
      * @param parent the parent composite
      * @return Composite
      */
@@ -194,7 +196,7 @@ public abstract class ConvertProjectWizardPage
         // Add a label
         Label label = new Label(parent, SWT.LEFT);
         label.setText(CUIPlugin.getResourceString(PROJECT_LIST));
-        
+
         Composite  container = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout();
         layout.marginHeight = 5;
@@ -203,25 +205,25 @@ public abstract class ConvertProjectWizardPage
         container.setLayout(layout);
         GridData data = new GridData(GridData.FILL_BOTH);
         container.setLayoutData(data);
-        
+
         // create the table
-        Table    table = new Table(container, 
-                                   SWT.CHECK | SWT.BORDER | SWT.MULTI | 
-                                   SWT.SINGLE | SWT.H_SCROLL | 
+        Table    table = new Table(container,
+                                   SWT.CHECK | SWT.BORDER | SWT.MULTI |
+                                   SWT.SINGLE | SWT.H_SCROLL |
                                    SWT.V_SCROLL);
         data = new GridData(GridData.FILL_BOTH);
         table.setLayoutData(data);
         table.setHeaderVisible(true);
         table.setLinesVisible(false);
         table.getAccessible().addAccessibleListener(
-            new AccessibleAdapter() {                       
+            new AccessibleAdapter() {
                 @Override
 				public void getName(AccessibleEvent e) {
                         e.result = CUIPlugin.getResourceString(PROJECT_LIST);
                 }
             }
         );
-        
+
         TableLayout tableLayout = new TableLayout();
         table.setHeaderVisible(false);
         table.setLayout(tableLayout);
@@ -257,18 +259,19 @@ public abstract class ConvertProjectWizardPage
                 return true;
             }
         });
-        tableViewer.setAllChecked(false);        
+        tableViewer.setAllChecked(false);
         tableViewer.refresh();
-        
+
         tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-            public void selectionChanged(SelectionChangedEvent e) {
+            @Override
+			public void selectionChanged(SelectionChangedEvent e) {
                 // will default to false until a selection is made
                 setPageComplete(validatePage());
                 updateSelectionButtons();
             }
         });
         // Add button panel
-        
+
         Composite buttons= new Composite(container, SWT.NULL);
         buttons.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
         layout= new GridLayout();
@@ -276,74 +279,76 @@ public abstract class ConvertProjectWizardPage
         layout.marginWidth= 0;
         layout.verticalSpacing = 8;
         buttons.setLayout(layout);
-        
-        
+
+
         selectAllButton= new Button(buttons, SWT.PUSH);
-        selectAllButton.setText(CUIMessages.ConvertProjectWizardPage_SelectAll); 
+        selectAllButton.setText(CUIMessages.ConvertProjectWizardPage_SelectAll);
         selectAllButton.setLayoutData(getButtonGridData(selectAllButton));
         selectAllButton.addListener(SWT.Selection, new Listener() {
-            public void handleEvent(Event e) {
+            @Override
+			public void handleEvent(Event e) {
                 ConvertProjectWizardPage.this.tableViewer.setAllChecked(true);
                 // update the pageComplete status
                 setPageComplete(true);
-                updateSelectionButtons();                
+                updateSelectionButtons();
             }
         });
 
         deselectAllButton= new Button(buttons, SWT.PUSH);
-        deselectAllButton.setText(CUIMessages.ConvertProjectWizardPage_DeselectAll); 
+        deselectAllButton.setText(CUIMessages.ConvertProjectWizardPage_DeselectAll);
         deselectAllButton.setLayoutData(getButtonGridData(deselectAllButton));
         deselectAllButton.addListener(SWT.Selection, new Listener() {
-            public void handleEvent(Event e) {
+            @Override
+			public void handleEvent(Event e) {
                 ConvertProjectWizardPage.this.tableViewer.setAllChecked(false);
                 // update the pageComplete status
                 setPageComplete(false);
                 updateSelectionButtons();
             }
         });
-        
+
         // enable or disable selection buttons
         Object[] elements = getElements();
         boolean enableSelectionButtons = (elements != null) && (elements.length > 0);
-                
+
         selectAllButton.setEnabled(enableSelectionButtons);
         // we've called setAllChecked(false) earlier
-        deselectAllButton.setEnabled(false); 
+        deselectAllButton.setEnabled(false);
 
         return parent;
     }
-       
+
      /*
       * Method updateSelectionButtons, enables/disables buttons
       * dependent on what is selected
       */
-      
-     protected void updateSelectionButtons() { 
-        
-        // update select and deselect buttons as required 
-        Object[] checkedObjects = getCheckedElements(); 
+
+     protected void updateSelectionButtons() {
+
+        // update select and deselect buttons as required
+        Object[] checkedObjects = getCheckedElements();
         int totalItems = tableViewer.getTable().getItemCount();
         boolean allSelected = checkedObjects.length == totalItems;
-        boolean noneSelected = checkedObjects.length == 0;            
+        boolean noneSelected = checkedObjects.length == 0;
         selectAllButton.setEnabled(!allSelected);
         deselectAllButton.setEnabled(!noneSelected);
       }
     /*
-     * Method  getButtonGridData creates 
+     * Method  getButtonGridData creates
      * and returns a GridData for the given button
-     * 
+     *
      * @GridData
      */
     private static GridData getButtonGridData(Button button) {
         GridData data= new GridData(GridData.FILL_HORIZONTAL);
         data.widthHint= SWTUtil.getButtonWidthHint(button);
-    
+
         return data;
     }
 
     /**
      * Returns whether this page's controls currently all contain valid values.
-     * 
+     *
      * @return <code>true</code> if the user has selected at  least one
      *         candidate project.
      */
@@ -360,13 +365,16 @@ public abstract class ConvertProjectWizardPage
      */
     public class ProjectContentProvider
         implements IStructuredContentProvider {
-        public Object[] getElements(Object parent) {
-             return listItems;                
+        @Override
+		public Object[] getElements(Object parent) {
+             return listItems;
         }
 
-        public void dispose() {}
+        @Override
+		public void dispose() {}
 
-        public void inputChanged(Viewer viewer, Object oldInput, 
+        @Override
+		public void inputChanged(Viewer viewer, Object oldInput,
                                  Object newInput) {}
     }
 
@@ -377,7 +385,8 @@ public abstract class ConvertProjectWizardPage
     public class ProjectLabelProvider
         extends LabelProvider
         implements ITableLabelProvider {
-        public String getColumnText(Object obj, int index) {
+        @Override
+		public String getColumnText(Object obj, int index) {
 
             if (index == 0) {
 
@@ -387,7 +396,8 @@ public abstract class ConvertProjectWizardPage
             return ""; //$NON-NLS-1$
         }
 
-        public Image getColumnImage(Object obj, int index) {
+        @Override
+		public Image getColumnImage(Object obj, int index) {
 
             return PlatformUI.getWorkbench().getSharedImages().getImage(
                            IDE.SharedImages.IMG_OBJ_PROJECT);
@@ -397,9 +407,9 @@ public abstract class ConvertProjectWizardPage
     /**
      * Returns a list of open projects that are determined to be candidates
      * through the method isCandidate().<br>
-     * 
+     *
      * Note: Only Projects that are open will be considered for conversion.
-     * 
+     *
      * @return Object[] which may be null
      */
     protected Object[] getElements() {
@@ -413,8 +423,8 @@ public abstract class ConvertProjectWizardPage
         for (IProject project : projects) {
             next = project;
 
-            if ((next != null) 
-                    && next.isOpen() 
+            if ((next != null)
+                    && next.isOpen()
                         && isCandidate(next)) {
                 candidates.addElement(next);
             }
@@ -429,10 +439,10 @@ public abstract class ConvertProjectWizardPage
             candidateArray = new Object[candidates.size()];
             candidates.copyInto(candidateArray);
         }
-        // update the global variable that will 
+        // update the global variable that will
         // be returned by the ProjectContentProvider
         listItems = candidateArray;
-        
+
         return candidateArray;
     }
 
@@ -440,7 +450,7 @@ public abstract class ConvertProjectWizardPage
      * doRun can be overwritten in subclasses to change behaviour, but this is
      * generally not required. It is called from the corresponding Conversion
      * Wizard
-     * 
+     *
      * @param monitor
      * @param projectID
      * @exception CoreException
@@ -458,7 +468,7 @@ public abstract class ConvertProjectWizardPage
             convertProjects(selection, monitor, projectID);
         }
     }
-    
+
     public void doRun(IProgressMonitor monitor, String projectID, String bsId) throws CoreException {
     	if(bsId == null)
     		doRun(monitor, projectID);
@@ -481,7 +491,7 @@ public abstract class ConvertProjectWizardPage
     /**
      * convertProjects calls the convertProject() method on each project
      * passed to it.
-     * 
+     *
      * @param selected
      * @param monitor
      * @param projectID
@@ -489,7 +499,7 @@ public abstract class ConvertProjectWizardPage
      */
     private void convertProjects(Object[] selected, IProgressMonitor monitor, String projectID)
                           throws CoreException {
-        monitor.beginTask(CUIPlugin.getResourceString(KEY_CONVERTING), 
+        monitor.beginTask(CUIPlugin.getResourceString(KEY_CONVERTING),
                           selected.length);
 		try {
 	        for (Object element : selected) {
@@ -503,7 +513,7 @@ public abstract class ConvertProjectWizardPage
 
     private void convertProjects(Object[] selected, String bsId, IProgressMonitor monitor)
     						throws CoreException {
-		monitor.beginTask(CUIPlugin.getResourceString(KEY_CONVERTING), 
+		monitor.beginTask(CUIPlugin.getResourceString(KEY_CONVERTING),
 		    selected.length);
 		try {
 			for (Object element : selected) {
@@ -516,7 +526,7 @@ public abstract class ConvertProjectWizardPage
 	}
     /**
      * Method finish we always finish successfully  :)
-     * 
+     *
      * @return boolean
      */
     public boolean finish() {
@@ -527,7 +537,7 @@ public abstract class ConvertProjectWizardPage
     /**
      * Must be overwritten in subclasses to change behaviour Determines which
      * projects will be displayed in the list
-     * 
+     *
      * @param project
      * @return boolean
      */
@@ -535,31 +545,31 @@ public abstract class ConvertProjectWizardPage
 
     /**
      * convertProject must be overwritten in subclasses to change behaviour
-     * 
+     *
      * @param project
      * @param monitor
      * @param projectID
      * @throws CoreException
      */
-    public void convertProject(IProject project, 
-                                IProgressMonitor monitor, 
+    public void convertProject(IProject project,
+                                IProgressMonitor monitor,
                                 String projectID)
                                 throws CoreException{
         // Add the correct nature
     	if (convertToC) {
     		if (!project.hasNature(CProjectNature.C_NATURE_ID)){
-    			addCNature(project, monitor, true);          	
+    			addCNature(project, monitor, true);
     		} else {
     			if (project.hasNature(CCProjectNature.CC_NATURE_ID)){
     				// remove the C++ nature
     				CCProjectNature.removeCCNature(project, monitor);
-    			}    			
+    			}
     		}
     	} else {
     		if (convertToCC && !project.hasNature(CCProjectNature.CC_NATURE_ID)) {
-    			addCCNature(project, monitor, true);          	
-    		}            			
-    	}                           	
+    			addCCNature(project, monitor, true);
+    		}
+    	}
     }
 
     public void convertProject(IProject project,
@@ -569,18 +579,18 @@ public abstract class ConvertProjectWizardPage
 		// Add the correct nature
 		if (convertToC) {
 			if (!project.hasNature(CProjectNature.C_NATURE_ID)){
-				addCNature(project, monitor, true);          	
+				addCNature(project, monitor, true);
 			} else {
 				if (project.hasNature(CCProjectNature.CC_NATURE_ID)){
 						// remove the C++ nature
 						CCProjectNature.removeCCNature(project, monitor);
-				}    			
+				}
 			}
 		} else {
 			if (convertToCC && !project.hasNature(CCProjectNature.CC_NATURE_ID)) {
-				addCCNature(project, monitor, true);          	
-			}            			
-		}                           	
+				addCCNature(project, monitor, true);
+			}
+		}
 	}
 
     protected void addCNature(IProject project, IProgressMonitor monitor, boolean addMakeBuilder) throws CoreException{
@@ -592,10 +602,10 @@ public abstract class ConvertProjectWizardPage
 				CCorePlugin.getDefault().convertProjectToC(project, monitor, cw.getProjectID());
 		}
      }
-     
+
      protected void addCCNature(IProject project, IProgressMonitor monitor, boolean addMakeBuilder) throws CoreException{
 		if ( getWizard() instanceof ConversionWizard) {
-	     	if (project.hasNature(CProjectNature.C_NATURE_ID)) {     		
+	     	if (project.hasNature(CProjectNature.C_NATURE_ID)) {
 		     	CCorePlugin.getDefault().convertProjectFromCtoCC(project, monitor);
      		} else {
      			ConversionWizard cw = (ConversionWizard)getWizard();
@@ -606,5 +616,5 @@ public abstract class ConvertProjectWizardPage
      		}
 		}
      }
-    
+
 }

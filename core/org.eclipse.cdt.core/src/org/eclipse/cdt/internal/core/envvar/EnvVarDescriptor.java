@@ -17,14 +17,14 @@ import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
  * this class represents the environment variable-relaed information.
  * That is the context for which the variable is defined and the supplier
  * that supplies the variable
- * 
+ *
  */
 public class EnvVarDescriptor implements IEnvironmentVariable{
 	private IEnvironmentVariable fVariable;
 	private IEnvironmentContextInfo fContextInfo;
 	private int fSupplierNum;
 	private ICoreEnvironmentVariableSupplier fSupplier;
-	
+
 	public EnvVarDescriptor(IEnvironmentVariable variable, IEnvironmentContextInfo contextInfo, int supplierNum, ICoreEnvironmentVariableSupplier supplier){
 		fVariable = variable;
 		fContextInfo = contextInfo;
@@ -43,19 +43,23 @@ public class EnvVarDescriptor implements IEnvironmentVariable{
 	public IEnvironmentVariable getOriginalVariable() {
 		return fVariable;
 	}
-	
+
+	@Override
 	public String getName() {
 		return fVariable.getName();
 	}
 
+	@Override
 	public String getValue() {
 		return fVariable.getValue();
 	}
-	
+
+	@Override
 	public int getOperation() {
 		return fVariable.getOperation();
 	}
 
+	@Override
 	public String getDelimiter() {
 		return fVariable.getDelimiter();
 	}
@@ -71,11 +75,11 @@ public class EnvVarDescriptor implements IEnvironmentVariable{
 	public void setVariable(IEnvironmentVariable variable) {
 		fVariable = variable;
 	}
-	
+
 	public ICoreEnvironmentVariableSupplier getSupplier(){
 		return fSupplier;
 	}
-	
+
 /*	public String getResolvedValue(int contextType, Object contextData){
 		String value = null;
 		if(getOperation() != IBuildEnvironmentVariable.ENVVAR_REMOVE){

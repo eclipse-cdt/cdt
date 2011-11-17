@@ -76,7 +76,7 @@ public class SynchronizedStorageElement implements ICStorageElement {
 	public static SynchronizedStorageElement synchronizedElement(ICStorageElement el, Object lock) {
 		return new SynchronizedStorageElement(el, lock);
 	}
-	
+
 	/**
 	 * @return the lock used to synchronize this SynchronizedStorage and its children
 	 */
@@ -85,18 +85,21 @@ public class SynchronizedStorageElement implements ICStorageElement {
 	}
 
 
+	@Override
 	public void clear() {
 		synchronized (fLock) {
 			fEl.clear();
 		}
 	}
 
+	@Override
 	public ICStorageElement createChild(String name) {
 		synchronized (fLock) {
 			return new SynchronizedStorageElement(fEl.createChild(name), fLock);
 		}
 	}
 
+	@Override
 	public ICStorageElement createCopy() throws UnsupportedOperationException,
 			CoreException {
 		synchronized (fLock) {
@@ -104,6 +107,7 @@ public class SynchronizedStorageElement implements ICStorageElement {
 		}
 	}
 
+	@Override
 	public boolean equals(ICStorageElement other) {
 		synchronized (fLock) {
 			if (other instanceof SynchronizedStorageElement)
@@ -112,24 +116,28 @@ public class SynchronizedStorageElement implements ICStorageElement {
 		}
 	}
 
+	@Override
 	public String getAttribute(String name) {
 		synchronized (fLock) {
 			return fEl.getAttribute(name);
 		}
 	}
 
+	@Override
 	public String[] getAttributeNames() {
 		synchronized (fLock) {
 			return fEl.getAttributeNames();
 		}
 	}
 
+	@Override
 	public ICStorageElement[] getChildren() {
 		synchronized (fLock) {
 			return createSynchronizedChildren(fEl.getChildren());
 		}
 	}
 
+	@Override
 	public ICStorageElement[] getChildrenByName(String name) {
 		synchronized (fLock) {
 			return createSynchronizedChildren(fEl.getChildrenByName(name));
@@ -143,12 +151,14 @@ public class SynchronizedStorageElement implements ICStorageElement {
 		return synchChildren;
 	}
 
+	@Override
 	public String getName() {
 		synchronized (fLock) {
 			return fEl.getName();
 		}
 	}
 
+	@Override
 	public ICStorageElement getParent() {
 		synchronized (fLock) {
 			if (fEl.getParent() == null ||
@@ -158,24 +168,28 @@ public class SynchronizedStorageElement implements ICStorageElement {
 		}
 	}
 
+	@Override
 	public String getValue() {
 		synchronized (fLock) {
 			return fEl.getValue();
 		}
 	}
 
+	@Override
 	public boolean hasAttribute(String name) {
 		synchronized (fLock) {
 			return fEl.hasAttribute(name);
 		}
 	}
 
+	@Override
 	public boolean hasChildren() {
 		synchronized (fLock) {
 			return fEl.hasChildren();
 		}
 	}
 
+	@Override
 	public ICStorageElement importChild(ICStorageElement el)
 			throws UnsupportedOperationException {
 		synchronized (fLock) {
@@ -183,12 +197,14 @@ public class SynchronizedStorageElement implements ICStorageElement {
 		}
 	}
 
+	@Override
 	public void removeAttribute(String name) {
 		synchronized (fLock) {
 			fEl.removeAttribute(name);
 		}
 	}
 
+	@Override
 	public void removeChild(ICStorageElement el) {
 		synchronized (fLock) {
 			if (el instanceof SynchronizedStorageElement)
@@ -197,12 +213,14 @@ public class SynchronizedStorageElement implements ICStorageElement {
 		}
 	}
 
+	@Override
 	public void setAttribute(String name, String value) {
 		synchronized (fLock) {
 			fEl.setAttribute(name, value);
 		}
 	}
 
+	@Override
 	public void setValue(String value) {
 		synchronized (fLock) {
 			fEl.setValue(value);

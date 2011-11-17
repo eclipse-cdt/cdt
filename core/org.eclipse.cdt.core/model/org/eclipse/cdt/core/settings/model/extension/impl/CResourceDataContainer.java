@@ -25,24 +25,24 @@ import org.eclipse.core.runtime.IPath;
 public class CResourceDataContainer {
 	private PathSettingsContainer fRcDataContainer;
 	private boolean fIncludeCurrent;
-	
+
 	public CResourceDataContainer(PathSettingsContainer pathSettings, boolean includeCurrent){
 		fRcDataContainer = pathSettings;
 		fIncludeCurrent = includeCurrent;
 	}
-	
+
 	public void changeCurrentPath(IPath path, boolean moveChildren){
 		fRcDataContainer.setPath(path, moveChildren);
 	}
-	
+
 	public IPath getCurrentPath(){
 		return fRcDataContainer.getPath();
 	}
-	
+
 	public CResourceData getCurrentResourceData(){
 		return (CResourceData)fRcDataContainer.getValue();
 	}
-	
+
 	public CResourceData getResourceData(IPath path, boolean exactPath) {
 		PathSettingsContainer cr = fRcDataContainer.getChildContainer(path, false, exactPath);
 		if(cr != null)
@@ -57,19 +57,20 @@ public class CResourceDataContainer {
 	public CResourceData[] getResourceDatas(final int kind) {
 		return getResourceDatas(kind, CResourceData.class);
 	}
-	
+
 	public CResourceData[] getResourceDatas(int kind, Class<CResourceData> clazz){
 		List<CResourceData> list = getRcDataList(kind);
 
 		CResourceData datas[] = (CResourceData[])Array.newInstance(clazz, list.size());
-		
+
 		return list.toArray(datas);
 	}
-	
+
 	public List<CResourceData> getRcDataList(final int kind){
-		final List<CResourceData> list = new ArrayList<CResourceData>(); 
+		final List<CResourceData> list = new ArrayList<CResourceData>();
 		fRcDataContainer.accept(new IPathSettingsContainerVisitor(){
 
+			@Override
 			public boolean visit(PathSettingsContainer container) {
 				if(fIncludeCurrent || container != fRcDataContainer){
 					CResourceData data = (CResourceData)container.getValue();
@@ -79,7 +80,7 @@ public class CResourceDataContainer {
 				return true;
 			}
 		});
-		
+
 		return list;
 	}
 
@@ -93,16 +94,16 @@ public class CResourceDataContainer {
 	public void removeResourceData(IPath path) {
 		fRcDataContainer.removeChildContainer(path);
 	}
-	
+
 	public void addResourceData(CResourceData data){
 		PathSettingsContainer cr = fRcDataContainer.getChildContainer(data.getPath(), true, true);
 		cr.setValue(data);
 	}
-	
+
 	public CFileData getFileData(IPath path){
 		return (CFileData)getResourceData(path, true, ICSettingBase.SETTING_FILE);
 	}
-	
+
 	public CFolderData getFolderData(IPath path){
 		return (CFolderData)getResourceData(path, true, ICSettingBase.SETTING_FOLDER);
 	}

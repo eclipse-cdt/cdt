@@ -47,6 +47,7 @@ public class BuildActiveConfigMenuAction extends ChangeBuildConfigActionBase
 	/**
 	 * @see org.eclipse.ui.IWorkbenchWindowPulldownDelegate2#getMenu(org.eclipse.swt.widgets.Menu)
 	 */
+	@Override
 	public Menu getMenu(Menu parent) {
 		Menu menu = new Menu(parent);
 		addMenuListener(menu);
@@ -56,6 +57,7 @@ public class BuildActiveConfigMenuAction extends ChangeBuildConfigActionBase
 	/**
 	 * @see org.eclipse.ui.IWorkbenchWindowPulldownDelegate#getMenu(org.eclipse.swt.widgets.Control)
 	 */
+	@Override
 	public Menu getMenu(Control parent) {
 		Menu menu = new Menu(parent);
 		addMenuListener(menu);
@@ -65,6 +67,7 @@ public class BuildActiveConfigMenuAction extends ChangeBuildConfigActionBase
 	/**
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
+	@Override
 	public void dispose() {
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
 		mngr.removeCProjectDescriptionListener(this);
@@ -73,6 +76,7 @@ public class BuildActiveConfigMenuAction extends ChangeBuildConfigActionBase
 	/**
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void init(IWorkbenchWindow window) {
 		buildaction = new BuildGroup.CDTBuildAction(window, IncrementalProjectBuilder.INCREMENTAL_BUILD);
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
@@ -82,6 +86,7 @@ public class BuildActiveConfigMenuAction extends ChangeBuildConfigActionBase
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		buildaction.selectionChanged(new StructuredSelection(fProjects.toArray()));
 		buildaction.run();
@@ -90,6 +95,7 @@ public class BuildActiveConfigMenuAction extends ChangeBuildConfigActionBase
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		if (actionMenuCache == null){
 			actionMenuCache = action;
@@ -97,7 +103,7 @@ public class BuildActiveConfigMenuAction extends ChangeBuildConfigActionBase
 		onSelectionChanged(action, selection);
 		updateBuildConfigMenuToolTip(action);
 	}
-	
+
 	/**
 	 * Adds a listener to the given menu to re-populate it each time is is shown
 	 * @param menu The menu to add listener to
@@ -115,7 +121,7 @@ public class BuildActiveConfigMenuAction extends ChangeBuildConfigActionBase
 	protected IAction makeAction(String sName, StringBuffer builder, int accel) {
 		return new BuildConfigAction(fProjects, sName, builder.toString(), accel + 1, buildaction);
 	}
-	
+
 	/**
 	 * Update the tool tip based on the currently selected project and active configuration.
 	 * @param action - The build configuration menu to change the tool tip on
@@ -140,6 +146,7 @@ public class BuildActiveConfigMenuAction extends ChangeBuildConfigActionBase
 		action.setToolTipText(toolTipText);
 	}
 
+	@Override
 	public void handleEvent(CProjectDescriptionEvent event) {
 		if (actionMenuCache != null){
 			updateBuildConfigMenuToolTip(actionMenuCache);

@@ -69,7 +69,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 	private static final String LBR = " ["; //$NON-NLS-1$
 	private static final String RBR = "]"; //$NON-NLS-1$
 	private static final UserDefinedEnvironmentSupplier fUserSupplier = EnvironmentVariableManager.fUserSupplier;
-	
+
 	private final MultiCfgContributedEnvironment ce = new MultiCfgContributedEnvironment();
 
 	private Table table;
@@ -86,14 +86,15 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		TabData(IEnvironmentVariable _var) {
 			var = _var;
 		}
+		@Override
 		public int compareTo(TabData a) {
 			String s = var.getName();
 			if (a != null && s != null && a.var != null)
-					return (s.compareTo(a.var.getName())); 
+					return (s.compareTo(a.var.getName()));
 			return 0;
 		}
 	}
-	
+
 	private class EnvironmentLabelProvider extends LabelProvider implements ITableLabelProvider, IFontProvider , ITableFontProvider, IColorProvider{
 		public EnvironmentLabelProvider(boolean user){
 		}
@@ -105,9 +106,11 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		public String getText(Object element) {
 			return getColumnText(element, 0);
 		}
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			return null;
 		}
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			TabData td = (TabData)element;
 			switch(columnIndex){
@@ -115,7 +118,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 				return td.var.getName();
 			case 1:
 				if(td.var.getOperation() == IEnvironmentVariable.ENVVAR_REMOVE)
-					return Messages.EnvironmentTab_20; 
+					return Messages.EnvironmentTab_20;
 				return td.var.getValue();
 			case 2:
 				return ce.getOrigin(td.var);
@@ -123,10 +126,12 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 			return EMPTY_STR;
 		}
 
+		@Override
 		public Font getFont(Object element) {
 			return getFont(element, 0);
 		}
 
+		@Override
 		public Font getFont(Object element, int columnIndex) {
 			TabData td = (TabData)element;
 			switch(columnIndex){
@@ -139,19 +144,21 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 			}
 			return null;
 		}
-		
-	    public Color getForeground(Object element){
+
+	    @Override
+		public Color getForeground(Object element){
 			return null;
 	    }
 
-	    public Color getBackground(Object element){
+	    @Override
+		public Color getBackground(Object element){
 			TabData td = (TabData)element;
 			if (isUsers(td.var))
 				return BACKGROUND_FOR_USER_VAR;
-			return null; 
+			return null;
 	    }
 	}
-	
+
 	@Override
 	public void createControls(Composite parent) {
 		super.createControls(parent);
@@ -165,10 +172,12 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 		table.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateButtons();
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				if (buttonIsEnabled(2) && table.getSelectionIndex() != -1)
 					buttonPressed(2);
@@ -178,6 +187,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		tv = new TableViewer(table);
 		tv.setContentProvider(new IStructuredContentProvider() {
 
+			@Override
 			public Object[] getElements(Object inputElement) {
 				if (inputElement != null && inputElement instanceof ArrayList<?>) {
 					@SuppressWarnings("unchecked")
@@ -187,9 +197,11 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 				return null;
 			}
 
+			@Override
 			public void dispose() {
 			}
 
+			@Override
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			}
 		});
@@ -234,6 +246,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		if (page.isForProject()) {
 			stringListModeControl = new StringListModeControl(page, usercomp, 1);
 			stringListModeControl.addListener(SWT.Selection, new Listener() {
+				@Override
 				public void handleEvent(Event event) {
 					updateData();
 				}
@@ -262,10 +275,10 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 				Messages.EnvironmentTab_6,
 				Messages.EnvironmentTab_7,
 				Messages.EnvironmentTab_8,
-				Messages.EnvironmentTab_9 
+				Messages.EnvironmentTab_9
 			});
 	}
-	
+
 	@Override
 	public void buttonPressed(int i) {
 		switch (i) {
@@ -287,11 +300,11 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		}
 		table.setFocus();
 	}
-	
+
 	@Override
 	protected void updateButtons() {
 		if (table == null || table.isDisposed()) return;
-		
+
 		boolean canEdit = table.getSelectionCount() == 1;
 		boolean canDel  = false;
 		boolean canUndef = table.getSelectionCount() >= 1;
@@ -312,7 +325,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 
 	@Override
 	protected void updateData(ICResourceDescription _cfgd) {
-		// null means preference configuration 
+		// null means preference configuration
 		cfgd = (_cfgd != null) ? _cfgd.getConfiguration() : null;
 		if (cfgd == null && vars == null)
 			vars = fUserSupplier.getWorkspaceEnvironmentCopy();
@@ -334,7 +347,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 			b2.setSelection(!vars.appendContributedEnvironment());
 			_vars = vars.getVariables() ;
 		}
-		
+
 		data.clear();
 		if (_vars != null) {
 			for (IEnvironmentVariable _var : _vars) {
@@ -343,7 +356,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		}
 		Collections.sort(data);
 		tv.setInput(data);
-		
+
 		if (stringListModeControl!=null) {
 			stringListModeControl.updateStringListModeControl();
 		}
@@ -354,7 +367,7 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 	protected void performApply(ICResourceDescription _src, ICResourceDescription _dst) {
 		ICConfigurationDescription src = _src.getConfiguration();
 		ICConfigurationDescription dst = _dst.getConfiguration();
-		
+
 		ce.setAppendEnvironment(ce.appendEnvironment(src), dst);
 		IEnvironmentVariable[] v = ce.getVariables(dst);
 		for (IEnvironmentVariable element : v)
@@ -362,24 +375,24 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		v = ce.getVariables(src);
 		for (IEnvironmentVariable element : v) {
 			if (ce.isUserVariable(src, element))
-					ce.addVariable(element.getName(), element.getValue(), 
+					ce.addVariable(element.getName(), element.getValue(),
 							element.getOperation(), element.getDelimiter(), dst);
 		}
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private class MyListSelectionDialog extends ListSelectionDialog {
 		public boolean toAll = false;
 	    public MyListSelectionDialog(Shell parentShell, Object input, IStructuredContentProvider contentProvider) {
-	        super(parentShell, input, contentProvider, new LabelProvider() {}, Messages.EnvironmentTab_12); 
+	        super(parentShell, input, contentProvider, new LabelProvider() {}, Messages.EnvironmentTab_12);
 	    }
 	    @Override
 		protected Control createDialogArea(Composite parent) {
 	    	Composite composite = (Composite) super.createDialogArea(parent);
 	    	Button b = new Button(composite, SWT.CHECK);
-	    	b.setText(Messages.EnvironmentTab_13); 
+	    	b.setText(Messages.EnvironmentTab_13);
 	    	b.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	    	if (cfgd == null)
 	    		b.setVisible(false);
@@ -392,21 +405,21 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 	    	return composite;
 	    }
 	}
-	
+
 	private void handleEnvEditButtonSelected(int n) {
 		if (n == -1)
 			return;
 		IEnvironmentVariable var = ((TabData)tv.getElementAt(n)).var;
-		EnvDialog dlg = new EnvDialog(usercomp.getShell(), 
-				var, 
-				Messages.EnvironmentTab_11,  
+		EnvDialog dlg = new EnvDialog(usercomp.getShell(),
+				var,
+				Messages.EnvironmentTab_11,
 				false,
 				page.isMultiCfg(),
 				cfgd);
 		if (dlg.open() == Window.OK) {
 			if (cfgd != null)
-				ce.addVariable(	var.getName(), dlg.t2.trim(), 
-						IEnvironmentVariable.ENVVAR_REPLACE, 
+				ce.addVariable(	var.getName(), dlg.t2.trim(),
+						IEnvironmentVariable.ENVVAR_REPLACE,
 						var.getDelimiter(), cfgd);
 			else
 				vars.createVariable(dlg.t1.trim(), dlg.t2.trim(),
@@ -416,36 +429,36 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 			updateButtons();
 		}
 	}
-	
+
 	private void handleEnvUndefButtonSelected(int n) {
-		if (n == -1) 
+		if (n == -1)
 			return;
 		for (int i : table.getSelectionIndices()) {
 			IEnvironmentVariable var = ((TabData)tv.getElementAt(i)).var;
 			if (cfgd == null)
 				vars.createVariable(
-						var.getName(), 
-						null, 
-						IEnvironmentVariable.ENVVAR_REMOVE, 
+						var.getName(),
+						null,
+						IEnvironmentVariable.ENVVAR_REMOVE,
 						var.getDelimiter());
-			else 
+			else
 				ce.addVariable(
-						var.getName(), 
-						null, 
-						IEnvironmentVariable.ENVVAR_REMOVE, 
+						var.getName(),
+						null,
+						IEnvironmentVariable.ENVVAR_REMOVE,
 						var.getDelimiter(), cfgd);
 		}
 		updateData();
 		table.setSelection(n);
 		updateButtons();
 	}
-	
+
 	private void handleEnvDelButtonSelected(int n) {
-		if (n == -1) 
+		if (n == -1)
 			return;
 		for (int i : table.getSelectionIndices()) {
 			IEnvironmentVariable var = ((TabData)tv.getElementAt(i)).var;
-			if (cfgd == null) 
+			if (cfgd == null)
 				vars.deleteVariable(var.getName());
 			else
 				ce.removeVariable(var.getName(), cfgd);
@@ -457,12 +470,12 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 			updateButtons();
 		}
 	}
-	
+
 	private void handleEnvAddButtonSelected() {
 		IEnvironmentVariable var = null;
-		EnvDialog dlg = new EnvDialog(usercomp.getShell(), 
-				var, 
-				Messages.EnvironmentTab_10, 
+		EnvDialog dlg = new EnvDialog(usercomp.getShell(),
+				var,
+				Messages.EnvironmentTab_10,
 				true,
 				page.isMultiCfg(),
 				cfgd);
@@ -472,15 +485,15 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 				ICConfigurationDescription[] cfgs;
 				if (dlg.toAll)
 					cfgs = page.getCfgsEditable();
-				else 
+				else
 					cfgs = new ICConfigurationDescription[] {cfgd};
 				if (cfgd == null)
-					vars.createVariable(name, dlg.t2.trim(), 
+					vars.createVariable(name, dlg.t2.trim(),
 							IEnvironmentVariable.ENVVAR_APPEND, SEPARATOR);
 				else
-					for (ICConfigurationDescription cfg : cfgs) { 
-						ce.addVariable(name, dlg.t2.trim(), 
-								IEnvironmentVariable.ENVVAR_APPEND, 
+					for (ICConfigurationDescription cfg : cfgs) {
+						ce.addVariable(name, dlg.t2.trim(),
+								IEnvironmentVariable.ENVVAR_APPEND,
 								SEPARATOR, cfg);
 					}
 				updateData();
@@ -500,21 +513,21 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 			}
 		}
 	}
-	
+
 	private void handleEnvSelectButtonSelected() {
 		// get Environment Variables from the OS
 		Map<?,?> v = EnvironmentReader.getEnvVars();
 		MyListSelectionDialog dialog = new MyListSelectionDialog(usercomp.getShell(), v, createSelectionDialogContentProvider());
-		
-		dialog.setTitle(Messages.EnvironmentTab_14); 
+
+		dialog.setTitle(Messages.EnvironmentTab_14);
 		if (dialog.open() == Window.OK) {
 			Object[] selected = dialog.getResult();
 			ICConfigurationDescription[] cfgs;
 			if (dialog.toAll)
 				cfgs = page.getCfgsEditable();
-			else 
+			else
 				cfgs = new ICConfigurationDescription[] {cfgd};
-			
+
 			String name = null;
 			for (Object element : selected) {
 				name = (String)element;
@@ -524,14 +537,14 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 					value = name.substring(x + 2, name.length() - 1);
 					name = name.substring(0, x);
 				}
-				
-				if (cfgd == null) 
+
+				if (cfgd == null)
 					vars.createVariable(name, value);
 				else
-					for (ICConfigurationDescription cfg : cfgs) { 
+					for (ICConfigurationDescription cfg : cfgs) {
 						ce.addVariable(
-								name, value, 
-								IEnvironmentVariable.ENVVAR_APPEND, 
+								name, value,
+								IEnvironmentVariable.ENVVAR_APPEND,
 								SEPARATOR, cfg);
 				}
 			}
@@ -539,26 +552,29 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 			setPos(name);
 		}
 	}
-	
+
 	private IStructuredContentProvider createSelectionDialogContentProvider() {
 		return new IStructuredContentProvider() {
 
+			@Override
 			public Object[] getElements(Object inputElement) {
 				String[] els = null;
 				if (inputElement instanceof Map<?, ?>) {
 					@SuppressWarnings("unchecked")
 					Map<String, String> m = (Map<String, String>)inputElement;
-					els = new String[m.size()];  
+					els = new String[m.size()];
 					int index = 0;
 					for (Iterator<String> iterator = m.keySet().iterator(); iterator.hasNext(); index++) {
 						String k = iterator.next();
-						els[index] = TextProcessor.process(k + LBR + m.get(k) + RBR);  
+						els[index] = TextProcessor.process(k + LBR + m.get(k) + RBR);
 					}
 				}
 				Arrays.sort(els, CDTListComparator.getInstance());
 				return els;
 			}
+			@Override
 			public void dispose() {}
+			@Override
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 		};
 	}
@@ -578,22 +594,22 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		vars = null;
 		super.performOK();
 	}
-	
+
 	@Override
 	protected void performCancel() {
 		vars = null;
 		super.performCancel();
 	}
-	
+
 	@Override
 	protected void performDefaults() {
 		ce.restoreDefaults(cfgd); // both for proj & prefs
 		vars = null;
 		updateData();
 	}
-	
+
 	private boolean isUsers(IEnvironmentVariable var) {
-		return cfgd == null || 
+		return cfgd == null ||
 		      (ce.isUserVariable(cfgd, var) &&
 			  ((EnvVarDescriptor)var).getContextInfo().getContext() != null);
 

@@ -25,7 +25,7 @@ import org.eclipse.cdt.utils.envvar.EnvVarOperationProcessor;
 /**
  * This is the Environment Variable Supplier used to supply variables
  * defined by the tool-integrator
- * 
+ *
  * @since 3.0
  */
 public class BuildSystemEnvironmentSupplier implements
@@ -34,8 +34,8 @@ public class BuildSystemEnvironmentSupplier implements
 	/**
 	 * EnvironmentVariableProvider passed to the tool-integrator provided
 	 * suppliers.
-	 * Accepts only contexts lower than the one passed to a suppler  
-	 * 
+	 * Accepts only contexts lower than the one passed to a suppler
+	 *
 	 * @since 3.0
 	 */
 	private class ExtensionEnvVarProvider extends EnvironmentVariableManager{
@@ -46,13 +46,13 @@ public class BuildSystemEnvironmentSupplier implements
 		private Object fStartData;
 		private IVariableContextInfo fStartMacroContextInfo;
 		private boolean fStartMacroInfoInitialized;
-		
+
 		public ExtensionEnvVarProvider(Object level){
 			fStartLevel = level;
 			fStartType = getMacroContextTypeFromContext(level);
 			fStartData = level;
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider#getVariable(java.lang.String, java.lang.Object, boolean)
 		 */
@@ -68,7 +68,7 @@ public class BuildSystemEnvironmentSupplier implements
 		public IEnvironmentVariable[] getVariables(ICConfigurationDescription cfg, boolean resolveMacros) {
 			return filterVariables(super.getVariables(cfg,resolveMacros));
 		}
-	
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.managedbuilder.internal.envvar.EnvironmentVariableProvider#getContextInfo(java.lang.Object)
 		 */
@@ -77,16 +77,16 @@ public class BuildSystemEnvironmentSupplier implements
 			IEnvironmentContextInfo startInfo = getStartInfo();
 			if(level == fStartLevel)
 				return startInfo;
-			
+
 			IEnvironmentContextInfo info = super.getContextInfo(level);
 			if(info == null)
 				return null;
-			
+
 			if(checkParentContextRelation(startInfo,info))
 				return info;
 			return null;
 		}
-		
+
 		protected IEnvironmentContextInfo getStartInfo(){
 			if(fStartInfo == null && !fStartInitialized){
 				IEnvironmentContextInfo info = super.getContextInfo(fStartLevel);
@@ -103,12 +103,12 @@ public class BuildSystemEnvironmentSupplier implements
 			}
 			return fStartInfo;
 		}
-		
+
 		@Override
 		public IVariableSubstitutor getVariableSubstitutor(IVariableContextInfo info, String inexistentMacroValue, String listDelimiter){
 			return super.getVariableSubstitutor(getSubstitutorMacroContextInfo(info),inexistentMacroValue,listDelimiter);
 		}
-		
+
 		protected IVariableContextInfo getSubstitutorMacroContextInfo(IVariableContextInfo info){
 			IVariableContextInfo startInfo = getStartMacroContextInfo();
 			if(info == null)
@@ -120,12 +120,12 @@ public class BuildSystemEnvironmentSupplier implements
 						coreInfo.getContextData() == fStartData)
 					return startInfo;
 			}
-			
+
 			if(SupplierBasedCdtVariableManager.checkParentContextRelation(startInfo,info))
 				return info;
 			return null;
 		}
-		
+
 		protected IVariableContextInfo getStartMacroContextInfo(){
 			if(fStartMacroContextInfo == null && !fStartMacroInfoInitialized){
 				final IVariableContextInfo info = getMacroContextInfoForContext(fStartLevel);
@@ -136,7 +136,7 @@ public class BuildSystemEnvironmentSupplier implements
 							ICdtVariableSupplier suppliers[] = info.getSuppliers();
 							return filterValidMacroSuppliers(suppliers);
 						}
-						
+
 						@Override
 						public IVariableContextInfo getNext() {
 							return info.getNext();
@@ -149,16 +149,17 @@ public class BuildSystemEnvironmentSupplier implements
 			return fStartMacroContextInfo;
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableSupplier#getVariable()
 	 */
+	@Override
 	public IEnvironmentVariable getVariable(String name, Object context) {
 		if(context == null)
 			return null;
 		if((name = getValidName(name)) == null)
 			return null;
-			
+
 		if(context instanceof ICConfigurationDescription){
 			ICConfigurationDescription cfg = (ICConfigurationDescription)context;
 			if (cfg.getBuildSetting() == null)
@@ -174,6 +175,7 @@ public class BuildSystemEnvironmentSupplier implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableSupplier#getVariables()
 	 */
+	@Override
 	public IEnvironmentVariable[] getVariables(Object context) {
 		if(context == null)
 			return new IEnvironmentVariable[0];
@@ -187,7 +189,7 @@ public class BuildSystemEnvironmentSupplier implements
 				return new IEnvironmentVariable[0];
 			variables = supplier.getVariables(new ExtensionEnvVarProvider(context));
 		}
-		
+
 		return filterVariables(variables);
 	}
 
@@ -200,34 +202,34 @@ public class BuildSystemEnvironmentSupplier implements
 			if(suppliers[i] == this)
 				break;
 		}
-		
-	
+
+
 		if(i >= suppliers.length)
 			return null;
-		
+
 		int startNum = i + 1;
 
 
-		ICoreEnvironmentVariableSupplier validSuppliers[] = 
+		ICoreEnvironmentVariableSupplier validSuppliers[] =
 			new ICoreEnvironmentVariableSupplier[suppliers.length - startNum];
-		
+
 		for(i = startNum, j = 0; i < suppliers.length; i++, j++)
 			validSuppliers[j] = suppliers[i];
-		
+
 		return validSuppliers;
 	}
-	
+
 	protected String getValidName(String name){
 		name = EnvVarOperationProcessor.normalizeName(name);
 		if(name == null)
 			return null;
 		return name;
 	}
-	
+
 	protected IEnvironmentVariable[] filterVariables(IEnvironmentVariable variables[]){
 		return EnvVarOperationProcessor.filterVariables(variables,null);
 	}
-	
+
 	protected ICdtVariableSupplier[] filterValidMacroSuppliers(ICdtVariableSupplier suppliers[]){
 		if(suppliers == null)
 			return null;
@@ -237,24 +239,25 @@ public class BuildSystemEnvironmentSupplier implements
 			if(suppliers[i] instanceof EnvironmentVariableSupplier)
 				break;
 		}
-		
-	
+
+
 		if(i >= suppliers.length)
 			return suppliers;
-		
+
 		int startNum = i + 1;
 
-		ICdtVariableSupplier validSuppliers[] = 
+		ICdtVariableSupplier validSuppliers[] =
 			new ICdtVariableSupplier[suppliers.length - startNum];
-		
+
 		for(i = startNum, j = 0; i < suppliers.length; i++, j++)
 			validSuppliers[j] = suppliers[i];
-		
+
 		return validSuppliers;
 	}
 
+	@Override
 	public boolean appendEnvironment(Object context) {
-		// TODO 
+		// TODO
 		return true;
 	}
 

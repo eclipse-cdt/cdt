@@ -42,7 +42,7 @@ public class ContributedEnvironment implements IContributedEnvironment{
 						break;
 					}
 				}
-				
+
 				if(i != suppliers.length){
 					ICoreEnvironmentVariableSupplier tmp[] = new ICoreEnvironmentVariableSupplier[suppliers.length - 1];
 					if(i != 0)
@@ -51,7 +51,7 @@ public class ContributedEnvironment implements IContributedEnvironment{
 						System.arraycopy(suppliers, i+1, tmp, i, tmp.length - i);
 					suppliers = tmp;
 				}
-				
+
 				fSuppliers = suppliers;
 			}
 			return fSuppliers;
@@ -65,11 +65,12 @@ public class ContributedEnvironment implements IContributedEnvironment{
 			return null;
 		}
 	}
-	
+
 	public IEnvironmentContextInfo getContextInfo(Object context){
 		return new ContributedEnvContextInfo(fMngr.getDefaultContextInfo(context));
 	}
-	
+
+	@Override
 	public IEnvironmentVariable[] getVariables(ICConfigurationDescription des){
 		EnvVarCollector cr = EnvironmentVariableManager.getVariables(getContextInfo(des), true);
 		if(cr != null){
@@ -87,22 +88,26 @@ public class ContributedEnvironment implements IContributedEnvironment{
 		}
 		return new EnvVarDescriptor[0];
 	}
-	
+
+	@Override
 	public IEnvironmentVariable getVariable(String name, ICConfigurationDescription des){
 		EnvVarDescriptor varDes = EnvironmentVariableManager.getVariable(name, getContextInfo(des), true);
 		if(varDes != null)
 			return EnvironmentVariableManager.getVariable(name, new DefaultEnvironmentContextInfo(des), true);
 		return null;
 	}
-	
+
+	@Override
 	public boolean appendEnvironment(ICConfigurationDescription des){
 		return EnvironmentVariableManager.fUserSupplier.appendContributedEnvironment(des);
 	}
 
+	@Override
 	public void setAppendEnvironment(boolean append, ICConfigurationDescription des){
 		EnvironmentVariableManager.fUserSupplier.setAppendContributedEnvironment(append, des);
 	}
 
+	@Override
 	public IEnvironmentVariable addVariable(String name,
 			String value,
 			int op,
@@ -114,36 +119,41 @@ public class ContributedEnvironment implements IContributedEnvironment{
 				-1,
 				EnvironmentVariableManager.fUserSupplier);
 	}
-	
+
+	@Override
 	public void addVariables(IEnvironmentVariable[] vars,
 			ICConfigurationDescription des) {
 		for (IEnvironmentVariable v : vars)
 			addVariable(v, des);
 	}
-	
+
+	@Override
 	public IEnvironmentVariable addVariable(IEnvironmentVariable var,
 			ICConfigurationDescription des) {
-		return addVariable(var.getName(), 
-						   var.getValue(), 
-						   var.getOperation(), 
-						   var.getDelimiter(), 
+		return addVariable(var.getName(),
+						   var.getValue(),
+						   var.getOperation(),
+						   var.getDelimiter(),
 						   des);
 	}
-	
+
+	@Override
 	public IEnvironmentVariable removeVariable(String name, ICConfigurationDescription des){
 		return EnvironmentVariableManager.fUserSupplier.deleteVariable(name, des);
 	}
-	
+
+	@Override
 	public void restoreDefaults(ICConfigurationDescription des){
 		EnvironmentVariableManager.fUserSupplier.restoreDefaults(des);
 	}
-	
+
+	@Override
 	public boolean isUserVariable(ICConfigurationDescription des, IEnvironmentVariable var){
 		if(var instanceof EnvVarDescriptor)
 			return ((EnvVarDescriptor)var).getSupplier() == EnvironmentVariableManager.fUserSupplier;
 		return false;
 	}
-	
+
 	public String getOrigin(IEnvironmentVariable var) {
 		if(var instanceof EnvVarDescriptor) {
 			ICoreEnvironmentVariableSupplier sup = ((EnvVarDescriptor)var).getSupplier();
@@ -159,10 +169,10 @@ public class ContributedEnvironment implements IContributedEnvironment{
 		}
 		return Messages.getString("ContributedEnvironment.3"); //$NON-NLS-1$
 	}
-	
+
 	public void serialize(ICProjectDescription des){
 		EnvironmentVariableManager.fUserSupplier.storeProjectEnvironment(des, false);
 	}
 
-	
+
 }

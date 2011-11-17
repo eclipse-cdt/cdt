@@ -50,6 +50,7 @@ public class BinaryElement extends CElement implements IBinaryElement, ISourceMa
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ISourceManipulation#copy(org.eclipse.cdt.core.model.ICElement, org.eclipse.cdt.core.model.ICElement, java.lang.String, boolean, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void copy(ICElement container, ICElement sibling, String rename, boolean replace, IProgressMonitor monitor)
 		throws CModelException {
 		throw new CModelException(new CModelStatus(ICModelStatusConstants.READ_ONLY, this));
@@ -58,6 +59,7 @@ public class BinaryElement extends CElement implements IBinaryElement, ISourceMa
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ISourceManipulation#delete(boolean, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void delete(boolean force, IProgressMonitor monitor) throws CModelException {
 		throw new CModelException(new CModelStatus(ICModelStatusConstants.READ_ONLY, this));
 	}
@@ -65,6 +67,7 @@ public class BinaryElement extends CElement implements IBinaryElement, ISourceMa
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ISourceManipulation#move(org.eclipse.cdt.core.model.ICElement, org.eclipse.cdt.core.model.ICElement, java.lang.String, boolean, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void move(ICElement container, ICElement sibling, String rename, boolean replace, IProgressMonitor monitor)
 		throws CModelException {
 		throw new CModelException(new CModelStatus(ICModelStatusConstants.READ_ONLY, this));
@@ -73,6 +76,7 @@ public class BinaryElement extends CElement implements IBinaryElement, ISourceMa
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ISourceManipulation#rename(java.lang.String, boolean, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void rename(String name, boolean replace, IProgressMonitor monitor) throws CModelException {
 		throw new CModelException(new CModelStatus(ICModelStatusConstants.READ_ONLY, this));
 	}
@@ -80,6 +84,7 @@ public class BinaryElement extends CElement implements IBinaryElement, ISourceMa
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ISourceReference#getSource()
 	 */
+	@Override
 	public String getSource() throws CModelException {
 		ITranslationUnit tu = getTranslationUnit();
 		if (tu != null) {
@@ -100,11 +105,12 @@ public class BinaryElement extends CElement implements IBinaryElement, ISourceMa
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ISourceReference#getSourceRange()
 	 */
+	@Override
 	public ISourceRange getSourceRange() throws CModelException {
 		return new SourceRange(getStartPos(),
 						getLength(),
 						getIdStartPos(),
-						getIdLength(), 
+						getIdLength(),
 						getStartLine(),
 						getEndLine());
 	}
@@ -112,6 +118,7 @@ public class BinaryElement extends CElement implements IBinaryElement, ISourceMa
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ISourceReference#getTranslationUnit()
 	 */
+	@Override
 	public ITranslationUnit getTranslationUnit()  {
 		if (fSourceTU == null) {
 			ITranslationUnit tu = null;
@@ -171,6 +178,7 @@ public class BinaryElement extends CElement implements IBinaryElement, ISourceMa
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.IBinaryElement#getAddress()
 	 */
+	@Override
 	public IAddress getAddress() throws CModelException {
 		return addr;
 	}
@@ -212,6 +220,7 @@ public class BinaryElement extends CElement implements IBinaryElement, ISourceMa
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.IBinaryElement#getBinary()
 	 */
+	@Override
 	public IBinary getBinary() {
 		ICElement current = this;
 		do {
@@ -245,10 +254,12 @@ public class BinaryElement extends CElement implements IBinaryElement, ISourceMa
 		return 0;
 	}
 
+	@Override
 	public boolean isActive() {
 		return true;
 	}
 
+	@Override
 	public int getIndex() {
 		return 0;
 	}

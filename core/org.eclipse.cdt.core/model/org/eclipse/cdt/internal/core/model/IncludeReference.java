@@ -41,7 +41,7 @@ import org.eclipse.core.runtime.Path;
  * IncludeReference
  */
 public class IncludeReference extends Openable implements IIncludeReference {
-	
+
 	final IIncludeEntry fIncludeEntry;
 	final IPath fPath;
 
@@ -76,7 +76,7 @@ public class IncludeReference extends Openable implements IIncludeReference {
 		}
 		return file != null && file.isDirectory();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.model.CElement#createElementInfo()
 	 */
@@ -88,6 +88,7 @@ public class IncludeReference extends Openable implements IIncludeReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.IIncludeReference#getIncludeEntry()
 	 */
+	@Override
 	public IIncludeEntry getIncludeEntry() {
 		return fIncludeEntry;
 	}
@@ -103,6 +104,7 @@ public class IncludeReference extends Openable implements IIncludeReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.IIncludeReference#getAffectedPath()
 	 */
+	@Override
 	public IPath getAffectedPath() {
 		return fIncludeEntry.getPath();
 	}
@@ -124,7 +126,7 @@ public class IncludeReference extends Openable implements IIncludeReference {
 				String[] names = null;
 				if (file != null && file.isDirectory()) {
 					names = file.list();
-		
+
 					if (names != null) {
 						IPath path = new Path(file.getAbsolutePath());
 						for (String name : names) {
@@ -175,8 +177,9 @@ public class IncludeReference extends Openable implements IIncludeReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.IIncludeReference#isOnIncludeEntry(org.eclipse.core.runtime.IPath)
 	 */
+	@Override
 	public boolean isOnIncludeEntry(IPath path) {
-		if (fIncludeEntry.getFullIncludePath().isPrefixOf(path) 
+		if (fIncludeEntry.getFullIncludePath().isPrefixOf(path)
 				&& !CoreModelUtil.isExcluded(path, fIncludeEntry.fullExclusionPatternChars())) {
 			return true;
 		}
@@ -190,7 +193,7 @@ public class IncludeReference extends Openable implements IIncludeReference {
 	public IPath getPath() {
 		return fPath;
 	}
-	
+
 	@Override
 	public ICElement getHandleFromMemento(String token, MementoTokenizer memento) {
 		return null;

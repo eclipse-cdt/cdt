@@ -32,7 +32,7 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * This supplier suplies the macros that represent the Eclipse variables
- * 
+ *
  * @since 3.0
  */
 public class EclipseVariablesVariableSupplier implements ICdtVariableSupplier {
@@ -40,13 +40,13 @@ public class EclipseVariablesVariableSupplier implements ICdtVariableSupplier {
 	private static final Pattern RESOURCE_VARIABLE_PATTERN= Pattern.compile("(project|resource|container)_(loc|path|name)"); //$NON-NLS-1$
 
 	//	private static final String VAR_PREFIX = "${";  //$NON-NLS-1$
-//	private static final char VAR_SUFFIX = '}';  
-	private static final char COLON = ':';  
-	
+//	private static final char VAR_SUFFIX = '}';
+	private static final char COLON = ':';
+
 	private static EclipseVariablesVariableSupplier fInstance;
-	
+
 	private EclipseVariablesVariableSupplier(){
-		
+
 	}
 
 	public static EclipseVariablesVariableSupplier getInstance(){
@@ -54,12 +54,12 @@ public class EclipseVariablesVariableSupplier implements ICdtVariableSupplier {
 			fInstance = new EclipseVariablesVariableSupplier();
 		return fInstance;
 	}
-	
+
 	public class EclipseVarMacro extends CdtVariable {
 		private IStringVariable fVariable;
 		private String fArgument;
 		private boolean fInitialized;
-		
+
 		private EclipseVarMacro(IStringVariable var){
 			this(var,null);
 		}
@@ -94,7 +94,7 @@ public class EclipseVariablesVariableSupplier implements ICdtVariableSupplier {
 			}
 			return fStringValue;
 		}
-		
+
 		private void loadValue(IStringVariable var) throws CdtVariableException {
 			if(var instanceof IDynamicVariable){
 				IDynamicVariable dynamicVar = (IDynamicVariable)var;
@@ -106,16 +106,16 @@ public class EclipseVariablesVariableSupplier implements ICdtVariableSupplier {
 					}
 				}else
 					fStringValue = null;
-					
+
 			}else if(var instanceof IValueVariable){
 				if(fArgument == null)
 					fStringValue = ((IValueVariable)var).getValue();
 				else
 					fStringValue = null;
 			}
-			
+
 		}
-		
+
 		public IStringVariable getVariable(){
 			return fVariable;
 		}
@@ -124,6 +124,7 @@ public class EclipseVariablesVariableSupplier implements ICdtVariableSupplier {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroSupplier#getMacro(java.lang.String, int, java.lang.Object)
 	 */
+	@Override
 	public ICdtVariable getVariable(String macroName, IVariableContextInfo info) {
 		return getVariable(macroName);
 	}
@@ -134,7 +135,7 @@ public class EclipseVariablesVariableSupplier implements ICdtVariableSupplier {
 //			return null;
 		if(macroName == null || "".equals(macroName))	//$NON-NLS-1$
 			return null;
-		
+
 		String varName = null;
 		String param = null;
 		IStringVariable var = null;
@@ -145,14 +146,14 @@ public class EclipseVariablesVariableSupplier implements ICdtVariableSupplier {
 			varName = macroName.substring(0,index);
 			param = macroName.substring(index+1);
 		}
-		
+
 		if(varName != null){
 			IStringVariableManager mngr = VariablesPlugin.getDefault().getStringVariableManager();
 			var = mngr.getValueVariable(varName);
 			if(var == null)
 				var = mngr.getDynamicVariable(varName);
 		}
-		
+
 		if(var != null)
 			return new EclipseVarMacro(var,param);
 		return null;
@@ -161,6 +162,7 @@ public class EclipseVariablesVariableSupplier implements ICdtVariableSupplier {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroSupplier#getMacros(int, java.lang.Object)
 	 */
+	@Override
 	public ICdtVariable[] getVariables(IVariableContextInfo info) {
 		return getVariables();
 	}
@@ -178,7 +180,7 @@ public class EclipseVariablesVariableSupplier implements ICdtVariableSupplier {
 				map.put(name,var);
 			}
 		}
-		
+
 		IValueVariable valVars[] = mngr.getValueVariables();
 		for (IValueVariable valVar : valVars)
 			map.put(valVar.getName(),valVar);
@@ -188,7 +190,7 @@ public class EclipseVariablesVariableSupplier implements ICdtVariableSupplier {
 		Iterator<IStringVariable> iter = collection.iterator();
 		for(int i = 0; i < macros.length ; i++)
 			macros[i] = new EclipseVarMacro(iter.next());
-		
+
 		return macros;
 	}
 
@@ -202,7 +204,7 @@ public class EclipseVariablesVariableSupplier implements ICdtVariableSupplier {
 		|| name.endsWith("_prompt") //$NON-NLS-1$
 		|| name.equals("selected_text"); //$NON-NLS-1$
 	}
-	
+
 	private static boolean canExpandVariable(String name, String argument) {
 		if (argument == null && RESOURCE_VARIABLE_PATTERN.matcher(name).matches()) {
 			return false;

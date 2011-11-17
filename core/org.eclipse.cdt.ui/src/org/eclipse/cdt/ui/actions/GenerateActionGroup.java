@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems) - Adapted for CDT
@@ -57,27 +57,27 @@ import org.eclipse.cdt.internal.ui.editor.SortLinesAction;
 /**
  * Action group that adds the source and generate actions to a part's context
  * menu and installs handlers for the corresponding global menu actions.
- * 
+ *
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @since 4.0
  */
 public class GenerateActionGroup extends ActionGroup implements ISelectionChangedListener {
-	
+
 	/**
 	 * Pop-up menu: id of the source sub menu (value <code>org.eclipse.cdt.ui.source.menu</code>).
 	 */
 	public static final String MENU_ID= "org.eclipse.cdt.ui.source.menu"; //$NON-NLS-1$
-	
+
 	/**
 	 * Pop-up menu: id of the organize group of the source sub menu (value
 	 * <code>organizeGroup</code>).
 	 */
 	public static final String GROUP_ORGANIZE= "organizeGroup";  //$NON-NLS-1$
-	
+
 	/**
 	 * Pop-up menu: id of the generate group of the source sub menu (value
 	 * <code>generateGroup</code>).
@@ -107,13 +107,13 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 	 * <code>editGroup</code>).
 	 */
 	private static final String GROUP_EDIT= "editGroup"; //$NON-NLS-1$
-	
+
 	private CEditor fEditor;
 	private IWorkbenchSite fSite;
 	private String fGroupName= IContextMenuConstants.GROUP_REORGANIZE;
 	private List<ISelectionChangedListener> fRegisteredSelectionListeners;
 	private List<RefactoringAction> fRefactorActions= new ArrayList<RefactoringAction>();
-	
+
 	private AddIncludeOnSelectionAction fAddInclude;
 //	private OverrideMethodsAction fOverrideMethods;
 //	private GenerateHashCodeEqualsAction fHashCodeEquals;
@@ -126,14 +126,14 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 	private AddBookmarkAction fAddBookmark;
 	private AddTaskAction fAddTaskAction;
 //	private ExternalizeStringsAction fExternalizeStrings;
-//	private CleanUpAction fCleanUp;	
-//	
+//	private CleanUpAction fCleanUp;
+//
 //	private OrganizeIncludesAction fOrganizeIncludes;
 //	private SortMembersAction fSortMembers;
 	private SortLinesAction fSortLines;
 	private FormatAllAction fFormatAll;
 //	private CopyQualifiedNameAction fCopyQualifiedNameAction;
-//	
+//
 	private static final String QUICK_MENU_ID= "org.eclipse.cdt.ui.edit.text.c.source.quickMenu"; //$NON-NLS-1$
 
 	private IHandlerActivation fQuickAccessHandlerActivation;
@@ -145,7 +145,7 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 	 * Note: This constructor is for internal use only. Clients should not call this constructor.
 	 * @param editor the C editor
 	 * @param groupName the group name to add the action to
-	 * 
+	 *
 	 * @noreference This constructor is not intended to be referenced by clients.
 	 */
 	public GenerateActionGroup(CEditor editor, String groupName) {
@@ -153,11 +153,11 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 		fSelectionProvider= fSite.getSelectionProvider();
 		fEditor= editor;
 		fGroupName= groupName;
-		
+
 		fAddInclude= new AddIncludeOnSelectionAction(editor);
 		fAddInclude.setActionDefinitionId(ICEditorActionDefinitionIds.ADD_INCLUDE);
 		editor.setAction("AddIncludeOnSelection", fAddInclude); //$NON-NLS-1$
-		
+
 //		fOrganizeIncludes= new OrganizeIncludesAction(editor);
 //		fOrganizeIncludes.setActionDefinitionId(ICEditorActionDefinitionIds.ORGANIZE_INCLUDES);
 //		editor.setAction("OrganizeIncludes", fOrganizeIncludes); //$NON-NLS-1$
@@ -169,7 +169,7 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 		fSortLines= new SortLinesAction(editor);
 		fSortLines.setActionDefinitionId(ICEditorActionDefinitionIds.SORT_LINES);
 		editor.setAction("SortLines", fSortLines); //$NON-NLS-1$
-		
+
 //		IAction pastAction= editor.getAction(ITextEditorActionConstants.PASTE);//IWorkbenchActionDefinitionIds.PASTE);
 //		fCopyQualifiedNameAction= new CopyQualifiedNameAction(editor, null, pastAction);
 //		fCopyQualifiedNameAction.setActionDefinitionId(CopyQualifiedNameAction.JAVA_EDITOR_ACTION_DEFINITIONS_ID);
@@ -178,11 +178,11 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 //		fOverrideMethods= new OverrideMethodsAction(editor);
 //		fOverrideMethods.setActionDefinitionId(ICEditorActionDefinitionIds.OVERRIDE_METHODS);
 //		editor.setAction("OverrideMethods", fOverrideMethods); //$NON-NLS-1$
-//		
+//
 		fAddGetterSetter= new GettersAndSettersAction(editor);
 		fAddGetterSetter.setActionDefinitionId(ICEditorActionDefinitionIds.GETTERS_AND_SETTERS);
 		editor.setAction("org.eclipse.cdt.ui.refactor.getters.and.setters", fAddGetterSetter); //$NON-NLS-1$
-		
+
 		fImplementMethod = new ImplementMethodAction(editor);
 		fImplementMethod.setActionDefinitionId(ICEditorActionDefinitionIds.IMPLEMENT_METHOD);
 		editor.setAction("org.eclipse.cdt.ui.refactor.implement.method", fImplementMethod); //$NON-NLS-1$
@@ -190,14 +190,14 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 //		fAddDelegateMethods= new AddDelegateMethodsAction(editor);
 //		fAddDelegateMethods.setActionDefinitionId(ICEditorActionDefinitionIds.CREATE_DELEGATE_METHODS);
 //		editor.setAction("AddDelegateMethods", fAddDelegateMethods); //$NON-NLS-1$
-//			
+//
 //		fAddUnimplementedConstructors= new AddUnimplementedConstructorsAction(editor);
 //		fAddUnimplementedConstructors.setActionDefinitionId(ICEditorActionDefinitionIds.ADD_UNIMPLEMENTED_CONTRUCTORS);
-//		editor.setAction("AddUnimplementedConstructors", fAddUnimplementedConstructors); //$NON-NLS-1$		
+//		editor.setAction("AddUnimplementedConstructors", fAddUnimplementedConstructors); //$NON-NLS-1$
 //
 //		fGenerateConstructorUsingFields= new GenerateNewConstructorUsingFieldsAction(editor);
 //		fGenerateConstructorUsingFields.setActionDefinitionId(ICEditorActionDefinitionIds.GENERATE_CONSTRUCTOR_USING_FIELDS);
-//		editor.setAction("GenerateConstructorUsingFields", fGenerateConstructorUsingFields); //$NON-NLS-1$		
+//		editor.setAction("GenerateConstructorUsingFields", fGenerateConstructorUsingFields); //$NON-NLS-1$
 //
 //		fHashCodeEquals= new GenerateHashCodeEqualsAction(editor);
 //		fHashCodeEquals.setActionDefinitionId(ICEditorActionDefinitionIds.GENERATE_HASHCODE_EQUALS);
@@ -206,23 +206,23 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 //		fAddCppDocStub= new AddJavaDocStubAction(editor);
 //		fAddCppDocStub.setActionDefinitionId(ICEditorActionDefinitionIds.ADD_JAVADOC_COMMENT);
 //		editor.setAction("AddJavadocComment", fAddCppDocStub); //$NON-NLS-1$
-//		
+//
 //		fCleanUp= new CleanUpAction(editor);
 //		fCleanUp.setActionDefinitionId(ICEditorActionDefinitionIds.CLEAN_UP);
 //		editor.setAction("CleanUp", fCleanUp); //$NON-NLS-1$
-//		
+//
 //		fExternalizeStrings= new ExternalizeStringsAction(editor);
 //		fExternalizeStrings.setActionDefinitionId(ICEditorActionDefinitionIds.EXTERNALIZE_STRINGS);
-//		editor.setAction("ExternalizeStrings", fExternalizeStrings); //$NON-NLS-1$	
-//				
+//		editor.setAction("ExternalizeStrings", fExternalizeStrings); //$NON-NLS-1$
+//
 		installQuickAccessAction();
 	}
-	
+
 	/**
-	 * Creates a new <code>GenerateActionGroup</code>. The group 
-	 * requires that the selection provided by the page's selection provider 
+	 * Creates a new <code>GenerateActionGroup</code>. The group
+	 * requires that the selection provided by the page's selection provider
 	 * is of type <code>org.eclipse.jface.viewers.IStructuredSelection</code>.
-	 * 
+	 *
 	 * @param page the page that owns this action group
 	 */
 	public GenerateActionGroup(Page page) {
@@ -232,10 +232,10 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 	}
 
 	/**
-	 * Creates a new <code>GenerateActionGroup</code>. The group 
-	 * requires that the selection provided by the part's selection provider 
+	 * Creates a new <code>GenerateActionGroup</code>. The group
+	 * requires that the selection provided by the part's selection provider
 	 * is of type <code>org.eclipse.jface.viewers.IStructuredSelection</code>.
-	 * 
+	 *
 	 * @param part the view part that owns this action group
 	 */
 	public GenerateActionGroup(IViewPart part) {
@@ -243,7 +243,7 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 
 		installQuickAccessAction();
 	}
-	
+
 	/**
 	 * Creates a new <code>GenerateActionGroup</code>. The group requires
 	 * that the selection provided by the given selection provider is of type
@@ -259,10 +259,10 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 		fSite= site;
 		fSelectionProvider= selectionProvider == null ? fSite.getSelectionProvider() : selectionProvider;
 		ISelection selection= fSelectionProvider.getSelection();
-		
+
 //		fOverrideMethods= new OverrideMethodsAction(site);
 //		fOverrideMethods.setActionDefinitionId(ICEditorActionDefinitionIds.OVERRIDE_METHODS);
-//		
+//
 		fAddGetterSetter = new GettersAndSettersAction();
 		fAddGetterSetter.setActionDefinitionId(ICEditorActionDefinitionIds.GETTERS_AND_SETTERS);
 		fAddGetterSetter.setSite(fSite);
@@ -275,10 +275,10 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 
 //		fAddDelegateMethods= new AddDelegateMethodsAction(site);
 //		fAddDelegateMethods.setActionDefinitionId(ICEditorActionDefinitionIds.CREATE_DELEGATE_METHODS);
-//		
+//
 //		fAddUnimplementedConstructors= new AddUnimplementedConstructorsAction(site);
 //		fAddUnimplementedConstructors.setActionDefinitionId(ICEditorActionDefinitionIds.ADD_UNIMPLEMENTED_CONTRUCTORS);
-//		
+//
 //		fGenerateConstructorUsingFields= new GenerateNewConstructorUsingFieldsAction(site);
 //		fGenerateConstructorUsingFields.setActionDefinitionId(ICEditorActionDefinitionIds.GENERATE_CONSTRUCTOR_USING_FIELDS);
 //
@@ -287,32 +287,32 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 //
 //		fAddCppDocStub= new AddJavaDocStubAction(site);
 //		fAddCppDocStub.setActionDefinitionId(ICEditorActionDefinitionIds.ADD_JAVADOC_COMMENT);
-		
+
 		fAddBookmark= new AddBookmarkAction(site, true);
 		fAddBookmark.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_ADD_BOOKMARK);
-		
+
 		fAddTaskAction= new AddTaskAction(site);
 		fAddTaskAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_ADD_TASK);
-		
+
 //		fExternalizeStrings= new ExternalizeStringsAction(site);
 //		fExternalizeStrings.setActionDefinitionId(ICEditorActionDefinitionIds.EXTERNALIZE_STRINGS);
-//		
+//
 //		fOrganizeIncludes= new OrganizeIncludesAction(site);
 //		fOrganizeIncludes.setActionDefinitionId(ICEditorActionDefinitionIds.ORGANIZE_INCLUDES);
-//		
+//
 //		fSortMembers= new SortMembersAction(site);
 //		fSortMembers.setActionDefinitionId(ICEditorActionDefinitionIds.SORT_MEMBERS);
-//		
+//
 		fFormatAll= new FormatAllAction(site);
 		fFormatAll.setActionDefinitionId(ICEditorActionDefinitionIds.FORMAT);
-//		
+//
 //		fCleanUp= new CleanUpAction(site);
 //		fCleanUp.setActionDefinitionId(ICEditorActionDefinitionIds.CLEAN_UP);
 
-		
+
 //		fOverrideMethods.update(selection);
 //		fAddDelegateMethods.update(selection);
-//		fAddUnimplementedConstructors.update(selection);	
+//		fAddUnimplementedConstructors.update(selection);
 //		fGenerateConstructorUsingFields.update(selection);
 //		fHashCodeEquals.update(selection);
 //		fAddCppDocStub.update(selection);
@@ -330,7 +330,7 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 			fAddBookmark.setEnabled(false);
 			fAddTaskAction.setEnabled(false);
 		}
-		
+
 //		registerSelectionListener(fSelectionProvider, fOverrideMethods);
 //		registerSelectionListener(fSelectionProvider, fAddDelegateMethods);
 //		registerSelectionListener(fSelectionProvider, fAddUnimplementedConstructors);
@@ -345,11 +345,11 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 //		registerSelectionListener(fSelectionProvider, fSortMembers);
 		registerSelectionListener(fSelectionProvider, fAddTaskAction);
 //		registerSelectionListener(fSelectionProvider, fCleanUp);
-		
+
 		selectionChanged(new SelectionChangedEvent(fSelectionProvider, selection));
 		registerSelectionListener(fSelectionProvider, this);
 	}
-	
+
 	private void installQuickAccessAction() {
 		fHandlerService= (IHandlerService)fSite.getService(IHandlerService.class);
 		if (fHandlerService != null) {
@@ -369,9 +369,9 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 		provider.addSelectionChangedListener(listener);
 		fRegisteredSelectionListeners.add(listener);
 	}
-	
+
 	/*
-	 * The state of the editor owning this action group has changed. 
+	 * The state of the editor owning this action group has changed.
 	 * This method does nothing if the group's owner isn't an
 	 * editor.
 	 */
@@ -382,7 +382,7 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 		Assert.isTrue(isEditorOwner());
 	}
 
-	/* 
+	/*
 	 * Method declared in ActionGroup
 	 */
 	@Override
@@ -390,8 +390,8 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 		super.fillActionBars(actionBar);
 		setGlobalActionHandlers(actionBar);
 	}
-	
-	/* 
+
+	/*
 	 * Method declared in ActionGroup
 	 */
 	@Override
@@ -416,7 +416,7 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 			fillViewSubMenu(menu);
 		}
 	}
-	
+
 	private int fillEditorSubMenu(IMenuManager source) {
 		int added= 0;
 		source.add(new Separator(GROUP_COMMENT));
@@ -475,7 +475,7 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 		return added;
 	}
 
-	/* 
+	/*
 	 * Method declared in ActionGroup
 	 */
 	@Override
@@ -493,14 +493,14 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 		fEditor= null;
 		super.dispose();
 	}
-	
+
 	private void setGlobalActionHandlers(IActionBars actionBar) {
 		actionBar.setGlobalActionHandler(CdtActionConstants.ADD_INCLUDE, fAddInclude);
 //		actionBar.setGlobalActionHandler(CdtActionConstants.OVERRIDE_METHODS, fOverrideMethods);
 		actionBar.setGlobalActionHandler(CdtActionConstants.GETTERS_AND_SETTERS, fAddGetterSetter);
 		actionBar.setGlobalActionHandler(CdtActionConstants.IMPLEMENT_METHOD, fImplementMethod);
 //		actionBar.setGlobalActionHandler(CdtActionConstants.GENERATE_DELEGATE_METHODS, fAddDelegateMethods);
-//		actionBar.setGlobalActionHandler(CdtActionConstants.ADD_CONSTRUCTOR_FROM_SUPERCLASS, fAddUnimplementedConstructors);		
+//		actionBar.setGlobalActionHandler(CdtActionConstants.ADD_CONSTRUCTOR_FROM_SUPERCLASS, fAddUnimplementedConstructors);
 //		actionBar.setGlobalActionHandler(CdtActionConstants.GENERATE_CONSTRUCTOR_USING_FIELDS, fGenerateConstructorUsingFields);
 //		actionBar.setGlobalActionHandler(CdtActionConstants.GENERATE_HASHCODE_EQUALS, fHashCodeEquals);
 //		actionBar.setGlobalActionHandler(CdtActionConstants.ADD_CPP_DOC_COMMENT, fAddCppDocStub);
@@ -517,7 +517,7 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 //			actionBar.setGlobalActionHandler(CopyQualifiedNameAction.ACTION_HANDLER_ID, fCopyQualifiedNameAction);
 		}
 	}
-	
+
 	private int addAction(IMenuManager menu, IAction action) {
 		if (action instanceof IUpdate)
 			((IUpdate)action).update();
@@ -526,8 +526,8 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 			return 1;
 		}
 		return 0;
-	}	
-	
+	}
+
 	private int addEditorAction(IMenuManager menu, String actionID) {
 		if (fEditor == null)
 			return 0;
@@ -542,11 +542,11 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 		}
 		return 0;
 	}
-	
+
 	private boolean isEditorOwner() {
 		return fEditor != null;
 	}
-	
+
 	private ICElement getCElement(ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ss = (IStructuredSelection) selection;
@@ -565,6 +565,7 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 	 * @since 5.2
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		ICElement celem = getCElement(event.getSelection());
 		for (RefactoringAction action : fRefactorActions) {

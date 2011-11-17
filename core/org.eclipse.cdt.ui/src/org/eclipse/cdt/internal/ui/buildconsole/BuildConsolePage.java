@@ -114,6 +114,7 @@ public class BuildConsolePage extends Page
 	// text selection listener
 	private ISelectionChangedListener fTextListener = new ISelectionChangedListener() {
 
+		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			updateSelectionDependentActions();
 		}
@@ -176,6 +177,7 @@ public class BuildConsolePage extends Page
 		return null;
 	}
 
+	@Override
 	public void consoleChange(final IBuildConsoleEvent event) {
 		if (event.getType() == IBuildConsoleEvent.CONSOLE_START || event.getType() == IBuildConsoleEvent.CONSOLE_CLOSE) {
 			Control control = getControl();
@@ -188,6 +190,7 @@ public class BuildConsolePage extends Page
 					 *
 					 * @see java.lang.Runnable#run()
 					 */
+					@Override
 					public void run() {
 						if (isAvailable()) {
 							if (event.getType() == IBuildConsoleEvent.CONSOLE_CLOSE && getProject() != event.getProject()) {
@@ -222,6 +225,7 @@ public class BuildConsolePage extends Page
 		manager.setRemoveAllWhenShown(true);
 		manager.addMenuListener(new IMenuListener() {
 
+			@Override
 			public void menuAboutToShow(IMenuManager m) {
 				contextMenuAboutToShow(m);
 			}
@@ -269,6 +273,7 @@ public class BuildConsolePage extends Page
 	 *
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		final Object source = event.getSource();
 		final String property = event.getProperty();
@@ -279,6 +284,7 @@ public class BuildConsolePage extends Page
 				Display display = getControl().getDisplay();
 				display.asyncExec(new Runnable() {
 
+					@Override
 					public void run() {
 						getViewer().getTextWidget().redraw();
 					}
@@ -433,6 +439,7 @@ public class BuildConsolePage extends Page
 		return false;
 	}
 
+	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		IProject newProject = convertSelectionToProject(selection);
 		IProject oldProject = getProject();
@@ -522,6 +529,7 @@ public class BuildConsolePage extends Page
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@Override
 	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class required) {
 		if (IFindReplaceTarget.class.equals(required)) {
@@ -544,6 +552,7 @@ public class BuildConsolePage extends Page
 	 *
 	 * @see org.eclipse.jface.text.ITextListener#textChanged(org.eclipse.jface.text.TextEvent)
 	 */
+	@Override
 	public void textChanged(TextEvent event) {
 		//		 update the find replace action if the document length is > 0
 		IUpdate findReplace = (IUpdate)fGlobalActions.get(ActionFactory.FIND.getId());

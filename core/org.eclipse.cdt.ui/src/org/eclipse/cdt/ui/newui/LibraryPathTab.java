@@ -40,7 +40,8 @@ public class LibraryPathTab extends AbstractLangsListTab implements IPathEntrySt
 		sashForm.setWeights(PRIVATE_SASH_WEIGHTS);
 		langTree.setVisible(false);
 	}
-	
+
+	@Override
 	public void pathEntryStoreChanged(PathEntryStoreChangedEvent event) {
 		updateData(getResDesc());
 	}
@@ -49,7 +50,7 @@ public class LibraryPathTab extends AbstractLangsListTab implements IPathEntrySt
 	public ICLanguageSettingEntry doAdd() {
 		IncludeDialog dlg = new IncludeDialog(
 				usercomp.getShell(), IncludeDialog.NEW_DIR,
-				Messages.LibraryPathTab_1,  
+				Messages.LibraryPathTab_1,
 				EMPTY_STR, getResDesc().getConfiguration(), 0);
 		if (dlg.open() && dlg.text1.trim().length() > 0 ) {
 			toAllCfgs = dlg.check1;
@@ -65,7 +66,7 @@ public class LibraryPathTab extends AbstractLangsListTab implements IPathEntrySt
 	public ICLanguageSettingEntry doEdit(ICLanguageSettingEntry ent) {
 		IncludeDialog dlg = new IncludeDialog(
 				usercomp.getShell(), IncludeDialog.OLD_DIR,
-				Messages.LibraryPathTab_2,  
+				Messages.LibraryPathTab_2,
 				ent.getValue(), getResDesc().getConfiguration(),
 				(ent.getFlags() & ICSettingEntry.VALUE_WORKSPACE_PATH));
 		if (dlg.open() && dlg.text1.trim().length() > 0 ) {
@@ -75,12 +76,12 @@ public class LibraryPathTab extends AbstractLangsListTab implements IPathEntrySt
 		}
 		return null;
 	}
-	
+
 	@Override
-	public int getKind() { 
-		return ICSettingEntry.LIBRARY_PATH; 
+	public int getKind() {
+		return ICSettingEntry.LIBRARY_PATH;
 	}
-	
+
 	@Override
 	protected boolean isHeaderVisible() {
 		return false;

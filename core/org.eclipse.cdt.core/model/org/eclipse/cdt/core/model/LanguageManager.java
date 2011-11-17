@@ -59,7 +59,7 @@ public class LanguageManager {
 	private static final String ELEMENT_PDOM_LINKAGE_FACTORY = "pdomLinkageFactory"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_CLASS = "class"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
-	
+
 	private static LanguageManager instance;
 	private Map<String, ILanguage> fLanguageCache = new HashMap<String, ILanguage>();
 	private Map<String, IPDOMLinkageFactory> fPDOMLinkageFactoryCache= new HashMap<String, IPDOMLinkageFactory>();
@@ -81,19 +81,19 @@ public class LanguageManager {
 		Map<String, ILanguageDescriptor> map = getDescriptorCache();
 		return map.get(id);
 	}
-	
+
 	private HashMap<String, ILanguageDescriptor> getDescriptorCache() {
 		if (fIdToLanguageDescriptorCache == null) {
 			fIdToLanguageDescriptorCache = createDescriptorCache();
 		}
 		return fIdToLanguageDescriptorCache;
 	}
-	
+
 	public ILanguageDescriptor[] getLanguageDescriptors() {
 		HashMap<String, ILanguageDescriptor> map = getDescriptorCache();
 		return map.values().toArray(new ILanguageDescriptor[map.size()]);
 	}
-	
+
 	private HashMap<String, ILanguageDescriptor> createDescriptorCache() {
 		HashMap<String, ILanguageDescriptor> map = new HashMap<String, ILanguageDescriptor>();
 		IConfigurationElement[] configs= Platform.getExtensionRegistry().getConfigurationElementsFor(LANGUAGE_EXTENSION_POINT_ID);
@@ -106,18 +106,18 @@ public class LanguageManager {
 		}
 		return map;
 	}
-	
+
 	private HashMap<String, List<ILanguageDescriptor>> getContentTypeToDescriptorCache() {
 		if (fContentTypeToDescriptorListCache == null) {
 			fContentTypeToDescriptorListCache = createContentTypeToDescriptorCache();
 		}
 		return fContentTypeToDescriptorListCache;
 	}
-	
+
 	public Map<String, ILanguageDescriptor[]> getContentTypeIdToLanguageDescriptionsMap() {
 		HashMap<String, ILanguageDescriptor[]> map = new HashMap<String, ILanguageDescriptor[]>();
 		Map<String, List<ILanguageDescriptor>> cache = getContentTypeToDescriptorCache();
-		
+
 		for (Entry<String, List<ILanguageDescriptor>> entry : cache.entrySet()) {
 			List<ILanguageDescriptor> list = entry.getValue();
 			if (list.size() > 0) {
@@ -125,11 +125,11 @@ public class LanguageManager {
 				map.put(entry.getKey(), dess);
 			}
 		}
-		
+
 		return map;
 	}
 
-	
+
 	private HashMap<String, List<ILanguageDescriptor>> createContentTypeToDescriptorCache() {
 		HashMap<String, List<ILanguageDescriptor>> map = new HashMap<String, List<ILanguageDescriptor>>();
 		Map<String, ILanguageDescriptor> dc = getDescriptorCache();
@@ -150,7 +150,7 @@ public class LanguageManager {
 		}
 		return map;
 	}
-	
+
 	public ILanguage getLanguage(String id) {
 		ILanguage language = fLanguageCache.get(id);
 		if (language != null)
@@ -160,14 +160,16 @@ public class LanguageManager {
 		for (int j = 0; j < configs.length; ++j) {
 			final IConfigurationElement languageElem = configs[j];
 			if (ELEMENT_LANGUAGE.equals(languageElem.getName())) {
-				String langId = getLanguageID(languageElem);  
+				String langId = getLanguageID(languageElem);
 				if (langId.equals(id)) {
 					final ILanguage[] result= new ILanguage[]{null};
 					SafeRunner.run(new ISafeRunnable() {
+						@Override
 						public void handleException(Throwable exception) {
 							CCorePlugin.log(exception);
 						}
 
+						@Override
 						public void run() throws Exception {
 							result[0]= (ILanguage)languageElem.createExecutableExtension(ATTRIBUTE_CLASS);
 						}
@@ -185,15 +187,15 @@ public class LanguageManager {
 	private String getLanguageID(final IConfigurationElement languageElem) {
 		return languageElem.getNamespaceIdentifier() + NAMESPACE_SEPARATOR + languageElem.getAttribute(ATTRIBUTE_ID);
 	}
-	
+
 	public ILanguage getLanguage(IContentType contentType) {
 		String contentTypeID= contentType.getId();
 		return getLanguageForContentTypeID(contentTypeID);
 	}
-	
+
 	public ILanguage getLanguageForContentTypeID(String contentTypeID) {
 		cacheAllLanguages();
-		
+
 		ILanguage language = fContentTypeToLanguageCache.get(contentTypeID);
 		if (language != null || fContentTypeToLanguageCache.containsKey(contentTypeID))
 			return language;
@@ -202,7 +204,7 @@ public class LanguageManager {
 		for (int j = 0; j < configs.length; ++j) {
 			final IConfigurationElement languageElem = configs[j];
 			if (ELEMENT_LANGUAGE.equals(languageElem.getName())) {
-				IConfigurationElement[] assocContentTypes = languageElem.getChildren(ELEMENT_CONTENT_TYPE); 
+				IConfigurationElement[] assocContentTypes = languageElem.getChildren(ELEMENT_CONTENT_TYPE);
 				for (int k = 0; k < assocContentTypes.length; ++k) {
 					if (contentTypeID.equals(assocContentTypes[k].getAttribute(ATTRIBUTE_ID))) {
 						String id= getLanguageID(languageElem);
@@ -216,8 +218,8 @@ public class LanguageManager {
 		fContentTypeToLanguageCache.put(contentTypeID, null);
 		return null;
 	}
-	
-	/** 
+
+	/**
 	 * @deprecated use getRegisteredContentTypes() instead.
 	 */
 	@Deprecated
@@ -229,19 +231,19 @@ public class LanguageManager {
 		allTypes.add(CCorePlugin.CONTENT_TYPE_CXXHEADER);
 		allTypes.add(CCorePlugin.CONTENT_TYPE_CXXSOURCE);
 
-		IContentTypeManager manager = Platform.getContentTypeManager(); 
+		IContentTypeManager manager = Platform.getContentTypeManager();
 		IConfigurationElement[] configs= Platform.getExtensionRegistry().getConfigurationElementsFor(LANGUAGE_EXTENSION_POINT_ID);
 		for (int j = 0; j < configs.length; ++j) {
 			final IConfigurationElement languageElem = configs[j];
 			if (ELEMENT_LANGUAGE.equals(languageElem.getName())) {
-				IConfigurationElement[] contentTypes = languageElem.getChildren(ELEMENT_CONTENT_TYPE); 
+				IConfigurationElement[] contentTypes = languageElem.getChildren(ELEMENT_CONTENT_TYPE);
 				for (int k = 0; k < contentTypes.length; ++k) {
-					IContentType langContType = manager.getContentType(contentTypes[k].getAttribute(ATTRIBUTE_ID)); 
+					IContentType langContType = manager.getContentType(contentTypes[k].getAttribute(ATTRIBUTE_ID));
 					allTypes.add(langContType.getId());
 				}
 			}
 		}
-		
+
 		return allTypes;
 	}
 
@@ -253,7 +255,7 @@ public class LanguageManager {
 		Set<String> contentTypes= collectContentTypeIds();
 		return contentTypes.toArray(new String[contentTypes.size()]);
 	}
-	
+
 	private Set<String> collectContentTypeIds() {
 		HashSet<String> allTypes = new HashSet<String>();
 		allTypes.add(CCorePlugin.CONTENT_TYPE_ASMSOURCE);
@@ -262,26 +264,26 @@ public class LanguageManager {
 		allTypes.add(CCorePlugin.CONTENT_TYPE_CXXHEADER);
 		allTypes.add(CCorePlugin.CONTENT_TYPE_CXXSOURCE);
 
-		IContentTypeManager manager = Platform.getContentTypeManager(); 
+		IContentTypeManager manager = Platform.getContentTypeManager();
 		IConfigurationElement[] configs= Platform.getExtensionRegistry().getConfigurationElementsFor(LANGUAGE_EXTENSION_POINT_ID);
 		for (int j = 0; j < configs.length; ++j) {
 			final IConfigurationElement languageElem = configs[j];
 			if (ELEMENT_LANGUAGE.equals(languageElem.getName())) {
-				IConfigurationElement[] contentTypes = languageElem.getChildren(ELEMENT_CONTENT_TYPE); 
+				IConfigurationElement[] contentTypes = languageElem.getChildren(ELEMENT_CONTENT_TYPE);
 				for (int k = 0; k < contentTypes.length; ++k) {
-					IContentType langContType = manager.getContentType(contentTypes[k].getAttribute(ATTRIBUTE_ID)); 
+					IContentType langContType = manager.getContentType(contentTypes[k].getAttribute(ATTRIBUTE_ID));
 					allTypes.add(langContType.getId());
 				}
 			}
 		}
-		
+
 		return allTypes;
 	}
 
 	public boolean isContributedContentType(String contentTypeId) {
 		return contentTypeId != null && getLanguageForContentTypeID(contentTypeId) != null;
 	}
-	
+
 	/**
 	 * @deprecated use {@link #getContributedModelBuilderFor(ITranslationUnit)}, instead.
 	 * @noreference This method is not intended to be referenced by clients.
@@ -309,36 +311,38 @@ public class LanguageManager {
 	}
 
 	/**
-	 * Returns mappings between IDs and IPDOMLinkageFactory. The IDs are defined in {@link ILinkage}. 
+	 * Returns mappings between IDs and IPDOMLinkageFactory. The IDs are defined in {@link ILinkage}.
 	 * @return a map.
 	 * @since 4.0
 	 */
 	public Map<String, IPDOMLinkageFactory> getPDOMLinkageFactoryMappings() {
 		if (!fPDOMLinkageFactoryCache.isEmpty())
 			return Collections.unmodifiableMap(fPDOMLinkageFactoryCache);
-		
+
 		fPDOMLinkageFactoryCache.clear();
 		final IPDOMLinkageFactory[] result = new IPDOMLinkageFactory[] {null};
-		
+
 		// read configuration
 		IConfigurationElement[] configs= Platform.getExtensionRegistry().getConfigurationElementsFor(LANGUAGE_EXTENSION_POINT_ID);
 		for (final IConfigurationElement element : configs) {
 			if (ELEMENT_PDOM_LINKAGE_FACTORY.equals(element.getName())) {
 				SafeRunner.run(new ISafeRunnable() {
+					@Override
 					public void handleException(Throwable exception) {
 						CCorePlugin.log(exception);
 					}
 
+					@Override
 					public void run() throws Exception {
 						result[0] = (IPDOMLinkageFactory) element.createExecutableExtension(ATTRIBUTE_CLASS);
 					}}
-				);			
+				);
 				fPDOMLinkageFactoryCache.put(element.getAttribute(ATTRIBUTE_ID), result[0]);
-			}			
-		} 
+			}
+		}
 		return Collections.unmodifiableMap(fPDOMLinkageFactoryCache);
-	}	
-	
+	}
+
 	/**
 	 * Returns all of the languages registered with the <code>Platform</code>.
 	 * @return all of the languages registered with the <code>Platform</code>.
@@ -361,13 +365,15 @@ public class LanguageManager {
 		for (int j = 0; j < configs.length; ++j) {
 			final IConfigurationElement languageElem = configs[j];
 			if (ELEMENT_LANGUAGE.equals(languageElem.getName())) {
-				String langId = getLanguageID(languageElem);  
+				String langId = getLanguageID(languageElem);
 				final ILanguage[] result= new ILanguage[] { null };
 				SafeRunner.run(new ISafeRunnable() {
+					@Override
 					public void handleException(Throwable exception) {
 						CCorePlugin.log(exception);
 					}
 
+					@Override
 					public void run() throws Exception {
 						result[0]= (ILanguage) languageElem.createExecutableExtension(ATTRIBUTE_CLASS);
 					}
@@ -379,7 +385,7 @@ public class LanguageManager {
 		}
 		fIsFullyCached = true;
 	}
-	
+
 	/**
 	 * Returns the language configuration for the workspace.
 	 * @return the language configuration for the workspace
@@ -391,16 +397,16 @@ public class LanguageManager {
 			if (fWorkspaceMappings != null) {
 				return fWorkspaceMappings;
 			}
-			
+
 			LanguageMappingStore store = new LanguageMappingStore();
 			fWorkspaceMappings = store.decodeWorkspaceMappings();
 			return fWorkspaceMappings;
 		}
 	}
-	
+
 	/**
 	 * Saves the workspace language configuration to persistent storage and notifies
-	 * all <code>ILanguageMappingChangeListeners</code> of changes. 
+	 * all <code>ILanguageMappingChangeListeners</code> of changes.
 	 * @param affectedContentTypes
 	 * @throws CoreException
 	 * @since 4.0
@@ -410,18 +416,18 @@ public class LanguageManager {
 			if (fWorkspaceMappings == null) {
 				return;
 			}
-			
+
 			LanguageMappingStore store = new LanguageMappingStore();
 			store.storeMappings(fWorkspaceMappings);
 		}
-		
+
 		// Notify listeners that the language mappings have changed.
 		LanguageMappingChangeEvent event = new LanguageMappingChangeEvent();
 		event.setType(ILanguageMappingChangeEvent.TYPE_WORKSPACE);
 		event.setAffectedContentTypes(affectedContentTypes);
 		notifyLanguageChangeListeners(event);
 	}
-	
+
 	/**
 	 * Returns the language configuration for the given project.
 	 * @param project
@@ -435,18 +441,18 @@ public class LanguageManager {
 			if (mappings != null) {
 				return mappings;
 			}
-			
+
 			LanguageMappingStore store = new LanguageMappingStore();
 			mappings = store.decodeMappings(project);
 			fLanguageConfigurationCache.put(project, mappings);
 			return mappings;
 		}
 	}
-	
+
 	/**
 	 * Saves the language configuration for the given project to persistent
 	 * storage and notifies all <code>ILanguageMappingChangeListeners</code>
-	 * of changes. 
+	 * of changes.
 	 * @param project
 	 * @param affectedContentTypes
 	 * @throws CoreException
@@ -458,7 +464,7 @@ public class LanguageManager {
 			LanguageMappingStore store = new LanguageMappingStore();
 			store.storeMappings(project, mappings);
 		}
-		
+
 		// Notify listeners that the language mappings have changed.
 		LanguageMappingChangeEvent event = new LanguageMappingChangeEvent();
 		event.setType(ILanguageMappingChangeEvent.TYPE_PROJECT);
@@ -466,7 +472,7 @@ public class LanguageManager {
 		event.setAffectedContentTypes(affectedContentTypes);
 		notifyLanguageChangeListeners(event);
 	}
-	
+
 	/**
 	 * Returns an ILanguage representing the language to be used for the given file.
 	 * @since 4.0
@@ -475,20 +481,20 @@ public class LanguageManager {
 	 * @param project the IProject that this file is in the context of.  This field cannot be null.
 	 * @param configuration the active build configuration, or <code>null</code> if build configurations
 	 *        are not relevant to determining the language.
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	public ILanguage getLanguageForFile(String fullPathToFile, IProject project, ICConfigurationDescription configuration) throws CoreException {
 		if (project == null)
 			throw new IllegalArgumentException("project must not be null in call to LanguageManager.getLanguageForFile(String, IProject)"); //$NON-NLS-1$
-		
+
 		IContentType contentType = CContentTypes.getContentType(project, fullPathToFile);
-		
+
 		if (contentType == null) {
 			return null;
 		}
-		
+
 		String contentTypeID = contentType.getId();
-		
+
 		return LanguageMappingResolver.computeLanguage(project, fullPathToFile, configuration, contentTypeID, false)[0].language;
 	}
 
@@ -507,7 +513,7 @@ public class LanguageManager {
 	public ILanguage getLanguageForFile(IPath pathToFile, IProject project, ICConfigurationDescription configuration) throws CoreException {
 		return getLanguageForFile(pathToFile, project, configuration, null);
 	}
-	
+
 	/**
 	 * Returns an ILanguage representing the language to be used for the given file.
 	 * @return an ILanguage representing the language to be used for the given file
@@ -536,7 +542,7 @@ public class LanguageManager {
 			}
 			contentTypeID= ct.getId();
 		}
-								
+
 		return LanguageMappingResolver.computeLanguage(project, pathToFile.toPortableString(), configuration, contentTypeID, false)[0].language;
 	}
 
@@ -566,7 +572,7 @@ public class LanguageManager {
 	public ILanguage getLanguageForFile(IFile file, ICConfigurationDescription configuration,
 			String contentTypeId) throws CoreException {
 		IProject project = file.getProject();
-		
+
 		if (contentTypeId == null) {
 			IPath location = file.getLocation();
 			String filename;
@@ -581,36 +587,36 @@ public class LanguageManager {
 			}
 			contentTypeId= contentType.getId();
 		}
-		
+
 		return LanguageMappingResolver.computeLanguage(project, file.getProjectRelativePath().toPortableString(), configuration, contentTypeId, false)[0].language;
 	}
-	
+
 	/**
 	 * Adds a listener that will be notified of changes in language mappings.
-	 * 
+	 *
 	 * @param listener the ILanguageMappingChangeListener to add
 	 */
 	public void registerLanguageChangeListener(ILanguageMappingChangeListener listener) {
 		fLanguageChangeListeners.add(listener);
 	}
-	
+
 	/**
 	 * Removes a language mapping change listener.
-	 * 
+	 *
 	 * @param listener the ILanguageMappingChangeListener to remove.
 	 */
 	public void unregisterLanguageChangeListener(ILanguageMappingChangeListener listener) {
 		fLanguageChangeListeners.remove(listener);
 	}
-	
+
 	/**
 	 * Notifies all language mappings change listeners of a change in the mappings.
-	 * 
+	 *
 	 * @param event the ILanguageMappingsChange event to be broadcast.
 	 */
 	public void notifyLanguageChangeListeners(ILanguageMappingChangeEvent event) {
 		Object[] listeners = fLanguageChangeListeners.getListeners();
-		
+
 		for (Object obj : listeners) {
 			ILanguageMappingChangeListener listener = (ILanguageMappingChangeListener) obj;
 			listener.handleLanguageMappingChangeEvent(event);
@@ -620,7 +626,7 @@ public class LanguageManager {
 	/**
 	 * Saves the language configuration for the given file to persistent
 	 * storage and notifies all <code>ILanguageMappingChangeListeners</code>
-	 * of changes. 
+	 * of changes.
 	 * @param file
 	 * @throws CoreException
 	 * @since 4.0
@@ -632,7 +638,7 @@ public class LanguageManager {
 			LanguageMappingStore store = new LanguageMappingStore();
 			store.storeMappings(project, mappings);
 		}
-		
+
 		// Notify listeners that the language mappings have changed.
 		LanguageMappingChangeEvent event = new LanguageMappingChangeEvent();
 		event.setType(ILanguageMappingChangeEvent.TYPE_FILE);
@@ -645,10 +651,10 @@ public class LanguageManager {
 	 * Returns language binding to a particular content type for given project.
 	 * This method will check project settings, workspace settings and default
 	 * bindings (in that order)
-	 * 
+	 *
 	 * @param contentType content type of the file
 	 * @param project C/C++ workspace project
-	 * @return CDT language object 
+	 * @return CDT language object
 	 * @since 5.4
 	 */
 	public ILanguage getLanguage(IContentType contentType, IProject project) {
@@ -659,11 +665,11 @@ public class LanguageManager {
 	 * Returns language binding to a particular content type for given project.
 	 * This method will check project settings, workspace settings and default
 	 * bindings (in that order)
-	 * 
+	 *
 	 * @param contentType content type of the file
 	 * @param project C/C++ workspace project
 	 * @param configurationDescription build configuration or <code>null</code>
-	 * @return CDT language object 
+	 * @return CDT language object
 	 * @since 5.4
 	 */
 	public ILanguage getLanguage(IContentType contentType,

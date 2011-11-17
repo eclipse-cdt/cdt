@@ -28,6 +28,7 @@ public final class CIncludeFileEntry extends ACPathEntry implements
 		super(rc, flags);
 	}
 
+	@Override
 	public final int getKind() {
 		return INCLUDE_FILE;
 	}

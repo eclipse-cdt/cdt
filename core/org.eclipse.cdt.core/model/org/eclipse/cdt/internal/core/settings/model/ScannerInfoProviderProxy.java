@@ -32,12 +32,13 @@ public class ScannerInfoProviderProxy extends AbstractCExtensionProxy implements
 		super(project, CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID);
 	}
 
+	@Override
 	public IScannerInfo getScannerInformation(IResource resource) {
 		providerRequested();
 		return fProvider.getScannerInformation(resource);
 	}
-	
-	
+
+
 	protected void notifyInfoListeners(IResource rc, IScannerInfo info) {
 		// Call in the cavalry
 		List<IScannerInfoChangeListener> listeners = getListeners().get(rc);
@@ -51,13 +52,14 @@ public class ScannerInfoProviderProxy extends AbstractCExtensionProxy implements
 		}
 	}
 
-	
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#subscribe(org.eclipse.core.resources.IResource,
 	 *      org.eclipse.cdt.core.parser.IScannerInfoChangeListener)
 	 */
+	@Override
 	public synchronized void subscribe(IResource resource, IScannerInfoChangeListener listener) {
 		if (resource == null || listener == null) {
 			return;
@@ -89,10 +91,11 @@ public class ScannerInfoProviderProxy extends AbstractCExtensionProxy implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#unsubscribe(org.eclipse.core.resources.IResource,
 	 *      org.eclipse.cdt.core.parser.IScannerInfoChangeListener)
 	 */
+	@Override
 	public synchronized void unsubscribe(IResource resource, IScannerInfoChangeListener listener) {
 		if (resource == null || listener == null) {
 			return;
@@ -107,6 +110,7 @@ public class ScannerInfoProviderProxy extends AbstractCExtensionProxy implements
 		}
 	}
 
+	@Override
 	public void changeNotification(IResource rc, IScannerInfo info) {
 		notifyInfoListeners(rc, info);
 	}
@@ -134,7 +138,7 @@ public class ScannerInfoProviderProxy extends AbstractCExtensionProxy implements
 		fProvider = provider;
 		provider.subscribe(getProject(), this);
 	}
-	
+
 	@Override
 	protected void postProcessProviderChange(Object newProvider,
 			Object oldProvider) {

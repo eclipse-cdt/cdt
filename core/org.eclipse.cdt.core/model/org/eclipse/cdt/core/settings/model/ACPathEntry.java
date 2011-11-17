@@ -20,7 +20,7 @@ public abstract class ACPathEntry extends ACSettingEntry
 //	IPath fFullPath;
 //	IPath fLocation;
 //	private IPath fPath;
-	
+
 	ACPathEntry(IResource rc, int flags) {
 		super(rc.getFullPath().toString(), flags | RESOLVED | VALUE_WORKSPACE_PATH);
 //		fFullPath = rc.getFullPath();
@@ -37,7 +37,7 @@ public abstract class ACPathEntry extends ACSettingEntry
 	ACPathEntry(String value, int flags) {
 		super(value, flags);
 	}
-	
+
 	ACPathEntry(IPath path, int flags) {
 		super(path.toString(), flags /*| RESOLVED*/);
 //		fPath = path;
@@ -47,6 +47,7 @@ public abstract class ACPathEntry extends ACSettingEntry
 //			fLocation = path;
 	}
 
+	@Override
 	public IPath getFullPath() {
 		if(isValueWorkspacePath())
 			return new Path(getValue());
@@ -56,19 +57,20 @@ public abstract class ACPathEntry extends ACSettingEntry
 		}
 		return null;
 	}
-	
+
 	protected IPath fullPathForLocation(IPath location){
 		IResource rcs[] = isFile() ?
 				(IResource[])ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(location)
 				: (IResource[])ResourcesPlugin.getWorkspace().getRoot().findContainersForLocation(location);
-		
+
 		if(rcs.length > 0)
 			return rcs[0].getFullPath();
 		return null;
 	}
-	
+
 	protected abstract boolean isFile();
 
+	@Override
 	public IPath getLocation() {
 		if(!isValueWorkspacePath())
 			return new Path(getValue());
@@ -80,7 +82,8 @@ public abstract class ACPathEntry extends ACSettingEntry
 		}
 		return null;
 	}
-	
+
+	@Override
 	public boolean isValueWorkspacePath() {
 		return checkFlags(VALUE_WORKSPACE_PATH);
 	}

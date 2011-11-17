@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.model.IMethodDeclaration;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 
 public class MethodDeclaration extends FunctionDeclaration implements IMethodDeclaration{
-	
+
 	boolean isConst = false;
 	boolean isConstructor = false;
 	boolean isDestructor = false;
@@ -31,11 +31,13 @@ public class MethodDeclaration extends FunctionDeclaration implements IMethodDec
 	public MethodDeclaration(ICElement parent, String name, int type){
 		super(parent, name, type);
 	}
-	
+
+	@Override
 	public boolean isConstructor(){
 		return isConstructor;
 	}
 
+	@Override
 	public boolean isDestructor() {
 		return isDestructor;
 	}
@@ -48,10 +50,12 @@ public class MethodDeclaration extends FunctionDeclaration implements IMethodDec
 		this.isDestructor = isDestructor;
 	}
 
+	@Override
 	public boolean isOperator(){
 		return getElementName().startsWith("operator"); //$NON-NLS-1$
 	}
 
+	@Override
 	public boolean isPureVirtual() throws CModelException{
 		return getMethodInfo().isPureVirtual();
 	}
@@ -60,6 +64,7 @@ public class MethodDeclaration extends FunctionDeclaration implements IMethodDec
 		getMethodInfo().setPureVirtual(isPureVirtual);
 	}
 
+	@Override
 	public boolean isInline() throws CModelException{
 		return getMethodInfo().isInline();
 	}
@@ -68,6 +73,7 @@ public class MethodDeclaration extends FunctionDeclaration implements IMethodDec
 		getMethodInfo().setInline(isInline);
 	}
 
+	@Override
 	public boolean isVirtual() throws CModelException{
 		return getMethodInfo().isVirtual();
 	}
@@ -76,6 +82,7 @@ public class MethodDeclaration extends FunctionDeclaration implements IMethodDec
 		getMethodInfo().setVirtual(isVirtual);
 	}
 
+	@Override
 	public boolean isFriend() throws CModelException{
 		return getMethodInfo().isFriend();
 	}
@@ -94,23 +101,24 @@ public class MethodDeclaration extends FunctionDeclaration implements IMethodDec
 		this.isConst = isConst;
 	}
 
+	@Override
 	public ASTAccessVisibility getVisibility() throws CModelException{
 		return getMethodInfo().getVisibility();
 	}
-	
+
 	public void setVisibility(ASTAccessVisibility visibility) throws CModelException{
 		getMethodInfo().setVisibility(visibility);
 	}
-	
+
 	@Override
 	protected CElementInfo createElementInfo () {
 		return new MethodInfo(this);
 	}
-	
+
 	protected MethodInfo getMethodInfo() throws CModelException{
 		return (MethodInfo) getElementInfo();
 	}
-	
+
 	@Override
 	public boolean equals(Object other) {
 		if (other instanceof IMethodDeclaration) {
@@ -127,6 +135,6 @@ public class MethodDeclaration extends FunctionDeclaration implements IMethodDec
 			return false;
 		}
 	}
-		
+
 
 }

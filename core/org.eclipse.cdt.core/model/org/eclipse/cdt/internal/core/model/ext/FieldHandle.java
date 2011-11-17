@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.model.ext;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
@@ -33,11 +33,13 @@ public class FieldHandle extends CElementHandle implements org.eclipse.cdt.core.
 	public String getTypeName() {
 		return fTypeName;
 	}
-	
+
+	@Override
 	public ASTAccessVisibility getVisibility() throws CModelException {
 		return fVisibility;
 	}
 
+	@Override
 	public boolean isStatic() throws CModelException {
 		return fIsStatic;
 	}

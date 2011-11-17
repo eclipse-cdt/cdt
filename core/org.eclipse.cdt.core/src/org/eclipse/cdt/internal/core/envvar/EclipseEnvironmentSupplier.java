@@ -20,7 +20,7 @@ import org.eclipse.cdt.utils.spawner.EnvironmentReader;
 /**
  * This is the Environment Variable Supplier used to supply variables
  * defined in eclipse environment
- * 
+ *
  * @since 3.0
  */
 public class EclipseEnvironmentSupplier implements ICoreEnvironmentVariableSupplier {
@@ -28,6 +28,7 @@ public class EclipseEnvironmentSupplier implements ICoreEnvironmentVariableSuppl
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableSupplier#getVariable()
 	 */
+	@Override
 	public IEnvironmentVariable getVariable(String name, Object context) {
 		if(context == null){
 			String value = EnvironmentReader.getEnvVar(name);
@@ -41,6 +42,7 @@ public class EclipseEnvironmentSupplier implements ICoreEnvironmentVariableSuppl
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableSupplier#getVariables()
 	 */
+	@Override
 	public IEnvironmentVariable[] getVariables(Object context) {
 		if(context == null){
 			Properties values = EnvironmentReader.getEnvVars();
@@ -59,6 +61,7 @@ public class EclipseEnvironmentSupplier implements ICoreEnvironmentVariableSuppl
 		return null;
 	}
 
+	@Override
 	public boolean appendEnvironment(Object context) {
 		return true;
 	}

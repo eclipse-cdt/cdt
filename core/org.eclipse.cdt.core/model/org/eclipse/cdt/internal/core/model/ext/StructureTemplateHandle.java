@@ -8,7 +8,7 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *    Anton Leherbauer (Wind River Systems)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.model.ext;
 
 import java.util.ArrayList;
@@ -75,18 +75,22 @@ public class StructureTemplateHandle extends StructureHandle implements IStructu
 		fTemplate.setTemplateInfo(null, args.toArray(new String[args.size()]));
 	}
 
+	@Override
 	public int getNumberOfTemplateParameters() {
 		return fTemplate.getNumberOfTemplateParameters();
 	}
 
+	@Override
 	public String[] getTemplateParameterTypes() {
 		return fTemplate.getTemplateParameterTypes();
 	}
 
+	@Override
 	public String[] getTemplateArguments() {
 		return  fTemplate.getTemplateArguments();
 	}
 
+	@Override
 	public String getTemplateSignature() throws CModelException {
 		return fTemplate.getTemplateSignature();
 	}

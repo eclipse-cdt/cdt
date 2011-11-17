@@ -155,14 +155,16 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 			fElement = el;
 		}
 
+		@Override
 		public void run(IProgressMonitor monitor) throws CoreException {
 			JobChangeAdapter notifyJobCanceller = new NotifyJobCanceller();
 			try {
 				// See Bug 249951 & Bug 310007
 				Job.getJobManager().addJobChangeListener(notifyJobCanceller);
-				// Ensure we can check a null-job into the workspace 
+				// Ensure we can check a null-job into the workspace
 				// i.e. if notification is currently in progress wait for it to finish...
 				ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+					@Override
 					public void run(IProgressMonitor monitor) throws CoreException {
 					}
 				}, null, IWorkspace.AVOID_UPDATE, null);
@@ -172,7 +174,7 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 				((ContributedEnvironment) CCorePlugin.getDefault().getBuildEnvironmentManager().getContributedEnvironment()).serialize(fDes);
 			} finally {
 				serializingLock.release();
-				Job.getJobManager().removeJobChangeListener(notifyJobCanceller);				
+				Job.getJobManager().removeJobChangeListener(notifyJobCanceller);
 			}
 		}
 
@@ -313,7 +315,7 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 		// the suggested solution is to use modStamp + modTime
 		//
 		// Both values are cached in resourceInfo, so this is fast.
-		return resource.getModificationStamp() + resource.getLocalTimeStamp();		
+		return resource.getModificationStamp() + resource.getLocalTimeStamp();
 	}
 
 	/**
@@ -736,6 +738,7 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 				// try refreshing
 				final Throwable[] t = new Throwable[1];
 				Job job = CProjectDescriptionManager.runWspModification(new IWorkspaceRunnable() {
+					@Override
 					public void run(IProgressMonitor monitor) throws CoreException {
 						try {
 							rscFile.refreshLocal(IResource.DEPTH_ZERO, null);

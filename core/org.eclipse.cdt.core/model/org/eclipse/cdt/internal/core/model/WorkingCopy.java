@@ -38,13 +38,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * the timestamp of the resource it was created from.
  */
 public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
-	
+
 	/**
 	 * If set, this is the factory that will be used to create the buffer.
 	 */
 	protected IBufferFactory bufferFactory;
 	/**
-	 * A counter of the number of time clients have asked for this 
+	 * A counter of the number of time clients have asked for this
 	 * working copy. It is set to 1, if the working
 	 * copy is not managed. When destroyed, this counter is
 	 * set to 0. Once destroyed, this working copy cannot be opened
@@ -74,6 +74,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	/**
 	 * @see org.eclipse.cdt.core.model.IWorkingCopy#commit(boolean, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void commit(boolean force, IProgressMonitor monitor) throws CModelException {
 		ITranslationUnit original = this.getOriginalElement();
 		if (original.exists()) {
@@ -94,8 +95,8 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 				ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
 				if (originalRes.exists()) {
 					originalRes.setContents(
-							stream, 
-							force ? IResource.FORCE | IResource.KEEP_HISTORY : IResource.KEEP_HISTORY, 
+							stream,
+							force ? IResource.FORCE | IResource.KEEP_HISTORY : IResource.KEEP_HISTORY,
 									null);
 				} else {
 					originalRes.create(
@@ -108,12 +109,13 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 			} catch (CoreException e) {
 				throw new CModelException(e);
 			}
-		}			
+		}
 	}
-	
+
 	/**
 	 * @see org.eclipse.cdt.core.model.IWorkingCopy#destroy()
 	 */
+	@Override
 	public void destroy() {
 		if (--this.useCount > 0) {
 			return;
@@ -151,17 +153,18 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	 */
 	@Override
 	public boolean equals(Object o) {
-		return this == o; 
+		return this == o;
 	}
 
 	/**
 	 * Returns the original element the specified working copy element was created from,
 	 * or <code>null</code> if this is not a working copy element.
-	 * 
+	 *
 	 * @param workingCopyElement the specified working copy element
 	 * @return the original element the specified working copy element was created from,
 	 * or <code>null</code> if this is not a working copy element
 	 */
+	@Override
 	public ICElement getOriginal(ICElement workingCopyElement) {
 		// It has to come from the same workingCopy, meaning ours.
 		if (workingCopyElement instanceof ISourceReference) {
@@ -207,10 +210,11 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 		}
 		return current;
 	}
-	
+
 	/**
 	 * @see org.eclipse.cdt.core.model.IWorkingCopy#getOriginalElement()
 	 */
+	@Override
 	public ITranslationUnit getOriginalElement() {
 		IFile file= getFile();
 		if (file != null) {
@@ -224,12 +228,12 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	 */
 	@Override
 	public IWorkingCopy getSharedWorkingCopy(IProgressMonitor monitor, IProblemRequestor requestor) {
-		return this;		
+		return this;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.core.model.ITranslationUnit#getWorkingCopy()
-	 */	
+	 */
 	@Override
 	public IWorkingCopy getWorkingCopy() {
 		return this;
@@ -246,6 +250,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	/**
 	 * @see IWorkingCopy
 	 */
+	@Override
 	public boolean isBasedOn(IResource resource) {
 		if (resource.getType() != IResource.FILE) {
 			return false;
@@ -282,12 +287,12 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	public void open(IProgressMonitor monitor) throws CModelException {
 		if (this.useCount == 0) { // was destroyed
 			throw newNotPresentException();
-		} 
+		}
 		super.open(monitor);
 		//if (monitor != null && monitor.isCanceled()) return;
 		//if (this.problemRequestor != null && this.problemRequestor.isActive()){
 		//	this.problemRequestor.beginReporting();
-		//	TranslationUnitProblemFinder.process(this, this.problemRequestor, monitor); 
+		//	TranslationUnitProblemFinder.process(this, this.problemRequestor, monitor);
 		//	this.problemRequestor.endReporting();
 		//}
 	}
@@ -298,10 +303,10 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	@Override
 	protected IBuffer openBuffer(IProgressMonitor pm) throws CModelException {
 		if (this.useCount == 0) throw newNotPresentException();
-	
+
 		// create buffer - working copies may use custom buffer factory
 		IBuffer buffer = getBufferFactory().createBuffer(this);
-		if (buffer == null) 
+		if (buffer == null)
 			return null;
 
 		// set the buffer source if needed
@@ -333,20 +338,22 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 		// listen to buffer changes
 		buffer.addBufferChangedListener(this);
 
-		return buffer;	
+		return buffer;
 	}
-	
+
 	/**
 	 * @see org.eclipse.cdt.core.model.IWorkingCopy#reconcile()
 	 */
+	@Override
 	public IMarker[] reconcile() throws CModelException {
 		reconcile(false, null);
 		return null;
 	}
-	
+
 	/**
 	 * @see org.eclipse.cdt.core.model.IWorkingCopy#reconcile(boolean, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void reconcile(boolean forceProblemDetection, IProgressMonitor monitor) throws CModelException {
 		reconcile(false, forceProblemDetection, monitor);
 	}
@@ -354,6 +361,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	/**
 	 * @see org.eclipse.cdt.core.model.IWorkingCopy#restore()
 	 */
+	@Override
 	public void restore() throws CModelException{
 		if (this.useCount == 0) throw newNotPresentException(); //was destroyed
 
@@ -362,7 +370,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 		if (buffer == null) return;
 		buffer.setContents(original.getContents());
 		updateTimeStamp(original);
-		makeConsistent(null);		
+		makeConsistent(null);
 	}
 
 	/**
@@ -375,7 +383,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 		}
 		// computes fine-grain deltas in case the working copy is being reconciled already
 		// (if not it would miss one iteration of deltas).
-		this.reconcile();   
+		this.reconcile();
 	}
 
 	/**
@@ -394,6 +402,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	/*
 	 * @see org.eclipse.cdt.core.model.IWorkingCopy#reconcile(boolean, boolean, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public IASTTranslationUnit reconcile(boolean computeAST, boolean forceProblemDetection, IProgressMonitor monitor)
 			throws CModelException {
 		if (this.useCount == 0)

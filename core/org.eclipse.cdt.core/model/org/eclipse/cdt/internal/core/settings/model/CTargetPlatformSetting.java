@@ -20,20 +20,23 @@ public class CTargetPlatformSetting extends CDataProxy implements
 		super(data, cfg, cfg);
 	}
 
+	@Override
 	public final int getType() {
 		return SETTING_TARGET_PLATFORM;
 	}
 
+	@Override
 	public String[] getBinaryParserIds() {
 		CTargetPlatformData data = getTargetPlatformData(false);
 		return data.getBinaryParserIds();
 	}
 
+	@Override
 	public void setBinaryParserIds(String[] ids) {
 		CTargetPlatformData data = getTargetPlatformData(true);
 		data.setBinaryParserIds(ids);
 	}
-	
+
 	private CTargetPlatformData getTargetPlatformData(boolean write){
 		return (CTargetPlatformData)getData(write);
 	}

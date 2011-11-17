@@ -54,6 +54,7 @@ public class BuildConsoleViewer extends TextViewer
 		 *
 		 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
 		 */
+		@Override
 		public void documentAboutToBeChanged(DocumentEvent e) {
 		}
 
@@ -62,6 +63,7 @@ public class BuildConsoleViewer extends TextViewer
 		 *
 		 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
 		 */
+		@Override
 		public void documentChanged(DocumentEvent e) {
 			revealEndOfDocument();
 		}
@@ -168,6 +170,7 @@ public class BuildConsoleViewer extends TextViewer
 	 *
 	 * @see org.eclipse.swt.custom.LineStyleListener#lineGetStyle(org.eclipse.swt.custom.LineStyleEvent)
 	 */
+	@Override
 	public void lineGetStyle(LineStyleEvent event) {
 		IDocument document = getDocument();
 		if (document == null) return;
@@ -223,17 +226,21 @@ public class BuildConsoleViewer extends TextViewer
 		}
 	}
 
+	@Override
 	public void mouseEnter(MouseEvent e) {
 		getTextWidget().addMouseListener(this);
 	}
 
+	@Override
 	public void mouseExit(MouseEvent e) {
 		getTextWidget().removeMouseListener(this);
 	}
 
+	@Override
 	public void mouseHover(MouseEvent e) {
 	}
 
+	@Override
 	public void mouseDoubleClick(MouseEvent e) {
 		int offset = -1;
 		try {
@@ -244,12 +251,15 @@ public class BuildConsoleViewer extends TextViewer
 		}
 	}
 
+	@Override
 	public void mouseDown(MouseEvent e) {
 	}
 
+	@Override
 	public void mouseUp(MouseEvent e) {
 	}
 
+	@Override
 	public void lineGetBackground(LineBackgroundEvent event) {
 		IDocument document = getDocument();
 		if (document == null) return;

@@ -103,12 +103,12 @@ public class CElementDelta implements ICElementDelta {
 				fChangeFlags |= F_CHILDREN;
 		}
 
-		// if a child delta is added to a translation unit delta or below, 
+		// if a child delta is added to a translation unit delta or below,
 		// it's a fine grained delta
 		if (!(fChangedElement.getElementType() >= ICElement.C_UNIT)) {
 			fineGrained();
 		}
-	
+
 		if (fAffectedChildren.length == 0) {
 			fAffectedChildren = new ICElementDelta[] {child};
 			return;
@@ -189,7 +189,7 @@ public class CElementDelta implements ICElementDelta {
 							return;
 					}
 					break;
-				default: 
+				default:
 					// unknown -> existing child becomes the child with the existing child's flags
 					int flags = existingChild.getFlags();
 					fAffectedChildren[existingChildIndex] = child;
@@ -201,7 +201,7 @@ public class CElementDelta implements ICElementDelta {
 	/**
 	 * Creates the nested deltas resulting from an add operation.
 	 * Convenience method for creating add deltas.
-	 * The constructor should be used to create the root delta 
+	 * The constructor should be used to create the root delta
 	 * and then an add operation should call this method.
 	 */
 	public void added(ICElement element) {
@@ -242,7 +242,7 @@ public class CElementDelta implements ICElementDelta {
 	/**
 	 * Creates the nested deltas resulting from a change operation.
 	 * Convenience method for creating change deltas.
-	 * The constructor should be used to create the root delta 
+	 * The constructor should be used to create the root delta
 	 * and then a change operation should call this method.
 	 */
 	public void changed(ICElement element, int changeFlag) {
@@ -329,6 +329,7 @@ public class CElementDelta implements ICElementDelta {
 	/**
 	 * @see ICElementDelta
 	 */
+	@Override
 	public ICElementDelta[] getAddedChildren() {
 		return getChildrenOfType(ADDED);
 	}
@@ -336,6 +337,7 @@ public class CElementDelta implements ICElementDelta {
 	/**
 	 * @see ICElementDelta
 	 */
+	@Override
 	public ICElementDelta[] getAffectedChildren() {
 		return fAffectedChildren;
 	}
@@ -366,6 +368,7 @@ public class CElementDelta implements ICElementDelta {
 	/**
 	 * @see ICElementDelta
 	 */
+	@Override
 	public ICElementDelta[] getChangedChildren() {
 		return getChildrenOfType(CHANGED);
 	}
@@ -415,6 +418,7 @@ public class CElementDelta implements ICElementDelta {
 	/**
 	 * @see ICElementDelta
 	 */
+	@Override
 	public ICElement getElement() {
 		return fChangedElement;
 	}
@@ -422,6 +426,7 @@ public class CElementDelta implements ICElementDelta {
 	/**
 	 * @see ICElementDelta
 	 */
+	@Override
 	public int getFlags() {
 		return fChangeFlags;
 	}
@@ -429,6 +434,7 @@ public class CElementDelta implements ICElementDelta {
 	/**
 	 * @see ICElementDelta
 	*/
+	@Override
 	public int getKind() {
 		return fKind;
 	}
@@ -436,6 +442,7 @@ public class CElementDelta implements ICElementDelta {
 	/**
 	 * @see ICElementDelta
 	 */
+	@Override
 	public ICElement getMovedFromElement() {
 		return fMovedFromHandle;
 	}
@@ -443,6 +450,7 @@ public class CElementDelta implements ICElementDelta {
 	/**
 	 * @see ICElementDelta
 	 */
+	@Override
 	public ICElement getMovedToElement() {
 		return fMovedToHandle;
 	}
@@ -450,6 +458,7 @@ public class CElementDelta implements ICElementDelta {
 	/**
 	 * @see ICElementDelta
 	 */
+	@Override
 	public ICElementDelta[] getRemovedChildren() {
 		return getChildrenOfType(REMOVED);
 	}
@@ -457,6 +466,7 @@ public class CElementDelta implements ICElementDelta {
 	/**
 	 * Return the collection of resource deltas. Return null if none.
 	 */
+	@Override
 	public IResourceDelta[] getResourceDeltas() {
 		if (resourceDeltas == null)
 			return null;
@@ -493,7 +503,7 @@ public class CElementDelta implements ICElementDelta {
 	/**
 	 * Creates the nested deltas resulting from an move operation.
 	 * Convenience method for creating the "move from" delta.
-	 * The constructor should be used to create the root delta 
+	 * The constructor should be used to create the root delta
 	 * and then the move operation should call this method.
 	 */
 	public void movedFrom(ICElement movedFromElement, ICElement movedToElement) {
@@ -507,7 +517,7 @@ public class CElementDelta implements ICElementDelta {
 	/**
 	 * Creates the nested deltas resulting from an move operation.
 	 * Convenience method for creating the "move to" delta.
-	 * The constructor should be used to create the root delta 
+	 * The constructor should be used to create the root delta
 	 * and then the move operation should call this method.
 	 */
 	public void movedTo(ICElement movedToElement, ICElement movedFromElement) {
@@ -563,7 +573,7 @@ public class CElementDelta implements ICElementDelta {
 	/**
 	 * Creates the nested deltas resulting from an delete operation.
 	 * Convenience method for creating removed deltas.
-	 * The constructor should be used to create the root delta 
+	 * The constructor should be used to create the root delta
 	 * and then the delete operation should call this method.
 	 */
 	public void removed(ICElement element) {
@@ -580,7 +590,7 @@ public class CElementDelta implements ICElementDelta {
 	/**
 	 * Creates the nested deltas resulting from a change operation.
 	 * Convenience method for creating change deltas.
-	 * The constructor should be used to create the root delta 
+	 * The constructor should be used to create the root delta
 	 * and then a change operation should call this method.
 	 */
 	public void binaryParserChanged(ICElement element) {
@@ -593,7 +603,7 @@ public class CElementDelta implements ICElementDelta {
 	/**
 	 * Creates the nested deltas resulting from a change operation.
 	 * Convenience method for creating change deltas.
-	 * The constructor should be used to create the root delta 
+	 * The constructor should be used to create the root delta
 	 * and then a change operation should call this method.
 	 */
 	public void sourceAttached(ICElement element) {
@@ -606,7 +616,7 @@ public class CElementDelta implements ICElementDelta {
 	/**
 	 * Creates the nested deltas resulting from a change operation.
 	 * Convenience method for creating change deltas.
-	 * The constructor should be used to create the root delta 
+	 * The constructor should be used to create the root delta
 	 * and then a change operation should call this method.
 	 */
 	public void sourceDetached(ICElement element) {
@@ -616,7 +626,7 @@ public class CElementDelta implements ICElementDelta {
 		insertDeltaTree(element, detachedDelta);
 	}
 
-	/** 
+	/**
 	 * Returns a string representation of this delta's
 	 * structure suitable for debug purposes.
 	 *
@@ -761,7 +771,7 @@ public class CElementDelta implements ICElementDelta {
 		return buffer.toString();
 	}
 
-	/** 
+	/**
 	 * Returns a string representation of this delta's
 	 * structure suitable for debug purposes.
 	 */

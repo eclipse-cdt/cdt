@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom;
 
 import java.io.IOException;
@@ -29,7 +29,8 @@ public abstract class AbstractCodeReaderFactory implements ICodeReaderFactory, I
 	public AbstractCodeReaderFactory(IIncludeFileResolutionHeuristics heuristics) {
 		fHeuristics= heuristics;
 	}
-	
+
+	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Object getAdapter(Class adapter) {
 		if (adapter.isAssignableFrom(IIncludeFileResolutionHeuristics.class)) {

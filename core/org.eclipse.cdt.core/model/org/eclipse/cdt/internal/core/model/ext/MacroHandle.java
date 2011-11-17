@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.model.ext;
 
 import org.eclipse.cdt.core.index.IIndexMacro;
@@ -24,14 +24,17 @@ public class MacroHandle extends CElementHandle implements IMacro {
 		fFunctionStyle= macro.isFunctionStyle();
 	}
 
+	@Override
 	public String getIdentifierList() {
 		return ""; //$NON-NLS-1$
 	}
 
+	@Override
 	public String getTokenSequence() {
 		return ""; //$NON-NLS-1$
 	}
 
+	@Override
 	public boolean isFunctionStyle() {
 		return fFunctionStyle;
 	}

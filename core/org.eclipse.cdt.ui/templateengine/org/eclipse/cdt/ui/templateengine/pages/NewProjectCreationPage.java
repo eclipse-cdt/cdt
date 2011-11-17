@@ -25,20 +25,21 @@ import org.eclipse.cdt.ui.templateengine.IWizardDataPage;
  * The first page in a NewProjectWizard. This is the wizard page that
  * asks the user for the name and location of the new project.
  */
-public class NewProjectCreationPage extends WizardNewProjectCreationPage implements IWizardDataPage {	
+public class NewProjectCreationPage extends WizardNewProjectCreationPage implements IWizardDataPage {
 	private static final String ERROR_SUFFIX = Messages.getString("NewProjectCreationPage.0"); //$NON-NLS-1$
 	private static final String ERROR_SUFFIX_TOO_LONG = Messages.getString("NewProjectCreationPage.1"); //$NON-NLS-1$
 	private static final Status OK_STATUS = new Status(IStatus.OK, CUIPlugin.getPluginId(), 0, "", null); //$NON-NLS-1$
 
 	private Map<String, String> data;
 	private IWizardPage next;
-	
+
 	public NewProjectCreationPage(String name) {
 		super(name);
 		data= new HashMap<String, String>();
 		this.setDescription(Messages.getString("NewProjectCreationPage.3"));	 //$NON-NLS-1$
 	}
 
+	@Override
 	public Map<String, String> getPageData() {
 		String projName = super.getProjectName().trim();
 		data.put("projectName", projName); //$NON-NLS-1$
@@ -61,7 +62,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage impleme
 		}
 		return baseName;
 	}
-	
+
 	@Override
 	protected boolean validatePage() {
 		if (super.validatePage() == true) {
@@ -74,38 +75,38 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage impleme
 		}
 		return false;
 	}
-	
+
 	/**
-	 * Projects names should only be alphanumeric and can contain ' ' and '_' chars. 
+	 * Projects names should only be alphanumeric and can contain ' ' and '_' chars.
 	 * Names are limited to 31 chars. Names cannot end in a '.' char.  Note that '.'
 	 * characters currently not allowed as many of the command line generators get
 	 * the name wrong for generated files.  e.g. my.foo project name results in
 	 * foo.rsc, foo.rsg, etc.. rather than the expected my.foo.rsc.
-	 * @param projectName - The unmodified project name from the project wizard. 
+	 * @param projectName - The unmodified project name from the project wizard.
 	 * @return an IStatus message on error.
-	 * 
+	 *
 	 * Note: Platform may have a different project name constraints. Please subclass this
 	 * to add your own versions of validnames for template projects.
 	 */
 	private IStatus isValidName(String projectName) {
 		//String baseName = getBaseName(projectName);
 		String baseName = projectName;
-		
+
 		if (!Character.isLetter(baseName.charAt(0))) {
 			return new Status(IStatus.ERROR, CUIPlugin.getPluginId(), IStatus.ERROR, projectName + ERROR_SUFFIX, null);
 		}
-		
+
 		if (baseName.length() > 31) {
 			return new Status(IStatus.ERROR, CUIPlugin.getPluginId(), IStatus.ERROR, projectName + ERROR_SUFFIX_TOO_LONG, null);
 		}
-		
+
 		for (int i = 1, l = baseName.length(); i < l; i++) {
 			char c = baseName.charAt(i);
 			if (!Character.isLetterOrDigit(c) && c != '_' && c != ' ') {
 				return new Status(IStatus.ERROR, CUIPlugin.getPluginId(), IStatus.ERROR, projectName + ERROR_SUFFIX, null);
 			}
 		}
-		
+
 		return OK_STATUS;
 	}
 
@@ -113,10 +114,11 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage impleme
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.templateengine.IWizardDataPage#setNextPage(org.eclipse.jface.wizard.IWizardPage)
 	 */
+	@Override
 	public void setNextPage(IWizardPage next) {
 		this.next= next;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.WizardPage#getNextPage()

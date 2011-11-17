@@ -38,7 +38,7 @@ import org.eclipse.cdt.ui.templateengine.uitree.uiwidgets.UIComposite;
 public class UIWizardPage extends UIPage implements IWizardDataPage, PatternEventListener {
 
 	/**
-	 * This map will contain reference to the source widgets, which has generated the 
+	 * This map will contain reference to the source widgets, which has generated the
 	 * SWT events. If this map contains an event source, the error message will not be cleared.
 	 */
 	HashMap<Object, String> validInvalid;
@@ -64,10 +64,10 @@ public class UIWizardPage extends UIPage implements IWizardDataPage, PatternEven
 	private IWizardPage previousPage = null;
 
 	private IWizardPage nextPage = null;
-	
+
 	/**
 	 * Title of the page, Page Name and UIElement group are the parameters.
-	 * 
+	 *
 	 * @param title
 	 *            Title of this page
 	 * @param pageName
@@ -84,9 +84,10 @@ public class UIWizardPage extends UIPage implements IWizardDataPage, PatternEven
 
 	/**
 	 * returns true if the page is complete, and there is a next page to flip.
-	 * 
+	 *
 	 * @return boolean. true if can flip to next page, otherwise false.
 	 */
+	@Override
 	public boolean canFlipToNextPage() {
 		boolean retVal = false;
 
@@ -110,7 +111,7 @@ public class UIWizardPage extends UIPage implements IWizardDataPage, PatternEven
 
 	/**
 	 * Returns the dialog setting for this wizard page. null, if none exists.
-	 * 
+	 *
 	 * @return IDialogSettings, if Wizard is not set null.
 	 */
 
@@ -124,7 +125,7 @@ public class UIWizardPage extends UIPage implements IWizardDataPage, PatternEven
 	/**
 	 * Overloaded from DialogPage get the Image from the super class,
 	 * DialogPage. if not defined, then the default page Image is returned.
-	 * 
+	 *
 	 * @return Image.
 	 */
 
@@ -141,25 +142,28 @@ public class UIWizardPage extends UIPage implements IWizardDataPage, PatternEven
 	/**
 	 * @return String, page Name.
 	 */
+	@Override
 	public String getName() {
 		return name;
 	}
 
 	/**
 	 * gets the Nextpage to be displayed, if set.
-	 * 
+	 *
 	 * @return IWizardPage.
 	 */
+	@Override
 	public IWizardPage getNextPage() {
 		if (nextPage != null)
 			return nextPage;
-		
+
 		if (wizard == null)
 			return null;
 
 		return wizard.getNextPage(this);
 	}
-	
+
+	@Override
 	public void setNextPage(IWizardPage page) {
 		nextPage  = page;
 	}
@@ -168,9 +172,10 @@ public class UIWizardPage extends UIPage implements IWizardDataPage, PatternEven
 	 * returns the PreviousPage, if Previous page is not initialized. Wizard is
 	 * checked for previous page. if wizard for this page is not set null is
 	 * returned.
-	 * 
+	 *
 	 * @return IWizardPage
 	 */
+	@Override
 	public IWizardPage getPreviousPage() {
 		if (previousPage != null)
 			return previousPage;
@@ -197,16 +202,17 @@ public class UIWizardPage extends UIPage implements IWizardDataPage, PatternEven
 
 	/**
 	 * returns the Wizard instance to which this page is added.
-	 * 
+	 *
 	 * @return IWizard.
 	 */
+	@Override
 	public IWizard getWizard() {
 		return wizard;
 	}
 
 	/**
 	 * is this is the current page being displayed.
-	 * 
+	 *
 	 * @return boolean, true if this is the current page. otherwise false.
 	 */
 	protected boolean isCurrentPage() {
@@ -220,6 +226,7 @@ public class UIWizardPage extends UIPage implements IWizardDataPage, PatternEven
 	/**
 	 * @return boolean, true if this page is complete, otherwise false.
 	 */
+	@Override
 	public boolean isPageComplete() {
 		return isPageComplete;
 	}
@@ -237,8 +244,9 @@ public class UIWizardPage extends UIPage implements IWizardDataPage, PatternEven
 
 	/**
 	 * Method from IWizardPage
-	 * 
+	 *
 	 */
+	@Override
 	public void setPreviousPage(IWizardPage page) {
 		previousPage = page;
 	}
@@ -246,8 +254,9 @@ public class UIWizardPage extends UIPage implements IWizardDataPage, PatternEven
 	/**
 	 * set the Wizard for this page, the wizard will contain this page. In the
 	 * list of pages which will be displayed as part of this Wizard.
-	 * 
+	 *
 	 */
+	@Override
 	public void setWizard(IWizard newWizard) {
 		wizard = newWizard;
 	}
@@ -263,22 +272,23 @@ public class UIWizardPage extends UIPage implements IWizardDataPage, PatternEven
 	/**
 	 * Creates the top level control for this dialog page under the given parent
 	 * composite.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		initializeDialogUnits(parent);
 		uiComposite = new UIComposite(parent, uiElement, valueStore);
 		uiComposite.addPatternListener(this);
 		uiElement.createWidgets(uiComposite);
-		
+
 		// set the focus so that InfoPop is displayed when F1 is Pressed.
 		uiComposite.setFocus();
-		
+
 		setControl(uiComposite);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), pageId);
-		
+
 		setPageComplete(uiComposite.isValid());
 	}
 
@@ -289,17 +299,18 @@ public class UIWizardPage extends UIPage implements IWizardDataPage, PatternEven
 	 * the Container. Which has to reflect the same as an ErrorMeesage. Get the
 	 * source of the PatternEvent, and the error String causing the
 	 * PatternEvent. Store this pair in validInvalid HashMap.
-	 * 
+	 *
 	 */
+	@Override
 	public void patternPerformed(PatternEvent patternEvent) {
 		if (!patternEvent.getValid()) {
-			
+
 			validInvalid.put(patternEvent.getSource(), patternEvent.toString());
 			setErrorMessage(getErrorString());
 			setPageComplete(validInvalid.isEmpty() && uiComposite.isValid());
 
 		} else {
-			
+
 			validInvalid.remove(patternEvent.getSource());
 			setPageComplete(validInvalid.isEmpty() && uiComposite.isValid());
 			if (validInvalid.isEmpty()) {
@@ -316,13 +327,13 @@ public class UIWizardPage extends UIPage implements IWizardDataPage, PatternEven
 	 * Iterate through the validInvalid HashMap, formulate the error string
 	 * return the same. This will ensure that the proper error string is
 	 * updated.
-	 * 
+	 *
 	 * @return
 	 */
 	private String getErrorString() {
 		Iterator<Object> iterator = validInvalid.keySet().iterator();
 		String message = ""; //$NON-NLS-1$
-		
+
 		// only display one error message at a time
 		if (iterator.hasNext()) {
 			message = validInvalid.get(iterator.next());

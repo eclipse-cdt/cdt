@@ -99,12 +99,15 @@ public class FormatAllAction extends SelectionDispatchAction {
 	 */
 	public static class ObjectDelegate implements IObjectActionDelegate {
 		private FormatAllAction fAction;
+		@Override
 		public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 			fAction= new FormatAllAction(targetPart.getSite());
 		}
+		@Override
 		public void run(IAction action) {
 			fAction.run();
 		}
+		@Override
 		public void selectionChanged(IAction action, ISelection selection) {
 			if (fAction == null)
 				action.setEnabled(false);
@@ -125,8 +128,8 @@ public class FormatAllAction extends SelectionDispatchAction {
 		setText(ActionMessages.FormatAllAction_label);
 		setToolTipText(ActionMessages.FormatAllAction_tooltip);
 		setDescription(ActionMessages.FormatAllAction_description);
-		
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.FORMAT_ALL);					
+
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.FORMAT_ALL);
 	}
 
 
@@ -151,7 +154,7 @@ public class FormatAllAction extends SelectionDispatchAction {
 						switch (elem.getElementType()) {
 							case ICElement.C_UNIT:
 								result.add(elem);
-								break;		
+								break;
 							case ICElement.C_CCONTAINER:
 								collectTranslationUnits((ICContainer) elem, result);
 								break;
@@ -172,7 +175,7 @@ public class FormatAllAction extends SelectionDispatchAction {
 		}
 		return result.toArray(new ITranslationUnit[result.size()]);
 	}
-	
+
 	private void collectTranslationUnits(ICProject project, Collection<ICElement> result) throws CModelException {
 		ISourceRoot[] roots = project.getSourceRoots();
 		for (ISourceRoot root : roots) {
@@ -195,7 +198,7 @@ public class FormatAllAction extends SelectionDispatchAction {
 				}
 			}
 		}
-	}	
+	}
 
 	private boolean isEnabled(IStructuredSelection selection) {
 		Object[] selected= selection.toArray();
@@ -218,7 +221,7 @@ public class FormatAllAction extends SelectionDispatchAction {
 		}
 		return false;
 	}
-	
+
 	@Override
 	public void run(ITextSelection selection) {
 	}
@@ -230,23 +233,23 @@ public class FormatAllAction extends SelectionDispatchAction {
 			return;
 		if (tus.length > 1) {
 			int returnCode= OptionalMessageDialog.open("FormatAll",  //$NON-NLS-1$
-					getShell(), 
-					ActionMessages.FormatAllAction_noundo_title, 
+					getShell(),
+					ActionMessages.FormatAllAction_noundo_title,
 					null,
-					ActionMessages.FormatAllAction_noundo_message,  
-					MessageDialog.WARNING, 		
-					new String[] {IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL}, 
+					ActionMessages.FormatAllAction_noundo_message,
+					MessageDialog.WARNING,
+					new String[] {IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL},
 					0);
-			if (returnCode != OptionalMessageDialog.NOT_SHOWN && 
+			if (returnCode != OptionalMessageDialog.NOT_SHOWN &&
 					returnCode != Window.OK ) return;
 		}
-				
+
 		IStatus status= Resources.makeCommittable(getResources(tus), getShell());
 		if (!status.isOK()) {
-			ErrorDialog.openError(getShell(), ActionMessages.FormatAllAction_failedvalidateedit_title, ActionMessages.FormatAllAction_failedvalidateedit_message, status); 
+			ErrorDialog.openError(getShell(), ActionMessages.FormatAllAction_failedvalidateedit_title, ActionMessages.FormatAllAction_failedvalidateedit_message, status);
 			return;
 		}
-		
+
 		runOnMultiple(tus);
 	}
 
@@ -264,35 +267,36 @@ public class FormatAllAction extends SelectionDispatchAction {
 	 */
 	public void runOnMultiple(final ITranslationUnit[] tus) {
 		try {
-			String message= ActionMessages.FormatAllAction_status_description; 
+			String message= ActionMessages.FormatAllAction_status_description;
 			final MultiStatus status= new MultiStatus(CUIPlugin.PLUGIN_ID, IStatus.OK, message, null);
-			
+
 			if (tus.length == 1) {
 				EditorUtility.openInEditor(tus[0]);
 			}
-			
+
 			PlatformUI.getWorkbench().getProgressService().run(true, true, new WorkbenchRunnableAdapter(new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) {
 					doRunOnMultiple(tus, status, monitor);
 				}
 			})); // workspace lock
 			if (!status.isOK()) {
-				String title= ActionMessages.FormatAllAction_multi_status_title; 
+				String title= ActionMessages.FormatAllAction_multi_status_title;
 				ErrorDialog.openError(getShell(), title, null, status);
 			}
 		} catch (InvocationTargetException e) {
-			ExceptionHandler.handle(e, getShell(), ActionMessages.FormatAllAction_error_title, ActionMessages.FormatAllAction_error_message); 
+			ExceptionHandler.handle(e, getShell(), ActionMessages.FormatAllAction_error_title, ActionMessages.FormatAllAction_error_message);
 		} catch (InterruptedException e) {
 			// Canceled by user
 		} catch (CoreException e) {
-			ExceptionHandler.handle(e, getShell(), ActionMessages.FormatAllAction_error_title, ActionMessages.FormatAllAction_error_message); 
+			ExceptionHandler.handle(e, getShell(), ActionMessages.FormatAllAction_error_title, ActionMessages.FormatAllAction_error_message);
 		}
 	}
 
 	private static Map<String, Object> getFomatterSettings(ICProject project) {
 		return new HashMap<String, Object>(project.getOptions(true));
 	}
-	
+
 	private void doFormat(IDocument document, Map<String, Object> options) {
 		final IFormattingContext context = new FormattingContext();
 		try {
@@ -323,7 +327,7 @@ public class FormatAllAction extends SelectionDispatchAction {
 			extension.startSequentialRewrite(false);
 		}
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	private void stopSequentialRewriteMode(IDocument document) {
 		if (document instanceof IDocumentExtension4) {
@@ -334,18 +338,18 @@ public class FormatAllAction extends SelectionDispatchAction {
 			extension.stopSequentialRewrite();
 		}
 	}
-	
+
 	private void doRunOnMultiple(ITranslationUnit[] tus, MultiStatus status, IProgressMonitor monitor) throws OperationCanceledException {
 		if (monitor == null) {
 			monitor= new NullProgressMonitor();
-		}	
-		monitor.setTaskName(ActionMessages.FormatAllAction_operation_description); 
-	
+		}
+		monitor.setTaskName(ActionMessages.FormatAllAction_operation_description);
+
 		monitor.beginTask("", tus.length * 4); //$NON-NLS-1$
 		try {
 			Map<String, Object> lastOptions= null;
 			ICProject lastProject= null;
-			
+
 			for (int i= 0; i < tus.length; i++) {
 				ITranslationUnit tu= tus[i];
 				IPath path= tu.getPath();
@@ -353,7 +357,7 @@ public class FormatAllAction extends SelectionDispatchAction {
 					lastProject= tu.getCProject();
 					lastOptions= getFomatterSettings(lastProject);
 				}
-				
+
 				ILanguage language= null;
 				try {
 					language= tu.getLanguage();
@@ -361,7 +365,7 @@ public class FormatAllAction extends SelectionDispatchAction {
 					// use fallback CPP
 					language= GPPLanguage.getDefault();
 				}
-				
+
 				// use working copy if available
 				ITranslationUnit wc = CDTUITools.getWorkingCopyManager().findSharedWorkingCopy(tu);
 				if (wc != null) {
@@ -374,18 +378,18 @@ public class FormatAllAction extends SelectionDispatchAction {
 				if (monitor.isCanceled()) {
 					throw new OperationCanceledException();
 				}
-				
+
 				ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 				try {
 					try {
 						manager.connect(path, LocationKind.IFILE, new SubProgressMonitor(monitor, 1));
-		
+
 						monitor.subTask(path.makeRelative().toString());
 						ITextFileBuffer fileBuffer= manager.getTextFileBuffer(path, LocationKind.IFILE);
 						boolean wasDirty = fileBuffer.isDirty();
-						
+
 						formatTranslationUnit(fileBuffer, lastOptions);
-						
+
 						if (fileBuffer.isDirty() && !wasDirty) {
 							fileBuffer.commit(new SubProgressMonitor(monitor, 2), false);
 						} else {
@@ -402,10 +406,11 @@ public class FormatAllAction extends SelectionDispatchAction {
 			monitor.done();
 		}
 	}
-	
+
 	private void formatTranslationUnit(final ITextFileBuffer fileBuffer, final Map<String, Object> options) {
 		if (fileBuffer.isShared()) {
 			getShell().getDisplay().syncExec(new Runnable() {
+				@Override
 				public void run() {
 					doFormat(fileBuffer.getDocument(), options);
 				}
@@ -414,5 +419,5 @@ public class FormatAllAction extends SelectionDispatchAction {
 			doFormat(fileBuffer.getDocument(), options); // run in context thread
 		}
 	}
-	
+
 }

@@ -157,6 +157,7 @@ final public class CConfigBasedDescriptor implements ICDescriptor {
 			fCfgExtRef = cfgRef;
 		}
 
+		@Override
 		public ICExtension createExtension() throws CoreException {
 			AbstractCExtension cExtension = null;
 			IConfigurationElement el = CExtensionUtil.getFirstConfigurationElement(fCfgExtRef, CEXTENSION_NAME, false);
@@ -166,18 +167,22 @@ final public class CConfigBasedDescriptor implements ICDescriptor {
 			return cExtension;
 		}
 
+		@Override
 		public ICDescriptor getCDescriptor() {
 			return CConfigBasedDescriptor.this;
 		}
 
+		@Override
 		public String getExtension() {
 			return fCfgExtRef.getExtensionPoint();
 		}
 
+		@Override
 		public String getExtensionData(String key) {
 			return fCfgExtRef.getExtensionData(key);
 		}
 
+		@Override
 		public IConfigurationElement[] getExtensionElements()
 				throws CoreException {
 			IConfigurationElement el = CExtensionUtil.getFirstConfigurationElement(fCfgExtRef, CEXTENSION_NAME, false);
@@ -186,10 +191,12 @@ final public class CConfigBasedDescriptor implements ICDescriptor {
 			return new IConfigurationElement[0];
 		}
 
+		@Override
 		public String getID() {
 			return fCfgExtRef.getID();
 		}
 
+		@Override
 		public void setExtensionData(String key, String value)
 				throws CoreException {
 			if(!CDataUtil.objectsEqual(fCfgExtRef.getExtensionData(key), value)){
@@ -286,6 +293,7 @@ final public class CConfigBasedDescriptor implements ICDescriptor {
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.core.ICDescriptor#create(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public ICExtensionReference create(String extensionPoint, String id) throws CoreException {
 		try {
 			fLock.acquire();
@@ -356,6 +364,7 @@ final public class CConfigBasedDescriptor implements ICDescriptor {
 	 * FIXME re-add caching (the current behaviour mirrors the previous behaviour -- just tidier)
 	 *  @return an array of ICExtenionReference
 	 */
+	@Override
 	public ICExtensionReference[] get(String extensionPoint) {
 		try {
 			fLock.acquire();
@@ -380,6 +389,7 @@ final public class CConfigBasedDescriptor implements ICDescriptor {
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.core.ICDescriptor#get(java.lang.String, boolean)
 	 */
+	@Override
 	public ICExtensionReference[] get(String extensionPoint, boolean update) throws CoreException {
 		try {
 			fLock.acquire();
@@ -399,6 +409,7 @@ final public class CConfigBasedDescriptor implements ICDescriptor {
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.core.ICDescriptor#getPlatform()
 	 */
+	@Override
 	public String getPlatform() {
 		try {
 			fLock.acquire();
@@ -412,6 +423,7 @@ final public class CConfigBasedDescriptor implements ICDescriptor {
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.core.ICDescriptor#getProject()
 	 */
+	@Override
 	public IProject getProject() {
 		try {
 			fLock.acquire();
@@ -429,6 +441,7 @@ final public class CConfigBasedDescriptor implements ICDescriptor {
 	 * returned ICStorageElement. We must allow this as this is how the existing implementation
 	 * behaves.
 	 */
+	@Override
 	public ICStorageElement getProjectStorageElement(String id) throws CoreException {
 		try {
 			fLock.acquire();
@@ -460,6 +473,7 @@ final public class CConfigBasedDescriptor implements ICDescriptor {
 	 * Currently relies on the fact that the only implementation if ICStorageElement
 	 * in the core is XmlStorageElement.
 	 */
+	@Override
 	public Element getProjectData(String id) throws CoreException {
 		try {
 			fLock.acquire();
@@ -484,6 +498,7 @@ final public class CConfigBasedDescriptor implements ICDescriptor {
 				final Element xmlEl = ((XmlStorageElement)el).fElement;
 				// This proxy synchronizes the storage element's root XML Element
 				el = new XmlStorageElement((Element)Proxy.newProxyInstance(Element.class.getClassLoader(), new Class[]{Element.class}, new InvocationHandler(){
+					@Override
 					public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 						Method realMethod = xmlEl.getClass().getMethod(method.getName(), method.getParameterTypes());
 						// Now just execute the method
@@ -493,6 +508,7 @@ final public class CConfigBasedDescriptor implements ICDescriptor {
 							if (method.getName().equals("getParentNode")) { //$NON-NLS-1$
 								final Node parent = (Node)realMethod.invoke(xmlEl, args);
 								Node parentProxy = (Node)Proxy.newProxyInstance(Node.class.getClassLoader(), new Class[]{Node.class}, new InvocationHandler(){
+									@Override
 									public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 										Method realMethod = parent.getClass().getMethod(method.getName(), method.getParameterTypes());
 										synchronized (xmlEl) {
@@ -535,6 +551,7 @@ final public class CConfigBasedDescriptor implements ICDescriptor {
 		}
 	}
 
+	@Override
 	public ICStorageElement removeProjectStorageElement(String id) throws CoreException {
 		try {
 			fLock.acquire();
@@ -544,6 +561,7 @@ final public class CConfigBasedDescriptor implements ICDescriptor {
 		}
 	}
 
+	@Override
 	public ICOwnerInfo getProjectOwner() {
 		try {
 			fLock.acquire();
@@ -553,6 +571,7 @@ final public class CConfigBasedDescriptor implements ICDescriptor {
 		}
 	}
 
+	@Override
 	public void remove(ICExtensionReference extension) throws CoreException {
 		try {
 			fLock.acquire();
@@ -584,6 +603,7 @@ final public class CConfigBasedDescriptor implements ICDescriptor {
 		}
 	}
 
+	@Override
 	public void remove(String extensionPoint) throws CoreException {
 		try {
 			fLock.acquire();
@@ -611,6 +631,7 @@ final public class CConfigBasedDescriptor implements ICDescriptor {
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.core.ICDescriptor#saveProjectData()
 	 */
+	@Override
 	public void saveProjectData() throws CoreException {
 		try {
 			fLock.acquire();
@@ -631,6 +652,7 @@ final public class CConfigBasedDescriptor implements ICDescriptor {
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.core.ICDescriptor#getConfigurationDescription()
 	 */
+	@Override
 	public ICConfigurationDescription getConfigurationDescription() {
 		try {
 			fLock.acquire();

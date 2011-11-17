@@ -26,6 +26,7 @@ public class MapProxyCache implements IProxyCache {
 		return fMap;
 	}
 
+	@Override
 	public CDataProxy[] getCachedProxies() {
 		Map<String, CDataProxy> map = getMap(false);
 		if(map != null){
@@ -35,6 +36,7 @@ public class MapProxyCache implements IProxyCache {
 		return new CDataProxy[0];
 	}
 
+	@Override
 	public CDataProxy getCachedProxy(String id) {
 		Map<String, CDataProxy> map = getMap(false);
 		if(map != null)
@@ -42,29 +44,35 @@ public class MapProxyCache implements IProxyCache {
 		return null;
 	}
 
+	@Override
 	public void removeCachedProxy(String id) {
 		Map<String, CDataProxy> map = getMap(false);
 		if(map != null)
 			map.remove(id);
 	}
 
+	@Override
 	public void clear() {
 		fMap.clear();
 	}
 
+	@Override
 	public void addCachedProxy(CDataProxy proxy) {
 		getMap(true).put(proxy.getId(), proxy);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public Map<String, CDataProxy> getCachedProxiesMap() {
 		return (Map<String, CDataProxy>)getMap(true).clone();
 	}
 
+	@Override
 	public CDataProxy getCachedProxy(CDataObject data) {
 		return getCachedProxy(data.getId());
 	}
 
+	@Override
 	public void removeCachedProxy(CDataProxy proxy) {
 		removeCachedProxy(proxy.getId());
 	}

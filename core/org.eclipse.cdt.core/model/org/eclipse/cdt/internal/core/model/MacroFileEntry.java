@@ -32,9 +32,10 @@ public class MacroFileEntry extends APathEntry implements IMacroFileEntry {
 
 	/**
 	 * Returns the macro file path
-	 * 
+	 *
 	 * @return IPath
 	 */
+	@Override
 	public IPath getMacroFilePath() {
 		return macroFilePath;
 	}
@@ -81,6 +82,7 @@ public class MacroFileEntry extends APathEntry implements IMacroFileEntry {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.IIncludeEntry#getFullIncludePath()
 	 */
+	@Override
 	public IPath getFullMacroFilePath() {
 		IPath p;
 		IPath inc = getMacroFilePath();
@@ -95,7 +97,7 @@ public class MacroFileEntry extends APathEntry implements IMacroFileEntry {
 			p = loc.append(inc);
 			return p;
 		}
-		
+
 		p = inc;
 
 		if (!p.isAbsolute()) {

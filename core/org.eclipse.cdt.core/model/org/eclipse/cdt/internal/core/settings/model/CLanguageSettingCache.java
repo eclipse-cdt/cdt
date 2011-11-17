@@ -54,29 +54,30 @@ public class CLanguageSettingCache extends CDefaultLanguageData implements
 		return getSettingEntries();
 	}
 */
+	@Override
 	public ICLanguageSettingEntry[] getResolvedSettingEntries(int kind) {
 		ICLanguageSettingEntry[] entries = getSettingEntries(kind);
 		if(entries.length != 0){
 			if(fResolvedEntriesStore == null){
 				fResolvedEntriesStore = new EntryStore();
 			}
-			
+
 			ICLanguageSettingEntry[] resolved = fResolvedEntriesStore.getEntries(kind);
 			if(resolved.length == 0){
 				resolved = CDataUtil.resolveEntries(entries, getConfiguration());
 				fResolvedEntriesStore.storeEntries(kind, resolved);
 			}
-			
+
 			entries = resolved;
 		}
 		return entries;
 	}
-	
+
 	private IProject getProject(){
 		return getConfiguration().getProjectDescription().getProject();
 	}
 
-	
+
 	@Override
 	public String[] getSourceExtensions() {
 		if(fCachedExtensions == null ){
@@ -91,17 +92,18 @@ public class CLanguageSettingCache extends CDefaultLanguageData implements
 				else
 					exts = CDefaultLanguageData.EMPTY_STRING_ARRAY;
 			}
-			
+
 			if(exts == null)
 				exts = CDefaultLanguageData.EMPTY_STRING_ARRAY;
 			fCachedExtensions = exts;
 		}
-		
+
 		if(fCachedExtensions.length != 0)
 			return fCachedExtensions.clone();
 		return fCachedExtensions;
 	}
 
+	@Override
 	public ICLanguageSettingEntry[] getSettingEntries(int kind) {
 //		int kinds[] = KindBasedStore.getSupportedKinds();
 //		List list = new ArrayList();
@@ -114,7 +116,8 @@ public class CLanguageSettingCache extends CDefaultLanguageData implements
 //		return (ICLanguageSettingEntry[])list.toArray(new ICLanguageSettingEntry[list.size()]);
 		return fStore.getEntries(kind);
 	}
-	
+
+	@Override
 	public List<ICLanguageSettingEntry> getSettingEntriesList(int kind) {
 //		int kinds[] = KindBasedStore.getSupportedKinds();
 //		List list = new ArrayList();
@@ -127,7 +130,7 @@ public class CLanguageSettingCache extends CDefaultLanguageData implements
 //		return (ICLanguageSettingEntry[])list.toArray(new ICLanguageSettingEntry[list.size()]);
 		return fStore.getEntriesList(kind);
 	}
-	
+
 
 	@Override
 	public void setLanguageId(String id) {
@@ -138,6 +141,7 @@ public class CLanguageSettingCache extends CDefaultLanguageData implements
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
 
+	@Override
 	public void setSettingEntries(int kind, List<ICLanguageSettingEntry> entriesList) {
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
@@ -147,22 +151,27 @@ public class CLanguageSettingCache extends CDefaultLanguageData implements
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
 
+	@Override
 	public void setSettingEntries(int kind, ICLanguageSettingEntry[] entries) {
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
 
+	@Override
 	public boolean supportsEntryKind(int kind) {
 		return (getSupportedEntryKinds() & kind) == kind;
 	}
 
+	@Override
 	public ICConfigurationDescription getConfiguration() {
 		return fParent.getConfiguration();
 	}
 
+	@Override
 	public ICSettingContainer getParent() {
 		return fParent;
 	}
 
+	@Override
 	public boolean isReadOnly() {
 		return true;
 	}

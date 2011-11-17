@@ -8,7 +8,7 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *    Anton Leherbauer (Wind River Systems)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.model.ext;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
@@ -43,22 +43,27 @@ public class FunctionDeclarationHandle extends CElementHandle implements IFuncti
 		return false;
 	}
 
+	@Override
 	public int getNumberOfParameters() {
 		return fParameterTypes.length;
 	}
 
+	@Override
 	public String[] getParameterTypes() {
 		return fParameterTypes;
 	}
 
+	@Override
 	public String getReturnType() {
 		return fReturnType;
 	}
-	
+
+	@Override
 	public String getSignature() throws CModelException {
 		return FunctionDeclaration.getSignature(this);
 	}
 
+	@Override
 	public boolean isStatic() throws CModelException {
 		return fIsStatic;
 	}

@@ -37,7 +37,7 @@ import org.eclipse.cdt.utils.ui.controls.IFileListChangeListener;
 
 /**
  * This gives a Label and StringList Widget.
- * 
+ *
  */
 public class UIStringListWidget extends InputUIElement {
 	/**
@@ -54,7 +54,7 @@ public class UIStringListWidget extends InputUIElement {
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param attribute
 	 *            attribute associated with this widget.
 	 */
@@ -80,7 +80,7 @@ public class UIStringListWidget extends InputUIElement {
 
 	/**
 	 * Set the Text widget with new value.
-	 * 
+	 *
 	 * @param valueMap
 	 */
 	@Override
@@ -100,7 +100,7 @@ public class UIStringListWidget extends InputUIElement {
 	 * create a Label and StringList widget, add it to UIComposite. set Layout
 	 * for the widgets to be added to UIComposite. set required parameters to
 	 * the Widgets.
-	 * 
+	 *
 	 * @param uiComposite
 	 */
 	@Override
@@ -129,16 +129,17 @@ public class UIStringListWidget extends InputUIElement {
 		fileListControl.setList(itemsList.toArray(new String[itemsList.size()]));
 		fileListControl.setSelection(0);
 		fileListControl.addChangeListener(new IFileListChangeListener(){
+			@Override
 			public void fileListChanged(FileListControl fileList, String oldValue[], String newValue[]) {
 				itemsList.clear();
 				itemsList.addAll(Arrays.asList(newValue));
 				uiComposite.firePatternEvent(createPatternEvent());
 			}
 		});
-		
+
 		uiComposite.firePatternEvent(createPatternEvent());
 	}
-	
+
 	protected PatternEvent createPatternEvent() {
 		String msg= MessageFormat.format("Please add an item to {0}", new String[] {label.getText()}); //$NON-NLS-1$
 		return new PatternEvent(this, msg, isValid());
@@ -149,7 +150,7 @@ public class UIStringListWidget extends InputUIElement {
 	 * will be used by the UIPage to update its(UIPage) state. Return value
 	 * depends on the value contained in String List Widget. If value contained
 	 * is null and Mandatory value from attributes.
-	 * 
+	 *
 	 * @return boolean.
 	 */
 	@Override

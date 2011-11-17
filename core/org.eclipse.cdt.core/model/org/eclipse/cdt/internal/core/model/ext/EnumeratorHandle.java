@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.model.ext;
 
@@ -20,6 +20,7 @@ public class EnumeratorHandle extends CElementHandle implements org.eclipse.cdt.
 		super(parent, ICElement.C_ENUMERATOR, enumerator.getName());
 	}
 
+	@Override
 	public String getConstantExpression() {
 		return null;
 	}

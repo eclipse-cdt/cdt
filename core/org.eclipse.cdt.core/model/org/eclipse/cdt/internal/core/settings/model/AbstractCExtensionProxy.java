@@ -58,11 +58,11 @@ public abstract class AbstractCExtensionProxy implements ICProjectDescriptionLis
 		}
 		return null;
 	}
-	
+
 	protected IProject getProject(){
 		return fProject;
 	}
-	
+
 	private boolean checkUpdateProvider(ICProjectDescription des, boolean recreate, boolean rescan){
 		Object newProvider = null;
 		Object oldProvider = null;
@@ -79,7 +79,7 @@ public abstract class AbstractCExtensionProxy implements ICProjectDescriptionLis
 						newStyle = CProjectDescriptionManager.getInstance().isNewStyleCfg(cfg);
 					}
 				}
-				
+
 				if(ref != null){
 					if(recreate || !ref.getID().equals(fExtId)){
 						try {
@@ -90,52 +90,52 @@ public abstract class AbstractCExtensionProxy implements ICProjectDescriptionLis
 						}
 					}
 				}
-					
+
 				if(newProvider == null){
 					if(recreate || fProvider == null || newStyle != fIsNewStyle){
 						newStyle = isNewStyleCfg(cfg);
 						newProvider = createDefaultProvider(cfg, newStyle);
 					}
 				}
-				
+
 				if(newProvider != null){
 					if(fProvider != null){
 						deinitializeProvider(fProvider);
 						oldProvider = fProvider;
 					}
-					
+
 					fProvider = newProvider;
 					if(ref != null)
 						fExtId = ref.getID();
-					
+
 					fIsNewStyle = newStyle;
-					
+
 					initializeProvider(fProvider);
 				}
-				
+
 				fInited = true;
 			}
 		}
-		
+
 		if(newProvider != null){
 			postProcessProviderChange(newProvider, oldProvider);
 			return true;
 		}
 		return false;
 	}
-	
+
 	protected boolean isNewStyleCfg(ICConfigurationDescription des){
 		return CProjectDescriptionManager.getInstance().isNewStyleCfg(des);
 	}
-	
+
 	protected abstract boolean isValidProvider(Object o);
-	
+
 	protected abstract void initializeProvider(Object o);
-	
+
 	protected abstract void deinitializeProvider(Object o);
-	
+
 	protected abstract Object createDefaultProvider(ICConfigurationDescription cfgDes, boolean newStile);
-	
+
 	protected void postProcessProviderChange(Object newProvider, Object oldProvider){
 	}
 
@@ -146,13 +146,14 @@ public abstract class AbstractCExtensionProxy implements ICProjectDescriptionLis
 		}
 	}
 
+	@Override
 	public void handleEvent(CProjectDescriptionEvent event) {
 		if(!fProject.equals(event.getProject()))
 			return;
-		
+
 		doHandleEvent(event);
 	}
-	
+
 	protected boolean doHandleEvent(CProjectDescriptionEvent event){
 		boolean force = false;
 		switch(event.getEventType()){
@@ -167,7 +168,7 @@ public abstract class AbstractCExtensionProxy implements ICProjectDescriptionLis
 			}
 			break;
 		}
-		
+
 		return false;
 	}
 }

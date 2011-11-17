@@ -17,11 +17,12 @@ import org.eclipse.cdt.core.model.IField;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 
 public class Field extends VariableDeclaration implements IField {
-	
+
 	public Field(ICElement parent, String name) {
 		super(parent, name, ICElement.C_FIELD);
 	}
 
+	@Override
 	public boolean isMutable() throws CModelException{
 		return getFieldInfo().isMutable();
 	}
@@ -70,6 +71,7 @@ public class Field extends VariableDeclaration implements IField {
 		getFieldInfo().setStatic(isStatic);
 	}
 
+	@Override
 	public ASTAccessVisibility getVisibility() throws CModelException {
 		return getFieldInfo().getVisibility();
 	}

@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.cdt.internal.core.IErrorMarkeredOutputStream;
 
 /**
- * Output stream which put all output to BuildConsolePartitioner 
+ * Output stream which put all output to BuildConsolePartitioner
  * and informs it when stream is closed
  */
 public class BuildOutputStream extends ConsoleOutputStream implements IErrorMarkeredOutputStream {
@@ -29,7 +29,7 @@ public class BuildOutputStream extends ConsoleOutputStream implements IErrorMark
 	final BuildConsoleStreamDecorator fStream;
 	private BuildConsolePartitioner fPartitioner;
 
-	public BuildOutputStream(BuildConsolePartitioner partitioner, 
+	public BuildOutputStream(BuildConsolePartitioner partitioner,
 			BuildConsoleStreamDecorator stream) {
 		fPartitioner = partitioner;
 		if (fPartitioner.getProject() == null)
@@ -56,9 +56,10 @@ public class BuildOutputStream extends ConsoleOutputStream implements IErrorMark
 		fPartitioner.appendToDocument(new String(b, off, len), fStream, null);
 	}
 
+	@Override
 	public void write(String s, ProblemMarkerInfo marker) throws IOException {
 		fPartitioner.appendToDocument(s, fStream, marker);
-		
+
 	}
-	
+
 }

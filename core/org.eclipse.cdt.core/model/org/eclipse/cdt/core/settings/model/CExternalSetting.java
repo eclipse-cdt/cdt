@@ -29,14 +29,14 @@ public final class CExternalSetting implements ICExternalSetting {
 		fLanguageIds = base.getCompatibleLanguageIds();
 		fContentTypeIds = base.getCompatibleContentTypeIds();
 		fExtensions = base.getCompatibleExtensions();
-		
+
 //		fEntryStore = new EntryStore();
 		initEntryStore(base.getEntries());
 	}
 
 	public CExternalSetting(ICExternalSetting base, ICSettingEntry entries[]) {
 		this(base);
-		
+
 		initEntryStore(entries);
 	}
 
@@ -48,25 +48,25 @@ public final class CExternalSetting implements ICExternalSetting {
 			fContentTypeIds = contentTypeIds.clone();
 		if (extensions != null)
 			fExtensions = extensions.clone();
-		
+
 		initEntryStore(entries);
 	}
-	
+
 	private void initEntryStore(ICSettingEntry entries[]) {
 		ICSettingEntry entry;
 		for (int i = 0; i < entries.length; i++) {
 			entry = entries[i];
-			
+
 			addEntry(entry);
 		}
-		
+
 //		trimToSize();
 	}
-	
+
 	private void addEntry(ICSettingEntry entry) {
 		getEntriesSet(entry.getKind(), true).addEntry(entry);
 	}
-	
+
 //	private void trimToSize() {
 //		int kinds[] = KindBasedStore.getSupportedKinds();
 //		for (int i = 0; i < kinds.length; i++) {
@@ -75,7 +75,7 @@ public final class CExternalSetting implements ICExternalSetting {
 //				set.trimToSize();
 //		}
 //	}
-	
+
 	private CEntriesSet getEntriesSet(int kind, boolean create) {
 		CEntriesSet set = fStore.get(kind);
 		if (set == null && create) {
@@ -85,24 +85,28 @@ public final class CExternalSetting implements ICExternalSetting {
 		return set;
 	}
 
+	@Override
 	public String[] getCompatibleContentTypeIds() {
 		if (fContentTypeIds != null)
 			return fContentTypeIds.clone();
 		return null;
 	}
 
+	@Override
 	public String[] getCompatibleExtensions() {
 		if (fExtensions != null)
 			return fExtensions.clone();
 		return null;
 	}
 
+	@Override
 	public String[] getCompatibleLanguageIds() {
 		if (fLanguageIds != null)
 			return fLanguageIds.clone();
 		return null;
 	}
 
+	@Override
 	public ICSettingEntry[] getEntries(int kind) {
 		CEntriesSet set = getEntriesSet(kind, false);
 		if (set != null)
@@ -114,6 +118,7 @@ public final class CExternalSetting implements ICExternalSetting {
 //		return fId;
 //	}
 
+	@Override
 	public ICSettingEntry[] getEntries() {
 		List<ICSettingEntry> result = new ArrayList<ICSettingEntry>();
 		int kinds[] = KindBasedStore.getAllEntryKinds();
@@ -122,7 +127,7 @@ public final class CExternalSetting implements ICExternalSetting {
 			if (list != null)
 				result.addAll(Arrays.asList(list.toArray()));
 		}
-		
+
 		return result.toArray(new ICSettingEntry[result.size()]);
 	}
 }

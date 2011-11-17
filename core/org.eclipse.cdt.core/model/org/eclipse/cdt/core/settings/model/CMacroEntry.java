@@ -29,6 +29,7 @@ public final class CMacroEntry extends ACSettingEntry implements ICMacroEntry{
 		return fValue;
 	}
 
+	@Override
 	public final int getKind() {
 		return MACRO;
 	}
@@ -49,7 +50,7 @@ public final class CMacroEntry extends ACSettingEntry implements ICMacroEntry{
 	public boolean equalsByContents(ICSettingEntry entry) {
 		if(!super.equalsByContents(entry))
 			return false;
-		
+
 		return fValue.equals(((CMacroEntry)entry).fValue);
 	}
 
@@ -57,5 +58,5 @@ public final class CMacroEntry extends ACSettingEntry implements ICMacroEntry{
 	protected String contentsToString() {
 		return new StringBuffer().append(fName).append('=').append(fValue).toString();
 	}
-	
+
 }

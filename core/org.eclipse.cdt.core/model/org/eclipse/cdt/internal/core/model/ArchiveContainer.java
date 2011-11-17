@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
- 
+
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -30,6 +30,7 @@ public class ArchiveContainer extends Openable implements IArchiveContainer {
 		super (cProject, null, CCorePlugin.getResourceString("CoreModel.ArchiveContainer.Archives"), ICElement.C_VCONTAINER); //$NON-NLS-1$
 	}
 
+	@Override
 	public IArchive[] getArchives() throws CModelException {
 		((ArchiveContainerInfo)getElementInfo()).sync();
 		ICElement[] e = getChildren();

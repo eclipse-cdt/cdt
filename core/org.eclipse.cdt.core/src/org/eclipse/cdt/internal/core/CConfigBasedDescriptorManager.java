@@ -133,6 +133,7 @@ final public class CConfigBasedDescriptorManager implements ICDescriptorManager 
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.core.ICDescriptorManager#configure(org.eclipse.core.resources.IProject, java.lang.String)
 	 */
+	@Override
 	public void configure(IProject project, String id) throws CoreException {
 		if (id.equals(NULLCOwner.getOwnerID())) {
 			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1,
@@ -206,6 +207,7 @@ final public class CConfigBasedDescriptorManager implements ICDescriptorManager 
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.core.ICDescriptorManager#convert(org.eclipse.core.resources.IProject, java.lang.String)
 	 */
+	@Override
 	public void convert(IProject project, String id) throws CoreException {
 		CConfigBasedDescriptor dr = findDescriptor(project, false);
 		if(dr == null)
@@ -225,6 +227,7 @@ final public class CConfigBasedDescriptorManager implements ICDescriptorManager 
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.core.ICDescriptorManager#getDescriptor(org.eclipse.core.resources.IProject)
 	 */
+	@Override
 	public ICDescriptor getDescriptor(IProject project) throws CoreException {
 		return getDescriptor(project, true);
 	}
@@ -233,6 +236,7 @@ final public class CConfigBasedDescriptorManager implements ICDescriptorManager 
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.core.ICDescriptorManager#getDescriptor(org.eclipse.core.resources.IProject, boolean)
 	 */
+	@Override
 	public ICDescriptor getDescriptor(IProject project, boolean create) throws CoreException {
 		return findDescriptor(project, create);
 	}
@@ -241,6 +245,7 @@ final public class CConfigBasedDescriptorManager implements ICDescriptorManager 
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.core.ICDescriptorManager#addDescriptorListener(org.eclipse.cdt.core.ICDescriptorListener)
 	 */
+	@Override
 	public void addDescriptorListener(ICDescriptorListener listener) {
 		fListeners.add(listener);
 	}
@@ -249,6 +254,7 @@ final public class CConfigBasedDescriptorManager implements ICDescriptorManager 
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.core.ICDescriptorManager#removeDescriptorListener(org.eclipse.cdt.core.ICDescriptorListener)
 	 */
+	@Override
 	public void removeDescriptorListener(ICDescriptorListener listener) {
 		fListeners.remove(listener);
 	}
@@ -258,6 +264,7 @@ final public class CConfigBasedDescriptorManager implements ICDescriptorManager 
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.core.ICDescriptorManager#runDescriptorOperation(org.eclipse.core.resources.IProject, org.eclipse.cdt.core.ICDescriptorOperation, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void runDescriptorOperation(IProject project, ICDescriptorOperation op, IProgressMonitor monitor)
 			throws CoreException {
 		CConfigBasedDescriptor dr = findDescriptor(project, true);
@@ -287,6 +294,7 @@ final public class CConfigBasedDescriptorManager implements ICDescriptorManager 
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.core.ICDescriptorManager#runDescriptorOperation(org.eclipse.core.resources.IProject, org.eclipse.cdt.core.settings.model.ICProjectDescription, org.eclipse.cdt.core.ICDescriptorOperation, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void runDescriptorOperation(IProject project, ICProjectDescription des, ICDescriptorOperation op, IProgressMonitor monitor)
 				throws CoreException {
 		// Ensure that only one of these is running on the project at any one time...
@@ -440,6 +448,7 @@ final public class CConfigBasedDescriptorManager implements ICDescriptorManager 
 		if (fDescriptionListener != null)
 			return;
 		fDescriptionListener = new ICProjectDescriptionListener(){
+			@Override
 			public void handleEvent(CProjectDescriptionEvent event) {
 				doHandleEvent(event);
 			}
@@ -579,12 +588,14 @@ final public class CConfigBasedDescriptorManager implements ICDescriptorManager 
 		for (final ICDescriptorListener listener : fListeners) {
 			SafeRunner.run(new ISafeRunnable() {
 
+				@Override
 				public void handleException(Throwable exception) {
 					IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1,
 							CCorePlugin.getResourceString("CDescriptorManager.exception.listenerError"), exception); //$NON-NLS-1$
 					CCorePlugin.log(status);
 				}
 
+				@Override
 				public void run() throws Exception {
 					listener.descriptorChanged(event);
 				}

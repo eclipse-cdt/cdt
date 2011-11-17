@@ -15,29 +15,29 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 /**
  * The default implementation of the IContextInfo used by the Environment Variable Provider
  * Used to represent the Configuration, Project, Workspace and Eclipse environment contexts
- * 
+ *
  * @since 3.0
  */
 public class DefaultEnvironmentContextInfo implements IEnvironmentContextInfo{
 	private Object fContextObject;
 	private ICoreEnvironmentVariableSupplier fContextSuppliers[];
-	
+
 	/**
 	 * This constructor is used to create the default context info given a context object
-	 * 
+	 *
 	 * @param context
 	 */
 	public DefaultEnvironmentContextInfo(Object context){
 		fContextObject = context;
 	}
-	
+
 	protected DefaultEnvironmentContextInfo(Object context, ICoreEnvironmentVariableSupplier suppliers[]){
 		fContextSuppliers = suppliers;
 		fContextObject = context;
 	}
-	
+
 	/*
-	 * answers the list of suppliers that should be used for the given context 
+	 * answers the list of suppliers that should be used for the given context
 	 */
 	protected ICoreEnvironmentVariableSupplier[] getSuppliers(Object context){
 		ICoreEnvironmentVariableSupplier suppliers[];
@@ -47,10 +47,11 @@ public class DefaultEnvironmentContextInfo implements IEnvironmentContextInfo{
 			suppliers = new ICoreEnvironmentVariableSupplier[]{EnvironmentVariableManager.fUserSupplier, EnvironmentVariableManager.fEclipseSupplier};
 		return suppliers;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.internal.envvar.IContextInfo#getNext()
 	 */
+	@Override
 	public IEnvironmentContextInfo getNext(){
 		DefaultEnvironmentContextInfo next = null;
 		if(fContextObject instanceof ICConfigurationDescription) {
@@ -60,23 +61,25 @@ public class DefaultEnvironmentContextInfo implements IEnvironmentContextInfo{
 		}
 		return next;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.internal.envvar.IContextInfo#getSuppliers()
 	 */
+	@Override
 	public ICoreEnvironmentVariableSupplier[] getSuppliers(){
 		if(fContextSuppliers == null)
 			fContextSuppliers = getSuppliers(fContextObject);
 		return fContextSuppliers;
 	}
-	
+
 	protected void setSuppliers(ICoreEnvironmentVariableSupplier suppliers[]){
 		fContextSuppliers = suppliers;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.internal.envvar.IContextInfo#getContext()
 	 */
+	@Override
 	public Object getContext(){
 		return fContextObject;
 	}

@@ -26,7 +26,7 @@ public class AsmLabel extends SourceManipulation implements IAsmLabel, IParent {
 
 	/**
 	 * Create a new assembly label.
-	 * 
+	 *
 	 * @param parent  the parent element (must be ITranslationUnit)
 	 * @param name  the name of the label
 	 * @param global  if <code>true</code>, the label is declared global (visible to the linker)
@@ -41,6 +41,7 @@ public class AsmLabel extends SourceManipulation implements IAsmLabel, IParent {
 	/*
 	 * @see org.eclipse.cdt.core.model.IAsmLabel#isGlobal()
 	 */
+	@Override
 	public final boolean isGlobal() {
 		return fIsGlobal;
 	}
@@ -55,7 +56,7 @@ public class AsmLabel extends SourceManipulation implements IAsmLabel, IParent {
 		}
 		return false;
 	}
-	
+
 	public static boolean equals(AsmLabel lhs, AsmLabel rhs) {
 		if (CElement.equals(lhs, rhs)) {
 			return lhs.fIndex == rhs.fIndex && lhs.fIsGlobal == rhs.fIsGlobal;

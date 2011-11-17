@@ -19,5 +19,6 @@ public interface ICMacroEntry extends ICLanguageSettingEntry {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.ICSettingEntry#getValue()
 	 */
+	@Override
 	String getValue();
 }

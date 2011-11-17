@@ -159,6 +159,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		sashForm.setWeights(DEFAULT_SASH_WEIGHTS);
 
 		sashForm.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				if (event.detail == SWT.DRAG)
 					return;
@@ -175,10 +176,13 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		tv = new TableViewer(table);
 
 		tv.setContentProvider(new IStructuredContentProvider() {
+			@Override
 			public Object[] getElements(Object inputElement) {
 				return (Object[])inputElement;
 			}
+			@Override
 			public void dispose() {}
+			@Override
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 		});
 
@@ -198,9 +202,11 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		});
 
 		table.addControlListener(new ControlListener() {
+			@Override
 			public void controlMoved(ControlEvent e) {
 				setColumnToFit();
 			}
+			@Override
 			public void controlResized(ControlEvent e) {
 				setColumnToFit();
 			}});
@@ -216,6 +222,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 
 		stringListModeControl = new StringListModeControl(page, usercomp, 1);
 		stringListModeControl.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				update();
 			}
@@ -298,6 +305,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 			}
 		});
 		langTree.addPaintListener(new PaintListener() {
+			@Override
 			public void paintControl(PaintEvent e) {
 				int x = langTree.getBounds().width - 5;
 				if (langCol.getWidth() != x)
@@ -696,6 +704,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		public Image getImage(Object element) {
 			return getColumnImage(element, 0);
 		}
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			if (columnIndex > 0) return null;
 			if (! (element instanceof ICLanguageSettingEntry)) return null;
@@ -723,6 +732,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		public String getText(Object element) {
 			return getColumnText(element, 0);
 		}
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			if (! (element instanceof ICLanguageSettingEntry)) {
 				return (columnIndex == 0) ? element.toString() : EMPTY_STR;
@@ -742,6 +752,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 			return EMPTY_STR;
 		}
 
+		@Override
 		public Font getFont(Object element) {
 			if (! (element instanceof ICLanguageSettingEntry)) return null;
 			ICLanguageSettingEntry le = (ICLanguageSettingEntry) element;

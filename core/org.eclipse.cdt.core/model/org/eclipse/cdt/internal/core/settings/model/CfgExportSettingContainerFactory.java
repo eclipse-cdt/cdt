@@ -7,7 +7,7 @@
  *
  * Contributors:
  * 	Intel Corporation - Initial API and implementation
- *  James Blackburn (Broadcom Corp.) 
+ *  James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.settings.model;
 
@@ -34,10 +34,10 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * A class responsible for persisting CDT Projects and Configuration IDs as referenced
- * by other configurations in other projects. 
+ * by other configurations in other projects.
  * The user controls this via RefsTab.  This External settings factory listens
  * for CProjectDescription model changes and notifies the {@link CExternalSettingsManager},
- * which is a listener, of changes to the set of external settings. 
+ * which is a listener, of changes to the set of external settings.
  * {@link ICConfigurationDescription#setReferenceInfo(Map)} and {@link ICConfigurationDescription#getReferenceInfo()}
  */
 public class CfgExportSettingContainerFactory extends
@@ -57,20 +57,20 @@ public class CfgExportSettingContainerFactory extends
 
 	private CfgExportSettingContainerFactory(){
 	}
-	
+
 	public static CfgExportSettingContainerFactory getInstance(){
 		if(fInstance == null)
 			fInstance = new CfgExportSettingContainerFactory();
 		return fInstance;
 	}
-	
+
 	@Override
 	public void startup(){
-		CProjectDescriptionManager.getInstance().addCProjectDescriptionListener(this, 
+		CProjectDescriptionManager.getInstance().addCProjectDescriptionListener(this,
 				CProjectDescriptionEvent.APPLIED
 				| CProjectDescriptionEvent.LOADED);
 	}
-	
+
 	@Override
 	public void shutdown(){
 		CProjectDescriptionManager.getInstance().removeCProjectDescriptionListener(this);
@@ -84,7 +84,7 @@ public class CfgExportSettingContainerFactory extends
 		final private String fId;
 		final private String fProjName, fCfgId;
 		final private CExternalSetting[] prevSettings;
-		
+
 		CfgRefContainer(String containerId, String projName, String cfgId, CExternalSetting[] previousSettings){
 			fId = containerId;
 			fProjName = projName;
@@ -98,9 +98,9 @@ public class CfgExportSettingContainerFactory extends
 			if (project.isAccessible()) {
 				ICProjectDescription des = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
 				if(des != null){
-					ICConfigurationDescription cfg = fCfgId.length() != 0 ? 
+					ICConfigurationDescription cfg = fCfgId.length() != 0 ?
 							des.getConfigurationById(fCfgId) : des.getActiveConfiguration();
-					
+
 					if(cfg != null){
 						CExternalSetting[] es;
 						ICExternalSetting[] ies = cfg.getExternalSettings();
@@ -146,7 +146,7 @@ public class CfgExportSettingContainerFactory extends
 	private static CContainerRef createContainerRef(String projName, String cfgId){
 		return new CContainerRef(FACTORY_ID, createId(projName, cfgId));
 	}
-	
+
 	public static Map<String, String> getReferenceMap(ICConfigurationDescription cfg){
 		CContainerRef[] refs = CExternalSettingsManager.getInstance().getReferences(cfg, FACTORY_ID);
 		Map<String, String> map = new LinkedHashMap<String, String>();
@@ -164,15 +164,15 @@ public class CfgExportSettingContainerFactory extends
 	public static void setReferenceMap(ICConfigurationDescription cfg, Map<String, String> map){
 		Map<String, String> oldRefs = getReferenceMap(cfg);
 		Map<String, String> newRefs = new LinkedHashMap<String, String>(map);
-		
+
 		// We need to preserve order. The API we have with the external settings manager allows us to
-		// add and remove individual items.  
+		// add and remove individual items.
 		// In the future this could be fixed, but for the moment, remove and replace all the referenced items
 		// from the first item that doens't match.
 
 		Iterator<Map.Entry<String, String>> oldIter = oldRefs.entrySet().iterator();
 		Iterator<Map.Entry<String, String>> newIter = newRefs.entrySet().iterator();
-		
+
 		while (oldIter.hasNext() && newIter.hasNext()) {
 			Map.Entry<String, String> oldEntry = oldIter.next();
 			Map.Entry<String, String> newEntry = newIter.next();
@@ -209,7 +209,7 @@ public class CfgExportSettingContainerFactory extends
 	private static String[] parseId(String id) throws CoreException {
 		if(id == null)
 			throw new NullPointerException();
-		
+
 		String projName, cfgId;
 		int index = id.indexOf(DELIMITER);
 		if(index != -1){
@@ -219,10 +219,10 @@ public class CfgExportSettingContainerFactory extends
 			projName = id;
 			cfgId = ACTIVE_CONFIG_ID;
 		}
-		
+
 		if((projName = projName.trim()).length() == 0)
 			throw ExceptionFactory.createCoreException(SettingsModelMessages.getString("CfgExportSettingContainerFactory.2")); //$NON-NLS-1$
-		
+
 		return new String[]{projName, cfgId};
 	}
 
@@ -230,6 +230,7 @@ public class CfgExportSettingContainerFactory extends
 	 * Notify the ExternalSettingManager that there's been a change in the configuration which may require referencing configs to update
 	 * their cache of the external settings
 	 */
+	@Override
 	public void handleEvent(CProjectDescriptionEvent event) {
 		switch(event.getEventType()){
 			case CProjectDescriptionEvent.LOADED: {
@@ -255,9 +256,9 @@ public class CfgExportSettingContainerFactory extends
 			case CProjectDescriptionEvent.APPLIED:
 				String[] ids = getContainerIds(event.getProjectDelta());
 				if(ids.length != 0){
-					CExternalSettingsContainerChangeInfo[] changeInfos = 
+					CExternalSettingsContainerChangeInfo[] changeInfos =
 						new CExternalSettingsContainerChangeInfo[ids.length];
-					
+
 					for(int i = 0; i < changeInfos.length; i++){
 						changeInfos[i] = new CExternalSettingsContainerChangeInfo(
 								CExternalSettingsContainerChangeInfo.CONTAINER_CONTENTS,
@@ -268,7 +269,7 @@ public class CfgExportSettingContainerFactory extends
 				}
 		}
 	}
-	
+
 	/**
 	 * Returns the set of containers (Project configurations) (project_name;config_id) for the project descriptions
 	 * reported as changed by the ICDescriptionDelta
@@ -279,7 +280,7 @@ public class CfgExportSettingContainerFactory extends
 		if(delta == null)
 			return new String[0];
 		int deltaKind = delta.getDeltaKind();
-		
+
 		Set<String> cfgIds = new HashSet<String>();
 		switch(deltaKind){
 		case ICDescriptionDelta.ADDED:
@@ -305,7 +306,7 @@ public class CfgExportSettingContainerFactory extends
 		if(ids.length != 0){
 			String projName = ((ICProjectDescription)delta.getSetting()).getProject().getName();
 			int i = 0;
-			for (String config : cfgIds) 
+			for (String config : cfgIds)
 				ids[i++] = createId(projName, config);
 		}
 		return ids;
@@ -327,7 +328,7 @@ public class CfgExportSettingContainerFactory extends
 				break;
 			case ICDescriptionDelta.CHANGED:
 				int changeFlags = delta.getChangeFlags();
-				if((changeFlags & 
+				if((changeFlags &
 						(ICDescriptionDelta.EXTERNAL_SETTINGS_ADDED
 								| ICDescriptionDelta.EXTERNAL_SETTINGS_REMOVED)) != 0){
 					c.add(delta.getSetting().getId());

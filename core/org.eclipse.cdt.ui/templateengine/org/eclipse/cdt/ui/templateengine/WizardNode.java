@@ -24,7 +24,7 @@ import org.eclipse.cdt.ui.templateengine.pages.UIWizardPage;
 
 
 /**
- * Wizard Node 
+ * Wizard Node
  */
 class WizardNode implements IWizardNode {
 	private IWizard wizard;
@@ -40,14 +40,15 @@ class WizardNode implements IWizardNode {
 		this.parentPage = parentPage;
 		this.template = template;
 	}
-	
+
+	@Override
 	public void dispose() {
 		if (wizard != null) {
 			wizard.dispose();
 			wizard = null;
 		}
 	}
-	
+
 	/**
 	 * Returns the Template
 	 */
@@ -55,13 +56,15 @@ class WizardNode implements IWizardNode {
 		return template;
 	}
 
+	@Override
 	public Point getExtent() {
 		return new Point(-1, -1);
 	}
-	
+
 	/**
 	 * Returns the Wizard.
 	 */
+	@Override
 	public IWizard getWizard() {
 		if (wizard != null) {
 			return wizard;
@@ -70,9 +73,9 @@ class WizardNode implements IWizardNode {
 			{
 				setWindowTitle(template.getLabel());
 			}
-			
+
 			private boolean finishPressed;
-			
+
 			@Override
 			public void addPages() {
 				IWizardPage[] wpages = null;
@@ -83,7 +86,7 @@ class WizardNode implements IWizardNode {
 					}
 				} catch (Exception e) {
 				}
-				
+
 				Map<String, UIWizardPage> pages = template.getUIPages();
 				for (Object element : template.getPagesOrderVector()) {
 					String id = (String) element;
@@ -95,7 +98,7 @@ class WizardNode implements IWizardNode {
 					addPage(wpage);
 				}
 			}
-			
+
 			@Override
 			public boolean performFinish() {
 				Map<String, String> valueStore = template.getValueStore();
@@ -109,7 +112,7 @@ class WizardNode implements IWizardNode {
 				template.getValueStore().putAll(parentPage.getDataInPreviousPages());
 				return true;
 			}
-			
+
 			@Override
 			public boolean canFinish(){
 				return !finishPressed && super.canFinish();
@@ -134,6 +137,7 @@ class WizardNode implements IWizardNode {
 		return wizard;
 	}
 
+	@Override
 	public boolean isContentCreated() {
 		return wizard != null;
 	}

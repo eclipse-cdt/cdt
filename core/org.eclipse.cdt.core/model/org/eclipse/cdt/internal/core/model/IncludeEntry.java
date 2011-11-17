@@ -33,18 +33,20 @@ public class IncludeEntry extends APathEntry implements IIncludeEntry {
 
 	/**
 	 * Returns the include path
-	 * 
+	 *
 	 * @return IPath
 	 */
+	@Override
 	public IPath getIncludePath() {
 		return includePath;
 	}
 
 	/**
 	 * Whether or not it a system include path
-	 * 
+	 *
 	 * @return boolean
 	 */
+	@Override
 	public boolean isSystemInclude() {
 		return isSystemInclude;
 	}
@@ -95,6 +97,7 @@ public class IncludeEntry extends APathEntry implements IIncludeEntry {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.IIncludeEntry#getFullIncludePath()
 	 */
+	@Override
 	public IPath getFullIncludePath() {
 		final IPath inc = getIncludePath();
 		if (!basePath.isEmpty()) {
@@ -110,7 +113,7 @@ public class IncludeEntry extends APathEntry implements IIncludeEntry {
 			}
 			return loc.append(inc);
 		}
-		
+
 		if (!inc.isAbsolute()) {
 			IPath resPath = getPath();
 			IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(resPath.append(inc));

@@ -27,10 +27,12 @@ public final class CIncludePathEntry extends ACPathEntry implements ICIncludePat
 		super(rc, flags);
 	}
 
+	@Override
 	public boolean isLocal() {
 		return checkFlags(LOCAL);
 	}
 
+	@Override
 	public final int getKind() {
 		return INCLUDE_PATH;
 	}

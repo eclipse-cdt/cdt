@@ -28,15 +28,18 @@ public class ConfigBasedPathEntryContainer implements IPathEntryContainer {
 	public ConfigBasedPathEntryContainer(IPathEntry entries[]){
 		this.fEntries = entries.clone();
 	}
-	
+
+	@Override
 	public String getDescription() {
 		return "Configuration Description info container";	//$NON-NLS-1$
 	}
 
+	@Override
 	public IPath getPath() {
 		return CONTAINER_PATH;
 	}
 
+	@Override
 	public IPathEntry[] getPathEntries() {
 		return fEntries.clone();
 	}

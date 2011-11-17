@@ -239,6 +239,7 @@ public final class RegexErrorParserOptionPage extends AbstractCOptionPage {
 		link.setText(DialogsMessages.RegexErrorParserOptionPage_LinkToPreferencesMessage);
 
 		link.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				// Use event.text to tell which link was used
 				PreferencesUtil.createPreferenceDialogOn(parent.getShell(), WORKSPACE_PREFERENCE_PAGE, null, null).open();
@@ -722,7 +723,7 @@ public final class RegexErrorParserOptionPage extends AbstractCOptionPage {
 		fTableViewer.insert(item, newPos);
 		fTable.setSelection(newPos);
 	}
-	
+
 	private void applyPatterns() {
 		if (fErrorParser!=null && fEditable) {
 			fErrorParser.clearPatterns();
@@ -768,7 +769,7 @@ public final class RegexErrorParserOptionPage extends AbstractCOptionPage {
 	public void removeListener(Listener listener){
 		fListeners.remove(listener);
 	}
-	
+
 	private void fireEvent() {
 		for (Listener listener : fListeners) {
 			listener.handleEvent(new Event());

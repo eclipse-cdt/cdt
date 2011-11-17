@@ -20,6 +20,7 @@ import org.eclipse.cdt.ui.IBuildConsoleManager;
  * before actually doing a build.
  */
 public class BuildConsoleFactory implements IConsoleFactory {
+	@Override
 	public void openConsole() {
 		IBuildConsoleManager manager = CUIPlugin.getDefault().getConsoleManager();
 		if (manager instanceof BuildConsoleManager) {

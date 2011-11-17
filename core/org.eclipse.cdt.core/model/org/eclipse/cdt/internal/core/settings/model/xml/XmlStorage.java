@@ -74,6 +74,7 @@ public class XmlStorage implements ICSettingsStorage {
 		}
 	}
 
+	@Override
 	public boolean isReadOnly(){
 		return fIsReadOnly;
 	}
@@ -127,6 +128,7 @@ public class XmlStorage implements ICSettingsStorage {
 		return getStorage(id, false) != null;
 	}
 
+	@Override
 	public ICStorageElement importStorage(String id, ICStorageElement el) throws UnsupportedOperationException {
 		if(fIsReadOnly)
 			throw ExceptionFactory.createIsReadOnlyException();
@@ -173,6 +175,7 @@ public class XmlStorage implements ICSettingsStorage {
 		}
 	}
 
+	@Override
 	public ICStorageElement getStorage(String id, boolean create){
 		initChildren();
 
@@ -199,6 +202,7 @@ public class XmlStorage implements ICSettingsStorage {
 		return child;
 	}
 
+	@Override
 	public void removeStorage(String id){
 		initChildren();
 		InternalXmlStorageElement se = fStorageElementMap.remove(id);
@@ -208,7 +212,7 @@ public class XmlStorage implements ICSettingsStorage {
 				throw ExceptionFactory.createIsReadOnlyException();
 
 			synchronized (fLock) {
-			synchronized (se.fLock){ 
+			synchronized (se.fLock){
 			fIsDirty = true;
 			Node nextSibling = se.fElement.getNextSibling();
 			fElement.removeChild(se.fElement);
@@ -223,6 +227,7 @@ public class XmlStorage implements ICSettingsStorage {
 		}
 	}
 
+	@Override
 	public boolean isModified(){
 		if(fIsDirty)
 			return true;
@@ -236,6 +241,7 @@ public class XmlStorage implements ICSettingsStorage {
 		return false;
 	}
 
+	@Override
 	public void setReadOnly(boolean readOnly, boolean keepModify){
 		fIsReadOnly = readOnly;
 		fIsDirty &= keepModify;

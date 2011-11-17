@@ -50,6 +50,7 @@ public class SourceRoot extends CContainer implements ISourceRoot {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ISourceRoot#isOnclasspath(org.eclipse.cdt.core.model.ICElement)
 	 */
+	@Override
 	public boolean isOnSourceEntry(ICElement element) {
 		IPath path = element.getPath();
 		return this.isOnSourceEntry(path);
@@ -58,13 +59,15 @@ public class SourceRoot extends CContainer implements ISourceRoot {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ISourceRoot#isOnSourceEntry(org.eclipse.core.resources.IResource)
 	 */
+	@Override
 	public boolean isOnSourceEntry(IResource res) {
 		IPath path = res.getFullPath();
 		return isOnSourceEntry(path);
 	}
 
+	@Override
 	public boolean isOnSourceEntry(IPath path) {
-		if (sourceEntry.getFullPath().isPrefixOf(path) 
+		if (sourceEntry.getFullPath().isPrefixOf(path)
 				&& !CoreModelUtil.isExcluded(path, sourceEntry.fullExclusionPatternChars())) {
 			return true;
 		}
@@ -86,7 +89,7 @@ public class SourceRoot extends CContainer implements ISourceRoot {
 		}
 		((CElement)getParent()).getHandleMemento(buff);
 		buff.append(getHandleMementoDelimiter());
-		escapeMementoName(buff, path.toString()); 
+		escapeMementoName(buff, path.toString());
 	}
 
 	/**

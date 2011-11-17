@@ -72,9 +72,9 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 
 	List<IPathEntryStoreListener> listeners;
 	IProject fProject;
-	
+
 	/**
-	 * 
+	 *
 	 */
 	public DefaultPathEntryStore(IProject project) {
 		fProject = project;
@@ -84,6 +84,7 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 		CCorePlugin.getDefault().getCDescriptorManager().addDescriptorListener(this);
 	}
 
+	@Override
 	public IPathEntry[] getRawPathEntries() throws CoreException {
 		ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(fProject, false);
 		if (cdesc != null) {
@@ -91,17 +92,18 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 			ICStorageElement entry = cdesc.getProjectStorageElement(PATH_ENTRY_ID);
 			for (ICStorageElement childNode : entry.getChildrenByName(PATH_ENTRY))
 				pathEntries.add(decodePathEntry(fProject, childNode));
-			IPathEntry[] entries = new IPathEntry[pathEntries.size()]; 
+			IPathEntry[] entries = new IPathEntry[pathEntries.size()];
 			pathEntries.toArray(entries);
 			return entries;
 		}
 		return NO_PATHENTRIES;
 	}
 
+	@Override
 	public void setRawPathEntries(IPathEntry[] newRawEntries) throws CoreException {
 		if (Arrays.equals(newRawEntries, getRawPathEntries())) {
 			return;
-		}	
+		}
 		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(fProject, true);
 		ICStorageElement rootElement = descriptor.getProjectStorageElement(PATH_ENTRY_ID);
 		// Clear out all current children
@@ -116,11 +118,11 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 
 	static IPathEntry decodePathEntry(IProject project, ICStorageElement element) throws CModelException {
 		IPath projectPath = project.getFullPath();
-		
+
 		// kind
 		String kindAttr = element.getAttribute(ATTRIBUTE_KIND);
 		int kind = PathEntry.kindFromString(kindAttr);
-		
+
 		// exported flag
 		boolean isExported = false;
 		if (element.hasAttribute(ATTRIBUTE_EXPORTED)) {
@@ -157,13 +159,13 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 				}
 			}
 		}
-		
+
 		// recreate the entry
 		switch (kind) {
 			case IPathEntry.CDT_PROJECT :
 				return CoreModel.newProjectEntry(path, isExported);
 			case IPathEntry.CDT_LIBRARY : {
-				IPath libraryPath = new Path(element.getAttribute(ATTRIBUTE_LIBRARY));				
+				IPath libraryPath = new Path(element.getAttribute(ATTRIBUTE_LIBRARY));
 				// source attachment info (optional)
 				IPath sourceAttachmentPath = element.hasAttribute(ATTRIBUTE_SOURCEPATH) ? new Path(
 						element.getAttribute(ATTRIBUTE_SOURCEPATH)) : null;
@@ -171,7 +173,7 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 						element.getAttribute(ATTRIBUTE_ROOTPATH)) : null;
 				IPath sourceAttachmentPrefixMapping = element.hasAttribute(ATTRIBUTE_PREFIXMAPPING) ? new Path(
 						element.getAttribute(ATTRIBUTE_PREFIXMAPPING)) : null;
-				
+
 				if (!baseRef.isEmpty()) {
 					return CoreModel.newLibraryRefEntry(path, baseRef, libraryPath);
 				}
@@ -207,7 +209,7 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 			case IPathEntry.CDT_INCLUDE_FILE: {
 				// include path info
 				IPath includeFilePath = new Path(element.getAttribute(ATTRIBUTE_INCLUDE_FILE));
-				return CoreModel.newIncludeFileEntry(path, basePath, baseRef, includeFilePath, exclusionPatterns, isExported);				
+				return CoreModel.newIncludeFileEntry(path, basePath, baseRef, includeFilePath, exclusionPatterns, isExported);
 			}
 			case IPathEntry.CDT_MACRO : {
 				String macroName = element.getAttribute(ATTRIBUTE_NAME);
@@ -276,7 +278,7 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 					element.setAttribute(ATTRIBUTE_LIBRARY, libraryPath.toString());
 					IPath sourcePath = lib.getSourceAttachmentPath();
 					if (sourcePath != null) {
-						// translate to project relative from absolute 
+						// translate to project relative from absolute
 						if (projectPath != null && projectPath.isPrefixOf(sourcePath)) {
 							if (sourcePath.segment(0).equals(projectPath.segment(0))) {
 								sourcePath = sourcePath.removeFirstSegments(1);
@@ -356,9 +358,10 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.ICDescriptorListener#descriptorChanged(org.eclipse.cdt.core.CDescriptorEvent)
 	 */
+	@Override
 	public void descriptorChanged(CDescriptorEvent event) {
 		if (event.getType() == CDescriptorEvent.CDTPROJECT_CHANGED
 				/*|| event.getType() == CDescriptorEvent.CDTPROJECT_ADDED*/) {
@@ -373,13 +376,15 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.resources.IPathEntryStore#addPathEntryStoreListener(org.eclipse.cdt.core.resources.IPathEntryStoreListener)
 	 */
-	public void addPathEntryStoreListener(IPathEntryStoreListener listener) {		
+	@Override
+	public void addPathEntryStoreListener(IPathEntryStoreListener listener) {
 		listeners.add(listener);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.resources.IPathEntryStore#removePathEntryStoreListener(org.eclipse.cdt.core.resources.IPathEntryStoreListener)
 	 */
+	@Override
 	public void removePathEntryStoreListener(IPathEntryStoreListener listener) {
 		listeners.remove(listener);
 	}
@@ -396,6 +401,7 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.resources.IPathEntryStore#fireClosedChangedEvent(IProject)
 	 */
+	@Override
 	public void close() {
 		PathEntryStoreChangedEvent evt = new PathEntryStoreChangedEvent(this, fProject, PathEntryStoreChangedEvent.STORE_CLOSED);
 		IPathEntryStoreListener[] observers = new IPathEntryStoreListener[listeners.size()];
@@ -406,14 +412,17 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 		CCorePlugin.getDefault().getCDescriptorManager().removeDescriptorListener(this);
 	}
 
+	@Override
 	public IProject getProject() {
 		return fProject;
 	}
 
+	@Override
 	public ICExtensionReference getExtensionReference() {
 		return null;
 	}
 
+	@Override
 	public ICConfigExtensionReference getConfigExtensionReference() {
 		return null;
 	}

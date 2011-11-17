@@ -16,19 +16,20 @@ import org.eclipse.cdt.core.model.IEnumerator;
 public class Enumerator extends SourceManipulation implements IEnumerator{
 
 	String constantExpression = ""; //$NON-NLS-1$
-	
+
 	public Enumerator(ICElement parent, String name) {
 		super(parent, name, ICElement.C_ENUMERATOR);
 	}
-	
+
 	@Override
 	protected CElementInfo createElementInfo () {
 		return new SourceManipulationInfo(this);
 	}
-	
+
 	/**
 	 * @see org.eclipse.cdt.core.model.IEnumerator#getConstantExpression()
 	 */
+	@Override
 	public String getConstantExpression() {
 		return constantExpression;
 	}

@@ -27,10 +27,11 @@ import org.eclipse.cdt.ui.newui.ManageConfigSelector;
 /**
  * Action which lets to manage (add/remove etc.) build configurations of the project.
  */
-public class ManageConfigsAction 
+public class ManageConfigsAction
 implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
-	IProject[] obs = null; 
-	
+	IProject[] obs = null;
+
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		if (!selection.isEmpty()) {
 			// case for context menu
@@ -42,18 +43,24 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 		}
 		action.setEnabled(false);
 	}
-	
+
+	@Override
 	public void run(IAction action) {
 		IConfigManager cm = ManageConfigSelector.getManager(obs);
 		if (cm != null && obs != null)
 			cm.manage(obs, true);
 	}
-	
+
+	@Override
 	public void dispose() { obs = null; }
-	
+
 	// doing nothing
+	@Override
 	public void init(IWorkbenchWindow window) { }
+	@Override
 	public Menu getMenu(Menu parent) { return null; }
+	@Override
 	public Menu getMenu(Control parent) { return null; }
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {}
 }

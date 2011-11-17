@@ -43,6 +43,7 @@ public class ErrorParserNamedWrapper implements IErrorParserNamed {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IErrorParser#processLine(java.lang.String, org.eclipse.cdt.core.ErrorParserManager)
 	 */
+	@Override
 	public boolean processLine(String line, ErrorParserManager epm) {
 		return fErrorParser.processLine(line, epm);
 	}
@@ -50,6 +51,7 @@ public class ErrorParserNamedWrapper implements IErrorParserNamed {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IErrorParserNamed#getId()
 	 */
+	@Override
 	public String getId() {
 		return fId;
 	}
@@ -57,6 +59,7 @@ public class ErrorParserNamedWrapper implements IErrorParserNamed {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IErrorParserNamed#getName()
 	 */
+	@Override
 	public String getName() {
 		return fName;
 	}
@@ -71,6 +74,7 @@ public class ErrorParserNamedWrapper implements IErrorParserNamed {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IErrorParserNamed#setId(java.lang.String)
 	 */
+	@Override
 	public void setId(String id) {
 		this.fId = id;
 	}
@@ -78,6 +82,7 @@ public class ErrorParserNamedWrapper implements IErrorParserNamed {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IErrorParserNamed#setName(java.lang.String)
 	 */
+	@Override
 	public void setName(String name) {
 		this.fName = name;
 	}

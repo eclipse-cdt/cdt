@@ -25,21 +25,22 @@ public abstract class MultiItemsHolder implements ICMultiItemsHolder {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.ICMultiItemsHolder#getItems()
 	 */
+	@Override
 	public abstract Object[] getItems();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.ICMultiItemsHolder#setStringListMode(int)
 	 */
 	/**
-	 * This method is put here to prevent UI from 
-	 * accessing constructors in "internal" dirs. 
-	 * 
+	 * This method is put here to prevent UI from
+	 * accessing constructors in "internal" dirs.
+	 *
 	 * Creates multiple configuration description.
-	 * If there's 1 cfg.desc in array, 
-	 * it's returned itself. 
-	 * 
+	 * If there's 1 cfg.desc in array,
+	 * it's returned itself.
+	 *
 	 * @param rds - array of cfg.descs
-	 *  
+	 *
 	 * @return multiple cfg.description or single cfg.desc.
 	 */
 	public static ICConfigurationDescription createCDescription(ICConfigurationDescription[] rds) {
@@ -51,16 +52,16 @@ public abstract class MultiItemsHolder implements ICMultiItemsHolder {
 			return new MultiConfigDescription(rds);
 	}
 	/**
-	 * This method is put here to prevent UI from 
-	 * accessing constructors in "internal" dirs. 
-	 * 
+	 * This method is put here to prevent UI from
+	 * accessing constructors in "internal" dirs.
+	 *
 	 * Creates multiple resource description, it
 	 * can be either MultiFile or MultiFolder.
-	 * If there's 1 description in array, 
-	 * it's returned itself. 
-	 * 
+	 * If there's 1 description in array,
+	 * it's returned itself.
+	 *
 	 * @param rds - array of resource descs
-	 *  
+	 *
 	 * @return multiple res.description or single res.desc.
 	 */
 	public static ICResourceDescription createRDescription(ICResourceDescription[] rds) {

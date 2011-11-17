@@ -16,6 +16,7 @@ import org.eclipse.cdt.utils.cdtvariables.IVariableContextInfo;
 
 public abstract class CoreMacroSupplierBase implements ICdtVariableSupplier {
 
+	@Override
 	public ICdtVariable getVariable(String macroName, IVariableContextInfo context) {
 		if(context instanceof ICoreVariableContextInfo){
 			ICoreVariableContextInfo info = (ICoreVariableContextInfo)context;
@@ -23,9 +24,10 @@ public abstract class CoreMacroSupplierBase implements ICdtVariableSupplier {
 		}
 		return null;
 	}
-	
+
 	protected abstract ICdtVariable getMacro(String name, int type, Object data);
 
+	@Override
 	public ICdtVariable[] getVariables(IVariableContextInfo context) {
 		if(context instanceof ICoreVariableContextInfo){
 			ICoreVariableContextInfo info = (ICoreVariableContextInfo)context;

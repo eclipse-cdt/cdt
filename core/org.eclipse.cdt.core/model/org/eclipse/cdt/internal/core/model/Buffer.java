@@ -61,6 +61,7 @@ public class Buffer implements IBuffer {
 	/**
 	 * @see IBuffer
 	 */
+	@Override
 	public void addBufferChangedListener(IBufferChangedListener listener) {
 		if (this.changeListeners == null) {
 			this.changeListeners = new ArrayList<IBufferChangedListener>(5);
@@ -72,6 +73,7 @@ public class Buffer implements IBuffer {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBuffer#append(char[])
 	 */
+	@Override
 	public void append(char[] text) {
 		if (!isReadOnly()) {
 			if (text == null || text.length == 0) {
@@ -89,6 +91,7 @@ public class Buffer implements IBuffer {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBuffer#append(java.lang.String)
 	 */
+	@Override
 	public void append(String text) {
 		if (text == null) {
 			return;
@@ -99,6 +102,7 @@ public class Buffer implements IBuffer {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBuffer#close()
 	 */
+	@Override
 	public void close() {
 		BufferChangedEvent event = null;
 		synchronized (this.lock) {
@@ -115,6 +119,7 @@ public class Buffer implements IBuffer {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBuffer#getChar(int)
 	 */
+	@Override
 	public char getChar(int position) {
 		synchronized (this.lock) {
 			if (position < this.gapStart) {
@@ -128,6 +133,7 @@ public class Buffer implements IBuffer {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBuffer#getCharacters()
 	 */
+	@Override
 	public char[] getCharacters() {
 		if (this.contents == null) return null;
 		synchronized (this.lock) {
@@ -145,6 +151,7 @@ public class Buffer implements IBuffer {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBuffer#getContents()
 	 */
+	@Override
 	public String getContents() {
 		if (this.contents == null) return null;
 		return new String(this.getCharacters());
@@ -153,6 +160,7 @@ public class Buffer implements IBuffer {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBuffer#getLength()
 	 */
+	@Override
 	public int getLength() {
 		synchronized (this.lock) {
 			int length = this.gapEnd - this.gapStart;
@@ -163,6 +171,7 @@ public class Buffer implements IBuffer {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBuffer#getOwner()
 	 */
+	@Override
 	public IOpenable getOwner() {
 		return this.owner;
 	}
@@ -170,6 +179,7 @@ public class Buffer implements IBuffer {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBuffer#getText(int, int)
 	 */
+	@Override
 	public String getText(int offset, int length) {
 		if (this.contents == null)
 			return ""; //$NON-NLS-1$
@@ -190,6 +200,7 @@ public class Buffer implements IBuffer {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBuffer#getUnderlyingResource()
 	 */
+	@Override
 	public IResource getUnderlyingResource() {
 		return this.file;
 	}
@@ -197,6 +208,7 @@ public class Buffer implements IBuffer {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBuffer#hasUnsavedChanges()
 	 */
+	@Override
 	public boolean hasUnsavedChanges() {
 		return (this.flags & F_HAS_UNSAVED_CHANGES) != 0;
 	}
@@ -204,6 +216,7 @@ public class Buffer implements IBuffer {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBuffer#isClosed()
 	 */
+	@Override
 	public boolean isClosed() {
 		return (this.flags & F_IS_CLOSED) != 0;
 	}
@@ -211,6 +224,7 @@ public class Buffer implements IBuffer {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBuffer#isReadOnly()
 	 */
+	@Override
 	public boolean isReadOnly() {
 		if (this.file == null) {
 			return (this.flags & F_IS_READ_ONLY) != 0;
@@ -227,9 +241,11 @@ public class Buffer implements IBuffer {
 			for (int i = 0, size = this.changeListeners.size(); i < size; ++i) {
 				final IBufferChangedListener listener = this.changeListeners.get(i);
 				SafeRunner.run(new ISafeRunnable() {
+					@Override
 					public void handleException(Throwable exception) {
 						Util.log(exception, "Exception occurred in listener of buffer change notification", ICLogConstants.CDT); //$NON-NLS-1$
 					}
+					@Override
 					public void run() throws Exception {
 						listener.bufferChanged(event);
 					}
@@ -240,6 +256,7 @@ public class Buffer implements IBuffer {
 	/**
 	 * @see IBuffer
 	 */
+	@Override
 	public void removeBufferChangedListener(IBufferChangedListener listener) {
 		if (this.changeListeners != null) {
 			this.changeListeners.remove(listener);
@@ -251,6 +268,7 @@ public class Buffer implements IBuffer {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBuffer#replace(int, int, char[])
 	 */
+	@Override
 	public void replace(int position, int length, char[] text) {
 		if (!isReadOnly()) {
 			int textLength = text == null ? 0 : text.length;
@@ -277,13 +295,14 @@ public class Buffer implements IBuffer {
 			if (textLength > 0) {
 				string = new String(text);
 			}
-			notifyChanged(new BufferChangedEvent(this, position, length, string));			
+			notifyChanged(new BufferChangedEvent(this, position, length, string));
 		}
 	}
 
 	/**
 	 * @see org.eclipse.cdt.core.model.IBuffer#replace(int, int, java.lang.String)
 	 */
+	@Override
 	public void replace(int position, int length, String text) {
 		this.replace(position, length, text == null ? null : text.toCharArray());
 	}
@@ -291,16 +310,17 @@ public class Buffer implements IBuffer {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBuffer#save(org.eclipse.core.runtime.IProgressMonitor, boolean)
 	 */
+	@Override
 	public void save(IProgressMonitor progress, boolean force)
 		throws CModelException {
-			// determine if saving is required 
+			// determine if saving is required
 			if (isReadOnly() || this.file == null) {
 				return;
 			}
 			synchronized (this.lock) {
 				if (!hasUnsavedChanges())
 					return;
-			
+
 				// use a platform operation to update the resource contents
 				try {
 					String encoding = null;
@@ -312,19 +332,19 @@ public class Buffer implements IBuffer {
 					}
 					String contents = this.getContents();
 					if (contents == null) return;
-					byte[] bytes = encoding == null 
-						? contents.getBytes() 
+					byte[] bytes = encoding == null
+						? contents.getBytes()
 					    : contents.getBytes(encoding);
 					ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
 
 					if (this.file.exists()) {
 						this.file.setContents(
-							stream, 
-							force ? IResource.FORCE | IResource.KEEP_HISTORY : IResource.KEEP_HISTORY, 
+							stream,
+							force ? IResource.FORCE | IResource.KEEP_HISTORY : IResource.KEEP_HISTORY,
 							null);
 					} else {
 						this.file.create(stream, force, null);
-					}	
+					}
 				}  catch (IOException e) {
 					throw new CModelException(e, ICModelStatusConstants.IO_EXCEPTION);
 				}
@@ -340,15 +360,16 @@ public class Buffer implements IBuffer {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBuffer#setContents(char[])
 	 */
+	@Override
 	public void setContents(char[] newContents) {
-		// allow special case for first initialization 
+		// allow special case for first initialization
 		// after creation by buffer factory
 		if (this.contents == null) {
 			this.contents = newContents;
 			this.flags &= ~ (F_HAS_UNSAVED_CHANGES);
 			return;
 		}
-	
+
 		if (!isReadOnly()) {
 			String string = null;
 			if (newContents != null) {
@@ -368,13 +389,14 @@ public class Buffer implements IBuffer {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBuffer#setContents(java.lang.String)
 	 */
+	@Override
 	public void setContents(String newContents) {
 		this.setContents(newContents.toCharArray());
 	}
-	
+
 	/**
 	 * Moves the gap to location and adjust its size to the
-	 * anticipated change size. The size represents the expected 
+	 * anticipated change size. The size represents the expected
 	 * range of the gap that will be filled after the gap has been moved.
 	 * Thus the gap is resized to actual size + the specified size and
 	 * moved to the given position.
@@ -414,7 +436,7 @@ public class Buffer implements IBuffer {
 		this.gapStart = newGapStart;
 		this.gapEnd = newGapEnd;
 	}
-	
+
 	/**
 	 * Sets this <code>Buffer</code> to be read only.
 	 */
@@ -425,7 +447,7 @@ public class Buffer implements IBuffer {
 			this.flags &= ~(F_IS_READ_ONLY);
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
@@ -442,7 +464,7 @@ public class Buffer implements IBuffer {
 			for (int i = 0; i < length; i++) {
 				char car = contents[i];
 				switch (car) {
-					case '\n': 
+					case '\n':
 						buffer.append("\\n\n"); //$NON-NLS-1$
 						break;
 					case '\r':

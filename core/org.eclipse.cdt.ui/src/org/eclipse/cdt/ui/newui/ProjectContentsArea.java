@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Intel corporation - cloned to CDT UI, to avoid discouraged access  
+ *     Intel corporation - cloned to CDT UI, to avoid discouraged access
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
@@ -41,14 +41,14 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ProjectContentsArea {
-	private static final String ERROR_INVALID_PATH = Messages.ProjectContentsArea_3; 
-	private static final String ERROR_PATH_EMPTY = Messages.ProjectContentsArea_4; 
-	private static final String ERROR_NOT_ABSOLUTE = Messages.ProjectContentsArea_6; 
-	private static final String ERROR_NOT_VALID = Messages.ProjectContentsArea_7;  
-	private static final String ERROR_CANNOT_CREATE = Messages.ProjectContentsArea_8;  
-	private static final String ERROR_FILE_EXISTS = Messages.ProjectContentsArea_9; 
-	
-	private static final String BROWSE_LABEL = Messages.ProjectContentsArea_0; 
+	private static final String ERROR_INVALID_PATH = Messages.ProjectContentsArea_3;
+	private static final String ERROR_PATH_EMPTY = Messages.ProjectContentsArea_4;
+	private static final String ERROR_NOT_ABSOLUTE = Messages.ProjectContentsArea_6;
+	private static final String ERROR_NOT_VALID = Messages.ProjectContentsArea_7;
+	private static final String ERROR_CANNOT_CREATE = Messages.ProjectContentsArea_8;
+	private static final String ERROR_FILE_EXISTS = Messages.ProjectContentsArea_9;
+
+	private static final String BROWSE_LABEL = Messages.ProjectContentsArea_0;
 	private static final int SIZING_TEXT_FIELD_WIDTH = 250;
 	private static final String FILE_SCHEME = "file"; //$NON-NLS-1$
 	private Label locationLabel;
@@ -62,7 +62,7 @@ public class ProjectContentsArea {
 
 	/**
 	 * Create a new instance of a ProjectContentsLocationArea.
-	 * 
+	 *
 	 * @param composite
 	 */
 	public ProjectContentsArea(IErrorMessageReporter er, Composite composite) {
@@ -72,7 +72,7 @@ public class ProjectContentsArea {
 
 	/**
 	 * Create the contents of the receiver.
-	 * 
+	 *
 	 * @param composite
 	 * @param defaultEnabled
 	 */
@@ -85,7 +85,7 @@ public class ProjectContentsArea {
 		projectGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		useDefaultsButton = new Button(projectGroup, SWT.CHECK | SWT.RIGHT);
-		useDefaultsButton.setText(Messages.ProjectContentsArea_1); 
+		useDefaultsButton.setText(Messages.ProjectContentsArea_1);
 		useDefaultsButton.setSelection(defaultEnabled);
 		GridData buttonData = new GridData();
 		buttonData.horizontalSpan = 4;
@@ -114,7 +114,7 @@ public class ProjectContentsArea {
 	/**
 	 * Return whether or not we are currently showing the default location for
 	 * the project.
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public boolean isDefault() {
@@ -123,14 +123,14 @@ public class ProjectContentsArea {
 
 	/**
 	 * Create the area for user entry.
-	 * 
+	 *
 	 * @param composite
 	 * @param defaultEnabled
 	 */
 	private void createUserEntryArea(Composite composite, boolean defaultEnabled) {
 		// location label
 		locationLabel = new Label(composite, SWT.NONE);
-		locationLabel.setText(Messages.ProjectContentsArea_2); 
+		locationLabel.setText(Messages.ProjectContentsArea_2);
 
 		// project location entry field
 		locationPathField = new Text(composite, SWT.BORDER);
@@ -162,6 +162,7 @@ public class ProjectContentsArea {
 		}
 
 		locationPathField.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				errorReporter.reportError(checkValidLocation());
 			}
@@ -171,7 +172,7 @@ public class ProjectContentsArea {
 	/**
 	 * Return the path we are going to display. If it is a file URI then remove
 	 * the file prefix.
-	 * 
+	 *
 	 * @return String
 	 */
 	private String getDefaultPathDisplayString() {
@@ -191,7 +192,7 @@ public class ProjectContentsArea {
 
 	/**
 	 * Set the enablement state of the receiver.
-	 * 
+	 *
 	 * @param enabled
 	 */
 	private void setUserAreaEnabled(boolean enabled) {
@@ -203,7 +204,7 @@ public class ProjectContentsArea {
 	/**
 	 * Return the browse button. Usually referenced in order to set the layout
 	 * data for a dialog.
-	 * 
+	 *
 	 * @return Button
 	 */
 	public Button getBrowseButton() {
@@ -224,7 +225,7 @@ public class ProjectContentsArea {
 		}
 
 		DirectoryDialog dialog = new DirectoryDialog(locationPathField.getShell());
-		dialog.setMessage(Messages.ProjectContentsArea_5); 
+		dialog.setMessage(Messages.ProjectContentsArea_5);
 		dialog.setFilterPath(dirName);
 		selectedDirectory = dialog.open();
 
@@ -234,7 +235,7 @@ public class ProjectContentsArea {
 
 	/**
 	 * Update the location field based on the selected path.
-	 * 
+	 *
 	 * @param selectedPath
 	 */
 	private void updateLocationField(String selectedPath) {
@@ -243,7 +244,7 @@ public class ProjectContentsArea {
 
 	/**
 	 * Return the path on the location field.
-	 * 
+	 *
 	 * @return String
 	 */
 	private String getPathFromLocationField() {
@@ -259,18 +260,18 @@ public class ProjectContentsArea {
 	/**
 	 * Check if the entry in the widget location is valid. If it is valid return
 	 * null. Otherwise return a string that indicates the problem.
-	 * 
+	 *
 	 * @return String
 	 */
 	private String checkValidLocation() {
-		
+
 		if (isDefault()) return null;
-		
+
 		String locationFieldContents = locationPathField.getText();
-		
+
 		if (locationFieldContents.length() == 0)
 			return ERROR_PATH_EMPTY;
-		
+
 		URI newPath = getProjectLocationURI();
 
 		if (newPath == null)
@@ -280,10 +281,10 @@ public class ProjectContentsArea {
 			return ERROR_NOT_VALID;
 
 		Path p = new Path(locationFieldContents);
-		
+
 		if (!p.isAbsolute())
 			return ERROR_NOT_ABSOLUTE;
-		
+
 		// try to create dummy file
 		File f = p.toFile();
 		if (!f.exists()) {
@@ -291,24 +292,24 @@ public class ProjectContentsArea {
 			try {
 				result = f.createNewFile();
 			} catch (IOException e) {}
-			
+
 			if (result)
 				f.delete();
 			else
 				return ERROR_CANNOT_CREATE;
 		} else {
-			if (f.isFile()) 
+			if (f.isFile())
 				return ERROR_FILE_EXISTS;
 		}
-		
+
 		//create a dummy project for the purpose of validation if necessary
 		IProject project = existingProject;
 		if (project == null) {
 			String name = new Path(locationFieldContents).lastSegment();
 			if (name != null && Path.EMPTY.isValidSegment(name))
 				project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
-			else 
-				return ERROR_INVALID_PATH; 
+			else
+				return ERROR_INVALID_PATH;
 		}
 		IStatus locationStatus = project.getWorkspace().validateProjectLocationURI(project, newPath);
 
@@ -328,7 +329,7 @@ public class ProjectContentsArea {
 	 * Get the URI for the location field if possible.
 	 * @return URI or <code>null</code> if it is not valid.
 	 */
-	public URI getProjectLocationURI() { 
+	public URI getProjectLocationURI() {
 		return URIUtil.toURI(locationPathField.getText());
 	}
 
@@ -347,12 +348,12 @@ public class ProjectContentsArea {
 	/**
 	 * Return the location for the project. If we are using defaults then return
 	 * the workspace root so that core creates it with default values.
-	 * 
+	 *
 	 * @return String
 	 */
 	public String getProjectLocation() {
-		return isDefault() ? 
-			Platform.getLocation().toString(): 
+		return isDefault() ?
+			Platform.getLocation().toString():
 			locationPathField.getText();
 	}
 

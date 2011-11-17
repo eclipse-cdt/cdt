@@ -28,6 +28,7 @@ public final class CLibraryPathEntry extends ACPathEntry implements
 		super(rc, flags);
 	}
 
+	@Override
 	public final int getKind() {
 		return LIBRARY_PATH;
 	}

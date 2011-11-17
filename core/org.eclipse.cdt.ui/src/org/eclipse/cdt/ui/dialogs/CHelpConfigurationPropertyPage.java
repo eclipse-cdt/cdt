@@ -4,8 +4,8 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors: 
+ *
+ * Contributors:
  *     Intel Corporation - Initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
  **********************************************************************/
@@ -43,7 +43,7 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
 
 /**
- * This class defines a project property page 
+ * This class defines a project property page
  * for C/C++ project help settings configuration
  * @since 2.1
  * @noextend This class is not intended to be subclassed by clients.
@@ -51,16 +51,16 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
 public class CHelpConfigurationPropertyPage extends PropertyPage implements
 		IWorkbenchPreferencePage {
 	private CHelpSettingsDisplay fCHelpSettingsDisplay;
-	
+
 	private class CHelpBookListLabelProvider extends LabelProvider {
 		private ImageDescriptor fHelpProviderIcon;
 		private ImageDescriptorRegistry fRegistry;
-		
+
 		public CHelpBookListLabelProvider() {
 			fRegistry= CUIPlugin.getImageDescriptorRegistry();
 			fHelpProviderIcon= CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_LIBRARY);
 		}
-		
+
 		@Override
 		public String getText(Object element) {
 			if (element instanceof CHelpBookDescriptor) {
@@ -73,56 +73,58 @@ public class CHelpConfigurationPropertyPage extends PropertyPage implements
 		public Image getImage(Object element) {
 			if (element instanceof CHelpBookDescriptor) {
 				return fRegistry.get(fHelpProviderIcon);
-			} 
+			}
 			return null;
 		}
 	}
-	
+
 	private class CHelpSettingsDisplay {
 		private CheckedListDialogField<CHelpBookDescriptor> fCHelpBookList;
 		private IProject fProject;
 		private CHelpBookDescriptor fCHelpBookDescriptors[];
-		
+
 		public CHelpSettingsDisplay() {
-		
+
 			String[] buttonLabels= new String[] {
 				/* 0 */ CUIMessages.CHelpConfigurationPropertyPage_buttonLabels_CheckAll,
 				/* 1 */ CUIMessages.CHelpConfigurationPropertyPage_buttonLabels_UncheckAll
 			};
-		
+
 			fCHelpBookList= new CheckedListDialogField<CHelpBookDescriptor>(null, buttonLabels, new CHelpBookListLabelProvider());
-			fCHelpBookList.setLabelText(CUIMessages.CHelpConfigurationPropertyPage_HelpBooks); 
+			fCHelpBookList.setLabelText(CUIMessages.CHelpConfigurationPropertyPage_HelpBooks);
 			fCHelpBookList.setCheckAllButtonIndex(0);
 			fCHelpBookList.setUncheckAllButtonIndex(1);
 		}
-		
+
 		public Control createControl(Composite parent){
 			PixelConverter converter= new PixelConverter(parent);
-			
+
 			Composite composite= new Composite(parent, SWT.NONE);
-			
+
 			LayoutUtil.doDefaultLayout(composite, new DialogField[] { fCHelpBookList }, true);
 			LayoutUtil.setHorizontalGrabbing(fCHelpBookList.getListControl(null), true);
 
 			int buttonBarWidth= converter.convertWidthInCharsToPixels(24);
 			fCHelpBookList.setButtonsMinWidth(buttonBarWidth);
-			
+
 			return composite;
 		}
-		
+
 		public void init(final IResource resource) {
 			if(!(resource instanceof IProject))
 				return;
 			fProject = (IProject)resource;
 			fCHelpBookDescriptors = CHelpProviderManager.getDefault().getCHelpBookDescriptors(new ICHelpInvocationContext(){
+				@Override
 				public IProject getProject(){return (IProject)resource;}
+				@Override
 				public ITranslationUnit getTranslationUnit(){return null;}
 				}
 			);
 
 			List<CHelpBookDescriptor> allTopicsList= Arrays.asList(fCHelpBookDescriptors);
 			List<CHelpBookDescriptor> enabledTopicsList= getEnabledEntries(allTopicsList);
-			
+
 			fCHelpBookList.setElements(allTopicsList);
 			fCHelpBookList.setCheckedElements(enabledTopicsList);
 		}
@@ -138,11 +140,11 @@ public class CHelpConfigurationPropertyPage extends PropertyPage implements
 			}
 			return desList;
 		}
-		
+
 		public void performOk(){
 			List<CHelpBookDescriptor> list = fCHelpBookList.getElements();
 			final IProject project = fProject;
-			
+
 			for(int i = 0; i < list.size(); i++){
 				Object obj = list.get(i);
 				if(obj != null && obj instanceof CHelpBookDescriptor){
@@ -150,12 +152,14 @@ public class CHelpConfigurationPropertyPage extends PropertyPage implements
 				}
 			}
 			CHelpProviderManager.getDefault().serialize(new ICHelpInvocationContext(){
+				@Override
 				public IProject getProject(){return project;}
+				@Override
 				public ITranslationUnit getTranslationUnit(){return null;}
 				});
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
@@ -184,6 +188,7 @@ public class CHelpConfigurationPropertyPage extends PropertyPage implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
+	@Override
 	public void init(IWorkbench workbench) {
 		// TODO Auto-generated method stub
 

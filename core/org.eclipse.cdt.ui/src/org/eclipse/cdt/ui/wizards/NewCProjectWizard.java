@@ -63,18 +63,18 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 	private static final String WZ_DESC= "CProjectWizard.description"; //$NON-NLS-1$
 
 	private static final String WINDOW_TITLE = "CProjectWizard.windowTitle"; //$NON-NLS-1$
-	
+
 
 	private String wz_title;
 	private String wz_desc;
 //	private String op_error;
 
 	protected IConfigurationElement fConfigElement;
-	protected NewCProjectWizardPage fMainPage; 
+	protected NewCProjectWizardPage fMainPage;
 	protected IProject newProject;
 
 	public NewCProjectWizard() {
-		this(CUIPlugin.getResourceString(WZ_TITLE), CUIPlugin.getResourceString(WZ_DESC), 
+		this(CUIPlugin.getResourceString(WZ_TITLE), CUIPlugin.getResourceString(WZ_DESC),
 			CUIPlugin.getResourceString(OP_ERROR));
 	}
 
@@ -93,7 +93,7 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.IWizard#addPages()
-	 */		
+	 */
 	@Override
 	public void addPages() {
 		fMainPage= new NewCProjectWizardPage(CUIPlugin.getResourceString(PREFIX));
@@ -145,7 +145,7 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 	 * in the main page.
 	 *
 	 * @returns the C project
-	 */    
+	 */
 	public IProject getNewProject() {
 		return newProject;
 	}
@@ -156,7 +156,7 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.IWizard#performFinish()
-	 */		
+	 */
 	@Override
 	public boolean performFinish() {
 		if (!invokeRunnable(getRunnable())) {
@@ -189,10 +189,11 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 	 *
 	 * @see IExecutableExtension#setInitializationData
 	 */
+	@Override
 	public void setInitializationData(IConfigurationElement cfig, String propertyName, Object data) {
 		fConfigElement= cfig;
 	}
-	
+
 	/*
 	 * Reimplemented method from superclass
 	 */
@@ -212,12 +213,15 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 
 	public IRunnableWithProgress getRunnable() {
 		return new WorkspaceModifyDelegatingOperation(new IRunnableWithProgress() {
+			@Override
 			public void run(IProgressMonitor imonitor) throws InvocationTargetException, InterruptedException {
 				final Exception except[] = new Exception[1];
 				// ugly, need to make the wizard page run in a non ui thread so that this can go away!!!
 				getShell().getDisplay().syncExec(new Runnable() {
+					@Override
 					public void run() {
 						IRunnableWithProgress op= new WorkspaceModifyDelegatingOperation(new IRunnableWithProgress() {
+			@Override
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				final IProgressMonitor fMonitor;
 				if (monitor == null) {
@@ -270,7 +274,7 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 			Shell shell= getShell();
 			String title= CUIPlugin.getResourceString(OP_ERROR + ".title"); //$NON-NLS-1$
 			String message= CUIPlugin.getResourceString(OP_ERROR + ".message"); //$NON-NLS-1$
-                       
+
 			Throwable th= e.getTargetException();
 			CUIPlugin.errorDialog(shell, title, message, th, false);
 			try {
@@ -287,7 +291,7 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 
 	protected void doRun(IProgressMonitor monitor) throws CoreException {
 		createNewProject(monitor);
-	}	
+	}
 
 	/**
 	 * Creates a new project resource with the selected name.
@@ -331,7 +335,7 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 			newProject = CCorePlugin.getDefault().createCDTProject(description, newProjectHandle, getBuildSystemId(), monitor);
 		else
 			newProject = CCorePlugin.getDefault().createCProject(description, newProjectHandle, monitor, getProjectID());
-		
+
 		return newProject;
 	}
 
@@ -341,7 +345,7 @@ public abstract class NewCProjectWizard extends BasicNewResourceWizard implement
 	 * @return String
 	 */
 	public abstract String getProjectID();
-	
+
 	public String getBuildSystemId(){
 		return null;
 	}

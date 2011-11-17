@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.settings.model.ICSettingEntry;
  */
 public class ExpLibraryPathTab extends AbstractExportTab implements IPathEntryStoreListener {
 
+	@Override
 	public void pathEntryStoreChanged(PathEntryStoreChangedEvent event) {
 		updateData(getResDesc());
 	}

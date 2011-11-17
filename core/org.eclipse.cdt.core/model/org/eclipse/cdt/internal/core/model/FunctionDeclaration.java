@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.model.IFunctionDeclaration;
 public class FunctionDeclaration extends SourceManipulation implements IFunctionDeclaration {
 	protected String[] fParameterTypes;
 	protected String returnType;
-	
+
 	public FunctionDeclaration(ICElement parent, String name) {
 		super(parent, name, ICElement.C_FUNCTION_DECLARATION);
 		fParameterTypes= fgEmptyStrings;
@@ -31,6 +31,7 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 		fParameterTypes= fgEmptyStrings;
 	}
 
+	@Override
 	public String getReturnType(){
 		if (returnType != null) {
 			return returnType;
@@ -42,22 +43,25 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 		returnType = type;
 	}
 
+	@Override
 	public int getNumberOfParameters() {
 		return fParameterTypes == null ? 0 : fParameterTypes.length;
 	}
 
+	@Override
 	public String[] getParameterTypes() {
 		return fParameterTypes;
 	}
-	
+
 	public void setParameterTypes(String[] parameterTypes) {
 		fParameterTypes = parameterTypes;
-	}		
-		
+	}
+
+	@Override
 	public String getSignature() throws CModelException{
 		return getSignature(this);
 	}
-	
+
 	public static String getSignature(IFunctionDeclaration func) {
 		StringBuffer sig = new StringBuffer(func.getElementName());
 		sig.append(getParameterClause(func.getParameterTypes()));
@@ -68,17 +72,17 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 				sig.append(" volatile"); //$NON-NLS-1$
 			}
 		} catch (CModelException e) {
-		} 
+		}
 		return sig.toString();
 	}
-	
+
 	public String getParameterClause() {
 		return getParameterClause(getParameterTypes());
 	}
-	
+
 	public static String getParameterClause(String[] paramTypes){
 		StringBuffer sig = new StringBuffer();
-		
+
 		if(paramTypes.length > 0){
 			sig.append("("); //$NON-NLS-1$
 			int i = 0;
@@ -92,13 +96,15 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 		else{
 			sig.append("()"); //$NON-NLS-1$
 		}
-		return sig.toString();	
+		return sig.toString();
 	}
-	
+
+	@Override
 	public String getParameterInitializer(int pos) {
 		return ""; //$NON-NLS-1$
 	}
-	
+
+	@Override
 	public String[] getExceptions(){
 		return new String[] {};
 	}
@@ -107,11 +113,11 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 	protected CElementInfo createElementInfo () {
 		return new FunctionInfo(this);
 	}
-	
+
 	protected FunctionInfo getFunctionInfo() throws CModelException{
 		return (FunctionInfo) getElementInfo();
 	}
-	
+
 	@Override
 	public boolean equals(Object other) {
 		if (other instanceof IFunctionDeclaration) {
@@ -119,17 +125,18 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 		}
 		return false;
 	}
-	
+
 	public static boolean equals(IFunctionDeclaration lhs, IFunctionDeclaration rhs) {
-		return CElement.equals(lhs, rhs) && 
+		return CElement.equals(lhs, rhs) &&
 			Util.equalArraysOrNull(lhs.getParameterTypes(), rhs.getParameterTypes()) &&
 			lhs.getReturnType().equals(rhs.getReturnType());
 	}
-	
+
 	/**
-	 * FunctionDeclarations and Functions can not be constant 
+	 * FunctionDeclarations and Functions can not be constant
 	 * @see org.eclipse.cdt.core.model.IDeclaration#isConst()
 	 */
+	@Override
 	public boolean isConst() throws CModelException{
 		return getFunctionInfo().isConst();
 	}
@@ -142,6 +149,7 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 	 * Returns the isStatic.
 	 * @return boolean
 	 */
+	@Override
 	public boolean isStatic() throws CModelException {
 		return getFunctionInfo().isStatic();
 	}
@@ -150,6 +158,7 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 	 * Returns the isVolatile.
 	 * @return boolean
 	 */
+	@Override
 	public boolean isVolatile() throws CModelException {
 		return getFunctionInfo().isVolatile();
 	}

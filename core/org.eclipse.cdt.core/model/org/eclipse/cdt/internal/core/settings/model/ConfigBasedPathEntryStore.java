@@ -60,6 +60,7 @@ public class ConfigBasedPathEntryStore implements IPathEntryStore, ICProjectDesc
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.resources.IPathEntryStore#addPathEntryStoreListener(org.eclipse.cdt.core.resources.IPathEntryStoreListener)
 	 */
+	@Override
 	public void addPathEntryStoreListener(IPathEntryStoreListener listener) {
 		fListeners.add(listener);
 	}
@@ -67,6 +68,7 @@ public class ConfigBasedPathEntryStore implements IPathEntryStore, ICProjectDesc
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.resources.IPathEntryStore#removePathEntryStoreListener(org.eclipse.cdt.core.resources.IPathEntryStoreListener)
 	 */
+	@Override
 	public void removePathEntryStoreListener(IPathEntryStoreListener listener) {
 		fListeners.remove(listener);
 	}
@@ -83,6 +85,7 @@ public class ConfigBasedPathEntryStore implements IPathEntryStore, ICProjectDesc
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.resources.IPathEntryStore#fireClosedChangedEvent(IProject)
 	 */
+	@Override
 	public void close() {
 		PathEntryStoreChangedEvent evt = new PathEntryStoreChangedEvent(this, fProject, PathEntryStoreChangedEvent.STORE_CLOSED);
 		IPathEntryStoreListener[] observers = new IPathEntryStoreListener[fListeners.size()];
@@ -93,19 +96,23 @@ public class ConfigBasedPathEntryStore implements IPathEntryStore, ICProjectDesc
 		CProjectDescriptionManager.getInstance().removeCProjectDescriptionListener(this);
 	}
 
+	@Override
 	public IProject getProject() {
 		return fProject;
 	}
 
+	@Override
 	@Deprecated
 	public ICExtensionReference getExtensionReference() {
 		return null;
 	}
 
+	@Override
 	public ICConfigExtensionReference getConfigExtensionReference() {
 		return null;
 	}
 
+	@Override
 	public IPathEntry[] getRawPathEntries() throws CoreException {
 		ICConfigurationDescription cfg = getIndexCfg(fProject);
 		List<IPathEntry>[] es = getEntries(fProject, cfg);
@@ -118,6 +125,7 @@ public class ConfigBasedPathEntryStore implements IPathEntryStore, ICProjectDesc
 		return new IPathEntry[0];
 	}
 
+	@Override
 	public void setRawPathEntries(IPathEntry[] entries) throws CoreException {
 		ICConfigurationDescription cfg = getIndexCfg(fProject);
 		List<IPathEntry> es[] = getEntries(fProject, cfg);
@@ -162,6 +170,7 @@ public class ConfigBasedPathEntryStore implements IPathEntryStore, ICProjectDesc
 		}
 	}
 
+	@Override
 	public void handleEvent(CProjectDescriptionEvent event) {
 		IProject project = event.getProject();
 		if(!fProject.equals(project))

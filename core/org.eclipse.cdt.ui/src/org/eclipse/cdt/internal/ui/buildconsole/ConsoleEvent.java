@@ -12,8 +12,9 @@ package org.eclipse.cdt.internal.ui.buildconsole;
 
 import java.util.EventObject;
 
-import org.eclipse.cdt.ui.IBuildConsoleEvent;
 import org.eclipse.core.resources.IProject;
+
+import org.eclipse.cdt.ui.IBuildConsoleEvent;
 
 public class ConsoleEvent extends EventObject implements IBuildConsoleEvent {
 
@@ -31,10 +32,12 @@ public class ConsoleEvent extends EventObject implements IBuildConsoleEvent {
 		fType = type;
 	}
 
+	@Override
 	public IProject getProject() {
 		return fProject;
 	}
 
+	@Override
 	public int getType() {
 		return fType;
 	}

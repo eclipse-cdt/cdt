@@ -27,12 +27,12 @@ import org.eclipse.cdt.utils.ui.controls.IFileListChangeListener;
 
 /**
  * This gives a Label and UISpecialList Widget.
- * 
+ *
  */
 public class UISpecialListWidget extends UIStringListWidget {
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param attribute
 	 *            attribute associated with this widget.
 	 */
@@ -44,7 +44,7 @@ public class UISpecialListWidget extends UIStringListWidget {
 	 * create a Label and Text widget, add it to UIComposite. set Layout for the
 	 * widgets to be added to UIComposite. set required parameters to the
 	 * Widgets.
-	 * 
+	 *
 	 * @param uiComposite
 	 */
 	@Override
@@ -73,6 +73,7 @@ public class UISpecialListWidget extends UIStringListWidget {
 		fileListControl.setList(itemsList.toArray(new String[itemsList.size()]));
 		fileListControl.setSelection(0);
 		fileListControl.addChangeListener(new IFileListChangeListener(){
+			@Override
 			public void fileListChanged(FileListControl fileList, String oldValue[], String newValue[]) {
 				itemsList.clear();
 				itemsList.addAll(Arrays.asList(newValue));

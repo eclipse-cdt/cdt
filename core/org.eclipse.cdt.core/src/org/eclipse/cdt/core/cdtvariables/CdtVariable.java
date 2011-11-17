@@ -16,7 +16,7 @@ import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
 
 /**
  * This is the trivial implementation of the IBuildMacro used internaly by the MBS
- * 
+ *
  * @since 3.0
  */
 public class CdtVariable implements ICdtVariable {
@@ -26,7 +26,7 @@ public class CdtVariable implements ICdtVariable {
 	protected String fStringListValue[];
 
 	protected CdtVariable(){
-		
+
 	}
 
 	public CdtVariable(String name, int type, String value){
@@ -40,7 +40,7 @@ public class CdtVariable implements ICdtVariable {
 		fType = type;
 		fStringListValue = value;
 	}
-	
+
 	public CdtVariable(ICdtVariable var){
 		fName = var.getName();
 		fType = var.getValueType();
@@ -56,6 +56,7 @@ public class CdtVariable implements ICdtVariable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacro#getName()
 	 */
+	@Override
 	public String getName() {
 		return fName;
 	}
@@ -63,6 +64,7 @@ public class CdtVariable implements ICdtVariable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacro#getMacroValueType()
 	 */
+	@Override
 	public int getValueType() {
 		return fType;
 	}
@@ -70,16 +72,18 @@ public class CdtVariable implements ICdtVariable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacro#getStringValue()
 	 */
+	@Override
 	public String getStringValue() throws CdtVariableException {
 		if(CdtVariableResolver.isStringListVariable(fType))
 			throw new CdtVariableException(ICdtVariableStatus.TYPE_MACRO_NOT_STRING,fName,null,fName);
-		
+
 		return fStringValue;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacro#getStringListValue()
 	 */
+	@Override
 	public String[] getStringListValue() throws CdtVariableException {
 		if(!CdtVariableResolver.isStringListVariable(fType))
 			throw new CdtVariableException(ICdtVariableStatus.TYPE_MACRO_NOT_STRINGLIST,fName,null,fName);

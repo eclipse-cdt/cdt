@@ -21,21 +21,26 @@ import org.eclipse.ui.part.IPageBookViewPage;
 public class BuildConsolePageParticipant implements IConsolePageParticipant {
 	private BuildConsole console;
 
+	@Override
 	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
 		return null;
 	}
 
+	@Override
 	public void init(IPageBookViewPage page, IConsole console) {
 		this.console = (BuildConsole)console;
 	}
 
+	@Override
 	public void dispose() {
 	}
 
+	@Override
 	public void activated() {
 		BuildConsole.setCurrentPage(console.getPage());
 	}
 
+	@Override
 	public void deactivated() {
 	}
 }

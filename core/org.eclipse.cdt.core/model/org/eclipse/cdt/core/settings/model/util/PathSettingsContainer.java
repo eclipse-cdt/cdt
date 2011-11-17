@@ -181,6 +181,7 @@ public final class PathSettingsContainer {
 		final List<PathSettingsContainer> list = new ArrayList<PathSettingsContainer>();
 		accept(new IPathSettingsContainerVisitor(){
 
+			@Override
 			public boolean visit(PathSettingsContainer container) {
 				if(container != PathSettingsContainer.this || includeThis)
 					list.add(container);
@@ -258,6 +259,7 @@ public final class PathSettingsContainer {
 		final List<Object> list = new ArrayList<Object>();
 		accept(new IPathSettingsContainerVisitor(){
 
+			@Override
 			public boolean visit(PathSettingsContainer container) {
 				if(container != PathSettingsContainer.this || includeThis)
 					list.add(container.getValue());

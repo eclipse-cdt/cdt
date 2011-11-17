@@ -89,6 +89,7 @@ public class XmlProjectDescriptionStorage2 extends XmlProjectDescriptionStorage 
 		final boolean[] needReload = new boolean[] { false };
 		try {
 			project.getFolder(STORAGE_FOLDER_NAME).accept(new IResourceProxyVisitor() {
+				@Override
 				public boolean visit(IResourceProxy proxy) throws CoreException {
 					if (modificationMap.containsKey(proxy.getName())) {
 						long modStamp = getModificationStamp(proxy.requestResource());
@@ -136,7 +137,7 @@ public class XmlProjectDescriptionStorage2 extends XmlProjectDescriptionStorage 
 																	currEl.getAttribute(EXTERNAL_CELEMENT_KEY),
 																	reCreate, createEmptyIfNotFound, readOnly);
 				// Update the modification stamp
-				modificationMap.put(currEl.getAttribute(EXTERNAL_CELEMENT_KEY), 
+				modificationMap.put(currEl.getAttribute(EXTERNAL_CELEMENT_KEY),
 						getModificationStamp(project.getFolder(STORAGE_FOLDER_NAME).getFile(currEl.getAttribute(EXTERNAL_CELEMENT_KEY))));
 
 				ICStorageElement currParent = currEl.getParent();

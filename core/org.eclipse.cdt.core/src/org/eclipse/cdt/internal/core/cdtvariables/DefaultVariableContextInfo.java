@@ -18,7 +18,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 
 /**
  * This is the default implementation of the IMacroContextInfo
- * 
+ *
  * @since 3.0
  */
 public class DefaultVariableContextInfo implements ICoreVariableContextInfo {
@@ -26,12 +26,12 @@ public class DefaultVariableContextInfo implements ICoreVariableContextInfo {
 	private ICdtVariableSupplier fSuppliers[];
 	private int fType;
 	private Object fData;
-	
+
 	public DefaultVariableContextInfo(int type, Object data){
 		fType = type;
 		fData = data;
 	}
-	
+
 	protected DefaultVariableContextInfo(int type, Object data, ICdtVariableSupplier suppliers[]){
 		fType = type;
 		fData = data;
@@ -63,7 +63,7 @@ public class DefaultVariableContextInfo implements ICoreVariableContextInfo {
 		case CONTEXT_INSTALLATIONS:
 			if(data == null){
 				return new ICdtVariableSupplier[]{
-						CdtVariableManager.fCdtMacroSupplier 
+						CdtVariableManager.fCdtMacroSupplier
 				};
 			}
 			break;
@@ -81,6 +81,7 @@ public class DefaultVariableContextInfo implements ICoreVariableContextInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.internal.macros.IMacroContextInfo#getContextType()
 	 */
+	@Override
 	public int getContextType() {
 		return fType;
 	}
@@ -88,6 +89,7 @@ public class DefaultVariableContextInfo implements ICoreVariableContextInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.internal.macros.IMacroContextInfo#getContextData()
 	 */
+	@Override
 	public Object getContextData() {
 		return fData;
 	}
@@ -95,6 +97,7 @@ public class DefaultVariableContextInfo implements ICoreVariableContextInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.internal.macros.IMacroContextInfo#getSuppliers()
 	 */
+	@Override
 	public ICdtVariableSupplier[] getSuppliers() {
 		if(fSuppliers == null)
 			fSuppliers = getSuppliers(fType, fData);
@@ -104,6 +107,7 @@ public class DefaultVariableContextInfo implements ICoreVariableContextInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.internal.macros.IMacroContextInfo#getNext()
 	 */
+	@Override
 	public IVariableContextInfo getNext() {
 		switch(fType){
 		case CONTEXT_CONFIGURATION:

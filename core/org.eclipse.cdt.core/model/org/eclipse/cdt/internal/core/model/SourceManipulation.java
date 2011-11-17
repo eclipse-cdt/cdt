@@ -52,6 +52,7 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 	/**
 	 * @see ISourceManipulation
 	 */
+	@Override
 	public void copy(ICElement container, ICElement sibling, String rename, boolean force,
 		IProgressMonitor monitor) throws CModelException {
 		if (container == null) {
@@ -73,6 +74,7 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 	/**
 	 * @see ISourceManipulation
 	 */
+	@Override
 	public void delete(boolean force, IProgressMonitor monitor) throws CModelException {
 		ICElement[] elements = new ICElement[] {this};
 		getCModel().delete(elements, force, monitor);
@@ -81,6 +83,7 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 	/**
 	 * @see ISourceManipulation
 	 */
+	@Override
 	public void move(ICElement container, ICElement sibling, String rename, boolean force,
 		IProgressMonitor monitor) throws CModelException {
 		if (container == null) {
@@ -102,6 +105,7 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 	/**
 	 * @see ISourceManipulation
 	 */
+	@Override
 	public void rename(String name, boolean force, IProgressMonitor monitor) throws CModelException {
 		if (name == null) {
 			throw new IllegalArgumentException("element.nullName"); //$NON-NLS-1$
@@ -115,6 +119,7 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 	/**
 	 * @see IMember
 	 */
+	@Override
 	public ITranslationUnit getTranslationUnit() {
 		try {
 			return getSourceManipulationInfo().getTranslationUnit();
@@ -152,6 +157,7 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 	/**
 	 * @see ISourceReference
 	 */
+	@Override
 	public String getSource() throws CModelException {
 		return getSourceManipulationInfo().getSource();
 	}
@@ -159,6 +165,7 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 	/**
 	 * @see ISourceReference
 	 */
+	@Override
 	public ISourceRange getSourceRange() throws CModelException {
 		return getSourceManipulationInfo().getSourceRange();
 	}
@@ -175,7 +182,7 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 	public IResource getResource() {
 		return null;
 	}
-	
+
 	@Override
 	protected CElementInfo createElementInfo () {
 		return new SourceManipulationInfo(this);
@@ -184,9 +191,9 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 	protected SourceManipulationInfo getSourceManipulationInfo() throws CModelException {
 		return (SourceManipulationInfo)getElementInfo();
 	}
-	
+
 	public boolean isIdentical(SourceManipulation other) throws CModelException{
-		return (this.equals(other) 
+		return (this.equals(other)
 		&& (this.getSourceManipulationInfo().hasSameContentsAs(other.getSourceManipulationInfo())));
 	}
 
@@ -199,7 +206,7 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 		if (openableParent == null) {
 			return;
 		}
-		
+
 		newElements.put(this, info);
 
 		CElementInfo openableParentInfo = (CElementInfo) CModelManager.getDefault().getInfo(openableParent);
@@ -215,7 +222,7 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 			//
 		}
 	}
-	
+
 	public void setIdPos(int startPos, int length) {
 		try {
 			getSourceManipulationInfo().setIdPos(startPos, length);
@@ -301,7 +308,7 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 				case ICElement.C_TEMPLATE_METHOD:
 				case ICElement.C_TEMPLATE_METHOD_DECLARATION:
 					for (ICElement element2 : children) {
-							if (elementType == element2.getElementType() 
+							if (elementType == element2.getElementType()
 									&& elementName.equals(element2.getElementName())) {
 								assert element2 instanceof IFunctionDeclaration;
 								String[] functionParams= ((IFunctionDeclaration)element2).getParameterTypes();
@@ -316,7 +323,7 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 				case ICElement.C_TEMPLATE_STRUCT:
 				case ICElement.C_TEMPLATE_UNION:
 					for (ICElement element2 : children) {
-							if (elementType == element2.getElementType() 
+							if (elementType == element2.getElementType()
 									&& elementName.equals(element2.getElementName())) {
 								assert element2 instanceof ITemplate;
 								String[] templateParams= ((ITemplate)element2).getTemplateParameterTypes();
@@ -329,7 +336,7 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 					break;
 				default:
 					for (ICElement element2 : children) {
-							if (elementType == element2.getElementType() 
+							if (elementType == element2.getElementType()
 									&& elementName.equals(element2.getElementName())) {
 								element= (CElement) element2;
 								break;
@@ -362,14 +369,16 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 		return CElement.CEM_SOURCEELEMENT;
 	}
 
+	@Override
 	public boolean isActive() {
 		return fIsActive;
 	}
 
+	@Override
 	public int getIndex() {
 		return fIndex;
 	}
-	
+
 	public void setActive(boolean active) {
 		fIsActive= active;
 	}
@@ -377,12 +386,12 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 	public void setIndex(int i) {
 		fIndex= (short) i;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return Util.combineHashCodes(fIndex, super.hashCode());
 	}
-	
+
 	@Override
 	public boolean equals(Object other) {
 		if (other instanceof ISourceReference) {

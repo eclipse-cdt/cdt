@@ -21,7 +21,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledFormText;
 
 /**
- * FormBrowser. 
+ * FormBrowser.
  */
 class FormBrowser {
 	private FormToolkit toolkit;
@@ -52,6 +52,7 @@ class FormBrowser {
 		ftext.marginHeight = 2;
 		ftext.setHyperlinkSettings(toolkit.getHyperlinkGroup());
 		formText.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				if (toolkit != null) {
 					toolkit.dispose();

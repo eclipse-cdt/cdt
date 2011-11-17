@@ -22,14 +22,16 @@ public class CExtensionDescriptor implements ICExtensionDescriptor {
 		fElement = el;
 	}
 
+	@Override
 	public String getId() {
 		return fElement.getAttribute(ATTRIBUTE_ID);
 	}
 
+	@Override
 	public String getName() {
 		return fElement.getAttribute(ATTRIBUTE_NAME);
 	}
-	
+
 	public IConfigurationElement getConfigurationElement(){
 		return fElement;
 	}

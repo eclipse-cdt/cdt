@@ -27,6 +27,7 @@ public final class CSourceEntry extends ACExclusionFilterEntry implements ICSour
 		super(value, exclusionPatterns, flags | VALUE_WORKSPACE_PATH);
 	}
 
+	@Override
 	public final int getKind() {
 		return SOURCE_PATH;
 	}

@@ -17,15 +17,16 @@ public class VariableTemplate extends Variable implements ITemplate {
 
 	protected static final String[] fgEmptyList= new String[] {};
 	protected String[] templateParameterTypes;
-		
+
 	public VariableTemplate(ICElement parent, String name) {
 		super(parent, name, ICElement.C_TEMPLATE_VARIABLE);
-		templateParameterTypes= fgEmptyList;		
+		templateParameterTypes= fgEmptyList;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ITemplate#getNumberOfTemplateParameters()
 	 */
+	@Override
 	public int getNumberOfTemplateParameters() {
 		return templateParameterTypes == null ? 0 : templateParameterTypes.length;
 	}
@@ -33,10 +34,12 @@ public class VariableTemplate extends Variable implements ITemplate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ITemplate#getTemplateParameterTypes()
 	 */
+	@Override
 	public String[] getTemplateParameterTypes() {
 		return templateParameterTypes;
 	}
 
+	@Override
 	public String[] getTemplateArguments() {
 		return fgEmptyList;
 	}
@@ -51,6 +54,7 @@ public class VariableTemplate extends Variable implements ITemplate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ITemplate#getTemplateSignature()
 	 */
+	@Override
 	public String getTemplateSignature() throws CModelException {
 		StringBuffer sig = new StringBuffer(getElementName());
 		if(getNumberOfTemplateParameters() > 0){
@@ -67,10 +71,10 @@ public class VariableTemplate extends Variable implements ITemplate {
 		else{
 			sig.append("<>"); //$NON-NLS-1$
 		}
-		
+
 		sig.append(" : "); //$NON-NLS-1$
 		sig.append(this.getTypeName());
-		
+
 		return sig.toString();
 	}
 }

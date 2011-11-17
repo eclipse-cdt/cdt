@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.model.ext;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
@@ -27,11 +27,11 @@ public class MethodDeclarationHandle extends CElementHandle implements IMethodDe
 	private boolean fIsStatic;
 	private boolean fIsConstructor;
 	private boolean fIsDestructor;
-	
+
 	public MethodDeclarationHandle(ICElement parent, ICPPMethod method) {
 		this(parent, ICElement.C_METHOD_DECLARATION, method);
 	}
-	
+
 	protected MethodDeclarationHandle(ICElement parent, int type, ICPPMethod method) {
 		super(parent, type, method.getName());
 		fParameterTypes= extractParameterTypes(method);
@@ -39,7 +39,7 @@ public class MethodDeclarationHandle extends CElementHandle implements IMethodDe
 		fVisibility= getVisibility(method);
 		fIsStatic= method.isStatic();
 		fIsConstructor= method instanceof ICPPConstructor;
-		if (!fIsConstructor) 
+		if (!fIsConstructor)
 			fIsDestructor= method.isDestructor();
 
 	}
@@ -52,34 +52,42 @@ public class MethodDeclarationHandle extends CElementHandle implements IMethodDe
 		return false;
 	}
 
+	@Override
 	public int getNumberOfParameters() {
 		return fParameterTypes.length;
 	}
 
+	@Override
 	public String[] getParameterTypes() {
 		return fParameterTypes;
 	}
 
+	@Override
 	public String getReturnType() {
 		return fReturnType;
 	}
-	
+
+	@Override
 	public String getSignature() throws CModelException {
 		return FunctionDeclaration.getSignature(this);
 	}
 
+	@Override
 	public boolean isStatic() throws CModelException {
 		return fIsStatic;
 	}
 
+	@Override
 	public ASTAccessVisibility getVisibility() throws CModelException {
 		return fVisibility;
 	}
-	
+
+	@Override
 	public boolean isConstructor() throws CModelException {
 		return fIsConstructor;
 	}
 
+	@Override
 	public boolean isDestructor() throws CModelException {
 		return fIsDestructor;
 	}

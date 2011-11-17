@@ -23,12 +23,13 @@ import org.eclipse.ui.IWorkbenchPart;
 /**
  * This context menu action is used to change active build configuration for the project
  */
-public class ChangeBuildConfigContextAction extends ChangeBuildConfigActionBase implements 
+public class ChangeBuildConfigContextAction extends ChangeBuildConfigActionBase implements
 	IMenuCreator, IObjectActionDelegate	{
 
-	/** 
+	/**
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
 	 */
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		// do nothing
 	}
@@ -36,6 +37,7 @@ public class ChangeBuildConfigContextAction extends ChangeBuildConfigActionBase 
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		// do nothing
 	}
@@ -43,6 +45,7 @@ public class ChangeBuildConfigContextAction extends ChangeBuildConfigActionBase 
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		onSelectionChanged(action, selection);
 		action.setMenuCreator(this);
@@ -51,6 +54,7 @@ public class ChangeBuildConfigContextAction extends ChangeBuildConfigActionBase 
 	/**
 	 * @see org.eclipse.jface.action.IMenuCreator#dispose()
 	 */
+	@Override
 	public void dispose() {
 		// do nothing
 	}
@@ -58,6 +62,7 @@ public class ChangeBuildConfigContextAction extends ChangeBuildConfigActionBase 
 	/**
 	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Control)
 	 */
+	@Override
 	public Menu getMenu(Control parent) {
 		// this method is never called
 		return null;
@@ -66,6 +71,7 @@ public class ChangeBuildConfigContextAction extends ChangeBuildConfigActionBase 
 	/**
 	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Menu)
 	 */
+	@Override
 	public Menu getMenu(Menu parent) {
 		Menu menu = new Menu(parent);
 		menu.addMenuListener(new MenuAdapter() {

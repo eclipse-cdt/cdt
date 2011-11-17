@@ -49,19 +49,20 @@ import org.eclipse.cdt.internal.ui.actions.DeleteResConfigsHandler;
 /**
  * Action which deletes resource description. (If resource description is missing
  * one from parent is normally used)
- * @deprecated as of CDT 8.0 now using {@link DeleteResConfigsHandler} 
+ * @deprecated as of CDT 8.0 now using {@link DeleteResConfigsHandler}
  */
 @Deprecated
-public class DeleteResConfigsAction 
+public class DeleteResConfigsAction
 implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 
 	protected ArrayList<IResource> objects = null;
-	private   ArrayList<ResCfgData> outData = null;		
+	private   ArrayList<ResCfgData> outData = null;
 
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		objects = null;
 		outData = null;
-		
+
 		if (!selection.isEmpty()) {
 			// case for context menu
 			if (selection instanceof IStructuredSelection) {
@@ -78,7 +79,7 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 						if (res != null) {
 							IProject p = res.getProject();
 							if (!p.isOpen()) continue;
-							
+
 							if (!CoreModel.getDefault().isNewStyleProject(p))
 								continue;
 
@@ -100,23 +101,24 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 					}
 				}
 			}
-		} 
+		}
 		action.setEnabled(objects != null);
 	}
-	
+
+	@Override
 	public void run(IAction action) {
 		openDialog();
 	}
-	
-	
+
+
 	private void openDialog() {
-		if (objects == null || objects.size() == 0) return; 
+		if (objects == null || objects.size() == 0) return;
 		// create list of configurations to delete
-		
+
 		ListSelectionDialog dialog = new ListSelectionDialog(
-				CUIPlugin.getActiveWorkbenchShell(), 
-				objects, 
-				createSelectionDialogContentProvider(), 
+				CUIPlugin.getActiveWorkbenchShell(),
+				objects,
+				createSelectionDialogContentProvider(),
 				new LabelProvider() {}, ActionMessages.DeleteResConfigsAction_0);
 		dialog.setTitle(ActionMessages.DeleteResConfigsAction_1);
 		if (dialog.open() == Window.OK) {
@@ -136,12 +138,12 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 		ICProjectDescription prjd;
 		ICConfigurationDescription cfgd;
 		ICResourceDescription rdesc;
-		
+
 		public ResCfgData(IResource res2, ICProjectDescription prjd2,
 				ICConfigurationDescription cfgd2, ICResourceDescription rdesc2) {
 			res = res2; prjd = prjd2; cfgd = cfgd2; rdesc = rdesc2;
 		}
-		
+
 		// performs deletion
 		public void delete() {
 			try {
@@ -154,14 +156,15 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 			return "[" + cfgd.getName() + "] for " + res.getName();   //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
-	
-	
+
+
 	private IStructuredContentProvider createSelectionDialogContentProvider() {
 		return new IStructuredContentProvider() {
 
+			@Override
 			public Object[] getElements(Object inputElement) {
 				if (outData != null) return outData.toArray();
-				
+
 				outData = new ArrayList<ResCfgData>();
 				List<?> ls = (List<?>)inputElement;
 				Iterator<?> it = ls.iterator();
@@ -181,24 +184,31 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 					if (cfgds != null) {
 						for (ICConfigurationDescription cfgd : cfgds) {
 							ICResourceDescription rd = cfgd.getResourceDescription(path, true);
-							if (rd != null) 
+							if (rd != null)
 								outData.add(new ResCfgData(res, prjd, cfgd, rd));
 						}
 					}
 				}
 				return outData.toArray();
 			}
+			@Override
 			public void dispose() {}
+			@Override
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 		};
 	}
-	
+
+	@Override
 	public void dispose() { objects = null; }
-	
+
 	// doing nothing
+	@Override
 	public void init(IWorkbenchWindow window) { }
+	@Override
 	public Menu getMenu(Menu parent) { return null; }
+	@Override
 	public Menu getMenu(Control parent) { return null; }
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {}
-	
+
 }

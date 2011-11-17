@@ -32,6 +32,7 @@ public class MacroEntry extends APathEntry implements IMacroEntry {
 	 * Returns the macro name.
 	 * @return String
 	 */
+	@Override
 	public String getMacroName() {
 		return macroName;
 	}
@@ -40,6 +41,7 @@ public class MacroEntry extends APathEntry implements IMacroEntry {
 	 * Returns the macro value.
 	 * @return String
 	 */
+	@Override
 	public String getMacroValue() {
 		return macroValue;
 	}
@@ -84,7 +86,7 @@ public class MacroEntry extends APathEntry implements IMacroEntry {
 		}
 		return super.equals(obj);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */

@@ -17,15 +17,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.ErrorParserManager;
-import org.eclipse.cdt.internal.ui.CUIMessages;
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.CheckedListDialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IExtension;
@@ -42,6 +33,17 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.ErrorParserManager;
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.CUIMessages;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.CheckedListDialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
+
 public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 	private static final String PREFIX = "ErrorParserBlock"; //$NON-NLS-1$
 	private static final String LABEL = PREFIX + ".label"; //$NON-NLS-1$
@@ -57,9 +59,10 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener#dialogFieldChanged(org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField)
 		 */
+		@Override
 		public void dialogFieldChanged(DialogField field) {
 			listDirty = true;
 		}
@@ -71,7 +74,7 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 	 *             now be handled by extending classes, use
 	 *             setErrorParserIDs(boolean)/saveErrorParserIDs() to handle
 	 *             getting/setting of values.
-	 * 
+	 *
 	 * @param prefs
 	 */
 	@Deprecated
@@ -98,7 +101,7 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 
 	/**
 	 * Returns a label provider for the error parsers
-	 * 
+	 *
 	 * @return the content provider
 	 */
 	protected ILabelProvider getLabelProvider() {
@@ -106,13 +109,13 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
 			 */
 			@Override
 			public String getText(Object element) {
 				String name = mapParsers.get(element.toString());
-				return name != null ? name : element.toString(); 
+				return name != null ? name : element.toString();
 			}
 		};
 	}
@@ -146,7 +149,7 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 
 	/**
 	 * To be implemented, abstract method.
-	 * 
+	 *
 	 * @param project
 	 * @return String[]
 	 */
@@ -262,17 +265,17 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ICHelpContextIds.ERROR_PARSERS_PAGE);
 
 		String[] buttonLabels = new String[]{
-		CUIMessages.AbstractErrorParserBlock_label_up, 
-				CUIMessages.AbstractErrorParserBlock_label_down, 
+		CUIMessages.AbstractErrorParserBlock_label_up,
+				CUIMessages.AbstractErrorParserBlock_label_down,
 				/* 2 */
 				null,
-				CUIMessages.AbstractErrorParserBlock_label_selectAll, 
+				CUIMessages.AbstractErrorParserBlock_label_selectAll,
 				CUIMessages.AbstractErrorParserBlock_label_unselectAll
 		};
 
 		fErrorParserList = new CheckedListDialogField<String>(null, buttonLabels, getLabelProvider());
 		fErrorParserList.setDialogFieldListener(getFieldListenerAdapter());
-		fErrorParserList.setLabelText(CUIMessages.AbstractErrorParserBlock_label_errorParsers); 
+		fErrorParserList.setLabelText(CUIMessages.AbstractErrorParserBlock_label_errorParsers);
 		fErrorParserList.setUpButtonIndex(0);
 		fErrorParserList.setDownButtonIndex(1);
 		fErrorParserList.setCheckAllButtonIndex(3);
@@ -291,7 +294,7 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 			if (monitor == null) {
 				monitor = new NullProgressMonitor();
 			}
-			monitor.beginTask(CUIMessages.AbstractErrorParserBlock_task_setErrorParser, 1); 
+			monitor.beginTask(CUIMessages.AbstractErrorParserBlock_task_setErrorParser, 1);
 			List<String> elements = fErrorParserList.getElements();
 			int count = elements.size();
 			List<Object> list = new ArrayList<Object>(count);

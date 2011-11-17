@@ -65,7 +65,7 @@ public class InputStatusDialog extends StatusDialog {
      * <p>
      * Note that the <code>open</code> method blocks for input dialogs.
      * </p>
-     * 
+     *
      * @param parentShell
      *            the parent shell, or <code>null</code> to create a top-level
      *            shell
@@ -116,7 +116,7 @@ public class InputStatusDialog extends StatusDialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
 	@Override
@@ -142,6 +142,7 @@ public class InputStatusDialog extends StatusDialog {
 		text = new Text(composite, getInputTextStyle());
 		text.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
 		text.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				validateInput();
 			}
@@ -159,7 +160,7 @@ public class InputStatusDialog extends StatusDialog {
 
 	/**
 	 * Returns the text area.
-	 * 
+	 *
 	 * @return the text area
 	 */
 	protected Text getText() {
@@ -168,7 +169,7 @@ public class InputStatusDialog extends StatusDialog {
 
 	/**
 	 * Returns the validator.
-	 * 
+	 *
 	 * @return the validator
 	 */
 	protected IInputStatusValidator getValidator() {
@@ -177,7 +178,7 @@ public class InputStatusDialog extends StatusDialog {
 
 	/**
 	 * Returns the string typed into this input dialog.
-	 * 
+	 *
 	 * @return the input string
 	 */
 	public String getValue() {
@@ -203,9 +204,9 @@ public class InputStatusDialog extends StatusDialog {
 	/**
 	 * Returns the style bits that should be used for the input text field. Defaults to a single line entry.
 	 * Subclasses may override.
-	 * 
+	 *
 	 * @return the integer style bits that should be used when creating the input text
-	 * 
+	 *
 	 */
 	protected int getInputTextStyle() {
 		return SWT.SINGLE | SWT.BORDER;

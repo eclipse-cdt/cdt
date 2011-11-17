@@ -38,7 +38,7 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
  * and some more features. The dialog is used on "Paths and Symbols" properties page.
  * Note that currently it is used not only for include files/folders but for library
  * files/folders as well.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class IncludeDialog extends AbstractPropertyDialog {
@@ -58,15 +58,15 @@ public class IncludeDialog extends AbstractPropertyDialog {
 	private ICConfigurationDescription cfgd;
 	private boolean isWsp = false;
 	private int kind = 0;
-	
+
 	static final int NEW_FILE = 0;
 	static final int NEW_DIR  = 1;
 	static final int OLD_FILE = 2;
 	static final int OLD_DIR  = 3;
-	
-	static final int DIR_MASK = 1;	
-	static final int OLD_MASK = 2;	
-	
+
+	static final int DIR_MASK = 1;
+	static final int OLD_MASK = 2;
+
 	/**
 	 * @since 5.3
 	 */
@@ -91,16 +91,16 @@ public class IncludeDialog extends AbstractPropertyDialog {
 	protected Control createDialogArea(Composite c) {
 		c.setLayout(new GridLayout(2, false));
 		GridData gd;
-		
+
 		Label l1 = new Label(c, SWT.NONE);
 		if ((mode & DIR_MASK) == DIR_MASK)
-			l1.setText(Messages.IncludeDialog_0); 
+			l1.setText(Messages.IncludeDialog_0);
 		else
-			l1.setText(Messages.IncludeDialog_1); 
+			l1.setText(Messages.IncludeDialog_1);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		l1.setLayoutData(gd);
-		
+
 		text = new Text(c, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
@@ -108,19 +108,20 @@ public class IncludeDialog extends AbstractPropertyDialog {
 		text.setLayoutData(gd);
 		if ((mode & OLD_MASK) == OLD_MASK) { text.setText(sdata); }
 		text.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				setButtons();
 			}});
-		
+
 // Checkboxes
-		Composite c1 = new Composite (c, SWT.NONE); 
+		Composite c1 = new Composite (c, SWT.NONE);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.verticalAlignment = SWT.TOP;
 		c1.setLayoutData(gd);
 		c1.setLayout(new GridLayout(1, false));
-		
+
 		b_add2confs = new Button(c1, SWT.CHECK);
-		b_add2confs.setText(Messages.IncludeDialog_2); 
+		b_add2confs.setText(Messages.IncludeDialog_2);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		if (((mode & OLD_MASK) == OLD_MASK) ||
 				(cfgd instanceof ICMultiConfigDescription)) {
@@ -130,7 +131,7 @@ public class IncludeDialog extends AbstractPropertyDialog {
 		b_add2confs.setLayoutData(gd);
 
 		b_add2langs = new Button(c1, SWT.CHECK);
-		b_add2langs.setText(Messages.IncludeDialog_3); 
+		b_add2langs.setText(Messages.IncludeDialog_3);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		if ((mode & OLD_MASK) == OLD_MASK) {
 			gd.heightHint = 1;
@@ -139,7 +140,7 @@ public class IncludeDialog extends AbstractPropertyDialog {
 		b_add2langs.setLayoutData(gd);
 
 		c_wsp = new Button(c1, SWT.CHECK);
-		c_wsp.setText(Messages.ExpDialog_4); 
+		c_wsp.setText(Messages.ExpDialog_4);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		c_wsp.setLayoutData(gd);
 		c_wsp.setSelection(isWsp);
@@ -150,12 +151,12 @@ public class IncludeDialog extends AbstractPropertyDialog {
 			}});
 		c_wsp.setImage(getWspImage(isWsp));
 
-// Buttons		
-		Composite c2 = new Composite (c, SWT.NONE); 
+// Buttons
+		Composite c2 = new Composite (c, SWT.NONE);
 		gd = new GridData(GridData.END);
 		c2.setLayoutData(gd);
 		c2.setLayout(new GridLayout(2, true));
-		
+
 		new Label(c2, 0).setLayoutData(new GridData()); // placeholder
 		b_vars = setupButton(c2, AbstractCPropertyTab.VARIABLESBUTTON_NAME);
 
@@ -167,42 +168,42 @@ public class IncludeDialog extends AbstractPropertyDialog {
 
 		b_ok = setupButton(c2, IDialogConstants.OK_LABEL);
 		b_ko = setupButton(c2, IDialogConstants.CANCEL_LABEL);
-		
+
 		c.getShell().setDefaultButton(b_ok);
 		c.pack();
-		
+
 		// resize (bug #189333)
 		int x = b_ko.getBounds().width * 3 + 10;
-		int y = c.getBounds().width - 10; 
+		int y = c.getBounds().width - 10;
 		if (x > y) {
 			((GridData)(text.getLayoutData())).widthHint = x;
 			c.pack();
 		}
-		
+
 		setButtons();
 		return c;
-	}	
-	
+	}
+
 	private void setButtons() {
 		b_ok.setEnabled(text.getText().trim().length() > 0);
 	}
-	
+
 	@Override
 	public void buttonPressed(SelectionEvent e) {
 		String s;
-		if (e.widget.equals(b_ok)) { 
+		if (e.widget.equals(b_ok)) {
 			text1 = text.getText();
 			check1 = b_add2confs.getSelection();
 			check2 = c_wsp.getSelection();
 			check3 = b_add2langs.getSelection();
 			result = true;
-			shell.dispose(); 
+			shell.dispose();
 		} else if (e.widget.equals(b_ko)) {
 			shell.dispose();
 		} else if (e.widget.equals(b_work)) {
 			if ((mode & DIR_MASK)== DIR_MASK)
 				s = AbstractCPropertyTab.getWorkspaceDirDialog(shell, text.getText());
-			else 
+			else
 				s = AbstractCPropertyTab.getWorkspaceFileDialog(shell, text.getText());
 			if (s != null) {
 				s = strip_wsp(s);
@@ -231,10 +232,10 @@ public class IncludeDialog extends AbstractPropertyDialog {
 			if (s != null) text.insert(s);
 		}
 	}
-	
+
 	static private Image getWspImage(boolean isWsp) {
-		final Image IMG_WORKSPACE = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_WORKSPACE); 
-		final Image IMG_FILESYSTEM = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_FOLDER); 
+		final Image IMG_WORKSPACE = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_WORKSPACE);
+		final Image IMG_FILESYSTEM = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_FOLDER);
 		return isWsp ? IMG_WORKSPACE : IMG_FILESYSTEM;
 	}
 

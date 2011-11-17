@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.model.ext;
 
@@ -36,34 +36,42 @@ public class StructureHandle extends CElementHandle implements IStructure {
 		return ICElement.C_CLASS;
 	}
 
+	@Override
 	public IField getField(String name) {
 		return null;
 	}
 
+	@Override
 	public IField[] getFields() throws CModelException {
 		return EMPTY_FIELDS;
 	}
 
+	@Override
 	public IMethodDeclaration getMethod(String name) {
 		return null;
 	}
 
+	@Override
 	public IMethodDeclaration[] getMethods() throws CModelException {
 		return EMPTY_METHODS;
 	}
-	
+
+	@Override
 	public boolean isClass() throws CModelException {
 		return getElementType() == ICElement.C_CLASS;
 	}
 
+	@Override
 	public boolean isStruct() throws CModelException {
 		return getElementType() == ICElement.C_STRUCT;
 	}
 
+	@Override
 	public boolean isUnion() throws CModelException {
 		return getElementType() == ICElement.C_UNION;
 	}
 
+	@Override
 	public boolean isStatic() throws CModelException {
 		return false;
 	}

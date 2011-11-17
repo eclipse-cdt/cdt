@@ -95,16 +95,18 @@ public interface ICProjectDescriptionStorageType {
 				return false;
 			return true;
 		}
+		@Override
 		public boolean createsCProjectXMLFile() {
 			return storageType.createsCProjectXMLFile();
 		}
+		@Override
 		public AbstractCProjectDescriptionStorage getProjectDescriptionStorage(CProjectDescriptionStorageTypeProxy type, IProject project, Version version) {
 			return storageType.getProjectDescriptionStorage(type, project, version);
 		}
 
 		private static Version getVersion(IConfigurationElement element, String id, Version defaultValue) throws IllegalArgumentException{
 			String value = element.getAttribute(id);
-			if (value==null) 
+			if (value==null)
 				return defaultValue;
 			Version v;
 			try {

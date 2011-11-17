@@ -24,14 +24,14 @@ import org.eclipse.core.runtime.CoreException;
 public class SystemBuildConsole implements IConsole {
 	final ConsoleOutputStream out;
 	final ConsoleOutputStream err;
-	
+
 	public SystemBuildConsole() {
 		out = new ConsoleOutputStream() {
 			@Override
 			public synchronized void write(byte[] b, int off, int len) throws java.io.IOException {
 				System.out.write(b, off, len);
 			}
-			
+
 			@Override
 			public synchronized void write(int c) throws java.io.IOException {
 				System.out.write(c);
@@ -42,7 +42,7 @@ public class SystemBuildConsole implements IConsole {
 			public synchronized void write(byte[] b, int off, int len) throws java.io.IOException {
 				System.err.write(b, off, len);
 			}
-			
+
 			@Override
 			public synchronized void write(int c) throws java.io.IOException {
 				System.err.write(c);
@@ -50,17 +50,21 @@ public class SystemBuildConsole implements IConsole {
 		};
 	}
 
+	@Override
 	public void start(IProject project) {
 	}
 
+	@Override
 	public ConsoleOutputStream getOutputStream() throws CoreException {
 		return out;
 	}
 
+	@Override
 	public ConsoleOutputStream getInfoStream() throws CoreException {
 		return out;
 	}
 
+	@Override
 	public ConsoleOutputStream getErrorStream() throws CoreException {
 		return err;
 	}

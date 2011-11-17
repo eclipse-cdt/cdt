@@ -11,10 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-
-import org.eclipse.cdt.internal.ui.newui.Messages;
-
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.JFacePreferences;
@@ -33,26 +29,30 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+
+import org.eclipse.cdt.internal.ui.newui.Messages;
+
 /**
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class RenameConfigurationDialog extends Dialog {
 	// Widgets
-	
+
 	private Text configName;
 	private Text configDescription;
-		
+
 	private ICConfigurationDescription[] cfgds;
 	private ICConfigurationDescription renameConfig;
 	private String newName;
 	private String newDescription;
 	private Label statusLabel;
-	
+
 	private String originalName;
 	final private String title;
 	/**
 	 */
-	protected RenameConfigurationDialog(Shell parentShell, 
+	protected RenameConfigurationDialog(Shell parentShell,
 			ICConfigurationDescription _renameConfig,
 			ICConfigurationDescription[] _cfgds,
 			String _title) {
@@ -60,17 +60,17 @@ public class RenameConfigurationDialog extends Dialog {
 		title = _title;
 		renameConfig = _renameConfig;
 		cfgds = _cfgds;
-		
+
 		setShellStyle(getShellStyle()|SWT.RESIZE);
 		newName = renameConfig.getName();
 		newDescription = renameConfig.getDescription();
 		if(newDescription == null) newDescription = new String();
 		originalName = renameConfig.getName();
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared on Dialog. Cache the name and base config selections.
-	 * We don't have to worry that the index or name is wrong because we 
+	 * We don't have to worry that the index or name is wrong because we
 	 * enable the OK button IFF those conditions are met.
 	 */
 	@Override
@@ -78,7 +78,7 @@ public class RenameConfigurationDialog extends Dialog {
 		if (buttonId == IDialogConstants.OK_ID) {
 			newName = configName.getText().trim();
 			newDescription = configDescription.getText().trim();
-		} 
+		}
 		super.buttonPressed(buttonId);
 	}
 
@@ -106,12 +106,12 @@ public class RenameConfigurationDialog extends Dialog {
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		
+
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setFont(parent.getFont());
 		composite.setLayout(new GridLayout(3, false));
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		// Create a group for the name & description
 
 		final Group group1 = new Group(composite, SWT.NONE);
@@ -126,7 +126,7 @@ public class RenameConfigurationDialog extends Dialog {
 		// as a directory name in the filesystem.
 		Label warningLabel = new Label(group1, SWT.BEGINNING | SWT.WRAP);
 		warningLabel.setFont(parent.getFont());
-		warningLabel.setText(Messages.RenameConfiguration_label_warning); 
+		warningLabel.setText(Messages.RenameConfiguration_label_warning);
 		gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false, 3, 1);
 		gd.widthHint = 300;
 		warningLabel.setLayoutData(gd);
@@ -135,7 +135,7 @@ public class RenameConfigurationDialog extends Dialog {
 		final Label nameLabel = new Label(group1, SWT.LEFT);
 		nameLabel.setFont(parent.getFont());
 		nameLabel.setText(Messages.RenameConfiguration_label_name);
-				
+
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 1;
 		gd.grabExcessHorizontalSpace = false;
@@ -150,11 +150,12 @@ public class RenameConfigurationDialog extends Dialog {
 		gd.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		configName.setLayoutData(gd);
 		configName.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				validateState();
 			}
 		});
-		
+
 //		 Add a label and a text widget for Configuration's description
         final Label descriptionLabel = new Label(group1, SWT.LEFT);
         descriptionLabel.setFont(parent.getFont());
@@ -168,12 +169,12 @@ public class RenameConfigurationDialog extends Dialog {
         configDescription.setFont(group1.getFont());
 		configDescription.setText(getNewDescription());
 		configDescription.setFocus();
-		
+
         gd = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL);
         gd.horizontalSpan = 2;
         gd.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
         configDescription.setLayoutData(gd);
-        
+
         statusLabel = new Label(parent, SWT.CENTER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 3;
@@ -191,7 +192,7 @@ public class RenameConfigurationDialog extends Dialog {
 		}
 		return false;
 	}
-	
+
 	protected boolean isSimilarName(String newName) {
 		if(newName.equalsIgnoreCase(originalName))	return false;
 		// Return true if there is already a config of that name defined on the target
@@ -202,7 +203,7 @@ public class RenameConfigurationDialog extends Dialog {
 	}
 
 	/* (non-Javadoc)
-	 * Checks the argument for leading whitespaces and invalid directory name characters. 
+	 * Checks the argument for leading whitespaces and invalid directory name characters.
 	 * @param name
 	 * @return <I>true</i> is the name is a valid directory name with no whitespaces
 	 */
@@ -236,7 +237,7 @@ public class RenameConfigurationDialog extends Dialog {
 	/* (non-Javadoc)
 	 * Update the status message and button state based on the input selected
 	 * by the user
-	 * 
+	 *
 	 */
 	private void validateState() {
 		String s = null;
@@ -250,7 +251,7 @@ public class RenameConfigurationDialog extends Dialog {
 		} else if (isSimilarName(currentName)) {
 			s = NLS.bind(Messages.RenameConfiguration_error_caseName, currentName);
 		} else if (!validateName(currentName)) {
-			s = NLS.bind(Messages.RenameConfiguration_error_invalidName, currentName);	
+			s = NLS.bind(Messages.RenameConfiguration_error_invalidName, currentName);
 		}
 		Button b = getButton(IDialogConstants.OK_ID);
 		if (s != null) {
@@ -263,7 +264,7 @@ public class RenameConfigurationDialog extends Dialog {
 		}
 		return;
 	}
-	
+
 	public String getNewName() { return newName; }
 	public String getNewDescription() { return newDescription; }
 }

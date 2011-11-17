@@ -33,26 +33,26 @@ public class CBuildSettingCache extends CDefaultBuildData implements
 
 	CBuildSettingCache(CBuildData base, CConfigurationDescriptionCache cfgCache){
 		super(/*base.getId(), base*/);
-		
+
 		fId = base.getId();
-		
+
 		fCfgCache = cfgCache;
-		
+
 		fCfgCache.addBuildSetting(this);
-		
+
 		copySettingsFrom(base);
 	}
-	
+
 	void initEnvironmentCache(){
 		fEnvironment = new StorableEnvironment(
 				EnvironmentVariableManager.getDefault().getVariables(fCfgCache, false),
 				true);
 	}
-	
+
 	public StorableEnvironment getCachedEnvironment(){
 		return fEnvironment;
 	}
-	
+
 	public StorableEnvironment getResolvedEnvironment(){
 		if(fResolvedEnvironment == null){
 			fResolvedEnvironment = new StorableEnvironment(
@@ -62,14 +62,17 @@ public class CBuildSettingCache extends CDefaultBuildData implements
 		return fResolvedEnvironment;
 	}
 
+	@Override
 	public ICConfigurationDescription getConfiguration() {
 		return fCfgCache;
 	}
 
+	@Override
 	public ICSettingContainer getParent() {
 		return fCfgCache;
 	}
 
+	@Override
 	public boolean isReadOnly() {
 		return true;
 	}
@@ -98,6 +101,7 @@ public class CBuildSettingCache extends CDefaultBuildData implements
 		return fCfgCache.getConfigurationData().getBuildData().getBuildEnvironmentContributor();
 	}
 
+	@Override
 	public ICOutputEntry[] getResolvedOutputDirectories() {
 		if(fResolvedOutputEntries == null){
 			ICOutputEntry[] entries = getOutputDirectories();
@@ -105,24 +109,24 @@ public class CBuildSettingCache extends CDefaultBuildData implements
 		}
 		return fResolvedOutputEntries;
 	}
-	
+
 	@Override
 	public ICOutputEntry[] getOutputDirectories() {
 		initOutputEntries();
 		return fProjOutputEntries.clone();
 	}
-	
+
 	private void initOutputEntries(){
 		if(fProjOutputEntries == null){
-			IProject project = getProject(); 
+			IProject project = getProject();
 			fProjOutputEntries = CDataUtil.adjustEntries(fOutputEntries, true, project);
 		}
 	}
-	
+
 	private IProject getProject(){
 		ICConfigurationDescription cfg = getConfiguration();
 		return cfg.isPreferenceConfiguration() ? null : cfg.getProjectDescription().getProject();
 	}
 
-	
+
 }

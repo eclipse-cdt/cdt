@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Composite;
 /**
  * A field editor for an enumeration type preference.
  * The choices are presented as a list of radio buttons.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class RadioButtonsArea extends Composite {
@@ -54,12 +54,12 @@ public class RadioButtonsArea extends Composite {
 	 * The current value, or <code>null</code> if none.
 	 */
 	protected String value = null;
-	
+
 	private SelectionListener listener;
-	
+
 	private List<SelectionListener> externalListeners = new ArrayList<SelectionListener>();
 
-	private Composite area = null; 
+	private Composite area = null;
 	/**
 	 * The radio buttons, or <code>null</code> if none
 	 * (before creation and after disposal).
@@ -74,16 +74,16 @@ public class RadioButtonsArea extends Composite {
 		this.numColumns = numColumns;
 		createControl(parent, labelText);
 	}
-	
+
 	@Override
 	public void setEnabled(boolean enabled) {
 		for (Button radioButton : radioButtons) {
 			radioButton.setEnabled(enabled);
 		}
 	}
-	
+
 	/**
-	 * Checks whether given <code>String[][]</code> is of "type" 
+	 * Checks whether given <code>String[][]</code> is of "type"
 	 * <code>String[][2]</code>.
 	 *
 	 * @return <code>true</code> if it is ok, and <code>false</code> otherwise
@@ -103,7 +103,7 @@ public class RadioButtonsArea extends Composite {
 			s.widgetSelected(event);
 		}
 	}
-	
+
 	/**
 	 * Create control area
 	 */
@@ -113,7 +113,7 @@ public class RadioButtonsArea extends Composite {
 		gl.marginWidth = 0;
 		gl.horizontalSpacing = 0;
 		this.setLayout(gl);
-	
+
 		if(null != labelText) { // Create group box
 			area = ControlFactory.createGroup(this, labelText, numColumns);
 		} else {
@@ -128,22 +128,23 @@ public class RadioButtonsArea extends Composite {
 				fireSelectionEvent(event); // Infor any external listener
 			}
 		};
-		
+
 		for (int i = 0; i < labelsAndValues.length; i++) {
-			radioButtons[i] = ControlFactory.createRadioButton(area, 
+			radioButtons[i] = ControlFactory.createRadioButton(area,
 							  labelsAndValues[i][0],
 							  labelsAndValues[i][1],
 			  			      listener);
 		}
-		
+
 		area.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent event) {
 				radioButtons = null;
 			}
 		});
 
 	}
-	
+
 	/**
 	 * Sets the indent used for the first column of the radion button matrix.
 	 *
@@ -168,7 +169,7 @@ public class RadioButtonsArea extends Composite {
 		this.value = selectedValue;
 		if (radioButtons == null)
 			return;
-	
+
 		if (this.value != null) {
 			boolean found = false;
 			for (Button radio : radioButtons) {
@@ -182,7 +183,7 @@ public class RadioButtonsArea extends Composite {
 			if (found)
 				return;
 		}
-	
+
 		// We weren't able to find the value. So we select the first
 		// radio button as a default.
 		if (radioButtons.length > 0) {
@@ -194,10 +195,10 @@ public class RadioButtonsArea extends Composite {
 
     public void setSelectedButton(int index) {
     	Button b;
-    	
+
     	if((index < 0) || (index >= radioButtons.length))
     		return;
-    		
+
 		for(int i = 0; i < radioButtons.length; ++i) {
 			b = radioButtons[i];
 			boolean selected = b.getSelection();
@@ -214,25 +215,25 @@ public class RadioButtonsArea extends Composite {
 		this.value = (String)b.getData();
 		b.setSelection(true);
     }
-	
+
 	public String getSelectedValue() {
 		return value;
 	}
-	
+
 	public int getSeletedIndex() {
 		if (radioButtons == null)
 			return -1;
-	
+
 		if (value != null) {
 			for (int i = 0; i < radioButtons.length; i++) {
-				if (radioButtons[i].getData().equals(this.value)) 
+				if (radioButtons[i].getData().equals(this.value))
 					return i;
 			}
 		}
-		
+
 		return -1;
 	}
-	
+
 	public void addSelectionListener(SelectionListener s) {
 		if(externalListeners.contains(s))
 			return;

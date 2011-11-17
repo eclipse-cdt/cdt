@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
- 
+
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -38,6 +38,7 @@ public class BinaryContainer extends Openable implements IBinaryContainer {
 		}
 	}
 
+	@Override
 	public IBinary[] getBinaries() throws CModelException {
 		sync();
 		ICElement[] e = getChildren();

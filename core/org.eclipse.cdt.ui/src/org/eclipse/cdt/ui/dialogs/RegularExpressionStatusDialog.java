@@ -25,11 +25,12 @@ import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 
 /**
  * Input Dialog for validating regular expression syntax.
- * 
+ *
  * @since 5.2
  */
 public class RegularExpressionStatusDialog extends InputStatusDialog {
 	private static final IInputStatusValidator fValidator = new IInputStatusValidator() {
+		@Override
 		public IStatus isValid(String newText) {
 			StatusInfo status = new StatusInfo();
 			if (newText.length() == 0) {

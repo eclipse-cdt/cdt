@@ -30,12 +30,12 @@ import org.eclipse.core.runtime.CoreException;
 public class PathEntryStoreProxy extends AbstractCExtensionProxy implements IPathEntryStore, IPathEntryStoreListener {
 	private List<IPathEntryStoreListener> fListeners;
 	private IPathEntryStore fStore;
-	
+
 	public PathEntryStoreProxy(IProject project){
 		super(project, PathEntryManager.PATHENTRY_STORE_UNIQ_ID);
 		fListeners = Collections.synchronizedList(new ArrayList<IPathEntryStoreListener>());
 	}
-	
+
 	public IPathEntryStore getStore(){
 		providerRequested();
 		return fStore;
@@ -43,13 +43,15 @@ public class PathEntryStoreProxy extends AbstractCExtensionProxy implements IPat
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.resources.IPathEntryStore#addPathEntryStoreListener(org.eclipse.cdt.core.resources.IPathEntryStoreListener)
 	 */
-	public void addPathEntryStoreListener(IPathEntryStoreListener listener) {		
+	@Override
+	public void addPathEntryStoreListener(IPathEntryStoreListener listener) {
 		fListeners.add(listener);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.resources.IPathEntryStore#removePathEntryStoreListener(org.eclipse.cdt.core.resources.IPathEntryStoreListener)
 	 */
+	@Override
 	public void removePathEntryStoreListener(IPathEntryStoreListener listener) {
 		fListeners.remove(listener);
 	}
@@ -58,7 +60,7 @@ public class PathEntryStoreProxy extends AbstractCExtensionProxy implements IPat
 		PathEntryStoreChangedEvent evt = new PathEntryStoreChangedEvent(this, project, PathEntryStoreChangedEvent.CONTENT_CHANGED);
 		notifyListeners(evt);
 	}
-	
+
 	private void notifyListeners(PathEntryStoreChangedEvent evt){
 		IPathEntryStoreListener[] observers = new IPathEntryStoreListener[fListeners.size()];
 		fListeners.toArray(observers);
@@ -86,30 +88,35 @@ public class PathEntryStoreProxy extends AbstractCExtensionProxy implements IPat
 		return super.getProject();
 	}
 
+	@Override
 	public ICExtensionReference getExtensionReference() {
 		//TODO: calculate
 		return null;
 	}
 
+	@Override
 	public ICConfigExtensionReference getConfigExtensionReference() {
 		return null;
 	}
 
+	@Override
 	public IPathEntry[] getRawPathEntries() throws CoreException {
 		providerRequested();
 		return fStore.getRawPathEntries();
 	}
 
+	@Override
 	public void setRawPathEntries(IPathEntry[] entries) throws CoreException {
 		providerRequested();
 		fStore.setRawPathEntries(entries);
 
 	}
 
+	@Override
 	public void pathEntryStoreChanged(PathEntryStoreChangedEvent event) {
 		notifyListeners(event);
 	}
-	
+
 	@Override
 	protected Object createDefaultProvider(ICConfigurationDescription cfgDes,
 			boolean newStile) {
@@ -148,10 +155,10 @@ public class PathEntryStoreProxy extends AbstractCExtensionProxy implements IPat
 	@Override
 	protected boolean doHandleEvent(CProjectDescriptionEvent event) {
 		IPathEntryStore oldStore = fStore;
-		boolean result = super.doHandleEvent(event); 
+		boolean result = super.doHandleEvent(event);
 		if(!result)
 			postProcessProviderChange(fStore, oldStore);
-		
+
 		return result;
 	}
 

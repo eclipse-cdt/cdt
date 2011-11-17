@@ -58,7 +58,7 @@ public abstract class AbstractGNUBinaryParserPage extends AbstractCOptionPage {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performApply(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
@@ -70,7 +70,7 @@ public abstract class AbstractGNUBinaryParserPage extends AbstractCOptionPage {
 		String addr2line = fAddr2LineCommandText.getText().trim();
 		String cppfilt = fCPPFiltCommandText.getText().trim();
 
-		monitor.beginTask(CUIMessages.BinaryParserPage_task_savingAttributes, 1); 
+		monitor.beginTask(CUIMessages.BinaryParserPage_task_savingAttributes, 1);
 		IProject proj = getContainer().getProject();
 		if (proj != null) {
 			ICConfigExtensionReference[] cext = null;
@@ -131,7 +131,7 @@ public abstract class AbstractGNUBinaryParserPage extends AbstractCOptionPage {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
 	 */
 	@Override
@@ -155,18 +155,18 @@ public abstract class AbstractGNUBinaryParserPage extends AbstractCOptionPage {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
 	public void createControl(Composite parent) {
 		Group comp = new Group(parent, SWT.SHADOW_ETCHED_IN);
-		comp.setText(CUIMessages.BinaryParserBlock_binaryParserOptions); 
+		comp.setText(CUIMessages.BinaryParserBlock_binaryParserOptions);
 		comp.setLayout(new GridLayout(2, true));
 		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		((GridLayout) comp.getLayout()).makeColumnsEqualWidth = false;
-		
-		Label label = ControlFactory.createLabel(comp, CUIMessages.BinaryParserPage_label_addr2lineCommand); 
+
+		Label label = ControlFactory.createLabel(comp, CUIMessages.BinaryParserPage_label_addr2lineCommand);
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -174,12 +174,13 @@ public abstract class AbstractGNUBinaryParserPage extends AbstractCOptionPage {
 		fAddr2LineCommandText = ControlFactory.createTextField(comp, SWT.SINGLE | SWT.BORDER);
 		fAddr2LineCommandText.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(ModifyEvent evt) {
 				//updateLaunchConfigurationDialog();
 			}
 		});
 
-		Button button = ControlFactory.createPushButton(comp, CUIMessages.BinaryParserPage_label_browse); 
+		Button button = ControlFactory.createPushButton(comp, CUIMessages.BinaryParserPage_label_browse);
 		button.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -190,7 +191,7 @@ public abstract class AbstractGNUBinaryParserPage extends AbstractCOptionPage {
 
 			private void handleAddr2LineButtonSelected() {
 				FileDialog dialog = new FileDialog(getShell(), SWT.NONE);
-				dialog.setText(CUIMessages.BinaryParserPage_label_addr2lineCommand); 
+				dialog.setText(CUIMessages.BinaryParserPage_label_addr2lineCommand);
 				String command = fAddr2LineCommandText.getText().trim();
 				int lastSeparatorIndex = command.lastIndexOf(File.separator);
 				if (lastSeparatorIndex != -1) {
@@ -204,7 +205,7 @@ public abstract class AbstractGNUBinaryParserPage extends AbstractCOptionPage {
 			}
 		});
 
-		label = ControlFactory.createLabel(comp, CUIMessages.BinaryParserPage_label_cppfiltCommand); 
+		label = ControlFactory.createLabel(comp, CUIMessages.BinaryParserPage_label_cppfiltCommand);
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -214,11 +215,12 @@ public abstract class AbstractGNUBinaryParserPage extends AbstractCOptionPage {
 		fCPPFiltCommandText.setLayoutData(gd);
 		fCPPFiltCommandText.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(ModifyEvent evt) {
 				//updateLaunchConfigurationDialog();
 			}
 		});
-		button = ControlFactory.createPushButton(comp, CUIMessages.BinaryParserPage_label_browse1); 
+		button = ControlFactory.createPushButton(comp, CUIMessages.BinaryParserPage_label_browse1);
 		button.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -229,7 +231,7 @@ public abstract class AbstractGNUBinaryParserPage extends AbstractCOptionPage {
 
 			private void handleCPPFiltButtonSelected() {
 				FileDialog dialog = new FileDialog(getShell(), SWT.NONE);
-				dialog.setText(CUIMessages.BinaryParserPage_label_cppfiltCommand); 
+				dialog.setText(CUIMessages.BinaryParserPage_label_cppfiltCommand);
 				String command = fCPPFiltCommandText.getText().trim();
 				int lastSeparatorIndex = command.lastIndexOf(File.separator);
 				if (lastSeparatorIndex != -1) {
@@ -246,7 +248,7 @@ public abstract class AbstractGNUBinaryParserPage extends AbstractCOptionPage {
 		setControl(comp);
 		initialziedValues();
 	}
-	
+
 	private void initialziedValues() {
 		String addr2line = null;
 		String cppfilt = null;

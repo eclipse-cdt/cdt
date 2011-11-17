@@ -37,10 +37,10 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * Provides scanner information from {@link PathEntryManager}.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
- * 
+ *
  * @deprecated Since CDT 4.0 replaced by {@link ScannerInfoProviderProxy}. Still
  *     used as a default for projects created by earlier CDT versions.
  */
@@ -51,9 +51,9 @@ public class ScannerProvider extends AbstractCExtension implements IScannerInfoP
 	private static Map<IProject, List<IScannerInfoChangeListener>> listeners;
 
 	private static ScannerProvider fProvider;
-	
+
 	// Map of the cache scannerInfos
-	
+
 	public static synchronized IScannerInfoProvider getInstance() {
 		if ( fProvider == null) {
 			fProvider = new ScannerProvider();
@@ -91,9 +91,10 @@ public class ScannerProvider extends AbstractCExtension implements IScannerInfoP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#getScannerInformation(org.eclipse.core.resources.IResource)
 	 */
+	@Override
 	public IScannerInfo getScannerInformation(IResource resource) {
 		IPath resPath = resource.getFullPath();
 
@@ -109,10 +110,10 @@ public class ScannerProvider extends AbstractCExtension implements IScannerInfoP
 				}
 			}
 			String[] localIncludes = new String[localCount];
-			String[] systemIncludes = new String[systemCount]; 
+			String[] systemIncludes = new String[systemCount];
 			for (int i = 0, j = 0, k = 0; i < includeEntries.length; ++i) {
 				if (includeEntries[i].isSystemInclude()) {
-					systemIncludes[j++] = includeEntries[i].getFullIncludePath().toOSString();					
+					systemIncludes[j++] = includeEntries[i].getFullIncludePath().toOSString();
 				} else {
 					localIncludes[k++] = includeEntries[i].getFullIncludePath().toOSString();
 				}
@@ -147,10 +148,11 @@ public class ScannerProvider extends AbstractCExtension implements IScannerInfoP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#subscribe(org.eclipse.core.resources.IResource,
 	 *      org.eclipse.cdt.core.parser.IScannerInfoChangeListener)
 	 */
+	@Override
 	public synchronized void subscribe(IResource resource, IScannerInfoChangeListener listener) {
 		if (resource == null || listener == null) {
 			return;
@@ -172,10 +174,11 @@ public class ScannerProvider extends AbstractCExtension implements IScannerInfoP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#unsubscribe(org.eclipse.core.resources.IResource,
 	 *      org.eclipse.cdt.core.parser.IScannerInfoChangeListener)
 	 */
+	@Override
 	public synchronized void unsubscribe(IResource resource, IScannerInfoChangeListener listener) {
 		if (resource == null || listener == null) {
 			return;
@@ -193,6 +196,7 @@ public class ScannerProvider extends AbstractCExtension implements IScannerInfoP
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.IElementChangedListener#elementChanged(org.eclipse.cdt.core.model.ElementChangedEvent)
 	 */
+	@Override
 	public void elementChanged(ElementChangedEvent event) {
 		try {
 			processDelta(event.getDelta());
@@ -202,7 +206,7 @@ public class ScannerProvider extends AbstractCExtension implements IScannerInfoP
 
 	protected boolean isPathEntryChange(ICElementDelta delta) {
 		int flags= delta.getFlags();
-		return (delta.getKind() == ICElementDelta.CHANGED && 
+		return (delta.getKind() == ICElementDelta.CHANGED &&
 				((flags & ICElementDelta.F_CHANGED_PATHENTRY_INCLUDE) != 0 ||
 				(flags & ICElementDelta.F_CHANGED_PATHENTRY_MACRO) != 0 ||
 				(flags & ICElementDelta.F_PATHENTRY_REORDER) !=0));
@@ -223,7 +227,7 @@ public class ScannerProvider extends AbstractCExtension implements IScannerInfoP
 			IScannerInfo info = getScannerInformation(res);
 			notifyInfoListeners(project, info);
 		}
-			
+
 		ICElementDelta[] affectedChildren= delta.getAffectedChildren();
 		for (ICElementDelta element2 : affectedChildren) {
 			processDelta(element2);

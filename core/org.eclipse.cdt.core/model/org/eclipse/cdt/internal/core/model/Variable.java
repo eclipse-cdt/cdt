@@ -15,7 +15,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IVariable;
 
 public class Variable extends VariableDeclaration implements IVariable {
-	
+
 	public Variable(ICElement parent, String name) {
 		super(parent, name, ICElement.C_VARIABLE);
 	}
@@ -24,6 +24,7 @@ public class Variable extends VariableDeclaration implements IVariable {
 		super(parent, name, kind);
 	}
 
+	@Override
 	public String getInitializer() {
 		return ""; //$NON-NLS-1$
 	}

@@ -32,7 +32,7 @@ public class CommandLauncher implements ICommandLauncher {
 	public final static int ILLEGAL_COMMAND = ICommandLauncher.ILLEGAL_COMMAND;
 	public final static int OK = ICommandLauncher.OK;
 
-	
+
 	protected Process fProcess;
 	protected boolean fShowCommand;
 	protected String[] fCommandArgs;
@@ -61,6 +61,7 @@ public class CommandLauncher implements ICommandLauncher {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.ICommandLauncher#showCommand(boolean)
 	 */
+	@Override
 	public void showCommand(boolean show) {
 		fShowCommand = show;
 	}
@@ -68,6 +69,7 @@ public class CommandLauncher implements ICommandLauncher {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.ICommandLauncher#getErrorMessage()
 	 */
+	@Override
 	public String getErrorMessage() {
 		return fErrorMessage;
 	}
@@ -75,6 +77,7 @@ public class CommandLauncher implements ICommandLauncher {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.ICommandLauncher#setErrorMessage(java.lang.String)
 	 */
+	@Override
 	public void setErrorMessage(String error) {
 		fErrorMessage = error;
 	}
@@ -82,6 +85,7 @@ public class CommandLauncher implements ICommandLauncher {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.ICommandLauncher#getCommandArgs()
 	 */
+	@Override
 	public String[] getCommandArgs() {
 		return fCommandArgs;
 	}
@@ -89,6 +93,7 @@ public class CommandLauncher implements ICommandLauncher {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.ICommandLauncher#getEnvironment()
 	 */
+	@Override
 	public Properties getEnvironment() {
 		return EnvironmentReader.getEnvVars();
 	}
@@ -96,6 +101,7 @@ public class CommandLauncher implements ICommandLauncher {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.ICommandLauncher#getCommandLine()
 	 */
+	@Override
 	public String getCommandLine() {
 		return getCommandLine(getCommandArgs());
 	}
@@ -119,12 +125,12 @@ public class CommandLauncher implements ICommandLauncher {
 		try {
 			// add platform specific arguments (shell invocation)
 			fCommandArgs = constructCommandArray(commandPath.toOSString(), args);
-			
+
 			File file = null;
-			
+
 			if(changeToDirectory != null)
 				file = changeToDirectory.toFile();
-			
+
 			fProcess = ProcessFactory.getFactory().exec(fCommandArgs, env, file);
 			fErrorMessage = ""; //$NON-NLS-1$
 		} catch (IOException e) {
@@ -133,21 +139,22 @@ public class CommandLauncher implements ICommandLauncher {
 		}
 		return fProcess;
 	}
-	
+
 	/**
 	 * @since 5.1
 	 * @see org.eclipse.cdt.core.ICommandLauncher#execute(IPath, String[], String[], IPath, IProgressMonitor)
 	 */
+	@Override
 	public Process execute(IPath commandPath, String[] args, String[] env, IPath changeToDirectory, IProgressMonitor monitor) throws CoreException {
 		try {
 			// add platform specific arguments (shell invocation)
 			fCommandArgs = constructCommandArray(commandPath.toOSString(), args);
-			
+
 			File file = null;
-			
+
 			if(changeToDirectory != null)
 				file = changeToDirectory.toFile();
-			
+
 			fProcess = ProcessFactory.getFactory().exec(fCommandArgs, env, file);
 			fErrorMessage = ""; //$NON-NLS-1$
 		} catch (IOException e) {
@@ -160,6 +167,7 @@ public class CommandLauncher implements ICommandLauncher {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.ICommandLauncher#waitAndRead(java.io.OutputStream, java.io.OutputStream)
 	 */
+	@Override
 	public int waitAndRead(OutputStream out, OutputStream err) {
 		if (fShowCommand) {
 			printCommandLine(out);
@@ -177,6 +185,7 @@ public class CommandLauncher implements ICommandLauncher {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.ICommandLauncher#waitAndRead(java.io.OutputStream, java.io.OutputStream, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public int waitAndRead(OutputStream output, OutputStream err, IProgressMonitor monitor) {
 		if (fShowCommand) {
 			printCommandLine(output);
@@ -237,11 +246,12 @@ public class CommandLauncher implements ICommandLauncher {
 		return buf.toString();
 	}
 
-	
+
 	/**
 	 * @since 5.1
 	 * @see org.eclipse.cdt.core.ICommandLauncher#getProject()
 	 */
+	@Override
 	public IProject getProject() {
 		return fProject;
 	}
@@ -250,6 +260,7 @@ public class CommandLauncher implements ICommandLauncher {
 	 * @since 5.1
 	 * @see org.eclipse.cdt.core.ICommandLauncher#setProject(org.eclipse.core.resources.IProject)
 	 */
+	@Override
 	public void setProject(IProject project) {
 		fProject = project;
 	}

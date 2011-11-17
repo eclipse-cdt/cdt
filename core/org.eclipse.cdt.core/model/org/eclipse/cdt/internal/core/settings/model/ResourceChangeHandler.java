@@ -76,6 +76,7 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 		/** Map of moved & removed resources: 'from' -> 'to'; 'to' may be null for removed resources */
 		Map<IResource, IResource> fMovedResources = new HashMap<IResource, IResource>();
 
+		@Override
 		public void handleProjectClose(IProject project) {
 			fMngr.projectClosedRemove(project);
 		}
@@ -121,6 +122,7 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 			return updatedList != null ? updatedList.toArray(new ICSourceEntry[updatedList.size()]) : null;
 		}
 
+		@Override
 		public boolean handleResourceMove(IResource fromRc, IResource toRc) {
 			boolean proceed = true;
 			IProject fromProject = fromRc.getProject();
@@ -135,7 +137,7 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 			break;
 			case IResource.FOLDER:
 			case IResource.FILE:
-				// Only handle move in the same project 
+				// Only handle move in the same project
 				// TODO: should we treat this as a remove?
 				if (!toProject.equals(fromProject))
 					break;
@@ -163,6 +165,7 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 			return des;
 		}
 
+		@Override
 		public boolean handleResourceRemove(IResource rc) {
 			boolean proceed = true;
 			IProject project = rc.getProject();
@@ -182,6 +185,7 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 			return proceed;
 		}
 
+		@Override
 		public void done() {
 			// If the resource's project was moved / removed, don't consider the path for source entry removal
 			for (Iterator<IResource> it = fMovedResources.keySet().iterator(); it.hasNext() ; ) {
@@ -198,6 +202,7 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 			// Run it in the Workspace, so we don't trip Bug 311189
 			CProjectDescriptionManager.runWspModification(new IWorkspaceRunnable(){
 
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					for (Map.Entry<IResource, IResource> entry : fMovedResources.entrySet()) {
 						IResource from = entry.getKey();
@@ -209,7 +214,7 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 						if (to == null) {
 							if (from.exists())
 								continue;
-							// Workaround for platform Bug 317783 
+							// Workaround for platform Bug 317783
 							if (from.getWorkspace().validateFiltered(from).isOK()) {
 								URI uri = from.getLocationURI();
 								if (uri != null && EFS.getStore(uri).fetchInfo().exists())
@@ -283,6 +288,7 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.ISaveParticipant#saving(org.eclipse.core.resources.ISaveContext)
 	 */
+	@Override
 	public void saving(ISaveContext context) throws CoreException {
 		//Request a resource delta to be used on next activation.
 	    context.needDelta();
@@ -291,18 +297,21 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.ISaveParticipant#doneSaving(org.eclipse.core.resources.ISaveContext)
 	 */
+	@Override
 	public void doneSaving(ISaveContext context) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.ISaveParticipant#prepareToSave(org.eclipse.core.resources.ISaveContext)
 	 */
+	@Override
 	public void prepareToSave(ISaveContext context) throws CoreException {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.ISaveParticipant#rollback(org.eclipse.core.resources.ISaveContext)
 	 */
+	@Override
 	public void rollback(ISaveContext context) {
 	}
 

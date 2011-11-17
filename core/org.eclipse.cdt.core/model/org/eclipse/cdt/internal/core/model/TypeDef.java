@@ -24,6 +24,7 @@ public class TypeDef extends SourceManipulation implements ITypeDef {
 	 * Returns the typeName.
 	 * @return String
 	 */
+	@Override
 	public String getTypeName() {
 		return typeName;
 	}

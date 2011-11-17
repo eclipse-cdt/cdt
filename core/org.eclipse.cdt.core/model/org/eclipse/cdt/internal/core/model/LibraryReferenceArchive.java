@@ -39,7 +39,7 @@ public class LibraryReferenceArchive extends Archive implements ILibraryReferenc
 		return null;
 	}
 
-	
+
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ICElement#getPath()
@@ -64,6 +64,7 @@ public class LibraryReferenceArchive extends Archive implements ILibraryReferenc
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ILibraryReference#getLibraryEntry()
 	 */
+	@Override
 	public ILibraryEntry getLibraryEntry() {
 		return entry;
 	}

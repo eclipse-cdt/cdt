@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.core;
 
@@ -28,7 +28,7 @@ public class PositionTracker implements IPositionConverter {
     private Node fAboveRoot = new Node(0, 0, 0);
     private PositionTracker fFollowedBy = null;
     private long fTimeStamp;
-    
+
     /**
      * Resets the tracker to a state reflecting no changes.
      */
@@ -45,7 +45,7 @@ public class PositionTracker implements IPositionConverter {
     }
 
     /**
-     * Notifies the tracker of the insertion of characters. 
+     * Notifies the tracker of the insertion of characters.
      * It is assumed that character get inserted before the offset.
      * @param offset offset of the character in front of which insertion occurs.
      * @param count amount of characters inserted.
@@ -61,7 +61,7 @@ public class PositionTracker implements IPositionConverter {
 
     /**
      * Notifies the tracker of the removal of characters.
-     * delete(0,1) removes the first character, 
+     * delete(0,1) removes the first character,
      * for convenience delete(1,-1) does the same.
      * @param offset offset of the first character deleted.
      * @param count amount of characters deleted.
@@ -88,7 +88,7 @@ public class PositionTracker implements IPositionConverter {
     public synchronized int historicOffset(int currentOffset) {
         return historicOffset(currentOffset, true);
     }
-    
+
     private synchronized int historicOffset(int currentOffset, boolean nextOnDelete) {
         int orig = currentOffset;
         if (fFollowedBy != null) {
@@ -106,7 +106,7 @@ public class PositionTracker implements IPositionConverter {
     public synchronized int currentOffset(int historicOffset) {
         return currentOffset(historicOffset, true);
     }
-    
+
     private synchronized int currentOffset(int historicOffset, boolean nextOnDelete) {
         int current = fAboveRoot.calculateCurrentOffset(historicOffset, 0, nextOnDelete);
         if (fFollowedBy != null) {
@@ -116,7 +116,7 @@ public class PositionTracker implements IPositionConverter {
     }
 
     /**
-     * Makes this tracker final. Future changes are tracked by the tracker 
+     * Makes this tracker final. Future changes are tracked by the tracker
      * supplied and will be taken into acoount when converting positions.
      * @param inFavourOf tracker that tracks changes from now on.
      */
@@ -142,7 +142,7 @@ public class PositionTracker implements IPositionConverter {
     public synchronized boolean isModified() {
         return fAboveRoot.fLeft != null || fAboveRoot.fRight!=null;
     }
-    
+
     public synchronized long getTimeStamp() {
         return fTimeStamp;
     }
@@ -166,10 +166,11 @@ public class PositionTracker implements IPositionConverter {
         return fAboveRoot.countNodes();
     }
 
-    public synchronized IRegion actualToHistoric(IRegion actualPosition) {
+    @Override
+	public synchronized IRegion actualToHistoric(IRegion actualPosition) {
         int actual= actualPosition.getOffset();
         int len= actualPosition.getLength();
-        
+
         int historic= historicOffset(actual, true);
         if (len > 0) {
             len= historicOffset(actual+len-1, false) - historic + 1;
@@ -178,10 +179,11 @@ public class PositionTracker implements IPositionConverter {
         return new Region(historic, len);
     }
 
-    public synchronized IRegion historicToActual(IRegion historicPosition) {
+    @Override
+	public synchronized IRegion historicToActual(IRegion historicPosition) {
         int historic= historicPosition.getOffset();
         int len= historicPosition.getLength();
-        
+
         int actual= currentOffset(historic, true);
         if (len > 0) {
             len= currentOffset(historic+len-1, false) - actual + 1;
@@ -189,7 +191,7 @@ public class PositionTracker implements IPositionConverter {
         assert len >= 0;
         return new Region(actual, len);
     }
-    
+
     /**
      * Nodes implementing a red black binary tree.
      * @author markus.schorn@windriver.com

@@ -145,10 +145,13 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 		}});
 		fTableViewer = new CheckboxTableViewer(fTable);
 		fTableViewer.setContentProvider(new IStructuredContentProvider() {
+			@Override
 			public Object[] getElements(Object inputElement) {
 				return (Object[])inputElement;
 			}
+			@Override
 			public void dispose() {}
+			@Override
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 		});
 		fTableViewer.setLabelProvider(new LabelProvider() {
@@ -163,11 +166,11 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 							return name;
 						}
 					}
-					return NLS.bind(Messages.ErrorParsTab_error_NonAccessibleID, id); 
+					return NLS.bind(Messages.ErrorParsTab_error_NonAccessibleID, id);
 				}
 				return OOPS;
 			}
-			
+
 			@Override
 			public Image getImage(Object element) {
 				final String TEST_PLUGIN_ID = "org.eclipse.cdt.core.tests"; //$NON-NLS-1$
@@ -198,6 +201,7 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 		});
 
 		fTableViewer.addCheckStateListener(new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent e) {
 				saveChecked();
 			}});
@@ -277,6 +281,7 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 					// allow to edit only for Build Settings Preference Page (where cfgd==null)
 					RegexErrorParserOptionPage optionsPage = new RegexErrorParserOptionPage((RegexErrorParser) errorParser, isErrorParsersEditable());
 					optionsPage.addListener(new Listener() {
+						@Override
 						public void handleEvent(Event event) {
 							fTableViewer.refresh(id);
 							updateButtons();
@@ -358,25 +363,26 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 
 	private void addErrorParser() {
 		IInputStatusValidator inputValidator = new IInputStatusValidator() {
+			@Override
 			public IStatus isValid(String newText) {
 				StatusInfo status = new StatusInfo();
 				if (newText.trim().length() == 0) {
-					status.setError(Messages.ErrorParsTab_error_NonEmptyName); 
+					status.setError(Messages.ErrorParsTab_error_NonEmptyName);
 				} else if (newText.indexOf(ErrorParserManager.ERROR_PARSER_DELIMITER)>=0) {
-					String message = MessageFormat.format( Messages.ErrorParsTab_error_IllegalCharacter, 
+					String message = MessageFormat.format( Messages.ErrorParsTab_error_IllegalCharacter,
 							new Object[] { ErrorParserManager.ERROR_PARSER_DELIMITER });
 					status.setError(message);
 				} else if (fAvailableErrorParsers.containsKey(makeId(newText))) {
-					status.setError(Messages.ErrorParsTab_error_NonUniqueID); 
+					status.setError(Messages.ErrorParsTab_error_NonUniqueID);
 				}
 				return status;
 			}
 
 		};
 		InputStatusDialog addDialog = new InputStatusDialog(usercomp.getShell(),
-				Messages.ErrorParsTab_title_Add, 
-				Messages.ErrorParsTab_label_EnterName, 
-				Messages.ErrorParsTab_label_DefaultRegexErrorParserName, 
+				Messages.ErrorParsTab_title_Add,
+				Messages.ErrorParsTab_label_EnterName,
+				Messages.ErrorParsTab_label_DefaultRegexErrorParserName,
 				inputValidator);
 		addDialog.setHelpAvailable(false);
 
@@ -404,12 +410,13 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 		IErrorParserNamed errorParser = fAvailableErrorParsers.get(id);
 
 		IInputStatusValidator inputValidator = new IInputStatusValidator() {
+			@Override
 			public IStatus isValid(String newText) {
 				StatusInfo status = new StatusInfo();
 				if (newText.trim().length() == 0) {
-					status.setError(Messages.ErrorParsTab_error_NonEmptyName); 
+					status.setError(Messages.ErrorParsTab_error_NonEmptyName);
 				} else if (newText.indexOf(ErrorParserManager.ERROR_PARSER_DELIMITER)>=0) {
-					String message = MessageFormat.format( Messages.ErrorParsTab_error_IllegalCharacter, 
+					String message = MessageFormat.format( Messages.ErrorParsTab_error_IllegalCharacter,
 							new Object[] { ErrorParserManager.ERROR_PARSER_DELIMITER });
 					status.setError(message);
 				}
@@ -418,8 +425,8 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 
 		};
 		InputStatusDialog addDialog = new InputStatusDialog(usercomp.getShell(),
-				Messages.ErrorParsTab_title_Edit, 
-				Messages.ErrorParsTab_label_EnterName, 
+				Messages.ErrorParsTab_title_Edit,
+				Messages.ErrorParsTab_label_EnterName,
 				errorParser.getName(),
 				inputValidator);
 		addDialog.setHelpAvailable(false);
@@ -445,7 +452,7 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 		} else {
 			// Delete
 			fTableViewer.remove(id);
-			
+
 			int last = fTable.getItemCount() - 1;
 			if (n>last)
 				n = last;
@@ -502,9 +509,9 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 		boolean isExtensionId = isExtensionId(id);
 		boolean canDelete = !isExtensionId && isErrorParsersEditable();
 		boolean canReset = isExtensionId && isErrorParsersEditable() && isModified(id);
-		
+
 		buttonSetText(BUTTON_DELETE, isExtensionId ? RESET_STR : DEL_STR);
-		
+
 		buttonSetEnabled(BUTTON_ADD, isErrorParsersEditable());
 		buttonSetEnabled(BUTTON_EDIT, isErrorParsersEditable() && selected);
 		buttonSetEnabled(BUTTON_DELETE, (canDelete || canReset) && selected);
@@ -558,17 +565,17 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 							}
 						}
 					}
-	
+
 					Object[] checkedElements = fTableViewer.getCheckedElements();
 					String[] checkedErrorParserIds = new String[checkedElements.length];
 					System.arraycopy(checkedElements, 0, checkedErrorParserIds, 0, checkedElements.length);
-	
+
 					ErrorParserManager.setDefaultErrorParserIds(checkedErrorParserIds);
 					ErrorParserManager.setUserDefinedErrorParsers(errorParsersList.toArray(new IErrorParserNamed[errorParsersList.size()]));
 				} catch (BackingStoreException e) {
-					CUIPlugin.log(Messages.ErrorParsTab_error_OnApplyingSettings, e); 
+					CUIPlugin.log(Messages.ErrorParsTab_error_OnApplyingSettings, e);
 				} catch (CoreException e) {
-					CUIPlugin.log(Messages.ErrorParsTab_error_OnApplyingSettings, e); 
+					CUIPlugin.log(Messages.ErrorParsTab_error_OnApplyingSettings, e);
 				}
 			}
 			initMapParsers();
@@ -614,16 +621,16 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 		if (isErrorParsersEditable()) {
 			// Must be Build Settings Preference Page
 			if (MessageDialog.openQuestion(usercomp.getShell(),
-					Messages.ErrorParsTab_title_ConfirmReset, 
-					Messages.ErrorParsTab_message_ConfirmReset)) { 
+					Messages.ErrorParsTab_title_ConfirmReset,
+					Messages.ErrorParsTab_message_ConfirmReset)) {
 
 				try {
 					ErrorParserManager.setUserDefinedErrorParsers(null);
 					ErrorParserManager.setDefaultErrorParserIds(null);
 				} catch (BackingStoreException e) {
-					CUIPlugin.log(Messages.ErrorParsTab_error_OnRestoring, e); 
+					CUIPlugin.log(Messages.ErrorParsTab_error_OnRestoring, e);
 				} catch (CoreException e) {
-					CUIPlugin.log(Messages.ErrorParsTab_error_OnRestoring, e); 
+					CUIPlugin.log(Messages.ErrorParsTab_error_OnRestoring, e);
 				}
 			}
 		} else {
@@ -646,7 +653,7 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 					else
 						dynamicPage.performDefaults();
 				} catch (CoreException e) {
-					CUIPlugin.log(Messages.ErrorParsTab_error_OnApplyingSettings, e); 
+					CUIPlugin.log(Messages.ErrorParsTab_error_OnApplyingSettings, e);
 				}
 			}
 		}

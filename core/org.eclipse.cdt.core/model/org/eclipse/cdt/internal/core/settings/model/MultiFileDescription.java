@@ -28,6 +28,7 @@ public class MultiFileDescription extends MultiResourceDescription implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.ICFileDescription#getLanguageSetting()
 	 */
+	@Override
 	public ICLanguageSetting getLanguageSetting() {
 		if (DEBUG)
 			System.out.println("Limited multi access: MultiFileDescription.getLanguageSetting()"); //$NON-NLS-1$

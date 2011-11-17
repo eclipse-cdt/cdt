@@ -22,14 +22,14 @@ import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.internal.core.parser.scanner.ILexerLog;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer;
-import org.eclipse.cdt.internal.core.parser.scanner.Token;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
+import org.eclipse.cdt.internal.core.parser.scanner.Token;
 
 /**
  * A simple model builder for assembly translation units.
  * Recognizes preprocessor directives (#include and #define)
  * and labels.
- * 
+ *
  * @see AssemblyLanguage
  * @since 5.0
  */
@@ -41,8 +41,10 @@ public class AsmModelBuilder implements IContributedModelBuilder {
 	}
 
 	private static final class LexerLog implements ILexerLog {
+		@Override
 		public void handleComment(boolean isBlockComment, int offset, int endOffset) {
 		}
+		@Override
 		public void handleProblem(int problemID, char[] info, int offset, int endOffset) {
 		}
 	}
@@ -52,7 +54,7 @@ public class AsmModelBuilder implements IContributedModelBuilder {
 	}
 
 	private static final Map<String, AsmDirective> fgDirectives;
-	
+
 	static {
 		fgDirectives= new HashMap<String, AsmDirective>();
 		fgDirectives.put("globl", AsmDirective.GLOBAL); //$NON-NLS-1$
@@ -63,12 +65,12 @@ public class AsmModelBuilder implements IContributedModelBuilder {
 		fgDirectives.put("long", AsmDirective.DATA); //$NON-NLS-1$
 		fgDirectives.put("word", AsmDirective.DATA); //$NON-NLS-1$
 	}
-	
+
 	private TranslationUnit fTranslationUnit;
 	private char fLineSeparatorChar;
 	private Map<String, Counter> fGlobals;
 	private Map<String, Counter> fLabels;
-	
+
 	private int fLastLabelEndOffset;
 	private AsmLabel fLastGlobalLabel;
 	private SourceManipulation fLastLabel;
@@ -76,7 +78,7 @@ public class AsmModelBuilder implements IContributedModelBuilder {
 
 	/**
 	 * Creates a model builder for the given assembly translation unit.
-	 * 
+	 *
 	 * @param tu  the translation unit
 	 */
 	public AsmModelBuilder(ITranslationUnit tu) {
@@ -85,7 +87,7 @@ public class AsmModelBuilder implements IContributedModelBuilder {
 
 	/**
 	 * Configure the line separator character (in addition to normal newlines).
-	 * 
+	 *
 	 * @param lineSeparatorChar
 	 */
 	public void setLineSeparatorCharacter(char lineSeparatorChar) {
@@ -95,6 +97,7 @@ public class AsmModelBuilder implements IContributedModelBuilder {
 	/*
 	 * @see org.eclipse.cdt.core.model.IContributedModelBuilder#parse(boolean)
 	 */
+	@Override
 	public void parse(boolean quickParseMode) throws Exception {
 		char[] source = fTranslationUnit.getContents();
 		if (source == null) {
@@ -111,7 +114,7 @@ public class AsmModelBuilder implements IContributedModelBuilder {
 
 	/**
 	 * Build the model.
-	 * 
+	 *
 	 * @param source
 	 * @throws CModelException
 	 */
@@ -124,7 +127,7 @@ public class AsmModelBuilder implements IContributedModelBuilder {
 
 		final LexerOptions lexerOptions= new LexerOptions();
 		fLexer= new Lexer(source, lexerOptions, new LexerLog(), null);
-		
+
 		// if true the next token is the first on a (logical) line
 		boolean firstTokenOnLine= true;
 		// next token can be an instruction or a label
@@ -207,7 +210,7 @@ public class AsmModelBuilder implements IContributedModelBuilder {
 			fixupLastGlobalLabel();
 		}
 	}
-	
+
 	/**
 	 * @return the next token from the scanner or <code>null</code> on end-of-input.
 	 */
@@ -313,8 +316,8 @@ public class AsmModelBuilder implements IContributedModelBuilder {
 
 	/**
 	 * Set the body position of the last global label.
-	 * 
-	 * @throws CModelException 
+	 *
+	 * @throws CModelException
 	 */
 	private void fixupLastGlobalLabel() throws CModelException {
 		if (fLastLabel != null && fLastLabel != fLastGlobalLabel) {
@@ -327,8 +330,8 @@ public class AsmModelBuilder implements IContributedModelBuilder {
 
 	/**
 	 * Set the body position of the last label.
-	 * 
-	 * @throws CModelException 
+	 *
+	 * @throws CModelException
 	 */
 	private void fixupLastLabel() throws CModelException {
 		if (fLastLabelEndOffset > 0) {

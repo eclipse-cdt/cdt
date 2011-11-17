@@ -114,7 +114,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	// Synchronized the access of the cache entries.
 	protected Map<ICProject, ArrayList<IPathEntry>> resolvedMap = new Hashtable<ICProject, ArrayList<IPathEntry>>();
 	private Map<ICProject, PathEntryResolveInfo> resolvedInfoMap = new Hashtable<ICProject, PathEntryResolveInfo>();
-	private ThreadLocalMap resolveInfoValidState = new ThreadLocalMap(); 
+	private ThreadLocalMap resolveInfoValidState = new ThreadLocalMap();
 
 	// Accessing the map is synch with the class
 	private Map<IProject, IPathEntryStore> storeMap = new HashMap<IProject, IPathEntryStore>();
@@ -122,7 +122,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	private static PathEntryManager pathEntryManager;
 
 	protected ConcurrentLinkedQueue<PathEntryProblem> markerProblems = new ConcurrentLinkedQueue<PathEntryProblem>();
-	
+
 	//Setting up a generate markers job, it does not get scheduled
 	Job markerTask = new GenerateMarkersJob("PathEntry Marker Job"); //$NON-NLS-1$
 
@@ -132,11 +132,11 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	private class PathEntryProblem {
 		IProject project;
 		ICModelStatus[] problems;
-		
+
 		public PathEntryProblem(IProject project, ICModelStatus[] problems) {
 			this.project = project;
 			this.problems = problems;
-		}		
+		}
 	}
 
 	private class PathEntryContainerLock implements IPathEntryContainer {
@@ -153,27 +153,30 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.cdt.core.model.IPathEntryContainer#getPathEntries()
 		 */
+		@Override
 		public IPathEntry[] getPathEntries() {
 			return NO_PATHENTRIES;
 		}
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.cdt.core.model.IPathEntryContainer#getDescription()
 		 */
+		@Override
 		public String getDescription() {
 			return new String("Lock container"); //$NON-NLS-1$
 		}
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.cdt.core.model.IPathEntryContainer#getPath()
 		 */
+		@Override
 		public IPath getPath() {
 			return Path.EMPTY;
 		}
@@ -294,8 +297,8 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 
 		IMacroEntry[] macros = macroList.toArray(new IMacroEntry[macroList.size()]);
 		macroList.clear();
-		
-		// For the macros the closest symbol will override 
+
+		// For the macros the closest symbol will override
 		// /projec/src/file.c --> NDEBUG=1
 		// /project/src       --> NDEBUG=0
 		//
@@ -387,7 +390,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		// includes with the closest match to the resource will come first
 		// /project/src/file.c  --> /usr/local/include
 		// /project             --> /usr/include
-		// 
+		//
 		//  /usr/local/include must come first.
 		//
 		int count = resPath.segmentCount();
@@ -422,7 +425,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 				}
 			}
 		}
-		return entryList;		
+		return entryList;
 	}
 
 	/**
@@ -440,7 +443,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		}
 		return null;
 	}
-	
+
 	public PathEntryResolveInfo getResolveInfo(ICProject cproject, boolean useCache) throws CModelException{
 		PathEntryResolveInfo info = resolvedInfoMap.get(cproject);
 		if (info == null && useCache){
@@ -450,20 +453,20 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		if (info == null || !useCache || !getResolveInfoValidState(cproject)){
 			Object[] resolved = getResolvedPathEntries(cproject, false, false);
 			if (resolved != null)
-				info = (PathEntryResolveInfo)resolved[1]; 
+				info = (PathEntryResolveInfo)resolved[1];
 		}
 		return info;
 	}
-	
+
 	private void setResolveInfoValidState(ICProject cproject, boolean valid){
 		Object v = valid ? null : Boolean.FALSE;
 		resolveInfoValidState.set(cproject, v);
 	}
-	
+
 	private boolean getResolveInfoValidState(ICProject cproject){
 		return resolveInfoValidState.get(cproject) == null;
 	}
-	
+
 	protected IPathEntry[] removeCachedResolvedPathEntries(ICProject cproject) {
 		ArrayList<IPathEntry> resolvedListEntries = resolvedMap.remove(cproject);
 		resolvedInfoMap.remove(cproject);
@@ -523,7 +526,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 
 	/**
 	 * This method will not expand container extending IPathEntryContainerExtension
-	 * 
+	 *
 	 * @param cproject
 	 * @param generateMarkers
 	 * @return
@@ -745,12 +748,14 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 					// causing some grief
 					SafeRunner.run(new ISafeRunnable() {
 
+						@Override
 						public void handleException(Throwable exception) {
-							IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, 
+							IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID,
 									"Exception occurred in container initializer: " + initializer, exception); //$NON-NLS-1$
 							CCorePlugin.log(status);
 						}
 
+						@Override
 						public void run() throws Exception {
 							initializer.initialize(containerPath, project);
 							ok[0] = true;
@@ -777,7 +782,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	 * A containerID is the first segment of any container path, used to
 	 * identify the registered container initializer.
 	 * <p>
-	 * 
+	 *
 	 * @param containerID -
 	 *            a containerID identifying a registered initializer
 	 * @return PathEntryContainerInitializer - the registered container
@@ -1011,7 +1016,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			throw new CModelException(e);
 		}
 	}
-	
+
 	/**
 	 * Collects path entry errors for each project and generate error markers for these errors
 	 * @param project - Project with path entry errors
@@ -1031,7 +1036,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		}
 
 		@Override
-		public IStatus runInWorkspace(IProgressMonitor monitor) {								
+		public IStatus runInWorkspace(IProgressMonitor monitor) {
 			while (markerProblems.peek() != null && !monitor.isCanceled()) {
 				PathEntryProblem problem = markerProblems.poll();
 				IProject project = problem.project;
@@ -1044,7 +1049,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			return Status.OK_STATUS;
 		}
 	}
-	
+
 	private boolean needDelta(ICProject cproject){
 		try {
 			PathEntryStoreProxy store = (PathEntryStoreProxy)getPathEntryStore(cproject.getProject(), false);
@@ -1172,7 +1177,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 					flag = ICElementDelta.F_CHANGED_PATHENTRY_INCLUDE;
 					break;
 				}
-				case IPathEntry.CDT_MACRO: { 
+				case IPathEntry.CDT_MACRO: {
 					IMacroEntry macro = (IMacroEntry)entry;
 					IPath path = macro.getPath();
 					celement = CoreModel.getDefault().create(path);
@@ -1286,7 +1291,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 //		}
 //		return store;
 	}
-	
+
 //	private IPathEntryStore createDefaultStore(IProject project){
 //		if (CProjectDescriptionManager.getInstance().isNewStyleIndexCfg(project)){
 //			return new ConfigBasedPathEntryStore(project);
@@ -1296,9 +1301,10 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.resources.IPathEntryStoreListener#pathEntryStoreChanged(org.eclipse.cdt.core.resources.PathEntryChangedEvent)
 	 */
+	@Override
 	public void pathEntryStoreChanged(PathEntryStoreChangedEvent event) {
 		IProject project = event.getProject();
 
@@ -1329,9 +1335,10 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.model.IElementChangedListener#elementChanged(org.eclipse.cdt.core.model.ElementChangedEvent)
 	 */
+	@Override
 	public void elementChanged(ElementChangedEvent event) {
 		try {
 			if (processDelta(event.getDelta()) == true) {
@@ -1369,7 +1376,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	protected boolean processDelta(ICElementDelta delta) throws CModelException {
 		int kind = delta.getKind();
 		ICElement element = delta.getElement();
-		int type = element.getElementType(); 
+		int type = element.getElementType();
 
 		// handle open, closing and removing of projects
 		if ( type == ICElement.C_PROJECT) {
@@ -1392,11 +1399,11 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 							containerRemove(cproject);
 						}
 					}
-				} 
+				}
 				return true;
 			}
 			// project change, traverse children.
-		} 
+		}
 		if (element instanceof IWorkingCopy) {
 			return false;
 		}
@@ -1464,7 +1471,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			updatePathEntry.schedule();
 		}
 	}
-		
+
 	public ICModelStatus validatePathEntry(ICProject cProject, IPathEntry[] entries) {
 		return PathEntryUtil.validatePathEntry(cProject, entries);
 	}

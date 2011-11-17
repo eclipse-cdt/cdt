@@ -146,6 +146,7 @@ public class BuildPreferencePage extends PreferencePage implements IWorkbenchPre
 	/**
 	 * @see IWorkbenchPreferencePage#init
 	 */
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 

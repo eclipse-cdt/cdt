@@ -24,11 +24,11 @@ import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.utils.envvar.StorableEnvironmentLoader.ISerializeInfo;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.IPreferenceNodeVisitor;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+import org.eclipse.core.runtime.preferences.IPreferenceNodeVisitor;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
@@ -121,6 +121,7 @@ public class PrefsStorableEnvironment extends StorableEnvironment {
 		private void addListener(IEclipsePreferences node) {
 			try {
 				node.accept(new IPreferenceNodeVisitor() {
+					@Override
 					public boolean visit(IEclipsePreferences node) throws BackingStoreException {
 						// {environment/{project|workspace/}config_name/variable/...
 						node.addPreferenceChangeListener(PrefListener.this);
@@ -163,11 +164,13 @@ public class PrefsStorableEnvironment extends StorableEnvironment {
 			return retVal;
 		}
 
+		@Override
 		public void preferenceChange(PreferenceChangeEvent event) {
 			prefsChanged = true;
 			if (parentRef.get() == null)
 				removeListener();
 		}
+		@Override
 		public void added(NodeChangeEvent event) {
 			prefsChanged = true;
 			if (parentRef.get() == null)
@@ -175,6 +178,7 @@ public class PrefsStorableEnvironment extends StorableEnvironment {
 			else
 				addListener((IEclipsePreferences)event.getChild());
 		}
+		@Override
 		public void removed(NodeChangeEvent event) {
 			prefsChanged = true;
 		}

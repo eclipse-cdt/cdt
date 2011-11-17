@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.model.IStructureTemplate;
 public class StructureTemplate extends Structure implements IStructureTemplate {
 
 	protected Template fTemplate;
-	
+
 	public StructureTemplate(ICElement parent, int kind, String name) {
 		super(parent, kind, name);
 		fTemplate = new Template(name);
@@ -27,10 +27,12 @@ public class StructureTemplate extends Structure implements IStructureTemplate {
 	 * @see org.eclipse.cdt.core.model.ITemplate#getTemplateParameterTypes()
 	 * @return String[]
 	 */
+	@Override
 	public String[] getTemplateParameterTypes() {
 		return fTemplate.getTemplateParameterTypes();
 	}
 
+	@Override
 	public String[] getTemplateArguments() {
 		return  fTemplate.getTemplateArguments();
 	}
@@ -46,13 +48,15 @@ public class StructureTemplate extends Structure implements IStructureTemplate {
 	/**
 	 * @see org.eclipse.cdt.core.model.ITemplate#getNumberOfTemplateParameters()
 	 */
+	@Override
 	public int getNumberOfTemplateParameters() {
 		return fTemplate.getNumberOfTemplateParameters();
 	}
 
 	/**
 	 * @see org.eclipse.cdt.core.model.ITemplate#getTemplateSignature()
-	 */	
+	 */
+	@Override
 	public String getTemplateSignature() {
 		return fTemplate.getTemplateSignature();
 	}

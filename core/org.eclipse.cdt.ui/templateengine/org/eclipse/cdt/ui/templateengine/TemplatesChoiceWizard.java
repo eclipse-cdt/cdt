@@ -34,11 +34,11 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 
 /**
- * A wizard intending to show a choice of templates (@see org.eclipse.cdt.core.templateenginee.Template) 
+ * A wizard intending to show a choice of templates (@see org.eclipse.cdt.core.templateenginee.Template)
  * before switching to the pages driven by the chosen template should extend from TemplatesChoiceWizard.
  * Alternatively, when a choice of templates needn't be shown, TemplateDrivenWizard is a better fit.
  * (@see org.eclipse.cdt.ui.templateengine.TemplateDrivenWizard)
- *  
+ *
  */
 public abstract class TemplatesChoiceWizard extends Wizard implements ITemplatesListProvider, IWorkbenchWizard {
 	private static final boolean DEBUG = false;
@@ -47,7 +47,7 @@ public abstract class TemplatesChoiceWizard extends Wizard implements ITemplates
 	protected IStructuredSelection selection;
 
 	@Override
-	public final void addPages() {		
+	public final void addPages() {
 		IWizardPage[] pages = getPagesBeforeTemplatePages();
 		for (IWizardPage page : pages) {
 			addPage(page);
@@ -93,7 +93,7 @@ public abstract class TemplatesChoiceWizard extends Wizard implements ITemplates
 			pageList.addAll(Arrays.asList(extraPages));
 			pages = pageList.toArray(new IWizardDataPage[pageList.size()]);
 		}
-		return pages;		
+		return pages;
 	}
 
 	IWizardDataPage[] getExtraCreatedPages(Template template) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
@@ -105,12 +105,13 @@ public abstract class TemplatesChoiceWizard extends Wizard implements ITemplates
 			pageList.addAll(Arrays.asList(extraPages));
 			return pageList.toArray(new IWizardDataPage[pageList.size()]);
 		}
-		return new IWizardDataPage[0];		
+		return new IWizardDataPage[0];
 	}
 
 	@Override
 	public boolean performFinish() {
 		IRunnableWithProgress op= new WorkspaceModifyDelegatingOperation(new IRunnableWithProgress() {
+			@Override
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				finishPage(monitor);
 			}
@@ -177,6 +178,7 @@ public abstract class TemplatesChoiceWizard extends Wizard implements ITemplates
 	/**
 	 * initializes the workbench
 	 */
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
 		this.workbench = workbench;
 		this.selection = currentSelection;

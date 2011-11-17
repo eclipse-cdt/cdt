@@ -4,13 +4,13 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sergey Prigogin (Google)
  *     James Blackburn (Broadcom) - Bug 247838
  *     Andrew Gvozdev (Quoin Inc)
- *     Dmitry Kozlov (CodeSourcery) - Build error highlighting and navigation  
+ *     Dmitry Kozlov (CodeSourcery) - Build error highlighting and navigation
  *******************************************************************************/
 package org.eclipse.cdt.core;
 
@@ -43,11 +43,11 @@ import org.eclipse.core.runtime.URIUtil;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
- * The purpose of ErrorParserManager is to delegate the work of error parsing 
+ * The purpose of ErrorParserManager is to delegate the work of error parsing
  * build output to {@link IErrorParser}s, assist in finding {@link IResource}s, and
  * help create appropriate error/warning/info markers to be displayed
  * by the Problems view.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ErrorParserManager extends OutputStream {
@@ -58,7 +58,7 @@ public class ErrorParserManager extends OutputStream {
 	 */
 	@Deprecated
 	public final static String PREF_ERROR_PARSER = CCorePlugin.PLUGIN_ID + ".errorOutputParser"; //$NON-NLS-1$
-	
+
 	/**
 	 * Delimiter for error parsers presented in one string.
 	 * @since 5.2
@@ -93,7 +93,7 @@ public class ErrorParserManager extends OutputStream {
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param builder - project builder.
 	 */
 	public ErrorParserManager(ACBuilder builder) {
@@ -102,7 +102,7 @@ public class ErrorParserManager extends OutputStream {
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param project - project being built.
 	 * @param markerGenerator - marker generator able to create markers.
 	 */
@@ -112,7 +112,7 @@ public class ErrorParserManager extends OutputStream {
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param project - project being built.
 	 * @param markerGenerator - marker generator able to create markers.
 	 * @param parsersIDs - array of error parsers' IDs.
@@ -123,24 +123,24 @@ public class ErrorParserManager extends OutputStream {
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param project - project being built.
-	 * @param workingDirectory - IPath location of the working directory of where the build is performed. 
+	 * @param workingDirectory - IPath location of the working directory of where the build is performed.
 	 * @param markerGenerator - marker generator able to create markers.
 	 * @param parsersIDs - array of error parsers' IDs.
 	 * @deprecated use {@link #ErrorParserManager(IProject, URI, IMarkerGenerator, String[])} instead
 	 */
 	@Deprecated
 	public ErrorParserManager(IProject project, IPath workingDirectory, IMarkerGenerator markerGenerator, String[] parsersIDs) {
-		this(project, (workingDirectory == null || workingDirectory.isEmpty()) ? null : org.eclipse.core.filesystem.URIUtil.toURI(workingDirectory), 
+		this(project, (workingDirectory == null || workingDirectory.isEmpty()) ? null : org.eclipse.core.filesystem.URIUtil.toURI(workingDirectory),
 				markerGenerator, parsersIDs);
 	}
 
 	/**
 	 * URI based constructor.
-	 * 
+	 *
 	 * @param project - project being built.
-	 * @param baseDirectoryURI - absolute location URI of working directory of where the build is performed. 
+	 * @param baseDirectoryURI - absolute location URI of working directory of where the build is performed.
 	 * @param markerGenerator - marker generator able to create markers.
 	 * @param parsersIDs - array of error parsers' IDs.
 	 * @since 5.1
@@ -205,7 +205,7 @@ public class ErrorParserManager extends OutputStream {
 	 * {@link #pushDirectory} and {@link #popDirectory} are used to change working directory
 	 * from where file name is searched (see {@link #findFileInWorkspace}).
 	 * The intention is to handle make output of commands "pushd dir" and "popd".
-	 * 
+	 *
 	 * @param dir - another directory level to keep in stack -- corresponding to 'pushd'.
 	 */
 	public void pushDirectory(IPath dir) {
@@ -227,7 +227,7 @@ public class ErrorParserManager extends OutputStream {
 	 * {@link #pushDirectoryURI} and {@link #popDirectoryURI} are used to change working directory
 	 * from where file name is searched (see {@link #findFileInWorkspace}).
 	 * The intention is to handle make output of commands "pushd dir" and "popd".
-	 * 
+	 *
 	 * @param dir - another directory level to keep in stack -- corresponding to 'pushd'.
 	 * @since 5.1
 	 */
@@ -244,7 +244,7 @@ public class ErrorParserManager extends OutputStream {
 	 * {@link #pushDirectory} and {@link #popDirectory} are used to change working directory
 	 * from where file name is searched (see {@link #findFileInWorkspace}).
 	 * The intention is to handle make output of commands "pushd" and "popd".
-	 * 
+	 *
 	 * @return previous build directory location corresponding 'popd' command.
 	 * @deprecated use {@link #popDirectoryURI()} instead
 	 */
@@ -257,7 +257,7 @@ public class ErrorParserManager extends OutputStream {
 	 * {@link #pushDirectoryURI(URI)} and {@link #popDirectoryURI()} are used to change working directory
 	 * from where file name is searched (see {@link #findFileInWorkspace(IPath)}).
 	 * The intention is to handle make output of commands "pushd" and "popd".
-	 * 
+	 *
 	 * @return previous build directory location corresponding 'popd' command.
 	 * @since 5.1
 	 */
@@ -284,13 +284,14 @@ public class ErrorParserManager extends OutputStream {
 	 * kept by {@code ErrorParserManager}.
 	 * @param parent - project.
 	 * @param result - resulting collection of files.
-	 * 
+	 *
 	 * @deprecated Use {@link #findFileName} for searches.
 	 */
 	@Deprecated
 	protected void collectFiles(IProject parent, final List<IResource> result) {
 		try {
 			parent.accept(new IResourceProxyVisitor() {
+				@Override
 				public boolean visit(IResourceProxy proxy) {
 					if (proxy.getType() == IResource.FILE) {
 						result.add(proxy.requestResource());
@@ -312,7 +313,7 @@ public class ErrorParserManager extends OutputStream {
 		lineCounter++;
 
 		ProblemMarkerInfo marker=null;
-		
+
 outer:
 		for (IErrorParser[] parsers : fErrorParsers.values()) {
 			for (IErrorParser parser : parsers) {
@@ -363,21 +364,21 @@ outer:
 		}
 		outputLine(line, marker);
 	}
-	
-	/** 
-	 * Conditionally output line to outputStream. If stream 
+
+	/**
+	 * Conditionally output line to outputStream. If stream
 	 * supports error markers, use it, otherwise use conventional stream
 	 */
 	private void outputLine(String line, ProblemMarkerInfo marker) {
 		String l = line + "\n";  //$NON-NLS-1$
-		if ( outputStream == null ) return; 
+		if ( outputStream == null ) return;
 		try {
 			if ( marker != null && outputStream instanceof IErrorMarkeredOutputStream ) {
 				IErrorMarkeredOutputStream s = (IErrorMarkeredOutputStream) outputStream;
 				s.write(l, marker);
-			} else {		
+			} else {
 				byte[] b = l.getBytes();
-				outputStream.write(b, 0, b.length);			
+				outputStream.write(b, 0, b.length);
 			}
 		} catch (IOException e) {
 			CCorePlugin.log(e);
@@ -409,7 +410,7 @@ outer:
 	 * @return - file in the workspace or {@code null}.
 	 */
 	public IFile findFileName(String partialLoc) {
-		if (partialLoc.equals(cachedFileName) && cachedWorkingDirectory != null && 
+		if (partialLoc.equals(cachedFileName) && cachedWorkingDirectory != null &&
 				org.eclipse.core.filesystem.URIUtil.equals(getWorkingDirectoryURI(), cachedWorkingDirectory))
 			return cachedFile;
 
@@ -452,7 +453,7 @@ outer:
 
 	/**
 	 * Find exact match in the workspace. If path is not absolute search is done in working directory.
-	 * 
+	 *
 	 * @param path - file path.
 	 * @return - file in the workspace or {@code null} if such a file doesn't exist
 	 */
@@ -472,7 +473,7 @@ outer:
 
 	/**
 	 * Find exact match in the workspace. If path is not absolute search is done in the current working directory.
-	 * 
+	 *
 	 * @param uri - absolute or relative URI to resolve.
 	 * @return - file in the workspace or {@code null} if such a file doesn't exist
 	 * @since 5.1
@@ -490,7 +491,7 @@ outer:
 	/**
 	 * @param fileName - file name.
 	 * @return {@code true} if the project contains more than one file with the given name.
-	 * 
+	 *
 	 * @deprecated Use {@link #findFileName} for searches.
 	 */
 	@Deprecated
@@ -501,11 +502,11 @@ outer:
 	/**
 	 * Called by the error parsers to find an IFile for a given
 	 * external filesystem 'location'
-	 * 
+	 *
 	 * @param filePath - file path.
-	 * @return IFile representing the external location, or null if one 
+	 * @return IFile representing the external location, or null if one
 	 *         couldn't be found.
-	 * 
+	 *
 	 * @deprecated Use {@link #findFileName} for searches.
 	 */
 	@Deprecated
@@ -542,7 +543,7 @@ outer:
 
 	/**
 	 * Add marker to the list of error markers.
-	 * 
+	 *
 	 * @param file - resource to add the new marker.
 	 * @param lineNumber - line number of the error.
 	 * @param desc - description of the error.
@@ -555,7 +556,7 @@ outer:
 
 	/**
 	 * Add marker to the list of error markers.
-	 * 
+	 *
 	 * @param file - resource to add the new marker.
 	 * @param lineNumber - line number of the error.
 	 * @param desc - description of the error.
@@ -574,7 +575,7 @@ outer:
 
 	/**
 	 * Add the given marker to the list of error markers.
-	 * 
+	 *
 	 * @param problemMarkerInfo - The marker to be added.
 	 * @since 5.4
 	 */
@@ -596,7 +597,7 @@ outer:
 	/**
 	 * Method setOutputStream.
 	 * Note: you have to close this stream explicitly
-	 * don't rely on ErrorParserManager.close(). 
+	 * don't rely on ErrorParserManager.close().
 	 * @param os - output stream
 	 */
 	public void setOutputStream(OutputStream os) {
@@ -604,9 +605,9 @@ outer:
 	}
 
 	/**
-	 * Method getOutputStream. 
+	 * Method getOutputStream.
 	 * Note: you have to close this stream explicitly
-	 * don't rely on ErrorParserManager.close(). 
+	 * don't rely on ErrorParserManager.close().
 	 * @return OutputStream
 	 */
 	public OutputStream getOutputStream() {
@@ -616,8 +617,8 @@ outer:
 
 	/**
 	 * @see java.io.OutputStream#close()
-	 * Note: don't rely on this method to close underlying OutputStream, 
-	 * close it explicitly 
+	 * Note: don't rely on this method to close underlying OutputStream,
+	 * close it explicitly
 	 */
 	@Override
 	public synchronized void close() throws IOException {
@@ -660,7 +661,7 @@ outer:
 
 	// This method examines contents of currentLine buffer
 	// if it contains whole line this line is checked by error
-	// parsers (processLine method). 
+	// parsers (processLine method).
 	// If flush is true rest of line is checked by error parsers.
 	private void checkLine(boolean flush) {
 		String buffer = currentLine.toString();
@@ -688,7 +689,7 @@ outer:
 	/**
 	 * @deprecated as of 5.2. This method is no longer reporting problems.
 	 *  The problem markers are generated after processing each line.
-	 * 
+	 *
 	 * @return {@code true} if detected a problem indicating that build failed.
 	 *         The semantics of the return code is inconsistent. As far as build is concerned
 	 *         there is no difference between errors
@@ -720,7 +721,7 @@ outer:
 			// On Windows "C:/folder/" -> "/C:/folder/"
 			if (path.isAbsolute() && uriString.charAt(0) != IPath.SEPARATOR)
 			    uriString = IPath.SEPARATOR + uriString;
-			
+
 			return EFSExtensionManager.getDefault().createNewURIFromPath(baseURI, uriString);
 	}
 
@@ -752,7 +753,7 @@ outer:
 
 	/**
 	 * @return {@code true} if errors attributed to resources detected
-	 * 
+	 *
 	 * @deprecated The semantics of this function is inconsistent. As far as build is concerned
 	 *         there is no difference between errors
 	 *         {@link IMarkerGenerator#SEVERITY_ERROR_RESOURCE} and
@@ -837,7 +838,7 @@ outer:
 	public static IErrorParserNamed getErrorParserExtensionCopy(String id) {
 		return ErrorParserExtensionManager.getErrorParserCopy(id, true);
 	}
-	
+
 	/**
 	 * @param ids - array of error parser IDs
 	 * @return error parser IDs delimited with error parser delimiter ";"

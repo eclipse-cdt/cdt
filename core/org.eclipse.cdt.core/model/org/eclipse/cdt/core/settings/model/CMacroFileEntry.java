@@ -28,10 +28,11 @@ public final class CMacroFileEntry extends ACPathEntry implements
 		super(rc, flags);
 	}
 
+	@Override
 	public final int getKind() {
 		return MACRO_FILE;
 	}
-	
+
 	@Override
 	public final boolean isFile() {
 		return true;

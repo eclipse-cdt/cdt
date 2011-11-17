@@ -25,7 +25,7 @@ public class LibraryEntry extends APathEntry implements ILibraryEntry {
 	IPath sourceAttachmentPrefixMapping;
 
 	/**
-	 * 
+	 *
 	 * @param basePath
 	 * @param baseRef
 	 * @param libraryPath
@@ -58,6 +58,7 @@ public class LibraryEntry extends APathEntry implements ILibraryEntry {
 	 *
 	 * @return the path to the source archive or folder, or <code>null</code> if none
 	 */
+	@Override
 	public IPath getSourceAttachmentPath() {
 		return sourceAttachmentPath;
 	}
@@ -72,10 +73,11 @@ public class LibraryEntry extends APathEntry implements ILibraryEntry {
 	 * @return the path within the source archive or folder, or <code>null</code> if
 	 *    not applicable
 	 */
+	@Override
 	public IPath getSourceAttachmentRootPath() {
 		return sourceAttachmentRootPath;
 	}
- 
+
 	/**
 	 * Returns the path to map the source paths with to the source achive or folder
 	 * An empty path indicates that the is a one-to-one mapping of source paths to the
@@ -86,6 +88,7 @@ public class LibraryEntry extends APathEntry implements ILibraryEntry {
 	 * @return the path mapping within the source archive or folder, or <code>null</code> if
 	 *    not applicable
 	 */
+	@Override
 	public IPath getSourceAttachmentPrefixMapping() {
 		return sourceAttachmentPrefixMapping;
 	}
@@ -143,6 +146,7 @@ public class LibraryEntry extends APathEntry implements ILibraryEntry {
 		return super.equals(obj);
 	}
 
+	@Override
 	public IPath getFullLibraryPath() {
 		IPath p;
 		IPath lib = getLibraryPath();
@@ -178,6 +182,7 @@ public class LibraryEntry extends APathEntry implements ILibraryEntry {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ILibraryEntry#getLibraryPath()
 	 */
+	@Override
 	public IPath getLibraryPath() {
 		return libraryPath;
 	}

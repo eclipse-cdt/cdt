@@ -15,9 +15,9 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IMacro;
 
 public class Macro extends SourceManipulation implements IMacro {
-	
+
 	private boolean fFunctionStyle = false;
-	
+
 	public void setFunctionStyle(boolean isFunctionStyle) {
 		this.fFunctionStyle = isFunctionStyle;
 	}
@@ -26,10 +26,12 @@ public class Macro extends SourceManipulation implements IMacro {
 		super(parent, name, ICElement.C_MACRO);
 	}
 
+	@Override
 	public String getIdentifierList() {
 		return ""; //$NON-NLS-1$
 	}
 
+	@Override
 	public String getTokenSequence() {
 		return ""; //$NON-NLS-1$
 	}
@@ -39,6 +41,7 @@ public class Macro extends SourceManipulation implements IMacro {
 		return new SourceManipulationInfo(this);
 	}
 
+	@Override
 	public boolean isFunctionStyle() {
 		return fFunctionStyle;
 	}

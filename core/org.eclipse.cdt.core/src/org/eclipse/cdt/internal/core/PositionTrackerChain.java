@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core;
 
 import java.util.Iterator;
@@ -19,13 +19,13 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 
 class PositionTrackerChain implements IDocumentListener {
-    public static final int LINKED_LIST_SIZE = 64;    
+    public static final int LINKED_LIST_SIZE = 64;
     public static final int LINKED_LIST_ENTRY_SIZE = 32;
     public static int MEMORY_SIZE= 32 + LINKED_LIST_SIZE;
-    
+
     private static final int MAX_DEPTH = 100; // 100 saves
     private static final long MAX_AGE = 24 * 60 * 60 * 1000; // one day
-    
+
     private LinkedList<PositionTracker> fTrackers= new LinkedList<PositionTracker>();
     private PositionTracker fActiveTracker;
     private IDocument fDocument;
@@ -33,7 +33,7 @@ class PositionTrackerChain implements IDocumentListener {
     public PositionTrackerChain(long timestamp) {
         createCheckpoint(timestamp);
     }
-    
+
     public int createCheckpoint(long timestamp) {
         // travel in time
         while (fActiveTracker != null && fActiveTracker.getTimeStamp() >= timestamp) {
@@ -51,7 +51,7 @@ class PositionTrackerChain implements IDocumentListener {
         PositionTracker newTracker= new PositionTracker();
         newTracker.setTimeStamp(timestamp);
         fTrackers.add(newTracker);
-        
+
         if (fActiveTracker != null) {
             fActiveTracker.retire(newTracker);
             retiredMemsize= fActiveTracker.getMemorySize() + LINKED_LIST_ENTRY_SIZE;
@@ -60,7 +60,7 @@ class PositionTrackerChain implements IDocumentListener {
         checkTrackerLimits();
         return retiredMemsize;
     }
-        
+
     private void checkTrackerLimits() {
         while (fTrackers.size() >= MAX_DEPTH) {
             fTrackers.removeFirst();
@@ -74,7 +74,7 @@ class PositionTrackerChain implements IDocumentListener {
             iter.remove();
         }
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.IPositionUpdater#update(org.eclipse.jface.text.DocumentEvent)
      */
@@ -155,14 +155,16 @@ class PositionTrackerChain implements IDocumentListener {
         }
     }
 
-    public void documentAboutToBeChanged(DocumentEvent event) {
+    @Override
+	public void documentAboutToBeChanged(DocumentEvent event) {
         update(event);
     }
 
-    public void documentChanged(DocumentEvent event) {
+    @Override
+	public void documentChanged(DocumentEvent event) {
         // react before updateing the document
     }
-    
+
     public IDocument getCurrentDocument() {
         return fDocument;
     }

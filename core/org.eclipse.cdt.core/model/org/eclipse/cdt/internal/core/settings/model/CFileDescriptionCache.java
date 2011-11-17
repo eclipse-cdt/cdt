@@ -34,16 +34,18 @@ public class CFileDescriptionCache extends CDefaultFileData implements
 
 		copyDataFrom(base, true);
 	}
-	
+
 	@Override
 	protected CLanguageData copyLanguageData(CLanguageData data, boolean clone) {
 		return new CLanguageSettingCache(data, this);
 	}
 
+	@Override
 	public void setExcluded(boolean excluded) throws WriteAccessException {
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
-	
+
+	@Override
 	public boolean canExclude(boolean exclude) {
 		return exclude == isExcluded();
 	}
@@ -59,26 +61,31 @@ public class CFileDescriptionCache extends CDefaultFileData implements
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
 
+	@Override
 	public ICConfigurationDescription getConfiguration() {
 		return fCfg;
 	}
 
+	@Override
 	public ICSettingContainer getParent() {
 		return fCfg;
 	}
 
+	@Override
 	public ICLanguageSetting getLanguageSetting() {
 		return (ICLanguageSetting)fLanguageData;
 	}
 
+	@Override
 	public ICSettingObject[] getChildSettings() {
 		return new ICSettingObject[]{(ICSettingObject)fLanguageData};
 	}
 
+	@Override
 	public boolean isReadOnly() {
 		return true;
 	}
-	
+
 	private ResourceDescriptionHolder getRcDesHolder(){
 		if(fRcDesHolder == null)
 			fRcDesHolder = fCfg.createHolderForRc(getPath());
@@ -86,6 +93,7 @@ public class CFileDescriptionCache extends CDefaultFileData implements
 	}
 
 
+	@Override
 	public ICFolderDescription getParentFolderDescription() {
 		return getRcDesHolder().getParentFolderDescription();
 	}
@@ -100,6 +108,7 @@ public class CFileDescriptionCache extends CDefaultFileData implements
 		return true;
 	}
 
+	@Override
 	public boolean isExcluded() {
 		return fCfg.isExcluded(getPath());
 	}

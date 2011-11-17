@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Intel Corporation - initial API and implementation
- *     QNX Software Systems - [272416] Rework the config sets dialog 
+ *     QNX Software Systems - [272416] Rework the config sets dialog
  *******************************************************************************/
 package org.eclipse.cdt.ui.actions;
 
@@ -27,38 +27,43 @@ import org.eclipse.cdt.internal.ui.workingsets.WorkingSetConfigurationDialog;
 /**
  */
 public class WorkingSetConfigAction implements IWorkbenchWindowActionDelegate, IPropertyChangeListener {
-	private static final IWorkingSetManager wsm = CUIPlugin.getDefault().getWorkbench().getWorkingSetManager();  
+	private static final IWorkingSetManager wsm = CUIPlugin.getDefault().getWorkbench().getWorkingSetManager();
 	private boolean enabled = true;
-	
+
 	private IWorkbenchWindow window;
-	
+
+	@Override
 	public void run(IAction action) {
 		new WorkingSetConfigurationDialog(window.getShell()).open();
 	}
-	
+
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		checkWS();
 		if (action.isEnabled() != enabled)
 			action.setEnabled(enabled);
 	}
+	@Override
 	public void dispose() {
 		wsm.removePropertyChangeListener(this);
-		
+
 	}
+	@Override
 	public void init(IWorkbenchWindow window) {
 		this.window = window;
 		wsm.addPropertyChangeListener(this);
 		checkWS();
 	}
-	
+
 	private IWorkingSet[] checkWS() {
 		IWorkingSet[] w = wsm.getWorkingSets();
 		if (w == null)
-			w = new IWorkingSet[0]; 
+			w = new IWorkingSet[0];
 		enabled = w.length > 0;
 		return w;
 	}
 
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		checkWS();
 	}

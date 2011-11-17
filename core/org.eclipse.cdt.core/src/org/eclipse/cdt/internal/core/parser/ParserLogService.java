@@ -31,11 +31,11 @@ public class ParserLogService extends AbstractParserLogService implements ICance
 	private final boolean fIsTracing;
 	private final boolean fIsTracingExceptions;
 	private final ICanceler fCanceler;
-	
+
 	public ParserLogService(DebugLogConstants constant) {
 		this(constant, null);
 	}
-	
+
 	public ParserLogService(DebugLogConstants constant, ICanceler canceler) {
 		topic = constant;
 		if (CCorePlugin.getDefault() == null) {
@@ -58,10 +58,10 @@ public class ParserLogService extends AbstractParserLogService implements ICance
 	public boolean isTracing(String option) {
 		return "true".equals(Platform.getDebugOption(option)); //$NON-NLS-1$
 	}
-	
+
 	@Override
 	public void traceLog(String option, String message) {
-		if (isTracing(option)) 
+		if (isTracing(option))
 			System.out.println(message);
 	}
 
@@ -74,7 +74,7 @@ public class ParserLogService extends AbstractParserLogService implements ICance
 	public boolean isTracing() {
 		return fIsTracing;
 	}
-	
+
 	@Override
 	public boolean isTracingExceptions() {
 		return fIsTracingExceptions;
@@ -83,6 +83,7 @@ public class ParserLogService extends AbstractParserLogService implements ICance
 	/*
 	 * @see org.eclipse.cdt.internal.core.util.ICanceler#setCancelable(org.eclipse.cdt.internal.core.util.ICancelable)
 	 */
+	@Override
 	public void setCancelable(ICancelable cancelable) {
 		if (fCanceler != null) {
 			fCanceler.setCancelable(cancelable);

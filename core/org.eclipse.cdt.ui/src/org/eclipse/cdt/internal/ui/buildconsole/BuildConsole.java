@@ -37,9 +37,9 @@ public class BuildConsole extends AbstractConsole {
 	 * error navigation (value <code>"errorGroup"</code>).
 	 */
 	public static final String ERROR_GROUP = "errorGroup"; //$NON-NLS-1$
-		
+
 	/**
-	 * Property constant indicating the color of a stream has changed. 
+	 * Property constant indicating the color of a stream has changed.
 	 */
 	public static final String P_STREAM_COLOR = CUIPlugin.PLUGIN_ID  + ".CONSOLE_P_STREAM_COLOR";	 //$NON-NLS-1$
 
@@ -55,7 +55,7 @@ public class BuildConsole extends AbstractConsole {
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param manager - build console manager.
 	 * @param name - name of console to appear in the list of consoles in context menu
 	 *    in the Console view.
@@ -67,7 +67,7 @@ public class BuildConsole extends AbstractConsole {
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param manager - build console manager.
 	 * @param name - name of console to appear in the list of consoles in context menu
 	 *    in the Console view.
@@ -87,12 +87,13 @@ public class BuildConsole extends AbstractConsole {
 		fConsoleId = contextId;
 	}
 
+	@Override
 	public IPageBookViewPage createPage(IConsoleView view) {
-		fBuildConsolePage = new BuildConsolePage(view, this, fConsoleId); 
+		fBuildConsolePage = new BuildConsolePage(view, this, fConsoleId);
 		fCurrentBuildConsolePage = fBuildConsolePage;
 		return fBuildConsolePage;
 	}
-	
+
 	BuildConsolePage getPage() {
 		return fBuildConsolePage;
 	}

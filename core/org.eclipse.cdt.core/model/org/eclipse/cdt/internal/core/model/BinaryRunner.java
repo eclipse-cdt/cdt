@@ -80,9 +80,9 @@ public class BinaryRunner {
 			}
 			addDelta(cdelta);
 		}
-		
+
 	}
-	
+
 	private final ICProject cproject;
 	private final Job runnerJob;		// final fields don't need synchronization
 	private IOutputEntry[] entries = new IOutputEntry[0];
@@ -182,6 +182,7 @@ public class BinaryRunner {
 			textContentType = mgr.getContentType("org.eclipse.core.runtime.text"); //$NON-NLS-1$
 		}
 
+		@Override
 		public boolean visit(IResourceProxy proxy) throws CoreException {
 			if (vMonitor.isCanceled()) {
 				return false;
@@ -189,13 +190,13 @@ public class BinaryRunner {
 			vMonitor.worked(1);
 			// Attempt to speed things up by rejecting up front
 			// Things we know should not be Binary files.
-			
+
 			// check if it's a file resource
 			// and bail out early
 			if (proxy.getType() != IResource.FILE) {
 				return true;
 			}
-			
+
 			// check against known content types
 			String name = proxy.getName();
 			IContentType contentType = CCorePlugin.getContentType(project, name);
@@ -228,7 +229,7 @@ public class BinaryRunner {
 			}
 			return true;
 		}
-		
+
 		private boolean isOnOutputEntry(IOutputEntry entry, IPath path) {
 			if (entry.getPath().isPrefixOf(path) && !CoreModelUtil.isExcluded(path, entry.fullExclusionPatternChars())) {
 				return true;

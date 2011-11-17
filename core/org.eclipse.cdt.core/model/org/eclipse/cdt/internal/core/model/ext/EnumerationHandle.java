@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.model.ext;
 
@@ -21,6 +21,7 @@ public class EnumerationHandle extends CElementHandle implements org.eclipse.cdt
 		super(parent, ICElement.C_ENUMERATION, enumeration.getName());
 	}
 
+	@Override
 	public boolean isStatic() throws CModelException {
 		return false;
 	}

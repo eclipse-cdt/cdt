@@ -41,7 +41,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PlatformObject;
 
 public abstract class CElement extends PlatformObject implements ICElement {
-	
+
 	public static final char CEM_ESCAPE = '\\';
 	public static final char CEM_CPROJECT = '=';
 	public static final char CEM_SOURCEROOT = '/';
@@ -53,7 +53,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 
 	protected static final CElement[] NO_ELEMENTS = new CElement[0];
 	protected int fType;
-	
+
 	protected ICElement fParent;
 
 	protected String fName;
@@ -63,7 +63,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 		fName= name;
 		fType= type;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
 	 */
@@ -79,8 +79,8 @@ public abstract class CElement extends PlatformObject implements ICElement {
 		}
 		return super.getAdapter(adapter);
 	}
-	
-	
+
+
 	// setters
 
 	public void setElementType (int type) {
@@ -90,44 +90,50 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	public void setElementName(String name) {
 		fName = name;
 	}
-	
+
 	public void setParent (ICElement parent) {
 		fParent = parent;
 	}
-	
+
 	// getters
-	
+
+	@Override
 	public int getElementType() {
 		return fType;
-	}	
+	}
 
+	@Override
 	public String getElementName() {
 		return fName;
 	}
-	
+
+	@Override
 	public ICElement getParent() {
 		return fParent;
 	}
 
+	@Override
 	public IPath getPath() {
 		IResource res = getUnderlyingResource();
 		if (res != null)
 			return res.getFullPath();
 		return new Path(getElementName());
 	}
-	
+
+	@Override
 	public URI getLocationURI() {
 		IResource res = getUnderlyingResource();
-		
+
 		if(res != null) {
 			return res.getLocationURI();
 		}
-		
+
 		else {
 			return null;
 		}
 	}
 
+	@Override
 	public boolean exists() {
 		try {
 			return getElementInfo() != null;
@@ -201,7 +207,8 @@ public abstract class CElement extends PlatformObject implements ICElement {
 		}
 		return new ICElement[]{this};
 	}
-	
+
+	@Override
 	public boolean isReadOnly () {
 		IResource r = getUnderlyingResource();
 		if (r != null) {
@@ -209,14 +216,16 @@ public abstract class CElement extends PlatformObject implements ICElement {
 			if (attributes != null) {
 				return attributes.isReadOnly();
 			}
-		}			
+		}
 		return false;
 	}
 
+	@Override
 	public boolean isStructureKnown() throws CModelException {
 		return getElementInfo().isStructureKnown();
 	}
 
+	@Override
 	public ICModel getCModel () {
 		ICElement current = this;
 		do {
@@ -225,6 +234,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 		return null;
 	}
 
+	@Override
 	public ICProject getCProject() {
 		ICElement current = this;
 		do {
@@ -236,6 +246,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	protected void addChild(ICElement e) throws CModelException {
 	}
 
+	@Override
 	public IResource getUnderlyingResource() {
 		IResource res = getResource();
 		if (res == null) {
@@ -247,6 +258,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 		return res;
 	}
 
+	@Override
 	public abstract IResource getResource() ;
 
 	protected abstract CElementInfo createElementInfo();
@@ -263,7 +275,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 		}
 		return false;
 	}
-	
+
 	public static boolean equals(ICElement lhs, ICElement rhs) {
 		if (lhs == rhs) {
 			return true;
@@ -277,19 +289,19 @@ public abstract class CElement extends PlatformObject implements ICElement {
 				!lhsName.equals(rhsName)) {
 			return false;
 		}
-		
+
 		if (lhs instanceof ISourceReference && rhs instanceof ISourceReference) {
 			if (((ISourceReference) lhs).getIndex() != ((ISourceReference) rhs).getIndex()) {
 				return false;
 			}
 		}
-			
+
 		ICElement lhsParent= lhs.getParent();
 		ICElement rhsParent= rhs.getParent();
 		if (lhsParent == rhsParent) {
 			return true;
 		}
-		
+
 		return lhsParent != null && lhsParent.equals(rhsParent);
 	}
 
@@ -370,7 +382,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 				return "UNKNOWN"; //$NON-NLS-1$
 		}
 	}
-	
+
 	/**
 	 * Close the C Element
 	 * @throws CModelException
@@ -398,7 +410,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	 * <p>Subclasses that are not IOpenable's must override this method.
 	 */
 	public IOpenable getOpenableParent() {
-		if (fParent instanceof IOpenable) {		
+		if (fParent instanceof IOpenable) {
 			return (IOpenable)fParent;
 		}
 		return null;
@@ -455,6 +467,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	/**
 	 * @see ICElement
 	 */
+	@Override
 	public ICElement getAncestor(int ancestorType) {
 		ICElement element = this;
 		while (element != null) {
@@ -477,14 +490,14 @@ public abstract class CElement extends PlatformObject implements ICElement {
 		}
 		return parent != null;
 	}
-	
+
 	/**
 	 * Creates and returns and not present exception for this element.
 	 */
 	protected CModelException newNotPresentException() {
 		return new CModelException(new CModelStatus(ICModelStatusConstants.ELEMENT_DOES_NOT_EXIST, this));
 	}
-	
+
 	/**
 	 * Returns the hash code for this Java element. By default,
 	 * the hash code for an element is a combination of its name
@@ -497,7 +510,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	public int hashCode() {
 		return hashCode(this);
 	}
-	
+
 	public static int hashCode(ICElement elem) {
 		ICElement parent= elem.getParent();
 		if (parent == null) {
@@ -505,7 +518,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 		}
 		return Util.combineHashCodes(elem.getElementName().hashCode(), parent.hashCode());
 	}
-	
+
 	/*
 	 * Test to see if two objects are identical
 	 * Subclasses should override accordingly
@@ -513,10 +526,11 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	public boolean isIdentical(CElement otherElement){
 		return this.equals(otherElement);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ICElement#accept(org.eclipse.cdt.core.model.ICElementVisitor)
 	 */
+	@Override
 	public void accept(ICElementVisitor visitor) throws CoreException {
 		// Visit me, return right away if the visitor doesn't want to visit my children
 		if (!visitor.visit(this))
@@ -533,13 +547,14 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	/*
 	 * @see org.eclipse.cdt.core.model.ICElement#getHandleIdentifier()
 	 */
+	@Override
 	public String getHandleIdentifier() {
 		return getHandleMemento();
 	}
 
 	/**
 	 * Builds a string representation of this element.
-	 * 
+	 *
 	 * @return  the string representation
 	 */
 	public String getHandleMemento(){
@@ -550,7 +565,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 
 	/**
 	 * Append this elements memento string to the given buffer.
-	 * 
+	 *
 	 * @param buff  the buffer building the memento string
 	 */
 	public void getHandleMemento(StringBuilder buff) {
@@ -567,7 +582,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 
 	/**
 	 * Creates a C element handle from the given memento.
-	 * 
+	 *
 	 * @param memento  the memento tokenizer
 	 */
 	public ICElement getHandleFromMemento(MementoTokenizer memento) {
@@ -579,7 +594,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	/**
 	 * Creates a C element handle from the given memento.
 	 * The given token is the current delimiter indicating the type of the next token(s).
-	 * 
+	 *
 	 * @param token  the curren memento token
 	 * @param memento  the memento tokenizer
 	 */
@@ -587,7 +602,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 
 	/**
 	 * Escape special characters in the given name and append the result to buffer.
-	 * 
+	 *
 	 * @param buffer  the buffer to build the memento string
 	 * @param mementoName  the name to escape
 	 */

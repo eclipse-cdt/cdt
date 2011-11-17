@@ -31,16 +31,17 @@ import org.eclipse.core.runtime.IPath;
 public abstract class MultiResourceDescription extends MultiItemsHolder implements ICMultiResourceDescription {
 	ICResourceDescription[] fRess = null;
 	ICConfigurationDescription fCfg = null;
-	
+
 	public MultiResourceDescription(ICResourceDescription[] res) {
 		fRess = res;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.ICResourceDescription#canExclude(boolean)
-	 * 
-	 * returns TRUE only if all res.configurations return true  
+	 *
+	 * returns TRUE only if all res.configurations return true
 	 */
+	@Override
 	public boolean canExclude(boolean exclude) {
 		for (int i=0; i<fRess.length; i++)
 			if (! fRess[i].canExclude(exclude))
@@ -51,6 +52,7 @@ public abstract class MultiResourceDescription extends MultiItemsHolder implemen
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.ICResourceDescription#getParentFolderDescription()
 	 */
+	@Override
 	public ICFolderDescription getParentFolderDescription() {
 		if (DEBUG)
 			System.out.println("Bad multi access: MultiResourceDescription.getParentFolderDescription()"); //$NON-NLS-1$
@@ -60,6 +62,7 @@ public abstract class MultiResourceDescription extends MultiItemsHolder implemen
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.ICResourceDescription#getPath()
 	 */
+	@Override
 	public IPath getPath() {
 		IPath p = fRess[0].getPath();
 		if (p != null) {
@@ -75,6 +78,7 @@ public abstract class MultiResourceDescription extends MultiItemsHolder implemen
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.ICResourceDescription#isExcluded()
 	 */
+	@Override
 	public boolean isExcluded() {
 		for (int i=0; i<fRess.length; i++)
 			if (! fRess[i].isExcluded())
@@ -85,6 +89,7 @@ public abstract class MultiResourceDescription extends MultiItemsHolder implemen
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.ICResourceDescription#setExcluded(boolean)
 	 */
+	@Override
 	public void setExcluded(boolean excluded) throws WriteAccessException {
 		for (int i=0; i<fRess.length; i++)
 			fRess[i].setExcluded(excluded);
@@ -93,14 +98,16 @@ public abstract class MultiResourceDescription extends MultiItemsHolder implemen
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.ICResourceDescription#setPath(org.eclipse.core.runtime.IPath)
 	 */
+	@Override
 	public void setPath(IPath path) throws WriteAccessException {
 		for (int i=0; i<fRess.length; i++)
-			fRess[i].setPath(path);			
+			fRess[i].setPath(path);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.ICSettingContainer#getChildSettings()
 	 */
+	@Override
 	public ICSettingObject[] getChildSettings() {
 		if (DEBUG)
 			System.out.println("Bad multi access: MultiResourceDescription.getChildSettings()"); //$NON-NLS-1$
@@ -109,9 +116,10 @@ public abstract class MultiResourceDescription extends MultiItemsHolder implemen
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.ICSettingObject#getConfiguration()
-	 * 
-	 * returns multi-configuration object 
+	 *
+	 * returns multi-configuration object
 	 */
+	@Override
 	public ICConfigurationDescription getConfiguration() {
 		if (fCfg == null) {
 			ICConfigurationDescription[] cfgs = new ICConfigurationDescription[fRess.length];
@@ -119,12 +127,13 @@ public abstract class MultiResourceDescription extends MultiItemsHolder implemen
 				cfgs[i] = fRess[i].getConfiguration();
 			fCfg = new MultiConfigDescription(cfgs);
 		}
-		return fCfg; 
+		return fCfg;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.ICSettingObject#getId()
 	 */
+	@Override
 	public String getId() {
 		return fRess[0].getId() + "_etc"; //$NON-NLS-1$
 	}
@@ -132,21 +141,23 @@ public abstract class MultiResourceDescription extends MultiItemsHolder implemen
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.ICSettingObject#getName()
 	 */
+	@Override
 	public String getName() {
 		return "Multiple Resource Description"; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.ICSettingObject#getParent()
-	 * 
+	 *
 	 * If there's the same parent for all res cfgs, return it.
 	 * Else return null;
 	 */
+	@Override
 	public ICSettingContainer getParent() {
 		ICSettingContainer sc = fRess[0].getParent();
 		if (sc == null)
 			return null;
-		for (int i=1; i<fRess.length; i++) 
+		for (int i=1; i<fRess.length; i++)
 			if (!sc.equals(fRess[i].getParent()))
 				return null;
 		return sc;
@@ -154,21 +165,23 @@ public abstract class MultiResourceDescription extends MultiItemsHolder implemen
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.ICSettingObject#getType()
-	 * 
+	 *
 	 * If there's the same type for all res cfgs, return it.
 	 * Else return null;
 	 */
+	@Override
 	public int getType() {
 		int t = fRess[0].getType();
 		for (int i=1; i<fRess.length; i++)
 			if (t != fRess[i].getType())
-				return 0; 
+				return 0;
 		return t;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.ICSettingObject#isReadOnly()
 	 */
+	@Override
 	public boolean isReadOnly() {
 		for (int i=0; i<fRess.length; i++)
 			if (! fRess[i].isReadOnly())
@@ -179,6 +192,7 @@ public abstract class MultiResourceDescription extends MultiItemsHolder implemen
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.ICSettingObject#isValid()
 	 */
+	@Override
 	public boolean isValid() {
 		for (int i=0; i<fRess.length; i++)
 			if (! fRess[i].isValid())
@@ -193,21 +207,22 @@ public abstract class MultiResourceDescription extends MultiItemsHolder implemen
 	public Object[] getItems() {
 		return fRess;
 	}
-	
+
+	@Override
 	public void setSettingEntries(ICLanguageSetting lang, int kind, List<ICLanguageSettingEntry> incs, boolean toAll) {
 		for (int i=0; i<fRess.length; i++) {
 			if (fRess[i] instanceof ICFolderDescription) {
 				String n = lang.getName();
 				ICLanguageSetting[] l = ((ICFolderDescription)fRess[i]).getLanguageSettings();
 				for (int j=0; j<l.length; j++) {
-					if (toAll || n.equals(l[j].getName())) { 
+					if (toAll || n.equals(l[j].getName())) {
 						l[j].setSettingEntries(kind, incs);
 						break;
 					}
 				}
 			} else if (fRess[i] instanceof ICFileDescription) {
 				ICLanguageSetting l = ((ICFileDescription)fRess[i]).getLanguageSetting();
-				if (l.getName().equals(lang.getName())) 
+				if (l.getName().equals(lang.getName()))
 					l.setSettingEntries(kind, incs);
 			}
 		}

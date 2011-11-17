@@ -50,7 +50,7 @@ public abstract class ResourceChangeHandlerBase implements IResourceChangeListen
 		void handleProjectClose(IProject project);
 
 		/**
-		 * Call-back ticked at end of a resource change event 
+		 * Call-back ticked at end of a resource change event
 		 */
 		void done();
 	}
@@ -66,7 +66,7 @@ public abstract class ResourceChangeHandlerBase implements IResourceChangeListen
 			fHandler = handler;
 //			fRootDelta = rootDelta;
 		}
-		
+
 		private IResource getResource(IPath path, IResource baseResource){
 			switch(baseResource.getType()){
 			case IResource.FILE:
@@ -80,24 +80,25 @@ public abstract class ResourceChangeHandlerBase implements IResourceChangeListen
 				throw new IllegalArgumentException();
 			}
 		}
-		
+
 		private boolean checkInitHandleResourceMove(IResource fromRc, IResource toRc){
 			if(fMoveMap.put(fromRc, toRc) == null){
 				return fHandler.handleResourceMove(fromRc, toRc);
 			}
-			
+
 			return true;
 		}
-		
+
+		@Override
 		public boolean visit(IResourceDelta delta) throws CoreException {
 			IResource dResource = delta.getResource();
-			
+
 			if(dResource.getType() == IResource.PROJECT && !shouldVisit((IProject)dResource))
 				return false;
-					
+
 			boolean resume = true;
 			boolean removed = false;
-			
+
 			switch (delta.getKind()) {
 			case IResourceDelta.REMOVED:
 				removed = true;
@@ -126,29 +127,30 @@ public abstract class ResourceChangeHandlerBase implements IResourceChangeListen
 				break;
 			}
 
-			
+
 			return resume;	//  visit the children
 		}
 	}
-		
+
 	/*
-	 *  I R e s o u r c e C h a n g e L i s t e n e r 
+	 *  I R e s o u r c e C h a n g e L i s t e n e r
 	 */
 
 	/* (non-Javadoc)
-	 * 
+	 *
 	 *  Handle the renaming and deletion of project resources
 	 *  This is necessary in order to update ResourceConfigurations and AdditionalInputs
-	 *  
+	 *
 	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
 	 */
+	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		if (event.getSource() instanceof IWorkspace) {
 			IResourceMoveHandler handler = createResourceMoveHandler(event);
 			doHandleResourceMove(event, handler);
 		}
 	}
-	
+
 	protected boolean shouldVisit(IProject project){
 		try {
 			return project.isOpen() ? project.hasNature(CProjectNature.C_NATURE_ID) : true;
@@ -165,7 +167,7 @@ public abstract class ResourceChangeHandlerBase implements IResourceChangeListen
 	protected void doHahdleResourceMove(IResourceChangeEvent event, IResourceMoveHandler handler) {
 		doHandleResourceMove(event, handler);
 	}
-	
+
 	/**
 	 * @since 5.1
 	 */
@@ -194,9 +196,9 @@ public abstract class ResourceChangeHandlerBase implements IResourceChangeListen
 			default :
 				break;
 		}
-			
+
 		handler.done();
 	}
-	
+
 	protected abstract IResourceMoveHandler createResourceMoveHandler(IResourceChangeEvent event);
 }

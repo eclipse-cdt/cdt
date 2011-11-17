@@ -34,35 +34,42 @@ public class CFolderDescriptionCache extends CDefaultFolderData implements
 		super(base.getId(), base.getPath(), cfg, null);
 		fCfg = cfg;
 		fCfg.addResourceDescription(this);
-		
+
 		copyDataFrom(base, true);
 	}
-	
+
+	@Override
 	public ICLanguageSetting getLanguageSettingForFile(String fileName) {
 		IProject project = getConfiguration().getProjectDescription().getProject();
 		return CProjectDescriptionManager.getInstance().findLanguagSettingForFile(fileName, project, getLanguageSettings());
 	}
 
+	@Override
 	public ICLanguageSetting[] getLanguageSettings() {
 		return fLanguageDatas.toArray(new CLanguageSettingCache[fLanguageDatas.size()]);
 	}
 
+	@Override
 	public ICResourceDescription getNestedResourceDescription(IPath relPath, boolean exactPath) {
 		return getRcDesHolder().getResourceDescription(relPath, exactPath);
 	}
 
+	@Override
 	public ICResourceDescription[] getNestedResourceDescriptions(int kind) {
 		return getRcDesHolder().getResourceDescriptions(kind);
 	}
 
+	@Override
 	public ICConfigurationDescription getConfiguration() {
 		return fCfg;
 	}
 
+	@Override
 	public ICSettingContainer getParent() {
 		return fCfg;
 	}
 
+	@Override
 	public ICSettingObject[] getChildSettings() {
 		return getLanguageSettings();
 	}
@@ -72,10 +79,12 @@ public class CFolderDescriptionCache extends CDefaultFolderData implements
 		return new CLanguageSettingCache(base, this);
 	}
 
+	@Override
 	public void setExcluded(boolean excluded) {
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
 
+	@Override
 	public boolean canExclude(boolean exclude) {
 		return exclude == isExcluded();
 	}
@@ -88,21 +97,24 @@ public class CFolderDescriptionCache extends CDefaultFolderData implements
 	public void setName(String name) throws WriteAccessException {
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
-	
+
+	@Override
 	public ICResourceDescription[] getNestedResourceDescriptions() {
 		return getNestedResourceDescriptions(ICSettingBase.SETTING_FILE | ICSettingBase.SETTING_FOLDER);
 	}
-	
+
 	private ResourceDescriptionHolder getRcDesHolder(){
 		if(fRcDesHolder == null)
 			fRcDesHolder = fCfg.createHolderForRc(getPath());
 		return fRcDesHolder;
 	}
 
+	@Override
 	public boolean isReadOnly() {
 		return true;
 	}
 
+	@Override
 	public ICFolderDescription getParentFolderDescription() {
 		return getRcDesHolder().getParentFolderDescription();
 	}
@@ -111,11 +123,13 @@ public class CFolderDescriptionCache extends CDefaultFolderData implements
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
 
+	@Override
 	public ICLanguageSetting createLanguageSettingForContentTypes(
 			String languageId, String[] typeIds) {
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
 
+	@Override
 	public ICLanguageSetting createLanguageSettingForExtensions(
 			String languageId, String[] extensions) {
 		throw ExceptionFactory.createIsReadOnlyException();
@@ -133,10 +147,11 @@ public class CFolderDescriptionCache extends CDefaultFolderData implements
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
 
+	@Override
 	public boolean isRoot() {
 		return getPath().segmentCount() == 0;
 	}
-	
+
 	@Override
 	public IPath getPath() {
 		return ResourceDescriptionHolder.normalizePath(super.getPath());
@@ -147,6 +162,7 @@ public class CFolderDescriptionCache extends CDefaultFolderData implements
 		return true;
 	}
 
+	@Override
 	public boolean isExcluded() {
 		return fCfg.isExcluded(getPath());
 	}

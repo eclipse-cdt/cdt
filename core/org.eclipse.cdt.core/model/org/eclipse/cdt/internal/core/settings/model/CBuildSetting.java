@@ -25,6 +25,7 @@ public class CBuildSetting extends CDataProxy implements ICBuildSetting {
 		super(data, cfg, cfg);
 	}
 
+	@Override
 	public IPath getBuilderCWD() {
 		CBuildData data = getBuildData(false);
 		return data.getBuilderCWD();
@@ -34,11 +35,13 @@ public class CBuildSetting extends CDataProxy implements ICBuildSetting {
 		return (CBuildData)getData(write);
 	}
 
+	@Override
 	public String[] getErrorParserIDs() {
 		CBuildData data = getBuildData(false);
 		return data.getErrorParserIDs();
 	}
 
+	@Override
 	public ICOutputEntry[] getOutputDirectories() {
 		CBuildData data = getBuildData(false);
 		ICOutputEntry[] entries = data.getOutputDirectories();
@@ -47,16 +50,19 @@ public class CBuildSetting extends CDataProxy implements ICBuildSetting {
 		return entries;
 	}
 
+	@Override
 	public void setBuilderCWD(IPath path) {
 		CBuildData data = getBuildData(true);
 		data.setBuilderCWD(path);
 	}
 
+	@Override
 	public void setErrorParserIDs(String[] ids) {
 		CBuildData data = getBuildData(true);
 		data.setErrorParserIDs(ids);
 	}
 
+	@Override
 	public void setOutputDirectories(ICOutputEntry[] entries) {
 		CBuildData data = getBuildData(true);
 		IProject project = getProject();
@@ -69,16 +75,19 @@ public class CBuildSetting extends CDataProxy implements ICBuildSetting {
 			CExternalSettingsManager.getInstance().restoreOutputEntryDefaults(getConfiguration());
 		}
 	}
-	
+
+	@Override
 	public final int getType() {
 		return ICSettingBase.SETTING_BUILD;
 	}
 
+	@Override
 	public IEnvironmentContributor getBuildEnvironmentContributor() {
 		CBuildData data = getBuildData(false);
 		return data.getBuildEnvironmentContributor();
 	}
 
+	@Override
 	public ICOutputEntry[] getResolvedOutputDirectories() {
 		ICOutputEntry[] entries = getOutputDirectories();
 		return CDataUtil.resolveEntries(entries, getConfiguration());

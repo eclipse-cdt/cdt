@@ -20,29 +20,29 @@ import org.eclipse.cdt.ui.templateengine.SimpleElementException;
 
 
 /**
- * 
+ *
  * call setgetUIElementTreeRootNull(), before createUIElementTree(...).
  * UIElementTreeBuilderManager builds a UIElementTree.
- * 
+ *
  * --------------UITree creation algorithm----------------------------
  * createUIElementTree(UITreeRoot, RootPropertyGroupElement) UITreeRoot is
  * initially null. createUIElementTree(UIElement parent, XML_Element element)
  * Step 1. if( parent == null ) parent =
  * UIElementTreeBuilderHelper.getUIElement(element).
- * Step 2. else { 
+ * Step 2. else {
  * 		Step 3. List
- * 		childList = getChildList(element); 
+ * 		childList = getChildList(element);
  * 		Step 4. Iterator I =
- * 		getIterator(childList); 
+ * 		getIterator(childList);
  * 		Step 5. for every element belonging to childList
- * 		{ 
+ * 		{
  * 			Step 6. uiElement = getUIElement (element from childList); advance I to next
  * 			Element. uiElement .setParent(parent); parent.put(uiElement );
- *  		createUIElementTree(uiElement, element from childList); 
+ *  		createUIElementTree(uiElement, element from childList);
  *  	}
  * }
  * ---------------------------------------------------------------------
- * 
+ *
  */
 
 public class UIElementTreeBuilderManager implements IUIElementTreeBuilderManager {
@@ -57,7 +57,7 @@ public class UIElementTreeBuilderManager implements IUIElementTreeBuilderManager
 	private UIElement uiTreeRoot = null;
 
 	/**
-	 * 
+	 *
 	 * @param uiElementTreeBuilderHelper
 	 */
 	public UIElementTreeBuilderManager(UIElementTreeBuilderHelper uiElementTreeBuilderHelper) {
@@ -68,6 +68,7 @@ public class UIElementTreeBuilderManager implements IUIElementTreeBuilderManager
 	 * This method create the UIElementTree, by following the algorithm given
 	 * above.
 	 */
+	@Override
 	public void createUIElementTree(UIElement uiParent, Element element) {
 		if (uiParent == null) {
 			uiTreeRoot = uiElementTreeBuilderHelper.getUIElement(element);
@@ -94,7 +95,7 @@ public class UIElementTreeBuilderManager implements IUIElementTreeBuilderManager
 	}
 
 	/**
-	 * 
+	 *
 	 * @return UIElement, root UIElement.
 	 */
 	public UIElement getUIElementTreeRoot() {

@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
- 
+
 import java.util.Map;
 
 import org.eclipse.cdt.core.IBinaryParser.IBinaryArchive;
@@ -42,6 +42,7 @@ public class Archive extends Openable implements IArchive {
 		binaryArchive = ar;
 	}
 
+	@Override
 	public IBinary[] getBinaries() throws CModelException {
 		ICElement[] e = getChildren();
 		IBinary[] b = new IBinary[e.length];

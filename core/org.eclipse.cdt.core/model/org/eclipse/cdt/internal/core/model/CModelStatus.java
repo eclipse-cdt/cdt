@@ -157,6 +157,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	/**
 	 * @see ICModelStatus
 	 */
+	@Override
 	public ICElement[] getElements() {
 		return fElements;
 	}
@@ -289,6 +290,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 		return exception.toString();
 	}
 
+	@Override
 	public IPath getPath() {
 		if (fPath == null) {
 			return Path.EMPTY;
@@ -316,6 +318,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	/**
 	 * @see ICModelStatus
 	 */
+	@Override
 	public String getString() {
 		if (fString == null) {
 			return EMPTY_STRING;
@@ -333,6 +336,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	/**
 	 * @see ICModelStatus
 	 */
+	@Override
 	public boolean doesNotExist() {
 		return getCode() == ELEMENT_DOES_NOT_EXIST;
 	}
@@ -381,7 +385,7 @@ public class CModelStatus extends Status implements ICModelStatus, ICModelStatus
 	/**
 	 * Creates and returns a new <code>ICModelStatus</code> that is a a
 	 * multi-status status.
-	 * 
+	 *
 	 * @see IStatus#isMultiStatus()
 	 */
 	public static ICModelStatus newMultiStatus(ICModelStatus[] children) {

@@ -14,26 +14,27 @@ package org.eclipse.cdt.utils.cdtvariables;
 
 /**
  * This interface represents the context information.
- * 
+ *
  * @since 3.0
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IVariableContextInfo {
-	
+
 	/**
 	 * Returns suppliers to be used for this context
-	 * 
+	 *
 	 * @return IBuildMacroSupplier[]
 	 */
 	public ICdtVariableSupplier[] getSuppliers();
-	
+
 	/**
 	 * Returns context info for the next lower-precedence context
-	 * 
+	 *
 	 * @return IMacroContextInfo
 	 */
 	public IVariableContextInfo getNext();
-	
+
+	@Override
 	public boolean equals(Object otherInfo);
 }

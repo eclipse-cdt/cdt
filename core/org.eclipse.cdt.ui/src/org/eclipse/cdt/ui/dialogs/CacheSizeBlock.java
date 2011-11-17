@@ -9,7 +9,7 @@
  *     Markus Schorn - initial API and implementation
  *     IBM Corporation
  *     Sergey Prigogin (Google)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.ui.dialogs;
 
 import org.eclipse.core.runtime.CoreException;
@@ -40,16 +40,17 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
 /**
  * This OptionPage is used in the IndexerPreference page to allow for adjusting
  * various parsing related caches.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class CacheSizeBlock extends AbstractCOptionPage {
 	private IntegerFieldEditor fDBLimitPct;
 	private IntegerFieldEditor fDBAbsoluteLimit;
 	private IntegerFieldEditor fCodeReaderLimit;
-	
+
     private IPropertyChangeListener validityChangeListener = new IPropertyChangeListener() {
-        public void propertyChange(PropertyChangeEvent event) {
+        @Override
+		public void propertyChange(PropertyChangeEvent event) {
             if (event.getProperty().equals(FieldEditor.IS_VALID)) {
 				updateValidState();
 			}
@@ -68,18 +69,18 @@ public class CacheSizeBlock extends AbstractCOptionPage {
         Composite composite = ControlFactory.createComposite(parent, 1);
 		gl=  (GridLayout)composite.getLayout();
 		gl.marginWidth= 0;
-		
+
 		gd= (GridData) composite.getLayoutData();
 		gd.grabExcessHorizontalSpace= false;
 		gd.horizontalAlignment= GridData.FILL;
 
 		setControl(composite);
-      
+
 		Group group= ControlFactory.createGroup(composite, DialogsMessages.CacheSizeBlock_cacheLimitGroup, 1);
 		gd= (GridData) group.getLayoutData();
 		gd.grabExcessHorizontalSpace= true;
 		gd.horizontalAlignment= GridData.FILL;
-		
+
 		Composite cacheComp= ControlFactory.createComposite(group, 3);
 
 		Label dbCacheLabel= ControlFactory.createLabel(cacheComp, DialogsMessages.CacheSizeBlock_indexDatabaseCache);
@@ -87,24 +88,24 @@ public class CacheSizeBlock extends AbstractCOptionPage {
 		fDBLimitPct.setValidRange(1, 75);
 		Text control = fDBLimitPct.getTextControl(cacheComp);
 		LayoutUtil.setWidthHint(control, pixelConverter.convertWidthInCharsToPixels(10));
-		LayoutUtil.setHorizontalGrabbing(control, false); 
+		LayoutUtil.setHorizontalGrabbing(control, false);
 		ControlFactory.createLabel(cacheComp, "%"); //$NON-NLS-1$
 
 		fDBAbsoluteLimit= new IntegerFieldEditor(CCorePreferenceConstants.MAX_INDEX_DB_CACHE_SIZE_MB, DialogsMessages.CacheSizeBlock_absoluteLimit, cacheComp, 4);
 		fDBAbsoluteLimit.setValidRange(1, 10000);
 		control = fDBAbsoluteLimit.getTextControl(cacheComp);
 		LayoutUtil.setWidthHint(control, pixelConverter.convertWidthInCharsToPixels(10));
-		LayoutUtil.setHorizontalGrabbing(control, false); 
+		LayoutUtil.setHorizontalGrabbing(control, false);
 		ControlFactory.createLabel(cacheComp, DialogsMessages.CacheSizeBlock_MB);
-		
+
 		Label codeReaderLabel= ControlFactory.createLabel(cacheComp, DialogsMessages.CacheSizeBlock_headerFileCache);
 		fCodeReaderLimit= new IntegerFieldEditor(CodeReaderCache.CODE_READER_BUFFER, DialogsMessages.CacheSizeBlock_absoluteLimit, cacheComp, 4);
 		fCodeReaderLimit.setValidRange(1, 10000);
 		control = fCodeReaderLimit.getTextControl(cacheComp);
 		LayoutUtil.setWidthHint(control, pixelConverter.convertWidthInCharsToPixels(10));
-		LayoutUtil.setHorizontalGrabbing(control, false); 
+		LayoutUtil.setHorizontalGrabbing(control, false);
 		ControlFactory.createLabel(cacheComp, DialogsMessages.CacheSizeBlock_MB);
-		
+
 		gl= (GridLayout) cacheComp.getLayout();
 		gl.numColumns= 3;
 		gl.makeColumnsEqualWidth= false;
@@ -158,7 +159,7 @@ public class CacheSizeBlock extends AbstractCOptionPage {
 		fDBLimitPct.store();
 		fDBAbsoluteLimit.store();
 		fCodeReaderLimit.store();
-		
+
 		// code reader cache does not listen for pref-changes, help out:
 		ICodeReaderCache cache = CDOM.getInstance().getCodeReaderFactory(CDOM.PARSE_SAVED_RESOURCES).getCodeReaderCache();
 		if (cache instanceof CodeReaderCache) {

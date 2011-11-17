@@ -30,9 +30,10 @@ import org.eclipse.core.runtime.Status;
 public class FileStorage extends PlatformObject implements IStorage {
 	IPath path;
 	InputStream in = null;
-        
+
+	@Override
 	public InputStream getContents() throws CoreException {
-		if (in == null) {	
+		if (in == null) {
 			try {
 				return new FileInputStream(path.toFile());
 			} catch (FileNotFoundException e) {
@@ -46,6 +47,7 @@ public class FileStorage extends PlatformObject implements IStorage {
 	/**
 	 * @see IStorage#getFullPath
 	 */
+	@Override
 	public IPath getFullPath() {
 		return this.path;
 	}
@@ -53,6 +55,7 @@ public class FileStorage extends PlatformObject implements IStorage {
 	/**
 	 * @see IStorage#getName
 	 */
+	@Override
 	public String getName() {
 		return this.path.lastSegment();
 	}
@@ -60,6 +63,7 @@ public class FileStorage extends PlatformObject implements IStorage {
 	/**
 	 * @see IStorage#isReadOnly()
 	 */
+	@Override
 	public boolean isReadOnly() {
 		return true;
 	}

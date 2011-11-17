@@ -3,8 +3,8 @@
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors: 
+ *
+ * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.Status;
 
 /**
  * Provides a shared AST of a single translation unit at a time.
- * 
+ *
  * @since 4.0
  */
 public class ASTCache {
@@ -43,7 +43,7 @@ public class ASTCache {
 	public static int PARSE_MODE_FULL = ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT
 			| ITranslationUnit.AST_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS
 			| ITranslationUnit.AST_PARSE_INACTIVE_CODE;
-	
+
 	/** Fast parse mode (use PDOM) */
 	public static int PARSE_MODE_FAST = ITranslationUnit.AST_SKIP_ALL_HEADERS
 			| ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT
@@ -52,28 +52,28 @@ public class ASTCache {
 
 	/**
 	 * Do something with an AST.
-	 * 
+	 *
 	 * @see #runOnAST(ILanguage, IASTTranslationUnit)
 	 */
 	public static interface ASTRunnable {
 		/**
 		 * Do something with the given AST.
-		 * 
+		 *
 		 * @param lang the language with which the AST has been created.
 		 * @param ast  the translation unit AST, may be <code>null</code>
 		 * @return a status object
 		 */
 		IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException;
 	}
-	
+
 	private final int fParseMode;
 	private final Object fCacheMutex= new Object();
-	
+
 	/** The active translation unit for which to cache the AST */
 	private ITranslationUnit fActiveTU;
 	/** The cached AST if any */
 	private IASTTranslationUnit fAST;
-	/** 
+	/**
 	 * The timestamp of the last index write access at the time
 	 * the AST got cached. A cached AST becomes invalid on any index
 	 * write access afterwards.
@@ -107,11 +107,11 @@ public class ASTCache {
 			IProgressMonitor progressMonitor) {
 		if (tUnit == null)
 			return null;
-		
+
 		while (true) {
 			if (progressMonitor != null && progressMonitor.isCanceled())
 				return null;
-	
+
 			final boolean isActiveElement;
 			synchronized (fCacheMutex) {
 				isActiveElement= tUnit.equals(fActiveTU);
@@ -132,7 +132,7 @@ public class ASTCache {
 					if (!wait) {
 						// no AST, no wait - we are done
 						if (DEBUG)
-							System.out.println(DEBUG_PREFIX + getThreadName() + "returning null (WAIT_NO) for: " + tUnit.getElementName()); //$NON-NLS-1$ 
+							System.out.println(DEBUG_PREFIX + getThreadName() + "returning null (WAIT_NO) for: " + tUnit.getElementName()); //$NON-NLS-1$
 						return null;
 					}
 				}
@@ -141,12 +141,12 @@ public class ASTCache {
 					try {
 						// Wait for AST
 						if (DEBUG)
-							System.out.println(DEBUG_PREFIX + getThreadName() + "waiting for AST for: " + tUnit.getElementName()); //$NON-NLS-1$ 
+							System.out.println(DEBUG_PREFIX + getThreadName() + "waiting for AST for: " + tUnit.getElementName()); //$NON-NLS-1$
 						fCacheMutex.wait();
 						// Check whether active element is still valid
 						if (fAST != null) {
 							if (DEBUG)
-								System.out.println(DEBUG_PREFIX + getThreadName() + "...got AST for: " + tUnit.getElementName()); //$NON-NLS-1$ 
+								System.out.println(DEBUG_PREFIX + getThreadName() + "...got AST for: " + tUnit.getElementName()); //$NON-NLS-1$
 							return fAST;
 						}
 						// try again
@@ -158,20 +158,20 @@ public class ASTCache {
 					return null;
 				}
 			}
-	
+
 			if (isActiveElement)
 				aboutToBeReconciled(tUnit);
-	
+
 			if (DEBUG)
-				System.err.println(DEBUG_PREFIX + getThreadName() + "creating AST for " + tUnit.getElementName()); //$NON-NLS-1$ 
-	
+				System.err.println(DEBUG_PREFIX + getThreadName() + "creating AST for " + tUnit.getElementName()); //$NON-NLS-1$
+
 			IASTTranslationUnit ast= null;
 			try {
 				ast= createAST(tUnit, index, progressMonitor);
 				if (progressMonitor != null && progressMonitor.isCanceled())
 					ast= null;
 				else if (DEBUG && ast != null)
-					System.err.println(DEBUG_PREFIX + getThreadName() + "created AST for: " + tUnit.getElementName()); //$NON-NLS-1$ 
+					System.err.println(DEBUG_PREFIX + getThreadName() + "created AST for: " + tUnit.getElementName()); //$NON-NLS-1$
 			} finally {
 				if (isActiveElement) {
 					if (fAST != null) {
@@ -191,7 +191,7 @@ public class ASTCache {
 	 * Executes {@link ASTRunnable#runOnAST(ILanguage, IASTTranslationUnit)} with the AST
 	 * provided by this cache for the given translation unit. Handles acquiring
 	 * and releasing the index read-lock for the client.
-	 * 
+	 *
 	 * @param tUnit
 	 *            the translation unit
 	 * @param wait
@@ -212,7 +212,7 @@ public class ASTCache {
 		} catch (InterruptedException e) {
 			return Status.CANCEL_STATUS;
 		}
-		
+
 		try {
 			IASTTranslationUnit ast= acquireSharedAST(tUnit, index, wait, monitor);
 			ILanguage lang= (tUnit instanceof TranslationUnit) ? ((TranslationUnit) tUnit).getLanguageOfContext() : tUnit.getLanguage();
@@ -286,12 +286,12 @@ public class ASTCache {
 		assert Thread.holdsLock(fCacheMutex);
 		if (fActiveTU != null && !fActiveTU.equals(tUnit)) {
 			if (DEBUG && tUnit != null) // don't report call from disposeAST()
-				System.out.println(DEBUG_PREFIX + getThreadName() + "don't cache AST for inactive: " + toString(tUnit)); //$NON-NLS-1$ 
+				System.out.println(DEBUG_PREFIX + getThreadName() + "don't cache AST for inactive: " + toString(tUnit)); //$NON-NLS-1$
 			return;
 		}
 
 		if (DEBUG && (tUnit != null || ast != null)) // don't report call from disposeAST()
-			System.out.println(DEBUG_PREFIX + getThreadName() + "caching AST: " + toString(ast) + " for: " + toString(tUnit)); //$NON-NLS-1$ //$NON-NLS-2$ 
+			System.out.println(DEBUG_PREFIX + getThreadName() + "caching AST: " + toString(ast) + " for: " + toString(tUnit)); //$NON-NLS-1$ //$NON-NLS-2$
 
 		if (fAST != null)
 			disposeAST();
@@ -310,10 +310,10 @@ public class ASTCache {
 		synchronized (fCacheMutex) {
 			if (fAST == null)
 				return;
-	
+
 			if (DEBUG)
-				System.out.println(DEBUG_PREFIX + getThreadName() + "disposing AST: " + toString(fAST) + " for: " + toString(fActiveTU)); //$NON-NLS-1$ //$NON-NLS-2$ 
-	
+				System.out.println(DEBUG_PREFIX + getThreadName() + "disposing AST: " + toString(fAST) + " for: " + toString(fActiveTU)); //$NON-NLS-1$ //$NON-NLS-2$
+
 			fAST= null;
 			cache(null, null);
 		}
@@ -321,7 +321,7 @@ public class ASTCache {
 
 	/**
 	 * Creates a new translation unit AST.
-	 * 
+	 *
 	 * @param tUnit  the translation unit for which to create the AST
 	 * @param index  the index for AST generation, needs to be read-locked.
 	 * @param progressMonitor  a progress monitor, may be <code>null</code>
@@ -331,9 +331,10 @@ public class ASTCache {
 		if (progressMonitor != null && progressMonitor.isCanceled())
 			return null;
 
-		final IASTTranslationUnit root[]= new IASTTranslationUnit[1]; 
-		
+		final IASTTranslationUnit root[]= new IASTTranslationUnit[1];
+
 		SafeRunner.run(new ISafeRunnable() {
+			@Override
 			public void run() throws CoreException {
 				try {
 					if (progressMonitor != null && progressMonitor.isCanceled()) {
@@ -345,18 +346,19 @@ public class ASTCache {
 					root[0]= null;
 				}
 			}
+			@Override
 			public void handleException(Throwable ex) {
 				IStatus status= new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, IStatus.OK, "Error in CDT Core during AST creation", ex);  //$NON-NLS-1$
 				CCorePlugin.getDefault().getLog().log(status);
 			}
 		});
-			
+
 		return root[0];
 	}
 
 	/**
 	 * Set the given translation unit as active element to cache an AST for.
-	 * 
+	 *
 	 * @param tUnit  the translation unit
 	 */
 	public void setActiveElement(ITranslationUnit tUnit) {
@@ -369,12 +371,12 @@ public class ASTCache {
 			cache(null, tUnit);
 		}
 		if (DEBUG)
-			System.out.println(DEBUG_PREFIX + getThreadName() + "active element is: " + toString(tUnit)); //$NON-NLS-1$ 
+			System.out.println(DEBUG_PREFIX + getThreadName() + "active element is: " + toString(tUnit)); //$NON-NLS-1$
 	}
 
 	/**
 	 * Check whether the given translation unit is the active element of this cache.
-	 * 
+	 *
 	 * @param tUnit  the translation unit
 	 * @return  <code>true</code>, if this cache manages the given translation unit
 	 */
@@ -385,7 +387,7 @@ public class ASTCache {
 	}
 
 	/**
-	 * Informs that reconciling (computation of the AST) for the given element 
+	 * Informs that reconciling (computation of the AST) for the given element
 	 * is about to be started.
 	 *
 	 * @param tUnit  the translation unit
@@ -393,15 +395,15 @@ public class ASTCache {
 	public void aboutToBeReconciled(ITranslationUnit tUnit) {
 		if (tUnit == null)
 			return;
-		
+
 		synchronized (fCacheMutex) {
 			if (fActiveTU == null || !fActiveTU.equals(tUnit)) {
 				return;
 			}
-	
+
 			if (DEBUG)
-				System.out.println(DEBUG_PREFIX + getThreadName() + "about to reconcile: " + toString(tUnit)); //$NON-NLS-1$ 
-	
+				System.out.println(DEBUG_PREFIX + getThreadName() + "about to reconcile: " + toString(tUnit)); //$NON-NLS-1$
+
 			fIsReconciling= true;
 			cache(null, tUnit);
 		}
@@ -409,7 +411,7 @@ public class ASTCache {
 
 	/**
 	 * Informs that reconciling of the AST of the given translation unit has finished.
-	 * 
+	 *
 	 * @param ast  the translation unit AST
 	 * @param tUnit  the translation unit
 	 */

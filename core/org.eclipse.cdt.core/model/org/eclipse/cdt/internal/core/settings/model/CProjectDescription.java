@@ -31,12 +31,12 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
 
-public class CProjectDescription implements ICProjectDescription, ICDataProxyContainer {	
+public class CProjectDescription implements ICProjectDescription, ICDataProxyContainer {
 	private static final String ACTIVE_CFG = "activeConfiguration"; //$NON-NLS-1$
 	private static final QualifiedName ACTIVE_CFG_PROPERTY = new QualifiedName(CCorePlugin.PLUGIN_ID, ACTIVE_CFG);
 	private static final String SETTING_CFG = "settingConfiguration"; //$NON-NLS-1$
 	private static final QualifiedName SETTING_CFG_PROPERTY = new QualifiedName(CCorePlugin.PLUGIN_ID, SETTING_CFG);
-	
+
 	private CfgIdPair fActiveCfgInfo;
 	private CfgIdPair fSettingCfgInfo;
 	private CProjectDescriptionPreferences fPrefs;
@@ -62,7 +62,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 		private QualifiedName fPersistanceName;
 		private boolean fNeedsPersistance;
 		private boolean fIsCfgModified;
-		
+
 		CfgIdPair(CfgIdPair base){
 			fId = base.fId;
 			fPersistanceName = base.fPersistanceName;
@@ -71,7 +71,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 		CfgIdPair(QualifiedName persistanceName){
 			fPersistanceName = persistanceName;
 		}
-		
+
 		public String getId(){
 			if(fId == null){
 				fId = load();
@@ -84,7 +84,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 			}
 			return fId;
 		}
-		
+
 		public ICConfigurationDescription getConfiguration() {
 			if(fCfg == null){
 				String id = getId();
@@ -101,20 +101,20 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 			}
 			return fCfg;
 		}
-		
+
 		public void setConfiguration(ICConfigurationDescription cfg){
 			if(cfg.getProjectDescription() != CProjectDescription.this)
 				throw new IllegalArgumentException();
-			
+
 			if(cfg.getId().equals(getId()))
 				return;
-			
+
 			fCfg = cfg;
 			fId = cfg.getId();
 			fIsCfgModified = true;
 			fNeedsPersistance = true;
 		}
-		
+
 		public void configurationRemoved(ICConfigurationDescription cfg){
 			if(cfg.getProjectDescription() != CProjectDescription.this)
 				throw new IllegalArgumentException();
@@ -126,7 +126,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 			fCfg = null;
 			getConfiguration();
 		}
-		
+
 		private String load(){
 			try {
 				return getProject().getPersistentProperty(fPersistanceName);
@@ -174,13 +174,13 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 			el = getStorage(CProjectDescriptionManager.MODULE_ID, false);
 		}
 
-		fPrefs = new CProjectDescriptionPreferences(el, 
-				(CProjectDescriptionPreferences)mngr.getProjectDescriptionWorkspacePreferences(false), 
+		fPrefs = new CProjectDescriptionPreferences(el,
+				(CProjectDescriptionPreferences)mngr.getProjectDescriptionWorkspacePreferences(false),
 				false);
 
 		fPropertiesMap = new HashMap<QualifiedName, Object>();
 	}
-	
+
 	public void updateProject(IProject project){
 		fProject = project;
 	}
@@ -188,7 +188,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 	public void loadDatas(){
 		if(!fIsReadOnly || !fIsLoading)
 			return;
-		
+
 		CSettingEntryFactory factory = new CSettingEntryFactory();
 		for(Iterator<ICConfigurationDescription> iter = fCfgMap.values().iterator(); iter.hasNext();){
 			CConfigurationDescriptionCache cache = (CConfigurationDescriptionCache)iter.next();
@@ -200,16 +200,16 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 				iter.remove();
 			}
 		}
-		
+
 //		doneInitializing();
-		
+
 //		fIsLoading = false;
 	}
 
 	public boolean applyDatas(SettingsContext context){
 		if(!fIsReadOnly || !fIsApplying)
 			return false;
-		
+
 		CSettingEntryFactory factory = new CSettingEntryFactory();
 		boolean modified = false;
 		for (Iterator<ICConfigurationDescription> iter = fCfgMap.values().iterator(); iter.hasNext();) {
@@ -224,14 +224,14 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 				iter.remove();
 			}
 		}
-		
+
 //		doneInitializing();
-		
+
 //		fIsApplying = false;
-		
+
 		return modified;
 	}
-	
+
 	/**
 	 * Called when the read-only project description has / is being set
 	 * fIsApplying => false
@@ -241,13 +241,13 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 	public void doneApplying(){
 		doneInitializing();
 		fIsApplying = false;
-		
+
 		try {
 			getStorageBase().setReadOnly(true, false);
 		} catch (CoreException e1) {
 			CCorePlugin.log(e1);
 		}
-		
+
 		setModified(false);
 	}
 
@@ -255,7 +255,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 		doneInitializing();
 		fIsLoading = false;
 	}
-	
+
 	public void setLoading(boolean loading){
 		fIsLoading = loading;
 	}
@@ -280,8 +280,8 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 	}
 
 	/**
-	 * Create a project description based on another project description 
-	 * 
+	 * Create a project description based on another project description
+	 *
 	 * @param base
 	 * @param saving
 	 * @param storage
@@ -298,9 +298,9 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 		fIsLoading = base.fIsLoading;
 		fIsApplying = saving || base.fIsApplying;
 		fIsCreating = isCreating;
-		
+
 		fPrefs = new CProjectDescriptionPreferences(base.fPrefs, (CProjectDescriptionPreferences)CProjectDescriptionManager.getInstance().getProjectDescriptionWorkspacePreferences(false), false);
-		
+
 		for(Iterator<ICConfigurationDescription> iter = base.fCfgMap.values().iterator(); iter.hasNext();){
 			try {
 				IInternalCCfgInfo cfgDes = (IInternalCCfgInfo)iter.next();
@@ -322,18 +322,18 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 				CCorePlugin.log(e);
 			}
 		}
-		
+
 		@SuppressWarnings("unchecked")
 		HashMap<QualifiedName, Object> cloneMap = (HashMap<QualifiedName, Object>)base.fPropertiesMap.clone();
 		fPropertiesMap = cloneMap;
 	}
-	
+
 	/**
 	 * Convert the current CConfigurationDescriptions to cached versions
 	 * This occurs during the SetCProjectDescription Operation
 	 */
 	void switchToCachedConfigurationDescriptions() throws CoreException {
-	
+
 		for (Map.Entry<String, ICConfigurationDescription> e : fCfgMap.entrySet()) {
 			if (e.getValue() instanceof CConfigurationDescription) {
 				CConfigurationDescription cfgDes = (CConfigurationDescription)e.getValue();
@@ -343,7 +343,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 					baseCache = (CConfigurationDescriptionCache)baseData;
 					baseData = baseCache.getConfigurationData();
 				}
-				CConfigurationDescriptionCache cache = new CConfigurationDescriptionCache(cfgDes, baseData, baseCache, 
+				CConfigurationDescriptionCache cache = new CConfigurationDescriptionCache(cfgDes, baseData, baseCache,
 						cfgDes.getSpecSettings(), this, null);
 				e.setValue(cache);
 			}
@@ -353,7 +353,8 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 	void configurationCreated(ICConfigurationDescription des){
 		fCfgMap.put(des.getId(), des);
 	}
-	
+
+	@Override
 	public ICConfigurationDescription createConfiguration(String id, String name,
 			ICConfigurationDescription base) throws CoreException{
 		if(fIsReadOnly)
@@ -363,21 +364,24 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 		return cfg;
 	}
 
+	@Override
 	public ICConfigurationDescription getActiveConfiguration() {
 		return fActiveCfgInfo.getConfiguration();
 	}
 
 	private String getFirstCfgId(){
 		if(!fCfgMap.isEmpty()){
-			return fCfgMap.keySet().iterator().next(); 
+			return fCfgMap.keySet().iterator().next();
 		}
 		return null;
 	}
 
+	@Override
 	public ICConfigurationDescription getConfigurationById(String id) {
 		return fCfgMap.get(id);
 	}
 
+	@Override
 	public ICConfigurationDescription getConfigurationByName(String name) {
 		for(Iterator<ICConfigurationDescription> iter = fCfgMap.values().iterator(); iter.hasNext();){
 			ICConfigurationDescription cfg = iter.next();
@@ -387,22 +391,24 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 		return null;
 	}
 
+	@Override
 	public ICConfigurationDescription[] getConfigurations() {
 		return fCfgMap.values().toArray(new ICConfigurationDescription[fCfgMap.size()]);
 	}
 
+	@Override
 	public void removeConfiguration(String name) throws WriteAccessException {
 		if(fIsReadOnly)
 			throw ExceptionFactory.createIsReadOnlyException();
-		
-		
+
+
 		CConfigurationDescription cfgDes = (CConfigurationDescription)getConfigurationByName(name);
 		if(cfgDes != null){
 			cfgDes.removeConfiguration();
 		}
-		
+
 	}
-	
+
 	void configurationRemoved(CConfigurationDescription des){
 		fCfgMap.remove(des.getId());
 		fIsModified = true;
@@ -411,35 +417,40 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 		fSettingCfgInfo.configurationRemoved(des);
 	}
 
+	@Override
 	public void removeConfiguration(ICConfigurationDescription cfg) throws WriteAccessException {
 		if(fIsReadOnly)
 			throw ExceptionFactory.createIsReadOnlyException();
-		
+
 		((CConfigurationDescription)cfg).removeConfiguration();
 	}
 
+	@Override
 	public void setActiveConfiguration(
 			ICConfigurationDescription cfg) throws WriteAccessException {
 		if(fIsReadOnly)
 			throw ExceptionFactory.createIsReadOnlyException();
 		if(cfg == null)
 			throw new NullPointerException();
-		
+
 		fActiveCfgInfo.setConfiguration(cfg);
-		
+
 		if(getConfigurationRelations() == CONFIGS_LINK_SETTINGS_AND_ACTIVE)
 			fSettingCfgInfo.setConfiguration(cfg);
 
 	}
-	
+
+	@Override
 	public IProject getProject() {
 		return fProject;
 	}
 
+	@Override
 	public ICStorageElement getStorage(String moduleId, boolean create) throws CoreException {
 		return getStorageBase().getStorage(moduleId, create);
 	}
 
+	@Override
 	public ICStorageElement importStorage(String id, ICStorageElement el) throws UnsupportedOperationException, CoreException {
 		return getStorageBase().importStorage(id, el);
 	}
@@ -448,40 +459,48 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 //		return getStorageBase().containsStorage(id);
 //	}
 
+	@Override
 	public ICSettingObject[] getChildSettings() {
 		return getConfigurations();
 	}
 
+	@Override
 	public ICConfigurationDescription getConfiguration() {
 		return null;
 	}
 
+	@Override
 	public String getId() {
 		//TODO:
 		return null;
 	}
 
+	@Override
 	public final int getType() {
 		return ICSettingBase.SETTING_PROJECT;
 	}
 
+	@Override
 	public String getName() {
 		return fProject.getName();
 	}
 
+	@Override
 	public ICSettingContainer getParent() {
 		return null;
 	}
 
+	@Override
 	public boolean isValid() {
 		return /*fProject.exists() &&*/ fCfgMap.size() > 0;
 	}
 
+	@Override
 	public void updateChild(CDataProxy child, boolean write) {
 		if(write){
 			try {
 				String oldId = child.getId();
-				CConfigurationDescription cfgDes = ((CConfigurationDescription)child); 
+				CConfigurationDescription cfgDes = ((CConfigurationDescription)child);
 				cfgDes.doWritable();
 				updateMap(cfgDes, oldId);
 			} catch (CoreException e) {
@@ -489,7 +508,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 			}
 		}
 	}
-	
+
 	void updateMap(CConfigurationDescription des, String oldId){
 		if(!oldId.equals(des.getId())){
 			fCfgMap.remove(oldId);
@@ -500,17 +519,17 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 	public ICStorageElement getRootStorageElement() throws CoreException {
 		if (fRootStorageElement == null)
 			throw ExceptionFactory.createCoreException("CProjectDescription ICStorageElement == null"); //$NON-NLS-1$
-			
+
 //		if(fRootStorageElement == null){
 //			fRootStorageElement = CProjectDescriptionManager.getInstance().createStorage(fProject, true, true, isReadOnly());
 //		}
 		return fRootStorageElement;
 	}
-	
+
 //	ICStorageElement doGetCachedRootStorageElement(){
 //		return fRootStorageElement;
 //	}
-	
+
 	ICSettingsStorage getStorageBase() throws CoreException{
 		if(fStorage == null)
 //			fStorage = new CStorage((InternalXmlStorageElement)getRootStorageElement());
@@ -518,6 +537,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 		return fStorage;
 	}
 
+	@Override
 	public ICConfigurationDescription createConfiguration(String buildSystemId, CConfigurationData data) throws CoreException {
 		if(fIsReadOnly)
 			throw ExceptionFactory.createIsReadOnlyException();
@@ -525,7 +545,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 		configurationCreated(cfg);
 		return cfg;
 	}
-	
+
 	public CConfigurationDescription createConvertedConfiguration(String id, String name, ICStorageElement el) throws CoreException{
 		if(fIsReadOnly)
 			throw ExceptionFactory.createIsReadOnlyException();
@@ -534,10 +554,11 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 		return cfg;
 	}
 
+	@Override
 	public boolean isModified() {
 		if(fIsModified)
 			return true;
-		
+
 		if(fActiveCfgInfo.fIsCfgModified)
 			return true;
 
@@ -556,10 +577,10 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 
 		return false;
 	}
-	
+
 	private void setModified(boolean modified){
 		fIsModified = modified;
-		
+
 		if(!modified){
 			fActiveCfgInfo.fIsCfgModified = false;
 
@@ -571,10 +592,12 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 		}
 	}
 
+	@Override
 	public boolean isReadOnly() {
 		return fIsReadOnly && !(fIsLoading || fIsApplying);
 	}
 
+	@Override
 	public void setReadOnly(boolean readOnly, boolean keepModify) {
 		fIsReadOnly = readOnly;
 		try {
@@ -587,14 +610,16 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 	public ICSettingObject getChildSettingById(String id) {
 		return getConfigurationById(id);
 	}
-	
+
+	@Override
 	public ICConfigurationDescription getDefaultSettingConfiguration(){
 		if(getConfigurationRelations() == CONFIGS_LINK_SETTINGS_AND_ACTIVE)
 			return getActiveConfiguration();
-		
+
 		return fSettingCfgInfo.getConfiguration();
 	}
 
+	@Override
 	public void setDefaultSettingConfiguration(ICConfigurationDescription cfg) throws WriteAccessException {
 		if(fIsReadOnly)
 			throw ExceptionFactory.createIsReadOnlyException();
@@ -602,24 +627,27 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 			throw new NullPointerException();
 
 		fSettingCfgInfo.setConfiguration(cfg);
-		
+
 		if(getConfigurationRelations() == CONFIGS_LINK_SETTINGS_AND_ACTIVE)
 			fActiveCfgInfo.setConfiguration(cfg);
 	}
 
+	@Override
 	public Object getSessionProperty(QualifiedName name) {
 		return fPropertiesMap.get(name);
 	}
 
+	@Override
 	public void setSessionProperty(QualifiedName name, Object value) {
 		if(value != null)
 			fPropertiesMap.put(name, value);
 		else
 			fPropertiesMap.remove(name);
-		
+
 		fIsModified = true;
 	}
 
+	@Override
 	public void removeStorage(String id) throws CoreException {
 		getStorageBase().removeStorage(id);
 	}
@@ -627,7 +655,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 	void switchToCachedAppliedData(CProjectDescription appliedCache){
 		if(fIsReadOnly)
 			return;
-		
+
 		ICConfigurationDescription[] cfgs = appliedCache.getConfigurations();
 		for(int i = 0; i < cfgs.length; i++){
 			CConfigurationDescriptionCache cfgCache = (CConfigurationDescriptionCache)cfgs[i];
@@ -641,14 +669,14 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 			}
 		}
 	}
-	
+
 //	boolean checkPersistCfgChanges(boolean force){
 //		boolean stored = false;
 //		stored |= checkPersistActiveCfg(force);
 //		stored |= checkPersistSettingCfg(force);
 //		return stored;
 //	}
-	
+
 	boolean checkPersistActiveCfg(String oldId, boolean force){
 		return fActiveCfgInfo.store(oldId, force);
 	}
@@ -669,30 +697,36 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 		return fPrefs;
 	}
 
+	@Override
 	public int getConfigurationRelations() {
 		return fPrefs.getConfigurationRelations();
 	}
 
+	@Override
 	public boolean isDefaultConfigurationRelations() {
 		return fPrefs.isDefaultConfigurationRelations();
 	}
 
+	@Override
 	public void setConfigurationRelations(int status) {
 		fPrefs.setConfigurationRelations(status);
 	}
 
+	@Override
 	public void useDefaultConfigurationRelations() {
 		fPrefs.useDefaultConfigurationRelations();
 	}
 
+	@Override
 	public boolean isCdtProjectCreating() {
 		return fIsCreating;
 	}
 
+	@Override
 	public void setCdtProjectCreated() {
 		if(!fIsCreating)
 			return;
-		
+
 		if(fIsReadOnly)
 			throw ExceptionFactory.createIsReadOnlyException();
 
@@ -703,9 +737,9 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 	public void touch() throws WriteAccessException {
 		if(fIsReadOnly)
 			throw ExceptionFactory.createIsReadOnlyException();
-		
+
 		fIsModified = true;
 	}
-	
-	
+
+
 }

@@ -55,7 +55,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 
 public class ProjectSelectionPage extends WizardPage implements IWizardDataPage {
-		
+
 	private static final String PAGE_NAME= "NewProjectSelectionWizardPage"; //$NON-NLS-1$
 	private static final String PAGE_TITLE = Messages.getString("ProjectSelectionPage.0"); //$NON-NLS-1$
 	private static final String PAGE_DESCRIPTION = Messages.getString("ProjectSelectionPage.1"); //$NON-NLS-1$
@@ -68,42 +68,42 @@ public class ProjectSelectionPage extends WizardPage implements IWizardDataPage 
 	private IWorkspaceRoot workspaceRoot;
 	private ICProject currentCProject;
 	private IWizardPage next;
-	
+
 	public ProjectSelectionPage() {
 		super(PAGE_NAME);
 		setTitle(PAGE_TITLE);
 		setDescription(PAGE_DESCRIPTION);
-		
+
 		workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-		
+
 		setPageComplete(false);
 	}
-			
+
 	public void init(IStructuredSelection selection) {
 		if (selection == null || selection.isEmpty()) {
 			setDefaultAttributes();
 			return;
 		}
-		
+
 		Object selectedElement= selection.getFirstElement();
 		if (selectedElement == null) {
 			selectedElement= getActiveEditorCInput();
-		}				
-		
+		}
+
 		String projPath= null;
-		
+
 		if (selectedElement instanceof IResource) {
 			IProject project= ((IResource)selectedElement).getProject();
 			if (project != null) {
 				projPath= project.getFullPath().makeRelative().toString();
-			}	
+			}
 		} else if (selectedElement instanceof ICElement) {
 			ICProject cProject= ((ICElement)selectedElement).getCProject();
 			if (cProject != null) {
 				projPath= cProject.getProject().getFullPath().makeRelative().toString();
 			}
-		}	
-		
+		}
+
 		if (projPath != null) {
 			projectName = projPath;
 		} else {
@@ -126,11 +126,11 @@ public class ProjectSelectionPage extends WizardPage implements IWizardDataPage 
 				}
 			}
 		}
-		return null;    
+		return null;
 	}
-        
+
 	private void setDefaultAttributes() {
-		
+
 		try {
 			// find the first C project
 			IProject[] projects= workspaceRoot.getProjects();
@@ -140,14 +140,15 @@ public class ProjectSelectionPage extends WizardPage implements IWizardDataPage 
 					projectName = project.getFullPath().makeRelative().toString();
 					break;
 				}
-			}					
+			}
 		} catch (CoreException e) {
 			// ignore here
 		}
 	}
-	
+
 	private Map<String, String> data = new HashMap<String, String>(2);
-	
+
+	@Override
 	public Map<String, String> getPageData() {
 		String cPojectName = currentCProject.getResource().getName().trim();
 		data.put("projectName", cPojectName); //$NON-NLS-1$
@@ -167,37 +168,38 @@ public class ProjectSelectionPage extends WizardPage implements IWizardDataPage 
 		}
 		return baseName;
 	}
-	
+
+	@Override
 	public void createControl(Composite parent) {
 		initializeDialogUnits(parent);
-		
+
 		Composite composite= new Composite(parent, SWT.NONE);
-			
+
 		GridLayout layout= new GridLayout();
 		layout.marginWidth= 0;
-		layout.marginHeight= 0;	
+		layout.marginHeight= 0;
 		layout.numColumns= 3;
 		composite.setLayout(layout);
-		
+
 		createProjectFiled(composite);
-		
+
 		setControl(composite);
 		Dialog.applyDialogFont(composite);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, ICHelpContextIds.NEW_SRCFLDER_WIZARD_PAGE);		
-	
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, ICHelpContextIds.NEW_SRCFLDER_WIZARD_PAGE);
+
 		projectNameText.setFocus();
 		projectNameText.setSelection(0, projectNameText.getText().length());
-		
+
 		setPageComplete(validatePage());
 	}
-	
+
 	private void createProjectFiled(Composite parent) {
 		getLabelControl(parent);
 		GridData gdLabel = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gdLabel.horizontalSpan= 1;
 		projectNameLabel.setLayoutData(gdLabel);
-		
-		
+
+
 		getTextControl(parent);
 		GridData gdText = new GridData();
 		gdText.horizontalAlignment= GridData.FILL;
@@ -205,7 +207,7 @@ public class ProjectSelectionPage extends WizardPage implements IWizardDataPage 
 		gdText.horizontalSpan= 1;
 		gdText.widthHint = convertWidthInCharsToPixels(40);
 		projectNameText.setLayoutData(gdText);
-		
+
 		getButtonControl(parent);
 		GridData gdButton = new GridData();
 		gdButton.horizontalAlignment= GridData.FILL;
@@ -217,24 +219,25 @@ public class ProjectSelectionPage extends WizardPage implements IWizardDataPage 
 	/**
 	 * Creates or returns the created Label control.
 	 * @param parent The parent composite
-	 */		
+	 */
 	private void getLabelControl(Composite parent) {
 		projectNameLabel = new Label(parent, SWT.LEFT | SWT.WRAP);
 		projectNameLabel.setText(Messages.getString("ProjectSelectionPage.4")); //$NON-NLS-1$
 		projectNameLabel.setFont(parent.getFont());
-		projectNameLabel.setEnabled(true);		
+		projectNameLabel.setEnabled(true);
 	}
 
 	/**
 	 * Creates or returns the created text control.
 	 * @param parent The parent composite
-	 */		
+	 */
 	private void getTextControl(Composite parent) {
 		projectNameText = new Text(parent, SWT.SINGLE | SWT.BORDER);
 		projectNameText.setText(projectName);
 		projectNameText.setFont(parent.getFont());
 		projectNameText.setEnabled(true);
 		projectNameText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				setPageComplete(validatePage());
 			}
@@ -244,27 +247,29 @@ public class ProjectSelectionPage extends WizardPage implements IWizardDataPage 
 	/**
 	 * Creates or returns the created buttom widget.
 	 * @param parent The parent composite
-	 */		
+	 */
 	private void getButtonControl(Composite parent) {
 		projectBrowseButton = new Button(parent, SWT.PUSH);
 		projectBrowseButton.setText(Messages.getString("ProjectSelectionPage.5")); //$NON-NLS-1$
 		projectBrowseButton.setFont(parent.getFont());
 		projectBrowseButton.setEnabled(true);
 		projectBrowseButton.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				packRootChangeControlPressed();
 			}
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				packRootChangeControlPressed();
 			}
-		});	
+		});
 	}
-	
+
 	@Override
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
-	}	
-		
+	}
+
 	protected void packRootChangeControlPressed() {
 		ICProject cProject= chooseProject();
 		if (cProject != null) {
@@ -272,29 +277,29 @@ public class ProjectSelectionPage extends WizardPage implements IWizardDataPage 
 			projectName = path.toOSString();
 			projectNameText.setText(projectName);
 		}
-	}	
-	
+	}
+
     private boolean validatePage() {
 		currentCProject= null;
-		
+
 		String projectName = projectNameText.getText();
 		if (projectName.length() == 0) {
             setErrorMessage(Messages.getString("ProjectSelectionPage.6")); //$NON-NLS-1$
 			return false;
 		}
-		
+
 		IPath path= new Path(projectName);
 		if (path.segmentCount() != 1) {
             setErrorMessage(Messages.getString("ProjectSelectionPage.7")); //$NON-NLS-1$
 			return false;
 		}
-		
+
 		IProject project= workspaceRoot.getProject(path.toString());
 		if (!project.exists()) {
             setErrorMessage(Messages.getString("ProjectSelectionPage.8")); //$NON-NLS-1$
 			return false;
 		}
-		
+
 		try {
 			if (project.hasNature(CProjectNature.C_NATURE_ID) || project.hasNature(CCProjectNature.CC_NATURE_ID)) {
 				currentCProject= CoreModel.getDefault().create(project);
@@ -305,11 +310,11 @@ public class ProjectSelectionPage extends WizardPage implements IWizardDataPage 
 			CUIPlugin.log(e);
 			currentCProject= null;
 		}
-		
+
         setErrorMessage(Messages.getString("ProjectSelectionPage.9")); //$NON-NLS-1$
 		return false;
     }
-    
+
 	private ICProject chooseProject() {
 		ICProject[] projects;
 		try {
@@ -318,27 +323,28 @@ public class ProjectSelectionPage extends WizardPage implements IWizardDataPage 
 			CUIPlugin.log(e);
 			projects= new ICProject[0];
 		}
-		
+
 		ILabelProvider labelProvider= new CElementLabelProvider(CElementLabelProvider.SHOW_DEFAULT);
 		ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), labelProvider);
 		dialog.setTitle(Messages.getString("ProjectSelectionPage.10")); //$NON-NLS-1$
 		dialog.setMessage(Messages.getString("ProjectSelectionPage.11")); //$NON-NLS-1$
 		dialog.setElements(projects);
 		dialog.setInitialSelections(new Object[] { currentCProject });
-		if (dialog.open() == Window.OK) {			
+		if (dialog.open() == Window.OK) {
 			return (ICProject) dialog.getFirstResult();
-		}			
-		return null;		
+		}
+		return null;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.templateengine.IWizardDataPage#setNextPage(org.eclipse.jface.wizard.IWizardPage)
 	 */
+	@Override
 	public void setNextPage(IWizardPage next) {
 		this.next= next;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.WizardPage#getNextPage()

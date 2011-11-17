@@ -54,17 +54,18 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
  * @deprecated as of CDT 8.0 now using {@link ExcludeFromBuildHandler}
  */
 @Deprecated
-public class ExcludeFromBuildAction 
+public class ExcludeFromBuildAction
 implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 
 	protected ArrayList<IResource> objects = null;
 	protected ArrayList<String> cfgNames = null;
 
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		objects = null;
 		cfgNames = null;
 		boolean cfgsOK = true;
-		
+
 		if (!selection.isEmpty()) {
 			// case for context menu
 			if (selection instanceof IStructuredSelection) {
@@ -73,7 +74,7 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 					for (int i=0; i<obs.length && cfgsOK; i++) {
 						// if project selected, don't do anything
 						if ((obs[i] instanceof IProject) || (obs[i] instanceof ICProject)) {
-							cfgsOK=false; 
+							cfgsOK=false;
 							break;
 						}
 						IResource res = null;
@@ -87,12 +88,12 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 						if (res != null) {
 							ICConfigurationDescription[] cfgds = getCfgsRead(res);
 							if (cfgds == null || cfgds.length == 0) continue;
-							
+
 							if (objects == null) objects = new ArrayList<IResource>();
 							objects.add(res);
 							if (cfgNames == null) {
 								cfgNames = new ArrayList<String>(cfgds.length);
-								for (int j=0; j<cfgds.length; j++) { 
+								for (int j=0; j<cfgds.length; j++) {
 									if (!canExclude(res, cfgds[j])) {
 										cfgNames = null;
 										cfgsOK = false;
@@ -117,7 +118,7 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 					}
 				}
 			}
-		} 
+		}
 		action.setEnabled(cfgsOK && objects != null );
 	}
 
@@ -134,13 +135,14 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 			cfg.setSourceEntries(newEntries);
 		} catch (CoreException e) {
 			CUIPlugin.log(e);
-		}					
+		}
 	}
-	
+
+	@Override
 	public void run(IAction action) {
 		openDialog();
 	}
-	
+
 	private ICConfigurationDescription[] getCfgsRead(IResource res) {
 		IProject p = res.getProject();
 		if (!p.isOpen()) return null;
@@ -149,19 +151,19 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 		if (prjd == null) return null;
 		return prjd.getConfigurations();
 	}
-	
+
 	private void openDialog() {
-		if (objects == null || objects.size() == 0) return; 
+		if (objects == null || objects.size() == 0) return;
 		// create list of configurations to delete
-		
+
 		ListSelectionDialog dialog = new ListSelectionDialog(
-				CUIPlugin.getActiveWorkbenchShell(), 
-				cfgNames, 
-				createSelectionDialogContentProvider(), 
-				new LabelProvider() {}, 
+				CUIPlugin.getActiveWorkbenchShell(),
+				cfgNames,
+				createSelectionDialogContentProvider(),
+				new LabelProvider() {},
 				ActionMessages.ExcludeFromBuildAction_0);
 		dialog.setTitle(ActionMessages.ExcludeFromBuildAction_1);
-		
+
 		boolean[] status = new boolean[cfgNames.size()];
 		Iterator<IResource> it = objects.iterator();
 		while (it.hasNext()) {
@@ -174,11 +176,11 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 			}
 		}
 		ArrayList<String> lst = new ArrayList<String>();
-		for (int i=0; i<status.length; i++) 
+		for (int i=0; i<status.length; i++)
 			if (status[i]) lst.add(cfgNames.get(i));
 		if (lst.size() > 0)
 			dialog.setInitialElementSelections(lst);
-		
+
 		if (dialog.open() == Window.OK) {
 			Object[] selected = dialog.getResult(); // may be empty
 			Iterator<IResource> it2 = objects.iterator();
@@ -203,7 +205,7 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 				try {
 					CoreModel.getDefault().setProjectDescription(p, prjd);
 				} catch (CoreException e) {
-					CUIPlugin.logError(Messages.AbstractPage_11 + e.getLocalizedMessage()); 
+					CUIPlugin.logError(Messages.AbstractPage_11 + e.getLocalizedMessage());
 				}
 				AbstractPage.updateViews(res);
 			}
@@ -212,17 +214,25 @@ implements IWorkbenchWindowPulldownDelegate2, IObjectActionDelegate {
 
 	private IStructuredContentProvider createSelectionDialogContentProvider() {
 		return new IStructuredContentProvider() {
+			@Override
 			public Object[] getElements(Object inputElement) { return cfgNames.toArray(); }
+			@Override
 			public void dispose() {}
+			@Override
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 		};
 	}
-	
+
+	@Override
 	public void dispose() { objects = null; }
-	
+
 	// doing nothing
+	@Override
 	public void init(IWorkbenchWindow window) { }
+	@Override
 	public Menu getMenu(Menu parent) { return null; }
+	@Override
 	public Menu getMenu(Control parent) { return null; }
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {}
 }

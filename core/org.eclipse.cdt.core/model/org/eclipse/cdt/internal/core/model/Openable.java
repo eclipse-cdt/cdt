@@ -9,7 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
- 
+
 import java.util.Enumeration;
 import java.util.Map;
 
@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 public abstract class Openable extends Parent implements IOpenable {
-	protected IResource resource;	
+	protected IResource resource;
 
 	public Openable(ICElement parent, IPath path, int type) {
 		// Check if the file is under the workspace.
@@ -38,7 +38,7 @@ public abstract class Openable extends Parent implements IOpenable {
 	public Openable(ICElement parent, IResource resource, int type) {
 		this(parent, resource, resource.getName(), type);
 	}
-	
+
 	public Openable(ICElement parent, IResource res, String name, int type) {
 		super(parent, name, type);
 		resource = res;
@@ -57,6 +57,7 @@ public abstract class Openable extends Parent implements IOpenable {
 	 *
 	 * @see IBufferChangedListener
 	 */
+	@Override
 	public void bufferChanged(BufferChangedEvent event) {
 		if (event.getBuffer().isClosed()) {
 			CModelManager.getDefault().getElementsOutOfSynchWithBuffers().remove(this);
@@ -64,7 +65,7 @@ public abstract class Openable extends Parent implements IOpenable {
 		} else {
 			CModelManager.getDefault().getElementsOutOfSynchWithBuffers().put(this, this);
 		}
-	}	
+	}
 
 	/**
 	 * Builds this element's structure and properties in the given
@@ -103,6 +104,7 @@ public abstract class Openable extends Parent implements IOpenable {
 	/**
 	 * @see org.eclipse.cdt.core.model.IOpenable#getBuffer()
 	 */
+	@Override
 	public IBuffer getBuffer() throws CModelException {
 		if (hasBuffer()) {
 			// ensure element is open
@@ -132,7 +134,7 @@ public abstract class Openable extends Parent implements IOpenable {
 	protected BufferManager getBufferManager() {
 		return BufferManager.getDefaultBufferManager();
 	}
-	
+
 	/**
 	 * Returns true if this element may have an associated source buffer,
 	 * otherwise false. Subclasses must override as required.
@@ -143,6 +145,7 @@ public abstract class Openable extends Parent implements IOpenable {
 	/**
 	 * @see org.eclipse.cdt.core.model.IOpenable#hasUnsavedChanges()
 	 */
+	@Override
 	public boolean hasUnsavedChanges() throws CModelException{
 		if (isReadOnly() || !isOpen()) {
 			return false;
@@ -165,22 +168,24 @@ public abstract class Openable extends Parent implements IOpenable {
 				}
 			}
 		}
-	
+
 		return false;
 	}
 
 	/**
 	 * Subclasses must override as required.
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.model.IOpenable#isConsistent()
 	 */
+	@Override
 	public boolean isConsistent() throws CModelException {
 		return true;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.core.model.IOpenable#isOpen()
-	 */	
+	 */
+	@Override
 	public boolean isOpen() {
 		return CModelManager.getDefault().getInfo(this) != null;
 	}
@@ -203,10 +208,12 @@ public abstract class Openable extends Parent implements IOpenable {
 	/**
 	 * @see org.eclipse.cdt.core.model.IOpenable#makeConsistent(IProgressMonitor)
 	 */
+	@Override
 	public void makeConsistent(IProgressMonitor pm) throws CModelException {
 		makeConsistent(pm, false);
 	}
-	
+
+	@Override
 	public void makeConsistent(IProgressMonitor monitor, boolean forced) throws CModelException {
 		// only translation units can be inconsistent
 		// other openables cannot be inconsistent so default is to do nothing
@@ -215,6 +222,7 @@ public abstract class Openable extends Parent implements IOpenable {
 	/**
 	 * @see org.eclipse.cdt.core.model.IOpenable#open(IProgressMonitor)
 	 */
+	@Override
 	public void open(IProgressMonitor pm) throws CModelException {
 		getElementInfo(pm);
 	}
@@ -249,7 +257,7 @@ public abstract class Openable extends Parent implements IOpenable {
 		if (CModelManager.VERBOSE){
 			System.out.println("OPENING Element ("+ Thread.currentThread()+"): " + this); //$NON-NLS-1$//$NON-NLS-2$
 		}
-		
+
 		// open the parent if necessary
 		openParent(info, newElements, monitor);
 		if (monitor != null && monitor.isCanceled())
@@ -268,7 +276,7 @@ public abstract class Openable extends Parent implements IOpenable {
 			newElements.remove(this);
 			throw e;
 		}
-		
+
 		// remove out of sync buffer for this element
 		CModelManager.getDefault().getElementsOutOfSynchWithBuffers().remove(this);
 	}
@@ -276,6 +284,7 @@ public abstract class Openable extends Parent implements IOpenable {
 	/**
 	 * @see org.eclipse.cdt.core.model.IOpenable#save(IProgressMonitor, boolean)
 	 */
+	@Override
 	public void save(IProgressMonitor pm, boolean force) throws CModelException {
 		IResource res = getResource();
 		if (res != null) {
@@ -289,7 +298,7 @@ public abstract class Openable extends Parent implements IOpenable {
 			throw new CModelException(new CModelStatus(ICModelStatusConstants.READ_ONLY, this));
 		}
 		IBuffer buf = getBuffer();
-		if (buf != null) { 
+		if (buf != null) {
 			buf.save(pm, force);
 			this.makeConsistent(pm); // update the element info of this element
 		}

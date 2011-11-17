@@ -51,6 +51,7 @@ public class StringListModeControl {
 		linkStringListMode.setToolTipText(Messages.AbstractLangsListTab_MultiConfigStringListModeLinkHint);
 
 		linkStringListMode.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				// Use event.text to tell which link was used
 				int result = PreferencesUtil.createPreferenceDialogOn(parent.getShell(), STRING_LIST_MODE_PREFERENCE_PAGE, null, null).open();

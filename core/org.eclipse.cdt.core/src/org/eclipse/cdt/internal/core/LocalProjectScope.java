@@ -56,14 +56,17 @@ public class LocalProjectScope implements IScopeContext {
 		fContext= projectName;
 	}
 
+	@Override
 	public IPath getLocation() {
 		return null;
 	}
 
+	@Override
 	public String getName() {
 		return SCOPE;
 	}
 
+	@Override
 	public IEclipsePreferences getNode(String qualifier) {
 		return InstanceScope.INSTANCE.getNode(qualifier + QUALIFIER_EXT + fContext);
 	}

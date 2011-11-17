@@ -46,8 +46,8 @@ public class IndexerOptionPropertyPage extends PropertyPage implements ICOptionC
 		composite.setLayout(new GridLayout());
 
 		optionPage.createControl(composite);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, ICHelpContextIds.PROJECT_INDEXER_PROPERTIES);	
-		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, ICHelpContextIds.PROJECT_INDEXER_PROPERTIES);
+
 		return composite;
 	}
 
@@ -55,7 +55,7 @@ public class IndexerOptionPropertyPage extends PropertyPage implements ICOptionC
 	protected void performDefaults() {
 		optionPage.performDefaults();
 	}
-		
+
 	@Override
 	public boolean performOk() {
 		try {
@@ -65,7 +65,8 @@ public class IndexerOptionPropertyPage extends PropertyPage implements ICOptionC
 		}
 		return true;
 	}
-	
+
+	@Override
 	public IProject getProject(){
 		IProject project= null;
 		IAdaptable elem = getElement();
@@ -77,12 +78,14 @@ public class IndexerOptionPropertyPage extends PropertyPage implements ICOptionC
 		return project;
 	}
 
+	@Override
 	public void updateContainer() {
 	}
-	
+
 	/**
 	 * @deprecated
 	 */
+	@Override
 	@Deprecated
 	public org.eclipse.core.runtime.Preferences getPreferences() {
 		throw new UnsupportedOperationException();

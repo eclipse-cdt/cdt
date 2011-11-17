@@ -24,7 +24,8 @@ public class PropertyTester extends org.eclipse.core.expressions.PropertyTester 
 	private static final String KEY_PAGE = "pageEnabled"; //$NON-NLS-1$
 	private static final String VAL_EXP  = "export"; //$NON-NLS-1$
 	private static final String VAL_TOOL = "toolEdit"; //$NON-NLS-1$
-	
+
+	@Override
 	public boolean test(Object receiver, String property, Object[] args,
 			Object expectedValue) {
 		if (KEY_SRC.equals(property)) {
@@ -35,7 +36,7 @@ public class PropertyTester extends org.eclipse.core.expressions.PropertyTester 
 				IFile file = (IFile)receiver;
 				return CoreModel.isValidSourceUnitName(file.getProject(), file.getName());
 			}
-		} else if (KEY_PAGE.equals(property) 
+		} else if (KEY_PAGE.equals(property)
 				&& expectedValue instanceof String) {
 			String s = (String) expectedValue;
 			if (VAL_EXP.equalsIgnoreCase(s))

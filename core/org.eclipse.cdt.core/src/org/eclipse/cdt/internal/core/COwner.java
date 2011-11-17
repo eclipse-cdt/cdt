@@ -24,14 +24,17 @@ public class COwner implements ICOwnerInfo {
 		fConfig = config;
 	}
 
+	@Override
 	public String getID() {
 		return fConfig.getOwnerID();
 	}
 
+	@Override
 	public String getName() {
 		return fConfig.getName();
 	}
 
+	@Override
 	public String getPlatform() {
 		return fConfig.getPlatform();
 	}

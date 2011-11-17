@@ -24,14 +24,17 @@ public class MethodTemplateDeclaration extends MethodDeclaration implements IMet
 		fTemplate = new Template(name);
 	}
 
+	@Override
 	public String[] getTemplateParameterTypes() {
 		return fTemplate.getTemplateParameterTypes();
 	}
 
+	@Override
 	public String[] getTemplateArguments() {
 		return  fTemplate.getTemplateArguments();
 	}
 
+	@Override
 	public String getTemplateSignature() throws CModelException {
 		StringBuffer sig = new StringBuffer(fTemplate.getTemplateSignature());
 		sig.append(this.getParameterClause());
@@ -40,15 +43,16 @@ public class MethodTemplateDeclaration extends MethodDeclaration implements IMet
 		if(isVolatile())
 			sig.append(" volatile"); //$NON-NLS-1$
 
-		if((this.getReturnType() != null) && (this.getReturnType().length() > 0)){ 
+		if((this.getReturnType() != null) && (this.getReturnType().length() > 0)){
 			sig.append(" : "); //$NON-NLS-1$
 			sig.append(this.getReturnType());
 		}
-		
+
 		return sig.toString();
 
 	}
 
+	@Override
 	public int getNumberOfTemplateParameters() {
 		return fTemplate.getNumberOfTemplateParameters();
 	}

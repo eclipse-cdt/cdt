@@ -64,9 +64,9 @@ public class ExPatternEntryDialog extends StatusDialog {
 		super(parent);
 		fExistingPatterns = existingPatterns;
 		if (patternToEdit == null) {
-			setTitle(CPathEntryMessages.ExclusionPatternEntryDialog_add_title); 
+			setTitle(CPathEntryMessages.ExclusionPatternEntryDialog_add_title);
 		} else {
-			setTitle(CPathEntryMessages.ExclusionPatternEntryDialog_edit_title); 
+			setTitle(CPathEntryMessages.ExclusionPatternEntryDialog_edit_title);
 			fExistingPatterns.remove(patternToEdit);
 		}
 
@@ -78,13 +78,13 @@ public class ExPatternEntryDialog extends StatusDialog {
 
 		fExclusionPatternStatus = new StatusInfo();
 
-		String label = NLS.bind(CPathEntryMessages.ExclusionPatternEntryDialog_pattern_label, 
+		String label = NLS.bind(CPathEntryMessages.ExclusionPatternEntryDialog_pattern_label,
 				path.makeRelative().toString());
 
 		ExPatternAdapter adapter = new ExPatternAdapter();
 		fExclusionPatternDialog = new StringButtonDialogField(adapter);
 		fExclusionPatternDialog.setLabelText(label);
-		fExclusionPatternDialog.setButtonLabel(CPathEntryMessages.ExclusionPatternEntryDialog_pattern_button); 
+		fExclusionPatternDialog.setButtonLabel(CPathEntryMessages.ExclusionPatternEntryDialog_pattern_button);
 		fExclusionPatternDialog.setDialogFieldListener(adapter);
 		fExclusionPatternDialog.enableButton(fCurrSourceFolder != null);
 
@@ -111,7 +111,7 @@ public class ExPatternEntryDialog extends StatusDialog {
 		inner.setLayout(layout);
 
 		Label description = new Label(inner, SWT.WRAP);
-		description.setText(CPathEntryMessages.ExclusionPatternEntryDialog_description); 
+		description.setText(CPathEntryMessages.ExclusionPatternEntryDialog_description);
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		gd.widthHint = convertWidthInCharsToPixels(80);
@@ -136,10 +136,12 @@ public class ExPatternEntryDialog extends StatusDialog {
 
 		// -------- IDialogFieldListener
 
+		@Override
 		public void dialogFieldChanged(DialogField field) {
 			doStatusLineUpdate();
 		}
 
+		@Override
 		public void changeControlPressed(DialogField field) {
 			doChangeControlPressed();
 		}
@@ -160,16 +162,16 @@ public class ExPatternEntryDialog extends StatusDialog {
 	protected void checkIfPatternValid() {
 		String pattern = fExclusionPatternDialog.getText().trim();
 		if (pattern.length() == 0) {
-			fExclusionPatternStatus.setError(CPathEntryMessages.ExclusionPatternEntryDialog_error_empty); 
+			fExclusionPatternStatus.setError(CPathEntryMessages.ExclusionPatternEntryDialog_error_empty);
 			return;
 		}
 		IPath path = new Path(pattern);
 		if (path.isAbsolute() || path.getDevice() != null) {
-			fExclusionPatternStatus.setError(CPathEntryMessages.ExclusionPatternEntryDialog_error_notrelative); 
+			fExclusionPatternStatus.setError(CPathEntryMessages.ExclusionPatternEntryDialog_error_notrelative);
 			return;
 		}
 		if (fExistingPatterns.contains(pattern)) {
-			fExclusionPatternStatus.setError(CPathEntryMessages.ExclusionPatternEntryDialog_error_exists); 
+			fExclusionPatternStatus.setError(CPathEntryMessages.ExclusionPatternEntryDialog_error_exists);
 			return;
 		}
 
@@ -218,9 +220,9 @@ public class ExPatternEntryDialog extends StatusDialog {
 		}
 
 		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(), lp, cp);
-		dialog.setTitle(CPathEntryMessages.ExclusionPatternEntryDialog_ChooseExclusionPattern_title); 
+		dialog.setTitle(CPathEntryMessages.ExclusionPatternEntryDialog_ChooseExclusionPattern_title);
 		dialog.setValidator(validator);
-		dialog.setMessage(CPathEntryMessages.ExclusionPatternEntryDialog_ChooseExclusionPattern_description); 
+		dialog.setMessage(CPathEntryMessages.ExclusionPatternEntryDialog_ChooseExclusionPattern_description);
 		dialog.addFilter(filter);
 		dialog.setInput(fCurrSourceFolder);
 		dialog.setInitialSelection(initialElement);

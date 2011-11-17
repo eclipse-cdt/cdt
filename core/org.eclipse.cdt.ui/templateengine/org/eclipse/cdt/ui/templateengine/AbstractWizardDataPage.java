@@ -20,7 +20,7 @@ import org.eclipse.jface.wizard.WizardPage;
  */
 public abstract class AbstractWizardDataPage extends WizardPage implements IWizardDataPage {
 	protected IWizardPage next;
-	
+
 	 /**
      * Creates a new wizard page with the given name, and
      * with no title or image.
@@ -30,7 +30,7 @@ public abstract class AbstractWizardDataPage extends WizardPage implements IWiza
 	public AbstractWizardDataPage(String pageName) {
 		super(pageName);
 	}
-	
+
     /**
      * Creates a new wizard page with the given name, title, and image.
      *
@@ -43,15 +43,16 @@ public abstract class AbstractWizardDataPage extends WizardPage implements IWiza
 	public AbstractWizardDataPage(String pageName, String title, ImageDescriptor imageDescriptor) {
 		super(pageName, title, imageDescriptor);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.templateengine.IWizardDataPage#setNextPage(org.eclipse.jface.wizard.IWizardPage)
 	 */
+	@Override
 	public void setNextPage(IWizardPage next) {
 		this.next= next;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.WizardPage#getNextPage()

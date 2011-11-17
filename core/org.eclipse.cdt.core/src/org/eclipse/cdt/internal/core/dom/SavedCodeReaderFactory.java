@@ -30,19 +30,19 @@ public class SavedCodeReaderFactory extends AbstractCodeReaderFactory {
 
 	private static ICodeReaderCache cache;
     private static SavedCodeReaderFactory instance = new SavedCodeReaderFactory(null);
-	
+
     public static SavedCodeReaderFactory getInstance() {
         return instance;
     }
-    
+
     public static SavedCodeReaderFactory createInstance(IIncludeFileResolutionHeuristics heuristics) {
     	return new SavedCodeReaderFactory(heuristics);
     }
-    
-    
+
+
     private SavedCodeReaderFactory(IIncludeFileResolutionHeuristics heuristics) {
     	super(heuristics);
-    	
+
 		if (cache == null) {
 			int size= CodeReaderCache.DEFAULT_CACHE_SIZE_IN_MB;
 			final CCorePlugin corePlugin = CCorePlugin.getDefault();
@@ -73,14 +73,16 @@ public class SavedCodeReaderFactory extends AbstractCodeReaderFactory {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#getUniqueIdentifier()
      */
-    public int getUniqueIdentifier() {
+    @Override
+	public int getUniqueIdentifier() {
         return CDOM.PARSE_SAVED_RESOURCES;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#createCodeReaderForTranslationUnit(java.lang.String)
      */
-    public CodeReader createCodeReaderForTranslationUnit(String path) {
+    @Override
+	public CodeReader createCodeReaderForTranslationUnit(String path) {
 		return cache.get(path);
     }
 
@@ -91,10 +93,11 @@ public class SavedCodeReaderFactory extends AbstractCodeReaderFactory {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#createCodeReaderForInclusion(java.lang.String)
      */
-    public CodeReader createCodeReaderForInclusion(String path) {
+    @Override
+	public CodeReader createCodeReaderForInclusion(String path) {
 		return cache.get(path);
     }
-	
+
 	@Override
 	public CodeReader createCodeReaderForInclusion(IIndexFileLocation ifl, String astPath)
 			throws CoreException, IOException {
@@ -104,6 +107,7 @@ public class SavedCodeReaderFactory extends AbstractCodeReaderFactory {
 	/* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#createCodeReaderForInclusion(java.lang.String)
      */
+	@Override
 	public ICodeReaderCache getCodeReaderCache() {
 		return cache;
 	}

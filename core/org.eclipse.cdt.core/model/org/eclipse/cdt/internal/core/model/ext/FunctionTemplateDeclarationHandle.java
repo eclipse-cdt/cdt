@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.model.ext;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
@@ -55,18 +55,22 @@ public class FunctionTemplateDeclarationHandle extends FunctionDeclarationHandle
 		fTemplate.setTemplateInfo(null, args);
 	}
 
+	@Override
 	public String[] getTemplateArguments() {
 		return  fTemplate.getTemplateArguments();
 	}
 
+	@Override
 	public int getNumberOfTemplateParameters() {
 		return fTemplate.getNumberOfTemplateParameters();
 	}
 
+	@Override
 	public String[] getTemplateParameterTypes() {
 		return fTemplate.getTemplateParameterTypes();
 	}
 
+	@Override
 	public String getTemplateSignature() throws CModelException {
 		return fTemplate.getTemplateSignature();
 	}

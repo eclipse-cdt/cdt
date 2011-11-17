@@ -24,19 +24,21 @@ import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 
 public class Structure extends StructureDeclaration implements  IStructure {
-	
+
 	Map<String, ASTAccessVisibility> superClassesNames = new TreeMap<String, ASTAccessVisibility>();
 
 	public Structure(ICElement parent, int kind, String name) {
 		super(parent, name, kind);
 	}
 
+	@Override
 	public IField[] getFields() throws CModelException {
 		List<ICElement> fields = new ArrayList<ICElement>();
 		fields.addAll(getChildrenOfType(ICElement.C_FIELD));
 		return fields.toArray(new IField[fields.size()]);
 	}
 
+	@Override
 	public IField getField(String name) {
 		try {
 			IField[] fields = getFields();
@@ -50,6 +52,7 @@ public class Structure extends StructureDeclaration implements  IStructure {
 		return null;
 	}
 
+	@Override
 	public IMethodDeclaration[] getMethods() throws CModelException {
 		List<ICElement> methods = new ArrayList<ICElement>();
 		methods.addAll(getChildrenOfType(ICElement.C_METHOD_DECLARATION));
@@ -57,6 +60,7 @@ public class Structure extends StructureDeclaration implements  IStructure {
 		return methods.toArray(new IMethodDeclaration[methods.size()]);
 	}
 
+	@Override
 	public IMethodDeclaration getMethod(String name) {
 		try {
 			IMethodDeclaration[] methods = getMethods();
@@ -70,6 +74,7 @@ public class Structure extends StructureDeclaration implements  IStructure {
 		return null;
 	}
 
+	@Override
 	public boolean isAbstract() throws CModelException {
 		IMethodDeclaration[] methods = getMethods();
 		for (IMethodDeclaration method : methods) {
@@ -79,14 +84,16 @@ public class Structure extends StructureDeclaration implements  IStructure {
 		return false;
 	}
 
+	@Override
 	public String[] getSuperClassesNames(){
 		return superClassesNames.keySet().toArray(new String[superClassesNames.keySet().size()]);
 	}
 
+	@Override
 	public ASTAccessVisibility getSuperClassAccess(String name){
 		return superClassesNames.get(name);
 	}
-	
+
 	public void addSuperClass(String name) {
 		superClassesNames.put(name, ASTAccessVisibility.PUBLIC);
 	}

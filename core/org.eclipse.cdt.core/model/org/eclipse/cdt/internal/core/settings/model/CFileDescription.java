@@ -31,21 +31,25 @@ public class CFileDescription extends CDataProxyContainer implements
 		super(data, cfg, cfg);
 	}
 
+	@Override
 	public IPath getPath() {
 		CResourceData data = (CResourceData)getData(false);
 		return ResourceDescriptionHolder.normalizePath(data.getPath());
 	}
 
+	@Override
 	public boolean isExcluded() {
 		CConfigurationDescription cfg = (CConfigurationDescription)getConfiguration();
 		return cfg.isExcluded(getPath());
 	}
 
+	@Override
 	public void setExcluded(boolean excluded) {
 		CConfigurationDescription cfg = (CConfigurationDescription)getConfiguration();
 		cfg.setExcluded(getPath(), false, excluded);
 	}
 
+	@Override
 	public void setPath(IPath path) {
 		path = ResourceDescriptionHolder.normalizePath(path);
 		if(getPath().equals(path))
@@ -53,7 +57,7 @@ public class CFileDescription extends CDataProxyContainer implements
 		CResourceData data = (CResourceData)getData(true);
 		data.setPath(path);
 	}
-	
+
 	@Override
 	void setData(CDataObject data) {
 		super.setData(data);
@@ -64,20 +68,24 @@ public class CFileDescription extends CDataProxyContainer implements
 		}
 	}
 
+	@Override
 	public IPath getCachedPath() {
 		if(fCache != null)
 			return fCache.getPath();
 		return null;
 	}
 
+	@Override
 	public final int getType() {
 		return ICSettingBase.SETTING_FILE;
 	}
 
+	@Override
 	public void setPathContainer(PathSettingsContainer cr) {
 		fCache = cr;
 	}
 
+	@Override
 	public ICLanguageSetting getLanguageSetting() {
 		CFileData data = getFileData(false);
 		IProxyProvider provider = getChildrenProxyProvider();
@@ -86,7 +94,7 @@ public class CFileDescription extends CDataProxyContainer implements
 			return (ICLanguageSetting)provider.getProxy(lData);
 		return null;
 	}
-	
+
 	protected CFileData getFileData(boolean write){
 		return (CFileData)getData(write);
 	}
@@ -95,26 +103,29 @@ public class CFileDescription extends CDataProxyContainer implements
 	protected IProxyProvider createChildProxyProvider() {
 		ICDataScope scope = new ICDataScope(){
 
+			@Override
 			public CDataObject[] getChildren() {
 				return new CLanguageData[]{getFileData(false).getLanguageData()};
 			}
 
+			@Override
 			public boolean isStatic() {
 				return !containsWritableData();
 			}
-			
+
 		};
 		IProxyCache cache = new MapProxyCache();
-	
+
 		return new ProxyProvider(scope, cache, this);
 	}
-	
+
+	@Override
 	public CDataProxy createProxy(CDataObject data) {
 		if(data instanceof CLanguageData)
 			return new CLanguageSetting((CLanguageData)data, this, (CConfigurationDescription)getConfiguration());
 		return null;
 	}
-	
+
 	private ResourceDescriptionHolder getRcHolder(){
 		if(fRcHolder == null){
 			fRcHolder = ((CConfigurationDescription)getConfiguration()).createHolder(this);
@@ -122,14 +133,17 @@ public class CFileDescription extends CDataProxyContainer implements
 		return fRcHolder;
 	}
 
+	@Override
 	public ICFolderDescription getParentFolderDescription() {
 		return getRcHolder().getParentFolderDescription();
 	}
 
+	@Override
 	public PathSettingsContainer getPathContainer() {
 		return fCache;
 	}
 
+	@Override
 	public boolean canExclude(boolean exclude) {
 		CConfigurationDescription cfg = (CConfigurationDescription)getConfiguration();
 		return cfg.canExclude(getPath(), false, exclude);

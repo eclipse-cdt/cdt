@@ -50,6 +50,7 @@ class SourceRange implements ISourceRange {
 	/**
 	 * @see ISourceRange
 	 */
+	@Override
 	public int getLength() {
 		return length;
 	}
@@ -57,24 +58,29 @@ class SourceRange implements ISourceRange {
 	/**
 	 * @see ISourceRange
 	 */
+	@Override
 	public int getStartPos() {
 		return startPos;
 	}
 
 	/**
 	 */
+	@Override
 	public int getIdStartPos() {
 		return idStartPos;
 	}
 
+	@Override
 	public int getIdLength() {
 		return idLength;
 	}
 
+	@Override
 	public int getStartLine() {
 		return startLine;
 	}
 
+	@Override
 	public int getEndLine() {
 		return endLine;
 	}

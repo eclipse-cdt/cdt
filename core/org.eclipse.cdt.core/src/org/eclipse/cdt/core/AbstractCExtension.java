@@ -23,17 +23,19 @@ public abstract class AbstractCExtension extends PlatformObject implements ICExt
 
 	/**
 	 * Returns the project for which this extension is defined.
-	 *	
+	 *
 	 * @return the project
 	 */
+	@Override
 	public final IProject getProject() {
 		return fProject;
 	}
-	
+
 	/**
 	 * <strong>May return <code>null</code>!</strong>
 	 * @deprecated Use {@link #getConfigExtensionReference()} instead.
 	 */
+	@Override
 	@Deprecated
 	public final ICExtensionReference getExtensionReference() {
 		if (extensionRef == null) {
@@ -60,10 +62,11 @@ public abstract class AbstractCExtension extends PlatformObject implements ICExt
 	 * Returns the extension reference this extension was created from.
 	 * @since 5.2
 	 */
+	@Override
 	public final ICConfigExtensionReference getConfigExtensionReference() {
 		return fCfgExtensionRef;
 	}
-	
+
     // internal stuff
 	/**
 	 * @noreference This method is not intended to be referenced by clients.

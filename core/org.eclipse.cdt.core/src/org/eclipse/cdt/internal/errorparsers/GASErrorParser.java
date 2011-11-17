@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IFile;
 
 public class GASErrorParser implements IErrorParser {
 
+	@Override
 	public boolean processLine(String line, ErrorParserManager eoParser) {
 		// cc -c x.c
 		// Only when the previous line sasys Assembler

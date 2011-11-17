@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.settings.model.ICSettingEntry;
  */
 public class ExpLibraryTab extends AbstractExportTab implements IPathEntryStoreListener {
 
+	@Override
 	public void pathEntryStoreChanged(PathEntryStoreChangedEvent event) {
 		updateData(getResDesc());
 	}
@@ -35,7 +36,7 @@ public class ExpLibraryTab extends AbstractExportTab implements IPathEntryStoreL
 	public ICLanguageSettingEntry doEdit(String s1, String s2, boolean isWsp) {
 		return doAdd(s1, s2, isWsp);
 	}
-	
+
 	@Override
 	public int getKind() {
 		return ICSettingEntry.LIBRARY_FILE;

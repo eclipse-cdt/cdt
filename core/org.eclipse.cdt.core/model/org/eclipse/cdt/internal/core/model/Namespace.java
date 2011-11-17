@@ -27,6 +27,7 @@ public class Namespace extends SourceManipulation implements INamespace{
 	 * Returns the typeName.
 	 * @return String
 	 */
+	@Override
 	public String getTypeName() {
 		return typeName;
 	}

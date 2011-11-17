@@ -28,7 +28,7 @@ import org.eclipse.cdt.ui.newui.ManageConfigSelector;
 import org.eclipse.cdt.internal.ui.actions.ActionMessages;
 
 /**
- * Action which changes active build configuration of the current project 
+ * Action which changes active build configuration of the current project
  */
 public class ChangeBuildConfigMenuAction extends ChangeBuildConfigActionBase implements
 		IWorkbenchWindowPulldownDelegate2 {
@@ -36,6 +36,7 @@ public class ChangeBuildConfigMenuAction extends ChangeBuildConfigActionBase imp
 	/**
 	 * @see org.eclipse.ui.IWorkbenchWindowPulldownDelegate2#getMenu(org.eclipse.swt.widgets.Menu)
 	 */
+	@Override
 	public Menu getMenu(Menu parent) {
 		Menu menu = new Menu(parent);
 		addMenuListener(menu);
@@ -45,6 +46,7 @@ public class ChangeBuildConfigMenuAction extends ChangeBuildConfigActionBase imp
 	/**
 	 * @see org.eclipse.ui.IWorkbenchWindowPulldownDelegate#getMenu(org.eclipse.swt.widgets.Control)
 	 */
+	@Override
 	public Menu getMenu(Control parent) {
 		Menu menu = new Menu(parent);
 		addMenuListener(menu);
@@ -54,6 +56,7 @@ public class ChangeBuildConfigMenuAction extends ChangeBuildConfigActionBase imp
 	/**
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
+	@Override
 	public void dispose() {
 		// do nothing
 	}
@@ -61,6 +64,7 @@ public class ChangeBuildConfigMenuAction extends ChangeBuildConfigActionBase imp
 	/**
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void init(IWorkbenchWindow window) {
 		// do nothing
 	}
@@ -68,6 +72,7 @@ public class ChangeBuildConfigMenuAction extends ChangeBuildConfigActionBase imp
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		IProject[] obs = fProjects.toArray(new IProject[fProjects.size()]);
 		IConfigManager cm = ManageConfigSelector.getManager(obs);
@@ -83,10 +88,11 @@ public class ChangeBuildConfigMenuAction extends ChangeBuildConfigActionBase imp
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		onSelectionChanged(action, selection);
 	}
-	
+
 	/**
 	 * Adds a listener to the given menu to repopulate it each time is is shown
 	 * @param menu The menu to add listener to

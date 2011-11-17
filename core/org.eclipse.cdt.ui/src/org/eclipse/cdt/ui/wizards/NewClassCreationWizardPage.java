@@ -21,7 +21,6 @@ import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -88,12 +87,12 @@ import org.eclipse.cdt.internal.ui.wizards.classwizard.IMethodStub;
 import org.eclipse.cdt.internal.ui.wizards.classwizard.MethodStubsListDialogField;
 import org.eclipse.cdt.internal.ui.wizards.classwizard.NamespaceSelectionDialog;
 import org.eclipse.cdt.internal.ui.wizards.classwizard.NewBaseClassSelectionDialog;
+import org.eclipse.cdt.internal.ui.wizards.classwizard.NewBaseClassSelectionDialog.ITypeSelectionListener;
 import org.eclipse.cdt.internal.ui.wizards.classwizard.NewClassCodeGenerator;
 import org.eclipse.cdt.internal.ui.wizards.classwizard.NewClassWizardMessages;
 import org.eclipse.cdt.internal.ui.wizards.classwizard.NewClassWizardPrefs;
 import org.eclipse.cdt.internal.ui.wizards.classwizard.NewClassWizardUtil;
 import org.eclipse.cdt.internal.ui.wizards.classwizard.SourceFileSelectionDialog;
-import org.eclipse.cdt.internal.ui.wizards.classwizard.NewBaseClassSelectionDialog.ITypeSelectionListener;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter;
@@ -117,7 +116,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
     private static final String KEY_STUB_SELECTED = "stubSelected"; //$NON-NLS-1$
     private static final String KEY_STUB_VIRTUAL = "stubVirtual"; //$NON-NLS-1$
     private static final String KEY_STUB_INLINE = "stubInline"; //$NON-NLS-1$
-    
+
 	// Field IDs
     protected static final int SOURCE_FOLDER_ID = 1;
     protected static final int NAMESPACE_ID = 2;
@@ -168,15 +167,15 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
     /** @since 5.3 */
     protected IFile fCreatedTestFile;
     protected ICElement fCreatedClass;
-    
+
     /**
      * This flag isFirstTime is used to keep a note
-     * that the class creation wizard has just been 
+     * that the class creation wizard has just been
      * created.
      */
     private boolean isFirstTime = false;
-    
-    
+
+
 	/**
 	 * Constructor for NewClassCreationWizardPage
 	 */
@@ -184,7 +183,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		super(PAGE_NAME);
 		setTitle(NewClassWizardMessages.NewClassCreationWizardPage_title);
 		setDescription(NewClassWizardMessages.NewClassCreationWizardPage_description);
-		
+
 		SourceFolderFieldAdapter sourceFolderAdapter = new SourceFolderFieldAdapter();
 		fSourceFolderDialogField = new StringButtonDialogField(sourceFolderAdapter);
 		fSourceFolderDialogField.setDialogFieldListener(sourceFolderAdapter);
@@ -204,13 +203,13 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		fClassNameDialogField = new StringDialogField();
 		fClassNameDialogField.setDialogFieldListener(classAdapter);
 		fClassNameDialogField.setLabelText(NewClassWizardMessages.NewClassCreationWizardPage_className_label);
-		
+
 		BaseClassesFieldAdapter baseClassesAdapter = new BaseClassesFieldAdapter();
 		fBaseClassesDialogField = new BaseClassesListDialogField(NewClassWizardMessages.NewClassCreationWizardPage_baseClasses_label, baseClassesAdapter);
-		
+
 		MethodStubsFieldAdapter methodStubsAdapter = new MethodStubsFieldAdapter();
 		fMethodStubsDialogField = new MethodStubsListDialogField(NewClassWizardMessages.NewClassCreationWizardPage_methodStubs_label, methodStubsAdapter);
-	    
+
 		FileGroupFieldAdapter fileGroupAdapter = new FileGroupFieldAdapter();
 		fHeaderFileDialogField = new StringButtonDialogField(fileGroupAdapter);
 		fHeaderFileDialogField.setDialogFieldListener(fileGroupAdapter);
@@ -240,55 +239,56 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		fSourceFileStatus = STATUS_OK;
 		fTestFileStatus = STATUS_OK;
 		fLastFocusedField = 0;
-		
+
 		isFirstTime = true;
 	}
-	
+
 	// -------- UI Creation ---------
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
      */
-    public void createControl(Composite parent) {
+    @Override
+	public void createControl(Composite parent) {
         initializeDialogUnits(parent);
-        
+
         Composite composite = new Composite(parent, SWT.NONE);
         int nColumns = 4;
-        
+
         GridLayout layout = new GridLayout();
         layout.numColumns = nColumns;
         composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		composite.setFont(parent.getFont());
-        
+
         createSourceFolderControls(composite, nColumns);
         createNamespaceControls(composite, nColumns);
-        
+
         createSeparator(composite, nColumns);
-        
+
         createClassNameControls(composite, nColumns);
         createBaseClassesControls(composite, nColumns);
         createMethodStubsControls(composite, nColumns);
-        
+
         createSeparator(composite, nColumns);
-        
+
         createFileControls(composite, nColumns);
-        
-		composite.layout();			
+
+		composite.layout();
 
 		setErrorMessage(null);
 		setMessage(null);
 		setControl(composite);
     }
-	
+
 	/**
 	 * Creates a separator line. Expects a <code>GridLayout</code> with at least 1 column.
-	 * 
+	 *
 	 * @param composite the parent composite
 	 * @param nColumns number of columns to span
 	 */
 	protected void createSeparator(Composite composite, int nColumns) {
-		(new Separator(SWT.SEPARATOR | SWT.HORIZONTAL)).doFillIntoGrid(composite, nColumns, convertHeightInCharsToPixels(1));		
+		(new Separator(SWT.SEPARATOR | SWT.HORIZONTAL)).doFillIntoGrid(composite, nColumns, convertHeightInCharsToPixels(1));
 	}
 
 	/**
@@ -296,7 +296,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	 * the source folder location. The method expects that the parent composite
 	 * uses a <code>GridLayout</code> as its layout manager and that the
 	 * grid layout has at least 3 columns.
-	 * 
+	 *
 	 * @param parent the parent composite
 	 * @param nColumns the number of columns to span. This number must be
 	 *  greater or equal three
@@ -307,14 +307,14 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		LayoutUtil.setWidthHint(textControl, getMaxFieldWidth());
 		textControl.addFocusListener(new StatusFocusListener(SOURCE_FOLDER_ID));
 	}
-	
+
 	/**
-	 * Creates the controls for the namespace field. Expects a <code>GridLayout</code> with at 
+	 * Creates the controls for the namespace field. Expects a <code>GridLayout</code> with at
 	 * least 4 columns.
-	 * 
+	 *
 	 * @param composite the parent composite
 	 * @param nColumns number of columns to span
-	 */		
+	 */
 	protected void createNamespaceControls(Composite composite, int nColumns) {
 		Composite tabGroup= new Composite(composite, SWT.NONE);
 		GridLayout layout= new GridLayout();
@@ -330,20 +330,20 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		gd.horizontalSpan= 2;
 		textControl.setLayoutData(gd);
 		textControl.addFocusListener(new StatusFocusListener(NAMESPACE_ID));
-		
+
 		Button button= fNamespaceDialogField.getChangeControl(composite);
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.widthHint = SWTUtil.getButtonWidthHint(button);
 		button.setLayoutData(gd);
-	}	
+	}
 
 	/**
-	 * Creates the controls for the class name field. Expects a <code>GridLayout</code> with at 
+	 * Creates the controls for the class name field. Expects a <code>GridLayout</code> with at
 	 * least 2 columns.
-	 * 
+	 *
 	 * @param composite the parent composite
 	 * @param nColumns number of columns to span
-	 */		
+	 */
 	protected void createClassNameControls(Composite composite, int nColumns) {
 		fClassNameDialogField.doFillIntoGrid(composite, nColumns - 1);
 		DialogField.createEmptySpace(composite);
@@ -353,26 +353,26 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	}
 
 	/**
-	 * Creates the controls for the base classes field. Expects a <code>GridLayout</code> with 
+	 * Creates the controls for the base classes field. Expects a <code>GridLayout</code> with
 	 * at least 3 columns.
-	 * 
+	 *
 	 * @param composite the parent composite
 	 * @param nColumns number of columns to span
-	 */			
+	 */
 	protected void createBaseClassesControls(Composite composite, int nColumns) {
 	    fBaseClassesDialogField.doFillIntoGrid(composite, nColumns);
 	    Control listControl = fBaseClassesDialogField.getListControl(null);
 	    LayoutUtil.setVerticalGrabbing(listControl, false);
 		listControl.addFocusListener(new StatusFocusListener(BASE_CLASSES_ID));
 	}
-	
+
 	/**
-	 * Creates the controls for the method stubs field. Expects a <code>GridLayout</code> with 
+	 * Creates the controls for the method stubs field. Expects a <code>GridLayout</code> with
 	 * at least 4 columns.
-	 * 
+	 *
 	 * @param composite the parent composite
 	 * @param nColumns number of columns to span
-	 */			
+	 */
 	protected void createMethodStubsControls(Composite composite, int nColumns) {
 		fMethodStubsDialogField.doFillIntoGrid(composite, nColumns);
 	    Control listControl = fMethodStubsDialogField.getListControl(null);
@@ -381,25 +381,25 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	    LayoutUtil.setVerticalGrabbing(listControl, false);
 		listControl.addFocusListener(new StatusFocusListener(METHOD_STUBS_ID));
 	}
-	
+
 	/**
-	 * Creates the controls for the file name fields. Expects a <code>GridLayout</code> with 
+	 * Creates the controls for the file name fields. Expects a <code>GridLayout</code> with
 	 * at least 4 columns.
-	 * 
+	 *
 	 * @param composite the parent composite
 	 * @param nColumns number of columns to span
-	 */		
+	 */
 	protected void createFileControls(Composite composite, int nColumns) {
  		fHeaderFileDialogField.doFillIntoGrid(composite, nColumns);
 		Text textControl = fHeaderFileDialogField.getTextControl(null);
 		LayoutUtil.setWidthHint(textControl, getMaxFieldWidth());
 		textControl.addFocusListener(new StatusFocusListener(HEADER_FILE_ID));
-		
+
 		fSourceFileDialogField.doFillIntoGrid(composite, nColumns);
 		textControl = fSourceFileDialogField.getTextControl(null);
 		LayoutUtil.setWidthHint(textControl, getMaxFieldWidth());
 		textControl.addFocusListener(new StatusFocusListener(SOURCE_FILE_ID));
-		
+
 		Composite tabGroup = new Composite(composite, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = 0;
@@ -407,25 +407,25 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
  		tabGroup.setLayout(layout);
 
 		fTestFileSelection.doFillIntoGrid(tabGroup, 1);
-		
+
 		textControl = fTestFileDialogField.getTextControl(composite);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = getMaxFieldWidth();
 		gd.horizontalSpan = 2;
 		textControl.setLayoutData(gd);
 		textControl.addFocusListener(new StatusFocusListener(TEST_FILE_ID));
-		
+
 		Button button = fTestFileDialogField.getChangeControl(composite);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.widthHint = SWTUtil.getButtonWidthHint(button);
 		button.setLayoutData(gd);
-	}	
-	
+	}
+
     /**
      * The wizard owning this page is responsible for calling this method with the
-     * current selection. The selection is used to initialize the fields of the wizard 
+     * current selection. The selection is used to initialize the fields of the wizard
      * page.
-     * 
+     *
      * @param selection used to initialize the fields
      */
     public void init(IStructuredSelection selection) {
@@ -437,7 +437,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
     	}
 
 		ICElement celem = getInitialCElement(selection);
-        
+
         String namespace = null;
         if (celem != null) {
             ICElement ns = NewClassWizardUtil.getNamespace(celem);
@@ -455,7 +455,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
         setNamespaceText(namespace, false);
         setNamespaceSelection(namespace != null || fDialogSettings.getBoolean(KEY_NAMESPACE_SELECTED),
         		true);
-        
+
         IPath folderPath = null;
         if (celem != null) {
             ICContainer folder = NewClassWizardUtil.getSourceFolder(celem);
@@ -470,7 +470,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
             }
         }
         setSourceFolderFullPath(folderPath, false);
-    
+
         String className = null;
         ITextSelection textSel = getEditorTextSelection();
         if (textSel != null) {
@@ -480,7 +480,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
             }
         }
         setClassName(className, false);
-        
+
         IMethodStub[] stubs = getDefaultMethodStubs();
         for (int i = 0; i < stubs.length; ++i) {
         	IMethodStub stub = stubs[i];
@@ -492,7 +492,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
         	}
             addMethodStub(stub, getBooleanSettingWithDefault(KEY_STUB_SELECTED + i, true));
         }
-        
+
         setTestFileSelection(fDialogSettings.getBoolean(KEY_TEST_FILE_SELECTED), true);
         handleFieldChanged(ALL_FIELDS);
     }
@@ -507,7 +507,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 
     /**
      * Attempts to extract a C Element from the initial selection.
-     * 
+     *
      * @param selection the initial selection
      * @return a C Element, or <code>null</code> if not available
      */
@@ -528,13 +528,13 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
         }
         return celem;
     }
-	
+
     /**
 	 * Returns the recommended maximum width for text fields (in pixels). This
 	 * method requires that createContent has been called before this method is
-	 * call. Subclasses may override to change the maximum width for text 
+	 * call. Subclasses may override to change the maximum width for text
 	 * fields.
-	 * 
+	 *
 	 * @return the recommended maximum width for text fields.
 	 */
 	protected int getMaxFieldWidth() {
@@ -563,10 +563,10 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
         }
     	return null;
     }
-	
+
     /**
      * Returns the method stubs to display in the wizard.
-     * 
+     *
      * @return array of method stubs
      */
     protected IMethodStub[] getDefaultMethodStubs() {
@@ -575,32 +575,32 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
             new DestructorMethodStub()
         };
     }
-    
+
     /**
      * Returns the text entered into the source folder input field.
-     * 
+     *
      * @return the source folder
      */
     public String getSourceFolderText() {
         return fSourceFolderDialogField.getText().trim();
     }
-    
+
     /**
      * Sets the text of the source folder input field.
-     * 
+     *
      * @param folder the folder name
      * @param update <code>true</code> if the dialog should be updated
-     */ 
+     */
     public void setSourceFolderText(String folder, boolean update) {
         fSourceFolderDialogField.setTextWithoutUpdate(folder != null ? folder : ""); //$NON-NLS-1$
         if (update) {
             fSourceFolderDialogField.dialogFieldChanged();
         }
     }
-    
+
     /**
      * Returns the current source folder as a path.
-     * 
+     *
      * @return the source folder path
      */
     protected IPath getSourceFolderFullPath() {
@@ -609,10 +609,10 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
             return new Path(text).makeAbsolute();
         return null;
     }
-    
+
     /**
      * Sets the source folder from the given path.
-     * 
+     *
      * @param folderPath the source folder path
      * @param update <code>true</code> if the dialog should be updated
      */
@@ -620,10 +620,10 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
         String str = (folderPath != null) ? folderPath.makeRelative().toString() : ""; //.makeRelative().toString(); //$NON-NLS-1$
         setSourceFolderText(str, update);
     }
-    
+
     /**
      * Returns the current project, based on the current source folder.
-     * 
+     *
      * @return the current project
      */
     protected ICProject getCurrentProject() {
@@ -642,7 +642,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 
     /**
      * Returns the text entered into the namespace input field.
-     * 
+     *
      * @return the namespace
      */
     public String getNamespaceText() {
@@ -651,29 +651,29 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 
     /**
      * Sets the text of the namespace input field.
-     * 
+     *
      * @param namespace the namespace name
      * @param update <code>true</code> if the dialog should be updated
-     */ 
+     */
     public void setNamespaceText(String namespace, boolean update) {
         fNamespaceDialogField.setTextWithoutUpdate(namespace != null ? namespace : ""); //$NON-NLS-1$
         if (update) {
             fNamespaceDialogField.dialogFieldChanged();
         }
     }
-    
+
     /**
      * Returns the selection state of the namespace checkbox.
-     * 
+     *
      * @return the selection state of the namespace checkbox
      */
     public boolean isNamespaceSelected() {
         return fNamespaceSelection.isSelected();
     }
-    
+
     /**
      * Sets the namespace checkbox's selection state.
-     * 
+     *
      * @param isSelected the checkbox's selection state
      * @param canBeModified if <code>true</code> the checkbox is
      * modifiable; otherwise it is read-only.
@@ -683,17 +683,17 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
         fNamespaceSelection.setEnabled(canBeModified);
         updateNamespaceEnableState();
     }
-    
+
     /**
      * Updates the enable state of the namespace button.
      */
     private void updateNamespaceEnableState() {
         fNamespaceDialogField.setEnabled(isNamespaceSelected());
     }
-    
+
     /**
      * Returns the class name entered into the class input field.
-     * 
+     *
      * @return the class name
      */
     public String getClassName() {
@@ -702,20 +702,20 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 
     /**
      * Sets the text of the class name input field.
-     * 
+     *
      * @param name the new class name
      * @param update <code>true</code> if the dialog should be updated
-     */ 
+     */
     public void setClassName(String name, boolean update) {
         fClassNameDialogField.setTextWithoutUpdate(name != null ? name : ""); //$NON-NLS-1$
         if (update) {
             fClassNameDialogField.dialogFieldChanged();
         }
     }
-    
+
     /**
      * Returns the currently selected (checked) method stubs.
-     * 
+     *
      * @return array of <code>IMethodStub</code> or empty array if none selected.
      */
     protected IMethodStub[] getSelectedMethodStubs() {
@@ -733,14 +733,14 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 
     /**
      * Returns the contents of the base classes field.
-     * 
+     *
      * @return array of <code>IBaseClassInfo</code>
      */
     protected IBaseClassInfo[] getBaseClasses() {
         List<IBaseClassInfo> classesList = fBaseClassesDialogField.getElements();
         return classesList.toArray(new IBaseClassInfo[classesList.size()]);
     }
-    
+
     /**
      * Adds a base class to the base classes field.
      * @param newBaseClass the new base class
@@ -769,7 +769,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 
     /**
      * Sets the use test file creation checkbox's selection state.
-     * 
+     *
      * @param isSelected the checkbox's selection state
      * @param canBeModified if <code>true</code> the checkbox is
      * modifiable; otherwise it is read-only.
@@ -787,38 +787,38 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
     private void updateTestFileEnableState() {
         fTestFileDialogField.setEnabled(fTestFileSelection.isSelected());
     }
-    
+
     /**
      * Returns the text entered into the header file input field.
-     * 
+     *
      * @return the header file
      */
     public String getHeaderFileText() {
         return fHeaderFileDialogField.getText().trim();
     }
-    
+
     /**
      * Sets the text of the header file input field.
-     * 
+     *
      * @param header the header file name
      * @param update <code>true</code> if the dialog should be updated
-     */ 
+     */
     public void setHeaderFileText(String header, boolean update) {
     	setFileText(fHeaderFileDialogField, header, update);
     }
 
     /**
      * Returns the current header file as a path.
-     * 
+     *
      * @return the header file path
      */
     protected IPath getHeaderFileFullPath() {
     	return getFilePath(getHeaderFileText());
     }
-    
+
     /**
      * Sets the header file from the given path.
-     * 
+     *
      * @param path the header file path
      * @param update <code>true</code> if the dialog should be updated
      */
@@ -828,35 +828,35 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 
     /**
      * Returns the text entered into the source file input field.
-     * 
+     *
      * @return the source file
      */
     public String getSourceFileText() {
         return fSourceFileDialogField.getText().trim();
     }
-    
+
     /**
      * Sets the text of the source file input field.
-     * 
+     *
      * @param source the source file name
      * @param update <code>true</code> if the dialog should be updated
-     */ 
+     */
     public void setSourceFileText(String source, boolean update) {
     	setFileText(fSourceFileDialogField, source, update);
     }
-    
+
     /**
      * Returns the current source file as a path.
-     * 
+     *
      * @return the source file path
      */
     protected IPath getSourceFileFullPath() {
     	return getFilePath(getSourceFileText());
     }
-    
+
     /**
      * Sets the source file from the given path.
-     * 
+     *
      * @param path the source file path
      * @param update <code>true</code> if the dialog should be updated
      */
@@ -866,7 +866,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 
     /**
      * Returns the text entered into the source file input field.
-     * 
+     *
      * @return the source file
      * @since 5.3
      */
@@ -876,11 +876,11 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 
     /**
      * Sets the text of the test file input field.
-     * 
+     *
      * @param testFile the test file name
      * @param update <code>true</code> if the dialog should be updated
      * @since 5.3
-     */ 
+     */
     public void setTestFileText(String testFile, boolean update) {
     	setFileText(fTestFileDialogField, testFile, update);
     }
@@ -888,7 +888,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
     /**
      * Returns the current test file as a path. Returns {@code null} if creation of test file
      * is disabled.
-     * 
+     *
      * @return the test file path, or {@code null} if creation of test file is disabled.
      * @since 5.3
      */
@@ -916,7 +916,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 
     /**
      * Sets a file name field to a given value.
-     * 
+     *
      * @param field the field to set
      * @param filename the new value of the field
      * @param update <code>true</code> if the dialog should be updated
@@ -930,7 +930,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 
     /**
      * Sets a file name field from the given path.
-     * 
+     *
      * @param path the file path
      * @param update <code>true</code> if the dialog should be updated
      */
@@ -950,7 +950,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 
     /**
      * Sets the test file from the given path.
-     * 
+     *
      * @param path the test file path
      * @param update <code>true</code> if the dialog should be updated
      * @since 5.3
@@ -972,13 +972,13 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 
     /**
      * Sets the focus on the class name input field.
-     */     
+     */
     protected void setFocus() {
         fClassNameDialogField.setFocus();
     }
-    
+
     // ----------- UI Validation ----------
-    
+
     /**
      * Causes doStatusUpdate() to be called whenever the focus changes.
      * Remembers the last focused field.
@@ -990,7 +990,8 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
             this.fieldID = fieldID;
         }
 
-        public void focusGained(FocusEvent e) {
+        @Override
+		public void focusGained(FocusEvent e) {
             if (fLastFocusedField != this.fieldID) {
                 fLastFocusedField = this.fieldID;
             	if (isFirstTime) {
@@ -1001,7 +1002,8 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
             }
         }
 
-        public void focusLost(FocusEvent e) {
+        @Override
+		public void focusLost(FocusEvent e) {
             if (fLastFocusedField != 0) {
                 fLastFocusedField = 0;
                 doStatusUpdate();
@@ -1013,6 +1015,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
      * Handles changes to the source folder field
      */
     private final class SourceFolderFieldAdapter implements IStringButtonAdapter, IDialogFieldListener {
+		@Override
 		public void changeControlPressed(DialogField field) {
 		    IPath oldFolderPath = getSourceFolderFullPath();
 			IPath newFolderPath = chooseSourceFolder(oldFolderPath);
@@ -1021,12 +1024,13 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 				handleFieldChanged(SOURCE_FOLDER_ID|ALL_FIELDS);
 			}
 		}
-		
+
+		@Override
 		public void dialogFieldChanged(DialogField field) {
 			handleFieldChanged(SOURCE_FOLDER_ID|ALL_FIELDS);
 		}
 	}
-    
+
     private IPath chooseSourceFolder(IPath initialPath) {
         ICElement initElement = NewClassWizardUtil.getSourceFolder(initialPath);
         if (initElement instanceof ISourceRoot) {
@@ -1035,11 +1039,11 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
             if (projRoot != null && projRoot.equals(initElement))
                 initElement = cProject;
         }
-        
+
         SourceFolderSelectionDialog dialog = new SourceFolderSelectionDialog(getShell());
         dialog.setInput(CoreModel.create(NewClassWizardUtil.getWorkspaceRoot()));
         dialog.setInitialSelection(initElement);
-        
+
         if (dialog.open() == Window.OK) {
             Object result = dialog.getFirstResult();
             if (result instanceof ICElement) {
@@ -1054,12 +1058,13 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
             }
         }
         return null;
-    }   
-	
+    }
+
     /**
      * handles changes to the namespace field
      */
     private final class NamespaceFieldAdapter implements IStringButtonAdapter, IDialogFieldListener {
+		@Override
 		public void changeControlPressed(DialogField field) {
 	        ITypeInfo ns = chooseNamespace();
 		    if (ns != null) {
@@ -1083,13 +1088,14 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 				handleFieldChanged(changedFields);
 	        }
 		}
-		
+
+		@Override
 		public void dialogFieldChanged(DialogField field) {
 	        updateNamespaceEnableState();
 			handleFieldChanged(NAMESPACE_ID|CLASS_NAME_ID);
 		}
 	}
-    
+
     private IPath updateSourceFolderFromPath(IPath filePath) {
         ICElement folder = NewClassWizardUtil.getSourceFolder(filePath);
         if (folder instanceof ISourceRoot) {
@@ -1103,10 +1109,10 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
         }
         IProject proj = PathUtil.getEnclosingProject(filePath);
         if (proj != null)
-            return proj.getFullPath(); 
+            return proj.getFullPath();
         return null;
     }
-    
+
     private ITypeInfo chooseNamespace() {
         ITypeSearchScope scope;
         ICProject project = getCurrentProject();
@@ -1123,21 +1129,22 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
             MessageDialog.openInformation(getShell(), title, message);
             return null;
         }
-        
+
         NamespaceSelectionDialog dialog = new NamespaceSelectionDialog(getShell());
         dialog.setElements(elements);
         int result = dialog.open();
         if (result == IDialogConstants.OK_ID) {
             return (ITypeInfo) dialog.getFirstResult();
         }
-        
+
         return null;
     }
-    
+
     /**
      * Handles changes to the class name field
      */
 	private final class ClassNameFieldAdapter implements IDialogFieldListener {
+		@Override
 		public void dialogFieldChanged(DialogField field) {
 		    int changedFields = CLASS_NAME_ID;
 			updateFilesFromClassName(fClassNameDialogField.getText().trim());
@@ -1145,30 +1152,34 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 			handleFieldChanged(changedFields);
 		}
 	}
-    
+
     /**
      * Handles changes to the base classes field
      */
 	private final class BaseClassesFieldAdapter implements IListAdapter<IBaseClassInfo> {
-        public void customButtonPressed(ListDialogField<IBaseClassInfo> field, int index) {
+        @Override
+		public void customButtonPressed(ListDialogField<IBaseClassInfo> field, int index) {
             if (index == 0) {
                 chooseBaseClasses();
             }
             handleFieldChanged(BASE_CLASSES_ID);
         }
 
-        public void selectionChanged(ListDialogField<IBaseClassInfo> field) {
+        @Override
+		public void selectionChanged(ListDialogField<IBaseClassInfo> field) {
         }
 
-        public void doubleClicked(ListDialogField<IBaseClassInfo> field) {
+        @Override
+		public void doubleClicked(ListDialogField<IBaseClassInfo> field) {
         }
     }
-    
+
     private void chooseBaseClasses() {
         List<IBaseClassInfo> oldContents = fBaseClassesDialogField.getElements();
         NewBaseClassSelectionDialog dialog = new NewBaseClassSelectionDialog(getShell());
         dialog.addListener(new ITypeSelectionListener() {
-            public void typeAdded(ITypeInfo newBaseClass) {
+            @Override
+			public void typeAdded(ITypeInfo newBaseClass) {
                 addBaseClass(newBaseClass, ASTAccessVisibility.PUBLIC, false);
             }
         });
@@ -1178,19 +1189,22 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
             fBaseClassesDialogField.setElements(oldContents);
         }
     }
-    
+
     /**
      * Handles changes to the method stubs field
      */
 	private final class MethodStubsFieldAdapter implements IListAdapter<IMethodStub> {
 
-        public void customButtonPressed(ListDialogField<IMethodStub> field, int index) {
+        @Override
+		public void customButtonPressed(ListDialogField<IMethodStub> field, int index) {
         }
 
-        public void selectionChanged(ListDialogField<IMethodStub> field) {
+        @Override
+		public void selectionChanged(ListDialogField<IMethodStub> field) {
         }
 
-        public void doubleClicked(ListDialogField<IMethodStub> field) {
+        @Override
+		public void doubleClicked(ListDialogField<IMethodStub> field) {
         }
     }
 
@@ -1198,6 +1212,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
      * handles changes to the file name fields
      */
     private final class FileGroupFieldAdapter implements IStringButtonAdapter, IDialogFieldListener {
+		@Override
 		public void changeControlPressed(DialogField field) {
 		    IPath filePath = null;
 			IPath headerPath = getHeaderFileFullPath();
@@ -1260,7 +1275,8 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 				handleFieldChanged(changedFields);
 		    }
 		}
-		
+
+		@Override
 		public void dialogFieldChanged(DialogField field) {
 		    int changedFields = 0;
 		    if (field == fTestFileSelection) {
@@ -1289,7 +1305,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 			handleFieldChanged(changedFields);
 		}
 	}
-    
+
     private IPath chooseFile(String title, IPath initialPath) {
         SourceFileSelectionDialog dialog = new SourceFileSelectionDialog(getShell());
         dialog.setTitle(title);
@@ -1310,12 +1326,12 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
                 dialog.setInitialSelection(filePath.toString(), null);
             }
         }
-        
+
         if (dialog.open() == Window.OK) {
             return dialog.getFilePath();
         }
         return null;
-    }   
+    }
 
     /**
      * update header and source file fields from the class name
@@ -1340,7 +1356,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
         if (fTestFileDerivedFromClassName && fTestFileDialogField.isEnabled())
         	fTestFileDialogField.setTextWithoutUpdate(testName);
     }
-    
+
     private static final int MAX_UNIQUE_CLASSNAME = 99;
 	private IDialogSettings fDialogSettings;
 
@@ -1348,7 +1364,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
      * Returns the names of the header file and source file which will be
      * used when this class is created, e.g. "MyClass" -> ["MyClass.h","MyClass.cpp"]
      * Note: the file names should be unique to avoid overwriting existing files.
-     * 
+     *
      * @param className the class name
      * @param folder the folder where the files are to be created, or <code>null</code>
      * @return an array of 2 Strings, containing the header file name and
@@ -1358,7 +1374,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
         String headerName = null;
         String sourceName = null;
         String testName = null;
-        
+
         if (folder == null) {
             headerName = NewSourceFileGenerator.generateHeaderFileNameFromClass(className);
             sourceName = NewSourceFileGenerator.generateSourceFileNameFromClass(className);
@@ -1389,16 +1405,16 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
                     }
                 }
                 ++count;
-                currName = className + separator + count; 
+                currName = className + separator + count;
             }
         }
-        
+
         return new String[] { headerName, sourceName, testName };
     }
-    
+
     /**
      * Hook method that gets called when a field on this page has changed.
-     * 
+     *
      * @param fields Bitwise-OR'd ids of the fields that changed.
      */
     protected void handleFieldChanged(int fields) {
@@ -1439,7 +1455,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
     /**
      * Updates the status line and the ok button according to the status of the fields
      * on the page. The most severe error is taken, with the last-focused field being
-     * evaluated first. 
+     * evaluated first.
      */
     protected void doStatusUpdate() {
         // do the last focused field first
@@ -1456,7 +1472,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
             (fHeaderFileStatus != lastStatus && isClassNameWarning) ? fHeaderFileStatus : STATUS_OK,
             (fSourceFileStatus != lastStatus && isClassNameWarning) ? fSourceFileStatus : STATUS_OK,
             (fTestFileStatus != lastStatus && isClassNameWarning) ? fTestFileStatus : STATUS_OK,
-                    
+
             (fClassNameStatus != lastStatus) ? fClassNameStatus : STATUS_OK,
             (fBaseClassesStatus != lastStatus) ? fBaseClassesStatus : STATUS_OK,
             (fMethodStubsStatus != lastStatus) ? fMethodStubsStatus : STATUS_OK,
@@ -1464,14 +1480,14 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
             (fSourceFileStatus != lastStatus) ? fSourceFileStatus : STATUS_OK,
             (fTestFileStatus != lastStatus) ? fTestFileStatus : STATUS_OK,
         };
-        
+
         // the mode severe status will be displayed and the ok button enabled/disabled.
         updateStatus(status);
     }
 
     /**
      * Returns the status of the last field which had focus.
-     * 
+     *
      * @return status of the last field which had focus
      */
     protected IStatus getLastFocusedStatus() {
@@ -1496,16 +1512,16 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
         	return STATUS_OK;
         }
     }
-    
+
     /**
-     * Hook method that gets called when the source folder has changed. The method validates the 
+     * Hook method that gets called when the source folder has changed. The method validates the
      * source folder and returns the status of the validation.
-     * 
+     *
      * @return the status of the validation
      */
 	protected IStatus sourceFolderChanged() {
 		StatusInfo status = new StatusInfo();
-		
+
 		IPath folderPath = getSourceFolderFullPath();
 		if (folderPath == null) {
 			status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_EnterSourceFolderName);
@@ -1543,11 +1559,11 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 
 		return status;
 	}
-		
+
 	/**
-     * Hook method that gets called when the namespace has changed. The method validates the 
+     * Hook method that gets called when the namespace has changed. The method validates the
      * namespace and returns the status of the validation.
-     * 
+     *
      * @return the status of the validation
      */
 	protected IStatus namespaceChanged() {
@@ -1588,7 +1604,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 			switch(searchResult) {
 			case NewClassWizardUtil.SEARCH_MATCH_FOUND_EXACT:
 				status.setOK();
-				return status;				
+				return status;
 			case NewClassWizardUtil.SEARCH_MATCH_FOUND_EXACT_ANOTHER_TYPE:
 				status.setWarning(NewClassWizardMessages.NewClassCreationWizardPage_error_TypeMatchingNamespaceExists);
 				return status;
@@ -1611,16 +1627,16 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		}
 	    return status;
 	}
-	
+
 	/**
-	 * Hook method that gets called when the class name has changed. The method validates the 
+	 * Hook method that gets called when the class name has changed. The method validates the
 	 * class name and returns the status of the validation.
-	 * 
+	 *
 	 * @return the status of the validation
 	 */
 	protected IStatus classNameChanged() {
 	    StatusInfo status = new StatusInfo();
-	    
+
 	    String className = getClassName();
 		// must not be empty
 		if (className == null || className.length() == 0) {
@@ -1633,7 +1649,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
             status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_QualifiedClassName);
             return status;
         }
-    
+
 		IStatus val = CConventions.validateClassName(className);
 		if (val.getSeverity() == IStatus.ERROR) {
 			status.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_InvalidClassName, val.getMessage()));
@@ -1642,7 +1658,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 			status.setWarning(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_warning_ClassNameDiscouraged, val.getMessage()));
 			// continue checking
 		}
-	
+
 	    ICProject project = getCurrentProject();
 	    if (project != null) {
 		    IQualifiedTypeName fullyQualifiedName = typeName;
@@ -1656,7 +1672,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 			switch(searchResult) {
 			case NewClassWizardUtil.SEARCH_MATCH_FOUND_EXACT:
 				status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_ClassNameExists);
-				return status;				
+				return status;
 			case NewClassWizardUtil.SEARCH_MATCH_FOUND_EXACT_ANOTHER_TYPE:
 				status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_TypeMatchingClassExists);
 				return status;
@@ -1668,15 +1684,15 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 				return status;
 			case NewClassWizardUtil.SEARCH_MATCH_NOTFOUND:
 				break;
-			}	
+			}
 	    }
 		return status;
 	}
-    
+
  	/**
-	 * Hook method that gets called when the list of base classes has changed. The method 
+	 * Hook method that gets called when the list of base classes has changed. The method
 	 * validates the base classes and returns the status of the validation.
-	 * 
+	 *
 	 * @return the status of the validation
 	 */
 	protected IStatus baseClassesChanged() {
@@ -1698,15 +1714,15 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
         }
 		return Status.OK_STATUS;
 	}
-    
+
     /**
      * This method validates the base classes by searching through the project's
      * include paths and checking if each base class is reachable.
-     * 
+     *
      * @param project the current project
      * @param sourceFolder the current source folder
      * @param baseClasses an array of base classes
-     * 
+     *
      * @return the status of the validation
      */
     protected IStatus baseClassesChanged(ICProject project, IPath sourceFolder, IBaseClassInfo[] baseClasses) {
@@ -1734,17 +1750,17 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 
     /**
      * Checks if the base classes need to be verified (ie they must exist in the project)
-     * 
+     *
      * @return <code>true</code> if the base classes should be verified
      */
     public boolean verifyBaseClasses() {
         return NewClassWizardPrefs.verifyBaseClasses();
     }
-    
+
     /**
-     * Hook method that gets called when the list of method stubs has changed. The method 
+     * Hook method that gets called when the list of method stubs has changed. The method
      * validates the method stubs and returns the status of the validation.
-     * 
+     *
      * @return the status of the validation
      */
 	protected IStatus methodStubsChanged() {
@@ -1753,32 +1769,32 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	}
 
     /**
-     * Hook method that gets called when the header file has changed. The method 
+     * Hook method that gets called when the header file has changed. The method
      * validates the header file and returns the status of the validation.
-     * 
+     *
      * @return the status of the validation
      */
 	protected IStatus headerFileChanged() {
 		StatusInfo status = new StatusInfo();
-		
+
 		IPath path = getHeaderFileFullPath();
 		if (path == null) {
 			status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_EnterHeaderFileName);
 			return status;
 		}
-		
+
 		IPath sourceFolderPath = getSourceFolderFullPath();
 		if (sourceFolderPath == null || !sourceFolderPath.isPrefixOf(path)) {
 			status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_HeaderFileNotInSourceFolder);
 			return status;
 		}
-		
+
 		// Make sure the file location is under a source root
 		if (!NewClassWizardUtil.isOnSourceRoot(path)) {
 			status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_HeaderFileNotInSourceFolder);
 			return status;
 		}
-		
+
 		boolean fileExists = false;
 		// Check if the file already exists
 		IResource file = NewClassWizardUtil.getWorkspaceRoot().getFile(path);
@@ -1795,7 +1811,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
     		} else {
     			fileExists = true;
     		}
-    		
+
 			IProject proj = file.getProject();
 			if (!proj.isOpen()) {
 				status.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_NotAFile, path));
@@ -1811,7 +1827,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
     		status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_NotAFile);
     		return status;
     	}
-		
+
 		// Check if folder exists
 		IPath folderPath = path.removeLastSegments(1).makeRelative();
 		IResource folder = NewClassWizardUtil.getWorkspaceRoot().findMember(folderPath);
@@ -1833,32 +1849,32 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	}
 
     /**
-     * Hook method that gets called when the source file has changed. The method 
+     * Hook method that gets called when the source file has changed. The method
      * validates the source file and returns the status of the validation.
-     * 
+     *
      * @return the status of the validation
      */
 	protected IStatus sourceFileChanged() {
 		StatusInfo status = new StatusInfo();
-		
+
 		IPath path = getSourceFileFullPath();
 		if (path == null) {
 			status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_EnterSourceFileName);
 			return status;
 		}
-		
+
 		IPath sourceFolderPath = getSourceFolderFullPath();
 		if (sourceFolderPath == null || !sourceFolderPath.isPrefixOf(path)) {
 			status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_SourceFileNotInSourceFolder);
 			return status;
 		}
-		
+
 		// Make sure the file location is under a source root
 		if (!NewClassWizardUtil.isOnSourceRoot(path)) {
 			status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_SourceFileNotInSourceFolder);
 			return status;
 		}
-		
+
 		boolean fileExists = false;
 		// Check if file already exists
 		IResource file = NewClassWizardUtil.getWorkspaceRoot().getFile(path);
@@ -1875,7 +1891,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
     		} else {
     			fileExists = true;
     		}
-    		
+
 			IProject proj = file.getProject();
 			if (!proj.isOpen()) {
 				status.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_NotAFile, path));
@@ -1891,7 +1907,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
     		status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_NotAFile);
     		return status;
     	}
-		
+
 		// Check if folder exists
 		IPath folderPath = path.removeLastSegments(1).makeRelative();
 		IResource folder = NewClassWizardUtil.getWorkspaceRoot().findMember(folderPath);
@@ -1911,11 +1927,11 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		}
 		return status;
 	}
-    
+
     /**
-     * Hook method that gets called when the test file has changed. The method 
+     * Hook method that gets called when the test file has changed. The method
      * validates the test file and returns the status of the validation.
-     * 
+     *
      * @return the status of the validation
      * @since 5.3
      */
@@ -1936,13 +1952,13 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 			status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_TestFileNotInSourceFolder);
 			return status;
 		}
-		
+
 		// Make sure the file location is under a source root
 		if (!NewClassWizardUtil.isOnSourceRoot(path)) {
 			status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_TestFileNotInSourceFolder);
 			return status;
 		}
-		
+
 		boolean fileExists = false;
 		// Check if file already exists
 		IResource file = NewClassWizardUtil.getWorkspaceRoot().getFile(path);
@@ -1959,7 +1975,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
     		} else {
     			fileExists = true;
     		}
-    		
+
 			IProject proj = file.getProject();
 			if (!proj.isOpen()) {
 				status.setError(NLS.bind(NewClassWizardMessages.NewClassCreationWizardPage_error_NotAFile, path));
@@ -1975,7 +1991,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
     		status.setError(NewClassWizardMessages.NewClassCreationWizardPage_error_NotAFile);
     		return status;
     	}
-		
+
 		// Check if folder exists
 		IPath folderPath = path.removeLastSegments(1).makeRelative();
 		IResource folder = NewClassWizardUtil.getWorkspaceRoot().findMember(folderPath);
@@ -1995,12 +2011,12 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		}
 		return status;
 	}
-    
+
     // -------- Code Generation ---------
-    
+
 	/**
 	 * Creates the new class using the entered field values.
-	 * 
+	 *
 	 * @param monitor a progress monitor to report progress.
 	 * @throws CoreException Thrown when the creation failed.
 	 * @throws InterruptedException Thrown when the operation was cancelled.
@@ -2034,21 +2050,21 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
         createClass(headerPath, sourcePath, testPath, getClassName(), namespace, getBaseClasses(),
         		getSelectedMethodStubs(), monitor);
 	}
-    
+
 	/**
      * Returns whether the generated header and source files should be
      * opened in editors after the finish button is pressed.
-     * 
+     *
      * @return <code>true</code> if the header and source file should be
      * displayed
      */
     public boolean openClassInEditor() {
         return NewClassWizardPrefs.openClassInEditor();
     }
-    
+
     /**
      * Creates a new class.
-     * 
+     *
      * @param headerPath the header file path
      * @param sourcePath the source file path
      * @param testPath the test file path, can be {@code null}.
@@ -2074,13 +2090,13 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
                 methodStubs);
         generator.setForceSourceFileCreation(true);
         generator.createClass(monitor);
-        
+
         fCreatedClass = generator.getCreatedClass();
         fCreatedHeaderFile = generator.getCreatedHeaderFile();
         fCreatedSourceFile = generator.getCreatedSourceFile();
         fCreatedTestFile = generator.getCreatedTestFile();
     }
-	
+
     protected void createClass(IPath headerPath, IPath sourcePath, String className, String namespace,
     		IBaseClassInfo[] baseClasses, IMethodStub[] methodStubs, IProgressMonitor monitor)
     		throws CoreException, InterruptedException {
@@ -2089,46 +2105,46 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
     }
 
 	/**
-	 * Returns the created class. The method only returns a valid class 
+	 * Returns the created class. The method only returns a valid class
 	 * after <code>createClass</code> has been called.
-	 * 
+	 *
 	 * @return the created class
 	 * @see #createClass(IProgressMonitor)
-	 */			
+	 */
 	public ICElement getCreatedClass() {
         return fCreatedClass;
 	}
-    
+
     /**
-     * Returns the created header file. The method only returns a valid file 
+     * Returns the created header file. The method only returns a valid file
      * after <code>createClass</code> has been called.
      *
      * @return the created header file
      * @see #createClass(IProgressMonitor)
-     */         
+     */
     public IFile getCreatedHeaderFile() {
         return fCreatedHeaderFile;
     }
 
     /**
-     * Returns the created source file. The method only returns a valid file 
+     * Returns the created source file. The method only returns a valid file
      * after <code>createClass</code> has been called.
-     * 
+     *
      * @return the created source file
      * @see #createClass(IProgressMonitor)
-     */         
+     */
     public IFile getCreatedSourceFile() {
     	return fCreatedSourceFile;
     }
 
     /**
-     * Returns the created test file. The method only returns a valid file 
+     * Returns the created test file. The method only returns a valid file
      * after <code>createClass</code> has been called.
-     * 
+     *
      * @return the created test file
      * @see #createClass(IProgressMonitor)
      * @since 5.3
-     */         
+     */
     public IFile getCreatedTestFile() {
     	return fCreatedTestFile;
     }

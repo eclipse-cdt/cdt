@@ -41,6 +41,7 @@ public class BinaryModule extends Parent implements IBinaryModule {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.IBinaryModule#getBinaryElements()
 	 */
+	@Override
 	public IBinaryElement[] getBinaryElements() throws CModelException {
 		ICElement[] e = getChildren();
 		IBinaryElement[] b = new IBinaryElement[e.length];
@@ -51,13 +52,15 @@ public class BinaryModule extends Parent implements IBinaryModule {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.IBinaryElement#getAddress()
 	 */
+	@Override
 	public IAddress getAddress() throws CModelException {
-		return null; 
+		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.IBinaryElement#getBinary()
 	 */
+	@Override
 	public IBinary getBinary() {
 		return (IBinary)getParent();
 	}

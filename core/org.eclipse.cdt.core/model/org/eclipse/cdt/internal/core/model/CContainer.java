@@ -50,9 +50,10 @@ public class CContainer extends Openable implements ICContainer {
 
 	/**
 	 * Returns a the collection of binary files in this ccontainer
-	 * 
+	 *
 	 * @see ICContainer#getBinaries()
 	 */
+	@Override
 	public IBinary[] getBinaries() throws CModelException {
 		List<?> list = getChildrenOfType(C_BINARY);
 		IBinary[] array = new IBinary[list.size()];
@@ -63,6 +64,7 @@ public class CContainer extends Openable implements ICContainer {
 	/**
 	 * @see ICContainer#getBinary(String)
 	 */
+	@Override
 	public IBinary getBinary(String name) {
 		IFile file = getContainer().getFile(new Path(name));
 		return getBinary(file);
@@ -78,9 +80,10 @@ public class CContainer extends Openable implements ICContainer {
 
 	/**
 	 * Returns a the collection of archive files in this ccontainer
-	 * 
+	 *
 	 * @see ICContainer#getArchives()
 	 */
+	@Override
 	public IArchive[] getArchives() throws CModelException {
 		List<?> list = getChildrenOfType(C_ARCHIVE);
 		IArchive[] array = new IArchive[list.size()];
@@ -91,6 +94,7 @@ public class CContainer extends Openable implements ICContainer {
 	/**
 	 * @see ICContainer#getArchive(String)
 	 */
+	@Override
 	public IArchive getArchive(String name) {
 		IFile file = getContainer().getFile(new Path(name));
 		return getArchive(file);
@@ -107,6 +111,7 @@ public class CContainer extends Openable implements ICContainer {
 	/**
 	 * @see ICContainer#getTranslationUnits()
 	 */
+	@Override
 	public ITranslationUnit[] getTranslationUnits() throws CModelException {
 		List<?> list = getChildrenOfType(C_UNIT);
 		ITranslationUnit[] array = new ITranslationUnit[list.size()];
@@ -116,9 +121,10 @@ public class CContainer extends Openable implements ICContainer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.model.ICContainer#getTranslationUnit(java.lang.String)
 	 */
+	@Override
 	public ITranslationUnit getTranslationUnit(String name) {
 		IFile file = getContainer().getFile(new Path(name));
 		return getTranslationUnit(file);
@@ -131,9 +137,10 @@ public class CContainer extends Openable implements ICContainer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.model.ICContainer#getCContainers()
 	 */
+	@Override
 	public ICContainer[] getCContainers() throws CModelException {
 		List<?> list = getChildrenOfType(C_CCONTAINER);
 		ICContainer[] array = new ICContainer[list.size()];
@@ -143,9 +150,10 @@ public class CContainer extends Openable implements ICContainer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.model.ICContainer#getCContainer(java.lang.String)
 	 */
+	@Override
 	public ICContainer getCContainer(String name) {
 		IFolder folder = getContainer().getFolder(new Path(name));
 		return getCContainer(folder);
@@ -195,9 +203,10 @@ public class CContainer extends Openable implements ICContainer {
 	/*
 	 * (non-Javadoc) Returns an array of non-c resources contained in the
 	 * receiver.
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.model.ICContainer#getNonCResources()
 	 */
+	@Override
 	public Object[] getNonCResources() throws CModelException {
 		return ((CContainerInfo) getElementInfo()).getNonCResources(getResource());
 	}
@@ -273,7 +282,7 @@ public class CContainer extends Openable implements ICContainer {
 		}
 		return celement;
 	}
-	
+
 	@Override
 	public ICElement getHandleFromMemento(String token, MementoTokenizer memento) {
 		switch (token.charAt(0)) {

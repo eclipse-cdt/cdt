@@ -55,17 +55,17 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class BinaryParsTab extends AbstractCPropertyTab {
-	
+
 	/* Settings from binary parser pages are NOT saved by prior CDT version.
 	 * So existing binary parsers _always_ use default values.
-	 * Moreover, obsolete interface is used while attempting to save. 
-	 * 
-	 * We have to affect both parsers and pages 
+	 * Moreover, obsolete interface is used while attempting to save.
+	 *
+	 * We have to affect both parsers and pages
 	 * to teach them to save data really.
-	 * 
+	 *
 	 * It will be done in next versions. Currently pages are disabled.
 	 */
-	
+
 	private static final int DEFAULT_HEIGHT = 160;
 	private static final String ATTR_FILTER = "filter"; //$NON-NLS-1$
 	private static final String ATTR_NAME = "name"; //$NON-NLS-1$
@@ -81,7 +81,7 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 	protected SashForm sashForm;
 
 	private ICTargetPlatformSetting tps;
-	
+
 	protected class BinaryParserConfiguration {
 		IExtension fExtension;
 		public BinaryParserConfiguration(IExtension extension) { fExtension = extension; }
@@ -97,7 +97,7 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 			return super.equals(obj);
 		}
 	}
-	
+
 	protected class BinaryParserPageConfiguration {
 		ICOptionPage dynamicPage;
 		IConfigurationElement fElement;
@@ -111,7 +111,7 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 			return dynamicPage;
 		}
 	}
-	
+
 	protected String getParserId() {
 		return CCorePlugin.BINARY_PARSER_SIMPLE_ID;
 	}
@@ -122,19 +122,19 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(usercomp, ICHelpContextIds.BINARY_PARSER_PAGE);
 
 		usercomp.setLayout(new GridLayout(1, false));
-		
+
 		sashForm = new SashForm(usercomp, SWT.NONE);
 		sashForm.setBackground(sashForm.getDisplay().getSystemColor(SWT.COLOR_GRAY));
 		sashForm.setOrientation(SWT.VERTICAL);
 		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		GridLayout layout = new GridLayout(2, false);
 		layout.marginHeight = 5;
 		sashForm.setLayout(layout);
 
 		Composite c1 = new Composite(sashForm, SWT.NONE);
 		c1.setLayout(new GridLayout(2, false));
-		setupLabel(c1, Messages.BinaryParsTab_0, 2, GridData.FILL_HORIZONTAL); 
+		setupLabel(c1, Messages.BinaryParsTab_0, 2, GridData.FILL_HORIZONTAL);
 		table = new Table(c1, SWT.BORDER | SWT.CHECK | SWT.SINGLE);
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
 		table.addSelectionListener(new SelectionAdapter() {
@@ -145,10 +145,13 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 		}});
 		tv = new CheckboxTableViewer(table);
 		tv.setContentProvider(new IStructuredContentProvider() {
+			@Override
 			public Object[] getElements(Object inputElement) {
 				return (Object[])inputElement;
 			}
+			@Override
 			public void dispose() {}
+			@Override
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 		});
 		tv.setLabelProvider(new LabelProvider() {
@@ -162,10 +165,11 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 		});
 
 		tv.addCheckStateListener(new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent e) {
 				saveChecked();
 			}});
-		
+
 		// get "standard" buttons on my own place
 		Composite c = new Composite(c1, SWT.NONE);
 		c.setLayoutData(new GridData(GridData.END));
@@ -174,7 +178,7 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 		parserGroup = new Composite(sashForm, SWT.NULL);
 		GridData gd = new GridData();
 		parserGroup.setLayout(new TabFolderLayout());
-		
+
 		PixelConverter converter = new PixelConverter(parent);
 		gd.heightHint = converter.convertHorizontalDLUsToPixels(DEFAULT_HEIGHT);
 
@@ -183,7 +187,7 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 		gd.grabExcessVerticalSpace = true;
 		gd.horizontalSpan = 2;
 		parserGroup.setLayoutData(gd);
-		
+
   	    sashForm.setWeights(new int[] {100, 100});
 		initializeParserList();
 		initializeParserPageMap();
@@ -205,7 +209,7 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 				if (tps != null)
 					ids = tps.getBinaryParserIds();
 			}
-			if (ids == null)	
+			if (ids == null)
 				ids = new String[0]; // no selection
 		} else { // project
 			ICConfigurationDescription[] cfgs = page.getCfgsEditable();
@@ -236,7 +240,7 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 		}
 		updateButtons();
 	}
-	
+
 	private void initializeParserList() {
 		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, CCorePlugin.BINARY_PARSER_SIMPLE_ID);
 		if (point != null) {
@@ -280,7 +284,7 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 		}
 		return false; // invalid extension definition (must have at least cextension elements)
 	}
-	
+
 	@Override
 	public void updateButtons() {
 		int cnt = table.getItemCount();
@@ -293,12 +297,12 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 		ICOptionPage dynamicPage;
 		for (String element : enabled) { // create all enabled pages
 			dynamicPage = getBinaryParserPage(element);
-			
+
 			if (dynamicPage != null) {
 				if (dynamicPage.getControl() == null) {
 					dynamicPage.setContainer(page);
 					dynamicPage.createControl(parserGroup);
-				} 
+				}
 				dynamicPage.setVisible(false);
 			}
 		}
@@ -307,7 +311,7 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 		dynamicPage = getBinaryParserPage(parserID);
 		if (dynamicPage != null) { dynamicPage.setVisible(true); }
 	}
-	
+
 	protected String[] getBinaryParserIDs() {
 		return configMap.keySet().toArray(new String[configMap.keySet().size()]);
 	}
@@ -333,34 +337,34 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 		if (page.isMultiCfg()) {
 			src = ((ICResourceDescription[])((ICMultiResourceDescription)src).getItems())[0];
 			dst = ((ICResourceDescription[])((ICMultiResourceDescription)dst).getItems())[0];
-		} 
+		}
 		ICTargetPlatformSetting tps1 = src.getConfiguration().getTargetPlatformSetting();
 		ICTargetPlatformSetting tps2 = dst.getConfiguration().getTargetPlatformSetting();
-		if (tps1 != null && tps2 != null) { 
+		if (tps1 != null && tps2 != null) {
 			tps2.setBinaryParserIds(tps1.getBinaryParserIds());
 		}
 	}
-	
+
 	@Override
 	protected void performDefaults() {
 		if (page.isForProject())
 			CoreModelUtil.setBinaryParserIds(page.getCfgsEditable(), null);
 		else
-			if (tps != null) 
+			if (tps != null)
 				tps.setBinaryParserIds(null);
-		informPages(false); 
+		informPages(false);
 		updateData(getResDesc());
-	}	
-	
-	private void informPages(boolean apply) {	
+	}
+
+	private void informPages(boolean apply) {
 		IProgressMonitor mon = new NullProgressMonitor();
 		Iterator<BinaryParserPageConfiguration> it = fParserPageMap.values().iterator();
-		
+
 		while (it.hasNext()) {
 			try {
 				ICOptionPage dynamicPage = (it.next()).getPage();
 				if (dynamicPage.isValid() && dynamicPage.getControl() != null) {
-					if (apply)  
+					if (apply)
 						dynamicPage.performApply(mon);
 					else
 						dynamicPage.performDefaults();
@@ -368,7 +372,7 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 			} catch (CoreException e) {}
 		}
 	}
-	
+
 	@Override
 	public void buttonPressed(int i) {
 		switch (i) {
@@ -386,8 +390,8 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 	// Move item up / down
 	private void moveItem(boolean up) {
 		int n = table.getSelectionIndex();
-		if (n < 0 || 
-				(up && n == 0) || 
+		if (n < 0 ||
+				(up && n == 0) ||
 				(!up && n+1 == table.getItemCount()))
 			return;
 		Object d = tv.getElementAt(n);
@@ -400,7 +404,7 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 		saveChecked();
 		updateButtons();
 	}
-	
+
 	private void saveChecked() {
 		Object[] objs = tv.getCheckedElements();
 		String[] ids = null;

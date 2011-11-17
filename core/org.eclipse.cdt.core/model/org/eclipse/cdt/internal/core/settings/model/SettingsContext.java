@@ -21,21 +21,22 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public final class SettingsContext implements IModificationContext{
 	private static final int USER_FLAGS_MASK = 0x0000ffff;
 	public static final int CFG_DATA_CACHED = 1 << 15;
-	
+
 	private IProjectDescription fEDes;
 	private IProject fProject;
 	private CompositeWorkspaceRunnable fRunnable;
 	private int fFlags;
-	
-	
+
+
 	public SettingsContext(IProject project){
 		fProject = project;
 	}
 
+	@Override
 	public IProject getProject(){
 		return fProject;
 	}
-	
+
 	void init(CConfigurationDescriptionCache cfg){
 		int flags = 0;
 		if(cfg.getBaseCache() != null)
@@ -48,16 +49,18 @@ public final class SettingsContext implements IModificationContext{
 		if(eDes == null && create){
 			if(fProject == null)
 				throw ExceptionFactory.createCoreException(SettingsModelMessages.getString("SettingsContext.0")); //$NON-NLS-1$
-			
+
 			eDes = fProject.getDescription();
 		}
 		return eDes;
 	}
-	
+
+	@Override
 	public IProjectDescription getEclipseProjectDescription() throws CoreException{
 		return getEclipseProjectDescription(true);
 	}
-	
+
+	@Override
 	public void setEclipseProjectDescription(IProjectDescription des)
 			throws CoreException {
 		if(fEDes == null)
@@ -71,28 +74,30 @@ public final class SettingsContext implements IModificationContext{
 			fRunnable = new CompositeWorkspaceRunnable(null);
 		return fRunnable;
 	}
-	
+
+	@Override
 	public void addWorkspaceRunnable(IWorkspaceRunnable runnable){
 		getCompositeWorkspaceRunnable(true).add(runnable);
 	}
-	
+
 	public IWorkspaceRunnable createOperationRunnable() {
 		CompositeWorkspaceRunnable result = new CompositeWorkspaceRunnable(null);
-		
+
 		IWorkspaceRunnable r = getSetEclipseProjectDescriptionRunnable();
 		if(r != null)
 			result.add(r);
 		r = getCompositeWorkspaceRunnable(false);
 		if(r != null)
 			result.add(r);
-		
+
 		return result.isEmpty() ? null : result;
 	}
-	
+
 	private IWorkspaceRunnable getSetEclipseProjectDescriptionRunnable(){
 		if(fEDes != null){
 			return new IWorkspaceRunnable(){
 
+				@Override
 				public void run(IProgressMonitor monitor)
 						throws CoreException {
 					fProject.setDescription(fEDes, monitor);
@@ -106,12 +111,14 @@ public final class SettingsContext implements IModificationContext{
 		return fFlags;
 	}
 
+	@Override
 	public void setConfigurationSettingsFlags(int flags) {
-		//system flags are read only; 
+		//system flags are read only;
 		flags &= USER_FLAGS_MASK;
 		fFlags |= flags;
 	}
 
+	@Override
 	public boolean isBaseDataCached() {
 		return (fFlags & CFG_DATA_CACHED) != 0;
 	}

@@ -10,7 +10,7 @@
  *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
- 
+
 import java.util.List;
 import java.util.Map;
 
@@ -48,6 +48,7 @@ public class CModel extends Openable implements ICModel {
 		return super.equals(o);
 	}
 
+	@Override
 	public ICProject[] getCProjects() throws CModelException {
 		List<?> list = getChildrenOfType(C_PROJECT);
 		ICProject[] array= new ICProject[list.size()];
@@ -58,9 +59,10 @@ public class CModel extends Openable implements ICModel {
 	/**
 	 * ICModel#getCProject(String)
 	 */
+	@Override
 	public ICProject getCProject(String name) {
-		IProject project = ((IWorkspaceRoot) getResource()).getProject(name);			
-		return CModelManager.getDefault().create(project);			
+		IProject project = ((IWorkspaceRoot) getResource()).getProject(name);
+		return CModelManager.getDefault().create(project);
 	}
 
 	/**
@@ -101,11 +103,13 @@ public class CModel extends Openable implements ICModel {
 		}
 		return null;
 	}
-	
+
+	@Override
 	public IWorkspace getWorkspace() {
 		return getUnderlyingResource().getWorkspace();
 	}
 
+	@Override
 	public void copy(ICElement[] elements, ICElement[] containers, ICElement[] siblings,
 		String[] renamings, boolean replace, IProgressMonitor monitor) throws CModelException {
 		if (elements != null && elements[0] != null && elements[0].getElementType() <= ICElement.C_UNIT ) {
@@ -117,6 +121,7 @@ public class CModel extends Openable implements ICModel {
 		}
 	}
 
+	@Override
 	public void delete(ICElement[] elements, boolean force, IProgressMonitor monitor)
 		throws CModelException {
 		CModelOperation op;
@@ -128,6 +133,7 @@ public class CModel extends Openable implements ICModel {
 		op.runOperation(monitor);
 	}
 
+	@Override
 	public void move(ICElement[] elements, ICElement[] containers, ICElement[] siblings,
 		String[] renamings, boolean replace, IProgressMonitor monitor) throws CModelException {
 		if (elements != null && elements[0] != null && elements[0].getElementType() <= ICElement.C_UNIT) {
@@ -139,6 +145,7 @@ public class CModel extends Openable implements ICModel {
 		}
 	}
 
+	@Override
 	public void rename(ICElement[] elements, ICElement[] destinations, String[] renamings,
 		boolean force, IProgressMonitor monitor) throws CModelException {
 		CModelOperation op;
@@ -210,6 +217,7 @@ public class CModel extends Openable implements ICModel {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ICModel#getNonCResources()
 	 */
+	@Override
 	public Object[] getNonCResources() throws CModelException {
 		return ((CModelInfo) getElementInfo()).getNonCResources();
 	}
@@ -241,12 +249,12 @@ public class CModel extends Openable implements ICModel {
 		}
 		return null;
 	}
-	
+
 	@Override
 	public void getHandleMemento(StringBuilder buff) {
 		buff.append(getElementName());
 	}
-	
+
 	@Override
 	protected char getHandleMementoDelimiter() {
 		Assert.isTrue(false, "Should not be called"); //$NON-NLS-1$

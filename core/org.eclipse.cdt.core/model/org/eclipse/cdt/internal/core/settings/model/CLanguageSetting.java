@@ -30,6 +30,7 @@ public class CLanguageSetting extends CDataProxy implements
 		super(data, parent, cfg);
 	}
 
+	@Override
 	public final int getType() {
 		return ICSettingBase.SETTING_LANGUAGE;
 	}
@@ -39,16 +40,18 @@ public class CLanguageSetting extends CDataProxy implements
 //		return data.getHeaderContentType();
 //	}
 
+	@Override
 	public String getLanguageId() {
 		CLanguageData data = getCLanguageData(false);
 		return data.getLanguageId();
 	}
-	
+
+	@Override
 	public void setLanguageId(String id){
 		CLanguageData data = getCLanguageData(true);
 		data.setLanguageId(id);
 	}
-	
+
 	private CLanguageData getCLanguageData(boolean write){
 		return (CLanguageData)getData(write);
 	}
@@ -57,11 +60,13 @@ public class CLanguageSetting extends CDataProxy implements
 //		return getSettingEntries(ICLanguageSettingEntry.ALL);
 //	}
 
+	@Override
 	public ICLanguageSettingEntry[] getSettingEntries(int kind) {
 		CLanguageData data = getCLanguageData(false);
 		return data.getEntries(kind);
 	}
 
+	@Override
 	public List<ICLanguageSettingEntry> getSettingEntriesList(int kind) {
 		CLanguageData data = getCLanguageData(false);
 		ICLanguageSettingEntry entries[] = data.getEntries(kind);
@@ -70,6 +75,7 @@ public class CLanguageSetting extends CDataProxy implements
 		return new ArrayList<ICLanguageSettingEntry>();
 	}
 
+	@Override
 	public String[] getSourceContentTypeIds() {
 		CLanguageData data = getCLanguageData(false);
 		String ids[] = data.getSourceContentTypeIds();
@@ -78,15 +84,17 @@ public class CLanguageSetting extends CDataProxy implements
 		return CDefaultLanguageData.EMPTY_STRING_ARRAY;
 	}
 
+	@Override
 	public int getSupportedEntryKinds() {
 		CLanguageData data = getCLanguageData(false);
 		return data.getSupportedEntryKinds();
 	}
 
+	@Override
 	public boolean supportsEntryKind(int kind) {
 		return (getSupportedEntryKinds() & kind) == kind;
 	}
-	
+
 /*	public String[] getHeaderExtensions() {
 		CLanguageData data = getCLanguageData(false);
 		IContentType type = data.getHeaderContentType();
@@ -100,10 +108,11 @@ public class CLanguageSetting extends CDataProxy implements
 			else
 				exts = new String[0];
 		}
-		
+
 		return exts;
 	}
 */
+	@Override
 	public String[] getSourceExtensions() {
 		CLanguageData data = getCLanguageData(false);
 		return CDataUtil.getSourceExtensions(getProject(), data);
@@ -118,17 +127,17 @@ public class CLanguageSetting extends CDataProxy implements
 //			else
 //				exts = CDefaultLanguageData.EMPTY_STRING_ARRAY;
 //		}
-//		
+//
 //		if(exts == null)
 //			exts = CDefaultLanguageData.EMPTY_STRING_ARRAY;
 //		return exts;
 	}
-	
+
 /*
 	private Map fillNameToEntryMap(ICLanguageSettingEntry entries[], Map map){
 		if(map == null)
 			map = new HashMap();
-		
+
 		for(int i = 0; i < entries.length; i++){
 			ICLanguageSettingEntry entry = entries[i];
 			map.put(entry.getName(), entry);
@@ -136,14 +145,14 @@ public class CLanguageSetting extends CDataProxy implements
 		return map;
 	}
 
-	
+
 	private class SettingChangeInfo implements ICSettingsChangeInfo {
 		CLanguageData fData;
 		ICLanguageSettingEntry fNewEntries[];
 		int fKind;
 		ICLanguageSettingEntryInfo fAddedInfo[];
 		ICLanguageSettingEntry fRemoved[];
-		
+
 		SettingChangeInfo(int kind, ICLanguageSettingEntry newEntries[], CLanguageData data){
 			fNewEntries = newEntries;
 			fData = data;
@@ -170,11 +179,11 @@ public class CLanguageSetting extends CDataProxy implements
 					ICLanguageSettingEntry entry = oldEntries[i];
 					if(entry.getKind() != fKind)
 						continue;
-					
+
 					list.add(entry);
 				}
-				
-				
+
+
 			}
 			return fNewEntries;
 		}
@@ -187,19 +196,19 @@ public class CLanguageSetting extends CDataProxy implements
 			// TODO Auto-generated method stub
 			return null;
 		}
-		
+
 	}
 
 	public void changeEntries(ICLanguageSettingEntryInfo[] added, ICLanguageSettingEntry[] removed) {
 		CLanguageData data = getCLanguageData(true);
-		Map map = null; 
+		Map map = null;
 		if(added != null && added.length > 0){
 			map = sortEntries(added, true, map);
 		}
 		if(removed != null && removed.length > 0){
 			map = sortEntries(removed, false, map);
 		}
-		
+
 		if(map != null){
 			for(Iterator iter = map.entrySet().iterator(); iter.hasNext();){
 				Map.Entry entry = (Map.Entry)iter.next();
@@ -208,21 +217,21 @@ public class CLanguageSetting extends CDataProxy implements
 				List aList = lists[0];
 				List rList = lists[1];
 				ICLanguageSettingEntry sortedAdded[] = aList != null ?
-						(ICLanguageSettingEntry[])aList.toArray(new ICLanguageSettingEntry[aList.size()]) 
+						(ICLanguageSettingEntry[])aList.toArray(new ICLanguageSettingEntry[aList.size()])
 							: null;
 				ICLanguageSettingEntry sortedRemoved[] = rList != null ?
-						(ICLanguageSettingEntry[])rList.toArray(new ICLanguageSettingEntry[rList.size()]) 
+						(ICLanguageSettingEntry[])rList.toArray(new ICLanguageSettingEntry[rList.size()])
 							: null;
-				
+
 				data.changeEntries(kind, sortedAdded, sortedRemoved);
 			}
 		}
 	}
-	
+
 	private Map sortEntries(ICLanguageSettingEntry entries[], boolean added, Map map){
 		if(map == null)
 			map = new HashMap();
-		
+
 		int index = added ? 0 : 1;
 		for(int i = 0; i < entries.length; i++){
 			ICLanguageSettingEntry entry = entries[i];
@@ -244,6 +253,7 @@ public class CLanguageSetting extends CDataProxy implements
 		return map;
 	}
 */
+	@Override
 	public void setSettingEntries(int kind, ICLanguageSettingEntry[] entries) {
 		CLanguageData data = getCLanguageData(true);
 		EntryStore store = new EntryStore();
@@ -266,11 +276,11 @@ public class CLanguageSetting extends CDataProxy implements
 					}
 				}
 			}
-		} 
-		
+		}
+
 		setSettingEntries(kind, data, store);
 	}
-	
+
 	private int[] flagsToArray(int flags){
 		int arr[] = new int[32];
 		int num = 0;
@@ -287,12 +297,13 @@ public class CLanguageSetting extends CDataProxy implements
 		return result;
 	}
 
+	@Override
 	public void setSettingEntries(int kind, List<ICLanguageSettingEntry> list) {
 		CLanguageData data = getCLanguageData(true);
 		EntryStore store = new EntryStore();
 //		KindBasedStore nameSetStore = new KindBasedStore();
 		int eKind;
-		
+
 		if(list != null){
 			if(list.size() != 0){
 				for(ICLanguageSettingEntry entry : list){
@@ -310,10 +321,10 @@ public class CLanguageSetting extends CDataProxy implements
 				}
 			}
 		}
-		
+
 		setSettingEntries(kind, data, store);
 	}
-	
+
 	private void setSettingEntries(int kind, CLanguageData data, EntryStore store){
 		int oredk = getSupportedEntryKinds();
 		int kinds[] = flagsToArray(oredk);
@@ -344,22 +355,25 @@ public class CLanguageSetting extends CDataProxy implements
 //		return getSettingEntries();
 //	}
 
+	@Override
 	public ICLanguageSettingEntry[] getResolvedSettingEntries(int kind) {
 		ICLanguageSettingEntry entries[] = getSettingEntries(kind);
 		entries = CDataUtil.resolveEntries(entries, getConfiguration());
 		return entries;
 	}
 
+	@Override
 	public void setSourceContentTypeIds(String[] ids) {
 		CLanguageData data = getCLanguageData(true);
-		
+
 		data.setSourceContentTypeIds(ids);
 	}
 
+	@Override
 	public void setSourceExtensions(String[] exts) {
 		CLanguageData data = getCLanguageData(true);
-		
+
 		data.setSourceExtensions(exts);
 	}
-	
+
 }

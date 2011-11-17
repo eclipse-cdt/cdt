@@ -18,107 +18,115 @@ import org.eclipse.cdt.internal.core.SafeStringInterner;
 public abstract class ACSettingEntry implements ICSettingEntry {
 	int fFlags;
 	String fName;
-	
+
 	ACSettingEntry(String name, int flags){
 		fName = SafeStringInterner.safeIntern(name);
 		fFlags = flags;
 	}
 
+	@Override
 	public boolean isBuiltIn() {
 		return checkFlags(BUILTIN);
 	}
 
+	@Override
 	public boolean isReadOnly() {
 		return checkFlags(READONLY);
 	}
-	
+
 	protected boolean checkFlags(int flags){
 		return (fFlags & flags) == flags;
 	}
-	
+
+	@Override
 	public String getName() {
 		return fName;
 	}
 
+	@Override
 	public String getValue() {
-		//name and value differ only for macro entry and have the same contents 
+		//name and value differ only for macro entry and have the same contents
 		//for all other entries
 		return fName;
 	}
 
+	@Override
 	public boolean isResolved() {
 		return checkFlags(RESOLVED);
 	}
-	
+
 	@Override
 	public boolean equals(Object other){
 		if(other == this)
 			return true;
-		
+
 		if(!(other instanceof ACSettingEntry))
 			return false;
-		
+
 		ACSettingEntry e = (ACSettingEntry)other;
-		
+
 		if(getKind() != e.getKind())
 			return false;
-		
+
 		if(fFlags != e.fFlags)
 			return false;
-		
+
 		if(!fName.equals(e.fName))
 			return false;
-		
+
 		return true;
 	}
-	
+
 	@Override
 	public int hashCode(){
-		return getKind() + fFlags + fName.hashCode(); 
+		return getKind() + fFlags + fName.hashCode();
 	}
 
+	@Override
 	public int getFlags() {
 		return fFlags;
 	}
 
+	@Override
 	public boolean equalsByContents(ICSettingEntry entry) {
 		return equalsByName(entry);
 	}
-	
+
 	protected int getByNameMatchFlags(){
 		return (fFlags & (~ (BUILTIN | READONLY | RESOLVED)));
 	}
 
+	@Override
 	public final boolean equalsByName(ICSettingEntry entry) {
 		if(entry == this)
 			return true;
-		
+
 		if(!(entry instanceof ACSettingEntry))
 			return false;
-		
+
 		ACSettingEntry e = (ACSettingEntry)entry;
-		
+
 		if(getKind() != e.getKind())
 			return false;
-		
+
 		if(getByNameMatchFlags()
 				!= e.getByNameMatchFlags())
 			return false;
-		
+
 		if(!fName.equals(e.fName))
 			return false;
-		
+
 		return true;
 	}
-	
+
 	public final int codeForNameKey(){
-		return getKind() + getByNameMatchFlags() + fName.hashCode(); 
+		return getKind() + getByNameMatchFlags() + fName.hashCode();
 	}
-	
+
 	public int codeForContentsKey(){
 		return codeForNameKey();
 	}
-	
+
 	@Override
 	public final String toString(){
 		StringBuffer buf = new StringBuffer();
@@ -127,7 +135,7 @@ public abstract class ACSettingEntry implements ICSettingEntry {
 		buf.append(" ; flags: ").append(LanguageSettingEntriesSerializer.composeFlagsString(getFlags())); //$NON-NLS-1$
 		return buf.toString();
 	}
-	
+
 	protected abstract String contentsToString();
-	
+
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *    Anton Leherbauer (Wind River Systems)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.model.ext;
 
 import java.net.URI;
@@ -42,7 +42,7 @@ import org.eclipse.jface.text.Region;
 abstract class CElementHandle implements ICElementHandle, ISourceReference {
 	protected static final String[] EMPTY_STRING_ARRAY = new String[0];
 	private static final ICElement[] NO_CHILDREN = new ICElement[0];
-	
+
 	private ICElement fParent;
 	private String fName;
 	private int fType;
@@ -54,7 +54,7 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 	public CElementHandle(ICElement parent, int type, String name) {
 		fParent= parent;
 		fType= type;
-		// anonymous types are assigned a name in the index, we 
+		// anonymous types are assigned a name in the index, we
 		// undo this here
 		if (name.length() > 0 && name.charAt(0)=='{') {
 			fName= ""; //$NON-NLS-1$
@@ -64,7 +64,7 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 		}
 		fRegion= new Region(0,0);
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof ICElement) {
@@ -79,6 +79,7 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 	}
 
 
+	@Override
 	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class adapter) {
 		return null;
@@ -89,6 +90,7 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 		fTimestamp= timestamp;
 	}
 
+	@Override
 	public ISourceRange getSourceRange() throws CModelException {
 		IRegion region= fRegion;
 		ITranslationUnit tu= getTranslationUnit();
@@ -103,10 +105,12 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 		return new SourceRange(startpos, length);
 	}
 
+	@Override
 	public String getSource() throws CModelException {
 		return null;
 	}
-	
+
+	@Override
 	public ITranslationUnit getTranslationUnit() {
 		ICElement parent= fParent;
 		do {
@@ -118,58 +122,72 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 		while (parent != null);
 		return null;
 	}
-	
+
+	@Override
 	public void accept(ICElementVisitor visitor) throws CoreException {
 	}
 
+	@Override
 	public boolean exists() {
 		return true;
 	}
 
+	@Override
 	public ICElement getAncestor(int ancestorType) {
 		return null;
 	}
 
+	@Override
 	public ICModel getCModel() {
 		return fParent.getCModel();
 	}
 
+	@Override
 	public ICProject getCProject() {
 		return fParent.getCProject();
 	}
 
+	@Override
 	public String getElementName() {
 		return fName;
 	}
 
+	@Override
 	public int getElementType() {
 		return fType;
 	}
 
+	@Override
 	public ICElement getParent() {
 		return fParent;
 	}
 
+	@Override
 	public IPath getPath() {
 		return getTranslationUnit().getPath();
 	}
 
+	@Override
 	public URI getLocationURI() {
 		return getTranslationUnit().getLocationURI();
 	}
-	
+
+	@Override
 	public IResource getResource() {
 		return getTranslationUnit().getResource();
 	}
 
+	@Override
 	public IResource getUnderlyingResource() {
 		return getResource();
 	}
 
+	@Override
 	public boolean isReadOnly() {
 		return true;
 	}
 
+	@Override
 	public boolean isStructureKnown() throws CModelException {
 		return false;
 	}
@@ -185,7 +203,7 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 
 	public void rename(String name, boolean replace, IProgressMonitor monitor) throws CModelException {
 	}
-	
+
 	public void setTypeName(String type) throws CModelException {
 	}
 
@@ -224,7 +242,7 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 	public boolean isFriend() throws CModelException {
 		return false;
 	}
-	
+
 	public boolean isInline() throws CModelException {
 		return false;
 	}
@@ -248,7 +266,7 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 	public String getInitializer() {
 		return null;
 	}
-	
+
 	public boolean isAbstract() throws CModelException {
 		return false;
 	}
@@ -260,7 +278,7 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 	public String[] getSuperClassesNames() {
 		return EMPTY_STRING_ARRAY;
 	}
-	
+
 	protected String[] extractParameterTypes(IFunction func) {
 		IParameter[] params= func.getParameters();
 		String[] parameterTypes= new String[params.length];
@@ -273,7 +291,7 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 		}
 		return parameterTypes;
 	}
-	
+
 	protected ASTAccessVisibility getVisibility(IBinding binding) {
 		if (binding instanceof ICPPMember) {
 			ICPPMember member= (ICPPMember) binding;
@@ -292,6 +310,7 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 	/**
 	 * @see ICElement
 	 */
+	@Override
 	public String getHandleIdentifier() {
 		ICElement cModelElement= mapToModelElement();
 		if (cModelElement != null) {
@@ -309,10 +328,12 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 		}
 	}
 
+	@Override
 	public boolean isActive() {
 		return true;
 	}
 
+	@Override
 	public int getIndex() {
 		return fIndex;
 	}

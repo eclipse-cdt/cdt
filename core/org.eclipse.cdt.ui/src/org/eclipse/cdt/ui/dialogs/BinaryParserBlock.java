@@ -53,7 +53,7 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
 /**
  * @deprecated as of CDT 4.0. This tab was used to set preferences/properties
  * for 3.X style projects.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 @Deprecated
@@ -113,18 +113,21 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 		super(CUIPlugin.getResourceString(LABEL));
 		setDescription(CUIPlugin.getResourceString(DESC));
 		String[] buttonLabels = new String[]{
-		CUIMessages.BinaryParserBlock_button_up, 
-				CUIMessages.BinaryParserBlock_button_down}; 
+		CUIMessages.BinaryParserBlock_button_up,
+				CUIMessages.BinaryParserBlock_button_down};
 
 		IListAdapter<BinaryParserConfiguration> listAdapter = new IListAdapter<BinaryParserConfiguration>() {
 
+			@Override
 			public void customButtonPressed(ListDialogField<BinaryParserConfiguration> field, int index) {
 			}
 
+			@Override
 			public void selectionChanged(ListDialogField<BinaryParserConfiguration> field) {
 				handleBinaryParserChanged();
 			}
 
+			@Override
 			public void doubleClicked(ListDialogField<BinaryParserConfiguration> field) {
 			}
 		};
@@ -139,6 +142,7 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 		};
 		binaryList.setDialogFieldListener(new IDialogFieldListener() {
 
+			@Override
 			public void dialogFieldChanged(DialogField field) {
 				if (getContainer() != null) {
 					getContainer().updateContainer();
@@ -146,7 +150,7 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 				}
 			}
 		});
-		binaryList.setLabelText(CUIMessages.BinaryParserBlock_binaryParser); 
+		binaryList.setLabelText(CUIMessages.BinaryParserBlock_binaryParser);
 		binaryList.setUpButtonIndex(0);
 		binaryList.setDownButtonIndex(1);
 		initializeParserList();
@@ -201,9 +205,9 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 		binaryList.setButtonsMinWidth(buttonBarWidth);
 
 		// Add the Parser UI contribution.
-		
+
 		Composite parserGroup = new Composite(composite, SWT.NULL);
-		
+
 		GridData gd = new GridData();
 		gd.heightHint = converter.convertHorizontalDLUsToPixels(DEFAULT_HEIGHT);
 		gd.horizontalAlignment = GridData.FILL;
@@ -222,7 +226,7 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		monitor.beginTask(CUIMessages.BinaryParserBlock_settingBinaryParser, 2); 
+		monitor.beginTask(CUIMessages.BinaryParserBlock_settingBinaryParser, 2);
 		List<BinaryParserConfiguration> parsers = binaryList.getElements();
 		final List<BinaryParserConfiguration> selected = new ArrayList<BinaryParserConfiguration>(); // must do this to get proper order.
 		for (int i = 0; i < parsers.size(); i++) {
@@ -233,6 +237,7 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 		if (getContainer().getProject() != null) {
 			ICDescriptorOperation op = new ICDescriptorOperation() {
 
+				@Override
 				public void execute(ICDescriptor descriptor, IProgressMonitor monitor) throws CoreException {
 					if (initialSelected == null || !selected.equals(initialSelected)) {
 						descriptor.remove(CCorePlugin.BINARY_PARSER_UNIQ_ID);
@@ -283,7 +288,7 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 
 		if (getContainer().getProject() != null) {
 			try {
-				ICConfigExtensionReference[] ref = CCorePlugin.getDefault().getDefaultBinaryParserExtensions(getContainer().getProject()); 
+				ICConfigExtensionReference[] ref = CCorePlugin.getDefault().getDefaultBinaryParserExtensions(getContainer().getProject());
 				initialSelected = new ArrayList<BinaryParserConfiguration>(ref.length);
 				for (ICConfigExtensionReference element : ref) {
 					if (configMap.get(element.getID()) != null) {

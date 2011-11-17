@@ -15,11 +15,11 @@ import org.eclipse.cdt.core.settings.model.extension.CDataObject;
 
 public abstract class CDataProxyContainer extends CDataProxy implements ICDataProxyContainer{
 	private IProxyProvider fChildProxyProvider;
-	
+
 	CDataProxyContainer(CDataObject data, ICDataProxyContainer parent, CConfigurationDescription cfg) {
 		super(data, parent, cfg);
 	}
-	
+
 /*	protected class ChildrenDataScope implements ICDataScope{
 		public boolean isStatic() {
 			return isWritable();
@@ -40,7 +40,7 @@ public abstract class CDataProxyContainer extends CDataProxy implements ICDataPr
 
 		return provider.getProxy(id);
 	}
-	
+
 	public ICSettingObject[] getChildrenOfKind(int kind){
 		IProxyProvider provider = getChildrenProxyProvider();
 
@@ -56,9 +56,10 @@ public abstract class CDataProxyContainer extends CDataProxy implements ICDataPr
 			fChildProxyProvider = createChildProxyProvider();
 		return fChildProxyProvider;
 	}
-	
+
 	protected abstract IProxyProvider createChildProxyProvider();
 
+	@Override
 	public ICSettingObject[] getChildSettings() {
 		IProxyProvider provider = getChildrenProxyProvider();
 
@@ -68,29 +69,30 @@ public abstract class CDataProxyContainer extends CDataProxy implements ICDataPr
 		return provider.getProxies();
 	}
 
+	@Override
 	public void updateChild(CDataProxy child, boolean write){
 		getData(write);
 		getChildrenProxyProvider().cacheValues();
 	}
-	
+
 	@Override
 	protected void setRescan(boolean rescan){
 		if(isRescan() == rescan)
 			return;
-		
+
 		super.setRescan(rescan);
-		
+
 		if(rescan){
 			setRescanChildren();
 		}
 	}
-	
+
 	@Override
 	void setData(CDataObject data) {
 		super.setData(data);
 		setRescanChildren();
 	}
-	
+
 	protected void setRescanChildren(){
 		IProxyProvider provider = getChildrenProxyProvider();
 		if(provider == null)
@@ -102,12 +104,12 @@ public abstract class CDataProxyContainer extends CDataProxy implements ICDataPr
 		for(int i = 0; i < proxies.length; i++){
 			proxies[i].setRescan(true);
 		}
-		
+
 	}
 
 	public ICSettingObject getChildSettingById(String id) {
 		return getChildrenProxyProvider().getProxy(id);
 	}
-	
-	
+
+
 }

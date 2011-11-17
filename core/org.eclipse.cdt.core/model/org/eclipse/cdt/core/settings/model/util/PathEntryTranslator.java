@@ -990,6 +990,7 @@ public class PathEntryTranslator {
 			final Set<PathEntryComposer> set = new HashSet<PathEntryComposer>();
 			fStorage.accept(new IPathSettingsContainerVisitor() {
 
+				@Override
 				public boolean visit(PathSettingsContainer container) {
 					PathEntryCollector clr = (PathEntryCollector)container.getValue();
 					clr.getLocalCollectedEntries(kind, list, set);
@@ -2033,6 +2034,7 @@ public class PathEntryTranslator {
 
 		final int kinds[] = KindBasedStore.getLanguageEntryKinds();
 		rcDatas.accept(new IPathSettingsContainerVisitor() {
+			@Override
 			public boolean visit(PathSettingsContainer container) {
 				CResourceData data = (CResourceData)container.getValue();
 				if (data != null) {

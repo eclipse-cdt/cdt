@@ -59,39 +59,41 @@ public class SymbolDialog extends AbstractPropertyDialog {
 	protected Control createDialogArea(Composite c) {
 		c.setLayout(new GridLayout(4, true));
 		GridData gd;
-		
+
 		Label l1 = new Label(c, SWT.NONE);
-		l1.setText(Messages.SymbolDialog_0); 
+		l1.setText(Messages.SymbolDialog_0);
 		l1.setLayoutData(new GridData(GridData.BEGINNING));
-		
+
 		txt1 = new Text(c, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 3;
 		gd.widthHint = 300;
 		txt1.setLayoutData(gd);
 		txt1.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				setButtons();
-			}}); 
-		
+			}});
+
 		Label l2 = new Label(c, SWT.NONE);
-		l2.setText(Messages.SymbolDialog_1); 
+		l2.setText(Messages.SymbolDialog_1);
 		l2.setLayoutData(new GridData(GridData.BEGINNING));
-		
+
 		txt2 = new Text(c, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		gd.widthHint = 200;
 		txt2.setLayoutData(gd);
 		txt2.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				setButtons();
-			}}); 
+			}});
 
 		b_vars = setupButton(c, AbstractCPropertyTab.VARIABLESBUTTON_NAME);
-			
+
 		b_add2conf = new Button(c, SWT.CHECK);
-		b_add2conf.setText(Messages.IncludeDialog_2); 
+		b_add2conf.setText(Messages.IncludeDialog_2);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 4;
 		b_add2conf.setLayoutData(gd);
@@ -101,7 +103,7 @@ public class SymbolDialog extends AbstractPropertyDialog {
 		}
 
 		b_add2lang = new Button(c, SWT.CHECK);
-		b_add2lang.setText(Messages.IncludeDialog_3); 
+		b_add2lang.setText(Messages.IncludeDialog_3);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 4;
 		b_add2lang.setLayoutData(gd);
@@ -109,37 +111,37 @@ public class SymbolDialog extends AbstractPropertyDialog {
 			b_add2lang.setVisible(false);
 			txt1.setEnabled(false); // don't change name
 		}
-		
+
 		// add 2 placeholders
 		new Label(c, 0).setLayoutData(new GridData());
 		new Label(c, 0).setLayoutData(new GridData());
 		b_ok = setupButton(c, IDialogConstants.OK_LABEL);
 		b_ko = setupButton(c, IDialogConstants.CANCEL_LABEL);
-		
+
 		c.getShell().setDefaultButton(b_ok);
 		c.pack();
 
 		// moved here to avoid accessing b_ok before it created.
 		txt1.setText(data1);
-		txt2.setText(data2); 
-		
+		txt2.setText(data2);
+
 		setButtons();
 		return c;
-	}	
-	
+	}
+
 	private void setButtons() {
 		b_ok.setEnabled(txt1.getText().trim().length() > 0);
 	}
-	
+
 	@Override
 	public void buttonPressed(SelectionEvent e) {
-		if (e.widget.equals(b_ok)) { 
+		if (e.widget.equals(b_ok)) {
 			super.text1 = txt1.getText();
 			super.text2 = txt2.getText();
-			check1 = b_add2conf.getSelection(); 
-			check3 = b_add2lang.getSelection(); 
+			check1 = b_add2conf.getSelection();
+			check3 = b_add2lang.getSelection();
 			result = true;
-			shell.dispose(); 
+			shell.dispose();
 		} else if (e.widget.equals(b_ko)) {
 			shell.dispose();
 		} else if (e.widget.equals(b_vars)) {

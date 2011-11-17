@@ -94,22 +94,22 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	public Color getWarningBackgroundColor() {
 		return problemWarningBackgroundColor;
 	}
-	
+
 	public Color getInfoBackgroundColor() {
 		return problemInfoBackgroundColor;
 	}
-	
+
 	private BuildConsoleStreamDecorator infoStream;
 	private BuildConsoleStreamDecorator outputStream;
 	private BuildConsoleStreamDecorator errorStream;
-	
+
 	private String fName;
 	private String fContextMenuId;
 
 	static public final int BUILD_STREAM_TYPE_INFO = 0;
 	static public final int BUILD_STREAM_TYPE_OUTPUT = 1;
 	static public final int BUILD_STREAM_TYPE_ERROR = 2;
-	
+
 	static public final String DEFAULT_CONTEXT_MENU_ID = CUIPlugin.PLUGIN_ID + ".CDTBuildConsole"; //$NON-NLS-1$
 
 	private IProject fLastProject;
@@ -185,9 +185,10 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	/**
 	 * Traverses the delta looking for added/removed/changed launch
 	 * configuration files.
-	 * 
+	 *
 	 * @see IResourceChangeListener#resourceChanged(IResourceChangeEvent)
 	 */
+	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		IResource resource = event.getResource();
 		if (resource != null && resource.getType() == IResource.PROJECT) {
@@ -241,7 +242,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	/**
 	 * Create new build console. Subclasses may override to create a specialized
 	 * console.
-	 * 
+	 *
 	 * @param name - name of console to appear in the list of consoles in context menu
 	 *    in the Console view.
 	 * @param contextId - context menu id in the Console view.
@@ -253,14 +254,14 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	protected BuildConsole createBuildConsole(String name, String contextId, final URL iconUrl) {
 		return new BuildConsole(this, name, contextId, iconUrl);
 	}
-	
+
 	/**
 	 * Start console activities. This will create a new console in the Console view,
 	 * create streams, color resources, register listeners etc.
 	 * Most work is done in UI thread.
-	 * 
+	 *
 	 * Use {@link #shutdown()} after the console activity ends.
-	 * 
+	 *
 	 * @param name - name of the console to appear in the Console view.
 	 * @param contextId - context menu id in the Console view.
 	 * @param iconUrl - icon to show in the context menu.
@@ -280,9 +281,10 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see java.lang.Runnable#run()
 			 */
+			@Override
 			public void run() {
 				// add console to the Console view
 				fConsole = createBuildConsole(fName, fContextMenuId, iconUrl);
@@ -311,9 +313,10 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		String property = event.getProperty();
 		// colors
@@ -364,9 +367,10 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 		final BuildConsolePage p = BuildConsole.getCurrentPage();
 		if ( p == null ) return;
 		final BuildConsoleViewer v = p.getViewer();
-		if ( v  == null ) return;		
+		if ( v  == null ) return;
 		Display display = Display.getDefault();
 		display.asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				v.getTextWidget().redraw();
 			}
@@ -395,7 +399,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 
 	/**
 	 * Returns a background color instance based on data from a preference field.
-	 * This is a workaround for black console bug 320723. 
+	 * This is a workaround for black console bug 320723.
 	 */
 	private Color createBackgroundColor(Display display, String preference) {
 		IPreferenceStore preferenceStore = CUIPlugin.getDefault().getPreferenceStore();
@@ -411,16 +415,18 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public IConsole getConsole(IProject project) {
 		return new MultiBuildConsoleAdapter(getProjectConsole(project), GlobalBuildConsoleManager.getGlobalConsole());
 	}
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @return the console for the specified project. Returns {@code null}
 	 *   if project is {@code null} or not accessible.
 	 */
+	@Override
 	public IConsole getProjectConsole(IProject project) {
 		if (project==null || !project.isAccessible())
 			return null;
@@ -431,9 +437,10 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.ui.IBuildConsoleManager#getLastBuiltProject()
 	 */
+	@Override
 	public IProject getLastBuiltProject() {
 		return fLastProject;
 	}
@@ -453,15 +460,18 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	/**
 	 * @return the document backing the build console for the specified project
 	 */
+	@Override
 	public IDocument getConsoleDocument(IProject project) {
 		Assert.isNotNull(project);
 		return getProjectConsolePartioner(project).getDocument();
 	}
 
+	@Override
 	public void addConsoleListener(IBuildConsoleListener listener) {
 		listeners.add(listener);
 	}
 
+	@Override
 	public void removeConsoleListener(IBuildConsoleListener listener) {
 		listeners.remove(listener);
 	}
@@ -485,7 +495,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 
 	/**
 	 * Where the log for per-project console is kept.
-	 * 
+	 *
 	 * @param project - the project. Cannot be {@code null}.
 	 * @return {@link URI} of build log or {@code null} if not available.
 	 */

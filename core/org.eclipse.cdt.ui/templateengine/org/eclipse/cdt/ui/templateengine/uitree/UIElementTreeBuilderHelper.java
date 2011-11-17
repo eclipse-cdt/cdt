@@ -50,7 +50,7 @@ public class UIElementTreeBuilderHelper implements IUIElementTreeBuilderHelper {
 
 	/**
 	 * Constructor, takes an TemplateDescriptor instance as parameter.
-	 * 
+	 *
 	 * @param templateDescriptor
 	 */
 	public UIElementTreeBuilderHelper(TemplateDescriptor templateDescriptor, TemplateInfo templateInfo) {
@@ -59,7 +59,7 @@ public class UIElementTreeBuilderHelper implements IUIElementTreeBuilderHelper {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return List of child Elements for the given
 	 */
 	public List<Element> getPropertyGroupList() {
@@ -71,10 +71,11 @@ public class UIElementTreeBuilderHelper implements IUIElementTreeBuilderHelper {
 	 * same is returned. The Type attribute is verified, based on Type
 	 * appropriate UIWidget is instantiated. This class the getUIWidget private
 	 * method.
-	 * 
+	 *
 	 * @param element
 	 * @return UIElement.
 	 */
+	@Override
 	public UIElement getUIElement(Element element) {
 		UIAttributes uiAttributes = new UIAttributes(templateInfo);
 
@@ -83,7 +84,7 @@ public class UIElementTreeBuilderHelper implements IUIElementTreeBuilderHelper {
 			Node attribute = list.item(i);
 			uiAttributes.put(attribute.getNodeName(), attribute.getNodeValue());
 		}
-		
+
 		return getUIWidget(element, uiAttributes);
 	}
 
@@ -91,7 +92,7 @@ public class UIElementTreeBuilderHelper implements IUIElementTreeBuilderHelper {
 	 * Given an XML Element, representing a PropertyElement. A UIElement for the
 	 * same is returned. The Type attribute is verified, based on Type
 	 * appropriate UIWidget is instantiated.
-	 * 
+	 *
 	 * @param uiAttributes
 	 * @return UIElement.
 	 */
@@ -99,22 +100,22 @@ public class UIElementTreeBuilderHelper implements IUIElementTreeBuilderHelper {
 		UIElement widgetElement= null;
 		String id= uiAttributes.get(UIElement.ID);
 		String type= uiAttributes.get(UIElement.TYPE);
-		
+
 		if (type == null || type.length()==0 ) {
 			return null;
 		}
-		
+
 		if (new Boolean(uiAttributes.get(InputUIElement.HIDDEN)).booleanValue()) {
-			return null;	
+			return null;
 		}
-		
+
 		if (type.equalsIgnoreCase(InputUIElement.INPUTTYPE)) {
 			widgetElement = new UITextWidget(uiAttributes);
 		} else if (type.equalsIgnoreCase(InputUIElement.MULTILINETYPE)) {
 			widgetElement = new UITextWidget(uiAttributes);
 		} else if (type.equalsIgnoreCase(InputUIElement.SELECTTYPE)) {
 			String defaultValue= element.getAttribute(InputUIElement.DEFAULT);
-			
+
 			Map<String,String> value2name= new LinkedHashMap<String,String>();
 			for(Element item : TemplateEngine.getChildrenOfElement(element)) {
 				String label= item.getAttribute(InputUIElement.COMBOITEM_LABEL); // item displayed in Combo
@@ -134,7 +135,7 @@ public class UIElementTreeBuilderHelper implements IUIElementTreeBuilderHelper {
 					}
 				}
 			}
-			
+
 			widgetElement = new UISelectWidget(uiAttributes, value2name, defaultValue);
 		} else if (type.equalsIgnoreCase(InputUIElement.BOOLEANTYPE)) {
 			String defaultValue= element.getAttribute(InputUIElement.DEFAULT);
@@ -152,7 +153,7 @@ public class UIElementTreeBuilderHelper implements IUIElementTreeBuilderHelper {
 			widgetElement = new SimpleUIElementGroup(uiAttributes);
 		} else if (type.equalsIgnoreCase(UIGroupTypeEnum.PAGES_TAB.getId())) {
 			// Note: This is not implemented now as we haven't found a use case
-			// for generating UI pages as TABS in a single page. 
+			// for generating UI pages as TABS in a single page.
 		} else {
 			String msg= MessageFormat.format(Messages.getString("UIElementTreeBuilderHelper.UnknownWidgetType0"), new Object[] {type}); //$NON-NLS-1$
 			CUIPlugin.log(TEMPLATE_ENGINE_ERROR, new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, msg)));

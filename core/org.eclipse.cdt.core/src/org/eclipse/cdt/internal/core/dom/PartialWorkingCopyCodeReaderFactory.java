@@ -46,21 +46,23 @@ public class PartialWorkingCopyCodeReaderFactory extends AbstractCodeReaderFacto
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#getUniqueIdentifier()
      */
-    public int getUniqueIdentifier() {
+    @Override
+	public int getUniqueIdentifier() {
         return CDOM.PARSE_WORKING_COPY_WITH_SAVED_INCLUSIONS;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#createCodeReaderForTranslationUnit(java.lang.String)
      */
-    public CodeReader createCodeReaderForTranslationUnit(String path) {
+    @Override
+	public CodeReader createCodeReaderForTranslationUnit(String path) {
 		return checkWorkingCopyThenCache(path);
     }
 
     public CodeReader createCodeReaderForTranslationUnit(ITranslationUnit tu) {
 		return new CodeReader(tu.getPath().toOSString(), tu.getContents());
     }
-    
+
 	protected CodeReader checkWorkingCopyThenCache(String path) {
 		char [] buffer = ParserUtil.findWorkingCopyBuffer( path, createWorkingCopyIterator() );
 		if( buffer != null )
@@ -71,11 +73,12 @@ public class PartialWorkingCopyCodeReaderFactory extends AbstractCodeReaderFacto
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#createCodeReaderForInclusion(java.lang.String)
      */
-    public CodeReader createCodeReaderForInclusion(String path) {
+    @Override
+	public CodeReader createCodeReaderForInclusion(String path) {
         return cache.get( path );
     }
 
-    
+
 	@Override
 	public CodeReader createCodeReaderForInclusion(IIndexFileLocation ifl, String astPath)
 			throws CoreException, IOException {
@@ -90,6 +93,7 @@ public class PartialWorkingCopyCodeReaderFactory extends AbstractCodeReaderFacto
 	/* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#getCodeReaderCache()
      */
+	@Override
 	public ICodeReaderCache getCodeReaderCache() {
 		return cache;
 	}

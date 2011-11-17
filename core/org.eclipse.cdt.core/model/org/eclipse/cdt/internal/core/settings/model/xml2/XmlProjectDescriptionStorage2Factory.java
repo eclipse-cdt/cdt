@@ -22,10 +22,12 @@ import org.osgi.framework.Version;
  */
 public class XmlProjectDescriptionStorage2Factory implements ICProjectDescriptionStorageType {
 
+	@Override
 	public AbstractCProjectDescriptionStorage getProjectDescriptionStorage(CProjectDescriptionStorageTypeProxy type, IProject project, Version version) {
 		return new XmlProjectDescriptionStorage2(type, project, version);
 	}
 
+	@Override
 	public boolean createsCProjectXMLFile() {
 		return true;
 	}

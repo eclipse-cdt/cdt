@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.resources;
 
 import java.lang.ref.SoftReference;
@@ -51,28 +51,28 @@ import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * Allows for looking up resources by location or name. When using this class 100 bytes per resource
- * are needed. Therefore the support is limited to header-files int non-cdt projects and all files 
+ * are needed. Therefore the support is limited to header-files int non-cdt projects and all files
  * except non-cdt-files in CDT projects.
  *
  * The information for a project is initialized when first requested and then it is kept up to date
  * using a resource change listener. No memory is used, as long as the class is not used.
  * When information is not used for more than 10 minutes, the data-structures will be held via a weak
  * reference, only and are subject to garbage collection.
- * 
+ *
  * The node map stores a map from hash-code of file-names to nodes.
  * A node contains the name of a file plus a link to the parent resource. From that we can compute
  * the resource path and obtain further information via the resource.
  */
 class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisitor, IResourceProxyVisitor {
 	private static final int UNREF_DELAY = 10 * 60000; // 10 min
-	
+
 	private static final boolean VISIT_CHILDREN = true;
 	private static final boolean SKIP_CHILDREN = false;
 	private static final IFile[] NO_FILES = new IFile[0];
-	private static final int TRIGGER_RECALC= 
-		IResourceDelta.TYPE | IResourceDelta.REPLACED | 
+	private static final int TRIGGER_RECALC=
+		IResourceDelta.TYPE | IResourceDelta.REPLACED |
 		IResourceDelta.LOCAL_CHANGED | IResourceDelta.OPEN;
-	
+
 	private static class Extensions {
 		private final boolean fInvert;
 		private final Set<String> fExtensions;
@@ -85,21 +85,21 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 			final int idx= filename.lastIndexOf('.');
 			if (idx < 0)
 				return true;
-			
+
 			return fExtensions.contains(filename.substring(idx+1).toUpperCase()) != fInvert;
 		}
 	}
-	
+
 	private static class Node {
 		final Node fParent;
 		final char[] fResourceName;
 		final boolean fHasFileLocationName;
 		final boolean fIsFileLinkTarget;
-		
+
 		boolean fDeleted;
 		boolean fHasChildren;
 		int fCanonicHash;
-		
+
 		Node(Node parent, char[] name, boolean hasFileLocationName, boolean isFileLinkTarget) {
 			fParent= parent;
 			fResourceName= name;
@@ -109,7 +109,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 				parent.fHasChildren= true;
 		}
 	}
-	
+
 	private final Object fLock= new Object();
 	private final Job fUnrefJob;
 	private SoftReference<Map<Integer, Object>> fNodeMapRef;
@@ -121,7 +121,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 	private Node fRootNode;
 	private boolean fNeedCleanup;
 	private Node fLastFolderNode;
-	
+
 	public ResourceLookupTree() {
 		fRootNode= new Node(null, CharArrayUtils.EMPTY, false, false) {};
 		fFileExtensions= new HashMap<String, Extensions>();
@@ -152,6 +152,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 	/**
 	 * Handle resource change notifications.
 	 */
+	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		IResourceDelta delta= event.getDelta();
 		synchronized (fLock) {
@@ -178,31 +179,32 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 			}
 		}
 	}
-	
+
 	/**
 	 * Handles resource change notifications by visiting the delta.
 	 */
+	@Override
 	public boolean visit(IResourceDelta delta) throws CoreException {
 		assert Thread.holdsLock(fLock);
-		
+
 		final IResource res= delta.getResource();
 		if (res instanceof IWorkspaceRoot)
 			return VISIT_CHILDREN;
-		
+
 		if (res instanceof IProject) {
 			// project not yet handled
 			final String name = res.getName();
 			final Extensions exts= fFileExtensions.get(name);
 			if (exts == null)
 				return SKIP_CHILDREN;
-			
+
 			switch (delta.getKind()) {
 			case IResourceDelta.ADDED:	// new projects should not yet be part of the tree
 			case IResourceDelta.REMOVED:
 				fFileExtensions.remove(name);
 				remove(res);
 				return SKIP_CHILDREN;
-				
+
 			case IResourceDelta.CHANGED:
 				if ((delta.getFlags() & (TRIGGER_RECALC | IResourceDelta.DESCRIPTION)) != 0) {
 					fFileExtensions.remove(name);
@@ -214,13 +216,13 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 			fCurrentExtensions= exts;
 			return VISIT_CHILDREN;
 		}
-				
+
 		// file or folder
 		switch (delta.getKind()) {
 		case IResourceDelta.ADDED:
 			add(res);
 			return SKIP_CHILDREN;
-			
+
 		case IResourceDelta.CHANGED:
 			if ((delta.getFlags() & TRIGGER_RECALC) != 0) {
 				remove(res);
@@ -228,9 +230,9 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 				return SKIP_CHILDREN;
 			}
 			return VISIT_CHILDREN;
-			
+
 		case IResourceDelta.REMOVED:
-			
+
 			remove(res);
 			return SKIP_CHILDREN;
 		}
@@ -243,7 +245,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 	 */
 	private void add(IResource res) {
 		assert Thread.holdsLock(fLock);
-		
+
 		if (res instanceof IFile) {
 			final String resName = res.getName();
 			String linkedName= null;
@@ -257,7 +259,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 						} else {
 							createFileNode(res.getFullPath(), linkedName);
 						}
-					}			
+					}
 				}
 			} else if (fCurrentExtensions.isRelevant(resName)) {
 				createFileNode(res.getFullPath(), null);
@@ -270,16 +272,17 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 			}
 		}
 	}
-	
+
 	/**
 	 * Add a resource tree by using a resource proxy visitor.
 	 */
+	@Override
 	public boolean visit(IResourceProxy proxy) throws CoreException {
 		if (proxy.getType() == IResource.FILE) {
 			if (fCurrentExtensions.isRelevant(proxy.getName())) {
 				if (proxy.isLinked()) {
 					IResource res= proxy.requestResource();
-					if (res instanceof IFile) { 
+					if (res instanceof IFile) {
 						add(res);
 					}
 					return true;
@@ -290,7 +293,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 		return true;
 	}
 
-	
+
 	public void unrefNodeMap() {
 		synchronized (fLock) {
 			fNodeMap= null;
@@ -309,7 +312,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 	 */
 	private void initializeProjects(IProject[] projects) {
 		assert Thread.holdsLock(fLock);
-		
+
 		if (fNodeMap == null) {
 			if (fNodeMapRef != null) {
 				fNodeMap= fNodeMapRef.get();
@@ -322,7 +325,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 			}
 		}
 		fUnrefJob.cancel();
-		fUnrefJob.schedule(UNREF_DELAY); 
+		fUnrefJob.schedule(UNREF_DELAY);
 
 		for (IProject project : projects) {
 			if (project.isOpen() && !fFileExtensions.containsKey(project.getName())) {
@@ -347,7 +350,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 	 * Initializes file-extensions and node map
 	 */
 	private void initFileExtensions() {
-		
+
 		if (fDefaultExtensions == null) {
 			HashSet<String> cdtContentTypes= new HashSet<String>();
 			String[] registeredContentTypes= CoreModel.getRegistedContentTypeIds();
@@ -373,14 +376,14 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 			outer: for (IContentType ctt : ctts) {
 				IContentType basedOn= ctt;
 				while (basedOn != null) {
-					if (cdtContentTypes.contains(basedOn.getId())) 
+					if (cdtContentTypes.contains(basedOn.getId()))
 						continue outer;
 					basedOn= basedOn.getBaseType();
 				}
 				// this is a non-cdt content type
 				addFileSpecs(ctt, nonCDTExtensions);
 			}
-			// Bug 323659: In case there is another content type for a cdt file-extension we need 
+			// Bug 323659: In case there is another content type for a cdt file-extension we need
 			// to remove it.
 			nonCDTExtensions.removeAll(cdtExtensions);
 			fCDTProjectExtensions= new Extensions(nonCDTExtensions, true);
@@ -424,7 +427,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 	 */
 	private Node createNode(char[][] segments, int segmentCount, boolean hasFileLocationName, boolean isFileLinkTarget) {
 		assert Thread.holdsLock(fLock);
-		
+
 		if (segmentCount == 0)
 			return fRootNode;
 
@@ -432,10 +435,10 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 			if (isNodeForSegments(fLastFolderNode, segments, segmentCount, isFileLinkTarget))
 				return fLastFolderNode;
 		}
-		
+
 		final char[] name= segments[segmentCount-1];
 		final int hash= hashCode(name);
-		
+
 		// search for existing node
 		Object obj= fNodeMap.get(hash);
 
@@ -456,7 +459,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 				nodes= (Node[]) obj;
 				for (len=0; len < nodes.length; len++) {
 					Node node = nodes[len];
-					if (node == null) 
+					if (node == null)
 						break;
 					if (isNodeForSegments(node, segments, segmentCount, isFileLinkTarget)) {
 						if (!hasFileLocationName)
@@ -465,12 +468,12 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 					}
 				}
 			}
-		}		
+		}
 		final Node parent= createNode(segments, segmentCount-1, false, false);
 		Node node= new Node(parent, name, hasFileLocationName, isFileLinkTarget);
 		if (nodes == null) {
 			fNodeMap.put(hash, node);
-		} else { 
+		} else {
 			if (len == nodes.length) {
 				Node[] newNodes= new Node[len+2];
 				System.arraycopy(nodes, 0, newNodes, 0, len);
@@ -479,7 +482,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 			}
 			nodes[len]= node;
 		}
-		
+
 		if (!hasFileLocationName)
 			fLastFolderNode= node;
 		return node;
@@ -490,10 +493,10 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 	 */
 	private boolean isNodeForSegments(Node node, char[][] segments, int segmentLength, boolean isFileLinkTarget) {
 		assert Thread.holdsLock(fLock);
-		
+
 		if (node.fIsFileLinkTarget != isFileLinkTarget)
 			return false;
-		
+
 		while(segmentLength > 0 && node != null) {
 			if (!CharArrayUtils.equals(segments[--segmentLength], node.fResourceName))
 				return false;
@@ -501,25 +504,25 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 		}
 		return node == fRootNode;
 	}
-	
+
 	/**
 	 * Remove a resource from the tree
 	 */
 	private void remove(IResource res) {
 		assert Thread.holdsLock(fLock);
-		
+
 		final char[] name= res.getName().toCharArray();
 		final int hash= hashCode(name);
-		
+
 		Object obj= fNodeMap.get(hash);
 		if (obj == null)
 			return;
-		
+
 		final IPath fullPath= res.getFullPath();
 		final int segmentCount= fullPath.segmentCount();
 		if (segmentCount == 0)
 			return;
-		
+
 		final char[][]segments= toCharArrayArray(fullPath.segments(), null);
 		if (obj instanceof Node) {
 			final Node node= (Node) obj;
@@ -538,7 +541,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 				if (!node.fDeleted && isNodeForSegments(node, segments, segmentCount, false)) {
 					remove(nodes, i);
 
-					if (nodes[0] == null) 
+					if (nodes[0] == null)
 						fNodeMap.remove(hash);
 
 					node.fDeleted= true;
@@ -553,7 +556,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 
 	private void remove(Node[] nodes, int i) {
     	int idx= lastValid(nodes, i);
-    	if (idx > 0) { 
+    	if (idx > 0) {
     		nodes[i]= nodes[idx];
     		nodes[idx]= null;
     	}
@@ -563,9 +566,9 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 		int right= nodes.length-1;
     	while (left < right) {
     		int mid= (left+right+1)/2;  // ==> mid > left
-    		if (nodes[mid] == null) 
+    		if (nodes[mid] == null)
     			right= mid-1;
-    		else 
+    		else
     			left= mid;
     	}
 		return right;
@@ -574,7 +577,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 	private void cleanup() {
 		assert Thread.holdsLock(fLock);
 		fLastFolderNode= null;
-		
+
 		for (Iterator<Object> iterator = fNodeMap.values().iterator(); iterator.hasNext();) {
 			Object obj= iterator.next();
 			if (obj instanceof Node) {
@@ -589,7 +592,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 					if (node == null) {
 						if (j==0) {
 							iterator.remove();
-						} 
+						}
 						break;
 					}
 					if (!isDeleted(node)) {
@@ -605,7 +608,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 			}
 		}
 	}
-	
+
 	private boolean isDeleted(Node node) {
 		while(node != null) {
 			if (node.fDeleted)
@@ -663,8 +666,8 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 				if (result.length > 0)
 					return result;
 			}
-		}	
-		
+		}
+
 		// fall back to platform functionality
 		return adapter.platformsFindFilesForLocation(location);
 	}
@@ -687,7 +690,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 		final int segCount= relativeLocation.segmentCount();
 		if (segCount < 1)
 			return NO_FILES;
-		
+
 		final String name= relativeLocation.lastSegment();
 		Node[] candidates;
 
@@ -699,7 +702,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 				return NO_FILES;
 			}
 			candidates= convert(obj);
-		}	
+		}
 		String suffix= relativeLocation.toString();
 		while(suffix.startsWith("../")) { //$NON-NLS-1$
 			suffix= suffix.substring(3);
@@ -710,7 +713,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 		}
 		return extractMatchesForName(candidates, name, suffix, ignoreCase, prjset);
 	}
-	
+
 	/**
 	 * Selects the actual matches for the list of candidate nodes.
 	 */
@@ -718,7 +721,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 		final char[] n1= name.toCharArray();
 		final int namelen = n1.length;
 		int resultIdx= 0;
-		
+
 		if (ignoreCase) {
 			for (int j = 0; j < namelen; j++) {
 				n1[j]= Character.toUpperCase(n1[j]);
@@ -734,7 +737,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 				if (namelen == n2.length) {
 					for (int j = 0; j < n2.length; j++) {
 						final char c= ignoreCase ? Character.toUpperCase(n2[j]) : n2[j];
-						if (c != n1[j]) 
+						if (c != n1[j])
 							continue outer;
 					}
 					final IFile file= root.getFile(createPath(node));
@@ -742,19 +745,19 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 					if (loc != null) {
 						String path= loc.getPath();
 						final int len= path.length();
-						if (len >= suffixLen && 
+						if (len >= suffixLen &&
 								suffix.regionMatches(ignoreCase, 0, path, len-suffixLen, suffixLen)) {
-							if (result == null) 
+							if (result == null)
 								result= new IFile[candidates.length-i];
 							result[resultIdx++]= root.getFile(createPath(node));
-						} 
+						}
 					}
 				}
 			}
 		}
 		if (result==null)
 			return NO_FILES;
-		
+
 		if (resultIdx < result.length) {
 			IFile[] copy= new IFile[resultIdx];
 			System.arraycopy(result, 0, copy, 0, resultIdx);
@@ -784,7 +787,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 
 		return createPath(node.fParent).append(new String(node.fResourceName));
 	}
-	
+
 	/**
 	 * Selects the actual matches from the list of candidates
 	 */
@@ -800,21 +803,21 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 				final T loc= adapter.getLocation(file);
 				if (loc != null) {
 					if (!loc.equals(location)) {
-						if (searchPath == null) 
+						if (searchPath == null)
 							continue;
-						
+
 						if (node.fCanonicHash != 0 && node.fCanonicHash != searchPath.hashCode())
 							continue;
-						
+
 						final String candPath= adapter.getCanonicalPath(loc);
 						if (candPath == null)
 							continue;
-						
+
 						node.fCanonicHash= candPath.hashCode();
 						if (!candPath.equals(searchPath))
 							continue;
 					}
-					if (result == null) 
+					if (result == null)
 						result= new IFile[candidates.length-i];
 					result[resultIdx++]= root.getFile(createPath(node));
 				}
@@ -822,7 +825,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 		}
 		if (result==null)
 			return NO_FILES;
-		
+
 		if (resultIdx < result.length) {
 			IFile[] copy= new IFile[resultIdx];
 			System.arraycopy(result, 0, copy, 0, resultIdx);
@@ -836,7 +839,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 		List<String> lines= new ArrayList<String>();
 		synchronized (fLock) {
 			for (Object object : fNodeMap.values()) {
-				Node[] nodes= convert(object);	
+				Node[] nodes= convert(object);
 				for (final Node node : nodes) {
 					if (node == null) {
 						break;
@@ -857,7 +860,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 	private String toString(Node node) {
 		if (node == fRootNode)
 			return "";
-		
+
 		return toString(node.fParent) + "/" + new String(node.fResourceName);
 	}
 }

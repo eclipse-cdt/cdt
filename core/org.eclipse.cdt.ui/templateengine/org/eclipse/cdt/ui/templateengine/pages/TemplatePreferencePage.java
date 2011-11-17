@@ -149,7 +149,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 
 	/**
 	 * Sets the values of the Message Dialog
-	 * 
+	 *
 	 * @param aName
 	 * @param aValue
 	 */
@@ -176,7 +176,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 	/**
 	 * Creates controls on the Preference Page Adds the created Table and Button
 	 * composite to the parent composite.
-	 * 
+	 *
 	 * @param parent
 	 * @return subComposite
 	 */
@@ -212,7 +212,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 	/**
 	 * Adds table into the first composite present under parent Updates the
 	 * Table with backend persistence data.
-	 * 
+	 *
 	 * @param parent
 	 */
 
@@ -224,7 +224,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 
 	/**
 	 * Creates second composite for buttons present under the parent
-	 * 
+	 *
 	 * @param parent
 	 */
 
@@ -235,7 +235,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 
 	/**
 	 * Creates default composite area for the Buttons
-	 * 
+	 *
 	 * @param parent
 	 * @return composite
 	 */
@@ -259,7 +259,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 
 	/**
 	 * Creates Table with XML properties as its settings
-	 * 
+	 *
 	 * @param composite
 	 */
 
@@ -350,7 +350,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 	 * Creates button controls on the first composite present under parent
 	 * composite. Its aligned at rightmost end of Table and top of the second
 	 * composite.
-	 * 
+	 *
 	 * @param composite
 	 */
 
@@ -372,7 +372,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 
 	/**
 	 * Constructs button listeners to trigger specific functionality
-	 * 
+	 *
 	 * @param button
 	 */
 	public void addButtonListener(final Button button) {
@@ -444,7 +444,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 
 	/**
 	 * Gets the size of the Attributes of an Element of XML file
-	 * 
+	 *
 	 * @param sharedElementList
 	 * @return attrListSize
 	 */
@@ -481,6 +481,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 		}
 	}
 
+	@Override
 	public void init(IWorkbench workbench) {
 
 	}
@@ -504,7 +505,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 
 	/**
 	 * Gives the item for the selected row in the table
-	 * 
+	 *
 	 * @return selectedItemName
 	 */
 
@@ -542,7 +543,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 		if (result == SWT.OK) {
 			int itemSelected[] = table.getSelectionIndices();
 			table.remove(itemSelected);
-			
+
 			if (delItemNames != null) {
 				sharedDefaults.deleteBackEndStorage(delItemNames);
 			}
@@ -554,7 +555,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 
 	/**
 	 * Sets confirmation for the data deletion at the fronend and backend
-	 * 
+	 *
 	 * @param selectedItems
 	 * @return result
 	 */

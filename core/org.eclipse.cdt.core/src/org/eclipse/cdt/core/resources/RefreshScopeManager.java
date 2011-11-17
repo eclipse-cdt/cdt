@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -47,14 +47,14 @@ import org.eclipse.core.runtime.jobs.MultiRule;
  * project may have a set of resources associated with it that are the set of resources to be refreshed. An
  * exclusion mechanism exists that allows for one to specify arbitrarily complicated, nested logic that
  * determines whether or not a given resource is refreshed according to previously specified rules.
- * 
+ *
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in progress. There
  * is no guarantee that this API will work or that it will remain the same. Please do not use this API without
  * consulting with the CDT team.
- * 
+ *
  * @author crecoskie
  * @since 5.3
- * 
+ *
  */
 public class RefreshScopeManager {
 
@@ -106,6 +106,7 @@ public class RefreshScopeManager {
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(
 				new IResourceChangeListener() {
 
+					@Override
 					public void resourceChanged(IResourceChangeEvent event) {
 
 						if (event.getType() == IResourceChangeEvent.PRE_CLOSE
@@ -130,6 +131,7 @@ public class RefreshScopeManager {
 							try {
 								delta.accept(new IResourceDeltaVisitor() {
 
+									@Override
 									public boolean visit(IResourceDelta delta) throws CoreException {
 										if (delta.getResource() instanceof IProject) {
 											IProject project = (IProject) delta.getResource();
@@ -326,6 +328,7 @@ public class RefreshScopeManager {
 				}
 			}
 
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 
 				List<IResource> resourcesToRefresh = getResourcesToRefresh(project);
@@ -355,7 +358,7 @@ public class RefreshScopeManager {
 	/**
 	 * Returns the set of resources that should be refreshed for a project. These resources might have
 	 * associated exclusions.
-	 * 
+	 *
 	 * @param project
 	 * @return List<IResource>
 	 */

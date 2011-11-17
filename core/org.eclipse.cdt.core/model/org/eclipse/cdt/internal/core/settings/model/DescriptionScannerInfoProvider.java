@@ -75,6 +75,7 @@ public class DescriptionScannerInfoProvider implements IScannerInfoProvider, ICP
 		return fProject;
 	}
 
+	@Override
 	public IScannerInfo getScannerInformation(IResource resource) {
 		if(!fInited)
 			updateProjCfgInfo(CProjectDescriptionManager.getInstance().getProjectDescription(fProject, false));
@@ -262,12 +263,14 @@ public class DescriptionScannerInfoProvider implements IScannerInfoProvider, ICP
 		return values;
 	}
 
+	@Override
 	public void subscribe(IResource resource,
 			IScannerInfoChangeListener listener) {
 		// TODO Auto-generated method stub
 
 	}
 
+	@Override
 	public void unsubscribe(IResource resource,
 			IScannerInfoChangeListener listener) {
 		// TODO Auto-generated method stub
@@ -278,6 +281,7 @@ public class DescriptionScannerInfoProvider implements IScannerInfoProvider, ICP
 		CProjectDescriptionManager.getInstance().removeCProjectDescriptionListener(this);
 	}
 
+	@Override
 	public void handleEvent(CProjectDescriptionEvent event) {
 		if(!event.getProject().equals(fProject))
 			return;

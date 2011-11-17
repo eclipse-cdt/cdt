@@ -40,6 +40,7 @@ public abstract class NewCProjectWizardOptionPage extends WizardPage implements 
 
 	protected abstract TabFolderOptionBlock createOptionBlock();
 
+	@Override
 	public void createControl(Composite parent) {
 		fOptionBlock = createOptionBlock();
 		setControl(fOptionBlock.createContents(parent));
@@ -52,6 +53,7 @@ public abstract class NewCProjectWizardOptionPage extends WizardPage implements 
 		updateContainer();
 	}
 
+	@Override
 	public void updateContainer() {
 		fOptionBlock.update();
 		setPageComplete(fOptionBlock.isValid());
@@ -65,11 +67,13 @@ public abstract class NewCProjectWizardOptionPage extends WizardPage implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionContainer#getPreferenceStore()
 	 */
+	@Override
 	public abstract Preferences getPreferences();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionContainer#getProject()
 	 */
+	@Override
 	public IProject getProject() {
 		return ((NewCProjectWizard)getWizard()).getNewProject();
 	}
@@ -77,6 +81,7 @@ public abstract class NewCProjectWizardOptionPage extends WizardPage implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionContainer#getProject()
 	 */
+	@Override
 	public IProject getProjectHandle() {
 		return ((NewCProjectWizard)getWizard()).getProjectHandle();
 	}

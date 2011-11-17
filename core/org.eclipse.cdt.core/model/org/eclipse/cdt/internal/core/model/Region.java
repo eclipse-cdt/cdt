@@ -32,7 +32,7 @@ public class Region implements IRegion {
 
 	/**
 	 * Creates an empty region.
-	 * 
+	 *
 	 * @see IRegion
 	 */
 	public Region() {
@@ -42,6 +42,7 @@ public class Region implements IRegion {
 	/**
 	 * @see IRegion#add(ICElement)
 	 */
+	@Override
 	public void add(ICElement element) {
 		if (!contains(element)) {
 			// "new" element added to region
@@ -54,6 +55,7 @@ public class Region implements IRegion {
 	/**
 	 * @see IRegion
 	 */
+	@Override
 	public boolean contains(ICElement element) {
 
 		int size = fRootElements.size();
@@ -77,7 +79,7 @@ public class Region implements IRegion {
 	/**
 	 * Returns a collection of all the parents of this element in bottom-up
 	 * order.
-	 * 
+	 *
 	 */
 	private ArrayList<ICElement> getAncestors(ICElement element) {
 		ArrayList<ICElement> parents = new ArrayList<ICElement>();
@@ -93,6 +95,7 @@ public class Region implements IRegion {
 	/**
 	 * @see IRegion
 	 */
+	@Override
 	public ICElement[] getElements() {
 		int size = fRootElements.size();
 		ICElement[] roots = new ICElement[size];
@@ -106,6 +109,7 @@ public class Region implements IRegion {
 	/**
 	 * @see IRegion#remove(ICElement)
 	 */
+	@Override
 	public boolean remove(ICElement element) {
 
 		removeAllChildren(element);
@@ -115,7 +119,7 @@ public class Region implements IRegion {
 	/**
 	 * Removes any children of this element that are contained within this
 	 * region as this parent is about to be added to the region.
-	 * 
+	 *
 	 * <p>
 	 * Children are all children, not just direct children.
 	 */

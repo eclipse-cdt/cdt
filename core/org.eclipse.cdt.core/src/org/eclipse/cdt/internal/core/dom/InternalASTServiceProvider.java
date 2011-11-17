@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *    IBM - Initial API and implementation
  *******************************************************************************/
@@ -73,37 +73,40 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.IASTServiceProvider#getTranslationUnit()
      */
-    public IASTTranslationUnit getTranslationUnit(IFile fileToParse) throws UnsupportedDialectException {
+    @Override
+	public IASTTranslationUnit getTranslationUnit(IFile fileToParse) throws UnsupportedDialectException {
         return getTranslationUnit( fileToParse.getLocation().toOSString(), fileToParse, SavedCodeReaderFactory.getInstance(), null);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.IASTServiceProvider#getTranslationUnit(org.eclipse.cdt.core.dom.ICodeReaderFactory)
      */
-    public IASTTranslationUnit getTranslationUnit(IFile fileToParse, ICodeReaderFactory fileCreator) throws UnsupportedDialectException {
+    @Override
+	public IASTTranslationUnit getTranslationUnit(IFile fileToParse, ICodeReaderFactory fileCreator) throws UnsupportedDialectException {
         return getTranslationUnit( fileToParse.getLocation().toOSString(), fileToParse, fileCreator, null);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.IASTServiceProvider#getTranslationUnit(org.eclipse.cdt.core.dom.ICodeReaderFactory, org.eclipse.cdt.core.dom.IParserConfiguration)
      */
-    public IASTTranslationUnit getTranslationUnit(
+    @Override
+	public IASTTranslationUnit getTranslationUnit(
             IFile fileToParse, ICodeReaderFactory fileCreator, IParserConfiguration configuration) throws UnsupportedDialectException {
 		return getTranslationUnit( fileToParse.getLocation().toOSString(), fileToParse, fileCreator, configuration);
     }
-    
-    public IASTTranslationUnit getTranslationUnit( 
-            String filename, IResource infoProvider, ICodeReaderFactory fileCreator, IParserConfiguration configuration) throws UnsupportedDialectException 
+
+    public IASTTranslationUnit getTranslationUnit(
+            String filename, IResource infoProvider, ICodeReaderFactory fileCreator, IParserConfiguration configuration) throws UnsupportedDialectException
     {
         IProject project = infoProvider.getProject();
 		IScannerInfo scanInfo = null;
-		
+
 		if( configuration == null )
 		{
 			IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(project);
 			if (provider != null){
                 IScannerInfo buildScanInfo = provider.getScannerInformation(infoProvider);
-                
+
                 if (buildScanInfo != null)
                     scanInfo = buildScanInfo;
                 else
@@ -112,7 +115,7 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 		}
 		else
 		    scanInfo = configuration.getScannerInfo();
-		
+
 		CodeReader reader = fileCreator.createCodeReaderForTranslationUnit(filename);
         if( reader == null )
             return null;
@@ -128,30 +131,30 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 		       scannerExtensionConfiguration = CPP_GNU_SCANNER_EXTENSION;
 		    else
 		       scannerExtensionConfiguration = C_GNU_SCANNER_EXTENSION;
-			scanner= createScanner(reader, scanInfo, ParserMode.COMPLETE_PARSE, l, ParserFactory.createDefaultLogService(), 
+			scanner= createScanner(reader, scanInfo, ParserMode.COMPLETE_PARSE, l, ParserFactory.createDefaultLogService(),
 					scannerExtensionConfiguration, fileCreator);
 		    //assume GCC
 		    if( l == ParserLanguage.C )
 		        parser = new GNUCSourceParser( scanner, ParserMode.COMPLETE_PARSE, ParserUtil.getParserLogService(), new GCCParserExtensionConfiguration()  );
 		    else
-		        parser = new GNUCPPSourceParser( scanner, ParserMode.COMPLETE_PARSE, ParserUtil.getParserLogService(), new GPPParserExtensionConfiguration() );		    
+		        parser = new GNUCPPSourceParser( scanner, ParserMode.COMPLETE_PARSE, ParserUtil.getParserLogService(), new GPPParserExtensionConfiguration() );
 		}
 		else
 		{
 		    String dialect = configuration.getParserDialect();
-		    if( dialect.equals( dialects[0]) || dialect.equals( dialects[2]))	
-				scanner= createScanner(reader, scanInfo, ParserMode.COMPLETE_PARSE, ParserLanguage.C, 
+		    if( dialect.equals( dialects[0]) || dialect.equals( dialects[2]))
+				scanner= createScanner(reader, scanInfo, ParserMode.COMPLETE_PARSE, ParserLanguage.C,
 						ParserUtil.getScannerLogService(), C_GNU_SCANNER_EXTENSION, fileCreator);
 		    else if( dialect.equals( dialects[1] ) || dialect.equals( dialects[3] ))
-			    scanner = createScanner(reader, scanInfo, ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, 
+			    scanner = createScanner(reader, scanInfo, ParserMode.COMPLETE_PARSE, ParserLanguage.CPP,
 						ParserUtil.getScannerLogService(), CPP_GNU_SCANNER_EXTENSION, fileCreator);
 		    else
 		        throw new UnsupportedDialectException();
-		    
+
 		    if( dialect.equals( dialects[0]))
 		    {
 		        ICParserExtensionConfiguration config = new ANSICParserExtensionConfiguration();
-		        parser = new GNUCSourceParser( scanner, ParserMode.COMPLETE_PARSE, ParserUtil.getParserLogService(), config ); 
+		        parser = new GNUCSourceParser( scanner, ParserMode.COMPLETE_PARSE, ParserUtil.getParserLogService(), config );
 		    }
 		    else if( dialect.equals( dialects[1] ))
 		    {
@@ -161,12 +164,12 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 		    else if( dialect.equals( dialects[2]))
 		    {
 		        ICParserExtensionConfiguration config = new GCCParserExtensionConfiguration();
-		        parser = new GNUCSourceParser( scanner, ParserMode.COMPLETE_PARSE, ParserUtil.getParserLogService(), config ); 		        
+		        parser = new GNUCSourceParser( scanner, ParserMode.COMPLETE_PARSE, ParserUtil.getParserLogService(), config );
 		    }
 		    else if( dialect.equals( dialects[3]))
 		    {
 		        ICPPParserExtensionConfiguration config = new GPPParserExtensionConfiguration();
-		        parser = new GNUCPPSourceParser( scanner, ParserMode.COMPLETE_PARSE, ParserUtil.getParserLogService(), config );		        
+		        parser = new GNUCPPSourceParser( scanner, ParserMode.COMPLETE_PARSE, ParserUtil.getParserLogService(), config );
 		    }
 		}
 		// Parse
@@ -178,16 +181,18 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 		return null;
     }
 
+	@Override
 	public IASTCompletionNode getCompletionNode(IStorage fileToParse, IProject project, int offset,
             ICodeReaderFactory fileCreator) throws UnsupportedDialectException {
         return getCompletionNode(fileToParse.getFullPath().toOSString(), project, offset, fileCreator);
     }
-    
-    public IASTCompletionNode getCompletionNode(IFile fileToParse, int offset,
+
+    @Override
+	public IASTCompletionNode getCompletionNode(IFile fileToParse, int offset,
             ICodeReaderFactory fileCreator) throws UnsupportedDialectException {
         return getCompletionNode(fileToParse.getLocation().toOSString(), fileToParse, offset, fileCreator);
     }
-    
+
     public IASTCompletionNode getCompletionNode(String filename, IResource infoProvider, int offset,
             ICodeReaderFactory fileCreator) throws UnsupportedDialectException {
 		// Get the scanner info
@@ -213,10 +218,10 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 		else
 			scannerExtensionConfiguration = C_GNU_SCANNER_EXTENSION;
 
-		IScanner scanner= createScanner(reader, scanInfo, ParserMode.COMPLETION_PARSE, l, 
+		IScanner scanner= createScanner(reader, scanInfo, ParserMode.COMPLETION_PARSE, l,
 				ParserFactory.createDefaultLogService(), scannerExtensionConfiguration, fileCreator);
 		scanner.setContentAssistMode(offset);
-		
+
 		// assume GCC
 		ISourceCodeParser parser = null;
 		if (l == ParserLanguage.C)
@@ -227,7 +232,7 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 			parser = new GNUCPPSourceParser(scanner, ParserMode.COMPLETION_PARSE,
 					ParserUtil.getParserLogService(),
 					new GPPParserExtensionConfiguration());
-		
+
 		// Run the parse and return the completion node
 		parser.parse();
 		IASTCompletionNode node = parser.getCompletionNode();
@@ -239,10 +244,10 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 			IScannerExtensionConfiguration scanConfig, ICodeReaderFactory fileCreator) {
 		return new CPreprocessor(FileContent.adapt(reader), scanInfo, lang, log, scanConfig, IncludeFileContentProvider.adapt(fileCreator));
 	}
-	
+
     /*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.dom.IASTServiceProvider#getSupportedDialects()
 	 */
     public String[] getSupportedDialects() {
@@ -265,7 +270,7 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
     		} else if (CCorePlugin.CONTENT_TYPE_CXXSOURCE.equals(id)) {
     			return ParserLanguage.CPP;
     		} else if (CCorePlugin.CONTENT_TYPE_CHEADER.equals(id)) {
-    			return ParserLanguage.C; 					
+    			return ParserLanguage.C;
     		} else if (CCorePlugin.CONTENT_TYPE_CSOURCE.equals(id)) {
     			isSource[0]= true;
     			return ParserLanguage.C;
@@ -277,18 +282,22 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 		return ParserLanguage.CPP;
     }
 
-    public IASTTranslationUnit getTranslationUnit(IStorage fileToParse, IProject project, ICodeReaderFactory fileCreator) throws UnsupportedDialectException{
+    @Override
+	public IASTTranslationUnit getTranslationUnit(IStorage fileToParse, IProject project, ICodeReaderFactory fileCreator) throws UnsupportedDialectException{
         return getTranslationUnit( fileToParse.getFullPath().toOSString(), project, fileCreator, null);
     }
 
-    public IASTTranslationUnit getTranslationUnit(IStorage fileToParse, IProject project) throws UnsupportedDialectException {
+    @Override
+	public IASTTranslationUnit getTranslationUnit(IStorage fileToParse, IProject project) throws UnsupportedDialectException {
         return getTranslationUnit( fileToParse.getFullPath().toOSString(), project, SavedCodeReaderFactory.getInstance(), null);
     }
 
+	@Override
 	public IASTTranslationUnit getTranslationUnit(IFile fileToParse, boolean parseComments) throws UnsupportedDialectException {
 		return getTranslationUnit( fileToParse.getLocation().toOSString(), fileToParse, SavedCodeReaderFactory.getInstance(), null);
 	}
 
+	@Override
 	public IASTTranslationUnit getTranslationUnit(IFile fileToParse, ICodeReaderFactory fileCreator, boolean parseComments) throws UnsupportedDialectException {
 		return getTranslationUnit( fileToParse.getLocation().toOSString(), fileToParse, fileCreator, null);
 	}

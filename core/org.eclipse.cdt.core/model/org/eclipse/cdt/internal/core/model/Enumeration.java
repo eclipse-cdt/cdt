@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.model.IEnumeration;
 public class Enumeration extends SourceManipulation implements IEnumeration{
 
 	public Enumeration(ICElement parent, String name) {
-		super(parent, name, ICElement.C_ENUMERATION);		
+		super(parent, name, ICElement.C_ENUMERATION);
 	}
 
 	@Override
@@ -34,6 +34,7 @@ public class Enumeration extends SourceManipulation implements IEnumeration{
 	/**
 	 * @see org.eclipse.cdt.core.model.IVariableDeclaration#getTypeName()
 	 */
+	@Override
 	public String getTypeName() throws CModelException {
 		return getEnumerationInfo().getTypeName();
 	}
@@ -48,6 +49,7 @@ public class Enumeration extends SourceManipulation implements IEnumeration{
 	/**
 	 * @see org.eclipse.cdt.core.model.IDeclaration#isConst()
 	 */
+	@Override
 	public boolean isConst() throws CModelException {
 		return getEnumerationInfo().isConst();
 	}
@@ -55,6 +57,7 @@ public class Enumeration extends SourceManipulation implements IEnumeration{
 	/**
 	 * @see org.eclipse.cdt.core.model.IDeclaration#isStatic()
 	 */
+	@Override
 	public boolean isStatic() throws CModelException {
 		return getEnumerationInfo().isStatic();
 	}
@@ -62,6 +65,7 @@ public class Enumeration extends SourceManipulation implements IEnumeration{
 	/**
 	 * @see org.eclipse.cdt.core.model.IDeclaration#isVolatile()
 	 */
+	@Override
 	public boolean isVolatile() throws CModelException {
 		return getEnumerationInfo().isVolatile();
 	}
@@ -88,6 +92,6 @@ public class Enumeration extends SourceManipulation implements IEnumeration{
 	 */
 	public void setVolatile(boolean isVolatile) throws CModelException {
 		getEnumerationInfo().setVolatile(isVolatile);
-	}	
+	}
 
 }

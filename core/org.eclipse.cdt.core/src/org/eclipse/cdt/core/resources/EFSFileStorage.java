@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.PlatformObject;
 
 /**
  * A storage object which is backed by an EFS resource.
- * 
+ *
  * @author crecoskie
  * @since 5.0
  *
@@ -34,14 +34,15 @@ public class EFSFileStorage extends PlatformObject implements IStorage {
 
 	private URI locationURI;
 	private InputStream inputStream;
-	
+
 	public EFSFileStorage(URI locationURI) {
 		this.locationURI = locationURI;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IStorage#getContents()
 	 */
+	@Override
 	public InputStream getContents() throws CoreException {
 		if (inputStream == null) {
 
@@ -59,6 +60,7 @@ public class EFSFileStorage extends PlatformObject implements IStorage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IStorage#getFullPath()
 	 */
+	@Override
 	public IPath getFullPath() {
 		return URIUtil.toPath(locationURI);
 	}
@@ -66,6 +68,7 @@ public class EFSFileStorage extends PlatformObject implements IStorage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IStorage#getName()
 	 */
+	@Override
 	public String getName() {
 		IFileStore fileStore = null;
 		try {
@@ -79,13 +82,14 @@ public class EFSFileStorage extends PlatformObject implements IStorage {
 		if (fileStore != null) {
 			return fileStore.getName();
 		}
-		
+
 		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IStorage#isReadOnly()
 	 */
+	@Override
 	public boolean isReadOnly() {
 		IFileStore fileStore = null;
 		try {
@@ -97,18 +101,18 @@ public class EFSFileStorage extends PlatformObject implements IStorage {
 
 		if (fileStore != null) {
 			IFileInfo info = fileStore.fetchInfo();
-			
+
 			if(info != null)
 				return info.getAttribute(EFS.ATTRIBUTE_READ_ONLY);
 		}
-		
+
 		return false;
 	}
-	
+
 	/**
 	 * Returns the location URI corresponding to the EFS resource that
 	 * backs this storage.
-	 * 
+	 *
 	 * @return URI
 	 */
 	public URI getLocationURI() {

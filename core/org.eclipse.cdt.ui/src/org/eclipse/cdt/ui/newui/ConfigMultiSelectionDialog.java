@@ -46,26 +46,26 @@ public class ConfigMultiSelectionDialog extends Dialog {
 	private Button b_ok;
 	private Label message;
 	private static ICConfigurationDescription[] result = null;
-	
+
 	/**
 	 * @since 5.2
 	 */
 	public static ICConfigurationDescription[] select(ICConfigurationDescription[] _cfgds, Shell parentShell) {
 		cfgds = _cfgds;
 		ConfigMultiSelectionDialog d = new ConfigMultiSelectionDialog(parentShell);
-		if (d.open() == OK)	
+		if (d.open() == OK)
 			return result;
 		return null;
 	}
-	
+
 	public ConfigMultiSelectionDialog(Shell parentShell) { super(parentShell); }
 
 	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		shell.setText(Messages.ConfigMultiSelectionDialog_0); 
+		shell.setText(Messages.ConfigMultiSelectionDialog_0);
 	}
-	
+
 	/**
 	 * Method is overridden to disable "OK" button at start
 	 */
@@ -75,7 +75,7 @@ public class ConfigMultiSelectionDialog extends Dialog {
 		b_ok = getButton(IDialogConstants.OK_ID);
 		b_ok.setEnabled(false);
 		return out;
-	}	
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
@@ -86,34 +86,38 @@ public class ConfigMultiSelectionDialog extends Dialog {
 		composite.setFont(parent.getFont());
 		composite.setLayout(new GridLayout(1, true));
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	
+
 		// Create the current config table
 		table = new Table(composite, SWT.CHECK | SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
 		table.setLayoutData(new GridData(GridData.FILL));
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
-		
+
 		message = new Label(composite, SWT.NONE);
 		message.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		message.setText(Messages.ConfigMultiSelectionDialog_1); 
+		message.setText(Messages.ConfigMultiSelectionDialog_1);
 		message.setForeground(composite.getDisplay().getSystemColor(SWT.COLOR_RED));
-		
+
 		TableColumn col = new TableColumn(table, SWT.NONE);
-		col.setText(Messages.ManageConfigDialog_1); 
+		col.setText(Messages.ManageConfigDialog_1);
 		col.setWidth(100);
 		col = new TableColumn(table, SWT.NONE);
-		col.setText(Messages.ManageConfigDialog_2); 
+		col.setText(Messages.ManageConfigDialog_2);
 		col.setWidth(120);
-		
+
 		tv = new CheckboxTableViewer(table);
 		tv.setContentProvider(new IStructuredContentProvider() {
+			@Override
 			public Object[] getElements(Object inputElement) { return cfgds; }
+			@Override
 			public void dispose() {}
+			@Override
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 		});
 		tv.addCheckStateListener(new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent e) {
-				boolean enabled = (tv.getCheckedElements().length > 1); 
+				boolean enabled = (tv.getCheckedElements().length > 1);
 				if (b_ok != null) b_ok.setEnabled(enabled);
 				message.setVisible(!enabled);
 				if (enabled) {
@@ -124,12 +128,18 @@ public class ConfigMultiSelectionDialog extends Dialog {
 					result = null;
 			}});
 		tv.setLabelProvider(new ITableLabelProvider() {
+			@Override
 			public Image getColumnImage(Object element, int columnIndex) { return null; }
+			@Override
 			public void addListener(ILabelProviderListener listener) {}
+			@Override
 			public void dispose() {}
+			@Override
 			public boolean isLabelProperty(Object element, String property) { return false;}
+			@Override
 			public void removeListener(ILabelProviderListener listener) {}
 
+			@Override
 			public String getColumnText(Object element, int index) {
 				ICConfigurationDescription cfg = (ICConfigurationDescription)element;
 				if (index == 0) return cfg.getName();
@@ -143,7 +153,7 @@ public class ConfigMultiSelectionDialog extends Dialog {
 
 	/**
 	 * @deprecated (in org.eclipse.cdt.ui 5.2.0)
-	 * 
+	 *
 	 * This call is deprecated in plugin org.eclipse.cdt.ui 5.2.0 and intended to be removed
 	 * on occasion when the plugin increases major version (Bug 285033).
 	 * Use {@link #select(ICConfigurationDescription[], Shell)} to properly set focus.
@@ -152,7 +162,7 @@ public class ConfigMultiSelectionDialog extends Dialog {
 	public static ICConfigurationDescription[] select(ICConfigurationDescription[] _cfgds) {
 		cfgds = _cfgds;
 		ConfigMultiSelectionDialog d = new ConfigMultiSelectionDialog(CUIPlugin.getActiveWorkbenchShell());
-		if (d.open() == OK)	
+		if (d.open() == OK)
 			return result;
 		return null;
 	}

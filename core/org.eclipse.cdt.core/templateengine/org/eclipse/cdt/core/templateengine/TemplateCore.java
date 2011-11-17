@@ -12,7 +12,6 @@ package org.eclipse.cdt.core.templateengine;
 
 import java.io.IOException;
 import java.net.URL;
-import com.ibm.icu.text.MessageFormat;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -28,13 +27,15 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
+import com.ibm.icu.text.MessageFormat;
+
 
 /**
- * TemplateCore class is responsible providing the non-UI part of template and 
- * initiating process part of Template Engine. This is created per TemplateDescriptor basis. 
+ * TemplateCore class is responsible providing the non-UI part of template and
+ * initiating process part of Template Engine. This is created per TemplateDescriptor basis.
  * Once The Template is created it creates a TemplateDescriptor for the XML file name given.
  * Template class extends this class with additional UI elements that are part of the template.
- * 
+ *
  * @since 4.0
  */
 public class TemplateCore {
@@ -42,13 +43,14 @@ public class TemplateCore {
 	private static final String LABEL = "label"; //$NON-NLS-1$
 	private static final String ID = "id"; //$NON-NLS-1$
 	private static final String TYPE = "type"; //$NON-NLS-1$
-	
+
 	private static Map<TemplateInfo, TemplateCore> templateCache = new HashMap<TemplateInfo, TemplateCore>();
 
 	public static final Comparator<TemplateCore> TEMPLATE_ID_CASE_INSENSITIVE_COMPARATOR = new Comparator<TemplateCore>() {
+		@Override
 		public int compare(TemplateCore t1, TemplateCore t2) {
 			return String.CASE_INSENSITIVE_ORDER.compare(t1.getTemplateId(), t2.getTemplateId());
-		}		
+		}
 	};
 
 	private TemplateDescriptor templateDescriptor;
@@ -61,7 +63,7 @@ public class TemplateCore {
 	private String templateId;
 	private String templateType;
 	private boolean fireDirtyEvents;
-	
+
 	/**
 	 * @param templateInfo may not be null
 	 * @throws TemplateInitializationException
@@ -114,7 +116,7 @@ public class TemplateCore {
 	/**
 	 * This is the List of IDs from TemplateDescriptor with "attribute" Persist
 	 * as "true"
-	 * 
+	 *
 	 * @return Vector of IDs.
 	 */
 	public List<String> getPersistTrueIDs() {
@@ -135,7 +137,7 @@ public class TemplateCore {
 	public TemplateDescriptor getTemplateDescriptor() {
 		return templateDescriptor;
 	}
-	
+
 	/**
 	 * @return   String, which contains the description
 	 */
@@ -155,7 +157,7 @@ public class TemplateCore {
         }
         return templateId;
 	}
-	
+
 	/**
 	 * @return   String, which contains the id of the template
 	 */
@@ -165,7 +167,7 @@ public class TemplateCore {
         }
         return templateType;
 	}
-	
+
 	/**
 	 * @return   String, which contains the Label
 	 */
@@ -175,14 +177,14 @@ public class TemplateCore {
         }
         return TemplateEngineHelper.externalizeTemplateString(templateInfo, label);
 	}
-	
+
 	/**
 	 * TemplateDescriptor for which, this Template is created.
 	 */
 	public TemplateProcessHandler getProcessHandler() {
 		return processHandler;
 	}
-	
+
 	@Override
 	public String toString()
 	{
@@ -204,7 +206,7 @@ public class TemplateCore {
 	 * initializeProcessBlockList() will create the ProcessBlockList,
 	 * processPorcessBlockList() will invoke each process execution by assigning
 	 * resources to each process (Ref. ProcessResourceManager).
-	 * @param monitor 
+	 * @param monitor
 	 */
 	public IStatus[] executeTemplateProcesses(IProgressMonitor monitor, final boolean showError) {
 		setDirty();
@@ -218,10 +220,10 @@ public class TemplateCore {
 		}
 		return result[0];
 	}
-	
+
 	/**
 	 * Gets the Template
-	 * 
+	 *
 	 * @param templateInfo
 	 * @throws TemplateInitializationException
      * @since 4.0
@@ -236,7 +238,7 @@ public class TemplateCore {
 			return template;
 		}
 	}
-	
+
 	private static class ValueStore<K> extends HashMap<K,String> {
 		private static final long serialVersionUID = -4523467333437879406L;
 		private TemplateCore template;
@@ -244,7 +246,7 @@ public class TemplateCore {
 		ValueStore(TemplateCore template) {
 			this.template = template;
 		}
-		
+
 		@Override
 		public String put(K key, String value) {
 			value = TemplateEngineHelper.externalizeTemplateString(template.getTemplateInfo(), value);

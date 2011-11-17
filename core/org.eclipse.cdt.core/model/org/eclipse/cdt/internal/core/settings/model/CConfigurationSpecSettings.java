@@ -16,8 +16,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.settings.model.CExternalSetting;
@@ -267,10 +267,12 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 		return fSettingsStorageElement;
 	}
 
+	@Override
 	public ICStorageElement getStorage(String id,boolean create) throws CoreException {
 		return getStorageBase().getStorage(id, create);
 	}
 
+	@Override
 	public void removeStorage(String id) throws CoreException {
 		getStorageBase().removeStorage(id);
 	}
@@ -389,10 +391,12 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 		encodeProjectExtensions(extEl);
 	}
 
+	@Override
 	public boolean isReadOnly(){
 		return fCfg.isReadOnly();
 	}
 
+	@Override
 	public void setReadOnly(boolean readOnly, boolean keepModify) {
 		fCfg.setReadOnly(readOnly, keepModify);
 	}
@@ -499,6 +503,7 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 		fExtSettingsProvider.removeExternalSettings();
 	}
 
+	@Override
 	public boolean isModified(){
 		if(fIsModified)
 			return true;
@@ -838,6 +843,7 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 		}
 	}
 
+	@Override
 	public ICStorageElement importStorage(String id, ICStorageElement el) throws CoreException {
 		return getStorageBase().importStorage(id, el);
 	}
@@ -902,7 +908,7 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 		}
 		return null;
 	}
-	
+
 
 	private DeltaSet getReferenceDelta(ICConfigExtensionReference refs[], String[] extIds){
 		if(refs == null || refs.length == 0){
@@ -913,16 +919,16 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 			Map<String, ICConfigExtensionReference> map = createRefMap(refs);
 			return new DeltaSet(new HashSet<ICConfigExtensionReference>(map.values()), null);
 		}
-		
+
 		Set<String> idSet = new HashSet<String>(Arrays.asList(extIds));
 		Set<String> idSetCopy = new HashSet<String>(idSet);
 		Map<String, ICConfigExtensionReference> refsMap = createRefMap(refs);
-		
+
 		idSet.removeAll(refsMap.keySet());
 		refsMap.keySet().removeAll(idSetCopy);
-		
+
 		Set<ICConfigExtensionReference> extSet = new HashSet<ICConfigExtensionReference>(refsMap.values());
-		
+
 		return new DeltaSet(extSet, idSet);
 	}
 

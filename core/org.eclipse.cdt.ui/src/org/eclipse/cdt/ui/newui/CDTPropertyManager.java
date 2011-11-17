@@ -26,16 +26,16 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.internal.ui.newui.Messages;
 
 /**
- * This class is intended to handle  
- * 
- * When new propertypage is created, it should request 
- * project description by method 
+ * This class is intended to handle
+ *
+ * When new propertypage is created, it should request
+ * project description by method
  * getProjectDescription()
  * This method, in addition, registers page in list.
- * 
+ *
  * While page is active, it can change this description
  * but should not set it, to avoid inconsistency.
- * 
+ *
  * When page's "performOK" called, it should call
  * manager's  method
  * performOk()
@@ -43,11 +43,11 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
  * Registered pages can call {@link CDTPropertyManager#remove(Object)}
  * to explicitly remove themselves from this manager.
  *
- * In addition, there are utility methods for pages: 
+ * In addition, there are utility methods for pages:
  * getPagesCount()
  * getPage()
  * isSaveDone()
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class CDTPropertyManager {
@@ -57,18 +57,18 @@ public class CDTPropertyManager {
 	private static boolean saveDone  = false;
 	private static IProject project = null;
 	private static DListener dListener = new DListener();
-	
-	
+
+
 	public static ICProjectDescription getProjectDescription(PropertyPage p, IProject prj) {
 		return get(p, prj);
-	} 	
+	}
 	public static ICProjectDescription getProjectDescription(Widget w, IProject prj) {
 		return get(w, prj);
-	} 	
+	}
 	public static ICProjectDescription getProjectDescription(IProject prj) {
 		return get(null, prj);
-	} 	
-	
+	}
+
 	private static ICProjectDescription get(Object p, IProject prj) {
 		// New session - clean static variables
 		if (pages.size() == 0) {
@@ -80,13 +80,13 @@ public class CDTPropertyManager {
 		if (p != null && !pages.contains(p)) {
 			pages.add(p);
 			if (p instanceof PropertyPage) {
-				if (((PropertyPage)p).getControl() != null) 
+				if (((PropertyPage)p).getControl() != null)
 					((PropertyPage)p).getControl().addDisposeListener(dListener);
 			} else if (p instanceof Widget) {
 				((Widget)p).addDisposeListener(dListener);
 			}
 		}
-		// Check that we are working with the same project 
+		// Check that we are working with the same project
 		if (project == null || !project.equals(prj)) {
 			project = prj;
 			prjd = null;
@@ -106,17 +106,17 @@ public class CDTPropertyManager {
 		if (saveDone) return;
 
 		performOkForced(p);
-		
+
 		if (pages.size() == 0) {
 			project = null;
 			prjd = null;
 			saveDone = false;
 		}
 	}
-	
+
 	public static void performCancel(Object p) {
 		saveDone = true;
-		
+
 		if (pages.size() == 0) {
 			project = null;
 			prjd = null;
@@ -134,7 +134,7 @@ public class CDTPropertyManager {
 	}
 
 	/**
-	 * Performs mandatory saving 
+	 * Performs mandatory saving
 	 * @param p
 	 */
 	public static void performOkForced(Object p) {
@@ -142,26 +142,26 @@ public class CDTPropertyManager {
 		try {
 			CoreModel.getDefault().setProjectDescription(project, prjd);
 		} catch (CoreException e) {
-			CUIPlugin.logError(Messages.AbstractPage_11 + e.getLocalizedMessage()); 
+			CUIPlugin.logError(Messages.AbstractPage_11 + e.getLocalizedMessage());
 		}
-		
+
 		if (pages.size() == 0) {
 			project = null;
 			prjd = null;
 			saveDone = false;
 		}
 	}
-	
+
 	// pages utilities
-	public static boolean isSaveDone() { return saveDone; }	
+	public static boolean isSaveDone() { return saveDone; }
 	public static int getPagesCount() {	return pages.size(); }
 	public static Object getPage(int index) { return pages.get(index); }
 
 	// Removes disposed items from list
 	static class DListener implements DisposeListener {
 		public static void dispose (Object w) {
-			if (pages.contains(w)) { // Widget ?	
-				pages.remove(w); 
+			if (pages.contains(w)) { // Widget ?
+				pages.remove(w);
 			} else {                 // Property Page ?
 				for (Object ob : pages) {
 					if (ob != null && ob instanceof PropertyPage) {
@@ -180,9 +180,10 @@ public class CDTPropertyManager {
 				saveDone = false;
 			}
 		}
+		@Override
 		public void widgetDisposed(DisposeEvent e) {
 			dispose(e.widget);
 		}
 	}
-	
+
 }

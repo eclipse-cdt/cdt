@@ -39,7 +39,7 @@ import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
  * entered by the user is verified against an expected pattern. If the user
  * entered data doesn't confirms to the expected pattern, a PatternEvent is
  * fired to UIComposite.
- * 
+ *
  * The UI***Widget classes which needs to handle patterns, can inherit the same
  * from this class. The inheriting class need not cache UIComposite instance
  * but should set the same for UITextWidget(super).
@@ -61,12 +61,12 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 	 * Composite to which this widget control is added. Classes extending this class, should make sure that they initialize this from the respective class createWidgets method.
 	 */
 	protected UIComposite uiComposite;
-	
+
 	protected String textValue;
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param uiAttribute
 	 *            attribute associated with this widget.
 	 */
@@ -88,7 +88,7 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 
 	/**
 	 * Set the Text widget with new value.
-	 * 
+	 *
 	 * @param valueMap
 	 */
 	@Override
@@ -114,7 +114,7 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 	 * create a Label and Text widget, add it to UIComposite. set Layout for the
 	 * widgets to be added to UIComposite. set required parameters to the
 	 * Widgets.
-	 * 
+	 *
 	 * @param uiComposite
 	 */
 	@Override
@@ -161,7 +161,7 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 	 * the value entered in this widget is treated as project name. The same is
 	 * verified if there is a directory by the same name in workspace,
 	 * PatternEvent is thrown to Container.
-	 * 
+	 *
 	 * @param pattern
 	 */
 	public void evaluatePattern(String labelText, String userInputText, String pattern) {
@@ -195,6 +195,7 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 	 * Method from ModifyListener. Extracts the Text from the widget. calls
 	 * evaluatePattern.
 	 */
+	@Override
 	public void modifyText(ModifyEvent e) {
 		String patternName = uiAttributes.get(InputUIElement.INPUTPATTERN);
 
@@ -216,9 +217,9 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 		// evaluatePattern and isValid.
 		textValue = text.getText();
 
-		if ((patternValue == null) || (textValue == null)) 
+		if ((patternValue == null) || (textValue == null))
 			return;
-		
+
 		String mandatory = uiAttributes.get(InputUIElement.MANDATORY);
 		if ((mandatory == null || !mandatory.equalsIgnoreCase("true")) && textValue.equals("")) { //$NON-NLS-1$ //$NON-NLS-2$
 			return;
@@ -254,7 +255,7 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 	 * will be used by the UIPage to update its(UIPage) state. Return value
 	 * depends on the value contained in TextWidget. If value contained is null, ""
 	 * and Mandatory value from attributes.
-	 * 
+	 *
 	 * @return boolean.
 	 */
 	@Override
@@ -274,7 +275,7 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 	/**
 	 * Based on Input Type Text widget is created. The Text widget created can
 	 * be of Type SINGLE or MULTI.
-	 * 
+	 *
 	 * @param type
 	 *            of Text widget required.
 	 * @return Text.

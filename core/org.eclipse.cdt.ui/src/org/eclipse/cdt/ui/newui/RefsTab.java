@@ -134,9 +134,11 @@ public class RefsTab extends AbstractCPropertyTab {
 		});
 
 		tree.addTreeListener(new TreeListener() {
+			@Override
 			public void treeCollapsed(TreeEvent e) {
 				updateExpandButtons(e, false, true);
 			}
+			@Override
 			public void treeExpanded(TreeEvent e) {
 				updateExpandButtons(e, true, false);
 			}});

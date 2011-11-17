@@ -22,7 +22,7 @@ import org.eclipse.core.resources.IResource;
 /**
  * The buffer manager manages the set of open buffers.
  * It implements an LRU cache of buffers.
- * 
+ *
  * This class is similar to the JDT BufferManager class
  */
 
@@ -92,17 +92,18 @@ public class BufferManager implements IBufferFactory {
 	/**
 	 * @see org.eclipse.cdt.internal.core.model.IBufferFactory#createBuffer(org.eclipse.cdt.core.model.IOpenable)
 	 */
+	@Override
 	public IBuffer createBuffer(IOpenable owner) {
 		ICElement element = (ICElement)owner;
 
 		IResource resource = element.getResource();
-		return 
+		return
 			new Buffer(
-				resource instanceof IFile ? (IFile)resource : null, 
-				owner, 
+				resource instanceof IFile ? (IFile)resource : null,
+				owner,
 				element.isReadOnly());
 	}
-	
+
 	/**
 	 * Returns the open buffer associated with the given owner,
 	 * or <code>null</code> if the owner does not have an open
@@ -128,7 +129,7 @@ public class BufferManager implements IBufferFactory {
 	}
 	/**
 	 * Returns an enumeration of all open buffers.
-	 * <p> 
+	 * <p>
 	 * The <code>Enumeration</code> answered is thread safe.
 	 *
 	 * @see OverflowingLRUCache
@@ -140,8 +141,8 @@ public class BufferManager implements IBufferFactory {
 			return openBuffers.elements();
 		}
 	}
-	
-	
+
+
 	/**
 	 * Removes a buffer from the table of open buffers.
 	 */

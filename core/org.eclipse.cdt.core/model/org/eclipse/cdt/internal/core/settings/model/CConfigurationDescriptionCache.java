@@ -75,31 +75,31 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		fInitializing = true;
 		fParent = parent;
 		fSpecSettings = new CConfigurationSpecSettings(this, storage);
-		
+
 		fId = fSpecSettings.getId();
 		fName = fSpecSettings.getName();
-		
+
 //		loadData();
 	}
-	
+
 	public boolean isInitializing(){
 		return fInitializing;
 	}
-	
+
 	void loadData(CSettingEntryFactory factory) throws CoreException{
 		if(fDataLoadded)
 			return;
-		
+
 		fDataLoadded = true;
-			
+
 		fData = CProjectDescriptionManager.getInstance().loadData(this, null);
-		
+
 		fSettingsFactory = factory;
-		
+
 		copySettingsFrom(fData, true);
-		
+
 		fSettingsFactory = null;
-		
+
 		fSpecSettings.reconcileExtensionSettings(true);
 		((CBuildSettingCache)fBuildData).initEnvironmentCache();
 		ICdtVariable vars[] = CdtVariableManager.getDefault().getVariables(this);
@@ -121,25 +121,25 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 			fData = base;
 //			base = CProjectDescriptionManager.getInstance().applyData(this, baseDescription, base);
 //			fData = base;
-		} 
-		
+		}
+
 		fBaseCache = baseCache;
 	}
-	
+
 	CConfigurationDescriptionCache getBaseCache(){
 		return fBaseCache;
 	}
-	
+
 	boolean applyData(CSettingEntryFactory factory, SettingsContext context) throws CoreException{
-		boolean modified = true; 
+		boolean modified = true;
 		if(fBaseDescription != null){
-		
+
 			fData = CProjectDescriptionManager.getInstance().applyData(this, fBaseDescription, fData, context, null);
 			fDataLoadded = true;
 			fName = fData.getName();
 			fId = fData.getId();
 			fSettingsFactory = factory;
-			
+
 			if((context.getAllConfigurationSettingsFlags() & IModificationContext.CFG_DATA_SETTINGS_UNMODIFIED) == 0  || fBaseCache == null){
 				copySettingsFrom(fData, true);
 			} else {
@@ -148,26 +148,26 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 				if(!modified)
 					modified = (context.getAllConfigurationSettingsFlags() & IModificationContext.CFG_DATA_STORAGE_UNMODIFIED) == 0;
 			}
-			
+
 			fSettingsFactory = null;
-			
+
 			ICdtVariable vars[] = CdtVariableManager.getDefault().getVariables(this);
 			fMacros = new StorableCdtVariables(vars, true);
 			fSpecSettings.serialize();
 			fSpecSettings.setModified(false);
-		
+
 		}
-		
+
 		fBaseDescription = null;
 		fBaseCache = null;
-		
+
 		return modified;
 	}
-	
+
 	CSettingEntryFactory getSettingsFactory(){
 		return fSettingsFactory;
 	}
-	
+
 	public StorableCdtVariables getCachedVariables(){
 		return fMacros;
 	}
@@ -175,7 +175,7 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 	protected void setId(String id) throws CoreException {
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
-	
+
 	@Override
 	public CFileData copyFileData(IPath path, CFileData base, boolean clone) {
 		return new CFileDescriptionCache(base, this);
@@ -202,20 +202,22 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		fRcHolder.addResourceDescription(des.getPath(), des);
 		fChildList.add(des);
 	}
-	
+
 	void addTargetPlatformSetting(ICTargetPlatformSetting tpS){
 		fChildList.add(tpS);
 	}
-	
+
 	void addBuildSetting(ICBuildSetting bs){
 		fChildList.add(bs);
 		fBuildData = (CBuildData)bs;
 	}
 
+	@Override
 	public ICProjectDescription getProjectDescription() {
 		return fParent;
 	}
 
+	@Override
 	public ICResourceDescription getResourceDescription(IPath path, boolean exactPath) {
 		return fRcHolder.getResourceDescription(path, exactPath);
 	}
@@ -224,16 +226,19 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		return fRcHolder.getResourceDescriptions(kind);
 	}
 
+	@Override
 	public ICFolderDescription getRootFolderDescription() {
 		return (ICFolderDescription)fRootFolderData;
 	}
 
+	@Override
 	public boolean isActive() {
 		if(isPreferenceConfiguration())
 			return false;
 		return fParent.getActiveConfiguration() == this;
 	}
 
+	@Override
 	public void removeResourceDescription(ICResourceDescription des)
 			throws CoreException {
 		throw new CoreException(new DescriptionStatus(SettingsModelMessages.getString("CConfigurationDescriptionCache.0"))); //$NON-NLS-1$
@@ -269,46 +274,57 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
 
+	@Override
 	public ICSettingObject[] getChildSettings() {
 		return fChildList.toArray(new ICSettingObject[fChildList.size()]);
 	}
 
+	@Override
 	public ICConfigurationDescription getConfiguration() {
 		return this;
 	}
 
+	@Override
 	public ICSettingContainer getParent() {
 		return fParent;
 	}
 
+	@Override
 	public ICResourceDescription[] getResourceDescriptions() {
 		return fRcHolder.getResourceDescriptions();
 	}
-	
+
+	@Override
 	public ICStorageElement getStorage(String id, boolean create) throws CoreException {
 		return getSpecSettings().getStorage(id, create);
 	}
-	
+
+	@Override
 	public void removeStorage(String id) throws CoreException {
 		getSpecSettings().removeStorage(id);
 	}
-	
+
+	@Override
 	public ICStorageElement importStorage(String id, ICStorageElement el) throws UnsupportedOperationException, CoreException {
 		return getSpecSettings().importStorage(id, el);
 	}
 
+	@Override
 	public CConfigurationSpecSettings getSpecSettings() /*throws CoreException*/{
 		return fSpecSettings;
 	}
 
+	@Override
 	public String getBuildSystemId() {
 		return fSpecSettings.getBuildSystemId();
 	}
 
+	@Override
 	public CConfigurationData getConfigurationData() {
 		return fData;
 	}
 
+	@Override
 	public void setConfigurationData(String bsId, CConfigurationData data) throws WriteAccessException {
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
@@ -318,42 +334,49 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		return false;
 	}
 
+	@Override
 	public CConfigurationData getConfigurationData(boolean write) throws WriteAccessException {
 		if(write)
 			throw ExceptionFactory.createIsReadOnlyException();
-		
+
 		return this;
 	}
 
+	@Override
 	public void setActive() throws WriteAccessException {
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
-	
+
 /*	public CConfigurationData getBaseData(){
 		return fData;
 	}
 */
+	@Override
 	public ICFileDescription createFileDescription(IPath path, ICResourceDescription base) throws CoreException, WriteAccessException {
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
 
+	@Override
 	public ICFolderDescription createFolderDescription(IPath path, ICFolderDescription base) throws CoreException, WriteAccessException {
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
-	
+
 	ResourceDescriptionHolder createHolderForRc(IPath path){
 		return new ResourceDescriptionHolder(fPathSettingContainer.getChildContainer(path, true, true), false);
 	}
 
+	@Override
 	public boolean isReadOnly() {
 		return !fInitializing;
 	}
 
+	@Override
 	public void setReadOnly(boolean readOnly, boolean keepModify) {
 		if (readOnly)
 			throw ExceptionFactory.createIsReadOnlyException();
 	}
 
+	@Override
 	public ICTargetPlatformSetting getTargetPlatformSetting() {
 		return (ICTargetPlatformSetting)getTargetPlatformData();
 	}
@@ -363,10 +386,12 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		return new CTargetPlatformSettingCache(base, this);
 	}
 
+	@Override
 	public ICFileDescription[] getFileDescriptions() {
 		return (ICFileDescription[])fRcHolder.getResourceDescriptions(ICSettingBase.SETTING_FILE);
 	}
 
+	@Override
 	public ICFolderDescription[] getFolderDescriptions() {
 		return (ICFolderDescription[])fRcHolder.getResourceDescriptions(ICSettingBase.SETTING_FOLDER);
 	}
@@ -380,14 +405,14 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		initSourceEntries();
 		return fProjSourceEntries.clone();
 	}
-	
+
 	private void initSourceEntries(){
 		if(fProjSourceEntries == null){
-			IProject project = getProject(); 
+			IProject project = getProject();
 			fProjSourceEntries = CDataUtil.adjustEntries(fSourceEntries, true, project);
 		}
 	}
-	
+
 	private IProject getProject(){
 		return isPreferenceConfiguration() ? null : getProjectDescription().getProject();
 	}
@@ -397,50 +422,59 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
 
+	@Override
 	public Map<String, String> getReferenceInfo() {
 		return getSpecSettings().getReferenceInfo();
 	}
 
+	@Override
 	public void setReferenceInfo(Map<String, String> refs) {
 		throw ExceptionFactory.createIsReadOnlyException();
 	}
 
+	@Override
 	public ICExternalSetting createExternalSetting(String[] languageIDs,
 			String[] contentTypeIds, String[] extensions,
 			ICSettingEntry[] entries) {
 		if(!fInitializing)
 			throw ExceptionFactory.createIsReadOnlyException();
-		
+
 		return fSpecSettings.createExternalSetting(languageIDs, contentTypeIds, extensions, entries);
 	}
 
+	@Override
 	public ICExternalSetting[] getExternalSettings() {
 		return fSpecSettings.getExternalSettings();
 	}
 
+	@Override
 	public void removeExternalSetting(ICExternalSetting setting) {
 		if(!fInitializing)
 			throw ExceptionFactory.createIsReadOnlyException();
-		
+
 		fSpecSettings.removeExternalSetting(setting);
 	}
 
+	@Override
 	public void removeExternalSettings() {
 		if(!fInitializing)
 			throw ExceptionFactory.createIsReadOnlyException();
-		
+
 		fSpecSettings.removeExternalSettings();
 	}
-	
+
+	@Override
 	public ICBuildSetting getBuildSetting() {
 		return (ICBuildSetting)getBuildData();
 	}
 
+	@Override
 	public void setSessionProperty(QualifiedName name, Object value) {
 		fSpecSettings.setSettionProperty(name, value);
 		//throw ExceptionFactory.createIsReadOnlyException();
 	}
 
+	@Override
 	public Object getSessionProperty(QualifiedName name) {
 		return fSpecSettings.getSettionProperty(name);
 	}
@@ -450,6 +484,7 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		return fData.getBuildVariablesContributor();
 	}
 
+	@Override
 	public ICConfigExtensionReference create(String extensionPoint,
 			String extension) throws CoreException {
 		if(!fInitializing)
@@ -457,32 +492,37 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		return fSpecSettings.create(extensionPoint, extension);
 	}
 
+	@Override
 	public ICConfigExtensionReference[] get(String extensionPointID) {
 		return fSpecSettings.get(extensionPointID);
 	}
 
+	@Override
 	public void remove(ICConfigExtensionReference ext) throws CoreException {
 		if(!fInitializing)
 			throw ExceptionFactory.createIsReadOnlyException();
 		fSpecSettings.remove(ext);
 	}
 
+	@Override
 	public void remove(String extensionPoint) throws CoreException {
 		if(!fInitializing)
 			throw ExceptionFactory.createIsReadOnlyException();
 		fSpecSettings.remove(extensionPoint);
 	}
-	
+
+	@Override
 	public boolean isPreferenceConfiguration() {
 		return getProjectDescription() == null;
 	}
-	
+
 	void doneInitialization(){
 		CProjectDescriptionManager.getInstance().notifyCached(this, fData, null);
 		fInitializing = false;
 		fSpecSettings.doneInitialization();
 	}
-	
+
+	@Override
 	public ICLanguageSetting getLanguageSettingForFile(IPath path, boolean ignoreExcludeStatus) {
 		return CProjectDescriptionManager.getLanguageSettingForFile(this, path, ignoreExcludeStatus);
 	}
@@ -502,26 +542,30 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		IProject project = getProject();
 		if(project != null)
 			path = project.getFullPath().append(path);
-		
+
 		return CDataUtil.isExcluded(path, fProjSourceEntries);
 	}
 
+	@Override
 	public String[] getExternalSettingsProviderIds() {
 		return fSpecSettings.getExternalSettingsProviderIds();
 	}
 
+	@Override
 	public void setExternalSettingsProviderIds(String[] ids) {
 		if(!fInitializing)
 			throw ExceptionFactory.createIsReadOnlyException();
 		fSpecSettings.setExternalSettingsProviderIds(ids);
 	}
 
+	@Override
 	public void updateExternalSettingsProviders(String[] ids) {
 		if(!fInitializing)
 			throw ExceptionFactory.createIsReadOnlyException();
 		fSpecSettings.updateExternalSettingsProviders(ids);
 	}
 
+	@Override
 	public ICSourceEntry[] getResolvedSourceEntries() {
 		if(fResolvedSourceEntries == null){
 			ICSourceEntry[] entries = getSourceEntries();
@@ -530,6 +574,7 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		return fResolvedSourceEntries;
 	}
 
+	@Override
 	public CConfigurationStatus getConfigurationStatus() {
 		CConfigurationStatus status = getStatus();
 		return status != null ? status : CConfigurationStatus.CFG_STATUS_OK;

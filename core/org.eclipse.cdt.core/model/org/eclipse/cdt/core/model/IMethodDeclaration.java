@@ -13,7 +13,7 @@ package org.eclipse.cdt.core.model;
 
 /**
  * Represents the declaration method of a class
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -46,7 +46,7 @@ public interface IMethodDeclaration extends IMember, IFunctionDeclaration {
 	/**
 	 * Returns whether this method is declared pure virtual.
 	 *
-	 * <p>For example, a source method declared as <code>virtual void m() = 0;</code>. 
+	 * <p>For example, a source method declared as <code>virtual void m() = 0;</code>.
 	 *
 	 * @exception CModelException if this element does not exist or if an
 	 *      exception occurs while accessing its corresponding resource.
@@ -57,14 +57,15 @@ public interface IMethodDeclaration extends IMember, IFunctionDeclaration {
 	 * Returns if this method is static or not
 	 * @return boolean
 	 */
+	@Override
 	public boolean isStatic() throws CModelException;
-	
+
 	/**
 	 * Returns if this method is inline or not
 	 * @return boolean
 	 */
 	public boolean isInline() throws CModelException;
-	
+
 	/**
 	 * Returns whether this method is declared virtual.
 	 *

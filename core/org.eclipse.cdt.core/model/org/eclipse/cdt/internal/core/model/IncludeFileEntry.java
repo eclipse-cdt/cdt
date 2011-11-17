@@ -33,9 +33,10 @@ public class IncludeFileEntry extends APathEntry implements IIncludeFileEntry {
 
 	/**
 	 * Returns the include path
-	 * 
+	 *
 	 * @return IPath
 	 */
+	@Override
 	public IPath getIncludeFilePath() {
 		return includeFilePath;
 	}
@@ -83,6 +84,7 @@ public class IncludeFileEntry extends APathEntry implements IIncludeFileEntry {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.IIncludeEntry#getFullIncludePath()
 	 */
+	@Override
 	public IPath getFullIncludeFilePath() {
 		final IPath inc = getIncludeFilePath();
 		if (!basePath.isEmpty()) {
@@ -98,7 +100,7 @@ public class IncludeFileEntry extends APathEntry implements IIncludeFileEntry {
 			}
 			return loc.append(inc);
 		}
-		
+
 		if (!inc.isAbsolute()) {
 			IPath resPath = getPath();
 			IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(resPath.append(inc));

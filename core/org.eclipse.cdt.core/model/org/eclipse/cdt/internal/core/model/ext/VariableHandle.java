@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.model.ext;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
@@ -29,7 +29,8 @@ public class VariableHandle extends CElementHandle implements org.eclipse.cdt.co
 	public String getTypeName() {
 		return fTypeName;
 	}
-	
+
+	@Override
 	public boolean isStatic() throws CModelException {
 		return fIsStatic;
 	}

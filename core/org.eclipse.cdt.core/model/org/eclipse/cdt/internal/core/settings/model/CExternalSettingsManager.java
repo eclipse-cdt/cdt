@@ -42,13 +42,13 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 	private static final int OP_CHANGED = 1;
 	private static final int OP_ADDED = 2;
 	private static final int OP_REMOVED = 3;
-	
+
 	private static final QualifiedName EXTERNAL_SETTING_PROPERTY = new QualifiedName(CCorePlugin.PLUGIN_ID, "externalSettings"); //$NON-NLS-1$
 	private static final String EXTERNAL_SETTING_STORAGE_ID = CCorePlugin.PLUGIN_ID + ".externalSettings"; //$NON-NLS-1$
-	
+
 	private Map<String, FactoryDescriptor> fFactoryMap = new HashMap<String, FactoryDescriptor>();
 	private static CExternalSettingsManager fInstance;
-	
+
 	private CExternalSettingsManager(){
 	}
 
@@ -67,14 +67,14 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 		CProjectDescriptionManager.getInstance().removeCProjectDescriptionListener(this);
 	}
 
-	
+
 	public static CExternalSettingsManager getInstance(){
 		if(fInstance == null){
 			fInstance = new CExternalSettingsManager();
 		}
 		return fInstance;
 	}
-	
+
 	/**
 	 * A simple class representing an external settings container.
 	 * These are uniquely identifiable by the factoryId + factory
@@ -83,7 +83,7 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 	public final static class CContainerRef {
 		private final String fFactoryId;
 		private final String fContainerId;
-		
+
 		public CContainerRef(String factoryId, String containerId){
 			fFactoryId = factoryId;
 			fContainerId = containerId;
@@ -101,15 +101,15 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 		public boolean equals(Object obj) {
 			if(obj == this)
 				return true;
-			
+
 			if(obj == null)
 				return false;
-			
+
 			if(!(obj instanceof CContainerRef))
 				return false;
-			
+
 			CContainerRef other = (CContainerRef)obj;
-			
+
 			if(!fContainerId.equals(other.fContainerId))
 				return false;
 
@@ -129,14 +129,14 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 	private static class ContainerDescriptor {
 		private FactoryDescriptor fFactoryDr;
 		private CExternalSettingsHolder fHolder;
-		
+
 		private CExternalSettingsContainer fContainer;
 
 		/** Stash error messages so we're not too noisy if things go wrong */
 		private static Set<String> failingProvidersMessages;
 
 		private ContainerDescriptor(FactoryDescriptor factoryDr,
-				String containerId, 
+				String containerId,
 				IProject project,
 				ICConfigurationDescription cfgDes,
 				CExternalSetting[] previousSettings){
@@ -162,7 +162,7 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 			}
 			return fHolder.getExternalSettings();
 		}
-		
+
 	}
 
 	/**
@@ -170,13 +170,13 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 	 */
 	static class NullContainer extends CExternalSettingsContainer {
 		static final NullContainer INSTANCE = new NullContainer();
-		
+
 		@Override
 		public CExternalSetting[] getExternalSettings() {
 			return new CExternalSetting[0];
 		}
 	}
-	
+
 	private static class NullFactory extends CExternalSettingContainerFactory {
 		static NullFactory INSTANCE = new NullFactory();
 
@@ -186,15 +186,15 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 			return NullContainer.INSTANCE;
 		}
 	}
-	
+
 	private class FactoryDescriptor {
 		private CExternalSettingContainerFactory fFactory;
 		private String fId;
-		
+
 		private FactoryDescriptor(String id){
 			fId = id;
 		}
-		
+
 		private CExternalSettingContainerFactory getFactory(){
 			if(fFactory == null){
 				fFactory = createFactory(fId);
@@ -203,7 +203,7 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 			}
 			return fFactory;
 		}
-		
+
 		private CExternalSettingContainerFactory createFactory(String id) {
 			if(id.equals(CfgExportSettingContainerFactory.FACTORY_ID))
 				return CfgExportSettingContainerFactory.getInstance();
@@ -211,7 +211,7 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 				return ExtensionContainerFactory.getInstance();
 			return NullFactory.INSTANCE;
 		}
-		
+
 		public void shutdown(){
 			if(fFactory != null){
 				fFactory.removeListener(CExternalSettingsManager.this);
@@ -220,35 +220,36 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 			}
 		}
 	}
-	
+
 	private interface ICfgContainer {
 		ICConfigurationDescription getConfguration(boolean write);
 	}
-	
+
 	private static class CfgContainer implements ICfgContainer {
 		private ICConfigurationDescription fCfgDes;
-		
+
 		CfgContainer(ICConfigurationDescription cfgDes){
 			fCfgDes = cfgDes;
 		}
-		
+
+		@Override
 		public ICConfigurationDescription getConfguration(boolean write) {
 			return fCfgDes;
 		}
-		
+
 	}
-	
+
 	private class CfgContainerRefInfoContainer {
 		private ICfgContainer fCfgContainer;
 		private CSettingsRefInfo fRefInfo;
 		private boolean fWriteWasRequested;
-		
+
 		CfgContainerRefInfoContainer(ICfgContainer container){
 			fCfgContainer = container;
 		}
-		
+
 		public CSettingsRefInfo getRefInfo(boolean write) {
-			if(fRefInfo == null 
+			if(fRefInfo == null
 					|| (write && !fWriteWasRequested)){
 				ICConfigurationDescription cfg = fCfgContainer.getConfguration(write);
 				fRefInfo = CExternalSettingsManager.this.getRefInfo(cfg, write);
@@ -257,20 +258,20 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 			return fRefInfo;
 		}
 	}
-	
+
 	private static class HolderContainer {
 		private CfgContainerRefInfoContainer fRIContainer;
 		private CRefSettingsHolder fHolder;
 		private boolean fWriteWasRequested;
 		private CContainerRef fCRef;
-		
+
 		HolderContainer(CfgContainerRefInfoContainer cr, CContainerRef cref){
 			fRIContainer = cr;
 			fCRef = cref;
 		}
-		
+
 		CRefSettingsHolder getHolder(boolean write){
-			if(fHolder == null 
+			if(fHolder == null
 					|| (write && !fWriteWasRequested)){
 				CSettingsRefInfo ri = fRIContainer.getRefInfo(write);
 				fHolder = ri.get(fCRef);
@@ -278,42 +279,43 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 			}
 			return fHolder;
 		}
-		
+
 		void setHolder(CRefSettingsHolder holder){
 			fRIContainer.getRefInfo(true).put(holder);
 			fWriteWasRequested = true;
 			fHolder = holder;
 		}
-		
+
 		void removeHolder(){
 			fWriteWasRequested = true;
 			fHolder = null;
 			fRIContainer.getRefInfo(true).remove(fCRef);
 		}
 	}
-	
+
 	private static class CfgListCfgContainer implements ICfgContainer{
 		private ProjDesCfgList fList;
 		private int fNum;
-		
+
 		CfgListCfgContainer(ProjDesCfgList list, int num){
 			fList = list;
 			fNum = num;
 		}
-		
+
+		@Override
 		public ICConfigurationDescription getConfguration(boolean write) {
 			return fList.get(fNum, write);
 		}
 	}
-	
+
 	/**
-	 * A simple container type that contains a Project Description & and associated list 
+	 * A simple container type that contains a Project Description & and associated list
 	 * of configuration descriptions.
 	 */
 	private static class ProjDesCfgList {
 		private ICProjectDescription fProjDes;
 		private List<ICConfigurationDescription> fCfgList = new ArrayList<ICConfigurationDescription>();
-		
+
 		public ProjDesCfgList(ICProjectDescription des, Set<String> idSet){
 			fProjDes = des;
 			ICConfigurationDescription[] cfgs = des.getConfigurations();
@@ -326,14 +328,14 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 		public boolean isWritable(){
 			return !fProjDes.isReadOnly();
 		}
-		
+
 		public ICConfigurationDescription get(int num, boolean write) {
 			if(write && fProjDes.isReadOnly()){
 				makeWritable();
 			}
 			return fCfgList.get(num);
 		}
-		
+
 		private void makeWritable(){
 			ICProjectDescription writeDes = CProjectDescriptionManager.getInstance().getProjectDescription(fProjDes.getProject());
 			fProjDes = writeDes;
@@ -346,12 +348,12 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 					fCfgList.remove(i);
 			}
 		}
-		
+
 		public int size() {
 			return fCfgList.size();
 		}
 	}
-	
+
 	private FactoryDescriptor getFactoryDescriptor(String id){
 		FactoryDescriptor dr = fFactoryMap.get(id);
 		if(dr == null){
@@ -360,20 +362,21 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 		}
 		return dr;
 	}
-	
+
 	CExternalSettingContainerFactory getFactory(String id){
 		FactoryDescriptor dr = getFactoryDescriptor(id);
 		return dr.getFactory();
 	}
 
-	private volatile IWorkspaceRunnable workspaceReconcileRunnable; 
+	private volatile IWorkspaceRunnable workspaceReconcileRunnable;
 
 	/**
 	 * External settings call-back from the setting container factories
 	 * to notify that settings have changed in a container.
-	 * 
+	 *
 	 * Schedules a runnable to update any referencing projects
 	 */
+	@Override
 	public void settingsChanged(final IProject project, final String cfgId,	final CExternalSettingChangeEvent event) {
 		// Performance: If workspace reconcile already scheduled, then nothing to do...
 		// Current project && cfgId always null (i.e. always reconcile at the workspace level) but don't assume this for the future
@@ -385,6 +388,7 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 		// Modifying the project description in an asynchronous runnable is likely bad...
 		// Unfortunately there's nothing else we can do as it's not safe to modify the referencing configurations in place
 		r = new IWorkspaceRunnable() {
+			@Override
 			@SuppressWarnings("unchecked")
 			public void run(IProgressMonitor monitor) throws CoreException {
 				// Unset workspaceReconcileRunnable
@@ -483,36 +487,36 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 
 		return new ProjDesCfgList(des, cfgIdSet);
 	}
-	
-	private boolean processContainerChange(int op, 
-		ICfgContainer cr, 
-		CfgContainerRefInfoContainer riContainer, 
+
+	private boolean processContainerChange(int op,
+		ICfgContainer cr,
+		CfgContainerRefInfoContainer riContainer,
 		CContainerRef crInfo){
 
 		ICConfigurationDescription cfg = cr.getConfguration(false);
 
-		ExtSettingsDelta[] deltas = checkExternalSettingsChange(op, 
+		ExtSettingsDelta[] deltas = checkExternalSettingsChange(op,
 				cfg.getProjectDescription().getProject(), cfg, riContainer, crInfo);
-		
+
 		if(deltas != null)
 			return CExternalSettingsDeltaProcessor.applyDelta(cr.getConfguration(true), deltas);
 		return false;
 	}
-	
+
 	private static class RefInfoContainer{
 		CSettingsRefInfo fRefInfo;
 		int fInstanceId;
-		
+
 		RefInfoContainer(CSettingsRefInfo ri, int id){
 			fRefInfo = ri;
 			fInstanceId = id;
 		}
 	}
-	
+
 	private CSettingsRefInfo getRefInfo(ICConfigurationDescription cfg, boolean write){
 		if(write && cfg.isReadOnly())
 			throw new IllegalArgumentException(SettingsModelMessages.getString("CExternalSettingsManager.3")); //$NON-NLS-1$
-		
+
 		RefInfoContainer cr = (RefInfoContainer)cfg.getSessionProperty(EXTERNAL_SETTING_PROPERTY);
 		CSettingsRefInfo ri;
 		boolean setCr = false;
@@ -528,15 +532,15 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 			ri = cr.fRefInfo;
 			setCr = false;
 		}
-		
+
 		if(setCr){
 			cr = new RefInfoContainer(ri, cfg.hashCode());
 			cfg.setSessionProperty(EXTERNAL_SETTING_PROPERTY, cr);
 		}
-		
+
 		return ri;
 	}
-	
+
 	private CSettingsRefInfo load(ICConfigurationDescription cfg){
 		try {
 			ICStorageElement el = cfg.getStorage(EXTERNAL_SETTING_STORAGE_ID, false);
@@ -556,13 +560,14 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 	 *                  writable, store cached external settings into the configuration
 	 *  - LOADED: Check whether a reconcile is needed and update the settings atomically
 	 */
+	@Override
 	public void handleEvent(CProjectDescriptionEvent event) {
 		switch(event.getEventType()){
 		case CProjectDescriptionEvent.DATA_APPLIED: {
 			ICProjectDescription des = event.getNewCProjectDescription();
 			if(des == null)
 				return;
-			
+
 			ICConfigurationDescription[] cfgs = des.getConfigurations();
 			for(int i = 0; i < cfgs.length; i++){
 				ICConfigurationDescription cfg = cfgs[i];
@@ -577,7 +582,7 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 			// If the project description has no references, short-circuit:
 			boolean needsReconcile = false;
 			for (ICConfigurationDescription desc : event.getNewCProjectDescription().getConfigurations()) {
-				if (!desc.getReferenceInfo().isEmpty() || 
+				if (!desc.getReferenceInfo().isEmpty() ||
 						(desc.getExternalSettingsProviderIds() != null && desc.getExternalSettingsProviderIds().length > 0)) {
 					needsReconcile = true;
 					break;
@@ -591,6 +596,7 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 			// us to reconcile / update the cached configuration during load
 			final IProject project = event.getProject();
 			IWorkspaceRunnable r = new IWorkspaceRunnable(){
+				@Override
 				@SuppressWarnings("unchecked")
 				public void run(IProgressMonitor monitor) throws CoreException {
 					if (!project.isAccessible())
@@ -631,12 +637,12 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 			CCorePlugin.log(e);
 		}
 	}
-	
+
 	public void containerContentsChanged(ICConfigurationDescription cfg, CContainerRef cr){
 		CfgContainer ccr = new CfgContainer(cfg);
 		processContainerChange(OP_CHANGED, ccr, new CfgContainerRefInfoContainer(ccr), cr);
 	}
-	
+
 	public void addContainer(ICConfigurationDescription cfg, CContainerRef cr){
 		CfgContainer ccr = new CfgContainer(cfg);
 		processContainerChange(OP_ADDED, ccr, new CfgContainerRefInfoContainer(ccr), cr);
@@ -646,16 +652,16 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 		CfgContainer ccr = new CfgContainer(cfg);
 		processContainerChange(OP_REMOVED, ccr, new CfgContainerRefInfoContainer(ccr), cr);
 	}
-	
+
 	public CContainerRef[] getReferences(ICConfigurationDescription cfg, String factoryId){
 		CSettingsRefInfo info = getRefInfo(cfg, false);
 		return info.getReferences(factoryId);
 	}
-	
-	private ExtSettingsDelta[] checkExternalSettingsChange(int op, 
-			IProject proj, 
-			ICConfigurationDescription cfgDes, 
-			CfgContainerRefInfoContainer riContainer, 
+
+	private ExtSettingsDelta[] checkExternalSettingsChange(int op,
+			IProject proj,
+			ICConfigurationDescription cfgDes,
+			CfgContainerRefInfoContainer riContainer,
 			CContainerRef cr){
 		HolderContainer hCr = new HolderContainer(riContainer, cr);
 		CRefSettingsHolder holder = hCr.getHolder(false);
@@ -688,7 +694,7 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 			hCr.removeHolder();
 		return deltas;
 	}
-	
+
 	public void restoreSourceEntryDefaults(ICConfigurationDescription cfg){
 		CfgContainer cr = new CfgContainer(cfg);
 		CfgContainerRefInfoContainer ric = new CfgContainerRefInfoContainer(cr);

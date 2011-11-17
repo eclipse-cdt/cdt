@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
  * #@noinstantiate This class is not intended to be instantiated by clients. Note
  *     that protected constructor won't allow to instantiate this class
  *     outside the package anyway, so it is not really API.
- * 
+ *
  * @deprecated Since CDT 4.0 not used for the "new style" projects.
  */
 @Deprecated
@@ -50,30 +50,35 @@ public class ScannerInfo implements IExtendedScannerInfo {
 	}
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.build.managed.IScannerInfo#getIncludePaths()
 	 */
+	@Override
 	public synchronized String[] getIncludePaths() {
 		return fSystemIncludePaths;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.build.managed.IScannerInfo#getIncludePaths()
 	 */
+	@Override
 	public synchronized Map<String, String> getDefinedSymbols() {
 		return fMacroMap;
 	}
 
+	@Override
 	public String[] getMacroFiles() {
 		return fMacroFiles;
 	}
 
+	@Override
 	public String[] getIncludeFiles() {
 		return fIncludeFiles;
 	}
 
+	@Override
 	public String[] getLocalIncludePath() {
 		return fLocalIncludePaths;
 	}

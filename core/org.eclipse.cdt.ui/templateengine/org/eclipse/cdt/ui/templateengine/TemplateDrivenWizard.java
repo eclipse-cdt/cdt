@@ -32,20 +32,20 @@ import org.eclipse.cdt.ui.templateengine.pages.UIWizardPage;
 
 /**
  * Any wizard intending to use template (@see org.eclipse.cdt.core.templateenginee.Template) based pages
- * can extend this wizard and use it. Alternatively, a wizard intending to show a choice of templates 
+ * can extend this wizard and use it. Alternatively, a wizard intending to show a choice of templates
  * should use TemplatesChoiceWizard (@see org.eclipse.cdt.core.templateenginee.ui.TemplatesChoiceWizard)
- *  
+ *
  */
 public abstract class TemplateDrivenWizard extends Wizard {
 	protected List<IWizardPage> pagesBeforeTemplatePages = new ArrayList<IWizardPage>();
 	protected List<IWizardPage> pagesAfterTemplatePages = new ArrayList<IWizardPage>();
-	
+
 	protected Template template;
 	protected int pageIndex;
 	protected Map<String, UIWizardPage> templatePages;
 	protected Composite pageContainer;
 	protected List<String> templatePagesOrderVector;
-	
+
 	@Override
 	public final void addPage(IWizardPage page) {
         page.setWizard(this);
@@ -57,7 +57,7 @@ public abstract class TemplateDrivenWizard extends Wizard {
 		for (IWizardPage page : pages) {
 			addPageBeforeTemplatePages(page);
 		}
-		
+
 		pages = getPagesAfterTemplatePages();
 		for (IWizardPage page : pages) {
 			addPageAfterTemplatePages(page);
@@ -77,7 +77,7 @@ public abstract class TemplateDrivenWizard extends Wizard {
 	protected abstract IWizardPage[] getPagesBeforeTemplatePages();
 
 	protected abstract IWizardPage[] getPagesAfterTemplatePages();
-	
+
 	/**
 	 * @return  the template
 	 */
@@ -156,6 +156,7 @@ public abstract class TemplateDrivenWizard extends Wizard {
 	@Override
 	public boolean performFinish() {
 		IRunnableWithProgress op= new WorkspaceModifyDelegatingOperation(new IRunnableWithProgress() {
+			@Override
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				finishPage(monitor);
 			}
@@ -181,7 +182,7 @@ public abstract class TemplateDrivenWizard extends Wizard {
 		TemplateEngineUIUtil.showStatusDialog(msg, new MultiStatus(CUIPlugin.getPluginId(), IStatus.OK, statuses, msg, null));
 		return true;
 	}
-	
+
 	@Override
 	public final void createPageControls(Composite pageContainer) {
 		super.createPageControls(pageContainer);

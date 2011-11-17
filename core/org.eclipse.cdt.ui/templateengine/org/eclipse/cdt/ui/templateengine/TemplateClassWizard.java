@@ -80,12 +80,14 @@ public class TemplateClassWizard extends TemplatesChoiceWizard implements INewWi
 		return pagesAfterTemplatePages;
 	}
 
+	@Override
 	public Template[] getTemplates() {
 		SortedSet<TemplateCore> templateList = new TreeSet<TemplateCore>(Template.TEMPLATE_ID_CASE_INSENSITIVE_COMPARATOR);
 		templateList.addAll(Arrays.asList(TemplateEngineUI.getDefault().getTemplates()));
 		return templateList.toArray(new Template[templateList.size()]);
 	}
 
+	@Override
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
 		configElement = config;
 	}
@@ -105,6 +107,7 @@ public class TemplateClassWizard extends TemplatesChoiceWizard implements INewWi
 		return pagesAfterTemplateSelection;
 	}
 
+	@Override
 	public String getDescription(Object object) {
 		if (object instanceof Template)
 		{
@@ -113,26 +116,32 @@ public class TemplateClassWizard extends TemplatesChoiceWizard implements INewWi
 		return ""; //$NON-NLS-1$
 	}
 
+	@Override
 	public boolean showTemplatesInTreeView() {
 		return false;
 	}
 
+	@Override
 	public Object[] getChildren(Object parentElement) {
 		return null;
 	}
 
+	@Override
 	public Object getParent(Object element) {
 		return null;
 	}
 
+	@Override
 	public boolean hasChildren(Object element) {
 		return false;
 	}
 
+	@Override
 	public Object[] getElements(Object inputElement) {
 		return getTemplates();
 	}
 
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 
 	}

@@ -16,24 +16,25 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  * A progress monitor accepting a <code>ICancelable</code> object to receive the cancel request.
- * 
+ *
  * @since 5.0
  */
 public class ProgressMonitorAndCanceler extends NullProgressMonitor implements ICanceler {
 
 	private ICancelable fCancelable;
 
+	@Override
 	public void setCancelable(ICancelable cancelable) {
 		fCancelable= cancelable;
 		checkCanceled();
 	}
-	
+
 	@Override
 	public void setCanceled(boolean canceled) {
 		super.setCanceled(canceled);
 		checkCanceled();
 	}
-	
+
 	private void checkCanceled() {
 		if (fCancelable != null && isCanceled()) {
 			fCancelable.cancel();

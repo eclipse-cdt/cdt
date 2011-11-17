@@ -240,6 +240,7 @@ public class BuildConsolePartitioner
 	 */
 	private void asyncProcessQueue() {
 		Runnable r = new Runnable() {
+			@Override
 			public void run() {
 				StreamEntry entry;
 				try {
@@ -380,19 +381,23 @@ public class BuildConsolePartitioner
 		checkOverflow();
 	}
 
+	@Override
 	public void connect(IDocument document) {
 		CUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 	}
 
+	@Override
 	public void disconnect() {
 		fDocument.setDocumentPartitioner(null);
 		CUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 		killed = true;
 	}
 
+	@Override
 	public void documentAboutToBeChanged(DocumentEvent event) {
 	}
 
+	@Override
 	public boolean documentChanged(DocumentEvent event) {
 		return documentChanged2(event) != null;
 	}
@@ -400,6 +405,7 @@ public class BuildConsolePartitioner
 	/**
 	 * @see org.eclipse.jface.text.IDocumentPartitioner#getLegalContentTypes()
 	 */
+	@Override
 	public String[] getLegalContentTypes() {
 		return new String[]{BuildConsolePartition.CONSOLE_PARTITION_TYPE};
 	}
@@ -407,6 +413,7 @@ public class BuildConsolePartitioner
 	/**
 	 * @see org.eclipse.jface.text.IDocumentPartitioner#getContentType(int)
 	 */
+	@Override
 	public String getContentType(int offset) {
 		ITypedRegion partition = getPartition(offset);
 		if (partition != null) {
@@ -419,6 +426,7 @@ public class BuildConsolePartitioner
 	 * @see org.eclipse.jface.text.IDocumentPartitioner#computePartitioning(int,
 	 *      int)
 	 */
+	@Override
 	public ITypedRegion[] computePartitioning(int offset, int length) {
 		if (offset == 0 && length == fDocument.getLength()) {
 			return fPartitions.toArray(new ITypedRegion[fPartitions.size()]);
@@ -440,6 +448,7 @@ public class BuildConsolePartitioner
 	/**
 	 * @see org.eclipse.jface.text.IDocumentPartitioner#getPartition(int)
 	 */
+	@Override
 	public ITypedRegion getPartition(int offset) {
 		for (int i = 0; i < fPartitions.size(); i++) {
 			ITypedRegion partition = fPartitions.get(i);
@@ -452,6 +461,7 @@ public class BuildConsolePartitioner
 		return null;
 	}
 
+	@Override
 	public IRegion documentChanged2(DocumentEvent event) {
 		String text = event.getText();
 		if (getDocument().getLength() == 0) {
@@ -555,16 +565,19 @@ public class BuildConsolePartitioner
 		return this;
 	}
 
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty() == BuildConsolePreferencePage.PREF_BUILDCONSOLE_LINES) {
 			setDocumentSize(BuildConsolePreferencePage.buildConsoleLines());
 		}
 	}
 
+	@Override
 	public void start(final IProject project) {
 		Display display = CUIPlugin.getStandardDisplay();
 		if (display != null) {
 			display.asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					fLogStream = null;
 					fLogURI = null;
@@ -579,14 +592,17 @@ public class BuildConsolePartitioner
 		}
 	}
 
+	@Override
 	public ConsoleOutputStream getOutputStream() throws CoreException {
 		return new BuildOutputStream(this, fManager.getStreamDecorator(BuildConsoleManager.BUILD_STREAM_TYPE_OUTPUT));
 	}
 
+	@Override
 	public ConsoleOutputStream getInfoStream() throws CoreException {
 		return new BuildOutputStream(this, fManager.getStreamDecorator(BuildConsoleManager.BUILD_STREAM_TYPE_INFO));
 	}
 
+	@Override
 	public ConsoleOutputStream getErrorStream() throws CoreException {
 		return new BuildOutputStream(this, fManager.getStreamDecorator(BuildConsoleManager.BUILD_STREAM_TYPE_ERROR));
 	}

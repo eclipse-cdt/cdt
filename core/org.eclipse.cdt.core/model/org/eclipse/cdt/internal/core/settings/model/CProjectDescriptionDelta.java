@@ -29,7 +29,7 @@ public class CProjectDescriptionDelta implements ICDescriptionDelta {
 
 	private static final int KIND_MASK = 3;
 	private static final int FLAGS_OFFSET = 2;
-	
+
 	public CProjectDescriptionDelta(ICSettingObject newSetting, ICSettingObject oldSetting){
 		fNewSetting = newSetting;
 		fOldSetting = oldSetting;
@@ -44,46 +44,52 @@ public class CProjectDescriptionDelta implements ICDescriptionDelta {
 			setDeltaKind(REMOVED);
 		}
 	}
-	
+
 	void addChild(CProjectDescriptionDelta child){
 		fChildList.add(child);
 		child.setParent(this);
 	}
-	
+
 	private void setParent(CProjectDescriptionDelta parent){
 		fParent = parent;
 	}
 
+	@Override
 	public ICDescriptionDelta[] getChildren() {
 		return fChildList.toArray(new CProjectDescriptionDelta[fChildList.size()]);
 	}
 
+	@Override
 	public ICSettingObject getOldSetting() {
 		return fOldSetting;
 	}
 
+	@Override
 	public ICSettingObject getSetting() {
 		return fSetting;
 	}
 
+	@Override
 	public int getSettingType() {
 		return fSetting.getType();
 	}
 
+	@Override
 	public ICDescriptionDelta getParent() {
 		return fParent;
 	}
-	
+
 	public boolean isEmpty(){
-		return fChildList.size() == 0 
-			&& getDeltaKind() == CHANGED 
+		return fChildList.size() == 0
+			&& getDeltaKind() == CHANGED
 			&& getChangeFlags() == 0;
 	}
 
+	@Override
 	public int getChangeFlags() {
 		return (fStatus & (~KIND_MASK)) >> FLAGS_OFFSET;
 	}
-	
+
 	void addChangeFlags(int flags){
 		flags |= getChangeFlags();
 		setChangeFlags(flags);
@@ -102,10 +108,12 @@ public class CProjectDescriptionDelta implements ICDescriptionDelta {
 		fStatus = (fStatus & (~KIND_MASK)) | (kind & KIND_MASK);
 	}
 
+	@Override
 	public int getDeltaKind() {
 		return fStatus & KIND_MASK;
 	}
 
+	@Override
 	public ICSettingObject getNewSetting() {
 		return fNewSetting;
 	}
@@ -115,14 +123,17 @@ public class CProjectDescriptionDelta implements ICDescriptionDelta {
 		checkSettingEntriesChangeFlag();
 	}
 
+	@Override
 	public int getAddedEntriesKinds() {
 		return fAddedLanguageEntriesKinds;
 	}
 
+	@Override
 	public int getRemovedEntriesKinds() {
 		return fRemovedLanguageEntriesKinds;
 	}
 
+	@Override
 	public int getReorderedEntriesKinds() {
 		return fReorderedLanguageEntriesKinds;
 	}
@@ -136,7 +147,7 @@ public class CProjectDescriptionDelta implements ICDescriptionDelta {
 		fReorderedLanguageEntriesKinds = kinds;
 		checkSettingEntriesChangeFlag();
 	}
-	
+
 	private void checkSettingEntriesChangeFlag(){
 		if(fAddedLanguageEntriesKinds != 0
 				|| fRemovedLanguageEntriesKinds != 0
@@ -145,12 +156,12 @@ public class CProjectDescriptionDelta implements ICDescriptionDelta {
 		else
 			removeChangeFlags(SETTING_ENTRIES);
 	}
-	
+
 	@SuppressWarnings("nls")
 	private static String flagsToString(int flags) {
 		StringBuilder str = new StringBuilder();
 		str.append(", flags=0x" + Integer.toHexString(flags));
-		
+
 		str.append(":");
 		if ((flags&ACTIVE_CFG)!=0) str.append("ACTIVE_CFG|");
 		if ((flags&NAME)!=0) str.append("NAME|");
@@ -175,7 +186,7 @@ public class CProjectDescriptionDelta implements ICDescriptionDelta {
 		if (str.charAt(str.length()-1)=='|') str.deleteCharAt(str.length()-1);
 		return str.toString();
 	}
-	
+
 	/**
 	 * Helper method to make debugging easier.
 	 */
@@ -183,10 +194,10 @@ public class CProjectDescriptionDelta implements ICDescriptionDelta {
 	@Override
 	public String toString() {
 		StringBuilder str = new StringBuilder();
-		
+
 		String type = fSetting.getClass().getSimpleName();
 		str.append("[" + type + "]");
-		
+
 		int kind = getDeltaKind();
 		str.append(", kind="+kind);
 		switch (kind) {
@@ -195,16 +206,16 @@ public class CProjectDescriptionDelta implements ICDescriptionDelta {
 		case CHANGED: str.append(":CHANGED");break;
 		default: str.append(":<unknown>");
 		}
-		
+
 		str.append(flagsToString(getChangeFlags()));
-		
+
 		ICDescriptionDelta[] children = getChildren();
 		if (children==null) {
 			str.append(", no children");
 		} else {
 			str.append(", " + getChildren().length + " children");
 		}
-		
+
 		return str.toString();
 	}
 }

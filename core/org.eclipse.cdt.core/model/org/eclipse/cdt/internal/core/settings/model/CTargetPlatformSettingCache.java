@@ -21,23 +21,26 @@ public class CTargetPlatformSettingCache extends CDefaultTargetPlatformData
 	private CConfigurationDescriptionCache fCfgCache;
 	CTargetPlatformSettingCache(CTargetPlatformData base, CConfigurationDescriptionCache cfgCache){
 		fId = base.getId();
-		
+
 		fCfgCache = cfgCache;
-		
+
 		fCfgCache.addTargetPlatformSetting(this);
-		
+
 		copyDataFrom(base);
 	}
-	
-	
+
+
+	@Override
 	public ICConfigurationDescription getConfiguration() {
 		return fCfgCache;
 	}
 
+	@Override
 	public ICSettingContainer getParent() {
 		return fCfgCache;
 	}
 
+	@Override
 	public boolean isReadOnly() {
 		return true;
 	}
@@ -46,7 +49,7 @@ public class CTargetPlatformSettingCache extends CDefaultTargetPlatformData
 	public void setBinaryParserIds(String[] ids) {
 		if(!fCfgCache.isInitializing())
 			throw ExceptionFactory.createIsReadOnlyException();
-		
+
 		super.setBinaryParserIds(ids);
 	}
 

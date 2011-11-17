@@ -12,7 +12,7 @@ package org.eclipse.cdt.core.model;
 
 /**
  * Represents a "using" declaration in C  translation unit.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -21,6 +21,7 @@ public interface IUsing extends ICElement, ISourceManipulation, ISourceReference
 	 * Returns the name of the package the statement refers to.
 	 * This is a handle-only method.
 	 */
+	@Override
 	String getElementName();
 
 	boolean isDirective();

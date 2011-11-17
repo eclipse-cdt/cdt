@@ -61,6 +61,7 @@ public class RegexErrorParser implements IErrorParserNamed {
 	 *
 	 * @param id of error parser
 	 */
+	@Override
 	public void setId(String id) {
 		fId = id;
 	}
@@ -70,6 +71,7 @@ public class RegexErrorParser implements IErrorParserNamed {
 	 *
 	 * @param name of error parser
 	 */
+	@Override
 	public void setName(String name) {
 		fName = name;
 	}
@@ -110,6 +112,7 @@ public class RegexErrorParser implements IErrorParserNamed {
 	/**
 	 * @return id of error parser
 	 */
+	@Override
 	public String getId() {
 		return fId;
 	}
@@ -117,6 +120,7 @@ public class RegexErrorParser implements IErrorParserNamed {
 	/**
 	 * @return name of error parser
 	 */
+	@Override
 	public String getName() {
 		return fName;
 	}
@@ -137,6 +141,7 @@ public class RegexErrorParser implements IErrorParserNamed {
 	 * @param epManager - error parsers manager
 	 * @return true if error parser recognized and accepted line, false otherwise
 	 */
+	@Override
 	public boolean processLine(String line, ErrorParserManager epManager) {
 		for (RegexErrorPattern pattern : fPatterns)
 			try {

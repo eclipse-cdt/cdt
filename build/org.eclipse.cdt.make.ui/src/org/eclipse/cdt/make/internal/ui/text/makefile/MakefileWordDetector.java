@@ -21,6 +21,7 @@ public class MakefileWordDetector implements IWordDetector {
 	/**
 	 * @see IWordDetector#isWordPart(char)
 	 */
+	@Override
 	public boolean isWordPart(char character) {
 		return Character.isLetterOrDigit(character) || (correctSpecChars.indexOf(character) >= 0);
 	}
@@ -28,6 +29,7 @@ public class MakefileWordDetector implements IWordDetector {
 	/**
 	 * @see IWordDetector#isWordStart(char)
 	 */
+	@Override
 	public boolean isWordStart(char character) {
 		return Character.isLetterOrDigit(character) || (correctStartSpecChars.indexOf(character) >= 0);
 	}

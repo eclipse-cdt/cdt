@@ -37,11 +37,11 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.osgi.framework.Version;
 
 /**
- * 
+ *
  *
  */
-public class TestMacro implements 
-	IConfigurationBuildMacroSupplier, 
+public class TestMacro implements
+	IConfigurationBuildMacroSupplier,
 	IProjectBuildMacroSupplier,
 	IReservedMacroNameSupplier,
 	IConfigurationEnvironmentVariableSupplier,
@@ -52,35 +52,37 @@ public class TestMacro implements
 
 	public static boolean supported[] = {false, false, false, false, false};
 	public static IPath topBuildDir = null;
-	
+
 	public static String CFG_VAR = "CFG_PROVIDER_VAR"; //$NON-NLS-1$
 	public static String PRJ_VAR = "PRJ_PROVIDER_VAR"; //$NON-NLS-1$
-	
+
 //	IConfigurationBuildMacroSupplier
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.macros.IConfigurationBuildMacroSupplier#getMacro(java.lang.String, org.eclipse.cdt.managedbuilder.core.IConfiguration, org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider)
 	 */
+	@Override
 	public IBuildMacro getMacro(String macroName, IConfiguration configuration,
 			IBuildMacroProvider provider) {
 		ManagedBuildMacrosTests.functionCalled |= ManagedBuildMacrosTests.GET_ONE_CONFIG;
-		
+
 		IBuildMacro ms = null;
 		if (!(provider instanceof TestMacro)) {
-			ms = provider.getMacro(macroName, 
+			ms = provider.getMacro(macroName,
 					IBuildMacroProvider.CONTEXT_CONFIGURATION,
 					configuration, false);
 		}
 		return ms;
 	}
 
+	@Override
 	public IBuildMacro getMacro(String macroName, IManagedProject mproj,
 			IBuildMacroProvider provider) {
 		ManagedBuildMacrosTests.functionCalled |= ManagedBuildMacrosTests.GET_ONE_PROJECT;
 
 		IBuildMacro ms = null;
 		if (!(provider instanceof TestMacro)) {
-			ms = provider.getMacro(macroName, 
+			ms = provider.getMacro(macroName,
 					IBuildMacroProvider.CONTEXT_PROJECT,
 					mproj, false);
 		}
@@ -88,10 +90,11 @@ public class TestMacro implements
 	}
 
 //	IProjectBuildMacroSupplier
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.macros.IConfigurationBuildMacroSupplier#getMacros(org.eclipse.cdt.managedbuilder.core.IConfiguration, org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider)
 	 */
+	@Override
 	public IBuildMacro[] getMacros(IConfiguration configuration,
 			IBuildMacroProvider provider) {
 		ManagedBuildMacrosTests.functionCalled |= ManagedBuildMacrosTests.GET_MANY_CONFIG;
@@ -112,8 +115,9 @@ public class TestMacro implements
 	}
 
 	/**
-	 * 
+	 *
 	 */
+	@Override
 	public IBuildMacro[] getMacros(IManagedProject mproj,
 			IBuildMacroProvider provider) {
 		ManagedBuildMacrosTests.functionCalled |= ManagedBuildMacrosTests.GET_MANY_PROJECT;
@@ -134,22 +138,24 @@ public class TestMacro implements
 	}
 
 //	IReservedMacroNameSupplier
-	
+
 	/**
-	 * 
+	 *
 	 */
+	@Override
 	public boolean isReservedName(String macroName, IConfiguration configuration) {
 		ManagedBuildMacrosTests.functionCalled |= ManagedBuildMacrosTests.RESERVED_NAME;
 		if (macroName.equalsIgnoreCase("USERNAME")) return true;  //$NON-NLS-1$
 		return false;
 	}
-	
+
 //	IConfigurationEnvironmentVariableSupplier
-	
+
 	/**
-	 * 
+	 *
 	 */
-	public IBuildEnvironmentVariable getVariable(String variableName, 
+	@Override
+	public IBuildEnvironmentVariable getVariable(String variableName,
 			IConfiguration configuration,
 			IEnvironmentVariableProvider provider) {
 		if (CFG_VAR.equals(variableName)) {
@@ -159,8 +165,9 @@ public class TestMacro implements
 	}
 
 	/**
-	 * 
+	 *
 	 */
+	@Override
 	public IBuildEnvironmentVariable[] getVariables (IConfiguration configuration,
 			IEnvironmentVariableProvider provider) {
 		IBuildEnvironmentVariable v = getVariable(CFG_VAR, configuration, provider);
@@ -168,16 +175,17 @@ public class TestMacro implements
 			IBuildEnvironmentVariable[] vs = new IBuildEnvironmentVariable[1];
 			vs[0] = v;
 			return(vs);
-		} else	
+		} else
 			return null;
 	}
-	
+
 //	IProjectEnvironmentVariableSupplier
-	
+
 	/**
-	 * 
+	 *
 	 */
-	public IBuildEnvironmentVariable getVariable(String variableName, 
+	@Override
+	public IBuildEnvironmentVariable getVariable(String variableName,
 			IManagedProject project,
 			IEnvironmentVariableProvider provider) {
 		if (PRJ_VAR.equals(variableName)) {
@@ -185,10 +193,11 @@ public class TestMacro implements
 		} else
 			return null;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 */
+	@Override
 	public IBuildEnvironmentVariable[] getVariables (IManagedProject project,
 			IEnvironmentVariableProvider provider) {
 		IBuildEnvironmentVariable v = getVariable(PRJ_VAR, project, provider);
@@ -196,16 +205,17 @@ public class TestMacro implements
 			IBuildEnvironmentVariable[] vs = new IBuildEnvironmentVariable[1];
 			vs[0] = v;
 			return(vs);
-		} else	
+		} else
 			return null;
 	}
 
-	
+
 //	IManagedIsToolChainSupported
-	
+
 	/**
-	 * 
+	 *
 	 */
+	@Override
 	public boolean isSupported(IToolChain toolChain, Version version, String instance) {
 		if ("One".equals(toolChain.getParent().getName()))   return supported[0]; //$NON-NLS-1$
 		if ("Two".equals(toolChain.getParent().getName()))   return supported[1]; //$NON-NLS-1$
@@ -214,22 +224,30 @@ public class TestMacro implements
 		return false;
 	}
 
-	
+
 //	IManagedBuilderMakefileGenerator
-	
+
 	/**
 	 */
+	@Override
 	public IPath getBuildWorkingDir() {
-//		System.out.println("---- getBuildWorkingDir: " + topBuildDir); 
-		return topBuildDir; 
+//		System.out.println("---- getBuildWorkingDir: " + topBuildDir);
+		return topBuildDir;
 		}
+	@Override
 	public void generateDependencies() {}
+	@Override
 	public MultiStatus generateMakefiles(IResourceDelta delta) { return null; }
+	@Override
 	public String getMakefileName() {return "test_instead_make"; } //$NON-NLS-1$
+	@Override
 	public void initialize(IProject project, IManagedBuildInfo info, IProgressMonitor monitor) {
-//		System.out.println("---- init: " + topBuildDir); 
+//		System.out.println("---- init: " + topBuildDir);
 	}
+	@Override
 	public boolean isGeneratedResource(IResource resource) { return false; }
+	@Override
 	public void regenerateDependencies(boolean force) {}
+	@Override
 	public MultiStatus regenerateMakefiles() { return null; }
 }

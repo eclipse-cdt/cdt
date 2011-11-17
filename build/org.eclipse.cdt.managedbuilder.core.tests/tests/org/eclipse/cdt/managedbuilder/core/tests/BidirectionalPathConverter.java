@@ -19,11 +19,12 @@ import org.eclipse.core.runtime.Path;
 
 public class BidirectionalPathConverter extends OneDirectionalPathConverter implements IReverseOptionPathConverter {
 
+	@Override
 	public String convertToOptionValue(ICSettingEntry entry, IOption option,
 			ITool tool) {
 		String name = entry.getName();
 		IPath path = new Path(name);
-		
+
 		if(PREFIX.isPrefixOf(path))
 			return path.removeFirstSegments(PREFIX.segmentCount()).makeAbsolute().toString();
 		else if (!path.isAbsolute())

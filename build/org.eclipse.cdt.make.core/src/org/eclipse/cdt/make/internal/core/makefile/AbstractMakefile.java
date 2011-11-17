@@ -26,15 +26,15 @@ import org.eclipse.cdt.make.core.makefile.ITargetRule;
  * statement :   rule | macro_definition | comments | empty
  * rule :  inference_rule | target_rule
  * inference_rule : target ':' <nl> ( <tab> command <nl> ) +
- * target_rule : target [ ( target ) * ] ':' [ ( prerequisite ) * ] [ ';' command ] <nl> 
+ * target_rule : target [ ( target ) * ] ':' [ ( prerequisite ) * ] [ ';' command ] <nl>
                  [ ( command ) * ]
- * macro_definition : string '=' (string)* 
+ * macro_definition : string '=' (string)*
  * comments : ('#' (string) <nl>) *
  * empty : <nl>
  * command : <tab> prefix_command string <nl>
  * target : string
  * prefix_command : '-' | '@' | '+'
- * internal_macro :  "$<" | "$*" | "$@" | "$?" | "$%" 
+ * internal_macro :  "$<" | "$*" | "$@" | "$?" | "$%"
  */
 
 public abstract class AbstractMakefile extends Parent implements IMakefile {
@@ -45,8 +45,10 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 		super(parent);
 	}
 
+	@Override
 	public abstract IDirective[] getBuiltins();
 
+	@Override
 	public IRule[] getRules() {
 		IDirective[] stmts = getDirectives(true);
 		List<IDirective> array = new ArrayList<IDirective>(stmts.length);
@@ -58,6 +60,7 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 		return array.toArray(new IRule[0]);
 	}
 
+	@Override
 	public IRule[] getRules(String target) {
 		IRule[] rules = getRules();
 		List<IRule> array = new ArrayList<IRule>(rules.length);
@@ -69,6 +72,7 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 		return array.toArray(new IRule[0]);
 	}
 
+	@Override
 	public IInferenceRule[] getInferenceRules() {
 		IRule[] rules = getRules();
 		List<IRule> array = new ArrayList<IRule>(rules.length);
@@ -80,6 +84,7 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 		return array.toArray(new IInferenceRule[0]);
 	}
 
+	@Override
 	public IInferenceRule[] getInferenceRules(String target) {
 		IInferenceRule[] irules = getInferenceRules();
 		List<IInferenceRule> array = new ArrayList<IInferenceRule>(irules.length);
@@ -91,6 +96,7 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 		return array.toArray(new IInferenceRule[0]);
 	}
 
+	@Override
 	public ITargetRule[] getTargetRules() {
 		IRule[] trules = getRules();
 		List<IRule> array = new ArrayList<IRule>(trules.length);
@@ -102,6 +108,7 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 		return array.toArray(new ITargetRule[0]);
 	}
 
+	@Override
 	public ITargetRule[] getTargetRules(String target) {
 		ITargetRule[] trules = getTargetRules();
 		List<ITargetRule> array = new ArrayList<ITargetRule>(trules.length);
@@ -113,6 +120,7 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 		return array.toArray(new ITargetRule[0]);
 	}
 
+	@Override
 	public IMacroDefinition[] getMacroDefinitions() {
 		IDirective[] stmts = getDirectives(true);
 		List<IDirective> array = new ArrayList<IDirective>(stmts.length);
@@ -124,6 +132,7 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 		return array.toArray(new IMacroDefinition[0]);
 	}
 
+	@Override
 	public IMacroDefinition[] getMacroDefinitions(String name) {
 		IMacroDefinition[] variables = getMacroDefinitions();
 		List<IMacroDefinition> array = new ArrayList<IMacroDefinition>(variables.length);
@@ -135,6 +144,7 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 		return array.toArray(new IMacroDefinition[0]);
 	}
 
+	@Override
 	public IMacroDefinition[] getBuiltinMacroDefinitions() {
 		IDirective[] stmts = getBuiltins();
 		List<IDirective> array = new ArrayList<IDirective>(stmts.length);
@@ -146,6 +156,7 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 		return array.toArray(new IMacroDefinition[0]);
 	}
 
+	@Override
 	public IMacroDefinition[] getBuiltinMacroDefinitions(String name) {
 		IMacroDefinition[] variables = getBuiltinMacroDefinitions();
 		List<IMacroDefinition> array = new ArrayList<IMacroDefinition>(variables.length);
@@ -179,10 +190,12 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 		return array.toArray(new IInferenceRule[0]);
 	}
 
+	@Override
 	public String expandString(String line) {
 		return expandString(line, false);
 	}
 
+	@Override
 	public String expandString(String line, boolean recursive) {
 		int len = line.length();
 		boolean foundDollar = false;
@@ -264,14 +277,15 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 		return buffer.toString();
 	}
 
+	@Override
 	public URI getFileURI() {
 		return filename;
 	}
-	
+
 	public void setFileURI(URI filename) {
 	    this.filename = filename;
     }
-	
+
 	@Override
 	public IMakefile getMakefile() {
 		return this;

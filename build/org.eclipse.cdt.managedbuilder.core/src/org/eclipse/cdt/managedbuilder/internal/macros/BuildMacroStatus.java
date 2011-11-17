@@ -15,12 +15,12 @@ import org.eclipse.cdt.utils.cdtvariables.IVariableContextInfo;
 import org.eclipse.cdt.utils.cdtvariables.SupplierBasedCdtVariableStatus;
 
 /**
- * This class implements the IBuildMacroStatus interface 
- * 
+ * This class implements the IBuildMacroStatus interface
+ *
  * @since 3.0
  */
 public class BuildMacroStatus extends SupplierBasedCdtVariableStatus implements IBuildMacroStatus {
-	
+
 	public BuildMacroStatus(int severity, int code, String message,
 			Throwable exception, String macroName, String expression,
 			String referencedName, IVariableContextInfo info) {
@@ -42,6 +42,7 @@ public class BuildMacroStatus extends SupplierBasedCdtVariableStatus implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroStatus#getContextType()
 	 */
+	@Override
 	public int getContextType() {
 		IMacroContextInfo info = getMacroContextInfo();
 		if(info != null){
@@ -49,7 +50,7 @@ public class BuildMacroStatus extends SupplierBasedCdtVariableStatus implements 
 		}
 		return 0;
 	}
-	
+
 	private IMacroContextInfo getMacroContextInfo(){
 		IVariableContextInfo info = getVariableContextInfo();
 		if(info instanceof IMacroContextInfo)
@@ -60,6 +61,7 @@ public class BuildMacroStatus extends SupplierBasedCdtVariableStatus implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroStatus#getContextData()
 	 */
+	@Override
 	public Object getContextData() {
 		IMacroContextInfo info = getMacroContextInfo();
 		if(info != null){
@@ -68,6 +70,7 @@ public class BuildMacroStatus extends SupplierBasedCdtVariableStatus implements 
 		return null;
 	}
 
+	@Override
 	public String getMacroName() {
 		return getVariableName();
 	}

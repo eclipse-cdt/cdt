@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
@@ -32,7 +33,7 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * GCC per file build output parser
- * 
+ *
  * @author vhirsl
  */
 public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
@@ -40,13 +41,14 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
         ".c", ".cc", ".cpp", ".cxx", ".C", ".CC", ".CPP", ".CXX" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
     };
     private final static List<String> FILE_EXTENSIONS_LIST = Arrays.asList(FILE_EXTENSIONS);
-    
+
     private GCCPerFileBOPConsoleParserUtility fUtil;
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser#startup(org.eclipse.core.resources.IProject, org.eclipse.core.runtime.IPath, org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector, org.eclipse.cdt.core.IMarkerGenerator)
      */
-    public void startup(IProject project, IPath workingDirectory, IScannerInfoCollector collector, IMarkerGenerator markerGenerator) {
+    @Override
+	public void startup(IProject project, IPath workingDirectory, IScannerInfoCollector collector, IMarkerGenerator markerGenerator) {
         fUtil = (project != null && workingDirectory != null && markerGenerator != null) ?
                 new GCCPerFileBOPConsoleParserUtility(project, workingDirectory, markerGenerator) : null;
         super.startup(project, collector);
@@ -65,7 +67,7 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
      */
     @Override
 	protected boolean processCommand(String[] tokens) {
-        // GCC C/C++ compiler invocation 
+        // GCC C/C++ compiler invocation
         int compilerInvocationIndex= findCompilerInvocation(tokens);
         if (compilerInvocationIndex < 0) {
             return false;
@@ -117,7 +119,7 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
 					tokens[i]= "SHORT_NAME" + token.substring(shortFileName.length()); //$NON-NLS-1$
 				}
 			}
-            
+
             IFile file= null;
             IPath baseDirectory= fUtil.getBaseDirectory();
             if (baseDirectory.isPrefixOf(pFilePath) || baseDirectory.setDevice(null).isPrefixOf(pFilePath)) {

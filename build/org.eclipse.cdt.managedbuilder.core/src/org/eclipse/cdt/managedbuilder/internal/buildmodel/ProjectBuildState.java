@@ -33,13 +33,13 @@ import org.eclipse.core.runtime.IPath;
 public class ProjectBuildState implements IProjectBuildState {
 	private Properties fCfgIdToFileNameProps;
 	private Map<String, ConfigurationBuildState> fCfgIdToStateMap = new HashMap<String, ConfigurationBuildState>();
-	private IProject fProject; 
+	private IProject fProject;
 	private boolean fIsMapInfoDirty;
-	
+
 	public ProjectBuildState(IProject project){
 		fProject = project;
 	}
-	
+
 	void setProject(IProject project){
 		fProject = project;
 		Collection<ConfigurationBuildState> cbStates = fCfgIdToStateMap.values();
@@ -48,6 +48,7 @@ public class ProjectBuildState implements IProjectBuildState {
 		}
 	}
 
+	@Override
 	public IConfigurationBuildState getConfigurationBuildState(String id, boolean create) {
 		ConfigurationBuildState state = fCfgIdToStateMap.get(id);
 		if(state == null){
@@ -59,7 +60,7 @@ public class ProjectBuildState implements IProjectBuildState {
 		}
 		return state;
 	}
-	
+
 	private ConfigurationBuildState loadState(String id, boolean create){
 		File file = getFileForCfg(id, create);
 		ConfigurationBuildState bs = new ConfigurationBuildState(fProject, id);
@@ -77,6 +78,7 @@ public class ProjectBuildState implements IProjectBuildState {
 		return bs;
 	}
 
+	@Override
 	public IConfigurationBuildState[] getConfigurationBuildStates() {
 		Properties props = getIdToNameProperties();
 		List<IConfigurationBuildState> list = new ArrayList<IConfigurationBuildState>(props.size());
@@ -90,6 +92,7 @@ public class ProjectBuildState implements IProjectBuildState {
 		return list.toArray(new ConfigurationBuildState[list.size()]);
 	}
 
+	@Override
 	public void removeConfigurationBuildState(String id) {
 		ConfigurationBuildState cbs = (ConfigurationBuildState)getConfigurationBuildState(id, false);
 		if(cbs != null){
@@ -97,17 +100,19 @@ public class ProjectBuildState implements IProjectBuildState {
 		}
 	}
 
+	@Override
 	public int getState() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
+	@Override
 	public void setState(int state) {
 		// TODO Auto-generated method stub
 	}
 	private static final int OP_CREATE = 1;
 	private static final int OP_REMOVE = 2;
-	
+
 	private String getFileName(String id, int op){
 		Properties props = getIdToNameProperties();
 		String name = props.getProperty(id);
@@ -124,26 +129,26 @@ public class ProjectBuildState implements IProjectBuildState {
 		}
 		return name;
 	}
-	
+
 	private File getFileForCfg(String id, boolean create){
 		String name = getFileName(id, create ? OP_CREATE : 0);
 		if(name == null)
 			return null;
-		
+
 		IPath path = BuildStateManager.getInstance().getPrefsDirPath(fProject);
 		path = path.append(name);
 		return path.toFile();
 	}
-	
+
 	private void saveMapFile(){
 		if(fCfgIdToFileNameProps == null)
 			return;
-		
+
 		File file = getMapFile();
 		File parent = file.getParentFile();
 		if(!parent.exists())
 			parent.mkdirs();
-		
+
 		try {
 			OutputStream oStream = new FileOutputStream(file);
 			fCfgIdToFileNameProps.store(oStream, ""); //$NON-NLS-1$
@@ -154,7 +159,7 @@ public class ProjectBuildState implements IProjectBuildState {
 			ManagedBuilderCorePlugin.log(e);
 		}
 	}
-	
+
 	private File getMapFile(){
 		IPath path = BuildStateManager.getInstance().getPrefsDirPath(fProject);
 		path = path.append(getProjFileName());
@@ -180,17 +185,18 @@ public class ProjectBuildState implements IProjectBuildState {
 		}
 		return fCfgIdToFileNameProps;
 	}
-	
+
 	private String getProjFileName(){
 		return fProject.getName();
 	}
 
+	@Override
 	public IProject getProject() {
 		return fProject;
 	}
-	
+
 	void serialize(){
-		
+
 		Collection<ConfigurationBuildState> cbStates = fCfgIdToStateMap.values();
 		for (ConfigurationBuildState s : cbStates) {
 			String id = s.getConfigurationId();
@@ -205,7 +211,7 @@ public class ProjectBuildState implements IProjectBuildState {
 				File parent = file.getParentFile();
 				if(!parent.exists())
 					parent.mkdirs();
-	
+
 				try {
 					FileOutputStream oStream = new FileOutputStream(file);
 					s.store(oStream);

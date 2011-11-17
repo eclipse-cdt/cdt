@@ -45,7 +45,7 @@ public class MapStorageElement implements ICStorageElement {
 		fValue = map.get(getMapKey(VALUE_KEY));
 		fMap = new HashMap<String, String>(map);
 		fParent = parent;
-		
+
 		String children = map.get(getMapKey(CHILDREN_KEY));
 		if(children != null){
 			List<String> childrenStrList = decodeList(children);
@@ -59,15 +59,15 @@ public class MapStorageElement implements ICStorageElement {
 			}
 		}
 	}
-	
+
 	protected MapStorageElement createChildElement(Map<String, String> childMap){
 		return new MapStorageElement(childMap, this);
 	}
-	
+
 	protected String getMapKey(String name){
 		return name;
 	}
-	
+
 	public Map<String, String> toStringMap(){
 		@SuppressWarnings("unchecked")
 		Map<String, String> map = (Map<String, String>)fMap.clone();
@@ -75,12 +75,12 @@ public class MapStorageElement implements ICStorageElement {
 			map.put(getMapKey(NAME_KEY), fName);
 		else
 			map.remove(getMapKey(NAME_KEY));
-		
+
 		if(fValue != null)
 			map.put(getMapKey(VALUE_KEY), fValue);
 		else
 			map.remove(getMapKey(VALUE_KEY));
-		
+
 		int size = fChildren.size();
 		if(size != 0){
 			List<String> childrenStrList = new ArrayList<String>(size);
@@ -90,49 +90,55 @@ public class MapStorageElement implements ICStorageElement {
 				String str = encodeMap(childStrMap);
 				childrenStrList.add(str);
 			}
-			
+
 			String childrenStr = encodeList(childrenStrList);
 			map.put(getMapKey(CHILDREN_KEY), childrenStr);
 		} else {
 			map.remove(getMapKey(CHILDREN_KEY));
 		}
-		
+
 		return map;
 	}
-	
+
 	protected boolean isSystemKey(String key){
 		return key.indexOf('?') == 0 && key.lastIndexOf('?') == key.length() - 1;
 	}
 
+	@Override
 	public void clear() {
 		fMap.clear();
 	}
 
+	@Override
 	public ICStorageElement createChild(String name) {
 		MapStorageElement child = createChildElement(name);
 		fChildren.add(child);
 		return child;
 	}
-	
+
 	protected MapStorageElement createChildElement(String name){
-		return new MapStorageElement(name, this); 
+		return new MapStorageElement(name, this);
 	}
 
+	@Override
 	public String getAttribute(String name) {
 		Object o = fMap.get(getMapKey(name));
 		if(o instanceof String)
 			return (String)o;
 		return null;
 	}
-	
+
+	@Override
 	public boolean hasAttribute(String name) {
 		return fMap.containsKey(getMapKey(name));
 	}
 
+	@Override
 	public ICStorageElement[] getChildren() {
 		return fChildren.toArray(new MapStorageElement[fChildren.size()]);
 	}
-	
+
+	@Override
 	public ICStorageElement[] getChildrenByName(String name) {
 		List<ICStorageElement> children = new ArrayList<ICStorageElement>();
 		for (ICStorageElement child : fChildren)
@@ -140,38 +146,44 @@ public class MapStorageElement implements ICStorageElement {
 				children.add(child);
 		return new ICStorageElement[children.size()];
 	}
-	
+
+	@Override
 	public boolean hasChildren() {
 		return !fChildren.isEmpty();
 	}
 
+	@Override
 	public String getName() {
 		return fName;
 	}
 
+	@Override
 	public ICStorageElement getParent() {
 		return fParent;
 	}
 
+	@Override
 	public void removeChild(ICStorageElement child){
 		fChildren.remove(child);
 		if(child instanceof MapStorageElement){
 			((MapStorageElement)child).removed();
 		}
 	}
-	
+
 	private void removed() {
 		fParent = null;
 	}
 
+	@Override
 	public void removeAttribute(String name) {
 		fMap.remove(getMapKey(name));
 	}
 
+	@Override
 	public void setAttribute(String name, String value) {
 		fMap.put(getMapKey(name), value);
 	}
-	
+
 	public static HashMap<String, String> decodeMap(String value) {
 		List<String> list = decodeList(value);
 		HashMap<String, String> map = new HashMap<String, String>();
@@ -193,11 +205,11 @@ public class MapStorageElement implements ICStorageElement {
 			}
 			map.put(SafeStringInterner.safeIntern(line.substring(0, lndx)), SafeStringInterner.safeIntern(line.substring(lndx + 1)));
 		}
-		
+
 		return map;
 
 	}
-	
+
 	public static List<String> decodeList(String value) {
 		List<String> list = new ArrayList<String>();
 		if (value != null) {
@@ -209,7 +221,7 @@ public class MapStorageElement implements ICStorageElement {
 					int ndx = 0;
 					while (ndx < envStr.length()) {
 						if (escapeChars.indexOf(envStr.charAt(ndx)) != -1) {
-							if (envStr.charAt(ndx - 1) == escapeChar) { 
+							if (envStr.charAt(ndx - 1) == escapeChar) {
 								// escaped '|' - remove '\' and continue on.
 								envStr.deleteCharAt(ndx - 1);
 								if (ndx == envStr.length()) {
@@ -243,7 +255,7 @@ public class MapStorageElement implements ICStorageElement {
 		}
 		return list;
 	}
-	
+
 	public static String encodeMap(Map<String, String> values) {
 		Iterator<Entry<String, String>> entries = values.entrySet().iterator();
 		StringBuffer str = new StringBuffer();
@@ -256,7 +268,7 @@ public class MapStorageElement implements ICStorageElement {
 		}
 		return str.toString();
 	}
-	
+
 	public static String encodeList(List<String> values) {
 		StringBuffer str = new StringBuffer();
 		Iterator<String> entries = values.iterator();
@@ -279,20 +291,24 @@ public class MapStorageElement implements ICStorageElement {
 		return str.toString();
 	}
 
+	@Override
 	public String getValue() {
 		return fValue;
 	}
 
+	@Override
 	public void setValue(String value) {
 		fValue = value;
 	}
 
+	@Override
 	public ICStorageElement importChild(ICStorageElement el)
 			throws UnsupportedOperationException {
 		// TODO
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public String[] getAttributeNames() {
 		List<String> list = new ArrayList<String>(fMap.size());
 		Set<Entry<String, String>> entrySet = fMap.entrySet();
@@ -302,14 +318,16 @@ public class MapStorageElement implements ICStorageElement {
 				list.add(key);
 			}
 		}
-		
+
 		return list.toArray(new String[list.size()]);
 	}
-	
+
+	@Override
 	public 	ICStorageElement createCopy() throws UnsupportedOperationException, CoreException {
 		throw new UnsupportedOperationException();
 	}
-	
+
+	@Override
 	public boolean equals(ICStorageElement other) {
 		throw new UnsupportedOperationException();
 	}

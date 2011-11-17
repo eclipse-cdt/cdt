@@ -316,6 +316,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		return tools.toArray(new Tool[tools.size()]);
 	}
 
+	@Override
 	public ITool[] getFilteredTools() {
 		if (toolChain == null) {
 			return new ITool[0];
@@ -325,6 +326,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		return filterTools(localTools, manProj);
 	}
 
+	@Override
 	public final int getKind() {
 		return ICSettingBase.SETTING_FOLDER;
 	}
@@ -355,18 +357,22 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 			toolChain.setRebuildState(false);
 	}
 
+	@Override
 	public IToolChain getToolChain() {
 		return toolChain;
 	}
 
+	@Override
 	public ITool[] getTools() {
 		return toolChain.getTools();
 	}
 
+	@Override
 	public ITool getTool(String id) {
 		return toolChain.getTool(id);
 	}
 
+	@Override
 	public ITool[] getToolsBySuperClassId(String id) {
 		return toolChain.getToolsBySuperClassId(id);
 	}
@@ -410,10 +416,12 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		return null;
 	}
 
+	@Override
 	public CFolderData getFolderData(){
 		return (CFolderData)getResourceData();
 	}
 
+	@Override
 	public CLanguageData[] getCLanguageDatas() {
 		List<CLanguageData> list = new ArrayList<CLanguageData>();
 		for(ITool t : getFilteredTools())
@@ -422,6 +430,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		return list.toArray(new BuildLanguageData[list.size()]);
 	}
 
+	@Override
 	public ITool getToolFromOutputExtension(String extension) {
 		// Treat a null argument as an empty string
 		String ext = extension == null ? "" : extension; //$NON-NLS-1$
@@ -435,6 +444,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		return null;
 	}
 
+	@Override
 	public ITool getToolFromInputExtension(String sourceExtension) {
 		// Get all the tools for the current config
 		ITool[] tools = getFilteredTools();
@@ -540,6 +550,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 	public void checkPropertiesModificationCompatibility(final ITool tools[], Map<String, String> unspecifiedRequiredProps, Map<String, String> unspecifiedProps, Set<String> undefinedSet){
 		final ToolChain tc = (ToolChain)getToolChain();
 		IBuildPropertiesRestriction r = new IBuildPropertiesRestriction(){
+			@Override
 			public boolean supportsType(String typeId) {
 				if(tc.supportsType(typeId, false))
 					return true;
@@ -551,6 +562,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 				return false;
 			}
 
+			@Override
 			public boolean supportsValue(String typeId, String valueId) {
 				if(tc.supportsValue(typeId, valueId, false))
 					return true;
@@ -562,6 +574,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 				return false;
 			}
 
+			@Override
 			public String[] getRequiredTypeIds() {
 				List<String> list = new ArrayList<String>();
 
@@ -574,6 +587,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 				return list.toArray(new String[list.size()]);
 			}
 
+			@Override
 			public String[] getSupportedTypeIds() {
 				List<String> list = new ArrayList<String>();
 
@@ -586,6 +600,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 				return list.toArray(new String[list.size()]);
 			}
 
+			@Override
 			public String[] getSupportedValueIds(String typeId) {
 				List<String> list = new ArrayList<String>();
 
@@ -598,6 +613,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 				return list.toArray(new String[list.size()]);
 			}
 
+			@Override
 			public boolean requiresType(String typeId) {
 				if(tc.requiresType(typeId, false))
 					return true;
@@ -641,6 +657,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		return set;
 	}
 
+	@Override
 	public boolean isToolChainCompatible(IToolChain tCh){
 		return isToolChainCompatible(toolChain, tCh);
 	}
@@ -672,6 +689,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		return compatible;
 	}
 
+	@Override
 	public IToolChain changeToolChain(IToolChain newSuperClass, String Id, String name) throws BuildException{
 		boolean usePrefTc = false;
 		if(newSuperClass == null){
@@ -898,6 +916,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		return map;
 	}
 
+	@Override
 	public void modifyToolChain(ITool[] removed, ITool[] added){
 		ToolListModificationInfo info = ToolChainModificationHelper.getModificationInfo(this, getTools(), added, removed);
 		info.apply();
@@ -1171,6 +1190,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 	}
 
 
+	@Override
 	public IModificationStatus getToolChainModificationStatus(ITool[] removed, ITool[] added){
 		ITool[][] checked = checkDups(removed, added);
 		removed = checked[0];
@@ -1193,6 +1213,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		return new ModificationStatus(unspecifiedRequiredProps, unspecifiedProps, undefinedSet, conflicting, nonManagedTools);
 	}
 
+	@Override
 	public boolean supportsBuild(boolean managed) {
 		if(getRequiredUnspecifiedProperties().size() != 0)
 			return false;
@@ -1210,6 +1231,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		return true;
 	}
 
+	@Override
 	public boolean buildsFileType(String srcExt) {
 		// Check to see if there is a rule to build a file with this extension
 		ITool[] tools = getFilteredTools();
@@ -1221,6 +1243,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		return false;
 	}
 
+	@Override
 	public String getOutputExtension(String resourceExtension) {
 		String outputExtension = null;
 		ITool[] tools = getFilteredTools();
@@ -1233,6 +1256,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		return null;
 	}
 
+	@Override
 	public boolean isHeaderFile(String ext) {
 		// Check to see if there is a rule to build a file with this extension
 		IManagedProject manProj = getParent().getManagedProject();
@@ -1376,6 +1400,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		setRebuildState(true);
 	}
 
+	@Override
 	public boolean isSupported(){
 		if(toolChain != null)
 			return toolChain.isSupported();

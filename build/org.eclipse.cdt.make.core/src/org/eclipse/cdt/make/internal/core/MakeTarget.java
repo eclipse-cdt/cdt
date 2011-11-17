@@ -63,14 +63,17 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 		isStopOnError = info.isStopOnError();
 	}
 
+	@Override
 	public IProject getProject() {
 		return project;
 	}
 
+	@Override
 	public void setContainer(IContainer container) {
 		this.container = container;
 	}
 
+	@Override
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -79,32 +82,39 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 		return targetAttributes;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public String getTargetBuilderID() {
 		return targetBuilderID;
 	}
 
+	@Override
 	public boolean isStopOnError() {
 		return isStopOnError;
 	}
 
+	@Override
 	public void setStopOnError(boolean stopOnError) throws CoreException {
 		isStopOnError = stopOnError;
 		manager.updateTarget(this);
 	}
 
+	@Override
 	public boolean isDefaultBuildCmd() {
 		return isDefaultBuildCmd;
 	}
 
+	@Override
 	public void setUseDefaultBuildCmd(boolean useDefault) throws CoreException {
 		isDefaultBuildCmd = useDefault;
 		manager.updateTarget(this);
 	}
 
+	@Override
 	public IPath getBuildCommand() {
 		if (isDefaultBuildCmd()) {
 			IMakeBuilderInfo info;
@@ -122,10 +132,12 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 		return new Path(result);
 	}
 
+	@Override
 	public void setBuildCommand(IPath command) throws CoreException {
 		setBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, command.toString());
 	}
 
+	@Override
 	public String getBuildArguments() {
 		if (isDefaultBuildCmd()) {
 			IMakeBuilderInfo info;
@@ -134,7 +146,7 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 				return info.getBuildArguments();
 			} catch (CoreException e) {
 			}
-		}		
+		}
 		String result = getBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, ""); //$NON-NLS-1$
 		try {
 			result = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(result, false);
@@ -143,14 +155,17 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 		return result;
 	}
 
+	@Override
 	public void setBuildArguments(String arguments) throws CoreException {
 		setBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, arguments);
 	}
 
+	@Override
 	public void setBuildTarget(String target) throws CoreException {
 		setBuildAttribute(IMakeTarget.BUILD_TARGET, target);
 	}
 
+	@Override
 	public String getBuildTarget() {
 		String result = getBuildAttribute(IMakeTarget.BUILD_TARGET, ""); //$NON-NLS-1$
 		try {
@@ -160,33 +175,40 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 		return result;
 	}
 
+	@Override
 	public void setRunAllBuilders(boolean runAllBuilders) throws CoreException {
 		this.runAllBuidlers = runAllBuilders;
 		manager.updateTarget(this);
 	}
 
+	@Override
 	public boolean runAllBuilders() {
 		return runAllBuidlers;
 	}
 
+	@Override
 	public void setBuildAttribute(String name, String value) throws CoreException {
 		targetAttributes.put(name, value);
 		manager.updateTarget(this);
 	}
 
+	@Override
 	public String getBuildAttribute(String name, String defaultValue) {
 		String value = targetAttributes.get(name);
 		return value != null ? value : defaultValue;
 	}
 
+	@Override
 	public IPath getBuildLocation() {
 		return container.getLocation();
 	}
 
+	@Override
 	public void setBuildLocation(IPath location) throws CoreException {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public String[] getErrorParsers() {
 		IMakeBuilderInfo projectInfo;
 		try {
@@ -197,10 +219,12 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 		return new String[0];
 	}
 
+	@Override
 	public void setErrorParsers(String[] parsers) throws CoreException {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public Map<String, String> getExpandedEnvironment() throws CoreException {
 		Map<String, String> env = null;
 		if (appendProjectEnvironment()) {
@@ -232,28 +256,34 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 		return envMap;
 	}
 
+	@Override
 	public boolean appendProjectEnvironment() {
 		return appendProjectEnvironment;
 	}
 
+	@Override
 	public void setAppendProjectEnvironment(boolean append) {
 		appendProjectEnvironment = append;
 	}
 
+	@Override
 	public Map<String, String> getEnvironment() {
 		return buildEnvironment;
 	}
 
+	@Override
 	public void setEnvironment(Map<String, String> env) throws CoreException {
 		buildEnvironment = new HashMap<String, String>(env);
 		manager.updateTarget(this);
 	}
 
+	@Override
 	public void setAppendEnvironment(boolean append) throws CoreException {
 		appendEnvironment = append ? 1 : 0;
 		manager.updateTarget(this);
 	}
 
+	@Override
 	public boolean appendEnvironment() {
 		return appendEnvironment == USE_PROJECT_ENV_SETTING ? getProjectEnvSetting(): appendEnvironment == 1;
 	}
@@ -268,6 +298,7 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 		return false;
 	}
 
+	@Override
 	public IContainer getContainer() {
 		return container;
 	}
@@ -288,6 +319,7 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 		return container.hashCode() * 17 + name != null ? name.hashCode(): 0;
 	}
 
+	@Override
 	public void build(IProgressMonitor monitor) throws CoreException {
 		final String builderID = manager.getBuilderID(targetBuilderID);
 		final HashMap<String, String> infoMap = new HashMap<String, String>();
@@ -314,6 +346,7 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 			 *
 			 * @see org.eclipse.core.resources.IWorkspaceRunnable#run(org.eclipse.core.runtime.IProgressMonitor)
 			 */
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				if (runAllBuidlers) {
 					ICommand[] commands = project.getDescription().getBuildSpec();

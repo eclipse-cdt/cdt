@@ -49,11 +49,11 @@ import org.eclipse.core.runtime.Path;
 /**
  * This class represents information about a Tool's inputs
  * and outputs while a Gnu makefile is being generated.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
-	
+
 	/*
 	 * Members
 	 */
@@ -76,7 +76,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 	private Vector<String> additionalTargets = new Vector<String>();
 	//private Vector enumeratedDependencies = new Vector();
 	// Map of macro names (String) to values (List)
-	
+
 	/*
 	 * Constructor
 	 */
@@ -89,41 +89,49 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 			targetExt = ext;
 		}
 	}
-	
+
 	/*
 	 * IManagedBuildGnuToolInfo Methods
 	 */
+	@Override
 	public boolean areInputsCalculated() {
 		return inputsCalculated;
 	}
 
 	//  Command inputs are top build directory relative
+	@Override
 	public Vector<String> getCommandInputs() {
 		return commandInputs;
 	}
 
 	//  Enumerated inputs are project relative
+	@Override
 	public Vector<String> getEnumeratedInputs() {
 		return enumeratedInputs;
 	}
 
+	@Override
 	public boolean areOutputsCalculated() {
 		return outputsCalculated;
 	}
 
 	//  Command outputs are top build directory relative
+	@Override
 	public Vector<String> getCommandOutputs() {
 		return commandOutputs;
 	}
 
+	@Override
 	public Vector<String> getEnumeratedPrimaryOutputs() {
 		return enumeratedPrimaryOutputs;
 	}
 
+	@Override
 	public Vector<String> getEnumeratedSecondaryOutputs() {
 		return enumeratedSecondaryOutputs;
 	}
 
+	@Override
 	public Vector<String> getOutputVariables() {
 		return outputVariables;
 	}
@@ -132,16 +140,19 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 		return outputVariablesCalculated;
 	}
 
+	@Override
 	public boolean areDependenciesCalculated() {
 		return dependenciesCalculated;
 	}
 
 	//  Command dependencies are top build directory relative
+	@Override
 	public Vector<String> getCommandDependencies() {
 		return commandDependencies;
 	}
 
 	//  Additional targets are top build directory relative
+	@Override
 	public Vector<String> getAdditionalTargets() {
 		return additionalTargets;
 	}
@@ -150,23 +161,24 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 	//	return enumeratedDependencies;
 	//}
 
+	@Override
 	public boolean isTargetTool() {
 		return bIsTargetTool;
 	}
-	
+
 	/*
 	 * Other Methods
 	 */
-	
+
 	public boolean calculateInputs(GnuMakefileGenerator makeGen, IConfiguration config, IResource[] projResources, ToolInfoHolder h, boolean lastChance) {
 		// Get the inputs for this tool invocation
 		// Note that command inputs that are also dependencies are also added to the command dependencies list
-		
+
 		/* The priorities for determining the names of the inputs of a tool are:
 		 *  1.  If an option is specified, use the value of the option.
 		 *  2.  If a build variable is specified, use the files that have been added to the build variable as
 		 *      the output(s) of other build steps.
-		 *  3.  Use the file extensions and the resources in the project 
+		 *  3.  Use the file extensions and the resources in the project
 		 */
 		boolean done = true;
 		Vector<String> myCommandInputs = new Vector<String>();			// Inputs for the tool command line
@@ -178,13 +190,13 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 			for (IInputType type : inTypes) {
 				Vector<String> itCommandInputs = new Vector<String>();			// Inputs for the tool command line for this input-type
 				Vector<String> itCommandDependencies = new Vector<String>();	// Dependencies for the make rule for this input-type
-				Vector<String> itEnumeratedInputs = new Vector<String>();		// Complete list of individual inputs for this input-type				
+				Vector<String> itEnumeratedInputs = new Vector<String>();		// Complete list of individual inputs for this input-type
 				String variable = type.getBuildVariable();
 				boolean primaryInput = type.getPrimaryInput();
 				boolean useFileExts = false;
 				IOption option = tool.getOptionBySuperClassId(type.getOptionId());
 				IOption assignToOption = tool.getOptionBySuperClassId(type.getAssignToOptionId());
-				
+
 				//  Option?
 				if (option != null) {
 					try {
@@ -208,8 +220,8 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 						}
 						for (int j=0; j<inputs.size(); j++) {
 							String inputName = inputs.get(j);
-							
-				
+
+
 							try {
 								// try to resolve the build macros in the output
 								// names
@@ -250,7 +262,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 									inputName = resolved;
 							} catch (BuildMacroException e) {
 							}
-	
+
 							if (primaryInput) {
 								itCommandDependencies.add(j, inputName);
 							} else {
@@ -261,7 +273,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 						}
 					} catch( BuildException ex ) {
 					}
-					
+
 				} else {
 
 					//  Build Variable?
@@ -289,7 +301,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 							}
 						}
 					}
-					
+
 					//  Use file extensions
 					if (variable.length() == 0 || useFileExts) {
 						//if (type.getMultipleOfType()) {
@@ -303,13 +315,13 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 								for (IResource rc : projResources) {
 									if (rc.getType() == IResource.FILE) {
 										String fileExt = rc.getFileExtension();
-										
+
 										// fix for NPE, bugzilla 99483
 										if(fileExt == null)
 										{
 											fileExt = "";  //$NON-NLS-1$
 										}
-										
+
 										for (int k=0; k<exts.length; k++) {
 											if (fileExt.equals(exts[k])) {
 												if (!useFileExts) {
@@ -337,7 +349,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 						//}
 					}
 				}
-				
+
 				// Get any additional inputs specified in the manifest file or the project file
 				IAdditionalInput[] addlInputs = type.getAdditionalInputs();
 				if (addlInputs != null) {
@@ -367,7 +379,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 						}
 					}
 				}
-				
+
 				//  If the assignToOption attribute is specified, set the input(s) as the value of that option
 				if (assignToOption != null && option == null) {
 					try {
@@ -380,7 +392,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 								}
 								optVal += itCommandInputs.get(j);
 							}
-							ManagedBuildManager.setOption(config, tool, assignToOption, optVal);							
+							ManagedBuildManager.setOption(config, tool, assignToOption, optVal);
 						} else if (
 								optType == IOption.STRING_LIST ||
 								optType == IOption.LIBRARIES ||
@@ -390,7 +402,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 								optType == IOption.LIBRARY_FILES ||
 								optType == IOption.MACRO_FILES) {
 							//TODO: do we need to do anything with undefs here?
-							//  Mote that when using the enumerated inputs, the path(s) must be translated from project relative 
+							//  Mote that when using the enumerated inputs, the path(s) must be translated from project relative
 							//  to top build directory relative
 							String[] paths = new String[itEnumeratedInputs.size()];
 							for (int j=0; j<itEnumeratedInputs.size(); j++) {
@@ -401,7 +413,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 									if (enumPath != null) {
 										paths[j] = ManagedBuildManager.calculateRelativePath(makeGen.getTopBuildDir(), enumPath).toString();
 									}
-								}								
+								}
 							}
 							ManagedBuildManager.setOption(config, tool, assignToOption, paths);
 						} else if (optType == IOption.BOOLEAN) {
@@ -420,7 +432,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 					} catch( BuildException ex ) {
 					}
 				}
-				
+
 				myCommandInputs.addAll(itCommandInputs);
 				myCommandDependencies.addAll(itCommandDependencies);
 				myEnumeratedInputs.addAll(itEnumeratedInputs);
@@ -435,14 +447,14 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 				// 2.  The target name comes from the configuration artifact name
 				// The rule looks like:
 				//    <targ_prefix><target>.<extension>: $(OBJS) <refd_project_1 ... refd_project_n>
-				myCommandInputs.add("$(OBJS)");			 //$NON-NLS-1$		
-				myCommandInputs.add("$(USER_OBJS)");	 //$NON-NLS-1$		
+				myCommandInputs.add("$(OBJS)");			 //$NON-NLS-1$
+				myCommandInputs.add("$(USER_OBJS)");	 //$NON-NLS-1$
 				myCommandInputs.add("$(LIBS)");			 //$NON-NLS-1$
 			} else {
 				// Rule will be generated by addRuleForSource
 			}
-		}		
-		
+		}
+
 		if (done) {
 			commandInputs.addAll(myCommandInputs);
 			commandDependencies.addAll(0, myCommandDependencies);
@@ -450,23 +462,23 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 			inputsCalculated = true;
 			return true;
 		}
-				
-		return false;		
+
+		return false;
 	}
-	
+
 	 /*
 	 * The priorities for determining the names of the outputs of a tool are:
 	 *  1.  If the tool is the build target and primary output, use artifact name & extension
 	 *  2.  If an option is specified, use the value of the option
 	 *  3.  If a nameProvider is specified, call it
 	 *  4.  If outputNames is specified, use it
-	 *  5.  Use the name pattern to generate a transformation macro 
-	 *      so that the source names can be transformed into the target names 
+	 *  5.  Use the name pattern to generate a transformation macro
+	 *      so that the source names can be transformed into the target names
 	 *      using the built-in string substitution functions of <code>make</code>.
-	 *      
+	 *
 	 * NOTE: If an option is not specified and this is not the primary output type, the outputs
-	 *       from the type are not added to the command line     
-	 */  
+	 *       from the type are not added to the command line
+	 */
 	public boolean calculateOutputs(GnuMakefileGenerator makeGen, IConfiguration config, HashSet<String> handledInputExtensions, boolean lastChance) {
 
 		boolean done = true;
@@ -477,7 +489,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 		//  The next two fields are used together
 		Vector<String> myBuildVars = new Vector<String>();
 		Vector<Vector<String>> myBuildVarsValues = new Vector<Vector<String>>();
-		
+
 		// Get the outputs for this tool invocation
 		IOutputType[] outTypes = tool.getOutputTypes();
 		if (outTypes != null && outTypes.length > 0) {
@@ -485,7 +497,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 				Vector<String> typeEnumeratedOutputs = new Vector<String>();
 				IOutputType type = outTypes[i];
 				String outputPrefix = type.getOutputPrefix();
-				
+
 				// Resolve any macros in the outputPrefix
 				// Note that we cannot use file macros because if we do a clean
                 // we need to know the actual name of the file to clean, and
@@ -508,26 +520,26 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 					catch (BuildMacroException e) {
 					}
 				}
-				
-				
+
+
 				String variable = type.getBuildVariable();
 				boolean multOfType = type.getMultipleOfType();
 				boolean primaryOutput = (type == tool.getPrimaryOutputType());
 				IOption option = tool.getOptionBySuperClassId(type.getOptionId());
 				IManagedOutputNameProvider nameProvider = type.getNameProvider();
 				String[] outputNames = type.getOutputNames();
-				
-				//  1.  If the tool is the build target and this is the primary output, 
+
+				//  1.  If the tool is the build target and this is the primary output,
 				//      use artifact name & extension
 				if (bIsTargetTool && primaryOutput) {
-					String outputName = outputPrefix + targetName; 
+					String outputName = outputPrefix + targetName;
 					if (targetExt.length() > 0) {
 						outputName += (DOT + targetExt);
 					}
 					myCommandOutputs.add(outputName);
 					typeEnumeratedOutputs.add(outputName);
 					//  But this doesn't use any output macro...
-				} else 
+				} else
 				//  2.  If an option is specified, use the value of the option
 				if (option != null) {
 					try {
@@ -555,7 +567,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 							}
 						}
 						for (int j=0; j<outputs.size(); j++) {
-							String outputName = outputs.get(j); 
+							String outputName = outputs.get(j);
 							try{
 								//try to resolve the build macros in the output names
 								String resolved = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(
@@ -569,7 +581,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 							} catch (BuildMacroException e){
 							}
 						}
-						
+
 						// NO - myCommandOutputs.addAll(outputs);
 						typeEnumeratedOutputs.addAll(outputs);
 						if (variable.length() > 0) {
@@ -587,7 +599,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 						}
 					} catch( BuildException ex ) {
 					}
-				} else 
+				} else
 				//  3.  If a nameProvider is specified, call it
 				if (nameProvider != null) {
 					// The inputs must have been calculated before we can do this
@@ -603,7 +615,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 						outNames = nameProvider.getOutputNames(tool, inputPaths);
 						if (outNames != null) {
 							for (int j=0; j<outNames.length; j++) {
-								String outputName = outNames[j].toString(); 
+								String outputName = outNames[j].toString();
 								try{
 									//try to resolve the build macros in the output names
 									String resolved = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(
@@ -640,7 +652,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 				if (outputNames != null) {
 					if (outputNames.length > 0) {
 						for (int j=0; j<outputNames.length; j++) {
-							String outputName = outputNames[j]; 
+							String outputName = outputNames[j];
 							try{
 								//try to resolve the build macros in the output names
 								String resolved = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(
@@ -674,8 +686,8 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 						}
 					}
 				} else {
-				//  5.  Use the name pattern to generate a transformation macro 
-				//      so that the source names can be transformed into the target names 
+				//  5.  Use the name pattern to generate a transformation macro
+				//      so that the source names can be transformed into the target names
 				//      using the built-in string substitution functions of <code>make</code>.
 					if (multOfType) {
 						// This case is not handled - a nameProvider or outputNames must be specified
@@ -694,7 +706,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 						else if (outputPrefix.length() > 0) {
 							namePattern = outputPrefix + namePattern;
 						}
-						
+
 						// Calculate the output name
 						// The inputs must have been calculated before we can do this
 						if (!inputsCalculated) {
@@ -730,7 +742,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 							}
 						}
 					}
-				}					
+				}
 				if (variable.length() > 0) {
 					myBuildVars.add(variable);
 					myBuildVarsValues.add(typeEnumeratedOutputs);
@@ -744,7 +756,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 		} else {
 			if (bIsTargetTool) {
 				String outputPrefix = tool.getOutputPrefix();
-				String outputName = outputPrefix + targetName; 
+				String outputName = outputPrefix + targetName;
 				if (targetExt.length() > 0) {
 					outputName += (DOT + targetExt);
 				}
@@ -757,13 +769,13 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 				//     by other tools in the build and produces a single output
 			}
 		}
-		
-		//  Add the output macros of this tool to the buildOutVars map 
+
+		//  Add the output macros of this tool to the buildOutVars map
 		Set<Entry<String, List<IPath>>> entrySet = myOutputMacros.entrySet();
 		for (Entry<String, List<IPath>> entry : entrySet) {
 			String macroName = entry.getKey();
 			List<IPath> newMacroValue = entry.getValue();
-			HashMap<String, List<IPath>> map = makeGen.getBuildOutputVars(); 
+			HashMap<String, List<IPath>> map = makeGen.getBuildOutputVars();
 			if (map.containsKey(macroName)) {
 				List<IPath> macroValue = map.get(macroName);
 				macroValue.addAll(newMacroValue);
@@ -781,18 +793,18 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 			outputVariables.addAll(myOutputMacros.keySet());
 			outputsCalculated = true;
 			for (int i=0; i<myBuildVars.size(); i++) {
-				makeGen.addMacroAdditionFiles(makeGen.getTopBuildOutputVars(), myBuildVars.get(i), myBuildVarsValues.get(i)); 
-			}			
+				makeGen.addMacroAdditionFiles(makeGen.getTopBuildOutputVars(), myBuildVars.get(i), myBuildVarsValues.get(i));
+			}
 			return true;
 		}
-				
-		return false;		
+
+		return false;
 	}
 
-	private boolean callDependencyCalculator (GnuMakefileGenerator makeGen, IConfiguration config, HashSet<String> handledInputExtensions, 
+	private boolean callDependencyCalculator (GnuMakefileGenerator makeGen, IConfiguration config, HashSet<String> handledInputExtensions,
 			IManagedDependencyGeneratorType depGen, String[] extensionsList, Vector<String> myCommandDependencies, HashMap<String, List<IPath>> myOutputMacros,
 			Vector<String> myAdditionalTargets, ToolInfoHolder h, boolean done) {
-		
+
 		int calcType = depGen.getCalculatorType();
 		switch (calcType) {
 		case IManagedDependencyGeneratorType.TYPE_COMMAND:
@@ -800,7 +812,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
  			// iterate over all extensions that the tool knows how to handle
  			for (int i=0; i<extensionsList.length; i++) {
  				String extensionName = extensionsList[i];
- 				
+
  				// Generated files should not appear in the list.
  				if(!makeGen.getOutputExtensions(h).contains(extensionName) && !handledInputExtensions.contains(extensionName)) {
  					handledInputExtensions.add(extensionName);
@@ -824,7 +836,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 						myOutputMacros.put(depsMacro, depsList);
 					}
  				}
- 			}											
+ 			}
 			break;
 
 		case IManagedDependencyGeneratorType.TYPE_INDEXER:
@@ -840,10 +852,10 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 					IManagedDependencyGenerator2 depGen2 = (IManagedDependencyGenerator2)depGen;
 					IManagedDependencyInfo depInfo = null;
 					for (int i=0; i<inputs.size(); i++) {
-						
+
 						depInfo = depGen2.getDependencySourceInfo(
 								Path.fromOSString(inputs.get(i)), config, tool, makeGen.getBuildWorkingDir());
-						
+
 						if (depInfo instanceof IManagedDependencyCalculator) {
 							IManagedDependencyCalculator depCalc = (IManagedDependencyCalculator)depInfo;
 							IPath[] depPaths = depCalc.getDependencies();
@@ -857,13 +869,13 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 									}
 									myCommandDependencies.add(depPaths[j].toString());
 								}
-							}								
+							}
 							IPath[] targetPaths = depCalc.getAdditionalTargets();
 							if (targetPaths != null) {
 								for (int j=0; j<targetPaths.length; j++) {
 									myAdditionalTargets.add(targetPaths[j].toString());
 								}
-							}								
+							}
 						}
 					}
 				} else {
@@ -874,8 +886,8 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 							for (IResource outName : outNames) {
 								myCommandDependencies.add(outName.toString());
 							}
-						}								
-					}								
+						}
+					}
 				}
 			}
 			break;
@@ -883,10 +895,10 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 		default:
 			break;
 		}
-		
+
 		return done;
 	}
-	
+
 	public boolean calculateDependencies(GnuMakefileGenerator makeGen, IConfiguration config, HashSet<String> handledInputExtensions, ToolInfoHolder h, boolean lastChance) {
 		// Get the dependencies for this tool invocation
 		boolean done = true;
@@ -899,16 +911,16 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 		if (inTypes != null && inTypes.length > 0) {
 			for (int i=0; i<inTypes.length; i++) {
 				IInputType type = inTypes[i];
-				
+
 				// Handle dependencies from the dependencyCalculator
 				IManagedDependencyGeneratorType depGen = type.getDependencyGenerator();
 				String[] extensionsList = type.getSourceExtensions(tool);
 				if (depGen != null) {
-					done = callDependencyCalculator (makeGen, config, handledInputExtensions, 
+					done = callDependencyCalculator (makeGen, config, handledInputExtensions,
 							depGen, extensionsList, myCommandDependencies, myOutputMacros,
 							myAdditionalTargets, h, done);
 				}
-				
+
 				// Add additional dependencies specified in AdditionalInput elements
 				IAdditionalInput[] addlInputs = type.getAdditionalInputs();
 				if (addlInputs != null && addlInputs.length > 0) {
@@ -950,27 +962,27 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 				// 2.  The target name comes from the configuration artifact name
 				// The rule looks like:
 				//    <targ_prefix><target>.<extension>: $(OBJS) <refd_project_1 ... refd_project_n>
-				myCommandDependencies.add("$(OBJS)");			 //$NON-NLS-1$		
-				myCommandDependencies.add("$(USER_OBJS)");	 //$NON-NLS-1$		
+				myCommandDependencies.add("$(OBJS)");			 //$NON-NLS-1$
+				myCommandDependencies.add("$(USER_OBJS)");	 //$NON-NLS-1$
 			} else {
 				// Handle dependencies from the dependencyCalculator
 				IManagedDependencyGeneratorType depGen = tool.getDependencyGenerator();
 	 			String[] extensionsList = tool.getAllInputExtensions();
 				if (depGen != null) {
-					done = callDependencyCalculator (makeGen, config, handledInputExtensions, 
+					done = callDependencyCalculator (makeGen, config, handledInputExtensions,
 							depGen, extensionsList, myCommandDependencies, myOutputMacros,
 							myAdditionalTargets, h, done);
 				}
-	 			
+
 			}
 		}
-		
-		//  Add the output macros of this tool to the buildOutVars map 
+
+		//  Add the output macros of this tool to the buildOutVars map
 		Set<Entry<String, List<IPath>>> entrySet = myOutputMacros.entrySet();
 		for (Entry<String, List<IPath>> entry : entrySet) {
 			String macroName = entry.getKey();
 			List<IPath> newMacroValue = entry.getValue();
-			HashMap<String, List<IPath>> map = makeGen.getBuildOutputVars(); 
+			HashMap<String, List<IPath>> map = makeGen.getBuildOutputVars();
 			if (map.containsKey(macroName)) {
 				List<IPath> macroValue = map.get(macroName);
 				macroValue.addAll(newMacroValue);
@@ -979,7 +991,7 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 				map.put(macroName, newMacroValue);
 			}
 		}
-		
+
 		if (done) {
 			commandDependencies.addAll(myCommandDependencies);
 			additionalTargets.addAll(myAdditionalTargets);
@@ -987,8 +999,8 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 			dependenciesCalculated = true;
 			return true;
 		}
-				
-		return false;		
+
+		return false;
 	}
 
 
@@ -999,19 +1011,19 @@ public class ManagedBuildGnuToolInfo implements IManagedBuildGnuToolInfo {
 		StringBuffer macroName = makeGen.getSourceMacroName(srcExtensionName);
 		String OptDotExt = ""; //$NON-NLS-1$
 		if (outExtensionName != null) {
-		    OptDotExt = DOT + outExtensionName; 
+		    OptDotExt = DOT + outExtensionName;
 		} else
 			if (tool.getOutputExtension(srcExtensionName) != "") //$NON-NLS-1$
-				OptDotExt = DOT + tool.getOutputExtension(srcExtensionName); 
-			           
+				OptDotExt = DOT + tool.getOutputExtension(srcExtensionName);
+
 		// create rule of the form
 		// OBJS = $(macroName1: ../%.input1=%.output1) ... $(macroNameN: ../%.inputN=%.outputN)
 		StringBuffer objectsBuffer = new StringBuffer();
 		objectsBuffer.append(IManagedBuilderMakefileGenerator.WHITESPACE + "$(" + macroName + 					//$NON-NLS-1$
 			IManagedBuilderMakefileGenerator.COLON + IManagedBuilderMakefileGenerator.ROOT +
-			IManagedBuilderMakefileGenerator.SEPARATOR + IManagedBuilderMakefileGenerator.WILDCARD +			
+			IManagedBuilderMakefileGenerator.SEPARATOR + IManagedBuilderMakefileGenerator.WILDCARD +
 				DOT + srcExtensionName + "=" + wildcard + OptDotExt + ")" );	//$NON-NLS-1$ //$NON-NLS-2$
         return objectsBuffer.toString();
 	}
-	
+
 }

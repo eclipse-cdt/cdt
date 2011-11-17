@@ -19,7 +19,7 @@ import org.eclipse.cdt.internal.core.dom.parser.c.CASTTypeIdExpression;
 public class UPCASTTypeIdSizeofExpression extends CASTTypeIdExpression implements IUPCASTTypeIdSizeofExpression {
 
 	private int upcSizeofOperator;
-	
+
 	public UPCASTTypeIdSizeofExpression() {
 		this(null);
 	}
@@ -27,17 +27,17 @@ public class UPCASTTypeIdSizeofExpression extends CASTTypeIdExpression implement
 	public UPCASTTypeIdSizeofExpression(IASTTypeId typeId) {
 		super(IASTTypeIdExpression.op_sizeof, typeId);
 	}
-	
+
 	public UPCASTTypeIdSizeofExpression(int upcSizeofOperator, IASTTypeId typeId) {
 		super(IASTTypeIdExpression.op_sizeof, typeId);
 		this.upcSizeofOperator = upcSizeofOperator;
 	}
-	
+
 	@Override
 	public UPCASTTypeIdSizeofExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public UPCASTTypeIdSizeofExpression copy(CopyStyle style) {
 		UPCASTTypeIdSizeofExpression copy = new UPCASTTypeIdSizeofExpression();
@@ -51,12 +51,14 @@ public class UPCASTTypeIdSizeofExpression extends CASTTypeIdExpression implement
 		return copy;
 	}
 
+	@Override
 	public int getUPCSizeofOperator() {
 		return upcSizeofOperator;
 	}
 
+	@Override
 	public void setUPCSizeofOperator(int upcSizeofOperator) {
 		this.upcSizeofOperator = upcSizeofOperator;
 	}
-	
+
 }

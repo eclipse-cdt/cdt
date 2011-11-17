@@ -17,20 +17,25 @@ import org.eclipse.cdt.utils.cdtvariables.IVariableContextInfo;
 
 public abstract class BuildCdtVariablesSupplierBase implements IBuildMacroSupplier {
 
+	@Override
 	public abstract IBuildMacro getMacro(String macroName, int contextType,
 			Object contextData);
 
+	@Override
 	public abstract IBuildMacro[] getMacros(int contextType, Object contextData);
 
+	@Override
 	public ICdtVariable getVariable(String macroName,
 			IMacroContextInfo context) {
 		return getMacro(macroName, context.getContextType(), context.getContextData());
 	}
 
+	@Override
 	public ICdtVariable[] getVariables(IMacroContextInfo context) {
 		return getMacros(context.getContextType(), context.getContextData());
 	}
 
+	@Override
 	public ICdtVariable getVariable(String macroName,
 			IVariableContextInfo context) {
 		if(context instanceof IMacroContextInfo){
@@ -40,6 +45,7 @@ public abstract class BuildCdtVariablesSupplierBase implements IBuildMacroSuppli
 		return null;
 	}
 
+	@Override
 	public ICdtVariable[] getVariables(IVariableContextInfo context) {
 		if(context instanceof IMacroContextInfo){
 			IMacroContextInfo info = (IMacroContextInfo)context;

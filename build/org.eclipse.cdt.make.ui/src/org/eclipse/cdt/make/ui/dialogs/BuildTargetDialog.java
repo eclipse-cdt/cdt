@@ -47,7 +47,7 @@ public class BuildTargetDialog extends Dialog {
 		fContainer = container;
 		targetPart = new TargetListViewerPart(fContainer, recursive);
 	}
-	
+
 	public BuildTargetDialog(Shell parent, IContainer container) {
 		this(parent, container, true);
 	}
@@ -91,11 +91,13 @@ public class BuildTargetDialog extends Dialog {
 		gd.widthHint = convertWidthInCharsToPixels(50);
 		targetPart.getControl().setLayoutData(gd);
 		targetPart.getViewer().addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				okPressed();
 			}
 		});
 		targetPart.getViewer().addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				getButton(IDialogConstants.OK_ID).setEnabled(targetPart.getSelectedTarget() != null);
 			}

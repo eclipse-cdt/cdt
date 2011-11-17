@@ -30,30 +30,32 @@ public class GnuCygwinConfigurationEnvironmentSupplier implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier#getVariable(java.lang.String, org.eclipse.cdt.managedbuilder.core.IConfiguration, org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider)
 	 */
+	@Override
 	public IBuildEnvironmentVariable getVariable(String variableName,
 			IConfiguration configuration, IEnvironmentVariableProvider provider) {
 
-		if (!System.getProperty(PROPERTY_OSNAME).toLowerCase().startsWith("windows ")) //$NON-NLS-1$ 
+		if (!System.getProperty(PROPERTY_OSNAME).toLowerCase().startsWith("windows ")) //$NON-NLS-1$
 			return null;
-		
+
 		if (variableName == null) return null;
 		if (!VARNAME.equalsIgnoreCase(variableName)) return null;
-		
+
 		String p = CygwinPathResolver.getBinPath();
-		if (p != null) 
+		if (p != null)
 			return new BuildEnvVar(VARNAME, p.replace('/','\\'), IBuildEnvironmentVariable.ENVVAR_PREPEND, System.getProperty(PROPERTY_DELIMITER, DELIMITER_UNIX));
-		return null;	
+		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier#getVariables(org.eclipse.cdt.managedbuilder.core.IConfiguration, org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider)
 	 */
+	@Override
 	public IBuildEnvironmentVariable[] getVariables(
 			IConfiguration configuration, IEnvironmentVariableProvider provider) {
-		
-		IBuildEnvironmentVariable[] tmp = new IBuildEnvironmentVariable[1];   
+
+		IBuildEnvironmentVariable[] tmp = new IBuildEnvironmentVariable[1];
 		tmp[0] = getVariable(VARNAME, configuration, provider);
-		if (tmp[0] != null) return tmp; 
+		if (tmp[0] != null) return tmp;
 		return null;
 	}
 }

@@ -56,7 +56,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 
 /*
- *  These tests exercise CDT 2.0 manifest file functionality 
+ *  These tests exercise CDT 2.0 manifest file functionality
  */
 public class ManagedBuildCoreTests20 extends TestCase {
 	private static final boolean boolVal = true;
@@ -72,14 +72,14 @@ public class ManagedBuildCoreTests20 extends TestCase {
 	private static final String stringVal = "-c -Wall";
 	private static final String anotherStringVal = "thevalue";
 	private static final String subExt = "bus";
-		
+
 	public ManagedBuildCoreTests20(String name) {
 		super(name);
 	}
-	
+
 	public static Test suite() {
 		TestSuite suite = new TestSuite(ManagedBuildCoreTests20.class.getName());
-		
+
 		// Note that some of the tests are dependent on others so run the suite as a whole
 		suite.addTest(new ManagedBuildCoreTests20("testExtensions"));
 		suite.addTest(new ManagedBuildCoreTests20("testProjectCreation"));
@@ -91,7 +91,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		suite.addTest(new ManagedBuildCoreTests20("testProjectRename"));
 		suite.addTest(new ManagedBuildCoreTests20("testErrorParsers"));
 		suite.addTest(new ManagedBuildCoreTests20("cleanup"));
-		
+
 		return suite;
 	}
 
@@ -107,13 +107,13 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		IProjectType testForwardParent = null;
 		IProjectType testForwardGrandchild = null;
 		int numTypes = 0;
-		
+
 		// Note secret null parameter which means just extensions
 		IProjectType[] projTypes = ManagedBuildManager.getDefinedProjectTypes();
 
 		for (int i = 0; i < projTypes.length; ++i) {
 			IProjectType type = projTypes[i];
-			
+
 			if (type.getName().equals("Test Root")) {
 				testRoot = type;
 				checkRootProjectType(testRoot);
@@ -139,10 +139,10 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		assertNotNull(testForwardParent);
 		assertNotNull(testForwardGrandchild);
 		checkForwardProjectTypes(testForwardParent, testForwardChild, testForwardGrandchild);
-		
+
 		// check that the proper number of projectTypes were dynamically provided
 		assertEquals(3, numTypes);
-		
+
 		// All these project types are defines in the plugin files, so none
 		// of them should be null at this point
 		assertNotNull(testRoot);
@@ -151,13 +151,13 @@ public class ManagedBuildCoreTests20 extends TestCase {
 	}
 
 	/**
-	 * This test exercises the interface the <code>IConfiguration</code> exposes to manipulate 
+	 * This test exercises the interface the <code>IConfiguration</code> exposes to manipulate
 	 * its make command.
 	 */
 	public void testMakeCommandManipulation () {
 		String oldMakeCmd = "make";
 		String newMakeCmd = "Ant";
-		
+
 		// Open the test project
 		IProject project = null;
 		try {
@@ -171,7 +171,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 			fail("Failed to open project in 'testMakeCommandManipulation': " + e.getLocalizedMessage());
 		}
 		assertNotNull(project);
-		
+
 		// Now get the default configuration
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 		assertNotNull(info);
@@ -179,25 +179,25 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		assertNotNull(managedProj);
 		IConfiguration defaultConfig = info.getDefaultConfiguration();
 		assertNotNull(defaultConfig);
-		
+
 		// Does it have a default build command
 		assertFalse(defaultConfig.hasOverriddenBuildCommand());
 		assertEquals(oldMakeCmd, defaultConfig.getBuildCommand());
-		
+
 		// Change it
 		defaultConfig.setBuildCommand(newMakeCmd);
 		assertEquals(newMakeCmd, defaultConfig.getBuildCommand());
 		assertTrue(defaultConfig.hasOverriddenBuildCommand());
-		
+
 		// Reset it
 		defaultConfig.setBuildCommand(null);
 		assertFalse(defaultConfig.hasOverriddenBuildCommand());
 		assertEquals(oldMakeCmd, defaultConfig.getBuildCommand());
-		
+
 		ManagedBuildManager.saveBuildInfo(project, false);
 	}
-	
-	
+
+
 	/**
 	 * The purpose of this test is to exercise the build path info interface.
 	 * To get to that point, a new project/config has to be created in the test
@@ -216,7 +216,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		} catch (CoreException e) {
 			fail("Failed to open project in 'testScannerInfoInterface': " + e.getLocalizedMessage());
 		}
-		
+
 		//These are the expected path settings
 		 final String[] expectedPaths = new String[5];
 
@@ -230,11 +230,11 @@ public class ManagedBuildCoreTests20 extends TestCase {
 			 expectedPaths[2] = project.getLocation().append("Sub Config").append(path).toOSString();
 		 expectedPaths[3] = project.getLocation().append( "includes" ).toOSString();
 		 expectedPaths[4] = (new Path("/usr/gnu/include")).toOSString();
-		 
+
 		// Create a new managed project based on the sub project type
 		IProjectType projType = ManagedBuildManager.getExtensionProjectType("test.sub");
 		assertNotNull(projType);
-		
+
 		// Create the managed-project (.cdtbuild) for our project
 		IManagedProject newProject = null;
 		try {
@@ -244,13 +244,13 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		}
 		assertNotNull(newProject);
 		ManagedBuildManager.setNewProjectVersion(project);
-	
+
 		// Copy over the configs
 		IConfiguration[] baseConfigs = projType.getConfigurations();
 		for (int i = 0; i < baseConfigs.length; ++i) {
 			newProject.createConfiguration(baseConfigs[i], baseConfigs[i].getId() + "." + i);
 		}
-		
+
 		// Change the default configuration to the sub config
 		IConfiguration[] configs = newProject.getConfigurations();
 		assertEquals(4, configs.length);
@@ -271,7 +271,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 			fail("Failed on project open: " + e.getLocalizedMessage());
 		}
 		buildInfo = ManagedBuildManager.getBuildInfo(project);
-		
+
 		// Use the plugin mechanism to discover the supplier of the path information
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID + ".ScannerInfoProvider");
 		if (extensionPoint == null) {
@@ -281,12 +281,13 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		// Find the first IScannerInfoProvider that supplies build info for the project
 		IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(project);
 		assertNotNull(provider);
-		
+
 		// Now subscribe (note that the method will be called after a change
 		provider.subscribe(project, new IScannerInfoChangeListener () {
+			@Override
 			public void changeNotification(IResource project, IScannerInfo info) {
 				// Test the symbols: expect "BUILTIN" from the manifest, and "DEBUG" and "GNOME=ME"
-				// from the overidden settings 
+				// from the overidden settings
 				Map<String, String> definedSymbols = info.getDefinedSymbols();
 				assertTrue(definedSymbols.containsKey("BUILTIN"));
 				assertTrue(definedSymbols.containsKey("DEBUG"));
@@ -303,12 +304,12 @@ public class ManagedBuildCoreTests20 extends TestCase {
 
 		// Check the build information before we change it
 		IScannerInfo currentSettings = provider.getScannerInformation(project);
-		
+
 		Map<String, String> currentSymbols = currentSettings.getDefinedSymbols();
 		// It should simply contain the built-in
 		assertTrue(currentSymbols.containsKey("BUILTIN"));
 		assertEquals(currentSymbols.get("BUILTIN"), "");
-		
+
 		String[] currentPaths = currentSettings.getIncludePaths();
 		BuildSystemTestHelper.checkDiff(expectedPaths, currentPaths);
 
@@ -346,16 +347,16 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		info.setDirty(false);
 		assertFalse(info.isDirty());
 	}
-	
+
 	/**
 	 * Create a new configuration based on one defined in the plugin file.
-	 * Overrides all of the configuration settings. Saves, closes, and reopens 
+	 * Overrides all of the configuration settings. Saves, closes, and reopens
 	 * the project. Then calls a method to check the overridden options.
-	 * 
+	 *
 	 * Tests creating a new configuration.
 	 * Tests setting options.
 	 * Tests persisting overridden options between project sessions.
-	 * 
+	 *
 	 */
 	public void testConfigurations() throws CoreException, BuildException {
 		final String rootName = "Root Config";
@@ -363,7 +364,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		final String completeOverrideName = "Complete Override Config";
 		final String toolCmd = "doIt";
 		final String newCmd = "never";
-		
+
 		// Open the test project
 		IProject project = createProject(projectName);
 		IProjectDescription description = project.getDescription();
@@ -371,17 +372,17 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		if (description != null) {
 			assertTrue(description.hasNature(ManagedCProjectNature.MNG_NATURE_ID));
 		}
-		
+
 		// Make sure there is a ManagedProject with 3 configs
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 		IManagedProject managedProj = info.getManagedProject();
-		IConfiguration[] definedConfigs = managedProj.getConfigurations(); 		
+		IConfiguration[] definedConfigs = managedProj.getConfigurations();
 		assertEquals(3, definedConfigs.length);
 		IConfiguration baseConfig = definedConfigs[0];
 		assertEquals(definedConfigs[0].getName(), rootName);
 		assertEquals(definedConfigs[1].getName(), overrideName);
 		assertEquals(definedConfigs[2].getName(), completeOverrideName);
-		
+
 		// Create a new configuration and test the rename function
 		IConfiguration newConfig = managedProj.createConfigurationClone(baseConfig, testConfigId);
 		assertEquals(4, managedProj.getConfigurations().length);
@@ -393,12 +394,12 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		ITool[] definedTools = newConfig.getTools();
 		assertEquals(1, definedTools.length);
 		ITool rootTool = definedTools[0];
-		
+
 		// Test changing its command
 		assertEquals(rootTool.getToolCommand(), toolCmd);
 		newConfig.setToolCommand(rootTool, newCmd);
 		assertEquals(rootTool.getToolCommand(), newCmd);
-		
+
 		// Override options in the new configuration
 		IOptionCategory topCategory = rootTool.getTopOptionCategory();
 		assertEquals("Root Tool", topCategory.getName());
@@ -437,20 +438,20 @@ public class ManagedBuildCoreTests20 extends TestCase {
 
 		// Test the values in the new configuration
 		checkOptionReferences(project);
-		
+
 		// Now delete the new configuration and test the managed project
 		info = ManagedBuildManager.getBuildInfo(project);
 		managedProj = info.getManagedProject();
-		definedConfigs = managedProj.getConfigurations(); 		
+		definedConfigs = managedProj.getConfigurations();
 		assertEquals(4, definedConfigs.length);
 		managedProj.removeConfiguration(testConfigId);
-		definedConfigs = managedProj.getConfigurations(); 		
+		definedConfigs = managedProj.getConfigurations();
 		assertEquals(3, definedConfigs.length);
 		assertEquals(definedConfigs[0].getName(), rootName);
 		assertEquals(definedConfigs[1].getName(), overrideName);
 		ManagedBuildManager.saveBuildInfo(project, false);
 	}
-	
+
 	public void testConfigurationReset() {
 		// Open the test project
 		IProject project = null;
@@ -472,14 +473,14 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		assertNotNull(managedProj);
 		IConfiguration defaultConfig = info.getDefaultConfiguration();
 		assertNotNull(defaultConfig);
-		
+
 		// See if it still contains the overridden values (see testProjectCreation())
 		try {
 			checkRootManagedProject(managedProj, "z");
 		} catch (BuildException e1) {
 			fail("Overridden root managed project check failed: " + e1.getLocalizedMessage());
 		}
-		
+
 		// Reset the config and retest
 		ManagedBuildManager.resetConfiguration(project, defaultConfig);
 		ManagedBuildManager.saveBuildInfo(project, false);
@@ -489,7 +490,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 			fail("Reset root managed project check failed: " + e2.getLocalizedMessage());
 		}
 	}
-	
+
 	/**
 	 * @throws BuildException
 	 */
@@ -509,11 +510,11 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		} catch (CoreException e) {
 			fail("Test failed on project creation: " + e.getLocalizedMessage());
 		}
-	
+
 		// Find the base project type definition
 		IProjectType projType = ManagedBuildManager.getExtensionProjectType("test.root");
 		assertNotNull(projType);
-		
+
 		// Create the managed-project (.cdtbuild) for our project that builds a dummy executable
 		IManagedProject newProject = ManagedBuildManager.createManagedProject(project, projType);
 		assertEquals(newProject.getName(), projType.getName());
@@ -524,7 +525,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		IConfiguration defaultConfig = null;
 		IConfiguration[] configs = projType.getConfigurations();
 		for (int i = 0; i < configs.length; ++i) {
-			// Make the first configuration the default 
+			// Make the first configuration the default
 			if (i == 0) {
 				defaultConfig = newProject.createConfiguration(configs[i], projType.getId() + "." + i);
 			} else {
@@ -536,18 +537,18 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		String buildArtifactName = projectName;
 		defaultConfig.setArtifactName(buildArtifactName);
 		defaultConfig.setArtifactExtension(newExt);
-		
+
 		ManagedBuildManager.getBuildInfo(project).setValid(true);
-		
+
 		// Initialize the path entry container
 		IStatus initResult = ManagedBuildManager.initBuildInfoContainer(project);
 		if (initResult.getCode() != IStatus.OK) {
 			fail("Initializing build information failed for: " + project.getName() + " because: " + initResult.getMessage());
 		}
-		
+
 		// Now test the results out
 		checkRootManagedProject(newProject, "x");
-		
+
 		// Override the "String Option in Category" option value
 		configs = newProject.getConfigurations();
 		ITool[] tools = configs[0].getTools();
@@ -565,7 +566,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		tool = (ITool)options[0][0];
 		option = (IOption)options[0][1];
 		assertEquals("z", option.getStringValue());
-		
+
 		// Save, close, reopen and test again
 		ManagedBuildManager.saveBuildInfo(project, true);
 		ManagedBuildManager.removeBuildInfo(project);
@@ -579,24 +580,24 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		} catch (CoreException e) {
 			fail("Failed on project open: " + e.getLocalizedMessage());
 		}
-		
+
 		// Test that the default config was remembered
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 		assertEquals(defaultConfig.getId(), info.getDefaultConfiguration().getId());
 
 		// Check the rest of the default information
 		checkRootManagedProject(newProject, "z");
-		
+
 		// Now test the information the makefile builder needs
 		checkBuildTestSettings(info);
 		ManagedBuildManager.removeBuildInfo(project);
 	}
 
 	/**
-	 * Tests that bugzilla 44159 has been addressed. After a project was renamed, the 
+	 * Tests that bugzilla 44159 has been addressed. After a project was renamed, the
 	 * build information mistakenly referred to the old project as its owner. This
-	 * caused a number of searches on the information to fail. In this bug, it was the 
-	 * list of tools that could not be determined. In other cases, the information 
+	 * caused a number of searches on the information to fail. In this bug, it was the
+	 * list of tools that could not be determined. In other cases, the information
 	 * retrieval caused NPEs because the old owner no longer existed.
 	 */
 	public void testProjectRename() {
@@ -612,16 +613,16 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		} catch (CoreException e) {
 			fail("Failed to open project: " + e.getLocalizedMessage());
 		}
-		
+
 		// Rename the project
-		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();	
+		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		IResource newResource = workspaceRoot.findMember(projectRename);
 		if (newResource != null) {
 			try {
 				newResource.delete(IResource.KEEP_HISTORY, new NullProgressMonitor());
 			} catch (CoreException e) {
 				fail("Failed to delete old project " + projectRename + ": " + e.getLocalizedMessage());
-			}		
+			}
 		}
 		IProjectDescription description = null;
 		try {
@@ -649,15 +650,15 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		// By now the project should have 3 configs
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 		IManagedProject managedProj = info.getManagedProject();
-		IConfiguration[] definedConfigs = managedProj.getConfigurations(); 		
+		IConfiguration[] definedConfigs = managedProj.getConfigurations();
 		assertEquals(4, definedConfigs.length);
 		IConfiguration baseConfig = definedConfigs[1];
-		
+
 		// There is only one tool
 		ITool[] definedTools = baseConfig.getTools();
 		assertEquals(1, definedTools.length);
 		ITool rootTool = definedTools[0];
-		
+
 		// Get the options (2) in top category and (4) in its child
 		IOptionCategory topCategory = rootTool.getTopOptionCategory();
 		assertEquals("Root Tool", topCategory.getName());
@@ -672,7 +673,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		for (i=0; i<options.length; i++)
 			if (options[i][0] == null) break;
 		assertEquals(4, i);
-		
+
 		// Set the name back
 		newResource = workspaceRoot.findMember(projectName);
 		if (newResource != null) {
@@ -680,7 +681,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 				newResource.delete(IResource.KEEP_HISTORY, new NullProgressMonitor());
 			} catch (CoreException e) {
 				fail("Failed to delete old project " + projectName + ": " + e.getLocalizedMessage());
-			}		
+			}
 		}
 		try {
 			description = project.getDescription();
@@ -707,7 +708,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		// Do it all again
 		info = ManagedBuildManager.getBuildInfo(project);
 		managedProj = info.getManagedProject();
-		definedConfigs = managedProj.getConfigurations(); 		
+		definedConfigs = managedProj.getConfigurations();
 		assertEquals(4, definedConfigs.length);
 		baseConfig = definedConfigs[1];
 		definedTools = baseConfig.getTools();
@@ -726,11 +727,11 @@ public class ManagedBuildCoreTests20 extends TestCase {
 			if (options[i][0] == null) break;
 		assertEquals(4, i);
 	}
-	
+
 	/**
 	 * Tests the tool settings through the interface the makefile generator
 	 * uses.
-	 * 
+	 *
 	 * @param project
 	 */
 	private void checkBuildTestSettings(IManagedBuildInfo info) {
@@ -739,45 +740,45 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		String badExt = "cpp";
 		String expectedOutput = "toor";
 		String expectedCmd = "doIt";
-		
+
 		assertNotNull(info);
 		assertEquals(info.getBuildArtifactName(), projectName);
-		
+
 		// There should be a default configuration defined for the project
 		IManagedProject managedProj = info.getManagedProject();
 		assertNotNull(managedProj);
 		IConfiguration buildConfig = info.getDefaultConfiguration();
 		assertNotNull(buildConfig);
-		
+
 		// Check that tool handles resources with extensions foo and bar by building a baz
 		assertEquals(info.getOutputExtension(ext1), expectedOutput);
 		assertEquals(info.getOutputExtension(ext2), expectedOutput);
-		
+
 		// Check that it ignores others based on filename extensions
 		assertNull(info.getOutputExtension(badExt));
-		
+
 		// Now see what the tool command line invocation is for foo and bar
 		assertEquals(info.getToolForSource(ext1), expectedCmd);
 		assertEquals(info.getToolForSource(ext2), expectedCmd);
 		// Make sure that there is no tool to build files of type foo and bar
 		assertNull(info.getToolForConfiguration(ext1));
 		assertNull(info.getToolForConfiguration(ext2));
-		
+
 		// There is no tool that builds toor
 		assertNull(info.getToolForSource(expectedOutput));
 		// but there is one that produces it
 		assertEquals(info.getToolForConfiguration(expectedOutput), expectedCmd);
-		
+
 		// Now check the build flags
 		assertEquals(info.getFlagsForSource(ext1), "-La -Lb z -e1 -nob");
 		assertEquals(info.getFlagsForSource(ext1), info.getFlagsForSource(ext2));
-		
+
 	}
-	
+
 	/**
 	 * Tests that overridden options are properly read into build model.
 	 * Test that option values that are not overridden remain the same.
-	 * 
+	 *
 	 * @param project The project to get build model information for.
 	 * @throws BuildException
 	 */
@@ -785,12 +786,12 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		// Get the configs
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 		IManagedProject managedProj = info.getManagedProject();
-		IConfiguration[] definedConfigs = managedProj.getConfigurations(); 		
+		IConfiguration[] definedConfigs = managedProj.getConfigurations();
 		assertEquals(4, definedConfigs.length);
 		IConfiguration newConfig = managedProj.getConfiguration(testConfigId);
 		assertNotNull(newConfig);
 
-		// Now get the tool options and make sure the values are correct		
+		// Now get the tool options and make sure the values are correct
 		ITool[] definedTools = newConfig.getTools();
 		assertEquals(1, definedTools.length);
 		ITool rootTool = definedTools[0];
@@ -837,7 +838,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		assertEquals(false, rootOptions[5].getBooleanValue());
 		assertEquals("-nob", rootOptions[5].getCommandFalse());
 	}
-	
+
 	/*
 	 * Do a full sanity check on the root project type.
 	 */
@@ -866,7 +867,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		// This configuration defines no errors parsers.
 		assertNull(configs[0].getErrorParserIds());
 		assertTrue(Arrays.equals(configs[0].getErrorParserList(), CCorePlugin.getDefault().getAllErrorParsersIDs()));
-		
+
 		// Tools
 		ITool[] tools = toolChain.getTools();
 		// Root Tool
@@ -903,7 +904,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		// Next option is an enumerated
 		assertEquals("Enumerated Option in Category", options[4].getName());
 		assertEquals(IOption.ENUMERATED, options[4].getValueType());
-		// Post-2.0 enums store the ID, not the string value 
+		// Post-2.0 enums store the ID, not the string value
 		assertEquals("default.enum.option", options[4].getSelectedEnum());
 		assertEquals("-e1", options[4].getEnumCommand("default.enum.option"));
 		// Need this methof to populate the UI selection widget
@@ -920,7 +921,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		assertEquals(false, options[5].getBooleanValue());
 		assertEquals("", options[5].getCommand());
 		assertEquals("-nob", options[5].getCommandFalse());
-		
+
 		// Option Categories
 		IOptionCategory topCategory = rootTool.getTopOptionCategory();
 		assertEquals("Root Tool", topCategory.getName());
@@ -946,7 +947,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		// There should be 3 defined configs
 		configs = type.getConfigurations();
 		assertEquals(3, configs.length);
-		
+
 		// Root Config
 		IConfiguration rootConfig = configs[0];
 		assertEquals("Root Config", rootConfig.getName());
@@ -965,7 +966,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		assertTrue(rootTool.isHeaderFile("baz"));
 		assertTrue(tools[0].isHeaderFile("baz"));
 		assertEquals(ITool.FILTER_C, rootTool.getNatureFilter());
-		
+
 		// Partially Overriden Configuration
 		assertEquals("Root Override Config", configs[1].getName());
 		tools = configs[1].getTools();
@@ -1015,7 +1016,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		assertTrue(tool.isHeaderFile("baz"));
 		assertEquals("doIt", tool.getToolCommand());
 		assertEquals("-La -Lb -b y -e1 -nob", tool.getToolFlags());
-		
+
 		// Completely Overridden configuration
 		assertEquals("Complete Override Config", configs[2].getName());
 		tools = configs[2].getTools();
@@ -1026,14 +1027,14 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		for (i=0; i<catoptions.length; i++)
 			if (catoptions[i][0] == null) break;
 		assertEquals(2, i);
-		// Check that there's an string list with totally new values 
+		// Check that there's an string list with totally new values
 		assertEquals("List Option in Top", ((IOption)catoptions[0][1]).getName());
 		assertEquals(IOption.STRING_LIST, ((IOption)catoptions[0][1]).getValueType());
 		valueList = ((IOption)catoptions[0][1]).getStringListValue();
 		assertTrue(valueList.length == 3);
 		assertEquals("d", valueList[0]);
 		assertEquals("e", valueList[1]);
-		assertEquals("f", valueList[2]);		
+		assertEquals("f", valueList[2]);
 		assertEquals("-L", ((IOption)catoptions[0][1]).getCommand());
 		// and a true boolean (commands should not have changed)
 		assertEquals("Boolean Option in Top", ((IOption)catoptions[1][1]).getName());
@@ -1060,11 +1061,11 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		assertEquals(true, ((IOption)catoptions[3][1]).getBooleanValue());
 		tool = tools[0];
 		assertEquals("-Ld -Le -Lf -b overridden -stralsooverridden -e2", tool.getToolFlags());
-		
+
 		// Make sure that the build manager returns the default makefile generator (not null)
 		assertNotNull(ManagedBuildManager.getBuildfileGenerator(configs[0]));
 	}
-	
+
 	/*
 	 * Do a full sanity check on the root managed project.
 	 */
@@ -1092,7 +1093,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		// This configuration defines no errors parsers.
 		assertNull(configs[0].getErrorParserIds());
 		assertTrue(Arrays.equals(configs[0].getErrorParserList(), CCorePlugin.getDefault().getAllErrorParsersIDs()));
-		
+
 		// Tools
 		ITool[] tools = configs[0].getTools();
 		// Root Tool
@@ -1129,7 +1130,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		// Next option is an enumerated
 		assertEquals("Enumerated Option in Category", options[4].getName());
 		assertEquals(IOption.ENUMERATED, options[4].getValueType());
-		// Post-2.0 enums store the ID, not the string value 
+		// Post-2.0 enums store the ID, not the string value
 		assertEquals("default.enum.option", options[4].getSelectedEnum());
 		assertEquals("-e1", options[4].getEnumCommand("default.enum.option"));
 		// Need this methof to populate the UI selection widget
@@ -1146,7 +1147,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		assertEquals(false, options[5].getBooleanValue());
 		assertEquals("", options[5].getCommand());
 		assertEquals("-nob", options[5].getCommandFalse());
-		
+
 		// Option Categories
 		IOptionCategory topCategory = rootTool.getTopOptionCategory();
 		assertEquals("Root Tool", topCategory.getName());
@@ -1155,9 +1156,9 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		for (i=0; i<catoptions.length; i++)
 			if (catoptions[i][0] == null) break;
 		assertEquals(2, i);
-		IOption catOption = (IOption)catoptions[0][1]; 
+		IOption catOption = (IOption)catoptions[0][1];
 		assertEquals("List Option in Top", catOption.getName());
-		catOption = (IOption)catoptions[1][1]; 
+		catOption = (IOption)catoptions[1][1];
 		assertEquals("Boolean Option in Top", catOption.getName());
 		IOptionCategory[] categories = topCategory.getChildCategories();
 		assertEquals(1, categories.length);
@@ -1166,18 +1167,18 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		for (i=0; i<catoptions.length; i++)
 			if (catoptions[i][0] == null) break;
 		assertEquals(4, i);
-		catOption = (IOption)catoptions[0][1]; 
+		catOption = (IOption)catoptions[0][1];
 		assertEquals("String Option in Category", catOption.getName());
-		catOption = (IOption)catoptions[1][1]; 
+		catOption = (IOption)catoptions[1][1];
 		assertEquals("Another String Option in Category", catOption.getName());
-		catOption = (IOption)catoptions[2][1]; 
+		catOption = (IOption)catoptions[2][1];
 		assertEquals("Enumerated Option in Category", catOption.getName());
-		catOption = (IOption)catoptions[3][1]; 
+		catOption = (IOption)catoptions[3][1];
 		assertEquals("Boolean Option in Category", catOption.getName());
 
 		// There should be 3 defined configs
 		assertEquals(3, configs.length);
-		
+
 		// Root Config
 		IConfiguration rootConfig = configs[0];
 		assertEquals("Root Config", rootConfig.getName());
@@ -1196,7 +1197,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		assertTrue(rootTool.isHeaderFile("baz"));
 		assertTrue(tools[0].isHeaderFile("baz"));
 		assertEquals(ITool.FILTER_C, rootTool.getNatureFilter());
-		
+
 		// Partially Overriden Configuration
 		assertEquals("Root Override Config", configs[1].getName());
 		tools = configs[1].getTools();
@@ -1207,12 +1208,12 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		for (i=0; i<catoptions.length; i++)
 			if (catoptions[i][0] == null) break;
 		assertEquals(2, i);
-		catOption = (IOption)catoptions[0][1]; 
+		catOption = (IOption)catoptions[0][1];
 		assertEquals("List Option in Top", catOption.getName());
 		valueList = catOption.getStringListValue();
 		assertEquals("a", valueList[0]);
 		assertEquals("b", valueList[1]);
-		catOption = (IOption)catoptions[1][1]; 
+		catOption = (IOption)catoptions[1][1];
 		assertEquals("Boolean Option in Top", catOption.getName());
 		assertEquals(true, catOption.getBooleanValue());
 		assertEquals("-b", catOption.getCommand());
@@ -1221,23 +1222,23 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		for (i=0; i<catoptions.length; i++)
 			if (catoptions[i][0] == null) break;
 		assertEquals(4, i);
-		catOption = (IOption)catoptions[0][1]; 
+		catOption = (IOption)catoptions[0][1];
 		assertEquals("String Option in Category", catOption.getName());
 		assertEquals("y", catOption.getStringValue());
-		catOption = (IOption)catoptions[1][1]; 
+		catOption = (IOption)catoptions[1][1];
 		assertEquals("Another String Option in Category", catOption.getName());
 		assertEquals("", catOption.getStringValue());
-		catOption = (IOption)catoptions[2][1]; 
+		catOption = (IOption)catoptions[2][1];
 		assertEquals("Enumerated Option in Category", catOption.getName());
 		valueList = catOption.getApplicableValues();
 		assertEquals(2, valueList.length);
 		assertEquals("Default Enum", valueList[0]);
 		assertEquals("Another Enum", valueList[1]);
-		catOption = (IOption)catoptions[2][1]; 
+		catOption = (IOption)catoptions[2][1];
 		assertEquals("-e1", catOption.getEnumCommand(valueList[0]));
 		assertEquals("-e2", catOption.getEnumCommand(valueList[1]));
 		assertEquals(1, tools.length);
-		catOption = (IOption)catoptions[3][1]; 
+		catOption = (IOption)catoptions[3][1];
 		assertEquals("Boolean Option in Category", catOption.getName());
 		assertEquals(false, catOption.getBooleanValue());
 		assertEquals("", catOption.getCommand());
@@ -1253,7 +1254,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		assertTrue(tool.isHeaderFile("baz"));
 		assertEquals("doIt", tool.getToolCommand());
 		assertEquals("-La -Lb -b y -e1 -nob", tool.getToolFlags());
-		
+
 		// Completely Overridden configuration
 		assertEquals("Complete Override Config", configs[2].getName());
 		tools = configs[2].getTools();
@@ -1264,18 +1265,18 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		for (i=0; i<catoptions.length; i++)
 			if (catoptions[i][0] == null) break;
 		assertEquals(2, i);
-		// Check that there's an string list with totally new values 
-		catOption = (IOption)catoptions[0][1]; 
+		// Check that there's an string list with totally new values
+		catOption = (IOption)catoptions[0][1];
 		assertEquals("List Option in Top", catOption.getName());
 		assertEquals(IOption.STRING_LIST, catOption.getValueType());
 		valueList = catOption.getStringListValue();
 		assertTrue(valueList.length == 3);
 		assertEquals("d", valueList[0]);
 		assertEquals("e", valueList[1]);
-		assertEquals("f", valueList[2]);		
+		assertEquals("f", valueList[2]);
 		assertEquals("-L", catOption.getCommand());
 		// and a true boolean (commands should not have changed)
-		catOption = (IOption)catoptions[1][1]; 
+		catOption = (IOption)catoptions[1][1];
 		assertEquals("Boolean Option in Top", catOption.getName());
 		assertEquals(IOption.BOOLEAN, catOption.getValueType());
 		assertEquals(true, catOption.getBooleanValue());
@@ -1286,48 +1287,48 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		for (i=0; i<catoptions.length; i++)
 			if (catoptions[i][0] == null) break;
 		assertEquals(4, i);
-		catOption = (IOption)catoptions[0][1]; 
+		catOption = (IOption)catoptions[0][1];
 		assertEquals("String Option in Category", catOption.getName());
 		assertEquals(IOption.STRING, catOption.getValueType());
 		assertEquals("overridden", catOption.getStringValue());
-		catOption = (IOption)catoptions[1][1]; 
+		catOption = (IOption)catoptions[1][1];
 		assertEquals("Another String Option in Category", catOption.getName());
 		assertEquals(IOption.STRING, catOption.getValueType());
 		assertEquals("alsooverridden", catOption.getStringValue());
-		catOption = (IOption)catoptions[2][1]; 
+		catOption = (IOption)catoptions[2][1];
 		assertEquals("Enumerated Option in Category", catOption.getName());
 		assertEquals(IOption.ENUMERATED, catOption.getValueType());
 		assertEquals("another.enum.option", catOption.getSelectedEnum());
-		catOption = (IOption)catoptions[3][1]; 
+		catOption = (IOption)catoptions[3][1];
 		assertEquals("Boolean Option in Category", catOption.getName());
 		assertEquals(IOption.BOOLEAN, catOption.getValueType());
 		assertEquals(true, catOption.getBooleanValue());
 		tool = tools[0];
 		assertEquals("-Ld -Le -Lf -b overridden -stralsooverridden -e2", tool.getToolFlags());
-		
+
 		// Make sure that the build manager returns the default makefile generator (not null)
 		assertNotNull(ManagedBuildManager.getBuildfileGenerator(configs[0]));
 	}
 
 	/*
-	 * The Sub Sub project type has a reference to a tool that is defined  
-	 * independently from the project type itself. This is a common pattern 
+	 * The Sub Sub project type has a reference to a tool that is defined
+	 * independently from the project type itself. This is a common pattern
 	 * for tools that are shared between many project types.
-	 * 
-	 * The tool itself is defined as having two option categories, with 
-	 * one option in each category. To test that the reference is properly 
-	 * inheritted, the project type overrides the default value of the boolean 
-	 * option. 
-	 * 
-	 * The test confirms that the basic settings are inheritted through the 
-	 * reference, and that the overridden value is used instead of the 
-	 * default. It also tests that the command can be overidden through a 
+	 *
+	 * The tool itself is defined as having two option categories, with
+	 * one option in each category. To test that the reference is properly
+	 * inheritted, the project type overrides the default value of the boolean
+	 * option.
+	 *
+	 * The test confirms that the basic settings are inheritted through the
+	 * reference, and that the overridden value is used instead of the
+	 * default. It also tests that the command can be overidden through a
 	 * tool reference.
-	 * 
-	 * Finally, the string option in the configuration is overridden and the 
-	 * test confirms that it contains both the overridden boolean that the 
-	 * project type provides, and the overridden string that it provides.   
-	 *  
+	 *
+	 * Finally, the string option in the configuration is overridden and the
+	 * test confirms that it contains both the overridden boolean that the
+	 * project type provides, and the overridden string that it provides.
+	 *
 	 * @param testSubSub
 	 */
 	private void checkSubSubProjectType(IProjectType projType) {
@@ -1345,7 +1346,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		final String freeOptValue = "Live free or die";
 		final String newCmd = "Let the Wookie win";
 		final String stringOverride = "The future language of slaves";
-		
+
 		IConfiguration[] configs = projType.getConfigurations();
 		// Check the inherited clean command
 		assertEquals("rm -yourworld", configs[0].getCleanCommand());
@@ -1359,17 +1360,17 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		String[] expectedOSList = {"win32","linux","solaris"};
 		assertTrue(Arrays.equals(expectedOSList, toolChain.getOSList()));
 		// Make sure the arch list is inherited
-		String[] expectedArchList = {"x86", "ppc"}; 
+		String[] expectedArchList = {"x86", "ppc"};
 		assertTrue(Arrays.equals(expectedArchList, toolChain.getArchList()));
 
 		// Get the 5 configurations (3 from test, 1 from test sub and 1 from this)
 		assertEquals(5, configs.length);
-		
+
 		// Check the tools. We should have 3 (1 from each parent and the one referenced).
 		ITool[] tools = configs[0].getTools();
 		assertEquals(3, tools.length);
 		ITool toolRef = tools[0];
-		
+
 		// Make sure we get all the tool settings
 		assertEquals(toolRef.getName(), indyToolName);
 		assertEquals(toolRef.getToolCommand(), indyToolCommand);
@@ -1397,9 +1398,9 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		IOption optCat = (IOption)optsInCat[0][1];
 		assertEquals(freeOptName, optCat.getName());
 		try {
-			// We get the option categories and options from the tool itself, but the 
-			// tool reference will have a set of 0 to n option references that contain 
-			// overridden settings. In this case, the string is inheritted and should 
+			// We get the option categories and options from the tool itself, but the
+			// tool reference will have a set of 0 to n option references that contain
+			// overridden settings. In this case, the string is inheritted and should
 			// not be reference
 			assertEquals(IOption.STRING, optCat.getValueType());
 			IOption stringOpt = toolRef.getOptionById(optCat.getId());
@@ -1422,11 +1423,11 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		} catch (BuildException e) {
 			fail("Failure getting boolean value in subsub: " + e.getLocalizedMessage());
 		}
-		
+
 		// Test that the tool command can be changed through the reference
 		toolRef.setToolCommand(newCmd);
 		assertEquals(toolRef.getToolCommand(), newCmd);
-		
+
 		// Muck about with the options in the local config
 		IConfiguration subSubConfig = projType.getConfiguration("sub.sub.config");
 		assertNotNull(subSubConfig);
@@ -1437,7 +1438,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		optCat = (IOption)optsInCat[0][1];
 		IOption configStringOpt = configToolRef.getOptionById(optCat.getId());
 		assertNotNull(configStringOpt);
-		// Override the string option		
+		// Override the string option
 		try {
 			subSubConfig.setOption(configToolRef, configStringOpt, stringOverride);
 		} catch (BuildException e) {
@@ -1447,7 +1448,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		configTools = subSubConfig.getTools();
 		configToolRef = configTools[0];
 		assertNotNull(configToolRef);
-		
+
 		// Test that the string option is overridden in the configuration
 		optsInCat = categories[0].getOptions(configs[0]);
 		for (i=0; i<optsInCat.length; i++)
@@ -1470,7 +1471,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		} catch (BuildException e) {
 			fail("Failure getting boolean value in subsubconfiguration: " + e.getLocalizedMessage());
 		}
-			
+
 		// Override it in config and retest
 		try {
 			subSubConfig.setOption(configToolRef, configBoolOpt, false);
@@ -1492,14 +1493,14 @@ public class ManagedBuildCoreTests20 extends TestCase {
 
 	/*
 	 * Do a sanity check on the values in the sub-project type. Most of the
-	 * sanity on the how build model entries are read is performed in 
-	 * the root project type check, so these tests just verify that the the sub 
+	 * sanity on the how build model entries are read is performed in
+	 * the root project type check, so these tests just verify that the the sub
 	 * project type properly inherits from its parent. For the new options
 	 * in the sub project type, the test does a sanity check just to be complete.
 	 */
 	private void checkSubProjectType(IProjectType projType) throws BuildException {
 		final String expectedFlags = "-I/usr/include -I/opt/gnome/include -IC:\\home\\tester/include -I\"../includes\" x y z";
-		
+
 		IConfiguration[] configs = projType.getConfigurations();
 		// Check the overridden clean command
 		assertEquals("rm -yourworld", configs[0].getCleanCommand());
@@ -1519,7 +1520,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		assertTrue(projType.isTestProjectType());
 		// Make sure the build artifact extension is there
 		assertEquals(configs[0].getArtifactExtension(), subExt);
-				
+
 		// Get the tools for this projType
 		ITool[] tools = configs[0].getTools();
 		// Do we inherit properly from parent
@@ -1539,8 +1540,8 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		assertTrue(subTool.isHeaderFile("arf"));
 		assertTrue(subTool.isHeaderFile("barf"));
 		assertEquals(ITool.FILTER_BOTH, subTool.getNatureFilter());
-		
-		// Do a sanity check on the options 
+
+		// Do a sanity check on the options
 		assertEquals("Include Paths", subOpts[0].getName());
 		assertEquals(IOption.INCLUDE_PATH, subOpts[0].getValueType());
 		String[] incPath = subOpts[0].getIncludePaths();
@@ -1552,7 +1553,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		assertEquals("/usr/gnu/include", builtInPaths[0]);
 		assertEquals("-I", subOpts[0].getCommand());
 		assertEquals(IOption.BROWSE_DIR, subOpts[0].getBrowseType());
-				
+
 		// There are no user-defined preprocessor symbols
 		assertEquals("Defined Symbols", subOpts[1].getName());
 		assertEquals(IOption.PREPROCESSOR_SYMBOLS, subOpts[1].getValueType());
@@ -1573,7 +1574,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		assertEquals("C:\\home\\tester/include", moreIncPath[0]);
 		assertEquals("-I", subOpts[2].getCommand());
 		assertEquals(IOption.BROWSE_DIR, subOpts[2].getBrowseType());
-		
+
 		// Check the user object option
 		assertEquals("User Objects", subOpts[3].getName());
 		assertEquals(IOption.OBJECTS, subOpts[3].getValueType());
@@ -1583,14 +1584,14 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		assertEquals("obj2.o", objs[1]);
 		assertEquals(IOption.BROWSE_FILE, subOpts[3].getBrowseType());
 		assertEquals("", subOpts[3].getCommand());
-		
+
 		// There should be a string list with no command
 		assertEquals("No Command StringList", subOpts[4].getName());
 		assertEquals(IOption.STRING_LIST, subOpts[4].getValueType());
-		
+
 		// Make sure the tool flags look right
 		assertEquals(subTool.getToolFlags(), expectedFlags);
-		
+
 		// Get the configs for this projType; it should inherit all the configs defined for the parent
 		assertEquals(4, configs.length);
 		assertEquals("Sub Config", configs[0].getName());
@@ -1603,7 +1604,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		// check that the projType parent reference has been resolved.
 		assertEquals(parent, child.getSuperClass());
 		assertEquals(child, grandchild.getSuperClass());
-		
+
 		// get the parent tool
 		IConfiguration[] parentConfigs = parent.getConfigurations();
 		ITool[] parentTools = parentConfigs[0].getTools();
@@ -1626,27 +1627,27 @@ public class ManagedBuildCoreTests20 extends TestCase {
 			if (optList[i][0] == null) break;
 		assertEquals(1, i);
 		assertEquals(option, optList[0][1]);
-		
+
 		// get the tool reference from the child
 		IConfiguration[] childConfigs = child.getConfigurations();
 		ITool[] childTools = childConfigs[0].getTools();
 		assertEquals(1, childTools.length);
 		ITool childToolRef = childTools[0];
 		assertEquals(parentTool.getSuperClass(), childToolRef.getSuperClass());
-		
+
 		// get and check the option reference
 		IOption optRef = childToolRef.getOptionById("test.forward.option");
 		assertEquals(option, optRef);
-		
+
 		// get the tool reference from the grandchild
 		IConfiguration[] grandConfigs = grandchild.getConfigurations();
 		ITool[] grandTools = grandConfigs[0].getTools();
 		assertEquals(1, grandTools.length);
 		ITool grandToolRef = grandTools[0];
 		assertEquals(parentTool.getSuperClass(), grandToolRef.getSuperClass());
-		
+
 	}
-	
+
 	public void checkProviderProjectType(IProjectType projType) throws Exception {
 		Properties props = new Properties();
 		props.load(getClass().getResourceAsStream("test_commands"));
@@ -1654,16 +1655,16 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		// check that this projType is in the file
 		String command = props.getProperty(projType.getId());
 		assertNotNull(command);
-		
+
 		IProjectType parent = projType.getSuperClass();
 		assertNotNull(parent);
 		assertEquals("test.forward.parent.target", parent.getId());
-		
+
 		IConfiguration[] configs = projType.getConfigurations();
 		ITool toolRef = configs[0].getFilteredTools()[0];
 		assertEquals(command, toolRef.getToolCommand());
 	}
-	
+
 	/**
 	 * Remove all the project information associated with the project used during test.
 	 */
@@ -1671,20 +1672,20 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		removeProject(projectName);
 		removeProject(projectName2);
 	}
-	
+
 	/* (non-Javadoc)
-	 * Create a new project named <code>name</code> or return the project in 
+	 * Create a new project named <code>name</code> or return the project in
 	 * the workspace of the same name if it exists.
-	 * 
+	 *
 	 * @param name The name of the project to create or retrieve.
-	 * @return 
+	 * @return
 	 * @throws CoreException
 	 */
 	private IProject createProject(String name) throws CoreException {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		final IProject newProjectHandle = root.getProject(name);
 		IProject project = null;
-		
+
 		if (!newProjectHandle.exists()) {
 			IWorkspace workspace = ResourcesPlugin.getWorkspace();
 			IWorkspaceDescription workspaceDesc = workspace.getDescription();
@@ -1699,6 +1700,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		} else {
 			IWorkspace workspace = ResourcesPlugin.getWorkspace();
 			IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					newProjectHandle.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 				}
@@ -1707,19 +1709,19 @@ public class ManagedBuildCoreTests20 extends TestCase {
 			workspace.run(runnable, root, IWorkspace.AVOID_UPDATE, monitor);
 			project = newProjectHandle;
 		}
-        
+
 		// Open the project if we have to
 		if (!project.isOpen()) {
 			project.open(new NullProgressMonitor());
 		}
-				
-		return project;	
+
+		return project;
 	}
-	
+
 	/**
-	 * Remove the <code>IProject</code> with the name specified in the argument from the 
+	 * Remove the <code>IProject</code> with the name specified in the argument from the
 	 * receiver's workspace.
-	 *  
+	 *
 	 * @param name
 	 */
 	private void removeProject(String name) {
@@ -1758,11 +1760,11 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		} catch (CoreException e) {
 			fail("Test failed on error parser project creation: " + e.getLocalizedMessage());
 		}
-		
+
 		// Find the base project Type definition
 		IProjectType projType = ManagedBuildManager.getProjectType("test.error.parsers");
 		assertNotNull(projType);
-		
+
 		// Create the target for our project that builds a dummy executable
 		IManagedProject newProj = ManagedBuildManager.createManagedProject(project, projType);
 		assertEquals(newProj.getName(), projType.getName());
@@ -1774,16 +1776,16 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		if (initResult.getCode() != IStatus.OK) {
 			fail("Initializing build information failed for: " + project.getName() + " because: " + initResult.getMessage());
 		}
-		
+
 		// Copy over the configs
 		IConfiguration[] baseConfigs = projType.getConfigurations();
 		for (int i = 0; i < baseConfigs.length; ++i) {
 			newProj.createConfiguration(baseConfigs[i], baseConfigs[i].getId() + "." + i);
 		}
-		
+
 		// Test this out
 		checkErrorParsersProject(newProj);
-		
+
 		// Save, close, reopen and test again
 		ManagedBuildManager.saveBuildInfo(project, true);
 		ManagedBuildManager.removeBuildInfo(project);
@@ -1797,7 +1799,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		} catch (CoreException e) {
 			fail("Failed on error parser project open: " + e.getLocalizedMessage());
 		}
-		
+
 		// Test that the default config was remembered
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 
@@ -1805,7 +1807,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		checkErrorParsersProject(info.getManagedProject());
 		ManagedBuildManager.removeBuildInfo(project);
 	}
-	
+
 	/*
 	 * Do a sanity check on the error parsers target.
 	 */
@@ -1819,7 +1821,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		// This target defines errors parsers.  Check that the error parsers
 		// have been assigned.
 		assertEquals("org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GmakeErrorParser", configs[0].getErrorParserIds());
-		
+
 		// Tool
 		ITool[] tools = configs[0].getTools();
 		ITool rootTool = tools[0];
@@ -1835,7 +1837,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		// There should be one defined configs
 		assertEquals(1, configs.length);
 	}
-	
+
 	/**
 	 * Test that the build artifact of a <code>ITarget</code> can be modified
 	 * programmatically.
@@ -1849,12 +1851,12 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		assertNotNull(managedProj);
 		IConfiguration defaultConfig = info.getDefaultConfiguration();
 		assertNotNull(defaultConfig);
-		
+
 		// Set the build artifact of the configuration
 		String ext = defaultConfig.getArtifactExtension();
 		String name = project.getName() + "." + ext;
 		defaultConfig.setArtifactName(name);
-		
+
 		// Save, close, reopen and test again
 		ManagedBuildManager.saveBuildInfo(project, false);
 		ManagedBuildManager.removeBuildInfo(project);
@@ -1874,6 +1876,6 @@ public class ManagedBuildCoreTests20 extends TestCase {
 	public void testThatAlwaysFails() {
 		assertTrue(false);
 	}
-	
+
 }
 

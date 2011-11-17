@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM - Initial API and implementation
  *     ARM Ltd. - basic tooltip support
@@ -81,7 +81,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	private Integer resourceFilter;
 	private IConfigurationElement valueHandlerElement = null;
 	private IManagedOptionValueHandler valueHandler = null;
-	private String valueHandlerExtraArgument;	
+	private String valueHandlerExtraArgument;
 	private String fieldEditorId;
 	private String fieldEditorExtraArgument;
 	private IConfigurationElement applicabilityCalculatorElement = null;
@@ -92,7 +92,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	private boolean isDirty = false;
 	private boolean resolved = true;
 	private boolean verified = false;
-	private boolean isValid = true; /** False for options which are invalid. getOption() 
+	private boolean isValid = true; /** False for options which are invalid. getOption()
 	                                  * routines will ignore invalid options. */
 	private boolean wasOptRef = false; /** True for options which are created because of an
 	                                     * MBS 2.0 model OptionReference element
@@ -101,9 +101,9 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	private boolean rebuildState;
 
 	/**
-	 * This constructor is called to create an option defined by an extension point in 
+	 * This constructor is called to create an option defined by an extension point in
 	 * a plugin manifest file, or returned by a dynamic element provider
-	 * 
+	 *
 	 * @param parent  The IHoldsOptions parent of this option, or <code>null</code> if
 	 *                defined at the top level
 	 * @param element The option definition from the manifest file or a dynamic element
@@ -112,23 +112,23 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	public Option(IHoldsOptions parent, IManagedConfigElement element) {
 		this.holder = parent;
 		isExtensionOption = true;
-		
+
 		// setup for resolving
 		resolved = false;
 
 		loadFromManifest(element);
-		
+
 		// Hook me up to the Managed Build Manager
 		ManagedBuildManager.addExtensionOption(this);
 	}
 
 	/**
-	 * This constructor is called to create an Option whose attributes and children will be 
+	 * This constructor is called to create an Option whose attributes and children will be
 	 * added by separate calls.
-	 * 
+	 *
 	 * @param parent - the parent of the option, if any
 	 * @param superClass - the superClass, if any
-	 * @param Id - the id for the new option 
+	 * @param Id - the id for the new option
 	 * @param name - the name for the new option
 	 * @param isExtensionElement - indicates whether this is an extension element or a managed project element
 	 */
@@ -151,24 +151,24 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	}
 
 	/**
-	 * Create an <code>Option</code> based on the specification stored in the 
+	 * Create an <code>Option</code> based on the specification stored in the
 	 * project file (.cdtbuild).
-	 * 
-	 * @param parent The <code>IHoldsOptions</code> the option will be added to. 
+	 *
+	 * @param parent The <code>IHoldsOptions</code> the option will be added to.
 	 * @param element The XML element that contains the option settings.
 	 */
 	public Option(IHoldsOptions parent, ICStorageElement element) {
 		this.holder = parent;
 		isExtensionOption = false;
-		
+
 		// Initialize from the XML attributes
 		loadFromProject(element);
 	}
 
 	/**
 	 * Create an <code>Option</code> based upon an existing option.
-	 * 
-	 * @param parent The <code>IHoldsOptions</code> the option will be added to. 
+	 *
+	 * @param parent The <code>IHoldsOptions</code> the option will be added to.
 	 * @param Id     New ID for the option.
 	 * @param name   New name for the option.
 	 * @param option The existing option to clone, except for the above fields.
@@ -184,7 +184,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		setName(name);
 		isExtensionOption = false;
 		boolean copyIds = Id.equals(option.id);
-		
+
 		//  Copy the remaining attributes
 		if (option.unusedChildren != null) {
 			unusedChildren = new String(option.unusedChildren);
@@ -290,24 +290,24 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 
 		applicabilityCalculatorElement = option.applicabilityCalculatorElement;
 		applicabilityCalculator = option.applicabilityCalculator;
-		
+
 		booleanExpressionCalculator = option.booleanExpressionCalculator;
 
 		if (option.valueHandlerElement != null) {
-			valueHandlerElement = option.valueHandlerElement; 
+			valueHandlerElement = option.valueHandlerElement;
 			valueHandler = option.valueHandler;
 		}
 		if (option.valueHandlerExtraArgument != null) {
 			valueHandlerExtraArgument = new String(option.valueHandlerExtraArgument);
-		}		
-		
+		}
+
 		if (option.fieldEditorId != null) {
-			fieldEditorId = option.fieldEditorId; 
+			fieldEditorId = option.fieldEditorId;
 		}
 		if (option.fieldEditorExtraArgument != null) {
 			fieldEditorExtraArgument = new String(option.fieldEditorExtraArgument);
-		}		
-		
+		}
+
 		if(copyIds){
 			isDirty = option.isDirty;
 			rebuildState = option.rebuildState;
@@ -320,28 +320,28 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	/*
 	 *  E L E M E N T   A T T R I B U T E   R E A D E R S   A N D   W R I T E R S
 	 */
-	
+
 	/* (non-Javadoc)
-	 * Loads the option information from the ManagedConfigElement specified in the 
+	 * Loads the option information from the ManagedConfigElement specified in the
 	 * argument.
-	 * 
-	 * @param element Contains the option information 
+	 *
+	 * @param element Contains the option information
 	 */
 	protected void loadFromManifest(IManagedConfigElement element) {
 		ManagedBuildManager.putConfigElement(this, element);
-		
+
 		// id
 		setId(SafeStringInterner.safeIntern(element.getAttribute(IBuildObject.ID)));
-		
+
 		// Get the name
 		setName(SafeStringInterner.safeIntern(element.getAttribute(IBuildObject.NAME)));
-		
+
 		// superClass
 		superClassId = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.SUPERCLASS));
 
 		// Get the unused children, if any
-		unusedChildren = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.UNUSED_CHILDREN)); 
-		
+		unusedChildren = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.UNUSED_CHILDREN));
+
 		// isAbstract
         String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
         if (isAbs != null){
@@ -350,22 +350,22 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 
 		// Get the command defined for the option
 		command = SafeStringInterner.safeIntern(element.getAttribute(COMMAND));
-		
+
 		// Get the command-generator, if any
-		String commandGeneratorStr = element.getAttribute(COMMAND_GENERATOR); 
+		String commandGeneratorStr = element.getAttribute(COMMAND_GENERATOR);
 		if (commandGeneratorStr != null && element instanceof DefaultManagedConfigElement) {
-			commandGeneratorElement = ((DefaultManagedConfigElement)element).getConfigurationElement();			
+			commandGeneratorElement = ((DefaultManagedConfigElement)element).getConfigurationElement();
 		}
 
 		// Get the command defined for a Boolean option when the value is False
 		commandFalse = SafeStringInterner.safeIntern(element.getAttribute(COMMAND_FALSE));
-		
+
 		// Get the tooltip for the option
 		tip = SafeStringInterner.safeIntern(element.getAttribute(TOOL_TIP));
-		
+
 		// Get the contextID for the option
 		contextId = SafeStringInterner.safeIntern(element.getAttribute(CONTEXT_ID));
-			
+
 		// Options hold different types of values
 		String valueTypeStr = element.getAttribute(VALUE_TYPE);
 		if (valueTypeStr != null) {
@@ -373,9 +373,9 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		}
 
 		// Note: The value and defaultValue attributes are loaded in the resolveReferences routine.
-		//       This is because we need to have the value-type, and this may be defined in a 
+		//       This is because we need to have the value-type, and this may be defined in a
 		//       superClass that is not yet loaded.
-		
+
 		// Determine if there needs to be a browse button
 		String browseTypeStr = element.getAttribute(BROWSE_TYPE);
 		if (browseTypeStr == null) {
@@ -394,15 +394,15 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 
 		// Get the browseFilterPath attribute
 		this.browseFilterPath = SafeStringInterner.safeIntern(element.getAttribute(BROWSE_FILTER_PATH));
-		
+
 		// Get the browseFilterExtensions attribute
 		String browseFilterExtensionsStr = element.getAttribute(BROWSE_FILTER_EXTENSIONS);
 		if (browseFilterExtensionsStr != null) {
 			this.browseFilterExtensions = SafeStringInterner.safeIntern(browseFilterExtensionsStr.split("\\s*,\\s*")); //$NON-NLS-1$
 		}
-		
+
 		categoryId = SafeStringInterner.safeIntern(element.getAttribute(CATEGORY));
-		
+
 		// Get the resourceFilter attribute
 		String resFilterStr = element.getAttribute(RESOURCE_FILTER);
 		if (resFilterStr == null) {
@@ -418,42 +418,42 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		} else if (resFilterStr.equals(PROJECT)) {
 			resourceFilter = new Integer(FILTER_PROJECT);
 		}
-		
+
 		//get enablements
 		IManagedConfigElement enablements[] = element.getChildren(OptionEnablementExpression.NAME);
 		if(enablements.length > 0)
 			booleanExpressionCalculator = new BooleanExpressionApplicabilityCalculator(enablements);
 
 		// get the applicability calculator, if any
-		String applicabilityCalculatorStr = element.getAttribute(APPLICABILITY_CALCULATOR); 
+		String applicabilityCalculatorStr = element.getAttribute(APPLICABILITY_CALCULATOR);
 		if (applicabilityCalculatorStr != null && element instanceof DefaultManagedConfigElement) {
-			applicabilityCalculatorElement = ((DefaultManagedConfigElement)element).getConfigurationElement();			
+			applicabilityCalculatorElement = ((DefaultManagedConfigElement)element).getConfigurationElement();
 		} else {
 			applicabilityCalculator = booleanExpressionCalculator;
 		}
 
 		// valueHandler
-		// Store the configuration element IFF there is a value handler defined 
-		String valueHandler = element.getAttribute(VALUE_HANDLER); 
+		// Store the configuration element IFF there is a value handler defined
+		String valueHandler = element.getAttribute(VALUE_HANDLER);
 		if (valueHandler != null && element instanceof DefaultManagedConfigElement) {
-			valueHandlerElement = ((DefaultManagedConfigElement)element).getConfigurationElement();			
+			valueHandlerElement = ((DefaultManagedConfigElement)element).getConfigurationElement();
 		}
 		// valueHandlerExtraArgument
 		valueHandlerExtraArgument = SafeStringInterner.safeIntern(element.getAttribute(VALUE_HANDLER_EXTRA_ARGUMENT));
 
 		// fieldEditor and optional argument
-		fieldEditorId = element.getAttribute(FIELD_EDITOR_ID); 
+		fieldEditorId = element.getAttribute(FIELD_EDITOR_ID);
 		fieldEditorExtraArgument = element.getAttribute(FIELD_EDITOR_EXTRA_ARGUMENT);
 	}
-	
+
 	/* (non-Javadoc)
-	 * Initialize the option information from the XML element 
+	 * Initialize the option information from the XML element
 	 * specified in the argument
-	 * 
-	 * @param element An XML element containing the option information 
+	 *
+	 * @param element An XML element containing the option information
 	 */
 	protected void loadFromProject(ICStorageElement element) {
-		
+
 		// id (unique, don't intern)
 		setId(element.getAttribute(IBuildObject.ID));
 
@@ -461,7 +461,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		if (element.getAttribute(IBuildObject.NAME) != null) {
 			setName(SafeStringInterner.safeIntern(element.getAttribute(IBuildObject.NAME)));
 		}
-		
+
 		// superClass
 		superClassId = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.SUPERCLASS));
 		if (superClassId != null && superClassId.length() > 0) {
@@ -473,9 +473,9 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 
 		// Get the unused children, if any
 		if (element.getAttribute(IProjectType.UNUSED_CHILDREN) != null) {
-				unusedChildren = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.UNUSED_CHILDREN)); 
+				unusedChildren = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.UNUSED_CHILDREN));
 		}
-		
+
 		// isAbstract
 		if (element.getAttribute(IProjectType.IS_ABSTRACT) != null) {
 			String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
@@ -488,31 +488,31 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		if (element.getAttribute(COMMAND) != null) {
 			command = SafeStringInterner.safeIntern(element.getAttribute(COMMAND));
 		}
-		
+
 		// Get the command defined for a Boolean option when the value is False
 		if (element.getAttribute(COMMAND_FALSE) != null) {
 			commandFalse = SafeStringInterner.safeIntern(element.getAttribute(COMMAND_FALSE));
 		}
-		
+
 		// Get the tooltip for the option
 		if (element.getAttribute(TOOL_TIP) != null) {
 			tip = SafeStringInterner.safeIntern(element.getAttribute(TOOL_TIP));
 		}
-		
+
 		// Get the contextID for the option
 		if (element.getAttribute(CONTEXT_ID) != null) {
 			contextId = SafeStringInterner.safeIntern(element.getAttribute(CONTEXT_ID));
 		}
-		
+
 		// Options hold different types of values
 		if (element.getAttribute(VALUE_TYPE) != null) {
 			String valueTypeStr = element.getAttribute(VALUE_TYPE);
 			valueType = new Integer(ValueTypeStrToInt(valueTypeStr));
 		}
-		
+
 		// Now get the actual value based upon value-type
 		try {
-			int valType = getValueType(); 
+			int valType = getValueType();
 			switch (valType) {
 				case BOOLEAN:
 					// Convert the string to a boolean
@@ -539,7 +539,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 					if (element.getAttribute(DEFAULT_VALUE) != null) {
 						defaultValue = SafeStringInterner.safeIntern(element.getAttribute(DEFAULT_VALUE));
 					}
-	
+
 					//  Do we have enumeratedOptionValue children?  If so, load them
 					//  to define the valid values and the default value.
 					ICStorageElement configElements[] = element.getChildren();
@@ -585,7 +585,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 				case UNDEF_LIBRARY_PATHS:
 				case UNDEF_LIBRARY_FILES:
 				case UNDEF_MACRO_FILES:
-					//  Note:  These string-list options do not load either the "value" or 
+					//  Note:  These string-list options do not load either the "value" or
 					//         "defaultValue" attributes.  Instead, the ListOptionValue children
 					//         are loaded in the value field.
 					List<OptionStringValue> vList = null;
@@ -596,7 +596,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 							vList = new ArrayList<OptionStringValue>();
 						if (biList==null)
 							biList = new ArrayList<OptionStringValue>();
-						
+
 						ICStorageElement veNode = configElements[i];
 						if (veNode.getName().equals(LIST_VALUE)) {
 							OptionStringValue ve = new OptionStringValue(veNode);
@@ -614,7 +614,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 						builtIns = biList;
 					else
 						builtIns = null;
-						
+
 					break;
 				default :
 					break;
@@ -634,7 +634,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 				// which they should be
 				browseType = null;
 			} else if (browseTypeStr.equals(NONE)) {
-				browseType = new Integer(BROWSE_NONE);						
+				browseType = new Integer(BROWSE_NONE);
 			} else if (browseTypeStr.equals(FILE)) {
 				browseType = new Integer(BROWSE_FILE);
 			} else if (browseTypeStr.equals(DIR)) {
@@ -661,7 +661,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 				category = holder.getOptionCategory(categoryId);
 			}
 		}
-		
+
 		// Get the resourceFilter attribute
 		if (element.getAttribute(RESOURCE_FILTER) != null) {
 			String resFilterStr = element.getAttribute(RESOURCE_FILTER);
@@ -672,21 +672,21 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 				// which they should be
 				resourceFilter = null;
 			} else if (resFilterStr.equals(ALL)) {
-				resourceFilter = new Integer(FILTER_ALL);			
+				resourceFilter = new Integer(FILTER_ALL);
 			} else if (resFilterStr.equals(FILE)) {
 				resourceFilter = new Integer(FILTER_FILE);
 			} else if (resFilterStr.equals(PROJECT)) {
 				resourceFilter = new Integer(FILTER_PROJECT);
 			}
 		}
-		
+
 		// Note: valueHandlerElement and VALUE_HANDLER are not restored,
 		// as they are not saved. See note in serialize().
-		
+
 		// valueHandlerExtraArgument
 		if (element.getAttribute(VALUE_HANDLER_EXTRA_ARGUMENT) != null) {
 			valueHandlerExtraArgument = SafeStringInterner.safeIntern(element.getAttribute(VALUE_HANDLER_EXTRA_ARGUMENT));
-		}		
+		}
 	}
 
 	private int ValueTypeStrToInt(String valueTypeStr) {
@@ -735,7 +735,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 
 	/**
 	 * Persist the option to the {@link ICStorageElement}.
-	 * 
+	 *
 	 * @param element - storage element to persist the option
 	 */
 	public void serialize(ICStorageElement element) throws BuildException {
@@ -745,7 +745,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			element.setAttribute(IProjectType.SUPERCLASS, superClassId);
 
 		element.setAttribute(IBuildObject.ID, id);
-		
+
 		if (name != null) {
 			element.setAttribute(IBuildObject.NAME, name);
 		}
@@ -753,23 +753,23 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		if (unusedChildren != null) {
 			element.setAttribute(IProjectType.UNUSED_CHILDREN, unusedChildren);
 		}
-		
+
 		if (isAbstract != null) {
 			element.setAttribute(IProjectType.IS_ABSTRACT, isAbstract.toString());
 		}
-		
+
 		if (command != null) {
 			element.setAttribute(COMMAND, command);
 		}
-		
+
 		if (commandFalse != null) {
 			element.setAttribute(COMMAND_FALSE, commandFalse);
 		}
-		
+
 		if (tip != null) {
 			element.setAttribute(TOOL_TIP, tip);
 		}
-		
+
 		if (contextId != null) {
 			element.setAttribute(CONTEXT_ID, contextId);
 		}
@@ -900,12 +900,12 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 					break;
 				default:
 					//  TODO; is this a problem...
-					str = EMPTY_STRING; 
+					str = EMPTY_STRING;
 					break;
 			}
 			element.setAttribute(VALUE_TYPE, str);
 		}
-		
+
 		// browse type
 		if (browseType != null) {
 			String str;
@@ -920,17 +920,17 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 					str = DIR;
 					break;
 				default:
-					str = EMPTY_STRING; 
+					str = EMPTY_STRING;
 					break;
 			}
 			element.setAttribute(BROWSE_TYPE, str);
 		}
-		
+
 		// browse filter path
 		if (browseFilterPath != null) {
 			element.setAttribute(BROWSE_FILTER_PATH, browseFilterPath);
 		}
-		
+
 		// browse filter extensions
 		if (browseFilterExtensions != null) {
 			StringBuilder sb = new StringBuilder();
@@ -939,11 +939,11 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			}
 			element.setAttribute(BROWSE_FILTER_EXTENSIONS, sb.toString());
 		}
-		
+
 		if (categoryId != null) {
 			element.setAttribute(CATEGORY, categoryId);
 		}
-		
+
 		// resource filter
 		if (resourceFilter != null) {
 			String str;
@@ -958,7 +958,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 					str = PROJECT;
 					break;
 				default:
-					str = EMPTY_STRING; 
+					str = EMPTY_STRING;
 					break;
 			}
 			element.setAttribute(RESOURCE_FILTER, str);
@@ -969,24 +969,25 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		if (applicabilityCalculatorElement != null) {
 			//  TODO:  issue warning?
 		}
-		
+
 		// Note: a value handler cannot be specified in a project file because
 		//       an IConfigurationElement is needed to load it!
 		if (valueHandlerElement != null) {
-			//  TODO:  Issue warning? Stuck with behavior of this elsewhere in 
+			//  TODO:  Issue warning? Stuck with behavior of this elsewhere in
 			//         CDT, e.g. the implementation of Tool
-		}		
+		}
 		if (valueHandlerExtraArgument != null) {
 			element.setAttribute(VALUE_HANDLER_EXTRA_ARGUMENT, valueHandlerExtraArgument);
 		}
-		
+
 		// I am clean now
 		isDirty = false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getOptionContextData(org.eclipse.cdt.managedbuilder.core.IHoldsOptions)
 	 */
+	@Override
 	public IOptionContextData getOptionContextData(IHoldsOptions holder) {
 		return new OptionContextData(this, holder);
 	}
@@ -998,6 +999,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getParent()
 	 */
+	@Override
 	public IBuildObject getParent() {
 		return holder;
 	}
@@ -1005,6 +1007,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getOptionHolder()
 	 */
+	@Override
 	public IHoldsOptions getOptionHolder() {
 		// Do not take superclasses into account
 		return holder;
@@ -1017,6 +1020,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getSuperClass()
 	 */
+	@Override
 	public IOption getSuperClass() {
 		return superClass;
 	}
@@ -1028,10 +1032,11 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	public String getName() {
 		return (name == null && superClass != null) ? superClass.getName() : name;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getApplicableValues()
 	 */
+	@Override
 	public String[] getApplicableValues() {
 		// Does this option instance have the list of values?
 		if (enumList == null) {
@@ -1053,14 +1058,16 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			return enumNames;
 		}
 	}
-	
+
+	@Override
 	public boolean getBooleanValue() {
 		return ((Boolean)getValue()).booleanValue();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getBrowseType()
 	 */
+	@Override
 	public int getBrowseType() {
 		if (browseType == null) {
 			if (superClass != null) {
@@ -1071,10 +1078,11 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		}
 		return browseType.intValue();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getBrowseFilterPath()
 	 */
+	@Override
 	public String getBrowseFilterPath() {
 		if (browseFilterPath == null) {
 			if (superClass != null) {
@@ -1089,6 +1097,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getBrowseFilterExtensions()
 	 */
+	@Override
 	public String[] getBrowseFilterExtensions() {
 		if (browseFilterExtensions == null) {
 			if (superClass != null) {
@@ -1103,6 +1112,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getResourceFilter()
 	 */
+	@Override
 	public int getResourceFilter() {
 		if (resourceFilter == null) {
 			if (superClass != null) {
@@ -1117,7 +1127,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getApplicabilityCalculatorElement()
 	 */
 	public IConfigurationElement getApplicabilityCalculatorElement() {
@@ -1132,9 +1142,10 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getApplicabilityCalculator()
 	 */
+	@Override
 	public IOptionApplicability getApplicabilityCalculator() {
 		if (applicabilityCalculator == null) {
 			if (applicabilityCalculatorElement != null) {
@@ -1152,27 +1163,28 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 
 		return applicabilityCalculator;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getBuiltIns()
 	 */
+	@Override
 	public String[] getBuiltIns() {
 		// Return the list of built-ins as an array
 		List<OptionStringValue> list = getExactBuiltinsList();
 		List<String> valueList = listValueListToValueList(list);
-		
+
 		if(valueList == null)
 			return EMPTY_STRING_ARRAY;
 		return valueList.toArray(new String[valueList.size()]);
 	}
-	
+
 	public List<OptionStringValue> getExactBuiltinsList() {
 		// Return the list of built-ins as an array
 		if (builtIns == null) {
 			if (superClass != null) {
 				return ((Option)superClass).getExactBuiltinsList();
 			} else {
-				return null; 
+				return null;
 			}
 		}
 
@@ -1182,6 +1194,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getCategory()
 	 */
+	@Override
 	public IOptionCategory getCategory() {
 		if (category == null) {
 			if (superClass != null) {
@@ -1189,24 +1202,25 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			} else {
 				if (getOptionHolder() instanceof ITool) {
 					return ((ITool)getOptionHolder()).getTopOptionCategory();
-				} else {					
+				} else {
 					return null;
 				}
-			}			
+			}
 		}
-		return category; 
+		return category;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getCommand()
 	 */
+	@Override
 	public String getCommand() {
 		if (command == null) {
 			if (superClass != null) {
 				return superClass.getCommand();
 			} else {
 				return EMPTY_STRING;
-			}			
+			}
 		}
 		return command;
 	}
@@ -1214,6 +1228,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getCommandGenerator()
 	 */
+	@Override
 	public IOptionCommandGenerator getCommandGenerator() {
 		if (commandGenerator == null) {
 			if (commandGeneratorElement != null) {
@@ -1233,24 +1248,26 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 
 		return commandGenerator;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getCommandFalse()
 	 */
+	@Override
 	public String getCommandFalse() {
 		if (commandFalse == null) {
 			if (superClass != null) {
 				return superClass.getCommandFalse();
 			} else {
 				return EMPTY_STRING;
-			}			
+			}
 		}
 		return commandFalse;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getToolTip()
 	 */
+	@Override
 	public String getToolTip() {
 		if (tip == null) {
 			if (superClass != null) {
@@ -1264,6 +1281,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getContextId()
 	 */
+	@Override
 	public String getContextId() {
 		if (contextId == null) {
 			if (superClass != null) {
@@ -1277,6 +1295,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getDefinedSymbols()
 	 */
+	@Override
 	public String[] getDefinedSymbols() throws BuildException {
 		if (getValueType() != PREPROCESSOR_SYMBOLS) {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
@@ -1294,6 +1313,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getEnumCommand(java.lang.String)
 	 */
+	@Override
 	public String getEnumCommand(String id) throws BuildException {
 		// Sanity
 		if (id == null) return EMPTY_STRING;
@@ -1304,12 +1324,12 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 				return superClass.getEnumCommand(id);
 			} else {
 				return EMPTY_STRING;
-			}			
+			}
 		}
 		if (getValueType() != ENUMERATED) {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
-	
+
 		// First check for the command in ID->command map
 		String cmd = getEnumCommandMap().get(id);
 		if (cmd == null) {
@@ -1330,6 +1350,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getEnumName(java.lang.String)
 	 */
+	@Override
 	public String getEnumName(String id) throws BuildException {
 		// Sanity
 		if (id == null) return EMPTY_STRING;
@@ -1340,12 +1361,12 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 				return superClass.getEnumName(id);
 			} else {
 				return EMPTY_STRING;
-			}			
+			}
 		}
 		if (getValueType() != ENUMERATED) {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
-		
+
 		// First check for the command in ID->name map
 		String name = getEnumNameMap().get(id);
 		if (name == null) {
@@ -1359,8 +1380,8 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	/* (non-Javadoc)
 	 * A memory-safe accessor to the map of enumerated option value IDs to the commands
 	 * that a tool understands.
-	 * 
-	 * @return a Map of enumerated option value IDs to actual commands that are passed 
+	 *
+	 * @return a Map of enumerated option value IDs to actual commands that are passed
 	 * to a tool on the command line.
 	 */
 	private Map<String, String> getEnumCommandMap() {
@@ -1369,10 +1390,11 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		}
 		return enumCommands;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getEnumeratedId(java.lang.String)
 	 */
+	@Override
 	public String getEnumeratedId(String name) throws BuildException {
 		if (name == null) return null;
 
@@ -1382,7 +1404,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 				return superClass.getEnumeratedId(name);
 			} else {
 				return EMPTY_STRING;
-			}			
+			}
 		}
 		if (getValueType() != ENUMERATED) {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
@@ -1399,7 +1421,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	}
 
 	/* (non-Javadoc)
-	 * 
+	 *
 	 * @return a Map of enumerated option value IDs to the selection displayed to the user.
 	 */
 	private Map<String, String> getEnumNameMap() {
@@ -1408,10 +1430,11 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		}
 		return enumNames;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getIncludePaths()
 	 */
+	@Override
 	public String[] getIncludePaths() throws BuildException {
 		if (getValueType() != INCLUDE_PATH) {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
@@ -1429,6 +1452,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getLibraries()
 	 */
+	@Override
 	public String[] getLibraries() throws BuildException {
 		if (getValueType() != LIBRARIES) {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
@@ -1446,6 +1470,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getLibraryFiles()
 	 */
+	@Override
 	public String[] getLibraryFiles() throws BuildException {
 		if (getValueType() != LIBRARY_FILES) {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
@@ -1463,6 +1488,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getLibraryPaths()
 	 */
+	@Override
 	public String[] getLibraryPaths() throws BuildException {
 		if (getValueType() != LIBRARY_PATHS) {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
@@ -1476,10 +1502,11 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			return v.toArray(new String[v.size()]);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getDefaultEnumValue()
 	 */
+	@Override
 	public String getSelectedEnum() throws BuildException {
 		if (getValueType() != ENUMERATED) {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
@@ -1490,6 +1517,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getStringListValue()
 	 */
+	@Override
 	public String[] getStringListValue() throws BuildException {
 		if (getValueType() != STRING_LIST) {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
@@ -1507,6 +1535,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getStringValue()
 	 */
+	@Override
 	public String getStringValue() throws BuildException {
 		if (getValueType() != STRING && getValueType() != ENUMERATED) {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
@@ -1517,6 +1546,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getUserObjects()
 	 */
+	@Override
 	public String[] getUserObjects() throws BuildException {
 		if (getValueType() != OBJECTS) {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
@@ -1535,13 +1565,14 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getValueType()
 	 */
+	@Override
 	public int getValueType() throws BuildException {
 		if (valueType == null) {
 			if (superClass != null) {
 				return superClass.getValueType();
 			} else {
 				throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$;
-			}			
+			}
 		}
 		return valueType.intValue();
 	}
@@ -1549,6 +1580,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	/* (non-Javadoc)
 	 * Gets the value, applying appropriate defaults if necessary.
 	 */
+	@Override
 	public Object getValue() {
 		/*
 		 *  In order to determine the current value of an option, perform the following steps until a value is found:
@@ -1568,7 +1600,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			if (val == null) {
 				int valType;
 				try {
-					valType = getValueType(); 
+					valType = getValueType();
 				} catch (BuildException e) {
 					return EMPTY_STRING;
 				}
@@ -1601,14 +1633,14 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 						val = new ArrayList<String>();
 						break;
 					default:
-						val = EMPTY_STRING; 
+						val = EMPTY_STRING;
 						break;
 				}
 			}
 		}
 		return val;
 	}
-	
+
 	public Object getExactValue() {
 		/*
 		 *  In order to determine the current value of an option, perform the following steps until a value is found:
@@ -1628,7 +1660,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			if (val == null) {
 				int valType;
 				try {
-					valType = getValueType(); 
+					valType = getValueType();
 				} catch (BuildException e) {
 					return EMPTY_STRING;
 				}
@@ -1661,7 +1693,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 						val = new ArrayList<OptionStringValue>();
 						break;
 					default:
-						val = EMPTY_STRING; 
+						val = EMPTY_STRING;
 						break;
 				}
 			}
@@ -1695,7 +1727,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	private List<String> listValueListToValueList(List<OptionStringValue> list){
 		if(list == null)
 			return null;
-		
+
 		List<String> valueList = new ArrayList<String>(list.size());
 		for(int i = 0; i < list.size(); i++){
 			OptionStringValue el = list.get(i);
@@ -1703,11 +1735,11 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		}
 		return valueList;
 	}
-	
+
 	private List<OptionStringValue> valueListToListValueList(List<String> list, boolean builtIn){
 		if(list == null)
 			return null;
-		
+
 		List<OptionStringValue> lvList = new ArrayList<OptionStringValue>(list.size());
 		for(int i = 0; i < list.size(); i++){
 			String v = list.get(i);
@@ -1720,6 +1752,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	/* (non-Javadoc)
 	 * Gets the raw default value.
 	 */
+	@Override
 	public Object getDefaultValue() {
 		Object ev = getExactDefaultValue();
 		if(ev instanceof List<?>) {
@@ -1729,7 +1762,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		}
 		return ev;
 	}
-	
+
 	public Object getExactDefaultValue() {
 		// Note: string-list options do not have a default value
 		if (defaultValue == null) {
@@ -1743,6 +1776,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setValue(Object)
 	 */
+	@Override
 	public void setDefaultValue(Object v) {
 		if(v instanceof List<?>) {
 			@SuppressWarnings("unchecked")
@@ -1756,10 +1790,11 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			rebuildState = true;
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setCategory(org.eclipse.cdt.managedbuilder.core.IOptionCategory)
 	 */
+	@Override
 	public void setCategory(IOptionCategory category) {
 		if (this.category != category) {
 			this.category = category;
@@ -1778,6 +1813,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setCommand(String)
 	 */
+	@Override
 	public void setCommand(String cmd) {
 		if (cmd == null && command == null) return;
 		if (cmd == null || command == null || !cmd.equals(command)) {
@@ -1792,6 +1828,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setCommandFalse(String)
 	 */
+	@Override
 	public void setCommandFalse(String cmd) {
 		if (cmd == null && commandFalse == null) return;
 		if (cmd == null || commandFalse == null || !cmd.equals(commandFalse)) {
@@ -1806,34 +1843,37 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setToolTip(String)
 	 */
+	@Override
 	public void setToolTip(String tooltip) {
 		if (tooltip == null && tip == null) return;
 		if (tooltip == null || tip == null || !tooltip.equals(tip)) {
 			tip = tooltip;
 			if(!isExtensionElement()){
-				isDirty = true;		
+				isDirty = true;
 				rebuildState = true;
 			}
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setContextId(String)
 	 */
+	@Override
 	public void setContextId(String id) {
 		if (id == null && contextId == null) return;
 		if (id == null || contextId == null || !id.equals(contextId)) {
 			contextId = id;
 			if(!isExtensionElement()){
-				isDirty = true;		
+				isDirty = true;
 				rebuildState = true;
 			}
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setResourceFilter(int)
 	 */
+	@Override
 	public void setResourceFilter(int filter) {
 		if (resourceFilter == null || !(filter == resourceFilter.intValue())) {
 			resourceFilter = new Integer(filter);
@@ -1843,10 +1883,11 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			}
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setBrowseType(int)
 	 */
+	@Override
 	public void setBrowseType(int type) {
 		if (browseType == null || !(type == browseType.intValue())) {
 			browseType = new Integer(type);
@@ -1860,6 +1901,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setBrowseFilterPath(java.lang.String)
 	 */
+	@Override
 	public void setBrowseFilterPath(String path) {
 		if (browseFilterPath == null || !(browseFilterPath.equals(path))) {
 			browseFilterPath = path;
@@ -1873,6 +1915,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setBrowseFilterExtensions(java.lang.String[])
 	 */
+	@Override
 	public void setBrowseFilterExtensions(String[] extensions) {
 		if (browseFilterExtensions == null || !(browseFilterExtensions.equals(extensions))) {
 			browseFilterExtensions = extensions;
@@ -1886,6 +1929,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setValue(boolean)
 	 */
+	@Override
 	public void setValue(boolean value) throws BuildException {
 		if (/*!isExtensionElement() && */getValueType() == BOOLEAN){
 			this.value = new Boolean(value);
@@ -1902,8 +1946,9 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setValue(String)
 	 */
+	@Override
 	public void setValue(String value) throws BuildException {
-		// Note that we can still set the human-readable value here 
+		// Note that we can still set the human-readable value here
 		if (/*!isExtensionElement() && */(getValueType() == STRING || getValueType() == ENUMERATED)) {
 			this.value = value;
 		} else {
@@ -1914,13 +1959,14 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			rebuildState = true;
 		}
 	}
-	
+
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setValue(String [])
 	 */
+	@Override
 	public void setValue(String [] value) throws BuildException {
-		if (/*!isExtensionElement() && */ 
+		if (/*!isExtensionElement() && */
 			  (getValueType() == STRING_LIST
 			|| getValueType() == INCLUDE_PATH
 			|| getValueType() == PREPROCESSOR_SYMBOLS
@@ -1953,7 +1999,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	}
 
 	public void setValue(OptionStringValue [] value) throws BuildException {
-		if (/*!isExtensionElement() && */ 
+		if (/*!isExtensionElement() && */
 			  (getValueType() == STRING_LIST
 			|| getValueType() == INCLUDE_PATH
 			|| getValueType() == PREPROCESSOR_SYMBOLS
@@ -1988,6 +2034,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setValue(Object)
 	 */
+	@Override
 	public void setValue(Object v) {
 		if(v instanceof List<?>) {
 			@SuppressWarnings("unchecked")
@@ -2005,6 +2052,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setValueType()
 	 */
+	@Override
 	public void setValueType(int type) {
 		// TODO:  Verify that this is a valid type
 		if (valueType == null || valueType.intValue() != type) {
@@ -2027,7 +2075,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		}
 		return valueHandlerElement;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setValueHandlerElement(IConfigurationElement)
 	 */
@@ -2038,10 +2086,11 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			rebuildState = true;
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getValueHandler()
 	 */
+	@Override
 	public IManagedOptionValueHandler getValueHandler() {
 		if (valueHandler != null) {
 			return valueHandler;
@@ -2063,17 +2112,18 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		// If no handler is provided, then use the default handler
 		return ManagedOptionValueHandler.getManagedOptionValueHandler();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getValueHandlerExtraArgument())
 	 */
+	@Override
 	public String getValueHandlerExtraArgument() {
 		if (valueHandlerExtraArgument == null) {
 			if (superClass != null) {
 				return superClass.getValueHandlerExtraArgument();
 			} else {
  				return EMPTY_STRING;
- 			}			
+ 			}
 		}
 		return valueHandlerExtraArgument;
 	}
@@ -2081,9 +2131,10 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setValueHandlerExtraArgument(String))
 	 */
+	@Override
 	public void setValueHandlerExtraArgument(String extraArgument) {
  		if (extraArgument == null && valueHandlerExtraArgument == null) return;
- 		if (extraArgument == null || 
+ 		if (extraArgument == null ||
  				valueHandlerExtraArgument == null ||
  				!extraArgument.equals(valueHandlerExtraArgument)) {
 			valueHandlerExtraArgument = extraArgument;
@@ -2097,6 +2148,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getFieldEditorId()
 	 */
+	@Override
 	public String getFieldEditorId() {
 		if (fieldEditorId == null) {
 			if (superClass != null) {
@@ -2109,13 +2161,14 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getFieldEditorExtraArgument()
 	 */
+	@Override
 	public String getFieldEditorExtraArgument() {
 		if (fieldEditorExtraArgument == null) {
 			if (superClass != null) {
 				return superClass.getFieldEditorExtraArgument();
 			} else {
  				return null;
- 			}			
+ 			}
 		}
 		return fieldEditorExtraArgument;
 	}
@@ -2123,9 +2176,10 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setFieldEditorExtraArgument(java.lang.String)
 	 */
+	@Override
 	public void setFieldEditorExtraArgument(String extraArgument) {
  		if (extraArgument == null && fieldEditorExtraArgument == null) return;
- 		if (extraArgument == null || 
+ 		if (extraArgument == null ||
  				fieldEditorExtraArgument == null ||
  				!extraArgument.equals(fieldEditorExtraArgument)) {
 			fieldEditorExtraArgument = extraArgument;
@@ -2136,14 +2190,15 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		}
 	}
 
-	
+
 	/*
 	 *  O B J E C T   S T A T E   M A I N T E N A N C E
 	 */
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#isExtensionElement()
 	 */
+	@Override
 	public boolean isExtensionElement() {
 		return isExtensionOption;
 	}
@@ -2179,7 +2234,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 							getId());
 				} else {
 					//  All of our superclasses must be resolved in order to call
-					//  getValueType below.   
+					//  getValueType below.
 					((Option)superClass).resolveReferences();
 				}
 			}
@@ -2219,7 +2274,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 					case ENUMERATED:
 						value = element.getAttribute(VALUE);
 						defaultValue = element.getAttribute(DEFAULT_VALUE);
-	
+
 						//  Do we have enumeratedOptionValue children?  If so, load them
 						//  to define the valid values and the default value.
 						IManagedConfigElement[] enumElements = element.getChildren(ENUM_VALUE);
@@ -2236,7 +2291,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 							getEnumNameMap().put(optId, SafeStringInterner.safeIntern(enumElements[i].getAttribute(NAME)));
 							Boolean isDefault = new Boolean(enumElements[i].getAttribute(IS_DEFAULT));
 							if (isDefault.booleanValue()) {
-								defaultValue = optId; 
+								defaultValue = optId;
 							}
 						}
 						break;
@@ -2255,7 +2310,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 					case UNDEF_LIBRARY_PATHS:
 					case UNDEF_LIBRARY_FILES:
 					case UNDEF_MACRO_FILES:
-						//  Note:  These string-list options do not load either the "value" or 
+						//  Note:  These string-list options do not load either the "value" or
 						//         "defaultValue" attributes.  Instead, the ListOptionValue children
 						//         are loaded in the value field.
 						List<OptionStringValue> vList = null;
@@ -2283,7 +2338,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			}
 		}
 	}
-	 
+
 	/**
 	 * @return Returns the managedBuildRevision.
 	 */
@@ -2300,7 +2355,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	/* (non-Javadoc)
 	 * For now implement this method just as a utility to make code
 	 * within the Option class cleaner.
-	 * TODO: In future we may want to move this to IOption   
+	 * TODO: In future we may want to move this to IOption
 	 */
 	protected boolean isAbstract() {
 		if (isAbstract != null) {
@@ -2309,7 +2364,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			return false;	// Note: no inheritance from superClass
 		}
 	}
-	
+
 	/**
 	 * Verifies whether the option is valid and handles
 	 * any errors for the option. The following errors
@@ -2319,7 +2374,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	 * (b) Options that are children of a ToolChain must
 	 *     NEVER have a resourceFilter of "file".
 	 * If an error occurs, the option is set to being invalid.
-	 * 
+	 *
 	 * @pre All references have been resolved.
 	 */
 	private void verify() {
@@ -2330,10 +2385,10 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			// Check for error (a)
 			if (getCategory() == null) {
 				ManagedBuildManager.optionValidError(ManagedBuildManager.ERROR_CATEGORY, getId());
-				// Object becomes invalid 
+				// Object becomes invalid
 				isValid = false;
 			}
-			// Check for error (b). Not specifying an attribute is OK. 
+			// Check for error (b). Not specifying an attribute is OK.
 			// Do not use getResourceFilter as it does not allow
 			// differentiating between "all" and no attribute specified.
 			if ( resourceFilter != null )
@@ -2344,7 +2399,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 					// specified. Thus do not produce an error. We can argue that "all"
 					// means all valid resource configurations.
 					ManagedBuildManager.optionValidError(ManagedBuildManager.ERROR_FILTER, getId());
-					// Object becomes invalid 
+					// Object becomes invalid
 					isValid = false;
 				}
 			}
@@ -2354,9 +2409,10 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#isValid()
 	 */
+	@Override
 	public boolean isValid() {
 		// We use a lazy scheme to check whether the option is valid.
-		// Note that by default an option is valid. verify() is only called if 
+		// Note that by default an option is valid. verify() is only called if
 		// the option has been resolved. This gets us around having to deal with
 		// ordering problems during a resolve, or introducing another global
 		// stage to verify the configuration after a resolve.
@@ -2364,11 +2420,11 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		// detected on load, but only when a particular grammar element
 		// is used, say in the GUI.
 		if (verified == false  &&  resolved == true) {
-			verify();			
+			verify();
 		}
 		return isValid;
 	}
-	
+
 	/**
 	 * @return Returns true if this Option was created from an MBS 2.0 model
 	 *         OptionReference element.
@@ -2380,7 +2436,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	public void setWasOptRef(boolean was) {
 		wasOptRef = was;
 	}
-	
+
 	/**
 	 * @return Returns the version.
 	 */
@@ -2393,12 +2449,12 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		}
 		return version;
 	}
-	
+
 	@Override
 	public void setVersion(Version version) {
 		// Do nothing
 	}
-	
+
 	public BooleanExpressionApplicabilityCalculator getBooleanExpressionCalculator(boolean isExtensionAdjustment){
 		if(booleanExpressionCalculator == null && !isExtensionAdjustment){
 			if(superClass != null){
@@ -2407,7 +2463,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		}
 		return booleanExpressionCalculator;
 	}
-	
+
 	public boolean isAdjustedExtension(){
 		return isUdjusted;
 	}
@@ -2424,10 +2480,10 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			} else {
 				superClassId = this.superClass.getId();
 			}
-		
+
 			if(!isExtensionElement())
 				setDirty(true);
-		}		
+		}
 	}
 
 	public boolean needsRebuild() {
@@ -2440,59 +2496,64 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 
 		rebuildState = rebuild;
 	}
-	
+
 	public boolean matches(IOption option){
 		try {
 			if(option.getValueType() != getValueType())
 				return false;
-			
+
 			if(!option.getName().equals(getName()))
 				return false;
 		} catch (BuildException e) {
 			return false;
 		}
-		
+
 		return true;
 	}
 
+	@Override
 	public String[] getRequiredTypeIds() {
 		return new String[0];
 	}
 
+	@Override
 	public String[] getSupportedTypeIds() {
 		String referenced[] = null;
 		BooleanExpressionApplicabilityCalculator calc = getBooleanExpressionCalculator(false);
-			
+
 		if(calc != null){
 			referenced = calc.getReferencedPropertyIds();
-		} 
-		
+		}
+
 		if(referenced == null)
 			referenced = new String[0];
 		return referenced;
 	}
 
+	@Override
 	public String[] getSupportedValueIds(String typeId) {
 		String referenced[] = null;
 		BooleanExpressionApplicabilityCalculator calc = getBooleanExpressionCalculator(false);
-			
+
 		if(calc != null){
 			referenced = calc.getReferencedValueIds(typeId);
-		} 
-		
+		}
+
 		if(referenced == null)
 			referenced = new String[0];
 		return referenced;
 	}
 
+	@Override
 	public boolean requiresType(String typeId) {
 		return false;
 	}
 
+	@Override
 	public boolean supportsType(String id) {
 		boolean supports = false;
 		BooleanExpressionApplicabilityCalculator calc = getBooleanExpressionCalculator(false);
-			
+
 		if(calc != null){
 			if(calc.referesProperty(id)){
 				supports = true;
@@ -2501,10 +2562,11 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		return supports;
 	}
 
+	@Override
 	public boolean supportsValue(String typeId, String valueId) {
 		boolean supports = false;
 		BooleanExpressionApplicabilityCalculator calc = getBooleanExpressionCalculator(false);
-			
+
 		if(calc != null){
 			if(calc.referesPropertyValue(typeId, valueId)){
 				supports = true;
@@ -2513,6 +2575,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		return supports;
 	}
 
+	@Override
 	public String[] getBasicStringListValue() throws BuildException {
 		if (getBasicValueType() != STRING_LIST) {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
@@ -2522,10 +2585,11 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		if (v == null) {
 			return EMPTY_STRING_ARRAY;
 		}
-		
+
 		return v.toArray(new String[v.size()]);
 	}
-	
+
+	@Override
 	public OptionStringValue[] getBasicStringListValueElements() throws BuildException {
 		if (getBasicValueType() != STRING_LIST) {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
@@ -2535,11 +2599,12 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		if (v == null) {
 			return EMPTY_LV_ARRAY;
 		}
-		
+
 		return v.toArray(new OptionStringValue[v.size()]);
 	}
 
 
+	@Override
 	public int getBasicValueType() throws BuildException {
 		switch(getValueType()){
 		case IOption.BOOLEAN:
@@ -2556,14 +2621,14 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	public boolean hasCustomSettings(){
 		if(superClass == null)
 			return true;
-		
+
 		if(value != null && !value.equals(superClass.getValue())){
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	public static int getOppositeType(int type){
 		switch(type){
 		case INCLUDE_PATH:

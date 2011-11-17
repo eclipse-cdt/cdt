@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *  IBM - Initial API and implementation
  *******************************************************************************/
@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
-public class PerFileDiscoveredPathContainer extends DiscoveredPathContainer 
+public class PerFileDiscoveredPathContainer extends DiscoveredPathContainer
                                             implements IPathEntryContainerExtension {
 
     public PerFileDiscoveredPathContainer(IProject project) {
@@ -36,13 +36,14 @@ public class PerFileDiscoveredPathContainer extends DiscoveredPathContainer
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.model.IPathEntryContainerExtension#getPathEntries(org.eclipse.core.runtime.IPath, int)
      */
-    public IPathEntry[] getPathEntries(IPath path, int mask) {
+    @Override
+	public IPathEntry[] getPathEntries(IPath path, int mask) {
 		ArrayList<IPathEntry> entries = new ArrayList<IPathEntry>();
         try {
             IDiscoveredPathInfo info = MakeCorePlugin.getDefault().getDiscoveryManager().getDiscoveredInfo(fProject);
             if (info instanceof IPerFileDiscoveredPathInfo) {
                 IPerFileDiscoveredPathInfo filePathInfo = (IPerFileDiscoveredPathInfo) info;
-            
+
         		if ((mask & IPathEntry.CDT_INCLUDE) != 0) {
     				IPath[] includes = filePathInfo.getIncludePaths(path);
     				for (int i = 0; i < includes.length; i++) {
@@ -86,7 +87,7 @@ public class PerFileDiscoveredPathContainer extends DiscoveredPathContainer
             }
         }
         catch (CoreException e) {
-            // 
+            //
         }
 		return entries.toArray(new IPathEntry[entries.size()]);
     }
@@ -94,6 +95,7 @@ public class PerFileDiscoveredPathContainer extends DiscoveredPathContainer
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.IPathEntryContainerExtension#isEmpty(org.eclipse.core.runtime.IPath)
 	 */
+	@Override
 	public boolean isEmpty(IPath path) {
         IDiscoveredPathInfo info;
 		try {

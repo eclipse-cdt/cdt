@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
-import com.ibm.icu.text.Collator;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -20,8 +19,8 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICMultiItemsHolder;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacro;
-import org.eclipse.cdt.managedbuilder.macros.IBuildMacro;
 import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
+import org.eclipse.cdt.managedbuilder.macros.IBuildMacro;
 import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
 import org.eclipse.cdt.utils.ui.controls.FileListControl;
 import org.eclipse.jface.dialogs.Dialog;
@@ -47,9 +46,11 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import com.ibm.icu.text.Collator;
+
 /**
  * the dialog used to create or edit the build macro
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -62,7 +63,7 @@ public class NewVarDialog extends Dialog {
 	private ICdtVariable fEditedMacro;
 	//the resulting macro. Can be accessed only when the dialog is closed
 	private ICdtVariable fResultingMacro;
-	
+
 	private boolean fTotalSizeCalculated;
 
 	private String fTypedName;
@@ -77,10 +78,10 @@ public class NewVarDialog extends Dialog {
 	private Button fBrowseButton;
 	private Combo fTypeSelector;
 	private Composite fListEditorContainier;
-	
+
 	private FileListControl fListEditor;
 	private ICConfigurationDescription cfgd;
-	private ICdtVariable[] vars; 
+	private ICdtVariable[] vars;
 
 	public NewVarDialog(Shell parentShell, ICdtVariable editedMacro, ICConfigurationDescription _cfgd, ICdtVariable[] _vars) {
 		super(parentShell);
@@ -102,7 +103,7 @@ public class NewVarDialog extends Dialog {
 		if (fTitle != null)
 			shell.setText(fTitle);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
@@ -118,9 +119,9 @@ public class NewVarDialog extends Dialog {
 
 		Label nameLabel = new Label(comp, SWT.LEFT);
 		nameLabel.setFont(comp.getFont());
-		nameLabel.setText(Messages.NewVarDialog_0); 
+		nameLabel.setText(Messages.NewVarDialog_0);
 		nameLabel.setLayoutData(new GridData());
-		
+
 		fMacroNameEdit = new CCombo(comp, SWT.BORDER);
 		fMacroNameEdit.setItems(getMacroNames());
 		fMacroNameEdit.setFont(comp.getFont());
@@ -129,6 +130,7 @@ public class NewVarDialog extends Dialog {
 		gd.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH + 50;
 		fMacroNameEdit.setLayoutData(gd);
 		fMacroNameEdit.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				handleMacroNameModified();
 			}
@@ -142,7 +144,7 @@ public class NewVarDialog extends Dialog {
 
 		if (fEditedMacro == null && cfgd != null && !(cfgd instanceof ICMultiItemsHolder)) {
 			Button c_all = new Button(comp, SWT.CHECK);
-			c_all.setText(Messages.NewVarDialog_1); 
+			c_all.setText(Messages.NewVarDialog_1);
 			gd = new GridData(GridData.BEGINNING);
 			gd.horizontalSpan = 3;
 			c_all.setLayoutData(gd);
@@ -153,13 +155,13 @@ public class NewVarDialog extends Dialog {
 				}
 			});
 		}
-		
+
 		Label typeLabel = new Label(comp, SWT.LEFT);
 		typeLabel.setFont(comp.getFont());
 		typeLabel.setText(Messages.NewBuildMacroDialog_label_type);
 		gd = new GridData();
 		typeLabel.setLayoutData(gd);
-		
+
 		fTypeSelector = new Combo(comp, SWT.READ_ONLY | SWT.DROP_DOWN | SWT.BORDER);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan = 2;
@@ -178,6 +180,7 @@ public class NewVarDialog extends Dialog {
 		setSelectedType(IBuildMacro.VALUE_TEXT);
 
 		fTypeSelector.addListener(SWT.Selection, new Listener () {
+			@Override
 			public void handleEvent(Event e) {
 				handleTypeModified();
 			}
@@ -187,9 +190,9 @@ public class NewVarDialog extends Dialog {
 		fMacroValueLabel.setFont(comp.getFont());
 		fMacroValueLabel.setText(Messages.NewBuildMacroDialog_label_value);
 		gd = new GridData();
-		gd.horizontalSpan = 1;		
+		gd.horizontalSpan = 1;
 		fMacroValueLabel.setLayoutData(gd);
-		
+
 		fMacroValueEdit = new Text(comp, SWT.SINGLE | SWT.BORDER);
 		fMacroValueEdit.setFont(comp.getFont());
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -197,6 +200,7 @@ public class NewVarDialog extends Dialog {
 		gd.horizontalSpan = 1;
 		fMacroValueEdit.setLayoutData(gd);
 		fMacroValueEdit.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				handleMacroValueModified();
 			}
@@ -211,12 +215,12 @@ public class NewVarDialog extends Dialog {
 				handleBrowseButtonPressed();
 			}
 		});
-		
+
 		gd = new GridData();
 		gd.widthHint = IDialogConstants.BUTTON_WIDTH;
 		gd.horizontalSpan = 1;
 		fBrowseButton.setLayoutData(gd);
-		
+
 		fListEditorContainier = new Composite(comp,0);
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 3;
@@ -236,7 +240,7 @@ public class NewVarDialog extends Dialog {
 		}
 		return comp;
 	}
-	
+
 	/*
 	 * get the names to be displayed in the var Name combo.
 	 */
@@ -250,7 +254,8 @@ public class NewVarDialog extends Dialog {
 				names[i] = vars[i].getName();
 			final Collator collator = Collator.getInstance();
 			Arrays.sort(names, new Comparator<String>() {
-	            public int compare(final String a, final String b) {
+	            @Override
+				public int compare(final String a, final String b) {
 					final String strA = a.toUpperCase();
 					final String strB = b.toUpperCase();
 					return collator.compare(strA,strB);
@@ -276,7 +281,7 @@ public class NewVarDialog extends Dialog {
 			break;
 		}
 	}
-	
+
 	private int getBrowseType(int type){
 		int browseType = IOption.BROWSE_NONE;
 		switch(type){
@@ -304,15 +309,15 @@ public class NewVarDialog extends Dialog {
 	 */
 	private void handleMacroNameSelection(){
 		int index = fMacroNameEdit.getSelectionIndex();
-		if (index != -1) 
+		if (index != -1)
 			loadVarSettings(fMacroNameEdit.getItem(index));
 	}
-	
+
 	private void loadVarSettings(String name) {
 		ICdtVariable v = null;
 		for (int i=0; i<vars.length; i++) {
-			if (vars[i].getName().equals(name)) { 
-				v = vars[i]; 
+			if (vars[i].getName().equals(name)) {
+				v = vars[i];
 				break;
 			}
 		}
@@ -321,21 +326,21 @@ public class NewVarDialog extends Dialog {
 		else
 			loadVar(name,IBuildMacro.VALUE_TEXT,EMPTY_STRING);
 	}
-	
+
 	private void loadVar(String name, int type, String value[]){
 		setSelectedType(type);
 		setSelectedMacroName(notNull(name));
 		fListEditor.setList(value);
 		updateWidgetState();
 	}
-	
+
 	private void loadVar(String name,	int type, String value){
 		setSelectedType(type);
 		setSelectedMacroName(notNull(name));
 		fMacroValueEdit.setText(notNull(value));
 		updateWidgetState();
 	}
-	
+
 	/*
 	 * loads all the dialog fields with the variable settings
 	 */
@@ -355,14 +360,14 @@ public class NewVarDialog extends Dialog {
 	private String notNull(String str){
 		return str == null ? EMPTY_STRING : str;
 	}
-	
+
 	/*
-	 * returns the name typed in the dialog var name edit triming spaces  
+	 * returns the name typed in the dialog var name edit triming spaces
 	 */
 	private String getSelectedVarName(){
 		return fMacroNameEdit.getText().trim();
 	}
-	
+
 	/*
 	 * sets the variable name to the dialog "variable name" edit control
 	 */
@@ -372,7 +377,7 @@ public class NewVarDialog extends Dialog {
 			fMacroNameEdit.setText(notNull(name).trim());
 		}
 	}
-	
+
 	private boolean macroNamesEqual(String name1, String name2){
 		name1 = name1.trim();
 		name2 = name2.trim();
@@ -403,7 +408,7 @@ public class NewVarDialog extends Dialog {
 				return IBuildMacro.VALUE_TEXT;
 		}
 	}
-	
+
 	/*
 	 * sets the selected type
 	 */
@@ -436,7 +441,7 @@ public class NewVarDialog extends Dialog {
 			break;
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
@@ -453,7 +458,7 @@ public class NewVarDialog extends Dialog {
 
 		super.okPressed();
 	}
-		
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#open()
 	 */
@@ -462,7 +467,7 @@ public class NewVarDialog extends Dialog {
 		fResultingMacro = null;
 		return super.open();
 	}
-	
+
 	/*
 	 * returns the macro value that should be stored in the resulting variable
 	 */
@@ -477,13 +482,13 @@ public class NewVarDialog extends Dialog {
 	/*
 	 * this method should be called after the dialog is closed
 	 * to obtain the created variable.
-	 * if the variable was not created, e.g. because a user has pressed 
+	 * if the variable was not created, e.g. because a user has pressed
 	 * the cancel button this method returns null
 	 */
 	public ICdtVariable getDefinedMacro(){
 		return fResultingMacro;
 	}
-	
+
 	/*
 	 * called when the variable name is modified
 	 */
@@ -493,9 +498,9 @@ public class NewVarDialog extends Dialog {
 			loadVarSettings(name);
 		}
 	}
-	
+
 	private void handleMacroValueModified(){}
-	
+
 	/*
 	 * called when the operation is modified
 	 */
@@ -503,12 +508,12 @@ public class NewVarDialog extends Dialog {
 		int type = getSelectedType();
 		if(fTypedType != -1 && fTypedType == type)
 			return;
-	
+
 		fTypedType = type;
 
 		adjustLayout(type);
 	}
-	
+
 	private void adjustLayout(int type){
 		GridData listGd = (GridData)fListEditorContainier.getLayoutData();
 		GridData labelGd = (GridData)fMacroValueLabel.getLayoutData();
@@ -525,7 +530,7 @@ public class NewVarDialog extends Dialog {
 			fMacroValueLabel.setVisible(false);
 			fMacroValueEdit.setVisible(false);
 			fBrowseButton.setVisible(false);
-		} else 
+		} else
 		{
 			listGd.exclude = true;
 			labelGd.exclude = false;
@@ -548,7 +553,7 @@ public class NewVarDialog extends Dialog {
 		fContainer.layout(true,true);
 	}
 
-	
+
 	/*
 	 * updates the state of the dialog controls
 	 */
@@ -563,7 +568,7 @@ public class NewVarDialog extends Dialog {
 			b.setEnabled(!EMPTY_STRING.equals(name));
 		}
 	}
-	
+
 	@Override
 	protected Point getInitialSize() {
 		Point size = super.getInitialSize();

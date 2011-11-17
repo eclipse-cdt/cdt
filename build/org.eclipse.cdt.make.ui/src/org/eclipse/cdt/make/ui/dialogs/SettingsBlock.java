@@ -55,7 +55,7 @@ import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 /**
  * @deprecated as of CDT 4.0. This tab was used to set preferences/properties
  * for 3.X style projects.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -82,7 +82,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 	private static final String MAKE_WORKBENCH_BUILD_CLEAN = PREFIX + ".makeWorkbench.clean"; //$NON-NLS-1$
 
 	private static final String MAKE_BUILD_DIR_GROUP = PREFIX + ".makeLoc.group_label"; //$NON-NLS-1$
-	private static final String MAKE_BUILD_DIR_LABEL = PREFIX + ".makeDir.label"; //$NON-NLS-1$	
+	private static final String MAKE_BUILD_DIR_LABEL = PREFIX + ".makeDir.label"; //$NON-NLS-1$
 	private static final String MAKE_BUILD_DIR_BROWSE_FILESYSTEM = PREFIX + ".makeDir.browseFilesystem"; //$NON-NLS-1$
 	private static final String MAKE_BUILD_DIR_BROWSE_WORKSPACE = PREFIX + ".makeDir.browseWorkspace"; //$NON-NLS-1$
 
@@ -110,7 +110,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 	Button incrVariableButton;
 	Button autoVariableButton;
 	Button cleanVariableButton;
-	
+
 	IMakeBuilderInfo fBuildInfo;
 	Preferences fPrefs;
 	String fBuilderID;
@@ -169,6 +169,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 		((GridData) (buildCommand.getLayoutData())).grabExcessHorizontalSpace = true;
 		buildCommand.addListener(SWT.Modify, new Listener() {
 
+			@Override
 			public void handleEvent(Event e) {
 				getContainer().updateContainer();
 			}
@@ -176,7 +177,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 		if (fBuildInfo.getBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, null) != null) {
 			StringBuffer cmd = new StringBuffer(fBuildInfo.getBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, "")); //$NON-NLS-1$
 			if (!fBuildInfo.isDefaultBuildCmd()) {
-				String args = fBuildInfo.getBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, ""); //$NON-NLS-1$ 
+				String args = fBuildInfo.getBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, ""); //$NON-NLS-1$
 				if (args != null && !args.equals("")) { //$NON-NLS-1$
 					cmd.append(" "); //$NON-NLS-1$
 					cmd.append(args);
@@ -184,7 +185,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 			}
 			buildCommand.setText(cmd.toString());
 		}
-		argumentVariablesButton = addVariablesButton(group, buildCommand); 
+		argumentVariablesButton = addVariablesButton(group, buildCommand);
 		if (fBuildInfo.isDefaultBuildCmd()) {
 			buildCommand.setEnabled(false);
 			argumentVariablesButton.setEnabled(false);
@@ -265,7 +266,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
 			@Override
@@ -293,6 +294,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 
 		final IPropertyChangeListener fontListener = new IPropertyChangeListener() {
 
+			@Override
 			public void propertyChange(PropertyChangeEvent event) {
 				if (JFaceResources.BANNER_FONT.equals(event.getProperty())) {
 					noteLabel.setFont(JFaceResources.getFont(JFaceResources.BANNER_FONT));
@@ -302,6 +304,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 		JFaceResources.getFontRegistry().addListener(fontListener);
 		noteLabel.addDisposeListener(new DisposeListener() {
 
+			@Override
 			public void widgetDisposed(DisposeEvent event) {
 				JFaceResources.getFontRegistry().removeListener(fontListener);
 			}
@@ -341,6 +344,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 		((GridData) (buildLocation.getLayoutData())).grabExcessHorizontalSpace = true;
 		buildLocation.addListener(SWT.Modify, new Listener() {
 
+			@Override
 			public void handleEvent(Event e) {
 				getContainer().updateContainer();
 			}
@@ -353,10 +357,10 @@ public class SettingsBlock extends AbstractCOptionPage {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		buttons.setLayoutData(gd);
-		
+
 		Label emptyLabel = ControlFactory.createLabel(buttons, "");	 //$NON-NLS-1$
 		emptyLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		Button browseWorkspace = new Button(buttons, SWT.NONE);
 		browseWorkspace.setText(MakeUIPlugin.getResourceString(MAKE_BUILD_DIR_BROWSE_WORKSPACE));
 		browseWorkspace.addSelectionListener(new SelectionAdapter() {
@@ -462,6 +466,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 		// To avoid multi-build
 		IWorkspaceRunnable operation = new IWorkspaceRunnable() {
 
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				monitor.beginTask(MakeUIPlugin.getResourceString("SettingsBlock.monitor.applyingSettings"), 1); //$NON-NLS-1$
 				IMakeBuilderInfo info = null;
@@ -556,9 +561,9 @@ public class SettingsBlock extends AbstractCOptionPage {
 			argumentVariablesButton.setEnabled(true);
 			stopOnErrorButton.setEnabled(false);
 		}
-		
+
 		defButton.setSelection(info.isDefaultBuildCmd());
-		
+
 		autoButton.setSelection(info.isAutoBuildEnable());
 		autoVariableButton.setEnabled(info.isAutoBuildEnable());
 		targetAuto.setEnabled(info.isAutoBuildEnable());

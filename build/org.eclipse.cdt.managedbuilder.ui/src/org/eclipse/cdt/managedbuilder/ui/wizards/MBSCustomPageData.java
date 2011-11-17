@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Texas Instruments - initial API and implementation
  *     IBM Corporation
@@ -87,8 +87,9 @@ public final class MBSCustomPageData
 		}
 
 		/**
-		 * 
+		 *
 		 */
+		@Override
 		public int compareTo(Object arg0) {
 			if (arg0 == null || !(arg0 instanceof ToolchainData))
 				return 0;
@@ -113,7 +114,7 @@ public final class MBSCustomPageData
 
 	/**
 	 * Contstructs a custom page data record
-	 * 
+	 *
 	 * @param id - Unique ID of the page
 	 * @param wizardPage - the IWizardPage that is displayed in the wizard
 	 * @param operation - the Runnable() that is executed during the wizard's DoRunEpilogue() method, or null if no operation is specified
@@ -128,7 +129,7 @@ public final class MBSCustomPageData
 
 	/**
 	 * Contstructs a custom page data record
-	 * 
+	 *
 	 * @param id - Unique ID of the page
 	 * @param wizardPage - the IWizardPage that is displayed in the wizard
 	 * @param operation - the Runnable() that is executed during the wizard's DoRunEpilogue() method, or null if no operation is specified
@@ -165,7 +166,7 @@ public final class MBSCustomPageData
 
 	/**
 	 * @return true if this page is a stock page provided by the Managed Build System, false otherwise.
-	 * @since 3.0 
+	 * @since 3.0
 	 */
 	public boolean isStockPage()
 	{
@@ -179,15 +180,15 @@ public final class MBSCustomPageData
 	 * 				 org.eclipse.cdt.core.cnature and org.eclipse.cdt.core.ccnature
 	 * @return true if the page should be visible when the project has the given nature, false otherwise.
 	 * @since 3.0
-	 * 
+	 *
 	 * Nature can be either string (old mode) or Set (new mode) or null.
 	 * New mode allows to take into account several natures per project.
-	 * Accepting null allows to process projects w/o nature 
+	 * Accepting null allows to process projects w/o nature
 	 * @since 4.0
 	 */
 	public boolean shouldBeVisibleForNature(Object nature)
 	{
-		if (natureSet == null) return true; 
+		if (natureSet == null) return true;
 		if (nature == null) return false;
 
 		if (nature instanceof String) // old style
@@ -196,7 +197,7 @@ public final class MBSCustomPageData
 			Iterator it = ((Set)nature).iterator();
 			while (it.hasNext()) {
 				String s = it.next().toString();
-				if (hasNature(s)) return true; 
+				if (hasNature(s)) return true;
 			}
 		}
 		return false; // no one nature fits or bad data
@@ -215,7 +216,7 @@ public final class MBSCustomPageData
 	{
 		if (natureSet == null || natureSet.size() == 0)
 			return null;
-		
+
 		Object[] objArray = natureSet.toArray();
 
 		String[] strArray = new String[objArray.length];
@@ -230,7 +231,7 @@ public final class MBSCustomPageData
 
 	/**
 	 * @param id - The unique ID of the toolchain
-	 * @param version - The version of the toolchain, or <code>null</code> if versions are not to be checked. 
+	 * @param version - The version of the toolchain, or <code>null</code> if versions are not to be checked.
 	 * @return true if the page should be present for the given toolchain and version, false otherwise.
 	 * @since 3.0
 	 */
@@ -239,7 +240,7 @@ public final class MBSCustomPageData
 		// if no toolchains specified then always return true
 		if (toolchainSet.size() == 0)
 			return true;
-		
+
 		Iterator iterator = toolchainSet.iterator();
 		while (iterator.hasNext())
 		{
@@ -311,7 +312,7 @@ public final class MBSCustomPageData
 	/**
 	 * Adds a dependency to this page upon a given nature.  The page will be visible
 	 * iff the given nature is selected by the user.
-	 * 
+	 *
 	 * @param nature The unique ID of the nature.
 	 * @since 3.0
 	 */
@@ -330,7 +331,7 @@ public final class MBSCustomPageData
 	 * Adds a dependency to this page upon a given toolchain.  The page will be visible
 	 * iff one or more of the selected project configurations utilizes the specified toolchain.
 	 * If versions are specified, then the version of the toolchain must exactly match one of the specified versions.
-	 * 
+	 *
 	 * @param toolchainID - The unique ID of the toolchain.
 	 * @param versionsSupported - A comma separated list of supported versions, or null if no version checking is to be done.
 	 * @since 3.0
@@ -339,7 +340,7 @@ public final class MBSCustomPageData
 	{
 		if(toolchainID == null)
 			return;
-		
+
 		if (toolchainSet == null)
 			toolchainSet = new TreeSet();
 
@@ -354,34 +355,34 @@ public final class MBSCustomPageData
 	 * @param projectType The unique ID of the project type to check.
 	 * @return true if this page should be visible if the given project type is selected, false otherwise.
 	 * @since 3.0
-	 * 
+	 *
 	 * Type can be either string (old mode) or Set (new mode) or null.
 	 * New mode allows to take into account several types per project,
-	 * or types absence in some cases 
+	 * or types absence in some cases
 	 * @since 4.0
 	 */
 	public boolean shouldBeVisibleForProjectType(Object projectType)
 	{
 		if (projectTypeSet == null)	return true;
-		if (projectType == null) return false; 
-		
+		if (projectType == null) return false;
+
 		if (projectType instanceof String)
 			return projectTypeSet.contains(projectType);
 		else if (projectType instanceof Set) {
 			Iterator it = ((Set)projectType).iterator();
 			while (it.hasNext()) {
 				String s = it.next().toString();
-				if (projectTypeSet.contains(s)) 
-					return true; 
+				if (projectTypeSet.contains(s))
+					return true;
 			}
-		} 
-		return false; // no one type fits			
+		}
+		return false; // no one type fits
 	}
 
 	/**
 	 * Adds a dependency to this page upon a given project type.  The page will be visible
 	 * iff the given project type is selected by the user.
-	 * 
+	 *
 	 * @param projectType - The unique ID of the project type.
 	 * @since 3.0
 	 */
@@ -389,7 +390,7 @@ public final class MBSCustomPageData
 	{
 		if(projectType == null)
 			return;
-			
+
 		if (projectTypeSet == null)
 			projectTypeSet = new TreeSet();
 
@@ -406,12 +407,13 @@ public final class MBSCustomPageData
 	{
 		return operation;
 	}
-	
+
 	private static IRunnableWithProgress convertRunnable(final Runnable runnable) {
 		if (runnable == null) {
 			return null;
 		}
 		return new IRunnableWithProgress() {
+			@Override
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				runnable.run();
 			}

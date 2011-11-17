@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -21,7 +21,7 @@ public class UPCASTForallStatement extends CASTForStatement implements IUPCASTFo
 
 	private IASTExpression affinity;
 	private boolean affinityContinue;
-	
+
 
 	public UPCASTForallStatement() {
 	}
@@ -36,7 +36,7 @@ public class UPCASTForallStatement extends CASTForStatement implements IUPCASTFo
 	public UPCASTForallStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public UPCASTForallStatement copy(CopyStyle style) {
 		UPCASTForallStatement copy = new UPCASTForallStatement();
@@ -47,16 +47,19 @@ public class UPCASTForallStatement extends CASTForStatement implements IUPCASTFo
 		}
 		return copy;
 	}
-	
-	
+
+
+	@Override
 	public boolean isAffinityContinue() {
 		return affinityContinue;
 	}
-	
+
+	@Override
 	public IASTExpression getAffinityExpresiion() {
 		return affinity;
 	}
 
+	@Override
 	public void setAffinityExpression(IASTExpression affinity) {
 		if(affinity != null)
 			this.affinityContinue = false;
@@ -67,12 +70,13 @@ public class UPCASTForallStatement extends CASTForStatement implements IUPCASTFo
 		}
 	}
 
+	@Override
 	public void setAffinityContinue(boolean affinityContinue) {
 		if(affinityContinue)
 			this.affinity = null;
 		this.affinityContinue = affinityContinue;
 	}
-	
+
 
 	@Override
 	public boolean accept(ASTVisitor visitor) {
@@ -82,28 +86,28 @@ public class UPCASTForallStatement extends CASTForStatement implements IUPCASTFo
             	case ASTVisitor.PROCESS_SKIP  : return true;
 			}
 		}
-		
+
 		IASTStatement initializer = super.getInitializerStatement();
 		if(initializer != null) if(!initializer.accept(visitor)) return false;
-		
+
 		IASTExpression condition = super.getConditionExpression();
 		if(condition != null) if(!condition.accept(visitor)) return false;
-		
+
 		IASTExpression iteration = super.getIterationExpression();
 		if(iteration != null) if(!iteration.accept(visitor)) return false;
-		
+
 		if(affinity != null) if(!affinity.accept(visitor)) return false;
-		
+
 		IASTStatement body = super.getBody();
 		if(body != null) if(!body.accept(visitor)) return false;
-		
+
 		if(visitor.shouldVisitStatements) {
 			switch(visitor.leave(this)){
             	case ASTVisitor.PROCESS_ABORT : return false;
             	case ASTVisitor.PROCESS_SKIP  : return true;
 			}
 		}
-		
+
 		return true;
 	}
 

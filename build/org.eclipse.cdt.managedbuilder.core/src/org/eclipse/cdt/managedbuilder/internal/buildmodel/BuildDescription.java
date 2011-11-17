@@ -12,7 +12,6 @@
 package org.eclipse.cdt.managedbuilder.internal.buildmodel;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -167,6 +166,7 @@ public class BuildDescription implements IBuildDescription {
 			fPostProcessMode = postProcess;
 		}
 
+		@Override
 		public boolean visit(IResourceProxy proxy) throws CoreException {
 			try {
 				if(proxy.getType() == IResource.FILE){
@@ -240,6 +240,7 @@ public class BuildDescription implements IBuildDescription {
 		}
 
 
+		@Override
 		public boolean visit(IResourceDelta delta) throws CoreException {
 			if(fPostProcessMode)
 				return postProcessVisit(delta);
@@ -294,6 +295,7 @@ public class BuildDescription implements IBuildDescription {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.managedbuilder.builddescription.IStepVisitor#visit(org.eclipse.cdt.managedbuilder.builddescription.IBuildStep)
 		 */
+		@Override
 		public int visit(IBuildStep a) throws CoreException {
 			BuildStep action = (BuildStep)a;
 			BuildResource rcs[] = (BuildResource[])action.getInputResources();
@@ -692,6 +694,7 @@ public class BuildDescription implements IBuildDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildDescription#getInputStep()
 	 */
+	@Override
 	public IBuildStep getInputStep() {
 		return fInputStep;
 	}
@@ -699,6 +702,7 @@ public class BuildDescription implements IBuildDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildDescription#getOutputStep()
 	 */
+	@Override
 	public IBuildStep getOutputStep() {
 		return fOutputStep;
 	}
@@ -1037,7 +1041,7 @@ public class BuildDescription implements IBuildDescription {
 	}
 
 	/**
-	 * Turns a filesystem location into a URI using the project as the hint for the 
+	 * Turns a filesystem location into a URI using the project as the hint for the
 	 * URI metadata.
 	 * @param location toString() is used as the URI path
 	 * @return URI representing the location or null
@@ -1456,6 +1460,7 @@ public class BuildDescription implements IBuildDescription {
 		return location;
 	}
 
+	@Override
 	public IBuildResource getBuildResource(IPath location) {
 		return getBuildResource(getURIForLocation(location));
 	}
@@ -1463,10 +1468,11 @@ public class BuildDescription implements IBuildDescription {
 	private IBuildResource getBuildResource(URI locationURI) {
 		return fLocationToRcMap.get(locationURI);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildDescription#getResources()
 	 */
+	@Override
 	public IBuildResource[] getResources(){
 		return fLocationToRcMap.values().toArray(new IBuildResource[0]);
 	}
@@ -1484,6 +1490,7 @@ public class BuildDescription implements IBuildDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildDescription#getConfiguration()
 	 */
+	@Override
 	public IConfiguration getConfiguration() {
 		return fCfg;
 	}
@@ -1747,26 +1754,32 @@ public class BuildDescription implements IBuildDescription {
 						}
 						depCalc = new IManagedDependencyCalculator(){
 
+							@Override
 							public IPath[] getAdditionalTargets() {
 								return null;
 							}
 
+							@Override
 							public IPath[] getDependencies() {
 								return paths;
 							}
 
+							@Override
 							public IBuildObject getBuildContext() {
 								return bof;
 							}
 
+							@Override
 							public IPath getSource() {
 								return rc.getLocation();
 							}
 
+							@Override
 							public ITool getTool() {
 								return tool;
 							}
 
+							@Override
 							public IPath getTopBuildDirectory() {
 								return getTopBuildDirectory();
 							}
@@ -2172,14 +2185,17 @@ public class BuildDescription implements IBuildDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildDescription#getDefaultBuildDirLocation()
 	 */
+	@Override
 	public IPath getDefaultBuildDirLocation() {
 		return getTopBuildDirLocation();
 	}
 
+	@Override
 	public URI getDefaultBuildDirLocationURI() {
 		return getTopBuildDirLocationURI();
 	}
 
+	@Override
 	public IPath getDefaultBuildDirFullPath() {
 		return getTopBuildDirFullPath();
 	}
@@ -2206,6 +2222,7 @@ public class BuildDescription implements IBuildDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildDescription#getSteps()
 	 */
+	@Override
 	public IBuildStep[] getSteps() {
 		return fStepList.toArray(new BuildStep[fStepList.size()]);
 	}
@@ -2213,6 +2230,7 @@ public class BuildDescription implements IBuildDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.buildmodel.IBuildDescription#findBuildResource(org.eclipse.core.resources.IResource)
 	 */
+	@Override
 	public IBuildResource getBuildResource(IResource resource){
 		return getBuildResource(calcResourceLocation(resource));
 	}
@@ -2240,7 +2258,7 @@ public class BuildDescription implements IBuildDescription {
 		for (IResourceInfo rcInfo : fCfg.getResourceInfos()) {
 //			if(rcInfo.isExcluded())
 //				continue;
-			
+
 			ToolInfoHolder h = getToolInfo(rcInfo.getPath(), true);
 			if(rcInfo instanceof IFolderInfo){
 				IFolderInfo fo = (IFolderInfo)rcInfo;

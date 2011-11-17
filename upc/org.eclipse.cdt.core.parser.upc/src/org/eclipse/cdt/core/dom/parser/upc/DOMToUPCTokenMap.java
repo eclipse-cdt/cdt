@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -21,30 +21,33 @@ import org.eclipse.cdt.core.parser.IToken;
 /**
  * Maps token kinds from CPreprocessor to the tokens kinds
  * created by LPG.
- * 
+ *
  * TODO UPC keywords need to be syntax highlighted
- * 
+ *
  * @author Mike Kucera
  */
 @SuppressWarnings("nls")
 public class DOMToUPCTokenMap implements IDOMTokenMap {
-	
 
+
+	@Override
 	public int getEOFTokenKind() {
 		return TK_EOF_TOKEN;
 	}
 
+	@Override
 	public int getEOCTokenKind() {
 		return TK_EndOfCompletion;
 	}
-	
+
+	@Override
 	public int mapKind(IToken token) {
-		
+
 		switch(token.getType()) {
-			case tIDENTIFIER : 
+			case tIDENTIFIER :
 				Integer keywordKind = UPCKeyword.getTokenKind(token.getCharImage());
 				return keywordKind == null ? TK_identifier : keywordKind;
-			
+
 			case tINTEGER      : return TK_integer;
 			case tCOLON        : return TK_Colon;
 			case tSEMI         : return TK_SemiColon;
@@ -93,11 +96,11 @@ public class DOMToUPCTokenMap implements IDOMTokenMap {
 			case tDOT          : return TK_Dot;
 			case tDIVASSIGN    : return TK_SlashAssign;
 			case tDIV          : return TK_Slash;
-			
+
 			case t_auto        : return TK_auto;
 			case t_break       : return TK_break;
 			case t_case        : return TK_case;
-			case t_char        : return TK_char; 
+			case t_char        : return TK_char;
 			case t_const       : return TK_const;
 			case t_continue    : return TK_continue;
 			case t_default     : return TK_default;
@@ -141,15 +144,15 @@ public class DOMToUPCTokenMap implements IDOMTokenMap {
 			case t__Imaginary  : return TK__Imaginary;
 			case t_restrict    : return TK_restrict;
 			case tCOMPLETION   : return TK_Completion;
-			case tEOC          : return TK_EndOfCompletion; 
+			case tEOC          : return TK_EndOfCompletion;
 			case tEND_OF_INPUT : return TK_EOF_TOKEN;
-	
+
 			default:
-				assert false : "token not recognized by the UPC parser: " + token.getType(); 
+				assert false : "token not recognized by the UPC parser: " + token.getType();
 				return TK_Invalid;
 		}
 	}
 
-	
+
 
 }

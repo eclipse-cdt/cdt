@@ -38,7 +38,7 @@ import org.eclipse.core.runtime.Path;
 import org.osgi.framework.Version;
 
 /**
- * 
+ *
  */
 public class OptionCategory extends BuildObject implements IOptionCategory {
 
@@ -52,18 +52,18 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 	private IOptionCategory owner;	// The logical Option Category parent
 	private String ownerId;
 	private URL    iconPathURL;
-	
+
 	private IConfigurationElement applicabilityCalculatorElement = null;
 	private IOptionCategoryApplicability applicabilityCalculator = null;
 	private BooleanExpressionApplicabilityCalculator booleanExpressionCalculator = null;
 
 	public static final String APPLICABILITY_CALCULATOR = "applicabilityCalculator"; //$NON-NLS-1$
-	
+
 	//  Miscellaneous
 	private boolean isExtensionOptionCategory = false;
 	private boolean isDirty = false;
 	private boolean resolved = true;
-	
+
 	/*
 	 *  C O N S T R U C T O R S
 	 */
@@ -71,11 +71,11 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 	public OptionCategory(IOptionCategory owner) {
 		this.owner = owner;
 	}
-	
+
 	/**
-	 * This constructor is called to create an option category defined by an extension point in 
+	 * This constructor is called to create an option category defined by an extension point in
 	 * a plugin manifest file, or returned by a dynamic element provider
-	 * 
+	 *
 	 * @param parent  The IHoldsOptions parent of this category, or <code>null</code> if
 	 *                defined at the top level
 	 * @param element The category definition from the manifest file or a dynamic element
@@ -89,28 +89,28 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 		resolved = false;
 
 		loadFromManifest(element);
-		
+
 		// Hook me up to the Managed Build Manager
 		ManagedBuildManager.addExtensionOptionCategory(this);
-		
+
 		// Add the category to the parent
 		parent.addOptionCategory(this);
 	}
 
 	/**
-	 * Create an <codeOptionCategory</code> based on the specification stored in the 
+	 * Create an <codeOptionCategory</code> based on the specification stored in the
 	 * project file (.cdtbuild).
-	 * 
-	 * @param parent The <code>IHoldsOptions</code> object the OptionCategory will be added to. 
+	 *
+	 * @param parent The <code>IHoldsOptions</code> object the OptionCategory will be added to.
 	 * @param element The XML element that contains the OptionCategory settings.
 	 */
 	public OptionCategory(IHoldsOptions parent, ICStorageElement element) {
 		this.holder = parent;
 		isExtensionOptionCategory = false;
-		
+
 		// Initialize from the XML attributes
 		loadFromProject(element);
-		
+
 		// Add the category to the parent
 		parent.addOptionCategory(this);
 	}
@@ -121,13 +121,13 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 
 	public void loadFromManifest(IManagedConfigElement element) {
 		ManagedBuildManager.putConfigElement(this, element);
-		
+
 		// id
 		setId(SafeStringInterner.safeIntern(element.getAttribute(IOptionCategory.ID)));
-		
+
 		// name
 		setName(SafeStringInterner.safeIntern(element.getAttribute(IOptionCategory.NAME)));
-		
+
 		// owner
 		ownerId = SafeStringInterner.safeIntern(element.getAttribute(IOptionCategory.OWNER));
 
@@ -137,29 +137,29 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 		    String icon = element.getAttribute(IOptionCategory.ICON);
 			iconPathURL = ManagedBuildManager.getURLInBuildDefinitions( (DefaultManagedConfigElement)element, new Path(icon) );
 		}
-		
+
 		//get enablements
 		IManagedConfigElement enablements[] = element.getChildren(OptionEnablementExpression.NAME);
 		if(enablements.length > 0)
 			booleanExpressionCalculator = new BooleanExpressionApplicabilityCalculator(enablements);
 
 		// get the applicability calculator, if any
-		String applicabilityCalculatorStr = element.getAttribute(APPLICABILITY_CALCULATOR); 
+		String applicabilityCalculatorStr = element.getAttribute(APPLICABILITY_CALCULATOR);
 		if (applicabilityCalculatorStr != null && element instanceof DefaultManagedConfigElement) {
-			applicabilityCalculatorElement = ((DefaultManagedConfigElement)element).getConfigurationElement();			
+			applicabilityCalculatorElement = ((DefaultManagedConfigElement)element).getConfigurationElement();
 		} else {
 			applicabilityCalculator = booleanExpressionCalculator;
 		}
 	}
-	
+
 	/* (non-Javadoc)
-	 * Initialize the OptionCategory information from the XML element 
+	 * Initialize the OptionCategory information from the XML element
 	 * specified in the argument
-	 * 
-	 * @param element An XML element containing the OptionCategory information 
+	 *
+	 * @param element An XML element containing the OptionCategory information
 	 */
 	protected void loadFromProject(ICStorageElement element) {
-		
+
 		// id (unique, do not intern)
 		setId(element.getAttribute(IBuildObject.ID));
 
@@ -167,7 +167,7 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 		if (element.getAttribute(IBuildObject.NAME) != null) {
 			setName(SafeStringInterner.safeIntern(element.getAttribute(IBuildObject.NAME)));
 		}
-		
+
 		// owner
 		if (element.getAttribute(IOptionCategory.OWNER) != null) {
 			ownerId = SafeStringInterner.safeIntern(element.getAttribute(IOptionCategory.OWNER));
@@ -176,8 +176,8 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 			owner = holder.getOptionCategory(ownerId);
 		} else {
 			owner = getNullOptionCategory();
-		}		
-		
+		}
+
 		// icon - was saved as URL in string form
 		if (element.getAttribute(IOptionCategory.ICON) != null) {
 			String iconPath = element.getAttribute(IOptionCategory.ICON);
@@ -189,7 +189,7 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 				iconPathURL = null;
 			}
 		}
-		
+
 		// Hook me in
 		if (owner == null)
 			((HoldsOptions)holder).addChildCategory(this);
@@ -214,30 +214,31 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 	 */
 	public void serialize(ICStorageElement element) {
 		element.setAttribute(IBuildObject.ID, id);
-		
+
 		if (name != null) {
 			element.setAttribute(IBuildObject.NAME, name);
 		}
 
 		if (owner != null)
 			element.setAttribute(IOptionCategory.OWNER, owner.getId());
-		
+
 		if (iconPathURL != null) {
 			// Save as URL in string form
 			element.setAttribute(IOptionCategory.ICON, iconPathURL.toString());
 		}
-		
+
 		// I am clean now
 		isDirty = false;
 	}
-	
+
 	/*
 	 *  P A R E N T   A N D   C H I L D   H A N D L I N G
 	 */
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOptionCategory#getChildCategories()
 	 */
+	@Override
 	public IOptionCategory[] getChildCategories() {
 		if (children != null)
 			return children.toArray(new IOptionCategory[children.size()]);
@@ -250,19 +251,21 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 			children = new ArrayList<OptionCategory>();
 		children.add(category);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOptionCategory#getOptions()
 	 */
+	@Override
 	public Object[][] getOptions(IConfiguration configuration, IHoldsOptions optionHolder) {
 		IHoldsOptions[] optionHolders = new IHoldsOptions[1];
 		optionHolders[0] = optionHolder;
 		return getOptions(optionHolders, FILTER_PROJECT);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOptionCategory#getOptions()
 	 */
+	@Override
 	public Object[][] getOptions(IConfiguration configuration) {
 		IHoldsOptions[] optionHolders = null;
 		if (configuration != null) {
@@ -284,6 +287,7 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOptionCategory#getOptions()
 	 */
+	@Override
 	public Object[][] getOptions(IResourceInfo resinfo, IHoldsOptions optionHolder) {
 		IHoldsOptions[] optionHolders = new IHoldsOptions[1];
 		optionHolders[0] = optionHolder;
@@ -294,10 +298,11 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 			isRoot = ((MultiResourceInfo)resinfo).isRoot();
 		return getOptions(optionHolders, isRoot ? FILTER_PROJECT : FILTER_FILE);
 	}
-		
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOptionCategory#getOptions()
 	 */
+	@Override
 	public Object[][] getOptions(IResourceConfiguration resConfig) {
 		IHoldsOptions[] optionHolders = null;
 		if (resConfig != null) {
@@ -305,10 +310,10 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 			if (optionHolder instanceof ITool) {
 				optionHolders = resConfig.getTools();
 			} else if (optionHolder instanceof IToolChain) {
-				// Resource configurations do not support categories that are children 
-				// of toolchains. The reason for this is that options in such categories 
+				// Resource configurations do not support categories that are children
+				// of toolchains. The reason for this is that options in such categories
 				// are intended to be global. Thus return nothing.
-				// TODO: Remove this restriction in future? 
+				// TODO: Remove this restriction in future?
 				optionHolders = new IHoldsOptions[1];
 				optionHolders[0] = null;
 			}
@@ -317,15 +322,15 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 		}
 		return getOptions(optionHolders, FILTER_FILE);
 	}
-	
+
 	private IHoldsOptions getOptionHoldersSuperClass(IHoldsOptions optionHolder) {
-		if (optionHolder instanceof ITool) 
+		if (optionHolder instanceof ITool)
 			return ((ITool)optionHolder).getSuperClass();
-		else if (optionHolder instanceof IToolChain) 
+		else if (optionHolder instanceof IToolChain)
 			return ((IToolChain)optionHolder).getSuperClass();
 		return null;
 	}
-	
+
 	private Object[][] getOptions(IHoldsOptions[] optionHolders, int filterValue) {
 		IHoldsOptions catHolder = getOptionHolder();
 		IHoldsOptions optionHolder = null;
@@ -347,7 +352,7 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 		if (optionHolder == null) {
 			optionHolder = catHolder;
 		}
-		
+
 		// Get all of the tool's options and see which ones are part of
 		// this category.
 		IOption[] allOptions = optionHolder.getOptions();
@@ -356,13 +361,13 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 		for (int i = 0; i < allOptions.length; ++i) {
 			IOption option = allOptions[i];
 			if (option.getCategory().equals(this)) {
-				
+
 				// Check whether this option can be displayed for a specific resource type.
 				if( (option.getResourceFilter() == FILTER_ALL) || (option.getResourceFilter() == filterValue) ) {
 					myOptions[index] = new Object[2];
 					myOptions[index][0] = optionHolder;
 					myOptions[index][1] = option;
-					index++;	
+					index++;
 				}
 			}
 		}
@@ -376,6 +381,7 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOptionCategory#getOwner()
 	 */
+	@Override
 	public IOptionCategory getOwner() {
 		return owner;
 	}
@@ -383,6 +389,7 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOptionCategory#getOptionHolder()
 	 */
+	@Override
 	public IHoldsOptions getOptionHolder() {
 		// This will stop at the parent's top category
 		if (owner != null)
@@ -393,6 +400,7 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOptionCategory#getTool()
 	 */
+	@Override
 	public ITool getTool() {
 		// This will stop at the tool's top category
 		IHoldsOptions parent = owner.getOptionHolder();
@@ -406,14 +414,15 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOptionCategory#getIconPath()
 	 */
+	@Override
 	public URL getIconPath() {
 		return iconPathURL;
 	}
-	
+
 	/*
 	 *  O B J E C T   S T A T E   M A I N T E N A N C E
 	 */
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOptionCategory#isExtensionElement()
 	 */
@@ -424,6 +433,7 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOptionCategory#isDirty()
 	 */
+	@Override
 	public boolean isDirty() {
 		// This shouldn't be called for an extension OptionCategory
  		if (isExtensionOptionCategory) return false;
@@ -433,6 +443,7 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IIOptionCategory#setDirty(boolean)
 	 */
+	@Override
 	public void setDirty(boolean isDirty) {
 		this.isDirty = isDirty;
 	}
@@ -446,7 +457,7 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 				if (owner == null) {
 					if (holder instanceof IOptionCategory) {
 						// Report error, only if the parent is a tool and thus also
-						// an option category. 
+						// an option category.
 						ManagedBuildManager.outputResolveError(
 								"owner",	//$NON-NLS-1$
 								ownerId,
@@ -455,7 +466,7 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 						error = true;
 					} else if ( false == holder.getId().equals(ownerId) ) {
 						// Report error, if the holder ID does not match the owner's ID.
-						ManagedBuildManager.outputResolveError(								
+						ManagedBuildManager.outputResolveError(
 								"owner",	//$NON-NLS-1$
 								ownerId,
 								"optionCategory",	//$NON-NLS-1$
@@ -467,7 +478,7 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 			if (owner == null) {
 				owner = getNullOptionCategory();
 			}
-			
+
 			// Hook me in
 			if (owner == null  &&  error == false)
 				((HoldsOptions)holder).addChildCategory(this);
@@ -503,50 +514,50 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 		}
 		return version;
 	}
-	
+
 	@Override
 	public void setVersion(Version version) {
 		// Do nothing
 	}
 
 	/**
-	 * Creates a name that uniquely identifies a category. The match name is 
-	 * a concatenation of the tool and categories, e.g. Tool->Cat1->Cat2 
+	 * Creates a name that uniquely identifies a category. The match name is
+	 * a concatenation of the tool and categories, e.g. Tool->Cat1->Cat2
 	 * maps onto the string "Tool|Cat1|Cat2|"
-	 * 
-	 * @param catOrTool category or tool for which to build the match name 
+	 *
+	 * @param catOrTool category or tool for which to build the match name
 	 * @return match name
 	 */
 	static public String makeMatchName(IBuildObject catOrTool) {
 		String catName = EMPTY_STRING;
-		
+
 		// Build the match name.
 		do {
 			catName = catOrTool.getName() + "|" + catName; //$NON-NLS-1$
 			if (catOrTool instanceof ITool) break;
 			else if (catOrTool instanceof IOptionCategory) {
-				catOrTool = ((IOptionCategory)catOrTool).getOwner();					
-			} else 
+				catOrTool = ((IOptionCategory)catOrTool).getOwner();
+			} else
 				break;
 		} while (catOrTool != null);
-		
+
 		return catName;
 	}
-	
+
 	/**
 	 * Finds an option category from an array of categories by comparing against
-	 * a match name. The match name is a concatenation of the tool and categories, 
+	 * a match name. The match name is a concatenation of the tool and categories,
 	 * e.g. Tool->Cat1->Cat2 maps onto the string "Tool|Cat1|Cat2|"
-	 * 
-	 * @param matchName an identifier to search 
-	 * @param cats as returned by getChildCategories(), i.e. non-flattened 
+	 *
+	 * @param matchName an identifier to search
+	 * @param cats as returned by getChildCategories(), i.e. non-flattened
 	 * @return category or tool, if found and null otherwise
 	 */
 	static public Object findOptionCategoryByMatchName(String matchName, IOptionCategory[] cats) {
 		Object primary = null;
-		
+
 		for (int j=0; j<cats.length; j++) {
-			IBuildObject catOrTool = cats[j]; 
+			IBuildObject catOrTool = cats[j];
 			// Build the match name
 			String catName = makeMatchName(catOrTool);
 			// Check whether the name matches
@@ -562,12 +573,13 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 		}
 		return primary;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.managedbuilder.core.IOptionCategory#getApplicabilityCalculator()
 	 */
+	@Override
 	public IOptionCategoryApplicability getApplicabilityCalculator() {
 		if (applicabilityCalculator == null) {
 			if (applicabilityCalculatorElement != null) {
@@ -579,7 +591,7 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 					ManagedBuilderCorePlugin.log(e);
 				}
 			}
-		} 
+		}
 		return applicabilityCalculator;
 	}
 }

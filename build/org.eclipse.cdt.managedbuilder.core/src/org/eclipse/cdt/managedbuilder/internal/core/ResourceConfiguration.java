@@ -57,29 +57,29 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	//  Miscellaneous
 	private boolean isExtensionResourceConfig = false;
 	private boolean resolved = true;
-	
+
 	/*
 	 *  C O N S T R U C T O R S
 	 */
-	
+
 	/**
-	 * This constructor is called to create a resource configuration defined by an 
+	 * This constructor is called to create a resource configuration defined by an
 	 * extension point in a plugin manifest file, or returned by a dynamic element provider
-	 * 
+	 *
 	 * @param parent  The IConfiguration parent of this resource configuration
-	 * @param element The resource configuration definition from the manifest file 
+	 * @param element The resource configuration definition from the manifest file
 	 *                or a dynamic element provider
 	 */
 	public ResourceConfiguration(IConfiguration parent, IManagedConfigElement element, String managedBuildRevision) {
 		super(parent, element, true);
 		isExtensionResourceConfig = true;
-		
+
 		// setup for resolving
 		resolved = false;
 
 		setManagedBuildRevision(managedBuildRevision);
 		loadFromManifest(element);
-		
+
 		// Hook me up to the Managed Build Manager
 		ManagedBuildManager.addExtensionResourceConfiguration(this);
 
@@ -90,22 +90,22 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 			getToolList().add(toolChild);
 			getToolMap().put(toolChild.getId(), toolChild);
 		}
-		
+
 		setDirty(false);
 	}
 
 	/**
-	 * Create a <code>ResourceConfiguration</code> based on the specification stored in the 
+	 * Create a <code>ResourceConfiguration</code> based on the specification stored in the
 	 * project file (.cdtbuild).
-	 * 
-	 * @param parent The <code>IConfiguration</code> the resource configuration will be added to. 
+	 *
+	 * @param parent The <code>IConfiguration</code> the resource configuration will be added to.
 	 * @param element The XML element that contains the resource configuration settings.
 	 */
 	public ResourceConfiguration(IConfiguration parent, ICStorageElement element, String managedBuildRevision) {
 		super(parent, element, true);
 		isExtensionResourceConfig = false;
 		setResourceData(new BuildFileData(this));
-		
+
 		setManagedBuildRevision(managedBuildRevision);
 		// Initialize from the XML attributes
 		loadFromProject(element);
@@ -119,30 +119,30 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 				addTool(tool);
 			}
 		}
-		
+
 		String rebuild = PropertyManager.getInstance().getProperty(this, REBUILD_STATE);
 		if(rebuild == null || Boolean.valueOf(rebuild).booleanValue())
 			setRebuildState(true);
 		setDirty(false);
 	}
-	
+
 	public ResourceConfiguration(FolderInfo folderInfo, ITool baseTool, String id, String resourceName, IPath path){
 		super(folderInfo, path, id, resourceName);
 //		setParentFolder(folderInfo);
 //		setParentFolderId(folderInfo.getId());
-		
+
 		isExtensionResourceConfig = folderInfo.isExtensionElement();
 		if(!isExtensionResourceConfig)
 			setResourceData(new BuildFileData(this));
-	
+
 		if ( folderInfo.getParent() != null)
 			setManagedBuildRevision(folderInfo.getParent().getManagedBuildRevision());
-		
+
 		setDirty(false);
 		toolsToInvoke = EMPTY_STRING;
 		rcbsApplicability = new Integer(KIND_DISABLE_RCBS_TOOL);
-		
-		
+
+
 		//	Get file extension.
 		String extString = path.getFileExtension();
 		if(baseTool != null){
@@ -158,9 +158,9 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 				break;
 			}
 		}
-		
+
 		if(baseTool != null){
-			subId = ManagedBuildManager.calculateChildId(baseTool.getId(), null);				
+			subId = ManagedBuildManager.calculateChildId(baseTool.getId(), null);
 			createTool(baseTool, subId, baseTool.getName(), false);
 			setRebuildState(true);
 		}
@@ -168,14 +168,14 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 
 	/**
 	 * Create a new resource configuration based on one already defined.
-	 * 
-	 * @param cfg The <code>IConfiguration</code> the resource configuration will be added to. 
+	 *
+	 * @param cfg The <code>IConfiguration</code> the resource configuration will be added to.
 	 * @param cloneConfig The <code>ResourceConfiguration</code> to copy the settings from.
 	 * @param id A unique ID for the new resource configuration.
 	 */
 	public ResourceConfiguration(IConfiguration cfg, ResourceConfiguration cloneConfig, String id, Map<IPath, Map<String, String>> superClassIdMap, boolean cloneChildren) {
 		super(cfg, cloneConfig, id);
-		
+
 		isExtensionResourceConfig = cfg.isExtensionElement();
 		if(!cloneConfig.isExtensionResourceConfig)
 			cloneChildren = true;
@@ -184,7 +184,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 			setResourceData(new BuildFileData(this));
 
 		setManagedBuildRevision(cloneConfig.getManagedBuildRevision());
-		
+
 		//  Copy the remaining attributes
 		if (cloneConfig.toolsToInvoke != null) {
 			toolsToInvoke = new String(cloneConfig.toolsToInvoke);
@@ -192,14 +192,14 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 		if (cloneConfig.rcbsApplicability != null) {
 			rcbsApplicability = new Integer(cloneConfig.rcbsApplicability.intValue());
 		}
-		
+
 		boolean copyIds = cloneChildren && id.equals(cloneConfig.id);
 		// Clone the resource configuration's tool children
 		if (cloneConfig.toolList != null) {
 			for (ITool toolChild : cloneConfig.getToolList()) {
 				String subId = null;
 				String subName;
-				
+
 				Map<String, String> curIdMap = superClassIdMap.get(cloneConfig.getPath());
 				ITool extTool = ManagedBuildManager.getExtensionTool(toolChild);
 				if(curIdMap != null){
@@ -207,9 +207,9 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 						subId = curIdMap.get(extTool.getId());
 					}
 				}
-				
+
 				subName = toolChild.getName();
-				
+
 				if(subId == null){
 					if (extTool != null) {
 						subId = copyIds ? toolChild.getId() : ManagedBuildManager.calculateChildId(
@@ -225,10 +225,10 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 				}
 
 				//  The superclass for the cloned tool is not the same as the one from the tool being cloned.
-				//  The superclasses reside in different configurations. 
+				//  The superclasses reside in different configurations.
 				ITool toolSuperClass = null;
 				String superId = null;
-				//  Search for the tool in this configuration that has the same grand-superClass as the 
+				//  Search for the tool in this configuration that has the same grand-superClass as the
 				//  tool being cloned
 				ITool otherSuperTool = toolChild.getSuperClass();
 				if(otherSuperTool != null){
@@ -270,12 +270,12 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 //						if(baseFo instanceof IFileInfo)
 //							baseFo = cfg.getResourceInfo(path.removeLastSegments(1), false);
 //						tCh = ((IFolderInfo)baseFo).getToolChain();
-//						
+//
 //					}
 //					ITool[] tools = tCh.getTools();
 //					for (int i=0; i<tools.length; i++) {
 //					    ITool configTool = tools[i];
-//					    if (toolChild.getSuperClass() != null 
+//					    if (toolChild.getSuperClass() != null
 //					    		&& configTool.getSuperClass() == toolChild.getSuperClass().getSuperClass())
 //					    {
 //					        toolSuperClass = configTool;
@@ -289,13 +289,13 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 				Tool newTool = null;
 				if(toolSuperClass != null)
 					newTool = new Tool(this, toolSuperClass, subId, subName, (Tool)toolChild);
-				else 
+				else
 					newTool = new Tool(this, superId, subId, subName, (Tool)toolChild);
 
 				addTool(newTool);
 			}
 		}
-		
+
 		if(copyIds){
 			isDirty = cloneConfig.isDirty;
 			needsRebuild = cloneConfig.needsRebuild;
@@ -307,17 +307,17 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 
 	public ResourceConfiguration(ResourceConfiguration baseInfo, IPath path, String id, String name) {
 		super(baseInfo, path, id, name);
-		
+
 		isExtensionResourceConfig = false;
 		setResourceData(new BuildFileData(this));
 
 		setManagedBuildRevision(baseInfo.getManagedBuildRevision());
-		
+
 		//  Copy the remaining attributes
 		toolsToInvoke = baseInfo.toolsToInvoke;
-		
+
 		rcbsApplicability = new Integer(KIND_DISABLE_RCBS_TOOL);
-				
+
 		// Clone the resource configuration's tool children
 		if (baseInfo.toolList != null) {
 			for (ITool toolChild : baseInfo.getToolList()) {
@@ -338,12 +338,12 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	/*
 	 *  E L E M E N T   A T T R I B U T E   R E A D E R S   A N D   W R I T E R S
 	 */
-	
+
 	/* (non-Javadoc)
-	 * Loads the resource configuration information from the ManagedConfigElement 
+	 * Loads the resource configuration information from the ManagedConfigElement
 	 * specified in the argument.
-	 * 
-	 * @param element Contains the resource configuration information 
+	 *
+	 * @param element Contains the resource configuration information
 	 */
 	protected void loadFromManifest(IManagedConfigElement element) {
 		ManagedBuildManager.putConfigElement(this, element);
@@ -363,12 +363,12 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 			rcbsApplicability = new Integer(KIND_APPLY_RCBS_TOOL_AS_OVERRIDE);
 		}
 	}
-	
+
 	/* (non-Javadoc)
-	 * Initialize the resource configuration information from the XML element 
+	 * Initialize the resource configuration information from the XML element
 	 * specified in the argument
-	 * 
-	 * @param element An XML element containing the resource configuration information 
+	 *
+	 * @param element An XML element containing the resource configuration information
 	 */
 	protected void loadFromProject(ICStorageElement element) {
 		// toolsToInvoke
@@ -417,19 +417,19 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 					str = DISABLE_RCBS_TOOL;
 					break;
 				default:
-					str = DISABLE_RCBS_TOOL; 
+					str = DISABLE_RCBS_TOOL;
 					break;
 			}
 			element.setAttribute(IResourceConfiguration.RCBS_APPLICABILITY, str);
 		}
-		
+
 		// Serialize my children
 		List<ITool> toolElements = getToolList();
 		for (ITool tool : toolElements) {
 			ICStorageElement toolElement = element.createChild(ITool.TOOL_ELEMENT_NAME);
 			((Tool)tool).serialize(toolElement);
 		}
-		
+
 		// I am clean now
 		setDirty(false);
 	}
@@ -438,16 +438,17 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	 *  P A R E N T   A N D   C H I L D   H A N D L I N G
 	 */
 
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IResourceConfiguration#getTools()
 	 */
+	@Override
 	public ITool[] getTools() {
 		List<ITool> toolList = getToolList();
 		ITool[] tools = new ITool[toolList.size()];
 		int i = 0;
 		for (ITool tool : toolList) {
-			tools[i++] = tool; 
+			tools[i++] = tool;
 		}
 		return tools;
 	}
@@ -455,14 +456,15 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceConfiguration#getTool(java.lang.String)
 	 */
+	@Override
 	public ITool getTool(String id) {
 		Tool tool = (Tool)getToolMap().get(id);
 		return tool;
 	}
-	
+
 	/* (non-Javadoc)
 	 * Safe accessor for the list of tools.
-	 * 
+	 *
 	 * @return List containing the tools
 	 */
 	private List<ITool> getToolList() {
@@ -471,10 +473,10 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 		}
 		return toolList;
 	}
-	
+
 	/* (non-Javadoc)
 	 * Safe accessor for the map of tool ids to tools
-	 * 
+	 *
 	 * @return
 	 */
 	private Map<String, ITool> getToolMap() {
@@ -486,7 +488,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 
 	/* (non-Javadoc)
 	 * Adds the Tool to the Tool list and map
-	 * 
+	 *
 	 * @param Tool
 	 */
 	public void addTool(Tool tool) {
@@ -497,9 +499,10 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 
 	/* (non-Javadoc)
 	 * Removes the Tool from the Tool list and map
-	 * 
+	 *
 	 * @param Tool
 	 */
+	@Override
 	public void removeTool(ITool tool) {
 		getToolList().remove(tool);
 		getToolMap().remove(tool);
@@ -513,15 +516,17 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceConfiguration#getResourcePath()
 	 */
+	@Override
 	public String getResourcePath() {
 		IPath path = getParent().getOwner().getProject().getFullPath();
 		path = path.append(getPath());
 		return path.toString();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceConfiguration#getRcbsApplicability()
 	 */
+	@Override
 	public int getRcbsApplicability() {
 		/*
 		 * rcbsApplicability is an integer constant that represents how the user wants to
@@ -538,6 +543,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceConfiguration#getToolsToInvoke()
 	 */
+	@Override
 	public ITool[] getToolsToInvoke() {
 		/*
 		 * toolsToInvoke is an ordered list of tool ids for the currently defined tools in
@@ -562,7 +568,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 		 * Update the current state of the toolsToInvoke attribute.
 		 * Build and return an ITool[] for consumers.
 		 */
-		
+
 		/*
 		 * If no tools are currently defined, return a zero lengh array of ITool.
 		 */
@@ -571,7 +577,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 			tools = new ITool[0];
 			return tools;
 		}
-		
+
 		/*
 		 * See if there is an rcbs tool defined.  There should only be one at most.
 		 */
@@ -675,10 +681,11 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 		return tools;
 	}
 
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceConfiguration#getRcbsApplicability()
 	 */
+	@Override
 	public void setRcbsApplicability(int newValue) {
 		/*
 		 * rcbsApplicability is an integer constant that represents how the user wants to
@@ -696,6 +703,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceConfiguration#setResourcePath()
 	 */
+	@Override
 	public void setResourcePath(String path) {
 		if( path == null)
 			return;
@@ -706,7 +714,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	/*
 	 *  O B J E C T   S T A T E   M A I N T E N A N C E
 	 */
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceConfiguration#isExtensionElement()
 	 */
@@ -721,16 +729,16 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	public boolean isDirty() {
 		// This shouldn't be called for an extension tool-chain
  		if (isExtensionResourceConfig) return false;
-		
+
 		// If I need saving, just say yes
 		if (super.isDirty())
 			return true;
-		
+
 		// Otherwise see if any tools need saving
 		for (ITool toolChild : getToolList()) {
 			if (toolChild.isDirty()) return true;
 		}
-		
+
 		return false;
 	}
 
@@ -740,7 +748,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	@Override
 	public void setDirty(boolean isDirty) {
  		if (isExtensionResourceConfig) return;
- 		
+
  		super.setDirty(isDirty);
 
  		// Propagate "false" to the children
@@ -750,7 +758,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 			}
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 *  Resolve the element IDs to interface references
 	 */
@@ -765,20 +773,21 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 			}
 		}
 	}
-	
+
+	@Override
 	public ITool createTool(ITool superClass, String id, String name, boolean isExtensionElement) {
 		Tool tool = new Tool(this, superClass, id, name, isExtensionElement);
 		addTool(tool);
 		setDirty(true);
 		return tool;
 	}
-	
+
 	public void reset() {
 		// We just need to remove all Options
 		ITool[] tools = getTools();
 		// Send out the event to notify the options that they are about to be removed
 //		ManagedBuildManager.performValueHandlerEvent(this, IManagedOptionValueHandler.EVENT_CLOSE);
-		// Remove the configurations		
+		// Remove the configurations
 		for (int i = 0; i < tools.length; i++) {
 			ITool tool = tools[i];
 			IOption[] opts = tool.getOptions();
@@ -792,11 +801,12 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceConfiguration#setToolCommand(org.eclipse.cdt.managedbuilder.core.ITool, java.lang.String)
 	 */
+	@Override
 	public void setToolCommand(ITool tool, String command) {
 		// TODO:  Do we need to verify that the tool is part of the configuration?
 			tool.setToolCommand(command);
 	}
-	
+
 //	private IBuildObject getHoldersParent(IOption option) {
 //		IHoldsOptions holder = option.getOptionHolder();
 //		if (holder instanceof ITool) {
@@ -806,11 +816,12 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 //		}
 //		return null;
 //	}
-	
+
+	@Override
 	public IResource getOwner() {
 		return getParent().getOwner();
 	}
-	
+
 	/**
 	 * @return Returns the version.
 	 */
@@ -823,7 +834,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 		}
 		return version;
 	}
-	
+
 	@Override
 	public void setVersion(Version version) {
 		// Do nothing
@@ -835,12 +846,12 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	@Override
 	public void updateManagedBuildRevision(String revision){
 		super.updateManagedBuildRevision(revision);
-		
+
 		for (ITool tool :  getToolList()) {
 			((Tool)tool).updateManagedBuildRevision(revision);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceConfiguration#needsRebuild()
 	 */
@@ -848,7 +859,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	public boolean needsRebuild() {
 		if(super.needsRebuild())
 			return true;
-		
+
 		ITool tools[] = getToolsToInvoke();
 		for(int i = 0; i < tools.length; i++){
 			if(tools[i].needsRebuild())
@@ -865,12 +876,12 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	public void setRebuildState(boolean rebuild) {
 		if(isExtensionResourceConfiguration() && rebuild)
 			return;
-		
+
 		if(needsRebuild() != rebuild){
 			super.setRebuildState(rebuild);
 			saveRebuildState();
 		}
-		
+
 		if(!rebuild){
 			ITool tools[] = getToolsToInvoke();
 			for(int i = 0; i < tools.length; i++){
@@ -879,19 +890,22 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 		}
 
 	}
-	
+
 	private void saveRebuildState(){
 		PropertyManager.getInstance().setProperty(this, REBUILD_STATE, Boolean.toString(needsRebuild()));
 	}
 
+	@Override
 	public final int getKind() {
 		return ICSettingBase.SETTING_FILE;
 	}
-	
+
+	@Override
 	public CFileData getFileData(){
 		return (CFileData)getResourceData();
 	}
-	
+
+	@Override
 	public CLanguageData[] getCLanguageDatas() {
 		ITool tools[] = getTools/*ToInvoke*/();
 		List<CLanguageData> list = new ArrayList<CLanguageData>();
@@ -909,7 +923,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 		ITool baseTool = null;
 		for(int i = 0; i < tools.length; i++){
 			ITool tool = tools[i];
-			ITool superTool = tool.getSuperClass(); 
+			ITool superTool = tool.getSuperClass();
 			if(superTool != null){
 				baseTool = superTool;
 				if(!superTool.isExtensionElement()){
@@ -917,7 +931,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 				}
 			}
 		}
-		
+
 		IToolChain baseTc = null;
 		if(baseTool != null){
 			IBuildObject parent = baseTool.getParent();
@@ -927,7 +941,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 				baseTc = ((ResourceConfiguration)parent).getBaseToolChain();
 			}
 		}
-		
+
 		return baseTc;
 	}
 
@@ -935,14 +949,15 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	public boolean isExtensionElement() {
 		return isExtensionResourceConfig;
 	}
-	
+
+	@Override
 	public boolean supportsBuild(boolean managed) {
 		ITool tools[] = getToolsToInvoke();
 		for(int i = 0; i < tools.length; i++){
 			if(!tools[i].supportsBuild(managed))
 				return false;
 		}
-		
+
 		return true;
 	}
 
@@ -979,28 +994,29 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 			ITool otherTool = ((FolderInfo)parentRc).getToolFromInputExtension(ext);
 			if(otherTool == null)
 				return true;
-			
+
 			ITool[] tti = getToolsToInvoke();
 			if(tti.length != 1)
 				return true;
-			
+
 			return ((Tool)tti[0]).hasCustomSettings((Tool)otherTool);
 		}
 		ITool[] tools = getTools();
 		ITool[] otherTools = ((IFileInfo)parentRc).getTools();
 		if(tools.length != otherTools.length)
 			return true;
-		
+
 		for(int i = 0; i < tools.length; i++){
 			Tool tool = (Tool)tools[i];
 			Tool otherTool = (Tool)otherTools[i];
 			if(tool.hasCustomSettings(otherTool))
 				return true;
 		}
-		
+
 		return false;
 	}
-	
+
+	@Override
 	public void setTools(ITool[] tools){
 		ToolListModificationInfo info = getToolListModificationInfo(tools);
 		info.apply();
@@ -1015,19 +1031,20 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	void applyToolsInternal(ITool[] resultingTools, ToolListModificationInfo info) {
 		List<ITool> list = getToolList();
 		Map<String, ITool> map = getToolMap();
-		
+
 		list.clear();
 		map.clear();
-		
+
 		list.addAll(Arrays.asList(resultingTools));
 		for(int i = 0; i < resultingTools.length; i++){
 			ITool tool = resultingTools[i];
 			map.put(tool.getId(), tool);
 		}
-		
+
 		setRebuildState(true);
 	}
-	
+
+	@Override
 	public boolean isSupported(){
 		IFolderInfo foInfo = getParentFolderInfo();
 		if(foInfo == null){
@@ -1036,7 +1053,7 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 				foInfo = cfg.getRootFolderInfo();
 			}
 		}
-		
+
 		if(foInfo != null)
 			return foInfo.isSupported();
 		return false;

@@ -55,10 +55,10 @@ import org.eclipse.ui.dialogs.IOverwriteQuery;
 public class MultiVersionSupportTests extends TestCase {
 	static IProject proj = null;
 	static IManagedProject mproj = null;
-	
-	IConfiguration[] cfgs = null;	
-	private IWorkspace worksp;	
-	
+
+	IConfiguration[] cfgs = null;
+	private IWorkspace worksp;
+
 	public MultiVersionSupportTests() { super(); }
 	public MultiVersionSupportTests(String name) { super(name); }
 
@@ -78,52 +78,52 @@ public class MultiVersionSupportTests extends TestCase {
 		return suite;
 	}
 
-	
+
 	/*
 	 * This function tests the functionality of Project converter convenience routines
 	 * defined in ManagedBuildManager class. These convenience routines are generic routines
-	 * anyone can use them 
+	 * anyone can use them
 	 * 		  i) To find out whether any converters are available for a given Build Object,
 	 * 		 ii) To get a list of converters
 	 * 		iii) To convert a Build Object
 	 */
-	
+
 	public void testProjectConverterConvenienceRoutines() throws Exception {
 		String projectName = "TestProjectConverterConvenienceRoutines";			//$NON-NLS-1$
 		String projectTypeId = "testProjectConverterConvenienceRoutines.exe";	//$NON-NLS-1$
 
 		doInit(projectName, projectTypeId);
-		
+
 		// It should contain only one configuration.
 		assertEquals(cfgs.length, 1);
-		
+
 		IToolChain toolChain = cfgs[0].getToolChain();
-		
+
 		// Check whether this tool chain has converters using generic convenience routine.
 		boolean hasConverters = ManagedBuildManager.hasTargetConversionElements(toolChain);
-		
+
 		// Expected value is 'true'
 		assertEquals(hasConverters, true);
-		
+
 		// Get the list of available converters for ths tool chain using generic convenience routine
 		Map<String, IConfigurationElement> converters = ManagedBuildManager.getConversionElements(toolChain);
-		
+
 		// Expected value for the number of converters available is '1'
 		assertEquals(converters.size(), 1);
 
 		return;
 	}
-	
+
 	/*
 	 * This function tests the functionality of configuration name provider.
 	 * Using this functionality, Tool Integrator can provide configuration names dynamically
 	 * based on the OS, architecture.
-	 * 
+	 *
 	 * In plugin manifest file, there are 4 configurations defined for the project type
 	 * "cdt.managedbuild.target.testMultipleVersions.exe". Two configurations are defined with "Debug"
-	 * as their name and other two are defined with "Release" as their name. But user will see the 
+	 * as their name and other two are defined with "Release" as their name. But user will see the
 	 * configuration names as "Debug", "Release", "Debug_ia64" and "Release_ia64" while creating a project.
-	 * 
+	 *
 	 */
 	public void testConfigurationNameProvider()throws Exception {
 		String [] expectedConfigNames = { "Debug","Release","Debug_ia64","Release_ia64" };	//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
@@ -132,29 +132,29 @@ public class MultiVersionSupportTests extends TestCase {
 		String projectName = "TestConfigurationNameProvider";	//$NON-NLS-1$
 		String projectTypeId = "cdt.managedbuild.target.testMultipleVersions.exe";	//$NON-NLS-1$
 		doInit(projectName, projectTypeId);
-		
+
 		// Check the configuration names
 		cfgs = mproj.getConfigurations();
-		
+
 		// Get the actual configuration names
 		for (int i = 0; i < cfgs.length; i++) {
-			actualConfigNames[i] = cfgs[i].getName();		
+			actualConfigNames[i] = cfgs[i].getName();
 		}
-		
+
 		// Compare the expected and actual,
 		for (int i = 0; i < expectedConfigNames.length; i++) {
-			assertTrue( isArrayContains(actualConfigNames, expectedConfigNames[i]) );			
+			assertTrue( isArrayContains(actualConfigNames, expectedConfigNames[i]) );
 		}
 		return;
 	}
-	
+
 	/*
 	 * This function tests whether the newly added attribute 'description' is retrived from plugin
 	 * manifest file correctly or not. There are 4 configurations defined with different description
 	 * each configuration. This function checks the description of each configuration against
 	 * expected description after creating a project.
 	 */
-	
+
 	public void testConfigurationDescription()throws Exception {
 		String [] expectedConfigDescriptions = { "debug configuration for IA32 windows","release configuration for IA32 windows","debug configuration for IA64 windows","release configuration for IA64 windows" };	//$NON-NLS-1$
 		String [] actualConfigDescriptions = new String[4];
@@ -163,28 +163,28 @@ public class MultiVersionSupportTests extends TestCase {
 		String projectTypeId = "cdt.managedbuild.target.testMultipleVersions.exe";	//$NON-NLS-1$
 
 		doInit(projectName, projectTypeId);
-		
+
 		// Check the configuration descriptions
 		cfgs = mproj.getConfigurations();
-		
+
 		// Get the actual configuration names
 		for (int i = 0; i < cfgs.length; i++) {
-			actualConfigDescriptions[i] = cfgs[i].getDescription();		
+			actualConfigDescriptions[i] = cfgs[i].getDescription();
 		}
-		
+
 		// Compare the expected and actual,
 		for (int i = 0; i < expectedConfigDescriptions.length; i++) {
-			assertTrue( isArrayContains(actualConfigDescriptions, expectedConfigDescriptions[i]) );			
+			assertTrue( isArrayContains(actualConfigDescriptions, expectedConfigDescriptions[i]) );
 		}
 		return;
 	}
 
-	
+
 	/*
 	 * This function tests whether the version information stored with in the 'id' of ToolChain/Tool/Builder
-	 * is retrived from plugin manifest file correctly or not. 
+	 * is retrived from plugin manifest file correctly or not.
 	 */
-	
+
 	public void testVersionInfo()throws Exception {
 
 		String projectName = "TestVersionInfo";	//$NON-NLS-1$
@@ -192,21 +192,21 @@ public class MultiVersionSupportTests extends TestCase {
 
 		// create managed project
 		doInit(projectName, projectTypeId);
-		
+
 		// Check the configuration descriptions
 		cfgs = mproj.getConfigurations();
-		
+
 		// Check the version information of ToolChain/Tool/Builder defined under 'Release' Configuration.
-		
+
 		// It should return the version as '0.0.4' as there is no version information defined
 		// for ToolChain/Tool/Builder. The version '0.0.4' is the default version for CDT3.0
-		
-		// Release configuration 'id' : "cdt.managedbuild.config.testMultipleVersions.exe.release.1"			
+
+		// Release configuration 'id' : "cdt.managedbuild.config.testMultipleVersions.exe.release.1"
 		IConfiguration releaseConfig = mproj.getConfiguration("cdt.managedbuild.config.testMultipleVersions.exe.release.1");	//$NON-NLS-1$
 
 		// the toolchain version should be '0.0.4' as this is default value
 		assertEquals(releaseConfig.getToolChain().getVersion().toString(), "0.0.4");	//$NON-NLS-1$
-		
+
 		// Get the tools of this toolChain and verify the version of each tool
 		// Each tool version in release configuration should be "0.0.4"
 		ITool [] tools = releaseConfig.getToolChain().getTools();
@@ -214,21 +214,21 @@ public class MultiVersionSupportTests extends TestCase {
 			ITool tool = tools[i];
 			assertEquals(tool.getVersion().toString(),"0.0.4");	//$NON-NLS-1$
 		}
-		
+
 		// check the builder version
 		IBuilder builder = releaseConfig.getToolChain().getBuilder();
 		assertEquals(builder.getVersion().toString(),"0.0.4");	//$NON-NLS-1$
-		
+
 		// Check the versions of ToolChain/Tool/Builder in Debug Configuration
 		// Expected version: "1.1.0" for all ToolChain/Tool(s)/Builder.
-		
+
 		// Get the 'Debug' Configuration
-		// Debug configuration 'id' : "cdt.managedbuild.config.testMultipleVersions.exe.debug.0"			
+		// Debug configuration 'id' : "cdt.managedbuild.config.testMultipleVersions.exe.debug.0"
 		IConfiguration debugConfig = mproj.getConfiguration("cdt.managedbuild.config.testMultipleVersions.exe.debug.0");	//$NON-NLS-1$
 
 		// the toolchain version should be '1.1.0' as that's what defined in plugin manifest file
 		assertEquals(debugConfig.getToolChain().getVersion().toString(), "1.1.0");	//$NON-NLS-1$
-		
+
 		// Get the tools of this toolChain and verify the version of each tool
 		// Each tool version in debug configuration should be "1.1.0"
 		tools = debugConfig.getToolChain().getTools();
@@ -236,18 +236,18 @@ public class MultiVersionSupportTests extends TestCase {
 			ITool tool = tools[i];
 			assertEquals(tool.getVersion().toString(),"1.1.0");	//$NON-NLS-1$
 		}
-		
+
 		// check the builder version
 		builder = debugConfig.getToolChain().getBuilder();
 		assertEquals(builder.getVersion().toString(),"1.1.0");	//$NON-NLS-1$
 
 		// Get the 'Debug64' Configuration
-		// Debug configuration 'id' : "cdt.managedbuild.config.testMultipleVersions.exe.debug.0"			
+		// Debug configuration 'id' : "cdt.managedbuild.config.testMultipleVersions.exe.debug.0"
 		IConfiguration debug64Config = mproj.getConfiguration("cdt.managedbuild.config.testMultipleVersions.exe.debug64.2");	//$NON-NLS-1$
 
 		// the toolchain version should be '2.2.0' as that's what defined in plugin manifest file
 		assertEquals(debug64Config.getToolChain().getVersion().toString(), "2.2.0");	//$NON-NLS-1$
-		
+
 		// Get the tools of this toolChain and verify the version of each tool
 		// Each tool version in debug64 configuration should be "5.0.9" (defined in plugin manifest file)
 		tools = debug64Config.getToolChain().getTools();
@@ -255,7 +255,7 @@ public class MultiVersionSupportTests extends TestCase {
 			ITool tool = tools[i];
 			assertEquals(tool.getVersion().toString(),"5.0.9");	//$NON-NLS-1$
 		}
-		
+
 		// check the builder version , expected value : "3.2.1"  defined in plugin manifest file
 		builder = debug64Config.getToolChain().getBuilder();
 		assertEquals(builder.getVersion().toString(),"3.2.1");	//$NON-NLS-1$
@@ -267,7 +267,7 @@ public class MultiVersionSupportTests extends TestCase {
 	 * This function tests whether the attribute 'versionsSupported' of
 	 * ToolChain/Tool/Builder elements is retrived from plugin manifest file correctly or not.
 	 */
-	
+
 	public void testVersionsSupportedAttribute() throws Exception {
 		// create managed project
 		String projectName = "TestVersionSupportAttribute";	//$NON-NLS-1$
@@ -277,13 +277,13 @@ public class MultiVersionSupportTests extends TestCase {
 
 		// Check the configuration descriptions
 		cfgs = mproj.getConfigurations();
-		
+
 		// Check the version information of ToolChain/Tool/Builder defined under 'Release' Configuration.
-		
+
 		// It should return the version as '0.0.4' as there is no version information defined
 		// for ToolChain/Tool/Builder. The version '0.0.4' is the default version for CDT3.0
-		
-		// Release configuration 'id' : "cdt.managedbuild.config.testMultipleVersions.exe.release64.3"			
+
+		// Release configuration 'id' : "cdt.managedbuild.config.testMultipleVersions.exe.release64.3"
 		IConfiguration releaseConfig = mproj.getConfiguration("cdt.managedbuild.config.testMultipleVersions.exe.release64.3");	//$NON-NLS-1$
 
 		// Get the tool chain
@@ -291,25 +291,25 @@ public class MultiVersionSupportTests extends TestCase {
 
 		//Get the 'versionsSupported' attribute of toolChain
 		String toolChainVersionsSupported = toolChain.getVersionsSupported();
-		
+
 		// Compare with the expected value "1.2.0,2.0.0,2.1.3"
 		assertEquals(toolChainVersionsSupported,"1.2.0,2.0.0,2.1.3");	//$NON-NLS-1$
-		
-		// Get the builder 
+
+		// Get the builder
 		IBuilder builder = releaseConfig.getToolChain().getBuilder();
-		
+
 		// Get the 'versionsSupported' attribute of builder
 		String versionsSupported = builder.getVersionsSupported();
-		
+
 		// Compare with expected value "2.0.0,2.1.1,3.0.3"
 		assertEquals(versionsSupported,"2.0.0,2.1.1,3.0.3");	//$NON-NLS-1$
 
 	}
-	
+
 	static void createManagedProject(String name, String projectTypeId) {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		proj = root.getProject(name); 
-	
+		proj = root.getProject(name);
+
 		if (proj.exists()) {
 			mproj = ManagedBuildManager.getBuildInfo(proj).getManagedProject();
 		} else {
@@ -318,9 +318,9 @@ public class MultiVersionSupportTests extends TestCase {
 			workspaceDesc.setAutoBuilding(false);
 			try {
 				workspace.setDescription(workspaceDesc);
-				proj = CCorePlugin.getDefault().createCProject(workspace.newProjectDescription(proj.getName()), 
+				proj = CCorePlugin.getDefault().createCProject(workspace.newProjectDescription(proj.getName()),
 					proj, new NullProgressMonitor(), ManagedBuilderCorePlugin.MANAGED_MAKE_PROJECT_ID);
-			
+
 				// 	add ManagedBuildNature
 				IManagedBuildInfo info = ManagedBuildManager.createBuildInfo(proj);
 				info.setValid(true);
@@ -333,8 +333,8 @@ public class MultiVersionSupportTests extends TestCase {
 				desc.saveProjectData();
 			} catch (CoreException e) {
 				fail("Cannot create project: " + e.getLocalizedMessage()); //$NON-NLS-1$
-			}				
-			// Call this function just to avoid init problems in getProjectType();   
+			}
+			// Call this function just to avoid init problems in getProjectType();
 			ManagedBuildManager.getDefinedProjectTypes();
 			IProjectType projType = ManagedBuildManager.getProjectType(projectTypeId);
 			assertNotNull(projType);
@@ -343,7 +343,7 @@ public class MultiVersionSupportTests extends TestCase {
 			} catch (BuildException e) {}
 			ManagedBuildManager.setNewProjectVersion(proj);
 			IConfiguration[] cfgs = projType.getConfigurations();
-			
+
 			for (int i = 0; i < cfgs.length; i++) { // sic ! from 1
 				mproj.createConfiguration(cfgs[i], cfgs[i].getId() + "." + i); //$NON-NLS-1$
 			}
@@ -355,11 +355,11 @@ public class MultiVersionSupportTests extends TestCase {
 		// open project w/o progress monitor; no action performed if it's opened
 		try {
 			proj.open(null);
-		} catch (CoreException e) {}				
+		} catch (CoreException e) {}
 	}
 
 	/*
-	 *  isArrayContains() 
+	 *  isArrayContains()
 	 */
 	private boolean isArrayContains(String[] actualConfigNames, String name) {
 		if (actualConfigNames != null) {
@@ -371,7 +371,7 @@ public class MultiVersionSupportTests extends TestCase {
 		}
 		return false;
 	}
-	
+
 	/**
 	 *  doInit() - call it at the beginning of every test
 	 *
@@ -383,89 +383,89 @@ public class MultiVersionSupportTests extends TestCase {
 		worksp = proj.getWorkspace();
 		assertNotNull(worksp);
 		cfgs = mproj.getConfigurations();
-		assertNotNull(cfgs);		
+		assertNotNull(cfgs);
 	}
-	
+
 	public void testToolChainConversion_CDT20() throws Exception {
 		// Pass projDirName as 'test20', and 'true' to update Project
 		doTestProjectUpdate("test20", true);	//$NON-NLS-1$
-		
-		String tmpDir = System.getProperty("java.io.tmpdir");	//$NON-NLS-1$	
-		
+
+		String tmpDir = System.getProperty("java.io.tmpdir");	//$NON-NLS-1$
+
 		File inputFile = new File(tmpDir + "/converterOutput20.txt");	//$NON-NLS-1$
 		try {
 			assertTrue(inputFile.exists());
-			
+
 			String expectedContent = "Converter for CDT 2.0 Project is invoked";	//$NON-NLS-1$
-			
+
 			BufferedReader data = new BufferedReader(new FileReader(inputFile));
 			String actualContent;
-			
+
 			if ((actualContent = data.readLine()) != null) {
 				assertEquals(actualContent,expectedContent);
-			}			
-			
+			}
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();			
+			e.printStackTrace();
 		}
 	}
-	
+
 	public void testToolChainConversion_CDT21() throws Exception {
 		// Pass projDirName as 'test21', and 'true' to update Project
 		doTestProjectUpdate("test21", true);	//$NON-NLS-1$
-		
-		String tmpDir = System.getProperty("java.io.tmpdir");	//$NON-NLS-1$	
-		
+
+		String tmpDir = System.getProperty("java.io.tmpdir");	//$NON-NLS-1$
+
 		File inputFile = new File(tmpDir + "/converterOutput21.txt");	//$NON-NLS-1$
 		try {
 			assertTrue(inputFile.exists());
-			
+
 			String expectedContent = "Converter for CDT 2.1 Project is invoked";	//$NON-NLS-1$
-			
+
 			BufferedReader data = new BufferedReader(new FileReader(inputFile));
 			String actualContent;
-			
+
 			if ((actualContent = data.readLine()) != null) {
 				assertEquals(actualContent,expectedContent);
-			}			
-			
+			}
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();			
+			e.printStackTrace();
 		}
 	}
-	
+
 	public void testProjectConversion() throws Exception {
 		// Pass the 'projDirName' as 'testProjectConversion', and 'true' to update Project
 		doTestProjectUpdate("testProjectConversion", true);	//$NON-NLS-1$
-		
-		String tmpDir = System.getProperty("java.io.tmpdir");	//$NON-NLS-1$	
-		
+
+		String tmpDir = System.getProperty("java.io.tmpdir");	//$NON-NLS-1$
+
 		File inputFile = new File(tmpDir + "/testProjectConverterOutput.txt");	//$NON-NLS-1$
 		try {
 			assertTrue(inputFile.exists());
-			
+
 			String expectedContent = "The converter for the projectType testProject_1.0.0 is invoked";	//$NON-NLS-1$
-			
+
 			BufferedReader data = new BufferedReader(new FileReader(inputFile));
 			String actualContent;
-			
+
 			if ((actualContent = data.readLine()) != null) {
 				assertEquals(actualContent,expectedContent);
-			}			
-			
+			}
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();			
+			e.printStackTrace();
 		}
 	}
-	
+
 	private IProject getCDT_TestProject(String projDirName) {
 
 		IProject project = null;
 		File file = null;
-		
+
 		if (projDirName.equalsIgnoreCase("test20")) {	//$NON-NLS-1$
 			file = CTestPlugin.getFileInPlugin(new Path(
 					"resources/toolChainConversionProjects/test20"));	//$NON-NLS-1$
@@ -475,7 +475,7 @@ public class MultiVersionSupportTests extends TestCase {
 		} else if (projDirName.equals("testProjectConversion")) {	//$NON-NLS-1$
 			file = CTestPlugin.getFileInPlugin(new Path(
 			"resources/toolChainConversionProjects/testProjectConversion"));	//$NON-NLS-1$
-		} 
+		}
 
 		if (file == null) {
 			fail("Test project directory " 	//$NON-NLS-1$
@@ -484,6 +484,7 @@ public class MultiVersionSupportTests extends TestCase {
 		}
 
 		File projectZips[] = file.listFiles(new FileFilter() {
+			@Override
 			public boolean accept(File pathname) {
 				if (pathname.isDirectory())
 					return false;
@@ -526,17 +527,19 @@ public class MultiVersionSupportTests extends TestCase {
 		}
 		return project;
 	}
-	
+
 	private void doTestProjectUpdate(String projDirName, boolean updateProject) {
 		IOverwriteQuery queryALL = new IOverwriteQuery(){
+			@Override
 			public String queryOverwrite(String file) {
 				return ALL;
 			}};
 		IOverwriteQuery queryNOALL = new IOverwriteQuery(){
+			@Override
 			public String queryOverwrite(String file) {
 				return NO_ALL;
 			}};
-		
+
 		UpdateManagedProjectManager.setUpdateProjectQuery(updateProject ? queryALL : queryNOALL);
 
 		final IProject project = getCDT_TestProject(projDirName);
@@ -570,5 +573,5 @@ public class MultiVersionSupportTests extends TestCase {
 		}
 		ManagedBuildTestHelper.removeProject(project.getName());
 	}
-	
+
 }

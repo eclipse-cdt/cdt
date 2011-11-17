@@ -23,8 +23,8 @@ public class ManagedCommandLineInfo implements
 	private String outputPrefix;
 	private String outputName;
 	private String inputResources;
-	
-	public ManagedCommandLineInfo( String commandLine, String commandLinePattern, String commandName, String flags, String outputFlag, 
+
+	public ManagedCommandLineInfo( String commandLine, String commandLinePattern, String commandName, String flags, String outputFlag,
 			String outputPrefix, String outputName, String inputResources) {
 		this.commandLine = commandLine;
 		this.commandLinePattern = commandLinePattern;
@@ -39,6 +39,7 @@ public class ManagedCommandLineInfo implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo#getCommandLine()
 	 */
+	@Override
 	public String getCommandLine() {
 		return this.commandLine;
 	}
@@ -46,6 +47,7 @@ public class ManagedCommandLineInfo implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo#getCommandLinePattern()
 	 */
+	@Override
 	public String getCommandLinePattern() {
 		return this.commandLinePattern;
 	}
@@ -53,6 +55,7 @@ public class ManagedCommandLineInfo implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo#getCommandName()
 	 */
+	@Override
 	public String getCommandName() {
 		return this.commandName;
 	}
@@ -60,6 +63,7 @@ public class ManagedCommandLineInfo implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo#getFlags()
 	 */
+	@Override
 	public String getFlags() {
 		return this.flags;
 	}
@@ -67,6 +71,7 @@ public class ManagedCommandLineInfo implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo#getOutputFlag()
 	 */
+	@Override
 	public String getOutputFlag() {
 		return this.outputFlag;
 	}
@@ -74,6 +79,7 @@ public class ManagedCommandLineInfo implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo#getOutputPrefix()
 	 */
+	@Override
 	public String getOutputPrefix() {
 		return this.outputPrefix;
 	}
@@ -81,6 +87,7 @@ public class ManagedCommandLineInfo implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo#getOutputName()
 	 */
+	@Override
 	public String getOutput() {
 		return this.outputName;
 	}
@@ -88,6 +95,7 @@ public class ManagedCommandLineInfo implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo#getInputResources()
 	 */
+	@Override
 	public String getInputs() {
 		return this.inputResources;
 	}

@@ -28,6 +28,7 @@ public class ManagedBuildCommandLineInfo implements IManagedCommandLineInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo#getCommandLine()
 	 */
+	@Override
 	public String getCommandLine() {
 		return commandLine;
 	}
@@ -35,6 +36,7 @@ public class ManagedBuildCommandLineInfo implements IManagedCommandLineInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo#getCommandLinePattern()
 	 */
+	@Override
 	public String getCommandLinePattern() {
 		return commandLinePattern;
 	}
@@ -42,6 +44,7 @@ public class ManagedBuildCommandLineInfo implements IManagedCommandLineInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo#getCommandName()
 	 */
+	@Override
 	public String getCommandName() {
 		return commandName;
 	}
@@ -49,6 +52,7 @@ public class ManagedBuildCommandLineInfo implements IManagedCommandLineInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo#getFlags()
 	 */
+	@Override
 	public String getFlags() {
 		return commandFlags;
 	}
@@ -56,6 +60,7 @@ public class ManagedBuildCommandLineInfo implements IManagedCommandLineInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo#getInputs()
 	 */
+	@Override
 	public String getInputs() {
 		return commandInputs;
 	}
@@ -63,6 +68,7 @@ public class ManagedBuildCommandLineInfo implements IManagedCommandLineInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo#getOutput()
 	 */
+	@Override
 	public String getOutput() {
 		return commandOutput;
 	}
@@ -70,6 +76,7 @@ public class ManagedBuildCommandLineInfo implements IManagedCommandLineInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo#getOutputFlag()
 	 */
+	@Override
 	public String getOutputFlag() {
 		return commandOutputFlag;
 	}
@@ -77,6 +84,7 @@ public class ManagedBuildCommandLineInfo implements IManagedCommandLineInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo#getOutputPrefix()
 	 */
+	@Override
 	public String getOutputPrefix() {
 		return commandOutputPrefix;
 	}

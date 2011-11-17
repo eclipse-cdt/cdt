@@ -37,7 +37,7 @@ public class TestCProjectPlatformPage extends TestCase implements IWizardItemsLi
 	private CDTProjectWizard wizard;
 	private TestPage page;
 	private boolean currentState=false;
-	
+
 	@Override
 	protected void setUp() throws Exception {
 		MBSCustomPageManager.init();
@@ -46,7 +46,7 @@ public class TestCProjectPlatformPage extends TestCase implements IWizardItemsLi
 		page = new TestPage(wizard);
 		wizard.addPages();
 	}
-	
+
 	@Override
 	protected void tearDown() throws Exception {
 		page.dispose();
@@ -54,10 +54,10 @@ public class TestCProjectPlatformPage extends TestCase implements IWizardItemsLi
 		wizard = null;
 	}
 	ArrayUtil x;
-	
+
 	// testing methods
 	//////////////////
-	
+
 	/* Test the new page, set selection, create page lifecycle. */
 	public void testHandler1() throws Exception {
 		CWizardHandler h = new CWizardHandler(getShell(), "Head", "Name");
@@ -78,43 +78,43 @@ public class TestCProjectPlatformPage extends TestCase implements IWizardItemsLi
 		assertEquals(tcs.length, 33);
 		*/
 	}
-	
+
 	/* Test the new page, create page, set selection lifecycle. */
 	public void testProject() throws Exception {
-		
-		//IPath p = 
+
+		//IPath p =
 		ResourcesPlugin.getWorkspace().getRoot().getLocation();
 		/*
 		NewModelProjectWizard wiz = new CDTProjectWizard();
 		/*
 		String s = System.getenv("TEMP");
-		
+
 		System.out.println(s);
 		assertNotNull(wiz);
 		/*
 		IProject pr1 = wiz.createIProject("test1", null);
 		assertNotNull(pr1);
-		
+
 		IProject pr2 = wiz.createIProject("test2", p.append("test2"));
 		assertNotNull(pr2);
 		*/
 	}
-	
-	/* 
+
+	/*
 	 * Tests that setting the selection to a projectType thats not on the list,
 	 * is handled correctly.
 	 */
 	public void testSelectedProjectType3() throws Exception {
 	}
-	
-	
+
+
 	// helping methods and classes
 	//////////////////////////////
-	
+
 	private Shell getShell() {
 		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 	}
-	
+
 	class TestPage extends WizardPage implements IWizardItemsListListener{
 		TestPage(CDTProjectWizard wizard) throws Exception {
 			super(CDTMainWizardPage.class.getName());
@@ -125,27 +125,34 @@ public class TestCProjectPlatformPage extends TestCase implements IWizardItemsLi
 		IProjectType getSecondType() {
 			return null; //(IProjectType) projectTypes.get(1);
 		}
+		@Override
 		public boolean isCurrent() {
 			// TODO Auto-generated method stub
 			return false;
 		}
+		@Override
 		public void toolChainListChanged(int count) {
 			// TODO Auto-generated method stub
-			
+
 		}
+		@Override
 		public void createControl(Composite parent) {
 			// TODO Auto-generated method stub
-			
+
 		}
+		@Override
 		public List filterItems(List items) {
 			return items;
 		}
 	}
 
 	// methods of IToolChainListListener
+	@Override
 	public boolean isCurrent() { return currentState; }
+	@Override
 	public void toolChainListChanged(int count) {}
 
+	@Override
 	public List filterItems(List items) {
 		return items;
 	}

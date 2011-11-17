@@ -253,6 +253,7 @@ public class CommonBuilder extends ACBuilder {
 			return fullBuildNeeded;
 		}
 
+		@Override
 		public boolean visit(IResourceDelta delta) throws CoreException {
 			IResource resource = delta.getResource();
 			// If the project has changed, then a build is needed and we can stop
@@ -345,6 +346,7 @@ public class CommonBuilder extends ACBuilder {
 
 		}
 
+		@Override
 		public boolean visit(IResourceDelta delta) throws CoreException {
 
 			IResource rc = delta.getResource();
@@ -1111,6 +1113,7 @@ public class CommonBuilder extends ACBuilder {
 					try {
 						ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 
+							@Override
 							public void run(IProgressMonitor monitor) throws CoreException {
 								bInfo.fBuilder.getBuildRunner().invokeBuild(
 										CLEAN_BUILD,

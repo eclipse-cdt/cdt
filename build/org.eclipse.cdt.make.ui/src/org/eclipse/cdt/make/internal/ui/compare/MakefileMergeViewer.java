@@ -77,6 +77,7 @@ public class MakefileMergeViewer extends TextMergeViewer {
 		if (fPreferenceStore == null) {
 			fPreferenceStore= MakeUIPlugin.getDefault().getCombinedPreferenceStore();
 			fPreferenceChangeListener= new IPropertyChangeListener() {
+				@Override
 				public void propertyChange(PropertyChangeEvent event) {
 					handlePropertyChange(event);
 				}
@@ -96,15 +97,15 @@ public class MakefileMergeViewer extends TextMergeViewer {
 	}
 
 	protected void handlePropertyChange(PropertyChangeEvent event) {
-		
+
 		String key= event.getProperty();
-		
+
 		if (key.equals(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND)) {
 			if (!fUseSystemColors) {
 				RGB bg= createColor(fPreferenceStore, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND);
 				setBackgroundColor(bg);
 			}
-						
+
 		} else if (key.equals(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT)) {
 			fUseSystemColors= fPreferenceStore.getBoolean(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT);
 			if (fUseSystemColors) {

@@ -51,8 +51,8 @@ public class MakePropertyPage extends PropertyPage implements ICOptionContainer 
 	public void setContainer(IPreferencePageContainer preferencePageContainer) {
 	    super.setContainer(preferencePageContainer);
 	    fOptionBlock.setOptionContainer(this);
-	}	
-	
+	}
+
 	@Override
 	protected Control createContents(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
@@ -70,7 +70,7 @@ public class MakePropertyPage extends PropertyPage implements ICOptionContainer 
 
 	private void contentForCProject(Composite parent) {
 		fOptionBlock.createContents(parent);
-		//		WorkbenchHelp.setHelp(parent, ICMakeHelpContextIds.PROJECT_PROPERTY_PAGE);	
+		//		WorkbenchHelp.setHelp(parent, ICMakeHelpContextIds.PROJECT_PROPERTY_PAGE);
 	}
 
 	private void contentForClosedProject(Composite parent) {
@@ -84,6 +84,7 @@ public class MakePropertyPage extends PropertyPage implements ICOptionContainer 
 	@Override
 	public boolean performOk() {
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
+			@Override
 			public void run(IProgressMonitor monitor) {
 				fOptionBlock.performApply(monitor);
 			}
@@ -101,6 +102,7 @@ public class MakePropertyPage extends PropertyPage implements ICOptionContainer 
 		return true;
 	}
 
+	@Override
 	public IProject getProject() {
 		Object element = getElement();
 		if (element instanceof IProject) {
@@ -115,6 +117,7 @@ public class MakePropertyPage extends PropertyPage implements ICOptionContainer 
 		fOptionBlock.setVisible(visible);
 	}
 
+	@Override
 	public void updateContainer() {
 		fOptionBlock.update();
 		setValid(fOptionBlock.isValid());
@@ -133,6 +136,7 @@ public class MakePropertyPage extends PropertyPage implements ICOptionContainer 
 		return super.isValid();
 	}
 
+	@Override
 	public Preferences getPreferences() {
 		return MakeCorePlugin.getDefault().getPluginPreferences();
 	}

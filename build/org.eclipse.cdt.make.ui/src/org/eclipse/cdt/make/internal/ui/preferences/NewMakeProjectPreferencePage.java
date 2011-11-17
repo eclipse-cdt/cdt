@@ -29,12 +29,12 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
  * It is left here for compatibility reasons only.
  * The page is superseded by "New CDT Project Wizard/Makefile Project" page,
  * class {@code org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_NewCDTProject}.
- * 
+ *
  * @deprecated as of CDT 4.0.
  */
 @Deprecated
 public class NewMakeProjectPreferencePage extends PreferencePage implements IWorkbenchPreferencePage, ICOptionContainer {
-	
+
 	private MakeProjectOptionBlock fOptionBlock;
 
 	public NewMakeProjectPreferencePage() {
@@ -43,7 +43,7 @@ public class NewMakeProjectPreferencePage extends PreferencePage implements IWor
 		fOptionBlock = new MakeProjectOptionBlock();
 	}
 
-	
+
 	@Override
 	public void setContainer(IPreferencePageContainer preferencePageContainer) {
 		super.setContainer(preferencePageContainer);
@@ -63,7 +63,8 @@ public class NewMakeProjectPreferencePage extends PreferencePage implements IWor
 		return fOptionBlock.createContents(parent);
 	}
 
-	
+
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 
@@ -83,6 +84,7 @@ public class NewMakeProjectPreferencePage extends PreferencePage implements IWor
 		fOptionBlock.setVisible(visible);
 	}
 
+	@Override
 	public void updateContainer() {
 		fOptionBlock.update();
 		boolean ok = fOptionBlock.isValid();
@@ -95,6 +97,7 @@ public class NewMakeProjectPreferencePage extends PreferencePage implements IWor
 		setValid(ok);
 	}
 
+	@Override
 	public IProject getProject() {
 		return null;
 	}
@@ -114,6 +117,7 @@ public class NewMakeProjectPreferencePage extends PreferencePage implements IWor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionContainer#getPreferences()
 	 */
+	@Override
 	public Preferences getPreferences() {
 		return MakeCorePlugin.getDefault().getPluginPreferences();
 	}

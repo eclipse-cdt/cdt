@@ -13,8 +13,8 @@ package org.eclipse.cdt.make.internal.core.makefile;
 import java.util.ArrayList;
 
 import org.eclipse.cdt.make.core.makefile.ICommand;
-import org.eclipse.cdt.make.core.makefile.IRule;
 import org.eclipse.cdt.make.core.makefile.IDirective;
+import org.eclipse.cdt.make.core.makefile.IRule;
 import org.eclipse.cdt.make.core.makefile.ITarget;
 
 public abstract class Rule extends Parent implements IRule {
@@ -31,6 +31,7 @@ public abstract class Rule extends Parent implements IRule {
 		addDirectives(cmds);
 	}
 
+	@Override
 	public ICommand[] getCommands() {
 		IDirective[] directives = getDirectives();
 		ArrayList<IDirective> cmds = new ArrayList<IDirective>(directives.length);
@@ -42,6 +43,7 @@ public abstract class Rule extends Parent implements IRule {
 		return cmds.toArray(new ICommand[0]);
 	}
 
+	@Override
 	public ITarget getTarget() {
 		return target;
 	}

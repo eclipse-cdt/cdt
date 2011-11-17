@@ -39,7 +39,7 @@ import org.eclipse.swt.widgets.Composite;
 
 /**
  * Fremework for loading profile option pages
- * 
+ *
  * @author vhirsl
  */
 public abstract class AbstractDiscoveryOptionsBlock extends AbstractCOptionPage {
@@ -57,12 +57,12 @@ public abstract class AbstractDiscoveryOptionsBlock extends AbstractCOptionPage 
     private static final String ERROR_MESSAGE = "ScannerConfigOptionsDialog.error.message"; //$NON-NLS-1$
     private static final String PROFILE_PAGE = "profilePage"; //$NON-NLS-1$
     private static final String PROFILE_ID = "profileId"; //$NON-NLS-1$
-    
+
     private Preferences fPrefs;
     private IScannerConfigBuilderInfo2 fBuildInfo;
     private boolean fInitialized = false;
     private String fPersistedProfileId = null;
-    
+
     private Map<String, DiscoveryProfilePageConfiguration> fProfilePageMap = null;
 
     // Composite parent provided by the block.
@@ -124,19 +124,19 @@ public abstract class AbstractDiscoveryOptionsBlock extends AbstractCOptionPage 
         }
         return rc;
     }
-    
+
     public boolean isProfileDifferentThenPersisted() {
-        return (fPersistedProfileId != null && 
+        return (fPersistedProfileId != null &&
                 !fPersistedProfileId.equals(getBuildInfo().getSelectedProfileId()));
     }
-    
+
     public void updatePersistedProfile() {
         fPersistedProfileId = getBuildInfo().getSelectedProfileId();
     }
-    
+
     /**
      * Create a profile page only on request
-     * 
+     *
      * @author vhirsl
      */
     protected static class DiscoveryProfilePageConfiguration {
@@ -170,11 +170,11 @@ public abstract class AbstractDiscoveryOptionsBlock extends AbstractCOptionPage 
     }
 
     /**
-     * 
+     *
      */
     private void initializeProfilePageMap() {
         fProfilePageMap = new HashMap<String, DiscoveryProfilePageConfiguration>(5);
-        
+
         IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(MakeUIPlugin.getPluginId(), "DiscoveryProfilePage"); //$NON-NLS-1$
         IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
         for (int i = 0; i < infos.length; i++) {
@@ -191,7 +191,7 @@ public abstract class AbstractDiscoveryOptionsBlock extends AbstractCOptionPage 
     @Override
 	public void setContainer(ICOptionContainer container) {
         super.setContainer(container);
-        
+
         fPrefs = getContainer().getPreferences();
         IProject project = getContainer().getProject();
 
@@ -200,7 +200,7 @@ public abstract class AbstractDiscoveryOptionsBlock extends AbstractCOptionPage 
             try {
                 fBuildInfo = ScannerConfigProfileManager.createScannerConfigBuildInfo2(project);
             } catch (CoreException e) {
-                // missing builder information (builder disabled or legacy project) 
+                // missing builder information (builder disabled or legacy project)
                 fInitialized = false;
                 fBuildInfo = null;
             }
@@ -245,7 +245,7 @@ public abstract class AbstractDiscoveryOptionsBlock extends AbstractCOptionPage 
             fBuildInfo = ScannerConfigProfileManager.createScannerConfigBuildInfo2(fPrefs, true);
         }
     }
-    
+
     protected Composite getCompositeParent() {
         return fCompositeParent;
     }
@@ -305,7 +305,7 @@ public abstract class AbstractDiscoveryOptionsBlock extends AbstractCOptionPage 
 	public boolean isValid() {
         return (getCurrentPage() == null) ? true : getCurrentPage().isValid();
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.IDialogPage#getErrorMessage()
      */
@@ -313,9 +313,9 @@ public abstract class AbstractDiscoveryOptionsBlock extends AbstractCOptionPage 
 	public String getErrorMessage() {
         return getCurrentPage().getErrorMessage();
     }
-    
+
     protected AbstractDiscoveryPage getDiscoveryProfilePage(String profileId) {
-        DiscoveryProfilePageConfiguration configElement = 
+        DiscoveryProfilePageConfiguration configElement =
                 fProfilePageMap.get(profileId);
         if (configElement != null) {
             try {
@@ -327,14 +327,14 @@ public abstract class AbstractDiscoveryOptionsBlock extends AbstractCOptionPage 
     }
 
     protected String getDiscoveryProfileName(String profileId) {
-        DiscoveryProfilePageConfiguration configElement = 
+        DiscoveryProfilePageConfiguration configElement =
                 fProfilePageMap.get(profileId);
         if (configElement != null) {
             return configElement.getName();
         }
         return null;
     }
-    
+
     protected String getDiscoveryProfileId(String profileName) {
         Set<String> profileIds = fProfilePageMap.keySet();
         for (String profileId : profileIds) {
@@ -345,21 +345,22 @@ public abstract class AbstractDiscoveryOptionsBlock extends AbstractCOptionPage 
         }
         return null;
     }
-    
+
     protected List<String> getDiscoveryProfileIdList() {
         return new ArrayList<String>(fProfilePageMap.keySet());
     }
-    
+
     protected abstract String getCurrentProfileId();
 
     /**
-     * 
+     *
      */
     public void callPerformApply() {
         try {
             new ProgressMonitorDialog(getShell()).run(false, false, new IRunnableWithProgress() {
-    
-                public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+
+                @Override
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
                     try {
                         performApply(monitor);
                     }
@@ -367,7 +368,7 @@ public abstract class AbstractDiscoveryOptionsBlock extends AbstractCOptionPage 
                         throw new InvocationTargetException(e);
                     }
                 }
-                
+
             });
         } catch (InvocationTargetException e) {
             String title = MakeUIPlugin.getResourceString(ERROR_TITLE);

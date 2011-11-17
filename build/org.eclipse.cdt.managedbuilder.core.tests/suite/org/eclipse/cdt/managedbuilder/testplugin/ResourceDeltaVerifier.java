@@ -29,12 +29,12 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 /**
- * Based on org.eclipse.core.tests.resources.ResourceDeltaVerifier with 
+ * Based on org.eclipse.core.tests.resources.ResourceDeltaVerifier with
  * additional support for ignoring changes in certain resources.
- * 
+ *
  * Verifies the state of an <code>IResourceDelta</code> by comparing
  * it with a client's expectations.  The delta is considered valid
- * if it contains exactly the set of changes expected by the client, 
+ * if it contains exactly the set of changes expected by the client,
  * and parents of those changes (having ignore filtered resources).
  *
  * <p>Example usage:
@@ -121,7 +121,7 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 	 * verifications.  When a getMessage() or isDeltaValid() method is
 	 * called, the verification completes, and the state becomes
 	 * VERIFICATION_COMPLETE.  While in this state, any number of
-	 * getMessage() and isDeltaValid() methods can be called.  
+	 * getMessage() and isDeltaValid() methods can be called.
 	 * While in the third state, any call to addExpectedChange()
 	 * resets the verifier and puts it back in its RECEIVING_INPUTS state.
 	 */
@@ -819,6 +819,7 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 	/**
 	 * Part of the <code>IResourceChangedListener</code> interface.
 	 */
+	@Override
 	public void resourceChanged(IResourceChangeEvent e) {
 		fMessage.append("Resource Changed Delta\n");
 		verifyDelta(e.getDelta());

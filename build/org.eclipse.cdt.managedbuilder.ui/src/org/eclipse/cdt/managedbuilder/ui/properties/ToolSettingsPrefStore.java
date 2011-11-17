@@ -43,10 +43,10 @@ public class ToolSettingsPrefStore implements IPreferenceStore {
 	private final static String EMPTY_STRING = new String();
 
 	static ToolSettingsPrefStore store = null;
-	
+
 	public final static String ALL_OPTIONS_ID = EMPTY_STRING;
 	public final static String COMMAND_LINE_SUFFIX = "org.eclipse.commandLinePatternId"; //$NON-NLS-1$
-	private IResourceInfo rcInfo = null; 
+	private IResourceInfo rcInfo = null;
 	private IOptionCategory optCategory;
 	private ToolListElement selectedElement;
 	private ListenerList listenerList;
@@ -57,7 +57,7 @@ public class ToolSettingsPrefStore implements IPreferenceStore {
 			store = new ToolSettingsPrefStore();
 		return store;
 	}
-	
+
 	public void setSelection(ICResourceDescription rd, ToolListElement element, IOptionCategory category){
 		selectedElement = element;
 		optCategory = category;
@@ -67,7 +67,7 @@ public class ToolSettingsPrefStore implements IPreferenceStore {
 	public IConfiguration getSelectedConfig(){
 		return rcInfo.getParent();
 	}
-	
+
 	public String getOptionId(IOption option){
 		IOption extOption = getExtensionOption(option);
 		if(extOption != null)
@@ -76,18 +76,20 @@ public class ToolSettingsPrefStore implements IPreferenceStore {
 	}
 
 	private static IOption getExtensionOption(IOption option){
-		for(;option != null && (!option.isExtensionElement() 
+		for(;option != null && (!option.isExtensionElement()
 				|| ((Option)option).isAdjustedExtension()
 				|| ((Option)option).wasOptRef());
 			option = option.getSuperClass()){}
-			
+
 		return option;
 	}
-	
+
+	@Override
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
 		listenerList.add(listener);
 	}
 
+	@Override
 	public boolean contains(String name) {
 		if(optCategory instanceof Tool){
 			if(optCategory.getId().equals(name))
@@ -102,13 +104,14 @@ public class ToolSettingsPrefStore implements IPreferenceStore {
 		return false;
 	}
 
+	@Override
 	public void firePropertyChangeEvent(String name, Object oldValue,
 			Object newValue) {
 		Object[] listeners = listenerList.getListeners();
-		if (listeners.length > 0 && (oldValue == null || !oldValue.equals(newValue))) 
+		if (listeners.length > 0 && (oldValue == null || !oldValue.equals(newValue)))
 		{
 			PropertyChangeEvent pe = new PropertyChangeEvent(this, name, oldValue, newValue);
-			for (int i = 0; i < listeners.length; ++i) 
+			for (int i = 0; i < listeners.length; ++i)
 			{
 				IPropertyChangeListener l = (IPropertyChangeListener)listeners[i];
 				l.propertyChange( pe );
@@ -116,6 +119,7 @@ public class ToolSettingsPrefStore implements IPreferenceStore {
 		}
 	}
 
+	@Override
 	public boolean getBoolean(String name) {
 		Object val = getOptionValue(name);
 		if(val instanceof Boolean)
@@ -123,26 +127,37 @@ public class ToolSettingsPrefStore implements IPreferenceStore {
 		return getDefaultBoolean(name);
 	}
 
+	@Override
 	public boolean getDefaultBoolean(String name) {	return false; }
+	@Override
 	public double getDefaultDouble(String name) { return 0; }
+	@Override
 	public float getDefaultFloat(String name) { return 0; }
+	@Override
 	public int getDefaultInt(String name) {	return 0; }
+	@Override
 	public long getDefaultLong(String name) { return 0; }
+	@Override
 	public String getDefaultString(String name) { return EMPTY_STRING; }
 
+	@Override
 	public double getDouble(String name) {
 		return getDefaultDouble(name);
 	}
+	@Override
 	public float getFloat(String name) {
 		return getDefaultFloat(name);
 	}
+	@Override
 	public int getInt(String name) {
 		return getDefaultInt(name);
 	}
+	@Override
 	public long getLong(String name) {
 		return getDefaultLong(name);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public String getString(String name) {
 		if(optCategory instanceof Tool){
@@ -156,7 +171,7 @@ public class ToolSettingsPrefStore implements IPreferenceStore {
 				String[] flags = tool.getToolCommandFlags(
 						null,
 						null,
-						macroSubstitutor, 
+						macroSubstitutor,
 						obtainMacroProvider());
 				IManagedCommandLineGenerator cmdLGen = tool.getCommandLineGenerator();
 				IManagedCommandLineInfo cmdLInfo = cmdLGen.generateCommandLineInfo(tool,
@@ -171,24 +186,24 @@ public class ToolSettingsPrefStore implements IPreferenceStore {
 			else if(val instanceof Collection)
 				return listToString((String[])((Collection)val).toArray(new String[0]));
 		}
-			
+
 		return getDefaultString(name);
 	}
-	
+
 	public BuildMacroProvider obtainMacroProvider(){
 		return (BuildMacroProvider)ManagedBuildManager.getBuildMacroProvider();
 	}
-	
+
 	public static String listToString(String[] items) {
 		return listToString(items,DEFAULT_SEPERATOR);
 	}
 
-	
+
 	protected Object getOptionValue(String name){
 		Object option[] = getOption(name);
 		if(option != null){
 			try {
-				IOption opt = (IOption)option[1]; 
+				IOption opt = (IOption)option[1];
 				Object val = opt.getValue();
 				if(opt.getValueType() == IOption.ENUMERATED && val instanceof String)
 					val = opt.getEnumName((String)val);
@@ -198,25 +213,25 @@ public class ToolSettingsPrefStore implements IPreferenceStore {
 		}
 		return null;
 	}
-	
+
 	public Object[] getOption(String id){
-		if (selectedElement == null) 
+		if (selectedElement == null)
 			return null;
-		
+
 		IHoldsOptions selectedHolder = selectedElement.getHoldOptions();
-		if (selectedHolder == null) 
+		if (selectedHolder == null)
 			selectedHolder = selectedElement.getTool();
 		Object options[][] = optCategory.getOptions(rcInfo, selectedHolder);
 		if (options == null)
 			return null;
-		
+
 		for(int i = 0; i < options.length; i++){
 			IHoldsOptions ho = (IHoldsOptions)options[i][0];
-			if(ho == null) 
+			if(ho == null)
 				break;
-			
+
 			IOption option = (IOption)options[i][1];
-			
+
 			if( ( option.getId().equals(id))
 					|| ((!option.isExtensionElement() || ((Option)option).isAdjustedExtension() || ((Option)option).wasOptRef())
 						&& option.getSuperClass() != null
@@ -224,29 +239,45 @@ public class ToolSettingsPrefStore implements IPreferenceStore {
 				return options[i];
 		}
 		return null;
-		
+
 	}
 
+	@Override
 	public boolean isDefault(String name) {	return false;}
+	@Override
 	public boolean needsSaving() {	return dirtyFlag;}
+	@Override
 	public void putValue(String name, String value) {setValue(name,value);}
 
+	@Override
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 		listenerList.remove(listener);
 	}
+	@Override
 	public void setDefault(String name, double value) {}
+	@Override
 	public void setDefault(String name, float value) {}
+	@Override
 	public void setDefault(String name, int value) {}
+	@Override
 	public void setDefault(String name, long value) {}
+	@Override
 	public void setDefault(String name, String defaultObject) {}
+	@Override
 	public void setDefault(String name, boolean value) {}
+	@Override
 	public void setToDefault(String name) {}
 	protected void setDirty( boolean isDirty )	{dirtyFlag = isDirty;}
+	@Override
 	public void setValue(String name, double value) {}
+	@Override
 	public void setValue(String name, float value) {}
+	@Override
 	public void setValue(String name, int value) {}
+	@Override
 	public void setValue(String name, long value) {}
 
+	@Override
 	public void setValue(String name, String value) {
 		if(optCategory instanceof Tool){
 			if(optCategory.getId().equals(name))
@@ -257,10 +288,11 @@ public class ToolSettingsPrefStore implements IPreferenceStore {
 			setOptionValue(name,value);
 	}
 
+	@Override
 	public void setValue(String name, boolean value) {
 		setOptionValue(name,new Boolean(value));
 	}
-	
+
 	protected void setOptionValue(String name, Object value){
 		Object opt[] = getOption(name);
 		if(opt != null){
@@ -284,7 +316,7 @@ public class ToolSettingsPrefStore implements IPreferenceStore {
 						if(value instanceof String){
 							String val = (String)value;
 							String enumId = option.getEnumeratedId(val);
-							newOption = rcInfo.setOption(holder, option, 
+							newOption = rcInfo.setOption(holder, option,
 									(enumId != null && enumId.length() > 0) ? enumId : val);
 						}
 						break;
@@ -311,7 +343,7 @@ public class ToolSettingsPrefStore implements IPreferenceStore {
 					default:
 						break;
 				}
-				
+
 				if(newOption != option){
 					//TODO: ???
 				}
@@ -319,7 +351,7 @@ public class ToolSettingsPrefStore implements IPreferenceStore {
 			}
 		}
 	}
-	
+
 	public static String[] parseString(String stringList) {
 		if (stringList == null || stringList.length() == 0) {
 			return new String[0];
@@ -327,10 +359,10 @@ public class ToolSettingsPrefStore implements IPreferenceStore {
 			return stringList.split(DEFAULT_SEPERATOR);
 		}
 	}
-	
+
 	public static String listToString(String items[], String separator){
 		StringBuffer path = new StringBuffer(""); //$NON-NLS-1$
-		
+
 		for (int i = 0; i < items.length; i++) {
 			path.append(items[i]);
 			if (i < (items.length - 1)) {
@@ -343,15 +375,15 @@ public class ToolSettingsPrefStore implements IPreferenceStore {
 	private IResourceInfo get(ICResourceDescription cfgd) {
 		IConfiguration cfg = ManagedBuildManager.getConfigurationForDescription(cfgd.getConfiguration());
 		if (cfgd.getType() == ICSettingBase.SETTING_PROJECT ||
-			cfgd.getType() == ICSettingBase.SETTING_CONFIGURATION) 
+			cfgd.getType() == ICSettingBase.SETTING_CONFIGURATION)
 			return cfg.getRootFolderInfo();
-		
+
 		IPath p = cfgd.getPath();
 		IResourceInfo ri = cfg.getResourceInfo(p, true);
 		if (ri != null && p.equals(ri.getPath())) {
 			return ri;
 		}
-		
+
 		if (cfgd.getType() == ICSettingBase.SETTING_FILE) {
 			ri = cfg.createFileInfo(p);
 		} else if (cfgd.getType() == ICSettingBase.SETTING_FOLDER) {
@@ -359,5 +391,5 @@ public class ToolSettingsPrefStore implements IPreferenceStore {
 		}
 		return ri;
 	}
-	
+
 }

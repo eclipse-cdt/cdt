@@ -17,9 +17,9 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 
 /**
- * This is the dependency calculator used by the makefile generation system when 
+ * This is the dependency calculator used by the makefile generation system when
  * nothing is defined for a tool.
- *  
+ *
  * @since 2.0
  */
 public class DefaultNoDependencyCalculator implements IManagedDependencyGenerator {
@@ -27,6 +27,7 @@ public class DefaultNoDependencyCalculator implements IManagedDependencyGenerato
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderDependencyCalculator#findDependencies(org.eclipse.core.resources.IResource, org.eclipse.core.resources.IProject)
 	 */
+	@Override
 	public IResource[] findDependencies(IResource resource, IProject project) {
 		// Never answers any dependencies
 		return null;
@@ -35,6 +36,7 @@ public class DefaultNoDependencyCalculator implements IManagedDependencyGenerato
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderDependencyCalculator#getCalculatorType()
 	 */
+	@Override
 	public int getCalculatorType() {
 		return TYPE_NODEPS;
 	}
@@ -42,6 +44,7 @@ public class DefaultNoDependencyCalculator implements IManagedDependencyGenerato
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderDependencyCalculator#getDependencyCommand(org.eclipse.core.resources.IResource)
 	 */
+	@Override
 	public String getDependencyCommand(IResource resource, IManagedBuildInfo info) {
 		// Never answers this call with an actual value
 		return null;

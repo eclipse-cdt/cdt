@@ -112,6 +112,7 @@ public class TargetBuild {
 						final IMakeTarget target = targets[i];
 						IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 
+							@Override
 							public void run(IProgressMonitor monitor) throws CoreException {
 								target.build(new SubProgressMonitor(monitor, 1));
 							}
@@ -126,7 +127,7 @@ public class TargetBuild {
 				}
 				return Status.OK_STATUS;
 			}
-			
+
 			@Override
 			public boolean belongsTo(Object family) {
 				return ResourcesPlugin.FAMILY_MANUAL_BUILD == family;

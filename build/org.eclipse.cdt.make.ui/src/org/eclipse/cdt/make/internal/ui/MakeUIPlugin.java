@@ -76,7 +76,7 @@ public class MakeUIPlugin extends AbstractUIPlugin {
 	public static String getPluginId() {
 		return getDefault().getBundle().getSymbolicName();
 	}
- 
+
 	/**
 	 * Returns the workspace instance.
 	 */
@@ -109,7 +109,7 @@ public class MakeUIPlugin extends AbstractUIPlugin {
 		}
 		return null;
 	}
- 
+
 	/**
 	 * Returns the string from the plugin's resource bundle,
 	 * or 'key' if not found.
@@ -179,6 +179,7 @@ public class MakeUIPlugin extends AbstractUIPlugin {
 			display = Display.getDefault();
 		final IStatus fstatus = status;
 		display.asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				ErrorDialog.openError(null, title, null, fstatus);
 			}
@@ -227,7 +228,7 @@ public class MakeUIPlugin extends AbstractUIPlugin {
 				message = null;
 			}
 		} else {
-			status = new Status(IStatus.ERROR, MakeUIPlugin.getUniqueIdentifier(), -1, "Internal Error: ", t); //$NON-NLS-1$	
+			status = new Status(IStatus.ERROR, MakeUIPlugin.getUniqueIdentifier(), -1, "Internal Error: ", t); //$NON-NLS-1$
 		}
 		ErrorDialog.openError(shell, title, message, status);
 	}
@@ -257,7 +258,7 @@ public class MakeUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns a combined preference store, this store is read-only.
-	 * 
+	 *
 	 * @return the combined preference store
 	 */
 	public IPreferenceStore getCombinedPreferenceStore() {
@@ -268,7 +269,7 @@ public class MakeUIPlugin extends AbstractUIPlugin {
 		return chainedStore;
 	}
 
-	
+
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);

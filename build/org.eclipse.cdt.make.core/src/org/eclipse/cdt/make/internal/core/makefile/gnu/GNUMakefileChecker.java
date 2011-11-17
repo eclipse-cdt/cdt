@@ -38,6 +38,7 @@ public class GNUMakefileChecker extends ACBuilder {
 			this.monitor = monitor;
 		}
 
+		@Override
 		public boolean visit(IResourceDelta delta) throws CoreException {
 			IResource resource = delta.getResource();
 			if (resource != null && resource.getProject() == getProject()) {

@@ -87,29 +87,31 @@ public class ProjectConverter implements ICProjectConverter {
 	private final static String NEW_MAKE_TARGET_BUIDER_ID = "org.eclipse.cdt.build.MakeTargetBuilder"; //$NON-NLS-1$
 
 	private static ResourcePropertyHolder PROPS = new ResourcePropertyHolder(true);
-	
+
 	private static String CONVERSION_FAILED_MSG_ID = "conversionFailed"; //$NON-NLS-1$
-	
+
+	@Override
 	public boolean canConvertProject(IProject project, String oldOwnerId, ICProjectDescription oldDes) {
 		try {
 			if(oldOwnerId == null || oldDes == null)
 				return false;
-		
+
 			IProjectDescription eDes = project.getDescription();
 			Set<String> natureSet = new HashSet<String>(Arrays.asList(eDes.getNatureIds()));
 			if(natureSet.contains(OLD_MAKE_NATURE_ID))
 				return true;
-			
+
 			if(natureSet.contains(OLD_MNG_NATURE_ID))
 				return true;
-			
+
 		} catch (CoreException e) {
 		}
-		
+
 		return false;
 //		return ManagedBuildManager.canGetBuildInfo(project);
 	}
 
+	@Override
 	public ICProjectDescription convertProject(IProject project, IProjectDescription eDes, String oldOwnerId, ICProjectDescription oldDes)
 			throws CoreException {
 		Set<String> natureSet = new HashSet<String>(Arrays.asList(eDes.getNatureIds()));
@@ -149,7 +151,7 @@ public class ProjectConverter implements ICProjectConverter {
 				displayInfo(project, CONVERSION_FAILED_MSG_ID, DataProviderMessages.getString("ProjectConverter.10"), DataProviderMessages.getFormattedString("ProjectConverter.11", new String[]{project.getName(), e.getLocalizedMessage()})); //$NON-NLS-1$ //$NON-NLS-2$
 				throw e;
 			}
-		} 
+		}
 
 		if(newDes == null || !newDes.isValid() || newDes.getConfigurations().length == 0){
 			newDes = null;
@@ -159,10 +161,10 @@ public class ProjectConverter implements ICProjectConverter {
 				changeEDes = true;
 			if(natureSet.remove(OLD_DISCOVERY_NATURE_ID))
 				changeEDes = true;
-				
+
 			if(changeEDes)
 				eDes.setNatureIds(natureSet.toArray(new String[natureSet.size()]));
-			
+
 			changeEDes = false;
 			ICommand[] cmds = eDes.getBuildSpec();
 			List<ICommand> list = new ArrayList<ICommand>(Arrays.asList(cmds));
@@ -179,7 +181,7 @@ public class ProjectConverter implements ICProjectConverter {
 					changeEDes = true;
 				}
 			}
-			
+
 			ICConfigurationDescription cfgDess[] = newDes.getConfigurations();
 			for(int i = 0; i < cfgDess.length; i++){
 				ICConfigurationDescription cfgDes = cfgDess[i];
@@ -188,29 +190,29 @@ public class ProjectConverter implements ICProjectConverter {
 
 				if(makeBuilderCmd != null)
 					loadBuilderSettings(cfg, makeBuilderCmd);
-				
+
 //				loadDiscoveryOptions(cfgDes, cfg);
-				
+
 				loadPathEntryInfo(project, cfgDes, data);
-				
+
 				if(binErrParserIds != null){
 					data.getTargetPlatformData().setBinaryParserIds(binErrParserIds);
 					cfgDes.get(OLD_BINARY_PARSER_ID);
 //					ICConfigExtensionReference refs[] = cfgDes.get(OLD_BINARY_PARSER_ID);
 //					String ids[] = idsFromRefs(refs);
 //					data.getTargetPlatformData().setBinaryParserIds(ids);
-//					
+//
 //					refs = cfgDes.get(OLD_ERROR_PARSER_ID);
 //					ids = idsFromRefs(refs);
 //					data.getBuildData().setErrorParserIDs(ids);
 				}
-				
+
 				try {
 					ConfigurationDataProvider.writeConfiguration(cfgDes, data);
 				} catch (CoreException e){
 				}
 			}
-			
+
 //			if(convertMakeTargetInfo){
 //				try {
 //					convertMakeTargetInfo(project, newDes, null);
@@ -218,15 +220,15 @@ public class ProjectConverter implements ICProjectConverter {
 //					ManagedBuilderCorePlugin.log(e);
 //				}
 //			}
-			
+
 			if(changeEDes){
 				cmds = list.toArray(new ICommand[list.size()]);
 				eDes.setBuildSpec(cmds);
 			}
-			
+
 			info.setValid(true);
-			
-			
+
+
 			try {
 				ManagedBuildManager.setLoaddedBuildInfo(project, info);
 			} catch (Exception e) {
@@ -235,21 +237,21 @@ public class ProjectConverter implements ICProjectConverter {
 
 		return newDes;
 	}
-	
+
 	static void displayInfo(IProject proj, String id, String title, String message){
 		if(PROPS.getProperty(proj, id) == null){
 			openInformation(proj, id, title, message, false);
 			PROPS.setProperty(proj, id, Boolean.TRUE);
 		}
 	}
-	
+
 	public static boolean getBooleanFromQueryAnswer(String answer){
 		if(IOverwriteQuery.ALL.equalsIgnoreCase(answer) ||
 				IOverwriteQuery.YES.equalsIgnoreCase(answer))
 			return true;
 		return false;
 	}
-	
+
 	static public boolean openQuestion(final IResource rc, final String id, final String title, final String message, IOverwriteQuery query, final boolean multiple){
 		if(query != null)
 			return getBooleanFromQueryAnswer(query.queryOverwrite(message));
@@ -263,6 +265,7 @@ public class ProjectConverter implements ICProjectConverter {
 		final Shell shell = window.getShell();
 		final boolean [] answer = new boolean[1];
 		shell.getDisplay().syncExec(new Runnable() {
+			@Override
 			public void run() {
 				Object ob = PROPS.getProperty(rc, id);
 				if(multiple || ob == null){
@@ -273,10 +276,10 @@ public class ProjectConverter implements ICProjectConverter {
 					answer[0] = ((Boolean)ob).booleanValue();
 				}
 			}
-		});	
+		});
 		return answer[0];
 	}
-	
+
 	static private void openInformation(final IResource rc, final String id, final String title, final String message, final boolean multiple){
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if(window == null){
@@ -286,32 +289,35 @@ public class ProjectConverter implements ICProjectConverter {
 
 		final Shell shell = window.getShell();
 		shell.getDisplay().syncExec(new Runnable() {
+			@Override
 			public void run() {
 				if(multiple || PROPS.getProperty(rc, id) == null){
 					PROPS.setProperty(rc, id, Boolean.TRUE);
 					MessageDialog.openInformation(shell,title,message);
 				}
 			}
-		});	
+		});
 	}
-	
+
 	private static void convertMakeTargetInfo(final IProject project, ICProjectDescription des, IProgressMonitor monitor) throws CoreException{
 		if(monitor == null)
 			monitor = new NullProgressMonitor();
-		
+
 		CCorePlugin.getDefault().getCDescriptorManager().runDescriptorOperation(project, des, new ICDescriptorOperation(){
 
+			@Override
 			public void execute(ICDescriptor descriptor,
 					IProgressMonitor monitor) throws CoreException {
 				final IMakeTargetManager mngr = MakeCorePlugin.getDefault().getTargetManager();
-				
+
 				project.accept(new IResourceVisitor(){
 
+					@Override
 					public boolean visit(IResource resource)
 							throws CoreException {
 						if(resource.getType() == IResource.FILE)
 							return false;
-						
+
 						try {
 							IContainer cr = (IContainer)resource;
 							IMakeTarget targets[] = mngr.getTargets(cr);
@@ -319,7 +325,7 @@ public class ProjectConverter implements ICProjectConverter {
 								IMakeTarget t = targets[i];
 								if(!OLD_MAKE_TARGET_BUIDER_ID.equals(t.getTargetBuilderID()))
 									continue;
-								
+
 								IMakeTarget newT = mngr.createTarget(project, t.getName(), NEW_MAKE_TARGET_BUIDER_ID);
 								copySettings(t, newT);
 								mngr.removeTarget(t);
@@ -330,13 +336,13 @@ public class ProjectConverter implements ICProjectConverter {
 						}
 						return true;
 					}
-					
+
 				});
 			}
-			
+
 		}, monitor);
 	}
-	
+
 	private static void copySettings(IMakeTarget fromTarget, IMakeTarget toTarget) throws CoreException{
 			toTarget.setAppendEnvironment(fromTarget.appendEnvironment());
 			toTarget.setAppendProjectEnvironment(fromTarget.appendProjectEnvironment());
@@ -345,23 +351,23 @@ public class ProjectConverter implements ICProjectConverter {
 			toTarget.setBuildAttribute(IMakeTarget.BUILD_COMMAND, fromTarget.getBuildAttribute(IMakeTarget.BUILD_COMMAND, null));
 			toTarget.setBuildAttribute(IMakeTarget.BUILD_ARGUMENTS, fromTarget.getBuildAttribute(IMakeTarget.BUILD_ARGUMENTS, null));
 			toTarget.setBuildAttribute(IMakeTarget.BUILD_TARGET, fromTarget.getBuildAttribute(IMakeTarget.BUILD_TARGET, null));
-			
+
 			Map<String, String> fromMap = fromTarget.getEnvironment();
 			if(fromMap != null)
 				toTarget.setEnvironment(new HashMap<String, String>(fromMap));
-			
+
 //			toTarget.setErrorParsers(fromTarget.getErrorParsers());
-			
+
 			toTarget.setRunAllBuilders(fromTarget.runAllBuilders());
-			
+
 			toTarget.setStopOnError(fromTarget.isStopOnError());
-			
+
 			toTarget.setUseDefaultBuildCmd(fromTarget.isDefaultBuildCmd());
-			
+
 			toTarget.setContainer(fromTarget.getContainer());
 
 	}
-	
+
 	private void loadPathEntryInfo(IProject project, ICConfigurationDescription des, CConfigurationData data){
 		try {
 			ICStorageElement el = des.getStorage(OLD_PATH_ENTRY_ID, false);
@@ -376,7 +382,7 @@ public class ProjectConverter implements ICProjectConverter {
 							continue;
 						}
 					}
-					
+
 					if(list.size() != 0){
 						PathEntryTranslator tr = new PathEntryTranslator(project, data);
 						entries = list.toArray(new IPathEntry[list.size()]);
@@ -387,9 +393,9 @@ public class ProjectConverter implements ICProjectConverter {
 							ICExternalSetting setting;
 							for(int i = 0; i < extSettings.length; i++){
 								setting = extSettings[i];
-								des.createExternalSetting(setting.getCompatibleLanguageIds(), 
-										setting.getCompatibleContentTypeIds(), 
-										setting.getCompatibleExtensions(), 
+								des.createExternalSetting(setting.getCompatibleLanguageIds(),
+										setting.getCompatibleContentTypeIds(),
+										setting.getCompatibleExtensions(),
 										setting.getEntries());
 							}
 						}
@@ -410,7 +416,7 @@ public class ProjectConverter implements ICProjectConverter {
 			ManagedBuilderCorePlugin.log(e);
 		}
 	}
-	
+
 //	private String[] idsFromRefs(ICConfigExtensionReference refs[]){
 //		String ids[] = new String[refs.length];
 //		for(int i = 0; i < ids.length; i++){
@@ -418,7 +424,7 @@ public class ProjectConverter implements ICProjectConverter {
 //		}
 //		return ids;
 //	}
-	
+
 //	private void loadDiscoveryOptions(ICConfigurationDescription des, IConfiguration cfg){
 //		try {
 //			ICStorageElement discoveryStorage = des.getStorage(OLD_DISCOVERY_MODULE_ID, false);
@@ -432,10 +438,10 @@ public class ProjectConverter implements ICProjectConverter {
 //		} catch (CoreException e) {
 //			ManagedBuilderCorePlugin.log(e);
 //		}
-//		
-//		
+//
+//
 //	}
-	
+
 	private void loadBuilderSettings(IConfiguration cfg, ICommand cmd){
 		Builder builder = (Builder)BuilderFactory.createBuilderFromCommand(cfg, cmd);
 		if(builder.getCommand() != null && builder.getCommand().length() != 0){
@@ -447,7 +453,7 @@ public class ProjectConverter implements ICProjectConverter {
 			}
 		}
 	}
-	
+
 	private static boolean convertOldStdMakeToNewStyle(final IProject project, boolean checkOnly, IProgressMonitor monitor, boolean throwExceptions) throws CoreException {
 		try {
 //			ICDescriptor dr = CCorePlugin.getDefault().getCProjectDescription(project, false);
@@ -466,9 +472,9 @@ public class ProjectConverter implements ICProjectConverter {
 //							DataProviderMessages.getString("ProjectConverter.1") + dr.getProjectOwner().getID())); //$NON-NLS-1$
 //				return false;
 //			}
-			
+
 			ICProjectDescription des = CCorePlugin.getDefault().getProjectDescription(project, false);
-			
+
 			if(des == null){
 				if(throwExceptions)
 					throw new CoreException(new Status(IStatus.ERROR,
@@ -485,7 +491,7 @@ public class ProjectConverter implements ICProjectConverter {
 							DataProviderMessages.getString("ProjectConverter.2") + cfgs.length)); //$NON-NLS-1$
 				return false;
 			}
-			
+
 			if(!CCorePlugin.DEFAULT_PROVIDER_ID.equals(cfgs[0].getBuildSystemId())){
 				if(throwExceptions)
 					throw new CoreException(new Status(IStatus.ERROR,
@@ -493,7 +499,7 @@ public class ProjectConverter implements ICProjectConverter {
 							DataProviderMessages.getString("ProjectConverter.3") + cfgs.length)); //$NON-NLS-1$
 				return false;
 			}
-			
+
 			final IProjectDescription eDes = project.getDescription();
 			String natureIds[] = eDes.getNatureIds();
 			Set<String> set = new HashSet<String>(Arrays.asList(natureIds));
@@ -504,7 +510,7 @@ public class ProjectConverter implements ICProjectConverter {
 							DataProviderMessages.getString("ProjectConverter.4") + natureIds.toString())); //$NON-NLS-1$
 				return false;
 			}
-			
+
 			if(!checkOnly){
 				ProjectConverter instance = new ProjectConverter();
 				ICProjectDescription oldDes = CCorePlugin.getDefault().getProjectDescription(project);
@@ -515,7 +521,7 @@ public class ProjectConverter implements ICProjectConverter {
 								DataProviderMessages.getString("ProjectConverter.5"))); //$NON-NLS-1$
 					return false;
 				}
-				
+
 				final ICProjectDescription newDes = instance.convertProject(project, eDes, MakeCorePlugin.MAKE_PROJECT_ID, oldDes);
 				if(newDes == null){
 					if(throwExceptions)
@@ -524,10 +530,11 @@ public class ProjectConverter implements ICProjectConverter {
 								DataProviderMessages.getString("ProjectConverter.6"))); //$NON-NLS-1$
 					return false;
 				}
-				
+
 				final IWorkspace wsp = ResourcesPlugin.getWorkspace();
 				wsp.run(new IWorkspaceRunnable(){
 
+					@Override
 					public void run(IProgressMonitor monitor)
 							throws CoreException {
 						project.setDescription(eDes, monitor);
@@ -545,13 +552,13 @@ public class ProjectConverter implements ICProjectConverter {
 								}
 								return Status.OK_STATUS;
 							}
-							
+
 						};
-						
+
 						job.setRule(wsp.getRoot());
 						job.schedule();
 					}
-					
+
 				}, wsp.getRoot(), IWorkspace.AVOID_UPDATE, monitor);
 			}
 			return true;
@@ -566,7 +573,7 @@ public class ProjectConverter implements ICProjectConverter {
 					DataProviderMessages.getString("ProjectConverter.8"))); //$NON-NLS-1$
 		return false;
 	}
-	
+
 	public static boolean isOldStyleMakeProject(IProject project){
 		try {
 			return convertOldStdMakeToNewStyle(project, true, null, false);
@@ -582,7 +589,7 @@ public class ProjectConverter implements ICProjectConverter {
 
 	private IManagedBuildInfo convertManagedBuildInfo(IProject project, ICProjectDescription newDes) throws CoreException {
 		IManagedBuildInfo info = ManagedBuildManager.getOldStyleBuildInfo(project);
-		
+
 		synchronized(PROPS){
 			if(info != null && info.isValid()){
 				IManagedProject mProj = info.getManagedProject();
@@ -604,7 +611,7 @@ public class ProjectConverter implements ICProjectConverter {
 								cfgDes.setConfigurationData(ManagedBuildManager.CFG_DATA_PROVIDER_ID, cfg.getConfigurationData());
 							}
 							cfg.setConfigurationDescription(cfgDes);
-							
+
 							StorableCdtVariables vars = ((ToolChain)cfg.getToolChain()).getResetOldStyleProjectVariables();
 							if(vars != null){
 								ICdtVariable vs[] = vars.getMacros();

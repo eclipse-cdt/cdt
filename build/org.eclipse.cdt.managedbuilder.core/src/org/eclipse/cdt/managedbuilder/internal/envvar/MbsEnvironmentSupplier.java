@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.IPath;
 /**
  * This is the Environment Variable Supplier used to supply variables
  * defined by the MBS
- * 
+ *
  * @since 3.0
  */
 public class MbsEnvironmentSupplier implements IEnvironmentVariableSupplier {
@@ -33,16 +33,17 @@ public class MbsEnvironmentSupplier implements IEnvironmentVariableSupplier {
 //		"CWD",	//$NON-NLS-1$
 //		"PWD"	//$NON-NLS-1$
 //	};
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableSupplier#getVariable()
 	 */
+	@Override
 	public IEnvironmentVariable getVariable(String name, Object context) {
 		if(context instanceof IConfiguration)
 			return getConfigurationVariable(name,(IConfiguration)context);
 		return null;
 	}
-	
+
 	public IBuildEnvironmentVariable getConfigurationVariable(String name, IConfiguration configuration) {
 		IBuildEnvironmentVariable variable = null;
 		if("CWD".equals(name) || "PWD".equals(name)){	//$NON-NLS-1$	//$NON-NLS-2$
@@ -54,8 +55,8 @@ public class MbsEnvironmentSupplier implements IEnvironmentVariableSupplier {
 //					generator.initialize((IProject)owner,info,null);
 				IBuilder builder = configuration.getEditableBuilder();
 				IPath topBuildDir = ManagedBuildManager.getBuildLocation(configuration, builder);
-	
-				
+
+
 ////					IPath topBuildDir = generator.getBuildWorkingDir();
 //					if(topBuildDir == null)
 //						topBuildDir = new Path(configuration.getName());
@@ -66,16 +67,17 @@ public class MbsEnvironmentSupplier implements IEnvironmentVariableSupplier {
 				if(topBuildDir != null) {
 					variable = new BuildEnvVar(name, topBuildDir.toOSString(), IBuildEnvironmentVariable.ENVVAR_REPLACE,null);
 				}
-				
+
 //				}
 			}
 		}
 		return variable;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableSupplier#getVariables()
 	 */
+	@Override
 	public IEnvironmentVariable[] getVariables(Object context) {
 		if(context instanceof IConfiguration){
 			List<IBuildEnvironmentVariable> variables = new ArrayList<IBuildEnvironmentVariable>(2);

@@ -13,8 +13,8 @@ package org.eclipse.cdt.make.internal.core.makefile;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.eclipse.cdt.make.core.makefile.IParent;
 import org.eclipse.cdt.make.core.makefile.IDirective;
+import org.eclipse.cdt.make.core.makefile.IParent;
 
 /**
  * IParent
@@ -32,6 +32,7 @@ public abstract class Parent extends Directive implements IParent {
 		return getDirectives();
 	}
 
+	@Override
 	public IDirective[] getDirectives() {
 		children.trimToSize();
 		return children.toArray(new IDirective[0]);
@@ -57,7 +58,7 @@ public abstract class Parent extends Directive implements IParent {
 
 	public Directive[] getStatements() {
 		children.trimToSize();
-		return children.toArray(new Directive[0]);		
+		return children.toArray(new Directive[0]);
 	}
 
 	/* (non-Javadoc)

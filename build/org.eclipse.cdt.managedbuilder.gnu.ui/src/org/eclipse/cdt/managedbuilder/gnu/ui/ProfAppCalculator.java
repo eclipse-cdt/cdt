@@ -25,24 +25,26 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
 public class ProfAppCalculator implements IOptionApplicability {
 
 	protected static final String COMPILER_PATTERN = ".compiler."; //$NON-NLS-1$
-	
+
 	protected String getOptionIdPattern() {
 		return ".compiler.option.debugging.prof"; //$NON-NLS-1$
 	}
-	
+
+	@Override
 	public boolean isOptionEnabled(IBuildObject configuration,
 			IHoldsOptions holder, IOption option) {
 		return true;
 	}
 
+	@Override
 	public boolean isOptionUsedInCommandLine(IBuildObject configuration,
 			IHoldsOptions holder, IOption option) {
 
 		if (! (configuration instanceof IConfiguration))
 			return false; // not probable.
-		
+
 		IConfiguration cfg = (IConfiguration)configuration;
-	outer:	
+	outer:
 		for (ITool t : cfg.getFilteredTools()){
 			if (t.getId().indexOf(COMPILER_PATTERN) < 0)
 				continue;
@@ -59,6 +61,7 @@ public class ProfAppCalculator implements IOptionApplicability {
 		return true;
 	}
 
+	@Override
 	public boolean isOptionVisible(IBuildObject configuration,
 			IHoldsOptions holder, IOption option) {
 		return false;

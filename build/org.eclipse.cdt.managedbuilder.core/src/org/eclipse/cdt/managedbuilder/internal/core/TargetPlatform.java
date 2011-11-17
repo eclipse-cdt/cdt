@@ -53,11 +53,11 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 	/*
 	 *  C O N S T R U C T O R S
 	 */
-	
+
 	/**
 	 * This constructor is called to create a TargetPlatform defined by an
 	 * extension point in a plugin manifest file, or returned by a dynamic element provider
-	 * 
+	 *
 	 * @param parent  The IToolChain parent of this TargetPlatform, or <code>null</code> if
 	 *                defined at the top level
 	 * @param element The TargetPlatform definition from the manifest file or a dynamic element
@@ -67,21 +67,21 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 	public TargetPlatform(IToolChain parent, IManagedConfigElement element, String managedBuildRevision) {
 		this.parent = parent;
 		isExtensionTargetPlatform = true;
-		
+
 		// setup for resolving
 		resolved = false;
-		
+
 		setManagedBuildRevision(managedBuildRevision);
 		loadFromManifest(element);
-		
+
 		// Hook me up to the Managed Build Manager
 		ManagedBuildManager.addExtensionTargetPlatform(this);
 	}
 
 	/**
-	 * This constructor is called to create a TargetPlatform whose attributes and children will be 
+	 * This constructor is called to create a TargetPlatform whose attributes and children will be
 	 * added by separate calls.
-	 * 
+	 *
 	 * @param parent The parent of the builder, if any
 	 * @param superClass The superClass, if any
 	 * @param Id The id for the new tool chain
@@ -97,7 +97,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 		}
 		setId(Id);
 		setName(name);
-		
+
 		isExtensionTargetPlatform = isExtensionElement;
 		if (isExtensionElement) {
 			// Hook me up to the Managed Build Manager
@@ -109,10 +109,10 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 	}
 
 	/**
-	 * Create a <code>TargetPlatform</code> based on the specification stored in the 
+	 * Create a <code>TargetPlatform</code> based on the specification stored in the
 	 * project file (.cdtbuild).
-	 * 
-	 * @param parent The <code>IToolChain</code> the TargetPlatform will be added to. 
+	 *
+	 * @param parent The <code>IToolChain</code> the TargetPlatform will be added to.
 	 * @param element The XML element that contains the TargetPlatform settings.
 	 * @param managedBuildRevision the fileVersion of Managed Build System
 	 */
@@ -120,7 +120,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 		this.parent = parent;
 		isExtensionTargetPlatform = false;
 		fTargetPlatformData = new BuildTargetPlatformData(this);
-		
+
 		setManagedBuildRevision(managedBuildRevision);
 		// Initialize from the XML attributes
 		loadFromProject(element);
@@ -128,13 +128,13 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 
 	/**
 	 * Create a <code>TargetPlatform</code> based upon an existing TargetPlatform.
-	 * 
-	 * @param parent The <code>IToolChain</code> the TargetPlatform will be added to. 
+	 *
+	 * @param parent The <code>IToolChain</code> the TargetPlatform will be added to.
 	 * @param targetPlatform The existing TargetPlatform to clone.
 	 */
 	public TargetPlatform(IToolChain parent, String Id, String name, TargetPlatform targetPlatform) {
 		this.parent = parent;
-		
+
 		superClass = targetPlatform.isExtensionTargetPlatform ? targetPlatform : targetPlatform.superClass;
 		if (superClass != null) {
 //			if (targetPlatform.superClassId != null) {
@@ -145,9 +145,9 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 		setName(name);
 		isExtensionTargetPlatform = false;
 		fTargetPlatformData = new BuildTargetPlatformData(this);
-			
+
 		setManagedBuildRevision(targetPlatform.getManagedBuildRevision());
-		
+
 		//  Copy the remaining attributes
 		if (targetPlatform.unusedChildren != null) {
 			unusedChildren = new String(targetPlatform.unusedChildren);
@@ -167,41 +167,41 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 		if (targetPlatform.binaryParserList != null) {
 			binaryParserList = new ArrayList<String>(targetPlatform.binaryParserList);
 		}
-		
+
 		setDirty(true);
 	}
 
 	/*
 	 *  E L E M E N T   A T T R I B U T E   R E A D E R S   A N D   W R I T E R S
 	 */
-	
+
 	/* (non-Javadoc)
-	 * Loads the target platform information from the ManagedConfigElement specified in the 
+	 * Loads the target platform information from the ManagedConfigElement specified in the
 	 * argument.
-	 * 
-	 * @param element Contains the tool-chain information 
+	 *
+	 * @param element Contains the tool-chain information
 	 */
 	protected void loadFromManifest(IManagedConfigElement element) {
 		ManagedBuildManager.putConfigElement(this, element);
-		
+
 		// id
 		setId(SafeStringInterner.safeIntern(element.getAttribute(IBuildObject.ID)));
-		
+
 		// Get the name
 		setName(SafeStringInterner.safeIntern(element.getAttribute(IBuildObject.NAME)));
-		
+
 		// superClass
 		superClassId = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.SUPERCLASS));
 
 		// Get the unused children, if any
-		unusedChildren = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.UNUSED_CHILDREN)); 
-		
+		unusedChildren = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.UNUSED_CHILDREN));
+
 		// isAbstract
         String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
         if (isAbs != null){
     		isAbstract = new Boolean("true".equals(isAbs)); //$NON-NLS-1$
         }
-		
+
 		// Get the comma-separated list of valid OS
 		String os = element.getAttribute(OS_LIST);
 		if (os != null) {
@@ -211,7 +211,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 				osList.add(osTokens[i].trim());
 			}
 		}
-		
+
 		// Get the comma-separated list of valid Architectures
 		String arch = element.getAttribute(ARCH_LIST);
 		if (arch != null) {
@@ -221,9 +221,9 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 				archList.add(SafeStringInterner.safeIntern(archTokens[j].trim()));
 			}
 		}
-		
+
 		// Get the IDs of the binary parsers from a semi-colon-separated list.
-		String bpars = element.getAttribute(BINARY_PARSER); 
+		String bpars = element.getAttribute(BINARY_PARSER);
 		if (bpars != null) {
 			binaryParserList = new ArrayList<String>();
 			String[] bparsTokens = CDataUtil.stringToArray(bpars, ";"); //$NON-NLS-1$
@@ -232,15 +232,15 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 			}
 		}
 	}
-	
+
 	/* (non-Javadoc)
-	 * Initialize the target platform information from the XML element 
+	 * Initialize the target platform information from the XML element
 	 * specified in the argument
-	 * 
-	 * @param element An XML element containing the target platform information 
+	 *
+	 * @param element An XML element containing the target platform information
 	 */
 	protected void loadFromProject(ICStorageElement element) {
-		
+
 		// id (unique, do not intern)
 		setId(element.getAttribute(IBuildObject.ID));
 
@@ -248,7 +248,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 		if (element.getAttribute(IBuildObject.NAME) != null) {
 			setName(SafeStringInterner.safeIntern(element.getAttribute(IBuildObject.NAME)));
 		}
-		
+
 		// superClass
 		superClassId = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.SUPERCLASS));
 		if (superClassId != null && superClassId.length() > 0) {
@@ -260,9 +260,9 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 
 		// Get the unused children, if any
 		if (element.getAttribute(IProjectType.UNUSED_CHILDREN) != null) {
-				unusedChildren = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.UNUSED_CHILDREN)); 
+				unusedChildren = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.UNUSED_CHILDREN));
 		}
-		
+
 		// isAbstract
 		if (element.getAttribute(IProjectType.IS_ABSTRACT) != null) {
 			String isAbs = element.getAttribute(IProjectType.IS_ABSTRACT);
@@ -270,7 +270,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 				isAbstract = new Boolean("true".equals(isAbs)); //$NON-NLS-1$
 			}
 		}
-		
+
 		// Get the comma-separated list of valid OS
 		if (element.getAttribute(OS_LIST) != null) {
 			String os = element.getAttribute(OS_LIST);
@@ -282,7 +282,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 				}
 			}
 		}
-		
+
 		// Get the comma-separated list of valid Architectures
 		if (element.getAttribute(ARCH_LIST) != null) {
 			String arch = element.getAttribute(ARCH_LIST);
@@ -294,7 +294,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 				}
 			}
 		}
-		
+
 		// Get the semi-colon-separated list of binaryParserIds
 		if (element.getAttribute(BINARY_PARSER) != null) {
 			String bpars = element.getAttribute(BINARY_PARSER);
@@ -315,9 +315,9 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 	public void serialize(ICStorageElement element) {
 		if (superClass != null)
 			element.setAttribute(IProjectType.SUPERCLASS, superClass.getId());
-		
+
 		element.setAttribute(IBuildObject.ID, id);
-		
+
 		if (name != null) {
 			element.setAttribute(IBuildObject.NAME, name);
 		}
@@ -325,7 +325,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 		if (unusedChildren != null) {
 			element.setAttribute(IProjectType.UNUSED_CHILDREN, unusedChildren);
 		}
-		
+
 		if (isAbstract != null) {
 			element.setAttribute(IProjectType.IS_ABSTRACT, isAbstract.toString());
 		}
@@ -368,7 +368,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 			}
 			element.setAttribute(ARCH_LIST, listValue);
 		}
-		
+
 		// I am clean now
 		isDirty = false;
 	}
@@ -380,6 +380,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITargetPlatform#getParent()
 	 */
+	@Override
 	public IToolChain getParent() {
 		return parent;
 	}
@@ -391,6 +392,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITargetPlatform#getSuperClass()
 	 */
+	@Override
 	public ITargetPlatform getSuperClass() {
 		return superClass;
 	}
@@ -406,6 +408,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITargetPlatform#isAbstract()
 	 */
+	@Override
 	public boolean isAbstract() {
 		if (isAbstract != null) {
 			return isAbstract.booleanValue();
@@ -417,6 +420,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITargetPlatform#getUnusedChildren()
 	 */
+	@Override
 	public String getUnusedChildren() {
 		if (unusedChildren != null) {
 			return unusedChildren;
@@ -428,6 +432,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 	 * @see org.eclipse.cdt.core.build.managed.ITargetPlatform#getBinaryParserId()
 	 * @deprecated
 	 */
+	@Override
 	public String getBinaryParserId() {
 		String[] ids = getBinaryParserList();
 		if (ids.length > 0) return ids[0];
@@ -437,6 +442,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITargetPlatform#getBinaryParserList()
 	 */
+	@Override
 	public String[] getBinaryParserList() {
 		if (binaryParserList == null) {
 			// If I have a superClass, ask it
@@ -452,6 +458,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITargetPlatform#getArchList()
 	 */
+	@Override
 	public String[] getArchList() {
 		if (archList == null) {
 			// Ask superClass for its list
@@ -464,10 +471,11 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 		}
 		return archList.toArray(new String[archList.size()]);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITargetPlatform#getOSList()
 	 */
+	@Override
 	public String[] getOSList() {
 		if (osList == null) {
 			// Ask superClass for its list
@@ -485,6 +493,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 	 * @see org.eclipse.cdt.core.build.managed.IBuilder#setBinaryParserId(String)
 	 * @deprecated
 	 */
+	@Override
 	public void setBinaryParserId(String id) {
 		if (id == null) {
 			setBinaryParserList(new String[0]);
@@ -496,6 +505,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IBuilder#setBinaryParserList(String[])
 	 */
+	@Override
 	public void setBinaryParserList(String[] ids) {
 		if(ids != null){
 			if (binaryParserList == null) {
@@ -515,16 +525,18 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 	/* (non-Javadoc)
 	 * Sets the isAbstract attribute
 	 */
+	@Override
 	public void setIsAbstract(boolean b) {
 		isAbstract = new Boolean(b);
 		setDirty(true);
 	}
-	
+
 	/* (non-Javadoc)
 	 * Sets the OS list.
-	 * 
+	 *
 	 * @param String[] The list of OS names
 	 */
+	@Override
 	public void setOSList(String[] OSs) {
 		if (osList == null) {
 			osList = new ArrayList<String>();
@@ -533,15 +545,16 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 		}
 		for (int i = 0; i < OSs.length; i++) {
 			osList.add(OSs[i]);
-		}		
+		}
 		setDirty(true);
 	}
-	
+
 	/* (non-Javadoc)
 	 * Sets the architecture list.
-	 * 
+	 *
 	 * @param String[] The list of OS names
 	 */
+	@Override
 	public void setArchList(String[] archs) {
 		if (archList == null) {
 			archList = new ArrayList<String>();
@@ -550,17 +563,18 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 		}
 		for (int i = 0; i < archs.length; i++) {
 			archList.add(archs[i]);
-		}		
+		}
 		setDirty(true);
 	}
 
 	/*
 	 *  O B J E C T   S T A T E   M A I N T E N A N C E
 	 */
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IBuilder#isExtensionElement()
 	 */
+	@Override
 	public boolean isExtensionElement() {
 		return isExtensionTargetPlatform;
 	}
@@ -568,6 +582,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IBuilder#isDirty()
 	 */
+	@Override
 	public boolean isDirty() {
 		// This shouldn't be called for an extension Builder
  		if (isExtensionTargetPlatform) return false;
@@ -577,10 +592,11 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IBuilder#setDirty(boolean)
 	 */
+	@Override
 	public void setDirty(boolean isDirty) {
 		this.isDirty = isDirty;
 	}
-	
+
 	/* (non-Javadoc)
 	 *  Resolve the element IDs to interface references
 	 */
@@ -601,7 +617,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 			}
 		}
 	}
-	
+
 	/**
 	 * @return Returns the version.
 	 */
@@ -614,12 +630,13 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 		}
 		return version;
 	}
-	
+
 	@Override
 	public void setVersion(Version version) {
 		// Do nothing
 	}
 
+	@Override
 	public CTargetPlatformData getTargetPlatformData() {
 		return fTargetPlatformData;
 	}

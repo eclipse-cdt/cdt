@@ -54,7 +54,7 @@ public class MakefileReaderProviderTests extends TestCase {
 			basePath + "incl"
 		};
 	}
-	
+
 	public void testNoReaderProvider() throws Exception {
 		IPath path = new Path("data/Makefile.main");
 		File file = getPluginRelativeFile(path);
@@ -80,13 +80,14 @@ public class MakefileReaderProviderTests extends TestCase {
 
 	public void testInputStreamReaderProvider() throws Exception {
 		IPath path = new Path("Makefile.main");
-		
+
 		// get base directory for searches
 		final URL url = getPluginRelativeURL(new Path("data").addTrailingSeparator());
 		IMakefile makefile = MakeCorePlugin.createMakefile(
 				URIUtil.toURI(path), true, inclDirs,
 				new IMakefileReaderProvider() {
 
+					@Override
 					public Reader getReader(URI fileURI) throws IOException {
 						URL fileUrl;
 						try {
@@ -97,9 +98,9 @@ public class MakefileReaderProviderTests extends TestCase {
 						InputStream is = fileUrl.openStream();
 						return new InputStreamReader(is);
 					}
-					
+
 				});
-		
+
 		assertMakefileContents(makefile);
 	}
 
@@ -108,36 +109,38 @@ public class MakefileReaderProviderTests extends TestCase {
 				URIUtil.toURI("/memory/Makefile.main"), true, inclDirs,
 				new IMakefileReaderProvider() {
 
+					@Override
 					public Reader getReader(URI fileURI) throws IOException {
-						String name = new File(fileURI).getName(); 
+						String name = new File(fileURI).getName();
 						if (name.equals("Makefile.main"))
 							return new StringReader(
-									"VAR = foo\r\n" + 
-									"\r\n" + 
-									"include Makefile.incl\r\n" + 
-									"\r\n" + 
-									"main: $(VAR)\r\n" + 
+									"VAR = foo\r\n" +
+									"\r\n" +
+									"include Makefile.incl\r\n" +
+									"\r\n" +
+									"main: $(VAR)\r\n" +
 									"	nothing\r\n");
 						if (name.equals("Makefile.incl"))
 							return new StringReader(
-									"INCLVAR = bar\r\n" + 
-									"\r\n" + 
-									"foo.o: .PHONY\r\n" 
+									"INCLVAR = bar\r\n" +
+									"\r\n" +
+									"foo.o: .PHONY\r\n"
 									);
-						
+
 						throw new FileNotFoundException(fileURI.getPath());
 					}
-					
+
 				});
-		
+
 		assertMakefileContents(makefile);
 	}
-	
+
 	public void testReaderIsClosed_Bug338936() throws Exception {
 		final boolean[] streamIsClosed = { false };
 		MakeCorePlugin.createMakefile(
 				URIUtil.toURI("Makefile.main"), true, inclDirs,
 				new IMakefileReaderProvider() {
+					@Override
 					public Reader getReader(URI fileURI) throws IOException {
 						return new StringReader("") {
 							@Override
@@ -147,7 +150,7 @@ public class MakefileReaderProviderTests extends TestCase {
 							}
 						};
 					}
-					
+
 				});
 		assertTrue("Stream is not closed", streamIsClosed[0]);
 	}
@@ -162,14 +165,14 @@ public class MakefileReaderProviderTests extends TestCase {
 		assertEquals(2, macroDefinitions.length);
 		assertEquals("VAR", macroDefinitions[0].getName());
 		assertEquals("INCLVAR", macroDefinitions[1].getName());
-		
+
 		IRule[] rules = makefile.getRules();
 		assertEquals(2, rules.length);
 		assertEquals("main", rules[0].getTarget().toString());
 		assertEquals("foo.o", rules[1].getTarget().toString());
 	}
 
-	/** 
+	/**
 	 * Try to get a file in the development version of a plugin --
 	 * will return <code>null</code> for a jar-packaged plugin.
 	 * @param path
@@ -183,11 +186,11 @@ public class MakefileReaderProviderTests extends TestCase {
 			return new File(url.getPath());
 		return null;
 	}
-	
+
 	private URL getPluginRelativeURL(IPath path) throws Exception {
 		if (MakeTestsPlugin.getDefault() != null) {
 			URL url = FileLocator.find(
-					MakeTestsPlugin.getDefault().getBundle(), 
+					MakeTestsPlugin.getDefault().getBundle(),
 					path, null);
 			return url != null ? FileLocator.toFileURL(url) : null;
 		}

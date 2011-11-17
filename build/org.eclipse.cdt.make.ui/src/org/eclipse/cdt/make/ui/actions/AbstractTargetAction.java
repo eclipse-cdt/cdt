@@ -56,10 +56,12 @@ public abstract class AbstractTargetAction
 		return fContainer;
 	}
 
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		fPart = targetPart;
 	}
 
+	@Override
 	public void init(IWorkbenchWindow window) {
 		fWindow = window;
 	}
@@ -92,7 +94,7 @@ public abstract class AbstractTargetAction
 			} else {
 				fContainer = null;
 			}
-		} else if (selection instanceof ITextSelection)	{	
+		} else if (selection instanceof ITextSelection)	{
 			// Key binding pressed inside active text editor
 			fContainer= null;
 			IWorkbenchPart part = fPart != null ? fPart : fWindow.getActivePage().getActivePart();
@@ -101,7 +103,7 @@ public abstract class AbstractTargetAction
 				if (file != null) {
 					fContainer = file.getParent();
 				}
-			} 
+			}
 		}
 		if (fContainer != null && MakeCorePlugin.getDefault().getTargetManager().hasTargetBuilder(fContainer.getProject())) {
 			isEnabled = true;
@@ -112,7 +114,7 @@ public abstract class AbstractTargetAction
 
 	/**
 	 * @return {@code true} if the action is enabled or {@code false} otherwise.
-	 * 
+	 *
 	 * @since 7.0
 	 */
 	public boolean isEnabled() {

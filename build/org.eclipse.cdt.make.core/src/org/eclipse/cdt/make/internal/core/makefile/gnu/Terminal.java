@@ -19,10 +19,12 @@ public abstract class Terminal extends Directive implements ITerminal {
 		super(parent);
 	}
 
+	@Override
 	public boolean isEndif() {
 		return false;
 	}
 
+	@Override
 	public boolean isEndef() {
 		return false;
 	}

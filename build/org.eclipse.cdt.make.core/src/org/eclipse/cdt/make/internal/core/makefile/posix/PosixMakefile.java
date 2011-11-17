@@ -51,15 +51,15 @@ import org.eclipse.core.runtime.CoreException;
  * rule :  inference_rule | target_rule | special_rule
  * inference_rule : target ':' [ ';' command ] <nl>
 		 [ ( command ) * ]
- * target_rule : [ ( target ) + ] ':' [ ( prerequisite ) * ] [ ';' command ] <nl> 
+ * target_rule : [ ( target ) + ] ':' [ ( prerequisite ) * ] [ ';' command ] <nl>
                  [ ( command ) *  ]
- * macro_definition : string '=' ( string )* 
+ * macro_definition : string '=' ( string )*
  * comments : ('#' ( string ) <nl>) *
  * empty : <nl>
  * command : <tab> prefix_command string <nl>
  * target : string
  * prefix_command : '-' | '@' | '+'
- * internal_macro :  "$<" | "$*" | "$@" | "$?" | "$%" 
+ * internal_macro :  "$<" | "$*" | "$@" | "$?" | "$%"
  */
 
 public class PosixMakefile extends AbstractMakefile {
@@ -70,14 +70,16 @@ public class PosixMakefile extends AbstractMakefile {
 	public PosixMakefile() {
 		super(null);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.make.core.makefile.IMakefile#getMakefileReaderProvider()
 	 */
+	@Override
 	public IMakefileReaderProvider getMakefileReaderProvider() {
 		return makefileReaderProvider;
 	}
-	
+
+	@Override
 	public void parse(String name, Reader reader) throws IOException {
 		parse(URIUtil.toURI(name), new MakefileReader(reader));
 	}
@@ -85,6 +87,7 @@ public class PosixMakefile extends AbstractMakefile {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.make.core.makefile.IMakefile#parse(java.net.URI, org.eclipse.cdt.make.core.makefile.IMakefileReaderProvider)
 	 */
+	@Override
 	public void parse(URI fileURI,
 			IMakefileReaderProvider makefileReaderProvider) throws IOException {
 		this.makefileReaderProvider = makefileReaderProvider;
@@ -102,7 +105,8 @@ public class PosixMakefile extends AbstractMakefile {
 		}
 		parse(fileURI, reader);
 	}
-	
+
+	@Override
 	public void parse(URI fileURI, Reader reader) throws IOException {
 		parse(fileURI, new MakefileReader(reader));
 	}

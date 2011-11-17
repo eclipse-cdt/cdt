@@ -33,24 +33,24 @@ import org.eclipse.swt.widgets.Display;
  * A "button" of a certain color determined by the color picker
  */
 public class ColorEditor {
-	
+
 	private Point fExtent;
 	Image fImage;
 	RGB fColorValue;
 	Color fColor;
 	Button fButton;
-	
+
 	public ColorEditor(Composite parent) {
-		
+
 		fButton= new Button(parent, SWT.PUSH);
 		fExtent= computeImageSize(parent);
 		fImage= new Image(parent.getDisplay(), fExtent.x, fExtent.y);
-		
+
 		GC gc= new GC(fImage);
 		gc.setBackground(fButton.getBackground());
 		gc.fillRectangle(0, 0, fExtent.x, fExtent.y);
 		gc.dispose();
-		
+
 		fButton.setImage(fImage);
 		fButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -64,8 +64,9 @@ public class ColorEditor {
 				}
 			}
 		});
-		
+
 		fButton.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent event) {
 				if (fImage != null)  {
 					fImage.dispose();
@@ -78,39 +79,39 @@ public class ColorEditor {
 			}
 		});
 	}
-	
+
 	public RGB getColorValue() {
 		return fColorValue;
 	}
-	
+
 	public void setColorValue(RGB rgb) {
 		fColorValue= rgb;
 		updateColorImage();
 	}
-	
+
 	public Button getButton() {
 		return fButton;
 	}
-	
+
 	protected void updateColorImage() {
-		
+
 		Display display= fButton.getDisplay();
-		
+
 		GC gc= new GC(fImage);
 		gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
 		gc.drawRectangle(0, 2, fExtent.x - 1, fExtent.y - 4);
-		
+
 		if (fColor != null)
 			fColor.dispose();
-			
+
 		fColor= new Color(display, fColorValue);
 		gc.setBackground(fColor);
 		gc.fillRectangle(1, 3, fExtent.x - 2, fExtent.y - 5);
 		gc.dispose();
-		
+
 		fButton.setImage(fImage);
 	}
-	
+
 	protected Point computeImageSize(Control window) {
 		GC gc= new GC(window);
 		Font f= JFaceResources.getFontRegistry().get(JFaceResources.DEFAULT_FONT);

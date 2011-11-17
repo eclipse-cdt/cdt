@@ -57,14 +57,16 @@ public class BuildInfoFactory {
 	static final String BUILD_AUTO_ENABLED = PREFIX + ".enableAutoBuild"; //$NON-NLS-1$
 	static final String BUILD_ARGUMENTS = PREFIX + ".buildArguments"; //$NON-NLS-1$
 	static final String ENVIRONMENT = PREFIX + ".environment"; //$NON-NLS-1$
-	static final String BUILD_APPEND_ENVIRONMENT = PREFIX + ".append_environment"; //$NON-NLS-1$ 
+	static final String BUILD_APPEND_ENVIRONMENT = PREFIX + ".append_environment"; //$NON-NLS-1$
 
 	private abstract static class AbstractBuildInfo implements IMakeBuilderInfo {
 
+		@Override
 		public void setUseDefaultBuildCmd(boolean on) throws CoreException {
 			putString(USE_DEFAULT_BUILD_CMD, new Boolean(on).toString());
 		}
 
+		@Override
 		public boolean isDefaultBuildCmd() {
 			if (getString(USE_DEFAULT_BUILD_CMD) == null) { // if no property
 				// then default to
@@ -74,6 +76,7 @@ public class BuildInfoFactory {
 			return getBoolean(USE_DEFAULT_BUILD_CMD);
 		}
 
+		@Override
 		public String getBuildAttribute(String name, String defaultValue) {
 			String value = getString(name);
 			if (value == null ) {
@@ -89,15 +92,17 @@ public class BuildInfoFactory {
 					value = getString(BuildInfoFactory.BUILD_TARGET_CLEAN);
 				} else if (IMakeBuilderInfo.BUILD_TARGET_INCREMENTAL.equals(name)) {
 					value = getString(BuildInfoFactory.BUILD_TARGET_INCREMENTAL);
-				} 
-			} 
+				}
+			}
 			return value != null ? value : defaultValue != null ? defaultValue : ""; //$NON-NLS-1$
 		}
 
+		@Override
 		public void setBuildAttribute(String name, String value) throws CoreException {
 			putString(name, value);
 		}
 
+		@Override
 		public Map<String, String> getExpandedEnvironment() {
 			Map<String, String> env = getEnvironment();
 			HashMap<String, String> envMap = new HashMap<String, String>(env.entrySet().size());
@@ -121,11 +126,13 @@ public class BuildInfoFactory {
 			return envMap;
 		}
 
+		@Override
 		public void setBuildCommand(IPath location) throws CoreException {
 			putString(IMakeCommonBuildInfo.BUILD_COMMAND, null);
 			putString(BuildInfoFactory.BUILD_COMMAND, location.toString());
 		}
 
+		@Override
 		public IPath getBuildCommand() {
 			if (isDefaultBuildCmd()) {
 				String command = getBuildParameter("defaultCommand"); //$NON-NLS-1$
@@ -163,11 +170,13 @@ public class BuildInfoFactory {
 
 		protected abstract String getBuilderID();
 
+		@Override
 		public void setBuildLocation(IPath location) throws CoreException {
 			putString(IMakeCommonBuildInfo.BUILD_LOCATION, null);
 			putString(BuildInfoFactory.BUILD_LOCATION, location.toString());
 		}
 
+		@Override
 		public IPath getBuildLocation() {
 			String result = getBuildAttribute(IMakeCommonBuildInfo.BUILD_LOCATION, getString(BuildInfoFactory.BUILD_LOCATION));
 			try {
@@ -177,6 +186,7 @@ public class BuildInfoFactory {
 			return new Path(result);
 		}
 
+		@Override
 		public String getBuildArguments() {
 			String result = getBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, getString(BuildInfoFactory.BUILD_ARGUMENTS));
 			if (result == null) {
@@ -189,24 +199,29 @@ public class BuildInfoFactory {
 			return result;
 		}
 
+		@Override
 		public void setBuildArguments(String args) throws CoreException {
 			putString(IMakeCommonBuildInfo.BUILD_ARGUMENTS, null);
 			putString(BuildInfoFactory.BUILD_ARGUMENTS, args);
 		}
-		
+
+		@Override
 		public void setStopOnError(boolean enabled) throws CoreException {
 			putString(STOP_ON_ERROR, new Boolean(enabled).toString());
 		}
 
+		@Override
 		public boolean isStopOnError() {
 			return getBoolean(STOP_ON_ERROR);
 		}
 
+		@Override
 		public void setAutoBuildTarget(String target) throws CoreException {
 			putString(IMakeBuilderInfo.BUILD_TARGET_AUTO, null);
 			putString(BuildInfoFactory.BUILD_TARGET_AUTO, target);
 		}
 
+		@Override
 		public String getAutoBuildTarget() {
 			String result = getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_AUTO, getString(BuildInfoFactory.BUILD_TARGET_AUTO));
 			try {
@@ -216,11 +231,13 @@ public class BuildInfoFactory {
 			return result;
 		}
 
+		@Override
 		public void setIncrementalBuildTarget(String target) throws CoreException {
 			putString(IMakeBuilderInfo.BUILD_TARGET_INCREMENTAL, null);
 			putString(BuildInfoFactory.BUILD_TARGET_INCREMENTAL, target);
 		}
 
+		@Override
 		public String getIncrementalBuildTarget() {
 			String result = getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREMENTAL,
 					getString(BuildInfoFactory.BUILD_TARGET_INCREMENTAL));
@@ -231,10 +248,12 @@ public class BuildInfoFactory {
 			return result;
 		}
 
+		@Override
 		public void setFullBuildTarget(String target) throws CoreException {
-		
+
 		}
 
+		@Override
 		public String getFullBuildTarget() {
 			String result = getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREMENTAL, getString(BuildInfoFactory.BUILD_TARGET_INCREMENTAL));
 			try {
@@ -244,11 +263,13 @@ public class BuildInfoFactory {
 			return result;
 		}
 
+		@Override
 		public void setCleanBuildTarget(String target) throws CoreException {
 			putString(IMakeBuilderInfo.BUILD_TARGET_CLEAN, null);
 			putString(BuildInfoFactory.BUILD_TARGET_CLEAN, target);
 		}
 
+		@Override
 		public String getCleanBuildTarget() {
 			String result = getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_CLEAN, getString(BuildInfoFactory.BUILD_TARGET_CLEAN));
 			try {
@@ -258,38 +279,47 @@ public class BuildInfoFactory {
 			return result;
 		}
 
+		@Override
 		public void setAutoBuildEnable(boolean enabled) throws CoreException {
 			putString(BUILD_AUTO_ENABLED, new Boolean(enabled).toString());
 		}
 
+		@Override
 		public boolean isAutoBuildEnable() {
 			return getBoolean(BUILD_AUTO_ENABLED);
 		}
 
+		@Override
 		public void setIncrementalBuildEnable(boolean enabled) throws CoreException {
 			putString(BUILD_INCREMENTAL_ENABLED, new Boolean(enabled).toString());
 		}
 
+		@Override
 		public boolean isIncrementalBuildEnabled() {
 			return getBoolean(BUILD_INCREMENTAL_ENABLED);
 		}
 
+		@Override
 		public void setFullBuildEnable(boolean enabled) throws CoreException {
 			putString(BUILD_FULL_ENABLED, new Boolean(enabled).toString());
 		}
 
+		@Override
 		public boolean isFullBuildEnabled() {
 			return getBoolean(BUILD_FULL_ENABLED);
 		}
 
+		@Override
 		public void setCleanBuildEnable(boolean enabled) throws CoreException {
 			putString(BUILD_CLEAN_ENABLED, new Boolean(enabled).toString());
 		}
 
+		@Override
 		public boolean isCleanBuildEnabled() {
 			return getBoolean(BUILD_CLEAN_ENABLED);
 		}
 
+		@Override
 		public String[] getErrorParsers() {
 			String parsers = getString(ErrorParserManager.PREF_ERROR_PARSER);
 			if (parsers != null && parsers.length() > 0) {
@@ -303,6 +333,7 @@ public class BuildInfoFactory {
 			return new String[0];
 		}
 
+		@Override
 		public void setErrorParsers(String[] parsers) throws CoreException {
 			StringBuffer buf = new StringBuffer();
 			for (int i = 0; i < parsers.length; i++) {
@@ -311,14 +342,17 @@ public class BuildInfoFactory {
 			putString(ErrorParserManager.PREF_ERROR_PARSER, buf.toString());
 		}
 
+		@Override
 		public Map<String, String> getEnvironment() {
 			return decodeMap(getString(ENVIRONMENT));
 		}
 
+		@Override
 		public void setEnvironment(Map<String, String> env) throws CoreException {
 			putString(ENVIRONMENT, encodeMap(env));
 		}
 
+		@Override
 		public boolean appendEnvironment() {
 			if (getString(BUILD_APPEND_ENVIRONMENT) != null) {
 				return getBoolean(BUILD_APPEND_ENVIRONMENT);
@@ -326,6 +360,7 @@ public class BuildInfoFactory {
 			return true;
 		}
 
+		@Override
 		public void setAppendEnvironment(boolean append) throws CoreException {
 			putString(BUILD_APPEND_ENVIRONMENT, new Boolean(append).toString());
 		}
@@ -345,7 +380,7 @@ public class BuildInfoFactory {
 						int ndx = 0;
 						while (ndx < envStr.length()) {
 							if (escapeChars.indexOf(envStr.charAt(ndx)) != -1) {
-								if (envStr.charAt(ndx - 1) == escapeChar) { 
+								if (envStr.charAt(ndx - 1) == escapeChar) {
 									// escaped '|' - remove '\' and continue on.
 									envStr.deleteCharAt(ndx - 1);
 									if (ndx == envStr.length()) {

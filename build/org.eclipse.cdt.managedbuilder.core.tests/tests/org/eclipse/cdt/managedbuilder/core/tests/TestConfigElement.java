@@ -19,12 +19,12 @@ import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.core.runtime.IExtension;
 
 public class TestConfigElement implements IManagedConfigElement {
-	
+
 	private String name;
 	private Map<String, String> attributeMap;
 	private IManagedConfigElement[] children;
-	
-	public TestConfigElement(String name, String[][] attributes, 
+
+	public TestConfigElement(String name, String[][] attributes,
 			IManagedConfigElement[] children) {
 		this.name = name;
 		this.children = children;
@@ -33,10 +33,11 @@ public class TestConfigElement implements IManagedConfigElement {
 			attributeMap.put(attributes[i][0], attributes[i][1]);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedConfigElement#getName()
 	 */
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -44,6 +45,7 @@ public class TestConfigElement implements IManagedConfigElement {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedConfigElement#getAttribute(java.lang.String)
 	 */
+	@Override
 	public String getAttribute(String name) {
 		return attributeMap.get(name);
 	}
@@ -51,6 +53,7 @@ public class TestConfigElement implements IManagedConfigElement {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedConfigElement#getChildren()
 	 */
+	@Override
 	public IManagedConfigElement[] getChildren() {
 		return children;
 	}
@@ -58,6 +61,7 @@ public class TestConfigElement implements IManagedConfigElement {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedConfigElement#getChildren(java.lang.String)
 	 */
+	@Override
 	public IManagedConfigElement[] getChildren(String elementName) {
 		List<IManagedConfigElement> ret = new ArrayList<IManagedConfigElement>(children.length);
 		for (int i = 0; i < children.length; i++) {
@@ -73,5 +77,5 @@ public class TestConfigElement implements IManagedConfigElement {
 	 */
 	public IExtension getExtension() {
 		return null;
-	}		
+	}
 }

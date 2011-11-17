@@ -13,18 +13,19 @@ package org.eclipse.cdt.core.dom.upc.ast;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 
 public interface IUPCASTTypeIdSizeofExpression extends IASTTypeIdExpression {
-	
+
 	public final int upc_localsizeof = 1;
-	
+
 	public final int upc_blocksizeof = 2;
-	
+
 	public final int upc_elemsizeof  = 3;
 
-	
+
 	public int getUPCSizeofOperator();
 
 	public void setUPCSizeofOperator(int upcSizeofOperator);
-	
-	
+
+
+	@Override
 	public IUPCASTTypeIdSizeofExpression copy();
 }

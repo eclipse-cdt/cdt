@@ -38,14 +38,14 @@ import org.eclipse.ui.dialogs.IOverwriteQuery;
 
 public class ManagedBuildDependencyCalculatorTests extends TestCase {
 	private IPath resourcesLocation = new Path(CTestPlugin.getFileInPlugin(new Path("resources/depCalcProjects/")).getAbsolutePath());
-	
+
 	public ManagedBuildDependencyCalculatorTests(String name) {
 		super(name);
 	}
-	
+
 	public static Test suite() {
 		TestSuite suite = new TestSuite(ManagedBuildDependencyCalculatorTests.class.getName());
-		
+
 		suite.addTest(new ManagedBuildDependencyCalculatorTests("test1DepCalc2"));
 		suite.addTest(new ManagedBuildDependencyCalculatorTests("test1DepCalc3"));
 		suite.addTest(new ManagedBuildDependencyCalculatorTests("test1DepCalcPreBuild"));
@@ -62,20 +62,21 @@ public class ManagedBuildDependencyCalculatorTests extends TestCase {
 			}
 
 			File projectZips[] = testDir.listFiles(new FileFilter(){
+				@Override
 				public boolean accept(File pathname){
 					if(pathname.isDirectory())
 						return false;
 					return true;
 				}
 			});
-			
+
 			projectList = new ArrayList<IProject>(projectZips.length);
 			for(int i = 0; i < projectZips.length; i++){
 				try{
 					String projectName = projectZips[i].getName();
 					if(!projectName.endsWith(".zip"))
 						continue;
-					
+
 					projectName = projectName.substring(0,projectName.length()-".zip".length());
 					if(projectName.length() == 0)
 						continue;
@@ -98,41 +99,42 @@ public class ManagedBuildDependencyCalculatorTests extends TestCase {
 					projectList.add(project);
 			} catch(Exception e){}
 		}
-		
+
 		return projectList.toArray(new IProject[projectList.size()]);
 	}
-	
+
 	private IProject[] createProjects(String projName, IPath location, String projectTypeId, boolean containsZip) {
-		
+
 		//  In case the projects need to be updated...
 		IOverwriteQuery queryALL = new IOverwriteQuery(){
+			@Override
 			public String queryOverwrite(String file) {
 				return ALL;
 			}};
-		
+
 		UpdateManagedProjectManager.setBackupFileOverwriteQuery(queryALL);
 		UpdateManagedProjectManager.setUpdateProjectQuery(queryALL);
-		
+
 		IProject projects[] = createProject(projName, location, projectTypeId, containsZip);
 		return projects;
 	}
-		
-	private void buildProjectsWorker(IProject projects[], IPath[] files, boolean compareBenchmark) {	
+
+	private void buildProjectsWorker(IProject projects[], IPath[] files, boolean compareBenchmark) {
 		if(projects == null || projects.length == 0)
 			return;
-				
+
 		boolean succeeded = true;
 		for (int i = 0; i < projects.length; i++){
 			IProject curProject = projects[i];
-			
+
 			IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(curProject);
-			
+
 			//check whether the managed build info is converted
 			boolean isCompatible = UpdateManagedProjectManager.isCompatibleProject(info);
 			assertTrue(isCompatible);
-			
+
 			if (isCompatible){
-				// Build the project in order to generate the makefiles 
+				// Build the project in order to generate the makefiles
 				try{
 					curProject.build(IncrementalProjectBuilder.INCREMENTAL_BUILD,null);
 				}
@@ -142,7 +144,7 @@ public class ManagedBuildDependencyCalculatorTests extends TestCase {
 				catch(OperationCanceledException e){
 					fail("the project \"" + curProject.getName() + "\" build was cancelled, exception message: " + e.getMessage());
 				}
-				
+
 				//compare the generated makefiles to their benchmarks
 				if (files != null && files.length > 0) {
 					if (i == 0) {
@@ -159,7 +161,7 @@ public class ManagedBuildDependencyCalculatorTests extends TestCase {
 				}
 			}
 		}
-		
+
 		if (succeeded) {	//  Otherwise leave the projects around for comparison
 			for (int i = 0; i < projects.length; i++)
 				ManagedBuildTestHelper.removeProject(projects[i].getName());
@@ -170,16 +172,16 @@ public class ManagedBuildDependencyCalculatorTests extends TestCase {
 	private void buildProjects(IProject projects[], IPath[] files) {
 		buildProjectsWorker(projects, files, true);
 	}
-	
+
 
 	/* (non-Javadoc)
 	 * test for dependency calculation as a side-effect of compilation
 	 */
 	public void test1DepCalc2(){
 		IPath[] makefiles = {
-				 Path.fromOSString("makefile"), 
-				 Path.fromOSString("objects.mk"), 
-				 Path.fromOSString("sources.mk"), 
+				 Path.fromOSString("makefile"),
+				 Path.fromOSString("objects.mk"),
+				 Path.fromOSString("sources.mk"),
 				 Path.fromOSString("subdir.mk"),
 				 //  This file is different using Cygwin vs GCC
 				 //Path.fromOSString("main.d"),
@@ -192,16 +194,16 @@ public class ManagedBuildDependencyCalculatorTests extends TestCase {
 		IProject[] projects = createProjects("test1DepCalc2", null, null, true);
 		buildProjects(projects, makefiles);
 	}
-	
+
 
 	/* (non-Javadoc)
 	 * test for dependency calculation using Echo, a 2nd conmpilation step, and post-processing
 	 */
 	public void test1DepCalc3(){
 		IPath[] makefiles = {
-				 Path.fromOSString("makefile"), 
-				 Path.fromOSString("objects.mk"), 
-				 Path.fromOSString("sources.mk"), 
+				 Path.fromOSString("makefile"),
+				 Path.fromOSString("objects.mk"),
+				 Path.fromOSString("sources.mk"),
 				 Path.fromOSString("subdir.mk"),
 				 //  This file is different using Cygwin vs GCC
 				 //Path.fromOSString("main.d"),
@@ -214,16 +216,16 @@ public class ManagedBuildDependencyCalculatorTests extends TestCase {
 		IProject[] projects = createProjects("test1DepCalc3", null, null, true);
 		buildProjects(projects, makefiles);
 	}
-	
+
 
 	/* (non-Javadoc)
 	 * test for dependency calculation that uses a separate, pre-build, step to generate dependency files
 	 */
 	public void test1DepCalcPreBuild(){
 		IPath[] makefiles = {
-				 Path.fromOSString("makefile"), 
-				 Path.fromOSString("objects.mk"), 
-				 Path.fromOSString("sources.mk"), 
+				 Path.fromOSString("makefile"),
+				 Path.fromOSString("objects.mk"),
+				 Path.fromOSString("sources.mk"),
 				 Path.fromOSString("subdir.mk"),
 				 //  This file is different using Cygwin vs GCC
 				 //Path.fromOSString("main.d"),
@@ -236,5 +238,5 @@ public class ManagedBuildDependencyCalculatorTests extends TestCase {
 		IProject[] projects = createProjects("test1DepCalcPreBuild", null, null, true);
 		buildProjects(projects, makefiles);
 	}
-	
+
 }

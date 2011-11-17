@@ -16,21 +16,23 @@ import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 /**
  * This interface represents the given build macro
  * Clients may implement or extend this interface.
- * 
+ *
  * @since 3.0
  */
 public interface IBuildMacro extends ICdtVariable{
 	int getMacroValueType();
-	
+
     /**
      * @throws BuildMacroException if macro holds StringList-type value
      */
-    String getStringValue() throws BuildMacroException;
+    @Override
+	String getStringValue() throws BuildMacroException;
 
     /**
      * @throws BuildMacroException if macro holds single String-type value
      */
-    String[] getStringListValue() throws BuildMacroException;
+    @Override
+	String[] getStringListValue() throws BuildMacroException;
 
 }
 

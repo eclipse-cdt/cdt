@@ -22,12 +22,13 @@ public class CompletionProposalComparator implements Comparator<ICompletionPropo
 	 */
 	public CompletionProposalComparator() {
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see Comparator#compare(Object, Object)
 	 */
+	@Override
 	public int compare(ICompletionProposal c1, ICompletionProposal c2) {
 		return c1.getDisplayString().compareToIgnoreCase(c2.getDisplayString());
-	}	
-	
+	}
+
 }

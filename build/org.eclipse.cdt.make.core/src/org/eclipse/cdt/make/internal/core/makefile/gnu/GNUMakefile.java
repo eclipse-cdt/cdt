@@ -59,15 +59,15 @@ import org.eclipse.core.runtime.CoreException;
  * statement :   rule | macro_definition | comments | empty
  * rule :  inference_rule | target_rule
  * inference_rule : target ':' <nl> ( <tab> command <nl> ) +
- * target_rule : target [ ( target ) * ] ':' [ ( prerequisite ) * ] [ ';' command ] <nl> 
+ * target_rule : target [ ( target ) * ] ':' [ ( prerequisite ) * ] [ ';' command ] <nl>
                  [ ( command ) * ]
- * macro_definition : string '=' (string)* 
+ * macro_definition : string '=' (string)*
  * comments : ('#' (string) <nl>) *
  * empty : <nl>
  * command : <tab> prefix_command string <nl>
  * target : string
  * prefix_command : '-' | '@' | '+'
- * internal_macro :  "$<" | "$*" | "$@" | "$?" | "$%" 
+ * internal_macro :  "$<" | "$*" | "$@" | "$?" | "$%"
  */
 
 public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
@@ -82,14 +82,16 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 	public GNUMakefile() {
 		super(null);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.make.core.makefile.IMakefile#getMakefileReaderProvider()
 	 */
+	@Override
 	public IMakefileReaderProvider getMakefileReaderProvider() {
 		return makefileReaderProvider;
 	}
-	
+
+	@Override
 	public void parse(String filePath, Reader reader) throws IOException {
 		parse(URIUtil.toURI(filePath), new MakefileReader(reader));
 	}
@@ -97,6 +99,7 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.make.core.makefile.IMakefile#parse(java.net.URI, org.eclipse.cdt.make.core.makefile.IMakefileReaderProvider)
 	 */
+	@Override
 	public void parse(URI fileURI,
 			IMakefileReaderProvider makefileReaderProvider) throws IOException {
 		this.makefileReaderProvider = makefileReaderProvider;
@@ -107,7 +110,7 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 				final IFileInfo info = store.fetchInfo();
 				if (!info.exists() || info.isDirectory())
 					throw new IOException();
-				
+
 				reader = new MakefileReader(new InputStreamReader(
 						store.openInputStream(EFS.NONE, null)));
 			} catch (CoreException e) {
@@ -119,12 +122,13 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 		}
 		parse(fileURI, reader);
 	}
-	
+
+	@Override
 	public void parse(URI filePath, Reader reader) throws IOException {
-		parse(filePath, new MakefileReader(reader));	    
+		parse(filePath, new MakefileReader(reader));
 	}
-	
-	
+
+
 	protected void parse(URI fileURI, MakefileReader reader) throws IOException {
 		String line;
 		Rule[] rules = null;
@@ -306,7 +310,7 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 					vd.setLines(startLine, endLine);
 					addDirective(conditions, vd);
 					if (!vd.isTargetSpecific()) {
-						continue;					
+						continue;
 					}
 				}
 
@@ -814,10 +818,12 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 		return builtins;
 	}
 
+	@Override
 	public void setIncludeDirectories(String[] dirs) {
 		includeDirectories = dirs;
 	}
 
+	@Override
 	public String[] getIncludeDirectories() {
 		return includeDirectories;
 	}

@@ -30,7 +30,13 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.projectconverter.UpdateManagedProjectManager;
 import org.eclipse.cdt.managedbuilder.testplugin.CTestPlugin;
 import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IPathVariableManager;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -42,14 +48,14 @@ public class ManagedProject21MakefileTests extends TestCase {
 	public static final String MBS_TEMP_DIR = "MBSTemp";
 
 	static boolean pathVariableCreated = false;
-	
+
 	public ManagedProject21MakefileTests(String name) {
 		super(name);
 	}
-	
+
 	public static Test suite() {
 		TestSuite suite = new TestSuite(ManagedProject21MakefileTests.class.getName());
-		
+
 		suite.addTest(new ManagedProject21MakefileTests("testSingleFileExe"));
 		suite.addTest(new ManagedProject21MakefileTests("testTwoFileSO"));
 		suite.addTest(new ManagedProject21MakefileTests("testMultiResConfig"));
@@ -58,7 +64,7 @@ public class ManagedProject21MakefileTests extends TestCase {
 		//        the makefiles to compare.  This appears to be a test set issue,
 		//        rather than an MBS functionality issue
 		suite.addTest(new ManagedProject21MakefileTests("testLinkedFolder"));
-		
+
 		return suite;
 	}
 
@@ -73,20 +79,21 @@ public class ManagedProject21MakefileTests extends TestCase {
 		ArrayList<IProject> projectList = null;
 		if (containsZip) {
 			File projectZips[] = testDir.listFiles(new FileFilter(){
+				@Override
 				public boolean accept(File pathname){
 					if(pathname.isDirectory())
 						return false;
 					return true;
 				}
 			});
-			
+
 			projectList = new ArrayList<IProject>(projectZips.length);
 			for(int i = 0; i < projectZips.length; i++){
 				try{
 					String projectName = projectZips[i].getName();
 					if(!projectName.endsWith(".zip"))
 						continue;
-					
+
 					projectName = projectName.substring(0,projectName.length()-".zip".length());
 					if(projectName.length() == 0)
 						continue;
@@ -109,41 +116,42 @@ public class ManagedProject21MakefileTests extends TestCase {
 					projectList.add(project);
 			} catch(Exception e){}
 		}
-		
+
 		return projectList.toArray(new IProject[projectList.size()]);
 	}
-	
+
 	private IProject[] createProjects(String projName, IPath location, String projectTypeId, boolean containsZip) {
-		
+
 		//  In case the projects need to be updated...
 		IOverwriteQuery queryALL = new IOverwriteQuery(){
+			@Override
 			public String queryOverwrite(String file) {
 				return ALL;
 			}};
-		
+
 		UpdateManagedProjectManager.setBackupFileOverwriteQuery(queryALL);
 		UpdateManagedProjectManager.setUpdateProjectQuery(queryALL);
-		
+
 		IProject projects[] = createProject(projName, location, projectTypeId, containsZip);
 		return projects;
 	}
-		
-	private boolean buildProjects(String benchmarkDir, IProject projects[], IPath[] files) {	
+
+	private boolean buildProjects(String benchmarkDir, IProject projects[], IPath[] files) {
 		if(projects == null || projects.length == 0)
 			return false;
-				
+
 		boolean succeeded = true;
 		for(int i = 0; i < projects.length; i++){
 			IProject curProject = projects[i];
-			
+
 			IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(curProject);
-			
+
 			//check whether the managed build info is converted
 			boolean isCompatible = UpdateManagedProjectManager.isCompatibleProject(info);
 			assertTrue(isCompatible);
-			
+
 			if(isCompatible){
-				// Build the project in order to generate the maekfiles 
+				// Build the project in order to generate the maekfiles
 				try{
 					curProject.build(IncrementalProjectBuilder.INCREMENTAL_BUILD,null);
 				}
@@ -153,7 +161,7 @@ public class ManagedProject21MakefileTests extends TestCase {
 				catch(OperationCanceledException e){
 					fail("the project \"" + curProject.getName() + "\" build was cancelled, exception message: " + e.getMessage());
 				}
-				
+
 				//compare the generated makefiles to their benchmarks
 				if (files != null && files.length > 0) {
 					if (i == 0) {
@@ -167,7 +175,7 @@ public class ManagedProject21MakefileTests extends TestCase {
 				}
 			}
 		}
-		
+
 		if (succeeded) {	//  Otherwise leave the projects around for comparison
 			for(int i = 0; i < projects.length; i++)
 				ManagedBuildTestHelper.removeProject(projects[i].getName());
@@ -189,7 +197,7 @@ public class ManagedProject21MakefileTests extends TestCase {
 			}
 		} catch (Exception e) {fail("could not create the path variable " + name);}
 	}
-	
+
 	private void createFileLink(IProject project, IPath tmpDir, String linkName, String fileName) {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		String name = MBS_TEMP_DIR;
@@ -197,9 +205,9 @@ public class ManagedProject21MakefileTests extends TestCase {
 			createPathVariable(tmpDir);
 			pathVariableCreated = true;
 		}
-			
-		try {	
-			// Now we can create a linked resource relative to the defined path variable: 
+
+		try {
+			// Now we can create a linked resource relative to the defined path variable:
 			IFile linkF1 = project.getFile(linkName);
 			IPath location = new Path("MBSTemp/" + fileName);
 			if (workspace.validateLinkLocation(linkF1, location).isOK()) {
@@ -209,30 +217,30 @@ public class ManagedProject21MakefileTests extends TestCase {
 			}
 		} catch (Exception e) {
 			fail("could not create the link to " + name + ": " + e);
-		}		
+		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * tests 2.1 style tool integration for a single file executable
 	 */
 	public void testSingleFileExe(){
 		IPath[] makefiles = {
-				 Path.fromOSString("makefile"), 
-				 Path.fromOSString("objects.mk"), 
-				 Path.fromOSString("sources.mk"), 
+				 Path.fromOSString("makefile"),
+				 Path.fromOSString("objects.mk"),
+				 Path.fromOSString("sources.mk"),
 				 Path.fromOSString("subdir.mk")};
 		IProject[] projects = createProjects("singleFileExe", null, null, true);
 		buildProjects("singleFileExe", projects, makefiles);
 	}
-	
+
 	/* (non-Javadoc)
 	 * tests 2.1 style tool integration for a two file SO
 	 */
 	public void testTwoFileSO(){
 		IPath[] makefiles = {
-				 Path.fromOSString("makefile"), 
-				 Path.fromOSString("objects.mk"), 
-				 Path.fromOSString("sources.mk"), 
+				 Path.fromOSString("makefile"),
+				 Path.fromOSString("objects.mk"),
+				 Path.fromOSString("sources.mk"),
 				 Path.fromOSString("subdir.mk")};
 		IProject[] projects = createProjects("twoFileSO", null, null, true);
 		buildProjects("twoFileSO", projects, makefiles);
@@ -243,9 +251,9 @@ public class ManagedProject21MakefileTests extends TestCase {
 	 */
 	public void testMultiResConfig(){
 		IPath[] makefiles = {
-				 Path.fromOSString("makefile"), 
-				 Path.fromOSString("objects.mk"), 
-				 Path.fromOSString("sources.mk"), 
+				 Path.fromOSString("makefile"),
+				 Path.fromOSString("objects.mk"),
+				 Path.fromOSString("sources.mk"),
 				 Path.fromOSString("subdir.mk"),
 				 Path.fromOSString("source1/subdir.mk"),
 				 Path.fromOSString("source2/subdir.mk"),
@@ -253,20 +261,20 @@ public class ManagedProject21MakefileTests extends TestCase {
 		IProject[] projects = createProjects("multiResConfig", null, null, true);
 		buildProjects("multiResConfig", projects, makefiles);
 	}
-	
+
 	/* (non-Javadoc)
 	 * tests 2.1 style tool integration for linked files
 	 */
 	public void testLinkedLib(){
 		boolean succeeded = false;
 		IPath[] makefiles = {
-				 Path.fromOSString("makefile"), 
-				 Path.fromOSString("objects.mk"), 
+				 Path.fromOSString("makefile"),
+				 Path.fromOSString("objects.mk"),
 				 //Path.fromOSString("subdir.mk")   // Can't compare this yet since it contains absolute paths!
-				 Path.fromOSString("sources.mk")}; 
+				 Path.fromOSString("sources.mk")};
 		IPath[] linkedFiles = {
-				 Path.fromOSString("f1.c"), 
-				 Path.fromOSString("f2.c"), 
+				 Path.fromOSString("f1.c"),
+				 Path.fromOSString("f2.c"),
 				 Path.fromOSString("test_ar.h")};
 		File srcDirFile = CTestPlugin.getFileInPlugin(new Path("resources/test21Projects/linkedLib/"));
 		IPath srcDir = Path.fromOSString(srcDirFile.toString());
@@ -286,25 +294,25 @@ public class ManagedProject21MakefileTests extends TestCase {
 				ManagedBuildTestHelper.deleteTempDir(tmpSubDir, linkedFiles);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * tests 2.1 style tool integration for a linked folder
 	 */
 	public void testLinkedFolder(){
 		boolean succeeded = false;
 		IPath[] makefiles = {
-				 Path.fromOSString("makefile"), 
-				 Path.fromOSString("objects.mk"), 
+				 Path.fromOSString("makefile"),
+				 Path.fromOSString("objects.mk"),
 				 Path.fromOSString("subdir.mk"),
-				 Path.fromOSString("sources.mk")}; 
+				 Path.fromOSString("sources.mk")};
 		IPath[] linkedFiles = {
-				 Path.fromOSString("f1.c"), 
-				 Path.fromOSString("f2.c"), 
+				 Path.fromOSString("f1.c"),
+				 Path.fromOSString("f2.c"),
 				 Path.fromOSString("test_ar.h"),
-				 Path.fromOSString("Benchmarks/makefile"), 
-				 Path.fromOSString("Benchmarks/objects.mk"), 
+				 Path.fromOSString("Benchmarks/makefile"),
+				 Path.fromOSString("Benchmarks/objects.mk"),
 				 Path.fromOSString("Benchmarks/subdir.mk"),
-				 Path.fromOSString("Benchmarks/sources.mk")}; 
+				 Path.fromOSString("Benchmarks/sources.mk")};
 		File srcDirFile = CTestPlugin.getFileInPlugin(new Path("resources/test21Projects/linkedFolder/"));
 		IPath srcDir = Path.fromOSString(srcDirFile.toString());
 		IPath tmpSubDir = Path.fromOSString("CDTMBSTest");

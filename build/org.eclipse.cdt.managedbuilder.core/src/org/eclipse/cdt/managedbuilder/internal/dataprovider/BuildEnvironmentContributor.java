@@ -27,21 +27,22 @@ public class BuildEnvironmentContributor implements IEnvironmentContributor {
 	private BuildBuildData fBuildData;
 	private IConfiguration fCfg;
 	private ICConfigurationDescription fCfgDes;
-	
+
 	private MbsEnvironmentSupplier fMbsSupplier = new MbsEnvironmentSupplier();
-	
+
 	public BuildEnvironmentContributor(BuildBuildData buildData){
 		fBuildData = buildData;
 		fCfg = fBuildData.getBuilder().getParent().getParent();
 		fCfgDes = ManagedBuildManager.getDescriptionForConfiguration(fCfg);
 	}
 
+	@Override
 	public IEnvironmentVariable getVariable(String name,
 			IEnvironmentVariableManager provider) {
-		
+
 		EnvironmentCollector collector = new EnvironmentCollector();
 		ExternalExtensionEnvironmentSupplier extSupplier = new ExternalExtensionEnvironmentSupplier(provider);
-		
+
 		boolean varFound = false;
 
 		IEnvironmentVariable var = extSupplier.getVariable(name, fCfg.getManagedProject());
@@ -49,28 +50,29 @@ public class BuildEnvironmentContributor implements IEnvironmentContributor {
 
 		var = fMbsSupplier.getVariable(name, fCfg);
 		varFound = processVariable(name, var, collector, provider, varFound);
-		
+
 		var = extSupplier.getVariable(name, fCfg);
 		varFound = processVariable(name, var, collector, provider, varFound);
 
 		return collector.getVariable(name);
 	}
 
+	@Override
 	public IEnvironmentVariable[] getVariables(
 			IEnvironmentVariableManager provider) {
 		EnvironmentCollector collector = new EnvironmentCollector();
 		ExternalExtensionEnvironmentSupplier extSupplier = new ExternalExtensionEnvironmentSupplier(provider);
-		
+
 		Set<String> set = null;
 
 		IEnvironmentVariable vars[] = extSupplier.getVariables(fCfg.getManagedProject());
-		set = processVariables(vars, collector, provider, set); 
+		set = processVariables(vars, collector, provider, set);
 
 		vars = fMbsSupplier.getVariables(fCfg);
-		set = processVariables(vars, collector, provider, set); 
-		
+		set = processVariables(vars, collector, provider, set);
+
 		vars = extSupplier.getVariables(fCfg);
-		set = processVariables(vars, collector, provider, set); 
+		set = processVariables(vars, collector, provider, set);
 
 		return collector.getVariables();
 	}
@@ -85,7 +87,7 @@ public class BuildEnvironmentContributor implements IEnvironmentContributor {
 			}
 			collector.addVariable(var);
 		}
-		
+
 		return varFound;
 	}
 
@@ -96,23 +98,23 @@ public class BuildEnvironmentContributor implements IEnvironmentContributor {
 				set = new HashSet<String>();
 				checkSet = false;
 			}
-			
+
 			for(int i = 0; i < vars.length; i++){
 				if(vars[i] == null)
 					continue;
-				
+
 				if(set.add(vars[i].getName()) || !checkSet){
 					IEnvironmentVariable base = provider.getVariable(vars[i].getName(), fCfgDes, false);
 					if(base != null){
 						collector.addVariable(base);
 					}
 				}
-				
+
 				collector.addVariable(vars[i]);
 			}
 			//collector.addVariables(vars);
 		}
-		
+
 		return set;
 	}
 

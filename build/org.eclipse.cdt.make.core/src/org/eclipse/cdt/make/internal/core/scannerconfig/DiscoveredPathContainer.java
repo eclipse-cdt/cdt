@@ -37,7 +37,7 @@ public class DiscoveredPathContainer implements IPathEntryContainer {
         fProject = project;
         fPathEntries = null;
     }
-    
+
 //    public IPathEntry[] getPathEntries() {
 //        IPathEntry[] fPathEntries;
 //        try {
@@ -49,15 +49,18 @@ public class DiscoveredPathContainer implements IPathEntryContainer {
 //        return fPathEntries;
 //    }
 
-    public String getDescription() {
+    @Override
+	public String getDescription() {
         return MakeMessages.getString("DiscoveredContainer.description"); //$NON-NLS-1$
     }
 
-    public IPath getPath() {
+    @Override
+	public IPath getPath() {
         return CONTAINER_ID;
     }
 
-    public IPathEntry[] getPathEntries() {
+    @Override
+	public IPathEntry[] getPathEntries() {
         if (fPathEntries == null) {
             try {
                 fPathEntries = computeNewPathEntries();

@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class MakeProjectNature implements IProjectNature {
-	
+
 	public final static String NATURE_ID = MakeCorePlugin.getUniqueIdentifier() + ".makeNature"; //$NON-NLS-1$
 	private IProject fProject;
 
@@ -49,7 +49,7 @@ public class MakeProjectNature implements IProjectNature {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Update the Java command in the build spec (replace existing one if present,
 	 * add one first if none).
@@ -78,7 +78,7 @@ public class MakeProjectNature implements IProjectNature {
 		// Commit the spec change into the project
 		description.setBuildSpec(newCommands);
 		return description;
-	}	
+	}
 
 	/**
 		* Adds a builder to the build spec for the given project.
@@ -130,6 +130,7 @@ public class MakeProjectNature implements IProjectNature {
 	/**
 		* @see IProjectNature#configure
 		*/
+	@Override
 	public void configure() throws CoreException {
 		addBuildSpec();
 		IMakeBuilderInfo info = MakeCorePlugin.createBuildInfo(MakeCorePlugin.getDefault().getPluginPreferences(), MakeBuilder.BUILDER_ID, false);
@@ -142,7 +143,7 @@ public class MakeProjectNature implements IProjectNature {
 
 		projectInfo.setAutoBuildEnable(info.isAutoBuildEnable());
 		projectInfo.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_AUTO, info.getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_AUTO, "")); //$NON-NLS-1$
-		
+
 		projectInfo.setIncrementalBuildEnable(info.isIncrementalBuildEnabled());
 		projectInfo.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREMENTAL, info.getBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREMENTAL, "")); //$NON-NLS-1$
 
@@ -163,6 +164,7 @@ public class MakeProjectNature implements IProjectNature {
 	/**
 	 * @see IProjectNature#deconfigure
 	 */
+	@Override
 	public void deconfigure() throws CoreException {
 		removeBuildSpec();
 	}
@@ -170,6 +172,7 @@ public class MakeProjectNature implements IProjectNature {
 	/**
 		* @see IProjectNature#getProject
 		*/
+	@Override
 	public IProject getProject() {
 		return fProject;
 	}
@@ -177,6 +180,7 @@ public class MakeProjectNature implements IProjectNature {
 	/**
 		* @see IProjectNature#setProject
 		*/
+	@Override
 	public void setProject(IProject project) {
 		fProject = project;
 	}

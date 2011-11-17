@@ -41,6 +41,7 @@ public class GNUMakefileValidator implements IMakefileValidator {
 		setMarkerGenerator(errorHandler);
 	}
 
+	@Override
 	public void setMarkerGenerator(IMarkerGenerator errorHandler) {
 		reporter = errorHandler;
 	}
@@ -49,16 +50,18 @@ public class GNUMakefileValidator implements IMakefileValidator {
 		if (reporter == null) {
 			reporter = new IMarkerGenerator() {
 
+				@Override
 				public void addMarker(IResource file, int lineNumber, String errorDesc, int severity, String errorVar) {
 					ProblemMarkerInfo problemMarkerInfo = new ProblemMarkerInfo(file, lineNumber, errorDesc, severity, errorVar, null);
 					addMarker(problemMarkerInfo);
 				}
-				
-				
+
+
 
 				/* (non-Javadoc)
 				 * @see org.eclipse.cdt.core.IMarkerGenerator#addMarker(org.eclipse.cdt.core.ProblemMarkerInfo)
 				 */
+				@Override
 				public void addMarker(ProblemMarkerInfo problemMarkerInfo) {
 					String name = "Makefile"; //$NON-NLS-1$
 					if (problemMarkerInfo.file != null) {
@@ -76,8 +79,8 @@ public class GNUMakefileValidator implements IMakefileValidator {
 						sb.append(':').append(problemMarkerInfo.externalPath);
 					}
 					sb.append('\n');
-					System.out.println(sb.toString());				
-					
+					System.out.println(sb.toString());
+
 				}
 
 
@@ -94,12 +97,13 @@ public class GNUMakefileValidator implements IMakefileValidator {
 					}
 					return MakefileMessages.getString("MakefileValidator.unknown"); //$NON-NLS-1$
 				}
-				
+
 			};
 		}
 		return reporter;
 	}
-	
+
+	@Override
 	public void checkFile(IFile file, IProgressMonitor monitor) {
 		String message = MakefileMessages.getString("MakefileValidator.checkingFile") + file.getFullPath().toString(); //$NON-NLS-1$
 		monitor.subTask(message);

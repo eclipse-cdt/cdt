@@ -31,7 +31,7 @@ public class BuildResource implements IBuildResource {
 	private BuildIOType fProducerArg;
 	private boolean fNeedsRebuild;
 	private boolean fIsRemoved;
-	private IPath fFullWorkspacePath; 
+	private IPath fFullWorkspacePath;
 	private boolean fIsProjectRc;
 	private BuildDescription fInfo;
 	private URI fLocationURI;
@@ -41,25 +41,26 @@ public class BuildResource implements IBuildResource {
 	}
 
 	protected BuildResource(BuildDescription info, IPath fullWorkspacePath, URI locationURI){
-		
+
 		if(locationURI == null)
 			throw new IllegalArgumentException(); // must point to somewhere!
-		
+
 		fLocationURI = locationURI;
-		
+
 		fFullWorkspacePath = fullWorkspacePath;
 		fInfo = info;
-		
+
 		fIsProjectRc = (fullWorkspacePath != null);
 
 		info.resourceCreated(this);
-		
+
 		if(DbgUtil.DEBUG)
 			DbgUtil.trace("resource " + fullWorkspacePath + " created");	//$NON-NLS-1$	//$NON-NLS-2$
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildResource#getLocation()
 	 */
+	@Override
 	public IPath getLocation() {
 		if(fFullWorkspacePath == null) {
 			return new Path(fLocationURI.getPath());
@@ -69,7 +70,7 @@ public class BuildResource implements IBuildResource {
 		if(resource == null) {
 			return new Path(fLocationURI.getPath());
 		}
-			
+
 		if(resource.getLocation() != null)
 			return resource.getLocation();
 		else
@@ -79,6 +80,7 @@ public class BuildResource implements IBuildResource {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildResource#getFullPath()
 	 */
+	@Override
 	public IPath getFullPath() {
 		return fFullWorkspacePath;
 		//return new Path(getLocationURI().getPath().toString());
@@ -87,6 +89,7 @@ public class BuildResource implements IBuildResource {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildResource#getProducerIOType()
 	 */
+	@Override
 	public IBuildIOType getProducerIOType() {
 		return fProducerArg;
 	}
@@ -94,6 +97,7 @@ public class BuildResource implements IBuildResource {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildResource#getDependentIOTypes()
 	 */
+	@Override
 	public IBuildIOType[] getDependentIOTypes() {
 		return fDepArgs.toArray(new BuildIOType[fDepArgs.size()]);
 	}
@@ -101,17 +105,19 @@ public class BuildResource implements IBuildResource {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildResource#needsRebuild()
 	 */
+	@Override
 	public boolean needsRebuild() {
 		return fNeedsRebuild;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildResource#isRemoved()
 	 */
+	@Override
 	public boolean isRemoved() {
 		return fIsRemoved;
 	}
-	
+
 	public void setRemoved(boolean removed) {
 		if(DbgUtil.DEBUG){
 			if(removed)
@@ -121,7 +127,7 @@ public class BuildResource implements IBuildResource {
 		if(fIsRemoved)
 			fNeedsRebuild = false;
 	}
-	
+
 	public void setRebuildState(boolean rebuild){
 		fNeedsRebuild = rebuild;
 	}
@@ -143,19 +149,19 @@ public class BuildResource implements IBuildResource {
 				String step1Name = DbgUtil.stepName(fProducerArg.getStep());
 				String step2Name = DbgUtil.stepName(arg.getStep());
 				String rcs[] = new String[]{rcName, step1Name, step2Name};
-				
+
 				String externalizedErr = BuildModelMessages.getFormattedString("BuildResource.0", rcs); //$NON-NLS-1$
 
 				if(DbgUtil.DEBUG){
 					err = err + externalizedErr + "curent producer: " + DbgUtil.dumpStep(fProducerArg.getStep()) + "\n producer attempt: " + DbgUtil.dumpStep(arg.getStep());	//$NON-NLS-1$	//$NON-NLS-2$
 				}
-				
-					
+
+
 				throw new IllegalArgumentException(externalizedErr);
 			}
 		}
 	}
-	
+
 	void removeFromArg(BuildIOType arg){
 		if(arg.isInput()){
 			fDepArgs.remove(arg);
@@ -166,43 +172,46 @@ public class BuildResource implements IBuildResource {
 				throw new IllegalArgumentException("Resource is not produced by this arg!!!");	//$NON-NLS-1$
 		}
 	}
-	
+
+	@Override
 	public boolean isProjectResource() {
 		return fIsProjectRc;
 	}
-	
+
 	BuildIOType[][] clear(){
 		BuildIOType types[][] = new BuildIOType[2][];
 		types[0] = new BuildIOType[1];
 		types[0][0] = fProducerArg;
 		BuildIOType outs[] = (BuildIOType[])getDependentIOTypes();
 		types[1] = outs;
-		
+
 		if(fProducerArg != null)
 			fProducerArg.removeResource(this);
 		for(int i = 0; i < outs.length; i++){
 			outs[i].removeResource(this);
 		}
-		
+
 		return types;
 	}
-	
+
 	BuildIOType[][] remove(){
 		BuildIOType types[][] = clear();
-		
+
 		if(DbgUtil.DEBUG)
 			DbgUtil.trace("resource " + DbgUtil.resourceName(this) + " removed");	//$NON-NLS-1$	//$NON-NLS-2$
-		
+
 		fInfo.resourceRemoved(this);
 		fInfo = null;
-		
+
 		return types;
 	}
-	
+
+	@Override
 	public IBuildDescription getBuildDescription(){
 		return fInfo;
 	}
 
+	@Override
 	public IBuildStep[] getDependentSteps() {
 		Set<IBuildStep> set = new HashSet<IBuildStep>();
 		for(Iterator<BuildIOType> iter = fDepArgs.iterator(); iter.hasNext();){
@@ -211,6 +220,7 @@ public class BuildResource implements IBuildResource {
 		return set.toArray(new BuildStep[set.size()]);
 	}
 
+	@Override
 	public IBuildStep getProducerStep() {
 		if(fProducerArg != null)
 			return fProducerArg.getStep();
@@ -226,13 +236,14 @@ public class BuildResource implements IBuildResource {
 			buf.append("WSP|").append(fullPath); //$NON-NLS-1$
 		else
 			buf.append("FS|").append(getLocation()); //$NON-NLS-1$
-			
+
 		return buf.toString();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.buildmodel.IBuildResource#getLocationURI()
 	 */
+	@Override
 	public URI getLocationURI() {
 		return fLocationURI;
 	}

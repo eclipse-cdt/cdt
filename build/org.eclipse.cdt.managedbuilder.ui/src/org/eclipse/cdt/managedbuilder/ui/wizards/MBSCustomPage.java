@@ -18,7 +18,7 @@ import org.eclipse.jface.wizard.IWizardPage;
 /**
  * This abstract class provides a convenient, partial implementation of the IWizardPage interface.
  * This class consults with the MBSCustomPageManager to determine its actions.
- 
+
  * If an ISV's custom pages do not subclass MBSCustomPage then their page implementation must be
  * carefully coded to function properly while still respecting the rules laid out by the page manager.
  */
@@ -27,7 +27,7 @@ public abstract class MBSCustomPage implements IWizardPage
 
 	protected String pageID = null;
 	protected IWizard wizard = null;
-	
+
 	/**
 	 * Constructor which sets the (required) pageID.
 	 * @param pageID identifies this page including for accessing the page data.
@@ -35,7 +35,7 @@ public abstract class MBSCustomPage implements IWizardPage
 	public MBSCustomPage(String pageID) {
 		this.pageID=pageID;
 	}
-	
+
 	/**
 	 * 0-argument constructor, which is generally what will be invoked by the standard, custom wizard
 	 * page system.  It is assumed that either statically, or in the constructor for your derived class,
@@ -44,18 +44,20 @@ public abstract class MBSCustomPage implements IWizardPage
 	 */
 	public MBSCustomPage() {
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.IWizardPage#isCustomPageComplete()
 	 */
+	@Override
 	public boolean canFlipToNextPage() {
 		return (getNextPage() != null && isCustomPageComplete());
-		
+
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.IWizardPage#getWizard()
 	 */
+	@Override
 	public IWizard getWizard()
 	{
 		return wizard;
@@ -64,6 +66,7 @@ public abstract class MBSCustomPage implements IWizardPage
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.IWizardPage#setPreviousPage
 	 */
+	@Override
 	public void setPreviousPage(IWizardPage page)
 	{
 		// do nothing, we use the page manager
@@ -73,15 +76,17 @@ public abstract class MBSCustomPage implements IWizardPage
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.IWizardPage#setWizard()
 	 */
+	@Override
 	public void setWizard(IWizard newWizard)
 	{
 		wizard = newWizard;
 
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.IWizardPage#getNextPage()
 	 */
+	@Override
 	public IWizardPage getNextPage()
 	{
 		// consult with the page manager to determine which pages are to be displayed
@@ -91,25 +96,27 @@ public abstract class MBSCustomPage implements IWizardPage
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.IWizardPage#getPreviousPage()
 	 */
+	@Override
 	public IWizardPage getPreviousPage()
 	{
 		// consult with the page manager to determine which pages are to be displayed
 		return MBSCustomPageManager.getPreviousPage(pageID);
 	}
 
-	
-	
+
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.IWizardPage#isPageComplete()
 	 */
+	@Override
 	public boolean isPageComplete()
 	{
 		/* Since the wizard must have all the pages added to it regardless of whether they are visible
 		 * or not, this method consults the page manager to see if the page is visible.  If it is not,
 		 * then the page is always considered complete.  If the page is visible then the child class is
-		 * consulted to see if it determines the page to be complete based on its own criteria.  
+		 * consulted to see if it determines the page to be complete based on its own criteria.
 		*/
-		
+
 		// if we are not visible then return true so that the wizard can enable the Finish button
 		if (!MBSCustomPageManager.isPageVisible(pageID))
 		{
@@ -130,7 +137,7 @@ public abstract class MBSCustomPage implements IWizardPage
 	/**
 	 * @return true if the page is complete, false otherwise.  This method is called to determine
 	 * the status of the wizard's Finish button.
-	 * 
+	 *
 	 * @see org.eclipse.jface.wizard.IWizardPage#isPageComplete()
 	 */
 	protected abstract boolean isCustomPageComplete();

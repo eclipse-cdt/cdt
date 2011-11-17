@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *    IBM - Initial API and implementation
  *    Anton Leherbauer (Wind River Systems)
@@ -27,6 +27,8 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
+import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo;
+import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IPerProjectDiscoveredPathInfo;
 import org.eclipse.cdt.make.core.scannerconfig.IExternalScannerInfoProvider;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
@@ -35,8 +37,6 @@ import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector3;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollectorCleaner;
 import org.eclipse.cdt.make.core.scannerconfig.InfoContext;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
-import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo;
-import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IPerProjectDiscoveredPathInfo;
 import org.eclipse.cdt.make.internal.core.MakeMessages;
 import org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredPathContainer;
 import org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredPathInfo;
@@ -61,7 +61,7 @@ import org.w3c.dom.Element;
 
 /**
  * New per project scanner info collector
- * 
+ *
  * @since 3.0
  * @author vhirsl
  */
@@ -71,22 +71,22 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
 	protected IProject project;
 	protected InfoContext context;
 	private boolean isBuiltinConfig= false;
-	
+
 	protected Map<ScannerInfoTypes, List<String>> discoveredSI;
-//    private List discoveredIncludes; 
+//    private List discoveredIncludes;
 //	private List discoveredSymbols;
 //	private List discoveredTSO;	// target specific options
 	// cumulative values
-	protected List<String> sumDiscoveredIncludes; 
+	protected List<String> sumDiscoveredIncludes;
 	private Map<String, SymbolEntry> sumDiscoveredSymbols;
     protected boolean scPersisted = false;
-	
+
 	public PerProjectSICollector() {
         discoveredSI = new HashMap<ScannerInfoTypes, List<String>>();
 //		discoveredIncludes = new ArrayList();
 //		discoveredSymbols = new ArrayList();
 //		discoveredTSO = new ArrayList();
-//		
+//
 		sumDiscoveredIncludes = new ArrayList<String>();
 		sumDiscoveredSymbols = new LinkedHashMap<String, SymbolEntry>();
 	}
@@ -94,6 +94,7 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector2#setProject(org.eclipse.core.resources.IProject)
 	 */
+	@Override
 	public void setProject(IProject project) {
 		this.project = project;
 		this.context = new InfoContext(project);
@@ -112,12 +113,13 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector#contributeToScannerConfig(java.lang.Object, java.util.Map)
 	 */
+	@Override
 	public synchronized void contributeToScannerConfig(Object resource, @SuppressWarnings("rawtypes") Map scannerInfo) {
 		// check the resource
 		String errorMessage = null;
 		if (resource == null) {
 			errorMessage = "resource is null";//$NON-NLS-1$
-		} 
+		}
 		else if (!(resource instanceof IResource)) {
 			errorMessage = "resource is not an IResource";//$NON-NLS-1$
 		}
@@ -131,7 +133,7 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
 			TraceUtil.outputError("PerProjectSICollector.contributeToScannerConfig : ", errorMessage); //$NON-NLS-1$
 			return;
 		}
-		
+
         if (scPersisted) {
             // delete discovered scanner config
             discoveredSI.clear();
@@ -141,13 +143,13 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
 		try {
 			if (/*project.hasNature(MakeProjectNature.NATURE_ID) && */// limits to StandardMake projects
 					(project.hasNature(CProjectNature.C_NATURE_ID) ||
-					 project.hasNature(CCProjectNature.CC_NATURE_ID))) { 
+					 project.hasNature(CCProjectNature.CC_NATURE_ID))) {
 
 			    for (Object name : scannerInfo.keySet()) {
 			        ScannerInfoTypes siType = (ScannerInfoTypes) name;
 			        @SuppressWarnings("unchecked")
                     List<String> delta = (List<String>) scannerInfo.get(siType);
-                    
+
                     List<String> discovered = discoveredSI.get(siType);
                     if (discovered == null) {
                         discovered = new ArrayList<String>(delta);
@@ -159,7 +161,7 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
                     }
                 }
 			}
-		} 
+		}
 		catch (CoreException e) {
 			MakeCorePlugin.log(e);
 		}
@@ -179,18 +181,18 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
 
 	/**
 	 * Adds new items to the already accumulated ones preserving order
-	 *  
+	 *
      * @param sumIncludes - previously accumulated items
 	 * @param includes - items to be added
 	 * @param ordered - to preserve order or append at the end
 	 * @return boolean - true if added
 	 */
 	protected boolean addItemsWithOrder(List<String> sumIncludes, List<String> includes, boolean ordered) {
-		if (includes.isEmpty()) 
+		if (includes.isEmpty())
 			return false;
-		
+
 		boolean addedIncludes = false;
-		int insertionPoint= ordered ? 0 : sumIncludes.size(); 
+		int insertionPoint= ordered ? 0 : sumIncludes.size();
 		for (String item : includes) {
 			int pos= sumIncludes.indexOf(item);
 			if (pos >= 0) {
@@ -200,7 +202,7 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
 			} else {
 				sumIncludes.add(insertionPoint++, item);
 				addedIncludes = true;
-			} 
+			}
 		}
 		return addedIncludes;
 	}
@@ -208,6 +210,7 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector2#updateScannerConfiguration(org.eclipse.core.resources.IProject, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public synchronized void updateScannerConfiguration(IProgressMonitor monitor) throws CoreException {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
@@ -215,7 +218,7 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
         IDiscoveredPathInfo pathInfo = MakeCorePlugin.getDefault().getDiscoveryManager().getDiscoveredInfo(project, context);
         if (pathInfo instanceof IPerProjectDiscoveredPathInfo) {
             IPerProjectDiscoveredPathInfo projectPathInfo = (IPerProjectDiscoveredPathInfo) pathInfo;
-            
+
             monitor.beginTask(MakeMessages.getString("ScannerInfoCollector.Processing"), 100); //$NON-NLS-1$
             monitor.subTask(MakeMessages.getString("ScannerInfoCollector.Processing")); //$NON-NLS-1$
             if (scannerConfigNeedsUpdate(projectPathInfo)) {
@@ -242,7 +245,7 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
 	private boolean scannerConfigNeedsUpdate(IPerProjectDiscoveredPathInfo discPathInfo) {
 		boolean addedIncludes = includePathsNeedUpdate(discPathInfo);
 		boolean addedSymbols = definedSymbolsNeedUpdate(discPathInfo);
-		
+
 		return (addedIncludes | addedSymbols);
 	}
 
@@ -253,7 +256,7 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
 		boolean addedIncludes = false;
         List<String> discoveredIncludes = discoveredSI.get(ScannerInfoTypes.INCLUDE_PATHS);
 		if (discoveredIncludes != null) {
-			// Step 1. Add discovered scanner config to the existing discovered scanner config 
+			// Step 1. Add discovered scanner config to the existing discovered scanner config
 			// add the includes from the latest discovery
 //			if (sumDiscoveredIncludes == null) {
 //				sumDiscoveredIncludes = new ArrayList(discoveredIncludes);
@@ -267,15 +270,15 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
 
             // try to translate cygpaths to absolute paths
 			List<String> finalSumIncludes = CygpathTranslator.translateIncludePaths(project, sumDiscoveredIncludes);
-			
+
 			// Step 2. Get project's scanner config
 			LinkedHashMap<String, Boolean> persistedIncludes = discPathInfo.getIncludeMap();
-	
+
 			// Step 3. Merge scanner config from steps 1 and 2
 			// order is important, use list to preserve it
 			ArrayList<String> persistedKeyList = new ArrayList<String>(persistedIncludes.keySet());
 			addedIncludes = addItemsWithOrder(persistedKeyList, finalSumIncludes, true);
-			
+
 			LinkedHashMap<String, Boolean> newPersistedIncludes;
 			if (addedIncludes) {
 				newPersistedIncludes = new LinkedHashMap<String, Boolean>(persistedKeyList.size());
@@ -287,10 +290,10 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
 						// the paths may be on EFS resources, not local
 						Boolean includePathExists = true;
 						URI projectLocationURI = discPathInfo.getProject().getLocationURI();
-						
+
 						// use the project's location... create a URI that uses the same provider but that points to the include path
 						URI includeURI = EFSExtensionManager.getDefault().createNewURIFromPath(projectLocationURI, include);
-						
+
 						// ask EFS if the path exists
 						try {
 							IFileStore fileStore = EFS.getStore(includeURI);
@@ -301,7 +304,7 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
 						} catch (CoreException e) {
 							MakeCorePlugin.log(e);
 						}
-						
+
 						// if the include path doesn't exist, then we tell the scanner config system that the folder
 						// has been "removed", and thus it won't show up in the UI
 						newPersistedIncludes.put(include, !includePathExists);
@@ -311,13 +314,13 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
 			else {
 				newPersistedIncludes = persistedIncludes;
 			}
-			
+
 			// Step 4. Set resulting scanner config
 			discPathInfo.setIncludeMap(newPersistedIncludes);
 		}
 		return addedIncludes;
 	}
-	
+
 	/**
 	 * Compare symbol definitions with already discovered.
 	 */
@@ -325,20 +328,20 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
 		boolean addedSymbols = false;
         List<String> discoveredSymbols = discoveredSI.get(ScannerInfoTypes.SYMBOL_DEFINITIONS);
 		if (discoveredSymbols != null) {
-			// Step 1. Add discovered scanner config to the existing discovered scanner config 
+			// Step 1. Add discovered scanner config to the existing discovered scanner config
 			// add the symbols from the latest discovery
 //			if (sumDiscoveredSymbols == null) {
 //				sumDiscoveredSymbols = new LinkedHashMap();
 //			}
 			addedSymbols = ScannerConfigUtil.scAddSymbolsList2SymbolEntryMap(sumDiscoveredSymbols, discoveredSymbols, true);
-			
+
 			// Step 2. Get project's scanner config
 			LinkedHashMap<String, SymbolEntry> persistedSymbols = discPathInfo.getSymbolMap();
-			
+
 			// Step 3. Merge scanner config from steps 1 and 2
 			LinkedHashMap<String, SymbolEntry> candidateSymbols = new LinkedHashMap<String, SymbolEntry>(persistedSymbols);
 			addedSymbols |= ScannerConfigUtil.scAddSymbolEntryMap2SymbolEntryMap(candidateSymbols, sumDiscoveredSymbols);
-			
+
 			// Step 4. Set resulting scanner config
 			discPathInfo.setSymbolMap(candidateSymbols);
 		}
@@ -348,13 +351,14 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector#getCollectedScannerInfo(java.lang.Object, org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes)
      */
-    public List<String> getCollectedScannerInfo(Object resource, ScannerInfoTypes type) {
+    @Override
+	public List<String> getCollectedScannerInfo(Object resource, ScannerInfoTypes type) {
         List<String> rv = null;
         // check the resource
         String errorMessage = null;
         if (resource == null) {
             errorMessage = "resource is null";//$NON-NLS-1$
-        } 
+        }
         else if (!(resource instanceof IResource)) {
             errorMessage = "resource is not an IResource";//$NON-NLS-1$
         }
@@ -364,7 +368,7 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
         else if (((IResource) resource).getProject() != project) {
             errorMessage = "wrong project";//$NON-NLS-1$
         }
-        
+
         if (errorMessage != null) {
             TraceUtil.outputError("PerProjectSICollector.getCollectedScannerInfo : ", errorMessage); //$NON-NLS-1$
         }
@@ -406,7 +410,8 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollectorUtil#deleteAllPaths(org.eclipse.core.resources.IResource)
      */
-    public void deleteAllPaths(IResource resource) {
+    @Override
+	public void deleteAllPaths(IResource resource) {
         IProject project = resource.getProject();
         if (project != null && project.equals(this.project)) {
             sumDiscoveredIncludes.clear();
@@ -416,7 +421,8 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollectorUtil#deleteAllSymbols(org.eclipse.core.resources.IResource)
      */
-    public void deleteAllSymbols(IResource resource) {
+    @Override
+	public void deleteAllSymbols(IResource resource) {
         IProject project = resource.getProject();
         if (project != null && project.equals(this.project)) {
             sumDiscoveredSymbols.clear();
@@ -426,7 +432,8 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollectorUtil#deletePath(org.eclipse.core.resources.IResource, java.lang.String)
      */
-    public void deletePath(IResource resource, String path) {
+    @Override
+	public void deletePath(IResource resource, String path) {
         IProject project = resource.getProject();
         if (project != null && project.equals(this.project)) {
             sumDiscoveredIncludes.remove(path);
@@ -436,10 +443,11 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollectorUtil#deleteSymbol(org.eclipse.core.resources.IResource, java.lang.String)
      */
-    public void deleteSymbol(IResource resource, String symbol) {
+    @Override
+	public void deleteSymbol(IResource resource, String symbol) {
         IProject project = resource.getProject();
         if (project != null && project.equals(this.project)) {
-            // remove it from the Map of SymbolEntries 
+            // remove it from the Map of SymbolEntries
             ScannerConfigUtil.removeSymbolEntryValue(symbol, sumDiscoveredSymbols);
         }
     }
@@ -447,7 +455,8 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollectorCleaner#deleteAll(org.eclipse.core.resources.IResource)
      */
-    public void deleteAll(IResource resource) {
+    @Override
+	public void deleteAll(IResource resource) {
         deleteAllPaths(resource);
         deleteAllSymbols(resource);
     }
@@ -455,7 +464,8 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector2#createPathInfoObject()
      */
-    public IDiscoveredPathInfo createPathInfoObject() {
+    @Override
+	public IDiscoveredPathInfo createPathInfoObject() {
         DiscoveredPathInfo pathInfo = new DiscoveredPathInfo(project);
         try {
             DiscoveredScannerInfoStore.getInstance().loadDiscoveredScannerInfoFromState(project, context, pathInfo);
@@ -463,13 +473,13 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
         catch (CoreException e) {
             MakeCorePlugin.log(e);
         }
-        return pathInfo; 
+        return pathInfo;
     }
 
 	/**
 	 * Static method to return compiler built-in scanner info.
 	 * Preconditions: resource has to be contained by a project that has following natures:
-	 *     C nature, CC nature (for C++ projects), Make nature and ScannerConfig nature  
+	 *     C nature, CC nature (for C++ projects), Make nature and ScannerConfig nature
 	 */
 	public static void calculateCompilerBuiltins(final IProject project) throws CModelException {
 		createDiscoveredPathContainer(project, new NullProgressMonitor());
@@ -484,10 +494,11 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
 			((IScannerInfoCollectorCleaner) collector).deleteAll(project);
 		}
 		final IExternalScannerInfoProvider esiProvider = profileInstance.createExternalScannerInfoProvider("specsFile");//$NON-NLS-1$
-		
+
 		// Set the arguments for the provider
-		
+
 		ISafeRunnable runnable = new ISafeRunnable() {
+			@Override
 			public void run() throws CoreException {
 				IProgressMonitor monitor = new NullProgressMonitor();
 				esiProvider.invokeProvider(monitor, project, "specsFile", buildInfo, collector);//$NON-NLS-1$
@@ -496,7 +507,8 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
 					collector2.updateScannerConfiguration(monitor);
 				}
 			}
-		
+
+			@Override
 			public void handleException(Throwable exception) {
 				if (exception instanceof OperationCanceledException) {
 					throw (OperationCanceledException) exception;
@@ -505,7 +517,7 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
 		};
 		SafeRunner.run(runnable);
 	}
-	
+
     private static void createDiscoveredPathContainer(IProject project, IProgressMonitor monitor) throws CModelException {
         IPathEntry container = CoreModel.newContainerEntry(DiscoveredPathContainer.CONTAINER_ID);
         ICProject cProject = CoreModel.getDefault().create(project);
@@ -521,13 +533,14 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
         MakeCorePlugin.getDefault().getDiscoveryManager().removeDiscoveredInfo(project);
     }
 
+	@Override
 	public void setInfoContext(InfoContext context) {
 		this.context = context;
 		this.project = context.getProject();
 	}
-	
+
 	public InfoContext getContext(){
 		return this.context;
 	}
-	
+
 }

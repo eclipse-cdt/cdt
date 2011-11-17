@@ -21,8 +21,8 @@ import org.eclipse.cdt.managedbuilder.core.IToolChain;
 
 /**
  * This class holds a number of IFolderInfo objects
- * delonging to different configurations when they 
- * are edited simultaneously. 
+ * delonging to different configurations when they
+ * are edited simultaneously.
  */
 public class MultiFolderInfo extends MultiResourceInfo implements IFolderInfo {
 
@@ -30,7 +30,8 @@ public class MultiFolderInfo extends MultiResourceInfo implements IFolderInfo {
 		super(ris, p);
 		fRis = ris;
 	}
-	
+
+	@Override
 	public boolean buildsFileType(String srcExt) {
 		for (int i=0; i<fRis.length; i++)
 			if (! ((IFolderInfo)fRis[i]).buildsFileType(srcExt))
@@ -38,6 +39,7 @@ public class MultiFolderInfo extends MultiResourceInfo implements IFolderInfo {
 		return true;
 	}
 
+	@Override
 	public IToolChain changeToolChain(IToolChain newSuperClass, String Id,
 			String name) throws BuildException {
 		IToolChain t = null;
@@ -46,51 +48,63 @@ public class MultiFolderInfo extends MultiResourceInfo implements IFolderInfo {
 		return t;
 	}
 
+	@Override
 	public ITool[] getFilteredTools() {
 		return ((IFolderInfo)fRis[curr]).getFilteredTools();
 	}
 
+	@Override
 	public CFolderData getFolderData() {
 		return ((IFolderInfo)fRis[curr]).getFolderData();
 	}
 
+	@Override
 	public String getOutputExtension(String resourceExtension) {
 		return ((IFolderInfo)fRis[curr]).getOutputExtension(resourceExtension);
 	}
 
+	@Override
 	public ITool getTool(String id) {
 		return ((IFolderInfo)fRis[curr]).getTool(id);
 	}
 
+	@Override
 	public IToolChain getToolChain() {
-		return ((IFolderInfo)fRis[curr]).getToolChain();	
+		return ((IFolderInfo)fRis[curr]).getToolChain();
 	}
 
+	@Override
 	public IModificationStatus getToolChainModificationStatus(ITool[] removed,
 			ITool[] added) {
-		return ((IFolderInfo)fRis[curr]).getToolChainModificationStatus(removed, added);		
+		return ((IFolderInfo)fRis[curr]).getToolChainModificationStatus(removed, added);
 	}
 
+	@Override
 	public ITool getToolFromInputExtension(String sourceExtension) {
 		return ((IFolderInfo)fRis[curr]).getToolFromInputExtension(sourceExtension);
 	}
 
+	@Override
 	public ITool getToolFromOutputExtension(String extension) {
 		return ((IFolderInfo)fRis[curr]).getToolFromOutputExtension(extension);
 	}
 
+	@Override
 	public ITool[] getToolsBySuperClassId(String id) {
 		return ((IFolderInfo)fRis[curr]).getToolsBySuperClassId(id);
 	}
 
+	@Override
 	public boolean isHeaderFile(String ext) {
 		return ((IFolderInfo)fRis[curr]).isHeaderFile(ext);
 	}
 
+	@Override
 	public boolean isToolChainCompatible(IToolChain ch) {
 		return ((IFolderInfo)fRis[curr]).isToolChainCompatible(ch);
 	}
 
+	@Override
 	public void modifyToolChain(ITool[] removed, ITool[] added)
 			throws BuildException {
 		((IFolderInfo)fRis[curr]).modifyToolChain(removed, added);

@@ -31,27 +31,28 @@ public class CheckStringExpression implements IBooleanExpression {
 	public static final String STRING = "string"; 	//$NON-NLS-1$
 	public static final String VALUE = "value"; 	//$NON-NLS-1$
 	public static final String IS_REGEX = "isRegex"; 	//$NON-NLS-1$
-	
+
 	private String fString;
 	private String fValue;
 	private boolean fIsRegex;
-	
+
 	public CheckStringExpression(IManagedConfigElement element){
 		fString = element.getAttribute(STRING);
 		if(fString == null)
 			fString = new String();
-		
+
 		fValue = element.getAttribute(VALUE);
 		if(fValue == null)
 			fValue = new String();
-		
+
 		fIsRegex = OptionEnablementExpression.getBooleanValue(element.getAttribute(IS_REGEX));
 	}
-	
-	public boolean evaluate(IResourceInfo rcInfo, 
-            IHoldsOptions holder, 
+
+	@Override
+	public boolean evaluate(IResourceInfo rcInfo,
+            IHoldsOptions holder,
             IOption option) {
-		
+
 		IBuildMacroProvider provider = ManagedBuildManager.getBuildMacroProvider();
 		IEnvironmentVariableProvider env = ManagedBuildManager.getEnvironmentVariableProvider();
 		String delimiter = env.getDefaultDelimiter();
@@ -62,14 +63,14 @@ public class CheckStringExpression implements IBooleanExpression {
 					IBuildMacroProvider.CONTEXT_OPTION,
 					new OptionContextData(option,holder)
 					);
-			
+
 			String resolvedValue =  provider.resolveValue(fValue,
 					" ",	//$NON-NLS-1$
 					delimiter,
 					IBuildMacroProvider.CONTEXT_OPTION,
 					new OptionContextData(option,holder)
 					);
-			
+
 			if(fIsRegex){
 				Pattern pattern = Pattern.compile(resolvedValue);
 				Matcher matcher = pattern.matcher(resolvedString);
@@ -80,11 +81,12 @@ public class CheckStringExpression implements IBooleanExpression {
 		}
 		return false;
 	}
-	
-	public boolean evaluate(IResourceInfo rcInfo, 
-            IHoldsOptions holder, 
+
+	@Override
+	public boolean evaluate(IResourceInfo rcInfo,
+            IHoldsOptions holder,
             IOptionCategory category) {
-		
+
 		IBuildMacroProvider provider = ManagedBuildManager.getBuildMacroProvider();
 		IEnvironmentVariableProvider env = ManagedBuildManager.getEnvironmentVariableProvider();
 		String delimiter = env.getDefaultDelimiter();
@@ -95,14 +97,14 @@ public class CheckStringExpression implements IBooleanExpression {
 					IBuildMacroProvider.CONTEXT_OPTION,
 					new OptionContextData(category,holder)
 					);
-			
+
 			String resolvedValue =  provider.resolveValue(fValue,
 					" ",	//$NON-NLS-1$
 					delimiter,
 					IBuildMacroProvider.CONTEXT_OPTION,
 					new OptionContextData(category,holder)
 					);
-			
+
 			if(fIsRegex){
 				Pattern pattern = Pattern.compile(resolvedValue);
 				Matcher matcher = pattern.matcher(resolvedString);

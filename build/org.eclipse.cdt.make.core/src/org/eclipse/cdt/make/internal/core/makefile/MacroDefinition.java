@@ -29,6 +29,7 @@ public class MacroDefinition extends Directive implements IMacroDefinition {
 		value = v;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -37,6 +38,7 @@ public class MacroDefinition extends Directive implements IMacroDefinition {
 		name = (n == null) ? "" : n.trim() ; //$NON-NLS-1$
 	}
 
+	@Override
 	public StringBuffer getValue() {
 		return value;
 	}
@@ -78,6 +80,7 @@ public class MacroDefinition extends Directive implements IMacroDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.make.core.makefile.IMacroDefinition#isFromCommand()
 	 */
+	@Override
 	public boolean isFromCommand() {
 		return fromCommand;
 	}
@@ -85,6 +88,7 @@ public class MacroDefinition extends Directive implements IMacroDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.make.core.makefile.IMacroDefinition#isFromDefault()
 	 */
+	@Override
 	public boolean isFromDefault() {
 		return fromDefault;
 	}
@@ -92,6 +96,7 @@ public class MacroDefinition extends Directive implements IMacroDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.make.core.makefile.IMacroDefinition#isFromEnviroment()
 	 */
+	@Override
 	public boolean isFromEnviroment() {
 		return fromEnvironment;
 	}
@@ -99,6 +104,7 @@ public class MacroDefinition extends Directive implements IMacroDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.make.core.makefile.IMacroDefinition#isFromEnviroment()
 	 */
+	@Override
 	public boolean isFromEnvironmentOverride() {
 		return fromEnvironmentOverride;
 	}
@@ -106,6 +112,7 @@ public class MacroDefinition extends Directive implements IMacroDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.make.core.makefile.IMacroDefinition#isFromMakefile()
 	 */
+	@Override
 	public boolean isFromMakefile() {
 		return fromMakefile;
 	}

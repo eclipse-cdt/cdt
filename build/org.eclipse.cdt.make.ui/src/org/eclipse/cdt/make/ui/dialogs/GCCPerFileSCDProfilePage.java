@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *  IBM - Initial API and implementation
  *******************************************************************************/
@@ -40,9 +40,9 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * SCD per project profile property/preference page
- * 
+ *
  * @author vhirsl
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -61,7 +61,8 @@ public class GCCPerFileSCDProfilePage extends AbstractDiscoveryPage {
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
      */
-    public void createControl(Composite parent) {
+    @Override
+	public void createControl(Composite parent) {
         Composite page = ControlFactory.createComposite(parent, 1);
 //        ((GridData) page.getLayoutData()).grabExcessVerticalSpace = true;
 //        ((GridData) page.getLayoutData()).verticalAlignment = GridData.FILL;
@@ -69,7 +70,7 @@ public class GCCPerFileSCDProfilePage extends AbstractDiscoveryPage {
         // Add the profile UI contribution.
         Group profileGroup = ControlFactory.createGroup(page,
                 MakeUIPlugin.getResourceString("ScannerConfigOptionsDialog.profile.group.label"), 3); //$NON-NLS-1$
-        
+
         GridData gd = (GridData) profileGroup.getLayoutData();
         gd.grabExcessHorizontalSpace = true;
 //        PixelConverter converter = new PixelConverter(profileGroup);
@@ -82,14 +83,14 @@ public class GCCPerFileSCDProfilePage extends AbstractDiscoveryPage {
         ((GridData)bopEnabledButton.getLayoutData()).horizontalSpan = 3;
         ((GridData)bopEnabledButton.getLayoutData()).grabExcessHorizontalSpace = true;
         bopEnabledButton.addSelectionListener(new SelectionAdapter() {
-            
+
             @Override
 			public void widgetSelected(SelectionEvent e) {
                 handleModifyOpenFileText();
             }
-            
+
         });
-        
+
         // load label
         Label loadLabel = ControlFactory.createLabel(profileGroup, L_OPEN);
         ((GridData) loadLabel.getLayoutData()).horizontalSpan = 2;
@@ -98,7 +99,7 @@ public class GCCPerFileSCDProfilePage extends AbstractDiscoveryPage {
         bopLoadButton = ControlFactory.createPushButton(profileGroup, B_LOAD);
         ((GridData) bopLoadButton.getLayoutData()).minimumWidth = 120;
         bopLoadButton.addSelectionListener(new SelectionAdapter() {
-            
+
             @Override
 			public void widgetSelected(SelectionEvent event) {
                 handleBOPLoadFileButtonSelected();
@@ -108,19 +109,20 @@ public class GCCPerFileSCDProfilePage extends AbstractDiscoveryPage {
         if (getContainer().getProject() == null) {  // project properties
             bopLoadButton.setVisible(false);
         }
-        
+
         // text field
         bopOpenFileText = ControlFactory.createTextField(profileGroup, SWT.SINGLE | SWT.BORDER);
         bopOpenFileText.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent e) {
+            @Override
+			public void modifyText(ModifyEvent e) {
                 handleModifyOpenFileText();
             }
         });
         bopLoadButton.setEnabled(loadButtonInitialEnabled && handleModifyOpenFileText());
-        
+
         // browse button
         Button browseButton = ControlFactory.createPushButton(profileGroup, B_BROWSE);
-        ((GridData) browseButton.getLayoutData()).minimumWidth = 120; 
+        ((GridData) browseButton.getLayoutData()).minimumWidth = 120;
         browseButton.addSelectionListener(new SelectionAdapter() {
 
             @Override
@@ -151,7 +153,7 @@ public class GCCPerFileSCDProfilePage extends AbstractDiscoveryPage {
 
         // variable button
         addVariablesButton(profileGroup, bopOpenFileText);
-        
+
         setControl(page);
         // set the shell variable; must be after setControl
         //lock.acquire();
@@ -186,7 +188,7 @@ public class GCCPerFileSCDProfilePage extends AbstractDiscoveryPage {
         }
         return fileName;
     }
-    
+
     private void setBopOpenFileText(String fileName) {
         // from absolute path to project relative path
         if (fileName.length() > 0) {
@@ -204,7 +206,7 @@ public class GCCPerFileSCDProfilePage extends AbstractDiscoveryPage {
         }
         bopOpenFileText.setText(fileName);
     }
-    
+
     private void initializeValues() {
         bopEnabledButton.setSelection(getContainer().getBuildInfo().isBuildOutputParserEnabled());
         setBopOpenFileText(getContainer().getBuildInfo().getBuildOutputFilePath());
@@ -214,22 +216,23 @@ public class GCCPerFileSCDProfilePage extends AbstractDiscoveryPage {
         if (!getContainer().checkDialogForChanges()) return;
         loadButtonInitialEnabled = false;
         bopLoadButton.setEnabled(false);
-        
+
         // populate buildInfo to be used by the reader job
         populateBuildInfo(getContainer().getBuildInfo());
         IProject project = getContainer().getProject();
         Job readerJob = new BuildOutputReaderJob(project, getContainer().getBuildInfo());
         readerJob.setPriority(Job.LONG);
         readerJob.addJobChangeListener(new JobChangeAdapter() {
-            
+
             @Override
 			public void done(IJobChangeEvent event) {
                 //lock.acquire();
                 synchronized (lock) {
                     if (!instance.shell.isDisposed()) {
                         instance.shell.getDisplay().asyncExec(new Runnable() {
-        
-                            public void run() {
+
+                            @Override
+							public void run() {
                                 if (!instance.shell.isDisposed()) {
                                     loadButtonInitialEnabled = instance.bopEnabledButton.getSelection() && handleModifyOpenFileText();
                                     instance.bopLoadButton.setEnabled(loadButtonInitialEnabled);
@@ -238,7 +241,7 @@ public class GCCPerFileSCDProfilePage extends AbstractDiscoveryPage {
                                     loadButtonInitialEnabled = true;
                                 }
                             }
-                            
+
                         });
                     }
                     else {
@@ -247,7 +250,7 @@ public class GCCPerFileSCDProfilePage extends AbstractDiscoveryPage {
                 }
                 //lock.release();
             }
-            
+
         });
         readerJob.schedule();
     }
@@ -283,14 +286,14 @@ public class GCCPerFileSCDProfilePage extends AbstractDiscoveryPage {
             bopEnabledButton.setSelection(buildInfo.isBuildOutputParserEnabled());
         }
     }
-    
+
     private String getProviderIDForSelectedProfile() {
     	IScannerConfigBuilderInfo2 builderInfo = getContainer().getBuildInfo();
     	// Provider IDs for selected profile
-    	List<String> providerIDs = builderInfo.getProviderIdList(); 
+    	List<String> providerIDs = builderInfo.getProviderIdList();
     	if(providerIDs.size() == 0)
     		return ""; //$NON-NLS-1$
-    	return providerIDs.iterator().next(); 
+    	return providerIDs.iterator().next();
     }
 
 }

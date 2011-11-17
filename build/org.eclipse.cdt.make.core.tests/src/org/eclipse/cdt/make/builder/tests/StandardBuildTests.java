@@ -50,43 +50,43 @@ public class StandardBuildTests extends TestCase {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite(StandardBuildTests.class.getName());
-		
+
 		// Add the relevant tests to the suite
 		suite.addTest(new StandardBuildTests("testProjectCreation"));
 		suite.addTest(new StandardBuildTests("testProjectSettings"));
 		suite.addTest(new StandardBuildTests("testProjectConversion"));
 		suite.addTest(new StandardBuildTests("testProjectCleanup"));
-				
+
 		return suite;
 	}
-	
+
 	private void checkDefaultProjectSettings(IProject project) throws Exception {
 		assertNotNull(project);
 
 		IMakeBuilderInfo defaultInfo = MakeCorePlugin.createBuildInfo(MakeCorePlugin.getDefault().getPluginPreferences(), MakeBuilder.BUILDER_ID, true);
-		
+
 		IMakeBuilderInfo builderInfo = MakeCorePlugin.createBuildInfo(project, MakeBuilder.BUILDER_ID);
 		// Check the rest of the project information
 		assertEquals(defaultInfo.isDefaultBuildCmd(), builderInfo.isDefaultBuildCmd());
 		assertEquals(defaultInfo.isStopOnError(), builderInfo.isStopOnError());
 		assertEquals(defaultInfo.getBuildCommand(), builderInfo.getBuildCommand());
 		assertEquals(defaultInfo.getBuildArguments(), builderInfo.getBuildArguments());
-		assertEquals(defaultInfo.getBuildLocation(), builderInfo.getBuildLocation());	
+		assertEquals(defaultInfo.getBuildLocation(), builderInfo.getBuildLocation());
 
-		assertEquals(defaultInfo.isAutoBuildEnable(), builderInfo.isAutoBuildEnable());	
-		assertEquals(defaultInfo.getAutoBuildTarget(), builderInfo.getAutoBuildTarget()); 
-		assertEquals(defaultInfo.isIncrementalBuildEnabled(), builderInfo.isIncrementalBuildEnabled());	
-		assertEquals(defaultInfo.getIncrementalBuildTarget(), builderInfo.getIncrementalBuildTarget()); 
-		assertEquals(defaultInfo.isFullBuildEnabled(), builderInfo.isFullBuildEnabled());	
+		assertEquals(defaultInfo.isAutoBuildEnable(), builderInfo.isAutoBuildEnable());
+		assertEquals(defaultInfo.getAutoBuildTarget(), builderInfo.getAutoBuildTarget());
+		assertEquals(defaultInfo.isIncrementalBuildEnabled(), builderInfo.isIncrementalBuildEnabled());
+		assertEquals(defaultInfo.getIncrementalBuildTarget(), builderInfo.getIncrementalBuildTarget());
+		assertEquals(defaultInfo.isFullBuildEnabled(), builderInfo.isFullBuildEnabled());
 		assertEquals(defaultInfo.getFullBuildTarget(), builderInfo.getFullBuildTarget());
-		assertEquals(defaultInfo.isCleanBuildEnabled(), builderInfo.isCleanBuildEnabled());	
+		assertEquals(defaultInfo.isCleanBuildEnabled(), builderInfo.isCleanBuildEnabled());
 		assertEquals(defaultInfo.getCleanBuildTarget(), builderInfo.getCleanBuildTarget());
-		
+
 	}
-	
+
 	private void checkOverriddenProjectSettings(IProject project) throws Exception {
 		assertNotNull(project);
-		
+
 		// Check the rest of the project information
 		IMakeBuilderInfo builderInfo = MakeCorePlugin.createBuildInfo(project, MakeBuilder.BUILDER_ID);
 		assertEquals(OFF, builderInfo.isDefaultBuildCmd());
@@ -97,17 +97,18 @@ public class StandardBuildTests extends TestCase {
 	}
 
 	/**
-	 * Create a new project named <code>name</code> or return the project in 
+	 * Create a new project named <code>name</code> or return the project in
 	 * the workspace of the same name if it exists.
-	 * 
+	 *
 	 * @param name The name of the project to create or retrieve.
-	 * @return 
+	 * @return
 	 * @throws CoreException
 	 */
 	private IProject createProject(final String name) throws CoreException {
 		final Object[] result = new Object[1];
 		ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
-			
+
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 				IProject project = root.getProject(name);
@@ -116,7 +117,7 @@ public class StandardBuildTests extends TestCase {
 				} else {
 					project.refreshLocal(IResource.DEPTH_INFINITE, null);
 				}
-		        
+
 				if (!project.isOpen()) {
 					project.open(null);
 				}
@@ -124,13 +125,13 @@ public class StandardBuildTests extends TestCase {
 				result[0] = project;
 			}
 		}, null);
-		return (IProject)result[0];	
+		return (IProject)result[0];
 	}
 
 	/**
-	 * Remove the <code>IProject</code> with the name specified in the argument from the 
+	 * Remove the <code>IProject</code> with the name specified in the argument from the
 	 * receiver's workspace.
-	 *  
+	 *
 	 * @param name
 	 */
 	private void removeProject(String name) {
@@ -161,10 +162,10 @@ public class StandardBuildTests extends TestCase {
 			fail("StandardBuildTest testProjectConversion failed opening project: " + e.getLocalizedMessage());
 		}
 		assertNotNull(project);
-		
+
 		// Check the settings (they should be the override values)
 		checkOverriddenProjectSettings(project);
-		
+
 		// Now convert the project
 		try {
 			CCorePlugin.getDefault().convertProjectFromCtoCC(project, new NullProgressMonitor());
@@ -190,19 +191,19 @@ public class StandardBuildTests extends TestCase {
 		} catch (CoreException e) {
 			fail("StandardBuildTest testProjectConversion failed getting nature: " + e.getLocalizedMessage());
 		}
-		
+
 		// Nothing should have changed in the settings
 		checkOverriddenProjectSettings(project);
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void testProjectCreation() throws Exception  {
 		// Create a new project
 		IProject project = null;
 		try {
-			project = createProject(PROJECT_NAME); 
+			project = createProject(PROJECT_NAME);
 			// Convert the new project to a standard make project
 			MakeProjectNature.addNature(project, null);
 		} catch (CoreException e) {
@@ -225,7 +226,7 @@ public class StandardBuildTests extends TestCase {
 		// Check the default settings
 		checkDefaultProjectSettings(project);
 	}
-	
+
 	public void testProjectSettings() throws Exception {
 		// Get the project
 		IProject project = null;
@@ -235,7 +236,7 @@ public class StandardBuildTests extends TestCase {
 			fail("StandardBuildTest testProjectSettings failed opening project: " + e.getLocalizedMessage());
 		}
 		assertNotNull(project);
-				
+
 		// Use the build info for the rest of the settings
 		IMakeBuilderInfo builderInfo = MakeCorePlugin.createBuildInfo(project, MakeBuilder.BUILDER_ID);
 		builderInfo.setStopOnError(ON);
@@ -253,7 +254,7 @@ public class StandardBuildTests extends TestCase {
 		} catch (CoreException e) {
 			fail ("StandardBuildTest testProjectSettings failed to open project " + e.getLocalizedMessage());
 		}
-		
+
 		// Retest
 		checkOverriddenProjectSettings(project);
 	}

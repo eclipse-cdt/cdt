@@ -41,13 +41,16 @@ public class UpdateMakeProjectWizardPage extends StatusWizardPage {
 	private TablePart tablePart;
 
 	public class MakeProjectContentProvider implements IStructuredContentProvider {
+		@Override
 		public Object[] getElements(Object parent) {
 			return UpdateMakeProjectAction.getOldProjects();
 		}
 
+		@Override
 		public void dispose() {
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}
@@ -81,6 +84,7 @@ public class UpdateMakeProjectWizardPage extends StatusWizardPage {
 		super.dispose();
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();

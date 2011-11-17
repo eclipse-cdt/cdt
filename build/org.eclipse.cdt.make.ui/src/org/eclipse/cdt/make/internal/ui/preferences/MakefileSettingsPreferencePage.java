@@ -74,6 +74,7 @@ public class MakefileSettingsPreferencePage extends FieldEditorPreferencePage im
 	public static void initDefaults(IPreferenceStore prefs) {
 	}
 
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 }

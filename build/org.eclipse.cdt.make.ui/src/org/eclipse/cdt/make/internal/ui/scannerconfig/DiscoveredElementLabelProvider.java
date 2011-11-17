@@ -28,10 +28,10 @@ import org.eclipse.swt.widgets.Display;
 
 /**
  * Label provider for DiscoveredElement-s. DiscoveredElement can be active or removed.
- * 
+ *
  * @deprecated as of CDT 4.0. This class was used to set preferences/properties
  * for 3.X style projects.
- * 
+ *
  * @author vhirsl
  */
 @Deprecated
@@ -45,7 +45,7 @@ public class DiscoveredElementLabelProvider extends LabelProvider implements ICo
 	private ImageDescriptorRegistry fRegistry;
 
 	private final String DISABLED_LABEL = MakeUIPlugin.
-			getResourceString("ManageScannerConfigDialogCommon.discoveredGroup.annotation.disabled");//$NON-NLS-1$ 
+			getResourceString("ManageScannerConfigDialogCommon.discoveredGroup.annotation.disabled");//$NON-NLS-1$
 
 	public DiscoveredElementLabelProvider() {
 		fRegistry = CUIPlugin.getImageDescriptorRegistry();
@@ -58,7 +58,7 @@ public class DiscoveredElementLabelProvider extends LabelProvider implements ICo
         fIncludeAndMacrosFileIcon = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_TUNIT_HEADER);
 		fMacroIcon = fMacroGroupIcon;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
@@ -138,6 +138,7 @@ public class DiscoveredElementLabelProvider extends LabelProvider implements ICo
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
 	 */
+	@Override
 	public Color getForeground(Object element) {
 		if (element instanceof DiscoveredElement) {
 			DiscoveredElement elem = (DiscoveredElement) element;
@@ -157,13 +158,14 @@ public class DiscoveredElementLabelProvider extends LabelProvider implements ICo
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
 	 */
+	@Override
 	public Color getBackground(Object element) {
 		return null;
 	}
 
 	/**
 	 * ComositeImageDescriptor adds 'removed' image overlay to the DiscoveredElement
-	 * 
+	 *
 	 * @author vhirsl
 	 */
 	private class DiscoveredElementImageDescriptor extends CompositeImageDescriptor {
@@ -199,7 +201,7 @@ public class DiscoveredElementLabelProvider extends LabelProvider implements ICo
 				drawImage(data, 0, 0);
 			}
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.resource.CompositeImageDescriptor#getSize()
 		 */

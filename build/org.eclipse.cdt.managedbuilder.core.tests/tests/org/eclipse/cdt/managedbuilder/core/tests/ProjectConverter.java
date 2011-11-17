@@ -19,11 +19,12 @@ import org.eclipse.cdt.managedbuilder.core.IConvertManagedBuildObject;
 
 public class ProjectConverter implements IConvertManagedBuildObject {
 
+	@Override
 	public IBuildObject convert(IBuildObject buildObj, String fromId,
 			String toId, boolean isConfirmed) {
 
 		String tmpDir = System.getProperty("java.io.tmpdir");
-		
+
 		File outputFile = new File(tmpDir + "/converterOutput.txt");
 		try {
 			FileWriter out = new FileWriter(outputFile);
@@ -37,8 +38,8 @@ public class ProjectConverter implements IConvertManagedBuildObject {
 		//	e.printStackTrace();
 			System.out.println("Exception raised.");
 		}
-		
-	
+
+
 	return buildObj;
 	}
 

@@ -24,6 +24,7 @@ public class ManagedBuildCommandLineGenerator implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator#generateCommandLineInfo(org.eclipse.cdt.managedbuilder.core.ITool, java.lang.String, java.lang.String[], java.lang.String, java.lang.String, java.lang.String, java.lang.String[], java.lang.String)
 	 */
+	@Override
 	public IManagedCommandLineInfo generateCommandLineInfo(ITool tool,
 			String commandName, String[] flags, String outputFlag,
 			String outputPrefix, String outputName, String[] inputResources,

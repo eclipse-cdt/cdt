@@ -29,9 +29,11 @@ public abstract class SharedPartWithButtons extends SharedPart {
 	private Composite buttonContainer;
 
 	private class SelectionHandler implements SelectionListener {
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			buttonSelected(e);
 		}
+		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
 			buttonSelected(e);
 		}

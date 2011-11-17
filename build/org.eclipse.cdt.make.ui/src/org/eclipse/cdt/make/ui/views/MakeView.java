@@ -66,7 +66,7 @@ import org.eclipse.ui.part.ViewPart;
 
 /**
  * Implementation of Make Target View.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -119,12 +119,14 @@ public class MakeView extends ViewPart {
 
 		fViewer.addDoubleClickListener(new IDoubleClickListener() {
 
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				handleDoubleClick(event);
 			}
 		});
 		fViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				handleSelectionChanged(event);
 			}
@@ -147,9 +149,9 @@ public class MakeView extends ViewPart {
 		makeActions();
 		hookContextMenu();
 		contributeToActionBars();
-		
+
 		updateActions((IStructuredSelection)fViewer.getSelection());
-		
+
 		bindingService = (IBindingService) PlatformUI.getWorkbench().getService(IBindingService.class);
 		if (bindingService != null) {
 			bindingService.addBindingManagerListener(bindingManagerListener);
@@ -223,7 +225,7 @@ public class MakeView extends ViewPart {
 		textActionHandler.setCopyAction(copyTargetAction);
 		textActionHandler.setPasteAction(pasteTargetAction);
 		textActionHandler.setDeleteAction(deleteTargetAction);
-		
+
 		actionBars.setGlobalActionHandler(ActionFactory.RENAME.getId(), editTargetAction);
 	}
 
@@ -244,6 +246,7 @@ public class MakeView extends ViewPart {
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
 
+			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 				MakeView.this.fillContextMenu(manager);
 				updateActions((IStructuredSelection)fViewer.getSelection());
@@ -299,41 +302,42 @@ public class MakeView extends ViewPart {
 			clipboard.dispose();
 			clipboard = null;
 		}
-		
+
 		if (bindingService != null) {
 			bindingService.removeBindingManagerListener(bindingManagerListener);
 			bindingService = null;
 		}
-		
+
 		super.dispose();
 	}
 
 	private IBindingManagerListener bindingManagerListener = new IBindingManagerListener() {
 
+		@Override
 		public void bindingManagerChanged(BindingManagerEvent event) {
-			
+
 			if (event.isActiveBindingsChanged()) {
 				String keyBinding = bindingService.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.FILE_RENAME);
 				if (keyBinding != null) editTargetAction.setText(
 						MakeUIPlugin.getResourceString("EditTargetAction.label")+"\t"+ keyBinding); //$NON-NLS-1$ //$NON-NLS-2$
-				
+
 				keyBinding = bindingService.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.EDIT_COPY);
 				if (keyBinding != null) copyTargetAction.setText(
 						MakeUIPlugin.getResourceString("CopyTargetAction.label")+"\t"+ keyBinding); //$NON-NLS-1$ //$NON-NLS-2$
-				
+
 				keyBinding = bindingService.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.EDIT_PASTE);
 				if (keyBinding != null) pasteTargetAction.setText(
 						MakeUIPlugin.getResourceString("PasteTargetAction.label")+"\t"+ keyBinding); //$NON-NLS-1$ //$NON-NLS-2$
-				
+
 				keyBinding = bindingService.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.EDIT_DELETE);
 				if (keyBinding != null) deleteTargetAction.setText(
 						MakeUIPlugin.getResourceString("DeleteTargetAction.label")+"\t"+ keyBinding); //$NON-NLS-1$ //$NON-NLS-2$
-				
+
 				keyBinding = bindingService.getBestActiveBindingFormattedFor(TARGET_BUILD_LAST_COMMAND);
 				if (keyBinding != null) buildLastTargetAction.setText(
 						MakeUIPlugin.getResourceString("BuildLastTargetAction.label")+"\t"+ keyBinding); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	};
-	
+
 }

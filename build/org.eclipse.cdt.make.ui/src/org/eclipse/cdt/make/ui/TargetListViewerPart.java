@@ -46,12 +46,12 @@ public class TargetListViewerPart extends StructuredViewerPart {
     private final int REMOVE_TARGET = 1;
     private final int EDIT_TARGET = 2;
     private IContainer fContainer;
-    private boolean recursive;  
-    
-    /** 
-     * @param container 
+    private boolean recursive;
+
+    /**
+     * @param container
      * @param recursive {@code true} if to search recursively for target
-     * 
+     *
      * @since 7.0
      */
     public TargetListViewerPart(IContainer container, boolean recursive) {
@@ -88,7 +88,8 @@ public class TargetListViewerPart extends StructuredViewerPart {
         tableViewer
                 .addSelectionChangedListener(new ISelectionChangedListener() {
 
-                    public void selectionChanged(SelectionChangedEvent e) {
+                    @Override
+					public void selectionChanged(SelectionChangedEvent e) {
                         TargetListViewerPart.this
                                 .selectionChanged((IStructuredSelection) e
                                         .getSelection());
@@ -170,7 +171,7 @@ public class TargetListViewerPart extends StructuredViewerPart {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.cdt.make.internal.ui.part.SharedPart#updateEnabledState()
      */
     @Override
@@ -182,7 +183,7 @@ public class TargetListViewerPart extends StructuredViewerPart {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.cdt.make.internal.ui.part.SharedPart#createControl(org.eclipse.swt.widgets.Composite,
      *      int, int)
      */

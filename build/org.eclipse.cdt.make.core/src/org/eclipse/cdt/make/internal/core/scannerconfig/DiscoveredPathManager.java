@@ -62,7 +62,7 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
 		public IDiscoveredPathInfo getInfo(InfoContext context){
 			return fInfoMap.get(context);
 		}
-		
+
 //		private Map getMap(IPath path, boolean create, boolean exactPath){
 //			PathSettingsContainer child = fContainer.getChildContainer(path, create, exactPath);
 //			Map map = null;
@@ -73,10 +73,10 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
 //					child.setValue(map);
 //				}
 //			}
-//			
+//
 //			return map;
 //		}
-		
+
 //		public IDiscoveredPathInfo getInfo(IFile file, String instanceId){
 //			IPath path = file.getProjectRelativePath();
 //			Map map = getMap(path, false, false);
@@ -98,20 +98,21 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
 	}
 
 	public DiscoveredPathManager() {
-        
+
 	}
-	
+
 	public void startup() {
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 	}
-	
+
 	public void shutdown() {
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
 	 */
+	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		if (event.getSource() instanceof IWorkspace) {
 			IResource resource = event.getResource();
@@ -131,29 +132,32 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
 			}
 		}
 	}
-	
-	
 
+
+
+	@Override
 	public IDiscoveredPathInfo getDiscoveredInfo(IProject project) throws CoreException {
 		return getDiscoveredInfo(project, new InfoContext(project));
 	}
 
+	@Override
 	public IDiscoveredPathInfo getDiscoveredInfo(IProject project, InfoContext context) throws CoreException{
 		return getDiscoveredInfo(project, context, true);
 	}
 
+	@Override
 	public IDiscoveredPathInfo getDiscoveredInfo(IProject project, InfoContext context, boolean defaultToProjectSettings) throws CoreException{
 		DiscoveredInfoHolder holder = getHolder(project, true);
 		IDiscoveredPathInfo info = holder.getInfo(context);
-		
+
 		if(info == null){
 			info = loadPathInfo(project, context, defaultToProjectSettings);
 			holder.setInfo(context, info);
 		}
-		
+
 		return info;
 	}
-	
+
 	private DiscoveredInfoHolder getHolder(IProject project, boolean create){
 		DiscoveredInfoHolder holder = fDiscoveredInfoHolderMap.get(project);
 		if(holder == null && create){
@@ -165,7 +169,7 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
 
 	private IDiscoveredPathInfo loadPathInfo(IProject project, InfoContext context, boolean defaultToProjectSettings) throws CoreException {
         IDiscoveredPathInfo pathInfo = null;
-        
+
         IScannerConfigBuilderInfo2Set container = ScannerConfigProfileManager.createScannerConfigBuildInfo2Set(project);
         IScannerConfigBuilderInfo2 buildInfo = container.getInfo(context);
         if(buildInfo == null && defaultToProjectSettings)
@@ -176,7 +180,7 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
 	        SCProfileInstance profileInstance = ScannerConfigProfileManager.getInstance().
 	                getSCProfileInstance(project, context, profileId);
 	        IScannerInfoCollector collector = profileInstance.getScannerInfoCollector();
-	        
+
 	        if (collector instanceof IScannerInfoCollector2) {
 	            IScannerInfoCollector2 collector2 = (IScannerInfoCollector2) collector;
 	            pathInfo = collector2.createPathInfoObject();
@@ -188,20 +192,20 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
 		return pathInfo;
 	}
 
-			
-			
-	
+
+
+
 //	private DiscoveredInfoHolder getHolder
 
 //	private IDiscoveredPathInfo loadPathInfo(IProject project) throws CoreException {
 //        IDiscoveredPathInfo pathInfo = null;
-//        
+//
 //        IScannerConfigBuilderInfo2 buildInfo = ScannerConfigProfileManager.createScannerConfigBuildInfo2(project);
 //        String profileId = buildInfo.getSelectedProfileId();
 //        SCProfileInstance profileInstance = ScannerConfigProfileManager.getInstance().
 //                getSCProfileInstance(project, profileId);
 //        IScannerInfoCollector collector = profileInstance.getScannerInfoCollector();
-//        
+//
 //        if (collector instanceof IScannerInfoCollector2) {
 //            IScannerInfoCollector2 collector2 = (IScannerInfoCollector2) collector;
 //            pathInfo = collector2.createPathInfoObject();
@@ -212,10 +216,12 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
 //		return pathInfo;
 //	}
 
+	@Override
 	public void removeDiscoveredInfo(IProject project) {
 		removeDiscoveredInfo(project, new InfoContext(project));
 	}
 
+	@Override
 	public void removeDiscoveredInfo(IProject project, InfoContext context) {
 		DiscoveredInfoHolder holder = getHolder(project, false);
 		if(holder != null){
@@ -229,16 +235,18 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager#updateDiscoveredInfo(org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo, java.util.List)
      */
-    public void updateDiscoveredInfo(IDiscoveredPathInfo info, List<IResource> changedResources) throws CoreException {
+    @Override
+	public void updateDiscoveredInfo(IDiscoveredPathInfo info, List<IResource> changedResources) throws CoreException {
     	updateDiscoveredInfo(new InfoContext(info.getProject()), info, true, changedResources);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager#updateDiscoveredInfo(org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo, java.util.List)
      */
-    public void updateDiscoveredInfo(InfoContext context, IDiscoveredPathInfo info, boolean updateContainer, List<IResource> changedResources) throws CoreException {
+    @Override
+	public void updateDiscoveredInfo(InfoContext context, IDiscoveredPathInfo info, boolean updateContainer, List<IResource> changedResources) throws CoreException {
     	DiscoveredInfoHolder holder = getHolder(info.getProject(), true);
-    	IDiscoveredPathInfo oldInfo = holder.getInfo(context); 
+    	IDiscoveredPathInfo oldInfo = holder.getInfo(context);
 		if (oldInfo != null) {
             IDiscoveredScannerInfoSerializable serializable = info.getSerializable();
 			if (serializable != null) {
@@ -246,7 +254,7 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
                 IProject project = info.getProject();
 				DiscoveredScannerInfoStore.getInstance().saveDiscoveredScannerInfoToState(project, context, serializable);
 				fireUpdate(INFO_CHANGED, info);
-                
+
 				if(updateContainer){
 
 	                IScannerConfigBuilderInfo2 buildInfo = ScannerConfigProfileManager.createScannerConfigBuildInfo2(project);
@@ -262,11 +270,11 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
 			}
 		}
 	}
-    
+
     /**
      * Allows one to update the discovered information for a particular scanner discovery profile ID.
      * TODO:  This should be made API in IDiscoveredPathManager, or in an interface derived there from.
-     * 
+     *
      * @param context
      * @param info
      * @param updateContainer
@@ -276,7 +284,7 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
      */
     public void updateDiscoveredInfo(InfoContext context, IDiscoveredPathInfo info, boolean updateContainer, List<IResource> changedResources, String profileId) throws CoreException {
     	DiscoveredInfoHolder holder = getHolder(info.getProject(), true);
-    	IDiscoveredPathInfo oldInfo = holder.getInfo(context); 
+    	IDiscoveredPathInfo oldInfo = holder.getInfo(context);
 		if (oldInfo != null) {
             IDiscoveredScannerInfoSerializable serializable = info.getSerializable();
 			if (serializable != null) {
@@ -284,11 +292,11 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
                 IProject project = info.getProject();
 				DiscoveredScannerInfoStore.getInstance().saveDiscoveredScannerInfoToState(project, context, serializable);
 				fireUpdate(INFO_CHANGED, info);
-                
+
 				if(updateContainer){
 
 	                IScannerConfigBuilderInfo2 buildInfo = ScannerConfigProfileManager.createScannerConfigBuildInfo2(project);
-	                
+
 	                ScannerConfigScope profileScope = ScannerConfigProfileManager.getInstance().
 	                        getSCProfileConfiguration(profileId).getProfileScope();
 	                changeDiscoveredContainer(project, profileScope, changedResources);
@@ -304,17 +312,19 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager#changeDiscoveredContainer(org.eclipse.core.resources.IProject, java.lang.String)
      */
-    public void changeDiscoveredContainer(final IProject project, final ScannerConfigScope profileScope, final List<IResource> changedResources) {
+    @Override
+	public void changeDiscoveredContainer(final IProject project, final ScannerConfigScope profileScope, final List<IResource> changedResources) {
         // order here is of essence
         // 1. clear DiscoveredPathManager's path info cache
     	DiscoveredInfoHolder holder = getHolder(project, false);
     	InfoContext context = new InfoContext(project);
         IDiscoveredPathInfo oldInfo = holder.getInfo(context);
-        
+
         // 2. switch the containers
         try {
         	IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
-        		public void run(IProgressMonitor monitor) throws CoreException {
+        		@Override
+				public void run(IProgressMonitor monitor) throws CoreException {
         			ICProject cProject = CoreModel.getDefault().create(project);
         			if (ScannerConfigScope.PROJECT_SCOPE.equals(profileScope)) {
         				CoreModel.setPathEntryContainer(new ICProject[]{cProject},
@@ -328,12 +338,12 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
         					List<PathEntryContainerChanged> changeDelta = new ArrayList<PathEntryContainerChanged>(changedResources.size());
         					for (IResource resource : changedResources) {
         						IPath path = resource.getFullPath();
-        						changeDelta.add(new PathEntryContainerChanged(path, 
-        								PathEntryContainerChanged.INCLUDE_CHANGED | 
+        						changeDelta.add(new PathEntryContainerChanged(path,
+        								PathEntryContainerChanged.INCLUDE_CHANGED |
         								PathEntryContainerChanged.MACRO_CHANGED)); // both include paths and symbols changed
         					}
-        					CoreModel.pathEntryContainerUpdates(container, 
-        							changeDelta.toArray(new PathEntryContainerChanged[changeDelta.size()]), 
+        					CoreModel.pathEntryContainerUpdates(container,
+        							changeDelta.toArray(new PathEntryContainerChanged[changeDelta.size()]),
         							null);
         				}
         			}
@@ -341,7 +351,7 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
         				MakeCorePlugin.log(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), 1,
         						MakeMessages.getString("DiscoveredContainer.ScopeErrorMessage"), null)); //$NON-NLS-1$
         			}
-        			
+
         		}
         	};
         	CoreModel.run(runnable, null);
@@ -349,7 +359,7 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
         catch (CoreException e) {
         	MakeCorePlugin.log(e);
         }
-        
+
         // 3. clear the container's path entry cache
         if (oldInfo != null) {
             fireUpdate(INFO_REMOVED, oldInfo);
@@ -362,13 +372,15 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
 			final IDiscoveredInfoListener listener = (IDiscoveredInfoListener)list[i];
 			if (listener != null) {
 				SafeRunner.run(new ISafeRunnable() {
-		
+
+					@Override
 					public void handleException(Throwable exception) {
 						IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1,
 								CCorePlugin.getResourceString("CDescriptorManager.exception.listenerError"), exception); //$NON-NLS-1$
 						CCorePlugin.log(status);
 					}
-		
+
+					@Override
 					public void run() throws Exception {
 						switch (type) {
 							case INFO_CHANGED :
@@ -384,10 +396,12 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
 		}
 	}
 
+	@Override
 	public void addDiscoveredInfoListener(IDiscoveredInfoListener listener) {
 		listeners.add(listener);
 	}
 
+	@Override
 	public void removeDiscoveredInfoListener(IDiscoveredInfoListener listener) {
 		listeners.remove(listener);
 	}

@@ -20,15 +20,16 @@ public class TestConfigurationNameProvider implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfigurationNameProvider#getNewConfigurationName(org.eclipse.cdt.managedbuilder.core.IConfiguration,
 	 *      java.lang.String[]) This function will generate a unique
 	 *      configuration name based on used names, current OS and current
 	 *      Architecture.
-	 * 
+	 *
 	 */
 	private static int configNumber = 0;
 
+	@Override
 	public String getNewConfigurationName(IConfiguration configuration,
 			String[] usedConfigurationNames) {
 

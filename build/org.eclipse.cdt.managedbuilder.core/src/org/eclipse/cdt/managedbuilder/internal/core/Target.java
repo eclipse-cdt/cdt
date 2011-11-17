@@ -67,35 +67,35 @@ public class Target extends BuildObject implements ITarget {
 	private String scannerInfoCollectorId;
 
 	/**
-	 * This constructor is called to create a target defined by an extension point in 
+	 * This constructor is called to create a target defined by an extension point in
 	 * a plugin manifest file.
-	 * 
+	 *
 	 * @param managedBuildRevision the fileVersion of Managed Build System
 	 */
 	public Target(IManagedConfigElement element, String managedBuildRevision) {
 		// setup for resolving
 		ManagedBuildManager.putConfigElement(this, element);
 		resolved = false;
-		
+
 		// id
 		setId(SafeStringInterner.safeIntern(element.getAttribute(ID)));
-		
+
 		// managedBuildRevision
 		setManagedBuildRevision(SafeStringInterner.safeIntern(managedBuildRevision));
-		
+
 		// hook me up
 		ManagedBuildManager.addExtensionTarget(this);
-		
+
 		// Get the target name
 		setName(SafeStringInterner.safeIntern(element.getAttribute(NAME)));
 
-		// Get the name of the build artifact associated with target (usually 
+		// Get the name of the build artifact associated with target (usually
 		// in the plugin specification).
 		artifactName = SafeStringInterner.safeIntern(element.getAttribute(ARTIFACT_NAME));
-		
+
 		// Get the ID of the binary parser
 		binaryParserId = SafeStringInterner.safeIntern(element.getAttribute(BINARY_PARSER));
-		
+
 		// Get the semicolon separated list of IDs of the error parsers
 		errorParserIds = SafeStringInterner.safeIntern(element.getAttribute(ERROR_PARSERS));
 
@@ -107,7 +107,7 @@ public class Target extends BuildObject implements ITarget {
 
 		// Is this a test target
 		isTest = ("true".equals(element.getAttribute(IS_TEST))); //$NON-NLS-1$
-		
+
 		// Get the clean command
 		cleanCommand = SafeStringInterner.safeIntern(element.getAttribute(CLEAN_COMMAND));
 
@@ -116,10 +116,10 @@ public class Target extends BuildObject implements ITarget {
 
 		// Get the make arguments
 		makeArguments = SafeStringInterner.safeIntern(element.getAttribute(MAKE_ARGS));
-		
+
 		// Get scannerInfoCollectorId
 		scannerInfoCollectorId = SafeStringInterner.safeIntern(element.getAttribute(SCANNER_INFO_COLLECTOR_ID));
-		
+
 		// Get the comma-separated list of valid OS
 		String os = element.getAttribute(OS_LIST);
 		if (os != null) {
@@ -129,7 +129,7 @@ public class Target extends BuildObject implements ITarget {
 				targetOSList.add(SafeStringInterner.safeIntern(osTokens[i].trim()));
 			}
 		}
-		
+
 		// Get the comma-separated list of valid Architectures
 		String arch = element.getAttribute(ARCH_LIST);
 		if (arch != null) {
@@ -140,7 +140,7 @@ public class Target extends BuildObject implements ITarget {
 			}
 		}
 
-		// Load any tool references we might have 
+		// Load any tool references we might have
 		IManagedConfigElement[] toolRefs = element.getChildren(IConfigurationV2.TOOLREF_ELEMENT_NAME);
 		for (int k = 0; k < toolRefs.length; ++k) {
 			new ToolReference(this, toolRefs[k]);
@@ -158,30 +158,30 @@ public class Target extends BuildObject implements ITarget {
 			new ConfigurationV2(this, configs[n]);
 		}
 	}
-	
+
 	/**
 	 * Set the resource that owns the target.
 	 */
 	protected Target(IResource owner) {
 		this.owner = owner;
 	}
-	
+
 	/**
-	 * Create a copy of the target specified in the argument, 
+	 * Create a copy of the target specified in the argument,
 	 * that is owned by the owned by the specified resource.
 	 */
 	public Target(IResource owner, ITarget parent) {
 		// Make the owner of the target the project resource
 		this(owner);
-		
+
 		// Copy the parent's identity
 		this.parent = parent;
 		int id = ManagedBuildManager.getRandomNumber();
 		setId(owner.getName() + "." + parent.getId() + "." + id);		 //$NON-NLS-1$ //$NON-NLS-2$
 		setName(parent.getName());
-		
+
 		setManagedBuildRevision(parent.getManagedBuildRevision());
-		
+
 		setArtifactName(parent.getArtifactName());
 		this.binaryParserId = parent.getBinaryParserId();
 		this.errorParserIds = parent.getErrorParserIds();
@@ -200,13 +200,13 @@ public class Target extends BuildObject implements ITarget {
 	 */
 	public Target(ManagedBuildInfo buildInfo, Element element) {
 		this(buildInfo.getOwner());
-		
+
 		// id
 		setId(element.getAttribute(ID));
-		
+
 		// hook me up
 		buildInfo.addTarget(this);
-		
+
 		// name
 		setName(element.getAttribute(NAME));
 
@@ -227,20 +227,20 @@ public class Target extends BuildObject implements ITarget {
 		// isAbstract
 		if ("true".equals(element.getAttribute(IS_ABSTRACT))) //$NON-NLS-1$
 			isAbstract = true;
-			
+
 		// Is this a test target
 		isTest = ("true".equals(element.getAttribute(IS_TEST))); //$NON-NLS-1$
-		
+
 		// Get the clean command
 		if (element.hasAttribute(CLEAN_COMMAND)) {
 			cleanCommand = element.getAttribute(CLEAN_COMMAND);
 		}
-		
+
 		// Get the semicolon separated list of IDs of the error parsers
 		if (element.hasAttribute(ERROR_PARSERS)) {
 			errorParserIds = element.getAttribute(ERROR_PARSERS);
 		}
-		
+
 		// Get the make command and arguments
 		if (element.hasAttribute(MAKE_COMMAND)) {
 			makeCommand = element.getAttribute(MAKE_COMMAND);
@@ -248,7 +248,7 @@ public class Target extends BuildObject implements ITarget {
 		if(element.hasAttribute(MAKE_ARGS)) {
 			makeArguments = element.getAttribute(MAKE_ARGS);
 		}
-	
+
 		Node child = element.getFirstChild();
 		while (child != null) {
 			if (child.getNodeName().equals(IConfigurationV2.CONFIGURATION_ELEMENT_NAME)) {
@@ -264,7 +264,7 @@ public class Target extends BuildObject implements ITarget {
 	}
 
 	/**
-	 * Adds a tool specification to the receiver. This tool is defined 
+	 * Adds a tool specification to the receiver. This tool is defined
 	 * only for the receiver, and cannot be shared by other targets.
 	 */
 	public void addTool(ITool tool) {
@@ -278,17 +278,17 @@ public class Target extends BuildObject implements ITarget {
 	public void addToolReference(ToolReference toolRef) {
 		getLocalToolReferences().add(toolRef);
 	}
-	
+
 
 	/**
-	 * Tail-recursion method that creates a lits of tools and tool reference 
-	 * walking the receiver's parent hierarchy. 
+	 * Tail-recursion method that creates a lits of tools and tool reference
+	 * walking the receiver's parent hierarchy.
 	 */
 	private void addToolsToArray(Vector<ITool> toolArray) {
 		if (parent != null) {
 			((Target)parent).addToolsToArray(toolArray);
 		}
-		
+
 		//	Add the tools from out own list
 		toolArray.addAll(getToolList());
 
@@ -299,6 +299,7 @@ public class Target extends BuildObject implements ITarget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITarget#createConfiguration(org.eclipse.cdt.core.build.managed.IConfigurationV2)
 	 */
+	@Override
 	public IConfigurationV2 createConfiguration(IConfigurationV2 parent, String id) {
 		isDirty = true;
 		return new ConfigurationV2(this, parent, id);
@@ -307,6 +308,7 @@ public class Target extends BuildObject implements ITarget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITarget#createConfiguration()
 	 */
+	@Override
 	public IConfigurationV2 createConfiguration(String id) {
 		return new ConfigurationV2(this, id);
 	}
@@ -314,6 +316,7 @@ public class Target extends BuildObject implements ITarget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getArtifactExtension()
 	 */
+	@Override
 	public String getArtifactExtension() {
 		// Has the user changed the extension for this target
 		if (extension != null) {
@@ -335,6 +338,7 @@ public class Target extends BuildObject implements ITarget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITarget#getArtifactName()
 	 */
+	@Override
 	public String getArtifactName() {
 		if (artifactName == null) {
 			// If I have a parent, ask it
@@ -348,10 +352,11 @@ public class Target extends BuildObject implements ITarget {
 			return artifactName;
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getBinaryParserId()
 	 */
+	@Override
 	public String getBinaryParserId() {
 		if (binaryParserId == null) {
 			// If I have a parent, ask it
@@ -368,6 +373,7 @@ public class Target extends BuildObject implements ITarget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITarget#getCleanCommand()
 	 */
+	@Override
 	public String getCleanCommand() {
 		// Return the command used to remove files
 		if (cleanCommand == null) {
@@ -390,13 +396,14 @@ public class Target extends BuildObject implements ITarget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITarget#getConfiguration()
 	 */
+	@Override
 	public IConfigurationV2 getConfiguration(String id) {
 		return getConfigurationMap().get(id);
 	}
-	
+
 	/**
 	 * Safe accessor for the list of configurations.
-	 * 
+	 *
 	 * @return List containing the configurations
 	 */
 	private List<IConfigurationV2> getConfigurationList() {
@@ -405,7 +412,7 @@ public class Target extends BuildObject implements ITarget {
 		}
 		return configList;
 	}
-	
+
 	/**
 	 * Safe accessor for the map of configuration ids to configurations
 	 */
@@ -415,10 +422,11 @@ public class Target extends BuildObject implements ITarget {
 		}
 		return configMap;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getConfigurations()
 	 */
+	@Override
 	public IConfigurationV2[] getConfigurations() {
 		return getConfigurationList().toArray(new IConfigurationV2[getConfigurationList().size()]);
 	}
@@ -426,10 +434,11 @@ public class Target extends BuildObject implements ITarget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getDefaultExtension()
 	 */
+	@Override
 	public String getDefaultExtension() {
 		return defaultExtension == null ? EMPTY_STRING : defaultExtension;
 	}
-	
+
 //	private Map getDepCalcMap() {
 //		if (depCalculatorsMap == null) {
 //			depCalculatorsMap = new HashMap();
@@ -440,6 +449,7 @@ public class Target extends BuildObject implements ITarget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getErrorParserIds()
 	 */
+	@Override
 	public String getErrorParserIds() {
 		if (errorParserIds == null) {
 			// If I have a parent, ask it
@@ -453,6 +463,7 @@ public class Target extends BuildObject implements ITarget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getErrorParserList()
 	 */
+	@Override
 	public String[] getErrorParserList() {
 		String parserIDs = getErrorParserIds();
 		String[] errorParsers = null;
@@ -470,7 +481,7 @@ public class Target extends BuildObject implements ITarget {
 				errorParsers = list.toArray(strArr);
 			}
 		} else {
-			// If no error parsers are specified by the target, the default is 
+			// If no error parsers are specified by the target, the default is
 			// all error parsers
 			errorParsers = ErrorParserManager.getErrorParserAvailableIds();
 		}
@@ -478,9 +489,9 @@ public class Target extends BuildObject implements ITarget {
 	}
 
 	/**
-	 * A safe accesor method. It answers the tool reference list in the 
+	 * A safe accesor method. It answers the tool reference list in the
 	 * receiver.
-	 * 
+	 *
 	 * @return List
 	 */
 	protected List<ToolReference> getLocalToolReferences() {
@@ -489,16 +500,17 @@ public class Target extends BuildObject implements ITarget {
 		}
 		return toolReferences;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getMakeArguments()
 	 */
+	@Override
 	public String getMakeArguments() {
 		if (makeArguments == null) {
 			// See if it is defined in my parent
 			if (parent != null) {
 				return parent.getMakeArguments();
-			} else { 
+			} else {
 				// No parent and no user setting
 				return new String(""); //$NON-NLS-1$
 			}
@@ -509,6 +521,7 @@ public class Target extends BuildObject implements ITarget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITarget#getMakeCommand()
 	 */
+	@Override
 	public String getMakeCommand() {
 		// Return the name of the make utility
 		if (makeCommand == null) {
@@ -527,6 +540,7 @@ public class Target extends BuildObject implements ITarget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObject#getName()
 	 */
+	@Override
 	public String getName() {
 		// If I am unnamed, see if I can inherit one from my parent
 		if (name == null) {
@@ -542,13 +556,13 @@ public class Target extends BuildObject implements ITarget {
 
 	protected List<OptionReference> getOptionReferences(ITool tool) {
 		List<OptionReference> references = new ArrayList<OptionReference>();
-		
+
 		// Get all the option references I add for this tool
 		ToolReference toolRef = getToolReference(tool);
 		if (toolRef != null) {
 			references.addAll(toolRef.getOptionReferenceList());
 		}
-		
+
 		// See if there is anything that my parents add that I don't
 		if (parent != null) {
 			List<OptionReference> refs = ((Target)parent).getOptionReferences(tool);
@@ -558,13 +572,14 @@ public class Target extends BuildObject implements ITarget {
 				}
 			}
 		}
-		
+
 		return references;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getOwner()
 	 */
+	@Override
 	public IResource getOwner() {
 		return owner;
 	}
@@ -572,6 +587,7 @@ public class Target extends BuildObject implements ITarget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getParent()
 	 */
+	@Override
 	public ITarget getParent() {
 		return parent;
 	}
@@ -579,6 +595,7 @@ public class Target extends BuildObject implements ITarget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getTargetArchList()
 	 */
+	@Override
 	public String[] getTargetArchList() {
 		if (targetArchList == null) {
 			// Ask parent for its list
@@ -591,10 +608,11 @@ public class Target extends BuildObject implements ITarget {
 		}
 		return targetArchList.toArray(new String[targetArchList.size()]);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getTargetOSList()
 	 */
+	@Override
 	public String[] getTargetOSList() {
 		if (targetOSList == null) {
 			// Ask parent for its list
@@ -607,10 +625,11 @@ public class Target extends BuildObject implements ITarget {
 		}
 		return targetOSList.toArray(new String[targetOSList.size()]);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getTool(java.lang.String)
 	 */
+	@Override
 	public ITool getTool(String id) {
 		ITool result = null;
 
@@ -621,7 +640,7 @@ public class Target extends BuildObject implements ITarget {
 		if (result == null && parent != null) {
 			result = ((Target)parent).getTool(id);
 		}
-		
+
 		// If not defined in parents, check if defined at all
 		if (result == null) {
 			result = ManagedBuildManager.getExtensionTool(id);
@@ -631,9 +650,9 @@ public class Target extends BuildObject implements ITarget {
 	}
 
 	/**
-	 * A safe accessor method for the list of tools maintained by the 
+	 * A safe accessor method for the list of tools maintained by the
 	 * target
-	 * 
+	 *
 	 */
 	private List<ITool> getToolList() {
 		if (toolList == null) {
@@ -644,7 +663,7 @@ public class Target extends BuildObject implements ITarget {
 
 	/**
 	 * A safe accessor for the tool map
-	 * 
+	 *
 	 */
 	private Map<String, ITool> getToolMap() {
 		if (toolMap == null) {
@@ -674,6 +693,7 @@ public class Target extends BuildObject implements ITarget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getTools()
 	 */
+	@Override
 	public ITool[] getTools() {
 		Vector<ITool> toolArray = new Vector<ITool>();
 		addToolsToArray(toolArray);
@@ -683,15 +703,17 @@ public class Target extends BuildObject implements ITarget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#hasMakeCommandOverride()
 	 */
+	@Override
 	public boolean hasOverridenMakeCommand() {
 		// We answer true if the make command or the flags are different
-		return ((makeCommand != null && !makeCommand.equals(parent.getMakeCommand())) 
+		return ((makeCommand != null && !makeCommand.equals(parent.getMakeCommand()))
 			|| (makeArguments != null && !makeArguments.equals(parent.getMakeArguments())));
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITarget#isAbstract()
 	 */
+	@Override
 	public boolean isAbstract() {
 		return isAbstract;
 	}
@@ -699,12 +721,13 @@ public class Target extends BuildObject implements ITarget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#isDirty()
 	 */
+	@Override
 	public boolean isDirty() {
 		// If I need saving, just say yes
 		if (isDirty) {
 			return true;
 		}
-		
+
 		// Iterate over the configurations and ask them if they need saving
 		List<IConfigurationV2> configurationList = getConfigurationList();
 		for (IConfigurationV2 cfgV2 : configurationList) {
@@ -712,20 +735,22 @@ public class Target extends BuildObject implements ITarget {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITarget#isTestTarget()
 	 */
+	@Override
 	public boolean isTestTarget() {
 		return isTest;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#needsRebuild()
 	 */
+	@Override
 	public boolean needsRebuild(){
 		// Iterate over the configurations and ask them if they need saving
 		List<IConfigurationV2> configurationList = getConfigurationList();
@@ -736,10 +761,11 @@ public class Target extends BuildObject implements ITarget {
 		}
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#removeConfiguration(java.lang.String)
 	 */
+	@Override
 	public void removeConfiguration(String id) {
 		// Remove the specified configuration from the list and map
 		List<IConfigurationV2> configurationList = getConfigurationList();
@@ -764,9 +790,9 @@ public class Target extends BuildObject implements ITarget {
 		makeCommand = null;
 		makeArguments = null;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 */
 	public void resolveReferences() {
 		if (!resolved) {
@@ -800,7 +826,7 @@ public class Target extends BuildObject implements ITarget {
 			}
 		}
 	}
-	
+
 	/**
 	 * Persist receiver to project file.
 	 */
@@ -821,7 +847,7 @@ public class Target extends BuildObject implements ITarget {
 		} else {
 			// Make sure we use the default
 		}
-		
+
 		if (makeArguments != null) {
 			element.setAttribute(MAKE_ARGS, makeArguments);
 		}
@@ -836,14 +862,15 @@ public class Target extends BuildObject implements ITarget {
 			element.appendChild(configElement);
 			((ConfigurationV2)config).serialize(doc, configElement);
 		}
-		
+
 		// I am clean now
 		isDirty = false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#setArtifactExtension(java.lang.String)
 	 */
+	@Override
 	public void setArtifactExtension(String extension) {
 		if (extension != null) {
 			this.extension = extension;
@@ -854,6 +881,7 @@ public class Target extends BuildObject implements ITarget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITarget#setArtifactName(java.lang.String)
 	 */
+	@Override
 	public void setArtifactName(String name) {
 		if (name != null) {
 			artifactName = name;
@@ -865,6 +893,7 @@ public class Target extends BuildObject implements ITarget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#setDirty(boolean)
 	 */
+	@Override
 	public void setDirty(boolean isDirty) {
 		// Override the dirty flag here
 		this.isDirty = isDirty;
@@ -878,6 +907,7 @@ public class Target extends BuildObject implements ITarget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#setErrorParserIds()
 	 */
+	@Override
 	public void setErrorParserIds(String ids) {
 		if (ids == null) return;
 		String currentIds = getErrorParserIds();
@@ -886,10 +916,11 @@ public class Target extends BuildObject implements ITarget {
 			isDirty = true;
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#setMakeArguments(java.lang.String)
 	 */
+	@Override
 	public void setMakeArguments(String makeArgs) {
 		if (makeArgs != null && !getMakeArguments().equals(makeArgs)) {
 			makeArguments = makeArgs;
@@ -901,6 +932,7 @@ public class Target extends BuildObject implements ITarget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#setMakeCommand(java.lang.String)
 	 */
+	@Override
 	public void setMakeCommand(String command) {
 		if (command != null && !getMakeCommand().equals(command)) {
 			makeCommand = command;
@@ -908,10 +940,11 @@ public class Target extends BuildObject implements ITarget {
 			isDirty = true;
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#setRebuildState(boolean)
 	 */
+	@Override
 	public void setRebuildState(boolean rebuild) {
 		List<IConfigurationV2> configurationList = getConfigurationList();
 		for (IConfigurationV2 config : configurationList) {
@@ -922,6 +955,7 @@ public class Target extends BuildObject implements ITarget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#updateOwner(org.eclipse.core.resources.IResource)
 	 */
+	@Override
 	public void updateOwner(IResource resource) {
 		if (!resource.equals(owner)) {
 			// Set the owner correctly
@@ -932,10 +966,11 @@ public class Target extends BuildObject implements ITarget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#convertToProjectType()
 	 */
+	@Override
 	public void convertToProjectType(String managedBuildRevision) {
-		// Create a ProjectType + Configuration + Toolchain + Builder + TargetPlatform 
+		// Create a ProjectType + Configuration + Toolchain + Builder + TargetPlatform
 		// from the Target
-		
+
 		// The "parent" needs to have been converted already.
 		// Do it now if necessary.
 		ProjectType parentProj = null;
@@ -956,7 +991,7 @@ public class Target extends BuildObject implements ITarget {
 		List<IConfigurationV2> configurationList = getConfigurationList();
 		for (IConfigurationV2 configV2 : configurationList) {
 			if (configV2.getCreatedConfig() != null) continue;
-			// The new config's superClass needs to be the 
+			// The new config's superClass needs to be the
 			// Configuration created from the ConfigurationV2 parent...
 			IConfiguration configSuperClass = null;
 			IConfigurationV2 parentV2 = configV2.getParent();
@@ -1008,12 +1043,12 @@ public class Target extends BuildObject implements ITarget {
 			targetPlatform.setOSList(getTargetOSList());
 			targetPlatform.setArchList(getTargetArchList());
 			targetPlatform.setBinaryParserList(new String[]{getBinaryParserId()});  // Older projects will always have only one binary parser set.
-				
+
 			// Handle ConfigurationV2 children (ToolReference)
 			// The tools references fetched here are strictly local to the configuration,
 			// so additional work is required to fetch the tool references from the target
 			IToolReference[] configToolRefs = configV2.getToolReferences();
-			// Add the "local" tool references (they are direct children of the target and 
+			// Add the "local" tool references (they are direct children of the target and
 			//  its parent targets)
 			Vector<IToolReference> targetToolRefs = new Vector<IToolReference>();
 			addTargetToolReferences(targetToolRefs);
@@ -1051,7 +1086,7 @@ public class Target extends BuildObject implements ITarget {
 					((Option)newOption).setWasOptRef(true);
 				}
 			}
-			
+
             // Process the tools in the configuration, adding them to the toolchain
 			// Tools for a configuration are stored in the enclosing target, so getting
 			// the tools for the configuration ultimately gets them from the enclosing target
@@ -1060,15 +1095,15 @@ public class Target extends BuildObject implements ITarget {
 				ITool tool = configTools[i];
                 // If tool references encountered, they have already been processed, above,
 				// so ignore them now
-				if (!(tool instanceof ToolReference)) {   
-                	// See if the toolchain already has a tool with a SuperClass that has an id 
-                	// equal to the tool that we are considering adding to the toolchain; if so, 
-					// don't add it 
+				if (!(tool instanceof ToolReference)) {
+                	// See if the toolchain already has a tool with a SuperClass that has an id
+                	// equal to the tool that we are considering adding to the toolchain; if so,
+					// don't add it
 					// This case arises when we have added a tool to the toolchain because
 					// we processed a ToolReference (above) that references this tool
 					// The original tool referenced in the ToolReference becomes the SuperClass
 					// of the tool that is created because of the ToolReference
-					boolean found = false;             
+					boolean found = false;
 				    ITool[] tools = toolChain.getTools();
 				    ITool currentTool;
 				    ITool supercurrentTool;
@@ -1078,7 +1113,7 @@ public class Target extends BuildObject implements ITarget {
 						if (supercurrentTool != null) {
 						    if (supercurrentTool.getId() == tool.getId()) {
 							    found = true;
-							    // If this tool was already added to the toolchain because of a 
+							    // If this tool was already added to the toolchain because of a
 							    // ToolReference, then we disconnent this redundant
 							    // tool from the target by setting the parent to null
 							    ((Tool)tool).setToolParent(null);
@@ -1086,11 +1121,11 @@ public class Target extends BuildObject implements ITarget {
 						    }
 						}
 					}
-                  
+
 					if (!found)
 						// This tool is not in the toolchain yet, so add it to the toolchain
 				        ((ToolChain)toolChain).addTool((Tool)tool);
-	
+
 				}
 			}
 			// Normalize the outputextensions list by adding an empty string for each tool
@@ -1110,10 +1145,11 @@ public class Target extends BuildObject implements ITarget {
 			targetParent.addTargetToolReferences(toolRefs);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getCreatedProjectType()
 	 */
+	@Override
 	public ProjectType getCreatedProjectType() {
 		return createdProjectType;
 	}
@@ -1121,6 +1157,7 @@ public class Target extends BuildObject implements ITarget {
 	/**
 	 * @return Returns the version.
 	 */
+	@Override
 	public Version getVersion() {
 		if ( version == null) {
 			if ( getParent() != null) {
@@ -1129,7 +1166,8 @@ public class Target extends BuildObject implements ITarget {
 		}
 		return version;
 	}
-	
+
+	@Override
 	public void setVersion(Version version) {
 		// Do nothing
 	}

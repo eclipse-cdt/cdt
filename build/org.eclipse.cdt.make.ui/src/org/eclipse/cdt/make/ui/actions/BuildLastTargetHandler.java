@@ -19,14 +19,15 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
  * Handler for {@link org.eclipse.cdt.make.ui.actions.BuildLastTargetAction}
- * 
+ *
  * @since 7.0
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class BuildLastTargetHandler extends AbstractHandler {
-	
+
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		final BuildLastTargetAction buildAction= new BuildLastTargetAction();
 		ISelection selection = HandlerUtil.getCurrentSelection( event );

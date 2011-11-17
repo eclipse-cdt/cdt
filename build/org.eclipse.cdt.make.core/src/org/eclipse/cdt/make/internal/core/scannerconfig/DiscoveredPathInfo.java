@@ -51,10 +51,12 @@ public class DiscoveredPathInfo implements IPerProjectDiscoveredPathInfo, IDisco
 		discoveredSymbols = new LinkedHashMap<String, SymbolEntry>();
 	}
 
+	@Override
 	public IProject getProject() {
 		return project;
 	}
 
+	@Override
 	public synchronized Map<String, String> getSymbols() {
 		if (activeSymbols == null) {
 			createSymbolsMap();
@@ -63,6 +65,7 @@ public class DiscoveredPathInfo implements IPerProjectDiscoveredPathInfo, IDisco
 		return dSymbols;
 	}
 
+	@Override
 	public synchronized IPath[] getIncludePaths() {
 		if ( activePaths == null) {
 			createPathLists();
@@ -70,22 +73,24 @@ public class DiscoveredPathInfo implements IPerProjectDiscoveredPathInfo, IDisco
 		return activePaths.toArray(new IPath[activePaths.size()]);
 	}
 
+	@Override
 	public LinkedHashMap<String, Boolean> getIncludeMap() {
 		return new LinkedHashMap<String, Boolean>(discoveredPaths);
 	}
 
+	@Override
 	public synchronized void setIncludeMap(LinkedHashMap<String, Boolean> paths) {
 		discoveredPaths = SafeStringInterner.safeIntern(new LinkedHashMap<String, Boolean>(paths));
 		activePaths = null;
 	}
-	
+
 	/**
 	 * Populates active and removed include path lists
 	 */
 	private void createPathLists() {
 		List<Path> aPaths = getActivePathList();
 		aPaths.clear();
-		
+
 		Set<String> paths = discoveredPaths.keySet();
 		for (String path : paths) {
 			Boolean removed = discoveredPaths.get(path);
@@ -95,22 +100,24 @@ public class DiscoveredPathInfo implements IPerProjectDiscoveredPathInfo, IDisco
 		}
 	}
 
+	@Override
 	public LinkedHashMap<String, SymbolEntry> getSymbolMap() {
 		return new LinkedHashMap<String, SymbolEntry>(discoveredSymbols);
 	}
-	
+
+	@Override
 	public synchronized void setSymbolMap(LinkedHashMap<String, SymbolEntry> symbols) {
 		discoveredSymbols = SafeStringInterner.safeIntern(new LinkedHashMap<String, SymbolEntry>(symbols));
 		activeSymbols = null;
 	}
-	
+
 	/**
 	 * Populates active symbols sets
 	 */
 	private void createSymbolsMap() {
 		Map<String, String> aSymbols = getActiveSymbolsMap();
 		aSymbols.clear();
-		
+
 		aSymbols.putAll(SafeStringInterner.safeIntern(ScannerConfigUtil.scSymbolEntryMap2Map(discoveredSymbols)));
 	}
 
@@ -131,9 +138,10 @@ public class DiscoveredPathInfo implements IPerProjectDiscoveredPathInfo, IDisco
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredScannerInfoStore.IDiscoveredScannerInfoSerializable#serialize(org.w3c.dom.Element)
 	 */
+	@Override
 	public void serialize(Element collectorElem) {
-		Document doc = collectorElem.getOwnerDocument(); 
-		
+		Document doc = collectorElem.getOwnerDocument();
+
 		Map<String, Boolean> includes = getIncludeMap();
 		Set<String> includesSet = includes.keySet();
 		for (String include : includesSet) {
@@ -172,6 +180,7 @@ public class DiscoveredPathInfo implements IPerProjectDiscoveredPathInfo, IDisco
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredScannerInfoStore.IDiscoveredScannerInfoSerializable#deserialize(org.w3c.dom.Element)
 	 */
+	@Override
 	public void deserialize(Element collectorElem) {
 		LinkedHashMap<String, Boolean> includes = getIncludeMap();
 		LinkedHashMap<String, SymbolEntry> symbols = getSymbolMap();
@@ -190,7 +199,7 @@ public class DiscoveredPathInfo implements IPerProjectDiscoveredPathInfo, IDisco
 			}
 			child = child.getNextSibling();
 		}
-		
+
 		setIncludeMap(includes);
 		setSymbolMap(symbols);
 	}
@@ -198,6 +207,7 @@ public class DiscoveredPathInfo implements IPerProjectDiscoveredPathInfo, IDisco
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredScannerInfoStore.IDiscoveredScannerInfoSerializable#getCollectorId()
 	 */
+	@Override
 	public String getCollectorId() {
 		return PerProjectSICollector.COLLECTOR_ID;
 	}
@@ -205,7 +215,8 @@ public class DiscoveredPathInfo implements IPerProjectDiscoveredPathInfo, IDisco
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getSerializable()
      */
-    public IDiscoveredScannerInfoSerializable getSerializable() {
+    @Override
+	public IDiscoveredScannerInfoSerializable getSerializable() {
         return this;
     }
 

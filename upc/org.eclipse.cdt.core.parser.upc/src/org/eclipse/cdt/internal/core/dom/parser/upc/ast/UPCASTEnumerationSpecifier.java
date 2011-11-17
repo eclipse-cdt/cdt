@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -22,15 +22,15 @@ public class UPCASTEnumerationSpecifier extends CASTEnumerationSpecifier impleme
 	private int referenceType;
 	private int sharedQualifier;
 	private IASTExpression blockSizeExpression;
-	
-	
+
+
 	public UPCASTEnumerationSpecifier() {
 	}
 
 	public UPCASTEnumerationSpecifier(IASTName name) {
 		super(name);
 	}
-	
+
 	public UPCASTEnumerationSpecifier(IASTName name, IASTExpression blockSizeExpression) {
 		super(name);
 		setBlockSizeExpression(blockSizeExpression);
@@ -40,7 +40,7 @@ public class UPCASTEnumerationSpecifier extends CASTEnumerationSpecifier impleme
 	public UPCASTEnumerationSpecifier copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public UPCASTEnumerationSpecifier copy(CopyStyle style) {
 		UPCASTEnumerationSpecifier copy = new UPCASTEnumerationSpecifier();
@@ -54,18 +54,22 @@ public class UPCASTEnumerationSpecifier extends CASTEnumerationSpecifier impleme
 		return copy;
 	}
 
+	@Override
 	public IASTExpression getBlockSizeExpression() {
 		return blockSizeExpression;
 	}
 
+	@Override
 	public int getReferenceType() {
 		return referenceType;
 	}
 
+	@Override
 	public int getSharedQualifier() {
 		return sharedQualifier;
 	}
 
+	@Override
 	public void setBlockSizeExpression(IASTExpression expr) {
 		this.blockSizeExpression = expr;
 		if(expr != null) {
@@ -74,10 +78,12 @@ public class UPCASTEnumerationSpecifier extends CASTEnumerationSpecifier impleme
 		}
 	}
 
+	@Override
 	public void setReferenceType(int referenceType) {
 		this.referenceType = referenceType;
 	}
 
+	@Override
 	public void setSharedQualifier(int shared) {
 		this.sharedQualifier = shared;
 	}
@@ -92,8 +98,8 @@ public class UPCASTEnumerationSpecifier extends CASTEnumerationSpecifier impleme
 	        }
 		}
         if( getName() != null ) if( !getName().accept( action ) ) return false;
-        if( blockSizeExpression != null) if( !blockSizeExpression.accept( action ) ) return false;    
-        
+        if( blockSizeExpression != null) if( !blockSizeExpression.accept( action ) ) return false;
+
         IASTEnumerator[] etors = getEnumerators();
         for ( int i = 0; i < etors.length; i++ ) {
             if( !etors[i].accept( action ) ) return false;
@@ -107,5 +113,5 @@ public class UPCASTEnumerationSpecifier extends CASTEnumerationSpecifier impleme
 		}
         return true;
     }
-	
+
 }

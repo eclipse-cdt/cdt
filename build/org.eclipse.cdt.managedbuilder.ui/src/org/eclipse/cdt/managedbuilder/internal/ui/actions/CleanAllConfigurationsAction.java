@@ -31,11 +31,13 @@ import org.eclipse.ui.internal.ide.actions.BuildUtilities;
 public class CleanAllConfigurationsAction implements IObjectActionDelegate {
 	private ArrayList<IProject> projects = null;
 
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		projects = CleanAndBuildAction.getSelectedCdtProjects(selection);
 		action.setEnabled(projects.size() > 0);
 	}
 
+	@Override
 	public void run(IAction action) {
 		// Setup the global build console
 		CUIPlugin.getDefault().startGlobalConsole();
@@ -47,7 +49,7 @@ public class CleanAllConfigurationsAction implements IObjectActionDelegate {
 				if (cfgds != null && cfgds.length > 0) {
 					// save all dirty editors
 					BuildUtilities.saveEditors(null);
-					
+
 					Job buildFilesJob = new BuildConfigurationsJob(cfgds, IncrementalProjectBuilder.CLEAN_BUILD, 0);
 					buildFilesJob.schedule();
 				}
@@ -56,6 +58,7 @@ public class CleanAllConfigurationsAction implements IObjectActionDelegate {
 		}
 	}
 
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 	}
 }

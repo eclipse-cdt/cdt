@@ -18,7 +18,8 @@ import org.eclipse.core.runtime.Path;
 
 public class OneDirectionalPathConverter implements IOptionPathConverter {
 	public static Path PREFIX = new Path("/test");
-	
+
+	@Override
 	public IPath convertToPlatformLocation(String toolSpecificPath,
 			IOption option, ITool tool) {
 		IPath path = new Path(toolSpecificPath);

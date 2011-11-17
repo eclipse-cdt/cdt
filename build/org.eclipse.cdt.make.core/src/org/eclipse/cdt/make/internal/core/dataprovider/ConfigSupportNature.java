@@ -17,16 +17,20 @@ import org.eclipse.core.runtime.CoreException;
 public class ConfigSupportNature implements IProjectNature {
 	private IProject fProject;
 
+	@Override
 	public void configure() throws CoreException {
 	}
 
+	@Override
 	public void deconfigure() throws CoreException {
 	}
 
+	@Override
 	public IProject getProject() {
 		return fProject;
 	}
 
+	@Override
 	public void setProject(IProject project) {
 		fProject = project;
 	}

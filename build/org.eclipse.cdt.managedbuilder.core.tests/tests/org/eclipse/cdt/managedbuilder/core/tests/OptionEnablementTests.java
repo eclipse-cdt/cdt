@@ -44,56 +44,62 @@ public class OptionEnablementTests extends TestCase implements IManagedOptionVal
 	private static final String OPTION_VALUE_ROOT = "test.value.root";
 	private static final String OPTION_VALUE_FOLDER = "test.value.folder";
 	private static final String OPTION_VALUE_FILE = "test.value.file";
-	
+
 	private static boolean fEnUiVisible;
 	private static boolean fEnUiEnabled;
 	private static boolean fEnCmdUsed;
-	
+
 	private static boolean fHandleValueCalled;
-	
+
 	private static final String thisEnumIds[] = new String[]{"testgnu.enablement.c.optimization.level.optimize", "testgnu.enablement.c.optimization.level.more"};
 	private static final String thisStrings[] = new String[]{
-//		"", 
-//		"test a b c", 
-//		"some buggy string", 
+//		"",
+//		"test a b c",
+//		"some buggy string",
 		"start 1.2.3 stop"};
 
 
+	@Override
 	public boolean handleValue(IBuildObject configuration, IHoldsOptions holder, IOption option, String extraArgument, int event) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
+	@Override
 	public boolean isDefaultValue(IBuildObject configuration, IHoldsOptions holder, IOption option, String extraArgument) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
+	@Override
 	public boolean isEnumValueAppropriate(IBuildObject configuration, IHoldsOptions holder, IOption option, String extraArgument, String enumValue) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
+	@Override
 	public boolean isOptionUsedInCommandLine(IBuildObject configuration, IHoldsOptions holder, IOption option) {
 		return fEnCmdUsed;
 	}
 
+	@Override
 	public boolean isOptionVisible(IBuildObject configuration, IHoldsOptions holder, IOption option) {
 		return fEnUiVisible;
 	}
 
+	@Override
 	public boolean isOptionEnabled(IBuildObject configuration, IHoldsOptions holder, IOption option) {
 		return fEnUiEnabled;
 	}
-	
+
 	public static Test suite() {
 		return new TestSuite(OptionEnablementTests.class);
 	}
-	
+
 	private void resetValueHandler(){
 		fHandleValueCalled = false;
 	}
-	
+
 	private void setEnablement(boolean cmdUs, boolean uiVis, boolean uiEn){
 		fEnUiVisible = uiVis;
 		fEnUiEnabled = uiEn;
@@ -111,21 +117,21 @@ public class OptionEnablementTests extends TestCase implements IManagedOptionVal
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 		IConfiguration cfg = info.getManagedProject().getConfigurations()[0];
 		assertFalse(fHandleValueCalled);
-		
+
 		doTestEnablement(cfg);
-		
+
 		doEnumAllValues(cfg);
-		
+
 		ManagedBuildTestHelper.removeProject("en");
 	}
-	
+
 	private void doEnumAllValues(IBuildObject cfgBo){
 		ITool thisTool = getTool(cfgBo,"enablement.this.child_1.2.3");
 		ITool otherTool = getTool(cfgBo,"enablement.other");
-		
-		IBuildObject thisCfg = thisTool.getParent(); 
+
+		IBuildObject thisCfg = thisTool.getParent();
 		IBuildObject otherCfg = otherTool.getParent();
-		
+
 		for(int i = 0; i < thisStrings.length; i++){
 			String strVal = thisStrings[i];
 			setOption(cfgBo, thisTool, "this.string", strVal);
@@ -137,14 +143,14 @@ public class OptionEnablementTests extends TestCase implements IManagedOptionVal
 			setOption(cfgBo, thisTool, "this.enum", strVal);
 			doTestEnablement(cfgBo);
 		}
-*/		
+*/
 		setOption(cfgBo, thisTool, "this.boolean", false);
 		doTestEnablement(cfgBo);
 
 		setOption(cfgBo, thisTool, "this.boolean", true);
 		doTestEnablement(cfgBo);
 	}
-	
+
 	private ITool getTool(IBuildObject cfgBo, String id){
 		IResourceConfiguration rcCfg = null;
 		IConfiguration cfg = null;
@@ -168,7 +174,7 @@ public class OptionEnablementTests extends TestCase implements IManagedOptionVal
 			fail("wrong argument");
 		return tool;
 	}
-	
+
 	private IOption setOption(IBuildObject cfg, IHoldsOptions holder, String id, boolean value){
 		return setOption(cfg, holder, holder.getOptionBySuperClassId(id), value);
 	}
@@ -224,23 +230,23 @@ public class OptionEnablementTests extends TestCase implements IManagedOptionVal
 		ITool tool = getTool(cfg, "enablement.this.child_1.2.3");
 		ITool otherTool = getTool(cfg, "enablement.other");
 		ITool tool2 = getTool(cfg, "enablement.this.child.2_1.2.3");
-		
+
 //		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
-		
+
 		IOption thisBoolean = tool.getOptionBySuperClassId("this.boolean");
 		IOption thisString = tool.getOptionBySuperClassId("this.string");
 		IOption thisEnum = tool.getOptionBySuperClassId("this.enum");
-		
+
 		IOption otherString = otherTool.getOptionBySuperClassId("other.string");
 		IOption otherBoolean = otherTool.getOptionBySuperClassId("other.boolean");
-		
 
-		
-		
+
+
+
 		try{
-		
+
 		IOption option = tool.getOptionBySuperClassId("enablement.command.c1");
-		
+
 		assertEquals(option.getCommand(), "c1");
 		assertEquals(option.getCommandFalse(), "cmdF");
 		assertTrue(option.getApplicabilityCalculator().isOptionEnabled(cfg, tool, option));
@@ -351,12 +357,12 @@ public class OptionEnablementTests extends TestCase implements IManagedOptionVal
 		assertFalse(option.getApplicabilityCalculator().isOptionUsedInCommandLine(cfg, tool, option));
 		assertTrue(option.getApplicabilityCalculator().isOptionVisible(cfg, tool, option));
 		assertFalse(option.getApplicabilityCalculator().isOptionEnabled(cfg, tool, option));
-		
+
 		setEnablement(false, false, true);
 		assertFalse(option.getApplicabilityCalculator().isOptionUsedInCommandLine(cfg, tool, option));
 		assertFalse(option.getApplicabilityCalculator().isOptionVisible(cfg, tool, option));
 		assertTrue(option.getApplicabilityCalculator().isOptionEnabled(cfg, tool, option));
-		
+
 		setEnablement(true, false, false);
 		assertTrue(option.getApplicabilityCalculator().isOptionUsedInCommandLine(cfg, tool, option));
 		assertFalse(option.getApplicabilityCalculator().isOptionVisible(cfg, tool, option));
@@ -397,7 +403,7 @@ public class OptionEnablementTests extends TestCase implements IManagedOptionVal
 		option = tool.getOptionBySuperClassId("enablement.checkOpt.all.Q.this.boolean.True");
 		assertEquals(option.getCommand(), "cmd");
 		assertEquals(option.getCommandFalse(), "cmdF");
-		assertEquals(thisBoolean.getBooleanValue() == true, 
+		assertEquals(thisBoolean.getBooleanValue() == true,
 				option.getApplicabilityCalculator().isOptionUsedInCommandLine(cfg, tool, option));
 		assertEquals(thisBoolean.getBooleanValue() == true,
 				option.getApplicabilityCalculator().isOptionVisible(cfg, tool, option));
@@ -407,7 +413,7 @@ public class OptionEnablementTests extends TestCase implements IManagedOptionVal
 		option = tool.getOptionBySuperClassId("enablement.checkOpt.all.Q.this.boolean.False");
 		assertEquals(option.getCommand(), "cmd");
 		assertEquals(option.getCommandFalse(), "cmdF");
-		assertEquals(thisBoolean.getBooleanValue() == false, 
+		assertEquals(thisBoolean.getBooleanValue() == false,
 				option.getApplicabilityCalculator().isOptionUsedInCommandLine(cfg, tool, option));
 		assertEquals(thisBoolean.getBooleanValue() == false,
 				option.getApplicabilityCalculator().isOptionVisible(cfg, tool, option));
@@ -417,7 +423,7 @@ public class OptionEnablementTests extends TestCase implements IManagedOptionVal
 		option = tool.getOptionBySuperClassId("enablement.checkOpt.all.Q.this.string.Q.empty");
 		assertEquals(option.getCommand(), "cmd");
 		assertEquals(option.getCommandFalse(), "cmdF");
-		assertEquals(thisString.getStringValue().equals(""), 
+		assertEquals(thisString.getStringValue().equals(""),
 				option.getApplicabilityCalculator().isOptionUsedInCommandLine(cfg, tool, option));
 		assertEquals(thisString.getStringValue().equals(""),
 				option.getApplicabilityCalculator().isOptionVisible(cfg, tool, option));
@@ -427,7 +433,7 @@ public class OptionEnablementTests extends TestCase implements IManagedOptionVal
 		option = tool.getOptionBySuperClassId("enablement.checkOpt.all.Q.this.string.Q.test a b c");
 		assertEquals(option.getCommand(), "cmd");
 		assertEquals(option.getCommandFalse(), "cmdF");
-		assertEquals(thisString.getStringValue().equals("test a b c"), 
+		assertEquals(thisString.getStringValue().equals("test a b c"),
 				option.getApplicabilityCalculator().isOptionUsedInCommandLine(cfg, tool, option));
 		assertEquals(thisString.getStringValue().equals("test a b c"),
 				option.getApplicabilityCalculator().isOptionVisible(cfg, tool, option));
@@ -440,7 +446,7 @@ public class OptionEnablementTests extends TestCase implements IManagedOptionVal
 		String id = thisEnum.getEnumeratedId(thisEnum.getStringValue());
 		if(id == null)
 			id = "";
-		assertEquals(id.equals("testgnu.enablement.c.optimization.level.optimize"), 
+		assertEquals(id.equals("testgnu.enablement.c.optimization.level.optimize"),
 				option.getApplicabilityCalculator().isOptionUsedInCommandLine(cfg, tool, option));
 		assertEquals(id.equals("testgnu.enablement.c.optimization.level.optimize"),
 				option.getApplicabilityCalculator().isOptionVisible(cfg, tool, option));
@@ -450,41 +456,41 @@ public class OptionEnablementTests extends TestCase implements IManagedOptionVal
 		option = tool.getOptionBySuperClassId("enablement.checkOpt.all.Q.this.Q.true");
 		assertEquals(option.getCommand(), "cmd");
 		assertEquals(option.getCommandFalse(), "cmdF");
-		assertEquals(option.getBooleanValue() == true, 
+		assertEquals(option.getBooleanValue() == true,
 				option.getApplicabilityCalculator().isOptionUsedInCommandLine(cfg, tool, option));
-		assertEquals(option.getBooleanValue()== true, 
+		assertEquals(option.getBooleanValue()== true,
 				option.getApplicabilityCalculator().isOptionVisible(cfg, tool, option));
-		assertEquals(option.getBooleanValue() == true, 
+		assertEquals(option.getBooleanValue() == true,
 				option.getApplicabilityCalculator().isOptionEnabled(cfg, tool, option));
 
 		option = tool.getOptionBySuperClassId("enablement.checkOpt.all.Q.this.string.Q.start ${ParentVersion} stop");
 		assertEquals(option.getCommand(), "cmd");
 		assertEquals(option.getCommandFalse(), "cmdF");
-		assertEquals(thisString.getStringValue().equals("start 1.2.3 stop"), 
+		assertEquals(thisString.getStringValue().equals("start 1.2.3 stop"),
 				option.getApplicabilityCalculator().isOptionUsedInCommandLine(cfg, tool, option));
-		assertEquals(thisString.getStringValue().equals("start 1.2.3 stop"), 
+		assertEquals(thisString.getStringValue().equals("start 1.2.3 stop"),
 				option.getApplicabilityCalculator().isOptionVisible(cfg, tool, option));
-		assertEquals(thisString.getStringValue().equals("start 1.2.3 stop"), 
-				option.getApplicabilityCalculator().isOptionEnabled(cfg, tool, option));
- 		  
-		option = tool.getOptionBySuperClassId("enablement.checkOpt.all.Q.this.string.Q.other.string");
-		assertEquals(option.getCommand(), "cmd");
-		assertEquals(option.getCommandFalse(), "cmdF");
-		assertEquals(thisString.getStringValue().equals(otherString.getStringValue()), 
-				option.getApplicabilityCalculator().isOptionUsedInCommandLine(cfg, tool, option));
-		assertEquals(thisString.getStringValue().equals(otherString.getStringValue()), 
-				option.getApplicabilityCalculator().isOptionVisible(cfg, tool, option));
-		assertEquals(thisString.getStringValue().equals(otherString.getStringValue()), 
+		assertEquals(thisString.getStringValue().equals("start 1.2.3 stop"),
 				option.getApplicabilityCalculator().isOptionEnabled(cfg, tool, option));
 
 		option = tool.getOptionBySuperClassId("enablement.checkOpt.all.Q.this.string.Q.other.string");
 		assertEquals(option.getCommand(), "cmd");
 		assertEquals(option.getCommandFalse(), "cmdF");
-		assertEquals(thisString.getStringValue().equals(otherString.getStringValue()), 
+		assertEquals(thisString.getStringValue().equals(otherString.getStringValue()),
 				option.getApplicabilityCalculator().isOptionUsedInCommandLine(cfg, tool, option));
-		assertEquals(thisString.getStringValue().equals(otherString.getStringValue()), 
+		assertEquals(thisString.getStringValue().equals(otherString.getStringValue()),
 				option.getApplicabilityCalculator().isOptionVisible(cfg, tool, option));
-		assertEquals(thisString.getStringValue().equals(otherString.getStringValue()), 
+		assertEquals(thisString.getStringValue().equals(otherString.getStringValue()),
+				option.getApplicabilityCalculator().isOptionEnabled(cfg, tool, option));
+
+		option = tool.getOptionBySuperClassId("enablement.checkOpt.all.Q.this.string.Q.other.string");
+		assertEquals(option.getCommand(), "cmd");
+		assertEquals(option.getCommandFalse(), "cmdF");
+		assertEquals(thisString.getStringValue().equals(otherString.getStringValue()),
+				option.getApplicabilityCalculator().isOptionUsedInCommandLine(cfg, tool, option));
+		assertEquals(thisString.getStringValue().equals(otherString.getStringValue()),
+				option.getApplicabilityCalculator().isOptionVisible(cfg, tool, option));
+		assertEquals(thisString.getStringValue().equals(otherString.getStringValue()),
 				option.getApplicabilityCalculator().isOptionEnabled(cfg, tool, option));
 
 		option = tool.getOptionBySuperClassId("enablement.checkString");
@@ -535,7 +541,7 @@ public class OptionEnablementTests extends TestCase implements IManagedOptionVal
 		assertFalse(option.getApplicabilityCalculator().isOptionUsedInCommandLine(cfg, tool, option));
 		assertFalse(option.getApplicabilityCalculator().isOptionVisible(cfg, tool, option));
 		assertFalse(option.getApplicabilityCalculator().isOptionEnabled(cfg, tool, option));
-		
+
 		option = tool.getOptionBySuperClassId("enablement.checkHolder.true.1.false.2");
 		assertEquals(option.getCommand(), "cmd");
 		assertEquals(option.getCommandFalse(), "cmdF");
@@ -554,7 +560,7 @@ public class OptionEnablementTests extends TestCase implements IManagedOptionVal
 			fail(e.getLocalizedMessage());
 		}
 	}
-	
+
 	/**
 	 * This method assumes that folder has only one qualified tool.
 	 */
@@ -580,66 +586,66 @@ public class OptionEnablementTests extends TestCase implements IManagedOptionVal
 		assertEquals(1, tools.length);
 		ITool tool = tools[0];
 		assertNotNull(tool);
-		
+
 		IOption option = tool.getOptionBySuperClassId(optionId);
 		return option;
 	}
-	
+
 	public void testEnablement_Bug250686() throws Exception {
 		final String testName = getName();
 		IProject project = ManagedBuildTestHelper.createProject(testName, PROJECT_TYPE);
 		assertNotNull(project);
-		
+
 		IFolder folder = ManagedBuildTestHelper.createFolder(project, "Folder");
 		assertNotNull(folder);
 
 		IFile file = ManagedBuildTestHelper.createFile(project, "Folder/file.c");
 		assertNotNull(file);
-		
+
 		ICProjectDescription prjDescription = CoreModel.getDefault().getProjectDescription(project);
 		prjDescription.getConfigurationByName(CFG_NAME);
-		
+
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 		IConfiguration cfg = info.getManagedProject().getConfigurations()[0];
 		assertNotNull(cfg);
 		assertEquals(CFG_NAME, cfg.getName());
-		
+
 		{
 			// Round 1. Test root folder option
 			IFolderInfo rootFolderInfo = cfg.getRootFolderInfo();
 			assertNotNull(rootFolderInfo);
-			
+
 			IOption option = getOptionForFolder(rootFolderInfo, TOOL_ID, OPTION_ID);
 			assertNotNull(option);
 			assertEquals(OPTION_VALUE_ENABLEMENT, option.getValue());
 			assertFalse(option.isExtensionElement());
 		}
-		
+
 		{
 			// Round 1. Test subfolder option
 			IResourceInfo folderInfo = cfg.getResourceInfo(folder.getFullPath(), false);
 			assertNotNull(folderInfo);
 			assertTrue(folderInfo instanceof IFolderInfo);
-			
+
 			IOption option = getOptionForFolder((IFolderInfo) folderInfo, TOOL_ID, OPTION_ID);
 			assertNotNull(option);
 			assertEquals(OPTION_VALUE_ENABLEMENT, option.getValue());
 			assertFalse(option.isExtensionElement());
 		}
-		
+
 		{
 			// Round 1. Test file option
 			IResourceInfo fileInfo = cfg.getResourceInfo(file.getFullPath(), false);
 			assertNotNull(fileInfo);
 			assertTrue(fileInfo instanceof IFolderInfo);
-			
+
 			// Option is taken from root folder here
 			IOption option = getOptionForFolder((IFolderInfo) fileInfo, TOOL_ID, OPTION_ID);
 			assertNotNull(option);
 			assertEquals(OPTION_VALUE_ENABLEMENT, option.getValue());
 			assertFalse(option.isExtensionElement());
 		}
-		
+
 		{
 			// Round 2. Override the value of the option for the root folder
 			IFolderInfo rootFolderInfo = cfg.getRootFolderInfo();
@@ -648,48 +654,48 @@ public class OptionEnablementTests extends TestCase implements IManagedOptionVal
 			IOption option = getOptionForFolder(rootFolderInfo, TOOL_ID, OPTION_ID);
 			rootFolderInfo.setOption(tools[0], option, OPTION_VALUE_ROOT);
 		}
-		
+
 		{
 			// Round 2. Test root folder option
 			IFolderInfo rootFolderInfo = cfg.getRootFolderInfo();
 			assertNotNull(rootFolderInfo);
-			
+
 			IOption option = getOptionForFolder(rootFolderInfo, TOOL_ID, OPTION_ID);
 			assertNotNull(option);
 			assertEquals(OPTION_VALUE_ROOT, option.getValue());
 			assertFalse(option.isExtensionElement());
 		}
-		
+
 		{
 			// Round 2. Test subfolder option
 			IResourceInfo folderInfo = cfg.getResourceInfo(folder.getFullPath(), false);
 			assertNotNull(folderInfo);
 			assertTrue(folderInfo instanceof IFolderInfo);
-			
+
 			IOption option = getOptionForFolder((IFolderInfo) folderInfo, TOOL_ID, OPTION_ID);
 			assertNotNull(option);
 			assertEquals(OPTION_VALUE_ROOT, option.getValue());
 			assertFalse(option.isExtensionElement());
 		}
-		
+
 		{
 			// Round 2. Test file option
 			IResourceInfo fileInfo = cfg.getResourceInfo(file.getFullPath(), false);
 			assertNotNull(fileInfo);
 			assertTrue(fileInfo instanceof IFolderInfo);
-			
+
 			// Option is taken from root folder here
 			IOption option = getOptionForFolder((IFolderInfo) fileInfo, TOOL_ID, OPTION_ID);
 			assertNotNull(option);
 			assertEquals(OPTION_VALUE_ROOT, option.getValue());
 			assertFalse(option.isExtensionElement());
 		}
-		
+
 		{
 			// Round 3. Override the value of the option for the subfolder
 			IFolderInfo folderInfo = cfg.createFolderInfo(folder.getFullPath());
 			assertNotNull(folderInfo);
-			
+
 			ITool[] tools = folderInfo.getToolsBySuperClassId(TOOL_ID);
 			assertEquals(1, tools.length);
 
@@ -697,99 +703,99 @@ public class OptionEnablementTests extends TestCase implements IManagedOptionVal
 			assertNotNull(option);
 			assertEquals(OPTION_VALUE_ROOT, option.getValue());
 			assertFalse(option.isExtensionElement());
-			
+
 			folderInfo.setOption(tools[0], option, OPTION_VALUE_FOLDER);
 		}
-		
+
 		{
 			// Round 3. Test root folder option
 			IFolderInfo rootFolderInfo = cfg.getRootFolderInfo();
 			assertNotNull(rootFolderInfo);
-			
+
 			IOption option = getOptionForFolder(rootFolderInfo, TOOL_ID, OPTION_ID);
 			assertNotNull(option);
 			assertEquals(OPTION_VALUE_ROOT, option.getValue());
 			assertFalse(option.isExtensionElement());
 		}
-		
+
 		{
 			// Round 3. Test subfolder option
 			IResourceInfo folderInfo = cfg.getResourceInfo(folder.getFullPath(), false);
 			assertNotNull(folderInfo);
 			assertTrue(folderInfo instanceof IFolderInfo);
-			
+
 			IOption option = getOptionForFolder((IFolderInfo) folderInfo, TOOL_ID, OPTION_ID);
 			assertNotNull(option);
 			assertEquals(OPTION_VALUE_FOLDER, option.getValue());
 			assertFalse(option.isExtensionElement());
 		}
-		
+
 		{
 			// Round 3. Test file option
 			IResourceInfo fileInfo = cfg.getResourceInfo(file.getFullPath(), false);
 			assertNotNull(fileInfo);
 			assertTrue(fileInfo instanceof IFolderInfo);
-			
+
 			// Option is taken from parent folder here
 			IOption option = getOptionForFolder((IFolderInfo) fileInfo, TOOL_ID, OPTION_ID);
 			assertNotNull(option);
 			assertEquals(OPTION_VALUE_FOLDER, option.getValue());
 			assertFalse(option.isExtensionElement());
 		}
-		
+
 		{
 			// Round 4. Override the value of the option for the file
 			IFileInfo fileInfo = cfg.createFileInfo(file.getFullPath());
 			assertNotNull(fileInfo);
-			
+
 			ITool[] tools = fileInfo.getTools();
 			assertEquals(1, tools.length);
 			ITool tool = tools[0];
 			assertNotNull(tool);
-			
+
 			IOption option = getOptionForFile(fileInfo, OPTION_ID);
 			assertNotNull(option);
 			assertEquals(OPTION_VALUE_FOLDER, option.getValue());
 			assertFalse(option.isExtensionElement());
-			
+
 			fileInfo.setOption(tool, option, OPTION_VALUE_FILE);
 		}
-		
+
 		{
 			// Round 4. Test root folder option
 			IFolderInfo rootFolderInfo = cfg.getRootFolderInfo();
 			assertNotNull(rootFolderInfo);
-			
+
 			IOption option = getOptionForFolder(rootFolderInfo, TOOL_ID, OPTION_ID);
 			assertNotNull(option);
 			assertEquals(OPTION_VALUE_ROOT, option.getValue());
 			assertFalse(option.isExtensionElement());
 		}
-		
+
 		{
 			// Round 4. Test subfolder option
 			IResourceInfo folderInfo = cfg.getResourceInfo(folder.getFullPath(), false);
 			assertNotNull(folderInfo);
 			assertTrue(folderInfo instanceof IFolderInfo);
-			
+
 			IOption option = getOptionForFolder((IFolderInfo) folderInfo, TOOL_ID, OPTION_ID);
 			assertNotNull(option);
 			assertEquals(OPTION_VALUE_FOLDER, option.getValue());
 			assertFalse(option.isExtensionElement());
 		}
-		
+
 		{
 			// Round 4. Test file option
 			IResourceInfo fileInfo = cfg.getResourceInfo(file.getFullPath(), false);
 			assertNotNull(fileInfo);
 			assertTrue(fileInfo instanceof IFileInfo);
-			
+
 			IOption option = getOptionForFile((IFileInfo) fileInfo, OPTION_ID);
 			assertNotNull(option);
 			assertEquals(OPTION_VALUE_FILE, option.getValue());
 			assertFalse(option.isExtensionElement());
 		}
-		
+
 		ManagedBuildTestHelper.removeProject(testName);
 	}
 

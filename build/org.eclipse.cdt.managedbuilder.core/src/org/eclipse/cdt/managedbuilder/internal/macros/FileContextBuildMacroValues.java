@@ -25,14 +25,14 @@ import org.eclipse.cdt.managedbuilder.macros.IFileContextBuildMacroValues;
  */
 public class FileContextBuildMacroValues implements
 		IFileContextBuildMacroValues, Cloneable {
-	
+
 	private IBuilder fBuilder;
 	private IFileContextBuildMacroValues fSupperClassValues;
 
 	private HashMap<String, String> fValues = new HashMap<String, String>();
 	private HashMap<String, String> fAllValues = new HashMap<String, String>();
 	private boolean fInitialized;
-	
+
 	public FileContextBuildMacroValues(IBuilder builder, IManagedConfigElement element){
 		fBuilder = builder;
 		load(element);
@@ -47,7 +47,7 @@ public class FileContextBuildMacroValues implements
 				fValues.put(names[i],value);
 		}
 	}
-	
+
 	private void load(){
 		if(!fInitialized){
 			fAllValues.clear();
@@ -55,7 +55,7 @@ public class FileContextBuildMacroValues implements
 			if(supperValues != null) {
 				String names[] = MbsMacroSupplier.getInstance().getMacroNames(IBuildMacroProvider.CONTEXT_FILE);
 				for(int i = 0; i < names.length; i++){
-					String value = fValues.get(names[i]); 
+					String value = fValues.get(names[i]);
 					if(value == null)
 						value = supperValues.getMacroValue(names[i]);
 					if(value != null && value.length() > 0)
@@ -76,6 +76,7 @@ public class FileContextBuildMacroValues implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.macros.IFileContextBuildMacroValues#getSupportedMacros()
 	 */
+	@Override
 	public String[] getSupportedMacros() {
 		load();
 		Set<String> set = fAllValues.keySet();
@@ -86,11 +87,12 @@ public class FileContextBuildMacroValues implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.macros.IFileContextBuildMacroValues#getMacroValue(java.lang.String)
 	 */
+	@Override
 	public String getMacroValue(String macroName) {
 		load();
 		return fAllValues.get(macroName);
 	}
-	
+
 	public IFileContextBuildMacroValues getSupperClassValues(){
 		if(fBuilder != null){
 			IBuilder supperClass = fBuilder.getSuperClass();
@@ -99,12 +101,12 @@ public class FileContextBuildMacroValues implements
 		}
 		return fSupperClassValues;
 	}
-	
+
 	public void setBuilder(IBuilder builder){
 		fBuilder = builder;
 		fInitialized = false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#clone()
 	 */
@@ -118,7 +120,7 @@ public class FileContextBuildMacroValues implements
 			cloned.fAllValues = (HashMap<String, String>)fAllValues.clone();
 		} catch (CloneNotSupportedException e){
 		}
-		
+
 		return cloned;
 	}
 }

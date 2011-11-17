@@ -14,7 +14,6 @@ package org.eclipse.cdt.make.internal.ui.preferences;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import com.ibm.icu.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -40,24 +39,29 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * AbstraceMakeEditorPreferencePage
  */
 public abstract class AbstractMakefileEditorPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	OverlayPreferenceStore fOverlayStore;
-	
+
 	Map<Control, String> fCheckBoxes= new HashMap<Control, String>();
 	private SelectionListener fCheckBoxListener= new SelectionListener() {
+		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Button button= (Button) e.widget;
 			fOverlayStore.setValue(fCheckBoxes.get(button), button.getSelection());
 		}
 	};
-	
+
 	Map<Control, String> fTextFields= new HashMap<Control, String>();
 	private ModifyListener fTextFieldListener= new ModifyListener() {
+		@Override
 		public void modifyText(ModifyEvent e) {
 			Text text= (Text) e.widget;
 			fOverlayStore.setValue(fTextFields.get(text), text.getText());
@@ -66,25 +70,27 @@ public abstract class AbstractMakefileEditorPreferencePage extends PreferencePag
 
 	private Map<Text, String[]> fNumberFields= new HashMap<Text, String[]>();
 	private ModifyListener fNumberFieldListener= new ModifyListener() {
+		@Override
 		public void modifyText(ModifyEvent e) {
 			numberFieldChanged((Text) e.widget);
 		}
 	};
-			
+
 	public AbstractMakefileEditorPreferencePage() {
 		super();
 		setPreferenceStore(MakeUIPlugin.getDefault().getPreferenceStore());
 		fOverlayStore= createOverlayStore();
 	}
-	
+
 	protected abstract OverlayPreferenceStore createOverlayStore();
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
+	@Override
 	public void init(IWorkbench workbench) {
 	}
-	
+
 	protected void initializeFields() {
 		Map<Control, String> checkBoxes= getCheckBoxes();
 		Map<Control, String> textFields= getTextFields();
@@ -94,15 +100,15 @@ public abstract class AbstractMakefileEditorPreferencePage extends PreferencePag
 			String key= checkBoxes.get(b);
 			b.setSelection(getOverlayStore().getBoolean(key));
 		}
-		
+
 		e= textFields.keySet().iterator();
 		while (e.hasNext()) {
 			Text t= (Text) e.next();
 			String key= textFields.get(t);
 			t.setText(getOverlayStore().getString(key));
-		}		
+		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
@@ -112,27 +118,27 @@ public abstract class AbstractMakefileEditorPreferencePage extends PreferencePag
 		MakeUIPlugin.getDefault().savePluginPreferences();
 		return true;
 	}
-	
+
 	protected OverlayPreferenceStore getOverlayStore() {
 		return fOverlayStore;
 	}
-	
+
 	protected OverlayPreferenceStore setOverlayStore() {
 		return fOverlayStore;
 	}
-	
+
 	protected Map<Control, String> getCheckBoxes() {
 		return fCheckBoxes;
 	}
-	
+
 	protected Map<Control, String> getTextFields() {
 		return fTextFields;
 	}
-	
+
 	protected Map<Text, String[]> getNumberFields() {
 		return fNumberFields;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
@@ -143,9 +149,9 @@ public abstract class AbstractMakefileEditorPreferencePage extends PreferencePag
 		handleDefaults();
 		super.performDefaults();
 	}
-	
+
 	protected abstract void handleDefaults();
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
 	 */
@@ -157,35 +163,35 @@ public abstract class AbstractMakefileEditorPreferencePage extends PreferencePag
 		}
 		super.dispose();
 	}
-	
-	protected Button addCheckBox(Composite parent, String labelText, String key, int indentation) {		
+
+	protected Button addCheckBox(Composite parent, String labelText, String key, int indentation) {
 		Button checkBox= new Button(parent, SWT.CHECK);
 		checkBox.setText(labelText);
 		checkBox.setFont(parent.getFont());
-		
+
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalIndent= indentation;
 		gd.horizontalSpan= 2;
 		checkBox.setLayoutData(gd);
 		checkBox.addSelectionListener(fCheckBoxListener);
-		
+
 		getCheckBoxes().put(checkBox, key);
-		
+
 		return checkBox;
 	}
-	
+
 	protected Control addTextField(Composite composite, String labelText, String key, int textLimit, int indentation, String[] errorMessages) {
 		Font font= composite.getFont();
-		
+
 		Label label= new Label(composite, SWT.NONE);
 		label.setText(labelText);
 		label.setFont(font);
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalIndent= indentation;
 		label.setLayoutData(gd);
-		
+
 		Text textControl= new Text(composite, SWT.BORDER | SWT.SINGLE);
-		textControl.setFont(font);		
+		textControl.setFont(font);
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.widthHint= convertWidthInCharsToPixels(textLimit + 1);
 		textControl.setLayoutData(gd);
@@ -197,10 +203,10 @@ public abstract class AbstractMakefileEditorPreferencePage extends PreferencePag
 		} else {
 			textControl.addModifyListener(fTextFieldListener);
 		}
-			
+
 		return textControl;
 	}
-	
+
 	void numberFieldChanged(Text textControl) {
 		String number= textControl.getText();
 		IStatus status= validatePositiveNumber(number, getNumberFields().get(textControl));
@@ -209,7 +215,7 @@ public abstract class AbstractMakefileEditorPreferencePage extends PreferencePag
 		}
 		updateStatus(status);
 	}
-	
+
 	private IStatus validatePositiveNumber(String number, String[] errorMessages) {
 		StatusInfo status= new StatusInfo();
 		if (number.length() == 0) {
@@ -225,7 +231,7 @@ public abstract class AbstractMakefileEditorPreferencePage extends PreferencePag
 		}
 		return status;
 	}
-	
+
 	private void updateStatus(IStatus status) {
 		if (!status.matches(IStatus.ERROR)) {
 			Set<Text> keys= getNumberFields().keySet();
@@ -234,7 +240,7 @@ public abstract class AbstractMakefileEditorPreferencePage extends PreferencePag
 				IStatus s= validatePositiveNumber(text.getText(), getNumberFields().get(text));
 				status= s.getSeverity() > status.getSeverity() ? s : status;
 			}
-		}	
+		}
 		setValid(!status.matches(IStatus.ERROR));
 		applyToStatusLine(this, status);
 	}
@@ -252,21 +258,21 @@ public abstract class AbstractMakefileEditorPreferencePage extends PreferencePag
 			case IStatus.WARNING:
 				page.setMessage(message, IMessageProvider.WARNING);
 				page.setErrorMessage(null);
-				break;				
+				break;
 			case IStatus.INFO:
 				page.setMessage(message, IMessageProvider.INFORMATION);
 				page.setErrorMessage(null);
-				break;			
+				break;
 			default:
 				if (message.length() == 0) {
 					message= null;
 				}
 				page.setMessage(null);
 				page.setErrorMessage(message);
-				break;		
+				break;
 		}
 	}
-	
+
 	/**
 	 * Returns an array of size 2:
 	 *  - first element is of type <code>Label</code>
@@ -280,8 +286,8 @@ public abstract class AbstractMakefileEditorPreferencePage extends PreferencePag
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalIndent= indentation;
 		labelControl.setLayoutData(gd);
-	
-		Text textControl= new Text(composite, SWT.BORDER | SWT.SINGLE);		
+
+		Text textControl= new Text(composite, SWT.BORDER | SWT.SINGLE);
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.widthHint= convertWidthInCharsToPixels(textLimit + 1);
 		textControl.setLayoutData(gd);
@@ -294,10 +300,10 @@ public abstract class AbstractMakefileEditorPreferencePage extends PreferencePag
 		} else {
 			textControl.addModifyListener(fTextFieldListener);
 		}
-		
+
 		return new Control[]{labelControl, textControl};
 	}
-	
+
 	protected String loadPreviewContentFromFile(String filename) {
 		String line;
 		String separator= System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$

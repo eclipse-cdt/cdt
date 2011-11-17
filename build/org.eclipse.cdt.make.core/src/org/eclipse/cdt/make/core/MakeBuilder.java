@@ -21,8 +21,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CommandLauncher;
@@ -126,6 +126,7 @@ public class MakeBuilder extends ACBuilder {
 					try {
 						ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 
+							@Override
 							public void run(IProgressMonitor monitor) {
 								invokeMake(CLEAN_BUILD, info, monitor);
 							}
@@ -170,7 +171,7 @@ public class MakeBuilder extends ACBuilder {
 				if(pathFromURI == null) {
 					throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.PLUGIN_ID, MakeMessages.getString("MakeBuilder.ErrorWorkingDirectory"), null)); //$NON-NLS-1$
 				}
-				
+
 				IPath workingDirectory = new Path(pathFromURI);
 
 				String[] targets = getTargets(kind, info);
@@ -288,7 +289,7 @@ public class MakeBuilder extends ACBuilder {
 	/**
 	 * Refresh project. Can be overridden to not call actual refresh or to do something else.
 	 * Method is called after build is complete.
-	 * 
+	 *
 	 * @since 6.0
 	 */
 	protected void refreshProject(IProject project) {
@@ -297,7 +298,7 @@ public class MakeBuilder extends ACBuilder {
 			// to Eclipse, files may have been created/modified and we will be out-of-sync.
 			// The caveat is for huge projects, it may take sometimes at every build.
 			// project.refreshLocal(IResource.DEPTH_INFINITE, null);
-			
+
 			// use the refresh scope manager to refresh
 			RefreshScopeManager refreshManager = RefreshScopeManager.getInstance();
 			IWorkspaceRunnable runnable = refreshManager.getRefreshRunnable(project);

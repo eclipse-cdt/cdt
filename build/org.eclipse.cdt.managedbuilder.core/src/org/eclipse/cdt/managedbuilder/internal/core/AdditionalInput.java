@@ -37,11 +37,11 @@ public class AdditionalInput implements IAdditionalInput {
 	/*
 	 *  C O N S T R U C T O R S
 	 */
-	
+
 	/**
-	 * This constructor is called to create an AdditionalInput defined by an extension point in 
+	 * This constructor is called to create an AdditionalInput defined by an extension point in
 	 * a plugin manifest file, or returned by a dynamic element provider
-	 * 
+	 *
 	 * @param parent  The IInputType parent of this AdditionalInput
 	 * @param element The AdditionalInput definition from the manifest file or a dynamic element
 	 *                provider
@@ -49,7 +49,7 @@ public class AdditionalInput implements IAdditionalInput {
 	public AdditionalInput(IInputType parent, IManagedConfigElement element) {
 		this.fParent = parent;
 		fIsExtensionAdditionalInput = true;
-		
+
 		// setup for resolving
 		fResolved = false;
 
@@ -57,9 +57,9 @@ public class AdditionalInput implements IAdditionalInput {
 	}
 
 	/**
-	 * This constructor is called to create an AdditionalInput whose attributes and children will be 
+	 * This constructor is called to create an AdditionalInput whose attributes and children will be
 	 * added by separate calls.
-	 * 
+	 *
 	 * @param parent The parent of the an AdditionalInput
 	 * @param isExtensionElement Indicates whether this is an extension element or a managed project element
 	 */
@@ -73,30 +73,30 @@ public class AdditionalInput implements IAdditionalInput {
 	}
 
 	/**
-	 * Create an <code>AdditionalInput</code> based on the specification stored in the 
+	 * Create an <code>AdditionalInput</code> based on the specification stored in the
 	 * project file (.cdtbuild).
-	 * 
-	 * @param parent The <code>ITool</code> the AdditionalInput will be added to. 
+	 *
+	 * @param parent The <code>ITool</code> the AdditionalInput will be added to.
 	 * @param element The XML element that contains the AdditionalInput settings.
 	 */
 	public AdditionalInput(IInputType parent, ICStorageElement element) {
 		this.fParent = parent;
 		fIsExtensionAdditionalInput = false;
-		
+
 		// Initialize from the XML attributes
 		loadFromProject(element);
 	}
 
 	/**
 	 * Create an <code>AdditionalInput</code> based upon an existing AdditionalInput.
-	 * 
+	 *
 	 * @param parent The <code>IInputType</code> the AdditionalInput will be added to.
 	 * @param additionalInput The existing AdditionalInput to clone.
 	 */
 	public AdditionalInput(IInputType parent, AdditionalInput additionalInput) {
 		this.fParent = parent;
 		fIsExtensionAdditionalInput = false;
-		
+
 		//  Copy the remaining attributes
 		if (additionalInput.fPaths != null) {
 			fPaths = new String(additionalInput.fPaths);
@@ -105,7 +105,7 @@ public class AdditionalInput implements IAdditionalInput {
 		if (additionalInput.fKind != null) {
 			fKind = new Integer(additionalInput.fKind.intValue());
 		}
-		
+
 		setDirty(true);
 		setRebuildState(true);
 	}
@@ -113,12 +113,12 @@ public class AdditionalInput implements IAdditionalInput {
 	/*
 	 *  E L E M E N T   A T T R I B U T E   R E A D E R S   A N D   W R I T E R S
 	 */
-	
+
 	/* (non-Javadoc)
-	 * Loads the AdditionalInput information from the ManagedConfigElement specified in the 
+	 * Loads the AdditionalInput information from the ManagedConfigElement specified in the
 	 * argument.
-	 * 
-	 * @param element Contains the AdditionalInput information 
+	 *
+	 * @param element Contains the AdditionalInput information
 	 */
 	protected void loadFromManifest(IManagedConfigElement element) {
 
@@ -135,20 +135,20 @@ public class AdditionalInput implements IAdditionalInput {
 			fKind = new Integer(KIND_ADDITIONAL_DEPENDENCY);
 		}
 	}
-	
+
 	/* (non-Javadoc)
-	 * Initialize the AdditionalInput information from the XML element 
+	 * Initialize the AdditionalInput information from the XML element
 	 * specified in the argument
-	 * 
-	 * @param element An XML element containing the AdditionalInput information 
+	 *
+	 * @param element An XML element containing the AdditionalInput information
 	 */
 	protected void loadFromProject(ICStorageElement element) {
-		
+
 		// path
 		if (element.getAttribute(IAdditionalInput.PATHS) != null) {
 			fPaths = SafeStringInterner.safeIntern(element.getAttribute(IAdditionalInput.PATHS));
 		}
-		
+
 		// kind
 		if (element.getAttribute(IAdditionalInput.KIND) != null) {
 			String kindStr = element.getAttribute(IAdditionalInput.KIND);
@@ -184,12 +184,12 @@ public class AdditionalInput implements IAdditionalInput {
 					str = ADDITIONAL_INPUT_DEPENDENCY;
 					break;
 				default:
-					str = EMPTY_STRING; 
+					str = EMPTY_STRING;
 					break;
 			}
 			element.setAttribute(IAdditionalInput.KIND, str);
 		}
-		
+
 		// I am clean now
 		fIsDirty = false;
 	}
@@ -201,6 +201,7 @@ public class AdditionalInput implements IAdditionalInput {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IAdditionalInput#getParent()
 	 */
+	@Override
 	public IInputType getParent() {
 		return fParent;
 	}
@@ -212,6 +213,7 @@ public class AdditionalInput implements IAdditionalInput {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IAdditionalInput#getPaths()
 	 */
+	@Override
 	public String[] getPaths() {
 		if (fPaths == null) {
 			return null;
@@ -223,6 +225,7 @@ public class AdditionalInput implements IAdditionalInput {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IAdditionalInput#setPaths()
 	 */
+	@Override
 	public void setPaths(String newPaths) {
 		if (fPaths == null && newPaths == null) return;
 		if (fPaths == null || newPaths == null || !(fPaths.equals(newPaths))) {
@@ -235,6 +238,7 @@ public class AdditionalInput implements IAdditionalInput {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IAdditionalInput#getKind()
 	 */
+	@Override
 	public int getKind() {
 		if (fKind == null) {
 			return KIND_ADDITIONAL_INPUT_DEPENDENCY;
@@ -245,6 +249,7 @@ public class AdditionalInput implements IAdditionalInput {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IAdditionalInput#setKind()
 	 */
+	@Override
 	public void setKind(int newKind) {
 		if (fKind == null || !(fKind.intValue() == newKind)) {
 			fKind = new Integer(newKind);
@@ -256,7 +261,7 @@ public class AdditionalInput implements IAdditionalInput {
 	/*
 	 *  O B J E C T   S T A T E   M A I N T E N A N C E
 	 */
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IAdditionalInput#isExtensionElement()
 	 */
@@ -267,6 +272,7 @@ public class AdditionalInput implements IAdditionalInput {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IAdditionalInput#isDirty()
 	 */
+	@Override
 	public boolean isDirty() {
 		// This shouldn't be called for an extension AdditionalInput
  		if (fIsExtensionAdditionalInput) return false;
@@ -276,10 +282,11 @@ public class AdditionalInput implements IAdditionalInput {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IAdditionalInput#setDirty(boolean)
 	 */
+	@Override
 	public void setDirty(boolean isDirty) {
 		this.fIsDirty = isDirty;
 	}
-	
+
 	/* (non-Javadoc)
 	 *  Resolve the element IDs to interface references
 	 */
@@ -288,11 +295,11 @@ public class AdditionalInput implements IAdditionalInput {
 			fResolved = true;
 		}
 	}
-	
+
 	public boolean needsRebuild(){
 		return fRebuildState;
 	}
-	
+
 	public void setRebuildState(boolean rebuild){
 		if(isExtensionElement() && rebuild)
 			return;

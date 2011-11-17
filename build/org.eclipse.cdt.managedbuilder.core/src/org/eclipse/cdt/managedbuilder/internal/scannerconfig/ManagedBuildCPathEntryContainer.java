@@ -138,6 +138,7 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 			// Set the arguments for the provider
 
 			ISafeRunnable runnable = new ISafeRunnable() {
+				@Override
 				public void run() {
 					IProgressMonitor monitor = new NullProgressMonitor();
 					IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
@@ -150,6 +151,7 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 					esiProvider.invokeProvider(monitor, project, providerId, buildInfo, collector/*, env*/);
 				}
 
+				@Override
 				public void handleException(Throwable exception) {
 					if (exception instanceof OperationCanceledException) {
 						throw (OperationCanceledException) exception;
@@ -163,6 +165,7 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.IPathEntryContainer#getPathEntries()
 	 */
+	@Override
 	public IPathEntry[] getPathEntries() {
 		info = (ManagedBuildInfo) ManagedBuildManager.getBuildInfo(project);
 		if (info == null) {
@@ -215,6 +218,7 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.IPathEntryContainer#getDescription()
 	 */
+	@Override
 	public String getDescription() {
 		return "CDT Managed Build Project";	//$NON-NLS-1$
 	}
@@ -222,6 +226,7 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.IPathEntryContainer#getPath()
 	 */
+	@Override
 	public IPath getPath() {
 		return new Path("org.eclipse.cdt.managedbuilder.MANAGED_CONTAINER");	//$NON-NLS-1$
 	}

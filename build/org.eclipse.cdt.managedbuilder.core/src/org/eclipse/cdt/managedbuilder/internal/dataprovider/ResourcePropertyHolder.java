@@ -21,20 +21,23 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 class ResourcePropertyHolder extends ResourceChangeHandlerBase {
 	private Map<String, Map<String, Boolean>> fRcMap = new HashMap<String, Map<String, Boolean>>();
 	private boolean fProjectOnly;
-	
+
 	public ResourcePropertyHolder(boolean projectOnly){
 		fProjectOnly = projectOnly;
 	}
-	
+
 	private class ResourceMoveHandler implements IResourceMoveHandler {
 
+		@Override
 		public void done() {
 		}
 
+		@Override
 		public void handleProjectClose(IProject project) {
 			removeResourcePropertyMap(project);
 		}
 
+		@Override
 		public boolean handleResourceMove(IResource fromRc, IResource toRc) {
 			if(isValidResource(fromRc)){
 				moveResourcePropertyMap(fromRc, toRc);
@@ -43,6 +46,7 @@ class ResourcePropertyHolder extends ResourceChangeHandlerBase {
 			return false;
 		}
 
+		@Override
 		public boolean handleResourceRemove(IResource rc) {
 			if(isValidResource(rc)){
 				removeResourcePropertyMap(rc);
@@ -50,9 +54,9 @@ class ResourcePropertyHolder extends ResourceChangeHandlerBase {
 			}
 			return false;
 		}
-		
+
 	}
-	
+
 	private boolean isValidResource(IResource rc){
 		return !fProjectOnly || rc.getType() == IResource.PROJECT;
 	}
@@ -62,7 +66,7 @@ class ResourcePropertyHolder extends ResourceChangeHandlerBase {
 			IResourceChangeEvent event) {
 		return new ResourceMoveHandler();
 	}
-	
+
 	protected String keyForResource(IResource rc){
 		return rc.getFullPath().toString();
 	}
@@ -74,10 +78,10 @@ class ResourcePropertyHolder extends ResourceChangeHandlerBase {
 		Map<String, Boolean> map = getResourcePropertyMap(rc, false);
 		if(map == null)
 			return null;
-		
+
 		return map.get(propKey);
 	}
-	
+
 	private Map<String, Boolean> getResourcePropertyMap(IResource rc, boolean create){
 		String key = keyForResource(rc);
 		Map<String, Boolean> map = fRcMap.get(key);
@@ -85,7 +89,7 @@ class ResourcePropertyHolder extends ResourceChangeHandlerBase {
 			map = new HashMap<String, Boolean>();
 			fRcMap.put(key, map);
 		}
-		
+
 		return map;
 	}
 
@@ -109,25 +113,25 @@ class ResourcePropertyHolder extends ResourceChangeHandlerBase {
 	public synchronized Boolean setProperty(IResource rc, String propKey, Boolean value) throws IllegalArgumentException {
 		if(!isValidResource(rc))
 			throw new IllegalArgumentException();
-		
+
 		if(value == null)
 			return removeProperty(rc, propKey);
-		
+
 		Map<String, Boolean> map = getResourcePropertyMap(rc, true);
 		return map.put(propKey, value);
 	}
 
 	private synchronized Boolean removeProperty(IResource rc, String propKey){
 		Map<String, Boolean> map = getResourcePropertyMap(rc, false);
-		
+
 		if(map == null)
 			return null;
-		
+
 		Boolean old = map.remove(propKey);
-		
+
 		if(map.size() == 0)
 			removeResourcePropertyMap(rc);
-		
+
 		return old;
 	}
 }

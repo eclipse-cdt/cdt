@@ -8,7 +8,7 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *    Anton Leherbauer (Wind River Systems)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.make.scannerdiscovery;
 
 import java.util.ArrayList;
@@ -27,7 +27,8 @@ import org.eclipse.cdt.make.internal.core.scannerconfig.util.CCommandDSC;
 final class TestScannerInfoCollector implements IScannerInfoCollector {
 	private HashMap<ScannerInfoTypes, List> fInfoMap = new HashMap<ScannerInfoTypes, List>();
 	private HashMap<Object, Map<ScannerInfoTypes, List>> fResourceToInfoMap = new HashMap<Object, Map<ScannerInfoTypes, List>>();
-	
+
+	@Override
 	public void contributeToScannerConfig(Object resource, Map scannerInfo0) {
 		Map<ScannerInfoTypes, List> scannerInfo = scannerInfo0;
 		Set<Entry<ScannerInfoTypes, List>> entrySet = scannerInfo.entrySet();
@@ -59,6 +60,7 @@ final class TestScannerInfoCollector implements IScannerInfoCollector {
 		target.addAll(col);
 	}
 
+	@Override
 	public List getCollectedScannerInfo(Object resource, ScannerInfoTypes type) {
 		if (resource == null) {
 			List result= fInfoMap.get(type);

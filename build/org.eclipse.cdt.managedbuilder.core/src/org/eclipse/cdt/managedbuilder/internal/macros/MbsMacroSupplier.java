@@ -43,12 +43,12 @@ import org.eclipse.cdt.utils.cdtvariables.IVariableSubstitutor;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.osgi.framework.Version;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.Version;
 
 /**
  * This supplier is used to suply MBS-predefined macros
- * 
+ *
  * @since 3.0
  */
 public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
@@ -56,7 +56,7 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 	public final static String DOT = ".";	//$NON-NLS-1$
 	public final static String EMPTY_STRING = ""; //$NON-NLS-1$
 
-	
+
 	private static final String fFileMacros[] = new String[]{
 		"InputFileName",	//$NON-NLS-1$
 		"InputFileExt",	//$NON-NLS-1$
@@ -74,7 +74,7 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 		"IncludeDefaults",	//$NON-NLS-1$
 		"ParentVersion",	//$NON-NLS-1$
 	};
-	
+
 	private static final String fToolMacros[] = new String[]{
 		"ToolVersion",	//$NON-NLS-1$
 	};
@@ -112,7 +112,7 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 //		"OsType",	//$NON-NLS-1$
 //		"ArchType",	//$NON-NLS-1$
 	};
-	
+
 	private class OptionData extends OptionContextData {
 		private IBuildObject fOptionContainer;
 		public OptionData(IOption option, IBuildObject parent) {
@@ -149,7 +149,7 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 
 //			fContextData = contextData;
 		}
-		
+
 		private void loadValue(IFileContextData contextData){
 			if(fIsInitialized)
 				return;
@@ -176,7 +176,7 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 					}
 				}
 			}
-			
+
 			if(builder != null){
 				IFileContextBuildMacroValues values = builder.getFileContextBuildMacroValues();
 				String value = values.getMacroValue(fName);
@@ -185,19 +185,19 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 					fIsExplicit = false;
 				}
 			}
-			
+
 			if(fStringValue == null){
 				fIsExplicit = true;
 				fStringValue = getExplicitFileMacroValue(fName, contextData.getInputFileLocation(), contextData.getOutputFileLocation(), builder, configuration);
 				fExplicitValue = fStringValue;
 				fIsExplicitResolved = true;
 			}
-			
+
 			fInputFileLocation = contextData.getInputFileLocation();
 			fOutputFileLocation = contextData.getOutputFileLocation();
 			fIsInitialized = true;
 		}
-		
+
 		public String getExplicitMacroValue(IConfiguration configuration, IBuilder builder){
 //			loadValue();
 			if(!fIsExplicitResolved){
@@ -206,12 +206,12 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 			}
 			return fExplicitValue;
 		}
-		
+
 		public boolean isExplicit(){
 //			loadValue();
 			return fIsExplicit;
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacro#getStringValue()
 		 */
@@ -221,7 +221,7 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 			return fStringValue;
 		}
 	}
-	
+
 	private String getExplicitFileMacroValue(String name, IPath inputFileLocation, IPath outputFileLocation, IBuilder builder, IConfiguration cfg){
 		String value = null;
 		if("InputFileName".equals(name)){	//$NON-NLS-1$
@@ -281,7 +281,7 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 				}
 			}
 		}
-		
+
 		return value;
 	}
 
@@ -293,25 +293,25 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 		String names[] = null;
 		switch(contextType){
 		case IBuildMacroProvider.CONTEXT_FILE:
-			names = fFileMacros; 
+			names = fFileMacros;
 			break;
 		case IBuildMacroProvider.CONTEXT_OPTION:
-			names = fOptionMacros; 
+			names = fOptionMacros;
 			break;
 		case IBuildMacroProvider.CONTEXT_TOOL:
-			names = fToolMacros; 
+			names = fToolMacros;
 			break;
 		case IBuildMacroProvider.CONTEXT_CONFIGURATION:
-			names = fConfigurationMacros; 
+			names = fConfigurationMacros;
 			break;
 		case IBuildMacroProvider.CONTEXT_PROJECT:
-			names = fProjectMacros; 
+			names = fProjectMacros;
 			break;
 		case IBuildMacroProvider.CONTEXT_WORKSPACE:
-			names = fWorkspaceMacros; 
+			names = fWorkspaceMacros;
 			break;
 		case IBuildMacroProvider.CONTEXT_INSTALLATIONS:
-			names = fCDTEclipseMacros; 
+			names = fCDTEclipseMacros;
 			break;
 		case IBuildMacroProvider.CONTEXT_ECLIPSEENV:
 			break;
@@ -322,7 +322,7 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 	}
 
 	private MbsMacroSupplier(){
-		
+
 	}
 
 	public static MbsMacroSupplier getInstance(){
@@ -330,14 +330,14 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 			fInstance = new MbsMacroSupplier();
 		return fInstance;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroSupplier#getMacro(java.lang.String, int, java.lang.Object)
 	 */
 	@Override
 	public IBuildMacro getMacro(String macroName, int contextType,
 			Object contextData) {
-		IBuildMacro macro = null; 
+		IBuildMacro macro = null;
 		switch(contextType){
 		case IBuildMacroProvider.CONTEXT_FILE:
 			if(contextData instanceof IFileContextData){
@@ -391,7 +391,7 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 		case IBuildMacroProvider.CONTEXT_ECLIPSEENV:
 			break;
 		}
-		
+
 		return macro;
 	}
 
@@ -408,7 +408,7 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 		}
 		return macro;
 	}
-	
+
 	public IBuildMacro getMacro(String macroName, ITool tool){
 		IBuildMacro macro = null;
 		if("ToolVersion".equals(macroName) && tool.getVersion() != null){	//$NON-NLS-1$
@@ -430,11 +430,11 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 			String ext = cfg.getArtifactExtension();
 			if(ext != null && !EMPTY_STRING.equals(ext))
 				name = name + DOT + ext;
-			macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,name); 
+			macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,name);
 		}
 		else if("BuildArtifactFileExt".equals(macroName)){	//$NON-NLS-1$
 			String ext = cfg.getArtifactExtension();
-			macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,ext); 
+			macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,ext);
 		}
 		else if("BuildArtifactFileBaseName".equals(macroName)){	//$NON-NLS-1$
 			String name = cfg.getArtifactName();
@@ -442,7 +442,7 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 			if(targetTool != null){
 				IOutputType pot = targetTool.getPrimaryOutputType();
 				String prefix = pot != null ? pot.getOutputPrefix() : "";	//$NON-NLS-1$
-				
+
 
 				// Resolve any macros in the outputPrefix
 				// Note that we cannot use file macros because if we do a clean
@@ -492,18 +492,18 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 
 				}
 
-				
+
 				if(prefix != null && !EMPTY_STRING.equals(prefix))
 					name = prefix + name;
 			}
-			macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,name); 
+			macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,name);
 		}
 		else if("BuildArtifactFilePrefix".equals(macroName)){	//$NON-NLS-1$
 			ITool targetTool = cfg.calculateTargetTool();
 			if(targetTool != null){
 				IOutputType pot = targetTool.getPrimaryOutputType();
 				String prefix = pot != null ? pot.getOutputPrefix() : "";	//$NON-NLS-1$
-				
+
 				// Resolve any macros in the outputPrefix
 				// Note that we cannot use file macros because if we do a clean
 				// we need to know the actual
@@ -551,7 +551,7 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 					}
 
 				}
-				
+
 				if(prefix == null)
 					prefix = EMPTY_STRING;
 				macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,prefix);
@@ -570,20 +570,20 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 			if(archList == null)
 				archList = new String[0];
 			macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT_LIST,archList);
-			
+
 		}
 		else if("ToolChainVersion".equals(macroName)){	//$NON-NLS-1$
 			if(cfg.getToolChain().getVersion() != null)
 				macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,cfg.getToolChain().getVersion().toString());
 		}
 		else if("BuilderVersion".equals(macroName)){	//$NON-NLS-1$
-			Version version = cfg.getToolChain().getBuilder().getVersion(); 
+			Version version = cfg.getToolChain().getBuilder().getVersion();
 			if(version != null)
 				macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,version.toString());
 		}
 		return macro;
 	}
-	
+
 	private String getBaseName(String name){
 		String value = null;
 		int index = name.lastIndexOf('.');
@@ -593,7 +593,7 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 			value = name.substring(0,index);
 		return value;
 	}
-	
+
 	private String getExtension(String name){
 		String value = null;
 		int index = name.lastIndexOf('.');
@@ -601,7 +601,7 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 			value = name.substring(index+1);
 		return value;
 	}
-	
+
 	public IBuildMacro getMacro(String macroName, IManagedProject mngProj){
 		IBuildMacro macro = null;
 		if("ProjName".equals(macroName)){	//$NON-NLS-1$
@@ -612,7 +612,7 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 		}
 		return macro;
 	}
-	
+
 	public IBuildMacro getMacro(String macroName, IWorkspace wsp){
 		IBuildMacro macro = null;
 		if("WorkspaceDirPath".equals(macroName)){	//$NON-NLS-1$
@@ -632,7 +632,7 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 		}
 		return macro;
 	}
-	
+
 	private boolean isWin32(){
 		String os = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
 		if (os.startsWith("windows ")) //$NON-NLS-1$
@@ -644,13 +644,13 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 		IBuildMacro macro = null;
 		if("EclipseVersion".equals(macroName)){	//$NON-NLS-1$
 			Bundle bundle = Platform.getBundle("org.eclipse.platform");	//$NON-NLS-1$
-			String version = bundle != null ? 
+			String version = bundle != null ?
 					(String)bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION) :
 						null;
 			macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,version);
 		}
 		else if("CDTVersion".equals(macroName)){	//$NON-NLS-1$
-			String version = (String)CCorePlugin.getDefault().getBundle().getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION);
+			String version = CCorePlugin.getDefault().getBundle().getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION);
 			macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,version);
 		}
 		else if("MBSVersion".equals(macroName)){	//$NON-NLS-1$
@@ -684,7 +684,7 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 	@Override
 	public IBuildMacro[] getMacros(int contextType, Object contextData) {
 		String names[] = getMacroNames(contextType,false);
-		
+
 		if(names != null){
 			IBuildMacro macros[] = new IBuildMacro[names.length];
 			int num = 0;
@@ -703,13 +703,13 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 		}
 		return null;
 	}
-	
+
 	private IPath getBuilderCWD(IBuilder builder, IConfiguration cfg){
 		return ManagedBuildManager.getBuildLocation(cfg, builder);
 	}
-	
+
 	private IPath getOutputFilePath(IPath inputPath, IBuilder builder, IConfiguration cfg){
-		ITool buildTools[] = null; 
+		ITool buildTools[] = null;
 		IResourceConfiguration rcCfg = cfg.getResourceConfiguration(inputPath.toString());
 		if(rcCfg != null) {
 			buildTools = rcCfg.getToolsToInvoke();
@@ -717,7 +717,7 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 		if (buildTools == null || buildTools.length == 0) {
 			buildTools = cfg.getFilteredTools();
 		}
-		
+
 		String name = null;
 		IPath path = null;
 		for(int i = 0; i < buildTools.length; i++){
@@ -742,15 +742,15 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 			}
 		}
 		return path;
-		
+
 	}
-	
+
 	/* (non-Javadoc)
 	 * Returns the option that matches the option ID in this tool
 	 */
 	public IOption getOption(ITool tool, String optionId) {
 		if (optionId == null) return null;
-		
+
 		//  Look for an option with this ID, or an option with a superclass with this id
 		IOption[] options = tool.getOptions();
 		for (int i = 0; i < options.length; i++) {
@@ -759,14 +759,14 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 			do {
 				if (optionId.equals(option.getId())) {
 					return targetOption;
-				}		
+				}
 				option = option.getSuperClass();
 			} while (option != null);
 		}
-		
+
 		return null;
 	}
-	
+
 	private class IncludeDefaultsSubstitutor implements IVariableSubstitutor {
 		private IOptionContextData fOptionContextData;
 
@@ -774,6 +774,7 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 			fOptionContextData = data;
 		}
 
+		@Override
 		public String resolveToString(String macroName) throws CdtVariableException {
 			if(!"IncludeDefaults".equals(macroName)) 	//$NON-NLS-1$
 				return CdtVariableResolver.createVariableReference(macroName);
@@ -810,7 +811,7 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 				default :
 					break;
 				}
-				
+
 				if(str != null)
 					return CdtVariableResolver.resolveToString(str,sub);
 				else if(strL != null){
@@ -818,17 +819,18 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 					return CdtVariableResolver.convertStringListToString(strL," "); 	//$NON-NLS-1$
 				}
 			} catch (BuildException e){
-				
+
 			} catch (CdtVariableException e){
-				
+
 			}
 			return null;
 		}
 
+		@Override
 		public String[] resolveToStringList(String macroName) throws CdtVariableException {
 			if(!"IncludeDefaults".equals(macroName)) 	//$NON-NLS-1$
 				return new String[]{CdtVariableResolver.createVariableReference(macroName)};
-			
+
 			IOptionContextData parent = getParent(fOptionContextData);
 			if(parent == null)
 				return new String[]{EMPTY_STRING};
@@ -862,19 +864,19 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 				default :
 					break;
 				}
-				
+
 				if(str != null)
 					return CdtVariableResolver.resolveToStringList(str,sub);
 				else if(strL != null)
 					return CdtVariableResolver.resolveStringListValues(strL,sub,true);
 			} catch (BuildException e){
-				
+
 			} catch (CdtVariableException e){
-				
+
 			}
 			return null;
 		}
-		
+
 		public void setMacroContextInfo(int contextType, Object contextData) throws BuildMacroException {
 		}
 
@@ -893,7 +895,7 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 			IOptionContextData parentOptionContextData = getParent(optionContextData);
 			load(optionContextData, parentOptionContextData);
 		}
-		
+
 		private boolean load(IOptionContextData optionContextData, IOptionContextData parentOptionContextData){
 			fStringValue = null;
 			fStringListValue = null;
@@ -981,14 +983,14 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 					}
 				}
 			}
-			
+
 			boolean result = fType != 0;
 			if(!result){
 				fType = VALUE_TEXT;
 				fStringListValue = null;
 				fStringValue = null;
 			}
-			
+
 			return result;
 		}
 	}
@@ -999,7 +1001,7 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 		IOption option = optionContext.getOption();
 		if(option == null)
 			return null;
-			
+
 		IBuildObject parent = option.getParent();
 		ITool tool = null;
 		IToolChain tCh = null;
@@ -1011,19 +1013,19 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 			tCh = (IToolChain)parent;
 			optionRcInfo = tCh.getParentFolderInfo();
 		}
-		
+
 		if(optionRcInfo != null && optionRcInfo.isExtensionElement())
 			optionRcInfo = null;
-		
+
 		IBuildObject parentObj = null;
 		IOption parentOption = null;
-		
+
 		if(optionRcInfo != null){
 			//only if optionRcInfo is not null
 			IBuildObject bObj = (optionContext instanceof OptionData) ?
 					((OptionData)optionContext).getOptionContainer() : optionContext.getParent();
-					
-			
+
+
 			IResourceInfo rcInfo = null;
 			IFileInfo fileInfo = null;
 			IFolderInfo folderInfo = null;
@@ -1043,12 +1045,12 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 				holderTc = (IToolChain)bObj;
 				folderInfo = holderTc.getParentFolderInfo();
 			}
-			
+
 			if(rcInfo != null && rcInfo.isExtensionElement())
 				rcInfo = null;
-			
+
 			IResourceInfo parentRcInfo = null;
-			
+
 			if(rcInfo != null){
 				IPath optionRcPath = optionRcInfo.getPath();
 				IPath rcPath = rcInfo.getPath();
@@ -1058,7 +1060,7 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 					parentRcInfo = ((ResourceInfo)rcInfo).getParentResourceInfo();
 				}
 			}
-			
+
 			if(parentRcInfo != null){
 				if(tool != null){
 					ITool tools[] = parentRcInfo.getTools();
@@ -1075,7 +1077,7 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 							break;
 						cur = cur.getSuperClass();
 					} while(cur != null);
-					
+
 					if(found != null){
 						parentOption = getParentOption(found, option);
 						if(parentOption != null){
@@ -1093,18 +1095,18 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 				}
 			}
 		}
-		
+
 		if(parentObj == null)
 			parentOption = null;
 		if(parentOption == null)
 			parentOption = option.getSuperClass();
-		
+
 		if(parentOption != null)
 			return new OptionData(parentOption,optionContext.getParent(),parentObj);
 
 		return null;
 	}
-	
+
 	private IOption getParentOption(IHoldsOptions holder, IOption option){
 		IOption cur = option;
 		IOption found = null;
@@ -1113,10 +1115,10 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 			found = holder.getOptionBySuperClassId(id);
 			if(found != null)
 				break;
-			
+
 			if(cur.isExtensionElement())
 				break;
-			cur = cur.getSuperClass(); 
+			cur = cur.getSuperClass();
 		} while (cur != null);
 		return found;
 	}
@@ -1125,7 +1127,7 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 		IOption option = optionData.getOption();
 		if(option == null)
 			return false;
-		
+
 		boolean can = false;
 		try{
 			switch (option.getBasicValueType()) {
@@ -1157,5 +1159,5 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 		}
 		return can;
 	}
-	
+
 }

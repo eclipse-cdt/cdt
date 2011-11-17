@@ -33,7 +33,7 @@ import org.eclipse.cdt.utils.envvar.EnvVarOperationProcessor;
 /**
  * This class implements the IEnvironmentVariableProvider interface and provides all
  * build environment functionality to the MBS
- * 
+ *
  * @since 3.0
  *
  */
@@ -43,7 +43,7 @@ public class EnvironmentVariableProvider implements
 
 //	private static final String DELIMITER_WIN32 = ";";  //$NON-NLS-1$
 //	private static final String DELIMITER_UNIX = ":";  //$NON-NLS-1$
-	
+
 	private static EnvironmentVariableProvider fInstance = null;
 	private List<IEnvironmentBuildPathsChangeListener> fListeners = null;
 	private IEnvironmentVariableManager fMngr;
@@ -51,34 +51,35 @@ public class EnvironmentVariableProvider implements
 
 	private StoredBuildPathEnvironmentContainer fIncludeStoredBuildPathVariables;
 	private StoredBuildPathEnvironmentContainer fLibraryStoredBuildPathVariables;
-	
+
 	/**
 	 * This class is used by the EnvironmentVariableProvider to calculate the build paths
-	 * in case a tool-integrator did not provide the special logic for obtaining the build 
+	 * in case a tool-integrator did not provide the special logic for obtaining the build
 	 * paths from environment variable values
-	 * 
+	 *
 	 * @since 3.0
 	 *
 	 */
 	static public class DefaultBuildPathResolver implements IBuildPathResolver {
 		private String fDelimiter;
-		
+
 		public DefaultBuildPathResolver(String delimiter){
 			fDelimiter = delimiter;
 		}
 
+		@Override
 		public String[] resolveBuildPaths(int pathType, String variableName,
 				String variableValue, IConfiguration configuration) {
-			
+
 			if(fDelimiter == null || "".equals(fDelimiter)) //$NON-NLS-1$
 				return new String[]{variableValue};
-			
+
 			List<String> list = EnvVarOperationProcessor.convertToList(variableValue,fDelimiter);
 			return list.toArray(new String[list.size()]);
 		}
 
 	}
-	
+
 	protected EnvironmentVariableProvider(IEnvironmentVariableManager mngr){
 		fMngr = mngr;
 	}
@@ -90,22 +91,24 @@ public class EnvironmentVariableProvider implements
 		}
 		return fInstance;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider#getVariable()
 	 */
+	@Override
 	public IBuildEnvironmentVariable getVariable(String variableName,
 			Object level, boolean includeParentLevels, boolean resolveMacros) {
 
 		if(variableName == null || "".equals(variableName)) //$NON-NLS-1$
 			return null;
-		
+
 		if(level instanceof IConfiguration){
 			return wrap(getVariable(variableName, (IConfiguration)level, resolveMacros));
 		}
 		return null;
 	}
 
+	@Override
 	public IEnvironmentVariable getVariable(String variableName,
 			IConfiguration cfg, boolean resolveMacros){
 		return getVariable(variableName, cfg, resolveMacros, true);
@@ -123,6 +126,7 @@ public class EnvironmentVariableProvider implements
 		return null;
 	}
 
+	@Override
 	public IEnvironmentVariable[] getVariables(IConfiguration cfg, boolean resolveMacros){
 		return getVariables(cfg, resolveMacros, true);
 	}
@@ -137,7 +141,7 @@ public class EnvironmentVariableProvider implements
 		}
 		return new IBuildEnvironmentVariable[0];
 	}
-	
+
 	public static IBuildEnvironmentVariable wrap(IEnvironmentVariable var){
 		if(var == null)
 			return null;
@@ -151,7 +155,7 @@ public class EnvironmentVariableProvider implements
 			return null;
 		if(vars instanceof IBuildEnvironmentVariable[])
 			return (IBuildEnvironmentVariable[])vars;
-		
+
 		IBuildEnvironmentVariable[] buildVars = new IBuildEnvironmentVariable[vars.length];
 		for(int i = 0; i < vars.length; i++){
 			buildVars[i] = wrap(vars[i]);
@@ -167,10 +171,11 @@ public class EnvironmentVariableProvider implements
 		}
 		return null;
 	}
-*/	
+*/
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider#getVariables()
 	 */
+	@Override
 	public IBuildEnvironmentVariable[] getVariables(Object level,
 			boolean includeParentLevels, boolean resolveMacros) {
 
@@ -179,10 +184,11 @@ public class EnvironmentVariableProvider implements
 		}
 		return new IBuildEnvironmentVariable[0];
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider#getDefaultDelimiter()
 	 */
+	@Override
 	public String getDefaultDelimiter() {
 		return fMngr.getDefaultDelimiter();
 	}
@@ -190,40 +196,43 @@ public class EnvironmentVariableProvider implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider#isVariableCaseSensitive()
 	 */
+	@Override
 	public boolean isVariableCaseSensitive() {
 		return fMngr.isVariableCaseSensitive();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider#getSuppliers()
 	 */
+	@Override
 	public IEnvironmentVariableSupplier[] getSuppliers(Object level) {
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider#getBuildPaths()
 	 */
+	@Override
 	public String[] getBuildPaths(IConfiguration configuration,
 			int buildPathType) {
 		ITool tools[] = configuration.getFilteredTools();
 		List<String> list = new ArrayList<String>();
-		
+
 		for(int i = 0; i < tools.length; i++){
 			IEnvVarBuildPath pathDescriptors[] = tools[i].getEnvVarBuildPaths();
-			
+
 			if(pathDescriptors == null || pathDescriptors.length == 0)
 				continue;
-			
+
 			for(int j = 0; j < pathDescriptors.length; j++){
 				IEnvVarBuildPath curPathDes = pathDescriptors[j];
 				if(curPathDes.getType() != buildPathType)
 					continue;
-				
+
 				String vars[] = curPathDes.getVariableNames();
 				if(vars == null || vars.length == 0)
 					continue;
-				
+
 				IBuildPathResolver pathResolver = curPathDes.getBuildPathResolver();
 				if(pathResolver == null){
 					String delimiter = curPathDes.getPathDelimiter();
@@ -231,14 +240,14 @@ public class EnvironmentVariableProvider implements
 						delimiter = getDefaultDelimiter();
 					pathResolver = new DefaultBuildPathResolver(delimiter);
 				}
-				
+
 				for(int k = 0; k < vars.length; k++){
 					String varName = vars[k];
-					
+
 					IEnvironmentVariable var = getVariable(varName,configuration,true, false);
 					if(var == null)
 						continue;
-					
+
 					String varValue = var.getValue();
 					String paths[] = pathResolver.resolveBuildPaths(buildPathType,varName,varValue,configuration);
 					if(paths != null && paths.length != 0)
@@ -246,10 +255,10 @@ public class EnvironmentVariableProvider implements
 				}
 			}
 		}
-		
+
 		return list.toArray(new String[list.size()]);
 	}
-	
+
 	/*
 	 * returns a list of registered listeners
 	 */
@@ -258,7 +267,7 @@ public class EnvironmentVariableProvider implements
 			fListeners = new ArrayList<IEnvironmentBuildPathsChangeListener>();
 		return fListeners;
 	}
-	
+
 	/*
 	 * notifies registered listeners
 	 */
@@ -272,12 +281,13 @@ public class EnvironmentVariableProvider implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider#subscribe()
 	 */
+	@Override
 	public synchronized void subscribe(IEnvironmentBuildPathsChangeListener listener) {
 		if(listener == null)
 			return;
-		
+
 		List<IEnvironmentBuildPathsChangeListener> listeners = getListeners();
-		
+
 		if(!listeners.contains(listener))
 			listeners.add(listener);
 	}
@@ -285,15 +295,16 @@ public class EnvironmentVariableProvider implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider#unsubscribe()
 	 */
+	@Override
 	public synchronized void unsubscribe(IEnvironmentBuildPathsChangeListener listener) {
 		if(listener == null)
 			return;
-		
+
 		List<IEnvironmentBuildPathsChangeListener> listeners = getListeners();
-		
+
 		listeners.remove(listener);
 	}
-	
+
 	/*
 	 * performs a check of the build path variables for the given configuration
 	 * If the build variables are changed, the notification is sent
@@ -315,7 +326,7 @@ public class EnvironmentVariableProvider implements
 
 	/*
 	 * performs a check of the build path variables
-	 * for the given configuration given the set of the variables 
+	 * for the given configuration given the set of the variables
 	 * defined for this configuration
 	 * If the build variables are changed, the notification is sent
 	 */
@@ -361,8 +372,8 @@ public class EnvironmentVariableProvider implements
 
 	/*
 	 * performs a check of the build path variables of the specified type
-	 * for the given configuration given the set of the variables 
-	 * defined for this configuration. 
+	 * for the given configuration given the set of the variables
+	 * defined for this configuration.
 	 * If the build variables are changed, the notification is sent
 	 */
 	protected void checkBuildPathVariables(IConfiguration configuration, int buildPathType, EnvVarCollector varSet){
@@ -373,7 +384,7 @@ public class EnvironmentVariableProvider implements
 			notifyListeners(configuration, buildPathType);
 		}
 	}
-	
+
 	/*
 	 * returns the container of the build variables of the specified type
 	 */
@@ -382,7 +393,7 @@ public class EnvironmentVariableProvider implements
 				getStoredLibraryBuildPathVariables() :
 				getStoredIncludeBuildPathVariables();
 	}
-	
+
 	/*
 	 * returns the container of the Include path variables
 	 */
@@ -399,5 +410,5 @@ public class EnvironmentVariableProvider implements
 		if(fLibraryStoredBuildPathVariables == null)
 			fLibraryStoredBuildPathVariables = new StoredBuildPathEnvironmentContainer(IEnvVarBuildPath.BUILDPATH_LIBRARY);
 		return fLibraryStoredBuildPathVariables;
-	}	
+	}
 }

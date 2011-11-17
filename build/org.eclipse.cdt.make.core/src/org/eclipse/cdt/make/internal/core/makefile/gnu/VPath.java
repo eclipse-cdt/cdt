@@ -36,10 +36,12 @@ public class VPath extends Directive implements IVPath {
 		return sb.toString();
 	}
 
+	@Override
 	public String[] getDirectories() {
 		return directories;
 	}
 
+	@Override
 	public String getPattern() {
 		return pattern;
 	}

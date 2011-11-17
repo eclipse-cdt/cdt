@@ -30,18 +30,19 @@ import org.eclipse.core.runtime.Path;
 
 /**
  * Parses gcc and g++ output for -I and -D parameters.
- * 
+ *
  * @author vhirsl
  */
 public class GCCScannerInfoConsoleParser extends AbstractGCCBOPConsoleParser {
 
 	protected ScannerInfoConsoleParserUtility fUtil = null;
 	private String fDefaultMacroDefinitionValue= "1"; //$NON-NLS-1$
-	
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser#startup(org.eclipse.core.resources.IProject, org.eclipse.core.runtime.IPath, org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector, org.eclipse.cdt.core.IMarkerGenerator)
      */
-    public void startup(IProject project, IPath workingDirectory, IScannerInfoCollector collector, IMarkerGenerator markerGenerator) {
+    @Override
+	public void startup(IProject project, IPath workingDirectory, IScannerInfoCollector collector, IMarkerGenerator markerGenerator) {
         fUtil = (project != null && workingDirectory != null && markerGenerator != null) ?
                 new ScannerInfoConsoleParserUtility(project, workingDirectory, markerGenerator) : null;
         super.startup(project, collector);
@@ -61,7 +62,7 @@ public class GCCScannerInfoConsoleParser extends AbstractGCCBOPConsoleParser {
         if (compilerInvocationIdx<0) {
         	return false;
         }
-        
+
         if (compilerInvocationIdx+1 >= tokens.length) {
         	return false;
         }
@@ -164,7 +165,7 @@ public class GCCScannerInfoConsoleParser extends AbstractGCCBOPConsoleParser {
         	return false;  // return when no file was given (analogous to GCCPerFileBOPConsoleParser)
         }
 
-        IProject project = getProject();   
+        IProject project = getProject();
         IFile file = null;
         List<String> translatedIncludes = includes;
         if (includes.size() > 0) {
@@ -200,7 +201,7 @@ public class GCCScannerInfoConsoleParser extends AbstractGCCBOPConsoleParser {
         }
 		return true;
 	}
-    
+
     public void setDefaultMacroDefinitionValue(String val) {
     	if (val != null) {
     		fDefaultMacroDefinitionValue= val;

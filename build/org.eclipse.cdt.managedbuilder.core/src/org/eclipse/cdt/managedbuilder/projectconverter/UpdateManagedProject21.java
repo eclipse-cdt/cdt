@@ -45,7 +45,7 @@ import org.eclipse.core.runtime.preferences.IScopeContext;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 class UpdateManagedProject21 {
-	
+
 	/**
 	 * @param monitor the monitor to allow users to cancel the long-running operation
 	 * @param project the <code>IProject</code> that needs to be upgraded
@@ -58,21 +58,21 @@ class UpdateManagedProject21 {
 			monitor.done();
 			return;
 		}
-		
+
 		// Backup the file
 		monitor.beginTask(ConverterMessages.getFormattedString("UpdateManagedProject20.0", projectName), 1); //$NON-NLS-1$
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 		UpdateManagedProjectManager.backupFile(file, "_21backup", monitor, project); //$NON-NLS-1$
 
-		// No physical conversion is need since the 3.0 model is a superset of the 2.1 model 
+		// No physical conversion is need since the 3.0 model is a superset of the 2.1 model
 		// We need to upgrade the version
 		((ManagedBuildInfo)info).setVersion("3.0.0"); //$NON-NLS-1$
-		info.setValid(true);		
+		info.setValid(true);
 
 		// Save the updated file.
 		// But first, check for this special case.  If the project is a C++ project, and it contains .c files, we add
 		// the .c extension to the project-specific list of C++ file extensions so that these projects build as they
-		// did in CDT 2.*.  Otherwise the .c files will not be compiled by default since CDT 3.0 switched to using 
+		// did in CDT 2.*.  Otherwise the .c files will not be compiled by default since CDT 3.0 switched to using
 		// Eclipse content types.
 		// If the tree is locked spawn a job to this.
 		IWorkspace workspace = project.getWorkspace();
@@ -107,15 +107,16 @@ class UpdateManagedProject21 {
 	static void checkForCPPWithC(IProgressMonitor monitor, final IProject project) {
 		// Also we check for this special case.  If the project is a C++ project, and it contains .c files, we add
 		// the .c extension to the project-specific list of C++ file extensions so that these projects build as they
-		// did in CDT 2.*.  Otherwise the .c files will not be compiled by default since CDT 3.0 switched to using 
+		// did in CDT 2.*.  Otherwise the .c files will not be compiled by default since CDT 3.0 switched to using
 		// Eclipse content types.
 		if (CoreModel.hasCCNature(project)) {
 			try {
 				try {
-					// Refresh the project here since we may be called before an import operation has fully 
+					// Refresh the project here since we may be called before an import operation has fully
 					// completed setting up the project's resources
 					IWorkspace workspace = project.getWorkspace();
 					IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+						@Override
 						public void run(IProgressMonitor monitor) throws CoreException {
 							project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 						}
@@ -123,13 +124,14 @@ class UpdateManagedProject21 {
 					workspace.run(runnable, project, IWorkspace.AVOID_UPDATE, monitor);
 				} catch (Exception e) {}	// Ignore the error - the user may have to add .c extensions to
 								// the local definition of C++ file extensions
-				
+
 				final boolean found[] = new boolean[1];
 				project.accept(new IResourceProxyVisitor(){
 
 						/* (non-Javadoc)
 						 * @see org.eclipse.core.resources.IResourceProxyVisitor#visit(org.eclipse.core.resources.IResourceProxy)
 						 */
+						@Override
 						public boolean visit(IResourceProxy proxy) throws CoreException {
 							if(found[0] || proxy.isDerived())
 								return false;
@@ -144,7 +146,7 @@ class UpdateManagedProject21 {
 						}
 					},
 					IResource.NONE);
-				
+
 				if(found[0]){
 					IScopeContext projectScope = new ProjectScope(project);
 

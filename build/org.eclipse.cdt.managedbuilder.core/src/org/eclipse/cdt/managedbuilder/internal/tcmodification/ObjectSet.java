@@ -20,41 +20,47 @@ import org.eclipse.cdt.managedbuilder.internal.tcmodification.extension.MatchObj
 public class ObjectSet implements IObjectSet {
 	private int fObjectType;
 	private Set<IRealBuildObjectAssociation> fObjectSet;
-	
+
 	public ObjectSet(int objectType, Set<IRealBuildObjectAssociation> objectSet){
 		fObjectType = objectType;
 		fObjectSet = objectSet;
 	}
-	
+
+	@Override
 	public final int getObjectType() {
 		return fObjectType;
 	}
 
+	@Override
 	public IRealBuildObjectAssociation[] getRealBuildObjects() {
 		return fObjectSet.toArray(new IRealBuildObjectAssociation[fObjectSet.size()]);
 	}
 
+	@Override
 	public Collection<IRealBuildObjectAssociation> getRealBuildObjects(Collection<IRealBuildObjectAssociation> set) {
 		if(set == null)
 			set = new HashSet<IRealBuildObjectAssociation>();
-		
+
 		set.addAll(fObjectSet);
-			
+
 		return set;
 	}
 
+	@Override
 	public boolean matchesObject(IRealBuildObjectAssociation obj) {
 		return fObjectSet.contains(obj.getRealBuildObject());
 	}
 
+	@Override
 	public boolean retainMatches(Collection<IRealBuildObjectAssociation> collection) {
 		return collection.retainAll(fObjectSet);
 	}
 
+	@Override
 	public int getNumObjects() {
 		return fObjectSet.size();
 	}
-	
+
 	@SuppressWarnings("nls")
 	@Override
 	public String toString(){
@@ -70,7 +76,7 @@ public class ObjectSet implements IObjectSet {
 			buf.append(obj.getId());
 		}
 		buf.append("]");
-		
+
 		return buf.toString();
 	}
 }

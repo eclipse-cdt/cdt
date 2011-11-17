@@ -26,7 +26,7 @@ public class MakePreferencePage extends FieldEditorPreferencePage implements IWo
 
 	private static final String PREF_BUILD_TARGET_IN_BACKGROUND = "MakeTargetPrefs.buildTargetInBackground"; //$NON-NLS-1$
 	private static final String TARGET_BUILDS_IN_BACKGROUND = "MakeTargetPreferencePage.buildTargetInBackground.label"; //$NON-NLS-1$
-	
+
 	private static final String PREF_BUILD_LAST_TARGET = "MakeTargetPrefs.buildLastTarget"; //$NON-NLS-1$
 	private static final String BUILD_LAST_TARGET = "MakeTargetPreferencePage.buildLastTarget.title"; //$NON-NLS-1$
 	private static final String PREF_BUILD_LAST_PROJECT = "MakeTargetPrefs.buildLastTarget.project"; //$NON-NLS-1$
@@ -57,15 +57,15 @@ public class MakePreferencePage extends FieldEditorPreferencePage implements IWo
 		BooleanFieldEditor tagetBackgroundEditor = new BooleanFieldEditor(PREF_BUILD_TARGET_IN_BACKGROUND,
 				MakeUIPlugin.getResourceString(TARGET_BUILDS_IN_BACKGROUND), parent);
 		addField(tagetBackgroundEditor);
-		
+
 		// make last target for selected resource or project
 		RadioGroupFieldEditor edit = new RadioGroupFieldEditor(
 				PREF_BUILD_LAST_TARGET,
-				MakeUIPlugin.getResourceString(BUILD_LAST_TARGET), 1, 
+				MakeUIPlugin.getResourceString(BUILD_LAST_TARGET), 1,
 				new String[][] {
 						{MakeUIPlugin.getResourceString(BUILD_LAST_PROJECT), PREF_BUILD_LAST_PROJECT},
-						{MakeUIPlugin.getResourceString(BUILD_LAST_RESOURCE), PREF_BUILD_LAST_RESOURCE}, 
-						{MakeUIPlugin.getResourceString(BUILD_LAST_PROJECTROOT), PREF_BUILD_LAST_PROJECTROOT} }, 
+						{MakeUIPlugin.getResourceString(BUILD_LAST_RESOURCE), PREF_BUILD_LAST_RESOURCE},
+						{MakeUIPlugin.getResourceString(BUILD_LAST_PROJECTROOT), PREF_BUILD_LAST_PROJECTROOT} },
 				parent,
 				true);
 		addField(edit);
@@ -81,17 +81,17 @@ public class MakePreferencePage extends FieldEditorPreferencePage implements IWo
 
 	/**
 	 * preference to rebuild last target
-	 * 
-	 * @return {@code true} if from root folder of selected project 
+	 *
+	 * @return {@code true} if from root folder of selected project
 	 */
 	public static boolean useProjectRootForLastMakeTarget() {
 		return MakeUIPlugin.getDefault().getPreferenceStore().getString(PREF_BUILD_LAST_TARGET).equals(PREF_BUILD_LAST_PROJECTROOT);
 	}
-	
+
 	/**
 	 * preference to rebuild last target
-	 * 
-	 * @return {@code true} if from selected project irrespective in which container 
+	 *
+	 * @return {@code true} if from selected project irrespective in which container
 	 */
 	public static boolean useProjectLastMakeTarget() {
 		return MakeUIPlugin.getDefault().getPreferenceStore().getString(PREF_BUILD_LAST_TARGET).equals(PREF_BUILD_LAST_PROJECT);
@@ -104,6 +104,7 @@ public class MakePreferencePage extends FieldEditorPreferencePage implements IWo
 		prefs.setDefault(PREF_BUILD_LAST_TARGET, PREF_BUILD_LAST_PROJECT);
 	}
 
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 }

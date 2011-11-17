@@ -26,16 +26,18 @@ class MacroDefinitionRule implements IPredicateRule {
 	private IToken token;
 	private StringBuffer buffer = new StringBuffer();
 	protected IToken defaultToken;
-	
+
 	public MacroDefinitionRule(IToken token, IToken defaultToken) {
 		this.token = token;
 		this.defaultToken = defaultToken;
 	}
 
+	@Override
 	public IToken getSuccessToken() {
 		return token;
 	}
 
+	@Override
 	public IToken evaluate(ICharacterScanner scanner, boolean resume) {
 		buffer.setLength(0);
 		int state = INIT_STATE;
@@ -103,6 +105,7 @@ class MacroDefinitionRule implements IPredicateRule {
 
 	}
 
+	@Override
 	public IToken evaluate(ICharacterScanner scanner) {
 		return evaluate(scanner, false);
 	}

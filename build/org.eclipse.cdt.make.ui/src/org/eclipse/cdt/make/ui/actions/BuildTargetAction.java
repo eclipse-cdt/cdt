@@ -32,28 +32,28 @@ import org.eclipse.ui.keys.IBindingService;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class BuildTargetAction extends AbstractTargetAction {
-	
+
 	private static final String TARGET_BUILD_COMMAND = "org.eclipse.cdt.make.ui.targetBuildCommand"; //$NON-NLS-1$
 	private IBindingService bindingService;
 	private IAction InitAction;
-	
+
 	public BuildTargetAction(){
 		bindingService = null;
 		InitAction = null;
 	}
-	
+
 	@Override
 	public void init(IAction action) {
 		bindingService = (IBindingService) PlatformUI.getWorkbench().getService(IBindingService.class);
 		if (bindingService != null) {
 			bindingService.addBindingManagerListener(bindingManagerListener);
 			String keyBinding = bindingService.getBestActiveBindingFormattedFor(TARGET_BUILD_COMMAND);
-			if (keyBinding != null) 
+			if (keyBinding != null)
 				action.setText(MakeUIPlugin.getResourceString("ActionMakeBuildTarget.label")+"\t"+ keyBinding); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		InitAction = action;
     }
-	
+
 	@Override
 	public void run(IAction action) {
 		IContainer container = getSelectedContainer();
@@ -86,26 +86,27 @@ public class BuildTargetAction extends AbstractTargetAction {
 			}
 		}
 	}
-	
+
 	@Override
 	public void dispose() {
 		if (bindingService != null) {
 			bindingService.removeBindingManagerListener(bindingManagerListener);
 			bindingService = null;
 		}
-		
+
 		super.dispose();
 	}
 
 	private IBindingManagerListener bindingManagerListener = new IBindingManagerListener() {
 
+		@Override
 		public void bindingManagerChanged(BindingManagerEvent event) {
-			
+
 			if (event.isActiveBindingsChanged()) {
 				String keyBinding = bindingService.getBestActiveBindingFormattedFor(TARGET_BUILD_COMMAND);
 				if (keyBinding != null) InitAction.setText(
 						MakeUIPlugin.getResourceString("ActionMakeBuildTarget.label")+"\t"+ keyBinding); //$NON-NLS-1$ //$NON-NLS-2$
-				
+
 			}
 		}
 	};

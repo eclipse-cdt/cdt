@@ -37,11 +37,13 @@ public class CheckboxTablePart extends StructuredViewerPart {
 		style |= SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER;
 		CheckboxTableViewer tableViewer = CheckboxTableViewer.newCheckList(parent, style);
 		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent e) {
 				CheckboxTablePart.this.selectionChanged((IStructuredSelection) e.getSelection());
 			}
 		});
 		tableViewer.addCheckStateListener(new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				elementChecked(event.getElement(), event.getChecked());
 			}

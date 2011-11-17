@@ -8,7 +8,7 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *    Anton Leherbauer (Wind River Systems)
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.cdt.make.scannerdiscovery;
 
 import java.io.File;
@@ -31,8 +31,10 @@ import org.eclipse.core.runtime.Path;
 
 public class GCCPerFileBOPConsoleParserTests extends BaseBOPConsoleParserTests {
 	private final static IMarkerGenerator MARKER_GENERATOR= new IMarkerGenerator() {
+		@Override
 		public void addMarker(IResource file, int lineNumber, String errorDesc, int severity, String errorVar) {
 		}
+		@Override
 		public void addMarker(ProblemMarkerInfo problemMarkerInfo) {
 		}
 	};
@@ -66,7 +68,7 @@ public class GCCPerFileBOPConsoleParserTests extends BaseBOPConsoleParserTests {
 			CProjectHelper.delete(fCProject);
 		}
 	}
-	
+
 	public void testParsingIfStatement_bug197930() throws Exception {
 		fOutputParser.processLine("if gcc -g -O0 -I\"include abc\" -c impl/testmath.c; then ; fi"); //$NON-NLS-1$
 
@@ -75,7 +77,7 @@ public class GCCPerFileBOPConsoleParserTests extends BaseBOPConsoleParserTests {
         CCommandDSC command= (CCommandDSC) cmds.get(0);
         assertEquals("gcc", command.getCompilerName());
 	}
-	
+
 	public void testResolvingLinkedFolder_Bug213690() throws Exception {
 		File tempRoot= new File(System.getProperty("java.io.tmpdir"));
 		File tempDir= new File(tempRoot, "cdttest_213690").getCanonicalFile();
@@ -116,19 +118,19 @@ public class GCCPerFileBOPConsoleParserTests extends BaseBOPConsoleParserTests {
 			tempDir.delete();
 		}
 	}
-	
+
 	public void testPwdInFilePath_Bug237958() throws Exception {
 		IFile file1= fCProject.getProject().getFile("Bug237958_1.c");
 		IFile file2= fCProject.getProject().getFile("Bug237958_2.c");
-		fOutputParser.processLine("gcc -g -DTEST1 -c `pwd`/Bug237958_1.c"); 
-		fOutputParser.processLine("gcc -DTEST2=12 -g -ggdb -Wall -c \"`pwd`/./Bug237958_2.c\""); 
+		fOutputParser.processLine("gcc -g -DTEST1 -c `pwd`/Bug237958_1.c");
+		fOutputParser.processLine("gcc -DTEST2=12 -g -ggdb -Wall -c \"`pwd`/./Bug237958_2.c\"");
 
 		List<?> cmds = fCollector.getCollectedScannerInfo(file1, ScannerInfoTypes.COMPILER_COMMAND);
 		CCommandDSC cdsc= (CCommandDSC) cmds.get(0);
 		List<?> symbols= cdsc.getSymbols();
 		assertEquals(1, symbols.size());
 		assertEquals("TEST1=1", symbols.get(0).toString());
-		
+
 		cmds = fCollector.getCollectedScannerInfo(file2, ScannerInfoTypes.COMPILER_COMMAND);
 		cdsc= (CCommandDSC) cmds.get(0);
 		symbols= cdsc.getSymbols();

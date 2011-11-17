@@ -34,7 +34,8 @@ public class MakeStartup extends Job {
         final IProject[] oldProject = UpdateMakeProjectAction.getOldProjects();
         if (oldProject.length > 0) {
             Display.getDefault().asyncExec(new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
                     Shell shell = MakeUIPlugin.getDefault().getShell();
                     boolean shouldUpdate = MessageDialog.openQuestion(shell,
                         MakeUIPlugin.getResourceString("MakeUIPlugin.update_project"), //$NON-NLS-1$

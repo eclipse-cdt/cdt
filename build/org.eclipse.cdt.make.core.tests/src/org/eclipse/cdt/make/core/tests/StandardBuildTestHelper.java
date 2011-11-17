@@ -33,22 +33,22 @@ import org.eclipse.core.runtime.Path;
 
 public class StandardBuildTestHelper {
 	/* (non-Javadoc)
-	 * Create a new project named <code>name</code> or return the project in 
+	 * Create a new project named <code>name</code> or return the project in
 	 * the workspace of the same name if it exists.
-	 * 
+	 *
 	 * @param name The name of the project to create or retrieve.
-	 * @return 
+	 * @return
 	 * @throws CoreException
 	 */
 	static public IProject createProject(
-			final String name, 
-			final IPath location, 
-			final String projectId) 
+			final String name,
+			final IPath location,
+			final String projectId)
 			throws CoreException {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		final IProject newProjectHandle = root.getProject(name);
 		IProject project = null;
-		
+
 		if (!newProjectHandle.exists()) {
 			IWorkspace workspace = ResourcesPlugin.getWorkspace();
 			IWorkspaceDescription workspaceDesc = workspace.getDescription();
@@ -60,19 +60,19 @@ public class StandardBuildTestHelper {
 		} else {
 			project = newProjectHandle;
 		}
-        
+
 		// Open the project if we have to
 		if (!project.isOpen()) {
 			project.open(new NullProgressMonitor());
 		}
-				
-		return project;	
+
+		return project;
 	}
-	
+
 	/**
-	 * Remove the <code>IProject</code> with the name specified in the argument from the 
+	 * Remove the <code>IProject</code> with the name specified in the argument from the
 	 * receiver's workspace.
-	 *  
+	 *
 	 * @param name
 	 */
 	static public void removeProject(String name) {
@@ -81,6 +81,7 @@ public class StandardBuildTestHelper {
 		if (project.exists()) {
 			IWorkspace workspace = ResourcesPlugin.getWorkspace();
 			IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					System.gc();
 					System.runFinalization();
@@ -99,6 +100,7 @@ public class StandardBuildTestHelper {
 	static public boolean compareBenchmarks(final IProject project, IPath testDir, IPath[] files) {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 			}
@@ -116,7 +118,7 @@ public class StandardBuildTestHelper {
 			StringBuffer benchmarkBuffer = readContentsStripLineEnds(project, benchmarkFile);
 			if (!testBuffer.toString().equals(benchmarkBuffer.toString())) {
 				Assert.fail("File " + testFile.lastSegment() + " does not match its benchmark.");
-			} 
+			}
 		}
 		return true;
 	}
@@ -124,6 +126,7 @@ public class StandardBuildTestHelper {
 	static public boolean verifyFilesDoNotExist(final IProject project, IPath testDir, IPath[] files) {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 			}
@@ -141,7 +144,7 @@ public class StandardBuildTestHelper {
 				if (fullPath.toFile().exists()) {
 					Assert.fail("File " + testFile.lastSegment() + " unexpectedly found.");
 					return false;
-				}					
+				}
 			} catch (Exception e) {
 				Assert.fail("File " + fullPath.toString() + " could not be referenced.");
 			}
@@ -174,7 +177,7 @@ public class StandardBuildTestHelper {
 		}
 		return buff;
 	}
-	
+
 	static public IPath copyFilesToTempDir(IPath srcDir, IPath tmpSubDir, IPath[] files) {
 		IPath tmpSrcDir = null;
 		String userDirStr = System.getProperty("user.home");
@@ -182,7 +185,7 @@ public class StandardBuildTestHelper {
 			IPath userDir = Path.fromOSString(userDirStr);
 			tmpSrcDir = userDir.append(tmpSubDir);
 			if (userDir.toString().equalsIgnoreCase(tmpSrcDir.toString())) {
-				Assert.fail("Temporary sub-directory cannot be the empty string.");				
+				Assert.fail("Temporary sub-directory cannot be the empty string.");
 			} else {
 				File tmpSrcDirFile = tmpSrcDir.toFile();
 				if (tmpSrcDirFile.exists()) {
@@ -238,7 +241,7 @@ public class StandardBuildTestHelper {
 		}
 		return tmpSrcDir;
 	}
-	
+
 	static public void deleteTempDir(IPath tmpSubDir, IPath[] files) {
 		IPath tmpSrcDir = null;
 		String userDirStr = System.getProperty("user.home");
@@ -246,11 +249,11 @@ public class StandardBuildTestHelper {
 			IPath userDir = Path.fromOSString(userDirStr);
 			tmpSrcDir = userDir.append(tmpSubDir);
 			if (userDir.toString().equalsIgnoreCase(tmpSrcDir.toString())) {
-				Assert.fail("Temporary sub-directory cannot be the empty string.");				
+				Assert.fail("Temporary sub-directory cannot be the empty string.");
 			} else {
 				File tmpSrcDirFile = tmpSrcDir.toFile();
 				if (!tmpSrcDirFile.exists()) {
-					Assert.fail("Temporary directory " + tmpSrcDirFile.toString() + " does not exist.");				
+					Assert.fail("Temporary directory " + tmpSrcDirFile.toString() + " does not exist.");
 				} else {
 					for (int i=0; i<files.length; i++) {
 						// Delete the file

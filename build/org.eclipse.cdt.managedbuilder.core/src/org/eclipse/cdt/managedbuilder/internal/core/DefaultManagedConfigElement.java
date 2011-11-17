@@ -23,15 +23,16 @@ public class DefaultManagedConfigElement implements IManagedConfigElement {
 
 	private IConfigurationElement element;
 	private IExtension extension;
-	
+
 	public DefaultManagedConfigElement(IConfigurationElement element, IExtension extension) {
 		this.element = element;
 		this.extension = extension;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedConfigElement#getName()
 	 */
+	@Override
 	public String getName() {
 		return element.getName();
 	}
@@ -39,6 +40,7 @@ public class DefaultManagedConfigElement implements IManagedConfigElement {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedConfigElement#getAttribute(java.lang.String)
 	 */
+	@Override
 	public String getAttribute(String name) {
 		return element.getAttribute(name);
 	}
@@ -46,6 +48,7 @@ public class DefaultManagedConfigElement implements IManagedConfigElement {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedConfigElement#getChildren()
 	 */
+	@Override
 	public IManagedConfigElement[] getChildren() {
 		return convertArray(element.getChildren(), extension);
 	}
@@ -53,6 +56,7 @@ public class DefaultManagedConfigElement implements IManagedConfigElement {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedConfigElement#getChildren(java.lang.String)
 	 */
+	@Override
 	public IManagedConfigElement[] getChildren(String elementName) {
 		return convertArray(element.getChildren(elementName), extension);
 	}
@@ -63,11 +67,11 @@ public class DefaultManagedConfigElement implements IManagedConfigElement {
 	public IExtension getExtension() {
 		return extension;
 	}
-	
+
 	public IConfigurationElement getConfigurationElement() {
 		return element;
 	}
-	
+
 	/**
 	 * Convenience method for converting an array of IConfigurationElements
 	 * into an array of IManagedConfigElements.

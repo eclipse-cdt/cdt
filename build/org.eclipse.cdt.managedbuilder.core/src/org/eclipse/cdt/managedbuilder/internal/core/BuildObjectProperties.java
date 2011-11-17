@@ -26,13 +26,13 @@ public class BuildObjectProperties extends BuildProperties implements
 		IBuildObjectProperties {
 	private IBuildPropertiesRestriction fRestriction;
 	private IBuildPropertyChangeListener fListener;
-	
+
 	public BuildObjectProperties(IBuildPropertiesRestriction restriction, IBuildPropertyChangeListener listener) {
 		super();
 		fRestriction = restriction;
 		fListener = listener;
 	}
-	
+
 	public BuildObjectProperties(BuildObjectProperties properties, IBuildPropertiesRestriction restriction, IBuildPropertyChangeListener listener) {
 		super(properties);
 		fRestriction = restriction;
@@ -45,22 +45,24 @@ public class BuildObjectProperties extends BuildProperties implements
 		fListener = listener;
 	}
 
+	@Override
 	public IBuildPropertyType[] getSupportedTypes() {
 		IBuildPropertyType types[] = BuildPropertyManager.getInstance().getPropertyTypes();
-		
+
 		if(fRestriction != null && types.length != 0){
 			List<IBuildPropertyType> list = new ArrayList<IBuildPropertyType>(types.length);
 			for (IBuildPropertyType type : types) {
 				if(fRestriction.supportsType(type.getId()))
 					list.add(type);
 			}
-			
+
 			types = list.toArray(new IBuildPropertyType[list.size()]);
 		}
 
 		return types;
 	}
 
+	@Override
 	public IBuildPropertyValue[] getSupportedValues(String typeId) {
 		IBuildPropertyType type = BuildPropertyManager.getInstance().getPropertyType(typeId);
 		if(type != null){
@@ -71,13 +73,14 @@ public class BuildObjectProperties extends BuildProperties implements
 					if(fRestriction.supportsValue(type.getId(), value.getId()))
 						list.add(value);
 				}
-				
+
 				return list.toArray(new IBuildPropertyValue[list.size()]);
 			}
 		}
 		return new IBuildPropertyValue[0];
 	}
 
+	@Override
 	public boolean supportsType(String id) {
 		return fRestriction.supportsType(id);
 //		IBuildPropertyType type = BuildPropertyManager.getInstance().getPropertyType(id);
@@ -90,6 +93,7 @@ public class BuildObjectProperties extends BuildProperties implements
 //		return false;
 	}
 
+	@Override
 	public boolean supportsValue(String typeId, String valueId) {
 		return fRestriction.supportsValue(typeId, valueId);
 //		IBuildPropertyType type = BuildPropertyManager.getInstance().getPropertyType(typeId);
@@ -118,7 +122,7 @@ public class BuildObjectProperties extends BuildProperties implements
 			fListener.propertiesChanged();
 		return property;
 	}
-	
+
 	IBuildProperty internalSetProperty(String propertyId, String propertyValue) throws CoreException{
 		return super.setProperty(propertyId, propertyValue);
 	}
@@ -134,24 +138,28 @@ public class BuildObjectProperties extends BuildProperties implements
 //			throw new CoreException(new Status(IStatus.ERROR,
 //					ManagedBuilderCorePlugin.getUniqueIdentifier(),
 //					"property value is not supported"));
-		
+
 		IBuildProperty property = super.setProperty(propertyId, propertyValue);
 		fListener.propertiesChanged();
 		return property;
 	}
 
+	@Override
 	public String[] getRequiredTypeIds() {
 		return fRestriction.getRequiredTypeIds();
 	}
 
+	@Override
 	public boolean requiresType(String typeId) {
 		return fRestriction.requiresType(typeId);
 	}
 
+	@Override
 	public String[] getSupportedTypeIds() {
 		return fRestriction.getSupportedTypeIds();
 	}
 
+	@Override
 	public String[] getSupportedValueIds(String typeId) {
 		return fRestriction.getSupportedValueIds(typeId);
 	}

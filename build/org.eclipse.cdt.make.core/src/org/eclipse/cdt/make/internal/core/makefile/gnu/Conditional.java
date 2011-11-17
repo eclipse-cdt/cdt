@@ -39,34 +39,42 @@ public abstract class Conditional extends Parent implements IConditional {
 	}
 
 
+	@Override
 	public String getConditional() {
 		return cond;
 	}
 
+	@Override
 	public String getArg1() {
 		return arg1;
 	}
 
+	@Override
 	public String getArg2() {
 		return arg2;
 	}
 
+	@Override
 	public boolean isIfdef() {
 		return false;
 	}
 
+	@Override
 	public boolean isIfndef() {
 		return false;
 	}
 
+	@Override
 	public boolean isIfeq() {
 		return false;
 	}
 
+	@Override
 	public boolean isIfneq() {
 		return false;
 	}
 
+	@Override
 	public boolean isElse() {
 		return false;
 	}
@@ -87,12 +95,12 @@ public abstract class Conditional extends Parent implements IConditional {
 		String line = getConditional().trim();
 
 		char terminal = line.charAt(0) == '(' ? ',' : line.charAt(0);
- 
+
 		if (line.length() < 5 && terminal != ',' && terminal != '"' && terminal != '\'') {
 			arg1 = arg2 = EMPTY;
 			return;
 		}
- 
+
 		// Find the end of the first string.
 		int count = 0;
 		// For the (ARG1, ARG2) format.
@@ -121,20 +129,20 @@ public abstract class Conditional extends Parent implements IConditional {
 
 		if (count >= line.length()) {
 			arg1 = arg2 = EMPTY;
-			return;			
+			return;
 		}
 
 		arg1 = line.substring(1, count);
- 
+
 		/* Find the start of the second string.  */
 		line = line.substring(count + 1).trim();
- 
+
 		terminal = terminal == ',' ? ')' : line.charAt(0);
 		if (terminal != ')' && terminal != '"' && terminal != '\'') {
 			arg2 = EMPTY;
 			return;
 		}
- 
+
 		count = 0;
 		/* Find the end of the second string.  */
 		if (terminal == ')') {

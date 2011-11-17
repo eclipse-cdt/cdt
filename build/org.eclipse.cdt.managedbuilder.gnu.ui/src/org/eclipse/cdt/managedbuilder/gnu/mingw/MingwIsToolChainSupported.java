@@ -4,8 +4,8 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors: 
+ *
+ * Contributors:
  *     QNX Software Systems - Initial API and implementation
  **********************************************************************/
 
@@ -23,12 +23,13 @@ import org.osgi.framework.Version;
 public class MingwIsToolChainSupported implements IManagedIsToolChainSupported {
 
 	private final boolean supported;
-	
+
 	public MingwIsToolChainSupported() {
 		// Only supported if we can find the mingw bin dir to run the compiler
 		supported = MingwEnvironmentVariableSupplier.getBinDir() != null;
 	}
-	
+
+	@Override
 	public boolean isSupported(IToolChain toolChain, Version version, String instance) {
 		return supported;
 	}

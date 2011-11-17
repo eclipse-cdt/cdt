@@ -123,6 +123,7 @@ public class MakeTargetDialog extends Dialog {
 			}
 		}
 
+		@Override
 		public void handleEvent(Event e) {
 			setStatusLine();
 			updateButtons();
@@ -339,6 +340,7 @@ public class MakeTargetDialog extends Dialog {
 
 		/* Add a listener to the target name text to update the targetText */
 		targetNameText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				if (sameAsNameCheckBox.getSelection()) {
 					targetText.setText(targetNameText.getText());
@@ -354,6 +356,7 @@ public class MakeTargetDialog extends Dialog {
 		((GridData) (targetText.getLayoutData())).grabExcessHorizontalSpace = true;
 		targetText.setText(targetString);
 		targetText.addListener(SWT.Modify, new Listener() {
+			@Override
 			public void handleEvent(Event e) {
 				updateButtons();
 			}

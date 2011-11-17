@@ -56,16 +56,16 @@ public class ManagedProject30MakefileTests extends TestCase {
 	public static final String MBS_TEMP_DIR = "MBSTemp";
 
 	static boolean pathVariableCreated = false;
-	
+
 	private IPath resourcesLocation = new Path(CTestPlugin.getFileInPlugin(new Path("resources/test30Projects/")).getAbsolutePath());
 
 	public ManagedProject30MakefileTests(String name) {
 		super(name);
 	}
-	
+
 	public static Test suite() {
 		TestSuite suite = new TestSuite(ManagedProject30MakefileTests.class.getName());
-		
+
 		suite.addTest(new ManagedProject30MakefileTests("test30SingleFileExe"));
 		suite.addTest(new ManagedProject30MakefileTests("test30TwoFileSO"));
 		suite.addTest(new ManagedProject30MakefileTests("test30MultiResConfig"));
@@ -106,20 +106,21 @@ public class ManagedProject30MakefileTests extends TestCase {
 			}
 
 			File projectZips[] = testDir.listFiles(new FileFilter(){
+				@Override
 				public boolean accept(File pathname){
 					if(pathname.isDirectory())
 						return false;
 					return true;
 				}
 			});
-			
+
 			projectList = new ArrayList<IProject>(projectZips.length);
 			for(int i = 0; i < projectZips.length; i++){
 				try{
 					String projectName = projectZips[i].getName();
 					if(!projectName.endsWith(".zip"))
 						continue;
-					
+
 					projectName = projectName.substring(0,projectName.length()-".zip".length());
 					if(projectName.length() == 0)
 						continue;
@@ -143,40 +144,41 @@ public class ManagedProject30MakefileTests extends TestCase {
 			} catch(Exception e){
 			}
 		}
-		
+
 		return projectList.toArray(new IProject[projectList.size()]);
 	}
-	
+
 	private IProject[] createProjects(String projName, IPath location, String projectTypeId, boolean containsZip) {
-		
+
 		//  In case the projects need to be updated...
 		IOverwriteQuery queryALL = new IOverwriteQuery(){
+			@Override
 			public String queryOverwrite(String file) {
 				return ALL;
 			}};
 		UpdateManagedProjectManager.setBackupFileOverwriteQuery(queryALL);
 		UpdateManagedProjectManager.setUpdateProjectQuery(queryALL);
-		
+
 		IProject projects[] = createProject(projName, location, projectTypeId, containsZip);
 		return projects;
 	}
-		
-	private void buildProjectsWorker(IProject projects[], IPath[] files, boolean compareBenchmark) {	
+
+	private void buildProjectsWorker(IProject projects[], IPath[] files, boolean compareBenchmark) {
 		if(projects == null || projects.length == 0)
 			return;
-				
+
 		boolean succeeded = true;
 		for (int i = 0; i < projects.length; i++){
 			IProject curProject = projects[i];
-			
+
 			IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(curProject);
-			
+
 			//check whether the managed build info is converted
 			boolean isCompatible = UpdateManagedProjectManager.isCompatibleProject(info);
 			assertTrue(isCompatible);
-			
+
 			if (isCompatible){
-				// Build the project in order to generate the makefiles 
+				// Build the project in order to generate the makefiles
 				try{
 					curProject.build(IncrementalProjectBuilder.INCREMENTAL_BUILD,null);
 				}
@@ -186,7 +188,7 @@ public class ManagedProject30MakefileTests extends TestCase {
 				catch(OperationCanceledException e){
 					fail("the project \"" + curProject.getName() + "\" build was cancelled, exception message: " + e.getMessage());
 				}
-				
+
 				//compare the generated makefiles to their benchmarks
 				if (files != null && files.length > 0) {
 					if (i == 0) {
@@ -203,7 +205,7 @@ public class ManagedProject30MakefileTests extends TestCase {
 				}
 			}
 		}
-		
+
 		if (succeeded) {	//  Otherwise leave the projects around for comparison
 			for (int i = 0; i < projects.length; i++)
 				ManagedBuildTestHelper.removeProject(projects[i].getName());
@@ -214,12 +216,12 @@ public class ManagedProject30MakefileTests extends TestCase {
 	private void buildProjects(IProject projects[], IPath[] files) {
 		buildProjectsWorker(projects, files, true);
 	}
-	
+
 	// Build projects but don't compare benchmarks because there should be not build files generated
-	private void buildDegenerativeProjects(IProject projects[], IPath[] files) {	
+	private void buildDegenerativeProjects(IProject projects[], IPath[] files) {
 		buildProjectsWorker(projects, files, false);
 	}
-		
+
 	private void createPathVariable(IPath tmpDir) {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		workspace = ResourcesPlugin.getWorkspace();
@@ -234,7 +236,7 @@ public class ManagedProject30MakefileTests extends TestCase {
 			}
 		} catch (Exception e) {fail("could not create the path variable " + name);}
 	}
-	
+
 	private void createFileLink(IProject project, IPath tmpDir, String linkName, String fileName) {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		String name = MBS_TEMP_DIR;
@@ -242,9 +244,9 @@ public class ManagedProject30MakefileTests extends TestCase {
 			createPathVariable(tmpDir);
 			pathVariableCreated = true;
 		}
-			
-		try {	
-			// Now we can create a linked resource relative to the defined path variable: 
+
+		try {
+			// Now we can create a linked resource relative to the defined path variable:
 			IFile linkF1 = project.getFile(linkName);
 			IPath location = new Path("MBSTemp/" + fileName);
 			if (workspace.validateLinkLocation(linkF1, location).isOK()) {
@@ -254,30 +256,30 @@ public class ManagedProject30MakefileTests extends TestCase {
 			}
 		} catch (Exception e) {
 			fail("could not create the link to " + name + ": " + e);
-		}		
+		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * tests 3.0 style tool integration for a single file executable
 	 */
 	public void test30SingleFileExe(){
 		IPath[] makefiles = {
-				 Path.fromOSString("makefile"), 
-				 Path.fromOSString("objects.mk"), 
-				 Path.fromOSString("sources.mk"), 
+				 Path.fromOSString("makefile"),
+				 Path.fromOSString("objects.mk"),
+				 Path.fromOSString("sources.mk"),
 				 Path.fromOSString("subdir.mk")};
 		IProject[] projects = createProjects("singleFileExe", null, null, true);
 		buildProjects(projects, makefiles);
 	}
-	
+
 	/* (non-Javadoc)
 	 * tests 3.0 style tool integration for a two file SO
 	 */
 	public void test30TwoFileSO(){
 		IPath[] makefiles = {
-				 Path.fromOSString("makefile"), 
-				 Path.fromOSString("objects.mk"), 
-				 Path.fromOSString("sources.mk"), 
+				 Path.fromOSString("makefile"),
+				 Path.fromOSString("objects.mk"),
+				 Path.fromOSString("sources.mk"),
 				 Path.fromOSString("subdir.mk")};
 		IProject[] projects = createProjects("twoFileSO", null, null, true);
 		buildProjects(projects, makefiles);
@@ -288,9 +290,9 @@ public class ManagedProject30MakefileTests extends TestCase {
 	 */
 	public void test30MultiResConfig(){
 		IPath[] makefiles = {
-				 Path.fromOSString("makefile"), 
-				 Path.fromOSString("objects.mk"), 
-				 Path.fromOSString("sources.mk"), 
+				 Path.fromOSString("makefile"),
+				 Path.fromOSString("objects.mk"),
+				 Path.fromOSString("sources.mk"),
 				 Path.fromOSString("subdir.mk"),
 				 Path.fromOSString("main.d"),
 				 Path.fromOSString("source1/subdir.mk"),
@@ -302,19 +304,19 @@ public class ManagedProject30MakefileTests extends TestCase {
 		IProject[] projects = createProjects("multiResConfig", null, null, true);
 		buildProjects(projects, makefiles);
 	}
-	
+
 	/* (non-Javadoc)
 	 * tests 3.0 style tool integration for linked files
 	 */
 	public void test30LinkedLib(){
 		IPath[] makefiles = {
-				 Path.fromOSString("makefile"), 
-				 Path.fromOSString("objects.mk"), 
+				 Path.fromOSString("makefile"),
+				 Path.fromOSString("objects.mk"),
 				 //Path.fromOSString("subdir.mk")   // Can't compare this yet since it contains absolute paths!
-				 Path.fromOSString("sources.mk")}; 
+				 Path.fromOSString("sources.mk")};
 		IPath[] linkedFiles = {
-				 Path.fromOSString("f1_30.c"), 
-				 Path.fromOSString("f2_30.c"), 
+				 Path.fromOSString("f1_30.c"),
+				 Path.fromOSString("f2_30.c"),
 				 Path.fromOSString("test_ar_30.h")};
 		File srcDirFile = CTestPlugin.getFileInPlugin(new Path("resources/test30Projects/linkedLib30/"));
 		IPath srcDir = Path.fromOSString(srcDirFile.toString());
@@ -331,24 +333,24 @@ public class ManagedProject30MakefileTests extends TestCase {
 			buildProjects(projects, makefiles);
 		} finally {ManagedBuildTestHelper.deleteTempDir(tmpSubDir, linkedFiles);}
 	}
-	
+
 	/* (non-Javadoc)
 	 * tests 3.0 style tool integration for a linked folder
 	 */
 	public void test30LinkedFolder(){
 		IPath[] makefiles = {
-				 Path.fromOSString("makefile"), 
-				 Path.fromOSString("objects.mk"), 
+				 Path.fromOSString("makefile"),
+				 Path.fromOSString("objects.mk"),
 				 Path.fromOSString("subdir.mk"),
-				 Path.fromOSString("sources.mk")}; 
+				 Path.fromOSString("sources.mk")};
 		IPath[] linkedFiles = {
-				 Path.fromOSString("f1.c"), 
-				 Path.fromOSString("f2.c"), 
+				 Path.fromOSString("f1.c"),
+				 Path.fromOSString("f2.c"),
 				 Path.fromOSString("test_ar.h"),
-				 Path.fromOSString("Benchmarks/makefile"), 
-				 Path.fromOSString("Benchmarks/objects.mk"), 
+				 Path.fromOSString("Benchmarks/makefile"),
+				 Path.fromOSString("Benchmarks/objects.mk"),
 				 Path.fromOSString("Benchmarks/subdir.mk"),
-				 Path.fromOSString("Benchmarks/sources.mk")}; 
+				 Path.fromOSString("Benchmarks/sources.mk")};
 		File srcDirFile = CTestPlugin.getFileInPlugin(new Path("resources/test30Projects/linkedFolder/"));
 		IPath srcDir = Path.fromOSString(srcDirFile.toString());
 		IPath tmpSubDir = Path.fromOSString("CDTMBSTest");
@@ -370,27 +372,27 @@ public class ManagedProject30MakefileTests extends TestCase {
 	 */
 	public void test30CopyandDeploy(){
 		IPath[] makefiles = {
-				 Path.fromOSString("makefile"), 
-				 Path.fromOSString("objects.mk"), 
-				 Path.fromOSString("sources.mk"), 
-				 Path.fromOSString("subdir.mk"), 
-				 Path.fromOSString("main.d"), 
+				 Path.fromOSString("makefile"),
+				 Path.fromOSString("objects.mk"),
+				 Path.fromOSString("sources.mk"),
+				 Path.fromOSString("subdir.mk"),
+				 Path.fromOSString("main.d"),
 				 Path.fromOSString("Functions/subdir.mk"),
 				 Path.fromOSString("Functions/Func1.d")};
 		IProject[] projects = createProjects("copyandDeploy", null, null, true);
 		buildProjects(projects, makefiles);
 	}
-	
+
 	/* (non-Javadoc)
 	 * tests 3.0 style tool integration in the context of deleting a file, to see if the proper behavior
 	 * occurs in the managedbuild system
 	 */
 	public void test30DeleteFile(){
 		IPath[] makefiles = {
-				 Path.fromOSString("makefile"), 
-				 Path.fromOSString("objects.mk"), 
+				 Path.fromOSString("makefile"),
+				 Path.fromOSString("objects.mk"),
 				 Path.fromOSString("subdir.mk"),
-				 Path.fromOSString("sources.mk")}; 		
+				 Path.fromOSString("sources.mk")};
 
 		IProject[] projects = createProjects("deleteFile", null, null, true);
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -400,6 +402,7 @@ public class ManagedProject30MakefileTests extends TestCase {
 		resourceList.add(projfile);
 		final IResource[] fileResource = resourceList.toArray(new IResource[resourceList.size()]);
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 			    workspace.delete(fileResource, false, null);
 			}
@@ -407,22 +410,22 @@ public class ManagedProject30MakefileTests extends TestCase {
 		try {
 			NullProgressMonitor monitor = new NullProgressMonitor();
 			workspace.run(runnable, workspace.getRoot(), IWorkspace.AVOID_UPDATE, monitor);
-		} catch (Exception e) { 
+		} catch (Exception e) {
 		    fail("could not delete file in project " + project.getName());
 		}
 		buildProjects(projects, makefiles);
 	}
 
 	/* (non-Javadoc)
-	 * tests 3.0 managed build system with a project which has only a single source file that is marked as 
+	 * tests 3.0 managed build system with a project which has only a single source file that is marked as
 	 * "excluded from build" to see that this degenerative case is handled gracefully
 	 */
 	public void test30NoFilesToBuild(){
 		IPath[] makefiles = {
-				 Path.fromOSString("makefile"), 
-				 Path.fromOSString("objects.mk"), 
+				 Path.fromOSString("makefile"),
+				 Path.fromOSString("objects.mk"),
 				 Path.fromOSString("subdir.mk"),
-				 Path.fromOSString("sources.mk")}; 		
+				 Path.fromOSString("sources.mk")};
 
 		IProject[] projects = createProjects("noFilesToBuild", null, null, true);
 		IProject project = projects[0];
@@ -431,7 +434,7 @@ public class ManagedProject30MakefileTests extends TestCase {
 		IConfiguration config = info.getDefaultConfiguration();
 		IResourceConfiguration rconfig = config.createResourceConfiguration(projfile);
 		rconfig.setExclude(true);
-		buildDegenerativeProjects(projects, makefiles);			
+		buildDegenerativeProjects(projects, makefiles);
 	}
 
 	/**
@@ -441,27 +444,27 @@ public class ManagedProject30MakefileTests extends TestCase {
 	public void testFileWithNoExtension()
 	{
 		IPath[] makefiles = {
-				 Path.fromOSString("makefile"), 
-				 Path.fromOSString("objects.mk"), 
-				 Path.fromOSString("sources.mk"), 
+				 Path.fromOSString("makefile"),
+				 Path.fromOSString("objects.mk"),
+				 Path.fromOSString("sources.mk"),
 				 Path.fromOSString("subdir.mk")};
 		IProject[] projects = createProjects("testFileWithNoExtension", null, null, true);
 		buildProjects(projects, makefiles);
 	}
-	
-	
+
+
 	/* (non-Javadoc)
-	 * tests 3.0 style tool integration: create pre-build and post-build steps and verify that 
+	 * tests 3.0 style tool integration: create pre-build and post-build steps and verify that
 	 * the proper commands are generated in the makefile which is created by the managedbuild system
 	 */
 	public void testPreAndPostProcessBuildSteps(){
 		IPath[] makefiles = {
-				 Path.fromOSString("makefile"), 
-				 Path.fromOSString("objects.mk"), 
+				 Path.fromOSString("makefile"),
+				 Path.fromOSString("objects.mk"),
 				 Path.fromOSString("subdir.mk"),
-				 Path.fromOSString("sources.mk")}; 		
+				 Path.fromOSString("sources.mk")};
 
-		IProject[] projects = createProjects("preAndPostBuildSteps", null, null, true);				
+		IProject[] projects = createProjects("preAndPostBuildSteps", null, null, true);
 		IProject project = projects[0];
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 		IConfiguration config = info.getDefaultConfiguration();
@@ -474,21 +477,21 @@ public class ManagedProject30MakefileTests extends TestCase {
 
 
 	/* (non-Javadoc)
-	 * tests 3.0 style tool integration: create resource custom build step and verify that 
+	 * tests 3.0 style tool integration: create resource custom build step and verify that
 	 * the proper commands are generated in the makefile which is created by the managedbuild system
 	 */
 	public void testResourceCustomBuildStep(){
 		IPath[] makefiles = {
-				 Path.fromOSString("makefile"), 
-				 Path.fromOSString("objects.mk"), 
+				 Path.fromOSString("makefile"),
+				 Path.fromOSString("objects.mk"),
 				 Path.fromOSString("subdir.mk"),
-				 Path.fromOSString("sources.mk")}; 		
+				 Path.fromOSString("sources.mk")};
 		ITool rcbsTool;
 		IInputType rcbsToolInputType;
 		IAdditionalInput rcbsToolInputTypeAdditionalInput;
 		IOutputType rcbsToolOutputType;
 
-		IProject[] projects = createProjects("rcbsBasicTest", null, null, true);				
+		IProject[] projects = createProjects("rcbsBasicTest", null, null, true);
 		IProject project = projects[0];
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 		IConfiguration config = info.getDefaultConfiguration();
@@ -507,15 +510,15 @@ public class ManagedProject30MakefileTests extends TestCase {
 		buildProjects(projects, makefiles);
 	}
 
-	
+
 	/* (non-Javadoc)
 	 * tests 3.0 style tool integration with pre and post process steps added to typical compile & link
 	 */
 	public void test30_1(){
 		IPath[] makefiles = {
-				 Path.fromOSString("makefile"), 
-				 Path.fromOSString("objects.mk"), 
-				 Path.fromOSString("sources.mk"), 
+				 Path.fromOSString("makefile"),
+				 Path.fromOSString("objects.mk"),
+				 Path.fromOSString("sources.mk"),
 				 Path.fromOSString("subdir.mk")};
 		IProject[] projects = createProjects("test30_1", null, null, true);
 		buildProjects(projects, makefiles);
@@ -526,14 +529,14 @@ public class ManagedProject30MakefileTests extends TestCase {
 	 */
 	public void test30_2(){
 		IPath[] makefiles = {
-				 Path.fromOSString("makefile"), 
-				 Path.fromOSString("objects.mk"), 
-				 Path.fromOSString("sources.mk"), 
+				 Path.fromOSString("makefile"),
+				 Path.fromOSString("objects.mk"),
+				 Path.fromOSString("sources.mk"),
 				 Path.fromOSString("subdir.mk")};
 		IProject[] projects = createProjects("test30_2", null, null, true);
 		buildProjects(projects, makefiles);
 	}
-	
+
 	/* (non-Javadoc)
 	 * tests 3.0 top-level tool-chain definition
 	 */
@@ -565,9 +568,9 @@ public class ManagedProject30MakefileTests extends TestCase {
 	 */
 	public void CDTFortranTest1(){
 		IPath[] makefiles = {
-				 Path.fromOSString("makefile"), 
-				 Path.fromOSString("objects.mk"), 
-				 Path.fromOSString("sources.mk"), 
+				 Path.fromOSString("makefile"),
+				 Path.fromOSString("objects.mk"),
+				 Path.fromOSString("sources.mk"),
 				 Path.fromOSString("subdir.mk")};
 		IProject[] projects = createProjects("CDTFortranTest1", null, null, true);
 		buildProjects(projects, makefiles);
@@ -578,9 +581,9 @@ public class ManagedProject30MakefileTests extends TestCase {
 	 */
 	public void CDTFortranTest2(){
 		IPath[] makefiles = {
-				 Path.fromOSString("makefile"), 
-				 Path.fromOSString("objects.mk"), 
-				 Path.fromOSString("sources.mk"), 
+				 Path.fromOSString("makefile"),
+				 Path.fromOSString("objects.mk"),
+				 Path.fromOSString("sources.mk"),
 				 Path.fromOSString("module/subdir.mk"),
 				 Path.fromOSString("Sources/subdir.mk")};
 		IProject[] projects = createProjects("CDTFortranTest2", null, null, true);
@@ -592,24 +595,24 @@ public class ManagedProject30MakefileTests extends TestCase {
 	 */
 	public void TestATO(){
 		IPath[] makefiles = {
-				 Path.fromOSString("makefile"), 
-				 Path.fromOSString("objects.mk"), 
-				 Path.fromOSString("sources.mk"), 
+				 Path.fromOSString("makefile"),
+				 Path.fromOSString("objects.mk"),
+				 Path.fromOSString("sources.mk"),
 				 Path.fromOSString("subdir.mk")};
 		IProject[] projects = createProjects("TestATO", null, null, true);
 		buildProjects(projects, makefiles);
 	}
-	
+
 	public void testMacroSupportInBuildDefinitions() {
 		IPath[] makefiles = {
-				 Path.fromOSString("makefile"), 
-				 Path.fromOSString("objects.mk"), 
-				 Path.fromOSString("sources.mk"), 
+				 Path.fromOSString("makefile"),
+				 Path.fromOSString("objects.mk"),
+				 Path.fromOSString("sources.mk"),
 				 Path.fromOSString("subdir.mk")};
 		IProject[] projects = createProjects("testMacroSupportInBuildDefinitions", null, null, true);
 		buildProjects(projects, makefiles);
 	}
-	
+
 	/**
 	 * (non-Javadoc)
 	 * tests managed build system with a project which has resources with spaces in their paths
@@ -617,9 +620,9 @@ public class ManagedProject30MakefileTests extends TestCase {
 	public void testSpaces()
 	{
 		IPath[] makefiles = {
-				 Path.fromOSString("makefile"), 
-				 Path.fromOSString("objects.mk"), 
-				 Path.fromOSString("sources.mk"), 
+				 Path.fromOSString("makefile"),
+				 Path.fromOSString("objects.mk"),
+				 Path.fromOSString("sources.mk"),
 				 Path.fromOSString("subdir.mk"),
 				 Path.fromOSString("main with spaces.d"),
 				 Path.fromOSString("sub folder with spaces/subdir.mk"),
@@ -627,7 +630,7 @@ public class ManagedProject30MakefileTests extends TestCase {
 		IProject[] projects = createProjects("test with spaces", null, null, true);
 		buildProjects(projects, makefiles);
 	}
-	
+
 	/**
 	 * (non-Javadoc)
 	 * tests managed build system with a project which has resources with spaces in their paths
@@ -635,9 +638,9 @@ public class ManagedProject30MakefileTests extends TestCase {
 	public void testInputTypeOption()
 	{
 		IPath[] makefiles = {
-				 Path.fromOSString("makefile"), 
-				 Path.fromOSString("objects.mk"), 
-				 Path.fromOSString("sources.mk"), 
+				 Path.fromOSString("makefile"),
+				 Path.fromOSString("objects.mk"),
+				 Path.fromOSString("sources.mk"),
 				 Path.fromOSString("subdir.mk"),
 		};
 		IProject[] projects = createProjects("inputTypeOption", null, null, true);

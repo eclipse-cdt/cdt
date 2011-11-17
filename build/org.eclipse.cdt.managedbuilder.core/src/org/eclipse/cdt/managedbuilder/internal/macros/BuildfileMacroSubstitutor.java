@@ -42,7 +42,7 @@ import org.eclipse.core.resources.IResource;
  * This substitutor resolves all macro references except for the environment macro references
  * If a user has chosen to keep those macros in the buildfile, the environment macro references
  * are converted to the buildfile variable references, otherwise those macros are also resolved
- * 
+ *
  * @see org.eclipse.cdt.managedbuilder.internal.macros#IMacroSubstitutor
  * @since 3.0
  */
@@ -53,10 +53,10 @@ public class BuildfileMacroSubstitutor extends SupplierBasedCdtVariableSubstitut
 	private HashSet<String> fCaseInsensitiveReferencedNames;
 	private ICdtVariableManager fVarMngr;
 	private ICConfigurationDescription fCfgDes;
-	
+
 	private class DefaultReservedMacroNameSupplier implements IReservedMacroNameSupplier{
 		String fReservedNames[];
-		
+
 		public DefaultReservedMacroNameSupplier(IConfiguration configuration){
 			IBuilder builder = configuration.getToolChain().getBuilder();
 			String reservedNames[] = builder.getReservedMacroNames();
@@ -76,6 +76,7 @@ public class BuildfileMacroSubstitutor extends SupplierBasedCdtVariableSubstitut
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.managedbuilder.macros.IReservedMacroNameSupplier#isReservedName(java.lang.String, org.eclipse.cdt.managedbuilder.core.IConfiguration)
 		 */
+		@Override
 		public boolean isReservedName(String macroName, IConfiguration configuration) {
 			if(fReservedNames != null && fReservedNames.length > 0){
 				for(int i = 0; i < fReservedNames.length; i++){
@@ -87,7 +88,7 @@ public class BuildfileMacroSubstitutor extends SupplierBasedCdtVariableSubstitut
 			}
 			return false;
 		}
-		
+
 		protected String[] getConfigurationReservedNames(IConfiguration configuration){
 			ITool tools[] = configuration.getFilteredTools();
 			if(tools != null){
@@ -114,13 +115,13 @@ public class BuildfileMacroSubstitutor extends SupplierBasedCdtVariableSubstitut
 					}
 
 				}
-				
+
 				return set.toArray(new String[set.size()]);
 			}
 			return null;
 		}
 	}
-	
+
 //	public BuildfileMacroSubstitutor(int contextType, Object contextData, String inexistentMacroValue, String listDelimiter){
 //		super(contextType, contextData, inexistentMacroValue, listDelimiter);
 //		init();
@@ -134,15 +135,15 @@ public class BuildfileMacroSubstitutor extends SupplierBasedCdtVariableSubstitut
 	public BuildfileMacroSubstitutor(IMacroContextInfo contextInfo, String inexistentMacroValue, String listDelimiter){
 		this(null, contextInfo, inexistentMacroValue, listDelimiter);
 	}
-	
-	
-	
+
+
+
 	private void init(IBuilder builder, IMacroContextInfo contextInfo){
 		if(contextInfo == null)
 			return;
-		
+
 		fVarMngr = CCorePlugin.getDefault().getCdtVariableManager();
-		
+
 		if(builder != null){
 			fBuilder = builder;
 			fConfiguration = builder.getParent().getParent();
@@ -153,12 +154,12 @@ public class BuildfileMacroSubstitutor extends SupplierBasedCdtVariableSubstitut
 				fBuilder = (IBuilder)bos[1];
 			}
 		}
-		
+
 		if(fConfiguration != null){
 			fCfgDes = ManagedBuildManager.getDescriptionForConfiguration(fConfiguration);
 		}
 	}
-	
+
 	static IBuildObject[] findConfigurationAndBuilderFromContext(IMacroContextInfo contextInfo){
 		int type = contextInfo.getContextType();
 		IConfiguration cfg = null;
@@ -205,21 +206,21 @@ public class BuildfileMacroSubstitutor extends SupplierBasedCdtVariableSubstitut
 			}
 			break;
 		}
-		
+
 		if(cfg != null && builder != null)
 			return new IBuildObject[]{cfg, builder};
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.internal.macros.DefaultMacroSubstitutor#resolveMacro(org.eclipse.cdt.managedbuilder.macros.IBuildMacro)
 	 */
 	@Override
 	protected ResolvedMacro resolveMacro(ICdtVariable macro) throws CdtVariableException{
 		ResolvedMacro resolved = null;
-			
-		if(fConfiguration != null && fBuilder != null && 
-				fBuilder.keepEnvironmentVariablesInBuildfile() && 
+
+		if(fConfiguration != null && fBuilder != null &&
+				fBuilder.keepEnvironmentVariablesInBuildfile() &&
 				fVarMngr.isEnvironmentVariable(macro, fCfgDes) &&
 				(!CdtVariableResolver.isStringListVariable(macro.getValueType())
 						|| size(macro.getStringListValue()) < 2)){
@@ -232,25 +233,25 @@ public class BuildfileMacroSubstitutor extends SupplierBasedCdtVariableSubstitut
 			return resolved;
 		return super.resolveMacro(macro);
 	}
-	
+
 	private static int size(String[] value){
 		return value != null ? value.length : 0;
 	}
-	
+
 	public IConfiguration getConfiguration(){
 		return fConfiguration;
 	}
-	
+
 	protected IReservedMacroNameSupplier getReservedMacroNameSupplier(){
 		if(fBuilder == null)
 			return null;
 		IReservedMacroNameSupplier supplier = fBuilder.getReservedMacroNameSupplier();
 		if(supplier == null)
 			supplier = new DefaultReservedMacroNameSupplier(fConfiguration);
-		
+
 		return supplier;
 	}
-	
+
 	protected String getMacroReference(ICdtVariable macro){
 		String macroName = macro.getName();
 		String ref = null;
@@ -267,13 +268,13 @@ public class BuildfileMacroSubstitutor extends SupplierBasedCdtVariableSubstitut
 		}
 		return ref;
 	}
-	
+
 	protected Set<String> getCaseInsensitiveReferencedNames(){
 		if(fCaseInsensitiveReferencedNames == null)
 			fCaseInsensitiveReferencedNames = new HashSet<String>();
 		return fCaseInsensitiveReferencedNames;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.internal.macros.DefaultMacroSubstitutor#setMacroContextInfo(org.eclipse.cdt.managedbuilder.internal.macros.IMacroContextInfo)
 	 */

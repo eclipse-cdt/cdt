@@ -19,6 +19,7 @@ public class GnuConfigurationNameProvider implements IConfigurationNameProvider 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfigurationNameProvider#getUniqueConfigurationName(org.eclipse.cdt.managedbuilder.core.IConfiguration, java.lang.String[])
 	 */
+	@Override
 	public String getNewConfigurationName(IConfiguration configuration,
 			String[] usedConfigurationNames) {
 		// TODO Auto-generated method stub

@@ -23,23 +23,25 @@ public class CheckHolderExpression implements IBooleanExpression {
 	public static final String NAME = "checkHolder"; 	//$NON-NLS-1$
 
 	public static final String HOLDER_ID = "holderId"; 	//$NON-NLS-1$
-	
+
 	private String fHolderId;
 
 	public CheckHolderExpression(IManagedConfigElement element){
 		fHolderId = element.getAttribute(HOLDER_ID);
 	}
 
+	@Override
 	public boolean evaluate(IResourceInfo rcInfo, IHoldsOptions holder,
 			IOption option) {
 		return evaluate(holder);
 	}
-	
+
+	@Override
 	public boolean evaluate(IResourceInfo rcInfo, IHoldsOptions holder,
 			IOptionCategory category) {
 		return evaluate(holder);
 	}
-	
+
 	private boolean evaluate(IHoldsOptions holder) {
 		if(fHolderId != null){
 			for(; holder != null; holder = getHolderSuperClass(holder)){
@@ -50,7 +52,7 @@ public class CheckHolderExpression implements IBooleanExpression {
 		}
 		return true;
 	}
-	
+
 	private IHoldsOptions getHolderSuperClass(IHoldsOptions holder){
 		if(holder instanceof ITool)
 			return ((ITool)holder).getSuperClass();

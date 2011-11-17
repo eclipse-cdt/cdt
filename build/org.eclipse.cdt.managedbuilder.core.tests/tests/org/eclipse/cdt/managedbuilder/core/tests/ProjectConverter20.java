@@ -20,14 +20,15 @@ import org.eclipse.cdt.managedbuilder.core.IConvertManagedBuildObject;
 
 public class ProjectConverter20 implements IConvertManagedBuildObject {
 
+	@Override
 	public IBuildObject convert(IBuildObject buildObj, String fromId,
 			String toId, boolean isConfirmed) {
-		
+
 		String tmpDir = System.getProperty("java.io.tmpdir");	//$NON-NLS-1$
-		
+
 		File outputFile = new File(tmpDir + "/converterOutput20.txt");	//$NON-NLS-1$
 		try {
-			FileWriter out = new FileWriter(outputFile);			
+			FileWriter out = new FileWriter(outputFile);
 			out.write("Converter for CDT 2.0 Project is invoked");	//$NON-NLS-1$
 			out.close();
 		} catch (IOException e) {

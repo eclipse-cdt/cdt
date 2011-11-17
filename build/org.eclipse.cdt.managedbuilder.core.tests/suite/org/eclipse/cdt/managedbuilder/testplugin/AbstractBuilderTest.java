@@ -95,6 +95,7 @@ public abstract class AbstractBuilderTest extends TestCase {
 		try {
 			// batch changes
 			IWorkspaceRunnable body = new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					getWorkspace().build(configs, kind, true, monitor);
 				}

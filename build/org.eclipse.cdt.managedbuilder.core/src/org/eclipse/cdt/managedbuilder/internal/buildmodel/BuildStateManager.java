@@ -29,21 +29,25 @@ public class BuildStateManager {
 	private static final String PREFS_LOCATION = "buildState"; //$NON-NLS-1$
 
 	private static BuildStateManager fInstance;
-	
+
 	private EventListener fListener;
-	
+
 	private class ResourceMoveHandler implements IResourceMoveHandler {
 
+		@Override
 		public void done() {
 		}
 
+		@Override
 		public void handleProjectClose(IProject project) {
 		}
 
+		@Override
 		public boolean handleResourceMove(IResource fromRc, IResource toRc) {
 			return doHandleResourceRemove(fromRc);
 		}
 
+		@Override
 		public boolean handleResourceRemove(IResource rc) {
 			return doHandleResourceRemove(rc);
 		}
@@ -60,7 +64,7 @@ public class BuildStateManager {
 			return false;
 		}
 	}
-	
+
 	private class EventListener extends ResourceChangeHandlerBase implements ICProjectDescriptionListener {
 
 		@Override
@@ -69,6 +73,7 @@ public class BuildStateManager {
 			//TODO: may handle resource changes as well
 		}
 
+		@Override
 		public void handleEvent(CProjectDescriptionEvent event) {
 			switch(event.getEventType()){
 			case CProjectDescriptionEvent.APPLIED:
@@ -78,11 +83,11 @@ public class BuildStateManager {
 				break;
 			}
 		}
-		
+
 		private void processAppliedDelta(CProjectDescriptionEvent event, ICDescriptionDelta delta){
 			if(delta == null)
 				return;
-			
+
 			IProjectBuildState pbs = null;
 			boolean apply = false;
 			switch (delta.getDeltaKind()) {
@@ -108,7 +113,7 @@ public class BuildStateManager {
 			default:
 				break;
 			}
-			
+
 			if(pbs != null && apply){
 				setProjectBuildState(event.getProject(), pbs);
 			}
@@ -119,9 +124,9 @@ public class BuildStateManager {
 				IResourceChangeEvent event) {
 			return new ResourceMoveHandler();
 		}
-		
+
 	}
-	
+
 	private void removeProjectInfo(IProject project){
 		File f = getPrefsDir(project);
 		if(f.exists()){
@@ -132,22 +137,22 @@ public class BuildStateManager {
 			f.delete();
 		}
 	}
-	
+
 	private BuildStateManager(){
 	}
-	
+
 	public static BuildStateManager getInstance(){
 		if(fInstance == null)
 			fInstance = new BuildStateManager();
 		return fInstance;
 	}
-	
+
 	public void startup(){
 		if(fListener == null){
 			fListener = new EventListener();
 			CoreModel.getDefault().getProjectDescriptionManager().addCProjectDescriptionListener(fListener, CProjectDescriptionEvent.APPLIED | CProjectDescriptionEvent.LOADED);
-			ResourcesPlugin.getWorkspace().addResourceChangeListener(fListener, 
-					IResourceChangeEvent.POST_CHANGE 
+			ResourcesPlugin.getWorkspace().addResourceChangeListener(fListener,
+					IResourceChangeEvent.POST_CHANGE
 					| IResourceChangeEvent.PRE_DELETE
 					| IResourceChangeEvent.PRE_CLOSE);
 		}
@@ -167,7 +172,7 @@ public class BuildStateManager {
 	public void setProjectBuildState(IProject project, IProjectBuildState state){
 		((ProjectBuildState)state).serialize();
 	}
-	
+
 	private IPath getPrefsDirPath(){
 		IPath path = ManagedBuilderCorePlugin.getDefault().getStateLocation();
 		path = path.append(PREFS_LOCATION);
@@ -179,7 +184,7 @@ public class BuildStateManager {
 		path = path.append(project.getName());
 		return path;
 	}
-	
+
 	private File getPrefsDir(IProject project){
 		IPath path = getPrefsDirPath(project);
 		File file = path.toFile();

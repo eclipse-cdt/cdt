@@ -40,26 +40,28 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * New default external scanner info provider of type 'open'
- * 
+ *
  * @author vhirsl
  */
 public class DefaultSIFileReader implements IExternalScannerInfoProvider {
     private static final String EXTERNAL_SI_PROVIDER_CONSOLE_ID = MakeCorePlugin.getUniqueIdentifier() + ".ExternalScannerInfoProviderConsole"; //$NON-NLS-1$
 
     private long fileSize = 0;
-    
+
     private SCMarkerGenerator markerGenerator = new SCMarkerGenerator();
 
-    public boolean invokeProvider(IProgressMonitor monitor, IResource resource,
+    @Override
+	public boolean invokeProvider(IProgressMonitor monitor, IResource resource,
     		String providerId, IScannerConfigBuilderInfo2 buildInfo,
     		IScannerInfoCollector collector) {
     	return invokeProvider(monitor, resource, new InfoContext(resource.getProject()), providerId, buildInfo, collector, null);
     }
-    
-    public boolean invokeProvider(IProgressMonitor monitor,
-                                  IResource resource, 
+
+    @Override
+	public boolean invokeProvider(IProgressMonitor monitor,
+                                  IResource resource,
                                   InfoContext context,
-                                  String providerId, 
+                                  String providerId,
                                   IScannerConfigBuilderInfo2 buildInfo,
                                   IScannerInfoCollector collector,
                                   Properties env) {
@@ -69,7 +71,7 @@ public class DefaultSIFileReader implements IExternalScannerInfoProvider {
         BufferedReader reader = getStreamReader(buildInfo.getBuildOutputFilePath());
         if (reader == null)
             return rc;
-        
+
         try {
 	        // output
 	        IConsole console = CCorePlugin.getDefault().getConsole(EXTERNAL_SI_PROVIDER_CONSOLE_ID);
@@ -81,16 +83,16 @@ public class DefaultSIFileReader implements IExternalScannerInfoProvider {
 	        catch (CoreException e) {
 	            ostream = null;
 	        }
-	        
+
 	        // get build location
 	        IPath buildDirectory = MakeBuilderUtil.getBuildDirectory(project, MakeBuilder.BUILDER_ID);
-	        
+
 			ConsoleOutputSniffer sniffer = ScannerInfoConsoleParserFactory.
 	                getMakeBuilderOutputSniffer(ostream, null, project, context, buildDirectory, buildInfo, markerGenerator, collector);
 			if (sniffer != null) {
 				ostream = sniffer.getOutputStream();
 			}
-	        
+
 			if (ostream != null) {
 				rc = readFileToOutputStream(monitor, reader, ostream);
 			}
@@ -100,7 +102,7 @@ public class DefaultSIFileReader implements IExternalScannerInfoProvider {
 			} catch (IOException e) {
 	            MakeCorePlugin.log(e);
 			}
-        }        
+        }
         return rc;
 	}
 

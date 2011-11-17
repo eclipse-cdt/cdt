@@ -362,9 +362,11 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
         };
     };
     public final static short baseCheck[] = BaseCheck.baseCheck;
-    public final int baseCheck(int index) { return baseCheck[index]; }
+    @Override
+	public final int baseCheck(int index) { return baseCheck[index]; }
     public final static short rhs[] = baseCheck;
-    public final int rhs(int index) { return rhs[index]; };
+    @Override
+	public final int rhs(int index) { return rhs[index]; };
 
     public interface BaseAction {
         public final static char baseAction[] = {
@@ -698,9 +700,11 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
         };
     };
     public final static char baseAction[] = BaseAction.baseAction;
-    public final int baseAction(int index) { return baseAction[index]; }
+    @Override
+	public final int baseAction(int index) { return baseAction[index]; }
     public final static char lhs[] = baseAction;
-    public final int lhs(int index) { return lhs[index]; };
+    @Override
+	public final int lhs(int index) { return lhs[index]; };
 
     public interface TermCheck {
         public final static byte termCheck[] = {0,
@@ -1015,7 +1019,8 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
         };
     };
     public final static byte termCheck[] = TermCheck.termCheck;
-    public final int termCheck(int index) { return termCheck[index]; }
+    @Override
+	public final int termCheck(int index) { return termCheck[index]; }
 
     public interface TermAction {
         public final static char termAction[] = {0,
@@ -1327,7 +1332,8 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
         };
     };
     public final static char termAction[] = TermAction.termAction;
-    public final int termAction(int index) { return termAction[index]; }
+    @Override
+	public final int termAction(int index) { return termAction[index]; }
 
     public interface Asb {
         public final static char asb[] = {0,
@@ -1373,7 +1379,8 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
         };
     };
     public final static char asb[] = Asb.asb;
-    public final int asb(int index) { return asb[index]; }
+    @Override
+	public final int asb(int index) { return asb[index]; }
 
     public interface Asr {
         public final static byte asr[] = {0,
@@ -1447,7 +1454,8 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
         };
     };
     public final static byte asr[] = Asr.asr;
-    public final int asr(int index) { return asr[index]; }
+    @Override
+	public final int asr(int index) { return asr[index]; }
 
     public interface Nasb {
         public final static char nasb[] = {0,
@@ -1493,7 +1501,8 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
         };
     };
     public final static char nasb[] = Nasb.nasb;
-    public final int nasb(int index) { return nasb[index]; }
+    @Override
+	public final int nasb(int index) { return nasb[index]; }
 
     public interface Nasr {
         public final static char nasr[] = {0,
@@ -1519,7 +1528,8 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
         };
     };
     public final static char nasr[] = Nasr.nasr;
-    public final int nasr(int index) { return nasr[index]; }
+    @Override
+	public final int nasr(int index) { return nasr[index]; }
 
     public interface TerminalIndex {
         public final static char terminalIndex[] = {0,
@@ -1537,7 +1547,8 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
         };
     };
     public final static char terminalIndex[] = TerminalIndex.terminalIndex;
-    public final int terminalIndex(int index) { return terminalIndex[index]; }
+    @Override
+	public final int terminalIndex(int index) { return terminalIndex[index]; }
 
     public interface NonterminalIndex {
         public final static char nonterminalIndex[] = {0,
@@ -1557,7 +1568,8 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
         };
     };
     public final static char nonterminalIndex[] = NonterminalIndex.nonterminalIndex;
-    public final int nonterminalIndex(int index) { return nonterminalIndex[index]; }
+    @Override
+	public final int nonterminalIndex(int index) { return nonterminalIndex[index]; }
 
     public interface ScopePrefix {
         public final static char scopePrefix[] = {
@@ -1569,7 +1581,8 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
         };
     };
     public final static char scopePrefix[] = ScopePrefix.scopePrefix;
-    public final int scopePrefix(int index) { return scopePrefix[index]; }
+    @Override
+	public final int scopePrefix(int index) { return scopePrefix[index]; }
 
     public interface ScopeSuffix {
         public final static char scopeSuffix[] = {
@@ -1581,7 +1594,8 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
         };
     };
     public final static char scopeSuffix[] = ScopeSuffix.scopeSuffix;
-    public final int scopeSuffix(int index) { return scopeSuffix[index]; }
+    @Override
+	public final int scopeSuffix(int index) { return scopeSuffix[index]; }
 
     public interface ScopeLhs {
         public final static char scopeLhs[] = {
@@ -1593,7 +1607,8 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
         };
     };
     public final static char scopeLhs[] = ScopeLhs.scopeLhs;
-    public final int scopeLhs(int index) { return scopeLhs[index]; }
+    @Override
+	public final int scopeLhs(int index) { return scopeLhs[index]; }
 
     public interface ScopeLa {
         public final static byte scopeLa[] = {
@@ -1605,7 +1620,8 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
         };
     };
     public final static byte scopeLa[] = ScopeLa.scopeLa;
-    public final int scopeLa(int index) { return scopeLa[index]; }
+    @Override
+	public final int scopeLa(int index) { return scopeLa[index]; }
 
     public interface ScopeStateSet {
         public final static char scopeStateSet[] = {
@@ -1617,7 +1633,8 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
         };
     };
     public final static char scopeStateSet[] = ScopeStateSet.scopeStateSet;
-    public final int scopeStateSet(int index) { return scopeStateSet[index]; }
+    @Override
+	public final int scopeStateSet(int index) { return scopeStateSet[index]; }
 
     public interface ScopeRhs {
         public final static char scopeRhs[] = {0,
@@ -1647,7 +1664,8 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
         };
     };
     public final static char scopeRhs[] = ScopeRhs.scopeRhs;
-    public final int scopeRhs(int index) { return scopeRhs[index]; }
+    @Override
+	public final int scopeRhs(int index) { return scopeRhs[index]; }
 
     public interface ScopeState {
         public final static char scopeState[] = {0,
@@ -1670,7 +1688,8 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
         };
     };
     public final static char scopeState[] = ScopeState.scopeState;
-    public final int scopeState(int index) { return scopeState[index]; }
+    @Override
+	public final int scopeState(int index) { return scopeState[index]; }
 
     public interface InSymb {
         public final static char inSymb[] = {0,
@@ -1716,7 +1735,8 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
         };
     };
     public final static char inSymb[] = InSymb.inSymb;
-    public final int inSymb(int index) { return inSymb[index]; }
+    @Override
+	public final int inSymb(int index) { return inSymb[index]; }
 
     public interface Name {
         public final static String name[] = {
@@ -1926,7 +1946,8 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
         };
     };
     public final static String name[] = Name.name;
-    public final String name(int index) { return name[index]; }
+    @Override
+	public final String name(int index) { return name[index]; }
 
     public final static int
            ERROR_SYMBOL      = 26,
@@ -1934,10 +1955,14 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
            SCOPE_SIZE        = 50,
            MAX_NAME_LENGTH   = 38;
 
-    public final int getErrorSymbol() { return ERROR_SYMBOL; }
-    public final int getScopeUbound() { return SCOPE_UBOUND; }
-    public final int getScopeSize() { return SCOPE_SIZE; }
-    public final int getMaxNameLength() { return MAX_NAME_LENGTH; }
+    @Override
+	public final int getErrorSymbol() { return ERROR_SYMBOL; }
+    @Override
+	public final int getScopeUbound() { return SCOPE_UBOUND; }
+    @Override
+	public final int getScopeSize() { return SCOPE_SIZE; }
+    @Override
+	public final int getMaxNameLength() { return MAX_NAME_LENGTH; }
 
     public final static int
            NUM_STATES        = 383,
@@ -1957,47 +1982,70 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
 
     public final static boolean BACKTRACK = true;
 
-    public final int getNumStates() { return NUM_STATES; }
-    public final int getNtOffset() { return NT_OFFSET; }
-    public final int getLaStateOffset() { return LA_STATE_OFFSET; }
-    public final int getMaxLa() { return MAX_LA; }
-    public final int getNumRules() { return NUM_RULES; }
-    public final int getNumNonterminals() { return NUM_NONTERMINALS; }
-    public final int getNumSymbols() { return NUM_SYMBOLS; }
-    public final int getSegmentSize() { return SEGMENT_SIZE; }
-    public final int getStartState() { return START_STATE; }
-    public final int getStartSymbol() { return lhs[0]; }
+    @Override
+	public final int getNumStates() { return NUM_STATES; }
+    @Override
+	public final int getNtOffset() { return NT_OFFSET; }
+    @Override
+	public final int getLaStateOffset() { return LA_STATE_OFFSET; }
+    @Override
+	public final int getMaxLa() { return MAX_LA; }
+    @Override
+	public final int getNumRules() { return NUM_RULES; }
+    @Override
+	public final int getNumNonterminals() { return NUM_NONTERMINALS; }
+    @Override
+	public final int getNumSymbols() { return NUM_SYMBOLS; }
+    @Override
+	public final int getSegmentSize() { return SEGMENT_SIZE; }
+    @Override
+	public final int getStartState() { return START_STATE; }
+    @Override
+	public final int getStartSymbol() { return lhs[0]; }
     public final int getIdentifierSymbol() { return IDENTIFIER_SYMBOL; }
-    public final int getEoftSymbol() { return EOFT_SYMBOL; }
-    public final int getEoltSymbol() { return EOLT_SYMBOL; }
-    public final int getAcceptAction() { return ACCEPT_ACTION; }
-    public final int getErrorAction() { return ERROR_ACTION; }
-    public final boolean isValidForParser() { return isValidForParser; }
-    public final boolean getBacktrack() { return BACKTRACK; }
+    @Override
+	public final int getEoftSymbol() { return EOFT_SYMBOL; }
+    @Override
+	public final int getEoltSymbol() { return EOLT_SYMBOL; }
+    @Override
+	public final int getAcceptAction() { return ACCEPT_ACTION; }
+    @Override
+	public final int getErrorAction() { return ERROR_ACTION; }
+    @Override
+	public final boolean isValidForParser() { return isValidForParser; }
+    @Override
+	public final boolean getBacktrack() { return BACKTRACK; }
 
-    public final int originalState(int state) {
+    @Override
+	public final int originalState(int state) {
         return -baseCheck[state];
     }
-    public final int asi(int state) {
+    @Override
+	public final int asi(int state) {
         return asb[originalState(state)];
     }
-    public final int nasi(int state) {
+    @Override
+	public final int nasi(int state) {
         return nasb[originalState(state)];
     }
-    public final int inSymbol(int state) {
+    @Override
+	public final int inSymbol(int state) {
         return inSymb[originalState(state)];
     }
 
-    public final int ntAction(int state, int sym) {
+    @Override
+	public final int ntAction(int state, int sym) {
         return baseAction[state + sym];
     }
 
-    public final int tAction(int state, int sym) {
+    @Override
+	public final int tAction(int state, int sym) {
         int i = baseAction[state],
             k = i + sym;
         return termAction[termCheck[k] == sym ? k : i];
     }
-    public final int lookAhead(int la_state, int sym) {
+    @Override
+	public final int lookAhead(int la_state, int sym) {
         int k = la_state + sym;
         return termAction[termCheck[k] == sym ? k : la_state];
     }

@@ -258,6 +258,7 @@ public class HeadlessBuilder implements IApplication {
 			final Map<String, String> map = BuilderFactory.createBuildArgs(configs);
 
 			IWorkspaceRunnable op = new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					ICommand[] commands = proj.getDescription().getBuildSpec();
 					monitor.beginTask("", commands.length); //$NON-NLS-1$
@@ -390,6 +391,7 @@ public class HeadlessBuilder implements IApplication {
 		return result;
 	}
 
+	@Override
 	public Object start(IApplicationContext context) throws Exception {
 		// Build result: whether projects were built successfully
 		boolean buildSuccessful = true;
@@ -792,6 +794,7 @@ public class HeadlessBuilder implements IApplication {
 		}
 	}
 
+	@Override
 	public void stop() {
 	}
 }

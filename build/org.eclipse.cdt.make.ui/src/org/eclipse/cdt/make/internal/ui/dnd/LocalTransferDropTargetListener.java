@@ -52,6 +52,7 @@ public class LocalTransferDropTargetListener extends AbstractContainerAreaDropAd
 	 * @return the {@link Transfer} type that this listener can accept a
 	 * drop operation for.
 	 */
+	@Override
 	public Transfer getTransfer() {
 		return LocalSelectionTransfer.getTransfer();
 	}

@@ -12,8 +12,8 @@ package org.eclipse.cdt.managedbuilder.core.tests;
 
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo;
-import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IOption;
+import org.eclipse.cdt.managedbuilder.core.ITool;
 
 /**
  *  Test command line generator
@@ -35,12 +35,12 @@ public class Test30_2_CommandLineGenerator implements
 	public final String WHITESPACE = " ";	//$NON-NLS-1$
 	public final String WILDCARD = "%";	//$NON-NLS-1$
 	public final String UNDERLINE = "_"; //$NON-NLS-1$
-	
+
 	public final String VAR_FIRST_CHAR = "$"; //$NON-NLS-1$
-	public final char VAR_SECOND_CHAR = '{'; //$NON-NLS-1$
+	public final char VAR_SECOND_CHAR = '{';
 	public final String VAR_FINAL_CHAR = "}"; //$NON-NLS-1$
 	public final String CLASS_PROPERTY_PREFIX = "get"; //$NON-NLS-1$
-	
+
 	public final String CMD_LINE_PRM_NAME = "COMMAND"; //$NON-NLS-1$
 	public final String FLAGS_PRM_NAME = "FLAGS"; //$NON-NLS-1$
 	public final String OUTPUT_FLAG_PRM_NAME = "OUTPUT_FLAG"; //$NON-NLS-1$
@@ -51,6 +51,7 @@ public class Test30_2_CommandLineGenerator implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator#generateCommandLineInfo(org.eclipse.cdt.managedbuilder.core.ITool, java.lang.String, java.lang.String[], java.lang.String, java.lang.String, java.lang.String, java.lang.String[], java.lang.String)
 	 */
+	@Override
 	public IManagedCommandLineInfo generateCommandLineInfo(ITool tool,
 			String commandName, String[] flags, String outputFlag,
 			String outputPrefix, String outputName, String[] inputResources,

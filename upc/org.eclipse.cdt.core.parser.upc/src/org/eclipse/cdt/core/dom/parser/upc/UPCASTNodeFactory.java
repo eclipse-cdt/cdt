@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -39,7 +39,7 @@ import org.eclipse.cdt.internal.core.dom.parser.upc.ast.UPCASTUnarySizeofExpress
 
 /**
  * Creates AST nodes that are specific to the UPC parser.
- * 
+ *
  * The methods in ASTNodeFactory that build nodes for declaration
  * specifiers are overridden here to replace those nodes with the UPC nodes for
  * declaration specifiers. These UPC specific nodes add support
@@ -48,32 +48,34 @@ import org.eclipse.cdt.internal.core.dom.parser.upc.ast.UPCASTUnarySizeofExpress
 @SuppressWarnings("restriction")
 public class UPCASTNodeFactory extends CNodeFactory implements IUPCNodeFactory {
 
-	
+
 	private boolean useUPCSizeofExpressions = false;
 	private int currentUPCSizofExpressionOperator = 0;
-	
-	
+
+
+	@Override
 	public void setUseUPCSizeofExpressions(int op) {
 		useUPCSizeofExpressions = true;
 		currentUPCSizofExpressionOperator = op;
 	}
-	
+
+	@Override
 	public void setUseC99SizeofExpressions() {
 		useUPCSizeofExpressions = false;
 	}
-	
-	
-	
+
+
+
 	@Override
 	public IASTTypeIdExpression newTypeIdExpression(int operator, IASTTypeId typeId) {
 		if(useUPCSizeofExpressions) {
 			assert operator == IASTTypeIdExpression.op_sizeof;
 			return new UPCASTTypeIdSizeofExpression(currentUPCSizofExpressionOperator, typeId);
 		}
-		
+
 		return super.newTypeIdExpression(operator, typeId);
 	}
-	
+
 
 	@Override
 	public IASTUnaryExpression newUnaryExpression(int operator, IASTExpression operand) {
@@ -81,21 +83,24 @@ public class UPCASTNodeFactory extends CNodeFactory implements IUPCNodeFactory {
 			assert operator == IASTUnaryExpression.op_sizeof;
 			return new UPCASTUnarySizeofExpression(currentUPCSizofExpressionOperator, operand);
 		}
-		
+
 		return super.newUnaryExpression(operator, operand);
 	}
-	
 
+
+	@Override
 	public IUPCASTKeywordExpression newKeywordExpression(int keywordKind) {
 		return new UPCASTKeywordExpression(keywordKind);
 	}
-	
 
+
+	@Override
 	public IUPCASTSynchronizationStatement newSyncronizationStatment(IASTExpression barrierExpression, int statmentKind) {
 		return new UPCASTSynchronizationStatement(barrierExpression, statmentKind);
 	}
-	
 
+
+	@Override
 	public IUPCASTForallStatement newForallStatement(IASTStatement init, IASTExpression condition,
 			IASTExpression iterationExpression, IASTStatement body, IASTExpression affinity) {
 		return new UPCASTForallStatement(init, condition, iterationExpression, body, affinity);
@@ -106,25 +111,25 @@ public class UPCASTNodeFactory extends CNodeFactory implements IUPCNodeFactory {
 	public IUPCASTSimpleDeclSpecifier newSimpleDeclSpecifier() {
 		return new UPCASTSimpleDeclSpecifier();
 	}
-	
+
 
 	@Override
 	public IUPCASTCompositeTypeSpecifier newCompositeTypeSpecifier(int key, IASTName name) {
 		return new UPCASTCompositeTypeSpecifier(key, name);
 	}
-	
+
 
 	@Override
 	public IUPCASTElaboratedTypeSpecifier newElaboratedTypeSpecifier(int kind, IASTName name) {
 		return new UPCASTElaboratedTypeSpecifier(kind, name);
 	}
-	
+
 
 	@Override
 	public IUPCASTEnumerationSpecifier newEnumerationSpecifier(IASTName name) {
 		return new UPCASTEnumerationSpecifier(name);
 	}
-	
+
 
 	@Override
 	public IUPCASTTypedefNameSpecifier newTypedefNameSpecifier(IASTName name) {

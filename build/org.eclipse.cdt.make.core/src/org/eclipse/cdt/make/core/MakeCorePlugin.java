@@ -60,7 +60,7 @@ import org.osgi.framework.BundleContext;
 
 /**
  * The main plugin class to be used in the desktop.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -74,13 +74,14 @@ public class MakeCorePlugin extends Plugin {
 			fEncoding = encoding != null ? encoding : ResourcesPlugin.getEncoding();
 		}
 
+		@Override
 		public Reader getReader(URI fileURI) throws IOException {
 			try {
 				final IFileStore store = EFS.getStore(fileURI);
 				final IFileInfo info = store.fetchInfo();
 				if (!info.exists() || info.isDirectory())
 					throw new IOException();
-				
+
 				return new InputStreamReader(store.openInputStream(EFS.NONE, null), fEncoding);
 			} catch (CoreException e) {
 				MakeCorePlugin.log(e);
@@ -88,7 +89,7 @@ public class MakeCorePlugin extends Plugin {
 			}
 		}
 	}
-	
+
 	public static final String PLUGIN_ID = "org.eclipse.cdt.make.core"; //$NON-NLS-1$
 	public static final String MAKE_PROJECT_ID = MakeCorePlugin.getUniqueIdentifier() + ".make"; //$NON-NLS-1$
 	public static final String OLD_BUILDER_ID = "org.eclipse.cdt.core.cbuilder"; //$NON-NLS-1$
@@ -229,8 +230,8 @@ public class MakeCorePlugin extends Plugin {
 
 	/**
 	 * Create an IMakefile using the given IMakefileReaderProvider to fetch
-	 * contents by name. 
-	 * 
+	 * contents by name.
+	 *
 	 * @param fileURI URI of main file
 	 * @param makefileReaderProvider may be <code>null</code> for EFS IFileStore reading
 	 */
@@ -263,7 +264,7 @@ public class MakeCorePlugin extends Plugin {
 
 	/**
 	 * Create an IMakefile using EFS to fetch contents.
-	 * 
+	 *
 	 * @param fileURI URI of main file
 	 */
 	public static IMakefile createMakefile(URI fileURI, boolean isGnuStyle, String[] makefileDirs) {
@@ -273,7 +274,7 @@ public class MakeCorePlugin extends Plugin {
 	public IMakefile createMakefile(IFile file) throws CoreException {
 		return createMakefile(EFS.getStore(file.getLocationURI()), isMakefileGNUStyle(), getMakefileDirs(), file.getCharset());
 	}
-	
+
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		try {
@@ -309,7 +310,7 @@ public class MakeCorePlugin extends Plugin {
 			Map<String, String> args, String builderID) {
 		return ScannerConfigInfoFactory.create(args, builderID);
 	}
-	
+
 	public static IPath getWorkingDirectory() {
 		return MakeCorePlugin.getDefault().getStateLocation();
 	}
@@ -337,7 +338,7 @@ public class MakeCorePlugin extends Plugin {
 						IConfigurationElement[] configElements = extensions[i].getConfigurationElements();
 						for (int j = 0; j < configElements.length; j++) {
 							IConfigurationElement[] runElement = configElements[j].getChildren("run"); //$NON-NLS-1$
-							if (runElement.length > 0) { 
+							if (runElement.length > 0) {
 								IExternalScannerInfoProvider builder = (IExternalScannerInfoProvider) runElement[0].createExecutableExtension("class"); //$NON-NLS-1$
 								return builder;
 							}
@@ -345,7 +346,7 @@ public class MakeCorePlugin extends Plugin {
 					}
 				}
 			}
-		} 
+		}
 		catch (CoreException e) {
 			log(e);
 		}
@@ -372,13 +373,13 @@ public class MakeCorePlugin extends Plugin {
 					if (id != null && (id.equals(commandId) || id.equals("all"))) {	//$NON-NLS-1$
 						parserIds.add(parserId);
 					}
-				}							
+				}
 			}
 			return parserIds.toArray(empty);
 		}
 		return empty;
 	}
-	
+
 	/**
 	 * @return parser - parser object identified by the parserId
 	 */
@@ -402,14 +403,14 @@ public class MakeCorePlugin extends Plugin {
 		}
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Plugin#startup()
 	 */
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		
+
 		//Set debug tracing options
 		configurePluginDebugOptions();
         // Scanner config discovery setup
@@ -418,7 +419,7 @@ public class MakeCorePlugin extends Plugin {
 
 	private static final String SCANNER_CONFIG = MakeCorePlugin.getUniqueIdentifier() + "/debug/scdiscovery"; //$NON-NLS-1$
 	/**
-	 * 
+	 *
 	 */
 	private void configurePluginDebugOptions() {
 		if (isDebugging()) {

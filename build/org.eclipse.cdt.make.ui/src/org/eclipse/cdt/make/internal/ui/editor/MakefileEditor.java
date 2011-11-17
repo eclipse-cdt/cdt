@@ -17,9 +17,9 @@ import java.util.ResourceBundle;
 
 import org.eclipse.cdt.make.core.makefile.IDirective;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
+import org.eclipse.cdt.make.internal.ui.actions.FoldingActionGroup;
 import org.eclipse.cdt.make.internal.ui.preferences.MakefileEditorPreferenceConstants;
 import org.eclipse.cdt.make.internal.ui.text.makefile.MakefileWordDetector;
-import org.eclipse.cdt.make.internal.ui.actions.FoldingActionGroup;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.action.IAction;
@@ -128,7 +128,7 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 	boolean isFoldingEnabled() {
 		return MakeUIPlugin.getDefault().getPreferenceStore().getBoolean(MakefileEditorPreferenceConstants.EDITOR_FOLDING_ENABLED);
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#rulerContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
 	 */
@@ -180,7 +180,7 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 
 		// ensure decoration support has been created and configured.
 		getSourceViewerDecorationSupport(viewer);
-		
+
 		return viewer;
 	}
 
@@ -235,7 +235,7 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 		a.setActionDefinitionId(IMakefileEditorActionDefinitionIds.COMMENT);
 		setAction("Comment", a); //$NON-NLS-1$
 		markAsStateDependentAction("Comment", true); //$NON-NLS-1$
- 
+
 		a = new TextOperationAction(bundle, "Uncomment.", this, ITextOperationTarget.STRIP_PREFIX); //$NON-NLS-1$
 		a.setActionDefinitionId(IMakefileEditorActionDefinitionIds.UNCOMMENT);
 		setAction("Uncomment", a); //$NON-NLS-1$
@@ -252,14 +252,15 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		ISelection selection = event.getSelection();
 		if (selection.isEmpty()) {
 			resetHighlightRange();
-		} else if (selection instanceof IStructuredSelection){                                                                                                                         
+		} else if (selection instanceof IStructuredSelection){
 			if (!isActivePart() && MakeUIPlugin.getActivePage() != null) {
 				MakeUIPlugin.getActivePage().bringToTop(this);
-			}                                                                                                                 
+			}
 			Object element =  ((IStructuredSelection) selection).getFirstElement();
 			if (element instanceof IDirective) {
 				IDirective statement = (IDirective)element;
@@ -280,7 +281,7 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 
 	/**
 	 * Returns the find/replace document adapter.
-	 * 
+	 *
 	 * @return the find/replace document adapter.
 	 */
 	private FindReplaceDocumentAdapter getFindReplaceDocumentAdapter() {
@@ -347,7 +348,7 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 	/**
 	 * Adds the given listener.
 	 * Has no effect if an identical listener was not already registered.
-	 * 
+	 *
 	 * @param listener	The reconcile listener to be added
 	 * @since 3.0
 	 */
@@ -356,11 +357,11 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 			fReconcilingListeners.add(listener);
 		}
 	}
-	
+
 	/**
 	 * Removes the given listener.
 	 * Has no effect if an identical listener was not already registered.
-	 * 
+	 *
 	 * @param listener	the reconcile listener to be removed
 	 * @since 3.0
 	 */
@@ -369,17 +370,18 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 			fReconcilingListeners.remove(listener);
 		}
 	}
-	
+
 	/*
 	 */
-	public void reconciled() {		
+	@Override
+	public void reconciled() {
 		// Notify listeners
 		Object[] listeners = fReconcilingListeners.getListeners();
 		for (int i = 0, length= listeners.length; i < length; ++i) {
 			((IReconcilingParticipant)listeners[i]).reconciled();
 		}
 	}
-	
+
 	/**
 	 * Returns the folding action group, or <code>null</code> if there is none.
 	 *
@@ -397,22 +399,22 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 		ProjectionViewer projectionViewer= (ProjectionViewer) getSourceViewer();
 		projectionViewer.setRedraw(false);
 		try {
-			
+
 			boolean projectionMode= projectionViewer.isProjectionMode();
 			if (projectionMode) {
-				projectionViewer.disableProjection();				
+				projectionViewer.disableProjection();
 				if (fProjectionMakefileUpdater != null)
 					fProjectionMakefileUpdater.uninstall();
 			}
-			
+
 			super.performRevert();
-			
+
 			if (projectionMode) {
 				if (fProjectionMakefileUpdater != null)
-					fProjectionMakefileUpdater.install(this, projectionViewer);	
+					fProjectionMakefileUpdater.install(this, projectionViewer);
 				projectionViewer.enableProjection();
 			}
-			
+
 		} finally {
 			projectionViewer.setRedraw(true);
 		}
@@ -480,7 +482,7 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 		System.arraycopy(parentPrefPageIds, 0, prefPageIds, nIds, parentPrefPageIds.length);
 		return prefPageIds;
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#isTabsToSpacesConversionEnabled()
 	 */
@@ -490,7 +492,7 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 		// see http://bugs.eclipse.org/186106
 		return false;
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.editors.text.TextEditor#initializeKeyBindingScopes()
 	 * @see http://bugs.eclipse.org/172331

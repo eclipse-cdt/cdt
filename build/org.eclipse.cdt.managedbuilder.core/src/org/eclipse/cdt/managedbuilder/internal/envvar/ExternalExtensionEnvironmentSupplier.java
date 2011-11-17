@@ -24,7 +24,7 @@ import org.eclipse.cdt.utils.envvar.EnvVarOperationProcessor;
 /**
  * This is the Environment Variable Supplier used to supply variables
  * defined by the tool-integrator
- * 
+ *
  * @since 3.0
  */
 public class ExternalExtensionEnvironmentSupplier implements
@@ -39,25 +39,26 @@ public class ExternalExtensionEnvironmentSupplier implements
 	/**
 	 * EnvironmentVariableProvider passed to the tool-integrator provided
 	 * suppliers.
-	 * Accepts only contexts lower than the one passed to a suppler  
-	 * 
+	 * Accepts only contexts lower than the one passed to a suppler
+	 *
 	 * @since 3.0
 	 */
-	
+
 	public ExternalExtensionEnvironmentSupplier(IEnvironmentVariableManager mngr){
 		fProvider = new EnvironmentVariableProvider(mngr);
 	}
-	
+
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableSupplier#getVariable()
 	 */
+	@Override
 	public IEnvironmentVariable getVariable(String name, Object context) {
 		if(context == null)
 			return null;
 		if((name = getValidName(name)) == null)
 			return null;
-			
+
 		else if(context instanceof IConfiguration){
 			IConfiguration cfg = (IConfiguration)context;
 			IConfigurationEnvironmentVariableSupplier supplier = cfg.getEnvironmentVariableSupplier();
@@ -66,7 +67,7 @@ public class ExternalExtensionEnvironmentSupplier implements
 			return supplier.getVariable(name,cfg,fProvider);
 		}
 		else if (context instanceof IManagedProject) {
-			IManagedProject project = (IManagedProject)context; 
+			IManagedProject project = (IManagedProject)context;
 			IProjectType pType = project.getProjectType();
 			IProjectEnvironmentVariableSupplier supplier = pType != null ?
 					pType.getEnvironmentVariableSupplier() : null;
@@ -80,6 +81,7 @@ public class ExternalExtensionEnvironmentSupplier implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableSupplier#getVariables()
 	 */
+	@Override
 	public IEnvironmentVariable[] getVariables(Object context) {
 		if(context == null)
 			return null;
@@ -92,13 +94,13 @@ public class ExternalExtensionEnvironmentSupplier implements
 			variables = supplier.getVariables(cfg,fProvider);
 		}
 		else if (context instanceof IManagedProject) {
-			IManagedProject project = (IManagedProject)context; 
+			IManagedProject project = (IManagedProject)context;
 			IProjectEnvironmentVariableSupplier supplier = project.getProjectType() != null ? project.getProjectType().getEnvironmentVariableSupplier() : null;
 			if(supplier == null)
 				return null;
 			variables = supplier.getVariables(project,fProvider);
 		}
-		
+
 		return filterVariables(variables);
 	}
 
@@ -111,23 +113,23 @@ public class ExternalExtensionEnvironmentSupplier implements
 			if(suppliers[i] == this)
 				break;
 		}
-		
-	
+
+
 		if(i >= suppliers.length)
 			return null;
-		
+
 		int startNum = i + 1;
 
 
-		IEnvironmentVariableSupplier validSuppliers[] = 
+		IEnvironmentVariableSupplier validSuppliers[] =
 			new IEnvironmentVariableSupplier[suppliers.length - startNum];
-		
+
 		for(i = startNum, j = 0; i < suppliers.length; i++, j++)
 			validSuppliers[j] = suppliers[i];
-		
+
 		return validSuppliers;
 	}
-	
+
 	protected String getValidName(String name){
 		name = EnvVarOperationProcessor.normalizeName(name);
 		if(name == null)
@@ -140,7 +142,7 @@ public class ExternalExtensionEnvironmentSupplier implements
 		}
 		return name;
 	}
-	
+
 	protected IEnvironmentVariable[] filterVariables(IBuildEnvironmentVariable variables[]){
 		return EnvVarOperationProcessor.filterVariables(variables,fNonOverloadableVariables);
 	}

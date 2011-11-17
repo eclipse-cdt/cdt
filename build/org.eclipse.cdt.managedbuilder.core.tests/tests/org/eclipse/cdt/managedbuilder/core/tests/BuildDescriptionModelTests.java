@@ -16,8 +16,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -66,10 +66,10 @@ import org.eclipse.core.runtime.Path;
 public class BuildDescriptionModelTests extends TestCase {
 	private static final String PREFIX = "BuildDescription_";
 	private static final String PROJ_PATH = "testBuildDescriptionProjects";
-	
+
 	private CompositeCleaner fCompositeCleaner = new CompositeCleaner();
 	private Runnable fCleaner = fCompositeCleaner;
-	
+
 	private class CompositeCleaner implements Runnable{
 		private List<Runnable> fRunnables = new ArrayList<Runnable>();
 
@@ -77,6 +77,7 @@ public class BuildDescriptionModelTests extends TestCase {
 			fRunnables.add(r);
 		}
 
+		@Override
 		public void run() {
 			for(Iterator<Runnable> iter = fRunnables.iterator(); iter.hasNext();){
 				Runnable r = iter.next();
@@ -84,11 +85,11 @@ public class BuildDescriptionModelTests extends TestCase {
 			}
 			fRunnables.clear();
 		}
-		
+
 	}
 	private class ProjectCleaner implements Runnable{
 		List<String> fProjList = new ArrayList<String>();
-		
+
 		public ProjectCleaner(IProject project){
 			addProject(project);
 		}
@@ -101,6 +102,7 @@ public class BuildDescriptionModelTests extends TestCase {
 			fProjList.add(name);
 		}
 
+		@Override
 		public void run() {
 			for(Iterator<String> iter = fProjList.iterator(); iter.hasNext();){
 				String name = iter.next();
@@ -108,29 +110,29 @@ public class BuildDescriptionModelTests extends TestCase {
 			}
 			fProjList.clear();
 		}
-		
+
 	}
 
 	public static Test suite() {
 		return new TestSuite(BuildDescriptionModelTests.class);
 	}
-	
+
 	public void testDes_Model(){
 		IProject project = createProject(PREFIX + "1", "test30_2.tar");
 		IFile aAsm = ManagedBuildTestHelper.createFile(project, "a.asm");
 		ManagedBuildTestHelper.createFile(project, "b.asm");
 		ManagedBuildTestHelper.createFile(project, "c.cpp");
 		ManagedBuildTestHelper.createFile(project, "d.cpp");
-	
+
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 		IManagedProject mProj = info.getManagedProject();
 		IConfiguration cfg = mProj.getConfigurations()[0];
 		cfg.setArtifactExtension("tmp");
 		BuildDescription des = new BuildDescription(cfg);
-		
+
 		BuildResource aAsmRc = des.createResource("a.asm");
 		assertNotNull("failed to create resource a.asm", aAsmRc);
-		
+
 		if(aAsmRc != des.createResource(aAsm))
 			fail("new build resource created for the same resource");
 
@@ -146,26 +148,26 @@ public class BuildDescriptionModelTests extends TestCase {
 		BuildStep inStep = (BuildStep)des.getInputStep();
 		assertEquals("input step has inputs", inStep.getInputIOTypes().length, 0);
 		assertEquals("initial input step has outputs", inStep.getOutputIOTypes().length, 0);
-		
+
 		BuildIOType type = inStep.createIOType(false, true, null);
 		if(type == null)
 			fail("failed to create output type");
-		
+
 		assertNotNull(type);
 		assertEquals(type.getStep(), inStep);
-		
+
 		type.addResource(aAsmRc);
-		
+
 		assertEquals(aAsmRc.getProducerIOType(), type);
 		assertEquals(aAsmRc.getDependentIOTypes().length, 0);
 
 		assertEquals("input step has inputs", inStep.getInputIOTypes().length, 0);
 		assertEquals(inStep.getOutputIOTypes().length, 1);
 		assertEquals(inStep.getOutputIOTypes()[0], type);
-		
+
 		assertEquals(type.getResources().length, 1);
 		assertEquals(type.getResources()[0], aAsmRc);
-		
+
 		BuildResource bAsmRc = des.createResource("b.asm");
 		assertEquals(bAsmRc.getProducerIOType(), null);
 		assertEquals(bAsmRc.getDependentIOTypes().length, 0);
@@ -177,24 +179,24 @@ public class BuildDescriptionModelTests extends TestCase {
 		assertEquals("input step has inputs", inStep.getInputIOTypes().length, 0);
 		assertEquals(inStep.getOutputIOTypes().length, 1);
 		assertEquals(inStep.getOutputIOTypes()[0], type);
-		
+
 		assertEquals(type.getResources().length, 2);
-		
+
 		BuildStep step = des.createStep(null, null);
 		assertEquals("new step has inputs", inStep.getInputIOTypes().length, 0);
 		assertEquals("new step has outputs", inStep.getOutputIOTypes().length, 1);
-		
+
 		BuildIOType iType = step.createIOType(true, true, null);
 		if(iType == null)
 			fail("failed to create in type");
-		
+
 		assertEquals(iType.getStep(), step);
-		
+
 		assertEquals(aAsmRc.getProducerIOType(), type);
 		assertEquals(aAsmRc.getDependentIOTypes().length, 0);
 
 		iType.addResource(aAsmRc);
-		
+
 		assertEquals(aAsmRc.getProducerIOType(), type);
 		assertEquals(aAsmRc.getDependentIOTypes().length, 1);
 		assertEquals(aAsmRc.getDependentIOTypes()[0], iType);
@@ -202,10 +204,10 @@ public class BuildDescriptionModelTests extends TestCase {
 		assertEquals("input step has inputs", inStep.getInputIOTypes().length, 0);
 		assertEquals(inStep.getOutputIOTypes().length, 1);
 		assertEquals(inStep.getOutputIOTypes()[0], type);
-		
+
 		assertEquals(iType.getResources().length, 1);
 		assertEquals(iType.getResources()[0], aAsmRc);
-		
+
 		assertEquals(bAsmRc.getProducerIOType(), type);
 		assertEquals(bAsmRc.getDependentIOTypes().length, 0);
 
@@ -217,13 +219,13 @@ public class BuildDescriptionModelTests extends TestCase {
 		assertEquals("input step has inputs", inStep.getInputIOTypes().length, 0);
 		assertEquals(inStep.getOutputIOTypes().length, 1);
 		assertEquals(inStep.getOutputIOTypes()[0], type);
-		
+
 		assertEquals(type.getResources().length, 2);
-		
-		
+
+
 //		ManagedBuildTestHelper.removeProject(PREFIX + "1");
 	}
-	
+
 	public void testDesTest30_2_asm_only(){
 		IProject project = createProject(PREFIX + "1", "test30_2.tar");
 		ManagedBuildTestHelper.createFile(project, "a.asm");
@@ -234,7 +236,7 @@ public class BuildDescriptionModelTests extends TestCase {
 		IConfiguration cfg = mProj.getConfigurations()[0];
 		cfg.setArtifactExtension("tmp");
 		BuildDescription tDes = new BuildDescription(cfg);
-		
+
 		IBuildDescription des = null;
 		try {
 			des = BuildDescriptionManager.createBuildDescription(cfg, null, BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED | BuildDescriptionManager.DEPS);
@@ -243,7 +245,7 @@ public class BuildDescriptionModelTests extends TestCase {
 		}
 
 		doTestBuildDescription(des, tDes);
-		
+
 //		ManagedBuildTestHelper.removeProject(PREFIX + "1");
 	}
 
@@ -264,7 +266,7 @@ public class BuildDescriptionModelTests extends TestCase {
 		}
 
 		doTestBuildDescription(des, tDes);
-		
+
 //		ManagedBuildTestHelper.removeProject(PREFIX + "1");
 	}
 
@@ -272,7 +274,7 @@ public class BuildDescriptionModelTests extends TestCase {
 		IProject project = createProject(PREFIX + "1", "test30_2.tar");
 		ManagedBuildTestHelper.createFile(project, "c.cpp");
 		ManagedBuildTestHelper.createFile(project, "d.cpp");
-	
+
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 		IManagedProject mProj = info.getManagedProject();
 		IConfiguration cfg = mProj.getConfigurations()[0];
@@ -289,7 +291,7 @@ public class BuildDescriptionModelTests extends TestCase {
 		BuildDescription tDes = new BuildDescription(cfg);
 		BuildStep step;
 		BuildIOType type;
-		
+
 		//
 		step = (BuildStep)tDes.getInputStep();
 
@@ -299,35 +301,35 @@ public class BuildDescriptionModelTests extends TestCase {
 		//
 		//
 		step = tDes.createStep(null, null);
-		
+
 			type = step.createIOType(true, true, null);
 			type.addResource(tDes.createResource("c.cpp"));
 			type.addResource(tDes.createResource("d.cpp"));
-			
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(cName + "/new.tar"));
 		//
 		//
 		step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, true, null);
 			type.addResource(tDes.createResource(cName + "/new.tar"));
-			
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(cName + "/new.log"));
 		//
 		//
 		step = tDes.createStep(null, null);
-				
+
 			type = step.createIOType(true, true, null);
 			type.addResource(tDes.createResource(cName + "/new.log"));
-				
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(cName + "/" + artifactName + ".tmp"));
 		//
 		//
 		step = (BuildStep)tDes.getOutputStep();
-			
+
 			type = step.createIOType(true, true, null);
 			type.addResource(tDes.createResource(cName + "/" + artifactName + ".tmp"));
 		//
@@ -340,27 +342,27 @@ public class BuildDescriptionModelTests extends TestCase {
 		}
 
 		doTestBuildDescription(des, tDes);
-		
+
 //		ManagedBuildTestHelper.removeProject(PREFIX + "1");
-	}	
-	
+	}
+
 	public void testDesTest30_1(){
 		IProject project = loadProject("test30_1");
-		
+
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 		IConfiguration cfg = info.getDefaultConfiguration();
 		String out = cfg.getName() + "/";
-		
+
 		BuildDescription tDes = new BuildDescription(cfg);
 		BuildStep step;
 		BuildIOType type;
-		
+
 		//
 		step = (BuildStep)tDes.getOutputStep();
 
 			type = step.createIOType(true, true, null);
 			type.addResource(tDes.createResource(out + "Test30_1.so.4.5.6"));
-			
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource(out + "CDT.jpeg"));
 		//
@@ -369,7 +371,7 @@ public class BuildDescriptionModelTests extends TestCase {
 
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(out + "CDT.jpeg"));
-			
+
 			type = step.createIOType(true, true, null);
 			type.addResource(tDes.createResource(out + "CDT.bmp"));
 		//
@@ -458,18 +460,18 @@ public class BuildDescriptionModelTests extends TestCase {
 		} catch (CoreException e) {
 			fail("build description creation failed: " + e.getLocalizedMessage());
 		}
-		
+
 		doTestBuildDescription(des, tDes);
 
 	}
-	
+
 	public void testDesTest30_2(){
 		IProject project = createProject(PREFIX + "1", "test30_2.tar");
 		ManagedBuildTestHelper.createFile(project, "a.asm");
 		ManagedBuildTestHelper.createFile(project, "b.asm");
 		ManagedBuildTestHelper.createFile(project, "c.cpp");
 		ManagedBuildTestHelper.createFile(project, "d.cpp");
-	
+
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 		IManagedProject mProj = info.getManagedProject();
 		IConfiguration cfg = mProj.getConfigurations()[0];
@@ -486,53 +488,53 @@ public class BuildDescriptionModelTests extends TestCase {
 		BuildDescription tDes = new BuildDescription(cfg);
 		BuildStep step;
 		BuildIOType type;
-		
+
 		//
 		step = (BuildStep)tDes.getInputStep();
 
 			type = step.createIOType(false, false, null);
 			type.addResource(tDes.createResource("a.asm"));
 			type.addResource(tDes.createResource("b.asm"));
-			
+
 			type = step.createIOType(false, false, null);
 			type.addResource(tDes.createResource("c.cpp"));
 			type.addResource(tDes.createResource("d.cpp"));
 		//
 		//
 		step = tDes.createStep(null, null);
-		
+
 			type = step.createIOType(true, true, null);
 			type.addResource(tDes.createResource("c.cpp"));
 			type.addResource(tDes.createResource("d.cpp"));
-			
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource("a.asm"));
 			type.addResource(tDes.createResource("b.asm"));
-			
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(cName + "/new.tar"));
 		//
 		//
 		step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, true, null);
 			type.addResource(tDes.createResource(cName + "/new.tar"));
-			
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(cName + "/new.log"));
 		//
 		//
 		step = tDes.createStep(null, null);
-				
+
 			type = step.createIOType(true, true, null);
 			type.addResource(tDes.createResource(cName + "/new.log"));
-				
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(cName + "/" + artifactName + ".tmp"));
 		//
 		//
 		step = (BuildStep)tDes.getOutputStep();
-			
+
 			type = step.createIOType(true, true, null);
 			type.addResource(tDes.createResource(cName + "/" + artifactName + ".tmp"));
 		//
@@ -545,60 +547,60 @@ public class BuildDescriptionModelTests extends TestCase {
 		}
 
 		doTestBuildDescription(des, tDes);
-		
+
 //		ManagedBuildTestHelper.removeProject(PREFIX + "1");
 	}
-/*	
+/*
 	private void doTestStep(IBuildStep step, StepDes testStep){
 		IBuildIOType iTs[] = step.getInputIOTypes();
 		TypeDes tITs[] = testStep.fInTypes;
 
 		IBuildIOType oTs[] = step.getOutputIOTypes();
 		TypeDes tOTs[] = testStep.fOutTypes;
-		
+
 		assertEquals(iTs.length, tITs.length);
 		assertEquals(oTs.length, tOTs.length);
-		
-		
+
+
 	}
 */
 	private void doTestStep(IBuildStep step, IBuildStep oStep, boolean up){
 		Map<IBuildIOType, IBuildIOType> inMap = new HashMap<IBuildIOType, IBuildIOType>();
 		Map<IBuildIOType, IBuildIOType> outMap = new HashMap<IBuildIOType, IBuildIOType>();
-		
+
 		stepsMatch(step, oStep, inMap, outMap, true);
-		
+
 		Map<IBuildIOType, IBuildIOType> map = up ? outMap : inMap;
-		
+
 		for (Entry<IBuildIOType, IBuildIOType> entry : map.entrySet()) {
 			doTestType(entry.getKey(), entry.getValue());
 		}
 	}
-	
+
 	private void doTestType(IBuildIOType type, IBuildIOType oType){
 		Map<IBuildResource, IBuildResource> map = new HashMap<IBuildResource, IBuildResource>();
-		
+
 		typesMatch(type, oType, map, true);
-		
+
 		for (Entry<IBuildResource, IBuildResource> entry : map.entrySet()) {
 			doTestResource(entry.getKey(), entry.getValue(), !type.isInput());
 		}
 	}
-	
+
 	private void doTestResource(IBuildResource rc, IBuildResource oRc, boolean up){
 		Map<IBuildIOType, IBuildIOType> outMap = new HashMap<IBuildIOType, IBuildIOType>();
-		
+
 		doTestResourceMatch(rc, oRc, outMap);
-		
+
 		if(!up){
 			typesMatch(rc.getProducerIOType(), oRc.getProducerIOType(), null, true);
 			doTestStep(rc.getProducerIOType().getStep(), oRc.getProducerIOType().getStep(), up);
 		} else {
 			Set<IBuildStep> stepSet = new HashSet<IBuildStep>();
-			
+
 			for (Entry<IBuildIOType, IBuildIOType> entry : outMap.entrySet()) {
 				IBuildIOType type = entry.getKey();
-				
+
 				IBuildStep step = type.getStep();
 				if(stepSet.add(step)){
 					IBuildIOType oType = entry.getValue();
@@ -608,38 +610,38 @@ public class BuildDescriptionModelTests extends TestCase {
 			}
 		}
 	}
-	
+
 	private void doTestResourceMatch(IBuildResource rc, IBuildResource oRc, Map<IBuildIOType, IBuildIOType> outTypeMap){
-		
+
 		doTrace("matching resource " + DbgUtil.resourceName(rc));
-		
+
 		if(!rc.getLocation().equals(oRc.getLocation()))
 			doFail("different resource locsations", rc, oRc);
-		
+
 		IBuildIOType inType = rc.getProducerIOType();
 		IBuildIOType oInType = oRc.getProducerIOType();
-		
+
 		typesMatch(inType, oInType, null, true);
-		
-		
+
+
 		IBuildIOType outTypes[] = rc.getDependentIOTypes();
 		IBuildIOType oOutTypes[] = oRc.getDependentIOTypes();
-		
+
 		if(outTypes.length != oOutTypes.length)
 			doFail("resources do not match: different number of output types", rc, oRc);
-		
+
 		for(int i = 0; i < outTypes.length; i++){
 			IBuildIOType oType = getCorType(outTypes[i], oOutTypes);
 			if(oType == null)
 				doFail("resources not match: no cor dep type found", rc, oRc);
-			
+
 			Object obj = outTypeMap.put(outTypes[i], oType);
-			
+
 			if(obj != null){
 				doFail("there was corresponding type",rc, oRc);
 			}
 		}
-		
+
 		doTrace("end matching resource");
 	}
 
@@ -651,9 +653,9 @@ public class BuildDescriptionModelTests extends TestCase {
 	private boolean stepsMatch(IBuildStep step, IBuildStep oStep, Map<IBuildIOType, IBuildIOType> inTypeMap, Map<IBuildIOType, IBuildIOType> outTypeMap, boolean checkSteps, boolean failOnErr){
 		IBuildIOType inTypes[] = step.getInputIOTypes();
 		IBuildIOType oInTypes[] = oStep.getInputIOTypes();
-		
+
 		doTrace("matching step " + DbgUtil.stepName(step));
-		
+
 		if(inTypes.length != oInTypes.length){
 			if(failOnErr)
 				doFail("steps do not match: different number of input types",step, oStep);
@@ -666,9 +668,9 @@ public class BuildDescriptionModelTests extends TestCase {
 					doFail("steps not match, no corresponding input type found", step, oStep);
 				return false;
 			}
-			
+
 			Object obj = inTypeMap.put(inTypes[i], oType);
-			
+
 			if(obj != null){
 				if(failOnErr)
 					doFail("there was already corresponding input type", step, oStep);
@@ -678,13 +680,13 @@ public class BuildDescriptionModelTests extends TestCase {
 
 		IBuildIOType outTypes[] = step.getOutputIOTypes();
 		IBuildIOType oOutTypes[] = oStep.getOutputIOTypes();
-		
+
 		if(outTypes.length != oOutTypes.length){
 			if(failOnErr)
 				doFail("steps do not match: different number of output types", step, oStep);
 			return false;
 		}
-		
+
 		for(int i = 0; i < outTypes.length; i++){
 			IBuildIOType oType = getCorType(outTypes[i], oOutTypes, null, checkSteps);
 			if(oType == null){
@@ -692,18 +694,18 @@ public class BuildDescriptionModelTests extends TestCase {
 					doFail("steps not match, no corresponding output type found", step, oStep);
 				return false;
 			}
-			
+
 			Object obj = outTypeMap.put(outTypes[i], oType);
-			
+
 			if(obj != null){
 				if(failOnErr)
 					doFail("there was already corresponding output type", step, oStep);
 				return false;
 			}
 		}
-		
+
 		doTrace("end matching step");
-		
+
 		return true;
 	}
 
@@ -715,31 +717,31 @@ public class BuildDescriptionModelTests extends TestCase {
 		for(int i = 0; i < oTypes.length; i++){
 			if(typesMatch(type, oTypes[i], rcMap, checkSteps, false))
 				return oTypes[i];
-			
+
 			if(rcMap != null)
 				rcMap.clear();
 		}
-		
+
 		return null;
-/*		
+/*
 		IBuildStep step = type.getStep();
 		IBuildResource rcs[] = type.getResources();
 		for(int i = 0; i < oTypes.length; i++){
 			if(type.isInput() != oTypes[i].isInput())
 				continue;
-			
+
 			IBuildResource oRcs[] = oTypes[i].getResources();
-			
+
 			if(rcs.length != oRcs.length)
 				continue;
-			
+
 			if(resourcesMatch(rcs, oRcs, null)){
 				if(!checkSteps)
 					return oTypes[i];
 				IBuildIOType oType = oTypes[i];
 				IBuildStep step = type.getStep();
 				IBuildStep oStep = oType.getStep();
-				
+
 				if(typesMatch(step.get))
 				for(int j = 0; j < )
 			}
@@ -753,7 +755,7 @@ public class BuildDescriptionModelTests extends TestCase {
 	}
 
 	private boolean typesMatch(IBuildIOType type, IBuildIOType oType, Map<IBuildResource, IBuildResource> rcMap, boolean checkStep, boolean failOnError){
-		
+
 //		doTrace("matching io type");
 		if(type.isInput() != oType.isInput()){
 			if(failOnError){
@@ -761,12 +763,12 @@ public class BuildDescriptionModelTests extends TestCase {
 			}
 			return false;
 		}
-		
+
 		IBuildResource rcs[] = type.getResources();
 		IBuildResource oRcs[] = oType.getResources();
 		if(rcs.length != oRcs.length)
 			return false;
-		
+
 		if(resourcesMatch(rcs, oRcs, rcMap)){
 			Map<IBuildIOType, IBuildIOType> inMap = new HashMap<IBuildIOType, IBuildIOType>();
 			Map<IBuildIOType, IBuildIOType> outMap = new HashMap<IBuildIOType, IBuildIOType>();
@@ -780,11 +782,11 @@ public class BuildDescriptionModelTests extends TestCase {
 
 		return false;
 	}
-	
+
 	private boolean resourcesMatch(IBuildResource rcs[], IBuildResource oRcs[], Map<IBuildResource, IBuildResource> rcMap){
 		if(rcs.length != oRcs.length)
 			return false;
-		
+
 		for(int j = 0; j < rcs.length; j++){
 			IPath location = rcs[j].getLocation();
 			int k;
@@ -817,25 +819,25 @@ public class BuildDescriptionModelTests extends TestCase {
 		DbgUtil.trace(getClass().getSimpleName()+'.'+getName()+ ": "+ message+dump);
 		fail(message+" (see console output)");
 	}
-	
+
 	private void doTrace(String str){
 		if(DbgUtil.DEBUG)
 			DbgUtil.trace(str);
 	}
-	
+
 	private void doTestBuildDescription(IBuildDescription des, IBuildDescription tDes){
 		assertEquals(des.getConfiguration(), tDes.getConfiguration());
-		
+
 		assertNotNull(des.getConfiguration());
-		
+
 		IBuildStep inStep = des.getInputStep();
 		IBuildStep outStep = des.getOutputStep();
-		
+
 		if(inStep.getInputIOTypes().length !=  0){
 			doFail("input step contains unexpected inputs", DbgUtil.dumpStep(inStep));
 		}
 		if(outStep.getOutputIOTypes().length !=  0){
-			doFail("output step contains unexpected outputs", DbgUtil.dumpStep(outStep)); 
+			doFail("output step contains unexpected outputs", DbgUtil.dumpStep(outStep));
 		}
 
 		IBuildStep tInStep = tDes.getInputStep();
@@ -844,36 +846,36 @@ public class BuildDescriptionModelTests extends TestCase {
 		doTrace("*****testing down to up..");
 		doTestStep(inStep, tInStep, true);
 		doTrace("*****down to up passed");
-		
+
 		doTrace("*****testing up to down..");
 		doTestStep(outStep, tOutStep, false);
 		doTrace("*****up to down passed");
 	}
-	
+
 	@Override
 	protected void tearDown() throws Exception {
 		fCleaner.run();
 		if(DbgUtil.DEBUG)
 			DbgUtil.flush();
 	}
-	
+
 	private IProject createProject(String name, String id){
 		IProject proj = ManagedBuildTestHelper.createProject(name, id);
 		if(proj != null)
 			fCompositeCleaner.addRunnable(new ProjectCleaner(proj));
-		
+
 		return proj;
 	}
-	
+
 	private IProject loadProject(String name){
 		IProject proj = ManagedBuildTestHelper.loadProject(name, PROJ_PATH);
 		if(proj != null)
 			fCompositeCleaner.addRunnable(new ProjectCleaner(proj));
-		
+
 		return proj;
 	}
 
-	
+
 	public void testDes_gnu30_exe(){
 		IProject project = createProject(PREFIX + "1", "cdt.managedbuild.target.gnu30.exe");
 		try {
@@ -881,16 +883,16 @@ public class BuildDescriptionModelTests extends TestCase {
 		} catch (CoreException e1) {
 			fail("fail to add CC nature");
 		}
-		
+
 		ManagedBuildTestHelper.createFile(project, "a.c");
 		ManagedBuildTestHelper.createFile(project, "b.c");
 		ManagedBuildTestHelper.createFile(project, "c.cpp");
 		ManagedBuildTestHelper.createFile(project, "d.cpp");
-	
+
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 		IManagedProject mProj = info.getManagedProject();
 		IConfiguration cfg = mProj.getConfigurations()[0];
-		
+
 		String artifactName=null;
 		try {
 			artifactName = ManagedBuildManager.getBuildMacroProvider().resolveValue(cfg.getArtifactName(), "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, cfg);
@@ -900,20 +902,20 @@ public class BuildDescriptionModelTests extends TestCase {
 		String ext = cfg.getArtifactExtension();
 		if(ext != null && ext.length() > 0)
 			artifactName = artifactName + "." + ext;
-		
+
 		String cName = cfg.getName();
 
 		BuildDescription tDes = new BuildDescription(cfg);
 		BuildStep step;
 		BuildIOType type;
-		
+
 		//
 		step = (BuildStep)tDes.getInputStep();
 
 			type = step.createIOType(false, false, null);
 			type.addResource(tDes.createResource("c.cpp"));
 			type.addResource(tDes.createResource("d.cpp"));
-			
+
 			type = step.createIOType(false, false, null);
 			type.addResource(tDes.createResource("a.c"));
 			type.addResource(tDes.createResource("b.c"));
@@ -921,55 +923,55 @@ public class BuildDescriptionModelTests extends TestCase {
 		//
 		//
 		step = tDes.createStep(null, null);
-		
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource("a.c"));
-			
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(cName + "/a.o"));
 		//
 		//
 		step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource("b.c"));
-		
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(cName + "/b.o"));
 		//
 		//
 		step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource("c.cpp"));
-		
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(cName + "/c.o"));
 		//
 		//
 		step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource("d.cpp"));
-		
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(cName + "/d.o"));
 		//
 		//
 		step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, true, null);
 			type.addResource(tDes.createResource(cName + "/a.o"));
 			type.addResource(tDes.createResource(cName + "/b.o"));
 			type.addResource(tDes.createResource(cName + "/c.o"));
 			type.addResource(tDes.createResource(cName + "/d.o"));
-			
+
 			type = step.createIOType(false, false, null);
 			type.addResource(tDes.createResource(cName + "/" + artifactName));
 		//
 		//
 		step = (BuildStep)tDes.getOutputStep();
-			
+
 			type = step.createIOType(true, true, null);
 			type.addResource(tDes.createResource(cName + "/" + artifactName));
 		//
@@ -983,7 +985,7 @@ public class BuildDescriptionModelTests extends TestCase {
 
 		doTestBuildDescription(des, tDes);
 	}
-	
+
 	public void testDes_gnu30_exe_deps(){
 		IProject project = createProject(PREFIX + "gnu30_exe_deps", "cdt.managedbuild.target.gnu30.exe");
 		try {
@@ -991,7 +993,7 @@ public class BuildDescriptionModelTests extends TestCase {
 		} catch (CoreException e1) {
 			fail("fail to add CC nature");
 		}
-		
+
 		ManagedBuildTestHelper.createFile(project, "a.c", "\n#include \"a.h\"\n#include \"d.h\"\n");
 		ManagedBuildTestHelper.createFile(project, "b.c");
 		ManagedBuildTestHelper.createFile(project, "c.cpp", "\n#include \"b.h\"\n#include \"e.h\"\n");
@@ -1002,7 +1004,7 @@ public class BuildDescriptionModelTests extends TestCase {
 		ManagedBuildTestHelper.createFile(project, "d.h", "\n");
 		ManagedBuildTestHelper.createFile(project, "e.h", "\n");
 		ManagedBuildTestHelper.createFile(project, "f.h", "\n");
-	
+
 		ICProject cProject = CoreModel.getDefault().create(project);
 		CCorePlugin.getIndexManager().setIndexerId(cProject, IPDOMManager.ID_FAST_INDEXER);
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
@@ -1018,20 +1020,20 @@ public class BuildDescriptionModelTests extends TestCase {
 		String ext = cfg.getArtifactExtension();
 		if(ext != null && ext.length() > 0)
 			artifactName = artifactName + "." + ext;
-		
+
 		String cName = cfg.getName();
 
 		BuildDescription tDes = new BuildDescription(cfg);
 		BuildStep step;
 		BuildIOType type;
-		
+
 		//
 		step = (BuildStep)tDes.getInputStep();
 
 			type = step.createIOType(false, false, null);
 			type.addResource(tDes.createResource("c.cpp"));
 			type.addResource(tDes.createResource("d.cpp"));
-			
+
 			type = step.createIOType(false, false, null);
 			type.addResource(tDes.createResource("a.c"));
 			type.addResource(tDes.createResource("b.c"));
@@ -1045,7 +1047,7 @@ public class BuildDescriptionModelTests extends TestCase {
 		//
 		//
 		step = tDes.createStep(null, null);
-		
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource("a.c"));
 
@@ -1060,16 +1062,16 @@ public class BuildDescriptionModelTests extends TestCase {
 		//
 		//
 		step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource("b.c"));
-		
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(cName + "/b.o"));
 		//
 		//
 		step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource("c.cpp"));
 
@@ -1083,28 +1085,28 @@ public class BuildDescriptionModelTests extends TestCase {
 		//
 		//
 		step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource("d.cpp"));
-		
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(cName + "/d.o"));
 		//
 		//
 		step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, true, null);
 			type.addResource(tDes.createResource(cName + "/a.o"));
 			type.addResource(tDes.createResource(cName + "/b.o"));
 			type.addResource(tDes.createResource(cName + "/c.o"));
 			type.addResource(tDes.createResource(cName + "/d.o"));
-			
+
 			type = step.createIOType(false, false, null);
 			type.addResource(tDes.createResource(cName + "/" + artifactName));
 		//
 		//
 		step = (BuildStep)tDes.getOutputStep();
-			
+
 			type = step.createIOType(true, true, null);
 			type.addResource(tDes.createResource(cName + "/" + artifactName));
 		//
@@ -1121,7 +1123,7 @@ public class BuildDescriptionModelTests extends TestCase {
 			Thread.sleep(5000);
 		} catch (InterruptedException e) {
 		}
-		
+
 		CCorePlugin.getIndexManager().joinIndexer(-1, new NullProgressMonitor());
 		CCorePlugin.getIndexManager().reindex(cProject);
 		CCorePlugin.getIndexManager().joinIndexer(-1, new NullProgressMonitor());
@@ -1135,7 +1137,7 @@ public class BuildDescriptionModelTests extends TestCase {
 
 		doTestBuildDescription(des, tDes);
 	}
-	
+
 	public void testDesTestgnu21_exe(){
 		IProject project = createProject(PREFIX + "1", "cdt.managedbuild.target.testgnu21.exe");
 		try {
@@ -1143,12 +1145,12 @@ public class BuildDescriptionModelTests extends TestCase {
 		} catch (CoreException e1) {
 			fail("fail to add CC nature");
 		}
-		
+
 		ManagedBuildTestHelper.createFile(project, "a.c");
 		ManagedBuildTestHelper.createFile(project, "b.c");
 		ManagedBuildTestHelper.createFile(project, "c.cpp");
 		ManagedBuildTestHelper.createFile(project, "d.cpp");
-	
+
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 		IManagedProject mProj = info.getManagedProject();
 		IConfiguration cfg = mProj.getConfigurations()[0];
@@ -1161,20 +1163,20 @@ public class BuildDescriptionModelTests extends TestCase {
 		String ext = cfg.getArtifactExtension();
 		if(ext != null && ext.length() > 0)
 			artifactName = artifactName + "." + ext;
-		
+
 		String cName = cfg.getName();
 
 		BuildDescription tDes = new BuildDescription(cfg);
 		BuildStep step;
 		BuildIOType type;
-		
+
 		//
 		step = (BuildStep)tDes.getInputStep();
 
 			type = step.createIOType(false, false, null);
 			type.addResource(tDes.createResource("c.cpp"));
 			type.addResource(tDes.createResource("d.cpp"));
-			
+
 			type = step.createIOType(false, false, null);
 			type.addResource(tDes.createResource("a.c"));
 			type.addResource(tDes.createResource("b.c"));
@@ -1182,55 +1184,55 @@ public class BuildDescriptionModelTests extends TestCase {
 		//
 		//
 		step = tDes.createStep(null, null);
-		
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource("a.c"));
-			
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(cName + "/a.o"));
 		//
 		//
 		step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource("b.c"));
-		
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(cName + "/b.o"));
 		//
 		//
 		step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource("c.cpp"));
-		
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(cName + "/c.o"));
 		//
 		//
 		step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource("d.cpp"));
-		
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(cName + "/d.o"));
 		//
 		//
 		step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, true, null);
 			type.addResource(tDes.createResource(cName + "/a.o"));
 			type.addResource(tDes.createResource(cName + "/b.o"));
 			type.addResource(tDes.createResource(cName + "/c.o"));
 			type.addResource(tDes.createResource(cName + "/d.o"));
-			
+
 			type = step.createIOType(false, false, null);
 			type.addResource(tDes.createResource(cName + "/" + artifactName));
 		//
 		//
 		step = (BuildStep)tDes.getOutputStep();
-			
+
 			type = step.createIOType(true, true, null);
 			type.addResource(tDes.createResource(cName + "/" + artifactName));
 		//
@@ -1244,7 +1246,7 @@ public class BuildDescriptionModelTests extends TestCase {
 
 		doTestBuildDescription(des, tDes);
 	}
-	
+
 	public void testDesRcCfg(){
 		IProject project = createProject(PREFIX + "1", "cdt.managedbuild.target.gnu30.exe");
 		try {
@@ -1252,12 +1254,12 @@ public class BuildDescriptionModelTests extends TestCase {
 		} catch (CoreException e1) {
 			fail("fail to add CC nature");
 		}
-		
+
 		IFile ac = ManagedBuildTestHelper.createFile(project, "a.c");
 		ManagedBuildTestHelper.createFile(project, "b.c");
 		IFile ccpp = ManagedBuildTestHelper.createFile(project, "c.cpp");
 		ManagedBuildTestHelper.createFile(project, "d.cpp");
-	
+
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 		IManagedProject mProj = info.getManagedProject();
 		IConfiguration cfg = mProj.getConfigurations()[0];
@@ -1271,7 +1273,7 @@ public class BuildDescriptionModelTests extends TestCase {
 		String ext = cfg.getArtifactExtension();
 		if(ext != null && ext.length() > 0)
 			artifactName = artifactName + "." + ext;
-		
+
 		String cName = cfg.getName();
 		IResourceConfiguration rcCfg = cfg.createResourceConfiguration(ac);
 		assertNotNull(rcCfg);
@@ -1281,14 +1283,14 @@ public class BuildDescriptionModelTests extends TestCase {
 		BuildDescription tDes = new BuildDescription(cfg);
 		BuildStep step;
 		BuildIOType type;
-		
+
 		//
 		step = (BuildStep)tDes.getInputStep();
 
 			type = step.createIOType(false, false, null);
 			type.addResource(tDes.createResource("c.cpp"));
 			type.addResource(tDes.createResource("d.cpp"));
-			
+
 			type = step.createIOType(false, false, null);
 			type.addResource(tDes.createResource("a.c"));
 			type.addResource(tDes.createResource("b.c"));
@@ -1296,55 +1298,55 @@ public class BuildDescriptionModelTests extends TestCase {
 		//
 		//
 		step = tDes.createStep(null, null);
-		
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource("a.c"));
-			
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(cName + "/a.o"));
 		//
 		//
 		step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource("b.c"));
-		
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(cName + "/b.o"));
 		//
 		//
 		step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource("c.cpp"));
-		
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(cName + "/c.o"));
 		//
 		//
 		step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource("d.cpp"));
-		
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(cName + "/d.o"));
 		//
 		//
 		step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, true, null);
 			type.addResource(tDes.createResource(cName + "/a.o"));
 			type.addResource(tDes.createResource(cName + "/b.o"));
 			type.addResource(tDes.createResource(cName + "/c.o"));
 			type.addResource(tDes.createResource(cName + "/d.o"));
-			
+
 			type = step.createIOType(false, false, null);
 			type.addResource(tDes.createResource(cName + "/" + artifactName));
 		//
 		//
 		step = (BuildStep)tDes.getOutputStep();
-			
+
 			type = step.createIOType(true, true, null);
 			type.addResource(tDes.createResource(cName + "/" + artifactName));
 		//
@@ -1367,7 +1369,7 @@ public class BuildDescriptionModelTests extends TestCase {
 		} catch (CoreException e1) {
 			fail("fail to add CC nature");
 		}
-		
+
 		ManagedBuildTestHelper.createFile(project, "a.c");
 		ManagedBuildTestHelper.createFile(project, "b.c");
 		IFile ccpp = ManagedBuildTestHelper.createFile(project, "c.cpp");
@@ -1377,12 +1379,12 @@ public class BuildDescriptionModelTests extends TestCase {
 		ManagedBuildTestHelper.createFile(project, "dir1/g.r");
 		ManagedBuildTestHelper.createFile(project, "dir2/h.r");
 		ManagedBuildTestHelper.createFile(project, "dir2/i.r");
-		
-		
+
+
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 		IManagedProject mProj = info.getManagedProject();
 		IConfiguration cfg = mProj.getConfigurations()[0];
-		
+
 		String artifactName=null;
 		try {
 			artifactName = ManagedBuildManager.getBuildMacroProvider().resolveValue(cfg.getArtifactName(), "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, cfg);
@@ -1392,11 +1394,11 @@ public class BuildDescriptionModelTests extends TestCase {
 		String ext = cfg.getArtifactExtension();
 		if(ext != null && ext.length() > 0)
 			artifactName = artifactName + "." + ext;
-		
+
 		String cName = cfg.getName();
 		String out = cName + "/";
-		
-		
+
+
 		ManagedBuildTestHelper.createRcbsTool(cfg, ccpp, "f.r;dir1/g.r;dir2/h.r", "q.o;w.o;e.o", "a;b;c");
 		ManagedBuildTestHelper.createRcbsTool(cfg, er, "f.r;dir1/g.r;dir2/h.r;dir2/i.r", "z.cpp;x.c", "d;e;f");
 //		IResourceConfiguration rcCfg = cfg.createResourceConfiguration(ac);
@@ -1407,14 +1409,14 @@ public class BuildDescriptionModelTests extends TestCase {
 		BuildDescription tDes = new BuildDescription(cfg);
 		BuildStep step;
 		BuildIOType type;
-		
+
 		//
 		step = (BuildStep)tDes.getInputStep();
 
 			type = step.createIOType(false, false, null);
 			type.addResource(tDes.createResource("c.cpp"));
 			type.addResource(tDes.createResource("d.cpp"));
-			
+
 			type = step.createIOType(false, false, null);
 			type.addResource(tDes.createResource("a.c"));
 			type.addResource(tDes.createResource("b.c"));
@@ -1428,25 +1430,25 @@ public class BuildDescriptionModelTests extends TestCase {
 		//
 		//
 		step = tDes.createStep(null, null);
-		
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource("a.c"));
-			
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(cName + "/a.o"));
 		//
 		//
 		step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource("b.c"));
-		
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(cName + "/b.o"));
 		//
 		//
 		step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource("c.cpp"));
 
@@ -1462,16 +1464,16 @@ public class BuildDescriptionModelTests extends TestCase {
 		//
 		//
 		step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource("d.cpp"));
-		
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(cName + "/d.o"));
 		//
 		//
 		step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource("e.r"));
 
@@ -1480,7 +1482,7 @@ public class BuildDescriptionModelTests extends TestCase {
 			type.addResource(tDes.createResource("dir1/g.r"));
 			type.addResource(tDes.createResource("dir2/h.r"));
 			type.addResource(tDes.createResource("dir2/i.r"));
-		
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(out + "z.cpp"));
 			type.addResource(tDes.createResource(out + "x.c"));
@@ -1490,25 +1492,25 @@ public class BuildDescriptionModelTests extends TestCase {
 		//
 		//
 		step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource(out + "z.cpp"));
-		
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(cName + "/z.o"));
 		//
 		//
 		step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource(out + "x.c"));
-		
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(cName + "/x.o"));
 		//
 		//
 		step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, true, null);
 			type.addResource(tDes.createResource(cName + "/a.o"));
 			type.addResource(tDes.createResource(cName + "/b.o"));
@@ -1522,13 +1524,13 @@ public class BuildDescriptionModelTests extends TestCase {
 //			type.addResource(tDes.createResource(cName + "/r.o"));
 //			type.addResource(tDes.createResource(cName + "/t.o"));
 //			type.addResource(tDes.createResource(cName + "/y.o"));
-			
+
 			type = step.createIOType(false, false, null);
 			type.addResource(tDes.createResource(cName + "/" + artifactName));
 		//
 		//
 		step = (BuildStep)tDes.getOutputStep();
-			
+
 			type = step.createIOType(true, true, null);
 			type.addResource(tDes.createResource(cName + "/" + artifactName));
 		//
@@ -1551,7 +1553,7 @@ public class BuildDescriptionModelTests extends TestCase {
 		} catch (CoreException e1) {
 			fail("fail to add CC nature");
 		}
-		
+
 		ManagedBuildTestHelper.createFile(project, "a.c");
 		ManagedBuildTestHelper.createFile(project, "b.c");
 		IFile ccpp = ManagedBuildTestHelper.createFile(project, "c.cpp");
@@ -1563,8 +1565,8 @@ public class BuildDescriptionModelTests extends TestCase {
 		ManagedBuildTestHelper.createFile(project, "dir2/i.r");
 		ManagedBuildTestHelper.createFile(project, "o1.o");
 		ManagedBuildTestHelper.createFile(project, "dir3/o2.o");
-		
-		
+
+
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 		IManagedProject mProj = info.getManagedProject();
 		IConfiguration cfg = mProj.getConfigurations()[0];
@@ -1578,13 +1580,13 @@ public class BuildDescriptionModelTests extends TestCase {
 		String ext = cfg.getArtifactExtension();
 		if(ext != null && ext.length() > 0)
 			artifactName = artifactName + "." + ext;
-		
+
 		String cName = cfg.getName();
 		String out = cName + "/";
-		
+
 		ManagedBuildTestHelper.setObjs(cfg, new String[]{"o1.o", "dir3/o2.o", "dir4/d/o3.o"});
-		
-		
+
+
 		ManagedBuildTestHelper.createRcbsTool(cfg, ccpp, "f.r;dir1/g.r;dir2/h.r", "q.o;w.o;e.o", "a;b;c");
 		ManagedBuildTestHelper.createRcbsTool(cfg, er, "f.r;dir1/g.r;dir2/h.r;dir2/i.r", "z.cpp;x.c", "d;e;f");
 //		IResourceConfiguration rcCfg = cfg.createResourceConfiguration(ac);
@@ -1595,14 +1597,14 @@ public class BuildDescriptionModelTests extends TestCase {
 		BuildDescription tDes = new BuildDescription(cfg);
 		BuildStep step;
 		BuildIOType type;
-		
+
 		//
 		step = (BuildStep)tDes.getInputStep();
 
 			type = step.createIOType(false, false, null);
 			type.addResource(tDes.createResource("c.cpp"));
 			type.addResource(tDes.createResource("d.cpp"));
-			
+
 			type = step.createIOType(false, false, null);
 			type.addResource(tDes.createResource("a.c"));
 			type.addResource(tDes.createResource("b.c"));
@@ -1613,7 +1615,7 @@ public class BuildDescriptionModelTests extends TestCase {
 			type.addResource(tDes.createResource("dir1/g.r"));
 			type.addResource(tDes.createResource("dir2/h.r"));
 			type.addResource(tDes.createResource("dir2/i.r"));
-			
+
 			type = step.createIOType(false, false, null);
 			type.addResource(tDes.createResource("o1.o"));
 			type.addResource(tDes.createResource("dir3/o2.o"));
@@ -1622,25 +1624,25 @@ public class BuildDescriptionModelTests extends TestCase {
 		//
 		//
 		step = tDes.createStep(null, null);
-		
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource("a.c"));
-			
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(cName + "/a.o"));
 		//
 		//
 		step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource("b.c"));
-		
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(cName + "/b.o"));
 		//
 		//
 		step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource("c.cpp"));
 
@@ -1656,16 +1658,16 @@ public class BuildDescriptionModelTests extends TestCase {
 		//
 		//
 		step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource("d.cpp"));
-		
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(cName + "/d.o"));
 		//
 		//
 		step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource("e.r"));
 
@@ -1674,7 +1676,7 @@ public class BuildDescriptionModelTests extends TestCase {
 			type.addResource(tDes.createResource("dir1/g.r"));
 			type.addResource(tDes.createResource("dir2/h.r"));
 			type.addResource(tDes.createResource("dir2/i.r"));
-		
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(out + "z.cpp"));
 			type.addResource(tDes.createResource(out + "x.c"));
@@ -1684,25 +1686,25 @@ public class BuildDescriptionModelTests extends TestCase {
 		//
 		//
 		step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource(out + "z.cpp"));
-		
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(cName + "/z.o"));
 		//
 		//
 		step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource(out + "x.c"));
-		
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(cName + "/x.o"));
 		//
 		//
 		step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, true, null);
 			type.addResource(tDes.createResource(cName + "/a.o"));
 			type.addResource(tDes.createResource(cName + "/b.o"));
@@ -1727,7 +1729,7 @@ public class BuildDescriptionModelTests extends TestCase {
 		//
 		//
 		step = (BuildStep)tDes.getOutputStep();
-			
+
 			type = step.createIOType(true, true, null);
 			type.addResource(tDes.createResource(cName + "/" + artifactName));
 		//
@@ -1742,7 +1744,7 @@ public class BuildDescriptionModelTests extends TestCase {
 		doTestBuildDescription(des, tDes);
 
 	}
-	
+
 	public void testDesAddlInVar(){
 		IProject project = createProject(PREFIX + "1", "cdt.managedbuild.target.bdm.exe");
 		try {
@@ -1750,7 +1752,7 @@ public class BuildDescriptionModelTests extends TestCase {
 		} catch (CoreException e1) {
 			fail("fail to add CC nature");
 		}
-		
+
 		ManagedBuildTestHelper.createFile(project, "a.c");
 		ManagedBuildTestHelper.createFile(project, "b.c");
 		ManagedBuildTestHelper.createFile(project, "c.cpp");
@@ -1759,11 +1761,11 @@ public class BuildDescriptionModelTests extends TestCase {
 		ManagedBuildTestHelper.createFile(project, "dir/f.s1");
 		ManagedBuildTestHelper.createFile(project, "g.s2");
 		ManagedBuildTestHelper.createFile(project, "dir/h.s2");
-	
+
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 		IManagedProject mProj = info.getManagedProject();
 		IConfiguration cfg = mProj.getConfigurations()[0];
-		
+
 		String artifactName=null;
 		try {
 			artifactName = ManagedBuildManager.getBuildMacroProvider().resolveValue(cfg.getArtifactName(), "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, cfg);
@@ -1773,21 +1775,21 @@ public class BuildDescriptionModelTests extends TestCase {
 		String ext = cfg.getArtifactExtension();
 		if(ext != null && ext.length() > 0)
 			artifactName = artifactName + "." + ext;
-		
+
 		String cName = cfg.getName();
 		String out = cName + "/";
 
 		BuildDescription tDes = new BuildDescription(cfg);
 		BuildStep step;
 		BuildIOType type;
-		
+
 		//
 		step = (BuildStep)tDes.getInputStep();
 
 			type = step.createIOType(false, false, null);
 			type.addResource(tDes.createResource("c.cpp"));
 			type.addResource(tDes.createResource("d.cpp"));
-			
+
 			type = step.createIOType(false, false, null);
 			type.addResource(tDes.createResource("a.c"));
 			type.addResource(tDes.createResource("b.c"));
@@ -1802,87 +1804,87 @@ public class BuildDescriptionModelTests extends TestCase {
 		//
 		//
 			step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource("e.s1"));
-			
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(out + "e.o1"));
 		//
 		//
 			step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource("dir/f.s1"));
-			
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(out + "dir/f.o1"));
 		//
 		//
 			step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource("g.s2"));
 
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource(out + "e.o1"));
 			type.addResource(tDes.createResource(out + "dir/f.o1"));
-			
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(out + "g.o"));
 		//
 		//
 			step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource("dir/h.s2"));
 
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource(out + "e.o1"));
 			type.addResource(tDes.createResource(out + "dir/f.o1"));
-			
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(out + "dir/h.o"));
 		//
 		//
 		step = tDes.createStep(null, null);
-		
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource("a.c"));
-			
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(cName + "/a.o"));
 		//
 		//
 		step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource("b.c"));
-		
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(cName + "/b.o"));
 		//
 		//
 		step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource("c.cpp"));
-		
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(cName + "/c.o"));
 		//
 		//
 		step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource("d.cpp"));
-		
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(cName + "/d.o"));
 		//
 		//
 		step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, true, null);
 			type.addResource(tDes.createResource(cName + "/a.o"));
 			type.addResource(tDes.createResource(cName + "/b.o"));
@@ -1890,13 +1892,13 @@ public class BuildDescriptionModelTests extends TestCase {
 			type.addResource(tDes.createResource(cName + "/d.o"));
 			type.addResource(tDes.createResource(out + "g.o"));
 			type.addResource(tDes.createResource(out + "dir/h.o"));
-			
+
 			type = step.createIOType(false, false, null);
 			type.addResource(tDes.createResource(cName + "/" + artifactName));
 		//
 		//
 		step = (BuildStep)tDes.getOutputStep();
-			
+
 			type = step.createIOType(true, true, null);
 			type.addResource(tDes.createResource(cName + "/" + artifactName));
 		//
@@ -1918,18 +1920,18 @@ public class BuildDescriptionModelTests extends TestCase {
 		} catch (CoreException e1) {
 			fail("fail to add CC nature");
 		}
-		
+
 		ManagedBuildTestHelper.createFile(project, "a.c");
 		ManagedBuildTestHelper.createFile(project, "b.c");
 		ManagedBuildTestHelper.createFile(project, "c.cpp");
 		ManagedBuildTestHelper.createFile(project, "d.cpp");
 		ManagedBuildTestHelper.createFile(project, "e.o");
 		ManagedBuildTestHelper.createFile(project, "dir/f.o");
-	
+
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 		IManagedProject mProj = info.getManagedProject();
 		IConfiguration cfg = mProj.getConfigurations()[0];
-		
+
 		String artifactName=null;
 		try {
 			artifactName = ManagedBuildManager.getBuildMacroProvider().resolveValue(cfg.getArtifactName(), "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, cfg);
@@ -1939,20 +1941,20 @@ public class BuildDescriptionModelTests extends TestCase {
 		String ext = cfg.getArtifactExtension();
 		if(ext != null && ext.length() > 0)
 			artifactName = artifactName + "." + ext;
-		
+
 		String cName = cfg.getName();
 
 		BuildDescription tDes = new BuildDescription(cfg);
 		BuildStep step;
 		BuildIOType type;
-		
+
 		//
 		step = (BuildStep)tDes.getInputStep();
 
 			type = step.createIOType(false, false, null);
 			type.addResource(tDes.createResource("c.cpp"));
 			type.addResource(tDes.createResource("d.cpp"));
-			
+
 			type = step.createIOType(false, false, null);
 			type.addResource(tDes.createResource("a.c"));
 			type.addResource(tDes.createResource("b.c"));
@@ -1960,55 +1962,55 @@ public class BuildDescriptionModelTests extends TestCase {
 		//
 		//
 		step = tDes.createStep(null, null);
-		
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource("a.c"));
-			
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(cName + "/a.o"));
 		//
 		//
 		step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource("b.c"));
-		
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(cName + "/b.o"));
 		//
 		//
 		step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource("c.cpp"));
-		
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(cName + "/c.o"));
 		//
 		//
 		step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, false, null);
 			type.addResource(tDes.createResource("d.cpp"));
-		
+
 			type = step.createIOType(false, true, null);
 			type.addResource(tDes.createResource(cName + "/d.o"));
 		//
 		//
 		step = tDes.createStep(null, null);
-			
+
 			type = step.createIOType(true, true, null);
 			type.addResource(tDes.createResource(cName + "/a.o"));
 			type.addResource(tDes.createResource(cName + "/b.o"));
 			type.addResource(tDes.createResource(cName + "/c.o"));
 			type.addResource(tDes.createResource(cName + "/d.o"));
-			
+
 			type = step.createIOType(false, false, null);
 			type.addResource(tDes.createResource(cName + "/" + artifactName));
 		//
 		//
 		step = (BuildStep)tDes.getOutputStep();
-			
+
 			type = step.createIOType(true, true, null);
 			type.addResource(tDes.createResource(cName + "/" + artifactName));
 		//
@@ -2022,7 +2024,7 @@ public class BuildDescriptionModelTests extends TestCase {
 
 		doTestBuildDescription(des, tDes);
 	}
-	
+
 	public void testDesRebuildState(){
 		IProject project = createProject(PREFIX + "1", "cdt.managedbuild.target.gnu30.exe");
 		try {
@@ -2030,22 +2032,22 @@ public class BuildDescriptionModelTests extends TestCase {
 		} catch (CoreException e1) {
 			fail("fail to add CC nature");
 		}
-		
+
 		ManagedBuildTestHelper.createFile(project, "a.c");
 		ManagedBuildTestHelper.createFile(project, "b.c");
 		ManagedBuildTestHelper.createFile(project, "c.cpp");
 		ManagedBuildTestHelper.createFile(project, "d.cpp");
 		ManagedBuildTestHelper.createFile(project, "e.o");
 		ManagedBuildTestHelper.createFile(project, "dir/f.o");
-	
+
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 		IManagedProject mProj = info.getManagedProject();
 		IConfiguration cfg = mProj.getConfigurations()[0];
-		
+
 		cfg.setRebuildState(false);
-		
+
 		assertFalse(cfg.needsRebuild());
-		
+
 		ITool targetTool = ((Configuration)cfg).calculateTargetTool();
 
 		cfg.setArtifactName("asdafasdfasdfasdfasdf");
@@ -2080,13 +2082,13 @@ public class BuildDescriptionModelTests extends TestCase {
 //		cfg.setRebuildState(false);
 		assertFalse(targetTool.needsRebuild());
 		assertFalse(cfg.needsRebuild());
-		
+
 		cfg.setPostannouncebuildStep("sdfasdfasdfsdfadfasf");
 		assertFalse(cfg.needsRebuild());
 
 		cfg.setPostbuildStep("asdf;asdf;asdf;asdf;asdf");
 		assertFalse(cfg.needsRebuild());
-		
+
 		cfg.setPreannouncebuildStep("sdfgsdgsdhnbvxcvbxcv");
 		assertFalse(cfg.needsRebuild());
 
@@ -2095,20 +2097,20 @@ public class BuildDescriptionModelTests extends TestCase {
 
 		ITool tools[] = cfg.getFilteredTools();
 		ITool tool = null;
-		
+
 		for(int i = 0; i < tools.length; i++){
 			tool = tools[i];
 			if(tool != targetTool)
 				break;
 		}
-		
+
 		cfg.setToolCommand(tool, "sdgsdcxvzcxvzxc");
 		assertTrue(tool.needsRebuild());
 		assertTrue(cfg.needsRebuild());
 		tool.setRebuildState(false);
 		assertFalse(tool.needsRebuild());
 		assertFalse(cfg.needsRebuild());
-		
+
 		cfg.setArtifactExtension("adsfasdfasdfasdfasdf");
 		assertTrue(targetTool.needsRebuild());
 		assertTrue(cfg.needsRebuild());
@@ -2129,16 +2131,16 @@ public class BuildDescriptionModelTests extends TestCase {
 		if(obj != null){
 			IHoldsOptions ho = (IHoldsOptions)obj[0];
 			IOption o = (IOption)obj[1];
-			
+
 			assertFalse(ho.needsRebuild());
 			assertFalse(cfg.needsRebuild());
-			
+
 			try {
 				cfg.setOption(ho, o, !o.getBooleanValue());
 			} catch (BuildException e) {
 				fail("failed to set the option: " + e.getLocalizedMessage());
 			}
-			
+
 			assertTrue(ho.needsRebuild());
 			assertTrue(cfg.needsRebuild());
 			ho.setRebuildState(false);
@@ -2150,16 +2152,16 @@ public class BuildDescriptionModelTests extends TestCase {
 		if(obj != null){
 			IHoldsOptions ho = (IHoldsOptions)obj[0];
 			IOption o = (IOption)obj[1];
-			
+
 			assertFalse(ho.needsRebuild());
 			assertFalse(cfg.needsRebuild());
-			
+
 			try {
 				cfg.setOption(ho, o, "sdfgsdfcvsdfgvxcsdf");
 			} catch (BuildException e) {
 				fail("failed to set the option: " + e.getLocalizedMessage());
 			}
-			
+
 			assertTrue(ho.needsRebuild());
 			assertTrue(cfg.needsRebuild());
 			ho.setRebuildState(false);
@@ -2171,16 +2173,16 @@ public class BuildDescriptionModelTests extends TestCase {
 		if(obj != null){
 			IHoldsOptions ho = (IHoldsOptions)obj[0];
 			IOption o = (IOption)obj[1];
-			
+
 			assertFalse(ho.needsRebuild());
 			assertFalse(cfg.needsRebuild());
-			
+
 			try {
 				cfg.setOption(ho, o, "sdfgsdfcvsdfgvxcfdgvsdf");
 			} catch (BuildException e) {
 				fail("failed to set the option: " + e.getLocalizedMessage());
 			}
-			
+
 			assertTrue(ho.needsRebuild());
 			assertTrue(cfg.needsRebuild());
 			ho.setRebuildState(false);
@@ -2192,16 +2194,16 @@ public class BuildDescriptionModelTests extends TestCase {
 		if(obj != null){
 			IHoldsOptions ho = (IHoldsOptions)obj[0];
 			IOption o = (IOption)obj[1];
-			
+
 			assertFalse(ho.needsRebuild());
 			assertFalse(cfg.needsRebuild());
-			
+
 			try {
 				cfg.setOption(ho, o, new String[]{"sdfgsd","fcvsdfgvxcfdgvsdf"});
 			} catch (BuildException e) {
 				fail("failed to set the option: " + e.getLocalizedMessage());
 			}
-			
+
 			assertTrue(ho.needsRebuild());
 			assertTrue(cfg.needsRebuild());
 			ho.setRebuildState(false);
@@ -2213,16 +2215,16 @@ public class BuildDescriptionModelTests extends TestCase {
 		if(obj != null){
 			IHoldsOptions ho = (IHoldsOptions)obj[0];
 			IOption o = (IOption)obj[1];
-			
+
 			assertFalse(ho.needsRebuild());
 			assertFalse(cfg.needsRebuild());
-			
+
 			try {
 				cfg.setOption(ho, o, new String[]{"sdfgsd","fcvsdfgvxcfdgvsdf"});
 			} catch (BuildException e) {
 				fail("failed to set the option: " + e.getLocalizedMessage());
 			}
-			
+
 			assertTrue(ho.needsRebuild());
 			assertTrue(cfg.needsRebuild());
 			ho.setRebuildState(false);
@@ -2230,21 +2232,21 @@ public class BuildDescriptionModelTests extends TestCase {
 			assertFalse(cfg.needsRebuild());
 		}
 
-		
+
 		obj = ManagedBuildTestHelper.getOption(cfg, IOption.PREPROCESSOR_SYMBOLS);
 		if(obj != null){
 			IHoldsOptions ho = (IHoldsOptions)obj[0];
 			IOption o = (IOption)obj[1];
-			
+
 			assertFalse(ho.needsRebuild());
 			assertFalse(cfg.needsRebuild());
-			
+
 			try {
 				cfg.setOption(ho, o, new String[]{"sdfgsd","fcvsdfgvxcfdgvsdf"});
 			} catch (BuildException e) {
 				fail("failed to set the option: " + e.getLocalizedMessage());
 			}
-			
+
 			assertTrue(ho.needsRebuild());
 			assertTrue(cfg.needsRebuild());
 			ho.setRebuildState(false);
@@ -2256,16 +2258,16 @@ public class BuildDescriptionModelTests extends TestCase {
 		if(obj != null){
 			IHoldsOptions ho = (IHoldsOptions)obj[0];
 			IOption o = (IOption)obj[1];
-			
+
 			assertFalse(ho.needsRebuild());
 			assertFalse(cfg.needsRebuild());
-			
+
 			try {
 				cfg.setOption(ho, o, new String[]{"sdfgsd","fcvsdfgvxcfdgvsdf"});
 			} catch (BuildException e) {
 				fail("failed to set the option: " + e.getLocalizedMessage());
 			}
-			
+
 			assertTrue(ho.needsRebuild());
 			assertTrue(cfg.needsRebuild());
 			ho.setRebuildState(false);
@@ -2277,16 +2279,16 @@ public class BuildDescriptionModelTests extends TestCase {
 		if(obj != null){
 			IHoldsOptions ho = (IHoldsOptions)obj[0];
 			IOption o = (IOption)obj[1];
-			
+
 			assertFalse(ho.needsRebuild());
 			assertFalse(cfg.needsRebuild());
-			
+
 			try {
 				cfg.setOption(ho, o, new String[]{"sdfgsd","fcvsdfgvxcfdgvsdf"});
 			} catch (BuildException e) {
 				fail("failed to set the option: " + e.getLocalizedMessage());
 			}
-			
+
 			assertTrue(ho.needsRebuild());
 			assertTrue(cfg.needsRebuild());
 			ho.setRebuildState(false);
@@ -2302,26 +2304,26 @@ public class BuildDescriptionModelTests extends TestCase {
 		tch.setRebuildState(false);
 		assertFalse(tch.needsRebuild());
 		assertFalse(cfg.needsRebuild());
-		
+
 		for(int i = 0; i < tools.length; i++){
 			doTestTool(tools[i]);
 		}
-		
+
 		IResourceConfiguration rcCfgs[] = cfg.getResourceConfigurations();
 		for(int i = 0; i < rcCfgs.length; i++){
 			IResourceConfiguration rcCfg = rcCfgs[i];
-			
+
 			assertFalse(rcCfg.needsRebuild());
 			assertFalse(cfg.needsRebuild());
-			
+
 			rcCfg.setRebuildState(true);
 			assertTrue(rcCfg.needsRebuild());
 			assertTrue(cfg.needsRebuild());
-			
+
 			rcCfg.setRebuildState(false);
 			assertFalse(rcCfg.needsRebuild());
 			assertFalse(cfg.needsRebuild());
-			
+
 			rcCfg.setExclude(!rcCfg.isExcluded());
 			assertTrue(rcCfg.needsRebuild());
 			assertTrue(cfg.needsRebuild());
@@ -2347,7 +2349,7 @@ public class BuildDescriptionModelTests extends TestCase {
 			rcCfg.setRcbsApplicability(rcCfg.getRcbsApplicability());
 			assertFalse(rcCfg.needsRebuild());
 			assertFalse(cfg.needsRebuild());
-			
+
 			ITool t = rcCfg.getToolsToInvoke()[0];
 			assertFalse(t.needsRebuild());
 			rcCfg.setToolCommand(t, "sdsdcdsffewffdvcx");
@@ -2358,14 +2360,14 @@ public class BuildDescriptionModelTests extends TestCase {
 			assertFalse(t.needsRebuild());
 			assertFalse(rcCfg.needsRebuild());
 			assertFalse(cfg.needsRebuild());
-			
+
 			rcCfg.setToolCommand(t, t.getToolCommand());
 			assertFalse(t.needsRebuild());
 			assertFalse(rcCfg.needsRebuild());
 			assertFalse(cfg.needsRebuild());
 		}
 	}
-	
+
 	private void doTestTool(ITool tool){
 		IBuildObject obj = tool.getParent();
 		IConfiguration cfg;
@@ -2373,31 +2375,31 @@ public class BuildDescriptionModelTests extends TestCase {
 			cfg = ((IResourceConfiguration)obj).getParent();
 		else
 			cfg = ((IToolChain)obj).getParent();
-		
+
 		cfg.setRebuildState(false);
-		
+
 		assertFalse(tool.needsRebuild());
-		
+
 		tool.setRebuildState(true);
 		assertTrue(tool.needsRebuild());
-		
+
 		assertTrue(cfg.needsRebuild());
-		
+
 		cfg.setRebuildState(false);
 
 		assertFalse(tool.needsRebuild());
 		assertFalse(cfg.needsRebuild());
-		
+
 		tool.setRebuildState(true);
 		assertTrue(tool.needsRebuild());
-		
+
 		assertTrue(cfg.needsRebuild());
-		
+
 		tool.setRebuildState(false);
 
 		assertFalse(tool.needsRebuild());
 		assertFalse(cfg.needsRebuild());
-		
+
 		tool.setCommandLinePattern("asdfasdfasdfasdfasdfasdsdfghdsfg");
 		assertTrue(tool.needsRebuild());
 		assertTrue(cfg.needsRebuild());
@@ -2411,7 +2413,7 @@ public class BuildDescriptionModelTests extends TestCase {
 		tool.setRebuildState(false);
 		assertFalse(tool.needsRebuild());
 		assertFalse(cfg.needsRebuild());
-		
+
 		tool.setOutputPrefix("afgsdfgfadcvwerfdvsdczxv");
 		assertTrue(tool.needsRebuild());
 		assertTrue(cfg.needsRebuild());
@@ -2434,20 +2436,20 @@ public class BuildDescriptionModelTests extends TestCase {
 		assertFalse(cfg.needsRebuild());
 
 		IInputType iTypes[] = tool.getInputTypes();
-		
+
 		for(int i = 0; i < iTypes.length; i++){
 			IInputType iType = iTypes[i];
-			
+
 			if(iType.isExtensionElement())
 				continue;
-			
+
 			iType.setAssignToOptionId("qwertyuiop");
 			assertTrue(tool.needsRebuild());
 			assertTrue(cfg.needsRebuild());
 			tool.setRebuildState(false);
 			assertFalse(tool.needsRebuild());
 			assertFalse(cfg.needsRebuild());
-			
+
 			iType.setBuildVariable("asdfghjkl");
 			assertTrue(tool.needsRebuild());
 			assertTrue(cfg.needsRebuild());
@@ -2479,7 +2481,7 @@ public class BuildDescriptionModelTests extends TestCase {
 			IAdditionalInput addlIns[] = iType.getAdditionalInputs();
 			for(int j = 0; j < addlIns.length; j++){
 				IAdditionalInput a = addlIns[j];
-				
+
 				a.setPaths("as;sd;fgl;fg;qw;er;ty;ui;op");
 				assertTrue(tool.needsRebuild());
 				assertTrue(cfg.needsRebuild());
@@ -2488,9 +2490,9 @@ public class BuildDescriptionModelTests extends TestCase {
 				assertFalse(cfg.needsRebuild());
 			}
 		}
-		
+
 		IOutputType oTypes[] = tool.getOutputTypes();
-		
+
 		for(int i = 0; i < oTypes.length; i++){
 			IOutputType oType = oTypes[i];
 
@@ -2510,7 +2512,7 @@ public class BuildDescriptionModelTests extends TestCase {
 			tool.setRebuildState(false);
 			assertFalse(tool.needsRebuild());
 			assertFalse(cfg.needsRebuild());
-		
+
 			oType.setNamePattern("qwerytuuioioyuioghjgfd");
 			assertTrue(tool.needsRebuild());
 			assertTrue(cfg.needsRebuild());
@@ -2547,7 +2549,7 @@ public class BuildDescriptionModelTests extends TestCase {
 			assertFalse(cfg.needsRebuild());
 		}
 	}
-	
+
 	public void testDesRebuildStateInDescription(){
 		IProject project = createProject(PREFIX + "1", "cdt.managedbuild.target.bdm.exe");
 		try {
@@ -2555,34 +2557,34 @@ public class BuildDescriptionModelTests extends TestCase {
 		} catch (CoreException e1) {
 			fail("fail to add CC nature");
 		}
-		
+
 		ManagedBuildTestHelper.createFile(project, "a.c");
 		ManagedBuildTestHelper.createFile(project, "b.c");
 		ManagedBuildTestHelper.createFile(project, "c.cpp");
 		ManagedBuildTestHelper.createFile(project, "d/d.cpp");
 		ManagedBuildTestHelper.createFile(project, "d2/e.s2");
 		ManagedBuildTestHelper.createFile(project, "f.s2");
-		
+
 		ManagedBuildTestHelper.createFile(project, "e.o");
 		ManagedBuildTestHelper.createFile(project, "dir/f.o");
-	
+
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 		IManagedProject mProj = info.getManagedProject();
 		Configuration cfg = (Configuration)mProj.getConfigurations()[0];
 		String out = cfg.getName() + "/";
-		
+
 		cfg.setRebuildState(false);
-		
+
 		IBuildDescription des = null;
 		try {
 			des = BuildDescriptionManager.createBuildDescription(cfg, null, BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED | BuildDescriptionManager.DEPS);
 		} catch (CoreException e) {
 			fail("build description creation failed: " + e.getLocalizedMessage());
 		}
-		
+
 		IBuildResource rcs[] = BuildDescriptionManager.filterGeneratedBuildResources(des.getResources(), BuildDescriptionManager.REBUILD);
 		assertEquals(rcs.length, 0);
-		
+
 		rcs = BuildDescriptionManager.filterGeneratedBuildResources(des.getResources(), BuildDescriptionManager.REMOVED);
 		assertEquals(rcs.length, 0);
 
@@ -2591,7 +2593,7 @@ public class BuildDescriptionModelTests extends TestCase {
 
 		//target
 		ITool tool = cfg.calculateTargetTool();
-		
+
 		tool.setToolCommand("fgdfgcvbcbv");
 		try {
 			des = BuildDescriptionManager.createBuildDescription(cfg, null, BuildDescriptionManager.REBUILD | BuildDescriptionManager.REMOVED);
@@ -2605,9 +2607,9 @@ public class BuildDescriptionModelTests extends TestCase {
 		assertEquals(oRcs.length, 1);
 		if(rcs[0] != oRcs[0])
 			fail("rebuild resources do not match");
-		
+
 		targetRc = oRcs[0];
-		
+
 		rcs = BuildDescriptionManager.filterGeneratedBuildResources(des.getResources(), BuildDescriptionManager.REMOVED);
 		assertEquals(rcs.length, 0);
 
@@ -2616,9 +2618,9 @@ public class BuildDescriptionModelTests extends TestCase {
 		assertEquals(oRcs.length, 1);
 		if(rcs[0] != oRcs[0])
 			fail("rebuild resources do not match");
-		
+
 		cfg.setRebuildState(false);
-		
+
 		//cpp
 		tool = getToolForInExt(cfg, "cpp");
 		tool.setToolCommand("sdfgzxcvzxcvzxv");
@@ -2642,13 +2644,13 @@ public class BuildDescriptionModelTests extends TestCase {
 		assertNotNull(oRcs[0]);
 		oRcs[4] = getResourceForProjPath(des, out + "b.o");
 		assertNotNull(oRcs[1]);
-		
+
 		assertEquals(rcs.length, 5);
 		assertEquals(oRcs.length, 5);
 		if(!resourcesEqual(rcs, oRcs))
 			fail("rebuild resources do not match");
-		
-		
+
+
 		rcs = BuildDescriptionManager.filterGeneratedBuildResources(des.getResources(), BuildDescriptionManager.REMOVED);
 		assertEquals(rcs.length, 0);
 
@@ -2656,9 +2658,9 @@ public class BuildDescriptionModelTests extends TestCase {
 		assertEquals(rcs.length, 5);
 		if(!resourcesEqual(rcs, oRcs))
 			fail("rebuild resources do not match");
-		
+
 		cfg.setRebuildState(false);
-	
+
 		//s2
 		tool = getToolForInExt(cfg, "s2");
 		tool.setToolCommand("sdfgzxcvzxcvzxv");
@@ -2678,13 +2680,13 @@ public class BuildDescriptionModelTests extends TestCase {
 		oRcs[1] = getResourceForProjPath(des, out + "f.o");
 		assertNotNull(oRcs[1]);
 		oRcs[2] = targetRc;
-		
+
 		assertEquals(rcs.length, 3);
 		assertEquals(oRcs.length, 3);
 		if(!resourcesEqual(rcs, oRcs))
 			fail("rebuild resources do not match");
-		
-		
+
+
 		rcs = BuildDescriptionManager.filterGeneratedBuildResources(des.getResources(), BuildDescriptionManager.REMOVED);
 		assertEquals(rcs.length, 0);
 
@@ -2692,11 +2694,11 @@ public class BuildDescriptionModelTests extends TestCase {
 		assertEquals(rcs.length, 3);
 		if(!resourcesEqual(rcs, oRcs))
 			fail("rebuild resources do not match");
-		
+
 		cfg.setRebuildState(false);
-		
+
 	}
-	
+
 	private IBuildResource getResourceForProjPath(IBuildDescription des, String path){
 		return getResourceForProjPath(des, new Path(path));
 	}
@@ -2714,11 +2716,11 @@ public class BuildDescriptionModelTests extends TestCase {
 		}
 		return null;
 	}
-	
+
 	private boolean resourcesEqual(IBuildResource rcs[], IBuildResource oRcs[]){
 		if(rcs.length != oRcs.length)
 			return false;
-		
+
 		for(int j = 0; j < rcs.length; j++){
 			int k;
 			for(k = 0; k < oRcs.length; k++){

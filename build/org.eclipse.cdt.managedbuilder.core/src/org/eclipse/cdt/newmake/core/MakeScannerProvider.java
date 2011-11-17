@@ -40,7 +40,7 @@ import org.eclipse.core.runtime.QualifiedName;
 
 /**
  * @deprecated @author DInglis
- *  
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -100,7 +100,7 @@ public class MakeScannerProvider extends ScannerProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#getScannerInformation(org.eclipse.core.resources.IResource)
 	 */
 	@Override
@@ -186,7 +186,8 @@ public class MakeScannerProvider extends ScannerProvider {
 	 */
 	public static void updateScannerInfo(final MakeScannerInfo scannerInfo) throws CoreException {
 		ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
-			
+
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				IProject project = scannerInfo.getProject();
 
@@ -201,6 +202,6 @@ public class MakeScannerProvider extends ScannerProvider {
 				descriptor.saveProjectData();
 				migrateToCPathEntries(scannerInfo);
 			}
-		}, null); 
+		}, null);
 	}
 }

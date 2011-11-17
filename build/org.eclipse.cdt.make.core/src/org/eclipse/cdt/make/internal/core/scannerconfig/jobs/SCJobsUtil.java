@@ -34,7 +34,7 @@ import org.eclipse.core.runtime.SafeRunner;
 
 /**
  * Utility class for build and job related functionality
- * 
+ *
  * @author vhirsl
  */
 public class SCJobsUtil {
@@ -54,7 +54,7 @@ public class SCJobsUtil {
         public void set(boolean rc) {
             this.rc = rc;
         }
-        
+
         @Override
 		public String toString() {
             return rc ? "true" : "false"; //$NON-NLS-1$ //$NON-NLS-2$
@@ -69,7 +69,7 @@ public class SCJobsUtil {
                                                  final IProgressMonitor monitor) {
     	return getProviderScannerInfo(project, buildInfo.getContext(), buildInfo, monitor);
     }
-    	
+
     public static boolean getProviderScannerInfo(final IProject project,
     			final InfoContext context,
                 final IScannerConfigBuilderInfo2 buildInfo,
@@ -90,7 +90,8 @@ public class SCJobsUtil {
                 if (esiProvider != null) {
                     ISafeRunnable runnable = new ISafeRunnable() {
 
-                        public void run() {
+                        @Override
+						public void run() {
                         	// TODO we need the environment for the project here...
                         	ICProjectDescription projDesc = CoreModel.getDefault().getProjectDescription(project);
                         	ICConfigurationDescription configDesc = projDesc.getActiveConfiguration();
@@ -104,12 +105,13 @@ public class SCJobsUtil {
                             esiProvider.invokeProvider(monitor, project, context, providerId, buildInfo, collector, env);
                             rc.set(true);
                         }
-            
-                        public void handleException(Throwable exception) {
+
+                        @Override
+						public void handleException(Throwable exception) {
                             rc.set(false);
                             MakeCorePlugin.log(exception);
                         }
-                        
+
                     };
                     SafeRunner.run(runnable);
                 }
@@ -143,12 +145,14 @@ public class SCJobsUtil {
             final IScannerInfoCollector2 collector2 = (IScannerInfoCollector2) collector;
             ISafeRunnable runnable = new ISafeRunnable() {
 
-                public void run() throws Exception {
+                @Override
+				public void run() throws Exception {
                     collector2.updateScannerConfiguration(monitor);
                     rc.set(true);
                 }
-                
-                public void handleException(Throwable exception) {
+
+                @Override
+				public void handleException(Throwable exception) {
                     rc.set(false);
                     MakeCorePlugin.log(exception);
                 }
@@ -156,7 +160,7 @@ public class SCJobsUtil {
             };
             SafeRunner.run(runnable);
         }
-        
+
         return rc.get();
     }
 
@@ -180,21 +184,23 @@ public class SCJobsUtil {
 
         if (buildInfo.isBuildOutputFileActionEnabled()) {
             ISafeRunnable runnable = new ISafeRunnable() {
-                
-                public void run() {
+
+                @Override
+				public void run() {
                     esiProvider.invokeProvider(monitor, project, context, null, buildInfo, collector, null);
                     rc.set(true);
                 }
-        
-                public void handleException(Throwable exception) {
+
+                @Override
+				public void handleException(Throwable exception) {
                     rc.set(false);
                     MakeCorePlugin.log(exception);
                 }
-                
+
             };
             SafeRunner.run(runnable);
         }
-        
+
         return rc.get();
     }
 

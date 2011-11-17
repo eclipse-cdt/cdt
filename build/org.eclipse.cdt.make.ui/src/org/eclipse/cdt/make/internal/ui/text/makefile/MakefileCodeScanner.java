@@ -54,7 +54,7 @@ public class MakefileCodeScanner extends AbstractMakefileCodeScanner {
 		super();
 		initialize();
 	}
-	
+
 	@Override
 	protected List<IRule> createRules() {
 		IToken keyword = getToken(ColorManager.MAKE_KEYWORD_COLOR);
@@ -67,6 +67,7 @@ public class MakefileCodeScanner extends AbstractMakefileCodeScanner {
 
 		// Add generic whitespace rule.
 		rules.add(new WhitespaceRule(new IWhitespaceDetector() {
+			@Override
 			public boolean isWhitespace(char character) {
 				return Character.isWhitespace(character);
 			}
@@ -82,9 +83,11 @@ public class MakefileCodeScanner extends AbstractMakefileCodeScanner {
 		// Add word rule for keywords, types, and constants.
 		// We restrict the detection of the keywords to be the first column to be valid.
 		WordRule keyWordRule = new WordRule(new IWordDetector() {
+			@Override
 			public boolean isWordPart(char c) {
 				return Character.isLetterOrDigit(c) || c == '_';
 			}
+			@Override
 			public boolean isWordStart(char c) {
 				return Character.isLetterOrDigit(c) || c == '_' || c == '-';
 			}}, other);
@@ -95,9 +98,11 @@ public class MakefileCodeScanner extends AbstractMakefileCodeScanner {
 		rules.add(keyWordRule);
 
 		WordRule functionRule = new WordRule(new IWordDetector() {
+			@Override
 			public boolean isWordPart(char c) {
 				return Character.isLetterOrDigit(c) || c == '_';
 			}
+			@Override
 			public boolean isWordStart(char c) {
 				return Character.isLetterOrDigit(c) || c == '_';
 			}}, other);

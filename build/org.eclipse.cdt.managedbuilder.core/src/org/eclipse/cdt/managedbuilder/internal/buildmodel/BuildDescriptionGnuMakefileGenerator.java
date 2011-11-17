@@ -43,22 +43,23 @@ public class BuildDescriptionGnuMakefileGenerator {
 	private static final String EQUALS = "="; //$NON-NLS-1$
 	private static final String VARREF_PREFIX = "${"; //$NON-NLS-1$
 	private static final String VARREF_SUFFIX = "}"; //$NON-NLS-1$
-	
+
 	private static final String DOT_DOT_SLASH = "../"; //$NON-NLS-1$
 	private static final String DOT_DOT_BACKSLASH = "..\\"; //$NON-NLS-1$
-	
+
 	private IBuildDescription fDes;
-	
+
 	private class DescriptionVisitor implements IStepVisitor {
 		Writer fWriter;
 		DescriptionVisitor(Writer writer){
 			fWriter = writer;
 		}
-		
+
+		@Override
 		public int visit(IBuildStep step) throws CoreException {
 			if(step == fDes.getInputStep() || step == fDes.getOutputStep())
 				return VISIT_CONTINUE;
-			
+
 			try {
 				write(fWriter, step);
 			} catch (IOException e) {
@@ -67,14 +68,14 @@ public class BuildDescriptionGnuMakefileGenerator {
 			return VISIT_CONTINUE;
 		}
 	}
-	
+
 	public BuildDescriptionGnuMakefileGenerator(IBuildDescription des){
 		fDes = des;
 	}
-	
+
 	public void store(OutputStream stream) throws CoreException{
 		Writer writer = createWriter(stream);
-		
+
 		try {
 			writer.write(VAR_SOURCES);
 			writer.write(EQUALS);
@@ -96,18 +97,18 @@ public class BuildDescriptionGnuMakefileGenerator {
 			writeRuleHeader(writer, ALL, IN_STEP_RULE + SPACE + OUT_STEP_RULE);
 			writer.write(LINE_SEPARATOR);
 			writer.write(LINE_SEPARATOR);
-			
+
 			write(writer, fDes.getOutputStep());
 
 			write(writer, fDes.getInputStep());
 
 			BuildDescriptionManager.accept(new DescriptionVisitor(writer), fDes, true);
-			
+
 			writer.flush();
 		} catch (IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), ManagedMakeMessages.getString("BuildDescriptionGnuMakefileGenerator.1"), e)); //$NON-NLS-1$
 		}
-		
+
 	}
 
 	protected Writer createWriter(OutputStream stream){
@@ -117,9 +118,9 @@ public class BuildDescriptionGnuMakefileGenerator {
 			ManagedBuilderCorePlugin.log(e1);
 		}
 		return new OutputStreamWriter(stream);
-		
+
 	}
-	
+
 	protected String createVarRef(String var){
 		return new StringBuffer().append(VARREF_PREFIX).append(var).append(VARREF_SUFFIX).toString();
 	}
@@ -140,26 +141,26 @@ public class BuildDescriptionGnuMakefileGenerator {
 			target = toString(outputs);
 			deps = toString(inputs);
 		}
-		
+
 		writeRuleHeader(writer, target, deps);
-		
+
 		IBuildCommand[] cmds = step.getCommands(null, null, null, true);
 		for(int i = 0; i < cmds.length; i++){
 			String cmdStr = toString(cmds[i]);
 			writeCommand(writer, cmdStr);
 		}
-			
+
 		writer.write(LINE_SEPARATOR);
 		writer.write(LINE_SEPARATOR);
 
 	}
-	
+
 	protected void writeCommand(Writer writer, String cmd) throws IOException{
 		writer.write(TAB);
 		writer.write(cmd);
 		writer.write(LINE_SEPARATOR);
 	}
-	
+
 	protected String toString(IBuildCommand cmd){
 		StringBuffer buf = new StringBuffer();
 		buf.append(cmd.getCommand());
@@ -170,7 +171,7 @@ public class BuildDescriptionGnuMakefileGenerator {
 		}
 		return removeDotDotSlashesAndBackSlashesHack(buf.toString());
 	}
-	
+
 	protected void writeRuleHeader(Writer writer, String target, String deps) throws IOException{
 		writer.write(target);
 		writer.write(TARGET_SEPARATOR);
@@ -178,18 +179,18 @@ public class BuildDescriptionGnuMakefileGenerator {
 		writer.write(deps);
 		writer.write(LINE_SEPARATOR);
 	}
-	
+
 	protected String toString(IBuildResource[] rcs){
 		StringBuffer buf = new StringBuffer();
 		for(int i = 0; i < rcs.length; i++){
 			if(i != 0)
 				buf.append(SPACE);
 			buf.append(toString(rcs[i]));
-				
+
 		}
 		return buf.toString();
 	}
-	
+
 	protected String toString(IBuildResource rc){
 		return removeDotDotSlashesAndBackSlashesHack(BuildDescriptionManager.getRelPath(fDes.getDefaultBuildDirLocation(), rc.getLocation()).toString());
 	}
@@ -218,7 +219,7 @@ public class BuildDescriptionGnuMakefileGenerator {
 		}
 		return str;
 	}
-	
+
 	private String removeDotDotBackslashes(String str){
 		int index = str.indexOf(DOT_DOT_BACKSLASH, 0);
 		if(index != -1){

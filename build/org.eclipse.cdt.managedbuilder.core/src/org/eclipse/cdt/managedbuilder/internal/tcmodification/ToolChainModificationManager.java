@@ -36,30 +36,32 @@ import org.eclipse.core.runtime.IPath;
 public class ToolChainModificationManager implements
 		IToolChainModificationManager {
 	private static ToolChainModificationManager fInstance;
-	
+
 	private ToolChainModificationManager(){
 	}
-	
+
 	public static ToolChainModificationManager getInstance(){
 		if(fInstance == null)
 			fInstance = getInstanceSynch();
 		return fInstance;
 	}
-	
+
 	private static synchronized ToolChainModificationManager getInstanceSynch() {
 		if(fInstance == null)
 			fInstance = new ToolChainModificationManager();
 		return fInstance;
 	}
-	
+
 	public void start(){
 		RulesManager.getInstance().start();
 	}
-	
+
+	@Override
 	public IFileInfoModification createModification(IFileInfo rcInfo) {
 		return new FileInfoModification((ResourceConfiguration)rcInfo);
 	}
 
+	@Override
 	public IFolderInfoModification createModification(IFolderInfo rcInfo) {
 		FolderInfo foInfo = (FolderInfo)rcInfo;
 		if(foInfo.isRoot())
@@ -67,6 +69,7 @@ public class ToolChainModificationManager implements
 		return new FolderInfoModification(foInfo);
 	}
 
+	@Override
 	public IFolderInfoModification createModification(IConfiguration cfg,
 			IFolderInfoModification base) throws IllegalArgumentException {
 		IResourceInfo baseRcInfo = base.getResourceInfo();
@@ -82,12 +85,13 @@ public class ToolChainModificationManager implements
 		} else {
 			folderInfo = (FolderInfo)cfg.createFolderInfo(path);
 		}
-		
+
 		return folderInfo.isRoot() ?
 				new ConfigurationModification(folderInfo, (ConfigurationModification)base)
 				: new FolderInfoModification(folderInfo, (FolderInfoModification)base);
 	}
 
+	@Override
 	public IFileInfoModification createModification(IConfiguration cfg,
 			IFileInfoModification base) throws IllegalArgumentException {
 		IResourceInfo baseRcInfo = base.getResourceInfo();
@@ -103,7 +107,7 @@ public class ToolChainModificationManager implements
 		} else {
 			fileInfo = (ResourceConfiguration)cfg.createFileInfo(path);
 		}
-		
+
 		return new FileInfoModification(fileInfo, (FileInfoModification)base);
 	}
 
@@ -118,7 +122,7 @@ public class ToolChainModificationManager implements
 	public static int clearFlags(int flags, int value){
 		return flags &= (~value);
 	}
-	
+
 	private boolean getMatchingObjects(int type, IObjectSet[] oSets, Set<IRealBuildObjectAssociation> skipSet, IRealBuildObjectAssociation additionalSkip, Set<IRealBuildObjectAssociation> result){
 		Set<IRealBuildObjectAssociation> tmp = null;
 		boolean added = false;
@@ -131,15 +135,15 @@ public class ToolChainModificationManager implements
 				tmp = new HashSet<IRealBuildObjectAssociation>();
 			else
 				tmp.clear();
-			
+
 			os.getRealBuildObjects(tmp);
-			
+
 			if(skipSet != null)
 				tmp.removeAll(skipSet);
-			
+
 			if(additionalSkip != null)
 				tmp.remove(additionalSkip);
-			
+
 			if(result.addAll(tmp)){
 				added = true;
 			}
@@ -150,9 +154,9 @@ public class ToolChainModificationManager implements
 	public ConflictMatchSet getConflictInfo(int objType, PerTypeMapStorage<IRealBuildObjectAssociation, Set<IPath>> parent){
 		//parent should be passed - it is constant no need to recalculate every time
 		//PerTypeMapStorage parent = TcModificationUtil.createParentObjectsRealToolToPathSet(foInfo);
-		
+
 		ConflictMatchSet conflicts = getConflictMatches(objType, parent, null);
-		
+
 		return conflicts;
 	}
 
@@ -161,7 +165,7 @@ public class ToolChainModificationManager implements
 		final Map<IRealBuildObjectAssociation, Set<IPath>> fRObjToPathMap;
 		final int fConflictType;
 		final Set<IRealBuildObjectAssociation> fConflicts;
-		
+
 		ConflictMatch(int matchType, Map<IRealBuildObjectAssociation, Set<IPath>> rtToPathMap, int conflictType, Set<IRealBuildObjectAssociation> conflicts){
 			fMatchType = matchType;
 			fRObjToPathMap = Collections.unmodifiableMap(rtToPathMap);
@@ -169,29 +173,29 @@ public class ToolChainModificationManager implements
 			fConflicts = Collections.unmodifiableSet(conflicts);
 		}
 	}
-	
+
 	public static class ConflictMatchSet {
 		ConflictMatch[] fConflicts;
 		Map<? extends IRealBuildObjectAssociation, List<ConflictMatch>> fObjToConflictListMap;
-		
+
 		ConflictMatchSet(ConflictMatch[] coflicts, Map<? extends IRealBuildObjectAssociation, List<ConflictMatch>> objToConflictMap){
 			fConflicts = coflicts;
 			fObjToConflictListMap = objToConflictMap;
 		}
-		
-		
+
+
 	}
-	
+
 	private ConflictMatchSet getConflictMatches(int type, PerTypeMapStorage<IRealBuildObjectAssociation, Set<IPath>> rtToPath, PerTypeSetStorage<IRealBuildObjectAssociation> skip){
-		
+
 		//conversion:
 		//1.first filter applicable to not-this
 		//2. get variants for applicable ones
-		
+
 		//1.first filter applicable to not-this
 		List<ConflictMatch> conflictList = new ArrayList<ConflictMatch>();
 		Map<IRealBuildObjectAssociation, List<ConflictMatch>> objToConflictMatchMap = new HashMap<IRealBuildObjectAssociation, List<ConflictMatch>>();
-		
+
 		ObjectSetListBasedDefinition[] defs = RulesManager.getInstance().getRules(ObjectSetListBasedDefinition.CONFLICT);
 		for(int i = 0; i < defs.length; i++){
 			ObjectSetListBasedDefinition def= defs[i];
@@ -203,7 +207,7 @@ public class ToolChainModificationManager implements
 				Map<IRealBuildObjectAssociation, Set<IPath>> rtToPathMap = rtToPath.getMap(objType, false);
 				if(rtToPathMap == null)
 					continue;
-				
+
 				@SuppressWarnings("unchecked")
 				Map<IRealBuildObjectAssociation, Set<IPath>> clone = (Map<IRealBuildObjectAssociation, Set<IPath>>)((HashMap<IRealBuildObjectAssociation, Set<IPath>>)rtToPathMap).clone();
 				rtToPathMap = clone;
@@ -214,7 +218,7 @@ public class ToolChainModificationManager implements
 					objSet.removeAll(skipSet);
 
 				os.retainMatches(objSet);
-				
+
 				if(objSet.size() != 0){
 					List<IObjectSet> remainingList = new ArrayList<IObjectSet>(Arrays.asList(oss));
 					remainingList.remove(os);
@@ -226,19 +230,19 @@ public class ToolChainModificationManager implements
 					getMatchingObjects(type, remaining, skipSet2, null, matchingObjects);
 					if(matchingObjects.size() != 0){
 						ConflictMatch conflict = new ConflictMatch(objType, rtToPathMap, type, matchingObjects);
-						
+
 						for (IRealBuildObjectAssociation bo : matchingObjects) {
 							List<ConflictMatch> list = TcModificationUtil.getArrayList(objToConflictMatchMap, bo);
 							list.add(conflict);
 						}
-						
+
 						conflictList.add(conflict);
 					}
 //					break;
 				}
 			}
 		}
-		
+
 		return new ConflictMatchSet(conflictList.toArray(new ConflictMatch[conflictList.size()]), objToConflictMatchMap);
 	}
 }

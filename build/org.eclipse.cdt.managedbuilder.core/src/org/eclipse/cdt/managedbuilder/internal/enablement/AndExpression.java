@@ -19,13 +19,14 @@ import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 
 public class AndExpression extends CompositeExpression {
 	public static final String NAME = "and"; 	//$NON-NLS-1$
-	
+
 	public AndExpression(IManagedConfigElement element) {
 		super(element);
 	}
 
-	public boolean evaluate(IResourceInfo rcInfo, 
-            IHoldsOptions holder, 
+	@Override
+	public boolean evaluate(IResourceInfo rcInfo,
+            IHoldsOptions holder,
             IOption option) {
 		IBooleanExpression children[] = getChildren();
 		for(int i = 0; i < children.length; i++){
@@ -34,8 +35,9 @@ public class AndExpression extends CompositeExpression {
 		}
 		return true;
 	}
-	public boolean evaluate(IResourceInfo rcInfo, 
-            IHoldsOptions holder, 
+	@Override
+	public boolean evaluate(IResourceInfo rcInfo,
+            IHoldsOptions holder,
             IOptionCategory category) {
 		IBooleanExpression children[] = getChildren();
 		for(int i = 0; i < children.length; i++){

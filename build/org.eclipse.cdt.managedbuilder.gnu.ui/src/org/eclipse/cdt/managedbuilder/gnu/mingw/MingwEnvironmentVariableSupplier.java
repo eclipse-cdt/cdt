@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.Platform;
  */
 public class MingwEnvironmentVariableSupplier implements
 		IConfigurationEnvironmentVariableSupplier {
-	
+
 	private static boolean checked = false;
 	private static IPath binDir = null;
 
@@ -35,32 +35,36 @@ public class MingwEnvironmentVariableSupplier implements
 		private final String name;
 		private final String value;
 		private final int operation;
-		
+
 		public MingwBuildEnvironmentVariable(String name, String value, int operation) {
 			this.name = name;
 			this.value = value;
 			this.operation = operation;
 		}
-		
+
+		@Override
 		public String getName() {
 			return name;
 		}
-		
+
+		@Override
 		public String getValue() {
 			return value;
 		}
-		
+
+		@Override
 		public int getOperation() {
 			return operation;
 		}
-		
+
+		@Override
 		public String getDelimiter() {
 			return ";"; //$NON-NLS-1$
 		}
 	}
-	
+
 	private IBuildEnvironmentVariable path;
-	
+
 	public static IPath getBinDir() {
 		if (!checked) {
 			binDir = findBinDir();
@@ -87,38 +91,38 @@ public class MingwEnvironmentVariableSupplier implements
 		// TODO: Since this dir is already in the PATH, why are we adding it here?
 		// This is really only to support isToolchainAvail. Must be a better way.
 		IPath gccLoc = PathUtil.findProgramLocation("mingw32-gcc.exe"); //$NON-NLS-1$
-		if (gccLoc != null) 
+		if (gccLoc != null)
 			return gccLoc.removeLastSegments(1);
-		
-		// Try the default MinGW install dir 
+
+		// Try the default MinGW install dir
 		mingwBinDir = new Path("C:\\MinGW\\bin"); //$NON-NLS-1$
 		if (mingwBinDir.toFile().isDirectory())
 			return mingwBinDir;
-		
+
 		return null;
 	}
-	
+
 	public static IPath getMsysBinDir() {
 		// Just look in the install location parent dir
 		IPath installPath = new Path(Platform.getInstallLocation().getURL().getFile());
 		IPath msysBinPath = installPath.append("msys\\bin"); //$NON-NLS-1$
 		if (msysBinPath.toFile().isDirectory())
 			return msysBinPath;
-		
+
 		String mingwHome = System.getenv("MINGW_HOME"); //$NON-NLS-1$
 		if (mingwHome != null) {
 			msysBinPath = new Path(mingwHome + "\\msys\\1.0\\bin"); //$NON-NLS-1$
 			if (msysBinPath.toFile().isDirectory())
 				return msysBinPath;
 		}
-		
+
 		// Try the new MinGW msys bin dir
 		msysBinPath = new Path("C:\\MinGW\\msys\\1.0\\bin"); //$NON-NLS-1$
 		if (msysBinPath.toFile().isDirectory())
 			return msysBinPath;
 		return null;
 	}
-	
+
 	public MingwEnvironmentVariableSupplier() {
 		IPath binPath = getBinDir();
 		if (binPath != null) {
@@ -126,11 +130,12 @@ public class MingwEnvironmentVariableSupplier implements
 			IPath msysBinPath = getMsysBinDir();
 			if (msysBinPath != null)
 				pathStr += ';' + msysBinPath.toOSString();
-			
+
 			path = new MingwBuildEnvironmentVariable("PATH", pathStr, IBuildEnvironmentVariable.ENVVAR_PREPEND); //$NON-NLS-1$
 		}
 	}
-	
+
+	@Override
 	public IBuildEnvironmentVariable getVariable(String variableName,
 			IConfiguration configuration, IEnvironmentVariableProvider provider) {
 		if (path != null && variableName.equals(path.getName()))
@@ -139,6 +144,7 @@ public class MingwEnvironmentVariableSupplier implements
 			return null;
 	}
 
+	@Override
 	public IBuildEnvironmentVariable[] getVariables(
 			IConfiguration configuration, IEnvironmentVariableProvider provider) {
 		return path != null

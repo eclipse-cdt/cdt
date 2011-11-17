@@ -40,36 +40,36 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 public class BuildSystemTestHelper {
-	
+
 	static public IProject createProject(String name, IPath location, String projTypeId) throws CoreException {
 		IProject project = createProject(name, location);
 
 		return createDescription(project, projTypeId);
 	}
-	
+
 	static public IProject createDescription(IProject project, String projTypeId) throws CoreException {
 		CoreModel coreModel = CoreModel.getDefault();
 		ICProjectDescription des = coreModel.getProjectDescription(project);
 		Assert.assertNull("detDescription1 returned not null!", des);
-		
+
 		des = coreModel.createProjectDescription(project, true);
 		Assert.assertNotNull("createDescription returned null!", des);
-		
+
 		Assert.assertNull("detDescription2 returned not null!", coreModel.getProjectDescription(project));
-		
+
 		Assert.assertFalse("new des should be not valid", des.isValid());
-		
+
 		Assert.assertEquals(0, des.getConfigurations().length);
-		
+
 		ManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
 		IProjectType type = ManagedBuildManager.getProjectType(projTypeId);
 		Assert.assertNotNull("project type not found", type);
 
 		ManagedProject mProj = new ManagedProject(project, type);
 		info.setManagedProject(mProj);
-		
+
 		IConfiguration cfgs[] = type.getConfigurations();
-		
+
 		for(int i = 0; i < cfgs.length; i++){
 			String id = ManagedBuildManager.calculateChildId(cfgs[i].getId(), null);
 			Configuration config = new Configuration(mProj, (Configuration)cfgs[i], id, false, true, false);
@@ -80,19 +80,19 @@ public class BuildSystemTestHelper {
 		coreModel.setProjectDescription(project, des);
 		return project;
 	}
-	
+
 	static public IProject createProject(String name) throws CoreException{
 		return createProject(name, (IPath)null);
 	}
-	
+
 	static public IProject createProject(
-			final String name, 
+			final String name,
 			final IPath location) throws CoreException{
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
 		final IProject newProjectHandle = root.getProject(name);
 		IProject project = null;
-		
+
 		if (!newProjectHandle.exists()) {
 			IWorkspaceDescription workspaceDesc = workspace.getDescription();
 			workspaceDesc.setAutoBuilding(false);
@@ -104,6 +104,7 @@ public class BuildSystemTestHelper {
 			project = CCorePlugin.getDefault().createCDTProject(description, newProjectHandle, new NullProgressMonitor());
 		} else {
 			IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					newProjectHandle.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 				}
@@ -112,15 +113,15 @@ public class BuildSystemTestHelper {
 			workspace.run(runnable, root, IWorkspace.AVOID_UPDATE, monitor);
 			project = newProjectHandle;
 		}
-        
+
 		// Open the project if we have to
 		if (!project.isOpen()) {
 			project.open(new NullProgressMonitor());
 		}
-				
-		return project;	
+
+		return project;
 	}
-	
+
 	static public void checkDiff(Object[] arr1, Object[] arr2){
 		LinkedHashSet<? extends Object> set1 = new LinkedHashSet<Object>(Arrays.asList(arr1));
 		LinkedHashSet<? extends Object> set2 = new LinkedHashSet<Object>(Arrays.asList(arr2));
@@ -130,13 +131,13 @@ public class BuildSystemTestHelper {
 
 		String set1String = collectionToString(set1);
 		String set2String = collectionToString(set2);
-		String diffMsg = "array1 entries: " + set1String + ",\n array2 entries: " + set2String + "\n"; 
+		String diffMsg = "array1 entries: " + set1String + ",\n array2 entries: " + set2String + "\n";
 		Assert.assertEquals("arrays have different size\n" + diffMsg, arr1.length, arr2.length);
 		Assert.assertEquals("arrays have different contents\n" + diffMsg, 0, set1.size());
 		Assert.assertEquals("arrays have different contents\n" + diffMsg, 0, set2.size());
-		
+
 		if(!Arrays.equals(arr1, arr2)){
-			Assert.fail("different element order, dumping..\n array1 entries: " + arrayToString(arr1) + "\n array2 entries: " + arrayToString(arr2) + "\n"); 
+			Assert.fail("different element order, dumping..\n array1 entries: " + arrayToString(arr1) + "\n array2 entries: " + arrayToString(arr2) + "\n");
 		}
 	}
 
@@ -150,7 +151,7 @@ public class BuildSystemTestHelper {
 		for(int i = 0; i < arr.length; i++)	{
 			if(i != 0)
 				buf.append(", ");
-			
+
 			buf.append(arr[i].toString());
 		}
 		buf.append(']');

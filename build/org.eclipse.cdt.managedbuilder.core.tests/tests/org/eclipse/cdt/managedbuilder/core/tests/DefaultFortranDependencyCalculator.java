@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *  IBM - Initial API and implementation
  *******************************************************************************/
@@ -41,7 +41,7 @@ public class DefaultFortranDependencyCalculator implements IManagedDependencyGen
 														   IManagedOutputNameProvider
 {
 	public static final String MODULE_EXTENSION = "mod";	//$NON-NLS-1$
-	
+
 	/*
 	 * Return a list of the names of all modules used by a file
 	 */
@@ -57,7 +57,7 @@ public class DefaultFortranDependencyCalculator implements IManagedDependencyGen
 			st.slashSlashComments(false);
 			st.slashStarComments(false);
 			st.wordChars('_', '_');
-			
+
 			while (st.nextToken() != StreamTokenizer.TT_EOF) {
 				if (st.ttype == StreamTokenizer.TT_WORD) {
 					if (st.sval.equalsIgnoreCase("use")) {
@@ -81,7 +81,7 @@ public class DefaultFortranDependencyCalculator implements IManagedDependencyGen
 		}
 		return names.toArray(new String[names.size()]);
 	}
-	
+
 	/*
 	 * Return a list of the names of all modules defined in a file
 	 */
@@ -97,7 +97,7 @@ public class DefaultFortranDependencyCalculator implements IManagedDependencyGen
 			st.slashSlashComments(false);
 			st.slashStarComments(false);
 			st.wordChars('_', '_');
-			
+
 			while (st.nextToken() != StreamTokenizer.TT_EOF) {
 				if (st.ttype == StreamTokenizer.TT_WORD) {
 					if (st.sval.equalsIgnoreCase("module")) {
@@ -135,12 +135,12 @@ public class DefaultFortranDependencyCalculator implements IManagedDependencyGen
 		}
 		return false;
 	}
-	
+
 	/*
 	 * Given a set of the module names used by a source file, and a set of resources to search, determine
 	 * if any of the source files implements the module names.
 	 */
-	private IResource[] FindModulesInResources(IProject project, ITool tool, IResource resource, IResource[] resourcesToSearch, 
+	private IResource[] FindModulesInResources(IProject project, ITool tool, IResource resource, IResource[] resourcesToSearch,
 							String topBuildDir, String[] usedNames) {
 		ArrayList<IResource> modRes = new ArrayList<IResource>();
 		for (int ir = 0; ir < resourcesToSearch.length; ir++) {
@@ -156,8 +156,8 @@ public class DefaultFortranDependencyCalculator implements IManagedDependencyGen
 							if (usedNames[iu].equalsIgnoreCase(modules[im])) {
 								//  Get the path to the module file that will be created by the build.  By default, ifort appears
 								//  to generate .mod files in the directory from which the compiler is run.  For MBS, this
-								//  is the top-level build directory.  
-								//  TODO: Support the /module:path option and use that in determining the path of the module file 
+								//  is the top-level build directory.
+								//  TODO: Support the /module:path option and use that in determining the path of the module file
 								IPath modName = Path.fromOSString(topBuildDir + Path.SEPARATOR + modules[im] + "." + MODULE_EXTENSION);
 								modRes.add(project.getFile(modName));
 								modRes.add(resourcesToSearch[ir]);
@@ -170,7 +170,7 @@ public class DefaultFortranDependencyCalculator implements IManagedDependencyGen
 				}
 			} else if (resourcesToSearch[ir].getType() == IResource.FOLDER) {
 				try {
-					IResource[] modFound = FindModulesInResources(project, tool, resource, ((IFolder)resourcesToSearch[ir]).members(), 
+					IResource[] modFound = FindModulesInResources(project, tool, resource, ((IFolder)resourcesToSearch[ir]).members(),
 							topBuildDir, usedNames);
 					if (modFound != null) {
 						for (int i=0; i<modFound.length; i++) {
@@ -179,13 +179,14 @@ public class DefaultFortranDependencyCalculator implements IManagedDependencyGen
 					}
 				} catch(Exception e) {}
 			}
-		}		
+		}
 		return modRes.toArray(new IResource[modRes.size()]);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderDependencyCalculator#findDependencies(org.eclipse.core.resources.IResource)
 	 */
+	@Override
 	public IResource[] findDependencies(IResource resource, IProject project) {
 		ArrayList<IResource> dependencies = new ArrayList<IResource>();
 
@@ -201,18 +202,18 @@ public class DefaultFortranDependencyCalculator implements IManagedDependencyGen
 				break;
 			}
 		}
-		
+
 		File file = resource.getLocation().toFile();
 		try {
 			if (!isFortranFile(tool, resource)) return null;
-	
+
 			//  Get the names of the modules USE'd by the source file
 			String[] usedNames = findUsedModuleNames(file);
 			if (usedNames.length == 0) return null;
-			
+
 			//  Search the project files for a Fortran source that creates the module.  If we find one, then compiling this
 			//  source file is dependent upon first compiling the found source file.
-			IResource[] resources = project.members();	
+			IResource[] resources = project.members();
 			IResource[] modRes = FindModulesInResources(project, tool, resource, resources, config.getName(), usedNames);
 			if (modRes != null) {
 				for (int i=0; i<modRes.length; i++) {
@@ -224,13 +225,14 @@ public class DefaultFortranDependencyCalculator implements IManagedDependencyGen
 		{
 			return null;
 		}
-		
+
 		return dependencies.toArray(new IResource[dependencies.size()]);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderDependencyCalculator#getCalculatorType()
 	 */
+	@Override
 	public int getCalculatorType() {
 		return TYPE_EXTERNAL;
 	}
@@ -238,8 +240,9 @@ public class DefaultFortranDependencyCalculator implements IManagedDependencyGen
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderDependencyCalculator#getDependencyCommand()
 	 */
+	@Override
 	public String getDependencyCommand(IResource resource, IManagedBuildInfo info) {
-		/* 
+		/*
 		 * The type of this IManagedDependencyGenerator is TYPE_EXTERNAL,
 		 * so implement findDependencies() rather than getDependencyCommand().
 		 * */
@@ -250,6 +253,7 @@ public class DefaultFortranDependencyCalculator implements IManagedDependencyGen
 	 *  (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedOutputNameProvider#getOutputNames(org.eclipse.cdt.managedbuilder.core.ITool, org.eclipse.core.runtime.IPath[])
 	 */
+	@Override
 	public IPath[] getOutputNames(ITool tool, IPath[] primaryInputNames) {
 		//  TODO:  This method should be passed the relative path of the top build directory?
 		ArrayList<IPath> outs = new ArrayList<IPath>();
@@ -261,16 +265,16 @@ public class DefaultFortranDependencyCalculator implements IManagedDependencyGen
 				for (int i = 0; i < modules.length; i++) {
 					//  Return the path to the module file that will be created by the build.  By default, ifort appears
 					//  to generate .mod files in the directory from which the compiler is run.  For MBS, this
-					//  is the top-level build directory.  
+					//  is the top-level build directory.
 					//  TODO: Support the /module:path option and use that in determining the path of the module file
-					//  TODO: The nameProvider documentation should note that the returned path is relative to the top-level 
+					//  TODO: The nameProvider documentation should note that the returned path is relative to the top-level
 					//        build directory.  HOWEVER, if only a file name is returned, MBS will automatically add on the
 					//        directory path relative to the top-level build directory.  The relative path comes from the source
-					//        file location.  In order to specify that this output file is always in the top-level build 
+					//        file location.  In order to specify that this output file is always in the top-level build
 					//        directory, regardless of the source file directory structure, return "./path".
 					IPath modName = new Path("./").append(Path.fromOSString(modules[i] + "." + MODULE_EXTENSION));
-					
-					outs.add(modName);				
+
+					outs.add(modName);
 				}
 			}
 		}

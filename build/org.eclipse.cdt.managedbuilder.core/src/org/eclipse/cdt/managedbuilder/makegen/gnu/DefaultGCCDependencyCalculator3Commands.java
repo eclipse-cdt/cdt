@@ -33,16 +33,16 @@ import org.eclipse.core.runtime.IPath;
 /**
  * This dependency calculator uses the same dependency management technique as the
  * DefaultGCCDependencyCalculator.  That is:
- * 
+ *
  *  1.  An echo command creates the dependency file (.d).
- *  2.  A second invocation of the compiler is made in order to append to the dependency file.  
+ *  2.  A second invocation of the compiler is made in order to append to the dependency file.
  *      The additional options -MM -MG -P -w are added to the command line.
- *  3.  The dependency files are post-processed to add the empty header rules. 
- * 
+ *  3.  The dependency files are post-processed to add the empty header rules.
+ *
  * This class is used with DefaultGCCDependencyCalculator3.
  *
  * This is an example dependency calculator that is not used by the CDT GCC tool-chain.
- * 
+ *
  * @since 3.1
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
@@ -56,9 +56,9 @@ public class DefaultGCCDependencyCalculator3Commands implements
 	IPath source;
 	IResource resource;
 	IBuildObject buildContext;
-	ITool tool; 
+	ITool tool;
 	IPath topBuildDirectory;
-	
+
 	//  Other Member variables
 	IProject project;
 	IConfiguration config;
@@ -67,10 +67,10 @@ public class DefaultGCCDependencyCalculator3Commands implements
 	IPath outputLocation;
 	boolean needExplicitRuleForFile;
 	boolean genericCommands = true;
-	
+
 	/**
      * Constructor
-	 * 
+	 *
      * @param source  The source file for which dependencies should be calculated
      *    The IPath can be either relative to the project directory, or absolute in the file system.
      * @param buildContext  The IConfiguration or IResourceConfiguration that
@@ -85,7 +85,7 @@ public class DefaultGCCDependencyCalculator3Commands implements
 		this.buildContext = buildContext;
 		this.tool = tool;
 		this.topBuildDirectory = topBuildDirectory;
-		
+
 		//  Compute the project
 		if (buildContext instanceof IConfiguration) {
 			config = (IConfiguration)buildContext;
@@ -95,22 +95,22 @@ public class DefaultGCCDependencyCalculator3Commands implements
 			resInfo = (IResourceInfo)buildContext;
 			config = resInfo.getParent();
 			project = (IProject)config.getOwner();
-		} 
-		
+		}
+
 		sourceLocation = (source.isAbsolute() ? source : project.getLocation().append(source));
 		outputLocation = project.getLocation().append(topBuildDirectory).append(getDependencyFiles()[0]);
 
 		// A separate rule is needed for the resource in the case where explicit file-specific macros
 		// are referenced, or if the resource contains special characters in its path (e.g., whitespace)
-		
+
 		/* fix for 137674
-		 * 
+		 *
 		 * We only need an explicit rule if one of the following is true:
 		 * - The resource is linked, and its full path to its real location contains special characters
 		 * - The resource is not linked, but its project relative path contains special characters
-		*/ 
+		*/
 		boolean resourceNameRequiresExplicitRule = true;
-		
+
 		if(resource != null)
 		{
 			resourceNameRequiresExplicitRule = (resource.isLinked() && GnuMakefileGenerator
@@ -118,19 +118,19 @@ public class DefaultGCCDependencyCalculator3Commands implements
 				|| (!resource.isLinked() && GnuMakefileGenerator
 						.containsSpecialCharacters(resource.getProjectRelativePath().toString()));
 		}
-		
-		needExplicitRuleForFile = resourceNameRequiresExplicitRule || 
+
+		needExplicitRuleForFile = resourceNameRequiresExplicitRule ||
 				BuildMacroProvider.getReferencedExplitFileMacros(tool).length > 0
 				|| BuildMacroProvider.getReferencedExplitFileMacros(
-						tool.getToolCommand(), 
+						tool.getToolCommand(),
 						IBuildMacroProvider.CONTEXT_FILE,
 						new FileContextData(sourceLocation, outputLocation,
 								null, tool)).length > 0;
-		
-		if (buildContext instanceof IResourceConfiguration || needExplicitRuleForFile) 
+
+		if (buildContext instanceof IResourceConfiguration || needExplicitRuleForFile)
 			genericCommands = false;
 	}
-	
+
 	/**
 	 * Constructor. This constructor calls
 	 * DefaultGCCDependencyCalculator3Commands(IPath source, IResource resource,
@@ -138,7 +138,7 @@ public class DefaultGCCDependencyCalculator3Commands implements
 	 * null resource. The net result of this is that dependency rules will
 	 * always be explicit and will never use pattern rules, as it is impossible
 	 * for the calculator to know whether the resource is linked or not.
-	 * 
+	 *
 	 * @param source
 	 *            The source file for which dependencies should be calculated
 	 *            The IPath can be either relative to the project directory, or
@@ -152,18 +152,19 @@ public class DefaultGCCDependencyCalculator3Commands implements
 	 *            The top build directory of the configuration. This is the
 	 *            working directory for the tool. This IPath is relative to the
 	 *            project directory.
-	 *            
+	 *
 	 * @see #DefaultGCCDependencyCalculator3Commands(IPath source, IResource resource, IBuildObject buildContext, ITool tool, IPath topBuildDirectory)
 	 */
 	public DefaultGCCDependencyCalculator3Commands(IPath source, IBuildObject buildContext, ITool tool, IPath topBuildDirectory)
 	{
-		this(source, (IResource) null, buildContext, tool, topBuildDirectory); 
+		this(source, (IResource) null, buildContext, tool, topBuildDirectory);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyCommands#areCommandsGeneric()
-	 */	
+	 */
+	@Override
 	public boolean areCommandsGeneric() {
 		return genericCommands;
 	}
@@ -172,6 +173,7 @@ public class DefaultGCCDependencyCalculator3Commands implements
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyCommands#getDependencyCommandOptions()
 	 */
+	@Override
 	public String[] getDependencyCommandOptions() {
 		// Nothing
 		return null;
@@ -181,6 +183,7 @@ public class DefaultGCCDependencyCalculator3Commands implements
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyCommands#getDependencyFiles()
 	 */
+	@Override
 	public IPath[] getDependencyFiles() {
 		//  The source file is project relative and the dependency file is top build directory relative
 		//  Remove the source extension and add the dependency extension
@@ -201,42 +204,43 @@ public class DefaultGCCDependencyCalculator3Commands implements
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyCommands#getPostToolDependencyCommands()
 	 */
+	@Override
 	public String[] getPostToolDependencyCommands() {
 		/*
 		 * For a given input, <path>/<resource_name>.<ext>, return a string containing
 		 * 	echo -n $(@:%.<out_ext>=%.d) '<path>/' >> $(@:%.<out_ext>=%.d) && \
 		 * 	<tool_command> -P -MM -MG <tool_flags> $< >> $(@:%.<out_ext>=%.d)
-		 * 
+		 *
 		 */
 		String[] commands = new String[2];
 
 		// Get what we need to create the dependency generation command
 		String inputExtension = source.getFileExtension();
 		String outputExtension = tool.getOutputExtension(inputExtension);
-		
+
 		// Calculate the dependency rule
 		// <path>/$(@:%.<out_ext>=%.d)
 		String depRule = "'$(@:%." + //$NON-NLS-1$
-			outputExtension + 
+			outputExtension +
 			"=%." + //$NON-NLS-1$
-			IManagedBuilderMakefileGenerator.DEP_EXT + 
+			IManagedBuilderMakefileGenerator.DEP_EXT +
 			")'"; //$NON-NLS-1$
-		
-		// Add the Echo command that will actually create the right format for the dep 
-		commands[0] = 
-				IManagedBuilderMakefileGenerator.TAB + 
-				IManagedBuilderMakefileGenerator.ECHO + 
-				IManagedBuilderMakefileGenerator.WHITESPACE + 
+
+		// Add the Echo command that will actually create the right format for the dep
+		commands[0] =
+				IManagedBuilderMakefileGenerator.TAB +
+				IManagedBuilderMakefileGenerator.ECHO +
+				IManagedBuilderMakefileGenerator.WHITESPACE +
 				"-n" + //$NON-NLS-1$
 				IManagedBuilderMakefileGenerator.WHITESPACE +
-				depRule + 
-				IManagedBuilderMakefileGenerator.WHITESPACE + 
+				depRule +
+				IManagedBuilderMakefileGenerator.WHITESPACE +
 				"$(dir $@)" + //$NON-NLS-1$
-				IManagedBuilderMakefileGenerator.WHITESPACE + 
-				">" + //$NON-NLS-1$ 
-				IManagedBuilderMakefileGenerator.WHITESPACE + 
+				IManagedBuilderMakefileGenerator.WHITESPACE +
+				">" + //$NON-NLS-1$
+				IManagedBuilderMakefileGenerator.WHITESPACE +
 				depRule;
-				
+
 		// Add the line that will do the work to calculate dependencies
 		IBuildMacroProvider provider = ManagedBuildManager.getBuildMacroProvider();
 		IManagedCommandLineInfo cmdLInfo = null;
@@ -270,15 +274,15 @@ public class DefaultGCCDependencyCalculator3Commands implements
 								new FileContextData(sourceLocation,
 										outputLocation, null, tool));
 			}
-			
+
 			if((resolvedCommand = resolvedCommand.trim()).length() > 0)
 				cmd = resolvedCommand;
-				
+
 		} catch (BuildMacroException e){
 		}
 
 		String[] toolFlags = null;
-		try { 
+		try {
 			toolFlags = tool.getToolCommandFlags(sourceLocation, outputLocation);
 		} catch( BuildException ex ) {
 			toolFlags = new String[0];
@@ -297,7 +301,7 @@ public class DefaultGCCDependencyCalculator3Commands implements
 
 		// The command to build
 		buildCmd = cmdLInfo.getCommandLine();
-			
+
 		// resolve any remaining macros in the command after it has been generated
 		try {
 			String resolvedCommand = null;
@@ -324,14 +328,14 @@ public class DefaultGCCDependencyCalculator3Commands implements
 
 			if((resolvedCommand = resolvedCommand.trim()).length() > 0)
 				buildCmd = resolvedCommand;
-				
+
 		} catch (BuildMacroException e){
 		}
 
-		commands[1] = 
-				IManagedBuilderMakefileGenerator.TAB + 
+		commands[1] =
+				IManagedBuilderMakefileGenerator.TAB +
 				buildCmd +
-				IManagedBuilderMakefileGenerator.WHITESPACE + 
+				IManagedBuilderMakefileGenerator.WHITESPACE +
 				">>" +  //$NON-NLS-1$
 				IManagedBuilderMakefileGenerator.WHITESPACE + depRule;
 
@@ -342,6 +346,7 @@ public class DefaultGCCDependencyCalculator3Commands implements
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyCommands#getPreToolDependencyCommands()
 	 */
+	@Override
 	public String[] getPreToolDependencyCommands() {
 		// Nothing
 		return null;
@@ -351,6 +356,7 @@ public class DefaultGCCDependencyCalculator3Commands implements
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyInfo#getBuildContext()
 	 */
+	@Override
 	public IBuildObject getBuildContext() {
 		return buildContext;
 	}
@@ -359,6 +365,7 @@ public class DefaultGCCDependencyCalculator3Commands implements
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyInfo#getSource()
 	 */
+	@Override
 	public IPath getSource() {
 		return source;
 	}
@@ -367,6 +374,7 @@ public class DefaultGCCDependencyCalculator3Commands implements
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyInfo#getTool()
 	 */
+	@Override
 	public ITool getTool() {
 		return tool;
 	}
@@ -375,6 +383,7 @@ public class DefaultGCCDependencyCalculator3Commands implements
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyInfo#getTopBuildDirectory()
 	 */
+	@Override
 	public IPath getTopBuildDirectory() {
 		return topBuildDirectory;
 	}

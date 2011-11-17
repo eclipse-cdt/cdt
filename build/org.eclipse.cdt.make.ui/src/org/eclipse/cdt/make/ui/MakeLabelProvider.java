@@ -27,7 +27,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 /**
  * Label provider for Make Targets view and for Make Targets dialog from
  * "Make Targets"->"Build..." in project context menu.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -85,10 +85,12 @@ public class MakeLabelProvider extends LabelProvider implements ITableLabelProvi
 		fLableProvider.dispose();
 	}
 
+	@Override
 	public Image getColumnImage(Object obj, int columnIndex) {
 		return columnIndex == 0 ? getImage(obj) : null;
 	}
 
+	@Override
 	public String getColumnText(Object obj, int columnIndex) {
 		switch (columnIndex) {
 			case 0 :

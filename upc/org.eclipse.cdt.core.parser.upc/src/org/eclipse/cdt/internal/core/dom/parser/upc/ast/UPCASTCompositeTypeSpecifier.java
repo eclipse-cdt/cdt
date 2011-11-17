@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -19,23 +19,23 @@ import org.eclipse.cdt.internal.core.dom.parser.c.CASTCompositeTypeSpecifier;
 
 @SuppressWarnings("restriction")
 public class UPCASTCompositeTypeSpecifier extends CASTCompositeTypeSpecifier implements IUPCASTCompositeTypeSpecifier {
-	
+
 	private int referenceType;
 	private int sharedQualifier;
 	private IASTExpression blockSizeExpression;
-	
+
 	public UPCASTCompositeTypeSpecifier() {
 	}
 
 	public UPCASTCompositeTypeSpecifier(int key, IASTName name) {
 		super(key, name);
 	}
-	
+
 	public UPCASTCompositeTypeSpecifier(int key, IASTName name, IASTExpression blockSizeExpression) {
 		super(key, name);
 		setBlockSizeExpression(blockSizeExpression);
 	}
-	
+
 	@Override
 	public UPCASTCompositeTypeSpecifier copy() {
 		return copy(CopyStyle.withoutLocations);
@@ -54,36 +54,42 @@ public class UPCASTCompositeTypeSpecifier extends CASTCompositeTypeSpecifier imp
 		return copy;
 	}
 
+	@Override
 	public IASTExpression getBlockSizeExpression() {
 		return blockSizeExpression;
 	}
 
+	@Override
 	public int getReferenceType() {
 		return referenceType;
 	}
 
+	@Override
 	public int getSharedQualifier() {
 		return sharedQualifier;
 	}
 
+	@Override
 	public void setBlockSizeExpression(IASTExpression expr) {
 		this.blockSizeExpression = expr;
 		if(expr != null) {
 			expr.setParent(this);
 			expr.setPropertyInParent(BLOCK_SIZE_EXPRESSION);
 		}
-		
+
 	}
 
+	@Override
 	public void setReferenceType(int referenceType) {
 		this.referenceType = referenceType;
 	}
 
+	@Override
 	public void setSharedQualifier(int shared) {
 		this.sharedQualifier = shared;
 	}
 
-	
+
 	@Override
 	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitDeclSpecifiers ){
@@ -94,12 +100,12 @@ public class UPCASTCompositeTypeSpecifier extends CASTCompositeTypeSpecifier imp
 	        }
 		}
         if( getName() != null ) if( !getName().accept( action ) ) return false;
-        if( blockSizeExpression != null) if( !blockSizeExpression.accept( action ) ) return false;    
-        
+        if( blockSizeExpression != null) if( !blockSizeExpression.accept( action ) ) return false;
+
         IASTDeclaration [] decls = getMembers();
         for( int i = 0; i < decls.length; i++ )
             if( !decls[i].accept( action ) ) return false;
-            
+
         if( action.shouldVisitDeclSpecifiers ){
 		    switch( action.leave( this ) ){
 	            case ASTVisitor.PROCESS_ABORT : return false;

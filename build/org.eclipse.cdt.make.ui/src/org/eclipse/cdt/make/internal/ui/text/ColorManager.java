@@ -36,10 +36,10 @@ public class ColorManager implements ISharedTextColors {
 	public static final RGB MAKE_DEFAULT_RGB = new RGB(0, 0, 0);
 
 	private static ColorManager fgColorManager;
-	
+
 	private ColorManager() {
 	}
-	
+
 	public static ColorManager getDefault() {
 		if (fgColorManager == null) {
 			fgColorManager= new ColorManager();
@@ -52,6 +52,7 @@ public class ColorManager implements ISharedTextColors {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.source.ISharedTextColors#dispose()
 	 */
+	@Override
 	public void dispose() {
 		Iterator<Color> e = fColorTable.values().iterator();
 		while (e.hasNext())
@@ -61,6 +62,7 @@ public class ColorManager implements ISharedTextColors {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.source.ISharedTextColors#getColor(org.eclipse.swt.graphics.RGB)
 	 */
+	@Override
 	public Color getColor(RGB rgb) {
 		Color color = fColorTable.get(rgb);
 		if (color == null) {

@@ -24,20 +24,21 @@ public class BuildCommand implements IBuildCommand {
 	private String fArgs[];
 	private Map<String, String> fEnv;
 	private IPath fCWD;
-	
+
 	public BuildCommand(IPath cmd, String args[], Map<String, String> env, IPath cwd, BuildStep step){
 		fCmd = cmd;
 		if(args != null)
 			fArgs = args.clone();
 		if(env != null)
 			fEnv = new HashMap<String, String>(env);
-		
+
 		fCWD = cwd;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildCommand#getCommand()
 	 */
+	@Override
 	public IPath getCommand() {
 		return fCmd;
 	}
@@ -45,6 +46,7 @@ public class BuildCommand implements IBuildCommand {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildCommand#getArgs()
 	 */
+	@Override
 	public String[] getArgs() {
 		if(fArgs != null)
 			return fArgs.clone();
@@ -54,6 +56,7 @@ public class BuildCommand implements IBuildCommand {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildCommand#getEnvironment()
 	 */
+	@Override
 	public Map<String, String> getEnvironment() {
 		if(fEnv != null)
 			return new HashMap<String, String>(fEnv);
@@ -63,6 +66,7 @@ public class BuildCommand implements IBuildCommand {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildCommand#getCWD()
 	 */
+	@Override
 	public IPath getCWD() {
 		return fCWD;
 	}

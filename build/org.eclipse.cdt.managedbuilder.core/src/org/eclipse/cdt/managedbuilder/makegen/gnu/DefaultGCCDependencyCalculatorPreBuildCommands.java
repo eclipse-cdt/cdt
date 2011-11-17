@@ -36,12 +36,12 @@ import org.eclipse.core.runtime.IPath;
 /**
  * This dependency calculator uses the GCC -MM -MF -MP -MT options in order to
  * generate .d files as separate step prior to the source compilations.
- * 
+ *
  * This dependency calculator uses the class DefaultGCCDependencyCalculatorPreBuildCommands
  * which implements the per-source command information
- * 
+ *
  * This class is used with DefaultGCCDependencyCalculatorPreBuild.
- * 
+ *
  * @since 3.1
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
@@ -54,19 +54,19 @@ public class DefaultGCCDependencyCalculatorPreBuildCommands implements IManagedD
 	IPath source;
 	IResource resource;
 	IBuildObject buildContext;
-	ITool tool; 
+	ITool tool;
 	IPath topBuildDirectory;
-	
+
 	//  Other Member variables
 	IProject project;
 	IPath sourceLocation;
 	IPath outputLocation;
 	boolean needExplicitRuleForFile;
 	Boolean genericCommands = null;
-	
+
 	/**
      * Constructor
-	 * 
+	 *
      * @param source  The source file for which dependencies should be calculated
      *    The IPath can be either relative to the project directory, or absolute in the file system.
      * @param buildContext  The IConfiguration or IResourceConfiguration that
@@ -81,7 +81,7 @@ public class DefaultGCCDependencyCalculatorPreBuildCommands implements IManagedD
 		this.buildContext = buildContext;
 		this.tool = tool;
 		this.topBuildDirectory = topBuildDirectory;
-		
+
 		//  Compute the project
 		if (buildContext instanceof IConfiguration) {
 			IConfiguration config = (IConfiguration)buildContext;
@@ -90,21 +90,21 @@ public class DefaultGCCDependencyCalculatorPreBuildCommands implements IManagedD
 			IResourceInfo resInfo = (IResourceInfo)buildContext;
 			project = (IProject)resInfo.getParent().getOwner();
 		}
-		
+
 		sourceLocation = (source.isAbsolute() ? source : project.getLocation().append(source));
 		outputLocation = project.getLocation().append(topBuildDirectory).append(getDependencyFiles()[0]);
 
 		// A separate rule is needed for the resource in the case where explicit file-specific macros
 		// are referenced, or if the resource contains special characters in its path (e.g., whitespace)
-		
+
 		/* fix for 137674
-		 * 
+		 *
 		 * We only need an explicit rule if one of the following is true:
 		 * - The resource is linked, and its full path to its real location contains special characters
 		 * - The resource is not linked, but its project relative path contains special characters
-		*/ 
+		*/
 		boolean resourceNameRequiresExplicitRule = true;
-		
+
 		if(resource != null)
 		{
 			resourceNameRequiresExplicitRule = (resource.isLinked() && GnuMakefileGenerator
@@ -112,15 +112,15 @@ public class DefaultGCCDependencyCalculatorPreBuildCommands implements IManagedD
 				|| (!resource.isLinked() && GnuMakefileGenerator
 						.containsSpecialCharacters(resource.getProjectRelativePath().toString()));
 		}
-		
-		needExplicitRuleForFile = resourceNameRequiresExplicitRule || 
+
+		needExplicitRuleForFile = resourceNameRequiresExplicitRule ||
 				BuildMacroProvider.getReferencedExplitFileMacros(tool).length > 0
 				|| BuildMacroProvider.getReferencedExplitFileMacros(
-						tool.getToolCommand(), 
+						tool.getToolCommand(),
 						IBuildMacroProvider.CONTEXT_FILE,
 						new FileContextData(sourceLocation, outputLocation,
 								null, tool)).length > 0;
-		
+
 		if (needExplicitRuleForFile) genericCommands = new Boolean(false);
 	}
 
@@ -131,7 +131,7 @@ public class DefaultGCCDependencyCalculatorPreBuildCommands implements IManagedD
 	 * null resource. The net result of this is that dependency rules will
 	 * always be explicit and will never use pattern rules, as it is impossible
 	 * for the calculator to know whether the resource is linked or not.
-	 * 
+	 *
 	 * @param source
 	 *            The source file for which dependencies should be calculated
 	 *            The IPath can be either relative to the project directory, or
@@ -145,14 +145,15 @@ public class DefaultGCCDependencyCalculatorPreBuildCommands implements IManagedD
 	 *            The top build directory of the configuration. This is the
 	 *            working directory for the tool. This IPath is relative to the
 	 *            project directory.
-	 *            
+	 *
 	 * @see #DefaultGCCDependencyCalculatorPreBuildCommands(IPath source, IResource resource, IBuildObject buildContext, ITool tool, IPath topBuildDirectory)
 	 */
 	public DefaultGCCDependencyCalculatorPreBuildCommands(IPath source, IBuildObject buildContext, ITool tool, IPath topBuildDirectory)
 	{
-		this(source, (IResource) null, buildContext, tool, topBuildDirectory); 
+		this(source, (IResource) null, buildContext, tool, topBuildDirectory);
 	}
-	
+
+	@Override
 	public boolean areCommandsGeneric() {
 		if (genericCommands != null) return genericCommands.booleanValue();
 		//  If the context is a Configuration, yes
@@ -168,16 +169,18 @@ public class DefaultGCCDependencyCalculatorPreBuildCommands implements IManagedD
 		return false;
 	}
 
+	@Override
 	public String getBuildStepName() {
 		return new String("GCC_DEPENDS");	//$NON-NLS-1$
 	}
 
+	@Override
 	public String[] getDependencyCommands() {
-		
+
 		String[] commands = new String[1];
 		String depCmd = EMPTY_STRING;
 		IBuildMacroProvider provider = ManagedBuildManager.getBuildMacroProvider();
-		
+
 		// Get and resolve the command
 		String cmd = tool.getToolCommand();
 		try {
@@ -208,20 +211,20 @@ public class DefaultGCCDependencyCalculatorPreBuildCommands implements IManagedD
 
 		} catch (BuildMacroException e) {
 		}
-			
+
 		IManagedCommandLineInfo cmdLInfo = null;
-		
+
 		//  Set up the command line options that will generate the dependency file
 		Vector<String> options = new Vector<String>();
-		// -w 
+		// -w
 		options.add("-w");						//$NON-NLS-1$
-		// -MM 
+		// -MM
 		options.add("-MM");						//$NON-NLS-1$
-		// -MP 
+		// -MP
 		options.add("-MP");						//$NON-NLS-1$
 
 		String optTxt;
-		
+
 		if( buildContext instanceof IResourceConfiguration || needExplicitRuleForFile ) {
 			IPath outPath = getDependencyFiles()[0];
 			// -MT"dependecy-file-name"
@@ -231,7 +234,7 @@ public class DefaultGCCDependencyCalculatorPreBuildCommands implements IManagedD
 			// -MT"object-file-filename"
 			optTxt = "-MT\"";					//$NON-NLS-1$
 			optTxt += GnuMakefileGenerator.escapeWhitespaces((outPath.removeFileExtension()).toString());
-			String outExt = tool.getOutputExtension(source.getFileExtension()); 
+			String outExt = tool.getOutputExtension(source.getFileExtension());
 			if (outExt != null) optTxt += "." + outExt;		//$NON-NLS-1$
 			optTxt += "\""; 					//$NON-NLS-1$
 			options.add(optTxt);
@@ -247,7 +250,7 @@ public class DefaultGCCDependencyCalculatorPreBuildCommands implements IManagedD
 		}
 
 		// Save the -I, -D, -U options and discard the rest
-		try { 
+		try {
 			String[] allFlags = tool.getToolCommandFlags(sourceLocation, outputLocation);
 			for (String flag : allFlags) {
 				if (flag.startsWith("-I") ||		//$NON-NLS-1$
@@ -264,16 +267,16 @@ public class DefaultGCCDependencyCalculatorPreBuildCommands implements IManagedD
 		String[] flags = options.toArray(new String[options.size()]);
 		String[] inputs = new String[1];
 		inputs[0] = IManagedBuilderMakefileGenerator.IN_MACRO;
-		cmdLInfo = cmdLGen.generateCommandLineInfo( 
+		cmdLInfo = cmdLGen.generateCommandLineInfo(
 				tool, cmd, flags, "-MF", EMPTY_STRING,	//$NON-NLS-1$
-				IManagedBuilderMakefileGenerator.OUT_MACRO, 
-				inputs, 
+				IManagedBuilderMakefileGenerator.OUT_MACRO,
+				inputs,
 				tool.getCommandLinePattern() );
-		
+
 		// The command to build
 		if (cmdLInfo != null) {
 			depCmd = cmdLInfo.getCommandLine();
-        
+
 	        // resolve any remaining macros in the command after it has been
 	        // generated
 			try {
@@ -297,10 +300,10 @@ public class DefaultGCCDependencyCalculatorPreBuildCommands implements IManagedD
 									new FileContextData(sourceLocation,
 											outputLocation, null, tool));
 				}
-	
+
 				if ((resolvedCommand = resolvedCommand.trim()).length() > 0)
 					depCmd = resolvedCommand;
-	
+
 			} catch (BuildMacroException e) {
 			}
 		}
@@ -309,6 +312,7 @@ public class DefaultGCCDependencyCalculatorPreBuildCommands implements IManagedD
 		return commands;
 	}
 
+	@Override
 	public IPath[] getDependencyFiles() {
 		//  The source file is project relative and the dependency file is top build directory relative
 		//  Remove the source extension and add the dependency extension
@@ -329,6 +333,7 @@ public class DefaultGCCDependencyCalculatorPreBuildCommands implements IManagedD
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyInfo#getBuildContext()
 	 */
+	@Override
 	public IBuildObject getBuildContext() {
 		return buildContext;
 	}
@@ -337,6 +342,7 @@ public class DefaultGCCDependencyCalculatorPreBuildCommands implements IManagedD
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyInfo#getSource()
 	 */
+	@Override
 	public IPath getSource() {
 		return source;
 	}
@@ -345,6 +351,7 @@ public class DefaultGCCDependencyCalculatorPreBuildCommands implements IManagedD
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyInfo#getTool()
 	 */
+	@Override
 	public ITool getTool() {
 		return tool;
 	}
@@ -353,6 +360,7 @@ public class DefaultGCCDependencyCalculatorPreBuildCommands implements IManagedD
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyInfo#getTopBuildDirectory()
 	 */
+	@Override
 	public IPath getTopBuildDirectory() {
 		return topBuildDirectory;
 	}

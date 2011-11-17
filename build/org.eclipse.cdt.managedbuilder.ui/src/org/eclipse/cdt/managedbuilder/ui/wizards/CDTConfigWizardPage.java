@@ -58,9 +58,9 @@ public class CDTConfigWizardPage extends WizardPage {
 	public static final String PAGE_ID = "org.eclipse.cdt.managedbuilder.ui.wizard.CConfigWizardPage"; //$NON-NLS-1$
 
 	private static final Image IMG_CONFIG = ManagedBuilderUIImages.get(ManagedBuilderUIImages.IMG_BUILD_CONFIG);
-	private static final String TITLE = Messages.CConfigWizardPage_0; 
-	private static final String MESSAGE = Messages.CConfigWizardPage_1; 
-	private static final String COMMENT = Messages.CConfigWizardPage_12; 
+	private static final String TITLE = Messages.CConfigWizardPage_0;
+	private static final String MESSAGE = Messages.CConfigWizardPage_1;
+	private static final String COMMENT = Messages.CConfigWizardPage_12;
 	private static final String EMPTY_STR = "";  //$NON-NLS-1$
 
 	private Table table;
@@ -79,7 +79,7 @@ public class CDTConfigWizardPage extends WizardPage {
 	IWizardPage[] customPages = null;
 
 	public CDTConfigWizardPage(MBSWizardHandler h) {
-		super(Messages.CDTConfigWizardPage_0); 
+		super(Messages.CDTConfigWizardPage_0);
 		setPageComplete(false);
 		handler = h;
 		setWizard(h.getWizard());
@@ -100,6 +100,7 @@ public class CDTConfigWizardPage extends WizardPage {
 		return its;
 	}
 
+	@Override
 	public void createControl(Composite p) {
 		parent = new Composite(p, SWT.NONE);
 		parent.setFont(parent.getFont());
@@ -110,11 +111,11 @@ public class CDTConfigWizardPage extends WizardPage {
 		c1.setLayout(new GridLayout(2, false));
 		c1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		setupLabel(c1, Messages.CConfigWizardPage_4, GridData.BEGINNING); 
+		setupLabel(c1, Messages.CConfigWizardPage_4, GridData.BEGINNING);
 		l_projtype = setupLabel(c1, EMPTY_STR, GridData.FILL_HORIZONTAL);
-		setupLabel(c1, Messages.CConfigWizardPage_5, GridData.BEGINNING); 
+		setupLabel(c1, Messages.CConfigWizardPage_5, GridData.BEGINNING);
 		l_chains = setupLabel(c1, EMPTY_STR, GridData.FILL_HORIZONTAL);
-		setupLabel(c1, Messages.CConfigWizardPage_6, GridData.BEGINNING); 
+		setupLabel(c1, Messages.CConfigWizardPage_6, GridData.BEGINNING);
 		setupLabel(c1, EMPTY_STR, GridData.BEGINNING);
 
 		Composite c2 = new Composite(parent, SWT.NONE);
@@ -127,10 +128,13 @@ public class CDTConfigWizardPage extends WizardPage {
 
 		tv = new CheckboxTableViewer(table);
 		tv.setContentProvider(new IStructuredContentProvider() {
+			@Override
 			public Object[] getElements(Object inputElement) {
 				return (Object[])inputElement;
 			}
+			@Override
 			public void dispose() {}
+			@Override
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 		});
 		tv.setLabelProvider(new LabelProvider() {
@@ -142,6 +146,7 @@ public class CDTConfigWizardPage extends WizardPage {
 			public Image getImage(Object element) { return IMG_CONFIG; }
 		});
 		tv.addCheckStateListener(new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				setPageComplete(isCustomPageComplete());
 				update();
@@ -151,7 +156,7 @@ public class CDTConfigWizardPage extends WizardPage {
 		c.setLayout(new GridLayout());
 
 		Button b1 = new Button(c, SWT.PUSH);
-		b1.setText(Messages.CConfigWizardPage_7); 
+		b1.setText(Messages.CConfigWizardPage_7);
 		b1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		b1.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -162,7 +167,7 @@ public class CDTConfigWizardPage extends WizardPage {
 			}});
 
 		Button b2 = new Button(c, SWT.PUSH);
-		b2.setText(Messages.CConfigWizardPage_8); 
+		b2.setText(Messages.CConfigWizardPage_8);
 		b2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		b2.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -176,7 +181,7 @@ public class CDTConfigWizardPage extends WizardPage {
 		new Label(c, 0).setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Button b3 = new Button(c, SWT.PUSH);
-		b3.setText(Messages.CConfigWizardPage_13); 
+		b3.setText(Messages.CConfigWizardPage_13);
 		b3.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		b3.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -214,10 +219,10 @@ public class CDTConfigWizardPage extends WizardPage {
 			for (int j=0; j<cfgs.length; j++) {
 				if (cfgs[j].isSystem() || (handler.supportedOnly() && !cfgs[j].isSupported())
 						// Bug 335338 don't include project type configurations if we're not creating a project-typed project
-						//            Project types are non-default if their nameAttribute != "" (see: ManagedBuildWizard: "old style project types")  
-						|| (pt == null && cfgs[j].getConfiguration() != null && 
-								          cfgs[j].getConfiguration().getProjectType() != null && 
-										  cfgs[j].getConfiguration().getProjectType().getNameAttribute().length() > 0)) 
+						//            Project types are non-default if their nameAttribute != "" (see: ManagedBuildWizard: "old style project types")
+						|| (pt == null && cfgs[j].getConfiguration() != null &&
+								          cfgs[j].getConfiguration().getProjectType() != null &&
+										  cfgs[j].getConfiguration().getProjectType().getNameAttribute().length() > 0))
 					continue;
 				out.add(cfgs[j]);
 			}
@@ -252,12 +257,12 @@ public class CDTConfigWizardPage extends WizardPage {
 			return true;
 
 		if (table.getItemCount() == 0) {
-			errorMessage = Messages.CConfigWizardPage_10; 
+			errorMessage = Messages.CConfigWizardPage_10;
 			message = errorMessage;
 			return false;
 		}
 		if (tv.getCheckedElements().length == 0) {
-			errorMessage = Messages.CConfigWizardPage_11; 
+			errorMessage = Messages.CConfigWizardPage_11;
 			message = errorMessage;
 			return false;
 		}

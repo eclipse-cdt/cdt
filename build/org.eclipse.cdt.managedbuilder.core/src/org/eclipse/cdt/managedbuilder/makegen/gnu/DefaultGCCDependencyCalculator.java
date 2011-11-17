@@ -42,6 +42,7 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderDependencyCalculator#findDependencies(org.eclipse.core.resources.IResource)
 	 */
+	@Override
 	public IResource[] findDependencies(IResource resource, IProject project) {
 		return null;
 	}
@@ -49,6 +50,7 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderDependencyCalculator#getCalculatorType()
 	 */
+	@Override
 	public int getCalculatorType() {
 		return TYPE_COMMAND;
 	}
@@ -56,12 +58,13 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderDependencyCalculator#getDependencyCommand()
 	 */
+	@Override
 	public String getDependencyCommand(IResource resource, IManagedBuildInfo info) {
 		/*
 		 * For a given input, <path>/<resource_name>.<ext>, return a string containing
 		 * 	echo -n $(@:%.<out_ext>=%.d) '<path>/' >> $(@:%.<out_ext>=%.d) && \
 		 * 	<tool_command> -P -MM -MG <tool_flags> $< >> $(@:%.<out_ext>=%.d)
-		 * 
+		 *
 		 */
 		StringBuffer buffer = new StringBuffer();
 
@@ -74,7 +77,7 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 
 		String inputExtension = resource.getFileExtension();
 		String outputExtension = info.getOutputExtension(inputExtension);
-		
+
 		// Work out the build-relative path for the output files
 		IContainer resourceLocation = resource.getParent();
 		String relativePath = new String();
@@ -84,33 +87,33 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 		if (relativePath.length() > 0) {
 			relativePath +=  IManagedBuilderMakefileGenerator.SEPARATOR;
 		}
-		
+
 		// Calculate the dependency rule
 		// <path>/$(@:%.<out_ext>=%.d)
 		String depRule = "'$(@:%." + //$NON-NLS-1$
-			outputExtension + 
+			outputExtension +
 			"=%." + //$NON-NLS-1$
-			IManagedBuilderMakefileGenerator.DEP_EXT + 
+			IManagedBuilderMakefileGenerator.DEP_EXT +
 			")'"; //$NON-NLS-1$
-		
-		// Add the rule that will actually create the right format for the dep 
-		buffer.append(IManagedBuilderMakefileGenerator.TAB + 
-				IManagedBuilderMakefileGenerator.ECHO + 
-				IManagedBuilderMakefileGenerator.WHITESPACE + 
+
+		// Add the rule that will actually create the right format for the dep
+		buffer.append(IManagedBuilderMakefileGenerator.TAB +
+				IManagedBuilderMakefileGenerator.ECHO +
+				IManagedBuilderMakefileGenerator.WHITESPACE +
 				"-n" + //$NON-NLS-1$
 				IManagedBuilderMakefileGenerator.WHITESPACE +
-				depRule + 
-				IManagedBuilderMakefileGenerator.WHITESPACE + 
+				depRule +
+				IManagedBuilderMakefileGenerator.WHITESPACE +
 				"$(dir $@)" + //$NON-NLS-1$
-				IManagedBuilderMakefileGenerator.WHITESPACE + 
-				">" + //$NON-NLS-1$ 
-				IManagedBuilderMakefileGenerator.WHITESPACE + 
-				depRule + 
-				IManagedBuilderMakefileGenerator.WHITESPACE + 
-				IManagedBuilderMakefileGenerator.LOGICAL_AND + 
-				IManagedBuilderMakefileGenerator.WHITESPACE + 
+				IManagedBuilderMakefileGenerator.WHITESPACE +
+				">" + //$NON-NLS-1$
+				IManagedBuilderMakefileGenerator.WHITESPACE +
+				depRule +
+				IManagedBuilderMakefileGenerator.WHITESPACE +
+				IManagedBuilderMakefileGenerator.LOGICAL_AND +
+				IManagedBuilderMakefileGenerator.WHITESPACE +
 				IManagedBuilderMakefileGenerator.LINEBREAK);
-		
+
 		// Add the line that will do the work to calculate dependencies
 		IManagedCommandLineInfo cmdLInfo = null;
 		String buildCmd = null;
@@ -150,15 +153,15 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 									new FileContextData(resource.getLocation(),
 											null, null, tool));
 				}
-				
+
 				if((resolvedCommand = resolvedCommand.trim()).length() > 0)
 					cmd = resolvedCommand;
-					
+
 			} catch (BuildMacroException e){
 			}
 
 			String[] toolFlags = null;
-			try { 
+			try {
 				toolFlags = tool.getToolCommandFlags(resource.getLocation(),null);
 			} catch( BuildException ex ) {
 				// TODO add some routines to catch this
@@ -176,7 +179,7 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 			cmdLInfo = cmdLGen.generateCommandLineInfo( tool, cmd, flags, outflag, outputPrefix,
 					outputFile, inputs, tool.getCommandLinePattern() );
 			buildCmd = cmdLInfo.getCommandLine();
-			
+
 			// resolve any remaining macros in the command after it has been generated
 			try {
 				String resolvedCommand = null;
@@ -207,11 +210,11 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 				}
 				if((resolvedCommand = resolvedCommand.trim()).length() > 0)
 					buildCmd = resolvedCommand;
-					
+
 			} catch (BuildMacroException e){
 			}
-			
-			
+
+
 		} else {
 			ITool tool = null;
 			IFolderInfo foInfo = (IFolderInfo)config.getResourceInfo(resource.getProjectRelativePath(), false);
@@ -234,26 +237,26 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 						new FileContextData(resource.getLocation(),null,null,tool));
 				if((resolvedCommand = resolvedCommand.trim()).length() > 0)
 					cmd = resolvedCommand;
-					
+
 			} catch (BuildMacroException e){
 			}
 
 			String buildFlags = "-MM -MG -P -w " + info.getToolFlagsForSource(inputExtension, resource.getLocation(), null); //$NON-NLS-1$
 			String[] flags = buildFlags.split( "\\s" ); //$NON-NLS-1$
-			cmdLInfo = info.generateToolCommandLineInfo( inputExtension, flags, outflag, outputPrefix, 
+			cmdLInfo = info.generateToolCommandLineInfo( inputExtension, flags, outflag, outputPrefix,
 					outputFile, inputs, resource.getLocation(), null);
 			// The command to build
-			if( cmdLInfo == null ) buildCmd = 
-				cmd + 
+			if( cmdLInfo == null ) buildCmd =
+				cmd +
 				IManagedBuilderMakefileGenerator.WHITESPACE +
 				"-MM -MG -P -w " +  //$NON-NLS-1$
-				buildFlags + 
-				IManagedBuilderMakefileGenerator.WHITESPACE + 
+				buildFlags +
+				IManagedBuilderMakefileGenerator.WHITESPACE +
 				IManagedBuilderMakefileGenerator.IN_MACRO;
 			else {
 				buildCmd = cmdLInfo.getCommandLine();
 			}
-            
+
             // resolve any remaining macros in the command after it has been
             // generated
 			try {
@@ -290,9 +293,9 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
             }
 		}
 
-		buffer.append(IManagedBuilderMakefileGenerator.TAB + 
+		buffer.append(IManagedBuilderMakefileGenerator.TAB +
 				buildCmd +
-				IManagedBuilderMakefileGenerator.WHITESPACE + 
+				IManagedBuilderMakefileGenerator.WHITESPACE +
 				">>" +  //$NON-NLS-1$
 				IManagedBuilderMakefileGenerator.WHITESPACE + depRule );
 

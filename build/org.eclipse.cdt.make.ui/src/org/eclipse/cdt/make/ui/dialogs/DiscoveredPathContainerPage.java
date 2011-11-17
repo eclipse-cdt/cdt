@@ -79,12 +79,12 @@ import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 
 /**
  * A dialog page to manage discovered scanner configuration
- * 
+ *
  * @deprecated as of CDT 4.0. This tab was used to set preferences/properties
  * for 3.X style projects.
- * 
+ *
  * @author vhirsl
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -98,12 +98,12 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 	private static final String DISABLE = DISC_COMMON_PREFIX + ".discoveredGroup.buttons.disable.label"; //$NON-NLS-1$
 	private static final String ENABLE = DISC_COMMON_PREFIX + ".discoveredGroup.buttons.enable.label"; //$NON-NLS-1$
 	private static final String DELETE = DISC_COMMON_PREFIX + ".discoveredGroup.buttons.delete.label"; //$NON-NLS-1$
-	
+
 	private static final String CONTAINER_LABEL = PREFIX + ".title"; //$NON-NLS-1$
 	private static final String CONTAINER_DESCRIPTION = PREFIX + ".description"; //$NON-NLS-1$
 	private static final String CONTAINER_LIST_LABEL = PREFIX + ".list.title"; //$NON-NLS-1$
     private static final String CONTAINER_INITIALIZATION_ERROR = PREFIX +".initialization.error.message";  //$NON-NLS-1$
-	
+
 	private final int IDX_UP = 0;
 	private final int IDX_DOWN = 1;
 	private final int IDX_ENABLE = 2;
@@ -113,7 +113,7 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 
 	private static final int DISC_UP = 0;
 	private static final int DISC_DOWN = 1;
-	
+
 	private static final int DO_DISABLE = 0;
 	private static final int DO_ENABLE = 1;
 
@@ -127,7 +127,7 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 
 	private CopyTextAction copyTextAction;
 	private HandlerSubmission submission;
-	
+
 	public DiscoveredPathContainerPage() {
 		super("DiscoveredScannerConfigurationContainerPage"); //$NON-NLS-1$
 
@@ -155,7 +155,7 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 		dirty = false;
 		deletedEntries = new ArrayList<DiscoveredElement>();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
 	 */
@@ -168,6 +168,7 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.wizards.ICPathContainerPage#initialize(org.eclipse.cdt.core.model.ICProject, org.eclipse.cdt.core.model.IPathEntry[])
 	 */
+	@Override
 	public void initialize(ICProject project, IPathEntry[] currentEntries) {
 		fCProject = project;
         try {
@@ -180,6 +181,7 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.wizards.ICPathContainerPage#finish()
 	 */
+	@Override
 	public boolean finish() {
 		if (!dirty) {
 			return true;
@@ -213,13 +215,13 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 	            }
 	        }
 		}
-		
+
         if (info instanceof IPerProjectDiscoveredPathInfo) {
             IPerProjectDiscoveredPathInfo projectPathInfo = (IPerProjectDiscoveredPathInfo) info;
-		
+
 			LinkedHashMap<String, Boolean> includes = new LinkedHashMap<String, Boolean>();
 			LinkedHashMap<String, SymbolEntry> symbols = new LinkedHashMap<String, SymbolEntry>();
-			
+
 			DiscoveredElement container = (DiscoveredElement) fDiscoveredContainerList.getElement(0);
 			if (container != null && container.getEntryKind() == DiscoveredElement.CONTAINER) {
 				Object[] cChildren = container.getChildren();
@@ -256,7 +258,7 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
             projectPathInfo.setIncludeMap(includes);
             projectPathInfo.setSymbolMap(symbols);
         }
-        
+
 		try {
 			// update scanner configuration
 			List<IResource> resourceDelta = new ArrayList<IResource>(1);
@@ -272,13 +274,15 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.wizards.ICPathContainerPage#getContainerEntries()
 	 */
+	@Override
 	public IContainerEntry[] getNewContainers() {
-		return new IContainerEntry[] { fPathEntry }; 
+		return new IContainerEntry[] { fPathEntry };
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.wizards.ICPathContainerPage#setSelection(org.eclipse.cdt.core.model.IPathEntry)
 	 */
+	@Override
 	public void setSelection(IContainerEntry containerEntry) {
 		if (containerEntry != null) {
 			fPathEntry = containerEntry;
@@ -312,22 +316,22 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 					for (String include : includesKeySet) {
 						Boolean removed = paths.get(include);
 						removed = (removed == null) ? Boolean.FALSE : removed;
-						DiscoveredElement.createNew(container, fCProject.getProject(), include, 
+						DiscoveredElement.createNew(container, fCProject.getProject(), include,
 								DiscoveredElement.INCLUDE_PATH, removed.booleanValue(), false);
 					}
-					// get defined symbols 
+					// get defined symbols
 					LinkedHashMap<String, SymbolEntry> symbols = projectPathInfo.getSymbolMap();
 					Set<String> symbolsKeySet = symbols.keySet();
 					for (String symbol : symbolsKeySet) {
 						SymbolEntry se = symbols.get(symbol);
 						List<String> activeValues = se.getActiveRaw();
 						for (String value : activeValues) {
-							DiscoveredElement.createNew(container, fCProject.getProject(), value, 
+							DiscoveredElement.createNew(container, fCProject.getProject(), value,
 									DiscoveredElement.SYMBOL_DEFINITION, false, false);
 						}
 						List<String> removedValues = se.getRemovedRaw();
 						for (String value : removedValues) {
-							DiscoveredElement.createNew(container, fCProject.getProject(), value, 
+							DiscoveredElement.createNew(container, fCProject.getProject(), value,
 									DiscoveredElement.SYMBOL_DEFINITION, true, false);
 						}
 					}
@@ -338,7 +342,7 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
             		IPath[] includes = filePathInfo.getIncludePaths();
             		for (int i = 0; i < includes.length; i++) {
 						String include = includes[i].toPortableString();
-						DiscoveredElement.createNew(container, fCProject.getProject(), include, 
+						DiscoveredElement.createNew(container, fCProject.getProject(), include,
 								DiscoveredElement.INCLUDE_PATH, false, false);
 					}
 					// get defined symbols
@@ -347,21 +351,21 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
             		for (String key : symbolsKeySet) {
 						String value = symbols.get(key);
 						String symbol = (value != null && value.length() > 0) ? key + "=" + value : key; //$NON-NLS-1$
-						DiscoveredElement.createNew(container, fCProject.getProject(), symbol, 
+						DiscoveredElement.createNew(container, fCProject.getProject(), symbol,
 								DiscoveredElement.SYMBOL_DEFINITION, false, false);
 					}
             		// get include files
             		IPath[] includeFiles = filePathInfo.getIncludeFiles(fCProject.getPath());
             		for (IPath incFile : includeFiles) {
             			String includeFile = incFile.toPortableString();
-						DiscoveredElement.createNew(container, fCProject.getProject(), includeFile, 
+						DiscoveredElement.createNew(container, fCProject.getProject(), includeFile,
 								DiscoveredElement.INCLUDE_FILE, false, false);
 					}
             		// get macros files
             		IPath[] macrosFiles = filePathInfo.getMacroFiles(fCProject.getPath());
             		for (IPath macrosFilePath : macrosFiles) {
             			String macrosFile = macrosFilePath.toPortableString();
-						DiscoveredElement.createNew(container, fCProject.getProject(), macrosFile, 
+						DiscoveredElement.createNew(container, fCProject.getProject(), macrosFile,
 								DiscoveredElement.MACROS_FILE, false, false);
 					}
             	}
@@ -374,6 +378,7 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		PixelConverter converter = new PixelConverter(parent);
 
@@ -403,9 +408,9 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 		});
 
 		setControl(composite);
-		
+
 		fDiscoveredContainerList.selectFirstElement();
-		
+
 		// Create copy text action
 		Shell shell = fDiscoveredContainerList.getTreeViewer().getControl().getShell();
 		copyTextAction = new CopyTextAction(shell);
@@ -417,6 +422,7 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 //				if (copyTextAction.canBeApplied(fDiscoveredContainerList.getSelectedElements())) {
 					manager.add(copyTextAction);
@@ -429,10 +435,10 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 
 	private void registerActionHandler(Shell shell, IAction action) {
 		IWorkbench workbench = PlatformUI.getWorkbench();
-		
+
 		IWorkbenchContextSupport contextSupport = workbench.getContextSupport();
 		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
-		
+
 		submission = new HandlerSubmission(null, shell, null,
 				CopyTextAction.ACTION_ID, new ActionHandler(action), Priority.MEDIUM);
 		commandSupport.addHandlerSubmission(submission);
@@ -441,10 +447,10 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 
 	private void deregisterActionHandlers() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
-		
+
 		IWorkbenchContextSupport contextSupport = workbench.getContextSupport();
 		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
-		
+
 		commandSupport.removeHandlerSubmission(submission);
 		contextSupport.unregisterShell(fDiscoveredContainerList.getTreeViewer().getControl().getShell());
 	}
@@ -459,15 +465,17 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener#dialogFieldChanged(org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField)
 		 */
+		@Override
 		public void dialogFieldChanged(DialogField field) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		// -------- IListAdapter --------
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter#customButtonPressed(org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField, int)
 		 */
+		@Override
 		public void customButtonPressed(TreeListDialogField<DiscoveredElement> field, int index) {
 			containerPageCustomButtonPressed(field, index);
 		}
@@ -475,6 +483,7 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter#selectionChanged(org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField)
 		 */
+		@Override
 		public void selectionChanged(TreeListDialogField<DiscoveredElement> field) {
 			if (copyTextAction != null) {
 				copyTextAction.canBeApplied(field.getSelectedElements());
@@ -485,6 +494,7 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter#doubleClicked(org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField)
 		 */
+		@Override
 		public void doubleClicked(TreeListDialogField<DiscoveredElement> field) {
 			// TODO Auto-generated method stub
 
@@ -493,6 +503,7 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter#keyPressed(org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField, org.eclipse.swt.events.KeyEvent)
 		 */
+		@Override
 		public void keyPressed(TreeListDialogField<DiscoveredElement> field, KeyEvent event) {
 			// TODO Auto-generated method stub
 
@@ -501,6 +512,7 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter#getChildren(org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField, java.lang.Object)
 		 */
+		@Override
 		public Object[] getChildren(TreeListDialogField<DiscoveredElement> field, Object element) {
 			if (element instanceof DiscoveredElement) {
 				DiscoveredElement elem = (DiscoveredElement) element;
@@ -512,6 +524,7 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter#getParent(org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField, java.lang.Object)
 		 */
+		@Override
 		public Object getParent(TreeListDialogField<DiscoveredElement> field, Object element) {
 			if (element instanceof DiscoveredElement) {
 				DiscoveredElement elem = (DiscoveredElement) element;
@@ -523,6 +536,7 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter#hasChildren(org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField, java.lang.Object)
 		 */
+		@Override
 		public boolean hasChildren(TreeListDialogField<DiscoveredElement> field, Object element) {
 			if (element instanceof DiscoveredElement) {
 				DiscoveredElement elem = (DiscoveredElement) element;
@@ -614,7 +628,7 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 		fDiscoveredContainerList.postSetSelection(new StructuredSelection(selElements));
 		return rc;
 	}
-	
+
 	private boolean enableDisableEntry(int action) {
 		boolean rc = false;
 		boolean remove = (action == DO_DISABLE);
@@ -640,7 +654,7 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 			DiscoveredElement elem = (DiscoveredElement) selElements.get(i);
 			if (elem.getEntryKind() == DiscoveredElement.CONTAINER) {
 				deletedEntries.add(elem);
-				
+
                 Object[] children = elem.getChildren();
                 for (int j = 0; j < children.length; j++) {
                     if (children[j] instanceof DiscoveredElement) {
@@ -739,7 +753,7 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 			DiscoveredElement borderElem = null;
 			int borderElementIndex = (direction == DISC_UP) ? 0 : parent.getChildren().length - 1;
 			if (parent.getEntryKind() == DiscoveredElement.PATHS_GROUP) {
-				borderElem = (DiscoveredElement)(parent.getChildren())[borderElementIndex];
+				borderElem = (parent.getChildren())[borderElementIndex];
 			}
 			if (borderElem != null) {
 				if (borderElem.equals(elem)) {
@@ -779,7 +793,7 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 	 */
 	private boolean canDelete(List selElements) {
 		if (info instanceof IPerFileDiscoveredPathInfo) {
-			if (selElements.size() > 0 && 
+			if (selElements.size() > 0 &&
 					((DiscoveredElement) selElements.get(0)).getEntryKind() == DiscoveredElement.CONTAINER) {
 				return true;
 			}
@@ -790,10 +804,10 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Support for text copy/paste
-	 * 
+	 *
 	 * @author vhirsl
 	 */
 	public class CopyTextAction extends Action {
@@ -835,7 +849,7 @@ public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntr
 		public void run() {
 			if (discoveredEntry != null) {
 				// copy to clipboard
-				clipboard.setContents(new Object[] {discoveredEntry}, 
+				clipboard.setContents(new Object[] {discoveredEntry},
 									  new Transfer[] {TextTransfer.getInstance()});
 				discoveredEntry = null;
 			}

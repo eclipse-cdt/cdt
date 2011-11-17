@@ -109,6 +109,7 @@ public abstract class AbstractContainerAreaDropAdapter implements TransferDropTa
 	 *
 	 * @see DropTargetEvent
 	 */
+	@Override
 	public boolean isEnabled(DropTargetEvent event) {
 		return true;
 	}
@@ -121,6 +122,7 @@ public abstract class AbstractContainerAreaDropAdapter implements TransferDropTa
 	 *
 	 * @see DropTargetEvent
 	 */
+	@Override
 	public void dragEnter(DropTargetEvent event) {
 		lastDragOverTarget = null;
 		lastDragOverOperation = DND.DROP_NONE;
@@ -142,6 +144,7 @@ public abstract class AbstractContainerAreaDropAdapter implements TransferDropTa
 	 *
 	 * @see DropTargetEvent
 	 */
+	@Override
 	public void dragOperationChanged(DropTargetEvent event) {
 		originallyRequestedOperation = event.detail;
 		event.detail = dragOverOperationCached(originallyRequestedOperation,
@@ -156,6 +159,7 @@ public abstract class AbstractContainerAreaDropAdapter implements TransferDropTa
 	 *
 	 * @see DropTargetEvent
 	 */
+	@Override
 	public void dragOver(DropTargetEvent event) {
 		event.detail = dragOverOperationCached(originallyRequestedOperation,
 			determineDropContainer(event), determineDropTarget(event));
@@ -180,6 +184,7 @@ public abstract class AbstractContainerAreaDropAdapter implements TransferDropTa
 	 *
 	 * @see DropTargetEvent
 	 */
+	@Override
 	public void dragLeave(DropTargetEvent event) {
 		// no action
 	}
@@ -192,6 +197,7 @@ public abstract class AbstractContainerAreaDropAdapter implements TransferDropTa
 	 *
 	 * @see DropTargetEvent
 	 */
+	@Override
 	public void dropAccept(DropTargetEvent event) {
 		// no action
 	}
@@ -204,6 +210,7 @@ public abstract class AbstractContainerAreaDropAdapter implements TransferDropTa
 	 *
 	 * @see DropTargetEvent
 	 */
+	@Override
 	public void drop(DropTargetEvent event) {
 		IContainer dropContainer = determineDropContainer(event);
 		if (dropContainer != null) {

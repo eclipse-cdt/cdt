@@ -24,26 +24,27 @@ public class CustomOptionCommandGenerator implements IOptionCommandGenerator
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOptionCommandGenerator#generateCommand(org.eclipse.cdt.managedbuilder.core.IOption, org.eclipse.cdt.utils.cdtvariables.IVariableSubstitutor)
 	 */
+	@Override
 	public String generateCommand(IOption option, IVariableSubstitutor macroSubstitutor) {
 		Object value = option.getValue();
-		
+
 		if(value instanceof List) {
 			try {
 				String[] list = CdtVariableResolver.resolveStringListValues(option.getBasicStringListValue(), macroSubstitutor, true);
 				if(list != null) {
 					StringBuilder sb = new StringBuilder();
-					
+
 					for(String entry : list) {
 						sb.append(entry + ';');
 					}
-					
+
 					return option.getCommand() + '\"' + sb.toString() + '\"';
 				}
 			}
 			catch(Exception x) {
 			}
 		}
-		
+
 		return null;
 	}
 

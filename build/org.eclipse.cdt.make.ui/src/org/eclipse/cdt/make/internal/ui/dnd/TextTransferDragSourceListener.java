@@ -42,6 +42,7 @@ public class TextTransferDragSourceListener extends AbstractSelectionDragAdapter
 	 * @return the {@link Transfer} type that this listener can accept a
 	 * drop operation for.
 	 */
+	@Override
 	public Transfer getTransfer() {
 		return TextTransfer.getInstance();
 	}

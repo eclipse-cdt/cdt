@@ -29,12 +29,13 @@ import org.eclipse.core.runtime.Path;
 /**
  * This class provides a name for the Gnu Linker tool when it is not used
  * as the target tool of a tool-chain
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class GnuLinkOutputNameProvider implements IManagedOutputNameProvider {
 
+	@Override
 	public IPath[] getOutputNames(ITool tool, IPath[] primaryInputNames) {
 		IPath[] name = new IPath[1];
 
@@ -46,8 +47,8 @@ public class GnuLinkOutputNameProvider implements IManagedOutputNameProvider {
 				fileName = fileName.substring(2,fileName.length()-1);
 			}
 		}
-		
-		//  If we are building a shared library, determine if the user has specified a name using the 
+
+		//  If we are building a shared library, determine if the user has specified a name using the
 		//  soname option
 		boolean isSO = false;
 		String soName = "";	//$NON-NLS-1$
@@ -82,15 +83,15 @@ public class GnuLinkOutputNameProvider implements IManagedOutputNameProvider {
 					} catch (Exception e) {}
 				}
 			}
-		} 
-			
+		}
+
 		//  If this is a shared library, use the specified name
 		if (isSO && soName != null && soName.length() > 0) {
 			fileName = soName;
 		} else {
-			//  Add the outputPrefix	
+			//  Add the outputPrefix
 			String outputPrefix = tool.getPrimaryOutputType().getOutputPrefix();
-			
+
 			// Resolve any macros in the outputPrefix
 			// Note that we cannot use file macros because if we do a clean
 			// we need to know the actual
@@ -122,9 +123,9 @@ public class GnuLinkOutputNameProvider implements IManagedOutputNameProvider {
 			}
 
 			if (config != null) {
-				
+
 				boolean explicitRuleRequired = false;
-				
+
 				// if any input files have spaces in the name, then we must
 				// not use builder variables
 				for(int k = 0; k < primaryInputNames.length; k++)
@@ -132,9 +133,9 @@ public class GnuLinkOutputNameProvider implements IManagedOutputNameProvider {
 					if(primaryInputNames[k].toString().indexOf(" ") != -1) //$NON-NLS-1$
 						explicitRuleRequired = true;
 				}
-				
+
 				try {
-					
+
 					if(explicitRuleRequired)
 					{
 						outputPrefix = ManagedBuildManager
@@ -146,7 +147,7 @@ public class GnuLinkOutputNameProvider implements IManagedOutputNameProvider {
 								IBuildMacroProvider.CONTEXT_CONFIGURATION,
 								config);
 					}
-					
+
 					else {
 					outputPrefix = ManagedBuildManager
 							.getBuildMacroProvider()
@@ -163,7 +164,7 @@ public class GnuLinkOutputNameProvider implements IManagedOutputNameProvider {
 				}
 
 			}
-			
+
 			if (outputPrefix != null && outputPrefix.length() > 0) {
 				fileName = outputPrefix + fileName;
 			}

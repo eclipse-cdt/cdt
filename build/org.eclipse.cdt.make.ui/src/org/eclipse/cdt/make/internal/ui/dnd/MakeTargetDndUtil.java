@@ -12,7 +12,6 @@
 package org.eclipse.cdt.make.internal.ui.dnd;
 
 import java.lang.reflect.InvocationTargetException;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +39,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.widgets.Shell;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * A collection of various functions for Make Target View drag and drop support.
@@ -267,6 +268,7 @@ public class MakeTargetDndUtil {
 	private static void copyTargetsWithProgressIndicator(final IMakeTarget[] makeTargets,
 		final IContainer container, final int operation, final Shell shell) {
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
+			@Override
 			public void run(IProgressMonitor monitor) throws InvocationTargetException,
 				InterruptedException {
 				boolean isMove = operation == DND.DROP_MOVE;

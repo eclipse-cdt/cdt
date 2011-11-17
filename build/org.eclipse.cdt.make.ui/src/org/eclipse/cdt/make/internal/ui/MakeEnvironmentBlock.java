@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.ui;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -66,10 +65,12 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * @deprecated as of CDT 4.0. This tab was used to set preferences/properties
  * for 3.X style projects.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -112,7 +113,7 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 		/**
 		 * Returns this variable's name, which serves as the key in the
 		 * key/value pair this variable represents
-		 * 
+		 *
 		 * @return this variable's name
 		 */
 		public String getName() {
@@ -121,7 +122,7 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 
 		/**
 		 * Returns this variables value.
-		 * 
+		 *
 		 * @return this variable's value
 		 */
 		public String getValue() {
@@ -137,7 +138,7 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see java.lang.Object#toString()
 		 */
 		@Override
@@ -147,7 +148,7 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see java.lang.Object#equals(java.lang.Object)
 		 */
 		@Override
@@ -161,7 +162,7 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 		}
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see java.lang.Object#hashCode()
 		 */
 		@Override
@@ -175,6 +176,7 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 	 */
 	protected class EnvironmentVariableContentProvider implements IStructuredContentProvider {
 
+		@Override
 		public Object[] getElements(Object inputElement) {
 			EnvironmentVariable[] elements = new EnvironmentVariable[0];
 			IMakeCommonBuildInfo info = (IMakeCommonBuildInfo)inputElement;
@@ -189,8 +191,10 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 			}
 			return elements;
 		}
+		@Override
 		public void dispose() {
 		}
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			if (newInput == null) {
 				return;
@@ -222,6 +226,7 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 	 */
 	public class EnvironmentVariableLabelProvider extends LabelProvider implements ITableLabelProvider {
 
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			String result = null;
 			if (element != null) {
@@ -237,6 +242,7 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 			}
 			return result;
 		}
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			if (columnIndex == 0) {
 				return MakeUIImages.getImage(MakeUIImages.IMG_OBJS_ENV_VAR);
@@ -278,6 +284,7 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 		// To avoid multi-build
 		IWorkspaceRunnable operation = new IWorkspaceRunnable() {
 
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				monitor.beginTask(MakeUIPlugin.getResourceString("SettingsBlock.monitor.applyingSettings"), 1); //$NON-NLS-1$
 				IMakeCommonBuildInfo info = null;
@@ -300,7 +307,7 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 				{
 					EnvironmentVariable var = (EnvironmentVariable) items[i].getData();
 					map.put(var.getName(), var.getValue());
-				} 
+				}
 				info.setEnvironment(map);
 				info.setAppendEnvironment(appendEnvironment.getSelection());
 			}
@@ -367,7 +374,7 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 		createBuildEnvironmentControls(composite);
 		createTableButtons(composite);
 		createAppendReplace(composite);
-		
+
 		boolean append = fBuildInfo.appendEnvironment();
 		if (append) {
 			appendEnvironment.setSelection(true);
@@ -413,12 +420,14 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 		environmentTable.setColumnProperties(envTableColumnProperties);
 		environmentTable.addSelectionChangedListener(new ISelectionChangedListener() {
 
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				handleTableSelectionChanged(event);
 			}
 		});
 		environmentTable.addDoubleClickListener(new IDoubleClickListener() {
 
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				if (!environmentTable.getSelection().isEmpty()) {
 					handleEnvEditButtonSelected();
@@ -436,7 +445,7 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 
 	/**
 	 * Responds to a selection changed event in the environment table
-	 * 
+	 *
 	 * @param event
 	 *            the selection change event
 	 */
@@ -459,7 +468,7 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 
 	/**
 	 * Creates the add/edit/remove buttons for the environment table
-	 * 
+	 *
 	 * @param parent
 	 *            the composite in which the buttons should be created
 	 */
@@ -548,7 +557,7 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 	 * Attempts to add the given variable. Returns whether the variable was
 	 * added or not (as when the user answers not to overwrite an existing
 	 * variable).
-	 * 
+	 *
 	 * @param variable
 	 *            the variable to add
 	 * @return whether the variable was added
@@ -575,7 +584,7 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 
 	/**
 	 * Gets native environment variable. Creates EnvironmentVariable objects.
-	 * 
+	 *
 	 * @return Map of name - EnvironmentVariable pairs based on native
 	 *         environment.
 	 */
@@ -625,27 +634,33 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 	/**
 	 * Creates a label provider for the native native environment variable
 	 * selection dialog.
-	 * 
+	 *
 	 * @return A label provider for the native native environment variable
 	 *         selection dialog.
 	 */
 	private ILabelProvider createSelectionDialogLabelProvider() {
 		return new ILabelProvider() {
 
+			@Override
 			public Image getImage(Object element) {
 				return MakeUIImages.getImage(MakeUIImages.IMG_OBJS_ENVIRONMNET);
 			}
+			@Override
 			public String getText(Object element) {
 				EnvironmentVariable var = (EnvironmentVariable)element;
 				return var.getName() + " [" + var.getValue() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 			}
+			@Override
 			public void addListener(ILabelProviderListener listener) {
 			}
+			@Override
 			public void dispose() {
 			}
+			@Override
 			public boolean isLabelProperty(Object element, String property) {
 				return false;
 			}
+			@Override
 			public void removeListener(ILabelProviderListener listener) {
 			}
 		};
@@ -654,19 +669,21 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 	/**
 	 * Creates a content provider for the native native environment variable
 	 * selection dialog.
-	 * 
+	 *
 	 * @return A content provider for the native native environment variable
 	 *         selection dialog.
 	 */
 	private IStructuredContentProvider createSelectionDialogContentProvider() {
 		return new IStructuredContentProvider() {
 
+			@Override
 			@SuppressWarnings({ "unchecked", "rawtypes" })
 			public Object[] getElements(Object inputElement) {
 				EnvironmentVariable[] elements = null;
 				if (inputElement instanceof Map<?, ?>) {
 					Comparator<String> comparator = new Comparator() {
 
+						@Override
 						public int compare(Object o1, Object o2) {
 							String s1 = (String)o1;
 							String s2 = (String)o2;
@@ -685,8 +702,10 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 				}
 				return elements;
 			}
+			@Override
 			public void dispose() {
 			}
+			@Override
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			}
 		};
@@ -749,7 +768,7 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 		/**
 		 * Returns the name of the section that this dialog stores its settings
 		 * in
-		 * 
+		 *
 		 * @return String
 		 */
 		protected String getDialogSettingsSectionName() {
@@ -758,7 +777,7 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.window.Window#getInitialLocation(org.eclipse.swt.graphics.Point)
 		 */
 		@Override
@@ -772,7 +791,7 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.window.Window#getInitialSize()
 		 */
 		@Override
@@ -783,7 +802,7 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.window.Window#close()
 		 */
 		@Override
@@ -797,7 +816,7 @@ public class MakeEnvironmentBlock extends AbstractCOptionPage {
 	 * Creates and configures the widgets which allow the user to choose whether
 	 * the specified environment should be appended to the native environment or
 	 * if it should completely replace it.
-	 * 
+	 *
 	 * @param parent
 	 *            the composite in which the widgets should be created
 	 */

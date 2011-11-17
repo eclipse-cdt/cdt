@@ -39,34 +39,35 @@ public class BuildPropertyManager implements IBuildPropertyManager{
 	static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
 
 	private static BuildPropertyManager fInstance;
-	
+
 	private List<IConfigurationElement> fTypeCfgElements;
 	private List<IConfigurationElement> fValueCfgElements;
-	
+
 	private BuildPropertyManager(){
 		loadExtensions();
 	}
-	
+
 	public static BuildPropertyManager getInstance(){
 		if(fInstance == null)
 			fInstance = new BuildPropertyManager();
 		return fInstance;
 	}
-	
+
 	public BuildProperties loadPropertiesFromString(String properties){
 		return new BuildProperties(properties);
 	}
-	
+
 	public String savePropertiesToString(BuildProperties properties){
 		return properties.toString();
 	}
 
 	private Map<String, IBuildPropertyType> fPropertyTypeMap = new HashMap<String, IBuildPropertyType>();
-	
+
+	@Override
 	public IBuildPropertyType getPropertyType(String id){
 		return fPropertyTypeMap.get(id);
 	}
-	
+
 	public IBuildPropertyType createPropertyType(String id, String name) throws CoreException{
 		IBuildPropertyType type = getPropertyType(id);
 		if(type != null){
@@ -88,7 +89,7 @@ public class BuildPropertyManager implements IBuildPropertyManager{
 					IStatus.ERROR,
 					ManagedBuilderCorePlugin.getUniqueIdentifier(),
 					BuildPropertiesMessages.getString("BuildPropertyManager.9"))); //$NON-NLS-1$
-		
+
 		return createPropertyValue(type, id, name);
 	}
 
@@ -103,14 +104,15 @@ public class BuildPropertyManager implements IBuildPropertyManager{
 			value = new BuildPropertyValue(id, name);
 			((BuildPropertyType)type).addSupportedValue(value);
 		}
-		
+
 		return value;
 	}
-	
+
+	@Override
 	public IBuildPropertyType[] getPropertyTypes(){
 		return fPropertyTypeMap.values().toArray(new BuildPropertyType[fPropertyTypeMap.size()]);
 	}
-	
+
 	public IBuildProperty createProperty(String id, String value) throws CoreException {
 		IBuildPropertyType type = getPropertyType(id);
 		if(type == null)
@@ -118,11 +120,11 @@ public class BuildPropertyManager implements IBuildPropertyManager{
 					IStatus.ERROR,
 					ManagedBuilderCorePlugin.getUniqueIdentifier(),
 					BuildPropertiesMessages.getString("BuildPropertyManager.11"))); //$NON-NLS-1$
-		
+
 		BuildProperty property = new BuildProperty(type, value);
 		return property;
 	}
-	
+
 	private boolean addConfigElement(IConfigurationElement el){
 		if(ELEMENT_PROPERTY_TYPE.equals(el.getName())){
 			getTypeElList(true).add(el);
@@ -133,7 +135,7 @@ public class BuildPropertyManager implements IBuildPropertyManager{
 		}
 		return false;
 	}
-	
+
 	private List<IConfigurationElement> getTypeElList(boolean create){
 		if(fTypeCfgElements == null && create)
 			fTypeCfgElements = new ArrayList<IConfigurationElement>();
@@ -145,7 +147,7 @@ public class BuildPropertyManager implements IBuildPropertyManager{
 			fValueCfgElements = new ArrayList<IConfigurationElement>();
 		return fValueCfgElements;
 	}
-	
+
 	private void loadExtensions(){
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(PROPERTIES_EXT_POINT_ID);
 		if( extensionPoint != null) {
@@ -157,11 +159,11 @@ public class BuildPropertyManager implements IBuildPropertyManager{
 					addConfigElement(els[k]);
 				}
 			}
-			
+
 			resolveConfigElements();
 		}
 	}
-	
+
 
 	private void resolveConfigElements(){
 		List<IConfigurationElement> typeEls = getTypeElList(false);
@@ -185,7 +187,7 @@ public class BuildPropertyManager implements IBuildPropertyManager{
 		}
 
 	}
-	
+
 	private IBuildPropertyType createPropertyType(IConfigurationElement el) throws CoreException{
 		String id = el.getAttribute(ATTRIBUTE_ID);
 		if(id == null)
@@ -200,7 +202,7 @@ public class BuildPropertyManager implements IBuildPropertyManager{
 
 		return createPropertyType(id, name);
 	}
-	
+
 	private IBuildPropertyValue createPropertyValue(IConfigurationElement el) throws CoreException{
 		String id = el.getAttribute(ATTRIBUTE_ID);
 		if(id == null)
@@ -218,7 +220,7 @@ public class BuildPropertyManager implements IBuildPropertyManager{
 					ManagedBuilderCorePlugin.getUniqueIdentifier(),
 					BuildPropertiesMessages.getString("BuildPropertyManager.16"))); //$NON-NLS-1$
 
-		
+
 		return createPropertyValue(property, id, name);
 	}
 }

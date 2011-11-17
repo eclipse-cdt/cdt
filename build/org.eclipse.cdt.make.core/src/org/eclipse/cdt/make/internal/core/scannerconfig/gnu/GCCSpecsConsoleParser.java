@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *    IBM - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
@@ -30,7 +30,7 @@ import org.eclipse.core.runtime.IPath;
  * Parses output of gcc -c -v specs.c or
  *                  g++ -c -v specs.cpp
  * command
- * 
+ *
  * @author vhirsl
  */
 public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
@@ -39,7 +39,7 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
 
 	private IProject fProject = null;
 	protected IScannerInfoCollector fCollector = null;
-	
+
 	private boolean expectingIncludes = false;
 	protected List<String> symbols = new ArrayList<String>();
 	protected List<String> includes = new ArrayList<String>();
@@ -47,7 +47,8 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser#startup(org.eclipse.core.resources.IProject, org.eclipse.core.runtime.IPath, org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector, org.eclipse.cdt.core.IMarkerGenerator)
      */
-    public void startup(IProject project, IPath workingDirectory, IScannerInfoCollector collector, IMarkerGenerator markerGenerator) {
+    @Override
+	public void startup(IProject project, IPath workingDirectory, IScannerInfoCollector collector, IMarkerGenerator markerGenerator) {
 		this.fProject = project;
 		this.fCollector = collector;
 	}
@@ -55,6 +56,7 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.make.internal.core.scannerconfig.IScannerInfoConsoleParser#processLine(java.lang.String)
 	 */
+	@Override
 	public boolean processLine(String line) {
 		boolean rc = false;
 		line= line.trim();
@@ -89,7 +91,7 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
                 	if (defineParts.length > 2) {
                 		symbol += defineParts[2];
                 	}
-                	if (!symbols.contains(symbol)) { 
+                	if (!symbols.contains(symbol)) {
                 		symbols.add(symbol);
                 	}
 				}
@@ -106,13 +108,14 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
 			if (!includes.contains(line))
 				includes.add(line);
 		}
-			
+
 		return rc;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.make.internal.core.scannerconfig.IScannerInfoConsoleParser#shutdown()
 	 */
+	@Override
 	public void shutdown() {
 		Map<ScannerInfoTypes, List<String>> scannerInfo = new HashMap<ScannerInfoTypes, List<String>>();
 		scannerInfo.put(ScannerInfoTypes.INCLUDE_PATHS, includes);

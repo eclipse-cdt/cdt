@@ -29,11 +29,13 @@ public class GCCSpecsConsoleParserTest extends TestCase {
 	protected void setUp() throws Exception {
 		collector = new IScannerInfoCollector() {
 
+			@Override
 			public List getCollectedScannerInfo(Object resource, ScannerInfoTypes type) {
 				// TODO Auto-generated method stub
 				return null;
 			}
 
+			@Override
 			public void contributeToScannerConfig(Object resource, Map scannerInfo1) {
 				Map<ScannerInfoTypes, List<String>> scannerInfo = scannerInfo1;
 				includes = scannerInfo.get(ScannerInfoTypes.INCLUDE_PATHS);

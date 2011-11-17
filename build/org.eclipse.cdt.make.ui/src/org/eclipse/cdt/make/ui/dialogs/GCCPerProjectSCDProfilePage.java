@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *  IBM - Initial API and implementation
  *******************************************************************************/
@@ -40,19 +40,19 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * SCD per project profile property/preference page
- * 
+ *
  * @author vhirsl
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
-    
+
     private static Object lock = GCCPerProjectSCDProfilePage.class;
     private Shell shell;
     private static GCCPerProjectSCDProfilePage instance;
     private static boolean loadButtonInitialEnabled = true;
-    
+
     private Button bopEnabledButton;
     private Text bopOpenFileText;
     private Button bopLoadButton;
@@ -60,13 +60,13 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
     private Text sipRunCommandText;
     private Text sipRunArgsText;
     private Button sipConsoleEnabledButton;
-    
+
     private boolean isValid = true;
 
 	/**
 	 * Static variable corresponding to global preference to show scanner
 	 * discovery console.
-	 * 
+	 *
 	 * @since 7.1
 	 */
 	public static boolean isSIConsoleEnabled = false;
@@ -74,20 +74,21 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.ui.dialogs.AbstractCOptionPage#createControl(org.eclipse.swt.widgets.Composite)
      */
-    public void createControl(Composite parent) {
+    @Override
+	public void createControl(Composite parent) {
         Composite page = ControlFactory.createComposite(parent, 1);
 //        ((GridData) page.getLayoutData()).grabExcessVerticalSpace = true;
 //        ((GridData) page.getLayoutData()).verticalAlignment = GridData.FILL;
-        
+
         // Add the profile UI contribution.
         Group profileGroup = ControlFactory.createGroup(page,
                 MakeUIPlugin.getResourceString("ScannerConfigOptionsDialog.profile.group.label"), 3); //$NON-NLS-1$
-        
+
         GridData gd = (GridData) profileGroup.getLayoutData();
         gd.grabExcessHorizontalSpace = true;
         gd.horizontalAlignment = GridData.FILL;
         ((GridLayout) profileGroup.getLayout()).makeColumnsEqualWidth = false;
-        
+
         // Add bop enabled checkbox
         bopEnabledButton = ControlFactory.createCheckBox(profileGroup, B_ENABLE);
         ((GridData)bopEnabledButton.getLayoutData()).horizontalSpan = 3;
@@ -98,7 +99,7 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
                 handleModifyOpenFileText();
             }
         });
-        
+
         // load label
         Label loadLabel = ControlFactory.createLabel(profileGroup, L_OPEN);
         ((GridData) loadLabel.getLayoutData()).horizontalSpan = 2;
@@ -115,16 +116,17 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
         if (getContainer().getProject() == null) {  // project properties
             bopLoadButton.setVisible(false);
         }
-        
+
         // text field
         bopOpenFileText = ControlFactory.createTextField(profileGroup, SWT.SINGLE | SWT.BORDER);
         bopOpenFileText.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent e) {
+            @Override
+			public void modifyText(ModifyEvent e) {
                 handleModifyOpenFileText();
             }
         });
         bopLoadButton.setEnabled(loadButtonInitialEnabled && handleModifyOpenFileText());
-        
+
         // browse button
         Button browseButton = ControlFactory.createPushButton(profileGroup, B_BROWSE);
         ((GridData) browseButton.getLayoutData()).minimumWidth = 120;
@@ -159,7 +161,7 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
         // variable button
         addVariablesButton(profileGroup, bopOpenFileText);
         ControlFactory.createSeparator(profileGroup, 3);
-        
+
         // si provider enabled checkbox
         sipEnabledButton = ControlFactory.createCheckBox(profileGroup, SI_ENABLE);
         ((GridData)sipEnabledButton.getLayoutData()).horizontalSpan = 3;
@@ -170,7 +172,7 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
                 handleSIPEnabledButtonSelected();
             }
         });
-        
+
         // si command label
         Label siCommandLabel = ControlFactory.createLabel(profileGroup, SI_COMMAND);
         ((GridData) siCommandLabel.getLayoutData()).horizontalSpan = 3;
@@ -178,11 +180,12 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
         // text field
         sipRunCommandText = ControlFactory.createTextField(profileGroup, SWT.SINGLE | SWT.BORDER);
         sipRunCommandText.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent e) {
+            @Override
+			public void modifyText(ModifyEvent e) {
                 handleModifyRunCommandText();
             }
         });
-        
+
         // si browse button
         Button siBrowseButton = ControlFactory.createPushButton(profileGroup, SI_BROWSE);
         ((GridData) siBrowseButton.getLayoutData()).minimumWidth = 120;
@@ -217,11 +220,12 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
         sipRunArgsText = ControlFactory.createTextField(profileGroup, SWT.SINGLE | SWT.BORDER);
         ((GridData) sipRunArgsText.getLayoutData()).horizontalSpan = 3;
         sipRunArgsText.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent e) {
+            @Override
+			public void modifyText(ModifyEvent e) {
                 handleModifyRunArgsText();
             }
         });
-        
+
         // si provider console enabled checkbox
         String sipConsoleEnabledLabel = MakeUIPlugin.getResourceString("ScannerConfigOptionsDialog.siProvider.show.console.label"); //$NON-NLS-1$
         sipConsoleEnabledButton = ControlFactory.createCheckBox(profileGroup, sipConsoleEnabledLabel);
@@ -266,7 +270,7 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
     protected void handleModifyRunArgsText() {
         getContainer().updateContainer();
     }
-    
+
     /**
 	 * @since 7.0
 	 */
@@ -274,7 +278,7 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
         sipRunCommandText.setEnabled(sipEnabledButton.getSelection());
         sipRunArgsText.setEnabled(sipEnabledButton.getSelection());
     }
-    
+
     private String getBopOpenFileText() {
         // from project relative path to absolute path
         String fileName = bopOpenFileText.getText().trim();
@@ -290,7 +294,7 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
         }
         return fileName;
     }
-    
+
     private void setBopOpenFileText(String fileName) {
         // from absolute path to project relative path
         if (fileName.length() > 0) {
@@ -308,11 +312,11 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
         }
         bopOpenFileText.setText(fileName);
     }
-    
+
     private void initializeValues() {
         IScannerConfigBuilderInfo2 builderInfo = getContainer().getBuildInfo();
-        String providerId = getProviderIDForSelectedProfile(); 
-        
+        String providerId = getProviderIDForSelectedProfile();
+
         bopEnabledButton.setSelection(builderInfo.isBuildOutputParserEnabled());
         setBopOpenFileText(builderInfo.getBuildOutputFilePath());
         sipEnabledButton.setSelection(builderInfo.isProviderOutputParserEnabled(providerId));
@@ -320,35 +324,36 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
         sipRunArgsText.setText(builderInfo.getProviderRunArguments(providerId));
         sipConsoleEnabledButton.setSelection(isSIConsoleEnabled);
     }
-    
+
     private String getProviderIDForSelectedProfile() {
         IScannerConfigBuilderInfo2 builderInfo = getContainer().getBuildInfo();
         // Provider IDs for selected profile
-        List<String> providerIDs = builderInfo.getProviderIdList(); 
+        List<String> providerIDs = builderInfo.getProviderIdList();
         if(providerIDs.size() == 0)
             return ""; //$NON-NLS-1$
-        return providerIDs.iterator().next(); 
+        return providerIDs.iterator().next();
     }
 
     private void handleBOPLoadFileButtonSelected() {
         if (!getContainer().checkDialogForChanges()) return;
         loadButtonInitialEnabled = false;
         bopLoadButton.setEnabled(false);
-        
+
         // populate buildInfo to be used by the reader job
         populateBuildInfo(getContainer().getBuildInfo());
         IProject project = getContainer().getProject();
         Job readerJob = new BuildOutputReaderJob(project, getContainer().getBuildInfo());
         readerJob.setPriority(Job.LONG);
         readerJob.addJobChangeListener(new JobChangeAdapter() {
-            
+
             @Override
             public void done(IJobChangeEvent event) {
                 synchronized (lock) {
                     if (!instance.shell.isDisposed()) {
                         instance.shell.getDisplay().asyncExec(new Runnable() {
-        
-                            public void run() {
+
+                            @Override
+							public void run() {
                                 if (!instance.shell.isDisposed()) {
                                     loadButtonInitialEnabled = instance.bopEnabledButton.getSelection() && handleModifyOpenFileText();
                                     instance.bopLoadButton.setEnabled(loadButtonInitialEnabled);
@@ -357,7 +362,7 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
                                     loadButtonInitialEnabled = true;
                                 }
                             }
-                            
+
                         });
                     }
                     else {
@@ -365,7 +370,7 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
                     }
                 }
             }
-            
+
         });
         readerJob.schedule();
     }
@@ -377,7 +382,7 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
     public boolean isValid() {
         return isValid;
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.IDialogPage#getErrorMessage()
      */
@@ -385,7 +390,7 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
     public String getErrorMessage() {
         return (isValid) ? null : SI_ERROR;
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.ui.dialogs.AbstractDiscoveryPage#populateBuildInfo(org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2)
      */

@@ -19,13 +19,13 @@ import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
 import org.eclipse.cdt.make.internal.core.MakeMessages;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.SCProfileInstance;
-import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfile.BuildOutputProvider;
+import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
 import org.eclipse.core.resources.IProject;
 
 /**
  * Common stuff for all GNU build output parsers
- * 
+ *
  * @author vhirsl
  */
 public abstract class AbstractGCCBOPConsoleParser implements IScannerInfoConsoleParser {
@@ -35,10 +35,10 @@ public abstract class AbstractGCCBOPConsoleParser implements IScannerInfoConsole
     protected static final String DASHIDASH= "-I-"; //$NON-NLS-1$
     protected static final String DASHI= "-I"; //$NON-NLS-1$
     protected static final String DASHD= "-D"; //$NON-NLS-1$
-    
+
     private IProject project;
     protected IScannerInfoCollector collector;
-    
+
     private boolean bMultiline = false;
     private String sMultiline = ""; //$NON-NLS-1$
 
@@ -65,7 +65,7 @@ public abstract class AbstractGCCBOPConsoleParser implements IScannerInfoConsole
 
     /**
      * Returns array of additional compiler commands to look for
-     * 
+     *
      * @return String[]
      */
     private String[] computeCompilerCommands() {
@@ -86,13 +86,14 @@ public abstract class AbstractGCCBOPConsoleParser implements IScannerInfoConsole
 	            }
 	        }
     	}
-        return COMPILER_INVOCATION; 
+        return COMPILER_INVOCATION;
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser#processLine(java.lang.String)
      */
-    public boolean processLine(String line) {
+    @Override
+	public boolean processLine(String line) {
         boolean rc = false;
         int lineBreakPos = line.length()-1;
         char[] lineChars = line.toCharArray();
@@ -123,7 +124,7 @@ public abstract class AbstractGCCBOPConsoleParser implements IScannerInfoConsole
         String make = line.substring(0, firstColon + 1);
         if (firstColon != -1 && make.indexOf("make") != -1) { //$NON-NLS-1$
             boolean enter = false;
-            String msg = line.substring(firstColon + 1).trim();     
+            String msg = line.substring(firstColon + 1).trim();
             if ((enter = msg.startsWith(MakeMessages.getString("AbstractGCCBOPConsoleParser_EnteringDirectory"))) || //$NON-NLS-1$
                 (msg.startsWith(MakeMessages.getString("AbstractGCCBOPConsoleParser_LeavingDirectory")))) { //$NON-NLS-1$
                 int s = msg.indexOf('`');
@@ -146,7 +147,7 @@ public abstract class AbstractGCCBOPConsoleParser implements IScannerInfoConsole
         int num = 0;
         if (s != -1) {
             int e = line.indexOf(']');
-            String number = line.substring(s + 1, e).trim();        
+            String number = line.substring(s + 1, e).trim();
             try {
                 num = Integer.parseInt(number);
             } catch (NumberFormatException exc) {
@@ -156,21 +157,22 @@ public abstract class AbstractGCCBOPConsoleParser implements IScannerInfoConsole
     }
 
     protected abstract AbstractGCCBOPConsoleParserUtility getUtility();
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser#shutdown()
      */
-    public void shutdown() {
+    @Override
+	public void shutdown() {
         if (getUtility() != null) {
             getUtility().reportProblems();
         }
     }
-    
+
 	/**
-	 * Tokenizes a line into an array of commands. Commands are separated by 
+	 * Tokenizes a line into an array of commands. Commands are separated by
 	 * ';', '&&' or '||'. Tokens are separated by whitespace unless found inside
 	 * of quotes, back-quotes, or double quotes.
-	 * Outside of single-, double- or back-quotes a backslash escapes white-spaces, all quotes, 
+	 * Outside of single-, double- or back-quotes a backslash escapes white-spaces, all quotes,
 	 * the backslash, '&' and '|'.
 	 * A backslash used for escaping is removed.
 	 * Quotes other than the back-quote plus '&&', '||', ';' are removed, also.
@@ -182,14 +184,14 @@ public abstract class AbstractGCCBOPConsoleParser implements IScannerInfoConsole
 		ArrayList<String[]> commands= new ArrayList<String[]>();
 		ArrayList<String> tokens= new ArrayList<String>();
 		StringBuffer token= new StringBuffer();
-		
+
 		final char[] input= line.toCharArray();
 		boolean nextEscaped= false;
 		char currentQuote= 0;
 		for (int i = 0; i < input.length; i++) {
 			final char c = input[i];
 			final boolean escaped= nextEscaped; nextEscaped= false;
-			
+
 			if (currentQuote != 0) {
 				if (c == currentQuote) {
 					if (escaped) {
@@ -255,7 +257,7 @@ public abstract class AbstractGCCBOPConsoleParser implements IScannerInfoConsole
 						endCommand(token, tokens, commands);
 					}
 					break;
-					
+
 				default:
 					if (Character.isWhitespace(c)) {
 						if (escaped) {
@@ -277,7 +279,7 @@ public abstract class AbstractGCCBOPConsoleParser implements IScannerInfoConsole
 		endCommand(token, tokens, commands);
 		return commands.toArray(new String[commands.size()][]);
 	}
-	
+
 	private void endCommand(StringBuffer token, ArrayList<String> tokens, ArrayList<String[]> commands) {
 		endToken(token, tokens);
 		if (!tokens.isEmpty()) {
@@ -291,7 +293,7 @@ public abstract class AbstractGCCBOPConsoleParser implements IScannerInfoConsole
 			token.setLength(0);
 		}
 	}
-	
+
     protected boolean processSingleLine(String line) {
     	boolean rc= false;
 		String[][] tokens= tokenize(line, true);
@@ -316,7 +318,7 @@ public abstract class AbstractGCCBOPConsoleParser implements IScannerInfoConsole
 		}
 		return rc;
     }
-    
+
     protected int findCompilerInvocation(String[] tokens) {
     	for (int i = 0; i < tokens.length; i++) {
 			final String token = tokens[i].toLowerCase();

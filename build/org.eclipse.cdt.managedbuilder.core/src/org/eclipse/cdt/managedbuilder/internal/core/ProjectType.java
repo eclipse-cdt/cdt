@@ -41,10 +41,10 @@ import org.osgi.framework.Version;
 
 
 public class ProjectType extends BuildObject implements IProjectType, IBuildPropertiesRestriction, IBuildPropertyChangeListener {
-	
+
 	private static final String EMPTY_STRING = new String();
 	//private static final IConfiguration[] emptyConfigs = new IConfiguration[0];
-	
+
 	//  Superclass
 	private IProjectType superClass;
 	private String superClassId;
@@ -64,7 +64,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	private IProjectEnvironmentVariableSupplier environmentVariableSupplier = null;
 	private IConfigurationElement buildMacroSupplierElement = null;
 	private IProjectBuildMacroSupplier buildMacroSupplier = null;
-	
+
 	BuildObjectProperties buildProperties;
 
 
@@ -72,13 +72,13 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	private boolean resolved = true;
 	private IConfigurationElement previousMbsVersionConversionElement;
 	private IConfigurationElement currentMbsVersionConversionElement;
-	
+
 	/*
 	 *  C O N S T R U C T O R S
 	 */
 
 	/**
-	 * This constructor is called to create a projectType defined by an extension point in 
+	 * This constructor is called to create a projectType defined by an extension point in
 	 * a plugin manifest file.
 	 */
 	public ProjectType(IManagedConfigElement element, String managedBuildRevision) {
@@ -86,18 +86,18 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		resolved = false;
 
 		setManagedBuildRevision(managedBuildRevision);
-		
+
 		loadFromManifest(element);
-		
+
 		// Hook me up to the Managed Build Manager
 		ManagedBuildManager.addExtensionProjectType(this);
 
 		// Load the configuration children
 		IManagedConfigElement[] configs = element.getChildren(IConfiguration.CONFIGURATION_ELEMENT_NAME);
-		
+
 		String [] usedConfigNames = new String[configs.length];
 		IConfigurationNameProvider configurationNameProvder = getConfigurationNameProvider();
-		
+
 		if (  configurationNameProvder != null ) {
 			// Tool Integrator provided 'ConfigurationNameProvider' class
 			// to get configuration names dynamically based architecture, os, toolchain version etc.
@@ -115,9 +115,9 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	}
 
 	/**
-	 * This constructor is called to create a project type whose attributes and children will be 
+	 * This constructor is called to create a project type whose attributes and children will be
 	 * added by separate calls.
-	 * 
+	 *
 	 * @param superClass The superClass, if any
 	 * @param Id The id for the new project type
 	 * @param managedBuildRevision The name for the new project type
@@ -132,10 +132,10 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		}
 		setId(Id);
 		setName(name);
-		
+
 		setManagedBuildRevision(managedBuildRevision);
 		setVersion(getVersionFromId());
-		
+
 		// Hook me up to the Managed Build Manager
 		ManagedBuildManager.addExtensionProjectType(this);
 	}
@@ -143,27 +143,27 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	/*
 	 *  E L E M E N T   A T T R I B U T E   R E A D E R S   A N D   W R I T E R S
 	 */
-	
+
 	/**
-	 * Load the project-type information from the XML element specified in the 
+	 * Load the project-type information from the XML element specified in the
 	 * argument
-	 * @param element An XML element containing the project type information 
+	 * @param element An XML element containing the project type information
 	 */
 	protected void loadFromManifest(IManagedConfigElement element) {
 		ManagedBuildManager.putConfigElement(this, element);
-		
+
 		// id
 		setId(SafeStringInterner.safeIntern(element.getAttribute(ID)));
-		
+
 		// Get the name
 		setName(SafeStringInterner.safeIntern(element.getAttribute(NAME)));
-		
+
 		// version
 		setVersion(getVersionFromId());
-		
+
 		// superClass
 		superClassId = SafeStringInterner.safeIntern(element.getAttribute(SUPERCLASS));
-		
+
 		String props = SafeStringInterner.safeIntern(element.getAttribute(BUILD_PROPERTIES));
 		if(props != null)
 			buildProperties = new BuildObjectProperties(props, this, this);
@@ -172,18 +172,18 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		if(artType != null){
 			if(buildProperties == null)
 				buildProperties = new BuildObjectProperties(this, this);
-			
+
 			try {
 				buildProperties.setProperty(ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_ID, artType, true);
 			} catch (CoreException e) {
 				ManagedBuilderCorePlugin.log(e);
 			}
 		}
-			
+
 
 		// Get the unused children, if any
-		unusedChildren = SafeStringInterner.safeIntern(element.getAttribute(UNUSED_CHILDREN)); 
-		
+		unusedChildren = SafeStringInterner.safeIntern(element.getAttribute(UNUSED_CHILDREN));
+
 		// isAbstract
         String isAbs = element.getAttribute(IS_ABSTRACT);
         if (isAbs != null){
@@ -195,20 +195,20 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
         if (isTestStr != null){
     		isTest = new Boolean("true".equals(isTestStr)); //$NON-NLS-1$
         }
-		
-		// Store the configuration element IFF there is a configuration name provider defined 
+
+		// Store the configuration element IFF there is a configuration name provider defined
 		if (element.getAttribute(CONFIGURATION_NAME_PROVIDER) != null && element instanceof DefaultManagedConfigElement) {
-			configurationNameProviderElement = ((DefaultManagedConfigElement)element).getConfigurationElement();			
+			configurationNameProviderElement = ((DefaultManagedConfigElement)element).getConfigurationElement();
 		}
-		
+
 		// Get the environmentVariableSupplier configuration element
-		String environmentVariableSupplier = element.getAttribute(PROJECT_ENVIRONMENT_SUPPLIER); 
+		String environmentVariableSupplier = element.getAttribute(PROJECT_ENVIRONMENT_SUPPLIER);
 		if(environmentVariableSupplier != null && element instanceof DefaultManagedConfigElement){
 			environmentVariableSupplierElement = ((DefaultManagedConfigElement)element).getConfigurationElement();
 		}
 
 		// Get the buildMacroSupplier configuration element
-		String buildMacroSupplier = element.getAttribute(PROJECT_MACRO_SUPPLIER); 
+		String buildMacroSupplier = element.getAttribute(PROJECT_MACRO_SUPPLIER);
 		if(buildMacroSupplier != null && element instanceof DefaultManagedConfigElement){
 			buildMacroSupplierElement = ((DefaultManagedConfigElement)element).getConfigurationElement();
 		}
@@ -224,6 +224,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IProjectType#createConfiguration(org.eclipse.cdt.core.build.managed.IConfiguration)
 	 */
+	@Override
 	public IConfiguration createConfiguration(IConfiguration parent, String id, String name) {
 		Configuration config = new Configuration(this, parent, id, name);
 //		ManagedBuildManager.performValueHandlerEvent(config, IManagedOptionValueHandler.EVENT_OPEN);
@@ -233,21 +234,24 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IProjectType#getConfiguration()
 	 */
+	@Override
 	public IConfiguration getConfiguration(String id) {
 		return getConfigurationMap().get(id);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IProjectType#getConfigurations()
 	 */
+	@Override
 	public IConfiguration[] getConfigurations() {
 		IConfiguration[] configs = getConfigurationList().toArray(new IConfiguration[0]);
 		return configs;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IProjectType#removeConfiguration(java.lang.String)
 	 */
+	@Override
 	public void removeConfiguration(String id) {
 		// Remove the specified configuration from the list and map
 		Iterator<Configuration> iter = getConfigurationList().listIterator();
@@ -260,7 +264,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 			 }
 		}
 	}
-	
+
 	/**
 	 * Adds the Configuration to the Configuration list and map
 	 */
@@ -270,10 +274,10 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 			getConfigurationMap().put(configuration.getId(), configuration);
 		}
 	}
-	
+
 	/**
 	 * Safe accessor for the list of configurations.
-	 * 
+	 *
 	 * @return List containing the configurations
 	 */
 	private List<Configuration> getConfigurationList() {
@@ -282,7 +286,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		}
 		return configList;
 	}
-	
+
 	/**
 	 * Safe accessor for the map of configuration ids to configurations
 	 */
@@ -312,6 +316,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		return name;
 	}
 
+	@Override
 	public String getNameAttribute() {
 		// If I am unnamed, see if I can inherit one from my parent
 		if (name == null) {
@@ -328,6 +333,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IProjectType#getSuperClass()
 	 */
+	@Override
 	public IProjectType getSuperClass() {
 		return superClass;
 	}
@@ -335,6 +341,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IProjectType#isAbstract()
 	 */
+	@Override
 	public boolean isAbstract() {
 		if (isAbstract != null) {
 			return isAbstract.booleanValue();
@@ -346,16 +353,18 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IProjectType#unusedChildren()
 	 */
+	@Override
 	public String getUnusedChildren() {
 		if (unusedChildren != null) {
 			return unusedChildren;
 		} else
 			return EMPTY_STRING;	// Note: no inheritance from superClass
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IProjectType#isTestProjectType()
 	 */
+	@Override
 	public boolean isTestProjectType() {
 		if (isTest == null) {
 			// If I have a superClass, ask it
@@ -371,6 +380,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	/**
 	 * Sets the isAbstract attribute
 	 */
+	@Override
 	public void setIsAbstract(boolean b) {
 		isAbstract = new Boolean(b);
 	}
@@ -385,7 +395,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	/*
 	 *  O B J E C T   S T A T E   M A I N T E N A N C E
 	 */
-	
+
 	/**
 	 *  Resolve the element IDs to interface references
 	 */
@@ -404,15 +414,15 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 							getId());
 				}
 			}
-			
+
 			// Add configurations from our superClass that are not overridden here
 			if (superClass != null) {
 			    ((ProjectType)superClass).resolveReferences();
 			    IConfiguration[] superConfigs = superClass.getConfigurations();
 			    for (int i = 0; i < superConfigs.length; i++) {
 			        String superId = superConfigs[i].getId();
-				    
-				    check: { 
+
+				    check: {
 					    IConfiguration[] currentConfigs = getConfigurations();
 				        for (int j = 0; j < currentConfigs.length; j++) {
 					        IConfiguration config = currentConfigs[j];
@@ -423,7 +433,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 				        }
 				        addConfiguration((Configuration)superConfigs[i]);
 				    } // end check
-				    
+
 			    }
 			}
 
@@ -438,6 +448,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IProjectType#isSupported()
 	 */
+	@Override
 	public boolean isSupported(){
 		List<Configuration> configurationList = getConfigurationList();
 		for (Configuration current : configurationList) {
@@ -446,7 +457,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		}
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IProjectType#getConfigurationNameProviderElement()
 	 */
@@ -459,24 +470,25 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		}
 		return configurationNameProviderElement;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IProjectType#setConfigurationNameProviderElement(IConfigurationElement)
 	 */
-	
+
 	public void setConfigurationNameProviderElement(IConfigurationElement configurationElement) {
 		configurationNameProviderElement = configurationElement;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IProjectType#getConfigurationNameProvider()
 	 */
+	@Override
 	public IConfigurationNameProvider getConfigurationNameProvider() {
-		
+
 		if (configurationNameProvider != null) {
 			return configurationNameProvider;
 		}
-		
+
 		IConfigurationElement element = getConfigurationNameProviderElement();
 		if (element != null) {
 			try {
@@ -488,10 +500,10 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Returns the plugin.xml element of the projectEnvironmentSupplier extension or <code>null</code> if none. 
-	 *  
+	 * Returns the plugin.xml element of the projectEnvironmentSupplier extension or <code>null</code> if none.
+	 *
 	 * @return IConfigurationElement
 	 */
 	public IConfigurationElement getEnvironmentVariableSupplierElement(){
@@ -503,10 +515,11 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		return environmentVariableSupplierElement;
 	}
 
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IProjectType#getEnvironmentVariableSupplier()
 	 */
+	@Override
 	public IProjectEnvironmentVariableSupplier getEnvironmentVariableSupplier(){
 		if (environmentVariableSupplier != null) {
 			return environmentVariableSupplier;
@@ -524,8 +537,8 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	}
 
 	/**
-	 * Returns the plugin.xml element of the projectMacroSupplier extension or <code>null</code> if none. 
-	 *  
+	 * Returns the plugin.xml element of the projectMacroSupplier extension or <code>null</code> if none.
+	 *
 	 * @return IConfigurationElement
 	 */
 	public IConfigurationElement getBuildMacroSupplierElement(){
@@ -537,10 +550,11 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		return buildMacroSupplierElement;
 	}
 
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IProjectType#getBuildMacroSupplier()
 	 */
+	@Override
 	public IProjectBuildMacroSupplier getBuildMacroSupplier(){
 		if (buildMacroSupplier != null) {
 			return buildMacroSupplier;
@@ -556,8 +570,9 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		}
 		return null;
 	}
-	
-	
+
+
+	@Override
 	public String getConvertToId() {
 		if (convertToId == null) {
 			// If I have a superClass, ask it
@@ -570,23 +585,25 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		return convertToId;
 	}
 
-	
+
+	@Override
 	public void setConvertToId(String convertToId) {
 		if (convertToId == null && this.convertToId == null) return;
 		if (convertToId == null || this.convertToId == null || !convertToId.equals(this.convertToId)) {
-			this.convertToId = convertToId;			
+			this.convertToId = convertToId;
 		}
 		return;
 	}
-	
+
 	/*
 	 * This function checks for migration support for the projectType while
 	 * loading the project. If migration support is needed, looks for the available
 	 * converters and adds them to the list.
 	 */
 
+	@Override
 	public boolean checkForMigrationSupport() {
-	
+
 		String convertToId = getConvertToId();
 		if ((convertToId == null) || (convertToId.equals(""))) { //$NON-NLS-1$
 				// It means there is no 'convertToId' attribute available and
@@ -655,7 +672,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		// If control comes here, it means 'Tool Integrator' specified
 		// 'convertToId' attribute in toolchain definition file, but
 		// has not provided any converter. So, make the project is invalid
-		
+
 		return false;
 	}
 
@@ -667,7 +684,8 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 	public IConfigurationElement getCurrentMbsVersionConversionElement() {
 		return currentMbsVersionConversionElement;
 	}
-	
+
+	@Override
 	public IBuildObjectProperties getBuildProperties() {
 		if(buildProperties == null){
 			BuildObjectProperties parentProps = findBuildProperties();
@@ -678,7 +696,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		}
 		return buildProperties;
 	}
-	
+
 	BuildObjectProperties findBuildProperties(){
 		if(buildProperties == null){
 			if(superClass != null){
@@ -689,6 +707,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		return buildProperties;
 	}
 
+	@Override
 	public void propertiesChanged() {
 		List<Configuration> list = getConfigurationList();
 		for(int i = 0; i < list.size(); i++){
@@ -705,6 +724,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		return supportsValue(type.getId(), value.getId());
 	}
 
+	@Override
 	public boolean supportsType(String typeId) {
 		List<Configuration> list = getConfigurationList();
 		for(int i = 0; i < list.size(); i++){
@@ -714,6 +734,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		return false;
 	}
 
+	@Override
 	public boolean supportsValue(String typeId, String valueId) {
 		List<Configuration> list = getConfigurationList();
 		for(int i = 0; i < list.size(); i++){
@@ -723,6 +744,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		return false;
 	}
 
+	@Override
 	public String[] getRequiredTypeIds() {
 		List<String> result = new ArrayList<String>();
 		List<Configuration> list = getConfigurationList();
@@ -732,6 +754,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		return result.toArray(new String[result.size()]);
 	}
 
+	@Override
 	public String[] getSupportedTypeIds() {
 		List<String> result = new ArrayList<String>();
 		List<Configuration> list = getConfigurationList();
@@ -741,6 +764,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		return result.toArray(new String[result.size()]);
 	}
 
+	@Override
 	public String[] getSupportedValueIds(String typeId) {
 		List<String> result = new ArrayList<String>();
 		List<Configuration> list = getConfigurationList();
@@ -750,6 +774,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		return result.toArray(new String[result.size()]);
 	}
 
+	@Override
 	public boolean requiresType(String typeId) {
 		List<Configuration> list = getConfigurationList();
 		for(int i = 0; i < list.size(); i++){
@@ -759,6 +784,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		return false;
 	}
 
+	@Override
 	public IBuildPropertyValue getBuildArtefactType() {
 		IBuildObjectProperties props = findBuildProperties();
 		if(props != null){
@@ -769,6 +795,7 @@ public class ProjectType extends BuildObject implements IProjectType, IBuildProp
 		return null;
 	}
 
+	@Override
 	public boolean isSystemObject() {
 		return isTestProjectType() || getConvertToId().length() != 0;
 	}

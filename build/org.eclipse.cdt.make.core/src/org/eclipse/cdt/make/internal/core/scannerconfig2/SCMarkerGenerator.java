@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *  IBM - Initial API and implementation
  *******************************************************************************/
@@ -29,13 +29,13 @@ import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * Scanner config discovery related marker generator
- * 
+ *
  * @author vhirsl
  */
 public class SCMarkerGenerator implements IMarkerGenerator {
 
 	/**
-	 * 
+	 *
 	 */
 	public SCMarkerGenerator() {
 		super();
@@ -44,6 +44,7 @@ public class SCMarkerGenerator implements IMarkerGenerator {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IMarkerGenerator#addMarker(org.eclipse.core.resources.IResource, int, java.lang.String, int, java.lang.String)
 	 */
+	@Override
 	public void addMarker(IResource file, int lineNumber, String errorDesc, int severity, String errorVar) {
 		ProblemMarkerInfo info = new ProblemMarkerInfo(file, lineNumber, errorDesc, severity, errorVar);
 		addMarker(info);
@@ -52,6 +53,7 @@ public class SCMarkerGenerator implements IMarkerGenerator {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IMarkerGenerator#addMarker(org.eclipse.cdt.core.ProblemMarkerInfo)
 	 */
+	@Override
 	public void addMarker(final ProblemMarkerInfo problemMarkerInfo) {
 		// we have to add the marker in the job or we can deadlock other
 		// threads that are responding to a resource delta by doing something
@@ -79,7 +81,7 @@ public class SCMarkerGenerator implements IMarkerGenerator {
 				} catch (CoreException e) {
 					return new Status(Status.ERROR, MakeCorePlugin.getUniqueIdentifier(), Messages.SCMarkerGenerator_Error_Adding_Markers, e);
 				}
-				
+
 				try {
 					marker = problemMarkerInfo.file.createMarker(ICModelMarker.C_MODEL_PROBLEM_MARKER);
 					marker.setAttribute(IMarker.MESSAGE, problemMarkerInfo.description);
@@ -87,7 +89,7 @@ public class SCMarkerGenerator implements IMarkerGenerator {
 					marker.setAttribute(IMarker.LINE_NUMBER, problemMarkerInfo.lineNumber);
 					marker.setAttribute(IMarker.CHAR_START, -1);
 					marker.setAttribute(IMarker.CHAR_END, -1);
-					
+
 					if (problemMarkerInfo.variableName != null) {
 						marker.setAttribute(ICModelMarker.C_MODEL_MARKER_VARIABLE, problemMarkerInfo.variableName);
 					}
@@ -95,7 +97,7 @@ public class SCMarkerGenerator implements IMarkerGenerator {
 				} catch (CoreException e) {
 					return new Status(Status.ERROR, MakeCorePlugin.getUniqueIdentifier(), Messages.SCMarkerGenerator_Error_Adding_Markers, e);
 				}
-				
+
 				return Status.OK_STATUS;
 			}
 		};
@@ -131,7 +133,7 @@ public class SCMarkerGenerator implements IMarkerGenerator {
 			MakeCorePlugin.log(e.getStatus());
 		}
 	}
-	
+
 	int mapMarkerSeverity(int severity) {
 		switch (severity) {
 			case SEVERITY_ERROR_BUILD :

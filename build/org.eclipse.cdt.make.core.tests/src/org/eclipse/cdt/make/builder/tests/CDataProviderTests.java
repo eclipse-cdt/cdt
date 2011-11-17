@@ -38,27 +38,27 @@ public class CDataProviderTests extends TestCase {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite(CDataProviderTests.class);
-		
+
 //		// Add the relevant tests to the suite
 //		suite.addTest(new StandardBuildTests("testProjectCreation"));
 //		suite.addTest(new StandardBuildTests("testProjectSettings"));
 //		suite.addTest(new StandardBuildTests("testProjectConversion"));
 //		suite.addTest(new StandardBuildTests("testProjectCleanup"));
-//		
+//
 //		suite.addTestSuite(ScannerConfigConsoleParserTests.class);
 //		suite.addTestSuite(ScannerConfigDiscoveryTests.class);
-		
+
 		return suite;
 	}
-	
+
 	public void testCData() throws Exception {
 		IProject project = createProject("a1");
 		ICProjectDescription projDes = CCorePlugin.getDefault().getProjectDescription(project);
 		assertNotNull("project description should not be null", projDes);
-		
+
 		ICConfigurationDescription cfgs[] = projDes.getConfigurations();
 		assertEquals(1, cfgs.length);
-		
+
 		int lssNum = cfgs[0].getRootFolderDescription().getLanguageSettings().length;
 		int rcDessNum = cfgs[0].getResourceDescriptions().length;
 		assertTrue(rcDessNum > 0);
@@ -67,9 +67,9 @@ public class CDataProviderTests extends TestCase {
 		assertEquals(2, projDes.getConfigurations().length);
 		assertEquals(lssNum, cfg2.getRootFolderDescription().getLanguageSettings().length);
 		assertEquals(rcDessNum, cfg2.getResourceDescriptions().length);
-		
+
 		CCorePlugin.getDefault().setProjectDescription(project, projDes);
-		
+
 		projDes = CCorePlugin.getDefault().getProjectDescription(project);
 		assertEquals(2, projDes.getConfigurations().length);
 		cfgs = projDes.getConfigurations();
@@ -89,16 +89,16 @@ public class CDataProviderTests extends TestCase {
 		assertEquals(2, projDes.getConfigurations().length);
 		assertEquals(lssNum, cfg2.getRootFolderDescription().getLanguageSettings().length);
 		assertEquals(rcDessNum, cfg2.getResourceDescriptions().length);
-		
+
 		project.delete(false, true, new NullProgressMonitor());
-		
+
 		project = ResourcesPlugin.getWorkspace().getRoot().getProject("a1");
 		project.create(new NullProgressMonitor());
 		project.open(new NullProgressMonitor());
-		
+
 		projDes = CCorePlugin.getDefault().getProjectDescription(project);
 		assertNotNull("project description should not be null", projDes);
-		
+
 		cfgs = projDes.getConfigurations();
 		assertEquals(2, cfgs.length);
 		cfg2 = cfgs[0];
@@ -106,18 +106,19 @@ public class CDataProviderTests extends TestCase {
 		assertEquals(2, projDes.getConfigurations().length);
 		assertEquals(lssNum, cfg2.getRootFolderDescription().getLanguageSettings().length);
 		assertEquals(rcDessNum, cfg2.getResourceDescriptions().length);
-		
+
 		cfg2 = cfgs[1];
 		assertNotNull(cfg2);
 		assertEquals(2, projDes.getConfigurations().length);
 		assertEquals(lssNum, cfg2.getRootFolderDescription().getLanguageSettings().length);
 		assertEquals(rcDessNum, cfg2.getResourceDescriptions().length);
 	}
-	
+
 	private IProject createProject(final String name) throws CoreException {
 		final Object[] result = new Object[1];
 		ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
-			
+
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 				IProject project = root.getProject(name);
@@ -132,7 +133,7 @@ public class CDataProviderTests extends TestCase {
 				if (!project.isOpen()) {
 					project.open(null);
 				}
-				
+
 				description = project.getDescription();
 //				ICommand[] commands = description.getBuildSpec();
 //				for (int i = 0; i < commands.length; ++i) {
@@ -152,6 +153,6 @@ public class CDataProviderTests extends TestCase {
 				result[0] = project;
 			}
 		}, null);
-		return (IProject)result[0];	
+		return (IProject)result[0];
 	}
 }

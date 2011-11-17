@@ -48,13 +48,13 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 	private Combo t2, t3, t4;
 	private Combo c1;
 	private int savedPos = -1; // current project type
-	private IConfiguration fCfg; 
+	private IConfiguration fCfg;
 	private IBuildPropertyValue[] values;
 	private ITool tTool;
 	private boolean canModify = true;
-	
+
 	private enum FIELD {NAME, EXT, PREF}
-	
+
 	private Set<String> set2 = new TreeSet<String>();
 	private Set<String> set3 = new TreeSet<String>();
 	private Set<String> set4 = new TreeSet<String>();
@@ -66,7 +66,7 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 
 		Label l1 = new Label(usercomp, SWT.NONE);
 		l1.setLayoutData(new GridData(GridData.BEGINNING));
-		l1.setText(Messages.ArtifactTab_0); 
+		l1.setText(Messages.ArtifactTab_0);
 		c1 = new Combo(usercomp, SWT.READ_ONLY | SWT.DROP_DOWN | SWT.BORDER);
 		c1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		c1.addSelectionListener(new SelectionAdapter() {
@@ -75,32 +75,35 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 			typeChanged();
 		}});
 		c1.setOrientation(SWT.LEFT_TO_RIGHT);
-		
+
 		Label l2 = new Label(usercomp, SWT.NONE);
 		l2.setLayoutData(new GridData(GridData.BEGINNING));
-		l2.setText(Messages.ArtifactTab_1); 
+		l2.setText(Messages.ArtifactTab_1);
 		t2 = setCombo(FIELD.NAME, set2);
 		t2.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				if (canModify)
 					fCfg.setArtifactName(t2.getText());
 			}} );
-		
+
 		Label l3 = new Label(usercomp, SWT.NONE);
 		l3.setLayoutData(new GridData(GridData.BEGINNING));
-		l3.setText(Messages.ArtifactTab_2); 
+		l3.setText(Messages.ArtifactTab_2);
 		t3 = setCombo(FIELD.EXT, set3);
 		t3.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				if (canModify)
 					fCfg.setArtifactExtension(t3.getText());
 			}} );
-		
+
 		l4 = new Label(usercomp, SWT.NONE);
 		l4.setLayoutData(new GridData(GridData.BEGINNING));
-		l4.setText(Messages.ArtifactTab_3); 
+		l4.setText(Messages.ArtifactTab_3);
 		t4 = setCombo(FIELD.PREF, set4);
 		t4.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				if (canModify) {
 					if(tTool != null)
@@ -130,7 +133,7 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 			ManagedBuilderUIPlugin.log(ex);
 		}
 	}
-	
+
 	@Override
 	public void updateData(ICResourceDescription cfgd) {
 		if (cfgd == null) return;
@@ -157,24 +160,24 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 				}
 			}
 		}
-		
+
 		updateCombo(t2);
 		updateCombo(t3);
 		updateCombo(t4);
-		
+
 		String s = fCfg.getArtifactName();
 		if (! page.isMultiCfg() && (s == null || s.trim().length() == 0)) {
 			s = getResDesc().getConfiguration().getProjectDescription().getName();
 			getCfg().setArtifactName(s);
 		}
-		
+
 		canModify = false;
-		
+
 		t2.setText(s);
 		t3.setText(fCfg.getArtifactExtension());
-		
+
 		if (page.isMultiCfg()) {
-			if (l4 != null) 
+			if (l4 != null)
 				l4.setVisible(true);
 			if (t4 != null) {
 				t4.setVisible(true);
@@ -183,34 +186,34 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 		} else {
 			tTool = fCfg.calculateTargetTool();
 			if(tTool != null){
-				if (l4 != null) 
+				if (l4 != null)
 					l4.setVisible(true);
 				if (t4 != null) {
 					t4.setVisible(true);
 					t4.setText(tTool.getOutputPrefix());
 				}
 			} else {
-				if (l4 != null) 
+				if (l4 != null)
 					l4.setVisible(false);
-				if (t4 != null) 
+				if (t4 != null)
 					t4.setVisible(false);
 			}
 		}
 		canModify = true;
 	}
-	
+
 	@Override
 	protected void performApply(ICResourceDescription src, ICResourceDescription dst) {
 		IConfiguration cfg1 = getCfg(src.getConfiguration());
 		IConfiguration cfg2 = getCfg(dst.getConfiguration());
 		cfg2.setArtifactName(cfg1.getArtifactName());
 		cfg2.setArtifactExtension(cfg1.getArtifactExtension());
-		
+
 		ITool t1 = cfg1.calculateTargetTool();
 		ITool t2 = cfg2.calculateTargetTool();
-		if (t1 != null && t2 != null) 
+		if (t1 != null && t2 != null)
 			t2.setOutputPrefixForPrimaryOutput(t1.getOutputPrefix());
-			
+
 		try {
 			IBuildPropertyValue bv = cfg1.getBuildArtefactType();
 			if (bv != null)
@@ -219,13 +222,13 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 			ManagedBuilderUIPlugin.log(e);
 		}
 	}
-	
+
 	@Override
 	protected void performDefaults() {
 		fCfg.setArtifactName(fCfg.getManagedProject().getDefaultArtifactName());
 		fCfg.setArtifactExtension(null);
 		// workaround for bad extension setting (always "exe"):
-		// set wrong project type temporary 
+		// set wrong project type temporary
 		// and then set right one back
 		if (c1.getItemCount() > 1) {
 			int right = c1.getSelectionIndex();
@@ -259,7 +262,7 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 	}
 	@Override
 	protected void updateButtons() {} // Do nothing. No buttons to update.
-	
+
 	private Combo setCombo(FIELD field, Set<String> set) {
 		Combo combo = new Combo(usercomp, SWT.BORDER);
 		combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -268,14 +271,14 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 		updateCombo(combo);
 		return combo;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private void updateCombo(Combo combo) {
 		FIELD field = (FIELD)combo.getData(ENUM);
 		Set<String> set   = (Set<String>)combo.getData(SSET);
 		if (field == null || set == null)
 			return;
-		
+
 		canModify = false;
 		String oldStr = combo.getText();
 		combo.removeAll();
@@ -284,7 +287,7 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 			String s = null;
 			switch (field) {
 			case NAME:
-				s = c.getArtifactName(); 
+				s = c.getArtifactName();
 				break;
 			case EXT:
 				s = c.getArtifactExtension();
@@ -297,7 +300,7 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 			if (s != null && s.trim().length() > 0)
 				set.add(s.trim());
 		}
-		if (set.size() > 0) 
+		if (set.size() > 0)
 			combo.setItems(set.toArray(new String[set.size()]));
 		combo.setText(oldStr);
 		canModify = true;

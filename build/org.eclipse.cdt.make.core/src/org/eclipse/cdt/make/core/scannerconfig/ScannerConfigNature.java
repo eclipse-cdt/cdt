@@ -30,21 +30,22 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * @deprecated as of CDT 4.0. Used by legacy CDT 3.X projects.
  * Replaced by ScannerConfigNature in org.eclipse.cdt.managedbuilder.core.
- * 
+ *
  * @see IProjectNature
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 @Deprecated
 public class ScannerConfigNature implements IProjectNature {
-	
+
 	public final static String NATURE_ID = MakeCorePlugin.getUniqueIdentifier() + ".ScannerConfigNature"; //$NON-NLS-1$
 	private IProject fProject;
 
 	/**
 	 * @see IProjectNature#configure
 	 */
+	@Override
 	public void configure() throws CoreException {
 		IProjectDescription description = getProject().getDescription();
 		ICommand[] commands = description.getBuildSpec();
@@ -60,13 +61,14 @@ public class ScannerConfigNature implements IProjectNature {
 		newCommands[commands.length] = command;
 		description.setBuildSpec(newCommands);
 		getProject().setDescription(description, null);
-		
+
 		// set default project scanner config settings
 	}
 
 	/**
 	 * @see IProjectNature#deconfigure
 	 */
+	@Override
 	public void deconfigure() throws CoreException {
 		IProjectDescription description = getProject().getDescription();
 		ICommand[] commands = description.getBuildSpec();
@@ -85,6 +87,7 @@ public class ScannerConfigNature implements IProjectNature {
 	/**
 	 * @see IProjectNature#getProject
 	 */
+	@Override
 	public IProject getProject()  {
 		return fProject;
 	}
@@ -92,10 +95,11 @@ public class ScannerConfigNature implements IProjectNature {
 	/**
 	 * @see IProjectNature#setProject
 	 */
+	@Override
 	public void setProject(IProject project)  {
 		fProject = project;
 	}
-	
+
 	public static void addScannerConfigNature(IProject project) throws CoreException {
 		IProjectDescription description = project.getDescription();
 		if (description.hasNature(NATURE_ID))
@@ -106,9 +110,9 @@ public class ScannerConfigNature implements IProjectNature {
 		newIds[ids.length] = NATURE_ID;
 		description.setNatureIds(newIds);
 		project.setDescription(description, null);
-		
+
 	}
-	
+
 	public static void removeScannerConfigNature(IProject project) throws CoreException {
 		IProjectDescription description = project.getDescription();
 		if (!description.hasNature(NATURE_ID))
@@ -152,7 +156,7 @@ public class ScannerConfigNature implements IProjectNature {
 			newCommands = new ICommand[oldCommands.length + 1];
 			System.arraycopy(oldCommands, 0, newCommands, 0, oldCommands.length);
 			newCommands[oldCommands.length] = newCommand;
-		} 
+		}
 		else {
 			for (int i = 0; i < oldCommands.length; i++) {
 				if (oldCommands[i] == oldCommand) {
@@ -175,19 +179,19 @@ public class ScannerConfigNature implements IProjectNature {
 			String selectedProfile = scPrefInfo.getSelectedProfileId();
 			IScannerConfigBuilderInfo2 scProjInfo = ScannerConfigProfileManager.createScannerConfigBuildInfo2(
 					project, selectedProfile);
-			
+
 			scProjInfo.setAutoDiscoveryEnabled(scPrefInfo.isAutoDiscoveryEnabled());
 			scProjInfo.setProblemReportingEnabled(scPrefInfo.isProblemReportingEnabled());
-	
+
 			scProjInfo.setBuildOutputParserEnabled(scPrefInfo.isBuildOutputParserEnabled());
 			scProjInfo.setBuildOutputFileActionEnabled(scPrefInfo.isBuildOutputFileActionEnabled());
 			scProjInfo.setBuildOutputFilePath(scPrefInfo.getBuildOutputFilePath());
-	
+
 			ScannerConfigProfile profile = ScannerConfigProfileManager.getInstance().getSCProfileConfiguration(selectedProfile);
 			List<String> providerIdList = scPrefInfo.getProviderIdList();
 			for (Iterator<String> i = providerIdList.iterator(); i.hasNext();) {
 				String providerId = i.next();
-				
+
 				scProjInfo.setProviderOutputParserEnabled(providerId, scPrefInfo.isProviderOutputParserEnabled(providerId));
 				if (profile.getScannerInfoProviderElement(providerId).getProviderKind().equals(
 						ScannerConfigProfile.ScannerInfoProvider.RUN)) {
@@ -199,7 +203,7 @@ public class ScannerConfigNature implements IProjectNature {
 				}
 			}
 			scProjInfo.save();
-			
+
 			// the last step is to add discovered paths container
 			ICProject cProject = CoreModel.getDefault().create(project);
 			IPathEntry[] rawPathEntries = CoreModel.getRawPathEntries(cProject);

@@ -24,6 +24,7 @@ public class TestPathConverter1 implements IOptionPathConverter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOptionPathConverter#convertToPlatformLocation(java.lang.String)
 	 */
+	@Override
 	public IPath convertToPlatformLocation(String toolSpecificPath, IOption option, ITool tool) {
 		Path path = new Path(toolSpecificPath);
 		return path ;

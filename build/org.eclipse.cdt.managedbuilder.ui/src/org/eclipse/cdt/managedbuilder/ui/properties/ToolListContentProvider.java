@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Timesys - Initial API and implementation 
+ * Timesys - Initial API and implementation
  * IBM Rational Software
  * Miwako Tokugawa (Intel Corporation) - bug 222817 (OptionCategoryApplicability)
  *******************************************************************************/
@@ -42,6 +42,7 @@ public class ToolListContentProvider implements ITreeContentProvider{
 	/**
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
+	@Override
 	public void dispose() {}
 
 	public ToolListContentProvider(int elementType) {
@@ -49,11 +50,11 @@ public class ToolListContentProvider implements ITreeContentProvider{
 	}
 
 	private ToolListElement[] createElements(IConfiguration config) {
-		IOptionCategory toolChainCategories[]; 
+		IOptionCategory toolChainCategories[];
 		ITool filteredTools[];
 		List<ToolListElement> elementList = new ArrayList<ToolListElement>();
 		if (config != null) {
-			// Get the the option categories of the toolChain  
+			// Get the the option categories of the toolChain
 			IToolChain toolChain = config.getToolChain();
 			toolChainCategories = toolChain.getChildCategories();
 			//  Create an element for each one
@@ -71,7 +72,7 @@ public class ToolListContentProvider implements ITreeContentProvider{
 				createChildElements(e,config);
 			}
 		}
-		return elementList.toArray(new ToolListElement[elementList.size()]);		
+		return elementList.toArray(new ToolListElement[elementList.size()]);
 	}
 
 	private ToolListElement[] createElements(IResourceInfo info) {
@@ -93,7 +94,7 @@ public class ToolListContentProvider implements ITreeContentProvider{
 				createChildElements(e);
 			}
 		}
-		return elementList.toArray(new ToolListElement[elementList.size()]);		
+		return elementList.toArray(new ToolListElement[elementList.size()]);
 	}
 	private void createChildElements(ToolListElement parentElement) {
 		createChildElements(parentElement,null);
@@ -119,10 +120,11 @@ public class ToolListContentProvider implements ITreeContentProvider{
 			}
 		}
 	}
-	
+
 	/**
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 	 */
+	@Override
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof IConfiguration ||
 			parentElement instanceof IResourceConfiguration	) {
@@ -130,10 +132,11 @@ public class ToolListContentProvider implements ITreeContentProvider{
 		}
 		return ((ToolListElement)parentElement).getChildElements();
 	}
-	
+
 	/**
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
+	@Override
 	public Object[] getElements(Object inputElement) {
 		return elements;
 	}
@@ -141,6 +144,7 @@ public class ToolListContentProvider implements ITreeContentProvider{
 	/**
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 	 */
+	@Override
 	public Object getParent(Object element) {
 		return ((ToolListElement)element).getParent();
 	}
@@ -148,6 +152,7 @@ public class ToolListContentProvider implements ITreeContentProvider{
 	/**
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
+	@Override
 	public boolean hasChildren(Object element) {
 		return getChildren(element).length > 0;
 	}
@@ -155,6 +160,7 @@ public class ToolListContentProvider implements ITreeContentProvider{
 	/**
 	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		if (newInput == null) return;
 		fInfo = (IResourceInfo)newInput;
@@ -162,7 +168,7 @@ public class ToolListContentProvider implements ITreeContentProvider{
 			elements = createElements(fInfo.getParent());
 		else
 			elements = createElements(fInfo);
-			
+
 	}
 }
 

@@ -51,7 +51,7 @@ public class ScannerConfigInfoFactory {
 	 * @since 3.0
 	 */
 	static final String SI_PROFILE_ID = PREFIX + ".siProfileId"; //$NON-NLS-1$
-	
+
 	/**
 	 *
 	 * @author vhirsl
@@ -60,6 +60,7 @@ public class ScannerConfigInfoFactory {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo#isAutoDiscoveryEnabled()
 		 */
+		@Override
 		public boolean isAutoDiscoveryEnabled() {
 			return getBoolean(BUILD_SCANNER_CONFIG_ENABLED);
 		}
@@ -67,6 +68,7 @@ public class ScannerConfigInfoFactory {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo#setAutoDiscoveryEnabled(boolean)
 		 */
+		@Override
 		public void setAutoDiscoveryEnabled(boolean enabled) throws CoreException {
 			putString(BUILD_SCANNER_CONFIG_ENABLED, Boolean.toString(enabled));
 		}
@@ -74,6 +76,7 @@ public class ScannerConfigInfoFactory {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo#isMakeBuilderConsoleParserEnabled()
 		 */
+		@Override
 		public boolean isMakeBuilderConsoleParserEnabled() {
 			if (getString(MAKE_BUILDER_PARSER_ENABLED) == null ||
 				getString(MAKE_BUILDER_PARSER_ENABLED).length() == 0) { // if no property then default to true
@@ -81,10 +84,11 @@ public class ScannerConfigInfoFactory {
 			}
 			return getBoolean(MAKE_BUILDER_PARSER_ENABLED);
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo#setMakeBuilderConsoleParserEnabled(boolean)
 		 */
+		@Override
 		public void setMakeBuilderConsoleParserEnabled(boolean enabled) throws CoreException {
 			putString(MAKE_BUILDER_PARSER_ENABLED, Boolean.toString(enabled));
 		}
@@ -92,19 +96,21 @@ public class ScannerConfigInfoFactory {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo#getMakeBuilderConsoleParserId()
 		 */
+		@Override
 		public String getMakeBuilderConsoleParserId() {
 			String parserId = getString(MAKE_BUILDER_PARSER_ID);
 			if (parserId == null || parserId.length() == 0) {
 				String[] parserIds = MakeCorePlugin.getDefault().
 					getScannerInfoConsoleParserIds("makeBuilder"); //$NON-NLS-1$
 				// the default is the first one in the registry
-				parserId = parserIds[0];	
+				parserId = parserIds[0];
 			}
 			return parserId;
 		}
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo#setMakeBuilderConsoleParserId(java.lang.String)
 		 */
+		@Override
 		public void setMakeBuilderConsoleParserId(String parserId) throws CoreException {
 			putString(MAKE_BUILDER_PARSER_ID, parserId);
 		}
@@ -112,6 +118,7 @@ public class ScannerConfigInfoFactory {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo#isESIProviderCommandEnabled()
 		 */
+		@Override
 		public boolean isESIProviderCommandEnabled() {
 			if (getString(ESI_PROVIDER_COMMAND_ENABLED) == null ||
 				getString(ESI_PROVIDER_COMMAND_ENABLED).length() == 0) { // if no property then default to true
@@ -123,13 +130,15 @@ public class ScannerConfigInfoFactory {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo#setESIProviderCommandEnabled(boolean)
 		 */
+		@Override
 		public void setESIProviderCommandEnabled(boolean enabled) throws CoreException {
 			putString(ESI_PROVIDER_COMMAND_ENABLED, Boolean.toString(enabled));
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo#isDefaultESIProviderCmd()
 		 */
+		@Override
 		public boolean isDefaultESIProviderCmd() {
 			if (getString(USE_DEFAULT_ESI_PROVIDER_CMD) == null ||
 				getString(USE_DEFAULT_ESI_PROVIDER_CMD).length() == 0) { // if no property then default to true
@@ -141,6 +150,7 @@ public class ScannerConfigInfoFactory {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo#setUseDefaultESIProviderCmd(boolean)
 		 */
+		@Override
 		public void setUseDefaultESIProviderCmd(boolean on) throws CoreException {
 			putString(USE_DEFAULT_ESI_PROVIDER_CMD, Boolean.toString(on));
 		}
@@ -148,6 +158,7 @@ public class ScannerConfigInfoFactory {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo#getESIProviderCommand()
 		 */
+		@Override
 		public IPath getESIProviderCommand() {
 			if (isDefaultESIProviderCmd()) {
 				String command = getESIProviderParameter("defaultCommand"); //$NON-NLS-1$
@@ -162,13 +173,15 @@ public class ScannerConfigInfoFactory {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo#setESIProviderCommand(org.eclipse.core.runtime.IPath)
 		 */
+		@Override
 		public void setESIProviderCommand(IPath command) throws CoreException {
 			putString(ESI_PROVIDER_COMMAND, command.toString());
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo#getESIProviderArguments()
 		 */
+		@Override
 		public String getESIProviderArguments() {
 			if (isDefaultESIProviderCmd()) {
 				String attributes = getESIProviderParameter("defaultAttributes"); //$NON-NLS-1$
@@ -183,6 +196,7 @@ public class ScannerConfigInfoFactory {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo#setESIProviderArguments(java.lang.String)
 		 */
+		@Override
 		public void setESIProviderArguments(String args) throws CoreException {
 			putString(ESI_PROVIDER_ARGUMENTS, args);
 		}
@@ -190,20 +204,22 @@ public class ScannerConfigInfoFactory {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo#getESIProviderConsoleParserId()
 		 */
+		@Override
 		public String getESIProviderConsoleParserId() {
 			String parserId = getString(ESI_PROVIDER_PARSER_ID);
 			if (parserId == null || parserId.length() == 0) {
 				String[] parserIds = MakeCorePlugin.getDefault().
 					getScannerInfoConsoleParserIds("externalScannerInfoProvider"); //$NON-NLS-1$
 				// the default is the first one in the registry
-				parserId = parserIds[0];	
+				parserId = parserIds[0];
 			}
 			return parserId;
 		}
-	
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo#setESIProviderConsoleParserId(java.lang.String)
 		 */
+		@Override
 		public void setESIProviderConsoleParserId(String parserId) throws CoreException {
 			putString(ESI_PROVIDER_PARSER_ID, parserId);
 		}
@@ -211,6 +227,7 @@ public class ScannerConfigInfoFactory {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo#isSIProblemGenerationEnabled()
 		 */
+		@Override
 		public boolean isSIProblemGenerationEnabled() {
 			if (getString(SI_PROBLEM_GENERATION_ENABLED) == null ||
 					getString(SI_PROBLEM_GENERATION_ENABLED).length() == 0) { // if no property then default to true
@@ -218,10 +235,11 @@ public class ScannerConfigInfoFactory {
 			}
 			return getBoolean(SI_PROBLEM_GENERATION_ENABLED);
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo#setSIProblemGenerationEnabled(boolean)
 		 */
+		@Override
 		public void setSIProblemGenerationEnabled(boolean enabled) throws CoreException {
 			putString(SI_PROBLEM_GENERATION_ENABLED, Boolean.toString(enabled));
 		}
@@ -256,7 +274,7 @@ public class ScannerConfigInfoFactory {
 			return null;
 		}
 	}
-	
+
 	private static class Preference extends Store {
 		private Preferences prefs;
 		private String builderID;
@@ -290,7 +308,7 @@ public class ScannerConfigInfoFactory {
 			return builderID;
 		}
 	}
-	
+
 	private static class BuildProperty extends Store {
 		private IProject project;
 		private String builderID;
@@ -304,7 +322,7 @@ public class ScannerConfigInfoFactory {
 				throw new CoreException(new Status(IStatus.ERROR,
 						MakeCorePlugin.getUniqueIdentifier(), -1,
 						MakeMessages.getString("ScannerConfigInfoFactory.Missing_Builder")//$NON-NLS-1$
-							+ builderID, null)); 
+							+ builderID, null));
 			}
 			Map<String,String> bArgs = builder.getArguments();
 			args = bArgs;

@@ -25,24 +25,24 @@ import org.eclipse.core.runtime.IPath;
 public class ResourceInfoContainer {
 	private PathSettingsContainer fRcDataContainer;
 	private boolean fIncludeCurrent;
-	
+
 	public ResourceInfoContainer(PathSettingsContainer pathSettings, boolean includeCurrent){
 		fRcDataContainer = pathSettings;
 		fIncludeCurrent = includeCurrent;
 	}
-	
+
 	public void changeCurrentPath(IPath path, boolean moveChildren){
 		fRcDataContainer.setPath(path, moveChildren);
 	}
-	
+
 	public IPath getCurrentPath(){
 		return fRcDataContainer.getPath();
 	}
-	
+
 	public IResourceInfo getCurrentResourceInfo(){
 		return (IResourceInfo)fRcDataContainer.getValue();
 	}
-	
+
 	public IResourceInfo getResourceInfo(IPath path, boolean exactPath) {
 		PathSettingsContainer cr = fRcDataContainer.getChildContainer(path, false, exactPath);
 		if(cr != null)
@@ -61,35 +61,36 @@ public class ResourceInfoContainer {
 	public IResourceInfo[] getResourceInfos(final int kind) {
 		return getResourceInfos(kind, IResourceInfo.class);
 	}
-	
+
 	public IResourceInfo[] getResourceInfos(int kind, Class<? extends IResourceInfo> clazz){
 		List<IResourceInfo> list = getRcInfoList(kind);
 
 		IResourceInfo datas[] = (IResourceInfo[])Array.newInstance(clazz, list.size());
-		
+
 		return list.toArray(datas);
 	}
 
 	public IResourceInfo[] getDirectChildResourceInfos(){
 		PathSettingsContainer[] children = fRcDataContainer.getDirectChildren();
-		
+
 		IResourceInfo datas[] = new IResourceInfo[children.length];
-		
+
 		for(int i = 0; i < datas.length; i++){
 			datas[i] = (IResourceInfo)children[i].getValue();
 		}
-		
+
 		return datas;
 	}
 
 	public List<IResourceInfo> getRcInfoList(final int kind){
 		return getRcInfoList(kind, fIncludeCurrent);
-	}		
-	
+	}
+
 	public List<IResourceInfo> getRcInfoList(final int kind, final boolean includeCurrent){
-		final List<IResourceInfo> list = new ArrayList<IResourceInfo>(); 
+		final List<IResourceInfo> list = new ArrayList<IResourceInfo>();
 		fRcDataContainer.accept(new IPathSettingsContainerVisitor(){
 
+			@Override
 			public boolean visit(PathSettingsContainer container) {
 				if(includeCurrent || container != fRcDataContainer){
 					IResourceInfo data = (IResourceInfo)container.getValue();
@@ -99,7 +100,7 @@ public class ResourceInfoContainer {
 				return true;
 			}
 		});
-		
+
 		return list;
 	}
 
@@ -113,16 +114,16 @@ public class ResourceInfoContainer {
 	public void removeResourceInfo(IPath path) {
 		fRcDataContainer.removeChildContainer(path);
 	}
-	
+
 	public void addResourceInfo(IResourceInfo data){
 		PathSettingsContainer cr = fRcDataContainer.getChildContainer(data.getPath(), true, true);
 		cr.setValue(data);
 	}
-	
+
 	public IFileInfo getFileInfo(IPath path){
 		return (IFileInfo)getResourceInfo(path, true, ICSettingBase.SETTING_FILE);
 	}
-	
+
 	public IFolderInfo getFolderInfo(IPath path){
 		return (IFolderInfo)getResourceInfo(path, true, ICSettingBase.SETTING_FOLDER);
 	}

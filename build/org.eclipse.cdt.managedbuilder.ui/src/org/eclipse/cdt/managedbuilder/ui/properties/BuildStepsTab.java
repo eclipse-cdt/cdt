@@ -57,9 +57,9 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 	private ICResourceDescription cfgdescr;
 	private IFileInfo rcfg;
 	private boolean canModify = true;
-	
-	private static final String label1 = Messages.BuildStepsTab_0; 
-	private static final String label2 = Messages.BuildStepsTab_1; 
+
+	private static final String label1 = Messages.BuildStepsTab_0;
+	private static final String label2 = Messages.BuildStepsTab_1;
 	private static final String PATH_SEPERATOR = ";";	//$NON-NLS-1$
 	private static final String rcbsToolId = new String("org.eclipse.cdt.managedbuilder.ui.rcbs");	//$NON-NLS-1$
 	private static final String rcbsToolName = new String("Resource Custom Build Step");	//$NON-NLS-1$
@@ -67,42 +67,43 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 	private static final String rcbsToolInputTypeName = new String("Resource Custom Build Step Input Type");	//$NON-NLS-1$
 	private static final String rcbsToolOutputTypeId = new String("org.eclipse.cdt.managedbuilder.ui.rcbs.outputtype");	//$NON-NLS-1$
 	private static final String rcbsToolOutputTypeName = new String("Resource Custom Build Step Output Type");	//$NON-NLS-1$
-	
+
 	private enum FIELD {PRECMD, PREANN, PSTCMD, PSTANN}
 	private Set<String> set1 = new TreeSet<String>();
 	private Set<String> set2 = new TreeSet<String>();
 	private Set<String> set3 = new TreeSet<String>();
 	private Set<String> set4 = new TreeSet<String>();
-	
+
 	private static final String[] rcbsApplicabilityRules = {
 		new String(Messages.ResourceCustomBuildStepBlock_label_applicability_rule_override),
 //		new String(ManagedBuilderMessages_getResourceString("ResourceCustomBuildStepBlock_label_applicability_rule_before")),
 //		new String(ManagedBuilderMessages_getResourceString("ResourceCustomBuildStepBlock_label_applicability_rule_after")),
 		new String(Messages.ResourceCustomBuildStepBlock_label_applicability_rule_disable),
 	};
-	
-	
+
+
 	@Override
 	public void createControls(Composite parent) {
 		super.createControls(parent);
 		usercomp.setLayout(new GridLayout(1, false));
 
-		if (page.isForProject()) 
+		if (page.isForProject())
 			createForProject();
 		else
 			createForFile();
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createForProject() {
-		Group g1 = setupGroup (usercomp, Messages.BuildStepsTab_2, 1, GridData.FILL_HORIZONTAL); 
+		Group g1 = setupGroup (usercomp, Messages.BuildStepsTab_2, 1, GridData.FILL_HORIZONTAL);
 		setupLabel(g1, label1, 1, GridData.BEGINNING);
 		preCmd = setCombo(g1, FIELD.PRECMD, set1);
 		preCmd.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
-				if (canModify && 
+				if (canModify &&
 					!preCmd.getText().equals(getCfg().getPrebuildStep()))
 					getCfg().setPrebuildStep(preCmd.getText());
 			}});
@@ -110,39 +111,42 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 		setupLabel(g1, label2, 1, GridData.BEGINNING);
 		preDes = setCombo(g1, FIELD.PREANN, set2);
 		preDes.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
-				if (canModify && 
-					!preDes.getText().equals(getCfg().getPreannouncebuildStep()))	
+				if (canModify &&
+					!preDes.getText().equals(getCfg().getPreannouncebuildStep()))
 					getCfg().setPreannouncebuildStep(preDes.getText());
 			}});
 
-		Group g2 = setupGroup (usercomp, Messages.BuildStepsTab_3, 1, GridData.FILL_HORIZONTAL); 
+		Group g2 = setupGroup (usercomp, Messages.BuildStepsTab_3, 1, GridData.FILL_HORIZONTAL);
 		setupLabel(g2, label1, 1, GridData.BEGINNING);
 		postCmd = setCombo(g2, FIELD.PSTCMD, set3);
 		postCmd.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
-				if (canModify && 
-					!postCmd.getText().equals(getCfg().getPostbuildStep()))	
+				if (canModify &&
+					!postCmd.getText().equals(getCfg().getPostbuildStep()))
 				    getCfg().setPostbuildStep(postCmd.getText());
 			}});
 
 		setupLabel(g2, label2, 1, GridData.BEGINNING);
 		postDes = setCombo(g2, FIELD.PSTANN, set4);
 		postDes.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
-				if (canModify && 
-				   !postDes.getText().equals(getCfg().getPostannouncebuildStep()))		
+				if (canModify &&
+				   !postDes.getText().equals(getCfg().getPostannouncebuildStep()))
 				   getCfg().setPostannouncebuildStep(postDes.getText());
 			}});
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void createForFile() {
-		Group g1 = setupGroup (usercomp, Messages.BuildStepsTab_4, 1, GridData.FILL_HORIZONTAL); 
+		Group g1 = setupGroup (usercomp, Messages.BuildStepsTab_4, 1, GridData.FILL_HORIZONTAL);
 		setupLabel(g1, Messages.ResourceCustomBuildStepBlock_label_applicability, 1, GridData.BEGINNING);
-		
+
 		combo = new Combo(g1, SWT.READ_ONLY | SWT.DROP_DOWN | SWT.BORDER);
 		combo.setItems(rcbsApplicabilityRules);
 		combo.addSelectionListener(new SelectionAdapter() {
@@ -150,10 +154,11 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 			public void widgetSelected(SelectionEvent e) {
 				rcfg.setRcbsApplicability(sel2app(combo.getSelectionIndex()));
 			}});
-		
-		setupLabel(g1, Messages.BuildStepsTab_5, 1, GridData.BEGINNING);		 
+
+		setupLabel(g1, Messages.BuildStepsTab_5, 1, GridData.BEGINNING);
 		preCmd = setCombo(g1, FIELD.PRECMD, set1);
 		preCmd.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				if (canModify && tool != null) {
 					IInputType[] ein = tool.getInputTypes();
@@ -166,9 +171,10 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 				}
 			}});
 
-		setupLabel(g1, Messages.BuildStepsTab_6, 1, GridData.BEGINNING); 
+		setupLabel(g1, Messages.BuildStepsTab_6, 1, GridData.BEGINNING);
 		preDes = setCombo(g1, FIELD.PREANN, set2);
 		preDes.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				if (canModify && tool != null) {
 					IOutputType[] out = tool.getOutputTypes();
@@ -180,20 +186,22 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 		setupLabel(g1, label1, 1, GridData.BEGINNING);
 		postCmd = setCombo(g1, FIELD.PSTCMD, set3);
 		postCmd.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
-				if (canModify && tool != null) 
+				if (canModify && tool != null)
 					tool.setToolCommand(postCmd.getText());
 			}});
 
 		setupLabel(g1, label2, 1, GridData.BEGINNING);
 		postDes = setCombo(g1, FIELD.PSTANN, set4);
 		postDes.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				if (canModify && tool != null)
 					tool.setAnnouncement(postDes.getText());
 			}});
 	}
-	
+
 	@Override
 	public void updateData(ICResourceDescription cfgd) {
 		if (cfgd == null) return;
@@ -201,15 +209,15 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 		cfgdescr = cfgd;
 		update();
 	}
-		
+
 	private void update() {
 		canModify = false; // avoid changing
-		
+
 		updateCombo(preCmd);
 		updateCombo(preDes);
 		updateCombo(postCmd);
 		updateCombo(postDes);
-		
+
 		if (page.isForProject()) {
 			preCmd.setText(config.getPrebuildStep());
 			preDes.setText(config.getPreannouncebuildStep());
@@ -219,7 +227,7 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 			rcfg = (IFileInfo)getResCfg(cfgdescr);
 			combo.select(app2sel(rcfg.getRcbsApplicability()));
 			tool = getRcbsTool(rcfg);
-			
+
 			if(tool != null){
 				preCmd.setText(getInputTypes(tool));
 				preDes.setText(getOutputNames(tool));
@@ -232,7 +240,7 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 				postDes.setText(EMPTY_STR);
 			}
 		}
-		canModify = true; 
+		canModify = true;
 	}
 
 	private String getInputTypes(ITool t) {
@@ -254,11 +262,11 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 		return s;
 	}
 
-	
+
 	private ITool getRcbsTool(IFileInfo rcConfig){
 		ITool rcbsTools[] = getRcbsTools(rcConfig);
-		ITool rcbsTool = null; 
-		
+		ITool rcbsTool = null;
+
 		if(rcbsTools != null)
 			rcbsTool = rcbsTools[0];
 		else {
@@ -275,7 +283,7 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 	private ITool[] getRcbsTools(IResourceInfo rcConfig){
 		List<ITool> list = new ArrayList<ITool>();
 		ITool tools[] = rcConfig.getTools();
-		
+
 		for (int i = 0; i < tools.length; i++) {
 			ITool tool = tools[i];
 			if (tool.getCustomBuildStep() && !tool.isExtensionElement()) {
@@ -291,9 +299,9 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 	private String createList(String[] items) {
 		if(items == null)
 			return new String();
-		
+
 		StringBuffer path = new StringBuffer(EMPTY_STR);
-	
+
 		for (int i = 0; i < items.length; i++) {
 			path.append(items[i]);
 			if (i < (items.length - 1)) {
@@ -314,15 +322,15 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 			cfg2.setPostannouncebuildStep(cfg1.getPostannouncebuildStep());
 		} else {
 			if (page.isMultiCfg()) {
-				ICResourceDescription[] ris1 = (ICResourceDescription[])((ICMultiResourceDescription)src).getItems();				
+				ICResourceDescription[] ris1 = (ICResourceDescription[])((ICMultiResourceDescription)src).getItems();
 				ICResourceDescription[] ris2 = (ICResourceDescription[])((ICMultiResourceDescription)dst).getItems();
 				for (int i=0; i<ris1.length; i++)
 					applyToFile(ris1[i], ris2[i]);
-			} else 
+			} else
 				applyToFile(src, dst);
 		}
 	}
-	
+
 	private void applyToFile(ICResourceDescription src, ICResourceDescription dst) {
 		IFileInfo rcfg1 = (IFileInfo)getResCfg(src);
 		IFileInfo rcfg2 = (IFileInfo)getResCfg(dst);
@@ -339,7 +347,7 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 				add2[0].setPaths(createList(add1[0].getPaths()));
 			}
 		}
-		IOutputType[] tmp1 = tool1.getOutputTypes();			
+		IOutputType[] tmp1 = tool1.getOutputTypes();
 		IOutputType[] tmp2 = tool2.getOutputTypes();
 //		if (tmp1 != null && tmp2 != null && tmp1.length > 0 && tmp2.length > 0) {
 		if (valid(tmp1) && valid(tmp2)) {
@@ -348,7 +356,7 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 		tool2.setToolCommand(tool1.getToolCommand());
 		tool2.setAnnouncement(tool1.getAnnouncement());
 	}
-	
+
 	private int sel2app(int index){
 		String sel = combo.getItem(index);
 		if(Messages.ResourceCustomBuildStepBlock_label_applicability_rule_override.equals(sel)){
@@ -362,7 +370,7 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 	}
 
 	private boolean valid(Object[] arr) { return (arr != null && arr.length > 0); }
-	
+
 	private int app2sel(int val){
 		switch(val){
 		case IResourceConfiguration.KIND_APPLY_RCBS_TOOL_AFTER:
@@ -376,8 +384,8 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 			return combo.indexOf(Messages.ResourceCustomBuildStepBlock_label_applicability_rule_override);
 		}
 	}
-	
-	
+
+
 	// This page can be displayed for managed project only
 	@Override
 	public boolean canBeVisible() {
@@ -393,7 +401,7 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 			} else
 				return getCfg().getBuilder().isManagedBuildOn();
 		}
-		else 
+		else
 			return false;
 	}
 
@@ -412,7 +420,7 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 				IAdditionalInput[] add = ein[0].getAdditionalInputs();
 				if (valid(add)) add[0].setPaths(null);
 			}
-			IOutputType[] tmp = tool.getOutputTypes();			
+			IOutputType[] tmp = tool.getOutputTypes();
 			if (valid(tmp)) tmp[0].setOutputNames(null);
 			tool.setToolCommand(null);
 			tool.setAnnouncement(null);
@@ -421,7 +429,7 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 	}
 	@Override
 	protected void updateButtons() {} // Do nothing. No buttons to update.
-	
+
 	private Combo setCombo(Composite c, FIELD field, Set<String> set) {
 		Combo combo = new Combo(c, SWT.BORDER);
 		setupControl(combo, 1, GridData.FILL_HORIZONTAL);
@@ -432,7 +440,7 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 		updateCombo(combo);
 		return combo;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private void updateCombo(Combo combo) {
 		FIELD field = (FIELD)combo.getData(ENUM);
@@ -452,7 +460,7 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 					if (r != null && r instanceof ICFileDescription)
 						t = getRcbsTool((IFileInfo)getResCfg(r));
 					if (t == null)
-						continue; // there's no specific resconfig for this configuration 
+						continue; // there's no specific resconfig for this configuration
 				}
 				String s = null;
 				switch (field) {
@@ -473,7 +481,7 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 					set.add(s.trim());
 			}
 		}
-		if (set.size() > 0) 
+		if (set.size() > 0)
 			combo.setItems(set.toArray(new String[set.size()]));
 	}
 }

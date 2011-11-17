@@ -24,14 +24,15 @@ public class TestProjectConverter implements IConvertManagedBuildObject {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConvertManagedBuildObject#convert(org.eclipse.cdt.managedbuilder.core.IBuildObject, java.lang.String, java.lang.String, boolean)
 	 */
+	@Override
 	public IBuildObject convert(IBuildObject buildObj, String fromId,
 			String toId, boolean isConfirmed) {
-		
+
 		String tmpDir = System.getProperty("java.io.tmpdir");	//$NON-NLS-1$
-		
+
 		File outputFile = new File(tmpDir + "/testProjectConverterOutput.txt");	//$NON-NLS-1$
 		try {
-			FileWriter out = new FileWriter(outputFile);			
+			FileWriter out = new FileWriter(outputFile);
 			out.write("The converter for the projectType testProject_1.0.0 is invoked");	//$NON-NLS-1$
 			out.close();
 		} catch (IOException e) {

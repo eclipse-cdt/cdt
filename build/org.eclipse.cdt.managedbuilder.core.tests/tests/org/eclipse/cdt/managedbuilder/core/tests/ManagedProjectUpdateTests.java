@@ -44,10 +44,10 @@ public class ManagedProjectUpdateTests extends TestCase {
 	public ManagedProjectUpdateTests(String name) {
 		super(name);
 	}
-	
+
 	public static Test suite() {
 		TestSuite suite = new TestSuite(ManagedProjectUpdateTests.class.getName());
-		
+
 		suite.addTest(new ManagedProjectUpdateTests("testProjectUpdate12_Update"));
 		suite.addTest(new ManagedProjectUpdateTests("testProjectUpdate20_Update"));
 		suite.addTest(new ManagedProjectUpdateTests("testProjectUpdate21_Update"));
@@ -56,10 +56,10 @@ public class ManagedProjectUpdateTests extends TestCase {
 //		suite.addTest(new ManagedProjectUpdateTests("testProjectUpdate21_NoUpdate"));
 		// TODO:  This is affected by the TODO in UpdateManagedProjectManager
 		suite.addTest(new ManagedProjectUpdateTests("testProjectUpdate21CPP_Update"));
-		
+
 		return suite;
 	}
-	
+
 	private File getVersionProjectsDir(String version){
 		return CTestPlugin.getFileInPlugin(new Path("resources/oldTypeProjects/"+version));
 	}
@@ -70,22 +70,23 @@ public class ManagedProjectUpdateTests extends TestCase {
 			fail("Test project directory is missing.");
 			return null;
 		}
-		
+
 		File projectZips[] = file.listFiles(new FileFilter(){
+			@Override
 			public boolean accept(File pathname){
 				if(pathname.isDirectory())
 					return false;
 				return true;
 			}
 		});
-		
+
 		ArrayList<IProject> projectList = new ArrayList<IProject>(projectZips.length);
 		for(int i = 0; i < projectZips.length; i++){
 			try{
 				String projectName = projectZips[i].getName();
 				if(!projectName.endsWith(".zip"))
 					continue;
-				
+
 				projectName = projectName.substring(0,projectName.length()-".zip".length());
 				if(projectName.length() == 0)
 					continue;
@@ -102,35 +103,37 @@ public class ManagedProjectUpdateTests extends TestCase {
 		}
 		return projectList.toArray(new IProject[projectList.size()]);
 	}
-	
-	private void doTestProjectUpdate(String version, boolean updateProject, boolean overwriteBackupFiles, 
+
+	private void doTestProjectUpdate(String version, boolean updateProject, boolean overwriteBackupFiles,
 			IPath[] files){
 		IOverwriteQuery queryALL = new IOverwriteQuery(){
+			@Override
 			public String queryOverwrite(String file) {
 				return ALL;
 			}};
 		IOverwriteQuery queryNOALL = new IOverwriteQuery(){
+			@Override
 			public String queryOverwrite(String file) {
 				return NO_ALL;
 			}};
-		
+
 		UpdateManagedProjectManager.setBackupFileOverwriteQuery(overwriteBackupFiles ? queryALL : queryNOALL);
 		UpdateManagedProjectManager.setUpdateProjectQuery(updateProject ? queryALL : queryNOALL);
-		
+
 		IProject projects[] = createVersionProjects(version);
 		if(projects == null || projects.length == 0)
 			return;
 		for(int i = 0; i < projects.length; i++){
 			final IProject curProject = projects[i];
-			
-			//the project conversion occures the first time 
+
+			//the project conversion occures the first time
 			//ManagedBuildManager.getBuildInfo gets called
 			IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(curProject);
-			
+
 			//check whether the managed build info is converted
 			boolean isCompatible = UpdateManagedProjectManager.isCompatibleProject(info);
 			assertTrue(isCompatible);
-			
+
 			if(isCompatible){
 				//check for correct update
 				if (!updateProject) {
@@ -167,15 +170,15 @@ public class ManagedProjectUpdateTests extends TestCase {
 					}
 				};
 				buildJob.setRule(rule);
-				
+
 				buildJob.schedule();
-				
+
 				try {
 					buildJob.join();
 				} catch (InterruptedException e) {
 					fail("the build job for the project \"" + curProject.getName() + "\" was interrupted, exception message: " + e.getMessage());
 				}
-				
+
 				IStatus status = buildJob.getResult();
 				if(status.getCode() != IStatus.OK){
 					fail("the build job for the project \"" + curProject.getName() + "\" failed, status message: " + status.getMessage());
@@ -192,83 +195,83 @@ public class ManagedProjectUpdateTests extends TestCase {
 				}
 			}
 		}
-		
+
 		for(int i = 0; i < projects.length; i++)
 			ManagedBuildTestHelper.removeProject(projects[i].getName());
 	}
-	
+
 	/* (non-Javadoc)
-	 * tests project v1.2 update 
-	 * in case when user chooses to update the project 
+	 * tests project v1.2 update
+	 * in case when user chooses to update the project
 	 */
 	public void testProjectUpdate12_Update(){
 		IPath[] makefiles = {
-				 Path.fromOSString("makefile"), 
-				 Path.fromOSString("objects.mk"), 
-				 Path.fromOSString("sources.mk"), 
+				 Path.fromOSString("makefile"),
+				 Path.fromOSString("objects.mk"),
+				 Path.fromOSString("sources.mk"),
 				 Path.fromOSString("subdir.mk")};
 		doTestProjectUpdate("1.2", true, true, makefiles);
 	}
 
 	/* (non-Javadoc)
-	 * tests project v2.0 update 
-	 * in case when user chooses to update the project 
+	 * tests project v2.0 update
+	 * in case when user chooses to update the project
 	 */
 	public void testProjectUpdate20_Update(){
 		IPath[] makefiles = {
-				 Path.fromOSString("makefile"), 
-				 Path.fromOSString("objects.mk"), 
-				 Path.fromOSString("sources.mk"), 
+				 Path.fromOSString("makefile"),
+				 Path.fromOSString("objects.mk"),
+				 Path.fromOSString("sources.mk"),
 				 Path.fromOSString("subdir.mk")};
 		doTestProjectUpdate("2.0", true, true, makefiles);
 	}
 
 	/* (non-Javadoc)
-	 * tests project v2.1 update 
-	 * in case when user chooses to update the project 
+	 * tests project v2.1 update
+	 * in case when user chooses to update the project
 	 */
 	public void testProjectUpdate21_Update(){
 		IPath[] makefiles = {
-				 Path.fromOSString("makefile"), 
-				 Path.fromOSString("objects.mk"), 
-				 Path.fromOSString("sources.mk"), 
-				 Path.fromOSString("subdir.mk"), 
+				 Path.fromOSString("makefile"),
+				 Path.fromOSString("objects.mk"),
+				 Path.fromOSString("sources.mk"),
+				 Path.fromOSString("subdir.mk"),
 				 Path.fromOSString("Functions/subdir.mk")};
 		doTestProjectUpdate("2.1", true, true, makefiles);
 	}
 
 	/* (non-Javadoc)
-	 * tests project v2.1 update of a C++ project with C source files 
+	 * tests project v2.1 update of a C++ project with C source files
 	 */
 	public void testProjectUpdate21CPP_Update(){
 		IPath[] makefiles = {
-				 Path.fromOSString("makefile"), 
-				 Path.fromOSString("objects.mk"), 
-				 Path.fromOSString("sources.mk"), 
-				 Path.fromOSString("subdir.mk"), 
+				 Path.fromOSString("makefile"),
+				 Path.fromOSString("objects.mk"),
+				 Path.fromOSString("sources.mk"),
+				 Path.fromOSString("subdir.mk"),
 				 Path.fromOSString("Functions/subdir.mk")};
 		doTestProjectUpdate("2.1CPP", true, true, makefiles);
 	}
 
 	/* (non-Javadoc)
-	 * tests project v1.2 update 
-	 * in case when user chooses not to update the project 
+	 * tests project v1.2 update
+	 * in case when user chooses not to update the project
 	 */
 	public void testProjectUpdate12_NoUpdate(){
 		doTestProjectUpdate("1.2", false, true, null);
 	}
 
 	/* (non-Javadoc)
-	 * tests project v2.0 update 
-	 * in case when user chooses not to update the project 
+	 * tests project v2.0 update
+	 * in case when user chooses not to update the project
 	 */
 	public void testProjectUpdate20_NoUpdate(){
 		doTestProjectUpdate("2.0", false, true, null);
 	}
 
 	/* (non-Javadoc)
-	 * tests project v2.1 update 
-	 * in case when user chooses not to update the project 
+	 * tests project v2.1 update
+	 * in case when user chooses not to update the project
 	 */
 	public void testProjectUpdate21_NoUpdate(){
 		doTestProjectUpdate("2.1", false, true, null);

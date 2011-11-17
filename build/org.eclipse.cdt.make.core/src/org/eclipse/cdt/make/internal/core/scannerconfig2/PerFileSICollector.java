@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *  IBM - Initial API and implementation
  *  Markus Schorn (Wind River Systems)
@@ -20,22 +20,22 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.Map.Entry;
 
 import org.eclipse.cdt.internal.core.SafeStringInterner;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
+import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo;
+import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredScannerInfoSerializable;
+import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IPerFileDiscoveredPathInfo;
+import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IPerFileDiscoveredPathInfo2;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector3;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollectorCleaner;
 import org.eclipse.cdt.make.core.scannerconfig.InfoContext;
 import org.eclipse.cdt.make.core.scannerconfig.PathInfo;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
-import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo;
-import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredScannerInfoSerializable;
-import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IPerFileDiscoveredPathInfo;
-import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IPerFileDiscoveredPathInfo2;
 import org.eclipse.cdt.make.internal.core.MakeMessages;
 import org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredScannerInfoStore;
 import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerConfigUtil;
@@ -57,7 +57,7 @@ import org.w3c.dom.NodeList;
 
 /**
  * Per file scanner info collector
- * 
+ *
  * @author vhirsl
  */
 public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoCollectorCleaner {
@@ -65,7 +65,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
 	protected static final int QUOTE_INCLUDE_PATH = 2;
 	protected static final int INCLUDE_FILE		= 3;
 	protected static final int MACROS_FILE		= 4;
-	
+
     protected class ScannerInfoData implements IDiscoveredScannerInfoSerializable {
         protected final Map<Integer, Set<IFile>> commandIdToFilesMap; // command id and set of files it applies to
         protected final Map<IFile, Integer> fileToCommandIdMap;  // maps each file to the corresponding command id
@@ -80,30 +80,31 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
         /* (non-Javadoc)
          * @see org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredScannerInfoStore.IDiscoveredScannerInfoSerializable#serialize(org.w3c.dom.Element)
          */
-        public void serialize(Element collectorElem) {
+        @Override
+		public void serialize(Element collectorElem) {
         	synchronized (PerFileSICollector.this.fLock) {
 	            Document doc = collectorElem.getOwnerDocument();
-	            
+
 	            List<Integer> commandIds = new ArrayList<Integer>(commandIdCommandMap.keySet());
 	            Collections.sort(commandIds);
 	            for (Integer commandId : commandIds) {
 	                CCommandDSC command = commandIdCommandMap.get(commandId);
-	                
-	                Element cmdElem = doc.createElement(CC_ELEM); 
+
+	                Element cmdElem = doc.createElement(CC_ELEM);
 	                collectorElem.appendChild(cmdElem);
-	                cmdElem.setAttribute(ID_ATTR, commandId.toString()); 
+	                cmdElem.setAttribute(ID_ATTR, commandId.toString());
 	                cmdElem.setAttribute(FILE_TYPE_ATTR, command.appliesToCPPFileType() ? "c++" : "c"); //$NON-NLS-1$ //$NON-NLS-2$
 	                // write command and scanner info
 	                command.serialize(cmdElem);
 	                // write files command applies to
-	                Element filesElem = doc.createElement(APPLIES_TO_ATTR); 
+	                Element filesElem = doc.createElement(APPLIES_TO_ATTR);
 	                cmdElem.appendChild(filesElem);
 	                Set<IFile> files = commandIdToFilesMap.get(commandId);
 	                if (files != null) {
 	                    for (IFile file : files) {
-	                        Element fileElem = doc.createElement(FILE_ELEM); 
+	                        Element fileElem = doc.createElement(FILE_ELEM);
 	                        IPath path = file.getProjectRelativePath();
-	                        fileElem.setAttribute(PATH_ATTR, path.toString()); 
+	                        fileElem.setAttribute(PATH_ATTR, path.toString());
 	                        filesElem.appendChild(fileElem);
 	                    }
 	                }
@@ -114,10 +115,11 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
         /* (non-Javadoc)
          * @see org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredScannerInfoStore.IDiscoveredScannerInfoSerializable#deserialize(org.w3c.dom.Element)
          */
-        public void deserialize(Element collectorElem) {
+        @Override
+		public void deserialize(Element collectorElem) {
         	synchronized (PerFileSICollector.this.fLock) {
 	            for (Node child = collectorElem.getFirstChild(); child != null; child = child.getNextSibling()) {
-	                if (child.getNodeName().equals(CC_ELEM)) { 
+	                if (child.getNodeName().equals(CC_ELEM)) {
 	                    Element cmdElem = (Element) child;
 	                    boolean cppFileType = cmdElem.getAttribute(FILE_TYPE_ATTR).equals("c++"); //$NON-NLS-1$
 	                    CCommandDSC command = new CCommandDSC(cppFileType, project);
@@ -145,12 +147,13 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
         /* (non-Javadoc)
          * @see org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredScannerInfoStore.IDiscoveredScannerInfoSerializable#getCollectorId()
          */
-        public String getCollectorId() {
+        @Override
+		public String getCollectorId() {
             return COLLECTOR_ID;
         }
 
     }
-    
+
     protected static class ProjectScannerInfo {
     	IPath[] includePaths;
     	IPath[] quoteIncludePaths;
@@ -165,7 +168,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
 					definedSymbols.size() == 0);
 		}
     }
-    
+
     public static final String COLLECTOR_ID = MakeCorePlugin.getUniqueIdentifier() + ".PerFileSICollector"; //$NON-NLS-1$
 	protected static final String CC_ELEM = "compilerCommand"; //$NON-NLS-1$
 	protected static final String ID_ATTR = "id"; //$NON-NLS-1$
@@ -173,47 +176,49 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
 	protected static final String APPLIES_TO_ATTR = "appliesToFiles"; //$NON-NLS-1$
 	protected static final String FILE_ELEM = "file"; //$NON-NLS-1$
 	protected static final String PATH_ATTR = "path"; //$NON-NLS-1$
-	
+
     protected IProject project;
     protected InfoContext context;
-    
+
     protected ScannerInfoData sid; // scanner info data
     protected ProjectScannerInfo psi = null;	// sum of all scanner info
-    
+
 //    protected List siChangedForFileList; 		// list of files for which scanner info has changed
 	protected final Map<IFile, Integer> siChangedForFileMap;		// (file, comandId) map for deltas
 	protected final List<Integer> siChangedForCommandIdList;	// list of command ids for which scanner info has changed
-    
+
     protected final SortedSet<Integer> freeCommandIdPool;   // sorted set of free command ids
     protected int commandIdCounter = 0;
-    
+
     /** monitor for data access */
     protected final Object fLock = new Object();
 
     /**
-     * 
+     *
      */
     public PerFileSICollector() {
         sid = new ScannerInfoData();
-        
+
 //        siChangedForFileList = new ArrayList();
 		siChangedForFileMap = new HashMap<IFile, Integer>();
 		siChangedForCommandIdList = new ArrayList<Integer>();
-		
+
         freeCommandIdPool = new TreeSet<Integer>();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector2#setProject(org.eclipse.core.resources.IProject)
      */
-    public void setProject(IProject project) {
+    @Override
+	public void setProject(IProject project) {
     	setInfoContext(new InfoContext(project));
     }
 
-    public void setInfoContext(InfoContext context) {
+    @Override
+	public void setInfoContext(InfoContext context) {
         this.project = context.getProject();
         this.context = context;
-        
+
         try {
             // deserialize from SI store
             DiscoveredScannerInfoStore.getInstance().loadDiscoveredScannerInfoFromState(project, context, sid);
@@ -230,7 +235,8 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
 	/* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector#contributeToScannerConfig(java.lang.Object, java.util.Map)
      */
-    public void contributeToScannerConfig(Object resource, @SuppressWarnings("rawtypes") Map scannerInfo) {
+    @Override
+	public void contributeToScannerConfig(Object resource, @SuppressWarnings("rawtypes") Map scannerInfo) {
         // check the resource
         String errorMessage = null;
         if (resource == null) {
@@ -257,9 +263,9 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
             TraceUtil.outputError("PerFileSICollector.contributeToScannerConfig : ", errorMessage); //$NON-NLS-1$
             return;
         }
-        
+
         IFile file = (IFile) resource;
-       
+
         synchronized (fLock) {
         	@SuppressWarnings("unchecked")
             Map<ScannerInfoTypes, List<CCommandDSC>> scanInfo = scannerInfo;
@@ -292,7 +298,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
             siItem = CygpathTranslator.translateIncludePaths(project, siItem);
             siItem = CCommandDSC.makeRelative(project, siItem);
             cmd.setQuoteIncludes(siItem);
-            
+
             cmd.setDiscovered(true);
         }
     }
@@ -317,7 +323,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
             cmd.setCommandId(commandId);
             sid.commandIdCommandMap.put(cmd.getCommandIdAsInteger(), cmd);
         }
-		
+
 		generateFileDelta(file, cmd);
     }
 
@@ -342,7 +348,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
 		for (IFile file : resources) {
 			Integer commandId = siChangedForFileMap.get(file);
 			if (commandId != null) {
-			
+
 		        // update sid.commandIdToFilesMap
 		        Set<IFile> fileSet = sid.commandIdToFilesMap.get(commandId);
 		        if (fileSet == null) {
@@ -408,8 +414,8 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
             sid.commandIdCommandMap.remove(cmdId);
             sid.commandIdToFilesMap.remove(cmdId);
         }
-        while (!freeCommandIdPool.isEmpty()) { 
-            Integer last = freeCommandIdPool.last(); 
+        while (!freeCommandIdPool.isEmpty()) {
+            Integer last = freeCommandIdPool.last();
             if (last.intValue() == commandIdCounter) {
                 freeCommandIdPool.remove(last);
                 --commandIdCounter;
@@ -417,16 +423,17 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
             else break;
         }
     }
-    
+
     protected void addScannerInfo(ScannerInfoTypes type, List<CCommandDSC> delta) {
         // TODO Auto-generated method stub
-        
+
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector2#updateScannerConfiguration(org.eclipse.core.runtime.IProgressMonitor)
      */
-    public void updateScannerConfiguration(IProgressMonitor monitor) throws CoreException {
+    @Override
+	public void updateScannerConfiguration(IProgressMonitor monitor) throws CoreException {
         if (monitor == null) {
             monitor = new NullProgressMonitor();
         }
@@ -464,7 +471,8 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector2#createPathInfoObject()
      */
-    public IDiscoveredPathInfo createPathInfoObject() {
+    @Override
+	public IDiscoveredPathInfo createPathInfoObject() {
         return new PerFileDiscoveredPathInfo();
     }
 
@@ -477,13 +485,14 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector#getCollectedScannerInfo(java.lang.Object, org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes)
      */
-    public List<CCommandDSC> getCollectedScannerInfo(Object resource, ScannerInfoTypes type) {
+    @Override
+	public List<CCommandDSC> getCollectedScannerInfo(Object resource, ScannerInfoTypes type) {
         List<CCommandDSC> rv = new ArrayList<CCommandDSC>();
         // check the resource
         String errorMessage = null;
         if (resource == null) {
             errorMessage = "resource is null";//$NON-NLS-1$
-        } 
+        }
         else if (!(resource instanceof IResource)) {
             errorMessage = "resource is not an IResource";//$NON-NLS-1$
         }
@@ -493,7 +502,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
         else if (((IResource) resource).getProject() != project) {
             errorMessage = "wrong project";//$NON-NLS-1$
         }
-        
+
         if (errorMessage != null) {
             TraceUtil.outputError("PerProjectSICollector.getCollectedScannerInfo : ", errorMessage); //$NON-NLS-1$
             return rv;
@@ -540,39 +549,44 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollectorUtil#deleteAllPaths(org.eclipse.core.resources.IResource)
      */
-    public void deleteAllPaths(IResource resource) {
+    @Override
+	public void deleteAllPaths(IResource resource) {
         // TODO Auto-generated method stub
-        
+
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollectorUtil#deleteAllSymbols(org.eclipse.core.resources.IResource)
      */
-    public void deleteAllSymbols(IResource resource) {
+    @Override
+	public void deleteAllSymbols(IResource resource) {
         // TODO Auto-generated method stub
-        
+
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollectorUtil#deletePath(org.eclipse.core.resources.IResource, java.lang.String)
      */
-    public void deletePath(IResource resource, String path) {
+    @Override
+	public void deletePath(IResource resource, String path) {
         // TODO Auto-generated method stub
-        
+
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollectorUtil#deleteSymbol(org.eclipse.core.resources.IResource, java.lang.String)
      */
-    public void deleteSymbol(IResource resource, String symbol) {
+    @Override
+	public void deleteSymbol(IResource resource, String symbol) {
         // TODO Auto-generated method stub
-        
+
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollectorCleaner#deleteAll(org.eclipse.core.resources.IResource)
      */
-    public void deleteAll(IResource resource) {
+    @Override
+	public void deleteAll(IResource resource) {
         if (resource.equals(project)) {
         	synchronized (fLock) {
 //            	siChangedForFileList = new ArrayList();
@@ -583,10 +597,10 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
 //	                siChangedForFileList.add(path);
 	                siChangedForFileMap.put(file, null);
 	            }
-	
+
 	            sid = new ScannerInfoData();
 	            psi = null;
-	            
+
 	            commandIdCounter = 0;
 				freeCommandIdPool.clear();
         	}
@@ -595,21 +609,23 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
 
     /**
      * Per file DPI object
-     * 
+     *
      * @author vhirsl
      */
     protected class PerFileDiscoveredPathInfo implements IPerFileDiscoveredPathInfo2 {
         /* (non-Javadoc)
          * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getProject()
          */
-        public IProject getProject() {
+        @Override
+		public IProject getProject() {
             return project;
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getIncludePaths()
          */
-        public IPath[] getIncludePaths() {
+        @Override
+		public IPath[] getIncludePaths() {
         	final IPath[] includepaths;
         	final IPath[] quotepaths;
         	synchronized (PerFileSICollector.this.fLock) {
@@ -632,7 +648,8 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
         /* (non-Javadoc)
          * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getSymbols()
          */
-        public Map<String, String> getSymbols() {
+        @Override
+		public Map<String, String> getSymbols() {
 //            return new HashMap();
         	synchronized (PerFileSICollector.this.fLock) {
         		return getAllSymbols();
@@ -642,7 +659,8 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
         /* (non-Javadoc)
          * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getIncludePaths(org.eclipse.core.runtime.IPath)
          */
-        public IPath[] getIncludePaths(IPath path) {
+        @Override
+		public IPath[] getIncludePaths(IPath path) {
         	synchronized (PerFileSICollector.this.fLock) {
 	            // get the command
 	            CCommandDSC cmd = getCommand(path);
@@ -660,7 +678,8 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
         /* (non-Javadoc)
          * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IPerFileDiscoveredPathInfo#getQuoteIncludePaths(org.eclipse.core.runtime.IPath)
          */
-        public IPath[] getQuoteIncludePaths(IPath path) {
+        @Override
+		public IPath[] getQuoteIncludePaths(IPath path) {
         	synchronized (PerFileSICollector.this.fLock) {
 	            // get the command
 	            CCommandDSC cmd = getCommand(path);
@@ -678,7 +697,8 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
         /* (non-Javadoc)
          * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getSymbols(org.eclipse.core.runtime.IPath)
          */
-        public Map<String, String> getSymbols(IPath path) {
+        @Override
+		public Map<String, String> getSymbols(IPath path) {
         	synchronized (PerFileSICollector.this.fLock) {
 	            // get the command
 	            CCommandDSC cmd = getCommand(path);
@@ -703,7 +723,8 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
         /* (non-Javadoc)
          * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getIncludeFiles(org.eclipse.core.runtime.IPath)
          */
-        public IPath[] getIncludeFiles(IPath path) {
+        @Override
+		public IPath[] getIncludeFiles(IPath path) {
         	synchronized (PerFileSICollector.this.fLock) {
 	            // get the command
 	            CCommandDSC cmd = getCommand(path);
@@ -721,7 +742,8 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
         /* (non-Javadoc)
          * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IPerFileDiscoveredPathInfo#getMacroFiles(org.eclipse.core.runtime.IPath)
          */
-        public IPath[] getMacroFiles(IPath path) {
+        @Override
+		public IPath[] getMacroFiles(IPath path) {
         	synchronized (PerFileSICollector.this.fLock) {
 	            // get the command
 	            CCommandDSC cmd = getCommand(path);
@@ -739,7 +761,8 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
         /* (non-Javadoc)
          * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IPerFileDiscoveredPathInfo#getSerializable()
          */
-        public IDiscoveredScannerInfoSerializable getSerializable() {
+        @Override
+		public IDiscoveredScannerInfoSerializable getSerializable() {
         	synchronized (PerFileSICollector.this.fLock) {
         		return sid;
         	}
@@ -748,6 +771,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IPerFileDiscoveredPathInfo#isEmpty(org.eclipse.core.runtime.IPath)
 		 */
+		@Override
 		public boolean isEmpty(IPath path) {
 			boolean rc = true;
 			IResource resource = project.getWorkspace().getRoot().findMember(path);
@@ -764,6 +788,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
 			return rc;
 		}
 
+		@Override
 		public Map<IResource, PathInfo> getPathInfoMap() {
         	synchronized (PerFileSICollector.this.fLock) {
 				//TODO: do we need to cache this?
@@ -772,10 +797,10 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
 		}
 
     }
-    
+
     protected Map<IResource, PathInfo> calculatePathInfoMap(){
 		assert Thread.holdsLock(fLock);
-		
+
     	Map<IResource, PathInfo> map = new HashMap<IResource, PathInfo>(sid.fileToCommandIdMap.size() + 1);
     	Set<Entry<IFile, Integer>> entrySet = sid.fileToCommandIdMap.entrySet();
     	for (Entry<IFile, Integer> entry : entrySet) {
@@ -788,19 +813,19 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
 	    		}
     		}
     	}
-    	
+
     	if(project != null){
 	    	if(psi == null){
 	    		generateProjectScannerInfo();
 	    	}
-	    	
+
 	    	PathInfo fpi = new PathInfo(psi.includePaths, psi.quoteIncludePaths, psi.definedSymbols, psi.includeFiles, psi.macrosFiles);
 	    	map.put(project, fpi);
     	}
-    	
+
     	return map;
     }
-    
+
     protected static PathInfo createFilePathInfo(CCommandDSC cmd){
     	IPath[] includes = stringListToPathArray(cmd.getIncludes());
     	IPath[] quotedIncludes = stringListToPathArray(cmd.getQuoteIncludes());
@@ -813,7 +838,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
             String value = ScannerConfigUtil.getSymbolValue(symbol);
             definedSymbols.put(key, value);
         }
-        
+
         return new PathInfo(includes, quotedIncludes, definedSymbols, incFiles, macroFiles);
     }
 
@@ -845,7 +870,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
      * <li><code>QUOTE_INCLUDE_PATH</code>
      * <li><code>INCLUDE_FILE</code>
      * <li><code>MACROS_FILE</code>
-     * 
+     *
      * @return list of IPath(s).
      */
     protected IPath[] getAllIncludePaths(int type) {
@@ -859,7 +884,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
             		case INCLUDE_PATH:
             			discovered = cmd.getIncludes();
             			break;
-            		case QUOTE_INCLUDE_PATH: 
+            		case QUOTE_INCLUDE_PATH:
             			discovered = cmd.getQuoteIncludes();
             			break;
             		case INCLUDE_FILE:

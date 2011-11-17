@@ -48,7 +48,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.MultiRule;
 
 public class ResourceChangeHandler implements IResourceChangeListener, ISaveParticipant {
-	
+
 	private Map<IProject, IManagedBuildInfo> fRmProjectToBuildInfoMap = new HashMap<IProject, IManagedBuildInfo>();
 
 	private class ResourceConfigurationChecker implements IResourceDeltaVisitor{
@@ -60,15 +60,16 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 		public ResourceConfigurationChecker(IResourceDelta rootDelta){
 			fRootDelta = rootDelta;
 		}
-		
+
 		public IProject[] getModifiedProjects(){
 			return fModifiedProjects.toArray(new IProject[fModifiedProjects.size()]);
 		}
 
+		@Override
 		public boolean visit(IResourceDelta delta) throws CoreException {
 			IResource dResource = delta.getResource();
-			int rcType = dResource.getType(); 
-			
+			int rcType = dResource.getType();
+
 			if(rcType == IResource.PROJECT || rcType == IResource.FOLDER){
 				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 				IProject project = null;
@@ -145,7 +146,7 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 			}
 			return true;	//  visit the children
 		}
-		
+
 		private IPath substituteProject(IPath path, String projectName){
 			return new Path(projectName).makeAbsolute().append(path.removeFirstSegments(1));
 		}
@@ -161,14 +162,14 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 			if(fromMakeGen == null || fromMakeGen.isGeneratedResource(root.getFile(substituteProject(fromPath,fromProject.getName()))))
 				return;
-			
+
 			IManagedBuildInfo fromInfo = ManagedBuildManager.getBuildInfo(fromProject);
 
 			IProject toProject = root.findMember(toPath.uptoSegment(1)).getProject();
-			IManagedBuildInfo toInfo = toProject != null ? 
+			IManagedBuildInfo toInfo = toProject != null ?
 					ManagedBuildManager.getBuildInfo(toProject) :
 						null;
-			IManagedBuilderMakefileGenerator toMakeGen = toProject != null ? 
+			IManagedBuilderMakefileGenerator toMakeGen = toProject != null ?
 					getInitializedGenerator(toProject) :
 						null;
 			if(toMakeGen != null && toMakeGen.isGeneratedResource(root.getFile(toPath)))
@@ -189,22 +190,22 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 					fModifiedProjects.add(fromProject);
 			}
 		}
-		
+
 		private void handleDeleteFile(IPath path){
 			IProject project = findModifiedProject(path.segment(0));
 			if(project != null){
 				IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
-				if(info != null 
+				if(info != null
 						&& removeResourceConfigurations(info,path))
 					fModifiedProjects.add(project);
 			}
 		}
-		
+
 		//finds the project geven the initial project name
 		//That is:
 		// if the project of a given name was renamed returns the renamed project
 		// if the project of a given name was removed returns null
-		// if the project of a given name was neither renamed or removed 
+		// if the project of a given name was neither renamed or removed
 		//   returns the project of that name or null if the project does not exist
 		//
 		private IProject findModifiedProject(final String oldProjectName){
@@ -229,6 +230,7 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 			final IProject project[] = new IProject[1];
 			try {
 				fRootDelta.accept(new IResourceDeltaVisitor() {
+					@Override
 					public boolean visit(IResourceDelta delta) throws CoreException {
 						IResource dResource = delta.getResource();
 						int rcType = dResource.getType();
@@ -268,7 +270,7 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 						// Determine if we can access the build info before actually trying
 						// If not, don't try, to avoid putting up a dialog box warning the user
 						if (!ManagedBuildManager.canGetBuildInfo(project)) return null;
-						
+
 						IManagedBuildInfo buildInfo = ManagedBuildManager.getBuildInfo(project);
 						if (buildInfo != null){
 							IConfiguration defaultCfg = buildInfo.getDefaultConfiguration();
@@ -296,7 +298,7 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 			IManagedProject managedProj = info.getManagedProject();
 			if (managedProj != null) {
 				IConfiguration cfgs[] = managedProj.getConfigurations();
-			
+
 				for(int i = 0; i < cfgs.length; i++)
 					ManagedBuildManager.performValueHandlerEvent(cfgs[i], IManagedOptionValueHandler.EVENT_CLOSE, true);
 			}
@@ -304,19 +306,20 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 	}
 
 	/*
-	 *  I R e s o u r c e C h a n g e L i s t e n e r 
+	 *  I R e s o u r c e C h a n g e L i s t e n e r
 	 */
 
 	/* (non-Javadoc)
-	 * 
+	 *
 	 *  Handle the renaming and deletion of project resources
 	 *  This is necessary in order to update ResourceConfigurations and AdditionalInputs
-	 *  
+	 *
 	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
 	 */
+	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		if (event.getSource() instanceof IWorkspace) {
-			
+
 			switch (event.getType()) {
 				case IResourceChangeEvent.PRE_CLOSE:
 					IResource proj = event.getResource();
@@ -345,10 +348,10 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 					try {
 						ResourceConfigurationChecker rcChecker = new ResourceConfigurationChecker(resDelta);
 						resDelta.accept(rcChecker);
-						
-						//saving info for the modified projects 
+
+						//saving info for the modified projects
 						initInfoSerialization(rcChecker.getModifiedProjects());
-					
+
 					} catch (CoreException e) {
 						ManagedBuilderCorePlugin.log(e);
 					}
@@ -358,7 +361,7 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 			}
 		}
 	}
-	
+
 	private void initInfoSerialization(final IProject projects[]){
 		if(projects.length == 0)
 			return;
@@ -389,7 +392,7 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 			}
 		};
 		savingJob.setRule(buildInfoSaveRule);
-		
+
 		savingJob.schedule();
 	}
 
@@ -409,7 +412,7 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 		}
 		return changed;
 	}
-	
+
 	private boolean removeResourceConfigurations(IManagedBuildInfo info, IPath path){
 		boolean changed = false;
 		IManagedProject mngProj = info.getManagedProject();
@@ -424,7 +427,7 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 		}
 		return changed;
 	}
-	
+
 	private boolean updateResourceConfiguration(IConfiguration config, IPath oldPath, IPath newPath){
 		IResourceConfiguration rcCfg = config.getResourceConfiguration(oldPath.toString());
 		if(rcCfg != null && !oldPath.equals(newPath)){
@@ -437,7 +440,7 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 		}
 		return false;
 	}
-	
+
 	private boolean removeResourceConfiguration(IConfiguration config, IPath path){
 		IResourceConfiguration rcCfg = config.getResourceConfiguration(path.toString());
 		if(rcCfg != null){
@@ -449,12 +452,13 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 	}
 
 	/*
-	 *  I S a v e P a r t i c i p a n t 
+	 *  I S a v e P a r t i c i p a n t
 	 */
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.ISaveParticipant#saving(org.eclipse.core.resources.ISaveContext)
 	 */
+	@Override
 	public void saving(ISaveContext context) throws CoreException {
 		PropertyManager.getInstance().serialize();
 
@@ -465,18 +469,21 @@ public class ResourceChangeHandler implements IResourceChangeListener, ISavePart
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.ISaveParticipant#doneSaving(org.eclipse.core.resources.ISaveContext)
 	 */
+	@Override
 	public void doneSaving(ISaveContext context) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.ISaveParticipant#prepareToSave(org.eclipse.core.resources.ISaveContext)
 	 */
+	@Override
 	public void prepareToSave(ISaveContext context) throws CoreException {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.ISaveParticipant#rollback(org.eclipse.core.resources.ISaveContext)
 	 */
+	@Override
 	public void rollback(ISaveContext context) {
 	}
 

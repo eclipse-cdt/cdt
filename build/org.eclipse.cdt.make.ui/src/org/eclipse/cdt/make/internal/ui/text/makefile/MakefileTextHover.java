@@ -26,14 +26,14 @@ import org.eclipse.ui.IEditorPart;
 
 /**
  * MakefileTextHover
- *  
+ *
  */
 public class MakefileTextHover implements ITextHover {
 
 	private IEditorPart fEditor;
 
 	/**
-	 *  
+	 *
 	 */
 	public MakefileTextHover(IEditorPart editor) {
 		fEditor = editor;
@@ -41,10 +41,11 @@ public class MakefileTextHover implements ITextHover {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.text.ITextHover#getHoverInfo(org.eclipse.jface.text.ITextViewer,
 	 *      org.eclipse.jface.text.IRegion)
 	 */
+	@Override
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 		if (hoverRegion != null) {
 			try {
@@ -64,7 +65,7 @@ public class MakefileTextHover implements ITextHover {
 								statements = makefile.getBuiltinMacroDefinitions(name);
 							}
 						}
-						
+
 						if (statements == null) {
 							statements = new IMacroDefinition[0];
 						}
@@ -77,7 +78,7 @@ public class MakefileTextHover implements ITextHover {
 							String infoString = statements[i].getValue().toString();
 							buffer.append(name);
 							buffer.append(" - "); //$NON-NLS-1$
-							buffer.append(infoString);			
+							buffer.append(infoString);
 						}
 						return buffer.toString();
 					}
@@ -90,10 +91,11 @@ public class MakefileTextHover implements ITextHover {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.text.ITextHover#getHoverRegion(org.eclipse.jface.text.ITextViewer,
 	 *      int)
 	 */
+	@Override
 	public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
 		Point selection = textViewer.getSelectedRange();
 		if (selection.x <= offset && offset < selection.x + selection.y) {

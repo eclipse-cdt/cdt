@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,12 +18,12 @@ import org.eclipse.cdt.internal.core.dom.parser.c.CASTTypedefNameSpecifier;
 
 @SuppressWarnings("restriction")
 public class UPCASTTypedefNameSpecifier extends CASTTypedefNameSpecifier implements IUPCASTTypedefNameSpecifier {
-	
+
 	private int referenceType;
 	private int sharedQualifier;
 	private IASTExpression blockSizeExpression;
-	
-	
+
+
 	public UPCASTTypedefNameSpecifier() {
 	}
 
@@ -40,7 +40,7 @@ public class UPCASTTypedefNameSpecifier extends CASTTypedefNameSpecifier impleme
 	public UPCASTTypedefNameSpecifier copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public UPCASTTypedefNameSpecifier copy(CopyStyle style) {
 		IASTName name = getName();
@@ -55,18 +55,22 @@ public class UPCASTTypedefNameSpecifier extends CASTTypedefNameSpecifier impleme
 		return copy;
 	}
 
+	@Override
 	public IASTExpression getBlockSizeExpression() {
 		return blockSizeExpression;
 	}
 
+	@Override
 	public int getReferenceType() {
 		return referenceType;
 	}
 
+	@Override
 	public int getSharedQualifier() {
 		return sharedQualifier;
 	}
 
+	@Override
 	public void setBlockSizeExpression(IASTExpression expr) {
 		this.blockSizeExpression = expr;
 		if(expr != null) {
@@ -75,15 +79,17 @@ public class UPCASTTypedefNameSpecifier extends CASTTypedefNameSpecifier impleme
 		}
 	}
 
+	@Override
 	public void setReferenceType(int referenceType) {
 		this.referenceType = referenceType;
 	}
 
+	@Override
 	public void setSharedQualifier(int shared) {
 		this.sharedQualifier = shared;
 	}
 
-	
+
 	@Override
 	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitDeclSpecifiers ){
@@ -95,7 +101,7 @@ public class UPCASTTypedefNameSpecifier extends CASTTypedefNameSpecifier impleme
 		}
         if( getName() != null ) if( !getName().accept( action ) ) return false;
         if( blockSizeExpression != null) if( !blockSizeExpression.accept( action ) ) return false;
-        
+
         if( action.shouldVisitDeclSpecifiers ){
 		    switch( action.leave( this ) ){
 	            case ASTVisitor.PROCESS_ABORT : return false;
@@ -105,5 +111,5 @@ public class UPCASTTypedefNameSpecifier extends CASTTypedefNameSpecifier impleme
 		}
         return true;
     }
-	
+
 }

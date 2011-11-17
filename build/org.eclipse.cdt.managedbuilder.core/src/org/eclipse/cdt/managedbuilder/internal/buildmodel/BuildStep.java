@@ -56,21 +56,22 @@ public class BuildStep implements IBuildStep {
 	private IInputType fInputType;
 	private ITool fLibTool;
 	private boolean fAssignToCalculated;
-	
+
 	protected BuildStep(BuildDescription des, ITool tool, IInputType inputType){
 		fTool = tool;
 		fInputType = inputType;
 		fBuildDescription = des;
-		
+
 		if(DbgUtil.DEBUG)
 			DbgUtil.trace("step " + DbgUtil.stepName(this) + " created");	//$NON-NLS-1$	//$NON-NLS-2$
-		
+
 		des.stepCreated(this);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildStep#getInputIOTypes()
 	 */
+	@Override
 	public IBuildIOType[] getInputIOTypes() {
 		return fInputTypes.toArray(new BuildIOType[fInputTypes.size()]);
 	}
@@ -78,6 +79,7 @@ public class BuildStep implements IBuildStep {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildStep#getOutputIOTypes()
 	 */
+	@Override
 	public IBuildIOType[] getOutputIOTypes() {
 		return fOutputTypes.toArray(new BuildIOType[fOutputTypes.size()]);
 	}
@@ -85,65 +87,66 @@ public class BuildStep implements IBuildStep {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildStep#needsRebuild()
 	 */
+	@Override
 	public boolean needsRebuild() {
-		if(fNeedsRebuild 
+		if(fNeedsRebuild
 				|| (fTool != null && fTool.needsRebuild())
 				|| (fLibTool != null && fLibTool.needsRebuild()))
 			return true;
-		
+
 		if(fBuildGroup != null && fBuildGroup.needsRebuild())
 			return true;
-		
+
 		return false;
 	}
-	
+
 	public void setRebuildState(boolean rebuild){
 		fNeedsRebuild = rebuild;
 	}
 
 	public BuildResource[] removeIOType(BuildIOType type) {
-		
+
 		BuildResource rcs[] = type.remove();
-		
+
 		if(type.isInput())
 			fInputTypes.remove(type);
 		else
 			fOutputTypes.remove(type);
-		
+
 		return rcs;
 	}
-	
+
 	BuildResource[][] remove(){
 		BuildResource[][] rcs = clear();
-		
+
 		if(DbgUtil.DEBUG)
 			DbgUtil.trace("step  " + DbgUtil.stepName(this) + " removed");	//$NON-NLS-1$	//$NON-NLS-2$
 
 		fBuildDescription.stepRemoved(this);
 		fBuildDescription = null;
-		
+
 		return rcs;
 	}
-	
+
 	BuildResource[][] clear(){
 		BuildResource[][] rcs = new BuildResource[2][];
 
 		rcs[0] = (BuildResource[])getInputResources();
 		rcs[1] = (BuildResource[])getOutputResources();
-		
+
 		BuildIOType types[] = (BuildIOType[])getInputIOTypes();
 		for(int i = 0; i < types.length; i++){
 			removeIOType(types[i]);
 		}
-		
+
 		types = (BuildIOType[])getOutputIOTypes();
 		for(int i = 0; i < types.length; i++){
 			removeIOType(types[i]);
 		}
-		
+
 		return rcs;
 	}
-	
+
 	public void removeResource(BuildIOType type, BuildResource rc, boolean rmTypeIfEmpty){
 		type.removeResource(rc);
 		if(rmTypeIfEmpty && type.getResources().length == 0){
@@ -159,27 +162,27 @@ public class BuildStep implements IBuildStep {
 			if(fBuildDescription.getOutputStep() == this)
 				throw new IllegalArgumentException("input step can not have outputs");	//$NON-NLS-1$
 		}
-		
+
 		BuildIOType arg = new BuildIOType(this, input, primary, /*ext,*/ ioType);
 		if(input)
 			fInputTypes.add(arg);
 		else
 			fOutputTypes.add(arg);
-		
+
 		return arg;
 	}
 
 	public void setTool(ITool tool){
 		fTool = tool;
 	}
-	
+
 	public ITool getTool(){
 		return fTool;
 	}
-	
+
 	public BuildIOType[] getPrimaryTypes(boolean input){
 		List<BuildIOType> types = input ? fInputTypes : fOutputTypes;
-		
+
 		List<BuildIOType> list = new ArrayList<BuildIOType>();
 		for (BuildIOType arg : types) {
 			if(arg.isPrimary())
@@ -187,11 +190,11 @@ public class BuildStep implements IBuildStep {
 		}
 		return list.toArray(new BuildIOType[list.size()]);
 	}
-	
+
 	public BuildIOType getIOTypeForType(IBuildObject ioType, boolean input){
 		List<BuildIOType> list = input ? fInputTypes : fOutputTypes;
-		
-		if(ioType != null){ 
+
+		if(ioType != null){
 			for (BuildIOType arg : list) {
 				if(arg.getIoType() == ioType)
 					return arg;
@@ -210,6 +213,7 @@ public class BuildStep implements IBuildStep {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildStep#getInputResources()
 	 */
+	@Override
 	public IBuildResource[] getInputResources() {
 		return getResources(true);
 	}
@@ -217,10 +221,11 @@ public class BuildStep implements IBuildStep {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildStep#getOutputResources()
 	 */
+	@Override
 	public IBuildResource[] getOutputResources() {
 		return getResources(false);
 	}
-	
+
 	public IBuildResource[] getResources(boolean input){
 		List<BuildIOType> list = input ? fInputTypes : fOutputTypes;
 		Set<IBuildResource> set = new HashSet<IBuildResource>();
@@ -234,15 +239,16 @@ public class BuildStep implements IBuildStep {
 		return set.toArray(new BuildResource[set.size()]);
 	}
 
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildStep#getCommands(org.eclipse.core.runtime.IPath, java.util.Map, java.util.Map, boolean)
 	 */
+	@Override
 	public IBuildCommand[] getCommands(IPath cwd, Map inputArgValues, Map outputArgValues, boolean resolveAll) {
 		if(cwd == null)
 			cwd = calcCWD();
 
-		
+
 		if(fTool == null){
 			String step = null;
 			String appendToLastStep = null;
@@ -252,31 +258,31 @@ public class BuildStep implements IBuildStep {
 				step = fBuildDescription.getConfiguration().getPostbuildStep();
 			} else if(this == fBuildDescription.getCleanStep()){
 				step = fBuildDescription.getConfiguration().getCleanCommand();
-				
+
 				IBuildResource[] generated = fBuildDescription.getResources(true);
 
 				if(generated.length != 0){
 					StringBuffer buf = new StringBuffer();
 					for(int i = 0; i < generated.length; i++){
 						buf.append(' ');
-						
+
 						IPath rel = BuildDescriptionManager.getRelPath(cwd, generated[i].getLocation());
 						buf.append(rel.toString());
 					}
 					appendToLastStep = buf.toString();
 				}
 			}
-			
+
 			if(step != null && (step = step.trim()).length() > 0){
 				step = resolveMacros(step, resolveAll);
 				if(step != null && (step = step.trim()).length() > 0){
 					String commands[] = step.split(";"); 	//$NON-NLS-1$
-					
+
 					if(appendToLastStep != null && commands.length != 0){
 						commands[commands.length - 1] = commands[commands.length - 1] + appendToLastStep;
 					}
-	
-					List<IBuildCommand> list = new ArrayList<IBuildCommand>(); 
+
+					List<IBuildCommand> list = new ArrayList<IBuildCommand>();
 					for(int i = 0; i < commands.length; i++){
 						IBuildCommand cmds[] = createCommandsFromString(commands[i], cwd, getEnvironment());
 						for(int j = 0; j < cmds.length; j++){
@@ -288,10 +294,10 @@ public class BuildStep implements IBuildStep {
 			}
 			return new IBuildCommand[0];
 		}
-		
-		
+
+
 		performAsignToOption(cwd);
-		
+
 		BuildResource inRc = getRcForMacros(true);
 		BuildResource outRc = getRcForMacros(false);
 		IPath inRcPath = inRc != null ? BuildDescriptionManager.getRelPath(cwd, inRc.getLocation()) : null;
@@ -302,19 +308,19 @@ public class BuildStep implements IBuildStep {
 		String outPrefix = fTool.getOutputPrefix();
 		outPrefix = resolveMacros(outPrefix, data, true);
 		outRcPath = rmNamePrefix(outRcPath, outPrefix);
-		
-		IManagedCommandLineInfo info = gen.generateCommandLineInfo(fTool, 
+
+		IManagedCommandLineInfo info = gen.generateCommandLineInfo(fTool,
 				fTool.getToolCommand(),
-				getCommandFlags(inRcPath, outRcPath, resolveAll), 
-				fTool.getOutputFlag(), 
+				getCommandFlags(inRcPath, outRcPath, resolveAll),
+				fTool.getOutputFlag(),
 				outPrefix,
 				listToString(resourcesToStrings(cwd, getPrimaryResources(false), outPrefix), " "), 	//$NON-NLS-1$
-				getInputResources(cwd, getPrimaryResources(true)), 
+				getInputResources(cwd, getPrimaryResources(true)),
 				fTool.getCommandLinePattern());
 
 		return createCommandsFromString(resolveMacros(info.getCommandLine(), data, true), cwd, getEnvironment());
 	}
-	
+
 	private IPath rmNamePrefix(IPath path, String prefix){
 		if(prefix != null && prefix.length() != 0){
 			String name = path.lastSegment();
@@ -325,10 +331,10 @@ public class BuildStep implements IBuildStep {
 		}
 		return path;
 	}
-	
+
 	private String[] getInputResources(IPath cwd, BuildResource[] rcs) {
 		String[] resources = resourcesToStrings(cwd, rcs, null);
-		
+
 		// also need to get libraries
 		String[] libs = null;
 		IOption[] opts = fTool.getOptions();
@@ -347,7 +353,7 @@ public class BuildStep implements IBuildStep {
 			} catch (BuildException e) {
 			}
 		}
-		
+
 		if (libs != null) {
 			String[] irs = new String[resources.length + libs.length];
 			System.arraycopy(resources, 0, irs, 0, resources.length);
@@ -357,20 +363,20 @@ public class BuildStep implements IBuildStep {
 			return resources;
 		}
 	}
-	
+
 	private IPath calcCWD(){
 		IPath cwd = fBuildDescription.getDefaultBuildDirLocation();
-		
+
 		if(!cwd.isAbsolute())
 			cwd = fBuildDescription.getConfiguration().getOwner().getProject().getLocation().append(cwd);
- 
+
 		return cwd;
 	}
 
 	protected Map<String, String> getEnvironment(){
 		return fBuildDescription.getEnvironment();
 	}
-	
+
 	protected IBuildCommand[] createCommandsFromString(String cmd, IPath cwd, Map<String, String> env){
 		char arr[] = cmd.toCharArray();
 		char expect = 0;
@@ -379,7 +385,7 @@ public class BuildStep implements IBuildStep {
 		List<String> list = new ArrayList<String>();
 		StringBuffer buf = new StringBuffer();
 		for(int i = 0; i < arr.length; i++){
-			char ch = arr[i]; 
+			char ch = arr[i];
 			switch(ch){
 			case '\'':
 			case '"':
@@ -411,40 +417,40 @@ public class BuildStep implements IBuildStep {
 			default:
 				buf.append(ch);
 				break;
-			
+
 			}
 			prev = ch;
 		}
-		
+
 		if(buf.length() > 0)
 			list.add(buf.toString());
-		
+
 		IPath c = new Path(list.remove(0));
 		String[] args = list.toArray(new String[list.size()]);
-		
+
 		return new IBuildCommand[]{new BuildCommand(c, args, env, cwd, this)};
 	}
-	
+
 	private BuildResource[] getPrimaryResources(boolean input){
 		BuildIOType[] types = getPrimaryTypes(input);
 		if(types.length == 0)
 			types = input ? (BuildIOType[])getInputIOTypes() : (BuildIOType[])getOutputIOTypes();
 		List<BuildResource> list = new ArrayList<BuildResource>();
-		
+
 		for(int i = 0; i < types.length; i++){
 			BuildResource [] rcs = (BuildResource[])types[i].getResources();
-			
+
 			for(int j = 0; j < rcs.length; j++){
 				list.add(rcs[j]);
 			}
 		}
-		
+
 		return list.toArray(new BuildResource[list.size()]);
 	}
-	
+
 	private String[] resourcesToStrings(IPath cwd, BuildResource rcs[], String prefixToRm){
 		List<String> list = new ArrayList<String>(rcs.length);
-		
+
 		for(int i = 0; i < rcs.length; i++){
 			IPath path = BuildDescriptionManager.getRelPath(cwd, rcs[i].getLocation());
 			path = rmNamePrefix(path, prefixToRm);
@@ -487,7 +493,7 @@ public class BuildStep implements IBuildStep {
 
 	private SupplierBasedCdtVariableSubstitutor createSubstitutor(IConfiguration cfg, IBuilder builder, IFileContextData fileData){
 		BuildMacroProvider prov = (BuildMacroProvider)ManagedBuildManager.getBuildMacroProvider();
-		IMacroContextInfo info = prov.getMacroContextInfo(IBuildMacroProvider.CONTEXT_FILE, fileData); 
+		IMacroContextInfo info = prov.getMacroContextInfo(IBuildMacroProvider.CONTEXT_FILE, fileData);
 		FileMacroExplicitSubstitutor sub = new FileMacroExplicitSubstitutor(
 				info,
 				cfg,
@@ -496,13 +502,13 @@ public class BuildStep implements IBuildStep {
 
 		return sub;
 	}
-	
+
 	private String[] getCommandFlags(IPath inRcPath, IPath outRcPath, boolean resolveAll){
 		try {
 			if(resolveAll) {
 				IConfiguration cfg = getBuildDescription().getConfiguration();
 				IBuilder builder = cfg.getBuilder();
-					return ((Tool)fTool).getToolCommandFlags(inRcPath, outRcPath, 
+					return ((Tool)fTool).getToolCommandFlags(inRcPath, outRcPath,
 							createSubstitutor(cfg, builder,
 									new FileContextData(inRcPath, outRcPath, null, fTool)),
 							BuildMacroProvider.getDefault());
@@ -512,20 +518,20 @@ public class BuildStep implements IBuildStep {
 		}
 		return new String[0];
 	}
-	
+
 	private String listToString(String[] list, String delimiter){
 		if(list == null || list.length == 0)
 			return new String();
 
 		StringBuffer buf = new StringBuffer(list[0]);
-		
+
 		for(int i = 1; i < list.length; i++){
 			buf.append(delimiter).append(list[i]);
 		}
-		
+
 		return buf.toString();
 	}
-	
+
 	private BuildResource getRcForMacros(boolean input){
 		IBuildIOType types[] = getPrimaryTypes(input);
 		if(types.length != 0){
@@ -535,7 +541,7 @@ public class BuildStep implements IBuildStep {
 					return (BuildResource)rcs[0];
 			}
 		}
-		
+
 		types = input ? getInputIOTypes() : getOutputIOTypes();
 		if(types.length != 0){
 			for(int i = 0; i < types.length; i++){
@@ -547,30 +553,32 @@ public class BuildStep implements IBuildStep {
 
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildStep#isRemoved()
 	 */
+	@Override
 	public boolean isRemoved(){
 		return fIsRemoved;
 	}
-	
+
 	public void setRemoved() {
 		fIsRemoved = true;
 		fNeedsRebuild = false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildStep#getBuildDescription()
 	 */
+	@Override
 	public IBuildDescription getBuildDescription(){
 		return fBuildDescription;
 	}
-	
+
 	boolean isMultiAction(){
 		BuildIOType args[] = getPrimaryTypes(true);
 		BuildIOType arg = args.length > 0 ? args[0] : null;
-		
+
 		if(arg != null){
 			if(arg.getIoType() != null)
 				return ((IInputType)arg.getIoType()).getMultipleOfType();
@@ -578,33 +586,33 @@ public class BuildStep implements IBuildStep {
 		}
 		return false;
 	}
-	
+
 	public IInputType getInputType(){
 		return fInputType;
 	}
-	
+
 	public void setLibTool(ITool libTool){
 		fLibTool = libTool;
 	}
-	
+
 	public ITool getLibTool(){
 		return fLibTool;
 	}
-	
+
 	protected void performAsignToOption(IPath cwd){
 		if(fTool == null && !fAssignToCalculated)
 			return;
-		
+
 		fAssignToCalculated = true;
 
 		IConfiguration cfg = fBuildDescription.getConfiguration();
-		
+
 		for (BuildIOType bType : fInputTypes) {
 			IInputType type = (IInputType)bType.getIoType();
-			
+
 			if(type == null)
 				continue;
-			
+
 			IOption option = fTool.getOptionBySuperClassId(type.getOptionId());
 			IOption assignToOption = fTool.getOptionBySuperClassId(type.getAssignToOptionId());
 			if (assignToOption != null && option == null) {
@@ -619,7 +627,7 @@ public class BuildStep implements IBuildStep {
 							}
 							optVal += BuildDescriptionManager.getRelPath(cwd, bRcs[j].getLocation()).toOSString();
 						}
-						ManagedBuildManager.setOption(cfg, fTool, assignToOption, optVal);							
+						ManagedBuildManager.setOption(cfg, fTool, assignToOption, optVal);
 					} else if (
 							optType == IOption.STRING_LIST ||
 							optType == IOption.LIBRARIES ||
@@ -636,7 +644,7 @@ public class BuildStep implements IBuildStep {
 							optType == IOption.UNDEF_LIBRARY_PATHS ||
 							optType == IOption.UNDEF_LIBRARY_FILES ||
 							optType == IOption.UNDEF_MACRO_FILES){
-						//  Mote that when using the enumerated inputs, the path(s) must be translated from project relative 
+						//  Mote that when using the enumerated inputs, the path(s) must be translated from project relative
 						//  to top build directory relative
 						String[] paths = new String[bRcs.length];
 						for (int j=0; j<bRcs.length; j++) {

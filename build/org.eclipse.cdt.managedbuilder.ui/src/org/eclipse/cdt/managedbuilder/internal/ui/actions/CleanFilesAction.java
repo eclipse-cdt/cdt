@@ -53,7 +53,7 @@ public class CleanFilesAction extends ActionDelegate implements
 	private IAction action = null;
 
 	/**
-	 * 
+	 *
 	 */
 	public CleanFilesAction() {
 		this(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
@@ -71,7 +71,7 @@ public class CleanFilesAction extends ActionDelegate implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
 	@Override
@@ -91,9 +91,10 @@ public class CleanFilesAction extends ActionDelegate implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void init(IWorkbenchWindow window) {
 		workbenchWindow = window;
 
@@ -104,7 +105,7 @@ public class CleanFilesAction extends ActionDelegate implements
 	 * interface. The conversion is a bare cast operation (if the object is
 	 * instance of <code>IFile</code>, or an adaptation (if the object is
 	 * instance of <code>IAdaptable</code>).
-	 * 
+	 *
 	 * @param object
 	 *            the object to be cast to <code>IFile</code>
 	 * @return a reference to an IFile corresponding to the object provided, or
@@ -145,7 +146,7 @@ public class CleanFilesAction extends ActionDelegate implements
 	/**
 	 * Returns a list of buildable resources currently selected.
 	 * "Buildable" means buildable by MBS.
-	 * 
+	 *
 	 * @return a list of resources
 	 */
 	private List<IFile> getSelectedBuildableFiles() {
@@ -192,7 +193,7 @@ public class CleanFilesAction extends ActionDelegate implements
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
 		@Override
@@ -252,7 +253,7 @@ public class CleanFilesAction extends ActionDelegate implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	@Override
@@ -268,19 +269,19 @@ public class CleanFilesAction extends ActionDelegate implements
 	}
 
 	private boolean shouldBeEnabled() {
-		
-		
+
+
 		// fix for Bugzilla 139663
 		// if build automatically is turned on, then this menu should be turned off as
 		// it will trigger the auto build
 		Preferences preferences = ResourcesPlugin.getPlugin().getPluginPreferences();
-		
+
 		if(preferences.getBoolean(ResourcesPlugin.PREF_AUTO_BUILDING))
 		{
 			// auto building is on... do not enable the menu
 			return false;
 		}
-		
+
 		ISelectionService selectionService = workbenchWindow
 				.getSelectionService();
 		ISelection selection = selectionService.getSelection();
@@ -338,7 +339,7 @@ public class CleanFilesAction extends ActionDelegate implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction,
 	 *      org.eclipse.jface.viewers.ISelection)
 	 */

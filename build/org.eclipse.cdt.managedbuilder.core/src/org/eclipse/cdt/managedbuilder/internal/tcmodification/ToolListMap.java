@@ -29,10 +29,10 @@ public class ToolListMap implements Cloneable {
 	public ToolListMap(){
 		fMap = new HashMap<ITool, List<ITool>>();
 	}
-	
+
 //	public class ValueIter {
-//		private Map fIterMap; 
-//		
+//		private Map fIterMap;
+//
 //		public ValueIter() {
 //			fIterMap = new HashMap(fMap);
 //			for(Iterator iter = fIterMap.entrySet().iterator(); iter.hasNext();){
@@ -41,7 +41,7 @@ public class ToolListMap implements Cloneable {
 //				entry.setValue(c.iterator());
 //			}
 //		}
-//		
+//
 //		public Iterator get(Object key){
 //			Iterator iter = (Iterator)fIterMap.get(key);
 //			if(iter != null && !iter.hasNext()){
@@ -51,18 +51,18 @@ public class ToolListMap implements Cloneable {
 //			return iter;
 //		}
 //	}
-	
+
 	public class CollectionEntry {
 		private Map.Entry<ITool, List<ITool>> fEntry;
-		
+
 		CollectionEntry(Map.Entry<ITool, List<ITool>> entry){
 			fEntry = entry;
 		}
-		
+
 		public ITool getKey(){
 			return fEntry.getKey();
 		}
-		
+
 		public List<ITool> getValue(){
 			return fEntry.getValue();
 		}
@@ -71,13 +71,13 @@ public class ToolListMap implements Cloneable {
 		public boolean equals(Object obj) {
 			if(obj == this)
 				return true;
-			
+
 			if(obj == null)
 				return false;
-			
+
 			if(!(obj instanceof CollectionEntry))
 				return false;
-			
+
 			return fEntry.equals(((CollectionEntry)obj).fEntry);
 		}
 
@@ -86,28 +86,31 @@ public class ToolListMap implements Cloneable {
 			return fEntry.hashCode();
 		}
 	}
-	
+
 	private class CollectionEntrySet extends AbstractSet<CollectionEntry> {
 		private Set<Entry<ITool, List<ITool>>> fMapEntrySet;
 
 		private class Iter implements Iterator<CollectionEntry> {
 			private Iterator<Entry<ITool, List<ITool>>> fIter;
-			
+
 			private Iter(){
 				fIter = fMapEntrySet.iterator();
 			}
+			@Override
 			public boolean hasNext() {
 				return fIter.hasNext();
 			}
 
+			@Override
 			public CollectionEntry next() {
 				return new CollectionEntry(fIter.next());
 			}
 
+			@Override
 			public void remove() {
 				fIter.remove();
 			}
-			
+
 		}
 
 		private CollectionEntrySet(){
@@ -130,7 +133,7 @@ public class ToolListMap implements Cloneable {
 		List<ITool> l = get(key, true);
 		l.add(value);
 	}
-	
+
 	public List<ITool> removeAll(ITool key){
 		return fMap.remove(key);
 	}
@@ -141,21 +144,21 @@ public class ToolListMap implements Cloneable {
 			l = newList(1);
 			fMap.put(key, l);
 		}
-		
+
 		return l;
 	}
-	
+
 	public List<ITool> valuesToCollection(List<ITool> c){
 		if(c == null)
 			c = newList(20);
-		
+
 		for (List<ITool> l : fMap.values()) {
 			c.addAll(l);
 		}
-		
+
 		return c;
 	}
-	
+
 //	public List<ITool> getValues(){
 //		return valuesToCollection(null);
 //	}
@@ -174,7 +177,7 @@ public class ToolListMap implements Cloneable {
 	protected List<ITool> cloneList(List<ITool> l){
 		return (List<ITool>)((ArrayList<ITool>)l).clone();
 	}
-	
+
 	public List<ITool> putValuesToCollection(List<ITool> c){
 		for (CollectionEntry entry : collectionEntrySet()) {
 			List<ITool> l = entry.getValue();
@@ -207,7 +210,7 @@ public class ToolListMap implements Cloneable {
 			if(l.size() > num){
 				result = l.remove(num);
 			}
-			
+
 			return result;
 		}
 		return null;
@@ -233,7 +236,7 @@ public class ToolListMap implements Cloneable {
 			}
 		}
 	}
-	
+
 	public void clearEmptyLists(){
 		for(Iterator<Entry<ITool, List<ITool>>> iter = fMap.entrySet().iterator(); iter.hasNext(); ){
 			Map.Entry<ITool, List<ITool>> entry = iter.next();
@@ -259,7 +262,7 @@ public class ToolListMap implements Cloneable {
 //			}
 //		}
 //	}
-	
+
 //	public ValueIter valueIter(){
 //		return new ValueIter();
 //	}
@@ -283,13 +286,13 @@ public class ToolListMap implements Cloneable {
 		}
 		return null;
 	}
-	
+
 //	protected Map getMap(boolean create){
 //		if(fMap == null && create)
 //			fMap = createMap();
 //		return fMap;
 //	}
-//	
+//
 //	protected Map createMap(){
 //		return new HashMap();
 //	}

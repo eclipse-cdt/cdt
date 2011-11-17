@@ -18,7 +18,7 @@ import org.eclipse.cdt.managedbuilder.macros.IBuildMacro;
 
 /**
  * This is the trivial implementation of the IBuildMacro used internaly by the MBS
- * 
+ *
  * @since 3.0
  */
 public class BuildMacro extends CdtVariable implements IBuildMacro {
@@ -39,6 +39,7 @@ public class BuildMacro extends CdtVariable implements IBuildMacro {
 		super(name, type, value);
 	}
 
+	@Override
 	public int getMacroValueType() {
 		return getValueType();
 	}
@@ -61,5 +62,5 @@ public class BuildMacro extends CdtVariable implements IBuildMacro {
 			throw new BuildMacroException(e);
 		}
 	}
-	
+
 }

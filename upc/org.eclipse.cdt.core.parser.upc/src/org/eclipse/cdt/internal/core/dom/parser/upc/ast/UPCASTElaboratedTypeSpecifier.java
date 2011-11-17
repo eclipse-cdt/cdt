@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -22,15 +22,15 @@ public class UPCASTElaboratedTypeSpecifier extends CASTElaboratedTypeSpecifier i
 	private int referenceType;
 	private int sharedQualifier;
 	private IASTExpression blockSizeExpression;
-	
-	
+
+
 	public UPCASTElaboratedTypeSpecifier() {
 	}
 
 	public UPCASTElaboratedTypeSpecifier(int kind, IASTName name) {
 		super(kind, name);
 	}
-	
+
 	public UPCASTElaboratedTypeSpecifier(int kind, IASTName name, IASTExpression blockSizeExpression) {
 		super(kind, name);
 		setBlockSizeExpression(blockSizeExpression);
@@ -40,7 +40,7 @@ public class UPCASTElaboratedTypeSpecifier extends CASTElaboratedTypeSpecifier i
 	public UPCASTElaboratedTypeSpecifier copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public UPCASTElaboratedTypeSpecifier copy(CopyStyle style) {
 		IASTName name = getName();
@@ -55,18 +55,22 @@ public class UPCASTElaboratedTypeSpecifier extends CASTElaboratedTypeSpecifier i
 		return copy;
 	}
 
+	@Override
 	public IASTExpression getBlockSizeExpression() {
 		return blockSizeExpression;
 	}
 
+	@Override
 	public int getReferenceType() {
 		return referenceType;
 	}
 
+	@Override
 	public int getSharedQualifier() {
 		return sharedQualifier;
 	}
 
+	@Override
 	public void setBlockSizeExpression(IASTExpression expr) {
 		this.blockSizeExpression = expr;
 		if(expr != null) {
@@ -75,15 +79,17 @@ public class UPCASTElaboratedTypeSpecifier extends CASTElaboratedTypeSpecifier i
 		}
 	}
 
+	@Override
 	public void setReferenceType(int referenceType) {
 		this.referenceType = referenceType;
 	}
 
+	@Override
 	public void setSharedQualifier(int shared) {
 		this.sharedQualifier = shared;
 	}
-	
-	
+
+
 	@Override
 	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitDeclSpecifiers ){
@@ -94,8 +100,8 @@ public class UPCASTElaboratedTypeSpecifier extends CASTElaboratedTypeSpecifier i
 	        }
 		}
         if( getName() != null ) if( !getName().accept( action ) ) return false;
-        if( blockSizeExpression != null) if( !blockSizeExpression.accept( action ) ) return false;    
-        
+        if( blockSizeExpression != null) if( !blockSizeExpression.accept( action ) ) return false;
+
         if( action.shouldVisitDeclSpecifiers ){
 		    switch( action.leave( this ) ){
 	            case ASTVisitor.PROCESS_ABORT : return false;
@@ -106,6 +112,6 @@ public class UPCASTElaboratedTypeSpecifier extends CASTElaboratedTypeSpecifier i
         return true;
     }
 
-	
-	
+
+
 }

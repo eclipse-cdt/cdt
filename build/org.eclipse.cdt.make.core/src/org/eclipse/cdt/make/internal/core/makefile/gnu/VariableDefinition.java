@@ -84,31 +84,38 @@ public class VariableDefinition extends MacroDefinition implements IVariableDefi
 		return sb.toString();
 	}
 
+	@Override
 	public boolean isRecursivelyExpanded() {
 		return type == TYPE_RECURSIVE_EXPAND;
 	}
 
+	@Override
 	public boolean isSimplyExpanded() {
 		return type == TYPE_SIMPLE_EXPAND;
 	}
-                                                                                                                             
+
+	@Override
 	public boolean isConditional() {
 		return type == TYPE_CONDITIONAL;
 	}
-                                                                                                                             
+
+	@Override
 	public boolean isAppend() {
 		return type == TYPE_APPEND;
 	}
 
+	@Override
 	public boolean isTargetSpecific() {
 		String t = getTarget();
 		return t != null && t.length() > 0;
 	}
 
+	@Override
 	public boolean isExport() {
 		return false;
 	}
 
+	@Override
 	public boolean isMultiLine() {
 		return false;
 	}
@@ -116,6 +123,7 @@ public class VariableDefinition extends MacroDefinition implements IVariableDefi
 	/**
 	 * Variable from an `override' directive.
 	 */
+	@Override
 	public boolean isOverride() {
 		return false;
 	}
@@ -123,10 +131,12 @@ public class VariableDefinition extends MacroDefinition implements IVariableDefi
 	/**
 	 * Automatic variable -- cannot be set.
 	 */
+	@Override
 	public boolean isAutomatic() {
 		return false;
 	}
 
+	@Override
 	public String getTarget() {
 		return varTarget;
 	}

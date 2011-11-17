@@ -23,11 +23,11 @@ import org.eclipse.core.runtime.CoreException;
 public class BuildProperties implements IBuildProperties {
 	private HashMap<String, IBuildProperty> fPropertiesMap = new HashMap<String, IBuildProperty>();
 	private ArrayList<String> fInexistentProperties;
-	
+
 	public BuildProperties(){
-		
+
 	}
-	
+
 	public BuildProperties(String properties){
 		StringTokenizer t = new StringTokenizer(properties, BuildPropertyManager.PROPERTIES_SEPARATOR);
 		while(t.hasMoreTokens()){
@@ -38,15 +38,15 @@ public class BuildProperties implements IBuildProperties {
 			} catch (CoreException e) {
 				if(fInexistentProperties == null)
 					fInexistentProperties = new ArrayList<String>();
-				
+
 				fInexistentProperties.add(property);
 			}
 		}
-		
+
 		if(fInexistentProperties != null)
 			fInexistentProperties.trimToSize();
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public BuildProperties(BuildProperties properties){
 		fPropertiesMap.putAll(properties.fPropertiesMap);
@@ -54,18 +54,21 @@ public class BuildProperties implements IBuildProperties {
 			fInexistentProperties = (ArrayList<String>)properties.fInexistentProperties.clone();
 	}
 
+	@Override
 	public IBuildProperty[] getProperties(){
 		return fPropertiesMap.values().toArray(new BuildProperty[fPropertiesMap.size()]);
 	}
-	
+
+	@Override
 	public IBuildProperty getProperty(String id){
 		return fPropertiesMap.get(id);
 	}
-	
+
 	void addProperty(IBuildProperty property){
 		fPropertiesMap.put(property.getPropertyType().getId(), property);
 	}
 
+	@Override
 	public IBuildProperty setProperty(String propertyId, String propertyValue) throws CoreException {
 		return setProperty(propertyId, propertyValue, false);
 	}
@@ -73,30 +76,31 @@ public class BuildProperties implements IBuildProperties {
 	public IBuildProperty setProperty(String propertyId, String propertyValue, boolean force) throws CoreException {
 		try {
 			IBuildProperty property = BuildPropertyManager.getInstance().createProperty(propertyId, propertyValue);
-			
+
 			addProperty(property);
-			
+
 			return property;
 		} catch (CoreException e){
 			if(force){
 				if(fInexistentProperties == null)
 					fInexistentProperties = new ArrayList<String>(1);
-				
+
 				fInexistentProperties.add(BuildProperty.toString(propertyId, propertyValue));
 				fInexistentProperties.trimToSize();
 			}
 			throw e;
 		}
 	}
-	
+
+	@Override
 	public IBuildProperty removeProperty(String id){
 		return fPropertiesMap.remove(id);
 	}
-	
+
 	void removeProperty(BuildProperty property){
 		fPropertiesMap.remove(property.getPropertyType().getId());
 	}
-	
+
 	@Override
 	public String toString(){
 		String props = toStringExistingProperties();
@@ -111,14 +115,14 @@ public class BuildProperties implements IBuildProperties {
 		}
 		return props;
 	}
-	
+
 	public String toStringExistingProperties(){
-		int size = fPropertiesMap.size(); 
+		int size = fPropertiesMap.size();
 		if(size == 0)
 			return ""; //$NON-NLS-1$
 		else if(size == 1)
 			return fPropertiesMap.values().iterator().next().toString();
-		
+
 		StringBuffer buf = new StringBuffer();
 		Iterator<IBuildProperty> iter = fPropertiesMap.values().iterator();
 		buf.append(iter.next().toString());
@@ -134,10 +138,10 @@ public class BuildProperties implements IBuildProperties {
 	public Object clone() {
 		try {
 			BuildProperties clone = (BuildProperties)super.clone();
-			
+
 			if(fInexistentProperties != null)
 				clone.fInexistentProperties = (ArrayList<String>)fInexistentProperties.clone();
-			
+
 			clone.fPropertiesMap = (HashMap<String, IBuildProperty>)fPropertiesMap.clone();
 /*			for(Iterator iter = clone.fPropertiesMap.entrySet().iterator(); iter.hasNext();){
 				Map.Entry entry = (Map.Entry)iter.next();
@@ -151,11 +155,13 @@ public class BuildProperties implements IBuildProperties {
 		return null;
 	}
 
+	@Override
 	public void clear() {
 		fPropertiesMap.clear();
 		fInexistentProperties.clear();
 	}
 
+	@Override
 	public boolean containsValue(String propertyId, String valueId) {
 		IBuildProperty prop = getProperty(propertyId);
 		if(prop != null){
@@ -163,7 +169,7 @@ public class BuildProperties implements IBuildProperties {
 		}
 		return false;
 	}
-	
-	
-	
+
+
+
 }

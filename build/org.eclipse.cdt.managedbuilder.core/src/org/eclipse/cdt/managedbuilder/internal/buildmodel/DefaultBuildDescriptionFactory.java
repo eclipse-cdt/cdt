@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 public class DefaultBuildDescriptionFactory implements IBuildDescriptionFactory {
 	static private DefaultBuildDescriptionFactory fInstance;
 	protected DefaultBuildDescriptionFactory(){
-		
+
 	}
 
 	public static DefaultBuildDescriptionFactory getInstance(){
@@ -28,10 +28,11 @@ public class DefaultBuildDescriptionFactory implements IBuildDescriptionFactory 
 			fInstance = new DefaultBuildDescriptionFactory();
 		return fInstance;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildDescriptionFactory#createBuildDescription(org.eclipse.cdt.managedbuilder.core.IConfiguration, org.eclipse.core.resources.IResourceDelta, int)
 	 */
+	@Override
 	public IBuildDescription createBuildDescription(IConfiguration cfg, IResourceDelta delta, int flags) throws CoreException {
 		return createBuildDescription(cfg, null, delta, flags);
 	}
@@ -48,10 +49,11 @@ public class DefaultBuildDescriptionFactory implements IBuildDescriptionFactory 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildDescriptionFactory#getSupportedMethods()
 	 */
+	@Override
 	public int getSupportedMethods() {
-		return BuildDescriptionManager.REMOVED 
-			| BuildDescriptionManager.REBUILD 
-			| BuildDescriptionManager.DEPFILES 
+		return BuildDescriptionManager.REMOVED
+			| BuildDescriptionManager.REBUILD
+			| BuildDescriptionManager.DEPFILES
 			| BuildDescriptionManager.DEPS;
 	}
 

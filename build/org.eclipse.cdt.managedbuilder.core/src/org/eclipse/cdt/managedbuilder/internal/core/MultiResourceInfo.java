@@ -38,11 +38,11 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	private static final int MODE_OSV  = 3;
 	private static final int MODE_CMDLINE  = 4;
 	private static final int MODE_COMMAND  = 5;
-	
+
 	protected IResourceInfo[] fRis = null;
 	protected int curr = 0;
 	IConfiguration parent = null;
-	
+
 	public MultiResourceInfo(IResourceInfo[] ris, IConfiguration _parent) {
 		fRis = ris;
 		parent = _parent;
@@ -56,10 +56,11 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 			}
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceInfo#canExclude(boolean)
 	 */
+	@Override
 	public boolean canExclude(boolean exclude) {
 		for (int i=0; i<fRis.length; i++)
 			if (! fRis[i].canExclude(exclude))
@@ -70,6 +71,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceInfo#getCLanguageDatas()
 	 */
+	@Override
 	public CLanguageData[] getCLanguageDatas() {
 		return fRis[curr].getCLanguageDatas();
 	}
@@ -77,6 +79,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceInfo#getKind()
 	 */
+	@Override
 	public int getKind() {
 		return fRis[curr].getKind();
 	}
@@ -84,6 +87,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceInfo#getParent()
 	 */
+	@Override
 	public IConfiguration getParent() {
 		return parent;
 	}
@@ -91,6 +95,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceInfo#getPath()
 	 */
+	@Override
 	public IPath getPath() {
 		return fRis[curr].getPath();
 	}
@@ -98,6 +103,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceInfo#getResourceData()
 	 */
+	@Override
 	public CResourceData getResourceData() {
 		if (DEBUG)
 			System.out.println("Strange call: MultiResourceInfo.getResourceData()"); //$NON-NLS-1$
@@ -107,6 +113,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceInfo#getTools()
 	 */
+	@Override
 	public ITool[] getTools() {
 		return fRis[curr].getTools();
 	}
@@ -114,6 +121,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceInfo#isDirty()
 	 */
+	@Override
 	public boolean isDirty() {
 		for (int i=0; i<fRis.length; i++)
 			if (fRis[i].isDirty())
@@ -124,6 +132,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceInfo#isExcluded()
 	 */
+	@Override
 	public boolean isExcluded() {
 		for (int i=0; i<fRis.length; i++)
 			if (fRis[i].isExcluded())
@@ -134,6 +143,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceInfo#isExtensionElement()
 	 */
+	@Override
 	public boolean isExtensionElement() {
 		for (int i=0; i<fRis.length; i++)
 			if (fRis[i].isExtensionElement())
@@ -144,6 +154,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceInfo#isSupported()
 	 */
+	@Override
 	public boolean isSupported() {
 		for (int i=0; i<fRis.length; i++)
 			if (fRis[i].isSupported())
@@ -154,6 +165,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceInfo#isValid()
 	 */
+	@Override
 	public boolean isValid() {
 		for (int i=0; i<fRis.length; i++)
 			if (!fRis[i].isValid())
@@ -164,6 +176,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceInfo#needsRebuild()
 	 */
+	@Override
 	public boolean needsRebuild() {
 		for (int i=0; i<fRis.length; i++)
 			if (fRis[i].needsRebuild())
@@ -174,6 +187,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceInfo#setDirty(boolean)
 	 */
+	@Override
 	public void setDirty(boolean dirty) {
 		for (int i=0; i<fRis.length; i++)
 			fRis[i].setDirty(dirty);
@@ -182,6 +196,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceInfo#setExclude(boolean)
 	 */
+	@Override
 	public void setExclude(boolean excluded) {
 		for (int i=0; i<fRis.length; i++)
 			fRis[i].setExclude(excluded);
@@ -195,21 +210,21 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 		}
 		return s;
 	}
-	
+
 	public void setToolsCommand(ITool tool, String s) {
-		setTool(tool, s, MODE_COMMAND);		
+		setTool(tool, s, MODE_COMMAND);
 	}
-	
+
 	public void setCommandLinePattern(ITool tool, String s) {
 		setTool(tool, s, MODE_CMDLINE);
 	}
-	
+
 	private void setTool(ITool tool, String s, int mode) {
 		String ext = tool.getDefaultInputExtension();
 		for (int i=0; i<fRis.length; i++) {
 			ITool[] ts = fRis[i].getTools();
 			for (int j=0; j<ts.length; j++) {
-				if (ext != null && 
+				if (ext != null &&
 						! ext.equals(ts[j].getDefaultInputExtension()))
 					continue;
 				switch (mode) {
@@ -219,16 +234,16 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 				case MODE_CMDLINE:
 					ts[j].setCommandLinePattern(s);
 					break;
-				}					
+				}
 			}
 		}
 	}
-	
-	private IOption setOption(IHoldsOptions parent, IOption option, Object value, int mode) 
+
+	private IOption setOption(IHoldsOptions parent, IOption option, Object value, int mode)
 	throws BuildException {
 		IOption op = null;
 		String ext = parent instanceof ITool ? ((ITool)parent).getDefaultInputExtension() : null;
-		
+
 		String sid = getSuperClassId(option);
 		for (int i=0; i<fRis.length; i++) {
 			IHoldsOptions[] hos;
@@ -241,22 +256,22 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 				throw new BuildException(ManagedMakeMessages.getString("MultiResourceInfo.MultiResourceInfo.UnhandledIHoldsOptionsType")); //$NON-NLS-1$
 
 			for (int j=0; j<hos.length; j++) {
-				if (ext != null && 
+				if (ext != null &&
 						! ext.equals(((ITool)hos[j]).getDefaultInputExtension()))
 					continue;
 				IOption op2 = hos[j].getOptionBySuperClassId(sid);
 				if (op2 != null) {
 					switch (mode) {
-					case MODE_BOOL:	
+					case MODE_BOOL:
 						op = fRis[i].setOption(hos[j], op2, ((Boolean)value).booleanValue());
 						break;
-					case MODE_STR:	
+					case MODE_STR:
 						op = fRis[i].setOption(hos[j], op2, (String)value);
 						break;
-					case MODE_SAR:	
+					case MODE_SAR:
 						op = fRis[i].setOption(hos[j], op2, (String[])value);
 						break;
-					case MODE_OSV:	
+					case MODE_OSV:
 						op = fRis[i].setOption(hos[j], op2, (OptionStringValue[])value);
 						break;
 					}
@@ -265,10 +280,11 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 		}
 		return op;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceInfo#setOption(org.eclipse.cdt.managedbuilder.core.IHoldsOptions, org.eclipse.cdt.managedbuilder.core.IOption, boolean)
 	 */
+	@Override
 	public IOption setOption(IHoldsOptions parent, IOption option, boolean value)
 			throws BuildException {
 		return setOption(parent, option, new Boolean(value), MODE_BOOL);
@@ -277,6 +293,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceInfo#setOption(org.eclipse.cdt.managedbuilder.core.IHoldsOptions, org.eclipse.cdt.managedbuilder.core.IOption, java.lang.String)
 	 */
+	@Override
 	public IOption setOption(IHoldsOptions parent, IOption option, String value)
 			throws BuildException {
 		return setOption(parent, option, value, MODE_STR);
@@ -285,6 +302,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceInfo#setOption(org.eclipse.cdt.managedbuilder.core.IHoldsOptions, org.eclipse.cdt.managedbuilder.core.IOption, java.lang.String[])
 	 */
+	@Override
 	public IOption setOption(IHoldsOptions parent, IOption option,
 			String[] value) throws BuildException {
 		return setOption(parent, option, value, MODE_SAR);
@@ -293,6 +311,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceInfo#setOption(org.eclipse.cdt.managedbuilder.core.IHoldsOptions, org.eclipse.cdt.managedbuilder.core.IOption, org.eclipse.cdt.managedbuilder.core.OptionStringValue[])
 	 */
+	@Override
 	public IOption setOption(IHoldsOptions parent, IOption option,
 			OptionStringValue[] value) throws BuildException {
 		return setOption(parent, option, value, MODE_OSV);
@@ -301,6 +320,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceInfo#setPath(org.eclipse.core.runtime.IPath)
 	 */
+	@Override
 	public void setPath(IPath path) {
 		for (int i=0; i<fRis.length; i++)
 			fRis[i].setPath(path);
@@ -309,6 +329,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceInfo#setRebuildState(boolean)
 	 */
+	@Override
 	public void setRebuildState(boolean rebuild) {
 		for (int i=0; i<fRis.length; i++)
 			fRis[i].setRebuildState(rebuild);
@@ -317,6 +338,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceInfo#supportsBuild(boolean)
 	 */
+	@Override
 	public boolean supportsBuild(boolean managed) {
 		return fRis[curr].supportsBuild(managed);
 	}
@@ -324,6 +346,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObject#getBaseId()
 	 */
+	@Override
 	public String getBaseId() {
 		return fRis[curr].getBaseId();
 	}
@@ -331,6 +354,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObject#getId()
 	 */
+	@Override
 	public String getId() {
 		return fRis[curr].getId();
 	}
@@ -338,6 +362,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObject#getManagedBuildRevision()
 	 */
+	@Override
 	public String getManagedBuildRevision() {
 		return fRis[curr].getManagedBuildRevision();
 	}
@@ -345,6 +370,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObject#getName()
 	 */
+	@Override
 	public String getName() {
 		return fRis[curr].getName();
 	}
@@ -352,6 +378,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObject#getVersion()
 	 */
+	@Override
 	public Version getVersion() {
 		return fRis[curr].getVersion();
 	}
@@ -359,6 +386,7 @@ public abstract class MultiResourceInfo extends MultiItemsHolder implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObject#setVersion(org.eclipse.core.runtime.PluginVersionIdentifier)
 	 */
+	@Override
 	public void setVersion(Version version) {
 		for (int i=0; i<fRis.length; i++)
 			fRis[i].setVersion(version);

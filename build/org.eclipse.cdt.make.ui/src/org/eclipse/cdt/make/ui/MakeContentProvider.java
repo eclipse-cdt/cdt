@@ -55,7 +55,7 @@ import org.eclipse.swt.widgets.Display;
 /**
  * Content provider for Make Targets view and for Make Targets dialog from
  * "Make Targets"->"Build..." in project context menu.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -76,7 +76,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param flat - {@code true} for "flat" representation for a table
 	 *    or {@code false} to represent as a tree.
 	 */
@@ -87,6 +87,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 	 */
+	@Override
 	public Object[] getChildren(Object obj) {
 		if (obj instanceof IWorkspaceRoot) {
 			try {
@@ -97,9 +98,9 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 		} else if (obj instanceof IContainer) {
 			IContainer container = (IContainer)obj;
 			ArrayList<Object> children = new ArrayList<Object>();
-			
+
 			boolean isAddingSourceRoots = !bFlatten && (container instanceof IProject) && CCorePlugin.showSourceRootsAtTopOfProject();
-			
+
 			// add source roots if necessary
 			if (isAddingSourceRoots) {
 				IProject project = (IProject) container;
@@ -110,7 +111,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 					}
 				}
 			}
-			
+
 			// add regular folders
 			try {
 				IResource[] resources = container.members();
@@ -124,7 +125,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 			} catch (CoreException e) {
 				MakeCorePlugin.log(e);
 			}
-				
+
 			// finally add targets
 			try {
 				IMakeTarget[] targets = MakeCorePlugin.getDefault().getTargetManager().getTargets(container);
@@ -133,7 +134,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 				MakeCorePlugin.log(e);
 			}
 			return children.toArray();
-			
+
 		} else if (obj instanceof TargetSourceContainer) {
 			ArrayList<Object> children = new ArrayList<Object>();
 			try {
@@ -156,6 +157,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 	 */
+	@Override
 	public Object getParent(Object obj) {
 		if (obj instanceof IMakeTarget) {
 			// this is ambiguous as make target can sit in 2 places, in its container
@@ -174,6 +176,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
+	@Override
 	public boolean hasChildren(Object obj) {
 		return getChildren(obj).length > 0;
 	}
@@ -181,6 +184,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getElements(java.lang.Object)
 	 */
+	@Override
 	public Object[] getElements(Object obj) {
 		if (bFlatten) {
 			List<Object> list = new ArrayList<Object>();
@@ -197,6 +201,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (viewer != null) {
 			MakeCorePlugin.getDefault().getTargetManager().removeListener(this);
@@ -206,6 +211,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		if (this.viewer == null) {
 			MakeCorePlugin.getDefault().getTargetManager().addListener(this);
@@ -245,6 +251,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.make.core.IMakeTargetListener#targetChanged(org.eclipse.cdt.make.core.MakeTargetEvent)
 	 */
+	@Override
 	public void targetChanged(final MakeTargetEvent event) {
 		final Control ctrl = viewer.getControl();
 		if (ctrl != null && !ctrl.isDisposed()) {
@@ -253,6 +260,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 				case MakeTargetEvent.PROJECT_REMOVED :
 					ctrl.getDisplay().asyncExec(new Runnable() {
 
+						@Override
 						public void run() {
 							if (!ctrl.isDisposed()) {
 								viewer.refresh();
@@ -265,6 +273,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 				case MakeTargetEvent.TARGET_REMOVED :
 					ctrl.getDisplay().asyncExec(new Runnable() {
 
+						@Override
 						public void run() {
 							if (!ctrl.isDisposed()) {
 								if (bFlatten) {
@@ -331,6 +340,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 			}
 			if (!affected.isEmpty()) {
 				Display.getDefault().asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						if (viewer == null || viewer.getControl() == null || viewer.getControl().isDisposed())
 							return;
@@ -355,6 +365,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 			}
 			if (!affected.isEmpty()) {
 				Display.getDefault().asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						if (viewer == null || viewer.getControl() == null || viewer.getControl().isDisposed())
 							return;
@@ -372,6 +383,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
 	 */
+	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		final IResourceDelta delta = event.getDelta();
 		Control ctrl = viewer.getControl();
@@ -381,29 +393,31 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @since 7.1
 	 */
+	@Override
 	public void handleEvent(final CProjectDescriptionEvent event) {
 		Display display = Display.getDefault();
 		display.asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				ICDescriptionDelta delta = event.getDefaultSettingCfgDelta();
 				if (delta==null)
 					return;
-				
+
 				int flags = delta.getChangeFlags();
 				if ( ((flags & ICDescriptionDelta.SOURCE_ADDED) != 0) ||
 					 ((flags & ICDescriptionDelta.SOURCE_REMOVED) != 0) ) {
-					
+
 					IProject project = null;
 					ICSettingObject setting = delta.getOldSetting();
 					if (setting==null)
 						setting = delta.getNewSetting();
-					
+
 					if (setting instanceof ICConfigurationDescription)
 						project = ((ICConfigurationDescription) setting).getProjectDescription().getProject();
-					
+
 					if (project!=null)
 						viewer.refresh(project);
 					else
@@ -415,12 +429,14 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @since 7.1
 	 */
+	@Override
 	public void preferenceChange(PreferenceChangeEvent event) {
 		if (event.getKey().equals(CCorePreferenceConstants.SHOW_SOURCE_ROOTS_AT_TOP_LEVEL_OF_PROJECT)) {
 			Display.getDefault().asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					viewer.refresh();
 				}
@@ -441,16 +457,16 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 				return srcEntries;
 			}
 		}
-		
+
 		return new ICSourceEntry[0];
 	}
 
 	/**
 	 * Check if the resource is in the list of source entries.
-	
+
 	 * @param rc - resource to check.
 	 * @return {@code true} if the resource is a source folder, {@code false} otherwise.
-	 * 
+	 *
 	 * @since 7.1
 	 */
 	public static boolean isSourceEntry(IResource rc) {

@@ -7,7 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
- * Miwako Tokugawa (Intel Corporation) - bug 222817 (OptionCategoryApplicability) 
+ * Miwako Tokugawa (Intel Corporation) - bug 222817 (OptionCategoryApplicability)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.macros;
 
@@ -25,7 +25,7 @@ import org.eclipse.cdt.managedbuilder.macros.IOptionContextData;
 
 /**
  * This is a trivial implementation of the IOptionContextData used internally by the MBS
- * 
+ *
  * @since 3.0
  */
 public class OptionContextData implements IOptionContextData {
@@ -37,7 +37,7 @@ public class OptionContextData implements IOptionContextData {
 		fOption = option;
 		fParent = parent;
 	}
-	
+
 	/*
 	 * @since 8.0
 	 */
@@ -48,13 +48,15 @@ public class OptionContextData implements IOptionContextData {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.macros.IOptionContextData#getOption()
 	 */
+	@Override
 	public IOption getOption() {
 		return fOption;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.macros.IOptionContextData#getOptionCategory()
 	 */
+	@Override
 	public IOptionCategory getOptionCategory() {
 		return fCategory;
 	}
@@ -62,6 +64,7 @@ public class OptionContextData implements IOptionContextData {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.macros.IOptionContextData#getParent()
 	 */
+	@Override
 	public IBuildObject getParent() {
 		return fParent;
 	}
@@ -92,7 +95,7 @@ public class OptionContextData implements IOptionContextData {
 			IOption option = data.getOption();
 			if(option == null)
 				return null;
-			
+
 			IHoldsOptions tmp = option.getOptionHolder();
 
 			ITool tools[] = null;
@@ -105,7 +108,7 @@ public class OptionContextData implements IOptionContextData {
 			} else if(rcInfo != null){
 				tools = rcInfo.getTools();
 			}
-			
+
 			if(tools != null){
 				for(int i = 0; i < tools.length; i++){
 					for(ITool cur = tools[i]; cur != null; cur = cur.getSuperClass()){
@@ -120,7 +123,7 @@ public class OptionContextData implements IOptionContextData {
 					}
 				}
 			}
-			
+
 			if(ho == null && tmp != null){
 				if(tmp instanceof ITool){
 					ITool tool = (ITool)tmp;

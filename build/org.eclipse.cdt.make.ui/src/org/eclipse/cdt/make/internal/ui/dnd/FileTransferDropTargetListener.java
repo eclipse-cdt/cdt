@@ -52,6 +52,7 @@ public class FileTransferDropTargetListener extends AbstractContainerAreaDropAda
 	 * @return the {@link Transfer} type that this listener can accept a
 	 * drop operation for.
 	 */
+	@Override
 	public Transfer getTransfer() {
 		return FileTransfer.getInstance();
 	}

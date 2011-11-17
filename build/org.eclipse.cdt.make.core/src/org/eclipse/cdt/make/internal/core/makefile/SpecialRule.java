@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.makefile;
 
-import org.eclipse.cdt.make.core.makefile.ISpecialRule;
 import org.eclipse.cdt.make.core.makefile.ICommand;
+import org.eclipse.cdt.make.core.makefile.ISpecialRule;
 
 /**
  * Targets that have special meaning for Make.
@@ -25,6 +25,7 @@ public abstract class SpecialRule extends Rule implements ISpecialRule {
 		prerequisites = reqs;
 	}
 
+	@Override
 	public String[] getPrerequisites() {
 		return prerequisites;
 	}

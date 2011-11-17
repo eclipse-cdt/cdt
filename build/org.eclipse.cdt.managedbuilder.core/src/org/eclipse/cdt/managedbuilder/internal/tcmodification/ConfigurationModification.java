@@ -47,13 +47,13 @@ public class ConfigurationModification extends FolderInfoModification implements
 		private Builder fBuilder;
 		private List<ConflictMatch> fErrComflictMatchList;
 		private CompatibilityStatus fStatus;
-		
+
 		BuilderCompatibilityInfoElement(Builder builder, List<ConflictMatch> errConflictList){
 			fBuilder = builder;
 			if(errConflictList != null && errConflictList.size() != 0)
 				fErrComflictMatchList = errConflictList;
 		}
-		
+
 		public CompatibilityStatus getCompatibilityStatus(){
 			if(fStatus == null){
 				int severity;
@@ -69,36 +69,39 @@ public class ConfigurationModification extends FolderInfoModification implements
 			}
 			return fStatus;
 		}
-		
+
 		public boolean isCompatible(){
 			return fErrComflictMatchList == null;
 		}
 	}
-	
+
 	public ConfigurationModification(FolderInfo foInfo) {
 		super(foInfo);
-		
+
 		setBuilder(foInfo.getParent().getBuilder());
 	}
 
 	public ConfigurationModification(FolderInfo foInfo, ConfigurationModification base) {
 		super(foInfo, base);
-		
+
 		fSelectedBuilder = base.fSelectedBuilder;
 		if(!fSelectedBuilder.isExtensionElement())
 			fSelectedBuilder = ManagedBuildManager.getExtensionBuilder(fSelectedBuilder);
-			
+
 		fRealBuilder = base.fRealBuilder;
 	}
 
+	@Override
 	public IBuilder getBuilder() {
 		return fSelectedBuilder;
 	}
 
+	@Override
 	public IBuilder getRealBuilder() {
 		return fRealBuilder;
 	}
 
+	@Override
 	public CompatibilityStatus getBuilderCompatibilityStatus() {
 		return getCurrentBuilderCompatibilityInfo().getCompatibilityStatus();
 	}
@@ -116,17 +119,17 @@ public class ConfigurationModification extends FolderInfoModification implements
 		}
 		return fConflicts;
 	}
-	
+
 	private IBuilder[] getAllSysBuilders(){
 		if(fAllSysBuilders == null)
 			fAllSysBuilders = ManagedBuildManager.getRealBuilders();
 		return fAllSysBuilders;
 	}
-	
+
 	private void initCompatibilityInfo(){
 		if(fCompatibilityInfoInited)
 			return;
-		
+
 		fCompatibleBuilders = new HashMap<IBuilder, BuilderCompatibilityInfoElement>();
 		fInCompatibleBuilders = new HashMap<IBuilder, BuilderCompatibilityInfoElement>();
 		ConflictMatchSet conflicts = getParentConflictMatchSet();
@@ -143,10 +146,10 @@ public class ConfigurationModification extends FolderInfoModification implements
 				fInCompatibleBuilders.put(b, info);
 			}
 		}
-		
+
 		fCompatibilityInfoInited = true;
 	}
-	
+
 	private BuilderCompatibilityInfoElement getCurrentBuilderCompatibilityInfo(){
 		if(fCurrentBuilderCompatibilityInfo == null){
 			initCompatibilityInfo();
@@ -157,12 +160,13 @@ public class ConfigurationModification extends FolderInfoModification implements
 		}
 		return fCurrentBuilderCompatibilityInfo;
 	}
-	
+
+	@Override
 	public IBuilder[] getCompatibleBuilders() {
 		initCompatibilityInfo();
 		List<IBuilder> l = new ArrayList<IBuilder>(fCompatibleBuilders.size());
 		IConfiguration cfg = getResourceInfo().getParent();
-		
+
 		Set<IBuilder> keySet = fCompatibleBuilders.keySet();
 		for (IBuilder b : keySet) {
 			if(b != fRealBuilder && cfg.isBuilderCompatible(b))
@@ -171,31 +175,33 @@ public class ConfigurationModification extends FolderInfoModification implements
 		return l.toArray(new IBuilder[l.size()]);
 	}
 
+	@Override
 	public boolean isBuilderCompatible() {
-		BuilderCompatibilityInfoElement be = getCurrentBuilderCompatibilityInfo(); 
+		BuilderCompatibilityInfoElement be = getCurrentBuilderCompatibilityInfo();
 		return be == null ? false : be.isCompatible();
 	}
 
+	@Override
 	public void setBuilder(IBuilder builder) {
 		if(builder == fSelectedBuilder)
 			return;
-		
+
 		fSelectedBuilder = builder;
 		IBuilder realBuilder = ManagedBuildManager.getRealBuilder(builder);
 		if(realBuilder == fRealBuilder)
 			return;
-		
+
 		fRealBuilder = realBuilder;
 		fCompletePathMapStorage = null;
-		
+
 		PerTypeMapStorage<IRealBuildObjectAssociation, Set<IPath>> storage = getCompleteObjectStore();
 		TcModificationUtil.applyBuilder(storage, getResourceInfo().getPath(), fSelectedBuilder);
-		
+
 		clearBuilderCompatibilityInfo();
 		clearToolChainCompatibilityInfo();
 		clearToolCompatibilityInfo();
 	}
-	
+
 	@Override
 	public void setToolChain(IToolChain tc, boolean force) {
 		setBuilder(tc.getBuilder());

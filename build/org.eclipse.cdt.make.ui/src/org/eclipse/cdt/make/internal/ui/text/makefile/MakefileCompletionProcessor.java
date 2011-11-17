@@ -51,6 +51,7 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 		/*
 		 * @see IContextInformationValidator#isContextInformationValid(int)
 		 */
+		@Override
 		public boolean isContextInformationValid(int offset) {
 			return Math.abs(fInstallOffset - offset) < 5;
 		}
@@ -58,6 +59,7 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 		/*
 		 * @see IContextInformationValidator#install(IContextInformation, ITextViewer, int)
 		 */
+		@Override
 		public void install(IContextInformation info, ITextViewer viewer, int offset) {
 			fInstallOffset = offset;
 		}
@@ -65,6 +67,7 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 		/*
 		 * @see org.eclipse.jface.text.contentassist.IContextInformationPresenter#updatePresentation(int, TextPresentation)
 		 */
+		@Override
 		public boolean updatePresentation(int documentPosition, TextPresentation presentation) {
 			return false;
 		}
@@ -75,6 +78,7 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 		/* (non-Javadoc)
 		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public int compare(Object o1, Object o2) {
 			String name1;
 			String name2;
@@ -98,7 +102,7 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 			//return String.CASE_INSENSITIVE_ORDER.compare(name1, name2);
 			return name1.compareToIgnoreCase(name2);
 		}
-		
+
 	}
 	protected IContextInformationValidator fValidator = new Validator();
 	protected Image imageMacro = MakeUIImages.getImage(MakeUIImages.IMG_OBJS_MAKEFILE_MACRO);
@@ -116,6 +120,7 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeCompletionProposals(org.eclipse.jface.text.ITextViewer, int)
 	 */
+	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int documentOffset) {
 		WordPartDetector wordPart = new WordPartDetector(viewer, documentOffset);
 		boolean macro = WordPartDetector.inMacro(viewer, documentOffset);
@@ -171,6 +176,7 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeContextInformation(org.eclipse.jface.text.ITextViewer, int)
 	 */
+	@Override
 	public IContextInformation[] computeContextInformation(ITextViewer viewer, int documentOffset) {
 		WordPartDetector wordPart = new WordPartDetector(viewer, documentOffset);
 		boolean macro = WordPartDetector.inMacro(viewer, documentOffset);
@@ -215,6 +221,7 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
 	 */
+	@Override
 	public char[] getCompletionProposalAutoActivationCharacters() {
 		return null;
 	}
@@ -222,6 +229,7 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getContextInformationAutoActivationCharacters()
 	 */
+	@Override
 	public char[] getContextInformationAutoActivationCharacters() {
 		return null;
 	}
@@ -229,6 +237,7 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getErrorMessage()
 	 */
+	@Override
 	public String getErrorMessage() {
 		return null;
 	}
@@ -236,6 +245,7 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getContextInformationValidator()
 	 */
+	@Override
 	public IContextInformationValidator getContextInformationValidator() {
 		return fValidator;
 	}

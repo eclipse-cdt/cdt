@@ -19,7 +19,7 @@ import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
 
 public class BuildPropertyType extends PropertyBase implements IBuildPropertyType{
 	private Map<String, BuildPropertyValue> fValuesMap = new HashMap<String, BuildPropertyValue>();
-	
+
 	BuildPropertyType(String id, String name){
 		super(id, name);
 	}
@@ -27,11 +27,13 @@ public class BuildPropertyType extends PropertyBase implements IBuildPropertyTyp
 	void addSupportedValue(BuildPropertyValue value){
 		fValuesMap.put(value.getId(), value);
 	}
-	
+
+	@Override
 	public IBuildPropertyValue[] getSupportedValues(){
 		return fValuesMap.values().toArray(new BuildPropertyValue[fValuesMap.size()]);
 	}
-	
+
+	@Override
 	public IBuildPropertyValue getSupportedValue(String id){
 		return fValuesMap.get(id);
 	}

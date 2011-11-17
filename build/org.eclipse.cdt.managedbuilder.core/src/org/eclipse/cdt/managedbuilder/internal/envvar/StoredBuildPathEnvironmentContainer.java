@@ -33,7 +33,7 @@ import org.osgi.service.prefs.Preferences;
 /**
  * This class holds the build path variable values and allows
  * checking the stored variable values with the values of the current environment environment
- * 
+ *
  * @since 3.0
  *
  */
@@ -43,14 +43,14 @@ public class StoredBuildPathEnvironmentContainer extends
 	public static final String NODENAME_PREFIX_CFG = "buildEnvironment";  //$NON-NLS-1$
 	public static final String NODENAME_CFG_INCLUDE = NODENAME_PREFIX_CFG + "Include";  //$NON-NLS-1$
 	public static final String NODENAME_CFG_LIBRARY = NODENAME_PREFIX_CFG + "Library";  //$NON-NLS-1$
-	
+
 	private IConfiguration fConfiguration;
 	private StorableEnvironment fEnvironment;
 	private int fPathType;
 	private boolean fIsVariableCaseSensitive = ManagedBuildManager.getEnvironmentVariableProvider().isVariableCaseSensitive();
 
 	public StoredBuildPathEnvironmentContainer(int pathType){
-		fPathType = pathType == IEnvVarBuildPath.BUILDPATH_LIBRARY ? 
+		fPathType = pathType == IEnvVarBuildPath.BUILDPATH_LIBRARY ?
 				IEnvVarBuildPath.BUILDPATH_LIBRARY : IEnvVarBuildPath.BUILDPATH_INCLUDE;
 	}
 
@@ -70,7 +70,7 @@ public class StoredBuildPathEnvironmentContainer extends
 					}
 
 					checkLoadedVarNames(env,context);
-					
+
 					fConfiguration = (IConfiguration)context;
 					fEnvironment = env;
 				}
@@ -78,19 +78,19 @@ public class StoredBuildPathEnvironmentContainer extends
 		}
 		return env;
 	}
-	
+
 	private boolean haveIdenticalValues(IEnvironmentVariable var1,
 			IEnvironmentVariable var2){
 		if(var1 == null)
 			return var2 == null || var2.getOperation() == IBuildEnvironmentVariable.ENVVAR_REMOVE;
 		if(var2 == null)
 			return var1 == null || var1.getOperation() == IBuildEnvironmentVariable.ENVVAR_REMOVE;
-		int op1 = var1.getOperation(); 
+		int op1 = var1.getOperation();
 		int op2 = var2.getOperation();
 		if(op1 == IBuildEnvironmentVariable.ENVVAR_REMOVE ||
 				op2 == IBuildEnvironmentVariable.ENVVAR_REMOVE)
 			return op1 == op2;
-		
+
 		return maskNull(var1.getValue()).equals(maskNull(var2.getValue()));
 	}
 
@@ -98,7 +98,7 @@ public class StoredBuildPathEnvironmentContainer extends
 		return val == null ? "" : val;  //$NON-NLS-1$
 	}
 
-	public boolean checkBuildPathChange(EnvVarCollector existingVariables, 
+	public boolean checkBuildPathChange(EnvVarCollector existingVariables,
 			IConfiguration configuration){
 		StorableEnvironment env = getEnvironment(configuration);
 		if(env == null)
@@ -107,7 +107,7 @@ public class StoredBuildPathEnvironmentContainer extends
 		for(int i = 0; i < vars.length; i++){
 			IEnvironmentVariable var = vars[i];
 			String name = var.getName();
-			EnvVarDescriptor des = existingVariables != null ? 
+			EnvVarDescriptor des = existingVariables != null ?
 					existingVariables.getVariable(name) : null;
 //			EnvironmentVariableProvider provider = ((EnvironmentVariableProvider)ManagedBuildManager.getEnvironmentVariableProvider());
 			IEnvironmentVariable curVar = des/* != null ?
@@ -130,7 +130,7 @@ public class StoredBuildPathEnvironmentContainer extends
 			}
 		return changed;
 	}
-	
+
 	/*
 	 * checks whether the variable of a given name is the build path variable
 	 * for the given configuration
@@ -138,8 +138,8 @@ public class StoredBuildPathEnvironmentContainer extends
 	 * If it is not the build path variable, no check is performed and this method always
 	 * returns false in this case
 	 */
-	public boolean isVariableChanged(String name, 
-			IEnvironmentVariable variable, 
+	public boolean isVariableChanged(String name,
+			IEnvironmentVariable variable,
 			IConfiguration configuration){
 		StorableEnvironment env = getEnvironment(configuration);
 		if(env == null)
@@ -150,21 +150,21 @@ public class StoredBuildPathEnvironmentContainer extends
 
 //		EnvironmentVariableProvider provider = (EnvironmentVariableProvider)ManagedBuildManager.getEnvironmentVariableProvider();
 //		variable = provider.getVariable(name, configuration, true, false);
-		
+
 		if(haveIdenticalValues(var,variable))
 			return false;
 
 		return true;
 	}
-	
+
 	/*
-	 * synchronizes the stored variables with the ones passed to this method 
+	 * synchronizes the stored variables with the ones passed to this method
 	 */
 	public void synchronize(EnvVarCollector existingVariables,
 			IConfiguration configuration){
 		checkBuildPathChange(existingVariables,configuration);
 	}
-	
+
 	private void checkLoadedVarNames(StorableEnvironment env, Object context){
 		String varNames[] = getBuildPathVarNames((IConfiguration)context, fPathType);
 		for(int i = 0; i < varNames.length; i++){
@@ -178,7 +178,7 @@ public class StoredBuildPathEnvironmentContainer extends
 			IEnvironmentVariable var = vars[i];
 			boolean validVar = false;
 			for(int j = 0; j < varNames.length; j++){
-				String varName = varNames[j]; 
+				String varName = varNames[j];
 				if(varNamesEqual(var.getName(),varName)){
 					validVar = true;
 					break;
@@ -189,7 +189,7 @@ public class StoredBuildPathEnvironmentContainer extends
 			}
 		}
 	}
-	
+
 	/*
 	 * returns true if the variable names are equal and false otherwise
 	 */
@@ -210,10 +210,12 @@ public class StoredBuildPathEnvironmentContainer extends
 			final String name = cfg.getId();
 			if(prefs != null && name != null)
 				serializeInfo = new ISerializeInfo(){
+				@Override
 				public Preferences getNode(){
 					return prefs;
 				}
-				
+
+				@Override
 				public String getPrefName(){
 					return name;
 				}
@@ -230,48 +232,48 @@ public class StoredBuildPathEnvironmentContainer extends
 			}
 		}
 	}
-	
+
 	private Preferences getConfigurationNode(IConfiguration cfg){
 		IProject project = (IProject)cfg.getOwner();
 		if(project == null || !project.exists())
 			return null;
-		
+
 		Preferences prefNode = new ProjectScope(project).getNode(ManagedBuilderCorePlugin.getUniqueIdentifier());
 		if(prefNode == null)
 			return null;
-		
+
 		prefNode = prefNode.node(NODENAME);
 		if(prefNode == null)
 			return null;
-		
+
 		if(fPathType == IEnvVarBuildPath.BUILDPATH_LIBRARY)
 			return prefNode.node(NODENAME_CFG_LIBRARY);
 		return prefNode.node(NODENAME_CFG_INCLUDE);
 	}
-	
+
 	private String[] getBuildPathVarNames(IConfiguration configuration,int buildPathType){
 		ITool tools[] = configuration.getFilteredTools();
 		List<String> list = new ArrayList<String>();
-		
+
 		for(int i = 0; i < tools.length; i++){
 			IEnvVarBuildPath pathDescriptors[] = tools[i].getEnvVarBuildPaths();
-			
+
 			if(pathDescriptors == null || pathDescriptors.length == 0)
 				continue;
-			
+
 			for(int j = 0; j < pathDescriptors.length; j++){
 				IEnvVarBuildPath curPathDes = pathDescriptors[j];
 				if(curPathDes.getType() != buildPathType)
 					continue;
-				
+
 				String vars[] = curPathDes.getVariableNames();
 				if(vars == null || vars.length == 0)
 					continue;
-				
+
 				list.addAll(Arrays.asList(vars));
 			}
 		}
-		
+
 		return list.toArray(new String[list.size()]);
 	}
 }

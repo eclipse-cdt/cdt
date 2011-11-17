@@ -27,34 +27,35 @@ public class ConfigurationBuildState implements IConfigurationBuildState {
 	private final static Integer REBUILD_STATE = new Integer(NEED_REBUILD);
 	private final static Integer REMOVED_STATE = new Integer(REMOVED);
 	private final static Integer NONE_STATE = new Integer(0);
-	
+
 	private HashMap<Integer, Set<String>> fStateToPathListMap;
 	private Properties fPathToStateProps;
 	private String fCfgId;
 	private IProject fProject;
 	private int fState;
-	
+
 	ConfigurationBuildState(IProject project, String cfgId){
 		fCfgId = cfgId;
 		fProject = project;
 		fState = NEED_REBUILD;
 	}
-	
+
 	void setProject(IProject project){
 		fProject = project;
 	}
 
+	@Override
 	public IPath[] getFullPathsForState(int state) {
 		if(fStateToPathListMap == null)
 			return new IPath[0];
-		
+
 		Set<String> set = fStateToPathListMap.get(new Integer(state));
 		if(set == null)
 			return new IPath[0];
 
 		return setToFullPaths(set);
 	}
-	
+
 	private IPath[] setToFullPaths(Set<String> set){
 		IPath paths[] = new IPath[set.size()];
 		IPath path = fProject.getFullPath();
@@ -65,6 +66,7 @@ public class ConfigurationBuildState implements IConfigurationBuildState {
 		return paths;
 	}
 
+	@Override
 	public int getStateForFullPath(IPath fullPath) {
 		if(fPathToStateProps == null)
 			return 0;
@@ -78,12 +80,13 @@ public class ConfigurationBuildState implements IConfigurationBuildState {
 		return 0;
 	}
 
+	@Override
 	public void setStateForFullPath(IPath fullPath, int state) {
 		String str = fullPathToString(fullPath);
 		int cur = getStateForFullPath(fullPath);
 		if(cur == state)
 			return;
-		
+
 		if(fPathToStateProps == null){
 			fPathToStateProps = new Properties();
 			fStateToPathListMap = new HashMap<Integer, Set<String>>();
@@ -92,7 +95,7 @@ public class ConfigurationBuildState implements IConfigurationBuildState {
 		Integer iState = stateToInt(strState);
 		if(iState == null)
 			throw new IllegalArgumentException();
-		
+
 		if(cur != 0){
 			Set<String> set = fStateToPathListMap.get(new Integer(cur));
 			set.remove(str);
@@ -109,10 +112,10 @@ public class ConfigurationBuildState implements IConfigurationBuildState {
 			}
 			set.add(str);
 		} else {
-			fPathToStateProps.remove(str);	
+			fPathToStateProps.remove(str);
 		}
 	}
-	
+
 	private String fullPathToString(IPath fullPath){
 		return fullPath.removeFirstSegments(1).toString();
 	}
@@ -134,7 +137,7 @@ public class ConfigurationBuildState implements IConfigurationBuildState {
 			}
 			list.add((String)entry.getKey());
 		}
-		
+
 		//TODO: trim lists
 		if(map.size() != 0){
 			fStateToPathListMap = map;
@@ -142,7 +145,7 @@ public class ConfigurationBuildState implements IConfigurationBuildState {
 		}
 		fState = 0;
 	}
-	
+
 	public void store(OutputStream oStream) throws IOException{
 		if(fPathToStateProps != null)
 			fPathToStateProps.store(oStream, ""); //$NON-NLS-1$
@@ -154,7 +157,7 @@ public class ConfigurationBuildState implements IConfigurationBuildState {
 //	public void store(Properties props){
 //		if(fStateToPathListMap == null)
 //			return;
-//		
+//
 //		for(Iterator iter = fStateToPathListMap.entrySet().iterator(); iter.hasNext();){
 //			Map.Entry entry = (Map.Entry)iter.next();
 //			String propValue = stateToString((Integer)entry.getKey());
@@ -184,28 +187,32 @@ public class ConfigurationBuildState implements IConfigurationBuildState {
 		return state.toString();
 	}
 
+	@Override
 	public int getState() {
 		return fState;
 	}
 
+	@Override
 	public void setState(int state) {
 		fState = state;
 		clear();
 	}
-	
+
 	private void clear(){
 		fPathToStateProps = null;
 		fStateToPathListMap = null;
 	}
 
+	@Override
 	public String getConfigurationId() {
 		return fCfgId;
 	}
 
+	@Override
 	public IProject getProject() {
 		return fProject;
 	}
-	
+
 	public boolean exists(){
 		return fState == 0;
 	}

@@ -19,8 +19,8 @@ import org.eclipse.cdt.internal.core.dom.parser.c.CASTUnaryExpression;
 public class UPCASTUnarySizeofExpression extends CASTUnaryExpression implements IUPCASTUnarySizeofExpression {
 
 	private int upcSizeofOperator;
-	
-	
+
+
 	public UPCASTUnarySizeofExpression() {
 		this(null);
 	}
@@ -28,7 +28,7 @@ public class UPCASTUnarySizeofExpression extends CASTUnaryExpression implements 
 	public UPCASTUnarySizeofExpression(IASTExpression operand) {
 		super(IASTUnaryExpression.op_sizeof, operand);
 	}
-	
+
 	public UPCASTUnarySizeofExpression(int upcSizeofOperator, IASTExpression operand) {
 		super(IASTUnaryExpression.op_sizeof, operand);
 		this.upcSizeofOperator = upcSizeofOperator;
@@ -38,7 +38,7 @@ public class UPCASTUnarySizeofExpression extends CASTUnaryExpression implements 
 	public UPCASTUnarySizeofExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public UPCASTUnarySizeofExpression copy(CopyStyle style) {
 		UPCASTUnarySizeofExpression copy = new UPCASTUnarySizeofExpression();
@@ -52,10 +52,12 @@ public class UPCASTUnarySizeofExpression extends CASTUnaryExpression implements 
 		return copy;
 	}
 
+	@Override
 	public int getUPCSizeofOperator() {
 		return upcSizeofOperator;
 	}
 
+	@Override
 	public void setUPCSizeofOperator(int upcSizeofOperator) {
 		this.upcSizeofOperator = upcSizeofOperator;
 	}

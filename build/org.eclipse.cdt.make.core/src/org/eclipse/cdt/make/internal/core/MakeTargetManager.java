@@ -14,8 +14,8 @@ package org.eclipse.cdt.make.internal.core;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Vector;
 import java.util.Map.Entry;
+import java.util.Vector;
 
 import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.core.IMakeTargetListener;
@@ -55,14 +55,17 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 	public MakeTargetManager() {
 	}
 
+	@Override
 	public IMakeTarget createTarget(IProject project, String name, String targetBuilderID) throws CoreException {
 		return new MakeTarget(this, project, targetBuilderID, name);
 	}
 
+	@Override
 	public void addTarget(IMakeTarget target) throws CoreException {
 		addTarget(null, target);
 	}
 
+	@Override
 	public void addTarget(IContainer container, IMakeTarget target) throws CoreException {
 		if (container instanceof IWorkspaceRoot) {
 			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeMessages.getString("MakeTargetManager.add_to_workspace_root"), null)); //$NON-NLS-1$
@@ -82,6 +85,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 		notifyListeners(new MakeTargetEvent(this, MakeTargetEvent.TARGET_ADD, target));
 	}
 
+	@Override
 	public void setTargets(IContainer container, IMakeTarget[] targets) throws CoreException {
 		if (container instanceof IWorkspaceRoot) {
 			throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeMessages.getString("MakeTargetManager.add_to_workspace_root"), null)); //$NON-NLS-1$
@@ -104,6 +108,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 		notifyListeners(new MakeTargetEvent(this, MakeTargetEvent.TARGET_ADD, targets[0]));
 	}
 
+	@Override
 	public boolean targetExists(IMakeTarget target) {
 		ProjectTargets projectTargets = projectMap.get(target.getProject());
 		if (projectTargets == null) {
@@ -112,6 +117,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 		return projectTargets.contains(target);
 	}
 
+	@Override
 	public void removeTarget(IMakeTarget target) throws CoreException {
 		ProjectTargets projectTargets = projectMap.get(target.getProject());
 		if (projectTargets == null) {
@@ -128,6 +134,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 		}
 	}
 
+	@Override
 	public void renameTarget(IMakeTarget target, String name) throws CoreException {
 		IMakeTarget makeTarget = target;
 
@@ -142,6 +149,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 		}
 	}
 
+	@Override
 	public IMakeTarget[] getTargets(IContainer container) throws CoreException {
 		ProjectTargets projectTargets = projectMap.get(container.getProject());
 		if (projectTargets == null) {
@@ -150,6 +158,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 		return projectTargets.get(container);
 	}
 
+	@Override
 	public IMakeTarget findTarget(IContainer container, String name) throws CoreException {
 		ProjectTargets projectTargets = projectMap.get(container.getProject());
 		if (projectTargets == null) {
@@ -158,10 +167,12 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 		return projectTargets.findTarget(container, name);
 	}
 
+	@Override
 	public IProject[] getTargetBuilderProjects() {
 		return fProjects.toArray(new IProject[fProjects.size()]);
 	}
 
+	@Override
 	public String[] getTargetBuilders(IProject project) {
 		if (fProjects.contains(project) || hasTargetBuilder(project)) {
 			try {
@@ -182,6 +193,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 		return new String[0];
 	}
 
+	@Override
 	public boolean hasTargetBuilder(IProject project) {
 		try {
 			if (project.isAccessible()) {
@@ -213,6 +225,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 	}
 
+	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		IResourceDelta delta = event.getDelta();
 		if (delta != null) {
@@ -228,6 +241,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 		/**
 		 * @see IResourceDeltaVisitor#visit(IResourceDelta)
 		 */
+		@Override
 		public boolean visit(IResourceDelta delta) {
 			if (delta == null) {
 				return false;
@@ -330,14 +344,17 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 		}
 	}
 
+	@Override
 	public void addListener(IMakeTargetListener listener) {
 		listeners.add(listener);
 	}
 
+	@Override
 	public void removeListener(IMakeTargetListener listener) {
 		listeners.remove(listeners);
 	}
 
+	@Override
 	public String getBuilderID(String targetBuilderID) {
 		return builderMap.get(targetBuilderID);
 	}

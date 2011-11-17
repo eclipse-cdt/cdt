@@ -51,10 +51,12 @@ public class BuildIOType implements IBuildIOType {
 		((BuildDescription)fStep.getBuildDescription()).typeCreated(this);
 	}
 
+	@Override
 	public IBuildResource[] getResources() {
 		return fResources.toArray(new BuildResource[fResources.size()]);
 	}
 
+	@Override
 	public IBuildStep getStep() {
 		return fStep;
 	}
@@ -66,14 +68,14 @@ public class BuildIOType implements IBuildIOType {
 			DbgUtil.trace("resource " + DbgUtil.resourceName(rc) + " added as "  	//$NON-NLS-1$	//$NON-NLS-2$
 					+ (fIsInput ? "input" : "output")	//$NON-NLS-1$	//$NON-NLS-2$
 					+ " to the action " + DbgUtil.stepName(fStep));	//$NON-NLS-1$
-		
+
 		((BuildDescription)fStep.getBuildDescription()).resourceAddedToType(this, rc);
 	}
-	
+
 	public void removeResource(BuildResource rc){
 		fResources.remove(rc);
 		rc.removeFromArg(this);
-		
+
 		if(DbgUtil.DEBUG)
 			DbgUtil.trace("resource " + DbgUtil.resourceName(rc) + " removed as "  	//$NON-NLS-1$	//$NON-NLS-2$
 					+ (fIsInput ? "input" : "output")	//$NON-NLS-1$	//$NON-NLS-2$
@@ -82,16 +84,17 @@ public class BuildIOType implements IBuildIOType {
 		((BuildDescription)fStep.getBuildDescription()).resourceRemovedFromType(this, rc);
 	}
 
+	@Override
 	public boolean isInput() {
 		return fIsInput;
 	}
-	
+
 	public boolean isPrimary(){
 		return fIsPrimary;
 	}
-	
+
 	public String getLinkId(){
-		if(!fIsInput && fStep.getTool() != null && /*(fLinkId == null || fLinkId.length() == 0) && */ 
+		if(!fIsInput && fStep.getTool() != null && /*(fLinkId == null || fLinkId.length() == 0) && */
 				fStep.getTool().getCustomBuildStep()){
 			IBuildResource rcs[] = getResources();
 			if(rcs.length != 0){
@@ -103,7 +106,7 @@ public class BuildIOType implements IBuildIOType {
 				} else {
 				}
 			}
-				
+
 		}
 		return fLinkId;
 	}
@@ -111,14 +114,14 @@ public class BuildIOType implements IBuildIOType {
 	public IBuildObject getIoType(){
 		return fIoType;
 	}
-	
+
 	BuildResource[] remove(){
 		BuildResource rcs[] = (BuildResource[])getResources();
-		
+
 		for(int i = 0; i < rcs.length; i++){
 			removeResource(rcs[i]);
 		}
-		
+
 		fStep = null;
 		return rcs;
 	}

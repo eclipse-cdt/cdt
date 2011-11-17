@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 
 public class EnvVarBuildPath implements
 		IEnvVarBuildPath {
-	
+
 	private int fType;
 	private String fVariableNames[];
 	private String fPathDelimiter;
@@ -32,41 +32,42 @@ public class EnvVarBuildPath implements
 
 	/**
 	 * Constructor to create an EnvVarBuildPath based on an element from the plugin
-	 * manifest. 
-	 * 
+	 * manifest.
+	 *
 	 * @param element The element containing the information about the tool.
 	 */
 	public EnvVarBuildPath(ITool tool, IManagedConfigElement element) {
 		loadFromManifest(element);
 	}
-	
+
 	/* (non-Javadoc)
-	 * Load the EnvVarBuildPath information from the XML element specified in the 
+	 * Load the EnvVarBuildPath information from the XML element specified in the
 	 * argument
-	 * @param element An XML element containing the tool information 
+	 * @param element An XML element containing the tool information
 	 */
 	protected void loadFromManifest(IManagedConfigElement element) {
-		
+
 		setType(convertPathTypeToInt(element.getAttribute(TYPE)));
-		
+
 		setVariableNames(SafeStringInterner.safeIntern(element.getAttribute(LIST)));
-		
+
 		setPathDelimiter(SafeStringInterner.safeIntern(element.getAttribute(PATH_DELIMITER)));
-		
-		// Store the configuration element IFF there is a build path resolver defined 
-		String buildPathResolver = element.getAttribute(BUILD_PATH_RESOLVER); 
+
+		// Store the configuration element IFF there is a build path resolver defined
+		String buildPathResolver = element.getAttribute(BUILD_PATH_RESOLVER);
 		if (buildPathResolver != null && element instanceof DefaultManagedConfigElement) {
-			fBuildPathResolverElement = ((DefaultManagedConfigElement)element).getConfigurationElement();			
+			fBuildPathResolverElement = ((DefaultManagedConfigElement)element).getConfigurationElement();
 		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IEnvVarBuildPath#getType()
 	 */
+	@Override
 	public int getType() {
 		return fType;
 	}
-	
+
 	public void setType(int type){
 		this.fType = type;
 	}
@@ -74,10 +75,11 @@ public class EnvVarBuildPath implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IEnvVarBuildPath#getVariableNames()
 	 */
+	@Override
 	public String[] getVariableNames() {
 		return fVariableNames;
 	}
-	
+
 	public void setVariableNames(String names[]){
 		fVariableNames = names;
 		fVariableNames = SafeStringInterner.safeIntern(fVariableNames);
@@ -86,7 +88,7 @@ public class EnvVarBuildPath implements
 	public void setVariableNames(String names){
 		setVariableNames(getNamesFromString(names));
 	}
-	
+
 	public String[] getNamesFromString(String names){
 		if(names == null)
 			return null;
@@ -96,6 +98,7 @@ public class EnvVarBuildPath implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IEnvVarBuildPath#getPathDelimiter()
 	 */
+	@Override
 	public String getPathDelimiter() {
 		return fPathDelimiter;
 	}
@@ -125,6 +128,7 @@ public class EnvVarBuildPath implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IEnvVarBuildPath#getBuildPathResolver()
 	 */
+	@Override
 	public IBuildPathResolver getBuildPathResolver() {
 		if(fBuildPathResolver == null && fBuildPathResolverElement != null){
 			try {

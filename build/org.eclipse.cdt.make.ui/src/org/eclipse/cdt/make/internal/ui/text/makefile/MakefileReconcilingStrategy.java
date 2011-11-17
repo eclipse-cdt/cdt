@@ -34,7 +34,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 public class MakefileReconcilingStrategy implements IReconcilingStrategy, IReconcilingStrategyExtension {
 
 
-	private ITextEditor fEditor;	
+	private ITextEditor fEditor;
 	private IWorkingCopyManager fManager;
 	private IDocumentProvider fDocumentProvider;
 	private MakefileContentOutlinePage fOutliner;
@@ -50,17 +50,19 @@ public class MakefileReconcilingStrategy implements IReconcilingStrategy, IRecon
 		}
 
 	}
-	
+
 	/**
 	 * @see IReconcilingStrategy#setDocument(IDocument)
 	 */
+	@Override
 	public void setDocument(IDocument document) {
-	}	
+	}
 
 
 	/**
 	 * @see IReconcilingStrategy#reconcile(IRegion)
 	 */
+	@Override
 	public void reconcile(IRegion region) {
 		reconcile();
 	}
@@ -68,10 +70,11 @@ public class MakefileReconcilingStrategy implements IReconcilingStrategy, IRecon
 	/**
 	 * @see IReconcilingStrategy#reconcile(DirtyRegion, IRegion)
 	 */
+	@Override
 	public void reconcile(DirtyRegion dirtyRegion, IRegion region) {
 		assert false : "This is a non-incremental reconciler"; //$NON-NLS-1$
 	}
-	
+
 	private void reconcile() {
 		try {
 			IMakefile makefile = fManager.getWorkingCopy(fEditor.getEditorInput());
@@ -82,7 +85,7 @@ public class MakefileReconcilingStrategy implements IReconcilingStrategy, IRecon
 					makefile.parse(makefile.getFileURI(), reader);
 				} catch (IOException e) {
 				}
-				
+
 				fOutliner.update();
 			}
 		} finally {
@@ -99,6 +102,7 @@ public class MakefileReconcilingStrategy implements IReconcilingStrategy, IRecon
 	/*
 	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension#setProgressMonitor(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void setProgressMonitor(IProgressMonitor monitor) {
 		// no use for a progress monitor at the moment
 	}
@@ -106,8 +110,9 @@ public class MakefileReconcilingStrategy implements IReconcilingStrategy, IRecon
 	/*
 	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension#initialReconcile()
 	 */
+	@Override
 	public void initialReconcile() {
 		// no need to reconcile initially
 //		reconcile();
-	}	
+	}
 }

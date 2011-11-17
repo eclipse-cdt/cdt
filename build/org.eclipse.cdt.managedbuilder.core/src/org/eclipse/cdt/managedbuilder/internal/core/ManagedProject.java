@@ -39,7 +39,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.osgi.framework.Version;
 
 public class ManagedProject extends BuildObject implements IManagedProject, IBuildPropertiesRestriction, IBuildPropertyChangeListener {
-	
+
 	//  Parent and children
 	private IProjectType projectType;
 	private String projectTypeId;
@@ -54,7 +54,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 //	private StorableMacros userDefinedMacros;
 	//holds user-defined environment
 //	private StorableEnvironment userDefinedEnvironment;
-	
+
 	private BuildObjectProperties buildProperties;
 
 	/*
@@ -63,23 +63,23 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 
 	/* (non-Javadoc)
 	 * Sets the Eclipse project that owns the Managed Project
-	 * 
+	 *
 	 * @param owner
 	 */
 	protected ManagedProject(IResource owner) {
 		this.owner = owner;
 	}
-	
+
 	/**
-	 * Create a project instance from the project-type specified in the argument, 
+	 * Create a project instance from the project-type specified in the argument,
 	 * that is owned by the specified Eclipse project.
-	 * 
+	 *
 	 * @param owner  the Eclipse project that owns the Managed Project
 	 */
 	public ManagedProject(IResource owner, IProjectType projectType) {
 		// Make the owner of the ProjectType the project resource
 		this(owner);
-		
+
 		// Copy the parent's identity
 		this.projectType = projectType;
 		int id = ManagedBuildManager.getRandomNumber();
@@ -87,7 +87,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 		setName(projectType.getName());
 
 		setManagedBuildRevision(projectType.getManagedBuildRevision());
-		
+
 		// Hook me up
 		IManagedBuildInfo buildInfo = ManagedBuildManager.getBuildInfo(owner);
 		buildInfo.setManagedProject(this);
@@ -97,7 +97,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 	public ManagedProject(ICProjectDescription des) {
 		// Make the owner of the ProjectType the project resource
 		this(des.getProject());
-		
+
 		// Copy the parent's identity
 //		this.projectType = projectType;
 		int id = ManagedBuildManager.getRandomNumber();
@@ -105,7 +105,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 		setName(des.getName());
 
 //		setManagedBuildRevision(projectType.getManagedBuildRevision());
-		
+
 		// Hook me up
 //		IManagedBuildInfo buildInfo = ManagedBuildManager.getBuildInfo(owner);
 //		buildInfo.setManagedProject(this);
@@ -114,23 +114,23 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 
 	/**
 	 * Create the project instance from project file.
-	 * 
+	 *
 	 * @param managedBuildRevision the fileVersion of Managed Build System
 	 */
 	public ManagedProject(ManagedBuildInfo buildInfo, ICStorageElement element, boolean loadConfigs, String managedBuildRevision) {
 		this(buildInfo.getOwner());
-		
+
 		setManagedBuildRevision(managedBuildRevision);
-		
+
 		// Initialize from the XML attributes
 		if (loadFromProject(element)) {
-			
+
 			// check for migration support.
 			boolean isSupportAvailable = projectType != null ? projectType.checkForMigrationSupport() : true;
 			if (isSupportAvailable == false) {
 				setValid(false);
 			}
-			
+
 			if(loadConfigs){
 				// Load children
 				StorableCdtVariables vars = null;
@@ -141,9 +141,9 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 					} else if (configElement.getName().equals("macros")) {	//$NON-NLS-1$
 						vars = new StorableCdtVariables(configElement, false);
 					}
-	
+
 				}
-				
+
 				if(vars != null){
 					for (Configuration cfg : getConfigurationCollection()) {
 						((ToolChain)cfg.getToolChain()).addProjectVariables(vars);
@@ -153,7 +153,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 		} else {
 			setValid(false);
 		}
-		
+
 		// hook me up
 		buildInfo.setManagedProject(this);
 	}
@@ -161,12 +161,12 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 	/*
 	 *  E L E M E N T   A T T R I B U T E   R E A D E R S   A N D   W R I T E R S
 	 */
-	
+
 	/* (non-Javadoc)
-	 * Initialize the project information from the XML element 
+	 * Initialize the project information from the XML element
 	 * specified in the argument
-	 * 
-	 * @param element An XML element containing the project information 
+	 *
+	 * @param element An XML element containing the project information
 	 */
 	protected boolean loadFromProject(ICStorageElement element) {
 		// note: id and name are unique, so don't intern them
@@ -177,7 +177,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 		if (element.getAttribute(IBuildObject.NAME) != null) {
 			setName(element.getAttribute(IBuildObject.NAME));
 		}
-		
+
 		// projectType
 		projectTypeId = element.getAttribute(PROJECTTYPE);
 		if (projectTypeId != null && projectTypeId.length() > 0) {
@@ -186,7 +186,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 				return false;
 			}
 		}
-		
+
 		String props = element.getAttribute(BUILD_PROPERTIES);
 		if(props != null && props.length() != 0)
 			buildProperties = new BuildObjectProperties(props, this, this);
@@ -195,7 +195,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 		if(artType != null){
 			if(buildProperties == null)
 				buildProperties = new BuildObjectProperties(this, this);
-			
+
 			try {
 				buildProperties.setProperty(ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_ID, artType, true);
 			} catch (CoreException e) {
@@ -208,7 +208,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 
 	public void serializeProjectInfo(ICStorageElement element) {
 		element.setAttribute(IBuildObject.ID, id);
-		
+
 		if (name != null) {
 			element.setAttribute(IBuildObject.NAME, name);
 		}
@@ -216,7 +216,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 		if (projectType != null) {
 			element.setAttribute(PROJECTTYPE, projectType.getId());
 		}
-		
+
 		// I am clean now
 		isDirty = false;
 	}
@@ -226,7 +226,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 	 */
 	public void serialize(ICStorageElement element, boolean saveChildren) {
 		serializeProjectInfo(element);
-		
+
 		if(saveChildren){
 			for (Configuration cfg : getConfigurationCollection()) {
 				ICStorageElement configElement = element.createChild(IConfiguration.CONFIGURATION_ELEMENT_NAME);
@@ -234,14 +234,14 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 			}
 		}
 		// Serialize my children
-		
+
 //		//serialize user-defined macros
 //		if(userDefinedMacros != null){
 //			Element macrosElement = doc.createElement(StorableMacros.MACROS_ELEMENT_NAME);
 //			element.appendChild(macrosElement);
 //			userDefinedMacros.serialize(doc,macrosElement);
 //		}
-//		
+//
 //		if(userDefinedEnvironment != null){
 //			EnvironmentVariableProvider.fUserSupplier.storeEnvironment(this,true);
 //		}
@@ -257,6 +257,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedProject#getOwner()
 	 */
+	@Override
 	public IResource getOwner() {
 		return owner;
 	}
@@ -264,6 +265,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedProject#updateOwner(org.eclipse.core.resources.IResource)
 	 */
+	@Override
 	public void updateOwner(IResource resource) {
 		if (!resource.equals(owner)) {
 			// Set the owner correctly
@@ -274,6 +276,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedProject#getProjectType()
 	 */
+	@Override
 	public IProjectType getProjectType() {
 		return projectType;
 	}
@@ -281,6 +284,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IManagedProject#createConfiguration(org.eclipse.cdt.core.build.managed.IConfiguration)
 	 */
+	@Override
 	public IConfiguration createConfiguration(IConfiguration parent, String id) {
 		Configuration config = new Configuration(this, (Configuration)parent, id, false, false, false);
 		ManagedBuildManager.performValueHandlerEvent(config, IManagedOptionValueHandler.EVENT_OPEN);
@@ -290,6 +294,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IManagedProject#createConfigurationClone(org.eclipse.cdt.core.build.managed.IConfiguration)
 	 */
+	@Override
 	public IConfiguration createConfigurationClone(IConfiguration parent, String id) {
 		Configuration config = new Configuration(this, (Configuration)parent, id, true, false, false);
 		// Inform all options in the configuration and all its resource configurations
@@ -300,25 +305,28 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IManagedProject#getConfiguration()
 	 */
+	@Override
 	public IConfiguration getConfiguration(String id) {
 		return configMap.get(id);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedProject#getConfigurations()
 	 */
+	@Override
 	public IConfiguration[] getConfigurations() {
 		synchronized (configMap) {
 			return configMap.values().toArray(new IConfiguration[configMap.size()]);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedProject#removeConfiguration(java.lang.String)
 	 */
+	@Override
 	public void removeConfiguration(String id) {
 		final String removeId = id;
-		
+
 		//handle the case of temporary configuration
 		if(!configMap.containsKey(id))
 			return;
@@ -350,8 +358,8 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 //			 				}
 //			 			}
 //			 			((IProject)proj).build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
-//					 	
-//			 			ManagedBuildManager.performValueHandlerEvent(config, 
+//
+//			 			ManagedBuildManager.performValueHandlerEvent(config,
 //			 					IManagedOptionValueHandler.EVENT_CLOSE);
 //						PropertyManager.getInstance().clearProperties(config);
 ////					 	getConfigurationList().remove(config);
@@ -359,7 +367,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 //
 //						if (info != null) {
 //							if (!isCurrent) {
-//			 					info.setDefaultConfiguration(currentConfig);								
+//			 					info.setDefaultConfiguration(currentConfig);
 //							} else {
 //								// If the current default config is the one being removed, reset the default config
 //								String[] configs = info.getConfigurationNames();
@@ -382,25 +390,25 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 
 	/* (non-Javadoc)
 	 * Adds the Configuration to the Configuration list and map
-	 * 
+	 *
 	 * @param Tool
 	 */
 	public void addConfiguration(Configuration configuration) {
 		if(!configuration.isTemporary())
 			configMap.put(configuration.getId(), configuration);
 	}
-	
+
 	/** (non-Javadoc)
 	 * Safe accessor for the list of configurations.
-	 * 
+	 *
 	 * @return List containing the configurations
 	 */
 	private Collection<Configuration> getConfigurationCollection() {
 		synchronized (configMap) {
-			return new ArrayList<Configuration>(configMap.values());			
+			return new ArrayList<Configuration>(configMap.values());
 		}
 	}
-	
+
 	/*
 	 *  M O D E L   A T T R I B U T E   A C C E S S O R S
 	 */
@@ -412,10 +420,11 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedProject#(getDefaultArtifactName)
 	 */
+	@Override
 	public String getDefaultArtifactName(){
 		return "${ProjName}"; //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 *  Resolve the element IDs to interface references
 	 */
@@ -429,7 +438,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 					return false;
 				}
 			}
-			
+
 			// call resolve references on any children
 			for (Configuration cfg : getConfigurationCollection())
 				cfg.resolveReferences();
@@ -440,10 +449,11 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedProject#isDirty()
 	 */
+	@Override
 	public boolean isDirty() {
 		// If I need saving, just say yes
 		if (isDirty) return true;
-		
+
 		//check whether the project - specific macros are dirty
 //		if(userDefinedMacros != null && userDefinedMacros.isDirty())
 //			return true;
@@ -451,19 +461,20 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 		//check whether the project - specific environment is dirty
 //		if(userDefinedEnvironment != null && userDefinedEnvironment.isDirty())
 //			return true;
-		
-		
+
+
 		// Otherwise see if any configurations need saving
 		for (IConfiguration cfg : getConfigurationCollection())
-			if (cfg.isDirty()) 
+			if (cfg.isDirty())
 				return true;
-		
+
 		return isDirty;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedProject#setDirty(boolean)
 	 */
+	@Override
 	public void setDirty(boolean isDirty) {
 		this.isDirty = isDirty;
 		// Propagate "false" to the children
@@ -475,6 +486,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedProject#isValid()
 	 */
+	@Override
 	public boolean isValid() {
 		//  TODO:  In the future, children could also have a "valid" state that should be checked
 		return isValid;
@@ -483,6 +495,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedProject#setValid(boolean)
 	 */
+	@Override
 	public void setValid(boolean isValid) {
 		//  TODO:  In the future, children could also have a "valid" state...
 		this.isValid = isValid;
@@ -500,7 +513,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 			}
 			return version;
 	}
-	
+
 	@Override
 	public void setVersion(Version version) {
 		// Do nothing
@@ -543,13 +556,14 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 			} else {
 				projectTypeId = this.projectType.getId();
 			}
-		}				
+		}
 	}
-	
+
 	public void applyConfiguration(Configuration cfg){
 		cfg.applyToManagedProject(this);
 	}
-	
+
+	@Override
 	public IBuildObjectProperties getBuildProperties() {
 		if(buildProperties == null){
 			BuildObjectProperties parentProps = findBuildProperties();
@@ -560,7 +574,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 		}
 		return buildProperties;
 	}
-	
+
 	private BuildObjectProperties findBuildProperties(){
 		if(buildProperties == null){
 			if(projectType != null){
@@ -571,6 +585,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 		return buildProperties;
 	}
 
+	@Override
 	public void propertiesChanged() {
 		IConfiguration cfgs[] = getConfigurations();
 		for (IConfiguration cfg : cfgs) {
@@ -587,6 +602,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 		return supportsValue(type.getId(), value.getId());
 	}
 
+	@Override
 	public boolean supportsType(String typeId) {
 		IConfiguration cfgs[] = getConfigurations();
 		for (IConfiguration cfg : cfgs) {
@@ -596,6 +612,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 		return false;
 	}
 
+	@Override
 	public boolean supportsValue(String typeId, String valueId) {
 		IConfiguration cfgs[] = getConfigurations();
 		for (IConfiguration cfg : cfgs) {
@@ -604,7 +621,8 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 		}
 		return false;
 	}
-	
+
+	@Override
 	public String[] getRequiredTypeIds() {
 		List<String> result = new ArrayList<String>();
 		IConfiguration cfgs[] = getConfigurations();
@@ -614,6 +632,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 		return result.toArray(new String[result.size()]);
 	}
 
+	@Override
 	public String[] getSupportedTypeIds() {
 		List<String> result = new ArrayList<String>();
 		IConfiguration cfgs[] = getConfigurations();
@@ -623,6 +642,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 		return result.toArray(new String[result.size()]);
 	}
 
+	@Override
 	public String[] getSupportedValueIds(String typeId) {
 		List<String> result = new ArrayList<String>();
 		IConfiguration cfgs[] = getConfigurations();
@@ -632,6 +652,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 		return result.toArray(new String[result.size()]);
 	}
 
+	@Override
 	public boolean requiresType(String typeId) {
 		IConfiguration cfgs[] = getConfigurations();
 		for (IConfiguration cfg : cfgs) {

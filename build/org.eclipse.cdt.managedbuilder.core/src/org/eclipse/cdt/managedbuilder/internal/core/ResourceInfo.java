@@ -67,7 +67,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 			isDirty = true;
 		}
 	}
-	
+
 	public boolean isRoot(){
 		return path.segmentCount() == 0;
 	}
@@ -87,7 +87,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		setId(id);
 		setName(name);
 		path = normalizePath(path);
-		
+
 		this.path = path;
 		needsRebuild = true;
 		isDirty = true;
@@ -99,7 +99,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		setId(id);
 		setName(name);
 		path = normalizePath(path);
-		
+
 		this.path = path;
 		needsRebuild = true;
 		isDirty = true;
@@ -110,15 +110,15 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		if(hasBody)
 			loadFromProject(element);
 	}
-	
+
 	private void loadFromManifest(IManagedConfigElement element) {
-	
+
 		// id
 		setId(SafeStringInterner.safeIntern(element.getAttribute(ID)));
-		
+
 		// Get the name
 		setName(SafeStringInterner.safeIntern(element.getAttribute(NAME)));
-		
+
 		// resourcePath
 		String tmp = element.getAttribute(RESOURCE_PATH);
 		if(tmp != null){
@@ -140,7 +140,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 	}
 
 	private void loadFromProject(ICStorageElement element) {
-		
+
 		// id (unique, do not intern)
 		setId(element.getAttribute(ID));
 
@@ -148,7 +148,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		if (element.getAttribute(NAME) != null) {
 			setName(SafeStringInterner.safeIntern(element.getAttribute(NAME)));
 		}
-		
+
 		// resourcePath
 		if (element.getAttribute(RESOURCE_PATH) != null) {
 			String tmp = element.getAttribute(RESOURCE_PATH);
@@ -174,46 +174,55 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 	}
 
 
+	@Override
 	public IConfiguration getParent() {
 		return config;
 	}
 
+	@Override
 	public IPath getPath() {
 		return normalizePath(path);
 	}
 
+	@Override
 	public boolean isDirty() {
 		return isDirty;
 	}
 
+	@Override
 	public boolean isExcluded() {
 		return config.isExcluded(getPath());
 	}
 
+	@Override
 	public boolean needsRebuild() {
 		return needsRebuild;
 	}
 
+	@Override
 	public void setDirty(boolean dirty) {
 		isDirty = dirty;
 	}
 
+	@Override
 	public void setExclude(boolean excluded) {
 		if(isExcluded() == excluded)
 			return;
-		
+
 		config.setExcluded(getPath(), isFolderInfo(), excluded);
-		
+
 		setDirty(true);
 		setRebuildState(true);
 	}
-	
+
+	@Override
 	public boolean canExclude(boolean exclude) {
 		return config.canExclude(getPath(), isFolderInfo(), exclude);
 	}
 
 	public abstract boolean isFolderInfo();
-	
+
+	@Override
 	public void setPath(IPath p) {
 		p = normalizePath(p);
 		if(path == null)
@@ -227,43 +236,46 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		}
 
 	}
-	
+
 	private ResourceInfoContainer getRcInfo(){
 		if(rcInfo == null)
 			rcInfo = (config).getRcInfoContainer(this);
 		return rcInfo;
 	}
 
+	@Override
 	public void setRebuildState(boolean rebuild) {
 		needsRebuild = rebuild;
 	}
-	
+
 	void serialize(ICStorageElement element){
 		element.setAttribute(IBuildObject.ID, id);
-		
+
 		if (name != null) {
 			element.setAttribute(IBuildObject.NAME, name);
 		}
-		
+
 		if (path != null) {
 			element.setAttribute(IResourceInfo.RESOURCE_PATH, path.toString());
 		}
 	}
 
 	void resolveReferences() {}
-	
+
+	@Override
 	public CResourceData getResourceData(){
 		return resourceData;
 	}
-	
+
 	protected void setResourceData(CResourceData data){
 		resourceData = data;
 	}
-	
+
 	void removed(){
 		config = null;
 	}
-	
+
+	@Override
 	public boolean isValid(){
 		return config != null;
 	}
@@ -283,7 +295,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 				if (t.getDefaultInputExtension() != tool.getDefaultInputExtension())
 					continue;
 				op = t.getOptionBySuperClassId(sup);
-				if (op == null) 
+				if (op == null)
 					continue;
 				try {
 					if (value instanceof Boolean) {
@@ -296,12 +308,12 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 							ri.setOption(t, op, (String)value);
 					} else if (value instanceof String[]) {
 						String[] s = (String[])oldValue;
-						if (Arrays.equals(s, op.getStringListValue()) && 
+						if (Arrays.equals(s, op.getStringListValue()) &&
 								! Arrays.equals(s, (String[])value))
 							ri.setOption(t, op, (String[])value);
 					} else if (value instanceof OptionStringValue[]) {
-						OptionStringValue[] s = (OptionStringValue[])oldValue; 
-						if (Arrays.equals(s, op.getBasicStringListValueElements()) && 
+						OptionStringValue[] s = (OptionStringValue[])oldValue;
+						if (Arrays.equals(s, op.getBasicStringListValueElements()) &&
 								! Arrays.equals(s, (OptionStringValue[])value))
 							ri.setOption(t, op, (OptionStringValue[])value);
 					}
@@ -309,10 +321,11 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 				} catch (BuildException e) {}
 			}
 		}
-		
+
 	}
-	
-	
+
+
+	@Override
 	public IOption setOption(IHoldsOptions parent, IOption option, boolean value) throws BuildException {
 		// Is there a change?
 		IOption retOpt = option;
@@ -321,17 +334,18 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 			retOpt = parent.getOptionToSet(option, false);
 			retOpt.setValue(value);
 			propagate(parent, option,
-					(oldVal ? Boolean.TRUE : Boolean.FALSE), 
+					(oldVal ? Boolean.TRUE : Boolean.FALSE),
 					(value  ? Boolean.TRUE : Boolean.FALSE));
 			NotificationManager.getInstance().optionChanged(this, parent, option, new Boolean(oldVal));
 		}
 		return retOpt;
 	}
 
+	@Override
 	public IOption setOption(IHoldsOptions parent, IOption option, String value) throws BuildException {
 		IOption retOpt = option;
 		String oldValue;
-		oldValue = option.getStringValue(); 
+		oldValue = option.getStringValue();
 		if (oldValue != null && !oldValue.equals(value)) {
 			retOpt = parent.getOptionToSet(option, false);
 			retOpt.setValue(value);
@@ -341,6 +355,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		return retOpt;
 	}
 
+	@Override
 	public IOption setOption(IHoldsOptions parent, IOption option, String[] value) throws BuildException {
 		IOption retOpt = option;
 		// Is there a change?
@@ -358,10 +373,11 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 			retOpt.setValue(value);
 			propagate(parent, option, oldValue, value);
 			NotificationManager.getInstance().optionChanged(this, parent, option, oldValue);
-		} 
+		}
 		return retOpt;
 	}
-	
+
+	@Override
 	public IOption setOption(IHoldsOptions parent, IOption option, OptionStringValue[] value) throws BuildException {
 		IOption retOpt = option;
 		// Is there a change?
@@ -379,48 +395,49 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 			((Option)retOpt).setValue(value);
 			propagate(parent, option, oldValue, value);
 			NotificationManager.getInstance().optionChanged(this, parent, option, oldValue);
-		} 
+		}
 		return retOpt;
 	}
 
-	
+
 	public void propertiesChanged(){
 		if(isExtensionElement())
 			return;
-		
+
 		ITool tools[] = getTools();
 		for (ITool tool : tools) {
 			((Tool)tool).propertiesChanged();
 		}
 	}
-	
+
+	@Override
 	public abstract boolean isExtensionElement();
-	
+
 	public abstract Set<String> contributeErrorParsers(Set<String> set);
-	
+
 	protected Set<String> contributeErrorParsers(ITool[] tools, Set<String> set){
 		for (ITool tool : tools) {
 			set = ((Tool)tool).contributeErrorParsers(set);
 		}
 		return set;
 	}
-	
+
 	public abstract void resetErrorParsers();
-	
+
 	protected void resetErrorParsers(ITool tools[]){
 		for (ITool tool : tools) {
 			((Tool)tool).resetErrorParsers();
 		}
 	}
-	
+
 	abstract void removeErrorParsers(Set<String> set);
-	
+
 	protected void removeErrorParsers(ITool tools[], Set<String> set){
 		for (ITool tool : tools) {
 			((Tool)tool).removeErrorParsers(set);
 		}
 	}
-	
+
 	public ITool getToolById(String id) {
 		ITool[] tools = getTools();
 		for (ITool tool : tools) {
@@ -429,7 +446,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		}
 		return null;
 	}
-	
+
 	public static IPath normalizePath(IPath path){
 		return path.makeRelative();
 	}
@@ -437,7 +454,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 	public ResourceInfo getParentResourceInfo(){
 		if(isRoot())
 			return null;
-		
+
 		IPath path = getPath();
 		path = path.removeLastSegments(1);
 		return (ResourceInfo)getParent().getResourceInfo(path, false);
@@ -455,7 +472,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 	abstract void resolveProjectReferences(boolean onLoad);
 
 	abstract public boolean hasCustomSettings();
-	
+
 	public ToolListModificationInfo getToolListModificationInfo(ITool[] tools) {
 		ITool[] curTools = getTools();
 		return ToolChainModificationHelper.getModificationInfo(this, curTools, tools);
@@ -473,37 +490,37 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		}
 		return pairs;
 	}
-	
+
 	abstract void applyToolsInternal(ITool[] resultingTools, ToolListModificationInfo info);
 
 	void doApply(ToolListModificationInfo info){
 		ITool[] resulting = info.getResultingTools();
-		
+
 		ITool[] removed = info.getRemovedTools();
-		
+
 		BuildSettingsUtil.disconnectDepentents(getParent(), removed);
-		
+
 		applyToolsInternal(resulting, info);
 
 		performPostModificationAdjustments(info);
 	}
-	
+
 	void performPostModificationAdjustments(ToolListModificationInfo info){
 		propertiesChanged();
 	}
-	
+
 	public IResourceInfo[] getDirectChildResourceInfos(){
 		ResourceInfoContainer cr = getRcInfo();
 		return cr.getDirectChildResourceInfos();
 	}
-	
+
 	public IResourceInfo[] getChildResourceInfos(){
 		ResourceInfoContainer cr = getRcInfo();
 		return cr.getResourceInfos();
 	}
-	
+
 	public List<IResourceInfo> getChildResourceInfoList(boolean includeCurrent){
 		return getRcInfo().getRcInfoList(ICSettingBase.SETTING_FILE | ICSettingBase.SETTING_FOLDER, includeCurrent);
 	}
-	
+
 }

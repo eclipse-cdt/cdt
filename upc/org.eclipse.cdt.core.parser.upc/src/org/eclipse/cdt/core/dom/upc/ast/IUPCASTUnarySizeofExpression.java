@@ -15,16 +15,17 @@ import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 public interface IUPCASTUnarySizeofExpression extends IASTUnaryExpression {
 
 	public final int upc_localsizeof = 1;
-	
+
 	public final int upc_blocksizeof = 2;
-	
+
 	public final int upc_elemsizeof  = 3;
-	
-	
+
+
 	public int getUPCSizeofOperator();
 
 	public void setUPCSizeofOperator(int upcSizeofOperator);
-	
-	
+
+
+	@Override
 	public IUPCASTUnarySizeofExpression copy();
 }

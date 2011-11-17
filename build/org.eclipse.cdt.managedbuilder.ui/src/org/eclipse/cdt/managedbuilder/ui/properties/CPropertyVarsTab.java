@@ -78,7 +78,7 @@ import org.eclipse.swt.widgets.TableColumn;
 
 /**
  * displays the build macros for the given context
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -87,20 +87,20 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 
 	private static final ICdtVariableManager vmgr = CCorePlugin.getDefault().getCdtVariableManager();
 	private static final IUserVarSupplier fUserSup = CCorePlugin.getUserVarSupplier();
-	private static final EnvCmp comparator = new EnvCmp(); 
+	private static final EnvCmp comparator = new EnvCmp();
 
 	private ICConfigurationDescription cfgd = null;
 	private IStorableCdtVariables prefvars = null;
-	
+
 	//currently the "CWD" and "PWD" macros are not displayed in UI
 	private static final String fHiddenMacros[] = new String[]{
 			"CWD",   //$NON-NLS-1$
 			"PWD"	  //$NON-NLS-1$
 		};
-	
+
 	private boolean fShowSysMacros = false;
 	private Set<String> fIncorrectlyDefinedMacrosNames = new HashSet<String>();
-	
+
 	private TableViewer tv;
 	private Label fStatusLabel;
 	private StringListModeControl stringListModeControl;
@@ -118,28 +118,35 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 	};
 
 	private static final ColumnLayoutData[] fTableColumnLayouts = {new ColumnPixelData(100), new ColumnPixelData(100), new ColumnPixelData(250)};
-	
+
 	private class MacroContentProvider implements IStructuredContentProvider{
+		@Override
 		public Object[] getElements(Object inputElement) { return (Object[])inputElement; }
+		@Override
 		public void dispose() {	}
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 	}
-	
+
 	private class MacroLabelProvider extends LabelProvider implements ITableLabelProvider, IFontProvider , ITableFontProvider, IColorProvider{
 		@Override
 		public Image getImage(Object element) { return null; }
 		@Override
 		public String getText(Object element) { return getColumnText(element, 0); }
+		@Override
 		public Font getFont(Object element) { return getFont(element, 0); }
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) { return null; }
 
+		@Override
 		public Color getBackground(Object element){
 			ICdtVariable var = (ICdtVariable)element;
 			if(isUserVar(var))
 				return BACKGROUND_FOR_USER_VAR;
-			return null; 
+			return null;
 		}
-		
+
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			ICdtVariable var = (ICdtVariable)element;
 			switch(columnIndex){
@@ -167,11 +174,12 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 					return "? " + var.getValueType();   //$NON-NLS-1$
 				}
 			case 2:
-				return getString(var);  
+				return getString(var);
 			}
 			return EMPTY_STR;
 		}
-		
+
+		@Override
 		public Font getFont(Object element, int columnIndex) {
 			ICdtVariable var = (ICdtVariable)element;
 			if(columnIndex == 0 && isUserVar(var))
@@ -179,6 +187,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 			return null;
 		}
 
+		@Override
 		public Color getForeground(Object element){
 			if(fIncorrectlyDefinedMacrosNames.contains(((ICdtVariable)element).getName()))
 				return JFaceResources.getColorRegistry().get(JFacePreferences.ERROR_COLOR);
@@ -187,12 +196,12 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 	}
 
 	/*
-	 * called when the user macro selection was changed 
+	 * called when the user macro selection was changed
 	 */
 	private void handleSelectionChanged(SelectionChangedEvent event){
 		updateButtons();
 	}
-	
+
 	@Override
 	protected void updateButtons() {
 		Object[] obs = ((IStructuredSelection)tv.getSelection()).toArray();
@@ -201,7 +210,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 		if (obs != null && obs.length > 0) {
 			canEdit = (obs.length == 1);
 			for (int i=0; i<obs.length; i++) {
-				if (obs[i] instanceof ICdtVariable && isUserVar((ICdtVariable)obs[i])) { 
+				if (obs[i] instanceof ICdtVariable && isUserVar((ICdtVariable)obs[i])) {
 					canDel = true;
 					break;
 				}
@@ -210,7 +219,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 		buttonSetEnabled(1, canEdit);
 		buttonSetEnabled(2, canDel);
 	}
-	
+
 	/*
 	 * called when a custom button was pressed
 	 */
@@ -229,9 +238,9 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 		}
 		tv.getTable().setFocus();
 	}
-	
+
 	private void replaceMacros() {
-		if (!page.isMultiCfg() || 
+		if (!page.isMultiCfg() ||
 				cfgd == null ||
 				CDTPrefUtil.getMultiCfgStringListWriteMode() != CDTPrefUtil.WMODE_REPLACE)
 			return;
@@ -251,16 +260,16 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 		if (cfgd instanceof ICMultiItemsHolder)
 			return (ICConfigurationDescription[])
 				((ICMultiItemsHolder)cfgd).getItems();
-		else 
+		else
 			return new ICConfigurationDescription[] {cfgd};
 	}
-	
+
 	private void addOrEdit(ICdtVariable macro, boolean forAll) {
-		if( ! canCreate(macro)) 
+		if( ! canCreate(macro))
 			return;
 		if (cfgd != null) {
 			if (forAll) {
-				for (ICConfigurationDescription c : page.getCfgsEditable()) 
+				for (ICConfigurationDescription c : page.getCfgsEditable())
 					fUserSup.createMacro(macro, c);
 			} else {
 				if (page.isMultiCfg() && cfgd instanceof ICMultiItemsHolder) {
@@ -275,7 +284,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 			prefvars.createMacro(macro);
 		updateData();
 	}
-	
+
 	private void handleAddButton() {
 		NewVarDialog dlg = new NewVarDialog(usercomp.getShell(), null, cfgd, getVariables());
 		if(dlg.open() == Dialog.OK)
@@ -304,7 +313,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 								fUserSup.deleteMacro(macros[i].getName(), cfs[k]);
 							replaceMacros();
 						}
-						else		
+						else
 							fUserSup.deleteMacro(macros[i].getName(), cfgd);
 					}
 					else if (chkVars())
@@ -314,7 +323,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 			}
 		}
 	}
-	
+
 	/*
 	 * returnes the selected user-defined macros
 	 */
@@ -324,7 +333,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 		List<ICdtVariable> list = ((IStructuredSelection)tv.getSelection()).toList();
 		return list.toArray(new ICdtVariable[list.size()]);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
 	 */
@@ -346,7 +355,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 			updateData();
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -356,11 +365,11 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 		initButtons(new String[] {ADD_STR, EDIT_STR, DEL_STR});
 		usercomp.setLayout(new GridLayout(2, true));
 		createTableControl();
-		
-		// Create a "show parent levels" button 
+
+		// Create a "show parent levels" button
 		final Button b = new Button(usercomp, SWT.CHECK);
 		b.setFont(usercomp.getFont());
-		b.setText(Messages.CPropertyVarsTab_0); 
+		b.setText(Messages.CPropertyVarsTab_0);
 		b.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		b.setSelection(fShowSysMacros);
 		b.addSelectionListener(new SelectionAdapter() {
@@ -370,26 +379,27 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 				updateData(getResDesc());
 			}
 		});
-		
+
 		stringListModeControl = new StringListModeControl(page, usercomp, 1);
 		stringListModeControl.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				updateData();
 			}
 		});
-		
+
 		fStatusLabel = new Label(usercomp, SWT.LEFT);
 		fStatusLabel.setFont(usercomp.getFont());
 		fStatusLabel.setText(EMPTY_STR);
 		fStatusLabel.setLayoutData(new GridData(GridData.BEGINNING));
 		fStatusLabel.setForeground(JFaceResources.getColorRegistry().get(JFacePreferences.ERROR_COLOR));
 	}
-	
+
 	private void createTableControl(){
 		TableViewer tableViewer;
 		tableViewer = new TableViewer(usercomp, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI
 				| SWT.FULL_SELECTION);
-		
+
 		Table table = tableViewer.getTable();
 		TableLayout tableLayout = new TableLayout();
 		for (int i = 0; i < fTableColumnNames.length; i++) {
@@ -405,33 +415,37 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 		tableViewer.setContentProvider(new MacroContentProvider());
 		tableViewer.setLabelProvider(new MacroLabelProvider());
 		tableViewer.setSorter(new ViewerSorter());
-		
+
 		tableViewer.setColumnProperties(fEditableTableColumnProps);
 		tv = tableViewer;
 		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				handleSelectionChanged(event);
 			}
 		});
 		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
-	
+
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				if (!tv.getSelection().isEmpty()) {	buttonPressed(1); }
 			}
 		});
-	
+
 		table.addKeyListener(new KeyListener(){
+			@Override
 			public void keyPressed(KeyEvent e){
 				if(e.keyCode == SWT.DEL) buttonPressed(2);
 			}
 
+			@Override
 			public void keyReleased(KeyEvent e){}
 		});
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 2;
 		table.setLayoutData(gd);
 	}
-	
+
 
 	/*
 	 * answers whether the macro of a given name can be sreated
@@ -447,9 +461,9 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 					return false;
 			}
 		}
-		return true; 
+		return true;
 	}
-		
+
 	@Override
 	public void updateData(ICResourceDescription _cfgd) {
 		if (_cfgd == null) {
@@ -461,13 +475,13 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 		}
 		updateData();
 	}
-	
+
 	private boolean chkVars() {
 		if (prefvars == null)
 			prefvars = fUserSup.getWorkspaceVariablesCopy();
 		return (prefvars != null);
 	}
-	
+
 	private void checkVariableIntegrity() {
 		try{
 			if (page.isMultiCfg() && cfgd instanceof ICMultiItemsHolder) {
@@ -496,17 +510,17 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 		} else
 			return vmgr.getVariables(cfgd);
 	}
-	
+
 	private void updateData() {
 		if(tv == null) return;
-			
+
 		checkVariableIntegrity();
 		// get variables
 		ICdtVariable[] _vars = getVariables();
 		if (_vars == null) return;
 
 		stringListModeControl.updateStringListModeControl();
-		
+
 		if (cfgd == null) {
 			chkVars();
 			if (fShowSysMacros) {
@@ -523,7 +537,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 				}
 				// add system vars not rewritten by user's
 				for (int j=0; j<_vars.length; j++) {
-					if (_vars[j] != null && !vmgr.isUserVariable(_vars[j], null)) 
+					if (_vars[j] != null && !vmgr.isUserVariable(_vars[j], null))
 						lst.add(_vars[j]);
 				}
 				_vars = lst.toArray(new ICdtVariable[lst.size()]);
@@ -531,17 +545,17 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 				_vars = prefvars.getMacros();
 			}
 		}
-		
+
 		ArrayList<ICdtVariable> list = new ArrayList<ICdtVariable>(_vars.length);
 		for(int i = 0; i < _vars.length; i++){
-			if(_vars[i] != null && (fShowSysMacros || isUserVar(_vars[i]))) 
+			if(_vars[i] != null && (fShowSysMacros || isUserVar(_vars[i])))
 				list.add(_vars[i]);
 		}
 		Collections.sort(list, CDTListComparator.getInstance());
 		tv.setInput(list.toArray(new ICdtVariable[list.size()]));
 		updateButtons();
 	}
-	
+
 	private void updateState(CdtVariableException e){
 		fIncorrectlyDefinedMacrosNames.clear();
 		if(e != null){
@@ -557,7 +571,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 		else
 			fStatusLabel.setVisible(false);
 	}
-	
+
 	/**
 	 * Checks whether variable is user's.
 	 * @param v - variable to check.
@@ -572,15 +586,15 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 				if (vmgr.isUserVariable(v, cfs[i]))
 					return true;
 			return false;
-		} else 
-			return vmgr.isUserVariable(v, cfgd); 
+		} else
+			return vmgr.isUserVariable(v, cfgd);
 	}
-	
+
 	private String getString(ICdtVariable v) {
-		if (fUserSup.isDynamic(v)) 
+		if (fUserSup.isDynamic(v))
 			return Messages.MacrosBlock_label_value_eclipse_dynamic;
-		String value = EMPTY_STR; 
-		try {			
+		String value = EMPTY_STR;
+		try {
 			if (CdtVariableResolver.isStringListVariable(v.getValueType()))
 				value = vmgr.convertStringListToString(v.getStringListValue(), VALUE_DELIMITER);
 			else
@@ -588,12 +602,12 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 		} catch (CdtVariableException e1) {}
 		return value;
 	}
-	
+
 	@Override
 	protected void performApply(ICResourceDescription src, ICResourceDescription dst) {
 		if (cfgd != null) {// only for project, not for prefs
 			if (page.isMultiCfg()) {
-				if (src instanceof ICMultiItemsHolder && 
+				if (src instanceof ICMultiItemsHolder &&
 					dst instanceof ICMultiItemsHolder) {
 					ICMultiItemsHolder s = (ICMultiItemsHolder)src;
 					ICMultiItemsHolder d = (ICMultiItemsHolder)dst;
@@ -615,8 +629,8 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 	}
 
 	/**
-	 * Unlike other pages, workspace variables 
-	 * should be stored explicitly on "OK".  
+	 * Unlike other pages, workspace variables
+	 * should be stored explicitly on "OK".
 	 */
 	@Override
 	protected void performOK() {
@@ -628,7 +642,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 		prefvars = null;
 		super.performOK();
 	}
-	
+
 	@Override
 	protected void performCancel() {
 		prefvars = null;
@@ -642,7 +656,8 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 	}
 
 	private static class EnvCmp implements Comparator<Object> {
-		
+
+		@Override
 		public int compare(Object a0, Object a1) {
 			if (a0 == null || a1 == null)
 				return 0;
@@ -657,7 +672,7 @@ public class CPropertyVarsTab extends AbstractCPropertyTab {
 				if (s1 == null)
 					s1 = AbstractPage.EMPTY_STR;
 				return(s0.compareTo(s1));
-			} else 
+			} else
 				return 0;
 		}
 	}

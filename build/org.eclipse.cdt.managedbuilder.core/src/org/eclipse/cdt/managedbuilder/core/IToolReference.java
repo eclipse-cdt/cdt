@@ -16,22 +16,22 @@ import org.eclipse.cdt.managedbuilder.internal.core.OptionReference;
 
 /**
  * @deprecated This class was deprecated in 2.1
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 @Deprecated
 public interface IToolReference extends ITool {
-	
+
 	/**
-	 * Answers a reference to the option. If the reference does not exist, 
-	 * a new reference is created. 
+	 * Answers a reference to the option. If the reference does not exist,
+	 * a new reference is created.
 	 */
 	public OptionReference createOptionReference(IOption option);
-	
+
 	/**
 	 * Answers the list of option references contained in the receiver.
-	 * 
+	 *
 	 * @return List
 	 */
 	public List<OptionReference> getOptionReferenceList();
@@ -43,30 +43,33 @@ public interface IToolReference extends ITool {
 
 	/**
 	 * Answers <code>true</code> if the receiver ahs been modified in any way.
-	 * 
+	 *
 	 * @return boolean
 	 */
+	@Override
 	public boolean isDirty();
-	
+
 	/**
-	 * Answers <code>true</code> if the reference is a reference to the 
+	 * Answers <code>true</code> if the reference is a reference to the
 	 * tool specified in the argument.
-	 * 
+	 *
 	 * @param tool the tool that should be tested
 	 * @return boolean
 	 */
 	public boolean references(ITool tool);
-	
+
 	/**
 	 * @param isDirty The value to set the dirty flag to in the receiver
 	 */
+	@Override
 	public void setDirty(boolean isDirty);
 
 	/**
 	 * Set the tool command in the receiver to be the argument.
-	 * 
+	 *
 	 * @return <code>true</code> if the command is changed, else <code>false</code>
 	 */
+	@Override
 	public boolean setToolCommand(String cmd);
 
 	/*
@@ -74,19 +77,19 @@ public interface IToolReference extends ITool {
 	 * to retrieve the actual value of attributes.  These routines do not go to the
 	 * referenced Tool for a value if the ToolReference does not have a value.
 	 */
-	
+
 	/**
 	 * Answers all of the output extensions that the receiver can build.
-	 * 
+	 *
 	 * @return String
 	 */
 	public String getRawOutputExtensions();
-	
+
 	/**
-	 * Answers the argument that must be passed to a specific tool in order to 
-	 * control the name of the output artifact. For example, the GCC compile and 
-	 * linker use '-o', while the archiver does not. 
-	 * 
+	 * Answers the argument that must be passed to a specific tool in order to
+	 * control the name of the output artifact. For example, the GCC compile and
+	 * linker use '-o', while the archiver does not.
+	 *
 	 * @return String
 	 */
 	public String getRawOutputFlag();
@@ -97,10 +100,10 @@ public interface IToolReference extends ITool {
 	 * @return String
 	 */
 	public String getRawOutputPrefix();
-	
+
 	/**
 	 * Answers the command-line invocation defined for the receiver.
-	 * 
+	 *
 	 * @return String
 	 */
 	public String getRawToolCommand();

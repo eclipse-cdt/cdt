@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.Platform;
 
 /**
  * Utility class for build and job related functionality
- * 
+ *
  * @author vhirsl
  */
 public class CfgSCJobsUtil {
@@ -48,7 +48,7 @@ public class CfgSCJobsUtil {
         public void set(boolean rc) {
             this.rc = rc;
         }
-        
+
         @Override
         public String toString() {
             return rc ? "true" : "false"; //$NON-NLS-1$ //$NON-NLS-2$
@@ -89,16 +89,18 @@ public class CfgSCJobsUtil {
                 if (esiProvider != null) {
                     ISafeRunnable runnable = new ISafeRunnable() {
 
-                        public void run() {
+                        @Override
+						public void run() {
                             esiProvider.invokeProvider(monitor, project, context.toInfoContext(), providerId, buildInfo, collector, env);
                             rc.set(true);
                         }
-            
-                        public void handleException(Throwable exception) {
+
+                        @Override
+						public void handleException(Throwable exception) {
                             rc.set(false);
                             ManagedBuilderCorePlugin.log(exception);
                         }
-                        
+
                     };
                     Platform.run(runnable);
                 }
@@ -127,7 +129,7 @@ public class CfgSCJobsUtil {
         // get the collector
 //        if(context == null)
 //        	context = ScannerConfigUtil.createContextForProject(project);
-   
+
         if(profileInstance == null){
         	profileInstance = ScannerConfigProfileManager.getInstance().
                 getSCProfileInstance(project, context.toInfoContext(), buildInfo.getSelectedProfileId());
@@ -137,12 +139,14 @@ public class CfgSCJobsUtil {
             final IScannerInfoCollector2 collector2 = (IScannerInfoCollector2) collector;
             ISafeRunnable runnable = new ISafeRunnable() {
 
-                public void run() throws Exception {
+                @Override
+				public void run() throws Exception {
                     collector2.updateScannerConfiguration(monitor);
                     rc.set(true);
                 }
-                
-                public void handleException(Throwable exception) {
+
+                @Override
+				public void handleException(Throwable exception) {
                     rc.set(false);
                     ManagedBuilderCorePlugin.log(exception);
                 }
@@ -150,7 +154,7 @@ public class CfgSCJobsUtil {
             };
             Platform.run(runnable);
         }
-        
+
         return rc.get();
     }
 
@@ -169,25 +173,27 @@ public class CfgSCJobsUtil {
 
         if (buildInfo.isBuildOutputFileActionEnabled()) {
             ISafeRunnable runnable = new ISafeRunnable() {
-                
-                public void run() {
+
+                @Override
+				public void run() {
                     esiProvider.invokeProvider(monitor, project, context.toInfoContext(), null, buildInfo, collector, env);
                     rc.set(true);
                 }
-        
-                public void handleException(Throwable exception) {
+
+                @Override
+				public void handleException(Throwable exception) {
                     rc.set(false);
                     ManagedBuilderCorePlugin.log(exception);
                 }
-                
+
             };
             Platform.run(runnable);
         }
-        
+
         if(rc.get())
         	return profileInstance;
         return null;
-    	
+
     }
 
     /**

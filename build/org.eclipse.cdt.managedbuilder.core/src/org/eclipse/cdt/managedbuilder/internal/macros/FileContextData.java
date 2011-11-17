@@ -18,14 +18,14 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * This is a trivial implementation of the IFileContextData used internaly by the MBS
- * 
+ *
  * @since 3.0
  */
 public class FileContextData implements IFileContextData {
 	private IPath fInputFileLocation;
 	private IPath fOutputFileLocation;
 	private IOptionContextData fOptionContextData;
-	
+
 	public FileContextData(IPath inputFileLocation, IPath outputFileLocation, IOption option, IBuildObject optionParent){
 		this(inputFileLocation, outputFileLocation, new OptionContextData(option,optionParent));
 	}
@@ -39,6 +39,7 @@ public class FileContextData implements IFileContextData {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.macros.IFileContextData#getInputFileLocation()
 	 */
+	@Override
 	public IPath getInputFileLocation() {
 		return fInputFileLocation;
 	}
@@ -46,6 +47,7 @@ public class FileContextData implements IFileContextData {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.macros.IFileContextData#getOutputFileLocation()
 	 */
+	@Override
 	public IPath getOutputFileLocation() {
 		return fOutputFileLocation;
 	}
@@ -53,6 +55,7 @@ public class FileContextData implements IFileContextData {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.macros.IFileContextData#getOption()
 	 */
+	@Override
 	public IOptionContextData getOptionContextData() {
 		return fOptionContextData;
 	}

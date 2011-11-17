@@ -27,30 +27,32 @@ public class CheckBuildPropertyExpression implements IBooleanExpression {
 
 	private String fPropertyId;
 	private String fValueId;
-	
+
 	public CheckBuildPropertyExpression(IManagedConfigElement element){
 		fPropertyId = element.getAttribute(PROPERTY);
 		if(fPropertyId == null)
 			fPropertyId = ""; //$NON-NLS-1$
-		
+
 		fValueId = element.getAttribute(VALUE);
 //		if(fValueId == null)
 //			fValueId = ""; //$NON-NLS-1$
-		
+
 //		fIsRegex = getBooleanValue(element.getAttribute(IS_REGEX));
 	}
-	
 
+
+	@Override
 	public boolean evaluate(IResourceInfo rcInfo, IHoldsOptions holder,
 			IOption option) {
 		return evaluate(rcInfo);
 	}
-	
+
+	@Override
 	public boolean evaluate(IResourceInfo rcInfo, IHoldsOptions holder,
 			IOptionCategory category) {
 		return evaluate(rcInfo);
 	}
-	
+
 	private boolean evaluate(IResourceInfo rcInfo) {
 		IConfiguration cfg = rcInfo.getParent();
 		IBuildProperty prop = getBuildProperty(cfg, fPropertyId);
@@ -59,7 +61,7 @@ public class CheckBuildPropertyExpression implements IBooleanExpression {
 		}
 		return false;
 	}
-/*	
+/*
 	public static IBuildProperty getBuildProperty(IHoldsOptions ho, String id){
 		if(ho instanceof ITool)
 			return getBuildProperty((ITool)ho, id);
@@ -93,7 +95,7 @@ public class CheckBuildPropertyExpression implements IBooleanExpression {
 		IBuildProperty prop = null;
 		if(toolChain.getParentFolderInfo() == toolChain.getParent().getRootFolderInfo())
 			prop = toolChain.getBuildProperties().getProperty(id);
-		
+
 		if(prop == null){
 			prop = getBuildProperty(toolChain.getParentFolderInfo(), id);
 		}
@@ -102,17 +104,17 @@ public class CheckBuildPropertyExpression implements IBooleanExpression {
 */
 	public static IBuildProperty getBuildProperty(IConfiguration cfg, String id){
 		IBuildProperty prop = cfg.getBuildProperties().getProperty(id);
-		
+
 //		if(prop == null)
 //			prop = cfg.getManagedProject().getBuildProperties().getProperty(id);
-		
+
 		return prop;
 	}
-	
+
 	public String getPropertyId(){
 		return fPropertyId;
 	}
-	
+
 	public String getValueId(){
 		return fValueId;
 	}

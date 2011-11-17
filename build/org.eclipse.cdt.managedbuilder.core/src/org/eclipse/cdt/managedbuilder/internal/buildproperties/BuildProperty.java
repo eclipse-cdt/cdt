@@ -34,7 +34,7 @@ public class BuildProperty implements IBuildProperty{
 			type = SafeStringInterner.safeIntern(property);
 			value = null;
 		}
-		
+
 		fType = BuildPropertyManager.getInstance().getPropertyType(type);
 		if(fType == null){
 			throw new CoreException(new Status(IStatus.ERROR,
@@ -43,19 +43,20 @@ public class BuildProperty implements IBuildProperty{
 		}
 		setValue(value);
 	}
-	
+
 	BuildProperty(IBuildPropertyType type, String valueId) throws CoreException {
 		fType = type;
 		setValue(valueId);
 	}
-	
+
+	@Override
 	public IBuildPropertyType getPropertyType(){
 		return fType;
 	}
-	
+
 	private void setValue(String id) throws CoreException {
 		IBuildPropertyValue value = fType.getSupportedValue(id);
-		
+
 		if(value == null)
 			throw new CoreException(new Status(IStatus.ERROR,
 				ManagedBuilderCorePlugin.getUniqueIdentifier(),
@@ -63,25 +64,26 @@ public class BuildProperty implements IBuildProperty{
 
 		setValue(value);
 	}
-	
+
 	private void setValue(IBuildPropertyValue value){
 		fValue = value;
 	}
-	
+
+	@Override
 	public IBuildPropertyValue getValue(){
 		return fValue;
 	}
-	
+
 	@Override
 	public String toString(){
 		return toString(fType.toString(), fValue.toString());
 	}
-	
+
 	public static String toString(String type, String value){
 		StringBuffer buf = new StringBuffer();
 		buf.append(type).append(BuildPropertyManager.PROPERTY_VALUE_SEPARATOR).append(value);
 		return buf.toString();
-	
+
 	}
 
 /*	public Object clone() {

@@ -38,28 +38,29 @@ public class BooleanExpressionApplicabilityCalculator implements IOptionApplicab
 	private OptionEnablementExpression fExpressions[];
 
 	private Map<String, Set<String>> fRefPropsMap;
-	
+
 	public BooleanExpressionApplicabilityCalculator(IManagedConfigElement optionElement){
 		this(optionElement.getChildren(OptionEnablementExpression.NAME));
 	}
 
 	public BooleanExpressionApplicabilityCalculator(IManagedConfigElement enablementElements[]){
 		fExpressions = new OptionEnablementExpression[enablementElements.length];
-		
+
 		for(int i = 0; i < enablementElements.length; i++){
 			fExpressions[i] = new OptionEnablementExpression(enablementElements[i]);
 		}
 	}
-	
-	public boolean isOptionVisible(IBuildObject configuration, 
-            IHoldsOptions holder, 
+
+	@Override
+	public boolean isOptionVisible(IBuildObject configuration,
+            IHoldsOptions holder,
             IOption option){
 		IResourceInfo rcInfo = rcInfoFromConfiguration(configuration);
 		if(rcInfo != null)
 			return evaluate(rcInfo, holder, option, OptionEnablementExpression.FLAG_UI_VISIBILITY);
 		return true;
 	}
-	
+
 	public static IResourceInfo rcInfoFromConfiguration(IBuildObject configuration){
 		if(configuration instanceof IFolderInfo)
 			return (IFolderInfo)configuration;
@@ -69,7 +70,7 @@ public class BooleanExpressionApplicabilityCalculator implements IOptionApplicab
 			return ((IConfiguration)configuration).getRootFolderInfo();
 		return null;
 	}
-	
+
 	public boolean isInputTypeEnabled(ITool tool, IInputType type){
 		return evaluate(tool.getParentResourceInfo(), tool, null, OptionEnablementExpression.FLAG_CMD_USAGE);
 	}
@@ -82,9 +83,10 @@ public class BooleanExpressionApplicabilityCalculator implements IOptionApplicab
 			ITool tool){
 		return evaluate(rcInfo, tool, null, OptionEnablementExpression.FLAG_CMD_USAGE);
 	}
-	
-	public boolean isOptionEnabled(IBuildObject configuration, 
-            IHoldsOptions holder, 
+
+	@Override
+	public boolean isOptionEnabled(IBuildObject configuration,
+            IHoldsOptions holder,
             IOption option){
 		IResourceInfo rcInfo = rcInfoFromConfiguration(configuration);
 		if(rcInfo != null)
@@ -92,8 +94,9 @@ public class BooleanExpressionApplicabilityCalculator implements IOptionApplicab
 		return true;
 	}
 
-	public boolean isOptionUsedInCommandLine(IBuildObject configuration, 
-            IHoldsOptions holder, 
+	@Override
+	public boolean isOptionUsedInCommandLine(IBuildObject configuration,
+            IHoldsOptions holder,
             IOption option){
 		IResourceInfo rcInfo = rcInfoFromConfiguration(configuration);
 		if(rcInfo != null)
@@ -109,7 +112,7 @@ public class BooleanExpressionApplicabilityCalculator implements IOptionApplicab
 		}
 		return true;
 	}
-	
+
 /*	public boolean performAdjustment(IBuildObject configuration,
 			IHoldsOptions holder, IOption option, boolean extensionAdjustment){
 		boolean adjusted = false;
@@ -119,9 +122,9 @@ public class BooleanExpressionApplicabilityCalculator implements IOptionApplicab
 		}
 		return adjusted;
 	}
-*/	
-	public boolean adjustOption(IResourceInfo rcInfo, 
-            IHoldsOptions holder, 
+*/
+	public boolean adjustOption(IResourceInfo rcInfo,
+            IHoldsOptions holder,
             IOption option,
             boolean extensionAdjustment){
 		boolean adjusted = false;
@@ -130,7 +133,7 @@ public class BooleanExpressionApplicabilityCalculator implements IOptionApplicab
 			if(fExpressions[i].adjustOption(rcInfo, holder, option, context, extensionAdjustment))
 				adjusted = true;
 		}
-		
+
 		if(context != null){
 			String unadjusted[] = context.getUnadjusted();
 			for(int i = 0; i < unadjusted.length; i++){
@@ -140,7 +143,7 @@ public class BooleanExpressionApplicabilityCalculator implements IOptionApplicab
 		return adjusted;
 	}
 
-	public boolean adjustToolChain(IFolderInfo info, 
+	public boolean adjustToolChain(IFolderInfo info,
             IToolChain tChain,
             boolean extensionAdjustment){
 		boolean adjusted = false;
@@ -149,7 +152,7 @@ public class BooleanExpressionApplicabilityCalculator implements IOptionApplicab
 			if(fExpressions[i].adjustToolChain(info, tChain, context, extensionAdjustment))
 				adjusted = true;
 		}
-		
+
 		if(context != null){
 			String unadjusted[] = context.getUnadjusted();
 			for(int i = 0; i < unadjusted.length; i++){
@@ -160,7 +163,7 @@ public class BooleanExpressionApplicabilityCalculator implements IOptionApplicab
 		return adjusted;
 	}
 
-	public boolean adjustTool(IResourceInfo info, 
+	public boolean adjustTool(IResourceInfo info,
             ITool tool,
             boolean extensionAdjustment){
 		boolean adjusted = false;
@@ -195,14 +198,14 @@ public class BooleanExpressionApplicabilityCalculator implements IOptionApplicab
 				OptionEnablementExpression.adjustConfiguration(cfg, unadjusted[i], null, extensionAdjustment);
 			}
 		}
-		
+
 		return adjusted;
 	}
-	
+
 	private Map<String, Set<String>> getReferencedProperties(){
 		if(fRefPropsMap == null){
 			fRefPropsMap = new HashMap<String, Set<String>>();
-		
+
 			for(int i = 0; i < fExpressions.length; i++){
 				fExpressions[i].getReferencedProperties(fRefPropsMap);
 			}
@@ -212,7 +215,7 @@ public class BooleanExpressionApplicabilityCalculator implements IOptionApplicab
 
 	public boolean referesProperty(String id){
 		Map<String, Set<String>> map = getReferencedProperties();
-		
+
 		return map.containsKey(id);
 	}
 
@@ -223,7 +226,7 @@ public class BooleanExpressionApplicabilityCalculator implements IOptionApplicab
 			return set.contains(valueId);
 		return false;
 	}
-	
+
 	public String[] getReferencedPropertyIds(){
 		Map<String, Set<String>> map = getReferencedProperties();
 		return map.keySet().toArray(new String[map.size()]);
@@ -235,11 +238,12 @@ public class BooleanExpressionApplicabilityCalculator implements IOptionApplicab
 		return set.toArray(new String[set.size()]);
 	}
 
+	@Override
 	public boolean isOptionCategoryVisible(IBuildObject configuration, IHoldsOptions optHolder,
 			IOptionCategory category) {
 		return evaluateCategory(rcInfoFromConfiguration(configuration), optHolder, category);
 	}
-	
+
 	private boolean evaluateCategory(IResourceInfo rcInfo, IHoldsOptions holder, IOptionCategory category) {
 		for(int i = 0; i < fExpressions.length; i++){
 			if(!fExpressions[i].evaluate(rcInfo, holder, category))

@@ -11,7 +11,6 @@
 
 package org.eclipse.cdt.make.internal.ui.dnd;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +24,8 @@ import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Shell;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * {@code TextTransferDropTargetListener} handles dropping of selected text to
@@ -50,6 +51,7 @@ public class TextTransferDropTargetListener extends AbstractContainerAreaDropAda
 	 * @return the {@link Transfer} type that this listener can accept a
 	 * drop operation for.
 	 */
+	@Override
 	public Transfer getTransfer() {
 		return TextTransfer.getInstance();
 	}

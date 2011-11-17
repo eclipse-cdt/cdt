@@ -38,7 +38,7 @@ public class ManagedCProjectNature implements IProjectNature {
 
 	/**
 	 * Utility method for adding a managed nature to a project.
-	 * 
+	 *
 	 * @param project the project to add the managed nature to.
 	 * @param monitor a progress monitor to indicate the duration of the operation, or
 	 * <code>null</code> if progress reporting is not required.
@@ -60,12 +60,12 @@ public class ManagedCProjectNature implements IProjectNature {
 				Vector<ICommand> vec = new Vector<ICommand>(Arrays.asList(commands));
 				vec.removeElementAt(i);
 				vec.trimToSize();
-				ICommand[] tempCommands = vec.toArray(new ICommand[commands.length-1]); 
+				ICommand[] tempCommands = vec.toArray(new ICommand[commands.length-1]);
 				description.setBuildSpec(tempCommands);
 				break;
 			}
 		}
-		
+
 		commands = description.getBuildSpec();
 		boolean found = false;
 		// See if the builder is already there
@@ -75,7 +75,7 @@ public class ManagedCProjectNature implements IProjectNature {
 			  break;
 		   }
 		}
-		if (!found) { 
+		if (!found) {
 		   //add builder to project
 		   ICommand command = description.newCommand();
 		   command.setBuilderName(getBuilderID());
@@ -85,12 +85,12 @@ public class ManagedCProjectNature implements IProjectNature {
 		   newCommands[0] = command;
 		   description.setBuildSpec(newCommands);
 		   project.setDescription(description, null);
-		}		
+		}
 	}
 
 	/**
 	 * Utility method for adding a nature to a project.
-	 * 
+	 *
 	 * @param project the project to add the nature to.
 	 * @param natureId the id of the nature to assign to the project
 	 * @param monitor a progress monitor to indicate the duration of the operation, or
@@ -109,7 +109,7 @@ public class ManagedCProjectNature implements IProjectNature {
 		description.setNatureIds(newNatures);
 		project.setDescription(description, monitor);
 	}
-	
+
 	/**
 	 * Update the Java command in the build spec (replace existing one if present,
 	 * add one first if none).
@@ -139,7 +139,7 @@ public class ManagedCProjectNature implements IProjectNature {
 		description.setBuildSpec(newCommands);
 		return description;
 	}
-	
+
 	public static ICommand getBuildSpec(IProjectDescription description, String builderID) {
 		ICommand[] commands = description.getBuildSpec();
 		for (int i = 0; i < commands.length; ++i) {
@@ -164,6 +164,7 @@ public class ManagedCProjectNature implements IProjectNature {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IProjectNature#configure()
 	 */
+	@Override
 	public void configure() throws CoreException {
 		addManagedBuilder(project, new NullProgressMonitor());
 	}
@@ -171,6 +172,7 @@ public class ManagedCProjectNature implements IProjectNature {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IProjectNature#deconfigure()
 	 */
+	@Override
 	public void deconfigure() throws CoreException {
 		// TODO remove builder from here
 	}
@@ -178,6 +180,7 @@ public class ManagedCProjectNature implements IProjectNature {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IProjectNature#getProject()
 	 */
+	@Override
 	public IProject getProject() {
 		// Just return the project associated with the nature
 		return project;
@@ -186,10 +189,10 @@ public class ManagedCProjectNature implements IProjectNature {
 
 	/**
 	 * Utility method to remove the managed nature from a project.
-	 * 
+	 *
 	 * @param project to remove the managed nature from
-	 * @param mon progress monitor to indicate the duration of the operation, or 
-	 * <code>null</code> if progress reporting is not required. 
+	 * @param mon progress monitor to indicate the duration of the operation, or
+	 * <code>null</code> if progress reporting is not required.
 	 */
 	public static void removeManagedNature(IProject project, IProgressMonitor mon) throws CoreException {
 		removeNature(project, MNG_NATURE_ID, mon);
@@ -197,7 +200,7 @@ public class ManagedCProjectNature implements IProjectNature {
 
 	/**
 	 * Utility method for removing a project nature from a project.
-	 * 
+	 *
 	 * @param project the project to remove the nature from
 	 * @param natureId the nature id to remove
 	 * @param monitor a progress monitor to indicate the duration of the operation, or
@@ -215,6 +218,7 @@ public class ManagedCProjectNature implements IProjectNature {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IProjectNature#setProject(org.eclipse.core.resources.IProject)
 	 */
+	@Override
 	public void setProject(IProject project) {
 		// Set the project for the nature
 		this.project = project;

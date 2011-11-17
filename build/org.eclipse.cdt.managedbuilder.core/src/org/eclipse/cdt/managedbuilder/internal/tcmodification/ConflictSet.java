@@ -27,18 +27,18 @@ import org.eclipse.core.runtime.IPath;
 public class ConflictSet {
 	public static final IConflict[] EMPTY_CONFLICT_ARRAY = new IConflict[0];
 	public static final IBuildObject[] EMPTY_BO_ARRAY = new IBuildObject[0];
-	
+
 	private PerTypeMapStorage<IRealBuildObjectAssociation, Conflict> fConflictStorage;
 	private List<ConflictMatch> fConflictMatchList;
 //	private Set<IRealBuildObjectAssociation> fExtConflictSet;
 //	private IRealBuildObjectAssociation fRealObj;
-	
+
 	public ConflictSet(IRealBuildObjectAssociation realObj, List<ConflictMatch> conflictMatchList, Set<? extends IRealBuildObjectAssociation> extConflictSet){
 		fConflictMatchList = conflictMatchList;
 //		fExtConflictSet = (Set<IRealBuildObjectAssociation>) extConflictSet;
-//		fRealObj = realObj; 
+//		fRealObj = realObj;
 	}
-	
+
 	private void init(){
 		if(fConflictStorage == null){
 			fConflictStorage = new PerTypeMapStorage<IRealBuildObjectAssociation, Conflict>();
@@ -58,13 +58,13 @@ public class ConflictSet {
 							if((bo).getType() != objType)
 								DbgTcmUtil.fail();
 						}
-						
+
 						Set<IPath> set = cur.get(bo);
 						if(set == null){
 							set = new TreeSet<IPath>(PathComparator.INSTANCE);
 							cur.put(bo, set);
 						}
-						
+
 						set.addAll(entry.getValue());
 					}
 				}
@@ -75,12 +75,12 @@ public class ConflictSet {
 					Map<IRealBuildObjectAssociation, Set<IPath>> map = result.getMap(type, false);
 					if(map == null)
 						continue;
-					
+
 					Set<Entry<IRealBuildObjectAssociation, Set<IPath>>> entrySet = map.entrySet();
 					for (Entry<IRealBuildObjectAssociation, Set<IPath>> entry : entrySet) {
 						IRealBuildObjectAssociation obj = entry.getKey();
 						Set<IPath> set = entry.getValue();
-						
+
 						Map<IRealBuildObjectAssociation, Conflict> cMap = fConflictStorage.getMap(type, true);
 						cMap.put(obj, new Conflict(IConflict.INCOMPATIBLE, obj, set));
 					}
@@ -89,35 +89,39 @@ public class ConflictSet {
 			}
 		}
 	}
-	
+
 	private static class Conflict implements IConflict {
 		private IRealBuildObjectAssociation fObj;
 		private Set<IPath> fPathSet;
 		private int fType;
-		
+
 		Conflict(int type, IRealBuildObjectAssociation obj, Set<IPath> paths){
 			fType = type;
 			fObj = obj;
 			fPathSet = paths;
 		}
-		
+
+		@Override
 		public IBuildObject getBuildObject() {
 			return fObj;
 		}
 
+		@Override
 		public int getConflictType() {
 			return fType;
 		}
 
+		@Override
 		public int getObjectType() {
 			return fObj.getType();
 		}
 
+		@Override
 		public IPath[] getPaths() {
 			return fPathSet.toArray(new IPath[fPathSet.size()]);
 		}
 	}
-	
+
 	public IConflict[] getConflicts(){
 		init();
 		int types[] = ObjectTypeBasedStorage.getSupportedObjectTypes();
@@ -126,25 +130,25 @@ public class ConflictSet {
 			Map<IRealBuildObjectAssociation, Conflict> map = fConflictStorage.getMap(types[i], false);
 			if(map == null)
 				continue;
-			
+
 			getConflicts(map, list);
 		}
-		
+
 		return conflictArray(list);
 	}
-	
+
 	private static List<Conflict> getConflicts(Map<IRealBuildObjectAssociation, Conflict> map, List<Conflict> list){
 		if(list == null)
 			list = new ArrayList<Conflict>();
-		
+
 		Collection<Conflict> conflicts = map.values();
 		for (Conflict conflict : conflicts) {
 			list.add(conflict);
 		}
-		
+
 		return list;
 	}
-	
+
 	private static Conflict[] conflictArray(Collection<Conflict> list){
 		return list.toArray(new Conflict[list.size()]);
 	}
@@ -162,7 +166,7 @@ public class ConflictSet {
 
 		return conflictArray(map.values());
 	}
-	
+
 	public IBuildObject[] getConflictingObjects(int objectType){
 		init();
 		Map<IRealBuildObjectAssociation, Conflict> map = fConflictStorage.getMap(objectType, false);
@@ -171,17 +175,17 @@ public class ConflictSet {
 
 		return objArray(map.keySet());
 	}
-	
+
 	public IConflict getConflictWith(IBuildObject bo){
 		init();
 		if(!(bo instanceof IRealBuildObjectAssociation))
 			return null;
-		
+
 		IRealBuildObjectAssociation obj = (IRealBuildObjectAssociation)bo;
 		Map<IRealBuildObjectAssociation, Conflict> map = fConflictStorage.getMap(obj.getType(), false);
 		if(map == null)
 			return null;
-		
+
 		return map.get(obj);
 	}
 }

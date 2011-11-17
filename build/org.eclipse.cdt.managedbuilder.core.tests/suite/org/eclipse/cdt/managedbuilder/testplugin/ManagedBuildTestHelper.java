@@ -79,24 +79,24 @@ public class ManagedBuildTestHelper {
 	private static final String rcbsToolOutputTypeId = new String("org.eclipse.cdt.managedbuilder.ui.rcbs.outputtype");	//$NON-NLS-1$
 	private static final String rcbsToolOutputTypeName = new String("Resource Custom Build Step Output Type");	//$NON-NLS-1$
 
-	
+
 	/* (non-Javadoc)
-	 * Create a new project named <code>name</code> or return the project in 
+	 * Create a new project named <code>name</code> or return the project in
 	 * the workspace of the same name if it exists.
-	 * 
+	 *
 	 * @param name The name of the project to create or retrieve.
-	 * @return 
+	 * @return
 	 * @throws CoreException
 	 */
 	static public IProject createProject(
-			final String name, 
-			final IPath location, 
-			final String projectId, 
+			final String name,
+			final IPath location,
+			final String projectId,
 			final String projectTypeId) throws CoreException {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		final IProject newProjectHandle = root.getProject(name);
 		IProject project = null;
-		
+
 		if (!newProjectHandle.exists()) {
 			IWorkspace workspace = ResourcesPlugin.getWorkspace();
 			if (projectId.equals(ManagedBuilderCorePlugin.MANAGED_MAKE_PROJECT_ID)) {
@@ -113,6 +113,7 @@ public class ManagedBuildTestHelper {
 		} else {
 			IWorkspace workspace = ResourcesPlugin.getWorkspace();
 			IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					newProjectHandle.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 				}
@@ -121,15 +122,15 @@ public class ManagedBuildTestHelper {
 			workspace.run(runnable, root, IWorkspace.AVOID_UPDATE, monitor);
 			project = newProjectHandle;
 		}
-        
+
 		// Open the project if we have to
 		if (!project.isOpen()) {
 			project.open(new NullProgressMonitor());
-			// CDT opens the Project with BACKGROUND_REFRESH enabled which causes the 
+			// CDT opens the Project with BACKGROUND_REFRESH enabled which causes the
 			// refresh manager to refresh the project 200ms later.  This Job interferes
 			// with the resource change handler firing see: bug 271264
 			try {
-				// CDT opens the Project with BACKGROUND_REFRESH enabled which causes the 
+				// CDT opens the Project with BACKGROUND_REFRESH enabled which causes the
 				// refresh manager to refresh the project 200ms later.  This Job interferes
 				// with the resource change handler firing see: bug 271264
 				Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, null);
@@ -137,24 +138,24 @@ public class ManagedBuildTestHelper {
 				// Ignore
 			}
 		}
-				
-		return project;	
+
+		return project;
 	}
-	
+
 	static public IProject createProject(
-			final String name, 
+			final String name,
 			final String projectTypeId) {
 		try {
-			return 	createProject(name, 
-					null, 
-					ManagedBuilderCorePlugin.MANAGED_MAKE_PROJECT_ID, 
+			return 	createProject(name,
+					null,
+					ManagedBuilderCorePlugin.MANAGED_MAKE_PROJECT_ID,
 					projectTypeId);
 		} catch (CoreException e) {
 			TestCase.fail(e.getLocalizedMessage());
 		}
 		return null;
 	}
-	
+
 	static public IFile createFile(IProject project, String name){
 		return createFile(project, name, new ByteArrayInputStream(new byte[0]));
 	}
@@ -174,7 +175,7 @@ public class ManagedBuildTestHelper {
 						rc.create(true, true, null);
 					}
 				}
-					
+
 //				file.create( new ByteArrayInputStream( "#include <stdio.h>\n extern void bar(); \n int main() { \nprintf(\"Hello, World!!\"); \n bar();\n return 0; }".getBytes() ), false, null );
 				file.create(contents, false, null );
 			} catch (CoreException e) {
@@ -195,7 +196,7 @@ public class ManagedBuildTestHelper {
 						rc.create(true, true, null);
 					}
 				}
-					
+
 //				file.create( new ByteArrayInputStream( "#include <stdio.h>\n extern void bar(); \n int main() { \nprintf(\"Hello, World!!\"); \n bar();\n return 0; }".getBytes() ), false, null );
 				folder.create(true , false, null );
 			} catch (CoreException e) {
@@ -206,9 +207,9 @@ public class ManagedBuildTestHelper {
 	}
 
 	/**
-	 * Remove the <code>IProject</code> with the name specified in the argument from the 
+	 * Remove the <code>IProject</code> with the name specified in the argument from the
 	 * receiver's workspace.
-	 *  
+	 *
 	 * @param name
 	 */
 	static public void removeProject(String name) {
@@ -217,6 +218,7 @@ public class ManagedBuildTestHelper {
 		if (project.exists()) {
 			IWorkspace workspace = ResourcesPlugin.getWorkspace();
 			IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					System.gc();
 					System.runFinalization();
@@ -276,7 +278,7 @@ public class ManagedBuildTestHelper {
 	static public IProject createProject(String projectName, File importFrom, IPath location, String projectTypeId) throws CoreException, InvocationTargetException, IOException {
 		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
 		IProject project= root.getProject(projectName);
-		if (project.exists()) 
+		if (project.exists())
 			removeProject(projectName);
 
 		IPath destPath = (location != null) ?
@@ -296,6 +298,7 @@ public class ManagedBuildTestHelper {
 
 			try {
 				ImportOperation op= new ImportOperation(destPath, importRoot, importStructure, new IOverwriteQuery() {
+					@Override
 					public String queryOverwrite(String file) {
 						return ALL;
 					}
@@ -311,15 +314,16 @@ public class ManagedBuildTestHelper {
 		return createProject(projectName, location, ManagedBuilderCorePlugin.MANAGED_MAKE_PROJECT_ID, projectTypeId);
 	}
 
-	static public IProject createNewManagedProject(IProject newProjectHandle, 
-			final String name, 
-			final IPath location, 
-			final String projectId, 
+	static public IProject createNewManagedProject(IProject newProjectHandle,
+			final String name,
+			final IPath location,
+			final String projectId,
 			final String projectTypeId) throws CoreException {
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
 		final IProject project = newProjectHandle;
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				// Create the base project
 				IWorkspaceDescription workspaceDesc = workspace.getDescription();
@@ -332,11 +336,11 @@ public class ManagedBuildTestHelper {
 				CCorePlugin.getDefault().createCProject(description, project, new NullProgressMonitor(), projectId);
 				// Add the managed build nature and builder
 				addManagedBuildNature(project);
-				
+
 				// Find the base project type definition
 				IProjectType projType = ManagedBuildManager.getProjectType(projectTypeId);
 				Assert.assertNotNull(projType);
-				
+
 				// Create the managed-project (.cdtbuild) for our project that builds an executable.
 				IManagedProject newProject = null;
 				try {
@@ -352,7 +356,7 @@ public class ManagedBuildTestHelper {
 				IConfiguration defaultConfig = null;
 				IConfiguration[] configs = projType.getConfigurations();
 				for (int i = 0; i < configs.length; ++i) {
-					// Make the first configuration the default 
+					// Make the first configuration the default
 					if (i == 0) {
 						defaultConfig = newProject.createConfiguration(configs[i], projType.getId() + "." + i);
 					} else {
@@ -360,12 +364,12 @@ public class ManagedBuildTestHelper {
 					}
 				}
 				ManagedBuildManager.setDefaultConfiguration(project, defaultConfig);
-				
+
 				IConfiguration cfgs[] = newProject.getConfigurations();
 				for(int i = 0; i < cfgs.length; i++){
 					cfgs[i].setArtifactName(newProject.getDefaultArtifactName());
 				}
-				
+
 				ManagedBuildManager.getBuildInfo(project).setValid(true);
 			}
 		};
@@ -375,11 +379,11 @@ public class ManagedBuildTestHelper {
 		} catch (CoreException e2) {
 			Assert.fail(e2.getLocalizedMessage());
 		}
-		// CDT opens the Project with BACKGROUND_REFRESH enabled which causes the 
+		// CDT opens the Project with BACKGROUND_REFRESH enabled which causes the
 		// refresh manager to refresh the project 200ms later.  This Job interferes
 		// with the resource change handler firing see: bug 271264
 		try {
-			// CDT opens the Project with BACKGROUND_REFRESH enabled which causes the 
+			// CDT opens the Project with BACKGROUND_REFRESH enabled which causes the
 			// refresh manager to refresh the project 200ms later.  This Job interferes
 			// with the resource change handler firing see: bug 271264
 			Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, null);
@@ -400,7 +404,7 @@ public class ManagedBuildTestHelper {
 		IManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
 		Assert.assertNotNull(info);
 //		info.setValid(true);
-		
+
 		// Add the managed build nature
 		try {
 			ManagedCProjectNature.addManagedNature(project, new NullProgressMonitor());
@@ -424,10 +428,11 @@ public class ManagedBuildTestHelper {
 		} catch (CoreException e) {
 			Assert.fail("Test failed on saving the ICDescriptor data: " + e.getLocalizedMessage());		}
 	}
-	
+
 	static public boolean compareBenchmarks(final IProject project, IPath testLocationBase, IPath[] files, IPath benchmarkLocationBase) {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 			}
@@ -462,7 +467,7 @@ public class ManagedBuildTestHelper {
 				buffer.append("but was:\n ");
 				buffer.append("\"").append(testBuffer).append("\"");
 				buffer.append("\n\n ");
-				
+
 				buffer.append(">>>>>>>>>>>>>>>start diff: \n");
 				String location1 = benchmarkFileLocation.isAbsolute()
 					? benchmarkFileLocation.toString()
@@ -476,9 +481,9 @@ public class ManagedBuildTestHelper {
 				buffer.append(diff);
 				buffer.append("\n<<<<<<<<<<<end diff");
 				buffer.append("\n\n ");
-				
+
 				Assert.fail(buffer.toString());
-			} 
+			}
 		}
 		return true;
 	}
@@ -495,7 +500,7 @@ public class ManagedBuildTestHelper {
 		}
 		return ext.equals("mk");
 	}
-	
+
 	private static boolean isDependencyFile(IPath file) {
 		String ext = file.getFileExtension();
 		return "d".equals(ext);
@@ -503,10 +508,10 @@ public class ManagedBuildTestHelper {
 
 	/**
 	 * Compare makefiles using a bunch of heuristics to avoid ordering mismatches
-	 * 
+	 *
 	 * @param testFile - location of actual makefile
 	 * @param benchmarkFile - location of the benchmark file
-	 * @return {@code true} if matches, {@code false} otherwise 
+	 * @return {@code true} if matches, {@code false} otherwise
 	 */
 	private static boolean compareMakefiles(IPath testFile, IPath benchmarkFile) {
 		final String ECHO_INVOKING_PATTERN = "	@echo 'Invoking: .* C\\+\\+ .*'";
@@ -517,7 +522,7 @@ public class ManagedBuildTestHelper {
 		final String WORKSPACE_DIR_STR = "${WorkspaceDirPath}";
 		ArrayList<String> testArray = mergeContinuationLines(getContents(testFile));
 		ArrayList<String> benchmarkArray = mergeContinuationLines(getContents(benchmarkFile));
-		
+
 		Set<String> testNotMatchingLines = new TreeSet<String>();
 		Set<String> benchNotMatchingLines = new TreeSet<String>();
 		Set<String> extraLines = new TreeSet<String>();
@@ -577,12 +582,12 @@ public class ManagedBuildTestHelper {
 						System.err.println("expected: ["+benchmarkLine+"], file "+benchmarkFile);
 						return false;
 					}
-					
+
 					final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 					final IWorkspaceRoot root = workspace.getRoot();
 					final String workspaceLocation = root.getLocation().toOSString();
 					final String platformFileSeparator = System.getProperty("file.separator", Character.toString(IPath.SEPARATOR)); //$NON-NLS-1$
-					
+
 					for (int j=0;j<testSubstrings.length;j++) {
 						String testSubstring = testSubstrings[j];
 						String benchmarkSubstring = benchmarkSubstrings[j];
@@ -621,8 +626,8 @@ public class ManagedBuildTestHelper {
 				return false;
 			}
 		}
-		
-		// Check if all collected lines match irrespective of order 
+
+		// Check if all collected lines match irrespective of order
 		String[] testNotMatchingLinesArray = testNotMatchingLines.toArray(new String[0]);
 		String[] benchNotMatchingLinesArray = benchNotMatchingLines.toArray(new String[0]);
 		for (int i=0;i<testNotMatchingLinesArray.length;i++) {
@@ -639,20 +644,20 @@ public class ManagedBuildTestHelper {
 
 		return true;
 	}
-	
+
 	/**
 	 * Compare dependency files *.d using some of heuristics to avoid mismatches
 	 * related to different gcc versions
-	 * 
+	 *
 	 * @param testFile - location of actual file
 	 * @param benchmarkFile - location of the benchmark file
-	 * @return {@code true} if matches, {@code false} otherwise 
+	 * @return {@code true} if matches, {@code false} otherwise
 	 */
 	private static boolean compareDependencyFiles(IPath testFile, IPath benchmarkFile) {
 		boolean result = true;
 		ArrayList<String> testArray = getContents(testFile);
 		ArrayList<String> benchmarkArray = getContents(benchmarkFile);
-		
+
 		for (int i=0;i<benchmarkArray.size() || i<testArray.size();i++) {
 			if (!(i<benchmarkArray.size())) {
 				System.err.println(testFile.lastSegment()+": extra line =["+testArray.get(i)+ "] not in benchmark. File "+testFile);
@@ -706,7 +711,7 @@ public class ManagedBuildTestHelper {
 		}
 		return lines;
 	}
-	
+
 	private static ArrayList<String> mergeContinuationLines(ArrayList<String> lines) {
 		for (int i=0;i<lines.size();) {
 			String line = lines.get(i);
@@ -728,6 +733,7 @@ public class ManagedBuildTestHelper {
 	static public boolean compareBenchmarks(final IProject project, IPath testDir, IPath benchmarkDir, String[] fileNames) {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 			}
@@ -738,29 +744,29 @@ public class ManagedBuildTestHelper {
 		} catch (Exception e) {
 			Assert.fail("File " + fileNames[0] + " - project refresh failed.");
 		}
-		
+
 		IFolder testFolder = (IFolder)project.findMember(testDir);
 		IFolder bmFolder = (IFolder)project.findMember(benchmarkDir);
-		
+
 		return compareBenchmarks(testFolder, bmFolder, fileNames);
 	}
-	
+
 	static public boolean compareBenchmarks(IFolder testFolder, IFolder bmFolder, String[] fileNames) {
 		Assert.assertNotNull(testFolder);
 		Assert.assertNotNull(bmFolder);
-		
+
 		for (int i=0; i<fileNames.length; i++) {
 			IFile tFile = testFolder.getFile(fileNames[i]);
 			IFile bmFile = bmFolder.getFile(fileNames[i]);
 			if(!tFile.exists() && !bmFile.exists())
 				continue;
-			
+
 			compareBenchmarks(tFile, bmFile);
 		}
-		
+
 		return true;
 	}
-	
+
 	static public boolean compareBenchmarks(IFile tFile, IFile bmFile) {
 		IPath tFileLocation = tFile.getLocation();
 		IPath bmFileLocation = bmFile.getLocation();
@@ -785,7 +791,7 @@ public class ManagedBuildTestHelper {
 			buffer.append("but was:\n ");
 			buffer.append("\"").append(testBuffer).append("\"");
 			buffer.append("\n\n ");
-				
+
 			buffer.append(">>>>>>>>>>>>>>>start diff: \n");
 			String location1 = getFileLocation(bmFile.getProject(), bmFile.getProjectRelativePath());
 			String location2 = getFileLocation(tFile.getProject(), tFile.getProjectRelativePath());
@@ -795,15 +801,16 @@ public class ManagedBuildTestHelper {
 			buffer.append(diff);
 			buffer.append("\n<<<<<<<<<<<end diff");
 			buffer.append("\n\n ");
-				
+
 			Assert.fail(buffer.toString());
-		} 
+		}
 		return true;
 	}
 
 	static public boolean verifyFilesDoNotExist(final IProject project, IPath testDir, IPath[] files) {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 			}
@@ -821,7 +828,7 @@ public class ManagedBuildTestHelper {
 				if (fullPath.toFile().exists()) {
 					Assert.fail("File " + testFile.lastSegment() + " unexpectedly found.");
 					return false;
-				}					
+				}
 			} catch (Exception e) {
 				Assert.fail("File " + fullPath.toString() + " could not be referenced.");
 			}
@@ -863,7 +870,7 @@ public class ManagedBuildTestHelper {
 		}
 		return buff;
 	}
-	
+
 	static public IPath copyFilesToTempDir(IPath srcDir, IPath tmpSubDir, IPath[] files) {
 		IPath tmpSrcDir = null;
 		String userDirStr = System.getProperty("user.home");
@@ -871,7 +878,7 @@ public class ManagedBuildTestHelper {
 			IPath userDir = Path.fromOSString(userDirStr);
 			tmpSrcDir = userDir.append(tmpSubDir);
 			if (userDir.toString().equalsIgnoreCase(tmpSrcDir.toString())) {
-				Assert.fail("Temporary sub-directory cannot be the empty string.");				
+				Assert.fail("Temporary sub-directory cannot be the empty string.");
 			} else {
 				File tmpSrcDirFile = tmpSrcDir.toFile();
 				if (tmpSrcDirFile.exists()) {
@@ -942,7 +949,7 @@ public class ManagedBuildTestHelper {
 		}
 		return tmpSrcDir;
 	}
-	
+
 	static public void deleteTempDir(IPath tmpSubDir, IPath[] files) {
 		IPath tmpSrcDir = null;
 		String userDirStr = System.getProperty("user.home");
@@ -950,7 +957,7 @@ public class ManagedBuildTestHelper {
 			IPath userDir = Path.fromOSString(userDirStr);
 			tmpSrcDir = userDir.append(tmpSubDir);
 			if (userDir.toString().equalsIgnoreCase(tmpSrcDir.toString())) {
-				Assert.fail("Temporary sub-directory cannot be the empty string.");				
+				Assert.fail("Temporary sub-directory cannot be the empty string.");
 			} else {
 				File tmpSrcDirFile = tmpSrcDir.toFile();
 				if (tmpSrcDirFile.exists()) {
@@ -965,7 +972,7 @@ public class ManagedBuildTestHelper {
 			}
 		}
 	}
-	
+
 	/*
 	 * Cloned from core CProjectHelper
 	 */
@@ -987,7 +994,7 @@ public class ManagedBuildTestHelper {
 			}
 		}
 	}
-	
+
 	/*
 	 * Cloned from core CProjectHelper
 	 */
@@ -1015,14 +1022,14 @@ public class ManagedBuildTestHelper {
 		}
 		dir.delete();
 	}
-	
+
 	public static ITool createRcbsTool(IConfiguration cfg, String file, String inputs, String outputs, String cmds){
 		IProject project = cfg.getOwner().getProject();
 		IResource f = project.findMember(file);
-		
+
 		Assert.assertTrue("file does not exist", f != null);
 		Assert.assertEquals("resource is not a file", f.getType(), IResource.FILE);
-		
+
 		return createRcbsTool(cfg, (IFile)f, inputs, outputs, cmds);
 	}
 
@@ -1030,20 +1037,20 @@ public class ManagedBuildTestHelper {
 		IResourceConfiguration rcCfg = cfg.getResourceConfiguration(file.getFullPath().toString());
 		if(rcCfg == null)
 			rcCfg = cfg.createResourceConfiguration(file);
-		
+
 		Assert.assertTrue("failed to create resource configuration", rcCfg != null);
-		
+
 		ITool tool = getRcbsTool(rcCfg, true);
-		
+
 		setRcbsInputs(tool, inputs);
 		setRcbsOutputs(tool, outputs);
 		tool.setToolCommand(cmds);
 		tool.setAnnouncement("default test rcbs announcement");
-		
+
 		rcCfg.setRcbsApplicability(IResourceConfiguration.KIND_APPLY_RCBS_TOOL_AS_OVERRIDE);
 		return tool;
 	}
-	
+
 	public static ITool setRcbsInputs(ITool tool, String inputs){
 		tool.getInputTypes()[0].getAdditionalInputs()[0].setPaths(inputs);
 		return tool;
@@ -1056,7 +1063,7 @@ public class ManagedBuildTestHelper {
 
 	public static ITool getRcbsTool(IResourceConfiguration rcConfig, boolean create){
 		ITool rcbsTools[] = getRcbsTools(rcConfig);
-		ITool rcbsTool = null; 
+		ITool rcbsTool = null;
 		if(rcbsTools != null)
 			rcbsTool = rcbsTools[0];
 		else if (create) {
@@ -1069,7 +1076,7 @@ public class ManagedBuildTestHelper {
 		}
 		return rcbsTool;
 	}
-	
+
 	public static ITool[] getRcbsTools(IResourceConfiguration rcConfig){
 		List<ITool> list = new ArrayList<ITool>();
 		ITool tools[] = rcConfig.getTools();
@@ -1127,7 +1134,7 @@ public class ManagedBuildTestHelper {
 
 	public static IOption getOption(IHoldsOptions tool, int type){
 		IOption opts[] = tool.getOptions();
-		
+
 		for(int i = 0; i < opts.length; i++){
 			IOption option = opts[i];
 			try {
@@ -1142,7 +1149,7 @@ public class ManagedBuildTestHelper {
 
 	public static boolean setOption(ITool tool, int type, Object value){
 		IOption option = getOption(tool, type);
-		
+
 		if(option == null)
 			return false;
 		IBuildObject obj = tool.getParent();
@@ -1200,5 +1207,5 @@ public class ManagedBuildTestHelper {
 			}
 		return false;
 	}
-	
+
 }

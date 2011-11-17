@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.Preferences;
 @Deprecated
 public class MakeProject implements ICOwner {
 
+	@Override
 	public void configure(ICDescriptor cDescriptor) throws CoreException {
 		cDescriptor.remove(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID);
 		cDescriptor.remove(CCorePlugin.BUILDER_MODEL_ID);
@@ -33,6 +34,7 @@ public class MakeProject implements ICOwner {
 		updateIndexers(cDescriptor);
 	}
 
+	@Override
 	public void update(ICDescriptor cDescriptor, String extensionID) throws CoreException {
 		if (extensionID.equals(CCorePlugin.BINARY_PARSER_UNIQ_ID)) {
 			updateBinaryParsers(cDescriptor);

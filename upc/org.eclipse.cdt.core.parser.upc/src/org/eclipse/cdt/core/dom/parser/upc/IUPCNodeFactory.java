@@ -26,7 +26,7 @@ import org.eclipse.cdt.core.dom.upc.ast.IUPCASTTypedefNameSpecifier;
 public interface IUPCNodeFactory extends ICNodeFactory {
 
 	public void setUseUPCSizeofExpressions(int op);
-	
+
 	public void setUseC99SizeofExpressions();
 
 	public IUPCASTKeywordExpression newKeywordExpression(int keywordKind);
@@ -38,16 +38,21 @@ public interface IUPCNodeFactory extends ICNodeFactory {
 			IASTExpression condition, IASTExpression iterationExpression,
 			IASTStatement body, IASTExpression affinity);
 
+	@Override
 	public IUPCASTSimpleDeclSpecifier newSimpleDeclSpecifier();
 
+	@Override
 	public IUPCASTCompositeTypeSpecifier newCompositeTypeSpecifier(int key,
 			IASTName name);
 
+	@Override
 	public IUPCASTElaboratedTypeSpecifier newElaboratedTypeSpecifier(int kind,
 			IASTName name);
 
+	@Override
 	public IUPCASTEnumerationSpecifier newEnumerationSpecifier(IASTName name);
 
+	@Override
 	public IUPCASTTypedefNameSpecifier newTypedefNameSpecifier(IASTName name);
 
 }

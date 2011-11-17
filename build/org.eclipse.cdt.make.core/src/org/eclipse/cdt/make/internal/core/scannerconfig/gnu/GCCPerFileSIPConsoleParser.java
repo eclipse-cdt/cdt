@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * Console parser for generated makefile output
- * 
+ *
  * @author vhirsl
  */
 public class GCCPerFileSIPConsoleParser implements IScannerInfoConsoleParser {
@@ -39,9 +39,9 @@ public class GCCPerFileSIPConsoleParser implements IScannerInfoConsoleParser {
     private final static int NO_INCLUDES = 0;
     private final static int QUOTE_INCLUDES = 1;
     private final static int INCLUDES = 2;
-    
+
     private IScannerInfoCollector fCollector = null;
-    
+
     private int expectingIncludes = NO_INCLUDES;
     private List<String> symbols;
     private List<String> includes;
@@ -51,14 +51,16 @@ public class GCCPerFileSIPConsoleParser implements IScannerInfoConsoleParser {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser#startup(org.eclipse.core.resources.IProject, org.eclipse.core.runtime.IPath, org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector, org.eclipse.cdt.core.IMarkerGenerator)
      */
-    public void startup(IProject project, IPath workingDirectory, IScannerInfoCollector collector, IMarkerGenerator markerGenerator) {
+    @Override
+	public void startup(IProject project, IPath workingDirectory, IScannerInfoCollector collector, IMarkerGenerator markerGenerator) {
         this.fCollector = collector;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.internal.core.scannerconfig.IScannerInfoConsoleParser#processLine(java.lang.String)
      */
-    public boolean processLine(String line) {
+    @Override
+	public boolean processLine(String line) {
         boolean rc = false;
         line= line.trim();
         TraceUtil.outputTrace("GCCPerFileSIPConsoleParser parsing line: [", line, "]");  //$NON-NLS-1$//$NON-NLS-2$
@@ -114,14 +116,15 @@ public class GCCPerFileSIPConsoleParser implements IScannerInfoConsoleParser {
             if (!includes.contains(line))
                 includes.add(line);
         }
-            
+
         return rc;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.internal.core.scannerconfig.IScannerInfoConsoleParser#shutdown()
      */
-    public void shutdown() {
+    @Override
+	public void shutdown() {
 //        Map scannerInfo = new HashMap();
 //        scannerInfo.put(ScannerInfoTypes.INCLUDE_PATHS, includes);
 //        scannerInfo.put(ScannerInfoTypes.SYMBOL_DEFINITIONS, symbols);

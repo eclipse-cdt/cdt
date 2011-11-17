@@ -23,6 +23,7 @@ public class DefaultIndexerDependencyCalculator implements IManagedDependencyGen
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderDependencyCalculator#findDependencies(org.eclipse.core.resources.IResource)
 	 */
+	@Override
 	public IResource[] findDependencies(IResource resource, IProject project) {
 //		PathCollector pathCollector = new PathCollector();
 //		ICSearchScope scope = SearchEngine.createWorkspaceScope();
@@ -32,28 +33,28 @@ public class DefaultIndexerDependencyCalculator implements IManagedDependencyGen
 //			new PatternSearchJob(
 //				(CSearchPattern) pattern,
 //				scope,
-//				pathCollector, 
+//				pathCollector,
 //				indexManager),
 //			ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,
 //			null, null);
-//		
+//
 //		// We will get back an array of resource names relative to the workspace
 //		String[] deps = pathCollector.getPaths();
-//		
+//
 //		// Convert them to something useful
 //		List depList = new ArrayList();
 //		IResource res = null;
 //		IWorkspaceRoot root = null;
-//		if (project != null) { 
+//		if (project != null) {
 //			root = project.getWorkspace().getRoot();
 //		}
 //		for (int index = 0; index < deps.length; ++index) {
 //			res = root.findMember(deps[index]);
 //			if (res != null) {
-//				depList.add(res); 
+//				depList.add(res);
 //			}
 //		}
-//		
+//
 //		return (IResource[]) depList.toArray(new IResource[depList.size()]);
 		// TODO this needs to be redone to fit on the PDOM
 		return new IResource[0];
@@ -62,14 +63,16 @@ public class DefaultIndexerDependencyCalculator implements IManagedDependencyGen
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderDependencyCalculator#getCalculatorType()
 	 */
+	@Override
 	public int getCalculatorType() {
-		// Tell the 
+		// Tell the
 		return TYPE_EXTERNAL;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderDependencyCalculator#getDependencyCommand()
 	 */
+	@Override
 	public String getDependencyCommand(IResource resource, IManagedBuildInfo info) {
 		// There is no command
 		return null;

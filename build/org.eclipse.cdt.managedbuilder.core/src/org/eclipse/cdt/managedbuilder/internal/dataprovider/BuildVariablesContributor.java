@@ -32,7 +32,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 
 public class BuildVariablesContributor implements ICdtVariablesContributor {
 	private BuildConfigurationData fCfgData;
-	
+
 	private class ContributorMacroContextInfo extends DefaultMacroContextInfo {
 		ICdtVariableManager fMngr;
 		private ICConfigurationDescription fCfgDes;
@@ -44,7 +44,7 @@ public class BuildVariablesContributor implements ICdtVariablesContributor {
 			fCfgDes = cfgDes;
 		}
 
-		
+
 		@Override
 		protected ICdtVariableSupplier[] getSuppliers(int type, Object data) {
 			switch(type){
@@ -77,7 +77,7 @@ public class BuildVariablesContributor implements ICdtVariablesContributor {
 						configuration = ((IBuilder)data).getParent().getParent();
 					else if(data instanceof IConfiguration)
 						configuration  = (IConfiguration)data;
-					
+
 					if(configuration != null){
 						IManagedProject managedProject = configuration.getManagedProject();
 							if(managedProject != null)
@@ -120,13 +120,14 @@ public class BuildVariablesContributor implements ICdtVariablesContributor {
 		fCfgData = data;
 	}
 
+	@Override
 	public ICdtVariable getVariable(String name, ICdtVariableManager provider) {
 		ContributorMacroContextInfo info = createContextInfo(provider);
 		if(info != null)
 			return SupplierBasedCdtVariableManager.getVariable(name, info, true);
 		return null;
 	}
-	
+
 	private ContributorMacroContextInfo createContextInfo(ICdtVariableManager mngr){
 		IConfiguration cfg = fCfgData.getConfiguration();
 		if(((Configuration)cfg).isPreference())
@@ -134,18 +135,19 @@ public class BuildVariablesContributor implements ICdtVariablesContributor {
 		ICConfigurationDescription cfgDes = ManagedBuildManager.getDescriptionForConfiguration(cfg);
 		if(cfgDes != null){
 			return new ContributorMacroContextInfo(mngr,
-					cfgDes, 
+					cfgDes,
 					BuildMacroProvider.CONTEXT_CONFIGURATION,
 					cfg);
 		}
 		return null;
 	}
-	
+
+	@Override
 	public ICdtVariable[] getVariables(ICdtVariableManager provider) {
 		ContributorMacroContextInfo info = createContextInfo(provider);
 		if(info != null)
 			return SupplierBasedCdtVariableManager.getVariables(info, true);
 		return null;
 	}
-	
+
 }

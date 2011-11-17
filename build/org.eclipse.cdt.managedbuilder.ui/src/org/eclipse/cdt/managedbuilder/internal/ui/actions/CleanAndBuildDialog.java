@@ -68,32 +68,38 @@ public class CleanAndBuildDialog extends MessageDialog {
 	private int cleanKind;
 	private int buildKind;
 
-	
+
 	private class ConfigurationLabelProvider implements ILabelProvider {
 		WorkbenchLabelProvider workbenchLabelProvider = new WorkbenchLabelProvider();
 
+		@Override
 		public void addListener(ILabelProviderListener listener) {
 			workbenchLabelProvider.addListener(listener);
 		}
 
+		@Override
 		public void dispose() {
 			workbenchLabelProvider.dispose();
 		}
 
+		@Override
 		public boolean isLabelProperty(Object element, String property) {
 			return workbenchLabelProvider.isLabelProperty(element, property);
 		}
 
+		@Override
 		public void removeListener(ILabelProviderListener listener) {
 			workbenchLabelProvider.removeListener(listener);
 		}
 
+		@Override
 		public Image getImage(Object element) {
 			if (element instanceof ICConfigurationDescription)
 				return ManagedBuilderUIImages.get(ManagedBuilderUIImages.IMG_BUILD_CONFIG);
 			return workbenchLabelProvider.getImage(element);
 		}
 
+		@Override
 		public String getText(Object element) {
 			if (element instanceof ICConfigurationDescription) {
 				ICConfigurationDescription cfgDescription = (ICConfigurationDescription) element;
@@ -112,18 +118,21 @@ public class CleanAndBuildDialog extends MessageDialog {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return getChildren(inputElement);
 		}
@@ -131,6 +140,7 @@ public class CleanAndBuildDialog extends MessageDialog {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 		 */
+		@Override
 		public boolean hasChildren(Object element) {
 			if (element instanceof IProject[])
 				return ((IProject[]) element).length > 0;
@@ -150,6 +160,7 @@ public class CleanAndBuildDialog extends MessageDialog {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 		 */
+		@Override
 		public Object getParent(Object element) {
 			if (element instanceof IProject) {
 				return projects;
@@ -164,6 +175,7 @@ public class CleanAndBuildDialog extends MessageDialog {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 		 */
+		@Override
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement instanceof IProject[])
 				return (IProject[]) parentElement;
@@ -182,7 +194,7 @@ public class CleanAndBuildDialog extends MessageDialog {
 
 	/**
 	 * Creates a new Clean and Build dialog.
-	 * 
+	 *
 	 * @param projects - the currently selected projects
 	 */
 	public CleanAndBuildDialog(IProject[] projects) {
@@ -195,7 +207,7 @@ public class CleanAndBuildDialog extends MessageDialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
 	 */
 	@Override
@@ -204,10 +216,10 @@ public class CleanAndBuildDialog extends MessageDialog {
 		if (buttonId != IDialogConstants.OK_ID) {
 			return;
 		}
-		
+
 		// save all dirty editors
 		BuildUtilities.saveEditors(null);
-		
+
 		if (selected!=null) {
 			List<ICConfigurationDescription> cfgDescriptions = new ArrayList<ICConfigurationDescription>();
 			for (Object sel : selected) {
@@ -215,7 +227,7 @@ public class CleanAndBuildDialog extends MessageDialog {
 					cfgDescriptions.add((ICConfigurationDescription)sel);
 				}
 			}
-			
+
 			if (cleanKind!=0 || buildKind!=0) {
 				ICConfigurationDescription[] cfgdArray = cfgDescriptions.toArray(new ICConfigurationDescription[cfgDescriptions.size()]);
 				Job buildJob = new BuildConfigurationsJob(cfgdArray, cleanKind, buildKind);
@@ -226,7 +238,7 @@ public class CleanAndBuildDialog extends MessageDialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.MessageDialog#createCustomArea(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
@@ -276,7 +288,7 @@ public class CleanAndBuildDialog extends MessageDialog {
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		data.heightHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		cfgCheckboxViewer.getControl().setLayoutData(data);
-		
+
 		ArrayList<ICConfigurationDescription> initialSelection = new ArrayList<ICConfigurationDescription>(projects.length);
 		for (IProject prj : projects) {
 			ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(prj, false);
@@ -287,6 +299,7 @@ public class CleanAndBuildDialog extends MessageDialog {
 		}
 		cfgCheckboxViewer.expandAll();
 		cfgCheckboxViewer.addCheckStateListener(new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				updateEnablement();
 				selected = cfgCheckboxViewer.getCheckedElements();
@@ -308,7 +321,7 @@ public class CleanAndBuildDialog extends MessageDialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.window.Window#close()
 	 */
 	@Override
@@ -319,7 +332,7 @@ public class CleanAndBuildDialog extends MessageDialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.window.Window#getInitialLocation(org.eclipse.swt.graphics.Point)
 	 */
 	@Override
@@ -330,7 +343,7 @@ public class CleanAndBuildDialog extends MessageDialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.window.Window#getInitialSize()
 	 */
 	@Override
@@ -343,7 +356,7 @@ public class CleanAndBuildDialog extends MessageDialog {
 	 * Returns the initial location which is persisted in the IDE Plugin dialog settings under the provided
 	 * dialog settings section name. If location is not persisted in the settings, the {@code null} is
 	 * returned.
-	 * 
+	 *
 	 * @param dialogSettingsSectionName - The name of the dialog settings section
 	 * @return The initial location or {@code null}
 	 */
@@ -370,7 +383,7 @@ public class CleanAndBuildDialog extends MessageDialog {
 	/**
 	 * Persists the location and dimensions of the shell and other user settings in the plugin's dialog
 	 * settings under the provided dialog settings section name
-	 * 
+	 *
 	 * @param shell - The shell whose geometry is to be stored
 	 * @param dialogSettingsSectionName - The name of the dialog settings section
 	 */
@@ -388,7 +401,7 @@ public class CleanAndBuildDialog extends MessageDialog {
 	 * Returns the initial size which is the larger of the <code>initialSize</code> or the size persisted in
 	 * the IDE UI Plugin dialog settings under the provided dialog setttings section name. If no size is
 	 * persisted in the settings, the {@code initialSize} is returned.
-	 * 
+	 *
 	 * @param initialSize - The initialSize to compare against
 	 * @param dialogSettingsSectionName - The name of the dialog settings section
 	 * @return the initial size
@@ -407,7 +420,7 @@ public class CleanAndBuildDialog extends MessageDialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.Dialog#isResizable()
 	 */
 	@Override

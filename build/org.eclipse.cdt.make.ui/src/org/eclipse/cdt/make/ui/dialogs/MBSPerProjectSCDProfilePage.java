@@ -31,15 +31,15 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * SCD per project profile property/preference page
- * 
+ *
  * @author vhirsl
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class MBSPerProjectSCDProfilePage extends AbstractDiscoveryPage {
     private static final String providerId = "specsFile";  //$NON-NLS-1$
-    
+
     private Button sipEnabledButton;
     private Text sipRunCommandText;
     private boolean isValid = true;
@@ -47,28 +47,29 @@ public class MBSPerProjectSCDProfilePage extends AbstractDiscoveryPage {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.ui.dialogs.AbstractCOptionPage#createControl(org.eclipse.swt.widgets.Composite)
      */
-    public void createControl(Composite parent) {
+    @Override
+	public void createControl(Composite parent) {
         Composite page = ControlFactory.createComposite(parent, 1);
-        
+
         // Add the profile UI contribution.
         Group profileGroup = ControlFactory.createGroup(page,
                 MakeUIPlugin.getResourceString("ScannerConfigOptionsDialog.profile.group.label"), 3); //$NON-NLS-1$
-        
+
         GridData gd = (GridData) profileGroup.getLayoutData();
         gd.grabExcessHorizontalSpace = true;
         gd.horizontalAlignment = GridData.FILL;
         ((GridLayout) profileGroup.getLayout()).makeColumnsEqualWidth = false;
-        
+
         // si provider enabled checkbox
         sipEnabledButton = ControlFactory.createCheckBox(profileGroup, SI_ENABLE);
         ((GridData)sipEnabledButton.getLayoutData()).horizontalSpan = 3;
         ((GridData)sipEnabledButton.getLayoutData()).grabExcessHorizontalSpace = true;
         sipEnabledButton.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e) {         
+			public void widgetSelected(SelectionEvent e) {
             }
         });
-        
+
         // si command label
         Label siCommandLabel = ControlFactory.createLabel(profileGroup, SI_COMMAND);
         ((GridData) siCommandLabel.getLayoutData()).horizontalSpan = 3;
@@ -77,11 +78,12 @@ public class MBSPerProjectSCDProfilePage extends AbstractDiscoveryPage {
         sipRunCommandText = ControlFactory.createTextField(profileGroup, SWT.SINGLE | SWT.BORDER);
         //((GridData) sipRunCommandText.getLayoutData()).horizontalSpan = 2;
         sipRunCommandText.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent e) {
+            @Override
+			public void modifyText(ModifyEvent e) {
                 handleModifyRunCommandText();
             }
         });
-        
+
         // si browse button
         Button siBrowseButton = ControlFactory.createPushButton(profileGroup, SI_BROWSE);
         ((GridData) siBrowseButton.getLayoutData()).minimumWidth = 120;
@@ -129,7 +131,7 @@ public class MBSPerProjectSCDProfilePage extends AbstractDiscoveryPage {
 	public boolean isValid() {
         return isValid;
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.IDialogPage#getErrorMessage()
      */
@@ -137,7 +139,7 @@ public class MBSPerProjectSCDProfilePage extends AbstractDiscoveryPage {
 	public String getErrorMessage() {
         return (isValid) ? null : SI_ERROR;
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.ui.dialogs.AbstractDiscoveryPage#populateBuildInfo(org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2)
      */

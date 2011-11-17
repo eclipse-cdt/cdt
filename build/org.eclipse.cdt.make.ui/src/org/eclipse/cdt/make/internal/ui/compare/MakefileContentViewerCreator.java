@@ -11,22 +11,19 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.ui.compare;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
-
-
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.IViewerCreator;
-
-
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
 
 
 /**
  * Required when creating a MakefileMergeViewer from the plugin.xml file.
  */
 public class MakefileContentViewerCreator implements IViewerCreator {
-	
+
+	@Override
 	public Viewer createViewer(Composite parent, CompareConfiguration mp) {
 		return new MakefileMergeViewer(parent, SWT.NULL, mp);
 	}

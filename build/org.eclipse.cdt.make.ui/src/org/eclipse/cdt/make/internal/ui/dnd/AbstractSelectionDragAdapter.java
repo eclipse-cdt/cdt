@@ -88,6 +88,7 @@ public abstract class AbstractSelectionDragAdapter implements TransferDragSource
 	 *
 	 * @param event the information associated with the drag event
 	 */
+	@Override
 	public void dragStart(DragSourceEvent event) {
 		ISelection selection= fProvider.getSelection();
 		if (isDragable(selection)) {
@@ -107,6 +108,7 @@ public abstract class AbstractSelectionDragAdapter implements TransferDragSource
 	 *
 	 * @param event the information associated with the drag event
 	 */
+	@Override
 	public void dragSetData(DragSourceEvent event) {
 		// Define data type so a listener could examine it with isSupportedType().
 		// The selection is not passed using event by the LocalSelectionTransfer internally.
@@ -122,6 +124,7 @@ public abstract class AbstractSelectionDragAdapter implements TransferDragSource
 	 *
 	 * @param event the information associated with the drag event
 	 */
+	@Override
 	public void dragFinished(DragSourceEvent event) {
 		dragDone();
 		event.doit = false;

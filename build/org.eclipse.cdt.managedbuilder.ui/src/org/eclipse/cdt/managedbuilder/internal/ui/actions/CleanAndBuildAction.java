@@ -28,30 +28,33 @@ import org.eclipse.ui.IWorkbenchPart;
 public class CleanAndBuildAction implements IObjectActionDelegate {
 	private ArrayList<IProject> projects = null;
 
+	@Override
 	public void run(IAction action) {
 		if (projects!=null) {
 			CleanAndBuildDialog dialog = new CleanAndBuildDialog(projects.toArray(new IProject[projects.size()]));
 			dialog.open();
 		}
 	}
-	
+
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		projects = getSelectedCdtProjects(selection);
 		action.setEnabled(projects.size() > 0);
 	}
 
 
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 	}
 
 	/**
 	 * @return list of CDT projects from the selection.
-	 * 
+	 *
 	 * @param selection - selected items.
 	 */
 	public static ArrayList<IProject> getSelectedCdtProjects(ISelection selection) {
 		ArrayList<IProject> projects = new ArrayList<IProject>();
-	
+
 		if (!selection.isEmpty() && selection instanceof IStructuredSelection) {
 			Object[] selected = ((IStructuredSelection)selection).toArray();
 			if (selected.length > 0) {
@@ -61,7 +64,7 @@ public class CleanAndBuildAction implements IObjectActionDelegate {
 						prj = (IProject)sel;
 					else if (sel instanceof ICProject)
 						prj = ((ICProject)sel).getProject();
-	
+
 					if (prj != null && CoreModel.getDefault().isNewStyleProject(prj)) {
 						projects.add(prj);
 					}

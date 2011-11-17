@@ -13,7 +13,7 @@ package org.eclipse.cdt.make.core.makefile;
 /**
  * A Makefile can contain rules, macro definitons and comments.
  * They are call directives.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -38,10 +38,11 @@ public interface IDirective {
 
 	/**
 	 * Returns the makefile where the directive was found.
-	 * 
+	 *
 	 * @return <code>IMakefile</code>
 	 */
 	IMakefile getMakefile();
 
+	@Override
 	String toString();
 }

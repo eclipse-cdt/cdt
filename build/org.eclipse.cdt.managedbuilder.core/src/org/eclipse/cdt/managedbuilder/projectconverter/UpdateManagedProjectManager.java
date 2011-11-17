@@ -34,10 +34,10 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
-import org.osgi.framework.Version;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
+import org.osgi.framework.Version;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.
@@ -52,11 +52,11 @@ public class UpdateManagedProjectManager {
 	private ManagedBuildInfo fConvertedInfo= null;
 	private boolean fIsInfoReadOnly = false;
 	final private IProject fProject;
-	
+
 	private UpdateManagedProjectManager(IProject project){
 		fProject = project;
-	}	
-	
+	}
+
 	public static void setBackupFileOverwriteQuery(IOverwriteQuery backupFileOverwriteQuery){
 		fBackupFileOverwriteQuery = backupFileOverwriteQuery;
 	}
@@ -68,14 +68,14 @@ public class UpdateManagedProjectManager {
 	public static void setUpdateProjectQuery(IOverwriteQuery updateProjectQuery){
 		fUpdateProjectQuery = updateProjectQuery;
 	}
-	
+
 	synchronized static private UpdateManagedProjectManager getUpdateManager(IProject project){
 		UpdateManagedProjectManager mngr = getExistingUpdateManager(project);
 		if(mngr == null)
 			mngr = createUpdateManager(project);
 		return mngr;
 	}
-	
+
 	static private UpdateManagedProjectManager getExistingUpdateManager(IProject project){
 		Map<String, UpdateManagedProjectManager> map = getManagerMap(false);
 		return map != null ? (UpdateManagedProjectManager)map.get(project.getName()) : null;
@@ -90,18 +90,18 @@ public class UpdateManagedProjectManager {
 	static public void addInfo(final IProject project, ManagedBuildInfo info) {
 		getUpdateManager(project).setBuildInfo(info);
 	}
-	
+
 	static public void delInfo(final IProject project) {
 		removeUpdateManager(project);
 	}
-	
+
 	static private void removeUpdateManager(IProject project){
 		UpdateManagedProjectManager mngr = getExistingUpdateManager(project);
 		if(mngr == null)
 			return;
 		getManagerMap(false).remove(project.getName());
 	}
-	
+
 	static private Map<String, UpdateManagedProjectManager> getManagerMap(boolean create){
 		Map<String, UpdateManagedProjectManager> map = fThreadInfo.get();
 		if(map == null && create){
@@ -110,7 +110,7 @@ public class UpdateManagedProjectManager {
 		}
 		return map;
 	}
-	
+
 	/**
 	 * @since 8.0
 	 */
@@ -135,7 +135,7 @@ public class UpdateManagedProjectManager {
 
 	/* (non-Javadoc)
 	 * Create a back-up file
-	 *  
+	 *
 	 * @param settingsFile
 	 * @param suffix
 	 * @param monitor
@@ -146,7 +146,7 @@ public class UpdateManagedProjectManager {
 		if(mngr == null || mngr.fIsInfoReadOnly)
 			return;
 		IContainer destFolder = project;
-		IFile dstFile = destFolder.getFile(new Path(settingsFile.getName()+suffix)); 
+		IFile dstFile = destFolder.getFile(new Path(settingsFile.getName()+suffix));
 		mngr.backupFile(settingsFile,  dstFile, monitor,  project, fBackupFileOverwriteQuery);
 	}
 
@@ -159,19 +159,19 @@ public class UpdateManagedProjectManager {
 	 * @param monitor
 	 * @param project
 	 */
-	
+
 	public static void backupSettingsFile(IFile settingsFile, String suffix, IProgressMonitor monitor, IProject project){
 		UpdateManagedProjectManager mngr = getUpdateManager(project);
 		if(mngr == null || mngr.fIsInfoReadOnly)
 			return;
 		IContainer destFolder = project;
-		IFile dstFile = destFolder.getFile(new Path(settingsFile.getName()+suffix)); 
+		IFile dstFile = destFolder.getFile(new Path(settingsFile.getName()+suffix));
 		mngr.backupFile(settingsFile,  dstFile, monitor,  project, fBackupFileOverwriteQuery);
 	}
-	
+
 	/* (non-Javadoc)
 	 * Create a back-up file
-	 * 
+	 *
 	 * @param srcFile
 	 * @param dstFile
 	 * @param monitor
@@ -209,15 +209,15 @@ public class UpdateManagedProjectManager {
 	void copyFile(File src, File dst) throws IOException {
 		FileInputStream fis = null;
 		FileOutputStream fos = null;
-		
+
 		try {
 			fis = new FileInputStream(src);
 			fos = new FileOutputStream(dst);
-			
+
 			final int BUFSIZ = 1024;
 			byte buf[] = new byte[BUFSIZ];
 			int len = 0;
-			
+
 			while ((len = fis.read(buf)) > 0) {
 				fos.write(buf, 0, len);
 			}
@@ -235,7 +235,7 @@ public class UpdateManagedProjectManager {
 		IContainer destFolder = project;
 		File restoreFile = destFolder.getFile(new Path(restoreFileName)).getLocation().toFile();
 		File backupFile = destFolder.getFile(new Path(backupFileName)).getLocation().toFile();
-		
+
 		try{
 			if (restoreFile.exists()) {
 				restoreFile.delete();
@@ -245,11 +245,11 @@ public class UpdateManagedProjectManager {
 			fIsInfoReadOnly = true;
 		}
 	}
-	
+
 //	static private boolean openQuestion(IResource rc, final String title, final String message){
 //		return ProjectConverter.openQuestion(rc, message, title, message, fOpenQuestionQuery, false);
 //	}
-	
+
 //	static public void openInformation(final String title, final String message){
 //		if(fOpenQuestionQuery != null)
 //			return;// getBooleanFromQueryAnswer(fOpenQuestionQuery.queryOverwrite(message));
@@ -263,14 +263,14 @@ public class UpdateManagedProjectManager {
 //		final Shell shell = window.getShell();
 //		shell.getDisplay().syncExec(new Runnable() {
 //			public void run() {
-//				MessageDialog.openInformation(shell,title,message); 
+//				MessageDialog.openInformation(shell,title,message);
 //			}
-//		});	
+//		});
 //	}
-	
+
 	/**
 	 * returns ManagedBuildInfo for the current project
-	 * if converter is currently running 
+	 * if converter is currently running
 	 * @param project project for which ManagedBuildInfo is needed
 	 * @return the pointer to the project ManagedBuildInfo or null
 	 * if converter is no running
@@ -281,16 +281,16 @@ public class UpdateManagedProjectManager {
 			return null;
 		return mngr.getConvertedManagedBuildInfo();
 	}
-	
+
 	private ManagedBuildInfo getConvertedManagedBuildInfo(){
 		return fConvertedInfo;
 	}
-	
+
 	private void setBuildInfo(ManagedBuildInfo info) {
 		fConvertedInfo = info;
 	}
-	
-	private void doProjectUpdate(ManagedBuildInfo info) 
+
+	private void doProjectUpdate(ManagedBuildInfo info)
 						throws CoreException {
 		fConvertedInfo = info;
 		NullProgressMonitor monitor = new NullProgressMonitor();
@@ -300,17 +300,18 @@ public class UpdateManagedProjectManager {
 			return;
 
 		try {
-			if (!settingsFile.getLocation().toFile().exists()) 
+			if (!settingsFile.getLocation().toFile().exists())
 				throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
 					ConverterMessages.getResourceString("UpdateManagedProjectManager.6"),null)); //$NON-NLS-1$
 
-				
+
 			backupFile(settingsFile, backupFile, monitor, fProject, new IOverwriteQuery(){
+					@Override
 					public String queryOverwrite(String file) {
 						return ALL;
-					}	
+					}
 				});
-	
+
 			Version version = getManagedBuildInfoVersion(info.getVersion());
 
 			boolean shouldUpdate;
@@ -320,12 +321,12 @@ public class UpdateManagedProjectManager {
 				shouldUpdate = ProjectConverter.openQuestion(fProject, "UpdateManagedProjectManager.3", ConverterMessages.getResourceString("UpdateManagedProjectManager.3"), //$NON-NLS-1$  //$NON-NLS-2$
 					ConverterMessages.getFormattedString("UpdateManagedProjectManager.4", new String[]{fProject.getName(),version.toString(),ManagedBuildManager.getBuildInfoVersion().toString()}), //$NON-NLS-1$
 					fOpenQuestionQuery, false);
-			
-			if (!shouldUpdate){ 
+
+			if (!shouldUpdate){
 				fIsInfoReadOnly = true;
 				throw new CoreException(new Status(IStatus.CANCEL, ManagedBuilderCorePlugin.getUniqueIdentifier(), ConverterMessages.getResourceString("UpdateManagedProjectManager.7"))); //$NON-NLS-1$
 			}
-			
+
 			IFile projectFile = fProject.getFile(".project"); //$NON-NLS-1$
 			if(projectFile.exists())
 				backupFile(projectFile, "_initial", monitor, fProject); //$NON-NLS-1$
@@ -345,12 +346,12 @@ public class UpdateManagedProjectManager {
 			if(version.equals(new Version(3,0,0))){
 				UpdateManagedProject30.doProjectUpdate(monitor, fProject);
 				version = getManagedBuildInfoVersion(info.getVersion());
-			} 
+			}
 			if (new Version(4,0,0).compareTo(version)>0){
 				UpdateManagedProject31.doProjectUpdate(monitor, fProject);
 				version = getManagedBuildInfoVersion(info.getVersion());
 			}
-	
+
 			if(!isCompatibleProject(info)){
 				throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
 						ConverterMessages.getFormattedString("UpdateManagedProjectManager.5",  //$NON-NLS-1$
@@ -361,10 +362,10 @@ public class UpdateManagedProjectManager {
 								}
 							),null));
 			}
-			
+
 		} catch (CoreException e) {
 			fIsInfoReadOnly = true;
-			throw e; 
+			throw e;
 		} finally{
 			if(fIsInfoReadOnly){
 				restoreFile(backupFile.getName(), settingsFile.getName(), monitor, fProject);
@@ -375,12 +376,12 @@ public class UpdateManagedProjectManager {
 
 	/**
 	 * updates the managed project
-	 * 
+	 *
 	 * @param project the project to be updated
 	 * @param info the ManagedBuildInfo for the current project
 	 * @throws CoreException if conversion failed
 	 */
-	static public void updateProject(final IProject project, ManagedBuildInfo info) 
+	static public void updateProject(final IProject project, ManagedBuildInfo info)
 						throws CoreException{
 		try {
 			getUpdateManager(project).doProjectUpdate(info);

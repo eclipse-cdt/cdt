@@ -12,14 +12,15 @@
 package org.eclipse.cdt.managedbuilder.core.tests;
 
 import org.eclipse.cdt.managedbuilder.core.IManagedOutputNameProvider;
-import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IOption;
+import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 
 public class TestLinkerNameProvider implements IManagedOutputNameProvider {
 
+	@Override
 	public IPath[] getOutputNames(ITool tool, IPath[] primaryInputNames) {
 		IPath[] name = new IPath[1];
 		boolean isSO = false;
@@ -43,7 +44,7 @@ public class TestLinkerNameProvider implements IManagedOutputNameProvider {
 				name[0] = Path.fromOSString(primaryInputNames[0].removeFileExtension().addFileExtension("so").lastSegment());	//$NON-NLS-1$
 			}
 			return name;
-		} 
+		}
 		String fileName = "default";	//$NON-NLS-1$
 		if (primaryInputNames != null && primaryInputNames.length > 0) {
 			fileName = primaryInputNames[0].removeFileExtension().toString();

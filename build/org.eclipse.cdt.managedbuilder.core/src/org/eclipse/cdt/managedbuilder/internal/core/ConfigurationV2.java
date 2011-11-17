@@ -49,23 +49,23 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 
 	/**
 	 * Build a configuration from the project manifest file.
-	 * 
-	 * @param target The <code>Target</code> the configuration belongs to. 
+	 *
+	 * @param target The <code>Target</code> the configuration belongs to.
 	 * @param element The element from the manifest that contains the overridden configuration information.
 	 */
 	public ConfigurationV2(Target target, Element element) {
 		this.target = target;
-		
+
 		// id
 		setId(element.getAttribute(IConfigurationV2.ID));
-		
+
 		// hook me up
 		target.addConfiguration(this);
-		
+
 		// name
 		if (element.hasAttribute(IConfigurationV2.NAME))
 			setName(element.getAttribute(IConfigurationV2.NAME));
-		
+
 		if (element.hasAttribute(IConfigurationV2.PARENT)) {
 			// See if the target has a parent
 			ITarget targetParent = target.getParent();
@@ -77,7 +77,7 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 				parent = null;
 			}
 		}
-		
+
 		NodeList configElements = element.getChildNodes();
 		for (int i = 0; i < configElements.getLength(); ++i) {
 			Node configElement = configElements.item(i);
@@ -85,12 +85,12 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 				new ToolReference(this, (Element)configElement);
 			}
 		}
-	
+
 	}
 
 	/**
 	 * Create a new configuration based on one already defined.
-	 * 
+	 *
 	 * @param target The <code>Target</code> the receiver will be added to.
 	 * @param parentConfig The <code>IConfigurationV2</code> to copy the settings from.
 	 * @param id A unique ID for the configuration.
@@ -100,15 +100,15 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 		this.name = parentConfig.getName();
 		this.target = target;
 
-		// If this contructor is called to clone an existing 
-		// configuration, the parent of the parent should be stored. 
+		// If this contructor is called to clone an existing
+		// configuration, the parent of the parent should be stored.
 		// As of 2.0, there is still one single level of inheritence to
 		// worry about
 		parent = parentConfig.getParent() == null ? parentConfig : parentConfig.getParent();
-		
+
 		// Check that the tool and the project match
 		IProject project = (IProject) target.getOwner();
-		
+
 		// Get the tool references from the target and parent
 		List<IToolReference> allToolRefs = new Vector<IToolReference>(target.getLocalToolReferences());
 		allToolRefs.addAll(((ConfigurationV2)parentConfig).getLocalToolReferences());
@@ -116,13 +116,13 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 			// Make a new ToolReference based on the tool in the ref
 			ITool parentTool = toolRef.getTool();
 			ToolReference newRef = new ToolReference(this, parentTool);
-			
+
 			// The reference may have a different command than the parent tool
-			String refCmd = toolRef.getToolCommand(); 
+			String refCmd = toolRef.getToolCommand();
 			if (!refCmd.equals(parentTool.getToolCommand())) {
 				newRef.setToolCommand(refCmd);
 			}
-			
+
 			List<OptionReference> optRefs = toolRef.getOptionReferenceList();
 			for (OptionReference optRef : optRefs) {
 				IOption opt = optRef.getOption();
@@ -158,29 +158,29 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 				}
 			}
 		}
-		
+
 		target.addConfiguration(this);
 	}
 
 	/**
 	 * Create a new <code>ConfigurationV2</code> based on the specification in the plugin manifest.
-	 * 
+	 *
 	 * @param target The <code>Target</code> the receiver will be added to.
 	 * @param element The element from the manifest that contains the default configuration settings.
 	 */
 	public ConfigurationV2(Target target, IManagedConfigElement element) {
 		this.target = target;
-		
+
 		// setup for resolving
 		ManagedBuildManager.putConfigElement(this, element);
 		resolved = false;
-		
+
 		// id
 		setId(element.getAttribute(IConfigurationV2.ID));
-		
+
 		// hook me up
 		target.addConfiguration(this);
-		
+
 		// name
 		setName(element.getAttribute(IConfigurationV2.NAME));
 
@@ -192,14 +192,14 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 			}
 		}
 	}
-	
+
 	/**
 	 * A fresh new configuration for a target.
-	 */	
+	 */
 	public ConfigurationV2(Target target, String id) {
 		this.id = id;
 		this.target = target;
-		
+
 		target.addConfiguration(this);
 	}
 
@@ -213,24 +213,25 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 			}
 		}
 	}
-	
+
 	/**
 	 * Adds a tool reference to the receiver.
 	 */
 	public void addToolReference(ToolReference toolRef) {
 		getLocalToolReferences().add(toolRef);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfigurationV2#getToolReferences()
 	 */
+	@Override
 	public IToolReference[] getToolReferences() {
 		List<IToolReference> list = getLocalToolReferences();
 		IToolReference[] tools = new IToolReference[list.size()];
 		list.toArray(tools);
 		return tools;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @param option
 	 * @return
@@ -243,12 +244,12 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 			// The option reference belongs to an existing tool reference
 			OptionReference optionRef = (OptionReference)option;
 			searchRef = optionRef.getToolReference();
-			
+
 			// That tool reference may belong to a target or to the configuration
 			if (searchRef.ownedByConfiguration(this))
 				return optionRef;
 			else {
-				// All this means is that the tool ref does not belong to the receiver. 
+				// All this means is that the tool ref does not belong to the receiver.
 				// The receiver may also have a reference to the tool
 				if ((answer = findLocalReference(searchRef)) == null) {
 					// Otherwise, create one and save the option setting in it
@@ -286,13 +287,14 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 				return ref;
 			}
 		}
-		
+
 		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfigurationV2#getFilteredTools(org.eclipse.core.resources.IProject)
 	 */
+	@Override
 	public ITool[] getFilteredTools(IProject project) {
 		ITool[] localTools = getTools();
 		Vector<ITool> tools = new Vector<ITool>(localTools.length);
@@ -320,15 +322,15 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 				continue;
 			}
 		}
-		
+
 		// Answer the filtered tools as an array
 		return tools.toArray(new ITool[tools.size()]);
 	}
 
 	/* (non-javadoc)
-	 * A safety method to avoid NPEs. It answers the tool reference list in the 
+	 * A safety method to avoid NPEs. It answers the tool reference list in the
 	 * receiver. It does not look at the tool references defined in the parent.
-	 * 
+	 *
 	 * @return List
 	 */
 	protected List<IToolReference> getLocalToolReferences() {
@@ -349,16 +351,17 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfigurationV2#getTools()
 	 */
+	@Override
 	public ITool[] getTools() {
 		ITool[] tools = parent != null
 			? parent.getTools()
 			: target.getTools();
-		
+
 		// Validate that the tools correspond to the nature
 		IProject project = (IProject)target.getOwner();
 		if (project != null) {
 			List<ITool> validTools = new ArrayList<ITool>();
-			
+
 			// The target is associated with a real project
 			for (int i = 0; i < tools.length; ++i) {
 				ITool tool = tools[i];
@@ -385,66 +388,69 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 					case ITool.FILTER_BOTH:
 						validTools.add(tool);
 						break;
-				} 
+				}
 			}
 			// Now put the valid tools back into the array
-			tools = validTools.toArray(new ITool[validTools.size()]);			
+			tools = validTools.toArray(new ITool[validTools.size()]);
 		}
-		
+
 		// Replace tools with local overrides
 		for (int i = 0; i < tools.length; ++i) {
 			IToolReference ref = getToolReference(tools[i]);
 			if (ref != null)
 				tools[i] = ref;
 		}
-		
+
 		return tools;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfigurationV2#isDirty()
 	 */
+	@Override
 	public boolean isDirty() {
 		// If I need saving, just say yes
 		if (isDirty) return true;
-		
+
 		// Otherwise see if any tool references need saving
 		List<IToolReference> localToolReferences = getLocalToolReferences();
 		for (IToolReference ref : localToolReferences) {
 			if (ref.isDirty()) return true;
 		}
-		
+
 		return isDirty;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfigurationV2#needsRebuild()
 	 */
+	@Override
 	public boolean needsRebuild() {
 		return rebuildNeeded;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfigurationV2#getParent()
 	 */
+	@Override
 	public IConfigurationV2 getParent() {
 		return parent;
 	}
-	
+
 	/* (non-javadoc)
-	 * 
+	 *
 	 * @param tool
 	 * @return List
 	 */
 	protected List<OptionReference> getOptionReferences(ITool tool) {
 		List<OptionReference> references = new ArrayList<OptionReference>();
-		
+
 		// Get all the option references I add for this tool
 		IToolReference toolRef = getToolReference(tool);
 		if (toolRef != null) {
 			references.addAll(toolRef.getOptionReferenceList());
 		}
-		
+
 		// See if there is anything that my parents add that I don't
 		if (parent != null) {
 			List<OptionReference> temp = ((ConfigurationV2)parent).getOptionReferences(tool);
@@ -454,13 +460,14 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 				}
 			}
 		}
-		
+
 		return references;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfigurationV2#getToolById(java.lang.String)
 	 */
+	@Override
 	public ITool getToolById(String id) {
 		ITool[] tools = parent != null
 		? parent.getTools()
@@ -486,6 +493,7 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfigurationV2#getTarget()
 	 */
+	@Override
 	public ITarget getTarget() {
 		return (target == null && parent != null) ? parent.getTarget() : target;
 	}
@@ -493,6 +501,7 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfigurationV2#getOwner()
 	 */
+	@Override
 	public IResource getOwner() {
 		return getTarget().getOwner();
 	}
@@ -500,7 +509,7 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 	/* (non-Javadoc)
 	 * Returns the reference for a given tool or <code>null</code> if one is not
 	 * found.
-	 * 
+	 *
 	 * @param tool
 	 * @return ToolReference
 	 */
@@ -515,7 +524,7 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 				return temp;
 			}
 		}
-		
+
 		// See if the target that the receiver belongs to has a reference to the tool
 		ITool[] targetTools = target.getTools();
 		for (int index = targetTools.length - 1; index >= 0; --index) {
@@ -528,7 +537,7 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 		}
 		return null;
 	}
-	
+
 	public void reset(IManagedConfigElement element) {
 		// I just need to reset the tool references
 		getLocalToolReferences().clear();
@@ -548,13 +557,13 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 	 */
 	public void serialize(Document doc, Element element) {
 		element.setAttribute(IConfigurationV2.ID, id);
-		
+
 		if (name != null)
 			element.setAttribute(IConfigurationV2.NAME, name);
-			
+
 		if (parent != null)
 			element.setAttribute(IConfigurationV2.PARENT, parent.getId());
-		
+
 		// Serialize only the tool references defined in the configuration
 		List<IToolReference> localToolReferences = getLocalToolReferences();
 		for (IToolReference toolRef : localToolReferences) {
@@ -562,14 +571,15 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 			element.appendChild(toolRefElement);
 			((ToolReference)toolRef).serialize(doc, toolRefElement);
 		}
-		
+
 		// I am clean now
 		isDirty = false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfigurationV2#setDirty(boolean)
 	 */
+	@Override
 	public void setDirty(boolean isDirty) {
 		// Override the dirty flag
 		this.isDirty = isDirty;
@@ -583,6 +593,7 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfigurationV2#setOption(org.eclipse.cdt.core.build.managed.IOption, boolean)
 	 */
+	@Override
 	public void setOption(IOption option, boolean value) throws BuildException {
 		// Is there a delta
 		if (option.getBooleanValue() != value) {
@@ -595,6 +606,7 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfigurationV2#setOption(org.eclipse.cdt.core.build.managed.IOption, java.lang.String)
 	 */
+	@Override
 	public void setOption(IOption option, String value) throws BuildException {
 		String oldValue;
 		// Check whether this is an enumerated option
@@ -602,7 +614,7 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 			oldValue = option.getSelectedEnum();
 		}
 		else {
-			oldValue = option.getStringValue(); 
+			oldValue = option.getStringValue();
 		}
 		if (oldValue != null && !oldValue.equals(value)) {
 			createOptionReference(option).setValue(value);
@@ -614,6 +626,7 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfigurationV2#setOption(org.eclipse.cdt.core.build.managed.IOption, java.lang.String[])
 	 */
+	@Override
 	public void setOption(IOption option, String[] value) throws BuildException {
 		// Is there a delta
 		String[] oldValue;
@@ -641,12 +654,13 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 			createOptionReference(option).setValue(value);
 			isDirty = true;
 			rebuildNeeded = true;
-		} 
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfigurationV2#setRebuildState(boolean)
 	 */
+	@Override
 	public void setRebuildState(boolean rebuild) {
 		rebuildNeeded = rebuild;
 	}
@@ -654,6 +668,7 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfigurationV2#setToolCommand(org.eclipse.cdt.managedbuilder.core.ITool, java.lang.String)
 	 */
+	@Override
 	public void setToolCommand(ITool tool, String command) {
 		// Make sure the command is different
 		if (command != null) {
@@ -672,6 +687,7 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfigurationV2#setCreatedConfig(IConfiguration)
 	 */
+	@Override
 	public void setCreatedConfig(IConfiguration config) {
 		createdConfig = config;
 	}
@@ -679,8 +695,9 @@ public class ConfigurationV2 extends BuildObject implements IConfigurationV2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfigurationV2#getCreatedConfig()
 	 */
+	@Override
 	public IConfiguration getCreatedConfig() {
 		return createdConfig;
 	}
-	
+
 }

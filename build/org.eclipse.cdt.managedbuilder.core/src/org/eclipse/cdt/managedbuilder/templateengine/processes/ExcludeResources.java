@@ -14,11 +14,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.cdt.core.templateengine.process.processes.Messages;
 import org.eclipse.cdt.core.templateengine.TemplateCore;
 import org.eclipse.cdt.core.templateengine.process.ProcessArgument;
 import org.eclipse.cdt.core.templateengine.process.ProcessFailureException;
 import org.eclipse.cdt.core.templateengine.process.ProcessRunner;
+import org.eclipse.cdt.core.templateengine.process.processes.Messages;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
@@ -48,29 +48,29 @@ import org.eclipse.core.runtime.IProgressMonitor;
  *   <li> <b>invertConfigMatching</b> if this is set to "true" then the set of configurations for which resources matching any of the specified file patterns will
  *   be inverted. This enables you to specify which resources the files should not be excluded for without having to know what other configurations may exist.
  * </ul>
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class ExcludeResources extends ProcessRunner {
-	
+
 	@Override
 	public void process(TemplateCore template, final ProcessArgument[] args, String processId, IProgressMonitor monitor) throws ProcessFailureException {
 		String projectName = args[0].getSimpleValue();
 		String configIdPattern = args[1].getSimpleValue();
 		final String[] filePatterns = args[2].getSimpleArrayValue();
 		String invertConfigMatching = args[3].getSimpleValue();
-		
+
 		boolean invert = Boolean.valueOf(invertConfigMatching).booleanValue();
-		
+
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-		
+
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 		if(info==null) {
 			throw new ProcessFailureException(Messages.getString("ExcludeResources.0")); //$NON-NLS-1$
 		}
 		IManagedProject managedProject = info.getManagedProject();
-		
+
 		/*
 		 * Determine which configurations to exclude for
 		 */
@@ -82,27 +82,28 @@ public class ExcludeResources extends ProcessRunner {
 				matchingConfigs.add(config);
 			}
 		}
-		
+
 		if(invert) {
 			List<IConfiguration> invertedConfigs = new ArrayList<IConfiguration>(Arrays.asList(allConfigs));
 			invertedConfigs.removeAll(matchingConfigs);
 			matchingConfigs = invertedConfigs;
 		}
-		
+
 		/*
 		 * Visit project resources and exclude them if they match any pattern
 		 */
 		final List<IConfiguration> configsToProcess = matchingConfigs;
 		IResourceProxyVisitor visitor = new IResourceProxyVisitor() {
+			@Override
 			public boolean visit(IResourceProxy proxy) throws CoreException {
 				IPath lPath = proxy.requestFullPath();
-				
+
 				if(proxy.getType() == IResource.FILE) { /* CDT does not support directory resource configurations */
 					boolean isDerived = false;
 					for(IResource res = proxy.requestResource(); res!=null; res = res.getParent()) {
 						isDerived |= res.isDerived();
 					}
-					
+
 					if(!isDerived) {
 						for (IConfiguration config : configsToProcess) {
 							IResourceConfiguration resourceConfig = config.getResourceConfiguration(lPath.toString());
@@ -115,27 +116,27 @@ public class ExcludeResources extends ProcessRunner {
 										IFile file = (IFile) proxy.requestResource();
 											resourceConfig = config.createResourceConfiguration(file);
 									}
-									
+
 									if (resourceConfig != null){
 										resourceConfig.setExclude(true);
 									}
-									
+
 									break;
-								
+
 								}
 							}
-							
+
 						}
 					}
 				}
 				return true;
 			}
 		};
-		
+
 		try {
 			project.accept(visitor, IResource.DEPTH_INFINITE);
 			if (info.isDirty()){
-				ManagedBuildManager.saveBuildInfo(project, true);											
+				ManagedBuildManager.saveBuildInfo(project, true);
 			}
 		} catch (CoreException ce) {
 			throw new ProcessFailureException(ce);

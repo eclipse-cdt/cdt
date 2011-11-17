@@ -9,7 +9,7 @@
  *  IBM Rational Software - Initial API and implementation
  *  ARM Ltd. - Minor changes to echo commands
  *  IBM Corporation
- *  Anna Dushistova  (Mentor Graphics) - [307244] extend visibility of fields in GnuMakefileGenerator 
+ *  Anna Dushistova  (Mentor Graphics) - [307244] extend visibility of fields in GnuMakefileGenerator
  *  James Blackburn (Broadcom Corp.)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.makegen.gnu;
@@ -142,6 +142,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.resources.IResourceDeltaVisitor#visit(org.eclipse.core.resources.IResourceDelta)
 		 */
+		@Override
 		public boolean visit(IResourceDelta delta) throws CoreException {
 			// Should the visitor keep iterating in current directory
 			boolean keepLooking = false;
@@ -238,6 +239,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.resources.IResourceProxyVisitor#visit(org.eclipse.core.resources.IResourceProxy)
 		 */
+		@Override
 		public boolean visit(IResourceProxy proxy) throws CoreException {
 			// No point in proceeding, is there
 			if (generator == null) {
@@ -392,6 +394,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator#initialize(IProject, IManagedBuildInfo, IProgressMonitor)
 	 */
+	@Override
 	public void initialize(IProject project, IManagedBuildInfo info, IProgressMonitor monitor) {
 		// Save the project so we can get path and member information
 		this.project = project;
@@ -539,12 +542,14 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator#generateDependencies()
 	 */
+	@Override
 	public void generateDependencies() throws CoreException {
 		final PathSettingsContainer postProcs = PathSettingsContainer.createRootContainer();
 		// Note: PopulateDummyTargets is a hack for the pre-3.x GCC compilers
 
 		// Collect the methods that will need to be called
 		toolInfos.accept(new IPathSettingsContainerVisitor(){
+			@Override
 			public boolean visit(PathSettingsContainer container){
 				ToolInfoHolder h = (ToolInfoHolder)container.getValue();
 				Vector<String> depExts = new Vector<String>();				//  Vector of dependency file extensions
@@ -606,6 +611,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator#generateMakefiles(org.eclipse.core.resources.IResourceDelta)
 	 */
+	@Override
 	public MultiStatus generateMakefiles(IResourceDelta delta) throws CoreException {
 		/*
 		 * Let's do a sanity check right now.
@@ -773,6 +779,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator#getBuildWorkingDir()
 	 */
+	@Override
 	public IPath getBuildWorkingDir() {
 		if (topBuildDir != null) {
 			return topBuildDir.removeFirstSegments(1);
@@ -783,6 +790,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator#getMakefileName()
 	 */
+	@Override
 	public String getMakefileName() {
 		return new String(MAKEFILE_NAME);
 	}
@@ -790,6 +798,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator#isGeneratedResource(org.eclipse.core.resources.IResource)
 	 */
+	@Override
 	public boolean isGeneratedResource(IResource resource) {
 		// Is this a generated directory ...
 		IPath path = resource.getProjectRelativePath();
@@ -807,12 +816,14 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator#regenerateDependencies()
 	 */
+	@Override
 	public void regenerateDependencies(boolean force) throws CoreException {
 		// A hack for the pre-3.x GCC compilers is to put dummy targets for deps
 		final IWorkspaceRoot root = CCorePlugin.getWorkspace().getRoot();
 		final CoreException[] es = new CoreException[1];
 
 		toolInfos.accept(new IPathSettingsContainerVisitor(){
+			@Override
 			public boolean visit(PathSettingsContainer container){
 				ToolInfoHolder h = (ToolInfoHolder)container.getValue();
 				// Collect the methods that will need to be called
@@ -853,6 +864,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator#regenerateMakefiles()
 	 */
+	@Override
 	public MultiStatus regenerateMakefiles() throws CoreException {
 		MultiStatus status;
 		// Visit the resources in the project
@@ -1052,6 +1064,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		// Determine the set of macros
 		toolInfos.accept(new IPathSettingsContainerVisitor() {
 
+			@Override
 			public boolean visit(PathSettingsContainer container){
 				ToolInfoHolder h = (ToolInfoHolder)container.getValue();
 				ITool[] buildTools = h.buildTools;
@@ -3909,6 +3922,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	protected void calculateToolInputsOutputs() {
 
 		toolInfos.accept(new IPathSettingsContainerVisitor(){
+			@Override
 			public boolean visit(PathSettingsContainer container){
 				ToolInfoHolder h = (ToolInfoHolder)container.getValue();
 				ITool[] buildTools = h.buildTools;
@@ -4432,7 +4446,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	 *
 	 * @return String
 	 * @since 8.0
-	 */	
+	 */
 	protected String getBuildTargetName() {
 		return buildTargetName;
 	}
@@ -4567,7 +4581,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 	/**
 	 * Strips outermost quotes of Strings of the form "a" and 'a' or returns the original
 	 * string if the input is not of this form.
-	 * 
+	 *
 	 * @throws NullPointerException if path is null
 	 * @return a String without the outermost quotes (if the input has them)
 	 */
@@ -4577,6 +4591,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		return doubleQuoted || singleQuoted ? path.substring(1,path.length()-1) : path;
 	}
 
+	@Override
 	public void initialize(int buildKind, IConfiguration cfg, IBuilder builder,
 			IProgressMonitor monitor) {
 		// Save the project so we can get path and member information

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Texas Instruments - initial API and implementation
  *******************************************************************************/
@@ -13,32 +13,33 @@ package org.eclipse.cdt.managedbuilder.internal.ui.actions;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.core.resources.ICommand;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.GeneratedMakefileBuilder;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
+import org.eclipse.core.resources.ICommand;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.ISelectionService;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionDelegate;
 import org.eclipse.ui.internal.ide.actions.BuildUtilities;
 
@@ -57,7 +58,7 @@ public class BuildFilesAction extends ActionDelegate implements
 	private IAction action = null;
 
 	/**
-	 * 
+	 *
 	 */
 	public BuildFilesAction() {
 		this(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
@@ -75,7 +76,7 @@ public class BuildFilesAction extends ActionDelegate implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
 	@Override
@@ -95,9 +96,10 @@ public class BuildFilesAction extends ActionDelegate implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void init(IWorkbenchWindow window) {
 		workbenchWindow = window;
 
@@ -108,7 +110,7 @@ public class BuildFilesAction extends ActionDelegate implements
 	 * interface. The conversion is a bare cast operation (if the object is
 	 * instance of <code>IFile</code>, or an adaptation (if the object is
 	 * instance of <code>IAdaptable</code>).
-	 * 
+	 *
 	 * @param object
 	 *            the object to be cast to <code>IFile</code>
 	 * @return a reference to an IFile corresponding to the object provided, or
@@ -149,7 +151,7 @@ public class BuildFilesAction extends ActionDelegate implements
 	/**
 	 * Returns a list of resources currently selected.
 	 * "Buildable" means buildable by MBS.
-	 * 
+	 *
 	 * @return a list of resources
 	 */
 	private List<IFile> getSelectedBuildableFiles() {
@@ -253,7 +255,7 @@ public class BuildFilesAction extends ActionDelegate implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	@Override
@@ -274,18 +276,18 @@ public class BuildFilesAction extends ActionDelegate implements
 	}
 
 	private boolean shouldBeEnabled() {
-		
+
 		// fix for Bugzilla 139663
 		// if build automatically is turned on, then this menu should be turned off as
 		// it will trigger the auto build
 		Preferences preferences = ResourcesPlugin.getPlugin().getPluginPreferences();
-		
+
 		if(preferences.getBoolean(ResourcesPlugin.PREF_AUTO_BUILDING))
 		{
 			// auto building is on... do not enable the menu
 			return false;
 		}
-		
+
 		ISelectionService selectionService = workbenchWindow
 				.getSelectionService();
 		ISelection selection = selectionService.getSelection();
@@ -309,7 +311,7 @@ public class BuildFilesAction extends ActionDelegate implements
 					IManagedBuildInfo buildInfo = ManagedBuildManager
 							.getBuildInfo(file.getProject());
 
-					if (buildInfo == null || !buildInfo.isValid() 
+					if (buildInfo == null || !buildInfo.isValid()
 							|| buildInfo.getDefaultConfiguration() == null
 							|| !buildInfo.getDefaultConfiguration().isManagedBuildOn()) {
 						return false;
@@ -361,7 +363,7 @@ public class BuildFilesAction extends ActionDelegate implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction,
 	 *      org.eclipse.jface.viewers.ISelection)
 	 */
@@ -370,7 +372,7 @@ public class BuildFilesAction extends ActionDelegate implements
 		// update state
 		update();
 	}
-	
+
 
     /*
      * Returns the projects to build.
@@ -389,7 +391,7 @@ public class BuildFilesAction extends ActionDelegate implements
                     }
                 }
             }
-        
+
         return projectsToBuild;
     }
 

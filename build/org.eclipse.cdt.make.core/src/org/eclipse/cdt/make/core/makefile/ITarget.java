@@ -16,6 +16,7 @@ package org.eclipse.cdt.make.core.makefile;
  */
 public interface ITarget {
 
+	@Override
 	String toString();
 
 }

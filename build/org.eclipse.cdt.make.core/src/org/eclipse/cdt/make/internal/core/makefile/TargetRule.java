@@ -18,15 +18,15 @@ import org.eclipse.cdt.make.core.makefile.ITargetRule;
  * statement :   rule | macro_definition | comments | empty
  * rule :  inference_rule | target_rule
  * inference_rule : target ':' <nl> ( <tab> command <nl> ) +
- * target_rule : target [ ( target ) * ] ':' [ ( prerequisite ) * ] [ ';' command ] <nl> 
+ * target_rule : target [ ( target ) * ] ':' [ ( prerequisite ) * ] [ ';' command ] <nl>
                  [ ( <tab> prefix_command command ) * ]
- * macro_definition : string '=' (string)* 
+ * macro_definition : string '=' (string)*
  * comments : '#' (string) *
  * empty : <nl>
  * command : string <nl>
  * target : string
  * prefix_command : '-' | '@' | '+'
- * internal_macro :  "$<" | "$*" | "$@" | "$?" | "$%" 
+ * internal_macro :  "$<" | "$*" | "$@" | "$?" | "$%"
  */
 
 public class TargetRule extends Rule implements ITargetRule {
@@ -46,6 +46,7 @@ public class TargetRule extends Rule implements ITargetRule {
 		prerequisites = reqs;
 	}
 
+	@Override
 	public String[] getPrerequisites() {
 		return prerequisites;
 	}

@@ -23,14 +23,14 @@ import org.eclipse.ui.IEditorPart;
 
 /**
  * MakefileAnnotationHover
- *  
+ *
  */
 public class MakefileAnnotationHover implements IAnnotationHover {
 
 	private IEditorPart fEditor;
-                                                                                                                             
+
 	/**
-	 *  
+	 *
 	 */
 	public MakefileAnnotationHover(IEditorPart editor) {
                 fEditor = editor;
@@ -38,10 +38,11 @@ public class MakefileAnnotationHover implements IAnnotationHover {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.text.source.IAnnotationHover#getHoverInfo(org.eclipse.jface.text.source.ISourceViewer,
 	 *      int)
 	 */
+	@Override
 	public String getHoverInfo(ISourceViewer sourceViewer, int lineNumber) {
 		IDocument document = sourceViewer.getDocument();
 		try {

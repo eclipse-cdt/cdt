@@ -4,8 +4,8 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors: 
+ *
+ * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
  *     Markus Schorn (Wind River Systems)
@@ -32,33 +32,35 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
-/** 
+/**
  * @author Doug Schaefer
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class PDOMDependencyCalculator implements IManagedDependencyCalculator {
-	
+
 	private final IPath source;
 	private final IResource resource;
 	private final IBuildObject buildContext;
 	private final ITool tool;
 	private final IPath topBuildDirectory;
 	private IPath[] dependencies;
-	
+
 	public PDOMDependencyCalculator(IPath source, IResource resource, IBuildObject buildContext, ITool tool, IPath topBuildDirectory) {
-		this.source = source; 
+		this.source = source;
 		this.resource = resource;
 		this.buildContext = buildContext;
 		this.tool = tool;
 		this.topBuildDirectory = topBuildDirectory;
 	}
-	
+
+	@Override
 	public IPath[] getAdditionalTargets() {
 		return null;
 	}
 
+	@Override
 	public IPath[] getDependencies() {
 		if (dependencies == null) {
 			if (resource != null) {
@@ -93,22 +95,26 @@ public class PDOMDependencyCalculator implements IManagedDependencyCalculator {
 			} else
 				dependencies = new IPath[0];
 		}
-		
+
 		return dependencies;
 	}
 
+	@Override
 	public IBuildObject getBuildContext() {
 		return buildContext;
 	}
 
+	@Override
 	public IPath getSource() {
 		return source;
 	}
 
+	@Override
 	public ITool getTool() {
 		return tool;
 	}
 
+	@Override
 	public IPath getTopBuildDirectory() {
 		return topBuildDirectory;
 	}

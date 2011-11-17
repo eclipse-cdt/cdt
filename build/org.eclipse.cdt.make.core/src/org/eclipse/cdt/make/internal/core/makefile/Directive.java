@@ -33,6 +33,7 @@ public abstract class Directive implements IDirective {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.make.core.makefile.IDirective#getEndLine()
 	 */
+	@Override
 	public int getEndLine() {
 		return endLine;
 	}
@@ -40,6 +41,7 @@ public abstract class Directive implements IDirective {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.make.core.makefile.IDirective#getStartLine()
 	 */
+	@Override
 	public int getStartLine() {
 		return startLine;
 	}
@@ -47,6 +49,7 @@ public abstract class Directive implements IDirective {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.make.core.makefile.IDirective#getParent()
 	 */
+	@Override
 	public IDirective getParent() {
 		return parent;
 	}
@@ -54,6 +57,7 @@ public abstract class Directive implements IDirective {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.make.core.makefile.IDirective#getMakefile()
 	 */
+	@Override
 	public IMakefile getMakefile() {
 		return parent.getMakefile();
 	}

@@ -69,8 +69,9 @@ public class FilterEmtpyFoldersAction extends Action {
 
 				final boolean [] haveTargets = new boolean[1];
 				haveTargets[0] = false;
-				
+
 				IResourceProxyVisitor visitor = new IResourceProxyVisitor() {
+					@Override
 					public boolean visit(IResourceProxy proxy) throws CoreException {
 						if(haveTargets[0]) {
 							return false;	//We found what we were looking for

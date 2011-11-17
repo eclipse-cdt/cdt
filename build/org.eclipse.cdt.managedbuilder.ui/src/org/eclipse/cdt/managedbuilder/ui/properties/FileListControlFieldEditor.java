@@ -37,7 +37,7 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Field editor that uses FileListControl for user input.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -75,7 +75,7 @@ public class FileListControlFieldEditor extends FieldEditor {
 	 * @param name the name of the preference this field editor works on
 	 * @param labelText the label text of the field editor
 	 * @param tooltip the tooltip text of the field editor
-	 * @param contextId 
+	 * @param contextId
 	 * @param parent the parent of the field editor's control
 	 * @param type the browseType of the file list control
 	 */
@@ -87,7 +87,7 @@ public class FileListControlFieldEditor extends FieldEditor {
 		Composite parent,
 		int type) {
 		this(name, labelText, parent, type);
-		// can't use setToolTip(tooltip) as label not created yet 
+		// can't use setToolTip(tooltip) as label not created yet
 		getLabelControl(parent).setToolTipText(tooltip);
 		if (!contextId.equals("")) PlatformUI.getWorkbench().getHelpSystem().setHelp(list.getListControl(), contextId);	 //$NON-NLS-1$
 	}
@@ -107,7 +107,7 @@ public class FileListControlFieldEditor extends FieldEditor {
 		// Currently just the label has the tooltip
 		getLabelControl().setToolTipText(tooltip);
 	}
-	
+
 	/**
 	 * Returns the field editor's tool tip text, or null if it has
 	 * not been set.
@@ -145,23 +145,23 @@ public class FileListControlFieldEditor extends FieldEditor {
 	/**
 	 * Sets the filter-path for the underlying Browse dialog. Only applies when browseType is 'file' or 'dir'.
 	 * @param filterPath
-	 * 
+	 *
 	 * @since 7.0
 	 */
 	public void setFilterPath(String filterPath) {
 		list.setFilterPath(filterPath);
 	}
-	
+
 	/**
 	 * Sets the filter-extensions for the underlying Browse dialog. Only applies when browseType is 'file'.
 	 * @param filterExtensions
-	 * 
+	 *
 	 * @since 7.0
 	 */
 	public void setFilterExtensions(String[] filterExtensions) {
 		list.setFilterExtensions(filterExtensions);
 	}
-	
+
 	/**
 	 * Fills this field editor's basic controls into the given parent.
 	 */
@@ -181,14 +181,15 @@ public class FileListControlFieldEditor extends FieldEditor {
 		list = new FileListControl(topLayout, getLabelText(), getType(), false);
 		list.addChangeListener(new IFileListChangeListener(){
 
+			@Override
 			public void fileListChanged(FileListControl fileList, String oldValue[], String newValue[]) {
 				handleFileListChange(fileList,oldValue,newValue);
 			}
-			
+
 		});
 		topLayout.setLayout(layout);
 	}
-	
+
 	private void handleFileListChange(FileListControl fileList, String oldValue[], String newValue[]){
 //		values = fileList.getItems();
 		fireValueChanged(
@@ -206,7 +207,7 @@ public class FileListControlFieldEditor extends FieldEditor {
 	}
 
 	/**
-	 * @return the file list control 
+	 * @return the file list control
 	 */
 	protected List getListControl() {
 		return list.getListControl();
@@ -218,7 +219,7 @@ public class FileListControlFieldEditor extends FieldEditor {
 	@Override
 	protected void doLoad() {
 		if (list != null) {
-			IPreferenceStore store = getPreferenceStore(); 
+			IPreferenceStore store = getPreferenceStore();
 			if (store != null) {
 				String s = store.getString(getPreferenceName());
 				String[] array = parseString(s);
@@ -275,7 +276,7 @@ public class FileListControlFieldEditor extends FieldEditor {
 		if (s != null)
 			getPreferenceStore().setValue(getPreferenceName(), s);
 	}
-	
+
 	public String[] getStringListValue(){
 		return list.getItems();
 	}
@@ -291,11 +292,11 @@ public class FileListControlFieldEditor extends FieldEditor {
 	}
 
 	/**
-	 * Answers a <code>String</code> containing the strings passed in the 
+	 * Answers a <code>String</code> containing the strings passed in the
 	 * argument separated by the DEFAULT_SEPERATOR
-	 * 
+	 *
 	 * @param items An array of strings
-	 * @return 
+	 * @return
 	 */
 	private String createList(String[] items) {
 		StringBuffer path = new StringBuffer(""); //$NON-NLS-1$
@@ -310,7 +311,7 @@ public class FileListControlFieldEditor extends FieldEditor {
 	}
 
 	/**
-	 * Parse the string with the separator and returns the string array. 
+	 * Parse the string with the separator and returns the string array.
 	 * @param stringList
 	 * @return
 	 */
@@ -338,12 +339,12 @@ public class FileListControlFieldEditor extends FieldEditor {
 	protected void adjustForNumColumns(int numColumns) {
 		((GridData)topLayout.getLayoutData()).horizontalSpan = numColumns;
 	}
-	
+
     @Override
 	public Label getLabelControl(Composite parent) {
     	return list.getLabelControl();
     }
-    
+
     @Override
 	public void setEnabled(boolean enabled, Composite parent) {
     	list.setEnabled(enabled);

@@ -32,8 +32,8 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.cdt.make.core.MakeCorePlugin;
-import org.eclipse.cdt.make.core.scannerconfig.InfoContext;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredScannerInfoSerializable;
+import org.eclipse.cdt.make.core.scannerconfig.InfoContext;
 import org.eclipse.cdt.make.internal.core.MakeMessages;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.PerProjectSICollector;
 import org.eclipse.core.resources.IProject;
@@ -54,18 +54,18 @@ import org.xml.sax.SAXException;
 
 /**
  * Discovered scanner info persistance store
- * 
+ *
  * @author vhirsl
  */
 public final class DiscoveredScannerInfoStore {
-	private static final QualifiedName dscFileNameProperty = new 
+	private static final QualifiedName dscFileNameProperty = new
             QualifiedName(MakeCorePlugin.getUniqueIdentifier(), "discoveredScannerConfigFileName"); //$NON-NLS-1$
 	private static final String CDESCRIPTOR_ID = MakeCorePlugin.getUniqueIdentifier() + ".discoveredScannerInfo"; //$NON-NLS-1$
     public static final String SCD_STORE_VERSION = "scdStore"; //$NON-NLS-1$
 	public static final String SI_ELEM = "scannerInfo"; //$NON-NLS-1$
 	public static final String COLLECTOR_ELEM = "collector"; //$NON-NLS-1$
 	public static final String ID_ATTR = "id"; //$NON-NLS-1$
-	
+
 	private static final String INSTANCE_ELEM = "instance";  //$NON-NLS-1$
 
 	private static DiscoveredScannerInfoStore instance;
@@ -82,7 +82,7 @@ public final class DiscoveredScannerInfoStore {
 		return instance;
 	}
 	/**
-	 * 
+	 *
 	 */
 	private DiscoveredScannerInfoStore() {
 	}
@@ -96,7 +96,7 @@ public final class DiscoveredScannerInfoStore {
 			throws CoreException {
 		// Get the document
 		Element rootElem = getRootElement(project, context, serializable);
-	        	
+
 		if(rootElem != null){
 	        // get the collector element
 	        NodeList collectorList = rootElem.getElementsByTagName(COLLECTOR_ELEM);
@@ -113,7 +113,7 @@ public final class DiscoveredScannerInfoStore {
 	        }
 		}
 	}
-	
+
 	public boolean hasInfo(IProject project, InfoContext context, IDiscoveredScannerInfoSerializable serializable){
 		try {
 			if(getRootElement(project, context, serializable) != null)
@@ -123,7 +123,7 @@ public final class DiscoveredScannerInfoStore {
 		}
 		return false;
 	}
-	
+
 	private Element getRootElement(IProject project, InfoContext context, IDiscoveredScannerInfoSerializable serializable) throws CoreException{
 		if(serializable == null)
 			return null;
@@ -134,17 +134,17 @@ public final class DiscoveredScannerInfoStore {
 			NodeList rootList = document.getElementsByTagName(SI_ELEM);
 			if (rootList.getLength() > 0) {
 				rootElem = (Element) rootList.item(0);
-				
+
 				if(!context.isDefaultContext()){
 					String instanceId = context.getInstanceId();
-	
+
 		        	Element instanceElem = findChild(rootElem, INSTANCE_ELEM, ID_ATTR, instanceId);
-		        	
+
 		        	rootElem = instanceElem;
 				}
 			}
 		}
-		
+
 		return rootElem;
 	}
 
@@ -200,7 +200,7 @@ public final class DiscoveredScannerInfoStore {
 		Element rootElem = (Element) document.getElementsByTagName(SI_ELEM).item(0);
 		ProcessingInstruction pi = document.createProcessingInstruction(SCD_STORE_VERSION, "version=\"2.0\""); //$NON-NLS-1$
 		document.insertBefore(pi, rootElem);
-		
+
 		Element collectorElem = document.createElement(COLLECTOR_ELEM);
 		collectorElem.setAttribute(ID_ATTR, PerProjectSICollector.COLLECTOR_ID);
 		for (Node child = rootElem.getFirstChild(); child != null; child = rootElem.getFirstChild()) {
@@ -223,15 +223,15 @@ public final class DiscoveredScannerInfoStore {
         		}
         	}
         }
-        
+
         return cfgElem;
 	}
-	
+
 	private void saveDiscoveredScannerInfo(InfoContext context, IDiscoveredScannerInfoSerializable serializable, Document doc) {
 		NodeList rootList = doc.getElementsByTagName(SI_ELEM);
 		if (rootList.getLength() > 0) {
 			Element rootElem = (Element) rootList.item(0);
-			
+
 			// get the collector element
 			if(!context.isDefaultContext()){
 				String instanceId = context.getInstanceId();
@@ -243,7 +243,7 @@ public final class DiscoveredScannerInfoStore {
 		        	instanceElem.setAttribute(ID_ATTR, instanceId);
 		        	rootElem.appendChild(instanceElem);
 		        }
-		        
+
 	        	rootElem = instanceElem;
 			}
 
@@ -256,7 +256,7 @@ public final class DiscoveredScannerInfoStore {
 	        		Element cElem = (Element) collectorList.item(i);
 	        		String collectorId = cElem.getAttribute(ID_ATTR);
 	        		if (serializable.getCollectorId().equals(collectorId)) {
-	        			for (Node child = cElem.getFirstChild(); child != null; 
+	        			for (Node child = cElem.getFirstChild(); child != null;
 	        					child = cElem.getFirstChild()) {
 	        				cElem.removeChild(child);
 	        			}
@@ -271,7 +271,7 @@ public final class DiscoveredScannerInfoStore {
 	        	collectorElem.setAttribute(ID_ATTR, serializable.getCollectorId());
 	        	rootElem.appendChild(collectorElem);
 	        }
-	        
+
 			// Save the discovered scanner info
 			serializable.serialize(collectorElem);
 		}
@@ -279,13 +279,13 @@ public final class DiscoveredScannerInfoStore {
 	public void saveDiscoveredScannerInfoToState(IProject project, IDiscoveredScannerInfoSerializable serializable) throws CoreException {
 		saveDiscoveredScannerInfoToState(project, new InfoContext(project), serializable);
 	}
-	
+
 	public void saveDiscoveredScannerInfoToState(IProject project, InfoContext context, IDiscoveredScannerInfoSerializable serializable) throws CoreException {
 		Document document = getDocument(project);
 		// Create document
 		try {
 			saveDiscoveredScannerInfo(context, serializable, document);
-		
+
 			// Transform the document to something we can save in a file
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
@@ -295,7 +295,7 @@ public final class DiscoveredScannerInfoStore {
 			DOMSource source = new DOMSource(document);
 			StreamResult result = new StreamResult(stream);
 			transformer.transform(source, result);
-		
+
 			// Save the document
 			try {
 				IPath path = getDiscoveredScannerConfigStore(project);
@@ -306,7 +306,7 @@ public final class DiscoveredScannerInfoStore {
 				throw new CoreException(new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1,
 						MakeMessages.getString("DiscoveredPathManager.File_Error_Message"), e)); //$NON-NLS-1$
 			}
-		
+
 			// Close the streams
 			stream.close();
 		} catch (TransformerException e) {
@@ -345,7 +345,8 @@ public final class DiscoveredScannerInfoStore {
         try {
             delta.accept(new IResourceDeltaVisitor() {
 
-                public boolean visit(IResourceDelta delta) throws CoreException {
+                @Override
+				public boolean visit(IResourceDelta delta) throws CoreException {
                     IResource resource = delta.getResource();
                     if (resource instanceof IProject) {
                         IProject project = (IProject) resource;

@@ -40,7 +40,7 @@ import org.w3c.dom.Element;
 
 /**
  * @deprecated @author DInglis
- *  
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -100,7 +100,7 @@ public class MakeScannerProvider extends ScannerProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#getScannerInformation(org.eclipse.core.resources.IResource)
 	 */
 	@Override
@@ -116,7 +116,7 @@ public class MakeScannerProvider extends ScannerProvider {
 	 * Loads the build file and parses the nodes for build information. The information is then associated with the resource for the
 	 * duration of the session.
 	 */
-	private MakeScannerInfo loadScannerInfo(IProject project) throws CoreException {		
+	private MakeScannerInfo loadScannerInfo(IProject project) throws CoreException {
 		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project);
 		ICStorageElement storage = descriptor.getProjectStorageElement(CDESCRIPTOR_ID);
 
@@ -143,7 +143,7 @@ public class MakeScannerProvider extends ScannerProvider {
 		ICProject cProject = CoreModel.getDefault().create(info.getProject());
 		IPathEntry[] entries = cProject.getRawPathEntries();
 		List<IPathEntry> cPaths = new ArrayList<IPathEntry>(Arrays.asList(entries));
-		
+
 		Iterator<IPathEntry> cpIter = cPaths.iterator();
 		while(cpIter.hasNext()) {
 			int kind = cpIter.next().getEntryKind();
@@ -187,7 +187,8 @@ public class MakeScannerProvider extends ScannerProvider {
 	 */
 	public static void updateScannerInfo(final MakeScannerInfo scannerInfo) throws CoreException {
 		ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
-			
+
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				IProject project = scannerInfo.getProject();
 
@@ -202,6 +203,6 @@ public class MakeScannerProvider extends ScannerProvider {
 				descriptor.saveProjectData();
 				migrateToCPathEntries(scannerInfo);
 			}
-		}, null); 
+		}, null);
 	}
 }

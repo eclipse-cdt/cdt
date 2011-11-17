@@ -65,7 +65,7 @@ import org.eclipse.swt.widgets.ScrollBar;
 
 /**
  * Tool Settings Tab in project properties Build Settings
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -158,6 +158,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		protected void createSelectionArea (Composite parent) {
 			optionList = new TreeViewer(parent, SWT.SINGLE|SWT.H_SCROLL|SWT.V_SCROLL|SWT.BORDER);
 			optionList.addSelectionChangedListener(new ISelectionChangedListener() {
+				@Override
 				public void selectionChanged(SelectionChangedEvent event) {
 					handleOptionSelection();
 				}});
@@ -200,7 +201,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			if (tipText==null) {
 				return;
 			}
-			tipText.setText(Messages.ToolSettingsTab_0); 
+			tipText.setText(Messages.ToolSettingsTab_0);
 			tipText.update();
 		}
 
@@ -342,7 +343,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		private void createTipArea (Composite parent) {
 			tipText = new StyledText(parent, SWT.V_SCROLL|SWT.BORDER | SWT.READ_ONLY | SWT.MULTI | SWT.WRAP);
 			tipText.setLayoutData(new GridData(GridData.FILL_BOTH));
-			tipText.setText(Messages.ToolSettingsTab_0); 
+			tipText.setText(Messages.ToolSettingsTab_0);
 
 			styleRange = new StyleRange();
 			styleRange.start = 0;
@@ -515,7 +516,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			// Reset the category or tool selection and run selection event handler
 			selectedElement = null;
 			setDirty(true);
-			
+
 			fInfo = getResCfg(getResDesc());
 			setValues();
 			handleOptionSelection();
@@ -543,7 +544,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		/**
 		 * @param filter - a viewer filter
 		 * @see StructuredViewer#addFilter(ViewerFilter)
-		 * 
+		 *
 		 * @since 5.1
 		 */
 		protected void addFilter(ViewerFilter filter) {
@@ -660,6 +661,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			return pages;
 		}
 
+		@Override
 		public IPreferenceStore getPreferenceStore() {
 			return settingsStore;
 		}
@@ -741,7 +743,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			copyHoldsOptions(pair.getKey(), pair.getValue(), ri2);
 		}
 		setDirty(false);
-		
+
 		updateData(getResDesc());
 	}
 
@@ -802,7 +804,9 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 	// IPreferencePageContainer methods
 	@Override
 	public void updateButtons() {}
+	@Override
 	public void updateMessage() {}
+	@Override
 	public void updateTitle() {}
 
 	@Override

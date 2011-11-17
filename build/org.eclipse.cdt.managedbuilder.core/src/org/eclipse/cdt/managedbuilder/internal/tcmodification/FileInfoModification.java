@@ -28,7 +28,7 @@ public class FileInfoModification extends
 	private String fFileExt;
 	private Set<IPath> fApplPathSet;
 	private IProject fProject;
-	
+
 	public FileInfoModification(ResourceConfiguration rcInfo) {
 		super(rcInfo, rcInfo.getTools());
 	}
@@ -53,7 +53,7 @@ public class FileInfoModification extends
 		String ext = getFileExtension();
 		return toTool.buildsFileType(ext, getProject());
 	}
-	
+
 	@Override
 	protected Set<IPath> getToolApplicabilityPathSet(Tool realTool, boolean isProject) {
 		if(fApplPathSet == null){
@@ -82,7 +82,7 @@ public class FileInfoModification extends
 		}
 		return fFileExt;
 	}
-	
+
 	private IProject getProject(){
 		if(fProject == null){
 			fProject = getResourceInfo().getParent().getOwner().getProject();
@@ -90,6 +90,7 @@ public class FileInfoModification extends
 		return fProject;
 	}
 
+	@Override
 	public void restoreDefaults() {
 //		3.per-file : change to the tool from the parent folder's tool-chain suitable
 //		for the given file. NOTE: the custom build step tool should be preserved!
@@ -102,7 +103,7 @@ public class FileInfoModification extends
 		ITool tool = parentFo.getToolFromInputExtension(ext);
 		ITool realTool = ManagedBuildManager.getRealTool(tool);
 		boolean add = true;
-		
+
 		ITool[] curTools = getProjectTools();
 		for(int i = 0; i < curTools.length; i++){
 			ITool cur = curTools[i];
@@ -112,7 +113,7 @@ public class FileInfoModification extends
 				changeProjectTools(cur, null);
 			}
 		}
-		
+
 		if(add && tool != null)
 			changeProjectTools(null, tool);
 	}

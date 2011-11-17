@@ -45,7 +45,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class ToolReference implements IToolReference {
-	private static final String DEFAULT_SEPARATOR = ","; //$NON-NLS-1$	
+	private static final String DEFAULT_SEPARATOR = ","; //$NON-NLS-1$
 
 	private String command;
 	private boolean isDirty = false;
@@ -58,18 +58,18 @@ public class ToolReference implements IToolReference {
 	private boolean resolved = true;
 	private String versionsSupported;
 	private String convertToId;
-	
+
 	/**
-	 * Create a new tool reference based on information contained in 
+	 * Create a new tool reference based on information contained in
 	 * a project file.
-	 * 
+	 *
 	 * @param owner The <code>ConfigurationV2</code> the receiver will be added to.
 	 * @param element The element defined in the project file containing build information
 	 * for the receiver.
 	 */
 	public ToolReference(BuildObject owner, Element element) {
 		this.owner = owner;
-		
+
 		if (owner instanceof ConfigurationV2) {
 			if (parent == null) {
 				Target parentTarget = (Target) ((ConfigurationV2)owner).getTarget();
@@ -95,13 +95,13 @@ public class ToolReference implements IToolReference {
 		if (element.hasAttribute(ITool.COMMAND)) {
 			command = element.getAttribute(ITool.COMMAND);
 		}
-	
+
 		// Get the overridden output prefix (if any)
 		if (element.hasAttribute(ITool.OUTPUT_PREFIX)) {
 			outputPrefix = element.getAttribute(ITool.OUTPUT_PREFIX);
 		}
-		
-		// Get the output extensions the reference produces 
+
+		// Get the output extensions the reference produces
 		if (element.hasAttribute(ITool.OUTPUTS)) {
 			outputExtensions = element.getAttribute(ITool.OUTPUTS);
 		}
@@ -120,7 +120,7 @@ public class ToolReference implements IToolReference {
 
 	/**
 	 * Created tool reference from an extension defined in a plugin manifest.
-	 * 
+	 *
 	 * @param owner The <code>BuildObject</code> the receiver will be added to.
 	 * @param element The element containing build information for the reference.
 	 */
@@ -143,7 +143,7 @@ public class ToolReference implements IToolReference {
 
 		// Get the overridden output prefix, if any
 		outputPrefix = element.getAttribute(ITool.OUTPUT_PREFIX);
-		
+
 		// Get the overridden output extensions (if any)
 		String output = element.getAttribute(ITool.OUTPUTS);
 		if (output != null) {
@@ -152,7 +152,7 @@ public class ToolReference implements IToolReference {
 
 		// Get the flag to control output
 		outputFlag = element.getAttribute(ITool.OUTPUT_FLAG);
-	
+
 		IManagedConfigElement[] toolElements = element.getChildren();
 		for (int m = 0; m < toolElements.length; ++m) {
 			IManagedConfigElement toolElement = toolElements[m];
@@ -164,7 +164,7 @@ public class ToolReference implements IToolReference {
 
 	/**
 	 * Created a tool reference on the fly based on an existing tool or tool reference.
-	 * 
+	 *
 	 * @param owner The <code>BuildObject</code> the receiver will be added to.
 	 * @param tool The <code>ITool</code>tool the reference will be based on.
 	 */
@@ -189,7 +189,7 @@ public class ToolReference implements IToolReference {
 				}
 			}
 		}
-		
+
 		// Create a copy of the option references of the parent in the receiver
 		if (tool instanceof ToolReference) {
 			List<OptionReference> parentRefs = ((ToolReference)tool).getOptionReferenceList();
@@ -215,7 +215,7 @@ public class ToolReference implements IToolReference {
 				}
 			}
 		}
-		
+
 		if (owner instanceof ConfigurationV2) {
 			((ConfigurationV2)owner).addToolReference(this);
 		} else if (owner instanceof Target) {
@@ -226,6 +226,7 @@ public class ToolReference implements IToolReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IToolReference#references(org.eclipse.cdt.managedbuilder.core.ITool)
 	 */
+	@Override
 	public boolean references(ITool target) {
 		if (equals(target)) {
 			// we are the target
@@ -237,7 +238,7 @@ public class ToolReference implements IToolReference {
 			// check the reference we are overriding
 			return ((IToolReference)parent).references(target);
 		} else if (target instanceof IToolReference) {
-			return parent.equals(((IToolReference)target).getTool()); 
+			return parent.equals(((IToolReference)target).getTool());
 		} else {
 			// the real reference
 			return parent.equals(target);
@@ -266,9 +267,9 @@ public class ToolReference implements IToolReference {
 			for (OptionReference optRef : optionReferenceList) {
 				optRef.resolveReferences();
 			}
-		}		
-	}	
-	
+		}
+	}
+
 	/**
 	 * Adds the option reference specified in the argument to the receiver.
 	 */
@@ -280,6 +281,7 @@ public class ToolReference implements IToolReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#buildsFileType(java.lang.String)
 	 */
+	@Override
 	public boolean buildsFileType(String extension) {
 		if (parent == null) {
 			// bad reference
@@ -291,6 +293,7 @@ public class ToolReference implements IToolReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#buildsFileType(java.lang.String)
 	 */
+	@Override
 	public boolean isInputFileType(String extension) {
 		if (parent == null) {
 			// bad reference
@@ -302,22 +305,23 @@ public class ToolReference implements IToolReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IToolReference#createOptionReference(org.eclipse.cdt.managedbuilder.core.IOption)
 	 */
+	@Override
 	public OptionReference createOptionReference(IOption option) {
 		// Check if the option reference already exists
 		OptionReference ref = getOptionReference(option);
 		// It is possible that the search will return an option reference
-		// that is supplied by another element of the build model, not the caller. 
-		// For example, if the search is starated by a configuration and the target 
-		// the caller  belongs to has an option reference for the option, it 
-		// will be returned. While this is correct behaviour for a search, the 
-		// caller will need to create a clone for itself, so make sure the tool 
+		// that is supplied by another element of the build model, not the caller.
+		// For example, if the search is starated by a configuration and the target
+		// the caller  belongs to has an option reference for the option, it
+		// will be returned. While this is correct behaviour for a search, the
+		// caller will need to create a clone for itself, so make sure the tool
 		// reference of the search result is owned by the caller
 		if (ref == null || !ref.getToolReference().owner.equals(this.owner)) {
 			ref = new OptionReference(this, option);
 		}
 		return ref;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @return
 	 */
@@ -332,10 +336,11 @@ public class ToolReference implements IToolReference {
 			return null;
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObject#getId()
 	 */
+	@Override
 	public String getId() {
 		if (parent == null) {
 			// bad reference
@@ -343,10 +348,11 @@ public class ToolReference implements IToolReference {
 		}
 		return parent.getId();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObject#getBaseId()
 	 */
+	@Override
 	public String getBaseId() {
 		if (parent == null) {
 			// bad reference
@@ -354,11 +360,12 @@ public class ToolReference implements IToolReference {
 		}
 		return parent.getBaseId();
 	}
-	
+
  	/* (non-Javadoc)
  	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getInputExtensions()
  	 */
- 	public List<String> getInputExtensions() {
+ 	@Override
+	public List<String> getInputExtensions() {
 		String[] exts = getPrimaryInputExtensions();
 		List<String> extList = new ArrayList<String>();
 		for (int i=0; i<exts.length; i++) {
@@ -366,10 +373,11 @@ public class ToolReference implements IToolReference {
 		}
 		return extList;
  	}
-	
+
 	 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObject#getName()
 	 */
+	@Override
 	public String getName() {
 		if (parent == null) {
 			// bad reference
@@ -381,6 +389,7 @@ public class ToolReference implements IToolReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getNatureFilter()
 	 */
+	@Override
 	public int getNatureFilter() {
 		if (parent == null) {
 			// bad reference
@@ -392,6 +401,7 @@ public class ToolReference implements IToolReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getOption(java.lang.String)
 	 */
+	@Override
 	public IOption getOption(String id) {
 		return getOptionById(id);
 	}
@@ -399,6 +409,7 @@ public class ToolReference implements IToolReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getOption(java.lang.String)
 	 */
+	@Override
 	public IOption getOptionById(String id) {
 		IOption[] options = getOptions();
 		for (int i = 0; i < options.length; i++) {
@@ -413,6 +424,7 @@ public class ToolReference implements IToolReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#producesFileType(java.lang.String)
 	 */
+	@Override
 	public boolean producesFileType(String outputExtension) {
 		// Check if the reference produces this type of file
 		if (!getOutputsList().contains(outputExtension)) {
@@ -420,7 +432,7 @@ public class ToolReference implements IToolReference {
 		} else {
 			return true;
 		}
-		
+
 	}
 
 	/* (non-Javadoc)
@@ -438,6 +450,7 @@ public class ToolReference implements IToolReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IToolReference#getTool()
 	 */
+	@Override
 	public ITool getTool() {
 		return parent;
 	}
@@ -445,6 +458,7 @@ public class ToolReference implements IToolReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getToolCommand()
 	 */
+	@Override
 	public String getToolCommand() {
 		if (command == null) {
 			// see if the parent has one
@@ -459,16 +473,17 @@ public class ToolReference implements IToolReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getToolFlags()
 	 */
+	@Override
 	public String getToolFlags() throws BuildException {
 		// Get all of the options
 		StringBuffer buf = new StringBuffer();
 		IOption[] opts = getOptions();
 		for (int index = 0; index < opts.length; index++) {
 			IOption option = opts[index];
-			
+
 			// check to see if the option has an applicability calculator
 			IOptionApplicability applicabilityCalculator = option.getApplicabilityCalculator();
-			
+
 			boolean optionIsApplicable = true;
 			if (applicabilityCalculator != null) {
 				ITool tool = getTool();
@@ -478,8 +493,8 @@ public class ToolReference implements IToolReference {
 				} else {
 					config = ((IToolChain)tool.getParent()).getParent();
 				}
-				optionIsApplicable = 
-					applicabilityCalculator.isOptionUsedInCommandLine(config, tool, option);	
+				optionIsApplicable =
+					applicabilityCalculator.isOptionUsedInCommandLine(config, tool, option);
 			}
 			if (optionIsApplicable) {
 				switch (option.getValueType()) {
@@ -495,23 +510,23 @@ public class ToolReference implements IToolReference {
 							buf.append(boolCmd + WHITE_SPACE);
 						}
 						break;
-					
+
 					case IOption.ENUMERATED :
 						String enumVal = option.getEnumCommand(option.getSelectedEnum());
 						if (enumVal.length() > 0) {
 							buf.append(enumVal + WHITE_SPACE);
 						}
 						break;
-					
+
 					case IOption.STRING :
 						String strCmd = option.getCommand();
 						String val = option.getStringValue();
-						if (val.length() > 0) { 
+						if (val.length() > 0) {
 							if (strCmd != null) buf.append(strCmd);
 							buf.append(val + WHITE_SPACE);
 						}
 						break;
-						
+
 					case IOption.STRING_LIST :
 						String cmd = option.getCommand();
 						String[] list = option.getStringListValue();
@@ -521,7 +536,7 @@ public class ToolReference implements IToolReference {
 							buf.append(temp + WHITE_SPACE);
 						}
 						break;
-						
+
 					case IOption.INCLUDE_PATH :
 						String incCmd = option.getCommand();
 						String[] paths = option.getIncludePaths();
@@ -530,7 +545,7 @@ public class ToolReference implements IToolReference {
 							buf.append(incCmd + temp + WHITE_SPACE);
 						}
 						break;
-	
+
 					case IOption.PREPROCESSOR_SYMBOLS :
 						String defCmd = option.getCommand();
 						String[] symbols = option.getDefinedSymbols();
@@ -539,7 +554,7 @@ public class ToolReference implements IToolReference {
 							buf.append(defCmd + temp + WHITE_SPACE);
 						}
 						break;
-	
+
 					default :
 						break;
 				}
@@ -552,6 +567,7 @@ public class ToolReference implements IToolReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getTopOptionCategory()
 	 */
+	@Override
 	public IOptionCategory getTopOptionCategory() {
 		try {
 			return parent.getTopOptionCategory();
@@ -562,7 +578,7 @@ public class ToolReference implements IToolReference {
 
 	/* (non-Javadoc)
 	 * Answers an option reference that overrides the option, or <code>null</code>
-	 * 
+	 *
 	 * @param option
 	 * @return OptionReference
 	 */
@@ -576,9 +592,9 @@ public class ToolReference implements IToolReference {
 
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
-	 * 
+	 *
 	 * @param id
 	 * @return
 	 */
@@ -594,52 +610,56 @@ public class ToolReference implements IToolReference {
 		return null;
 	}
 	*/
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IToolReference#getOptionReferenceList()
 	 */
+	@Override
 	public List<OptionReference> getOptionReferenceList() {
 		if (optionReferences == null) {
 			optionReferences = new ArrayList<OptionReference>();
 		}
 		return optionReferences;
 	}
-	
+
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getOptions()
 	 */
+	@Override
 	public IOption[] getOptions() {
 		IOption[] options = parent.getOptions();
-		
+
 		// Replace with our references
 		for (int i = 0; i < options.length; ++i) {
 			OptionReference ref = getOptionReference(options[i]);
 			if (ref != null)
 				options[i] = ref;
 		}
-			
+
 		return options;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getOutputExtensions()
 	 */
+	@Override
 	public String[] getOutputExtensions() {
 		if (outputExtensions == null){
-			 if (parent != null) { 
+			 if (parent != null) {
 			 	return parent.getOutputsAttribute();
 			 } else {
 			 	return new String[0];
-			 } 
+			 }
 		}
 		return outputExtensions.split(DEFAULT_SEPARATOR);
 	}
-	
+
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getOutputExtension(java.lang.String)
 	 */
+	@Override
 	public String getOutputExtension(String inputExtension) {
 		if (parent == null) {
 			// bad reference
@@ -647,10 +667,11 @@ public class ToolReference implements IToolReference {
 		}
 		return parent.getOutputExtension(inputExtension);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getOutputFlag()
 	 */
+	@Override
 	public String getOutputFlag() {
 		if (outputFlag == null) {
 			if (parent != null) {
@@ -666,6 +687,7 @@ public class ToolReference implements IToolReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getOutputPrefix()
 	 */
+	@Override
 	public String getOutputPrefix() {
 		if (outputPrefix == null) {
 			if (parent != null) {
@@ -679,13 +701,15 @@ public class ToolReference implements IToolReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IToolReference#isDirty()
 	 */
+	@Override
 	public boolean isDirty() {
 		return isDirty;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#isHeaderFile(java.lang.String)
 	 */
+	@Override
 	public boolean isHeaderFile(String ext) {
 		if (parent == null) {
 			// bad reference
@@ -695,7 +719,7 @@ public class ToolReference implements IToolReference {
 	}
 
 	/**
-	 * Answers <code>true</code> if the owner of the receiver matches 
+	 * Answers <code>true</code> if the owner of the receiver matches
 	 * the argument.
 	 */
 	public boolean ownedByConfiguration(IConfigurationV2 config) {
@@ -704,38 +728,38 @@ public class ToolReference implements IToolReference {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Persist receiver to project file.
-	 * 
+	 *
 	 * @param doc The persistent store for the reference information.
-	 * @param element The root element in the store the receiver must use 
+	 * @param element The root element in the store the receiver must use
 	 * to persist settings.
 	 */
 	public void serialize(Document doc, Element element) {
 		if (parent == null) return;	// This is a bad reference
 		element.setAttribute(ITool.ID, parent.getId());
 
-		// Output the command 
+		// Output the command
 		if (command != null) {
 			element.setAttribute(ITool.COMMAND, getToolCommand());
 		}
-		
+
 		// Save output prefix
 		if (outputPrefix != null) {
 			element.setAttribute(ITool.OUTPUT_PREFIX, getOutputPrefix());
 		}
-		
+
 		// Save the output flag
 		if (outputFlag != null) {
 			element.setAttribute(ITool.OUTPUT_FLAG, getOutputFlag());
 		}
-		
+
 		// Save the outputs
 		if (outputExtensions != null) {
 			element.setAttribute(ITool.OUTPUTS, outputExtensions);
 		}
-		
+
 		// Output the option references
 		List<OptionReference> optionReferenceList = getOptionReferenceList();
 		for (OptionReference optionRef : optionReferenceList) {
@@ -743,22 +767,24 @@ public class ToolReference implements IToolReference {
 			element.appendChild(optionRefElement);
 			optionRef.serialize(doc, optionRefElement);
 		}
-		
+
 		// Set the reference to clean
 		isDirty = false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IToolReference#setDirty(boolean)
 	 */
+	@Override
 	public void setDirty(boolean isDirty) {
-		// Override the local flag 
+		// Override the local flag
 		this.isDirty = isDirty;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IToolReference#setToolCommand(java.lang.String)
 	 */
+	@Override
 	public boolean setToolCommand(String cmd) {
 		if (cmd != null && !cmd.equals(command)) {
 			command = cmd;
@@ -768,10 +794,11 @@ public class ToolReference implements IToolReference {
 			return false;
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#setOutputFlag(java.lang.String)
 	 */
+	@Override
 	public void setOutputFlag(String flag) {
 		if (flag == null) return;
 		if (outputFlag == null || !(flag.equals(outputFlag))) {
@@ -779,10 +806,11 @@ public class ToolReference implements IToolReference {
 			isDirty = true;
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#setOutputPrefix(java.lang.String)
 	 */
+	@Override
 	public void setOutputPrefix(String prefix) {
 		if (prefix == null) return;
 		if (outputPrefix == null || !(prefix.equals(outputPrefix))) {
@@ -790,7 +818,7 @@ public class ToolReference implements IToolReference {
 			isDirty = true;
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#setOutputExtensions(java.lang.String)
 	 */
@@ -817,71 +845,78 @@ public class ToolReference implements IToolReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getParent()
 	 */
+	@Override
 	public IBuildObject getParent() {
 		return owner;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getCommandLinePattern()
 	 */
+	@Override
 	public String getCommandLinePattern() {
 		if( parent == null ) return new String();
 		return parent.getCommandLinePattern();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getCommandLineGenerator()
 	 */
+	@Override
 	public IManagedCommandLineGenerator getCommandLineGenerator() {
 		if( parent == null ) return null;
 		return parent.getCommandLineGenerator();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getDependencyGenerator()
 	 */
+	@Override
 	public IManagedDependencyGenerator getDependencyGenerator() {
 		if( parent == null ) return null;
 		return parent.getDependencyGenerator();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getCommandFlags()
 	 */
+	@Override
 	public String[] getCommandFlags() throws BuildException {
 		if( parent == null ) return null;
 		return parent.getToolCommandFlags(null, null);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getToolCommandFlags(org.eclipse.core.runtime.IPath, org.eclipse.core.runtime.IPath)
 	 */
+	@Override
 	public String[] getToolCommandFlags(IPath inputFileLocation, IPath outputFileLocation) throws BuildException{
 		return getCommandFlags();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getToolCommandFlagsString(org.eclipse.core.runtime.IPath, org.eclipse.core.runtime.IPath)
 	 */
+	@Override
 	public String getToolCommandFlagsString(IPath inputFileLocation, IPath outputFileLocation) throws BuildException{
 		return getToolFlags();
-		
+
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		String answer = new String();	
+		String answer = new String();
 		if (parent != null) {
-			answer += "Reference to " + parent.getName();	//$NON-NLS-1$ 
+			answer += "Reference to " + parent.getName();	//$NON-NLS-1$
 		}
-		
+
 		if (answer.length() > 0) {
 			return answer;
 		} else {
-			return super.toString();			
+			return super.toString();
 		}
 	}
 
@@ -893,6 +928,7 @@ public class ToolReference implements IToolReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getSuperClass()
 	 */
+	@Override
 	public ITool getSuperClass() {
 		return null;
 	}
@@ -900,6 +936,7 @@ public class ToolReference implements IToolReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITool#isAbstract()
 	 */
+	@Override
 	public boolean isAbstract() {
 		return false;
 	}
@@ -907,13 +944,15 @@ public class ToolReference implements IToolReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getUnusedChildren()
 	 */
+	@Override
 	public String getUnusedChildren() {
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getErrorParserList()
 	 */
+	@Override
 	public String[] getErrorParserList() {
 		return null;
 	}
@@ -921,6 +960,7 @@ public class ToolReference implements IToolReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getErrorParserIds()
 	 */
+	@Override
 	public String getErrorParserIds() {
 		return null;
 	}
@@ -928,16 +968,19 @@ public class ToolReference implements IToolReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#setErrorParserIds()
 	 */
+	@Override
 	public void setErrorParserIds(String ids) {
 	}
-	
+
+	@Override
 	public List<String> getInterfaceExtensions() {
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#isExtensionElement()
 	 */
+	@Override
 	public boolean isExtensionElement() {
 		return false;
 	}
@@ -945,6 +988,7 @@ public class ToolReference implements IToolReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#createOption()
 	 */
+	@Override
 	public IOption createOption(IOption superClass, String Id, String name, boolean b) {
 		return null;
 	}
@@ -952,18 +996,21 @@ public class ToolReference implements IToolReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IHoldsOptions#createOptions()
 	 */
+	@Override
 	public void createOptions(IHoldsOptions options) {
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#removeOption()
 	 */
+	@Override
 	public void removeOption(IOption o) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOptionCategory#getChildCategories()
 	 */
+	@Override
 	public IOptionCategory[] getChildCategories() {
 		return null;
 	}
@@ -971,34 +1018,36 @@ public class ToolReference implements IToolReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#setIsAbstract(boolean)
 	 */
+	@Override
 	public void setIsAbstract(boolean b) {
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getCommandLinePattern()
 	 */
+	@Override
 	public void setCommandLinePattern(String pattern) {
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITool#setCommandLineGenerator(IConfigurationElement)
 	 */
 	public void setCommandLineGeneratorElement(IConfigurationElement element) {
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getCommandLineGenerator()
 	 */
 	public IConfigurationElement getDependencyGeneratorElement() {
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITool#setCommandLineGenerator(IConfigurationElement)
 	 */
 	public void setDependencyGeneratorElement(IConfigurationElement element) {
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getCommandLineGeneratorElement()
 	 */
@@ -1009,6 +1058,7 @@ public class ToolReference implements IToolReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getAdvancedInputCategory()
 	 */
+	@Override
 	public boolean getAdvancedInputCategory() {
 		return false;
 	}
@@ -1016,93 +1066,117 @@ public class ToolReference implements IToolReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITool#setAdvancedInputCategory()
 	 */
+	@Override
 	public void setAdvancedInputCategory(boolean display) {
 	}
 
+	@Override
 	public IInputType createInputType(IInputType superClass, String Id, String name, boolean isExtensionElement) {
 		return null;
 	}
 
+	@Override
 	public IOutputType createOutputType(IOutputType superClass, String Id, String name, boolean isExtensionElement) {
 		return null;
 	}
 
+	@Override
 	public String getAnnouncement() {
 		return null;
 	}
 
+	@Override
 	public IInputType getInputTypeById(String id) {
 		return null;
 	}
 
+	@Override
 	public IInputType[] getInputTypes() {
 		return null;
 	}
 
+	@Override
 	public IOutputType getOutputTypeById(String id) {
 		return null;
 	}
 
+	@Override
 	public IOutputType[] getOutputTypes() {
 		return null;
 	}
 
+	@Override
 	public void removeInputType(IInputType type) {
 	}
 
+	@Override
 	public void removeOutputType(IOutputType type) {
 	}
 
+	@Override
 	public void setAnnouncement(String announcement) {
 	}
 
+	@Override
 	public String getDefaultInputExtension() {
 		return null;
 	}
 
+	@Override
 	public String[] getAllInputExtensions() {
 		return null;
 	}
 
+	@Override
 	public String[] getPrimaryInputExtensions() {
 		return null;
 	}
 
+	@Override
 	public IInputType getInputType(String inputExtension) {
 		return null;
 	}
 
+	@Override
 	public String[] getOutputsAttribute() {
 		return null;
 	}
 
+	@Override
 	public IOutputType getOutputType(String outputExtension) {
 		return null;
 	}
 
+	@Override
 	public void setOutputsAttribute(String extensions) {
 	}
 
+	@Override
 	public String[] getAllOutputExtensions() {
 		return null;
 	}
 
+	@Override
 	public String[] getAllDependencyExtensions() {
 		return null;
 	}
 
+	@Override
 	public IInputType getPrimaryInputType() {
 		return null;
 	}
 
+	@Override
 	public IOutputType getPrimaryOutputType() {
 		return null;
 	}
 
+	@Override
 	public IPath[] getAdditionalDependencies() {
 		return null;
 	}
 
+	@Override
 	public IPath[] getAdditionalResources() {
 		return null;
 	}
@@ -1111,45 +1185,53 @@ public class ToolReference implements IToolReference {
 		return null;
 	}
 
+	@Override
 	public IManagedDependencyGeneratorType getDependencyGeneratorForExtension(String sourceExt) {
 		return null;
 	}
 
+	@Override
 	public boolean getCustomBuildStep() {
 		return false;
 	}
 
+	@Override
 	public void setCustomBuildStep(boolean customBuildStep) {
 	}
 
+	@Override
 	public IOption getOptionBySuperClassId(String id) {
 		return null;
 	}
-	
+
+	@Override
 	public IOptionCategory getOptionCategory(String id) {
 		// return null as class is deprecated
 		return null;
 	}
 
+	@Override
 	public void addOptionCategory(IOptionCategory category) {
 	}
-	
+
 	/*
 	 * The following methods are added to allow the converter from ToolReference -> Tool
 	 * to retrieve the actual value of attributes.  These routines do not go to the
 	 * referenced Tool for a value if the ToolReference does not have a value.
 	 */
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IToolReference#getRawOutputExtensions()
 	 */
+	@Override
 	public String getRawOutputExtensions() {
 		return outputExtensions;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IToolReference#getRawOutputFlag()
 	 */
+	@Override
 	public String getRawOutputFlag() {
 		return outputFlag;
 	}
@@ -1157,20 +1239,23 @@ public class ToolReference implements IToolReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IToolReference#getRawOutputPrefix()
 	 */
+	@Override
 	public String getRawOutputPrefix() {
 		return outputPrefix;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IToolReference#getRawToolCommand()
 	 */
+	@Override
 	public String getRawToolCommand() {
 		return command;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getConvertToId()
 	 */
+	@Override
 	public String getConvertToId() {
 		if (convertToId == null) {
 			// If I have a superClass, ask it
@@ -1182,10 +1267,11 @@ public class ToolReference implements IToolReference {
 		}
 		return convertToId;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#setConvertToId(String)
 	 */
+	@Override
 	public void setConvertToId(String convertToId) {
 		if (convertToId == null && this.convertToId == null) return;
 		if (convertToId == null || this.convertToId == null || !convertToId.equals(this.convertToId)) {
@@ -1198,6 +1284,7 @@ public class ToolReference implements IToolReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getVersionsSupported()
 	 */
+	@Override
 	public String getVersionsSupported() {
 		if (versionsSupported == null) {
 			// If I have a superClass, ask it
@@ -1213,6 +1300,7 @@ public class ToolReference implements IToolReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#setVersionsSupported(String)
 	 */
+	@Override
 	public void setVersionsSupported(String versionsSupported) {
 		if (versionsSupported == null && this.versionsSupported == null) return;
 		if (versionsSupported == null || this.versionsSupported == null || !versionsSupported.equals(this.versionsSupported)) {
@@ -1225,22 +1313,27 @@ public class ToolReference implements IToolReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getEnvVarBuildPaths()
 	 */
+	@Override
 	public IEnvVarBuildPath[] getEnvVarBuildPaths(){
 		return null;
 	}
 
+	@Override
 	public Version getVersion() {
 		return null;
 	}
 
+	@Override
 	public void setVersion(Version version) {
 		// TODO Auto-generated method stub
 	}
 
+	@Override
 	public String getManagedBuildRevision() {
 		return null;
 	}
-	
+
+	@Override
 	public IOption getOptionToSet(IOption option, boolean adjustExtension){
 		return null;
 	}
@@ -1248,6 +1341,7 @@ public class ToolReference implements IToolReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IHoldsOptions#needsRebuild()
 	 */
+	@Override
 	public boolean needsRebuild() {
 		return false;
 	}
@@ -1255,12 +1349,14 @@ public class ToolReference implements IToolReference {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IHoldsOptions#setRebuildState(boolean)
 	 */
+	@Override
 	public void setRebuildState(boolean rebuild) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getPathConverter()
 	 */
+	@Override
 	public IOptionPathConverter getOptionPathConverter() {
 		if (parent!=null)  {
 			return parent.getOptionPathConverter();
@@ -1268,26 +1364,32 @@ public class ToolReference implements IToolReference {
 		return null;
 	}
 
+	@Override
 	public CLanguageData getCLanguageData(IInputType type) {
 		return null;
 	}
 
+	@Override
 	public CLanguageData[] getCLanguageDatas() {
 		return new CLanguageData[0];
 	}
 
+	@Override
 	public IInputType getInputTypeForCLanguageData(CLanguageData data) {
 		return null;
 	}
 
+	@Override
 	public IResourceInfo getParentResourceInfo() {
 		return null;
 	}
 
+	@Override
 	public IInputType getEditableInputType(IInputType base) {
 		return null;
 	}
 
+	@Override
 	public boolean isEnabled() {
 		return true;
 	}
@@ -1300,26 +1402,32 @@ public class ToolReference implements IToolReference {
 		return true;
 	}
 
+	@Override
 	public boolean supportsBuild(boolean managed) {
 		return true;
 	}
 
+	@Override
 	public boolean matches(ITool tool) {
 		return false;
 	}
 
+	@Override
 	public boolean isSystemObject() {
 		return false;
 	}
 
+	@Override
 	public String getUniqueRealName() {
 		return getName();
 	}
 
+	@Override
 	public IOutputType getEditableOutputType(IOutputType base) {
 		return null;
 	}
 
+	@Override
 	public void setOutputPrefixForPrimaryOutput(String prefix) {
 		setOutputPrefix(prefix);
 	}

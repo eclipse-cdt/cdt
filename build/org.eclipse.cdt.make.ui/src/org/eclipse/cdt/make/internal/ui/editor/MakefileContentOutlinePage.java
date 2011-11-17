@@ -69,6 +69,7 @@ public class MakefileContentOutlinePage extends ContentOutlinePage {
 		/* (non-Javadoc)
 		* @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 		*/
+		@Override
 		public Object[] getChildren(Object element) {
 			if (element == fInput) {
 				return getElements(makefile);
@@ -81,6 +82,7 @@ public class MakefileContentOutlinePage extends ContentOutlinePage {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 		 */
+		@Override
 		public Object getParent(Object element) {
 			if (element instanceof IMakefile) {
 				return fInput;
@@ -93,6 +95,7 @@ public class MakefileContentOutlinePage extends ContentOutlinePage {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 		 */
+		@Override
 		public boolean hasChildren(Object element) {
 			if (element == fInput) {
 				return true;
@@ -109,6 +112,7 @@ public class MakefileContentOutlinePage extends ContentOutlinePage {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
+		@Override
 		public Object[] getElements(Object inputElement) {
 			IDirective[] directives;
 			if (inputElement == fInput) {
@@ -135,7 +139,7 @@ public class MakefileContentOutlinePage extends ContentOutlinePage {
 				} else {
 					boolean irrelevant = (directives[i] instanceof IComment ||
 						directives[i] instanceof IEmptyLine ||
-						directives[i] instanceof ITerminal); 
+						directives[i] instanceof ITerminal);
 					if (!irrelevant) {
 						list.add(directives[i]);
 					}
@@ -147,12 +151,14 @@ public class MakefileContentOutlinePage extends ContentOutlinePage {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			if (oldInput != null) {
 				makefile = nullMakefile;
@@ -246,6 +252,7 @@ public class MakefileContentOutlinePage extends ContentOutlinePage {
 		MenuManager manager= new MenuManager("#MakefileOutlinerContext"); //$NON-NLS-1$
 		manager.setRemoveAllWhenShown(true);
 		manager.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager m) {
 				contextMenuAboutToShow(m);
 			}
@@ -258,6 +265,7 @@ public class MakefileContentOutlinePage extends ContentOutlinePage {
 			/* (non-Javadoc)
 			 * @see org.eclipse.jface.viewers.IDoubleClickListener#doubleClick(org.eclipse.jface.viewers.DoubleClickEvent)
 			 */
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				if (fOpenIncludeAction != null) {
 					fOpenIncludeAction.run();
@@ -307,6 +315,7 @@ public class MakefileContentOutlinePage extends ContentOutlinePage {
 			final Control control = viewer.getControl();
 			if (control != null && !control.isDisposed()) {
 				control.getDisplay().asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						if (!control.isDisposed()) {
 							control.setRedraw(false);

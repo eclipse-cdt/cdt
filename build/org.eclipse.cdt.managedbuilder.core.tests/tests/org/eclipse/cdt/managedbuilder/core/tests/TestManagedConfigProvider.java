@@ -24,6 +24,7 @@ public class TestManagedConfigProvider implements IManagedConfigElementProvider 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedConfigProvider#getConfigElements()
 	 */
+	@Override
 	public IManagedConfigElement[] getConfigElements() {
 		try {
 			Properties props = new Properties();
@@ -45,19 +46,19 @@ public class TestManagedConfigProvider implements IManagedConfigElementProvider 
 
 	private IManagedConfigElement createTarget(String targetId, String command) {
 		IManagedConfigElement toolRef = new TestConfigElement(
-			IConfigurationV2.TOOLREF_ELEMENT_NAME, 
+			IConfigurationV2.TOOLREF_ELEMENT_NAME,
 			new String[][] {
 					{ITool.ID, "test.forward.tool"},
 					{ITool.COMMAND, command}},
 			new IManagedConfigElement[0]);
 
 		IManagedConfigElement config = new TestConfigElement(
-				IConfigurationV2.CONFIGURATION_ELEMENT_NAME, 
+				IConfigurationV2.CONFIGURATION_ELEMENT_NAME,
 				new String[][] {
 						{IConfigurationV2.ID, targetId + ".config"},
 						{IConfigurationV2.NAME, "test.forward.config"}},
 				new IManagedConfigElement[] {toolRef});
-				
+
 		IManagedConfigElement target = new TestConfigElement(
 			ITarget.TARGET_ELEMENT_NAME,
 			new String[][] {
@@ -68,7 +69,7 @@ public class TestManagedConfigProvider implements IManagedConfigElementProvider 
 					{ITarget.IS_TEST, "true"},
 					{ITarget.OS_LIST, "win32,linux,solaris"}},
 			new IManagedConfigElement[] {config});
-		
+
 		return target;
 	}
 }

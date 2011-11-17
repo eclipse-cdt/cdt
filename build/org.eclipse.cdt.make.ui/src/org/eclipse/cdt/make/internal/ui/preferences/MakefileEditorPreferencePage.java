@@ -65,13 +65,13 @@ public class MakefileEditorPreferencePage extends AbstractMakefileEditorPreferen
 	ColorSelector fSyntaxForegroundColorEditor;
 	Button fBoldCheckBox;
 	Button fItalicCheckBox;
-	
+
 	// folding
 	protected Button fFoldingCheckbox;
 
 	/**
 	 * Item in the highlighting color list.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private class HighlightingColorListItem {
@@ -85,10 +85,10 @@ public class MakefileEditorPreferencePage extends AbstractMakefileEditorPreferen
 		private String fItalicKey;
 		/** Item color */
 		private Color fItemColor;
-		
+
 		/**
 		 * Initialize the item with the given values.
-		 * 
+		 *
 		 * @param displayName the display name
 		 * @param colorKey the color preference key
 		 * @param boldKey the bold preference key
@@ -102,35 +102,35 @@ public class MakefileEditorPreferencePage extends AbstractMakefileEditorPreferen
 			fItalicKey= italicKey;
 			fItemColor= itemColor;
 		}
-		
+
 		/**
 		 * @return the bold preference key
 		 */
 		public String getBoldKey() {
 			return fBoldKey;
 		}
-		
+
 		/**
 		 * @return the bold preference key
 		 */
 		public String getItalicKey() {
 			return fItalicKey;
 		}
-		
+
 		/**
 		 * @return the color preference key
 		 */
 		public String getColorKey() {
 			return fColorKey;
 		}
-		
+
 		/**
 		 * @return the display name
 		 */
 		public String getDisplayName() {
 			return fDisplayName;
 		}
-		
+
 		/**
 		 * @return the item color
 		 */
@@ -141,7 +141,7 @@ public class MakefileEditorPreferencePage extends AbstractMakefileEditorPreferen
 
 	/**
 	 * Color list label provider.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private class ColorListLabelProvider extends LabelProvider implements IColorProvider {
@@ -153,10 +153,11 @@ public class MakefileEditorPreferencePage extends AbstractMakefileEditorPreferen
 		public String getText(Object element) {
 			return ((HighlightingColorListItem)element).getDisplayName();
 		}
-		
+
 		/*
 		 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
 		 */
+		@Override
 		public Color getForeground(Object element) {
 			return ((HighlightingColorListItem)element).getItemColor();
 		}
@@ -164,14 +165,15 @@ public class MakefileEditorPreferencePage extends AbstractMakefileEditorPreferen
 		/*
 		 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
 		 */
+		@Override
 		public Color getBackground(Object element) {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Color list content provider.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private class ColorListContentProvider implements IStructuredContentProvider {
@@ -179,6 +181,7 @@ public class MakefileEditorPreferencePage extends AbstractMakefileEditorPreferen
 		/*
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return ((List<?>)inputElement).toArray();
 		}
@@ -186,20 +189,22 @@ public class MakefileEditorPreferencePage extends AbstractMakefileEditorPreferen
 		/*
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 		}
 
 		/*
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}
-	
+
 
 
 	/**
-	 * 
+	 *
 	 */
 	public MakefileEditorPreferencePage() {
 		super();
@@ -221,12 +226,12 @@ public class MakefileEditorPreferencePage extends AbstractMakefileEditorPreferen
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, MakefileEditorPreferenceConstants.EDITOR_FOLDING_CONDITIONAL));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, MakefileEditorPreferenceConstants.EDITOR_FOLDING_MACRODEF));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, MakefileEditorPreferenceConstants.EDITOR_FOLDING_RULE));
-		
+
 		for (int i= 0; i < fSyntaxColorListModel.length; i++) {
 			String colorKey= fSyntaxColorListModel[i][1];
 			addTextKeyToCover(overlayKeys, colorKey);
 		}
-		
+
 		OverlayPreferenceStore.OverlayKey[] keys= new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
 		overlayKeys.toArray(keys);
 		return new OverlayPreferenceStore(getPreferenceStore(), keys);
@@ -246,33 +251,33 @@ public class MakefileEditorPreferencePage extends AbstractMakefileEditorPreferen
 		MakeUIPlugin.getDefault().getWorkbench().getHelpSystem().setHelp(getControl(), IMakeHelpContextIds.MAKE_EDITOR_PREFERENCE_PAGE);
 		getOverlayStore().load();
 		getOverlayStore().start();
-		
+
 		TabFolder folder= new TabFolder(parent, SWT.NONE);
-		folder.setLayout(new TabFolderLayout());	
+		folder.setLayout(new TabFolderLayout());
 		folder.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		TabItem item= new TabItem(folder, SWT.NONE);
 		item.setText(MakefilePreferencesMessages.getString("MakefileEditorPreferencePage.syntax")); //$NON-NLS-1$
 		item.setControl(createSyntaxPage(folder));
-		
+
 		item= new TabItem(folder, SWT.NONE);
 		item.setText(MakefilePreferencesMessages.getString("MakefileEditorPreferencePage.folding")); //$NON-NLS-1$
 		item.setControl(createFoldingTabContent(folder));
-					
+
 		initialize();
-		
+
 		applyDialogFont(folder);
 		return folder;
 	}
 
 	private void initialize() {
-		
+
 		initializeFields();
-		
+
 		for (int i= 0, n= fSyntaxColorListModel.length; i < n; i++) {
 			fHighlightingColorList.add(
 				new HighlightingColorListItem (fSyntaxColorListModel[i][0], fSyntaxColorListModel[i][1],
-						fSyntaxColorListModel[i][1] + MakefileEditorPreferenceConstants.EDITOR_BOLD_SUFFIX, 
+						fSyntaxColorListModel[i][1] + MakefileEditorPreferenceConstants.EDITOR_BOLD_SUFFIX,
 						fSyntaxColorListModel[i][1] + MakefileEditorPreferenceConstants.EDITOR_ITALIC_SUFFIX, null));
 		}
 		fHighlightingColorListViewer.setInput(fHighlightingColorList);
@@ -283,12 +288,12 @@ public class MakefileEditorPreferencePage extends AbstractMakefileEditorPreferen
 
 	void initializeFolding() {
 		boolean enabled= getOverlayStore().getBoolean(PreferenceConstants.EDITOR_FOLDING_ENABLED);
-		fFoldingCheckbox.setSelection(enabled);		
+		fFoldingCheckbox.setSelection(enabled);
 	}
 
 	void initializeDefaultFolding() {
 		boolean enabled= getOverlayStore().getDefaultBoolean(PreferenceConstants.EDITOR_FOLDING_ENABLED);
-		fFoldingCheckbox.setSelection(enabled);		
+		fFoldingCheckbox.setSelection(enabled);
 	}
 
 	/* (non-Javadoc)
@@ -299,9 +304,9 @@ public class MakefileEditorPreferencePage extends AbstractMakefileEditorPreferen
 		handleSyntaxColorListSelection();
 		initializeDefaultFolding();
 	}
-	
+
 	private Control createSyntaxPage(Composite parent) {
-		
+
 		Composite colorComposite= new Composite(parent, SWT.NONE);
 		colorComposite.setLayout(new GridLayout());
 
@@ -316,7 +321,7 @@ public class MakefileEditorPreferencePage extends AbstractMakefileEditorPreferen
 		layout.marginWidth= 0;
 		editorComposite.setLayout(layout);
 		GridData gd= new GridData(GridData.FILL_BOTH);
-		editorComposite.setLayoutData(gd);		
+		editorComposite.setLayoutData(gd);
 
 		fHighlightingColorListViewer= new TableViewer(editorComposite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION);
 		fHighlightingColorListViewer.setLabelProvider(new ColorListLabelProvider());
@@ -325,7 +330,7 @@ public class MakefileEditorPreferencePage extends AbstractMakefileEditorPreferen
 		gd= new GridData(GridData.FILL_BOTH);
 		gd.heightHint= convertHeightInCharsToPixels(5);
 		fHighlightingColorListViewer.getControl().setLayoutData(gd);
-						
+
 		Composite stylesComposite= new Composite(editorComposite, SWT.NONE);
 		layout= new GridLayout();
 		layout.marginHeight= 0;
@@ -333,7 +338,7 @@ public class MakefileEditorPreferencePage extends AbstractMakefileEditorPreferen
 		layout.numColumns= 2;
 		stylesComposite.setLayout(layout);
 		stylesComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		label= new Label(stylesComposite, SWT.LEFT);
 		label.setText(MakefilePreferencesMessages.getString("MakefileEditorPreferencePage.color")); //$NON-NLS-1$
 		gd= new GridData();
@@ -345,14 +350,14 @@ public class MakefileEditorPreferencePage extends AbstractMakefileEditorPreferen
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment= GridData.BEGINNING;
 		foregroundColorButton.setLayoutData(gd);
-		
+
 		fBoldCheckBox= new Button(stylesComposite, SWT.CHECK);
 		fBoldCheckBox.setText(MakefilePreferencesMessages.getString("MakefileEditorPreferencePage.bold")); //$NON-NLS-1$
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment= GridData.BEGINNING;
 		gd.horizontalSpan= 2;
 		fBoldCheckBox.setLayoutData(gd);
-		
+
 		fItalicCheckBox= new Button(stylesComposite, SWT.CHECK);
 		fItalicCheckBox.setText(MakefilePreferencesMessages.getString("MakefileEditorPreferencePage.italic")); //$NON-NLS-1$
 		gd= new GridData(GridData.FILL_HORIZONTAL);
@@ -361,15 +366,18 @@ public class MakefileEditorPreferencePage extends AbstractMakefileEditorPreferen
 		fItalicCheckBox.setLayoutData(gd);
 
 		fHighlightingColorListViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				handleSyntaxColorListSelection();
 			}
 		});
 
 		foregroundColorButton.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				HighlightingColorListItem item= getHighlightingColorListItem();
 				PreferenceConverter.setValue(getOverlayStore(), item.getColorKey(), fSyntaxForegroundColorEditor.getColorValue());
@@ -377,28 +385,32 @@ public class MakefileEditorPreferencePage extends AbstractMakefileEditorPreferen
 		});
 
 		fBoldCheckBox.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				HighlightingColorListItem item= getHighlightingColorListItem();
 				getOverlayStore().setValue(item.getBoldKey(), fBoldCheckBox.getSelection());
 			}
 		});
-				
+
 		fItalicCheckBox.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				HighlightingColorListItem item= getHighlightingColorListItem();
 				getOverlayStore().setValue(item.getItalicKey(), fItalicCheckBox.getSelection());
 			}
 		});
-				
+
 		return colorComposite;
 	}
-	
+
 
 	private Composite createFoldingTabContent(TabFolder folder) {
 		Composite composite= new Composite(folder, SWT.NULL);
@@ -410,37 +422,39 @@ public class MakefileEditorPreferencePage extends AbstractMakefileEditorPreferen
 		//PixelConverter pc= new PixelConverter(composite);
 		//layout.verticalSpacing= pc.convertHeightInCharsToPixels(1) / 2;
 		composite.setLayout(layout);
-		
-		
+
+
 		/* check box for new editors */
 		fFoldingCheckbox= new Button(composite, SWT.CHECK);
 		fFoldingCheckbox.setText(MakefilePreferencesMessages.getString("MakefileEditorPreferencePage.foldingenable")); //$NON-NLS-1$
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING);
 		fFoldingCheckbox.setLayoutData(gd);
 		fFoldingCheckbox.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
-				boolean enabled= fFoldingCheckbox.getSelection(); 
+				boolean enabled= fFoldingCheckbox.getSelection();
 				getOverlayStore().setValue(MakefileEditorPreferenceConstants.EDITOR_FOLDING_ENABLED, enabled);
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
-		
+
 		return composite;
 	}
 
 	void handleSyntaxColorListSelection() {
 		HighlightingColorListItem item= getHighlightingColorListItem();
 		RGB rgb= PreferenceConverter.getColor(getOverlayStore(), item.getColorKey());
-		fSyntaxForegroundColorEditor.setColorValue(rgb);		
+		fSyntaxForegroundColorEditor.setColorValue(rgb);
 		fBoldCheckBox.setSelection(getOverlayStore().getBoolean(item.getBoldKey()));
 		fItalicCheckBox.setSelection(getOverlayStore().getBoolean(item.getItalicKey()));
 	}
-	
+
 	/**
 	 * Returns the current highlighting color list item.
-	 * 
+	 *
 	 * @return the current highlighting color list item
 	 * @since 3.0
 	 */
@@ -457,14 +471,14 @@ public class MakefileEditorPreferencePage extends AbstractMakefileEditorPreferen
 		return super.performOk();
 	}
 
-	public static void initDefaults(IPreferenceStore prefs) {		
+	public static void initDefaults(IPreferenceStore prefs) {
 		// Makefile Editor color preferences
 		PreferenceConverter.setDefault(prefs, ColorManager.MAKE_COMMENT_COLOR, ColorManager.MAKE_COMMENT_RGB);
 		PreferenceConverter.setDefault(prefs, ColorManager.MAKE_DEFAULT_COLOR, ColorManager.MAKE_DEFAULT_RGB);
 		PreferenceConverter.setDefault(prefs, ColorManager.MAKE_FUNCTION_COLOR, ColorManager.MAKE_FUNCTION_RGB);
 		PreferenceConverter.setDefault(prefs, ColorManager.MAKE_KEYWORD_COLOR, ColorManager.MAKE_KEYWORD_RGB);
 		PreferenceConverter.setDefault(prefs, ColorManager.MAKE_MACRO_DEF_COLOR, ColorManager.MAKE_MACRO_DEF_RGB);
-		PreferenceConverter.setDefault(prefs, ColorManager.MAKE_MACRO_REF_COLOR, ColorManager.MAKE_MACRO_REF_RGB);		
+		PreferenceConverter.setDefault(prefs, ColorManager.MAKE_MACRO_REF_COLOR, ColorManager.MAKE_MACRO_REF_RGB);
 	}
 
 }

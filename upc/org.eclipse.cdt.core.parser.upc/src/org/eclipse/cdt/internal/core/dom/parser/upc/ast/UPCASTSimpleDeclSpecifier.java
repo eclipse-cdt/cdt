@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,12 +18,12 @@ import org.eclipse.cdt.internal.core.dom.parser.c.CASTSimpleDeclSpecifier;
 @SuppressWarnings("restriction")
 public class UPCASTSimpleDeclSpecifier extends CASTSimpleDeclSpecifier
 		implements IUPCASTSimpleDeclSpecifier {
-	
+
 	private int referenceType;
 	private int sharedQualifier;
 	private IASTExpression blockSizeExpression;
-	
-	
+
+
 	public UPCASTSimpleDeclSpecifier() {
 	}
 
@@ -35,7 +35,7 @@ public class UPCASTSimpleDeclSpecifier extends CASTSimpleDeclSpecifier
 	public UPCASTSimpleDeclSpecifier copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+
 	@Override
 	public UPCASTSimpleDeclSpecifier copy(CopyStyle style) {
 		UPCASTSimpleDeclSpecifier copy = new UPCASTSimpleDeclSpecifier();
@@ -49,18 +49,22 @@ public class UPCASTSimpleDeclSpecifier extends CASTSimpleDeclSpecifier
 		return copy;
 	}
 
+	@Override
 	public IASTExpression getBlockSizeExpression() {
 		return blockSizeExpression;
 	}
 
+	@Override
 	public int getReferenceType() {
 		return referenceType;
 	}
 
+	@Override
 	public int getSharedQualifier() {
 		return sharedQualifier;
 	}
 
+	@Override
 	public void setBlockSizeExpression(IASTExpression expr) {
 		this.blockSizeExpression = expr;
 		if(expr != null) {
@@ -69,15 +73,17 @@ public class UPCASTSimpleDeclSpecifier extends CASTSimpleDeclSpecifier
 		}
 	}
 
+	@Override
 	public void setReferenceType(int referenceType) {
 		this.referenceType = referenceType;
 	}
 
+	@Override
 	public void setSharedQualifier(int shared) {
 		this.sharedQualifier = shared;
 	}
-	
-	
+
+
 	@Override
 	public boolean accept(ASTVisitor action) {
         if( action.shouldVisitDeclSpecifiers ){
@@ -87,8 +93,8 @@ public class UPCASTSimpleDeclSpecifier extends CASTSimpleDeclSpecifier
 	            default : break;
 	        }
 		}
-        if( blockSizeExpression != null) if( !blockSizeExpression.accept( action ) ) return false;    
-        
+        if( blockSizeExpression != null) if( !blockSizeExpression.accept( action ) ) return false;
+
         if( action.shouldVisitDeclSpecifiers ){
 		    switch( action.leave( this ) ){
 	            case ASTVisitor.PROCESS_ABORT : return false;

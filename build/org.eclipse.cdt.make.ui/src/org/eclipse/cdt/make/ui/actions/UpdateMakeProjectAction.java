@@ -57,12 +57,15 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 
 	private ISelection fSelection;
 
+	@Override
 	public void dispose() {
 	}
 
+	@Override
 	public void init(IWorkbenchWindow window) {
 	}
 
+	@Override
 	public void run(IAction action) {
 		if (fSelection instanceof IStructuredSelection) {
 			Object[] elems = ((IStructuredSelection) fSelection).toArray();
@@ -126,9 +129,11 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 	static public void run(boolean fork, IRunnableContext context, final IProject[] projects) {
 		try {
 			context.run(fork, true, new IRunnableWithProgress() {
+				@Override
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
 						IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+							@Override
 							public void run(IProgressMonitor monitor) throws CoreException {
 								doProjectUpdate(monitor, projects);
 							}
@@ -161,6 +166,7 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 			monitor.beginTask(MakeUIPlugin.getResourceString("UpdateMakeProjectAction.monitor.convert"), TOTAL_WORK); //$NON-NLS-1$
 		}
 
+		@Override
 		public boolean visit(IResourceProxy proxy) throws CoreException {
 			try {
 				if (proxy.getType() != IResource.FOLDER && proxy.getType() != IResource.PROJECT) {
@@ -254,6 +260,7 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 		}
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		boolean enabled = false;
 		fSelection = selection;

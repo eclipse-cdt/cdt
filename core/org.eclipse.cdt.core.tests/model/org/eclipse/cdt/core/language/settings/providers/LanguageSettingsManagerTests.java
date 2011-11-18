@@ -696,7 +696,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 		ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(provider);
 		assertEquals(EXTENSION_EDITABLE_PROVIDER_ID, rawProvider.getId());
 		assertEquals(EXTENSION_EDITABLE_PROVIDER_NAME, rawProvider.getName());
-		assertTrue(rawProvider instanceof LanguageSettingsSerializable);
+		assertTrue(rawProvider instanceof LanguageSettingsSerializableProvider);
 		// assert they are not the same object
 		assertNotSame(provider, rawProvider);
 		
@@ -713,7 +713,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 			List<ICLanguageSettingEntry> newEntries = new ArrayList<ICLanguageSettingEntry>();
 			newEntries.add(new CIncludePathEntry("path0", 0));
 			newEntries.add(new CIncludePathEntry("path1", 0));
-			((LanguageSettingsSerializable)rawProvider).setSettingEntries(null, null, null, newEntries);
+			((LanguageSettingsSerializableProvider)rawProvider).setSettingEntries(null, null, null, newEntries);
 			
 			// check that the workspace provider gets them too
 			List<ICLanguageSettingEntry> newRawEntries = rawProvider.getSettingEntries(null, null, null);
@@ -752,7 +752,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 		{
 			// replace raw provider
 			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
-			LanguageSettingsSerializable newRawProvider = new LanguageSettingsSerializable(EXTENSION_EDITABLE_PROVIDER_ID, PROVIDER_NAME_0);
+			LanguageSettingsSerializableProvider newRawProvider = new LanguageSettingsSerializableProvider(EXTENSION_EDITABLE_PROVIDER_ID, PROVIDER_NAME_0);
 			newRawProvider.setSettingEntries(null, null, null, newEntries);
 			providers.add(newRawProvider);
 			LanguageSettingsManager.setWorkspaceProviders(providers);
@@ -800,7 +800,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 		assertNotNull(file);
 		
 		// create a provider and set the entries
-		LanguageSettingsSerializable provider = new LanguageSettingsSerializable(PROVIDER_1, PROVIDER_NAME_1);
+		LanguageSettingsSerializableProvider provider = new LanguageSettingsSerializableProvider(PROVIDER_1, PROVIDER_NAME_1);
 		provider.setSettingEntries(null, file, null, entries);
 		// build the hierarchy
 		LanguageSettingsProvidersSerializer.buildResourceTree(provider, null, null, project);
@@ -824,7 +824,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 		IFile file = ResourceHelper.createFile(project, "Folder/file.cpp");
 		
 		// create a provider and set the entries
-		LanguageSettingsSerializable provider = new LanguageSettingsSerializable(PROVIDER_1, PROVIDER_NAME_1);
+		LanguageSettingsSerializableProvider provider = new LanguageSettingsSerializableProvider(PROVIDER_1, PROVIDER_NAME_1);
 		provider.setSettingEntries(null, file, null, entries);
 		// build the hierarchy
 		LanguageSettingsManager.buildResourceTree(provider, null, null, project);
@@ -852,7 +852,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 		IFile file2 = ResourceHelper.createFile(project, "Folder2/file2.cpp");
 		
 		// create a provider and set the entries
-		LanguageSettingsSerializable provider = new LanguageSettingsSerializable(PROVIDER_1, PROVIDER_NAME_1);
+		LanguageSettingsSerializableProvider provider = new LanguageSettingsSerializableProvider(PROVIDER_1, PROVIDER_NAME_1);
 		provider.setSettingEntries(null, file1, null, entries1);
 		provider.setSettingEntries(null, file2, null, entries2);
 		// build the hierarchy
@@ -884,7 +884,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 		IFile file3 = ResourceHelper.createFile(project, "file3.cpp");
 		
 		// create a provider
-		LanguageSettingsSerializable provider = new LanguageSettingsSerializable(PROVIDER_1, PROVIDER_NAME_1);
+		LanguageSettingsSerializableProvider provider = new LanguageSettingsSerializableProvider(PROVIDER_1, PROVIDER_NAME_1);
 		
 		// set the entries for the first 2 files
 		provider.setSettingEntries(null, file1, null, entries1);
@@ -922,7 +922,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 		IFile file = ResourceHelper.createFile(project, "Folder/file.cpp");
 		
 		// create a provider and set the entries
-		LanguageSettingsSerializable provider = new LanguageSettingsSerializable(PROVIDER_1, PROVIDER_NAME_1);
+		LanguageSettingsSerializableProvider provider = new LanguageSettingsSerializableProvider(PROVIDER_1, PROVIDER_NAME_1);
 		provider.setSettingEntries(null, file, LANG_CPP, entries);
 		// build the hierarchy
 		LanguageSettingsManager.buildResourceTree(provider, null, LANG_CPP, project);

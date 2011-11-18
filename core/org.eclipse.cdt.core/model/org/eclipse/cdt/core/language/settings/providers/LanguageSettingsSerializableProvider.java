@@ -31,7 +31,7 @@ import org.w3c.dom.NodeList;
  * TODO - more JavaDoc, info and hints about class hierarchy
  *
  */
-public class LanguageSettingsSerializable extends LanguageSettingsBaseProvider {
+public class LanguageSettingsSerializableProvider extends LanguageSettingsBaseProvider {
 	public static final String ELEM_PROVIDER = "provider"; //$NON-NLS-1$
 	private static final String ATTR_ID = "id"; //$NON-NLS-1$
 
@@ -51,7 +51,7 @@ public class LanguageSettingsSerializable extends LanguageSettingsBaseProvider {
 	/**
 	 * Default constructor. This constructor has to be always followed with setting id and name of the provider.
 	 */
-	public LanguageSettingsSerializable() {
+	public LanguageSettingsSerializableProvider() {
 		super();
 	}
 
@@ -61,7 +61,7 @@ public class LanguageSettingsSerializable extends LanguageSettingsBaseProvider {
 	 * @param id - id of the provider.
 	 * @param name - name of the provider. Note that this name may show up in UI.
 	 */
-	public LanguageSettingsSerializable(String id, String name) {
+	public LanguageSettingsSerializableProvider(String id, String name) {
 		super(id, name);
 	}
 
@@ -70,7 +70,7 @@ public class LanguageSettingsSerializable extends LanguageSettingsBaseProvider {
 	 *
 	 * @param elementProvider
 	 */
-	public LanguageSettingsSerializable(Element elementProvider) {
+	public LanguageSettingsSerializableProvider(Element elementProvider) {
 		super();
 		load(elementProvider);
 	}
@@ -315,8 +315,8 @@ public class LanguageSettingsSerializable extends LanguageSettingsBaseProvider {
 	 * See {@link #cloneShallow()}. This method is extracted
 	 * to avoid expressing {@link #clone()} via {@link #cloneShallow()}.
 	 */
-	private LanguageSettingsSerializable cloneShallowInternal() throws CloneNotSupportedException {
-		LanguageSettingsSerializable clone = (LanguageSettingsSerializable)super.clone();
+	private LanguageSettingsSerializableProvider cloneShallowInternal() throws CloneNotSupportedException {
+		LanguageSettingsSerializableProvider clone = (LanguageSettingsSerializableProvider)super.clone();
 		if (languageScope!=null)
 			clone.languageScope = new ArrayList<String>(languageScope);
 
@@ -331,13 +331,13 @@ public class LanguageSettingsSerializable extends LanguageSettingsBaseProvider {
 	 * @return shallow copy of the provider.
 	 * @throws CloneNotSupportedException in case {@link #clone()} throws the exception.
 	 */
-	protected LanguageSettingsSerializable cloneShallow() throws CloneNotSupportedException {
+	protected LanguageSettingsSerializableProvider cloneShallow() throws CloneNotSupportedException {
 		return cloneShallowInternal();
 	}
 
 	@Override
-	protected LanguageSettingsSerializable clone() throws CloneNotSupportedException {
-		LanguageSettingsSerializable clone = cloneShallowInternal();
+	protected LanguageSettingsSerializableProvider clone() throws CloneNotSupportedException {
+		LanguageSettingsSerializableProvider clone = cloneShallowInternal();
 		clone.fStorage = fStorage.cloneStorage();
 		return clone;
 	}
@@ -368,7 +368,7 @@ public class LanguageSettingsSerializable extends LanguageSettingsBaseProvider {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		LanguageSettingsSerializable other = (LanguageSettingsSerializable) obj;
+		LanguageSettingsSerializableProvider other = (LanguageSettingsSerializableProvider) obj;
 
 		String id = getId();
 		String otherId = other.getId();

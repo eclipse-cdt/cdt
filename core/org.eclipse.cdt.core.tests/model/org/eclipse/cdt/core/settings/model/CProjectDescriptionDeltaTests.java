@@ -20,7 +20,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
-import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializable;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializableProvider;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
@@ -1012,7 +1012,7 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 		List<ILanguageSettingsProvider> originalProviders = cfgDescription.getLanguageSettingProviders();
 		
 		// Modification LANGUAGE_SETTINGS_PROVIDERS
-		ILanguageSettingsProvider provider = new LanguageSettingsSerializable("id", "name");
+		ILanguageSettingsProvider provider = new LanguageSettingsSerializableProvider("id", "name");
 		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 		providers.add(provider);
 		cfgDescription.setLanguageSettingProviders(providers);

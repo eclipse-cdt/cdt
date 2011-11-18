@@ -46,7 +46,7 @@ import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditabl
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsBaseProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
-import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializable;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializableProvider;
 import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.LanguageManager;
@@ -682,7 +682,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 	}
 
 	private void saveEntries(ILanguageSettingsProvider provider, List<ICLanguageSettingEntry> entries) {
-		if (provider instanceof LanguageSettingsSerializable) {
+		if (provider instanceof LanguageSettingsSerializableProvider) {
 			ICConfigurationDescription cfgDescription = getConfigurationDescription();
 			IResource rc = getResource();
 			if (entries!=null && rc!=null) {
@@ -697,7 +697,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 					entries = null;
 				}
 			}
-			((LanguageSettingsSerializable)provider).setSettingEntries(cfgDescription, rc, currentLanguageId, entries);
+			((LanguageSettingsSerializableProvider)provider).setSettingEntries(cfgDescription, rc, currentLanguageId, entries);
 		}
 	}
 

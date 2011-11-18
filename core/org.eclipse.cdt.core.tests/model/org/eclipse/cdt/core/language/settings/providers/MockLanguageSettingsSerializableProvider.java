@@ -11,10 +11,10 @@
 
 package org.eclipse.cdt.core.language.settings.providers;
 
-import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializable;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializableProvider;
 
 
-public class MockLanguageSettingsSerializableProvider extends LanguageSettingsSerializable {
+public class MockLanguageSettingsSerializableProvider extends LanguageSettingsSerializableProvider {
 	public MockLanguageSettingsSerializableProvider() {
 		super();
 	}

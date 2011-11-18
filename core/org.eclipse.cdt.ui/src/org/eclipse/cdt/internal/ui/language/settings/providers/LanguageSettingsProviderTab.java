@@ -49,7 +49,7 @@ import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditabl
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager_TBD;
-import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializable;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializableProvider;
 import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
@@ -403,8 +403,8 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 						if (isGlobal != LanguageSettingsManager.isWorkspaceProvider(provider)) {
 							provider = toggleGlobalProvider(provider, isGlobal);
 						}
-						projectStorageCheckBox.setSelection(provider instanceof LanguageSettingsSerializable
-								&& ((LanguageSettingsSerializable) provider).isStoringEntriesInProjectArea());
+						projectStorageCheckBox.setSelection(provider instanceof LanguageSettingsSerializableProvider
+								&& ((LanguageSettingsSerializableProvider) provider).isStoringEntriesInProjectArea());
 					}
 
 					@Override
@@ -421,8 +421,8 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 					public void widgetSelected(SelectionEvent e) {
 						boolean isWithProject = projectStorageCheckBox.getSelection();
 						ILanguageSettingsProvider provider = getWorkingCopy(getSelectedProvider().getId());
-						Assert.isTrue(provider instanceof LanguageSettingsSerializable);
-						((LanguageSettingsSerializable)provider).setStoringEntriesInProjectArea(isWithProject);
+						Assert.isTrue(provider instanceof LanguageSettingsSerializableProvider);
+						((LanguageSettingsSerializableProvider)provider).setStoringEntriesInProjectArea(isWithProject);
 						refreshItem(provider);
 					}
 
@@ -607,9 +607,9 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 			globalProviderCheckBox.setVisible(provider!=null);
 
 			projectStorageCheckBox.setEnabled(!isGlobal);
-			projectStorageCheckBox.setVisible(rawProvider instanceof LanguageSettingsSerializable);
-			projectStorageCheckBox.setSelection(provider instanceof LanguageSettingsSerializable
-					&& ((LanguageSettingsSerializable)provider).isStoringEntriesInProjectArea());
+			projectStorageCheckBox.setVisible(rawProvider instanceof LanguageSettingsSerializableProvider);
+			projectStorageCheckBox.setSelection(provider instanceof LanguageSettingsSerializableProvider
+					&& ((LanguageSettingsSerializableProvider)provider).isStoringEntriesInProjectArea());
 
 			boolean needPreferencesLink=isGlobal && currentOptionsPage!=null;
 			// TODO: message

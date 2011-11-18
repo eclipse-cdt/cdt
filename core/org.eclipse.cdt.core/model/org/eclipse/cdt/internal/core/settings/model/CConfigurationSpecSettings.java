@@ -25,7 +25,7 @@ import java.util.Set;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
-import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializable;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializableProvider;
 import org.eclipse.cdt.core.settings.model.CExternalSetting;
 import org.eclipse.cdt.core.settings.model.ICBuildSetting;
 import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
@@ -1041,8 +1041,8 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 			if (LanguageSettingsManager.isWorkspaceProvider(provider)) {
 				provider = LanguageSettingsManager.getRawProvider(provider);
 			}
-			if (provider instanceof LanguageSettingsSerializable) {
-				LanguageSettingsStorage store = ((LanguageSettingsSerializable) provider).getStorageInternal();
+			if (provider instanceof LanguageSettingsSerializableProvider) {
+				LanguageSettingsStorage store = ((LanguageSettingsSerializableProvider) provider).getStorageInternal();
 				if (!store.isEmpty()) {
 					newStateShallow.put(provider.getId(), store);
 				}

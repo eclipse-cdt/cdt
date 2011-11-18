@@ -28,7 +28,7 @@ import org.eclipse.core.resources.IResource;
  * To define a provider like that use extension point
  * {@code org.eclipse.cdt.core.LanguageSettingsProvider} and implement this
  * interface. CDT provides a few general use implementations such as
- * {@link LanguageSettingsBaseProvider} or {@link LanguageSettingsSerializable}
+ * {@link LanguageSettingsBaseProvider} or {@link LanguageSettingsSerializableProvider}
  * which could be used out of the box or extended. See also extension point
  * schema description LanguageSettingsProvider.exsd.
  *

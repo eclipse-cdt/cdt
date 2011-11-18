@@ -36,7 +36,7 @@ public class LanguageSettingsManager_TBD {
 		for (ILanguageSettingsProvider provider: cfgDescription.getLanguageSettingProviders()) {
 			// FIXME
 //			if (!LanguageSettingsManager.isWorkspaceProvider(provider)) {
-			if (provider instanceof ILanguageSettingsEditableProvider || provider instanceof LanguageSettingsSerializable) {
+			if (provider instanceof ILanguageSettingsEditableProvider || provider instanceof LanguageSettingsSerializableProvider) {
 				for (String languageId : LanguageSettingsManager.getLanguages(rc, cfgDescription)) {
 					List<ICLanguageSettingEntry> list = provider.getSettingEntries(cfgDescription, rc, languageId);
 					if (list!=null) {

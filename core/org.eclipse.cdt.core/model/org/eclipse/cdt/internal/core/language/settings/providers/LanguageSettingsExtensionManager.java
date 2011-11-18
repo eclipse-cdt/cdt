@@ -23,7 +23,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditableProvider;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsBaseProvider;
-import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializable;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializableProvider;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.settings.model.util.LanguageSettingEntriesSerializer;
@@ -255,8 +255,8 @@ public class LanguageSettingsExtensionManager {
 	 * @return new instance of language settings provider.
 	 */
 	/*package*/ static ILanguageSettingsProvider getProviderInstance(String className) {
-		if (className==null || className.equals(LanguageSettingsSerializable.class.getName())) {
-			return new LanguageSettingsSerializable();
+		if (className==null || className.equals(LanguageSettingsSerializableProvider.class.getName())) {
+			return new LanguageSettingsSerializableProvider();
 		}
 	
 		ILanguageSettingsProvider provider = createProviderCarcass(className, Platform.getExtensionRegistry());

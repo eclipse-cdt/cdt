@@ -19,7 +19,7 @@ import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
-import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializable;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializableProvider;
 import org.eclipse.cdt.ui.CDTSharedImages;
 
 
@@ -69,8 +69,8 @@ class LanguageSettingsProvidersLabelProvider extends LabelProvider {
 //			boolean isSpecial = provider.getId().equals(LegacySupport.MBS_LANGUAGE_SETTINGS_PROVIDER);
 			
 			ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(provider);
-			if (rawProvider instanceof LanguageSettingsSerializable) {
-				if (((LanguageSettingsSerializable)rawProvider).isEmpty()) {
+			if (rawProvider instanceof LanguageSettingsSerializableProvider) {
+				if (((LanguageSettingsSerializableProvider)rawProvider).isEmpty()) {
 					overlayKeys[IDecoration.BOTTOM_RIGHT] = CDTSharedImages.IMG_OVR_EMPTY;
 				}
 			}

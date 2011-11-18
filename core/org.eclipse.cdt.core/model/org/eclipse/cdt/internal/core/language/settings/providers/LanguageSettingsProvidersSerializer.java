@@ -23,7 +23,7 @@ import org.eclipse.cdt.core.language.settings.providers.ICListenerAgent;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditableProvider;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
-import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializable;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializableProvider;
 import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.LanguageManager;
@@ -337,11 +337,11 @@ public class LanguageSettingsProvidersSerializer {
 		rawGlobalWorkspaceProviders = rawWorkspaceProviders;
 	}
 
-	private static List<LanguageSettingsChangeEvent> createLanguageLettingsChangeEvents(List<LanguageSettingsSerializable> serializableProviders) {
+	private static List<LanguageSettingsChangeEvent> createLanguageLettingsChangeEvents(List<LanguageSettingsSerializableProvider> serializableProviders) {
 		List<LanguageSettingsChangeEvent> events = new ArrayList<LanguageSettingsProvidersSerializer.LanguageSettingsChangeEvent>();
 
 		List<String> serializableIds = new ArrayList<String>();
-		for (LanguageSettingsSerializable provider : serializableProviders) {
+		for (LanguageSettingsSerializableProvider provider : serializableProviders) {
 			serializableIds.add(provider.getId());
 		}
 
@@ -376,13 +376,13 @@ projects:
 		LanguageSettingsLogger.logWarning("LanguageSettingsProvidersSerializer.serializeLanguageSettingsWorkspace()");
 
 		URI uriStoreWsp = getStoreInWorkspaceArea(STORAGE_WORKSPACE_LANGUAGE_SETTINGS);
-		List<LanguageSettingsSerializable> serializableWorkspaceProviders = new ArrayList<LanguageSettingsSerializable>();
+		List<LanguageSettingsSerializableProvider> serializableWorkspaceProviders = new ArrayList<LanguageSettingsSerializableProvider>();
 		for (ILanguageSettingsProvider provider : rawGlobalWorkspaceProviders.values()) {
-			if (provider instanceof LanguageSettingsSerializable) {
+			if (provider instanceof LanguageSettingsSerializableProvider) {
 				// serialize all editable providers which are different from corresponding extension
 				// and serialize all serializable ones that are not editable (those are singletons and we don't know whether they changed)
 				if (!(provider instanceof ILanguageSettingsEditableProvider) || !LanguageSettingsExtensionManager.equalsExtensionProvider(provider)) {
-					serializableWorkspaceProviders.add((LanguageSettingsSerializable)provider);
+					serializableWorkspaceProviders.add((LanguageSettingsSerializableProvider)provider);
 				}
 			}
 		}
@@ -403,7 +403,7 @@ projects:
 				Element rootElement = XmlUtil.appendElement(doc, ELEM_PLUGIN);
 				Element elementExtension = XmlUtil.appendElement(rootElement, ELEM_EXTENSION, new String[] {ATTR_POINT, LanguageSettingsExtensionManager.PROVIDER_EXTENSION_FULL_ID});
 
-				for (LanguageSettingsSerializable provider : serializableWorkspaceProviders) {
+				for (LanguageSettingsSerializableProvider provider : serializableWorkspaceProviders) {
 					provider.serialize(elementExtension);
 				}
 
@@ -445,7 +445,7 @@ projects:
 
 		if (doc!=null) {
 			Element rootElement = doc.getDocumentElement();
-			NodeList providerNodes = rootElement.getElementsByTagName(LanguageSettingsSerializable.ELEM_PROVIDER);
+			NodeList providerNodes = rootElement.getElementsByTagName(LanguageSettingsSerializableProvider.ELEM_PROVIDER);
 
 			List<String> userDefinedProvidersIds = new ArrayList<String>();
 			for (int i=0;i<providerNodes.getLength();i++) {
@@ -497,8 +497,8 @@ projects:
 								LanguageSettingsExtensionManager.ATTR_ID, provider.getId()});
 						continue;
 					}
-					if (provider instanceof LanguageSettingsSerializable) {
-						LanguageSettingsSerializable lss = (LanguageSettingsSerializable) provider;
+					if (provider instanceof LanguageSettingsSerializableProvider) {
+						LanguageSettingsSerializableProvider lss = (LanguageSettingsSerializableProvider) provider;
 
 						boolean useWsp = projectElementWspStore!=null && projectElementPrjStore!=projectElementWspStore;
 						if (lss.isStoringEntriesInProjectArea() || !useWsp) {
@@ -630,8 +630,8 @@ projects:
 							provider = getWorkspaceProvider(providerId);
 						} else if (providerNode.getNodeName().equals(LanguageSettingsExtensionManager.ELEM_PROVIDER)) {
 							provider = loadProvider(providerNode);
-							if (provider instanceof LanguageSettingsSerializable) {
-								LanguageSettingsSerializable lss = (LanguageSettingsSerializable) provider;
+							if (provider instanceof LanguageSettingsSerializableProvider) {
+								LanguageSettingsSerializableProvider lss = (LanguageSettingsSerializableProvider) provider;
 								if (!lss.isStoringEntriesInProjectArea() && projectElementWsp!=null) {
 									loadProviderEntries(lss, cfgId, projectElementWsp);
 								}
@@ -658,7 +658,7 @@ projects:
 		}
 	}
 
-	private static void loadProviderEntries(LanguageSettingsSerializable provider, String cfgId, Element projectElementWsp) {
+	private static void loadProviderEntries(LanguageSettingsSerializableProvider provider, String cfgId, Element projectElementWsp) {
 		/*
 		<project>
 			<configuration id="cfg.id">
@@ -712,8 +712,8 @@ projects:
 		String attrClass = XmlUtil.determineAttributeValue(providerNode, LanguageSettingsExtensionManager.ATTR_CLASS);
 		ILanguageSettingsProvider provider = LanguageSettingsExtensionManager.getProviderInstance(attrClass);
 
-		if (provider instanceof LanguageSettingsSerializable)
-			((LanguageSettingsSerializable)provider).load((Element) providerNode);
+		if (provider instanceof LanguageSettingsSerializableProvider)
+			((LanguageSettingsSerializableProvider)provider).load((Element) providerNode);
 
 		return provider;
 	}
@@ -1087,7 +1087,8 @@ projects:
 	 * @param languageId - language ID.
 	 * @param folder - container where the tree roots.
 	 */
-	public static void buildResourceTree(LanguageSettingsSerializable provider, ICConfigurationDescription cfgDescription, String languageId, IContainer folder) {
+	public static void buildResourceTree(LanguageSettingsSerializableProvider provider,
+			ICConfigurationDescription cfgDescription, String languageId, IContainer folder) {
 		IResource[] members = null;
 		try {
 			members = folder.members();

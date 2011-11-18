@@ -236,8 +236,8 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 
 		// get raw extension provider
 		ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(providerExt);
-		assertTrue(rawProvider instanceof LanguageSettingsSerializable);
-		LanguageSettingsSerializable provider = (LanguageSettingsSerializable) rawProvider;
+		assertTrue(rawProvider instanceof LanguageSettingsSerializableProvider);
+		LanguageSettingsSerializableProvider provider = (LanguageSettingsSerializableProvider) rawProvider;
 		
 		assertEquals(null, provider.getLanguageScope());
 		assertEquals("", provider.getCustomParameter());
@@ -259,7 +259,7 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 
 			// get raw extension provider
 			ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(providerExt);
-			assertTrue(rawProvider instanceof LanguageSettingsSerializable);
+			assertTrue(rawProvider instanceof LanguageSettingsSerializableProvider);
 			assertTrue(LanguageSettingsExtensionManager.equalsExtensionProvider(rawProvider));
 			
 			// compare with workspace provider

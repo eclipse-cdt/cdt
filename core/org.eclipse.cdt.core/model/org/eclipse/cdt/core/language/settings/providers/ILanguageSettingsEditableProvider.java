@@ -19,7 +19,7 @@ import org.eclipse.core.resources.IResource;
 
 /**
  * This interface is used in UI to identify classes allowing user to modify settings externally
- * contrary to some subclasses of {@link LanguageSettingsSerializable} managing
+ * contrary to some subclasses of {@link LanguageSettingsSerializableProvider} managing
  * their settings themselves and not providing such option to the user.
  *
  */

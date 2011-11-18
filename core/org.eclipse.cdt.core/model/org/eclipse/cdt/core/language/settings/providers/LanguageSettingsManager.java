@@ -59,22 +59,23 @@ public class LanguageSettingsManager {
 
 	/**
 	 * Builds for the provider a nice looking resource tree to present hierarchical view to the user.
-	 * 
+	 *
 	 * TODO - Note that after using this method for a while for BOP parsers it appears that disadvantages
 	 * outweight benefits. In particular, it doesn't result in saving memory as the language settings
 	 * (and the lists itself) are not duplicated in memory anyway but optimized with using WeakHashSet
 	 * and SafeStringInterner.
-	 * 
+	 *
 	 * @param provider - language settings provider to build the tree for.
 	 * @param cfgDescription - configuration description.
 	 * @param languageId - language ID.
 	 * @param project - the project which is considered the root of the resource tree.
 	 */
-	public static void buildResourceTree(LanguageSettingsSerializable provider, ICConfigurationDescription cfgDescription, String languageId, IProject project) {
+	public static void buildResourceTree(LanguageSettingsSerializableProvider provider,
+			ICConfigurationDescription cfgDescription, String languageId, IProject project) {
 		LanguageSettingsProvidersSerializer.buildResourceTree(provider, cfgDescription, languageId, project);
 	}
 
-	
+
 	/**
 	 * Returns the list of setting entries of a certain kind (such as include paths)
 	 * for the given configuration description, resource and language. This is a
@@ -91,7 +92,7 @@ public class LanguageSettingsManager {
 	 *
 	 * @return the list of setting entries.
 	 */
-	// FIXME: get rid of callers PathEntryTranslator and DescriptionScannerInfoProvider 
+	// FIXME: get rid of callers PathEntryTranslator and DescriptionScannerInfoProvider
 	public static List<ICLanguageSettingEntry> getSettingEntriesByKind(ICConfigurationDescription cfgDescription, IResource rc, String languageId, int kind) {
 		return LanguageSettingsProvidersSerializer.getSettingEntriesByKind(cfgDescription, rc, languageId, kind);
 	}
@@ -132,7 +133,7 @@ public class LanguageSettingsManager {
 
 	/**
 	 * TODO - helper method for often used chunk of code
-	 * @param provider 
+	 * @param provider
 	 * @return ILanguageSettingsProvider
 	 */
 	public static ILanguageSettingsProvider getRawProvider(ILanguageSettingsProvider provider) {
@@ -141,8 +142,8 @@ public class LanguageSettingsManager {
 		}
 		return provider;
 	}
-	
-	
+
+
 	/**
 	 * Set and store in workspace area user defined providers.
 	 *
@@ -174,7 +175,7 @@ public class LanguageSettingsManager {
 		}
 		if (provider==null)
 			provider = LanguageSettingsManager.getWorkspaceProvider(id);
-		
+
 		return provider;
 	}
 
@@ -182,11 +183,11 @@ public class LanguageSettingsManager {
 	 * Find language IDs for the resource represented by resource description.
 	 * Under the hood build component is inquired and the language IDs would
 	 * commonly come from the input type(s).
-	 * 
+	 *
 	 * @param rcDescription - resource description
 	 * @return list of language IDs for the resource.
 	 *    Never returns {@code null} but empty list if no languages can be found.
-	 * 
+	 *
 	 */
 	public static List<String> getLanguages(ICResourceDescription rcDescription) {
 		ICLanguageSetting[] languageSettings = null;
@@ -198,7 +199,7 @@ public class LanguageSettingsManager {
 		} else if (rcDescription instanceof ICFolderDescription) {
 			languageSettings = ((ICFolderDescription)rcDescription).getLanguageSettings();
 		}
-	
+
 		List<String> languageIds = new ArrayList<String>();
 		if (languageSettings != null) {
 			for (ICLanguageSetting languageSetting : languageSettings) {
@@ -210,7 +211,7 @@ public class LanguageSettingsManager {
 				}
 			}
 		}
-	
+
 		return languageIds;
 	}
 
@@ -218,7 +219,7 @@ public class LanguageSettingsManager {
 	 * Find language IDs for the resource in given build configuration.
 	 * Under the hood build component is inquired and the language IDs would
 	 * commonly come from the input type(s).
-	 * 
+	 *
 	 * @param resource - the resource to find languages for.
 	 * @param cfgDescription
 	 * @return list of language IDs for the resource.
@@ -252,7 +253,7 @@ public class LanguageSettingsManager {
 			}
 			languageIds = getLanguages(rcDes);
 		}
-	
+
 		return languageIds;
 	}
 

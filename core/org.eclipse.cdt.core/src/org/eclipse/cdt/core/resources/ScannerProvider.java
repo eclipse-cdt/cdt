@@ -29,8 +29,10 @@ import org.eclipse.cdt.core.model.IMacroFileEntry;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
+import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsLogger;
 import org.eclipse.cdt.internal.core.model.PathEntryManager;
 import org.eclipse.cdt.internal.core.settings.model.ScannerInfoProviderProxy;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -96,6 +98,13 @@ public class ScannerProvider extends AbstractCExtension implements IScannerInfoP
 	 */
 	@Override
 	public IScannerInfo getScannerInformation(IResource resource) {
+		// AG FIXME
+		if (resource instanceof IFile) {
+			LanguageSettingsLogger.logInfo("rc="+resource+" (ScannerProvider.getScannerInformation())");
+		} else {
+			LanguageSettingsLogger.logWarning("rc="+resource+" (ScannerProvider.getScannerInformation())");
+		}
+
 		IPath resPath = resource.getFullPath();
 
 		try {

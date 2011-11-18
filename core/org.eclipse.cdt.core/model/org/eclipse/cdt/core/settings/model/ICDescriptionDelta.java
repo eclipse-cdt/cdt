@@ -49,7 +49,10 @@ public interface ICDescriptionDelta {
 //	int PATH = 1 << 3;
 	int LANGUAGE_ID = 1 << 4;
 	int SOURCE_CONTENT_TYPE = 1 << 5;
-	int SOURCE_ENTENSIONS = 1 << 6;
+	int SOURCE_EXTENSIONS = 1 << 6;
+	/** @deprecated Use ICDescriptionDelta.SOURCE_EXTENSIONS */
+	@Deprecated
+	int SOURCE_ENTENSIONS = SOURCE_EXTENSIONS;
 //	int HEADER_CONTENT_TYPE = 1 << 7;
 //	int HEADER_ENTENSIONS = 1 << 8;
 	int SETTING_ENTRIES = 1 << 9;
@@ -66,6 +69,7 @@ public interface ICDescriptionDelta {
 	int OWNER = 1 << 20;
 	int INDEX_CFG = 1 << 21;
 	int SETTING_CFG = INDEX_CFG;
+	int LANGUAGE_SETTINGS_PROVIDERS = 1 << 22;
 	
 	/**
 	 * specifies that the project "isCdtProjectCreating" state was set to false

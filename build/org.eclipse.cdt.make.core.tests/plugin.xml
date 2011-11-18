@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="org.eclipse.cdt.make.core.tests.ErrorParsers"
+         name="org.eclipse.cdt.make.core.tests ErrorParsers"
+         point="org.eclipse.cdt.core.ErrorParser">
+      <errorparser
+            class="org.eclipse.cdt.make.internal.core.scannerconfig.GCCBuildCommandParser$GCCBuildCommandPatternHighlighter"
+            id="org.eclipse.cdt.core.tests.make.core.GCCBuildCommandPatternHighlighter"
+            name="Test Plugin GCC BOP Patterns Highlighter">
+      </errorparser>
+   </extension>
+</plugin>

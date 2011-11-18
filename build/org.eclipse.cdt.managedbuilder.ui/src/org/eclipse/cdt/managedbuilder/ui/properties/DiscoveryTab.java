@@ -24,10 +24,12 @@ import org.eclipse.cdt.build.core.scannerconfig.ICfgScannerConfigBuilderInfo2Set
 import org.eclipse.cdt.build.internal.core.scannerconfig.CfgDiscoveredPathManager;
 import org.eclipse.cdt.build.internal.core.scannerconfig.CfgScannerConfigUtil;
 import org.eclipse.cdt.build.internal.core.scannerconfig2.CfgScannerConfigProfileManager;
+import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.util.CDTListComparator;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
+import org.eclipse.cdt.internal.ui.newui.StatusMessageLine;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2Set;
@@ -46,7 +48,9 @@ import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
@@ -103,6 +107,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 	private Button reportProblemsCheckBox;
 	private Combo profileComboBox;
 	private Composite profileOptionsComposite;
+	private Button clearButton;
 
 	private ICfgScannerConfigBuilderInfo2Set cbi;
 	private Map<InfoContext, IScannerConfigBuilderInfo2> baseInfoMap;
@@ -115,6 +120,8 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 	protected SashForm sashForm;
 
 	private DiscoveryPageWrapper wrapper = null;
+
+	private StatusMessageLine fStatusLine;
 
 	/*
 	 * (non-Javadoc)
@@ -184,6 +191,9 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		profileOptionsComposite.setLayoutData(gd);
 		profileOptionsComposite.setLayout(new TabFolderLayout());
 
+		fStatusLine = new StatusMessageLine(usercomp, SWT.LEFT, 2);
+		setEnablement();
+
 		sashForm.setWeights(DEFAULT_SASH_WEIGHTS);
 	}
 
@@ -236,7 +246,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		Label clearLabel = ControlFactory.createLabel(autoDiscoveryGroup, Messages.DiscoveryTab_ClearDisoveredEntries);
 
 		// "Clear" button
-		Button clearButton = ControlFactory.createPushButton(autoDiscoveryGroup, Messages.DiscoveryTab_Clear);
+		clearButton = ControlFactory.createPushButton(autoDiscoveryGroup, Messages.DiscoveryTab_Clear); 
 		GridData gd = (GridData) clearButton.getLayoutData();
 		gd.grabExcessHorizontalSpace = true;
 		//Bug 331783 - NLS: "Clear" button label in Makefile Project preferences truncated
@@ -334,6 +344,27 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		} else {
 			setVisibility(Messages.DiscoveryTab_6);
 		}
+		
+		setEnablement();
+	}
+
+	private void setEnablement() {
+		IStatus status = null;
+		ICConfigurationDescription cfgDescription = page.getResDesc().getConfiguration();
+		boolean isEnabled = ScannerDiscoveryLegacySupport.isMbsLanguageSettingsProviderOn(cfgDescription);
+		if (!isEnabled) {
+			status = new Status(IStatus.INFO, CUIPlugin.PLUGIN_ID, "Managed Build language settings provider is not enabled.");
+		}
+		
+		scopeComboBox.setEnabled(isEnabled);
+		resTable.setEnabled(isEnabled);
+		boolean isSCDEnabled = autoDiscoveryCheckBox.getSelection();
+		reportProblemsCheckBox.setEnabled(isEnabled && isSCDEnabled);
+		autoDiscoveryCheckBox.setEnabled(isEnabled);
+		autoDiscoveryGroup.setEnabled(isEnabled);
+		clearButton.setEnabled(isEnabled);
+		
+		fStatusLine.setErrorStatus(status);
 	}
 
 	private void setVisibility(String errMsg) {
@@ -372,7 +403,13 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		buildInfo = (IScannerConfigBuilderInfo2) ti.getData("info"); //$NON-NLS-1$
 		String selectedProfileId = buildInfo.getSelectedProfileId();
 		iContext = (CfgInfoContext) ti.getData("cont"); //$NON-NLS-1$
-		autoDiscoveryCheckBox.setSelection(buildInfo.isAutoDiscoveryEnabled()
+		boolean autodiscoveryEnabled2 = buildInfo.isAutoDiscoveryEnabled();
+		if (autodiscoveryEnabled2) {
+			IConfiguration cfg = iContext.getConfiguration();
+			ICConfigurationDescription cfgDescription = ManagedBuildManager.getDescriptionForConfiguration(cfg);
+			autodiscoveryEnabled2 = ScannerDiscoveryLegacySupport.isMbsLanguageSettingsProviderOn(cfgDescription);
+		}
+		autoDiscoveryCheckBox.setSelection(autodiscoveryEnabled2
 				&& !selectedProfileId.equals(ScannerConfigProfileManager.NULL_PROFILE_ID));
 		reportProblemsCheckBox.setSelection(buildInfo.isProblemReportingEnabled());
 

@@ -105,6 +105,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	private String cleanCommand;
 	private String artifactExtension;
 	private String errorParserIds;
+	private String defaultLanguageSettingsProvidersIds;
     private String prebuildStep; 
     private String postbuildStep; 
     private String preannouncebuildStep; 
@@ -784,6 +785,9 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		// Get the semicolon separated list of IDs of the error parsers
 		errorParserIds = SafeStringInterner.safeIntern(element.getAttribute(ERROR_PARSERS));
 
+		// Get the initial/default language setttings providers IDs
+		defaultLanguageSettingsProvidersIds = SafeStringInterner.safeIntern(element.getAttribute(LANGUAGE_SETTINGS_PROVIDERS));
+
 		// Get the artifact extension
 		artifactExtension = SafeStringInterner.safeIntern(element.getAttribute(EXTENSION));
 		
@@ -1456,6 +1460,10 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return set;
 	}
 	
+	public String getDefaultLanguageSettingsProvidersIds() {
+		return defaultLanguageSettingsProvidersIds;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#setArtifactExtension(java.lang.String)
 	 */

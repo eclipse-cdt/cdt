@@ -67,6 +67,7 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 	    private Tree tree;
 	    private Composite right;
 	    private Button show_sup;
+	    private Button checkBoxTryNewSD;
 	    private Label right_label;
 
 	    public CWizardHandler h_selected = null;
@@ -154,6 +155,20 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 
 	        // restore settings from preferences
 			show_sup.setSelection(!CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOSUPP));
+
+			checkBoxTryNewSD = new Button(c, SWT.CHECK);
+			checkBoxTryNewSD.setText(Messages.CDTMainWizardPage_TrySD90);
+			/* GridData */gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan = 2;
+			checkBoxTryNewSD.setLayoutData(gd);
+
+			// restore settings from preferences
+			boolean isTryNewSD = true;
+			boolean contains = CUIPlugin.getDefault().getPreferenceStore().contains(CDTPrefUtil.KEY_NEWSD);
+			if (contains) {
+				isTryNewSD = CDTPrefUtil.getBool(CDTPrefUtil.KEY_NEWSD);
+			}
+			checkBoxTryNewSD.setSelection(isTryNewSD);
 	    }
 
 	    @Override
@@ -480,6 +495,10 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		public List filterItems(List items) {
 			return items;
+		}
+
+		public boolean isTryingNewSD() {
+			return checkBoxTryNewSD.getSelection();
 		}
 }
 

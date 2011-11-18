@@ -182,6 +182,7 @@ public class CProjectDescriptionDelta implements ICDescriptionDelta {
 		if ((flags&EXT_REF)!=0) str.append("EXT_REF|");
 		if ((flags&OWNER)!=0) str.append("OWNER|");
 		if ((flags&INDEX_CFG)!=0) str.append("INDEX_CFG|");
+		if ((flags&LANGUAGE_SETTINGS_PROVIDERS)!=0) str.append("LANGUAGE_SETTINGS_PROVIDERS|");
 
 		if (str.charAt(str.length()-1)=='|') str.deleteCharAt(str.length()-1);
 		return str.toString();

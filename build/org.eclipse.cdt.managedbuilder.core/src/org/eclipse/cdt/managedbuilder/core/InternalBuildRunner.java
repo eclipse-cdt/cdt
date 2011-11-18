@@ -13,14 +13,25 @@ package org.eclipse.cdt.managedbuilder.core;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.IMarkerGenerator;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.IConsole;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
+import org.eclipse.cdt.make.core.scannerconfig.AbstractBuildCommandParser;
 import org.eclipse.cdt.managedbuilder.buildmodel.BuildDescriptionManager;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildDescription;
+import org.eclipse.cdt.managedbuilder.internal.buildmodel.BuildDescription;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.BuildStateManager;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.DescriptionBuilder;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.IBuildModelBuilder;
@@ -35,6 +46,7 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
@@ -60,6 +72,21 @@ public class InternalBuildRunner extends AbstractBuildRunner {
 	private static final String MARKERS = "ManagedMakeBuilder.message.creating.markers";	//$NON-NLS-1$
 	private static final String NOTHING_BUILT = "ManagedMakeBuilder.message.no.build";	//$NON-NLS-1$
 	private static final String BUILD_ERROR = "ManagedMakeBuilder.message.error";	//$NON-NLS-1$
+
+
+	// TODO: same function is present in CommandBuilder and BuildProcessManager
+	private String[] mapToStringArray(Map<String, String> map){
+		if(map == null)
+			return null;
+
+		List<String> list = new ArrayList<String>();
+
+		for (Entry<String, String> entry : map.entrySet()) {
+			list.add(entry.getKey() + '=' + entry.getValue());
+		}
+
+		return list.toArray(new String[list.size()]);
+	}
 
 	@Override
 	public boolean invokeBuild(int kind, IProject project, IConfiguration configuration,
@@ -96,6 +123,16 @@ public class InternalBuildRunner extends AbstractBuildRunner {
 
 			// Get a build console for the project
 			StringBuffer buf = new StringBuffer();
+
+			IBuildDescription des = BuildDescriptionManager.createBuildDescription(configuration, cBS, delta, flags);
+
+			IPath workingDirectory = des.getDefaultBuildDirLocation();
+			String[] env = null;
+			if (des instanceof BuildDescription) {
+				Map<String, String> envMap = ((BuildDescription)des).getEnvironment();
+				env = mapToStringArray(envMap);
+			}
+
 			consoleOutStream = console.getOutputStream();
 			String[] consoleHeader = new String[3];
 			if(buildIncrementaly)
@@ -119,10 +156,26 @@ public class InternalBuildRunner extends AbstractBuildRunner {
 				buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
 				buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
 			}
+
+			if (kind!=IncrementalProjectBuilder.CLEAN_BUILD) {
+				// TODO - AG - sanity check? elaborate
+				ICConfigurationDescription cfgDescription = ManagedBuildManager.getDescriptionForConfiguration(configuration);
+				List<ILanguageSettingsProvider> providers = cfgDescription.getLanguageSettingProviders();
+				for (ILanguageSettingsProvider provider : providers) {
+					if (provider instanceof AbstractBuildCommandParser) {
+						buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
+						String msg = ManagedMakeMessages.getFormattedString("BOP Language Settings Provider [{0}] is not supported by Internal Builder.", provider.getName());
+						buf.append("**** "+msg+" ****");
+						buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
+						buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
+
+						ManagedBuilderCorePlugin.error(msg);
+					}
+				}
+			}
+
 			consoleOutStream.write(buf.toString().getBytes());
 			consoleOutStream.flush();
-
-			IBuildDescription des = BuildDescriptionManager.createBuildDescription(configuration, cBS, delta, flags);
 
 			DescriptionBuilder dBuilder = null;
 			if (!isParallel)
@@ -192,6 +245,7 @@ public class InternalBuildRunner extends AbstractBuildRunner {
 				consoleOutStream.flush();
 				epmOutputStream.close();
 				epmOutputStream = null;
+
 				// Generate any error markers that the build has discovered
 				monitor.subTask(ManagedMakeMessages.getResourceString(MARKERS));
 
@@ -238,5 +292,4 @@ public class InternalBuildRunner extends AbstractBuildRunner {
 		}
 		return false;
 	}
-	
 }

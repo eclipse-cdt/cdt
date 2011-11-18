@@ -470,6 +470,14 @@
            tooltip="%ErrorParsersTab.tooltip"
            weight="020">
      </tab>
+     <tab
+           class="org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProviderTab"
+           icon="icons/obj16/search.gif"
+           name="%LanguageSettingsProvidersTab.name"
+           parent="org.eclipse.cdt.make.internal.ui.preferences.BuildSettingsPreferencePage"
+           tooltip="%LanguageSettingsProvidersTab.tooltip"
+           weight="000">
+     </tab>
    </extension>
 
      <extension
@@ -531,5 +539,32 @@
             %makeCompareFontDefinition.description
          </description>
       </fontDefinition>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.ui.LanguageSettingsProviderAssociation">
+      <class-association
+            class="org.eclipse.cdt.make.core.scannerconfig.AbstractBuildCommandParser"
+            icon="icons/obj16/log_obj.gif"
+            page="org.eclipse.cdt.make.internal.ui.preferences.GCCBuildCommandParserOptionPage">
+      </class-association>
+      <class-association
+            class="org.eclipse.cdt.make.core.scannerconfig.AbstractBuiltinSpecsDetector"
+            icon="icons/obj16/inspect_system.gif"
+            page="org.eclipse.cdt.make.internal.ui.scannerconfig.BuiltinSpecsDetectorOptionPage">
+      </class-association>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.core.CBuildConsole">
+      <CBuildConsole
+            id="org.eclipse.cdt.make.internal.ui.scannerconfig.ScannerDiscoveryConsole"
+            class="org.eclipse.cdt.make.internal.ui.scannerconfig.ScannerDiscoveryConsole">
+      </CBuildConsole>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.core.CBuildConsole">
+      <CBuildConsole
+            id="org.eclipse.cdt.make.internal.ui.scannerconfig.ScannerDiscoveryGlobalConsole"
+            class="org.eclipse.cdt.make.internal.ui.scannerconfig.ScannerDiscoveryGlobalConsole">
+      </CBuildConsole>
    </extension>
 </plugin>

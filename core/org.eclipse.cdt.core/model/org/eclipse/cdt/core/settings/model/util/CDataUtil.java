@@ -56,6 +56,7 @@ import org.eclipse.cdt.core.settings.model.extension.CResourceData;
 import org.eclipse.cdt.core.settings.model.extension.CTargetPlatformData;
 import org.eclipse.cdt.core.settings.model.extension.impl.CDataFactory;
 import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultLanguageData;
+import org.eclipse.cdt.internal.core.parser.util.WeakHashSet;
 import org.eclipse.cdt.internal.core.settings.model.ExceptionFactory;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
@@ -74,6 +75,14 @@ public class CDataUtil {
 	
 	private static Random randomNumber;
 	public static final String[] EMPTY_STRING_ARRAY = new String[0];
+	
+	private static WeakHashSet<ICSettingEntry> languageSettingsPool = new WeakHashSet<ICSettingEntry>() {
+		@Override
+		public synchronized ICSettingEntry add(ICSettingEntry entry) {
+			return super.add(entry);
+		}
+		
+	};
 
 	public static int genRandomNumber(){
 		if (randomNumber == null) {
@@ -301,25 +310,36 @@ public class CDataUtil {
 
 	
 	public static ICSettingEntry createEntry(int kind, String name, String value, IPath[] exclusionPatterns, int flags, IPath srcPath, IPath srcRootPath, IPath srcPrefixMapping){
+		ICSettingEntry entry = null;
 		switch (kind){
 		case ICLanguageSettingEntry.INCLUDE_PATH:
-			return new CIncludePathEntry(name, flags);
+			entry = new CIncludePathEntry(name, flags);
+			break;
 		case ICLanguageSettingEntry.MACRO:
-			return new CMacroEntry(name, value, flags);
+			entry = new CMacroEntry(name, value, flags);
+			break;
 		case ICLanguageSettingEntry.INCLUDE_FILE:
-			return new CIncludeFileEntry(name, flags);
+			entry = new CIncludeFileEntry(name, flags);
+			break;
 		case ICLanguageSettingEntry.MACRO_FILE:
-			return new CMacroFileEntry(name, flags);
+			entry = new CMacroFileEntry(name, flags);
+			break;
 		case ICLanguageSettingEntry.LIBRARY_PATH:
-			return new CLibraryPathEntry(name, flags);
+			entry = new CLibraryPathEntry(name, flags);
+			break;
 		case ICLanguageSettingEntry.LIBRARY_FILE:
-			return new CLibraryFileEntry(name, flags, srcPath, srcRootPath, srcPrefixMapping);
+			entry = new CLibraryFileEntry(name, flags, srcPath, srcRootPath, srcPrefixMapping);
+			break;
 		case ICLanguageSettingEntry.OUTPUT_PATH:
-			return new COutputEntry(name, exclusionPatterns, flags);
+			entry = new COutputEntry(name, exclusionPatterns, flags);
+			break;
 		case ICLanguageSettingEntry.SOURCE_PATH:
-			return new CSourceEntry(name, exclusionPatterns, flags);
+			entry = new CSourceEntry(name, exclusionPatterns, flags);
+			break;
+		default:
+			throw new IllegalArgumentException();
 		}
-		throw new IllegalArgumentException();
+		return languageSettingsPool.add(entry);
 	}
 
 	public static String[] getSourceExtensions(IProject project, CLanguageData data) {

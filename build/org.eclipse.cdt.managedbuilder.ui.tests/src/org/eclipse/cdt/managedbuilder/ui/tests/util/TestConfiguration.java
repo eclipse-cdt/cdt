@@ -208,6 +208,12 @@ public class TestConfiguration implements IConfiguration {
 	}
 
 	@Override
+	public String getDefaultLanguageSettingsProvidersIds() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
 	public ITool[] getFilteredTools() {
 		// TODO Auto-generated method stub
 		return null;

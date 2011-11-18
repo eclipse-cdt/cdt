@@ -25,15 +25,22 @@ import org.eclipse.cdt.build.core.scannerconfig.ICfgScannerConfigBuilderInfo2Set
 import org.eclipse.cdt.build.internal.core.scannerconfig2.CfgScannerConfigProfileManager;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ErrorParserManager;
+import org.eclipse.cdt.core.ICConsoleParser;
 import org.eclipse.cdt.core.ICommandLauncher;
+import org.eclipse.cdt.core.IConsoleParser;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariableManager;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
+import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.core.resources.RefreshScopeManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.internal.core.ConsoleOutputSniffer;
+import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
@@ -114,6 +121,18 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 						break;
 				}
 
+				URI workingDirectoryURI = ManagedBuildManager.getBuildLocationURI(configuration, builder);
+				final String pathFromURI = EFSExtensionManager.getDefault().getPathFromURI(workingDirectoryURI);
+				if(pathFromURI == null) {
+					throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, ManagedMakeMessages.getString("ManagedMakeBuilder.message.error"), null)); //$NON-NLS-1$
+				}
+				
+				IPath workingDirectory = new Path(pathFromURI);
+
+				// Set the environment
+				Map<String, String> envMap = getEnvironment(builder);
+				String[] env = getEnvStrings(envMap);
+
 				consoleHeader[1] = configuration.getName();
 				consoleHeader[2] = project.getName();
 				buf.append(NEWLINE);
@@ -135,14 +154,6 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 				if (markers != null)
 					workspace.deleteMarkers(markers);
 
-				URI workingDirectoryURI = ManagedBuildManager.getBuildLocationURI(configuration, builder);
-				final String pathFromURI = EFSExtensionManager.getDefault().getPathFromURI(workingDirectoryURI);
-				if(pathFromURI == null) {
-					throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, ManagedMakeMessages.getString("ManagedMakeBuilder.message.error"), null)); //$NON-NLS-1$
-				}
-				
-				IPath workingDirectory = new Path(pathFromURI);
-
 				String[] targets = getTargets(kind, builder);
 				if (targets.length != 0 && targets[targets.length - 1].equals(builder.getCleanBuildTarget()))
 					isClean = true;
@@ -153,9 +164,6 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 				// Print the command for visual interaction.
 				launcher.showCommand(true);
 
-				// Set the environment
-				Map<String, String> envMap = getEnvironment(builder);
-				String[] env = getEnvStrings(envMap);
 				String[] buildArguments = targets;
 
 				String[] newArgs = CommandLineUtil.argumentsToArray(builder.getBuildArguments());
@@ -175,9 +183,15 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 				OutputStream stderr = streamMon;
 
 				// Sniff console output for scanner info
-				ConsoleOutputSniffer sniffer = createBuildOutputSniffer(stdout, stderr, project, configuration, workingDirectory, markerGenerator, null);
-				OutputStream consoleOut = (sniffer == null ? stdout : sniffer.getOutputStream());
-				OutputStream consoleErr = (sniffer == null ? stderr : sniffer.getErrorStream());
+				OutputStream consoleOut = stdout;
+				OutputStream consoleErr = stderr;
+				if (kind!=IncrementalProjectBuilder.CLEAN_BUILD) {
+					ConsoleOutputSniffer sniffer = createBuildOutputSniffer(stdout, stderr, project, configuration, workingDirectory, markerGenerator, null, epm);
+					if (sniffer!=null) {
+						consoleOut = sniffer.getOutputStream();
+						consoleErr = sniffer.getErrorStream();
+					}
+				}
 				Process p = launcher.execute(buildCommand, buildArguments, env, workingDirectory, monitor);
 				if (p != null) {
 					try {
@@ -337,10 +351,11 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 			IConfiguration cfg,
 			IPath workingDirectory,
 			IMarkerGenerator markerGenerator,
-			IScannerInfoCollector collector){
+			IScannerInfoCollector collector,
+			ErrorParserManager epm){
 		ICfgScannerConfigBuilderInfo2Set container = CfgScannerConfigProfileManager.getCfgScannerConfigBuildInfo(cfg);
 		Map<CfgInfoContext, IScannerConfigBuilderInfo2> map = container.getInfoMap();
-		List<IScannerInfoConsoleParser> clParserList = new ArrayList<IScannerInfoConsoleParser>();
+		List<IConsoleParser> clParserList = new ArrayList<IConsoleParser>();
 
 		if(container.isPerRcTypeDiscovery()){
 			for (IResourceInfo rcInfo : cfg.getResourceInfos()) {
@@ -370,9 +385,25 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 			contributeToConsoleParserList(project, map, new CfgInfoContext(cfg), workingDirectory, markerGenerator, collector, clParserList);
 		}
 
+		ICConfigurationDescription cfgDescription = ManagedBuildManager.getDescriptionForConfiguration(cfg);
+		List<ILanguageSettingsProvider> lsProviders = cfgDescription.getLanguageSettingProviders();
+		for (ILanguageSettingsProvider lsProvider : lsProviders) {
+			ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(lsProvider);
+			if (rawProvider instanceof ICConsoleParser) {
+				ICConsoleParser consoleParser = (ICConsoleParser) rawProvider;
+				try {
+					consoleParser.startup(cfgDescription);
+					clParserList.add(consoleParser);
+				} catch (CoreException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+
 		if(clParserList.size() != 0){
-			return new ConsoleOutputSniffer(outputStream, errorStream,
-					clParserList.toArray(new IScannerInfoConsoleParser[clParserList.size()]));
+			IConsoleParser[] parsers = clParserList.toArray(new IConsoleParser[clParserList.size()]);
+			return new ConsoleOutputSniffer(outputStream, errorStream, parsers, epm);
 		}
 
 		return null;
@@ -385,36 +416,41 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 			IPath workingDirectory,
 			IMarkerGenerator markerGenerator,
 			IScannerInfoCollector collector,
-			List<IScannerInfoConsoleParser> parserList){
+			List<IConsoleParser> parserList){
 		IScannerConfigBuilderInfo2 info = map.get(context);
 		InfoContext ic = context.toInfoContext();
 		boolean added = false;
-		if (info != null &&
-				info.isAutoDiscoveryEnabled() &&
-				info.isBuildOutputParserEnabled()) {
+		if (info != null) {
+			boolean autodiscoveryEnabled2 = info.isAutoDiscoveryEnabled();
+			if (autodiscoveryEnabled2) {
+				IConfiguration cfg = context.getConfiguration();
+				ICConfigurationDescription cfgDescription = ManagedBuildManager.getDescriptionForConfiguration(cfg);
+				autodiscoveryEnabled2 = ScannerDiscoveryLegacySupport.isMbsLanguageSettingsProviderOn(cfgDescription);
+			}
+			if (autodiscoveryEnabled2 && info.isBuildOutputParserEnabled()) {
 
-			String id = info.getSelectedProfileId();
-			ScannerConfigProfile profile = ScannerConfigProfileManager.getInstance().getSCProfileConfiguration(id);
-			if(profile.getBuildOutputProviderElement() != null){
-				// get the make builder console parser
-				SCProfileInstance profileInstance = ScannerConfigProfileManager.getInstance().
-						getSCProfileInstance(project, ic, id);
+				String id = info.getSelectedProfileId();
+				ScannerConfigProfile profile = ScannerConfigProfileManager.getInstance().getSCProfileConfiguration(id);
+				if(profile.getBuildOutputProviderElement() != null){
+					// get the make builder console parser
+					SCProfileInstance profileInstance = ScannerConfigProfileManager.getInstance().
+							getSCProfileInstance(project, ic, id);
 
-				IScannerInfoConsoleParser clParser = profileInstance.createBuildOutputParser();
-                if (collector == null) {
-                    collector = profileInstance.getScannerInfoCollector();
-                }
-                if(clParser != null){
-					clParser.startup(project, workingDirectory, collector,
-                            info.isProblemReportingEnabled() ? markerGenerator : null);
-					parserList.add(clParser);
-					added = true;
-                }
+					IScannerInfoConsoleParser clParser = profileInstance.createBuildOutputParser();
+					if (collector == null) {
+						collector = profileInstance.getScannerInfoCollector();
+					}
+					if(clParser != null){
+						clParser.startup(project, workingDirectory, collector,
+								info.isProblemReportingEnabled() ? markerGenerator : null);
+						parserList.add(clParser);
+						added = true;
+					}
 
+				}
 			}
 		}
 
 		return added;
 	}
-
 }

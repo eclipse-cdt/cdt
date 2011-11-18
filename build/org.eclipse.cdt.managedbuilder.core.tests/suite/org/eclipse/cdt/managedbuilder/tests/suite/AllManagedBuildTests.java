@@ -16,6 +16,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.build.core.scannerconfig.tests.CfgScannerConfigProfileManagerTests;
+import org.eclipse.cdt.build.core.scannerconfig.tests.GCCBuiltinSpecsDetectorTest;
 import org.eclipse.cdt.build.core.scannerconfig.tests.GCCSpecsConsoleParserTest;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
@@ -59,6 +60,7 @@ public class AllManagedBuildTests {
 		// build.core.scannerconfig.tests
 		suite.addTest(CfgScannerConfigProfileManagerTests.suite());
 		suite.addTestSuite(GCCSpecsConsoleParserTest.class);
+		suite.addTestSuite(GCCBuiltinSpecsDetectorTest.class);
 
 		// managedbuilder.core.tests
 		suite.addTest(ManagedBuildCoreTests20.suite());

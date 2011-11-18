@@ -56,30 +56,31 @@ public abstract class ACSettingEntry implements ICSettingEntry {
 	}
 
 	@Override
-	public boolean equals(Object other){
-		if(other == this)
+	public boolean equals(Object obj) {
+		if (this == obj)
 			return true;
-
-		if(!(other instanceof ACSettingEntry))
+		if (obj == null)
 			return false;
-
-		ACSettingEntry e = (ACSettingEntry)other;
-
-		if(getKind() != e.getKind())
+		if (getClass() != obj.getClass())
 			return false;
-
-		if(fFlags != e.fFlags)
+		ACSettingEntry other = (ACSettingEntry) obj;
+		if (fFlags != other.fFlags)
 			return false;
-
-		if(!fName.equals(e.fName))
+		if (fName == null) {
+			if (other.fName != null)
+				return false;
+		} else if (!fName.equals(other.fName))
 			return false;
-
 		return true;
 	}
 
 	@Override
-	public int hashCode(){
-		return getKind() + fFlags + fName.hashCode();
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + fFlags;
+		result = prime * result + ((fName == null) ? 0 : fName.hashCode());
+		return result;
 	}
 
 	@Override

@@ -648,5 +648,12 @@
            </description>
         </wizard>
      </extension>
+   <extension
+         point="org.eclipse.cdt.ui.LanguageSettingsProviderAssociation">
+      <id-association
+            id="org.eclipse.cdt.managedbuilder.core.LanguageSettingsProvider"
+            icon="icons/obj16/mbs.gif">
+      </id-association>
+   </extension>
    
 </plugin>

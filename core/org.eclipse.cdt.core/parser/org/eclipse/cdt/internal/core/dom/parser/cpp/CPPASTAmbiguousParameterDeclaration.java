@@ -43,13 +43,14 @@ public class CPPASTAmbiguousParameterDeclaration extends ASTAmbiguousNode implem
     	fParameterDecl= decl;
 	}
 
+	@Override
 	public void addParameterDeclaration(IASTParameterDeclaration d) {
 		assert false;
     }
 
 	
     @Override
-	public IASTNode resolveAmbiguity(ASTVisitor resolver) {
+	protected final IASTNode doResolveAmbiguity(ASTVisitor resolver) {
 		final IASTAmbiguityParent owner= (IASTAmbiguityParent) getParent();
 		
 		// Setup the ast to use the alternative
@@ -79,6 +80,7 @@ public class CPPASTAmbiguousParameterDeclaration extends ASTAmbiguousNode implem
 		}
 	}
 
+	@Override
 	public IASTParameterDeclaration[] getParameterDeclarations() {
     	return new IASTParameterDeclaration[] {fParameterDecl};
     }
@@ -88,32 +90,39 @@ public class CPPASTAmbiguousParameterDeclaration extends ASTAmbiguousNode implem
         return getParameterDeclarations();
     }
 
+	@Override
 	public IASTDeclSpecifier getDeclSpecifier() {
 		return fParameterDecl.getDeclSpecifier();
 	}
 
+	@Override
 	public ICPPASTDeclarator getDeclarator() {
 		return fParameterDecl.getDeclarator();
 	}
 
+	@Override
 	public void setDeclSpecifier(IASTDeclSpecifier declSpec) {
 		Assert.isLegal(false);
 	}
 
+	@Override
 	public void setDeclarator(IASTDeclarator declarator) {
 		Assert.isLegal(false);
 	}
 
+	@Override
 	public ICPPASTParameterDeclaration copy() {
 		Assert.isLegal(false);
 		return null;
 	}
 
+	@Override
 	public ICPPASTParameterDeclaration copy(CopyStyle style) {
 		Assert.isLegal(false);
 		return null;
 	}
 
+	@Override
 	public boolean isParameterPack() {
 		Assert.isLegal(false);
 		return true;

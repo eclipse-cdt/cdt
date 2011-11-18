@@ -84,11 +84,13 @@ public interface ICPPASTCompositeTypeSpecifier extends IASTCompositeTypeSpecifie
 		/**
 		 * @since 5.1
 		 */
+		@Override
 		public ICPPASTBaseSpecifier copy();
 		
 		/**
 		 * @since 5.3
 		 */
+		@Override
 		public ICPPASTBaseSpecifier copy(CopyStyle style);
 		
 		/**
@@ -125,15 +127,18 @@ public interface ICPPASTCompositeTypeSpecifier extends IASTCompositeTypeSpecifie
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICPPClassScope getScope();
 	
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICPPASTCompositeTypeSpecifier copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICPPASTCompositeTypeSpecifier copy(CopyStyle style);
 }

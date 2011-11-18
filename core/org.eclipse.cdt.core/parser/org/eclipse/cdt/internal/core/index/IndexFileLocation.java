@@ -28,26 +28,16 @@ public class IndexFileLocation implements IIndexFileLocation {
 		this.fullPath = fullPath;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.core.index.IIndexFileLocation#getFullPath()
-	 */
+	@Override
 	public String getFullPath() {
 		return fullPath;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.core.index.IIndexFileLocation#getURI()
-	 */
+	@Override
 	public URI getURI() {
 		return uri;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IIndexFileLocation) {
@@ -56,10 +46,6 @@ public class IndexFileLocation implements IIndexFileLocation {
 		return false;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return uri.hashCode();

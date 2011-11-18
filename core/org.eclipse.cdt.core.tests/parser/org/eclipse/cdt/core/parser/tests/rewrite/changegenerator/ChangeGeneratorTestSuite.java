@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.changegenerator;
 
@@ -21,7 +21,6 @@ import org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.replace.Replace
 
 /**
  * @author Thomas Corbat
- *
  */
 public class ChangeGeneratorTestSuite{
 

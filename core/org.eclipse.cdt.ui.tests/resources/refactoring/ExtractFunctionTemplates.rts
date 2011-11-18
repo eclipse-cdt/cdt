@@ -1,34 +1,34 @@
 //!Extract template function 
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@A.cpp
-void test(){
+void test() {
 }
+
 template <typename T>
-int tempFunct(){
-	
+int tempFunct() {
 	T i;
 	i = 0;
 	/*$*/i++;
-	i+=3;/*$$*/
+	i += 3;/*$$*/
 	
 	return 0;
 }
 
 //=
-void test(){
+void test() {
 }
-template<typename T> void exp(T i)
-{
-    i++;
-    i += 3;
+
+template<typename T>
+void exp(T i) {
+	i++;
+	i += 3;
 }
 
 template <typename T>
-int tempFunct(){
-	
+int tempFunct() {
 	T i;
 	i = 0;
-    exp(i);
+	exp(i);
 	
 	return 0;
 }
@@ -36,39 +36,40 @@ int tempFunct(){
 //!Extract template function with template parameter Bug #12
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@A.cpp
-void test(){
+void test() {
 }
-template <typename T>
-int tempFunct(T p){
 
+template <typename T>
+int tempFunct(T p) {
 	/*$*/++p;
 	p + 4;/*$$*/
 	return 0;
 }
 
 //=
-void test(){
+void test() {
 }
-template<typename T> void exp(T p)
-{
-    ++p;
-    p + 4;
+
+template<typename T>
+void exp(T p) {
+	++p;
+	p + 4;
 }
 
 template <typename T>
-int tempFunct(T p){
-    exp(p);
+int tempFunct(T p) {
+	exp(p);
 	return 0;
 }
 
 //!Extract template function with template type declaration Bug #11
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@A.cpp
-void test(){
+void test() {
 }
-template <typename T>
-int tempFunct(){
 
+template <typename T>
+int tempFunct() {
 	/*$*/T p;
 	p = 0;
 	p + 4;/*$$*/
@@ -77,19 +78,19 @@ int tempFunct(){
 }
 
 //=
-void test(){
+void test() {
 }
-template<typename T> T exp()
-{
-    T p;
-    p = 0;
-    p + 4;
-    return p;
+
+template<typename T>
+T exp() {
+	T p;
+	p = 0;
+	p + 4;
+	return p;
 }
 
 template <typename T>
-int tempFunct(){
-
+int tempFunct() {
 	T p = exp();
 	p + 2;
 	return 0;

@@ -87,6 +87,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		setupLabel(g1, Messages.BuilderSettingsTab_5, 1, GridData.BEGINNING); 
 		t_buildCmd = setupBlock(g1, b_useDefault);
 		t_buildCmd.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				if (! canModify)
 					return;
@@ -111,6 +112,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		setupLabel(group_dir, Messages.BuilderSettingsTab_22, 1, GridData.BEGINNING); 
 		t_dir = setupText(group_dir, 1, GridData.FILL_HORIZONTAL);
 		t_dir.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				if (canModify)
 					setBuildPath(t_dir.getText());
@@ -171,7 +173,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 				canEnableInternalBuilder(true) &&
 				canEnableInternalBuilder(false));
 		
-		t_buildCmd.setText(getMC());
+		t_buildCmd.setText(getMakeCommand());
 		
 		if (page.isMultiCfg()) {
 			group_dir.setVisible(false);
@@ -293,11 +295,14 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 	/**
 	 * @return make command
 	 */
-	private String getMC() {
-		String makeCommand = bldr.getCommand();
-		String makeArgs = bldr.getArguments();
-		if (makeArgs != null) {	makeCommand += " " + makeArgs; } //$NON-NLS-1$
-		return makeCommand;
+	private String getMakeCommand() {
+		String makeCommand = icfg.getBuildCommand();
+		String makeArgs = icfg.getBuildArguments();
+
+		if (!makeCommand.isEmpty() && makeArgs != null) {
+			return makeCommand + " " + makeArgs; //$NON-NLS-1$
+		}
+		return EMPTY_STR;
 	}
 	/**
 	 * Performs common settings for all controls

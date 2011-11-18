@@ -5,7 +5,8 @@
  * accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors: Pascal Kesseli (HSR) - Initial API and implementation
+ * Contributors:
+ *     Pascal Kesseli (HSR) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.astwriter;
 
@@ -182,8 +183,7 @@ public class ExpressionWriterTest extends TestCase {
         ICPPASTLambdaExpression lambda = new CPPASTLambdaExpression();
         CPPASTCompoundStatement stmt = new CPPASTCompoundStatement();
         stmt.addStatement(new CPPASTReturnStatement(new CPPASTLiteralExpression(
-						IASTLiteralExpression.lk_integer_constant,
-						new char[] { '7' })));
+        		IASTLiteralExpression.lk_integer_constant, new char[] { '7' })));
         lambda.setBody(stmt);
         return lambda;
     }

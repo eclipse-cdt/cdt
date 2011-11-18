@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,9 +26,8 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 public class CHHistoryDropDownAction extends Action implements IMenuCreator {
 	
 	public static class ClearHistoryAction extends Action {
-
-		private CHViewPart fView;
 		
+		private CHViewPart fView;
 		public ClearHistoryAction(CHViewPart view) {
 			super(CHMessages.CHHistoryDropDownAction_ClearHistory_label);
 			fView= view;
@@ -36,7 +35,7 @@ public class CHHistoryDropDownAction extends Action implements IMenuCreator {
 			
 		@Override
 		public void run() {
-			fView.setHistoryEntries(new ICElement[0]);
+			CallHierarchyUI.clearHistory();
 			fView.setInput(null);
 		}
 	}
@@ -54,6 +53,7 @@ public class CHHistoryDropDownAction extends Action implements IMenuCreator {
 		setMenuCreator(this);
 	}
 
+	@Override
 	public void dispose() {
 		// action is reused, can be called several times.
 		if (fMenu != null) {
@@ -62,16 +62,18 @@ public class CHHistoryDropDownAction extends Action implements IMenuCreator {
 		}
 	}
 
+	@Override
 	public Menu getMenu(Menu parent) {
 		return null;
 	}
 
+	@Override
 	public Menu getMenu(Control parent) {
 		if (fMenu != null) {
 			fMenu.dispose();
 		}
 		fMenu= new Menu(parent);
-		ICElement[] elements= fHierarchyView.getHistoryEntries();
+		ICElement[] elements= CallHierarchyUI.getHistoryEntries();
 		addEntries(fMenu, elements);
 		new MenuItem(fMenu, SWT.SEPARATOR);
 		addActionToMenu(fMenu, new CHHistoryListAction(fHierarchyView));

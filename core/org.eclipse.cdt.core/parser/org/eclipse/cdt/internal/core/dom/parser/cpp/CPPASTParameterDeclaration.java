@@ -37,14 +37,17 @@ public class CPPASTParameterDeclaration extends ASTNode implements ICPPASTParame
 		setDeclarator(declarator);
 	}
 	
+	@Override
 	public boolean isParameterPack() {
 		return fDeclarator != null && CPPVisitor.findInnermostDeclarator(fDeclarator).declaresParameterPack();
 	}
 
+	@Override
 	public CPPASTParameterDeclaration copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CPPASTParameterDeclaration copy(CopyStyle style) {
 		CPPASTParameterDeclaration copy = new CPPASTParameterDeclaration();
 		copy.setDeclSpecifier(fDeclSpec == null ? null : fDeclSpec.copy(style));
@@ -56,15 +59,18 @@ public class CPPASTParameterDeclaration extends ASTNode implements ICPPASTParame
 		return copy;
 	}
 
+	@Override
 	public IASTDeclSpecifier getDeclSpecifier() {
         return fDeclSpec;
     }
 
-    public ICPPASTDeclarator getDeclarator() {
+    @Override
+	public ICPPASTDeclarator getDeclarator() {
         return fDeclarator;
     }
 
-    public void setDeclSpecifier(IASTDeclSpecifier declSpec) {
+    @Override
+	public void setDeclSpecifier(IASTDeclSpecifier declSpec) {
         assertNotFrozen();
         this.fDeclSpec = declSpec;
         if (declSpec != null) {
@@ -73,7 +79,8 @@ public class CPPASTParameterDeclaration extends ASTNode implements ICPPASTParame
 		}
     }
 
-    public void setDeclarator(IASTDeclarator declarator) {
+    @Override
+	public void setDeclarator(IASTDeclarator declarator) {
         assertNotFrozen();
         if (declarator instanceof ICPPASTDeclarator) {
         	fDeclarator = (ICPPASTDeclarator) declarator;
@@ -85,7 +92,7 @@ public class CPPASTParameterDeclaration extends ASTNode implements ICPPASTParame
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
+	public boolean accept(ASTVisitor action) {
 		if (action.shouldVisitParameterDeclarations) {
 			switch (action.visit((IASTParameterDeclaration) this)) {
 	            case ASTVisitor.PROCESS_ABORT: return false;
@@ -105,7 +112,8 @@ public class CPPASTParameterDeclaration extends ASTNode implements ICPPASTParame
 		}
         return true;
     }
-    
+
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
         if (child == fDeclarator) {
             other.setPropertyInParent(child.getPropertyInParent());

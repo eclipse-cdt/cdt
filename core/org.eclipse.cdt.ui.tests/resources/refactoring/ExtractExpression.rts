@@ -6,43 +6,38 @@ filename=test.cpp
 methodname=check
 
 //@test.h
-class Test
-{
-  void test();
+class Test {
+	void test();
 };
 
 
 //=
-class Test
-{
-  void test();
-    bool check();
+class Test {
+	void test();
+	bool check();
 };
 
 
 //@test.cpp
 #include "test.h"
 
-void Test::test()
-{
-    if(/*$*/5 == 3 + 2/*$$*/) {
+void Test::test() {
+	if (/*$*/5 == 3 + 2/*$$*/) {
 		//...
-    }
+	}
 }
 
 //=
 #include "test.h"
 
-bool Test::check()
-{
-    return 5 == 3 + 2;
+bool Test::check() {
+	return 5 == 3 + 2;
 }
 
-void Test::test()
-{
-    if(check()) {
+void Test::test() {
+	if (check()) {
 		//...
-    }
+	}
 }
 
 //!Extract boolean comparison from if-condition with parameter.
@@ -53,45 +48,40 @@ filename=test.cpp
 methodname=check
 
 //@test.h
-class Test
-{
-  void test();
+class Test {
+	void test();
 };
 
 
 //=
-class Test
-{
-  void test();
-    bool check(int num);
+class Test {
+	void test();
+	bool check(int num);
 };
 
 
 //@test.cpp
 #include "test.h"
 
-void Test::test()
-{
-    int num = 1;
-    if(/*$*/5 != 3 + num/*$$*/) {
+void Test::test() {
+	int num = 1;
+	if (/*$*/5 != 3 + num/*$$*/) {
 		//...
-    }
+	}
 }
 
 //=
 #include "test.h"
 
-bool Test::check(int num)
-{
-    return 5 != 3 + num;
+bool Test::check(int num) {
+	return 5 != 3 + num;
 }
 
-void Test::test()
-{
-    int num = 1;
-    if(check(num)) {
+void Test::test() {
+	int num = 1;
+	if (check(num)) {
 		//...
-    }
+	}
 }
 
 //!Extract binary expression that results in a function with the same return type (BasicType) as the LHS.
@@ -102,43 +92,38 @@ filename=test.cpp
 methodname=add
 
 //@test.h
-class Test
-{
-  void test();
+class Test {
+	void test();
 };
 
 
 //=
-class Test
-{
-  void test();
-    int add(int five, int six);
+class Test {
+	void test();
+	int add(int five, int six);
 };
 
 
 //@test.cpp
 #include "test.h"
 
-void Test::test()
-{
+void Test::test() {
 	int five = 5;
 	int six = 6;
-    int result = /*$*/five + six/*$$*/;
+	int result = /*$*/five + six/*$$*/;
 }
 
 //=
 #include "test.h"
 
-int Test::add(int five, int six)
-{
-    return five + six;
+int Test::add(int five, int six) {
+	return five + six;
 }
 
-void Test::test()
-{
+void Test::test() {
 	int five = 5;
 	int six = 6;
-    int result = add(five, six);
+	int result = add(five, six);
 }
 
 //!Extract binary expression that results in a function with the same return type (ClassType) as the LHS
@@ -151,45 +136,40 @@ methodname=cat
 //@test.h
 struct helper {};
 
-class Test
-{
-  void test();
+class Test {
+	void test();
 };
 
 
 //=
 struct helper {};
 
-class Test
-{
-  void test();
-    helper cat(helper s1, helper s2);
+class Test {
+	void test();
+	helper cat(helper s1, helper s2);
 };
 
 
 //@test.cpp
 #include "test.h"
 
-void Test::test()
-{
+void Test::test() {
 	helper s1 = "a";
 	helper s2 = "b";
-    helper result = /*$*/s1 + s2/*$$*/;
+	helper result = /*$*/s1 + s2/*$$*/;
 }
 
 //=
 #include "test.h"
 
-helper Test::cat(helper s1, helper s2)
-{
-    return s1 + s2;
+helper Test::cat(helper s1, helper s2) {
+	return s1 + s2;
 }
 
-void Test::test()
-{
+void Test::test() {
 	helper s1 = "a";
 	helper s2 = "b";
-    helper result = cat(s1, s2);
+	helper result = cat(s1, s2);
 }
 
 //!Extract binary expression that results in a function with the same return type (Typedef) as the LHS
@@ -203,9 +183,8 @@ methodname=cat
 struct helper {};
 typedef helper new_helper;
 
-class Test
-{
-  void test();
+class Test {
+	void test();
 };
 
 
@@ -213,36 +192,32 @@ class Test
 struct helper {};
 typedef helper new_helper;
 
-class Test
-{
-  void test();
-    new_helper cat(new_helper s1, new_helper s2);
+class Test {
+	void test();
+	new_helper cat(new_helper s1, new_helper s2);
 };
 
 
 //@test.cpp
 #include "test.h"
 
-void Test::test()
-{
+void Test::test() {
 	new_helper s1 = "a";
 	new_helper s2 = "b";
-    new_helper result = /*$*/s1 + s2/*$$*/;
+	new_helper result = /*$*/s1 + s2/*$$*/;
 }
 
 //=
 #include "test.h"
 
-new_helper Test::cat(new_helper s1, new_helper s2)
-{
-    return s1 + s2;
+new_helper Test::cat(new_helper s1, new_helper s2) {
+	return s1 + s2;
 }
 
-void Test::test()
-{
+void Test::test() {
 	new_helper s1 = "a";
 	new_helper s2 = "b";
-    new_helper result = cat(s1, s2);
+	new_helper result = cat(s1, s2);
 }
 
 //!Extract new-Expression
@@ -256,23 +231,20 @@ methodname=new_helper
 
 struct helper {};
 
-int main(int argc, char** argv)
-{
-    helper* h = /*$*/new helper/*$$*/;
+int main(int argc, char** argv) {
+	helper* h = /*$*/new helper/*$$*/;
 	return 0;
 }
 //=
 
 struct helper {};
 
-helper *new_helper()
-{
-    return new helper;
+helper* new_helper() {
+	return new helper;
 }
 
-int main(int argc, char** argv)
-{
-    helper* h = new_helper();
+int main(int argc, char** argv) {
+	helper* h = new_helper();
 	return 0;
 }
 //!Extract function call
@@ -285,33 +257,28 @@ methodname=join_with_world
 //@test.cpp
 class string {};
 
-string join(string s1, char* s2)
-{
-  return s1 + " " + s2;
+string join(string s1, char* s2) {
+	return s1 + " " + s2;
 }
 
-int main()
-{
-  string hello = "Hello";
-  cout << /*$*/join(hello, "World")/*$$*/ << endl;
+int main() {
+	string hello = "Hello";
+	cout << /*$*/join(hello, "World")/*$$*/ << endl;
 }
 //=
 class string {};
 
-string join(string s1, char* s2)
-{
-  return s1 + " " + s2;
+string join(string s1, char* s2) {
+	return s1 + " " + s2;
 }
 
-string join_with_world(string hello)
-{
-    return join(hello, "World");
+string join_with_world(string hello) {
+	return join(hello, "World");
 }
 
-int main()
-{
-  string hello = "Hello";
-  cout << join_with_world(hello) << endl;
+int main() {
+	string hello = "Hello";
+	cout << join_with_world(hello) << endl;
 }
 //!Extract method call
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
@@ -321,40 +288,36 @@ filename=test.cpp
 methodname=value_from
 
 //@test.cpp
-struct other
-{
-  bool value() {}
+struct other {
+	bool value() {}
 };
 
-class Klass
-{
-	void set(bool b){}
-	void test()
-	{
-	  other o;
-	  this->set(/*$*/o.value()/*$$*/);
+class Klass {
+	void set(bool b) {
+	}
+
+	void test()	{
+		other o;
+		this->set(/*$*/o.value()/*$$*/);
 	}
 };
 
 //=
-struct other
-{
-  bool value() {}
+struct other {
+	bool value() {}
 };
 
-class Klass
-{
-	void set(bool b){}
+class Klass {
+	void set(bool b) {
+	}
 
-    bool value_from(other o)
-    {
-        return o.value();
-    }
+	bool value_from(other o) {
+		return o.value();
+	}
 
-    void test()
-    {
-        other o;
-        this->set(value_from(o));
+	void test() {
+		other o;
+		this->set(value_from(o));
 	}
 };
 
@@ -380,9 +343,8 @@ class Cursor{};
 
 Cursor* contains(const Cursor& pos);
 
-Cursor *has(Cursor c)
-{
-    return contains(c);
+Cursor* has(Cursor c) {
+	return contains(c);
 }
 
 int main() {
@@ -400,8 +362,7 @@ methodname=has
 //@test.cpp
 class Cursor{};
 
-Cursor* contains(const Cursor& pos)
-{
+Cursor* contains(const Cursor& pos) {
 	;
 }
 
@@ -413,14 +374,12 @@ int main() {
 //=
 class Cursor{};
 
-Cursor* contains(const Cursor& pos)
-{
+Cursor* contains(const Cursor& pos) {
 	;
 }
 
-Cursor *has(Cursor c)
-{
-    return contains(c);
+Cursor* has(Cursor c) {
+	return contains(c);
 }
 
 int main() {
@@ -436,39 +395,34 @@ filename=test.cpp
 methodname=greeting
 
 //@test.h
-class Test
-{
+class Test {
   void test();
 };
 
 
 //=
-class Test
-{
+class Test {
   void test();
-    const char greeting();
+	const char greeting();
 };
 
 
 //@test.cpp
 #include "test.h"
 
-void Test::test()
-{
-    char* hi = /*$*/"hello"/*$$*/;
+void Test::test() {
+	char* hi = /*$*/"hello"/*$$*/;
 }
 
 //=
 #include "test.h"
 
-const char Test::greeting()
-{
-    return "hello";
+const char Test::greeting() {
+	return "hello";
 }
 
-void Test::test()
-{
-    char* hi = greeting();
+void Test::test() {
+	char* hi = greeting();
 }
 
 //!Extract int constant
@@ -479,39 +433,34 @@ filename=test.cpp
 methodname=size
 
 //@test.h
-class Test
-{
+class Test {
   void test();
 };
 
 
 //=
-class Test
-{
+class Test {
   void test();
-    int size();
+	int size();
 };
 
 
 //@test.cpp
 #include "test.h"
 
-void Test::test()
-{
-    int i = /*$*/42/*$$*/;
+void Test::test() {
+	int i = /*$*/42/*$$*/;
 }
 
 //=
 #include "test.h"
 
-int Test::size()
-{
-    return 42;
+int Test::size() {
+	return 42;
 }
 
-void Test::test()
-{
-    int i = size();
+void Test::test() {
+	int i = size();
 }
 
 //!Extract float constant
@@ -522,39 +471,34 @@ filename=test.cpp
 methodname=certainty
 
 //@test.h
-class Test
-{
+class Test {
   void test();
 };
 
 
 //=
-class Test
-{
+class Test {
   void test();
-    float certainty();
+	float certainty();
 };
 
 
 //@test.cpp
 #include "test.h"
 
-void Test::test()
-{
-    float f = /*$*/0.42f/*$$*/;
+void Test::test() {
+	float f = /*$*/0.42f/*$$*/;
 }
 
 //=
 #include "test.h"
 
-float Test::certainty()
-{
-    return 0.42f;
+float Test::certainty() {
+	return 0.42f;
 }
 
-void Test::test()
-{
-    float f = certainty();
+void Test::test() {
+	float f = certainty();
 }
 
 //!Extract char constant
@@ -565,39 +509,34 @@ filename=test.cpp
 methodname=newline
 
 //@test.h
-class Test
-{
+class Test {
   void test();
 };
 
 
 //=
-class Test
-{
+class Test {
   void test();
-    char newline();
+	char newline();
 };
 
 
 //@test.cpp
 #include "test.h"
 
-void Test::test()
-{
-    char nl = /*$*/'\n'/*$$*/;
+void Test::test() {
+	char nl = /*$*/'\n'/*$$*/;
 }
 
 //=
 #include "test.h"
 
-char Test::newline()
-{
-    return '\n';
+char Test::newline() {
+	return '\n';
 }
 
-void Test::test()
-{
-    char nl = newline();
+void Test::test() {
+	char nl = newline();
 }
 
 //!Extract boolean true constant
@@ -608,39 +547,34 @@ filename=test.cpp
 methodname=valid
 
 //@test.h
-class Test
-{
+class Test {
   void test();
 };
 
 
 //=
-class Test
-{
+class Test {
   void test();
-    bool valid();
+	bool valid();
 };
 
 
 //@test.cpp
 #include "test.h"
 
-void Test::test()
-{
-    bool b = /*$*/true/*$$*/;
+void Test::test() {
+	bool b = /*$*/true/*$$*/;
 }
 
 //=
 #include "test.h"
 
-bool Test::valid()
-{
-    return true;
+bool Test::valid() {
+	return true;
 }
 
-void Test::test()
-{
-    bool b = valid();
+void Test::test() {
+	bool b = valid();
 }
 
 //!Extract boolean false constant
@@ -651,39 +585,34 @@ filename=test.cpp
 methodname=invalid
 
 //@test.h
-class Test
-{
+class Test {
   void test();
 };
 
 
 //=
-class Test
-{
+class Test {
   void test();
-    bool invalid();
+	bool invalid();
 };
 
 
 //@test.cpp
 #include "test.h"
 
-void Test::test()
-{
-    bool b = /*$*/false/*$$*/;
+void Test::test() {
+	bool b = /*$*/false/*$$*/;
 }
 
 //=
 #include "test.h"
 
-bool Test::invalid()
-{
-    return false;
+bool Test::invalid() {
+	return false;
 }
 
-void Test::test()
-{
-    bool b = invalid();
+void Test::test() {
+	bool b = invalid();
 }
 
 //!Extract int constant
@@ -694,39 +623,34 @@ filename=test.cpp
 methodname=size
 
 //@test.h
-class Test
-{
+class Test {
   void test();
 };
 
 
 //=
-class Test
-{
+class Test {
   void test();
-    int size();
+	int size();
 };
 
 
 //@test.cpp
 #include "test.h"
 
-void Test::test()
-{
-    int i = /*$*/42/*$$*/;
+void Test::test() {
+	int i = /*$*/42/*$$*/;
 }
 
 //=
 #include "test.h"
 
-int Test::size()
-{
-    return 42;
+int Test::size() {
+	return 42;
 }
 
-void Test::test()
-{
-    int i = size();
+void Test::test() {
+	int i = size();
 }
 
 //!Extract char constant
@@ -737,39 +661,34 @@ filename=test.cpp
 methodname=newline
 
 //@test.h
-class Test
-{
+class Test {
   void test();
 };
 
 
 //=
-class Test
-{
+class Test {
   void test();
-    char newline();
+	char newline();
 };
 
 
 //@test.cpp
 #include "test.h"
 
-void Test::test()
-{
-    char nl = /*$*/'\n'/*$$*/;
+void Test::test() {
+	char nl = /*$*/'\n'/*$$*/;
 }
 
 //=
 #include "test.h"
 
-char Test::newline()
-{
-    return '\n';
+char Test::newline() {
+	return '\n';
 }
 
-void Test::test()
-{
-    char nl = newline();
+void Test::test() {
+	char nl = newline();
 }
 
 //!Extract boolean true constant
@@ -780,39 +699,34 @@ filename=test.cpp
 methodname=valid
 
 //@test.h
-class Test
-{
+class Test {
   void test();
 };
 
 
 //=
-class Test
-{
+class Test {
   void test();
-    bool valid();
+	bool valid();
 };
 
 
 //@test.cpp
 #include "test.h"
 
-void Test::test()
-{
-    bool b = /*$*/true/*$$*/;
+void Test::test() {
+	bool b = /*$*/true/*$$*/;
 }
 
 //=
 #include "test.h"
 
-bool Test::valid()
-{
-    return true;
+bool Test::valid() {
+	return true;
 }
 
-void Test::test()
-{
-    bool b = valid();
+void Test::test() {
+	bool b = valid();
 }
 
 //!Extract boolean false constant
@@ -823,39 +737,34 @@ filename=test.cpp
 methodname=invalid
 
 //@test.h
-class Test
-{
+class Test {
   void test();
 };
 
 
 //=
-class Test
-{
+class Test {
   void test();
-    bool invalid();
+	bool invalid();
 };
 
 
 //@test.cpp
 #include "test.h"
 
-void Test::test()
-{
-    bool b = /*$*/false/*$$*/;
+void Test::test() {
+	bool b = /*$*/false/*$$*/;
 }
 
 //=
 #include "test.h"
 
-bool Test::invalid()
-{
-    return false;
+bool Test::invalid() {
+	return false;
 }
 
-void Test::test()
-{
-    bool b = invalid();
+void Test::test() {
+	bool b = invalid();
 }
 
 //!Extract expresion with typdef Bug 331985
@@ -868,20 +777,19 @@ methodname=bar
 //@test.cpp
 typedef int& foo;
 int test(foo s) {
-   int a= /*$*/s + 1/*$$*/;  // type of id-expression 's' is int, not 'foo' or 'int&'
+   int a = /*$*/s + 1/*$$*/;  // type of id-expression 's' is int, not 'foo' or 'int&'
    return a;
 }
 
 
 //=
 typedef int& foo;
-int bar(foo s)
-{
-    return s + 1;
+int bar(foo s) {
+	return s + 1;
 }
 
 int test(foo s) {
-   int a= bar(s);  // type of id-expression 's' is int, not 'foo' or 'int&'
+   int a = bar(s);  // type of id-expression 's' is int, not 'foo' or 'int&'
    return a;
 }
 
@@ -895,21 +803,20 @@ methodname=bar
 
 //@test.cpp
 
-void foo(){
+void foo() {
 	int x = 3;
-    double y = /*$*/x + 2.5/*$$*/;
+	double y = /*$*/x + 2.5/*$$*/;
 }
 
 //=
 
-double bar(int x)
-{
-    return x + 2.5;
+double bar(int x) {
+	return x + 2.5;
 }
 
-void foo(){
+void foo() {
 	int x = 3;
-    double y = bar(x);
+	double y = bar(x);
 }
 
 //! Extract macro
@@ -923,7 +830,7 @@ methodname=bar
 #define five 5
 #define ADD(a, b) a + b
 
-int main(){
+int main() {
 	int i = five; //comment3
 	i = /*$*/ADD(i, five)/*$$*/;
 
@@ -934,12 +841,11 @@ int main(){
 #define five 5
 #define ADD(a, b) a + b
 
-int bar(int & i)
-{
-    return ADD(i, five);
+int bar(int& i) {
+	return ADD(i, five);
 }
 
-int main(){
+int main() {
 	int i = five; //comment3
 	i = bar(i);
 
@@ -957,7 +863,7 @@ methodname=bar
 #define five 5
 #define ADD(a, b) a + b
 
-int main(){
+int main() {
 	int i = five; //comment3
 	i = /*$*/ADD(i, five)/*$$*/;
 
@@ -968,12 +874,11 @@ int main(){
 #define five 5
 #define ADD(a, b) a + b
 
-int bar(int & i)
-{
-    return ADD(i, five);
+int bar(int& i) {
+	return ADD(i, five);
 }
 
-int main(){
+int main() {
 	int i = five; //comment3
 	i = bar(i);
 

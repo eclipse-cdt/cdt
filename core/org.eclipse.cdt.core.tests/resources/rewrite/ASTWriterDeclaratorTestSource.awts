@@ -1,22 +1,23 @@
 //!DeclaratorTest
 //%CPP
 int sd;
-int *ip;
+int* ip;
 int hs = 1;
-char & c;
+char& c;
+
 void foo()
 {
     struct B
     {
         int f();
     };
-    int (B::* pb)() = &B::f;
+    int (B::*pb)() = &B::f;
 }
 
 
 //!ArrayDeclaratorTest
 //%CPP
-int *pi[3];
+int* pi[3];
 int (*p3i)[3];
 
 //!FieldDeclaratorTest
@@ -30,38 +31,39 @@ struct Bit
 //%C
 int foo();
 int bar(int a, int b);
-int fun(const char *a, ...);
-int fun3(int i, const char *a, ...);
+int fun(const char* a, ...);
+int fun3(int i, const char* a, ...);
 
 //!CPPStandardFunctionDeclaratorTest
 //%CPP
 int foo();
 int bar(int a, int b);
-int fun(const char *a, ...);
-int fun2(const char *a ...);
-int fun3(int i, const char *a, ...);
+int fun(const char* a, ...);
+int fun2(const char* a ...);
+int fun3(int i, const char* a, ...);
 //= ,... is synonymous with ...
 int foo();
 int bar(int a, int b);
-int fun(const char *a, ...);
-int fun2(const char *a, ...);
-int fun3(int i, const char *a, ...);
+int fun(const char* a, ...);
+int fun2(const char* a, ...);
+int fun3(int i, const char* a, ...);
 
 //!CPPFunctionDeclaratorTest
 //%CPP
-char & operator [](unsigned int);
+char& operator [](unsigned int);
 class TestClass
 {
     int alpha;
     TestClass(int a);
-    virtual void pure() =0;
+    virtual void pure() = 0;
 };
+
 TestClass::TestClass(int a)
 :alpha(a)
 {
 }
 
-void undefPar(const char *c) throw (int);
+void undefPar(const char* c) throw (int);
 int getV() const;
 int vol() volatile;
 
@@ -72,15 +74,17 @@ class C
 {
     int i;
     double d;
+
 public:
     C(int, double);
 };
+
 C::C(int ii, double id)
 try
 :i(f(ii)), d(id)
 {
 }
-catch(...){
+catch (...){
 }
 
 
@@ -94,7 +98,7 @@ int b, a;
 
 //!ICPPASTDeclarator with nested declarator being a variable
 //%C
-int *(*var[3]);
+int* (*var[3]);
 
 //!ICPPASTDeclarator with nested declarator and redundant parentheses 
 //%C
@@ -108,8 +112,8 @@ class Foo
 };
 //!ICPPASTReferenceOperator rvalue reference
 //%CPP
-int && foo(int && a)
+int&& foo(int&& a)
 {
-    char && b;
+    char&& b;
 }
 

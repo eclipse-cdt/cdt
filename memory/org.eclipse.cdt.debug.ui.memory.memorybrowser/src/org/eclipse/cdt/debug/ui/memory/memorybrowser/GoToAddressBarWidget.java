@@ -268,16 +268,36 @@ public class GoToAddressBarWidget {
 	public void loadSavedExpressions(Object context, String memorySpace)
 	{
 		try {
+			// Rebuild the combobox entries, but make sure we don't clear the
+			// (expression) field. It's an input field; don't trample anything
+			// the user may have previously entered or is in the process of
+			// entering (see bugzilla 356346). removeAll() clears all the
+			// entries and the field. remove(beg, end) leaves the field in-tact 
+			// as long as it's not asked to remove the entry the user selected
+			// to set the current field value. So, if the current expression
+			// corresponds to an entry, we purge all the entries but that one.
 			String[] expressions = getSavedExpressions(context, memorySpace);
 			String currentExpression = fExpression.getText(); 
-			fExpression.removeAll();
+			if (currentExpression.length() > 0)
+			{
+				int index = fExpression.indexOf(currentExpression);
+				if(index > 0) {
+					fExpression.remove(0, index-1);
+				}
+				index = fExpression.indexOf(currentExpression);
+				if (fExpression.getItemCount() - index - 1 > 1) {
+					fExpression.remove(index+1, fExpression.getItemCount()-1);
+				}				
+			}
+			else {
+				// No expression to trample. Use removeAll()
+				fExpression.removeAll();
+			}
 			for (String expression : expressions) {
-				fExpression.add(expression);
+				if (fExpression.indexOf(expression) < 0) {
+					fExpression.add(expression);
+				}
 			}
-			if (currentExpression != null) {
-				fExpression.setText(currentExpression);
-			}
-			System.out.println("GoToAddressBarWidget: set context field to " + context);
 		} catch (CoreException e) {
 			// Unexpected snag dealing with launch configuration
 			MemoryBrowserPlugin.log(e);

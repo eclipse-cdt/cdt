@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.astwriter;
 
@@ -57,7 +57,7 @@ public class ASTWriterTest extends RewriteBaseTest {
 	protected void setUp() throws Exception {
 		super.setUp();
 		for (TestSourceFile testFile : fileMap.values()) {
-			if(testFile.getSource().length() > 0) {
+			if (testFile.getSource().length() > 0) {
 				file = importFile(testFile.getName(), testFile.getSource());
 			}
 		}
@@ -70,11 +70,12 @@ public class ASTWriterTest extends RewriteBaseTest {
 	}
 	
 	@Override
-	protected void compareFiles(Map<String,TestSourceFile> testResourceFiles) throws Exception {
+	protected void compareFiles(Map<String, TestSourceFile> testResourceFiles) throws Exception {
 		for (String fileName : testResourceFiles.keySet()) {
 			TestSourceFile testFile = testResourceFiles.get(fileName);
 			String code = generateSource(testFile);
-			assertEquals(TestHelper.unifyNewLines(testFile.getExpectedSource()), TestHelper.unifyNewLines(code + System.getProperty("line.separator"))); //$NON-NLS-1$
+			assertEquals(TestHelper.unifyNewLines(testFile.getExpectedSource()),
+					TestHelper.unifyNewLines(code + System.getProperty("line.separator"))); //$NON-NLS-1$
 		}
 	}
 	
@@ -84,7 +85,7 @@ public class ASTWriterTest extends RewriteBaseTest {
 		ASTModificationMap map = new ASTModificationMap();
 		map.getModificationsForNode(unit.getDeclarations()[0]);
 		ASTWriter writer = new ASTWriter();
-		return writer.write(unit, null, commentMap);
+		return writer.write(unit, commentMap);
 	}
 	
 	protected ISourceCodeParser getParser(TestSourceFile testFile) throws Exception {
@@ -97,43 +98,37 @@ public class ASTWriterTest extends RewriteBaseTest {
         IScanner scanner = AST2BaseTest.createScanner(codeReader, language, ParserMode.COMPLETE_PARSE, scannerInfo);
         
         ISourceCodeParser parser2 = null;
-        if( language == ParserLanguage.CPP ) {
+        if (language == ParserLanguage.CPP) {
             ICPPParserExtensionConfiguration config = null;
-            if (useGNUExtensions){
+            if (useGNUExtensions) {
             	config = new GPPParserExtensionConfiguration();
-            } else{
+            } else {
             	config = new ANSICPPParserExtensionConfiguration();
             }
-            parser2 = new GNUCPPSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, config );
+            parser2 = new GNUCPPSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, config);
         } else {
             ICParserExtensionConfiguration config = null;
 
-            if (useGNUExtensions){
+            if (useGNUExtensions) {
             	config = new GCCParserExtensionConfiguration();	
-            } else{
+            } else {
             	config = new ANSICParserExtensionConfiguration();
             }
             
-            parser2 = new GNUCSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, config );
+            parser2 = new GNUCSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, config);
         }
         return parser2;
 	}
 	
 	private boolean getGNUExtension(TestSourceFile file) {
-		if(file instanceof ASTWriterTestSourceFile) {
-			return ((ASTWriterTestSourceFile)file).isUseGNUExtensions();
-		}
-		else {
-			return false;
-		}
+		if (file instanceof ASTWriterTestSourceFile)
+			return ((ASTWriterTestSourceFile) file).isUseGNUExtensions();
+		return false;
 	}
 
 	private ParserLanguage getLanguage(TestSourceFile file) {
-		if(file instanceof ASTWriterTestSourceFile) {
-			return ((ASTWriterTestSourceFile)file).getParserLanguage();
-		}
-		else {
-			return ParserLanguage.CPP;
-		}
+		if (file instanceof ASTWriterTestSourceFile)
+			return ((ASTWriterTestSourceFile) file).getParserLanguage();
+		return ParserLanguage.CPP;
 	}
 }

@@ -7,14 +7,14 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.insertbefore;
 
 import junit.framework.Test;
 
-import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.ChangeGeneratorTest;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTConstructorChainInitializer;
@@ -22,25 +22,28 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification;
-import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification.ModificationKind;
+import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
 
 public class CtorChainInitializerTest extends ChangeGeneratorTest {
 
-	public CtorChainInitializerTest(){
-		super("Insert Before Ctor Initializer"); //$NON-NLS-1$
+	CtorChainInitializerTest() {
+		super("CtorChainInitializerTest");
+	}
+
+	public static Test suite() {		
+		return new CtorChainInitializerTest();
 	}
 
 	@Override
 	protected void setUp() throws Exception {
-		source = "TestClass::TestClass(int a, int b):beta(b){\n}\n\n"; //$NON-NLS-1$
-		expectedSource = "TestClass::TestClass(int a, int b):alpha(a), beta(b){\n}\n\n"; //$NON-NLS-1$
+		source = "TestClass::TestClass(int a, int b):beta(b) {\n}\n\n"; //$NON-NLS-1$
+		expectedSource = "TestClass::TestClass(int a, int b) :\n\t\talpha(a), beta(b) {\n}\n\n"; //$NON-NLS-1$
 		super.setUp();
 	}
 
 	@Override
-	protected ASTVisitor createModificator(
-			final ASTModificationStore modStore) {
+	protected ASTVisitor createModificator(final ASTModificationStore modStore) {
 		return new ASTVisitor() {
 			{
 				shouldVisitDeclarators = true;
@@ -49,7 +52,7 @@ public class CtorChainInitializerTest extends ChangeGeneratorTest {
 			@Override
 			public int visit(IASTDeclarator declarator) {
 				if (declarator instanceof CPPASTFunctionDeclarator) {
-					CPPASTFunctionDeclarator functionDeclarator = (CPPASTFunctionDeclarator)declarator;
+					CPPASTFunctionDeclarator functionDeclarator = (CPPASTFunctionDeclarator) declarator;
 					ICPPASTConstructorChainInitializer ctorInitializer = functionDeclarator.getConstructorChain()[0];
 					CPPASTIdExpression initExpr = new CPPASTIdExpression(new CPPASTName("a".toCharArray())); //$NON-NLS-1$
 					CPPASTName initName = new CPPASTName("alpha".toCharArray()); //$NON-NLS-1$
@@ -62,10 +65,5 @@ public class CtorChainInitializerTest extends ChangeGeneratorTest {
 				return PROCESS_CONTINUE;
 			}
 		};
-	}
-	
-	public static Test suite() {
-		return new CtorChainInitializerTest();
-		
 	}
 }

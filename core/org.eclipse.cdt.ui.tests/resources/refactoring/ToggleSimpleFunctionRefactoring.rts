@@ -7,28 +7,27 @@ filename=A.h
 
 class A {
 public:
-    int /*$*/function/*$$*/()
-    {
-        return 0;
-    }
+	int /*$*/function/*$$*/() {
+		return 0;
+	}
+
 private:
-    int a;
+	int a;
 };
 //=
 #include <iostream>
 
 class A {
 public:
-    int function();
+	int function();
+
 private:
-    int a;
+	int a;
 };
 
-inline int A::function()
-{
-    return 0;
+inline int A::function() {
+	return 0;
 }
-
 
 //!TestSimpleFunctionInHeaderToImplementation
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
@@ -39,23 +38,24 @@ filename=A.h
 
 class A {
 public:
-    int function();
+	int function();
+
 private:
-    int a;
+	int a;
 };
 
-inline int A::/*$*/function/*$$*/()
-{
-    return 0;
+inline int A::/*$*/function/*$$*/() {
+	return 0;
 }
 //=
 #include <iostream>
 
 class A {
 public:
-    int function();
+	int function();
+
 private:
-    int a;
+	int a;
 };
 
 
@@ -63,20 +63,18 @@ private:
 #include "A.h"
 
 int main() {
-    return 0;
+	return 0;
 }
 //=
 #include "A.h"
 
 int main() {
-    return 0;
+	return 0;
 }
 
-int A::function()
-{
-    return 0;
+int A::function() {
+	return 0;
 }
-
 
 //!TestSimpleFunctionInImplementationToInClass
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
@@ -85,44 +83,42 @@ filename=A.cpp
 //@A.cpp
 #include "A.h"
 
-int A::/*$*/function/*$$*/()
-{
-    return 0;
+int A::/*$*/function/*$$*/() {
+	return 0;
 }
 
-int main()
-{
-    return 0;
+int main() {
+	return 0;
 }
 //=
 #include "A.h"
 
 
 
-int main()
-{
-    return 0;
+int main() {
+	return 0;
 }
 //@A.h
 #include <iostream>
 
 class A {
 public:
-    int function();
+	int function();
+
 private:
-    int a;
+	int a;
 };
 //=
 #include <iostream>
 
 class A {
 public:
-    int function()
-    {
-        return 0;
-    }
+	int function() {
+		return 0;
+	}
+
 private:
-    int a;
+	int a;
 };
 //!TestDifferentParameterNames
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
@@ -131,36 +127,35 @@ filename=MyClass.cpp
 //@MyClass.cpp
 #include "MyClass.h"
 
-myClass::/*$*/myClass/*$$*/(int implname) : fVal(implname) {}
+myClass::/*$*/myClass/*$$*/(int implname) :
+		fVal(implname) {
+}
 
-int main()
-{
-    return 0;
+int main() {
+	return 0;
 }
 //=
 #include "MyClass.h"
 
 
 
-int main()
-{
-    return 0;
+int main() {
+	return 0;
 }
 //@MyClass.h
 
 struct myClass {
-  int fVal;
-  myClass(int headername);
+	int fVal;
+	myClass(int headername);
 };
 
 //=
 
 struct myClass {
-  int fVal;
-  myClass(int implname)
-    :fVal(implname)
-    {
-    }
+	int fVal;
+	myClass(int implname) :
+			fVal(implname) {
+	}
 };
 
 //!TestMissingParameterNames
@@ -170,35 +165,34 @@ filename=MyClass.cpp
 //@MyClass.cpp
 #include "MyClass.h"
 
-myClass::/*$*/myClass/*$$*/(int implname) : fVal(implname) {}
+myClass::/*$*/myClass/*$$*/(int implname) :
+		fVal(implname) {
+}
 
-int main()
-{
-    return 0;
+int main() {
+	return 0;
 }
 //=
 #include "MyClass.h"
 
 
 
-int main()
-{
-    return 0;
+int main() {
+	return 0;
 }
 //@MyClass.h
 
 struct myClass {
-  int fVal;
-  myClass(int);
+	int fVal;
+	myClass(int);
 };
 
 //=
 
 struct myClass {
-  int fVal;
-  myClass(int implname)
-    :fVal(implname)
-    {
-    }
+	int fVal;
+	myClass(int implname) :
+			fVal(implname) {
+	}
 };
 

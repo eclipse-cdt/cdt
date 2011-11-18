@@ -7,11 +7,11 @@ fatalerror=true
 
 class A {
 public:
-        void foo()
-        {
-        }
+	void foo() {
+	}
+
 private:
-        int /*$*/x/*$$*/;
+	int /*$*/x/*$$*/;
 };
 
 //!TestNotSupportedNoDefinition
@@ -23,14 +23,13 @@ fatalerror=true
 
 class A {
 public:
-        void /*$*/foo/*$$*/();
+		void /*$*/foo/*$$*/();
 };
 //@A.cpp
 #include "A.h"
 
-int main()
-{
-    return 0;
+int main() {
+	return 0;
 }
 
 //!TestNotSupportedNoTranslationunit
@@ -42,7 +41,7 @@ fatalerror=true
 
 class A {
 public:
-        void /*$*/foo/*$$*/();
+	void /*$*/foo/*$$*/();
 };
 
 //!TestMultipleDeclarations
@@ -54,15 +53,14 @@ fatalerror=true
 #include <iostream>
 
 class A {
-    void /*$*/foo/*$$*/();
-    void foo();
+	void /*$*/foo/*$$*/();
+	void foo();
 };
 //@A.cpp
 #include "A.h"
 
-int main()
-{
-    return 0;
+int main() {
+	return 0;
 }
 
 //!TestMultipledefinitions  
@@ -73,28 +71,23 @@ fatalerror=true
 #include <iostream>
 
 class A {
-        void foo();
-        void /*$*/foo/*$$*/() 
-        {
-            return;
-        }
+	void foo();
+	void /*$*/foo/*$$*/() {
+		return;
+	}
 };
 
-void blah() 
-{
-
+void blah() {
 }
 
-inline void A::foo() 
-{
-    return;
+inline void A::foo() {
+	return;
 }
 //@A.cpp
 #include "A.h"
 
-int main()
-{
-    return 0;
+int main() {
+	return 0;
 }
 
 //!TestNotSupportedNestedFunctions 
@@ -105,9 +98,8 @@ fatalerror=true
 #include <iostream>
 
 class A {
-        void foo() 
-        {
-            void /*$*/bar/*$$*/() {
-            }
-        }
+	void foo() {
+		void /*$*/bar/*$$*/() {
+		}
+	}
 };

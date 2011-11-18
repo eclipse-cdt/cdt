@@ -6,23 +6,20 @@ filename=A.h
 #include <iostream>
 
 class A {
-    void /*$*/member/*$$*/(int a=0, int b=0)
-    {
-        return;
-    }
+	void /*$*/member/*$$*/(int a = 0, int b = 0) {
+		return;
+	}
 };
 //=
 #include <iostream>
 
 class A {
-    void member(int a=0, int b=0);
+	void member(int a = 0, int b = 0);
 };
 
-inline void A::member(int a, int b)
-{
-    return;
+inline void A::member(int a, int b) {
+	return;
 }
-
 
 //!TestDefaultParameterInitializerInHeaderToImplementation
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
@@ -32,18 +29,17 @@ filename=A.h
 #include <iostream>
 
 class A {
-    void member(int a=0, int b=0);
+	void member(int a = 0, int b = 0);
 };
 
-inline void /*$*/A::member/*$$*/(int a, int b)
-{
-    return;
+inline void /*$*/A::member/*$$*/(int a, int b) {
+	return;
 }
 //=
 #include <iostream>
 
 class A {
-    void member(int a=0, int b=0);
+	void member(int a = 0, int b = 0);
 };
 
 
@@ -51,20 +47,18 @@ class A {
 #include "A.h"
 
 int main() {
-    return 0;
+	return 0;
 }
 //=
 #include "A.h"
 
 int main() {
-    return 0;
+	return 0;
 }
 
-void A::member(int a, int b)
-{
-    return;
+void A::member(int a, int b) {
+	return;
 }
-
 
 //!TestDefaultParameterInitializerInImplementationToClass
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
@@ -73,36 +67,32 @@ filename=A.cpp
 //@A.cpp
 #include "A.h"
 
-void A::/*$*/member/*$$*/(int a, int b)
-{
-    return;
+void A::/*$*/member/*$$*/(int a, int b) {
+	return;
 }
 
-int main()
-{
-    return 0;
+int main() {
+	return 0;
 }
 //=
 #include "A.h"
 
 
 
-int main()
-{
-    return 0;
+int main() {
+	return 0;
 }
 //@A.h
 #include <iostream>
 
 class A {
-    void member(int a = 0, int b = 0);
+	void member(int a = 0, int b = 0);
 };
 //=
 #include <iostream>
 
 class A {
-    void member(int a = 0, int b = 0)
-    {
-        return;
-    }
+	void member(int a = 0, int b = 0) {
+		return;
+	}
 };

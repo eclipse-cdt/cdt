@@ -40,10 +40,10 @@ import org.eclipse.cdt.core.settings.model.extension.CBuildData;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.settings.model.util.LanguageSettingEntriesSerializer;
 import org.eclipse.cdt.internal.core.SafeStringInterner;
+import org.eclipse.cdt.managedbuilder.core.AbstractBuildRunner;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.ExternalBuildRunner;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
-import org.eclipse.cdt.managedbuilder.core.AbstractBuildRunner;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
@@ -66,6 +66,7 @@ import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator2;
 import org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -79,7 +80,7 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.osgi.framework.Version;
 
 public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider<Builder>, IRealBuildObjectAssociation  {
-
+	public static final int UNLIMITED_JOBS = Integer.MAX_VALUE;
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	//  Superclass
@@ -119,10 +120,12 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 	private HashMap<String, String> customBuildProperties;
 //	private Boolean isWorkspaceBuildPath;
 	private String ignoreErrCmd;
-	private String parallelBuildCmd;
 	private Boolean stopOnErr;
-	private Integer parallelNum;
-	private Boolean parallelBuildOn;
+	// parallelization
+	private String parallelBuildCmd;
+	private Boolean isParallelBuildEnabled;
+	private Integer parallelNumberAttribute; // negative number denotes "optimal" value, see getOptimalParallelJobNum()
+
 	private boolean isTest;
 	
 	//  Miscellaneous
@@ -327,9 +330,10 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		
 		stopOnErr = builder.stopOnErr;
 		ignoreErrCmd = builder.ignoreErrCmd;
+
+		isParallelBuildEnabled = builder.isParallelBuildEnabled;
+		parallelNumberAttribute = builder.parallelNumberAttribute;
 		parallelBuildCmd = builder.parallelBuildCmd;
-		parallelNum = builder.parallelNum;
-		parallelBuildOn = builder.parallelBuildOn;
 
 		if(builder.outputEntries != null){
 			outputEntries = builder.outputEntries.clone();
@@ -372,17 +376,15 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 			} catch (CoreException e) {
 			}
 		}
-		if(getParallelizationNum() != builder.getParallelizationNum()
-				&& supportsParallelBuild()){
+		if (isParallelBuildOn() != builder.isParallelBuildOn() && supportsParallelBuild()) {
 			try {
-				setParallelizationNum(builder.getParallelizationNum());
+				setParallelBuildOn(builder.isParallelBuildOn());
 			} catch (CoreException e) {
 			}
 		}
-		if(isParallelBuildOn() != builder.isParallelBuildOn()
-				&& supportsParallelBuild()){
+		if (getParallelizationNumAttribute() != builder.getParallelizationNumAttribute() && supportsParallelBuild()) {
 			try {
-				setParallelBuildOn(builder.isParallelBuildOn());
+				setParallelizationNum(builder.getParallelizationNumAttribute());
 			} catch (CoreException e) {
 			}
 		}
@@ -552,23 +554,23 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 
 		ignoreErrCmd = SafeStringInterner.safeIntern(element.getAttribute(ATTRIBUTE_IGNORE_ERR_CMD));
 		
-        tmp = element.getAttribute(ATTRIBUTE_STOP_ON_ERR);
-        if(tmp != null)
-        	stopOnErr = Boolean.valueOf(tmp);
-        
-        parallelBuildCmd = SafeStringInterner.safeIntern(element.getAttribute(ATTRIBUTE_PARALLEL_BUILD_CMD));
-        
-        tmp = element.getAttribute(ATTRIBUTE_PARALLELIZATION_NUMBER);
-        if(tmp != null){
-        	try {
-        		parallelNum = Integer.decode(tmp);
-        	} catch (NumberFormatException e){
-        	}
-        }
-        tmp = element.getAttribute(ATTRIBUTE_PARALLEL_BUILD_ON);
-        if(tmp != null)
-        	parallelBuildOn = Boolean.valueOf(tmp);
-        
+		tmp = element.getAttribute(ATTRIBUTE_STOP_ON_ERR);
+		if (tmp != null)
+			stopOnErr = Boolean.valueOf(tmp);
+
+		tmp = element.getAttribute(ATTRIBUTE_PARALLEL_BUILD_CMD);
+		if (tmp != null)
+			parallelBuildCmd = SafeStringInterner.safeIntern(tmp);
+
+		tmp = element.getAttribute(ATTRIBUTE_PARALLEL_BUILD_ON);
+		if (tmp != null) {
+			isParallelBuildEnabled = Boolean.valueOf(tmp);
+			if (isParallelBuildEnabled) {
+				tmp = element.getAttribute(ATTRIBUTE_PARALLELIZATION_NUMBER);
+				setParallelizationNumAttribute(decodeParallelizationNumber(element.getAttribute(ATTRIBUTE_PARALLELIZATION_NUMBER)));
+			}
+		}
+
 		// Get the semicolon separated list of IDs of the error parsers
 		errorParserIds = SafeStringInterner.safeIntern(element.getAttribute(IToolChain.ERROR_PARSERS));
 		
@@ -618,6 +620,43 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 			fBuildRunnerElement = ((DefaultManagedConfigElement)element).getConfigurationElement();
 	}
 	
+	private String encodeParallelizationNumber(Integer jobsNumber) {
+		if (jobsNumber <= 0)
+			return VALUE_OPTIMAL;
+		
+		if (jobsNumber.equals(UNLIMITED_JOBS))
+			return VALUE_UNLIMITED;
+		
+		return jobsNumber.toString();
+	}
+
+	private int decodeParallelizationNumber(String value) {
+		int parallelNumber = -1;
+		if (VALUE_OPTIMAL.equals(value)) {
+			parallelNumber = -getOptimalParallelJobNum();
+		} else if (VALUE_UNLIMITED.equals(value)) {
+			parallelNumber = UNLIMITED_JOBS;
+		} else {
+			try {
+				parallelNumber = Integer.decode(value);
+			} catch (NumberFormatException e) {
+				ManagedBuilderCorePlugin.log(e);
+				parallelNumber = getOptimalParallelJobNum();
+			}
+			if (parallelNumber <= 0) {
+				// compatibility with legacy representation - it was that inconsistent
+				if (isInternalBuilder()) {
+					// "optimal" for Internal Builder
+					parallelNumber = -getOptimalParallelJobNum();
+				} else {
+					// unlimited for External Builder
+					parallelNumber = UNLIMITED_JOBS;
+				}
+			}
+		}
+		return parallelNumber;
+	}
+
 	/**
 	 * Initialize the builder information from the XML element 
 	 * specified in the argument
@@ -748,24 +787,22 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		if(element.getAttribute(ATTRIBUTE_IGNORE_ERR_CMD) != null)
 			ignoreErrCmd = SafeStringInterner.safeIntern(element.getAttribute(ATTRIBUTE_IGNORE_ERR_CMD));
 		
-        tmp = element.getAttribute(ATTRIBUTE_STOP_ON_ERR);
-        if(tmp != null)
-        	stopOnErr = Boolean.valueOf(tmp);
-        
-        if(element.getAttribute(ATTRIBUTE_PARALLEL_BUILD_CMD) != null)
-        	parallelBuildCmd = SafeStringInterner.safeIntern(element.getAttribute(ATTRIBUTE_PARALLEL_BUILD_CMD));
-        
-        tmp = element.getAttribute(ATTRIBUTE_PARALLELIZATION_NUMBER);
-        if(tmp != null){
-        	try {
-        		parallelNum = Integer.decode(tmp);
-        	} catch (NumberFormatException e){
-        	}
-        }
-        
-        tmp = element.getAttribute(ATTRIBUTE_PARALLEL_BUILD_ON);
-        if(tmp != null)
-        	parallelBuildOn = Boolean.valueOf(tmp);
+		tmp = element.getAttribute(ATTRIBUTE_STOP_ON_ERR);
+		if (tmp != null)
+			stopOnErr = Boolean.valueOf(tmp);
+
+		tmp = element.getAttribute(ATTRIBUTE_PARALLEL_BUILD_CMD);
+		if (tmp != null)
+			parallelBuildCmd = SafeStringInterner.safeIntern(tmp);
+
+		tmp = element.getAttribute(ATTRIBUTE_PARALLEL_BUILD_ON);
+		if (tmp != null) {
+			isParallelBuildEnabled = Boolean.valueOf(tmp);
+			if (isParallelBuildEnabled) {
+				tmp = element.getAttribute(ATTRIBUTE_PARALLELIZATION_NUMBER);
+				setParallelizationNumAttribute(decodeParallelizationNumber(element.getAttribute(ATTRIBUTE_PARALLELIZATION_NUMBER)));
+			}
+		}
 
         ICStorageElement[] children = element.getChildren();
         for(int i = 0; i < children.length; i++){
@@ -869,16 +906,19 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		if(customBuildProperties != null)
 			element.setAttribute(ATTRIBUTE_CUSTOM_PROPS, MapStorageElement.encodeMap(customBuildProperties));
 
-        if(ignoreErrCmd != null)
-        	element.setAttribute(ATTRIBUTE_IGNORE_ERR_CMD, ignoreErrCmd);
-        if(stopOnErr != null)
-        	element.setAttribute(ATTRIBUTE_STOP_ON_ERR, stopOnErr.toString());
-        if(parallelBuildCmd != null)
-        	element.setAttribute(ATTRIBUTE_PARALLEL_BUILD_CMD, parallelBuildCmd);
-        if(parallelNum != null)
-        	element.setAttribute(ATTRIBUTE_PARALLELIZATION_NUMBER, parallelNum.toString());
-        if(parallelBuildOn != null)
-        	element.setAttribute(ATTRIBUTE_PARALLEL_BUILD_ON, parallelBuildOn.toString());
+		if (ignoreErrCmd != null)
+			element.setAttribute(ATTRIBUTE_IGNORE_ERR_CMD, ignoreErrCmd);
+		if (stopOnErr != null)
+			element.setAttribute(ATTRIBUTE_STOP_ON_ERR, stopOnErr.toString());
+
+		if (parallelBuildCmd != null)
+			element.setAttribute(ATTRIBUTE_PARALLEL_BUILD_CMD, parallelBuildCmd);
+
+		if (isParallelBuildEnabled != null)
+			element.setAttribute(ATTRIBUTE_PARALLEL_BUILD_ON, isParallelBuildEnabled.toString());
+		if (isParallelBuildOn() && parallelNumberAttribute != null)
+			element.setAttribute(ATTRIBUTE_PARALLELIZATION_NUMBER, encodeParallelizationNumber(parallelNumberAttribute));
+
 		// Note: build file generator cannot be specified in a project file because
 		//       an IConfigurationElement is needed to load it!
 		if (buildFileGeneratorElement != null) {
@@ -965,13 +1005,18 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		if(customBuildProperties != null)
 			element.setAttribute(ATTRIBUTE_CUSTOM_PROPS, MapStorageElement.encodeMap(customBuildProperties));
 
-        if(getIgnoreErrCmdAttribute() != null)
-        	element.setAttribute(ATTRIBUTE_IGNORE_ERR_CMD, getIgnoreErrCmdAttribute());
-       	element.setAttribute(ATTRIBUTE_STOP_ON_ERR, Boolean.valueOf(isStopOnError()).toString());
-        if(getParrallelBuildCmd() != null)
-        	element.setAttribute(ATTRIBUTE_PARALLEL_BUILD_CMD, getParrallelBuildCmd());
-       	element.setAttribute(ATTRIBUTE_PARALLELIZATION_NUMBER, new Integer(getParallelizationNumAttribute()).toString());
-       	element.setAttribute(ATTRIBUTE_PARALLEL_BUILD_ON, Boolean.valueOf(isParallelBuildOn()).toString());
+		if (getIgnoreErrCmdAttribute() != null)
+			element.setAttribute(ATTRIBUTE_IGNORE_ERR_CMD, getIgnoreErrCmdAttribute());
+		element.setAttribute(ATTRIBUTE_STOP_ON_ERR, Boolean.valueOf(isStopOnError()).toString());
+
+		if (parallelBuildCmd != null)
+			element.setAttribute(ATTRIBUTE_PARALLEL_BUILD_CMD, parallelBuildCmd);
+
+		if (isParallelBuildEnabled != null)
+			element.setAttribute(ATTRIBUTE_PARALLEL_BUILD_ON, isParallelBuildEnabled.toString());
+		if (isParallelBuildOn() && parallelNumberAttribute != null)
+			element.setAttribute(ATTRIBUTE_PARALLELIZATION_NUMBER, encodeParallelizationNumber(parallelNumberAttribute));
+
 		// Note: build file generator cannot be specified in a project file because
 		//       an IConfigurationElement is needed to load it!
 		if (buildFileGeneratorElement != null) {
@@ -995,6 +1040,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 	 *  P A R E N T   A N D   C H I L D   H A N D L I N G
 	 */
 
+	@Override
 	public IToolChain getParent() {
 		return parent;
 	}
@@ -1003,6 +1049,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 	 *  M O D E L   A T T R I B U T E   A C C E S S O R S
 	 */
 
+	@Override
 	public IBuilder getSuperClass() {
 		return (IBuilder)superClass;
 	}
@@ -1012,6 +1059,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return (name == null && superClass != null) ? superClass.getName() : name;
 	}
 
+	@Override
 	public boolean isAbstract() {
 		if (isAbstract != null) {
 			return isAbstract.booleanValue();
@@ -1020,6 +1068,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		}
 	}
 
+	@Override
 	public String getUnusedChildren() {
 		if (unusedChildren != null) {
 			return unusedChildren;
@@ -1027,6 +1076,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 			return EMPTY_STRING;	// Note: no inheritance from superClass
 	}
 
+	@Override
 	public String getCommand() {
 		if (command == null) {
 			// If I have a superClass, ask it
@@ -1039,19 +1089,21 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return command;
 	}
 
+	@Override
 	public String getArguments() {
 		String args = getArgumentsAttribute(); 
 		String stopOnErrCmd = getStopOnErrCmd(isStopOnError());
-		String parallelBuildCmd = isParallelBuildOn() ? getParallelizationCmd(getParallelizationNum()) : EMPTY_STRING;
+		int parallelNum = getParallelizationNum();
+		String parallelCmd = isParallelBuildOn() ? getParallelizationCmd(parallelNum) : EMPTY_STRING;
 		
 		String reversedStopOnErrCmd = getStopOnErrCmd(!isStopOnError());
-		String reversedParallelBuildCmd = !isParallelBuildOn() ? getParallelizationCmd(getParallelizationNum()) : EMPTY_STRING;
+		String reversedParallelBuildCmd = !isParallelBuildOn() ? getParallelizationCmd(parallelNum) : EMPTY_STRING;
 		
 		args = removeCmd(args, reversedStopOnErrCmd);
 		args = removeCmd(args, reversedParallelBuildCmd);
 		
 		args = addCmd(args, stopOnErrCmd);
-		args = addCmd(args, parallelBuildCmd);
+		args = addCmd(args, parallelCmd);
 
 		return args != null ? args.trim() : null;
 	}
@@ -1114,18 +1166,27 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return index;
 	}
 	
-	public String getParallelizationCmd(int num){
+	public String getParallelizationCmd(int num) {
 		String pattern = getParrallelBuildCmd();
-		if(pattern.length() == 0){
-			return EMPTY_STRING;
-		}if(num == 0){
+		if (pattern.length() == 0 || num == 0) {
 			return EMPTY_STRING;
 		}
-		
-		return processParallelPattern(pattern, num < 0, num);
+		// "unlimited" number of jobs results in not adding the number to parallelization cmd
+		// that behavior corresponds that of "make" flag "-j".
+		return processParallelPattern(pattern, num == UNLIMITED_JOBS, num);
 	}
 	
+	/**
+	 * This method turns the supplied pattern to parallelization command
+	 * 
+	 * It supports 2 kinds of pattern where "*" is replaced with number of jobs:
+	 * <li>Pattern 1 (supports "<b>-j*</b>"): "text*text" -> "text#text"</li>
+	 * <li>Pattern 2 (supports "<b>-[j*]</b>"): "text[text*text]text" -> "texttext#texttext</li>
+	 * <br>Where # is num or empty if {@code empty} is {@code true})
+	 */
 	private String processParallelPattern(String pattern, boolean empty, int num){
+		Assert.isTrue(num > 0);
+		
 		int start = pattern.indexOf(PARALLEL_PATTERN_NUM_START);
 		int end = -1;
 		boolean hasStartChar = false;
@@ -1190,6 +1251,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return args;
 	}
 
+	@Override
 	public String getErrorParserIds() {
 		String ids = errorParserIds;
 		if (ids == null) {
@@ -1201,6 +1263,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return ids;
 	}
 
+	@Override
 	public String[] getErrorParserList() {
 		String parserIDs = getErrorParserIds();
 		String[] errorParsers = null;
@@ -1223,6 +1286,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return errorParsers;
 	}
 
+	@Override
 	public void setCommand(String cmd) {
 		if(getCommand().equals(cmd)) return;
 		if (cmd == null && command == null) return;
@@ -1232,16 +1296,17 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		}
 	}
 
+	@Override
 	public void setArguments(String newArgs) {
 		if(getArguments().equals(newArgs))
 			return;
 		
 		if(newArgs != null){
 			String stopOnErrCmd = getStopOnErrCmd(isStopOnError());
-			String parallelBuildCmd = isParallelBuildOn() ? getParallelizationCmd(getParallelizationNum()) : EMPTY_STRING;
+			String parallelCmd = isParallelBuildOn() ? getParallelizationCmd(getParallelizationNum()) : EMPTY_STRING;
 
 			newArgs = removeCmd(newArgs, stopOnErrCmd);
-			newArgs = removeCmd(newArgs, parallelBuildCmd);
+			newArgs = removeCmd(newArgs, parallelCmd);
 		}
 		setArgumentsAttribute(newArgs);
 	}
@@ -1254,6 +1319,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		}
 	}
 
+	@Override
 	public void setErrorParserIds(String ids) {
 		String currentIds = getErrorParserIds();
 		if (ids == null && currentIds == null) return;
@@ -1263,11 +1329,13 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		}
 	}
 
+	@Override
 	public void setIsAbstract(boolean b) {
 		isAbstract = new Boolean(b);
 		setDirty(true);
 	}
 	
+	@Override
 	public IConfigurationElement getBuildFileGeneratorElement() {
 		if (buildFileGeneratorElement == null) {
 			if (superClass != null) {
@@ -1277,6 +1345,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return buildFileGeneratorElement;
 	}
 	
+	@Override
 	public IManagedBuilderMakefileGenerator getBuildFileGenerator(){
 		IConfigurationElement element = getBuildFileGeneratorElement();
 		if (element != null) {
@@ -1299,6 +1368,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 	}
 
 	
+	@Override
 	public void setBuildFileGeneratorElement(IConfigurationElement element) {
 		buildFileGeneratorElement = element;
 		setDirty(true);
@@ -1344,6 +1414,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		}
 	}
 
+	@Override
 	public String getConvertToId() {
 		if (convertToId == null) {
 			// If I have a superClass, ask it
@@ -1356,6 +1427,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return convertToId;
 	}
 
+	@Override
 	public void setConvertToId(String convertToId) {
 		if (convertToId == null && this.convertToId == null) return;
 		if (convertToId == null || this.convertToId == null || !convertToId.equals(this.convertToId)) {
@@ -1365,6 +1437,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return;
 	}
 
+	@Override
 	public String getVersionsSupported() {
 		if (versionsSupported == null) {
 			// If I have a superClass, ask it
@@ -1377,6 +1450,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return versionsSupported;
 	}
 
+	@Override
 	public void setVersionsSupported(String versionsSupported) {
 		if (versionsSupported == null && this.versionsSupported == null) return;
 		if (versionsSupported == null || this.versionsSupported == null || !versionsSupported.equals(this.versionsSupported)) {
@@ -1386,18 +1460,21 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return;
 	}
 	
+	@Override
 	public IFileContextBuildMacroValues getFileContextBuildMacroValues(){
 		if(fileContextBuildMacroValues == null && superClass != null)
 			return getSuperClass().getFileContextBuildMacroValues();
 		return fileContextBuildMacroValues;
 	}
 	
+	@Override
 	public String getBuilderVariablePattern(){
 		if(builderVariablePattern == null && superClass != null)
 			return getSuperClass().getBuilderVariablePattern();
 		return builderVariablePattern;
 	}
 	
+	@Override
 	public boolean isVariableCaseSensitive(){
 		if(isVariableCaseSensitive == null){
 			if(superClass != null)
@@ -1407,12 +1484,14 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return isVariableCaseSensitive.booleanValue();
 	}
 	
+	@Override
 	public String[] getReservedMacroNames(){
 		if(reservedMacroNames == null && superClass != null)
 			return getSuperClass().getReservedMacroNames();
 		return reservedMacroNames;
 	}
 	
+	@Override
 	public IReservedMacroNameSupplier getReservedMacroNameSupplier(){
 		if(reservedMacroNameSupplier == null && reservedMacroNameSupplierElement != null){
 			try{
@@ -1617,6 +1696,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return currentMbsVersionConversionElement;
 	}
 
+	@Override
 	public CBuildData getBuildData() {
 		return fBuildData;
 	}
@@ -1627,6 +1707,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 //		return null;
 //	}
 	
+	@Override
 	public String[] getErrorParsers() {
 		if(isCustomBuilder() && customizedErrorParserIds != null)
 			return customizedErrorParserIds.clone();
@@ -1646,6 +1727,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		customizedErrorParserIds = ids != null ? (String[])ids.clone() : ids;
 	}
 
+	@Override
 	public void setErrorParsers(String[] parsers) throws CoreException {
 		if(isCustomBuilder()){
 			customizedErrorParserIds = (parsers != null && parsers.length != 0) ? (String[])parsers.clone() : parsers;
@@ -1660,6 +1742,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return this;//!isExtensionBuilder ? (Object)this : (Object)getParent().getParent();
 	}
 
+	@Override
 	public String getBuildArguments() {
 		String args = getArguments();
 		IBuildMacroProvider provider = ManagedBuildManager.getBuildMacroProvider();
@@ -1672,6 +1755,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return args;
 	}
 
+	@Override
 	public IPath getBuildCommand() {
 		String command = getCommand();
 		IBuildMacroProvider provider = ManagedBuildManager.getBuildMacroProvider();
@@ -1697,6 +1781,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return buildPath;
 	}
 	
+	@Override
 	public void setBuildPath(String path){
 		setBuildPathAttribute(path);
 	}
@@ -1706,6 +1791,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		setDirty(true);
 	}
 	
+	@Override
 	public String getBuildPath(){
 		if(isManagedBuildOn())
 			return getDefaultBuildPath();
@@ -1791,6 +1877,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return isWorkspaceBuildPath.booleanValue();
 	}
 */
+	@Override
 	public IPath getBuildLocation() {
 		String path = getBuildPath();
 		
@@ -1804,10 +1891,12 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return new Path(path);
 	}
 
+	@Override
 	public boolean isDefaultBuildCmd() {
 		return isExtensionBuilder || (command == null && args == null /*&& stopOnErr == null && parallelBuildOn == null && parallelNum == null */ &&  superClass != null);
 	}
 
+	@Override
 	public boolean isStopOnError() {
 		if(stopOnErr == null){
 			if(superClass != null){
@@ -1818,20 +1907,24 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return stopOnErr.booleanValue();
 	}
 
+	@Override
 	public void setBuildArguments(String args) throws CoreException {
 		setArguments(args);
 	}
 
+	@Override
 	public void setBuildCommand(IPath command) throws CoreException {
 		String cmd = command != null ? command.toString() : null;
 		setCommand(cmd);
 	}
 
+	@Override
 	public void setBuildLocation(IPath location) throws CoreException {
 		String path = location != null ? location.toString() : null;
 		setBuildPath(path);
 	}
 
+	@Override
 	public void setStopOnError(boolean on) throws CoreException {
 		if(isStopOnError() == on)
 			return;
@@ -1847,6 +1940,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		setDirty(true);
 	}
 
+	@Override
 	public void setUseDefaultBuildCmd(boolean on) throws CoreException {
 		if(!isExtensionBuilder && superClass != null){
 			if(on){
@@ -1870,6 +1964,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return autoBuildTarget;
 	}
 	
+	@Override
 	public String getAutoBuildTarget() {
 		String attr = getAutoBuildTargetAttribute();
 		
@@ -1898,6 +1993,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return cleanBuildTarget;
 	}
 
+	@Override
 	public String getCleanBuildTarget() {
 		String attr = getCleanBuildTargetAttribute();
 		
@@ -1917,6 +2013,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 	}
 
 	
+	@Override
 	public String getFullBuildTarget() {
 		return getIncrementalBuildTarget();
 	}
@@ -1930,6 +2027,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return incrementalBuildTarget;
 	}
 
+	@Override
 	public String getIncrementalBuildTarget() {
 		String attr = getIncrementalBuildTargetAttribute();
 		
@@ -1948,6 +2046,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return attr;
 	}
 
+	@Override
 	public boolean isAutoBuildEnable() {
 		if(autoBuildEnabled == null){
 			if(superClass != null)
@@ -1957,6 +2056,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return autoBuildEnabled.booleanValue();
 	}
 
+	@Override
 	public boolean isCleanBuildEnabled() {
 		if(cleanBuildEnabled == null){
 			if(superClass != null)
@@ -1966,10 +2066,12 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return cleanBuildEnabled.booleanValue();
 	}
 
+	@Override
 	public boolean isFullBuildEnabled() {
 		return isIncrementalBuildEnabled();
 	}
 
+	@Override
 	public boolean isIncrementalBuildEnabled() {
 		if(incrementalBuildEnabled == null){
 			if(superClass != null)
@@ -1979,38 +2081,47 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return incrementalBuildEnabled.booleanValue();
 	}
 
+	@Override
 	public void setAutoBuildEnable(boolean enabled) throws CoreException {
 		autoBuildEnabled = Boolean.valueOf(enabled);
 	}
 
+	@Override
 	public void setAutoBuildTarget(String target) throws CoreException {
 		autoBuildTarget = target;
 	}
 
+	@Override
 	public void setCleanBuildEnable(boolean enabled) throws CoreException {
 		cleanBuildEnabled = Boolean.valueOf(enabled);
 	}
 
+	@Override
 	public void setCleanBuildTarget(String target) throws CoreException {
 		cleanBuildTarget = target;
 	}
 
+	@Override
 	public void setFullBuildEnable(boolean enabled) throws CoreException {
 		setIncrementalBuildEnable(enabled);
 	}
 
+	@Override
 	public void setFullBuildTarget(String target) throws CoreException {
 		setIncrementalBuildTarget(target);
 	}
 
+	@Override
 	public void setIncrementalBuildEnable(boolean enabled) throws CoreException {
 		incrementalBuildEnabled = Boolean.valueOf(enabled);
 	}
 
+	@Override
 	public void setIncrementalBuildTarget(String target) throws CoreException {
 		incrementalBuildTarget = target;
 	}
 
+	@Override
 	public boolean appendEnvironment() {
 		if(appendEnvironment == null){
 			if(superClass != null){
@@ -2021,6 +2132,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return appendEnvironment.booleanValue();
 	}
 
+	@Override
 	public String getBuildAttribute(String name, String defaultValue) {
 		String result = null;
 		if(BUILD_TARGET_INCREMENTAL.equals(name)){
@@ -2156,12 +2268,14 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 	}
 	
 
+	@Override
 	public Map<String, String> getEnvironment() {
 		if(customizedEnvironment != null)
 			return cloneMap(customizedEnvironment);
 		return null;
 	}
 
+	@Override
 	public Map<String, String> getExpandedEnvironment() throws CoreException {
 		if(customizedEnvironment != null){
 			Map<String, String> expanded = cloneMap(customizedEnvironment);
@@ -2183,10 +2297,12 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return null;
 	}
 
+	@Override
 	public void setAppendEnvironment(boolean append) throws CoreException {
 		appendEnvironment = Boolean.valueOf(append);
 	}
 
+	@Override
 	public void setBuildAttribute(String name, String value)
 			throws CoreException {
 		if(BUILD_TARGET_INCREMENTAL.equals(name)){
@@ -2255,10 +2371,12 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return customBuildProperties;
 	}
 
+	@Override
 	public void setEnvironment(Map<String, String> env) throws CoreException {
 		customizedEnvironment = new HashMap<String, String>(env);
 	}
 
+	@Override
 	public boolean isCustomBuilder() {
 		if(!isExtensionBuilder && getParent().getBuilder() != this)
 			return true;
@@ -2271,6 +2389,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return null;
 	}
 
+	@Override
 	public boolean isManagedBuildOn() {
 		IConfiguration cfg = getConfguration();
 		if(cfg != null){
@@ -2295,14 +2414,17 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return managedBuildOn;
 	}
 
+	@Override
 	public void setManagedBuildOn(boolean on) throws CoreException {
 		managedBuildOn = Boolean.valueOf(on);
 	}
 
+	@Override
 	public boolean canKeepEnvironmentVariablesInBuildfile() {
 		return BuildMacroProvider.canKeepMacrosInBuildfile(this);
 	}
 
+	@Override
 	public boolean keepEnvironmentVariablesInBuildfile() {
 		if(keepEnvVarInBuildfile == null){
 			if(superClass != null)
@@ -2312,10 +2434,12 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return keepEnvVarInBuildfile.booleanValue();
 	}
 
+	@Override
 	public void setKeepEnvironmentVariablesInBuildfile(boolean keep) {
 		keepEnvVarInBuildfile = Boolean.valueOf(keep);
 	}
 
+	@Override
 	public boolean supportsCustomizedBuild() {
 		if(fSupportsCustomizedBuild == null){
 			IManagedBuilderMakefileGenerator makeGen = getBuildFileGenerator();
@@ -2327,6 +2451,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return fSupportsCustomizedBuild.booleanValue();
 	}
 	
+	@Override
 	public boolean supportsBuild(boolean managed) {
 		if(supportsManagedBuild == null){
 			if(superClass != null)
@@ -2340,6 +2465,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		parent = toolChain;
 	}
 
+	@Override
 	public boolean matches(IBuilder builder){
 		if(builder == this)
 			return true;
@@ -2351,6 +2477,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return rBld == ManagedBuildManager.getRealBuilder(builder);
 	}
 
+	@Override
 	public MatchKey<Builder> getMatchKey() {
 		if(isAbstract())
 			return null;
@@ -2359,6 +2486,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return new MatchKey<Builder>(this);
 	}
 
+	@Override
 	public void setIdenticalList(List<Builder> list) {
 		identicalList = list;
 	}
@@ -2372,10 +2500,12 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return name;
 	}
 
+	@Override
 	public List<Builder> getIdenticalList() {
 		return identicalList;
 	}
 
+	@Override
 	public boolean isInternalBuilder() {
 		IBuilder internalBuilder = ManagedBuildManager.getInternalBuilder();
 		for(IBuilder builder = this; builder != null; builder = builder.getSuperClass()){
@@ -2385,42 +2515,92 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return false;
 	}
 
-	public int getParallelizationNum() {
-		if(supportsParallelBuild())
-			return getParallelizationNumAttribute();
-		return 1;
+	/**
+	 * Returns the optimal number of parallel jobs.
+	 * The number is the number of available processors on the machine.
+	 * 
+	 * The function never returns number smaller than 1.
+	 */
+	public int getOptimalParallelJobNum() {
+		return Runtime.getRuntime().availableProcessors();
 	}
 	
-	public int getParallelizationNumAttribute(){
-		if(parallelNum == null){
+	/**
+	 * Returns the internal representation of maximum number of parallel jobs
+	 * to be used for a build.
+	 * Note that negative number represents "optimal" value.
+	 * 
+	 * The value of the number is encoded as follows:
+	 * <pre>
+	 *  Status       Returns
+	 * No parallel      1       
+	 * Optimal       -CPU# (negative number of processors) 
+	 * Specific        >0  (positive number)
+	 * Unlimited    Builder.UNLIMITED_JOBS
+	 * </pre>
+	 */
+	public int getParallelizationNumAttribute() {
+		if (!isParallelBuildOn())
+			return 1;
+		
+		if(parallelNumberAttribute == null){
 			if(superClass != null){
 				return ((Builder)superClass).getParallelizationNumAttribute();
 			}
 			return 1;
 		}
-		return parallelNum.intValue();
+		return parallelNumberAttribute.intValue();
 	}
 
-	public void setParallelizationNum(int num) throws CoreException {
-//		if(num == 0 || supportsParallelBuild()){
-			Integer newParallelNum = new Integer(num);
+	private void setParallelizationNumAttribute(int parallelNumber) {
+		isParallelBuildEnabled = (parallelNumber != 1);
+		if (parallelNumber > 0) {
+			parallelNumberAttribute = parallelNumber;
+		} else {
+			// "optimal"
+			parallelNumberAttribute = -getOptimalParallelJobNum();
+		}
+	}
+
+	@Override
+	public int getParallelizationNum() {
+		return Math.abs(getParallelizationNumAttribute());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @param jobs - maximum number of jobs. There are 2 special cases:
+	 *    <br>- any number <=0 is interpreted as setting "optimal" property,
+	 *    the value of the number itself is ignored in this case
+	 *    <br>- value 1 will turn parallel mode off.
+	 */
+	@Override
+	public void setParallelizationNum(int jobs) throws CoreException {
+		if (!supportsParallelBuild())
+			return;
+
+		if (parallelNumberAttribute == null || parallelNumberAttribute != jobs) {
 			String curCmd = getParallelizationCmd(getParallelizationNum());
 			String args = getArgumentsAttribute();
 			String updatedArgs = removeCmd(args, curCmd);
-			if(!updatedArgs.equals(args)){
+			if (!updatedArgs.equals(args)) {
 				setArgumentsAttribute(updatedArgs);
 			}
-			parallelNum = newParallelNum;
+
+			setParallelizationNumAttribute(jobs);
 			setDirty(true);
-//		}
+		}
 	}
 
+	@Override
 	public boolean supportsParallelBuild() {
 		if(isInternalBuilder())
 			return true;
 		return getParrallelBuildCmd().length() != 0;
 	}
 
+	@Override
 	public boolean supportsStopOnError(boolean on) {
 		if(isInternalBuilder())
 			return true;
@@ -2446,42 +2626,48 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return ignoreErrCmd;
 	}
 
-	public String getParrallelBuildCmd(){
-		if(parallelBuildCmd == null){
-			if(superClass != null){
-				return ((Builder)superClass).getParrallelBuildCmd();
+	public String getParrallelBuildCmd() {
+		if (parallelBuildCmd == null) {
+			if (superClass != null) {
+				return ((Builder) superClass).getParrallelBuildCmd();
 			}
 			return EMPTY_STRING;
 		}
 		return parallelBuildCmd;
 	}
 
+	@Override
 	public boolean isParallelBuildOn() {
-		if(parallelBuildOn == null){
-			if(superClass != null){
+		if (!supportsParallelBuild()) {
+			return false;
+		}
+		if (isParallelBuildEnabled == null) {
+			if (superClass != null) {
 				return getSuperClass().isParallelBuildOn();
 			}
 			return false;
 		}
-		return parallelBuildOn.booleanValue();
+		return isParallelBuildEnabled.booleanValue();
 	}
 
-	public void setParallelBuildOn(boolean on) throws CoreException{
-		if(isParallelBuildOn() == on)
-			return;
-		if(on && !supportsParallelBuild())
-			return;
-		
-		String curCmd = getParallelizationCmd(getParallelizationNum());
-		String args = getArgumentsAttribute();
-		String updatedArgs = removeCmd(args, curCmd);
-		if(!updatedArgs.equals(args)){
-			setArgumentsAttribute(updatedArgs);
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @param on - the flag to enable or disable parallel mode.
+	 *    <br>{@code true} to enable, in this case the maximum number of jobs
+	 *      will be set to "optimal" number, see {@link #getOptimalParallelJobNum()}.
+	 *    <br>{@code false} to disable, the number of jobs will be set to 1.
+	 */
+	@Override
+	public void setParallelBuildOn(boolean on) throws CoreException {
+		if (on) {
+			// set "optimal" jobs by default when enabling parallel build
+			setParallelizationNum(-1);
+		} else {
+			setParallelizationNum(1);
 		}
-		parallelBuildOn = Boolean.valueOf(on);
-		setDirty(true);
 	}
-	
+
 	public Set<String> contributeErrorParsers(Set<String> set){
 		if(getErrorParserIds() != null){
 			if(set == null)
@@ -2521,6 +2707,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		}
 	}
 	
+	@Override
 	public boolean isSystemObject() {
 		if(isTest)
 			return true;
@@ -2533,6 +2720,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return false;
 	}
 
+	@Override
 	public String getUniqueRealName() {
 		String name = getName();
 		if(name == null){
@@ -2604,6 +2792,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return num;
 	}
 
+	@Override
 	public int compareTo(Builder other) {
 		if(other.isSystemObject() != isSystemObject())
 			return isSystemObject() ? 1 : -1;
@@ -2611,30 +2800,37 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return getSuperClassNum() - other.getSuperClassNum();
 	}
 
+	@Override
 	public IRealBuildObjectAssociation getExtensionObject() {
 		return (Builder)ManagedBuildManager.getExtensionBuilder(this);
 	}
 
+	@Override
 	public IRealBuildObjectAssociation[] getIdenticBuildObjects() {
 		return (IRealBuildObjectAssociation[])ManagedBuildManager.findIdenticalBuilders(this);
 	}
 
+	@Override
 	public IRealBuildObjectAssociation getRealBuildObject() {
 		return (Builder)ManagedBuildManager.getRealBuilder(this);
 	}
 
+	@Override
 	public IRealBuildObjectAssociation getSuperClassObject() {
 		return (Builder)getSuperClass();
 	}
 
+	@Override
 	public final int getType() {
 		return OBJECT_BUILDER;
 	}
 
+	@Override
 	public boolean isRealBuildObject() {
 		return ManagedBuildManager.getRealBuilder(this) == this;
 	}
 
+	@Override
 	public boolean isExtensionBuildObject() {
 		return isExtensionElement();
 	}
@@ -2643,6 +2839,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return getUniqueRealName();
 	}
 
+	@Override
 	public ICommandLauncher getCommandLauncher() {
 		if(fCommandLauncher != null)
 			return fCommandLauncher;
@@ -2664,6 +2861,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		return fCommandLauncher;
 	}
 
+	@Override
 	public AbstractBuildRunner getBuildRunner() throws CoreException {
 		// Already defined
 		if (fBuildRunner != null)

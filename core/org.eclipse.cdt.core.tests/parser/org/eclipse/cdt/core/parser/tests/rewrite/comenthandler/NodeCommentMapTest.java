@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- * Institute for Software - initial API and implementation 
+ *     Institute for Software - initial API and implementation 
  ******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.comenthandler;
 
@@ -21,10 +21,8 @@ import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
 /**
  * @author Guido Zgraggen IFS
- *
  */
 public class NodeCommentMapTest extends TestCase {
-
 	private NodeCommentMap map;
 	
 	@Override
@@ -39,7 +37,6 @@ public class NodeCommentMapTest extends TestCase {
 	
 	public void testNoComment(){
 		ASTNode node = new CPPASTName();
-		
 		assertEquals(0, map.getLeadingCommentsForNode(node).size());
 		assertEquals(0, map.getTrailingCommentsForNode(node).size());
 		assertEquals(0, map.getFreestandingCommentsForNode(node).size());
@@ -50,7 +47,6 @@ public class NodeCommentMapTest extends TestCase {
 		IASTComment comm1 = new Comment();
 		IASTComment comm2 = new Comment();
 		IASTComment comm3 = new Comment();
-		
 		
 		map.addLeadingCommentToNode(node, comm1);
 		map.addTrailingCommentToNode(node, comm2);
@@ -88,8 +84,7 @@ public class NodeCommentMapTest extends TestCase {
 		assertEquals(com1, map.getFreestandingCommentsForNode(node).get(0));
 		assertEquals(com2, map.getFreestandingCommentsForNode(node).get(1));
 	}
-	
-	
+
 	public void testCommentOnDifferentNodes(){
 		ASTNode node1 = new CPPASTName();
 		ASTNode node2 = new CPPASTName();
@@ -129,19 +124,22 @@ public class NodeCommentMapTest extends TestCase {
 		assertEquals(com3, map.getFreestandingCommentsForNode(node1).get(1));
 	}
 	
-	
 	//=== InternalComment class for testing 
-	private class Comment extends ASTNode implements IASTComment{
+	private class Comment extends ASTNode implements IASTComment {
 		private char[] comment;
 		
 		public char[] getComment() {
 			return comment;
 		}
+
 		public void setComment(char[] comment) {
 			this.comment = comment;
 		}
-		//not used
-		public boolean isBlockComment() {return false;}
+
+		// not used
+		public boolean isBlockComment() {
+			return false;
+		}
 
 		public IASTNode copy() {
 			return null;

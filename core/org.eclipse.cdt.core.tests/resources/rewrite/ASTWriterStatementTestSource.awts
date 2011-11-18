@@ -2,7 +2,7 @@
 //%CPP
 void foo()
 {
-    while(true){
+    while (true){
         break;
     }
 }
@@ -41,7 +41,7 @@ void foo()
 //%CPP
 void foo()
 {
-    while(true){
+    while (true){
         continue;
     }
 }
@@ -62,7 +62,7 @@ void foo()
 {
     do{
         continue;
-    } while(true);
+    } while (true);
 }
 
 
@@ -79,13 +79,13 @@ void foo()
 //%CPP
 void foo()
 {
-    for(int i = 0;i < 1;++i){
+    for (int i = 0;i < 1;++i){
         break;
     }
-    for(;;){
+    for (;;){
         break;
     }
-    for(;int c = f();){
+    for (;int c = f();){
         c++;
     }
 }
@@ -96,7 +96,7 @@ void foo()
 void foo()
 {
     int i;
-    for(i = 0;i < 1;++i){
+    for (i = 0;i < 1;++i){
     }
 }
 
@@ -115,12 +115,12 @@ int f()
 int f()
 {
     int i = 0;
-    if(i < 1){
+    if (i < 1){
         ++i;
     }else{
         --i;
     }
-    if(int c = f()){
+    if (int c = f()){
         c++;
     }
     return i;
@@ -131,7 +131,7 @@ int f()
 //%CPP
 int g()
 {
-    if(10 > 5)
+    if (10 > 5)
         return 1;
 
     return 0;
@@ -141,7 +141,7 @@ int g()
 //%C
 int g()
 {
-    if(10 > 5)
+    if (10 > 5)
         return 1;
 
     return 0;
@@ -240,14 +240,14 @@ int foo(int a)
 //%CPP
 void foo()
 {
-    while(true){
+    while (true){
         break;
     }
 }
 
 void fa()
 {
-    while(int i = f()){
+    while (int i = f()){
         ++i;
         break;
     }
@@ -255,7 +255,7 @@ void fa()
 
 void fb()
 {
-    while(true);
+    while (true);
 
 }
 
@@ -263,7 +263,7 @@ void fb()
 //%C
 void foo()
 {
-    while(true){
+    while (true){
         break;
     }
 }
@@ -279,10 +279,10 @@ int foo()
             ++i;
             return i;
         }
-        catch(...){
+        catch (...){
         }
     }
-    catch(...){
+    catch (...){
     }
 }
 
@@ -293,7 +293,7 @@ int foo()
 int foo()
 {
     int i = 1;
-    if( i == ZWO)
+    if (i == ZWO)
     {
     }
 }
@@ -301,7 +301,7 @@ int foo()
 int foo()
 {
     int i = 1;
-    if( i == ZWO)
+    if (i == ZWO)
     {
     }
 }
@@ -309,5 +309,5 @@ int foo()
 
 //!ArrayDeclarationStatementTest
 //%CPP
-string *newElements = new string[m_capacity];
+string* newElements = new string[m_capacity];
 

@@ -6,9 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Tomasz Wesolowski - initial API and implementation
+ *     Tomasz Wesolowski - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.core.dom.rewrite;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -18,8 +17,8 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.dom.rewrite.DeclarationGeneratorImpl;
 
 /**
- * 
- * This class handles the creation of {@link IASTDeclarator}s and {@link IASTDeclSpecifier}s basing on given type.
+ * This class handles the creation of {@link IASTDeclarator}s and {@link IASTDeclSpecifier}s
+ * for a given type.
  * 
  * @author Tomasz Wesolowski
  * @noextend This interface is not intended to be extended by clients.
@@ -45,5 +44,4 @@ public abstract class DeclarationGenerator {
 	 * @return the generated declarator
 	 */
 	public abstract IASTDeclarator createDeclaratorFromType(IType type, char[] name);
-
 }

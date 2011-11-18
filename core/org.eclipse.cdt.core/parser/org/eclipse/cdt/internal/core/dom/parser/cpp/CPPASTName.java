@@ -6,10 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon(IBM) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    Bryan Wilkinson (QNX)
- *    Anton Leherbauer (Wind River Systems)
+ *     John Camelon(IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Bryan Wilkinson (QNX)
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -45,10 +45,12 @@ public class CPPASTName extends CPPASTNameBase implements ICPPASTCompletionConte
         name = CharArrayUtils.EMPTY;
     }
 
-    public CPPASTName copy() {
+    @Override
+	public CPPASTName copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CPPASTName copy(CopyStyle style) {
 		CPPASTName copy = new CPPASTName(name == null ? null : name.clone());
 		copy.setOffsetAndLength(this);
@@ -78,6 +80,7 @@ public class CPPASTName extends CPPASTNameBase implements ICPPASTCompletionConte
     	return null;
     }
 
+	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix, String[] namespaces) {
 		IASTNode parent = getParent();
 		if (parent instanceof ICPPASTElaboratedTypeSpecifier) {
@@ -142,14 +145,17 @@ public class CPPASTName extends CPPASTNameBase implements ICPPASTCompletionConte
 		return (IBinding[])ArrayUtil.removeNulls(IBinding.class, bindings);
 	}
 
-    public char[] toCharArray() {
+    @Override
+	public char[] toCharArray() {
         return name;
     }
 
-    public char[] getSimpleID() {
+    @Override
+	public char[] getSimpleID() {
 		return name;
 	}
 
+	@Override
 	public char[] getLookupKey() {
 		return name;
 	}
@@ -185,6 +191,7 @@ public class CPPASTName extends CPPASTNameBase implements ICPPASTCompletionConte
         return true;
     }
     
+	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		return findBindings(n, isPrefix, null);
 	}

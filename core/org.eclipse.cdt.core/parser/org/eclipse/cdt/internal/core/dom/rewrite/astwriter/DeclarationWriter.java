@@ -9,10 +9,10 @@
  * Contributors:
  *     Institute for Software - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -47,7 +47,7 @@ import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
  * @see IASTDeclaration
  * @author Emanuel Graf IFS
  */
-public class DeclarationWriter extends NodeWriter{
+public class DeclarationWriter extends NodeWriter {
 	private static final String ASM_END = ")"; //$NON-NLS-1$
 	private static final String ASM_START = "asm("; //$NON-NLS-1$
 	private static final String TEMPLATE_DECLARATION = "template<"; //$NON-NLS-1$
@@ -57,7 +57,7 @@ public class DeclarationWriter extends NodeWriter{
 	private static final String USING = "using "; //$NON-NLS-1$
 	private boolean printSemicolon;
 
-	public DeclarationWriter(Scribe scribe, ASTVisitor visitor, NodeCommentMap commentMap) {
+	public DeclarationWriter(Scribe scribe, ASTWriterVisitor visitor, NodeCommentMap commentMap) {
 		super(scribe, visitor, commentMap);
 	}
 
@@ -72,6 +72,7 @@ public class DeclarationWriter extends NodeWriter{
 			writeASMDeclatation((IASTASMDeclaration) declaration);
 		} else if (declaration instanceof IASTFunctionDefinition) {
 			writeFunctionDefinition((IASTFunctionDefinition) declaration);
+			addNewLine = false;
 		} else if (declaration instanceof IASTProblemDeclaration) {
 			throw new ProblemRuntimeException((IASTProblemDeclaration) declaration);
 		} else if (declaration instanceof IASTSimpleDeclaration) {
@@ -98,16 +99,16 @@ public class DeclarationWriter extends NodeWriter{
 		}
 
 		if (hasTrailingComments(declaration)) {
-			writeTrailingComments(declaration, addNewLine);
-		} else if (addNewLine) {
+			writeTrailingComments(declaration, false);
+		}
+		if (addNewLine) {
 			scribe.newLine();
 		}
 		if (hasFreestandingComments(declaration)) {
+			if (declaration instanceof IASTFunctionDefinition) {
+				scribe.newLine();
+			}
 			writeFreeStandingComments(declaration);
-		}
-
-		if (declaration instanceof ICPPASTUsingDirective) {
-			scribe.newLine();
 		}
 	}
 
@@ -181,17 +182,18 @@ public class DeclarationWriter extends NodeWriter{
 		if (!hasTrailingComments(namespaceDefinition.getName())) {
 			scribe.newLine();
 		}
-		scribe.printLBrace();
-		scribe.newLine();
+		scribe.print('{');
+		scribe.newLine(2);
 		writeDeclarationsInNamespace(namespaceDefinition, namespaceDefinition.getDeclarations());
 		if (hasFreestandingComments(namespaceDefinition)) {
 			writeFreeStandingComments(namespaceDefinition);
 		}
-		scribe.printRBrace();
+		scribe.newLine();
+		scribe.print('}');
 
 		if (hasTrailingComments(namespaceDefinition)) {
 			writeTrailingComments(namespaceDefinition);
-		}else{
+		} else {
 			scribe.newLine();
 		}
 	}
@@ -211,7 +213,7 @@ public class DeclarationWriter extends NodeWriter{
 	}
 
 	private void writeLinkageSpecification(ICPPASTLinkageSpecification linkageSpecification) {
-		scribe.print( EXTERN);
+		scribe.print(EXTERN);
 		scribe.print(linkageSpecification.getLiteral());
 		scribe.printSpaces(1);
 
@@ -266,10 +268,10 @@ public class DeclarationWriter extends NodeWriter{
 		if (declSpecifier instanceof IASTSimpleDeclSpecifier) {
 			IASTSimpleDeclSpecifier simDeclSpec = (IASTSimpleDeclSpecifier) declSpecifier;
 			if (simDeclSpec.getType() != IASTSimpleDeclSpecifier.t_unspecified) {
-				scribe.printSpace();
+				visitor.setSpaceNeededBeforeName(true);
 			}
-		}else {
-			scribe.printSpace();
+		} else {
+			visitor.setSpaceNeededBeforeName(true);
 		}
 		IASTDeclarator declarator = ASTQueries.findOutermostDeclarator(funcDef.getDeclarator());
 		declarator.accept(visitor);
@@ -325,10 +327,16 @@ public class DeclarationWriter extends NodeWriter{
 		}
 
 		if (decls.length > 0) {
-			if (!noSpace) {
-				scribe.printSpace();
+			if (decls.length == 1) {
+				if (!noSpace)
+					visitor.setSpaceNeededBeforeName(true);
+				decls[0].accept(visitor);
+			} else {
+				if (!noSpace) {
+					scribe.printSpace();
+				}
+				writeNodeList(decls);
 			}
-			writeNodeList(decls);
 		}
 
 		printSemicolon();

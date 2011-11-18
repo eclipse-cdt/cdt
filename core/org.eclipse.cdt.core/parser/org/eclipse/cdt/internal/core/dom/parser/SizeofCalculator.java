@@ -34,7 +34,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 /**
- * Calculator of in-memory size and of types.
+ * Calculator of in-memory size and alignment of types.
  */
 public class SizeofCalculator {
 	/** Size and alignment pair */
@@ -95,16 +95,16 @@ public class SizeofCalculator {
 		sizeof_bool = getSize(sizeofMacros, "__SIZEOF_BOOL__", maxAlignment); //$NON-NLS-1$
 		sizeof_wchar_t = getSize(sizeofMacros, "__SIZEOF_WCHAR_T__", maxAlignment); //$NON-NLS-1$
 		sizeof_float = getSize(sizeofMacros, "__SIZEOF_FLOAT__", maxAlignment); //$NON-NLS-1$
-		sizeof_complex_float = getDoubleSize(sizeof_float);
+		sizeof_complex_float = getSizeOfPair(sizeof_float);
 		sizeof_double = getSize(sizeofMacros, "__SIZEOF_DOUBLE__", maxAlignment); //$NON-NLS-1$
-		sizeof_complex_double = getDoubleSize(sizeof_double);
+		sizeof_complex_double = getSizeOfPair(sizeof_double);
 		sizeof_long_double = getSize(sizeofMacros, "__SIZEOF_LONG_DOUBLE__", maxAlignment); //$NON-NLS-1$
-		sizeof_complex_long_double = getDoubleSize(sizeof_long_double);
+		sizeof_complex_long_double = getSizeOfPair(sizeof_long_double);
 	}
 
 	/**
 	 * Calculates size and alignment for the given type.
-	 * @param type
+	 * @param type the type to get size and alignment for.
 	 * @return size and alignment, or <code>null</code> if could not be calculated.
 	 */
 	public SizeAndAlignment sizeAndAlignment(IType type) {
@@ -128,6 +128,14 @@ public class SizeofCalculator {
 			return sizeAndAlignment((ICompositeType) type);
 		}
 		return null;
+	}
+
+	/**
+	 * Returns size and alignment of pointer types.
+	 * @return size and alignment of pointer types, or <code>null</code> if unknown.
+	 */
+	public SizeAndAlignment sizeAndAlignmentOfPointer() {
+		return sizeof_pointer;
 	}
 
 	private SizeAndAlignment sizeAndAlignment(IBasicType type) {
@@ -262,7 +270,7 @@ public class SizeofCalculator {
 		}
 	}
 
-	private SizeAndAlignment getDoubleSize(SizeAndAlignment sizeAndAlignment) {
+	private SizeAndAlignment getSizeOfPair(SizeAndAlignment sizeAndAlignment) {
 		return sizeAndAlignment == null ?
 				null : new SizeAndAlignment(sizeAndAlignment.size * 2, sizeAndAlignment.alignment);
 	}

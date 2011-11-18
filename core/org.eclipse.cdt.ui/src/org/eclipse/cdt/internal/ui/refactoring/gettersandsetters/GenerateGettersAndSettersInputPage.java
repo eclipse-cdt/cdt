@@ -52,6 +52,7 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 		node.addPreferenceChangeListener(this);
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
 		
@@ -67,18 +68,18 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 		gd = new GridData();
 		gd.verticalAlignment = SWT.TOP;
 		btComp.setLayoutData(gd);
-		
-		final Button placeImplemetation = new Button(comp, SWT.CHECK);
-		placeImplemetation.setText(Messages.GenerateGettersAndSettersInputPage_PlaceImplHeader);
+
+		final Button definitionSeparate = new Button(comp, SWT.CHECK);
+		definitionSeparate.setText(Messages.GenerateGettersAndSettersInputPage_SeparateDefinition);
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		gd.heightHint = 40;
-		placeImplemetation.setLayoutData(gd);
-		placeImplemetation.setSelection(context.isImplementationInHeader());
-		placeImplemetation.addSelectionListener(new SelectionAdapter() {
+		definitionSeparate.setLayoutData(gd);
+		definitionSeparate.setSelection(context.isDefinitionSeparate());
+		definitionSeparate.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				context.setImplementationInHeader(placeImplemetation.getSelection());
+				context.setDefinitionSeparate(definitionSeparate.getSelection());
 			}
 		});
 
@@ -206,7 +207,7 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 			}
 		}
 		variableSelectionView.addCheckStateListener(new ICheckStateListener() {
-
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				Set<GetterSetterInsertEditProvider> checkedFunctions = context.selectedFunctions;
 				for (Object currentElement : variableSelectionView.getCheckedElements()) {
@@ -219,6 +220,7 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 		});
 	}
 
+	@Override
 	public void preferenceChange(PreferenceChangeEvent event) {
 		if (variableSelectionView.getTree().isDisposed()) {
 			return;

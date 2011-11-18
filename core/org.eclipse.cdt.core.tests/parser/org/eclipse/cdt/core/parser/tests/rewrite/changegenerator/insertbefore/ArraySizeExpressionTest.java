@@ -7,17 +7,18 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.insertbefore;
 
 import junit.framework.Test;
 
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.ChangeGeneratorTest;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTArrayModifier;
@@ -25,25 +26,25 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLiteralExpression;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
 
-
-
 public class ArraySizeExpressionTest extends ChangeGeneratorTest {
 
-	public ArraySizeExpressionTest(){
-		super("Insert Array Size Expression"); //$NON-NLS-1$
+	ArraySizeExpressionTest() {
+		super("ArraySizeExpressionTest");
+	}
+
+	public static Test suite() {		
+		return new ArraySizeExpressionTest();
 	}
 
 	@Override
 	protected void setUp() throws Exception {
-		source = "int *values = new int[5];"; //$NON-NLS-1$
-		expectedSource = "int *values = new int[6][5];"; //$NON-NLS-1$
+		source = "int* values = new int[5];"; //$NON-NLS-1$
+		expectedSource = "int* values = new int[6][5];"; //$NON-NLS-1$
 		super.setUp();
 	}
-	
 
 	@Override
-	protected ASTVisitor createModificator(
-			final ASTModificationStore modStore) {
+	protected ASTVisitor createModificator(final ASTModificationStore modStore) {
 		return new ASTVisitor() {
 			{
 				shouldVisitExpressions = true;
@@ -56,17 +57,13 @@ public class ArraySizeExpressionTest extends ChangeGeneratorTest {
 					IASTTypeId id= newExpression.getTypeId();
 					IASTArrayDeclarator dtor= (IASTArrayDeclarator) id.getAbstractDeclarator();
 					IASTArrayModifier[] mods= dtor.getArrayModifiers();
-					IASTArrayModifier add= new CPPASTArrayModifier(new CPPASTLiteralExpression(0, "6"));
+					IASTArrayModifier add= new CPPASTArrayModifier(
+							new CPPASTLiteralExpression(IASTLiteralExpression.lk_integer_constant, "6".toCharArray()));
 					ASTModification modification = new ASTModification(ASTModification.ModificationKind.INSERT_BEFORE, mods[0], add, null); 
 					modStore.storeModification(null, modification);
 				}
 				return PROCESS_CONTINUE;
 			}
 		};
-	}
-	
-	public static Test suite() {
-		return new ArraySizeExpressionTest();
-		
 	}
 }

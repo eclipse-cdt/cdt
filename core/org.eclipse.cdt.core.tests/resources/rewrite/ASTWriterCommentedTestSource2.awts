@@ -1,6 +1,7 @@
 //!Commented TemplateFunction1
 //%CPP
-template<typename T> int tempFunct(T p)
+template<typename T> 
+int tempFunct(T p)
 {
     ++p;
     //Kommentar
@@ -12,7 +13,8 @@ template<typename T> int tempFunct(T p)
 //!Commented TemplateFunction2
 //%CPP
 //Kommentar
-template<typename T> int tempFunct(T p)
+template<typename T> 
+int tempFunct(T p)
 {
     ++p;
     p + 4;
@@ -22,7 +24,8 @@ template<typename T> int tempFunct(T p)
 
 //!Commented TemplateFunction3
 //%CPP
-template<typename T> int tempFunct(T p)
+template<typename T> 
+int tempFunct(T p)
 {
     ++p;
     p + 4;

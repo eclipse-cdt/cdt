@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -62,12 +61,12 @@ public class DeclSpecWriter extends NodeWriter {
 	private static final String ENUM = "enum "; //$NON-NLS-1$
 	private static final String _BOOL = "_Bool"; //$NON-NLS-1$
 	
-	public DeclSpecWriter(Scribe scribe, ASTVisitor visitor, NodeCommentMap commentMap) {
+	public DeclSpecWriter(Scribe scribe, ASTWriterVisitor visitor, NodeCommentMap commentMap) {
 		super(scribe, visitor, commentMap);
 	}
 
 	protected void writeDelcSpec(IASTDeclSpecifier declSpec) {
-//		Write general DelcSpec Keywords
+		// Write general DelcSpec Keywords
 		writeDeclSpec(declSpec);
 		if (declSpec instanceof ICPPASTDeclSpecifier) {
 			writeCPPDeclSpec((ICPPASTDeclSpecifier) declSpec);
@@ -129,7 +128,6 @@ public class DeclSpecWriter extends NodeWriter {
 			break;
 		}
 
-		System.err.println("Unknown specifier type: " + type); //$NON-NLS-1$
 		throw new IllegalArgumentException("Unknown specifier type: " + type); //$NON-NLS-1$
 	}
 
@@ -152,7 +150,7 @@ public class DeclSpecWriter extends NodeWriter {
 	}
 
 	private void writeNamedTypeSpecifier(ICPPASTNamedTypeSpecifier namedSpc) {
-		if ( namedSpc.isTypename() ){
+		if (namedSpc.isTypename()) {
 			scribe.print(TYPENAME);
 		}
 		namedSpc.getName().accept(visitor);
@@ -168,7 +166,7 @@ public class DeclSpecWriter extends NodeWriter {
 	}
 
 	private String getElabTypeString(int kind) {
-		switch(kind) {
+		switch (kind) {
 		case IASTElaboratedTypeSpecifier.k_enum:
 			return ENUM;
 		case IASTElaboratedTypeSpecifier.k_struct:
@@ -179,8 +177,7 @@ public class DeclSpecWriter extends NodeWriter {
 			return CLASS_SPACE;
 			
 		default:
-			System.err.println("Unknown ElaboratedType: " + kind); //$NON-NLS-1$
-			throw new IllegalArgumentException("Unknown ElaboratedType: " + kind); //$NON-NLS-1$
+			throw new IllegalArgumentException("Unknown elaborated type: " + kind); //$NON-NLS-1$
 		}
 	}
 
@@ -217,14 +214,13 @@ public class DeclSpecWriter extends NodeWriter {
 		scribe.print('{');
 		scribe.printSpace();
 		IASTEnumerator[] enums = enumSpec.getEnumerators();
-		for (int i = 0; i< enums.length;++i) {
+		for (int i = 0; i < enums.length; ++i) {
 			writeEnumerator(enums[i]);
-			if (i+1< enums.length) {
+			if (i + 1 < enums.length) {
 				scribe.print(NodeWriter.COMMA_SPACE);
 			}
 		}
 		scribe.print('}');
-		
 	}
 
 	private void writeEnumerator(IASTEnumerator enumerator) {
@@ -246,21 +242,22 @@ public class DeclSpecWriter extends NodeWriter {
 			ICPPASTBaseSpecifier[] baseSpecifiers = cppComp.getBaseSpecifiers();
 			if (baseSpecifiers.length > 0) {
 				scribe.print(SPACE_COLON_SPACE);
-				for (int i = 0; i < baseSpecifiers.length;++i) {
+				for (int i = 0; i < baseSpecifiers.length; ++i) {
 					writeBaseSpecifiers(baseSpecifiers[i]);
-					if (i+1 < baseSpecifiers.length) {
+					if (i + 1 < baseSpecifiers.length) {
 						scribe.print(COMMA_SPACE);
 					}
 				}
 				hasTrailingComments = hasTrailingComments(baseSpecifiers[baseSpecifiers.length-1].getName());
 			}
 		}
-		if (!hasTrailingComments){
+		if (!hasTrailingComments) {
 			scribe.newLine();
 		}
 		scribe.print('{');
 		scribe.newLine();
 		scribe.incrementIndentationLevel();
+		visitor.setSuppressLeadingBlankLine(true);
 		IASTDeclaration[] decls = getMembers(compDeclSpec);
 		
 		if (decls.length > 0) {
@@ -285,7 +282,7 @@ public class DeclSpecWriter extends NodeWriter {
 	}
 
 	private void writeBaseSpecifiers(ICPPASTBaseSpecifier specifier) {
-		switch(specifier.getVisibility()) {
+		switch (specifier.getVisibility()) {
 		case ICPPASTBaseSpecifier.v_public:
 			scribe.printStringSpace(PUBLIC);
 			break;
@@ -307,8 +304,7 @@ public class DeclSpecWriter extends NodeWriter {
 		case ICPPASTCompositeTypeSpecifier.k_class:
 			return CLASS;
 		default:
-			System.err.println("Unknow Specifiertype: " + key); //$NON-NLS-1$
-			throw new IllegalArgumentException("Unknow Specifiertype: " + key); //$NON-NLS-1$
+			throw new IllegalArgumentException("Unknown type specifier: " + key); //$NON-NLS-1$
 		}
 	}
 
@@ -319,8 +315,7 @@ public class DeclSpecWriter extends NodeWriter {
 		case IASTCompositeTypeSpecifier.k_union:
 			return UNION;
 		default:
-			System.err.println("Unknow Specifiertype: " + key); //$NON-NLS-1$
-			throw new IllegalArgumentException("Unknow Specifiertype: " + key); //$NON-NLS-1$
+			throw new IllegalArgumentException("Unknown type specifier: " + key); //$NON-NLS-1$
 		}
 	}
 
@@ -328,7 +323,7 @@ public class DeclSpecWriter extends NodeWriter {
 		if (declSpec.isInline()) {
 			scribe.print(INLINE);
 		}
-		switch(declSpec.getStorageClass()) {
+		switch (declSpec.getStorageClass()) {
 		case IASTDeclSpecifier.sc_typedef:
 			scribe.print(TYPEDEF);
 			break;
@@ -369,7 +364,7 @@ public class DeclSpecWriter extends NodeWriter {
 	private void printQualifiers(IASTSimpleDeclSpecifier simpDeclSpec) {
 		if (simpDeclSpec.isSigned()) {
 			scribe.printStringSpace(SIGNED);
-		} else if (simpDeclSpec.isUnsigned()){
+		} else if (simpDeclSpec.isUnsigned()) {
 			scribe.printStringSpace(UNSIGNED);
 		}
 		

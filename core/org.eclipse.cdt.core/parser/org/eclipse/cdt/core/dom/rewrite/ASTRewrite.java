@@ -202,8 +202,8 @@ public final class ASTRewrite {
 	 * changes.
 	 * </p>
 	 * 
-	 * @return Change object describing the changes to the
-	 * document corresponding to the changes recorded by this rewriter
+	 * @return Change object describing the changes to the document corresponding to the changes
+	 *     recorded by this rewriter
 	 * @since 5.0
 	 */
 	public Change rewriteAST() {

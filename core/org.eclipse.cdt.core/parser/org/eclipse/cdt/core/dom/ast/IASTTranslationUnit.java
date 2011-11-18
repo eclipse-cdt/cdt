@@ -64,6 +64,7 @@ public interface IASTTranslationUnit extends IASTDeclarationListOwner, IFileNomi
 	 * 
 	 * @param declaration <code>IASTDeclaration</code>
 	 */
+	@Override
 	public void addDeclaration(IASTDeclaration declaration);
 
 	/**
@@ -324,6 +325,7 @@ public interface IASTTranslationUnit extends IASTDeclarationListOwner, IFileNomi
 	 * @noreference This method is not intended to be referenced by clients.
 	 * @since 5.1
 	 */
+	@Override
 	public IASTTranslationUnit copy();
 
 	/**
@@ -335,6 +337,7 @@ public interface IASTTranslationUnit extends IASTDeclarationListOwner, IFileNomi
 	 * @noreference This method is not intended to be referenced by clients.
 	 * @since 5.3
 	 */
+	@Override
 	public IASTTranslationUnit copy(CopyStyle style);
 
 	/**

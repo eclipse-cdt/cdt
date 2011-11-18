@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.utils;
 
@@ -36,9 +36,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 
 /**
- * A collection of helper methods to interact with the 
- * workbench's IDocuments and IFiles
- *
+ * A collection of helper methods to interact with the workbench's IDocuments and IFiles
  */
 public class EclipseObjects {
 	static public IWorkbenchPage getActivePage() {

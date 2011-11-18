@@ -153,13 +153,13 @@ import org.w3c.dom.ProcessingInstruction;
 public class ManagedBuildManager extends AbstractCExtension {
 
 	public static final String MBS_LANGUAGE_SETTINGS_PROVIDER = "org.eclipse.cdt.managedbuilder.core.LanguageSettingsProvider";
-//	private static final QualifiedName buildInfoProperty = new QualifiedName(ManagedBuilderCorePlugin.getUniqueIdentifier(), "managedBuildInfo");	//$NON-NLS-1$
+//	private static final QualifiedName buildInfoProperty = new QualifiedName(ManagedBuilderCorePlugin.PLUGIN_ID, "managedBuildInfo");	//$NON-NLS-1$
 	private static final String ROOT_NODE_NAME = "ManagedProjectBuildInfo";	//$NON-NLS-1$
 	public  static final String SETTINGS_FILE_NAME = ".cdtbuild";	//$NON-NLS-1$
 	private static final ITarget[] emptyTargets = new ITarget[0];
-	public  static final String INTERFACE_IDENTITY = ManagedBuilderCorePlugin.getUniqueIdentifier() + ".ManagedBuildManager";	//$NON-NLS-1$
-	public  static final String EXTENSION_POINT_ID = ManagedBuilderCorePlugin.getUniqueIdentifier() + ".buildDefinitions";		//$NON-NLS-1$
-	public  static final String EXTENSION_POINT_ID_V2 = ManagedBuilderCorePlugin.getUniqueIdentifier() + ".ManagedBuildInfo";	//$NON-NLS-1$
+	public  static final String INTERFACE_IDENTITY = ManagedBuilderCorePlugin.PLUGIN_ID + ".ManagedBuildManager";	//$NON-NLS-1$
+	public  static final String EXTENSION_POINT_ID = ManagedBuilderCorePlugin.PLUGIN_ID + ".buildDefinitions";		//$NON-NLS-1$
+	public  static final String EXTENSION_POINT_ID_V2 = ManagedBuilderCorePlugin.PLUGIN_ID + ".ManagedBuildInfo";	//$NON-NLS-1$
 	private static final String REVISION_ELEMENT_NAME = "managedBuildRevision";	//$NON-NLS-1$
 	private static final String VERSION_ELEMENT_NAME = "fileVersion";	//$NON-NLS-1$
 	private static final String MANIFEST_VERSION_ERROR ="ManagedBuildManager.error.manifest.version.error";	//$NON-NLS-1$
@@ -188,7 +188,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 	public static final String BUILD_ARTEFACT_TYPE_PROPERTY_STATICLIB = "org.eclipse.cdt.build.core.buildArtefactType.staticLib";	//$NON-NLS-1$
 	public static final String BUILD_ARTEFACT_TYPE_PROPERTY_SHAREDLIB = "org.eclipse.cdt.build.core.buildArtefactType.sharedLib";	//$NON-NLS-1$
 
-	public static final String CFG_DATA_PROVIDER_ID = ManagedBuilderCorePlugin.getUniqueIdentifier() + ".configurationDataProvider"; //$NON-NLS-1$
+	public static final String CFG_DATA_PROVIDER_ID = ManagedBuilderCorePlugin.PLUGIN_ID + ".configurationDataProvider"; //$NON-NLS-1$
 
 	private static final String NEWLINE = System.getProperty("line.separator");	//$NON-NLS-1$
 
@@ -261,16 +261,19 @@ public class ManagedBuildManager extends AbstractCExtension {
 	private static Map<IProject, IManagedBuildInfo> fInfoMap = new HashMap<IProject, IManagedBuildInfo>();
 
 	private static ISorter fToolChainSorter = new ISorter(){
+		@Override
 		public void sort() {
 			resortToolChains();
 		}
 	};
 	private static ISorter fToolSorter = new ISorter(){
+		@Override
 		public void sort() {
 			resortTools();
 		}
 	};
 	private static ISorter fBuilderSorter = new ISorter(){
+		@Override
 		public void sort() {
 			resortBuilders();
 		}
@@ -284,6 +287,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 	static {
 		getEnvironmentVariableProvider().subscribe(
 				fEnvironmentBuildPathsChangeListener = new IEnvironmentBuildPathsChangeListener(){
+					@Override
 					public void buildPathsChanged(IConfiguration configuration, int buildPathType){
 //						if(buildPathType == IEnvVarBuildPath.BUILDPATH_INCLUDE){
 //							initializePathEntries(configuration,null);
@@ -1331,6 +1335,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 			if (shell != null) {
 				final String exceptionMsg = err.getMessage();
 				shell.getDisplay().syncExec( new Runnable() {
+					@Override
 					public void run() {
 						MessageDialog.openError(shell,
 								ManagedMakeMessages.getResourceString("ManagedBuildManager.error.write_failed_title"),	//$NON-NLS-1$
@@ -1880,13 +1885,13 @@ public class ManagedBuildManager extends AbstractCExtension {
 			initBuildInfoContainer(buildInfo);
 		} catch (CoreException e) {
 			return new Status(IStatus.ERROR,
-				ManagedBuilderCorePlugin.getUniqueIdentifier(),
+				ManagedBuilderCorePlugin.PLUGIN_ID,
 				IStatus.ERROR,
 				e.getLocalizedMessage(),
 				e);
 		}
 		return new Status(IStatus.OK,
-			ManagedBuilderCorePlugin.getUniqueIdentifier(),
+			ManagedBuilderCorePlugin.PLUGIN_ID,
 			IStatus.OK,
 			ManagedMakeMessages.getFormattedString("ManagedBuildInfo.message.init.ok", resource.getName()),	//$NON-NLS-1$
 			null);
@@ -1903,7 +1908,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 //	private static void initBuildInfoContainer(ManagedBuildInfo info) throws CoreException {
 //		if (info == null) {
 //			throw new CoreException(new Status(IStatus.ERROR,
-//					ManagedBuilderCorePlugin.getUniqueIdentifier(),
+//					ManagedBuilderCorePlugin.PLUGIN_ID,
 //					IStatus.ERROR,
 //					new String(),
 //					null));
@@ -2156,6 +2161,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 						final Shell shell = window.getShell();
 						final String errMsg = ManagedMakeMessages.getFormattedString(MANIFEST_VERSION_ERROR, extension.getUniqueIdentifier());
 						shell.getDisplay().asyncExec( new Runnable() {
+							@Override
 							public void run() {
 								MessageDialog.openError(shell,
 										ManagedMakeMessages.getResourceString("ManagedBuildManager.error.manifest_load_failed_title"),	//$NON-NLS-1$
@@ -2943,7 +2949,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 				if(info != null)
 					doSetLoaddedInfo(project, info, false);
 			} catch (Exception e) {
-				throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), e.getLocalizedMessage(), e));
+				throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, e.getLocalizedMessage(), e));
 			}
 		}
 
@@ -4585,6 +4591,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 			 *
 			 * @see org.eclipse.core.resources.IWorkspaceRunnable#run(org.eclipse.core.runtime.IProgressMonitor)
 			 */
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				int ticks = 1;
 				if (buildKind==IncrementalProjectBuilder.CLEAN_BUILD) {

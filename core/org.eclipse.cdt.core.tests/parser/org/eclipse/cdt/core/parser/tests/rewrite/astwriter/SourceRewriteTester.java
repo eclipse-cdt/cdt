@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.astwriter;
 
@@ -31,7 +31,6 @@ import org.eclipse.jface.text.TextSelection;
 import org.osgi.framework.Bundle;
 
 public class SourceRewriteTester extends TestSuite {
-	
 	private static final String testRegexp = "//!(.*)\\s*(\\w*)*$"; //$NON-NLS-1$
 	private static final String codeTypeRegexp = "//%(C|CPP)( GNU)?$"; //$NON-NLS-1$
 	private static final String resultRegexp = "//=.*$"; //$NON-NLS-1$
@@ -56,8 +55,8 @@ public class SourceRewriteTester extends TestSuite {
 	private static TestSuite createSuite(ArrayList<RewriteBaseTest> testCases, String name) {
 		TestSuite suite = new TestSuite(name);
 		Iterator<RewriteBaseTest> it = testCases.iterator();
-		while(it.hasNext()) {
-			RewriteBaseTest subject =it.next();
+		while (it.hasNext()) {
+			RewriteBaseTest subject = it.next();
 			suite.addTest(subject);
 		}
 		return suite;
@@ -77,10 +76,11 @@ public class SourceRewriteTester extends TestSuite {
 	
 	protected static String getNameOfTest(String line) {
 		Matcher matcherBeginOfTest = createMatcherFromString(testRegexp, line);
-		if(matcherBeginOfTest.find())
+		if (matcherBeginOfTest.find()) {
 			return matcherBeginOfTest.group(1);
-		else
+		} else {
 			return "Not Named";
+		}
 	}
 
 	protected static boolean lineMatchesBeginOfResult(String line) {
@@ -88,37 +88,37 @@ public class SourceRewriteTester extends TestSuite {
 	}
 
 	private static ArrayList<RewriteBaseTest> createTests(BufferedReader inputReader) throws Exception {
-		String line;
 		ASTWriterTestSourceFile file = null;
 		MatcherState matcherState = MatcherState.skip;
 		ArrayList<RewriteBaseTest> testCases = new ArrayList<RewriteBaseTest>();
 		
-		while ((line = inputReader.readLine()) != null){
-			if(lineMatchesBeginOfTest(line)) {
+		String line;
+		while ((line = inputReader.readLine()) != null) {
+			if (lineMatchesBeginOfTest(line)) {
 				matcherState = MatcherState.inTest;
 				file = new ASTWriterTestSourceFile("ASTWritterTest.h"); //$NON-NLS-1$
 				testCases.add(createTestClass(getNameOfTest(line), file));
 				continue;
-			}	else if (lineMatchesBeginOfResult(line)) {
+			} else if (lineMatchesBeginOfResult(line)) {
 				matcherState = MatcherState.inExpectedResult;
 				continue;
-			}else if (lineMatchesCodeType(line)) {
+			} else if (lineMatchesCodeType(line)) {
 				matcherState = MatcherState.inSource;
-				if(file != null) {
+				if (file != null) {
 					file.setParserLanguage(getParserLanguage(line));
 					file.setUseGNUExtensions(useGNUExtensions(line));
 				}
 				continue;
 			}
 			
-			switch(matcherState) {
+			switch (matcherState) {
 			case inSource:
-				if(file != null) {
+				if (file != null) {
 					file.addLineToSource(line);
 				}
 				break;
 			case inExpectedResult:
-				if(file != null) {
+				if (file != null) {
 					file.addLineToExpectedSource(line);
 				}
 				break;
@@ -131,11 +131,11 @@ public class SourceRewriteTester extends TestSuite {
 
 	protected static boolean useGNUExtensions(String line) {
 		Matcher matcherBeginOfTest = createMatcherFromString(codeTypeRegexp, line);
-		if(matcherBeginOfTest.find()) {
+		if (matcherBeginOfTest.find()) {
 			String codeType = matcherBeginOfTest.group(2);
-			if(codeType == null) {
+			if (codeType == null) {
 				return false;
-			}else {
+			} else {
 				return true;
 			}
 		}
@@ -144,11 +144,11 @@ public class SourceRewriteTester extends TestSuite {
 
 	protected static ParserLanguage getParserLanguage(String line) {
 		Matcher matcherBeginOfTest = createMatcherFromString(codeTypeRegexp, line);
-		if(matcherBeginOfTest.find()) {
+		if (matcherBeginOfTest.find()) {
 			String codeType = matcherBeginOfTest.group(1);
-			if(codeType.equalsIgnoreCase("CPP")) { //$NON-NLS-1$
+			if (codeType.equalsIgnoreCase("CPP")) { //$NON-NLS-1$
 				return ParserLanguage.CPP;
-			}else {
+			} else {
 				return ParserLanguage.C;
 			}
 		}
@@ -156,9 +156,9 @@ public class SourceRewriteTester extends TestSuite {
 	}
 	
 	private static RewriteBaseTest createTestClass(String testName, ASTWriterTestSourceFile file) throws Exception {
-		ASTWriterTest test = new ASTWriterTest(testName,file);
+		ASTWriterTest test = new ASTWriterTest(testName, file);
 		TextSelection sel = file.getSelection();
-		if(sel != null) {
+		if (sel != null) {
 			test.setFileWithSelection(file.getName());
 			test.setSelection(sel);
 		}

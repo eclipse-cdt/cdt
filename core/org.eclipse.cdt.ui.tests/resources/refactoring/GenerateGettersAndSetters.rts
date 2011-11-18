@@ -3,16 +3,14 @@
 //@.config
 filename=C.h
 getters=name
-inHeader=true
 //@C.cpp
 #include "C.h"
 
-int Person::SocSecNo(){
+int Person::SocSecNo() {
 	return socSecNo;
 }
 
-int main(int argc, char **argv) {
-	
+int main(int argc, char** argv) {
 }
 
 //=
@@ -21,40 +19,34 @@ int main(int argc, char **argv) {
 #define C_H_
 
 class Person {
-
 private:
-
-  int systemId;
+	int systemId;
 
 protected:
-
-  char *name;
+	char* name;
 
 public:
+	const int socSecNo;
 
-  const int socSecNo;
-  
-  Person myFriend;
+	Person myFriend;
 
+	Person(int socSecNo); // contructor
 
-  Person(int socSecNo); // contructor
-
-  ~Person(); // destructor
-
+	~Person(); // destructor
 
 	char*   Name();
-	
-	void    Print();
-	
-	int     /*$*/SocSecNo/*$$*/();
-	
-	int     GetUniqueId();
-	
-	int getSystemId(){
+
+	void	Print();
+
+	int	 /*$*/SocSecNo/*$$*/();
+
+	int	 GetUniqueId();
+
+	int getSystemId() {
 		return systemId;
 	}
-	
-	void setSystemId(int systemId){
+
+	void setSystemId(int systemId) {
 		this->systemId = systemId;
 	}
 };
@@ -67,44 +59,38 @@ int gooo = 1;
 #define C_H_
 
 class Person {
-
 private:
-
-  int systemId;
+	int systemId;
 
 protected:
-
-  char *name;
+	char* name;
 
 public:
+	const int socSecNo;
 
-  const int socSecNo;
-  
-  Person myFriend;
+	Person myFriend;
 
+	Person(int socSecNo); // contructor
 
-  Person(int socSecNo); // contructor
-
-  ~Person(); // destructor
-
+	~Person(); // destructor
 
 	char*   Name();
-	
-	void    Print();
-	
-	int     SocSecNo();
-	
-	int     GetUniqueId();
-    char *getName() const
-    {
-        return name;
-    }
-	
-	int getSystemId(){
+
+	void	Print();
+
+	int	 SocSecNo();
+
+	int	 GetUniqueId();
+
+	char* getName() const {
+		return name;
+	}
+
+	int getSystemId() {
 		return systemId;
 	}
-	
-	void setSystemId(int systemId){
+
+	void setSystemId(int systemId) {
 		this->systemId = systemId;
 	}
 };
@@ -117,16 +103,14 @@ int gooo = 1;
 //@.config
 filename=C.h
 getters=name
-inHeader=true
 //@C.cpp
 #include "C.h"
 
-int Person::SocSecNo(){
+int Person::SocSecNo() {
 	return socSecNo;
 }
 
-int main(int argc, char **argv) {
-	
+int main(int argc, char** argv) {
 }
 
 //=
@@ -135,44 +119,40 @@ int main(int argc, char **argv) {
 #define C_H_
 
 namespace Personal {
-	class Person {
-	
-	private:
-	
-	  int systemId;
-	
-	protected:
-	
-	  char *name;
-	
-	public:
-	
-	  const int socSecNo;
-	  
-	  Person myFriend;
-	
-	
-	  Person(int socSecNo); // contructor
-	
-	  ~Person(); // destructor
-	
-	
-		char*   Name();
-		
-		void    Print();
-		
-		int     /*$*/SocSecNo/*$$*/();
-		
-		int     GetUniqueId();
-		
-		int getSystemId(){
-			return systemId;
-		}
-		
-		void setSystemId(int systemId){
-			this->systemId = systemId;
-		}
-	};
+
+class Person {
+private:
+	int systemId;
+
+protected:
+	char* name;
+
+public:
+	const int socSecNo;
+
+	Person myFriend;
+
+	Person(int socSecNo); // contructor
+
+	~Person(); // destructor
+
+	char*   Name();
+
+	void	Print();
+
+	int	 /*$*/SocSecNo/*$$*/();
+
+	int	 GetUniqueId();
+
+	int getSystemId() {
+		return systemId;
+	}
+
+	void setSystemId(int systemId) {
+		this->systemId = systemId;
+	}
+};
+
 }
 
 int gooo = 1;
@@ -184,48 +164,44 @@ int gooo = 1;
 #define C_H_
 
 namespace Personal {
-	class Person {
-	
-	private:
-	
-	  int systemId;
-	
-	protected:
-	
-	  char *name;
-	
-	public:
-	
-	  const int socSecNo;
-	  
-	  Person myFriend;
-	
-	
-	  Person(int socSecNo); // contructor
-	
-	  ~Person(); // destructor
-	
-	
-		char*   Name();
-		
-		void    Print();
-		
-		int     SocSecNo();
-		
-		int     GetUniqueId();
-	    char *getName() const
-	    {
-	        return name;
-	    }
-		
-		int getSystemId(){
-			return systemId;
-		}
-		
-		void setSystemId(int systemId){
-			this->systemId = systemId;
-		}
-	};
+
+class Person {
+private:
+	int systemId;
+
+protected:
+	char* name;
+
+public:
+	const int socSecNo;
+
+	Person myFriend;
+
+	Person(int socSecNo); // contructor
+
+	~Person(); // destructor
+
+	char*   Name();
+
+	void	Print();
+
+	int	 SocSecNo();
+
+	int	 GetUniqueId();
+
+	char* getName() const {
+		return name;
+	}
+
+	int getSystemId() {
+		return systemId;
+	}
+
+	void setSystemId(int systemId) {
+		this->systemId = systemId;
+	}
+};
+
 }
 
 int gooo = 1;
@@ -237,16 +213,14 @@ int gooo = 1;
 //@.config
 filename=C.h
 setters=name
-inHeader=true
 //@C.cpp
 #include "C.h"
 
-int Person::SocSecNo(){
+int Person::SocSecNo() {
 	return socSecNo;
 }
 
-int main(int argc, char **argv) {
-	
+int main(int argc, char** argv) {
 }
 
 //=
@@ -255,40 +229,34 @@ int main(int argc, char **argv) {
 #define C_H_
 
 class Person {
-
 private:
-
-  int systemId;
+	int systemId;
 
 protected:
-
-  char *name;
+	char* name;
 
 public:
+	const int socSecNo;
 
-  const int socSecNo;
-  
-  Person myFriend;
+	Person myFriend;
 
+	Person(int socSecNo); // contructor
 
-  Person(int socSecNo); // contructor
-
-  ~Person(); // destructor
-
+	~Person(); // destructor
 
 	char*   Name();
-	
-	void    Print();
-	
-	int     /*$*/SocSecNo/*$$*/();
-	
-	int     GetUniqueId();
-	
-	int getSystemId(){
+
+	void	Print();
+
+	int	 /*$*/SocSecNo/*$$*/();
+
+	int	 GetUniqueId();
+
+	int getSystemId() {
 		return systemId;
 	}
-	
-	void setSystemId(int systemId){
+
+	void setSystemId(int systemId) {
 		this->systemId = systemId;
 	}
 };
@@ -302,44 +270,38 @@ int gooo = 1;
 #define C_H_
 
 class Person {
-
 private:
-
-  int systemId;
+	int systemId;
 
 protected:
-
-  char *name;
+	char* name;
 
 public:
+	const int socSecNo;
 
-  const int socSecNo;
-  
-  Person myFriend;
+	Person myFriend;
 
+	Person(int socSecNo); // contructor
 
-  Person(int socSecNo); // contructor
-
-  ~Person(); // destructor
-
+	~Person(); // destructor
 
 	char*   Name();
-	
-	void    Print();
-	
-	int     SocSecNo();
-	
-	int     GetUniqueId();
-    void setName(char *name)
-    {
-        this->name = name;
-    }
-	
-	int getSystemId(){
+
+	void	Print();
+
+	int	 SocSecNo();
+
+	int	 GetUniqueId();
+
+	void setName(char* name) {
+		this->name = name;
+	}
+
+	int getSystemId() {
 		return systemId;
 	}
-	
-	void setSystemId(int systemId){
+
+	void setSystemId(int systemId) {
 		this->systemId = systemId;
 	}
 };
@@ -354,16 +316,14 @@ int gooo = 1;
 filename=C.h
 setters=name
 getters=name
-inHeader=true
 //@C.cpp
 #include "C.h"
 
-int Person::SocSecNo(){
+int Person::SocSecNo() {
 	return socSecNo;
 }
 
-int main(int argc, char **argv) {
-	
+int main(int argc, char** argv) {
 }
 
 //=
@@ -372,40 +332,34 @@ int main(int argc, char **argv) {
 #define C_H_
 
 class Person {
-
 private:
-
-  int systemId;
+	int systemId;
 
 protected:
-
-  char *name;
+	char* name;
 
 public:
+	const int socSecNo;
 
-  const int socSecNo;
-  
-  Person myFriend;
+	Person myFriend;
 
+	Person(int socSecNo); // contructor
 
-  Person(int socSecNo); // contructor
-
-  ~Person(); // destructor
-
+	~Person(); // destructor
 
 	char*   Name();
-	
-	void    Print();
-	
-	int     /*$*/SocSecNo/*$$*/();
-	
-	int     GetUniqueId();
-	
-	int getSystemId(){
+
+	void	Print();
+
+	int	 /*$*/SocSecNo/*$$*/();
+
+	int	 GetUniqueId();
+
+	int getSystemId() {
 		return systemId;
 	}
-	
-	void setSystemId(int systemId){
+
+	void setSystemId(int systemId) {
 		this->systemId = systemId;
 	}
 };
@@ -419,49 +373,42 @@ int gooo = 1;
 #define C_H_
 
 class Person {
-
 private:
-
-  int systemId;
+	int systemId;
 
 protected:
-
-  char *name;
+	char* name;
 
 public:
+	const int socSecNo;
 
-  const int socSecNo;
-  
-  Person myFriend;
+	Person myFriend;
 
+	Person(int socSecNo); // contructor
 
-  Person(int socSecNo); // contructor
-
-  ~Person(); // destructor
-
+	~Person(); // destructor
 
 	char*   Name();
-	
-	void    Print();
-	
-	int     SocSecNo();
-	
-	int     GetUniqueId();
-    char *getName() const
-    {
-        return name;
-    }
 
-    void setName(char *name)
-    {
-        this->name = name;
-    }
-	
-	int getSystemId(){
+	void	Print();
+
+	int	 SocSecNo();
+
+	int	 GetUniqueId();
+
+	char* getName() const {
+		return name;
+	}
+
+	void setName(char* name) {
+		this->name = name;
+	}
+
+	int getSystemId() {
 		return systemId;
 	}
-	
-	void setSystemId(int systemId){
+
+	void setSystemId(int systemId) {
 		this->systemId = systemId;
 	}
 };
@@ -476,16 +423,14 @@ int gooo = 1;
 filename=C.h
 getters=name,systemId
 setters=name,systemId
-inHeader=true
 //@C.cpp
 #include "C.h"
 
-int Person::SocSecNo(){
+int Person::SocSecNo() {
 	return socSecNo;
 }
 
-int main(int argc, char **argv) {
-	
+int main(int argc, char** argv) {
 }
 
 //=
@@ -494,35 +439,28 @@ int main(int argc, char **argv) {
 #define C_H_
 
 class Person {
-
 private:
-
-  int systemId;
+	int systemId;
 
 protected:
-
-  char *name;
+	char* name;
 
 public:
+	const int socSecNo;
 
-  const int socSecNo;
-  
-  Person myFriend;
+	Person myFriend;
 
+	Person(int socSecNo); // contructor
 
-  Person(int socSecNo); // contructor
-
-  ~Person(); // destructor
-
+	~Person(); // destructor
 
 	char*   Name();
-	
-	void    Print();
-	
-	int     /*$*/SocSecNo/*$$*/();
-	
-	int     GetUniqueId();
 
+	void	Print();
+
+	int	 /*$*/SocSecNo/*$$*/();
+
+	int	 GetUniqueId();
 };
 
 int gooo = 1;
@@ -534,54 +472,44 @@ int gooo = 1;
 #define C_H_
 
 class Person {
-
 private:
-
-  int systemId;
+	int systemId;
 
 protected:
-
-  char *name;
+	char* name;
 
 public:
+	const int socSecNo;
 
-  const int socSecNo;
-  
-  Person myFriend;
-    char *getName() const
-    {
-        return name;
-    }
+	Person myFriend;
 
-    int getSystemId() const
-    {
-        return systemId;
-    }
+	char* getName() const {
+		return name;
+	}
 
-    void setName(char *name)
-    {
-        this->name = name;
-    }
+	int getSystemId() const {
+		return systemId;
+	}
 
-    void setSystemId(int systemId)
-    {
-        this->systemId = systemId;
-    }
+	void setName(char* name) {
+		this->name = name;
+	}
 
+	void setSystemId(int systemId) {
+		this->systemId = systemId;
+	}
 
-  Person(int socSecNo); // contructor
+	Person(int socSecNo); // contructor
 
-  ~Person(); // destructor
-
+	~Person(); // destructor
 
 	char*   Name();
-	
-	void    Print();
-	
-	int     SocSecNo();
-	
-	int     GetUniqueId();
 
+	void	Print();
+
+	int	 SocSecNo();
+
+	int	 GetUniqueId();
 };
 
 int gooo = 1;
@@ -594,7 +522,6 @@ int gooo = 1;
 filename=GaS.h
 getters=i,ok
 setters=i,ok
-inHeader=true
 //@GaS.cpp
 #include "Getters.h"
 
@@ -631,25 +558,22 @@ public:
 	virtual ~GaS();
 	bool ok;
 	void method2();
-    int getI() const
-    {
-        return i;
-    }
 
-    bool isOk() const
-    {
-        return ok;
-    }
+	int getI() const {
+		return i;
+	}
 
-    void setI(int i)
-    {
-        this->i = i;
-    }
+	bool isOk() const {
+		return ok;
+	}
 
-    void setOk(bool ok)
-    {
-        this->ok = ok;
-    }
+	void setI(int i) {
+		this->i = i;
+	}
+
+	void setOk(bool ok) {
+		this->ok = ok;
+	}
 
 private:
 	int i;
@@ -663,14 +587,13 @@ private:
 filename=C.h
 getters=id
 setters=id
-inHeader=true
 //@C.h
 #ifndef C_H_
 #define C_H_
 
 class Person {
 private:
-  int /*$*/id/*$$*/;
+	int /*$*/id/*$$*/;
 };
 
 #endif /*C_H_*/
@@ -681,17 +604,16 @@ private:
 
 class Person {
 private:
-  int id;
-public:
-    int getId() const
-    {
-        return id;
-    }
+	int id;
 
-    void setId(int id)
-    {
-        this->id = id;
-    }
+public:
+	int getId() const {
+		return id;
+	}
+
+	void setId(int id) {
+		this->id = id;
+	}
 };
 
 #endif /*C_H_*/
@@ -702,7 +624,6 @@ public:
 filename=C.h
 getters=i
 setters=i
-inHeader=true
 //@C.h
 /*
  * test.h
@@ -712,8 +633,7 @@ inHeader=true
 #define TEST_H_
 
 //comment1
-class test
-{
+class test {
 	int /*$*/i/*$$*/; //comment2
 	char* b;
 	//comment3
@@ -730,21 +650,19 @@ class test
 #define TEST_H_
 
 //comment1
-class test
-{
+class test {
 	int i; //comment2
 	char* b;
-public:
-    int getI() const
-    {
-        return i;
-    }
-
-    void setI(int i)
-    {
-        this->i = i;
-    }
 	//comment3
+
+public:
+	int getI() const {
+		return i;
+	}
+
+	void setI(int i) {
+		this->i = i;
+	}
 };
 
 #endif /* TEST_H_ */
@@ -763,8 +681,7 @@ fatalerror=true
 #define TEST_H_
 
 //comment1
-class test
-{
+class test {
 	void /*$*/test/*$$*/();
 	//comment3
 };
@@ -780,44 +697,41 @@ class test
 #define TEST_H_
 
 //comment1
-class test
-{
+class test {
 	void test();
 	//comment3
 };
 
 #endif /* TEST_H_ */
 
-//!Generate Getters and Setters One Getter Selection Implementation in CPP
+//!Generate Getters and Setters One Getter Selection Separate Definition
 //#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
 //@.config
 filename=C.h
 getters=name
+definitionSeparate=true
 //@C.cpp
 #include "C.h"
 
-int Person::SocSecNo(){
+int Person::SocSecNo() {
 	return socSecNo;
 }
 
-int main(int argc, char **argv) {
-	
+int main(int argc, char** argv) {
 }
 
 //=
 #include "C.h"
 
-char *Person::getName() const
-{
-    return name;
+char* Person::getName() const {
+	return name;
 }
 
-int Person::SocSecNo(){
+int Person::SocSecNo() {
 	return socSecNo;
 }
 
-int main(int argc, char **argv) {
-	
+int main(int argc, char** argv) {
 }
 
 //@C.h
@@ -825,37 +739,31 @@ int main(int argc, char **argv) {
 #define C_H_
 
 class Person {
-
 private:
-
-  int systemId;
+	int systemId;
 
 protected:
-
-  char *name;
+	char* name;
 
 public:
+	const int socSecNo;
 
-  const int socSecNo;
-  
-  Person myFriend;
+	Person myFriend;
 
+	Person(int socSecNo); // contructor
 
-  Person(int socSecNo); // contructor
-
-  ~Person(); // destructor
-
+	~Person(); // destructor
 
 	char*   Name();
-	
-	void    Print();
-	
-	int     /*$*/SocSecNo/*$$*/();
-	
-	int     GetUniqueId();
-	
+
+	void	Print();
+
+	int	 /*$*/SocSecNo/*$$*/();
+
+	int	 GetUniqueId();
+
 	int getSystemId();
-	
+
 	void setSystemId(int systemId);
 };
 
@@ -867,49 +775,44 @@ int gooo = 1;
 #define C_H_
 
 class Person {
-
 private:
-
-  int systemId;
+	int systemId;
 
 protected:
-
-  char *name;
+	char* name;
 
 public:
+	const int socSecNo;
 
-  const int socSecNo;
-  
-  Person myFriend;
-    char *getName() const;
+	Person myFriend;
+	char* getName() const;
 
+	Person(int socSecNo); // contructor
 
-  Person(int socSecNo); // contructor
-
-  ~Person(); // destructor
-
+	~Person(); // destructor
 
 	char*   Name();
-	
-	void    Print();
-	
-	int     SocSecNo();
-	
-	int     GetUniqueId();
-	
+
+	void	Print();
+
+	int	 SocSecNo();
+
+	int	 GetUniqueId();
+
 	int getSystemId();
-	
+
 	void setSystemId(int systemId);
 };
 
 int gooo = 1;
 
 #endif /*C_H_*/
-//!Generate Getters and Setters One Getter Selection with Namespace Implementation in CPP
+//!Generate Getters and Setters One Getter Selection with Namespace Separate Definition
 //#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
 //@.config
 filename=C.h
 getters=name
+definitionSeparate=true
 //@C.cpp
 #include "C.h"
 
@@ -921,17 +824,17 @@ int Person::SocSecNo() {
 
 } // namespace Personal
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
 }
 
 //=
 #include "C.h"
 
 namespace Personal {
-    char *Person::getName() const
-    {
-        return name;
-    }
+
+char* Person::getName() const {
+	return name;
+}
 
 int Person::SocSecNo() {
 	return socSecNo;
@@ -939,7 +842,7 @@ int Person::SocSecNo() {
 
 } // namespace Personal
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
 }
 
 //@C.h
@@ -947,44 +850,40 @@ int main(int argc, char **argv) {
 #define C_H_
 
 namespace Personal {
-	class Person {
-	
-	private:
-	
-	  int systemId;
-	
-	protected:
-	
-	  char *name;
-	
-	public:
-	
-	  const int socSecNo;
-	  
-	  Person myFriend;
-	
-	
-	  Person(int socSecNo); // contructor
-	
-	  ~Person(); // destructor
-	
-	
-		char*   Name();
-		
-		void    Print();
-		
-		int     /*$*/SocSecNo/*$$*/();
-		
-		int     GetUniqueId();
-		
-		int getSystemId(){
-			return systemId;
-		}
-		
-		void setSystemId(int systemId){
-			this->systemId = systemId;
-		}
-	};
+
+class Person {
+private:
+	int systemId;
+
+protected:
+	char* name;
+
+public:
+	const int socSecNo;
+
+	Person myFriend;
+
+	Person(int socSecNo); // contructor
+
+	~Person(); // destructor
+
+	char*   Name();
+
+	void	Print();
+
+	int	 /*$*/SocSecNo/*$$*/();
+
+	int	 GetUniqueId();
+
+	int getSystemId() {
+		return systemId;
+	}
+
+	void setSystemId(int systemId) {
+		this->systemId = systemId;
+	}
+};
+
 }
 
 int gooo = 1;
@@ -996,82 +895,76 @@ int gooo = 1;
 #define C_H_
 
 namespace Personal {
-	class Person {
-	
-	private:
-	
-	  int systemId;
-	
-	protected:
-	
-	  char *name;
-	
-	public:
-	
-	  const int socSecNo;
-	  
-	  Person myFriend;
-	
-	
-	  Person(int socSecNo); // contructor
-	
-	  ~Person(); // destructor
-	
-	
-		char*   Name();
-		
-		void    Print();
-		
-		int     SocSecNo();
-		
-		int     GetUniqueId();
-	    char *getName() const;
-		
-		int getSystemId(){
-			return systemId;
-		}
-		
-		void setSystemId(int systemId){
-			this->systemId = systemId;
-		}
-	};
+
+class Person {
+private:
+	int systemId;
+
+protected:
+	char* name;
+
+public:
+	const int socSecNo;
+
+	Person myFriend;
+
+	Person(int socSecNo); // contructor
+
+	~Person(); // destructor
+
+	char*   Name();
+
+	void	Print();
+
+	int	 SocSecNo();
+
+	int	 GetUniqueId();
+	char* getName() const;
+
+	int getSystemId() {
+		return systemId;
+	}
+
+	void setSystemId(int systemId) {
+		this->systemId = systemId;
+	}
+};
+
 }
 
 int gooo = 1;
 
 #endif /*C_H_*/
 
-//!Generate Getters and Setters One Setter Selection Implementation in CPP
+//!Generate Getters and Setters One Setter Selection Separate Definition
 //#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
 //@.config
 filename=C.h
 setters=name
+definitionSeparate=true
 //@C.cpp
 #include "C.h"
 
-int Person::SocSecNo(){
+int Person::SocSecNo() {
 	return socSecNo;
 }
 
-int main(int argc, char **argv) {
-	
+int main(int argc, char** argv) {
 }
 
 
 //=
 #include "C.h"
 
-void Person::setName(char *name)
-{
-    this->name = name;
+void Person::setName(char* name) {
+	this->name = name;
 }
 
-int Person::SocSecNo(){
+int Person::SocSecNo() {
 	return socSecNo;
 }
 
-int main(int argc, char **argv) {
-	
+int main(int argc, char** argv) {
 }
 
 
@@ -1080,40 +973,34 @@ int main(int argc, char **argv) {
 #define C_H_
 
 class Person {
-
 private:
-
-  int systemId;
+	int systemId;
 
 protected:
-
-  char *name;
+	char* name;
 
 public:
+	const int socSecNo;
 
-  const int socSecNo;
-  
-  Person myFriend;
+	Person myFriend;
 
+	Person(int socSecNo); // contructor
 
-  Person(int socSecNo); // contructor
-
-  ~Person(); // destructor
-
+	~Person(); // destructor
 
 	char*   Name();
-	
-	void    Print();
-	
-	int     /*$*/SocSecNo/*$$*/();
-	
-	int     GetUniqueId();
-	
-	int getSystemId(){
+
+	void	Print();
+
+	int	 /*$*/SocSecNo/*$$*/();
+
+	int	 GetUniqueId();
+
+	int getSystemId() {
 		return systemId;
 	}
-	
-	void setSystemId(int systemId){
+
+	void setSystemId(int systemId) {
 		this->systemId = systemId;
 	}
 };
@@ -1127,41 +1014,35 @@ int gooo = 1;
 #define C_H_
 
 class Person {
-
 private:
-
-  int systemId;
+	int systemId;
 
 protected:
-
-  char *name;
+	char* name;
 
 public:
+	const int socSecNo;
 
-  const int socSecNo;
-  
-  Person myFriend;
+	Person myFriend;
 
+	Person(int socSecNo); // contructor
 
-  Person(int socSecNo); // contructor
-
-  ~Person(); // destructor
-
+	~Person(); // destructor
 
 	char*   Name();
-	
-	void    Print();
-	
-	int     SocSecNo();
-	
-	int     GetUniqueId();
-    void setName(char *name);
-	
-	int getSystemId(){
+
+	void	Print();
+
+	int	 SocSecNo();
+
+	int	 GetUniqueId();
+	void setName(char* name);
+
+	int getSystemId() {
 		return systemId;
 	}
-	
-	void setSystemId(int systemId){
+
+	void setSystemId(int systemId) {
 		this->systemId = systemId;
 	}
 };
@@ -1170,42 +1051,39 @@ public:
 int gooo = 1;
 
 #endif /*C_H_*/
-//!Getter and Setter Selection Implementation in CPP
+//!Getter and Setter Selection Separate Definition
 //#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
 //@.config
 filename=C.h
 setters=name
 getters=name
+definitionSeparate=true
 //@C.cpp
 #include "C.h"
 
-int Person::SocSecNo(){
+int Person::SocSecNo() {
 	return socSecNo;
 }
 
-int main(int argc, char **argv) {
-	
+int main(int argc, char** argv) {
 }
 
 //=
 #include "C.h"
 
-char *Person::getName() const
-{
-    return name;
+char* Person::getName() const {
+	return name;
 }
 
-void Person::setName(char *name)
-{
-    this->name = name;
+void Person::setName(char* name) {
+	this->name = name;
 }
 
-int Person::SocSecNo(){
+int Person::SocSecNo() {
 	return socSecNo;
 }
 
-int main(int argc, char **argv) {
-	
+int main(int argc, char** argv) {
 }
 
 //@C.h
@@ -1213,40 +1091,34 @@ int main(int argc, char **argv) {
 #define C_H_
 
 class Person {
-
 private:
-
-  int systemId;
+	int systemId;
 
 protected:
-
-  char *name;
+	char* name;
 
 public:
+	const int socSecNo;
 
-  const int socSecNo;
-  
-  Person myFriend;
+	Person myFriend;
 
+	Person(int socSecNo); // contructor
 
-  Person(int socSecNo); // contructor
-
-  ~Person(); // destructor
-
+	~Person(); // destructor
 
 	char*   Name();
-	
-	void    Print();
-	
-	int     /*$*/SocSecNo/*$$*/();
-	
-	int     GetUniqueId();
-	
-	int getSystemId(){
+
+	void	Print();
+
+	int	 /*$*/SocSecNo/*$$*/();
+
+	int	 GetUniqueId();
+
+	int getSystemId() {
 		return systemId;
 	}
-	
-	void setSystemId(int systemId){
+
+	void setSystemId(int systemId) {
 		this->systemId = systemId;
 	}
 };
@@ -1261,42 +1133,36 @@ int gooo = 1;
 #define C_H_
 
 class Person {
-
 private:
-
-  int systemId;
+	int systemId;
 
 protected:
-
-  char *name;
+	char* name;
 
 public:
+	const int socSecNo;
 
-  const int socSecNo;
-  
-  Person myFriend;
+	Person myFriend;
 
+	Person(int socSecNo); // contructor
 
-  Person(int socSecNo); // contructor
-
-  ~Person(); // destructor
-
+	~Person(); // destructor
 
 	char*   Name();
-	
-	void    Print();
-	
-	int     SocSecNo();
-	
-	int     GetUniqueId();
-    char *getName() const;
-    void setName(char *name);
-	
-	int getSystemId(){
+
+	void	Print();
+
+	int	 SocSecNo();
+
+	int	 GetUniqueId();
+	char* getName() const;
+	void setName(char* name);
+
+	int getSystemId() {
 		return systemId;
 	}
-	
-	void setSystemId(int systemId){
+
+	void setSystemId(int systemId) {
 		this->systemId = systemId;
 	}
 };
@@ -1306,20 +1172,20 @@ int gooo = 1;
 
 #endif /*C_H_*/
 
-//!Generate Getters and Setters no Methods Implementation in CPP
+//!Generate Getters and Setters no Methods Separate Definition
 //#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
 //@.config
 filename=C.h
 getters=id
 setters=id
-infos=1
+definitionSeparate=true
 //@C.h
 #ifndef C_H_
 #define C_H_
 
 class Person {
 private:
-  int /*$*/id/*$$*/;
+	int /*$*/id/*$$*/;
 };
 
 #endif /*C_H_*/
@@ -1330,33 +1196,31 @@ private:
 
 class Person {
 private:
-  int id;
+	int id;
+
 public:
-    int getId() const;
-    void setId(int id);
+	int getId() const;
+	void setId(int id);
 };
 
-int Person::getId() const
-{
-    return id;
+inline int Person::getId() const {
+	return id;
 }
 
-void Person::setId(int id)
-{
-    this->id = id;
+inline void Person::setId(int id) {
+	this->id = id;
 }
-
 
 
 #endif /*C_H_*/
 
-//!No Methods Implementation in CPP
+//!No Methods Separate Definition
 //#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
 //@.config
 filename=C.h
 getters=i
 setters=i
-infos=1
+definitionSeparate=true
 //@C.h
 /*
  * test.h
@@ -1366,8 +1230,7 @@ infos=1
 #define TEST_H_
 
 //comment1
-class test
-{
+class test {
 	int /*$*/i/*$$*/; //comment2
 	char* b;
 	//comment3
@@ -1384,26 +1247,23 @@ class test
 #define TEST_H_
 
 //comment1
-class test
-{
+class test {
 	int i; //comment2
 	char* b;
-public:
-    int getI() const;
-    void setI(int i);
 	//comment3
+
+public:
+	int getI() const;
+	void setI(int i);
 };
 
-int test::getI() const
-{
-    return i;
+inline int test::getI() const {
+	return i;
 }
 
-void test::setI(int i)
-{
-    this->i = i;
+inline void test::setI(int i) {
+	this->i = i;
 }
-
 
 
 #endif /* TEST_H_ */
@@ -1414,69 +1274,66 @@ void test::setI(int i)
 filename=Test.h
 getters=testField
 setters=testField
+definitionSeparate=true
 
 //@Test.h
 #ifndef TEST_H_
 #define TEST_H_
 
-namespace foo
-{
-	class Test
-	{
-		int /*$*/testField/*$$*/;
-		void foo();
-	};
-}
+namespace foo {
+
+class Test {
+	int /*$*/testField/*$$*/;
+	void foo();
+};
+
+} // namespace foo
 
 #endif
 //=
 #ifndef TEST_H_
 #define TEST_H_
 
-namespace foo
-{
-	class Test
-	{
-		int testField;
-		void foo();
-	public:
-	    int getTestField() const;
-	    void setTestField(int testField);
-	};
-}
+namespace foo {
+
+class Test {
+	int testField;
+	void foo();
+
+public:
+	int getTestField() const;
+	void setTestField(int testField);
+};
+
+} // namespace foo
 
 #endif
 //@Test.cpp
 #include "Test.h"
 
-namespace foo
-{
-    
-	void Test::foo()
-	{
-	
-	}
+namespace foo {
+
+void Test::foo() {
+}
+
 }
 
 //=
 #include "Test.h"
 
-namespace foo
-{
-    int Test::getTestField() const
-    {
-        return testField;
-    }
+namespace foo {
 
-    void Test::setTestField(int testField)
-    {
-        this->testField = testField;
-    }
-    
-	void Test::foo()
-	{
-	
-	}
+int Test::getTestField() const {
+	return testField;
+}
+
+void Test::setTestField(int testField) {
+	this->testField = testField;
+}
+
+void Test::foo() {
+}
+
 }
 
 //!Bug 337040 - Insert definition in empty implementation file (.cxx)
@@ -1485,13 +1342,13 @@ namespace foo
 filename=Test.h
 getters=testField
 setters=testField
+definitionSeparate=true
 
 //@Test.h
 #ifndef TEST_H_
 #define TEST_H_
 
-class Test
-{
+class Test {
 	int /*$*/testField/*$$*/;
 };
 
@@ -1500,12 +1357,12 @@ class Test
 #ifndef TEST_H_
 #define TEST_H_
 
-class Test
-{
+class Test {
 	int testField;
+
 public:
-    int getTestField() const;
-    void setTestField(int testField);
+	int getTestField() const;
+	void setTestField(int testField);
 };
 
 #endif
@@ -1513,31 +1370,26 @@ public:
 
 //=
 
-
-
-int Test::getTestField() const
-{
-    return testField;
+int Test::getTestField() const {
+	return testField;
 }
 
-void Test::setTestField(int testField)
-{
-    this->testField = testField;
+void Test::setTestField(int testField) {
+	this->testField = testField;
 }
-
 //!Bug 337040 - Insert definition in empty implementation file in complex directory structure
 //#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
 //@.config
 filename=component_b/public_headers/Test.h
 getters=testField
 setters=testField
+definitionSeparate=true
 
 //@component_b/public_headers/Test.h
 #ifndef TEST_H_
 #define TEST_H_
 
-class Test
-{
+class Test {
 	int /*$*/testField/*$$*/;
 };
 
@@ -1546,12 +1398,12 @@ class Test
 #ifndef TEST_H_
 #define TEST_H_
 
-class Test
-{
+class Test {
 	int testField;
+
 public:
-    int getTestField() const;
-    void setTestField(int testField);
+	int getTestField() const;
+	void setTestField(int testField);
 };
 
 #endif
@@ -1559,18 +1411,13 @@ public:
 
 //=
 
-
-
-int Test::getTestField() const
-{
-    return testField;
+int Test::getTestField() const {
+	return testField;
 }
 
-void Test::setTestField(int testField)
-{
-    this->testField = testField;
+void Test::setTestField(int testField) {
+	this->testField = testField;
 }
-
 //@component_a/public_headers/Test.h
 
 //=

@@ -149,6 +149,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 		}
 	}
 
+	@Override
 	public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
 		if (ast == null) {
 			return Status.OK_STATUS;
@@ -484,6 +485,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 		}
 		
 		runInUIThread(new Runnable() {
+			@Override
 			public void run() {
 				ISourceReference target= null;
 				if (uniqueElements.size() == 1) {
@@ -561,6 +563,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 		final int length = fileloc.getNodeLength();
 
 		runInUIThread(new Runnable() {
+			@Override
 			public void run() {
 				try {
 					fAction.open(path, offset, length);
@@ -588,6 +591,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 		if (name != null) {
 			final IPath path = new Path(name);
 			runInUIThread(new Runnable() {
+				@Override
 				public void run() {
 					try {
 						fAction.open(path, 0, 0);

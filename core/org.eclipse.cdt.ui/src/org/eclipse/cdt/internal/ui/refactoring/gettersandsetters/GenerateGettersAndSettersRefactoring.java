@@ -121,9 +121,10 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring2 {
 	public RefactoringStatus checkFinalConditions(IProgressMonitor pm,
 			CheckConditionsContext checkContext) throws CoreException, OperationCanceledException {
 		RefactoringStatus result = new RefactoringStatus();
-		if (!context.isImplementationInHeader()) {
+		if (context.isDefinitionSeparate()) {
 			findDefinitionInsertLocation(pm);
-			if (definitionInsertLocation == null || tu.equals(definitionInsertLocation.getTranslationUnit())) {
+			if (definitionInsertLocation == null ||
+					definitionInsertLocation.getTranslationUnit() == null) {
 				result.addInfo(Messages.GenerateGettersAndSettersRefactoring_NoImplFile);
 			}
 		}
@@ -230,14 +231,19 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring2 {
 		List<IASTNode> getterAndSetters = new ArrayList<IASTNode>();
 		List<IASTFunctionDefinition> definitions = new ArrayList<IASTFunctionDefinition>();
 		for (GetterSetterInsertEditProvider currentProvider : context.selectedFunctions) {
-			if (context.isImplementationInHeader()) {
-				getterAndSetters.add(currentProvider.getFunctionDefinition(false));
-			} else {
+			if (context.isDefinitionSeparate()) {
 				getterAndSetters.add(currentProvider.getFunctionDeclaration());
-				definitions.add(currentProvider.getFunctionDefinition(true));
+				IASTFunctionDefinition functionDefinition = currentProvider.getFunctionDefinition(true);
+				// Standalone definitions in a header file have to be declared inline. 
+				if (definitionInsertLocation.getTranslationUnit().isHeaderUnit()) {
+					functionDefinition.getDeclSpecifier().setInline(true);
+				}
+				definitions.add(functionDefinition);
+			} else {
+				getterAndSetters.add(currentProvider.getFunctionDefinition(false));
 			}
 		}
-		if (!context.isImplementationInHeader()) {
+		if (context.isDefinitionSeparate()) {
 			addDefinition(collector, definitions, pm);
 		}
 		ICPPASTCompositeTypeSpecifier classDefinition =
@@ -271,9 +277,9 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring2 {
 		}
 		
 		IASTSimpleDeclaration decl = context.existingFields.get(0);
-		MethodDefinitionInsertLocationFinder methodDefinitionInsertLocationFinder = new MethodDefinitionInsertLocationFinder();
-		InsertLocation location = methodDefinitionInsertLocationFinder.find(
-				tu, decl.getFileLocation(), decl.getParent(), astCache, pm);
+		MethodDefinitionInsertLocationFinder locationFinder = new MethodDefinitionInsertLocationFinder();
+		InsertLocation location = locationFinder.find(tu, decl.getFileLocation(), decl.getParent(),
+				astCache, pm);
 
 		if (location.getFile() == null || NodeHelper.isContainedInTemplateDeclaration(decl)) {
 			location.setNodeToInsertAfter(NodeHelper.findTopLevelParent(decl), tu);

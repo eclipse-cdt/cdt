@@ -9,6 +9,7 @@
  * Contributors:
  *     Institute for Software - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
@@ -38,15 +39,14 @@ import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
 /**
  * Visits all nodes, prints leading comments and handles macro expansions. The
- * source code generation is delegated to severals <code>NodeWriters</code>.
+ * source code generation is delegated to severals {@code NodeWriter}s.
  *
- * @see NodeWriter
  * @see MacroExpansionHandler
  *
  * @author Emanuel Graf IFS
  */
 public class ASTWriterVisitor extends ASTVisitor {
-	protected Scribe scribe = new Scribe();
+	protected final Scribe scribe = new Scribe();
 	protected NodeCommentMap commentMap;
 	protected ExpressionWriter expWriter;
 	protected DeclSpecWriter declSpecWriter;
@@ -57,6 +57,9 @@ public class ASTWriterVisitor extends ASTVisitor {
 	protected NameWriter nameWriter;
 	protected TemplateParameterWriter tempParameterWriter;
 	protected MacroExpansionHandler macroHandler;
+	private boolean insertLeadingBlankLine;
+	private boolean suppressLeadingBlankLine;
+	private boolean spaceNeededBeforeName;
 
 	{
 		shouldVisitExpressions = true;
@@ -83,6 +86,7 @@ public class ASTWriterVisitor extends ASTVisitor {
 		scribe.setGivenIndentation(givenIndentation);
 		init(commentMap);
 		this.commentMap = commentMap;
+		this.suppressLeadingBlankLine = true;
 	}
 
 	private void init(NodeCommentMap commentMap) {
@@ -135,6 +139,10 @@ public class ASTWriterVisitor extends ASTVisitor {
 
 	@Override
 	public int visit(IASTName name) {
+		if (spaceNeededBeforeName && name.getSimpleID().length != 0) {
+			scribe.printSpace();
+			spaceNeededBeforeName = false;
+		}
 		writeLeadingComments(name);
 		if (!macroHandler.checkisMacroExpansionNode(name)) {
 			nameWriter.writeName(name);
@@ -166,24 +174,31 @@ public class ASTWriterVisitor extends ASTVisitor {
 
 	@Override
 	public int visit(IASTStatement statement) {
+		insertBlankLineIfNeeded(statement);
 		writeLeadingComments(statement);
-		if (macroHandler.isStatementWithMixedLocation(statement) &&
-				!(statement instanceof IASTCompoundStatement)) {
-			return statementWriter.writeMixedStatement(statement);
+		try {
+			if (macroHandler.isStatementWithMixedLocation(statement) &&
+					!(statement instanceof IASTCompoundStatement)) {
+				return statementWriter.writeMixedStatement(statement);
+			}
+			if (macroHandler.checkisMacroExpansionNode(statement)) {
+				return ASTVisitor.PROCESS_SKIP;
+			}
+			return statementWriter.writeStatement(statement, true);
+		} finally {
+			setLeadingBlankLineFlags(statement);
 		}
-		if (macroHandler.checkisMacroExpansionNode(statement)) {
-			return ASTVisitor.PROCESS_SKIP;
-		}
-		return statementWriter.writeStatement(statement, true);
 	}
 
 	@Override
 	public int visit(IASTDeclaration declaration) {
+		insertBlankLineIfNeeded(declaration);
 		writeLeadingComments(declaration);
 		if (!macroHandler.checkisMacroExpansionNode(declaration)) {
 			declarationWriter.writeDeclaration(declaration);
+			setLeadingBlankLineFlags(declaration);
 		}
-		return  ASTVisitor.PROCESS_SKIP;
+		return ASTVisitor.PROCESS_SKIP;
 	}
 
 	@Override
@@ -219,9 +234,7 @@ public class ASTWriterVisitor extends ASTVisitor {
 			parameterDeclaration.getDeclSpecifier().accept(this);
 			IASTDeclarator declarator = getParameterDeclarator(parameterDeclaration);
 
-			if (getParameterName(declarator).toString().length() != 0) {
-				scribe.printSpaces(1);
-			}
+			spaceNeededBeforeName = true;
 			declarator.accept(this);
 		}
 		return ASTVisitor.PROCESS_SKIP;
@@ -237,9 +250,11 @@ public class ASTWriterVisitor extends ASTVisitor {
 
 	@Override
 	public int visit(ICPPASTNamespaceDefinition namespace) {
+		insertBlankLineIfNeeded(namespace);
 		writeLeadingComments(namespace);
 		if (!macroHandler.checkisMacroExpansionNode(namespace)) {
 			declarationWriter.writeDeclaration(namespace);
+			setLeadingBlankLineFlags(namespace);
 		}
 		return ASTVisitor.PROCESS_SKIP;
 	}
@@ -256,5 +271,39 @@ public class ASTWriterVisitor extends ASTVisitor {
 	public void cleanCache() {
 		scribe.cleanCache();
 		macroHandler.reset();
+	}
+
+	private void insertBlankLineIfNeeded(IASTNode node) {
+		if (!suppressLeadingBlankLine &&
+				(insertLeadingBlankLine || ASTWriter.requiresLeadingBlankLine(node))) {
+			scribe.newLine();
+		}
+		insertLeadingBlankLine = false;
+		suppressLeadingBlankLine = false;
+	}
+
+	private void setLeadingBlankLineFlags(IASTNode node) {
+		insertLeadingBlankLine = ASTWriter.requiresTrailingBlankLine(node);
+		suppressLeadingBlankLine = ASTWriter.suppressesTrailingBlankLine(node);
+	}
+
+	public boolean isSuppressLeadingBlankLine() {
+		return suppressLeadingBlankLine;
+	}
+
+	public void setSuppressLeadingBlankLine(boolean value) {
+		this.suppressLeadingBlankLine = value;
+	}
+
+	public boolean isSpaceNeededBeforeName() {
+		return spaceNeededBeforeName;
+	}
+
+	public void setSpaceNeededBeforeName(boolean value) {
+		this.spaceNeededBeforeName = value;
+	}
+
+	public void newLine() {
+		scribe.newLine();
 	}
 }

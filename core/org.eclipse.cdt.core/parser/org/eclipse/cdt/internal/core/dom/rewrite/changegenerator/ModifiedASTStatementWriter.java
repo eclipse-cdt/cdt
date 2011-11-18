@@ -11,10 +11,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.changegenerator;
 
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ASTWriterVisitor;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.Scribe;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.StatementWriter;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
@@ -22,7 +22,7 @@ import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 public class ModifiedASTStatementWriter extends StatementWriter {
 	private final ASTModificationHelper modificationHelper;
 	
-	public ModifiedASTStatementWriter(Scribe scribe, ASTVisitor visitor, ModificationScopeStack stack, NodeCommentMap commentMap) {
+	public ModifiedASTStatementWriter(Scribe scribe, ASTWriterVisitor visitor, ModificationScopeStack stack, NodeCommentMap commentMap) {
 		super(scribe, visitor, commentMap);
 		this.modificationHelper = new ASTModificationHelper(stack);
 	}

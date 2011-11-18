@@ -7,9 +7,10 @@ inline int foo()
 
 const int a = 1;
 volatile int b = 3;
-typedef int *intp;
+typedef int* intp;
 extern int b;
 static int c;
+
 int foo()
 {
     int i = 1;
@@ -43,7 +44,7 @@ public:
 
 //!ElaboratedTypeSpecifier
 //%CPP
-class A *A;
+class A* A;
 enum Status{ good, bad};
 enum Status stat;
 union D
@@ -52,7 +53,7 @@ union D
     int y;
 };
 union D d;
-struct S *S;
+struct S* S;
 
 //!EnumeratioSpecifier
 //%CPP

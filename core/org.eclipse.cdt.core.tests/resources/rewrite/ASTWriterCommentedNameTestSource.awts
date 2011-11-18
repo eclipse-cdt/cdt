@@ -30,7 +30,7 @@ class Foo
 {
 public:
     //Test
-    char & operator [](unsigned int);
+    char& operator [](unsigned int);
 };
 
 //!Commented OperatorName2
@@ -38,7 +38,7 @@ public:
 class Foo
 {
 public:
-    char & operator [](unsigned int); //Test
+    char& operator [](unsigned int); //Test
 };
 
 //!Commented ConversionName1

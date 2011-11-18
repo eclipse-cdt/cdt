@@ -14,4 +14,4 @@ Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.cdt.errorparsers.xlc.tests
 Bundle-ClassPath: .
 Bundle-Vendor: Eclipse.org
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

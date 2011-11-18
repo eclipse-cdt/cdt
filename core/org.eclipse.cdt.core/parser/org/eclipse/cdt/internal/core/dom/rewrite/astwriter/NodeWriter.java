@@ -7,13 +7,12 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- *    Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
 import java.util.ArrayList;
 
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTCopyLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -21,17 +20,14 @@ import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
 /**
- * 
  * Base class for node writers. This class contains methods and string constants
  * used by multiple node writers.
  * 
  * @author Emanuel Graf IFS
- * 
  */
 public class NodeWriter {
-
 	protected Scribe scribe;
-	protected ASTVisitor visitor;
+	protected ASTWriterVisitor visitor;
 	protected NodeCommentMap commentMap;
 	protected static final String COMMA_SPACE = ", "; //$NON-NLS-1$
 	protected static final String EQUALS = " = "; //$NON-NLS-1$
@@ -64,7 +60,7 @@ public class NodeWriter {
 	protected static final String COLON_COLON = "::"; //$NON-NLS-1$
 	protected static final String COLON_SPACE = ": "; //$NON-NLS-1$
 
-	public NodeWriter(Scribe scribe, ASTVisitor visitor, NodeCommentMap commentMap) {
+	public NodeWriter(Scribe scribe, ASTWriterVisitor visitor, NodeCommentMap commentMap) {
 		super();
 		this.scribe = scribe;
 		this.visitor = visitor;
@@ -72,31 +68,42 @@ public class NodeWriter {
 	}
 
 	protected void writeNodeList(IASTNode[] nodes) {
-		for(int i = 0; i < nodes.length; ++i) {
+		for (int i = 0; i < nodes.length; ++i) {
 			nodes[i].accept(visitor);
-			if(i + 1 < nodes.length) {
+			if (i + 1 < nodes.length) {
 				scribe.print(COMMA_SPACE);
 			}
 		}
 	}
 	
-	protected void visitNodeIfNotNull(IASTNode node){
-		if(node != null){
+	protected void visitNodeIfNotNull(IASTNode node) {
+		if (node != null) {
 			node.accept(visitor);
 		}
 	}
 
-
 	protected void writeTrailingComments(IASTNode node) {
-		//default write newLine
+		// Default is to write a new line after trailing comments.
 		writeTrailingComments(node, true);
 	}
-	
-	protected boolean hasTrailingComments(IASTNode node){
-		if(getTrailingComments(node).size()>0) {
-			return true;
+
+	protected void writeTrailingComments(IASTNode node, boolean newLine) {
+		boolean first = true;
+		for (IASTComment comment : getTrailingComments(node)) {
+			if (!first) {
+				scribe.newLine();
+			}
+			scribe.printSpace();
+			scribe.print(comment.getComment());
+			first = false;
 		}
-		return false;
+		if (newLine) {
+			scribe.newLine();
+		}
+	}
+
+	protected boolean hasTrailingComments(IASTNode node) {
+		return !getTrailingComments(node).isEmpty();
 	}
 
 	private ArrayList<IASTComment> getTrailingComments(IASTNode node) {
@@ -108,22 +115,9 @@ public class NodeWriter {
 		}
 		return trailingComments;
 	}
-	
-	protected void writeTrailingComments(IASTNode node, boolean newLine) {
-		for(IASTComment comment : getTrailingComments(node)) {
-			scribe.printSpace();
-			scribe.print(comment.getComment());
-			if(newLine) {
-				scribe.newLine();
-			}
-		}
-	}
 
-	protected boolean hasFreestandingComments(IASTNode node){
-		if(getFreestandingComments(node).size()>0) {
-			return true;
-		}
-		return false;
+	protected boolean hasFreestandingComments(IASTNode node) {
+		return !getFreestandingComments(node).isEmpty();
 	}
 
 	private ArrayList<IASTComment> getFreestandingComments(IASTNode node) {
@@ -137,7 +131,7 @@ public class NodeWriter {
 	}
 
 	protected void writeFreeStandingComments(IASTNode node) {
-		for(IASTComment comment : getFreestandingComments(node)) {
+		for (IASTComment comment : getFreestandingComments(node)) {
 			scribe.print(comment.getComment());
 			scribe.newLine();
 		}

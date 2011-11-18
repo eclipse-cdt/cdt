@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 QNX Software Systems and others.
+ * Copyright (c) 2004, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.cdt.newmake.core;
 
 import java.util.Map;
 
+import org.eclipse.cdt.managedbuilder.internal.core.Builder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
@@ -42,10 +43,39 @@ public interface IMakeCommonBuildInfo {
 	void setStopOnError(boolean on) throws CoreException;
 	boolean supportsStopOnError(boolean on);
 
+	/**
+	 * @return the maximum number of parallel jobs to be used for build.
+	 */
 	int getParallelizationNum();
-	void setParallelizationNum(int num) throws CoreException;
+
+	/**
+	 * Sets maximum number of parallel threads/jobs to be used by builder.
+	 * Note that this number can be interpreted by builder in a special way.
+	 * @see Builder#setParallelizationNum(int)
+	 * 
+	 * @param jobs - maximum number of jobs.
+	 */
+	void setParallelizationNum(int jobs) throws CoreException;
+
+	/**
+	 * @return {@code true} if builder supports parallel build,
+	 *    {@code false} otherwise.
+	 */
+
 	boolean supportsParallelBuild();
+
+	/**
+	 * @return {@code true} if builder support for parallel build is enabled,
+	 *    {@code false} otherwise.
+	 */
 	boolean isParallelBuildOn();
+
+	/**
+	 * Set parallel execution mode for the builder.
+	 * @see Builder#setParallelBuildOn(boolean)
+	 * 
+	 * @param on - the flag to enable or disable parallel mode.
+	 */
 	void setParallelBuildOn(boolean on) throws CoreException;
 
 	boolean isDefaultBuildCmd();

@@ -6,18 +6,17 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Doug Schaefer (IBM) - Initial API and implementation
+ *     Doug Schaefer (IBM) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
 /**
- * A composite type specifier represents a ocmposite structure (contains
- * declarations).
+ * A composite type specifier represents a composite structure (contains declarations).
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IASTCompositeTypeSpecifier extends IASTDeclSpecifier , IASTNameOwner, IASTDeclarationListOwner {
+public interface IASTCompositeTypeSpecifier extends IASTDeclSpecifier, IASTNameOwner, IASTDeclarationListOwner {
 
 	/**
 	 * <code>TYPE_NAME</code> represents the relationship between an
@@ -101,5 +100,6 @@ public interface IASTCompositeTypeSpecifier extends IASTDeclSpecifier , IASTName
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IASTCompositeTypeSpecifier copy();
 }

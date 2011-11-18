@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2002, 2010 IBM Corporation and others.
+ *  Copyright (c) 2002, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -151,6 +151,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			return fullBuildNeeded;
 		}
 
+		@Override
 		public boolean visit(IResourceDelta delta) throws CoreException {
 			IResource resource = delta.getResource();
 			// If the project has changed, then a build is needed and we can stop
@@ -231,6 +232,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			}
 		}
 		
+		@Override
 		public boolean visit(IResourceDelta delta) throws CoreException {
 			
 			IResource rc = delta.getResource();
@@ -906,244 +908,242 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			}
 
 			IPath makeCommand = new Path(makeCmd); 
-			if (makeCommand != null) {
-				String[] msgs = new String[2];
-				msgs[0] = makeCommand.toString();
-				msgs[1] = currentProject.getName();
-				monitor.subTask(ManagedMakeMessages.getFormattedString(MAKE, msgs));
+			String[] msgs = new String[2];
+			msgs[0] = makeCommand.toString();
+			msgs[1] = currentProject.getName();
+			monitor.subTask(ManagedMakeMessages.getFormattedString(MAKE, msgs));
 
-				// Get a build console for the project
-				StringBuffer buf = new StringBuffer();
-				IConsole console = CCorePlugin.getDefault().getConsole();
-				console.start(currentProject);
-				ConsoleOutputStream consoleOutStream = console.getOutputStream();
-				String[] consoleHeader = new String[3];
+			// Get a build console for the project
+			StringBuffer buf = new StringBuffer();
+			IConsole console = CCorePlugin.getDefault().getConsole();
+			console.start(currentProject);
+			ConsoleOutputStream consoleOutStream = console.getOutputStream();
+			String[] consoleHeader = new String[3];
+			switch (buildType) {
+				case FULL_BUILD:
+				case INCREMENTAL_BUILD:
+					consoleHeader[0] = ManagedMakeMessages.getResourceString(TYPE_INC);
+					break;
+				case CLEAN_BUILD:
+					consoleHeader[0] = ManagedMakeMessages.getResourceString(TYPE_CLEAN);
+					break;
+			}
+					
+			consoleHeader[1] = info.getConfigurationName();
+			consoleHeader[2] = currentProject.getName();
+			buf.append(NEWLINE);
+			buf.append(ManagedMakeMessages.getFormattedString(CONSOLE_HEADER, consoleHeader)).append(NEWLINE);
+			buf.append(NEWLINE);
+			
+			IConfiguration cfg = info.getDefaultConfiguration();
+			if(!cfg.isSupported()){
+				String msg = ManagedMakeMessages.getFormattedString(WARNING_UNSUPPORTED_CONFIGURATION,new String[] {cfg.getName(),cfg.getToolChain().getName()});
+				buf.append(msg).append(NEWLINE);
+				buf.append(NEWLINE);
+			}
+			consoleOutStream.write(buf.toString().getBytes());
+			consoleOutStream.flush();
+			
+			// Remove all markers for this project
+			removeAllMarkers(currentProject);
+		
+			// Get a launcher for the make command
+			String errMsg = null;
+			IBuilder builder = info.getDefaultConfiguration().getBuilder();
+			ICommandLauncher launcher = builder.getCommandLauncher();
+			launcher.setProject(currentProject);
+			launcher.showCommand(true);
+
+			// Set the environmennt
+			IBuildEnvironmentVariable variables[] = ManagedBuildManager.getEnvironmentVariableProvider().getVariables(cfg,true,true);
+			String[] env = null;
+			ArrayList<String> envList = new ArrayList<String>();
+			if (variables != null) {
+				for(int i = 0; i < variables.length; i++){
+					envList.add(variables[i].getName() + "=" + variables[i].getValue());	//$NON-NLS-1$
+				}
+				env = envList.toArray(new String[envList.size()]);
+			}
+		
+			// Hook up an error parser manager
+			String[] errorParsers = info.getDefaultConfiguration().getErrorParserList(); 
+			ErrorParserManager epm = new ErrorParserManager(getProject(), workingDirectoryURI, this, errorParsers);
+			epm.setOutputStream(consoleOutStream);
+			// This variable is necessary to ensure that the EPM stream stay open
+			// until we explicitly close it. See bug#123302.
+			OutputStream epmOutputStream = epm.getOutputStream();
+		
+			// Get the arguments to be passed to make from build model 
+			ArrayList<String> makeArgs = new ArrayList<String>();
+			String arg = info.getBuildArguments();
+			if (arg.length() > 0) {
+				String[] args = arg.split("\\s"); //$NON-NLS-1$ 
+				for (int i = 0; i < args.length; ++i) {
+					makeArgs.add(args[i]);
+				}
+			}
+
+			String[] makeTargets;
+			String prebuildStep = info.getPrebuildStep();
+			//try to resolve the build macros in the prebuildStep
+			try{
+				prebuildStep = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(
+						prebuildStep,
+						"", //$NON-NLS-1$
+						" ", //$NON-NLS-1$
+						IBuildMacroProvider.CONTEXT_CONFIGURATION,
+						cfg);
+			} catch (BuildMacroException e){
+			}
+			boolean prebuildStepPresent = (prebuildStep.length() > 0);
+			Process proc = null;
+			boolean isuptodate = false;
+
+			if (prebuildStepPresent) {
+				@SuppressWarnings("unchecked")
+				ArrayList<String> premakeArgs = (ArrayList<String>) makeArgs.clone();
+				String[] premakeTargets;
 				switch (buildType) {
-					case FULL_BUILD:
-					case INCREMENTAL_BUILD:
-						consoleHeader[0] = ManagedMakeMessages.getResourceString(TYPE_INC);
-						break;
-					case CLEAN_BUILD:
-						consoleHeader[0] = ManagedMakeMessages.getResourceString(TYPE_CLEAN);
-						break;
-				}
-						
-				consoleHeader[1] = info.getConfigurationName();
-				consoleHeader[2] = currentProject.getName();
-				buf.append(NEWLINE);
-				buf.append(ManagedMakeMessages.getFormattedString(CONSOLE_HEADER, consoleHeader)).append(NEWLINE);
-				buf.append(NEWLINE);
-				
-				IConfiguration cfg = info.getDefaultConfiguration();
-				if(!cfg.isSupported()){
-					String msg = ManagedMakeMessages.getFormattedString(WARNING_UNSUPPORTED_CONFIGURATION,new String[] {cfg.getName(),cfg.getToolChain().getName()});
-					buf.append(msg).append(NEWLINE);
-					buf.append(NEWLINE);
-				}
-				consoleOutStream.write(buf.toString().getBytes());
-				consoleOutStream.flush();
-				
-				// Remove all markers for this project
-				removeAllMarkers(currentProject);
-			
-				// Get a launcher for the make command
-				String errMsg = null;
-				IBuilder builder = info.getDefaultConfiguration().getBuilder();
-				ICommandLauncher launcher = builder.getCommandLauncher();
-				launcher.setProject(currentProject);
-				launcher.showCommand(true);
-	
-				// Set the environmennt
-				IBuildEnvironmentVariable variables[] = ManagedBuildManager.getEnvironmentVariableProvider().getVariables(cfg,true,true);
-				String[] env = null;
-				ArrayList<String> envList = new ArrayList<String>();
-				if (variables != null) {
-					for(int i = 0; i < variables.length; i++){
-						envList.add(variables[i].getName() + "=" + variables[i].getValue());	//$NON-NLS-1$
-					}
-					env = envList.toArray(new String[envList.size()]);
-				}
-			
-				// Hook up an error parser manager
-				String[] errorParsers = info.getDefaultConfiguration().getErrorParserList(); 
-				ErrorParserManager epm = new ErrorParserManager(getProject(), workingDirectoryURI, this, errorParsers);
-				epm.setOutputStream(consoleOutStream);
-				// This variable is necessary to ensure that the EPM stream stay open
-				// until we explicitly close it. See bug#123302.
-				OutputStream epmOutputStream = epm.getOutputStream();
-			
-				// Get the arguments to be passed to make from build model 
-				ArrayList<String> makeArgs = new ArrayList<String>();
-				String arg = info.getBuildArguments();
-				if (arg.length() > 0) {
-					String[] args = arg.split("\\s"); //$NON-NLS-1$ 
-					for (int i = 0; i < args.length; ++i) {
-						makeArgs.add(args[i]);
-					}
-				}
-
-				String[] makeTargets;
-				String prebuildStep = info.getPrebuildStep();
-				//try to resolve the build macros in the prebuildStep
-				try{
-					prebuildStep = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(
-							prebuildStep,
-							"", //$NON-NLS-1$
-							" ", //$NON-NLS-1$
-							IBuildMacroProvider.CONTEXT_CONFIGURATION,
-							cfg);
-				} catch (BuildMacroException e){
-				}
-				boolean prebuildStepPresent = (prebuildStep.length() > 0);
-				Process proc = null;
-				boolean isuptodate = false;
-
-				if (prebuildStepPresent) {
-					@SuppressWarnings("unchecked")
-					ArrayList<String> premakeArgs = (ArrayList<String>) makeArgs.clone();
-					String[] premakeTargets;
-					switch (buildType) {
-					case INCREMENTAL_BUILD: {
-						// For an incremental build with a prebuild step: 
-						// Check the status of the main build with "make -q main-build" 
-						// If up to date: 
-						// then: don't invoke the prebuild step, which should be run only if 
-						//       something needs to be built in the main build 
-						// else: invoke the prebuild step and the main build step 
-						premakeArgs.add("-q"); //$NON-NLS-1$ 
-						premakeArgs.add("main-build"); //$NON-NLS-1$ 
-						premakeTargets = premakeArgs.toArray(new String[premakeArgs.size()]);
-						proc = launcher.execute(makeCommand, premakeTargets, env, workingDirectory, monitor);
-						if (proc != null) {
-							try {
-								// Close the input of the process since we will never write to it
-								proc.getOutputStream().close();
-							} catch (IOException e) {
-							}
-							if (launcher.waitAndRead(epm.getOutputStream(), epm.getOutputStream(),
-									new SubProgressMonitor(monitor,
-											IProgressMonitor.UNKNOWN)) != ICommandLauncher.OK) {
-								errMsg = launcher.getErrorMessage();
-							}
-						} else {
-							errMsg = launcher.getErrorMessage();
-						}
-
-						if ((errMsg != null && errMsg.length() > 0) || proc == null) {
-							// Can't tell if the build is needed, so assume it is, and let any errors be triggered
-							// when the "real" build is invoked below 
-							makeArgs.add("pre-build"); //$NON-NLS-1$ 
-							makeArgs.add("main-build"); //$NON-NLS-1$ 
-						} else {
-							// The "make -q" command launch was successful 
-							if (proc.exitValue() == 0) {
-								// If the status value returned from "make -q" is 0, then the build state is up-to-date
-								isuptodate = true;
-								// Report that the build was up to date, and thus nothing needs to be built
-								String uptodateMsg = ManagedMakeMessages.getFormattedString(NOTHING_BUILT, currentProject.getName());
-								buf = new StringBuffer();
-								buf.append(NEWLINE);
-								buf.append(uptodateMsg).append(NEWLINE);
-								// Write message on the console 
-								consoleOutStream.write(buf.toString().getBytes());
-								consoleOutStream.flush();
-								epmOutputStream.close();
-								consoleOutStream.close();
-							} else {
-								// The status value was other than 0, so press on with the build process
-								makeArgs.add("pre-build"); //$NON-NLS-1$                        
-								makeArgs.add("main-build"); //$NON-NLS-1$ 
-							}
-						}
-						break;
-					}
-					case FULL_BUILD: {
-//						makeArgs.add("clean"); //$NON-NLS-1$        
-						makeArgs.add("pre-build"); //$NON-NLS-1$ 
-						makeArgs.add("main-build"); //$NON-NLS-1$                           
-						break;
-					}
-					case CLEAN_BUILD: {
-						makeArgs.add("clean"); //$NON-NLS-1$                                                            
-						break;
-					}
-					}
-
-				} else {
-					// No prebuild step 
-					// 
-					makeArgs.addAll(Arrays.asList(getMakeTargets(buildType)));
-				}
-
-				makeTargets = makeArgs.toArray(new String[makeArgs.size()]);
-
-				// Launch make - main invocation 
-				if (!isuptodate) {
-					proc = launcher.execute(makeCommand, makeTargets, env, workingDirectory, monitor);
+				case INCREMENTAL_BUILD: {
+					// For an incremental build with a prebuild step: 
+					// Check the status of the main build with "make -q main-build" 
+					// If up to date: 
+					// then: don't invoke the prebuild step, which should be run only if 
+					//       something needs to be built in the main build 
+					// else: invoke the prebuild step and the main build step 
+					premakeArgs.add("-q"); //$NON-NLS-1$ 
+					premakeArgs.add("main-build"); //$NON-NLS-1$ 
+					premakeTargets = premakeArgs.toArray(new String[premakeArgs.size()]);
+					proc = launcher.execute(makeCommand, premakeTargets, env, workingDirectory, monitor);
 					if (proc != null) {
 						try {
 							// Close the input of the process since we will never write to it
 							proc.getOutputStream().close();
 						} catch (IOException e) {
 						}
-
-						int state = launcher.waitAndRead(epm.getOutputStream(), epm.getOutputStream(),
+						if (launcher.waitAndRead(epm.getOutputStream(), epm.getOutputStream(),
 								new SubProgressMonitor(monitor,
-										IProgressMonitor.UNKNOWN));
-						if(state != ICommandLauncher.OK){
+										IProgressMonitor.UNKNOWN)) != ICommandLauncher.OK) {
 							errMsg = launcher.getErrorMessage();
-							
-							if(state == ICommandLauncher.COMMAND_CANCELED){
-								//TODO: the better way of handling cancel is needed
-								//currently the rebuild state is set to true forcing the full rebuild
-								//on the next builder invocation
-								info.getDefaultConfiguration().setRebuildState(true);
-							}
-						}
-
-						// Force a resync of the projects without allowing the user to cancel. 
-						// This is probably unkind, but short of this there is no way to insure 
-						// the UI is up-to-date with the build results 
-						monitor.subTask(ManagedMakeMessages
-								.getResourceString(REFRESH));
-						try {
-							//currentProject.refreshLocal(IResource.DEPTH_INFINITE, null);
-							
-							// use the refresh scope manager to refresh
-							RefreshScopeManager refreshManager = RefreshScopeManager.getInstance();
-							IWorkspaceRunnable runnable = refreshManager.getRefreshRunnable(currentProject);
-							ResourcesPlugin.getWorkspace().run(runnable, null, IWorkspace.AVOID_UPDATE, null);
-						} catch (CoreException e) {
-							monitor.subTask(ManagedMakeMessages
-									.getResourceString(REFRESH_ERROR));
 						}
 					} else {
 						errMsg = launcher.getErrorMessage();
 					}
 
-					// Report either the success or failure of our mission 
-					buf = new StringBuffer();
-					if (errMsg != null && errMsg.length() > 0) {
-						String errorDesc = ManagedMakeMessages.getResourceString(BUILD_ERROR);
-						buf.append(errorDesc).append(NEWLINE);
-						buf.append("(").append(errMsg).append(")"); //$NON-NLS-1$ //$NON-NLS-2$ 
+					if ((errMsg != null && errMsg.length() > 0) || proc == null) {
+						// Can't tell if the build is needed, so assume it is, and let any errors be triggered
+						// when the "real" build is invoked below 
+						makeArgs.add("pre-build"); //$NON-NLS-1$ 
+						makeArgs.add("main-build"); //$NON-NLS-1$ 
 					} else {
-						// Report a successful build 
-						String successMsg = ManagedMakeMessages.getFormattedString(BUILD_FINISHED,
-								currentProject.getName());
-						buf.append(successMsg).append(NEWLINE);
+						// The "make -q" command launch was successful 
+						if (proc.exitValue() == 0) {
+							// If the status value returned from "make -q" is 0, then the build state is up-to-date
+							isuptodate = true;
+							// Report that the build was up to date, and thus nothing needs to be built
+							String uptodateMsg = ManagedMakeMessages.getFormattedString(NOTHING_BUILT, currentProject.getName());
+							buf = new StringBuffer();
+							buf.append(NEWLINE);
+							buf.append(uptodateMsg).append(NEWLINE);
+							// Write message on the console 
+							consoleOutStream.write(buf.toString().getBytes());
+							consoleOutStream.flush();
+							epmOutputStream.close();
+							consoleOutStream.close();
+						} else {
+							// The status value was other than 0, so press on with the build process
+							makeArgs.add("pre-build"); //$NON-NLS-1$                        
+							makeArgs.add("main-build"); //$NON-NLS-1$ 
+						}
+					}
+					break;
+				}
+				case FULL_BUILD: {
+//						makeArgs.add("clean"); //$NON-NLS-1$        
+					makeArgs.add("pre-build"); //$NON-NLS-1$ 
+					makeArgs.add("main-build"); //$NON-NLS-1$                           
+					break;
+				}
+				case CLEAN_BUILD: {
+					makeArgs.add("clean"); //$NON-NLS-1$                                                            
+					break;
+				}
+				}
+
+			} else {
+				// No prebuild step 
+				// 
+				makeArgs.addAll(Arrays.asList(getMakeTargets(buildType)));
+			}
+
+			makeTargets = makeArgs.toArray(new String[makeArgs.size()]);
+
+			// Launch make - main invocation 
+			if (!isuptodate) {
+				proc = launcher.execute(makeCommand, makeTargets, env, workingDirectory, monitor);
+				if (proc != null) {
+					try {
+						// Close the input of the process since we will never write to it
+						proc.getOutputStream().close();
+					} catch (IOException e) {
 					}
 
-					// Write message on the console 
-					consoleOutStream.write(buf.toString().getBytes());
-					consoleOutStream.flush();
-					epmOutputStream.close();
+					int state = launcher.waitAndRead(epm.getOutputStream(), epm.getOutputStream(),
+							new SubProgressMonitor(monitor,
+									IProgressMonitor.UNKNOWN));
+					if(state != ICommandLauncher.OK){
+						errMsg = launcher.getErrorMessage();
+						
+						if(state == ICommandLauncher.COMMAND_CANCELED){
+							//TODO: the better way of handling cancel is needed
+							//currently the rebuild state is set to true forcing the full rebuild
+							//on the next builder invocation
+							info.getDefaultConfiguration().setRebuildState(true);
+						}
+					}
 
-					// Generate any error markers that the build has discovered 
-					monitor.subTask(ManagedMakeMessages.getResourceString(MARKERS));
-					addBuilderMarkers(epm);
-					consoleOutStream.close();
+					// Force a resync of the projects without allowing the user to cancel. 
+					// This is probably unkind, but short of this there is no way to insure 
+					// the UI is up-to-date with the build results 
+					monitor.subTask(ManagedMakeMessages
+							.getResourceString(REFRESH));
+					try {
+						//currentProject.refreshLocal(IResource.DEPTH_INFINITE, null);
+						
+						// use the refresh scope manager to refresh
+						RefreshScopeManager refreshManager = RefreshScopeManager.getInstance();
+						IWorkspaceRunnable runnable = refreshManager.getRefreshRunnable(currentProject);
+						ResourcesPlugin.getWorkspace().run(runnable, null, IWorkspace.AVOID_UPDATE, null);
+					} catch (CoreException e) {
+						monitor.subTask(ManagedMakeMessages
+								.getResourceString(REFRESH_ERROR));
+					}
+				} else {
+					errMsg = launcher.getErrorMessage();
 				}
+
+				// Report either the success or failure of our mission 
+				buf = new StringBuffer();
+				if (errMsg != null && errMsg.length() > 0) {
+					String errorDesc = ManagedMakeMessages.getResourceString(BUILD_ERROR);
+					buf.append(errorDesc).append(NEWLINE);
+					buf.append("(").append(errMsg).append(")"); //$NON-NLS-1$ //$NON-NLS-2$ 
+				} else {
+					// Report a successful build 
+					String successMsg = ManagedMakeMessages.getFormattedString(BUILD_FINISHED,
+							currentProject.getName());
+					buf.append(successMsg).append(NEWLINE);
+				}
+
+				// Write message on the console 
+				consoleOutStream.write(buf.toString().getBytes());
+				consoleOutStream.flush();
+				epmOutputStream.close();
+
+				// Generate any error markers that the build has discovered 
+				monitor.subTask(ManagedMakeMessages.getResourceString(MARKERS));
+				addBuilderMarkers(epm);
+				consoleOutStream.close();
 			}
 		} catch (Exception e) {
 			forgetLastBuiltState();
@@ -1196,7 +1196,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			boolean resumeOnErr,
 			IProgressMonitor monitor) {
 		
-		boolean isParallel = ((Configuration)cfg).getInternalBuilderParallel();
+		boolean isParallel = ((Configuration)cfg).getParallelDef();
 		
 		// Get the project and make sure there's a monitor to cancel the build
 		IProject currentProject = cfg.getOwner().getProject();

@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2010, 2011 Tomasz Wesolowski and others
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Tomasz Wesolowski - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers.ui.quickfix;
 
 import org.eclipse.cdt.codan.ui.AbstractCodanCMarkerResolution;
@@ -18,7 +28,7 @@ public class CaseBreakQuickFixTest extends QuickFixTestCase {
 	//     case 2:
 	//	 }
 	// }
-	public void testMiddleCase() {
+	public void testMiddleCase() throws Exception {
 		loadcode(getAboveComment());
 		String result = runQuickFixOneFile();
 		assertContainedIn("break;     case 2:", result);
@@ -31,11 +41,12 @@ public class CaseBreakQuickFixTest extends QuickFixTestCase {
 	//	     hello();
 	//	 }
 	// }
-	public void testLastCase() {
+	public void testLastCase() throws Exception {
 		loadcode(getAboveComment());
 		String result = runQuickFixOneFile();
 		assertContainedIn("break;	 }", result);
 	}
+
 	// void func() {
 	//	 int a;
 	//   switch(a) {
@@ -44,9 +55,9 @@ public class CaseBreakQuickFixTest extends QuickFixTestCase {
 	//     }
 	//	 }
 	// }
-	public void testLastCaseComp() {
+	public void testLastCaseComp() throws Exception {
 		loadcode(getAboveComment());
 		String result = runQuickFixOneFile();
-		assertContainedIn("hello();    break;", result);
+		assertContainedIn("hello();\t\tbreak;", result);
 	}
 }

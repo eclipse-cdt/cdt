@@ -18,10 +18,8 @@ import org.eclipse.jface.text.TextSelection;
 
 /**
  * @author Emanuel Graf
- *
  */
 public class TestSourceFile {
-	
 	private static final String REPLACEMENT = ""; //$NON-NLS-1$
 	private String name;
 	private StringBuffer source = new StringBuffer();
@@ -39,29 +37,32 @@ public class TestSourceFile {
 		super();
 		this.name = name;
 	}
+
 	public String getExpectedSource() {
 		String exp = expectedSource.toString();
-		if(exp.length() == 0) {
+		if (exp.length() == 0) {
 			return getSource();
-		}else {
+		} else {
 			return exp;
 		}
 	}
+
 	public String getName() {
 		return name;
 	}
+
 	public String getSource() {
 		return source.toString();
 	}
 	
 	public void addLineToSource(String code) {
 		Matcher start = createMatcherFromString(selectionStartLineRegex, code);
-		if(start.matches()) {
+		if (start.matches()) {
 			selectionStart = start.start(2) + source.length();
 			code = code.replaceAll(selectionStartRegex, REPLACEMENT);
 		}
 		Matcher end = createMatcherFromString(selectionEndLineRegex, code);
-		if(end.matches()) {
+		if (end.matches()) {
 			selectionEnd = end.start(2) + source.length();
 			code = code.replaceAll(selectionEndRegex, REPLACEMENT);
 		}
@@ -75,11 +76,9 @@ public class TestSourceFile {
 	}
 	
 	public TextSelection getSelection() {
-		if(selectionStart < 0 || selectionEnd <0 ) {
+		if (selectionStart < 0 || selectionEnd <0 )
 			return null;
-		}else {
-			return new TextSelection(selectionStart, selectionEnd -selectionStart);
-		}
+		return new TextSelection(selectionStart, selectionEnd -selectionStart);
 	}
 
 	protected static Matcher createMatcherFromString(String pattern, String line) {

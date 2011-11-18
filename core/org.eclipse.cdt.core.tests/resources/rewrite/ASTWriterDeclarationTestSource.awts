@@ -32,12 +32,14 @@ extern "C" typedef void FUNC();
 
 //!NamespaceAlias
 //%CPP
-namespace kurz = ziemlichlangernamespace;
+namespace kurz = somenamespace;
 
 //!NamespaceDefinition
 //%CPP
-namespace ziemlichlangernamespace
+namespace somenamespace
 {
+
+
 }
 
 //!TemplateDeclaration
@@ -58,8 +60,9 @@ template<typename T> class MyQueue;
 template<> class MyQueue<double>
 {
     std::vector<double> data;
+
 public:
-    void Add(const double& );
+    void Add(const double&);
     void Remove();
     void Print();
 };
@@ -92,9 +95,11 @@ using namespace B;
 class A
 {
 public:
-    int hallo();
+    int hello();
+
 protected:
     int b, c;
+
 private:
     int p;
 };
@@ -104,7 +109,7 @@ private:
 //Comment
 int i = 2;
 
-//!typename qualfier
+//!Typename qualifier
 //%CPP
-typename T::A *a6;
+typename T::A* a6;
 

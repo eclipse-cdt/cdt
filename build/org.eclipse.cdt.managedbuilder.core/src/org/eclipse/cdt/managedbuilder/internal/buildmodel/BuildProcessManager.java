@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Intel Corporation and others.
+ * Copyright (c) 2006, 2011 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,41 +11,27 @@
 
 package org.eclipse.cdt.managedbuilder.internal.buildmodel;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Vector;
 
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildCommand;
-import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
-import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * This class implements process pool management for internal builder 
- *
- * NOTE: This class is subject to change and discuss, 
- * and is currently available in experimental mode only
  */
 public class BuildProcessManager {
 	protected OutputStream out;
 	protected OutputStream err;
 	protected boolean show;
-	protected ProcessLauncher[] processes;
-	protected int maxProcesses;  
-	
-//	 Number of CPUs is not dependent of object instance.
-//   But user can change UI settings for processes number.
-//   So we cannot set procNumber directly to maxProcesses. 	
-	static int procNumber = 0;
+	protected Vector<ProcessLauncher> processes;
+	protected int maxProcesses;
 	
 	/**
 	 * Initializes process manager
@@ -59,7 +45,7 @@ public class BuildProcessManager {
 		err = _err;
 		show = _show;
 		maxProcesses = _procNumber;
-		processes = new ProcessLauncher[maxProcesses];
+		processes = new Vector<ProcessLauncher>(Math.min(10, maxProcesses), 10);
 	}
 	
 	/**
@@ -79,18 +65,19 @@ public class BuildProcessManager {
 	 * @param monitor Progress monitor for this task 
 	 */
 	public ProcessLauncher launchProcess(IBuildCommand cmd, IPath cwd, IProgressMonitor monitor) {
-		if (hasEmpty()) {
-			int i = 0;
-			for (; i < maxProcesses; i++) {
-				if (processes[i] == null || processes[i].queryState() == ProcessLauncher.STATE_DONE) {
-					break;
-				}
+		for (int i = 0; i < maxProcesses; i++) {
+			if (i >= processes.size()) {
+				ProcessLauncher process = new ProcessLauncher(cmd.getCommand(), cmd.getArgs(), mapToStringArray(cmd.getEnvironment()), cwd, out, err, monitor, show);
+				processes.add(process);
+				process.launch();
+				return process;
+				
 			}
-			
-			if (i < maxProcesses) {
-				processes[i] = new ProcessLauncher(cmd.getCommand(), cmd.getArgs(), mapToStringArray(cmd.getEnvironment()), cwd, out, err, monitor, show);
-				processes[i].launch();
-				return processes[i];
+			if (processes.get(i).queryState() == ProcessLauncher.STATE_DONE) {
+				ProcessLauncher process = new ProcessLauncher(cmd.getCommand(), cmd.getArgs(), mapToStringArray(cmd.getEnvironment()), cwd, out, err, monitor, show);
+				processes.set(i, process);
+				process.launch();
+				return process;
 			}
 		}
 		return null;
@@ -102,35 +89,36 @@ public class BuildProcessManager {
 	 * returned as a result. Otherwise this method returns null.
 	 */
 	public ProcessLauncher queryStates() {
-		ProcessLauncher result = null;
-		
-		for (int i = 0; i < maxProcesses; i++) {
-			if (processes[i] != null) {
-				int state = processes[i].queryState();
-				if (state != ProcessLauncher.STATE_RUNNING) {
-					if (state != ProcessLauncher.STATE_DONE && result == null)
-						result = processes[i];
-				}
-			}
+		for (ProcessLauncher process : processes) {
+			int state = process.queryState();
+			if (state != ProcessLauncher.STATE_RUNNING && state != ProcessLauncher.STATE_DONE)
+				return process;
 		}
 		
-		return result;
+		return null;
 	}
 
 	/**
 	 * Checks states of all currently running processes. 
 	 */
 	public boolean hasEmpty() {
-		for (int i = 0; i < maxProcesses; i++) {
-			if (processes[i] == null) 
+		if (processes.size() < maxProcesses)
+			return true;
+		
+		for (ProcessLauncher process : processes) {
+			if (process.queryState() != ProcessLauncher.STATE_RUNNING) 
 				return true;
-			else {
-				if (processes[i].queryState() != ProcessLauncher.STATE_RUNNING) 
-					return true;
-			}
 		}
 		return false;
 	}
+
+	/**
+	 * Returns maximum threads used up to that point
+	 */
+	public int getThreadsUsed() {
+		return processes.size();
+	}
+	
 
 	
 	/**
@@ -152,40 +140,10 @@ public class BuildProcessManager {
 	
 	/**
 	 * @return Number of processors detected
+	 * @deprecated since CDT 9.0 - just use Runtime.getRuntime().availableProcessors()
 	 */
+	@Deprecated
 	static public int checkCPUNumber() {
-		if (procNumber > 0) return procNumber;
-		
-		procNumber = 1;
-		int x = 0;
-		String os = System.getProperty("os.name"); //$NON-NLS-1$
-		if (os != null) {
-			if (os.startsWith("Win")) { //$NON-NLS-1$
-				IEnvironmentVariableProvider evp = ManagedBuildManager.getEnvironmentVariableProvider();
-				if (evp != null) {
-					IBuildEnvironmentVariable var = evp.getVariable("NUMBER_OF_PROCESSORS", null, false, false); //$NON-NLS-1$
-					if (var != null) {
-						try {
-							x = new Integer(var.getValue()).intValue();
-							if (x > 0) { procNumber = x; }
-						} catch (NumberFormatException e) {} // fallthrough and return default
-					}
-				}
-			} else { // linux
-				String p = "/proc/cpuinfo"; //$NON-NLS-1$
-				try {
-					BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream(p)));
-					String s;
-					while ((s = r.readLine() ) != null ) 
-					   { if (s.startsWith("processor\t:")) x++; } //$NON-NLS-1$
-					r.close();
-					if (x > 0) { procNumber = x; }
-				} 
-				catch (IOException e) {} // fallthrough and return default
-			}
-		}
-		if(DbgUtil.DEBUG)
-			DbgUtil.trace("Number of processors detected: " + procNumber);	//$NON-NLS-1$
-		return procNumber;
+		return Runtime.getRuntime().availableProcessors();
 	}
 }

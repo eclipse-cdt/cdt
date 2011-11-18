@@ -1,45 +1,49 @@
 //!CommentRecognition000
 //%CPP
-class Klasse0
+class Class0
 {
 public:
-    Klasse0();   /*
+    Class0();   /*
     			  * Comment
     			  */
     std::string toString();
+
 private:
     int i;
 };
 
 //=
-class Klasse0
+class Class0
 {
 public:
-    Klasse0(); /*
+    Class0(); /*
     			  * Comment
     			  */
     std::string toString();
+
 private:
     int i;
 };
 
 //!CommentRecognition00
 //%CPP
-class Klasse0
+class Class0
 {
 public:
-    Klasse0();   //Comment
+    Class0();   //Comment
     std::string toString();
+
 private:
     int i;
 };
 
 //=
-class Klasse0
+class Class0
 {
 public:
-    Klasse0(); //Comment
+    Class0(); //Comment
     std::string toString();
+
 private:
     int i;
 };
@@ -47,12 +51,13 @@ private:
 //!CommentRecognition0
 //%CPP
 //Comment1
-class Klasse0
+class Class0
 {
     //Comment2
 public:
-    Klasse0();
+    Class0();
     std::string toString();
+
 private:
     int i;
 };
@@ -131,6 +136,7 @@ public:
     void lala();
     //test
     virtual ~test();
+
 protected:
     class test2
     {
@@ -153,6 +159,7 @@ public:
     void lala();
     //test
     virtual ~test();
+
 protected:
     class test2
     {
@@ -175,6 +182,7 @@ public:
     void lala();
     //test
     virtual ~test();
+
 protected:
     class test2
     {
@@ -187,7 +195,7 @@ protected:
 //%CPP
 class test
 {
-    //Klasse...
+    //Class...
 public:
     test();
     /*
@@ -196,6 +204,7 @@ public:
     void lala();
     //test
     virtual ~test();
+
 protected:
     class test2
     {
@@ -206,122 +215,133 @@ protected:
 
 //!CommentRecognition1 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
     //TEST
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
 private:
     int i;
 };
 
 //!CommentRecognition2 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
 public: //TEST
-    Klasse1();
+    Class1();
     std::string toString();
+
 private:
     int i;
 };
 
 //!CommentRecognition3 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
 public:
     //TEST
-    Klasse1();
+    Class1();
     std::string toString();
+
 private:
     int i;
 };
 
 //!CommentRecognition4 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
 private:
     int i;
 };
 
 //!CommentRecognition5 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {   //TEST
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
 private:
     int i;
 };
 
 //=
-class Klasse1
+class Class1
 {
     //TEST
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
 private:
     int i;
 };
 
 //!CommentRecognition6 - von CERP
 //%CPP
-class Klasse1{    //TEST
+class Class1{    //TEST
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
 private:
     int i;
 };
 
 //=
-class Klasse1
+class Class1
 {
     //TEST
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
 private:
     int i;
 };
 
 //!CommentRecognition7 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {//TEST
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
 private:
     int i;
 };
 
 //=
-class Klasse1
+class Class1
 {
     //TEST
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
 private:
     int i;
 };
 
 //!CommentRecognition8 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
 private:
     int i;
     int i = 5; //lala
@@ -329,75 +349,82 @@ private:
 
 //!CommentRecognition9 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
     /*TEST*/
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
 private:
     int i;
 };
 
 //!CommentRecognition10 - von CERP
 //%CPP
-class Klasse1{    /*TEST*/
+class Class1{    /*TEST*/
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
 private:
     int i;
 };
 
 //=
-class Klasse1
+class Class1
 {
     /*TEST*/
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
 private:
     int i;
 };
 
 //!CommentRecognition11 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
 public: /*TEST*/
-    Klasse1();
+    Class1();
     std::string toString();
+
 private:
     int i;
 };
 
 //!CommentRecognition11b - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
-public: /*TEST*/ Klasse1();
+public: /*TEST*/ Class1();
     std::string toString();
+
 private:
     int i;
 };
 
 //=
-class Klasse1
+class Class1
 {
 public: /*TEST*/
-    Klasse1();
+    Class1();
     std::string toString();
+
 private:
     int i;
 };
 
 //!CommentRecognition12 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
 private:
     int i;
     int i = 5; /*TEST*/
@@ -405,25 +432,27 @@ private:
 
 //!CommentRecognition13 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
     /*
      * TEST
      */
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
 private:
     int i;
 };
 
 //!CommentRecognition14 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
 private:
     int i;
     int i = 5; /*
@@ -433,47 +462,51 @@ private:
 
 //!CommentRecognition15 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
 public: /*
          * TEST
          */
-    Klasse1();
+    Class1();
     std::string toString();
+
 private:
     int i;
 };
 
 //!CommentRecognition16 - von CERP
 //%CPP
-class Klasse1{  //Test mit
+class Class1{  //Test mit
                 //2 Zeilen
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
 private:
     int i;
 };
 
 //=
-class Klasse1
+class Class1
 {
     //Test mit
     //2 Zeilen
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
 private:
     int i;
 };
 
 //!CommentRecognition17 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
 private:
     int i;
     int i = 5; //Test mit
@@ -482,48 +515,52 @@ private:
 
 //!CommentRecognition18 - von CERP
 //%CPP
-class Klasse1{
+class Class1{
     //Test mit
     //2 Zeilen
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
 private:
     int i;
 };
 
 //=
-class Klasse1
+class Class1
 {
     //Test mit
     //2 Zeilen
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
 private:
     int i;
 };
 
 //!CommentRecognition19 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
     //Test mit
     //2 Zeilen
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
 private:
     int i;
 };
 
 //!CommentRecognition20 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
     void inlineMethode()
     {
         int i = 0;
@@ -536,11 +573,12 @@ private:
 
 //!CommentRecognition21 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
     void inlineMethode()
     {
         int i = 0; //TEST
@@ -552,11 +590,12 @@ public:
 
 //!CommentRecognition22 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
     void inlineMethode()
     {
         int i = 0;
@@ -569,11 +608,12 @@ private:
 
 //!CommentRecognition23 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
     //KommentarDavor
     void inlineMethode()
     {
@@ -587,11 +627,12 @@ private:
 
 //!CommentRecognition24 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
     void inlineMethode()
     {
         int i = 0;
@@ -604,11 +645,12 @@ private:
 
 //!CommentRecognition25 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
     void inlineMethode()
     {
         int i = 0;
@@ -622,11 +664,12 @@ private:
 
 //!CommentRecognition26 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
     void inlineMethode()
     {
         int i = 0;
@@ -641,11 +684,12 @@ private:
 
 //!CommentRecognition27 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
     void inlineMethode()
     {
         int i = 0;
@@ -658,11 +702,12 @@ private:
 
 //!CommentRecognition28 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
     void inlineMethode()
     {
         int i = 0;
@@ -676,11 +721,12 @@ private:
 
 //!CommentRecognition29 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
     void inlineMethode()
     {
         int i = 0;
@@ -695,11 +741,12 @@ private:
 
 //!CommentRecognition30 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
     //TEST
     void inlineMethode()
     {
@@ -713,11 +760,12 @@ private:
 
 //!CommentRecognition31 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
     /*TEST*/
     void inlineMethode()
     {
@@ -732,11 +780,12 @@ private:
 //!CommentRecognition32 - von CERP
 //%CPP
 //Vorher
-class Klasse1 //Nachher
+class Class1 //Nachher
 {
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
     void inlineMethode()
     {
         int i = 0;
@@ -750,11 +799,12 @@ private:
 //!CommentRecognition33 - von CERP
 //%CPP
 //Vorher
-class Klasse1 /*Nachher*/
+class Class1 /*Nachher*/
 {
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
     void inlineMethode()
     {
         int i = 0;
@@ -768,12 +818,13 @@ private:
 //!CommentRecognition34 - von CERP
 //%CPP
 /*Vorher*/
-class Klasse1
+class Class1
 {
     /*Nachher*/
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
     void inlineMethode()
     {
         int i = 0;
@@ -787,12 +838,13 @@ private:
 //!CommentRecognition35 - von CERP
 //%CPP
 /*Vorher*/
-class Klasse1
+class Class1
 {
     //Nachher
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
     void inlineMethode()
     {
         int i = 0;
@@ -808,12 +860,13 @@ private:
 /*
  * Vorher
  */
-class Klasse1
+class Class1
 {
     //Nachher
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
     void inlineMethode()
     {
         int i = 0;
@@ -826,11 +879,12 @@ private:
 
 //!CommentRecognition37 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
     void inlineMethode()
     {
         int i = 0;
@@ -843,11 +897,12 @@ private:
 
 //!CommentRecognition38 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
     void inlineMethode()
     {
         int i = 0;
@@ -860,11 +915,12 @@ private:
 
 //!CommentRecognition39 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
     void inlineMethode()
     {
         int i = 0;
@@ -879,11 +935,12 @@ private:
 
 //!CommentRecognition40 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
     void inlineMethode()
     {
         int i = 0;
@@ -899,11 +956,12 @@ private:
 
 //!CommentRecognition41 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
     void inlineMethode()
     {
         int i = 0;
@@ -917,11 +975,12 @@ private:
 
 //!CommentRecognition42 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
     void inlineMethode()
     {
         int i = 0;
@@ -935,7 +994,7 @@ private:
 
 //!CommentRecognition43 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
 private:
     int i;
@@ -943,7 +1002,7 @@ private:
 
 //!CommentRecognition44 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
 private:
     int i;
@@ -952,7 +1011,7 @@ private:
 
 //!CommentRecognition44b - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
 private:
     int i; //TEST
@@ -960,7 +1019,7 @@ private:
 
 //!CommentRecognition44c - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
 private:
     int i;
@@ -969,7 +1028,7 @@ private:
 
 //!CommentRecognition44d - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
 private:
     int i;
@@ -979,7 +1038,7 @@ private:
 
 //!CommentRecognition45 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
 private:
     //TEST
@@ -988,7 +1047,7 @@ private:
 
 //!CommentRecognition46 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
     //TEST
 private:
@@ -997,137 +1056,148 @@ private:
 
 //!CommentRecognition47 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
 private: //TEST
     int i;
 };
 
 //!CommentRecognition48 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
     //TEST
 public: /*TEST*/
-    Klasse1();
+    Class1();
     std::string toString();
+
 private:
     int i;
 };
 
 //!CommentRecognition48b - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
     //TEST
 public: /*TEST*/
-    Klasse1();
+    Class1();
     std::string toString();
+
 private:
     int i;
 };
 
 //!CommentRecognition49 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
 public:
-    Klasse1(); //TEST1
+    Class1(); //TEST1
     //TEST2
     std::string toString();
+
 private:
     int i;
 };
 
 //!CommentRecognition50 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
 public:
-    Klasse1(); /*TEST1*/
+    Class1(); /*TEST1*/
     /*TEST2*/
     std::string toString();
+
 private:
     int i;
 };
 
 //!CommentRecognition51 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
 public:
-    Klasse1(); //TEST1
+    Class1(); //TEST1
     /*TEST2*/
     std::string toString();
+
 private:
     int i;
 };
 
 //!CommentRecognition52 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
 public:
-    Klasse1(); /*TEST1*/
+    Class1(); /*TEST1*/
     //TEST2
     std::string toString();
+
 private:
     int i;
 };
 
 //!CommentRecognition53 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
 public:
-    Klasse1(); /*TEST1*/
+    Class1(); /*TEST1*/
     //TEST3
     //TEST2
     std::string toString();
+
 private:
     int i;
 };
 
 //!CommentRecognition54 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
 public:
-    Klasse1(); /*TEST1*/
+    Class1(); /*TEST1*/
     /*TEST3*/
     //TEST2
     std::string toString();
+
 private:
     int i;
 };
 
 //!CommentRecognition55 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
 public:
-    Klasse1(); //TEST1
+    Class1(); //TEST1
     /*
      * TEST3
      */
     std::string toString();
+
 private:
     int i;
 };
 
 //!CommentRecognition56 - von CERP
 //%CPP
-class Klasse1
+class Class1
 {
 public:
-    Klasse1(); /*
+    Class1(); /*
                 * TEST1
                 */
     //TEST2
     std::string toString();
+
 private:
     int i;
 };
@@ -1136,27 +1206,31 @@ private:
 //%CPP
 namespace testNamespace
 {
-    class Klasse1
-    {
-    public:
-        Klasse1();
-        std::string toString();
-    private:
-        int i;
-    };
+
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
 }
 
 //!CommentRecognition58 - von CERP
 //%CPP
-//Kommentar
+//Comment
 namespace testNamespace
 {
 
-class Klasse1
+class Class1
 {
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
 private:
     int i;
 };
@@ -1164,224 +1238,264 @@ private:
 }
 
 //=
-//Kommentar
+//Comment
 namespace testNamespace
 {
-    class Klasse1
-    {
-    public:
-        Klasse1();
-        std::string toString();
-    private:
-        int i;
-    };
+
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
 }
 
 //!CommentRecognition59 - von CERP
 //%CPP
-namespace testNamespace //Kommentar
+namespace testNamespace //Comment
 {
-    class Klasse1
-    {
-    public:
-        Klasse1();
-        std::string toString();
-    private:
-        int i;
-    };
+
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
 }
 
 //!CommentRecognition60 - von CERP
 //%CPP
-/*Kommentar*/
+/*Comment*/
 namespace testNamespace
 {
-    class Klasse1
-    {
-    public:
-        Klasse1();
-        std::string toString();
-    private:
-        int i;
-    };
+
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
 }
 
 //!CommentRecognition61 - von CERP
 //%CPP
-namespace testNamespace /*Kommentar*/
+namespace testNamespace /*Comment*/
 {
-    class Klasse1
-    {
-    public:
-        Klasse1();
-        std::string toString();
-    private:
-        int i;
-    };
+
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
 }
 
 //!CommentRecognition62 - von CERP
 //%CPP
 /*
- * Kommentar
+ * Comment
  */
 namespace testNamespace
 {
-    class Klasse1
-    {
-    public:
-        Klasse1();
-        std::string toString();
-    private:
-        int i;
-    };
+
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
 }
 
 //!CommentRecognition63 - von CERP
 //%CPP
 namespace testNamespace /*
-                         * Kommentar
+                         * Comment
                          */
 {
-    class Klasse1
-    {
-    public:
-        Klasse1();
-        std::string toString();
-    private:
-        int i;
-    };
+
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
 }
 
 //!CommentRecognition64 - von CERP
 //%CPP
 namespace testNamespace
 {
-    class Klasse1
-    {
-    public:
-        Klasse1();
-        std::string toString();
-    private:
-        int i;
-    };
-} //Kommentar
+
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+} //Comment
 
 //!CommentRecognition65 - von CERP
 //%CPP
 namespace testNamespace
 {
-    class Klasse1
-    {
-    public:
-        Klasse1();
-        std::string toString();
-    private:
-        int i;
-    };
-} /*Kommentar*/
+
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+} /*Comment*/
 
 //!CommentRecognition66 - von CERP
 //%CPP
 namespace testNamespace
 {
-    class Klasse1
-    {
-    public:
-        Klasse1();
-        std::string toString();
-    private:
-        int i;
-    };
+
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
 } /*
-   * Kommentar
+   * Comment
    */
 
 //!CommentRecognition67 - von CERP
 //%CPP
 namespace testNamespace
 {
-    class Klasse1 //TEST
-    {
-    public:
-        Klasse1();
-        std::string toString();
-    private:
-        int i;
-    };
+
+class Class1 //TEST
+{
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
 }
 
 //!CommentRecognition68 - von CERP
 //%CPP
 namespace testNamespace
 {
-    class Klasse1
-    {
-    public:
-        Klasse1();
-        std::string toString();
-    private:
-        int i; //TEST
-    };
+
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i; //TEST
+};
+
 }
 
 //!CommentRecognition69 - von CERP
 //%CPP
 namespace testNamespace
 {
-    class Klasse1
-    {
-    public:
-        Klasse1();
-        std::string toString();
-    private:
-        int i;
-    }; //TEST
+
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+}; //TEST
+
 }
 
 //!CommentRecognition100 - von CERP
 //%CPP
-struct Klasse1
+struct Class1
 {
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
 private:
     int i;
 };
 
 //!CommentRecognition101 - von CERP
 //%CPP
-//Kommentar
-struct Klasse1
+//Comment
+struct Class1
 {
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
 private:
     int i;
 };
 
 //!CommentRecognition102 - von CERP
 //%CPP
-struct Klasse1
+struct Class1
 {
-    //Kommentar
+    //Comment
 public:
-    Klasse1();
+    Class1();
     std::string toString();
+
 private:
     int i;
 };
 
 //!CommentRecognition103 - von CERP
 //%CPP
-struct Klasse1
+struct Class1
 {
-    //Kommentar
+    //Comment
 private:
-    Klasse1();
+    Class1();
     std::string toString();
+
 protected:
     int i;
 };
@@ -1389,11 +1503,12 @@ protected:
 //!CommentRecognition104 - von CERP
 //%CPP
 /*Davor*/
-struct Klasse1 //Kommentar
+struct Class1 //Comment
 {
 private:
-    Klasse1();
+    Class1();
     std::string toString();
+
 protected:
     int i;
 };

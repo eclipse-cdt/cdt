@@ -55,10 +55,12 @@ public class GPPLanguage extends AbstractCLikeLanguage {
 		return super.getAdapter(adapter);
 	}
 	
+	@Override
 	public String getId() {
 		return ID;
 	}
 	
+	@Override
 	public int getLinkageID() {
 		return ILinkage.CPP_LINKAGE_ID;
 	}
@@ -68,6 +70,9 @@ public class GPPLanguage extends AbstractCLikeLanguage {
 		return CPP_GNU_SCANNER_EXTENSION;
 	}
 
+	/**
+	 * @since 5.4
+	 */
 	@Override
 	protected IScannerExtensionConfiguration getScannerExtensionConfiguration(IScannerInfo info) {
 		return GPPScannerExtensionConfiguration.getInstance(info);

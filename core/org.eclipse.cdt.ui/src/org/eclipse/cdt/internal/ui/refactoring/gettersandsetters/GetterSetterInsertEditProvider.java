@@ -4,7 +4,7 @@
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html  
+ * http://www.eclipse.org/legal/epl-v10.html
  *  
  * Contributors: 
  *     Institute for Software - initial API and implementation
@@ -84,11 +84,11 @@ public class GetterSetterInsertEditProvider implements Comparable<GetterSetterIn
 	}
 	
 	private ICPPASTQualifiedName getClassname() {
-		IASTNode n = fieldDeclaration.getParent();
-		while (!(n instanceof IASTCompositeTypeSpecifier)) {
-			n = n.getParent();
+		IASTNode node = fieldDeclaration.getParent();
+		while (!(node instanceof IASTCompositeTypeSpecifier)) {
+			node = node.getParent();
 		}
-		IASTCompositeTypeSpecifier comp = (IASTCompositeTypeSpecifier) n;
+		IASTCompositeTypeSpecifier comp = (IASTCompositeTypeSpecifier) node;
 		
 		CPPASTQualifiedName qname = new CPPASTQualifiedName();
 		qname.addName(comp.getName().copy(CopyStyle.withLocations));
@@ -103,6 +103,7 @@ public class GetterSetterInsertEditProvider implements Comparable<GetterSetterIn
 		return kind;
 	}
 
+	@Override
 	public int compareTo(GetterSetterInsertEditProvider o) {
 		return toString().compareTo(o.toString());
 	}

@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.ui.refactoring.gettersandsetters;
 import java.util.Arrays;
 
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -181,7 +182,13 @@ public class FunctionFactory {
 	public static IASTSimpleDeclaration createGetterDeclaration(IASTName fieldName,
 			IASTSimpleDeclaration fieldDeclaration) {
 		IASTSimpleDeclaration getter = new CPPASTSimpleDeclaration();
-		getter.setDeclSpecifier(fieldDeclaration.getDeclSpecifier().copy(CopyStyle.withLocations));
+		IASTDeclSpecifier declSpec = fieldDeclaration.getDeclSpecifier();
+		getter.setDeclSpecifier(declSpec.copy(CopyStyle.withLocations));
+		// TODO(sprigogin): Implement return by reference
+//		IType type = CPPVisitor.createType(declSpec);
+//		if (TypeHelper.shouldBePassedByReference(type, fieldDeclaration.getTranslationUnit())) {
+//			declSpec.s
+//		}
 		getter.addDeclarator(getGetterDeclarator(fieldName, fieldDeclaration, null));
 		return getter;
 	}

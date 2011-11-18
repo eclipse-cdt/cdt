@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.togglefunction;
 
@@ -26,7 +26,6 @@ import org.eclipse.cdt.ui.tests.refactoring.RefactoringTest;
 import org.eclipse.cdt.ui.tests.refactoring.TestSourceFile;
 
 public class ToggleRefactoringTest extends RefactoringTest {
-
 	private boolean fatalError;
 	private boolean newFileCreation;
 	private String[] newfiles;
@@ -77,7 +76,7 @@ public class ToggleRefactoringTest extends RefactoringTest {
 		assertConditionsOk(refactoring.checkFinalConditions(NULL_PROGRESS_MONITOR));
 		changes.perform(NULL_PROGRESS_MONITOR);
 		filesDoExist();
-		for(String fileName: fileMap.keySet()) {			
+		for (String fileName: fileMap.keySet()) {			
 			IFile iFile = project.getFile(new Path(fileName));
 			String code = getCodeFromIFile(iFile);
 			String expectedSource = fileMap.get(fileName).getExpectedSource();
@@ -91,21 +90,21 @@ public class ToggleRefactoringTest extends RefactoringTest {
 	}
 
 	private void filesDoExist() {
-		for(String fileName: newfiles) {
+		for (String fileName: newfiles) {
 			IFile file = project.getFile(new Path(fileName));
 			assertTrue(file.exists());
 		}
 	}
 
 	private void filesDoNotExist() {
-		for(String fileName: newfiles) {
+		for (String fileName: newfiles) {
 			IFile file = project.getFile(new Path(fileName));
 			assertFalse(file.exists());
 		}
 	}
 
 	private void removeFiles() throws CoreException {
-		for(String fileName: newfiles) {
+		for (String fileName: newfiles) {
 			IFile file = project.getFile(new Path(fileName));
 			file.delete(true, NULL_PROGRESS_MONITOR);
 		}
@@ -117,5 +116,4 @@ public class ToggleRefactoringTest extends RefactoringTest {
 		changes.perform(NULL_PROGRESS_MONITOR);
 		compareFiles(fileMap);		
 	}
-
 }

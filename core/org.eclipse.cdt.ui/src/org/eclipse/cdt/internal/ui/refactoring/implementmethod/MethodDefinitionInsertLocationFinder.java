@@ -105,11 +105,15 @@ public class MethodDefinitionInsertLocationFinder {
 		}
 
 		if (insertLocation.getTranslationUnit() == null) {
-			ITranslationUnit partner = SourceHeaderPartnerFinder.getPartnerTranslationUnit(
-					declarationTu, astCache);
-			if (partner != null) {
-				insertLocation.setParentNode(astCache.getAST(partner, null), partner);
-			}	
+			if (declarationTu.isHeaderUnit()) {
+				ITranslationUnit partner = SourceHeaderPartnerFinder.getPartnerTranslationUnit(
+						declarationTu, astCache);
+				if (partner != null) {
+					insertLocation.setParentNode(astCache.getAST(partner, null), partner);
+				}
+			} else {
+				insertLocation.setParentNode(parent.getTranslationUnit(), declarationTu);
+			}
 		}
 
 		return insertLocation;

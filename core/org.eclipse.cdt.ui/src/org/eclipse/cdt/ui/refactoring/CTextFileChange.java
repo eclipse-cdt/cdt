@@ -31,7 +31,6 @@ import org.eclipse.cdt.internal.core.model.TranslationUnit;
 import org.eclipse.cdt.internal.ui.refactoring.DocumentAdapter;
 import org.eclipse.cdt.internal.ui.refactoring.UndoCTextFileChange;
 
-
 /**
  * A TextFileChange that uses a working copy in order to generate CModel events.
  * 
@@ -63,10 +62,6 @@ public class CTextFileChange extends TextFileChange {
         setTextType(TEXT_TYPE);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.ltk.core.refactoring.TextFileChange#acquireDocument(org.eclipse.core.runtime.IProgressMonitor)
-     */
     @Override
 	protected IDocument acquireDocument(IProgressMonitor pm) throws CoreException {
         IDocument doc= super.acquireDocument(pm);
@@ -85,16 +80,11 @@ public class CTextFileChange extends TextFileChange {
 	protected void commit(final IDocument document, final IProgressMonitor pm) throws CoreException {
         if (fWorkingCopy == null) {
         	super.commit(document, pm);
-        }
-        else if (needsSaving()) {
+        } else if (needsSaving()) {
         	fWorkingCopy.commit(false, pm);
         }
     }
     
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.ltk.core.refactoring.TextFileChange#releaseDocument(org.eclipse.jface.text.IDocument, org.eclipse.core.runtime.IProgressMonitor)
-     */
     @Override
 	protected void releaseDocument(IDocument document, IProgressMonitor pm) throws CoreException {
         super.releaseDocument(document, pm);
@@ -105,11 +95,7 @@ public class CTextFileChange extends TextFileChange {
             }
         }
     }
-    
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.ltk.core.refactoring.TextFileChange#createUndoChange(org.eclipse.text.edits.UndoEdit, org.eclipse.ltk.core.refactoring.ContentStamp)
-     */
+
     @Override
 	protected Change createUndoChange(UndoEdit edit, ContentStamp stampToRestore) {
         return new UndoCTextFileChange(getName(), getFile(), edit, stampToRestore, getSaveMode());

@@ -6,15 +6,15 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Tomasz Wesolowski - initial API and implementation
+ *     Tomasz Wesolowski - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.dom.rewrite;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
@@ -51,35 +51,23 @@ import org.eclipse.cdt.core.dom.rewrite.DeclarationGenerator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
- * 
  * @author Tomasz Wesolowski
- * 
  */
 public class DeclarationGeneratorImpl extends DeclarationGenerator {
-
 	private INodeFactory factory;
 
 	/**
 	 * Creates a new generator using the given factory.
 	 * 
-	 * @param factory
-	 *            a factory to use. If a C++ type is requested, it has to be an instance of
-	 *            {@link ICPPNodeFactory}.
+	 * @param factory The factory to use. If a C++ type is requested, it has to be an instance of
+	 *     {@link ICPPNodeFactory}.
 	 */
 	public DeclarationGeneratorImpl(INodeFactory factory) {
 		this.factory = factory;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.cdt.core.dom.rewrite.IDeclarationGenerator#createDeclSpecFromType(org.eclipse.cdt.core.
-	 * dom.ast.IType)
-	 */
 	@Override
 	public IASTDeclSpecifier createDeclSpecFromType(IType type) {
-
 		IASTDeclSpecifier returnedDeclSpec = null;
 
 		if (type instanceof IPointerType) {
@@ -133,20 +121,11 @@ public class DeclarationGeneratorImpl extends DeclarationGenerator {
 		return returnedDeclSpec;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.cdt.core.dom.rewrite.IDeclarationGenerator#createDeclaratorFromType(org.eclipse.cdt.core
-	 * .dom.ast.IType, char[])
-	 */
 	@Override
 	public IASTDeclarator createDeclaratorFromType(IType type, char[] name) {
-
 		IASTDeclarator returnedDeclarator = null;
 
 		try {
-
 			// Addition of pointer operators has to be in reverse order, so it's deferred until the end
 			Map<IASTDeclarator, LinkedList<IASTPointerOperator>> pointerOperatorMap = new HashMap<IASTDeclarator, LinkedList<IASTPointerOperator>>();
 
@@ -225,9 +204,8 @@ public class DeclarationGeneratorImpl extends DeclarationGenerator {
 			}
 			
 			finalizePointerOperators(pointerOperatorMap);
-
 		} catch (DOMException e) {
-			e.printStackTrace();
+			CCorePlugin.log(e);
 		}
 
 		// Fallback
@@ -273,7 +251,7 @@ public class DeclarationGeneratorImpl extends DeclarationGenerator {
 		if (type instanceof ICPPPointerToMemberType) {
 			String classStr = ASTTypeUtil.getType(((ICPPPointerToMemberType) type).getMemberOfClass());
 			IASTName newName = factory.newName((classStr + "::").toCharArray()); //$NON-NLS-1$
-			// any better way of getting class name from ICPPPointerToMemberType?
+			// Any better way of getting class name from ICPPPointerToMemberType?
 
 			ICPPASTPointerToMember member = ((ICPPNodeFactory) factory).newPointerToMember(newName);
 			member.setConst(((ICPPPointerToMemberType) type).isConst());
@@ -286,8 +264,8 @@ public class DeclarationGeneratorImpl extends DeclarationGenerator {
 			return pointer;
 		} else {
 			ICPPReferenceType refType = (ICPPReferenceType) type;
-			ICPPASTReferenceOperator op = ((ICPPNodeFactory) factory).newReferenceOperator(refType
-					.isRValueReference());
+			ICPPASTReferenceOperator op =
+					((ICPPNodeFactory) factory).newReferenceOperator(refType.isRValueReference());
 			return op;
 		}
 	}
@@ -303,14 +281,13 @@ public class DeclarationGeneratorImpl extends DeclarationGenerator {
 	private IASTDeclSpecifier getDeclSpecForTemplate(ICPPTemplateInstance type) {
 		IASTName name = getName(type);
 		if (factory instanceof ICPPNodeFactory) {
-
 			if (name instanceof ICPPASTQualifiedName) {
 				ICPPASTQualifiedName fullQualifiedName = (ICPPASTQualifiedName) name;
 				IASTName templateName = fullQualifiedName.getLastName();
 				ICPPASTTemplateId tempId = getTemplateId(type, templateName);
 				
-				ICPPASTQualifiedName newQualifiedName = ((ICPPNodeFactory) factory)
-						.newQualifiedName();
+				ICPPASTQualifiedName newQualifiedName =
+						((ICPPNodeFactory) factory).newQualifiedName();
 				int nbQualifiedNames = fullQualifiedName.getNames().length;
 				if (nbQualifiedNames > 1) {
 					for (int i = 0; i < nbQualifiedNames - 1; i++) {
@@ -320,7 +297,6 @@ public class DeclarationGeneratorImpl extends DeclarationGenerator {
 				newQualifiedName.addName(tempId);
 
 				return factory.newTypedefNameSpecifier(newQualifiedName);
-
 			} else {
 				IASTName templateName = getName(type);
 				ICPPASTTemplateId tempId = getTemplateId(type, templateName);
@@ -352,12 +328,10 @@ public class DeclarationGeneratorImpl extends DeclarationGenerator {
 		char[][] qualifiedNameCharArray = CPPVisitor.getQualifiedNameCharArray(binding);
 		IASTName name;
 		if (qualifiedNameCharArray.length > 1) {
-
 			name = ((ICPPNodeFactory) factory).newQualifiedName();
 			for (char[] cs : qualifiedNameCharArray) {
 				((ICPPASTQualifiedName) name).addName(factory.newName(cs));
 			}
-
 		} else if (qualifiedNameCharArray.length == 1) {
 			name = factory.newName(qualifiedNameCharArray[0]);
 		} else {
@@ -365,5 +339,4 @@ public class DeclarationGeneratorImpl extends DeclarationGenerator {
 		}
 		return name;
 	}
-
 }

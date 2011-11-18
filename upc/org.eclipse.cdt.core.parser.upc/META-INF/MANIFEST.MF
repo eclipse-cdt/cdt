@@ -14,4 +14,4 @@ Export-Package: org.eclipse.cdt.core.dom.upc,
  org.eclipse.cdt.internal.core.dom.parser.upc.ast;x-internal:=true
 Bundle-Localization: plugin
 Bundle-Vendor: %Bundle-Vendor.0
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

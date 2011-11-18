@@ -1,13 +1,13 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2011 IBM Corporation and others.
- *  All rights reserved. This program and the accompanying materials
- *  are made available under the terms of the Eclipse Public License v1.0
- *  which accompanies this distribution, and is available at
- *  http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  * 
- *  Contributors:
- *    John Camelon (IBM) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ * Contributors:
+ *     John Camelon (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -44,10 +44,12 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 		this.value = value;
 	}
 
+	@Override
 	public CPPASTLiteralExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CPPASTLiteralExpression copy(CopyStyle style) {
 		CPPASTLiteralExpression copy = new CPPASTLiteralExpression(kind, value == null ? null
 				: value.clone());
@@ -58,20 +60,24 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 		return copy;
 	}
 
+	@Override
 	public int getKind() {
         return kind;
     }
 
-    public void setKind(int value) {
+    @Override
+	public void setKind(int value) {
         assertNotFrozen();
         kind = value;
     }
 
-    public char[] getValue() {
+    @Override
+	public char[] getValue() {
     	return value;
     }
 
-    public void setValue(char[] value) {
+    @Override
+	public void setValue(char[] value) {
         assertNotFrozen();
     	this.value= value;
     }
@@ -100,7 +106,8 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
         return true;
     }
     
-    public IType getExpressionType() {
+    @Override
+	public IType getExpressionType() {
     	switch (getKind()) {
     		case lk_this: {
     			IScope scope = CPPVisitor.getContainingScope(this);
@@ -127,10 +134,12 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 		return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
     }
     
+	@Override
 	public boolean isLValue() {
 		return getKind() == IASTLiteralExpression.lk_string_literal;
 	}
 	
+	@Override
 	public ValueCategory getValueCategory() {
 		return isLValue() ? ValueCategory.LVALUE : ValueCategory.PRVALUE;
 	}
@@ -231,7 +240,8 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
     /**
      * @deprecated, use {@link #setValue(char[])}, instead.
      */
-    @Deprecated
+    @Override
+	@Deprecated
 	public void setValue(String value) {
         assertNotFrozen();
         this.value = value.toCharArray();

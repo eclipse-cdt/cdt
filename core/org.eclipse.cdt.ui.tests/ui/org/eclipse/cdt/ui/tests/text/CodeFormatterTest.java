@@ -535,11 +535,13 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//static void *f(){}
 	//static void * g();
 	//static void* h();
+	//int* (*a) [2];
 
 	//static void *f() {
 	//}
 	//static void * g();
 	//static void* h();
+	//int* (*a)[2];
 	public void testSpaceBetweenDeclSpecAndDeclarator() throws Exception {
 		assertFormatterResult();
 	}

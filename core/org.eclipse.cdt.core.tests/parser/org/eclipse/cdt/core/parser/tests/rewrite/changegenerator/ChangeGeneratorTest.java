@@ -38,6 +38,10 @@ public abstract class ChangeGeneratorTest extends BaseTestFramework {
 		super();
 	}
 
+	public ChangeGeneratorTest(String name) {
+		super(name);
+	}
+
 	@Override
 	protected void setUp() throws Exception {
 		CCorePlugin.getIndexManager().joinIndexer(IIndexManager.FOREVER, new NullProgressMonitor());
@@ -45,7 +49,7 @@ public abstract class ChangeGeneratorTest extends BaseTestFramework {
 	}
 
 	@Override
-	public void runTest() throws Exception{
+	public void runTest() throws Exception {
 		final ASTModificationStore modStore = new ASTModificationStore();
 		IFile testFile = importFile("source.h", source); //$NON-NLS-1$			
 
@@ -65,8 +69,7 @@ public abstract class ChangeGeneratorTest extends BaseTestFramework {
 
 		changegenartor.generateChange(unit);
 		Document doc = new Document(source);
-		for (Change curChange : ((CompositeChange) changegenartor.getChange())
-				.getChildren()) {
+		for (Change curChange : ((CompositeChange) changegenartor.getChange()).getChildren()) {
 			if (curChange instanceof TextFileChange) {
 				TextFileChange textChange = (TextFileChange) curChange;
 				textChange.getEdit().apply(doc);
@@ -76,10 +79,6 @@ public abstract class ChangeGeneratorTest extends BaseTestFramework {
 	}
 
 	protected abstract ASTVisitor createModificator(ASTModificationStore modStore);
-
-	public ChangeGeneratorTest(String name) {
-		super(name);
-	}
 
 	@Override
 	protected void tearDown() throws Exception {

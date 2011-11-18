@@ -5574,4 +5574,13 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testDependentUsingDeclaration() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <int> void* foo(int);
+	//	template <typename T> void f(T t) {
+	//	    if (T* i = foo<0>(0))
+	//	        return;
+	//	}
+	public void testDirectlyNestedAmbiguity_362976() throws Exception {
+		parseAndCheckBindings();
+	}
 }

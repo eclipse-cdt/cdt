@@ -92,7 +92,7 @@ public class InternalBuildRunner extends AbstractBuildRunner {
 	public boolean invokeBuild(int kind, IProject project, IConfiguration configuration,
 			IBuilder builder, IConsole console, IMarkerGenerator markerGenerator,
 			IncrementalProjectBuilder projectBuilder, IProgressMonitor monitor) throws CoreException {
-		boolean isParallel = builder.isParallelBuildOn() && builder.getParallelizationNum() > 1;
+		boolean isParallel = builder.getParallelizationNum() > 1;
 //		boolean buildIncrementaly = true;
 		boolean resumeOnErr = !builder.isStopOnError();
 
@@ -226,8 +226,7 @@ public class InternalBuildRunner extends AbstractBuildRunner {
 					break;
 				case IBuildModelBuilder.STATUS_ERROR_LAUNCH:
 				default:
-					buf.append(ManagedMakeMessages
-							.getResourceString(BUILD_FAILED_ERR));
+					buf.append(ManagedMakeMessages.getResourceString(BUILD_FAILED_ERR));
 					break;
 				}
 				buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
@@ -248,8 +247,7 @@ public class InternalBuildRunner extends AbstractBuildRunner {
 				epmOutputStream = null;
 
 				// Generate any error markers that the build has discovered
-				monitor.subTask(ManagedMakeMessages
-						.getResourceString(MARKERS));
+				monitor.subTask(ManagedMakeMessages.getResourceString(MARKERS));
 
 				bsMngr.setProjectBuildState(project, pBS);
 			} else {

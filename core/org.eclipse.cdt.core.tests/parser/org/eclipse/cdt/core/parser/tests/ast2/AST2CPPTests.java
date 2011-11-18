@@ -266,8 +266,7 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertNoProblemBindings(col);
 	}
 	
-	protected IASTTranslationUnit parseAndCheckBindings(String code) throws Exception
-	{
+	protected IASTTranslationUnit parseAndCheckBindings(String code) throws Exception {
 		IASTTranslationUnit tu = parse(code, ParserLanguage.CPP); 
 		CPPNameCollector col = new CPPNameCollector();
 		tu.accept(col);
@@ -285,8 +284,7 @@ public class AST2CPPTests extends AST2BaseTest {
 		return new BindingAssertionHelper(code, true);
 	}
 
-	public void testBug40422() throws Exception
-	{
+	public void testBug40422() throws Exception {
 		IASTTranslationUnit tu = parse("class A { int y; }; int A::* x = 0;", ParserLanguage.CPP); //$NON-NLS-1$
 		CPPNameCollector col = new CPPNameCollector();
 		tu.accept(col);

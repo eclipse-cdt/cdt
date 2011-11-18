@@ -75,14 +75,17 @@ public interface IBuilder extends IHoldsOptions, IMakeBuilderInfo {
 	
 	static final String ATTRIBUTE_CUSTOMIZED_ERROR_PARSERS = "customizedErrorParsers"; //$NON-NLS-1$
 	static final String ATTRIBUTE_CUSTOM_PROPS = "customBuilderProperties"; //$NON-NLS-1$
-	
-//	static final String ATTRIBUTE_CUSTOMIZED_ERROR_PARSERS = "customizedErrorParsers"; //$NON-NLS-1$
 
 	static final String ATTRIBUTE_IGNORE_ERR_CMD = "ignoreErrCmd"; //$NON-NLS-1$
 	static final String ATTRIBUTE_STOP_ON_ERR = "stopOnErr"; //$NON-NLS-1$
+	
 	static final String ATTRIBUTE_PARALLEL_BUILD_CMD = "parallelBuildCmd"; //$NON-NLS-1$
-	static final String ATTRIBUTE_PARALLELIZATION_NUMBER = "parallelizationNumber"; //$NON-NLS-1$
 	static final String ATTRIBUTE_PARALLEL_BUILD_ON = "parallelBuildOn"; //$NON-NLS-1$
+	static final String ATTRIBUTE_PARALLELIZATION_NUMBER = "parallelizationNumber"; //$NON-NLS-1$
+	/** @since 8.1 */
+	static final String VALUE_OPTIMAL = "optimal"; //$NON-NLS-1$
+	/** @since 8.1 */
+	static final String VALUE_UNLIMITED = "unlimited"; //$NON-NLS-1$
 	static final String PARALLEL_PATTERN_NUM = "*"; //$NON-NLS-1$
 	static final String PARALLEL_PATTERN_NUM_START = "["; //$NON-NLS-1$
 	static final String PARALLEL_PATTERN_NUM_END = "]"; //$NON-NLS-1$
@@ -92,15 +95,9 @@ public interface IBuilder extends IHoldsOptions, IMakeBuilderInfo {
 	static final String DEFAULT_TARGET_INCREMENTAL = "all";  //$NON-NLS-1$
 	static final String DEFAULT_TARGET_CLEAN = "clean";  //$NON-NLS-1$
 	static final String DEFAULT_TARGET_AUTO = "all"; //$NON-NLS-1$
-	
-	/**
-	 * @since 6.0
-	 */
+	/** @since 6.0 */
 	static final String ATTRIBUTE_COMMAND_LAUNCHER = "commandLauncher"; //$NON-NLS-1$
-
-	/**
-	 * @since 8.0
-	 */
+	/** @since 8.0 */
 	static final String ATTRIBUTE_BUILD_RUNNER = "buildRunner"; //$NON-NLS-1$
 	
 	/**

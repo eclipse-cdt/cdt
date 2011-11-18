@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Doug Schaefer (IBM) - Initial API and implementation
+ *     Doug Schaefer (IBM) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -52,10 +52,12 @@ public interface IASTCompoundStatement extends IASTStatement {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IASTCompoundStatement copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public IASTCompoundStatement copy(CopyStyle style);
 }

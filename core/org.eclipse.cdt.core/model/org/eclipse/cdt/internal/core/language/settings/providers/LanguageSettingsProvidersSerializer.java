@@ -83,8 +83,8 @@ public class LanguageSettingsProvidersSerializer {
 		private ICListenerAgent listener;
 		private ICConfigurationDescription cfgDescription;
 
-		public ListenerAssociation(ICListenerAgent li, ICConfigurationDescription cfgd) {
-			listener = li;
+		public ListenerAssociation(ICListenerAgent la, ICConfigurationDescription cfgd) {
+			listener = la;
 			cfgDescription = cfgd;
 		}
 	}
@@ -864,7 +864,7 @@ projects:
 	}
 
 	/**
-	 * Get a providers list including only providers of type ICListenerRegisterer
+	 * Get a providers list including only providers of type {@link ICListenerAgent}
 	 * for a given project description - collecting from all configurations.
 	 */
 	private static List<ICListenerAgent> getListeners(ICProjectDescription prjDescription) {
@@ -895,7 +895,7 @@ projects:
 	}
 
 	/**
-	 * Get a providers list including only providers of type IResourceChangeListener
+	 * Get a providers list including only providers of type {@link ICListenerAgent}
 	 * for a given project description - collecting from all configurations.
 	 */
 	private static List<ListenerAssociation> getListenersAssociations(ICProjectDescription prjDescription) {
@@ -916,7 +916,8 @@ projects:
 
 	/**
 	 * Unregister listeners which are not used anymore and register new listeners.
-	 * The method is used when project description is applied to workspace.
+	 * The method is called when project description is applied to workspace.
+	 *
 	 * @param oldPrjDescription - old project descriptions being replaced in the workspace.
 	 * @param newPrjDescription - new project description being applied to the workspace.
 	 */

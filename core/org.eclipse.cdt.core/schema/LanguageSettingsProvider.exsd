@@ -15,6 +15,9 @@
          <appInfo>
             <meta.element />
          </appInfo>
+         <documentation>
+            This extension point is used to contribute a new Language Settings Provider. A Language Settings Provider is used to get additions to compiler options such as include paths (-I) or preprocessor defines (-D) and others into the project model.
+         </documentation>
       </annotation>
       <complexType>
          <sequence minOccurs="1" maxOccurs="unbounded">

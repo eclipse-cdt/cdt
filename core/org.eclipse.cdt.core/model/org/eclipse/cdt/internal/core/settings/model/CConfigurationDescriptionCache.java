@@ -56,7 +56,7 @@ import org.eclipse.core.runtime.QualifiedName;
 
 /**
  * CConfigurationDescriptionCache is a proxy class for serialization of configuration description data.
- * 
+ *
  * An inspection of the scenario where user changes project properties and saves it yields
  * following sequence of events:
  * - Initialization:
@@ -603,12 +603,14 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		return status != null ? status : CConfigurationStatus.CFG_STATUS_OK;
 	}
 
+	@Override
 	public void setLanguageSettingProviders(List<ILanguageSettingsProvider> providers) {
 		if(!fInitializing)
 			throw ExceptionFactory.createIsReadOnlyException();
 		fSpecSettings.setLanguageSettingProviders(providers);
 	}
 
+	@Override
 	public List<ILanguageSettingsProvider> getLanguageSettingProviders() {
 		return fSpecSettings.getLanguageSettingProviders();
 	}

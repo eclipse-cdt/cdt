@@ -43,7 +43,7 @@ public class LanguageSettingsExtensionManager {
 	/** Name of the extension point for contributing language settings */
 	static final String PROVIDER_EXTENSION_FULL_ID = "org.eclipse.cdt.core.LanguageSettingsProvider"; //$NON-NLS-1$
 	static final String PROVIDER_EXTENSION_SIMPLE_ID = "LanguageSettingsProvider"; //$NON-NLS-1$
-	
+
 	static final String ELEM_PROVIDER = "provider"; //$NON-NLS-1$
 	static final String ATTR_CLASS = "class"; //$NON-NLS-1$
 	static final String ATTR_ID = "id"; //$NON-NLS-1$
@@ -57,7 +57,7 @@ public class LanguageSettingsExtensionManager {
 	static final String ATTR_KIND = "kind"; //$NON-NLS-1$
 	static final String ATTR_VALUE = "value"; //$NON-NLS-1$
 
-	/** 
+	/**
 	 * Extension providers loaded once. If the provider is editable (read cloneable)
 	 * external callers get copy rather than real instance.
 	 */
@@ -82,6 +82,7 @@ public class LanguageSettingsExtensionManager {
 		// sort by name - for the providers taken from platform extensions
 		Set<ILanguageSettingsProvider> sortedProviders = new TreeSet<ILanguageSettingsProvider>(
 				new Comparator<ILanguageSettingsProvider>() {
+					@Override
 					public int compare(ILanguageSettingsProvider pr1, ILanguageSettingsProvider pr2) {
 						return pr1.getName().compareTo(pr2.getName());
 					}
@@ -155,7 +156,7 @@ public class LanguageSettingsExtensionManager {
 
 	/**
 	 * Configure language settings provider with parameters defined in XML metadata.
-	 * 
+	 *
 	 * @param provider - empty non-configured provider.
 	 * @param ce - configuration element from registry representing XML.
 	 */
@@ -222,7 +223,7 @@ public class LanguageSettingsExtensionManager {
 		if (className==null || className.length()==0) {
 			return new LanguageSettingsBaseProvider();
 		}
-	
+
 		try {
 			IExtensionPoint extension = registry.getExtensionPoint(CCorePlugin.PLUGIN_ID, PROVIDER_EXTENSION_SIMPLE_ID);
 			if (extension != null) {
@@ -249,8 +250,8 @@ public class LanguageSettingsExtensionManager {
 	}
 
 	/**
-	 * Create an instance of language settings provider of given class name. 
-	 * 
+	 * Create an instance of language settings provider of given class name.
+	 *
 	 * @param className - class name to instantiate.
 	 * @return new instance of language settings provider.
 	 */
@@ -258,7 +259,7 @@ public class LanguageSettingsExtensionManager {
 		if (className==null || className.equals(LanguageSettingsSerializableProvider.class.getName())) {
 			return new LanguageSettingsSerializableProvider();
 		}
-	
+
 		ILanguageSettingsProvider provider = createProviderCarcass(className, Platform.getExtensionRegistry());
 		if (provider==null) {
 			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "Not able to load provider class=" + className);
@@ -280,7 +281,7 @@ public class LanguageSettingsExtensionManager {
 		if (provider!=null) {
 			if (!(provider instanceof ILanguageSettingsEditableProvider))
 				throw new CloneNotSupportedException("Not able to clone provider " + provider.getClass());
-			
+
 			provider = ((ILanguageSettingsEditableProvider) provider).clone();
 		}
 		return provider;
@@ -288,7 +289,7 @@ public class LanguageSettingsExtensionManager {
 
 	/**
 	 * TODO
-	 * 
+	 *
 	 * @param id
 	 * @return
 	 */
@@ -305,7 +306,7 @@ public class LanguageSettingsExtensionManager {
 		}
 		return provider;
 	}
-	
+
 	/**
 	 * @return list of providers contributed by all extensions. Preferable copy but if not possible
 	 *   will return raw provider.
@@ -321,7 +322,7 @@ public class LanguageSettingsExtensionManager {
 			}
 			if (extensionProvider==null)
 				extensionProvider = fExtensionProviders.get(id);
-			
+
 			if (extensionProvider!=null)
 				list.add(extensionProvider);
 		}

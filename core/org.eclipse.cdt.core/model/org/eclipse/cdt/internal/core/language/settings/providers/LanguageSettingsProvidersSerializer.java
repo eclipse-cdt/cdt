@@ -658,7 +658,8 @@ projects:
 		}
 	}
 
-	private static void loadProviderEntries(LanguageSettingsSerializableProvider provider, String cfgId, Element projectElementWsp) {
+	private static void loadProviderEntries(LanguageSettingsSerializableProvider provider,
+			String cfgId, Element projectElementWsp) {
 		/*
 		<project>
 			<configuration id="cfg.id">

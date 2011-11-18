@@ -819,6 +819,7 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 		return status != null ? status : CConfigurationStatus.CFG_STATUS_OK;
 	}
 
+	@Override
 	public void setLanguageSettingProviders(List<ILanguageSettingsProvider> providers) {
 		try {
 			CConfigurationSpecSettings specSettings = getSpecSettings();
@@ -828,6 +829,7 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 		}
 }
 
+	@Override
 	public List<ILanguageSettingsProvider> getLanguageSettingProviders() {
 		try {
 			return getSpecSettings().getLanguageSettingProviders();

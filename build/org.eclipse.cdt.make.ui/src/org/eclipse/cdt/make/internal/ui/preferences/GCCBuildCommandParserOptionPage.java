@@ -41,7 +41,7 @@ public final class GCCBuildCommandParserOptionPage extends AbstractLanguageSetti
 	private boolean fEditable;
 
 	private Text inputCommand;
-	
+
 	private StatusMessageLine fStatusLine;
 	private Button runOnceRadioButton;
 	private Button runEveryBuildRadioButton;
@@ -69,7 +69,7 @@ public final class GCCBuildCommandParserOptionPage extends AbstractLanguageSetti
 			composite.setLayout(layout);
 			composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 			Dialog.applyDialogFont(composite);
-			
+
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 2;
 			composite.setLayoutData(gd);
@@ -90,15 +90,16 @@ public final class GCCBuildCommandParserOptionPage extends AbstractLanguageSetti
 			inputCommand = ControlFactory.createTextField(composite, SWT.SINGLE | SWT.BORDER);
 			String customParameter = provider.getCustomParameter();
 			inputCommand.setText(customParameter!=null ? customParameter : "");
-			
+
 			GridData gd = new GridData();
 			gd.horizontalSpan = 1;
 			gd.grabExcessHorizontalSpace = true;
 			gd.horizontalAlignment = SWT.FILL;
 			inputCommand.setLayoutData(gd);
 			inputCommand.setEnabled(fEditable);
-			
+
 			inputCommand.addModifyListener(new ModifyListener() {
+				@Override
 				public void modifyText(ModifyEvent e) {
 					String text = inputCommand.getText();
 					AbstractBuildCommandParser provider = getRawProvider();
@@ -155,7 +156,7 @@ public final class GCCBuildCommandParserOptionPage extends AbstractLanguageSetti
 			});
 
 		}
-		
+
 		{
 			applyToProjectCheckBox = new Button(composite, SWT.CHECK);
 			applyToProjectCheckBox.setText("Apply discovered settings on project level");
@@ -178,23 +179,23 @@ public final class GCCBuildCommandParserOptionPage extends AbstractLanguageSetti
 						providerTab.refreshItem(selectedProvider);
 					}
 				}
-				
+
 				@Override
 				public void widgetDefaultSelected(SelectionEvent e) {
 					widgetSelected(e);
 				}
-				
+
 			});
-			
+
 		}
-		
+
 //		// Status line
 //		if (fEditable) {
 //			fStatusLine = new StatusMessageLine(composite, SWT.LEFT, 2);
 //			IStatus status = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, "Note that currently not all options are persisted (FIXME)");
 //			fStatusLine.setErrorStatus(status);
 //		}
-		
+
 		setControl(composite);
 	}
 

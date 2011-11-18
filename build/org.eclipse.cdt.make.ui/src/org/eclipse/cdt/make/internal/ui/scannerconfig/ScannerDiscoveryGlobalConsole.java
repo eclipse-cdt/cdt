@@ -30,7 +30,7 @@ import org.eclipse.ui.console.MessageConsoleStream;
 public class ScannerDiscoveryGlobalConsole implements ICConsole {
 	private MessageConsole console;
 	private ConsoleOutputStreamAdapter stream;
-	
+
 	private class ConsoleOutputStreamAdapter extends ConsoleOutputStream {
 		private MessageConsoleStream fConsoleStream;
 		public ConsoleOutputStreamAdapter(MessageConsoleStream stream) {
@@ -44,37 +44,42 @@ public class ScannerDiscoveryGlobalConsole implements ICConsole {
 		public synchronized void write(byte[] b, int off, int len) throws IOException {
 			fConsoleStream.write(b, off, len);
 		}
-		
+
 		@Override
 		public void flush() throws IOException {
 			fConsoleStream.flush();
 		}
-		
+
 		@Override
 		public void close() throws IOException {
 			fConsoleStream.close();
 		}
 	}
 
+	@Override
 	public void start(IProject project) {
 		Assert.isTrue(project == null);
 	}
 
+	@Override
 	public ConsoleOutputStream getOutputStream() throws CoreException {
 		return stream;
 	}
 
+	@Override
 	public ConsoleOutputStream getInfoStream() throws CoreException {
 		return stream;
 	}
 
+	@Override
 	public ConsoleOutputStream getErrorStream() throws CoreException {
 		return stream;
 	}
 
+	@Override
 	public void init(String consoleId, String name, URL defaultIconUrl) {
 		console = null;
-		
+
 		IConsoleManager consoleManager = ConsolePlugin.getDefault().getConsoleManager();
 		IConsole[] allConsoles = consoleManager.getConsoles();
 		for (IConsole con : allConsoles) {
@@ -90,12 +95,12 @@ public class ScannerDiscoveryGlobalConsole implements ICConsole {
 			if (iconUrl==null) {
 				iconUrl = defaultIconUrl;
 			}
-			
+
 			console = new MessageConsole(name, CDTSharedImages.getImageDescriptor(iconUrl.toString()));
 			console.activate();
 			consoleManager.addConsoles(new IConsole[]{ console });
 		}
-		
+
 		stream = new ConsoleOutputStreamAdapter(console.newMessageStream());
 	}
 

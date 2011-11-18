@@ -92,10 +92,10 @@ import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.Version;
 
 public class Configuration extends BuildObject implements IConfiguration, IBuildPropertiesRestriction, IBuildPropertyChangeListener, IRealBuildObjectAssociation {
-	
+
 	private static final String EMPTY_STRING = "";	//$NON-NLS-1$
 	private static final String EMPTY_CFG_ID = "org.eclipse.cdt.build.core.emptycfg";	//$NON-NLS-1$
-	
+
 	//  Parent and children
 	private String parentId;
 	private IConfiguration parent;
@@ -106,10 +106,10 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	private String artifactExtension;
 	private String errorParserIds;
 	private String defaultLanguageSettingsProvidersIds;
-    private String prebuildStep; 
-    private String postbuildStep; 
-    private String preannouncebuildStep; 
-    private String postannouncebuildStep;   
+    private String prebuildStep;
+    private String postbuildStep;
+    private String preannouncebuildStep;
+    private String postannouncebuildStep;
 	private String description;
 	private ICSourceEntry[] sourceEntries;
 	private BuildObjectProperties buildProperties;
@@ -136,10 +136,10 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	private ICfgScannerConfigBuilderInfo2Set cfgScannerInfo;
 	private boolean isPreferenceConfig;
 	private List<IPath> excludeList;
-	
+
 	//property name for holding the rebuild state
 	private static final String REBUILD_STATE = "rebuildState";  //$NON-NLS-1$
-	
+
 	//The resource delta passed to the builder is not always up-to-date
 	//for the given configuration because between two builds of the same configuration
 	//any number of other configuration builds may occur
@@ -147,7 +147,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	//with the resource tree between the two configuration builds
 	//
 	//The trivial approach implemented currently is to hold
-	//the general information of whether some resources were 
+	//the general information of whether some resources were
 	//removed,changed,etc. and detect whether the rebuild is needed
 	//based upon this information
 	//
@@ -166,7 +166,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	//builder enabling/disabling as the Builder substitution functionality
 	//
 //	private static final String INTERNAL_BUILDER = "internalBuilder"; //$NON-NLS-1$
-	//preference key that holds the Internal Builder enable state 
+	//preference key that holds the Internal Builder enable state
 //	private static final String INTERNAL_BUILDER_ENABLED = "enabled";  //$NON-NLS-1$
 	//preference key that holds the internal builder mode
 //	private static final String INTERNAL_BUILDER_IGNORE_ERR = "ignoreErr";  //$NON-NLS-1$
@@ -192,35 +192,35 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 
 	/**
 	 * Create an extension configuration from the project manifest file element.
-	 * 
-	 * @param projectType The <code>ProjectType</code> the configuration will be added to. 
+	 *
+	 * @param projectType The <code>ProjectType</code> the configuration will be added to.
 	 * @param element The element from the manifest that contains the configuration information.
 	 */
 	public Configuration(ProjectType projectType, IManagedConfigElement element, String managedBuildRevision) {
 		this.projectType = projectType;
 		isExtensionConfig = true;
-		
+
 		// setup for resolving
 		resolved = false;
-		
+
 		setManagedBuildRevision(managedBuildRevision);
-		
+
 		// Initialize from the XML attributes
 		loadFromManifest(element);
-		
+
 		// Hook me up to the Managed Build Manager
 		ManagedBuildManager.addExtensionConfiguration(this);
-		
+
 		// Hook me up to the ProjectType
 		if (projectType != null) {
 			projectType.addConfiguration(this);
 		}
-		
+
 		IManagedConfigElement enablements[] = element.getChildren(OptionEnablementExpression.NAME);
 		if(enablements.length > 0)
 			booleanExpressionCalculator = new BooleanExpressionApplicabilityCalculator(enablements);
 
-		
+
 		// Load the children
 		IManagedConfigElement[] configElements = element.getChildren();
 		List<IPath> srcPathList = new ArrayList<IPath>();
@@ -248,23 +248,23 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 				sourceEntries = seList.toArray(new ICSourceEntry[seList.size()]);
 			}
 		}
-		
+
 		sourceEntries = createSourceEntries(sourceEntries, srcPathList, excludeList);
-		
+
 		excludeList = null;
-		
+
 		if(rootFolderInfo == null)
 			createRootFolderInfo();
-		
+
 		String props = SafeStringInterner.safeIntern(element.getAttribute(BUILD_PROPERTIES));
 		if(props != null)
 			buildProperties = new BuildObjectProperties(props, this, this);
-		
+
 		String artType = SafeStringInterner.safeIntern(element.getAttribute(BUILD_ARTEFACT_TYPE));
 		if(artType != null){
 			if(buildProperties == null)
 				buildProperties = new BuildObjectProperties(this, this);
-			
+
 			try {
 				buildProperties.setProperty(ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_ID, artType, true);
 			} catch (CoreException e) {
@@ -289,7 +289,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 
 		setDirty(false);
 	}
-	
+
 	private static ICSourceEntry[] createSourceEntries(ICSourceEntry[] curEntries, List<IPath> pathList, List<IPath> excludeList){
 		for(int i = 0; i < excludeList.size(); i++){
 			IPath path = excludeList.get(i);
@@ -298,12 +298,12 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		}
 		if(pathList.size() == 0)
 			pathList.add(Path.EMPTY);
-		
+
 		if(pathList.size() == 1
 				&& pathList.get(0).equals(Path.EMPTY)
 				&& excludeList.size() == 0)
 			return curEntries;
-		
+
 		int pathSize = pathList.size();
 		Map<IPath, ICSourceEntry> map = new LinkedHashMap<IPath, ICSourceEntry>();
 
@@ -312,19 +312,19 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			ICSourceEntry entry = map.get(path);
 			if(entry == null)
 				entry = new CSourceEntry(path, null, ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED);
-			
+
 			entry = CDataUtil.addExcludePaths(entry, excludeList, true);
 			if(entry != null)
 				map.put(path, entry);
 		}
-		
+
 		return map.values().toArray(new ICSourceEntry[map.size()]);
 	}
 
 	/**
 	 * Create a new extension configuration based on one already defined.
-	 * 
-	 * @param projectType The <code>ProjectType</code> the configuration will be added to. 
+	 *
+	 * @param projectType The <code>ProjectType</code> the configuration will be added to.
 	 * @param parentConfig The <code>IConfiguration</code> that is the parent configuration of this configuration
 	 * @param id A unique ID for the new configuration.
 	 */
@@ -332,25 +332,25 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		setId(id);
 		this.projectType = projectType;
 		isExtensionConfig = true;
-		
+
 		// setup for resolving
 		resolved = false;
 
 		if (parentConfig != null) {
 			name = parentConfig.getName();
-			// If this contructor is called to clone an existing 
-			// configuration, the parent of the parent should be stored. 
+			// If this contructor is called to clone an existing
+			// configuration, the parent of the parent should be stored.
 			// As of 2.1, there is still one single level of inheritence to
 			// worry about
 			parent = parentConfig.getParent() == null ? parentConfig : parentConfig.getParent();
 		}
-		
+
 		// Hook me up to the Managed Build Manager
 		ManagedBuildManager.addExtensionConfiguration(this);
-		
+
 		// Hook me up to the ProjectType
 		if (projectType != null) {
-			projectType.addConfiguration(this);			
+			projectType.addConfiguration(this);
 			// set managedBuildRevision
 			setManagedBuildRevision(projectType.getManagedBuildRevision());
 		}
@@ -358,8 +358,8 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 
 	/**
 	 * Create a new extension configuration and fill in the attributes and childen later.
-	 * 
-	 * @param projectType The <code>ProjectType</code> the configuration will be added to. 
+	 *
+	 * @param projectType The <code>ProjectType</code> the configuration will be added to.
 	 * @param parentConfig The <code>IConfiguration</code> that is the parent configuration of this configuration
 	 * @param id A unique ID for the new configuration.
 	 * @param name A name for the new configuration.
@@ -370,10 +370,10 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		this.projectType = projectType;
 		parent = parentConfig;
 		isExtensionConfig = true;
-		
+
 		// Hook me up to the Managed Build Manager
 		ManagedBuildManager.addExtensionConfiguration(this);
-		
+
 		// Hook me up to the ProjectType
 		if (projectType != null) {
 			projectType.addConfiguration(this);
@@ -382,21 +382,21 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	}
 
 	/**
-	 * Create a <code>Configuration</code> based on the specification stored in the 
+	 * Create a <code>Configuration</code> based on the specification stored in the
 	 * project file (.cdtbuild).
-	 * 
-	 * @param managedProject The <code>ManagedProject</code> the configuration will be added to. 
+	 *
+	 * @param managedProject The <code>ManagedProject</code> the configuration will be added to.
 	 * @param element The XML element that contains the configuration settings.
-	 * 
+	 *
 	 */
 	public Configuration(ManagedProject managedProject, ICStorageElement element, String managedBuildRevision, boolean isPreference) {
 		this.managedProject = managedProject;
 		this.isPreferenceConfig = isPreference;
 		isExtensionConfig = false;
 		fCfgData = new BuildConfigurationData(this);
-		
+
 		setManagedBuildRevision(managedBuildRevision);
-		
+
 		// Initialize from the XML attributes
 		loadFromProject(element);
 
@@ -428,18 +428,18 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 				sourceEntries = seList.toArray(new ICSourceEntry[seList.size()]);
 			}
 		}
-		
+
 		resolveProjectReferences(true);
-		
+
 		sourceEntries = createSourceEntries(sourceEntries, srcPathList, excludeList);
 
 		excludeList = null;
-		
+
 		PropertyManager mngr = PropertyManager.getInstance();
 		String rebuild = mngr.getProperty(this, REBUILD_STATE);
 		if(rebuild == null || Boolean.valueOf(rebuild).booleanValue())
 			rebuildNeeded = true;
-		
+
 		String rcChangeState = mngr.getProperty(this, RC_CHANGE_STATE);
 		if(rcChangeState == null)
 			resourceChangeState = ~0;
@@ -450,11 +450,11 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 				resourceChangeState = ~0;
 			}
 		}
-		
+
 		setDirty(false);
-		
+
 //		Preferences prefs = getPreferences(INTERNAL_BUILDER);
-//		
+//
 //		internalBuilderEnabled = prefs != null ?
 //				prefs.getBoolean(INTERNAL_BUILDER_ENABLED, false) : false;
 //		internalBuilderIgnoreErr = prefs != null ?
@@ -464,7 +464,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	public Configuration(ManagedProject managedProject, ToolChain tCh, String id, String name) {
 		setId(id);
 		setName(name);
-		
+
 //		this.description = cloneConfig.getDescription();
 		this.managedProject = managedProject;
 		isExtensionConfig = false;
@@ -480,38 +480,38 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			fCfgData = new BuildConfigurationData(this);
 			if(baseCfg.buildProperties != null)
 				this.buildProperties = new BuildObjectProperties(baseCfg.buildProperties, this, this);
-	
+
 			// set managedBuildRevision
 			setManagedBuildRevision(baseCfg.getManagedBuildRevision());
-	
+
 	//		if(!baseCfg.isExtensionConfig)
 	//			cloneChildren = true;
-			// If this contructor is called to clone an existing 
-			// configuration, the parent of the cloning config should be stored. 
+			// If this contructor is called to clone an existing
+			// configuration, the parent of the cloning config should be stored.
 			parent = baseCfg.isExtensionConfig || baseCfg.getParent() == null ? baseCfg : baseCfg.getParent();
-		
+
 			//  Copy the remaining attributes
 			projectType = baseCfg.projectType;
-	
+
 			artifactName = baseCfg.artifactName;
-	
+
 			cleanCommand = baseCfg.cleanCommand;
-	
+
 			artifactExtension = baseCfg.artifactExtension;
-	
+
 			errorParserIds = baseCfg.errorParserIds;
-	
+
 			prebuildStep = baseCfg.prebuildStep;
-	
+
 			postbuildStep = baseCfg.postbuildStep;
-	
+
 			preannouncebuildStep = baseCfg.preannouncebuildStep;
-	
+
 			postannouncebuildStep = baseCfg.postannouncebuildStep;
-			
+
 			if(baseCfg.sourceEntries != null)
 				sourceEntries = baseCfg.sourceEntries.clone();
-			
+
 	//		enableInternalBuilder(baseCfg.isInternalBuilderEnabled());
 	//		setInternalBuilderIgnoreErr(baseCfg.getInternalBuilderIgnoreErr());
 	//		setInternalBuilderParallel(baseCfg.getInternalBuilderParallel());
@@ -519,23 +519,23 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	//		setParallelNumber(baseCfg.getParallelNumber());
 	//		internalBuilderEnabled = cloneConfig.internalBuilderEnabled;
 	//		internalBuilderIgnoreErr = cloneConfig.internalBuilderIgnoreErr;
-			
+
 			// Clone the configuration's children
 			// Tool Chain
-	
+
 			String tcId = ManagedBuildManager.calculateChildId(tCh.getId(), null);
-	
+
 			IToolChain newChain = createToolChain(tCh, tcId, tCh.getId(), false);
-			
+
 			// For each option/option category child of the tool-chain that is
 			// the child of the selected configuration element, create an option/
 			// option category child of the cloned configuration's tool-chain element
 			// that specifies the original tool element as its superClass.
 			newChain.createOptions(tCh);
 
-			// For each tool element child of the tool-chain that is the child of 
-			// the selected configuration element, create a tool element child of 
-			// the cloned configuration's tool-chain element that specifies the 
+			// For each tool element child of the tool-chain that is the child of
+			// the selected configuration element, create a tool element child of
+			// the cloned configuration's tool-chain element that specifies the
 			// original tool element as its superClass.
 			String subId;
 			ITool[] tools = tCh.getTools();
@@ -544,11 +544,11 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			    subId = ManagedBuildManager.calculateChildId(toolChild.getId(),null);
 			    newChain.createTool(toolChild, subId, toolChild.getName(), false);
 			}
-			
+
 			ITargetPlatform tpBase = tCh.getTargetPlatform();
 			ITargetPlatform extTp = tpBase;
 			for(;extTp != null && !extTp.isExtensionElement();extTp = extTp.getSuperClass()) {}
-			
+
 			TargetPlatform tp;
 			if(extTp != null){
 				int nnn = ManagedBuildManager.getRandomNumber();
@@ -563,36 +563,36 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 
 			((ToolChain)newChain).setTargetPlatform(tp);
 
-			
+
 	//		if(cloneChildren){
 				//copy expand build macros setting
 	//			BuildMacroProvider macroProvider = (BuildMacroProvider)ManagedBuildManager.getBuildMacroProvider();
 	//			macroProvider.expandMacrosInBuildfile(this,
 	//						macroProvider.areMacrosExpandedInBuildfile(baseCfg));
-	
+
 				//copy user-defined build macros
 	/*			UserDefinedMacroSupplier userMacros = BuildMacroProvider.fUserDefinedMacroSupplier;
 				userMacros.setMacros(
 						userMacros.getMacros(BuildMacroProvider.CONTEXT_CONFIGURATION,cloneConfig),
 						BuildMacroProvider.CONTEXT_CONFIGURATION,
 						this);
-	*/			
+	*/
 				//copy user-defined environment
 	//			UserDefinedEnvironmentSupplier userEnv = EnvironmentVariableProvider.fUserSupplier;
 	//			userEnv.setVariables(
 	//					userEnv.getVariables(cloneConfig), this);
-	
+
 	//		}
-			
+
 			// Hook me up
 			managedProject.addConfiguration(this);
-			
+
 			IBuilder builder = getEditableBuilder();
 			try {
 				builder.setManagedBuildOn(false);
 			} catch (CoreException e) {
 			}
-	
+
 			propertiesChanged();
 		}
 		setDirty(true);
@@ -602,14 +602,14 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	public Configuration(ManagedProject managedProject, Configuration cloneConfig, String id, boolean cloneChildren, boolean temporary) {
 		this(managedProject, cloneConfig, id, cloneChildren, temporary, false);
 	}
-	
+
 	/**
 	 * Create a new project, non-extension, configuration based on one already defined.
-	 * 
-	 * @param managedProject The <code>ManagedProject</code> the configuration will be added to. 
+	 *
+	 * @param managedProject The <code>ManagedProject</code> the configuration will be added to.
 	 * @param cloneConfig The <code>IConfiguration</code> to copy the settings from.
 	 * @param id A unique ID for the new configuration.
-	 * @param cloneChildren If <code>true</code>, the configuration's tools are cloned 
+	 * @param cloneChildren If <code>true</code>, the configuration's tools are cloned
 	 */
 	public Configuration(ManagedProject managedProject, Configuration cloneConfig, String id, boolean cloneChildren, boolean temporary, boolean isPreferenceConfig) {
 		setId(id);
@@ -618,10 +618,10 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		this.managedProject = managedProject;
 		isExtensionConfig = false;
 		this.isTemporary = temporary;
-		
+
 		copySettingsFrom(cloneConfig, cloneChildren);
 	}
-	
+
 	private void copySettingsFrom(Configuration cloneConfig, boolean cloneChildren){
 		fCfgData = new BuildConfigurationData(this);
 		if(cloneConfig.buildProperties != null)
@@ -634,11 +634,11 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 
 		if(!cloneConfig.isExtensionConfig)
 			cloneChildren = true;
-		// If this contructor is called to clone an existing 
-		// configuration, the parent of the cloning config should be stored. 
+		// If this contructor is called to clone an existing
+		// configuration, the parent of the cloning config should be stored.
 		parent = cloneConfig.isExtensionConfig || cloneConfig.getParent() == null ? cloneConfig : cloneConfig.getParent();
 		parentId = parent.getId();
-	
+
 		//  Copy the remaining attributes
 		projectType = cloneConfig.projectType;
 		if (cloneConfig.artifactName != null) {
@@ -664,10 +664,10 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		}
 		if (cloneConfig.postannouncebuildStep != null) {
 			postannouncebuildStep = new String(cloneConfig.postannouncebuildStep);
-		} 
+		}
 		if(cloneConfig.sourceEntries != null)
 			sourceEntries = cloneConfig.sourceEntries.clone();
-		
+
 //		enableInternalBuilder(cloneConfig.isInternalBuilderEnabled());
 //		setInternalBuilderIgnoreErr(cloneConfig.getInternalBuilderIgnoreErr());
 //		setInternalBuilderParallel(cloneConfig.getInternalBuilderParallel());
@@ -675,7 +675,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 //		setParallelNumber(cloneConfig.getParallelNumber());
 //		internalBuilderEnabled = cloneConfig.internalBuilderEnabled;
 //		internalBuilderIgnoreErr = cloneConfig.internalBuilderIgnoreErr;
-		
+
 		// Clone the configuration's children
 		// Tool Chain
 		boolean copyIds = cloneConfig.getId().equals(id);
@@ -694,12 +694,12 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 				subId = copyIds ? fileInfo.getId() : ManagedBuildManager.calculateChildId(getId(), fileInfo.getPath().toString());
 				ResourceConfiguration newResConfig = new ResourceConfiguration(this, fileInfo, subId, toolIdMap, cloneChildren);
 				addResourceConfiguration(newResConfig);
-				
+
 			}
 		}
-		
+
 		resolveProjectReferences(false);
-		
+
 		if(cloneChildren){
 			//copy expand build macros setting
 			BuildMacroProvider macroProvider = (BuildMacroProvider)ManagedBuildManager.getBuildMacroProvider();
@@ -712,23 +712,23 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 					userMacros.getMacros(BuildMacroProvider.CONTEXT_CONFIGURATION,cloneConfig),
 					BuildMacroProvider.CONTEXT_CONFIGURATION,
 					this);
-*/			
+*/
 			//copy user-defined environment
 //			UserDefinedEnvironmentSupplier userEnv = EnvironmentVariableProvider.fUserSupplier;
 //			userEnv.setVariables(
 //					userEnv.getVariables(cloneConfig), this);
 
 		}
-		
+
 		// Hook me up
 		if(managedProject != null){
 			managedProject.addConfiguration(this);
 		}
-		
+
 		if(cloneConfig.isExtensionConfig){
 			propertiesChanged();
 		}
-		
+
 		if(copyIds){
 			rebuildNeeded = cloneConfig.rebuildNeeded;
 			resourceChangeState = cloneConfig.resourceChangeState;
@@ -741,7 +741,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		}
 
 	}
-	
+
 	public void applyToManagedProject(ManagedProject mProj){
 		managedProject = mProj;
 		isPreferenceConfig = false;
@@ -752,28 +752,28 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/*
 	 *  E L E M E N T   A T T R I B U T E   R E A D E R S   A N D   W R I T E R S
 	 */
-	
+
 	/**
-	 * Initialize the configuration information from an element in the 
+	 * Initialize the configuration information from an element in the
 	 * manifest file or provided by a dynamicElementProvider
-	 * 
-	 * @param element An obejct implementing IManagedConfigElement 
+	 *
+	 * @param element An obejct implementing IManagedConfigElement
 	 */
 	protected void loadFromManifest(IManagedConfigElement element) {
 		ManagedBuildManager.putConfigElement(this, element);
-		
+
 		// id
 		setId(SafeStringInterner.safeIntern(element.getAttribute(IConfiguration.ID)));
 
 		// name
 		name = SafeStringInterner.safeIntern(element.getAttribute(IConfiguration.NAME));
-		
+
 		// description
 		description = SafeStringInterner.safeIntern(element.getAttribute(IConfiguration.DESCRIPTION));
-		
+
 		// parent
 		parentId = SafeStringInterner.safeIntern(element.getAttribute(IConfiguration.PARENT));
-		
+
 //		if (parentID != null) {
 //			// Lookup the parent configuration by ID
 //			parent = ManagedBuildManager.getExtensionConfiguration(parentID);
@@ -781,7 +781,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 
 		// Get the name of the build artifact associated with configuration
 		artifactName = SafeStringInterner.safeIntern(element.getAttribute(ARTIFACT_NAME));
-		
+
 		// Get the semicolon separated list of IDs of the error parsers
 		errorParserIds = SafeStringInterner.safeIntern(element.getAttribute(ERROR_PARSERS));
 
@@ -790,31 +790,31 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 
 		// Get the artifact extension
 		artifactExtension = SafeStringInterner.safeIntern(element.getAttribute(EXTENSION));
-		
+
 		// Get the clean command
 		cleanCommand = SafeStringInterner.safeIntern(element.getAttribute(CLEAN_COMMAND));
-               
-        // Get the pre-build and post-build commands            
-        prebuildStep = SafeStringInterner.safeIntern(element.getAttribute(PREBUILD_STEP));     
-        postbuildStep = SafeStringInterner.safeIntern(element.getAttribute(POSTBUILD_STEP));           
-               
-        // Get the pre-build and post-build announcements               
-        preannouncebuildStep = SafeStringInterner.safeIntern(element.getAttribute(PREANNOUNCEBUILD_STEP)); 
+
+        // Get the pre-build and post-build commands
+        prebuildStep = SafeStringInterner.safeIntern(element.getAttribute(PREBUILD_STEP));
+        postbuildStep = SafeStringInterner.safeIntern(element.getAttribute(POSTBUILD_STEP));
+
+        // Get the pre-build and post-build announcements
+        preannouncebuildStep = SafeStringInterner.safeIntern(element.getAttribute(PREANNOUNCEBUILD_STEP));
         postannouncebuildStep = SafeStringInterner.safeIntern(element.getAttribute(POSTANNOUNCEBUILD_STEP));
-        
+
         String tmp = element.getAttribute(IS_SYSTEM);
         if(tmp != null)
         	isTest = Boolean.valueOf(tmp).booleanValue();
 	}
-	
+
 	/**
-	 * Initialize the configuration information from the XML element 
+	 * Initialize the configuration information from the XML element
 	 * specified in the argument
-	 * 
-	 * @param element An XML element containing the configuration information 
+	 *
+	 * @param element An XML element containing the configuration information
 	 */
 	protected void loadFromProject(ICStorageElement element) {
-		
+
 		// id
 		// note: IDs are unique so no benefit to intern them
 		setId(element.getAttribute(IConfiguration.ID));
@@ -822,20 +822,20 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		// name
 		if (element.getAttribute(IConfiguration.NAME) != null)
 			setName(SafeStringInterner.safeIntern(element.getAttribute(IConfiguration.NAME)));
-		
+
 		// description
 		if (element.getAttribute(IConfiguration.DESCRIPTION) != null)
 			description = SafeStringInterner.safeIntern(element.getAttribute(IConfiguration.DESCRIPTION));
-		
+
 		String props = element.getAttribute(BUILD_PROPERTIES);
 		if(props != null)
 			buildProperties = new BuildObjectProperties(props, this, this);
-		
+
 		String artType = SafeStringInterner.safeIntern(element.getAttribute(BUILD_ARTEFACT_TYPE));
 		if(artType != null){
 			if(buildProperties == null)
 				buildProperties = new BuildObjectProperties(this, this);
-			
+
 			try {
 				buildProperties.setProperty(ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_ID, artType, true);
 			} catch (CoreException e) {
@@ -858,12 +858,12 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			}
 		}
 
-		// Get the name of the build artifact associated with target (usually 
+		// Get the name of the build artifact associated with target (usually
 		// in the plugin specification).
 		if (element.getAttribute(ARTIFACT_NAME) != null) {
 			artifactName = SafeStringInterner.safeIntern(element.getAttribute(ARTIFACT_NAME));
 		}
-		
+
 		// Get the semicolon separated list of IDs of the error parsers
 		if (element.getAttribute(ERROR_PARSERS) != null) {
 			errorParserIds = SafeStringInterner.safeIntern(element.getAttribute(ERROR_PARSERS));
@@ -873,7 +873,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		if (element.getAttribute(EXTENSION) != null) {
 			artifactExtension = SafeStringInterner.safeIntern(element.getAttribute(EXTENSION));
 		}
-		
+
 		// Get the clean command
 		if (element.getAttribute(CLEAN_COMMAND) != null) {
 			cleanCommand = SafeStringInterner.safeIntern(element.getAttribute(CLEAN_COMMAND));
@@ -903,13 +903,13 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	 */
 	public void serialize(ICStorageElement element) {
 		element.setAttribute(IConfiguration.ID, id);
-		
+
 		if (name != null)
 			element.setAttribute(IConfiguration.NAME, name);
-			
+
 		if (description != null)
 			element.setAttribute(IConfiguration.DESCRIPTION, description);
-		
+
 		if(buildProperties != null){
 			element.setAttribute(BUILD_PROPERTIES, buildProperties.toString());
 
@@ -919,13 +919,13 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 				element.setAttribute(BUILD_ARTEFACT_TYPE, val.getId());
 			}
 		}
-		
+
 		if (parent != null)
 			element.setAttribute(IConfiguration.PARENT, parent.getId());
-		
+
 		if (artifactName != null)
 			element.setAttribute(ARTIFACT_NAME, artifactName);
-		
+
 		if (errorParserIds != null)
 			element.setAttribute(ERROR_PARSERS, errorParserIds);
 
@@ -952,13 +952,13 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		for(int i = 0; i < infos.length; i++){
 			String elementName = infos[i].getKind() == ICSettingBase.SETTING_FILE ? IFileInfo.FILE_INFO_ELEMENT_NAME :
 				IFolderInfo.FOLDER_INFO_ELEMENT_NAME;
-			
+
 			ICStorageElement resElement = element.createChild(elementName);
 			((ResourceInfo)infos[i]).serialize(resElement);
 		}
 
 		PropertyManager.getInstance().serialize(this);
-		
+
 		if(sourceEntries != null && sourceEntries.length > 0){
 			ICStorageElement el = element.createChild(SOURCE_ENTRIES);
 			LanguageSettingEntriesSerializer.serializeEntries(sourceEntries, el);
@@ -970,7 +970,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/*
 	 *  P A R E N T   A N D   C H I L D   H A N D L I N G
 	 */
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getParent()
 	 */
@@ -990,7 +990,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			return null;	// Extension configurations don't have an "owner"
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getProjectType()
 	 */
@@ -998,7 +998,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	public IProjectType getProjectType() {
 		return projectType;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getManagedProject()
 	 */
@@ -1006,7 +1006,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	public IManagedProject getManagedProject() {
 		return managedProject;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getToolChain(IToolChain, String, String, boolean)
 	 */
@@ -1015,25 +1015,25 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		if(rootFolderInfo == null){
 			createRootFolderInfo();
 		}
-		
+
 		return rootFolderInfo.createToolChain(superClass, Id, name, isExtensionElement);
 	}
-	
+
 	private IFolderInfo createRootFolderInfo(){
 		String id = ManagedBuildManager.calculateChildId(this.id, null);
 		String name = "/"; //$NON-NLS-1$
-		
+
 		rootFolderInfo = new FolderInfo(this, new Path(name), id, name, isExtensionConfig);
 		addResourceConfiguration(rootFolderInfo);
 		return rootFolderInfo;
 	}
-/*	
+/*
 	public IFolderInfo createFolderInfo(IPath path, IToolChain superClass, String Id, String name){
-		
+
 	}
 
 	public IFolderInfo createFolderInfo(IPath path, IFolderInfo baseFolderInfo, String Id, String name){
-		
+
 	}
 */
 	/* (non-Javadoc)
@@ -1043,7 +1043,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	public IToolChain getToolChain() {
 		return rootFolderInfo.getToolChain();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getResourceConfigurations()
 	 */
@@ -1085,7 +1085,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getToolsBySuperClassId(java.lang.String) 
+	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getToolsBySuperClassId(java.lang.String)
 	 */
 	@Override
 	public ITool[] getToolsBySuperClassId(String id) {
@@ -1099,7 +1099,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	public ITool getTargetTool() {
 		String[] targetToolIds = rootFolderInfo.getToolChain().getTargetToolList();
 		if (targetToolIds == null || targetToolIds.length == 0) return null;
-		
+
 		//  For each target tool id, in list order,
 		//  look for a tool with this ID, or a tool with a superclass with this id.
 		//  Stop when we find a match
@@ -1112,7 +1112,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 				do {
 					if (targetToolId.equals(tool.getId())) {
 						return targetTool;
-					}		
+					}
 					tool = tool.getSuperClass();
 				} while (tool != null);
 			}
@@ -1161,10 +1161,10 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	public IOption setOption(IHoldsOptions holder, IOption option, String[] value) throws BuildException {
 		return getRootFolderInfo().setOption(holder, option, value);
 	}
-	
+
 	/* (non-Javadoc)
 	 * Adds the Resource Configuration to the Resource Configuration list and map
-	 * 
+	 *
 	 * @param resConfig
 	 */
 	void addResourceConfiguration(IResourceInfo resConfig) {
@@ -1177,7 +1177,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 
 	@Override
 	public void removeResourceConfiguration(IResourceInfo resConfig) {
-		ManagedBuildManager.performValueHandlerEvent(resConfig, 
+		ManagedBuildManager.performValueHandlerEvent(resConfig,
  					IManagedOptionValueHandler.EVENT_CLOSE);
 		ITool tools[] = resConfig.getTools();
 		rcInfos.removeResourceInfo(resConfig.getPath());
@@ -1212,9 +1212,9 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			// Ask my parent first
 			if (parent != null) {
 				return parent.getArtifactExtension();
-			} 
-			return null; 
-		} 
+			}
+			return null;
+		}
 		return artifactExtension;
 	}
 
@@ -1257,14 +1257,14 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		IToolChain tc = getToolChain();
 		IBuilder builder = tc.getBuilder();
 		if (builder != null) {
-		    return builder.getCommand();		
+		    return builder.getCommand();
 		}
 		return new String("make"); //$NON-NLS-1$
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getPrebuildStep()
 	 */
 	@Override
@@ -1284,7 +1284,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getPostbuildStep()
 	 */
 	@Override
@@ -1304,7 +1304,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getPreannouncebuildStep()
 	 */
 	@Override
@@ -1324,7 +1324,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getPostannouncebuildStep()
 	 */
 	@Override
@@ -1344,7 +1344,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getCleanCommand()
 	 */
 	@Override
@@ -1366,7 +1366,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			return cleanCommand;
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#getDescription()
 	 */
@@ -1387,14 +1387,14 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getErrorParserIds()
 	 */
 	@Override
 	public String getErrorParserIds() {
 		if (errorParserIds != null) {
 			return errorParserIds;
-		}			
+		}
 		// If I have a parent, ask it
 		String errorParsers = null;
 		if (parent != null) {
@@ -1413,13 +1413,13 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	public String getErrorParserIdsAttribute() {
 		if (errorParserIds != null) {
 			return errorParserIds;
-		}			
+		}
 		// If I have a parent, ask it
 		String errorParsers = null;
 		if (parent != null) {
 			errorParsers = ((Configuration)parent).getErrorParserIdsAttribute();
 		}
-		
+
 		return errorParsers;
 	}
 
@@ -1449,7 +1449,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 				}
 			}
 		}
-		
+
 		if(includeChildren){
 			IResourceInfo[] rcInfos = getResourceInfos();
 			for(int i = 0; i < rcInfos.length; i++){
@@ -1459,7 +1459,8 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		}
 		return set;
 	}
-	
+
+	@Override
 	public String getDefaultLanguageSettingsProvidersIds() {
 		return defaultLanguageSettingsProvidersIds;
 	}
@@ -1505,7 +1506,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 							if (entries.contains(lib)) {
 								entries.remove(lib);
 								des.removeExternalSetting(setting);
-								des.createExternalSetting(setting.getCompatibleLanguageIds(), setting.getCompatibleContentTypeIds(), 
+								des.createExternalSetting(setting.getCompatibleLanguageIds(), setting.getCompatibleContentTypeIds(),
 										setting.getCompatibleExtensions(), entries.toArray(new ICSettingEntry[entries.size()]));
 							}
 						}
@@ -1552,17 +1553,17 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			isDirty = true;
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#setDescription(java.lang.String)
 	 */
 	@Override
 	public void setDescription(String description) {
-		 if (description == null && this.description == null) return; 
-	        if (this.description == null || description == null || !description.equals(this.description)) { 
-				this.description = description; 
-	            isDirty = true; 
-	        }       
+		 if (description == null && this.description == null) return;
+	        if (this.description == null || description == null || !description.equals(this.description)) {
+				this.description = description;
+	            isDirty = true;
+	        }
 	}
 
 	/* (non-Javadoc)
@@ -1610,60 +1611,60 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 //			rebuildNeeded = true;
 		}
 	}
- 
-    /* (non-Javadoc) 
-     * @see org.eclipse.cdt.core.build.managed.IConfiguration#setPrebuildStep(java.lang.String) 
-     */ 
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.build.managed.IConfiguration#setPrebuildStep(java.lang.String)
+     */
     @Override
-	public void setPrebuildStep(String step) { 
-        if (step == null && prebuildStep == null) return; 
-        if (prebuildStep == null || step == null || !prebuildStep.equals(step)) { 
-            prebuildStep = step; 
+	public void setPrebuildStep(String step) {
+        if (step == null && prebuildStep == null) return;
+        if (prebuildStep == null || step == null || !prebuildStep.equals(step)) {
+            prebuildStep = step;
 //			rebuildNeeded = true;
-            isDirty = true; 
-        } 
-    } 
-	
- 
-    /* (non-Javadoc) 
-     * @see org.eclipse.cdt.core.build.managed.IConfiguration#setPostbuildStep(java.lang.String) 
-     */ 
+            isDirty = true;
+        }
+    }
+
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.build.managed.IConfiguration#setPostbuildStep(java.lang.String)
+     */
     @Override
-	public void setPostbuildStep(String step) { 
-        if (step == null && postbuildStep == null) return; 
-        if (postbuildStep == null || step == null || !postbuildStep.equals(step)) { 
-            postbuildStep = step; 
+	public void setPostbuildStep(String step) {
+        if (step == null && postbuildStep == null) return;
+        if (postbuildStep == null || step == null || !postbuildStep.equals(step)) {
+            postbuildStep = step;
 //    		rebuildNeeded = true;
-            isDirty = true; 
-        }       
-    } 
-	
-    /* (non-Javadoc) 
-     * @see org.eclipse.cdt.core.build.managed.IConfiguration#setPreannouncebuildStep(java.lang.String) 
-     */ 
+            isDirty = true;
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.build.managed.IConfiguration#setPreannouncebuildStep(java.lang.String)
+     */
     @Override
-	public void setPreannouncebuildStep(String announceStep) { 
-        if (announceStep == null && preannouncebuildStep == null) return; 
+	public void setPreannouncebuildStep(String announceStep) {
+        if (announceStep == null && preannouncebuildStep == null) return;
         if (preannouncebuildStep == null || announceStep == null || !preannouncebuildStep.equals(announceStep)) {
-            preannouncebuildStep = announceStep; 
+            preannouncebuildStep = announceStep;
 //    		rebuildNeeded = true;
-            isDirty = true; 
-        } 
-    } 
- 
-    /* (non-Javadoc) 
-     * @see org.eclipse.cdt.core.build.managed.IConfiguration#setPostannouncebuildStep(java.lang.String) 
-     */ 
+            isDirty = true;
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.build.managed.IConfiguration#setPostannouncebuildStep(java.lang.String)
+     */
     @Override
-	public void setPostannouncebuildStep(String announceStep) { 
-        if (announceStep == null && postannouncebuildStep == null) return; 
+	public void setPostannouncebuildStep(String announceStep) {
+        if (announceStep == null && postannouncebuildStep == null) return;
         if (postannouncebuildStep == null || announceStep == null || !postannouncebuildStep.equals(announceStep)) {
-            postannouncebuildStep = announceStep; 
+            postannouncebuildStep = announceStep;
 //    		rebuildNeeded = true;
-            isDirty = true; 
-        } 
-    } 
-	
+            isDirty = true;
+        }
+    }
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#isSupported()
 	 */
@@ -1674,7 +1675,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			return foInfo.isSupported();
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#isHeaderFile(java.lang.String)
 	 */
@@ -1686,7 +1687,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/*
 	 *  O B J E C T   S T A T E   M A I N T E N A N C E
 	 */
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#isExtensionElement()
 	 */
@@ -1702,13 +1703,13 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	public boolean isDirty() {
 		// This shouldn't be called for an extension configuration
  		if (isExtensionConfig) return false;
-		
+
 		// If I need saving, just say yes
 		if (isDirty) return true;
-		
+
 		// Otherwise see if any children need saving
 		IResourceInfo infos[] = rcInfos.getResourceInfos();
-		
+
 		for(int i = 0; i < infos.length; i++){
 			if(infos[i].isDirty())
 				return true;
@@ -1723,18 +1724,18 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	public boolean needsRebuild() {
 		return needsRebuild(true);
 	}
-	
+
 	@Override
 	public boolean needsFullRebuild() {
 		return needsRebuild(false);
 	}
-	
+
 	public boolean needsRebuild(boolean checkChildren) {
-		boolean needRebuild = rebuildNeeded || resourceChangesRequireRebuild(); 
-		
+		boolean needRebuild = rebuildNeeded || resourceChangesRequireRebuild();
+
 		if(needRebuild || !checkChildren)
 			return needRebuild;
-		
+
 		IResourceInfo infos[] = rcInfos.getResourceInfos();
 
 		for(int i = 0; i < infos.length; i++){
@@ -1744,7 +1745,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#setDirty(boolean)
 	 */
@@ -1769,15 +1770,15 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	public void setRebuildState(boolean rebuild) {
 		if(isExtensionElement() && rebuild)
 			return;
-		
+
 		if(rebuildNeeded != rebuild){
 			rebuildNeeded = rebuild;
 			saveRebuildState();
 		}
-		
+
 		if(!rebuildNeeded){
 			setResourceChangeState(0);
-			
+
 			IResourceInfo infos[] = rcInfos.getResourceInfos();
 
 			for(int i = 0; i < infos.length; i++){
@@ -1803,7 +1804,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 							return true;
 						}
 					}
-				}			
+				}
 				String args = builder.getArguments();
 				if (args != null) {
 					String superA = superB.getArguments();
@@ -1812,23 +1813,23 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 							return true;
 						}
 					}
-				}			
+				}
 			}
 		}
 		return false;
 	}
-	
+
 	public void resolveReferences() {
 		if (!resolved) {
 			resolved = true;
-			
+
 			// call resolve references on any children
 			ResourceInfo infos[] = (ResourceInfo[])rcInfos.getResourceInfos(ResourceInfo.class);
 
 			for(int i = 0; i < infos.length; i++){
 				infos[i].resolveReferences();
 			}
-			
+
 			if (parentId != null) {
 				// Lookup the parent configuration by ID
 				parent = ManagedBuildManager.getExtensionConfiguration(parentId);
@@ -1836,7 +1837,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 
 		}
 	}
-	
+
 	/**
 	 * Reset the configuration's, tools', options
 	 */
@@ -1851,7 +1852,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	public IResourceConfiguration createResourceConfiguration(IFile file)
 	{
 		return createFileInfo(file.getFullPath().removeFirstSegments(1));
-		 
+
 	}
 
 	@Override
@@ -1873,12 +1874,12 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		}
 		return fileInfo;
 	}
-	
+
 	@Override
 	public IFileInfo createFileInfo(IPath path, IFolderInfo base, ITool baseTool, String id, String name){
 		if(base.getPath().equals(path))
 			return null;
-		
+
 		IFileInfo fileInfo = new ResourceConfiguration((FolderInfo)base, baseTool, id, name, path);
 		addResourceConfiguration(fileInfo);
 		ManagedBuildManager.performValueHandlerEvent(fileInfo, IManagedOptionValueHandler.EVENT_OPEN);
@@ -1890,7 +1891,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	public IFileInfo createFileInfo(IPath path, IFileInfo base, String id, String name){
 		if(base.getPath().equals(path))
 			return null;
-		
+
 		IFileInfo fileInfo = new ResourceConfiguration((ResourceConfiguration)base, path, id, name);
 		addResourceConfiguration(fileInfo);
 		ManagedBuildManager.performValueHandlerEvent(fileInfo, IManagedOptionValueHandler.EVENT_OPEN);
@@ -1921,12 +1922,12 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		}
 		return version;
 	}
-	
+
 	@Override
 	public void setVersion(Version version) {
 		// Do nothing
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getBuildMacroSupplier()
 	 */
@@ -1936,9 +1937,9 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		if(toolChain != null)
 			return toolChain.getBuildMacroSupplier();
 		return null;
-		
+
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#isTemporary()
 	 */
@@ -1946,41 +1947,41 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	public boolean isTemporary(){
 		return isTemporary;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.internal.core.BuildObject#updateManagedBuildRevision(java.lang.String)
 	 */
 	@Override
 	public void updateManagedBuildRevision(String revision){
 		super.updateManagedBuildRevision(revision);
-		
+
 		ResourceInfo infos[] = (ResourceInfo[])rcInfos.getResourceInfos(ResourceInfo.class);
 
 		for(int i = 0; i < infos.length; i++){
 			infos[i].updateManagedBuildRevision(revision);
 		}
 	}
-	
+
 	public void setParent(IConfiguration parent) {
 		if ( this.parent != parent) {
 			this.parent = parent;
 			if (!isExtensionElement())
 				setDirty(true);
-		}		
+		}
 	}
-	
+
 	@Override
 	public ITool calculateTargetTool(){
 		ITool tool = getTargetTool();
-		
+
 		if(tool == null){
 			tool = getToolFromOutputExtension(getArtifactExtension());
 		}
-		
+
 		if(tool == null){
 			IConfiguration extCfg;
-			for(extCfg = this; 
-			extCfg != null && !extCfg.isExtensionElement(); 
+			for(extCfg = this;
+			extCfg != null && !extCfg.isExtensionElement();
 			extCfg = extCfg.getParent()){
 			}
 
@@ -1988,15 +1989,15 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 				tool = getToolFromOutputExtension(extCfg.getArtifactExtension());
 			}
 		}
-		
+
 		return tool;
 	}
-	
+
 	@Override
 	public ITool getToolFromOutputExtension(String extension) {
 		return getRootFolderInfo().getToolFromOutputExtension(extension);
 	}
-	
+
 	@Override
 	public ITool getToolFromInputExtension(String sourceExtension) {
 		return getRootFolderInfo().getToolFromInputExtension(sourceExtension);
@@ -2010,19 +2011,19 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	 * with the resource tree between the two configuration builds
 	 *
 	 * The trivial approach implemented currently is to hold
-	 * the general information of whether some resources were 
+	 * the general information of whether some resources were
 	 * removed,changed,etc. and detect whether the rebuild is needed
 	 * based upon this information
-	 * 
+	 *
 	 * This method adds the resource change state for the configuration
 	 * specifying the resource change type performed on the project
 	 * reported while building another configuration
 	 * The method is not exported to the public API since delta handling
-	 * mechanism will likely to be changed in the future 
+	 * mechanism will likely to be changed in the future
 	 *
 	 * In the future we might implement some more smart mechanism
 	 * for tracking delta, e.g calculate the pre-cinfiguration resource delta, etc.
-	 *  
+	 *
 	 */
 	public void addResourceChangeState(int state){
 		setResourceChangeState(state | resourceChangeState);
@@ -2034,13 +2035,13 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			saveResourceChangeState();
 		}
 	}
-	
+
 	private boolean resourceChangesRequireRebuild(){
 		return isInternalBuilderEnabled() ?
 				resourceChangeState != 0 :
 					(resourceChangeState & IResourceDelta.REMOVED) == IResourceDelta.REMOVED;
 	}
-	
+
 	private void saveRebuildState(){
 		PropertyManager.getInstance().setProperty(this, REBUILD_STATE, Boolean.toString(rebuildNeeded));
 	}
@@ -2048,16 +2049,16 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	private void saveResourceChangeState(){
 		PropertyManager.getInstance().setProperty(this, RC_CHANGE_STATE, Integer.toString(resourceChangeState));
 	}
-	
+
 	/*
 	 * Internal Builder state API
 	 * NOTE: this is a temporary API
 	 * In the future we are going present the Internal Builder
 	 * as a special Builder object of the tool-chain and implement the internal
 	 * builder enabling/disabling as the Builder substitution functionality
-	 * 
+	 *
 	 */
-	
+
 /*	public void setInternalBuilderBoolean(boolean value, String pref) {
 		Preferences prefs = getPreferences(INTERNAL_BUILDER);
 		if(prefs != null){
@@ -2067,17 +2068,17 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			} catch (BackingStoreException e) {}
 		}
 	}
-*/	
+*/
 /*	public boolean getInternalBuilderBoolean(String pref, boolean defaultValue) {
 		Preferences prefs = getPreferences(INTERNAL_BUILDER);
 		return prefs != null ?
 				prefs.getBoolean(pref, false) : defaultValue;
 	}
-*/	
+*/
 	/**
 	 * this method is used for enabling/disabling the internal builder
 	 * for the given configuration
-	 * 
+	 *
 	 * @param enable boolean
 	 */
 	public void enableInternalBuilder(boolean enable){
@@ -2089,12 +2090,12 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			if(enable){
 				savePrevBuilderId(getBuilder());
 			}
-			
-			changeBuilder(builder, 
+
+			changeBuilder(builder,
 					ManagedBuildManager.calculateChildId(builder.getId(), null),
-					builder.getName(), 
+					builder.getName(),
 					true);
-			
+
 			if(enable){
 				try {
 					setManagedBuildOn(true);
@@ -2103,11 +2104,11 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			}
 		}
 	}
-	
+
 	public boolean canEnableInternalBuilder(boolean enable){
 		return getBuilderForInternalBuilderEnablement(enable, true) != null;
 	}
-	
+
 	private IBuilder getBuilderForInternalBuilderEnablement(boolean enable, boolean checkCompatibility){
 		IBuilder newBuilder = null;
 		if(enable){
@@ -2132,9 +2133,9 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 					IBuilder b = tc.getBuilder();
 					if(b.isInternalBuilder())
 						continue;
-					
+
 					for(;b != null && !b.isExtensionElement(); b = b.getSuperClass()) {}
-					
+
 					if(b != null){
 						if(!checkCompatibility || isBuilderCompatible(b)){
 							newBuilder = b;
@@ -2143,7 +2144,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 					}
 				}
 			}
-			
+
 //			if(newBuilder == null){
 //				IBuilder builders[] = ManagedBuildManager.getRealBuilders();
 //				IBuilder tmpB = null;
@@ -2152,7 +2153,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 //					if(b.isInternalBuilder())
 //						continue;
 //
-//					
+//
 //					if(isBuilderCompatible(b)){
 //						newBuilder = b;
 //						break;
@@ -2160,7 +2161,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 //						tmpB = b;
 //					}
 //				}
-//				
+//
 //				if(newBuilder == null){
 //					if(tmpB != null)
 //						newBuilder = tmpB;
@@ -2171,14 +2172,14 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 
 		return newBuilder;
 	}
-	
+
 	private void savePrevBuilderId(IBuilder builder){
 		IBuilder b = builder;
 		for(;b != null && !b.isExtensionElement(); b = b.getSuperClass()) {}
-		
+
 		if(b == null)
 			b = builder;
-		
+
 		ToolChain tc = (ToolChain)getToolChain();
 		if(tc != null)
 			tc.setNonInternalBuilderId(b.getId());
@@ -2196,14 +2197,14 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	 * @return boolean
 	 */
 	public boolean isInternalBuilderEnabled(){
-		return getBuilder().isInternalBuilder(); 
+		return getBuilder().isInternalBuilder();
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * sets the Internal Builder mode
-	 * 
-	 * @param ignore if true, internal builder will ignore 
+	 *
+	 * @param ignore if true, internal builder will ignore
 	 * build errors while building,
 	 * otherwise it will stop at the first build error
 	 */
@@ -2218,54 +2219,54 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	 * returns the Internal Builder mode
 	 * if true, internal builder will ignore build errors while building,
 	 * otherwise it will stop at the first build error
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public boolean getInternalBuilderIgnoreErr(){
 		return !getBuilder().isStopOnError();
 	}
-	
+
 	/**
 	 * sets the Internal Builder Parallel mode
-	 * @param parallel if true, internal builder will use parallel mode 
-	 * 
+	 * @param parallel if true, internal builder will use parallel mode
+	 *
 	 * @deprecated since CDT 9.0. Use {@link #setParallelDef(boolean)}
 	 */
 	@Deprecated
 	public void setInternalBuilderParallel(boolean parallel){
 		setParallelDef(parallel);
 	}
-	
+
 	/**
 	 * returns the Internal Builder parallel mode
-	 * if true, internal builder will work in parallel mode 
+	 * if true, internal builder will work in parallel mode
 	 * otherwise it will use only one thread
 	 * @return boolean
-	 * 
+	 *
 	 * @deprecated since CDT 9.0. Use {@link #getParallelDef()}
 	 */
 	@Deprecated
 	public boolean getInternalBuilderParallel(){
 		return getParallelDef();
 	}
-	
+
 	/**
 	 * Set parallel execution mode for the configuration's builder.
 	 * @see Builder#setParallelBuildOn(boolean)
-	 * 
+	 *
 	 * @param parallel - the flag to enable or disable parallel mode.
 	 */
 	public void setParallelDef(boolean parallel){
 		if(getParallelDef() == parallel)
 			return;
-		
+
 		try {
 			getEditableBuilder().setParallelBuildOn(parallel);
 		} catch (CoreException e) {
 			ManagedBuilderCorePlugin.log(e);
 		}
 	}
-	
+
 	/**
 	 * Check if the configuration's builder is operating in parallel mode.
 	 * @return {@code true} if parallel mode is enabled, {@code false} otherwise.
@@ -2273,10 +2274,10 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	public boolean getParallelDef(){
 		return getBuilder().isParallelBuildOn();
 	}
-	
+
 	/**
 	 * Sets maximum number of parallel threads/jobs to be used by builder.
-	 * 
+	 *
 	 * @param jobs - maximum number of jobs or threads. For details how
 	 *    the number is interpreted see {@link Builder#setParallelizationNum(int)}.
 	 */
@@ -2287,23 +2288,23 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			ManagedBuilderCorePlugin.log(e);
 		}
 	}
-	
+
 	/**
 	 * Returns maximum number of parallel threads/jobs used by the configuration's builder.
 	 * @see #setParallelDef(boolean)
-	 * 
+	 *
 	 * @return - maximum number of parallel threads or jobs used by the builder.
 	 */
 	public int getParallelNumber(){
 		return getBuilder().getParallelizationNum();
 	}
-	
+
 //	private Preferences getPreferences(String name){
 //		if(isTemporary)
 //			return null;
-//		
+//
 //		IProject project = (IProject)getOwner();
-//		
+//
 //		if(project == null || !project.exists() || !project.isOpen())
 //			return null;
 //
@@ -2340,12 +2341,12 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	public IFolderInfo getRootFolderInfo() {
 		return rootFolderInfo;
 	}
-	
+
 	ResourceInfoContainer getRcInfoContainer(IResourceInfo rcInfo){
 		PathSettingsContainer cr = pathSettings.getChildContainer(rcInfo.getPath(), true, true);
 		return new ResourceInfoContainer(cr, false);
 	}
-	
+
 	@Override
 	public CConfigurationData getConfigurationData(){
 		return fCfgData;
@@ -2382,7 +2383,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	public IFolderInfo createFolderInfo(IPath path, IFolderInfo base, String id, String name) {
 		if(base.getPath().equals(path))
 			return null;
-		
+
 		FolderInfo folderInfo = new FolderInfo((FolderInfo)base, id, name, path);
 		addResourceConfiguration(folderInfo);
 		folderInfo.propertiesChanged();
@@ -2397,7 +2398,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			if(parent != null && sourceEntries == null)
 				return parent.getSourceEntries();
 			return new ICSourceEntry[]{new CSourceEntry(Path.EMPTY, null, ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED)};
-			
+
 		}
 		return sourceEntries.clone();
 	}
@@ -2445,13 +2446,13 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			resetErrorParsers();
 			Set<String> oldSet = contributeErrorParsers(null, true);
 			if(oldSet != null) {
-				oldSet.removeAll(Arrays.asList(ids));						
+				oldSet.removeAll(Arrays.asList(ids));
 				removeErrorParsers(oldSet);
-			}			
+			}
 			setErrorParserAttribute(ids);
 		}
 	}
-	
+
 	public void resetErrorParsers(){
 		errorParserIds = null;
 		IResourceInfo rcInfos[] = getResourceInfos();
@@ -2460,15 +2461,15 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			rcInfo.resetErrorParsers();
 		}
 	}
-	
+
 	void removeErrorParsers(Set<String> set){
 		Set<String> oldSet = contributeErrorParsers(null, false);
 		if(oldSet == null)
 			oldSet = new LinkedHashSet<String>();
-		
+
 		oldSet.removeAll(set);
 		setErrorParserAttribute(oldSet.toArray(new String[oldSet.size()]));
-		
+
 		IResourceInfo rcInfos[] = getResourceInfos();
 		for(int i = 0; i < rcInfos.length; i++){
 			ResourceInfo rcInfo = (ResourceInfo)rcInfos[i];
@@ -2480,7 +2481,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	public CBuildData getBuildData() {
 		return getEditableBuilder().getBuildData();
 	}
-	
+
 	@Override
 	public IBuilder getEditableBuilder(){
 		IToolChain tc = getToolChain();
@@ -2492,17 +2493,17 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		}
 		return builder;
 	}
-	
+
 	@Override
 	public IBuilder getBuilder(){
 		return getToolChain().getBuilder();
 	}
-	
+
 	@Override
 	public String getOutputPrefix(String outputExtension) {
 		// Treat null extensions as empty string
 		String ext = outputExtension == null ? new String() : outputExtension;
-		
+
 		// Get all the tools for the current config
 		String flags = new String();
 		ITool[] tools = getFilteredTools();
@@ -2514,11 +2515,11 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		}
 		return flags;
 	}
-	
+
 	public ICConfigurationDescription getConfigurationDescription(){
 		return fCfgDes;
 	}
-	
+
 	public void setConfigurationDescription(ICConfigurationDescription cfgDes){
 		fCfgDes = cfgDes;
 	}
@@ -2534,7 +2535,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		}
 		return buildProperties;
 	}
-	
+
 	private BuildObjectProperties findBuildProperties(){
 		if(buildProperties == null){
 			if(parent != null){
@@ -2558,7 +2559,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	public void propertiesChanged() {
 		if(isExtensionConfig)
 			return;
-		
+
 		BooleanExpressionApplicabilityCalculator calculator = getBooleanExpressionCalculator();
 		if(calculator != null)
 			calculator.adjustConfiguration(this, false);
@@ -2568,7 +2569,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			((ResourceInfo)infos[i]).propertiesChanged();
 		}
 	}
-	
+
 	public BooleanExpressionApplicabilityCalculator getBooleanExpressionCalculator(){
 		if(booleanExpressionCalculator == null){
 			if(parent != null){
@@ -2582,10 +2583,10 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	public boolean isSystemObject() {
 		if(isTest)
 			return true;
-		
+
 		if(getProjectType() != null)
 			return getProjectType().isSystemObject();
-		
+
 		return false;
 	}
 
@@ -2598,7 +2599,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	public String getOutputFlag(String outputExt) {
 		// Treat null extension as an empty string
 		String ext = outputExt == null ? new String() : outputExt;
-		
+
 		// Get all the tools for the current config
 		String flags = new String();
 		ITool[] tools = getFilteredTools();
@@ -2611,9 +2612,9 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		}
 		return flags;
 	}
-	
+
 	@Override
-	public IManagedCommandLineInfo generateToolCommandLineInfo( String sourceExtension, String[] flags, 
+	public IManagedCommandLineInfo generateToolCommandLineInfo( String sourceExtension, String[] flags,
 			String outputFlag, String outputPrefix, String outputName, String[] inputResources, IPath inputLocation, IPath outputLocation ){
 		ITool[] tools = getFilteredTools();
 		for (int index = 0; index < tools.length; index++) {
@@ -2623,7 +2624,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 				//try to resolve the build macros in the tool command
 				try{
 					String resolvedCommand = null;
-					
+
 					if ((inputLocation != null && inputLocation.toString().indexOf(" ") != -1) || //$NON-NLS-1$
 							(outputLocation != null && outputLocation.toString().indexOf(" ") != -1) ) //$NON-NLS-1$
 					{
@@ -2652,26 +2653,26 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 					}
 					if((resolvedCommand = resolvedCommand.trim()).length() > 0)
 						cmd = resolvedCommand;
-						
+
 				} catch (BuildMacroException e){
 				}
 
 				IManagedCommandLineGenerator gen = tool.getCommandLineGenerator();
-				return gen.generateCommandLineInfo( tool, cmd, 
-						flags, outputFlag, outputPrefix, outputName, inputResources, 
+				return gen.generateCommandLineInfo( tool, cmd,
+						flags, outputFlag, outputPrefix, outputName, inputResources,
 						tool.getCommandLinePattern() );
 			}
 		}
 		return null;
 	}
-	
+
 	@Override
 	public String[] getUserObjects(String extension) {
 		Vector<String> objs = new Vector<String>();
 		ITool tool = calculateTargetTool();
 		if(tool == null)
 			tool = getToolFromOutputExtension(extension);
-			
+
 		if(tool != null){
 				IOption[] opts = tool.getOptions();
 				// Look for the user object option type
@@ -2706,14 +2707,14 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		}
 		return objs.toArray(new String[objs.size()]);
 	}
-	
+
 	@Override
 	public String[] getLibs(String extension) {
 		Vector<String> libs = new Vector<String>();
 		ITool tool = calculateTargetTool();
 		if(tool == null)
 			tool = getToolFromOutputExtension(extension);
-			
+
 		if(tool != null){
 				IOption[] opts = tool.getOptions();
 				// Look for the lib option type
@@ -2721,10 +2722,10 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 					IOption option = opts[i];
 					try {
 						if (option.getValueType() == IOption.LIBRARIES) {
-							
+
 							// check to see if the option has an applicability calculator
 							IOptionApplicability applicabilitytCalculator = option.getApplicabilityCalculator();
-							
+
 							if (applicabilitytCalculator == null
 									|| applicabilitytCalculator.isOptionUsedInCommandLine(this, tool, option)) {
 								String command = option.getCommand();
@@ -2749,7 +2750,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 										// TODO: report error
 										continue;
 									}
-									
+
 								}
 							}
 						}
@@ -2789,7 +2790,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	/**
 	 * Responsible for contributing 'external' settings back to the core for use
 	 * by referenced projects.
-	 * 
+	 *
 	 * In this case it returns Include, Library path & Library File settings
 	 * to be used be references for linking the output of this library project
 	 */
@@ -2841,13 +2842,13 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			if(!rcs[i].supportsBuild(managed))
 				return false;
 		}
-		
+
 		if(checkBuilder){
 			IBuilder builder = getBuilder();
 			if(builder != null && !builder.supportsBuild(managed))
 				return false;
 		}
-		
+
 		return true;
 	}
 
@@ -2858,10 +2859,10 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		if(props != null){
 			supports = props.supportsType(typeId);
 		}
-		
+
 		if(!supports)
 			supports = ((ToolChain)getToolChain()).supportsType(typeId);
-		
+
 		return supports;
 	}
 
@@ -2872,13 +2873,13 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		if(props != null){
 			supports = props.supportsValue(typeId, valueId);
 		}
-		
+
 		if(!supports)
 			supports = ((ToolChain)getToolChain()).supportsValue(typeId, valueId);
-		
+
 		return supports;
 	}
-	
+
 	private SupportedProperties findSupportedProperties(){
 		if(supportedProperties == null){
 			if(parent != null){
@@ -2887,7 +2888,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		}
 		return supportedProperties;
 	}
-	
+
 	private void loadProperties(IManagedConfigElement el){
 		supportedProperties = new SupportedProperties(el);
 	}
@@ -2899,9 +2900,9 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		if(props != null){
 			list.addAll(Arrays.asList(props.getRequiredTypeIds()));
 		}
-		
+
 		list.addAll(Arrays.asList(((ToolChain)getToolChain()).getRequiredTypeIds()));
-		
+
 		return list.toArray(new String[list.size()]);
 	}
 
@@ -2912,9 +2913,9 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		if(props != null){
 			list.addAll(Arrays.asList(props.getSupportedTypeIds()));
 		}
-		
+
 		list.addAll(Arrays.asList(((ToolChain)getToolChain()).getSupportedTypeIds()));
-		
+
 		return list.toArray(new String[list.size()]);
 	}
 
@@ -2925,9 +2926,9 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		if(props != null){
 			list.addAll(Arrays.asList(props.getSupportedValueIds(typeId)));
 		}
-		
+
 		list.addAll(Arrays.asList(((ToolChain)getToolChain()).getSupportedValueIds(typeId)));
-		
+
 		return list.toArray(new String[list.size()]);
 	}
 
@@ -2938,10 +2939,10 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		if(props != null){
 			requires = props.requiresType(typeId);
 		}
-		
+
 		if(!requires)
 			requires = ((ToolChain)getToolChain()).requiresType(typeId);
-		
+
 		return requires;
 	}
 
@@ -2978,22 +2979,22 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 				for(;extBuilder != null && !extBuilder.isExtensionElement(); extBuilder = extBuilder.getSuperClass()) {}
 				if(extBuilder == null)
 					extBuilder = newBuilder;
-				
+
 				newCfgBuilder = new Builder(tc, extBuilder, id, name, false);
 				newCfgBuilder.copySettings(cur, allBuildSettings);
 			}
 		}
-		
+
 		if(newCfgBuilder != null){
 			tc.setBuilder(newCfgBuilder);
 		}
 	}
-	
+
 	@Override
 	public boolean isBuilderCompatible(IBuilder builder){
 		return builder.supportsBuild(isManagedBuildOn());
 	}
-	
+
 	ITool findToolById(String id){
 		IResourceInfo[] rcInfos = getResourceInfos();
 		ITool tool = null;
@@ -3005,7 +3006,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		}
 		return tool;
 	}
-	
+
 	void resolveProjectReferences(boolean onLoad){
 		IResourceInfo[] rcInfos = getResourceInfos();
 		for(int i = 0; i < rcInfos.length; i++){
@@ -3013,7 +3014,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			info.resolveProjectReferences(onLoad);
 		}
 	}
-	
+
 	public boolean isPerRcTypeDiscovery(){
 		ToolChain tc = (ToolChain)getRootFolderInfo().getToolChain();
 		return tc.isPerRcTypeDiscovery();
@@ -3043,33 +3044,33 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		ToolChain tc = (ToolChain)getRootFolderInfo().getToolChain();
 		return tc.getDiscoveredPathInfo();
 	}
-	
+
 	public String getDiscoveryProfileId(){
 		ToolChain tc = (ToolChain)getRootFolderInfo().getToolChain();
 		return tc.getScannerConfigDiscoveryProfileId();
 	}
-	
+
 	public PathInfoCache clearDiscoveredPathInfo(){
 		ToolChain tc = (ToolChain)getRootFolderInfo().getToolChain();
 		return tc.clearDiscoveredPathInfo();
 	}
-	
+
 	public ICfgScannerConfigBuilderInfo2Set getCfgScannerConfigInfo(){
 		return cfgScannerInfo;
 	}
-	
+
 	public void setCfgScannerConfigInfo(ICfgScannerConfigBuilderInfo2Set info){
 		cfgScannerInfo = info;
 	}
-	
+
 	public void clearCachedData(){
 		cfgScannerInfo = null;
 	}
-	
+
 	public boolean isPreference(){
 		return isPreferenceConfig;
 	}
-	
+
 	@Override
 	public IBuildPropertyValue getBuildArtefactType() {
 		IBuildObjectProperties props = findBuildProperties();
@@ -3080,7 +3081,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		}
 		return null;
 	}
-	
+
 	@Override
 	public void setBuildArtefactType(String id) throws BuildException {
 		IBuildObjectProperties props = getBuildProperties();
@@ -3090,7 +3091,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			throw new BuildException(e.getLocalizedMessage());
 		}
 		// May need to update the exports paths & symbols after artifact type change
-		exportArtifactInfo();		
+		exportArtifactInfo();
 	}
 
 	boolean isExcluded(IPath path){
@@ -3099,7 +3100,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		ICSourceEntry[] entries = getSourceEntries();
 		return CDataUtil.isExcluded(path, entries);
 	}
-	
+
 	void setExcluded(IPath path, boolean isFolder, boolean excluded){
 //		if(path.segmentCount() == 0)
 //			return;
@@ -3112,7 +3113,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 				excludeList.add(path);
 		}
 	}
-	
+
 	private ICSourceEntry[] getUpdatedEntries(IPath path, boolean isFolder, boolean excluded){
 		try {
 			ICSourceEntry[] entries = getSourceEntries();
@@ -3122,7 +3123,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		}
 		return null;
 	}
-	
+
 	boolean canExclude(IPath path, boolean isFolder, boolean excluded){
 		if(excludeList == null) {
 			ICSourceEntry[] newEntries = getUpdatedEntries(path, isFolder, excluded);

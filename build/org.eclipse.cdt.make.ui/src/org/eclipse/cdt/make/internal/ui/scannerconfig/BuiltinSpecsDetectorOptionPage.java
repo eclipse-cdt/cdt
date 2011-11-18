@@ -30,7 +30,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
@@ -42,7 +41,7 @@ public final class BuiltinSpecsDetectorOptionPage extends AbstractLanguageSettin
 	private boolean fEditable;
 
 	private Text inputCommand;
-	
+
 	private StatusMessageLine fStatusLine;
 	private Button allocateConsoleCheckBox;
 
@@ -66,7 +65,7 @@ public final class BuiltinSpecsDetectorOptionPage extends AbstractLanguageSettin
 			composite.setLayout(layout);
 			composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 			Dialog.applyDialogFont(composite);
-			
+
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 2;
 			composite.setLayoutData(gd);
@@ -89,6 +88,7 @@ public final class BuiltinSpecsDetectorOptionPage extends AbstractLanguageSettin
 			inputCommand.setText(customParameter!=null ? customParameter : "");
 			inputCommand.setEnabled(fEditable);
 			inputCommand.addModifyListener(new ModifyListener() {
+				@Override
 				public void modifyText(ModifyEvent e) {
 					String text = inputCommand.getText();
 					AbstractBuiltinSpecsDetector provider = getRawProvider();
@@ -225,14 +225,14 @@ public final class BuiltinSpecsDetectorOptionPage extends AbstractLanguageSettin
 			});
 
 		}
-		
+
 //		// Status line
 //		if (fEditable) {
 //			fStatusLine = new StatusMessageLine(composite, SWT.LEFT, 2);
 //			IStatus status = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, "Note that currently not all options are persisted (FIXME)");
 //			fStatusLine.setErrorStatus(status);
 //		}
-		
+
 		setControl(composite);
 	}
 

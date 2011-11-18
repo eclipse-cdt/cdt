@@ -50,16 +50,16 @@ import org.eclipse.core.runtime.IPath;
 import org.osgi.framework.Version;
 
 /**
- * This class represents a set of configurations 
+ * This class represents a set of configurations
  * to be edited simultaneously on property pages.
  */
 public class MultiConfiguration extends MultiItemsHolder implements
 		IMultiConfiguration {
 	private static final String[] EMPTY_STR_ARRAY = new String[0];
-	
+
 	protected IConfiguration[] fCfgs = null;
 	private int curr = 0;
-	
+
 	public MultiConfiguration(IConfiguration[] cfs) {
 		fCfgs = cfs;
 		for (int i=0; i<fCfgs.length; i++)
@@ -68,19 +68,19 @@ public class MultiConfiguration extends MultiItemsHolder implements
 				break;
 			}
 	}
-	
+
 	public MultiConfiguration(ICConfigurationDescription[] cfds) {
 		this(cfds2cfs(cfds));
 	}
-	
+
 	public static IConfiguration[] cfds2cfs(ICConfigurationDescription[] cfgds) {
 		IConfiguration[] cfs = new IConfiguration[cfgds.length];
 		for (int i=0; i<cfgds.length; i++)
 			cfs[i] = ManagedBuildManager.getConfigurationForDescription(cfgds[i]);
 		return cfs;
 	}
-	
-	
+
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.MultiItemsHolder#getItems()
 	 */
@@ -211,24 +211,24 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 */
 	@Override
 	public IManagedCommandLineInfo generateToolCommandLineInfo(
-			String sourceExtension, 
-			String[] flags, 
+			String sourceExtension,
+			String[] flags,
 			String outputFlag,
-			String outputPrefix, 
-			String outputName, 
+			String outputPrefix,
+			String outputName,
 			String[] inputResources,
-			IPath inputLocation, 
+			IPath inputLocation,
 			IPath outputLocation) {
 		if (DEBUG)
 			System.out.println("Strange multi access: MultiConfiguration.generateToolCommandLineInfo()"); //$NON-NLS-1$
 		return curr().generateToolCommandLineInfo(
-				sourceExtension, 
-				flags, 
-				outputFlag, 
-				outputPrefix, 
-				outputName, 
-				inputResources, 
-				inputLocation, 
+				sourceExtension,
+				flags,
+				outputFlag,
+				outputPrefix,
+				outputName,
+				inputResources,
+				inputLocation,
 				outputLocation);
 	}
 
@@ -243,7 +243,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 				return EMPTY_STR;
 		return s;
 	}
-	
+
 	public String[] getArtifactExtensions() {
 		String[] s = new String[fCfgs.length];
 		for (int i=0; i<fCfgs.length; i++)
@@ -278,7 +278,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 		String args0 = fCfgs[0].getBuildArguments();
 		if (args0 == null)
 			args0 = EMPTY_STR;
-		
+
 		for (IConfiguration cfg : fCfgs) {
 			String args = cfg.getBuildArguments();
 			if (args == null)
@@ -294,7 +294,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 */
 	@Override
 	public IBuildPropertyValue getBuildArtefactType() {
-		IBuildPropertyValue b = fCfgs[0].getBuildArtefactType(); 
+		IBuildPropertyValue b = fCfgs[0].getBuildArtefactType();
 		if (b == null)
 			return null;
 		for (int i=1; i<fCfgs.length; i++)
@@ -414,7 +414,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#getErrorParserIds()
 	 */
-	
+
 	@Override
 	public String getErrorParserIds() {
 		String s = fCfgs[0].getErrorParserIds();
@@ -440,6 +440,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 		return s;
 	}
 
+	@Override
 	public String getDefaultLanguageSettingsProvidersIds() {
 		ManagedBuilderCorePlugin.error("Default Language Settings Providers are not supported in multiconfiguration mode");
 		return null;
@@ -847,9 +848,9 @@ public class MultiConfiguration extends MultiItemsHolder implements
 				return false;
 		return true;
 	}
-	
+
 	public boolean[] isManagedBuildOnMulti() {
-		boolean[] b = new boolean[fCfgs.length]; 
+		boolean[] b = new boolean[fCfgs.length];
 		for (int i=0; i<fCfgs.length; i++)
 			b[i] = fCfgs[i].isManagedBuildOn();
 		return b;
@@ -1031,7 +1032,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#setName(java.lang.String)
 	 */
 	@Override
-	public void setName(String name) {} // do nothing 
+	public void setName(String name) {} // do nothing
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#setOption(org.eclipse.cdt.managedbuilder.core.IHoldsOptions, org.eclipse.cdt.managedbuilder.core.IOption, boolean)
@@ -1214,7 +1215,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 		}
 		return true; // all cfgs report true
 	}
-	
+
 	@Override
 	public void setParallelDef(boolean parallel) {
 		for (IConfiguration cfg : fCfgs) {
@@ -1222,7 +1223,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 				((Configuration)cfg).setParallelDef(parallel);
 		}
 	}
-	
+
 	@Override
 	public int getParallelNumber() {
 		int res = 0;
@@ -1231,7 +1232,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 				int num = ((Configuration)cfg).getParallelNumber();
 				Assert.isTrue(num != 0); // can't be 0, see IMakeCommonBuildInfo.getParallelizationNum()
 
-				if (res == 0) 
+				if (res == 0)
 					res = num;
 				else if (res != num)
 					return 0; // values are different !
@@ -1240,7 +1241,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 		}
 		return res; // all cfgs report same value
 	}
-	
+
 	@Override
 	public void setParallelNumber(int num) {
 		for (IConfiguration cfg : fCfgs) {
@@ -1248,12 +1249,12 @@ public class MultiConfiguration extends MultiItemsHolder implements
 				((Configuration)cfg).setParallelNumber(num);
 		}
 	}
-	
+
 	@Override
 	public boolean getInternalBuilderParallel() {
 		return getParallelDef();
 	}
-	
+
 	@Override
 	public boolean isInternalBuilderEnabled() {
 		for (int i=0; i<fCfgs.length; i++)
@@ -1275,14 +1276,14 @@ public class MultiConfiguration extends MultiItemsHolder implements
 				return false;
 		return true; // all cfgs report true
 	}
-	
+
 	@Override
 	public void enableInternalBuilder(boolean v) {
 		for (int i=0; i<fCfgs.length; i++)
 			if (fCfgs[i] instanceof Configuration)
 				((Configuration)fCfgs[i]).enableInternalBuilder(v);
 	}
-	
+
 	/**
 	 * Returns "default" configuration.
 	 */
@@ -1367,7 +1368,7 @@ public class MultiConfiguration extends MultiItemsHolder implements
 			ManagedBuilderCorePlugin.log(e);
 		}
 	}
-	
+
 	public String getBuildAttribute(String name, String defValue) {
 		String res = defValue;
 		IBuilder b = fCfgs[0].getBuilder();

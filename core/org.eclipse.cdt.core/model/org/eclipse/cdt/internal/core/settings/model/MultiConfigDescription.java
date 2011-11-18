@@ -639,11 +639,13 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 			fCfgs[i].removeStorage(id);
 	}
 
+	@Override
 	public void setLanguageSettingProviders(List<ILanguageSettingsProvider> providers) {
 		if (DEBUG)
 			System.out.println("Bad multi access: MultiConfigDescription.setLanguageSettingProviders()"); //$NON-NLS-1$
 	}
 
+	@Override
 	public List<ILanguageSettingsProvider> getLanguageSettingProviders() {
 		if (DEBUG)
 			System.out.println("Bad multi access: MultiConfigDescription.getLanguageSettingProviders()"); //$NON-NLS-1$

@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.AbstractExecutableExtensionBase;
-import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditableProvider;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICFileDescription;
@@ -31,11 +30,12 @@ import org.eclipse.core.runtime.IPath;
 //public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase implements ILanguageSettingsEditableProvider {
 public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase implements ILanguageSettingsProvider {
 
+	@Override
 	public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId) {
-		
+
 		IPath projectPath = rc.getProjectRelativePath();
 		ICLanguageSetting[] languageSettings = null;
-		
+
 		if (rc instanceof IFile) {
 			ICLanguageSetting ls = cfgDescription.getLanguageSettingForFile(projectPath, true);
 			if (ls != null) {
@@ -45,9 +45,9 @@ public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase
 			ICResourceDescription rcDescription = cfgDescription.getResourceDescription(projectPath, false);
 			languageSettings = getLanguageSettings(rcDescription);
 		}
-		
+
 		List<ICLanguageSettingEntry> list = new ArrayList<ICLanguageSettingEntry>();
-		
+
 		if (languageSettings != null) {
 			for (ICLanguageSetting langSetting : languageSettings) {
 				if (langSetting!=null) {
@@ -69,7 +69,7 @@ public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase
 		}
 		return list;
 	}
-	
+
 	private ICLanguageSetting[] getLanguageSettings(ICResourceDescription rcDescription) {
 		ICLanguageSetting[] array = null;
 		switch (rcDescription.getType()) {
@@ -98,7 +98,7 @@ public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase
 //		lang.setSettingEntries(kind, entries);
 		IPath projectPath = rc.getProjectRelativePath();
 		ICResourceDescription rcDescription = cfgDescription.getResourceDescription(projectPath, false);
-		
+
 		for (ICLanguageSetting languageSetting : getLanguageSettings(rcDescription)) {
 			if (languageSetting!=null) {
 				String id = languageSetting.getLanguageId();

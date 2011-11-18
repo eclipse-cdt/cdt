@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.Assert;
 /**
  * Language Settings Provider that keeps count how many times it has been registered.
  */
-public class MockListenerRegisterer extends LanguageSettingsSerializable implements ILanguageSettingsEditableProvider, ICListenerRegisterer {
+public class MockListenerRegisterer extends LanguageSettingsSerializable implements ILanguageSettingsEditableProvider, ICListenerAgent {
 	private static MockListenerManager mockListenerManager = new MockListenerManager();
 	
 	private static class MockListenerManager {

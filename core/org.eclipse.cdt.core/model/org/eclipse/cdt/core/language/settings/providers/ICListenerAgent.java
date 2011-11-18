@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
  * Helper class to allow listeners self-register/dispose. Called by cdt core.
  * TODO - expand in more detail.
  */
-public interface ICListenerRegisterer {
+public interface ICListenerAgent {
 	public void registerListener(ICConfigurationDescription cfgDescription);
 	public void unregisterListener();
 }

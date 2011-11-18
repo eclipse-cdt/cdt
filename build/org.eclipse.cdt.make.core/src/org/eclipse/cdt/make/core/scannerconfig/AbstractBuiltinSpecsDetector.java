@@ -27,7 +27,7 @@ import org.eclipse.cdt.core.IConsoleParser;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.cdt.core.index.IIndexManager;
-import org.eclipse.cdt.core.language.settings.providers.ICListenerRegisterer;
+import org.eclipse.cdt.core.language.settings.providers.ICListenerAgent;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
@@ -68,7 +68,7 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.w3c.dom.Element;
 
-public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSettingsOutputScanner implements ICListenerRegisterer {
+public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSettingsOutputScanner implements ICListenerAgent {
 	public static final Object JOB_FAMILY_BUILTIN_SPECS_DETECTOR = "org.eclipse.cdt.make.core.scannerconfig.AbstractBuiltinSpecsDetector";
 
 	private static final int TICKS_STREAM_MONITOR = 100;

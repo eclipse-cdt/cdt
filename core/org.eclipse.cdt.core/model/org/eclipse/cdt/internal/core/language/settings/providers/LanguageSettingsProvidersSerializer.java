@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.language.settings.providers.ICListenerRegisterer;
+import org.eclipse.cdt.core.language.settings.providers.ICListenerAgent;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditableProvider;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
@@ -80,16 +80,16 @@ public class LanguageSettingsProvidersSerializer {
 	private static ListenerList fLanguageSettingsChangeListeners = new ListenerList(ListenerList.IDENTITY);
 
 	private static class ListenerAssociation {
-		private ICListenerRegisterer listener;
+		private ICListenerAgent listener;
 		private ICConfigurationDescription cfgDescription;
 
-		public ListenerAssociation(ICListenerRegisterer li, ICConfigurationDescription cfgd) {
+		public ListenerAssociation(ICListenerAgent li, ICConfigurationDescription cfgd) {
 			listener = li;
 			cfgDescription = cfgd;
 		}
 	}
 
-	private static class LanguageSettingsWorkspaceProvider implements ILanguageSettingsProvider, ICListenerRegisterer {
+	private static class LanguageSettingsWorkspaceProvider implements ILanguageSettingsProvider, ICListenerAgent {
 		private String providerId;
 		private int projectCount = 0;
 
@@ -164,8 +164,8 @@ public class LanguageSettingsProvidersSerializer {
 		public void registerListener(ICConfigurationDescription cfgDescription) {
 			// keep in mind that rawProvider can change
 			ILanguageSettingsProvider rawProvider = getRawProvider();
-			if (rawProvider instanceof ICListenerRegisterer) {
-				((ICListenerRegisterer) rawProvider).registerListener(null);
+			if (rawProvider instanceof ICListenerAgent) {
+				((ICListenerAgent) rawProvider).registerListener(null);
 			}
 		}
 
@@ -173,8 +173,8 @@ public class LanguageSettingsProvidersSerializer {
 		public void unregisterListener() {
 			// keep in mind that rawProvider can change
 			ILanguageSettingsProvider rawProvider = getRawProvider();
-			if (rawProvider instanceof ICListenerRegisterer) {
-				((ICListenerRegisterer) rawProvider).unregisterListener();
+			if (rawProvider instanceof ICListenerAgent) {
+				((ICListenerAgent) rawProvider).unregisterListener();
 			}
 		}
 	}
@@ -313,10 +313,10 @@ public class LanguageSettingsProvidersSerializer {
 			}
 		}
 
-		List<ICListenerRegisterer> oldListeners = selectListeners(rawGlobalWorkspaceProviders.values());
-		List<ICListenerRegisterer> newListeners = selectListeners(rawProviders);
+		List<ICListenerAgent> oldListeners = selectListeners(rawGlobalWorkspaceProviders.values());
+		List<ICListenerAgent> newListeners = selectListeners(rawProviders);
 
-		for (ICListenerRegisterer oldListener : oldListeners) {
+		for (ICListenerAgent oldListener : oldListeners) {
 			if (!isObjectInTheList(newListeners, oldListener)) {
 				LanguageSettingsWorkspaceProvider wspProvider = (LanguageSettingsWorkspaceProvider) globalWorkspaceProviders.get(((ILanguageSettingsProvider)oldListener).getId());
 				if (wspProvider != null && wspProvider.getProjectCount() > 0) {
@@ -325,7 +325,7 @@ public class LanguageSettingsProvidersSerializer {
 			}
 		}
 
-		for (ICListenerRegisterer newListener : newListeners) {
+		for (ICListenerAgent newListener : newListeners) {
 			if (!isObjectInTheList(oldListeners, newListener)) {
 				LanguageSettingsWorkspaceProvider wspProvider = (LanguageSettingsWorkspaceProvider) globalWorkspaceProviders.get(((ILanguageSettingsProvider)newListener).getId());
 				if (wspProvider != null && wspProvider.getProjectCount() > 0) {
@@ -854,7 +854,7 @@ projects:
 		return false;
 	}
 
-	private static boolean isListenerInTheListOfAssociations(Collection<ListenerAssociation> list, ICListenerRegisterer element) {
+	private static boolean isListenerInTheListOfAssociations(Collection<ListenerAssociation> list, ICListenerAgent element) {
 		// list.contains(element) won't do it as we are interested in exact object, not in equal object
 		for (ListenerAssociation la : list) {
 			if (la.listener == element)
@@ -867,14 +867,14 @@ projects:
 	 * Get a providers list including only providers of type ICListenerRegisterer
 	 * for a given project description - collecting from all configurations.
 	 */
-	private static List<ICListenerRegisterer> getListeners(ICProjectDescription prjDescription) {
-		List<ICListenerRegisterer> listeners = new ArrayList<ICListenerRegisterer>();
+	private static List<ICListenerAgent> getListeners(ICProjectDescription prjDescription) {
+		List<ICListenerAgent> listeners = new ArrayList<ICListenerAgent>();
 		if (prjDescription != null) {
 			for (ICConfigurationDescription cfgDescription : prjDescription.getConfigurations()) {
 				List<ILanguageSettingsProvider> providers = cfgDescription.getLanguageSettingProviders();
 				for (ILanguageSettingsProvider provider : providers) {
-					if (provider instanceof ICListenerRegisterer) {
-						ICListenerRegisterer listener = (ICListenerRegisterer) provider;
+					if (provider instanceof ICListenerAgent) {
+						ICListenerAgent listener = (ICListenerAgent) provider;
 						if (!isObjectInTheList(listeners, listener)) {
 							listeners.add(listener);
 						}
@@ -885,11 +885,11 @@ projects:
 		return listeners;
 	}
 
-	private static List<ICListenerRegisterer> selectListeners(Collection<ILanguageSettingsProvider> values) {
-		List<ICListenerRegisterer> listeners = new ArrayList<ICListenerRegisterer>();
+	private static List<ICListenerAgent> selectListeners(Collection<ILanguageSettingsProvider> values) {
+		List<ICListenerAgent> listeners = new ArrayList<ICListenerAgent>();
 		for (ILanguageSettingsProvider provider : values) {
-			if (provider instanceof ICListenerRegisterer)
-				listeners.add((ICListenerRegisterer) provider);
+			if (provider instanceof ICListenerAgent)
+				listeners.add((ICListenerAgent) provider);
 		}
 		return listeners;
 	}
@@ -903,8 +903,8 @@ projects:
 		if (prjDescription != null) {
 			for (ICConfigurationDescription cfgDescription : prjDescription.getConfigurations()) {
 				List<ILanguageSettingsProvider> providers = cfgDescription.getLanguageSettingProviders();
-				List<ICListenerRegisterer> listeners = selectListeners(providers);
-				for (ICListenerRegisterer listener : listeners) {
+				List<ICListenerAgent> listeners = selectListeners(providers);
+				for (ICListenerAgent listener : listeners) {
 					if (!isListenerInTheListOfAssociations(associations, listener)) {
 						associations.add(new ListenerAssociation(listener, cfgDescription));
 					}
@@ -929,10 +929,10 @@ projects:
 		assertConsistency(oldPrjDescription); // TODO - remove me
 		assertConsistency(newPrjDescription); // TODO - remove me
 
-		List<ICListenerRegisterer> oldListeners = getListeners(oldPrjDescription);
+		List<ICListenerAgent> oldListeners = getListeners(oldPrjDescription);
 		List<ListenerAssociation> newAssociations = getListenersAssociations(newPrjDescription);
 
-		for (ICListenerRegisterer oldListener : oldListeners) {
+		for (ICListenerAgent oldListener : oldListeners) {
 			if (!isListenerInTheListOfAssociations(newAssociations, oldListener)) {
 				int count = 0;
 				if (oldListener instanceof LanguageSettingsWorkspaceProvider) {
@@ -950,7 +950,7 @@ projects:
 		}
 
 		for (ListenerAssociation newListenerAssociation : newAssociations) {
-			ICListenerRegisterer newListener = newListenerAssociation.listener;
+			ICListenerAgent newListener = newListenerAssociation.listener;
 			if (!isObjectInTheList(oldListeners, newListener)) {
 				int count = 1;
 				if (newListener instanceof LanguageSettingsWorkspaceProvider) {

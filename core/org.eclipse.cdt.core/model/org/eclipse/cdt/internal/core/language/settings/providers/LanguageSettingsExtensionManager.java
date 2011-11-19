@@ -71,7 +71,6 @@ public class LanguageSettingsExtensionManager {
 			loadProviderExtensions();
 		} catch (Throwable e) {
 			CCorePlugin.log("Error loading language settings providers extensions", e); //$NON-NLS-1$
-		} finally {
 		}
 	}
 
@@ -79,7 +78,7 @@ public class LanguageSettingsExtensionManager {
 	 * Load language settings providers contributed via the extension point.
 	 */
 	synchronized private static void loadProviderExtensions() {
-		// sort by name - for the providers taken from platform extensions
+		// sort by name - the providers defined via extensions are kept in separate list sorted
 		Set<ILanguageSettingsProvider> sortedProviders = new TreeSet<ILanguageSettingsProvider>(
 				new Comparator<ILanguageSettingsProvider>() {
 					@Override
@@ -111,7 +110,7 @@ public class LanguageSettingsExtensionManager {
 			for (IExtension ext : extensions) {
 				for (IConfigurationElement cfgEl : ext.getConfigurationElements()) {
 					ILanguageSettingsProvider provider = null;
-					String id=null;
+					String id = null;
 					try {
 						if (cfgEl.getName().equals(ELEM_PROVIDER)) {
 							id = determineAttributeValue(cfgEl, ATTR_ID);
@@ -169,8 +168,8 @@ public class LanguageSettingsExtensionManager {
 
 		for (IConfigurationElement ceLang : ce.getChildren(ELEM_LANGUAGE_SCOPE)) {
 			String langId = determineAttributeValue(ceLang, ATTR_ID);
-			if (langId.trim().length()>0) {
-				if (languages==null) {
+			if (langId.length() > 0) {
+				if (languages == null) {
 					languages = new ArrayList<String>();
 				}
 				languages.add(langId);
@@ -192,8 +191,9 @@ public class LanguageSettingsExtensionManager {
 				ICLanguageSettingEntry entry = (ICLanguageSettingEntry) CDataUtil.createEntry(
 						entryKind, entryName, entryValue, null, flags);
 
-				if (entries == null)
+				if (entries == null) {
 					entries = new ArrayList<ICLanguageSettingEntry>();
+				}
 				entries.add(entry);
 
 			} catch (Exception e) {
@@ -213,7 +213,7 @@ public class LanguageSettingsExtensionManager {
 	 * Creates empty non-configured provider from extension point definition. The method will
 	 * inspect extension registry for extension point "org.eclipse.cdt.core.LanguageSettingsProvider"
 	 * to determine bundle and instantiate the class.
-	 * ID and name of provider are assigned from first extension point encountered.
+	 * ID and name of provider are assigned from the first encountered extension point specifying the class.
 	 *
 	 * @param className - full qualified class name of provider.
 	 * @param registry - extension registry

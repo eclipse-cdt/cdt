@@ -26,7 +26,7 @@ import org.osgi.service.prefs.Preferences;
 /**
  * Collection of utilities for legacy support of older Scanner Discovery functionality.
  * This class is temporary and not intended to be used by clients.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -99,7 +99,7 @@ public class ScannerDiscoveryLegacySupport {
 	 * Returns the values of scanner discovery profiles (scannerConfigDiscoveryProfileId) which were deprecated
 	 * and replaced with language settings providers in plugin.xml.
 	 * This (temporary) function serves as fail-safe switch during the transition.
-	 * 
+	 *
 	 * @param id - can be id of either org.eclipse.cdt.managedbuilder.internal.core.InputType
 	 * or org.eclipse.cdt.managedbuilder.internal.core.ToolChain.
 	 * @return legacy scannerConfigDiscoveryProfileId.
@@ -108,8 +108,9 @@ public class ScannerDiscoveryLegacySupport {
 	public static String getDeprecatedLegacyProfiles(String id) {
 		if (legacyProfiles == null) {
 			legacyProfiles = new HashMap<String, String>();
-	
+
 			// InputTypes
+			// TODO -doublecheck
 //			legacyProfiles.put(inputTypeId, scannerConfigDiscoveryProfileId);
 			legacyProfiles.put("cdt.managedbuild.tool.gnu.c.compiler.input", "org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC|org.eclipse.cdt.make.core.GCCStandardMakePerFileProfile");
 			legacyProfiles.put("cdt.managedbuild.tool.gnu.cpp.compiler.input", "org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileCPP|org.eclipse.cdt.make.core.GCCStandardMakePerFileProfile");
@@ -118,11 +119,12 @@ public class ScannerDiscoveryLegacySupport {
 			legacyProfiles.put("cdt.managedbuild.tool.xlc.c.compiler.input", "org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfile");
 			legacyProfiles.put("cdt.managedbuild.tool.xlc.cpp.c.compiler.input", "org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfile");
 			legacyProfiles.put("cdt.managedbuild.tool.xlc.cpp.compiler.input", "org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfileCPP");
-			
+
 			// Toolchains
+			// TODO -doublecheck
 //			legacyProfiles.put(toolchainId, scannerConfigDiscoveryProfileId);
 		}
-		
+
 		return legacyProfiles.get(id);
 	}
 

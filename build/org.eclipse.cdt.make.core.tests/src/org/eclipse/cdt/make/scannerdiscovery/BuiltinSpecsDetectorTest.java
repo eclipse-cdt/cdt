@@ -48,7 +48,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 	private static final String LANGUAGE_ID = "language.test.id";
 	private static final String CUSTOM_PARAMETER = "customParameter";
 	private static final String ELEM_TEST = "test";
-	
+
 	// those attributes must match that in AbstractBuiltinSpecsDetector
 	private static final String ATTR_CONSOLE = "console"; //$NON-NLS-1$
 
@@ -88,7 +88,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 			return isExecuted;
 		}
 	}
-	
+
 	private class MockConsoleBuiltinSpecsDetector extends AbstractBuiltinSpecsDetector {
 		@SuppressWarnings("nls")
 		private final AbstractOptionParser[] optionParsers = {
@@ -116,7 +116,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 			return optionParsers;
 		}
 	}
-	
+
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -141,35 +141,41 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 	}
 
 	public void testAbstractBuiltinSpecsDetector_GettersSetters() throws Exception {
-		// define mock detector
-		MockBuiltinSpecsDetectorExecutedFlag detector = new MockBuiltinSpecsDetectorExecutedFlag();
-		
-		detector.configureProvider(PROVIDER_ID, PROVIDER_NAME, null, null, null);
-		assertEquals(PROVIDER_ID, detector.getId());
-		assertEquals(PROVIDER_NAME, detector.getName());
-		assertEquals(null, detector.getLanguageScope());
-		assertEquals(null, detector.getSettingEntries(null, null, null));
-		assertEquals(null, detector.getCustomParameter());
-		assertEquals(false, detector.isExecuted());
+		{
+			// provider configured with null parameters
+			MockBuiltinSpecsDetectorExecutedFlag detector = new MockBuiltinSpecsDetectorExecutedFlag();
+			detector.configureProvider(PROVIDER_ID, PROVIDER_NAME, null, null, null);
 
-		List<String> languages = new ArrayList<String>();
-		languages.add(LANGUAGE_ID);
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
-		ICLanguageSettingEntry entry = new CMacroEntry("MACRO", "VALUE", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
-		entries.add(entry);
+			assertEquals(PROVIDER_ID, detector.getId());
+			assertEquals(PROVIDER_NAME, detector.getName());
+			assertEquals(null, detector.getLanguageScope());
+			assertEquals(null, detector.getSettingEntries(null, null, null));
+			assertEquals(null, detector.getCustomParameter());
+			assertEquals(false, detector.isExecuted());
+		}
 
-		detector.configureProvider(PROVIDER_ID, PROVIDER_NAME, languages, entries, CUSTOM_PARAMETER);
-		assertEquals(PROVIDER_ID, detector.getId());
-		assertEquals(PROVIDER_NAME, detector.getName());
-		assertEquals(languages, detector.getLanguageScope());
-		assertEquals(entries, detector.getSettingEntries(null, null, null));
-		assertEquals(CUSTOM_PARAMETER, detector.getCustomParameter());
-		assertEquals(false, detector.isExecuted());
-		
-		detector.execute();
-		assertEquals(true, detector.isExecuted());
+		{
+			// provider configured with non-null parameters
+			MockBuiltinSpecsDetectorExecutedFlag detector = new MockBuiltinSpecsDetectorExecutedFlag();
+			List<String> languages = new ArrayList<String>();
+			languages.add(LANGUAGE_ID);
+			List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+			ICLanguageSettingEntry entry = new CMacroEntry("MACRO", "VALUE", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
+			entries.add(entry);
+
+			detector.configureProvider(PROVIDER_ID, PROVIDER_NAME, languages, entries, CUSTOM_PARAMETER);
+			assertEquals(PROVIDER_ID, detector.getId());
+			assertEquals(PROVIDER_NAME, detector.getName());
+			assertEquals(languages, detector.getLanguageScope());
+			assertEquals(entries, detector.getSettingEntries(null, null, null));
+			assertEquals(CUSTOM_PARAMETER, detector.getCustomParameter());
+			assertEquals(false, detector.isExecuted());
+
+			detector.execute();
+			assertEquals(true, detector.isExecuted());
+		}
 	}
-	
+
 	public void testAbstractBuiltinSpecsDetector_CloneAndEquals() throws Exception {
 		// define mock detector
 		class MockDetectorCloneable extends MockBuiltinSpecsDetectorExecutedFlag implements Cloneable {
@@ -182,10 +188,10 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 				return (MockDetectorCloneable) super.cloneShallow();
 			}
 		}
-		
+
 		// create instance to compare to
 		MockDetectorCloneable detector = new MockDetectorCloneable();
-		
+
 		List<String> languages = new ArrayList<String>();
 		languages.add(LANGUAGE_ID);
 		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
@@ -195,7 +201,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		// check clone after initialization
 		MockDetectorCloneable clone0 = detector.clone();
 		assertTrue(detector.equals(clone0));
-		
+
 		// configure provider
 		detector.configureProvider(PROVIDER_ID, PROVIDER_NAME, languages, entries, CUSTOM_PARAMETER);
 		assertEquals(false, detector.isConsoleEnabled());
@@ -209,21 +215,21 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 			MockDetectorCloneable clone = detector.clone();
 			assertTrue(detector.equals(clone));
 		}
-		
+
 		// check custom parameter
 		{
 			MockDetectorCloneable clone = detector.clone();
 			clone.setCustomParameter("changed");
 			assertFalse(detector.equals(clone));
 		}
-		
+
 		// check language scope
 		{
 			MockDetectorCloneable clone = detector.clone();
 			clone.setLanguageScope(null);
 			assertFalse(detector.equals(clone));
 		}
-		
+
 		// check console flag
 		{
 			MockDetectorCloneable clone = detector.clone();
@@ -231,7 +237,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 			clone.setConsoleEnabled( ! isConsoleEnabled );
 			assertFalse(detector.equals(clone));
 		}
-		
+
 		// check isExecuted flag
 		{
 			MockDetectorCloneable clone = detector.clone();
@@ -240,14 +246,14 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 			assertEquals(false, clone.isExecuted());
 			assertFalse(detector.equals(clone));
 		}
-		
+
 		// check entries
 		{
 			MockDetectorCloneable clone = detector.clone();
 			clone.setSettingEntries(null, null, null, null);
 			assertFalse(detector.equals(clone));
 		}
-		
+
 		// check cloneShallow()
 		{
 			MockDetectorCloneable detector2 = detector.clone();
@@ -257,12 +263,12 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 
 			detector2.setSettingEntries(null, null, null, null);
 			assertFalse(detector2.equals(clone));
-			
+
 			clone.execute();
 			assertTrue(detector2.equals(clone));
 		}
 	}
-	
+
 	/**
 	 */
 	public void testAbstractBuiltinSpecsDetector_Serialize() throws Exception {
@@ -270,36 +276,36 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 			// create empty XML
 			Document doc = XmlUtil.newDocument();
 			Element rootElement = XmlUtil.appendElement(doc, ELEM_TEST);
-			
+
 			// load it to new provider
 			MockBuiltinSpecsDetectorExecutedFlag detector = new MockBuiltinSpecsDetectorExecutedFlag();
 			detector.load(rootElement);
 			assertEquals(false, detector.isConsoleEnabled());
 		}
-		
+
 		Element elementProvider;
 		{
 			// define mock detector
 			MockBuiltinSpecsDetectorExecutedFlag detector = new MockBuiltinSpecsDetectorExecutedFlag();
 			assertEquals(false, detector.isConsoleEnabled());
-			
+
 			// redefine the settings
 			detector.setConsoleEnabled(true);
 			assertEquals(true, detector.isConsoleEnabled());
-			
+
 			// serialize in XML
 			Document doc = XmlUtil.newDocument();
 			Element rootElement = XmlUtil.appendElement(doc, ELEM_TEST);
 			elementProvider = detector.serialize(rootElement);
 			String xmlString = XmlUtil.toString(doc);
-			
+
 			assertTrue(xmlString.contains(ATTR_CONSOLE));
 		}
 		{
 			// create another instance of the provider
 			MockBuiltinSpecsDetectorExecutedFlag detector = new MockBuiltinSpecsDetectorExecutedFlag();
 			assertEquals(false, detector.isConsoleEnabled());
-			
+
 			// load element
 			detector.load(elementProvider);
 			assertEquals(true, detector.isConsoleEnabled());
@@ -329,16 +335,16 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		IProject project = ResourceHelper.createCDTProjectWithConfig(projectName);
 		ICConfigurationDescription[] cfgDescriptions = getConfigurationDescriptions(project);
 		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
-		
+
 		MockConsoleBuiltinSpecsDetector detector = new MockConsoleBuiltinSpecsDetector();
 		detector.setLanguageScope(new ArrayList<String>() {{add(LANGUAGE_ID);}});
-		
+
 		detector.runForEachLanguage(cfgDescription, null, null, null);
 		assertFalse(detector.isEmpty());
-		
+
 		List<ICLanguageSettingEntry> noentries = detector.getSettingEntries(null, null, null);
 		assertNull(noentries);
-		
+
 		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(cfgDescription, null, LANGUAGE_ID);
 		ICLanguageSettingEntry expected = new CMacroEntry("MACRO", "VALUE", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
 		assertEquals(expected, entries.get(0));
@@ -347,10 +353,10 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 	public void testAbstractBuiltinSpecsDetector_RunGlobal() throws Exception {
 		MockConsoleBuiltinSpecsDetector detector = new MockConsoleBuiltinSpecsDetector();
 		detector.setLanguageScope(new ArrayList<String>() {{add(LANGUAGE_ID);}});
-		
+
 		detector.runForEachLanguage(null, null, null, null);
 		assertFalse(detector.isEmpty());
-		
+
 		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, LANGUAGE_ID);
 		ICLanguageSettingEntry expected = new CMacroEntry("MACRO", "VALUE", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
 		assertEquals(expected, entries.get(0));
@@ -370,7 +376,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		final CLibraryPathEntry libraryPath_2 = new CLibraryPathEntry(new Path("/lib/path_2"), ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
 		final CLibraryFileEntry libraryFile_1 = new CLibraryFileEntry("lib_1.a", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
 		final CLibraryFileEntry libraryFile_2 = new CLibraryFileEntry("lib_2.a", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
-		
+
 		// Define mock detector adding unorganized entries
 		MockBuiltinSpecsDetector detector = new MockBuiltinSpecsDetector() {
 			@Override
@@ -381,7 +387,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 				detectedSettingEntries.add(macro_1);
 				detectedSettingEntries.add(includeFile_1);
 				detectedSettingEntries.add(includePath_1);
-				
+
 				detectedSettingEntries.add(includePath_2);
 				detectedSettingEntries.add(includeFile_2);
 				detectedSettingEntries.add(macro_2);
@@ -391,17 +397,17 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 				return true;
 			}
 		};
-		
+
 		// run specs detector
 		detector.startup(null);
 		detector.startupForLanguage(null);
 		detector.processLine("", null);
 		detector.shutdownForLanguage();
 		detector.shutdown();
-		
+
 		// compare benchmarks, expected well-sorted
 		List<ICLanguageSettingEntry> entries = detector.getSettingEntries(null, null, null);
-		
+
 		int i=0;
 		assertEquals(includePath_1, entries.get(i++));
 		assertEquals(includePath_2, entries.get(i++));
@@ -415,7 +421,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		assertEquals(libraryPath_2, entries.get(i++));
 		assertEquals(libraryFile_1, entries.get(i++));
 		assertEquals(libraryFile_2, entries.get(i++));
-		
+
 		assertEquals(12, entries.size());
 	}
 }

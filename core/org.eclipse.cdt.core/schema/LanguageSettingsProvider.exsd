@@ -65,7 +65,8 @@
             <annotation>
                <documentation>
                   A fully qualified name of the Java class that implements &lt;samp&gt;org.eclipse.cdt.core.settings.model.ILanguageSettingsProvider&lt;/samp&gt; interface. If empty, &lt;samp&gt;org.eclipse.cdt.core.language.settings.providers.LanguageSettingsBaseProvider&lt;/samp&gt; is used by default which provides basic functionality defined by this extension point.
-If there is a need to configure a provider, attribute parameter could be used in a class extending &lt;samp&gt;LanguageSettingsBaseProvider&lt;/samp&gt;.
+If there is a need to configure a provider in more deliberate way, attribute &lt;samp&gt;parameter&lt;/samp&gt; could be used in a class extending &lt;samp&gt;LanguageSettingsBaseProvider&lt;/samp&gt;.
+Default constructor (constructor without arguments) of this class must be public and the package be exported in order to be able to instantiate via extension point.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.cdt.core.language.settings.providers.LanguageSettingsBaseProvider:org.eclipse.cdt.core.settings.model.ILanguageSettingsProvider"/>
@@ -89,7 +90,7 @@ If there is a need to configure a provider, attribute parameter could be used in
          <attribute name="parameter" type="string">
             <annotation>
                <documentation>
-                  A custom parameter to initialize provider. Used to deliver command for GCCBuiltinSpecsDetector as an example.
+                  A custom parameter to initialize provider. For example, used to deliver command for GCCBuiltinSpecsDetector.
                </documentation>
             </annotation>
          </attribute>
@@ -256,7 +257,7 @@ For those cases where contributed settings entries (representing the compiler op
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2009, 2010 Andrew Gvozdev (Quoin Inc.) and others.
+         Copyright (c) 2009, 2011 Andrew Gvozdev and others.
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License v1.0
 which accompanies this distribution, and is available at

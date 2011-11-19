@@ -111,7 +111,7 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 		// get test plugin extension provider
 		ILanguageSettingsProvider providerExt = LanguageSettingsManager.getExtensionProviderCopy(EXTENSION_BASE_PROVIDER_ID);
 		assertTrue(LanguageSettingsManager.isWorkspaceProvider(providerExt));
-		
+
 		// get raw extension provider
 		ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(providerExt);
 		assertTrue(rawProvider instanceof LanguageSettingsBaseProvider);
@@ -225,7 +225,26 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 			assertEquals(languages.size(), actualLanguageIds.size());
 		}
 	}
-	
+
+	/**
+	 * LanguageSettingsBaseProvider is not allowed to be configured twice.
+	 */
+	public void testBaseProviderCantReconfigure() throws Exception {
+		// create LanguageSettingsBaseProvider
+		LanguageSettingsBaseProvider provider = new LanguageSettingsBaseProvider();
+		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		entries.add(new CIncludePathEntry("/usr/include/", 0));
+		// configure it
+		provider.configureProvider("id", "name", null, entries, null);
+
+		try {
+			// attempt to configure it twice should fail
+			provider.configureProvider("id", "name", null, entries, null);
+			fail("LanguageSettingsBaseProvider is not allowed to be configured twice");
+		} catch (UnsupportedOperationException e) {
+		}
+	}
+
 	/**
 	 * TODO
 	 */
@@ -238,10 +257,10 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 		ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(providerExt);
 		assertTrue(rawProvider instanceof LanguageSettingsSerializableProvider);
 		LanguageSettingsSerializableProvider provider = (LanguageSettingsSerializableProvider) rawProvider;
-		
+
 		assertEquals(null, provider.getLanguageScope());
 		assertEquals("", provider.getCustomParameter());
-		
+
 		List<ICLanguageSettingEntry> expected = new ArrayList<ICLanguageSettingEntry>();
 		expected.add(new CMacroEntry("MACRO", "value", 0));
 		assertEquals(expected, provider.getSettingEntries(null, null, null));
@@ -261,65 +280,45 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 			ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(providerExt);
 			assertTrue(rawProvider instanceof LanguageSettingsSerializableProvider);
 			assertTrue(LanguageSettingsExtensionManager.equalsExtensionProvider(rawProvider));
-			
+
 			// compare with workspace provider
 			ILanguageSettingsProvider providerWsp = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_SERIALIZABLE_PROVIDER_ID);
 			ILanguageSettingsProvider providerWspRaw = LanguageSettingsManager.getRawProvider(providerWsp);
 			assertSame(rawProvider, providerWspRaw);
 		}
-		
+
 		// Editable providers are retrieved by copy
 		{
 			ILanguageSettingsProvider providerExt = LanguageSettingsManager.getExtensionProviderCopy(EXTENSION_EDITABLE_PROVIDER_ID);
 			assertFalse(LanguageSettingsManager.isWorkspaceProvider(providerExt));
 			assertTrue(providerExt instanceof ILanguageSettingsEditableProvider);
 			assertTrue(LanguageSettingsExtensionManager.equalsExtensionProvider(providerExt));
-			
+
 			ILanguageSettingsProvider providerExt2 = LanguageSettingsManager.getExtensionProviderCopy(EXTENSION_EDITABLE_PROVIDER_ID);
 			assertNotSame(providerExt, providerExt2);
 			assertEquals(providerExt, providerExt2);
-			
+
 			ILanguageSettingsProvider providerWsp = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_EDITABLE_PROVIDER_ID);
 			ILanguageSettingsProvider providerWspRaw = LanguageSettingsManager.getRawProvider(providerWsp);
 			assertNotSame(providerExt, providerWspRaw);
 			assertEquals(providerExt, providerWspRaw);
 			assertTrue(LanguageSettingsExtensionManager.equalsExtensionProvider(providerWspRaw));
 		}
-		
+
 		// Test shallow copy
 		{
 			ILanguageSettingsProvider provider = LanguageSettingsManager.getExtensionProviderCopy(EXTENSION_EDITABLE_PROVIDER_ID);
 			assertNotNull(provider);
 			assertTrue(provider instanceof ILanguageSettingsEditableProvider);
-			
+
 			ILanguageSettingsProvider providerShallow = LanguageSettingsExtensionManager.getExtensionProviderShallow(EXTENSION_EDITABLE_PROVIDER_ID);
 			assertNotNull(providerShallow);
 			assertTrue(providerShallow instanceof ILanguageSettingsEditableProvider);
 			assertFalse(provider.equals(providerShallow));
-			
+
 			assertFalse(LanguageSettingsExtensionManager.equalsExtensionProvider(providerShallow));
 			assertTrue(LanguageSettingsExtensionManager.equalsExtensionProviderShallow((ILanguageSettingsEditableProvider) providerShallow));
-			
 		}
 	}
-	
-//	/**
-//	 * LanguageSettingsBaseProvider is not allowed to be configured twice.
-//	 */
-//	public void testBaseProviderConfigure() throws Exception {
-//		// create LanguageSettingsBaseProvider
-//		LanguageSettingsBaseProvider provider = new LanguageSettingsBaseProvider();
-//		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
-//		entries.add(new CIncludePathEntry("/usr/include/", 0));
-//		// configure it
-//		provider.configureProvider("id", "name", null, entries, null);
-//
-//		try {
-//			// attempt to configure it twice should fail
-//			provider.configureProvider("id", "name", null, entries, null);
-//			fail("LanguageSettingsBaseProvider is not allowed to be configured twice");
-//		} catch (UnsupportedOperationException e) {
-//		}
-//	}
 
 }

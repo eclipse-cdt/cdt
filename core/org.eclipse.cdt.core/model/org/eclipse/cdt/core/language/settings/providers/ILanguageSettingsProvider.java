@@ -24,7 +24,7 @@ import org.eclipse.core.resources.IResource;
  * This interface is used to deliver additions to compiler options such as
  * include paths (-I) or preprocessor defines (-D) and others (see
  * {@link ICSettingEntry#INCLUDE_PATH} and other kinds).
- * <br>
+ * <br><br>
  * To define a provider like that use extension point
  * {@code org.eclipse.cdt.core.LanguageSettingsProvider} and implement this
  * interface. CDT provides a few general use implementations such as

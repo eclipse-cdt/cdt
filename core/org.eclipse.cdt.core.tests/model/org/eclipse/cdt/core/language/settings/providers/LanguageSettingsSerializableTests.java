@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Andrew Gvozdev and others.
+ * Copyright (c) 2009, 2011 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1238,17 +1238,17 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 		sampleLanguages.add(LANG_ID);
 
 		// create a model provider
-		class LanguageSettingsSerializableMock extends LanguageSettingsSerializableProvider implements Cloneable {
-			public LanguageSettingsSerializableMock(String id, String name) {
+		class MockSerializableProvider extends LanguageSettingsSerializableProvider implements Cloneable {
+			public MockSerializableProvider(String id, String name) {
 				super(id, name);
 			}
 			@Override
-			public LanguageSettingsSerializableMock clone() throws CloneNotSupportedException {
-				return (LanguageSettingsSerializableMock) super.clone();
+			public MockSerializableProvider clone() throws CloneNotSupportedException {
+				return (MockSerializableProvider) super.clone();
 			}
 
 		}
-		LanguageSettingsSerializableMock provider1 = new LanguageSettingsSerializableMock(PROVIDER_1, PROVIDER_NAME_1);
+		MockSerializableProvider provider1 = new MockSerializableProvider(PROVIDER_1, PROVIDER_NAME_1);
 		provider1.setLanguageScope(sampleLanguages);
 		provider1.setCustomParameter(CUSTOM_PARAMETER);
 		assertEquals(false, provider1.isStoringEntriesInProjectArea());
@@ -1257,7 +1257,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 		provider1.setSettingEntries(null, null, LANG_ID, sampleEntries_2);
 
 		// clone provider
-		LanguageSettingsSerializableMock providerClone = provider1.clone();
+		MockSerializableProvider providerClone = provider1.clone();
 		assertNotSame(provider1, providerClone);
 		assertTrue(provider1.equals(providerClone));
 		assertTrue(provider1.getClass()==providerClone.getClass());
@@ -1286,17 +1286,17 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 		sampleLanguages.add(LANG_ID);
 
 		// create a model provider
-		class LanguageSettingsSerializableMock extends LanguageSettingsSerializableProvider implements Cloneable {
-			public LanguageSettingsSerializableMock(String id, String name) {
+		class MockSerializableProvider extends LanguageSettingsSerializableProvider implements Cloneable {
+			public MockSerializableProvider(String id, String name) {
 				super(id, name);
 			}
 			@Override
-			public LanguageSettingsSerializableMock cloneShallow() throws CloneNotSupportedException {
-				return (LanguageSettingsSerializableMock) super.cloneShallow();
+			public MockSerializableProvider cloneShallow() throws CloneNotSupportedException {
+				return (MockSerializableProvider) super.cloneShallow();
 			}
 
 		}
-		LanguageSettingsSerializableMock provider1 = new LanguageSettingsSerializableMock(PROVIDER_1, PROVIDER_NAME_1);
+		MockSerializableProvider provider1 = new MockSerializableProvider(PROVIDER_1, PROVIDER_NAME_1);
 		provider1.setLanguageScope(sampleLanguages);
 		provider1.setCustomParameter(CUSTOM_PARAMETER);
 		assertEquals(false, provider1.isStoringEntriesInProjectArea());
@@ -1307,7 +1307,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 		provider1.setSettingEntries(null, null, null, entries);
 
 		// clone provider
-		LanguageSettingsSerializableMock providerClone = provider1.cloneShallow();
+		MockSerializableProvider providerClone = provider1.cloneShallow();
 		assertNotSame(provider1, providerClone);
 		assertFalse(provider1.equals(providerClone));
 		assertTrue(provider1.getClass()==providerClone.getClass());

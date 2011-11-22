@@ -176,7 +176,7 @@
             </additionalInput>
             <additionalInput
             	paths="$(LIBS)"
-            	kind="additionalinput">
+            	kind="additionalinputdependency">
             </additionalInput>
          </inputType>
          <outputType
@@ -377,7 +377,7 @@
             </additionalInput>
             <additionalInput
             	paths="$(LIBS)"
-            	kind="additionalinput">
+            	kind="additionalinputdependency">
             </additionalInput>
          </inputType>
          <outputType
@@ -458,7 +458,7 @@
             </additionalInput>
             <additionalInput
             	paths="$(LIBS)"
-            	kind="additionalinput">
+            	kind="additionalinputdependency">
             </additionalInput>
          </inputType>
          <outputType
@@ -746,7 +746,7 @@
             </additionalInput>
             <additionalInput
             	paths="$(LIBS)"
-            	kind="additionalinput">
+            	kind="additionalinputdependency">
             </additionalInput>
          </inputType>
          <outputType
@@ -911,7 +911,7 @@
             </additionalInput>
             <additionalInput
             	paths="$(LIBS)"
-            	kind="additionalinput">
+            	kind="additionalinputdependency">
             </additionalInput>
          </inputType>
          <outputType

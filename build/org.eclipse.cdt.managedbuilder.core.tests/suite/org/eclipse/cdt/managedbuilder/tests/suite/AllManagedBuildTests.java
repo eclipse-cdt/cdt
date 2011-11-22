@@ -26,6 +26,7 @@ import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCoreTests;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCoreTests20;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildCoreTests_SharedToolOptions;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildDependencyCalculatorTests;
+import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildDependencyLibsTests;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildEnvironmentTests;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildMacrosTests;
 import org.eclipse.cdt.managedbuilder.core.tests.ManagedBuildTCSupportedTest;
@@ -61,6 +62,7 @@ public class AllManagedBuildTests {
 		suite.addTestSuite(GCCSpecsConsoleParserTest.class);
 
 		// managedbuilder.core.tests
+		suite.addTest(ManagedBuildDependencyLibsTests.suite());
 		suite.addTest(ManagedBuildCoreTests20.suite());
 		suite.addTest(ManagedBuildCoreTests.suite());
 		suite.addTest(ManagedProjectUpdateTests.suite());

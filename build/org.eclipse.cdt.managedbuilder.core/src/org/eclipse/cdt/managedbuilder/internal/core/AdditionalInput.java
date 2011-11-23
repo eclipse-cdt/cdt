@@ -337,7 +337,8 @@ public class AdditionalInput implements IAdditionalInput {
 		if (fRebuildState)
 			return fRebuildState;
 		if (fKind.intValue() == IAdditionalInput.KIND_ADDITIONAL_DEPENDENCY
-				|| fKind.intValue() == IAdditionalInput.KIND_ADDITIONAL_INPUT_DEPENDENCY) {
+				|| fKind.intValue() == IAdditionalInput.KIND_ADDITIONAL_INPUT_DEPENDENCY
+				|| isLibrariesInput()) {
 			IToolChain toolChain = getToolChain();
 			if (!toolChain.isExtensionElement()) {
 				long artifactTimeStamp = getArtifactTimeStamp(toolChain);
@@ -395,6 +396,13 @@ public class AdditionalInput implements IAdditionalInput {
 		return 0;
 	}
 
+	private boolean isLibrariesInput() {
+		// libraries are of the "additionalinput" kind, not "additionalinputdependency" because otherwise the
+		// external make builder would generate makefiles with $(LIBS) in the dependency list, resulting in
+		// failure to build dependency -lxyz etc.
+		return (fKind.intValue() == IAdditionalInput.KIND_ADDITIONAL_INPUT && Arrays.asList(getPaths()).contains("$(LIBS)")); //$NON-NLS-1$
+	}
+	
 	private boolean dependencyChanged(String sPath, long artefactTimeStamp) {
 		try {
 			IToolChain toolChain = getToolChain();

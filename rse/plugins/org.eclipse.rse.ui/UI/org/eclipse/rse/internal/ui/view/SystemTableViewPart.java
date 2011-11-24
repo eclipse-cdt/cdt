@@ -46,6 +46,7 @@
  * David McKnight   (IBM)        - [340912] inconsistencies with columns in RSE table viewers
  * David McKnight   (IBM)        - [341240] Remote Systems Details view not remembering locked/unlocked state between sessions
  * David McKnight   (IBM)        - [341244] folder selection input to unlocked Remote Systems Details view sometimes fails
+ * David McKnight   (IBM)        - [363829] Closing Eclipse with a populated Remote System Details view forces a remote system connection
 *******************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -1929,9 +1930,19 @@ public class SystemTableViewPart extends ViewPart
 				}
 
 
-				
+				boolean isConnected = false;
+				// don't reconnect
+				ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)((IAdaptable)input).getAdapter(ISystemViewElementAdapter.class);
+				if (adapter != null){
+					ISubSystem ss = adapter.getSubSystem(input);
+					if (ss != null){
+						isConnected = ss.isConnected();
+					}
+				}				
 				// new code - as of RSE 3.1
-				_viewer.inputChanged(input, input); // make sure the latest widths are stored
+				if (isConnected){ // calling this requires a connect so only do it if already connected
+					_viewer.inputChanged(input, input); // make sure the latest widths are stored
+				}
 				Map cachedColumnWidths = _viewer.getCachedColumnWidths();
 				StringBuffer columnWidths = new StringBuffer();
 				Iterator keyIter = cachedColumnWidths.keySet().iterator();

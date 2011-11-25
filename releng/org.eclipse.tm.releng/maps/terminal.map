@@ -12,5 +12,5 @@ plugin@org.eclipse.tm.terminal.local=v201101042155,:pserver:anonymous:none@dev.e
 plugin@org.eclipse.tm.terminal.serial=v201101042155,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.serial
 plugin@org.eclipse.tm.terminal.ssh=v201101042155,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.ssh
 plugin@org.eclipse.tm.terminal.telnet=v201102010911,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.telnet
-plugin@org.eclipse.tm.terminal.test=v201101042155,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.test
+plugin@org.eclipse.tm.terminal.test=v201111250938,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.test
 plugin@org.eclipse.tm.terminal.view=v201103142315,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/tools,,org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.view

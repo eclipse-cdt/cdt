@@ -40,12 +40,13 @@ import org.w3c.dom.Element;
  * Test cases testing LanguageSettingsProvider functionality
  */
 public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
+	// These should match extension points defined in plugin.xml
+	private static final String EXTENSION_BASE_PROVIDER_ID = LanguageSettingsExtensionsTests.EXTENSION_BASE_PROVIDER_ID;
+	private static final String EXTENSION_BASE_PROVIDER_NAME = LanguageSettingsExtensionsTests.EXTENSION_BASE_PROVIDER_NAME;
+	private static final String EXTENSION_SERIALIZABLE_PROVIDER_ID = LanguageSettingsExtensionsTests.EXTENSION_SERIALIZABLE_PROVIDER_ID;
+
 	private static final String LANGUAGE_SETTINGS_PROJECT_XML = ".settings/language.settings.xml";
 	private static final String LANGUAGE_SETTINGS_WORKSPACE_XML = "language.settings.xml";
-	// Should match extension points defined in plugin.xml
-	private static final String EXTENSION_PROVIDER_ID = "org.eclipse.cdt.core.tests.language.settings.base.provider.subclass";
-	private static final String EXTENSION_PROVIDER_NAME = "Test Plugin Mock Base Provider Subclass";
-	private static final String EXTENSION_SERIALIZABLE_PROVIDER_ID = "org.eclipse.cdt.core.tests.custom.serializable.language.settings.provider";
 
 	private static final String CFG_ID = "test.configuration.id.0";
 	private static final String CFG_ID_2 = "test.configuration.id.2";
@@ -100,20 +101,6 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 					return cfgDescription;
 			}
 			return null;
-		}
-	}
-
-	private class MockEditableProvider extends LanguageSettingsSerializableProvider implements ILanguageSettingsEditableProvider {
-		public MockEditableProvider(String id, String name) {
-			super(id, name);
-		}
-		@Override
-		public MockEditableProvider cloneShallow() throws CloneNotSupportedException {
-			return (MockEditableProvider) super.cloneShallow();
-		}
-		@Override
-		public MockEditableProvider clone() throws CloneNotSupportedException {
-			return (MockEditableProvider) super.clone();
 		}
 	}
 
@@ -200,7 +187,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 		int originalSize = originalProviders.size();
 
 		// create new provider list
-		LanguageSettingsSerializableProvider mockProvider = new MockEditableProvider(PROVIDER_0, PROVIDER_NAME_0);
+		LanguageSettingsSerializableProvider mockProvider = new MockLanguageSettingsEditableProvider(PROVIDER_0, PROVIDER_NAME_0);
 		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>(originalProviders);
 		providers.add(mockProvider);
 		assertTrue(originalSize != providers.size());
@@ -245,7 +232,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 			ICConfigurationDescription cfgDescription = cfgDescriptions[0];
 
 			// create a provider
-			LanguageSettingsSerializableProvider mockProvider = new MockEditableProvider(PROVIDER_0, PROVIDER_NAME_0);
+			LanguageSettingsSerializableProvider mockProvider = new MockLanguageSettingsEditableProvider(PROVIDER_0, PROVIDER_NAME_0);
 			mockProvider.setStoringEntriesInProjectArea(true);
 			mockProvider.setSettingEntries(cfgDescription, null, null, entries);
 			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
@@ -268,7 +255,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 			List<ILanguageSettingsProvider> providers = cfgDescription.getLanguageSettingProviders();
 			assertEquals(1, providers.size());
 			ILanguageSettingsProvider loadedProvider = providers.get(0);
-			assertTrue(loadedProvider instanceof LanguageSettingsSerializableProvider);
+			assertTrue(loadedProvider instanceof MockLanguageSettingsEditableProvider);
 			assertEquals(PROVIDER_0, loadedProvider.getId());
 			assertEquals(PROVIDER_NAME_0, loadedProvider.getName());
 
@@ -287,7 +274,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 			List<ILanguageSettingsProvider> providers = cfgDescription.getLanguageSettingProviders();
 			assertEquals(1, providers.size());
 			ILanguageSettingsProvider loadedProvider = providers.get(0);
-			assertTrue(loadedProvider instanceof LanguageSettingsSerializableProvider);
+			assertTrue(loadedProvider instanceof MockLanguageSettingsEditableProvider);
 			assertEquals(PROVIDER_0, loadedProvider.getId());
 			assertEquals(PROVIDER_NAME_0, loadedProvider.getName());
 
@@ -375,16 +362,16 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	public void testWorkspacePersistence_ShadowedExtensionProvider() throws Exception {
 		{
 			// get the raw extension provider
-			ILanguageSettingsProvider provider = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_PROVIDER_ID);
+			ILanguageSettingsProvider provider = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_BASE_PROVIDER_ID);
 			ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(provider);
 			// confirm its type and name
 			assertTrue(rawProvider instanceof LanguageSettingsBaseProvider);
-			assertEquals(EXTENSION_PROVIDER_ID, rawProvider.getId());
-			assertEquals(EXTENSION_PROVIDER_NAME, rawProvider.getName());
+			assertEquals(EXTENSION_BASE_PROVIDER_ID, rawProvider.getId());
+			assertEquals(EXTENSION_BASE_PROVIDER_NAME, rawProvider.getName());
 		}
 		{
 			// replace extension provider
-			ILanguageSettingsProvider provider = new MockLanguageSettingsSerializableProvider(EXTENSION_PROVIDER_ID, PROVIDER_NAME_0);
+			ILanguageSettingsProvider provider = new MockLanguageSettingsSerializableProvider(EXTENSION_BASE_PROVIDER_ID, PROVIDER_NAME_0);
 			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 			providers.add(provider);
 			// note that this will also serialize workspace providers
@@ -392,10 +379,10 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 		}
 		{
 			// doublecheck it's in the list
-			ILanguageSettingsProvider provider = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_PROVIDER_ID);
+			ILanguageSettingsProvider provider = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_BASE_PROVIDER_ID);
 			ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(provider);
 			assertTrue(rawProvider instanceof MockLanguageSettingsSerializableProvider);
-			assertEquals(EXTENSION_PROVIDER_ID, rawProvider.getId());
+			assertEquals(EXTENSION_BASE_PROVIDER_ID, rawProvider.getId());
 			assertEquals(PROVIDER_NAME_0, rawProvider.getName());
 		}
 
@@ -403,10 +390,10 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 			// re-load to check serialization
 			LanguageSettingsProvidersSerializer.loadLanguageSettingsWorkspace();
 
-			ILanguageSettingsProvider provider = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_PROVIDER_ID);
+			ILanguageSettingsProvider provider = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_BASE_PROVIDER_ID);
 			ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(provider);
 			assertTrue(rawProvider instanceof MockLanguageSettingsSerializableProvider);
-			assertEquals(EXTENSION_PROVIDER_ID, rawProvider.getId());
+			assertEquals(EXTENSION_BASE_PROVIDER_ID, rawProvider.getId());
 			assertEquals(PROVIDER_NAME_0, rawProvider.getName());
 		}
 
@@ -416,21 +403,21 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 		}
 		{
 			// doublecheck original one is in the list
-			ILanguageSettingsProvider provider = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_PROVIDER_ID);
+			ILanguageSettingsProvider provider = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_BASE_PROVIDER_ID);
 			ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(provider);
 			assertTrue(rawProvider instanceof LanguageSettingsBaseProvider);
-			assertEquals(EXTENSION_PROVIDER_ID, rawProvider.getId());
-			assertEquals(EXTENSION_PROVIDER_NAME, rawProvider.getName());
+			assertEquals(EXTENSION_BASE_PROVIDER_ID, rawProvider.getId());
+			assertEquals(EXTENSION_BASE_PROVIDER_NAME, rawProvider.getName());
 		}
 		{
 			// re-load to check serialization
 			LanguageSettingsProvidersSerializer.loadLanguageSettingsWorkspace();
 
-			ILanguageSettingsProvider provider = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_PROVIDER_ID);
+			ILanguageSettingsProvider provider = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_BASE_PROVIDER_ID);
 			ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(provider);
 			assertTrue(rawProvider instanceof LanguageSettingsBaseProvider);
-			assertEquals(EXTENSION_PROVIDER_ID, rawProvider.getId());
-			assertEquals(EXTENSION_PROVIDER_NAME, rawProvider.getName());
+			assertEquals(EXTENSION_BASE_PROVIDER_ID, rawProvider.getId());
+			assertEquals(EXTENSION_BASE_PROVIDER_NAME, rawProvider.getName());
 		}
 	}
 
@@ -674,7 +661,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 		Element rootElement = null;
 
 		// provider of other type (not LanguageSettingsSerializableProvider) defined as an extension
-		ILanguageSettingsProvider providerExt = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_PROVIDER_ID);
+		ILanguageSettingsProvider providerExt = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_BASE_PROVIDER_ID);
 
 		{
 			// create cfg description
@@ -721,7 +708,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 		Element rootElement = null;
 
 		// provider set on workspace level overriding an extension
-		String idExt = EXTENSION_PROVIDER_ID;
+		String idExt = EXTENSION_BASE_PROVIDER_ID;
 		ILanguageSettingsProvider providerExt = LanguageSettingsManager.getWorkspaceProvider(idExt);
 		assertNotNull(providerExt);
 		{
@@ -791,7 +778,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 				assertNotNull(cfgDescription);
 
 				// 1. Provider reference to extension from plugin.xml
-				providerExt = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_PROVIDER_ID);
+				providerExt = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_BASE_PROVIDER_ID);
 
 				// 2. TODO Provider reference to provider defined in the project
 

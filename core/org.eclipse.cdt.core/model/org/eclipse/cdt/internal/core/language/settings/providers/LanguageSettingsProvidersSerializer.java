@@ -337,7 +337,7 @@ public class LanguageSettingsProvidersSerializer {
 		rawGlobalWorkspaceProviders = rawWorkspaceProviders;
 	}
 
-	private static List<LanguageSettingsChangeEvent> createLanguageLettingsChangeEvents(List<LanguageSettingsSerializableProvider> serializableProviders) {
+	private static List<LanguageSettingsChangeEvent> createLanguageSettingsChangeEvents(List<LanguageSettingsSerializableProvider> serializableProviders) {
 		List<LanguageSettingsChangeEvent> events = new ArrayList<LanguageSettingsProvidersSerializer.LanguageSettingsChangeEvent>();
 
 		List<String> serializableIds = new ArrayList<String>();
@@ -379,11 +379,7 @@ projects:
 		List<LanguageSettingsSerializableProvider> serializableWorkspaceProviders = new ArrayList<LanguageSettingsSerializableProvider>();
 		for (ILanguageSettingsProvider provider : rawGlobalWorkspaceProviders.values()) {
 			if (provider instanceof LanguageSettingsSerializableProvider) {
-				// serialize all editable providers which are different from corresponding extension
-				// and serialize all serializable ones that are not editable (those are singletons and we don't know whether they changed)
-				if (!(provider instanceof ILanguageSettingsEditableProvider) || !LanguageSettingsExtensionManager.equalsExtensionProvider(provider)) {
-					serializableWorkspaceProviders.add((LanguageSettingsSerializableProvider)provider);
-				}
+				serializableWorkspaceProviders.add((LanguageSettingsSerializableProvider)provider);
 			}
 		}
 		try {
@@ -394,7 +390,7 @@ projects:
 					serializingLock.acquire();
 					fileStoreWsp.delete();
 					// manufacture events while inside the lock
-					events = createLanguageLettingsChangeEvents(serializableWorkspaceProviders);
+					events = createLanguageSettingsChangeEvents(serializableWorkspaceProviders);
 				} finally {
 					serializingLock.release();
 				}
@@ -411,7 +407,7 @@ projects:
 					serializingLock.acquire();
 					XmlUtil.serializeXml(doc, uriStoreWsp);
 					// manufacture events while inside the lock
-					events = createLanguageLettingsChangeEvents(serializableWorkspaceProviders);
+					events = createLanguageSettingsChangeEvents(serializableWorkspaceProviders);
 				} finally {
 					serializingLock.release();
 				}

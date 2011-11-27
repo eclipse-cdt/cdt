@@ -31,7 +31,7 @@ import org.w3c.dom.NodeList;
  * TODO - more JavaDoc, info and hints about class hierarchy
  *
  */
-public class LanguageSettingsSerializableProvider extends LanguageSettingsBaseProvider {
+public class LanguageSettingsSerializableProvider extends LanguageSettingsBaseProvider implements ILanguageSettingsBroadcastingProvider {
 	public static final String ELEM_PROVIDER = "provider"; //$NON-NLS-1$
 	private static final String ATTR_ID = "id"; //$NON-NLS-1$
 
@@ -158,6 +158,7 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 	 *    the language scope. See {@link #getLanguageScope()}
 	 * @param entries - language settings entries to set.
 	 */
+	@Override
 	public void setSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId, List<ICLanguageSettingEntry> entries) {
 		String rcProjectPath = rc!=null ? rc.getProjectRelativePath().toString() : null;
 		fStorage.setSettingEntries(rcProjectPath, languageId, entries);
@@ -190,7 +191,7 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 	 * This is convenience method not intended to be overridden on purpose.
 	 * Override {@link #serializeAttributes(Element)} or
 	 * {@link #serializeEntries(Element)} instead.
-	 * 
+	 *
 	 * @param parentElement - element where to serialize.
 	 * @return - newly created <provider> element. That element will already be
 	 *    attached to the parent element.
@@ -249,7 +250,7 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 	 * This is convenience method not intended to be overridden on purpose.
 	 * Override {@link #loadAttributes(Element)} or
 	 * {@link #loadEntries(Element)} instead.
-	 * 
+	 *
 	 * @param providerNode - XML element <provider> to load provider from.
 	 */
 	final public void load(Element providerNode) {
@@ -272,7 +273,7 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 		}
 		String id = XmlUtil.determineAttributeValue(parentNode, ATTR_ID);
 		languageScope.add(id);
-	
+
 	}
 
 	/**
@@ -310,7 +311,7 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 	public void loadEntries(Element providerNode) {
 		fStorage.loadEntries(providerNode);
 	}
-	
+
 	/**
 	 * See {@link #cloneShallow()}. This method is extracted
 	 * to avoid expressing {@link #clone()} via {@link #cloneShallow()}.
@@ -408,7 +409,7 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 			return false;
 		return true;
 	}
-	
+
 	/**
 	 * @noreference This method is not intended to be referenced by clients.
 	 */

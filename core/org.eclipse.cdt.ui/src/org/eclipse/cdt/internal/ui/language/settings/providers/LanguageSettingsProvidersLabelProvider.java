@@ -49,7 +49,7 @@ class LanguageSettingsProvidersLabelProvider extends LabelProvider {
 		if (url!=null) {
 			imageKey = url.toString();
 		}
-		
+
 		if (imageKey==null) {
 			if (id.matches(TEST_PLUGIN_ID_PATTERN)) {
 				imageKey = CDTSharedImages.IMG_OBJS_CDT_TESTING;
@@ -67,7 +67,7 @@ class LanguageSettingsProvidersLabelProvider extends LabelProvider {
 		String[] overlayKeys = new String[5];
 		{ // TODO temporary for debugging
 //			boolean isSpecial = provider.getId().equals(LegacySupport.MBS_LANGUAGE_SETTINGS_PROVIDER);
-			
+
 			ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(provider);
 			if (rawProvider instanceof LanguageSettingsSerializableProvider) {
 				if (((LanguageSettingsSerializableProvider)rawProvider).isEmpty()) {
@@ -84,14 +84,14 @@ class LanguageSettingsProvidersLabelProvider extends LabelProvider {
 //				overlayKeys[IDecoration.TOP_LEFT] = CDTSharedImages.IMG_OVR_CONFIGURATION;
 //				overlayKeys[IDecoration.TOP_LEFT] = CDTSharedImages.IMG_OVR_INDEXED;
 //				overlayKeys[IDecoration.TOP_LEFT] = CDTSharedImages.IMG_OVR_CONTEXT;
-				
+
 //				overlayKeys[IDecoration.TOP_LEFT] = CDTSharedImages.IMG_OVR_PROJECT;
 			}
-			
+
 		}
 		return overlayKeys;
 	}
-	
+
 	@Override
 	public Image getImage(Object element) {
 		if (element instanceof ILanguageSettingsProvider) {

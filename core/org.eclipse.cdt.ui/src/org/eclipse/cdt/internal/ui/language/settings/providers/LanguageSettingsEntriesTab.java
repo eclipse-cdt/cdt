@@ -42,11 +42,11 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsBroadcastingProvider;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditableProvider;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsBaseProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
-import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializableProvider;
 import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.LanguageManager;
@@ -122,7 +122,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 					if (entriesParent != null /*&& entriesParent.size() > 0*/) {
 						overlayKeys[IDecoration.TOP_RIGHT] = CDTSharedImages.IMG_OVR_PARENT;
 					}
-				} else if (provider instanceof ILanguageSettingsEditableProvider && (page.isForFile() || page.isForFolder())) {
+				} else if (provider instanceof ILanguageSettingsBroadcastingProvider && (page.isForFile() || page.isForFolder())) {
 					// Assuming that the default entries for a resource are always null.
 					// Using that for performance reasons. See note in PerformDefaults().
 					List<ICLanguageSettingEntry> entriesParent = provider.getSettingEntries(null, null, currentLanguageId);
@@ -682,7 +682,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 	}
 
 	private void saveEntries(ILanguageSettingsProvider provider, List<ICLanguageSettingEntry> entries) {
-		if (provider instanceof LanguageSettingsSerializableProvider) {
+		if (provider instanceof ILanguageSettingsEditableProvider) {
 			ICConfigurationDescription cfgDescription = getConfigurationDescription();
 			IResource rc = getResource();
 			if (entries!=null && rc!=null) {
@@ -697,7 +697,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 					entries = null;
 				}
 			}
-			((LanguageSettingsSerializableProvider)provider).setSettingEntries(cfgDescription, rc, currentLanguageId, entries);
+			((ILanguageSettingsEditableProvider)provider).setSettingEntries(cfgDescription, rc, currentLanguageId, entries);
 		}
 	}
 
@@ -961,11 +961,11 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 			boolean changed = false;
 			ICConfigurationDescription cfgDescription = getConfigurationDescription();
 			IResource rc = getResource();
-			List<ILanguageSettingsProvider> providers = cfgDescription.getLanguageSettingProviders();
-			List<ILanguageSettingsProvider> writableProviders = new ArrayList<ILanguageSettingsProvider>(providers.size());
+			List<ILanguageSettingsProvider> oldProviders = cfgDescription.getLanguageSettingProviders();
+			List<ILanguageSettingsProvider> newProviders = new ArrayList<ILanguageSettingsProvider>(oldProviders.size());
 
-providers:	for (ILanguageSettingsProvider provider : providers) {
-				ILanguageSettingsEditableProvider writableProvider = null;
+providers:	for (ILanguageSettingsProvider provider : oldProviders) {
+				ILanguageSettingsEditableProvider providerCopy = null;
 				if (provider instanceof ILanguageSettingsEditableProvider) {
 					for (TreeItem langItems : treeLanguages.getItems()) {
 						String langId = (String)langItems.getData();
@@ -973,10 +973,10 @@ providers:	for (ILanguageSettingsProvider provider : providers) {
 							if (provider.getSettingEntries(cfgDescription, rc, langId)!=null) {
 								try {
 									// clone providers to be able to "Cancel" in UI
-									if (writableProvider==null) {
-										writableProvider = ((ILanguageSettingsEditableProvider) provider).clone();
+									if (providerCopy==null) {
+										providerCopy = ((ILanguageSettingsEditableProvider) provider).clone();
 									}
-									writableProvider.setSettingEntries(cfgDescription, rc, langId, null);
+									providerCopy.setSettingEntries(cfgDescription, rc, langId, null);
 									changed = true;
 								} catch (CloneNotSupportedException e) {
 									CUIPlugin.log("Internal Error: cannot clone provider "+provider.getId(), e);
@@ -986,13 +986,13 @@ providers:	for (ILanguageSettingsProvider provider : providers) {
 						}
 					}
 				}
-				if (writableProvider!=null)
-					writableProviders.add(writableProvider);
+				if (providerCopy!=null)
+					newProviders.add(providerCopy);
 				else
-					writableProviders.add(provider);
+					newProviders.add(provider);
 			}
 			if (changed) {
-				cfgDescription.setLanguageSettingProviders(writableProviders);
+				cfgDescription.setLanguageSettingProviders(newProviders);
 //				updateTreeEntries();
 //				updateData(getResDesc());
 				List<ILanguageSettingsProvider> tableItems = getProviders(currentLanguageId);

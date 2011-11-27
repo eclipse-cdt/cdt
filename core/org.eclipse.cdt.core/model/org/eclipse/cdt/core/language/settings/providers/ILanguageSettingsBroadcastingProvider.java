@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Andrew Gvozdev and others.
+ * Copyright (c) 2011, 2011 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,21 +18,15 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.core.resources.IResource;
 
 /**
- * This interface is used in UI to identify classes allowing user to modify settings externally
- * contrary to some subclasses of {@link LanguageSettingsSerializableProvider} managing
- * their settings themselves and not providing such option to the user.
- *
+ * TODO
  */
-public interface ILanguageSettingsEditableProvider extends ILanguageSettingsBroadcastingProvider, Cloneable {
+public interface ILanguageSettingsBroadcastingProvider extends ILanguageSettingsProvider {
 	@Override
 	public String getId();
 	@Override
 	public String getName();
 	@Override
 	public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId);
-	@Override
-	public void setSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId, List<ICLanguageSettingEntry> entries);
 
-	public ILanguageSettingsEditableProvider cloneShallow() throws CloneNotSupportedException;
-	public ILanguageSettingsEditableProvider clone() throws CloneNotSupportedException;
+	public void setSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId, List<ICLanguageSettingEntry> entries);
 }

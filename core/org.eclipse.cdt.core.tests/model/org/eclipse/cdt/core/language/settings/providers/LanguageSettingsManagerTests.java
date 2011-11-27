@@ -42,9 +42,10 @@ import org.eclipse.core.runtime.Path;
  */
 public class LanguageSettingsManagerTests extends BaseTestCase {
 	// Those should match ids of plugin extensions defined in plugin.xml
-	private static final String EXTENSION_BASE_PROVIDER_ID = "org.eclipse.cdt.core.tests.language.settings.base.provider";
-	private static final String EXTENSION_EDITABLE_PROVIDER_ID = "org.eclipse.cdt.core.tests.custom.editable.language.settings.provider";
-	private static final String EXTENSION_EDITABLE_PROVIDER_NAME = "Test Plugin Mock Editable Language Settings Provider";
+	private static final String EXTENSION_BASE_PROVIDER_ID = LanguageSettingsExtensionsTests.EXTENSION_BASE_PROVIDER_ID;
+	private static final String EXTENSION_SERIALIZABLE_PROVIDER_ID = LanguageSettingsExtensionsTests.EXTENSION_SERIALIZABLE_PROVIDER_ID;
+	private static final String EXTENSION_SERIALIZABLE_PROVIDER_NAME = LanguageSettingsExtensionsTests.EXTENSION_SERIALIZABLE_PROVIDER_NAME;
+	private static final String EXTENSION_EDITABLE_PROVIDER_ID = LanguageSettingsExtensionsTests.EXTENSION_EDITABLE_PROVIDER_ID;
 
 	private static final IFile FILE_0 = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path("/project/path0"));
 	private static final String CFG_ID = "test.configuration.id";
@@ -688,14 +689,14 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 	 */
 	public void testWorkspaceProvider_Basic() throws Exception {
 		// get workspace provider
-		ILanguageSettingsProvider provider = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_EDITABLE_PROVIDER_ID);
-		assertEquals(EXTENSION_EDITABLE_PROVIDER_ID, provider.getId());
-		assertEquals(EXTENSION_EDITABLE_PROVIDER_NAME, provider.getName());
+		ILanguageSettingsProvider provider = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_SERIALIZABLE_PROVIDER_ID);
+		assertEquals(EXTENSION_SERIALIZABLE_PROVIDER_ID, provider.getId());
+		assertEquals(EXTENSION_SERIALIZABLE_PROVIDER_NAME, provider.getName());
 
 		// get raw provider
 		ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(provider);
-		assertEquals(EXTENSION_EDITABLE_PROVIDER_ID, rawProvider.getId());
-		assertEquals(EXTENSION_EDITABLE_PROVIDER_NAME, rawProvider.getName());
+		assertEquals(EXTENSION_SERIALIZABLE_PROVIDER_ID, rawProvider.getId());
+		assertEquals(EXTENSION_SERIALIZABLE_PROVIDER_NAME, rawProvider.getName());
 		assertTrue(rawProvider instanceof LanguageSettingsSerializableProvider);
 		// assert they are not the same object
 		assertNotSame(provider, rawProvider);
@@ -726,8 +727,8 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 	 * Test workspace providers equality.
 	 */
 	public void testWorkspaceProvider_Equals() throws Exception {
-		ILanguageSettingsProvider providerA = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_EDITABLE_PROVIDER_ID);
-		ILanguageSettingsProvider providerB = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_EDITABLE_PROVIDER_ID);
+		ILanguageSettingsProvider providerA = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_SERIALIZABLE_PROVIDER_ID);
+		ILanguageSettingsProvider providerB = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_SERIALIZABLE_PROVIDER_ID);
 		assertEquals(providerA, providerB);
 	}
 
@@ -738,7 +739,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 		// get sample workspace provider
 		ILanguageSettingsProvider provider = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_EDITABLE_PROVIDER_ID);
 		{
-			// check on its entries
+			// check on its entries (1 predefined entry via extension point)
 			List<ICLanguageSettingEntry> entries = provider.getSettingEntries(null, null, null);
 			assertEquals(1, entries.size()); // defined in the extension
 		}
@@ -771,7 +772,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 	 */
 	public void testWorkspaceProvider_ReplaceWithWorkspaceProvider() throws Exception {
 		// get sample workspace provider
-		ILanguageSettingsProvider provider = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_EDITABLE_PROVIDER_ID);
+		ILanguageSettingsProvider provider = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_SERIALIZABLE_PROVIDER_ID);
 		ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(provider);
 		assertNotSame(provider, rawProvider);
 

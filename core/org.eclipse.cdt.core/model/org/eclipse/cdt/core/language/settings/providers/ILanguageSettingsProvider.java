@@ -29,8 +29,8 @@ import org.eclipse.core.resources.IResource;
  * {@code org.eclipse.cdt.core.LanguageSettingsProvider} and implement this
  * interface. CDT provides a few general use implementations such as
  * {@link LanguageSettingsBaseProvider} or {@link LanguageSettingsSerializableProvider}
- * which could be used out of the box or extended. See also extension point
- * schema description LanguageSettingsProvider.exsd.
+ * or {@link LanguageSettingsGenericProvider} which could be used out of the box or
+ * extended. See also extension point schema description LanguageSettingsProvider.exsd.
  *
  * @since 6.0
  */

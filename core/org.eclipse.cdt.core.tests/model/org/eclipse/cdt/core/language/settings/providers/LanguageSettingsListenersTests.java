@@ -32,20 +32,20 @@ import org.eclipse.core.resources.IProject;
  * Test cases testing LanguageSettingsProvider functionality
  */
 public class LanguageSettingsListenersTests extends BaseTestCase {
-	// Must match provider id defined as extension point 
-	private static final String EXTENSION_REGISTERER_PROVIDER_ID = "org.eclipse.cdt.core.tests.language.settings.listener.registerer.provider";
-	private static final String EXTENSION_EDITABLE_PROVIDER_ID = "org.eclipse.cdt.core.tests.custom.editable.language.settings.provider";
-	
+	// Must match provider id defined as extension point
+	private static final String EXTENSION_REGISTERER_PROVIDER_ID = LanguageSettingsExtensionsTests.EXTENSION_REGISTERER_PROVIDER_ID;
+	private static final String EXTENSION_EDITABLE_PROVIDER_ID = LanguageSettingsExtensionsTests.EXTENSION_EDITABLE_PROVIDER_ID;
+
 	private static final String PROVIDER_1 = "test.provider.1.id";
 	private static final String PROVIDER_NAME_1 = "test.provider.1.name";
 	private static final String PROVIDER_CUSTOM_GLOBAL = "test.provider.custom.global.id";
 	private static final String PROVIDER_CUSTOM_GLOBAL_NAME = "test.provider.custom.global.name";
-	
+
 	private static final CMacroEntry SAMPLE_LSE = new CMacroEntry("MACRO", "value",0);
 	private class MockLanguageSettingsChangeListener implements ILanguageSettingsChangeListener {
 		private int count = 0;
 		private ILanguageSettingsChangeEvent lastEvent = null;
-		
+
 		@Override
 		public void handleEvent(ILanguageSettingsChangeEvent event) {
 			count++;
@@ -55,12 +55,12 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 		public int getCount() {
 			return count;
 		}
-		
+
 		public void resetCount() {
 			count = 0;
 			lastEvent = null;
 		}
-		
+
 		public ILanguageSettingsChangeEvent getLastEvent() {
 			return lastEvent;
 		}
@@ -114,7 +114,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 		// global listeners providers get registered only lazily
 		assertEquals(0, MockListenerRegisterer.getCount(EXTENSION_REGISTERER_PROVIDER_ID));
 	}
-	
+
 	/**
 	 */
 	public void testListenerRegisterer_OneOwnedByCfg() throws Exception {
@@ -164,7 +164,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			"org.eclipse.cdt.core.tests.configuration.id.1",
 			"org.eclipse.cdt.core.tests.configuration.id.2",
 		});
-		
+
 		{
 			// get project descriptions
 			ICProjectDescription writableProjDescription = CoreModel.getDefault().getProjectDescription(project);
@@ -173,7 +173,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			assertEquals(2, cfgDescriptions.length);
 			ICConfigurationDescription cfgDescription1 = cfgDescriptions[0];
 			ICConfigurationDescription cfgDescription2 = cfgDescriptions[1];
-			
+
 			{
 				// create a provider 1
 				ILanguageSettingsProvider mockProvider = new MockListenerRegisterer(PROVIDER_1, PROVIDER_NAME_1);
@@ -192,7 +192,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 				List<ILanguageSettingsProvider> storedProviders = cfgDescription2.getLanguageSettingProviders();
 				assertEquals(1, storedProviders.size());
 			}
-			
+
 			// write to project description
 			CoreModel.getDefault().setProjectDescription(project, writableProjDescription);
 			assertEquals(2, MockListenerRegisterer.getCount(PROVIDER_1));
@@ -211,9 +211,9 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			project.delete(true, null);
 			assertEquals(0, MockListenerRegisterer.getCount(PROVIDER_1));
 		}
-		
+
 	}
-	
+
 	/**
 	 */
 	public void testListenerRegisterer_OneGlobal() throws Exception {
@@ -225,7 +225,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			ICConfigurationDescription[] cfgDescriptions = writableProjDescription.getConfigurations();
 			assertEquals(1, cfgDescriptions.length);
 			ICConfigurationDescription cfgDescription = cfgDescriptions[0];
-			
+
 			// add global provider
 			ILanguageSettingsProvider workspaceProvider = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_REGISTERER_PROVIDER_ID);
 			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
@@ -233,7 +233,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			cfgDescription.setLanguageSettingProviders(providers);
 			List<ILanguageSettingsProvider> storedProviders = cfgDescription.getLanguageSettingProviders();
 			assertEquals(1, storedProviders.size());
-			
+
 			// write to project description
 			CoreModel.getDefault().setProjectDescription(project, writableProjDescription);
 			assertEquals(1, MockListenerRegisterer.getCount(EXTENSION_REGISTERER_PROVIDER_ID));
@@ -252,9 +252,9 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			project.delete(true, null);
 			assertEquals(0, MockListenerRegisterer.getCount(EXTENSION_REGISTERER_PROVIDER_ID));
 		}
-		
+
 	}
-	
+
 	/**
 	 */
 	public void testListenerRegisterer_TwoGlobal() throws Exception {
@@ -262,7 +262,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			"org.eclipse.cdt.core.tests.configuration.id.1",
 			"org.eclipse.cdt.core.tests.configuration.id.2",
 		});
-		
+
 		{
 			// retrieve global provider
 			ILanguageSettingsProvider workspaceProvider = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_REGISTERER_PROVIDER_ID);
@@ -273,7 +273,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			assertEquals(2, cfgDescriptions.length);
 			ICConfigurationDescription cfgDescription1 = cfgDescriptions[0];
 			ICConfigurationDescription cfgDescription2 = cfgDescriptions[1];
-			
+
 			{
 				// add global provider to configuration 1
 				List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
@@ -309,7 +309,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			assertEquals(0, MockListenerRegisterer.getCount(EXTENSION_REGISTERER_PROVIDER_ID));
 		}
 	}
-	
+
 	/**
 	 */
 	public void testListenerRegisterer_TwoGlobalMinusOne() throws Exception {
@@ -317,7 +317,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			"org.eclipse.cdt.core.tests.configuration.id.1",
 			"org.eclipse.cdt.core.tests.configuration.id.2",
 		});
-		
+
 		{
 			// retrieve workspace provider
 			ILanguageSettingsProvider workspaceProvider = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_REGISTERER_PROVIDER_ID);
@@ -328,7 +328,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			assertEquals(2, cfgDescriptions.length);
 			ICConfigurationDescription cfgDescription1 = cfgDescriptions[0];
 			ICConfigurationDescription cfgDescription2 = cfgDescriptions[1];
-			
+
 			{
 				// add global provider to configuration 1
 				List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
@@ -359,7 +359,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			assertEquals(2, cfgDescriptions.length);
 			ICConfigurationDescription cfgDescription1 = cfgDescriptions[0];
 			ICConfigurationDescription cfgDescription2 = cfgDescriptions[1];
-			
+
 			{
 				// remove global provider from configuration 1
 				List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
@@ -377,7 +377,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			assertEquals(0, MockListenerRegisterer.getCount(EXTENSION_REGISTERER_PROVIDER_ID));
 		}
 	}
-	
+
 	/**
 	 */
 	public void testListenerRegisterer_GlobalProviderTwoProjects() throws Exception {
@@ -390,7 +390,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			ICConfigurationDescription[] cfgDescriptions = writableProjDescription.getConfigurations();
 			assertEquals(1, cfgDescriptions.length);
 			ICConfigurationDescription cfgDescription = cfgDescriptions[0];
-			
+
 			// add global provider
 			ILanguageSettingsProvider workspaceProvider = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_REGISTERER_PROVIDER_ID);
 			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
@@ -398,7 +398,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			cfgDescription.setLanguageSettingProviders(providers);
 			List<ILanguageSettingsProvider> storedProviders = cfgDescription.getLanguageSettingProviders();
 			assertEquals(1, storedProviders.size());
-			
+
 			// write to project description
 			CoreModel.getDefault().setProjectDescription(project_1, writableProjDescription);
 			assertEquals(1, MockListenerRegisterer.getCount(EXTENSION_REGISTERER_PROVIDER_ID));
@@ -413,7 +413,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			ICConfigurationDescription[] cfgDescriptions = writableProjDescription.getConfigurations();
 			assertEquals(1, cfgDescriptions.length);
 			ICConfigurationDescription cfgDescription = cfgDescriptions[0];
-			
+
 			// add global provider
 			ILanguageSettingsProvider workspaceProvider = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_REGISTERER_PROVIDER_ID);
 			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
@@ -421,12 +421,12 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			cfgDescription.setLanguageSettingProviders(providers);
 			List<ILanguageSettingsProvider> storedProviders = cfgDescription.getLanguageSettingProviders();
 			assertEquals(1, storedProviders.size());
-			
+
 			// write to project description
 			CoreModel.getDefault().setProjectDescription(project_2, writableProjDescription);
 			assertEquals(1, MockListenerRegisterer.getCount(EXTENSION_REGISTERER_PROVIDER_ID));
 		}
-		
+
 		{
 			// close project 1
 			project_1.close(null);
@@ -437,7 +437,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			project_2.close(null);
 			assertEquals(0, MockListenerRegisterer.getCount(EXTENSION_REGISTERER_PROVIDER_ID));
 		}
-		
+
 	}
 
 	/**
@@ -466,17 +466,17 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			assertEquals(0, MockListenerRegisterer.getCount(PROVIDER_CUSTOM_GLOBAL));
 		}
 	}
-	
+
 	/**
 	 */
 	public void testListenerRegisterer_GlobalProviderAddRemoveOutsideTheProject() throws Exception {
 		ILanguageSettingsProvider workspaceProvider = LanguageSettingsManager.getWorkspaceProvider(PROVIDER_CUSTOM_GLOBAL);
-		
+
 		// the global custom provider has not been added yet
 		ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(workspaceProvider);
 		assertNull(rawProvider);
 		assertEquals(0, MockListenerRegisterer.getCount(PROVIDER_CUSTOM_GLOBAL));
-		
+
 		// prepare project
 		List<ILanguageSettingsProvider> workspaceProvidersOriginal = LanguageSettingsManager.getWorkspaceProviders();
 		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
@@ -487,14 +487,14 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			ICConfigurationDescription[] cfgDescriptions = writableProjDescription.getConfigurations();
 			assertEquals(1, cfgDescriptions.length);
 			ICConfigurationDescription cfgDescription = cfgDescriptions[0];
-			
+
 			// add global provider
 			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 			providers.add(workspaceProvider);
 			cfgDescription.setLanguageSettingProviders(providers);
 			List<ILanguageSettingsProvider> storedProviders = cfgDescription.getLanguageSettingProviders();
 			assertEquals(1, storedProviders.size());
-			
+
 			// write to project description
 			CoreModel.getDefault().setProjectDescription(project, writableProjDescription);
 			// the global custom provider has not been added yet
@@ -510,19 +510,19 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			assertEquals(1, MockListenerRegisterer.getCount(PROVIDER_CUSTOM_GLOBAL));
 		}
 		{
-			// remove global provider 
+			// remove global provider
 			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>(workspaceProvidersOriginal);
 			LanguageSettingsManager.setWorkspaceProviders(providers);
 			assertEquals(0, MockListenerRegisterer.getCount(PROVIDER_CUSTOM_GLOBAL));
 		}
-		
+
 		{
 			// close project
 			project.close(null);
 			assertEquals(0, MockListenerRegisterer.getCount(PROVIDER_CUSTOM_GLOBAL));
 		}
 	}
-	
+
 	/**
 	 */
 	public void testNotification_cfgProvider_AddEmptyProvider() throws Exception {
@@ -545,12 +545,12 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			// write to project description
 			CoreModel.getDefault().setProjectDescription(project, writableProjDescription);
 		}
-		
+
 		// register mock listener to inspect the notifications
 		LanguageSettingsProvidersSerializer.registerLanguageSettingsChangeListener(mockLseListener);
 		assertEquals(0, mockLseListener.getCount());
 		assertEquals(null, mockLseListener.getLastEvent());
-		
+
 		// Add empty provider
 		{
 			// get project descriptions
@@ -559,7 +559,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			ICConfigurationDescription[] cfgDescriptions = writableProjDescription.getConfigurations();
 			assertEquals(1, cfgDescriptions.length);
 			ICConfigurationDescription cfgDescription = cfgDescriptions[0];
-			
+
 			// create a provider and add to cfgDescription
 			ILanguageSettingsProvider mockProvider = new MockLanguageSettingsEditableProvider(PROVIDER_1, PROVIDER_NAME_1);
 			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
@@ -567,16 +567,16 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			cfgDescription.setLanguageSettingProviders(providers);
 			List<ILanguageSettingsProvider> storedProviders = cfgDescription.getLanguageSettingProviders();
 			assertEquals(1, storedProviders.size());
-			
+
 			// write to project description
 			CoreModel.getDefault().setProjectDescription(project, writableProjDescription);
 		}
-		
+
 		// No notifications expected
 		assertEquals(0, mockLseListener.getCount());
 		assertEquals(null, mockLseListener.getLastEvent());
 	}
-	
+
 	/**
 	 */
 	public void testNotification_cfgProvider_AddNonEmptyProvider() throws Exception {
@@ -589,22 +589,22 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			ICConfigurationDescription[] cfgDescriptions = writableProjDescription.getConfigurations();
 			assertEquals(1, cfgDescriptions.length);
 			ICConfigurationDescription cfgDescription = cfgDescriptions[0];
-			
+
 			// clear providers
 			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 			cfgDescription.setLanguageSettingProviders(providers);
 			List<ILanguageSettingsProvider> storedProviders = cfgDescription.getLanguageSettingProviders();
 			assertEquals(0, storedProviders.size());
-			
+
 			// write to project description
 			CoreModel.getDefault().setProjectDescription(project, writableProjDescription);
 		}
-		
+
 		// register mock listener to inspect the notifications
 		LanguageSettingsProvidersSerializer.registerLanguageSettingsChangeListener(mockLseListener);
 		assertEquals(0, mockLseListener.getCount());
 		assertEquals(null, mockLseListener.getLastEvent());
-		
+
 		// Add non-empty provider
 		{
 			// get project descriptions
@@ -614,7 +614,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			assertEquals(1, cfgDescriptions.length);
 			ICConfigurationDescription cfgDescription = cfgDescriptions[0];
 			String cfgDescriptionId = cfgDescription.getId();
-			
+
 			// create a provider and add entries
 			MockLanguageSettingsEditableProvider mockProvider = new MockLanguageSettingsEditableProvider(PROVIDER_1, PROVIDER_NAME_1);
 			List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
@@ -625,7 +625,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			cfgDescription.setLanguageSettingProviders(providers);
 			List<ILanguageSettingsProvider> storedProviders = cfgDescription.getLanguageSettingProviders();
 			assertEquals(1, storedProviders.size());
-			
+
 			// write to project description
 			CoreModel.getDefault().setProjectDescription(project, writableProjDescription);
 
@@ -633,18 +633,18 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			assertEquals(1, mockLseListener.getCount());
 			ILanguageSettingsChangeEvent event = mockLseListener.getLastEvent();
 			assertNotNull(event);
-			
+
 			assertEquals(project.getName(), event.getProjectName());
 			assertEquals(1, event.getConfigurationDescriptionIds().length);
 			assertEquals(cfgDescriptionId, event.getConfigurationDescriptionIds()[0]);
 		}
 	}
-	
+
 	/**
 	 */
 	public void testNotification_cfgProvider_SerializeEntries() throws Exception {
 		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
-		
+
 		// add the mock provider
 		{
 			// get project descriptions
@@ -653,18 +653,18 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			ICConfigurationDescription[] cfgDescriptions = writableProjDescription.getConfigurations();
 			assertEquals(1, cfgDescriptions.length);
 			ICConfigurationDescription cfgDescription = cfgDescriptions[0];
-			
+
 			// create a provider and add to cfgDescription
 			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 			providers.add(new MockLanguageSettingsEditableProvider(PROVIDER_1, PROVIDER_NAME_1));
 			cfgDescription.setLanguageSettingProviders(providers);
 			List<ILanguageSettingsProvider> storedProviders = cfgDescription.getLanguageSettingProviders();
 			assertEquals(1, storedProviders.size());
-			
+
 			// write to project description
 			CoreModel.getDefault().setProjectDescription(project, writableProjDescription);
 		}
-		
+
 		// register mock listener to inspect the notifications
 		LanguageSettingsProvidersSerializer.registerLanguageSettingsChangeListener(mockLseListener);
 		assertEquals(0, mockLseListener.getCount());
@@ -679,7 +679,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			assertEquals(1, cfgDescriptions.length);
 			ICConfigurationDescription cfgDescription = cfgDescriptions[0];
 			String cfgDescriptionId = cfgDescription.getId();
-			
+
 			// Add entries
 			List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
 			entries.add(SAMPLE_LSE);
@@ -690,25 +690,25 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			mockProvider.setSettingEntries(cfgDescription, project, null, entries);
 			assertEquals(0, mockLseListener.getCount());
 			assertEquals(null, mockLseListener.getLastEvent());
-			
+
 			// Serialize settings
 			LanguageSettingsProvidersSerializer.serializeLanguageSettings(prjDescription);
 			// inspect event
 			assertEquals(1, mockLseListener.getCount());
 			ILanguageSettingsChangeEvent event = mockLseListener.getLastEvent();
 			assertNotNull(event);
-			
+
 			assertEquals(project.getName(), event.getProjectName());
 			assertEquals(1, event.getConfigurationDescriptionIds().length);
 			assertEquals(cfgDescriptionId, event.getConfigurationDescriptionIds()[0]);
 		}
 	}
-	
+
 	/**
 	 */
 	public void testNotification_cfgProvider_SerializeEntriesConcurrent() throws Exception {
 		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
-		
+
 		// add the mock provider
 		{
 			// get project descriptions
@@ -717,25 +717,25 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			ICConfigurationDescription[] cfgDescriptions = writableProjDescription.getConfigurations();
 			assertEquals(1, cfgDescriptions.length);
 			ICConfigurationDescription cfgDescription = cfgDescriptions[0];
-			
+
 			// create a provider and add to cfgDescription
 			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 			providers.add(new MockLanguageSettingsEditableProvider(PROVIDER_1, PROVIDER_NAME_1));
 			cfgDescription.setLanguageSettingProviders(providers);
 			List<ILanguageSettingsProvider> storedProviders = cfgDescription.getLanguageSettingProviders();
 			assertEquals(1, storedProviders.size());
-			
+
 			// write to project description
 			CoreModel.getDefault().setProjectDescription(project, writableProjDescription);
 		}
-		
+
 		// register mock listener to inspect the notifications
 		LanguageSettingsProvidersSerializer.registerLanguageSettingsChangeListener(mockLseListener);
 		assertEquals(0, mockLseListener.getCount());
 		assertEquals(null, mockLseListener.getLastEvent());
-		
+
 		// Change the provider's entries concurrently
-		
+
 		// get project descriptions
 		ICProjectDescription prjDescription_1 = CoreModel.getDefault().getProjectDescription(project, false);
 		assertNotNull(prjDescription_1);
@@ -746,7 +746,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			assertEquals(1, cfgDescriptions.length);
 			ICConfigurationDescription cfgDescriptionWritable = cfgDescriptions[0];
 			String cfgDescriptionId = cfgDescriptionWritable.getId();
-			
+
 			// Add entries
 			List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
 			entries.add(SAMPLE_LSE);
@@ -755,19 +755,19 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			assertTrue(providers.get(0) instanceof MockLanguageSettingsEditableProvider);
 			MockLanguageSettingsEditableProvider mockProvider = (MockLanguageSettingsEditableProvider) providers.get(0);
 			mockProvider.setSettingEntries(cfgDescriptionWritable, project, null, entries);
-			
+
 			// reset count
 			mockLseListener.resetCount();
 			assertEquals(0, mockLseListener.getCount());
 			assertNull(mockLseListener.getLastEvent());
-			
+
 			// Serialize settings
 			LanguageSettingsProvidersSerializer.serializeLanguageSettings(prjDescription_1);
 			// inspect event
 			assertEquals(1, mockLseListener.getCount());
 			ILanguageSettingsChangeEvent event = mockLseListener.getLastEvent();
 			assertNotNull(event);
-			
+
 			assertEquals(project.getName(), event.getProjectName());
 			assertEquals(1, event.getConfigurationDescriptionIds().length);
 			assertEquals(cfgDescriptionId, event.getConfigurationDescriptionIds()[0]);
@@ -777,7 +777,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			assertEquals(1, cfgDescriptions.length);
 			ICConfigurationDescription cfgDescriptionWritable = cfgDescriptions[0];
 			String cfgDescriptionId = cfgDescriptionWritable.getId();
-			
+
 			// Add same entries
 			List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
 			entries.add(SAMPLE_LSE);
@@ -786,12 +786,12 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			assertTrue(providers.get(0) instanceof MockLanguageSettingsEditableProvider);
 			MockLanguageSettingsEditableProvider mockProvider = (MockLanguageSettingsEditableProvider) providers.get(0);
 			mockProvider.setSettingEntries(cfgDescriptionWritable, project, null, entries);
-			
+
 			// reset count
 			mockLseListener.resetCount();
 			assertEquals(0, mockLseListener.getCount());
 			assertNull(mockLseListener.getLastEvent());
-			
+
 			// Serialize settings
 			LanguageSettingsProvidersSerializer.serializeLanguageSettings(prjDescription_2);
 			// inspect event
@@ -800,7 +800,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			assertNull(event);
 		}
 	}
-	
+
 	/**
 	 */
 	public void testNotification_globalProvider_AddEmptyProvider() throws Exception {
@@ -823,12 +823,12 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			// write to project description
 			CoreModel.getDefault().setProjectDescription(project, writableProjDescription);
 		}
-		
+
 		// register mock listener to inspect the notifications
 		LanguageSettingsProvidersSerializer.registerLanguageSettingsChangeListener(mockLseListener);
 		assertEquals(0, mockLseListener.getCount());
 		assertEquals(null, mockLseListener.getLastEvent());
-		
+
 		// Add empty global provider
 		{
 			// get project descriptions
@@ -837,7 +837,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			ICConfigurationDescription[] cfgDescriptions = writableProjDescription.getConfigurations();
 			assertEquals(1, cfgDescriptions.length);
 			ICConfigurationDescription cfgDescription = cfgDescriptions[0];
-			
+
 			// retrieve a global provider
 			ILanguageSettingsProvider wspProvider = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_EDITABLE_PROVIDER_ID);
 			assertNotNull(wspProvider);
@@ -852,16 +852,16 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			cfgDescription.setLanguageSettingProviders(providers);
 			List<ILanguageSettingsProvider> storedProviders = cfgDescription.getLanguageSettingProviders();
 			assertEquals(1, storedProviders.size());
-			
+
 			// write to project description
 			CoreModel.getDefault().setProjectDescription(project, writableProjDescription);
 		}
-		
+
 		// No notifications expected
 		assertEquals(0, mockLseListener.getCount());
 		assertEquals(null, mockLseListener.getLastEvent());
 	}
-	
+
 	/**
 	 */
 	public void testNotification_globalProvider_AddNonEmptyProvider() throws Exception {
@@ -874,22 +874,22 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			ICConfigurationDescription[] cfgDescriptions = writableProjDescription.getConfigurations();
 			assertEquals(1, cfgDescriptions.length);
 			ICConfigurationDescription cfgDescription = cfgDescriptions[0];
-			
+
 			// clear providers
 			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 			cfgDescription.setLanguageSettingProviders(providers);
 			List<ILanguageSettingsProvider> storedProviders = cfgDescription.getLanguageSettingProviders();
 			assertEquals(0, storedProviders.size());
-			
+
 			// write to project description
 			CoreModel.getDefault().setProjectDescription(project, writableProjDescription);
 		}
-		
+
 		// register mock listener to inspect the notifications
 		LanguageSettingsProvidersSerializer.registerLanguageSettingsChangeListener(mockLseListener);
 		assertEquals(0, mockLseListener.getCount());
 		assertEquals(null, mockLseListener.getLastEvent());
-		
+
 		// Add non-empty provider
 		{
 			// get project descriptions
@@ -899,7 +899,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			assertEquals(1, cfgDescriptions.length);
 			ICConfigurationDescription cfgDescription = cfgDescriptions[0];
 			String cfgDescriptionId = cfgDescription.getId();
-			
+
 			// retrieve a global provider
 			ILanguageSettingsProvider wspProvider = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_EDITABLE_PROVIDER_ID);
 			assertNotNull(wspProvider);
@@ -925,21 +925,21 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			assertEquals(1, mockLseListener.getCount());
 			ILanguageSettingsChangeEvent event = mockLseListener.getLastEvent();
 			assertNotNull(event);
-			
+
 			assertEquals(project.getName(), event.getProjectName());
 			assertEquals(1, event.getConfigurationDescriptionIds().length);
 			assertEquals(cfgDescriptionId, event.getConfigurationDescriptionIds()[0]);
 		}
 	}
-	
+
 	/**
 	 */
 	public void testNotification_globalProvider_SerializeEntries() throws Exception {
 		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
-		
+
 		// register mock listener to inspect the notifications
 		LanguageSettingsProvidersSerializer.registerLanguageSettingsChangeListener(mockLseListener);
-		
+
 		// Add empty global provider
 		{
 			// get project descriptions
@@ -948,7 +948,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			ICConfigurationDescription[] cfgDescriptions = writableProjDescription.getConfigurations();
 			assertEquals(1, cfgDescriptions.length);
 			ICConfigurationDescription cfgDescription = cfgDescriptions[0];
-			
+
 			// retrieve a global provider
 			ILanguageSettingsProvider wspProvider = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_EDITABLE_PROVIDER_ID);
 			assertNotNull(wspProvider);
@@ -963,7 +963,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			cfgDescription.setLanguageSettingProviders(providers);
 			List<ILanguageSettingsProvider> storedProviders = cfgDescription.getLanguageSettingProviders();
 			assertEquals(1, storedProviders.size());
-			
+
 			// write to project description
 			CoreModel.getDefault().setProjectDescription(project, writableProjDescription);
 		}
@@ -981,12 +981,12 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			entries.add(SAMPLE_LSE);
 			((MockLanguageSettingsEditableProvider) rawProvider).setSettingEntries(null, project, null, entries);
 			assertEquals(SAMPLE_LSE, wspProvider.getSettingEntries(null, project, null).get(0));
-			
+
 			// reset count
 			mockLseListener.resetCount();
 			assertEquals(0, mockLseListener.getCount());
 			assertEquals(null, mockLseListener.getLastEvent());
-			
+
 			// Serialize settings
 			LanguageSettingsProvidersSerializer.serializeLanguageSettingsWorkspace();
 
@@ -997,12 +997,12 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			assertEquals(1, cfgDescriptions.length);
 			ICConfigurationDescription cfgDescription = cfgDescriptions[0];
 			String cfgDescriptionId = cfgDescription.getId();
-			
+
 			// inspect event
 			assertEquals(1, mockLseListener.getCount());
 			ILanguageSettingsChangeEvent event = mockLseListener.getLastEvent();
 			assertNotNull(event);
-			
+
 			assertEquals(project.getName(), event.getProjectName());
 			assertEquals(1, event.getConfigurationDescriptionIds().length);
 			assertEquals(cfgDescriptionId, event.getConfigurationDescriptionIds()[0]);
@@ -1016,15 +1016,15 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			assertTrue(rawProvider instanceof MockLanguageSettingsEditableProvider);
 			// clear the provider again
 			((MockLanguageSettingsEditableProvider) rawProvider).clear();
-			
+
 			// reset count
 			mockLseListener.resetCount();
 			assertEquals(0, mockLseListener.getCount());
 			assertEquals(null, mockLseListener.getLastEvent());
-			
+
 			// Serialize settings
 			LanguageSettingsProvidersSerializer.serializeLanguageSettingsWorkspace();
-			
+
 			// get cfgDescriptionId
 			ICProjectDescription prjDescription = CoreModel.getDefault().getProjectDescription(project, false);
 			assertNotNull(prjDescription);
@@ -1032,12 +1032,12 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			assertEquals(1, cfgDescriptions.length);
 			ICConfigurationDescription cfgDescription = cfgDescriptions[0];
 			String cfgDescriptionId = cfgDescription.getId();
-			
+
 			// inspect event
 			assertEquals(1, mockLseListener.getCount());
 			ILanguageSettingsChangeEvent event = mockLseListener.getLastEvent();
 			assertNotNull(event);
-			
+
 			assertEquals(project.getName(), event.getProjectName());
 			assertEquals(1, event.getConfigurationDescriptionIds().length);
 			assertEquals(cfgDescriptionId, event.getConfigurationDescriptionIds()[0]);

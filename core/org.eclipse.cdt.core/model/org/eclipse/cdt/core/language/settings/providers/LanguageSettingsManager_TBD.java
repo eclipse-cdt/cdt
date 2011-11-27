@@ -32,14 +32,13 @@ public class LanguageSettingsManager_TBD {
 	public static boolean isCustomizedResource(ICConfigurationDescription cfgDescription, IResource rc) {
 		if (rc instanceof IProject)
 			return false;
-		
+
 		for (ILanguageSettingsProvider provider: cfgDescription.getLanguageSettingProviders()) {
-			// FIXME
-//			if (!LanguageSettingsManager.isWorkspaceProvider(provider)) {
-			if (provider instanceof ILanguageSettingsEditableProvider || provider instanceof LanguageSettingsSerializableProvider) {
+			if (provider instanceof ILanguageSettingsBroadcastingProvider) {
 				for (String languageId : LanguageSettingsManager.getLanguages(rc, cfgDescription)) {
 					List<ICLanguageSettingEntry> list = provider.getSettingEntries(cfgDescription, rc, languageId);
 					if (list!=null) {
+						// TODO - check default or check parent?
 						List<ICLanguageSettingEntry> listDefault = provider.getSettingEntries(null, null, languageId);
 						// != is OK here due as the equal lists will have the same reference in WeakHashSet
 						if (list != listDefault)
@@ -62,7 +61,7 @@ public class LanguageSettingsManager_TBD {
 		}
 		return false;
 	}
-	
+
 	public static boolean isEqualExtensionProvider(ILanguageSettingsProvider provider) {
 		return LanguageSettingsExtensionManager.equalsExtensionProvider(provider);
 	}

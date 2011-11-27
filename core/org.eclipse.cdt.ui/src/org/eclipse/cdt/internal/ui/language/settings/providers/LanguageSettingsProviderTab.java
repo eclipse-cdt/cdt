@@ -150,14 +150,13 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 		ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(provider);
 		Assert.isTrue(rawProvider instanceof ILanguageSettingsEditableProvider);
 
-		ILanguageSettingsEditableProvider editableProvider = (ILanguageSettingsEditableProvider)rawProvider;
 		try {
-			ILanguageSettingsEditableProvider newProvider = editableProvider.clone();
+			ILanguageSettingsEditableProvider newProvider = ((ILanguageSettingsEditableProvider)rawProvider).clone();
 			replaceSelectedProvider(newProvider);
 			return newProvider;
 
 		} catch (CloneNotSupportedException e) {
-			CUIPlugin.log("Error cloning provider " + editableProvider.getId(), e);
+			CUIPlugin.log("Error cloning provider " + rawProvider.getId(), e);
 			// TODO warning dialog for user?
 		}
 
@@ -249,7 +248,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 
 		if (page.isForPrefs()) {
 			initButtons(BUTTON_LABELS_PREF);
-			
+
 		} else {
 			// "I want to try new scanner discovery" temporary checkbox
 			enableProvidersCheckBox = setupCheck(usercomp, Messages.CDTMainWizardPage_TrySD90, 2, GridData.FILL_HORIZONTAL);
@@ -545,7 +544,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 
 		// renders better when using temporary
 		presentedProviders = providers;
-		
+
 		int pos = tableProviders.getSelectionIndex();
 		tableProvidersViewer.setInput(presentedProviders);
 		tableProviders.setSelection(pos);
@@ -744,8 +743,8 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 
 	private void performClear(ILanguageSettingsProvider selectedProvider) {
 		if (isWorkingCopy(selectedProvider)) {
-			if (selectedProvider instanceof ILanguageSettingsEditableProvider) {
-				ILanguageSettingsEditableProvider editableProvider = (ILanguageSettingsEditableProvider) selectedProvider;
+			if (selectedProvider instanceof LanguageSettingsSerializableProvider) {
+				LanguageSettingsSerializableProvider editableProvider = (LanguageSettingsSerializableProvider) selectedProvider;
 				editableProvider.clear();
 				tableProvidersViewer.update(selectedProvider, null);
 			}
@@ -892,7 +891,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 					}
 					// seems to render better when temporary is used
 					presentedProviders = providers;
-					
+
 					int pos = tableProviders.getSelectionIndex();
 					tableProvidersViewer.setInput(presentedProviders);
 					tableProviders.setSelection(pos);

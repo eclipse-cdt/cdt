@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.AbstractExecutableExtensionBase;
-import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsBroadcastingProvider;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICFileDescription;
 import org.eclipse.cdt.core.settings.model.ICFolderDescription;
@@ -27,9 +27,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 
-//public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase implements ILanguageSettingsEditableProvider {
-public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase implements ILanguageSettingsProvider {
-
+public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase implements ILanguageSettingsBroadcastingProvider {
 	@Override
 	public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId) {
 
@@ -92,6 +90,7 @@ public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase
 		return array;
 	}
 
+	@Override
 	public void setSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId,
 			List<ICLanguageSettingEntry> entries) {
 

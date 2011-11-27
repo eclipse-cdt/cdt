@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsExtensionManager;
-import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 
@@ -25,10 +24,6 @@ import org.eclipse.core.resources.IResource;
  * This temporary class keeps the utility methods being looking for better home
  */
 public class LanguageSettingsManager_TBD {
-	public static final String PROVIDER_UNKNOWN = "org.eclipse.cdt.projectmodel.4.0.0";
-	public static final String PROVIDER_UI_USER = "org.eclipse.cdt.ui.user.LanguageSettingsProvider";
-	public static final char PROVIDER_DELIMITER = LanguageSettingsProvidersSerializer.PROVIDER_DELIMITER;
-
 	public static boolean isCustomizedResource(ICConfigurationDescription cfgDescription, IResource rc) {
 		if (rc instanceof IProject)
 			return false;

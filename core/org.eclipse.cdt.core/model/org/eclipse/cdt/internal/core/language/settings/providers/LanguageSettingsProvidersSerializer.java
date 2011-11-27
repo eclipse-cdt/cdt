@@ -63,7 +63,6 @@ public class LanguageSettingsProvidersSerializer {
 	private static final String STORAGE_WORKSPACE_LANGUAGE_SETTINGS = "language.settings.xml"; //$NON-NLS-1$
 	private static final String SETTINGS_FOLDER_NAME = ".settings/"; //$NON-NLS-1$
 	private static final String STORAGE_PROJECT_LANGUAGE_SETTINGS = "language.settings.xml"; //$NON-NLS-1$
-	public static final char PROVIDER_DELIMITER = ';';
 	private static final String ELEM_PLUGIN = "plugin"; //$NON-NLS-1$
 	private static final String ELEM_EXTENSION = "extension"; //$NON-NLS-1$
 	private static final String ATTR_POINT = "point"; //$NON-NLS-1$
@@ -761,8 +760,8 @@ projects:
 			for (ICConfigurationDescription cfgDescription : cfgDescriptions) {
 				if (cfgDescription!=null) {
 					List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>(2);
-					ILanguageSettingsProvider userProvider = getWorkspaceProvider(ScannerDiscoveryLegacySupport.MBS_LANGUAGE_SETTINGS_PROVIDER);
-					providers.add(userProvider);
+					ILanguageSettingsProvider providerMBS = getWorkspaceProvider(ScannerDiscoveryLegacySupport.MBS_LANGUAGE_SETTINGS_PROVIDER);
+					providers.add(providerMBS);
 					cfgDescription.setLanguageSettingProviders(providers);
 				}
 			}

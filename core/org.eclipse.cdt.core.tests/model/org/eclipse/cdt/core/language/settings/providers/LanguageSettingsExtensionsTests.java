@@ -48,6 +48,7 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 	/*package*/ static final String EXTENSION_EDITABLE_PROVIDER_ID = "org.eclipse.cdt.core.tests.custom.editable.language.settings.provider";
 	/*package*/ static final String EXTENSION_EDITABLE_PROVIDER_NAME = "Test Plugin Mock Editable Language Settings Provider";
 	/*package*/ static final String EXTENSION_REGISTERER_PROVIDER_ID = "org.eclipse.cdt.core.tests.language.settings.listener.registerer.provider";
+	/*package*/ static final String EXTENSION_USER_PROVIDER_ID = "org.eclipse.cdt.ui.user.LanguageSettingsProvider";
 
 	// These are made up
 	private static final String PROVIDER_0 = "test.provider.0.id";
@@ -328,8 +329,8 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 	 * Check that LanguageSettingsGenericProvider extension defined in plugin.xml is accessible.
 	 */
 	public void testExtensionGenericProvider() throws Exception {
-		ILanguageSettingsProvider provider = LanguageSettingsExtensionManager.getExtensionProviderClone(LanguageSettingsManager_TBD.PROVIDER_UI_USER);
-		assertNotNull("extension " + LanguageSettingsManager_TBD.PROVIDER_UI_USER + " not found", provider);
+		ILanguageSettingsProvider provider = LanguageSettingsExtensionManager.getExtensionProviderClone(EXTENSION_USER_PROVIDER_ID);
+		assertNotNull("extension " + EXTENSION_USER_PROVIDER_ID + " not found", provider);
 		assertTrue(provider instanceof LanguageSettingsGenericProvider);
 	}
 

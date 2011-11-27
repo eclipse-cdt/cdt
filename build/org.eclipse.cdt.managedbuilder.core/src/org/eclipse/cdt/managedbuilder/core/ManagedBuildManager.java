@@ -51,7 +51,6 @@ import org.eclipse.cdt.core.AbstractCExtension;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
-import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager_TBD;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.parser.IScannerInfo;
@@ -151,8 +150,6 @@ import org.w3c.dom.ProcessingInstruction;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class ManagedBuildManager extends AbstractCExtension {
-
-	public static final String MBS_LANGUAGE_SETTINGS_PROVIDER = "org.eclipse.cdt.managedbuilder.core.LanguageSettingsProvider";
 //	private static final QualifiedName buildInfoProperty = new QualifiedName(ManagedBuilderCorePlugin.PLUGIN_ID, "managedBuildInfo");	//$NON-NLS-1$
 	private static final String ROOT_NODE_NAME = "ManagedProjectBuildInfo";	//$NON-NLS-1$
 	public  static final String SETTINGS_FILE_NAME = ".cdtbuild";	//$NON-NLS-1$
@@ -193,6 +190,10 @@ public class ManagedBuildManager extends AbstractCExtension {
 	private static final String NEWLINE = System.getProperty("line.separator");	//$NON-NLS-1$
 
 	public static final String INTERNAL_BUILDER_ID = "org.eclipse.cdt.build.core.internal.builder";	//$NON-NLS-1$
+
+	public static final String MBS_LANGUAGE_SETTINGS_PROVIDER = "org.eclipse.cdt.managedbuilder.core.LanguageSettingsProvider";
+	private static final String UI_USER_LANGUAGE_SETTINGS_PROVIDER = "org.eclipse.cdt.ui.user.LanguageSettingsProvider";
+	private static final String LANGUAGE_SETTINGS_PROVIDER_DELIMITER = ";";
 
 	private static final String os = Platform.getOS();
 	private static final String arch = Platform.getOSArch();
@@ -4758,7 +4759,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 				}
 				providersIdsStr = providersIdsStr.replaceAll("\\$\\{Toolchain\\}", toolchainProvidersIds);
 			}
-			List<String> providersIds = Arrays.asList(providersIdsStr.split(String.valueOf(LanguageSettingsManager_TBD.PROVIDER_DELIMITER)));
+			List<String> providersIds = Arrays.asList(providersIdsStr.split(LANGUAGE_SETTINGS_PROVIDER_DELIMITER));
 			for (String id : providersIds) {
 				id = id.trim();
 				ILanguageSettingsProvider provider = null;
@@ -4790,8 +4791,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 			providers.add(provider);
 		}
 
-		if (!isProviderThere(providers, LanguageSettingsManager_TBD.PROVIDER_UI_USER)) {
-			ILanguageSettingsProvider provider = LanguageSettingsManager.getExtensionProviderCopy(LanguageSettingsManager_TBD.PROVIDER_UI_USER);
+		if (!isProviderThere(providers, UI_USER_LANGUAGE_SETTINGS_PROVIDER)) {
+			ILanguageSettingsProvider provider = LanguageSettingsManager.getExtensionProviderCopy(UI_USER_LANGUAGE_SETTINGS_PROVIDER);
 			providers.add(0, provider);
 		}
 

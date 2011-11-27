@@ -265,6 +265,10 @@ public class LanguageSettingsExtensionManager {
 		if (className.equals(LanguageSettingsGenericProvider.class.getName())) {
 			return new LanguageSettingsGenericProvider();
 		}
+		// FIXME - older usage, will fade it out
+		if (className.equals("org.eclipse.cdt.internal.ui.language.settings.providers.UserLanguageSettingsProvider")) {
+			return new LanguageSettingsGenericProvider();
+		}
 
 		ILanguageSettingsProvider provider = createProviderCarcass(className, Platform.getExtensionRegistry());
 		if (provider==null) {

@@ -551,7 +551,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 		}
 		if (status==null || status==Status.OK_STATUS) {
 			ILanguageSettingsProvider provider = getSelectedProvider();
-			if (provider!=null && !(provider instanceof UserLanguageSettingsProvider)) {
+			if (provider!=null && !(provider instanceof ILanguageSettingsBroadcastingProvider)) {
 				String msg = "Setting entries for this provider are supplied by system and are not editable.";
 				status = new Status(IStatus.INFO, CUIPlugin.PLUGIN_ID, msg);
 			}

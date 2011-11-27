@@ -324,4 +324,13 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 		}
 	}
 
+	/**
+	 * Check that LanguageSettingsGenericProvider extension defined in plugin.xml is accessible.
+	 */
+	public void testExtensionGenericProvider() throws Exception {
+		ILanguageSettingsProvider provider = LanguageSettingsExtensionManager.getExtensionProviderClone(LanguageSettingsManager_TBD.PROVIDER_UI_USER);
+		assertNotNull("extension " + LanguageSettingsManager_TBD.PROVIDER_UI_USER + " not found", provider);
+		assertTrue(provider instanceof LanguageSettingsGenericProvider);
+	}
+
 }

@@ -3797,7 +3797,7 @@
 	</extension>
 	<extension point="org.eclipse.cdt.core.LanguageSettingsProvider">
 		<provider
-			class="org.eclipse.cdt.internal.ui.language.settings.providers.UserLanguageSettingsProvider"
+			class="org.eclipse.cdt.core.language.settings.providers.LanguageSettingsGenericProvider"
 			id="org.eclipse.cdt.ui.user.LanguageSettingsProvider"
 			name="CDT User Setting Entries">
 		</provider>

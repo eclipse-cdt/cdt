@@ -35,9 +35,10 @@ public interface ILanguageSettingsEditableProvider extends ILanguageSettingsBroa
 	 * Sets language settings entries for the provider.
 	 *
 	 * @param cfgDescription - configuration description.
-	 * @param rc - resource such as file or folder.
-	 * @param languageId - language id. If {@code null}, then entries are considered to be defined for
-	 *    any language.
+	 * @param rc - resource such as file or folder. If {@code null} the entries are
+	 *    considered to be being defined as default entries for resources.
+	 * @param languageId - language id. If {@code null}, then entries are considered
+	 *    to be defined as default entries for languages.
 	 * @param entries - language settings entries to set.
 	 */
 	public void setSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId, List<ICLanguageSettingEntry> entries);

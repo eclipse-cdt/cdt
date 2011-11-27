@@ -19,17 +19,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.internal.core.parser.util.WeakHashSet;
-import org.eclipse.core.resources.IResource;
 
+/**
+ * The class representing the (in-memory) storage for language settings entries {@link ICLanguageSettingEntry}.
+ */
 public class LanguageSettingsStorage implements Cloneable {
-	/**
-	 * Storage to keep settings entries. Note that it is not necessary to keep configuration in the maps
-	 * as the configuration is always the one provider belongs to.
-	 */
+	/** Storage to keep settings entries. */
 	protected Map<String, // languageId
 				Map<String, // resource project path
 					List<ICLanguageSettingEntry>>> fStorage = new HashMap<String, Map<String, List<ICLanguageSettingEntry>>>();
@@ -44,26 +42,28 @@ public class LanguageSettingsStorage implements Cloneable {
 		public synchronized List<ICLanguageSettingEntry> add(List<ICLanguageSettingEntry> list) {
 			return super.add(list);
 		}
-
 	};
 
 	/**
-	 * TODO
+	 * Returns the list of setting entries for the given resource and language.
 	 * <br> Note that this list is <b>unmodifiable</b>.
 	 *
+	 * @param rcProjectPath - path to the resource relative to the project.
+	 * @param languageId - language id.
+	 *
+	 * @return the list of setting entries or {@code null} if no settings defined.
 	 */
-	public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId) {
+	public List<ICLanguageSettingEntry> getSettingEntries(String rcProjectPath, String languageId) {
 		List<ICLanguageSettingEntry> entries = null;
 		Map<String, List<ICLanguageSettingEntry>> langMap = fStorage.get(languageId);
 		if (langMap!=null) {
-			String rcProjectPath = rc!=null ? rc.getProjectRelativePath().toString() : null;
 			entries = langMap.get(rcProjectPath);
 		}
 		return entries;
 	}
 
 	/**
-	 * Some providers may collect entries in pretty much random order. For the purposes of
+	 * Some providers may collect entries in pretty much random order. For the intent of
 	 * predictability, UI usability and efficient storage the entries are sorted by kinds
 	 * and secondary by name for kinds where the secondary order is not significant.
 	 *
@@ -72,7 +72,7 @@ public class LanguageSettingsStorage implements Cloneable {
 	 */
 	private List<ICLanguageSettingEntry> sortEntries(List<ICLanguageSettingEntry> entries) {
 		List<ICLanguageSettingEntry> sortedEntries = new ArrayList<ICLanguageSettingEntry>(entries);
-		Collections.sort(sortedEntries, new Comparator<ICLanguageSettingEntry>(){
+		Collections.sort(sortedEntries, new Comparator<ICLanguageSettingEntry>() {
 			/**
 			 * This comparator sorts by kinds first and the macros are sorted additionally by name.
 			 */
@@ -91,7 +91,11 @@ public class LanguageSettingsStorage implements Cloneable {
 	}
 
 	/**
+	 * Sets language settings entries for the resource and language.
 	 *
+	 * @param rcProjectPath - path to the resource relative to the project.
+	 * @param languageId - language id.
+	 * @param entries - language settings entries to set.
 	 */
 	public void setSettingEntries(String rcProjectPath, String languageId, List<ICLanguageSettingEntry> entries) {
 		synchronized (fStorage) {
@@ -104,7 +108,7 @@ public class LanguageSettingsStorage implements Cloneable {
 				List<ICLanguageSettingEntry> sortedEntries = getPooledList(sortEntries(entries), false);
 				langMap.put(rcProjectPath, sortedEntries);
 			} else {
-				// do not keep nulls in the tables
+				// reduct the empty maps in the tables
 				Map<String, List<ICLanguageSettingEntry>> langMap = fStorage.get(languageId);
 				if (langMap!=null) {
 					langMap.remove(rcProjectPath);
@@ -117,14 +121,14 @@ public class LanguageSettingsStorage implements Cloneable {
 	}
 
 	/**
-	 * @return {@code true} if the provider does not keep any settings yet or {@code false} if there are some.
+	 * @return {@code true} if the storage is empty or {@code false} otherwise.
 	 */
 	public boolean isEmpty() {
 		return fStorage.isEmpty();
 	}
 
 	/**
-	 * Clear all the entries for all configurations, all resources and all languages.
+	 * Clear all the entries for all resources and all languages.
 	 */
 	public void clear() {
 		synchronized (fStorage) {
@@ -133,7 +137,7 @@ public class LanguageSettingsStorage implements Cloneable {
 	}
 
 	/**
-	 * Returns the equal list of entries from the pool to conserve the memory.
+	 * Find and return the equal list of entries from the pool.
 	 *
 	 * @param entries - list of entries to pool.
 	 * @param copy - specify {@code true} to copy the list in order to prevent
@@ -161,7 +165,7 @@ public class LanguageSettingsStorage implements Cloneable {
 	}
 
 	/**
-	 * Returns the equal list of entries from the pool to conserve the memory.
+	 * Find and return the equal list of entries from the pool to conserve the memory.
 	 *
 	 * @param entries - list of entries to pool.
 	 * @return returns the list of entries from the pool.
@@ -171,8 +175,9 @@ public class LanguageSettingsStorage implements Cloneable {
 	}
 
 	/**
-	 * @return the empty immutable list which is pooled. Use this call rather than creating
-	 * new empty array to ensure that operator '==' can be used instead of deep equals().
+	 * @return Returns the empty immutable list which is pooled. Use this call rather than creating
+	 * new empty array to ensure that faster shallow operator '==' can be used instead of equals()
+	 * which goes deep on HashMaps.
 	 */
 	public static List<ICLanguageSettingEntry> getPooledEmptyList() {
 		List<ICLanguageSettingEntry> pooledEmptyList = Collections.emptyList();
@@ -181,7 +186,7 @@ public class LanguageSettingsStorage implements Cloneable {
 
 	/**
 	 * Clone storage for the entries. Copies references for lists of entries as a whole.
-	 * Note that is OK as the lists kept in storage are unmodifiable.
+	 * Note that that is OK as the lists kept in storage are unmodifiable and pooled.
 	 */
 	@Override
 	public LanguageSettingsStorage clone() throws CloneNotSupportedException {
@@ -197,7 +202,7 @@ public class LanguageSettingsStorage implements Cloneable {
 				for (Entry<String, List<ICLanguageSettingEntry>> entryRc : entrySetRc) {
 					String rcProjectPath = entryRc.getKey();
 					List<ICLanguageSettingEntry> lsEntries = entryRc.getValue();
-					// don't need to clone entries, they are from the LSE pool
+					// don't need to clone entries, they are from the LSE lists pool
 					mapRcClone.put(rcProjectPath, lsEntries);
 				}
 				storageClone.fStorage.put(langId, mapRcClone);

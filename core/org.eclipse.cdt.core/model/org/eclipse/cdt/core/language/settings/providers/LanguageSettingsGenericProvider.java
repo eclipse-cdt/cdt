@@ -8,12 +8,14 @@
  * Contributors:
  *     Andrew Gvozdev - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.core.language.settings.providers;
 
 /**
  * Generic implementation of language settings provider which can be edited in UI
  * with entries persisted between eclipse sessions.
+ * The instances of this class can be used in plugin.xml to create a new provider
+ * but this class is not intended to be extended. For more details how to create a
+ * language settings provider see the description of {@link ILanguageSettingsProvider}.
  */
 final public class LanguageSettingsGenericProvider extends LanguageSettingsSerializableProvider
 		implements ILanguageSettingsEditableProvider {

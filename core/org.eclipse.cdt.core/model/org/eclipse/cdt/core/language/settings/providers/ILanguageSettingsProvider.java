@@ -27,12 +27,18 @@ import org.eclipse.core.resources.IResource;
  * <br><br>
  * To define a provider like that use extension point
  * {@code org.eclipse.cdt.core.LanguageSettingsProvider} and implement this
- * interface. CDT provides a few general use implementations such as
- * {@link LanguageSettingsBaseProvider} or {@link LanguageSettingsSerializableProvider}
- * or {@link LanguageSettingsGenericProvider} which could be used out of the box or
- * extended. See also extension point schema description LanguageSettingsProvider.exsd.
- *
- * @since 6.0
+ * interface. The recommended way of implementing is to extend
+ * {@link LanguageSettingsSerializableProvider} and implement {@link ILanguageSettingsEditableProvider}.
+ * That will give the ability to persist and edit/clean entries by user in UI.
+ * The clone methods defined by {@link ILanguageSettingsEditableProvider} should be
+ * chained as done for example by {@link LanguageSettingsGenericProvider}.
+ * <br><br>
+ * CDT provides a few general use implementations in the core such as {@link LanguageSettingsBaseProvider}
+ * or {@link LanguageSettingsSerializableProvider} or {@link LanguageSettingsGenericProvider}
+ * which could be used out of the box or built upon. There are also abstract classes in build
+ * plugins {@code AbstractBuildCommandParser} and {@code AbstractBuiltinSpecsDetector} which
+ * serve as a base for output parsers and built-in compiler language settings detectors.
+ * See also extension point schema description LanguageSettingsProvider.exsd.
  */
 public interface ILanguageSettingsProvider {
 	/**
@@ -65,7 +71,9 @@ public interface ILanguageSettingsProvider {
 	 *
 	 * @param cfgDescription - configuration description.
 	 * @param rc - resource such as file or folder.
-	 * @param languageId - language id
+	 *    If {@code null}, the default entries for all resources are returned.
+	 * @param languageId - language id.
+	 *    If {@code null}, the default entries for all languages are returned.
 	 *     (see {@link LanguageManager#getLanguageForFile(org.eclipse.core.resources.IFile, ICConfigurationDescription)}).
 	 *
 	 * @return the list of setting entries or {@code null} if no settings defined.

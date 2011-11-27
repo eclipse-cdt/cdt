@@ -8,7 +8,6 @@
  * Contributors:
  *     Andrew Gvozdev - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.core.language.settings.providers;
 
 import java.util.ArrayList;
@@ -17,24 +16,25 @@ import java.util.List;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.internal.core.XmlUtil;
+import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsSerializableStorage;
 import org.eclipse.core.resources.IResource;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-
 /**
  * This class is the base class for language settings providers able to serialize
  * into XML storage.
- * Although this class has setter methods, it is not editable in UI by design.
- * Implement {@link ILanguageSettingsEditableProvider} interface for that.
- *
- * TODO - more JavaDoc, info and hints about class hierarchy
- *
+ * Although this class has setter methods, its instances are not editable in UI by
+ * design. Implement {@link ILanguageSettingsEditableProvider} interface for that.
+ * For more on the suggested way of extending this class see the description of
+ * {@link ILanguageSettingsProvider}.
  */
 public class LanguageSettingsSerializableProvider extends LanguageSettingsBaseProvider implements ILanguageSettingsBroadcastingProvider {
+	/** This field is for internal use only */
 	public static final String ELEM_PROVIDER = "provider"; //$NON-NLS-1$
 	private static final String ATTR_ID = "id"; //$NON-NLS-1$
 
@@ -53,6 +53,7 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 
 	/**
 	 * Default constructor. This constructor has to be always followed with setting id and name of the provider.
+	 * This constructor is necessary to instantiate the class via the extension point in plugin.xml.
 	 */
 	public LanguageSettingsSerializableProvider() {
 		super();
@@ -62,7 +63,7 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 	 * Constructor.
 	 *
 	 * @param id - id of the provider.
-	 * @param name - name of the provider. Note that this name may show up in UI.
+	 * @param name - name of the provider. Note that this name shows up in UI.
 	 */
 	public LanguageSettingsSerializableProvider(String id, String name) {
 		super(id, name);
@@ -153,12 +154,19 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 
 	/**
 	 * Sets language settings entries for the provider.
-	 * Note that the entries are not persisted at that point. To persist use TODO
+	 * Note that the entries are not persisted at that point. Use this method to
+	 * set the entries for all resources and then to persist use
+	 * {@fixme FIXME - update references with API versions}
+	 * {@link LanguageSettingsProvidersSerializer#serializeLanguageSettings(ICProjectDescription)} or
+	 * {@link LanguageSettingsProvidersSerializer#serializeLanguageSettingsWorkspace()}.
+	 * See for example {@code AbstractBuildCommandParser} and {@code AbstractBuiltinSpecsDetector}
+	 * in build plugins.
 	 *
 	 * @param cfgDescription - configuration description.
-	 * @param rc - resource such as file or folder.
-	 * @param languageId - language id. If {@code null}, then entries are considered to be defined for
-	 *    the language scope. See {@link #getLanguageScope()}
+	 * @param rc - resource such as file or folder. If {@code null} the entries are
+	 *    considered to be being defined as default entries for resources.
+	 * @param languageId - language id. If {@code null}, then entries are considered
+	 *    to be defined for the language scope. See {@link #getLanguageScope()}
 	 * @param entries - language settings entries to set.
 	 */
 	public void setSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId, List<ICLanguageSettingEntry> entries) {
@@ -171,17 +179,18 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 	 * <br>
 	 * Note that this list is <b>unmodifiable</b>. To modify the list copy it, change and use
 	 * {@link #setSettingEntries(ICConfigurationDescription, IResource, String, List)}.
-	 * <br>
+	 * <br><br>
 	 * Note also that <b>you can compare these lists with simple equality operator ==</b>,
-	 * as lists themselves are backed by WeakHashSet<List<ICLanguageSettingEntry>> where
+	 * as the lists themselves are backed by WeakHashSet<List<ICLanguageSettingEntry>> where
 	 * identical copies (deep comparison is used) are replaced with the same one instance.
 	 */
 	@Override
 	public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId) {
-		List<ICLanguageSettingEntry> entries = fStorage.getSettingEntries(cfgDescription, rc, languageId);
+		String rcProjectPath = rc!=null ? rc.getProjectRelativePath().toString() : null;
+		List<ICLanguageSettingEntry> entries = fStorage.getSettingEntries(rcProjectPath, languageId);
 		if (entries == null) {
-			if (languageId!=null && (languageScope==null || languageScope.contains(languageId))) {
-				entries = getSettingEntries(cfgDescription, rc, null);
+			if (languageId != null && (languageScope == null || languageScope.contains(languageId))) {
+				entries = fStorage.getSettingEntries(rcProjectPath, null);
 			}
 		}
 
@@ -195,7 +204,7 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 	 * {@link #serializeEntries(Element)} instead.
 	 *
 	 * @param parentElement - element where to serialize.
-	 * @return - newly created <provider> element. That element will already be
+	 * @return - newly created "provider" element. That element will already be
 	 *    attached to the parent element.
 	 */
 	final public Element serialize(Element parentElement) {
@@ -219,7 +228,7 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 	 * equivalent to serializing everything (including language scope) except entries.
 	 *
 	 * @param parentElement - element where to serialize.
-	 * @return - newly created <provider> element. That element will already be
+	 * @return - newly created "provider" element. That element will already be
 	 *    attached to the parent element.
 	 */
 	public Element serializeAttributes(Element parentElement) {
@@ -253,7 +262,7 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 	 * Override {@link #loadAttributes(Element)} or
 	 * {@link #loadEntries(Element)} instead.
 	 *
-	 * @param providerNode - XML element <provider> to load provider from.
+	 * @param providerNode - XML element "provider" to load provider from.
 	 */
 	final public void load(Element providerNode) {
 		fStorage.clear();
@@ -280,7 +289,7 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 
 	/**
 	 * Load attributes from XML provider element.
-	 * @param providerNode - XML element <provider> to load attributes from.
+	 * @param providerNode - XML element "provider" to load attributes from.
 	 */
 	public void loadAttributes(Element providerNode) {
 		String providerId = XmlUtil.determineAttributeValue(providerNode, ATTR_ID);
@@ -308,15 +317,15 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 
 	/**
 	 * Load provider entries from XML provider element.
-	 * @param providerNode - parent XML element <provider> where entries are defined.
+	 * @param providerNode - parent XML element "provider" where entries are defined.
 	 */
 	public void loadEntries(Element providerNode) {
 		fStorage.loadEntries(providerNode);
 	}
 
 	/**
-	 * See {@link #cloneShallow()}. This method is extracted
-	 * to avoid expressing {@link #clone()} via {@link #cloneShallow()}.
+	 * See {@link #cloneShallow()}. This method is extracted to avoid expressing
+	 * {@link #clone()} via {@link #cloneShallow()}. Do not inline to "optimize"!
 	 */
 	private LanguageSettingsSerializableProvider cloneShallowInternal() throws CloneNotSupportedException {
 		LanguageSettingsSerializableProvider clone = (LanguageSettingsSerializableProvider)super.clone();

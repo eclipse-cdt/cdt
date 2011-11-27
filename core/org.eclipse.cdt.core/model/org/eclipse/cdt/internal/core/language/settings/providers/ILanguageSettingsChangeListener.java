@@ -10,17 +10,19 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.language.settings.providers;
 
+import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+
 /**
- * An interface for listeners to changes in language settings.
- * 
+ * An interface for listeners to changes in language settings {@link ICLanguageSettingEntry}.
+ *
  * @see LanguageSettingsProvidersSerializer#registerLanguageSettingsChangeListener(ILanguageSettingsChangeListener)
  * @see LanguageSettingsProvidersSerializer#unregisterLanguageSettingsChangeListener(ILanguageSettingsChangeListener)
  */
 public interface ILanguageSettingsChangeListener {
 	/**
 	 * Indicates that language settings have been changed.
-	 * 
-	 * @param event - details of the event. 
+	 *
+	 * @param event - details of the event.
 	 */
 	public void handleEvent(ILanguageSettingsChangeEvent event);
 }

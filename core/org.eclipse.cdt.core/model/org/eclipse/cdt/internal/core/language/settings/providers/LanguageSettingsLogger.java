@@ -7,6 +7,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
+/**
+ *  Temporary class for logging language settings providers development.
+ *
+ */
 @Deprecated
 public class LanguageSettingsLogger {
 
@@ -15,7 +19,6 @@ public class LanguageSettingsLogger {
 //		return true;
 	}
 
-	// AG FIXME
 	/**
 	 * @param msg
 	 * @noreference This method is not intended to be referenced by clients.
@@ -29,7 +32,6 @@ public class LanguageSettingsLogger {
 		}
 	}
 
-	// AG FIXME
 	/**
 	 * @param msg
 	 * @noreference This method is not intended to be referenced by clients.
@@ -43,7 +45,6 @@ public class LanguageSettingsLogger {
 		}
 	}
 
-	// AG FIXME
 	/**
 	 * @param msg
 	 * @noreference This method is not intended to be referenced by clients.
@@ -56,8 +57,7 @@ public class LanguageSettingsLogger {
 			CCorePlugin.log(status);
 		}
 	}
-	
-	// AG FIXME
+
 	/**
 	 * @param rc
 	 * @param who - pass "this" (calling class instance) here

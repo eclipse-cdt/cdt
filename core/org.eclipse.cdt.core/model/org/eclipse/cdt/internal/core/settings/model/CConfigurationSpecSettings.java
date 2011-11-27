@@ -23,9 +23,10 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsBroadcastingProvider;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
-import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializableProvider;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsStorage;
 import org.eclipse.cdt.core.settings.model.CExternalSetting;
 import org.eclipse.cdt.core.settings.model.ICBuildSetting;
 import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
@@ -45,7 +46,6 @@ import org.eclipse.cdt.internal.core.cdtvariables.StorableCdtVariables;
 import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsDelta;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
-import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsStorage;
 import org.eclipse.cdt.utils.envvar.StorableEnvironment;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
@@ -193,11 +193,15 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 		fOwner = base.fOwner;
 
 		copyExtensionInfo(base);
-		
+
 		fLanguageSettingsProviders = LanguageSettingsProvidersSerializer.cloneProviders(base.getLanguageSettingProviders());
 		for (String providerId : base.lspPersistedState.keySet()) {
-			LanguageSettingsStorage clone = base.lspPersistedState.get(providerId).cloneStorage();
-			lspPersistedState.put(providerId, clone);
+			try {
+				LanguageSettingsStorage clone = base.lspPersistedState.get(providerId).clone();
+				lspPersistedState.put(providerId, clone);
+			} catch (CloneNotSupportedException e) {
+				CCorePlugin.log(e);
+			}
 		}
 	}
 
@@ -997,11 +1001,11 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 	public void updateExternalSettingsProviders(String[] ids){
 		ExtensionContainerFactory.updateReferencedProviderIds(fCfg, ids);
 	}
-	
+
 	/**
 	 * Adds list of {@link ILanguageSettingsProvider} to the specs.
 	 * Note that only unique IDs are accepted.
-	 * 
+	 *
 	 * @param providers - list of providers to keep in the specs.
 	 */
 	public void setLanguageSettingProviders(List<ILanguageSettingsProvider> providers) {
@@ -1035,32 +1039,25 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 	 */
 	public LanguageSettingsDelta dropDelta() {
 		LanguageSettingsDelta languageSettingsDelta = null;
-		// newState gets shallow map first
-		LinkedHashMap<String, LanguageSettingsStorage> newStateShallow = new LinkedHashMap<String, LanguageSettingsStorage>();
+		LinkedHashMap<String, LanguageSettingsStorage> newState = new LinkedHashMap<String, LanguageSettingsStorage>();
 		for (ILanguageSettingsProvider provider : fLanguageSettingsProviders) {
 			if (LanguageSettingsManager.isWorkspaceProvider(provider)) {
 				provider = LanguageSettingsManager.getRawProvider(provider);
 			}
-			if (provider instanceof LanguageSettingsSerializableProvider) {
-				LanguageSettingsStorage store = ((LanguageSettingsSerializableProvider) provider).getStorageInternal();
-				if (!store.isEmpty()) {
-					newStateShallow.put(provider.getId(), store);
+			if (provider instanceof ILanguageSettingsBroadcastingProvider) {
+				LanguageSettingsStorage store = ((ILanguageSettingsBroadcastingProvider) provider).copyStorage();
+				// avoid triggering event if empty provider was added
+				if (store != null && !store.isEmpty()) {
+					newState.put(provider.getId(), store);
 				}
 			}
 		}
-		if (!newStateShallow.equals(lspPersistedState)) {
-			// do deep copy if the state needs to be saved
-			LinkedHashMap<String, LanguageSettingsStorage> newStateDeep = new LinkedHashMap<String, LanguageSettingsStorage>();
-			for (Entry<String, LanguageSettingsStorage> entry : newStateShallow.entrySet()) {
-				String providerId = entry.getKey();
-				LanguageSettingsStorage store = entry.getValue();
-				newStateDeep.put(providerId, store.cloneStorage());
-			}
-			languageSettingsDelta = new LanguageSettingsDelta(lspPersistedState, newStateDeep);
-			lspPersistedState = newStateDeep;
+		if (!newState.equals(lspPersistedState)) {
+			languageSettingsDelta = new LanguageSettingsDelta(lspPersistedState, newState);
+			lspPersistedState = newState;
 		}
-		
+
 		return languageSettingsDelta;
 	}
-	
+
 }

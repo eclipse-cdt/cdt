@@ -30,9 +30,29 @@ public interface ILanguageSettingsEditableProvider extends ILanguageSettingsBroa
 	public String getName();
 	@Override
 	public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId);
-	@Override
+
+	/**
+	 * Sets language settings entries for the provider.
+	 *
+	 * @param cfgDescription - configuration description.
+	 * @param rc - resource such as file or folder.
+	 * @param languageId - language id. If {@code null}, then entries are considered to be defined for
+	 *    any language.
+	 * @param entries - language settings entries to set.
+	 */
 	public void setSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId, List<ICLanguageSettingEntry> entries);
 
+	/**
+	 * Shallow clone of the provider. "Shallow" is defined here as the exact copy except that
+	 * the copy will have zero language settings entries.
+	 *
+	 * @return shallow copy of the provider.
+	 * @throws CloneNotSupportedException in case {@link #clone()} throws the exception.
+	 */
 	public ILanguageSettingsEditableProvider cloneShallow() throws CloneNotSupportedException;
+
+	/*
+	 * @see Object#clone()
+	 */
 	public ILanguageSettingsEditableProvider clone() throws CloneNotSupportedException;
 }

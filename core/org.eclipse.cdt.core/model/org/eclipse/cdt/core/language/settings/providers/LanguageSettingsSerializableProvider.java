@@ -14,10 +14,11 @@ package org.eclipse.cdt.core.language.settings.providers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.internal.core.XmlUtil;
-import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsStorage;
+import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsSerializableStorage;
 import org.eclipse.core.resources.IResource;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -27,6 +28,8 @@ import org.w3c.dom.NodeList;
 /**
  * This class is the base class for language settings providers able to serialize
  * into XML storage.
+ * Although this class has setter methods, it is not editable in UI by design.
+ * Implement {@link ILanguageSettingsEditableProvider} interface for that.
  *
  * TODO - more JavaDoc, info and hints about class hierarchy
  *
@@ -46,7 +49,7 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 	/** Tells if language settings entries are persisted with the project or in workspace area while serializing. */
 	private boolean storeEntriesInProjectArea = false;
 
-	private LanguageSettingsStorage fStorage = new LanguageSettingsStorage();
+	private LanguageSettingsSerializableStorage fStorage = new LanguageSettingsSerializableStorage();
 
 	/**
 	 * Default constructor. This constructor has to be always followed with setting id and name of the provider.
@@ -158,7 +161,6 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 	 *    the language scope. See {@link #getLanguageScope()}
 	 * @param entries - language settings entries to set.
 	 */
-	@Override
 	public void setSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId, List<ICLanguageSettingEntry> entries) {
 		String rcProjectPath = rc!=null ? rc.getProjectRelativePath().toString() : null;
 		fStorage.setSettingEntries(rcProjectPath, languageId, entries);
@@ -321,7 +323,7 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 		if (languageScope!=null)
 			clone.languageScope = new ArrayList<String>(languageScope);
 
-		clone.fStorage = new LanguageSettingsStorage();
+		clone.fStorage = new LanguageSettingsSerializableStorage();
 		return clone;
 	}
 
@@ -339,7 +341,7 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 	@Override
 	protected LanguageSettingsSerializableProvider clone() throws CloneNotSupportedException {
 		LanguageSettingsSerializableProvider clone = cloneShallowInternal();
-		clone.fStorage = fStorage.cloneStorage();
+		clone.fStorage = fStorage.clone();
 		return clone;
 	}
 
@@ -410,10 +412,13 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 		return true;
 	}
 
-	/**
-	 * @noreference This method is not intended to be referenced by clients.
-	 */
-	public LanguageSettingsStorage getStorageInternal() {
-		return fStorage;
+	@Override
+	public LanguageSettingsStorage copyStorage() {
+		try {
+			return fStorage.clone();
+		} catch (CloneNotSupportedException e) {
+			CCorePlugin.log(e);
+		}
+		return null;
 	}
 }

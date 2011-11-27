@@ -12,6 +12,8 @@ package org.eclipse.cdt.internal.core.language.settings.providers;
 
 import java.util.LinkedHashMap;
 
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsStorage;
+
 
 /**
  * This class currently is a placeholder holding old and new states.
@@ -21,11 +23,11 @@ public class LanguageSettingsDelta {
 	// maps need to be ordered by providers
 	@SuppressWarnings("unused")
 	private LinkedHashMap<String, // providerId
-					LanguageSettingsStorage> oldLanguageSettingsState;
+			LanguageSettingsStorage> oldLanguageSettingsState;
 	@SuppressWarnings("unused")
 	private LinkedHashMap<String, // providerId
-					LanguageSettingsStorage> newLanguageSettingsState;
-	
+			LanguageSettingsStorage> newLanguageSettingsState;
+
 	public LanguageSettingsDelta(LinkedHashMap<String, LanguageSettingsStorage> oldState, LinkedHashMap<String, LanguageSettingsStorage> newState) {
 		oldLanguageSettingsState = oldState;
 		newLanguageSettingsState = newState;

@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.AbstractExecutableExtensionBase;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsBroadcastingProvider;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsStorage;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICFileDescription;
 import org.eclipse.cdt.core.settings.model.ICFolderDescription;
@@ -27,6 +28,9 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 
+/**
+ * Implementation of language settings provider for CDT Managed Build System.
+ */
 public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase implements ILanguageSettingsBroadcastingProvider {
 	@Override
 	public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId) {
@@ -90,7 +94,6 @@ public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase
 		return array;
 	}
 
-	@Override
 	public void setSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId,
 			List<ICLanguageSettingEntry> entries) {
 
@@ -121,6 +124,27 @@ public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase
 				System.err.println("languageSetting=null: rcDescription=" + rcDescription.getName());
 			}
 		}
+	}
+
+	@Override
+	public LanguageSettingsStorage copyStorage() {
+		class PretendStorage extends LanguageSettingsStorage {
+			@Override
+			public boolean isEmpty() {
+				return false;
+			}
+			@Override
+			public LanguageSettingsStorage clone() throws CloneNotSupportedException {
+				throw new CloneNotSupportedException();
+//				return this;
+			}
+			@Override
+			public boolean equals(Object obj) {
+				// Note that this always triggers change event even if nothing changed in MBS
+				return false;
+			}
+		}
+		return new PretendStorage();
 	}
 
 }

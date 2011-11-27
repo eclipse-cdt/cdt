@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditabl
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializableProvider;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsStorage;
 import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.LanguageManager;
@@ -338,7 +339,7 @@ public class LanguageSettingsProvidersSerializer {
 	}
 
 	private static List<LanguageSettingsChangeEvent> createLanguageSettingsChangeEvents(List<LanguageSettingsSerializableProvider> serializableProviders) {
-		List<LanguageSettingsChangeEvent> events = new ArrayList<LanguageSettingsProvidersSerializer.LanguageSettingsChangeEvent>();
+		List<LanguageSettingsChangeEvent> events = new ArrayList<LanguageSettingsChangeEvent>();
 
 		List<String> serializableIds = new ArrayList<String>();
 		for (LanguageSettingsSerializableProvider provider : serializableProviders) {

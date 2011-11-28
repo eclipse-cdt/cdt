@@ -629,12 +629,8 @@ public class CSourceHover extends AbstractCEditorTextHover {
 
 				String[] sourceLines= Strings.convertIntoLines(source);
 				String firstLine= sourceLines[0];
-				if (firstLine.length() > 0 && !Character.isWhitespace(firstLine.charAt(0)))
-					sourceLines[0]= ""; //$NON-NLS-1$
-				Strings.trimIndentation(sourceLines, getTabWidth(), getTabWidth());
-
-				if (!Character.isWhitespace(firstLine.charAt(0)))
-					sourceLines[0]= firstLine;
+				boolean ignoreFirstLine = firstLine.length() > 0 && !Character.isWhitespace(firstLine.charAt(0));
+				Strings.trimIndentation(sourceLines, getTabWidth(), getTabWidth(), !ignoreFirstLine);
 
 				source = Strings.concatenate(sourceLines, delim);
 				return source;

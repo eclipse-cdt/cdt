@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,9 +11,11 @@
 package org.eclipse.cdt.make.internal.core.scannerconfig2;
 
 import java.util.List;
+import java.util.Properties;
 
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
 import org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCScannerConfigUtil;
@@ -26,6 +28,20 @@ import org.eclipse.core.runtime.CoreException;
  * @author vhirsl
  */
 public class GCCSpecsRunSIProvider extends DefaultRunSIProvider {
+    /**
+     * Override LC_ALL so {@link org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCSpecsConsoleParser}
+     * understands the diagnostics generated when non-English locale is active.
+     * 
+     * @see org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCSpecsConsoleParser
+     */
+    @Override
+    protected String[] setEnvironment(ICommandLauncher launcher, Properties initialEnv) {
+        Properties extendedEnv = new Properties();
+        extendedEnv.putAll(initialEnv);
+        extendedEnv.put("LC_ALL", "C");  //$NON-NLS-1$ //$NON-NLS-2$
+
+        return super.setEnvironment(launcher, extendedEnv);
+    }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.internal.core.scannerconfig2.DefaultRunSIProvider#initialize()

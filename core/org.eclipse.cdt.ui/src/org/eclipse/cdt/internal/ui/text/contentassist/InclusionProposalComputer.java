@@ -257,6 +257,9 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 		final int prefixLength = namePrefix.length();
 		final IProject project= tu.getCProject().getProject();
 		File[] files= fileDir.listFiles();
+		if (files == null) {
+			return;
+		}
 		IContentAssistMatcher matcher = ContentAssistMatcherFactory.getInstance().createMatcher(namePrefix);
 		for (File file : files) {
 			final String name= file.getName();

@@ -287,6 +287,42 @@ public class IndexNamesTests extends BaseTestCase {
 			fIndex.releaseReadLock();
 		}
 	}
+	
+	//	class A {
+	//	    virtual void foo(){} 
+	//	    template<typename C> void SetCallback(C callback){}
+	//	    void InitCallback() {
+	//	        SetCallback(&A::foo); // Can be A::foo or B::foo
+	//	    }
+	//	};
+	//	class B: public A {
+	//	    virtual void foo(){}
+	//	};
+	public void testAddressOfPolymorphicMethod_Bug363731() throws Exception {
+		waitForIndexer();
+		String content= getComment();
+		IFile file= createFile(getProject().getProject(), "test.cpp", content);
+		waitUntilFileIsIndexed(file, 4000);
+
+		fIndex.acquireReadLock();
+		try {
+			IIndexFile ifile= getIndexFile(ILinkage.CPP_LINKAGE_ID, file);
+			IIndexName[] names= ifile.findNames(0, content.length());
+			int j= 0;
+			for (IIndexName indexName : names) {
+				if (indexName.isReference() && indexName.toString().equals("foo")) {
+					assertEquals(true, indexName.couldBePolymorphicMethodCall());
+					assertEquals("A", CPPVisitor.getQualifiedName(fIndex.findBinding(indexName))[0]);
+					j++;
+				} else {
+					assertEquals(false, indexName.couldBePolymorphicMethodCall());
+				}
+			}
+			assertEquals(1, j);
+		} finally {
+			fIndex.releaseReadLock();
+		}
+	}
 
 	//	int _i, ri, wi, rwi;
 	//  int* rp; int* wp; int* rwp;

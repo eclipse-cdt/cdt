@@ -5605,4 +5605,15 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testNestedTemplateAmbiguity_363609() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	struct A {
+	//	    void m() {}
+	//	};
+	//	template <class T, void (T::*m)() = &T::m> struct B {};
+	//	void test() {
+	//		B<A> b1;
+	//	}
+	public void testDefaultArgForNonTypeTemplateParameter_363743() throws Exception {
+		parseAndCheckBindings();
+	}
 }

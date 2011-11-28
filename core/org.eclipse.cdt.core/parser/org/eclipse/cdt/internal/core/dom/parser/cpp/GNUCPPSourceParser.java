@@ -2390,7 +2390,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		case IToken.t_try:
         case IToken.tLBRACE:
         case IToken.tASSIGN: // defaulted or deleted function definition
-        	if (declarators.length != 1)
+        	if (declarators.length != 1 || !declOption.fAllowFunctionDefinition)
         		throwBacktrack(LA(1));
         	
         	dtor= declarators[0];

@@ -216,7 +216,7 @@ public class GCCCompleteParseExtensionsTest extends AST2BaseTest {
 		parseGPP( writer.toString() );
         
         writer = new StringWriter();
-        writer.write( "int x = ({ int foo() { return 1; } int y = foo (); int z;\n" ); //$NON-NLS-1$
+        writer.write( "int x = ({ int foo(); int y = foo (); int z;\n" ); //$NON-NLS-1$
         writer.write( "if (y > 0) z = y;\n" ); //$NON-NLS-1$
         writer.write( "else z = - y;\n" );//$NON-NLS-1$
         writer.write( "z; });\n" );//$NON-NLS-1$

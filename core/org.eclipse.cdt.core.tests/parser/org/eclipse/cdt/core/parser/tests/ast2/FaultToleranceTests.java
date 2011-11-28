@@ -278,4 +278,41 @@ public class FaultToleranceTests extends AST2BaseTest {
     	p= getDeclaration(tu, 1);
     	s= getDeclaration(tu, 2);
 	}
+	
+	//	    TINT* f(TINT* p) {
+	//	    TINT* f1(TINT* p) {
+	//	    TINT* f2(TINT* p) {
+	//	    TINT* f3(TINT* p) {
+	//	    TINT* f4(TINT* p) {
+	//	    TINT* f5(TINT* p) {
+	//	    TINT* f6(TINT* p) {
+	//	    TINT* f7(TINT* p) {
+	//	    TINT* f8(TINT* p) {
+	//	    TINT* f9(TINT* p) {
+	//	    TINT* f10(TINT* p) {
+	//	    TINT* f11(TINT* p) {
+	//	    TINT* f12(TINT* p) {
+	//	    TINT* f13(TINT* p) {
+	//	    TINT* f14(TINT* p) {
+	//	    TINT* f15(TINT* p) {
+	//	    TINT* f16(TINT* p) {
+	//	    TINT* f17(TINT* p) {
+	//	    TINT* f18(TINT* p) {
+	//	    TINT* f19(TINT* p) {
+	//	    TINT* f20(TINT* p) {
+	//	    TINT* f21(TINT* p) {
+	//	    TINT* f22(TINT* p) {
+	//	    TINT* f23(TINT* p) {
+	//	    TINT* f24(TINT* p) {
+	//	    TINT* f25(TINT* p) {
+	//	    TINT* f26(TINT* p) {
+	//	    TINT* f27(TINT* p) {
+	//	    TINT* f28(TINT* p) {
+	//	    TINT* f29(TINT* p) {
+	//	    }
+	public void testPerformanceIssue_364108() throws Exception {
+    	final String comment= getAboveComment();
+    	parse(comment, ParserLanguage.CPP, false, false);
+    	parse(comment, ParserLanguage.C, false, false);
+	}
 }

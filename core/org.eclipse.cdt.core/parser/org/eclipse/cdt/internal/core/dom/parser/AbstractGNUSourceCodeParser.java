@@ -1874,9 +1874,11 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             ds = nodeFactory.newDeclarationStatement(d);
             setRange(ds, d);
         } catch (BacktrackException b) {
-            if (expressionStatement == null) {
-            	IASTNode node = b.getNodeBeforeProblem();
-            	if (node instanceof IASTDeclaration) {
+        	IASTNode node = b.getNodeBeforeProblem();
+        	final boolean isProblemDecl = node instanceof IASTDeclaration;
+            if (expressionStatement == null
+            		|| (!foundSemicolon && isProblemDecl && node.contains(expressionStatement))) {
+				if (isProblemDecl) {
             		ds= nodeFactory.newDeclarationStatement((IASTDeclaration) node);
             		b.initialize(b.getProblem(), setRange(ds, node));
             	}

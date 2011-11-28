@@ -199,7 +199,7 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 				LanguageSettingsStorage clone = base.lspPersistedState.get(providerId).clone();
 				lspPersistedState.put(providerId, clone);
 			} catch (CloneNotSupportedException e) {
-				CCorePlugin.log(e);
+				CCorePlugin.log("Not able to clone language settings storage:" + e); //$NON-NLS-1$
 			}
 		}
 	}

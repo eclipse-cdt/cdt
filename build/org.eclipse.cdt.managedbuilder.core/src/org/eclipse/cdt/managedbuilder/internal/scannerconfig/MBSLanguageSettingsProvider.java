@@ -135,8 +135,7 @@ public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase
 			}
 			@Override
 			public LanguageSettingsStorage clone() throws CloneNotSupportedException {
-				throw new CloneNotSupportedException();
-//				return this;
+				return this;
 			}
 			@Override
 			public boolean equals(Object obj) {

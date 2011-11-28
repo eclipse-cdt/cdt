@@ -61,6 +61,7 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 
 	private String fErrorMessage;
 
+	@Override
 	public List<ICompletionProposal> computeCompletionProposals(ContentAssistInvocationContext context, IProgressMonitor monitor) {
 		List<ICompletionProposal> proposals= Collections.emptyList();
 		fErrorMessage= null;
@@ -81,17 +82,21 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 		return proposals;
 	}
 
+	@Override
 	public List<IContextInformation> computeContextInformation(ContentAssistInvocationContext context, IProgressMonitor monitor) {
 		return null;
 	}
 
+	@Override
 	public String getErrorMessage() {
 		return fErrorMessage;
 	}
 
+	@Override
 	public void sessionEnded() {
 	}
 
+	@Override
 	public void sessionStarted() {
 	}
 
@@ -257,6 +262,9 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 		final int prefixLength = namePrefix.length();
 		final IProject project= tu.getCProject().getProject();
 		File[] files= fileDir.listFiles();
+		if (files == null) {
+			return;
+		}
 		IContentAssistMatcher matcher = ContentAssistMatcherFactory.getInstance().createMatcher(namePrefix);
 		for (File file : files) {
 			final String name= file.getName();
@@ -311,6 +319,7 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 		final IProject project= tu.getCProject().getProject();
 		parent.accept(new IResourceProxyVisitor() {
 			boolean fFirstVisit= true;
+			@Override
 			public boolean visit(IResourceProxy proxy) throws CoreException {
 				final int type= proxy.getType();
 				final String name= proxy.getName();

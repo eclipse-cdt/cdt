@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.settings.model.ICFileDescription;
 import org.eclipse.cdt.core.settings.model.ICFolderDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsExtensionManager;
@@ -35,8 +36,6 @@ import org.eclipse.core.runtime.IPath;
 /**
  * A collection of utility methods to manage language settings providers.
  * See {@link ILanguageSettingsProvider}.
- *
- * @since 6.0
  */
 public class LanguageSettingsManager {
 	/**
@@ -255,6 +254,43 @@ public class LanguageSettingsManager {
 		}
 
 		return languageIds;
+	}
+
+	/**
+	 * Adds a listener that will be notified of changes in language settings.
+	 *
+	 * @param listener the listener to add
+	 */
+	public static void registerLanguageSettingsChangeListener(ILanguageSettingsChangeListener listener) {
+		LanguageSettingsProvidersSerializer.registerLanguageSettingsChangeListener(listener);
+	}
+
+	/**
+	 * Removes a language settings change listener.
+	 *
+	 * @param listener the listener to remove.
+	 */
+	public static void unregisterLanguageSettingsChangeListener(ILanguageSettingsChangeListener listener) {
+		LanguageSettingsProvidersSerializer.unregisterLanguageSettingsChangeListener(listener);
+	}
+
+	/**
+	 * Save language settings providers of a project to persistent storage.
+	 *
+	 * @param prjDescription - project description of the project.
+	 * @throws CoreException if something goes wrong.
+	 */
+	public static void serializeLanguageSettings(ICProjectDescription prjDescription) throws CoreException {
+		LanguageSettingsProvidersSerializer.serializeLanguageSettings(prjDescription);
+	}
+
+	/**
+	 * Save language settings providers of the workspace (global providers) to persistent storage.
+	 *
+	 * @throws CoreException
+	 */
+	public static void serializeLanguageSettingsWorkspace() throws CoreException {
+		LanguageSettingsProvidersSerializer.serializeLanguageSettingsWorkspace();
 	}
 
 }

@@ -66,7 +66,7 @@ public class LanguageSettingsLogger {
 	@Deprecated
 	public static void logScannerInfoProvider(IResource rc, Object who) {
 		if (isEnabled()) {
-			String msg = "rc="+rc+" <-- "+who.getClass().getSimpleName();
+			String msg = "rc="+rc+" <-- "+who.getClass().getSimpleName(); //$NON-NLS-1$ //$NON-NLS-2$
 			if (rc instanceof IFile) {
 				LanguageSettingsLogger.logInfo(msg);
 			} else if (rc instanceof IProject) {

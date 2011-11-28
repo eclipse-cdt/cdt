@@ -23,9 +23,6 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
-import org.eclipse.cdt.internal.core.language.settings.providers.ILanguageSettingsChangeEvent;
-import org.eclipse.cdt.internal.core.language.settings.providers.ILanguageSettingsChangeListener;
-import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.core.resources.IProject;
 
 /**
@@ -83,7 +80,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 
 	@Override
 	protected void tearDown() throws Exception {
-		LanguageSettingsProvidersSerializer.unregisterLanguageSettingsChangeListener(mockLseListener);
+		LanguageSettingsManager.unregisterLanguageSettingsChangeListener(mockLseListener);
 		LanguageSettingsManager.setWorkspaceProviders(null);
 		super.tearDown();
 	}
@@ -547,7 +544,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 		}
 
 		// register mock listener to inspect the notifications
-		LanguageSettingsProvidersSerializer.registerLanguageSettingsChangeListener(mockLseListener);
+		LanguageSettingsManager.registerLanguageSettingsChangeListener(mockLseListener);
 		assertEquals(0, mockLseListener.getCount());
 		assertEquals(null, mockLseListener.getLastEvent());
 
@@ -601,7 +598,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 		}
 
 		// register mock listener to inspect the notifications
-		LanguageSettingsProvidersSerializer.registerLanguageSettingsChangeListener(mockLseListener);
+		LanguageSettingsManager.registerLanguageSettingsChangeListener(mockLseListener);
 		assertEquals(0, mockLseListener.getCount());
 		assertEquals(null, mockLseListener.getLastEvent());
 
@@ -666,7 +663,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 		}
 
 		// register mock listener to inspect the notifications
-		LanguageSettingsProvidersSerializer.registerLanguageSettingsChangeListener(mockLseListener);
+		LanguageSettingsManager.registerLanguageSettingsChangeListener(mockLseListener);
 		assertEquals(0, mockLseListener.getCount());
 		assertEquals(null, mockLseListener.getLastEvent());
 
@@ -692,7 +689,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			assertEquals(null, mockLseListener.getLastEvent());
 
 			// Serialize settings
-			LanguageSettingsProvidersSerializer.serializeLanguageSettings(prjDescription);
+			LanguageSettingsManager.serializeLanguageSettings(prjDescription);
 			// inspect event
 			assertEquals(1, mockLseListener.getCount());
 			ILanguageSettingsChangeEvent event = mockLseListener.getLastEvent();
@@ -730,7 +727,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 		}
 
 		// register mock listener to inspect the notifications
-		LanguageSettingsProvidersSerializer.registerLanguageSettingsChangeListener(mockLseListener);
+		LanguageSettingsManager.registerLanguageSettingsChangeListener(mockLseListener);
 		assertEquals(0, mockLseListener.getCount());
 		assertEquals(null, mockLseListener.getLastEvent());
 
@@ -762,7 +759,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			assertNull(mockLseListener.getLastEvent());
 
 			// Serialize settings
-			LanguageSettingsProvidersSerializer.serializeLanguageSettings(prjDescription_1);
+			LanguageSettingsManager.serializeLanguageSettings(prjDescription_1);
 			// inspect event
 			assertEquals(1, mockLseListener.getCount());
 			ILanguageSettingsChangeEvent event = mockLseListener.getLastEvent();
@@ -793,7 +790,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			assertNull(mockLseListener.getLastEvent());
 
 			// Serialize settings
-			LanguageSettingsProvidersSerializer.serializeLanguageSettings(prjDescription_2);
+			LanguageSettingsManager.serializeLanguageSettings(prjDescription_2);
 			// inspect event
 			assertEquals(0, mockLseListener.getCount());
 			ILanguageSettingsChangeEvent event = mockLseListener.getLastEvent();
@@ -825,7 +822,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 		}
 
 		// register mock listener to inspect the notifications
-		LanguageSettingsProvidersSerializer.registerLanguageSettingsChangeListener(mockLseListener);
+		LanguageSettingsManager.registerLanguageSettingsChangeListener(mockLseListener);
 		assertEquals(0, mockLseListener.getCount());
 		assertEquals(null, mockLseListener.getLastEvent());
 
@@ -886,7 +883,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 		}
 
 		// register mock listener to inspect the notifications
-		LanguageSettingsProvidersSerializer.registerLanguageSettingsChangeListener(mockLseListener);
+		LanguageSettingsManager.registerLanguageSettingsChangeListener(mockLseListener);
 		assertEquals(0, mockLseListener.getCount());
 		assertEquals(null, mockLseListener.getLastEvent());
 
@@ -938,7 +935,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
 
 		// register mock listener to inspect the notifications
-		LanguageSettingsProvidersSerializer.registerLanguageSettingsChangeListener(mockLseListener);
+		LanguageSettingsManager.registerLanguageSettingsChangeListener(mockLseListener);
 
 		// Add empty global provider
 		{
@@ -988,7 +985,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			assertEquals(null, mockLseListener.getLastEvent());
 
 			// Serialize settings
-			LanguageSettingsProvidersSerializer.serializeLanguageSettingsWorkspace();
+			LanguageSettingsManager.serializeLanguageSettingsWorkspace();
 
 			// get cfgDescriptionId
 			ICProjectDescription prjDescription = CoreModel.getDefault().getProjectDescription(project, false);
@@ -1023,7 +1020,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			assertEquals(null, mockLseListener.getLastEvent());
 
 			// Serialize settings
-			LanguageSettingsProvidersSerializer.serializeLanguageSettingsWorkspace();
+			LanguageSettingsManager.serializeLanguageSettingsWorkspace();
 
 			// get cfgDescriptionId
 			ICProjectDescription prjDescription = CoreModel.getDefault().getProjectDescription(project, false);

@@ -51,7 +51,7 @@ public class LanguageSettingsManager_TBD {
 			try {
 				return ! LanguageSettingsExtensionManager.equalsExtensionProviderShallow((ILanguageSettingsEditableProvider) provider);
 			} catch (Exception e) {
-				CCorePlugin.log("Internal Error: cannot clone provider "+provider.getId(), e);
+				CCorePlugin.log(e);
 			}
 		}
 		return false;

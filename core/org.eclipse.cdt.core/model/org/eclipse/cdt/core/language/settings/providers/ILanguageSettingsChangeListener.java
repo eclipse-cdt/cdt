@@ -8,15 +8,15 @@
  * Contributors:
  *     Andrew Gvozdev - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.language.settings.providers;
+package org.eclipse.cdt.core.language.settings.providers;
 
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 
 /**
  * An interface for listeners to changes in language settings {@link ICLanguageSettingEntry}.
  *
- * @see LanguageSettingsProvidersSerializer#registerLanguageSettingsChangeListener(ILanguageSettingsChangeListener)
- * @see LanguageSettingsProvidersSerializer#unregisterLanguageSettingsChangeListener(ILanguageSettingsChangeListener)
+ * @see LanguageSettingsManager#registerLanguageSettingsChangeListener(ILanguageSettingsChangeListener)
+ * @see LanguageSettingsManager#unregisterLanguageSettingsChangeListener(ILanguageSettingsChangeListener)
  */
 public interface ILanguageSettingsChangeListener {
 	/**

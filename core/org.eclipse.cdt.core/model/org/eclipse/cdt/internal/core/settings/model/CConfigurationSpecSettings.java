@@ -49,7 +49,6 @@ import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSetting
 import org.eclipse.cdt.utils.envvar.StorableEnvironment;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.osgi.util.NLS;
 
 /**
  * CConfigurationSpecSettings impelements ICSettingsStorage
@@ -1014,15 +1013,13 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 		for (ILanguageSettingsProvider provider : providers) {
 			String id = provider.getId();
 			if (provider==LanguageSettingsProvidersSerializer.getRawWorkspaceProvider(id)) {
-				String msg = "Error: Attempt to add to the configuration raw global provider " + id;
-				throw new IllegalArgumentException(msg);
+				throw new IllegalArgumentException("Error: Attempt to add to the configuration raw global provider " + id); //$NON-NLS-1$
 			}
 			if (!ids.contains(id)) {
 				fLanguageSettingsProviders.add(provider);
 				ids.add(id);
 			} else {
-				String msg = NLS.bind(SettingsModelMessages.getString("CConfigurationSpecSettings.MustHaveUniqueID"), id); //$NON-NLS-1$
-				throw new IllegalArgumentException(msg);
+				throw new IllegalArgumentException("Language Settings Providers must have unique ID. Duplicate ID=" + id); //$NON-NLS-1$
 			}
 		}
 		fIsModified = true;

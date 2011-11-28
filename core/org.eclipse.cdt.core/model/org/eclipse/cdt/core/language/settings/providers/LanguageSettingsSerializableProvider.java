@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.internal.core.XmlUtil;
-import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsSerializableStorage;
 import org.eclipse.core.resources.IResource;
 import org.w3c.dom.Element;
@@ -156,9 +155,8 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 	 * Sets language settings entries for the provider.
 	 * Note that the entries are not persisted at that point. Use this method to
 	 * set the entries for all resources and then to persist use
-	 * {@fixme FIXME - update references with API versions}
-	 * {@link LanguageSettingsProvidersSerializer#serializeLanguageSettings(ICProjectDescription)} or
-	 * {@link LanguageSettingsProvidersSerializer#serializeLanguageSettingsWorkspace()}.
+	 * {@link LanguageSettingsManager#serializeLanguageSettings(ICProjectDescription)} or
+	 * {@link LanguageSettingsManager#serializeLanguageSettingsWorkspace()}.
 	 * See for example {@code AbstractBuildCommandParser} and {@code AbstractBuiltinSpecsDetector}
 	 * in build plugins.
 	 *

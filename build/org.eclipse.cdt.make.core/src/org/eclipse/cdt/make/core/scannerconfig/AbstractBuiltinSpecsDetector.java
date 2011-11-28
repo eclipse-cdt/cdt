@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.language.settings.providers.ICListenerAgent;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
@@ -41,7 +42,6 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.internal.core.ConsoleOutputSniffer;
 import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsLogger;
-import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.internal.core.MakeMessages;
 import org.eclipse.cdt.make.internal.core.StreamMonitor;
@@ -99,7 +99,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 
 	protected URI mappedRootURI = null;
 	protected URI buildDirURI = null;
-	
+
 	private class SDMarkerGenerator implements IMarkerGenerator {
 		protected static final String SCANNER_DISCOVERY_PROBLEM_MARKER = MakeCorePlugin.PLUGIN_ID + ".scanner.discovery.problem"; //$NON-NLS-1$
 		protected static final String PROVIDER = "provider"; //$NON-NLS-1$
@@ -135,14 +135,14 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 					} catch (CoreException e) {
 						return new Status(Status.ERROR, MakeCorePlugin.getUniqueIdentifier(), "Error removing markers.", e);
 					}
-					
+
 					// add new marker
 					try {
 						IMarker marker = problemMarkerInfo.file.createMarker(SDMarkerGenerator.SCANNER_DISCOVERY_PROBLEM_MARKER);
 						marker.setAttribute(IMarker.MESSAGE, problemMarkerInfo.description);
 						marker.setAttribute(IMarker.SEVERITY, problemMarkerInfo.severity);
 						marker.setAttribute(SDMarkerGenerator.PROVIDER, providerId);
-						
+
 						if (problemMarkerInfo.file instanceof IWorkspaceRoot) {
 							marker.setAttribute(IMarker.LOCATION, "SD90 Providers, [" + providerName + "] options in Preferences");
 						} else {
@@ -151,7 +151,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 					} catch (CoreException e) {
 						return new Status(Status.ERROR, MakeCorePlugin.getUniqueIdentifier(), "Error adding markers.", e);
 					}
-					
+
 					return Status.OK_STATUS;
 				}
 			};
@@ -159,9 +159,9 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 			markerJob.setRule(problemMarkerInfo.file);
 			markerJob.schedule();
 		}
-		
+
 	}
-	
+
 	/**
 	 * This ICConsoleParser handles each individual run for one language from
 	 * {@link AbstractBuiltinSpecsDetector#runForEachLanguage(ICConfigurationDescription, IPath, String[], IProgressMonitor)}
@@ -220,7 +220,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		// This works as if workspace-wide
 		return null;
 	}
-	
+
 	@Override
 	protected String determineLanguage() {
 		// language id is supposed to be set by run(), just return it
@@ -234,7 +234,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		}
 		return mappedRootURI;
 	}
-	
+
 	@Override
 	protected URI getBuildDirURI(URI mappedRootURI) {
 		if (buildDirURI==null) {
@@ -246,7 +246,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	@Override
 	public void registerListener(ICConfigurationDescription cfgDescription) {
 		LanguageSettingsLogger.logInfo(getPrefixForLog() + "registerListener [" + System.identityHashCode(this) + "] " + this);
-		
+
 		currentCfgDescription = cfgDescription;
 		execute();
 	}
@@ -264,7 +264,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 			return;
 		}
 		isExecuted = true;
-		
+
 		Job job = new Job("Discover compiler's built-in language settings") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
@@ -275,7 +275,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 				return family == JOB_FAMILY_BUILTIN_SPECS_DETECTOR;
 			}
 		};
-		
+
 		IProject ownerProject = null;
 		if (currentCfgDescription != null) {
 			ICProjectDescription prjDescription = currentCfgDescription.getProjectDescription();
@@ -292,7 +292,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		}
 		job.setRule(rule);
 		job.schedule();
-		
+
 		// TODO - remove me
 		LanguageSettingsLogger.logInfo(getPrefixForLog() + "Execution scheduled [" + System.identityHashCode(this) + "] " + this);
 	}
@@ -312,24 +312,24 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		}
 
 		MultiStatus status = new MultiStatus(MakeCorePlugin.PLUGIN_ID, IStatus.OK, "Problem running CDT Scanner Discovery provider " + getId(), null);
-		
+
 		boolean isChanged = false;
 		mappedRootURI = null;
 		buildDirURI = null;
-		
+
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
 
 		try {
-			
+
 			List<String> languageIds = getLanguageScope();
 			if (languageIds != null) {
 				int totalWork = TICKS_CLEAN_MARKERS + languageIds.size()*TICKS_RUN_FOR_ONE_LANGUAGE + TICKS_SERIALIZATION;
 				monitor.beginTask("CDT Scanner Discovery", totalWork * TICKS_SCALE);
-				
+
 				IResource markersResource = currentProject!= null ? currentProject : ResourcesPlugin.getWorkspace().getRoot();
-				
+
 				// clear old markers
 				monitor.subTask("Clearing stale markers");
 				try {
@@ -342,19 +342,19 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 				} catch (CoreException e) {
 					MakeCorePlugin.log(e);
 				}
-				
+
 				if (monitor.isCanceled())
 					throw new OperationCanceledException();
-				
+
 				monitor.worked(TICKS_CLEAN_MARKERS * TICKS_SCALE);
-				
+
 				for (String languageId : languageIds) {
 					List<ICLanguageSettingEntry> oldEntries = getSettingEntries(cfgDescription, null, languageId);
 					try {
 						startupForLanguage(languageId);
 						if (monitor.isCanceled())
 							throw new OperationCanceledException();
-						
+
 						runForLanguage(workingDirectory, env, new SubProgressMonitor(monitor, TICKS_RUN_FOR_ONE_LANGUAGE * TICKS_SCALE));
 						if (monitor.isCanceled())
 							throw new OperationCanceledException();
@@ -367,24 +367,24 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 					}
 					List<ICLanguageSettingEntry> newEntries = getSettingEntries(cfgDescription, null, languageId);
 					isChanged = isChanged || newEntries != oldEntries;
-					
+
 				}
 			}
-	
+
 			monitor.subTask("Serializing results");
 			if (isChanged) { // avoids resource and settings change notifications
 				try {
 					if (currentCfgDescription != null) {
-						LanguageSettingsProvidersSerializer.serializeLanguageSettings(currentCfgDescription.getProjectDescription());
+						LanguageSettingsManager.serializeLanguageSettings(currentCfgDescription.getProjectDescription());
 					} else {
-						LanguageSettingsProvidersSerializer.serializeLanguageSettingsWorkspace();
+						LanguageSettingsManager.serializeLanguageSettingsWorkspace();
 					}
 				} catch (CoreException e) {
 					IStatus s = new Status(IStatus.ERROR, MakeCorePlugin.PLUGIN_ID, IStatus.ERROR, "Error serializing language settings", e);
 					MakeCorePlugin.log(s);
 					status.merge(s);
 				}
-				
+
 				// AG: FIXME - rather send event that ls settings changed
 				if (currentCfgDescription != null) {
 					ICProject icProject = CoreModel.getDefault().create(currentProject);
@@ -402,7 +402,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 			}
 			if (monitor.isCanceled())
 				throw new OperationCanceledException();
-			
+
 			monitor.worked(TICKS_SERIALIZATION * TICKS_SCALE);
 		} catch (OperationCanceledException e) {
 			if (!status.isOK()) {
@@ -418,7 +418,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 			shutdown();
 			currentCfgDescription = cfgDescription; // current description gets cleared in super.shutdown(), keep it
 		}
-	
+
 		return status;
 	}
 
@@ -427,7 +427,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 
 		specFile = null; // can get set in resolveCommand()
 		currentCommandResolved = resolveCommand(currentLanguageId);
-		
+
 		detectedSettingEntries = new ArrayList<ICLanguageSettingEntry>();
 		collected = 0;
 	}
@@ -435,20 +435,20 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	protected void shutdownForLanguage() {
 		if (detectedSettingEntries != null && detectedSettingEntries.size() > 0) {
 			collected = detectedSettingEntries.size();
-			
+
 			LanguageSettingsLogger.logInfo(getPrefixForLog()
 					+ getClass().getSimpleName() + " collected " + detectedSettingEntries.size() + " entries" + " for language " + currentLanguageId);
-			
+
 			setSettingEntries(currentCfgDescription, currentResource, currentLanguageId, detectedSettingEntries);
 		}
 		detectedSettingEntries = null;
-	
+
 		currentCommandResolved = null;
 		if (specFile!=null && !preserveSpecFile) {
 			specFile.delete();
 			specFile = null;
 		}
-	
+
 		currentLanguageId = null;
 	}
 
@@ -473,21 +473,21 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		
+
 		try {
-			// StreamMonitor will do monitor.beginTask(...) 
+			// StreamMonitor will do monitor.beginTask(...)
 			StreamMonitor streamMon = new StreamMonitor(monitor, errorParserManager, TICKS_STREAM_MONITOR);
 			OutputStream stdout = streamMon;
 			OutputStream stderr = streamMon;
-	
+
 			String msg = "Running scanner discovery: " + getName();
 			printLine(stdout, "**** " + msg + " ****" + NEWLINE);
-	
+
 			ConsoleParser consoleParser = new ConsoleParser();
 			ConsoleOutputSniffer sniffer = new ConsoleOutputSniffer(stdout, stderr, new IConsoleParser[] { consoleParser }, errorParserManager);
 			OutputStream consoleOut = sniffer.getOutputStream();
 			OutputStream consoleErr = sniffer.getErrorStream();
-	
+
 			boolean isSuccess = false;
 			try {
 				isSuccess = runProgram(currentCommandResolved, env, workingDirectory, monitor, consoleOut, consoleErr);
@@ -519,7 +519,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	 */
 	protected boolean runProgram(String command, String[] env, IPath workingDirectory, IProgressMonitor monitor,
 			OutputStream consoleOut, OutputStream consoleErr) throws CoreException, IOException {
-		
+
 		if (command==null || command.trim().length()==0) {
 			return false;
 		}
@@ -575,7 +575,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 			}
 			return false;
 		}
-		
+
 		printLine(consoleOut, NEWLINE + "**** Collected " + detectedSettingEntries.size() + " entries. ****");
 		return true;
 	}
@@ -601,7 +601,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		String consoleId = MakeCorePlugin.PLUGIN_ID + '.' + getId() + '.' + currentLanguageId;
 		String consoleName = getName() + ", " + ld.getName();
 		URL defaultIcon = Platform.getBundle(PLUGIN_CDT_MAKE_UI_ID).getEntry("icons/obj16/inspect_system.gif");
-		
+
 		IConsole console = CCorePlugin.getDefault().getConsole(extConsoleId, consoleId, consoleName, defaultIcon);
 		return console;
 	}
@@ -642,7 +642,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		if (specExt != null) {
 			ext = '.' + specExt;
 		}
-		
+
 		String specFileName = SPEC_FILE_BASE + ext;
 		IPath workingLocation = MakeCorePlugin.getWorkingDirectory();
 		IPath fileLocation = workingLocation.append(specFileName);
@@ -664,7 +664,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	/**
 	 * Determine file extension by language id. This implementation retrieves first extension
 	 * from the list as there could be multiple extensions associated with the given language.
-	 * 
+	 *
 	 * @param languageId - given language ID.
 	 * @return file extension associated with the language or {@code null} if not found.
 	 */
@@ -680,7 +680,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 				}
 			}
 		}
-		
+
 		if (ext == null) {
 			MakeCorePlugin.log(new Status(IStatus.ERROR, MakeCorePlugin.PLUGIN_ID, "Unable to find file extension for language "+languageId));
 		}

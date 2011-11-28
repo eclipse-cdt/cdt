@@ -8,7 +8,7 @@
  * Contributors:
  *     Andrew Gvozdev - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.language.settings.providers;
+package org.eclipse.cdt.core.language.settings.providers;
 
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 

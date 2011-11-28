@@ -27,7 +27,6 @@ import org.eclipse.cdt.core.errorparsers.RegexErrorPattern;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.internal.core.ConsoleOutputSniffer;
-import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -40,7 +39,7 @@ import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * TODO - class description
- * 
+ *
  * Note: IErrorParser interface is used here to work around {@link ConsoleOutputSniffer} having
  * no access from CDT core to build packages. TODO - elaborate?
  */
@@ -52,7 +51,7 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 	private static final String LEADING_PATH_PATTERN = "\\S+[/\\\\]"; //$NON-NLS-1$
 	private static final Pattern OPTIONS_PATTERN = Pattern.compile("-[^\\s\"']*(\\s*((\".*?\")|('.*?')|([^-\\s][^\\s]+)))?"); //$NON-NLS-1$
 	private static final int OPTION_GROUP = 0;
-	
+
 	/**
 	 * Note: design patterns to keep file group the same and matching {@link #FILE_GROUP}
 	 */
@@ -62,8 +61,8 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 		"${COMPILER_PATTERN}.*\\s" + "(['\"])(.*\\.${EXTENSIONS_PATTERN})\\${COMPILER_GROUPS+1}(\\s.*)?[\r\n]*" // compiling quoted file
 	};
 	private static final int FILE_GROUP = 2;
-	
-	
+
+
 	@SuppressWarnings("nls")
 	private String getCompilerCommandPattern() {
 		String parameter = getCustomParameter();
@@ -88,7 +87,7 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 		if (line==null) {
 			return null;
 		}
-		
+
 		for (String template : PATTERN_TEMPLATES) {
 			String pattern = makePattern(template);
 			Matcher fileMatcher = Pattern.compile(pattern).matcher(line);
@@ -106,7 +105,7 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 		if (line==null || currentResource==null) {
 			return null;
 		}
-		
+
 		List<String> options = new ArrayList<String>();
 		Matcher optionMatcher = OPTIONS_PATTERN.matcher(line);
 		while (optionMatcher.find()) {
@@ -134,33 +133,23 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 		scheduleSerializingJob(currentCfgDescription);
 		super.shutdown();
 	}
-	
+
 
 	private void scheduleSerializingJob(final ICConfigurationDescription cfgDescription) {
 		Job job = new Job("Serialize CDT language settings entries") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				// FIXME - remove thread name reassigning
-				Thread thread = getThread();
-				String oldName = thread.getName();
-				thread.setName("CDT LSP Serializer,BOP");
-				
-				IStatus status = null;
+				IStatus status = Status.OK_STATUS;
 				try {
 					if (cfgDescription != null) {
-						LanguageSettingsProvidersSerializer.serializeLanguageSettings(cfgDescription.getProjectDescription());
+						LanguageSettingsManager.serializeLanguageSettings(cfgDescription.getProjectDescription());
 					} else {
-						LanguageSettingsProvidersSerializer.serializeLanguageSettingsWorkspace();
+						LanguageSettingsManager.serializeLanguageSettingsWorkspace();
 					}
 				} catch (CoreException e) {
 					status = new Status(IStatus.ERROR, MakeCorePlugin.PLUGIN_ID, IStatus.ERROR, "Error serializing language settings", e);
 					MakeCorePlugin.log(status);
 				}
-
-				if (status == null)
-					status = Status.OK_STATUS;
-				
-				thread.setName(oldName);
 				return status;
 			}
 			@Override
@@ -168,7 +157,7 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 				return family == JOB_FAMILY_BUILD_COMMAND_PARSER;
 			}
 		};
-		
+
 		ISchedulingRule rule = null;
 		if (currentProject != null) {
 			IFolder settingsFolder = currentProject.getFolder(".settings");
@@ -193,7 +182,7 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 	 * Trivial Error Parser which allows highlighting of output lines matching the patterns
 	 * of this parser. Intended for better troubleshooting experience.
 	 * Implementers are supposed to add the error parser as an extension. Initialize with
-	 * build command parser extension ID. 
+	 * build command parser extension ID.
 	 */
 	protected static abstract class AbstractBuildCommandPatternHighlighter extends RegexErrorParser implements IErrorParser2 {
 		public AbstractBuildCommandPatternHighlighter(String buildCommandParserPluginExtension) {

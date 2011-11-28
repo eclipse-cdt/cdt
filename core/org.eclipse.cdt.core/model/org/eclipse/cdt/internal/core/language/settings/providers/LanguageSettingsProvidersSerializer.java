@@ -8,7 +8,6 @@
  * Contributors:
  *     Andrew Gvozdev - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.core.language.settings.providers;
 
 import java.net.URI;
@@ -20,6 +19,8 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.language.settings.providers.ICListenerAgent;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsChangeEvent;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsChangeListener;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditableProvider;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
@@ -58,8 +59,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+/**
+ * Helper class handling serialization and notifications for language settings entries {@link ICLanguageSettingEntry}.
+ */
 public class LanguageSettingsProvidersSerializer {
-	private static final String PREFERENCE_WORSPACE_PROVIDERS_SET = "language.settings.providers.set.for.workspace";
+	private static final String PREFERENCE_WORSPACE_PROVIDERS_SET = "language.settings.providers.set.for.workspace"; //$NON-NLS-1$
 	private static final String STORAGE_WORKSPACE_LANGUAGE_SETTINGS = "language.settings.xml"; //$NON-NLS-1$
 	private static final String SETTINGS_FOLDER_NAME = ".settings/"; //$NON-NLS-1$
 	private static final String STORAGE_PROJECT_LANGUAGE_SETTINGS = "language.settings.xml"; //$NON-NLS-1$
@@ -372,6 +376,11 @@ projects:
 		return events;
 	}
 
+	/**
+	 * Save language settings providers of the workspace (global providers) to persistent storage.
+	 *
+	 * @throws CoreException
+	 */
 	public static void serializeLanguageSettingsWorkspace() throws CoreException {
 		LanguageSettingsLogger.logWarning("LanguageSettingsProvidersSerializer.serializeLanguageSettingsWorkspace()");
 
@@ -530,6 +539,12 @@ projects:
 		}
 	}
 
+	/**
+	 * Save language settings providers of a project to persistent storage.
+	 *
+	 * @param prjDescription - project description of the project.
+	 * @throws CoreException if something goes wrong.
+	 */
 	public static void serializeLanguageSettings(ICProjectDescription prjDescription) throws CoreException {
 		IProject project = prjDescription.getProject();
 		LanguageSettingsLogger.logWarning("LanguageSettingsProvidersSerializer.serializeLanguageSettings() for " + project);
@@ -993,7 +1008,7 @@ projects:
 	/**
 	 * Adds a listener that will be notified of changes in language settings.
 	 *
-	 * @param listener the ILanguageMappingChangeListener to add
+	 * @param listener the listener to add
 	 */
 	public static void registerLanguageSettingsChangeListener(ILanguageSettingsChangeListener listener) {
 		fLanguageSettingsChangeListeners.add(listener);
@@ -1002,7 +1017,7 @@ projects:
 	/**
 	 * Removes a language settings change listener.
 	 *
-	 * @param listener the ILanguageMappingChangeListener to remove.
+	 * @param listener the listener to remove.
 	 */
 	public static void unregisterLanguageSettingsChangeListener(ILanguageSettingsChangeListener listener) {
 		fLanguageSettingsChangeListeners.remove(listener);

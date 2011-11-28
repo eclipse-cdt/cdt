@@ -304,7 +304,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 			assertEquals(entries.size(), actual.size());
 
 			// serialize language settings of workspace providers
-			LanguageSettingsProvidersSerializer.serializeLanguageSettingsWorkspace();
+			LanguageSettingsManager.serializeLanguageSettingsWorkspace();
 
 			// clear the provider
 			extProvider.setSettingEntries(null, null, null, null);

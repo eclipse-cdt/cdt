@@ -1454,14 +1454,16 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         	// ( type-name ) { initializer-list , }
         	IToken m = mark();
         	try {
-        		int offset = consume().getOffset();
-        		IASTTypeId t= typeId(DeclarationOptions.TYPEID);
-        		consume(IToken.tRPAREN);
-        		if (LT(1) == IToken.tLBRACE) {
-        			IASTInitializer i = bracedInitList(false);
-        			firstExpression= nodeFactory.newTypeIdInitializerExpression(t, i);
-        			setRange(firstExpression, offset, calculateEndOffset(i));
-        			break;        
+        		if (canBeCompoundLiteral()) {
+        			int offset = consume().getOffset();
+        			IASTTypeId t= typeId(DeclarationOptions.TYPEID);
+        			consume(IToken.tRPAREN);
+        			if (LT(1) == IToken.tLBRACE) {
+        				IASTInitializer i = bracedInitList(false);
+        				firstExpression= nodeFactory.newTypeIdInitializerExpression(t, i);
+        				setRange(firstExpression, offset, calculateEndOffset(i));
+        				break;        
+        			}
         		}
         	} catch (BacktrackException bt) {
         	}
@@ -2568,7 +2570,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         final int startOffset= LA(1).getOffset();
         
 		if (LT(1) == IToken.tLBRACKET && supportParameterInfoBlock) {
-			skipBrackets(IToken.tLBRACKET, IToken.tRBRACKET);
+			skipBrackets(IToken.tLBRACKET, IToken.tRBRACKET, 0);
 		}
 		
         IASTDeclSpecifier declSpec= null;

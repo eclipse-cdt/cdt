@@ -1754,7 +1754,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         final IToken current = LA(1);
         int startingOffset = current.getOffset();
         if (current.getType() == IToken.tLBRACKET && supportParameterInfoBlock) {
-        	skipBrackets(IToken.tLBRACKET, IToken.tRBRACKET);
+        	skipBrackets(IToken.tLBRACKET, IToken.tRBRACKET, 0);
         }
 
         IASTDeclSpecifier declSpec = null;

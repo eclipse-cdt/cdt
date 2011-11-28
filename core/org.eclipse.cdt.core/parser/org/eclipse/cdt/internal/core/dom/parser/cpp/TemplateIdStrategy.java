@@ -14,6 +14,8 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import java.util.BitSet;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser.ITemplateIdStrategy;
 
@@ -48,29 +50,36 @@ final class TemplateIdStrategy implements ITemplateIdStrategy {
 	}
 
 	public boolean setNextAlternative() {
-		final int bp = fCurrentBranchPoint;
+		int bp = fCurrentBranchPoint;
 		if (bp < 0)
 			return false;
 		
 		fCurrentBranchPoint= -1;
+		IASTName[] names = getTemplateNames();
+		int nameLen= names.length;
 		fTemplateNames= IASTName.EMPTY_NAME_ARRAY;
 		if (fSimpleIDs == null) {
 			fSimpleIDs= new BitSet();
 		}
 
 		// Set a new branch as far right as possible.
-		final int len = fSimpleIDs.length();
-		if (len <= bp) {
-			fSimpleIDs.set(bp);
-			return true;
-		}
-			
-		for (int branch= Math.min(bp, len-2); branch>=0; branch--) {
-			if (!fSimpleIDs.get(branch)) {
-				fSimpleIDs.clear(branch+1, len);
-				fSimpleIDs.set(branch);
-				return true;
+		while (bp >= 0) {
+			if (!fSimpleIDs.get(bp)) {
+				if (nameLen == 0 || !hasMultipleArgs(names[--nameLen])) {
+					fSimpleIDs.clear(bp+1, Integer.MAX_VALUE);
+					fSimpleIDs.set(bp);
+					return true;
+				}
 			}
+			bp--;
+		}
+		return false;
+	}
+
+	private boolean hasMultipleArgs(IASTName templateName) {
+		IASTNode parent= templateName.getParent();
+		if (parent instanceof ICPPASTTemplateId) {
+			return ((ICPPASTTemplateId) parent).getTemplateArguments().length > 1;
 		}
 		return false;
 	}

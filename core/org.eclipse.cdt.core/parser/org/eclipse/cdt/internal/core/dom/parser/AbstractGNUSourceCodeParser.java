@@ -243,7 +243,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         throw backtrack;
     }
 
-    public IASTCompletionNode getCompletionNode() {
+    @Override
+	public IASTCompletionNode getCompletionNode() {
         return completionNode;
     }
 
@@ -555,7 +556,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         parsePassed = false;
     }
 
-    public synchronized void cancel() {
+    @Override
+	public synchronized void cancel() {
         isCancelled = true;
     }
 
@@ -642,7 +644,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		throwBacktrack(n.getOffset(), n.getLength());
     }
 
-    public IASTTranslationUnit parse() {
+    @Override
+	public IASTTranslationUnit parse() {
         long startTime = System.currentTimeMillis();
         translationUnit();
         log.traceLog("Parse " //$NON-NLS-1$
@@ -1173,22 +1176,27 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 			return fUnaryOperatorOffset;
 		}
 		
+		@Override
 		public IASTExpression copy() {
 			throw new UnsupportedOperationException();
 		}
 
+		@Override
 		public IASTExpression copy(CopyStyle style) {
 			throw new UnsupportedOperationException();
 		}
 
+		@Override
 		public IType getExpressionType() {
 			throw new UnsupportedOperationException();
 		}
 
+		@Override
 		public boolean isLValue() {
 			throw new UnsupportedOperationException();
 		}		
 		
+		@Override
 		public ValueCategory getValueCategory() {
 			throw new UnsupportedOperationException();
 		}
@@ -1198,11 +1206,14 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		if (LT(1) == IToken.tLPAREN) {
 			final IToken mark= mark();
 			final int startingOffset= mark.getOffset();
+			final boolean canBeCast= canBeCastExpression();
 			consume();
 			IASTTypeId typeId= null;
-			try {
-				typeId= typeId(DeclarationOptions.TYPEID);
-			} catch (BacktrackException e) {
+			if (canBeCast) {
+				try {
+					typeId= typeId(DeclarationOptions.TYPEID);
+				} catch (BacktrackException e) {
+				}
 			}
 			if (typeId != null && LT(1) == IToken.tRPAREN) {
 				consume();
@@ -1562,7 +1573,8 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		return skipProblemConditionInParenthesis(mark.getOffset());
     }
 
-    public boolean encounteredError() {
+    @Override
+	public boolean encounteredError() {
         return !parsePassed;
     }
 
@@ -2399,7 +2411,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     	if (token.getType() == IGCCToken.t__declspec) {
     		consume();
     		if (LT(1) == IToken.tLPAREN) {
-    	    	skipBrackets(IToken.tLPAREN, IToken.tRPAREN);
+    	    	skipBrackets(IToken.tLPAREN, IToken.tRPAREN, 0);
     		}
     	}
     }    
@@ -2433,24 +2445,68 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		}
 	}
 
-    /**
-     * In case a cast expression is followed by +/- or & we should avoid it:
-     * (a)+1 vs. (int)+1;
-     * @since 4.0
-     */
-	protected boolean avoidCastExpressionByHeuristics() throws EndOfFileException {
-		if (LT(1) == IToken.tIDENTIFIER) {
-			if (LT(2) == IToken.tRPAREN) {
-				switch (LT(3)) {
-				case IToken.tPLUS:
-				case IToken.tMINUS:
-				case IToken.tAMPER:
-				case IToken.tSTAR:
-		    		return true;
-		    	}
-			}
+	protected boolean canBeCompoundLiteral() throws EndOfFileException {
+		IToken m= mark();
+		try {
+			// The parenthesis cannot be followed by a binary operator 
+			skipBrackets(IToken.tLPAREN, IToken.tRPAREN, IToken.tSEMI);
+			return LTcatchEOF(1) == IToken.tLBRACE;
+		} catch (BacktrackException bt) {
+			return false;
+		} finally {
+			backup(m);
 		}
-		return false;
+	}
+
+	protected boolean canBeCastExpression() throws EndOfFileException {
+		IToken m= mark();
+		try {
+			// The parenthesis cannot be followed by a binary operator 
+			skipBrackets(IToken.tLPAREN, IToken.tRPAREN, IToken.tSEMI);
+			switch (LTcatchEOF(1)) {
+			case IToken.tAMPERASSIGN:
+			case IToken.tAND:
+			case IToken.tARROW:
+			case IToken.tARROWSTAR:
+			case IToken.tASSIGN:
+			case IToken.tBITOR:
+			case IToken.tBITORASSIGN:
+			case IToken.tCOLON:
+			case IToken.tCOMMA:
+			case IToken.tDIV:
+			case IToken.tDIVASSIGN:
+			case IToken.tDOT:
+			case IToken.tDOTSTAR:
+			case IToken.tEQUAL:
+			case IToken.tGT:
+			case IToken.tGT_in_SHIFTR:
+			case IToken.tGTEQUAL:
+			case IToken.tLBRACKET:
+			case IToken.tLTEQUAL:
+			case IToken.tMINUSASSIGN:
+			case IToken.tMOD:
+			case IToken.tMODASSIGN:
+			case IToken.tNOTEQUAL:
+			case IToken.tOR:
+			case IToken.tPLUSASSIGN:
+			case IToken.tQUESTION:
+			case IToken.tRBRACE:
+			case IToken.tRBRACKET:
+			case IToken.tRPAREN:
+			case IToken.tSEMI:
+			case IToken.tSHIFTL:
+			case IToken.tSHIFTLASSIGN:
+			case IToken.tSHIFTR:
+			case IToken.tSHIFTRASSIGN:
+			case IToken.tSTARASSIGN:
+				return false;
+			}
+			return true;
+		} catch (BacktrackException bt) {
+			return false;
+		} finally {
+			backup(m);
+		}
 	}
 	
 	protected boolean canBeTypeSpecifier() throws EndOfFileException {
@@ -2511,12 +2567,12 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		}
 	}
 	
-	protected void skipBrackets(int left, int right) throws EndOfFileException, BacktrackException {
+	protected void skipBrackets(int left, int right, int terminator) throws EndOfFileException, BacktrackException {
 		consume(left);
 		int nesting= 0;
 		while(true) {
 			final int lt1= LT(1);
-			if (lt1 == IToken.tEOC)
+			if (lt1 == IToken.tEOC || lt1 == terminator)
 				throwBacktrack(LA(1));
 
 			consume();

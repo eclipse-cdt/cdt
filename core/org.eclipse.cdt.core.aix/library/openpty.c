@@ -86,7 +86,7 @@ ptym_open(char * pts_name)
 	char *ptr;
 
 	strcpy(pts_name, "/dev/ptmx");
-	fdm = getpt();
+	fdm = posix_openpt(O_RDWR);
 	if (fdm < 0)
 		return -1;
 	if (grantpt(fdm) < 0) { /* grant access to slave */

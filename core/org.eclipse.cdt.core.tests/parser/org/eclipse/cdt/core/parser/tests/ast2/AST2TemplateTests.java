@@ -5616,4 +5616,26 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testDefaultArgForNonTypeTemplateParameter_363743() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template<class T> struct A {
+	//		bool b;
+	//	};
+	//	class B {
+	//	};
+	//	template<class T> T * func();
+	//	void test1() {
+	//		delete func<A<B>>(); // This line causes the NPE
+	//	}
+	//
+	//	template<bool> struct C {
+	//		int* ptr;
+	//	};
+	//	void test2() {
+	//		int a = 0, b = 1;
+	//		delete C< a<b >::ptr;
+	//		delete C< A<B>::b >::ptr;
+	//	}
+	public void testTemplateAmbiguityInDeleteExpression_364225() throws Exception {
+		parseAndCheckBindings();
+	}
 }

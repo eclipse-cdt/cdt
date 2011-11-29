@@ -90,6 +90,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
  */
 public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 	public interface ITemplateIdStrategy {
+		boolean shallParseAsTemplateID(IASTName name);
 	}
 
 	protected static class FoundAggregateInitializer extends Exception {

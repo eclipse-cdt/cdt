@@ -27,24 +27,18 @@ final class TemplateIdStrategy implements ITemplateIdStrategy {
 	private IASTName[] fTemplateNames;
 	
 	public TemplateIdStrategy() {
-		reset();
-	}
-
-	public void reset() {
 		fCurrentBranchPoint= -1;
 		fTemplateNames= IASTName.EMPTY_NAME_ARRAY;
-		if (fSimpleIDs != null) {
-			fSimpleIDs.clear();
-		}
 	}
 
-	public boolean ignoreTemplateID() {
+	public boolean shallParseAsTemplateID(IASTName name) {
 		fCurrentBranchPoint++;
-		return fSimpleIDs == null ? false : fSimpleIDs.get(fCurrentBranchPoint);
-	}
-
-	public void addTemplateName(IASTName name) {
-		fTemplateNames= ArrayUtil.append(fTemplateNames, name);
+		
+		boolean templateID= fSimpleIDs == null || !fSimpleIDs.get(fCurrentBranchPoint);
+		if (templateID) {
+			fTemplateNames= ArrayUtil.append(fTemplateNames, name);
+		}
+		return templateID;
 	}
 
 	public boolean setNextAlternative() {

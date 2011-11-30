@@ -12,7 +12,7 @@
 	</parent>
 
 	<version>1.0.0-SNAPSHOT</version>
-	<artifactId>org.eclipse.cdt.codan.core.tests</artifactId>
+	<artifactId>org.eclipse.cdt.codan.core.test</artifactId>
 	<packaging>eclipse-test-plugin</packaging>
 	
 	<profiles>

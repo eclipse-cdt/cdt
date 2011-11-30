@@ -14,4 +14,5 @@
 	<version>5.1.1-SNAPSHOT</version>
 	<artifactId>org.eclipse.cdt.core.lrparser.sdk</artifactId>
 	<packaging>eclipse-feature</packaging>
+	<groupId>org.eclipse.cdt.features</groupId>
 </project>

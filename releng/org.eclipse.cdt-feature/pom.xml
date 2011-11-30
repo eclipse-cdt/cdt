@@ -13,4 +13,5 @@
 
 	<artifactId>org.eclipse.cdt</artifactId>
 	<packaging>eclipse-feature</packaging>
+	<groupId>org.eclipse.cdt.features</groupId>
 </project>

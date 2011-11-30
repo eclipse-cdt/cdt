@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2010 IBM Corporation and others.
+ *  Copyright (c) 2004, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -58,7 +58,6 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
     private static final String EXTERNAL_SI_PROVIDER_ERROR = "ExternalScannerInfoProvider.Provider_Error"; //$NON-NLS-1$
 	private static final String GMAKE_ERROR_PARSER_ID = "org.eclipse.cdt.core.GmakeErrorParser"; //$NON-NLS-1$
 	private static final String PREF_CONSOLE_ENABLED = "org.eclipse.cdt.make.core.scanner.discovery.console.enabled"; //$NON-NLS-1$
-    private static final String LANG_ENV_VAR = "LANG"; //$NON-NLS-1$
 	private static final String NEWLINE = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 	private static final String PATH_ENV = "PATH"; //$NON-NLS-1$
 
@@ -260,21 +259,19 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
 
 	private Properties getEnvMap(ICommandLauncher launcher, Properties initialEnv) {
 		// Set the environmennt, some scripts may need the CWD var to be set.
-        Properties props = initialEnv != null ? initialEnv : launcher.getEnvironment();
-        
-        if (fWorkingDirectory != null) {
+		Properties props = initialEnv != null ? initialEnv : launcher.getEnvironment();
+	
+		if (fWorkingDirectory != null) {
 			props.put("CWD", fWorkingDirectory.toOSString()); //$NON-NLS-1$
 			props.put("PWD", fWorkingDirectory.toOSString()); //$NON-NLS-1$
 		}
-        // On POSIX (Linux, UNIX) systems reset LANG variable to English with
-		// UTF-8 encoding
-        // since GNU compilers can handle only UTF-8 characters. English language is chosen
-        // beacuse GNU compilers inconsistently handle different locales when generating
-        // output of the 'gcc -v' command. Include paths with locale characters will be
-        // handled properly regardless of the language as long as the encoding is set to UTF-8.
-        if (props.containsKey(LANG_ENV_VAR)) {
-            props.put(LANG_ENV_VAR, "en_US.UTF-8"); //$NON-NLS-1$
-        }
+		// On POSIX (Linux, UNIX) systems reset LANG variable to English with
+		// UTF-8 encoding since GNU compilers can handle only UTF-8 characters.
+		// Include paths with locale characters will be handled properly regardless
+		// of the language as long as the encoding is set to UTF-8.
+		// English language is chosen because parser relies on English messages
+		// in the output of the 'gcc -v' command.
+		props.put("LC_ALL", "en_US.UTF-8"); //$NON-NLS-1$ //$NON-NLS-2$
 		return props;
 	}
 

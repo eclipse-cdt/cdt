@@ -12,6 +12,6 @@
 	</parent>
 
 	<version>5.1.1-SNAPSHOT</version>
-	<artifactId>org.eclipse.cdt.core.lrparser.source.feature</artifactId>
+	<artifactId>org.eclipse.cdt.core.lrparser.source</artifactId>
 	<packaging>eclipse-feature</packaging>
 </project>

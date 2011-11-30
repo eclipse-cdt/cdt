@@ -12,6 +12,6 @@
 	</parent>
 
 	<version>1.0.3-SNAPSHOT</version>
-	<artifactId>org.eclipse.cdt.bupc-feature</artifactId>
+	<artifactId>org.eclipse.cdt.bupc</artifactId>
 	<packaging>eclipse-feature</packaging>
 </project>

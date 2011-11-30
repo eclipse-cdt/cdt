@@ -781,7 +781,9 @@ public class CPPSemantics {
 	            data.foundItems = ArrayUtil.addAll(Object.class, (Object[]) data.foundItems, (Object[]) results);
 	        }
 	    } else {
-	        data.foundItems = mergePrefixResults((CharArrayObjectMap) data.foundItems, results, scoped);
+	        @SuppressWarnings("unchecked")
+			final CharArrayObjectMap<Object> oldItems = (CharArrayObjectMap<Object>) data.foundItems;
+			data.foundItems = mergePrefixResults(oldItems, results, scoped);
 	    }
 	}
 	
@@ -791,15 +793,17 @@ public class CPPSemantics {
 	 * @param scoped
 	 * @return
 	 */
-	static CharArrayObjectMap mergePrefixResults(CharArrayObjectMap dest, Object source, boolean scoped) {
+	static CharArrayObjectMap<Object> mergePrefixResults(CharArrayObjectMap<Object> dest, Object source, boolean scoped) {
 		if (source == null) return dest; 
-        CharArrayObjectMap resultMap = (dest != null) ? dest : new CharArrayObjectMap(2);
+        CharArrayObjectMap<Object> resultMap = (dest != null) ? dest : new CharArrayObjectMap<Object>(2);
         
-        CharArrayObjectMap map = null;
+        CharArrayObjectMap<Object> map = null;
         Object[] objs = null;
         int size;
         if (source instanceof CharArrayObjectMap) {
-        	map = (CharArrayObjectMap) source;
+        	@SuppressWarnings("unchecked")
+			final CharArrayObjectMap<Object> sourceMap = (CharArrayObjectMap<Object>) source;
+			map = sourceMap;
         	size= map.size();
 	    } else {
 			if (source instanceof Object[])
@@ -3499,7 +3503,7 @@ public class CPPSemantics {
 		LookupData data = createLookupData(name);
 		data.contentAssist = true;
 		data.prefixLookup = prefixLookup;
-		data.foundItems = new CharArrayObjectMap(2);
+		data.foundItems = new CharArrayObjectMap<Object>(2);
 
 		// Convert namespaces to scopes.
 		List<ICPPScope> nsScopes= new ArrayList<ICPPScope>();
@@ -3567,7 +3571,8 @@ public class CPPSemantics {
     		}
         } catch (DOMException e) {
         }
-        CharArrayObjectMap map = (CharArrayObjectMap) data.foundItems;
+        @SuppressWarnings("unchecked")
+		CharArrayObjectMap<Object> map = (CharArrayObjectMap<Object>) data.foundItems;
         IBinding[] result = IBinding.EMPTY_BINDING_ARRAY;
         if (!map.isEmpty()) {
             char[] key = null;
@@ -3686,7 +3691,7 @@ public class CPPSemantics {
 		return true;
 	}
 
-	private static boolean isSameTemplateParameter(ICPPTemplateParameter tp1, ICPPASTTemplateParameter tp2) {
+	static boolean isSameTemplateParameter(ICPPTemplateParameter tp1, ICPPASTTemplateParameter tp2) {
 		if (tp1.isParameterPack() != tp2.isParameterPack())
 			return false;
 		

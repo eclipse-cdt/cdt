@@ -460,10 +460,9 @@ public class CPPVisitor extends ASTQueries {
 	    }
 	    
         try {
-        	boolean template = false;
+        	ICPPASTTemplateDeclaration templateDecl = CPPTemplates.getTemplateDeclaration(name);
         	ICPPScope scope = (ICPPScope) getContainingScope(name);
         	while (scope instanceof ICPPTemplateScope) {
-        		template = true;
         		scope= (ICPPScope) scope.getParent();
         	}
 		
@@ -493,35 +492,21 @@ public class CPPVisitor extends ASTQueries {
         		
         		if (binding instanceof ICPPClassType) {
         			final ICPPInternalBinding ib = (ICPPInternalBinding) binding;
-        			if ((binding instanceof ICPPClassTemplate) == template) {
+        			if (templateParametersMatch((ICPPClassType) binding, templateDecl)) {
         				ib.addDeclaration(elabType);
         				return binding;
         			}
-        			if (CPPSemantics.declaredBefore(binding, name, false)) {
+
+        			if (CPPSemantics.declaredBefore(ib, name, false)) {
         				return new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION);
         			}
-
-        			// Mark the other declarations as problem and create the binding
-        			final IASTNode[] decls = ib.getDeclarations();
-        			if (decls != null) {
-        				for (IASTNode decl : decls) {
-        					if (decl instanceof IASTName) {
-        						final IASTName n = (IASTName) decl;
-        						n.setBinding(new ProblemBinding(n, IProblemBinding.SEMANTIC_INVALID_REDECLARATION));
-        					}
-        				}
-        			}
-        			IASTNode decl= ib.getDefinition();
-        			if (decl instanceof IASTName) {
-        				final IASTName n = (IASTName) decl;
-        				n.setBinding(new ProblemBinding(n, IProblemBinding.SEMANTIC_INVALID_REDEFINITION));
-        			}
+        			markRedeclaration(ib);
         		} 
         	}
         	
         	// Create a binding
         	if (elabType.getKind() != IASTElaboratedTypeSpecifier.k_enum) {
-        		if (template)
+        		if (templateDecl != null)
         			binding = new CPPClassTemplate(name);
         		else
         			binding = new CPPClassType(name, binding);
@@ -535,44 +520,91 @@ public class CPPVisitor extends ASTQueries {
 		return binding;
 	}
 
+	public static void markRedeclaration(final ICPPInternalBinding ib) {
+		// Mark the other declarations as problem and create the binding
+		final IASTNode[] decls = ib.getDeclarations();
+		if (decls != null) {
+			for (IASTNode decl : decls) {
+				if (decl instanceof IASTName) {
+					final IASTName n = (IASTName) decl;
+					n.setBinding(new ProblemBinding(n, IProblemBinding.SEMANTIC_INVALID_REDECLARATION));
+				}
+			}
+		}
+		IASTNode decl= ib.getDefinition();
+		if (decl instanceof IASTName) {
+			final IASTName n = (IASTName) decl;
+			n.setBinding(new ProblemBinding(n, IProblemBinding.SEMANTIC_INVALID_REDEFINITION));
+		}
+	}
+
+	/**
+	 * Tests whether a class binding matches the template parameters of another declaration
+	 */
+	private static boolean templateParametersMatch(ICPPClassType binding,
+			ICPPASTTemplateDeclaration templateDecl) {
+		final boolean isTemplate= binding instanceof ICPPClassTemplate;
+		if (templateDecl == null)
+			return !isTemplate;
+		if (!isTemplate)
+			return false;
+		
+		ICPPTemplateParameter[] pars1 = ((ICPPClassTemplate) binding).getTemplateParameters();
+		ICPPASTTemplateParameter[] pars2 = templateDecl.getTemplateParameters();
+		
+		int i=0;
+		for (ICPPASTTemplateParameter p2 : pars2) {
+			if (i >= pars1.length)
+				return true;
+
+			if (!CPPSemantics.isSameTemplateParameter(pars1[i++], p2))
+				return false;
+		}
+		return true;
+	}
+
 	private static IBinding createBinding(ICPPASTCompositeTypeSpecifier compType) {
 		IASTName name = compType.getName();
 		if (name instanceof ICPPASTQualifiedName) {
 			IASTName[] ns = ((ICPPASTQualifiedName) name).getNames();
 			name = ns[ns.length - 1];
 		}
-
-    	IBinding binding = null;
+		if (name instanceof ICPPASTTemplateId) 
+			return CPPTemplates.createBinding((ICPPASTTemplateId) name);
+		
     	ICPPScope scope = (ICPPScope) getContainingScope(name);
-        try {
-        	boolean template = false;
+		try {
         	while (scope instanceof ICPPTemplateScope) {
-        		template = true;
         		scope= (ICPPScope) scope.getParent();
         	}
-    		if (name instanceof ICPPASTTemplateId) {
-    			return CPPTemplates.createBinding((ICPPASTTemplateId) name);
-    		} 
-        	if (name.getLookupKey().length > 0 && scope != null) // can't lookup anonymous things
-        		binding = scope.getBinding(name, false);
-            if (binding instanceof ICPPInternalBinding && binding instanceof ICPPClassType && name.isActive()) {
-            	ICPPInternalBinding internal = (ICPPInternalBinding) binding;
-				if (internal.getDefinition() == null && (binding instanceof ICPPClassTemplate) == template) {
-            		ASTInternal.addDefinition(internal, compType);
-            	} else {
-            		binding = new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDEFINITION);
-            	}
-    		} else {
-    			if (template) {
-    				binding = new CPPClassTemplate(name);
-    			} else {
-    				binding = new CPPClassType(name, binding);
-    			}
-    		}
         } catch (DOMException e) {
-            binding = e.getProblem();
+            return e.getProblem();
         }
-		return binding;
+		
+    		// Can't lookup anonymous names
+		IBinding binding= null;
+		ICPPASTTemplateDeclaration templateDecl = CPPTemplates.getTemplateDeclaration(name);
+		if (name.getLookupKey().length > 0 && scope != null) { 
+			binding = scope.getBinding(name, false);
+
+			if (binding instanceof ICPPInternalBinding 
+					&& binding instanceof ICPPClassType && name.isActive()) {
+				ICPPInternalBinding ib = (ICPPInternalBinding) binding;
+				if (ib.getDefinition() == null 
+						&& templateParametersMatch((ICPPClassType) binding, templateDecl)) {
+					ASTInternal.addDefinition(ib, compType);
+					return binding;
+				} 
+				if (CPPSemantics.declaredBefore(ib, name, false)) {
+					return new ProblemBinding(name, IProblemBinding.SEMANTIC_INVALID_REDEFINITION);
+				}
+				markRedeclaration(ib);
+			}
+		}
+		if (templateDecl != null) 
+			return new CPPClassTemplate(name);
+
+		return  new CPPClassType(name, binding);
 	}
 	
 	private static IBinding createBinding(IASTDeclaration declaration) {

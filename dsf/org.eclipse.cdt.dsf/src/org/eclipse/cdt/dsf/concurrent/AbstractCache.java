@@ -154,6 +154,27 @@ public abstract class AbstractCache<V> implements ICache<V> {
             rm.done(); 
         }
     } 
+
+    private void completeWaitingRms() {
+        Object waiting = null;
+        synchronized(this) {
+            waiting = fWaitingList;
+            fWaitingList = null;
+        }
+        if (waiting != null) { 
+            if (waiting instanceof RequestMonitor) {
+                completeWaitingRm((RequestMonitor)waiting);
+            } else if (waiting instanceof RequestMonitor[]) {
+                RequestMonitor[] waitingList = (RequestMonitor[])waiting;
+                for (int i = 0; i < waitingList.length; i++) {
+                    if (waitingList[i] != null) {
+                        completeWaitingRm(waitingList[i]);
+                    }
+                }
+            }
+            waiting = null;
+        }
+    }
     
     private void completeWaitingRm(RequestMonitor rm) {
         rm.setStatus(fStatus); 
@@ -300,23 +321,32 @@ public abstract class AbstractCache<V> implements ICache<V> {
         fStatus = status;
         fValid = true;
  
-        Object waiting = null;
-        synchronized(this) {
-            waiting = fWaitingList;
-            fWaitingList = null;
-        }
-        if (waiting != null) { 
-            if (waiting instanceof RequestMonitor) {
-                completeWaitingRm((RequestMonitor)waiting);
-            } else if (waiting instanceof RequestMonitor[]) {
-                RequestMonitor[] waitingList = (RequestMonitor[])waiting;
-                for (int i = 0; i < waitingList.length; i++) {
-                    if (waitingList[i] != null) {
-                        completeWaitingRm(waitingList[i]);
-                    }
-                }
-            }
-            waiting = null;
-        }
+        completeWaitingRms();
     }
+    
+    /**
+     * Performs the set and reset operations in one step  This allows the cache to 
+     * remain in invalid state, but to notify any waiting listeners that the state of 
+     * the cache has changed.  
+     * 
+     * @param data
+     *            The data that should be returned to any clients waiting for
+     *            cache data and for clients requesting data until the cache is
+     *            invalidated.
+     * @status The status that should be returned to any clients waiting for
+     *         cache data and for clients requesting data until the cache is
+     *         invalidated
+     * 
+     * @see #reset(Object, IStatus)
+     */ 
+    protected void setAndReset(V data, IStatus status) {
+        assert fExecutor.getDsfExecutor().isInExecutorThread();
+        
+        fData = data;
+        fStatus = status;
+        fValid = false;
+ 
+        completeWaitingRms();
+    }
+    
 } 

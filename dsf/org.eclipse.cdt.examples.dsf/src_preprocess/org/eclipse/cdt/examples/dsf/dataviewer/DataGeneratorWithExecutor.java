@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems and others.
+ * Copyright (c) 2006, 2011 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,14 +14,14 @@ package org.eclipse.cdt.examples.dsf.dataviewer;
 //#package org.eclipse.cdt.examples.dsf.dataviewer.answers;
 //#endif
 
-import java.util.HashSet;
+import java.util.HashMap;
 //#ifdef answers
 //#import java.util.Iterator;
 //#endif
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
+import java.util.Map;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -70,6 +70,16 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
         
         Request(RequestMonitor rm) {
             fRequestMonitor = rm;
+            
+            rm.addCancelListener(new RequestMonitor.ICanceledListener() {
+                public void requestCanceled(RequestMonitor rm) {
+                    fExecutor.execute(new DsfRunnable() {
+                        public void run() {
+                            fQueue.remove(Request.this);
+                        }
+                    });
+                }
+            });
         }
     }
     
@@ -93,7 +103,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
     //#endif
     class ItemRequest extends Request {
         final int fIndex;
-        ItemRequest(int index, DataRequestMonitor<String> rm) { 
+        ItemRequest(int index, DataRequestMonitor<Integer> rm) { 
             super(rm);
             fIndex = index; 
         }
@@ -156,24 +166,20 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
     //#else
 //#    @ConfinedToDsfExecutor("fExecutor")
     //#endif
-    private Set<Integer> fChangedIndexes = new HashSet<Integer>();
+    private Map<Integer, Integer> fChangedValues = 
+        new HashMap<Integer, Integer>();
     
-    // Flag used to ensure that requests are processed sequentially.
-    //#ifdef exercises
-    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
-    // indicating allowed thread access to this class/method/member
-    //#else
-//#    @ConfinedToDsfExecutor("fExecutor")
-    //#endif
-    private boolean fServiceQueueInProgress = false;
- 
-    //#ifdef exercises
-    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
-    // indicating allowed thread access to this class/method/member
-    //#endif
     public DataGeneratorWithExecutor() {
         // Create the executor
-        fExecutor = new DefaultDsfExecutor("Supplier Executor");
+        this(new DefaultDsfExecutor("Supplier Executor"));
+    }
+    //#ifdef exercises
+    // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
+    // indicating allowed thread access to this class/method/member
+    //#endif
+    public DataGeneratorWithExecutor(DsfExecutor executor) {
+        // Create the executor
+        fExecutor = executor;
         
         // Schedule a runnable to make the random changes.
         fExecutor.scheduleAtFixedRate(
@@ -182,8 +188,8 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
                     randomChanges();
                 }
             },
-            RANDOM_CHANGE_INTERVAL, 
-            RANDOM_CHANGE_INTERVAL, 
+            new Random().nextInt() % RANDOM_CHANGE_INTERVAL, 
+            RANDOM_CHANGE_INTERVAL, //Add a 10% variance to the interval. 
             TimeUnit.MILLISECONDS);
     }
      
@@ -197,8 +203,9 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
                 public void run() {
                     // Empty the queue of requests and fail them.
                     for (Request request : fQueue) {
-                        request.fRequestMonitor.setStatus(
-                            new Status(IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID, "Supplier shut down"));
+                        request.fRequestMonitor.setStatus(new Status(
+                            IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID, 
+                            "Supplier shut down"));
                         request.fRequestMonitor.done();
                     }
                     fQueue.clear();
@@ -209,7 +216,8 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
                 }
             });
         } catch (RejectedExecutionException e) {
-            rm.setStatus(new Status(IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID, "Supplier shut down"));
+            rm.setStatus(new Status(IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID, 
+                "Supplier shut down"));
             rm.done();
         }
     }
@@ -227,7 +235,9 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
                 }
             });
         } catch (RejectedExecutionException e) {
-            rm.setStatus(new Status(IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID, "Supplier shut down"));
+            rm.setStatus(new Status(
+                IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID, 
+                "Supplier shut down"));
             rm.done();
         }
     }
@@ -236,7 +246,7 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
     // TODO Exercise 4 - Add an annotation (ThreadSafe/ConfinedToDsfExecutor) 
     // indicating allowed thread access to this class/method/member
     //#endif
-    public void getValue(final int index, final DataRequestMonitor<String> rm) { 
+    public void getValue(final int index, final DataRequestMonitor<Integer> rm) { 
         try {
             fExecutor.execute( new DsfRunnable() {
                 public void run() {
@@ -245,7 +255,8 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
                 }
             });
         } catch (RejectedExecutionException e) {
-            rm.setStatus(new Status(IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID, "Supplier shut down"));
+            rm.setStatus(new Status(IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID, 
+                "Supplier shut down"));
             rm.done();
         }
     } 
@@ -286,7 +297,16 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
 //#    @ConfinedToDsfExecutor("fExecutor")
     //#endif
     private void serviceQueue() {
-        
+        fExecutor.schedule(
+            new DsfRunnable() {
+                public void run() {
+                    doServiceQueue();
+                }
+            }, 
+            PROCESSING_DELAY, TimeUnit.MILLISECONDS);        
+    }
+    
+    private void doServiceQueue() {
         //#ifdef exercises
         // TODO Exercise 3 - Add logic to discard cancelled requests from queue.
         // Hint: Since serviceQueue() is called using the executor, and the 
@@ -305,33 +325,16 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
 //#        }
         //#endif
         
-        // If a queue servicing is already scheduled, do nothing.
-        if (fServiceQueueInProgress) {
-            return;
-        }
-        
-        if (fQueue.size() != 0) {
+        while (fQueue.size() != 0) {
             // If there are requests to service, remove one from the queue and 
             // schedule a runnable to process the request after a processing
             // delay.
-            fServiceQueueInProgress = true;
-            final Request request = fQueue.remove(0);
-            fExecutor.schedule(
-                new DsfRunnable() {
-                    public void run() {
-                        if (request instanceof CountRequest) {
-                            processCountRequest((CountRequest)request);
-                        } else if (request instanceof ItemRequest) {
-                            processItemRequest((ItemRequest)request);
-                        } 
-                        
-                        // Reset the processing flag and process next
-                        // request.
-                        fServiceQueueInProgress = false;
-                        serviceQueue();
-                    }
-                }, 
-                PROCESSING_DELAY, TimeUnit.MILLISECONDS);
+            Request request = fQueue.remove(0);
+            if (request instanceof CountRequest) {
+                processCountRequest((CountRequest)request);
+            } else if (request instanceof ItemRequest) {
+                processItemRequest((ItemRequest)request);
+            } 
         }
     }
     
@@ -343,7 +346,8 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
     //#endif
     private void processCountRequest(CountRequest request) {
         @SuppressWarnings("unchecked") // Suppress warning about lost type info.
-        DataRequestMonitor<Integer> rm = (DataRequestMonitor<Integer>)request.fRequestMonitor;
+        DataRequestMonitor<Integer> rm = 
+        (DataRequestMonitor<Integer>)request.fRequestMonitor;
         
         rm.setData(fCount);
         rm.done();
@@ -357,12 +361,13 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
     //#endif
     private void processItemRequest(ItemRequest request) {
         @SuppressWarnings("unchecked") // Suppress warning about lost type info.
-        DataRequestMonitor<String> rm = (DataRequestMonitor<String>)request.fRequestMonitor; 
+        DataRequestMonitor<Integer> rm = 
+        (DataRequestMonitor<Integer>)request.fRequestMonitor; 
 
-        if (fChangedIndexes.contains(request.fIndex)) {
-            rm.setData("Changed: " + request.fIndex);
+        if (fChangedValues.containsKey(request.fIndex)) {
+            rm.setData(fChangedValues.get(request.fIndex));
         } else {
-            rm.setData(Integer.toString(request.fIndex)); 
+            rm.setData(request.fIndex); 
         }
         rm.done();
     } 
@@ -398,10 +403,11 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
     private void randomCountReset() {
         // Calculate the new count.
         Random random = new java.util.Random();
-        fCount = MIN_COUNT + Math.abs(random.nextInt()) % (MAX_COUNT - MIN_COUNT);
+        fCount = MIN_COUNT + 
+            Math.abs(random.nextInt()) % (MAX_COUNT - MIN_COUNT);
 
         // Reset the changed values.
-        fChangedIndexes.clear();
+        fChangedValues.clear();
         
         // Notify listeners  
         for (Listener listener : fListeners) {
@@ -421,17 +427,19 @@ public class DataGeneratorWithExecutor implements IDataGenerator {
     private void randomDataChange() {
         // Calculate the indexes to change.
         Random random = new java.util.Random();
-        Set<Integer> set = new HashSet<Integer>();
+        Map<Integer, Integer> changed = new HashMap<Integer, Integer>();
         for (int i = 0; i < fCount * RANDOM_CHANGE_SET_PERCENTAGE / 100; i++) {
-            set.add( new Integer(Math.abs(random.nextInt()) % fCount) );
-        }                    
+            int randomIndex = Math.abs(random.nextInt()) % fCount;
+            int randomValue = Math.abs(random.nextInt()) % fCount;
+            changed.put(randomIndex, randomValue);
+        }                
 
         // Add the indexes to an overall set of changed indexes.
-        fChangedIndexes.addAll(set);
+        fChangedValues.putAll(changed);
         
         // Notify listeners  
-        for (Listener listener : fListeners) {
-            listener.valuesChanged(set);
+        for (Object listener : fListeners) {
+            ((Listener)listener).valuesChanged(changed.keySet());
         }
     }    
 }

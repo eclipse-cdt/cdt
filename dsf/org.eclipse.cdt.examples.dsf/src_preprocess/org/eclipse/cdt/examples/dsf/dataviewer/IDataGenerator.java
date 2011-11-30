@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems and others.
+ * Copyright (c) 2006, 2011 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,11 +41,11 @@ public interface IDataGenerator {
     // Changing the count range can stress the scalability of the system, while
     // changing of the process delay and random change interval can stress 
     // its performance.
-    final static int MIN_COUNT = 100;
-    final static int MAX_COUNT = 200;
-    final static int PROCESSING_DELAY = 10;
-    final static int RANDOM_CHANGE_INTERVAL = 10000;
-    final static int RANDOM_COUNT_CHANGE_INTERVALS = 3;
+    final static int MIN_COUNT = 50;
+    final static int MAX_COUNT = 100;
+    final static int PROCESSING_DELAY = 500;
+    final static int RANDOM_CHANGE_INTERVAL = 4000;
+    final static int RANDOM_COUNT_CHANGE_INTERVALS = 5;
     final static int RANDOM_CHANGE_SET_PERCENTAGE = 10;
 
     
@@ -58,7 +58,7 @@ public interface IDataGenerator {
 
     // Data access methods.
     void getCount(DataRequestMonitor<Integer> rm);
-    void getValue(int index, DataRequestMonitor<String> rm); 
+    void getValue(int index, DataRequestMonitor<Integer> rm); 
     
     // Method used to shutdown the data generator including any threads that 
     // it may use.  

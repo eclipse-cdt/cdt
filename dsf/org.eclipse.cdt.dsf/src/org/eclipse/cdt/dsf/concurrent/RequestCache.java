@@ -94,4 +94,13 @@ public abstract class RequestCache<V> extends AbstractCache<V> {
         } 
         super.set(data, status);
     }
+    
+    @Override
+    protected void reset() {
+        if (fRm != null) { 
+            fRm.cancel(); 
+            fRm = null; 
+        } 
+        super.reset();
+    }
 } 

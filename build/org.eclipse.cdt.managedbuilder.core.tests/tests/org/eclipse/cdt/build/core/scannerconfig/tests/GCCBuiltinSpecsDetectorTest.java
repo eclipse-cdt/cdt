@@ -88,7 +88,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		{
 			MockGCCBuiltinSpecsDetectorLocal detector = new MockGCCBuiltinSpecsDetectorLocal();
 			detector.setLanguageScope(new ArrayList<String>() {{add(LANGUAGE_ID_C);}});
-			detector.setCustomParameter("${COMMAND} -E -P -v -dD ${INPUTS}");
+			detector.setCommand("${COMMAND} -E -P -v -dD ${INPUTS}");
 
 			String resolvedCommand = detector.resolveCommand(LANGUAGE_ID_C);
 			assertTrue(resolvedCommand.startsWith("gcc -E -P -v -dD "));
@@ -97,7 +97,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		{
 			MockGCCBuiltinSpecsDetectorLocal detector = new MockGCCBuiltinSpecsDetectorLocal();
 			detector.setLanguageScope(new ArrayList<String>() {{add(LANGUAGE_ID_C);}});
-			detector.setCustomParameter("${COMMAND} -E -P -v -dD file.${EXT}");
+			detector.setCommand("${COMMAND} -E -P -v -dD file.${EXT}");
 
 			String resolvedCommand = detector.resolveCommand(LANGUAGE_ID_C);
 			assertTrue(resolvedCommand.startsWith("gcc -E -P -v -dD "));

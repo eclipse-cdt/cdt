@@ -13,8 +13,10 @@ package org.eclipse.cdt.internal.core.language.settings.providers;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -49,7 +51,6 @@ public class LanguageSettingsExtensionManager {
 	static final String ATTR_CLASS = "class"; //$NON-NLS-1$
 	static final String ATTR_ID = "id"; //$NON-NLS-1$
 	static final String ATTR_NAME = "name"; //$NON-NLS-1$
-	static final String ATTR_PARAMETER = "parameter"; //$NON-NLS-1$
 
 	static final String ELEM_LANGUAGE_SCOPE = "language-scope"; //$NON-NLS-1$
 
@@ -163,9 +164,13 @@ public class LanguageSettingsExtensionManager {
 	private static void configureExecutableProvider(ILanguageSettingsProvider provider, IConfigurationElement ce) {
 		String ceId = determineAttributeValue(ce, ATTR_ID);
 		String ceName = determineAttributeValue(ce, ATTR_NAME);
-		String ceParameter = determineAttributeValue(ce, ATTR_PARAMETER);
+		Map<String, String> ceAttributes = new HashMap<String, String>();
 		List<String> languages = null;
 		List<ICLanguageSettingEntry> entries = null;
+
+		for (String attr : ce.getAttributeNames()) {
+			ceAttributes.put(attr, determineAttributeValue(ce, attr));
+		}
 
 		for (IConfigurationElement ceLang : ce.getChildren(ELEM_LANGUAGE_SCOPE)) {
 			String langId = determineAttributeValue(ceLang, ATTR_ID);
@@ -203,7 +208,7 @@ public class LanguageSettingsExtensionManager {
 		}
 
 		if (provider instanceof LanguageSettingsBaseProvider) {
-			((LanguageSettingsBaseProvider) provider).configureProvider(ceId, ceName, languages, entries, ceParameter);
+			((LanguageSettingsBaseProvider) provider).configureProvider(ceId, ceName, languages, entries, ceAttributes);
 		} else if (provider instanceof AbstractExecutableExtensionBase) {
 			((AbstractExecutableExtensionBase) provider).setId(ceId);
 			((AbstractExecutableExtensionBase) provider).setName(ceName);

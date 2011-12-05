@@ -57,11 +57,17 @@ import org.w3c.dom.Element;
 public class GCCBuildCommandParserTest extends BaseTestCase {
 	// ID of the parser taken from the extension point
 	private static final String GCC_BUILD_COMMAND_PARSER_EXT = "org.eclipse.cdt.make.core.build.command.parser.gcc"; //$NON-NLS-1$
-	
+
+	private static final String PROVIDER_ID = "provider.id";
+	private static final String PROVIDER_NAME = "provider name";
+	private static final String LANGUAGE_ID = "language.test.id";
+	private static final String CUSTOM_PARAMETER = "customParameter";
+	private static final String CUSTOM_PARAMETER_2 = "customParameter2";
 	private static final String ELEM_TEST = "test";
 	private static final String LANG_CPP = GPPLanguage.ID;
 
-	// those attributes must match that in AbstractBuiltinSpecsDetector
+	// those attributes must match that in AbstractBuildCommandParser
+	private static final String ATTR_PARAMETER = "parameter"; //$NON-NLS-1$
 	private static final String ATTR_EXPAND_RELATIVE_PATHS = "expand-relative-paths"; //$NON-NLS-1$
 
 	private class MockBuildCommandParser extends AbstractBuildCommandParser  implements Cloneable {
@@ -140,12 +146,12 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 			// configuration description
 			ICConfigurationDescription[] cfgDescriptions = projectDescription.getConfigurations();
 			ICConfigurationDescription cfgDescription = cfgDescriptions[0];
-				
+
 			final ICConfigurationDescription cfgDescriptionReferenced = getConfigurationDescriptions(projectReferenced)[0];
 			cfgDescription.setReferenceInfo(new HashMap<String, String>() {{ put(projectReferenced.getName(), cfgDescriptionReferenced.getId()); }});
 			coreModel.setProjectDescription(project, projectDescription);
 		}
-		
+
 		{
 			// doublecheck that it's set as expected
 			ICConfigurationDescription[] cfgDescriptions = getConfigurationDescriptions(project);
@@ -157,7 +163,44 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		}
 
 	}
-	
+
+
+	public void testAbstractBuildCommandParser_GettersSetters() throws Exception {
+		{
+			// provider configured with null parameters
+			MockBuildCommandParser provider = new MockBuildCommandParser();
+			provider.configureProvider(PROVIDER_ID, PROVIDER_NAME, null, null, null);
+
+			assertEquals(PROVIDER_ID, provider.getId());
+			assertEquals(PROVIDER_NAME, provider.getName());
+			assertEquals(null, provider.getLanguageScope());
+			assertEquals(null, provider.getSettingEntries(null, null, null));
+			assertEquals(null, provider.getCompilerPattern());
+		}
+
+		{
+			// provider configured with non-null parameters
+			MockBuildCommandParser provider = new MockBuildCommandParser();
+			List<String> languages = new ArrayList<String>();
+			languages.add(LANGUAGE_ID);
+			Map<String, String> properties = new HashMap<String, String>();
+			properties.put(ATTR_PARAMETER, CUSTOM_PARAMETER);
+			List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+			ICLanguageSettingEntry entry = new CMacroEntry("MACRO", "VALUE", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY);
+			entries.add(entry);
+
+			provider.configureProvider(PROVIDER_ID, PROVIDER_NAME, languages, entries, properties);
+			assertEquals(PROVIDER_ID, provider.getId());
+			assertEquals(PROVIDER_NAME, provider.getName());
+			assertEquals(languages, provider.getLanguageScope());
+			assertEquals(entries, provider.getSettingEntries(null, null, null));
+			assertEquals(CUSTOM_PARAMETER, provider.getCompilerPattern());
+
+			// setters
+			provider.setCompilerPattern(CUSTOM_PARAMETER_2);
+			assertEquals(CUSTOM_PARAMETER_2, provider.getCompilerPattern());
+		}
+	}
 
 	public void testAbstractBuildCommandParser_CloneAndEquals() throws Exception {
 		// create instance to compare to
@@ -824,7 +867,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		parser.startup(cfgDescription);
 		parser.processLine("gcc -I/path0 missing.cpp");
 		parser.shutdown();
-		
+
 		// check entries
 		assertTrue(parser.isEmpty());
 	}
@@ -838,13 +881,13 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		IFile file=ResourceHelper.createFile(project, "file.cpp");
 		ICConfigurationDescription[] cfgDescriptions = getConfigurationDescriptions(project);
 		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
-		
+
 		ICLanguageSetting ls = cfgDescription.getLanguageSettingForFile(file.getProjectRelativePath(), true);
 		String languageId = ls.getLanguageId();
-		
+
 		// create GCCBuildCommandParser
 		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
-		
+
 		// parse line
 		parser.startup(cfgDescription);
 		parser.processLine("gcc "
@@ -852,7 +895,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 				+ "-I. "
 				+ file.getLocation().toOSString());
 		parser.shutdown();
-		
+
 		// check entries
 		IPath path0 = new Path("/path0").setDevice(project.getLocation().getDevice());
 		{
@@ -861,7 +904,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 			assertEquals(new CIncludePathEntry(project.getFullPath(), ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED), entries.get(1));
 		}
 	}
-	
+
 	/**
 	 */
 	public void testFileAbsolutePath_NoProject() throws Exception {
@@ -871,13 +914,13 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		IFile file=ResourceHelper.createFile(project, "file.cpp");
 		ICConfigurationDescription[] cfgDescriptions = getConfigurationDescriptions(project);
 		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
-		
+
 		ICLanguageSetting ls = cfgDescription.getLanguageSettingForFile(file.getProjectRelativePath(), true);
 		String languageId = ls.getLanguageId();
-		
+
 		// create GCCBuildCommandParser
 		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
-		
+
 		// parse line
 		parser.startup(null);
 		parser.processLine("gcc "
@@ -885,7 +928,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 				+ "-I. "
 				+ file.getLocation().toOSString());
 		parser.shutdown();
-		
+
 		// check entries
 		IPath path0 = new Path("/path0").setDevice(project.getLocation().getDevice());
 		{
@@ -894,7 +937,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 			assertEquals(new CIncludePathEntry(file.getParent().getFullPath(), ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED), entries.get(1));
 		}
 	}
-	
+
 	/**
 	 */
 	public void testFileWithSpaces() throws Exception {
@@ -960,17 +1003,17 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		IFile file=ResourceHelper.createFile(project, "Folder1/Folder2/file.cpp");
 		ICConfigurationDescription[] cfgDescriptions = getConfigurationDescriptions(project);
 		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
-		
+
 		ICLanguageSetting ls = cfgDescription.getLanguageSettingForFile(file.getProjectRelativePath(), true);
 		String languageId = ls.getLanguageId();
-		
+
 		// create GCCBuildCommandParser
 		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
 		ErrorParserManager epm = new ErrorParserManager(project, null);
 		// Shift build directory, that could happen if Make Target from folder1 was run
 		IFolder buildDir = folder1;
 		epm.pushDirectoryURI(buildDir.getLocationURI());
-		
+
 		// parse line
 		parser.startup(cfgDescription);
 		parser.processLine("gcc "
@@ -979,7 +1022,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 				+ "Folder1/Folder2/file.cpp",
 				epm);
 		parser.shutdown();
-		
+
 		// check entries
 		IPath path0 = new Path("/path0").setDevice(project.getLocation().getDevice());
 		{
@@ -989,7 +1032,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 			assertEquals(new CIncludePathEntry(project.getFullPath(), ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED), entries.get(1));
 		}
 	}
-	
+
 	/**
 	 */
 	public void testEndOfLine() throws Exception {
@@ -998,23 +1041,23 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		IProject project = ResourceHelper.createCDTProjectWithConfig(projectName);
 		ICConfigurationDescription[] cfgDescriptions = getConfigurationDescriptions(project);
 		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
-	
+
 		IFile file0=ResourceHelper.createFile(project, "file0.cpp");
 		IFile file1=ResourceHelper.createFile(project, "file1.cpp");
 		IFile file2=ResourceHelper.createFile(project, "file2.cpp");
 		ICLanguageSetting ls = cfgDescription.getLanguageSettingForFile(file0.getProjectRelativePath(), true);
 		String languageId = ls.getLanguageId();
-	
+
 		// create GCCBuildCommandParser
 		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
-	
+
 		// parse line
 		parser.startup(cfgDescription);
 		parser.processLine("gcc -I/path0 file0.cpp");
 		parser.processLine("gcc -I/path0 file1.cpp\n");
 		parser.processLine("gcc -I/path0 file2.cpp\r\n");
 		parser.shutdown();
-	
+
 		// check populated entries
 		IPath path0 = new Path("/path0").setDevice(project.getLocation().getDevice());
 		{
@@ -1043,33 +1086,33 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		// do not test on non-windows systems where drive letters are not supported
 		if (! Platform.getOS().equals(Platform.OS_WIN32))
 			return;
-		
+
 		// Create model project and accompanied descriptions
 		String projectName = getName();
 		IProject project = ResourceHelper.createCDTProjectWithConfig(projectName);
 		ICConfigurationDescription[] cfgDescriptions = getConfigurationDescriptions(project);
 		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
-		
+
 		IFile file=ResourceHelper.createFile(project, "file.cpp");
 		ICLanguageSetting ls = cfgDescription.getLanguageSettingForFile(file.getProjectRelativePath(), true);
 		String languageId = ls.getLanguageId();
-		
+
 		// create GCCBuildCommandParser
 		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
 		parser.setResolvingPaths(true);
-		
+
 		// parse line
 		parser.startup(cfgDescription);
 		parser.processLine("gcc "
 				+ " -IX:\\path"
 				+ " file.cpp");
 		parser.shutdown();
-		
+
 		// check populated entries
 		List<ICLanguageSettingEntry> entries = parser.getSettingEntries(cfgDescription, file, languageId);
 		assertEquals(new CIncludePathEntry(new Path("X:\\path"), 0), entries.get(0));
 	}
-	
+
 	/**
 	 */
 	public void testPathEntry_ExpandRelativePath() throws Exception {
@@ -1189,7 +1232,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		IProject project = ResourceHelper.createCDTProjectWithConfig(projectName);
 		ICConfigurationDescription[] cfgDescriptions = getConfigurationDescriptions(project);
 		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
-		
+
 		IFolder buildDir=ResourceHelper.createFolder(project, "BuildDir");
 		IFolder folder=ResourceHelper.createFolder(project, "BuildDir/Folder");
 		IFile file=ResourceHelper.createFile(project, "BuildDir/file.cpp");
@@ -1197,12 +1240,12 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		IFile fakeFile=ResourceHelper.createFile(project, "file.cpp");
 		ICLanguageSetting ls = cfgDescription.getLanguageSettingForFile(file.getProjectRelativePath(), true);
 		String languageId = ls.getLanguageId();
-		
+
 		// create GCCBuildCommandParser
 		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
 		ErrorParserManager epm = new ErrorParserManager(project, null);
 		epm.pushDirectoryURI(buildDir.getLocationURI());
-		
+
 		// parse line
 		parser.startup(cfgDescription);
 		parser.processLine("gcc "
@@ -1214,7 +1257,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 				+ " file.cpp",
 				epm);
 		parser.shutdown();
-		
+
 		// check populated entries
 		List<ICLanguageSettingEntry> entries = parser.getSettingEntries(cfgDescription, file, languageId);
 		{
@@ -1225,7 +1268,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 			assertEquals(new CIncludePathEntry(buildDir.getFullPath().append("MissingFolder"), ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED), entries.get(4));
 		}
 	}
-	
+
 	/**
 	 */
 	public void testPathEntry_GuessCWD() throws Exception {
@@ -1382,7 +1425,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 			assertEquals(new CIncludePathEntry(buildDir.getFullPath().append("MissingFolder2"), ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED), entries.get(4));
 		}
 	}
-	
+
 	/**
 	 */
 	public void testPathEntry_MappedFolderInProject() throws Exception {
@@ -1391,7 +1434,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		IProject project = ResourceHelper.createCDTProjectWithConfig(projectName);
 		ICConfigurationDescription[] cfgDescriptions = getConfigurationDescriptions(project);
 		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
-		
+
 		IFile file=ResourceHelper.createFile(project, "BuildDir/file.cpp");
 		IFolder mappedFolder=ResourceHelper.createFolder(project, "Mapped/Folder");
 		IFolder folder=ResourceHelper.createFolder(project, "Mapped/Folder/Subfolder");
@@ -1399,14 +1442,14 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		IFolder ambiguousFolder1=ResourceHelper.createFolder(project, "One/Ambiguous/Folder");
 		@SuppressWarnings("unused")
 		IFolder ambiguousFolder2=ResourceHelper.createFolder(project, "Another/Ambiguous/Folder");
-		
+
 		ICLanguageSetting ls = cfgDescription.getLanguageSettingForFile(file.getProjectRelativePath(), true);
 		String languageId = ls.getLanguageId();
-		
+
 		// create GCCBuildCommandParser
 		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
 		ErrorParserManager epm = new ErrorParserManager(project, null);
-		
+
 		// parse line
 		parser.startup(cfgDescription);
 		parser.processLine("gcc "
@@ -1417,7 +1460,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 				+ " file.cpp",
 				epm);
 		parser.shutdown();
-		
+
 		// check populated entries
 		List<ICLanguageSettingEntry> entries = parser.getSettingEntries(cfgDescription, file, languageId);
 		{
@@ -1442,7 +1485,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		IProject project = ResourceHelper.createCDTProjectWithConfig(projectName);
 		ICConfigurationDescription[] cfgDescriptions = getConfigurationDescriptions(project);
 		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
-		
+
 		// create files and folders
 		IFile file=ResourceHelper.createFile(project, "file.cpp");
 		// another project
@@ -1453,14 +1496,14 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		@SuppressWarnings("unused")
 		IFolder ambiguousFolder2=ResourceHelper.createFolder(anotherProject, "Another/Ambiguous/Folder");
 
-		
+
 		ICLanguageSetting ls = cfgDescription.getLanguageSettingForFile(file.getProjectRelativePath(), true);
 		String languageId = ls.getLanguageId();
 
 		// create GCCBuildCommandParser
 		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
 		ErrorParserManager epm = new ErrorParserManager(project, null);
-		
+
 		// parse line
 		parser.startup(cfgDescription);
 		parser.processLine("gcc "
@@ -1470,7 +1513,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 				+ " file.cpp",
 				epm);
 		parser.shutdown();
-		
+
 		// check populated entries
 		List<ICLanguageSettingEntry> entries = parser.getSettingEntries(cfgDescription, file, languageId);
 		{
@@ -1485,22 +1528,22 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 			assertEquals(new CIncludePathEntry(path, 0), entries.get(2));
 		}
 	}
-	
+
 	/**
 	 */
 	public void testPathEntry_MappedFolderInReferencedProject() throws Exception {
 		// Create model project and accompanied descriptions
 		String projectName = getName();
-		
+
 		// create main project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(projectName);
 		IFile file=ResourceHelper.createFile(project, "file.cpp");
-		
+
 		// create another project (non-referenced)
 		IProject anotherProject = ResourceHelper.createCDTProjectWithConfig(projectName+"-another");
 		@SuppressWarnings("unused")
 		IFolder folderInAnotherProject=ResourceHelper.createFolder(anotherProject, "Mapped/Folder/Subfolder");
-		
+
 		// create referenced project
 		IProject referencedProject = ResourceHelper.createCDTProjectWithConfig(projectName+"-referenced");
 		IFolder folderInReferencedProject=ResourceHelper.createFolder(referencedProject, "Mapped/Folder/Subfolder");
@@ -1508,7 +1551,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		IFolder ambiguousFolder1=ResourceHelper.createFolder(referencedProject, "One/Ambiguous/Folder");
 		@SuppressWarnings("unused")
 		IFolder ambiguousFolder2=ResourceHelper.createFolder(referencedProject, "Another/Ambiguous/Folder");
-		
+
 		setReference(project, referencedProject);
 
 		// get cfgDescription and language to work with
@@ -1516,11 +1559,11 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
 		ICLanguageSetting ls = cfgDescription.getLanguageSettingForFile(file.getProjectRelativePath(), true);
 		String languageId = ls.getLanguageId();
-		
+
 		// create GCCBuildCommandParser
 		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
 		ErrorParserManager epm = new ErrorParserManager(project, null);
-		
+
 		// parse line
 		parser.startup(cfgDescription);
 		parser.processLine("gcc "
@@ -1529,7 +1572,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 				+ " file.cpp",
 				epm);
 		parser.shutdown();
-		
+
 		// check populated entries
 		List<ICLanguageSettingEntry> entries = parser.getSettingEntries(cfgDescription, file, languageId);
 		{
@@ -1680,16 +1723,16 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		IFolder includeDir=ResourceHelper.createFolder(project, "BuildDir/include");
 		// Change build dir
 		setBuilderCWD(project, buildDir.getLocation());
-		
+
 		ICConfigurationDescription[] cfgDescriptions = getConfigurationDescriptions(project);
 		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
-		
+
 		ICLanguageSetting ls = cfgDescription.getLanguageSettingForFile(file.getProjectRelativePath(), true);
 		String languageId = ls.getLanguageId();
-		
+
 		// create GCCBuildCommandParser
 		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
-		
+
 		// parse line
 		parser.startup(cfgDescription);
 		parser.processLine("gcc "
@@ -1698,16 +1741,16 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 				+ " " + file.getLocation().toOSString()
 			);
 		parser.shutdown();
-		
+
 		// check populated entries
 		List<ICLanguageSettingEntry> entries = parser.getSettingEntries(cfgDescription, file, languageId);
 		{
 			assertEquals(new CIncludePathEntry(buildDir.getFullPath(), ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED), entries.get(0));
 			assertEquals(new CIncludePathEntry(includeDir.getFullPath(), ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED), entries.get(1));
 		}
-		
+
 	}
-	
+
 	public void testContentType_None() throws Exception {
 		MockBuildCommandParser parser = new MockBuildCommandParser() {
 			@Override
@@ -1718,11 +1761,11 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		parser.startup(null);
 		parser.processLine("gcc file.wrong-content-type");
 		parser.shutdown();
-		
+
 		List<ICLanguageSettingEntry> entries = parser.getSettingEntries(null, null, null);
 		assertNull(entries);
 	}
-	
+
 	/**
 	 */
 	public void testContentType_Mismatch() throws Exception {
@@ -1732,7 +1775,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		ICConfigurationDescription[] cfgDescriptions = getConfigurationDescriptions(project);
 		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
 		ResourceHelper.createFile(project, "file.c");
-		
+
 		// create GCCBuildCommandParser
 		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
 		// restrict the parser's language scope to C++ only
@@ -1742,7 +1785,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		parser.startup(cfgDescription);
 		parser.processLine("gcc -I/path0 file.c");
 		parser.shutdown();
-		
+
 		assertTrue(parser.isEmpty());
 	}
 
@@ -1863,7 +1906,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		IProject project = ResourceHelper.createCDTProjectWithConfig(projectName);
 		ICConfigurationDescription[] cfgDescriptions = getConfigurationDescriptions(project);
 		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
-		
+
 		// create folder structure
 		@SuppressWarnings("unused")
 		IFolder buildDir=ResourceHelper.createEfsFolder(project, "BuildDir", new URI("mem:/EfsProject/BuildDir"));
@@ -1902,7 +1945,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		IProject project = ResourceHelper.createCDTProjectWithConfig(projectName);
 		ICConfigurationDescription[] cfgDescriptions = getConfigurationDescriptions(project);
 		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
-		
+
 		// create folder structure
 		@SuppressWarnings("unused")
 		IFolder buildDir=ResourceHelper.createEfsFolder(project, "BuildDir", new URI("mem:/MappedEfsProject/BuildDir"));
@@ -1911,11 +1954,11 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		IFile file=ResourceHelper.createEfsFile(project, "BuildDir/file.cpp", new URI("mem:/MappedEfsProject/BuildDir/file.cpp"));
 		ICLanguageSetting ls = cfgDescription.getLanguageSettingForFile(file.getProjectRelativePath(), true);
 		String languageId = ls.getLanguageId();
-		
+
 		// create GCCBuildCommandParser
 		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
 		ErrorParserManager epm = new ErrorParserManager(project, null);
-		
+
 		// parse line
 		parser.startup(cfgDescription);
 		parser.processLine("gcc "
@@ -1923,7 +1966,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 				+ " file.cpp",
 				epm);
 		parser.shutdown();
-		
+
 		// check populated entries
 		List<ICLanguageSettingEntry> entries = parser.getSettingEntries(cfgDescription, file, languageId);
 		{

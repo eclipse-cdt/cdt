@@ -84,17 +84,17 @@ public final class BuiltinSpecsDetectorOptionPage extends AbstractLanguageSettin
 
 		{
 			inputCommand = ControlFactory.createTextField(composite, SWT.SINGLE | SWT.BORDER);
-			String customParameter = provider.getCustomParameter();
-			inputCommand.setText(customParameter!=null ? customParameter : "");
+			String command = provider.getCommand();
+			inputCommand.setText(command!=null ? command : "");
 			inputCommand.setEnabled(fEditable);
 			inputCommand.addModifyListener(new ModifyListener() {
 				@Override
 				public void modifyText(ModifyEvent e) {
 					String text = inputCommand.getText();
 					AbstractBuiltinSpecsDetector provider = getRawProvider();
-					if (!text.equals(provider.getCustomParameter())) {
+					if (!text.equals(provider.getCommand())) {
 						AbstractBuiltinSpecsDetector selectedProvider = getWorkingCopy(providerId);
-						selectedProvider.setCustomParameter(text);
+						selectedProvider.setCommand(text);
 						providerTab.refreshItem(selectedProvider);
 					}
 				}

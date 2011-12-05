@@ -44,9 +44,7 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 	private static final String ELEM_LANGUAGE_SCOPE = "language-scope"; //$NON-NLS-1$
 	private static final String ATTR_NAME = "name"; //$NON-NLS-1$
 	private static final String ATTR_CLASS = "class"; //$NON-NLS-1$
-	private static final String ATTR_PARAMETER = "parameter"; //$NON-NLS-1$
 
-	private Map<String, String> properties = new HashMap<String, String>();
 	private LanguageSettingsSerializableStorage fStorage = new LanguageSettingsSerializableStorage();
 
 	/**
@@ -78,9 +76,9 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 	}
 
 	@Override
-	public void configureProvider(String id, String name, List<String> languages, List<ICLanguageSettingEntry> entries, String customParameter) {
+	public void configureProvider(String id, String name, List<String> languages, List<ICLanguageSettingEntry> entries, Map<String, String> properties) {
 		// do not pass entries to super, keep them in local storage
-		super.configureProvider(id, name, languages, null, customParameter);
+		super.configureProvider(id, name, languages, null, properties);
 
 		fStorage.clear();
 
@@ -111,16 +109,6 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 			this.languageScope = null;
 		else
 			this.languageScope = new ArrayList<String>(languages);
-	}
-
-	/**
-	 * Set custom parameter for the provider.
-	 * Subclasses are free to define how their behavior depends on custom parameter.
-	 *
-	 * @param customParameter
-	 */
-	public void setCustomParameter(String customParameter) {
-		this.customParameter = customParameter;
 	}
 
 	/**
@@ -218,8 +206,6 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 		attributes.add(getName());
 		attributes.add(ATTR_CLASS);
 		attributes.add(getClass().getCanonicalName());
-		attributes.add(ATTR_PARAMETER);
-		attributes.add(getCustomParameter());
 		for (Entry<String, String> entry : properties.entrySet()) {
 			attributes.add(entry.getKey());
 			attributes.add(entry.getValue());
@@ -281,7 +267,6 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 	public void loadAttributes(Element providerNode) {
 		String providerId = XmlUtil.determineAttributeValue(providerNode, ATTR_ID);
 		String providerName = XmlUtil.determineAttributeValue(providerNode, ATTR_NAME);
-		String providerParameter = XmlUtil.determineAttributeValue(providerNode, ATTR_PARAMETER);
 
 		properties.clear();
 		NamedNodeMap attrs = providerNode.getAttributes();
@@ -298,7 +283,6 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 
 		this.setId(providerId);
 		this.setName(providerName);
-		this.setCustomParameter(providerParameter);
 
 		NodeList nodes = providerNode.getChildNodes();
 		for (int i=0;i<nodes.getLength();i++) {
@@ -322,17 +306,19 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 	}
 
 	/**
-	 * TODO
-	 */
-	public String getProperty(String key) {
-		return properties.get(key);
-	}
-
-	/**
-	 * TODO
+	 * Set a custom property of the provider.
+	 * @see LanguageSettingsBaseProvider#getProperty(String)
+	 *
+	 * @param key - name of the property.
+	 * @param value - value of the property.
+	 *    If value is {@code null} the property is removed from the list.
 	 */
 	public void setProperty(String key, String value) {
-		properties.put(key, value);
+		if (value != null) {
+			properties.put(key, value);
+		} else {
+			properties.remove(key);
+		}
 	}
 
 	/**
@@ -374,7 +360,6 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 		result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
 		result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
 		result = prime * result + ((languageScope == null) ? 0 : languageScope.hashCode());
-		result = prime * result + ((customParameter == null) ? 0 : customParameter.hashCode());
 		result = prime * result + ((properties == null) ? 0 : properties.hashCode());
 		result = prime * result + ((fStorage == null) ? 0 : fStorage.hashCode());
 		result = prime * result + getClass().hashCode();
@@ -415,12 +400,6 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 			if (other.languageScope != null)
 				return false;
 		} else if (!languageScope.equals(other.languageScope))
-			return false;
-
-		if (customParameter == null) {
-			if (other.customParameter != null)
-				return false;
-		} else if (!customParameter.equals(other.customParameter))
 			return false;
 
 		if (properties == null) {

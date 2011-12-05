@@ -45,8 +45,8 @@ import org.eclipse.core.runtime.jobs.Job;
  */
 public abstract class AbstractBuildCommandParser extends AbstractLanguageSettingsOutputScanner
 		implements ICConsoleParser, IErrorParser {
-
 	public static final Object JOB_FAMILY_BUILD_COMMAND_PARSER = "org.eclipse.cdt.make.core.scannerconfig.AbstractBuildCommandParser";
+	private static final String ATTR_PARAMETER = "parameter"; //$NON-NLS-1$
 
 	private static final String LEADING_PATH_PATTERN = "\\S+[/\\\\]"; //$NON-NLS-1$
 	private static final Pattern OPTIONS_PATTERN = Pattern.compile("-[^\\s\"']*(\\s*((\".*?\")|('.*?')|([^-\\s][^\\s]+)))?"); //$NON-NLS-1$
@@ -63,22 +63,43 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 	private static final int FILE_GROUP = 2;
 
 
+	/**
+	 * The compiler command pattern without specifying compiler options.
+	 * The options are intended to be handled with option parsers,
+	 * see {@link #getOptionParsers()}.
+	 * This is regular expression pattern.
+	 *
+	 * @return the compiler command pattern.
+	 */
+	public String getCompilerPattern() {
+		return getProperty(ATTR_PARAMETER);
+	}
+
+	/**
+	 * Set compiler command pattern for the provider. See {@link #getCompilerPattern()}.
+	 * @param commandPattern - value of the command pattern to set.
+	 *    This is regular expression pattern.
+	 */
+	public void setCompilerPattern(String commandPattern) {
+		setProperty(ATTR_PARAMETER, commandPattern);
+	}
+
 	@SuppressWarnings("nls")
-	private String getCompilerCommandPattern() {
-		String parameter = getCustomParameter();
-		return "\\s*\"?("+LEADING_PATH_PATTERN+")?(" + parameter + ")\"?";
+	private String getCompilerPatternExtended() {
+		String compilerPattern = getCompilerPattern();
+		return "\\s*\"?("+LEADING_PATH_PATTERN+")?(" + compilerPattern + ")\"?";
 	}
 
 	private int adjustFileGroup() {
-		return countGroups(getCompilerCommandPattern()) + FILE_GROUP;
+		return countGroups(getCompilerPatternExtended()) + FILE_GROUP;
 	}
 
 	private String makePattern(String template) {
 		@SuppressWarnings("nls")
 		String pattern = template
-				.replace("${COMPILER_PATTERN}", getCompilerCommandPattern())
+				.replace("${COMPILER_PATTERN}", getCompilerPatternExtended())
 				.replace("${EXTENSIONS_PATTERN}", getPatternFileExtensions())
-				.replace("${COMPILER_GROUPS+1}", new Integer(countGroups(getCompilerCommandPattern()) + 1).toString());
+				.replace("${COMPILER_GROUPS+1}", new Integer(countGroups(getCompilerPatternExtended()) + 1).toString());
 		return pattern;
 	}
 

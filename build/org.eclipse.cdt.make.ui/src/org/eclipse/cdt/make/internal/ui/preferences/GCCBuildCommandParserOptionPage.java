@@ -88,8 +88,8 @@ public final class GCCBuildCommandParserOptionPage extends AbstractLanguageSetti
 
 		{
 			inputCommand = ControlFactory.createTextField(composite, SWT.SINGLE | SWT.BORDER);
-			String customParameter = provider.getCustomParameter();
-			inputCommand.setText(customParameter!=null ? customParameter : "");
+			String compilerPattern = provider.getCompilerPattern();
+			inputCommand.setText(compilerPattern!=null ? compilerPattern : "");
 
 			GridData gd = new GridData();
 			gd.horizontalSpan = 1;
@@ -103,9 +103,9 @@ public final class GCCBuildCommandParserOptionPage extends AbstractLanguageSetti
 				public void modifyText(ModifyEvent e) {
 					String text = inputCommand.getText();
 					AbstractBuildCommandParser provider = getRawProvider();
-					if (!text.equals(provider.getCustomParameter())) {
+					if (!text.equals(provider.getCompilerPattern())) {
 						AbstractBuildCommandParser selectedProvider = getWorkingCopy(providerId);
-						selectedProvider.setCustomParameter(text);
+						selectedProvider.setCompilerPattern(text);
 						providerTab.refreshItem(selectedProvider);
 					}
 				}

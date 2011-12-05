@@ -54,8 +54,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	private static final String PROVIDER_2 = "test.provider.2.id";
 	private static final String PROVIDER_NAME_0 = "test.provider.0.name";
 	private static final String PROVIDER_NAME_2 = "test.provider.2.name";
-	private static final String PROVIDER_ID_WSP = "test.provider.workspace.id";
-	private static final String PROVIDER_NAME_WSP = "test.provider.workspace.name";
+	private static final String ATTR_PARAMETER = "parameter";
 	private static final String CUSTOM_PARAMETER = "custom parameter";
 	private static final String ELEM_TEST = "test";
 
@@ -349,8 +348,8 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 			assertEquals(EXTENSION_SERIALIZABLE_PROVIDER_ID, rawProvider.getId());
 
 			// customize provider
-			rawProvider.setCustomParameter(CUSTOM_PARAMETER);
-			assertEquals(CUSTOM_PARAMETER, rawProvider.getCustomParameter());
+			rawProvider.setProperty(ATTR_PARAMETER, CUSTOM_PARAMETER);
+			assertEquals(CUSTOM_PARAMETER, rawProvider.getProperty(ATTR_PARAMETER));
 		}
 		{
 			// save workspace provider (as opposed to raw provider)
@@ -363,7 +362,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 			// check that it has not cleared
 			ILanguageSettingsProvider provider = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_SERIALIZABLE_PROVIDER_ID);
 			LanguageSettingsSerializableProvider rawProvider = (LanguageSettingsSerializableProvider) LanguageSettingsManager.getRawProvider(provider);
-			assertEquals(CUSTOM_PARAMETER, rawProvider.getCustomParameter());
+			assertEquals(CUSTOM_PARAMETER, rawProvider.getProperty(ATTR_PARAMETER));
 		}
 	}
 

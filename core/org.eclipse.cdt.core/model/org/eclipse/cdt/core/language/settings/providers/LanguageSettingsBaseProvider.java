@@ -13,7 +13,9 @@ package org.eclipse.cdt.core.language.settings.providers;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.cdt.core.AbstractExecutableExtensionBase;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -27,15 +29,13 @@ import org.eclipse.core.resources.IResource;
  *
  * This implementation supports "static" list of entries for languages specified in
  * the extension point.
- *
- * @since 6.0
  */
 public class LanguageSettingsBaseProvider extends AbstractExecutableExtensionBase implements ILanguageSettingsProvider {
 	/** Language scope, i.e. list of languages the entries will be provided for. */
 	protected List<String> languageScope = null;
 
-	/** Custom parameter. Intended for providers extending this class. */
-	protected String customParameter = null;
+	/** Provider-specific properties */
+	protected Map<String, String> properties = new HashMap<String, String>();
 
 	/** List of entries defined by this provider. */
 	private List<ICLanguageSettingEntry> entries = null;
@@ -85,15 +85,15 @@ public class LanguageSettingsBaseProvider extends AbstractExecutableExtensionBas
 	 *    are provided for any language.
 	 * @param entries - the list of language settings entries this provider provides.
 	 *    If {@code null} is passed, the provider creates an empty list.
-	 * @param customParameter - a custom parameter as the means to customize
-	 *    providers extending this class.
+	 * @param properties - custom properties as the means to customize providers.
 	 */
 	public LanguageSettingsBaseProvider(String id, String name, List<String> languages,
-			List<ICLanguageSettingEntry> entries, String customParameter) {
+			List<ICLanguageSettingEntry> entries, Map<String, String> properties) {
 		super(id, name);
 		this.languageScope = languages!=null ? new ArrayList<String>(languages) : null;
 		this.entries = getPooledList(entries);
-		this.customParameter = customParameter;
+		if (properties != null)
+			this.properties = new HashMap<String, String>(properties);
 	}
 
 	/**
@@ -111,21 +111,34 @@ public class LanguageSettingsBaseProvider extends AbstractExecutableExtensionBas
 	 *    are provided for any language.
 	 * @param entries - the list of language settings entries this provider provides.
 	 *    If {@code null} is passed, the provider creates an empty list.
-	 * @param customParameter - a custom parameter as the means to customize
-	 *    providers extending this class from extension definition in {@code plugin.xml}.
+	 * @param properties - custom properties as the means to customize providers.
 	 *
 	 * @throws UnsupportedOperationException if an attempt to reconfigure provider is made.
 	 */
 	public void configureProvider(String id, String name, List<String> languages,
-			List<ICLanguageSettingEntry> entries, String customParameter) {
-		if (this.entries!=null)
+			List<ICLanguageSettingEntry> entries, Map<String, String> properties) {
+		if (this.entries!=null || !this.properties.isEmpty())
 			throw new UnsupportedOperationException(SettingsModelMessages.getString("LanguageSettingsBaseProvider.CanBeConfiguredOnlyOnce")); //$NON-NLS-1$
 
 		setId(id);
 		setName(name);
 		this.languageScope = languages!=null ? new ArrayList<String>(languages) : null;
 		this.entries = getPooledList(entries);
-		this.customParameter = customParameter;
+		if (properties != null)
+			this.properties = new HashMap<String, String>(properties);
+	}
+
+	/**
+	 * {@code LanguageSettingsBaseProvider} keeps the list of key-value pairs
+	 * so extenders of this class can customize the provider. The properties
+	 * of {@code LanguageSettingsBaseProvider} come from the extension in plugin.xml
+	 * although the extenders can provide their own method.
+	 *
+	 * @param key - property to check the value.
+	 * @return value of the property.
+	 */
+	public String getProperty(String key) {
+		return properties.get(key);
 	}
 
 	private List<ICLanguageSettingEntry> getPooledList(List<ICLanguageSettingEntry> entries) {
@@ -167,12 +180,5 @@ public class LanguageSettingsBaseProvider extends AbstractExecutableExtensionBas
 		if (languageScope==null)
 			return null;
 		return Collections.unmodifiableList(languageScope);
-	}
-
-	/**
-	 * @return the custom parameter defined in the extension in {@code plugin.xml}.
-	 */
-	public String getCustomParameter() {
-		return customParameter;
 	}
 }

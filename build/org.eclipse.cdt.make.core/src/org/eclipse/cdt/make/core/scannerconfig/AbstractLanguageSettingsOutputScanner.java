@@ -184,7 +184,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	/**
 	 * Parse the line returning the resource name as appears in the output.
 	 * This is the resource where {@link ICLanguageSettingEntry} list is being added.
-	 * 
+	 *
 	 * @param line - one input line from the output stripped from end of line characters.
 	 * @return the resource name as appears in the output or {@code null}.
 	 *    Note that {@code null} can have different semantics and can mean "no resource found"
@@ -198,7 +198,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	 * the option parsers. It is assumed that each substring presents one
 	 * {@link ICLanguageSettingEntry} (for example compiler options {@code -I/path} or
 	 * {@code -DMACRO=1}.
-	 * 
+	 *
 	 * @param line - one input line from the output stripped from end of line characters.
 	 * @return list of substrings representing language settings entries.
 	 */
@@ -240,7 +240,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		errorParserManager = epm;
 		parsedResourceName = parseForResourceName(line);
 		currentResource = findResource(parsedResourceName);
-		
+
 		currentLanguageId = determineLanguage();
 		if (!isLanguageInScope(currentLanguageId))
 			return false;
@@ -251,7 +251,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		 * it can be different filesystem (and different URI schema).
 		 */
 		URI buildDirURI = null;
-		
+
 		/**
 		 * Where source tree starts if mapped. This kind of mapping is useful for example in cases when
 		 * the absolute path to the source file on the remote system is simulated inside a project in the
@@ -260,14 +260,14 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		 * (or even URI schema) does not have to match that of buildDirURI.
 		 */
 		URI mappedRootURI = null;
-		
+
 		if (isResolvingPaths) {
 			mappedRootURI = getMappedRootURI(currentResource, parsedResourceName);
 			buildDirURI = getBuildDirURI(mappedRootURI);
 		}
 
 		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
-		
+
 		List<String> options = parseForOptions(line);
 		if (options!=null) {
 			for (String option : options) {
@@ -283,7 +283,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 							} else {
 								entry = optionParser.createEntry(optionParser.parsedName, optionParser.parsedValue, 0);
 							}
-	
+
 							if (entry != null && !entries.contains(entry)) {
 								entries.add(entry);
 								break;
@@ -319,7 +319,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 
 	protected void setSettingEntries(List<ICLanguageSettingEntry> entries) {
 		setSettingEntries(currentCfgDescription, currentResource, currentLanguageId, entries);
-		
+
 		LanguageSettingsLogger.logInfo(getPrefixForLog()
 				+ getClass().getSimpleName() + " collected " + (entries!=null ? ("" + entries.size()) : "null") + " entries for " + currentResource);
 	}
@@ -331,10 +331,10 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 			// use handle; resource does not need to exist
 			rc = currentProject.getFile("__" + fileName);
 		}
-		
+
 		if (rc == null)
 			return null;
-	
+
 		List<String> languageIds = LanguageSettingsManager.getLanguages(rc, currentCfgDescription);
 		if (languageIds.isEmpty())
 			return null;
@@ -349,26 +349,26 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 
 	protected String getPatternFileExtensions() {
 		IContentTypeManager manager = Platform.getContentTypeManager();
-	
+
 		Set<String> fileExts = new HashSet<String>();
-	
+
 		IContentType contentTypeCpp = manager.getContentType("org.eclipse.cdt.core.cxxSource"); //$NON-NLS-1$
 		fileExts.addAll(Arrays.asList(contentTypeCpp.getFileSpecs(IContentType.FILE_EXTENSION_SPEC)));
-	
+
 		IContentType contentTypeC = manager.getContentType("org.eclipse.cdt.core.cSource"); //$NON-NLS-1$
 		fileExts.addAll(Arrays.asList(contentTypeC.getFileSpecs(IContentType.FILE_EXTENSION_SPEC)));
-	
+
 		String pattern = expressionLogicalOr(fileExts);
-	
+
 		return pattern;
 	}
 
 	private ICLanguageSettingEntry createResolvedPathEntry(AbstractOptionParser optionParser,
 			String parsedPath, int flag, URI baseURI) {
-		
+
 		ICLanguageSettingEntry entry;
 		String resolvedPath = null;
-		
+
 		URI uri = determineMappedURI(parsedPath, baseURI);
 		IResource rc = null;
 		if (uri != null && uri.isAbsolute()) {
@@ -400,7 +400,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 				resolvedPath = path.toString();
 			}
 		}
-		
+
 		if (resolvedPath==null) {
 			resolvedPath = parsedPath;
 		}
@@ -412,9 +412,9 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	private IResource findResource(String parsedResourceName) {
 		if (parsedResourceName==null)
 			return null;
-		
+
 		IResource sourceFile = null;
-		
+
 		// try ErrorParserManager
 		if (errorParserManager != null) {
 			sourceFile = errorParserManager.findFileName(parsedResourceName);
@@ -442,7 +442,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 
 	protected URI getBuildDirURI(URI mappedRootURI) {
 		URI buildDirURI = null;
-		
+
 		URI cwdURI = null;
 		if (currentResource!=null && parsedResourceName!=null && !new Path(parsedResourceName).isAbsolute()) {
 			cwdURI = findBaseLocationURI(currentResource.getLocationURI(), parsedResourceName);
@@ -450,14 +450,14 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		if (cwdURI == null && errorParserManager != null) {
 			cwdURI = errorParserManager.getWorkingDirectoryURI();
 		}
-	
+
 		String cwdPath = cwdURI != null ? EFSExtensionManager.getDefault().getPathFromURI(cwdURI) : null;
 		if (cwdPath != null && mappedRootURI != null) {
 			buildDirURI = EFSExtensionManager.getDefault().append(mappedRootURI, cwdPath);
 		} else {
 			buildDirURI = cwdURI;
 		}
-	
+
 		if (buildDirURI == null && currentCfgDescription != null) {
 			IPath pathBuilderCWD = currentCfgDescription.getBuildSetting().getBuilderCWD();
 			if (pathBuilderCWD != null) {
@@ -472,11 +472,11 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 				buildDirURI = org.eclipse.core.filesystem.URIUtil.toURI(builderCWD);
 			}
 		}
-		
+
 		if (buildDirURI == null && currentProject != null) {
 			buildDirURI = currentProject.getLocationURI();
 		}
-		
+
 		if (buildDirURI == null && currentResource != null) {
 			IContainer container;
 			if (currentResource instanceof IContainer) {
@@ -491,14 +491,14 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 
 	/**
 	 * Determine URI on the local filesystem considering possible mapping.
-	 * 
+	 *
 	 * @param pathStr - path to the resource, can be absolute or relative
 	 * @param baseURI - base {@link URI} where path to the resource is rooted
 	 * @return {@link URI} of the resource
 	 */
 	private static URI determineMappedURI(String pathStr, URI baseURI) {
 		URI uri = null;
-	
+
 		if (baseURI==null) {
 			if (new Path(pathStr).isAbsolute()) {
 				uri = resolvePathFromBaseLocation(pathStr, Path.ROOT);
@@ -519,7 +519,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 				}
 			}
 		}
-	
+
 		if (uri == null) {
 			// if everything fails just wrap string to URI
 			uri = org.eclipse.core.filesystem.URIUtil.toURI(pathStr);
@@ -532,7 +532,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		if (path.equals(new Path(".")) || path.equals(new Path(".."))) { //$NON-NLS-1$ //$NON-NLS-2$
 			return null;
 		}
-	
+
 		// prefer current project
 		if (preferredProject!=null) {
 			List<IResource> result = findPathInFolder(path, preferredProject);
@@ -543,9 +543,9 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 				return null;
 			}
 		}
-	
+
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		
+
 		// then prefer referenced projects
 		if (referencedProjectsNames.size() > 0) {
 			IResource rc = null;
@@ -567,7 +567,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 				return rc;
 			}
 		}
-	
+
 		// then check all other projects in workspace
 		IProject[] projects = root.getProjects();
 		if (projects.length > 0) {
@@ -589,7 +589,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 				return rc;
 			}
 		}
-		
+
 		// not found or ambiguous
 		return null;
 	}
@@ -600,7 +600,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		if (resource != null) {
 			paths.add(resource);
 		}
-	
+
 		try {
 			for (IResource res : folder.members()) {
 				if (res instanceof IContainer) {
@@ -610,7 +610,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		} catch (CoreException e) {
 			// ignore
 		}
-	
+
 		return paths;
 	}
 
@@ -637,9 +637,9 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	private static URI findBaseLocationURI(URI fileURI, String relativeFileName) {
 		URI cwdURI = null;
 		String path = fileURI.getPath();
-	
+
 		String[] segments = relativeFileName.split("[/\\\\]"); //$NON-NLS-1$
-	
+
 		// start removing segments from the end of the path
 		for (int i = segments.length - 1; i >= 0; i--) {
 			String lastSegment = segments[i];
@@ -659,7 +659,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 				}
 			}
 		}
-	
+
 		try {
 			cwdURI = new URI(fileURI.getScheme(), fileURI.getUserInfo(), fileURI.getHost(),
 					fileURI.getPort(), path + '/', fileURI.getQuery(), fileURI.getFragment());
@@ -667,7 +667,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 			// It should be valid URI here or something is wrong
 			MakeCorePlugin.log(e);
 		}
-	
+
 		return cwdURI;
 	}
 
@@ -676,7 +676,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	 * this function will try to figure mapping and return "mapped root",
 	 * i.e URI where the root path would be mapped. The mapped root will be
 	 * used to prepend to other "absolute" paths where appropriate.
-	 * 
+	 *
 	 * @param sourceFile - a resource referred by parsed path
 	 * @param parsedResourceName - path as appears in the output
 	 * @return mapped path as URI
@@ -685,10 +685,10 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		if (currentResource==null) {
 			return null;
 		}
-		
+
 		URI fileURI = sourceFile.getLocationURI();
 		String mappedRoot = "/"; //$NON-NLS-1$
-		
+
 		if (parsedResourceName!=null) {
 			IPath parsedSrcPath = new Path(parsedResourceName);
 			if (parsedSrcPath.isAbsolute()) {
@@ -723,7 +723,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 				if (device != null && device.length() > 0) {
 					pathName = pathName.substring(device.length());
 				}
-		
+
 				baseLocation = baseLocation.addTrailingSeparator();
 				if (pathName.startsWith("/")) { //$NON-NLS-1$
 					pathName = pathName.substring(1);
@@ -731,7 +731,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 				pathName = baseLocation.toString() + pathName;
 			}
 		}
-	
+
 		try {
 			File file = new File(pathName);
 			file = file.getCanonicalFile();
@@ -739,7 +739,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		} catch (IOException e) {
 			// if error just leave it as is
 		}
-	
+
 		URI uri = org.eclipse.core.filesystem.URIUtil.toURI(pathName);
 		return uri;
 	}
@@ -747,9 +747,9 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	private static IResource findResourceForLocationURI(URI uri, int kind, IProject preferredProject) {
 		if (uri==null)
 			return null;
-		
+
 		IResource resource = null;
-	
+
 		switch (kind) {
 		case ICSettingEntry.INCLUDE_PATH:
 		case ICSettingEntry.LIBRARY_PATH:
@@ -760,7 +760,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 			resource = findFileForLocationURI(uri, preferredProject);
 			break;
 		}
-	
+
 		return resource;
 	}
 
@@ -788,11 +788,11 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	private static IPath getFilesystemLocation(URI uri) {
 		if (uri==null)
 			return null;
-		
+
 		// EFSExtensionManager mapping
 		String pathStr = EFSExtensionManager.getDefault().getMappedPath(uri);
 		uri = org.eclipse.core.filesystem.URIUtil.toURI(pathStr);
-	
+
 		try {
 			File file = new java.io.File(uri);
 			String canonicalPathStr = file.getCanonicalPath();
@@ -818,7 +818,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		pattern += ")";
 		return pattern;
 	}
-	
+
 	protected static int countGroups(String str) {
 		@SuppressWarnings("nls")
 		int count = str.replaceAll("[^\\(]", "").length();
@@ -831,16 +831,16 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		elementProvider.setAttribute(ATTR_EXPAND_RELATIVE_PATHS, Boolean.toString(isResolvingPaths));
 		return elementProvider;
 	}
-	
+
 	@Override
 	public void loadAttributes(Element providerNode) {
 		super.loadAttributes(providerNode);
-		
+
 		String expandRelativePathsValue = XmlUtil.determineAttributeValue(providerNode, ATTR_EXPAND_RELATIVE_PATHS);
 		if (expandRelativePathsValue!=null)
 			isResolvingPaths = Boolean.parseBoolean(expandRelativePathsValue);
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

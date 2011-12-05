@@ -39,6 +39,7 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 	/*package*/ static final String EXTENSION_BASE_PROVIDER_NAME = "Test Plugin Mock Language Settings Base Provider";
 	/*package*/ static final String EXTENSION_BASE_PROVIDER_LANG_ID = "org.eclipse.cdt.core.tests.language.id";
 	/*package*/ static final String EXTENSION_BASE_PROVIDER_PARAMETER = "custom parameter";
+	/*package*/ static final String EXTENSION_BASE_PROVIDER_ATTR_PARAMETER = "parameter";
 	/*package*/ static final String EXTENSION_CUSTOM_PROVIDER_ID = "org.eclipse.cdt.core.tests.custom.language.settings.provider";
 	/*package*/ static final String EXTENSION_CUSTOM_PROVIDER_NAME = "Test Plugin Mock Language Settings Provider";
 	/*package*/ static final String EXTENSION_BASE_SUBCLASS_PROVIDER_ID = "org.eclipse.cdt.core.tests.language.settings.base.provider.subclass";
@@ -122,7 +123,7 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 		LanguageSettingsBaseProvider provider = (LanguageSettingsBaseProvider)rawProvider;
 		assertEquals(EXTENSION_BASE_PROVIDER_ID, provider.getId());
 		assertEquals(EXTENSION_BASE_PROVIDER_NAME, provider.getName());
-		assertEquals(EXTENSION_BASE_PROVIDER_PARAMETER, provider.getCustomParameter());
+		assertEquals(EXTENSION_BASE_PROVIDER_PARAMETER, provider.getProperty(EXTENSION_BASE_PROVIDER_ATTR_PARAMETER));
 
 		// attempt to get entries for wrong language
 		assertNull(provider.getSettingEntries(null, FILE_0, LANG_ID));
@@ -263,7 +264,7 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 		LanguageSettingsSerializableProvider provider = (LanguageSettingsSerializableProvider) rawProvider;
 
 		assertEquals(null, provider.getLanguageScope());
-		assertEquals("", provider.getCustomParameter());
+		assertEquals("", provider.getProperty(EXTENSION_BASE_PROVIDER_ATTR_PARAMETER));
 
 		List<ICLanguageSettingEntry> expected = new ArrayList<ICLanguageSettingEntry>();
 		expected.add(new CMacroEntry("MACRO", "value", 0));

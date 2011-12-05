@@ -1,19 +1,23 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2009 Andrew Gvozdev (Quoin Inc.) and others.
+ * Copyright (c) 2009, 2011 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Andrew Gvozdev (Quoin Inc.) - initial API and implementation
+ *     Andrew Gvozdev - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.core.language.settings.providers;
 
-import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsBaseProvider;
-
-
 public class MockLanguageSettingsBaseProvider extends LanguageSettingsBaseProvider {
+	private static final String ATTR_PARAMETER = "parameter"; //$NON-NLS-1$
+
+	/**
+	 * @return the custom parameter defined in the extension in {@code plugin.xml}.
+	 */
+	public String getCustomParameter() {
+		return getProperty(ATTR_PARAMETER);
+	}
 
 }

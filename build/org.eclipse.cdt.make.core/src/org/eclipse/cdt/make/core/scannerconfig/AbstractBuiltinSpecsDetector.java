@@ -80,6 +80,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	private static final String PLUGIN_CDT_MAKE_UI_ID = "org.eclipse.cdt.make.ui"; //$NON-NLS-1$
 	private static final String GMAKE_ERROR_PARSER_ID = "org.eclipse.cdt.core.GmakeErrorParser"; //$NON-NLS-1$
 	private static final String PATH_ENV = "PATH"; //$NON-NLS-1$
+	private static final String ATTR_PARAMETER = "parameter"; //$NON-NLS-1$
 	private static final String ATTR_CONSOLE = "console"; //$NON-NLS-1$
 
 	protected static final String COMPILER_MACRO = "${COMMAND}"; //$NON-NLS-1$
@@ -182,6 +183,30 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		}
 	}
 
+	/**
+	 * The command to run. Some macros could be specified in there:
+	 * <ul>
+	 * <b>${COMMAND}</b> - compiler command taken from the toolchain.<br>
+	 * <b>${INPUTS}</b> - path to spec file which will be placed in workspace area.<br>
+	 * <b>${EXT}</b> - file extension calculated from language ID.
+	 * </ul>
+	 * The parameter could be taken from the extension
+	 * in {@code plugin.xml} or from property file.
+	 *
+	 * @return the command to run.
+	 */
+	public String getCommand() {
+		return getProperty(ATTR_PARAMETER);
+	}
+
+	/**
+	 * Set custom command for the provider. See {@link #getCommand()}.
+	 * @param command - value of custom command to set.
+	 */
+	public void setCommand(String command) {
+		setProperty(ATTR_PARAMETER, command);
+	}
+
 	public void setConsoleEnabled(boolean enable) {
 		isConsoleEnabled = enable;
 	}
@@ -191,7 +216,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 	}
 
 	protected String resolveCommand(String languageId) throws CoreException {
-		String cmd = getCustomParameter();
+		String cmd = getCommand();
 		if (cmd!=null && (cmd.contains(COMPILER_MACRO) || cmd.contains(SPEC_FILE_MACRO) || cmd.contains(SPEC_EXT_MACRO))) {
 			if (cmd.contains(COMPILER_MACRO)) {
 				String compiler = getCompilerCommand(languageId);

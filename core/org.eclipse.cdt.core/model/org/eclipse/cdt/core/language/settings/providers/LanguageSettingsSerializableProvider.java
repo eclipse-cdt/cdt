@@ -11,7 +11,10 @@
 package org.eclipse.cdt.core.language.settings.providers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -21,6 +24,7 @@ import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsSerializableStorage;
 import org.eclipse.core.resources.IResource;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -41,13 +45,8 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 	private static final String ATTR_NAME = "name"; //$NON-NLS-1$
 	private static final String ATTR_CLASS = "class"; //$NON-NLS-1$
 	private static final String ATTR_PARAMETER = "parameter"; //$NON-NLS-1$
-	private static final String ATTR_STORE_ENTRIES = "store-entries"; //$NON-NLS-1$
-	private static final String VALUE_WORKSPACE = "workspace"; //$NON-NLS-1$
-	private static final String VALUE_PROJECT = "project"; //$NON-NLS-1$
 
-	/** Tells if language settings entries are persisted with the project or in workspace area while serializing. */
-	private boolean storeEntriesInProjectArea = false;
-
+	private Map<String, String> properties = new HashMap<String, String>();
 	private LanguageSettingsSerializableStorage fStorage = new LanguageSettingsSerializableStorage();
 
 	/**
@@ -122,26 +121,6 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 	 */
 	public void setCustomParameter(String customParameter) {
 		this.customParameter = customParameter;
-	}
-
-	/**
-	 * Tells if language settings entries are persisted with the project (under .settings folder)
-	 * or in workspace area. Persistence in the project area lets the entries migrate with the
-	 * project.
-	 *
-	 * @return {@code true} if LSE persisted with the project or {@code false} if in the workspace.
-	 */
-	public boolean isStoringEntriesInProjectArea() {
-		return storeEntriesInProjectArea;
-	}
-
-	/**
-	 * Setter to define where language settings are persisted.
-	 * @param storeEntriesWithProject - {@code true} if with the project,
-	 *    {@code false} if in workspace area.
-	 */
-	public void setStoringEntriesInProjectArea(boolean storeEntriesWithProject) {
-		this.storeEntriesInProjectArea = storeEntriesWithProject;
 	}
 
 	/**
@@ -230,13 +209,23 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 	 *    attached to the parent element.
 	 */
 	public Element serializeAttributes(Element parentElement) {
-		Element elementProvider = XmlUtil.appendElement(parentElement, ELEM_PROVIDER, new String[] {
-				ATTR_ID, getId(),
-				ATTR_NAME, getName(),
-				ATTR_CLASS, getClass().getCanonicalName(),
-				ATTR_PARAMETER, getCustomParameter(),
-				ATTR_STORE_ENTRIES, isStoringEntriesInProjectArea() ? VALUE_PROJECT : VALUE_WORKSPACE,
-			});
+		// Keeps pairs: key, value. See JavaDoc XmlUtil.appendElement(Node, String, String[]).
+		List<String> attributes = new ArrayList<String>();
+
+		attributes.add(ATTR_ID);
+		attributes.add(getId());
+		attributes.add(ATTR_NAME);
+		attributes.add(getName());
+		attributes.add(ATTR_CLASS);
+		attributes.add(getClass().getCanonicalName());
+		attributes.add(ATTR_PARAMETER);
+		attributes.add(getCustomParameter());
+		for (Entry<String, String> entry : properties.entrySet()) {
+			attributes.add(entry.getKey());
+			attributes.add(entry.getValue());
+		}
+
+		Element elementProvider = XmlUtil.appendElement(parentElement, ELEM_PROVIDER, attributes.toArray(new String[0]));
 
 		if (languageScope!=null) {
 			for (String langId : languageScope) {
@@ -293,12 +282,23 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 		String providerId = XmlUtil.determineAttributeValue(providerNode, ATTR_ID);
 		String providerName = XmlUtil.determineAttributeValue(providerNode, ATTR_NAME);
 		String providerParameter = XmlUtil.determineAttributeValue(providerNode, ATTR_PARAMETER);
-		String providerStoreEntries = XmlUtil.determineAttributeValue(providerNode, ATTR_STORE_ENTRIES);
+
+		properties.clear();
+		NamedNodeMap attrs = providerNode.getAttributes();
+		for (int i=0; i<attrs.getLength(); i++) {
+			Node attr = attrs.item(i);
+			if (attr.getNodeType()==Node.ATTRIBUTE_NODE) {
+				String key = attr.getNodeName();
+				if (!key.equals(ATTR_ID) && !key.equals(ATTR_NAME) && !key.equals(ATTR_CLASS)) {
+					String value = attr.getNodeValue();
+					properties.put(key, value);
+				}
+			}
+		}
 
 		this.setId(providerId);
 		this.setName(providerName);
 		this.setCustomParameter(providerParameter);
-		this.setStoringEntriesInProjectArea(VALUE_PROJECT.equals(providerStoreEntries));
 
 		NodeList nodes = providerNode.getChildNodes();
 		for (int i=0;i<nodes.getLength();i++) {
@@ -322,6 +322,20 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 	}
 
 	/**
+	 * TODO
+	 */
+	public String getProperty(String key) {
+		return properties.get(key);
+	}
+
+	/**
+	 * TODO
+	 */
+	public void setProperty(String key, String value) {
+		properties.put(key, value);
+	}
+
+	/**
 	 * See {@link #cloneShallow()}. This method is extracted to avoid expressing
 	 * {@link #clone()} via {@link #cloneShallow()}. Do not inline to "optimize"!
 	 */
@@ -329,6 +343,7 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 		LanguageSettingsSerializableProvider clone = (LanguageSettingsSerializableProvider)super.clone();
 		if (languageScope!=null)
 			clone.languageScope = new ArrayList<String>(languageScope);
+		clone.properties = new HashMap<String, String>(properties);
 
 		clone.fStorage = new LanguageSettingsSerializableStorage();
 		return clone;
@@ -360,7 +375,7 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 		result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
 		result = prime * result + ((languageScope == null) ? 0 : languageScope.hashCode());
 		result = prime * result + ((customParameter == null) ? 0 : customParameter.hashCode());
-		result = prime * result + (storeEntriesInProjectArea ? 0 : 1);
+		result = prime * result + ((properties == null) ? 0 : properties.hashCode());
 		result = prime * result + ((fStorage == null) ? 0 : fStorage.hashCode());
 		result = prime * result + getClass().hashCode();
 		return result;
@@ -408,7 +423,10 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 		} else if (!customParameter.equals(other.customParameter))
 			return false;
 
-		if (storeEntriesInProjectArea!=other.storeEntriesInProjectArea)
+		if (properties == null) {
+			if (other.properties != null)
+				return false;
+		} else if (!properties.equals(other.properties))
 			return false;
 
 		if (fStorage == null) {

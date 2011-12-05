@@ -76,6 +76,10 @@ public class LanguageSettingsProvidersSerializer {
 	private static final String ELEM_PROVIDER = "provider"; //$NON-NLS-1$
 	private static final String ELEM_PROVIDER_REFERENCE = "provider-reference"; //$NON-NLS-1$
 
+	private static final String ATTR_STORE_ENTRIES = "store-entries"; //$NON-NLS-1$
+	private static final String VALUE_WORKSPACE = "workspace"; //$NON-NLS-1$
+	private static final String VALUE_PROJECT = "project"; //$NON-NLS-1$
+
 	private static ILock serializingLock = Job.getJobManager().newLock();
 
 	/** Cache of globally available providers to be consumed by calling clients */
@@ -512,7 +516,7 @@ projects:
 						LanguageSettingsSerializableProvider lss = (LanguageSettingsSerializableProvider) provider;
 
 						boolean useWsp = projectElementWspStore!=null && projectElementPrjStore!=projectElementWspStore;
-						if (lss.isStoringEntriesInProjectArea() || !useWsp) {
+						if (isStoringEntriesInProjectArea(lss) || !useWsp) {
 							lss.serialize(elementExtension);
 						} else {
 							lss.serializeAttributes(elementExtension);
@@ -649,7 +653,7 @@ projects:
 							provider = loadProvider(providerNode);
 							if (provider instanceof LanguageSettingsSerializableProvider) {
 								LanguageSettingsSerializableProvider lss = (LanguageSettingsSerializableProvider) provider;
-								if (!lss.isStoringEntriesInProjectArea() && projectElementWsp!=null) {
+								if (!isStoringEntriesInProjectArea(lss) && projectElementWsp!=null) {
 									loadProviderEntries(lss, cfgId, projectElementWsp);
 								}
 							}
@@ -1315,5 +1319,30 @@ projects:
 	public static List<ICLanguageSettingEntry> getLocalSettingEntriesByKind(ICConfigurationDescription cfgDescription, IResource rc, String languageId, int kind) {
 		return getSettingEntriesByKind(cfgDescription, rc, languageId, kind, /* checkLocality */ true, /* isLocal */ true);
 	}
+
+	/**
+	 * Tells if language settings entries of the provider are persisted with the project
+	 * (under .settings/ folder) or in workspace area. Persistence in the project area lets
+	 * the entries migrate with the project.
+	 *
+	 * @param provider - provider to check the persistence mode.
+	 * @return {@code true} if LSE persisted with the project or {@code false} if in the workspace.
+	 */
+	public static boolean isStoringEntriesInProjectArea(LanguageSettingsSerializableProvider provider) {
+		String value = provider.getProperty(ATTR_STORE_ENTRIES);
+		return VALUE_PROJECT.equals(value);
+	}
+
+	/**
+	 * Define where language settings are persisted for the provider.
+	 *
+	 * @param provider - provider to set the persistence mode.
+	 * @param storeEntriesWithProject - {@code true} if with the project,
+	 *    {@code false} if in workspace area.
+	 */
+	public static void setStoringEntriesInProjectArea(LanguageSettingsSerializableProvider provider, boolean storeEntriesWithProject) {
+		provider.setProperty(ATTR_STORE_ENTRIES, storeEntriesWithProject ? VALUE_PROJECT : VALUE_WORKSPACE);
+	}
+
 
 }

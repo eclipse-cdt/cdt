@@ -239,7 +239,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 
 			// create a provider
 			LanguageSettingsSerializableProvider mockProvider = new MockLanguageSettingsEditableProvider(PROVIDER_0, PROVIDER_NAME_0);
-			mockProvider.setStoringEntriesInProjectArea(true);
+			LanguageSettingsManager.setStoringEntriesInProjectArea(mockProvider, true);
 			mockProvider.setSettingEntries(cfgDescription, null, null, entries);
 			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 			providers.add(mockProvider);
@@ -450,7 +450,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 
 			LanguageSettingsSerializableProvider serializableProvider = new LanguageSettingsSerializableProvider(PROVIDER_0, PROVIDER_NAME_0);
 			serializableProvider.setSettingEntries(null, null, null, entries);
-			serializableProvider.setStoringEntriesInProjectArea(true);
+			LanguageSettingsManager.setStoringEntriesInProjectArea(serializableProvider, true);
 
 			ArrayList<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 			providers.add(serializableProvider);
@@ -516,7 +516,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 
 					assertEquals(CFG_ID, cfgDescription1.getId());
 					LanguageSettingsSerializableProvider provider1 = new LanguageSettingsSerializableProvider(PROVIDER_0, PROVIDER_NAME_0);
-					provider1.setStoringEntriesInProjectArea(true);
+					LanguageSettingsManager.setStoringEntriesInProjectArea(provider1, true);
 					provider1.setSettingEntries(null, null, null, entries);
 					ArrayList<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 					providers.add(provider1);
@@ -530,7 +530,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 
 					assertEquals(CFG_ID_2, cfgDescription2.getId());
 					LanguageSettingsSerializableProvider provider2 = new LanguageSettingsSerializableProvider(PROVIDER_0, PROVIDER_NAME_0);
-					provider2.setStoringEntriesInProjectArea(true);
+					LanguageSettingsManager.setStoringEntriesInProjectArea(provider2, true);
 					provider2.setSettingEntries(null, null, null, entries2);
 					ArrayList<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 					providers.add(provider2);
@@ -646,7 +646,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 
 			LanguageSettingsSerializableProvider serializableProvider = new MockLanguageSettingsSerializableProvider(PROVIDER_0, PROVIDER_NAME_0);
 			serializableProvider.setSettingEntries(null, null, null, entries);
-			serializableProvider.setStoringEntriesInProjectArea(true);
+			LanguageSettingsManager.setStoringEntriesInProjectArea(serializableProvider, true);
 
 			ArrayList<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 			providers.add(serializableProvider);
@@ -750,7 +750,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 
 			// populate with provider overriding the extension (must be SerializableLanguageSettingsProvider or a class from another extension)
 			MockLanguageSettingsSerializableProvider providerOverride = new MockLanguageSettingsSerializableProvider(idExt, PROVIDER_NAME_0);
-			providerOverride.setStoringEntriesInProjectArea(true);
+			LanguageSettingsManager.setStoringEntriesInProjectArea(providerOverride, true);
 			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 			providers.add(providerOverride);
 			((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
@@ -817,11 +817,11 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 				// 3. Providers defined in a configuration
 				// 3.1
 				LanguageSettingsSerializableProvider mockProvider1 = new LanguageSettingsSerializableProvider(PROVIDER_0, PROVIDER_NAME_0);
-				mockProvider1.setStoringEntriesInProjectArea(true);
+				LanguageSettingsManager.setStoringEntriesInProjectArea(mockProvider1, true);
 				mockProvider1.setSettingEntries(null, null, null, entries_31);
 				// 3.2
 				LanguageSettingsSerializableProvider mockProvider2 = new MockLanguageSettingsSerializableProvider(PROVIDER_2, PROVIDER_NAME_2);
-				mockProvider2.setStoringEntriesInProjectArea(true);
+				LanguageSettingsManager.setStoringEntriesInProjectArea(mockProvider2, true);
 				mockProvider2.setSettingEntries(null, null, null, entries_32);
 
 				ArrayList<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
@@ -901,7 +901,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 
 			// create a provider
 			LanguageSettingsSerializableProvider mockProvider = new LanguageSettingsSerializableProvider(PROVIDER_0, PROVIDER_NAME_0);
-			mockProvider.setStoringEntriesInProjectArea(true);
+			LanguageSettingsManager.setStoringEntriesInProjectArea(mockProvider, true);
 			mockProvider.setSettingEntries(cfgDescription, null, null, entries);
 			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 			providers.add(mockProvider);
@@ -1042,7 +1042,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 			LanguageSettingsSerializableProvider serializableProvider = new LanguageSettingsSerializableProvider(PROVIDER_0, PROVIDER_NAME_0);
 			serializableProvider.setSettingEntries(null, null, null, entries);
 			// do not store entries inside project
-			serializableProvider.setStoringEntriesInProjectArea(false);
+			LanguageSettingsManager.setStoringEntriesInProjectArea(serializableProvider, false);
 
 			ArrayList<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 			providers.add(serializableProvider);
@@ -1115,7 +1115,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 
 			// create a provider
 			LanguageSettingsSerializableProvider mockProvider = new LanguageSettingsSerializableProvider(PROVIDER_0, PROVIDER_NAME_0);
-			mockProvider.setStoringEntriesInProjectArea(false);
+			LanguageSettingsManager.setStoringEntriesInProjectArea(mockProvider, false);
 			mockProvider.setSettingEntries(cfgDescription, null, null, entries);
 			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 			providers.add(mockProvider);

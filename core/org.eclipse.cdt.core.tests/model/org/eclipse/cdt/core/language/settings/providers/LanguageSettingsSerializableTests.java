@@ -116,9 +116,11 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 		mockProvider.setCustomParameter(CUSTOM_PARAMETER);
 		assertEquals(CUSTOM_PARAMETER, mockProvider.getCustomParameter());
 
-		assertEquals(false, mockProvider.isStoringEntriesInProjectArea());
-		mockProvider.setStoringEntriesInProjectArea(true);
-		assertEquals(true, mockProvider.isStoringEntriesInProjectArea());
+		assertEquals(false, LanguageSettingsManager.isStoringEntriesInProjectArea(mockProvider));
+		LanguageSettingsManager.setStoringEntriesInProjectArea(mockProvider, true);
+		assertEquals(true, LanguageSettingsManager.isStoringEntriesInProjectArea(mockProvider));
+		LanguageSettingsManager.setStoringEntriesInProjectArea(mockProvider, false);
+		assertEquals(false, LanguageSettingsManager.isStoringEntriesInProjectArea(mockProvider));
 
 		mockProvider.setLanguageScope(languages);
 		assertEquals(languages, mockProvider.getLanguageScope());
@@ -143,7 +145,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 		{
 			// create customized provider
 			LanguageSettingsSerializableProvider provider = new LanguageSettingsSerializableProvider(PROVIDER_1, PROVIDER_NAME_1);
-			provider.setStoringEntriesInProjectArea(true);
+			LanguageSettingsManager.setStoringEntriesInProjectArea(provider, true);
 			provider.setCustomParameter(CUSTOM_PARAMETER);
 
 			List<String> languageScope = new ArrayList<String>();
@@ -170,7 +172,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 			// re-load and check language settings of the newly loaded provider
 			LanguageSettingsSerializableProvider provider = new LanguageSettingsSerializableProvider(elementProvider);
 			assertEquals(PROVIDER_1, provider.getId());
-			assertEquals(true, provider.isStoringEntriesInProjectArea());
+			assertEquals(true, LanguageSettingsManager.isStoringEntriesInProjectArea(provider));
 			assertEquals(CUSTOM_PARAMETER, provider.getCustomParameter());
 			assertNotNull(provider.getLanguageScope());
 			assertTrue(provider.getLanguageScope().size()>0);
@@ -190,7 +192,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 		{
 			// create customized provider
 			LanguageSettingsSerializableProvider provider = new LanguageSettingsSerializableProvider(PROVIDER_1, PROVIDER_NAME_1);
-			provider.setStoringEntriesInProjectArea(true);
+			LanguageSettingsManager.setStoringEntriesInProjectArea(provider, true);
 			provider.setCustomParameter(CUSTOM_PARAMETER);
 
 			List<String> languageScope = new ArrayList<String>();
@@ -219,7 +221,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 			LanguageSettingsSerializableProvider provider = new LanguageSettingsSerializableProvider();
 			provider.loadAttributes(elementProvider);
 			assertEquals(PROVIDER_1, provider.getId());
-			assertEquals(true, provider.isStoringEntriesInProjectArea());
+			assertEquals(true, LanguageSettingsManager.isStoringEntriesInProjectArea(provider));
 			assertEquals(CUSTOM_PARAMETER, provider.getCustomParameter());
 			assertNotNull(provider.getLanguageScope());
 			assertTrue(provider.getLanguageScope().size()>0);
@@ -237,7 +239,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 		{
 			// create customized provider
 			LanguageSettingsSerializableProvider provider = new LanguageSettingsSerializableProvider(PROVIDER_1, PROVIDER_NAME_1);
-			provider.setStoringEntriesInProjectArea(true);
+			LanguageSettingsManager.setStoringEntriesInProjectArea(provider, true);
 			provider.setCustomParameter(CUSTOM_PARAMETER);
 
 			List<String> languageScope = new ArrayList<String>();
@@ -271,7 +273,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 			// no attributes should be loaded
 			assertFalse(PROVIDER_1.equals(provider.getId()));
 			assertFalse(PROVIDER_NAME_1.equals(provider.getName()));
-			assertFalse(true==provider.isStoringEntriesInProjectArea());
+			assertFalse(true==LanguageSettingsManager.isStoringEntriesInProjectArea(provider));
 			assertFalse(CUSTOM_PARAMETER.equals(provider.getCustomParameter()));
 			assertNull(provider.getLanguageScope());
 			// entries should be loaded
@@ -337,11 +339,11 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	public void testStoreEntriesWithProjectDOM() throws Exception {
 		Element elementProvider;
 		{
-			// create provider with custom parameter
+			// create provider storing entries in project area
 			LanguageSettingsSerializableProvider provider = new LanguageSettingsSerializableProvider(PROVIDER_1, PROVIDER_NAME_1);
-			assertEquals(false, provider.isStoringEntriesInProjectArea());
-			provider.setStoringEntriesInProjectArea(true);
-			assertEquals(true, provider.isStoringEntriesInProjectArea());
+			assertEquals(false, LanguageSettingsManager.isStoringEntriesInProjectArea(provider));
+			LanguageSettingsManager.setStoringEntriesInProjectArea(provider, true);
+			assertEquals(true, LanguageSettingsManager.isStoringEntriesInProjectArea(provider));
 
 			Document doc = XmlUtil.newDocument();
 			Element rootElement = XmlUtil.appendElement(doc, ELEM_TEST);
@@ -351,9 +353,9 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 			assertTrue(xmlString.contains(VALUE_PROJECT));
 		}
 		{
-			// re-load and check custom parameter of the newly loaded provider
+			// re-load and check storing mode of the newly loaded provider
 			LanguageSettingsSerializableProvider provider = new LanguageSettingsSerializableProvider(elementProvider);
-			assertEquals(true, provider.isStoringEntriesInProjectArea());
+			assertEquals(true, LanguageSettingsManager.isStoringEntriesInProjectArea(provider));
 		}
 	}
 
@@ -1174,8 +1176,8 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 		LanguageSettingsSerializableProvider provider1 = new LanguageSettingsSerializableProvider(PROVIDER_1, PROVIDER_NAME_1);
 		provider1.setLanguageScope(sampleLanguages);
 		provider1.setCustomParameter(CUSTOM_PARAMETER);
-		assertEquals(false, provider1.isStoringEntriesInProjectArea());
-		provider1.setStoringEntriesInProjectArea(true);
+		assertEquals(false, LanguageSettingsManager.isStoringEntriesInProjectArea(provider1));
+		LanguageSettingsManager.setStoringEntriesInProjectArea(provider1, true);
 		provider1.setSettingEntries(MOCK_CFG, MOCK_RC, LANG_ID, sampleEntries_1);
 		provider1.setSettingEntries(null, null, LANG_ID, sampleEntries_2);
 
@@ -1201,7 +1203,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 			assertFalse(provider1.equals(provider2));
 			assertFalse(provider1.hashCode()==provider2.hashCode());
 
-			provider2.setStoringEntriesInProjectArea(true);
+			LanguageSettingsManager.setStoringEntriesInProjectArea(provider2, true);
 
 			// All set now, so they should be equal
 			assertTrue(provider1.equals(provider2));
@@ -1251,8 +1253,8 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 		MockSerializableProvider provider1 = new MockSerializableProvider(PROVIDER_1, PROVIDER_NAME_1);
 		provider1.setLanguageScope(sampleLanguages);
 		provider1.setCustomParameter(CUSTOM_PARAMETER);
-		assertEquals(false, provider1.isStoringEntriesInProjectArea());
-		provider1.setStoringEntriesInProjectArea(true);
+		assertEquals(false, LanguageSettingsManager.isStoringEntriesInProjectArea(provider1));
+		LanguageSettingsManager.setStoringEntriesInProjectArea(provider1, true);
 		provider1.setSettingEntries(MOCK_CFG, MOCK_RC, LANG_ID, sampleEntries_1);
 		provider1.setSettingEntries(null, null, LANG_ID, sampleEntries_2);
 
@@ -1261,8 +1263,17 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 		assertNotSame(provider1, providerClone);
 		assertTrue(provider1.equals(providerClone));
 		assertTrue(provider1.getClass()==providerClone.getClass());
+
 		assertEquals(provider1.getCustomParameter(), providerClone.getCustomParameter());
-		assertEquals(provider1.isStoringEntriesInProjectArea(), providerClone.isStoringEntriesInProjectArea());
+		// ensure we did not clone reference
+		provider1.setCustomParameter("");
+		assertFalse(provider1.getCustomParameter().equals(providerClone.getCustomParameter()));
+
+		assertEquals(LanguageSettingsManager.isStoringEntriesInProjectArea(provider1), LanguageSettingsManager.isStoringEntriesInProjectArea(providerClone));
+		// ensure we did not clone reference
+		LanguageSettingsManager.setStoringEntriesInProjectArea(provider1, !LanguageSettingsManager.isStoringEntriesInProjectArea(providerClone));
+		assertFalse(LanguageSettingsManager.isStoringEntriesInProjectArea(provider1) == LanguageSettingsManager.isStoringEntriesInProjectArea(providerClone));
+
 		assertEquals(provider1.getLanguageScope().get(0), providerClone.getLanguageScope().get(0));
 
 		List<ICLanguageSettingEntry> actual1 = providerClone.getSettingEntries(MOCK_CFG, MOCK_RC, LANG_ID);
@@ -1299,8 +1310,8 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 		MockSerializableProvider provider1 = new MockSerializableProvider(PROVIDER_1, PROVIDER_NAME_1);
 		provider1.setLanguageScope(sampleLanguages);
 		provider1.setCustomParameter(CUSTOM_PARAMETER);
-		assertEquals(false, provider1.isStoringEntriesInProjectArea());
-		provider1.setStoringEntriesInProjectArea(true);
+		assertEquals(false, LanguageSettingsManager.isStoringEntriesInProjectArea(provider1));
+		LanguageSettingsManager.setStoringEntriesInProjectArea(provider1, true);
 
 		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
 		entries.add(new CIncludePathEntry("path", 1));
@@ -1312,7 +1323,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 		assertFalse(provider1.equals(providerClone));
 		assertTrue(provider1.getClass()==providerClone.getClass());
 		assertEquals(provider1.getCustomParameter(), providerClone.getCustomParameter());
-		assertEquals(provider1.isStoringEntriesInProjectArea(), providerClone.isStoringEntriesInProjectArea());
+		assertEquals(LanguageSettingsManager.isStoringEntriesInProjectArea(provider1), LanguageSettingsManager.isStoringEntriesInProjectArea(providerClone));
 		assertEquals(provider1.getLanguageScope().get(0), providerClone.getLanguageScope().get(0));
 
 		List<ICLanguageSettingEntry> actual = providerClone.getSettingEntries(null, null, null);

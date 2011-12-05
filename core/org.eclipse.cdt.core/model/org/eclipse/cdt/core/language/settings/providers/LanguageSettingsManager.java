@@ -275,6 +275,29 @@ public class LanguageSettingsManager {
 	}
 
 	/**
+	 * Tells if language settings entries of the provider are persisted with the project
+	 * (under .settings/ folder) or in workspace area. Persistence in the project area lets
+	 * the entries migrate with the project.
+	 *
+	 * @param provider - provider to check the persistence mode.
+	 * @return {@code true} if LSE persisted with the project or {@code false} if in the workspace.
+	 */
+	public static boolean isStoringEntriesInProjectArea(LanguageSettingsSerializableProvider provider) {
+		return LanguageSettingsProvidersSerializer.isStoringEntriesInProjectArea(provider);
+	}
+
+	/**
+	 * Define where language settings are persisted for the provider.
+	 *
+	 * @param provider - provider to set the persistence mode.
+	 * @param storeEntriesWithProject - {@code true} if with the project,
+	 *    {@code false} if in workspace area.
+	 */
+	public static void setStoringEntriesInProjectArea(LanguageSettingsSerializableProvider provider, boolean storeEntriesWithProject) {
+		LanguageSettingsProvidersSerializer.setStoringEntriesInProjectArea(provider, storeEntriesWithProject);
+	}
+
+	/**
 	 * Save language settings providers of a project to persistent storage.
 	 *
 	 * @param prjDescription - project description of the project.

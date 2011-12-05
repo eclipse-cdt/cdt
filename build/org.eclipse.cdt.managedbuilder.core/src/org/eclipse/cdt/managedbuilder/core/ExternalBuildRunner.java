@@ -32,15 +32,14 @@ import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariableManager;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.core.resources.RefreshScopeManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.internal.core.ConsoleOutputSniffer;
-import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
@@ -126,7 +125,7 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 				if(pathFromURI == null) {
 					throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, ManagedMakeMessages.getString("ManagedMakeBuilder.message.error"), null)); //$NON-NLS-1$
 				}
-				
+
 				IPath workingDirectory = new Path(pathFromURI);
 
 				// Set the environment
@@ -211,10 +210,10 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 						// Do not allow the cancel of the refresh, since the builder is external
 						// to Eclipse, files may have been created/modified and we will be out-of-sync.
 						// The caveat is for huge projects, it may take sometimes at every build.
-						
+
 						// TODO should only refresh output folders
 						//project.refreshLocal(IResource.DEPTH_INFINITE, null);
-						
+
 						// use the refresh scope manager to refresh
 						RefreshScopeManager refreshManager = RefreshScopeManager.getInstance();
 						IWorkspaceRunnable runnable = refreshManager.getRefreshRunnable(project);
@@ -247,7 +246,7 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 					consoleErr.write(buf.toString().getBytes());
 					consoleErr.flush();
 				}
-				
+
 				buf = new StringBuffer(NEWLINE);
 				buf.append(ManagedMakeMessages.getResourceString("ManagedMakeBuilder.message.build.finished")).append(NEWLINE); //$NON-NLS-1$
 				consoleOut.write(buf.toString().getBytes());
@@ -324,15 +323,15 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 				envMap.put(var.getName(), var.getValue());
 			}
 		}
-		
+
 		// Add variables from build info
 		Map<String, String> builderEnv = builder.getExpandedEnvironment();
 		if (builderEnv != null)
 			envMap.putAll(builderEnv);
-		
+
 		return envMap;
 	}
-	
+
 	protected static String[] getEnvStrings(Map<String, String> env) {
 		// Convert into env strings
 		List<String> strings= new ArrayList<String>(env.size());
@@ -341,10 +340,10 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 			buffer.append('=').append(entry.getValue());
 			strings.add(buffer.toString());
 		}
-		
+
 		return strings.toArray(new String[strings.size()]);
 	}
-	
+
 	private ConsoleOutputSniffer createBuildOutputSniffer(OutputStream outputStream,
 			OutputStream errorStream,
 			IProject project,
@@ -386,17 +385,19 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 		}
 
 		ICConfigurationDescription cfgDescription = ManagedBuildManager.getDescriptionForConfiguration(cfg);
-		List<ILanguageSettingsProvider> lsProviders = cfgDescription.getLanguageSettingProviders();
-		for (ILanguageSettingsProvider lsProvider : lsProviders) {
-			ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(lsProvider);
-			if (rawProvider instanceof ICConsoleParser) {
-				ICConsoleParser consoleParser = (ICConsoleParser) rawProvider;
-				try {
-					consoleParser.startup(cfgDescription);
-					clParserList.add(consoleParser);
-				} catch (CoreException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+		if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+			List<ILanguageSettingsProvider> lsProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+			for (ILanguageSettingsProvider lsProvider : lsProviders) {
+				ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(lsProvider);
+				if (rawProvider instanceof ICConsoleParser) {
+					ICConsoleParser consoleParser = (ICConsoleParser) rawProvider;
+					try {
+						consoleParser.startup(cfgDescription);
+						clParserList.add(consoleParser);
+					} catch (CoreException e) {
+						ManagedBuilderCorePlugin.log(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID,
+								"Language Settings Provider failed to start up", e)); //$NON-NLS-1$
+					}
 				}
 			}
 		}

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -46,13 +47,13 @@ import org.eclipse.swt.widgets.Composite;
 public class STDWizardHandler extends MBSWizardHandler {
 
 	public STDWizardHandler(Composite p, IWizard w) {
-		super(Messages.StdBuildWizard_0, p, w); 
+		super(Messages.StdBuildWizard_0, p, w);
 	}
 
 	@Override
 	public void addTc(IToolChain tc) {
 		if (tc == null) {
-			full_tcs.put(Messages.StdProjectTypeHandler_0, null); 
+			full_tcs.put(Messages.StdProjectTypeHandler_0, null);
 		} else {
 			if (tc.isAbstract() || tc.isSystemObject()) return;
 		// 	unlike CWizardHandler, we don't check for configs
@@ -67,9 +68,9 @@ public class STDWizardHandler extends MBSWizardHandler {
 	public void createProject(IProject project, boolean defaults, boolean onFinish, IProgressMonitor monitor)  throws CoreException {
 		try {
 			monitor.beginTask("", 100);//$NON-NLS-1$
-		
+
 			setProjectDescription(project, defaults, onFinish, monitor);
-			
+
 			doTemplatesPostProcess(project);
 			doCustom(project);
 			monitor.worked(30);
@@ -112,40 +113,44 @@ public class STDWizardHandler extends MBSWizardHandler {
 	    		}
 	    		bld.setManagedBuildOn(false);
 	    	} else {
-	    		System.out.println(Messages.StdProjectTypeHandler_3); 
+	    		System.out.println(Messages.StdProjectTypeHandler_3);
 	    	}
 	    	cfg.setArtifactName(mProj.getDefaultArtifactName());
 	    	CConfigurationData data = cfg.getConfigurationData();
 	    	ICConfigurationDescription cfgDes = des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
 
-			ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, isTryingNewSD);
-			if (isTryingNewSD) {
-				List<ILanguageSettingsProvider> providers = ManagedBuildManager.getLanguageSettingsProviders(cfg);
-				cfgDes.setLanguageSettingProviders(providers);
+			if (cfgDes instanceof ILanguageSettingsProvidersKeeper) {
+				ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, isTryingNewSD);
+				if (isTryingNewSD) {
+					List<ILanguageSettingsProvider> providers = ManagedBuildManager.getLanguageSettingsProviders(cfg);
+					((ILanguageSettingsProvidersKeeper) cfgDes).setLanguageSettingProviders(providers);
+				} else {
+					ILanguageSettingsProvider provider = LanguageSettingsManager.getWorkspaceProvider(ManagedBuildManager.MBS_LANGUAGE_SETTINGS_PROVIDER);
+					List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+					providers.add(provider);
+					((ILanguageSettingsProvidersKeeper) cfgDes).setLanguageSettingProviders(providers);
+				}
 			} else {
-				ILanguageSettingsProvider provider = LanguageSettingsManager.getWorkspaceProvider(ManagedBuildManager.MBS_LANGUAGE_SETTINGS_PROVIDER);
-				List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
-				providers.add(provider);
-				cfgDes.setLanguageSettingProviders(providers);
+				ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, false);
 			}
 
 	    	monitor.worked(work);
 	    }
 	    mngr.setProjectDescription(project, des);
     }
-	public boolean canCreateWithoutToolchain() { return true; } 
-	
+	public boolean canCreateWithoutToolchain() { return true; }
+
 	@Override
 	public void convertProject(IProject proj, IProgressMonitor monitor) throws CoreException {
 	    setProjectDescription(proj, true, true, monitor);
 	}
-	
+
 	/**
 	 * If no toolchains selected by user, use default toolchain
 	 */
 	@Override
 	public IToolChain[] getSelectedToolChains() {
-		if (full_tcs.size() == 0 || table.getSelection().length == 0) 
+		if (full_tcs.size() == 0 || table.getSelection().length == 0)
 			return new IToolChain[] { null };
 		else
 			return super.getSelectedToolChains();

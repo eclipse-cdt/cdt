@@ -86,10 +86,12 @@ public class ScannerDiscoveryLegacySupport {
 	 * which is not intended to be referenced by clients.
 	 */
 	public static boolean isMbsLanguageSettingsProviderOn(ICConfigurationDescription cfgDescription) {
-		List<ILanguageSettingsProvider> lsProviders = cfgDescription.getLanguageSettingProviders();
-		for (ILanguageSettingsProvider lsp : lsProviders) {
-			if (MBS_LANGUAGE_SETTINGS_PROVIDER.equals(lsp.getId())) {
-				return true;
+		if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+			List<ILanguageSettingsProvider> lsProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+			for (ILanguageSettingsProvider lsp : lsProviders) {
+				if (MBS_LANGUAGE_SETTINGS_PROVIDER.equals(lsp.getId())) {
+					return true;
+				}
 			}
 		}
 		return false;

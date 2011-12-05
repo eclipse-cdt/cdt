@@ -47,6 +47,7 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditableProvider;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager_TBD;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializableProvider;
@@ -195,8 +196,8 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 			return null;
 
 		ICConfigurationDescription cfgDescription = getResDesc().getConfiguration();
-		return cfgDescription;
-	}
+			return cfgDescription;
+		}
 
 	/**
 	 * Shortcut for getting the currently selected provider.
@@ -216,9 +217,9 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 		if (page.isForProject()) {
 			ICConfigurationDescription[] cfgDescriptions = page.getCfgsEditable();
 			for (ICConfigurationDescription cfgDescription : cfgDescriptions) {
-				if (cfgDescription!=null) {
+				if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
 					String cfgId = cfgDescription.getId();
-					List<ILanguageSettingsProvider> initialProviders = cfgDescription.getLanguageSettingProviders();
+					List<ILanguageSettingsProvider> initialProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
 					initialProvidersByCfg.put(cfgId, initialProviders);
 				}
 			}
@@ -371,11 +372,13 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 		if (!page.isForPrefs()) {
 			cfgDescription = getConfigurationDescription();
 
-			List<ILanguageSettingsProvider> cfgProviders = new ArrayList<ILanguageSettingsProvider>(cfgDescription.getLanguageSettingProviders());
-			pos = getProviderIndex(newProvider.getId(), cfgProviders);
-			cfgProviders.set(pos, newProvider);
-			cfgDescription.setLanguageSettingProviders(cfgProviders);
-			tableProvidersViewer.setCheckedElements(cfgProviders.toArray(new ILanguageSettingsProvider[0]));
+			if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+				List<ILanguageSettingsProvider> cfgProviders = new ArrayList<ILanguageSettingsProvider>(((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders());
+				pos = getProviderIndex(newProvider.getId(), cfgProviders);
+				cfgProviders.set(pos, newProvider);
+				((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(cfgProviders);
+				tableProvidersViewer.setCheckedElements(cfgProviders.toArray(new ILanguageSettingsProvider[0]));
+			}
 		}
 		refreshItem(newProvider);
 	}
@@ -479,8 +482,8 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 		tableProviders.setSelection(pos);
 
 		ICConfigurationDescription cfgDescription = getConfigurationDescription();
-		if (cfgDescription!=null) {
-			List<ILanguageSettingsProvider> cfgProviders = cfgDescription.getLanguageSettingProviders();
+		if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+			List<ILanguageSettingsProvider> cfgProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
 			tableProvidersViewer.setCheckedElements(cfgProviders.toArray(new ILanguageSettingsProvider[0]));
 		}
 
@@ -509,8 +512,8 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 
 		List<ILanguageSettingsProvider> providers;
 		ICConfigurationDescription cfgDescription = getConfigurationDescription();
-		if (cfgDescription!=null) {
-			providers = new ArrayList<ILanguageSettingsProvider>(cfgDescription.getLanguageSettingProviders());
+		if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+			providers = new ArrayList<ILanguageSettingsProvider>(((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders());
 			for (ILanguageSettingsProvider provider : providers) {
 				idsList.add(provider.getId());
 			}
@@ -640,14 +643,16 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 				providers.add(provider);
 			}
 			ICConfigurationDescription cfgDescription = getConfigurationDescription();
-			cfgDescription.setLanguageSettingProviders(providers);
+			if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+				((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
 
-			if (selectedElement!=null) {
-				tableProvidersViewer.update(selectedElement, null);
-				if (selectedElement instanceof ILanguageSettingsProvider) {
-					ILanguageSettingsProvider selectedProvider = (ILanguageSettingsProvider) selectedElement;
-					initializeOptionsPage(selectedProvider, cfgDescription);
-					displaySelectedOptionPage();
+				if (selectedElement!=null) {
+					tableProvidersViewer.update(selectedElement, null);
+					if (selectedElement instanceof ILanguageSettingsProvider) {
+						ILanguageSettingsProvider selectedProvider = (ILanguageSettingsProvider) selectedElement;
+						initializeOptionsPage(selectedProvider, cfgDescription);
+						displaySelectedOptionPage();
+					}
 				}
 			}
 		}
@@ -865,18 +870,20 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 
 				if (page.isForProject()) {
 					ICConfigurationDescription cfgDescription = getConfigurationDescription();
-					List<ILanguageSettingsProvider> cfgProviders = new ArrayList<ILanguageSettingsProvider>(cfgDescription.getLanguageSettingProviders());
-					boolean atLeastOneChanged = false;
-					for (int i=0;i<cfgProviders.size();i++) {
-						ILanguageSettingsProvider provider = cfgProviders.get(i);
-						if (!LanguageSettingsManager.isWorkspaceProvider(provider) && !LanguageSettingsManager_TBD.isEqualExtensionProvider(provider)) {
-							ILanguageSettingsProvider extProvider = LanguageSettingsManager.getExtensionProviderCopy(provider.getId());
-							cfgProviders.set(i, extProvider);
-							atLeastOneChanged = true;
+					if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+						List<ILanguageSettingsProvider> cfgProviders = new ArrayList<ILanguageSettingsProvider>(((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders());
+						boolean atLeastOneChanged = false;
+						for (int i=0;i<cfgProviders.size();i++) {
+							ILanguageSettingsProvider provider = cfgProviders.get(i);
+							if (!LanguageSettingsManager.isWorkspaceProvider(provider) && !LanguageSettingsManager_TBD.isEqualExtensionProvider(provider)) {
+								ILanguageSettingsProvider extProvider = LanguageSettingsManager.getExtensionProviderCopy(provider.getId());
+								cfgProviders.set(i, extProvider);
+								atLeastOneChanged = true;
+							}
 						}
-					}
-					if (atLeastOneChanged) {
-						cfgDescription.setLanguageSettingProviders(cfgProviders);
+						if (atLeastOneChanged) {
+							((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(cfgProviders);
+						}
 					}
 
 				} else if (page.isForPrefs()) {
@@ -914,22 +921,26 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 			ICConfigurationDescription srcCfgDescription = srcRcDescription.getConfiguration();
 			ICConfigurationDescription destCfgDescription = destRcDescription.getConfiguration();
 
-			List<ILanguageSettingsProvider> destProviders = new ArrayList<ILanguageSettingsProvider>();
+			if (srcCfgDescription instanceof ILanguageSettingsProvidersKeeper
+					&& destCfgDescription instanceof ILanguageSettingsProvidersKeeper) {
 
-			List<ILanguageSettingsProvider> srcProviders = srcCfgDescription.getLanguageSettingProviders();
-			for (ILanguageSettingsProvider pro : srcProviders) {
-				// TODO: clone
-				destProviders.add(pro);
+				List<ILanguageSettingsProvider> destProviders = new ArrayList<ILanguageSettingsProvider>();
+				List<ILanguageSettingsProvider> srcProviders = ((ILanguageSettingsProvidersKeeper) srcCfgDescription).getLanguageSettingProviders();
+				for (ILanguageSettingsProvider pro : srcProviders) {
+					// TODO: clone
+					destProviders.add(pro);
+				}
+				((ILanguageSettingsProvidersKeeper) destCfgDescription).setLanguageSettingProviders(destProviders);
 			}
-
-			destCfgDescription.setLanguageSettingProviders(destProviders);
 		}
 
 		if (!page.isForPrefs()) {
 			ICConfigurationDescription sd = srcRcDescription.getConfiguration();
 			ICConfigurationDescription dd = destRcDescription.getConfiguration();
-			List<ILanguageSettingsProvider> newProviders = sd.getLanguageSettingProviders();
-			dd.setLanguageSettingProviders(newProviders);
+			if (sd instanceof ILanguageSettingsProvidersKeeper && dd instanceof ILanguageSettingsProvidersKeeper) {
+				List<ILanguageSettingsProvider> newProviders = ((ILanguageSettingsProvidersKeeper) sd).getLanguageSettingProviders();
+				((ILanguageSettingsProvidersKeeper) dd).setLanguageSettingProviders(newProviders);
+			}
 		}
 
 		performOK();
@@ -942,14 +953,15 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 			ICResourceDescription rcDesc = getResDesc();
 			IResource rc = getResource();
 			ICConfigurationDescription cfgDescription = rcDesc.getConfiguration();
-
-			List<ILanguageSettingsProvider> destProviders = new ArrayList<ILanguageSettingsProvider>();
-			List<ILanguageSettingsProvider> providers = cfgDescription.getLanguageSettingProviders();
-			for (ILanguageSettingsProvider pro : providers) {
-				// TODO: clone
-				destProviders.add(pro);
+			if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+				List<ILanguageSettingsProvider> destProviders = new ArrayList<ILanguageSettingsProvider>();
+				List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+				for (ILanguageSettingsProvider pro : providers) {
+					// TODO: clone
+					destProviders.add(pro);
+				}
+				((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(destProviders);
 			}
-			cfgDescription.setLanguageSettingProviders(destProviders);
 		}
 
 		// Build Settings page

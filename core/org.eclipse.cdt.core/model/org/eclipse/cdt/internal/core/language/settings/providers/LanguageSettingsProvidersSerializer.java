@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsChangeE
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsChangeListener;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditableProvider;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializableProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsStorage;
@@ -358,13 +359,15 @@ projects:
 				if (prjDescription != null) {
 					ICConfigurationDescription[] cfgDescriptions = prjDescription.getConfigurations();
 					for (ICConfigurationDescription cfgDescription : cfgDescriptions) {
-						for (ILanguageSettingsProvider provider : cfgDescription.getLanguageSettingProviders()) {
-							if (isWorkspaceProvider(provider) && serializableIds.contains(provider.getId())) {
-								LanguageSettingsChangeEvent event = new LanguageSettingsChangeEvent(prjDescription);
-								if (event.getConfigurationDescriptionIds().length > 0) {
-									events.add(event);
+						if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+							for (ILanguageSettingsProvider provider : ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders()) {
+								if (isWorkspaceProvider(provider) && serializableIds.contains(provider.getId())) {
+									LanguageSettingsChangeEvent event = new LanguageSettingsChangeEvent(prjDescription);
+									if (event.getConfigurationDescriptionIds().length > 0) {
+										events.add(event);
+									}
+									continue projects;
 								}
-								continue projects;
 							}
 						}
 					}
@@ -485,12 +488,15 @@ projects:
 
 		ICConfigurationDescription[] cfgDescriptions = prjDescription.getConfigurations();
 		for (ICConfigurationDescription cfgDescription : cfgDescriptions) {
+			if (!(cfgDescription instanceof ILanguageSettingsProvidersKeeper))
+				continue;
+
 			Element elementConfiguration = XmlUtil.appendElement(projectElementPrjStore, ELEM_CONFIGURATION, new String[] {
 					LanguageSettingsExtensionManager.ATTR_ID, cfgDescription.getId(),
 					LanguageSettingsExtensionManager.ATTR_NAME, cfgDescription.getName(),
 				});
 			Element elementConfigurationWsp = null;
-			List<ILanguageSettingsProvider> providers = cfgDescription.getLanguageSettingProviders();
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
 			if (providers.size()>0) {
 				Element elementExtension = XmlUtil.appendElement(elementConfiguration, ELEM_EXTENSION, new String[] {
 						ATTR_POINT, LanguageSettingsExtensionManager.PROVIDER_EXTENSION_FULL_ID});
@@ -656,8 +662,8 @@ projects:
 			}
 
 			ICConfigurationDescription cfgDescription = prjDescription.getConfigurationById(cfgId);
-			if (cfgDescription!=null) {
-				cfgDescription.setLanguageSettingProviders(providers);
+			if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+				((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
 				if (cfgDescription instanceof IInternalCCfgInfo) {
 					try {
 						((IInternalCCfgInfo) cfgDescription).getSpecSettings().dropDelta();
@@ -773,11 +779,11 @@ projects:
 			// Already existing legacy projects
 			ICConfigurationDescription[] cfgDescriptions = prjDescription.getConfigurations();
 			for (ICConfigurationDescription cfgDescription : cfgDescriptions) {
-				if (cfgDescription!=null) {
+				if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
 					List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>(2);
 					ILanguageSettingsProvider providerMBS = getWorkspaceProvider(ScannerDiscoveryLegacySupport.MBS_LANGUAGE_SETTINGS_PROVIDER);
 					providers.add(providerMBS);
-					cfgDescription.setLanguageSettingProviders(providers);
+					((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
 				}
 			}
 
@@ -840,17 +846,19 @@ projects:
 		if (prjDescription != null) {
 			List<ILanguageSettingsProvider> prjProviders = new ArrayList<ILanguageSettingsProvider>();
 			for (ICConfigurationDescription cfgDescription : prjDescription.getConfigurations()) {
-				List<ILanguageSettingsProvider> providers = cfgDescription.getLanguageSettingProviders();
-				for (ILanguageSettingsProvider provider : providers) {
-					if (!LanguageSettingsManager.isWorkspaceProvider(provider)) {
-						if (isObjectInTheList(prjProviders, provider)) {
-							IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "Inconsistent state, duplicate LSP in project description "
-									+ "[" + System.identityHashCode(provider) + "] "
-									+ provider);
-							CoreException e = new CoreException(status);
-							CCorePlugin.log(e);
+				if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+					List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+					for (ILanguageSettingsProvider provider : providers) {
+						if (!LanguageSettingsManager.isWorkspaceProvider(provider)) {
+							if (isObjectInTheList(prjProviders, provider)) {
+								IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "Inconsistent state, duplicate LSP in project description "
+										+ "[" + System.identityHashCode(provider) + "] "
+										+ provider);
+								CoreException e = new CoreException(status);
+								CCorePlugin.log(e);
+							}
+							prjProviders.add(provider);
 						}
-						prjProviders.add(provider);
 					}
 				}
 			}
@@ -883,12 +891,14 @@ projects:
 		List<ICListenerAgent> listeners = new ArrayList<ICListenerAgent>();
 		if (prjDescription != null) {
 			for (ICConfigurationDescription cfgDescription : prjDescription.getConfigurations()) {
-				List<ILanguageSettingsProvider> providers = cfgDescription.getLanguageSettingProviders();
-				for (ILanguageSettingsProvider provider : providers) {
-					if (provider instanceof ICListenerAgent) {
-						ICListenerAgent listener = (ICListenerAgent) provider;
-						if (!isObjectInTheList(listeners, listener)) {
-							listeners.add(listener);
+				if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+					List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+					for (ILanguageSettingsProvider provider : providers) {
+						if (provider instanceof ICListenerAgent) {
+							ICListenerAgent listener = (ICListenerAgent) provider;
+							if (!isObjectInTheList(listeners, listener)) {
+								listeners.add(listener);
+							}
 						}
 					}
 				}
@@ -914,11 +924,13 @@ projects:
 		List<ListenerAssociation> associations = new ArrayList<ListenerAssociation>();
 		if (prjDescription != null) {
 			for (ICConfigurationDescription cfgDescription : prjDescription.getConfigurations()) {
-				List<ILanguageSettingsProvider> providers = cfgDescription.getLanguageSettingProviders();
-				List<ICListenerAgent> listeners = selectListeners(providers);
-				for (ICListenerAgent listener : listeners) {
-					if (!isListenerInTheListOfAssociations(associations, listener)) {
-						associations.add(new ListenerAssociation(listener, cfgDescription));
+				if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+					List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+					List<ICListenerAgent> listeners = selectListeners(providers);
+					for (ICListenerAgent listener : listeners) {
+						if (!isListenerInTheListOfAssociations(associations, listener)) {
+							associations.add(new ListenerAssociation(listener, cfgDescription));
+						}
 					}
 				}
 			}
@@ -1210,10 +1222,14 @@ projects:
 	private static List<ICLanguageSettingEntry> getSettingEntriesByKind(ICConfigurationDescription cfgDescription,
 			IResource rc, String languageId, int kind, boolean checkLocality, boolean isLocal) {
 
+		if (!(cfgDescription instanceof ILanguageSettingsProvidersKeeper)) {
+			return null;
+		}
+
 		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
 		List<String> alreadyAdded = new ArrayList<String>();
 
-		List<ILanguageSettingsProvider> providers = cfgDescription.getLanguageSettingProviders();
+		List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
 		for (ILanguageSettingsProvider provider: providers) {
 			List<ICLanguageSettingEntry> providerEntries = getSettingEntriesUpResourceTree(provider, cfgDescription, rc, languageId);
 			for (ICLanguageSettingEntry entry : providerEntries) {

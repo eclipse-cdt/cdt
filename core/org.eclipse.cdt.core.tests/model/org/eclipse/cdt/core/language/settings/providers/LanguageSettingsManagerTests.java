@@ -58,7 +58,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 	private static final String PROVIDER_NAME_1 = "test.provider.1.name";
 	private static final String PROVIDER_NAME_2 = "test.provider.2.name";
 
-	class MockConfigurationDescription extends CModelMock.DummyCConfigurationDescription {
+	class MockConfigurationDescription extends CModelMock.DummyCConfigurationDescription implements ILanguageSettingsProvidersKeeper {
 		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 		public MockConfigurationDescription(String id) {
 			super(id);
@@ -130,7 +130,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 	 * Test ICConfigurationDescription API (getters and setters).
 	 */
 	public void testConfigurationDescription_Providers() throws Exception {
-		ICConfigurationDescription cfgDescription = new MockConfigurationDescription(CFG_ID);
+		MockConfigurationDescription cfgDescription = new MockConfigurationDescription(CFG_ID);
 
 		// set providers
 		ILanguageSettingsProvider provider1 = new MockProvider(PROVIDER_1, PROVIDER_NAME_1, null);
@@ -170,7 +170,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 		providers.add(dupe2);
 
 		try {
-			cfgDescription.setLanguageSettingProviders(providers);
+			((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
 			fail("cfgDescription.setLanguageSettingProviders() should not accept duplicate providers");
 		} catch (Exception e) {
 			// Exception is welcome here
@@ -181,7 +181,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 	 * Test various cases of ill-defined providers.
 	 */
 	public void testRudeProviders() throws Exception {
-		ICConfigurationDescription cfgDescription = new MockConfigurationDescription(CFG_ID);
+		MockConfigurationDescription cfgDescription = new MockConfigurationDescription(CFG_ID);
 		// set impolite provider returning null by getSettingEntries()
 		ILanguageSettingsProvider providerNull = new MockProvider(PROVIDER_1, PROVIDER_NAME_1, null);
 		{
@@ -257,7 +257,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 	 * Test simple use case.
 	 */
 	public void testProvider_Basic() throws Exception {
-		final ICConfigurationDescription modelCfgDescription = new MockConfigurationDescription(CFG_ID);
+		final MockConfigurationDescription modelCfgDescription = new MockConfigurationDescription(CFG_ID);
 
 		final List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
 		entries.add(new CIncludePathEntry("path0", 0));
@@ -309,7 +309,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 	 * Test regular functionality with a few providers.
 	 */
 	public void testProvider_Regular() throws Exception {
-		ICConfigurationDescription cfgDescription = new MockConfigurationDescription(CFG_ID);
+		MockConfigurationDescription cfgDescription = new MockConfigurationDescription(CFG_ID);
 
 		// create couple of providers
 		List<ICLanguageSettingEntry> entries1 = new ArrayList<ICLanguageSettingEntry>();
@@ -392,7 +392,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 
 		};
 		providers.add(provider);
-		cfgDescription.setLanguageSettingProviders(providers);
+		((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
 
 		{
 			// retrieve entries for a derived resource (in a subfolder)
@@ -453,7 +453,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 
 		};
 		providers.add(provider);
-		cfgDescription.setLanguageSettingProviders(providers);
+		((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
 
 		{
 			// retrieve entries for a resource
@@ -470,7 +470,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 	 * Test ability to get entries by kind.
 	 */
 	public void testEntriesByKind_Regular() throws Exception {
-		ICConfigurationDescription cfgDescription = new MockConfigurationDescription(CFG_ID);
+		MockConfigurationDescription cfgDescription = new MockConfigurationDescription(CFG_ID);
 
 		// contribute the entries
 		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
@@ -504,7 +504,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 	 * Test how conflicting entries are resolved.
 	 */
 	public void testEntriesByKind_ConflictingEntries() throws Exception {
-		ICConfigurationDescription cfgDescription = new MockConfigurationDescription(CFG_ID);
+		MockConfigurationDescription cfgDescription = new MockConfigurationDescription(CFG_ID);
 
 		// contribute the entries
 		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
@@ -528,7 +528,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 	 * Check handling of {@link ICSettingEntry#UNDEFINED} flag.
 	 */
 	public void testEntriesByKind_Undefined() throws Exception {
-		ICConfigurationDescription cfgDescription = new MockConfigurationDescription(CFG_ID);
+		MockConfigurationDescription cfgDescription = new MockConfigurationDescription(CFG_ID);
 
 		// contribute the entries
 		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
@@ -550,7 +550,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 	 * Check handling of local vs. system entries, see {@link ICSettingEntry#LOCAL} flag.
 	 */
 	public void testEntriesByKind_LocalAndSystem() throws Exception {
-		ICConfigurationDescription cfgDescription = new MockConfigurationDescription(CFG_ID);
+		MockConfigurationDescription cfgDescription = new MockConfigurationDescription(CFG_ID);
 
 		// contribute the entries
 		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
@@ -594,7 +594,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 	 * Test conflicting entries contributed by different providers.
 	 */
 	public void testEntriesByKind_ConflictingProviders() throws Exception {
-		ICConfigurationDescription cfgDescription = new MockConfigurationDescription(CFG_ID);
+		MockConfigurationDescription cfgDescription = new MockConfigurationDescription(CFG_ID);
 
 		// contribute the entries
 		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
@@ -648,18 +648,18 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 		assertNotNull(workspaceProvider);
 		{
 			// ensure no test provider is set yet
-			List<ILanguageSettingsProvider> providers = cfgDescription.getLanguageSettingProviders();
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
 			assertEquals(0, providers.size());
 		}
 		{
 			// set test provider
 			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 			providers.add(workspaceProvider);
-			cfgDescription.setLanguageSettingProviders(providers);
+			((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
 		}
 		{
 			// check that test provider got there
-			List<ILanguageSettingsProvider> providers = cfgDescription.getLanguageSettingProviders();
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
 			assertEquals(workspaceProvider, providers.get(0));
 		}
 
@@ -678,7 +678,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 			ICConfigurationDescription loadedCfgDescription = loadedCfgDescriptions[0];
 			assertTrue(cfgDescription instanceof CConfigurationDescription);
 
-			List<ILanguageSettingsProvider> loadedProviders = loadedCfgDescription.getLanguageSettingProviders();
+			List<ILanguageSettingsProvider> loadedProviders = ((ILanguageSettingsProvidersKeeper) loadedCfgDescription).getLanguageSettingProviders();
 			assertTrue(LanguageSettingsManager.isWorkspaceProvider(loadedProviders.get(0)));
 		}
 

@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -119,15 +120,19 @@ public class NewMakeProjFromExisting extends Wizard implements IImportWizard, IN
 					CConfigurationData data = config.getConfigurationData();
 					ICConfigurationDescription cfgDes = projDesc.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
 
-					ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, isTryingNewSD);
-					if (isTryingNewSD) {
-						List<ILanguageSettingsProvider> providers = ManagedBuildManager.getLanguageSettingsProviders(config);
-						cfgDes.setLanguageSettingProviders(providers);
+					if (cfgDes instanceof ILanguageSettingsProvidersKeeper) {
+						ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, isTryingNewSD);
+						if (isTryingNewSD) {
+							List<ILanguageSettingsProvider> providers = ManagedBuildManager.getLanguageSettingsProviders(config);
+							((ILanguageSettingsProvidersKeeper) cfgDes).setLanguageSettingProviders(providers);
+						} else {
+							ILanguageSettingsProvider provider = LanguageSettingsManager.getWorkspaceProvider(ManagedBuildManager.MBS_LANGUAGE_SETTINGS_PROVIDER);
+							List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+							providers.add(provider);
+							((ILanguageSettingsProvidersKeeper) cfgDes).setLanguageSettingProviders(providers);
+						}
 					} else {
-						ILanguageSettingsProvider provider = LanguageSettingsManager.getWorkspaceProvider(ManagedBuildManager.MBS_LANGUAGE_SETTINGS_PROVIDER);
-						List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
-						providers.add(provider);
-						cfgDes.setLanguageSettingProviders(providers);
+						ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, false);
 					}
 
 					monitor.worked(1);

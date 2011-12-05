@@ -45,6 +45,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsBroadcastingProvider;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditableProvider;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsBaseProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
@@ -391,9 +392,9 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 		if (!page.isForPrefs()) {
 			ICConfigurationDescription[] cfgDescriptions = page.getCfgsEditable();
 			for (ICConfigurationDescription cfgDescription : cfgDescriptions) {
-				if (cfgDescription!=null) {
+				if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
 					String cfgId = cfgDescription.getId();
-					List<ILanguageSettingsProvider> initialProviders = cfgDescription.getLanguageSettingProviders();
+					List<ILanguageSettingsProvider> initialProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
 					initialProvidersMap.put(cfgId, initialProviders);
 				}
 			}
@@ -740,13 +741,13 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 		ICConfigurationDescription cfgDescription = getConfigurationDescription();
 		List<ILanguageSettingsProvider> initialProviders = initialProvidersMap.get(cfgDescription.getId());
 		if (initialProviders.contains(selectedProvider)) {
-			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>(cfgDescription.getLanguageSettingProviders());
+			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>(((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders());
 			int pos = providers.indexOf(selectedProvider);
 			if (pos>=0) {
 				try {
 					selectedProvider = selectedProvider.clone();
 					providers.set(pos, selectedProvider);
-					cfgDescription.setLanguageSettingProviders(providers);
+					((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
 				} catch (CloneNotSupportedException e) {
 					CUIPlugin.log("Internal Error: cannot clone provider "+selectedProvider.getId(), e);
 				}
@@ -858,8 +859,8 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 		if (currentLanguageId!=null) {
 			IResource rc = getResource();
 			ICConfigurationDescription cfgDescription = getConfigurationDescription();
-			if (rc!=null && cfgDescription!=null) {
-				List<ILanguageSettingsProvider> cfgProviders = cfgDescription.getLanguageSettingProviders();
+			if (rc != null && cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+				List<ILanguageSettingsProvider> cfgProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
 				for (ILanguageSettingsProvider cfgProvider : cfgProviders) {
 					ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(cfgProvider);
 					if (rawProvider instanceof LanguageSettingsBaseProvider) {
@@ -958,10 +959,13 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 			// However for the performance reasons for resource decorators where the same logic is used
 			// we use null for resetting file/folder resource which should be correct in most cases.
 			// Count that as a feature.
-			boolean changed = false;
 			ICConfigurationDescription cfgDescription = getConfigurationDescription();
+			if (!(cfgDescription instanceof ILanguageSettingsProvidersKeeper))
+				return;
+
+			boolean changed = false;
 			IResource rc = getResource();
-			List<ILanguageSettingsProvider> oldProviders = cfgDescription.getLanguageSettingProviders();
+			List<ILanguageSettingsProvider> oldProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
 			List<ILanguageSettingsProvider> newProviders = new ArrayList<ILanguageSettingsProvider>(oldProviders.size());
 
 providers:	for (ILanguageSettingsProvider provider : oldProviders) {
@@ -992,7 +996,7 @@ providers:	for (ILanguageSettingsProvider provider : oldProviders) {
 					newProviders.add(provider);
 			}
 			if (changed) {
-				cfgDescription.setLanguageSettingProviders(newProviders);
+				((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(newProviders);
 //				updateTreeEntries();
 //				updateData(getResDesc());
 				List<ILanguageSettingsProvider> tableItems = getProviders(currentLanguageId);
@@ -1007,15 +1011,20 @@ providers:	for (ILanguageSettingsProvider provider : oldProviders) {
 			ICConfigurationDescription srcCfgDescription = srcRcDescription.getConfiguration();
 			ICConfigurationDescription destCfgDescription = destRcDescription.getConfiguration();
 
-			List<ILanguageSettingsProvider> providers = srcCfgDescription.getLanguageSettingProviders();
-			destCfgDescription.setLanguageSettingProviders(providers);
+			if (srcCfgDescription instanceof ILanguageSettingsProvidersKeeper
+					&& destCfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+				List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) srcCfgDescription).getLanguageSettingProviders();
+				((ILanguageSettingsProvidersKeeper) destCfgDescription).setLanguageSettingProviders(providers);
+			}
 		}
 
 		if (!page.isForPrefs()) {
 			ICConfigurationDescription sd = srcRcDescription.getConfiguration();
 			ICConfigurationDescription dd = destRcDescription.getConfiguration();
-			List<ILanguageSettingsProvider> newProviders = sd.getLanguageSettingProviders();
-			dd.setLanguageSettingProviders(newProviders);
+			if (sd instanceof ILanguageSettingsProvidersKeeper && dd instanceof ILanguageSettingsProvidersKeeper) {
+				List<ILanguageSettingsProvider> newProviders = ((ILanguageSettingsProvidersKeeper) sd).getLanguageSettingProviders();
+				((ILanguageSettingsProvidersKeeper) dd).setLanguageSettingProviders(newProviders);
+			}
 		}
 
 		performOK();

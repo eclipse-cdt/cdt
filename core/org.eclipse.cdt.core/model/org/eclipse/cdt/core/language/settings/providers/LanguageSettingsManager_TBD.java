@@ -21,23 +21,26 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 
 /**
- * This temporary class keeps the utility methods being looking for better home
+ * This temporary class keeps the utility methods being looking for better home.
+ * Checking if any Language Settings Provider has custom entries for the resource.
  */
 public class LanguageSettingsManager_TBD {
 	public static boolean isCustomizedResource(ICConfigurationDescription cfgDescription, IResource rc) {
 		if (rc instanceof IProject)
 			return false;
 
-		for (ILanguageSettingsProvider provider: cfgDescription.getLanguageSettingProviders()) {
-			if (provider instanceof ILanguageSettingsBroadcastingProvider) {
-				for (String languageId : LanguageSettingsManager.getLanguages(rc, cfgDescription)) {
-					List<ICLanguageSettingEntry> list = provider.getSettingEntries(cfgDescription, rc, languageId);
-					if (list!=null) {
-						// TODO - check default or check parent?
-						List<ICLanguageSettingEntry> listDefault = provider.getSettingEntries(null, null, languageId);
-						// != is OK here due as the equal lists will have the same reference in WeakHashSet
-						if (list != listDefault)
-							return true;
+		if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+			for (ILanguageSettingsProvider provider: ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders()) {
+				if (provider instanceof ILanguageSettingsBroadcastingProvider) {
+					for (String languageId : LanguageSettingsManager.getLanguages(rc, cfgDescription)) {
+						List<ICLanguageSettingEntry> list = provider.getSettingEntries(cfgDescription, rc, languageId);
+						if (list!=null) {
+							// TODO - check default or check parent?
+							List<ICLanguageSettingEntry> listDefault = provider.getSettingEntries(null, null, languageId);
+							// != is OK here due as the equal lists will have the same reference in WeakHashSet
+							if (list != listDefault)
+								return true;
+						}
 					}
 				}
 			}

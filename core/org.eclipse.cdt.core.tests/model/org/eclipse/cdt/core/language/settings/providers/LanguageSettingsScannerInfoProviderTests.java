@@ -51,7 +51,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 	private static final String PROVIDER_ID = "test.provider.id";
 	private static final String PROVIDER_ID_2 = "test.provider.id.2";
 	private static final String PROVIDER_NAME = "test.provider.name";
-	
+
 	// constants for getProjectDescription()
 	private static final boolean READ_ONLY = false;
 	private static final boolean WRITEABLE = true;
@@ -225,6 +225,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 		assertNotNull(prjDescription);
 		ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 		assertNotNull(cfgDescription);
+		assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
 
 		// sample file
 		IFile file = ResourceHelper.createFile(project, "file.c");
@@ -256,7 +257,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 		ILanguageSettingsProvider provider = new MockProvider(PROVIDER_ID, PROVIDER_NAME, entries);
 		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 		providers.add(provider);
-		cfgDescription.setLanguageSettingProviders(providers);
+		((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
 
 		// set project description
 		CProjectDescriptionManager.getInstance().setProjectDescription(project, prjDescription);
@@ -296,6 +297,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 		assertNotNull(prjDescription);
 		ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 		assertNotNull(cfgDescription);
+		assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
 
 		// sample file
 		IFile file = ResourceHelper.createFile(project, "file.c");
@@ -319,7 +321,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 		ILanguageSettingsProvider provider = new MockProvider(PROVIDER_ID, PROVIDER_NAME, entries);
 		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 		providers.add(provider);
-		cfgDescription.setLanguageSettingProviders(providers);
+		((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
 
 		// set project description
 		CProjectDescriptionManager.getInstance().setProjectDescription(project, prjDescription);
@@ -349,22 +351,23 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 		assertNotNull(prjDescription);
 		ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 		assertNotNull(cfgDescription);
-		
+		assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
+
 		// sample file
 		IFile file = ResourceHelper.createFile(project, "file.c");
-		
+
 		// contribute the entries
 		IFolder frameworkFolder = ResourceHelper.createFolder(project, "Fmwk");
 		CIncludePathEntry frameworkPathEntry = new CIncludePathEntry(frameworkFolder, ICSettingEntry.FRAMEWORKS_MAC);
-		
+
 		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
 		entries.add(frameworkPathEntry);
-		
+
 		// add provider to the configuration
 		ILanguageSettingsProvider provider = new MockProvider(PROVIDER_ID, PROVIDER_NAME, entries);
 		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 		providers.add(provider);
-		cfgDescription.setLanguageSettingProviders(providers);
+		((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
 
 		// set project description
 		CProjectDescriptionManager.getInstance().setProjectDescription(project, prjDescription);
@@ -380,7 +383,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 				new Path(actualIncludePaths[1]));
 		assertEquals(2, actualIncludePaths.length);
 	}
-	
+
 	/**
 	 * Test duplicate entries.
 	 */
@@ -391,6 +394,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 		assertNotNull(prjDescription);
 		ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 		assertNotNull(cfgDescription);
+		assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
 
 		// sample file
 		IFile file = ResourceHelper.createFile(project, "file.c");
@@ -412,7 +416,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 		ILanguageSettingsProvider provider = new MockProvider(PROVIDER_ID, PROVIDER_NAME, entries);
 		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 		providers.add(provider);
-		cfgDescription.setLanguageSettingProviders(providers);
+		((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
 
 		// set project description
 		CProjectDescriptionManager.getInstance().setProjectDescription(project, prjDescription);
@@ -440,6 +444,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 		assertNotNull(prjDescription);
 		ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 		assertNotNull(cfgDescription);
+		assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
 
 		// create sample file
 		IFile file = ResourceHelper.createFile(project, "file.c");
@@ -472,7 +477,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 		ILanguageSettingsProvider provider = new MockProvider(PROVIDER_ID, PROVIDER_NAME, entries);
 		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 		providers.add(provider);
-		cfgDescription.setLanguageSettingProviders(providers);
+		((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
 
 		// set project description
 		CProjectDescriptionManager.getInstance().setProjectDescription(project, prjDescription);
@@ -508,6 +513,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 		assertNotNull(prjDescription);
 		ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 		assertNotNull(cfgDescription);
+		assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
 
 		// create sample file
 		IFile file = ResourceHelper.createFile(project, "file.c");
@@ -523,7 +529,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 		ILanguageSettingsProvider provider = new MockProvider(PROVIDER_ID, PROVIDER_NAME, entries);
 		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 		providers.add(provider);
-		cfgDescription.setLanguageSettingProviders(providers);
+		((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
 
 		// set project description
 		CProjectDescriptionManager.getInstance().setProjectDescription(project, prjDescription);
@@ -559,6 +565,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 		assertNotNull(prjDescription);
 		ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 		assertNotNull(cfgDescription);
+		assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
 
 		// create sample file
 		IFile file = ResourceHelper.createFile(project, "file.c");
@@ -576,7 +583,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 		ILanguageSettingsProvider provider = new MockProvider(PROVIDER_ID, PROVIDER_NAME, entries);
 		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 		providers.add(provider);
-		cfgDescription.setLanguageSettingProviders(providers);
+		((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
 
 		// set project description
 		CProjectDescriptionManager.getInstance().setProjectDescription(project, prjDescription);
@@ -628,6 +635,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 		assertNotNull(prjDescription);
 		ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 		assertNotNull(cfgDescription);
+		assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
 
 		// create sample file
 		IFile file = ResourceHelper.createFile(project, "file.c");
@@ -655,7 +663,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 		ILanguageSettingsProvider provider = new MockProvider(PROVIDER_ID, PROVIDER_NAME, entries);
 		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 		providers.add(provider);
-		cfgDescription.setLanguageSettingProviders(providers);
+		((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
 
 		// set project description
 		CProjectDescriptionManager.getInstance().setProjectDescription(project, prjDescription);
@@ -710,6 +718,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 		assertNotNull(prjDescription);
 		ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 		assertNotNull(cfgDescription);
+		assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
 
 		// create sample file
 		IFile file = ResourceHelper.createFile(project, "file.c");
@@ -723,7 +732,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 		ILanguageSettingsProvider provider = new MockProvider(PROVIDER_ID, PROVIDER_NAME, entries);
 		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 		providers.add(provider);
-		cfgDescription.setLanguageSettingProviders(providers);
+		((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
 
 		// set project description
 		CProjectDescriptionManager.getInstance().setProjectDescription(project, prjDescription);
@@ -765,6 +774,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 		assertNotNull(prjDescription);
 		ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 		assertNotNull(cfgDescription);
+		assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
 
 		// sample file
 		IFolder parentFolder = ResourceHelper.createFolder(project, "ParentFolder");
@@ -784,7 +794,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 
 		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 		providers.add(provider);
-		cfgDescription.setLanguageSettingProviders(providers);
+		((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
 
 		// set project description
 		CProjectDescriptionManager.getInstance().setProjectDescription(project, prjDescription);
@@ -812,6 +822,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 		assertNotNull(prjDescription);
 		ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 		assertNotNull(cfgDescription);
+		assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
 
 		// create sample file
 		IFile file = ResourceHelper.createFile(project, "file.c");
@@ -825,8 +836,8 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 		ILanguageSettingsProvider provider = new MockProvider(PROVIDER_ID, PROVIDER_NAME, entries);
 		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 		providers.add(provider);
-		cfgDescription.setLanguageSettingProviders(providers);
-		
+		((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
+
 		// set project description
 		CProjectDescriptionManager.getInstance().setProjectDescription(project, prjDescription);
 
@@ -893,6 +904,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 		assertNotNull(prjDescription);
 		ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 		assertNotNull(cfgDescription);
+		assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
 
 		// find 2 languages applicable to the folder
 		List<String> languageIds = getLanguages(folder, cfgDescription);
@@ -917,7 +929,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 		providers.add(provider1);
 		providers.add(provider2);
-		cfgDescription.setLanguageSettingProviders(providers);
+		((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
 
 		// set project description
 		CProjectDescriptionManager.getInstance().setProjectDescription(project, prjDescription);

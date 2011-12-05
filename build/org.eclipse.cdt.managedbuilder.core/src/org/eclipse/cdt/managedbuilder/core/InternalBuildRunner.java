@@ -18,16 +18,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
-import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.cdt.make.core.scannerconfig.AbstractBuildCommandParser;
 import org.eclipse.cdt.managedbuilder.buildmodel.BuildDescriptionManager;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildDescription;
@@ -52,7 +50,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  * The build runner for the internal builder.
- * 
+ *
  * @author dschaefer
  * @since 8.0
  */
@@ -160,16 +158,18 @@ public class InternalBuildRunner extends AbstractBuildRunner {
 			if (kind!=IncrementalProjectBuilder.CLEAN_BUILD) {
 				// TODO - AG - sanity check? elaborate
 				ICConfigurationDescription cfgDescription = ManagedBuildManager.getDescriptionForConfiguration(configuration);
-				List<ILanguageSettingsProvider> providers = cfgDescription.getLanguageSettingProviders();
-				for (ILanguageSettingsProvider provider : providers) {
-					if (provider instanceof AbstractBuildCommandParser) {
-						buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
-						String msg = ManagedMakeMessages.getFormattedString("BOP Language Settings Provider [{0}] is not supported by Internal Builder.", provider.getName());
-						buf.append("**** "+msg+" ****");
-						buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
-						buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
+				if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+					List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+					for (ILanguageSettingsProvider provider : providers) {
+						if (provider instanceof AbstractBuildCommandParser) {
+							buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
+							String msg = ManagedMakeMessages.getFormattedString("BOP Language Settings Provider [{0}] is not supported by Internal Builder.", provider.getName());
+							buf.append("**** "+msg+" ****");
+							buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
+							buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
 
-						ManagedBuilderCorePlugin.error(msg);
+							ManagedBuilderCorePlugin.error(msg);
+						}
 					}
 				}
 			}

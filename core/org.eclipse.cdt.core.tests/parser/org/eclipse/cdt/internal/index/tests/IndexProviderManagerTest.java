@@ -25,7 +25,6 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.provider.IIndexProvider;
 import org.eclipse.cdt.core.internal.index.provider.test.DummyProviderTraces;
 import org.eclipse.cdt.core.internal.index.provider.test.Providers;
-import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -76,7 +75,7 @@ public class IndexProviderManagerTest extends IndexTestBase {
 	final static Class DP4= Providers.Dummy4.class;
 	final static Class DP5= Providers.Dummy5.class;
 	final static Class[] DPS= new Class[] {DP4, DP2, DP1, DP3, DP5};
-	
+
 	/*
 	 * Fictional compatibility ranges for testing
 	 */
@@ -84,9 +83,9 @@ public class IndexProviderManagerTest extends IndexTestBase {
 	final static VersionRange VERSION_401= new VersionRange("[36,37]");
 	final static VersionRange VERSION_405= new VersionRange("[37,39]");
 	final static VersionRange VERSION_502= new VersionRange("[89,91]");
-	
+
 	final CCorePlugin core= CCorePlugin.getDefault();
-	
+
 	public IndexProviderManagerTest() {
 		super("IndexProviderManagerTest");
 	}
@@ -107,11 +106,11 @@ public class IndexProviderManagerTest extends IndexTestBase {
 		IndexProviderManager ipm= ((PDOMManager)CCorePlugin.getIndexManager()).getIndexProviderManager();
 		ipm.reset(); ipm.startup();
 	}
-	
+
 	public void testProvider_SimpleLifeCycle_200958() throws Exception {
 		for (Class element : DPS)
 			DPT.reset(element);
-		
+
 		List cprojects = new ArrayList(), expectedTrace = new ArrayList();
 		try {
 			for(int i=0; i<3; i++) {
@@ -138,7 +137,7 @@ public class IndexProviderManagerTest extends IndexTestBase {
 
 	public void testProvider_OverDeleteAndAdd() throws Exception {
 		DPT.reset(DP1);
-		
+
 		List expectedTrace = new ArrayList();
 		ICProject cproject = null;
 		try {
@@ -181,7 +180,7 @@ public class IndexProviderManagerTest extends IndexTestBase {
 			File newLocation = CProjectHelper.freshDir();
 			IProjectDescription description = cproject.getProject().getDescription();
 			description.setLocationURI(newLocation.toURI());
-			cproject.getProject().move(description, IResource.FORCE | IResource.SHALLOW, new NullProgressMonitor());	
+			cproject.getProject().move(description, IResource.FORCE | IResource.SHALLOW, new NullProgressMonitor());
 
 			index = CCorePlugin.getIndexManager().getIndex(cproject);
 			assertEquals(expectedTrace, DPT.getProjectsTrace(DP1));
@@ -191,19 +190,19 @@ public class IndexProviderManagerTest extends IndexTestBase {
 			}
 		}
 	}
-	
+
 	public void testVersioning_IncompatibleIgnored() throws Exception {
 		IndexProviderManager ipm= ((PDOMManager)CCorePlugin.getIndexManager()).getIndexProviderManager();
-		
+
 		ICProject cproject = null;
 		try {
 			cproject= CProjectHelper.createCCProject("IndexFactoryConfigurationUsageTest", IPDOMManager.ID_NO_INDEXER);
 			IProject project= cproject.getProject();
-			
-			
+
+
 			MockState mockState = new MockState(cproject);
 			mockState.setConfig(MockState.REL_V1_ID);
-			
+
 			IIndexProvider provider1= new IIndexFragmentProvider() {
 				IIndexFragment[] fragments= new IIndexFragment[] {
 					new MockPDOM("contentID.contentA", "36"),
@@ -212,9 +211,11 @@ public class IndexProviderManagerTest extends IndexTestBase {
 					new MockPDOM("contentID.bar", "91"),
 					new MockPDOM("contentID.baz", "89")
 				};
+				@Override
 				public IIndexFragment[] getIndexFragments(ICConfigurationDescription config) {
 					return fragments;
 				}
+				@Override
 				public boolean providesFor(ICProject project) throws CoreException {
 					return true;
 				}
@@ -224,20 +225,22 @@ public class IndexProviderManagerTest extends IndexTestBase {
 						new MockPDOM("contentID.baz", "90"),
 						new MockPDOM("contentID.contentA", "38"),
 				};
+				@Override
 				public IIndexFragment[] getIndexFragments(ICConfigurationDescription config) {
 					return fragments;
 				}
+				@Override
 				public boolean providesFor(ICProject project) throws CoreException {
 					return true;
 				}
 			};
-			
+
 			CCorePlugin.getIndexManager().joinIndexer(8000, npm()); // ensure IPM is called only once under test conditions
 			setExpectedNumberOfLoggedNonOKStatusObjects(3); // foo, bar and baz have no compatible fragments available
-			
+
 			ipm.reset(VERSION_405); ipm.startup();
 			ipm.addIndexProvider(provider1);  ipm.addIndexProvider(provider2);
-			
+
 			IIndexFragment[] actual = ipm.getProvidedIndexFragments(mockState.getCurrentConfig(), true);
 			assertEquals(1, actual.length);
 			assertFragmentPresent("contentID.contentA", "38", actual);
@@ -247,19 +250,19 @@ public class IndexProviderManagerTest extends IndexTestBase {
 			}
 		}
 	}
-	
+
 	public void testVersioning_NoCompatibleVersionsFound() throws Exception {
 		IndexProviderManager ipm= ((PDOMManager)CCorePlugin.getIndexManager()).getIndexProviderManager();
-		
+
 		ICProject cproject = null;
 		try {
 			cproject= CProjectHelper.createCCProject("IndexFactoryConfigurationUsageTest", IPDOMManager.ID_NO_INDEXER);
 			IProject project= cproject.getProject();
-			
-			
+
+
 			MockState mockState = new MockState(cproject);
 			mockState.setConfig(MockState.REL_V1_ID);
-			
+
 			IIndexProvider provider1= new IIndexFragmentProvider() {
 				IIndexFragment[] fragments= new IIndexFragment[] {
 					new MockPDOM("contentID.contentA", "36"),
@@ -268,9 +271,11 @@ public class IndexProviderManagerTest extends IndexTestBase {
 					new MockPDOM("contentID.bar", "91"),
 					new MockPDOM("contentID.baz", "89")
 				};
+				@Override
 				public IIndexFragment[] getIndexFragments(ICConfigurationDescription config) {
 					return fragments;
 				}
+				@Override
 				public boolean providesFor(ICProject project) throws CoreException {
 					return true;
 				}
@@ -279,20 +284,22 @@ public class IndexProviderManagerTest extends IndexTestBase {
 				IIndexFragment[] fragments= new IIndexFragment[] {
 					new MockPDOM("contentID.contentA", "41"),
 				};
+				@Override
 				public IIndexFragment[] getIndexFragments(ICConfigurationDescription config) {
 					return fragments;
 				}
+				@Override
 				public boolean providesFor(ICProject project) throws CoreException {
 					return true;
 				}
 			};
-			
+
 			CCorePlugin.getIndexManager().joinIndexer(8000, npm()); // ensure IPM is called only once under test conditions
 			setExpectedNumberOfLoggedNonOKStatusObjects(1); // contentA has no compatible fragments available
-			
+
 			ipm.reset(VERSION_502); ipm.startup();
 			ipm.addIndexProvider(provider1);  ipm.addIndexProvider(provider2);
-			
+
 			IIndexFragment[] actual = ipm.getProvidedIndexFragments(mockState.getCurrentConfig(), true);
 			assertEquals(3, actual.length);
 			assertFragmentPresent("contentID.foo", "90", actual);
@@ -304,7 +311,7 @@ public class IndexProviderManagerTest extends IndexTestBase {
 			}
 		}
 	}
-	
+
 	private void assertFragmentPresent(String id, String version, IIndexFragment[] fragments) throws Exception {
 		for (IIndexFragment candidate : fragments) {
 			String cid= null, csver= null;
@@ -320,49 +327,49 @@ public class IndexProviderManagerTest extends IndexTestBase {
 		}
 		fail("Fragment matching (id="+id+",version="+version+") was not present");
 	}
-	
+
 	public void testIndexFactoryConfigurationUsage() throws Exception {
 		IIndex index;
-		
+
 		ICProject cproject = null;
 		// Modifying the .project file triggers an indexer job, suppress that:
 		DeltaAnalyzer.sSuppressPotentialTUs= true;
 		try {
 			cproject = CProjectHelper.createCCProject("IndexFactoryConfigurationUsageTest", IPDOMManager.ID_NO_INDEXER);
 			IProject project= cproject.getProject();
-			
+
 			ICProjectDescription pd= core.getProjectDescription(project);
 			ICConfigurationDescription cfg1= newCfg(pd, "project", "config1");
 			ICConfigurationDescription cfg2= newCfg(pd, "project", "config2");
 			core.setProjectDescription(project, pd);
-			
+
 			index= CCorePlugin.getIndexManager().getIndex(cproject);
 			CCorePlugin.getIndexManager().joinIndexer(8000, npm());
-		
+
 			DPT.reset(DP1);
 			changeConfigRelations(project, ICProjectDescriptionPreferences.CONFIGS_LINK_SETTINGS_AND_ACTIVE);
 			assertEquals(0, DPT.getProjectsTrace(DP1).size());
 			assertEquals(0, DPT.getCfgsTrace(DP1).size());
-			
+
 			changeActiveConfiguration(project, cfg1);
 			DPT.reset(DP1);
 			index= CCorePlugin.getIndexManager().getIndex(cproject);
 			assertEquals(0, DPT.getProjectsTrace(DP1).size());
 			assertEquals(1, DPT.getCfgsTrace(DP1).size());
 			assertEquals("project.config1", ((ICConfigurationDescription)DPT.getCfgsTrace(DP1).get(0)).getId());
-			
+
 			changeActiveConfiguration(project, cfg2);
 			DPT.reset(DP1);
 			index= CCorePlugin.getIndexManager().getIndex(cproject);
 			assertEquals(0, DPT.getProjectsTrace(DP1).size());
 			assertEquals(1, DPT.getCfgsTrace(DP1).size());
 			assertEquals("project.config2", ((ICConfigurationDescription)DPT.getCfgsTrace(DP1).get(0)).getId());
-			
+
 			DPT.reset(DP1);
 			changeConfigRelations(project, ICProjectDescriptionPreferences.CONFIGS_INDEPENDENT);
 			assertEquals(0, DPT.getProjectsTrace(DP1).size());
 			assertEquals(0, DPT.getCfgsTrace(DP1).size());
-			
+
 			changeActiveConfiguration(project, cfg1);
 			DPT.reset(DP1);
 			index= CCorePlugin.getIndexManager().getIndex(cproject);
@@ -370,7 +377,7 @@ public class IndexProviderManagerTest extends IndexTestBase {
 			assertEquals(1, DPT.getCfgsTrace(DP1).size());
 			// should still be config2, as the change in active configuration does not matter
 			assertEquals("project.config2", ((ICConfigurationDescription)DPT.getCfgsTrace(DP1).get(0)).getId());
-			
+
 			changeActiveConfiguration(project, cfg2);
 			DPT.reset(DP1);
 			index= CCorePlugin.getIndexManager().getIndex(cproject);
@@ -385,7 +392,7 @@ public class IndexProviderManagerTest extends IndexTestBase {
 			}
 		}
 	}
-	
+
 	public void testGetProvidedFragments() throws Exception {
 		ICProject cproject= CProjectHelper.createCProject("IndexProviderManagerTest", "bin", IPDOMManager.ID_NO_INDEXER);
 
@@ -492,20 +499,20 @@ public class IndexProviderManagerTest extends IndexTestBase {
 			}
 		}
 	}
-	
+
 	private ICConfigurationDescription newCfg(ICProjectDescription des, String project, String config) throws CoreException {
 		CDefaultConfigurationData data= new CDefaultConfigurationData(project+"."+config, project+" "+config+" name", null);
 		data.initEmptyData();
-		return des.createConfiguration(CCorePlugin.DEFAULT_PROVIDER_ID, data);		
+		return des.createConfiguration(CCorePlugin.DEFAULT_PROVIDER_ID, data);
 	}
-	
+
 	private void changeActiveConfiguration(IProject project, ICConfigurationDescription cfg) throws CoreException {
 		ICProjectDescription pd= core.getProjectDescription(project);
 		pd.setActiveConfiguration(pd.getConfigurationById(cfg.getId()));
 		core.setProjectDescription(project, pd);
 		CCorePlugin.getIndexManager().joinIndexer(8000, npm());
 	}
-	
+
 	private void changeConfigRelations(IProject project, int option) throws CoreException {
 		ICProjectDescription pd= core.getProjectDescription(project);
 		pd.setConfigurationRelations(option);
@@ -521,6 +528,7 @@ class MockStateIndexProvider implements IIndexProvider {
 		this.targetProject = cproject;
 	}
 
+	@Override
 	public boolean providesFor(ICProject cproject) throws CoreException {
 		return this.targetProject.equals(cproject);
 	}
@@ -529,7 +537,7 @@ class MockStateIndexProvider implements IIndexProvider {
 class MockStateIndexFragmentProvider extends MockStateIndexProvider implements IIndexFragmentProvider {
 	private boolean invert;
 	final IIndexFragment[] fragments;
-	
+
 	public void invert() {
 		invert = !invert;
 	}
@@ -543,6 +551,7 @@ class MockStateIndexFragmentProvider extends MockStateIndexProvider implements I
 		}
 	}
 
+	@Override
 	public IIndexFragment[] getIndexFragments(ICConfigurationDescription config) throws CoreException {
 		int index = MockState.states.indexOf(config.getId());
 		index = invert ? (fragments.length-1)-index : index;
@@ -565,152 +574,201 @@ class MockConfig implements ICConfigurationDescription {
 		this.project= project;
 	}
 
+	@Override
 	public String getId() {
 		return id;
 	}
 
+	@Override
 	public ICConfigExtensionReference create(String extensionPoint,
 			String extension) throws CoreException {
 		return null;
 	}
 
+	@Override
 	public ICExternalSetting createExternalSetting(String[] languageIDs,
 			String[] contentTypeIds, String[] extensions,
 			ICSettingEntry[] entries) throws WriteAccessException {
 		return null;
 	}
 
+	@Override
 	public ICFileDescription createFileDescription(IPath path,
 			ICResourceDescription base) throws CoreException,
 			WriteAccessException {
 		return null;
 	}
 
+	@Override
 	public ICFolderDescription createFolderDescription(IPath path,
 			ICFolderDescription base) throws CoreException,
 			WriteAccessException {
 		return null;
 	}
 
+	@Override
 	public ICConfigExtensionReference[] get(String extensionPointID) {
 		return null;
 	}
 
+	@Override
 	public ICBuildSetting getBuildSetting() {
 		return null;
 	}
 
+	@Override
 	public String getBuildSystemId() {
 		return null;
 	}
 
+	@Override
 	public ICdtVariablesContributor getBuildVariablesContributor() {
 		return null;
 	}
 
+	@Override
 	public CConfigurationData getConfigurationData() {
 		return null;
 	}
 
+	@Override
 	public String getDescription() {
 		return null;
 	}
 
+	@Override
 	public ICExternalSetting[] getExternalSettings() {
 		return null;
 	}
 
+	@Override
 	public ICFileDescription[] getFileDescriptions() {
 		return null;
 	}
 
+	@Override
 	public ICFolderDescription[] getFolderDescriptions() {
 		return null;
 	}
 
+	@Override
 	public ICProjectDescription getProjectDescription() {
 		return CoreModel.getDefault().getProjectDescription(project);
 	}
 
+	@Override
 	public Map getReferenceInfo() {
 		return null;
 	}
 
+	@Override
 	public ICResourceDescription getResourceDescription(IPath path,
 			boolean exactPath) {
 		return null;
 	}
 
+	@Override
 	public ICResourceDescription[] getResourceDescriptions() {
 		return null;
 	}
 
+	@Override
 	public ICFolderDescription getRootFolderDescription() {return null;}
+	@Override
 	public Object getSessionProperty(QualifiedName name) {return null;}
+	@Override
 	public ICSourceEntry[] getSourceEntries() {return null;}
+	@Override
 	public ICTargetPlatformSetting getTargetPlatformSetting() {return null;}
+	@Override
 	public boolean isActive() {return false;}
+	@Override
 	public boolean isModified() {return false;}
+	@Override
 	public boolean isPreferenceConfiguration() {return false;}
+	@Override
 	public void remove(ICConfigExtensionReference ext) throws CoreException {}
+	@Override
 	public void remove(String extensionPoint) throws CoreException {}
+	@Override
 	public void removeExternalSetting(ICExternalSetting setting) throws WriteAccessException {}
+	@Override
 	public void removeExternalSettings() throws WriteAccessException {}
+	@Override
 	public void removeResourceDescription(ICResourceDescription des)
 	throws CoreException, WriteAccessException {}
+	@Override
 	public void setActive() throws WriteAccessException {}
+	@Override
 	public void setConfigurationData(String buildSystemId,
 			CConfigurationData data) throws WriteAccessException {}
+	@Override
 	public void setDescription(String des) throws WriteAccessException {}
+	@Override
 	public void setName(String name) throws WriteAccessException {}
+	@Override
 	public void setReferenceInfo(Map<String, String> refs) throws WriteAccessException {}
+	@Override
 	public void setSessionProperty(QualifiedName name, Object value) {}
+	@Override
 	public void setSourceEntries(ICSourceEntry[] entries) throws CoreException,
 	WriteAccessException {}
+	@Override
 	public ICSettingObject[] getChildSettings() {return null;}
+	@Override
 	public ICConfigurationDescription getConfiguration() {return null;}
+	@Override
 	public String getName() {return null;}
+	@Override
 	public ICSettingContainer getParent() {return null;}
+	@Override
 	public int getType() {return 0;}
+	@Override
 	public boolean isReadOnly() {return false;}
+	@Override
 	public boolean isValid() {return false;}
+	@Override
 	public ICStorageElement getStorage(String id, boolean create) throws CoreException {
 		return null;
 	}
+	@Override
 	public ICStorageElement importStorage(String id, ICStorageElement storage) {
 		return null;
 	}
 
+	@Override
 	public void removeStorage(String id) throws CoreException {
 	}
 
+	@Override
 	public ICLanguageSetting getLanguageSettingForFile(IPath path, boolean ignoreExludeStatus) {
 		return null;
 	}
 
+	@Override
 	public String[] getExternalSettingsProviderIds() {
 		return null;
 	}
 
+	@Override
 	public void setExternalSettingsProviderIds(String[] ids) {}
 
+	@Override
 	public void updateExternalSettingsProviders(String[] ids) {}
 
+	@Override
 	public ICSourceEntry[] getResolvedSourceEntries() {
 		return null;
 	}
 
+	@Override
 	public CConfigurationStatus getConfigurationStatus() {
 		return CConfigurationStatus.CFG_STATUS_OK;
 	}
 
+	@Override
 	public void setReadOnly(boolean readOnly, boolean keepModify) {}
 
-	public void setLanguageSettingProviders(List<ILanguageSettingsProvider> providers) {}
-
-	public List<ILanguageSettingsProvider> getLanguageSettingProviders() {
-		return null;
-	}
 }
 
 /*
@@ -743,12 +801,12 @@ class MockState {
 class MockPDOM extends EmptyIndexFragment {
 	String id;
 	String version;
-	
+
 	MockPDOM(String id, String version) {
 		this.id= id;
 		this.version= version;
 	}
-	
+
 	@Override
 	public String getProperty(String propertyName) throws CoreException {
 		if(IIndexFragment.PROPERTY_FRAGMENT_ID.equals(propertyName)) {
@@ -762,7 +820,7 @@ class MockPDOM extends EmptyIndexFragment {
 		}
 		return null;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "[Mock index fragment "+id+"."+System.identityHashCode(this)+"]";

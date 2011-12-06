@@ -46,6 +46,7 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 	/*package*/ static final String EXTENSION_BASE_SUBCLASS_PROVIDER_PARAMETER = "custom parameter subclass";
 	/*package*/ static final String EXTENSION_SERIALIZABLE_PROVIDER_ID = "org.eclipse.cdt.core.tests.custom.serializable.language.settings.provider";
 	/*package*/ static final String EXTENSION_SERIALIZABLE_PROVIDER_NAME = "Test Plugin Mock Serializable Language Settings Provider";
+	/*package*/ static final String EXTENSION_SERIALIZABLE_PROVIDER_MISSING_PARAMETER = "parameter";
 	/*package*/ static final String EXTENSION_EDITABLE_PROVIDER_ID = "org.eclipse.cdt.core.tests.custom.editable.language.settings.provider";
 	/*package*/ static final String EXTENSION_EDITABLE_PROVIDER_NAME = "Test Plugin Mock Editable Language Settings Provider";
 	/*package*/ static final String EXTENSION_REGISTERER_PROVIDER_ID = "org.eclipse.cdt.core.tests.language.settings.listener.registerer.provider";
@@ -264,7 +265,7 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 		LanguageSettingsSerializableProvider provider = (LanguageSettingsSerializableProvider) rawProvider;
 
 		assertEquals(null, provider.getLanguageScope());
-		assertEquals("", provider.getProperty(EXTENSION_BASE_PROVIDER_ATTR_PARAMETER));
+		assertEquals(null, provider.getProperty(EXTENSION_SERIALIZABLE_PROVIDER_MISSING_PARAMETER));
 
 		List<ICLanguageSettingEntry> expected = new ArrayList<ICLanguageSettingEntry>();
 		expected.add(new CMacroEntry("MACRO", "value", 0));

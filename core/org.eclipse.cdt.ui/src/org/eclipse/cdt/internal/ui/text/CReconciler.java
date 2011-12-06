@@ -209,10 +209,7 @@ public class CReconciler extends MonoReconciler {
 			if ((flags & ICElementDelta.F_CONTENT) != 0) {
 				if (!fIsReconciling && isRelevantElement(delta.getElement())) {
 					// mark model changed, but don't update immediately
-					fIndexerListener.ignoreChanges(false);
 					setCModelChanged(true);
-				} else if (delta.getElement() instanceof ITranslationUnit) {
-					fIndexerListener.ignoreChanges(true);
 				}
 			}
 			if ((flags & (
@@ -237,7 +234,6 @@ public class CReconciler extends MonoReconciler {
 
 	private class IndexerListener implements IIndexerStateListener, IIndexChangeListener {
 		private boolean fIndexChanged;
-		private boolean fIgnoreChanges;
 
 		/*
 		 * @see org.eclipse.cdt.core.index.IIndexerStateListener#indexChanged(org.eclipse.cdt.core.index.IIndexerStateEvent)
@@ -252,12 +248,7 @@ public class CReconciler extends MonoReconciler {
 						setCModelChanged(true);
 					}
 				}
-				fIgnoreChanges= false;
 			}
-		}
-
-		public void ignoreChanges(boolean ignore) {
-			fIgnoreChanges= ignore;
 		}
 
 		/*
@@ -265,12 +256,9 @@ public class CReconciler extends MonoReconciler {
 		 */
 		public void indexChanged(IIndexChangeEvent event) {
 			if (!fIndexChanged && isRelevantProject(event.getAffectedProject())) {
-				if (!fIgnoreChanges || event.isCleared() || event.isReloaded() || event.hasNewFile()) {
-					fIndexChanged= true;
-				}
+				fIndexChanged= true;
 			}
 		}
-		
 	}
 
 	/** The reconciler's editor */

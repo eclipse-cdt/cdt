@@ -22,6 +22,7 @@
  * David McKnight   (IBM)     [312415] [dstore] shell service interprets &lt; and &gt; sequences - handle old client/new server case
  * David McKnight   (IBM)     [320624] [dstore] shell &lt; and &gt; sequence conversion not being applied to thread
  * David McKnight   (IBM) - [283613] [dstore] Create a Constants File for all System Properties we support
+ * Noriaki Takatsu  (IBM)  - [365765] [dstore][multithread]client environment cause harm to singe-process server
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -38,6 +39,7 @@ import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStoreAttributes;
 import org.eclipse.dstore.core.model.DataStoreResources;
+import org.eclipse.dstore.core.server.SystemServiceManager;
 import org.eclipse.dstore.internal.core.model.IDataStoreSystemProperties;
 import org.eclipse.rse.internal.dstore.universal.miners.command.CommandMinerThread;
 import org.eclipse.rse.internal.dstore.universal.miners.command.QueryPathThread;
@@ -209,8 +211,10 @@ public class CommandMiner extends Miner
 			DataElement encodingArg = getCommandArgument(theElement, 1);
 			if (encodingArg.getType().equals("shell.encoding")) //$NON-NLS-1$
 			{
-				// fix for 191599
-				 System.setProperty(IDataStoreSystemProperties.DSTORE_STDIN_ENCODING,encodingArg.getValue()); 
+				if (SystemServiceManager.getInstance().getSystemService() == null) {
+					// fix for 191599
+					 System.setProperty(IDataStoreSystemProperties.DSTORE_STDIN_ENCODING,encodingArg.getValue()); 
+				}
 			}
 			launchCommand(subject, invocation, status);
 		}

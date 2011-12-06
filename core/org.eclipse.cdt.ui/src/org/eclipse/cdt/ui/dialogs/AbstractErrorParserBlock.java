@@ -80,7 +80,7 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 	@Deprecated
 	public AbstractErrorParserBlock(Preferences prefs) {
 		this();
-//		usingDeprecatedContructor = true;
+//		usingDeprecatedConstructor = true;
 		fPrefs = prefs;
 	}
 

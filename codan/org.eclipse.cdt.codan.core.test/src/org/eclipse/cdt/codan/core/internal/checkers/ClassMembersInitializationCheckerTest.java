@@ -53,7 +53,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//   int m;
 	//   C() { m = 0; }  // No warnings.
 	// };
-	public void testAssignmentsInContructorShouldBeChecked() {
+	public void testAssignmentsInConstructorShouldBeChecked() {
 		loadCodeAndRun(getAboveComment());
 		checkNoErrors();
 	}
@@ -171,7 +171,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//   int i1, i2;
 	// };
 	// C::C() : i1(0) {}  // 1 warning for: i2.
-	public void testExternalContructorHandling() {
+	public void testExternalConstructorHandling() {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(5);
 	}
@@ -184,7 +184,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	//   T2 t2;
 	// };
 	// C::C() : i1(0), t1(T1()) {}  // 1 warning for: i2.
-	public void testExternalContructorOfTemplateClassHandling() {
+	public void testExternalConstructorOfTemplateClassHandling() {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(8);
 	}
@@ -196,7 +196,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	// };
 	// template <typename T>
 	// C::C() : i1(0) {}  // 1 warning for: i2.
-	public void testExternalTemplateContructorHandling() {
+	public void testExternalTemplateConstructorHandling() {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(7);
 	}
@@ -212,7 +212,7 @@ public class ClassMembersInitializationCheckerTest extends CheckerTestCase {
 	// template <typename T1, typename T2>
 	// template <typename T>
 	// C<T1,T2>::C() : i1(0), t1(T1()) {}  // 1 warning for: i2.
-	public void testExternalTemplateContructorOfTemplateClassHandling() {
+	public void testExternalTemplateConstructorOfTemplateClassHandling() {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(11);
 	}

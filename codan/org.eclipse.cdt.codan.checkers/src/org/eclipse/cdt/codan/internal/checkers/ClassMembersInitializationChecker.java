@@ -98,8 +98,8 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 		
 		public int visit(IASTExpression expression) {
 			if (!constructorsStack.empty() && expression instanceof IASTFunctionCallExpression) {
-				Set<IField> actualContructorFields = constructorsStack.peek();
-				if (!actualContructorFields.isEmpty()) {
+				Set<IField> actualConstructorFields = constructorsStack.peek();
+				if (!actualConstructorFields.isEmpty()) {
 					boolean skipCurrentConstructor = false;
 					IASTFunctionCallExpression fCall = (IASTFunctionCallExpression)expression;
 					IASTExpression fNameExp = fCall.getFunctionNameExpression();
@@ -108,7 +108,7 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 						IBinding fBinding = fName.getName().resolveBinding();
 						if (fBinding instanceof ICPPMethod) {
 							ICPPMethod method = (ICPPMethod)fBinding;
-							ICompositeType constructorOwner = actualContructorFields.iterator().next().getCompositeTypeOwner();
+							ICompositeType constructorOwner = actualConstructorFields.iterator().next().getCompositeTypeOwner();
 							if (constructorOwner == method.getClassOwner() && !method.getType().isConst()) {
 								skipCurrentConstructor = true;
 							}
@@ -152,12 +152,12 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 
 		public int visit(IASTName name) {
 			if (!constructorsStack.empty()) {
-				Set<IField> actualContructorFields = constructorsStack.peek();
-				if (!actualContructorFields.isEmpty()) {
+				Set<IField> actualConstructorFields = constructorsStack.peek();
+				if (!actualConstructorFields.isEmpty()) {
 					IBinding binding = name.resolveBinding();
-					if (actualContructorFields.contains(binding)) {
+					if (actualConstructorFields.contains(binding)) {
 						if ((CPPVariableReadWriteFlags.getReadWriteFlags(name) & PDOMName.WRITE_ACCESS) != 0) {
-							actualContructorFields.remove(binding);
+							actualConstructorFields.remove(binding);
 						}
 					}
 				}

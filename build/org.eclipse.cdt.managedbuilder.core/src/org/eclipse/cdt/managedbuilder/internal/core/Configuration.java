@@ -337,9 +337,9 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 
 		if (parentConfig != null) {
 			name = parentConfig.getName();
-			// If this contructor is called to clone an existing 
+			// If this constructor is called to clone an existing 
 			// configuration, the parent of the parent should be stored. 
-			// As of 2.1, there is still one single level of inheritence to
+			// As of 2.1, there is still one single level of inheritance to
 			// worry about
 			parent = parentConfig.getParent() == null ? parentConfig : parentConfig.getParent();
 		}
@@ -485,7 +485,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	
 	//		if(!baseCfg.isExtensionConfig)
 	//			cloneChildren = true;
-			// If this contructor is called to clone an existing 
+			// If this constructor is called to clone an existing 
 			// configuration, the parent of the cloning config should be stored. 
 			parent = baseCfg.isExtensionConfig || baseCfg.getParent() == null ? baseCfg : baseCfg.getParent();
 		
@@ -633,7 +633,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 
 		if(!cloneConfig.isExtensionConfig)
 			cloneChildren = true;
-		// If this contructor is called to clone an existing 
+		// If this constructor is called to clone an existing 
 		// configuration, the parent of the cloning config should be stored. 
 		parent = cloneConfig.isExtensionConfig || cloneConfig.getParent() == null ? cloneConfig : cloneConfig.getParent();
 		parentId = parent.getId();

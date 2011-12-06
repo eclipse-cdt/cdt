@@ -192,8 +192,8 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 //		editor.setAction("AddDelegateMethods", fAddDelegateMethods); //$NON-NLS-1$
 //
 //		fAddUnimplementedConstructors= new AddUnimplementedConstructorsAction(editor);
-//		fAddUnimplementedConstructors.setActionDefinitionId(ICEditorActionDefinitionIds.ADD_UNIMPLEMENTED_CONTRUCTORS);
-//		editor.setAction("AddUnimplementedConstructors", fAddUnimplementedConstructors); //$NON-NLS-1$
+//		fAddUnimplementedConstructors.setActionDefinitionId(ICEditorActionDefinitionIds.ADD_UNIMPLEMENTED_CONSTRUCTORS);
+//		editor.setAction("AddUnimplementedConstructors", fAddUnimplementedConstructors); //$NON-NLS-1$		
 //
 //		fGenerateConstructorUsingFields= new GenerateNewConstructorUsingFieldsAction(editor);
 //		fGenerateConstructorUsingFields.setActionDefinitionId(ICEditorActionDefinitionIds.GENERATE_CONSTRUCTOR_USING_FIELDS);
@@ -277,8 +277,8 @@ public class GenerateActionGroup extends ActionGroup implements ISelectionChange
 //		fAddDelegateMethods.setActionDefinitionId(ICEditorActionDefinitionIds.CREATE_DELEGATE_METHODS);
 //
 //		fAddUnimplementedConstructors= new AddUnimplementedConstructorsAction(site);
-//		fAddUnimplementedConstructors.setActionDefinitionId(ICEditorActionDefinitionIds.ADD_UNIMPLEMENTED_CONTRUCTORS);
-//
+//		fAddUnimplementedConstructors.setActionDefinitionId(ICEditorActionDefinitionIds.ADD_UNIMPLEMENTED_CONSTRUCTORS);
+//		
 //		fGenerateConstructorUsingFields= new GenerateNewConstructorUsingFieldsAction(site);
 //		fGenerateConstructorUsingFields.setActionDefinitionId(ICEditorActionDefinitionIds.GENERATE_CONSTRUCTOR_USING_FIELDS);
 //

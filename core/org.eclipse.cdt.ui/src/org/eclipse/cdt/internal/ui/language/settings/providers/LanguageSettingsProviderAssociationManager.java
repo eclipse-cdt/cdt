@@ -20,7 +20,7 @@ import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.dialogs.ICOptionPage;
 
-public class LanguageSettingsProviderAssociation {
+public class LanguageSettingsProviderAssociationManager {
 	public static final String LANGUAGE_SETTINGS_PROVIDER_UI = "LanguageSettingsProviderAssociation"; //$NON-NLS-1$
 
 	private static final String ELEM_ID_ASSOCIATION = "id-association"; //$NON-NLS-1$
@@ -47,7 +47,7 @@ public class LanguageSettingsProviderAssociation {
 		if (fRegisteredClasses==null) fRegisteredClasses = new ArrayList<String>();
 
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
-		IExtensionPoint extension = registry.getExtensionPoint(CUIPlugin.PLUGIN_ID, LanguageSettingsProviderAssociation.LANGUAGE_SETTINGS_PROVIDER_UI);
+		IExtensionPoint extension = registry.getExtensionPoint(CUIPlugin.PLUGIN_ID, LANGUAGE_SETTINGS_PROVIDER_UI);
 		if (extension != null) {
 			IExtension[] extensions = extension.getExtensions();
 			for (IExtension ext : extensions) {
@@ -85,12 +85,12 @@ public class LanguageSettingsProviderAssociation {
 					return url;
 			}
 		} catch (MalformedURLException exception) {}
-		
+
 		loadedIcons.add(url);
 		if (url!=null) {
 			CDTSharedImages.register(url);
 		}
-		
+
 		return url;
 	}
 
@@ -107,7 +107,7 @@ public class LanguageSettingsProviderAssociation {
 		}
 		if (fRegirestedIds.contains(providerId)) {
 			IExtensionRegistry registry = Platform.getExtensionRegistry();
-			IExtensionPoint extension = registry.getExtensionPoint(CUIPlugin.PLUGIN_ID, LanguageSettingsProviderAssociation.LANGUAGE_SETTINGS_PROVIDER_UI);
+			IExtensionPoint extension = registry.getExtensionPoint(CUIPlugin.PLUGIN_ID, LANGUAGE_SETTINGS_PROVIDER_UI);
 			if (extension != null) {
 				IExtension[] extensions = extension.getExtensions();
 				for (IExtension ext : extensions) {
@@ -141,7 +141,7 @@ public class LanguageSettingsProviderAssociation {
 		}
 		if (fRegisteredClasses.contains(providerClassName)) {
 			IExtensionRegistry registry = Platform.getExtensionRegistry();
-			IExtensionPoint extension = registry.getExtensionPoint(CUIPlugin.PLUGIN_ID, LanguageSettingsProviderAssociation.LANGUAGE_SETTINGS_PROVIDER_UI);
+			IExtensionPoint extension = registry.getExtensionPoint(CUIPlugin.PLUGIN_ID, LANGUAGE_SETTINGS_PROVIDER_UI);
 			if (extension != null) {
 				IExtension[] extensions = extension.getExtensions();
 				for (IExtension ext : extensions) {
@@ -178,12 +178,12 @@ public class LanguageSettingsProviderAssociation {
 	 */
 	public static URL getImage(Class<? extends ILanguageSettingsProvider> clazz) {
 		URL url = null;
-		
+
 		outer: for (Class<?> cl=clazz;cl!=null;cl=cl.getSuperclass()) {
 			url = getImageURL(cl);
 			if (url!=null)
 				break;
-			
+
 			// this does not check for superinterfaces, feel free to implement as needed
 			for (Class<?> in : cl.getInterfaces()) {
 				url = getImageURL(in);

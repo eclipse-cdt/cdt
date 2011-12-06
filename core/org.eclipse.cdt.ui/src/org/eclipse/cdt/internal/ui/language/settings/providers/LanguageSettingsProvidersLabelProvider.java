@@ -38,12 +38,12 @@ class LanguageSettingsProvidersLabelProvider extends LabelProvider {
 		String imageKey = null;
 		// try id-association
 		String id = provider.getId();
-		URL url = LanguageSettingsProviderAssociation.getImageUrl(id);
+		URL url = LanguageSettingsProviderAssociationManager.getImageUrl(id);
 		// try class-association
 		if (url==null) {
 			ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(provider);
 			if (rawProvider!=null) {
-				url = LanguageSettingsProviderAssociation.getImage(rawProvider.getClass());
+				url = LanguageSettingsProviderAssociationManager.getImage(rawProvider.getClass());
 			}
 		}
 		if (url!=null) {

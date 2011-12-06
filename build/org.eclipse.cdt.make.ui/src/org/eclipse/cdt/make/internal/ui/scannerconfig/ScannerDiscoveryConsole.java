@@ -14,7 +14,7 @@ package org.eclipse.cdt.make.internal.ui.scannerconfig;
 import java.net.URL;
 
 import org.eclipse.cdt.internal.ui.buildconsole.CBuildConsole;
-import org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProviderAssociation;
+import org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProviderAssociationManager;
 
 public class ScannerDiscoveryConsole extends CBuildConsole {
 
@@ -27,7 +27,7 @@ public class ScannerDiscoveryConsole extends CBuildConsole {
 	 */
 	@Override
 	public void init(String consoleId, String name, URL defaultIconUrl) {
-		URL iconUrl = LanguageSettingsProviderAssociation.getImageUrl(consoleId);
+		URL iconUrl = LanguageSettingsProviderAssociationManager.getImageUrl(consoleId);
 		if (iconUrl==null) {
 			iconUrl = defaultIconUrl;
 		}

@@ -558,7 +558,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 		if (provider!=null) {
 			ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(provider);
 			if (rawProvider!=null) {
-				optionsPage = LanguageSettingsProviderAssociation.createOptionsPage(rawProvider);
+				optionsPage = LanguageSettingsProviderAssociationManager.createOptionsPage(rawProvider);
 			}
 
 			if (optionsPage instanceof AbstractLanguageSettingProviderOptionPage) {

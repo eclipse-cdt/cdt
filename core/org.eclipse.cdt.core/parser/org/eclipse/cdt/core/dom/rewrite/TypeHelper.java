@@ -52,10 +52,9 @@ public class TypeHelper {
 			}
 			SizeofCalculator calc = ((ASTTranslationUnit) ast).getSizeofCalculator();
 			SizeAndAlignment sizeofPointer = calc.sizeAndAlignmentOfPointer();
-			if (sizeofPointer == null)
-				return true;
+			long maxSize = sizeofPointer != null ? sizeofPointer.size : 4;
 			SizeAndAlignment sizeofType = calc.sizeAndAlignment(type);
-			if (sizeofType == null || sizeofType.size > sizeofPointer.size)
+			if (sizeofType == null || sizeofType.size > maxSize)
 				return true;
 		}
 		return false;

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.cdt.dsf" version="2">
+    <resource path="src/org/eclipse/cdt/dsf/concurrent/Transaction.java" type="org.eclipse.cdt.dsf.concurrent.Transaction">
+        <filter comment="Utility is not in common use.  I changed erasure type for argument, but at worse this should only cause a warning." id="420679712">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.dsf.concurrent.Transaction.validate(ICache&lt;?&gt;[])"/>
+                <message_argument value="T"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

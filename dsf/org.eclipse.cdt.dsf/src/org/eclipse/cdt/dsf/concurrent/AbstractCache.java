@@ -338,6 +338,7 @@ public abstract class AbstractCache<V> implements ICache<V> {
      *         invalidated
      * 
      * @see #reset(Object, IStatus)
+     * @since 2.3
      */ 
     protected void setAndReset(V data, IStatus status) {
         assert fExecutor.getDsfExecutor().isInExecutorThread();

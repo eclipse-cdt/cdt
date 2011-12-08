@@ -27,7 +27,7 @@ import org.eclipse.cdt.ui.CDTSharedImages;
  * Label provider for language settings providers.
  *
  */
-class LanguageSettingsProvidersLabelProvider extends LabelProvider {
+public class LanguageSettingsProvidersLabelProvider extends LabelProvider {
 	private static final String TEST_PLUGIN_ID_PATTERN = "org.eclipse.cdt.*.tests.*"; //$NON-NLS-1$
 	private static final String OOPS = "OOPS"; //$NON-NLS-1$
 
@@ -65,9 +65,8 @@ class LanguageSettingsProvidersLabelProvider extends LabelProvider {
 	 */
 	protected String[] getOverlayKeys(ILanguageSettingsProvider provider) {
 		String[] overlayKeys = new String[5];
-		{ // TODO temporary for debugging
-//			boolean isSpecial = provider.getId().equals(LegacySupport.MBS_LANGUAGE_SETTINGS_PROVIDER);
 
+		if (isDebugging()) { // TODO temporary for debugging
 			ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(provider);
 			if (rawProvider instanceof LanguageSettingsSerializableProvider) {
 				if (((LanguageSettingsSerializableProvider)rawProvider).isEmpty()) {
@@ -75,7 +74,7 @@ class LanguageSettingsProvidersLabelProvider extends LabelProvider {
 				}
 			}
 
-			if (LanguageSettingsManager.isWorkspaceProvider(provider) /*&& !isSpecial*/) {
+			if (LanguageSettingsManager.isWorkspaceProvider(provider)) {
 				overlayKeys[IDecoration.TOP_LEFT] = CDTSharedImages.IMG_OVR_GLOBAL;
 //				overlayKeys[IDecoration.TOP_LEFT] = CDTSharedImages.IMG_OVR_REFERENCE;
 //				overlayKeys[IDecoration.TOP_RIGHT] = CDTSharedImages.IMG_OVR_PARENT;
@@ -118,5 +117,14 @@ class LanguageSettingsProvidersLabelProvider extends LabelProvider {
 			return "[ Not accessible id="+id+" ]";
 		}
 		return OOPS;
+	}
+
+	/**
+	 * Temporary method for debugging only
+	 */
+	@Deprecated
+	private boolean isDebugging() {
+		return false;
+//		return true;
 	}
 }

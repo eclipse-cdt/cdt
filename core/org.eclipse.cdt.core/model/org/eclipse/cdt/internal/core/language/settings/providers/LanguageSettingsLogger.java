@@ -13,8 +13,7 @@ import org.eclipse.core.runtime.Status;
  */
 @Deprecated
 public class LanguageSettingsLogger {
-
-	public static boolean isEnabled() {
+	private static boolean isEnabled() {
 		return false;
 //		return true;
 	}

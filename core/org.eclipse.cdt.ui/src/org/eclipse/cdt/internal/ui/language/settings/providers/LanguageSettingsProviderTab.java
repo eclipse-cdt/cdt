@@ -390,7 +390,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 		if (!page.isForPrefs()) {
 			if (projectStorageCheckBox == null) {
 				projectStorageCheckBox = new Button(groupOptionsPage, SWT.CHECK);
-				projectStorageCheckBox.setText("Store entries in project settings folder (supporting project miration)");
+				projectStorageCheckBox.setText("Store entries in project settings folder (easing project miration)");
 				projectStorageCheckBox.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
@@ -583,7 +583,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 
 			boolean needPreferencesLink=isGlobal && currentOptionsPage!=null;
 			// TODO: message
-			final String linkMsg = needPreferencesLink ? "Options of global providers can be changed in <a href=\"workspace\">Workspace Settings</a>, Discovery Tab." : "";
+			final String linkMsg = needPreferencesLink ? "Options of shared providers below can be changed in <a href=\"workspace\">Workspace Settings</a>, Discovery Tab." : "";
 			linkWorkspacePreferences.setText(linkMsg);
 			linkWorkspacePreferences.pack();
 			linkWorkspacePreferences.setEnabled(isChecked);

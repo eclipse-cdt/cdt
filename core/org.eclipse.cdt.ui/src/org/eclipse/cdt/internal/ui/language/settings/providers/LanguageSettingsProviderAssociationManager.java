@@ -29,12 +29,18 @@ public class LanguageSettingsProviderAssociationManager {
 	private static final String ATTR_CLASS = "class"; //$NON-NLS-1$
 	private static final String ATTR_ICON = "icon"; //$NON-NLS-1$
 	private static final String ATTR_PAGE = "page"; //$NON-NLS-1$
+	private static final String ATTR_SHARED = "shared"; //$NON-NLS-1$
+	private static final String ATTR_UI_CLEAR_ENTRIES = "ui-clear-entries"; //$NON-NLS-1$
+	private static final String ATTR_UI_EDIT_ENTRIES = "ui-edit-entries"; //$NON-NLS-1$
 
-	static private List<URL> loadedIcons = null;
-	static private Map<String, URL> fImagesUrlById = null;
-	static private Map<String, URL> fImagesUrlByClass = null;
-	static private List<String> fRegirestedIds = null;
-	static private List<String> fRegisteredClasses = null;
+	private static List<URL> loadedIcons = null;
+	private static Map<String, URL> fImagesUrlById = null;
+	private static Map<String, URL> fImagesUrlByClass = null;
+	private static List<String> fRegirestedIds = null;
+	private static List<String> fRegisteredClasses = null;
+
+	private static Map<String, Map<String, String>> fAssociationsById = null;
+	private static Map<String, Map<String, String>> fAssociationsByClass = null;
 
 	private static void loadExtensions() {
 		if (loadedIcons!=null) {
@@ -45,6 +51,9 @@ public class LanguageSettingsProviderAssociationManager {
 		if (fImagesUrlByClass==null) fImagesUrlByClass = new HashMap<String, URL>();
 		if (fRegirestedIds==null) fRegirestedIds = new ArrayList<String>();
 		if (fRegisteredClasses==null) fRegisteredClasses = new ArrayList<String>();
+
+		if (fAssociationsById==null) fAssociationsById = new HashMap<String, Map<String, String>>();
+		if (fAssociationsByClass==null) fAssociationsByClass = new HashMap<String, Map<String, String>>();
 
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IExtensionPoint extension = registry.getExtensionPoint(CUIPlugin.PLUGIN_ID, LANGUAGE_SETTINGS_PROVIDER_UI);
@@ -59,19 +68,38 @@ public class LanguageSettingsProviderAssociationManager {
 						URL url = getIconUrl(cfgEl);
 						fImagesUrlById.put(id, url);
 						fRegirestedIds.add(id);
+
+						Map<String, String> properties = new HashMap<String, String>();
+						sensiblePut(properties, ATTR_PAGE, cfgEl.getAttribute(ATTR_PAGE));
+						sensiblePut(properties, ATTR_SHARED, cfgEl.getAttribute(ATTR_SHARED));
+						sensiblePut(properties, ATTR_UI_CLEAR_ENTRIES, cfgEl.getAttribute(ATTR_UI_CLEAR_ENTRIES));
+						sensiblePut(properties, ATTR_UI_EDIT_ENTRIES, cfgEl.getAttribute(ATTR_UI_EDIT_ENTRIES));
+						fAssociationsById.put(id, properties);
 					} else if (cfgEl.getName().equals(ELEM_CLASS_ASSOCIATION)) {
 						String className = cfgEl.getAttribute(ATTR_CLASS);
 						URL url = getIconUrl(cfgEl);
 						fImagesUrlByClass.put(className, url);
 						String pageClass = cfgEl.getAttribute(ATTR_PAGE);
-						if (pageClass!=null && pageClass.trim().length()>0) {
+						if (pageClass!=null && pageClass.length()>0) {
 							fRegisteredClasses.add(className);
 						}
+
+						Map<String, String> properties = new HashMap<String, String>();
+						sensiblePut(properties, ATTR_PAGE, cfgEl.getAttribute(ATTR_PAGE));
+						sensiblePut(properties, ATTR_SHARED, cfgEl.getAttribute(ATTR_SHARED));
+						sensiblePut(properties, ATTR_UI_CLEAR_ENTRIES, cfgEl.getAttribute(ATTR_UI_CLEAR_ENTRIES));
+						sensiblePut(properties, ATTR_UI_EDIT_ENTRIES, cfgEl.getAttribute(ATTR_UI_EDIT_ENTRIES));
+						fAssociationsByClass.put(className, properties);
 					}
 				}
 			}
 		}
 
+	}
+
+	private static void sensiblePut(Map<String, String> properties, String key, String value) {
+		if (value != null)
+			properties.put(key, value);
 	}
 
 	private static URL getIconUrl(IConfigurationElement config) {
@@ -242,5 +270,66 @@ public class LanguageSettingsProviderAssociationManager {
 		return optionsPage;
 	}
 
+	/**
+	 * Returns TODO for id or closest superclass.
+	 * @param provider TODO
+	 * @return TODO
+	 */
+	private static boolean getBooleanAttribute(ILanguageSettingsProvider provider, String attr) {
+		loadExtensions();
+
+		String id = provider.getId();
+
+		Map<String, String> properties = fAssociationsById.get(id);
+		if (properties != null) {
+			return Boolean.parseBoolean(properties.get(attr));
+		}
+
+		for (Class<?> clazz=provider.getClass();clazz!=null;clazz=clazz.getSuperclass()) {
+			String className = clazz.getCanonicalName();
+			properties = fAssociationsByClass.get(className);
+			if (properties != null) {
+				return Boolean.parseBoolean(properties.get(attr));
+			}
+
+			// this does not check for superinterfaces, feel free to implement as needed
+			for (Class<?> iface : clazz.getInterfaces()) {
+				String interfaceName = iface.getCanonicalName();
+				properties = fAssociationsByClass.get(interfaceName);
+				if (properties != null) {
+					return Boolean.parseBoolean(properties.get(attr));
+				}
+			}
+		}
+		return false;
+	}
+
+
+	/**
+	 * Returns TODO for id or closest superclass.
+	 * @param provider TODO
+	 * @return TODO
+	 */
+	public static boolean shouldBeShared(ILanguageSettingsProvider provider) {
+		return getBooleanAttribute(provider, ATTR_SHARED);
+	}
+
+	/**
+	 * Returns TODO for id or closest superclass.
+	 * @param provider TODO
+	 * @return TODO
+	 */
+	public static boolean isToClear(ILanguageSettingsProvider provider) {
+		return getBooleanAttribute(provider, ATTR_UI_CLEAR_ENTRIES);
+	}
+
+	/**
+	 * Returns TODO for id or closest superclass.
+	 * @param provider TODO
+	 * @return TODO
+	 */
+	public static boolean isToEditEntries(ILanguageSettingsProvider provider) {
+		return getBooleanAttribute(provider, ATTR_UI_EDIT_ENTRIES);
+	}
 
 }

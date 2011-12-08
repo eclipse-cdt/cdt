@@ -3805,7 +3805,8 @@
 	<extension point="org.eclipse.cdt.ui.LanguageSettingsProviderAssociation">
 		<id-association
 			id="org.eclipse.cdt.ui.user.LanguageSettingsProvider"
-			icon="icons/obj16/person-me.gif">
+			icon="icons/obj16/person-me.gif"
+			shared="false">
 		</id-association>
 	</extension>
 	<extension point="org.eclipse.cdt.ui.cPropertyTab">

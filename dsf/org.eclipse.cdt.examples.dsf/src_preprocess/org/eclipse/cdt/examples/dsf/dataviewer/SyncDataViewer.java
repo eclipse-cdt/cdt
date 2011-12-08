@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Wind River Systems and others.
+ * Copyright (c) 2008, 2011 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,11 @@ package org.eclipse.cdt.examples.dsf.dataviewer;
 //#package org.eclipse.cdt.examples.dsf.dataviewer.answers;
 //#endif
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.Query;
@@ -35,8 +38,8 @@ import org.eclipse.swt.widgets.Shell;
  * This viewer implements the {@link IStructuredContentProvider} interface 
  * which is used by the JFace TableViewer class to populate a Table.  This 
  * interface contains one principal methods for reading data {@link #getElements(Object)}, 
- * which synchronously returns an array of elements.  In order to implement this 
- * method using the asynchronous data generator, this provider uses the 
+ * which synchronously returns an array of elements.  In order to implement 
+ * this method using the asynchronous data generator, this provider uses the 
  * {@link Query} object. 
  * </p>
  */
@@ -84,27 +87,43 @@ public class SyncDataViewer
             return new Object[0]; 
         } 
 
-        // Create the array that will be filled with elements.
-        // For each index in the array execute a query to get the element at
-        // that index.
-        final Object[] elements = new Object[count];
-
-        for (int i = 0; i < count; i++) {
-            final int index = i;
-            Query<String> valueQuery = new Query<String>() {
-                @Override
-                protected void execute(DataRequestMonitor<String> rm) {
-                    fDataGenerator.getValue(index, rm);
+        final int finalCount = count; 
+        Query<List<Integer>> valueQuery = new Query<List<Integer>>() {
+            @Override
+            protected void execute(final DataRequestMonitor<List<Integer>> rm) {
+                final Integer[] retVal = new Integer[finalCount];
+                final CountingRequestMonitor crm = new CountingRequestMonitor(
+                    ImmediateExecutor.getInstance(), rm) 
+                {
+                    @Override
+                    protected void handleSuccess() {
+                        rm.setData(Arrays.asList(retVal));
+                        rm.done();
+                    };
+                };
+                for (int i = 0; i < finalCount; i++) {
+                    final int finalI = i;
+                    fDataGenerator.getValue(
+                        i, 
+                        new DataRequestMonitor<Integer>(
+                            ImmediateExecutor.getInstance(), crm) 
+                        {
+                            @Override
+                            protected void handleSuccess() {
+                                retVal[finalI] = getData();
+                                crm.done();
+                            }
+                        });
                 }
-            };
-            ImmediateExecutor.getInstance().execute(valueQuery);
-            try {
-                elements[i] = valueQuery.get();
-            } catch (Exception e) { 
-                elements[i] = "error";
-            } 
+                crm.setDoneCount(finalCount);
+            }
+        };
+        ImmediateExecutor.getInstance().execute(valueQuery);
+        try {
+            return valueQuery.get().toArray(new Integer[0]);
+        } catch (Exception e) { 
         }
-        return elements;
+        return new Object[0];
     }
 
     public void dispose() {
@@ -140,6 +159,10 @@ public class SyncDataViewer
         });
     }
     
+    /**
+     * The entry point for the example.
+     * @param args Program arguments.
+     */
     public static void main(String[] args) {
         // Create the shell to hold the viewer.
         Display display = new Display();
@@ -162,7 +185,8 @@ public class SyncDataViewer
         //#endif
         
         // Create the content provider which will populate the viewer.
-        SyncDataViewer contentProvider = new SyncDataViewer(tableViewer, generator);
+        SyncDataViewer contentProvider = 
+            new SyncDataViewer(tableViewer, generator);
         tableViewer.setContentProvider(contentProvider);
         tableViewer.setInput(new Object());
 

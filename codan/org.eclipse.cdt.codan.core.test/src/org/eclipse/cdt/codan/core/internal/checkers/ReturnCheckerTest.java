@@ -122,7 +122,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	//			return;
 	//		}
 	//	};
-	public void testContructorRetValue() {
+	public void testConstructorRetValue() {
 		loadCodeAndRunCpp(getAboveComment());
 		checkErrorLine(3, ReturnChecker.RET_ERR_VALUE_ID);
 	}
@@ -136,7 +136,7 @@ public class ReturnCheckerTest extends CheckerTestCase {
 	//			return;
 	//		}
 	//	};
-	public void testContructor_Bug323602() {
+	public void testConstructor_Bug323602() {
 		IProblemPreference macro = getPreference(ReturnChecker.RET_NO_VALUE_ID, ReturnChecker.PARAM_IMPLICIT);
 		macro.setValue(Boolean.TRUE);
 		loadCodeAndRunCpp(getAboveComment());

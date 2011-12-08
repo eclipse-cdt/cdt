@@ -30,7 +30,7 @@ public:
 
 	Person myFriend;
 
-	Person(int socSecNo); // contructor
+	Person(int socSecNo); // constructor
 
 	~Person(); // destructor
 
@@ -53,7 +53,7 @@ public:
 
 int gooo = 1;
 
-#endif /*C_H_*/
+#endif /* C_H_ */
 //=
 #ifndef C_H_
 #define C_H_
@@ -70,7 +70,7 @@ public:
 
 	Person myFriend;
 
-	Person(int socSecNo); // contructor
+	Person(int socSecNo); // constructor
 
 	~Person(); // destructor
 
@@ -97,7 +97,7 @@ public:
 
 int gooo = 1;
 
-#endif /*C_H_*/
+#endif /* C_H_ */
 //!Generate Getters and Setters One Getter Selection with Namespace
 //#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
 //@.config
@@ -132,7 +132,7 @@ public:
 
 	Person myFriend;
 
-	Person(int socSecNo); // contructor
+	Person(int socSecNo); // constructor
 
 	~Person(); // destructor
 
@@ -157,7 +157,7 @@ public:
 
 int gooo = 1;
 
-#endif /*C_H_*/
+#endif /* C_H_ */
 
 //=
 #ifndef C_H_
@@ -177,7 +177,7 @@ public:
 
 	Person myFriend;
 
-	Person(int socSecNo); // contructor
+	Person(int socSecNo); // constructor
 
 	~Person(); // destructor
 
@@ -206,7 +206,7 @@ public:
 
 int gooo = 1;
 
-#endif /*C_H_*/
+#endif /* C_H_ */
 
 //!Generate Getters and Setters One Setter Selection
 //#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
@@ -240,7 +240,7 @@ public:
 
 	Person myFriend;
 
-	Person(int socSecNo); // contructor
+	Person(int socSecNo); // constructor
 
 	~Person(); // destructor
 
@@ -264,7 +264,7 @@ public:
 
 int gooo = 1;
 
-#endif /*C_H_*/
+#endif /* C_H_ */
 //=
 #ifndef C_H_
 #define C_H_
@@ -281,7 +281,7 @@ public:
 
 	Person myFriend;
 
-	Person(int socSecNo); // contructor
+	Person(int socSecNo); // constructor
 
 	~Person(); // destructor
 
@@ -309,7 +309,7 @@ public:
 
 int gooo = 1;
 
-#endif /*C_H_*/
+#endif /* C_H_ */
 //!Generate Getters and Setters Getter and Setter Selection
 //#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
 //@.config
@@ -343,7 +343,7 @@ public:
 
 	Person myFriend;
 
-	Person(int socSecNo); // contructor
+	Person(int socSecNo); // constructor
 
 	~Person(); // destructor
 
@@ -367,7 +367,7 @@ public:
 
 int gooo = 1;
 
-#endif /*C_H_*/
+#endif /* C_H_ */
 //=
 #ifndef C_H_
 #define C_H_
@@ -384,7 +384,7 @@ public:
 
 	Person myFriend;
 
-	Person(int socSecNo); // contructor
+	Person(int socSecNo); // constructor
 
 	~Person(); // destructor
 
@@ -416,7 +416,7 @@ public:
 
 int gooo = 1;
 
-#endif /*C_H_*/
+#endif /* C_H_ */
 //!Generate Getters and Setters Multiple Selection
 //#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
 //@.config
@@ -450,7 +450,7 @@ public:
 
 	Person myFriend;
 
-	Person(int socSecNo); // contructor
+	Person(int socSecNo); // constructor
 
 	~Person(); // destructor
 
@@ -465,7 +465,7 @@ public:
 
 int gooo = 1;
 
-#endif /*C_H_*/
+#endif /* C_H_ */
 
 //=
 #ifndef C_H_
@@ -499,7 +499,7 @@ public:
 		this->systemId = systemId;
 	}
 
-	Person(int socSecNo); // contructor
+	Person(int socSecNo); // constructor
 
 	~Person(); // destructor
 
@@ -514,7 +514,7 @@ public:
 
 int gooo = 1;
 
-#endif /*C_H_*/
+#endif /* C_H_ */
 
 //!Generate Getters and Setters Visibility order 1
 //#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
@@ -596,7 +596,7 @@ private:
 	int /*$*/id/*$$*/;
 };
 
-#endif /*C_H_*/
+#endif /* C_H_ */
 
 //=
 #ifndef C_H_
@@ -616,7 +616,7 @@ public:
 	}
 };
 
-#endif /*C_H_*/
+#endif /* C_H_ */
 
 //!Generate Getters and Setters no Methods
 //#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
@@ -704,53 +704,37 @@ class test {
 
 #endif /* TEST_H_ */
 
-//!Generate Getters and Setters One Getter Selection Separate Definition
+//!Generate Getters and Setters, Pass by Reference, Separate Definition
 //#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
 //@.config
 filename=C.h
 getters=name
+setters=name
 definitionSeparate=true
-//@C.cpp
-#include "C.h"
-
-int Person::SocSecNo() {
-	return socSecNo;
-}
-
-int main(int argc, char** argv) {
-}
-
-//=
-#include "C.h"
-
-char* Person::getName() const {
-	return name;
-}
-
-int Person::SocSecNo() {
-	return socSecNo;
-}
-
-int main(int argc, char** argv) {
-}
-
 //@C.h
 #ifndef C_H_
 #define C_H_
+
+struct FullName {
+	const char* first;
+	const char* last;
+	FullName(const FullName& other);
+	~FullName();
+};
 
 class Person {
 private:
 	int systemId;
 
 protected:
-	char* name;
+	FullName name;
 
 public:
 	const int socSecNo;
 
 	Person myFriend;
 
-	Person(int socSecNo); // contructor
+	Person(int socSecNo); // constructor
 
 	~Person(); // destructor
 
@@ -769,25 +753,33 @@ public:
 
 int gooo = 1;
 
-#endif /*C_H_*/
+#endif /* C_H_ */
 //=
 #ifndef C_H_
 #define C_H_
+
+struct FullName {
+	const char* first;
+	const char* last;
+	FullName(const FullName& other);
+	~FullName();
+};
 
 class Person {
 private:
 	int systemId;
 
 protected:
-	char* name;
+	FullName name;
 
 public:
 	const int socSecNo;
 
 	Person myFriend;
-	char* getName() const;
+	const FullName& getName() const;
+	void setName(const FullName& name);
 
-	Person(int socSecNo); // contructor
+	Person(int socSecNo); // constructor
 
 	~Person(); // destructor
 
@@ -806,7 +798,35 @@ public:
 
 int gooo = 1;
 
-#endif /*C_H_*/
+#endif /* C_H_ */
+//@C.cpp
+#include "C.h"
+
+int Person::SocSecNo() {
+	return socSecNo;
+}
+
+int main(int argc, char** argv) {
+}
+
+//=
+#include "C.h"
+
+const FullName& Person::getName() const {
+	return name;
+}
+
+void Person::setName(const FullName& name) {
+	this->name = name;
+}
+
+int Person::SocSecNo() {
+	return socSecNo;
+}
+
+int main(int argc, char** argv) {
+}
+
 //!Generate Getters and Setters One Getter Selection with Namespace Separate Definition
 //#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
 //@.config
@@ -863,7 +883,7 @@ public:
 
 	Person myFriend;
 
-	Person(int socSecNo); // contructor
+	Person(int socSecNo); // constructor
 
 	~Person(); // destructor
 
@@ -888,7 +908,7 @@ public:
 
 int gooo = 1;
 
-#endif /*C_H_*/
+#endif /* C_H_ */
 
 //=
 #ifndef C_H_
@@ -908,7 +928,7 @@ public:
 
 	Person myFriend;
 
-	Person(int socSecNo); // contructor
+	Person(int socSecNo); // constructor
 
 	~Person(); // destructor
 
@@ -934,7 +954,7 @@ public:
 
 int gooo = 1;
 
-#endif /*C_H_*/
+#endif /* C_H_ */
 
 //!Generate Getters and Setters One Setter Selection Separate Definition
 //#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
@@ -984,7 +1004,7 @@ public:
 
 	Person myFriend;
 
-	Person(int socSecNo); // contructor
+	Person(int socSecNo); // constructor
 
 	~Person(); // destructor
 
@@ -1008,7 +1028,7 @@ public:
 
 int gooo = 1;
 
-#endif /*C_H_*/
+#endif /* C_H_ */
 //=
 #ifndef C_H_
 #define C_H_
@@ -1025,7 +1045,7 @@ public:
 
 	Person myFriend;
 
-	Person(int socSecNo); // contructor
+	Person(int socSecNo); // constructor
 
 	~Person(); // destructor
 
@@ -1050,7 +1070,7 @@ public:
 
 int gooo = 1;
 
-#endif /*C_H_*/
+#endif /* C_H_ */
 //!Getter and Setter Selection Separate Definition
 //#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
 //@.config
@@ -1102,7 +1122,7 @@ public:
 
 	Person myFriend;
 
-	Person(int socSecNo); // contructor
+	Person(int socSecNo); // constructor
 
 	~Person(); // destructor
 
@@ -1126,7 +1146,7 @@ public:
 
 int gooo = 1;
 
-#endif /*C_H_*/
+#endif /* C_H_ */
 
 //=
 #ifndef C_H_
@@ -1144,7 +1164,7 @@ public:
 
 	Person myFriend;
 
-	Person(int socSecNo); // contructor
+	Person(int socSecNo); // constructor
 
 	~Person(); // destructor
 
@@ -1170,7 +1190,7 @@ public:
 
 int gooo = 1;
 
-#endif /*C_H_*/
+#endif /* C_H_ */
 
 //!Generate Getters and Setters no Methods Separate Definition
 //#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
@@ -1188,7 +1208,7 @@ private:
 	int /*$*/id/*$$*/;
 };
 
-#endif /*C_H_*/
+#endif /* C_H_ */
 
 //=
 #ifndef C_H_
@@ -1212,7 +1232,7 @@ inline void Person::setId(int id) {
 }
 
 
-#endif /*C_H_*/
+#endif /* C_H_ */
 
 //!No Methods Separate Definition
 //#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest

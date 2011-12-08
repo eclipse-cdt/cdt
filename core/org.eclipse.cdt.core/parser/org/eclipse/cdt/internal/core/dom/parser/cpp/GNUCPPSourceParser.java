@@ -209,11 +209,15 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     }
     
     private IASTName qualifiedName() throws BacktrackException, EndOfFileException {
+    	return ambiguousQualifiedName(CastExprCtx.eNotInBExpr);
+    }
+
+    private IASTName ambiguousQualifiedName(CastExprCtx ctx) throws BacktrackException, EndOfFileException {
     	TemplateIdStrategy strat= new TemplateIdStrategy();
     	IToken m= mark();
     	for(;;) {
     		try {
-    			return qualifiedName(strat, CastExprCtx.eNotInBExpr);
+    			return qualifiedName(ctx, strat);
     		} catch (BacktrackException e) {
     			if (strat.setNextAlternative()) {
     				backup(m);
@@ -223,12 +227,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     		}
     	}
     }
-    
+
     /**
      * Parses a qualified name.
      */
-    private IASTName qualifiedName(ITemplateIdStrategy s, CastExprCtx ctx) throws BacktrackException, EndOfFileException {
-    	final TemplateIdStrategy strat= (TemplateIdStrategy) s;
+    private IASTName qualifiedName(CastExprCtx ctx, ITemplateIdStrategy strat) throws BacktrackException, EndOfFileException {
+    	if (strat == null)
+    		return ambiguousQualifiedName(ctx);
+    	
     	ICPPASTQualifiedName qname= null;
     	IASTName name= null;
     	final int offset= LA(1).getOffset();
@@ -288,11 +294,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 					if (haveArgs == -1) {
 						templateID= false;
 					} else if (haveArgs == 0) {
-						if (strat.ignoreTemplateID()) {
-							templateID= false;
-						} else {
-							strat.addTemplateName(name);
-						}
+						templateID= strat.shallParseAsTemplateID(name);
 					}
             	}
             	if (templateID) {
@@ -350,7 +352,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		return name;
 	}
 
-	private IASTName addTemplateArguments(IASTName templateName, TemplateIdStrategy strat) throws EndOfFileException, BacktrackException {
+	private IASTName addTemplateArguments(IASTName templateName, ITemplateIdStrategy strat) throws EndOfFileException, BacktrackException {
         // Parse for template arguments
         consume(IToken.tLT);
         List<IASTNode> list = templateArgumentList(strat);
@@ -566,7 +568,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		}
 	}
 
-	private List<IASTNode> templateArgumentList(TemplateIdStrategy strat) throws EndOfFileException, BacktrackException {
+	private List<IASTNode> templateArgumentList(ITemplateIdStrategy strat) throws EndOfFileException, BacktrackException {
     	int startingOffset = LA(1).getOffset();
     	int endOffset = 0;
     	List<IASTNode> list= null;
@@ -596,7 +598,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     	return list;
     }
 
-    private IASTNode templateArgument(TemplateIdStrategy strat) throws EndOfFileException, BacktrackException {
+    private IASTNode templateArgument(ITemplateIdStrategy strat) throws EndOfFileException, BacktrackException {
     	IToken argStart = mark();
 		ICPPASTTypeId typeId= null;
 		int lt1= 0;
@@ -742,19 +744,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     	return expression(ExprKind.eConstant, BinaryExprCtx.eNotInTemplateID, null, null);
     }
 
-    private IASTExpression expression(final ExprKind kind, final BinaryExprCtx ctx, IASTInitializerClause expr, TemplateIdStrategy strat) throws EndOfFileException, BacktrackException {
+    private IASTExpression expression(final ExprKind kind, final BinaryExprCtx ctx, IASTInitializerClause expr, ITemplateIdStrategy strat) throws EndOfFileException, BacktrackException {
     	final boolean allowComma= kind==ExprKind.eExpression;
     	boolean allowAssignment= kind !=ExprKind.eConstant;
     	
     	if (allowAssignment && LT(1) == IToken.t_throw) {
     		return throwExpression();
     	} 
-
-    	final boolean handleVariants= strat == null;
-		if (handleVariants) {
-    		strat= new TemplateIdStrategy();
-    	}
-    	
 
     	final int startOffset= expr != null ? ((ASTNode) expr).getOffset() : LA(1).getOffset();
     	int lt1;
@@ -763,7 +759,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     	NameOrTemplateIDVariants variants= null;
     	
 		if (expr == null) {
-			Object e = castExpressionForBinaryExpression(handleVariants, strat);
+			Object e = castExpressionForBinaryExpression(strat);
 			if (e instanceof IASTExpression) {
 				expr= (IASTExpression) e;
 			} else {
@@ -934,7 +930,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     				// Cast expression
     				IToken m= mark();
     				try {
-    					Object e = castExpressionForBinaryExpression(handleVariants, strat);
+    					Object e = castExpressionForBinaryExpression(strat);
     					if (e instanceof IASTExpression) {
     						expr= (IASTExpression) e;
     					} else {
@@ -999,18 +995,19 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     	return buildExpression(lastOperator, expr);
     }
 
-	public Object castExpressionForBinaryExpression(boolean handleVariants, final TemplateIdStrategy strat)
+	public Object castExpressionForBinaryExpression(ITemplateIdStrategy s)
 			throws EndOfFileException, BacktrackException {
-		if (!handleVariants)
-			return castExpression(CastExprCtx.eDirectlyInBExpr, strat);
+		if (s != null) {
+			return castExpression(CastExprCtx.eDirectlyInBExpr, s);
+		}
 		
+		TemplateIdStrategy strat= new TemplateIdStrategy();
 		Variant variants= null;
 		IASTExpression singleExpression= null;
 		IASTName[] firstNames= null;
 		
 		final IToken mark= mark();
 		IToken lastToken= null;
-		strat.reset();
 		for(;;) {
 			try {
 				IASTExpression e = castExpression(CastExprCtx.eDirectlyInBExpr, strat);
@@ -1454,14 +1451,16 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         	// ( type-name ) { initializer-list , }
         	IToken m = mark();
         	try {
-        		int offset = consume().getOffset();
-        		IASTTypeId t= typeId(DeclarationOptions.TYPEID);
-        		consume(IToken.tRPAREN);
-        		if (LT(1) == IToken.tLBRACE) {
-        			IASTInitializer i = bracedInitList(false);
-        			firstExpression= nodeFactory.newTypeIdInitializerExpression(t, i);
-        			setRange(firstExpression, offset, calculateEndOffset(i));
-        			break;        
+        		if (canBeCompoundLiteral()) {
+        			int offset = consume().getOffset();
+        			IASTTypeId t= typeId(DeclarationOptions.TYPEID);
+        			consume(IToken.tRPAREN);
+        			if (LT(1) == IToken.tLBRACE) {
+        				IASTInitializer i = bracedInitList(false);
+        				firstExpression= nodeFactory.newTypeIdInitializerExpression(t, i);
+        				setRange(firstExpression, offset, calculateEndOffset(i));
+        				break;        
+        			}
         		}
         	} catch (BacktrackException bt) {
         	}
@@ -1554,7 +1553,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     isTemplate = true;
                 }
 
-                IASTName name = qualifiedName(strat, ctx);
+                IASTName name = qualifiedName(ctx, strat);
                 
                 if (name == null)
                 	throwBacktrack(((ASTNode) firstExpression).getOffset(), 
@@ -1577,7 +1576,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     isTemplate = true;
                 }
 
-                name = qualifiedName(strat, ctx);
+                name = qualifiedName(ctx, strat);
                 
                 if (name == null)
                 	throwBacktrack(((ASTNode) firstExpression).getOffset(), 
@@ -1690,7 +1689,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         case IToken.t_operator:
         case IToken.tCOMPLETION:
         case IToken.tBITCOMPLEMENT: {
-            IASTName name = qualifiedName(strat, ctx);
+            IASTName name = qualifiedName(ctx, strat);
             IASTIdExpression idExpression = nodeFactory.newIdExpression(name);
             ((ASTNode) idExpression).setOffsetAndLength(((ASTNode) name).getOffset(), ((ASTNode) name).getOffset()
                     + ((ASTNode) name).getLength() - ((ASTNode) name).getOffset());
@@ -2388,7 +2387,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		case IToken.t_try:
         case IToken.tLBRACE:
         case IToken.tASSIGN: // defaulted or deleted function definition
-        	if (declarators.length != 1)
+        	if (declarators.length != 1 || !declOption.fAllowFunctionDefinition)
         		throwBacktrack(LA(1));
         	
         	dtor= declarators[0];
@@ -2568,7 +2567,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         final int startOffset= LA(1).getOffset();
         
 		if (LT(1) == IToken.tLBRACKET && supportParameterInfoBlock) {
-			skipBrackets(IToken.tLBRACKET, IToken.tRBRACKET);
+			skipBrackets(IToken.tLBRACKET, IToken.tRBRACKET, 0);
 		}
 		
         IASTDeclSpecifier declSpec= null;

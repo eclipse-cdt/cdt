@@ -5583,4 +5583,59 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testDirectlyNestedAmbiguity_362976() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template<typename T, T p1, T p2, T p3=T(), T p4=T(), T p5=T(),
+	//			T p6=T(),  T p7=T(),  T p8=T(),  T p9=T(),  T p10=T(),
+	//			T p11=T(), T p12=T(), T p13=T(), T p14=T(), T p15=T(),
+	//			T p16=T(), T p17=T(), T p18=T(), T p19=T(), T p20=T()
+	//			>
+	//	struct MaxOfN {
+	//		template<typename X, X x1, X x2> struct Max2 {
+	//			static const X result = (x1>x2)?x1:x2;
+	//		};
+	//		static const T result = Max2<T,(Max2<T,(Max2<T,(Max2<T,(Max2<T,(Max2<T,(Max2<T,(Max2<T,(Max2<T,
+	//				(Max2<T,(Max2<T,(Max2<T,(Max2<T,(Max2<T,(Max2<T,(Max2<T,(Max2<T,(Max2<T,(Max2<T,p1,p2>::result),
+	//						p3>::result),p4>::result),p5>::result),p6>::result),p7>::result),p8>::result),
+	//						p9>::result),p10>::result),p11>::result),p12>::result),p13>::result),p14>::result),
+	//						p15>::result),p16>::result),p17>::result),p18>::result),p19>::result),p20>::result;
+	//	};
+	//	int main(){
+	//		return MaxOfN<int,1,2>::result;
+	//	}
+	public void testNestedTemplateAmbiguity_363609() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	struct A {
+	//	    void m() {}
+	//	};
+	//	template <class T, void (T::*m)() = &T::m> struct B {};
+	//	void test() {
+	//		B<A> b1;
+	//	}
+	public void testDefaultArgForNonTypeTemplateParameter_363743() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	template<class T> struct A {
+	//		bool b;
+	//	};
+	//	class B {
+	//	};
+	//	template<class T> T * func();
+	//	void test1() {
+	//		delete func<A<B>>(); // This line causes the NPE
+	//	}
+	//
+	//	template<bool> struct C {
+	//		int* ptr;
+	//	};
+	//	void test2() {
+	//		int a = 0, b = 1;
+	//		delete C< a<b >::ptr;
+	//		delete C< A<B>::b >::ptr;
+	//	}
+	public void testTemplateAmbiguityInDeleteExpression_364225() throws Exception {
+		parseAndCheckBindings();
+	}
 }

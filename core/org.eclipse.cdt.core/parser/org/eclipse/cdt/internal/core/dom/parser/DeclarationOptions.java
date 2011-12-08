@@ -29,16 +29,17 @@ public class DeclarationOptions {
 	final public static int ALLOW_FOLLOWED_BY_BRACE=    	0x1000;
 	final public static int ALLOW_OPAQUE_ENUM=				0x2000;
 	final public static int SINGLE_DTOR=					0x4000;
+	final public static int ALLOW_FUNCTION_DEFINITION=		0x8000;
 
     public static final DeclarationOptions 
-    	GLOBAL=     new DeclarationOptions(ALLOW_EMPTY_SPECIFIER | ALLOW_OPAQUE_ENUM),
-    	FUNCTION_STYLE_ASM= new DeclarationOptions(ALLOW_EMPTY_SPECIFIER | NO_INITIALIZER | ALLOW_ABSTRACT),
+    	GLOBAL=     new DeclarationOptions(ALLOW_EMPTY_SPECIFIER | ALLOW_OPAQUE_ENUM | ALLOW_FUNCTION_DEFINITION),
+    	FUNCTION_STYLE_ASM= new DeclarationOptions(ALLOW_EMPTY_SPECIFIER | NO_INITIALIZER | ALLOW_ABSTRACT | ALLOW_FUNCTION_DEFINITION),
     	C_MEMBER=   new DeclarationOptions(ALLOW_BITFIELD | ALLOW_ABSTRACT),
-    	CPP_MEMBER= new DeclarationOptions(ALLOW_EMPTY_SPECIFIER | ALLOW_BITFIELD | NO_CTOR_STYLE_INITIALIZER),
+    	CPP_MEMBER= new DeclarationOptions(ALLOW_EMPTY_SPECIFIER | ALLOW_BITFIELD | NO_CTOR_STYLE_INITIALIZER | ALLOW_FUNCTION_DEFINITION),
     	LOCAL=	    new DeclarationOptions(ALLOW_OPAQUE_ENUM),
     	PARAMETER=  new DeclarationOptions(ALLOW_ABSTRACT | ALLOW_PARAMETER_PACKS | REQUIRE_SIMPLE_NAME | NO_BRACED_INITIALIZER | NO_CTOR_STYLE_INITIALIZER),
     	TYPEID=     new DeclarationOptions(REQUIRE_ABSTRACT | NO_INITIALIZER),
-    	TYPEID_TRAILING_RETURN_TYPE= new DeclarationOptions(REQUIRE_ABSTRACT | NO_INITIALIZER | ALLOW_FOLLOWED_BY_BRACE),
+    	TYPEID_TRAILING_RETURN_TYPE= new DeclarationOptions(REQUIRE_ABSTRACT | NO_INITIALIZER | ALLOW_FOLLOWED_BY_BRACE | ALLOW_FUNCTION_DEFINITION),
     	TYPEID_NEW= new DeclarationOptions(REQUIRE_ABSTRACT | NO_INITIALIZER | NO_FUNCTIONS | NO_NESTED | ALLOW_FOLLOWED_BY_BRACE),
     	TYPEID_CONVERSION= new DeclarationOptions(REQUIRE_ABSTRACT | NO_INITIALIZER | NO_FUNCTIONS | NO_NESTED),
         EXCEPTION= new DeclarationOptions(ALLOW_ABSTRACT | NO_INITIALIZER),
@@ -60,6 +61,7 @@ public class DeclarationOptions {
 	final public boolean fRequireSimpleName;
 	final public boolean fAllowOpaqueEnum;
 	final public boolean fSingleDtor;
+	final public boolean fAllowFunctionDefinition;
 	
 	public DeclarationOptions(int options) {
 		fAllowEmptySpecifier= (options & ALLOW_EMPTY_SPECIFIER) != 0;
@@ -76,5 +78,6 @@ public class DeclarationOptions {
 		fCanBeFollowedByBrace= fAllowBracedInitializer || (options & ALLOW_FOLLOWED_BY_BRACE) != 0;
 		fAllowOpaqueEnum= (options & ALLOW_OPAQUE_ENUM) != 0;
 		fSingleDtor= (options & SINGLE_DTOR) != 0;
+		fAllowFunctionDefinition= (options & ALLOW_FUNCTION_DEFINITION) != 0;
 	}
 }

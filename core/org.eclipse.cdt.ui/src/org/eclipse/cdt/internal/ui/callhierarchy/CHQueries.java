@@ -130,7 +130,7 @@ public class CHQueries {
 				if (CallHierarchyUI.isRelevantForCallHierarchy(binding)) {
 					while (true) {
 						ICElement[] defs= null;
-						if (binding instanceof ICPPMethod) {
+						if (binding instanceof ICPPMethod && name.couldBePolymorphicMethodCall()) {
 							defs = findOverriders(index, (ICPPMethod) binding);
 						}
 						if (defs == null) {

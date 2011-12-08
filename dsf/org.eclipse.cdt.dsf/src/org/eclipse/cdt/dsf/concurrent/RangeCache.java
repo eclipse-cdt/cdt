@@ -107,8 +107,7 @@ abstract public class RangeCache<V> {
         protected List<V> process() throws InvalidCacheException, CoreException {
             clearCanceledRequests();
             
-            List<ICache<?>> transactionRequests = getRequests(fOffset, fCount);
-            
+            List<Request> transactionRequests = getRequests(fOffset, fCount);
             validate(transactionRequests);
 
             return makeElementsListFromRequests(transactionRequests, fOffset, fCount);
@@ -156,7 +155,7 @@ abstract public class RangeCache<V> {
     public ICache<List<V>> getRange(final long offset, final int count) {
         assert fExecutor.getDsfExecutor().isInExecutorThread();
         
-        List<ICache<?>> requests = getRequests(offset, count);
+        List<Request> requests = getRequests(offset, count);
         
         RequestCache<List<V>> range = new RequestCache<List<V>>(fExecutor) {
             @Override
@@ -232,8 +231,8 @@ abstract public class RangeCache<V> {
         }
     }
     
-    private List<ICache<?>> getRequests(long fOffset, int fCount) {
-        List<ICache<?>> requests = new ArrayList<ICache<?>>(1);
+    private List<Request> getRequests(long fOffset, int fCount) {
+        List<Request> requests = new ArrayList<Request>(1);
         
         // Create a new request for the data to retrieve.
         Request current = new Request(fOffset, fCount);
@@ -252,7 +251,7 @@ abstract public class RangeCache<V> {
     // Adjust the beginning of the requested range of data.  If there 
     // is already an overlapping range in front of the requested range, 
     // then use it.
-    private Request adjustRequestHead(Request request, List<ICache<?>> transactionRequests, long offset, int count) {
+    private Request adjustRequestHead(Request request, List<Request> transactionRequests, long offset, int count) {
         SortedSet<Request> headRequests = fRequests.headSet(request);
         if (!headRequests.isEmpty()) {
             Request headRequest = headRequests.last();
@@ -276,7 +275,7 @@ abstract public class RangeCache<V> {
      * @param transactionRequests
      * @return
      */
-    private Request adjustRequestTail(Request current, List<ICache<?>> transactionRequests, long offset, int count) {
+    private Request adjustRequestTail(Request current, List<Request> transactionRequests, long offset, int count) {
         // Create a duplicate of the tailSet, in order to avoid a concurrent modification exception.
         List<Request> tailSet = new ArrayList<Request>(fRequests.tailSet(current));
         
@@ -313,14 +312,13 @@ abstract public class RangeCache<V> {
         return current;
     }
     
-    private List<V> makeElementsListFromRequests(List<ICache<?>> requests, long offset, int count) {
+    private List<V> makeElementsListFromRequests(List<Request> requests, long offset, int count) {
         List<V> retVal = new ArrayList<V>(count);
         long index = offset;
         long end = offset + count;
         int requestIdx = 0;
         while (index < end ) {
-            @SuppressWarnings("unchecked")
-            Request request = (Request)requests.get(requestIdx);
+            Request request = requests.get(requestIdx);
             if (index < request.fOffset + request.fCount) {
                 retVal.add( request.getData().get((int)(index - request.fOffset)) );
                 index ++;

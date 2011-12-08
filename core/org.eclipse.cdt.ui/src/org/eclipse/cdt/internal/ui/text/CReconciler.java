@@ -84,6 +84,7 @@ public class CReconciler extends MonoReconciler {
 		/*
 		 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
 		 */
+		@Override
 		public boolean contains(ISchedulingRule rule) {
 			return rule == this;
 		}
@@ -91,6 +92,7 @@ public class CReconciler extends MonoReconciler {
 		/*
 		 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#isConflicting(org.eclipse.core.runtime.jobs.ISchedulingRule)
 		 */
+		@Override
 		public boolean isConflicting(ISchedulingRule rule) {
 			return rule == this;
 		}
@@ -104,26 +106,31 @@ public class CReconciler extends MonoReconciler {
 		/*
 		 * @see org.eclipse.ui.IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
 		 */
+		@Override
 		public void partActivated(IWorkbenchPartReference partRef) {
 		}
 		/*
 		 * @see org.eclipse.ui.IPartListener2#partBroughtToTop(org.eclipse.ui.IWorkbenchPartReference)
 		 */
+		@Override
 		public void partBroughtToTop(IWorkbenchPartReference partRef) {
 		}
 		/*
 		 * @see org.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
 		 */
+		@Override
 		public void partClosed(IWorkbenchPartReference partRef) {
 		}
 		/*
 		 * @see org.eclipse.ui.IPartListener2#partDeactivated(org.eclipse.ui.IWorkbenchPartReference)
 		 */
+		@Override
 		public void partDeactivated(IWorkbenchPartReference partRef) {
 		}
 		/*
 		 * @see org.eclipse.ui.IPartListener2#partHidden(org.eclipse.ui.IWorkbenchPartReference)
 		 */
+		@Override
 		public void partHidden(IWorkbenchPartReference partRef) {
 			if (partRef.getPart(false) == fTextEditor) {
 				setEditorActive(false);
@@ -132,16 +139,19 @@ public class CReconciler extends MonoReconciler {
 		/*
 		 * @see org.eclipse.ui.IPartListener2#partInputChanged(org.eclipse.ui.IWorkbenchPartReference)
 		 */
+		@Override
 		public void partInputChanged(IWorkbenchPartReference partRef) {
 		}
 		/*
 		 * @see org.eclipse.ui.IPartListener2#partOpened(org.eclipse.ui.IWorkbenchPartReference)
 		 */
+		@Override
 		public void partOpened(IWorkbenchPartReference partRef) {
 		}
 		/*
 		 * @see org.eclipse.ui.IPartListener2#partVisible(org.eclipse.ui.IWorkbenchPartReference)
 		 */
+		@Override
 		public void partVisible(IWorkbenchPartReference partRef) {
 			if (partRef.getPart(false) == fTextEditor) {
 				CReconciler.this.scheduleReconciling();
@@ -192,6 +202,7 @@ public class CReconciler extends MonoReconciler {
 		/*
 		 * @see org.eclipse.cdt.core.model.IElementChangedListener#elementChanged(org.eclipse.cdt.core.model.ElementChangedEvent)
 		 */
+		@Override
 		public void elementChanged(ElementChangedEvent event) {
 			if (event.getType() == ElementChangedEvent.POST_CHANGE) {
 				if (isRelevantDelta(event.getDelta())) {
@@ -209,10 +220,7 @@ public class CReconciler extends MonoReconciler {
 			if ((flags & ICElementDelta.F_CONTENT) != 0) {
 				if (!fIsReconciling && isRelevantElement(delta.getElement())) {
 					// mark model changed, but don't update immediately
-					fIndexerListener.ignoreChanges(false);
 					setCModelChanged(true);
-				} else if (delta.getElement() instanceof ITranslationUnit) {
-					fIndexerListener.ignoreChanges(true);
 				}
 			}
 			if ((flags & (
@@ -237,11 +245,11 @@ public class CReconciler extends MonoReconciler {
 
 	private class IndexerListener implements IIndexerStateListener, IIndexChangeListener {
 		private boolean fIndexChanged;
-		private boolean fIgnoreChanges;
 
 		/*
 		 * @see org.eclipse.cdt.core.index.IIndexerStateListener#indexChanged(org.eclipse.cdt.core.index.IIndexerStateEvent)
 		 */
+		@Override
 		public void indexChanged(IIndexerStateEvent event) {
 			if (event.indexerIsIdle()) {
 				if (fIndexChanged || hasCModelChanged()) {
@@ -252,25 +260,18 @@ public class CReconciler extends MonoReconciler {
 						setCModelChanged(true);
 					}
 				}
-				fIgnoreChanges= false;
 			}
-		}
-
-		public void ignoreChanges(boolean ignore) {
-			fIgnoreChanges= ignore;
 		}
 
 		/*
 		 * @see org.eclipse.cdt.core.index.IIndexChangeListener#indexChanged(org.eclipse.cdt.core.index.IIndexChangeEvent)
 		 */
+		@Override
 		public void indexChanged(IIndexChangeEvent event) {
 			if (!fIndexChanged && isRelevantProject(event.getAffectedProject())) {
-				if (!fIgnoreChanges || event.isCleared() || event.isReloaded() || event.hasNewFile()) {
-					fIndexChanged= true;
-				}
+				fIndexChanged= true;
 			}
 		}
-		
 	}
 
 	/** The reconciler's editor */
@@ -328,6 +329,7 @@ public class CReconciler extends MonoReconciler {
 		CCorePlugin.getIndexManager().addIndexChangeListener(fIndexerListener);
 		
 		fTriggerReconcilerJob= new SingletonJob("Trigger Reconciler", new Runnable() { //$NON-NLS-1$
+			@Override
 			public void run() {
 				forceReconciling();
 			}});

@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     John Camelon (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -19,21 +19,23 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
  * Reference operator for declarators.
  */
 public class CPPASTReferenceOperator extends ASTNode implements ICPPASTReferenceOperator {
-    
 	private final boolean fIsRValue;
 
 	public CPPASTReferenceOperator(boolean isRValueReference) {
 		fIsRValue= isRValueReference;
 	}
 	
+	@Override
 	public boolean isRValueReference() {
 		return fIsRValue;
 	}
 
+	@Override
 	public CPPASTReferenceOperator copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CPPASTReferenceOperator copy(CopyStyle style) {
 		CPPASTReferenceOperator copy = new CPPASTReferenceOperator(fIsRValue);
 		copy.setOffsetAndLength(this);
@@ -47,8 +49,8 @@ public class CPPASTReferenceOperator extends ASTNode implements ICPPASTReference
 	public boolean accept(ASTVisitor action) {
 		if (action.shouldVisitPointerOperators) {
 			switch (action.visit(this)) {
-    		case ASTVisitor.PROCESS_ABORT : return false;
-    		case ASTVisitor.PROCESS_SKIP  : return true;
+    		case ASTVisitor.PROCESS_ABORT: return false;
+    		case ASTVisitor.PROCESS_SKIP: return true;
     		}
 			if (action.leave(this) == ASTVisitor.PROCESS_ABORT)
 				return false;

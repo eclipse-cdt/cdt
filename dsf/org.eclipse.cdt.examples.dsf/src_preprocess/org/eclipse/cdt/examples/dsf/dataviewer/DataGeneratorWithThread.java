@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems and others.
+ * Copyright (c) 2006, 2011 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,9 +15,9 @@ package org.eclipse.cdt.examples.dsf.dataviewer;
 //#endif
 
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Random;
-import java.util.Set;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -41,7 +41,9 @@ import org.eclipse.cdt.examples.dsf.DsfExamplesPlugin;
  * synchronization.
  * </p>
  */
-public class DataGeneratorWithThread extends Thread implements IDataGenerator {
+public class DataGeneratorWithThread extends Thread 
+    implements IDataGenerator 
+{
 
     // Request objects are used to serialize the interface calls into objects
     // which can then be pushed into a queue.
@@ -61,7 +63,7 @@ public class DataGeneratorWithThread extends Thread implements IDataGenerator {
 
     class ItemRequest extends Request {
         final int fIndex;
-        ItemRequest(int index, DataRequestMonitor<String> rm) { 
+        ItemRequest(int index, DataRequestMonitor<Integer> rm) { 
             super(rm);
             fIndex = index; 
         }
@@ -76,7 +78,8 @@ public class DataGeneratorWithThread extends Thread implements IDataGenerator {
     // Main request queue of the data generator.  The getValue(), getCount(), 
     // and shutdown() methods write into the queue, while the run() method 
     // reads from it.
-    private final BlockingQueue<Request> fQueue = new LinkedBlockingQueue<Request>();
+    private final BlockingQueue<Request> fQueue = 
+        new LinkedBlockingQueue<Request>();
 
     // ListenerList class provides thread safety.
     private ListenerList fListeners = new ListenerList();
@@ -88,7 +91,8 @@ public class DataGeneratorWithThread extends Thread implements IDataGenerator {
     private int fCountResetTrigger = 0;
     
     // Elements which were modified since the last reset.
-    private Set<Integer> fChangedIndexes = Collections.synchronizedSet(new HashSet<Integer>());
+    private Map<Integer, Integer> fChangedValues = 
+        Collections.synchronizedMap(new HashMap<Integer, Integer>());
     
     // Used to determine when to make changes in data.
     private long fLastChangeTime = System.currentTimeMillis();
@@ -108,7 +112,8 @@ public class DataGeneratorWithThread extends Thread implements IDataGenerator {
             fQueue.add(new ShutdownRequest(rm));
         } else {
             // 
-            rm.setStatus(new Status(IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID, "Supplier shut down"));
+            rm.setStatus(new Status(IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID, 
+                "Supplier shut down"));
             rm.done();
         }        
     }
@@ -117,16 +122,18 @@ public class DataGeneratorWithThread extends Thread implements IDataGenerator {
         if (!fShutdown.get()) {
             fQueue.add(new CountRequest(rm));
         } else {
-            rm.setStatus(new Status(IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID, "Supplier shut down"));
+            rm.setStatus(new Status(IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID, 
+                "Supplier shut down"));
             rm.done();
         }        
     }
     
-    public void getValue(int index, DataRequestMonitor<String> rm) { 
+    public void getValue(int index, DataRequestMonitor<Integer> rm) { 
         if (!fShutdown.get()) {
             fQueue.add(new ItemRequest(index, rm));
         } else {
-            rm.setStatus(new Status(IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID, "Supplier shut down"));
+            rm.setStatus(new Status(IStatus.ERROR, DsfExamplesPlugin.PLUGIN_ID, 
+                "Supplier shut down"));
             rm.done();
         }        
     } 
@@ -150,7 +157,6 @@ public class DataGeneratorWithThread extends Thread implements IDataGenerator {
                 // If a request was dequeued, process it.
                 if (request != null) {
                     // Simulate a processing delay.
-                    Thread.sleep(PROCESSING_DELAY);
                     
                     if (request instanceof CountRequest) {
                         processCountRequest((CountRequest)request);
@@ -162,6 +168,8 @@ public class DataGeneratorWithThread extends Thread implements IDataGenerator {
                         request.fRequestMonitor.done();
                         break;
                     }
+                } else {
+                    Thread.sleep(PROCESSING_DELAY);
                 }
                 
                 // Simulate data changes.
@@ -173,7 +181,8 @@ public class DataGeneratorWithThread extends Thread implements IDataGenerator {
 
     private void processCountRequest(CountRequest request) {
         @SuppressWarnings("unchecked") // Suppress warning about lost type info.
-        DataRequestMonitor<Integer> rm = (DataRequestMonitor<Integer>)request.fRequestMonitor;
+        DataRequestMonitor<Integer> rm = 
+        (DataRequestMonitor<Integer>)request.fRequestMonitor;
         
         rm.setData(fCount);
         rm.done();
@@ -181,12 +190,13 @@ public class DataGeneratorWithThread extends Thread implements IDataGenerator {
 
     private void processItemRequest(ItemRequest request) {
         @SuppressWarnings("unchecked") // Suppress warning about lost type info.
-        DataRequestMonitor<String> rm = (DataRequestMonitor<String>)request.fRequestMonitor; 
+        DataRequestMonitor<Integer> rm = 
+        (DataRequestMonitor<Integer>)request.fRequestMonitor; 
 
-        if (fChangedIndexes.contains(request.fIndex)) {
-            rm.setData("Changed: " + request.fIndex);
+        if (fChangedValues.containsKey(request.fIndex)) {
+            rm.setData(fChangedValues.get(request.fIndex));
         } else {
-            rm.setData(Integer.toString(request.fIndex));
+            rm.setData(request.fIndex);
         }
         rm.done();
     } 
@@ -194,12 +204,14 @@ public class DataGeneratorWithThread extends Thread implements IDataGenerator {
     
     private void randomChanges() {
         // Check if enough time is elapsed.
-        if (System.currentTimeMillis() > fLastChangeTime + RANDOM_CHANGE_INTERVAL) {
+        if (System.currentTimeMillis() > 
+            fLastChangeTime + RANDOM_CHANGE_INTERVAL) 
+        {
             fLastChangeTime = System.currentTimeMillis();
             
             // Once every number of changes, reset the count, the rest of the 
             // times just change certain values.
-            if (++fCountResetTrigger % RANDOM_COUNT_CHANGE_INTERVALS == 0){
+            if (++fCountResetTrigger % RANDOM_COUNT_CHANGE_INTERVALS == 0) {
                 randomCountReset();
             } else {
                 randomDataChange();
@@ -213,7 +225,7 @@ public class DataGeneratorWithThread extends Thread implements IDataGenerator {
         fCount = MIN_COUNT + Math.abs(random.nextInt()) % (MAX_COUNT - MIN_COUNT);
 
         // Reset the changed values.
-        fChangedIndexes.clear();
+        fChangedValues.clear();
         
         // Notify listeners  
         for (Object listener : fListeners.getListeners()) {
@@ -224,17 +236,19 @@ public class DataGeneratorWithThread extends Thread implements IDataGenerator {
     private void randomDataChange() {
         // Calculate the indexes to change.
         Random random = new java.util.Random();
-        Set<Integer> set = new HashSet<Integer>();
+        Map<Integer, Integer> changed = new HashMap<Integer, Integer>();
         for (int i = 0; i < fCount * RANDOM_CHANGE_SET_PERCENTAGE / 100; i++) {
-            set.add( new Integer(Math.abs(random.nextInt()) % fCount) );
+            int randomIndex = Math.abs(random.nextInt()) % fCount;
+            int randomValue = Math.abs(random.nextInt()) % fCount;
+            changed.put(randomIndex, randomValue);
         }                
 
         // Add the indexes to an overall set of changed indexes.
-        fChangedIndexes.addAll(set);
+        fChangedValues.putAll(changed);
         
         // Notify listeners  
         for (Object listener : fListeners.getListeners()) {
-            ((Listener)listener).valuesChanged(set);
+            ((Listener)listener).valuesChanged(changed.keySet());
         }
     }    
 }

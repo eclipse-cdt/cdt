@@ -100,9 +100,11 @@ public class CSourceHover extends AbstractCEditorTextHover {
 
 	protected static class SingletonRule implements ISchedulingRule {
 		public static final ISchedulingRule INSTANCE = new SingletonRule();
+		@Override
 		public boolean contains(ISchedulingRule rule) {
 			return rule == this;
 		}
+		@Override
 		public boolean isConflicting(ISchedulingRule rule) {
 			return rule == this;
 		}
@@ -132,6 +134,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		/*
 		 * @see org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable#runOnAST(org.eclipse.cdt.core.dom.ast.IASTTranslationUnit)
 		 */
+		@Override
 		public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
 			if (ast != null) {
 				try {
@@ -637,12 +640,8 @@ public class CSourceHover extends AbstractCEditorTextHover {
 
 				String[] sourceLines= Strings.convertIntoLines(source);
 				String firstLine= sourceLines[0];
-				if (firstLine.length() > 0 && !Character.isWhitespace(firstLine.charAt(0)))
-					sourceLines[0]= ""; //$NON-NLS-1$
-				Strings.trimIndentation(sourceLines, getTabWidth(), getTabWidth());
-
-				if (!Character.isWhitespace(firstLine.charAt(0)))
-					sourceLines[0]= firstLine;
+				boolean ignoreFirstLine= firstLine.length() > 0 && !Character.isWhitespace(firstLine.charAt(0));
+				Strings.trimIndentation(sourceLines, getTabWidth(), getTabWidth(), !ignoreFirstLine);
 
 				source = Strings.concatenate(sourceLines, delim);
 				return source;
@@ -797,6 +796,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 	@Override
 	public IInformationControlCreator getHoverControlCreator() {
 		return new IInformationControlCreator() {
+			@Override
 			public IInformationControl createInformationControl(Shell parent) {
 				IEditorPart editor= getEditor();
 				int orientation= SWT.NONE;
@@ -814,6 +814,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 	@Override
 	public IInformationControlCreator getInformationPresenterControlCreator() {
 		return new IInformationControlCreator() {
+			@Override
 			public IInformationControl createInformationControl(Shell parent) {
 				IEditorPart editor= getEditor();
 				int orientation= SWT.NONE;

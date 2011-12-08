@@ -534,7 +534,7 @@
                id="cdt.managedbuild.toolchain.xlc.exe.debug"
                name="%ToolChainName.Dbg"
                osList="all"
-               languageSettingsProviders="org.eclipse.cdt.managedbuilder.xlc.core.xlc.build.command.parser;*org.eclipse.cdt.managedbuilder.xlc.core.xlc.specs.detector"
+               languageSettingsProviders="org.eclipse.cdt.managedbuilder.xlc.core.xlc.build.command.parser;org.eclipse.cdt.managedbuilder.xlc.core.xlc.specs.detector"
                targetTool="cdt.managedbuild.tool.xlc.c.linker.exe.debug;cdt.managedbuild.tool.xlc.cpp.linker.exe.debug">
                <targetPlatform
                   id="cdt.managedbuild.target.xlc.platform.exe.debug"
@@ -600,7 +600,7 @@
                id="cdt.managedbuild.toolchain.xlc.exe.release"
                name="%ToolChainName.Rel"
                osList="all"
-               languageSettingsProviders="org.eclipse.cdt.managedbuilder.xlc.core.xlc.build.command.parser;*org.eclipse.cdt.managedbuilder.xlc.core.xlc.specs.detector"
+               languageSettingsProviders="org.eclipse.cdt.managedbuilder.xlc.core.xlc.build.command.parser;org.eclipse.cdt.managedbuilder.xlc.core.xlc.specs.detector"
                targetTool="cdt.managedbuild.tool.xlc.c.linker.exe.release;cdt.managedbuild.tool.xlc.cpp.linker.exe.release">
                <targetPlatform
                   id="cdt.managedbuild.target.xlc.platform.exe.release"
@@ -671,7 +671,7 @@
                id="cdt.managedbuild.config.xlc.so.debug">
             <toolChain
                   id="cdt.managedbuild.toolchain.xlc.so.debug"
-                  languageSettingsProviders="org.eclipse.cdt.managedbuilder.xlc.core.xlc.build.command.parser;*org.eclipse.cdt.managedbuilder.xlc.core.xlc.specs.detector"
+                  languageSettingsProviders="org.eclipse.cdt.managedbuilder.xlc.core.xlc.build.command.parser;org.eclipse.cdt.managedbuilder.xlc.core.xlc.specs.detector"
                   name="%ToolChainName.Dbg"
                   targetTool="cdt.managedbuild.tool.xlc.c.linker.so.debug;cdt.managedbuild.tool.xlc.cpp.linker.so.debug">
                <targetPlatform
@@ -735,7 +735,7 @@
                id="cdt.managedbuild.config.xlc.so.release">
             <toolChain
                   id="cdt.managedbuild.toolchain.xlc.so.release"
-                  languageSettingsProviders="org.eclipse.cdt.managedbuilder.xlc.core.xlc.build.command.parser;*org.eclipse.cdt.managedbuilder.xlc.core.xlc.specs.detector"
+                  languageSettingsProviders="org.eclipse.cdt.managedbuilder.xlc.core.xlc.build.command.parser;org.eclipse.cdt.managedbuilder.xlc.core.xlc.specs.detector"
                   name="%ToolChainName.Rel"
                   targetTool="cdt.managedbuild.tool.xlc.c.linker.so.release;cdt.managedbuild.tool.xlc.cpp.linker.so.release">
                <targetPlatform
@@ -807,7 +807,7 @@
                id="cdt.managedbuild.config.xlc.lib.debug">
             <toolChain
                   id="cdt.managedbuild.toolchain.xlc.lib.debug"
-                  languageSettingsProviders="org.eclipse.cdt.managedbuilder.xlc.core.xlc.build.command.parser;*org.eclipse.cdt.managedbuilder.xlc.core.xlc.specs.detector"
+                  languageSettingsProviders="org.eclipse.cdt.managedbuilder.xlc.core.xlc.build.command.parser;org.eclipse.cdt.managedbuilder.xlc.core.xlc.specs.detector"
                   name="%ToolChainName.Dbg"
                   targetTool="cdt.managedbuild.tool.xlc.archiver.lib.debug">
                <targetPlatform
@@ -867,7 +867,7 @@
                id="cdt.managedbuild.config.xlc.lib.release">
             <toolChain
                   id="cdt.managedbuild.toolchain.xlc.lib.release"
-                  languageSettingsProviders="org.eclipse.cdt.managedbuilder.xlc.core.xlc.build.command.parser;*org.eclipse.cdt.managedbuilder.xlc.core.xlc.specs.detector"
+                  languageSettingsProviders="org.eclipse.cdt.managedbuilder.xlc.core.xlc.build.command.parser;org.eclipse.cdt.managedbuilder.xlc.core.xlc.specs.detector"
                   name="%ToolChainName.Rel"
                   targetTool="cdt.managedbuild.tool.xlc.archiver.lib.release">
                <targetPlatform

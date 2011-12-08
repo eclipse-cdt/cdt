@@ -49,8 +49,6 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.cdt.core.AbstractCExtension;
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
-import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.parser.IScannerInfo;
@@ -190,10 +188,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 	private static final String NEWLINE = System.getProperty("line.separator");	//$NON-NLS-1$
 
 	public static final String INTERNAL_BUILDER_ID = "org.eclipse.cdt.build.core.internal.builder";	//$NON-NLS-1$
-
-	public static final String MBS_LANGUAGE_SETTINGS_PROVIDER = "org.eclipse.cdt.managedbuilder.core.LanguageSettingsProvider";
-	private static final String UI_USER_LANGUAGE_SETTINGS_PROVIDER = "org.eclipse.cdt.ui.user.LanguageSettingsProvider";
-	private static final String LANGUAGE_SETTINGS_PROVIDER_DELIMITER = ";";
 
 	private static final String os = Platform.getOS();
 	private static final String arch = Platform.getOSArch();
@@ -4724,88 +4718,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 			return false; // OS or ARCH does not fit
 		}
 		return true; // no target platform - nothing to check.
-	}
-
-	private static String getLanguageSettingsProvidersStr(IToolChain toolchain) {
-		for (;toolchain!=null;toolchain=toolchain.getSuperClass()) {
-			String providersIdsStr = toolchain.getDefaultLanguageSettingsProvidersIds();
-			if (providersIdsStr!=null) {
-				return providersIdsStr;
-			}
-		}
-		return "";
-	}
-
-	private static String getLanguageSettingsProvidersStr(IConfiguration cfg) {
-		for (;cfg!=null;cfg=cfg.getParent()) {
-			String providersIdsStr = cfg.getDefaultLanguageSettingsProvidersIds();
-			if (providersIdsStr!=null) {
-				return providersIdsStr;
-			}
-		}
-		return "";
-	}
-
-	public static List<ILanguageSettingsProvider> getLanguageSettingsProviders(IConfiguration cfg) {
-		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
-
-		String providersIdsStr = getLanguageSettingsProvidersStr(cfg);
-		if (providersIdsStr!=null) {
-			if (providersIdsStr.contains("${Toolchain}")) {
-				IToolChain toolchain = cfg.getToolChain();
-				String toolchainProvidersIds = getLanguageSettingsProvidersStr(toolchain);
-				if (toolchainProvidersIds==null) {
-					toolchainProvidersIds="";
-				}
-				providersIdsStr = providersIdsStr.replaceAll("\\$\\{Toolchain\\}", toolchainProvidersIds);
-			}
-			List<String> providersIds = Arrays.asList(providersIdsStr.split(LANGUAGE_SETTINGS_PROVIDER_DELIMITER));
-			for (String id : providersIds) {
-				id = id.trim();
-				ILanguageSettingsProvider provider = null;
-				if (id.startsWith("*")) {
-					id = id.substring(1);
-					provider = LanguageSettingsManager.getWorkspaceProvider(id);
-				} else if (id.startsWith("-")) {
-					id = id.substring(1);
-					for (ILanguageSettingsProvider pr : providers) {
-						if (pr.getId().equals(id)) {
-							providers.remove(pr);
-							// Has to break as the collection is invalidated
-							// TODO: remove all elements or better use unique list
-							break;
-						}
-					}
-				} else if (id.length()>0){
-					provider = LanguageSettingsManager.getExtensionProviderCopy(id);
-				}
-				if (provider!=null) {
-					providers.add(provider);
-				}
-			}
-		}
-
-		if (providers.isEmpty()) {
-			// Add MBS provider for unsuspecting toolchains (backward compatibility)
-			ILanguageSettingsProvider provider = LanguageSettingsManager.getWorkspaceProvider(MBS_LANGUAGE_SETTINGS_PROVIDER);
-			providers.add(provider);
-		}
-
-		if (!isProviderThere(providers, UI_USER_LANGUAGE_SETTINGS_PROVIDER)) {
-			ILanguageSettingsProvider provider = LanguageSettingsManager.getExtensionProviderCopy(UI_USER_LANGUAGE_SETTINGS_PROVIDER);
-			providers.add(0, provider);
-		}
-
-		return providers;
-	}
-
-	private static boolean isProviderThere(List<ILanguageSettingsProvider> providers, String id) {
-		for (ILanguageSettingsProvider provider : providers) {
-			if (provider.getId().equals(id)) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 }

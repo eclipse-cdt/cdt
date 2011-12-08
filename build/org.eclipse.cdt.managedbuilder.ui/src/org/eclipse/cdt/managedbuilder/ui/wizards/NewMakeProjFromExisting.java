@@ -122,15 +122,14 @@ public class NewMakeProjFromExisting extends Wizard implements IImportWizard, IN
 
 					if (cfgDes instanceof ILanguageSettingsProvidersKeeper) {
 						ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, isTryingNewSD);
+						List<ILanguageSettingsProvider> providers;
 						if (isTryingNewSD) {
-							List<ILanguageSettingsProvider> providers = ManagedBuildManager.getLanguageSettingsProviders(config);
-							((ILanguageSettingsProvidersKeeper) cfgDes).setLanguageSettingProviders(providers);
+							providers = MBSWizardHandler.getLanguageSettingsProviders(config);
 						} else {
-							ILanguageSettingsProvider provider = LanguageSettingsManager.getWorkspaceProvider(ManagedBuildManager.MBS_LANGUAGE_SETTINGS_PROVIDER);
-							List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
-							providers.add(provider);
-							((ILanguageSettingsProvidersKeeper) cfgDes).setLanguageSettingProviders(providers);
+							providers = new ArrayList<ILanguageSettingsProvider>();
+							providers.add(LanguageSettingsManager.getWorkspaceProvider(MBSWizardHandler.MBS_LANGUAGE_SETTINGS_PROVIDER));
 						}
+						((ILanguageSettingsProvidersKeeper) cfgDes).setLanguageSettingProviders(providers);
 					} else {
 						ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, false);
 					}

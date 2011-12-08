@@ -82,13 +82,6 @@ public class STDWizardHandler extends MBSWizardHandler {
 	private void setProjectDescription(IProject project, boolean defaults, boolean onFinish, IProgressMonitor monitor)
             throws CoreException {
 
-		boolean isTryingNewSD = false;
-		IWizardPage page = getStartingPage();
-		if (page instanceof CDTMainWizardPage) {
-			CDTMainWizardPage mainWizardPage = (CDTMainWizardPage)page;
-			isTryingNewSD = mainWizardPage.isTryingNewSD();
-		}
-
 	    ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
 	    ICProjectDescription des = mngr.createProjectDescription(project, false, !onFinish);
 	    ManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
@@ -120,16 +113,21 @@ public class STDWizardHandler extends MBSWizardHandler {
 	    	ICConfigurationDescription cfgDes = des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
 
 			if (cfgDes instanceof ILanguageSettingsProvidersKeeper) {
-				ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, isTryingNewSD);
-				if (isTryingNewSD) {
-					List<ILanguageSettingsProvider> providers = ManagedBuildManager.getLanguageSettingsProviders(cfg);
-					((ILanguageSettingsProvidersKeeper) cfgDes).setLanguageSettingProviders(providers);
-				} else {
-					ILanguageSettingsProvider provider = LanguageSettingsManager.getWorkspaceProvider(ManagedBuildManager.MBS_LANGUAGE_SETTINGS_PROVIDER);
-					List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
-					providers.add(provider);
-					((ILanguageSettingsProvidersKeeper) cfgDes).setLanguageSettingProviders(providers);
+				boolean isTryingNewSD = false;
+				IWizardPage page = getStartingPage();
+				if (page instanceof CDTMainWizardPage) {
+					isTryingNewSD = ((CDTMainWizardPage)page).isTryingNewSD();
 				}
+
+				ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, isTryingNewSD);
+				List<ILanguageSettingsProvider> providers;
+				if (isTryingNewSD) {
+					providers = MBSWizardHandler.getLanguageSettingsProviders(cfg);
+				} else {
+					providers = new ArrayList<ILanguageSettingsProvider>();
+					providers.add(LanguageSettingsManager.getWorkspaceProvider(MBSWizardHandler.MBS_LANGUAGE_SETTINGS_PROVIDER));
+				}
+				((ILanguageSettingsProvidersKeeper) cfgDes).setLanguageSettingProviders(providers);
 			} else {
 				ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, false);
 			}

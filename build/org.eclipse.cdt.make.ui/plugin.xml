@@ -546,13 +546,17 @@
             class="org.eclipse.cdt.make.core.scannerconfig.AbstractBuildCommandParser"
             icon="icons/obj16/log_obj.gif"
             page="org.eclipse.cdt.make.internal.ui.preferences.GCCBuildCommandParserOptionPage"
-            shared="false">
+            shared="false"
+            ui-clear-entries="true"
+            ui-edit-entries="false">
       </class-association>
       <class-association
             class="org.eclipse.cdt.make.core.scannerconfig.AbstractBuiltinSpecsDetector"
             icon="icons/obj16/inspect_system.gif"
             page="org.eclipse.cdt.make.internal.ui.scannerconfig.BuiltinSpecsDetectorOptionPage"
-            shared="true">
+            shared="true"
+            ui-clear-entries="true"
+            ui-edit-entries="false">
       </class-association>
    </extension>
    <extension

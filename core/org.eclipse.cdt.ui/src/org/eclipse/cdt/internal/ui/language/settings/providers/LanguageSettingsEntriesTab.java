@@ -511,17 +511,20 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 		boolean isEntrySelected = entry!=null;
 		boolean isProviderSelected = !isEntrySelected && (provider!=null);
 
-		boolean isProviderEditable = provider instanceof ILanguageSettingsEditableProvider;
-//		boolean isUserProvider = provider instanceof UserLanguageSettingsProvider;
+		boolean isAllowedEditing = provider instanceof ILanguageSettingsEditableProvider
+				&& LanguageSettingsProviderAssociationManager.isToEditEntries(provider);
 
-		boolean canAdd = isProviderEditable;
-		boolean canEdit = isProviderEditable && isEntrySelected;
-		boolean canDelete = isProviderEditable && isEntrySelected;
-		boolean canClear = isProviderEditable && isProviderSelected && entries!=null && entries.size()>0;
+		boolean isAllowedClearing = provider instanceof ILanguageSettingsEditableProvider
+				&& LanguageSettingsProviderAssociationManager.isToClear(provider);
+
+		boolean canAdd = isAllowedEditing;
+		boolean canEdit = isAllowedEditing && isEntrySelected;
+		boolean canDelete = isAllowedEditing && isEntrySelected;
+		boolean canClear = isAllowedClearing && isProviderSelected && entries!=null && entries.size()>0;
 
 		boolean canMoveUp = false;
 		boolean canMoveDown = false;
-		if (isProviderEditable && isEntrySelected && entries!=null) {
+		if (isAllowedEditing && isEntrySelected && entries!=null) {
 			int last = entries.size()-1;
 			int pos = getExactIndex(entries, entry);
 
@@ -552,7 +555,9 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 		}
 		if (status==null || status==Status.OK_STATUS) {
 			ILanguageSettingsProvider provider = getSelectedProvider();
-			if (provider!=null && !(provider instanceof ILanguageSettingsBroadcastingProvider)) {
+			boolean isAllowedEditing = provider instanceof ILanguageSettingsEditableProvider
+					&& LanguageSettingsProviderAssociationManager.isToEditEntries(provider);
+			if (!isAllowedEditing) {
 				String msg = "Setting entries for this provider are supplied by system and are not editable.";
 				status = new Status(IStatus.INFO, CUIPlugin.PLUGIN_ID, msg);
 			}

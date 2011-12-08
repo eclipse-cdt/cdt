@@ -3806,7 +3806,9 @@
 		<id-association
 			id="org.eclipse.cdt.ui.user.LanguageSettingsProvider"
 			icon="icons/obj16/person-me.gif"
-			shared="false">
+			shared="false"
+			ui-clear-entries="true"
+			ui-edit-entries="true">
 		</id-association>
 	</extension>
 	<extension point="org.eclipse.cdt.ui.cPropertyTab">

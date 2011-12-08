@@ -652,13 +652,10 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 		boolean isRangeOk = pos >= 0 && pos <= last;
 
 		ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(provider);
-		boolean canClear = false;
-		if (rawProvider instanceof ILanguageSettingsEditableProvider) {
-			// TODO - commented out because we need the means to restart failed Spec Detectors
-//			if (!((ILanguageSettingsEditableProvider) rawProvider).isEmpty()) {
-				canClear = canForWorkspace || canForProject;
-//			}
-		}
+		boolean isAllowedClearing = rawProvider instanceof ILanguageSettingsEditableProvider
+				&& LanguageSettingsProviderAssociationManager.isToClear(rawProvider);
+
+		boolean canClear = isAllowedClearing && (canForWorkspace || canForProject);
 
 		boolean canReset = false;
 		if (rawProvider!=null && (canForWorkspace || canForProject)) {

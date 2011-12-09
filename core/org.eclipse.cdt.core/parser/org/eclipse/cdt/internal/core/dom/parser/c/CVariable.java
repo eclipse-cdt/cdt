@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM Rational Software - Initial API and implementation
- *    Markus Schorn (Wind River Systems) 
+ *     IBM Rational Software - Initial API and implementation
+ *     Markus Schorn (Wind River Systems) 
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -44,6 +44,7 @@ public class CVariable extends PlatformObject implements IInternalVariable, ICIn
 		declarations = new IASTName[] { name };
 	}
 
+	@Override
 	public IASTNode getPhysicalNode() {
 		return declarations[0];
 	}
@@ -54,40 +55,30 @@ public class CVariable extends PlatformObject implements IInternalVariable, ICIn
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.core.dom.ast.IVariable#getType()
-	 */
+	@Override
 	public IType getType() {
 		if (type == null && declarations[0].getParent() instanceof IASTDeclarator)
 			type = CVisitor.createType((IASTDeclarator) declarations[0].getParent());
 		return type;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
-	 */
+	@Override
 	public String getName() {
 		return declarations[0].toString();
 	}
 
+	@Override
 	public char[] getNameCharArray() {
 		return declarations[0].toCharArray();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
-	 */
+	@Override
 	public IScope getScope() {
 		IASTDeclarator declarator = (IASTDeclarator) declarations[0].getParent();
 		return CVisitor.getContainingScope(declarator.getParent());
 	}
 
+	@Override
 	public boolean isStatic() {
 		return hasStorageClass(IASTDeclSpecifier.sc_static);
 	}
@@ -113,45 +104,37 @@ public class CVariable extends PlatformObject implements IInternalVariable, ICIn
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.core.dom.ast.IVariable#isExtern()
-	 */
+	@Override
 	public boolean isExtern() {
 		return hasStorageClass(IASTDeclSpecifier.sc_extern);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.core.dom.ast.IVariable#isAuto()
-	 */
+	@Override
 	public boolean isAuto() {
 		return hasStorageClass(IASTDeclSpecifier.sc_auto);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.core.dom.ast.IVariable#isRegister()
-	 */
+	@Override
 	public boolean isRegister() {
 		return hasStorageClass(IASTDeclSpecifier.sc_register);
 	}
 
+	@Override
 	public ILinkage getLinkage() {
 		return Linkage.C_LINKAGE;
 	}
 
+	@Override
 	public IASTNode[] getDeclarations() {
 		return declarations;
 	}
 
+	@Override
 	public IASTNode getDefinition() {
 		return getPhysicalNode();
 	}
 
+	@Override
 	public IBinding getOwner() {
 		if (declarations == null || declarations.length == 0)
 			return null;
@@ -159,10 +142,12 @@ public class CVariable extends PlatformObject implements IInternalVariable, ICIn
 		return CVisitor.findDeclarationOwner(declarations[0], true);
 	}
 
+	@Override
 	public IValue getInitialValue() {
 		return getInitialValue(Value.MAX_RECURSION_DEPTH);
 	}
 
+	@Override
 	public IValue getInitialValue(int maxDepth) {
 		if (declarations != null) {
 			for (IASTName decl : declarations) {
@@ -199,5 +184,10 @@ public class CVariable extends PlatformObject implements IInternalVariable, ICIn
 			return null;
 
 		return ASTQueries.findOutermostDeclarator((IASTDeclarator) node);
+	}
+
+	@Override
+	public String toString() {
+		return getName();
 	}
 }

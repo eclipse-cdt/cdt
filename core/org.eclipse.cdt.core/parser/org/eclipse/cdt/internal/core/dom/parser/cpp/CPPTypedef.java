@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,21 +44,18 @@ public class CPPTypedef extends PlatformObject implements ITypedef, ITypeContain
             name.setBinding(this);
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPBinding#getDeclarations()
-     */
-    public IASTNode[] getDeclarations() {
+    @Override
+	public IASTNode[] getDeclarations() {
         return declarations;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPBinding#getDefinition()
-     */
-    public IASTNode getDefinition() {
+    @Override
+	public IASTNode getDefinition() {
         return declarations[0];
     }
 
-    public boolean isSameType(IType o) {
+    @Override
+	public boolean isSameType(IType o) {
         if (o == this)
             return true;
 	    if (o instanceof ITypedef) {
@@ -74,9 +71,7 @@ public class CPPTypedef extends PlatformObject implements ITypedef, ITypeContain
 	    return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.ITypedef#getType()
-	 */
+	@Override
 	public IType getType() {
 	    if (type == null) {
 	        type = CPPVisitor.createType((IASTDeclarator) declarations[0].getParent());
@@ -84,27 +79,22 @@ public class CPPTypedef extends PlatformObject implements ITypedef, ITypeContain
 		return type;
 	}
 
+	@Override
 	public void setType(IType t) {
 	    type = t;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
-	 */
+	@Override
 	public String getName() {
 		return new String(getNameCharArray());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
-	 */
+	@Override
 	public char[] getNameCharArray() {
 		return declarations[0].getSimpleID();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
-	 */
+	@Override
 	public IScope getScope() {
 		return CPPVisitor.getContainingScope(declarations[0].getParent());
 	}
@@ -120,24 +110,18 @@ public class CPPTypedef extends PlatformObject implements ITypedef, ITypeContain
         return t;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedName()
-     */
-    public String[] getQualifiedName() {
+    @Override
+	public String[] getQualifiedName() {
         return CPPVisitor.getQualifiedName(this);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedNameCharArray()
-     */
-    public char[][] getQualifiedNameCharArray() {
+    @Override
+	public char[][] getQualifiedNameCharArray() {
         return CPPVisitor.getQualifiedNameCharArray(this);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#isGloballyQualified()
-     */
-    public boolean isGloballyQualified() throws DOMException {
+    @Override
+	public boolean isGloballyQualified() throws DOMException {
         IScope scope = getScope();
         while(scope != null) {
             if (scope instanceof ICPPBlockScope)
@@ -147,32 +131,27 @@ public class CPPTypedef extends PlatformObject implements ITypedef, ITypeContain
         return true;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDefinition(org.eclipse.cdt.core.dom.ast.IASTNode)
-	 */
+	@Override
 	public void addDefinition(IASTNode node) {
 	    addDeclaration(node);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDeclaration(org.eclipse.cdt.core.dom.ast.IASTNode)
-	 */
+	@Override
 	public void addDeclaration(IASTNode node) {
 	    IASTName name;
-		if (node instanceof IASTName) {
-	    	if (node.getParent() instanceof ICPPASTQualifiedName) {
-	    		name= (IASTName) node.getParent();
-	    	} else {
-	    		name= (IASTName) node;
-	    	}
-	    } else {
+		if (!(node instanceof IASTName)) {
 			return;
-	    }
+		}
+    	if (node.getParent() instanceof ICPPASTQualifiedName) {
+    		name= (IASTName) node.getParent();
+    	} else {
+    		name= (IASTName) node;
+    	}
 
 		if (declarations == null) {
 	        declarations = new IASTName[] { name };
 		} else {
-	        // keep the lowest offset declaration in [0]
+	        // Keep the lowest offset declaration in [0]
 			if (declarations.length > 0 &&
 					((ASTNode) node).getOffset() < ((ASTNode) declarations[0]).getOffset()) {
 				declarations = (IASTName[]) ArrayUtil.prepend(IASTName.class, declarations, name);
@@ -182,19 +161,21 @@ public class CPPTypedef extends PlatformObject implements ITypedef, ITypeContain
 	    }
 	}
 
+	@Override
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
 	}
 
 	@Override
-	public String toString() {
-		return ASTTypeUtil.getQualifiedName(this) + " -> " + ASTTypeUtil.getType(this, true); //$NON-NLS-1$
-	}
-	
 	public IBinding getOwner() {
 		if (declarations != null && declarations.length > 0) {
 			return CPPVisitor.findDeclarationOwner(declarations[0], true);
 		}
 		return null;
+	}
+
+	@Override
+	public String toString() {
+		return ASTTypeUtil.getQualifiedName(this) + " -> " + ASTTypeUtil.getType(this, true); //$NON-NLS-1$
 	}
 }

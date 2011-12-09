@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.PlatformObject;
  * Represents a label.
  */
 public class CLabel extends PlatformObject implements ILabel {
-
 	private final IASTName labelStatement;
 
 	public CLabel(IASTName statement) {
@@ -37,42 +36,38 @@ public class CLabel extends PlatformObject implements ILabel {
 		return labelStatement;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.core.dom.ast.ILabel#getLabelStatement()
-	 */
+	@Override
 	public IASTLabelStatement getLabelStatement() {
 		return (IASTLabelStatement) labelStatement.getParent();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
-	 */
+	@Override
 	public String getName() {
 		return labelStatement.toString();
 	}
 
+	@Override
 	public char[] getNameCharArray() {
 		return labelStatement.toCharArray();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
-	 */
+	@Override
 	public IScope getScope() {
 		return CVisitor.getContainingScope(labelStatement.getParent());
 	}
 
+	@Override
 	public ILinkage getLinkage() {
 		return Linkage.C_LINKAGE;
 	}
 
+	@Override
 	public IBinding getOwner() {
 		return CVisitor.findEnclosingFunction(labelStatement);
+	}
+
+	@Override
+	public String toString() {
+		return getName();
 	}
 }

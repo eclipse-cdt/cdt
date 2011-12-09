@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings;
 
 import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -23,7 +24,6 @@ import org.eclipse.core.runtime.PlatformObject;
 
 @SuppressWarnings("restriction")
 public class C99Typedef extends PlatformObject implements IC99Binding, ITypedef, ITypeContainer, ITypeable {
-
 	private IType type;
 	private String name;
 	
@@ -41,7 +41,6 @@ public class C99Typedef extends PlatformObject implements IC99Binding, ITypedef,
 		this.type = type;
 		this.name = name;
 	}
-	
 	
 	public IType getType() {
 		return type;
@@ -63,7 +62,6 @@ public class C99Typedef extends PlatformObject implements IC99Binding, ITypedef,
 		return name.toCharArray();
 	}
 
-
 	public boolean isSameType(IType t) {
 		if(t == this)
 			return true;
@@ -71,7 +69,6 @@ public class C99Typedef extends PlatformObject implements IC99Binding, ITypedef,
 		if(t instanceof ITypedef)
 			return type.isSameType(((ITypedef)t).getType());
 		return type.isSameType(t);
-
 	}
 
 	@Override
@@ -103,5 +100,10 @@ public class C99Typedef extends PlatformObject implements IC99Binding, ITypedef,
 			return CVisitor.findEnclosingFunction((IASTNode) scope.getScopeName()); // local or global
 		}
 		return null;
+	}
+
+	@Override
+	public String toString() {
+		return getName() + " -> " + ASTTypeUtil.getType(this, true); //$NON-NLS-1$
 	}
 }

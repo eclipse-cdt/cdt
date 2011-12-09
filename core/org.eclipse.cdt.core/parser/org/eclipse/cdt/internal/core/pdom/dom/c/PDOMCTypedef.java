@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Doug Schaefer (QNX) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    IBM Corporation
+ *     Doug Schaefer (QNX) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
@@ -33,7 +33,6 @@ import org.eclipse.core.runtime.CoreException;
  * Typedefs for c
  */
 class PDOMCTypedef extends PDOMBinding implements ITypedef, ITypeContainer, IIndexType {
-
 	private static final int TYPE_OFFSET = PDOMBinding.RECORD_SIZE + 0;
 	
 	@SuppressWarnings("hiding")
@@ -82,8 +81,7 @@ class PDOMCTypedef extends PDOMBinding implements ITypedef, ITypeContainer, IInd
 			}
 			if (type instanceof ITypeContainer) {
 				type= ((ITypeContainer) type).getType();
-			}
-			else if (type instanceof IFunctionType) {
+			} else if (type instanceof IFunctionType) {
 				IFunctionType ft= (IFunctionType) type;
 				if (introducesRecursion(ft.getReturnType(), tdname)) {
 					return true;
@@ -113,6 +111,7 @@ class PDOMCTypedef extends PDOMBinding implements ITypedef, ITypeContainer, IInd
 		return IIndexCBindingConstants.CTYPEDEF;
 	}
 
+	@Override
 	public IType getType() {
 		try {
 			return getLinkage().loadType(record + TYPE_OFFSET);
@@ -122,6 +121,7 @@ class PDOMCTypedef extends PDOMBinding implements ITypedef, ITypeContainer, IInd
 		}
 	}
 
+	@Override
 	public boolean isSameType(IType type) {
 		IType myrtype = getType();
 		if (myrtype == null)
@@ -138,6 +138,7 @@ class PDOMCTypedef extends PDOMBinding implements ITypedef, ITypeContainer, IInd
 		return getName() + ": " + super.toStringBase(); //$NON-NLS-1$
 	}
 
+	@Override
 	public void setType(IType type) {
 		throw new UnsupportedOperationException(); 
 	}

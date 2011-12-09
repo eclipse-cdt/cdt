@@ -1,14 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Niefer (IBM Corporation) - Initial API and implementation 
- *    Markus Schorn (Wind River Systems)
- *    Ed Swartz (Nokia)
+ *     Andrew Niefer (IBM Corporation) - Initial API and implementation 
+ *     Markus Schorn (Wind River Systems)
+ *     Ed Swartz (Nokia)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -87,6 +87,7 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 	    return dtor;
 	}		
 	
+	@Override
 	public void addDeclaration(IASTNode node) {
 		if (!(node instanceof IASTName))
 			return;
@@ -110,23 +111,17 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 		}
 	}
 	
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPBinding#getDeclarations()
-     */
-    public IASTNode[] getDeclarations() {
+    @Override
+	public IASTNode[] getDeclarations() {
         return fDeclarations;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPBinding#getDefinition()
-     */
-    public IASTNode getDefinition() {
+    @Override
+	public IASTNode getDefinition() {
         return fDefinition;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IVariable#getType()
-	 */
+	@Override
 	public IType getType() {
 		if (fType != null) {
 			return fType;
@@ -135,7 +130,7 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 		IArrayType firstCandidate= null;
 		final int length = fDeclarations == null ? 0 : fDeclarations.length;
 		for (int i = -1; i < length; i++) {
-			IASTName n = i==-1 ? fDefinition : fDeclarations[i];
+			IASTName n = i == -1 ? fDefinition : fDeclarations[i];
 			if (n != null) {
 				while (n.getParent() instanceof IASTName)
 					n = (IASTName) n.getParent();
@@ -167,7 +162,7 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 		fAllResolved= true;
 		final int length = fDeclarations == null ? 0 : fDeclarations.length;
 		for (int i = -1; i < length; i++) {
-			IASTName n = i==-1 ? fDefinition : fDeclarations[i];
+			IASTName n = i == -1 ? fDefinition : fDeclarations[i];
 			if (n != null) {
 			    IASTTranslationUnit tu = n.getTranslationUnit();
 		        if (tu != null) {
@@ -178,16 +173,12 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
-	 */
+	@Override
 	public String getName() {
 		return new String(getNameCharArray());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
-	 */
+	@Override
 	public char[] getNameCharArray() {
 	    if (fDeclarations != null) {
 	        return fDeclarations[0].getSimpleID();
@@ -195,31 +186,23 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 	    return fDefinition.getSimpleID();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
-	 */
+	@Override
 	public IScope getScope() {
 		return CPPVisitor.getContainingScope(fDefinition != null ? fDefinition : fDeclarations[0]);
 	}
 	
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedName()
-     */
-    public String[] getQualifiedName() {
+    @Override
+	public String[] getQualifiedName() {
         return CPPVisitor.getQualifiedName(this);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedNameCharArray()
-     */
-    public char[][] getQualifiedNameCharArray() {
+    @Override
+	public char[][] getQualifiedNameCharArray() {
         return CPPVisitor.getQualifiedNameCharArray(this);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#isGloballyQualified()
-     */
-    public boolean isGloballyQualified() throws DOMException {
+    @Override
+	public boolean isGloballyQualified() throws DOMException {
         IScope scope = getScope();
         while (scope != null) {
             if (scope instanceof ICPPBlockScope)
@@ -229,9 +212,7 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
         return true;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDefinition(org.eclipse.cdt.core.dom.ast.IASTNode)
-	 */
+	@Override
 	public void addDefinition(IASTNode node) {
 		addDeclaration(node);
 	}
@@ -254,37 +235,33 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 	                }
 	            }
             }
-            if (ns != null && ++i < ns.length)
+            if (ns != null && ++i < ns.length) {
                 name = (IASTName) ns[i];
-            else
+            } else {
                 break;
+            }
         } while (name != null);
         return false;
 	}
 	
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable#isMutable()
-     */
-    public boolean isMutable() {
+    @Override
+	public boolean isMutable() {
         //7.1.1-8 the mutable specifier can only be applied to names of class data members
         return false;
     }
 
-    public boolean isStatic() {
+    @Override
+	public boolean isStatic() {
 		return hasStorageClass(IASTDeclSpecifier.sc_static);
 	}
 
-	/* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IVariable#isExtern()
-     */
-    public boolean isExtern() {
+    @Override
+	public boolean isExtern() {
         return hasStorageClass(IASTDeclSpecifier.sc_extern);
     }
 
-	/* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IVariable#isExtern()
-     */
-    public boolean isExternC() {
+    @Override
+	public boolean isExternC() {
 	    if (CPPVisitor.isExternC(getDefinition())) {
 	    	return true;
 	    }
@@ -299,38 +276,33 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IVariable#isAuto()
-     */
-    public boolean isAuto() {
+    @Override
+	public boolean isAuto() {
         return hasStorageClass(IASTDeclSpecifier.sc_auto);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IVariable#isRegister()
-     */
-    public boolean isRegister() {
+    @Override
+	public boolean isRegister() {
         return hasStorageClass(IASTDeclSpecifier.sc_register);
     }
     
+	@Override
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
 	}
 	
+	@Override
 	public IBinding getOwner() {
 		IASTName node = fDefinition != null ? fDefinition : fDeclarations[0];
 		return CPPVisitor.findNameOwner(node, !hasStorageClass(IASTDeclSpecifier.sc_extern)); 
 	}
 	
 	@Override
-	public String toString() {
-		return getName();
-	}
-
 	public IValue getInitialValue() {
 		return getInitialValue(Value.MAX_RECURSION_DEPTH);
 	}
 	
+	@Override
 	public IValue getInitialValue(int maxDepth) {
 		if (fDefinition != null) {
 			final IValue val= getInitialValue(fDefinition, maxDepth);
@@ -381,5 +353,10 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public String toString() {
+		return getName();
 	}
 }

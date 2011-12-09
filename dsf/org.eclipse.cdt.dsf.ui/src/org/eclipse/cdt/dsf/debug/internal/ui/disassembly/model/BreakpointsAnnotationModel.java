@@ -18,8 +18,7 @@ import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
-import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.AddressRangePosition;
-import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.LabelPosition;
+import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.DisassemblyAnnotationModel;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.IBreakpointLocationProvider;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -32,13 +31,11 @@ import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
-import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
 import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;
@@ -47,7 +44,7 @@ import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;
  * Annotation model for breakpoints in the disassembly.
  * Works only with {@link DisassemblyDocument}.
  */
-public class BreakpointsAnnotationModel extends AnnotationModel implements IBreakpointListener, IDocumentListener {
+public class BreakpointsAnnotationModel extends DisassemblyAnnotationModel implements IBreakpointListener, IDocumentListener {
 	
 	private Runnable fCatchup;
 
@@ -89,6 +86,7 @@ public class BreakpointsAnnotationModel extends AnnotationModel implements IBrea
 	/*
 	 * @see org.eclipse.debug.core.IBreakpointListener#breakpointAdded(org.eclipse.debug.core.model.IBreakpoint)
 	 */
+	@Override
 	public void breakpointAdded(IBreakpoint breakpoint) {
 		addBreakpointAnnotation(breakpoint, true);
 	}
@@ -96,6 +94,7 @@ public class BreakpointsAnnotationModel extends AnnotationModel implements IBrea
 	/*
 	 * @see org.eclipse.debug.core.IBreakpointListener#breakpointChanged(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.resources.IMarkerDelta)
 	 */
+	@Override
 	public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
 		Annotation a= findAnnotation(breakpoint.getMarker());
 		if (a != null) {
@@ -114,6 +113,7 @@ public class BreakpointsAnnotationModel extends AnnotationModel implements IBrea
 	/*
 	 * @see org.eclipse.debug.core.IBreakpointListener#breakpointRemoved(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.resources.IMarkerDelta)
 	 */
+	@Override
 	public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
 		Annotation a= findAnnotation(breakpoint.getMarker());
 		if (a != null) {
@@ -220,64 +220,6 @@ public class BreakpointsAnnotationModel extends AnnotationModel implements IBrea
 		return null;
 	}
 
-	private Position createPositionFromSourceLine(String fileName, int lineNumber) {
-		if (fileName != null) {
-			return getDisassemblyDocument().getSourcePosition(fileName, lineNumber);
-		}
-		return null;
-	}
-
-	private Position createPositionFromSourceLine(IFile file, int lineNumber) {
-		return getDisassemblyDocument().getSourcePosition(file, lineNumber);
-	}
-
-	private Position createPositionFromAddress(BigInteger address) {
-		if (address != null) {
-			AddressRangePosition p= getDisassemblyDocument().getDisassemblyPosition(address);
-			if (p != null && p.fValid) {
-				return new Position(p.offset, p.length);
-			}
-		}
-		return null;
-	}
-	
-	private Position createPositionFromLabel(BigInteger address) {
-		if (address != null) {
-			LabelPosition p = getDisassemblyDocument().getLabelPosition(address);
-			if (p != null && p.fValid) {
-				return new Position(p.offset, p.length);
-			}
-		}
-		return null;
-	}
-
-	private Position createPositionFromLabel(String label) {
-		if (label != null) {
-			try {
-				Position[] labelPositions = getDisassemblyDocument().getPositions(DisassemblyDocument.CATEGORY_LABELS);
-				int labelLen = label.length();
-				for (Position position : labelPositions) {
-					if (position instanceof LabelPosition) {
-						String candidate = ((LabelPosition) position).fLabel;
-						if (candidate != null && candidate.startsWith(label)) {
-							// exact match or followed by ()
-							if (candidate.length() == labelLen || candidate.charAt(labelLen) == '(') {
-								return position;
-							}
-						}
-					}
-				}
-			} catch (BadPositionCategoryException exc) {
-				return null;
-			}
-		}
-		return null;
-	}
-
-	private DisassemblyDocument getDisassemblyDocument() {
-		return (DisassemblyDocument) fDocument;
-	}
-
 	/**
 	 * Decode given string representation of a non-negative integer. A
 	 * hexadecimal encoded integer is expected to start with <code>0x</code>.
@@ -305,15 +247,18 @@ public class BreakpointsAnnotationModel extends AnnotationModel implements IBrea
 	/*
 	 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
 	 */
+	@Override
 	public void documentAboutToBeChanged(DocumentEvent event) {
 	}
 
 	/*
 	 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
 	 */
+	@Override
 	public void documentChanged(DocumentEvent event) {
 		if (fCatchup == null && event.fText != null && event.fText.length() > 0) {
 			fCatchup= new Runnable() {
+				@Override
 				public void run() {
 					if (fCatchup == this) {
 						catchupWithBreakpoints();

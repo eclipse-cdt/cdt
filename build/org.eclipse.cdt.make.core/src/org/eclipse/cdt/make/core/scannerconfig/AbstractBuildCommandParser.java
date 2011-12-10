@@ -211,12 +211,14 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 		}
 
 		protected void init(String buildCommandParserId) {
-			AbstractBuildCommandParser buildCommandParser = (AbstractBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(buildCommandParserId);
-			for (String template : PATTERN_TEMPLATES) {
-				String pattern = buildCommandParser.makePattern(template);
-				String fileExpr = "$"+buildCommandParser.adjustFileGroup(); //$NON-NLS-1$
-				String descExpr = "$0"; //$NON-NLS-1$
-				addPattern(new RegexErrorPattern(pattern, fileExpr, null, descExpr, null, IMarkerGenerator.SEVERITY_WARNING, true));
+			AbstractBuildCommandParser buildCommandParser = (AbstractBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(buildCommandParserId, false);
+			if (buildCommandParser != null) {
+				for (String template : PATTERN_TEMPLATES) {
+					String pattern = buildCommandParser.makePattern(template);
+					String fileExpr = "$"+buildCommandParser.adjustFileGroup(); //$NON-NLS-1$
+					String descExpr = "$0"; //$NON-NLS-1$
+					addPattern(new RegexErrorPattern(pattern, fileExpr, null, descExpr, null, IMarkerGenerator.SEVERITY_WARNING, true));
+				}
 			}
 		}
 

@@ -284,57 +284,13 @@ public class LanguageSettingsExtensionManager {
 	}
 
 	/**
-	 * Get Language Settings Provider defined via
-	 * {@code org.eclipse.cdt.core.LanguageSettingsProvider} extension point.
-	 *
-	 * @param id - ID of provider to find.
-	 * @return the clone of the provider or {@code null} if provider is not defined.
-	 * @throws CloneNotSupportedException if the provider is not cloneable
-	 */
-	public static ILanguageSettingsProvider getExtensionProviderClone(String id) throws CloneNotSupportedException {
-		ILanguageSettingsProvider provider = fExtensionProviders.get(id);
-		if (provider!=null) {
-			if (!(provider instanceof ILanguageSettingsEditableProvider))
-				throw new CloneNotSupportedException("Not able to clone provider " + provider.getClass());
-
-			provider = ((ILanguageSettingsEditableProvider) provider).clone();
-		}
-		return provider;
-	}
-
-	/**
-	 * TODO
-	 *
-	 * @param id
-	 * @return
-	 */
-	public static ILanguageSettingsProvider getExtensionProviderShallow(String id) {
-		ILanguageSettingsProvider provider = fExtensionProviders.get(id);
-		if (provider instanceof ILanguageSettingsEditableProvider) {
-			try {
-				return ((ILanguageSettingsEditableProvider) provider).cloneShallow();
-			} catch (CloneNotSupportedException e) {
-				IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "Not able to clone provider " + provider.getClass());
-				CCorePlugin.log(new CoreException(status));
-				return null;
-			}
-		}
-		return provider;
-	}
-
-	/**
 	 * @return list of providers contributed by all extensions. Preferable copy but if not possible
 	 *   will return raw provider.
 	 */
 	/*package*/ static List<ILanguageSettingsProvider> getExtensionProvidersInternal() {
 		ArrayList<ILanguageSettingsProvider> list = new ArrayList<ILanguageSettingsProvider>(fExtensionProviders.size());
 		for (String id : fExtensionProviders.keySet()) {
-			ILanguageSettingsProvider extensionProvider = null;
-			try {
-				extensionProvider = getExtensionProviderClone(id);
-			} catch (CloneNotSupportedException e) {
-				// from here falls to get raw extension provider
-			}
+			ILanguageSettingsProvider extensionProvider = getExtensionProviderCopy(id, true);
 			if (extensionProvider==null)
 				extensionProvider = fExtensionProviders.get(id);
 
@@ -344,16 +300,59 @@ public class LanguageSettingsExtensionManager {
 		return list;
 	}
 
-	public static boolean equalsExtensionProviderShallow(ILanguageSettingsEditableProvider provider) throws CloneNotSupportedException {
-		String id = provider.getId();
-		ILanguageSettingsProvider extensionProviderShallow = getExtensionProviderShallow(id);
-		return provider.cloneShallow().equals(extensionProviderShallow);
+	/**
+	 * TODO
+	 * @param provider
+	 * @param deep
+	 * @return
+	 */
+	public static ILanguageSettingsEditableProvider getProviderCopy(ILanguageSettingsEditableProvider provider, boolean deep) {
+		try {
+			if (deep) {
+				return provider.clone();
+			} else {
+				return provider.cloneShallow();
+			}
+		} catch (CloneNotSupportedException e) {
+			CCorePlugin.log("Error cloning provider " + provider.getId() + ", class " + provider.getClass(), e); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		return null;
 	}
 
-	public static boolean equalsExtensionProvider(ILanguageSettingsProvider provider) {
+	/**
+	 * Get Language Settings Provider defined via
+	 * {@code org.eclipse.cdt.core.LanguageSettingsProvider} extension point.
+	 *
+	 * @param id - ID of provider to find.
+	 * @param deep TODO
+	 * @return the clone of the provider or {@code null} TODO if provider is not defined.
+	 */
+	public static ILanguageSettingsProvider getExtensionProviderCopy(String id, boolean deep) {
+		ILanguageSettingsProvider provider = fExtensionProviders.get(id);
+		if (provider instanceof ILanguageSettingsEditableProvider) {
+			return getProviderCopy((ILanguageSettingsEditableProvider) provider, deep);
+		}
+
+		return null;
+	}
+
+	/**
+	 * TODO
+	 * @param provider
+	 * @param deep
+	 * @return
+	 */
+	public static boolean isEqualsExtensionProvider(ILanguageSettingsProvider provider, boolean deep) {
 		String id = provider.getId();
-		ILanguageSettingsProvider extensionProvider = fExtensionProviders.get(id);
-		return provider.equals(extensionProvider);
+		if (deep || !(provider instanceof ILanguageSettingsEditableProvider)) {
+			ILanguageSettingsProvider extensionProvider = fExtensionProviders.get(id);
+			return provider.equals(extensionProvider);
+		} else {
+			ILanguageSettingsEditableProvider providerShallow = getProviderCopy((ILanguageSettingsEditableProvider) provider, false);
+			ILanguageSettingsProvider extensionProviderShallow = getExtensionProviderCopy(id, false);
+			return providerShallow == extensionProviderShallow
+					|| (providerShallow != null && providerShallow.equals(extensionProviderShallow));
+		}
 	}
 
 }

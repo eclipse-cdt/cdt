@@ -203,7 +203,8 @@ public class LanguageSettingsProvidersSerializer {
 		 */
 		public LanguageSettingsChangeEvent(ICProjectDescription prjDescription) {
 			if (!prjDescription.isReadOnly()) {
-				String msg = "Project description " + prjDescription.getName() + " is expected to be read-only";
+				// The logic goes that we send notifications only for acting description but not for currently being prepared to set
+				String msg = "Project description " + prjDescription.getName() + " is expected to be read-only"; //$NON-NLS-1$ //$NON-NLS-2$
 				CCorePlugin.log(new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, msg, new Exception(msg)));
 			}
 
@@ -222,7 +223,8 @@ public class LanguageSettingsProvidersSerializer {
 						if (delta != null)
 							deltaMap.put(cfgDescription.getId(), delta);
 					} else {
-						IStatus ss = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "Internal error: Missing specSettings for " + cfgDescription.getClass().getSimpleName());
+						IStatus ss = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "Internal error: Missing specSettings for " //$NON-NLS-1$
+								+ cfgDescription.getClass().getSimpleName());
 						CCorePlugin.log(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, ss.getMessage(), new CoreException(ss)));
 					}
 				}
@@ -239,11 +241,11 @@ public class LanguageSettingsProvidersSerializer {
 			return deltaMap.keySet().toArray(new String[deltaMap.size()]);
 		}
 
+		@SuppressWarnings("nls")
 		@Override
 		public String toString() {
 			return "LanguageSettingsChangeEvent for project=[" + getProjectName() + "]"
-					+ ", configurations=" + deltaMap.keySet()
-				;
+					+ ", configurations=" + deltaMap.keySet();
 		}
 	}
 
@@ -257,6 +259,12 @@ public class LanguageSettingsProvidersSerializer {
 		}
 	}
 
+	/**
+	 * Determine location of the project store of language settings providers in the plug-in state area.
+	 *
+	 * @param store - name of the store.
+	 * @return location of the store in the plug-in state area.
+	 */
 	private static IFile getStoreInProjectArea(IProject project) throws CoreException {
 		IFolder folder = project.getFolder(SETTINGS_FOLDER_NAME);
 		if (!folder.exists()) {
@@ -267,10 +275,10 @@ public class LanguageSettingsProvidersSerializer {
 	}
 
 	/**
-	 * TODO: refactor with ErrorParserManager ?
+	 * Determine location of the store in the plug-in state area.
 	 *
-	 * @param store - name of the store
-	 * @return location of the store in the plug-in state area
+	 * @param store - name of the store.
+	 * @return location of the store in the plug-in state area.
 	 */
 	private static URI getStoreInWorkspaceArea(String store) {
 		IPath location = CCorePlugin.getDefault().getStateLocation().append(store);
@@ -434,9 +442,9 @@ projects:
 			}
 
 		} catch (Exception e) {
-			CCorePlugin.log("Internal error while trying to serialize language settings", e); //$NON-NLS-1$
-			IStatus s = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "Internal error while trying to serialize language settings", e);
-			throw new CoreException(s);
+			String msg = "Internal error while trying to serialize language settings"; //$NON-NLS-1$
+			CCorePlugin.log(msg, e);
+			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, msg, e));
 		}
 	}
 
@@ -464,7 +472,7 @@ projects:
 				Node providerNode = providerNodes.item(i);
 				String providerId = XmlUtil.determineAttributeValue(providerNode, LanguageSettingsExtensionManager.ATTR_ID);
 				if (userDefinedProvidersIds.contains(providerId)) {
-					String msg = "Ignored repeatedly persisted duplicate language settings provider id=" + providerId;
+					String msg = "Ignored an attempt to persist duplicate language settings provider, id=" + providerId; //$NON-NLS-1$
 					CCorePlugin.log(new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, msg, new Exception()));
 					continue;
 				}
@@ -475,7 +483,7 @@ projects:
 					if (providers==null)
 						providers= new ArrayList<ILanguageSettingsProvider>();
 
-					if (!LanguageSettingsExtensionManager.equalsExtensionProvider(provider)) {
+					if (!LanguageSettingsManager.isEqualExtensionProvider(provider, true)) {
 						providers.add(provider);
 					}
 				}
@@ -600,9 +608,9 @@ projects:
 			}
 
 		} catch (Exception e) {
-			IStatus s = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "Internal error while trying to serialize language settings", e);
-			CCorePlugin.log(s);
-			throw new CoreException(s);
+			String msg = "Internal error while trying to serialize language settings"; //$NON-NLS-1$
+			CCorePlugin.log(msg, e);
+			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, msg, e));
 		}
 	}
 
@@ -1008,12 +1016,9 @@ projects:
 		List<ILanguageSettingsProvider> newProviders = new ArrayList<ILanguageSettingsProvider>();
 		for (ILanguageSettingsProvider provider : baseProviders) {
 			if (provider instanceof ILanguageSettingsEditableProvider) {
-				try {
-					provider = ((ILanguageSettingsEditableProvider) provider).clone();
-				} catch (CloneNotSupportedException e) {
-					IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, Status.OK,
-							"Not able to clone provider " + provider.getClass(), e);
-					CCorePlugin.log(status);
+				ILanguageSettingsEditableProvider newProvider = LanguageSettingsManager.getProviderCopy((ILanguageSettingsEditableProvider) provider, true);
+				if (newProvider != null) {
+					provider = newProvider;
 				}
 			}
 			newProviders.add(provider);

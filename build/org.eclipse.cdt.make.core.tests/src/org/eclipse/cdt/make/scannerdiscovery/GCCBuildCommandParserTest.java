@@ -353,7 +353,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		String languageId = ls.getLanguageId();
 
 		// create GCCBuildCommandParser
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		// parse line
 		parser.startup(cfgDescription);
@@ -395,7 +395,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		String languageId = ls.getLanguageId();
 
 		// create GCCBuildCommandParser
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		// parse line
 		parser.startup(cfgDescription);
@@ -459,7 +459,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		String languageId = ls.getLanguageId();
 
 		// create GCCBuildCommandParser
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		// parse line
 		parser.startup(cfgDescription);
@@ -531,7 +531,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		String languageId = ls.getLanguageId();
 
 		// create GCCBuildCommandParser
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		// parse line
 		parser.startup(cfgDescription);
@@ -609,7 +609,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		String languageId = ls.getLanguageId();
 
 		// create GCCBuildCommandParser
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		// parse line
 		parser.startup(cfgDescription);
@@ -639,7 +639,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		String languageId = ls.getLanguageId();
 
 		// create GCCBuildCommandParser
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		// parse line
 		parser.startup(cfgDescription);
@@ -690,7 +690,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		String languageId = ls.getLanguageId();
 
 		// create GCCBuildCommandParser
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		// parse line
 		parser.startup(cfgDescription);
@@ -735,7 +735,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		String languageId = ls.getLanguageId();
 
 		// create GCCBuildCommandParser
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		// parse line
 		parser.startup(cfgDescription);
@@ -779,7 +779,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		String languageId = ls.getLanguageId();
 
 		// create GCCBuildCommandParser
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		// parse line
 		parser.startup(cfgDescription);
@@ -811,7 +811,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		String languageId = ls.getLanguageId();
 
 		// create GCCBuildCommandParser
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		// parse line
 		parser.startup(cfgDescription);
@@ -861,7 +861,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
 
 		// create GCCBuildCommandParser
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		// parse line
 		parser.startup(cfgDescription);
@@ -886,7 +886,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		String languageId = ls.getLanguageId();
 
 		// create GCCBuildCommandParser
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		// parse line
 		parser.startup(cfgDescription);
@@ -919,7 +919,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		String languageId = ls.getLanguageId();
 
 		// create GCCBuildCommandParser
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		// parse line
 		parser.startup(null);
@@ -955,7 +955,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		String languageId = ls.getLanguageId();
 
 		// create GCCBuildCommandParser
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		// parse line
 		parser.startup(cfgDescription);
@@ -1008,7 +1008,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		String languageId = ls.getLanguageId();
 
 		// create GCCBuildCommandParser
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 		ErrorParserManager epm = new ErrorParserManager(project, null);
 		// Shift build directory, that could happen if Make Target from folder1 was run
 		IFolder buildDir = folder1;
@@ -1049,7 +1049,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		String languageId = ls.getLanguageId();
 
 		// create GCCBuildCommandParser
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		// parse line
 		parser.startup(cfgDescription);
@@ -1098,7 +1098,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		String languageId = ls.getLanguageId();
 
 		// create GCCBuildCommandParser
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 		parser.setResolvingPaths(true);
 
 		// parse line
@@ -1129,7 +1129,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		String languageId = ls.getLanguageId();
 
 		// create GCCBuildCommandParser
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 		parser.setResolvingPaths(true);
 
 		// parse line
@@ -1169,7 +1169,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		String languageId = ls.getLanguageId();
 
 		// create GCCBuildCommandParser with expandRelativePaths=false
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 		parser.setResolvingPaths(false);
 
 		// parse line
@@ -1205,7 +1205,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		String languageId = ls.getLanguageId();
 
 		// create GCCBuildCommandParser
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 		parser.setResolvingPaths(true);
 
 		// parse line
@@ -1242,7 +1242,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		String languageId = ls.getLanguageId();
 
 		// create GCCBuildCommandParser
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 		ErrorParserManager epm = new ErrorParserManager(project, null);
 		epm.pushDirectoryURI(buildDir.getLocationURI());
 
@@ -1284,7 +1284,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		String languageId = ls.getLanguageId();
 
 		// create GCCBuildCommandParser
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		ErrorParserManager epm = new ErrorParserManager(project, null);
 
@@ -1316,7 +1316,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		String languageId = ls.getLanguageId();
 
 		// create GCCBuildCommandParser
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		ErrorParserManager epm = new ErrorParserManager(project, null);
 		epm.pushDirectoryURI(buildDir.getLocationURI());
@@ -1354,7 +1354,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		String languageId = ls.getLanguageId();
 
 		// create GCCBuildCommandParser
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		ErrorParserManager epm = new ErrorParserManager(project, null);
 		URI uriBuildDir = new URI("file:/non-existing/path");
@@ -1397,7 +1397,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		String languageId = ls.getLanguageId();
 
 		// create GCCBuildCommandParser
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		ErrorParserManager epm = new ErrorParserManager(project, null);
 		URI uriBuildDir = new URI("file:/BuildDir");
@@ -1447,7 +1447,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		String languageId = ls.getLanguageId();
 
 		// create GCCBuildCommandParser
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 		ErrorParserManager epm = new ErrorParserManager(project, null);
 
 		// parse line
@@ -1501,7 +1501,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		String languageId = ls.getLanguageId();
 
 		// create GCCBuildCommandParser
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 		ErrorParserManager epm = new ErrorParserManager(project, null);
 
 		// parse line
@@ -1561,7 +1561,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		String languageId = ls.getLanguageId();
 
 		// create GCCBuildCommandParser
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 		ErrorParserManager epm = new ErrorParserManager(project, null);
 
 		// parse line
@@ -1606,7 +1606,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		ResourceHelper.createSymbolicLink(linkPath, dir2);
 
 		// create GCCBuildCommandParser
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 		ErrorParserManager epm = new ErrorParserManager(project, null);
 
 		// parse line
@@ -1646,7 +1646,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		ResourceHelper.createSymbolicLink(linkPath, subfolder.getLocation());
 
 		// create GCCBuildCommandParser
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 		ErrorParserManager epm = new ErrorParserManager(project, null);
 
 		// parse line
@@ -1688,7 +1688,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		String languageId = ls.getLanguageId();
 
 		// create GCCBuildCommandParser
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		// parse line
 		parser.startup(cfgDescription);
@@ -1731,7 +1731,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		String languageId = ls.getLanguageId();
 
 		// create GCCBuildCommandParser
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		// parse line
 		parser.startup(cfgDescription);
@@ -1777,7 +1777,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		ResourceHelper.createFile(project, "file.c");
 
 		// create GCCBuildCommandParser
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 		// restrict the parser's language scope to C++ only
 		parser.setLanguageScope(new ArrayList<String>() {{add(LANG_CPP);}});
 
@@ -1809,7 +1809,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		assertEquals(contentType, contentTypeX);
 
 		// create GCCBuildCommandParser
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		// parse line
 		parser.startup(cfgDescription);
@@ -1839,7 +1839,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		IFile file=ResourceHelper.createFile(project, "file.cpp");
 
 		// create GCCBuildCommandParser
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 		ErrorParserManager epm = new ErrorParserManager(project, null);
 
 		// parse line
@@ -1870,7 +1870,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		String languageId = ls.getLanguageId();
 
 		// create GCCBuildCommandParser
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 
 		// parse line
 		parser.startup(cfgDescription);
@@ -1916,7 +1916,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		String languageId = ls.getLanguageId();
 
 		// create GCCBuildCommandParser
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 		ErrorParserManager epm = new ErrorParserManager(project, null);
 
 		// parse line
@@ -1956,7 +1956,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 		String languageId = ls.getLanguageId();
 
 		// create GCCBuildCommandParser
-		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT);
+		GCCBuildCommandParser parser = (GCCBuildCommandParser) LanguageSettingsManager.getExtensionProviderCopy(GCC_BUILD_COMMAND_PARSER_EXT, true);
 		ErrorParserManager epm = new ErrorParserManager(project, null);
 
 		// parse line

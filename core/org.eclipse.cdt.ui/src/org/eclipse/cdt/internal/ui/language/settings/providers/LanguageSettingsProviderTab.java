@@ -49,7 +49,6 @@ import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditabl
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
-import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager_TBD;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializableProvider;
 import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -150,17 +149,19 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 		ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(provider);
 		Assert.isTrue(rawProvider instanceof ILanguageSettingsEditableProvider);
 
-		try {
-			ILanguageSettingsEditableProvider newProvider = ((ILanguageSettingsEditableProvider)rawProvider).clone();
+		ILanguageSettingsEditableProvider newProvider = LanguageSettingsManager.getProviderCopy((ILanguageSettingsEditableProvider)rawProvider, true);
+		if (newProvider != null) {
 			replaceSelectedProvider(newProvider);
-			return newProvider;
-
-		} catch (CloneNotSupportedException e) {
-			CUIPlugin.log("Error cloning provider " + rawProvider.getId(), e);
-			// TODO warning dialog for user?
 		}
 
-		return null;
+		return newProvider;
+	}
+
+	private static boolean isReconfigured(ILanguageSettingsProvider provider) {
+		if (provider instanceof ILanguageSettingsEditableProvider) {
+			return ! LanguageSettingsManager.isEqualExtensionProvider(provider, false);
+		}
+		return false;
 	}
 
 	private class ProvidersTableLabelProvider extends LanguageSettingsProvidersLabelProvider {
@@ -169,7 +170,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 			String[] overlayKeys = super.getOverlayKeys(provider);
 
 			ILanguageSettingsProvider rawProvider = page.isForPrefs() ? LanguageSettingsManager.getRawProvider(provider) : provider;
-			if (LanguageSettingsManager_TBD.isReconfigured(rawProvider)) {
+			if (isReconfigured(rawProvider)) {
 				overlayKeys[IDecoration.TOP_RIGHT] = CDTSharedImages.IMG_OVR_SETTING;
 			}
 
@@ -315,18 +316,16 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 					ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(provider);
 					if (!LanguageSettingsProviderAssociationManager.shouldBeShared(rawProvider)) {
 						// Switch to local provider instance
-						try {
-							if (rawProvider instanceof ILanguageSettingsEditableProvider) {
-								provider = ((ILanguageSettingsEditableProvider) rawProvider).cloneShallow();
+						if (rawProvider instanceof ILanguageSettingsEditableProvider) {
+							ILanguageSettingsEditableProvider newProvider = LanguageSettingsManager.getProviderCopy((ILanguageSettingsEditableProvider) rawProvider, false);
+							if (newProvider != null) {
+								provider = newProvider;
+								replaceSelectedProvider(provider);
+								ICConfigurationDescription cfgDescription = getConfigurationDescription();
+								initializeOptionsPage(provider, cfgDescription);
+								displaySelectedOptionPage();
 							}
-						} catch (CloneNotSupportedException e) {
-							CUIPlugin.log("Error cloning provider " + provider.getId(), e);
 						}
-
-						replaceSelectedProvider(provider);
-						ICConfigurationDescription cfgDescription = getConfigurationDescription();
-						initializeOptionsPage(provider, cfgDescription);
-						displaySelectedOptionPage();
 					}
 				}
 
@@ -659,7 +658,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 
 		boolean canReset = false;
 		if (rawProvider!=null && (canForWorkspace || canForProject)) {
-			canReset = ! LanguageSettingsManager_TBD.isEqualExtensionProvider(rawProvider);
+			canReset = ! LanguageSettingsManager.isEqualExtensionProvider(rawProvider, true);
 		}
 
 		boolean canMoveUp = page.isForProject() && isProviderSelected && isRangeOk && pos!=0;
@@ -721,28 +720,24 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 		} else {
 			ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(selectedProvider);
 			if (rawProvider instanceof ILanguageSettingsEditableProvider) {
-				ILanguageSettingsEditableProvider editableProvider = (ILanguageSettingsEditableProvider) rawProvider;
-
-				try {
-					ILanguageSettingsEditableProvider newProvider = editableProvider.cloneShallow();
+				ILanguageSettingsEditableProvider newProvider = LanguageSettingsManager.getProviderCopy((ILanguageSettingsEditableProvider) rawProvider, false);
+				if (newProvider != null) {
 					replaceSelectedProvider(newProvider);
-
 					ICConfigurationDescription cfgDescription = getConfigurationDescription();
 					initializeOptionsPage(newProvider, cfgDescription);
 					displaySelectedOptionPage();
-
-				} catch (CloneNotSupportedException e) {
-					CUIPlugin.log("Error cloning provider " + editableProvider.getId(), e);
-					return;
 				}
 			}
-
 		}
 		updateButtons();
 	}
 
 	private void performReset(ILanguageSettingsProvider selectedProvider) {
-		ILanguageSettingsProvider newProvider = LanguageSettingsManager.getExtensionProviderCopy(selectedProvider.getId());
+		String id = selectedProvider.getId();
+		ILanguageSettingsProvider newProvider = LanguageSettingsManager.getExtensionProviderCopy(id, true);
+		if (newProvider == null) {
+			newProvider = LanguageSettingsManager.getWorkspaceProvider(id);
+		}
 		replaceSelectedProvider(newProvider);
 
 		ICConfigurationDescription cfgDescription = getConfigurationDescription();
@@ -840,8 +835,11 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 						boolean atLeastOneChanged = false;
 						for (int i=0;i<cfgProviders.size();i++) {
 							ILanguageSettingsProvider provider = cfgProviders.get(i);
-							if (!LanguageSettingsManager.isWorkspaceProvider(provider) && !LanguageSettingsManager_TBD.isEqualExtensionProvider(provider)) {
-								ILanguageSettingsProvider extProvider = LanguageSettingsManager.getExtensionProviderCopy(provider.getId());
+							if (!LanguageSettingsManager.isWorkspaceProvider(provider) && !LanguageSettingsManager.isEqualExtensionProvider(provider, true)) {
+								ILanguageSettingsProvider extProvider = LanguageSettingsManager.getExtensionProviderCopy(provider.getId(), true);
+								if (extProvider == null) {
+									extProvider = LanguageSettingsManager.getWorkspaceProvider(provider.getId());
+								}
 								cfgProviders.set(i, extProvider);
 								atLeastOneChanged = true;
 							}
@@ -856,8 +854,12 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 					for (int i=0;i<providers.size();i++) {
 						ILanguageSettingsProvider provider = providers.get(i);
 						ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(provider);
-						if (!LanguageSettingsManager_TBD.isEqualExtensionProvider(rawProvider)) {
-							ILanguageSettingsProvider extProvider = LanguageSettingsManager.getExtensionProviderCopy(provider.getId());
+						if (!LanguageSettingsManager.isEqualExtensionProvider(rawProvider, true)) {
+							String id = provider.getId();
+							ILanguageSettingsProvider extProvider = LanguageSettingsManager.getExtensionProviderCopy(id, true);
+							if (extProvider == null) {
+								extProvider = LanguageSettingsManager.getWorkspaceProvider(id);
+							}
 							providers.set(i, extProvider);
 						}
 					}

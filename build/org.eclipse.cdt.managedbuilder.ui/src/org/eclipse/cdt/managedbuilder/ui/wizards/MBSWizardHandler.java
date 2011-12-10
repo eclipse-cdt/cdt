@@ -912,10 +912,9 @@ public class MBSWizardHandler extends CWizardHandler {
 							break;
 						}
 					}
-				} else if (id.length()>0){
-					// TODO - look into saving on copying, need to figure out "shared" attribute from extension provider directly
-					ILanguageSettingsProvider providerExt = LanguageSettingsManager.getExtensionProviderCopy(id);
-					if (LanguageSettingsProviderAssociationManager.shouldBeShared(providerExt)) {
+				} else if (id.length()>0) {
+					ILanguageSettingsProvider providerExt = LanguageSettingsManager.getExtensionProviderCopy(id, false);
+					if (providerExt == null || LanguageSettingsProviderAssociationManager.shouldBeShared(providerExt)) {
 						provider = LanguageSettingsManager.getWorkspaceProvider(id);
 					} else {
 						provider = providerExt;
@@ -935,7 +934,7 @@ public class MBSWizardHandler extends CWizardHandler {
 		}
 
 		if (!isProviderThere(providers, UI_USER_LANGUAGE_SETTINGS_PROVIDER)) {
-			ILanguageSettingsProvider provider = LanguageSettingsManager.getExtensionProviderCopy(UI_USER_LANGUAGE_SETTINGS_PROVIDER);
+			ILanguageSettingsProvider provider = LanguageSettingsManager.getExtensionProviderCopy(UI_USER_LANGUAGE_SETTINGS_PROVIDER, true);
 			providers.add(0, provider);
 		}
 

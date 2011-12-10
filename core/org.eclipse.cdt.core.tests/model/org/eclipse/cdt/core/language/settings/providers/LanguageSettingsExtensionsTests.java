@@ -25,7 +25,6 @@ import org.eclipse.cdt.core.settings.model.CMacroFileEntry;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
-import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsExtensionManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
@@ -108,14 +107,14 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 
 		{
 			// test provider not in the list
-			ILanguageSettingsProvider providerExt = LanguageSettingsManager.getExtensionProviderCopy("missing.povider");
-			assertTrue(LanguageSettingsManager.isWorkspaceProvider(providerExt));
-			ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(providerExt);
-			assertNull(rawProvider);
+			ILanguageSettingsProvider providerExt = LanguageSettingsManager.getExtensionProviderCopy("missing.povider", true);
+			assertNull(providerExt);
 		}
 
 		// get test plugin extension provider
-		ILanguageSettingsProvider providerExt = LanguageSettingsManager.getExtensionProviderCopy(EXTENSION_BASE_PROVIDER_ID);
+		ILanguageSettingsProvider providerExtCopy = LanguageSettingsManager.getExtensionProviderCopy(EXTENSION_BASE_PROVIDER_ID, true);
+		assertNull(providerExtCopy);
+		ILanguageSettingsProvider providerExt = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_BASE_PROVIDER_ID);
 		assertTrue(LanguageSettingsManager.isWorkspaceProvider(providerExt));
 
 		// get raw extension provider
@@ -157,7 +156,9 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 	 */
 	public void testExtensionBaseProviderSubclass() throws Exception {
 		// get test plugin extension provider
-		ILanguageSettingsProvider providerExt = LanguageSettingsManager.getExtensionProviderCopy(EXTENSION_BASE_SUBCLASS_PROVIDER_ID);
+		ILanguageSettingsProvider providerExtCopy = LanguageSettingsManager.getExtensionProviderCopy(EXTENSION_BASE_SUBCLASS_PROVIDER_ID, true);
+		assertNull(providerExtCopy);
+		ILanguageSettingsProvider providerExt = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_BASE_SUBCLASS_PROVIDER_ID);
 		assertTrue(LanguageSettingsManager.isWorkspaceProvider(providerExt));
 
 		// get raw extension provider
@@ -187,7 +188,9 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 	 */
 	public void testExtensionCustomProvider() throws Exception {
 		// get test plugin extension non-default provider
-		ILanguageSettingsProvider providerExt = LanguageSettingsManager.getExtensionProviderCopy(EXTENSION_CUSTOM_PROVIDER_ID);
+		ILanguageSettingsProvider providerExtCopy = LanguageSettingsManager.getExtensionProviderCopy(EXTENSION_CUSTOM_PROVIDER_ID, true);
+		assertNull(providerExtCopy);
+		ILanguageSettingsProvider providerExt = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_CUSTOM_PROVIDER_ID);
 		assertTrue(LanguageSettingsManager.isWorkspaceProvider(providerExt));
 
 		// get raw extension provider
@@ -256,7 +259,9 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 	 */
 	public void testSerializableProvider() throws Exception {
 		// get test plugin extension for serializable provider
-		ILanguageSettingsProvider providerExt = LanguageSettingsManager.getExtensionProviderCopy(EXTENSION_SERIALIZABLE_PROVIDER_ID);
+		ILanguageSettingsProvider providerExtCopy = LanguageSettingsManager.getExtensionProviderCopy(EXTENSION_SERIALIZABLE_PROVIDER_ID, true);
+		assertNull(providerExtCopy);
+		ILanguageSettingsProvider providerExt = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_SERIALIZABLE_PROVIDER_ID);
 		assertTrue(LanguageSettingsManager.isWorkspaceProvider(providerExt));
 
 		// get raw extension provider
@@ -279,28 +284,25 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 		// Non-editable providers cannot be copied so they are singletons
 		{
 			// get test plugin extension for serializable provider
-			ILanguageSettingsProvider providerExt = LanguageSettingsManager.getExtensionProviderCopy(EXTENSION_SERIALIZABLE_PROVIDER_ID);
+			ILanguageSettingsProvider providerExtCopy = LanguageSettingsManager.getExtensionProviderCopy(EXTENSION_SERIALIZABLE_PROVIDER_ID, true);
+			assertNull(providerExtCopy);
+			ILanguageSettingsProvider providerExt = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_SERIALIZABLE_PROVIDER_ID);
 			assertTrue(LanguageSettingsManager.isWorkspaceProvider(providerExt));
 
 			// get raw extension provider
 			ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(providerExt);
 			assertTrue(rawProvider instanceof LanguageSettingsSerializableProvider);
-			assertTrue(LanguageSettingsExtensionManager.equalsExtensionProvider(rawProvider));
-
-			// compare with workspace provider
-			ILanguageSettingsProvider providerWsp = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_SERIALIZABLE_PROVIDER_ID);
-			ILanguageSettingsProvider providerWspRaw = LanguageSettingsManager.getRawProvider(providerWsp);
-			assertSame(rawProvider, providerWspRaw);
+			assertTrue(LanguageSettingsManager.isEqualExtensionProvider(rawProvider, true));
 		}
 
 		// Editable providers are retrieved by copy
 		{
-			ILanguageSettingsProvider providerExt = LanguageSettingsManager.getExtensionProviderCopy(EXTENSION_EDITABLE_PROVIDER_ID);
+			ILanguageSettingsProvider providerExt = LanguageSettingsManager.getExtensionProviderCopy(EXTENSION_EDITABLE_PROVIDER_ID, true);
 			assertFalse(LanguageSettingsManager.isWorkspaceProvider(providerExt));
 			assertTrue(providerExt instanceof ILanguageSettingsEditableProvider);
-			assertTrue(LanguageSettingsExtensionManager.equalsExtensionProvider(providerExt));
+			assertTrue(LanguageSettingsManager.isEqualExtensionProvider(providerExt, true));
 
-			ILanguageSettingsProvider providerExt2 = LanguageSettingsManager.getExtensionProviderCopy(EXTENSION_EDITABLE_PROVIDER_ID);
+			ILanguageSettingsProvider providerExt2 = LanguageSettingsManager.getExtensionProviderCopy(EXTENSION_EDITABLE_PROVIDER_ID, true);
 			assertNotSame(providerExt, providerExt2);
 			assertEquals(providerExt, providerExt2);
 
@@ -308,22 +310,22 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 			ILanguageSettingsProvider providerWspRaw = LanguageSettingsManager.getRawProvider(providerWsp);
 			assertNotSame(providerExt, providerWspRaw);
 			assertEquals(providerExt, providerWspRaw);
-			assertTrue(LanguageSettingsExtensionManager.equalsExtensionProvider(providerWspRaw));
+			assertTrue(LanguageSettingsManager.isEqualExtensionProvider(providerWspRaw, true));
 		}
 
 		// Test shallow copy
 		{
-			ILanguageSettingsProvider provider = LanguageSettingsManager.getExtensionProviderCopy(EXTENSION_EDITABLE_PROVIDER_ID);
+			ILanguageSettingsProvider provider = LanguageSettingsManager.getExtensionProviderCopy(EXTENSION_EDITABLE_PROVIDER_ID, true);
 			assertNotNull(provider);
 			assertTrue(provider instanceof ILanguageSettingsEditableProvider);
 
-			ILanguageSettingsProvider providerShallow = LanguageSettingsExtensionManager.getExtensionProviderShallow(EXTENSION_EDITABLE_PROVIDER_ID);
+			ILanguageSettingsProvider providerShallow = LanguageSettingsManager.getExtensionProviderCopy(EXTENSION_EDITABLE_PROVIDER_ID, false);
 			assertNotNull(providerShallow);
 			assertTrue(providerShallow instanceof ILanguageSettingsEditableProvider);
 			assertFalse(provider.equals(providerShallow));
 
-			assertFalse(LanguageSettingsExtensionManager.equalsExtensionProvider(providerShallow));
-			assertTrue(LanguageSettingsExtensionManager.equalsExtensionProviderShallow((ILanguageSettingsEditableProvider) providerShallow));
+			assertFalse(LanguageSettingsManager.isEqualExtensionProvider(providerShallow, true));
+			assertTrue(LanguageSettingsManager.isEqualExtensionProvider(providerShallow, false));
 		}
 	}
 
@@ -331,7 +333,7 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 	 * Check that LanguageSettingsGenericProvider extension defined in plugin.xml is accessible.
 	 */
 	public void testExtensionGenericProvider() throws Exception {
-		ILanguageSettingsProvider provider = LanguageSettingsExtensionManager.getExtensionProviderClone(EXTENSION_USER_PROVIDER_ID);
+		ILanguageSettingsProvider provider = LanguageSettingsManager.getExtensionProviderCopy(EXTENSION_USER_PROVIDER_ID, true);
 		assertNotNull("extension " + EXTENSION_USER_PROVIDER_ID + " not found", provider);
 		assertTrue(provider instanceof LanguageSettingsGenericProvider);
 	}

@@ -60,7 +60,7 @@ public class LanguageSettingsManager {
 	 * Builds for the provider a nice looking resource tree to present hierarchical view to the user.
 	 *
 	 * TODO - Note that after using this method for a while for BOP parsers it appears that disadvantages
-	 * outweight benefits. In particular, it doesn't result in saving memory as the language settings
+	 * outweigh benefits. In particular, it doesn't result in saving memory as the language settings
 	 * (and the lists itself) are not duplicated in memory anyway but optimized with using WeakHashSet
 	 * and SafeStringInterner.
 	 *
@@ -158,24 +158,37 @@ public class LanguageSettingsManager {
 	}
 
 	/**
+	 * TODO
+	 * @param deepCopy TODO
+	 * @param id
+	 *
+	 * @return
+	 */
+	public static ILanguageSettingsEditableProvider getProviderCopy(ILanguageSettingsEditableProvider provider, boolean deep) {
+		return LanguageSettingsExtensionManager.getProviderCopy(provider, deep);
+	}
+
+	/**
 	 * Get Language Settings Provider defined via
 	 * {@code org.eclipse.cdt.core.LanguageSettingsProvider} extension point.
 	 *
 	 * @param id - ID of provider to find.
+	 * @param deep TODO
 	 * @return the copy of the provider if possible (i.e. for {@link ILanguageSettingsEditableProvider})
 	 *    or workspace provider if provider is not copyable.
 	 */
-	public static ILanguageSettingsProvider getExtensionProviderCopy(String id) {
-		ILanguageSettingsProvider provider = null;
-		try {
-			provider = LanguageSettingsExtensionManager.getExtensionProviderClone(id);
-		} catch (CloneNotSupportedException e) {
-			// from here falls to get workspace provider
-		}
-		if (provider==null)
-			provider = LanguageSettingsManager.getWorkspaceProvider(id);
+	public static ILanguageSettingsProvider getExtensionProviderCopy(String id, boolean deep) {
+		return LanguageSettingsExtensionManager.getExtensionProviderCopy(id, deep);
+	}
 
-		return provider;
+	/**
+	 * TODO
+	 * @param provider
+	 * @param deep
+	 * @return
+	 */
+	public static boolean isEqualExtensionProvider(ILanguageSettingsProvider provider, boolean deep) {
+		return LanguageSettingsExtensionManager.isEqualsExtensionProvider(provider, deep);
 	}
 
 	/**

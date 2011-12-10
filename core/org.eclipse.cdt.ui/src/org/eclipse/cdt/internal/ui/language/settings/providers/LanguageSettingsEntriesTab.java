@@ -980,16 +980,14 @@ providers:	for (ILanguageSettingsProvider provider : oldProviders) {
 						String langId = (String)langItems.getData();
 						if (langId!=null) {
 							if (provider.getSettingEntries(cfgDescription, rc, langId)!=null) {
-								try {
-									// clone providers to be able to "Cancel" in UI
-									if (providerCopy==null) {
-										providerCopy = ((ILanguageSettingsEditableProvider) provider).clone();
+								if (providerCopy == null) {
+									// copy providers to be able to "Cancel" in UI
+									providerCopy = LanguageSettingsManager.getProviderCopy((ILanguageSettingsEditableProvider) provider, true);
+									if (providerCopy == null) {
+										continue providers;
 									}
 									providerCopy.setSettingEntries(cfgDescription, rc, langId, null);
 									changed = true;
-								} catch (CloneNotSupportedException e) {
-									CUIPlugin.log("Internal Error: cannot clone provider "+provider.getId(), e);
-									continue providers;
 								}
 							}
 						}

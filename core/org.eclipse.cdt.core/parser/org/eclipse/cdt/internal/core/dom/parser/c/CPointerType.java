@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Devin Steffler (IBM Rational Software) - Initial API and implementation 
+ *     Devin Steffler (IBM Rational Software) - Initial API and implementation 
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -34,6 +34,7 @@ public class CPointerType implements ICPointerType, ITypeContainer, ISerializabl
 		this.qualifiers = qualifiers;
 	}
 	
+	@Override
 	public boolean isSameType(IType obj) {
 	    if (obj == this)
 	        return true;
@@ -51,34 +52,27 @@ public class CPointerType implements ICPointerType, ITypeContainer, ISerializabl
     	return false;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.c.ICPointerType#isRestrict()
-	 */
+	@Override
 	public boolean isRestrict() {
 		return (qualifiers & IS_RESTRICT) != 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IPointerType#getType()
-	 */
+	@Override
 	public IType getType() {
 		return nextType;
 	}
 	
+	@Override
 	public void setType(IType type) {
 		nextType = type;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IPointerType#isConst()
-	 */
+	@Override
 	public boolean isConst() {
 		return (qualifiers & IS_CONST) != 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IPointerType#isVolatile()
-	 */
+	@Override
 	public boolean isVolatile() {
 		return (qualifiers & IS_VOLATILE) != 0;
 	}
@@ -98,6 +92,7 @@ public class CPointerType implements ICPointerType, ITypeContainer, ISerializabl
 		this.qualifiers = qualifiers;
 	}
 
+	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
 		int firstByte= ITypeMarshalBuffer.POINTER;
 		if (isConst()) firstByte |= ITypeMarshalBuffer.FLAG1;

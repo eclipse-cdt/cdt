@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Doug Schaefer (QNX) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     Doug Schaefer (QNX) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -32,7 +32,6 @@ import org.eclipse.core.runtime.CoreException;
  * Typedefs for c++
  */
 class PDOMCPPTypedef extends PDOMCPPBinding implements ITypedef, ITypeContainer, IIndexType {
-
 	private static final int TYPE_OFFSET = PDOMBinding.RECORD_SIZE;
 	
 	@SuppressWarnings("hiding")
@@ -107,6 +106,7 @@ class PDOMCPPTypedef extends PDOMCPPBinding implements ITypedef, ITypeContainer,
 		return IIndexCPPBindingConstants.CPPTYPEDEF;
 	}
 
+	@Override
 	public IType getType() {
 		try {
 			return getLinkage().loadType(record + TYPE_OFFSET);
@@ -116,6 +116,7 @@ class PDOMCPPTypedef extends PDOMCPPBinding implements ITypedef, ITypeContainer,
 		}
 	}
 
+	@Override
 	public boolean isSameType(IType type) {
 		IType myrtype = getType();
 		if (myrtype == null)
@@ -129,12 +130,8 @@ class PDOMCPPTypedef extends PDOMCPPBinding implements ITypedef, ITypeContainer,
 		}
 		return myrtype.isSameType(type);
 	}
-	
-	@Override
-	protected String toStringBase() {
-		return ASTTypeUtil.getQualifiedName(this) + " -> " + super.toStringBase(); //$NON-NLS-1$
-	}
 
+	@Override
 	public void setType(IType type) { 
 		throw new UnsupportedOperationException(); 
 	}
@@ -142,5 +139,10 @@ class PDOMCPPTypedef extends PDOMCPPBinding implements ITypedef, ITypeContainer,
 	@Override
 	public Object clone() {
 		return new CPPTypedefClone(this);
+	}
+
+	@Override
+	protected String toStringBase() {
+		return ASTTypeUtil.getQualifiedName(this) + " -> " + super.toStringBase(); //$NON-NLS-1$
 	}
 }

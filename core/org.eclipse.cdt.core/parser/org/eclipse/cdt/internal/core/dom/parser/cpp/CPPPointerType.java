@@ -46,6 +46,7 @@ public class CPPPointerType implements IPointerType, ITypeContainer, ISerializab
 	    this(type, false, false, false);
 	}
 
+	@Override
 	public boolean isSameType(IType o) {
 	    if (o == this)
             return true;
@@ -68,23 +69,28 @@ public class CPPPointerType implements IPointerType, ITypeContainer, ISerializab
 	    return false;
 	}
 
+	@Override
 	public IType getType() {
 		return type;
 	}
 	
+	@Override
 	public void setType(IType t) {
 		assert t != null;
 	    type = t;
 	}
 
+	@Override
 	public boolean isConst() {
 		return isConst;
 	}
 
+	@Override
 	public boolean isVolatile() {
 		return isVolatile;
 	}
 
+	@Override
 	public boolean isRestrict() {
 		return isRestrict;
 	}
@@ -101,10 +107,6 @@ public class CPPPointerType implements IPointerType, ITypeContainer, ISerializab
     }
 
 	@Override
-	public String toString() {
-		return ASTTypeUtil.getType(this);
-	}
-
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
 		int firstByte= ITypeMarshalBuffer.POINTER;
 		if (isConst()) firstByte |= ITypeMarshalBuffer.FLAG1;
@@ -120,5 +122,10 @@ public class CPPPointerType implements IPointerType, ITypeContainer, ISerializab
 		return new CPPPointerType(nested, (firstByte & ITypeMarshalBuffer.FLAG1) != 0,
 				(firstByte & ITypeMarshalBuffer.FLAG2) != 0,
 				(firstByte & ITypeMarshalBuffer.FLAG3) != 0);
+	}
+
+	@Override
+	public String toString() {
+		return ASTTypeUtil.getType(this);
 	}
 }

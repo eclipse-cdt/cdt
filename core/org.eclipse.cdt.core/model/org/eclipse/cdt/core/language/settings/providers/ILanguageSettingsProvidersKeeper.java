@@ -25,10 +25,12 @@ public interface ILanguageSettingsProvidersKeeper {
 	 * used to supply language settings {@link ICLanguageSettingEntry} such as include paths
 	 * or preprocessor macros.
 	 *
-	 * @param providers the list of providers to assign to the owner (configuration description).
+	 * @param providers - the list of providers to assign to the owner (configuration description).
 	 *    This method clones the internal list or otherwise ensures immutability of the internal
-	 *    list before actual addition to the project model.
-	 *    That is due to TODO - very important reason but I forgot why by now.
+	 *    list before actual addition to the project model. That is to ensure that there is no
+	 *    back-door access and all changes in the list done by this method which fires notifications
+	 *    to the registered listeners about the accompanied changes in settings entries, see
+	 *    {@link LanguageSettingsManager#registerLanguageSettingsChangeListener(ILanguageSettingsChangeListener)}.
 	 */
 	public void setLanguageSettingProviders(List<ILanguageSettingsProvider> providers);
 

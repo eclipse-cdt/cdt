@@ -121,7 +121,10 @@ public class LanguageSettingsManager {
 	}
 
 	/**
-	 * Checks if the provider is defined on the workspace level.
+	 * Checks if the provider is a workspace level provider.
+	 * This method is intended to check providers retrieved from a configuration.
+	 * Raw providers from {@link #getRawProvider(ILanguageSettingsProvider)}
+	 * are not considered as workspace providers.
 	 *
 	 * @param provider - provider to check.
 	 * @return {@code true} if the given provider is workspace provider, {@code false} otherwise.
@@ -131,12 +134,16 @@ public class LanguageSettingsManager {
 	}
 
 	/**
-	 * TODO - helper method for often used chunk of code
-	 * @param provider
-	 * @return ILanguageSettingsProvider
+	 * Helper method to get to real underlying provider collecting entries as opposed to wrapper
+	 * which is normally used for workspace provider.
+	 * @see LanguageSettingsProvidersSerializer#isWorkspaceProvider(ILanguageSettingsProvider)
+	 * 
+	 * @param provider - the provider to get raw provider for. Can be either workspace provider
+	 *    or regular one.
+	 * @return raw underlying provider for workspace provider or provider itself if no wrapper is used.
 	 */
 	public static ILanguageSettingsProvider getRawProvider(ILanguageSettingsProvider provider) {
-		if (LanguageSettingsManager.isWorkspaceProvider(provider)){
+		if (LanguageSettingsManager.isWorkspaceProvider(provider)) {
 			provider = LanguageSettingsProvidersSerializer.getRawWorkspaceProvider(provider.getId());
 		}
 		return provider;
@@ -158,34 +165,43 @@ public class LanguageSettingsManager {
 	}
 
 	/**
-	 * TODO
-	 * @param deepCopy TODO
-	 * @param id
+	 * Copy language settings provider. It is different from clone() methods in that
+	 * it does not throw {@code CloneNotSupportedException} but returns {@code null}
+	 * instead.
+	 * 
+	 * @param provider - language settings provider to copy.
+	 * @param deep - {@code true} to request deep copy including copying settings entries
+	 *    or {@code false} to return shallow copy with no settings entries.
 	 *
-	 * @return
+	 * @return a copy of the provider or null if copying is not possible.
 	 */
 	public static ILanguageSettingsEditableProvider getProviderCopy(ILanguageSettingsEditableProvider provider, boolean deep) {
 		return LanguageSettingsExtensionManager.getProviderCopy(provider, deep);
 	}
 
 	/**
-	 * Get Language Settings Provider defined via
-	 * {@code org.eclipse.cdt.core.LanguageSettingsProvider} extension point.
+	 * Get language settings provider defined via extension point
+	 * {@code org.eclipse.cdt.core.LanguageSettingsProvider}.
+	 * A new copy of the extension provider is returned.
 	 *
-	 * @param id - ID of provider to find.
-	 * @param deep TODO
-	 * @return the copy of the provider if possible (i.e. for {@link ILanguageSettingsEditableProvider})
-	 *    or workspace provider if provider is not copyable.
+	 * @param id - ID of the extension provider.
+	 * @param deep - {@code true} to request deep copy including copying settings entries
+	 *    or {@code false} to return shallow copy with no settings entries.
+	 * @return the copy of the extension provider if possible (i.e. for {@link ILanguageSettingsEditableProvider})
+	 *    or {@code null} if provider is not copyable.
 	 */
 	public static ILanguageSettingsProvider getExtensionProviderCopy(String id, boolean deep) {
 		return LanguageSettingsExtensionManager.getExtensionProviderCopy(id, deep);
 	}
 
 	/**
-	 * TODO
-	 * @param provider
-	 * @param deep
-	 * @return
+	 * Test if the provider is equal to the one defined via extension point
+	 * {@code org.eclipse.cdt.core.LanguageSettingsProvider}.
+	 * 
+	 * @param provider - the provider to test.
+	 * @param deep - {@code true} to check for deep equality testing also settings entries
+	 *    or {@code false} to test shallow copy with no settings entries.
+	 * @return - {@code true} if the provider matches the extension or {@code false} otherwise.
 	 */
 	public static boolean isEqualExtensionProvider(ILanguageSettingsProvider provider, boolean deep) {
 		return LanguageSettingsExtensionManager.isEqualsExtensionProvider(provider, deep);

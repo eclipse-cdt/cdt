@@ -276,8 +276,8 @@ public class LanguageSettingsExtensionManager {
 		}
 
 		ILanguageSettingsProvider provider = createProviderCarcass(className, Platform.getExtensionRegistry());
-		if (provider==null) {
-			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "Not able to load provider class=" + className);
+		if (provider == null) {
+			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "Not able to load provider class=" + className); //$NON-NLS-1$
 			CCorePlugin.log(new CoreException(status));
 		}
 		return provider;
@@ -291,20 +291,27 @@ public class LanguageSettingsExtensionManager {
 		ArrayList<ILanguageSettingsProvider> list = new ArrayList<ILanguageSettingsProvider>(fExtensionProviders.size());
 		for (String id : fExtensionProviders.keySet()) {
 			ILanguageSettingsProvider extensionProvider = getExtensionProviderCopy(id, true);
-			if (extensionProvider==null)
+			if (extensionProvider == null) {
 				extensionProvider = fExtensionProviders.get(id);
+			}
 
-			if (extensionProvider!=null)
+			if (extensionProvider != null) {
 				list.add(extensionProvider);
+			}
 		}
 		return list;
 	}
 
 	/**
-	 * TODO
-	 * @param provider
-	 * @param deep
-	 * @return
+	 * Copy language settings provider. It is different from clone() methods in that
+	 * it does not throw {@code CloneNotSupportedException} but returns {@code null}
+	 * instead.
+	 *
+	 * @param provider - language settings provider to copy.
+	 * @param deep - {@code true} to request deep copy including copying settings entries
+	 *    or {@code false} to return shallow copy with no settings entries.
+	 *
+	 * @return a copy of the provider or null if copying is not possible.
 	 */
 	public static ILanguageSettingsEditableProvider getProviderCopy(ILanguageSettingsEditableProvider provider, boolean deep) {
 		try {
@@ -320,12 +327,15 @@ public class LanguageSettingsExtensionManager {
 	}
 
 	/**
-	 * Get Language Settings Provider defined via
-	 * {@code org.eclipse.cdt.core.LanguageSettingsProvider} extension point.
+	 * Get language settings provider defined via extension point
+	 * {@code org.eclipse.cdt.core.LanguageSettingsProvider}.
+	 * A new copy of the extension provider is returned.
 	 *
-	 * @param id - ID of provider to find.
-	 * @param deep TODO
-	 * @return the clone of the provider or {@code null} TODO if provider is not defined.
+	 * @param id - ID of the extension provider.
+	 * @param deep - {@code true} to request deep copy including copying settings entries
+	 *    or {@code false} to return shallow copy with no settings entries.
+	 * @return the copy of the extension provider if possible (i.e. for {@link ILanguageSettingsEditableProvider})
+	 *    or {@code null} if provider is not copyable.
 	 */
 	public static ILanguageSettingsProvider getExtensionProviderCopy(String id, boolean deep) {
 		ILanguageSettingsProvider provider = fExtensionProviders.get(id);
@@ -337,10 +347,13 @@ public class LanguageSettingsExtensionManager {
 	}
 
 	/**
-	 * TODO
-	 * @param provider
-	 * @param deep
-	 * @return
+	 * Test if the provider is equal to the one defined via extension point
+	 * {@code org.eclipse.cdt.core.LanguageSettingsProvider}.
+	 *
+	 * @param provider - the provider to test.
+	 * @param deep - {@code true} to check for deep equality testing also settings entries
+	 *    or {@code false} to test shallow copy with no settings entries.
+	 * @return - {@code true} if the provider matches the extension or {@code false} otherwise.
 	 */
 	public static boolean isEqualsExtensionProvider(ILanguageSettingsProvider provider, boolean deep) {
 		String id = provider.getId();

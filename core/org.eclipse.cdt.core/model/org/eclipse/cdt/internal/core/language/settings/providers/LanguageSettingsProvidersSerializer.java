@@ -88,6 +88,9 @@ public class LanguageSettingsProvidersSerializer {
 
 	private static ListenerList fLanguageSettingsChangeListeners = new ListenerList(ListenerList.IDENTITY);
 
+	/**
+	 * language settings provider listener-cfgDescription association
+	 */
 	private static class ListenerAssociation {
 		private ICListenerAgent listener;
 		private ICConfigurationDescription cfgDescription;
@@ -98,6 +101,11 @@ public class LanguageSettingsProvidersSerializer {
 		}
 	}
 
+	/**
+	 * Wrapper for workspace providers to ensure level of indirection. That way workspace providers
+	 * can be changed/replaced without notifying/changing the configurations which keep the providers
+	 * in their lists.
+	 */
 	private static class LanguageSettingsWorkspaceProvider implements ILanguageSettingsProvider, ICListenerAgent {
 		private String providerId;
 		private int projectCount = 0;
@@ -141,6 +149,7 @@ public class LanguageSettingsProvidersSerializer {
 			}
 			return false;
 		}
+
 		/**
 		 * Method toString() for debugging purposes.
 		 */
@@ -171,7 +180,7 @@ public class LanguageSettingsProvidersSerializer {
 
 		@Override
 		public void registerListener(ICConfigurationDescription cfgDescription) {
-			// keep in mind that rawProvider can change
+			// keep in mind that rawProvider can change externally
 			ILanguageSettingsProvider rawProvider = getRawProvider();
 			if (rawProvider instanceof ICListenerAgent) {
 				((ICListenerAgent) rawProvider).registerListener(null);
@@ -180,7 +189,7 @@ public class LanguageSettingsProvidersSerializer {
 
 		@Override
 		public void unregisterListener() {
-			// keep in mind that rawProvider can change
+			// keep in mind that rawProvider can change externally
 			ILanguageSettingsProvider rawProvider = getRawProvider();
 			if (rawProvider instanceof ICListenerAgent) {
 				((ICListenerAgent) rawProvider).unregisterListener();
@@ -190,7 +199,6 @@ public class LanguageSettingsProvidersSerializer {
 
 	/**
 	 * Language Settings Change Event implementation.
-	 *
 	 */
 	private static class LanguageSettingsChangeEvent implements ILanguageSettingsChangeEvent {
 		private String projectName = null;
@@ -287,7 +295,7 @@ public class LanguageSettingsProvidersSerializer {
 	}
 
 	/**
-		 * Set and store in workspace area user defined providers.
+		 * Set and store user defined providers in workspace area.
 		 *
 		 * @param providers - array of user defined providers
 		 * @throws CoreException in case of problems
@@ -424,6 +432,7 @@ projects:
 				Element elementExtension = XmlUtil.appendElement(rootElement, ELEM_EXTENSION, new String[] {ATTR_POINT, LanguageSettingsExtensionManager.PROVIDER_EXTENSION_FULL_ID});
 
 				for (LanguageSettingsSerializableProvider provider : serializableWorkspaceProviders) {
+					// TODO don't serialize if equals to extension provider
 					provider.serialize(elementExtension);
 				}
 
@@ -448,14 +457,17 @@ projects:
 		}
 	}
 
+	/**
+	 * Load language settings for workspace.
+	 */
 	public static void loadLanguageSettingsWorkspace() throws CoreException {
 		List <ILanguageSettingsProvider> providers = null;
 
 		URI uriStoreWsp = getStoreInWorkspaceArea(STORAGE_WORKSPACE_LANGUAGE_SETTINGS);
 
 		Document doc = null;
-		serializingLock.acquire();
 		try {
+			serializingLock.acquire();
 			doc = XmlUtil.loadXml(uriStoreWsp);
 		} catch (Exception e) {
 			CCorePlugin.log("Can't load preferences from file "+uriStoreWsp, e); //$NON-NLS-1$
@@ -463,12 +475,12 @@ projects:
 			serializingLock.release();
 		}
 
-		if (doc!=null) {
+		if (doc != null) {
 			Element rootElement = doc.getDocumentElement();
 			NodeList providerNodes = rootElement.getElementsByTagName(LanguageSettingsSerializableProvider.ELEM_PROVIDER);
 
 			List<String> userDefinedProvidersIds = new ArrayList<String>();
-			for (int i=0;i<providerNodes.getLength();i++) {
+			for (int i = 0; i < providerNodes.getLength(); i++) {
 				Node providerNode = providerNodes.item(i);
 				String providerId = XmlUtil.determineAttributeValue(providerNode, LanguageSettingsExtensionManager.ATTR_ID);
 				if (userDefinedProvidersIds.contains(providerId)) {
@@ -479,10 +491,10 @@ projects:
 				userDefinedProvidersIds.add(providerId);
 
 				ILanguageSettingsProvider provider = loadProvider(providerNode);
-				if (provider!=null) {
-					if (providers==null)
-						providers= new ArrayList<ILanguageSettingsProvider>();
-
+				if (provider != null) {
+					if (providers == null) {
+						providers = new ArrayList<ILanguageSettingsProvider>();
+					}
 					if (!LanguageSettingsManager.isEqualExtensionProvider(provider, true)) {
 						providers.add(provider);
 					}
@@ -615,6 +627,8 @@ projects:
 	}
 
 	/**
+	 * Load language settings to the project description from XML.
+	 *
 	 * @noreference This method is not intended to be referenced by clients.
 	 * It is public solely for benefit of JUnit testing.
 	 */
@@ -748,6 +762,10 @@ projects:
 		return provider;
 	}
 
+	/**
+	 * Load language settings from workspace and project storages for the given project description.
+	 * @param prjDescription - project description to load language settings.
+	 */
 	public static void loadLanguageSettings(ICProjectDescription prjDescription) {
 		IProject project = prjDescription.getProject();
 		IFile storePrj = project.getFile(SETTINGS_FOLDER_NAME+STORAGE_PROJECT_LANGUAGE_SETTINGS);
@@ -766,8 +784,8 @@ projects:
 
 				URI uriStoreWsp = getStoreInWorkspaceArea(project.getName()+'.'+STORAGE_WORKSPACE_LANGUAGE_SETTINGS);
 				Document docWsp = null;
-				serializingLock.acquire();
 				try {
+					serializingLock.acquire();
 					docWsp = XmlUtil.loadXml(uriStoreWsp);
 				} finally {
 					serializingLock.release();
@@ -821,6 +839,14 @@ projects:
 		return provider;
 	}
 
+	/**
+	 * Helper method to get to real underlying provider collecting entries as opposed to wrapper
+	 * which is normally used for workspace provider.
+	 * @see LanguageSettingsProvidersSerializer#isWorkspaceProvider(ILanguageSettingsProvider)
+	 *
+	 * @param id - ID of the provider.
+	 * @return raw underlying provider.
+	 */
 	public static ILanguageSettingsProvider getRawWorkspaceProvider(String id) {
 		return rawGlobalWorkspaceProviders.get(id);
 	}
@@ -839,11 +865,13 @@ projects:
 	}
 
 	/**
-	 * Checks if the provider is defined on the workspace level.
+	 * Checks if the provider is a workspace level provider.
+	 * This method is intended to check providers retrieved from a configuration.
+	 * Raw providers from {@link #getRawWorkspaceProvider(String)}
+	 * are not considered as workspace providers.
 	 *
 	 * @param provider - provider to check.
 	 * @return {@code true} if the given provider is workspace provider, {@code false} otherwise.
-	 *
 	 */
 	public static boolean isWorkspaceProvider(ILanguageSettingsProvider provider) {
 		return provider instanceof LanguageSettingsWorkspaceProvider;
@@ -1066,6 +1094,7 @@ projects:
 			return LanguageSettingsStorage.getPooledList(provider.getSettingEntries(cfgDescription, rc, languageId));
 		} catch (Throwable e) {
 			String cfgId = cfgDescription!=null ? cfgDescription.getId() : null;
+			@SuppressWarnings("nls")
 			String msg = "Exception in provider "+provider.getId()+": getSettingEntries("+cfgId+", "+rc+", "+languageId+")";
 			CCorePlugin.log(msg, e);
 			// return empty list to prevent getting potentially non-empty list from up the resource tree

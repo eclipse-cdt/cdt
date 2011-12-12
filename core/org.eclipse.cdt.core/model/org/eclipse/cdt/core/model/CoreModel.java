@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model;
 
-
 import java.net.URI;
 
 import org.eclipse.cdt.core.CCProjectNature;
@@ -1425,7 +1424,7 @@ public class CoreModel {
 	}
 	
 	/**
-	 * forces the cached data of the specified projects to be re-calculated.
+	 * Forces the cached data of the specified projects to be re-calculated.
 	 * if the <code>projects</code> argument is <code>null</code> al projects 
 	 * within the workspace are updated
 	 * 
@@ -1438,14 +1437,14 @@ public class CoreModel {
 	}
 	
 	/**
-	 * answers whether the given project is a new-style project, i.e. CConfigurationDataProvider-driven
+	 * Answers whether the given project is a new-style project, i.e. CConfigurationDataProvider-driven
 	 */
 	public boolean isNewStyleProject(IProject project){
 		return descriptionManager.isNewStyleProject(project);
 	}
 
 	/**
-	 * answers whether the given project is a new-style project, i.e. CConfigurationDataProvider-driven
+	 * Answers whether the given project is a new-style project, i.e. CConfigurationDataProvider-driven
 	 */
 	public boolean isNewStyleProject(ICProjectDescription des){
 		return descriptionManager.isNewStyleProject(des);

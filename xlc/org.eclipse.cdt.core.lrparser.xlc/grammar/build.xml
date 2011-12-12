@@ -1,5 +1,5 @@
 <!--
- Copyright (c) 2009, 2010 IBM Corporation and others.
+ Copyright (c) 2009, 2011 IBM Corporation and others.
  All rights reserved. This program and the accompanying materials
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -11,7 +11,9 @@
 
 <project name="XLC Parsers" default="c" basedir=".">
 
-	<import file="../../org.eclipse.cdt.core.lrparser/grammar/generate.xml" />
+	<property file="parserBuild.properties" /> 
+
+	<import file="${lpg_include_loc}/generate.xml" />
 
 	<property name="c_location" value="../parser/org/eclipse/cdt/internal/core/lrparser/xlc/c" />
 	<property name="cpp_location" value="../parser/org/eclipse/cdt/internal/core/lrparser/xlc/cpp" />

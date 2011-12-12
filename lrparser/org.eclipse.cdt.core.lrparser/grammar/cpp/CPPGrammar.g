@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------------------
--- Copyright (c) 2006, 2010 IBM Corporation and others.
+-- Copyright (c) 2006, 2011 IBM Corporation and others.
 -- All rights reserved. This program and the accompanying materials
 -- are made available under the terms of the Eclipse Public License v1.0
 -- which accompanies this distribution, and is available at
@@ -1721,10 +1721,10 @@ type_name_inTemplate  -- all identifiers of some kind
 -- last two rules moved here from simple_type_specifier
 type_name_specifier_inTemplate  -- all identifiers of some kind
     ::= type_name_inTemplate
---      | dcolon_opt nested_name_specifier_opt_inTemplate type_name_inTemplate
---          /. $Build  consumeQualifiedId(false);  $EndBuild ./
---      | dcolon_opt nested_name_specifier_inTemplate 'template' template_id_name
---          /. $Build  consumeQualifiedId(false);  $EndBuild ./
+      | dcolon_opt nested_name_specifier_opt_inTemplate type_name_inTemplate
+          /. $Build  consumeQualifiedId(false);  $EndBuild ./
+      | dcolon_opt nested_name_specifier 'template' template_id_name
+          /. $Build  consumeQualifiedId(false);  $EndBuild ./
       | 'typename' dcolon_opt nested_name_specifier identifier_name
           /. $Build  consumeQualifiedId(false);  $EndBuild ./
       | 'typename' dcolon_opt nested_name_specifier template_opt template_id_name

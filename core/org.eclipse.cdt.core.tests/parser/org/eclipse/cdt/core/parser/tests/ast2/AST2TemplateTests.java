@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -422,7 +422,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 		IPointerType ptype = (IPointerType) pT.getType();
 		assertSame(ptype.getType(), T);
 	}
-	
+
 	// template <class T> class A {        
 	//    A<T>* a;                         
 	//    A<T>* a2;                        
@@ -5019,5 +5019,13 @@ public class AST2TemplateTests extends AST2BaseTest {
 		IASTTranslationUnit tu= parse(code.toString(), ParserLanguage.CPP, true, true);
 		tu = validateCopy(tu);
 		assertEquals(1, tu.getDeclarations().length);
+	}
+	
+	// std::vector<I::C::DM::pr*>& pr_list;                                                                   
+	public void testTemplateParameters_pointerOfClassWithNameSpace_366273() throws Exception {
+		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP);
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept(col);
+		assertEquals(col.getName(4).toString(), "I::C::DM::pr");
 	}
 }

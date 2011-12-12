@@ -20,6 +20,7 @@ import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
@@ -186,7 +187,7 @@ public class GdbLaunch extends DsfLaunch
     ///////////////////////////////////////////////////////////////////////////
     // IServiceEventListener
     @DsfServiceEventHandler public void eventDispatched(ICommandControlShutdownDMEvent event) {
-        shutdownSession(new RequestMonitor(ImmediateExecutor.getInstance(), null));
+        shutdownSession(new ImmediateRequestMonitor());
     }
 
     ///////////////////////////////////////////////////////////////////////////

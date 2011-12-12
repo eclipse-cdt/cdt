@@ -41,7 +41,7 @@ import org.eclipse.cdt.debug.internal.core.breakpoints.BreakpointProblems;
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
-import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
@@ -229,7 +229,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     @Override
     public void initialize(final RequestMonitor rm) {
         super.initialize(
-            new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
+            new ImmediateRequestMonitor(rm) {
                 @Override
                 protected void handleSuccess() {
                     doInitialize(rm);

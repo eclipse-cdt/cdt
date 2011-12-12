@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.concurrent.MultiRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
@@ -397,7 +398,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
     @Override
     public void initialize(final RequestMonitor rm) {
         super.initialize(
-            new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
+            new ImmediateRequestMonitor(rm) {
                 @Override
                 protected void handleSuccess() {
                     doInitialize(rm);
@@ -1093,7 +1094,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 		
 		// This RM propagates any error to the original rm of the actual steps.
 		// Even in case of errors for these steps, we want to continue the overall sequence
-		RequestMonitor stepsRm = new RequestMonitor(ImmediateExecutor.getInstance(), null) {
+		RequestMonitor stepsRm = new ImmediateRequestMonitor() {
 			@Override
 			protected void handleCompleted() {
 				info.rm.setStatus(getStatus());

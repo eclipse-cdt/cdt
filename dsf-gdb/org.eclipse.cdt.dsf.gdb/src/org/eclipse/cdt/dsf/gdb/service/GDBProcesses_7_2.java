@@ -18,7 +18,9 @@ import java.util.Set;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
@@ -93,7 +95,7 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
 
 	@Override
 	public void initialize(final RequestMonitor requestMonitor) {
-		super.initialize(new RequestMonitor(ImmediateExecutor.getInstance(), requestMonitor) {
+		super.initialize(new ImmediateRequestMonitor(requestMonitor) {
 			@Override
 			protected void handleSuccess() {
 				doInitialize(requestMonitor);
@@ -204,7 +206,7 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
 		            	    	ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(procCtx, ICommandControlDMContext.class);
 		            	        fCommandControl.queueCommand(
 		            	        		fCommandFactory.createMIAddInferior(controlDmc),
-		            	        		new DataRequestMonitor<MIAddInferiorInfo>(ImmediateExecutor.getInstance(), rm) {
+		            	        		new ImmediateDataRequestMonitor<MIAddInferiorInfo>(rm) {
 		            	        			@Override
 		            	        			protected void handleSuccess() {
 		            	        				final String groupId = getData().getGroupId();
@@ -237,7 +239,7 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
 		                    				ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(procCtx, ICommandControlDMContext.class);
 		                    				fCommandControl.queueCommand(
 		                    						fCommandFactory.createMITargetDisconnect(controlDmc),
-		                    						new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), rm) {
+		                    						new ImmediateDataRequestMonitor<MIInfo>(rm) {
 		                    							@Override
 		                    							protected void handleSuccess() {
 		                    								fNeedToReconnect = true;
@@ -259,7 +261,7 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
 	    						if (binaryPath != null) {
     				    			fCommandControl.queueCommand(
     				    					fCommandFactory.createMIFileExecAndSymbols(fContainerDmc, binaryPath), 
-			    							new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), rm) {
+			    							new ImmediateDataRequestMonitor<MIInfo>(rm) {
     				    						@Override
     				    						protected void handleCompleted() {
     						                    	// Because of a GDB 7.2 bug, for remote-attach sessions,
@@ -306,7 +308,7 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
 
 	    						fCommandControl.queueCommand(
 	    								fCommandFactory.createMITargetAttach(fContainerDmc, ((IMIProcessDMContext)procCtx).getProcId(), shouldInterrupt),
-		    							new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), rm));
+		    							new ImmediateDataRequestMonitor<MIInfo>(rm));
 		                    }
 		                },
                     	// Start tracking this process' breakpoints.
@@ -389,7 +391,7 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
 				fCommandControl.queueCommand(
 						fCommandFactory.createMITargetSelect(fCommandControl.getContext(), 
 								remoteTcpHost, remoteTcpPort, true), 
-								new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), rm));
+								new ImmediateDataRequestMonitor<MIInfo>(rm));
 			} else {
 				String serialDevice = CDebugUtils.getAttribute(
 						attributes,
@@ -398,7 +400,7 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
 				fCommandControl.queueCommand(
 						fCommandFactory.createMITargetSelect(fCommandControl.getContext(), 
 								serialDevice, true), 
-								new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), rm));
+								new ImmediateDataRequestMonitor<MIInfo>(rm));
 			}
 		} else {
     		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Cannot reconnect to target.", null)); //$NON-NLS-1$
@@ -522,7 +524,7 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
 	public void restart(final IContainerDMContext containerDmc, Map<String, Object> attributes,
             			DataRequestMonitor<IContainerDMContext> rm) {
 		fProcRestarting.add(containerDmc);
-		super.restart(containerDmc, attributes, new DataRequestMonitor<IContainerDMContext>(ImmediateExecutor.getInstance(), rm) {
+		super.restart(containerDmc, attributes, new ImmediateDataRequestMonitor<IContainerDMContext>(rm) {
 			@Override
 			protected void handleCompleted() {
 				if (!isSuccess()) {
@@ -546,7 +548,7 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 {
     				IBreakpointsTargetDMContext bpTargetDmc = DMContexts.getAncestorOfType(dmc, IBreakpointsTargetDMContext.class);
     				MIBreakpointsManager bpmService = getServicesTracker().getService(MIBreakpointsManager.class);
     				if (bpmService != null) {
-    					bpmService.stopTrackingBreakpoints(bpTargetDmc, new RequestMonitor(ImmediateExecutor.getInstance(), null) {
+    					bpmService.stopTrackingBreakpoints(bpTargetDmc, new ImmediateRequestMonitor() {
     						@Override
     						protected void handleCompleted() {
     							// Ok, no need to report any error because we may have already shutdown.

@@ -16,14 +16,13 @@ import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
-import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Query;
-import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.gdb.internal.commands.ISelectPrevTraceRecordHandler;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
-import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl;
 import org.eclipse.cdt.dsf.gdb.service.GDBTraceControl_7_2.TraceRecordSelectedChangedEvent;
+import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceRecordDMContext;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceStatusDMData;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceTargetDMContext;
@@ -81,7 +80,7 @@ public class GdbSelectPrevTraceRecordCommand extends AbstractDebugCommand implem
        							@Override
        							protected void handleSuccess() {
        							 final ITraceRecordDMContext prevDmc = traceControl.createPrevRecordContext(getData());
-       							 traceControl.selectTraceRecord(prevDmc, new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
+       							 traceControl.selectTraceRecord(prevDmc, new ImmediateRequestMonitor(rm) {
        							     @Override
        							     protected void handleSuccess() {
        							         fSession.dispatchEvent(new TraceRecordSelectedChangedEvent(prevDmc), new Hashtable<String, String>());

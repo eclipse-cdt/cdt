@@ -19,7 +19,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
-import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
@@ -76,12 +76,12 @@ public class LaunchConfigurationAndRestartTest_7_0 extends LaunchConfigurationAn
     		protected void execute(final DataRequestMonitor<MIBreakListInfo> rm) {
     			fGdbControl.queueCommand(
     					fGdbControl.getCommandFactory().createCLITrace(bpTargetDmc, "invalid", ""),
-    					new DataRequestMonitor<CLITraceInfo>(ImmediateExecutor.getInstance(), rm) {
+    					new ImmediateDataRequestMonitor<CLITraceInfo>(rm) {
     						@Override
     						protected void handleSuccess() {
     							fGdbControl.queueCommand(
     									fGdbControl.getCommandFactory().createMIBreakList(bpTargetDmc), 
-    									new DataRequestMonitor<MIBreakListInfo>(ImmediateExecutor.getInstance(), rm) {
+    									new ImmediateDataRequestMonitor<MIBreakListInfo>(rm) {
     			    						@Override
     			    						protected void handleSuccess() {
     			    							rm.setData(getData());

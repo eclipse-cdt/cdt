@@ -13,7 +13,7 @@ package org.eclipse.cdt.dsf.gdb.service;
 import java.util.Hashtable;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
-import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMContext;
@@ -396,7 +396,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 	 */
 	@Override
 	public void initialize(final RequestMonitor requestMonitor) {
-		super.initialize(new RequestMonitor(ImmediateExecutor.getInstance(), requestMonitor) {
+		super.initialize(new ImmediateRequestMonitor(requestMonitor) {
 			@Override
 			protected void handleSuccess() {
 				doInitialize(requestMonitor);
@@ -698,7 +698,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
     							// of the frame when we load a trace file.
     							// To get around this, we can force a select of record 0
     							final ITraceRecordDMContext initialRecord = createTraceRecordContext(context, "0"); //$NON-NLS-1$
-    							selectTraceRecord(initialRecord, new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
+    							selectTraceRecord(initialRecord, new ImmediateRequestMonitor(rm) {
     							    @Override
     							    protected void handleSuccess() {
     							        // This event will indicate to the other services that we are visualizing trace data.
@@ -1045,7 +1045,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 	public void getTraceRecordData(final ITraceRecordDMContext context, final DataRequestMonitor<ITraceRecordDMData> rm) {
     	if (context instanceof MITraceRecordDMContext) {
     		
-    		RequestMonitor tdumpRm = new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
+    		RequestMonitor tdumpRm = new ImmediateRequestMonitor(rm) {
 				@Override
 				protected void handleSuccess() {
 					fConnection.queueCommand(

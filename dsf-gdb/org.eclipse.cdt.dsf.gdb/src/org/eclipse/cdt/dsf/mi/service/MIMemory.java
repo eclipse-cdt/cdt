@@ -24,7 +24,7 @@ import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
-import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
@@ -119,7 +119,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 	 */
 	@Override
     public void initialize(final RequestMonitor requestMonitor) {
-        super.initialize(new RequestMonitor(ImmediateExecutor.getInstance(), requestMonitor) {
+        super.initialize(new ImmediateRequestMonitor(requestMonitor) {
             @Override
             protected void handleSuccess() {
                 doInitialize(requestMonitor);

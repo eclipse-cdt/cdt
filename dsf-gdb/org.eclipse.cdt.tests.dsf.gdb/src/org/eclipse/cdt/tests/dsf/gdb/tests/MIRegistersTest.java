@@ -21,7 +21,8 @@ import java.util.List;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
-import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateCountingRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.CompositeDMContext;
@@ -250,13 +251,13 @@ public class MIRegistersTest extends BaseTestCase {
             protected void execute(DataRequestMonitor<IRegisterDMData[]> rm) {
                 final IRegisterDMData[] datas = new IRegisterDMData[regDMCs.length];
                 rm.setData(datas);
-                final CountingRequestMonitor countingRm = new CountingRequestMonitor(ImmediateExecutor.getInstance(), rm);
+                final CountingRequestMonitor countingRm = new ImmediateCountingRequestMonitor(rm);
                 countingRm.setDoneCount(regDMCs.length);
                 for (int i = 0; i < regDMCs.length; i++) {
                     final int index = i; 
                     fRegService.getRegisterData(
                         regDMCs[index], 
-                        new DataRequestMonitor<IRegisterDMData>(ImmediateExecutor.getInstance(), countingRm) {
+                        new ImmediateDataRequestMonitor<IRegisterDMData>(countingRm) {
                             @Override
                             protected void handleSuccess() {
                                 datas[index] = getData();

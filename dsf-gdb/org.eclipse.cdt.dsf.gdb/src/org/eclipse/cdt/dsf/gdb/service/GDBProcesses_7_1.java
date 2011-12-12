@@ -11,7 +11,8 @@
 package org.eclipse.cdt.dsf.gdb.service;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
-import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
@@ -74,7 +75,7 @@ public class GDBProcesses_7_1 extends GDBProcesses_7_0 {
 
 	@Override
 	public void initialize(final RequestMonitor requestMonitor) {
-		super.initialize(new RequestMonitor(ImmediateExecutor.getInstance(), requestMonitor) {
+		super.initialize(new ImmediateRequestMonitor(requestMonitor) {
 			@Override
 			protected void handleSuccess() {
 				doInitialize(requestMonitor);
@@ -125,7 +126,7 @@ public class GDBProcesses_7_1 extends GDBProcesses_7_0 {
 			// running on (each core that has a thread of that process).
 			// We have to use -list-thread-groups to obtain that information
 			// Note that -list-thread-groups does not show the 'user' field
-			super.getExecutionData(dmc, new DataRequestMonitor<IThreadDMData>(ImmediateExecutor.getInstance(), rm) {
+			super.getExecutionData(dmc, new ImmediateDataRequestMonitor<IThreadDMData>(rm) {
 				@Override
 				protected void handleSuccess() {
 					final IThreadDMData firstLevelData = getData();
@@ -135,7 +136,7 @@ public class GDBProcesses_7_1 extends GDBProcesses_7_0 {
 
 					fCommandForCoresCache.execute(
 							fCommandFactory.createMIListThreadGroups(controlDmc),
-							new DataRequestMonitor<MIListThreadGroupsInfo>(ImmediateExecutor.getInstance(), rm) {
+							new ImmediateDataRequestMonitor<MIListThreadGroupsInfo>(rm) {
 								@Override
 								protected void handleCompleted() {
 									String[] cores = null;
@@ -165,7 +166,7 @@ public class GDBProcesses_7_1 extends GDBProcesses_7_0 {
 
 			ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
 			fCommandForCoresCache.execute(fCommandFactory.createMIThreadInfo(controlDmc, threadDmc.getId()),
-					new DataRequestMonitor<MIThreadInfoInfo>(ImmediateExecutor.getInstance(), rm) {
+					new ImmediateDataRequestMonitor<MIThreadInfoInfo>(rm) {
 				        @Override
 			          	protected void handleSuccess() {
 				        	IThreadDMData threadData = null;

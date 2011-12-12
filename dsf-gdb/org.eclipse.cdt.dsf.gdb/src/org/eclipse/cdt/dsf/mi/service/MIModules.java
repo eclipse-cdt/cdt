@@ -16,7 +16,7 @@ import java.util.Hashtable;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
-import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMContext;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
@@ -54,7 +54,7 @@ public class MIModules extends AbstractDsfService implements IModules, ICachingS
     @Override
     public void initialize(final RequestMonitor requestMonitor) {
         super.initialize(
-            new RequestMonitor(ImmediateExecutor.getInstance(), requestMonitor) { 
+            new ImmediateRequestMonitor(requestMonitor) { 
                 @Override
                 protected void handleSuccess() {
                     doInitialize(requestMonitor);

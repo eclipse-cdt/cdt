@@ -30,7 +30,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 
-import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsBroadcastingProvider;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
@@ -397,21 +396,17 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 
 		if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
 			for (ILanguageSettingsProvider provider: ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders()) {
-				if (provider instanceof ILanguageSettingsBroadcastingProvider) {
-					for (String languageId : LanguageSettingsManager.getLanguages(rc, cfgDescription)) {
-						List<ICLanguageSettingEntry> list = provider.getSettingEntries(cfgDescription, rc, languageId);
-						if (list!=null) {
-							// TODO - check default or check parent?
-							List<ICLanguageSettingEntry> listDefault = provider.getSettingEntries(null, null, languageId);
-							// != is OK here due as the equal lists will have the same reference in WeakHashSet
-							if (list != listDefault)
-								return true;
-						}
+				for (String languageId : LanguageSettingsManager.getLanguages(rc, cfgDescription)) {
+					List<ICLanguageSettingEntry> list = provider.getSettingEntries(cfgDescription, rc, languageId);
+					if (list!=null) {
+						List<ICLanguageSettingEntry> listDefault = provider.getSettingEntries(cfgDescription, rc.getParent(), languageId);
+						// != is OK here due as the equal lists will have the same reference in WeakHashSet
+						if (list != listDefault)
+							return true;
 					}
 				}
 			}
 		}
-
 		return false;
 	}
 

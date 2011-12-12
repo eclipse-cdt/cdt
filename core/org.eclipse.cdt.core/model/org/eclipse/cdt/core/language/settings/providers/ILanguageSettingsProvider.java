@@ -77,6 +77,8 @@ public interface ILanguageSettingsProvider {
 	 *     (see {@link LanguageManager#getLanguageForFile(org.eclipse.core.resources.IFile, ICConfigurationDescription)}).
 	 *
 	 * @return the list of setting entries or {@code null} if no settings defined.
+	 *    The list needs to be a pooled list created by {@link LanguageSettingsStorage#getPooledList(List)}
+	 *    to save memory and avoid deep equality comparisons.
 	 */
 	public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId);
 }

@@ -69,7 +69,7 @@ public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase
 				}
 			}
 		}
-		return list;
+		return LanguageSettingsStorage.getPooledList(list);
 	}
 
 	private ICLanguageSetting[] getLanguageSettings(ICResourceDescription rcDescription) {

@@ -48,6 +48,7 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 	/*package*/ static final String EXTENSION_SERIALIZABLE_PROVIDER_MISSING_PARAMETER = "parameter";
 	/*package*/ static final String EXTENSION_EDITABLE_PROVIDER_ID = "org.eclipse.cdt.core.tests.custom.editable.language.settings.provider";
 	/*package*/ static final String EXTENSION_EDITABLE_PROVIDER_NAME = "Test Plugin Mock Editable Language Settings Provider";
+	/*package*/ static final ICLanguageSettingEntry EXTENSION_EDITABLE_PROVIDER_ENTRY = new CMacroEntry("MACRO", "value", 0);
 	/*package*/ static final String EXTENSION_REGISTERER_PROVIDER_ID = "org.eclipse.cdt.core.tests.language.settings.listener.registerer.provider";
 	/*package*/ static final String EXTENSION_USER_PROVIDER_ID = "org.eclipse.cdt.ui.user.LanguageSettingsProvider";
 
@@ -56,6 +57,11 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 	private static final String PROVIDER_NAME_0 = "test.provider.0.name";
 	private static final String LANG_ID = "test.lang.id";
 	private static final IFile FILE_0 = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path("/project/path0"));
+
+	// These must match constants used in LanguageSettingsSerializableProvider
+	private static final String ATTR_ID = "id"; //$NON-NLS-1$
+	private static final String ATTR_NAME = "name"; //$NON-NLS-1$
+	private static final String ATTR_CLASS = "class"; //$NON-NLS-1$
 
 	/**
 	 * Constructor.
@@ -111,19 +117,23 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 			assertNull(providerExt);
 		}
 
-		// get test plugin extension provider
+		// this extension provider is not copyable
 		ILanguageSettingsProvider providerExtCopy = LanguageSettingsManager.getExtensionProviderCopy(EXTENSION_BASE_PROVIDER_ID, true);
 		assertNull(providerExtCopy);
+
+		// get raw extension provider - retrieve the only instance via workspace provider
 		ILanguageSettingsProvider providerExt = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_BASE_PROVIDER_ID);
 		assertTrue(LanguageSettingsManager.isWorkspaceProvider(providerExt));
-
-		// get raw extension provider
 		ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(providerExt);
 		assertTrue(rawProvider instanceof LanguageSettingsBaseProvider);
 		LanguageSettingsBaseProvider provider = (LanguageSettingsBaseProvider)rawProvider;
 		assertEquals(EXTENSION_BASE_PROVIDER_ID, provider.getId());
 		assertEquals(EXTENSION_BASE_PROVIDER_NAME, provider.getName());
 		assertEquals(EXTENSION_BASE_PROVIDER_PARAMETER, provider.getProperty(EXTENSION_BASE_PROVIDER_ATTR_PARAMETER));
+		// these attributes are not exposed as properties
+		assertEquals(null, provider.getProperty(ATTR_ID));
+		assertEquals(null, provider.getProperty(ATTR_NAME));
+		assertEquals(null, provider.getProperty(ATTR_CLASS));
 
 		// attempt to get entries for wrong language
 		assertNull(provider.getSettingEntries(null, FILE_0, LANG_ID));
@@ -273,7 +283,7 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 		assertEquals(null, provider.getProperty(EXTENSION_SERIALIZABLE_PROVIDER_MISSING_PARAMETER));
 
 		List<ICLanguageSettingEntry> expected = new ArrayList<ICLanguageSettingEntry>();
-		expected.add(new CMacroEntry("MACRO", "value", 0));
+		expected.add(EXTENSION_EDITABLE_PROVIDER_ENTRY);
 		assertEquals(expected, provider.getSettingEntries(null, null, null));
 	}
 
@@ -297,15 +307,18 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 
 		// Editable providers are retrieved by copy
 		{
+			// get extension provider
 			ILanguageSettingsProvider providerExt = LanguageSettingsManager.getExtensionProviderCopy(EXTENSION_EDITABLE_PROVIDER_ID, true);
 			assertFalse(LanguageSettingsManager.isWorkspaceProvider(providerExt));
 			assertTrue(providerExt instanceof ILanguageSettingsEditableProvider);
 			assertTrue(LanguageSettingsManager.isEqualExtensionProvider(providerExt, true));
 
+			// test that different copies are not same
 			ILanguageSettingsProvider providerExt2 = LanguageSettingsManager.getExtensionProviderCopy(EXTENSION_EDITABLE_PROVIDER_ID, true);
 			assertNotSame(providerExt, providerExt2);
 			assertEquals(providerExt, providerExt2);
 
+			// test that workspace provider is not the same as extension provider
 			ILanguageSettingsProvider providerWsp = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_EDITABLE_PROVIDER_ID);
 			ILanguageSettingsProvider providerWspRaw = LanguageSettingsManager.getRawProvider(providerWsp);
 			assertNotSame(providerExt, providerWspRaw);

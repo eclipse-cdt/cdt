@@ -169,7 +169,9 @@ public class LanguageSettingsExtensionManager {
 		List<ICLanguageSettingEntry> entries = null;
 
 		for (String attr : ce.getAttributeNames()) {
-			ceAttributes.put(attr, determineAttributeValue(ce, attr));
+			if (!attr.equals(ATTR_ID) && !attr.equals(ATTR_NAME) && !attr.equals(ATTR_CLASS)) {
+				ceAttributes.put(attr, determineAttributeValue(ce, attr));
+			}
 		}
 
 		for (IConfigurationElement ceLang : ce.getChildren(ELEM_LANGUAGE_SCOPE)) {

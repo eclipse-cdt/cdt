@@ -48,6 +48,7 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 	/*package*/ static final String EXTENSION_SERIALIZABLE_PROVIDER_MISSING_PARAMETER = "parameter";
 	/*package*/ static final String EXTENSION_EDITABLE_PROVIDER_ID = "org.eclipse.cdt.core.tests.custom.editable.language.settings.provider";
 	/*package*/ static final String EXTENSION_EDITABLE_PROVIDER_NAME = "Test Plugin Mock Editable Language Settings Provider";
+	/*package*/ static final ICLanguageSettingEntry EXTENSION_SERIALIZABLE_PROVIDER_ENTRY = new CMacroEntry("MACRO", "value", 0);
 	/*package*/ static final ICLanguageSettingEntry EXTENSION_EDITABLE_PROVIDER_ENTRY = new CMacroEntry("MACRO", "value", 0);
 	/*package*/ static final String EXTENSION_REGISTERER_PROVIDER_ID = "org.eclipse.cdt.core.tests.language.settings.listener.registerer.provider";
 	/*package*/ static final String EXTENSION_USER_PROVIDER_ID = "org.eclipse.cdt.ui.user.LanguageSettingsProvider";

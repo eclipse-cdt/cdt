@@ -295,18 +295,18 @@ public class LanguageSettingsProvidersSerializer {
 	}
 
 	/**
-		 * Set and store user defined providers in workspace area.
-		 *
-		 * @param providers - array of user defined providers
-		 * @throws CoreException in case of problems
-		 */
-		public static void setWorkspaceProviders(List<ILanguageSettingsProvider> providers) throws CoreException {
-			setWorkspaceProvidersInternal(providers);
-			serializeLanguageSettingsWorkspace();
-			// generate preference change event
-			IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID);
-			prefs.putBoolean(PREFERENCE_WORSPACE_PROVIDERS_SET, ! prefs.getBoolean(PREFERENCE_WORSPACE_PROVIDERS_SET, false));
-		}
+	 * Set and store user defined providers in workspace area.
+	 *
+	 * @param providers - array of user defined providers
+	 * @throws CoreException in case of problems
+	 */
+	public static void setWorkspaceProviders(List<ILanguageSettingsProvider> providers) throws CoreException {
+		setWorkspaceProvidersInternal(providers);
+		serializeLanguageSettingsWorkspace();
+		// generate preference change event
+		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID);
+		prefs.putBoolean(PREFERENCE_WORSPACE_PROVIDERS_SET, ! prefs.getBoolean(PREFERENCE_WORSPACE_PROVIDERS_SET, false));
+	}
 
 	/**
 	 * Internal method to set user defined providers in memory.
@@ -316,13 +316,8 @@ public class LanguageSettingsProvidersSerializer {
 	 */
 	private static void setWorkspaceProvidersInternal(List<ILanguageSettingsProvider> providers) {
 		Map<String, ILanguageSettingsProvider> rawWorkspaceProviders = new HashMap<String, ILanguageSettingsProvider>();
-		List<ILanguageSettingsProvider> extensionProviders = new ArrayList<ILanguageSettingsProvider>(LanguageSettingsExtensionManager.getExtensionProvidersInternal());
-		for (ILanguageSettingsProvider rawExtensionProvider : extensionProviders) {
-			if (rawExtensionProvider!=null) {
-				rawWorkspaceProviders.put(rawExtensionProvider.getId(), rawExtensionProvider);
-			}
-		}
 
+		// given providers
 		List<ILanguageSettingsProvider> rawProviders = new ArrayList<ILanguageSettingsProvider>();
 		if (providers!=null) {
 			for (ILanguageSettingsProvider provider : providers) {
@@ -335,6 +330,20 @@ public class LanguageSettingsProvidersSerializer {
 			}
 			for (ILanguageSettingsProvider provider : rawProviders) {
 				rawWorkspaceProviders.put(provider.getId(), provider);
+			}
+		}
+
+		// fill the rest from extension registry
+		// this list is independent from the internal list of extensions in LanguageSettingsExtensionManager
+		for (String id : LanguageSettingsExtensionManager.getExtensionProviderIds()) {
+			if (!rawWorkspaceProviders.containsKey(id)) {
+				ILanguageSettingsProvider provider = LanguageSettingsExtensionManager.getExtensionProviderCopy(id, true);
+				if (provider == null) {
+					provider = LanguageSettingsExtensionManager.loadProvider(id);
+				}
+				if (provider != null) {
+					rawWorkspaceProviders.put(provider.getId(), provider);
+				}
 			}
 		}
 
@@ -432,8 +441,9 @@ projects:
 				Element elementExtension = XmlUtil.appendElement(rootElement, ELEM_EXTENSION, new String[] {ATTR_POINT, LanguageSettingsExtensionManager.PROVIDER_EXTENSION_FULL_ID});
 
 				for (LanguageSettingsSerializableProvider provider : serializableWorkspaceProviders) {
-					// TODO don't serialize if equals to extension provider
-					provider.serialize(elementExtension);
+					if (!LanguageSettingsManager.isEqualExtensionProvider(provider, true)) {
+						provider.serialize(elementExtension);
+					}
 				}
 
 				try {
@@ -495,9 +505,7 @@ projects:
 					if (providers == null) {
 						providers = new ArrayList<ILanguageSettingsProvider>();
 					}
-					if (!LanguageSettingsManager.isEqualExtensionProvider(provider, true)) {
-						providers.add(provider);
-					}
+					providers.add(provider);
 				}
 			}
 		}
@@ -754,7 +762,7 @@ projects:
 
 	private static ILanguageSettingsProvider loadProvider(Node providerNode) {
 		String attrClass = XmlUtil.determineAttributeValue(providerNode, LanguageSettingsExtensionManager.ATTR_CLASS);
-		ILanguageSettingsProvider provider = LanguageSettingsExtensionManager.getProviderInstance(attrClass);
+		ILanguageSettingsProvider provider = LanguageSettingsExtensionManager.instantiateProviderClass(attrClass);
 
 		if (provider instanceof LanguageSettingsSerializableProvider)
 			((LanguageSettingsSerializableProvider)provider).load((Element) providerNode);

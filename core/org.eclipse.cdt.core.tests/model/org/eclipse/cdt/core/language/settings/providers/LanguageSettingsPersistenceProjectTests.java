@@ -44,6 +44,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	private static final String EXTENSION_BASE_PROVIDER_ID = LanguageSettingsExtensionsTests.EXTENSION_BASE_PROVIDER_ID;
 	private static final String EXTENSION_BASE_PROVIDER_NAME = LanguageSettingsExtensionsTests.EXTENSION_BASE_PROVIDER_NAME;
 	private static final String EXTENSION_SERIALIZABLE_PROVIDER_ID = LanguageSettingsExtensionsTests.EXTENSION_SERIALIZABLE_PROVIDER_ID;
+	private static final ICLanguageSettingEntry EXTENSION_SERIALIZABLE_PROVIDER_ENTRY = LanguageSettingsExtensionsTests.EXTENSION_SERIALIZABLE_PROVIDER_ENTRY;
 
 	private static final String LANGUAGE_SETTINGS_PROJECT_XML = ".settings/language.settings.xml";
 	private static final String LANGUAGE_SETTINGS_WORKSPACE_XML = "language.settings.xml";
@@ -334,6 +335,49 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 			List<ICLanguageSettingEntry> actual = provider.getSettingEntries(null, null, null);
 			assertEquals(entries.get(0), actual.get(0));
 			assertEquals(entries.size(), actual.size());
+		}
+	}
+
+	/**
+	 */
+	public void testWorkspacePersistence_UnmodifiedExtensionProvider() throws Exception {
+		List<ICLanguageSettingEntry> extensionEntries = new ArrayList<ICLanguageSettingEntry>();
+		extensionEntries.add(EXTENSION_SERIALIZABLE_PROVIDER_ENTRY);
+		{
+			// test initial state of the extension provider
+			ILanguageSettingsProvider extProvider = LanguageSettingsManager.getExtensionProviderCopy(EXTENSION_SERIALIZABLE_PROVIDER_ID, true);
+			assertNull(extProvider);
+		}
+		{
+			// get the workspace provider
+			ILanguageSettingsProvider provider = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_SERIALIZABLE_PROVIDER_ID);
+			// check that entries match that of extension provider
+			assertEquals(extensionEntries, provider.getSettingEntries(null, null, null));
+			ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(provider);
+			assertTrue(LanguageSettingsManager.isEqualExtensionProvider(rawProvider, true));
+
+			// serialize language settings of workspace providers
+			LanguageSettingsManager.serializeLanguageSettingsWorkspace();
+		}
+		{
+			// re-load
+			LanguageSettingsProvidersSerializer.loadLanguageSettingsWorkspace();
+
+			// ensure the workspace provider still matches extension
+			ILanguageSettingsProvider provider = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_SERIALIZABLE_PROVIDER_ID);
+			assertEquals(EXTENSION_SERIALIZABLE_PROVIDER_ID, provider.getId());
+			assertEquals(extensionEntries, provider.getSettingEntries(null, null, null));
+			ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(provider);
+			assertTrue(LanguageSettingsManager.isEqualExtensionProvider(rawProvider, true));
+
+			// replace entries
+			assertTrue(rawProvider instanceof LanguageSettingsSerializableProvider);
+			List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+			entries.add(new CIncludePathEntry("path0", 0));
+			((LanguageSettingsSerializableProvider)rawProvider).setSettingEntries(null, null, null, entries);
+
+			// check that the extension provider is not affected
+			assertTrue(!LanguageSettingsManager.isEqualExtensionProvider(rawProvider, true));
 		}
 	}
 

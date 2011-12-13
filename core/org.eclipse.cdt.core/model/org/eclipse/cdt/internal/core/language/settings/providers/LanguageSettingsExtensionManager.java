@@ -218,33 +218,28 @@ public class LanguageSettingsExtensionManager {
 	}
 
 	/**
-	 * Creates empty non-configured provider from extension point definition. The method will
-	 * inspect extension registry for extension point "org.eclipse.cdt.core.LanguageSettingsProvider"
+	 * Creates provider from extension point definition which matches value of the given attribute.
+	 * The method will inspect extension registry for extension point "org.eclipse.cdt.core.LanguageSettingsProvider"
 	 * to determine bundle and instantiate the class.
-	 * ID and name of provider are assigned from the first encountered extension point specifying the class.
 	 *
-	 * @param className - full qualified class name of provider.
-	 * @param registry - extension registry
-	 * @return new non-configured provider
+	 * @param attr - attribute to match.
+	 * @param attrValue - value of the attribute to match.
+	 * @param registry - extension registry.
+	 * @param configure - flag which indicates if provider needs to be configured.
+	 * @return new instance of the provider
 	 */
-	private static ILanguageSettingsProvider createProviderCarcass(String className, IExtensionRegistry registry) {
-		if (className==null || className.length()==0) {
-			return new LanguageSettingsBaseProvider();
-		}
-
+	private static ILanguageSettingsProvider loadProviderFromRegistry(String attr, String attrValue,
+			IExtensionRegistry registry, boolean configure) {
 		try {
 			IExtensionPoint extension = registry.getExtensionPoint(CCorePlugin.PLUGIN_ID, PROVIDER_EXTENSION_SIMPLE_ID);
 			if (extension != null) {
 				IExtension[] extensions = extension.getExtensions();
 				for (IExtension ext : extensions) {
 					for (IConfigurationElement cfgEl : ext.getConfigurationElements()) {
-						if (cfgEl.getName().equals(ELEM_PROVIDER) && className.equals(cfgEl.getAttribute(ATTR_CLASS))) {
+						if (cfgEl.getName().equals(ELEM_PROVIDER) && attrValue.equals(cfgEl.getAttribute(attr))) {
 							ILanguageSettingsProvider provider = createExecutableExtension(cfgEl);
-							if (provider instanceof AbstractExecutableExtensionBase) {
-								String ceId = determineAttributeValue(cfgEl, ATTR_ID);
-								String ceName = determineAttributeValue(cfgEl, ATTR_NAME);
-								((AbstractExecutableExtensionBase) provider).setId(ceId);
-								((AbstractExecutableExtensionBase) provider).setName(ceName);
+							if (configure) {
+								configureExecutableProvider(provider, cfgEl);
 							}
 							return provider;
 						}
@@ -258,12 +253,13 @@ public class LanguageSettingsExtensionManager {
 	}
 
 	/**
-	 * Create an instance of language settings provider of given class name.
+	 * Create an instance of non-configured language settings provider of given class name.
+	 * The class should be known or registered with the extension point.
 	 *
 	 * @param className - class name to instantiate.
 	 * @return new instance of language settings provider.
 	 */
-	/*package*/ static ILanguageSettingsProvider getProviderInstance(String className) {
+	/*package*/ static ILanguageSettingsProvider instantiateProviderClass(String className) {
 		if (className==null || className.equals(LanguageSettingsSerializableProvider.class.getName())) {
 			return new LanguageSettingsSerializableProvider();
 		}
@@ -277,7 +273,8 @@ public class LanguageSettingsExtensionManager {
 			return new LanguageSettingsGenericProvider();
 		}
 
-		ILanguageSettingsProvider provider = createProviderCarcass(className, Platform.getExtensionRegistry());
+		// Create it as executable extension from the extension registry.
+		ILanguageSettingsProvider provider = loadProviderFromRegistry(ATTR_CLASS, className, Platform.getExtensionRegistry(), false);
 		if (provider == null) {
 			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "Not able to load provider class=" + className); //$NON-NLS-1$
 			CCorePlugin.log(new CoreException(status));
@@ -286,22 +283,32 @@ public class LanguageSettingsExtensionManager {
 	}
 
 	/**
-	 * @return list of providers contributed by all extensions. Preferable copy but if not possible
-	 *   will return raw provider.
+	 * Load an instance of language settings provider of given id from the extension point.
+	 * The class should be registered with the extension point.
+	 *
+	 * @param id - class name to instantiate.
+	 * @return new instance of language settings provider.
 	 */
-	/*package*/ static List<ILanguageSettingsProvider> getExtensionProvidersInternal() {
-		ArrayList<ILanguageSettingsProvider> list = new ArrayList<ILanguageSettingsProvider>(fExtensionProviders.size());
-		for (String id : fExtensionProviders.keySet()) {
-			ILanguageSettingsProvider extensionProvider = getExtensionProviderCopy(id, true);
-			if (extensionProvider == null) {
-				extensionProvider = fExtensionProviders.get(id);
-			}
-
-			if (extensionProvider != null) {
-				list.add(extensionProvider);
-			}
+	/*package*/ static ILanguageSettingsProvider loadProvider(String id) {
+		if (id==null) {
+			return null;
 		}
-		return list;
+
+		// Create it as executable extension from the extension registry.
+		ILanguageSettingsProvider provider = loadProviderFromRegistry(ATTR_ID, id, Platform.getExtensionRegistry(), true);
+		if (provider == null) {
+			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "Not able to load provider id=" + id); //$NON-NLS-1$
+			CCorePlugin.log(new CoreException(status));
+		}
+		return provider;
+	}
+
+	/**
+	 * Returns list of provider id-s contributed by all extensions.
+	 * @return list of provider id-s contributed by all extensions.
+	 */
+	public static Set<String> getExtensionProviderIds() {
+		return fExtensionProviders.keySet();
 	}
 
 	/**

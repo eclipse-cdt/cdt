@@ -24,14 +24,13 @@ import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.tests.dsf.DsfTestPlugin;
-import org.eclipse.debug.internal.ui.viewers.model.ITreeModelCheckProviderTarget;
-import org.eclipse.debug.internal.ui.viewers.model.ITreeModelContentProviderTarget;
-import org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer;
+import org.eclipse.debug.internal.ui.viewers.model.IInternalTreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ICheckUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.jface.viewers.TreePath;
 import org.osgi.framework.BundleContext;
@@ -297,7 +296,7 @@ public class TestModel extends AbstractDsfService implements IFormattedValues {
         }
     }
     
-    public TestElement getElementFromViewer(ITreeModelContentProviderTarget viewer, TreePath parentPath, int index) {
+    public TestElement getElementFromViewer(IInternalTreeModelViewer viewer, TreePath parentPath, int index) {
         Object element = viewer.getChildElement(parentPath, index);
         if (element instanceof TestElementVMContext) {
             return ((TestElementVMContext)element).getElement();
@@ -339,12 +338,11 @@ public class TestModel extends AbstractDsfService implements IFormattedValues {
 
     public void validateData(ITreeModelViewer _viewer, TreePath path, TestElementValidator validator, boolean expandedElementsOnly) {
         
-        ITreeModelContentProviderTarget viewer = (ITreeModelContentProviderTarget)_viewer;
+        IInternalTreeModelViewer viewer = (IInternalTreeModelViewer)_viewer;
         TestElement element = getElement(path);
         if ( Boolean.TRUE.equals(_viewer.getPresentationContext().getProperty(ICheckUpdate.PROP_CHECK)) ) {
-            ITreeModelCheckProviderTarget checkTarget = (ITreeModelCheckProviderTarget)_viewer;  
-            Assert.assertEquals(element.getChecked(), checkTarget.getElementChecked(path));
-            Assert.assertEquals(element.getGrayed(), checkTarget.getElementGrayed(path));
+            Assert.assertEquals(element.getChecked(), viewer.getElementChecked(path));
+            Assert.assertEquals(element.getGrayed(), viewer.getElementGrayed(path));
         }
         
         if (!expandedElementsOnly || path.getSegmentCount() == 0 || viewer.getExpandedState(path) ) {

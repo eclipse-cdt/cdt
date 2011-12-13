@@ -18,8 +18,8 @@ import java.util.TreeSet;
 
 import org.eclipse.cdt.tests.dsf.ViewerUpdatesListener;
 import org.eclipse.cdt.tests.dsf.vm.TestModel.TestElement;
-import org.eclipse.debug.internal.ui.viewers.model.ITreeModelContentProviderTarget;
-import org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer;
+import org.eclipse.debug.internal.ui.viewers.model.IInternalTreeModelViewer;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
 import org.eclipse.jface.viewers.TreePath;
 
 /**
@@ -138,7 +138,7 @@ public class TestModelUpdatesListener extends ViewerUpdatesListener
         addUpdates(path, element, levels, ALL_UPDATES_COMPLETE);
     }
 
-    public void addStateUpdates(ITreeModelContentProviderTarget viewer, TreePath path, TestElement element) {
+    public void addStateUpdates(IInternalTreeModelViewer viewer, TreePath path, TestElement element) {
         addUpdates(viewer, path, element, -1, STATE_UPDATES);
     }
     
@@ -146,7 +146,7 @@ public class TestModelUpdatesListener extends ViewerUpdatesListener
         addUpdates(null, path, element, levels, flags);
     }
 
-    public void addUpdates(ITreeModelContentProviderTarget viewer, TreePath path, TestElement element, int levels, int flags) {
+    public void addUpdates(IInternalTreeModelViewer viewer, TreePath path, TestElement element, int levels, int flags) {
         if (!path.equals(TreePath.EMPTY)) {
             if ((flags & LABEL_UPDATES) != 0) {
                 addLabelUpdate(path);

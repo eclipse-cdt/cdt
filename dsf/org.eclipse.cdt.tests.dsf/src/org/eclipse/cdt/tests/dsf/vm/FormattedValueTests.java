@@ -41,10 +41,10 @@ import org.eclipse.cdt.tests.dsf.IViewerUpdatesListenerConstants;
 import org.eclipse.cdt.tests.dsf.vm.TestModel.TestElement;
 import org.eclipse.cdt.tests.dsf.vm.TestModel.TestElementValidator;
 import org.eclipse.cdt.tests.dsf.vm.TestModel.TestEvent;
-import org.eclipse.debug.internal.ui.viewers.model.ITreeModelContentProviderTarget;
-import org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer;
+import org.eclipse.debug.internal.ui.viewers.model.IInternalTreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.ViewerLabel;
@@ -191,7 +191,7 @@ abstract public class FormattedValueTests extends TestCase implements IViewerUpd
         initQuery.get();
     }
     
-    abstract protected ITreeModelContentProviderTarget createViewer(Display display, Shell shell);
+    abstract protected IInternalTreeModelViewer createViewer(Display display, Shell shell);
     
     /**
      * @throws java.lang.Exception
@@ -618,7 +618,7 @@ abstract public class FormattedValueTests extends TestCase implements IViewerUpd
     		int levelStop, int levelIndex, HashMap<String, ElementFormatSetting> result) {
     	if (levelStop >= 0 && levelIndex >= levelStop)
     		return;
-    	ITreeModelContentProviderTarget viewer = (ITreeModelContentProviderTarget)_viewer;
+    	IInternalTreeModelViewer viewer = (IInternalTreeModelViewer)_viewer;
     	int childCount = viewer.getChildCount(path);
     	if (childCount == 0)
     		return;

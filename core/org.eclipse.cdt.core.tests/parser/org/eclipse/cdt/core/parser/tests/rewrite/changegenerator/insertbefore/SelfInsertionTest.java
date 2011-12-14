@@ -51,7 +51,8 @@ public class SelfInsertionTest extends ChangeGeneratorTest {
 					IASTForStatement forStatement = (IASTForStatement) statement;
 					IASTCompoundStatement compoundStatement = (IASTCompoundStatement) forStatement.getBody();
 
-					ASTModification modification = new ASTModification(ASTModification.ModificationKind.APPEND_CHILD, compoundStatement, forStatement, null);
+					ASTModification modification = new ASTModification(ASTModification.ModificationKind.APPEND_CHILD,
+							compoundStatement, forStatement, null);
 					modStore.storeModification(null, modification);
 				}
 

@@ -211,7 +211,7 @@ int main() {
  name="exp" project="RegressionTestProject" selection="34,6" visibility="private"/>
 </session>
 
-//!Extract Function History extracted statement with trailling comment
+//!Extract Function History extracted statement with trailing comment
 //#org.eclipse.cdt.ui.tests.refactoring.RefactoringHistoryTest
 //@main.cpp
 int main() {
@@ -227,7 +227,7 @@ void exp(int& i) {
 
 int main() {
 	int i;
-	exp(i); // Comment
+	exp(i);
 	return i;
 }
 

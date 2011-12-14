@@ -132,6 +132,7 @@ namespace N {
 void A::foo() {
 	return;
 }
+
 }
 //!TestSimpleNamespaceInHeaderToImplementationWithNamespaceQualifiedName
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
@@ -163,8 +164,6 @@ class A {
 };
 
 }
-
-
 //@A.cpp
 #include "A.h"
 
@@ -202,8 +201,6 @@ int main() {
 }
 //=
 #include "A.h"
-
-
 
 int main() {
 	return 0;
@@ -246,8 +243,6 @@ void /*$*/A::foo/*$$*/() {
 }
 //=
 #include "A.h"
-
-
 //@A.h
 #include <iostream>
 

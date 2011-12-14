@@ -154,12 +154,8 @@ public class StatementWriter extends NodeWriter {
 			throw new ProblemRuntimeException((IASTProblemStatement)statement);
 		} 
 		
-		if (hasTrailingComments(statement)) {
-			writeTrailingComments(statement, newLine);			
-		} else if (newLine) {
-			scribe.newLine();
-		}
-		
+		writeTrailingComments(statement, newLine);			
+
 		return ASTVisitor.PROCESS_SKIP;
 	}
 
@@ -389,7 +385,7 @@ public class StatementWriter extends NodeWriter {
 		}
 		
 		if (hasFreestandingComments(compoundStatement)) {
-			writeFreeStandingComments(compoundStatement);			
+			writeFreestandingComments(compoundStatement);			
 		}
 		
 		if (decrementIndentationLevelOneMore) {

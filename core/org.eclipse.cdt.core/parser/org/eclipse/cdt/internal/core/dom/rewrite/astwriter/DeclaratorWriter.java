@@ -62,9 +62,7 @@ public class DeclaratorWriter extends NodeWriter {
 		}
 
 		visitor.setSpaceNeededBeforeName(false);
-		if (hasTrailingComments(declarator)) {
-			writeTrailingComments(declarator, false);			
-		}	
+		writeTrailingComments(declarator, false);			
 	}
 
 	protected void writeDefaultDeclarator(IASTDeclarator declarator) {
@@ -81,7 +79,7 @@ public class DeclaratorWriter extends NodeWriter {
 
 	protected void writePointerOperators(IASTDeclarator declarator, IASTPointerOperator[] pointOps) {
 		for (IASTPointerOperator operator : pointOps) {
-			writePointerOp(operator);
+			writePointerOperator(operator);
 		}
 	}
 
@@ -194,7 +192,7 @@ public class DeclaratorWriter extends NodeWriter {
 		}
 	}
 
-	private void writePointerOp(IASTPointerOperator operator) {
+	public void writePointerOperator(IASTPointerOperator operator) {
 		if (operator instanceof IASTPointer) {
 			IASTPointer pointOp = (IASTPointer) operator;
 			writePointer(pointOp);

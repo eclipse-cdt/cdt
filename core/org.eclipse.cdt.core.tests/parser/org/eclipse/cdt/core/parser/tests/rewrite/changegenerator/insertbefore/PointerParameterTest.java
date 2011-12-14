@@ -36,8 +36,8 @@ public class PointerParameterTest extends ChangeGeneratorTest {
 
 	@Override
 	protected void setUp() throws Exception {
-		source = "void foo(int *parameter){\n}\n\n"; //$NON-NLS-1$
-		expectedSource = "void foo(int **parameter){\n}\n\n"; //$NON-NLS-1$
+		source = "void foo(int *parameter) {\n}\n\n"; //$NON-NLS-1$
+		expectedSource = "void foo(int **parameter) {\n}\n\n"; //$NON-NLS-1$
 		super.setUp();
 	}
 	

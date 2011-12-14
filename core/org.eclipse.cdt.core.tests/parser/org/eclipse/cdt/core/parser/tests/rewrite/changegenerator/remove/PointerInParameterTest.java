@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.remove;
 
@@ -25,25 +25,23 @@ import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification.ModificationKin
 
 public class PointerInParameterTest extends ChangeGeneratorTest {
 
-	public PointerInParameterTest(){
+	public PointerInParameterTest() {
 		super("Remove Pointer in Parameter"); //$NON-NLS-1$
 	}
 
 	@Override
 	protected void setUp() throws Exception {
-		source = "void foo(int *parameter){\n}\n\n"; //$NON-NLS-1$
-		expectedSource = "void foo(int parameter){\n}\n\n"; //$NON-NLS-1$
+		source = "void foo(int *parameter) {\n}\n\n"; //$NON-NLS-1$
+		expectedSource = "void foo(int parameter) {\n}\n\n"; //$NON-NLS-1$
 		super.setUp();
 	}
-
 
 	public static Test suite() {
 		return new PointerInParameterTest();
 	}
 
 	@Override
-	protected ASTVisitor createModificator(
-			final ASTModificationStore modStore) {
+	protected ASTVisitor createModificator(final ASTModificationStore modStore) {
 		return new ASTVisitor() {
 			{
 				shouldVisitDeclarators = true;
@@ -52,17 +50,17 @@ public class PointerInParameterTest extends ChangeGeneratorTest {
 			@Override
 			public int visit(IASTDeclarator declarator) {
 				if (declarator instanceof CPPASTFunctionDeclarator) {
-					CPPASTFunctionDeclarator functionDeclarator = (CPPASTFunctionDeclarator)declarator;
+					CPPASTFunctionDeclarator functionDeclarator = (CPPASTFunctionDeclarator) declarator;
 					IASTParameterDeclaration[] parameters = functionDeclarator.getParameters();
-					for(IASTParameterDeclaration curParam : parameters){
-						if(String.valueOf(curParam.getDeclarator().getName().toCharArray()).equals("parameter")){ //$NON-NLS-1$
+					for (IASTParameterDeclaration curParam : parameters){
+						if (String.valueOf(curParam.getDeclarator().getName().toCharArray()).equals("parameter")){ //$NON-NLS-1$
 							IASTPointerOperator pointer = curParam.getDeclarator().getPointerOperators()[0];
-							ASTModification modification = new ASTModification(ModificationKind.REPLACE, pointer, null, null);
+							ASTModification modification = new ASTModification(ModificationKind.REPLACE,
+									pointer, null, null);
 							modStore.storeModification(null, modification);
 						}
 					}
 				}
-
 
 				return PROCESS_CONTINUE;
 			}

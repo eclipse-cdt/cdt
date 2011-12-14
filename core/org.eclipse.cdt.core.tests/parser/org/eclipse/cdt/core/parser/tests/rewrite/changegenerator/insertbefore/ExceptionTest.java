@@ -54,7 +54,7 @@ public class ExceptionTest extends ChangeGeneratorTest {
 			@Override
 			public int visit(IASTDeclarator declarator) {
 				if (declarator instanceof CPPASTFunctionDeclarator) {
-					CPPASTFunctionDeclarator functionDeclarator = (CPPASTFunctionDeclarator)declarator;
+					CPPASTFunctionDeclarator functionDeclarator = (CPPASTFunctionDeclarator) declarator;
 					IASTTypeId existingException = functionDeclarator.getExceptionSpecification()[0];
 					
 					IASTTypeId exception = new CPPASTTypeId();
@@ -64,9 +64,9 @@ public class ExceptionTest extends ChangeGeneratorTest {
 					exDeclSpec.setType(IASTSimpleDeclSpecifier.t_int);
 					exception.setDeclSpecifier(exDeclSpec);
 					exception.setAbstractDeclarator(exceptionDeclarator);
-					ASTModification modification = new ASTModification(ModificationKind.INSERT_BEFORE, existingException, exception, null);
+					ASTModification modification = new ASTModification(ModificationKind.INSERT_BEFORE,
+							existingException, exception, null);
 					modStore.storeModification(null, modification);
-					
 				}
 				return PROCESS_CONTINUE;
 			}

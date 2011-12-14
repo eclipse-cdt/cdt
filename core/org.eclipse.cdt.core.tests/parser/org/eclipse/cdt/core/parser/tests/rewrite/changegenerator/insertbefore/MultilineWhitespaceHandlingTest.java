@@ -38,8 +38,8 @@ public class MultilineWhitespaceHandlingTest extends ChangeGeneratorTest {
 
 	@Override
 	protected void setUp() throws Exception {
-		source = "void foo() {\r\n\r\n\tfor(int i = 0; i < 10; i++) {\r\n\r\n\t}\r\n}\r\n"; //$NON-NLS-1$
-		expectedSource = "void foo() {\r\n\r\n\tfor(int i = 0; i < 10; i++) {\r\n\t\tint i;\r\n\t\tint j;\r\n\r\n\t}\r\n}\r\n"; //$NON-NLS-1$
+		source = "void foo() {\n\tfor (int i = 0; i < 10; i++) {\n\n\n\t}\n}\n"; //$NON-NLS-1$
+		expectedSource = "void foo() {\n\tfor (int i = 0; i < 10; i++) {\n\t\tint i;\n\t\tint j;\n\t}\n}\n"; //$NON-NLS-1$
 		super.setUp();
 	}
 
@@ -73,7 +73,8 @@ public class MultilineWhitespaceHandlingTest extends ChangeGeneratorTest {
 				newSimpleDeclaration.addDeclarator(nf.newDeclarator(nf.newName(variableName.toCharArray())));
 				IASTDeclarationStatement newDeclaration = nf.newDeclarationStatement(newSimpleDeclaration);
 									
-				ASTModification modification = new ASTModification(ASTModification.ModificationKind.APPEND_CHILD, compoundStatement, newDeclaration, null);
+				ASTModification modification = new ASTModification(ASTModification.ModificationKind.APPEND_CHILD,
+						compoundStatement, newDeclaration, null);
 				modStore.storeModification(null, modification);
 			}
 		};

@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.dom.rewrite.commenthandler;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.TreeMap;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -171,26 +172,25 @@ public class ASTCommenter {
 	 * @return NodeCommentMap
 	 */
 	public static NodeCommentMap getCommentedNodeMap(IASTTranslationUnit transUnit){
-		if (transUnit== null) {
+		if (transUnit == null) {
 			return new NodeCommentMap();
 		}
-		ArrayList<IASTComment> comments = removeNotNeededComments(transUnit);		
-		if (comments == null || comments.size() == 0) {
+		List<IASTComment> comments = removeNotNeededComments(transUnit);		
+		if (comments == null || comments.isEmpty()) {
 			return new NodeCommentMap();
 		}
 		return addCommentsToCommentMap(transUnit, comments);
 	}
 
-	private static ArrayList<IASTComment> removeNotNeededComments(IASTTranslationUnit transUnit) {
-		ArrayList<IASTComment> comments = getCommentsInWorkspace(transUnit);
-		if (comments == null || comments.size() == 0) {
+	private static List<IASTComment> removeNotNeededComments(IASTTranslationUnit transUnit) {
+		List<IASTComment> comments = getCommentsInWorkspace(transUnit);
+		if (comments == null || comments.isEmpty()) {
 			return null;
 		}
-		ArrayList<IASTComment> com = removeAllPreprocessorComments(transUnit, comments);
-		return com;
+		return removeAllPreprocessorComments(transUnit, comments);
 	}
 
-	private static ArrayList<IASTComment> getCommentsInWorkspace(IASTTranslationUnit tu) {
+	private static List<IASTComment> getCommentsInWorkspace(IASTTranslationUnit tu) {
 		IASTComment[] comments = tu.getComments();
 		ArrayList<IASTComment> commentsInWorkspace = new ArrayList<IASTComment>();
 
@@ -206,8 +206,8 @@ public class ASTCommenter {
 		return commentsInWorkspace;
 	}
 
-	private static ArrayList<IASTComment> removeAllPreprocessorComments(IASTTranslationUnit tu,
-			ArrayList<IASTComment> comments) {
+	private static List<IASTComment> removeAllPreprocessorComments(IASTTranslationUnit tu,
+			List<IASTComment> comments) {
 		IASTPreprocessorStatement[] preprocessorStatements = tu.getAllPreprocessorStatements();
 		TreeMap<Integer, String> treeOfPreProcessorLines = new TreeMap<Integer,String>();
 		TreeMap<String, ArrayList<Integer>> ppOffsetForFiles = new TreeMap<String, ArrayList<Integer>>();
@@ -286,7 +286,7 @@ public class ASTCommenter {
 	}
 	
 	private static NodeCommentMap addCommentsToCommentMap(IASTTranslationUnit rootNode,
-			ArrayList<IASTComment> comments){
+			List<IASTComment> comments){
 		NodeCommentMap commentMap = new NodeCommentMap();
 		CommentHandler commHandler = new CommentHandler(comments);
 
@@ -296,8 +296,8 @@ public class ASTCommenter {
 				ASTCommenterVisitor commenter = new ASTCommenterVisitor(commHandler, commentMap);
 				declarations[i].accept(commenter);
 				
-				//add remaining comments to the last declaration => Comments won't get lost
-				if (i + 1 == declarations.length) {
+				// Add the remaining comments to the last declaration to prevent comment loss.
+				if (i == declarations.length - 1) {
 					commenter.addRemainingComments(declarations[i]);
 				}
 			}

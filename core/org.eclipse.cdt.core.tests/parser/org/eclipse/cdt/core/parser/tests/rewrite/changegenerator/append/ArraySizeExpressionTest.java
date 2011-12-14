@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.append;
 
@@ -39,8 +39,7 @@ public class ArraySizeExpressionTest extends ChangeGeneratorTest {
 	}
 
 	@Override
-	protected ASTVisitor createModificator(
-			final ASTModificationStore modStore) {
+	protected ASTVisitor createModificator(final ASTModificationStore modStore) {
 		return new ASTVisitor() {
 			{
 				shouldVisitExpressions = true;
@@ -53,8 +52,9 @@ public class ArraySizeExpressionTest extends ChangeGeneratorTest {
 					IASTTypeId id= newExpression.getTypeId();
 					IASTArrayDeclarator dtor= (IASTArrayDeclarator) id.getAbstractDeclarator();
 					IASTArrayModifier[] mods= dtor.getArrayModifiers();
-					IASTArrayModifier add= new CPPASTArrayModifier(new CPPASTLiteralExpression(0, "5"));
-					ASTModification modification = new ASTModification(ASTModification.ModificationKind.APPEND_CHILD, dtor, add, null); 
+					IASTArrayModifier add= new CPPASTArrayModifier(new CPPASTLiteralExpression(0, "5".toCharArray()));
+					ASTModification modification = new ASTModification(ASTModification.ModificationKind.APPEND_CHILD,
+							dtor, add, null); 
 					modStore.storeModification(null, modification);
 				}
 				return PROCESS_CONTINUE;

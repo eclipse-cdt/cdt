@@ -49,13 +49,14 @@ public class ArrayModifierTest extends ChangeGeneratorTest {
 			@Override
 			public int visit(IASTDeclarator declarator) {
 				if (declarator instanceof IASTArrayDeclarator) {
-					IASTArrayDeclarator arrayDeclarator = (IASTArrayDeclarator)declarator;
+					IASTArrayDeclarator arrayDeclarator = (IASTArrayDeclarator) declarator;
 					arrayDeclarator.getArrayModifiers();
 					IASTArrayModifier newModifier = new CPPASTArrayModifier();
 					IASTExpression expr = new CPPASTLiteralExpression(
 							IASTLiteralExpression.lk_integer_constant, "3".toCharArray()); //$NON-NLS-1$
 					newModifier.setConstantExpression(expr);
-					ASTModification modification = new ASTModification(ModificationKind.APPEND_CHILD, declarator, newModifier, null);
+					ASTModification modification = new ASTModification(ModificationKind.APPEND_CHILD,
+							declarator, newModifier, null);
 					modStore.storeModification(null, modification);
 				}
 				return PROCESS_CONTINUE;

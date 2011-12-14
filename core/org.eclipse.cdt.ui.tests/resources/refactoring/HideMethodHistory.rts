@@ -17,7 +17,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -31,11 +30,11 @@ public:
 
 private:
 	int i;
+
 	void method2();
 };
 
 #endif /*A_H_*/
-
 //@refScript.xml
 <?xml version="1.0" encoding="UTF-8"?>
 <session version="1.0">

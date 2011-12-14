@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.remove;
 
@@ -16,13 +16,11 @@ import junit.framework.TestSuite;
 
 /**
  * @author Thomas Corbat
- *
  */
-public class RemoveTestSuite{
+public class RemoveTestSuite {
 
 	public static Test suite() throws Exception {
-		TestSuite suite = new TestSuite("Changegenerator Remove Tests");
-
+		TestSuite suite = new TestSuite("ChangeGenerator Remove Tests");
 		suite.addTest(DeclarationTest.suite());
 		suite.addTest(FirstParameterTest.suite());
 		suite.addTest(MiddleParameterTest.suite());
@@ -36,7 +34,6 @@ public class RemoveTestSuite{
 		suite.addTest(ArraySizeExpressionTest.suite());
 		suite.addTest(NewInitializerExpressionTest.suite());
 		suite.addTest(StatementTest.suite());
-				
 		return suite;
 	}
 }

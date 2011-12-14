@@ -7,11 +7,11 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.commenthandler;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 
@@ -23,10 +23,9 @@ import org.eclipse.cdt.core.dom.ast.IASTComment;
  * @author Guido Zgraggen IFS
  */
 public class CommentHandler {
-
-	private final ArrayList<IASTComment> comments;
+	private final List<IASTComment> comments;
 	
-	public CommentHandler(ArrayList<IASTComment> comments) {
+	public CommentHandler(List<IASTComment> comments) {
 		super();
 		this.comments = comments;
 	}
@@ -36,7 +35,7 @@ public class CommentHandler {
 	}
 
 	public boolean hasMore() {
-		return comments.size()>0;
+		return !comments.isEmpty();
 	}
 
 	public IASTComment getFirst() {

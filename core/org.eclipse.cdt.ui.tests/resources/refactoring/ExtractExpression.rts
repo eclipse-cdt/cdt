@@ -296,7 +296,7 @@ class Klass {
 	void set(bool b) {
 	}
 
-	void test()	{
+	void test() {
 		other o;
 		this->set(/*$*/o.value()/*$$*/);
 	}
@@ -740,22 +740,17 @@ methodname=invalid
 class Test {
   void test();
 };
-
-
 //=
 class Test {
   void test();
 	bool invalid();
 };
-
-
 //@test.cpp
 #include "test.h"
 
 void Test::test() {
 	bool b = /*$*/false/*$$*/;
 }
-
 //=
 #include "test.h"
 
@@ -766,34 +761,30 @@ bool Test::invalid() {
 void Test::test() {
 	bool b = invalid();
 }
-
-//!Extract expresion with typdef Bug 331985
+//!Extract expression with typedef Bug 331985
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
-
 //@.config
 filename=test.cpp
 methodname=bar
 
 //@test.cpp
 typedef int& foo;
+
 int test(foo s) {
-   int a = /*$*/s + 1/*$$*/;  // type of id-expression 's' is int, not 'foo' or 'int&'
-   return a;
+	int a = /*$*/s + 1/*$$*/;  // type of id-expression 's' is int, not 'foo' or 'int&'
+	return a;
 }
-
-
 //=
 typedef int& foo;
+
 int bar(foo s) {
 	return s + 1;
 }
 
 int test(foo s) {
-   int a = bar(s);  // type of id-expression 's' is int, not 'foo' or 'int&'
-   return a;
+	int a = bar(s);  // type of id-expression 's' is int, not 'foo' or 'int&'
+	return a;
 }
-
-
 //!Bug 260133 Extract function and extract local variable don't handle type promotion
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 
@@ -802,14 +793,11 @@ filename=test.cpp
 methodname=bar
 
 //@test.cpp
-
 void foo() {
 	int x = 3;
 	double y = /*$*/x + 2.5/*$$*/;
 }
-
 //=
-
 double bar(int x) {
 	return x + 2.5;
 }
@@ -818,7 +806,6 @@ void foo() {
 	int x = 3;
 	double y = bar(x);
 }
-
 //! Extract macro
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 
@@ -836,7 +823,6 @@ int main() {
 
 	return i;
 }
-
 //=
 #define five 5
 #define ADD(a, b) a + b
@@ -851,7 +837,6 @@ int main() {
 
 	return i;
 }
-
 //! Extract macro
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 
@@ -869,7 +854,6 @@ int main() {
 
 	return i;
 }
-
 //=
 #define five 5
 #define ADD(a, b) a + b
@@ -884,4 +868,3 @@ int main() {
 
 	return i;
 }
-

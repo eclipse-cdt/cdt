@@ -57,8 +57,6 @@ catch (std::exception& e1) {
 class A {
 	void member(int a, int b);
 };
-
-
 //@A.cpp
 #include "A.h"
 
@@ -102,8 +100,6 @@ int main() {
 //=
 #include <exception>
 #include "A.h"
-
-
 
 int main() {
 	return 0;
@@ -194,8 +190,6 @@ catch (std::exception& e2) {
 class A {
 	void member(int a, int b);
 };
-
-
 //@A.cpp
 #include "A.h"
 
@@ -245,8 +239,6 @@ int main() {
 //=
 #include <exception>
 #include "A.h"
-
-
 
 int main() {
 	return 0;

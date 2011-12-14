@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
@@ -62,28 +63,25 @@ public class ASTWriterVisitor extends ASTVisitor {
 	private boolean spaceNeededBeforeName;
 
 	{
-		shouldVisitExpressions = true;
-		shouldVisitStatements = true;
-		shouldVisitNames = true;
-		shouldVisitDeclarations = true;
-		shouldVisitDeclSpecifiers = true;
-		shouldVisitDeclarators = true;
-		shouldVisitArrayModifiers= true;
-		shouldVisitInitializers = true;
+		shouldVisitArrayModifiers = true;
 		shouldVisitBaseSpecifiers = true;
+		shouldVisitDeclarations = true;
+		shouldVisitDeclarators = true;
+		shouldVisitDeclSpecifiers = true;
+		shouldVisitExpressions = true;
+		shouldVisitInitializers = true;
+		shouldVisitNames = true;
 		shouldVisitNamespaces = true;
-		shouldVisitTemplateParameters = true;
 		shouldVisitParameterDeclarations = true;
+		shouldVisitPointerOperators = true;
+		shouldVisitStatements = true;
+		shouldVisitTemplateParameters = true;
 		shouldVisitTranslationUnit = true;
+		shouldVisitTypeIds = true;
 	}
 
 	public ASTWriterVisitor(NodeCommentMap commentMap) {
-		this("", commentMap); //$NON-NLS-1$
-	}
-
-	public ASTWriterVisitor(String givenIndentation, NodeCommentMap commentMap) {
 		super();
-		scribe.setGivenIndentation(givenIndentation);
 		init(commentMap);
 		this.commentMap = commentMap;
 		this.suppressLeadingBlankLine = true;
@@ -123,8 +121,8 @@ public class ASTWriterVisitor extends ASTVisitor {
 		}
 	}
 
-	private ArrayList<IASTComment> getLeadingComments(IASTNode node) {
-		ArrayList<IASTComment> leadingComments = commentMap.getLeadingCommentsForNode(node);
+	private List<IASTComment> getLeadingComments(IASTNode node) {
+		List<IASTComment> leadingComments = commentMap.getLeadingCommentsForNode(node);
 		IASTNodeLocation[] locs = node.getNodeLocations();
 		if (locs != null && locs.length > 0 && locs[0] instanceof IASTCopyLocation) {
 			IASTCopyLocation copyLoc = (IASTCopyLocation) locs[0];
@@ -240,6 +238,15 @@ public class ASTWriterVisitor extends ASTVisitor {
 		return ASTVisitor.PROCESS_SKIP;
 	}
 
+	@Override
+	public int visit(IASTPointerOperator pointerOperator) {
+		writeLeadingComments(pointerOperator);
+		if (!macroHandler.checkisMacroExpansionNode(pointerOperator)) {
+			declaratorWriter.writePointerOperator(pointerOperator);
+		}
+		return ASTVisitor.PROCESS_SKIP;
+	}
+
 	protected IASTName getParameterName(IASTDeclarator declarator) {
 		return declarator.getName();
 	}
@@ -301,6 +308,10 @@ public class ASTWriterVisitor extends ASTVisitor {
 
 	public void setSpaceNeededBeforeName(boolean value) {
 		this.spaceNeededBeforeName = value;
+	}
+
+	public Scribe getScribe() {
+		return scribe;
 	}
 
 	public void newLine() {

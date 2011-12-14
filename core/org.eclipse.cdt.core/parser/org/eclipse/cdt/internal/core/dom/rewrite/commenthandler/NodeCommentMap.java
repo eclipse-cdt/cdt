@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -7,12 +7,14 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- * Institute for Software - initial API and implementation 
+ *     Institute for Software - initial API and implementation
  ******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.commenthandler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -25,18 +27,18 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
  * @author Guido Zgraggen IFS
  */
 public class NodeCommentMap {
-	protected final HashMap<IASTNode, ArrayList<IASTComment>> leadingMap = new HashMap<IASTNode, ArrayList<IASTComment>>();
-	protected final HashMap<IASTNode, ArrayList<IASTComment>> trailingMap = new HashMap<IASTNode, ArrayList<IASTComment>>();
-	protected final HashMap<IASTNode, ArrayList<IASTComment>> freestandingMap = new HashMap<IASTNode, ArrayList<IASTComment>>();
+	protected final Map<IASTNode, List<IASTComment>> leadingMap = new HashMap<IASTNode, List<IASTComment>>();
+	protected final Map<IASTNode, List<IASTComment>> trailingMap = new HashMap<IASTNode, List<IASTComment>>();
+	protected final Map<IASTNode, List<IASTComment>> freestandingMap = new HashMap<IASTNode, List<IASTComment>>();
 	
 	/**
 	 * Add a comment to the map with the trailing comments.
 	 * @param node The node is the key.
 	 * @param comment The comment is the value
 	 */
-	public void addTrailingCommentToNode(IASTNode node, IASTComment comment){
-		ArrayList<IASTComment> comments = trailingMap.get(node);
-		if(comments == null){
+	public void addTrailingCommentToNode(IASTNode node, IASTComment comment) {
+		List<IASTComment> comments = trailingMap.get(node);
+		if (comments == null) {
 			comments = new ArrayList<IASTComment>();
 		}
 		comments.add(comment);
@@ -44,17 +46,15 @@ public class NodeCommentMap {
 	}
 	
 	/**
-	 * Returns an ArrayList for the given node. This ArrayList contains all the comments 
+	 * Returns a List for the given node. This List contains all the comments 
 	 * which are assigned to this specific node. If no comments are available an empty
-	 * ArrayList is returned.
+	 * List is returned.
 	 * @param node The key to fetch the associated comments.
-	 * @return ArrayList
+	 * @return List
 	 */
-	public ArrayList<IASTComment> getTrailingCommentsForNode(IASTNode node){
-		if(trailingMap.get(node) == null) {
-			return new ArrayList<IASTComment>();
-		}
-		return trailingMap.get(node);
+	public List<IASTComment> getTrailingCommentsForNode(IASTNode node) {
+		List<IASTComment> list = trailingMap.get(node);
+		return list != null ? list : new ArrayList<IASTComment>();
 	}
 	
 	/**
@@ -62,9 +62,9 @@ public class NodeCommentMap {
 	 * @param node The node is the key.
 	 * @param comment The comment is the value
 	 */
-	public void addLeadingCommentToNode(IASTNode node, IASTComment comment){
-		ArrayList<IASTComment> comments = leadingMap.get(node);
-		if(comments == null){
+	public void addLeadingCommentToNode(IASTNode node, IASTComment comment) {
+		List<IASTComment> comments = leadingMap.get(node);
+		if (comments == null) {
 			comments = new ArrayList<IASTComment>();
 		}
 		comments.add(comment);
@@ -72,17 +72,15 @@ public class NodeCommentMap {
 	}
 	
 	/**
-	 * Returns an ArrayList for the given node. This ArrayList contains all the comments 
+	 * Returns a List for the given node. This List contains all the comments 
 	 * which are assigned to this specific node. If no comments are available an empty
-	 * ArrayList is returned.
+	 * List is returned.
 	 * @param node The key to fetch the associated comments.
-	 * @return ArrayList
+	 * @return List
 	 */
-	public ArrayList<IASTComment> getLeadingCommentsForNode(IASTNode node){
-		if(leadingMap.get(node) == null) {
-			return new ArrayList<IASTComment>();
-		}
-		return leadingMap.get(node);
+	public List<IASTComment> getLeadingCommentsForNode(IASTNode node) {
+		List<IASTComment> list = leadingMap.get(node);
+		return list != null ? list : new ArrayList<IASTComment>();
 	}
 	
 	/**
@@ -90,9 +88,9 @@ public class NodeCommentMap {
 	 * @param node The node is the key.
 	 * @param comment The comment is the value
 	 */
-	public void addFreestandingCommentToNode(IASTNode node, IASTComment comment){
-		ArrayList<IASTComment> comments = freestandingMap.get(node);
-		if(comments == null){
+	public void addFreestandingCommentToNode(IASTNode node, IASTComment comment) {
+		List<IASTComment> comments = freestandingMap.get(node);
+		if (comments == null) {
 			comments = new ArrayList<IASTComment>();
 		}
 		comments.add(comment);
@@ -100,51 +98,50 @@ public class NodeCommentMap {
 	}
 	
 	/**
-	 * Returns an ArrayList for the given node. This ArrayList contains all the comments 
+	 * Returns a List for the given node. This List contains all the comments 
 	 * which are assigned to this specific node. If no comments are available an empty
-	 * ArrayList is returned.
+	 * List is returned.
 	 * @param node The key to fetch the associated comments.
-	 * @return ArrayList
+	 * @return List
 	 */
-	public ArrayList<IASTComment> getFreestandingCommentsForNode(IASTNode node){
-		if(freestandingMap.get(node) == null) {
-			return new ArrayList<IASTComment>();
-		}
-		return freestandingMap.get(node);
+	public List<IASTComment> getFreestandingCommentsForNode(IASTNode node) {
+		List<IASTComment> list = freestandingMap.get(node);
+		return list != null ? list : new ArrayList<IASTComment>();
 	}
-	
-	
+
 	/**
-	 * Returns the HashMap with all leading maps. Used only for test purpose
-	 * @return HashMap of all leading comments
+	 * Returns the Map with all leading maps. Used only for test purpose
+	 * @return Map of all leading comments
 	 */
-	public HashMap<IASTNode, ArrayList<IASTComment>> getLeadingMap() {
+	public Map<IASTNode, List<IASTComment>> getLeadingMap() {
 		return leadingMap;
 	}
+
 	/**
-	 * Returns the HashMap with all trailing maps. Used only for test purpose
-	 * @return HashMap of all trailing comments
+	 * Returns the Map with all trailing maps. Used only for test purpose
+	 * @return Map of all trailing comments
 	 */
-	public HashMap<IASTNode, ArrayList<IASTComment>> getTrailingMap() {
+	public Map<IASTNode, List<IASTComment>> getTrailingMap() {
 		return trailingMap;
 	}
+
 	/**
-	 * Returns the HashMap with all freestanding maps. Used only for test purpose
-	 * @return HashMap of all freestanding comments
+	 * Returns the Map with all freestanding maps. Used only for test purpose
+	 * @return Map of all freestanding comments
 	 */
-	public HashMap<IASTNode, ArrayList<IASTComment>> getFreestandingMap() {
+	public Map<IASTNode, List<IASTComment>> getFreestandingMap() {
 		return freestandingMap;
 	}
 
 	/**
-	 * Returns an ArrayList for the given node. This ArrayList contains all the comments 
+	 * Returns an List for the given node. This List contains all the comments 
 	 * which are assigned to this specific node. If no comments are available an empty
-	 * ArrayList is returned.
+	 * List is returned.
 	 * @param node The key to fetch the associated comments.
-	 * @return ArrayList
+	 * @return List
 	 */
-	public ArrayList<IASTComment> getAllCommentsForNode(IASTNode node) {
-		ArrayList<IASTComment> comment = new ArrayList<IASTComment>();
+	public List<IASTComment> getAllCommentsForNode(IASTNode node) {
+		List<IASTComment> comment = new ArrayList<IASTComment>();
 		comment.addAll(getFreestandingCommentsForNode(node));
 		comment.addAll(getLeadingCommentsForNode(node));
 		comment.addAll(getTrailingCommentsForNode(node));

@@ -60,7 +60,8 @@ public class ArrayModifierTest extends ChangeGeneratorTest {
 					IASTExpression expr =
 							new CPPASTLiteralExpression(IASTLiteralExpression.lk_integer_constant, "5".toCharArray()); //$NON-NLS-1$
 					newModifier.setConstantExpression(expr);
-					ASTModification modification = new ASTModification(ModificationKind.INSERT_BEFORE, modifiers[0], newModifier, null);
+					ASTModification modification = new ASTModification(ModificationKind.INSERT_BEFORE,
+							modifiers[0], newModifier, null);
 					modStore.storeModification(null, modification);
 				}
 				return PROCESS_CONTINUE;

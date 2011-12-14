@@ -182,7 +182,6 @@ public:
 };
 
 }
-
 //@A.cpp
 #include "A.h"
 

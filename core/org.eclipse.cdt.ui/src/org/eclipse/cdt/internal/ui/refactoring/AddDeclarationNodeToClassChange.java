@@ -38,7 +38,7 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
  * @author Mirko Stocker
  */
 public class AddDeclarationNodeToClassChange {
-	private final ICPPASTCompositeTypeSpecifier nodeClass;
+	private final ICPPASTCompositeTypeSpecifier classNode;
 	private final VisibilityEnum visibility;
 	private List<IASTNode> fieldNodes = new ArrayList<IASTNode>();
 	private final ModificationCollector collector;
@@ -49,26 +49,26 @@ public class AddDeclarationNodeToClassChange {
 		new AddDeclarationNodeToClassChange(nodeClass, visibility, fieldNodes, collector, isField);
 	}
 
-	public static void createChange(ICPPASTCompositeTypeSpecifier nodeClass,
+	public static void createChange(ICPPASTCompositeTypeSpecifier classNode,
 			VisibilityEnum visibility, List<IASTNode> fieldNodes, boolean isField,
 			ModificationCollector collector) {
-		new AddDeclarationNodeToClassChange(nodeClass, visibility, fieldNodes, collector, isField);
+		new AddDeclarationNodeToClassChange(classNode, visibility, fieldNodes, collector, isField);
 	}	
 
-	private AddDeclarationNodeToClassChange(ICPPASTCompositeTypeSpecifier nodeClass,
+	private AddDeclarationNodeToClassChange(ICPPASTCompositeTypeSpecifier classNode,
 			VisibilityEnum visibility, List<IASTNode> fieldNodes,
 			ModificationCollector collector, boolean isField) {
 		this.fieldNodes = fieldNodes;
-		this.nodeClass = nodeClass;		
+		this.classNode = classNode;		
 		this.visibility = visibility;
 		this.collector = collector;
 		createRewrites(isField);
 	}
 	
-	private AddDeclarationNodeToClassChange(ICPPASTCompositeTypeSpecifier nodeClass,
+	private AddDeclarationNodeToClassChange(ICPPASTCompositeTypeSpecifier classNode,
 			VisibilityEnum visibility, IASTNode fieldNodes, ModificationCollector collector,
 			boolean isField) {
-		this.nodeClass = nodeClass;		
+		this.classNode = classNode;		
 		this.visibility = visibility;
 		this.fieldNodes.add(fieldNodes);
 		this.collector = collector;
@@ -78,12 +78,10 @@ public class AddDeclarationNodeToClassChange {
 	private void createRewrites(boolean isField) {
 		int lastFunctionDeclaration = -1;
 		int lastFieldDeclaration = -1;
-		IASTDeclaration[] members = nodeClass.getMembers();
+		IASTDeclaration[] members = classNode.getMembers();
 		
-		VisibilityEnum currentVisibility = VisibilityEnum.v_private;
-		if (IASTCompositeTypeSpecifier.k_struct == nodeClass.getKey()) {
-			currentVisibility = VisibilityEnum.v_public;
-		}	
+		VisibilityEnum currentVisibility = classNode.getKey() == IASTCompositeTypeSpecifier.k_struct ?
+				VisibilityEnum.v_public : VisibilityEnum.v_private;
 	
 		// Find the insert location by iterating over the elements of the class 
 		// and remembering the last element with the matching visibility
@@ -92,18 +90,13 @@ public class AddDeclarationNodeToClassChange {
 			
 			if (declaration instanceof ICPPASTVisibilityLabel) {
 				currentVisibility = VisibilityEnum.from((ICPPASTVisibilityLabel) declaration);
-			}
-			
-			if (declaration instanceof IASTSimpleDeclaration) {
+			} else if (declaration instanceof IASTSimpleDeclaration && currentVisibility.equals(visibility)) {
 				IASTSimpleDeclaration simple = (IASTSimpleDeclaration) declaration;
 				IASTDeclarator[] declarators = simple.getDeclarators();
-				if (declarators.length > 0 && declarators[0] != null &&
-						declarators[0] instanceof IASTFunctionDeclarator) {
-					if (currentVisibility.equals(visibility)) {
+				if (declarators.length > 0 && declarators[0] != null) {
+					if (declarators[0] instanceof IASTFunctionDeclarator) {
 						lastFunctionDeclaration = i;
-					}
-				} else if (declarators.length > 0 && declarators[0] != null) {
-					if (currentVisibility.equals(visibility)) {
+					} else {
 						lastFieldDeclaration = i;
 					}
 				}
@@ -142,29 +135,29 @@ public class AddDeclarationNodeToClassChange {
 		}
 	}
 
-	private void insertBefore(IASTNode nearestNode) {			
-		ASTRewrite rewrite = collector.rewriterForTranslationUnit(nearestNode.getTranslationUnit());
+	private void insertBefore(IASTNode nextNode) {			
+		ASTRewrite rewrite = collector.rewriterForTranslationUnit(nextNode.getTranslationUnit());
 		for (IASTNode node : fieldNodes) {
-			rewrite.insertBefore(nearestNode.getParent(), nearestNode, node, createEditDescription());
+			rewrite.insertBefore(nextNode.getParent(), nextNode, node, createEditDescription());
 		}
 	}
 
 	private void insertAtTheEnd(VisibilityEnum currentVisibility) {
-		ASTRewrite rewrite = collector.rewriterForTranslationUnit(nodeClass.getTranslationUnit());
+		ASTRewrite rewrite = collector.rewriterForTranslationUnit(classNode.getTranslationUnit());
 		
 		if (!currentVisibility.equals(visibility)) {
 			ICPPASTVisibilityLabel label =
 					new CPPASTVisibilityLabel(visibility.getICPPASTVisiblityLabelVisibility());
-			rewrite.insertBefore(nodeClass, null, label, createEditDescription());
+			rewrite.insertBefore(classNode, null, label, createEditDescription());
 		}
 		
 		for (IASTNode node : fieldNodes) {
-			rewrite.insertBefore(nodeClass, null, node, createEditDescription());
+			rewrite.insertBefore(classNode, null, node, createEditDescription());
 		}
 	}
 	
 	private TextEditGroup createEditDescription() {
 		return new TextEditGroup(NLS.bind(Messages.AddDeclarationNodeToClassChange_AddDeclaration,
-				nodeClass.getName()));
+				classNode.getName()));
 	}
 }

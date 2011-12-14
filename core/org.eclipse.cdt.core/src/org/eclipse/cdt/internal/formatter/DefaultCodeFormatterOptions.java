@@ -100,7 +100,7 @@ public class DefaultCodeFormatterOptions {
 //	public int comment_line_length;
 	public int comment_min_distance_between_code_and_line_comment;
 	public boolean comment_preserve_white_space_between_code_and_line_comment;
-	public boolean never_indent_line_comments_on_first_column = true;
+	public boolean never_indent_line_comments_on_first_column;
 	
 	public int continuation_indentation;
 	public int continuation_indentation_for_initializer_list;
@@ -314,6 +314,7 @@ public class DefaultCodeFormatterOptions {
 //		options.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_LINE_LENGTH, Integer.toString(this.comment_line_length));
 		options.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_MIN_DISTANCE_BETWEEN_CODE_AND_LINE_COMMENT, Integer.toString(this.comment_min_distance_between_code_and_line_comment));
 		options.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_PRESERVE_WHITE_SPACE_BETWEEN_CODE_AND_LINE_COMMENT, this.comment_preserve_white_space_between_code_and_line_comment ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
+		options.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_NEVER_INDENT_LINE_COMMENTS_ON_FIRST_COLUMN, this.never_indent_line_comments_on_first_column ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
 		options.put(DefaultCodeFormatterConstants.FORMATTER_CONTINUATION_INDENTATION, Integer.toString(this.continuation_indentation));
 		options.put(DefaultCodeFormatterConstants.FORMATTER_CONTINUATION_INDENTATION_FOR_INITIALIZER_LIST, Integer.toString(this.continuation_indentation_for_initializer_list));
 		options.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_STATEMENTS_COMPARE_TO_BLOCK, this.indent_statements_compare_to_block ? DefaultCodeFormatterConstants.TRUE : DefaultCodeFormatterConstants.FALSE);
@@ -846,6 +847,10 @@ public class DefaultCodeFormatterOptions {
 		final Object commentPreserveWhiteSpaceBetweenCodeAndLineCommentOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_COMMENT_PRESERVE_WHITE_SPACE_BETWEEN_CODE_AND_LINE_COMMENT);
 		if (commentPreserveWhiteSpaceBetweenCodeAndLineCommentOption != null) {
 			this.comment_preserve_white_space_between_code_and_line_comment = DefaultCodeFormatterConstants.TRUE.equals(commentPreserveWhiteSpaceBetweenCodeAndLineCommentOption);
+		}
+		final Object neverIndentLineCommentsOnFirstColumn = settings.get(DefaultCodeFormatterConstants.FORMATTER_COMMENT_NEVER_INDENT_LINE_COMMENTS_ON_FIRST_COLUMN);
+		if (neverIndentLineCommentsOnFirstColumn != null) {
+			this.never_indent_line_comments_on_first_column = DefaultCodeFormatterConstants.TRUE.equals(neverIndentLineCommentsOnFirstColumn);
 		}
 		final Object continuationIndentationOption = settings.get(DefaultCodeFormatterConstants.FORMATTER_CONTINUATION_INDENTATION);
 		if (continuationIndentationOption != null) {
@@ -1525,7 +1530,8 @@ public class DefaultCodeFormatterOptions {
 		this.brace_position_for_switch = DefaultCodeFormatterConstants.END_OF_LINE;
 		this.brace_position_for_type_declaration = DefaultCodeFormatterConstants.END_OF_LINE;
 		this.comment_min_distance_between_code_and_line_comment = 1;
-		this.comment_preserve_white_space_between_code_and_line_comment = false;
+		this.comment_preserve_white_space_between_code_and_line_comment = true;
+		this.never_indent_line_comments_on_first_column = true;
 //		this.comment_clear_blank_lines = false;
 //		this.comment_format = true;
 //		this.comment_format_header = false;

@@ -33,14 +33,13 @@ public class CtorChainInitializerTest extends ChangeGeneratorTest {
 
 	@Override
 	protected void setUp() throws Exception {
-		source = "TestClass::TestClass(int a, int b):beta(b){\n}\n\n"; //$NON-NLS-1$
-		expectedSource = "TestClass::TestClass(int a, int b):beta(b), alpha(a){\n}\n\n"; //$NON-NLS-1$
+		source = "TestClass::TestClass(int a, int b) :\n\t\tbeta(b) {\n}\n"; //$NON-NLS-1$
+		expectedSource = "TestClass::TestClass(int a, int b) :\n\t\tbeta(b), alpha(a) {\n}\n"; //$NON-NLS-1$
 		super.setUp();
 	}
 
 	@Override
-	protected ASTVisitor createModificator(
-			final ASTModificationStore modStore) {
+	protected ASTVisitor createModificator(final ASTModificationStore modStore) {
 		return new ASTVisitor() {
 			{
 				shouldVisitDeclarations = true;
@@ -49,12 +48,13 @@ public class CtorChainInitializerTest extends ChangeGeneratorTest {
 			@Override
 			public int visit(IASTDeclaration decl) {
 				if (decl instanceof CPPASTFunctionDefinition) {
-					CPPASTFunctionDefinition fdef = (CPPASTFunctionDefinition)decl;
+					CPPASTFunctionDefinition fdef = (CPPASTFunctionDefinition) decl;
 					CPPASTIdExpression initExpr = new CPPASTIdExpression(new CPPASTName("a".toCharArray())); //$NON-NLS-1$
 					CPPASTName initName = new CPPASTName("alpha".toCharArray()); //$NON-NLS-1$
 					ICPPASTConstructorChainInitializer newInitializer = new CPPASTConstructorChainInitializer(initName, null);
 					newInitializer.setInitializerValue(initExpr);
-					ASTModification modification = new ASTModification(ModificationKind.APPEND_CHILD, fdef, newInitializer, null);
+					ASTModification modification = new ASTModification(ModificationKind.APPEND_CHILD,
+							fdef, newInitializer, null);
 					modStore.storeModification(null, modification);
 				}
 				return PROCESS_CONTINUE;

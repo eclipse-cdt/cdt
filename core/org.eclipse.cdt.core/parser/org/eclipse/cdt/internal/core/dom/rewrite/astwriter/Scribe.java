@@ -8,6 +8,7 @@
  *  
  * Contributors: 
  *     Institute for Software - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
@@ -19,40 +20,41 @@ package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
  * @author Emanuel Graf IFS
  */
 public class Scribe {
-	private int indentationLevel = 0;
-	// Any positive indentation size is good enough since the code is going to be formatted anyway.
-	private int indentationSize = 4;
+	// Indentation is not necessary since the code is going to be formatted anyway.
+	// Preserved because some tests depend on it.
+	private static final int INDENTATION_SIZE = 4;
+	private final String newLine = System.getProperty("line.separator"); //$NON-NLS-1$
 	private StringBuilder buffer = new StringBuilder();
-	private boolean isAtLineBeginning = true;
-	private String newLine = System.getProperty("line.separator"); //$NON-NLS-1$
-	private String givenIndentation;
+	private int indentationLevel = 0;
+	private boolean isAtBeginningOfLine = true;
 
 	private boolean skipLineBreaks;
 	private boolean skipSemicolons;
 
+	public String getLineSeparator() {
+		return newLine;
+	}
+
 	public void newLine() {
 		if (!skipLineBreaks) {
-			isAtLineBeginning = true;
-			buffer.append(getNewline());
+			isAtBeginningOfLine = true;
+			buffer.append(newLine);
 		}
+	}
+
+	public boolean isAtBeginningOfLine() {
+		return isAtBeginningOfLine;
 	}
 
 	private void indent() {
-		if (givenIndentation != null) {
-			buffer.append(givenIndentation);
-		}
-		printSpaces(indentationLevel * indentationSize);
+		printSpaces(indentationLevel * INDENTATION_SIZE);
 	}
 
 	private void indentIfNewLine() {
-		if (isAtLineBeginning) {
-			isAtLineBeginning = false;
+		if (isAtBeginningOfLine) {
+			isAtBeginningOfLine = false;
 			indent();
 		}
-	}
-
-	private String getNewline() {
-		return newLine;
 	}
 
 	public void print(String code) {
@@ -169,14 +171,6 @@ public class Scribe {
 
 	public void printSpace() {
 		buffer.append(' ');
-	}
-
-	public String getGivenIndentation() {
-		return givenIndentation;
-	}
-
-	public void setGivenIndentation(String givenIndentation) {
-		this.givenIndentation = givenIndentation;
 	}
 
 	public void cleanCache() {

@@ -11,8 +11,6 @@ void A::/*$*/member/*$$*/() {
 }
 //=
 #include "A.h"
-
-
 //@A.h
 class A {
 	void member();
@@ -37,9 +35,6 @@ void A::/*$*/member/*$$*/() {
 }
 //=
 #include "A.h"
-
-// Definition comment
-
 //@A.h
 class A {
 	void member();
@@ -64,9 +59,6 @@ void A::/*$*/member/*$$*/() try {
 } /*1*/ catch (int e) { /*2*/ } /*3*/ catch (int e) { /*4*/ }
 //=
 #include "A.h"
-
-// Definition comment
-
 //@A.h
 class A {
 	void member();
@@ -98,8 +90,6 @@ void /*$*/member/*$$*/() {
 }
 //=
 #include "A.h"
-
-
 //@A.h
 
 //=
@@ -122,9 +112,6 @@ void /*$*/member/*$$*/() {
 }
 //=
 #include "A.h"
-
-// Top comment
-
 //@A.h
 
 //=

@@ -77,6 +77,7 @@ public final class SourceHeaderPartnerFinder {
 	private static class PartnerFileComputer implements ASTRunnable {
 		PartnerFileVisitor fVisitor = null;
 		
+		@Override
 		public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
 			if (ast != null && ast.getIndex() != null) {
 				fVisitor = new PartnerFileVisitor();
@@ -86,7 +87,7 @@ public final class SourceHeaderPartnerFinder {
 		}
 
 		public IPath getPartnerFileLocation() {
-			if(fVisitor != null) {
+			if (fVisitor != null) {
 				return fVisitor.getPartnerFileLocation();
 			}
 			
@@ -120,6 +121,7 @@ public final class SourceHeaderPartnerFinder {
 			shouldVisitDeclarators= true;
 			shouldVisitTranslationUnit = true;
 		}
+
 		public PartnerFileVisitor() {
 			fMap= new HashMap<IPath, Counter>();
 		}
@@ -127,7 +129,7 @@ public final class SourceHeaderPartnerFinder {
 		@Override
 		public int visit(IASTTranslationUnit tu) {
 			fIndex= tu.getIndex();
-			if(fIndex == null) {
+			if (fIndex == null) {
 				return PROCESS_ABORT;	
 			}
 			
@@ -212,6 +214,7 @@ public final class SourceHeaderPartnerFinder {
 	private static IFile findInContainer(IContainer container, final String basename) {
 		final IFile[] result= { null };
 		IResourceProxyVisitor visitor= new IResourceProxyVisitor() {
+			@Override
 			public boolean visit(IResourceProxy proxy) throws CoreException {
 				if (result[0] != null) {
 					return false;
@@ -227,8 +230,8 @@ public final class SourceHeaderPartnerFinder {
 			}};
 		try {
 			container.accept(visitor, 0);
-		} catch (CoreException exc) {
-			// ignore
+		} catch (CoreException e) {
+			// Ignore
 		}
 		return result[0];
 	}

@@ -69,8 +69,6 @@ public:
 	~A() {
 	}
 };
-
-
 //@A.cpp
 #include "A.h"
 
@@ -104,8 +102,6 @@ int main() {
 }
 //=
 #include "A.h"
-
-
 
 int main() {
 	return 0;
@@ -188,8 +184,6 @@ private:
 public:
 	~A();
 };
-
-
 //@A.cpp
 #include "A.h"
 
@@ -224,8 +218,6 @@ int main() {
 }
 //=
 #include "A.h"
-
-
 
 int main() {
 	return 0;

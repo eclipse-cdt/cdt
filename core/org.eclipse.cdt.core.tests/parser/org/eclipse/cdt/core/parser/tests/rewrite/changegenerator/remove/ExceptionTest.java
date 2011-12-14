@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.remove;
 
@@ -30,8 +30,8 @@ public class ExceptionTest extends ChangeGeneratorTest {
 
 	@Override
 	protected void setUp() throws Exception {
-		source = "void foo(int parameter) throw (int){\n}\n\n"; //$NON-NLS-1$
-		expectedSource = "void foo(int parameter) throw (){\n}\n\n"; //$NON-NLS-1$
+		source = "void foo(int parameter) throw (int) {\n}\n\n"; //$NON-NLS-1$
+		expectedSource = "void foo(int parameter) throw () {\n}\n\n"; //$NON-NLS-1$
 		super.setUp();
 	}
 
@@ -40,8 +40,7 @@ public class ExceptionTest extends ChangeGeneratorTest {
 	}
 
 	@Override
-	protected ASTVisitor createModificator(
-			final ASTModificationStore modStore) {
+	protected ASTVisitor createModificator(final ASTModificationStore modStore) {
 		return new ASTVisitor() {
 			{
 				shouldVisitDeclarators = true;
@@ -50,11 +49,12 @@ public class ExceptionTest extends ChangeGeneratorTest {
 			@Override
 			public int visit(IASTDeclarator declarator) {
 				if (declarator instanceof CPPASTFunctionDeclarator) {
-					CPPASTFunctionDeclarator functionDeclarator = (CPPASTFunctionDeclarator)declarator;
+					CPPASTFunctionDeclarator functionDeclarator = (CPPASTFunctionDeclarator) declarator;
 					IASTTypeId[] exceptions = functionDeclarator.getExceptionSpecification();
-					for(IASTTypeId curException : exceptions){		
-							ASTModification modification = new ASTModification(ModificationKind.REPLACE, curException, null, null);
-							modStore.storeModification(null, modification);
+					for (IASTTypeId curException : exceptions) {		
+						ASTModification modification = new ASTModification(ModificationKind.REPLACE,
+								curException, null, null);
+						modStore.storeModification(null, modification);
 					}
 				}
 				return PROCESS_CONTINUE;

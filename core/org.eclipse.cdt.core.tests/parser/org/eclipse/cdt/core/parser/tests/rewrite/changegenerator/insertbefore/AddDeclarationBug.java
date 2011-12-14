@@ -69,7 +69,8 @@ public class AddDeclarationBug extends ChangeGeneratorTest {
 					returnTyp.setType(IASTSimpleDeclSpecifier.t_int);
 					newDecl.setDeclSpecifier(returnTyp);
 					
-					IASTStandardFunctionDeclarator declarator = new CPPASTFunctionDeclarator(new CPPASTName("exp".toCharArray())); //$NON-NLS-1$
+					IASTStandardFunctionDeclarator declarator = new CPPASTFunctionDeclarator(
+							new CPPASTName("exp".toCharArray())); //$NON-NLS-1$
 					IASTSimpleDeclSpecifier paramTyp = new CPPASTSimpleDeclSpecifier();
 					paramTyp.setType(IASTSimpleDeclSpecifier.t_int);
 					IASTDeclarator decl = new CPPASTDeclarator(new CPPASTName("i".toCharArray())); //$NON-NLS-1$
@@ -77,7 +78,8 @@ public class AddDeclarationBug extends ChangeGeneratorTest {
 					declarator.addParameterDeclaration(param);
 					newDecl.addDeclarator(declarator);
 					
-					ASTModification mod = new ASTModification(ModificationKind.APPEND_CHILD, classNode, newDecl, null);
+					ASTModification mod = new ASTModification(ModificationKind.APPEND_CHILD, classNode,
+							newDecl, null);
 					modStore.storeModification(null, mod);
 				}
 				return PROCESS_CONTINUE;

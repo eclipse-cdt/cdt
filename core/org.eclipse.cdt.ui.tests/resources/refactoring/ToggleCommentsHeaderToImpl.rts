@@ -15,8 +15,6 @@ inline void A::member() {
 class A {
 	void member();
 };
-
-
 //@A.cpp
 #include "A.h"
 //=
@@ -44,8 +42,6 @@ catch /*3*/ (int e) { /*4*/ }
 class A {
 	void member();
 };
-
-
 //@A.cpp
 #include "A.h"
 //=
@@ -80,9 +76,6 @@ inline void A::member() {
 class A {
 	void member();
 };
-
-
-
 //@A.cpp
 #include "A.h"
 //=
@@ -105,10 +98,8 @@ void /*$*/member/*$$*/() {
 //=
 // Definition comment
 void member();
-
 //@A.cpp
 #include "A.h"
-
 //=
 #include "A.h"
 

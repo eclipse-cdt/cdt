@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -43,7 +44,6 @@ import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
  * @author Emanuel Graf IFS
  */
 public class ChangeGeneratorWriterVisitor extends ASTWriterVisitor {
-	private static final String DEFAULT_INDENTATION = ""; //$NON-NLS-1$
 	private final ASTModificationStore modificationStore;
 	private final String fileScope;
 	private ModificationScopeStack stack;
@@ -56,30 +56,31 @@ public class ChangeGeneratorWriterVisitor extends ASTWriterVisitor {
 		this.fileScope = fileScope;
 		this.stack = new ModificationScopeStack(modificationStore);
 
-		shouldVisitExpressions = delegateVisitor.shouldVisitExpressions;
-		shouldVisitStatements = delegateVisitor.shouldVisitStatements;
-		shouldVisitNames = delegateVisitor.shouldVisitNames;
-		shouldVisitDeclarations = delegateVisitor.shouldVisitDeclarators;
-		shouldVisitDeclSpecifiers = delegateVisitor.shouldVisitDeclSpecifiers;
-		shouldVisitDeclarators = delegateVisitor.shouldVisitDeclarators;
-		shouldVisitInitializers = delegateVisitor.shouldVisitInitializers;
-		shouldVisitBaseSpecifiers = delegateVisitor.shouldVisitBaseSpecifiers;
-		shouldVisitNamespaces = delegateVisitor.shouldVisitNamespaces;
-		shouldVisitTemplateParameters = delegateVisitor.shouldVisitTemplateParameters;
-		shouldVisitParameterDeclarations = delegateVisitor.shouldVisitParameterDeclarations;
-		shouldVisitTranslationUnit = delegateVisitor.shouldVisitTranslationUnit;
-		shouldVisitProblems = delegateVisitor.shouldVisitProblems;
-		shouldVisitTypeIds = delegateVisitor.shouldVisitTypeIds;
 		shouldVisitArrayModifiers= delegateVisitor.shouldVisitArrayModifiers;
+		shouldVisitBaseSpecifiers = delegateVisitor.shouldVisitBaseSpecifiers;
+		shouldVisitDeclarations = delegateVisitor.shouldVisitDeclarators;
+		shouldVisitDeclarators = delegateVisitor.shouldVisitDeclarators;
+		shouldVisitDeclSpecifiers = delegateVisitor.shouldVisitDeclSpecifiers;
+		shouldVisitExpressions = delegateVisitor.shouldVisitExpressions;
+		shouldVisitInitializers = delegateVisitor.shouldVisitInitializers;
+		shouldVisitNames = delegateVisitor.shouldVisitNames;
+		shouldVisitNamespaces = delegateVisitor.shouldVisitNamespaces;
+		shouldVisitParameterDeclarations = delegateVisitor.shouldVisitParameterDeclarations;
+		shouldVisitPointerOperators= delegateVisitor.shouldVisitPointerOperators;
+		shouldVisitProblems = delegateVisitor.shouldVisitProblems;
+		shouldVisitStatements = delegateVisitor.shouldVisitStatements;
+		shouldVisitTemplateParameters = delegateVisitor.shouldVisitTemplateParameters;
+		shouldVisitTranslationUnit = delegateVisitor.shouldVisitTranslationUnit;
+		shouldVisitTypeIds = delegateVisitor.shouldVisitTypeIds;
 	}
 
 	public ChangeGeneratorWriterVisitor(ASTModificationStore modStore, NodeCommentMap nodeMap) {
-		this(modStore, DEFAULT_INDENTATION, null, nodeMap);
+		this(modStore, null, nodeMap);
 	}
 
-	public ChangeGeneratorWriterVisitor(ASTModificationStore modStore, String givenIndentation,
-			String fileScope, NodeCommentMap commentMap) {
-		super(givenIndentation, commentMap);
+	public ChangeGeneratorWriterVisitor(ASTModificationStore modStore, String fileScope,
+			NodeCommentMap commentMap) {
+		super(commentMap);
 		this.modificationStore = modStore;
 		this.fileScope = fileScope;
 		this.shouldVisitTranslationUnit = true;
@@ -210,6 +211,12 @@ public class ChangeGeneratorWriterVisitor extends ASTWriterVisitor {
 	}
 
 	@Override
+	public int leave(IASTPointerOperator pointerOperator) {
+		super.leave(pointerOperator);
+		return PROCESS_SKIP;
+	}
+
+	@Override
 	public int leave(IASTProblem problem) {
 		super.leave(problem);
 		return PROCESS_SKIP;
@@ -306,6 +313,14 @@ public class ChangeGeneratorWriterVisitor extends ASTWriterVisitor {
 	}
 
 	@Override
+	public int visit(IASTPointerOperator pointerOperator) {
+		if (doBeforeEveryNode(pointerOperator) == PROCESS_CONTINUE) {
+			return super.visit(pointerOperator);
+		}
+		return PROCESS_SKIP;
+	}
+
+	@Override
 	public int visit(IASTProblem problem) {
 		if (doBeforeEveryNode(problem) == PROCESS_CONTINUE) {
 			return super.visit(problem);
@@ -369,10 +384,8 @@ public class ChangeGeneratorWriterVisitor extends ASTWriterVisitor {
 						stack.pushScope(node);
 						currentMod.getNewNode().accept(this);
 						stack.popScope(node);
-						return PROCESS_SKIP;
-					} else {
-						return PROCESS_SKIP;
 					}
+					return PROCESS_SKIP;
 				}
 			}
 		}

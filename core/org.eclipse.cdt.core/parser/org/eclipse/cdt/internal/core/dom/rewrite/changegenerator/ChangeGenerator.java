@@ -856,27 +856,6 @@ public class ChangeGenerator extends ASTVisitor {
 	}
 
 	/**
-	 * Skips whitespace between the given position and the end of the line.
-	 *
-	 * @param text The text to scan.
-	 * @param startPos The start position. 
-	 * @return The end of the line containing the start position, if there are no non-whitespace
-	 *     characters between the start position and the end of the line.
-	 *     Otherwise returns the start position.
-	 */
-	private int skipTrailingWhitespace(String text, int startPos) {
-		for (int pos = startPos; pos < text.length(); pos++) {
-			char c = text.charAt(pos);
-			if (c == '\n') {
-				return pos + 1;
-			} else if (!Character.isWhitespace(c)) {
-				return startPos;
-			}
-		}
-		return text.length();
-	}
-
-	/**
 	 * Skips whitespace between the given position and the end of the line and blank lines
 	 * below that.
 	 *

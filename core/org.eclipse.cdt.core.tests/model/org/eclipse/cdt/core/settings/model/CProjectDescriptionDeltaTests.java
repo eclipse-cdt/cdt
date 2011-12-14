@@ -1017,7 +1017,7 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 		List<ILanguageSettingsProvider> originalProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
 
 		// Modification LANGUAGE_SETTINGS_PROVIDERS
-		ILanguageSettingsProvider provider = new LanguageSettingsSerializableProvider("id", "name");
+		ILanguageSettingsProvider provider = new LanguageSettingsSerializableProvider("test.id", "test.name");
 		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 		providers.add(provider);
 		((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);

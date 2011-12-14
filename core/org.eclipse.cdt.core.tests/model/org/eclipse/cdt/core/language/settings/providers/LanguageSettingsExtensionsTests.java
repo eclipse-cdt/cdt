@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.settings.model.CMacroFileEntry;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
@@ -59,10 +60,10 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 	private static final String LANG_ID = "test.lang.id";
 	private static final IFile FILE_0 = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path("/project/path0"));
 
-	// These must match constants used in LanguageSettingsSerializableProvider
-	private static final String ATTR_ID = "id"; //$NON-NLS-1$
-	private static final String ATTR_NAME = "name"; //$NON-NLS-1$
-	private static final String ATTR_CLASS = "class"; //$NON-NLS-1$
+	// Constants used in LanguageSettingsSerializableProvider
+	private static final String ATTR_ID = LanguageSettingsProvidersSerializer.ATTR_ID;
+	private static final String ATTR_NAME = LanguageSettingsProvidersSerializer.ATTR_NAME;
+	private static final String ATTR_CLASS = LanguageSettingsProvidersSerializer.ATTR_CLASS;
 
 	/**
 	 * Constructor.
@@ -255,11 +256,11 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
 		entries.add(new CIncludePathEntry("/usr/include/", 0));
 		// configure it
-		provider.configureProvider("id", "name", null, entries, null);
+		provider.configureProvider("test.id", "test.name", null, entries, null);
 
 		try {
 			// attempt to configure it twice should fail
-			provider.configureProvider("id", "name", null, entries, null);
+			provider.configureProvider("test.id", "test.name", null, entries, null);
 			fail("LanguageSettingsBaseProvider is not allowed to be configured twice");
 		} catch (UnsupportedOperationException e) {
 		}

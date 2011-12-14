@@ -44,20 +44,20 @@ import org.eclipse.core.runtime.Status;
  */
 public class LanguageSettingsExtensionManager {
 	/** Name of the extension point for contributing language settings */
-	static final String PROVIDER_EXTENSION_FULL_ID = "org.eclipse.cdt.core.LanguageSettingsProvider"; //$NON-NLS-1$
+	static final String PROVIDER_EXTENSION_POINT_ID = "org.eclipse.cdt.core.LanguageSettingsProvider"; //$NON-NLS-1$
 	static final String PROVIDER_EXTENSION_SIMPLE_ID = "LanguageSettingsProvider"; //$NON-NLS-1$
-
-	static final String ELEM_PROVIDER = "provider"; //$NON-NLS-1$
-	static final String ATTR_CLASS = "class"; //$NON-NLS-1$
 	static final String ATTR_ID = "id"; //$NON-NLS-1$
 	static final String ATTR_NAME = "name"; //$NON-NLS-1$
+	static final String ATTR_CLASS = "class"; //$NON-NLS-1$
 
+	static final String ELEM_PROVIDER = "provider"; //$NON-NLS-1$
 	static final String ELEM_LANGUAGE_SCOPE = "language-scope"; //$NON-NLS-1$
 
 	static final String ELEM_ENTRY = "entry"; //$NON-NLS-1$
-	static final String ELEM_FLAG = "flag"; //$NON-NLS-1$
-	static final String ATTR_KIND = "kind"; //$NON-NLS-1$
-	static final String ATTR_VALUE = "value"; //$NON-NLS-1$
+	static final String ATTR_ENTRY_NAME = "name"; //$NON-NLS-1$
+	static final String ATTR_ENTRY_KIND = "kind"; //$NON-NLS-1$
+	static final String ATTR_ENTRY_VALUE = "value"; //$NON-NLS-1$
+	static final String ELEM_ENTRY_FLAG = "flag"; //$NON-NLS-1$
 
 	/**
 	 * Extension providers loaded once. If the provider is editable (read cloneable)
@@ -186,13 +186,13 @@ public class LanguageSettingsExtensionManager {
 
 		for (IConfigurationElement ceEntry : ce.getChildren(ELEM_ENTRY)) {
 			try {
-				int entryKind = LanguageSettingEntriesSerializer.stringToKind(determineAttributeValue(ceEntry, ATTR_KIND));
-				String entryName = determineAttributeValue(ceEntry, ATTR_NAME);
-				String entryValue = determineAttributeValue(ceEntry, ATTR_VALUE);
+				int entryKind = LanguageSettingEntriesSerializer.stringToKind(determineAttributeValue(ceEntry, ATTR_ENTRY_KIND));
+				String entryName = determineAttributeValue(ceEntry, ATTR_ENTRY_NAME);
+				String entryValue = determineAttributeValue(ceEntry, ATTR_ENTRY_VALUE);
 
 				int flags = 0;
-				for (IConfigurationElement ceFlags : ceEntry.getChildren(ELEM_FLAG)) {
-					int bitFlag = LanguageSettingEntriesSerializer.composeFlags(determineAttributeValue(ceFlags, ATTR_VALUE));
+				for (IConfigurationElement ceFlags : ceEntry.getChildren(ELEM_ENTRY_FLAG)) {
+					int bitFlag = LanguageSettingEntriesSerializer.composeFlags(determineAttributeValue(ceFlags, ATTR_ENTRY_VALUE));
 					flags |= bitFlag;
 				}
 

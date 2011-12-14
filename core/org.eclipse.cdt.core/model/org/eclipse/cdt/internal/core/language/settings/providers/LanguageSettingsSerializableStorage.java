@@ -34,11 +34,11 @@ public class LanguageSettingsSerializableStorage extends LanguageSettingsStorage
 	private static final String ELEM_RESOURCE = "resource"; //$NON-NLS-1$
 	private static final String ATTR_PROJECT_PATH = "project-relative-path"; //$NON-NLS-1$
 
-	private static final String ELEM_ENTRY = "entry"; //$NON-NLS-1$
-	private static final String ATTR_KIND = "kind"; //$NON-NLS-1$
-	private static final String ATTR_NAME = "name"; //$NON-NLS-1$
-	private static final String ATTR_VALUE = "value"; //$NON-NLS-1$
-	private static final String ELEM_FLAG = "flag"; //$NON-NLS-1$
+	private static final String ELEM_ENTRY = LanguageSettingsExtensionManager.ELEM_ENTRY;
+	private static final String ATTR_ENTRY_KIND = LanguageSettingsExtensionManager.ATTR_ENTRY_KIND;
+	private static final String ATTR_ENTRY_NAME = LanguageSettingsExtensionManager.ATTR_ENTRY_NAME;
+	private static final String ATTR_ENTRY_VALUE = LanguageSettingsExtensionManager.ATTR_ENTRY_VALUE;
+	private static final String ELEM_ENTRY_FLAG = LanguageSettingsExtensionManager.ELEM_ENTRY_FLAG;
 
 	/**
 	 * Serialize the provider entries under parent XML element.
@@ -83,12 +83,12 @@ public class LanguageSettingsSerializableStorage extends LanguageSettingsStorage
 	private void serializeSettingEntries(Element parentElement, List<ICLanguageSettingEntry> settingEntries) {
 		for (ICLanguageSettingEntry entry : settingEntries) {
 			Element elementSettingEntry = XmlUtil.appendElement(parentElement, ELEM_ENTRY, new String[] {
-					ATTR_KIND, LanguageSettingEntriesSerializer.kindToString(entry.getKind()),
-					ATTR_NAME, entry.getName(),
+					ATTR_ENTRY_KIND, LanguageSettingEntriesSerializer.kindToString(entry.getKind()),
+					ATTR_ENTRY_NAME, entry.getName(),
 				});
 			switch (entry.getKind()) {
 			case ICSettingEntry.MACRO:
-				elementSettingEntry.setAttribute(ATTR_VALUE, entry.getValue());
+				elementSettingEntry.setAttribute(ATTR_ENTRY_VALUE, entry.getValue());
 				break;
 //			case ICLanguageSettingEntry.LIBRARY_FILE:
 //				// YAGNI: sourceAttachment fields may need to be covered
@@ -97,8 +97,8 @@ public class LanguageSettingsSerializableStorage extends LanguageSettingsStorage
 			int flags = entry.getFlags();
 			if (flags != 0) {
 				// Element elementFlag =
-				XmlUtil.appendElement(elementSettingEntry, ELEM_FLAG, new String[] {
-						ATTR_VALUE, LanguageSettingEntriesSerializer.composeFlagsString(entry.getFlags())
+				XmlUtil.appendElement(elementSettingEntry, ELEM_ENTRY_FLAG, new String[] {
+						ATTR_ENTRY_VALUE, LanguageSettingEntriesSerializer.composeFlagsString(entry.getFlags())
 					});
 			}
 		}
@@ -138,17 +138,17 @@ public class LanguageSettingsSerializableStorage extends LanguageSettingsStorage
 	 * Load a setting entry from XML element.
 	 */
 	private ICLanguageSettingEntry loadSettingEntry(Node parentElement) {
-		String settingKind = XmlUtil.determineAttributeValue(parentElement, ATTR_KIND);
-		String settingName = XmlUtil.determineAttributeValue(parentElement, ATTR_NAME);
+		String settingKind = XmlUtil.determineAttributeValue(parentElement, ATTR_ENTRY_KIND);
+		String settingName = XmlUtil.determineAttributeValue(parentElement, ATTR_ENTRY_NAME);
 
 		NodeList flagNodes = parentElement.getChildNodes();
 		int flags = 0;
 		for (int i=0;i<flagNodes.getLength();i++) {
 			Node flagNode = flagNodes.item(i);
-			if (flagNode.getNodeType() != Node.ELEMENT_NODE || !ELEM_FLAG.equals(flagNode.getNodeName()))
+			if (flagNode.getNodeType() != Node.ELEMENT_NODE || !ELEM_ENTRY_FLAG.equals(flagNode.getNodeName()))
 				continue;
 
-			String settingFlags = XmlUtil.determineAttributeValue(flagNode, ATTR_VALUE);
+			String settingFlags = XmlUtil.determineAttributeValue(flagNode, ATTR_ENTRY_VALUE);
 			int bitFlag = LanguageSettingEntriesSerializer.composeFlags(settingFlags);
 			flags |= bitFlag;
 
@@ -157,7 +157,7 @@ public class LanguageSettingsSerializableStorage extends LanguageSettingsStorage
 		String settingValue = null;
 		int kind = LanguageSettingEntriesSerializer.stringToKind(settingKind);
 		if (kind == ICSettingEntry.MACRO)
-			settingValue = XmlUtil.determineAttributeValue(parentElement, ATTR_VALUE);
+			settingValue = XmlUtil.determineAttributeValue(parentElement, ATTR_ENTRY_VALUE);
 		ICLanguageSettingEntry entry = (ICLanguageSettingEntry) CDataUtil.createEntry(kind, settingName, settingValue, null, flags);
 		return entry;
 	}

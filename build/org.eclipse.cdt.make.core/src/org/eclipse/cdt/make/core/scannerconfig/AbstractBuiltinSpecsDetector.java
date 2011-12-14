@@ -103,7 +103,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 
 	private class SDMarkerGenerator implements IMarkerGenerator {
 		protected static final String SCANNER_DISCOVERY_PROBLEM_MARKER = MakeCorePlugin.PLUGIN_ID + ".scanner.discovery.problem"; //$NON-NLS-1$
-		protected static final String PROVIDER = "provider"; //$NON-NLS-1$
+		protected static final String ATTR_PROVIDER = "provider"; //$NON-NLS-1$
 
 		@Override
 		public void addMarker(IResource file, int lineNumber, String errorDesc, int severity, String errorVar) {
@@ -142,7 +142,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 						IMarker marker = problemMarkerInfo.file.createMarker(SDMarkerGenerator.SCANNER_DISCOVERY_PROBLEM_MARKER);
 						marker.setAttribute(IMarker.MESSAGE, problemMarkerInfo.description);
 						marker.setAttribute(IMarker.SEVERITY, problemMarkerInfo.severity);
-						marker.setAttribute(SDMarkerGenerator.PROVIDER, providerId);
+						marker.setAttribute(SDMarkerGenerator.ATTR_PROVIDER, providerId);
 
 						if (problemMarkerInfo.file instanceof IWorkspaceRoot) {
 							marker.setAttribute(IMarker.LOCATION, "SD90 Providers, [" + providerName + "] options in Preferences");
@@ -360,7 +360,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 				try {
 					IMarker[] cur = markersResource.findMarkers(SDMarkerGenerator.SCANNER_DISCOVERY_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
 					for (IMarker marker : cur) {
-						if (getId().equals(marker.getAttribute(SDMarkerGenerator.PROVIDER))) {
+						if (getId().equals(marker.getAttribute(SDMarkerGenerator.ATTR_PROVIDER))) {
 							marker.delete();
 						}
 					}

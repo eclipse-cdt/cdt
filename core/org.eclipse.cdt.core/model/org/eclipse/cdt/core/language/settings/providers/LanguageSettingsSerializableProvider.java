@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.internal.core.XmlUtil;
+import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsSerializableStorage;
 import org.eclipse.core.resources.IResource;
 import org.w3c.dom.Element;
@@ -37,13 +38,11 @@ import org.w3c.dom.NodeList;
  * {@link ILanguageSettingsProvider}.
  */
 public class LanguageSettingsSerializableProvider extends LanguageSettingsBaseProvider implements ILanguageSettingsBroadcastingProvider {
-	/** This field is for internal use only */
-	public static final String ELEM_PROVIDER = "provider"; //$NON-NLS-1$
-	private static final String ATTR_ID = "id"; //$NON-NLS-1$
-
-	private static final String ELEM_LANGUAGE_SCOPE = "language-scope"; //$NON-NLS-1$
-	private static final String ATTR_NAME = "name"; //$NON-NLS-1$
-	private static final String ATTR_CLASS = "class"; //$NON-NLS-1$
+	protected static final String ATTR_ID = LanguageSettingsProvidersSerializer.ATTR_ID;
+	protected static final String ATTR_NAME = LanguageSettingsProvidersSerializer.ATTR_NAME;
+	protected static final String ATTR_CLASS = LanguageSettingsProvidersSerializer.ATTR_CLASS;
+	protected static final String ELEM_PROVIDER = LanguageSettingsProvidersSerializer.ELEM_PROVIDER;
+	protected static final String ELEM_LANGUAGE_SCOPE = LanguageSettingsProvidersSerializer.ELEM_LANGUAGE_SCOPE;
 
 	private LanguageSettingsSerializableStorage fStorage = new LanguageSettingsSerializableStorage();
 

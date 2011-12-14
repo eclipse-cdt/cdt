@@ -810,7 +810,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	public void testCIncludeFileEntryDOM() throws Exception {
 		Element elementProvider;
 		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
-		entries.add(new CIncludeFileEntry("name", 1));
+		entries.add(new CIncludeFileEntry("a-path", 1));
 		{
 			// create a provider and serialize its settings
 			LanguageSettingsSerializableProvider provider = new LanguageSettingsSerializableProvider(PROVIDER_1, PROVIDER_NAME_1);
@@ -874,7 +874,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	public void testCMacroFileEntryDOM() throws Exception {
 		Element elementProvider;
 		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
-		entries.add(new CMacroFileEntry("name", 1));
+		entries.add(new CMacroFileEntry("a-path", 1));
 		{
 			// create a provider and serialize its settings
 			LanguageSettingsSerializableProvider provider = new LanguageSettingsSerializableProvider(PROVIDER_1, PROVIDER_NAME_1);
@@ -906,7 +906,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	public void testCLibraryPathEntryDOM() throws Exception {
 		Element elementProvider;
 		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
-		entries.add(new CLibraryPathEntry("name", 1));
+		entries.add(new CLibraryPathEntry("a-path", 1));
 		{
 			// create a provider and serialize its settings
 			LanguageSettingsSerializableProvider provider = new LanguageSettingsSerializableProvider(PROVIDER_1, PROVIDER_NAME_1);
@@ -938,7 +938,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	public void testCLibraryFileEntryDOM() throws Exception {
 		Element elementProvider;
 		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
-		entries.add(new CLibraryFileEntry("name", 1));
+		entries.add(new CLibraryFileEntry("a-path", 1));
 		{
 			// create a provider and serialize its settings
 			LanguageSettingsSerializableProvider provider = new LanguageSettingsSerializableProvider(PROVIDER_1, PROVIDER_NAME_1);

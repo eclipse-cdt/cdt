@@ -60,8 +60,8 @@ public class LanguageSettingsExtensionManager {
 	static final String ELEM_ENTRY_FLAG = "flag"; //$NON-NLS-1$
 
 	/**
-	 * Extension providers loaded once. If the provider is editable (read cloneable)
-	 * external callers get copy rather than real instance.
+	 * Extension providers loaded once and used for equality only.
+	 * Those who request extension provider will get copy rather than real instance.
 	 */
 	private static final LinkedHashMap<String, ILanguageSettingsProvider> fExtensionProviders = new LinkedHashMap<String, ILanguageSettingsProvider>();
 
@@ -80,7 +80,7 @@ public class LanguageSettingsExtensionManager {
 	 * Load language settings providers contributed via the extension point.
 	 */
 	synchronized private static void loadProviderExtensions() {
-		// sort by name - the providers defined via extensions are kept in separate list sorted
+		// sort by name - the providers defined via extensions are kept in separate list sorted by name
 		Set<ILanguageSettingsProvider> sortedProviders = new TreeSet<ILanguageSettingsProvider>(
 				new Comparator<ILanguageSettingsProvider>() {
 					@Override
@@ -131,7 +131,7 @@ public class LanguageSettingsExtensionManager {
 
 	private static String determineAttributeValue(IConfigurationElement ce, String attr) {
 		String value = ce.getAttribute(attr);
-		return value!=null ? value : ""; //$NON-NLS-1$
+		return value != null ? value : ""; //$NON-NLS-1$
 	}
 
 	/**
@@ -254,7 +254,7 @@ public class LanguageSettingsExtensionManager {
 
 	/**
 	 * Create an instance of non-configured language settings provider of given class name.
-	 * The class should be known or registered with the extension point.
+	 * The class should be known to this method or registered with the extension point.
 	 *
 	 * @param className - class name to instantiate.
 	 * @return new instance of language settings provider.
@@ -263,13 +263,7 @@ public class LanguageSettingsExtensionManager {
 		if (className==null || className.equals(LanguageSettingsSerializableProvider.class.getName())) {
 			return new LanguageSettingsSerializableProvider();
 		}
-
-		// TODO unit test case for this
 		if (className.equals(LanguageSettingsGenericProvider.class.getName())) {
-			return new LanguageSettingsGenericProvider();
-		}
-		// FIXME - older usage, will fade it out
-		if (className.equals("org.eclipse.cdt.internal.ui.language.settings.providers.UserLanguageSettingsProvider")) {
 			return new LanguageSettingsGenericProvider();
 		}
 
@@ -305,7 +299,7 @@ public class LanguageSettingsExtensionManager {
 
 	/**
 	 * Returns list of provider id-s contributed by all extensions.
-	 * @return list of provider id-s contributed by all extensions.
+	 * @return the provider id-s.
 	 */
 	public static Set<String> getExtensionProviderIds() {
 		return fExtensionProviders.keySet();
@@ -320,7 +314,7 @@ public class LanguageSettingsExtensionManager {
 	 * @param deep - {@code true} to request deep copy including copying settings entries
 	 *    or {@code false} to return shallow copy with no settings entries.
 	 *
-	 * @return a copy of the provider or null if copying is not possible.
+	 * @return a copy of the provider or {@code null} if copying is not possible.
 	 */
 	public static ILanguageSettingsEditableProvider getProviderCopy(ILanguageSettingsEditableProvider provider, boolean deep) {
 		try {
@@ -362,6 +356,7 @@ public class LanguageSettingsExtensionManager {
 	 * @param provider - the provider to test.
 	 * @param deep - {@code true} to check for deep equality testing also settings entries
 	 *    or {@code false} to test shallow copy with no settings entries.
+	 *    Shallow equality is applicable only for {@link ILanguageSettingsEditableProvider}.
 	 * @return - {@code true} if the provider matches the extension or {@code false} otherwise.
 	 */
 	public static boolean isEqualsExtensionProvider(ILanguageSettingsProvider provider, boolean deep) {

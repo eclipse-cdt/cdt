@@ -44,6 +44,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	private static final String EXTENSION_BASE_PROVIDER_ID = LanguageSettingsExtensionsTests.EXTENSION_BASE_PROVIDER_ID;
 	private static final String EXTENSION_BASE_PROVIDER_NAME = LanguageSettingsExtensionsTests.EXTENSION_BASE_PROVIDER_NAME;
 	private static final String EXTENSION_SERIALIZABLE_PROVIDER_ID = LanguageSettingsExtensionsTests.EXTENSION_SERIALIZABLE_PROVIDER_ID;
+	private static final String EXTENSION_USER_PROVIDER_ID = LanguageSettingsExtensionsTests.EXTENSION_USER_PROVIDER_ID;
 	private static final ICLanguageSettingEntry EXTENSION_SERIALIZABLE_PROVIDER_ENTRY = LanguageSettingsExtensionsTests.EXTENSION_SERIALIZABLE_PROVIDER_ENTRY;
 
 	private static final String LANGUAGE_SETTINGS_PROJECT_XML = ".settings/language.settings.xml";
@@ -523,6 +524,64 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 			assertEquals(1, providers.size());
 			ILanguageSettingsProvider provider = providers.get(0);
 			assertTrue(provider instanceof LanguageSettingsSerializableProvider);
+
+			List<ICLanguageSettingEntry> actual = provider.getSettingEntries(null, null, null);
+			assertEquals(entries.get(0), actual.get(0));
+			assertEquals(entries.size(), actual.size());
+		}
+	}
+
+	/**
+	 */
+	public void testProjectPersistence_UserProviderDOM() throws Exception {
+		Element rootElement = null;
+
+		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		entries.add(new CIncludePathEntry("path0", 0));
+
+		{
+			// create a provider
+			MockProjectDescription mockPrjDescription = new MockProjectDescription(new MockConfigurationDescription(CFG_ID));
+			ICConfigurationDescription[] cfgDescriptions = mockPrjDescription.getConfigurations();
+			ICConfigurationDescription cfgDescription = cfgDescriptions[0];
+			assertNotNull(cfgDescription);
+			assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
+
+			ILanguageSettingsProvider provider = LanguageSettingsManager.getExtensionProviderCopy(EXTENSION_USER_PROVIDER_ID, false);
+			assertTrue(provider instanceof LanguageSettingsGenericProvider);
+			LanguageSettingsGenericProvider serializableProvider = (LanguageSettingsGenericProvider) provider;
+			serializableProvider.setSettingEntries(null, null, null, entries);
+			LanguageSettingsManager.setStoringEntriesInProjectArea(serializableProvider, true);
+
+			ArrayList<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+			providers.add(serializableProvider);
+			((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
+
+			// prepare DOM storage
+			Document doc = XmlUtil.newDocument();
+			rootElement = XmlUtil.appendElement(doc, ELEM_TEST);
+			// serialize language settings to the DOM
+			LanguageSettingsProvidersSerializer.serializeLanguageSettingsInternal(rootElement, null, mockPrjDescription);
+			assertTrue(XmlUtil.toString(doc).contains(EXTENSION_USER_PROVIDER_ID));
+			assertTrue(XmlUtil.toString(doc).contains(LanguageSettingsGenericProvider.class.getName()));
+		}
+		{
+			// re-load and check language settings of the newly loaded provider
+			MockProjectDescription mockPrjDescription = new MockProjectDescription(new MockConfigurationDescription(CFG_ID));
+			LanguageSettingsProvidersSerializer.loadLanguageSettingsInternal(rootElement, null, mockPrjDescription);
+
+			ICConfigurationDescription[] cfgDescriptions = mockPrjDescription.getConfigurations();
+			assertNotNull(cfgDescriptions);
+			assertEquals(1, cfgDescriptions.length);
+			ICConfigurationDescription cfgDescription = cfgDescriptions[0];
+			assertNotNull(cfgDescription);
+			assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
+
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+			assertNotNull(providers);
+			assertEquals(1, providers.size());
+			ILanguageSettingsProvider provider = providers.get(0);
+			assertTrue(provider instanceof LanguageSettingsGenericProvider);
 
 			List<ICLanguageSettingEntry> actual = provider.getSettingEntries(null, null, null);
 			assertEquals(entries.get(0), actual.get(0));

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.changegenerator;
 
@@ -16,15 +16,15 @@ import org.eclipse.osgi.util.NLS;
  * External strings for the change generator.
  * @since 5.0
  */
-public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.core.dom.rewrite.changegenerator.messages"; //$NON-NLS-1$
+public class ChangeGeneratorMessages extends NLS {
 	public static String ChangeGenerator_compositeChange;
 	public static String ChangeGenerator_group;
+
 	static {
-		// initialize resource bundle
-		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
+		// Initialize resource bundle
+		NLS.initializeMessages(ChangeGeneratorMessages.class.getName(), ChangeGeneratorMessages.class);
 	}
 
-	private Messages() {
+	private ChangeGeneratorMessages() {
 	}
 }

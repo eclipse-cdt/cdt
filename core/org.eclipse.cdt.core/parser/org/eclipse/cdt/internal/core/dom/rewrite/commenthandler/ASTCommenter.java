@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -37,7 +38,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
-import org.eclipse.cdt.internal.core.dom.rewrite.util.OffsetHelper;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -215,7 +215,7 @@ public class ASTCommenter {
 		for (IASTPreprocessorStatement statement : preprocessorStatements) {
 			if (isInWorkspace(statement)) {
 				String fileName = statement.getFileLocation().getFileName();
-				treeOfPreProcessorLines.put(OffsetHelper.getStartingLineNumber(statement), fileName);
+				treeOfPreProcessorLines.put(statement.getFileLocation().getStartingLineNumber(), fileName);
 				ArrayList<Integer> offsetList = ppOffsetForFiles.get(fileName);
 				if (offsetList == null) {
 					offsetList = new ArrayList<Integer>();
@@ -227,8 +227,9 @@ public class ASTCommenter {
 
 		ArrayList<IASTComment> commentsInCode = new ArrayList<IASTComment>();
 		for (IASTComment comment : comments) {
-			int comStartLineNumber = OffsetHelper.getStartingLineNumber(comment);
-			String fileName = comment.getFileLocation().getFileName();
+			IASTFileLocation commentFileLocation = comment.getFileLocation();
+			int comStartLineNumber = commentFileLocation.getStartingLineNumber();
+			String fileName = commentFileLocation.getFileName();
 			if (treeOfPreProcessorLines.containsKey(comStartLineNumber)
 					&& treeOfPreProcessorLines.get(comStartLineNumber).equals(fileName)) {
 				continue;
@@ -248,7 +249,7 @@ public class ASTCommenter {
 			return false;
 		}
 		
-		if (comment.getTranslationUnit()==null || comment.getTranslationUnit().getDeclarations().length < 1) {
+		if (comment.getTranslationUnit() == null || comment.getTranslationUnit().getDeclarations().length < 1) {
 			return true;
 		}
 		IASTDeclaration decl = comment.getTranslationUnit().getDeclarations()[0];

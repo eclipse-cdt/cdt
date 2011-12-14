@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.changegenerator;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -36,7 +35,6 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
-import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -48,10 +46,8 @@ import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionWithTryBlock;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.formatter.CodeFormatter;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
@@ -64,13 +60,12 @@ import org.eclipse.cdt.internal.core.dom.rewrite.ASTRewriteAnalyzer;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ASTWriter;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ProblemRuntimeException;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
-import org.eclipse.cdt.internal.core.dom.rewrite.util.FileContentHelper;
 import org.eclipse.cdt.internal.core.dom.rewrite.util.FileHelper;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.cdt.internal.formatter.CCodeFormatter;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.BadLocationException;
@@ -133,7 +128,7 @@ public class ChangeGenerator extends ASTVisitor {
 		rootNode.accept(pathProvider);
 		for (IFile currentFile : changes.keySet()) {
 			MultiTextEdit edit = changes.get(currentFile);
-			edit = formatChangedCode(edit, currentFile);
+			edit = formatChangedCode(edit, rootNode.getTranslationUnit().getRawSignature(), currentFile.getProject());
 			TextFileChange subchange= ASTRewriteAnalyzer.createCTextFileChange(currentFile);
 			subchange.setEdit(edit);
 			change.add(subchange);
@@ -325,21 +320,12 @@ public class ChangeGenerator extends ASTVisitor {
 	 * Applies the C++ code formatter to the code affected by refactoring.
 	 * 
 	 * @param multiEdit The text edit produced by refactoring.
-	 * @param file The file being modified.
+	 * @param code The code being modified.
+	 * @param project The project containing the code.
 	 * @return The text edit containing formatted refactoring changes, or the original text edit
 	 *     in case of errors.
 	 */
-	private MultiTextEdit formatChangedCode(MultiTextEdit multiEdit, IFile file) {
-		String code;
-		try {
-			code = FileContentHelper.getContent(file, 0);
-		} catch (IOException e) {
-			CCorePlugin.log(e);
-			return multiEdit;
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return multiEdit;
-		}
+	private MultiTextEdit formatChangedCode(MultiTextEdit multiEdit, String code, IProject project) {
 		IDocument document = new Document(code);
 		try {
 			// Apply refactoring changes to a temporary document.
@@ -382,8 +368,8 @@ public class ChangeGenerator extends ASTVisitor {
 			}
 
 			// Calculate formatting changes for the regions after the refactoring changes.
-			ICProject project = CCorePlugin.getDefault().getCoreModel().create(file.getProject());
-			Map<String, String> options = project.getOptions(true);
+			ICProject proj = CCorePlugin.getDefault().getCoreModel().create(project);
+			Map<String, String> options = proj.getOptions(true);
 			// Allow all comments to be indented.
 			options.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_NEVER_INDENT_LINE_COMMENTS_ON_FIRST_COLUMN,
 					DefaultCodeFormatterConstants.FALSE);
@@ -599,8 +585,7 @@ public class ChangeGenerator extends ASTVisitor {
 				IASTDeclaration lastDecl = targetTu.getDeclarations()[targetTu.getDeclarations().length - 1];
 				targetLocation = lastDecl.getFileLocation();
 			}
-			String lineDelimiter = FileHelper.determineLineDelimiter(
-					FileHelper.getFileFromNode(targetNode));
+			String lineDelimiter = FileHelper.determineLineDelimiter(tu.getRawSignature());
 			edit.addChild(new InsertEdit(endOffset(targetLocation),	lineDelimiter + lineDelimiter + code));
 		}
 	}
@@ -941,15 +926,15 @@ public class ChangeGenerator extends ASTVisitor {
 	}
 
 	private int getOffsetIncludingComments(IASTNode node) {
-		int nodeOffset = node.getFileLocation().getNodeOffset();
+		int nodeOffset = offset(node);
 
 		List<IASTComment> comments = commentMap.getAllCommentsForNode(node);
 		if (!comments.isEmpty()) {
 			int startOffset = nodeOffset;
 			for (IASTComment comment : comments) {
-				IASTFileLocation commentLocation = comment.getFileLocation();
-				if (commentLocation.getNodeOffset() < startOffset) {
-					startOffset = commentLocation.getNodeOffset();
+				int commentOffset = offset(comment);
+				if (commentOffset < startOffset) {
+					startOffset = commentOffset;
 				}
 			}
 			nodeOffset = startOffset;
@@ -958,44 +943,47 @@ public class ChangeGenerator extends ASTVisitor {
 	}
 
 	private int getEndOffsetIncludingComments(IASTNode node) {
-		IASTFileLocation nodeLocation = node.getFileLocation();
-		int endOffset = nodeLocation.getNodeOffset() + nodeLocation.getNodeLength();
-
-		List<IASTComment> comments = commentMap.getAllCommentsForNode(node);
-		if (!comments.isEmpty()) {
-			for (IASTComment comment : comments) {
-				int commentEndOffset = endOffset(comment.getFileLocation());
-				if (commentEndOffset >= endOffset) {
-					endOffset = commentEndOffset;
+		int endOffset = 0;
+		while (true) {
+			IASTFileLocation fileLocation = node.getFileLocation();
+			if (fileLocation != null)
+				endOffset = Math.max(endOffset, endOffset(fileLocation));
+			List<IASTComment> comments = commentMap.getAllCommentsForNode(node);
+			if (!comments.isEmpty()) {
+				for (IASTComment comment : comments) {
+					int commentEndOffset = endOffset(comment);
+					if (commentEndOffset >= endOffset) {
+						endOffset = commentEndOffset;
+					}
 				}
 			}
+			IASTNode[] children = node.getChildren();
+			if (children.length == 0)
+				break;
+			node = children[children.length - 1];
 		}
 		return endOffset;
 	}
 
 	private int getEndOffsetIncludingTrailingComments(IASTNode node) {
-		IASTFileLocation nodeLocation = node.getFileLocation();
-		int endOffset = nodeLocation.getNodeOffset() + nodeLocation.getNodeLength();
-
-		List<IASTComment> comments = commentMap.getTrailingCommentsForNode(node);
-		if (!comments.isEmpty()) {
-			for (IASTComment comment : comments) {
-				int commentEndOffset = endOffset(comment.getFileLocation());
-				if (commentEndOffset >= endOffset) {
-					endOffset = commentEndOffset;
+		int endOffset = 0;
+		while (true) {
+			IASTFileLocation fileLocation = node.getFileLocation();
+			if (fileLocation != null)
+				endOffset = Math.max(endOffset, endOffset(fileLocation));
+			List<IASTComment> comments = commentMap.getTrailingCommentsForNode(node);
+			if (!comments.isEmpty()) {
+				for (IASTComment comment : comments) {
+					int commentEndOffset = endOffset(comment);
+					if (commentEndOffset >= endOffset) {
+						endOffset = commentEndOffset;
+					}
 				}
 			}
-		}
-		// TODO(sprigogin): Remove when comments are always assigned to the outermost nodes.
-		if (node instanceof ICPPASTFunctionWithTryBlock) {
-			ICPPASTCatchHandler[] catchHandlers = ((ICPPASTFunctionWithTryBlock) node).getCatchHandlers();
-			if (catchHandlers.length > 0) {
-				endOffset = Math.max(endOffset,
-						getEndOffsetIncludingTrailingComments(catchHandlers[catchHandlers.length - 1]));
-			}
-		} else if (node instanceof IASTFunctionDefinition) {
-			endOffset = Math.max(endOffset,
-					getEndOffsetIncludingTrailingComments(((IASTFunctionDefinition) node).getBody()));
+			IASTNode[] children = node.getChildren();
+			if (children.length == 0)
+				break;
+			node = children[children.length - 1];
 		}
 		return endOffset;
 	}

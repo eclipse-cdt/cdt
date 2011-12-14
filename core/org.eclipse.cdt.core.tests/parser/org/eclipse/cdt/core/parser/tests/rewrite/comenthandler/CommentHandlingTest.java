@@ -74,7 +74,6 @@ import org.eclipse.core.runtime.CoreException;
  * @author Guido Zgraggen IFS, Lukas Felber IFS
  */
 public class CommentHandlingTest extends RewriteBaseTest {
-
 	private static final String ANY_CHAR_REGEXP = "(.*)"; //$NON-NLS-1$
 	private static final String SEPARATOR = System.getProperty("line.separator"); //$NON-NLS-1$
 
@@ -92,7 +91,7 @@ public class CommentHandlingTest extends RewriteBaseTest {
 
 	@Override
 	protected void runTest() throws Throwable {
-		if (fileMap.size() == 0) {
+		if (fileMap.isEmpty()) {
 			fail("No file for testing"); //$NON-NLS-1$
 		}
 		

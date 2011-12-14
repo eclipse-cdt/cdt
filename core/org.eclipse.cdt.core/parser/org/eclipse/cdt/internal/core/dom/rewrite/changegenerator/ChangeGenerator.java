@@ -123,7 +123,7 @@ public class ChangeGenerator extends ASTVisitor {
 
 	public void generateChange(IASTNode rootNode, ASTVisitor pathProvider)
 			throws ProblemRuntimeException {
-		change = new CompositeChange(Messages.ChangeGenerator_compositeChange);
+		change = new CompositeChange(ChangeGeneratorMessages.ChangeGenerator_compositeChange);
 		classifyModifications();
 		rootNode.accept(pathProvider);
 		for (IFile currentFile : changes.keySet()) {
@@ -912,7 +912,7 @@ public class ChangeGenerator extends ASTVisitor {
 			edit = new MultiTextEdit();
 			changes.put(file, edit);
 		}
-		TextEditGroup editGroup = new TextEditGroup(Messages.ChangeGenerator_group);
+		TextEditGroup editGroup = new TextEditGroup(ChangeGeneratorMessages.ChangeGenerator_group);
 		for (List<ASTModification> modifications : getModifications(modifiedNode).values()) {
 			for (ASTModification modification : modifications) {
 				if (modification.getAssociatedEditGroup() != null) {

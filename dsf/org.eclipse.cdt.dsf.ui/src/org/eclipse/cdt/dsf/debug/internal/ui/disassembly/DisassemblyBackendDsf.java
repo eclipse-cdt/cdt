@@ -9,8 +9,9 @@
  *     Wind River Systems - initial API and implementation
  *     Freescale Semiconductor - refactoring
  *     Patrick Chuong (Texas Instruments) - Bug 323279
- *     Patrick Chuong (Texas Instruments) - Bug fix (329682)
+ *     Patrick Chuong (Texas Instruments) - Bug 329682
  *     Patrick Chuong (Texas Instruments) - Bug 328168
+ *     Patrick Chuong (Texas Instruments) - Bug 353351
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly;
 
@@ -67,7 +68,6 @@ import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Position;
 
@@ -336,11 +336,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 				} else {
 					final IStatus status= getStatus();
 					if (status != null && !status.isOK()) {
-						fCallback.asyncExec(new Runnable() {
-							public void run() {
-				                ErrorDialog.openError(fCallback.getSite().getShell(), "Error", null, getStatus()); //$NON-NLS-1$
-							}
-						});
+						DisassemblyBackendDsf.this.handleError(getStatus());
 					}
 				}
 			}
@@ -967,12 +963,8 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 							rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "", null)); //$NON-NLS-1$
 							
 							if (!suppressError) {
-								fCallback.asyncExec(new Runnable() {
-									public void run() {
-						                ErrorDialog.openError(fCallback.getSite().getShell(), "Error", null,  //$NON-NLS-1$
-						                		new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, 
-						                		DisassemblyMessages.Disassembly_log_error_expression_eval + " (" + e.getMessage() + ")", null)); //$NON-NLS-1$ //$NON-NLS-2$
-									}});
+								DisassemblyBackendDsf.this.handleError(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, 
+						                DisassemblyMessages.Disassembly_log_error_expression_eval + " (" + e.getMessage() + ")", null)); //$NON-NLS-1$ //$NON-NLS-2$
 							}							
 						}
 						rm.setData(address);
@@ -981,10 +973,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 					@Override
 					protected void handleError() {
 						if (!suppressError) {
-							fCallback.asyncExec(new Runnable() {
-								public void run() {
-					                ErrorDialog.openError(fCallback.getSite().getShell(), "Error", null, getStatus()); //$NON-NLS-1$
-								}});
+							DisassemblyBackendDsf.this.handleError(getStatus());
 						}
 						rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.REQUEST_FAILED, "", null)); //$NON-NLS-1$
 						rm.done();
@@ -1043,11 +1032,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 				} else {
 					final IStatus status= getStatus();
 					if (status != null && !status.isOK()) {
-						fCallback.asyncExec(new Runnable() {
-							public void run() {
-				                ErrorDialog.openError(fCallback.getSite().getShell(), "Error", null, getStatus()); //$NON-NLS-1$
-							}
-						});
+						DisassemblyBackendDsf.this.handleError(getStatus());
 					}
 					fCallback.setUpdatePending(false);
 				}

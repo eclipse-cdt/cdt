@@ -7,8 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Aaron Luchko, aluchko@redhat.com - 105926 [Formatter] Exporting Unnamed profile fails silently
- *     Sergey Prigogin, Google
+ *     Aaron Luchko, aluchko@redhat.com - 105926 [Formatter] Exporting unnamed profile fails silently
+ *     Sergey Prigogin (Google)
  *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences.formatter;
@@ -32,7 +32,6 @@ import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.Profile;
  * The code formatter preference page. 
  */
 public class CodeFormatterConfigurationBlock extends ProfileConfigurationBlock {
-    
     private static final String FORMATTER_DIALOG_PREFERENCE_KEY= "formatter_page"; //$NON-NLS-1$
 
     private static final String DIALOGSTORE_LASTSAVELOADPATH= CUIPlugin.PLUGIN_ID + ".codeformatter.savepath"; //$NON-NLS-1$
@@ -46,6 +45,7 @@ public class CodeFormatterConfigurationBlock extends ProfileConfigurationBlock {
 			fCodeStylePreview.update();
 		}
 		
+		@Override
 		public void update(Observable o, Object arg) {
 			if (o == fCustomCodeFormatterBlock) {
 				fCodeStylePreview.setFormatterId((String)arg);
@@ -173,5 +173,4 @@ public class CodeFormatterConfigurationBlock extends ProfileConfigurationBlock {
 		}
 		return super.performOk();
 	}
-    
 }

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -24,7 +24,9 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
  * @see ICPPASTFunctionWithTryBlock
  */
 public class CPPASTFunctionWithTryBlock extends CPPASTFunctionDefinition implements ICPPASTFunctionWithTryBlock {
-
+    private ICPPASTCatchHandler[] catchHandlers;
+    private int catchHandlersPos= -1;
+    
     public CPPASTFunctionWithTryBlock() {
 	}
 
@@ -49,10 +51,12 @@ public class CPPASTFunctionWithTryBlock extends CPPASTFunctionDefinition impleme
 		copy.setDeclarator(declarator == null ? null : declarator.copy(style));
 		copy.setBody(bodyStatement == null ? null : bodyStatement.copy(style));
 
-		for (ICPPASTConstructorChainInitializer initializer : getMemberInitializers())
+		for (ICPPASTConstructorChainInitializer initializer : getMemberInitializers()) {
 			copy.addMemberInitializer(initializer == null ? null : initializer.copy(style));
-		for (ICPPASTCatchHandler handler : getCatchHandlers())
+		}
+		for (ICPPASTCatchHandler handler : getCatchHandlers()) {
 			copy.addCatchHandler(handler == null ? null : handler.copy(style));
+		}
 
 		copy.setOffsetAndLength(this);
 		if (style == CopyStyle.withLocations) {
@@ -61,29 +65,27 @@ public class CPPASTFunctionWithTryBlock extends CPPASTFunctionDefinition impleme
 		return copy;
 	}
 
+	@Override
 	public void addCatchHandler(ICPPASTCatchHandler statement) {
         assertNotFrozen();
     	if (statement != null) {
-    		catchHandlers = (ICPPASTCatchHandler[]) ArrayUtil.append( ICPPASTCatchHandler.class, catchHandlers, ++catchHandlersPos, statement );
+    		catchHandlers = (ICPPASTCatchHandler[]) ArrayUtil.append(ICPPASTCatchHandler.class, catchHandlers, ++catchHandlersPos, statement);
     		statement.setParent(this);
 			statement.setPropertyInParent(CATCH_HANDLER);
     	}
     }
 
-    public ICPPASTCatchHandler [] getCatchHandlers() {
-        if( catchHandlers == null ) return ICPPASTCatchHandler.EMPTY_CATCHHANDLER_ARRAY;
-        catchHandlers = (ICPPASTCatchHandler[]) ArrayUtil.removeNullsAfter( ICPPASTCatchHandler.class, catchHandlers, catchHandlersPos );
+    @Override
+	public ICPPASTCatchHandler[] getCatchHandlers() {
+        if (catchHandlers == null) return ICPPASTCatchHandler.EMPTY_CATCHHANDLER_ARRAY;
+        catchHandlers = (ICPPASTCatchHandler[]) ArrayUtil.removeNullsAfter(ICPPASTCatchHandler.class, catchHandlers, catchHandlersPos);
         return catchHandlers;
     }
 
-
-    private ICPPASTCatchHandler [] catchHandlers = null;
-    private int catchHandlersPos=-1;
-    
     @Override
-	protected boolean acceptCatchHandlers( ASTVisitor action ){
-    	final ICPPASTCatchHandler [] handlers = getCatchHandlers();
-        for (int i=0; i<handlers.length; i++) {
+	protected boolean acceptCatchHandlers(ASTVisitor action) {
+    	final ICPPASTCatchHandler[] handlers = getCatchHandlers();
+        for (int i= 0; i < handlers.length; i++) {
             if (!handlers[i].accept(action)) 
             	return false;
         }

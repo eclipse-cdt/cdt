@@ -40,6 +40,7 @@ public abstract class ASTEnumerator extends ASTNode implements IASTEnumerator, I
 		copy.setOffsetAndLength(this);
 	}
 
+	@Override
 	public void setName(IASTName name) {
 		assertNotFrozen();
         this.name = name;
@@ -49,11 +50,13 @@ public abstract class ASTEnumerator extends ASTNode implements IASTEnumerator, I
 		}
     }
 
-    public IASTName getName() {
+    @Override
+	public IASTName getName() {
         return name;
     }
 
-    public void setValue(IASTExpression expression) {
+    @Override
+	public void setValue(IASTExpression expression) {
     	assertNotFrozen();
         this.value = expression;
         if (expression != null) {
@@ -62,7 +65,8 @@ public abstract class ASTEnumerator extends ASTNode implements IASTEnumerator, I
 		}
     }
 
-    public IASTExpression getValue() {
+    @Override
+	public IASTExpression getValue() {
         return value;
     }
 
@@ -87,6 +91,7 @@ public abstract class ASTEnumerator extends ASTNode implements IASTEnumerator, I
         return true;
     }
 
+	@Override
 	public int getRoleForName(IASTName n) {
 		if (n == name)
 			return r_definition;
@@ -94,7 +99,8 @@ public abstract class ASTEnumerator extends ASTNode implements IASTEnumerator, I
 		return r_reference;
 	}
 
-    public void replace(IASTNode child, IASTNode other) {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
         if (child == value) {
             other.setPropertyInParent(child.getPropertyInParent());
             other.setParent(child.getParent());

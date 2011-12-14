@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser;
 
@@ -18,15 +18,18 @@ import org.eclipse.cdt.core.dom.ast.INodeFactory;
  */
 public abstract class NodeFactory implements INodeFactory {
 
+	@Override
 	public final void setOffsets(IASTNode node, int offset, int endOffset) {
 		((ASTNode) node).setOffsetAndLength(offset, endOffset-offset);
 	}
 
+	@Override
 	public final void setEndOffset(IASTNode node, int endOffset) {
 		ASTNode a= (ASTNode) node;
 		a.setLength(endOffset - a.getOffset());
 	}
 
+	@Override
 	public final void setEndOffset(IASTNode node, IASTNode endNode) {
 		ASTNode a= (ASTNode) node;
 		ASTNode e= (ASTNode) endNode;

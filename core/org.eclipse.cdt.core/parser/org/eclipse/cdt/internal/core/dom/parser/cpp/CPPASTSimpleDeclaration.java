@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *     IBM - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -32,10 +32,12 @@ public class CPPASTSimpleDeclaration extends ASTNode implements IASTSimpleDeclar
 		setDeclSpecifier(declSpecifier);
 	}
 
+	@Override
 	public CPPASTSimpleDeclaration copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CPPASTSimpleDeclaration copy(CopyStyle style) {
 		CPPASTSimpleDeclaration copy = new CPPASTSimpleDeclaration();
 		copy.setDeclSpecifier(declSpecifier == null ? null : declSpecifier.copy(style));
@@ -48,17 +50,21 @@ public class CPPASTSimpleDeclaration extends ASTNode implements IASTSimpleDeclar
 		return copy;
 	}
 
+	@Override
 	public IASTDeclSpecifier getDeclSpecifier() {
         return declSpecifier;
     }
 
-    public IASTDeclarator[] getDeclarators() {
-        if (declarators == null) return IASTDeclarator.EMPTY_DECLARATOR_ARRAY;
+    @Override
+	public IASTDeclarator[] getDeclarators() {
+        if (declarators == null)
+        	return IASTDeclarator.EMPTY_DECLARATOR_ARRAY;
         declarators = (IASTDeclarator[]) ArrayUtil.removeNullsAfter(IASTDeclarator.class, declarators, declaratorsPos);
         return declarators;
     }
     
-    public void addDeclarator(IASTDeclarator d) {
+    @Override
+	public void addDeclarator(IASTDeclarator d) {
         assertNotFrozen();
     	if (d != null) {
     		declarators = (IASTDeclarator[]) ArrayUtil.append(IASTDeclarator.class, declarators, ++declaratorsPos, d);
@@ -67,14 +73,15 @@ public class CPPASTSimpleDeclaration extends ASTNode implements IASTSimpleDeclar
     	}
     }
     
-    private IASTDeclarator[] declarators = null;
+    private IASTDeclarator[] declarators;
     private int declaratorsPos = -1;
     private IASTDeclSpecifier declSpecifier;
 
     /**
      * @param declSpecifier The declSpecifier to set.
      */
-    public void setDeclSpecifier(IASTDeclSpecifier declSpecifier) {
+    @Override
+	public void setDeclSpecifier(IASTDeclSpecifier declSpecifier) {
         assertNotFrozen();
         this.declSpecifier = declSpecifier;
         if (declSpecifier != null) {
@@ -93,10 +100,12 @@ public class CPPASTSimpleDeclaration extends ASTNode implements IASTSimpleDeclar
 	        }
 		}
         
-        if (declSpecifier != null) if (!declSpecifier.accept(action)) return false;
+        if (declSpecifier != null && !declSpecifier.accept(action)) return false;
         IASTDeclarator[] dtors = getDeclarators();
-        for (int i = 0; i < dtors.length; i++)
-            if (!dtors[i].accept(action)) return false;
+        for (int i = 0; i < dtors.length; i++) {
+            if (!dtors[i].accept(action))
+            	return false;
+        }
         
         if (action.shouldVisitDeclarations) {
 		    switch (action.leave(this)) {
@@ -108,7 +117,8 @@ public class CPPASTSimpleDeclaration extends ASTNode implements IASTSimpleDeclar
         return true;
     }
     
-    public void replace(IASTNode child, IASTNode other) {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
 		IASTDeclarator[] declarators = getDeclarators();
 		for (int i = 0; i < declarators.length; i++) {
 			if (declarators[i] == child) {

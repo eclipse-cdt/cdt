@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- * Institute for Software (IFS)- initial API and implementation 
+ *     Institute for Software (IFS)- initial API and implementation 
  ******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
@@ -17,32 +17,31 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 
 /**
  * @author Emanuel Graf IFS
- *
  */
 public class ASTCopyLocation implements IASTCopyLocation {
-	
 	private IASTNode originalNode;
-	
-	
 
 	public ASTCopyLocation(IASTNode originalNode) {
 		this.originalNode = originalNode;
 	}
 
+	@Override
 	public int getNodeOffset() {
 		return 0;
 	}
 
+	@Override
 	public int getNodeLength() {
 		return 0;
 	}
 
+	@Override
 	public IASTFileLocation asFileLocation() {
 		return null;
 	}
 
+	@Override
 	public IASTNode getOriginalNode() {
 		return originalNode;
 	}
-
 }

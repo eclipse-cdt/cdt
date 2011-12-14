@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM Rational Software) - Initial API and implementation
+ *     John Camelon (IBM Rational Software) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -44,10 +44,12 @@ public interface IASTExpressionList extends IASTExpression {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IASTExpressionList copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public IASTExpressionList copy(CopyStyle style);
 }

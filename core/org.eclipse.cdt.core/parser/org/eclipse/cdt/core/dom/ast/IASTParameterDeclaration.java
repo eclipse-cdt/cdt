@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Doug Schaefer (IBM) - Initial API and implementation
+ *     Doug Schaefer (IBM) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -20,7 +20,7 @@ public interface IASTParameterDeclaration extends IASTNode {
 	/**
 	 * Constant/sentinel.
 	 */
-	public static final IASTParameterDeclaration[] EMPTY_PARAMETERDECLARATION_ARRAY = new IASTParameterDeclaration[0];
+	public static final IASTParameterDeclaration[] EMPTY_PARAMETERDECLARATION_ARRAY = {};
 
 	/**
 	 * <code>DECL_SPECIFIER</code> represents the relationship between an
@@ -71,10 +71,12 @@ public interface IASTParameterDeclaration extends IASTNode {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IASTParameterDeclaration copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public IASTParameterDeclaration copy(CopyStyle style);
 }

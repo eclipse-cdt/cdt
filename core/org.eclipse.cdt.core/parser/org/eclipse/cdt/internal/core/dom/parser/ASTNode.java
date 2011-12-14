@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     John Camelon - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
@@ -42,23 +42,29 @@ public abstract class ASTNode implements IASTNode {
 
     private int length;
     private int offset;
+    private IASTNodeLocation[] locations;
+    private IASTFileLocation fileLocation;
 
     private boolean frozen = false;
     private boolean active = true;
     
-    public IASTNode getParent() {
+    @Override
+	public IASTNode getParent() {
     	return parent;
     }
     
+	@Override
 	public IASTNode[] getChildren() {
 		ChildCollector collector= new ChildCollector(this);
 		return collector.getChildren();
 	}
 	
+	@Override
 	public boolean isFrozen() {
 		return frozen;
 	}
 	
+	@Override
 	public boolean isActive() {
 		return active;
 	}
@@ -78,16 +84,19 @@ public abstract class ASTNode implements IASTNode {
 			throw new IllegalStateException("attempt to modify frozen AST node"); //$NON-NLS-1$
 	}
 	
-    public void setParent(IASTNode node) {
+    @Override
+	public void setParent(IASTNode node) {
     	assertNotFrozen();
     	this.parent = node;
     }
     
-    public ASTNodeProperty getPropertyInParent() {
+    @Override
+	public ASTNodeProperty getPropertyInParent() {
     	return property;
     }
     
-    public void setPropertyInParent(ASTNodeProperty property) {
+    @Override
+	public void setPropertyInParent(ASTNodeProperty property) {
     	assertNotFrozen();
     	this.property = property;
     }
@@ -120,10 +129,8 @@ public abstract class ASTNode implements IASTNode {
         setOffsetAndLength(node.getOffset(), node.getLength());
     }
 
-    private IASTNodeLocation[] locations = null;
-    private IASTFileLocation fileLocation = null;
-
-    public IASTNodeLocation[] getNodeLocations() {
+    @Override
+	public IASTNodeLocation[] getNodeLocations() {
         if (locations != null)
             return locations;
         if (length == 0) {
@@ -163,11 +170,13 @@ public abstract class ASTNode implements IASTNode {
         return CharArrayUtils.EMPTY;
     }
 
-    public String getRawSignature() {
+    @Override
+	public String getRawSignature() {
     	return new String(getRawSignatureChars());
     }
 
-    public String getContainingFilename() {
+    @Override
+	public String getContainingFilename() {
     	if (offset <= 0 && (length == 0 || offset < 0)) {
     		final IASTNode parent = getParent();
     		if (parent == null) {
@@ -181,7 +190,8 @@ public abstract class ASTNode implements IASTNode {
         return getTranslationUnit().getContainingFilename(offset);
     }
 
-    public IASTFileLocation getFileLocation() {
+    @Override
+	public IASTFileLocation getFileLocation() {
         if (fileLocation != null)
             return fileLocation;
         // TODO(sprigogin): The purpose of offset == 0 && length == 0 condition is not clear to me.
@@ -201,7 +211,8 @@ public abstract class ASTNode implements IASTNode {
         return fileLocation;
     }
     
-    public boolean isPartOfTranslationUnitFile() {
+    @Override
+	public boolean isPartOfTranslationUnitFile() {
         IASTTranslationUnit ast = getTranslationUnit();
         if (ast != null) {
         	ILocationResolver lr= (ILocationResolver) ast.getAdapter(ILocationResolver.class);
@@ -223,15 +234,18 @@ public abstract class ASTNode implements IASTNode {
         return false;
     }
     
-    public IASTTranslationUnit getTranslationUnit() {
+    @Override
+	public IASTTranslationUnit getTranslationUnit() {
        	return parent != null ? parent.getTranslationUnit() : null;
     }
 
-    public boolean accept(ASTVisitor visitor) {
+    @Override
+	public boolean accept(ASTVisitor visitor) {
     	return true;
     }
     
-    public boolean contains(IASTNode node) {
+    @Override
+	public boolean contains(IASTNode node) {
     	if (node instanceof ASTNode) {
     		ASTNode astNode= (ASTNode) node;
     		return offset <= astNode.offset && 
@@ -240,15 +254,18 @@ public abstract class ASTNode implements IASTNode {
     	return false;
     }
 
+	@Override
 	public IToken getSyntax() throws ExpansionOverlapsBoundaryException {
 		return getSyntax(offset, offset+length, 0);
 	}
 
+	@Override
 	public IToken getLeadingSyntax() throws ExpansionOverlapsBoundaryException {
 		int left= getBoundary(-1);
 		return getSyntax(left, offset, -1);
 	}
 
+	@Override
 	public IToken getTrailingSyntax() throws ExpansionOverlapsBoundaryException {
     	int right= getBoundary(1);
 		return getSyntax(offset+length, right, 1);
@@ -346,5 +363,4 @@ public abstract class ASTNode implements IASTNode {
 	protected void setCopyLocation(IASTNode originalNode) {
 		locations = new IASTNodeLocation[] {new ASTCopyLocation(originalNode)};
 	}
-	
 }

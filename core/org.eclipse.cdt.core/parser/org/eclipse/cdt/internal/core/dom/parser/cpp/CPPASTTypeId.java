@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     John Camelon (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -24,7 +24,6 @@ public class CPPASTTypeId extends ASTNode implements ICPPASTTypeId {
     private IASTDeclSpecifier declSpec;
     private IASTDeclarator absDecl;
     private boolean isPackExpansion;
-
     
     public CPPASTTypeId() {
 	}
@@ -34,10 +33,12 @@ public class CPPASTTypeId extends ASTNode implements ICPPASTTypeId {
 		setAbstractDeclarator(absDecl);
 	}
 	
+	@Override
 	public CPPASTTypeId copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CPPASTTypeId copy(CopyStyle style) {
 		CPPASTTypeId copy = new CPPASTTypeId();
 		copy.setDeclSpecifier(declSpec == null ? null : declSpec.copy(style));
@@ -50,11 +51,13 @@ public class CPPASTTypeId extends ASTNode implements ICPPASTTypeId {
 		return copy;
 	}
 
+	@Override
 	public IASTDeclSpecifier getDeclSpecifier() {
         return declSpec;
     }
 
-    public void setDeclSpecifier(IASTDeclSpecifier declSpec) {
+    @Override
+	public void setDeclSpecifier(IASTDeclSpecifier declSpec) {
         assertNotFrozen();
         this.declSpec = declSpec;
         if (declSpec != null) {
@@ -63,12 +66,13 @@ public class CPPASTTypeId extends ASTNode implements ICPPASTTypeId {
 		}
     }
 
-    public IASTDeclarator getAbstractDeclarator() {
+    @Override
+	public IASTDeclarator getAbstractDeclarator() {
         return absDecl;
     }
 
-
-    public void setAbstractDeclarator(IASTDeclarator abstractDeclarator) {
+    @Override
+	public void setAbstractDeclarator(IASTDeclarator abstractDeclarator) {
         assertNotFrozen();
         this.absDecl = abstractDeclarator;
         if (abstractDeclarator != null) {
@@ -77,10 +81,12 @@ public class CPPASTTypeId extends ASTNode implements ICPPASTTypeId {
 		}
     }
 
-    public boolean isPackExpansion() {
+    @Override
+	public boolean isPackExpansion() {
 		return isPackExpansion;
 	}
 
+	@Override
 	public void setIsPackExpansion(boolean val) {
 		isPackExpansion= val;
 	}

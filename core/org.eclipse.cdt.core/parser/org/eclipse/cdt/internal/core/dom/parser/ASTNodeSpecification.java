@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser;
 
@@ -41,12 +41,12 @@ public class ASTNodeSpecification<T extends IASTNode> {
 		fRelation= relation;
 		fClass= clazz;
 		fFileOffset= fileOffset;
-		fFileEndOffset= fileOffset+fileLength;
+		fFileEndOffset= fileOffset + fileLength;
 	}
 
 	public void setRangeInSequence(int offsetInSeq, int lengthInSeq) {
 		fSeqNumber= offsetInSeq;
-		fSeqEndNumber= offsetInSeq+lengthInSeq;
+		fSeqEndNumber= offsetInSeq + lengthInSeq;
 	}
 
 	public void setRangeInSequence(int offsetInSeq, int lengthInSeq, boolean zeroRangeToLeft) {

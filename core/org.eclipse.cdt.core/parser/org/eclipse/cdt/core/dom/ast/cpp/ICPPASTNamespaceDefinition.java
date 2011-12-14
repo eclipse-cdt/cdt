@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     John Camelon (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -25,7 +25,6 @@ import org.eclipse.cdt.core.dom.ast.IScope;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTNamespaceDefinition extends IASTDeclaration, IASTNameOwner, IASTDeclarationListOwner {
-
 	/**
 	 * <code>OWNED_DECLARATION</code> is the role served by all the nested
 	 * declarations.
@@ -68,22 +67,22 @@ public interface ICPPASTNamespaceDefinition extends IASTDeclaration, IASTNameOwn
 	public boolean isInline();
 	
 	/**
-	 * A translation unit contains an ordered sequence of declarations.
+	 * A namespace contains an ordered sequence of declarations.
 	 * 
-	 * @return <code>IASTDeclaration []</code>
+	 * @return an array of declarations contained in the namespace
 	 */
 	public IASTDeclaration[] getDeclarations();
 
 	/**
-	 * Add a declaration to the namespace.
+	 * Adds a declaration to the namespace.
 	 * 
-	 * @param declaration
-	 *            <code>IASTDeclaration</code>
+	 * @param declaration <code>IASTDeclaration</code>
 	 */
+	@Override
 	public void addDeclaration(IASTDeclaration declaration);
 
 	/**
-	 * Get the scope object represented by this construct.
+	 * Returns the scope object represented by this construct.
 	 * 
 	 * @return <code>IScope</code>
 	 */
@@ -92,10 +91,12 @@ public interface ICPPASTNamespaceDefinition extends IASTDeclaration, IASTNameOwn
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICPPASTNamespaceDefinition copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICPPASTNamespaceDefinition copy(CopyStyle style);
 }

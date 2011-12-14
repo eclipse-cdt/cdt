@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
- *    Anton Leherbauer (Wind River Systems)
- *    Markus Schorn (Wind River Systems)
+ *     IBM - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
@@ -23,95 +23,10 @@ import org.eclipse.cdt.internal.core.parser.ParserMessages;
 
 import com.ibm.icu.text.MessageFormat;
 
-
 /**
  * Models problems, all problems should derive from this class.
  */
 public class ASTProblem extends ASTNode implements IASTProblem {
-	
-    private final int id;
-    private final char[] arg;
-	private boolean isError= false;
-
-    public ASTProblem(IASTNode parent, ASTNodeProperty property, int id, char[] arg, boolean isError, int startNumber, int endNumber) {
-		setParent(parent);
-		setPropertyInParent(property);
-		setOffset(startNumber);
-		setLength(endNumber-startNumber);
-
-		this.isError= isError;
-        this.id = id;
-        this.arg = arg;
-    }
-
-	public ASTProblem(int id, char[] arg, boolean isError) {
-        this.id = id;
-        this.arg = arg;
-        this.isError= isError;
-	}
-
-	public ASTProblem copy() {
-		return copy(CopyStyle.withoutLocations);
-	}
-	
-	public ASTProblem copy(CopyStyle style) {
-		ASTProblem problem = new ASTProblem(id, arg == null ? null : arg.clone(), isError);
-		problem.setOffsetAndLength(this);
-		if (style == CopyStyle.withLocations) {
-			problem.setCopyLocation(this);
-		}
-		return problem;
-	}
-
-	public int getID() {
-        return id;
-    }
-
-    public boolean isError() {
-        return isError;
-    }
-    
-    public boolean isWarning() {
-        return !isError;
-    }
-
-    public String getMessageWithLocation() {
-        String msg= getMessage();
-
-        char[] file= getOriginatingFileName();
-        int line= getSourceLineNumber();
-        Object[] args = new Object[] { msg, new String(file), new Integer(line) };
-        return ParserMessages.getFormattedString("BaseProblemFactory.problemPattern", args); //$NON-NLS-1$
-    }
-
-    public static String getMessage(int id, String arg) {
-        String msg = errorMessages.get(new Integer(id));
-        if (msg == null)
-            msg = ""; //$NON-NLS-1$
-
-        if (arg != null) {
-            return MessageFormat.format(msg, new Object[] {arg});
-        }
-        return msg;
-    }
-    
-    public String getMessage() {
-    	return getMessage(id, arg == null ? null : new String(arg));
-    }
-
-    public boolean checkCategory(int bitmask) {
-        return ((id & bitmask) != 0);
-    }
-
-    public String[] getArguments() {
-        return arg == null ? new String[0] : new String[] {new String(arg)};
-    }
-
-    public char[] getArgument() {
-    	return arg;
-    }
-    
-
     protected static final Map<Integer, String> errorMessages;
     static {
     	errorMessages = new HashMap<Integer, String>();
@@ -179,16 +94,104 @@ public class ASTProblem extends ASTNode implements IASTProblem {
     			ParserMessages.getString("ParserProblemFactory.error.syntax.missingSemicolon")); //$NON-NLS-1$
 	}
 
-    /*
-	 * @see org.eclipse.cdt.core.parser.IProblem#getOriginatingFileName()
-	 */
+    private final int id;
+    private final char[] arg;
+	private boolean isError;
+
+    public ASTProblem(IASTNode parent, ASTNodeProperty property, int id, char[] arg, boolean isError,
+    		int startNumber, int endNumber) {
+		setParent(parent);
+		setPropertyInParent(property);
+		setOffset(startNumber);
+		setLength(endNumber-startNumber);
+
+		this.isError= isError;
+        this.id = id;
+        this.arg = arg;
+    }
+
+	public ASTProblem(int id, char[] arg, boolean isError) {
+        this.id = id;
+        this.arg = arg;
+        this.isError= isError;
+	}
+
+	@Override
+	public ASTProblem copy() {
+		return copy(CopyStyle.withoutLocations);
+	}
+	
+	@Override
+	public ASTProblem copy(CopyStyle style) {
+		ASTProblem problem = new ASTProblem(id, arg == null ? null : arg.clone(), isError);
+		problem.setOffsetAndLength(this);
+		if (style == CopyStyle.withLocations) {
+			problem.setCopyLocation(this);
+		}
+		return problem;
+	}
+
+	@Override
+	public int getID() {
+        return id;
+    }
+
+    @Override
+	public boolean isError() {
+        return isError;
+    }
+    
+    @Override
+	public boolean isWarning() {
+        return !isError;
+    }
+
+    @Override
+	public String getMessageWithLocation() {
+        String msg= getMessage();
+
+        char[] file= getOriginatingFileName();
+        int line= getSourceLineNumber();
+        Object[] args = new Object[] { msg, new String(file), new Integer(line) };
+        return ParserMessages.getFormattedString("BaseProblemFactory.problemPattern", args); //$NON-NLS-1$
+    }
+
+    public static String getMessage(int id, String arg) {
+        String msg = errorMessages.get(new Integer(id));
+        if (msg == null)
+            msg = ""; //$NON-NLS-1$
+
+        if (arg != null) {
+            return MessageFormat.format(msg, new Object[] {arg});
+        }
+        return msg;
+    }
+    
+    @Override
+	public String getMessage() {
+    	return getMessage(id, arg == null ? null : new String(arg));
+    }
+
+    @Override
+	public boolean checkCategory(int bitmask) {
+        return (id & bitmask) != 0;
+    }
+
+    @Override
+	public String[] getArguments() {
+        return arg == null ? new String[0] : new String[] { new String(arg) };
+    }
+
+    public char[] getArgument() {
+    	return arg;
+    }
+
+	@Override
 	public char[] getOriginatingFileName() {
 		return getContainingFilename().toCharArray();
 	}
 
-	/*
-	 * @see org.eclipse.cdt.core.parser.IProblem#getSourceEnd()
-	 */
+	@Override
 	public int getSourceEnd() {
 		final IASTFileLocation location= getFileLocation();
 		if (location != null) {
@@ -197,9 +200,7 @@ public class ASTProblem extends ASTNode implements IASTProblem {
 		return INT_VALUE_NOT_PROVIDED;
 	}
 
-	/*
-	 * @see org.eclipse.cdt.core.parser.IProblem#getSourceLineNumber()
-	 */
+	@Override
 	public int getSourceLineNumber() {
 		final IASTFileLocation location= getFileLocation();
 		if (location != null) {
@@ -208,9 +209,7 @@ public class ASTProblem extends ASTNode implements IASTProblem {
 		return INT_VALUE_NOT_PROVIDED;
 	}
 
-	/*
-	 * @see org.eclipse.cdt.core.parser.IProblem#getSourceStart()
-	 */
+	@Override
 	public int getSourceStart() {
 		final IASTFileLocation location= getFileLocation();
 		if (location != null) {

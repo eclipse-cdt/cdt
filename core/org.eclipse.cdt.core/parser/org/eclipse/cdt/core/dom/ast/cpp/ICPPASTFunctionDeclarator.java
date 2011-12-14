@@ -6,8 +6,8 @@
  *  http://www.eclipse.org/legal/epl-v10.html
  * 
  *  Contributors:
- *    IBM - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *      IBM - Initial API and implementation
+ *      Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
  * @noextend This interface is not intended to be extended by clients.
  */
 public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarator, ICPPASTDeclarator {
-
 	/**
 	 * Used as return value for {@link #getExceptionSpecification()}.
 	 * @since 5.1
@@ -80,6 +79,7 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 	/**
 	 * @since 5.2
 	 */
+	@Override
 	public ICPPASTParameterDeclaration[] getParameters();
 	
 	/**
@@ -117,6 +117,7 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 	 * Get function scope this node represents. Returns <code>null</code>, if this declarator does not
 	 * declare a function-prototype or function-definition.
 	 */
+	@Override
 	public ICPPFunctionScope getFunctionScope();
 
 
@@ -136,10 +137,12 @@ public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarato
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICPPASTFunctionDeclarator copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICPPASTFunctionDeclarator copy(CopyStyle style);
 }

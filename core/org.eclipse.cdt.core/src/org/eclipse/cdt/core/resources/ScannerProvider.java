@@ -98,7 +98,7 @@ public class ScannerProvider extends AbstractCExtension implements IScannerInfoP
 	 */
 	@Override
 	public IScannerInfo getScannerInformation(IResource resource) {
-		// AG FIXME
+		// AG FIXME - temporary log to remove before CDT 9.0 release
 		if (resource instanceof IFile) {
 			LanguageSettingsLogger.logInfo("rc="+resource+" (ScannerProvider.getScannerInformation())");
 		} else {

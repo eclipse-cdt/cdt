@@ -374,34 +374,55 @@ public class LanguageSettingsProvidersSerializer {
 		rawGlobalWorkspaceProviders = rawNewProviders;
 	}
 
-	private static List<LanguageSettingsChangeEvent> createLanguageSettingsChangeEvents(List<LanguageSettingsSerializableProvider> serializableProviders) {
+	/**
+	 * Create event for language settings changes of workspace providers in a project.
+	 */
+	private static LanguageSettingsChangeEvent createEvent(ICProjectDescription prjDescription, List<String> providerIds) {
+		ICConfigurationDescription[] cfgDescriptions = prjDescription.getConfigurations();
+		for (ICConfigurationDescription cfgDescription : cfgDescriptions) {
+			if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+				for (ILanguageSettingsProvider provider : ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders()) {
+					if (isWorkspaceProvider(provider) && providerIds.contains(provider.getId())) {
+						LanguageSettingsChangeEvent event = new LanguageSettingsChangeEvent(prjDescription);
+						if (event.getConfigurationDescriptionIds().length > 0) {
+							return event;
+						}
+						return null;
+					}
+				}
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Compute events for language settings changes in workspace.
+	 */
+	private static List<LanguageSettingsChangeEvent> createLanguageSettingsChangeEvents(List<LanguageSettingsSerializableProvider> providers) {
 		List<LanguageSettingsChangeEvent> events = new ArrayList<LanguageSettingsChangeEvent>();
 
-		List<String> serializableIds = new ArrayList<String>();
-		for (LanguageSettingsSerializableProvider provider : serializableProviders) {
-			serializableIds.add(provider.getId());
+		List<String> providerIds = new ArrayList<String>();
+		for (LanguageSettingsSerializableProvider provider : providers) {
+			providerIds.add(provider.getId());
 		}
 
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IProject[] projects = root.getProjects();
-projects:
+
 		for (IProject project : projects) {
 			if (project.isAccessible()) {
 				ICProjectDescription prjDescription = CCorePlugin.getDefault().getProjectDescription(project, false);
 				if (prjDescription != null) {
-					ICConfigurationDescription[] cfgDescriptions = prjDescription.getConfigurations();
-					for (ICConfigurationDescription cfgDescription : cfgDescriptions) {
-						if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
-							for (ILanguageSettingsProvider provider : ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders()) {
-								if (isWorkspaceProvider(provider) && serializableIds.contains(provider.getId())) {
-									LanguageSettingsChangeEvent event = new LanguageSettingsChangeEvent(prjDescription);
-									if (event.getConfigurationDescriptionIds().length > 0) {
-										events.add(event);
-									}
-									continue projects;
-								}
-							}
+					try {
+						LanguageSettingsChangeEvent event = createEvent(prjDescription, providerIds);
+						if (event != null) {
+							events.add(event);
 						}
+					} catch (Throwable e) {
+						// log and swallow any exception
+						CCorePlugin.log("Error creating event about changes in workspace language settings providers, " //$NON-NLS-1$
+								+ "project=" + project.getName(), e); //$NON-NLS-1$
 					}
 				}
 			}
@@ -416,7 +437,7 @@ projects:
 	 * @throws CoreException
 	 */
 	public static void serializeLanguageSettingsWorkspace() throws CoreException {
-		// FIXME - temporary log to remove before CDT 9.0 release
+		// AG FIXME - temporary log to remove before CDT 9.0 release
 		LanguageSettingsLogger.logWarning("LanguageSettingsProvidersSerializer.serializeLanguageSettingsWorkspace()");
 
 		URI uriStoreWsp = getStoreInWorkspaceArea(STORAGE_WORKSPACE_LANGUAGE_SETTINGS);
@@ -588,6 +609,7 @@ projects:
 	 */
 	public static void serializeLanguageSettings(ICProjectDescription prjDescription) throws CoreException {
 		IProject project = prjDescription.getProject();
+		// AG FIXME - temporary log to remove before CDT 9.0 release
 		LanguageSettingsLogger.logWarning("LanguageSettingsProvidersSerializer.serializeLanguageSettings() for " + project);
 
 		try {
@@ -1098,12 +1120,12 @@ projects:
 	 * @param event the ILanguageSettingsChangeEvent event to be broadcast.
 	 */
 	public static void notifyLanguageSettingsChangeListeners(ILanguageSettingsChangeEvent event) {
+		// AG FIXME - temporary log to remove before CDT 9.0 release
 		LanguageSettingsLogger.logWarning("Firing " + event);
 
 		Object[] listeners = fLanguageSettingsChangeListeners.getListeners();
-		for (Object obj : listeners) {
-			ILanguageSettingsChangeListener listener = (ILanguageSettingsChangeListener) obj;
-			listener.handleEvent(event);
+		for (Object listener : listeners) {
+			((ILanguageSettingsChangeListener) listener).handleEvent(event);
 		}
 	}
 

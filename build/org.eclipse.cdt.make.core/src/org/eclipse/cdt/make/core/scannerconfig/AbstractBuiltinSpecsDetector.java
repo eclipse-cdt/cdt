@@ -270,6 +270,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 
 	@Override
 	public void registerListener(ICConfigurationDescription cfgDescription) {
+		// AG FIXME - temporary log to remove before CDT 9.0 release
 		LanguageSettingsLogger.logInfo(getPrefixForLog() + "registerListener [" + System.identityHashCode(this) + "] " + this);
 
 		currentCfgDescription = cfgDescription;
@@ -278,6 +279,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 
 	@Override
 	public void unregisterListener() {
+		// AG FIXME - temporary log to remove before CDT 9.0 release
 		LanguageSettingsLogger.logInfo(getPrefixForLog() + "unregisterListener [" + System.identityHashCode(this) + "] " + this);
 	}
 
@@ -318,7 +320,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		job.setRule(rule);
 		job.schedule();
 
-		// TODO - remove me
+		// AG FIXME - temporary log to remove before CDT 9.0 release
 		LanguageSettingsLogger.logInfo(getPrefixForLog() + "Execution scheduled [" + System.identityHashCode(this) + "] " + this);
 	}
 
@@ -461,6 +463,7 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 		if (detectedSettingEntries != null && detectedSettingEntries.size() > 0) {
 			collected = detectedSettingEntries.size();
 
+			// AG FIXME - temporary log to remove before CDT 9.0 release
 			LanguageSettingsLogger.logInfo(getPrefixForLog()
 					+ getClass().getSimpleName() + " collected " + detectedSettingEntries.size() + " entries" + " for language " + currentLanguageId);
 

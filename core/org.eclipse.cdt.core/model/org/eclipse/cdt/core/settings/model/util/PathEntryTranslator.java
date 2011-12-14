@@ -2041,7 +2041,8 @@ public class PathEntryTranslator {
 			public boolean visit(PathSettingsContainer container) {
 				CResourceData data = (CResourceData)container.getValue();
 				if (data != null) {
-					AG_log(des, kinds, data); // AG FIXME REMOVEME
+					// AG FIXME - temporary log to remove before CDT 9.0 release
+					temporaryLog(des, kinds, data);
 
 					PathEntryCollector child = cr.createChild(container.getPath());
 					for (int kind : kinds) {
@@ -2055,8 +2056,9 @@ public class PathEntryTranslator {
 				return true;
 			}
 
-			// AG FIXME REMOVEME
-			private void AG_log(final ICConfigurationDescription des, final int[] kinds, CResourceData data) {
+			// AG FIXME - temporary log to remove before CDT 9.0 release
+			@Deprecated
+			private void temporaryLog(final ICConfigurationDescription des, final int[] kinds, CResourceData data) {
 				String kindsStr="";
 				for (int kind : kinds) {
 					String kstr = LanguageSettingEntriesSerializer.kindToString(kind);
@@ -2092,7 +2094,7 @@ public class PathEntryTranslator {
 			return false;
 		}
 
-		
+
 		IProject project = des.getProjectDescription().getProject();
 		if (ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(project)) {
 			IResource rc = getResource(project, data.getPath());
@@ -2100,7 +2102,7 @@ public class PathEntryTranslator {
 				list.addAll(LanguageSettingsManager.getSettingEntriesByKind(des, rc, lData.getLanguageId(), kind));
 			}
 			return list.size()>0;
-			
+
 		}
 		// Legacy logic
 		boolean supported = false;

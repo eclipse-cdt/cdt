@@ -78,9 +78,9 @@ public class DescriptionScannerInfoProvider implements IScannerInfoProvider, ICP
 
 	@Override
 	public IScannerInfo getScannerInformation(IResource resource) {
-		// AG FIXME
+		// AG FIXME - temporary log to remove before CDT 9.0 release
 		LanguageSettingsLogger.logScannerInfoProvider(resource, this);
-		
+
 		if(!fInited)
 			updateProjCfgInfo(CProjectDescriptionManager.getInstance().getProjectDescription(fProject, false));
 

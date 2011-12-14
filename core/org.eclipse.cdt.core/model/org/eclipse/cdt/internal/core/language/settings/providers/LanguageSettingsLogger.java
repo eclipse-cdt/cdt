@@ -8,7 +8,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 /**
- *  Temporary class for logging language settings providers development.
+ *  AG FIXME -Temporary class for logging language settings providers development.
+ *  To remove before CDT 9.0 release
  *
  */
 @Deprecated

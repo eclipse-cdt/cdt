@@ -2207,7 +2207,6 @@ test::string toXML() {
 int main() {
 	return 0;
 }
-
 //=
 #include "testString.h"
 
@@ -2224,111 +2223,6 @@ test::string toXML() {
 int main() {
 	return 0;
 }
-
-//!Bug 248622: Extract function fails to extract several expressions; Selection at the end
-//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
-//@.config
-filename=Test.cpp
-methodname=endTag
-//@testString.h
-
-namespace test {
-
-class string {
-public:
-	friend string operator+(const string& lhs, const string& rhs) {
-		return rhs;
-	}
-
-	string operator+(const string& rhs) { return rhs; }
-	string(char* cp) {}
-	string() {};
-};
-
-}
-
-//@Test.cpp
-#include "testString.h"
-
-test::string toXML() {
-	test::string name;
-	name = "hello";
-	return "<" + name + ">" + /*$*/"</" + name + ">"/*$$*/;
-}
-
-int main() {
-	return 0;
-}
-
-//=
-#include "testString.h"
-
-const char endTag(test::string name) {
-	return "</" + name + ">";
-}
-
-test::string toXML() {
-	test::string name;
-	name = "hello";
-	return "<" + name + ">" + endTag(name);
-}
-
-int main() {
-	return 0;
-}
-
-//!Bug 248622: Extract function fails to extract several expressions; Selection in the middle
-//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
-//@.config
-filename=Test.cpp
-methodname=exp
-//@testString.h
-
-namespace test {
-
-class string {
-public:
-	friend string operator+(const string& lhs, const string& rhs) {
-		return rhs;
-	}
-
-	string operator+(const string& rhs) { return rhs; }
-	string(char* cp) {}
-	string() {};
-};
-
-}
-
-//@Test.cpp
-#include "testString.h"
-
-test::string toXML() {
-	test::string name;
-	name = "hello";
-	return "<" + name + /*$*/">" + "</"/*$$*/ + name + ">";
-}
-
-int main() {
-	return 0;
-}
-
-//=
-#include "testString.h"
-
-const char exp() {
-	return ">" + "</";
-}
-
-test::string toXML() {
-	test::string name;
-	name = "hello";
-	return "<" + name + exp() + name + ">";
-}
-
-int main() {
-	return 0;
-}
-
 //!Bug#262000 refactoring "extract function" misinterprets artificial blocks
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
@@ -2341,7 +2235,6 @@ int main(int argc, char** argv) {
 		a++;
 	}/*$$*/
 }
-
 //=
 void exp() {
 	int a = 0;
@@ -2353,7 +2246,6 @@ void exp() {
 int main(int argc, char** argv) {
 	exp();
 }
-
 //!Bug#264712 Refactor extract function deletes comments in header
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config

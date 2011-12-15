@@ -7,9 +7,11 @@
  *
  * Contributors:
  *     Patrick Chuong (Texas Instruments) - Pin and Clone Supports (331781)
+ *     Patrick Chuong (Texas Instruments) - Bug 358135
  *****************************************************************/
 package org.eclipse.cdt.debug.internal.ui.pinclone;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +22,7 @@ import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.debug.ui.contexts.IDebugContextService;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -45,15 +48,17 @@ public class DebugEventFilterService {
 		public void debugContextChanged(DebugContextEvent event) {
 			ISelection eventContext = event.getContext();
 			if (eventContext instanceof IStructuredSelection) {
-				
+				List<Object> filteredContextList = new ArrayList<Object>();
 				List<?> eventContextList = ((IStructuredSelection)eventContext).toList();
 				for (Object o : eventContextList) {
 					if (fProvider.isPinnedTo(o)) {
 						if (fProvider != event.getDebugContextProvider()) {
-							fProvider.delegateEvent(new DebugContextEvent(fProvider, event.getContext(), event.getFlags()));
+							filteredContextList.add(o);
 						}
-						return;
 					}
+				}
+				if (filteredContextList.size() > 0) {
+					fProvider.delegateEvent(new DebugContextEvent(fProvider, new StructuredSelection(filteredContextList), event.getFlags()));
 				}
 			}
  		}

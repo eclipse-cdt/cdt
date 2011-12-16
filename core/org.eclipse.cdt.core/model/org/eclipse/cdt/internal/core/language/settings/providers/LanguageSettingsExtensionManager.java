@@ -270,8 +270,8 @@ public class LanguageSettingsExtensionManager {
 		// Create it as executable extension from the extension registry.
 		ILanguageSettingsProvider provider = loadProviderFromRegistry(ATTR_CLASS, className, Platform.getExtensionRegistry(), false);
 		if (provider == null) {
-			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "Not able to load provider class=" + className); //$NON-NLS-1$
-			CCorePlugin.log(new CoreException(status));
+			String msg = "Not able to load provider class=" + className; //$NON-NLS-1$
+			CCorePlugin.log(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, msg, new Exception(msg)));
 		}
 		return provider;
 	}
@@ -291,8 +291,8 @@ public class LanguageSettingsExtensionManager {
 		// Create it as executable extension from the extension registry.
 		ILanguageSettingsProvider provider = loadProviderFromRegistry(ATTR_ID, id, Platform.getExtensionRegistry(), true);
 		if (provider == null) {
-			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "Not able to load provider id=" + id); //$NON-NLS-1$
-			CCorePlugin.log(new CoreException(status));
+			String msg = "Not able to load provider id=" + id; //$NON-NLS-1$
+			CCorePlugin.log(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, msg, new Exception(msg)));
 		}
 		return provider;
 	}

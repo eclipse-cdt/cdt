@@ -19,11 +19,13 @@ import java.util.Map.Entry;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsSerializableStorage;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -119,10 +121,9 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 
 	/**
 	 * Sets language settings entries for the provider.
-	 * Note that the entries are not persisted at that point. Use this method to
-	 * set the entries for all resources and then to persist use
-	 * {@link LanguageSettingsManager#serializeLanguageSettings(ICProjectDescription)} or
-	 * {@link LanguageSettingsManager#serializeLanguageSettingsWorkspace()}.
+	 * Note that the entries are not persisted at that point. Use this method to set
+	 * the entries for all resources one by one and after all done persist in one shot
+	 * using {@link #serializeLanguageSettings(ICConfigurationDescription)}.
 	 * See for example {@code AbstractBuildCommandParser} and {@code AbstractBuiltinSpecsDetector}
 	 * in build plugins.
 	 *
@@ -226,6 +227,33 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 	 */
 	public void serializeEntries(Element elementProvider) {
 		fStorage.serializeEntries(elementProvider);
+	}
+
+	/**
+	 * Convenience method to persist language settings entries for the project or
+	 * workspace as often-used operation.
+	 * Note that configuration description is passed as an argument but the
+	 * current implementation saves all configurations.
+	 *
+	 * @param cfgDescription - configuration description.
+	 *    If not {@code null}, all providers of the project are serialized.
+	 *    If {@code null}, global workspace providers are serialized.
+	 *
+	 * @return - status of operation.
+	 */
+	public IStatus serializeLanguageSettings(ICConfigurationDescription cfgDescription) {
+		IStatus status = Status.OK_STATUS;
+		try {
+			if (cfgDescription != null) {
+				LanguageSettingsManager.serializeLanguageSettings(cfgDescription.getProjectDescription());
+			} else {
+				LanguageSettingsManager.serializeLanguageSettingsWorkspace();
+			}
+		} catch (CoreException e) {
+			status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, IStatus.ERROR, "Error serializing language settings", e); //$NON-NLS-1$
+			CCorePlugin.log(status);
+		}
+		return status;
 	}
 
 	/**

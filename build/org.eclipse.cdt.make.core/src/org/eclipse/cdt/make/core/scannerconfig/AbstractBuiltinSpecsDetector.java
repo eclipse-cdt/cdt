@@ -28,7 +28,6 @@ import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.language.settings.providers.ICListenerAgent;
-import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
@@ -400,17 +399,8 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 
 			monitor.subTask("Serializing results");
 			if (isChanged) { // avoids resource and settings change notifications
-				try {
-					if (currentCfgDescription != null) {
-						LanguageSettingsManager.serializeLanguageSettings(currentCfgDescription.getProjectDescription());
-					} else {
-						LanguageSettingsManager.serializeLanguageSettingsWorkspace();
-					}
-				} catch (CoreException e) {
-					IStatus s = new Status(IStatus.ERROR, MakeCorePlugin.PLUGIN_ID, IStatus.ERROR, "Error serializing language settings", e);
-					MakeCorePlugin.log(s);
-					status.merge(s);
-				}
+				IStatus s = serializeLanguageSettings(currentCfgDescription);
+				status.merge(s);
 
 				// AG: FIXME - rather send event that ls settings changed
 				if (currentCfgDescription != null) {
@@ -419,9 +409,9 @@ public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSetti
 					try {
 						CCorePlugin.getIndexManager().update(tuSelection, IIndexManager.UPDATE_ALL | IIndexManager.UPDATE_EXTERNAL_FILES_FOR_PROJECT);
 					} catch (CoreException e) {
-						IStatus s = new Status(IStatus.ERROR, MakeCorePlugin.PLUGIN_ID, IStatus.ERROR, "Error updating CDT index", e);
-						MakeCorePlugin.log(s);
-						status.merge(s);
+						IStatus s2 = new Status(IStatus.ERROR, MakeCorePlugin.PLUGIN_ID, IStatus.ERROR, "Error updating CDT index", e);
+						MakeCorePlugin.log(s2);
+						status.merge(s2);
 					}
 				} else {
 					// TODO

@@ -27,13 +27,11 @@ import org.eclipse.cdt.core.errorparsers.RegexErrorPattern;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.internal.core.ConsoleOutputSniffer;
-import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 
@@ -160,18 +158,7 @@ public abstract class AbstractBuildCommandParser extends AbstractLanguageSetting
 		Job job = new Job("Serialize CDT language settings entries") {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				IStatus status = Status.OK_STATUS;
-				try {
-					if (cfgDescription != null) {
-						LanguageSettingsManager.serializeLanguageSettings(cfgDescription.getProjectDescription());
-					} else {
-						LanguageSettingsManager.serializeLanguageSettingsWorkspace();
-					}
-				} catch (CoreException e) {
-					status = new Status(IStatus.ERROR, MakeCorePlugin.PLUGIN_ID, IStatus.ERROR, "Error serializing language settings", e);
-					MakeCorePlugin.log(status);
-				}
-				return status;
+				return serializeLanguageSettings(cfgDescription);
 			}
 			@Override
 			public boolean belongsTo(Object family) {

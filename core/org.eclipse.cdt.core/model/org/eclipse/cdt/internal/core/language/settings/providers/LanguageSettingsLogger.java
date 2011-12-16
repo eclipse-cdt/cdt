@@ -9,7 +9,7 @@ import org.eclipse.core.runtime.Status;
 
 /**
  *  AG FIXME -Temporary class for logging language settings providers development.
- *  To remove before CDT 9.0 release
+ *  To remove before CDT Juno release
  *
  */
 @Deprecated

@@ -52,7 +52,7 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 
 	@Override
 	public ExtendedScannerInfo getScannerInformation(IResource rc) {
-		// AG FIXME - temporary log to remove before CDT 9.0 release
+		// AG FIXME - temporary log to remove before CDT Juno release
 		LanguageSettingsLogger.logScannerInfoProvider(rc, this);
 
 		IProject project = rc.getProject();

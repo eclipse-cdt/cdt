@@ -71,7 +71,7 @@ public class LanguageSettingsProvidersSerializer {
 	public static final String ELEM_PROVIDER = LanguageSettingsExtensionManager.ELEM_PROVIDER;
 	public static final String ELEM_LANGUAGE_SCOPE = LanguageSettingsExtensionManager.ELEM_LANGUAGE_SCOPE;
 
-	private static final String PREFERENCE_WORSPACE_PROVIDERS_SET = "language.settings.providers.set.for.workspace"; //$NON-NLS-1$
+	private static final String PREFERENCE_WORSPACE_PROVIDERS_SET = "language.settings.providers.workspace.prefs.toggle"; //$NON-NLS-1$
 	private static final String STORAGE_WORKSPACE_LANGUAGE_SETTINGS = "language.settings.xml"; //$NON-NLS-1$
 	private static final String SETTINGS_FOLDER_NAME = ".settings/"; //$NON-NLS-1$
 	private static final String STORAGE_PROJECT_LANGUAGE_SETTINGS = "language.settings.xml"; //$NON-NLS-1$
@@ -87,13 +87,13 @@ public class LanguageSettingsProvidersSerializer {
 	private static final String VALUE_WORKSPACE = "workspace"; //$NON-NLS-1$
 	private static final String VALUE_PROJECT = "project"; //$NON-NLS-1$
 
-	private static ILock serializingLock = Job.getJobManager().newLock();
-
-	/** Cache of globally available providers to be consumed by calling clients */
+	/** Cache of true (raw) workspace providers */
 	private static Map<String, ILanguageSettingsProvider> rawGlobalWorkspaceProviders = new HashMap<String, ILanguageSettingsProvider>();
+	/** Cache of workspace providers wrappers */
 	private static Map<String, ILanguageSettingsProvider> globalWorkspaceProviders = new HashMap<String, ILanguageSettingsProvider>();
 
 	private static ListenerList fLanguageSettingsChangeListeners = new ListenerList(ListenerList.IDENTITY);
+	private static ILock serializingLock = Job.getJobManager().newLock();
 
 	/**
 	 * language settings provider listener-cfgDescription association
@@ -269,9 +269,33 @@ public class LanguageSettingsProvidersSerializer {
 		try {
 			loadLanguageSettingsWorkspace();
 		} catch (Throwable e) {
-			// log and swallow any exception
+			// log but swallow any exception
 			CCorePlugin.log("Error loading workspace language settings providers", e); //$NON-NLS-1$
 		}
+	}
+
+	/**
+	 * Tells if language settings entries of the provider are persisted with the project
+	 * (under .settings/ folder) or in workspace area. Persistence in the project area lets
+	 * the entries migrate with the project.
+	 *
+	 * @param provider - provider to check the persistence mode.
+	 * @return {@code true} if LSE persisted with the project or {@code false} if in the workspace.
+	 */
+	public static boolean isStoringEntriesInProjectArea(LanguageSettingsSerializableProvider provider) {
+		String value = provider.getProperty(ATTR_STORE_ENTRIES);
+		return VALUE_PROJECT.equals(value);
+	}
+
+	/**
+	 * Define where language settings are persisted for the provider.
+	 *
+	 * @param provider - provider to set the persistence mode.
+	 * @param storeEntriesWithProject - {@code true} if with the project,
+	 *    {@code false} if in workspace area.
+	 */
+	public static void setStoringEntriesInProjectArea(LanguageSettingsSerializableProvider provider, boolean storeEntriesWithProject) {
+		provider.setProperty(ATTR_STORE_ENTRIES, storeEntriesWithProject ? VALUE_PROJECT : VALUE_WORKSPACE);
 	}
 
 	/**
@@ -309,7 +333,7 @@ public class LanguageSettingsProvidersSerializer {
 	public static void setWorkspaceProviders(List<ILanguageSettingsProvider> providers) throws CoreException {
 		setWorkspaceProvidersInternal(providers);
 		serializeLanguageSettingsWorkspace();
-		// generate preference change event
+		// generate preference change event for preference change listeners (value is not intended to be used)
 		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID);
 		prefs.putBoolean(PREFERENCE_WORSPACE_PROVIDERS_SET, ! prefs.getBoolean(PREFERENCE_WORSPACE_PROVIDERS_SET, false));
 	}
@@ -437,7 +461,7 @@ public class LanguageSettingsProvidersSerializer {
 	 * @throws CoreException
 	 */
 	public static void serializeLanguageSettingsWorkspace() throws CoreException {
-		// AG FIXME - temporary log to remove before CDT 9.0 release
+		// AG FIXME - temporary log to remove before CDT Juno release
 		LanguageSettingsLogger.logWarning("LanguageSettingsProvidersSerializer.serializeLanguageSettingsWorkspace()");
 
 		URI uriStoreWsp = getStoreInWorkspaceArea(STORAGE_WORKSPACE_LANGUAGE_SETTINGS);
@@ -540,8 +564,7 @@ public class LanguageSettingsProvidersSerializer {
 	 * @noreference This method is not intended to be referenced by clients.
 	 * It is public solely for benefit of JUnit testing.
 	 */
-	public static void serializeLanguageSettingsInternal(Element projectElementPrjStore, Element projectElementWspStore, ICProjectDescription prjDescription) throws CoreException {
-
+	public static void serializeLanguageSettingsInternal(Element projectElementPrjStore, Element projectElementWspStore, ICProjectDescription prjDescription) {
 		ICConfigurationDescription[] cfgDescriptions = prjDescription.getConfigurations();
 		for (ICConfigurationDescription cfgDescription : cfgDescriptions) {
 			if (!(cfgDescription instanceof ILanguageSettingsProvidersKeeper))
@@ -552,11 +575,13 @@ public class LanguageSettingsProvidersSerializer {
 					ATTR_NAME, cfgDescription.getName(),
 				});
 			Element elementConfigurationWsp = null;
+
 			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
 			if (providers.size()>0) {
 				Element elementExtension = XmlUtil.appendElement(elementConfiguration, ELEM_EXTENSION, new String[] {
 						ATTR_EXTENSION_POINT, PROVIDER_EXTENSION_POINT_ID});
 				Element elementExtensionWsp = null;
+
 				for (ILanguageSettingsProvider provider : providers) {
 					if (isWorkspaceProvider(provider)) {
 						// Element elementProviderReference =
@@ -565,28 +590,34 @@ public class LanguageSettingsProvidersSerializer {
 						continue;
 					}
 					if (provider instanceof LanguageSettingsSerializableProvider) {
-						LanguageSettingsSerializableProvider lss = (LanguageSettingsSerializableProvider) provider;
+						try {
+							LanguageSettingsSerializableProvider lss = (LanguageSettingsSerializableProvider) provider;
 
-						boolean useWsp = projectElementWspStore!=null && projectElementPrjStore!=projectElementWspStore;
-						if (isStoringEntriesInProjectArea(lss) || !useWsp) {
-							lss.serialize(elementExtension);
-						} else {
-							lss.serializeAttributes(elementExtension);
-
-							// lazy initialization of elements - to avoid serialization of no-data file
-							if (elementExtensionWsp==null) {
-								if (elementConfigurationWsp==null) {
-									elementConfigurationWsp = XmlUtil.appendElement(projectElementWspStore, ELEM_CONFIGURATION, new String[] {
-											ATTR_ID, cfgDescription.getId(),
-											ATTR_NAME, cfgDescription.getName(),
-									});
+							boolean isWspStorageAvailable = (projectElementWspStore != null) && (projectElementPrjStore != projectElementWspStore);
+							if (isStoringEntriesInProjectArea(lss) || !isWspStorageAvailable) {
+								lss.serialize(elementExtension);
+							} else {
+								// lazy initialization of wsp storage elements - to avoid serialization of no-data file
+								if (elementExtensionWsp == null) {
+									if (elementConfigurationWsp == null) {
+										elementConfigurationWsp = XmlUtil.appendElement(projectElementWspStore, ELEM_CONFIGURATION, new String[] {
+												ATTR_ID, cfgDescription.getId(),
+												ATTR_NAME, cfgDescription.getName(),
+										});
+									}
+									elementExtensionWsp = XmlUtil.appendElement(elementConfigurationWsp, ELEM_EXTENSION, new String[] {
+											ATTR_EXTENSION_POINT, PROVIDER_EXTENSION_POINT_ID});
 								}
-								elementExtensionWsp = XmlUtil.appendElement(elementConfigurationWsp, ELEM_EXTENSION, new String[] {
-										ATTR_EXTENSION_POINT, PROVIDER_EXTENSION_POINT_ID});
+								Element elementProviderWsp = XmlUtil.appendElement(elementExtensionWsp, ELEM_PROVIDER, new String[] {
+										ATTR_ID, provider.getId()});
+
+								// split storage
+								lss.serializeAttributes(elementExtension);
+								lss.serializeEntries(elementProviderWsp);
 							}
-							Element elementProviderWsp = XmlUtil.appendElement(elementExtensionWsp, ELEM_PROVIDER, new String[] {
-									ATTR_ID, provider.getId()});
-							lss.serializeEntries(elementProviderWsp);
+						} catch (Throwable e) {
+							// protect from any exceptions from implementers
+							CCorePlugin.log("Exception trying serialize provider "+provider.getId(), e); //$NON-NLS-1$
 						}
 					} else {
 						// Element elementProvider =
@@ -609,10 +640,13 @@ public class LanguageSettingsProvidersSerializer {
 	 */
 	public static void serializeLanguageSettings(ICProjectDescription prjDescription) throws CoreException {
 		IProject project = prjDescription.getProject();
-		// AG FIXME - temporary log to remove before CDT 9.0 release
+		// AG FIXME - temporary log to remove before CDT Juno release
 		LanguageSettingsLogger.logWarning("LanguageSettingsProvidersSerializer.serializeLanguageSettings() for " + project);
 
 		try {
+			// The storage could be split in two, one for provider properties, another one for entries,
+			// depending on provider flag
+
 			// Document to store in project area
 			Document docStorePrj = XmlUtil.newDocument();
 			Element projectElementStorePrj = XmlUtil.appendElement(docStorePrj, ELEM_PROJECT);
@@ -620,7 +654,7 @@ public class LanguageSettingsProvidersSerializer {
 			Document docStoreWsp = XmlUtil.newDocument();
 			Element projectElementStoreWsp = XmlUtil.appendElement(docStoreWsp, ELEM_PROJECT);
 
-			// The project store should not be absent. Absent store means legacy project, not 0 providers.
+			// The project store should not be absent. Currently absent store means legacy project, not 0 providers.
 			IFile fileStorePrj = getStoreInProjectArea(project);
 
 			URI uriStoreWsp = getStoreInWorkspaceArea(project.getName()+'.'+STORAGE_WORKSPACE_LANGUAGE_SETTINGS);
@@ -629,17 +663,17 @@ public class LanguageSettingsProvidersSerializer {
 			try {
 				serializingLock.acquire();
 
-				// Note that need for serialization may exist even if LSE event delta is empty,
-				// as number or properties of providers may differ
+				// Note that need for serialization may exist even if LS *entries* event delta is empty,
+				// as set of providers or their properties may differ
 				serializeLanguageSettingsInternal(projectElementStorePrj, projectElementStoreWsp, prjDescription);
 				XmlUtil.serializeXml(docStorePrj, fileStorePrj);
 
 				// project-specific location in workspace area
 				boolean isWorkspaceStoreEmpty = projectElementStoreWsp.getChildNodes().getLength() == 0;
-				if (!isWorkspaceStoreEmpty) {
-					XmlUtil.serializeXml(docStoreWsp, uriStoreWsp);
-				} else {
+				if (isWorkspaceStoreEmpty) {
 					new java.io.File(uriStoreWsp).delete();
+				} else {
+					XmlUtil.serializeXml(docStoreWsp, uriStoreWsp);
 				}
 
 				// manufacture the event only if serialization was successful
@@ -677,45 +711,41 @@ public class LanguageSettingsProvidersSerializer {
 		</project>
 		 */
 		NodeList configurationNodes = projectElementPrj.getChildNodes();
-		for (int ic=0;ic<configurationNodes.getLength();ic++) {
+		for (int ic = 0; ic < configurationNodes.getLength(); ic++) {
 			Node cfgNode = configurationNodes.item(ic);
-			if (!(cfgNode instanceof Element && cfgNode.getNodeName().equals(ELEM_CONFIGURATION)) )
+			if (!isElementWithName(cfgNode, ELEM_CONFIGURATION)) {
 				continue;
+			}
+
 			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 			String cfgId = XmlUtil.determineAttributeValue(cfgNode, ATTR_ID);
-			@SuppressWarnings("unused")
-			String cfgName = XmlUtil.determineAttributeValue(cfgNode, ATTR_NAME);
 
-			NodeList extensionAndReferenceNodes = cfgNode.getChildNodes();
-			for (int ie=0;ie<extensionAndReferenceNodes.getLength();ie++) {
-				Node extNode = extensionAndReferenceNodes.item(ie);
-				if (!(extNode instanceof Element))
+			NodeList extensionNodes = cfgNode.getChildNodes();
+			for (int ie = 0; ie < extensionNodes.getLength(); ie++) {
+				Node extNode = extensionNodes.item(ie);
+				if (!isElementWithName(extNode, ELEM_EXTENSION)) {
 					continue;
+				}
 
-				if (extNode.getNodeName().equals(ELEM_EXTENSION)) {
-					NodeList providerNodes = extNode.getChildNodes();
+				NodeList providerNodes = extNode.getChildNodes();
+				for (int ip = 0; ip < providerNodes.getLength(); ip++) {
+					ILanguageSettingsProvider provider = null;
 
-					for (int i=0;i<providerNodes.getLength();i++) {
-						Node providerNode = providerNodes.item(i);
-						if (!(providerNode instanceof Element))
-							continue;
-
-						ILanguageSettingsProvider provider=null;
-						if (providerNode.getNodeName().equals(ELEM_PROVIDER_REFERENCE)) {
-							String providerId = XmlUtil.determineAttributeValue(providerNode, ATTR_ID);
-							provider = getWorkspaceProvider(providerId);
-						} else if (providerNode.getNodeName().equals(ELEM_PROVIDER)) {
-							provider = loadProvider(providerNode);
-							if (provider instanceof LanguageSettingsSerializableProvider) {
-								LanguageSettingsSerializableProvider lss = (LanguageSettingsSerializableProvider) provider;
-								if (!isStoringEntriesInProjectArea(lss) && projectElementWsp!=null) {
-									loadProviderEntries(lss, cfgId, projectElementWsp);
-								}
+					Node providerNode = providerNodes.item(ip);
+					if (isElementWithName(providerNode, ELEM_PROVIDER_REFERENCE)) {
+						String providerId = XmlUtil.determineAttributeValue(providerNode, ATTR_ID);
+						provider = getWorkspaceProvider(providerId);
+					} else if (isElementWithName(providerNode, ELEM_PROVIDER)) {
+						provider = loadProvider(providerNode);
+						if (provider instanceof LanguageSettingsSerializableProvider) {
+							LanguageSettingsSerializableProvider lss = (LanguageSettingsSerializableProvider) provider;
+							if (!isStoringEntriesInProjectArea(lss) && projectElementWsp != null) {
+								loadProviderEntries(lss, cfgId, projectElementWsp);
 							}
 						}
-						if (provider!=null) {
-							providers.add(provider);
-						}
+					}
+					if (provider != null) {
+						providers.add(provider);
 					}
 				}
 			}
@@ -734,8 +764,18 @@ public class LanguageSettingsProvidersSerializer {
 		}
 	}
 
+	/**
+	 * Check if the node is {@code Element} and that the name matches.
+	 */
+	private static boolean isElementWithName(Node cfgNode, String name) {
+		return cfgNode instanceof Element && cfgNode.getNodeName().equals(name);
+	}
+
+	/**
+	 * Load provider entries for the given configuration from XML Element.
+	 */
 	private static void loadProviderEntries(LanguageSettingsSerializableProvider provider,
-			String cfgId, Element projectElementWsp) {
+			String cfgId, Element projectElement) {
 		/*
 		<project>
 			<configuration id="cfg.id">
@@ -746,52 +786,51 @@ public class LanguageSettingsProvidersSerializer {
 			</configuration>
 		</project>
 		 */
-		NodeList configurationNodes = projectElementWsp.getChildNodes();
-		for (int ic=0;ic<configurationNodes.getLength();ic++) {
+		NodeList configurationNodes = projectElement.getChildNodes();
+		for (int ic = 0; ic < configurationNodes.getLength(); ic++) {
 			Node cfgNode = configurationNodes.item(ic);
-			if (!(cfgNode instanceof Element && cfgNode.getNodeName().equals(ELEM_CONFIGURATION)) )
+			if (!isElementWithName(cfgNode, ELEM_CONFIGURATION)) {
 				continue;
+			}
 			String cfgIdXml = XmlUtil.determineAttributeValue(cfgNode, ATTR_ID);
-			if (!cfgId.equals(cfgIdXml))
+			if (!cfgId.equals(cfgIdXml)) {
 				continue;
+			}
 
-			NodeList extensionAndReferenceNodes = cfgNode.getChildNodes();
-			for (int ie=0;ie<extensionAndReferenceNodes.getLength();ie++) {
-				Node extNode = extensionAndReferenceNodes.item(ie);
-				if (!(extNode instanceof Element))
+			NodeList extensionNodes = cfgNode.getChildNodes();
+			for (int ie = 0; ie < extensionNodes.getLength(); ie++) {
+				Node extNode = extensionNodes.item(ie);
+				if (!isElementWithName(extNode, ELEM_EXTENSION)) {
 					continue;
+				}
 
-				if (extNode.getNodeName().equals(ELEM_EXTENSION)) {
-					NodeList providerNodes = extNode.getChildNodes();
+				NodeList providerNodes = extNode.getChildNodes();
+				for (int ip = 0; ip < providerNodes.getLength(); ip++) {
+					Node providerNode = providerNodes.item(ip);
+					if (!isElementWithName(providerNode, ELEM_PROVIDER)) {
+						continue;
+					}
 
-					for (int i=0;i<providerNodes.getLength();i++) {
-						Node providerNode = providerNodes.item(i);
-						if (!(providerNode instanceof Element))
-							continue;
-						if (!providerNode.getNodeName().equals(ELEM_PROVIDER))
-							continue;
-						String providerIdXml = XmlUtil.determineAttributeValue(providerNode, ATTR_ID);
-						if (!provider.getId().equals(providerIdXml))
-							continue;
-
+					String id = XmlUtil.determineAttributeValue(providerNode, ATTR_ID);
+					if (provider.getId().equals(id)) {
 						provider.loadEntries((Element) providerNode);
 						return;
-
-
 					}
 				}
 			}
-
 		}
 	}
 
+	/**
+	 * Load provider from provider node.
+	 */
 	private static ILanguageSettingsProvider loadProvider(Node providerNode) {
 		String attrClass = XmlUtil.determineAttributeValue(providerNode, ATTR_CLASS);
 		ILanguageSettingsProvider provider = LanguageSettingsExtensionManager.instantiateProviderClass(attrClass);
 
-		if (provider instanceof LanguageSettingsSerializableProvider)
+		if (provider instanceof LanguageSettingsSerializableProvider) {
 			((LanguageSettingsSerializableProvider)provider).load((Element) providerNode);
-
+		}
 		return provider;
 	}
 
@@ -801,19 +840,20 @@ public class LanguageSettingsProvidersSerializer {
 	 */
 	public static void loadLanguageSettings(ICProjectDescription prjDescription) {
 		IProject project = prjDescription.getProject();
-		IFile storePrj = project.getFile(SETTINGS_FOLDER_NAME+STORAGE_PROJECT_LANGUAGE_SETTINGS);
-		// AG: FIXME not sure about that one
+		IFile storeInPrjArea = project.getFile(SETTINGS_FOLDER_NAME + STORAGE_PROJECT_LANGUAGE_SETTINGS);
+		// AG: FIXME investigate this one
 		// Causes java.lang.IllegalArgumentException: Attempted to beginRule: P/cdt312, does not match outer scope rule: org.eclipse.cdt.internal.ui.text.c.hover.CSourceHover$SingletonRule@6f34fb
 		try {
-			storePrj.refreshLocal(IResource.DEPTH_ZERO, null);
+			storeInPrjArea.refreshLocal(IResource.DEPTH_ZERO, null);
 		} catch (CoreException e) {
 			// ignore failure
+			CCorePlugin.log(e);
 		}
-		if (storePrj.exists() && storePrj.isAccessible()) {
+		if (storeInPrjArea.exists()) {
 			Document doc = null;
 			try {
-				doc = XmlUtil.loadXml(storePrj);
-				Element rootElementPrj = doc.getDocumentElement(); // <project/>
+				doc = XmlUtil.loadXml(storeInPrjArea);
+				Element rootElementPrj = doc.getDocumentElement(); // <project>
 
 				URI uriStoreWsp = getStoreInWorkspaceArea(project.getName()+'.'+STORAGE_WORKSPACE_LANGUAGE_SETTINGS);
 				Document docWsp = null;
@@ -824,18 +864,14 @@ public class LanguageSettingsProvidersSerializer {
 					serializingLock.release();
 				}
 
-				Element rootElementWsp = null; // <project/>
-				if (docWsp!=null) {
+				Element rootElementWsp = null; // <project>
+				if (docWsp != null) {
 					rootElementWsp = docWsp.getDocumentElement();
 				}
 
-
 				loadLanguageSettingsInternal(rootElementPrj, rootElementWsp, prjDescription);
 			} catch (Exception e) {
-				CCorePlugin.log("Can't load preferences from file "+storePrj.getLocation(), e); //$NON-NLS-1$
-			}
-
-			if (doc!=null) {
+				CCorePlugin.log("Can't load preferences from file " + storeInPrjArea.getLocation(), e); //$NON-NLS-1$
 			}
 
 		} else {
@@ -854,11 +890,8 @@ public class LanguageSettingsProvidersSerializer {
 	}
 
 	/**
-	 * FIXME Get Language Settings Provider defined in the workspace. That includes user-defined
-	 * providers and after that providers defined as extensions via
-	 * {@code org.eclipse.cdt.core.LanguageSettingsProvider} extension point.
-	 * That returns actual object, any modifications will affect any configuration
-	 * referring to the provider.
+	 * Get Language Settings Provider from the list of workspace providers,
+	 * see {@link #getWorkspaceProviders()}.
 	 *
 	 * @param id - ID of provider to find.
 	 * @return the provider or {@code null} if provider is not defined.
@@ -873,9 +906,9 @@ public class LanguageSettingsProvidersSerializer {
 	}
 
 	/**
-	 * Helper method to get to real underlying provider collecting entries as opposed to wrapper
-	 * which is normally used for workspace provider.
-	 * @see LanguageSettingsProvidersSerializer#isWorkspaceProvider(ILanguageSettingsProvider)
+	 * Helper method to get to real underlying provider collecting entries as opposed
+	 * to wrapper which is normally used for workspace provider.
+	 * @see #isWorkspaceProvider(ILanguageSettingsProvider)
 	 *
 	 * @param id - ID of the provider.
 	 * @return raw underlying provider.
@@ -885,9 +918,14 @@ public class LanguageSettingsProvidersSerializer {
 	}
 
 	/**
-	 * TODO
-	 * @return ordered set of providers defined in the workspace which include contributed through extension + user defined ones
+	 * Get Language Settings Providers defined in the workspace. That includes
+	 * user-defined providers and after that providers defined as extensions via
+	 * {@code org.eclipse.cdt.core.LanguageSettingsProvider} extension point.
+	 * Note that this returns wrappers around workspace provider so underlying
+	 * provider could be replaced internally without need to change configuration.
+	 * See also {@link #getRawWorkspaceProvider(String)}.
 	 *
+	 * @return list of workspace providers.
 	 */
 	public static List<ILanguageSettingsProvider> getWorkspaceProviders() {
 		ArrayList<ILanguageSettingsProvider> workspaceProviders = new ArrayList<ILanguageSettingsProvider>();
@@ -911,9 +949,10 @@ public class LanguageSettingsProvidersSerializer {
 	}
 
 	/**
-	 * TODO - remove me
-	 * Temporary method to report inconsistency in log.
+	 * Reports inconsistency in log.
+	 * AG FIXME - temporary method to remove before CDT Juno release
 	 */
+	@SuppressWarnings("nls")
 	@Deprecated
 	public static void assertConsistency(ICProjectDescription prjDescription) {
 		if (prjDescription != null) {
@@ -1029,33 +1068,35 @@ public class LanguageSettingsProvidersSerializer {
 	 */
 	public static void reRegisterListeners(ICProjectDescription oldPrjDescription, ICProjectDescription newPrjDescription) {
 		if (oldPrjDescription == newPrjDescription) {
-			assertConsistency(oldPrjDescription); // TODO - remove me
+			assertConsistency(oldPrjDescription);
 			return;
 		}
 
-		assertConsistency(oldPrjDescription); // TODO - remove me
-		assertConsistency(newPrjDescription); // TODO - remove me
+		assertConsistency(oldPrjDescription);
+		assertConsistency(newPrjDescription);
 
 		List<ICListenerAgent> oldListeners = getListeners(oldPrjDescription);
 		List<ListenerAssociation> newAssociations = getListenersAssociations(newPrjDescription);
 
+		// unregister old listeners
 		for (ICListenerAgent oldListener : oldListeners) {
 			if (!isListenerInTheListOfAssociations(newAssociations, oldListener)) {
 				int count = 0;
 				if (oldListener instanceof LanguageSettingsWorkspaceProvider) {
 					count = ((LanguageSettingsWorkspaceProvider) oldListener).decrementProjectCount();
 				}
-				if (count == 0) {
+				if (count <= 0) {
 					try {
 						oldListener.unregisterListener();
 					} catch (Throwable e) {
 						// protect from any exceptions from implementers
-						CCorePlugin.log(e);
+						CCorePlugin.log("Exception trying unregister listener "+((ILanguageSettingsProvider) oldListener).getId(), e); //$NON-NLS-1$
 					}
 				}
 			}
 		}
 
+		// register new listeners
 		for (ListenerAssociation newListenerAssociation : newAssociations) {
 			ICListenerAgent newListener = newListenerAssociation.listener;
 			if (!isInList(oldListeners, newListener)) {
@@ -1068,7 +1109,7 @@ public class LanguageSettingsProvidersSerializer {
 						newListener.registerListener(newListenerAssociation.cfgDescription);
 					} catch (Throwable e) {
 						// protect from any exceptions from implementers
-						CCorePlugin.log(e);
+						CCorePlugin.log("Exception trying register listener "+((ILanguageSettingsProvider) newListener).getId(), e); //$NON-NLS-1$
 					}
 				}
 			}
@@ -1077,29 +1118,9 @@ public class LanguageSettingsProvidersSerializer {
 	}
 
 	/**
-	 * Deep clone of a list of language settings providers.
-	 *
-	 * @param baseProviders - list of providers to clone.
-	 * @return newly cloned list.
-	 */
-	public static List<ILanguageSettingsProvider> cloneProviders(List<ILanguageSettingsProvider> baseProviders) {
-		List<ILanguageSettingsProvider> newProviders = new ArrayList<ILanguageSettingsProvider>();
-		for (ILanguageSettingsProvider provider : baseProviders) {
-			if (provider instanceof ILanguageSettingsEditableProvider) {
-				ILanguageSettingsEditableProvider newProvider = LanguageSettingsManager.getProviderCopy((ILanguageSettingsEditableProvider) provider, true);
-				if (newProvider != null) {
-					provider = newProvider;
-				}
-			}
-			newProviders.add(provider);
-		}
-		return new ArrayList<ILanguageSettingsProvider>(newProviders);
-	}
-
-	/**
 	 * Adds a listener that will be notified of changes in language settings.
 	 *
-	 * @param listener the listener to add
+	 * @param listener - the listener to add
 	 */
 	public static void registerLanguageSettingsChangeListener(ILanguageSettingsChangeListener listener) {
 		fLanguageSettingsChangeListeners.add(listener);
@@ -1108,30 +1129,31 @@ public class LanguageSettingsProvidersSerializer {
 	/**
 	 * Removes a language settings change listener.
 	 *
-	 * @param listener the listener to remove.
+	 * @param listener - the listener to remove.
 	 */
 	public static void unregisterLanguageSettingsChangeListener(ILanguageSettingsChangeListener listener) {
 		fLanguageSettingsChangeListeners.remove(listener);
 	}
 
 	/**
-	 * Notifies all language settings change listeners of a change.
+	 * Notifies all language settings change listeners of a change in language settings entries.
 	 *
-	 * @param event the ILanguageSettingsChangeEvent event to be broadcast.
+	 * @param event - the {@link ILanguageSettingsChangeEvent} event to be broadcast.
 	 */
-	public static void notifyLanguageSettingsChangeListeners(ILanguageSettingsChangeEvent event) {
-		// AG FIXME - temporary log to remove before CDT 9.0 release
+	private static void notifyLanguageSettingsChangeListeners(ILanguageSettingsChangeEvent event) {
+		// AG FIXME - temporary log to remove before CDT Juno release
 		LanguageSettingsLogger.logWarning("Firing " + event);
 
-		Object[] listeners = fLanguageSettingsChangeListeners.getListeners();
-		for (Object listener : listeners) {
+		for (Object listener : fLanguageSettingsChangeListeners.getListeners()) {
 			((ILanguageSettingsChangeListener) listener).handleEvent(event);
 		}
 	}
 
+	/**
+	 * Get list of setting entries from the pool in {@link LanguageSettingsStorage}.
+	 */
 	private static List<ICLanguageSettingEntry> getSettingEntriesPooled(ILanguageSettingsProvider provider,
 			ICConfigurationDescription cfgDescription, IResource rc, String languageId) {
-
 		try {
 			return LanguageSettingsStorage.getPooledList(provider.getSettingEntries(cfgDescription, rc, languageId));
 		} catch (Throwable e) {
@@ -1148,7 +1170,7 @@ public class LanguageSettingsProvidersSerializer {
 	 * Returns the list of setting entries of the given provider
 	 * for the given configuration description, resource and language.
 	 * This method reaches to the parent folder of the resource recursively
-	 * in case the resource does not define the entries for the given provider.
+	 * if the resource does not define the entries for the given provider.
 	 *
 	 * @param provider - language settings provider.
 	 * @param cfgDescription - configuration description.
@@ -1160,19 +1182,19 @@ public class LanguageSettingsProvidersSerializer {
 	 */
 	public static List<ICLanguageSettingEntry> getSettingEntriesUpResourceTree(ILanguageSettingsProvider provider, ICConfigurationDescription cfgDescription, IResource rc, String languageId) {
 		Assert.isTrue( !(rc instanceof IWorkspaceRoot) );
-		if (provider!=null) {
+		if (provider != null) {
 			List<ICLanguageSettingEntry> entries = getSettingEntriesPooled(provider, cfgDescription, rc, languageId);
-			if (entries!=null) {
+			if (entries != null) {
 				return entries;
 			}
-			if (rc!=null) {
+			if (rc != null) {
 				IResource parentFolder = (rc instanceof IProject) ? null : rc.getParent();
-				if (parentFolder!=null) {
+				if (parentFolder != null) {
 					return getSettingEntriesUpResourceTree(provider, cfgDescription, parentFolder, languageId);
 				}
-				// if out of parent resources - get default entries for the applicable language scope
+				// if out of parent resources - get default entries
 				entries = getSettingEntriesPooled(provider, null, null, languageId);
-				if (entries!=null) {
+				if (entries != null) {
 					return entries;
 				}
 			}
@@ -1182,99 +1204,8 @@ public class LanguageSettingsProvidersSerializer {
 	}
 
 	/**
-	 * Builds for the provider a nice looking resource tree to present hierarchical view to the user.
-	 * Note that it is not advisable to "compact" the tree because of potential loss of information
-	 * which is especially important during partial or incremental builds.
-	 *
-	 * @param provider - language settings provider to build the tree for.
-	 * @param cfgDescription - configuration description.
-	 * @param languageId - language ID.
-	 * @param folder - container where the tree roots.
+	 * Test if the binary flag contains a particular bit.
 	 */
-	public static void buildResourceTree(LanguageSettingsSerializableProvider provider,
-			ICConfigurationDescription cfgDescription, String languageId, IContainer folder) {
-		IResource[] members = null;
-		try {
-			members = folder.members();
-		} catch (Exception e) {
-			CCorePlugin.log(e);
-		}
-		if (members==null)
-			return;
-
-		for (IResource rc : members) {
-			if (rc instanceof IContainer) {
-				buildResourceTree(provider, cfgDescription, languageId, (IContainer) rc);
-			}
-		}
-
-		int rcNumber = members.length;
-
-		Map<List<ICLanguageSettingEntry>, Integer> listMap = new HashMap<List<ICLanguageSettingEntry>, Integer>();
-
-		// on the first pass find majority entries
-		List<ICLanguageSettingEntry> majorityEntries = null;
-		List<ICLanguageSettingEntry> candidate = null;
-		int candidateCount = 0;
-		for (IResource rc : members) {
-			if (!isLanguageInScope(rc, cfgDescription, languageId)) {
-				rcNumber--;
-			} else {
-				List<ICLanguageSettingEntry> entries = provider.getSettingEntries(null, rc, languageId);
-				if (entries==null && rc instanceof IContainer) {
-					rcNumber--;
-				} else {
-					Integer count = listMap.get(entries);
-					if (count==null) {
-						count = 0;
-					}
-					count++;
-
-					if (count>candidateCount) {
-						candidateCount = count;
-						candidate = entries;
-					}
-
-					listMap.put(entries, count);
-				}
-			}
-
-			if (candidateCount > rcNumber/2) {
-				majorityEntries = candidate;
-				break;
-			}
-		}
-
-		if (majorityEntries!=null) {
-			provider.setSettingEntries(cfgDescription, folder, languageId, majorityEntries);
-		}
-
-		// second pass - assign the entries to the folders
-		for (IResource rc : members) {
-			List<ICLanguageSettingEntry> entries = provider.getSettingEntries(null, rc, languageId);
-			if (entries!=null && entries==majorityEntries) {
-				if (!(rc instanceof IFile)) { // preserve information which files were collected
-					provider.setSettingEntries(cfgDescription, rc, languageId, null);
-				}
-			}
-		}
-	}
-
-	private static boolean isLanguageInScope(IResource rc, ICConfigurationDescription cfgDescription, String languageId) {
-		if (rc instanceof IFile) {
-			ILanguage lang = null;
-			try {
-				lang = LanguageManager.getInstance().getLanguageForFile((IFile) rc, cfgDescription);
-			} catch (CoreException e) {
-				CCorePlugin.log("Error loading language settings providers extensions", e); //$NON-NLS-1$
-			}
-			if (lang==null || (languageId!=null && !languageId.equals(lang.getId()))) {
-				return false;
-			}
-		}
-		return true;
-	}
-
 	private static boolean checkBit(int flags, int bit) {
 		return (flags & bit) == bit;
 	}
@@ -1313,9 +1244,9 @@ public class LanguageSettingsProvidersSerializer {
 		for (ILanguageSettingsProvider provider: providers) {
 			List<ICLanguageSettingEntry> providerEntries = getSettingEntriesUpResourceTree(provider, cfgDescription, rc, languageId);
 			for (ICLanguageSettingEntry entry : providerEntries) {
-				if (entry!=null) {
+				if (entry != null) {
 					String entryName = entry.getName();
-					boolean isRightKind = (entry.getKind() & kind) != 0;
+					boolean isRightKind = checkBit(entry.getKind(), kind);
 					// Only first entry is considered
 					// Entry flagged as "UNDEFINED" prevents adding entry with the same name down the line
 					if (isRightKind && !alreadyAdded.contains(entryName)) {
@@ -1397,28 +1328,128 @@ public class LanguageSettingsProvidersSerializer {
 	}
 
 	/**
-	 * Tells if language settings entries of the provider are persisted with the project
-	 * (under .settings/ folder) or in workspace area. Persistence in the project area lets
-	 * the entries migrate with the project.
+	 * Deep clone of a list of language settings providers.
 	 *
-	 * @param provider - provider to check the persistence mode.
-	 * @return {@code true} if LSE persisted with the project or {@code false} if in the workspace.
+	 * @param baseProviders - list of providers to clone.
+	 * @return newly cloned list.
 	 */
-	public static boolean isStoringEntriesInProjectArea(LanguageSettingsSerializableProvider provider) {
-		String value = provider.getProperty(ATTR_STORE_ENTRIES);
-		return VALUE_PROJECT.equals(value);
+	public static List<ILanguageSettingsProvider> cloneProviders(List<ILanguageSettingsProvider> baseProviders) {
+		List<ILanguageSettingsProvider> newProviders = new ArrayList<ILanguageSettingsProvider>();
+		for (ILanguageSettingsProvider provider : baseProviders) {
+			if (provider instanceof ILanguageSettingsEditableProvider) {
+				ILanguageSettingsEditableProvider newProvider = LanguageSettingsManager.getProviderCopy((ILanguageSettingsEditableProvider) provider, true);
+				if (newProvider != null) {
+					provider = newProvider;
+				}
+			}
+			newProviders.add(provider);
+		}
+		return new ArrayList<ILanguageSettingsProvider>(newProviders);
 	}
 
 	/**
-	 * Define where language settings are persisted for the provider.
-	 *
-	 * @param provider - provider to set the persistence mode.
-	 * @param storeEntriesWithProject - {@code true} if with the project,
-	 *    {@code false} if in workspace area.
+	 * Check if the language is applicable for the file.
 	 */
-	public static void setStoringEntriesInProjectArea(LanguageSettingsSerializableProvider provider, boolean storeEntriesWithProject) {
-		provider.setProperty(ATTR_STORE_ENTRIES, storeEntriesWithProject ? VALUE_PROJECT : VALUE_WORKSPACE);
+	private static boolean isLanguageInScope(IResource rc, ICConfigurationDescription cfgDescription, String languageId) {
+		if (rc instanceof IFile) {
+			ILanguage lang = null;
+			try {
+				lang = LanguageManager.getInstance().getLanguageForFile((IFile) rc, cfgDescription);
+			} catch (CoreException e) {
+				CCorePlugin.log("Error while determining language for a file", e); //$NON-NLS-1$
+			}
+			if (lang == null || (languageId != null && !languageId.equals(lang.getId()))) {
+				return false;
+			}
+		}
+		return true;
 	}
 
+	/**
+	 * Builds for the provider a nicer-looking resource tree to present hierarchical view to the user.
+	 *
+	 * Note that it is not advisable to "compact" the tree because of potential loss of information
+	 * which is especially important during partial or incremental builds.
+	 *
+	 * Note also that after using this method for a while for BOP parsers it appears that disadvantages
+	 * outweigh benefits. In particular, it doesn't result in saving memory as the language settings
+	 * (and the lists itself) are not duplicated in memory anyway but optimized with using WeakHashSet
+	 * and SafeStringInterner.
+	 *
+	 * This method is a candidate for removal.
+	 *
+	 * @param provider - language settings provider to build the tree for.
+	 * @param cfgDescription - configuration description.
+	 * @param languageId - language ID.
+	 * @param folder - container where the tree roots.
+	 */
+	public static void buildResourceTree(LanguageSettingsSerializableProvider provider,
+			ICConfigurationDescription cfgDescription, String languageId, IContainer folder) {
+		IResource[] members = null;
+		try {
+			members = folder.members();
+		} catch (Exception e) {
+			CCorePlugin.log(e);
+		}
+		if (members==null)
+			return;
+
+		for (IResource rc : members) {
+			if (rc instanceof IContainer) {
+				buildResourceTree(provider, cfgDescription, languageId, (IContainer) rc);
+			}
+		}
+
+		int rcNumber = members.length;
+
+		Map<List<ICLanguageSettingEntry>, Integer> listMap = new HashMap<List<ICLanguageSettingEntry>, Integer>();
+
+		// on the first pass find majority entry list, i.e. list present most often
+		List<ICLanguageSettingEntry> majorityEntries = null;
+		List<ICLanguageSettingEntry> candidate = null;
+		int candidateCount = 0;
+		for (IResource rc : members) {
+			if (!isLanguageInScope(rc, cfgDescription, languageId)) {
+				rcNumber--;
+			} else {
+				List<ICLanguageSettingEntry> entries = provider.getSettingEntries(null, rc, languageId);
+				if (entries==null && rc instanceof IContainer) {
+					rcNumber--;
+				} else {
+					Integer count = listMap.get(entries);
+					if (count==null) {
+						count = 0;
+					}
+					count++;
+
+					if (count>candidateCount) {
+						candidateCount = count;
+						candidate = entries;
+					}
+
+					listMap.put(entries, count);
+				}
+			}
+
+			if (candidateCount > rcNumber/2) {
+				majorityEntries = candidate;
+				break;
+			}
+		}
+
+		if (majorityEntries!=null) {
+			provider.setSettingEntries(cfgDescription, folder, languageId, majorityEntries);
+		}
+
+		// second pass - assign the entries to the folders
+		for (IResource rc : members) {
+			List<ICLanguageSettingEntry> entries = provider.getSettingEntries(null, rc, languageId);
+			if (entries!=null && entries==majorityEntries) {
+				if (!(rc instanceof IFile)) { // preserve information which files were collected
+					provider.setSettingEntries(cfgDescription, rc, languageId, null);
+				}
+			}
+		}
+	}
 
 }

@@ -24,11 +24,9 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
-import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsExtensionManager;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -42,7 +40,7 @@ public class LanguageSettingsManager {
 	 * Returns the list of setting entries of the given provider
 	 * for the given configuration description, resource and language.
 	 * This method reaches to the parent folder of the resource recursively
-	 * in case the resource does not define the entries for the given provider.
+	 * if the resource does not define the entries for the given provider.
 	 *
 	 * @param provider - language settings provider.
 	 * @param cfgDescription - configuration description.
@@ -56,52 +54,9 @@ public class LanguageSettingsManager {
 		return LanguageSettingsProvidersSerializer.getSettingEntriesUpResourceTree(provider, cfgDescription, rc, languageId);
 	}
 
-	/**
-	 * Builds for the provider a nice looking resource tree to present hierarchical view to the user.
-	 *
-	 * TODO - Note that after using this method for a while for BOP parsers it appears that disadvantages
-	 * outweigh benefits. In particular, it doesn't result in saving memory as the language settings
-	 * (and the lists itself) are not duplicated in memory anyway but optimized with using WeakHashSet
-	 * and SafeStringInterner.
-	 *
-	 * @param provider - language settings provider to build the tree for.
-	 * @param cfgDescription - configuration description.
-	 * @param languageId - language ID.
-	 * @param project - the project which is considered the root of the resource tree.
-	 */
-	public static void buildResourceTree(LanguageSettingsSerializableProvider provider,
-			ICConfigurationDescription cfgDescription, String languageId, IProject project) {
-		LanguageSettingsProvidersSerializer.buildResourceTree(provider, cfgDescription, languageId, project);
-	}
-
-
-	/**
-	 * Returns the list of setting entries of a certain kind (such as include paths)
-	 * for the given configuration description, resource and language. This is a
-	 * combined list for all providers taking into account settings of parent folder
-	 * if settings for the given resource are not defined.
-	 *
-	 * @param cfgDescription - configuration description.
-	 * @param rc - resource such as file or folder.
-	 * @param languageId - language id.
-	 * @param kind - kind of language settings entries, such as
-	 *     {@link ICSettingEntry#INCLUDE_PATH} etc. This is a binary flag
-	 *     and it is possible to specify composite kind.
-	 *     Use {@link ICSettingEntry#ALL} to get all kinds.
-	 *
-	 * @return the list of setting entries.
-	 */
-	// FIXME: get rid of callers PathEntryTranslator and DescriptionScannerInfoProvider
-	public static List<ICLanguageSettingEntry> getSettingEntriesByKind(ICConfigurationDescription cfgDescription, IResource rc, String languageId, int kind) {
-		return LanguageSettingsProvidersSerializer.getSettingEntriesByKind(cfgDescription, rc, languageId, kind);
-	}
-
-	/**
-	 * Get Language Settings Provider defined in the workspace. That includes user-defined
-	 * providers and after that providers defined as extensions via
-	 * {@code org.eclipse.cdt.core.LanguageSettingsProvider} extension point.
-	 * That returns actual object, any modifications will affect any configuration
-	 * referring to the provider.
+/**
+	 * Get Language Settings Provider from the list of workspace providers,
+	 * see {@link #getWorkspaceProviders()}.
 	 *
 	 * @param id - id of provider to find.
 	 * @return the provider or {@code null} if provider is not defined.
@@ -111,10 +66,14 @@ public class LanguageSettingsManager {
 	}
 
 	/**
-	 * @return a list of language settings providers defined on workspace level.
-	 * That includes user-defined providers and after that providers defined as
-	 * extensions via {@code org.eclipse.cdt.core.LanguageSettingsProvider}
-	 * extension point.
+	 * Get Language Settings Providers defined in the workspace. That includes
+	 * user-defined providers and after that providers defined as extensions via
+	 * {@code org.eclipse.cdt.core.LanguageSettingsProvider} extension point.
+	 * Note that this returns wrappers around workspace provider so underlying
+	 * provider could be replaced internally without need to change configuration.
+	 * See also {@link #getRawProvider(ILanguageSettingsProvider)}.
+	 *
+	 * @return list of workspace providers.
 	 */
 	public static List<ILanguageSettingsProvider> getWorkspaceProviders() {
 		return LanguageSettingsProvidersSerializer.getWorkspaceProviders();
@@ -137,7 +96,7 @@ public class LanguageSettingsManager {
 	 * Helper method to get to real underlying provider collecting entries as opposed to wrapper
 	 * which is normally used for workspace provider.
 	 * @see LanguageSettingsProvidersSerializer#isWorkspaceProvider(ILanguageSettingsProvider)
-	 * 
+	 *
 	 * @param provider - the provider to get raw provider for. Can be either workspace provider
 	 *    or regular one.
 	 * @return raw underlying provider for workspace provider or provider itself if no wrapper is used.
@@ -168,7 +127,7 @@ public class LanguageSettingsManager {
 	 * Copy language settings provider. It is different from clone() methods in that
 	 * it does not throw {@code CloneNotSupportedException} but returns {@code null}
 	 * instead.
-	 * 
+	 *
 	 * @param provider - language settings provider to copy.
 	 * @param deep - {@code true} to request deep copy including copying settings entries
 	 *    or {@code false} to return shallow copy with no settings entries.
@@ -197,7 +156,7 @@ public class LanguageSettingsManager {
 	/**
 	 * Test if the provider is equal to the one defined via extension point
 	 * {@code org.eclipse.cdt.core.LanguageSettingsProvider}.
-	 * 
+	 *
 	 * @param provider - the provider to test.
 	 * @param deep - {@code true} to check for deep equality testing also settings entries
 	 *    or {@code false} to test shallow copy with no settings entries.
@@ -344,5 +303,4 @@ public class LanguageSettingsManager {
 	public static void serializeLanguageSettingsWorkspace() throws CoreException {
 		LanguageSettingsProvidersSerializer.serializeLanguageSettingsWorkspace();
 	}
-
 }

@@ -320,7 +320,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	protected void setSettingEntries(List<ICLanguageSettingEntry> entries) {
 		setSettingEntries(currentCfgDescription, currentResource, currentLanguageId, entries);
 
-		// AG FIXME - temporary log to remove before CDT 9.0 release
+		// AG FIXME - temporary log to remove before CDT Juno release
 		LanguageSettingsLogger.logInfo(getPrefixForLog()
 				+ getClass().getSimpleName() + " collected " + (entries!=null ? ("" + entries.size()) : "null") + " entries for " + currentResource);
 	}

@@ -14,12 +14,11 @@ import java.util.List;
 
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
-import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.core.resources.IResource;
 
 /**
  * This interface is to be implemented by providers which want to broadcast the changes in their setting entries
- * by {@link LanguageSettingsProvidersSerializer#notifyLanguageSettingsChangeListeners(ILanguageSettingsChangeEvent)}
+ * with {@link ILanguageSettingsChangeEvent}.
  */
 public interface ILanguageSettingsBroadcastingProvider extends ILanguageSettingsProvider {
 	@Override

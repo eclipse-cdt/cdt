@@ -198,7 +198,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 			assertEquals(0, actual.size());
 		}
 		{
-			List<ICLanguageSettingEntry> actual = LanguageSettingsManager
+			List<ICLanguageSettingEntry> actual = LanguageSettingsProvidersSerializer
 				.getSettingEntriesByKind(cfgDescription, FILE_0, LANG_ID, 0);
 			assertNotNull(actual);
 			assertEquals(0, actual.size());
@@ -226,7 +226,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 			assertEquals(1, actual.size());
 		}
 		{
-			List<ICLanguageSettingEntry> actual = LanguageSettingsManager
+			List<ICLanguageSettingEntry> actual = LanguageSettingsProvidersSerializer
 				.getSettingEntriesByKind(cfgDescription, FILE_0, LANG_ID, 0);
 			assertNotNull(actual);
 			assertEquals(0, actual.size());
@@ -486,14 +486,14 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 		cfgDescription.setLanguageSettingProviders(providers);
 
 		// retrieve entries by kind
-		List<ICLanguageSettingEntry> includes = LanguageSettingsManager
+		List<ICLanguageSettingEntry> includes = LanguageSettingsProvidersSerializer
 			.getSettingEntriesByKind(cfgDescription, FILE_0, LANG_ID, ICSettingEntry.INCLUDE_PATH);
 		assertEquals(new CIncludePathEntry("path0", 0),includes.get(0));
 		assertEquals(new CIncludePathEntry("path1", 0),includes.get(1));
 		assertEquals(new CIncludePathEntry("path2", 0),includes.get(2));
 		assertEquals(3, includes.size());
 
-		List<ICLanguageSettingEntry> macros = LanguageSettingsManager
+		List<ICLanguageSettingEntry> macros = LanguageSettingsProvidersSerializer
 			.getSettingEntriesByKind(cfgDescription, FILE_0, LANG_ID, ICSettingEntry.MACRO);
 		assertEquals(new CMacroEntry("MACRO0", "value0",0), macros.get(0));
 		assertEquals(new CMacroEntry("MACRO1", "value1",0), macros.get(1));
@@ -518,8 +518,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 		cfgDescription.setLanguageSettingProviders(providers);
 
 		// retrieve entries by kind, only first entry should be returned
-		List<ICLanguageSettingEntry> includes = LanguageSettingsManager
-			.getSettingEntriesByKind(cfgDescription, FILE_0, LANG_ID, ICSettingEntry.INCLUDE_PATH);
+		List<ICLanguageSettingEntry> includes = LanguageSettingsProvidersSerializer.getSettingEntriesByKind(cfgDescription, FILE_0, LANG_ID, ICSettingEntry.INCLUDE_PATH);
 		assertEquals(1, includes.size());
 		assertEquals(entries.get(0),includes.get(0));
 	}
@@ -541,7 +540,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 		cfgDescription.setLanguageSettingProviders(providers);
 
 		// retrieve entries by kind, no entries should be returned
-		List<ICLanguageSettingEntry> includes = LanguageSettingsManager
+		List<ICLanguageSettingEntry> includes = LanguageSettingsProvidersSerializer
 			.getSettingEntriesByKind(cfgDescription, FILE_0, LANG_ID, ICSettingEntry.INCLUDE_PATH);
 		assertEquals(0, includes.size());
 	}
@@ -619,7 +618,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 		cfgDescription.setLanguageSettingProviders(providers);
 
 		// retrieve entries by kind
-		List<ICLanguageSettingEntry> includes = LanguageSettingsManager
+		List<ICLanguageSettingEntry> includes = LanguageSettingsProvidersSerializer
 			.getSettingEntriesByKind(cfgDescription, FILE_0, LANG_ID, ICSettingEntry.INCLUDE_PATH);
 		// path0 is taken from higher priority provider
 		assertEquals(entriesHigh.get(0),includes.get(0));
@@ -828,7 +827,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 		LanguageSettingsSerializableProvider provider = new LanguageSettingsSerializableProvider(PROVIDER_1, PROVIDER_NAME_1);
 		provider.setSettingEntries(null, file, null, entries);
 		// build the hierarchy
-		LanguageSettingsManager.buildResourceTree(provider, null, null, project);
+		LanguageSettingsProvidersSerializer.buildResourceTree(provider, null, null, project);
 
 		// check that entries go to highest possible level
 		assertEquals(entries, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, file, null));
@@ -857,7 +856,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 		provider.setSettingEntries(null, file1, null, entries1);
 		provider.setSettingEntries(null, file2, null, entries2);
 		// build the hierarchy
-		LanguageSettingsManager.buildResourceTree(provider, null, null, project);
+		LanguageSettingsProvidersSerializer.buildResourceTree(provider, null, null, project);
 
 		// check that entries go to highest possible level
 		assertEquals(entries1, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, file1, null));
@@ -891,7 +890,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 		provider.setSettingEntries(null, file1, null, entries1);
 		provider.setSettingEntries(null, file2, null, entries1);
 		// build the hierarchy
-		LanguageSettingsManager.buildResourceTree(provider, null, null, project);
+		LanguageSettingsProvidersSerializer.buildResourceTree(provider, null, null, project);
 		// double-check where the entries go
 		assertEquals(entries1, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, file1, null));
 		assertEquals(entries1, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, file2, null));
@@ -901,7 +900,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 		provider.setSettingEntries(null, file2, null, entries2);
 		provider.setSettingEntries(null, file3, null, entries2);
 		// build the hierarchy
-		LanguageSettingsManager.buildResourceTree(provider, null, null, project);
+		LanguageSettingsProvidersSerializer.buildResourceTree(provider, null, null, project);
 		// check where the entries go, it should not lose entries for the first file
 		assertEquals(entries1, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, file1, null));
 		assertEquals(entries2, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, file2, null));
@@ -926,7 +925,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 		LanguageSettingsSerializableProvider provider = new LanguageSettingsSerializableProvider(PROVIDER_1, PROVIDER_NAME_1);
 		provider.setSettingEntries(null, file, LANG_CPP, entries);
 		// build the hierarchy
-		LanguageSettingsManager.buildResourceTree(provider, null, LANG_CPP, project);
+		LanguageSettingsProvidersSerializer.buildResourceTree(provider, null, LANG_CPP, project);
 
 		// check that entries go to highest possible level
 		assertEquals(entries, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, file, LANG_CPP));

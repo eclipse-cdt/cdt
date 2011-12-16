@@ -78,7 +78,7 @@ public class DescriptionScannerInfoProvider implements IScannerInfoProvider, ICP
 
 	@Override
 	public IScannerInfo getScannerInformation(IResource resource) {
-		// AG FIXME - temporary log to remove before CDT 9.0 release
+		// AG FIXME - temporary log to remove before CDT Juno release
 		LanguageSettingsLogger.logScannerInfoProvider(resource, this);
 
 		if(!fInited)

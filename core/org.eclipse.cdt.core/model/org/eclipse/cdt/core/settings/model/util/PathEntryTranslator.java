@@ -26,7 +26,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
-import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -71,6 +70,7 @@ import org.eclipse.cdt.internal.core.cdtvariables.CoreVariableSubstitutor;
 import org.eclipse.cdt.internal.core.cdtvariables.DefaultVariableContextInfo;
 import org.eclipse.cdt.internal.core.cdtvariables.ICoreVariableContextInfo;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsLogger;
+import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.cdt.internal.core.model.APathEntry;
 import org.eclipse.cdt.internal.core.model.CModelStatus;
 import org.eclipse.cdt.internal.core.model.PathEntry;
@@ -2041,7 +2041,7 @@ public class PathEntryTranslator {
 			public boolean visit(PathSettingsContainer container) {
 				CResourceData data = (CResourceData)container.getValue();
 				if (data != null) {
-					// AG FIXME - temporary log to remove before CDT 9.0 release
+					// AG FIXME - temporary log to remove before CDT Juno release
 					temporaryLog(des, kinds, data);
 
 					PathEntryCollector child = cr.createChild(container.getPath());
@@ -2056,7 +2056,7 @@ public class PathEntryTranslator {
 				return true;
 			}
 
-			// AG FIXME - temporary log to remove before CDT 9.0 release
+			// AG FIXME - temporary log to remove before CDT Juno release
 			@Deprecated
 			private void temporaryLog(final ICConfigurationDescription des, final int[] kinds, CResourceData data) {
 				String kindsStr="";
@@ -2099,7 +2099,7 @@ public class PathEntryTranslator {
 		if (ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(project)) {
 			IResource rc = getResource(project, data.getPath());
 			for (CLanguageData lData : lDatas) {
-				list.addAll(LanguageSettingsManager.getSettingEntriesByKind(des, rc, lData.getLanguageId(), kind));
+				list.addAll(LanguageSettingsProvidersSerializer.getSettingEntriesByKind(des, rc, lData.getLanguageId(), kind));
 			}
 			return list.size()>0;
 

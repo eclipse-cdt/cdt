@@ -529,6 +529,8 @@ public class CCorePlugin extends Plugin {
 	 *    </code>
 	 *
 	 * @return CDT console adapter.
+	 *
+	 * @since 5.4
 	 */
 	public IConsole getConsole(String extConsoleId, String contextId, String name, URL iconUrl) {
 		try {

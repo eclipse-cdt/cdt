@@ -64,71 +64,72 @@ import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.newui.Messages;
 
 /**
- * It is a parent for all standard property tabs 
+ * It is a parent for all standard property tabs
  * in new CDT model.
- * 
+ *
  * Although it's enough for new tabs to implement
- * ICPropertyTab interface only, it would be better 
+ * ICPropertyTab interface only, it would be better
  * to extend them from this class.
  *
  * In this case, we'll able to use:
  * - a lot of utility methods via "provider" link.
  *   In particular, it allows to get current project,
- *   configuration etc. See ICPropertyProvider interface. 
+ *   configuration etc. See ICPropertyProvider interface.
  * - a standard way to create buttons (ins/edit/del etc)
  *   and to handle their events (see buttonPressed(int))
  * - several utility methods to create widgets in the
- *   uniform manner (setupLabel(), setupText() etc). 
+ *   uniform manner (setupLabel(), setupText() etc).
  * - means to handle control messages which are the main
- *   communication way for new CDT model pages and tabs.   
+ *   communication way for new CDT model pages and tabs.
  */
 public abstract class AbstractCPropertyTab implements ICPropertyTab {
-	
+
 	public static final Method GRAY_METHOD = getGrayEnabled();
 	public static final int BUTTON_WIDTH = 120; // used as hint for all push buttons
 
 	// commonly used button names
 	public static final String EMPTY_STR = ""; //$NON-NLS-1$
-	public static final String ADD_STR = Messages.FileListControl_add; 
-	public static final String DEL_STR = Messages.FileListControl_delete; 
-	public static final String EDIT_STR = Messages.FileListControl_edit; 
-	public static final String MOVEUP_STR = Messages.FileListControl_moveup; 
-	public static final String MOVEDOWN_STR = Messages.FileListControl_movedown; 
-	public static final String PROJECTBUTTON_NAME = "Project..."; 
-	public static final String WORKSPACEBUTTON_NAME = Messages.FileListControl_button_workspace; 
-	public static final String FILESYSTEMBUTTON_NAME = Messages.FileListControl_button_fs; 
-	public static final String VARIABLESBUTTON_NAME = Messages.AbstractCPropertyTab_1; 
-	public static final String FILESYSTEM_DIR_DIALOG_MSG = Messages.BrowseEntryDialog_fs_dir_dlg_msg;	
-	public static final String FILESYSTEM_FILE_DIALOG_TITLE = EMPTY_STR;	
-	public static final String WORKSPACE_DIR_DIALOG_TITLE = Messages.BrowseEntryDialog_wsp_dir_dlg_title;	
-	public static final String WORKSPACE_FILE_DIALOG_TITLE = Messages.BrowseEntryDialog_wsp_file_dlg_title;	
-	public static final String WORKSPACE_DIR_DIALOG_MSG = Messages.BrowseEntryDialog_wsp_dir_dlg_msg;	
-	public static final String WORKSPACE_FILE_DIALOG_MSG = Messages.BrowseEntryDialog_wsp_file_dlg_msg;	
-	public static final String WORKSPACE_FILE_DIALOG_ERR = Messages.BrowseEntryDialog_wsp_file_dlg_err;	
-	public static final String WORKSPACE_DIR_DIALOG_ERR = Messages.BrowseEntryDialog_wsp_dir_dlg_err;	
-	public static final String BACKGROUND_TEXT_DEFAULT = Messages.AbstractCPropertyTab_2; 
+	public static final String ADD_STR = Messages.FileListControl_add;
+	public static final String DEL_STR = Messages.FileListControl_delete;
+	public static final String EDIT_STR = Messages.FileListControl_edit;
+	public static final String MOVEUP_STR = Messages.FileListControl_moveup;
+	public static final String MOVEDOWN_STR = Messages.FileListControl_movedown;
+	/** @since 5.4 */
+	public static final String PROJECTBUTTON_NAME = "Project...";
+	public static final String WORKSPACEBUTTON_NAME = Messages.FileListControl_button_workspace;
+	public static final String FILESYSTEMBUTTON_NAME = Messages.FileListControl_button_fs;
+	public static final String VARIABLESBUTTON_NAME = Messages.AbstractCPropertyTab_1;
+	public static final String FILESYSTEM_DIR_DIALOG_MSG = Messages.BrowseEntryDialog_fs_dir_dlg_msg;
+	public static final String FILESYSTEM_FILE_DIALOG_TITLE = EMPTY_STR;
+	public static final String WORKSPACE_DIR_DIALOG_TITLE = Messages.BrowseEntryDialog_wsp_dir_dlg_title;
+	public static final String WORKSPACE_FILE_DIALOG_TITLE = Messages.BrowseEntryDialog_wsp_file_dlg_title;
+	public static final String WORKSPACE_DIR_DIALOG_MSG = Messages.BrowseEntryDialog_wsp_dir_dlg_msg;
+	public static final String WORKSPACE_FILE_DIALOG_MSG = Messages.BrowseEntryDialog_wsp_file_dlg_msg;
+	public static final String WORKSPACE_FILE_DIALOG_ERR = Messages.BrowseEntryDialog_wsp_file_dlg_err;
+	public static final String WORKSPACE_DIR_DIALOG_ERR = Messages.BrowseEntryDialog_wsp_dir_dlg_err;
+	public static final String BACKGROUND_TEXT_DEFAULT = Messages.AbstractCPropertyTab_2;
 	public static final Color BACKGROUND_FOR_USER_VAR = new Color(Display.getDefault(), 255, 255, 200); // light yellow
 
 	private static final String PREFIX = "org.eclipse.cdt.ui."; //$NON-NLS-1$
-	
+
 	public static final int TRI_UNKNOWN = 2;
 	public static final int TRI_YES = 1;
 	public static final int TRI_NO = 0;
 
 	protected static final String ENUM = "enum"; //$NON-NLS-1$
 	protected static final String SSET = "set";  //$NON-NLS-1$
-	
+
 	private PageBook pageBook; // to select between background and usercomp.
 	private CLabel  background;
 	private Composite userdata;
-	
-	protected Composite usercomp; // space where user can create widgets 
+
+	protected Composite usercomp; // space where user can create widgets
 	protected Composite buttoncomp; // space for buttons on the right
 	private Button[] buttons;     // buttons in buttoncomp
 	public ICPropertyProvider page;
-	protected Image icon = null; 
-	private String helpId = EMPTY_STR; 
-	
+	protected Image icon = null;
+	private String helpId = EMPTY_STR;
+
 	protected boolean visible;
 
 	@Override
@@ -140,8 +141,8 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	/**
 	 * Creates basic widgets for property tab.
 	 * Descendants should, normally, override
-	 * this method but call super.createControls(). 
-	 * 
+	 * this method but call super.createControls().
+	 *
 	 * @param parent
 	 */
 	protected void createControls(Composite parent) {
@@ -154,27 +155,27 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		GridData gd;
 		userdata= new Composite(pageBook, SWT.NONE);
 		userdata.setLayout(new GridLayout(2, false));
-		
+
 		usercomp = new Composite(userdata, SWT.NONE);
 		usercomp.setLayoutData(gd= new GridData(GridData.FILL_BOTH));
 		gd.widthHint= 150;
-		
+
 		buttoncomp = new Composite(userdata, SWT.NONE);
 		buttoncomp.setLayoutData(gd= new GridData(GridData.END));
 		// width hint must be set to one, otherwise subclasses that do not have buttons
 		// don't look pretty, bug 242408
 		gd.widthHint= 1;
-		
+
 		pageBook.showPage(userdata);
-		
+
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, helpId);
 	}
-	
+
 	/**
 	 * The common way to create buttons cluster
 	 * on the right of tab workspace.
 	 * @param names : array of button names
-	 * null instead of name means "skip place" 
+	 * null instead of name means "skip place"
 	 */
 	protected void  initButtons(String[] names) {
 		initButtons(buttoncomp, names, 80);
@@ -182,7 +183,7 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	protected void  initButtons(String[] names, int width) {
 		initButtons(buttoncomp, names, width);
 	}
-	
+
 	/**
 	 * Ability to create standard button on any composite.
 	 * @param c
@@ -202,15 +203,15 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 			gdb.grabExcessHorizontalSpace = false;
 			gdb.horizontalAlignment = SWT.FILL;
 			gdb.minimumWidth = width;
-			
+
 			if (names[i] != null)
 				buttons[i].setText(names[i]);
-			else { // no button, but placeholder ! 
+			else { // no button, but placeholder !
 				buttons[i].setVisible(false);
 				buttons[i].setEnabled(false);
 				gdb.heightHint = 10;
 			}
-			
+
 			buttons[i].setLayoutData(gdb);
 			buttons[i].addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -220,15 +221,15 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 			});
 		}
 	}
-	
+
 	/**
-	 * Called when user changes 
+	 * Called when user changes
 	 * @param cfg - selected configuration
 	 */
 	private void configChanged(ICResourceDescription cfg) {
 		if (visible) updateData(cfg);
 	}
-	
+
 	/**
 	 * Disposes the SWT resources allocated by this dialog page.
 	 */
@@ -245,13 +246,13 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		visible = _visible;
 		if (visible) updateData(page.getResDesc());
 	}
-	
+
 	/**
-	 * Descendant tabs should implement this method so 
-	 * that it copies it's data from one description 
+	 * Descendant tabs should implement this method so
+	 * that it copies it's data from one description
 	 * to another. Only data affected by given tab
 	 * should be copied.
-	 * 
+	 *
 	 * @param src
 	 * @param dst
 	 */
@@ -273,32 +274,32 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 			}
 		}
 	}
-	
+
 	/**
-	 * Method should be rewritten to handle button presses 
+	 * Method should be rewritten to handle button presses
 	 * @param i : number of button pressed
-	 * 
-	 * Does nothing by default. 
+	 *
+	 * Does nothing by default.
 	 * May (but not must) be overridden.
 	 */
 	protected void buttonPressed(int i) {}
-	
+
 	/**
 	 * Checks state of existing button.
-	 * 
+	 *
 	 * @param i - button index
-	 * @return - true if button exists and enabled 
+	 * @return - true if button exists and enabled
 	 */
 	protected boolean buttonIsEnabled(int i) {
-		if (buttons == null || buttons.length <= i ) 
+		if (buttons == null || buttons.length <= i )
 			return false;
 		return buttons[i].isEnabled();
 	}
-	
+
 	/**
 	 * Changes state of existing button.
 	 * Does nothing if index is invalid
-	 * 
+	 *
 	 * @param i - button index
 	 * @param state - required state
 	 */
@@ -306,11 +307,11 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		if (buttons == null || buttons.length <= i ) return;
 		buttons[i].setEnabled(state);
 	}
-	
+
 	/**
 	 * Changes text of existing button
 	 * Does nothing if index is invalid
-	 * 
+	 *
 	 * @param i - button index
 	 * @param text - text to display
 	 */
@@ -346,13 +347,13 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		b.setLayoutData(g);
 		return b;
 	}
-	
+
 	protected Text setupText(Composite c, int span, int mode) {
 		Text t = new Text(c, SWT.SINGLE | SWT.BORDER);
 		setupControl(t, span, mode);
 		return t;
 	}
-	
+
 	protected Group setupGroup(Composite c, String name, int cols, int mode) {
 		Group g = new Group(c, SWT.NONE);
 		g.setText(name);
@@ -360,7 +361,7 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		setupControl(g, 1, mode);
 		return g;
 	}
-	
+
 	protected Button setupCheck(Composite c, String name, int span, int mode) {
 		Button b = new Button(c, SWT.CHECK);
 		b.setText(name);
@@ -376,23 +377,23 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	}
 
 	/**
-	 * Selection handler for checkbox created 
-	 * by methods "setupCheck()" or "setupTri()" 
-	 * Descendants should override this method 
-	 * if they use "setupCheck".  
+	 * Selection handler for checkbox created
+	 * by methods "setupCheck()" or "setupTri()"
+	 * Descendants should override this method
+	 * if they use "setupCheck".
 	 * Usually the method body will look like:
-	 * { 
+	 * {
 	 * 		Control b = (Control)e.widget;
-	 *   	if (b.equals(myFirstCheckbox) { ... } 
+	 *   	if (b.equals(myFirstCheckbox) { ... }
 	 *   	else if (b.equals(mySecondCheckbox) { ... }
-	 *   ... } 
+	 *   ... }
 	 */
 	protected void checkPressed(SelectionEvent e) {
 	}
 
 	protected void setupControl(Control c, int span, int mode) {
 		// although we use GridLayout usually,
-		// exceptions can occur: do nothing. 
+		// exceptions can occur: do nothing.
 		if (c != null) {
 			if (span != 0) {
 				GridData gd = new GridData(mode);
@@ -403,11 +404,11 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 			c.setFont(p.getFont());
 		}
 	}
-	
+
 	/*
-	 * A set of methods providing selection dialogs for files or dirs. 
+	 * A set of methods providing selection dialogs for files or dirs.
 	 */
-	
+
 	public static String getFileSystemDirDialog(Shell shell, String text) {
 		DirectoryDialog dialog = new DirectoryDialog(shell,	SWT.OPEN|SWT.APPLICATION_MODAL);
 		if(text != null && text.trim().length() != 0) dialog.setFilterPath(text);
@@ -432,12 +433,12 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		dialog.setText(FILESYSTEM_FILE_DIALOG_TITLE);
 		return dialog.open();
 	}
-	
+
 	public static String getVariableDialog(Shell shell, ICConfigurationDescription cfgd) {
-		
+
 		ICdtVariableManager vm = CCorePlugin.getDefault().getCdtVariableManager();
 		BuildVarListDialog dialog = new BuildVarListDialog(shell, vm.getVariables(cfgd));
-		dialog.setTitle(Messages.AbstractCPropertyTab_0); 
+		dialog.setTitle(Messages.AbstractCPropertyTab_0);
 		if (dialog.open() == Window.OK) {
 			Object[] selected = dialog.getResult();
 			if (selected.length > 0) {
@@ -454,13 +455,19 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	public static String getWorkspaceFileDialog(Shell shell, String text) {
 		return getWorkspaceDialog(shell, text, false, null);
 	}
+	/**
+	 * @since 5.4
+	 */
 	public static String getProjectDirDialog(Shell shell, String text, IProject prj) {
 		return getWorkspaceDialog(shell, text, true, prj);
 	}
+	/**
+	 * @since 5.4
+	 */
 	public static String getProjectFileDialog(Shell shell, String text, IProject prj) {
 		return getWorkspaceDialog(shell, text, false, prj);
 	}
-	
+
 	private static String getWorkspaceDialog(Shell shell, String text, boolean dir, IProject prj) {
 		String currentPathText;
 		IPath path;
@@ -468,7 +475,7 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		/* Remove double quotes */
 		currentPathText = currentPathText.replaceAll("\"", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		path = new Path(currentPathText);
-		
+
 		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(shell,
 				new WorkbenchLabelProvider(), new WorkbenchContentProvider());
 
@@ -477,7 +484,7 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		else
 			dialog.setInput(prj);
 		dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
-	
+
 		if (dir)	{
 			IResource container = null;
 			if(path.isAbsolute()){
@@ -519,14 +526,14 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		}
 		if (dialog.open() == Window.OK) {
 			IResource resource = (IResource) dialog.getFirstResult();
-			if (resource != null) { 
+			if (resource != null) {
 				StringBuffer buf = new StringBuffer();
 				return buf.append("${").append("workspace_loc:").append(resource.getFullPath()).append("}").toString(); //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
 			}
 		}
 		return null;
 	}
-	
+
 	// shortcut to frequently-used method
 	public ICResourceDescription getResDesc() {
 		return page.getResDesc();
@@ -560,19 +567,19 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 			dispose();
 			break;
 		case ICPropertyTab.VISIBLE:
-			if (canBeVisible()) 
+			if (canBeVisible())
 				setVisible(data != null);
-			else 
+			else
 				setVisible(false);
 			break;
 		case ICPropertyTab.SET_ICON:
-			icon = (Image)data; 
+			icon = (Image)data;
 			break;
 		default:
 			break;
 		}
 	}
-	
+
 	// By default, returns true (no visibility restriction)
 	// But several pages should rewrite this functionality.
 	@Override
@@ -594,20 +601,20 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	}
 
 	/**
-	 * Sets checkbox to appropriate state: 
+	 * Sets checkbox to appropriate state:
 	 * 	  unchecked or checked
 	 * @param b - checkbox to set
-	 * @param state  
+	 * @param state
 	 */
 	public static void setTriSelection(Button b, boolean state) {
 		setTriSelection(b, state ? TRI_YES : TRI_NO);
 	}
-	
+
 	/**
-	 * Sets checkbox to appropriate state: 
+	 * Sets checkbox to appropriate state:
 	 * 	  unchecked, checked or unknown (grayed)
 	 * @param b - checkbox to set
-	 * @param state 
+	 * @param state
 	 */
 	public static void setTriSelection(Button b, int state) {
 		switch (state) {
@@ -630,7 +637,7 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	 * This method will be simplified after M5 release,
 	 * when Button.setGrayed() method will be accessible.
 	 * In this case, reflection will not be required.
-	 * 
+	 *
 	 * @param b
 	 * @param value
 	 * @deprecated call {@link Button#setGrayed(boolean)} instead
@@ -643,7 +650,7 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	/**
 	 * This method will be removed after M5 release,
 	 * when Button.setGrayed() will be officially accessible.
-	 * 
+	 *
 	 * @return reference to Button.setGrayed() method
 	 */
 	private static Method getGrayEnabled() {
@@ -659,8 +666,8 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 
 	/**
 	 * Utility method to show/hide working panes
-	 * When panes are hidden, message becomes visible 
-	 * 
+	 * When panes are hidden, message becomes visible
+	 *
 	 * @param visible - true or false
 	 * @param msg - text to be shown instead of panes
 	 */
@@ -680,21 +687,21 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 				b.setVisible(visible);
 		}
 	}
-	
+
 	/**
 	 * Allows changing message on background pane,
 	 * which becomes visible after usercomp hidden
-	 * 
-	 * @param s - text to display or null for default  
+	 *
+	 * @param s - text to display or null for default
 	 */
 	protected void setBackgroundText(String s) {
 		background.setText(s == null ? BACKGROUND_TEXT_DEFAULT : s);
 	}
-	
+
 	/**
 	 * Used to display double-clickable buttons for multiple configurations
 	 * string list mode (see Multiple Configurations Edit Preference page).
-	 * 
+	 *
 	 * @deprecated as of CDT 8.0. This functionality is presented as links
 	 *    to the preference page, see {@link AbstractLangsListTab#updateStringListModeControl()}
 	 */
@@ -721,7 +728,7 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	 * The writing mode for multiple configurations edits (configuration drop-down list
 	 * in project properties). This mode applies to lists of entries.
 	 * See preference Multiple Configurations Edit, String List Write Mode.
-	 * 
+	 *
 	 * @return
 	 *    {@code true} if each list should be replaced as a whole with the
 	 *       list user is currently working with in UI<br/>
@@ -736,12 +743,12 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	public String getHelpContextId() {
 		return helpId;
 	}
-	
+
 	public void setHelpContextId(String id) {
 		helpId = PREFIX + id;
 	}
 
-	/** 
+	/**
 	 * Allows subclasses to inform the container about changes relevant to the indexer.
 	 * The tab will be asked before the apply is performed. As a consequence of returning
 	 * <code>true</code> the user will be asked whether she wants to rebuild the index.

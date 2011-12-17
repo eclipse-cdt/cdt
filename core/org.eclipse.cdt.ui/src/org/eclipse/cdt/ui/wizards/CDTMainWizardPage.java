@@ -497,6 +497,10 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 			return items;
 		}
 
+		/**
+		 * AG FIXME - remove before CDT Juno release.
+		 * @since 5.4
+		 */
 		public boolean isTryingNewSD() {
 			return checkBoxTryNewSD.getSelection();
 		}

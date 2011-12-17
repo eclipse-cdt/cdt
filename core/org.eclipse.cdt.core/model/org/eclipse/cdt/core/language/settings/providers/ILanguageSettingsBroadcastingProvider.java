@@ -19,6 +19,8 @@ import org.eclipse.core.resources.IResource;
 /**
  * This interface is to be implemented by providers which want to broadcast the changes in their setting entries
  * with {@link ILanguageSettingsChangeEvent}.
+ *
+ * @since 5.4
  */
 public interface ILanguageSettingsBroadcastingProvider extends ILanguageSettingsProvider {
 	@Override

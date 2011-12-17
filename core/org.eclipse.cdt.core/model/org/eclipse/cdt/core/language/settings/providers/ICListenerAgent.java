@@ -25,6 +25,8 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
  * Implementers are to create a specific listener and register it to
  * appropriate event manager in {@link #registerListener(ICConfigurationDescription)}
  * then unregister and dispose in {@link #unregisterListener()}.
+ *
+ * @since 5.4
  */
 public interface ICListenerAgent {
 	/**

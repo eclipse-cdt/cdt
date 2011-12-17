@@ -15,6 +15,8 @@ package org.eclipse.cdt.core;
  * Helper abstract class serving as a base for creating a frame of executable class
  * defined as an extension in plugin.xml.
  *
+ * @since 5.4
+ *
  */
 public abstract class AbstractExecutableExtensionBase {
 	private String fId;

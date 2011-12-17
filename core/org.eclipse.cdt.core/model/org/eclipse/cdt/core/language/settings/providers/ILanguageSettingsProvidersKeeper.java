@@ -18,6 +18,8 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
  * Providers.
  * @see ILanguageSettingsProvider
  *
+ * @since 5.4
+ *
  */
 public interface ILanguageSettingsProvidersKeeper {
 	/**

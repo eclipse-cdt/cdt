@@ -66,9 +66,9 @@ public abstract class ACPathEntry extends ACSettingEntry implements ICPathEntry 
 			return rcs[0].getFullPath();
 		return null;
 	}
-	
+
 	/**
-	 * @since 5.3
+	 * @since 5.4
 	 */
 	public abstract boolean isFile();
 

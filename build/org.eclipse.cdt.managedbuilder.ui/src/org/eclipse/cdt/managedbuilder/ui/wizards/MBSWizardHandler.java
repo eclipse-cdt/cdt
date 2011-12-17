@@ -94,6 +94,7 @@ public class MBSWizardHandler extends CWizardHandler {
 	private static final String PROP_VAL = PROPERTY + ".debug"; //$NON-NLS-1$
 
 	private static final String UI_USER_LANGUAGE_SETTINGS_PROVIDER = "org.eclipse.cdt.ui.user.LanguageSettingsProvider";
+	/** @since 8.1 */
 	public static final String MBS_LANGUAGE_SETTINGS_PROVIDER = "org.eclipse.cdt.managedbuilder.core.LanguageSettingsProvider";
 	private static final String LANGUAGE_SETTINGS_PROVIDER_DELIMITER = ";";
 
@@ -885,6 +886,9 @@ public class MBSWizardHandler extends CWizardHandler {
 		return "";
 	}
 
+	/**
+	 * @since 8.1
+	 */
 	public static List<ILanguageSettingsProvider> getLanguageSettingsProviders(IConfiguration cfg) {
 		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
 

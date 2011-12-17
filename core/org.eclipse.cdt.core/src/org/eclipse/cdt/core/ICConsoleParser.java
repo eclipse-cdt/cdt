@@ -19,6 +19,8 @@ import org.eclipse.core.runtime.CoreException;
  * can be without configurations, in that case IProject should be passed
  * to startup somehow. Perhaps another interface "IPConsoleParser" could
  * be created when needed?
+ *
+ * @since 5.4
  */
 public interface ICConsoleParser extends IConsoleParser {
 	public void startup(ICConfigurationDescription cfgDescription) throws CoreException;

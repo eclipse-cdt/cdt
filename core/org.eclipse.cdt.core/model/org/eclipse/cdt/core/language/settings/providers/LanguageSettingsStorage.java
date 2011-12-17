@@ -25,6 +25,8 @@ import org.eclipse.cdt.internal.core.parser.util.WeakHashSet;
 
 /**
  * The class representing the (in-memory) storage for language settings entries {@link ICLanguageSettingEntry}.
+ *
+ * @since 5.4
  */
 public class LanguageSettingsStorage implements Cloneable {
 	/** Storage to keep settings entries. */

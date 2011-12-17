@@ -38,6 +38,8 @@ import org.w3c.dom.NodeList;
  * design. Implement {@link ILanguageSettingsEditableProvider} interface for that.
  * For more on the suggested way of extending this class see the description of
  * {@link ILanguageSettingsProvider}.
+ *
+ * @since 5.4
  */
 public class LanguageSettingsSerializableProvider extends LanguageSettingsBaseProvider implements ILanguageSettingsBroadcastingProvider {
 	protected static final String ATTR_ID = LanguageSettingsProvidersSerializer.ATTR_ID;

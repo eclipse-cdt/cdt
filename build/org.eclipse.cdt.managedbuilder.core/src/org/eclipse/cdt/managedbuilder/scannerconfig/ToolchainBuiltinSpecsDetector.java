@@ -21,6 +21,9 @@ import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 
+/**
+ * @since 8.1
+ */
 public abstract class ToolchainBuiltinSpecsDetector extends AbstractBuiltinSpecsDetector {
 	private Map<String, ITool> toolMap = new HashMap<String, ITool>();
 	/**
@@ -33,7 +36,7 @@ public abstract class ToolchainBuiltinSpecsDetector extends AbstractBuiltinSpecs
 		if (langTool != null) {
 			return langTool;
 		}
-		
+
 		String toolchainId = getToolchainId();
 		IToolChain toolchain = ManagedBuildManager.getExtensionToolChain(toolchainId);
 		if (toolchain != null) {

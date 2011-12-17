@@ -39,6 +39,8 @@ import org.eclipse.core.resources.IResource;
  * plugins {@code AbstractBuildCommandParser} and {@code AbstractBuiltinSpecsDetector} which
  * serve as a base for output parsers and built-in compiler language settings detectors.
  * See also extension point schema description LanguageSettingsProvider.exsd.
+ *
+ * @since 5.4
  */
 public interface ILanguageSettingsProvider {
 	/**

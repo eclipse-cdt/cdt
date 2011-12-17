@@ -34,6 +34,8 @@ import org.eclipse.core.runtime.IPath;
 /**
  * A collection of utility methods to manage language settings providers.
  * See {@link ILanguageSettingsProvider}.
+ *
+ * @since 5.4
  */
 public class LanguageSettingsManager {
 	/**

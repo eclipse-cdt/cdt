@@ -17,6 +17,8 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
  *
  * @see LanguageSettingsManager#registerLanguageSettingsChangeListener(ILanguageSettingsChangeListener)
  * @see LanguageSettingsManager#unregisterLanguageSettingsChangeListener(ILanguageSettingsChangeListener)
+ *
+ * @since 5.4
  */
 public interface ILanguageSettingsChangeListener {
 	/**

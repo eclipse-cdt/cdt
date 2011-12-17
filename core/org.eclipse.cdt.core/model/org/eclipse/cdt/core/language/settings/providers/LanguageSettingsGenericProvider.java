@@ -16,6 +16,8 @@ package org.eclipse.cdt.core.language.settings.providers;
  * The instances of this class can be used in plugin.xml to create a new provider
  * but this class is not intended to be extended. For more details how to create a
  * language settings provider see the description of {@link ILanguageSettingsProvider}.
+ *
+ * @since 5.4
  */
 final public class LanguageSettingsGenericProvider extends LanguageSettingsSerializableProvider
 		implements ILanguageSettingsEditableProvider {

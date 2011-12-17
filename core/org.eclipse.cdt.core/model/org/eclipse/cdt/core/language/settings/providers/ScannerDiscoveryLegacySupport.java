@@ -29,6 +29,8 @@ import org.osgi.service.prefs.Preferences;
  *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
+ *
+ * @since 5.4
  */
 public class ScannerDiscoveryLegacySupport {
 	/** Name of MBS language settings provider (from org.eclipse.cdt.managedbuilder.core) */

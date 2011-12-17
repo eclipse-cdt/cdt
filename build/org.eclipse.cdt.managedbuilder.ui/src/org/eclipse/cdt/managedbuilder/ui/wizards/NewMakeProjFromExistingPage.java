@@ -53,7 +53,7 @@ public class NewMakeProjFromExistingPage extends WizardPage {
 	IWorkspaceRoot root;
 	List tcList;
 	Map<String, IToolChain> tcMap = new HashMap<String, IToolChain>();
-	
+
 	private Button checkBoxTryNewSD;
 
 
@@ -233,6 +233,10 @@ public class NewMakeProjFromExistingPage extends WizardPage {
 		return selection.length != 0 ? tcMap.get(selection[0]) : null;
 	}
 
+	/**
+	 * AG FIXME temporary method to be removed before CDT Juno release.
+	 * @since 8.1
+	 */
 	public boolean isTryingNewSD() {
 		return checkBoxTryNewSD.getSelection();
 	}

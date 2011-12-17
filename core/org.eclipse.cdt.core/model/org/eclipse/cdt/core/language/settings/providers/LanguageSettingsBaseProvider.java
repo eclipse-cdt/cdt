@@ -29,6 +29,8 @@ import org.eclipse.core.resources.IResource;
  *
  * This implementation supports "static" list of entries for languages specified in
  * the extension point.
+ *
+ * @since 5.4
  */
 public class LanguageSettingsBaseProvider extends AbstractExecutableExtensionBase implements ILanguageSettingsProvider {
 	/** Language scope, i.e. list of languages the entries will be provided for. */

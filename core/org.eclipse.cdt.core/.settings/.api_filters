@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.cdt.core" version="2">
+    <resource path="model/org/eclipse/cdt/core/settings/model/ICDescriptionDelta.java" type="org.eclipse.cdt.core.settings.model.ICDescriptionDelta">
+        <filter comment="Temporary filter to ignore added API restictions for interfaces that should be internal to begin with" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.core.settings.model.ICDescriptionDelta"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="model/org/eclipse/cdt/core/settings/model/ICSettingEntry.java" type="org.eclipse.cdt.core.settings.model.ICSettingEntry">
+        <filter comment="Temporary filter to ignore added API restictions for interfaces that should be internal to begin with" id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.core.settings.model.ICSettingEntry"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

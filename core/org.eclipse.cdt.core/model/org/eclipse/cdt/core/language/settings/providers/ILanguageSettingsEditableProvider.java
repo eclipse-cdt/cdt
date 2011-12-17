@@ -22,6 +22,8 @@ import org.eclipse.core.resources.IResource;
  * contrary to some subclasses of {@link LanguageSettingsSerializableProvider} managing
  * their settings themselves and not providing such option to the user.
  *
+ * @since 5.4
+ *
  */
 public interface ILanguageSettingsEditableProvider extends ILanguageSettingsBroadcastingProvider, Cloneable {
 	@Override

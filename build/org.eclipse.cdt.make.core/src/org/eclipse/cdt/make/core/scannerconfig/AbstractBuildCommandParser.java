@@ -40,6 +40,8 @@ import org.eclipse.core.runtime.jobs.Job;
  *
  * Note: IErrorParser interface is used here to work around {@link ConsoleOutputSniffer} having
  * no access from CDT core to build packages. TODO - elaborate?
+ * 
+ * @since 7.2
  */
 public abstract class AbstractBuildCommandParser extends AbstractLanguageSettingsOutputScanner
 		implements ICConsoleParser, IErrorParser {

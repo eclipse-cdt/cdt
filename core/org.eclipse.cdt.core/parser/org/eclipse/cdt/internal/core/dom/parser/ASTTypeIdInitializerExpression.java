@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM Rational Software) - Initial API and implementation
- *    Yuan Zhang / Beth Tibbitts (IBM Research)
- *    Markus Schorn (Wind River Systems)
+ *     John Camelon (IBM Rational Software) - Initial API and implementation
+ *     Yuan Zhang / Beth Tibbitts (IBM Research)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
@@ -41,11 +41,13 @@ public abstract class ASTTypeIdInitializerExpression extends ASTNode implements 
 		}
 	}
 	
+	@Override
 	public IASTTypeId getTypeId() {
         return typeId;
     }
 
-    public void setTypeId(IASTTypeId typeId) {
+    @Override
+	public void setTypeId(IASTTypeId typeId) {
         assertNotFrozen();
         this.typeId = typeId;
         if (typeId != null) {
@@ -54,11 +56,13 @@ public abstract class ASTTypeIdInitializerExpression extends ASTNode implements 
 		}
     }
 
-    public IASTInitializer getInitializer() {
+    @Override
+	public IASTInitializer getInitializer() {
         return initializer;
     }
 
-    public void setInitializer(IASTInitializer initializer) {
+    @Override
+	public void setInitializer(IASTInitializer initializer) {
         assertNotFrozen();
         this.initializer = initializer;
         if (initializer != null) {
@@ -68,32 +72,34 @@ public abstract class ASTTypeIdInitializerExpression extends ASTNode implements 
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitExpressions ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitExpressions) {
+		    switch(action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         
-        if( typeId != null ) if( !typeId.accept( action ) ) return false;
-        if( initializer != null ) if( !initializer.accept( action ) ) return false;
+        if (typeId != null && !typeId.accept(action)) return false;
+        if (initializer != null && !initializer.accept(action)) return false;
 
-        if( action.shouldVisitExpressions ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+        if (action.shouldVisitExpressions) {
+		    switch(action.leave(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         return true;
     }
 
+	@Override
 	public final boolean isLValue() {
 		return false;
 	}
 	
+	@Override
 	public final ValueCategory getValueCategory() {
 		return ValueCategory.PRVALUE;
 	}

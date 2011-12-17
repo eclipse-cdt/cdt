@@ -18,7 +18,7 @@ import java.util.Map;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
-import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
@@ -105,7 +105,7 @@ public class DebugNewProcessSequence_7_2 extends DebugNewProcessSequence {
 		
 		fGdbControl.queueCommand(
 				fGdbControl.getCommandFactory().createMIAddInferior(fGdbControl.getContext()),
-				new DataRequestMonitor<MIAddInferiorInfo>(ImmediateExecutor.getInstance(), rm) {
+				new ImmediateDataRequestMonitor<MIAddInferiorInfo>(rm) {
 					@Override
 					protected void handleSuccess() {
 						final String groupId = getData().getGroupId();

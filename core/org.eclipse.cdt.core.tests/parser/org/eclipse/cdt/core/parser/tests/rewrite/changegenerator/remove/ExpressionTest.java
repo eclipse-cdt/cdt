@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.remove;
 
@@ -20,20 +20,16 @@ import org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.ChangeGenerator
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
 
-
-
-
-
 public class ExpressionTest extends ChangeGeneratorTest {
 
-	public ExpressionTest(){
+	public ExpressionTest() {
 		super("Remove Expression"); //$NON-NLS-1$
 	}
 
 	@Override
 	protected void setUp() throws Exception {
-		source = "void main(){int s = 0, c = 0, h = 0;\ns = 3, c = 4, h = 5;}"; //$NON-NLS-1$
-		expectedSource = "void main(){int s = 0, c = 0, h = 0;\ns = 3, h = 5;}"; //$NON-NLS-1$
+		source = "void main() {\n\tint s = 0, c = 0, h = 0;\n\ts = 3, c = 4, h = 5;\n}"; //$NON-NLS-1$
+		expectedSource = "void main() {\n\tint s = 0, c = 0, h = 0;\n\ts = 3, h = 5;\n}"; //$NON-NLS-1$
 		super.setUp();
 	}
 
@@ -42,8 +38,7 @@ public class ExpressionTest extends ChangeGeneratorTest {
 	}
 
 	@Override
-	protected ASTVisitor createModificator(
-			final ASTModificationStore modStore) {
+	protected ASTVisitor createModificator(final ASTModificationStore modStore) {
 		return new ASTVisitor() {
 			{
 				shouldVisitExpressions = true;
@@ -54,13 +49,12 @@ public class ExpressionTest extends ChangeGeneratorTest {
 				if (expression instanceof IASTExpressionList) {
 					IASTExpressionList expressionList = (IASTExpressionList) expression;
 					IASTExpression[] expressions = expressionList.getExpressions();
-					ASTModification modification = new ASTModification(ASTModification.ModificationKind.REPLACE, expressions[1], null, null);
+					ASTModification modification = new ASTModification(ASTModification.ModificationKind.REPLACE,
+							expressions[1], null, null);
 					modStore.storeModification(null, modification);
 				}
 				return PROCESS_CONTINUE;
 			}
 		};
 	}
-	
-	
 }

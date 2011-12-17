@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTCopyLocation;
@@ -83,7 +83,7 @@ public class NodeWriter {
 	}
 
 	protected void writeTrailingComments(IASTNode node) {
-		// Default is to write a new line after trailing comments.
+		// Default is to write a new line after the trailing comments.
 		writeTrailingComments(node, true);
 	}
 
@@ -106,8 +106,8 @@ public class NodeWriter {
 		return !getTrailingComments(node).isEmpty();
 	}
 
-	private ArrayList<IASTComment> getTrailingComments(IASTNode node) {
-		ArrayList<IASTComment> trailingComments = commentMap.getTrailingCommentsForNode(node);
+	private List<IASTComment> getTrailingComments(IASTNode node) {
+		List<IASTComment> trailingComments = commentMap.getTrailingCommentsForNode(node);
 		IASTNodeLocation[] locs = node.getNodeLocations();
 		if (locs != null && locs.length > 0 && locs[0] instanceof IASTCopyLocation) {
 			IASTCopyLocation loc = (IASTCopyLocation) locs[0];
@@ -120,8 +120,8 @@ public class NodeWriter {
 		return !getFreestandingComments(node).isEmpty();
 	}
 
-	private ArrayList<IASTComment> getFreestandingComments(IASTNode node) {
-		ArrayList<IASTComment> freestandingComments = commentMap.getFreestandingCommentsForNode(node);
+	private List<IASTComment> getFreestandingComments(IASTNode node) {
+		List<IASTComment> freestandingComments = commentMap.getFreestandingCommentsForNode(node);
 		IASTNodeLocation[] locs = node.getNodeLocations();
 		if (locs != null && locs.length > 0 && locs[0] instanceof IASTCopyLocation) {
 			IASTCopyLocation loc = (IASTCopyLocation) locs[0];
@@ -130,7 +130,7 @@ public class NodeWriter {
 		return freestandingComments;
 	}
 
-	protected void writeFreeStandingComments(IASTNode node) {
+	protected void writeFreestandingComments(IASTNode node) {
 		for (IASTComment comment : getFreestandingComments(node)) {
 			scribe.print(comment.getComment());
 			scribe.newLine();

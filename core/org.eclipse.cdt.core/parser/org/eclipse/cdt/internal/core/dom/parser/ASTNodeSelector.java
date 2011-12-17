@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser;
 
@@ -24,7 +24,6 @@ import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
  * @since 5.0
  */
 public class ASTNodeSelector implements IASTNodeSelector {
-
 	private ASTTranslationUnit fTu;
 	private ILocationResolver fLocationResolver;
 	private String fFilePath;
@@ -74,7 +73,7 @@ public class ASTNodeSelector implements IASTNodeSelector {
 			sequenceLength= 0;
 			if (offsetInFile > 0) {
 				altSequenceNumber= fLocationResolver.getSequenceNumberForFileOffset(fFilePath, offsetInFile-1);
-				if (altSequenceNumber+1 == sequenceNumber) {
+				if (altSequenceNumber + 1 == sequenceNumber) {
 					altSequenceNumber= -1;
 				} else {
 					// we are on a context boundary and we need to check the variant to the left and
@@ -118,55 +117,67 @@ public class ASTNodeSelector implements IASTNodeSelector {
 		return nodeSpec.getBestNode();
 	}
 
-
+	@Override
 	public IASTNode findFirstContainedNode(int offset, int length) {
 		return findNode(offset, length, Relation.FIRST_CONTAINED, IASTNode.class);
 	}
 
+	@Override
 	public IASTNode findNode(int offset, int length) {
 		return findNode(offset, length, Relation.EXACT_MATCH, IASTNode.class);
 	}
 
+	@Override
 	public IASTNode findEnclosingNode(int offset, int length) {
 		return findNode(offset, length, Relation.ENCLOSING, IASTNode.class);
 	}
 	
+	@Override
 	public IASTNode findStrictlyEnclosingNode(int offset, int length) {
 		return findNode(offset, length, Relation.STRICTLY_ENCLOSING, IASTNode.class);
 	}
 
+	@Override
 	public IASTNode findFirstContainedNodeInExpansion(int offset, int length) {
 		return findNode(offset, length, Relation.FIRST_CONTAINED, IASTNode.class, true);
 	}
 
+	@Override
 	public IASTNode findNodeInExpansion(int offset, int length) {
 		return findNode(offset, length, Relation.EXACT_MATCH, IASTNode.class, true);
 	}
 
+	@Override
 	public IASTNode findEnclosingNodeInExpansion(int offset, int length) {
 		return findNode(offset, length, Relation.ENCLOSING, IASTNode.class, true);
 	}
 
+	@Override
 	public IASTName findFirstContainedName(int offset, int length) {
 		return findNode(offset, length, Relation.FIRST_CONTAINED, IASTName.class);
 	}
 
+	@Override
 	public IASTName findName(int offset, int length) {
 		return findNode(offset, length, Relation.EXACT_MATCH, IASTName.class);
 	}
 
+	@Override
 	public IASTName findEnclosingName(int offset, int length) {
 		return findNode(offset, length, Relation.ENCLOSING, IASTName.class);
 	}
 
+	@Override
 	public IASTImplicitName findImplicitName(int offset, int length) {
 		return findNode(offset, length, Relation.EXACT_MATCH, IASTImplicitName.class);
 	}
 	
+	@Override
 	public IASTImplicitName findEnclosingImplicitName(int offset, int length) {
 		return findNode(offset, length, Relation.ENCLOSING, IASTImplicitName.class);
 	}
 	
+	@Override
 	public IASTPreprocessorMacroExpansion findEnclosingMacroExpansion(int offset, int length) {
 		return findNode(offset, length, Relation.ENCLOSING, IASTPreprocessorMacroExpansion.class);
 	}

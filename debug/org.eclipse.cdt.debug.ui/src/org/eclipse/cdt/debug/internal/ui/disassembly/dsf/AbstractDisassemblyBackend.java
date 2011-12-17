@@ -8,11 +8,15 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Freescale Semiconductor - refactoring
- *     Patrick Chuong (Texas Instruments) - Bug fix (329682)
+ *     Patrick Chuong (Texas Instruments) - Bug 329682
+ *     Patrick Chuong (Texas Instruments) - Bug 353351
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.disassembly.dsf;
 
 import java.math.BigInteger;
+
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.dialogs.ErrorDialog;
 
 public abstract class AbstractDisassemblyBackend implements IDisassemblyBackend {
 
@@ -46,4 +50,17 @@ public abstract class AbstractDisassemblyBackend implements IDisassemblyBackend 
     	return null;
 	}
 
+	/**
+	 * Default error handler, sub-class can override this method to provide it's own error handling.
+	 *  
+	 * @param status
+	 */
+	protected void handleError(final IStatus status) {
+		fCallback.asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				ErrorDialog.openError(fCallback.getSite().getShell(), "Error", null, status); //$NON-NLS-1$
+			}
+		});				
+	}
 }

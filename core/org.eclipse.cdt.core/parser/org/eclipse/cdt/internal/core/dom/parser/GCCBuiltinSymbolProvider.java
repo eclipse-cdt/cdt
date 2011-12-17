@@ -6,10 +6,10 @@
  *  http://www.eclipse.org/legal/epl-v10.html
  * 
  *  Contributors:
- *    IBM - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    Anton Leherbauer (Wind River Systems)
- *    Sergey Prigogin (Google)
+ *      IBM - Initial API and implementation
+ *      Markus Schorn (Wind River Systems)
+ *      Anton Leherbauer (Wind River Systems)
+ *      Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
@@ -63,7 +63,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 	private static final Map<String, char[]> CHAR_ARRAYS = new HashMap<String, char[]>();
 
 	private IBinding[] fBindings;
-	private IScope fScope= null;
+	private IScope fScope;
 	private final boolean fCpp;
 	private final boolean fGnu;
 
@@ -75,6 +75,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		fGnu= supportGnuSymbols;
 	}
 	
+	@Override
 	public IBinding[] getBuiltinBindings(IScope scope) {
 		fScope= scope;
 		initialize();

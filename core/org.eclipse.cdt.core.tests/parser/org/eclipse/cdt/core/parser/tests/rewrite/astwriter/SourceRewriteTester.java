@@ -15,7 +15,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,18 +34,17 @@ public class SourceRewriteTester extends TestSuite {
 	private static final String codeTypeRegexp = "//%(C|CPP)( GNU)?$"; //$NON-NLS-1$
 	private static final String resultRegexp = "//=.*$"; //$NON-NLS-1$
 	
-	enum MatcherState{skip, inTest, inSource, inExpectedResult}
+	enum MatcherState { skip, inTest, inSource, inExpectedResult }
 
 	protected static BufferedReader createReader(String file) throws IOException {
 		Bundle bundle = CTestPlugin.getDefault().getBundle();
 		Path path = new Path(file);
-		String file2 = FileLocator.toFileURL(FileLocator.find(bundle, path, null)).getFile();
-		return new BufferedReader(new FileReader(file2));
+		file = FileLocator.toFileURL(FileLocator.find(bundle, path, null)).getFile();
+		return new BufferedReader(new FileReader(file));
 	}
 
 	public static Test suite(String name, String file)throws Exception {
 		BufferedReader in = createReader(file);
-
 		ArrayList<RewriteBaseTest> testCases = createTests(in);
 		in.close();
 		return createSuite(testCases, name);
@@ -54,9 +52,7 @@ public class SourceRewriteTester extends TestSuite {
 
 	private static TestSuite createSuite(ArrayList<RewriteBaseTest> testCases, String name) {
 		TestSuite suite = new TestSuite(name);
-		Iterator<RewriteBaseTest> it = testCases.iterator();
-		while (it.hasNext()) {
-			RewriteBaseTest subject = it.next();
+		for (RewriteBaseTest subject : testCases) {
 			suite.addTest(subject);
 		}
 		return suite;
@@ -155,7 +151,8 @@ public class SourceRewriteTester extends TestSuite {
 		return ParserLanguage.C;
 	}
 	
-	private static RewriteBaseTest createTestClass(String testName, ASTWriterTestSourceFile file) throws Exception {
+	private static RewriteBaseTest createTestClass(String testName, ASTWriterTestSourceFile file)
+			throws Exception {
 		ASTWriterTest test = new ASTWriterTest(testName, file);
 		TextSelection sel = file.getSelection();
 		if (sel != null) {

@@ -14,7 +14,8 @@ package org.eclipse.cdt.dsf.gdb.service;
 import java.util.Hashtable;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
-import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
@@ -59,7 +60,7 @@ public class GDBRunControl_7_2_NS extends GDBRunControl_7_0_NS
 
 	@Override
 	public void initialize(final RequestMonitor rm) {
-		super.initialize(new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
+		super.initialize(new ImmediateRequestMonitor(rm) {
 			@Override
 			protected void handleSuccess() {
 				doInitialize(rm);
@@ -113,7 +114,7 @@ public class GDBRunControl_7_2_NS extends GDBRunControl_7_0_NS
 			return;
 		}
 
-		canSuspend(context, new DataRequestMonitor<Boolean>(ImmediateExecutor.getInstance(), rm) {
+		canSuspend(context, new ImmediateDataRequestMonitor<Boolean>(rm) {
 			@Override
 			protected void handleSuccess() {
 				if (getData()) {
@@ -142,7 +143,7 @@ public class GDBRunControl_7_2_NS extends GDBRunControl_7_0_NS
 			return;
 		}
 
-		canResume(context, new DataRequestMonitor<Boolean>(ImmediateExecutor.getInstance(), rm) {
+		canResume(context, new ImmediateDataRequestMonitor<Boolean>(rm) {
 			@Override
 			protected void handleSuccess() {
 				if (getData()) {

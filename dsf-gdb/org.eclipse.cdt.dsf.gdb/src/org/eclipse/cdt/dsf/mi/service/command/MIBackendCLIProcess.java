@@ -22,7 +22,7 @@ import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
-import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
@@ -103,7 +103,7 @@ public class MIBackendCLIProcess extends AbstractCLIProcess {
                         rm.done();
                     } else {
                         fExitedEventListener.fWaitForRMs.add(
-                            new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
+                            new ImmediateRequestMonitor(rm) {
                                 @Override
                                 protected void handleSuccess() {
                                     rm.setData(new Object());

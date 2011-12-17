@@ -19,7 +19,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -33,11 +32,11 @@ public:
 
 private:
 	int i;
+
 	void method2();
 };
 
 #endif /*A_H_*/
-
 //!HideMethodLineComment
 //#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
 //@.config
@@ -60,7 +59,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -74,12 +72,12 @@ public:
 
 private:
 	int i;
+
 	//Comment
 	void method2();
 };
 
 #endif /*A_H_*/
-
 //!HideMethodBlockComment
 //#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
 //@.config
@@ -102,7 +100,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -116,12 +113,12 @@ public:
 
 private:
 	int i;
+
 	/*Comment*/
 	void method2();
 };
 
 #endif /*A_H_*/
-
 //!HideMethodLineCommentBehind
 //#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
 //@.config
@@ -143,7 +140,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -157,11 +153,11 @@ public:
 
 private:
 	int i;
+
 	void method2(); //Comment
 };
 
 #endif /*A_H_*/
-
 //!HideMethodBlockCommentBehind
 //#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
 //@.config
@@ -183,7 +179,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -197,11 +192,11 @@ public:
 
 private:
 	int i;
+
 	void method2(); /*Comment*/
 };
 
 #endif /*A_H_*/
-
 //!HideMethodLineCommentWithSpace
 //#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
 //@.config
@@ -225,7 +220,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -239,12 +233,12 @@ public:
 
 private:
 	int i;
+
 	//Comment
 	void method2();
 };
 
 #endif /*A_H_*/
-
 //!HideMethodBlockCommentWithSpace
 //#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
 //@.config
@@ -268,7 +262,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -282,12 +275,12 @@ public:
 
 private:
 	int i;
+
 	/*Comment*/
 	void method2();
 };
 
 #endif /*A_H_*/
-
 //!HideMethodLineCommentWithSpaceBehind
 //#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
 //@.config
@@ -309,7 +302,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -323,11 +315,11 @@ public:
 
 private:
 	int i;
+
 	void method2(); //Comment
 };
 
 #endif /*A_H_*/
-
 //!HideMethodBlockCommentWithSpaceBehind
 //#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
 //@.config
@@ -349,7 +341,6 @@ private:
 	int i;
 };
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -363,10 +354,10 @@ public:
 
 private:
 	int i;
+
 	void method2(); /*Comment*/
 };
 #endif /*A_H_*/
-
 //!HideMethodBigBlockComment
 //#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
 //@.config
@@ -390,7 +381,6 @@ private:
 	int i;
 };
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -404,13 +394,13 @@ public:
 
 private:
 	int i;
+
 	/*
 	 * Comment
 	 */
 	void method2();
 };
 #endif /*A_H_*/
-
 //!HideMethodBigBlockCommentBehind
 //#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
 //@.config
@@ -434,7 +424,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -448,13 +437,13 @@ public:
 
 private:
 	int i;
+
 	void method2(); /*
 	 * Comment
 	 */
 };
 
 #endif /*A_H_*/
-
 //!HideMethodBigBlockCommentBeforeAndBehind
 //#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
 //@.config
@@ -481,7 +470,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -495,6 +483,7 @@ public:
 
 private:
 	int i;
+
 	/*
 	 * Davor
 	 */
@@ -504,7 +493,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //!HideMethodMixedCommentBeforeAndAfter
 //#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
 //@.config
@@ -527,7 +515,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -541,12 +528,12 @@ public:
 
 private:
 	int i;
+
 	/*123*/
 	void method2(); //TEST
 };
 
 #endif /*A_H_*/
-
 //!HideMethodBlockCommentBeforeAndBehind
 //#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
 //@.config
@@ -568,7 +555,6 @@ private:
 	int i;
 };
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -582,11 +568,11 @@ public:
 
 private:
 	int i;
+
 	/*123*/
 	void method2(); /*TEST*/
 };
 #endif /*A_H_*/
-
 //!HideMethodNoChange
 //#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
 //@.config
@@ -604,7 +590,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -617,7 +602,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //!HideMethod2MethodsDifferentLine
 //#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
 //@.config
@@ -635,7 +619,6 @@ public:
 };
 
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -651,7 +634,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //!HideMethod2MethodsSameLine
 //#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
 //@.config
@@ -668,7 +650,6 @@ public:
 };
 
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -684,7 +665,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //!HideMethod2MethodsDifferentLineWithComment
 //#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
 //@.config
@@ -703,7 +683,6 @@ public:
 };
 
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -720,7 +699,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //!HideMethod2MethodsSameLineWithComment
 //#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
 //@.config
@@ -738,7 +716,6 @@ public:
 };
 
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -755,7 +732,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //!HideMethodSimple ImplementationFile
 //#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
 //@A.h
@@ -775,7 +751,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -789,18 +764,17 @@ public:
 
 private:
 	int i;
+
 	void method2();
 };
 
 #endif /*A_H_*/
-
 //@A.cpp
 #include "A.h"
 
 void A::/*$*/method2/*$$*/()
 {
 }
-
 //!HideMethodSimple ImplementationFile with Comments BUG #60
 //#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
 //@A.h
@@ -821,7 +795,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -835,12 +808,12 @@ public:
 
 private:
 	int i;
+
 	//TEST 1
 	void method2(); //TEST 2
 };
 
 #endif /*A_H_*/
-
 //@A.cpp
 #include "A.h"
 
@@ -848,7 +821,7 @@ void A::/*$*/method2/*$$*/()
 {
 }
 
-//!HideMethod with References 1
+//!HideMethod with references 1
 //#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
 //@.config
 filename=HideMethod.h
@@ -860,14 +833,14 @@ class HideMethod {
 public:
 	HideMethod();
 	virtual ~HideMethod();
-	void /*$*/methode2/*$$*/();
-	void methode3() {
-		methode2();
+	void /*$*/method2/*$$*/();
+
+	void method3() {
+		method2();
 	}
 };
 
 #endif /* HIDEMETHOD_H_ */
-
 //=
 #ifndef HIDEMETHOD_H_
 #define HIDEMETHOD_H_
@@ -876,17 +849,17 @@ class HideMethod {
 public:
 	HideMethod();
 	virtual ~HideMethod();
-	void methode3() {
-		methode2();
+
+	void method3() {
+		method2();
 	}
 
 private:
-	void methode2();
+	void method2();
 };
 
 #endif /* HIDEMETHOD_H_ */
-
-//!HideMethod with References 2
+//!HideMethod with references 2
 //#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
 //@.config
 filename=HideMethod.h
@@ -898,12 +871,11 @@ class HideMethod {
 public:
 	HideMethod();
 	virtual ~HideMethod();
-	void /*$*/methode2/*$$*/();
-	void methode3();
+	void /*$*/method2/*$$*/();
+	void method3();
 };
 
 #endif /* HIDEMETHOD_H_ */
-
 //=
 #ifndef HIDEMETHOD_H_
 #define HIDEMETHOD_H_
@@ -912,14 +884,13 @@ class HideMethod {
 public:
 	HideMethod();
 	virtual ~HideMethod();
-	void methode3();
+	void method3();
 
 private:
-	void methode2();
+	void method2();
 };
 
 #endif /* HIDEMETHOD_H_ */
-
 //@HideMethod.cpp
 #include "HideMethod.h"
 
@@ -931,15 +902,13 @@ HideMethod::~HideMethod() {
 	// TODO Auto-generated destructor stub
 }
 
-void HideMethod::methode2() {
+void HideMethod::method2() {
 	//do nothing
 }
 
-void HideMethod::methode3()
-{
-	methode2();
+void HideMethod::method3() {
+	method2();
 }
-
 //=
 #include "HideMethod.h"
 
@@ -951,16 +920,14 @@ HideMethod::~HideMethod() {
 	// TODO Auto-generated destructor stub
 }
 
-void HideMethod::methode2() {
+void HideMethod::method2() {
 	//do nothing
 }
 
-void HideMethod::methode3()
-{
-	methode2();
+void HideMethod::method3() {
+	method2();
 }
-
-//!HideMethod with References 3
+//!HideMethod with references 3
 //#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
 //@.config
 filename=HideMethod.h
@@ -973,20 +940,19 @@ class HideMethod {
 public:
 	HideMethod();
 	virtual ~HideMethod();
-	void /*$*/methode2/*$$*/();
-	void methode3();
+	void /*$*/method2/*$$*/();
+	void method3();
 };
 
 class test{
 public:
 	void call() {
 		HideMethod hm;
-		hm.methode2();
+		hm.method2();
 	}
 };
 
 #endif /* HIDEMETHOD_H_ */
-
 //=
 #ifndef HIDEMETHOD_H_
 #define HIDEMETHOD_H_
@@ -995,23 +961,22 @@ class HideMethod {
 public:
 	HideMethod();
 	virtual ~HideMethod();
-	void methode3();
+	void method3();
 
 private:
-	void methode2();
+	void method2();
 };
 
 class test{
 public:
 	void call() {
 		HideMethod hm;
-		hm.methode2();
+		hm.method2();
 	}
 };
 
 #endif /* HIDEMETHOD_H_ */
-
-//!HideMethod with References 4
+//!HideMethod with references 4
 //#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
 //@.config
 filename=HideMethod.h
@@ -1024,12 +989,11 @@ class HideMethod {
 public:
 	HideMethod();
 	virtual ~HideMethod();
-	void /*$*/methode2/*$$*/();
-	void methode3();
+	void /*$*/method2/*$$*/();
+	void method3();
 };
 
 #endif /* HIDEMETHOD_H_ */
-
 //=
 #ifndef HIDEMETHOD_H_
 #define HIDEMETHOD_H_
@@ -1038,14 +1002,13 @@ class HideMethod {
 public:
 	HideMethod();
 	virtual ~HideMethod();
-	void methode3();
+	void method3();
 
 private:
-	void methode2();
+	void method2();
 };
 
 #endif /* HIDEMETHOD_H_ */
-
 //@HideMethod.cpp
 #include "HideMethod.h"
 
@@ -1058,19 +1021,18 @@ HideMethod::~HideMethod() {
 	// TODO Auto-generated destructor stub
 }
 
-void HideMethod::methode2() {
+void HideMethod::method2() {
 	//do nothing
 }
 
-void HideMethod::methode3() {
+void HideMethod::method3() {
 	//do nothing
 }
 
 int main() {
 	HideMethod hm;
-	hm.methode2();
+	hm.method2();
 }
-
 //=
 //@HideMethod.cpp
 #include "HideMethod.h"
@@ -1084,20 +1046,19 @@ HideMethod::~HideMethod() {
 	// TODO Auto-generated destructor stub
 }
 
-void HideMethod::methode2() {
+void HideMethod::method2() {
 	//do nothing
 }
 
-void HideMethod::methode3() {
+void HideMethod::method3() {
 	//do nothing
 }
 
 int main() {
 	HideMethod hm;
-	hm.methode2();
+	hm.method2();
 }
-
-//!HideMethod with CPP File selection
+//!HideMethod with CPP file selection
 //#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
 //@.config
 filename=HideMethod.h
@@ -1109,12 +1070,11 @@ class HideMethod {
 public:
 	HideMethod();
 	virtual ~HideMethod();
-	void methode2();
-	void methode3();
+	void method2();
+	void method3();
 };
 
 #endif /* HIDEMETHOD_H_ */
-
 //=
 #ifndef HIDEMETHOD_H_
 #define HIDEMETHOD_H_
@@ -1123,14 +1083,13 @@ class HideMethod {
 public:
 	HideMethod();
 	virtual ~HideMethod();
-	void methode3();
+	void method3();
 
 private:
-	void methode2();
+	void method2();
 };
 
 #endif /* HIDEMETHOD_H_ */
-
 //@HideMethod.cpp
 #include "HideMethod.h"
 
@@ -1142,15 +1101,13 @@ HideMethod::~HideMethod() {
 	// TODO Auto-generated destructor stub
 }
 
-void HideMethod::/*$*/methode2/*$$*/() {
+void HideMethod::/*$*/method2/*$$*/() {
 	//do nothing
 }
 
-void HideMethod::methode3()
-{
-	methode2();
+void HideMethod::method3() {
+	method2();
 }
-
 //=
 #include "HideMethod.h"
 
@@ -1162,15 +1119,13 @@ HideMethod::~HideMethod() {
 	// TODO Auto-generated destructor stub
 }
 
-void HideMethod::methode2() {
+void HideMethod::method2() {
 	//do nothing
 }
 
-void HideMethod::methode3()
-{
-	methode2();
+void HideMethod::method3() {
+	method2();
 }
-
 //!HideMethodChangeToDefaultVisibility Class1
 //#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
 //@.config
@@ -1187,7 +1142,6 @@ public:
 };
 
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -1196,12 +1150,12 @@ public:
 
 class A {
 public:
+
 private:
 	void method2();
 };
 
 #endif /*A_H_*/
-
 //!HideMethodChangeToDefaultVisibility Class2
 //#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
 //@.config
@@ -1246,7 +1200,6 @@ struct A {
 };
 
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -1259,7 +1212,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //!HideMethod CheckIfPrivateBug 1
 //#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
 //@.config
@@ -1354,7 +1306,9 @@ public:
 //=
 struct other {
 private:
-	bool value() { return true; }
+	bool value() {
+		return true;
+	}
 };
 
 class Class {
@@ -1397,7 +1351,6 @@ public:
 	}
 
 private:
-
 	void test() {
 		other o;
 		this->set(o.value());
@@ -1435,15 +1388,14 @@ public:
 private:
 	void just_private();
 };
-
 //=
 class Class {
 public:
+
 private:
 	void just_private();
 	void to_move();
 };
-
 //!HideMethod several private sections
 //#org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodRefactoringTest
 //@.config
@@ -1458,14 +1410,13 @@ private:
 
 private:
 };
-
 //=
 class Class {
 public:
+
 private:
 	void just_private();
 	void to_move();
 
 private:
 };
-

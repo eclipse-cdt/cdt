@@ -17,7 +17,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
-import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Sequence.Step;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
@@ -63,7 +63,7 @@ public class GDBBreakpoints_7_0 extends MIBreakpoints
 	 */
 	@Override
 	public void initialize(final RequestMonitor rm) {
-		super.initialize(new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
+		super.initialize(new ImmediateRequestMonitor(rm) {
 			@Override
 			protected void handleSuccess() {
 				doInitialize(rm);

@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.append;
 
@@ -34,8 +34,8 @@ public class ParameterTest extends ChangeGeneratorTest {
 
 	@Override
 	protected void setUp() throws Exception {
-		source = "void foo(int existing){\n}\n\n"; //$NON-NLS-1$
-		expectedSource = "void foo(int existing, int newParameter){\n}\n\n"; //$NON-NLS-1$
+		source = "void foo(int existing) {\n}\n"; //$NON-NLS-1$
+		expectedSource = "void foo(int existing, int newParameter) {\n}\n"; //$NON-NLS-1$
 		super.setUp();
 	}
 	
@@ -49,7 +49,7 @@ public class ParameterTest extends ChangeGeneratorTest {
 			@Override
 			public int visit(IASTDeclarator declarator) {
 				if (declarator instanceof CPPASTFunctionDeclarator) {
-					CPPASTFunctionDeclarator functionDeclarator = (CPPASTFunctionDeclarator)declarator;
+					CPPASTFunctionDeclarator functionDeclarator = (CPPASTFunctionDeclarator) declarator;
 					
 					CPPASTParameterDeclaration insertedParameter = new CPPASTParameterDeclaration();
 					CPPASTDeclarator parameterDeclarator = new CPPASTDeclarator();
@@ -59,7 +59,8 @@ public class ParameterTest extends ChangeGeneratorTest {
 					CPPASTSimpleDeclSpecifier parameterDeclSpec = new CPPASTSimpleDeclSpecifier();
 					parameterDeclSpec.setType(IASTSimpleDeclSpecifier.t_int);
 					insertedParameter.setDeclSpecifier(parameterDeclSpec);
-					ASTModification modification = new ASTModification(ModificationKind.APPEND_CHILD, functionDeclarator, insertedParameter, null);
+					ASTModification modification = new ASTModification(ModificationKind.APPEND_CHILD,
+							functionDeclarator, insertedParameter, null);
 					modStore.storeModification(null, modification);	
 				}
 				return PROCESS_CONTINUE;

@@ -51,8 +51,8 @@ public class InitializerWriter extends NodeWriter{
 		} else if (initializer instanceof ICPPASTConstructorChainInitializer) {
 			writeConstructorChainInitializer((ICPPASTConstructorChainInitializer) initializer);
 		}
-		if (hasTrailingComments(initializer))
-			writeTrailingComments(initializer, false);
+
+		writeTrailingComments(initializer, false);
 	}
 	
 	private void writeEqualsInitializer(IASTEqualsInitializer initializer) {

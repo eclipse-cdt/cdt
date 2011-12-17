@@ -60,7 +60,6 @@ public class CtorChainInitializerTest extends ChangeGeneratorTest {
 					newInitializer.setInitializerValue(initExpr);
 					ASTModification modification = new ASTModification(ModificationKind.INSERT_BEFORE, ctorInitializer, newInitializer, null);
 					modStore.storeModification(null, modification);
-					
 				}
 				return PROCESS_CONTINUE;
 			}

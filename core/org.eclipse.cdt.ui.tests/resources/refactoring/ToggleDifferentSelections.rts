@@ -18,8 +18,6 @@ void N::A::/*$*/foo/*$$*/() {
 int main() {
 	return 0;
 }
-
-
 //@A.h
 #include <iostream>
 #include <exception>
@@ -90,5 +88,3 @@ void N::A::foo() {
 int main() {
 	return 0;
 }
-
-

@@ -49,8 +49,6 @@ class A {
 		void member(int a, int b);
 	};
 };
-
-
 //@A.cpp
 #include "A.h"
 
@@ -88,8 +86,6 @@ void A::B::/*$*/member/*$$*/(int a, int b) {
 int main() {
 	return 0;
 }
-
-
 //@A.h
 #include <iostream>
 

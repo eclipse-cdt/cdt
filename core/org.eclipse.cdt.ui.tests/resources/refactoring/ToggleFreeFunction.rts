@@ -38,7 +38,6 @@ public:
 };
 
 int freeFunction(int* a, int& b);
-
 //@A.cpp
 #include "A.h"
 
@@ -76,8 +75,6 @@ int /*$*/freeFunction/*$$*/(int* a, int& b) {
 int main() {
 	return 0;
 }
-
-
 //@A.h
 #include <iostream>
 
@@ -114,7 +111,6 @@ public:
 int freeFunction(int* a, int& b) {
 	return 42;
 }
-
 //!TestFreeFunctionToggleFromImplementationToHeaderWithOutDeclaration
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
@@ -132,14 +128,13 @@ try {
 }
 catch (std::exception& e) {
 }
+
 //=
 #include "A.h"
 
 int main() {
 	return 0;
 }
-
-
 //@A.h
 #include <iostream>
 
@@ -155,7 +150,6 @@ public:
 	~A() {
 	}
 };
-
 //=
 #include <iostream>
 
@@ -179,7 +173,6 @@ try {
 catch (std::exception& e) {
 }
 
-
 //!TestFreeFunction
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
@@ -190,7 +183,6 @@ int /*$*/freeFunction/*$$*/() {
 }
 //=
 int freeFunction();
-
 //@A.cpp
 #include "A.h"
 //=

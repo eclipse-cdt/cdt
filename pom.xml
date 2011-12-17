@@ -16,7 +16,7 @@
 
 	<properties>
 		<tycho-version>0.13.0</tycho-version>
-		<platform-version>3.7</platform-version>
+		<platform-version>4.2milestones</platform-version>
 		<platform-site>http://download.eclipse.org/eclipse/updates/${platform-version}</platform-site>
 		<orbit-version>R20110523182458</orbit-version>
 		<orbit-site>http://download.eclipse.org/tools/orbit/downloads/drops/${orbit-version}/repository</orbit-site>

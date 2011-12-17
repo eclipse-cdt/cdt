@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
-
-
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
@@ -29,7 +27,6 @@ import org.eclipse.ui.PlatformUI;
  * type associations for the workspace
  */
 public class CFileTypesPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
-
 	private CFileTypesPreferenceBlock fPrefsBlock;
 
 	public CFileTypesPreferencePage() {
@@ -72,11 +69,9 @@ public class CFileTypesPreferencePage extends PreferencePage implements IWorkben
 	 */
 	@Override
 	public boolean performOk() {
-		
 		if (fPrefsBlock.performOk()) {
 		}
 		
 		return super.performOk();
 	}
-
 }

@@ -21,7 +21,7 @@ import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
-import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ReflectionSequence;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
@@ -375,7 +375,7 @@ public class FinalLaunchSequence extends ReflectionSequence {
 				fCommandControl.queueCommand(
 						fCommandFactory.createMITargetSelect(fCommandControl.getContext(), 
 								remoteTcpHost, remoteTcpPort, true), 
-								new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), rm));
+								new ImmediateDataRequestMonitor<MIInfo>(rm));
 			} else {
 				String serialDevice = CDebugUtils.getAttribute(
 						fAttributes,
@@ -384,7 +384,7 @@ public class FinalLaunchSequence extends ReflectionSequence {
 				fCommandControl.queueCommand(
 						fCommandFactory.createMITargetSelect(fCommandControl.getContext(), 
 								serialDevice, true), 
-								new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), rm));
+								new ImmediateDataRequestMonitor<MIInfo>(rm));
 			}
 		} else {
 			rm.done();

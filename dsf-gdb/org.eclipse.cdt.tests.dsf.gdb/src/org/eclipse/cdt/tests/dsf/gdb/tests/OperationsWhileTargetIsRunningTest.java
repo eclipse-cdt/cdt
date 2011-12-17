@@ -18,9 +18,8 @@ import java.util.concurrent.TimeoutException;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
-import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Query;
-import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExitedDMEvent;
@@ -172,7 +171,7 @@ public class OperationsWhileTargetIsRunningTest extends BaseTestCase {
         Runnable runnable = new Runnable() {
             public void run() {
     	        IProcessDMContext processDmc = DMContexts.getAncestorOfType(fContainerDmc, IProcessDMContext.class);
-    	    	fProcesses.terminate(processDmc, new RequestMonitor(ImmediateExecutor.getInstance(), null));
+    	    	fProcesses.terminate(processDmc, new ImmediateRequestMonitor());
             }
         };
         fProcesses.getExecutor().execute(runnable);
@@ -260,7 +259,7 @@ public class OperationsWhileTargetIsRunningTest extends BaseTestCase {
         // But that is ok because we wait for a shutdown event right after
         Runnable runnable = new Runnable() {
             public void run() {
-    	    	fProcesses.detachDebuggerFromProcess(fContainerDmc, new RequestMonitor(ImmediateExecutor.getInstance(), null));
+    	    	fProcesses.detachDebuggerFromProcess(fContainerDmc, new ImmediateRequestMonitor());
             }
         };
         fProcesses.getExecutor().execute(runnable);

@@ -13,11 +13,10 @@ package org.eclipse.cdt.dsf.gdb.internal.ui.actions;
 
 import java.util.concurrent.RejectedExecutionException;
 
-import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
-import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
-import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
@@ -73,7 +72,7 @@ public class DsfTerminateCommand implements ITerminateHandler {
                             request.setEnabled(false);
                             request.done();
                         } else {
-                        	procService.canTerminate(processDmc, new DataRequestMonitor<Boolean>(ImmediateExecutor.getInstance(), null) {
+                        	procService.canTerminate(processDmc, new ImmediateDataRequestMonitor<Boolean>() {
                         		@Override
                         		protected void handleCompleted() {
                         			request.setEnabled(isSuccess() && getData());
@@ -110,7 +109,7 @@ public class DsfTerminateCommand implements ITerminateHandler {
                 public void run() {
                 	IProcesses procService = fTracker.getService(IProcesses.class);
                     if (procService != null) {
-                    	procService.terminate(processDmc, new RequestMonitor(ImmediateExecutor.getInstance(), null) {
+                    	procService.terminate(processDmc, new ImmediateRequestMonitor() {
                             @Override
                             protected void handleCompleted() {
                                 request.setStatus(getStatus());

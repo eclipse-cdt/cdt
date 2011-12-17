@@ -15,7 +15,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -32,7 +31,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //@A.cpp
 #include "A.h"
 
@@ -52,7 +50,6 @@ int A::foo() {
 int A::help() {
 	return 42;
 }
-
 //=
 #include "A.h"
 
@@ -77,7 +74,6 @@ int A::foo() {
 int A::help() {
 	return 42;
 }
-
 //!ExtractFunctionRefactoringTest with comment
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@A.h
@@ -95,7 +91,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -112,7 +107,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //@A.cpp
 #include "A.h"
 
@@ -133,7 +127,6 @@ int A::foo() {
 int A::help() {
 	return 42;
 }
-
 //=
 #include "A.h"
 
@@ -159,7 +152,6 @@ int A::foo() {
 int A::help() {
 	return 42;
 }
-
 //@.config
 filename=A.cpp
 methodname=exp
@@ -213,7 +205,7 @@ void exp(int& i) {
 
 int main() {
 	int i;
-	exp(i); // Comment
+	exp(i);
 	return i;
 }
 
@@ -1739,7 +1731,6 @@ returnparameterindex=0
 filename=main.h
 methodname=loop
 //@main.h
-
 void method() {
 	/*$*/for (int var = 0; var < 100; ++var) {
 		if (var < 50)
@@ -1747,7 +1738,6 @@ void method() {
 	}/*$$*/
 }
 //=
-
 void loop() {
 	for (int var = 0; var < 100; ++var) {
 		if (var < 50)
@@ -1764,7 +1754,6 @@ void method() {
 filename=main.h
 fatalerror=true
 //@main.h
-
 void method() {
 	/*$*/if (true)
 		return;/*$$*/
@@ -1776,14 +1765,12 @@ void method() {
 fatalerror=true
 filename=A.h
 //@A.h
-
 void function() {
 	for (int var = 0; var < 100; ++var) {
 		/*$*/if (var < 50)
 			continue;/*$$*/
 	}
 }
-
 //! Bug #124 Extract Function with a Macro call in selected code "forgets" the macro
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
@@ -2220,7 +2207,6 @@ test::string toXML() {
 int main() {
 	return 0;
 }
-
 //=
 #include "testString.h"
 
@@ -2237,111 +2223,6 @@ test::string toXML() {
 int main() {
 	return 0;
 }
-
-//!Bug 248622: Extract function fails to extract several expressions; Selection at the end
-//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
-//@.config
-filename=Test.cpp
-methodname=endTag
-//@testString.h
-
-namespace test {
-
-class string {
-public:
-	friend string operator+(const string& lhs, const string& rhs) {
-		return rhs;
-	}
-
-	string operator+(const string& rhs) { return rhs; }
-	string(char* cp) {}
-	string() {};
-};
-
-}
-
-//@Test.cpp
-#include "testString.h"
-
-test::string toXML() {
-	test::string name;
-	name = "hello";
-	return "<" + name + ">" + /*$*/"</" + name + ">"/*$$*/;
-}
-
-int main() {
-	return 0;
-}
-
-//=
-#include "testString.h"
-
-const char endTag(test::string name) {
-	return "</" + name + ">";
-}
-
-test::string toXML() {
-	test::string name;
-	name = "hello";
-	return "<" + name + ">" + endTag(name);
-}
-
-int main() {
-	return 0;
-}
-
-//!Bug 248622: Extract function fails to extract several expressions; Selection in the middle
-//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
-//@.config
-filename=Test.cpp
-methodname=exp
-//@testString.h
-
-namespace test {
-
-class string {
-public:
-	friend string operator+(const string& lhs, const string& rhs) {
-		return rhs;
-	}
-
-	string operator+(const string& rhs) { return rhs; }
-	string(char* cp) {}
-	string() {};
-};
-
-}
-
-//@Test.cpp
-#include "testString.h"
-
-test::string toXML() {
-	test::string name;
-	name = "hello";
-	return "<" + name + /*$*/">" + "</"/*$$*/ + name + ">";
-}
-
-int main() {
-	return 0;
-}
-
-//=
-#include "testString.h"
-
-const char exp() {
-	return ">" + "</";
-}
-
-test::string toXML() {
-	test::string name;
-	name = "hello";
-	return "<" + name + exp() + name + ">";
-}
-
-int main() {
-	return 0;
-}
-
 //!Bug#262000 refactoring "extract function" misinterprets artificial blocks
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
@@ -2354,7 +2235,6 @@ int main(int argc, char** argv) {
 		a++;
 	}/*$$*/
 }
-
 //=
 void exp() {
 	int a = 0;
@@ -2366,7 +2246,6 @@ void exp() {
 int main(int argc, char** argv) {
 	exp();
 }
-
 //!Bug#264712 Refactor extract function deletes comments in header
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
@@ -2411,7 +2290,6 @@ class Test {
 };
 
 #endif
-
 //=
 /*
  * Copyright 2009
@@ -2438,11 +2316,11 @@ class Test {
 	 * Retain a value for something.
 	 */
 	int m_value;
+
 	int exp();
 };
 
 #endif
-
 //@test.cpp
 #include "test.h"
 

@@ -530,6 +530,7 @@ public class DefaultCodeFormatterConstants {
 	 * @since 5.3
 	 */	
 	public final static String FORMATTER_COMMENT_MIN_DISTANCE_BETWEEN_CODE_AND_LINE_COMMENT = CCorePlugin.PLUGIN_ID + ".formatter.comment.min_distance_between_code_and_line_comment"; //$NON-NLS-1$
+
 	/**
 	 * <pre>
 	 * FORMATTER / Option to control whether the white space between code and line comments should be preserved or replaced with a single space
@@ -541,8 +542,20 @@ public class DefaultCodeFormatterConstants {
 	 * @see #FALSE
 	 * @since 5.3
 	 */
-
 	public final static String FORMATTER_COMMENT_PRESERVE_WHITE_SPACE_BETWEEN_CODE_AND_LINE_COMMENT = CCorePlugin.PLUGIN_ID + ".formatter.comment.preserve_white_space_between_code_and_line_comments"; //$NON-NLS-1$
+
+	/**
+	 * <pre>
+	 * FORMATTER / Option to control whether comments starting from the beginning of line should stay that way and never be indented. 
+	 *     - option id:         "org.eclipse.cdt.core.formatter.comment.never_indent_line_comments_on_first_column"
+	 *     - possible values:   { TRUE, FALSE }
+	 *     - default:           TRUE
+	 * </pre>
+	 * @see #TRUE
+	 * @see #FALSE
+	 * @since 5.4
+	 */
+	public final static String FORMATTER_COMMENT_NEVER_INDENT_LINE_COMMENTS_ON_FIRST_COLUMN = CCorePlugin.PLUGIN_ID + ".formatter.comment.never_indent_line_comments_on_first_column"; //$NON-NLS-1$
 
 	/**
 	 * <pre>

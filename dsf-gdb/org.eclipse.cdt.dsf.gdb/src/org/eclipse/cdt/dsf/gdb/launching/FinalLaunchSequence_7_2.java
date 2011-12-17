@@ -16,9 +16,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.CDebugUtils;
-import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
-import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
@@ -96,6 +95,6 @@ public class FinalLaunchSequence_7_2 extends FinalLaunchSequence {
 
 		fGdbControl.queueCommand(
 				fGdbControl.getCommandFactory().createMIGDBSetDetachOnFork(fGdbControl.getContext(), !debugOnFork), 
-				new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), rm));
+				new ImmediateDataRequestMonitor<MIInfo>(rm));
 	}
 }

@@ -20,7 +20,7 @@ import java.util.concurrent.TimeoutException;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
-import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
@@ -291,7 +291,7 @@ public class TraceControlView extends ViewPart implements IViewPart, SessionEnde
 						final IGDBTraceControl traceControl = getService(IGDBTraceControl.class);
 						if (traceControl != null) {
 							ITraceRecordDMContext emptyDmc = traceControl.createTraceRecordContext(ctx, "-1"); //$NON-NLS-1$
-							traceControl.selectTraceRecord(emptyDmc, new RequestMonitor(ImmediateExecutor.getInstance(), null));
+							traceControl.selectTraceRecord(emptyDmc, new ImmediateRequestMonitor());
 						}
 					}
 				});

@@ -9,7 +9,6 @@
  *     QNX Software Systems - Initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.core;
 
 import java.util.Map;
@@ -49,19 +48,19 @@ public class ToolFactory {
 		IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, extID);
 		if (extension != null) {
 			IExtension[] extensions =  extension.getExtensions();
-			for(int i = 0; i < extensions.length; i++){
+			for (int i = 0; i < extensions.length; i++){
 				IConfigurationElement [] configElements = extensions[i].getConfigurationElements();
-				for(int j = 0; j < configElements.length; j++){
+				for (int j = 0; j < configElements.length; j++){
 					String initializerID = configElements[j].getAttribute("id"); //$NON-NLS-1$
 					if (initializerID != null && initializerID.equals(formatterID)){
 						try {
 							Object execExt = configElements[j].createExecutableExtension("class"); //$NON-NLS-1$
 							if (execExt instanceof CodeFormatter){
-								CodeFormatter formatter = (CodeFormatter)execExt;
+								CodeFormatter formatter = (CodeFormatter) execExt;
 								formatter.setOptions(options);
 								return formatter;
 							}
-						} catch(CoreException e) {
+						} catch (CoreException e) {
 							CCorePlugin.log(e.getStatus());
 							break;
 						}

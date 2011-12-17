@@ -16,9 +16,8 @@ import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
-import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Query;
-import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.gdb.internal.commands.ISelectNextTraceRecordHandler;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
@@ -87,7 +86,7 @@ public class GdbSelectNextTraceRecordCommand extends AbstractDebugCommand implem
        							    // Bug 347514
 						            fSession.dispatchEvent(new TraceRecordSelectedChangedEvent(nextDmc), new Hashtable<String, String>());
 						            
-						            traceControl.selectTraceRecord(nextDmc, new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
+						            traceControl.selectTraceRecord(nextDmc, new ImmediateRequestMonitor(rm) {
 						            	@Override
 						            	protected void handleError() {
 						            		// If we weren't able to select the next record, we must notify that we are still on the previous one

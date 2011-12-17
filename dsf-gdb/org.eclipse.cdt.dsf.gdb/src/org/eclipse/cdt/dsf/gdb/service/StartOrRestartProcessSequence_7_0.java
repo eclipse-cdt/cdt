@@ -20,7 +20,7 @@ import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
-import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ReflectionSequence;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
@@ -203,7 +203,7 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 
 			fCommandControl.queueCommand(
 					fCommandFactory.createMIBreakInsert(bpTargetDmc, true, false, null, 0, userStopSymbol, 0),
-					new DataRequestMonitor<MIBreakInsertInfo>(ImmediateExecutor.getInstance(), rm) {
+					new ImmediateDataRequestMonitor<MIBreakInsertInfo>(rm) {
 						@Override
 						public void handleSuccess() {
 							if (getData() != null) {
@@ -234,7 +234,7 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 			fCommandControl.queueCommand(
 					fCommandFactory.createMIBreakInsert(bpTargetDmc, true, false, null, 0, 
 							ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT, 0),
-					new DataRequestMonitor<MIBreakInsertInfo>(ImmediateExecutor.getInstance(), rm) {
+					new ImmediateDataRequestMonitor<MIBreakInsertInfo>(rm) {
 						@Override
 						public void handleSuccess() {
 							if (getData() != null) {
@@ -274,7 +274,7 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
     			// Tell GDB to use this PTY
     			fCommandControl.queueCommand(
     					fCommandFactory.createMIInferiorTTYSet((IMIContainerDMContext)getContainerContext(), fPty.getSlaveName()), 
-    					new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), rm) {
+    					new ImmediateDataRequestMonitor<MIInfo>(rm) {
     						@Override
     						protected void handleFailure() {
     							// We were not able to tell GDB to use the PTY
@@ -373,7 +373,7 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 		} else {
 			command = fCommandFactory.createMIExecRun(fContainerDmc);	
 		}
-		fCommandControl.queueCommand(command, new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), rm) {
+		fCommandControl.queueCommand(command, new ImmediateDataRequestMonitor<MIInfo>(rm) {
 			@Override
 			protected void handleSuccess() {
 				// Now that the process is started, the pid has been allocated
@@ -429,7 +429,7 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 	public void stepContinue(RequestMonitor rm) {
 		if (fReverseEnabled && !fUserBreakpointIsOnMain) {
 			fCommandControl.queueCommand(fCommandFactory.createMIExecContinue(fContainerDmc),
-					new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), rm));
+					new ImmediateDataRequestMonitor<MIInfo>(rm));
 		} else {
 			rm.done();
 		}

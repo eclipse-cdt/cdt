@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- * 		Martin Schwab & Thomas Kallenberg - initial API and implementation 
+ * 	   Martin Schwab & Thomas Kallenberg - initial API and implementation 
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.togglefunction;
 
@@ -33,7 +33,6 @@ import org.eclipse.cdt.internal.ui.refactoring.IndexToASTNameHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.TranslationUnitHelper;
 
 public class ToggleRefactoringContext {
-
 	private IASTFunctionDefinition targetDefinition;
 	private IASTFunctionDeclarator targetDeclaration;
 	private IASTTranslationUnit targetDefinitionUnit;
@@ -79,7 +78,7 @@ public class ToggleRefactoringContext {
 				throw new NotSupportedException(
 						Messages.ToggleRefactoringContext_MultipleDeclarations);
 			for (IIndexName iname : decnames) {
-				selectionUnit = getTUForNameinFile(iname);
+				selectionUnit = getTUForNameInFile(iname);
 				IASTName astname = IndexToASTNameHelper.findMatchingASTName(
 						selectionUnit, iname, index);
 				if (astname != null) {
@@ -100,9 +99,8 @@ public class ToggleRefactoringContext {
 				throw new NotSupportedException(Messages.ToggleRefactoringContext_MultipleDefinitions);
 			}
 			for (IIndexName iname : defnames) {
-				IASTTranslationUnit unit = getTUForNameinFile(iname);
-				IASTName astname = IndexToASTNameHelper.findMatchingASTName(
-						unit, iname, index);
+				IASTTranslationUnit unit = getTUForNameInFile(iname);
+				IASTName astname = IndexToASTNameHelper.findMatchingASTName(unit, iname, index);
 				if (astname != null) {
 					targetDefinition = findFunctionDefinition(astname);
 					targetDefinitionUnit = unit;
@@ -150,15 +148,14 @@ public class ToggleRefactoringContext {
 	
 	private void findSelectionUnit() {
 		try {
-			selectionUnit = TranslationUnitHelper.loadTranslationUnit(
-					selectionFile, true);
+			selectionUnit = TranslationUnitHelper.loadTranslationUnit(selectionFile, true);
 		} catch (Exception e) {
 		}
 		if (selectionUnit == null)
 			throw new NotSupportedException(Messages.ToggleRefactoringContext_NoTuFound);
 	}
 
-	private IASTTranslationUnit getTUForNameinFile(IIndexName iname)
+	private IASTTranslationUnit getTUForNameInFile(IIndexName iname)
 			throws CModelException, CoreException {
 		if (isSameFileAsInTU(iname)) {
 			return selectionUnit;

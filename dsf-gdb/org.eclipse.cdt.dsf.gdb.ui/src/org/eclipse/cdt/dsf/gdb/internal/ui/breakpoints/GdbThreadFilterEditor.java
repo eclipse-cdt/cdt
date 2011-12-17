@@ -20,7 +20,7 @@ import java.util.concurrent.RejectedExecutionException;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
-import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
@@ -464,7 +464,7 @@ public class GdbThreadFilterEditor {
                 if (processService != null && procDmc != null) {
                 	processService.getExecutionData(
                             procDmc,
-                            new DataRequestMonitor<IThreadDMData>(ImmediateExecutor.getInstance(), rm) {
+                            new ImmediateDataRequestMonitor<IThreadDMData>(rm) {
                                 @Override
                                 public void handleSuccess() {
                                     final StringBuilder builder = new StringBuilder(getData().getName());
@@ -517,8 +517,7 @@ public class GdbThreadFilterEditor {
                 IProcesses procService = tracker.getService(IProcesses.class);
                 if (procService != null) {
                     IThreadDMContext threadDmc = DMContexts.getAncestorOfType(thread, IThreadDMContext.class);
-                	procService.getExecutionData(threadDmc, new DataRequestMonitor<IThreadDMData>(
-                        ImmediateExecutor.getInstance(), rm) {
+                	procService.getExecutionData(threadDmc, new ImmediateDataRequestMonitor<IThreadDMData>(rm) {
                         @Override
                         protected void handleSuccess() {
                             final StringBuilder builder = new StringBuilder(Messages.GdbThreadFilterEditor_Thread);

@@ -556,12 +556,12 @@ public class CodeFormatterTest extends BaseUITestCase {
 	//}
 
 	//typedef signed int TInt;
-	//extern void Bar(); // should not have space between parens
+	//extern void Bar();  // should not have space between parens
 	//
-	//void Foo() // should not have space between parens
+	//void Foo()    // should not have space between parens
 	//	{
-	//	TInt a( 3 ); // should become TInt a( 3 );
-	//	Bar(); // should not have space between parens
+	//	TInt a( 3 );  // should become TInt a( 3 );
+	//	Bar();   // should not have space between parens
 	//	}
 	public void testSpaceBetweenParen_Bug217918() throws Exception {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_METHOD_DECLARATION,
@@ -893,9 +893,9 @@ public class CodeFormatterTest extends BaseUITestCase {
     //namespace ns1 {
 	//namespace ns2 {
 	//void foo() {
-	//    int x;        // comment
-	//    int y;        // comment
-	//    		        // continuation of the previous comment
+	//    int x;// comment
+	//    int y;// comment
+	//    		// continuation of the previous comment
 	////  int z;  <- comments starting from the beginning of line are not indented
 	//}
 	//}// namespace ns2
@@ -914,6 +914,7 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testLineCommentMinDistanceFromCode() throws Exception {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_MIN_DISTANCE_BETWEEN_CODE_AND_LINE_COMMENT, "2");
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_PRESERVE_WHITE_SPACE_BETWEEN_CODE_AND_LINE_COMMENT, DefaultCodeFormatterConstants.FALSE);
 		assertFormatterResult();
 	}
 

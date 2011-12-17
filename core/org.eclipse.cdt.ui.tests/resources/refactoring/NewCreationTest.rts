@@ -1,4 +1,4 @@
-//!FreefunctionFromHeaderToImpl
+//!FreeFunctionFromHeaderToImpl
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
 filename=A.h
@@ -20,7 +20,7 @@ void freefunction();
 void freefunction() {
 	return;
 }
-//!FreefunctionFromImplToHeader
+//!FreeFunctionFromImplToHeader
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
 filename=A.cpp

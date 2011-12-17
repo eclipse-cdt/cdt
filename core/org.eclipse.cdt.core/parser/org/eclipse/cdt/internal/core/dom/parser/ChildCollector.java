@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser;
 
@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
  * Collector to find all children for an ast-node.
  */
 class ChildCollector extends ASTGenericVisitor {
-
 	private final IASTNode fNode;
 	private List<IASTNode> fNodes;
 

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser;
 
@@ -36,26 +36,32 @@ public class ProblemFunctionType extends ProblemType implements ICPPFunctionType
 		return new ProblemFunctionType(buffer.getShort());
 	}
 
+	@Override
 	public IType getReturnType() {
 		return new ProblemType(getID());
 	}
 
+	@Override
 	public IType[] getParameterTypes() {
 		return new IType[] {new ProblemType(getID())};
 	}
 
+	@Override
 	public boolean isConst() {
 		return false;
 	}
 
+	@Override
 	public boolean isVolatile() {
 		return false;
 	}
 
+	@Override
 	public boolean takesVarArgs() {
 		return false;
 	}
 
+	@Override
 	public IPointerType getThisType() {
 		return new CPPPointerType(new ProblemType(getID()));
 	}

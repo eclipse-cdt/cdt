@@ -30,6 +30,7 @@ import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
@@ -119,7 +120,7 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
     
     @Override
     public void initialize(final RequestMonitor requestMonitor) {
-        super.initialize( new RequestMonitor(ImmediateExecutor.getInstance(), requestMonitor) {
+        super.initialize(new ImmediateRequestMonitor(requestMonitor) {
             @Override
             protected void handleSuccess() {
                 doInitialize(requestMonitor);

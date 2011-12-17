@@ -15,7 +15,7 @@ import java.util.concurrent.RejectedExecutionException;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
-import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
@@ -50,7 +50,7 @@ public class GdbSuspendTrigger extends DsfSuspendTrigger {
 
                     processService.getProcessesBeingDebugged(
                         controlService.getContext(),
-                        new DataRequestMonitor<IDMContext[]>(ImmediateExecutor.getInstance(), rm) {
+                        new ImmediateDataRequestMonitor<IDMContext[]>(rm) {
                             @Override
                             public void handleSuccess() {
                                 IContainerDMContext[] containers = new IContainerDMContext[getData().length];

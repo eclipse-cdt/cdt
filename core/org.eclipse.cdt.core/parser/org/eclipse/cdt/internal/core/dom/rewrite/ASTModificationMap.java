@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Markus Schorn - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.rewrite;
 
@@ -15,6 +16,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification.ModificationKind;
@@ -22,20 +24,18 @@ import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification.ModificationKin
 /**
  * Represents a list of modifications to an AST node. If there are nested modifications
  * to nodes introduced by insertions or replacements, these modifications are collected
- * in separate modification maps. I.e. a modification map represents one level of 
- * modifications.
+ * in separate modification maps. I.e. a modification map represents one level of modifications.
  * @see ASTModificationStore
  * @since 5.0
  */
 public class ASTModificationMap {
-	private HashMap<IASTNode, List<ASTModification>> fModifications= new HashMap<IASTNode, List<ASTModification>>();
+	private final Map<IASTNode, List<ASTModification>> fModifications= new HashMap<IASTNode, List<ASTModification>>();
 
 	/**
 	 * Adds a modification to this modification map.
 	 */
 	public void addModification(ASTModification mod) {
-		final IASTNode targetNode = mod.getKind() == ASTModification.ModificationKind.INSERT_BEFORE ?
-				mod.getTargetNode().getParent() : mod.getTargetNode();
+		IASTNode targetNode = mod.getTargetNode();
 		List<ASTModification> mods= fModifications.get(targetNode);
 		if (mods == null || mods.isEmpty()) {
 			mods= new ArrayList<ASTModification>();

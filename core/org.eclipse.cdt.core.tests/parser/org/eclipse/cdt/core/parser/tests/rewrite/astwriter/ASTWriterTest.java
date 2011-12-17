@@ -97,7 +97,7 @@ public class ASTWriterTest extends RewriteBaseTest {
                 
         IScanner scanner = AST2BaseTest.createScanner(codeReader, language, ParserMode.COMPLETE_PARSE, scannerInfo);
         
-        ISourceCodeParser parser2 = null;
+        ISourceCodeParser parser = null;
         if (language == ParserLanguage.CPP) {
             ICPPParserExtensionConfiguration config = null;
             if (useGNUExtensions) {
@@ -105,7 +105,7 @@ public class ASTWriterTest extends RewriteBaseTest {
             } else {
             	config = new ANSICPPParserExtensionConfiguration();
             }
-            parser2 = new GNUCPPSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, config);
+            parser = new GNUCPPSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, config);
         } else {
             ICParserExtensionConfiguration config = null;
 
@@ -115,9 +115,9 @@ public class ASTWriterTest extends RewriteBaseTest {
             	config = new ANSICParserExtensionConfiguration();
             }
             
-            parser2 = new GNUCSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, config);
+            parser = new GNUCSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, config);
         }
-        return parser2;
+        return parser;
 	}
 	
 	private boolean getGNUExtension(TestSourceFile file) {

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *     IBM - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -24,8 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTCatchHandler extends IASTStatement {
-
-	public static final ICPPASTCatchHandler[] EMPTY_CATCHHANDLER_ARRAY = new ICPPASTCatchHandler[0];
+	public static final ICPPASTCatchHandler[] EMPTY_CATCHHANDLER_ARRAY = {};
 
 	/**
 	 * <code>DECLARATION</code> represents the nested declaration within the catch handler.
@@ -78,10 +77,12 @@ public interface ICPPASTCatchHandler extends IASTStatement {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICPPASTCatchHandler copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICPPASTCatchHandler copy(CopyStyle style);
 }

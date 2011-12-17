@@ -31,8 +31,8 @@ public class PointerToParameterTest extends ChangeGeneratorTest {
 
 	@Override
 	protected void setUp() throws Exception {
-		source = "void foo(int parameter){\n}\n\n"; //$NON-NLS-1$
-		expectedSource = "void foo(int *parameter){\n}\n\n"; //$NON-NLS-1$
+		source = "void foo(int parameter) {\n}\n\n"; //$NON-NLS-1$
+		expectedSource = "void foo(int *parameter) {\n}\n\n"; //$NON-NLS-1$
 		super.setUp();
 	}
 
@@ -46,12 +46,13 @@ public class PointerToParameterTest extends ChangeGeneratorTest {
 			@Override
 			public int visit(IASTDeclarator declarator) {
 				if (declarator instanceof CPPASTFunctionDeclarator) {
-					CPPASTFunctionDeclarator functionDeclarator = (CPPASTFunctionDeclarator)declarator;
+					CPPASTFunctionDeclarator functionDeclarator = (CPPASTFunctionDeclarator) declarator;
 					IASTParameterDeclaration[] parameters = functionDeclarator.getParameters();
 					for (IASTParameterDeclaration curParam : parameters){
 						if (String.valueOf(curParam.getDeclarator().getName().toCharArray()).equals("parameter")){ //$NON-NLS-1$
 							CPPASTPointer addedPointer = new CPPASTPointer();
-							ASTModification modification = new ASTModification(ModificationKind.APPEND_CHILD, curParam.getDeclarator(), addedPointer, null);
+							ASTModification modification = new ASTModification(ModificationKind.APPEND_CHILD,
+									curParam.getDeclarator(), addedPointer, null);
 							modStore.storeModification(null, modification);
 						}
 					}

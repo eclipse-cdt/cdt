@@ -26,9 +26,8 @@ import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
-import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Query;
-import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
 import org.eclipse.cdt.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
@@ -353,7 +352,7 @@ public class MIInferiorProcess extends Process
         tracker.dispose();
         if (procService != null) {
         	IProcessDMContext procDmc = DMContexts.getAncestorOfType(fContainerDMContext, IProcessDMContext.class);
-        	procService.terminate(procDmc, new RequestMonitor(ImmediateExecutor.getInstance(), null));
+        	procService.terminate(procDmc, new ImmediateRequestMonitor());
         } else {
         	setTerminated();
         }

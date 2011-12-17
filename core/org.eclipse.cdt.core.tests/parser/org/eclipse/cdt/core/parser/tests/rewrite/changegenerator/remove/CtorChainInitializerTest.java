@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.remove;
 
@@ -24,14 +24,14 @@ import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification.ModificationKin
 
 public class CtorChainInitializerTest extends ChangeGeneratorTest {
 
-	public CtorChainInitializerTest(){
+	public CtorChainInitializerTest() {
 		super("Remove Ctor Initializer"); //$NON-NLS-1$
 	}
 
 	@Override
 	protected void setUp() throws Exception {
-		source = "TestClass::TestClass(int a):alpha(a){\n}\n\n"; //$NON-NLS-1$
-		expectedSource = "TestClass::TestClass(int a){\n}\n\n"; //$NON-NLS-1$
+		source = "TestClass::TestClass(int a):alpha(a) {\n}\n\n"; //$NON-NLS-1$
+		expectedSource = "TestClass::TestClass(int a) {\n}\n\n"; //$NON-NLS-1$
 		super.setUp();
 	}
 
@@ -40,8 +40,7 @@ public class CtorChainInitializerTest extends ChangeGeneratorTest {
 	}
 
 	@Override
-	protected ASTVisitor createModificator(
-			final ASTModificationStore modStore) {
+	protected ASTVisitor createModificator(final ASTModificationStore modStore) {
 		return new ASTVisitor() {
 			{
 				shouldVisitDeclarators = true;
@@ -50,11 +49,12 @@ public class CtorChainInitializerTest extends ChangeGeneratorTest {
 			@Override
 			public int visit(IASTDeclarator declarator) {
 				if (declarator instanceof CPPASTFunctionDeclarator) {
-					CPPASTFunctionDeclarator functionDeclarator = (CPPASTFunctionDeclarator)declarator;
+					CPPASTFunctionDeclarator functionDeclarator = (CPPASTFunctionDeclarator) declarator;
 					ICPPASTConstructorChainInitializer[] ctorInitializers = functionDeclarator.getConstructorChain();
-					for(ICPPASTConstructorChainInitializer curInitializer : ctorInitializers){		
-							ASTModification modification = new ASTModification(ModificationKind.REPLACE, curInitializer, null, null);
-							modStore.storeModification(null, modification);
+					for (ICPPASTConstructorChainInitializer curInitializer : ctorInitializers){		
+						ASTModification modification = new ASTModification(ModificationKind.REPLACE,
+								curInitializer, null, null);
+						modStore.storeModification(null, modification);
 					}
 				}
 				return PROCESS_CONTINUE;

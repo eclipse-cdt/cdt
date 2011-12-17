@@ -45,17 +45,18 @@ public class ASTCommenterVisitor extends ASTVisitor {
 	private NodeCommenter nodeCommenter;
 	
 	{
-		shouldVisitExpressions = true;
-		shouldVisitStatements = true;
-		shouldVisitNames = true;
-		shouldVisitDeclarations = true;
-		shouldVisitDeclSpecifiers = true;
-		shouldVisitDeclarators = true;
-		shouldVisitInitializers = true;
 		shouldVisitBaseSpecifiers = true;
+		shouldVisitDeclarations = true;
+		shouldVisitDeclarators = true;
+		shouldVisitDeclSpecifiers = true;
+		shouldVisitExpressions = true;
+		shouldVisitInitializers = true;
+		shouldVisitNames = true;
 		shouldVisitNamespaces = true;
-		shouldVisitTemplateParameters = true;
 		shouldVisitParameterDeclarations = true;
+		shouldVisitStatements = true;
+		shouldVisitTemplateParameters = true;
+		shouldVisitTypeIds = true;
 	}
 	
 	public ASTCommenterVisitor(CommentHandler commHandler, NodeCommentMap commentMap) {
@@ -90,6 +91,11 @@ public class ASTCommenterVisitor extends ASTVisitor {
 	@Override
 	public int visit(IASTStatement statement) {
 		return nodeCommenter.appendComments((ASTNode) statement);
+	}
+
+	@Override
+	public int visit(IASTTypeId typeId) {
+		return nodeCommenter.appendComments((ASTNode) typeId);
 	}
 
 	@Override

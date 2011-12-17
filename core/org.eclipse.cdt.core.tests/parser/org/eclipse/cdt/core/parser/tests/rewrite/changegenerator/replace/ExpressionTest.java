@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.replace;
 
@@ -25,20 +25,16 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
 
-
-
-
-
 public class ExpressionTest extends ChangeGeneratorTest {
 
-	public ExpressionTest(){
+	public ExpressionTest() {
 		super("Replace Expression"); //$NON-NLS-1$
 	}
 
 	@Override
 	protected void setUp() throws Exception {
-		source = "void main(){int s = 0, c = 0, h = 0;\ns = 3, c = 4, h = 5;}"; //$NON-NLS-1$
-		expectedSource = "void main(){int s = 0, c = 0, h = 0;\ns = 3, c = 9, h = 5;}"; //$NON-NLS-1$
+		source = "void main() {\n\tint s = 0, c = 0, h = 0;\n\ts = 3, c = 4, h = 5;\n}"; //$NON-NLS-1$
+		expectedSource = "void main() {\n\tint s = 0, c = 0, h = 0;\n\ts = 3, c = 9, h = 5;\n}"; //$NON-NLS-1$
 		super.setUp();
 	}
 
@@ -46,10 +42,8 @@ public class ExpressionTest extends ChangeGeneratorTest {
 		return new ExpressionTest();
 	}
 
-
 	@Override
-	protected ASTVisitor createModificator(
-			final ASTModificationStore modStore) {
+	protected ASTVisitor createModificator(final ASTModificationStore modStore) {
 		return new ASTVisitor() {
 			{
 				shouldVisitExpressions = true;
@@ -60,8 +54,11 @@ public class ExpressionTest extends ChangeGeneratorTest {
 				if (expression instanceof IASTExpressionList) {
 					IASTExpressionList expressionList = (IASTExpressionList) expression;
 					IASTExpression[] expressions = expressionList.getExpressions();
-					CPPASTBinaryExpression binEx = new CPPASTBinaryExpression(IASTBinaryExpression.op_assign, new CPPASTIdExpression(new CPPASTName("c".toCharArray())), new CPPASTLiteralExpression(0, "9")); //$NON-NLS-1$ //$NON-NLS-2$
-					ASTModification modification = new ASTModification(ASTModification.ModificationKind.REPLACE, expressions[1], binEx, null);
+					CPPASTBinaryExpression binEx = new CPPASTBinaryExpression(IASTBinaryExpression.op_assign,
+							new CPPASTIdExpression(new CPPASTName("c".toCharArray())), //$NON-NLS-1$
+							new CPPASTLiteralExpression(0, "9".toCharArray())); //$NON-NLS-1$
+					ASTModification modification = new ASTModification(ASTModification.ModificationKind.REPLACE,
+							expressions[1], binEx, null);
 					modStore.storeModification(null, modification);
 				}
 				return PROCESS_CONTINUE;

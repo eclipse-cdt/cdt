@@ -15,8 +15,8 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -100,29 +100,29 @@ public class ASTModificationHelper {
 
 	private void copyComments(IASTNode newNode, IASTNode oldNode, NodeCommentMap commentMap) {
 		// Attach all the comments that is attached to oldNode to newNode
-		ArrayList<IASTComment> leadingComments = commentMap.getLeadingCommentsForNode(oldNode);
+		List<IASTComment> leadingComments = commentMap.getLeadingCommentsForNode(oldNode);
 		for (IASTComment comment : leadingComments) {
 			commentMap.addLeadingCommentToNode(newNode, comment);
 		}
 		
-		ArrayList<IASTComment> trailingComments = commentMap.getTrailingCommentsForNode(oldNode);
+		List<IASTComment> trailingComments = commentMap.getTrailingCommentsForNode(oldNode);
 		for (IASTComment comment : trailingComments) {
 			commentMap.addTrailingCommentToNode(newNode, comment);
 		}
 		
-		ArrayList<IASTComment> freestandingComments = commentMap.getFreestandingCommentsForNode(oldNode);
+		List<IASTComment> freestandingComments = commentMap.getFreestandingCommentsForNode(oldNode);
 		for (IASTComment comment : freestandingComments) {
 			commentMap.addFreestandingCommentToNode(newNode, comment);
 		}
 		
 		// Detach comments from oldNode (to avoid memory leak)
-		HashMap<IASTNode, ArrayList<IASTComment>> leadingMap = commentMap.getLeadingMap();
+		Map<IASTNode, List<IASTComment>> leadingMap = commentMap.getLeadingMap();
 		leadingMap.remove(oldNode);
 		
-		HashMap<IASTNode, ArrayList<IASTComment>> trailingMap = commentMap.getTrailingMap();
+		Map<IASTNode, List<IASTComment>> trailingMap = commentMap.getTrailingMap();
 		trailingMap.remove(oldNode);
 		
-		HashMap<IASTNode, ArrayList<IASTComment>> freestandingMap = commentMap.getFreestandingMap();
+		Map<IASTNode, List<IASTComment>> freestandingMap = commentMap.getFreestandingMap();
 		freestandingMap.remove(oldNode);
 	}
 

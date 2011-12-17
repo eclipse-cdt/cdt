@@ -17,9 +17,9 @@ import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.tests.dsf.IViewerUpdatesListenerConstants;
 import org.eclipse.cdt.tests.dsf.vm.TestModel.TestElement;
-import org.eclipse.debug.internal.ui.viewers.model.ITreeModelContentProviderTarget;
-import org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer;
+import org.eclipse.debug.internal.ui.viewers.model.IInternalTreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.layout.FillLayout;
@@ -73,7 +73,7 @@ abstract public class PerformanceTests extends TestCase implements IViewerUpdate
         fShell.open ();
     }
 
-    abstract protected ITreeModelContentProviderTarget createViewer(Display display, Shell shell);
+    abstract protected IInternalTreeModelViewer createViewer(Display display, Shell shell);
     
     /**
      * @throws java.lang.Exception

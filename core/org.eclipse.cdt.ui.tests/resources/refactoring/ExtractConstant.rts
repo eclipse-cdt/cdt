@@ -13,8 +13,6 @@ public:
 };
 
 #endif /*A_H_*/
-
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -25,12 +23,11 @@ public:
 	virtual ~A();
 	int foo();
 	void bar();
+
 	static const int theAnswer = 42;
 };
 
 #endif /*A_H_*/
-
-
 //@A.cpp
 #include "A.h"
 
@@ -48,7 +45,6 @@ void A::bar() {
 	int a = 42;
 	int b = 42;
 }
-
 //=
 #include "A.h"
 
@@ -66,7 +62,6 @@ void A::bar() {
 	int a = theAnswer;
 	int b = theAnswer;
 }
-
 //!ExtractConstantInt 2
 //#org.eclipse.cdt.ui.tests.refactoring.extractconstant.ExtractConstantRefactoringTest
 //@A.h
@@ -82,8 +77,6 @@ public:
 };
 
 #endif /*A_H_*/
-
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -94,12 +87,11 @@ public:
 	virtual ~A();
 	int foo();
 	void bar();
+
 	static const int theAnswer = 42;
 };
 
 #endif /*A_H_*/
-
-
 //@A.cpp
 #include "A.h"
 
@@ -118,7 +110,6 @@ void A::bar() {
 	int a = 42;
 	int b = 42;
 }
-
 //=
 #include "A.h"
 
@@ -137,7 +128,6 @@ void A::bar() {
 	int a = theAnswer;
 	int b = theAnswer;
 }
-
 //!ExtractConstantFloat
 //#org.eclipse.cdt.ui.tests.refactoring.extractconstant.ExtractConstantRefactoringTest
 //@A.h
@@ -153,8 +143,6 @@ public:
 };
 
 #endif /*A_H_*/
-
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -165,12 +153,11 @@ public:
 	virtual ~A();
 	float foo();
 	void bar();
+
 	static const float theAnswer = 42.0f;
 };
 
 #endif /*A_H_*/
-
-
 //@A.cpp
 #include "A.h"
 
@@ -188,7 +175,6 @@ void A::bar() {
 	float a = 42.0f;
 	float b = 42.0f;
 }
-
 //=
 #include "A.h"
 
@@ -206,7 +192,6 @@ void A::bar() {
 	float a = theAnswer;
 	float b = theAnswer;
 }
-
 //!ExtractConstantDouble
 //#org.eclipse.cdt.ui.tests.refactoring.extractconstant.ExtractConstantRefactoringTest
 //@A.h
@@ -222,8 +207,6 @@ public:
 };
 
 #endif /*A_H_*/
-
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -234,12 +217,11 @@ public:
 	virtual ~A();
 	double foo();
 	void bar();
+
 	static const double theAnswer = 42.0;
 };
 
 #endif /*A_H_*/
-
-
 //@A.cpp
 #include "A.h"
 
@@ -257,7 +239,6 @@ void A::bar() {
 	double a = 42.0;
 	double b = 42.0;
 }
-
 //=
 #include "A.h"
 
@@ -275,7 +256,6 @@ void A::bar() {
 	double a = theAnswer;
 	double b = theAnswer;
 }
-
 //!ExtractConstantStaticInt
 //#org.eclipse.cdt.ui.tests.refactoring.extractconstant.ExtractConstantRefactoringTest
 //@A.h
@@ -291,7 +271,6 @@ public:
 };
 
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -305,7 +284,6 @@ public:
 };
 
 #endif /*A_H_*/
-
 //@A.cpp
 #include "A.h"
 
@@ -322,7 +300,6 @@ int A::foo() {
 int bar() {
 	return /*$*/42/*$$*/;
 }
-
 //=
 #include "A.h"
 
@@ -345,7 +322,6 @@ int A::foo() {
 int bar() {
 	return theAnswer;
 }
-
 //!replaceNumberProtected
 //#org.eclipse.cdt.ui.tests.refactoring.extractconstant.ExtractConstantRefactoringTest
 //@.config

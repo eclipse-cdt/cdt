@@ -98,17 +98,12 @@ public class DeclarationWriter extends NodeWriter {
 			writeVisibilityLabel((ICPPASTVisibilityLabel) declaration);
 		}
 
-		if (hasTrailingComments(declaration)) {
-			writeTrailingComments(declaration, false);
-		}
-		if (addNewLine) {
-			scribe.newLine();
-		}
+		writeTrailingComments(declaration, addNewLine);
 		if (hasFreestandingComments(declaration)) {
 			if (declaration instanceof IASTFunctionDefinition) {
 				scribe.newLine();
 			}
-			writeFreeStandingComments(declaration);
+			writeFreestandingComments(declaration);
 		}
 	}
 
@@ -186,7 +181,7 @@ public class DeclarationWriter extends NodeWriter {
 		scribe.newLine(2);
 		writeDeclarationsInNamespace(namespaceDefinition, namespaceDefinition.getDeclarations());
 		if (hasFreestandingComments(namespaceDefinition)) {
-			writeFreeStandingComments(namespaceDefinition);
+			writeFreestandingComments(namespaceDefinition);
 		}
 		scribe.newLine();
 		scribe.print('}');

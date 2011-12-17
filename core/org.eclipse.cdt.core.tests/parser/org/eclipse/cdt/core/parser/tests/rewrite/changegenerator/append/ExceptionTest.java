@@ -35,8 +35,8 @@ public class ExceptionTest extends ChangeGeneratorTest {
 
 	@Override
 	protected void setUp() throws Exception {
-		source = "void foo(int parameter){\n}\n\n"; //$NON-NLS-1$
-		expectedSource = "void foo(int parameter) throw (int){\n}\n\n"; //$NON-NLS-1$
+		source = "void foo(int parameter) {\n}\n\n"; //$NON-NLS-1$
+		expectedSource = "void foo(int parameter) throw (int) {\n}\n\n"; //$NON-NLS-1$
 		super.setUp();
 	}
 	
@@ -57,7 +57,8 @@ public class ExceptionTest extends ChangeGeneratorTest {
 					exDeclSpec.setType(IASTSimpleDeclSpecifier.t_int);
 					exception.setDeclSpecifier(exDeclSpec);
 					exception.setAbstractDeclarator(exceptionDeclarator);
-					ASTModification modification = new ASTModification(ModificationKind.APPEND_CHILD, declarator, exception, null);
+					ASTModification modification = new ASTModification(ModificationKind.APPEND_CHILD,
+							declarator, exception, null);
 					modStore.storeModification(null, modification);
 				}
 				return PROCESS_CONTINUE;

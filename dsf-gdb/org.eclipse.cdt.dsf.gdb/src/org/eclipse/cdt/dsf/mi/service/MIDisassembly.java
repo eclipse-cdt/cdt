@@ -15,7 +15,7 @@ import java.math.BigInteger;
 import java.util.Hashtable;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
-import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.debug.service.IDisassembly;
 import org.eclipse.cdt.dsf.debug.service.IInstruction;
@@ -54,7 +54,7 @@ public class MIDisassembly extends AbstractDsfService implements IDisassembly {
      */
     @Override
     public void initialize(final RequestMonitor rm) {
-        super.initialize(new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
+        super.initialize(new ImmediateRequestMonitor(rm) {
             @Override
             protected void handleSuccess() {
                 doInitialize(rm);

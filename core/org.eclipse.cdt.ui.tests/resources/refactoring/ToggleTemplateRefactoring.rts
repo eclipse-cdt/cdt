@@ -57,8 +57,6 @@ class A {
 		}
 	};
 };
-
-
 //!TestTemplateFunctionInHeaderToInClassWithTemplateSelected
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
@@ -74,7 +72,6 @@ class A {
 class A {
 	template<typename T>
 	T foo();
-
 };
 
 template<typename T>
@@ -101,7 +98,6 @@ class A {
 public:
 	template<typename U, typename V>
 	void foo(const U& u, const V& v);
-
 };
 
 template<typename T, typename S>
@@ -135,7 +131,4 @@ public:
 	void foo(const U& u, const V& v) {
 		return;
 	}
-
 };
-
-

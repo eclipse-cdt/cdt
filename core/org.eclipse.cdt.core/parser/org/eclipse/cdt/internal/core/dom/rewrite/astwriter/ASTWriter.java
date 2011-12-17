@@ -14,9 +14,13 @@ package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
@@ -34,23 +38,12 @@ import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
  */
 public class ASTWriter {
 	private ASTModificationStore modificationStore = new ASTModificationStore();
-	private String givenIndentation = ""; //$NON-NLS-1$
 
 	/**
 	 * Creates a <code>ASTWriter</code>.
 	 */
 	public ASTWriter() {
 		super();
-	}
-
-	/**
-	 * Creates a <code>ASTWriter</code> that indents the code.
-	 *
-	 * @param givenIndentation The indentation added to each line
-	 */
-	public ASTWriter(String givenIndentation) {
-		super();
-		this.givenIndentation = givenIndentation;
 	}
 
 	/**
@@ -75,10 +68,9 @@ public class ASTWriter {
 	 *
 	 * @see ASTCommenter#getCommentedNodeMap(org.eclipse.cdt.core.dom.ast.IASTTranslationUnit)
 	 */
-	public String write(IASTNode rootNode, NodeCommentMap commentMap)
-			throws ProblemRuntimeException {
+	public String write(IASTNode rootNode, NodeCommentMap commentMap) throws ProblemRuntimeException {
 		ChangeGeneratorWriterVisitor writer = new ChangeGeneratorWriterVisitor(
-				modificationStore, givenIndentation, null, commentMap);
+				modificationStore, null, commentMap);
 		if (rootNode != null) {
 			rootNode.accept(writer);
 		}
@@ -152,10 +144,35 @@ public class ASTWriter {
 	 * @return <code>true</code> if the blank line between the nodes is needed.
 	 */
 	public static boolean requireBlankLineInBetween(IASTNode node1, IASTNode node2) {
-		if (requiresTrailingBlankLine(node1))
+		if (node1 instanceof ICPPASTVisibilityLabel && node2 instanceof ICPPASTVisibilityLabel) {
 			return true;
+		}
+		if (suppressesTrailingBlankLine(node1)) {
+			return false;
+		}
+		if (node1 instanceof IASTPreprocessorIncludeStatement !=
+				node2 instanceof IASTPreprocessorIncludeStatement) {
+			return true;
+		}
+		if (isFunctionDeclaration(node1) != isFunctionDeclaration(node2)) {
+			return true;
+		}
+		if (requiresTrailingBlankLine(node1)) {
+			return true;
+		}
 
-		return !suppressesTrailingBlankLine(node1) && requiresLeadingBlankLine(node2);
+		return requiresLeadingBlankLine(node2);
+	}
+
+	private static boolean isFunctionDeclaration(IASTNode node) {
+		if (!(node instanceof IASTSimpleDeclaration)) {
+			return false;
+		}
+		for (IASTDeclarator declarator : ((IASTSimpleDeclaration) node).getDeclarators()) {
+			if (declarator instanceof IASTFunctionDeclarator)
+				return true;
+		}
+		return false;
 	}
 
 	/**

@@ -170,7 +170,7 @@ int A::help() {
 	return 42;
 }
 
-//!ExtractFunctionRefactoringTest dublicate with field
+//!ExtractFunctionRefactoringTest duplicate with field
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
 replaceduplicates=true
@@ -267,7 +267,7 @@ int A::help() {
 	return 42;
 }
 
-//!ExtractFunctionRefactoringTest dublicate with field in marked scope
+//!ExtractFunctionRefactoringTest duplicate with field in marked scope
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
 replaceduplicates=true
@@ -289,7 +289,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -308,7 +307,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //@A.cpp
 #include "A.h"
 
@@ -336,7 +334,6 @@ void A::foo() {
 int A::help() {
 	return 42;
 }
-
 //=
 #include "A.h"
 
@@ -360,6 +357,7 @@ int A::exp(int j) {
 
 void A::foo() {
 	int j = 0;
+
 	j = exp(j);
 	field++;
 	j++;
@@ -368,7 +366,6 @@ void A::foo() {
 int A::help() {
 	return 42;
 }
-
 //!ExtractFunctionRefactoringTest duplicates with different Names and return type
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
@@ -561,7 +558,7 @@ int A::help() {
 	return 42;
 }
 
-//!ExtractFunctionRefactoringTest with duplicates name used afterwards in duplicate but not in original selection this is no dublicate
+//!ExtractFunctionRefactoringTest with duplicate name used afterwards in duplicate but not in original selection this is no duplicate
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
 replaceduplicates=true

@@ -267,7 +267,7 @@ public class DeclSpecWriter extends NodeWriter {
 		}
 
 		if (hasFreestandingComments(compDeclSpec)) {
-			writeFreeStandingComments(compDeclSpec);			
+			writeFreestandingComments(compDeclSpec);			
 		}
 		scribe.decrementIndentationLevel();
 		scribe.print('}');

@@ -25,7 +25,9 @@ import org.eclipse.cdt.core.IProcessInfo;
 import org.eclipse.cdt.core.IProcessList;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
@@ -496,7 +498,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
      */
     @Override
     public void initialize(final RequestMonitor requestMonitor) {
-    	super.initialize(new RequestMonitor(ImmediateExecutor.getInstance(), requestMonitor) {
+    	super.initialize(new ImmediateRequestMonitor(requestMonitor) {
     		@Override
     		protected void handleSuccess() {
     			doInitialize(requestMonitor);
@@ -840,7 +842,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 	    						if (binaryPath != null) {
     				    			fCommandControl.queueCommand(
     				    					fCommandFactory.createMIFileExecAndSymbols(fContainerDmc, binaryPath), 
-			    							new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), rm));
+			    							new ImmediateDataRequestMonitor<MIInfo>(rm));
     				    			return;
 	    						}
 
@@ -1196,7 +1198,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
    		} else if (thread instanceof IMIProcessDMContext) {
 			getDebuggingContext(
 					thread, 
-					new DataRequestMonitor<IDMContext>(ImmediateExecutor.getInstance(), rm) {
+					new ImmediateDataRequestMonitor<IDMContext>(rm) {
 						@Override
 						protected void handleSuccess() {
 							if (getData() instanceof IMIContainerDMContext) {
@@ -1207,7 +1209,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 
 								fCommandControl.queueCommand(
 										fCommandFactory.createMIInterpreterExecConsoleKill((IMIContainerDMContext)getData()),
-										new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), rm));
+										new ImmediateDataRequestMonitor<MIInfo>(rm));
 							} else {
 					            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid process context.", null)); //$NON-NLS-1$
 					            rm.done();								
@@ -1279,7 +1281,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 		final String groupId = ((IMIContainerDMContext)containerDmc).getGroupId();
 		
 		// This request monitor actually performs the restart
-		RequestMonitor restartRm = new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
+		RequestMonitor restartRm = new ImmediateRequestMonitor(rm) {
 			@Override
 			protected void handleSuccess() {
 				// For a restart, we are given the container context of the original process.  However, we want to start
@@ -1287,7 +1289,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
 				// Pass in the groupId because starting with GDB 7.2, we must re-use the same groupId.
 				IContainerDMContext newContainerDmc = createContainerContextForRestart(groupId);
 
-				startOrRestart(newContainerDmc, attributes, true, new DataRequestMonitor<IContainerDMContext>(ImmediateExecutor.getInstance(), rm) {
+				startOrRestart(newContainerDmc, attributes, true, new ImmediateDataRequestMonitor<IContainerDMContext>(rm) {
 					@Override
 					protected void handleCompleted() {
 						if (!isSuccess()) {
@@ -1414,7 +1416,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService
     				// We also do this for a remote attach session, since the 'auto terminate' preference
     				// is enabled.  If users want to keep the session alive to attach to another process,
     				// they can simply disable that preference
-    				fCommandControl.terminate(new RequestMonitor(ImmediateExecutor.getInstance(), null));
+    				fCommandControl.terminate(new ImmediateRequestMonitor());
     			}
     		}
     		fProcRestarting = false;

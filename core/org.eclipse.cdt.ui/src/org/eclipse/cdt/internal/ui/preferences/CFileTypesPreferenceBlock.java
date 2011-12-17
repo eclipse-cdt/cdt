@@ -62,7 +62,6 @@ import org.eclipse.cdt.internal.ui.util.SWTUtil;
  * for displaying/editing CDT file type associations
  */
 public class CFileTypesPreferenceBlock {
-
 	private static final int 	COL_PATTERN		= 0;
 	private static final int 	COL_DESCRIPTION	= 1;
 	private static final int 	COL_STATUS	= 2;
@@ -167,7 +166,6 @@ public class CFileTypesPreferenceBlock {
 		public String getText(Object element) {
 			return getColumnText(element, 0);
 		}
-
 	}
 
 	public CFileTypesPreferenceBlock() {
@@ -400,9 +398,9 @@ public class CFileTypesPreferenceBlock {
 
 	public IContentType[] getRegistedContentTypes() {
 		if (fContentTypes == null) {
-			String [] ids = CoreModel.getRegistedContentTypeIds();
+			String[] ids = CoreModel.getRegistedContentTypeIds();
 			IContentTypeManager manager = Platform.getContentTypeManager();
-			IContentType [] ctypes = new IContentType[ids.length];
+			IContentType[] ctypes = new IContentType[ids.length];
 			for (int i = 0; i < ids.length; i++) {
 				ctypes[i] = manager.getContentType(ids[i]);
 			}
@@ -502,8 +500,7 @@ public class CFileTypesPreferenceBlock {
 		IContentTypeSettings settings;
 		if (fInput == null) {
 			settings= assoc.getContentType();
-		}
-		else {
+		} else {
 			try {
 				settings= assoc.getContentType().getSettings(new ProjectScope(fInput));
 			} catch (CoreException e) {

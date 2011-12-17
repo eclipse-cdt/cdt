@@ -41,9 +41,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
-import org.eclipse.cdt.internal.core.dom.rewrite.util.FileContentHelper;
-import org.eclipse.cdt.internal.core.dom.rewrite.util.FileHelper;
-import org.eclipse.core.resources.IFile;
 
 /**
  * Generates source code of statement nodes. The actual string operations are delegated
@@ -154,12 +151,8 @@ public class StatementWriter extends NodeWriter {
 			throw new ProblemRuntimeException((IASTProblemStatement)statement);
 		} 
 		
-		if (hasTrailingComments(statement)) {
-			writeTrailingComments(statement, newLine);			
-		} else if (newLine) {
-			scribe.newLine();
-		}
-		
+		writeTrailingComments(statement, newLine);			
+
 		return ASTVisitor.PROCESS_SKIP;
 	}
 
@@ -389,7 +382,7 @@ public class StatementWriter extends NodeWriter {
 		}
 		
 		if (hasFreestandingComments(compoundStatement)) {
-			writeFreeStandingComments(compoundStatement);			
+			writeFreestandingComments(compoundStatement);			
 		}
 		
 		if (decrementIndentationLevelOneMore) {
@@ -438,11 +431,7 @@ public class StatementWriter extends NodeWriter {
 	}
 
 	protected int writeMixedStatement(IASTStatement statement) {
-		IFile file = FileHelper.getFileFromNode(statement);
-		int offset = statement.getFileLocation().getNodeOffset();
-		int length = statement.getFileLocation().getNodeLength();
-		String code = FileContentHelper.getContent(file, offset, length);
-		
+		String code = statement.getRawSignature();
 		scribe.println(code);
 		return ASTVisitor.PROCESS_SKIP;
 	}

@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.changegenerator.append;
 
@@ -16,13 +16,11 @@ import junit.framework.TestSuite;
 
 /**
  * @author Thomas Corbat
- *
  */
-public class AppendTestSuite{
+public class AppendTestSuite {
 
 	public static Test suite() throws Exception {
-		TestSuite suite = new TestSuite("Changegenerator Append Child Tests");
-
+		TestSuite suite = new TestSuite("ChangeGenerator Append Child Tests");
 		suite.addTest(ParameterTest.suite());
 		suite.addTest(ParameterToListTest.suite());
 		suite.addTest(PointerToParameterTest.suite());
@@ -32,7 +30,6 @@ public class AppendTestSuite{
 		suite.addTest(ArrayModifierTest.suite());
 		suite.addTest(ExpressionTest.suite());
 		suite.addTest(ArraySizeExpressionTest.suite());
-				
 		return suite;
 	}
 }

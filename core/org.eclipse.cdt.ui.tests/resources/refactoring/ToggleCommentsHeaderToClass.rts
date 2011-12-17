@@ -21,8 +21,6 @@ class A {
 		return T();
 	}
 };
-
-
 //!HeaderToClassRetainTopComments
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
@@ -44,18 +42,14 @@ inline T A<T>::member() {
 //=
 template<typename T>
 class A {
-	// Third comment
-	// Fourth comment
 	// First comment
 	// Second comment
+	// Third comment
+	// Fourth comment
 	T member() {
 		return T();
 	}
 };
-
-
-
-
 //!HeaderToClassTryCatchComment
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
@@ -93,8 +87,6 @@ class A {
 		// Catch 2
 	}
 };
-
-
 //!HeaderToClassMultiTemplateComment
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
@@ -123,11 +115,7 @@ class A {
 		// body comment
 		return T();
 	}
-
 };
-
-// 2nd Top Comment
-
 //!HeaderToClassBodyComment
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
@@ -151,6 +139,3 @@ class A {
 		return T();
 	}
 };
-
-
-

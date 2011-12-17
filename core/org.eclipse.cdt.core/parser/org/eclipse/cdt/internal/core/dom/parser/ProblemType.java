@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser;
 
@@ -14,7 +14,6 @@ import org.eclipse.cdt.core.dom.ast.IProblemType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.parser.ParserMessages;
 import org.eclipse.core.runtime.CoreException;
-
 
 /**
  * Implementation of problem types.
@@ -28,14 +27,17 @@ public class ProblemType implements IProblemType, ISerializableType {
 		fID= id;
 	}
 	
+	@Override
 	public int getID() {
 		return fID;
 	}
 
+	@Override
 	public String getMessage() {
 		return ParserMessages.getProblemPattern(this);
 	}
 
+	@Override
 	public boolean isSameType(IType type) {
 		return type == this;
 	}
@@ -49,6 +51,7 @@ public class ProblemType implements IProblemType, ISerializableType {
 		}
 	}
 
+	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
 		buffer.putByte(ITypeMarshalBuffer.PROBLEM_TYPE);
 		buffer.putShort((short) getID());

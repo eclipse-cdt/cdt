@@ -59,7 +59,8 @@ public class ArraySizeExpressionTest extends ChangeGeneratorTest {
 					IASTArrayModifier[] mods= dtor.getArrayModifiers();
 					IASTArrayModifier add= new CPPASTArrayModifier(
 							new CPPASTLiteralExpression(IASTLiteralExpression.lk_integer_constant, "6".toCharArray()));
-					ASTModification modification = new ASTModification(ASTModification.ModificationKind.INSERT_BEFORE, mods[0], add, null); 
+					ASTModification modification = new ASTModification(ASTModification.ModificationKind.INSERT_BEFORE,
+							mods[0], add, null); 
 					modStore.storeModification(null, modification);
 				}
 				return PROCESS_CONTINUE;

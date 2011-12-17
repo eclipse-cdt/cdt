@@ -41,8 +41,6 @@ inline void /*$*/A::member/*$$*/(int a, int b) {
 class A {
 	void member(int a = 0, int b = 0);
 };
-
-
 //@A.cpp
 #include "A.h"
 
@@ -76,8 +74,6 @@ int main() {
 }
 //=
 #include "A.h"
-
-
 
 int main() {
 	return 0;

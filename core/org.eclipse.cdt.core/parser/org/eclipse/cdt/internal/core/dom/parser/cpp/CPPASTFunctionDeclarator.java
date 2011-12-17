@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     IBM - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -77,6 +77,7 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 		return copy;
 	}
 
+	@Override
 	public ICPPASTParameterDeclaration[] getParameters() {
         if (parameters == null) 
         	return ICPPASTParameterDeclaration.EMPTY_CPPPARAMETERDECLARATION_ARRAY;
@@ -84,7 +85,8 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
         return parameters= ArrayUtil.trim(parameters);
     }
 
-    public void addParameterDeclaration(IASTParameterDeclaration parameter) {
+    @Override
+	public void addParameterDeclaration(IASTParameterDeclaration parameter) {
         assertNotFrozen();
     	if (parameter != null) {
     		parameter.setParent(this);
@@ -93,52 +95,63 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
     	}
     }
 
-    public boolean takesVarArgs() {
+    @Override
+	public boolean takesVarArgs() {
         return varArgs;
     }
 
-    public void setVarArgs(boolean value) {
+    @Override
+	public void setVarArgs(boolean value) {
         assertNotFrozen();
         varArgs = value;
     }
 
-    public boolean isConst() {
+    @Override
+	public boolean isConst() {
         return isConst;
     }
 
-    public void setConst(boolean value) {
+    @Override
+	public void setConst(boolean value) {
         assertNotFrozen();
         this.isConst = value;
     }
 
-    public boolean isVolatile() {
+    @Override
+	public boolean isVolatile() {
         return isVolatile;
     }
 
-    public void setVolatile(boolean value) {
+    @Override
+	public void setVolatile(boolean value) {
         assertNotFrozen();
         this.isVolatile = value;
     }
 
-    public boolean isMutable() {
+    @Override
+	public boolean isMutable() {
         return isMutable;
     }
 
-    public void setMutable(boolean value) {
+    @Override
+	public void setMutable(boolean value) {
         assertNotFrozen();
         this.isMutable = value;
     }
 
-    public IASTTypeId[] getExceptionSpecification() {
+    @Override
+	public IASTTypeId[] getExceptionSpecification() {
         return typeIds= ArrayUtil.trim(typeIds);
     }
     
-    public void setEmptyExceptionSpecification() {
+    @Override
+	public void setEmptyExceptionSpecification() {
         assertNotFrozen();
     	typeIds= IASTTypeId.EMPTY_TYPEID_ARRAY;
     }
 
-    public void addExceptionSpecificationTypeId(IASTTypeId typeId) {
+    @Override
+	public void addExceptionSpecificationTypeId(IASTTypeId typeId) {
         assertNotFrozen();
     	if (typeId != null) {
     		assert typeIds != null;
@@ -147,12 +160,13 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 			typeId.setPropertyInParent(EXCEPTION_TYPEID);
     	}
     }
-
     
-    public IASTTypeId getTrailingReturnType() {
+    @Override
+	public IASTTypeId getTrailingReturnType() {
 		return trailingReturnType;
 	}
 
+	@Override
 	public void setTrailingReturnType(IASTTypeId typeId) {
 		assertNotFrozen();
 		trailingReturnType= typeId;
@@ -162,20 +176,23 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 		}
 	}
 
+	@Override
 	public boolean isPureVirtual() {
         return pureVirtual;
     }
 
-    public void setPureVirtual(boolean isPureVirtual) {
+    @Override
+	public void setPureVirtual(boolean isPureVirtual) {
         assertNotFrozen();
         this.pureVirtual = isPureVirtual;
     }
 
-    @Deprecated
+    @Override
+	@Deprecated
     public org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer[] getConstructorChain() {
     	if (ASTQueries.findTypeRelevantDeclarator(this) == this) {
     		IASTNode parent= getParent();
-    		while(!(parent instanceof IASTDeclaration)) {
+    		while (!(parent instanceof IASTDeclaration)) {
     			if (parent == null)
     				break;
     			parent= parent.getParent();
@@ -187,18 +204,20 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
     	return org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer.EMPTY_CONSTRUCTORCHAININITIALIZER_ARRAY;
     }
 
-    @Deprecated
+    @Override
+	@Deprecated
     public void addConstructorToChain(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer initializer) {
         assertNotFrozen();
     }
 
-    public ICPPFunctionScope getFunctionScope() {
+    @Override
+	public ICPPFunctionScope getFunctionScope() {
         if (scope != null)
             return scope;
         
         // introduce a scope for function declarations and definitions, only.
         IASTNode node= getParent();
-        while(!(node instanceof IASTDeclaration)) {
+        while (!(node instanceof IASTDeclaration)) {
         	if (node==null)
         		return null;
         	node= node.getParent();
@@ -232,6 +251,7 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 		return super.postAccept(action);
 	}
 
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
 		if (parameters != null) {
 			for (int i = 0; i < parameters.length; ++i) {

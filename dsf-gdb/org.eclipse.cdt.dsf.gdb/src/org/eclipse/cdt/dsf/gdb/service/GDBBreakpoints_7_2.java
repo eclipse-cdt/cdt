@@ -16,7 +16,8 @@ import java.util.Hashtable;
 import java.util.Map;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
-import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints;
@@ -57,7 +58,7 @@ public class GDBBreakpoints_7_2 extends GDBBreakpoints_7_0
 	 */
 	@Override
 	public void initialize(final RequestMonitor rm) {
-		super.initialize(new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
+		super.initialize(new ImmediateRequestMonitor(rm) {
 			@Override
 			protected void handleSuccess() {
 				doInitialize(rm);
@@ -186,7 +187,7 @@ public class GDBBreakpoints_7_2 extends GDBBreakpoints_7_0
 		// Unless we should only set slow tracepoints, we try to set a fast tracepoint.
 		boolean isFastTracepoint = fTracepointMode != TracepointMode.SLOW_ONLY;
 
-		sendTracepointCommand(context, attributes, isFastTracepoint, new DataRequestMonitor<IBreakpointDMContext>(ImmediateExecutor.getInstance(), drm) {
+		sendTracepointCommand(context, attributes, isFastTracepoint, new ImmediateDataRequestMonitor<IBreakpointDMContext>(drm) {
 			@Override
 			protected void handleSuccess() {
 				// Tracepoint was set successfully.

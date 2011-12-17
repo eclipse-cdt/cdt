@@ -19,7 +19,7 @@ package org.eclipse.cdt.dsf.gdb.service;
 import java.util.Hashtable;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
-import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
@@ -100,7 +100,7 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
     @Override
     public void initialize(final RequestMonitor requestMonitor) {
         super.initialize(
-            new RequestMonitor(ImmediateExecutor.getInstance(), requestMonitor) { 
+            new ImmediateRequestMonitor(requestMonitor) { 
                 @Override
                 public void handleSuccess() {
                     doInitialize(requestMonitor);

@@ -39,8 +39,8 @@ public class FirstParameterTest extends ChangeGeneratorTest {
 
 	@Override
 	protected void setUp() throws Exception {
-		source = "void foo(int a){\n}\n\n"; //$NON-NLS-1$
-		expectedSource = "void foo(int newParameter, int a){\n}\n\n"; //$NON-NLS-1$
+		source = "void foo(int a) {\n}\n\n"; //$NON-NLS-1$
+		expectedSource = "void foo(int newParameter, int a) {\n}\n\n"; //$NON-NLS-1$
 		super.setUp();
 	}
 
@@ -54,10 +54,10 @@ public class FirstParameterTest extends ChangeGeneratorTest {
 			@Override
 			public int visit(IASTDeclarator declarator) {
 				if (declarator instanceof CPPASTFunctionDeclarator) {
-					CPPASTFunctionDeclarator functionDeclarator = (CPPASTFunctionDeclarator)declarator;
+					CPPASTFunctionDeclarator functionDeclarator = (CPPASTFunctionDeclarator) declarator;
 					IASTParameterDeclaration[] parameters = functionDeclarator.getParameters();
-					for(IASTParameterDeclaration curParam : parameters){
-						if(String.valueOf(curParam.getDeclarator().getName().toCharArray()).equals("a")){ //$NON-NLS-1$
+					for (IASTParameterDeclaration curParam : parameters){
+						if (String.valueOf(curParam.getDeclarator().getName().toCharArray()).equals("a")){ //$NON-NLS-1$
 							CPPASTParameterDeclaration insertedParameter = new CPPASTParameterDeclaration();
 							CPPASTDeclarator parameterDeclarator = new CPPASTDeclarator();
 							CPPASTName parameterName = new CPPASTName("newParameter".toCharArray()); //$NON-NLS-1$
@@ -66,7 +66,8 @@ public class FirstParameterTest extends ChangeGeneratorTest {
 							CPPASTSimpleDeclSpecifier parameterDeclSpec = new CPPASTSimpleDeclSpecifier();
 							parameterDeclSpec.setType(IASTSimpleDeclSpecifier.t_int);
 							insertedParameter.setDeclSpecifier(parameterDeclSpec);
-							ASTModification modification = new ASTModification(ModificationKind.INSERT_BEFORE, curParam, insertedParameter, null);
+							ASTModification modification = new ASTModification(ModificationKind.INSERT_BEFORE,
+									curParam, insertedParameter, null);
 							modStore.storeModification(null, modification);
 						}
 					}

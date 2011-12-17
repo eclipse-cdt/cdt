@@ -525,26 +525,41 @@
       </content-type>
    </extension>
 
-   <!-- the reserved filenames by the C++ standard -->
+   <!-- The reserved filenames by the C++ standard (cinttypes is G++ specific) -->
    <extension point="org.eclipse.core.contenttype.contentTypes"> 
       <file-association 
        content-type="org.eclipse.cdt.core.cxxHeader"
-       file-names="algorithm,bitset,cassert,cctype,cerrno,cfloat,ciso646,climits,clocale,cmath,complex,csetjmp,csignal"/>
+       file-names="algorithm,array,atomic,bitset,cassert,ccomplex,cctype,cerrno,cfenv,cfloat,chrono,cinttypes"/>
    </extension> 
    <extension point="org.eclipse.core.contenttype.contentTypes"> 
       <file-association 
        content-type="org.eclipse.cdt.core.cxxHeader"
-       file-names="cstdarg,cstddef,cstdio,cstdlib,cstring,ctime,cwchar,cwctype,deque,exception,fstream,functional"/>
+       file-names="ciso646,climits,clocale,cmath,codecvt,complex,csetjmp,csignal,cstdarg,cstdbool,cstddef"/>
    </extension> 
    <extension point="org.eclipse.core.contenttype.contentTypes"> 
       <file-association 
        content-type="org.eclipse.cdt.core.cxxHeader"
-       file-names="hash_map,hash_set,iomanip,ios,iosfwd,iostream,istream,iterator,limits,list,locale,map,memory"/>
+       file-names="cstdint,cstdio,cstdlib,cstring,ctime,cwchar,cwctype,deque,exception,forward_list,fstream"/>
    </extension> 
    <extension point="org.eclipse.core.contenttype.contentTypes"> 
       <file-association 
        content-type="org.eclipse.cdt.core.cxxHeader"
-       file-names="new,numeric,ostream,queue,set,sstream,stack,stdexcept,streambuf,string,strstream,typeinfo,utility,valarray,vector"/>
+       file-names="functional,future,hash_map,hash_set,initializer_list,iomanip,ios,iosfwd,iostream,istream"/>
+   </extension> 
+   <extension point="org.eclipse.core.contenttype.contentTypes"> 
+      <file-association 
+       content-type="org.eclipse.cdt.core.cxxHeader"
+       file-names="iterator,limits,list,locale,map,memory,mutex,new,numeric,ostream,queue,random,ratio,regex"/>
+   </extension> 
+   <extension point="org.eclipse.core.contenttype.contentTypes"> 
+      <file-association 
+       content-type="org.eclipse.cdt.core.cxxHeader"
+       file-names="set,sstream,stack,stdexcept,streambuf,string,strstream,system_error,thread,tuple"/>
+   </extension> 
+   <extension point="org.eclipse.core.contenttype.contentTypes"> 
+      <file-association 
+       content-type="org.eclipse.cdt.core.cxxHeader"
+       file-names="typeindex,typeinfo,type_traits,unordered_map,unordered_set,utility,valarray,vector"/>
    </extension> 
  
 <!-- =================================================================================== -->

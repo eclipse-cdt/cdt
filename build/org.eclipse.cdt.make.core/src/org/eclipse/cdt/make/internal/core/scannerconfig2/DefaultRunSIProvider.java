@@ -273,7 +273,8 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
 		// of the language as long as the encoding is set to UTF-8.
 		// English language is chosen because parser relies on English messages
 		// in the output of the 'gcc -v' command.
-		props.put("LC_ALL", "en_US.UTF-8"); //$NON-NLS-1$ //$NON-NLS-2$
+		props.put("LANGUAGE", "en");        // override for GNU gettext   //$NON-NLS-1$ //$NON-NLS-2$
+		props.put("LC_ALL", "en_US.UTF-8"); // for other parts of the system libraries    //$NON-NLS-1$ //$NON-NLS-2$
 		return props;
 	}
 

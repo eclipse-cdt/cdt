@@ -18,7 +18,7 @@ import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
-import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
+import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ReflectionSequence;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
@@ -181,7 +181,7 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 		if (!noFileCommand && fBinaryName != null && fBinaryName.length() > 0) {
 			fCommandControl.queueCommand(
 					fCommandFactory.createMIFileExecAndSymbols(getContainerContext(), fBinaryName), 
-					new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), rm));
+					new ImmediateDataRequestMonitor<MIInfo>(rm));
 		} else {
 			rm.done();
 		}
@@ -199,7 +199,7 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 				String[] argArray = args.replaceAll("\n", " ").split(" ");  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				fCommandControl.queueCommand(
 						fCommandFactory.createMIGDBSetArgs(getContainerContext(), argArray), 
-						new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), rm));
+						new ImmediateDataRequestMonitor<MIInfo>(rm));
 			} else {
 				rm.done();
 			}
@@ -239,7 +239,7 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 				fCommandControl.queueCommand(
 						fCommandFactory.createMITargetSelect(fCommandControl.getContext(), 
 								remoteTcpHost, remoteTcpPort, false), 
-								new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), rm));
+								new ImmediateDataRequestMonitor<MIInfo>(rm));
 			} else {
 				String serialDevice = CDebugUtils.getAttribute(
 						fAttributes,
@@ -247,7 +247,7 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 				fCommandControl.queueCommand(
 						fCommandFactory.createMITargetSelect(fCommandControl.getContext(), 
 								serialDevice, false), 
-								new DataRequestMonitor<MIInfo>(ImmediateExecutor.getInstance(), rm));
+								new ImmediateDataRequestMonitor<MIInfo>(rm));
 			}
 		} else {
 			rm.done();
@@ -405,7 +405,7 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 			// Bug 342351
 			fAttributes.put(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, fBinaryName);
 			
-			fProcService.start(getContainerContext(), fAttributes, new DataRequestMonitor<IContainerDMContext>(ImmediateExecutor.getInstance(), rm) {
+			fProcService.start(getContainerContext(), fAttributes, new ImmediateDataRequestMonitor<IContainerDMContext>(rm) {
 				@Override
 				protected void handleSuccess() {
 					assert getData() instanceof IMIContainerDMContext;

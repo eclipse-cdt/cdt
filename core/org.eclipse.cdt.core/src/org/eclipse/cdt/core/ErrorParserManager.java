@@ -713,7 +713,7 @@ outer:
 	 * @return URI
 	 * @since 5.1
 	 */
-	public URI toURI(IPath path) {
+	private URI toURI(IPath path) {
 //		try {
 			URI baseURI = getWorkingDirectoryURI();
 			String uriString = path.toString();

@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.cdtvariables.ICdtVariablesContributor;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
 import org.eclipse.cdt.core.settings.model.CConfigurationStatus;
+import org.eclipse.cdt.core.settings.model.CProjectDescriptionEvent;
 import org.eclipse.cdt.core.settings.model.ICBuildSetting;
 import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -60,22 +61,34 @@ import org.eclipse.core.runtime.QualifiedName;
  *
  * An inspection of the scenario where user changes project properties and saves it yields
  * following sequence of events:
- * - Initialization:
- *   - After eclipse started a project is being opened. A new CConfigurationDescriptionCache is created
- *     with CConfigurationDescriptionCache(ICStorageElement storage, CProjectDescription parent) constructor.
- *   - Any clients needed ICConfigurationDescription get CConfigurationDescription using constructor
- *     CConfigurationDescription(CConfigurationData data, String buildSystemId, ICDataProxyContainer cr)
- *     where the CConfigurationDescriptionCache is passed as data. The reference to cache is kept in field fCfgCache.
- *   - fCfgCache is used to getSpecSettings() CConfigurationSpecSettings, after that fCfgCache is set to null.
- * - User enters project properties/settings:
- *   - another CConfigurationDescription (settings configuration) created using the same constructor setting fCfgCache
- *     to the CConfigurationDescriptionCache.
- * - User changes settings (in the settings configuration CConfigurationDescription) and saves it:
- *   - new CConfigurationDescriptionCache is created from the CConfigurationDescription via constructor
- *     CConfigurationDescriptionCache(ICConfigurationDescription baseDescription, ...) where
- *     baseDescription is saved as fBaseDescription.
- *   - CConfigurationDescriptionCache.applyData(...) is used to persist the data. at that point
- *     reference fBaseDescription gets set to null.
+ * <ol>
+ * <li> Initialization:
+ *   <ul>
+ *   <li> After eclipse started a project is being opened. A new CConfigurationDescriptionCache is created
+ *        with CConfigurationDescriptionCache(ICStorageElement storage, CProjectDescription parent) constructor.
+ *   <li> Any clients needed ICConfigurationDescription get CConfigurationDescription using constructor
+ *        CConfigurationDescription(CConfigurationData data, String buildSystemId, ICDataProxyContainer cr)
+ *        where the CConfigurationDescriptionCache is passed as data. The reference to cache is kept in field fCfgCache.
+ *   <li> fCfgCache is used to getSpecSettings() CConfigurationSpecSettings, after that fCfgCache is set to null.
+ *   </ul>
+ * <li> User enters project properties/settings:
+ *   <ul>
+ *   <li> another CConfigurationDescription (settings configuration) created using the same constructor setting fCfgCache
+ *        to the CConfigurationDescriptionCache.
+ *   </ul>
+ * <li> User changes settings (in the settings configuration CConfigurationDescription) and saves it:
+ *   <ul>
+ *   <li> new CConfigurationDescriptionCache is created from the CConfigurationDescription via constructor
+ *        CConfigurationDescriptionCache(ICConfigurationDescription baseDescription, ...) where
+ *        baseDescription is saved as fBaseDescription.
+ *   <li> CConfigurationDescriptionCache.applyData(...) is used to persist the data. at that point
+ *        reference fBaseDescription gets set to null.
+ *   </ul>
+ * </ol>
+ *
+ * @see ICConfigurationDescription
+ * @see CConfigurationDescription
+ * @see CProjectDescriptionEvent
  */
 public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		implements ICConfigurationDescription, IInternalCCfgInfo, ILanguageSettingsProvidersKeeper, ICachedData {

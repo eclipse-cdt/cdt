@@ -16,13 +16,29 @@ import org.eclipse.cdt.core.cdtvariables.ICdtVariablesContributor;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationDataProvider;
+import org.eclipse.cdt.internal.core.settings.model.CConfigurationDescription;
+import org.eclipse.cdt.internal.core.settings.model.CConfigurationDescriptionCache;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.QualifiedName;
 
 /**
- * This is the element representing configuration and thus this is the root element
- * for configuration-specific settings
+ * This is the class representing configuration and thus this is the root element
+ * for configuration-specific settings.
+ * <br><br>
+ * A typical (simplified) life-cycle of configuration description in CDT is as following:
+ * <br> 1. A project is created or opened. A new read-only configuration description is loaded.
+ * <br> 2. If a description needs to be changed, a client gets a copy as a writable configuration
+ *         description first. Then, that instance can be edited.
+ * <br> 3. The changed writable configuration description gets applied to the model and becomes
+ *         read-only.
+ * <br> 4. The project gets closed or removed. The configuration description gets disposed.
+ * <br><br>
+ * Typically read-only configuration description would be represented by {@link CConfigurationDescriptionCache}
+ * and writable one by {@link CConfigurationDescription}.
+ *
+ * @see CProjectDescriptionEvent
+ * @see CConfigurationDescriptionCache
  */
 public interface ICConfigurationDescription extends ICSettingContainer, ICSettingObject, ICSettingsStorage {
 	/**

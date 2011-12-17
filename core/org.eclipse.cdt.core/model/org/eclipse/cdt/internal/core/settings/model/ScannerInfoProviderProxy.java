@@ -25,10 +25,6 @@ import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSetting
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 
-/**
- * TODO fProvider is going to be deprecated in favor of {@link LanguageSettingsScannerInfoProvider}.
- *
- */
 public class ScannerInfoProviderProxy extends AbstractCExtensionProxy implements IScannerInfoProvider, IScannerInfoChangeListener{
 	private Map<IProject, List<IScannerInfoChangeListener>> listeners;
 	private IScannerInfoProvider fProvider;

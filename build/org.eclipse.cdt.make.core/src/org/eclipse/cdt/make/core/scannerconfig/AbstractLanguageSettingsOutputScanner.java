@@ -55,6 +55,8 @@ import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.w3c.dom.Element;
 
 /**
+ * Abstract class for providers capable to parse build output.
+ *
  * @since 7.2
  */
 public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSettingsSerializableProvider {

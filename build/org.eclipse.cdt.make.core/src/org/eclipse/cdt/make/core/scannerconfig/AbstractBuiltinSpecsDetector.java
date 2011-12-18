@@ -68,6 +68,9 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.w3c.dom.Element;
 
 /**
+ * Abstract parser capable to execute compiler command printing built-in compiler
+ * specs and parse built-in language settings out of it.
+ *
  * @since 7.2
  */
 public abstract class AbstractBuiltinSpecsDetector extends AbstractLanguageSettingsOutputScanner implements ICListenerAgent {

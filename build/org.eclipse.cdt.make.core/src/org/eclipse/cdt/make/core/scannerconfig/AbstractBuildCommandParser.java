@@ -36,11 +36,12 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 
 /**
- * TODO - class description
+ * Abstract class for providers parsing compiler option from build command when it
+ * is present in build output.
  *
  * Note: IErrorParser interface is used here to work around {@link ConsoleOutputSniffer} having
  * no access from CDT core to build packages. TODO - elaborate?
- * 
+ *
  * @since 7.2
  */
 public abstract class AbstractBuildCommandParser extends AbstractLanguageSettingsOutputScanner

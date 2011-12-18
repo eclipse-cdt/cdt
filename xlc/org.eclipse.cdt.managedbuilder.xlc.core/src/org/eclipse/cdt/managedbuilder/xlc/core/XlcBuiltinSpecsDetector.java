@@ -21,32 +21,30 @@ import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.managedbuilder.scannerconfig.ToolchainBuiltinSpecsDetector;
 
 
-/**
- * 
-
-> xlC -E -V -P -w ~/tmp/spec.C
-export XL_CONFIG=/etc/vac.cfg:xlC 
-/usr/vac/exe/xlCcpp /home/me/tmp/spec.C - -qc++=/usr/vacpp/include -D_AIX -D_AIX32 -D_AIX41 -D_AIX43 -D_AIX50 -D_AIX51 -D_AIX52 -D_IBMR2 -D_POWER -E -P -w -qlanglvl=ansi -qansialias 
-rm /tmp/xlcW0lt4Jia
-rm /tmp/xlcW1lt4Jib
-rm /tmp/xlcW2lt4Jic
-
- */
 
 /**
- * Class to detect built-in compiler settings. Note that currently this class is hardwired
- * to GCC toolchain {@code cdt.managedbuild.toolchain.gnu.base}.
- *
+ * Language settings provider to detect built-in compiler settings for IBM XLC compiler.
+ * Note that currently this class is hardwired to GCC toolchain
+ * {@code cdt.managedbuild.toolchain.gnu.base}.
  */
 public class XlcBuiltinSpecsDetector extends ToolchainBuiltinSpecsDetector implements ILanguageSettingsEditableProvider {
 	// must match the toolchain definition in org.eclipse.cdt.managedbuilder.core.buildDefinitions extension point
 	// FIXME - ill defined XLC toolchain
 //	private static final String XLC_TOOLCHAIN_ID = "cdt.managedbuild.toolchain.xlc.exe.debug";  //$NON-NLS-1$
 	private static final String GCC_TOOLCHAIN_ID = "cdt.managedbuild.toolchain.gnu.base";  //$NON-NLS-1$
-	
+
 	private static final Pattern OPTIONS_PATTERN = Pattern.compile("-[^\\s\"']*(\\s*((\".*?\")|('.*?')|([^-\\s][^\\s]+)))?"); //$NON-NLS-1$
 	private static final int OPTION_GROUP = 0;
 
+	/*	Sample output:
+
+		> xlC -E -V -P -w ~/tmp/spec.C
+		export XL_CONFIG=/etc/vac.cfg:xlC
+		/usr/vac/exe/xlCcpp /home/me/tmp/spec.C - -qc++=/usr/vacpp/include -D_AIX -D_AIX32 -D_AIX41 -D_AIX43 -D_AIX50 -D_AIX51 -D_AIX52 -D_IBMR2 -D_POWER -E -P -w -qlanglvl=ansi -qansialias
+		rm /tmp/xlcW0lt4Jia
+		rm /tmp/xlcW1lt4Jib
+		rm /tmp/xlcW2lt4Jic
+	 */
 	@SuppressWarnings("nls")
 	private static final AbstractOptionParser[] optionParsers = {
 			new IncludePathOptionParser("-I\\s*([\"'])(.*)\\1", "$2", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY | ICSettingEntry.LOCAL),
@@ -93,5 +91,5 @@ public class XlcBuiltinSpecsDetector extends ToolchainBuiltinSpecsDetector imple
 		return (XlcBuiltinSpecsDetector) super.clone();
 	}
 
-	
+
 }

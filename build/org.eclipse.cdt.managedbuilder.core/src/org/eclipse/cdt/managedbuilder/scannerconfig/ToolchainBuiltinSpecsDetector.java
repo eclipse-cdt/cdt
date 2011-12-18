@@ -22,6 +22,10 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 
 /**
+ * Abstract parser capable to execute compiler command printing built-in compiler
+ * specs and parse built-in language settings out of it. The compiler to be used
+ * is taken from MBS tool-chain definition.
+ *
  * @since 8.1
  */
 public abstract class ToolchainBuiltinSpecsDetector extends AbstractBuiltinSpecsDetector {

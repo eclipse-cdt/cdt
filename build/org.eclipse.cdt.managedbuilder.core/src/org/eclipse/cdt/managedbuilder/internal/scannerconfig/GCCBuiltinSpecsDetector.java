@@ -21,17 +21,15 @@ import org.eclipse.cdt.managedbuilder.scannerconfig.ToolchainBuiltinSpecsDetecto
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Class to detect built-in compiler settings. Note that currently this class is hardwired
- * to GCC toolchain {@code cdt.managedbuild.toolchain.gnu.base}.
- *
+ * Language settings provider to detect built-in compiler settings for GCC compiler.
  */
 public class GCCBuiltinSpecsDetector extends ToolchainBuiltinSpecsDetector implements ILanguageSettingsEditableProvider {
 	// ID must match the toolchain definition in org.eclipse.cdt.managedbuilder.core.buildDefinitions extension point
 	private static final String GCC_TOOLCHAIN_ID = "cdt.managedbuild.toolchain.gnu.base";  //$NON-NLS-1$
-	
+
 	private enum State {NONE, EXPECTING_LOCAL_INCLUDE, EXPECTING_SYSTEM_INCLUDE, EXPECTING_FRAMEWORKS}
 	private State state = State.NONE;
-	
+
 	@SuppressWarnings("nls")
 	private static final AbstractOptionParser[] optionParsers = {
 			new IncludePathOptionParser("#include \"(\\S.*)\"", "$1", ICSettingEntry.BUILTIN | ICSettingEntry.READONLY | ICSettingEntry.LOCAL),
@@ -54,7 +52,7 @@ public class GCCBuiltinSpecsDetector extends ToolchainBuiltinSpecsDetector imple
 	private List<String> makeList(final String line) {
 		return new ArrayList<String>() {{ add(line); }};
 	}
-	
+
 	@Override
 	protected List<String> parseForOptions(String line) {
 		line = line.trim();
@@ -102,10 +100,10 @@ public class GCCBuiltinSpecsDetector extends ToolchainBuiltinSpecsDetector imple
 	@Override
 	public void startup(ICConfigurationDescription cfgDescription) throws CoreException {
 		super.startup(cfgDescription);
-		
+
 		state = State.NONE;
 	}
-	
+
 	@Override
 	public void shutdown() {
 		state = State.NONE;
@@ -123,5 +121,5 @@ public class GCCBuiltinSpecsDetector extends ToolchainBuiltinSpecsDetector imple
 		return (GCCBuiltinSpecsDetector) super.clone();
 	}
 
-	
+
 }

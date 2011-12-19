@@ -171,7 +171,7 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 				for (Object funct : funtions) {
 					if (funct instanceof GetterSetterInsertEditProvider) {
 						GetterSetterInsertEditProvider getSet = (GetterSetterInsertEditProvider) funct;
-						if(getSet.getType() == type) {
+						if (getSet.getType() == type) {
 							checked.add(getSet);
 							variableSelectionView.setChecked(getSet, true);
 						}

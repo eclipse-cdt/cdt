@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.language.settings.providers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ILanguage;
@@ -138,6 +139,14 @@ public class LanguageSettingsManager {
 	 */
 	public static ILanguageSettingsEditableProvider getProviderCopy(ILanguageSettingsEditableProvider provider, boolean deep) {
 		return LanguageSettingsExtensionManager.getProviderCopy(provider, deep);
+	}
+
+	/**
+	 * Returns list of provider id-s contributed by all extensions.
+	 * @return the provider id-s.
+	 */
+	public static Set<String> getExtensionProviderIds() {
+		return LanguageSettingsExtensionManager.getExtensionProviderIds();
 	}
 
 	/**

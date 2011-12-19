@@ -159,7 +159,8 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 
 	private static boolean isReconfigured(ILanguageSettingsProvider provider) {
 		if (provider instanceof ILanguageSettingsEditableProvider) {
-			return ! LanguageSettingsManager.isEqualExtensionProvider(provider, false);
+			return (LanguageSettingsManager.getExtensionProviderIds().contains(provider.getId()) &&
+				! LanguageSettingsManager.isEqualExtensionProvider(provider, false));
 		}
 		return false;
 	}

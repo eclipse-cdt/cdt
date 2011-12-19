@@ -164,7 +164,7 @@ public class LanguageSettingsBaseProvider extends AbstractExecutableExtensionBas
 		if (entries != null) {
 			return LanguageSettingsStorage.getPooledList(entries);
 		}
-		return LanguageSettingsStorage.getPooledEmptyList();
+		return null;
 	}
 
 	/**

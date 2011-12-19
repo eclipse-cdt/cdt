@@ -61,7 +61,7 @@ import org.w3c.dom.Element;
  */
 public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSettingsSerializableProvider {
 
-	protected static final String ATTR_EXPAND_RELATIVE_PATHS = "expand-relative-paths"; //$NON-NLS-1$
+	protected static final String ATTR_KEEP_RELATIVE_PATHS = "keep-relative-paths"; //$NON-NLS-1$
 
 	protected ICConfigurationDescription currentCfgDescription = null;
 	protected IProject currentProject = null;
@@ -834,7 +834,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	@Override
 	public Element serializeAttributes(Element parentElement) {
 		Element elementProvider = super.serializeAttributes(parentElement);
-		elementProvider.setAttribute(ATTR_EXPAND_RELATIVE_PATHS, Boolean.toString(isResolvingPaths));
+		elementProvider.setAttribute(ATTR_KEEP_RELATIVE_PATHS, Boolean.toString( ! isResolvingPaths ));
 		return elementProvider;
 	}
 
@@ -842,9 +842,9 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	public void loadAttributes(Element providerNode) {
 		super.loadAttributes(providerNode);
 
-		String expandRelativePathsValue = XmlUtil.determineAttributeValue(providerNode, ATTR_EXPAND_RELATIVE_PATHS);
+		String expandRelativePathsValue = XmlUtil.determineAttributeValue(providerNode, ATTR_KEEP_RELATIVE_PATHS);
 		if (expandRelativePathsValue!=null)
-			isResolvingPaths = Boolean.parseBoolean(expandRelativePathsValue);
+			isResolvingPaths = ! Boolean.parseBoolean(expandRelativePathsValue);
 	}
 
 	@Override

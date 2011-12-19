@@ -68,7 +68,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 
 	// those attributes must match that in AbstractBuildCommandParser
 	private static final String ATTR_PARAMETER = "parameter"; //$NON-NLS-1$
-	private static final String ATTR_EXPAND_RELATIVE_PATHS = "expand-relative-paths"; //$NON-NLS-1$
+	private static final String ATTR_KEEP_RELATIVE_PATHS = "keep-relative-paths"; //$NON-NLS-1$
 
 	private class MockBuildCommandParser extends AbstractBuildCommandParser  implements Cloneable {
 		@Override
@@ -266,7 +266,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 			elementProvider = parser.serialize(rootElement);
 			String xmlString = XmlUtil.toString(doc);
 
-			assertTrue(xmlString.contains(ATTR_EXPAND_RELATIVE_PATHS));
+			assertTrue(xmlString.contains(ATTR_KEEP_RELATIVE_PATHS));
 		}
 		{
 			// create another instance of the provider

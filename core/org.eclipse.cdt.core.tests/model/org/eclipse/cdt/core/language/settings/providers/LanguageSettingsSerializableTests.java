@@ -56,9 +56,13 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	private static final String PROVIDER_NAME_2 = "test.provider.2.name";
 	private static final String ATTR_PARAMETER = "parameter";
 	private static final String VALUE_PARAMETER = "custom.parameter";
-	private static final String ATTR_STORE_ENTRIES = "store-entries";
-	private static final String VALUE_PROJECT = "project";
 	private static final String ELEM_TEST = "test";
+	private static final String ATTR_PROPERTY = "custom-property";
+	private static final String ATTR_PROPERTY_BOOL = "custom-property-bool";
+	private static final String VALUE_PROPERTY = "custom.property";
+
+	// This value must match that of LanguageSettingsProvidersSerializer.ATTR_STORE_ENTRIES_WITH_PROJECT
+	private static final String ATTR_STORE_ENTRIES_WITH_PROJECT = "store-entries-with-project";
 
 	/**
 	 * Constructor.
@@ -357,8 +361,8 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 			Element rootElement = XmlUtil.appendElement(doc, ELEM_TEST);
 			elementProvider = provider.serialize(rootElement);
 			String xmlString = XmlUtil.toString(doc);
-			assertTrue(xmlString.contains(ATTR_STORE_ENTRIES));
-			assertTrue(xmlString.contains(VALUE_PROJECT));
+			assertTrue(xmlString.contains(ATTR_STORE_ENTRIES_WITH_PROJECT));
+			assertTrue(xmlString.contains(ATTR_STORE_ENTRIES_WITH_PROJECT+"=\"true\""));
 		}
 		{
 			// re-load and check storing mode of the newly loaded provider
@@ -1189,46 +1193,144 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 		provider1.setSettingEntries(MOCK_CFG, MOCK_RC, LANG_ID, sampleEntries_1);
 		provider1.setSettingEntries(null, null, LANG_ID, sampleEntries_2);
 
+		// create another provider with the same data
+		LanguageSettingsSerializableProvider provider2 = new LanguageSettingsSerializableProvider(PROVIDER_1, PROVIDER_NAME_1);
 		{
-			// create another provider with the same data
-			LanguageSettingsSerializableProvider provider2 = new LanguageSettingsSerializableProvider(PROVIDER_1, PROVIDER_NAME_1);
-			assertFalse(provider1.equals(provider2));
-			assertFalse(provider1.hashCode()==provider2.hashCode());
-
-			provider2.setSettingEntries(MOCK_CFG, MOCK_RC, LANG_ID, sampleEntries_1);
-			assertFalse(provider1.equals(provider2));
-			assertFalse(provider1.hashCode()==provider2.hashCode());
-
-			provider2.setSettingEntries(null, null, LANG_ID, sampleEntries_2);
-			assertFalse(provider1.equals(provider2));
-			assertFalse(provider1.hashCode()==provider2.hashCode());
-
 			provider2.setLanguageScope(sampleLanguages);
-			assertFalse(provider1.equals(provider2));
-			assertFalse(provider1.hashCode()==provider2.hashCode());
-
 			provider2.setProperty(ATTR_PARAMETER, VALUE_PARAMETER);
-			assertFalse(provider1.equals(provider2));
-			assertFalse(provider1.hashCode()==provider2.hashCode());
-
 			LanguageSettingsManager.setStoringEntriesInProjectArea(provider2, true);
-
+			provider2.setSettingEntries(MOCK_CFG, MOCK_RC, LANG_ID, sampleEntries_1);
+			provider2.setSettingEntries(null, null, LANG_ID, sampleEntries_2);
 			// All set now, so they should be equal
-			assertTrue(provider1.equals(provider2));
 			assertTrue(provider1.hashCode()==provider2.hashCode());
+			assertTrue(provider1.equals(provider2));
+		}
 
-			// check different ID
-			provider2.setId(PROVIDER_2);
-			assertFalse(provider1.equals(provider2));
+		{
+			// start with provider with the same data
+			assertTrue(provider1.hashCode()==provider2.hashCode());
+			assertTrue(provider1.equals(provider2));
+			// replace languages
+			List<String> sampleLanguages2 = new ArrayList<String>();
+			sampleLanguages2.add(LANG_ID_1);
+			provider2.setLanguageScope(sampleLanguages2);
 			assertFalse(provider1.hashCode()==provider2.hashCode());
+			assertFalse(provider1.equals(provider2));
+			// restore provider
+			provider2.setLanguageScope(sampleLanguages);
+			assertTrue(provider1.hashCode()==provider2.hashCode());
+			assertTrue(provider1.equals(provider2));
+		}
+
+		{
+			// start with provider with the same data
+			assertTrue(provider1.hashCode()==provider2.hashCode());
+			assertTrue(provider1.equals(provider2));
+			// replace property
+			provider2.setProperty(ATTR_PARAMETER, "changed-parameter");
+			// hash is not calculated for properties
+			assertFalse(provider1.equals(provider2));
+			// restore provider
+			provider2.setProperty(ATTR_PARAMETER, VALUE_PARAMETER);
+			assertTrue(provider1.hashCode()==provider2.hashCode());
+			assertTrue(provider1.equals(provider2));
+		}
+		{
+			// start with provider with the same data
+			assertTrue(provider1.hashCode()==provider2.hashCode());
+			assertTrue(provider1.equals(provider2));
+			// replace property
+			LanguageSettingsManager.setStoringEntriesInProjectArea(provider2, false);
+			// hash is not calculated for properties
+			assertFalse(provider1.equals(provider2));
+			// restore provider
+			LanguageSettingsManager.setStoringEntriesInProjectArea(provider2, true);
+			assertTrue(provider1.hashCode()==provider2.hashCode());
+			assertTrue(provider1.equals(provider2));
+		}
+		{
+			// start with provider with the same data
+			assertTrue(provider1.hashCode()==provider2.hashCode());
+			assertTrue(provider1.equals(provider2));
+			// replace entries
+			List<ICLanguageSettingEntry> changedEntries = new ArrayList<ICLanguageSettingEntry>();
+			changedEntries.add(new CMacroEntry("MACROX", "valueX",1));
+			provider2.setSettingEntries(MOCK_CFG, MOCK_RC, LANG_ID, changedEntries);
+			assertFalse(provider1.hashCode()==provider2.hashCode());
+			assertFalse(provider1.equals(provider2));
+			// restore provider
+			provider2.setSettingEntries(MOCK_CFG, MOCK_RC, LANG_ID, sampleEntries_1);
+			assertTrue(provider1.hashCode()==provider2.hashCode());
+			assertTrue(provider1.equals(provider2));
+		}
+		{
+			// start with provider with the same data
+			assertTrue(provider1.hashCode()==provider2.hashCode());
+			assertTrue(provider1.equals(provider2));
+			// replace default entries
+			List<ICLanguageSettingEntry> changedEntries = new ArrayList<ICLanguageSettingEntry>();
+			changedEntries.add(new CIncludePathEntry("pathX", 1));
+			provider2.setSettingEntries(null, null, LANG_ID, changedEntries);
+			assertFalse(provider1.hashCode()==provider2.hashCode());
+			assertFalse(provider1.equals(provider2));
+			// restore provider
+			provider2.setSettingEntries(null, null, LANG_ID, sampleEntries_2);
+			assertTrue(provider1.hashCode()==provider2.hashCode());
+			assertTrue(provider1.equals(provider2));
 		}
 
 		{
 			// check that subclasses are not equal
 			LanguageSettingsSerializableProvider providerSub1 = new LanguageSettingsSerializableProvider() {};
 			LanguageSettingsSerializableProvider providerSub2 = new LanguageSettingsSerializableProvider() {};
-			assertFalse(providerSub1.equals(providerSub2));
 			assertFalse(providerSub1.hashCode()==providerSub2.hashCode());
+			assertFalse(providerSub1.equals(providerSub2));
+		}
+	}
+
+	/**
+	 */
+	public void testEquals_DefaultProperties() throws Exception {
+		// create model providers
+		LanguageSettingsSerializableProvider provider1 = new LanguageSettingsSerializableProvider(PROVIDER_1, PROVIDER_NAME_1);
+		LanguageSettingsSerializableProvider provider2 = new LanguageSettingsSerializableProvider(PROVIDER_1, PROVIDER_NAME_1);
+
+		// equality for setProperty(String, String)
+		{
+			// equality for missing property
+			assertTrue(provider1.equals(provider2));
+			// equality for default empty value (missing in provider2)
+			provider1.setProperty(ATTR_PROPERTY, "");
+			assertTrue(provider1.equals(provider2));
+			// just for kicks disturb equality
+			provider1.setProperty(ATTR_PROPERTY, VALUE_PROPERTY);
+			assertFalse(provider1.equals(provider2));
+			// equality for default null value (missing in provider2)
+			provider1.setProperty(ATTR_PROPERTY, null);
+			assertTrue(provider1.equals(provider2));
+		}
+
+		// equality for setPropertyBool(String, boolean)
+		{
+			// equality for missing property
+			assertEquals(false, provider1.getPropertyBool(ATTR_PROPERTY_BOOL));
+			assertTrue(provider1.equals(provider2));
+			// equality for default empty value (missing in provider2)
+			provider1.setPropertyBool(ATTR_PROPERTY_BOOL, false);
+			assertEquals(false, provider1.getPropertyBool(ATTR_PROPERTY_BOOL));
+			assertTrue(provider1.equals(provider2));
+			// just for kicks disturb equality
+			provider1.setPropertyBool(ATTR_PROPERTY_BOOL, true);
+			assertEquals(true, provider1.getPropertyBool(ATTR_PROPERTY_BOOL));
+			assertFalse(provider1.equals(provider2));
+			// equality for true value in both
+			provider2.setPropertyBool(ATTR_PROPERTY_BOOL, true);
+			assertEquals(true, provider2.getPropertyBool(ATTR_PROPERTY_BOOL));
+			assertTrue(provider1.equals(provider2));
+			// switch provider1 back to false
+			provider1.setPropertyBool(ATTR_PROPERTY_BOOL, false);
+			provider1.setPropertyBool(ATTR_PROPERTY_BOOL, false);
+			assertFalse(provider1.equals(provider2));
 		}
 	}
 

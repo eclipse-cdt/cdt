@@ -83,10 +83,7 @@ public class LanguageSettingsProvidersSerializer {
 	private static final String ELEM_PROJECT = "project"; //$NON-NLS-1$
 	private static final String ELEM_CONFIGURATION = "configuration"; //$NON-NLS-1$
 	private static final String ELEM_PROVIDER_REFERENCE = "provider-reference"; //$NON-NLS-1$
-
-	private static final String ATTR_STORE_ENTRIES = "store-entries"; //$NON-NLS-1$
-	private static final String VALUE_WORKSPACE = "workspace"; //$NON-NLS-1$
-	private static final String VALUE_PROJECT = "project"; //$NON-NLS-1$
+	private static final String ATTR_STORE_ENTRIES_WITH_PROJECT = "store-entries-with-project"; //$NON-NLS-1$
 
 	/** Cache of true (raw) workspace providers */
 	private static Map<String, ILanguageSettingsProvider> rawGlobalWorkspaceProviders = new HashMap<String, ILanguageSettingsProvider>();
@@ -284,8 +281,7 @@ public class LanguageSettingsProvidersSerializer {
 	 * @return {@code true} if LSE persisted with the project or {@code false} if in the workspace.
 	 */
 	public static boolean isStoringEntriesInProjectArea(LanguageSettingsSerializableProvider provider) {
-		String value = provider.getProperty(ATTR_STORE_ENTRIES);
-		return VALUE_PROJECT.equals(value);
+		return provider.getPropertyBool(ATTR_STORE_ENTRIES_WITH_PROJECT);
 	}
 
 	/**
@@ -296,7 +292,7 @@ public class LanguageSettingsProvidersSerializer {
 	 *    {@code false} if in workspace area.
 	 */
 	public static void setStoringEntriesInProjectArea(LanguageSettingsSerializableProvider provider, boolean storeEntriesWithProject) {
-		provider.setProperty(ATTR_STORE_ENTRIES, storeEntriesWithProject ? VALUE_PROJECT : VALUE_WORKSPACE);
+		provider.setPropertyBool(ATTR_STORE_ENTRIES_WITH_PROJECT, storeEntriesWithProject);
 	}
 
 	/**

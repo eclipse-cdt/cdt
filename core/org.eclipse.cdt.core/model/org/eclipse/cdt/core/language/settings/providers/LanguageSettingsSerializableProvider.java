@@ -306,9 +306,9 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 				if (!key.equals(ATTR_ID) && !key.equals(ATTR_NAME) && !key.equals(ATTR_CLASS)) {
 					String value = attr.getNodeValue();
 					properties.put(key, value);
+					}
 				}
 			}
-		}
 
 		this.setId(providerId);
 		this.setName(providerName);
@@ -336,6 +336,12 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 
 	/**
 	 * Set a custom property of the provider.
+	 * <br><br>
+	 * A note of caution - do not use default values for a provider which are different
+	 * from empty or {@code null} value. When providers are checked for equality
+	 * (during internal operations in core) the missing properties are evaluated as
+	 * empty ones.
+	 *
 	 * @see LanguageSettingsBaseProvider#getProperty(String)
 	 *
 	 * @param key - name of the property.
@@ -343,10 +349,23 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 	 *    If value is {@code null} the property is removed from the list.
 	 */
 	public void setProperty(String key, String value) {
-		if (value != null) {
-			properties.put(key, value);
+		properties.put(key, value);
+	}
+
+	/**
+	 * Set a custom boolean property of the provider.
+	 * <br>Please, note that default value is always {@code false}.
+	 * @see LanguageSettingsBaseProvider#getProperty(String)
+	 *
+	 * @param key - name of the property.
+	 * @param value - {@code boolean} value of the property.
+	 */
+	public void setPropertyBool(String key, boolean value) {
+		if (value == true) {
+			properties.put(key, Boolean.TRUE.toString());
 		} else {
-			properties.remove(key);
+			// Keep "false" values in default representation and preserve the key in the list
+			properties.put(key, null);
 		}
 	}
 
@@ -383,69 +402,6 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 	}
 
 	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
-		result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
-		result = prime * result + ((languageScope == null) ? 0 : languageScope.hashCode());
-		result = prime * result + ((properties == null) ? 0 : properties.hashCode());
-		result = prime * result + ((fStorage == null) ? 0 : fStorage.hashCode());
-		result = prime * result + getClass().hashCode();
-		return result;
-	}
-
-	/**
-	 * @return {@code true} if the objects are equal, {@code false } otherwise.
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		LanguageSettingsSerializableProvider other = (LanguageSettingsSerializableProvider) obj;
-
-		String id = getId();
-		String otherId = other.getId();
-		if (id == null) {
-			if (otherId != null)
-				return false;
-		} else if (!id.equals(otherId))
-			return false;
-
-		String name = getName();
-		String otherName = other.getName();
-		if (name == null) {
-			if (otherName != null)
-				return false;
-		} else if (!name.equals(otherName))
-			return false;
-
-		if (languageScope == null) {
-			if (other.languageScope != null)
-				return false;
-		} else if (!languageScope.equals(other.languageScope))
-			return false;
-
-		if (properties == null) {
-			if (other.properties != null)
-				return false;
-		} else if (!properties.equals(other.properties))
-			return false;
-
-		if (fStorage == null) {
-			if (other.fStorage != null)
-				return false;
-		} else if (!fStorage.equals(other.fStorage))
-			return false;
-		return true;
-	}
-
-	@Override
 	public LanguageSettingsStorage copyStorage() {
 		try {
 			return fStorage.clone();
@@ -453,5 +409,31 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 			CCorePlugin.log(e);
 		}
 		return null;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((fStorage == null) ? 0 : fStorage.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		LanguageSettingsSerializableProvider other = (LanguageSettingsSerializableProvider) obj;
+
+		if (fStorage == null) {
+			if (other.fStorage != null)
+				return false;
+		} else if (!fStorage.equals(other.fStorage))
+			return false;
+		return true;
 	}
 }

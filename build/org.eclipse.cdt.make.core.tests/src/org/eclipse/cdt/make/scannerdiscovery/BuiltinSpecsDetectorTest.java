@@ -154,7 +154,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 			assertEquals(PROVIDER_NAME, provider.getName());
 			assertEquals(null, provider.getLanguageScope());
 			assertEquals(null, provider.getSettingEntries(null, null, null));
-			assertEquals(null, provider.getCommand());
+			assertEquals("", provider.getCommand());
 			assertEquals(false, provider.isExecuted());
 			assertEquals(false, provider.isConsoleEnabled());
 		}

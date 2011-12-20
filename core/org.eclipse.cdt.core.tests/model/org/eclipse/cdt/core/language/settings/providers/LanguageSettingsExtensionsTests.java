@@ -12,7 +12,9 @@
 package org.eclipse.cdt.core.language.settings.providers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import junit.framework.TestSuite;
 
@@ -133,9 +135,9 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 		assertEquals(EXTENSION_BASE_PROVIDER_NAME, provider.getName());
 		assertEquals(EXTENSION_BASE_PROVIDER_PARAMETER, provider.getProperty(EXTENSION_BASE_PROVIDER_ATTR_PARAMETER));
 		// these attributes are not exposed as properties
-		assertEquals(null, provider.getProperty(ATTR_ID));
-		assertEquals(null, provider.getProperty(ATTR_NAME));
-		assertEquals(null, provider.getProperty(ATTR_CLASS));
+		assertEquals("", provider.getProperty(ATTR_ID));
+		assertEquals("", provider.getProperty(ATTR_NAME));
+		assertEquals("", provider.getProperty(ATTR_CLASS));
 
 		// attempt to get entries for wrong language
 		assertNull(provider.getSettingEntries(null, FILE_0, LANG_ID));
@@ -248,6 +250,55 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 	}
 
 	/**
+	 * TODO
+	 */
+	public void testBaseProviderConfigure() throws Exception {
+		// sample entries
+		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		entries.add(new CIncludePathEntry("/usr/include/", 0));
+		List<String> languages = new ArrayList<String>();
+		languages.add(LANG_ID);
+		// create LanguageSettingsBaseProvider
+		LanguageSettingsBaseProvider provider1 = new LanguageSettingsBaseProvider();
+		LanguageSettingsBaseProvider provider2 = new LanguageSettingsBaseProvider();
+		{
+			// configure provider1
+			Map<String, String> properties = new HashMap<String, String>();
+			properties.put("key1", "value1");
+			properties.put("key2", null);
+			properties.put("key3", "");
+			properties.put("key4", "false");
+			provider1.configureProvider(PROVIDER_0, PROVIDER_NAME_0, languages, entries, properties);
+			assertEquals(PROVIDER_0, provider1.getId());
+			assertEquals(PROVIDER_NAME_0, provider1.getName());
+			assertEquals(languages, provider1.getLanguageScope());
+			assertEquals(entries, provider1.getSettingEntries(null, null, LANG_ID));
+			assertEquals("value1", provider1.getProperty("key1"));
+			assertEquals("", provider1.getProperty("key2"));
+			assertEquals("", provider1.getProperty("key3"));
+			assertEquals("false", provider1.getProperty("key4"));
+			assertEquals(false, provider1.getPropertyBool("key4"));
+			assertEquals("", provider1.getProperty("keyX"));
+			assertEquals(false, provider1.getPropertyBool("keyX"));
+		}
+		{
+			// configure provider2
+			Map<String, String> properties = new HashMap<String, String>();
+			properties.put("key1", "value1");
+			provider2.configureProvider(PROVIDER_0, PROVIDER_NAME_0, languages, entries, properties);
+			assertEquals(PROVIDER_0, provider2.getId());
+			assertEquals(PROVIDER_NAME_0, provider2.getName());
+			assertEquals(languages, provider2.getLanguageScope());
+			assertEquals(entries, provider2.getSettingEntries(null, null, LANG_ID));
+			assertEquals("value1", provider2.getProperty("key1"));
+			assertEquals("", provider2.getProperty("keyX"));
+			assertEquals(false, provider2.getPropertyBool("keyX"));
+		}
+		// test equality
+		assertTrue(provider1.equals(provider2));
+	}
+
+	/**
 	 * LanguageSettingsBaseProvider is not allowed to be configured twice.
 	 */
 	public void testBaseProviderCantReconfigure() throws Exception {
@@ -282,7 +333,7 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 		LanguageSettingsSerializableProvider provider = (LanguageSettingsSerializableProvider) rawProvider;
 
 		assertEquals(null, provider.getLanguageScope());
-		assertEquals(null, provider.getProperty(EXTENSION_SERIALIZABLE_PROVIDER_MISSING_PARAMETER));
+		assertEquals("", provider.getProperty(EXTENSION_SERIALIZABLE_PROVIDER_MISSING_PARAMETER));
 
 		List<ICLanguageSettingEntry> expected = new ArrayList<ICLanguageSettingEntry>();
 		expected.add(EXTENSION_EDITABLE_PROVIDER_ENTRY);

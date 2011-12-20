@@ -175,7 +175,7 @@ public class GCCBuildCommandParserTest extends BaseTestCase {
 			assertEquals(PROVIDER_NAME, provider.getName());
 			assertEquals(null, provider.getLanguageScope());
 			assertEquals(null, provider.getSettingEntries(null, null, null));
-			assertEquals(null, provider.getCompilerPattern());
+			assertEquals("", provider.getCompilerPattern());
 		}
 
 		{

@@ -143,10 +143,14 @@ public class LanguageSettingsBaseProvider extends AbstractExecutableExtensionBas
 	 * {@link #equals(Object)} evaluate the property as equal while comparing providers.
 	 *
 	 * @param key - property to check the value.
-	 * @return value of the property.
+	 * @return value of the property. If the property is missing returns empty string.
 	 */
 	public String getProperty(String key) {
-		return properties.get(key);
+		String value = properties.get(key);
+		if (value == null) {
+			value = ""; //$NON-NLS-1$
+		}
+		return value;
 	}
 
 	/**
@@ -154,7 +158,8 @@ public class LanguageSettingsBaseProvider extends AbstractExecutableExtensionBas
 	 * @see #getProperty(String)
 	 *
 	 * @param key - property to check the value.
-	 * @return boolean value of the property.
+	 * @return boolean value of the property. If the property is missing or cannot be
+	 *    interpreted as boolean returns {@code false}.
 	 */
 	public boolean getPropertyBool(String key) {
 		return Boolean.parseBoolean(properties.get(key));
@@ -267,10 +272,10 @@ public class LanguageSettingsBaseProvider extends AbstractExecutableExtensionBas
 			keys.addAll(other.properties.keySet());
 			for (String key : keys) {
 				String value = properties.get(key);
-				if (value == null)
+				if (value == null || value.equals(Boolean.FALSE.toString()))
 					value = ""; //$NON-NLS-1$
 				String otherValue = other.properties.get(key);
-				if (otherValue == null)
+				if (otherValue == null || otherValue.equals(Boolean.FALSE.toString()))
 					otherValue = ""; //$NON-NLS-1$
 				if (!value.equals(otherValue))
 					return false;

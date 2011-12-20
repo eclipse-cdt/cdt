@@ -361,12 +361,7 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 	 * @param value - {@code boolean} value of the property.
 	 */
 	public void setPropertyBool(String key, boolean value) {
-		if (value == true) {
-			properties.put(key, Boolean.TRUE.toString());
-		} else {
-			// Keep "false" values in default representation and preserve the key in the list
-			properties.put(key, null);
-		}
+		properties.put(key, Boolean.toString(value));
 	}
 
 	/**

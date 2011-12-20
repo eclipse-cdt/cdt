@@ -21,9 +21,9 @@ import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.cdt.core.settings.model.ACPathEntry;
-import org.eclipse.cdt.core.settings.model.CMacroEntry;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CUIPlugin;
 
@@ -47,18 +47,18 @@ public class LanguageSettingsImages {
 	 * Returns image for the given entry from internally managed repository including
 	 * necessary overlays. This method is shortcut for {@link #getImage(ICLanguageSettingEntry, String)}
 	 * when no project is available.
-	 * 
+	 *
 	 * @param entry - language settings entry to get an image for.
 	 * @return the image for the entry with appropriate overlays.
 	 */
 	public static Image getImage(ICLanguageSettingEntry entry) {
 		return getImage(entry, null);
 	}
-	
+
 	/**
 	 * Returns image for the given entry from internally managed repository including
 	 * necessary overlays.
-	 * 
+	 *
 	 * @param entry - language settings entry to get an image for.
 	 * @param projectName - pass project name if available. That lets to put "project" metaphor
 	 *    on the image. Pass {@code null} if no project name is available.
@@ -76,7 +76,7 @@ public class LanguageSettingsImages {
 		if (imageKey!=null) {
 			if ((entry.getFlags()&ICSettingEntry.UNDEFINED) == ICSettingEntry.UNDEFINED)
 				return CDTSharedImages.getImageOverlaid(imageKey, CDTSharedImages.IMG_OVR_INACTIVE, IDecoration.BOTTOM_LEFT);
-			
+
 			if (entry instanceof ACPathEntry) {
 				String overlayKey=null;
 				IStatus status = getStatus(entry);
@@ -105,7 +105,7 @@ public class LanguageSettingsImages {
 		// have to trust paths which contain variables
 		if (entry.getName().contains("${")) //$NON-NLS-1$
 			return true;
-		
+
 		boolean exists = true;
 		boolean isWorkspacePath = (entry.getFlags() & ICSettingEntry.VALUE_WORKSPACE_PATH) != 0;
 		if (isWorkspacePath) {
@@ -119,17 +119,25 @@ public class LanguageSettingsImages {
 		}
 		return exists;
 	}
-	
+
 	/**
 	 * Defines status object for the status message line.
-	 * 
+	 *
 	 * @param entry - the entry to check status on.
 	 * @return a status object defining severity and message.
 	 */
 	public static IStatus getStatus(ICLanguageSettingEntry entry) {
 		if (entry instanceof ACPathEntry) {
+			if (!entry.isResolved()) {
+				ICLanguageSettingEntry[] entries = CDataUtil.resolveEntries(new ICLanguageSettingEntry[] {entry}, null);
+				if (entries != null && entries.length > 0) {
+					entry = entries[0];
+				}
+
+			}
 			ACPathEntry acEntry = (ACPathEntry)entry;
-			IPath path = new Path(acEntry.getName());
+			String acEntryName = acEntry.getName();
+			IPath path = new Path(acEntryName);
 			if (!path.isAbsolute()) {
 				String msg = "Using relative paths is ambiguous and not recommended. It can cause unexpected side-effects.";
 				return new Status(IStatus.INFO, CUIPlugin.PLUGIN_ID, msg);
@@ -142,7 +150,7 @@ public class LanguageSettingsImages {
 					msg = "The selected folder does not exist or not accessible.";
 				return new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, msg);
 			}
-				
+
 		}
 		return Status.OK_STATUS;
 	}

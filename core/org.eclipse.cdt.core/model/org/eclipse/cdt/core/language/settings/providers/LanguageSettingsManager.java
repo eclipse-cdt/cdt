@@ -229,14 +229,19 @@ public class LanguageSettingsManager {
 		if (resource instanceof IFile) {
 			String langId = null;
 			if (cfgDescription != null) {
+				// Inquire MBS
 				ICLanguageSetting ls = cfgDescription.getLanguageSettingForFile(prjRelPath, true);
 				if (ls != null) {
 					langId = ls.getLanguageId();
 				}
-			} else {
+			}
+			if (langId == null) {
+				// Try getting language from content types
 				try {
-					ILanguage lang = LanguageManager.getInstance().getLanguageForFile((IFile) resource, null);
-					langId = lang.getId();
+					ILanguage lang = LanguageManager.getInstance().getLanguageForFile((IFile) resource, cfgDescription);
+					if (lang != null) {
+						langId = lang.getId();
+					}
 				} catch (CoreException e) {
 					CCorePlugin.log(e);
 				}

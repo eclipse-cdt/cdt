@@ -34,7 +34,6 @@ import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.cdt.internal.core.settings.model.SettingsModelMessages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -70,7 +69,8 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 		List<String> languageIds = LanguageSettingsManager.getLanguages(rc, cfgDescription);
 		if (languageIds.isEmpty()) {
 			String msg = NLS.bind(SettingsModelMessages.getString("LanguageSettingsScannerInfoProvider.UnableToDetermineLanguage"), rc.toString()); //$NON-NLS-1$
-			CCorePlugin.log(new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, msg)));
+			IStatus status = new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, msg, new Exception());
+			CCorePlugin.log(status);
 			return DUMMY_SCANNER_INFO;
 		}
 

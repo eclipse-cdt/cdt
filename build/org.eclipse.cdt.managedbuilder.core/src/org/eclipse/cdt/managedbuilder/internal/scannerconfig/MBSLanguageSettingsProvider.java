@@ -42,6 +42,8 @@ public class MBSLanguageSettingsProvider extends AbstractExecutableExtensionBase
 			ICLanguageSetting ls = cfgDescription.getLanguageSettingForFile(projectPath, true);
 			if (ls != null) {
 				languageSettings = new ICLanguageSetting[] {ls};
+			} else {
+				return getSettingEntries(cfgDescription, rc.getParent(), languageId);
 			}
 		} else {
 			ICResourceDescription rcDescription = cfgDescription.getResourceDescription(projectPath, false);

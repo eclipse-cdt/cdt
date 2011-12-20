@@ -37,13 +37,13 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
-public class CPPASTArraySubscriptExpression extends ASTNode implements ICPPASTArraySubscriptExpression, IASTAmbiguityParent {
-
+public class CPPASTArraySubscriptExpression extends ASTNode
+		implements ICPPASTArraySubscriptExpression, IASTAmbiguityParent {
     private IASTExpression arrayExpression;
     private IASTInitializerClause subscriptExp;
     private ICPPFunction overload= UNINITIALIZED_FUNCTION;
 
-    private IASTImplicitName[] implicitNames = null;
+    private IASTImplicitName[] implicitNames;
     
     public CPPASTArraySubscriptExpression() {
 	}
@@ -53,10 +53,12 @@ public class CPPASTArraySubscriptExpression extends ASTNode implements ICPPASTAr
 		setArgument(operand);
 	}
 	
+	@Override
 	public CPPASTArraySubscriptExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CPPASTArraySubscriptExpression copy(CopyStyle style) {
 		CPPASTArraySubscriptExpression copy = new CPPASTArraySubscriptExpression();
 		copy.setArrayExpression(arrayExpression == null ? null : arrayExpression.copy(style));
@@ -68,11 +70,13 @@ public class CPPASTArraySubscriptExpression extends ASTNode implements ICPPASTAr
 		return copy;
 	}
 
+	@Override
 	public IASTExpression getArrayExpression() {
         return arrayExpression;
     }
 
-    public void setArrayExpression(IASTExpression expression) {
+    @Override
+	public void setArrayExpression(IASTExpression expression) {
         assertNotFrozen();
         arrayExpression = expression;        
         if (expression != null) {
@@ -81,11 +85,13 @@ public class CPPASTArraySubscriptExpression extends ASTNode implements ICPPASTAr
 		}
     }
 
-    public IASTInitializerClause getArgument() {
+    @Override
+	public IASTInitializerClause getArgument() {
         return subscriptExp;
     }
 
-    public void setArgument(IASTInitializerClause arg) {
+    @Override
+	public void setArgument(IASTInitializerClause arg) {
         assertNotFrozen();
         subscriptExp = arg;
         if (arg != null) {
@@ -94,19 +100,22 @@ public class CPPASTArraySubscriptExpression extends ASTNode implements ICPPASTAr
 		}
     }
 
-    @Deprecated
+    @Override
+	@Deprecated
     public IASTExpression getSubscriptExpression() {
     	if (subscriptExp instanceof IASTExpression)
     		return (IASTExpression) subscriptExp;
     	return null;
     }
 
-    @Deprecated
+    @Override
+	@Deprecated
     public void setSubscriptExpression(IASTExpression expression) {
     	setArgument(expression);
     }
     
-    public IASTImplicitName[] getImplicitNames() {
+    @Override
+	public IASTImplicitName[] getImplicitNames() {
 		if (implicitNames == null) {
 			ICPPFunction overload = getOverload();
 			if (overload == null || overload instanceof CPPImplicitFunction)
@@ -127,8 +136,7 @@ public class CPPASTArraySubscriptExpression extends ASTNode implements ICPPASTAr
 		
 		return implicitNames;
 	}
-    
-    
+
     public ICPPFunction getOverload() {
     	if (overload == UNINITIALIZED_FUNCTION) {
     		overload= null;
@@ -174,7 +182,8 @@ public class CPPASTArraySubscriptExpression extends ASTNode implements ICPPASTAr
         return true;
     }
 
-    public void replace(IASTNode child, IASTNode other) {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
         if (child == subscriptExp) {
             other.setPropertyInParent(child.getPropertyInParent());
             other.setParent(child.getParent());
@@ -187,7 +196,8 @@ public class CPPASTArraySubscriptExpression extends ASTNode implements ICPPASTAr
         }
     }
 
-    public IType getExpressionType() {
+    @Override
+	public IType getExpressionType() {
 		ICPPFunction op = getOverload();
 		if (op != null) {
 			return ExpressionTypes.typeFromFunctionCall(op);
@@ -216,10 +226,12 @@ public class CPPASTArraySubscriptExpression extends ASTNode implements ICPPASTAr
 		return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
     }
 
+	@Override
 	public boolean isLValue() {
 		return getValueCategory() == LVALUE;
 	}
 
+	@Override
 	public ValueCategory getValueCategory() {
 		ICPPFunction op = getOverload();
 		if (op != null) {

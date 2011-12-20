@@ -460,7 +460,7 @@ public class ChangeGenerator extends ASTVisitor {
 		IFile file = FileHelper.getFileFromNode(anchorNode);
 		MultiTextEdit parentEdit = getEdit(anchorNode, file);
 		parentEdit.addChild(edit);
-		sourceOffsets.put(file.getName(), Integer.valueOf(edit.getOffset()));
+		sourceOffsets.put(file.getName(), edit.getOffset());
 	}
 
 	private void handleReplace(IASTNode node) {
@@ -469,10 +469,13 @@ public class ChangeGenerator extends ASTVisitor {
 		TextEdit edit;
 		ChangeGeneratorWriterVisitor writer =
 				new ChangeGeneratorWriterVisitor(modificationStore, commentMap);
+		IASTFileLocation fileLocation = node.getFileLocation();
+		Integer val = sourceOffsets.get(fileLocation.getFileName());
+		int processedOffset = val != null ? val.intValue() : 0;
 		if (modifications.size() == 1 && modifications.get(0).getNewNode() == null) {
 			int offset = getOffsetIncludingComments(node);
 			int endOffset = getEndOffsetIncludingComments(node);
-			offset = skipPrecedingBlankLines(source, offset);
+			offset = Math.max(skipPrecedingBlankLines(source, offset), processedOffset);
 			endOffset = skipTrailingBlankLines(source, endOffset);
 			IASTNode[] siblingsList = getContainingNodeList(node);
 			if (siblingsList != null) {
@@ -500,9 +503,8 @@ public class ChangeGenerator extends ASTVisitor {
 		} else {
 			node.accept(writer);
 			String code = writer.toString();
-			IASTFileLocation location = node.getFileLocation();
-			int offset = location.getNodeOffset();
-			int endOffset = offset + location.getNodeLength();
+			int offset = fileLocation.getNodeOffset();
+			int endOffset = offset + fileLocation.getNodeLength();
 			if (node instanceof IASTStatement || node instanceof IASTDeclaration) {
 				// Include trailing comments in the area to be replaced.
 				endOffset = Math.max(endOffset, getEndOffsetIncludingTrailingComments(node));
@@ -517,9 +519,7 @@ public class ChangeGenerator extends ASTVisitor {
 		MultiTextEdit parentEdit = getEdit(node, file);
 		parentEdit.addChild(edit);
 		
-		IASTFileLocation fileLocation = node.getFileLocation();
-		int newOffset = fileLocation.getNodeOffset() + fileLocation.getNodeLength();
-		sourceOffsets.put(fileLocation.getFileName(), Integer.valueOf(newOffset));
+		sourceOffsets.put(fileLocation.getFileName(), edit.getExclusiveEnd());
 	}
 
 	private void handleAppends(IASTNode node) {
@@ -553,8 +553,7 @@ public class ChangeGenerator extends ASTVisitor {
 				code + anchor.getText());
 		parentEdit.addChild(edit);
 		IASTFileLocation fileLocation = node.getFileLocation();
-		int newOffset = fileLocation.getNodeOffset() + fileLocation.getNodeLength();
-		sourceOffsets.put(fileLocation.getFileName(), Integer.valueOf(newOffset));
+		sourceOffsets.put(fileLocation.getFileName(), endOffset(fileLocation));
 	}
 
 	private void handleAppends(IASTTranslationUnit tu) {

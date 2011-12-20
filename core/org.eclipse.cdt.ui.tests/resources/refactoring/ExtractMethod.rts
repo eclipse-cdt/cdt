@@ -2512,24 +2512,60 @@ visibility=public
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@main.c
 int main() {
-	int a,b;
-	/*$*/a = b*2;/*$$*/
+	int a, b;
+	/*$*/a = b * 2;/*$$*/
 	return a;
 }
-
 //=
 void test(int* a, int b) {
 	a = b * 2;
 }
 
 int main() {
-	int a,b;
+	int a, b;
 	test(a, b);
 	return a;
 }
-
 //@.config
 filename=main.c
 methodname=test
 replaceduplicates=false
 returnvalue=false
+
+//!Handling of blank lines
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@main.c
+int main() {
+	int f;
+	/*$*/int a = 0;
+	int b = 1;
+
+	for (int i = 0; i < 10; ++i) {
+		int c = a + b;
+		a = b;
+		b = c;
+	}/*$$*/
+
+	f = b;
+}
+//=
+int fib() {
+	int a = 0;
+	int b = 1;
+	for (int i = 0; i < 10; ++i) {
+		int c = a + b;
+		a = b;
+		b = c;
+	}
+	return b;
+}
+
+int main() {
+	int f;
+	int b = fib();
+	f = b;
+}
+//@.config
+filename=main.c
+methodname=fib
+replaceduplicates=false

@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     John Camelon (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -22,11 +22,9 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
  * Array declarator for c++.
  */
 public class CPPASTArrayDeclarator extends CPPASTDeclarator implements ICPPASTArrayDeclarator {
-    
-    private IASTArrayModifier [] arrayMods = null;
-    private int arrayModsPos=-1;
+    private IASTArrayModifier[] arrayMods = null;
+    private int arrayModsPos = -1;
 
-    
     public CPPASTArrayDeclarator(IASTName name, IASTInitializer initializer) {
 		super(name, initializer);
 	}
@@ -34,8 +32,7 @@ public class CPPASTArrayDeclarator extends CPPASTDeclarator implements ICPPASTAr
 	public CPPASTArrayDeclarator(IASTName name) {
 		super(name);
 	}
-	
-	
+
     public CPPASTArrayDeclarator() {
 	}
 
@@ -43,7 +40,6 @@ public class CPPASTArrayDeclarator extends CPPASTDeclarator implements ICPPASTAr
 	public CPPASTArrayDeclarator copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-    
 
 	@Override
 	public CPPASTArrayDeclarator copy(CopyStyle style) {
@@ -57,22 +53,27 @@ public class CPPASTArrayDeclarator extends CPPASTDeclarator implements ICPPASTAr
 		}
 		return copy;
 	}
-    
+
+	@Override
 	public IASTArrayModifier[] getArrayModifiers() {
-        if( arrayMods == null ) return IASTArrayModifier.EMPTY_ARRAY;
-        arrayMods = (IASTArrayModifier[]) ArrayUtil.removeNullsAfter( IASTArrayModifier.class, arrayMods, arrayModsPos );
+        if (arrayMods == null)
+        	return IASTArrayModifier.EMPTY_ARRAY;
+        arrayMods = (IASTArrayModifier[]) ArrayUtil.removeNullsAfter(IASTArrayModifier.class,
+        		arrayMods, arrayModsPos);
         return arrayMods;
     }
 
-    public void addArrayModifier(IASTArrayModifier arrayModifier) {
+    @Override
+	public void addArrayModifier(IASTArrayModifier arrayModifier) {
         assertNotFrozen();
     	if (arrayModifier != null) {
-    		arrayMods = (IASTArrayModifier[]) ArrayUtil.append( IASTArrayModifier.class, arrayMods, ++arrayModsPos, arrayModifier );
+    		arrayMods = (IASTArrayModifier[]) ArrayUtil.append(IASTArrayModifier.class, arrayMods,
+    				++arrayModsPos, arrayModifier);
     		arrayModifier.setParent(this);
 			arrayModifier.setPropertyInParent(ARRAY_MODIFIER);
     	}
     }
-    
+
     @Override
 	protected boolean postAccept(ASTVisitor action) {
 		IASTArrayModifier[] mods = getArrayModifiers();

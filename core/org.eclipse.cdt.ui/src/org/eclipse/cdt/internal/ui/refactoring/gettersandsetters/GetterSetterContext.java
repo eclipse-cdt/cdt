@@ -23,6 +23,15 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IArrayType;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IPointerType;
+import org.eclipse.cdt.core.dom.ast.IQualifierType;
+import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
+
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.GetterSetterInsertEditProvider.AccessorKind;
 
@@ -45,7 +54,7 @@ public class GetterSetterContext implements ITreeContentProvider {
 				if (!wrapper.getter.exists()) {
 					wrapper.childNodes.add(createGetterInserter(wrapper.field));
 				}
-				if (!wrapper.setter.exists() && !wrapper.field.getDeclSpecifier().isConst()) {
+				if (!wrapper.setter.exists() && isAssignable(wrapper.field)) {
 					wrapper.childNodes.add(createSetterInserter(wrapper.field));
 				}
 			}
@@ -55,12 +64,12 @@ public class GetterSetterContext implements ITreeContentProvider {
 	}
 
 	public GetterSetterInsertEditProvider createGetterInserter(IASTSimpleDeclaration simpleDeclaration) {
-		IASTName fieldName = getFieldDeclarationName(simpleDeclaration);
+		IASTName fieldName = getDeclarationName(simpleDeclaration);
 		return new GetterSetterInsertEditProvider(fieldName, simpleDeclaration, AccessorKind.GETTER);
 	}
 
 	public GetterSetterInsertEditProvider createSetterInserter(IASTSimpleDeclaration simpleDeclaration) {
-		IASTName fieldName = getFieldDeclarationName(simpleDeclaration);
+		IASTName fieldName = getDeclarationName(simpleDeclaration);
 		return new GetterSetterInsertEditProvider(fieldName, simpleDeclaration, AccessorKind.SETTER);
 	}
 
@@ -115,11 +124,11 @@ public class GetterSetterContext implements ITreeContentProvider {
 	private ArrayList<FieldWrapper> getWrappedFields() {
 		if (wrappedFields == null) {
 			wrappedFields = new ArrayList<FieldWrapper>();
-			for (IASTSimpleDeclaration currentField : existingFields) {
+			for (IASTSimpleDeclaration field : existingFields) {
 				FieldWrapper wrapper = new FieldWrapper();
-				wrapper.field = currentField;
-				wrapper.getter = getGetterForField(currentField);
-				wrapper.setter = getSetterForField(currentField);
+				wrapper.field = field;
+				wrapper.getter = getGetterForField(field);
+				wrapper.setter = getSetterForField(field);
 				if (wrapper.missingGetterOrSetter()) {
 					wrappedFields.add(wrapper);
 				}
@@ -130,35 +139,52 @@ public class GetterSetterContext implements ITreeContentProvider {
 
 	private FunctionWrapper getGetterForField(IASTSimpleDeclaration currentField) {
 		FunctionWrapper wrapper = new FunctionWrapper();
-		String name = GetterSetterNameGenerator.generateGetterName(getFieldDeclarationName(currentField));
+		String name = GetterSetterNameGenerator.generateGetterName(getDeclarationName(currentField));
 		setFunctionToWrapper(wrapper, name);
 		return wrapper;
 	}
 
-	private IASTName getFieldDeclarationName(IASTSimpleDeclaration fieldDeclaration) {
-		IASTDeclarator declarator = fieldDeclaration.getDeclarators()[0];
+	private FunctionWrapper getSetterForField(IASTSimpleDeclaration field) {
+		FunctionWrapper wrapper = new FunctionWrapper();
+		String name = GetterSetterNameGenerator.generateSetterName(getDeclarationName(field));
+		setFunctionToWrapper(wrapper, name);
+		return wrapper;
+	}
+
+	private static IASTName getDeclarationName(IASTSimpleDeclaration declaration) {
+		IASTDeclarator declarator = declaration.getDeclarators()[0];
 		while (declarator.getNestedDeclarator() != null) {
 			declarator = declarator.getNestedDeclarator();
 		}
 		return declarator.getName();
 	}
-	
-	private FunctionWrapper getSetterForField(IASTSimpleDeclaration currentField) {
-		FunctionWrapper wrapper = new FunctionWrapper();
-		String name = GetterSetterNameGenerator.generateSetterName(getFieldDeclarationName(currentField));
-		setFunctionToWrapper(wrapper, name);
-		return wrapper;
+
+	private static boolean isAssignable(IASTSimpleDeclaration declaration) {
+		IASTName name = getDeclarationName(declaration);
+		IBinding binding = name.resolveBinding();
+		if (!(binding instanceof ICPPField))
+			return false;
+		ICPPField field = (ICPPField) binding;
+		IType type = field.getType();
+		type = SemanticUtil.getNestedType(type, SemanticUtil.TDEF);
+		if (type instanceof IArrayType || type instanceof ICPPReferenceType)
+			return false;
+		if (type instanceof IPointerType && ((IPointerType) type).isConst())
+			return false;
+		if (type instanceof IQualifierType && ((IQualifierType) type).isConst())
+			return false;
+		return true;
 	}
 
-	private void setFunctionToWrapper(FunctionWrapper wrapper, String getterName) {
+	private void setFunctionToWrapper(FunctionWrapper wrapper, String accessorName) {
 		for (IASTFunctionDefinition currentDefinition : existingFunctionDefinitions) {
-			if (currentDefinition.getDeclarator().getName().toString().endsWith(getterName)) {
+			if (currentDefinition.getDeclarator().getName().toString().equals(accessorName)) {
 				wrapper.functionDefinition = currentDefinition;
 			}
 		}
 		
 		for (IASTSimpleDeclaration currentDeclaration : existingFunctionDeclarations) {
-			if (getFieldDeclarationName(currentDeclaration).toString().endsWith(getterName)) {
+			if (getDeclarationName(currentDeclaration).toString().equals(accessorName)) {
 				wrapper.functionDeclaration = currentDeclaration;
 			}
 		}

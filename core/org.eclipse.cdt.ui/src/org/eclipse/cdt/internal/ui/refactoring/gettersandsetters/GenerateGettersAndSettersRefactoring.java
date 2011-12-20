@@ -173,7 +173,7 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring2 {
 
 	private IASTCompositeTypeSpecifier getCompositeTypeSpecifier(IASTName selectedName) {
 		IASTNode node = selectedName;
-		while(node != null && !(node instanceof IASTCompositeTypeSpecifier)) {
+		while (node != null && !(node instanceof IASTCompositeTypeSpecifier)) {
 			node = node.getParent();
 		}
 		return (IASTCompositeTypeSpecifier) node;
@@ -181,7 +181,7 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring2 {
 
 	private IASTName getSelectedName(IASTTranslationUnit ast) {
 		List<IASTName> names = findAllMarkedNames(ast);
-		if (names.size() < 1) {
+		if (names.isEmpty()) {
 			return null;
 		}
 		return names.get(names.size() - 1);

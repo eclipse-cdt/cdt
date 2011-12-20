@@ -1451,3 +1451,31 @@ public:
 	int test;
 };
 #endif /* A_H_ */
+//!Bug ??? - Getter for an array field
+//#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
+//@.config
+filename=A.h
+getters=a
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+class A {
+private:
+	int /*$*/a[2]/*$$*/;
+};
+#endif /* A_H_ */
+//=
+#ifndef A_H_
+#define A_H_
+
+class A {
+private:
+	int a[2];
+
+public:
+	const int* getA() const {
+		return a;
+	}
+};
+#endif /* A_H_ */

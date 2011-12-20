@@ -6,33 +6,22 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM Rational Software) - Initial API and implementation
+ *     John Camelon (IBM Rational Software) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
 /**
- * This interface represents a postfix array subscript expression. x[ 10 ]
- * y.z()[ t * t ]
+ * This interface represents a postfix array subscript expression. x[10]
+ * y.z()[t * t]
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTArraySubscriptExpression extends IASTExpression {
-
 	public static final ASTNodeProperty ARRAY = new ASTNodeProperty(
 			"IASTArraySubscriptExpression.ARRAY [IASTExpression]"); //$NON-NLS-1$
 	public static final ASTNodeProperty SUBSCRIPT = new ASTNodeProperty(
 			"IASTArraySubscriptExpression.SUBSCRIPT - [IASTFunctionArgument]"); //$NON-NLS-1$
-
-	/**
-	 * @since 5.1
-	 */
-	IASTArraySubscriptExpression copy();
-	
-	/**
-	 * @since 5.3
-	 */
-	IASTArraySubscriptExpression copy(CopyStyle style);
 
 	/**
 	 * Get the expression that represents the array
@@ -74,4 +63,16 @@ public interface IASTArraySubscriptExpression extends IASTExpression {
 	 */
 	@Deprecated
 	public void setSubscriptExpression(IASTExpression expression);
+
+	/**
+	 * @since 5.1
+	 */
+	@Override
+	IASTArraySubscriptExpression copy();
+	
+	/**
+	 * @since 5.3
+	 */
+	@Override
+	IASTArraySubscriptExpression copy(CopyStyle style);
 }

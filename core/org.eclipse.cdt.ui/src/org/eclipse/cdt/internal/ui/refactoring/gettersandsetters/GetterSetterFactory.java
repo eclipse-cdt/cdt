@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.ui.refactoring.gettersandsetters;
 
 import java.util.Arrays;
 
+import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -25,12 +26,16 @@ import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.rewrite.TypeHelper;
 import org.eclipse.cdt.core.parser.Keywords;
 
+import org.eclipse.cdt.internal.core.dom.parser.c.CASTDeclarator;
+import org.eclipse.cdt.internal.core.dom.parser.c.CASTPointer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTBinaryExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompoundStatement;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTExpressionStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFieldReference;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionDeclarator;
@@ -39,6 +44,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLiteralExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTParameterDeclaration;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTPointer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTReferenceOperator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTReturnStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclSpecifier;
@@ -90,12 +96,23 @@ public class GetterSetterFactory {
 		// Copy declarator hierarchy
 		IASTDeclarator topDeclarator = fieldDeclaration.getDeclarators()[0].copy(CopyStyle.withLocations);
 		
+		if (topDeclarator instanceof IASTArrayDeclarator) {
+			boolean isCpp = topDeclarator instanceof ICPPASTArrayDeclarator;
+			IASTDeclarator decl = isCpp ? new CPPASTDeclarator() : new CASTDeclarator();
+			decl.setName(topDeclarator.getName());
+			decl.setNestedDeclarator(topDeclarator.getNestedDeclarator());
+			decl.addPointerOperator(isCpp ? new CPPASTPointer() : new CASTPointer());
+			for (IASTPointerOperator pointer : topDeclarator.getPointerOperators()) {
+				decl.addPointerOperator(pointer);
+			}
+			topDeclarator = decl;
+		}
 		// Find the innermost declarator in hierarchy
 		IASTDeclarator innermost = topDeclarator;
 		while (innermost.getNestedDeclarator() != null) {
 			innermost = innermost.getNestedDeclarator();
 		}
-		
+
 		// Create a new innermost function declarator based on the field declarator 
 		CPPASTFunctionDeclarator functionDeclarator = new CPPASTFunctionDeclarator();
 		functionDeclarator.setConst(true);
@@ -203,7 +220,7 @@ public class GetterSetterFactory {
 
 	private IASTDeclSpecifier getParamOrReturnDeclSpecifier() {
 		IASTDeclSpecifier declSpec = fieldDeclaration.getDeclSpecifier().copy(CopyStyle.withLocations);
-		if (passByReference) {
+		if (passByReference || fieldDeclaration.getDeclarators()[0] instanceof IASTArrayDeclarator) {
 			declSpec.setConst(true);
 		}
 		return declSpec;

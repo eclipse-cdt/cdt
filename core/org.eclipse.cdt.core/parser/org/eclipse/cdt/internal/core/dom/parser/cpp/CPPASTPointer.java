@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     John Camelon (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -19,7 +19,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
  * A pointer operator of a declarator
  */
 public class CPPASTPointer extends ASTNode implements IASTPointer {
-
     private boolean isConst;
     private boolean isVolatile;
     private boolean isRestrict;
@@ -27,10 +26,12 @@ public class CPPASTPointer extends ASTNode implements IASTPointer {
     public CPPASTPointer() {
     }
     
-    public CPPASTPointer copy() {
+    @Override
+	public CPPASTPointer copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
     
+	@Override
 	public CPPASTPointer copy(CopyStyle style) {
 		CPPASTPointer copy = new CPPASTPointer();
 		copy.isConst = isConst;
@@ -43,29 +44,35 @@ public class CPPASTPointer extends ASTNode implements IASTPointer {
 		return copy;
 	}
 
-    public boolean isConst() {
+    @Override
+	public boolean isConst() {
         return isConst;
     }
 
-    public boolean isVolatile() {
+    @Override
+	public boolean isVolatile() {
         return isVolatile;
     }
 
-    public boolean isRestrict() {
+    @Override
+	public boolean isRestrict() {
         return isRestrict;
     }
 
-    public void setConst(boolean value) {
+    @Override
+	public void setConst(boolean value) {
         assertNotFrozen();
         isConst = value;
     }
 
-    public void setVolatile(boolean value) {
+    @Override
+	public void setVolatile(boolean value) {
         assertNotFrozen();
         isVolatile = value;
     }
 
-    public void setRestrict(boolean value) {
+    @Override
+	public void setRestrict(boolean value) {
         assertNotFrozen();
         isRestrict = value;
     }
@@ -74,8 +81,8 @@ public class CPPASTPointer extends ASTNode implements IASTPointer {
 	public boolean accept(ASTVisitor action) {
 		if (action.shouldVisitPointerOperators) {
 			switch (action.visit(this)) {
-    		case ASTVisitor.PROCESS_ABORT : return false;
-    		case ASTVisitor.PROCESS_SKIP  : return true;
+    		case ASTVisitor.PROCESS_ABORT: return false;
+    		case ASTVisitor.PROCESS_SKIP: return true;
     		}
 			if (action.leave(this) == ASTVisitor.PROCESS_ABORT)
 				return false;

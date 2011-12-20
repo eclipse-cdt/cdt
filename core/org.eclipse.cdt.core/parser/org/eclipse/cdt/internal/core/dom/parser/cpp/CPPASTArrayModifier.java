@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     IBM - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -22,7 +22,6 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
  * @author jcamelon
  */
 public class CPPASTArrayModifier extends ASTNode implements IASTArrayModifier, IASTAmbiguityParent {
-
     private IASTExpression exp;
 
     public CPPASTArrayModifier() {
@@ -32,14 +31,17 @@ public class CPPASTArrayModifier extends ASTNode implements IASTArrayModifier, I
 		setConstantExpression(exp);
 	}
 
+	@Override
 	public IASTExpression getConstantExpression() {
         return exp;
     }
 
+	@Override
 	public CPPASTArrayModifier copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CPPASTArrayModifier copy(CopyStyle style) {
 		CPPASTArrayModifier copy = new CPPASTArrayModifier(exp == null ? null : exp.copy(style));
 		copy.setOffsetAndLength(this);
@@ -49,7 +51,8 @@ public class CPPASTArrayModifier extends ASTNode implements IASTArrayModifier, I
 		return copy;
 	}
 
-    public void setConstantExpression(IASTExpression expression) {
+    @Override
+	public void setConstantExpression(IASTExpression expression) {
         assertNotFrozen();
         exp = expression;
         if (expression != null) {
@@ -62,9 +65,9 @@ public class CPPASTArrayModifier extends ASTNode implements IASTArrayModifier, I
 	public boolean accept(ASTVisitor action) {
 		if (action.shouldVisitArrayModifiers) {
 			switch (action.visit(this)) {
-    		case ASTVisitor.PROCESS_ABORT : return false;
-    		case ASTVisitor.PROCESS_SKIP  : return true;
-    		default : break;
+    		case ASTVisitor.PROCESS_ABORT: return false;
+    		case ASTVisitor.PROCESS_SKIP: return true;
+    		default: break;
     		}
     	}
         if (exp != null && !exp.accept(action))
@@ -76,7 +79,8 @@ public class CPPASTArrayModifier extends ASTNode implements IASTArrayModifier, I
 		return true;
     }
 
-    public void replace(IASTNode child, IASTNode other) {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
         if (child == exp) {
             other.setPropertyInParent(child.getPropertyInParent());
             other.setParent(child.getParent());

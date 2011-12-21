@@ -9349,6 +9349,33 @@ public class AST2CPPTests extends AST2BaseTest {
 		parseAndCheckBindings();
 	}
 	
+	//	namespace std {
+	//	    template <class T1, class T2> struct pair {
+	//	        T1 first;
+	//	        T2 second;
+	//	    };
+	//
+	//	    template <typename T, typename U> T begin(const pair<T, U>& p) {
+	//	        return p.first;
+	//	    }
+	//	    template <typename T, typename U> U end(const pair<T, U>& p) {
+	//	        return p.second;
+	//	    }
+	//	}
+	//	struct S {
+	//	    int x;
+	//	};
+	//
+	//	int main() {
+	//	    S arr[5];
+	//	    std::pair<S*, S*> p{arr, arr + 5};
+	//	    for (const auto& r : p)
+	//	        r.x;  
+	//	}
+	public void testAutoTypeInRangeBasedFor_332883c() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	struct S {
 	//	    void f();
 	//	};

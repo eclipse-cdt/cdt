@@ -20,6 +20,7 @@
  * David McKnight   (IBM)        - [296877] Allow user to choose the attributes for remote search result
  * David McKnight   (IBM)        - [357587] Custom sorter is changed to SystemTableViewSorter
  * David McKnight   (IBM)        - [363392] system table views shows open view actions when they shouldn't
+ * David McKnight   (IBM)        - [367357]	system table-tree view not showing refresh action
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -967,48 +968,45 @@ public class SystemTableTreeView
 				// --------------------------
 			case ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_DELETED :
 				{
+					Object dchild = remoteResource;
+
+					ISystemViewElementAdapter dadapt = getViewAdapter(dchild);
+					if (dadapt != null)
 					{
-						Object dchild = remoteResource;
+						ISubSystem dSubSystem = dadapt.getSubSystem(dchild);
+						String dkey = dadapt.getAbsoluteName(dchild);
 
-						ISystemViewElementAdapter dadapt = getViewAdapter(dchild);
-						if (dadapt != null)
+						if (provider != null)
 						{
-							ISubSystem dSubSystem = dadapt.getSubSystem(dchild);
-							String dkey = dadapt.getAbsoluteName(dchild);
-
-							if (provider != null)
+							Object[] children = provider.getChildren(_objectInput);
+							for (int i = 0; i < children.length; i++)
 							{
-								Object[] children = provider.getChildren(_objectInput);
-								for (int i = 0; i < children.length; i++)
+								Object existingChild = children[i];
+								if (existingChild != null)
 								{
-									Object existingChild = children[i];
-									if (existingChild != null)
+									ISystemViewElementAdapter eadapt = getViewAdapter(existingChild);
+									ISubSystem eSubSystem = eadapt.getSubSystem(existingChild);
+
+									if (dSubSystem == eSubSystem)
 									{
-										ISystemViewElementAdapter eadapt = getViewAdapter(existingChild);
-										ISubSystem eSubSystem = eadapt.getSubSystem(existingChild);
-
-										if (dSubSystem == eSubSystem)
+										String ekey = eadapt.getAbsoluteName(existingChild);
+										if (ekey.equals(dkey))
 										{
-											String ekey = eadapt.getAbsoluteName(existingChild);
-											if (ekey.equals(dkey))
+											if (!madeChange)
 											{
-												if (!madeChange)
-												{
-													provider.flushCache();
-													madeChange = true;
+												provider.flushCache();
+												madeChange = true;
 
-													// do a full refresh
-													refresh();
-												}
+												// do a full refresh
+												refresh();
 											}
 										}
-
 									}
+
 								}
 							}
 						}
 					}
-
 				}
 				break;
 
@@ -1361,6 +1359,16 @@ public class SystemTableTreeView
 			scanSelections();
 		return _selectionShowRenameAction;
 	}
+	
+	/**
+	 * Decides whether to even show the refresh menu item.
+	 * Assumes scanSelections() has already been called
+	 */
+	protected boolean showRefresh() {
+		if (!_selectionFlagsUpdated)
+			scanSelections();
+		return _selectionShowRefreshAction;
+	}
 	/**
 	 * Required method from ISystemRenameTarget
 	 * Decides whether to enable the rename menu item. 
@@ -1580,7 +1588,10 @@ public class SystemTableTreeView
 			SystemView.createStandardGroups(menu);
 
 			// ADD COMMON ACTIONS...
-
+			if (showRefresh()) {
+				menu.appendToGroup(ISystemContextMenuConstants.GROUP_BUILD, getRefreshAction());
+			}
+			
 			// COMMON RENAME ACTION...
 			if (canRename())
 			{
@@ -1597,6 +1608,9 @@ public class SystemTableTreeView
 			{
 				Object element = elements.next();
 				ISystemViewElementAdapter adapter = getViewAdapter(element);
+				if (adapter == null){
+					System.out.println("no adapter for "+element);
+				}
 				adapters.put(adapter, element); // want only unique adapters
 			}
 			Enumeration uniqueAdapters = adapters.keys();
@@ -1670,8 +1684,6 @@ public class SystemTableTreeView
 					menu.appendToGroup(ISystemContextMenuConstants.GROUP_OPEN, showInTableAction);
 				}
 			}
-
-
 		}
 	}
 	

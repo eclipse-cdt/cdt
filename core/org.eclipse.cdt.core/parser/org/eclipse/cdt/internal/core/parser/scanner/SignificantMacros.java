@@ -28,11 +28,10 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
  * A <code>null</code> string is encoded as a single comma.
  */
 public class SignificantMacros implements ISignificantMacros {
-	public static final char[] UNDEFINED = {}; 
-	public static final char[] DEFINED = {};
-	private static final int ENCODED_UNDEFINED = Character.MAX_VALUE;
-	private static final int ENCODED_DEFINED = Character.MAX_VALUE-1;
+	public static final char[] DEFINED = {0};
+	public static final char[] UNDEFINED = {1}; 
 	private static final Comparator<Object> SORTER = new Comparator<Object>() {
+		@Override
 		public int compare(Object o1, Object o2) {
 			return CharArrayUtils.compare((char[])o1, (char[])o2);
 		}
@@ -58,13 +57,7 @@ public class SignificantMacros implements ISignificantMacros {
 			char[] name= (char[]) key;
 			char[] value= sigMacros.get(name);
 			buffer.append((char) name.length).append(name);
-			if (value == DEFINED) {
-				buffer.append((char) ENCODED_DEFINED);
-			} else if (value == UNDEFINED) {
-				buffer.append((char) ENCODED_UNDEFINED);
-			} else {
-				buffer.append((char) value.length).append(value);
-			}
+			buffer.append((char) value.length).append(value);
 		}
 		int len= buffer.length();
 		char[] result= new char[len];
@@ -93,6 +86,7 @@ public class SignificantMacros implements ISignificantMacros {
 				&& CharArrayUtils.equals(fEncoded, ((SignificantMacros) obj).fEncoded);
 	}
 
+	@Override
 	public boolean accept(IVisitor visitor) {
 		final char[] encoded = fEncoded;
 		final int len = encoded.length;
@@ -102,28 +96,27 @@ public class SignificantMacros implements ISignificantMacros {
 			int v= i + len1;
 			if (v >= len) 
 				break;
+			final int len2 = encoded[v++];
+			if (v+len2 > len) 
+				break;
 			
 			char[] macro= extract(encoded, i, len1);
-			final int len2 = encoded[v++];
-			switch(len2) {
-			case ENCODED_UNDEFINED:
-				i= v;
-				if (!visitor.visitUndefined(macro))
-					return false;
-				break;
-			case ENCODED_DEFINED:
-				i= v;
-				if (!visitor.visitDefined(macro))
-					return false;
-				break;
-			default:
-				i= v+len2;
-				if (i > len) 
-					break;
-				if (!visitor.visitValue(macro, extract(encoded, v, len2)))
-					return false;
-				break;
-			} 
+			i= v+len2;
+			if (len2 == 1) {
+				if (encoded[v] == UNDEFINED[0]) {
+					if (!visitor.visitUndefined(macro))
+						return false;
+					continue;
+				} 
+				if (encoded[v] == DEFINED[0]) {
+					if (!visitor.visitDefined(macro))
+						return false;
+					continue;
+				} 
+			}				
+			final char[] value = extract(encoded, v, len2);
+			if (!visitor.visitValue(macro, value))
+				return false;
 		}
 		return true;
 	}
@@ -134,6 +127,7 @@ public class SignificantMacros implements ISignificantMacros {
 		return value;
 	}
 
+	@Override
 	public char[] encode() {
 		return fEncoded;
 	}
@@ -147,14 +141,17 @@ public class SignificantMacros implements ISignificantMacros {
 		final StringBuilder buf= new StringBuilder();
 		buf.append('{');
 		accept(new IVisitor() {
+			@Override
 			public boolean visitValue(char[] macro, char[] value) {
 				buf.append(macro).append('=').append(value).append(',');
 				return true;
 			}
+			@Override
 			public boolean visitUndefined(char[] macro) {
 				buf.append(macro).append('=').append("null,");
 				return true;
 			}
+			@Override
 			public boolean visitDefined(char[] macro) {
 				buf.append(macro).append('=').append("*,");
 				return true;
@@ -165,5 +162,20 @@ public class SignificantMacros implements ISignificantMacros {
 			buf.setLength(buflen-1);
 		buf.append('}');
 		return buf.toString();
+	}
+
+	public static char[] shortenValue(char[] expansion) {
+		if (expansion.length <= 16)
+			return expansion;
+		char[] result= new char[16];
+		System.arraycopy(expansion, 0, result, 0, 8);
+		StreamHasher hasher= new StreamHasher();
+		hasher.addChunk(expansion);
+		long hash= hasher.computeHash();
+		for(int i= 0; i<8; i++) {
+			result[8+i]= (char) (hash & 0xff);
+			hash= hash >> 1;
+		}
+		return result;
 	}
 }

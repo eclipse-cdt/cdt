@@ -136,10 +136,12 @@ public class DBTest extends BaseTestCase {
 			this.key = key;
 		}
 
+		@Override
 		public int compare(long record) throws CoreException {
 			return db.getString(db.getRecPtr(record + 4)).compare(key, true);
 		}
 		
+		@Override
 		public boolean visit(long record) throws CoreException {
 			this.record = record;
 			return false;
@@ -185,6 +187,7 @@ public class DBTest extends BaseTestCase {
 		};
 		
 		IBTreeComparator comparator = new IBTreeComparator() {
+			@Override
 			public int compare(long record1, long record2) throws CoreException {
 				IString string1 = db.getString(db.getRecPtr(record1 + 4));
 				IString string2 = db.getString(db.getRecPtr(record2 + 4));
@@ -221,9 +224,10 @@ public class DBTest extends BaseTestCase {
 		assertCMP("",  EQ, "", true);
 		assertCMP("",  EQ, "", false);
 		
-		doTrials(1000, 1, ShortString.MAX_LENGTH, r, true);
-		
-		doTrials(1000, 1, ShortString.MAX_LENGTH, r, false);
+		doTrials(1000, 1, ShortString.MAX_BYTE_LENGTH/2, r, true);
+		doTrials(1000, 1, ShortString.MAX_BYTE_LENGTH/2, r, false);
+		doTrials(1000, 1, ShortString.MAX_BYTE_LENGTH, r, true);
+		doTrials(1000, 1, ShortString.MAX_BYTE_LENGTH, r, false);
 		
 		assertCMP("a",  LT, "b", true);
 		assertCMP("aa", LT, "ab", true);
@@ -239,8 +243,8 @@ public class DBTest extends BaseTestCase {
 	
 	public void testLongStringComparison() throws CoreException {
 		Random r= new Random(314159265);
-		doTrials(100, ShortString.MAX_LENGTH+1, ShortString.MAX_LENGTH*2, r, true);
-		doTrials(100, ShortString.MAX_LENGTH+1, ShortString.MAX_LENGTH*2, r, false);
+		doTrials(100, ShortString.MAX_BYTE_LENGTH+1, ShortString.MAX_BYTE_LENGTH*2, r, true);
+		doTrials(100, ShortString.MAX_BYTE_LENGTH+1, ShortString.MAX_BYTE_LENGTH*2, r, false);
 	}
 		
 	private void doTrials(int n, int min, int max, Random r, boolean caseSensitive) throws CoreException {

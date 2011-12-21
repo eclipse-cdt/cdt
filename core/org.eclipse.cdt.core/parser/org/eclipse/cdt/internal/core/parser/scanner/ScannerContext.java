@@ -337,7 +337,9 @@ final class ScannerContext {
 	public void significantMacro(IMacroBinding macro) {
 		final char[] macroName= macro.getNameCharArray();
 		if (fInternalModifications != null && !fInternalModifications.containsKey(macroName)) {
-			fSignificantMacros.put(macroName, macro.getExpansion());
+			final char[] expansion = macro.getExpansion();
+			if (expansion != null)
+				fSignificantMacros.put(macroName, SignificantMacros.shortenValue(expansion));
 		}
 	}
 	
@@ -398,18 +400,21 @@ final class ScannerContext {
 			return;
 		
 		sm.accept(new ISignificantMacros.IVisitor() {
+			@Override
 			public boolean visitValue(char[] macro, char[] value) {
 				if (!fInternalModifications.containsKey(macro)) {
 					fSignificantMacros.put(macro, value);
 				}
 				return true;
 			}
+			@Override
 			public boolean visitUndefined(char[] macro) {
 				if (!fInternalModifications.containsKey(macro)) {
 					fSignificantMacros.put(macro, SignificantMacros.UNDEFINED);
 				}
 				return true;
 			}
+			@Override
 			public boolean visitDefined(char[] macro) {
 				if (!fInternalModifications.containsKey(macro)) {
 					fSignificantMacros.put(macro, SignificantMacros.DEFINED);

@@ -530,25 +530,42 @@ public class Database {
 	}
 
 	public IString newString(String string) throws CoreException {
-		if (string.length() > ShortString.MAX_LENGTH)
-			return new LongString(this, string);
-		else
-			return new ShortString(this, string);
+		return newString(string.toCharArray());
 	}
 
 	public IString newString(char[] chars) throws CoreException {
-		if (chars.length > ShortString.MAX_LENGTH)
-			return new LongString(this, chars);
+		int len= chars.length;
+		int bytelen;
+		final boolean useBytes = useBytes(chars);
+		if (useBytes) {
+			bytelen= len;
+		} else {
+			bytelen= 2*len;
+		}
+		
+		if (bytelen > ShortString.MAX_BYTE_LENGTH)
+			return new LongString(this, chars, useBytes);
 		else
-			return new ShortString(this, chars);
+			return new ShortString(this, chars, useBytes);
+	}
+	
+	private boolean useBytes(char[] chars) {
+		for (char c : chars) {
+			if ((c & 0xff00) != 0)
+				return false;
+		}
+		return true;
 	}
 
+
+
 	public IString getString(long offset) throws CoreException {
-		int length = getInt(offset);
-		if (length > ShortString.MAX_LENGTH)
+		final int l = getInt(offset);
+		int bytelen= l<0 ? -l : 2*l;
+		if (bytelen > ShortString.MAX_BYTE_LENGTH) {
 			return new LongString(this, offset);
-		else
-			return new ShortString(this, offset);
+		}
+		return new ShortString(this, offset);
 	}
 	
 	/**

@@ -133,7 +133,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		@Override
 		public boolean visitValue(char[] macro, char[] value) {
 			PreprocessorMacro m = fMacroDictionary.get(macro);
-			return m != null && CharArrayUtils.equals(m.getExpansion(), value);
+			return m != null && CharArrayUtils.equals(SignificantMacros.shortenValue(m.getExpansion()), value);
 		}
 
 		private boolean isDefined(char[] macro) {
@@ -246,7 +246,6 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     private final LocationMap fLocationMap;
 	private CharArraySet fPreventInclusion= new CharArraySet(0); 
 
-	private final Lexer fRootLexer;
 	private final ScannerContext fRootContext;
 	protected ScannerContext fCurrentContext;
 
@@ -302,8 +301,8 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         setupMacroDictionary(configuration, info, language);		
 
         ILocationCtx ctx= fLocationMap.pushTranslationUnit(filePath, fRootContent.getSource());
-        fRootLexer= new Lexer(fRootContent.getSource(), fLexOptions, this, this);
-        fRootContext= fCurrentContext= new ScannerContext(ctx, null, fRootLexer);
+        Lexer lexer = new Lexer(fRootContent.getSource(), fLexOptions, this, this);
+        fRootContext= fCurrentContext= new ScannerContext(ctx, null, lexer);
         if (info instanceof IExtendedScannerInfo) {
         	final IExtendedScannerInfo einfo= (IExtendedScannerInfo) info;
         	fPreIncludedFiles= new String[][] { einfo.getMacroFiles(), einfo.getIncludeFiles() };
@@ -346,11 +345,11 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	@Override
 	public void setContentAssistMode(int offset) {
 		fContentAssistLimit= offset;
-		fRootLexer.setContentAssistMode(offset);
+		fRootContext.getLexer().setContentAssistMode(offset);
 	}
 	
 	public boolean isContentAssistMode() {
-		return fRootLexer.isContentAssistMode();
+		return fRootContext.getLexer().isContentAssistMode();
 	}
 
 	@Override
@@ -469,7 +468,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		InternalFileContent content= fFileContentProvider.getContentForContextToHeaderGap(location,
 				fMacroDictionaryFacade);
 		if (content != null && content.getKind() == InclusionKind.FOUND_IN_INDEX) {
-			processInclusionFromIndex(0, location, content, false);
+			processInclusionFromIndex(0, content, false);
 		}
 		
         detectIncludeGuard(location, fRootContent.getSource(), fRootContext);
@@ -577,7 +576,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     	}
     	
     	try {
-			t= internalFetchToken(fRootContext, CHECK_NUMBERS, false);
+			t= internalFetchToken(fRootContext, CHECK_NUMBERS | REPORT_SIGNIFICANT_MACROS | IGNORE_UNDEFINED_SIGNIFICANT_MACROS, false);
 		} catch (OffsetLimitReachedException e) {
 			fHandledCompletion= true;
 			throw e;
@@ -1463,7 +1462,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			} catch (CoreException e) {
 			}
 			
-			processInclusionFromIndex(poundOffset, path, fi, true);
+			processInclusionFromIndex(poundOffset, fi, true);
 			break;
 		case USE_SOURCE:
 			// Will be parsed
@@ -1502,7 +1501,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		}
 	}
 
-	private void processInclusionFromIndex(int offset, String path, InternalFileContent fi, boolean updateContext) {
+	private void processInclusionFromIndex(int offset, InternalFileContent fi, boolean updateContext) {
 		List<IIndexMacro> mdefs= fi.getMacroDefinitions();
 		for (IIndexMacro macro : mdefs) {
 			addMacroDefinition(macro);

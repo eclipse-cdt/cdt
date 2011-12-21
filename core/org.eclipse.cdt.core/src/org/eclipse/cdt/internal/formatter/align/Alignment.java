@@ -311,7 +311,7 @@ public class Alignment {
 						this.fragmentIndentations[i] = this.breakIndentationLevel;
 						return wasSplit = true;
 					}
-				} while (--i >= 0);
+				} while ((this.fragmentBreaks[i] != BREAK || (this.mode & M_INDENT_ON_COLUMN) != 0) && --i >= 0); 
 				break;
 
 			/*  # aligned fragment

@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICExternalBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionCallExpression;
@@ -297,7 +298,8 @@ public class CallHierarchyUI {
 		
 		if (binding instanceof IVariable) {
 			try {
-				if (binding.getScope().getKind() == EScopeKind.eLocal)
+				final IScope scope = binding.getScope();
+				if (scope != null && scope.getKind() == EScopeKind.eLocal)
 					return false;
 			} catch (DOMException e) {
 			}

@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 QNX Software Systems and others.
+ * Copyright (c) 2002, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation
- * Anton Leherbauer (Wind River Systems)
+ *     QNX Software Systems - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.text.c.hover;
@@ -46,9 +46,12 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.texteditor.AbstractTextEditor;
 
+import org.eclipse.cdt.ui.CDTUITools;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.ICColorConstants;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
 import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
@@ -88,6 +91,10 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	 * @since 3.0
 	 */
 	private Font fStatusTextFont;
+	/**
+	 * The color of the optional status text label or <code>null</code> if none.
+	 */
+	private Color fStatusTextForegroundColor;
 	/**
 	 * The width size constraint.
 	 * @since 4.0
@@ -198,16 +205,49 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 			GridData gd2= new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 			fStatusField.setLayoutData(gd2);
 
-			// Regarding the color see bug 41128
-			fStatusField.setForeground(display.getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
+			RGB defaultColor= CDTUITools.getColorManager().getColor(ICColorConstants.C_DEFAULT).getRGB();
+			fStatusTextForegroundColor= new Color(fStatusField.getDisplay(), blend(fBackgroundColor.getRGB(), defaultColor, 0.56f));
+			fStatusField.setForeground(fStatusTextForegroundColor);
 			fStatusField.setBackground(fBackgroundColor);
 		}
 
 		addDisposeListener(this);
 	}
 
+	/**
+	 * Returns an RGB that lies between the given foreground and background
+	 * colors using the given mixing factor. A <code>factor</code> of 1.0 will produce a
+	 * color equal to <code>fg</code>, while a <code>factor</code> of 0.0 will produce one
+	 * equal to <code>bg</code>.
+	 * @param bg the background color
+	 * @param fg the foreground color
+	 * @param factor the mixing factor, must be in [0,&nbsp;1]
+	 *
+	 * @return the interpolated color
+	 */
+	@SuppressWarnings("null")
+	private static RGB blend(RGB bg, RGB fg, float factor) {
+		// copy of org.eclipse.jface.internal.text.revisions.Colors#blend(..)
+		Assert.isLegal(bg != null);
+		Assert.isLegal(fg != null);
+		Assert.isLegal(factor >= 0f && factor <= 1f);
+		
+		float complement= 1f - factor;
+		return new RGB(
+				(int) (complement * bg.red + factor * fg.red),
+				(int) (complement * bg.green + factor * fg.green),
+				(int) (complement * bg.blue + factor * fg.blue)
+		);
+	}
+	
 	private void initializeColors() {
-		RGB bgRGB= getHoverBackgroundColorRGB();
+		IPreferenceStore store= CUIPlugin.getDefault().getPreferenceStore();
+		RGB bgRGB;
+		if (store.getBoolean(PreferenceConstants.EDITOR_SOURCE_HOVER_BACKGROUND_COLOR_SYSTEM_DEFAULT)) {
+			bgRGB= getVisibleBackgroundColor(fShell.getDisplay());
+		} else {
+			bgRGB= PreferenceConverter.getColor(store, PreferenceConstants.EDITOR_SOURCE_HOVER_BACKGROUND_COLOR);
+		}
 		if (bgRGB != null) {
 			fBackgroundColor= new Color(fShell.getDisplay(), bgRGB);
 			fIsSystemBackgroundColor= false;
@@ -217,11 +257,29 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 		}
 	}
 
-	private RGB getHoverBackgroundColorRGB() {
-		IPreferenceStore store= CUIPlugin.getDefault().getPreferenceStore();
-		return store.getBoolean(PreferenceConstants.EDITOR_SOURCE_HOVER_BACKGROUND_COLOR_SYSTEM_DEFAULT)
-			? null
-			: PreferenceConverter.getColor(store, PreferenceConstants.EDITOR_SOURCE_HOVER_BACKGROUND_COLOR);
+	/**
+	 * Returns <code>null</code> if {@link SWT#COLOR_INFO_BACKGROUND} is visibly distinct from the
+	 * default source text color. Otherwise, returns the editor background color.
+	 * 
+	 * @param display the display
+	 * @return an RGB or <code>null</code>
+	 */
+	public static RGB getVisibleBackgroundColor(Display display) {
+		float[] infoBgHSB= display.getSystemColor(SWT.COLOR_INFO_BACKGROUND).getRGB().getHSB();
+		
+		Color defaultColor= CDTUITools.getColorManager().getColor(ICColorConstants.C_DEFAULT);
+		RGB defaultRGB= defaultColor != null ? defaultColor.getRGB() : new RGB(255, 255, 255);
+		float[] defaultHSB= defaultRGB.getHSB();
+		
+		if (Math.abs(infoBgHSB[2] - defaultHSB[2]) < 0.5f) {
+			// workaround for dark tooltip background color, see https://bugs.eclipse.org/365051
+			IPreferenceStore preferenceStore= CUIPlugin.getDefault().getCombinedPreferenceStore();
+			boolean useDefault= preferenceStore.getBoolean(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT);
+			if (useDefault)
+				return display.getSystemColor(SWT.COLOR_LIST_BACKGROUND).getRGB();
+			return PreferenceConverter.getColor(preferenceStore, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND);
+		}
+		return null;
 	}
 
 	/**
@@ -274,6 +332,10 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 		if (fStatusTextFont != null && !fStatusTextFont.isDisposed())
 			fStatusTextFont.dispose();
 
+		if (fStatusTextForegroundColor != null && !fStatusTextForegroundColor.isDisposed())
+			fStatusTextForegroundColor.dispose();
+		
+		fStatusTextForegroundColor= null;
 		fStatusTextFont= null;
 		fTextFont= null;
 		fShell= null;

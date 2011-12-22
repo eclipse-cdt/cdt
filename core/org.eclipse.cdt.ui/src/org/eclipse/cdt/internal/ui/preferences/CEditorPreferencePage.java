@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2010 IBM Corporation and others.
+ *  Copyright (c) 2005, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
@@ -45,6 +46,7 @@ import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey;
+import org.eclipse.cdt.internal.ui.text.c.hover.SourceViewerInformationControl;
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
 
@@ -329,7 +331,10 @@ public class CEditorPreferencePage extends AbstractPreferencePage {
 	 */
 	private void initializeDefaultColors() {
 		if (getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_SOURCE_HOVER_BACKGROUND_COLOR_SYSTEM_DEFAULT)) {
-			RGB rgb= fAppearanceColorList.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND).getRGB();
+			Display display= fAppearanceColorList.getDisplay();
+			RGB rgb= SourceViewerInformationControl.getVisibleBackgroundColor(display);
+			if (rgb == null)
+				rgb= display.getSystemColor(SWT.COLOR_INFO_BACKGROUND).getRGB();
 			PreferenceConverter.setValue(getPreferenceStore(), PreferenceConstants.EDITOR_SOURCE_HOVER_BACKGROUND_COLOR, rgb);
 		}
 	}

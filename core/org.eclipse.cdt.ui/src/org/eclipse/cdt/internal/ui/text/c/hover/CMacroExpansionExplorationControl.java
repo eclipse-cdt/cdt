@@ -262,8 +262,7 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 		GridData gd= new GridData(GridData.BEGINNING | GridData.FILL_BOTH);
 		gd.heightHint= fMacroText.getLineHeight() * 2;
 		fMacroText.setLayoutData(gd);
-		fMacroText.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
-		
+
 		final Document doc= new Document();
 		CUIPlugin.getDefault().getTextTools().setupCDocument(doc);
 		sourceViewer.setDocument(doc);

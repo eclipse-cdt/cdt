@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others.
+ * Copyright (c) 2002, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David McKnight   (IBM) - [244388] [dstore] Connection hangs when a miner not installed
+ * David McKnight   (IBM) - [367264] [dstore] Trace should be written when load miner is failed.
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.server;
@@ -213,25 +214,25 @@ public class MinerLoader implements ISchemaRegistry
 			}
 			catch (NoClassDefFoundError e)
 			{
-				e.printStackTrace();
+				_dataStore.trace(e);
 				handleNoClassFound(e.getMessage().replace('/','.'));
 			}
 			catch (ClassNotFoundException e)
 			{
-				e.printStackTrace();
+				_dataStore.trace(e);
 				handleNoClassFound(name);
 			}					
 			catch (InstantiationException e)
 			{
-				e.printStackTrace();
+				_dataStore.trace(e);
 			}
 			catch (IllegalAccessException e)
 			{
-				e.printStackTrace();
+				_dataStore.trace(e);
 			}
 			catch (Exception e)
 			{
-				e.printStackTrace();
+				_dataStore.trace(e);
 			}
 		}
 		else
@@ -350,7 +351,6 @@ public class MinerLoader implements ISchemaRegistry
 		//if (remoteLoader.canLoad(source))
 		if(true)
 		{
-			//System.out.println("using RemoteClassLoader");
 			return remoteLoader;
 		}
 		
@@ -359,7 +359,6 @@ public class MinerLoader implements ISchemaRegistry
 			ExternalLoader loader = (ExternalLoader) _loaders.get(i);
 			if (loader.canLoad(source))
 			{
-			//	System.out.println("using local loader");
 				return loader;
 			}
 			else

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  * Contributors:
  * David McKnight   (IBM) - [226561] [apidoc] Add API markup to RSE Javadocs where extend / implement is allowed
  * David McKnight   (IBM) - [244388] [dstore] Connection hangs when a miner not installed
+ * David McKnight   (IBM) - [367264] [dstore] Trace should be written when load miner is failed.
  *******************************************************************************/
 
 package org.eclipse.dstore.core.java;
@@ -131,7 +132,11 @@ public class RemoteClassLoader extends ClassLoader
 	public boolean useCaching()
 	{
 		boolean useCaching = false;
-		String pref = _dataStore.getPreference(CACHING_PREFERENCE);
+		
+		// hard coding this to false for now since remote loading can cause problems
+		// and isn't intentionally used by anyone
+		String pref = "false"; //$NON-NLS-1$
+		//String pref = _dataStore.getPreference(CACHING_PREFERENCE);
 		if (pref != null && pref.equals("true")) //$NON-NLS-1$
 		{
 			useCaching = true;
@@ -185,9 +190,8 @@ public class RemoteClassLoader extends ClassLoader
 					theClass = ((ClassLoader)localLoaders.get(i)).loadClass(className);
 					if (theClass != null) return theClass;
 				}
-				catch (Exception e)
-				{
-					//e.printStackTrace();
+				catch (Exception e){
+					_dataStore.trace(e);
 				}
 			}
 		}
@@ -203,8 +207,13 @@ public class RemoteClassLoader extends ClassLoader
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			if (!_useCaching){
+				// no remote loading in this case
+				throw new ClassNotFoundException(className);
+			}
 		}
+
+		
 
 		// DKM
 		// only do lookup if the classname looks valid

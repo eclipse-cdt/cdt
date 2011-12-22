@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,7 +66,6 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.ui.text.IColorManager;
-import org.eclipse.cdt.ui.text.doctools.doxygen.DoxygenHelper;
 
 import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlighting;
@@ -206,6 +205,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		/*
 		 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
 		 */
+		@Override
 		public Color getBackground(Object element) {
 			return null;
 		}
@@ -213,6 +213,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		/*
 		 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
 		 */
+		@Override
 		public Color getForeground(Object element) {
 			if (element instanceof SemanticHighlightingColorListItem) {
 				if (!getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED)) {
@@ -231,6 +232,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		/*
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return new String[] {fCodeCategory, fAssemblyCategory, fCommentsCategory, fPreprocessorCategory, fDoxygenCategory};
 		}
@@ -238,15 +240,18 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		/*
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 		}
 	
 		/*
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 
+		@Override
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement instanceof String) {
 				String entry= (String) parentElement;
@@ -264,6 +269,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 			return new Object[0];
 		}
 
+		@Override
 		public Object getParent(Object element) {
 			if (element instanceof String)
 				return null;
@@ -279,6 +285,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 			return fCommentsCategory;
 		}
 
+		@Override
 		public boolean hasChildren(Object element) {
 			return element instanceof String;
 		}
@@ -313,9 +320,9 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 			{ PreferencesMessages.CEditorColoringConfigurationBlock_ppHeaders, PreferenceConstants.EDITOR_PP_HEADER_COLOR },
 			{ PreferencesMessages.CEditorColoringConfigurationBlock_asmLabels, PreferenceConstants.EDITOR_ASM_LABEL_COLOR },
 			{ PreferencesMessages.CEditorColoringConfigurationBlock_asmDirectives, PreferenceConstants.EDITOR_ASM_DIRECTIVE_COLOR },
-         	{ PreferencesMessages.CEditorColoringConfigurationBlock_DoxygenTagRecognized, DoxygenHelper.DOXYGEN_TAG_RECOGNIZED },
-			{ PreferencesMessages.CEditorColoringConfigurationBlock_DoxygenSingleLineComment, DoxygenHelper.DOXYGEN_SINGLE_TOKEN },
-			{ PreferencesMessages.CEditorColoringConfigurationBlock_DoxygenMultiLineComment, DoxygenHelper.DOXYGEN_MULTI_TOKEN },
+         	{ PreferencesMessages.CEditorColoringConfigurationBlock_DoxygenTagRecognized, PreferenceConstants.DOXYGEN_TAG_COLOR },
+			{ PreferencesMessages.CEditorColoringConfigurationBlock_DoxygenSingleLineComment, PreferenceConstants.DOXYGEN_SINGLE_LINE_COLOR },
+			{ PreferencesMessages.CEditorColoringConfigurationBlock_DoxygenMultiLineComment, PreferenceConstants.DOXYGEN_MULTI_LINE_COLOR },
 			{ PreferencesMessages.CEditorColoringConfigurationBlock_keywords, PreferenceConstants.EDITOR_C_KEYWORD_COLOR },
 //			{ PreferencesMessages.CEditorColoringConfigurationBlock_returnKeyword, PreferenceConstants.EDITOR_C_KEYWORD_RETURN_COLOR },
 			{ PreferencesMessages.CEditorColoringConfigurationBlock_builtInTypes, PreferenceConstants.EDITOR_C_BUILTIN_TYPE_COLOR },
@@ -432,6 +439,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 	 * @param parent the parent composite
 	 * @return the control for the preference page
 	 */
+	@Override
 	public Control createControl(Composite parent) {
 		initializeDialogUnits(parent);
 		return createSyntaxPage(parent);
@@ -698,15 +706,18 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		previewer.setLayoutData(gd);
 		
 		fListViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				handleSyntaxColorListSelection();
 			}
 		});
 		
 		foregroundColorButton.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				HighlightingColorListItem item= getHighlightingColorListItem();
 				PreferenceConverter.setValue(getPreferenceStore(), item.getColorKey(), fSyntaxForegroundColorEditor.getColorValue());
@@ -714,9 +725,11 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		});
 	
 		fBoldCheckBox.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				HighlightingColorListItem item= getHighlightingColorListItem();
 				getPreferenceStore().setValue(item.getBoldKey(), fBoldCheckBox.getSelection());
@@ -724,18 +737,22 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		});
 				
 		fItalicCheckBox.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				HighlightingColorListItem item= getHighlightingColorListItem();
 				getPreferenceStore().setValue(item.getItalicKey(), fItalicCheckBox.getSelection());
 			}
 		});
 		fStrikethroughCheckBox.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				HighlightingColorListItem item= getHighlightingColorListItem();
 				getPreferenceStore().setValue(item.getStrikethroughKey(), fStrikethroughCheckBox.getSelection());
@@ -743,9 +760,11 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		});
 		
 		fUnderlineCheckBox.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				HighlightingColorListItem item= getHighlightingColorListItem();
 				getPreferenceStore().setValue(item.getUnderlineKey(), fUnderlineCheckBox.getSelection());
@@ -753,9 +772,11 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		});
 				
 		fEnableCheckbox.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				HighlightingColorListItem item= getHighlightingColorListItem();
 				if (item instanceof SemanticHighlightingColorListItem) {
@@ -775,9 +796,11 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		});
 		
 		fEnableSemanticHighlightingCheckbox.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
 			}
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fListViewer.refresh(true);
 				HighlightingColorListItem item= getHighlightingColorListItem();

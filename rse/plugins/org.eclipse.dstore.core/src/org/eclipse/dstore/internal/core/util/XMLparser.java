@@ -25,6 +25,7 @@
  * David McKnight  (IBM)   [343939][dstore][windows] DBCS3.7 DBCS characters are corrupted in Files
  * David McKnight  (IBM)   [350315][dstore] regress change made for bug 305218
  * David McKnight    (IBM)  - [358301] [DSTORE] Hang during debug source look up
+ * David McKnight   (IBM)  - [367449] [dstore] allow custom encoding for data transport layer
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.util;
@@ -483,6 +484,10 @@ public class XMLparser
 		{
 			String result = null;				
 			String encoding = DE.ENCODING_UTF_8;
+			String serverEncoding = System.getProperty("DSTORE_SERVER_ENCODING"); //$NON-NLS-1$
+			if (serverEncoding != null && serverEncoding.length() > 0){
+				encoding = serverEncoding;				
+			}
 			try
 			{
 				result = new String(_byteBuffer, 0, offset, encoding);

@@ -19,6 +19,7 @@
  * David McKnight  (IBM)   [347412][dstore] Need an option to set TCP NODELAYACKS
  * David McKnight  (IBM)   [350315][dstore] regress change made for bug 305218
  * David McKnight    (IBM)  - [358301] [DSTORE] Hang during debug source look up
+ * David McKnight   (IBM)  - [367449] [dstore] allow custom encoding for data transport layer
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.util;
@@ -93,6 +94,10 @@ public class Sender implements ISender
 			_outFile = new PrintStream(_socket.getOutputStream());
 			
 			String encoding = DE.ENCODING_UTF_8;		
+			String serverEncoding = System.getProperty("DSTORE_SERVER_ENCODING"); //$NON-NLS-1$
+			if (serverEncoding != null && serverEncoding.length() > 0){
+				encoding = serverEncoding;
+			}
 			
 			OutputStreamWriter writer = new OutputStreamWriter(_socket.getOutputStream(), encoding);
 			_outData = new BufferedWriter(writer);

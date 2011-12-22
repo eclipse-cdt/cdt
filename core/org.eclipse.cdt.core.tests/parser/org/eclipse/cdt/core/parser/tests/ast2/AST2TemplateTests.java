@@ -5516,4 +5516,13 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testTemplateAmbiguityInDeleteExpression_364225() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <typename T> void foo(T);
+	//	template <typename T> void foo(T, typename T::type* = 0);
+	//	int main() {
+	//		foo(0);
+	//	}
+	public void testSFINE_365981() throws Exception {
+		parseAndCheckBindings();
+	}
 }

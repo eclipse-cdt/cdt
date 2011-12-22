@@ -2259,6 +2259,8 @@ public class CPPTemplates {
 	            		}
 	            	}
 	            }
+            } else if (t != owner) {
+            	return new ProblemBinding(unknown.getUnknownName(), IProblemBinding.SEMANTIC_BAD_SCOPE);
             }
         }
         

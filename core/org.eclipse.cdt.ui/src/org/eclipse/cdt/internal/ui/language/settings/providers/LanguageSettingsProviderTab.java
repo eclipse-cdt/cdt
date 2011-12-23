@@ -117,6 +117,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 	private Button enableProvidersCheckBox;
 	private StatusMessageLine fStatusLine;
 
+	private Button globalProviderCheckBox = null;
 	private Link linkWorkspacePreferences = null;
 	private Button projectStorageCheckBox = null;
 
@@ -356,6 +357,37 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 		return link;
 	}
 
+	// Called from globalProviderCheckBox listener
+	private ILanguageSettingsProvider toggleGlobalProvider(ILanguageSettingsProvider oldProvider, boolean toGlobal) {
+		ILanguageSettingsProvider newProvider = null;
+
+		String id = oldProvider.getId();
+		if (toGlobal) {
+			newProvider = LanguageSettingsManager.getWorkspaceProvider(id);
+		} else {
+			// Local provider instance chosen
+			try {
+				ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(oldProvider);
+				if (rawProvider instanceof ILanguageSettingsEditableProvider) {
+					newProvider = ((ILanguageSettingsEditableProvider) rawProvider).cloneShallow();
+				}
+			} catch (CloneNotSupportedException e) {
+				CUIPlugin.log("Error cloning provider " + oldProvider.getId(), e);
+			}
+		}
+		if (newProvider!=null) {
+			replaceSelectedProvider(newProvider);
+
+			ICConfigurationDescription cfgDescription = getConfigurationDescription();
+			initializeOptionsPage(newProvider, cfgDescription);
+			displaySelectedOptionPage();
+		} else {
+			newProvider = oldProvider;
+		}
+
+		return newProvider;
+	}
+
 	private void replaceSelectedProvider(ILanguageSettingsProvider newProvider) {
 		int pos = tableProviders.getSelectionIndex();
 		presentedProviders.set(pos, newProvider);
@@ -388,6 +420,29 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 		groupOptionsPage.setLayout(new GridLayout(2, false));
 
 		if (!page.isForPrefs()) {
+			if (globalProviderCheckBox==null) {
+				globalProviderCheckBox = new Button(groupOptionsPage, SWT.CHECK);
+				globalProviderCheckBox.setText("Share setting entries between projects (global provider)");
+				globalProviderCheckBox.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						boolean isGlobal = globalProviderCheckBox.getSelection();
+						ILanguageSettingsProvider provider = getSelectedProvider();
+						if (isGlobal != LanguageSettingsManager.isWorkspaceProvider(provider)) {
+							provider = toggleGlobalProvider(provider, isGlobal);
+						}
+						projectStorageCheckBox.setSelection(provider instanceof LanguageSettingsSerializableProvider
+								&& LanguageSettingsManager.isStoringEntriesInProjectArea((LanguageSettingsSerializableProvider) provider));
+					}
+
+					@Override
+					public void widgetDefaultSelected(SelectionEvent e) {
+						widgetSelected(e);
+					}
+
+				});
+			}
+
 			if (projectStorageCheckBox == null) {
 				projectStorageCheckBox = new Button(groupOptionsPage, SWT.CHECK);
 				projectStorageCheckBox.setText("Store entries in project settings folder (easing project miration)");
@@ -576,6 +631,11 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 
 		boolean isChecked = tableProvidersViewer.getChecked(provider);
 		if (!page.isForPrefs()) {
+			boolean isRawProviderEditable = rawProvider instanceof ILanguageSettingsEditableProvider;
+			globalProviderCheckBox.setSelection(isGlobal);
+			globalProviderCheckBox.setEnabled(isChecked && isRawProviderEditable);
+			globalProviderCheckBox.setVisible(provider!=null);
+
 			projectStorageCheckBox.setEnabled(!isGlobal);
 			projectStorageCheckBox.setVisible(rawProvider instanceof LanguageSettingsSerializableProvider);
 			projectStorageCheckBox.setSelection(provider instanceof LanguageSettingsSerializableProvider
@@ -583,7 +643,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 
 			boolean needPreferencesLink=isGlobal && currentOptionsPage!=null;
 			// TODO: message
-			final String linkMsg = needPreferencesLink ? "Options of shared providers below can be changed in <a href=\"workspace\">Workspace Settings</a>, Discovery Tab." : "";
+			final String linkMsg = needPreferencesLink ? "Options of global providers below can be changed in <a href=\"workspace\">Workspace Settings</a>, Discovery Tab." : "";
 			linkWorkspacePreferences.setText(linkMsg);
 			linkWorkspacePreferences.pack();
 			linkWorkspacePreferences.setEnabled(isChecked);

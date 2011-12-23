@@ -36,6 +36,7 @@ public class EvaluateAction extends AbstractTracepointAction {
 
 	private String fEvalString = ""; //$NON-NLS-1$
 	
+	@Override
 	public String getDefaultName() {
 		return MessagesForTracepointActions.TracepointActions_Untitled_Evaluate;
 	}
@@ -48,10 +49,12 @@ public class EvaluateAction extends AbstractTracepointAction {
 		fEvalString = str;
 	}
 
+	@Override
 	public String getIdentifier() {
 		return EVALUATE_ACTION_ID;
 	}
 
+	@Override
 	public String getMemento() {
 		String collectData = new String(""); //$NON-NLS-1$
 
@@ -85,14 +88,17 @@ public class EvaluateAction extends AbstractTracepointAction {
 		return collectData;
 	}
 
+	@Override
 	public String getSummary() {
 		return MessageFormat.format(MessagesForTracepointActions.TracepointActions_Evaluate_text, new Object[] { fEvalString });
 	}
 
+	@Override
 	public String getTypeName() {
 		return MessagesForTracepointActions.TracepointActions_Evaluate_Name;
 	}
 
+	@Override
 	public void initializeFromMemento(String data) {
 		Element root = null;
 		DocumentBuilder parser;

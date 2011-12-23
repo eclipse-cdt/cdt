@@ -2752,9 +2752,11 @@ public class MIVariableManager implements ICommandControl {
 				});
 	}
 
+	@Override
     public <V extends ICommandResult> ICommandToken queueCommand(final ICommand<V> command, DataRequestMonitor<V> rm) {
     	
         final ICommandToken token = new ICommandToken() {
+        	@Override
             public ICommand<? extends ICommandResult> getCommand() {
                 return command;
             }
@@ -2939,6 +2941,7 @@ public class MIVariableManager implements ICommandControl {
      * (non-Javadoc)
      * @see org.eclipse.cdt.dsf.mi.service.command.IDebuggerControl#removeCommand(org.eclipse.cdt.dsf.mi.service.command.commands.ICommand)
      */
+	@Override
     public void removeCommand(ICommandToken token) {
     	// It is impossible to remove a command from the MIVariableManager.
     	// This should never be called, if we did things right.
@@ -2955,9 +2958,13 @@ public class MIVariableManager implements ICommandControl {
      * (non-Javadoc)
      * @see org.eclipse.cdt.dsf.mi.service.command.IDebuggerControl#cancelCommand(org.eclipse.cdt.dsf.mi.service.command.commands.ICommand)
      */
+	@Override
     public void addCommandListener(ICommandListener processor) { fCommandProcessors.add(processor); }
+    @Override
     public void removeCommandListener(ICommandListener processor) { fCommandProcessors.remove(processor); }    
+	@Override
     public void addEventListener(IEventListener processor) {}
+	@Override
     public void removeEventListener(IEventListener processor) {}
 
     

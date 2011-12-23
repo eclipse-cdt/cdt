@@ -29,14 +29,17 @@ public class MIMixedInstruction implements IMixedInstruction {
         parse(tuple);
     }
 
+	@Override
     public String getFileName() {
         return fileName;
     }
 
+	@Override
     public int getLineNumber() {
         return lineNumber;
     }
 
+	@Override
     public IInstruction[] getInstructions() {
         return assemblyCode;
     }

@@ -23,6 +23,7 @@ public class ExprMetaGetValueInfo implements ICommandResult {
 	    
 	    public String getValue() { return value; }
 		
+		@Override
 		public <V extends ICommandResult> V getSubsetResult(ICommand<V> command) {
 			return null;
 		}

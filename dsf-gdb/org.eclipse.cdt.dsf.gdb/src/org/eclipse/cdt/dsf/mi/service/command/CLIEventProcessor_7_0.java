@@ -44,13 +44,11 @@ public class CLIEventProcessor_7_0
     implements ICommandListener, IEventListener
 {
     private final ICommandControlService fCommandControl;
-    private final ICommandControlDMContext fControlDmc;
     
     private final DsfServicesTracker fServicesTracker;
     
     public CLIEventProcessor_7_0(ICommandControlService connection, ICommandControlDMContext controlDmc) {
         fCommandControl = connection;
-        fControlDmc = controlDmc;
         fServicesTracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), fCommandControl.getSession().getId());
         fCommandControl.addCommandListener(this);
         fCommandControl.addEventListener(this);
@@ -62,6 +60,7 @@ public class CLIEventProcessor_7_0
         fServicesTracker.dispose();
     }
     
+	@Override
     public void commandSent(ICommandToken token) {
         if (token.getCommand() instanceof CLICommand<?>) {
             processStateChanges( (CLICommand<?>)token.getCommand() );
@@ -71,6 +70,7 @@ public class CLIEventProcessor_7_0
         }
     }
     
+	@Override
     public void commandDone(ICommandToken token, ICommandResult result) {
         if (token.getCommand() instanceof CLICommand<?>) {
             processSettingChanges( (CLICommand<?>)token.getCommand() );
@@ -80,14 +80,17 @@ public class CLIEventProcessor_7_0
         }
     }
     
+	@Override
     public void commandQueued(ICommandToken token) {
         // No action 
     }
     
+	@Override
     public void commandRemoved(ICommandToken token) {
         // No action 
     }
     
+	@Override
     public void eventReceived(Object output) {
     }
 

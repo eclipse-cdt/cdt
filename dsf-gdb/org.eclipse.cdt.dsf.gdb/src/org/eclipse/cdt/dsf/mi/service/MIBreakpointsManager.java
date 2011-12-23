@@ -365,7 +365,8 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
             protected IStatus run(IProgressMonitor monitor) {
                 // Submit the runnable to plant the breakpoints on dispatch thread.
                 getExecutor().submit(new Runnable() {
-                    public void run() {
+                	@Override
+                	public void run() {
                         installInitialBreakpoints(dmc, rm);
                     }
                 });
@@ -399,7 +400,6 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
             IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(fDebugModelId);
             for (IBreakpoint breakpoint : breakpoints) {
                 if (supportsBreakpoint(breakpoint)) {
-                    @SuppressWarnings("unchecked")
                     Map<String, Object> attributes = breakpoint.getMarker().getAttributes();
                     attributes.put(ATTR_DEBUGGER_PATH, NULL_STRING);
                     attributes.put(ATTR_THREAD_FILTER, extractThreads(dmc, (ICBreakpoint) breakpoint));
@@ -1108,6 +1108,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.IBreakpointManagerListener#breakpointManagerEnablementChanged(boolean)
      */
+	@Override
     public void breakpointManagerEnablementChanged(boolean enabled) {
 
         // Only modify enabled breakpoints
@@ -1136,15 +1137,16 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
      * @see org.eclipse.debug.core.IBreakpointListener#breakpointAdded(org.eclipse.debug.core.model.IBreakpoint)
      */
     @ThreadSafe
+	@Override
     public void breakpointAdded(final IBreakpoint breakpoint) {
 
         if (supportsBreakpoint(breakpoint)) {
             try {
                 // Retrieve the breakpoint attributes
-                @SuppressWarnings("unchecked")
                 final Map<String, Object> attrs = breakpoint.getMarker().getAttributes();
 
                 getExecutor().execute(new DsfRunnable() {
+                	@Override
                     public void run() {
                         final CountingRequestMonitor countingRm = new CountingRequestMonitor(getExecutor(), null) {
                             @Override
@@ -1199,13 +1201,13 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.IBreakpointListener#breakpointChanged(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.resources.IMarkerDelta)
      */
+	@Override
     public void breakpointChanged(final IBreakpoint breakpoint, final IMarkerDelta delta) {
 
         if (supportsBreakpoint(breakpoint)) {
 
             try {
                 // Retrieve the breakpoint attributes
-                @SuppressWarnings("unchecked")
                 final Map<String, Object> attrs = breakpoint.getMarker().getAttributes();
                 // Tracepoints are not affected by "skip-all"
                 if (!(breakpoint instanceof ICTracepoint) && !fBreakpointManager.isEnabled()) {
@@ -1214,6 +1216,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
 
                 // Modify the breakpoint in all the target contexts
                 getExecutor().execute( new DsfRunnable() {
+                	@Override
                     public void run() {
 
                         // If the breakpoint is currently being updated, queue the request and exit
@@ -1269,11 +1272,13 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.IBreakpointListener#breakpointRemoved(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.resources.IMarkerDelta)
      */
+	@Override
     public void breakpointRemoved(final IBreakpoint breakpoint, IMarkerDelta delta) {
 
         if (supportsBreakpoint(breakpoint)) {
             try {
                 getExecutor().execute(new DsfRunnable() {
+                	@Override
                     public void run() {
                         CountingRequestMonitor countingRm = new CountingRequestMonitor(getExecutor(), null) {
                             @Override
@@ -1448,6 +1453,7 @@ public class MIBreakpointsManager extends AbstractDsfService implements IBreakpo
     private void clearBreakpointStatus(final ICBreakpoint[] bps, final IBreakpointsTargetDMContext ctx)
     {
         IWorkspaceRunnable wr = new IWorkspaceRunnable() {
+        	@Override
             public void run(IProgressMonitor monitor) throws CoreException {
             	// For every platform breakpoint that has at least one target breakpoint installed
             	// we must decrement the install count, for every target breakpoint.

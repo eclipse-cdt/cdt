@@ -42,6 +42,7 @@ public class WhileSteppingAction extends AbstractTracepointAction {
 	// The number of steps this while-stepping command will occur
 	private int fStepCount = 1;
 	
+	@Override
 	public String getDefaultName() {
 		return MessagesForTracepointActions.TracepointActions_Untitled_WhileStepping;
 	}
@@ -84,10 +85,12 @@ public class WhileSteppingAction extends AbstractTracepointAction {
 		fStepCount = count;
 	}
 
+	@Override
 	public String getIdentifier() {
 		return WHILE_STEPPING_ACTION_ID;
 	}
 
+	@Override
 	public String getMemento() {
 		String collectData = new String(""); //$NON-NLS-1$
 
@@ -122,14 +125,17 @@ public class WhileSteppingAction extends AbstractTracepointAction {
 		return collectData;
 	}
 
+	@Override
 	public String getSummary() {
 		return MessageFormat.format(MessagesForTracepointActions.TracepointActions_WhileStepping_text, new Object[] { fStepCount, fSubActionContent });
 	}
 
+	@Override
 	public String getTypeName() {
 		return MessagesForTracepointActions.TracepointActions_WhileStepping_Name;
 	}
 
+	@Override
 	public void initializeFromMemento(String data) {
 		Element root = null;
 		DocumentBuilder parser;

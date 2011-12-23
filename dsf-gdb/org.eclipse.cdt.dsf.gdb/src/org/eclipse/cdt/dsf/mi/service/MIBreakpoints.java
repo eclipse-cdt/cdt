@@ -188,6 +188,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
 			super(DMContexts.getAncestorOfType(bp, IBreakpointsTargetDMContext.class));
 			fEventBreakpoints = new IBreakpointDMContext[] { bp };
 		}
+		@Override
 		public IBreakpointDMContext[] getBreakpoints() {
 			return fEventBreakpoints;
 		}
@@ -383,6 +384,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.dsf.debug.service.IBreakpoints#getBreakpoints(org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
 	 */
+	@Override
 	public void getBreakpoints(final IBreakpointsTargetDMContext context, final DataRequestMonitor<IBreakpointDMContext[]> drm)
 	{
 		// Validate the context
@@ -430,6 +432,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.dsf.debug.service.IBreakpoints#getBreakpointDMData(org.eclipse.cdt.dsf.debug.service.IBreakpoints.IDsfBreakpointDMContext, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
 	 */
+	@Override
 	public void getBreakpointDMData(IBreakpointDMContext dmc, DataRequestMonitor<IBreakpointDMData> drm)
 	{
 		// Validate the breakpoint context
@@ -479,6 +482,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.dsf.debug.service.IBreakpoints#insertBreakpoint(org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext, java.util.Map, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
 	 */
+	@Override
 	public void insertBreakpoint(IBreakpointsTargetDMContext context, Map<String, Object> attributes, DataRequestMonitor<IBreakpointDMContext> drm) {
 		
 		// Validate the context
@@ -524,6 +528,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
 	/**
      * @since 3.0
      */
+	@Override
 	public void getExecutionContextBreakpoints(IExecutionDMContext ctx, DataRequestMonitor<IBreakpointDMContext[]> rm) {
 	    IBreakpointDMContext[] bps = fBreakpointHitMap.get(ctx);
 	    if (bps == null && ctx instanceof IContainerDMContext) {
@@ -866,6 +871,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.dsf.debug.service.IBreakpoints#removeBreakpoint(org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointDMContext, org.eclipse.cdt.dsf.concurrent.RequestMonitor)
 	 */
+	@Override
 	public void removeBreakpoint(final IBreakpointDMContext dmc, final RequestMonitor finalRm) {
 
 		// Validate the breakpoint context
@@ -940,6 +946,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpoints, I
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.dsf.debug.service.IBreakpoints#updateBreakpoint(org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointDMContext, java.util.Map, org.eclipse.cdt.dsf.concurrent.RequestMonitor)
 	 */
+	@Override
 	public void updateBreakpoint(IBreakpointDMContext dmc, Map<String, Object> properties, RequestMonitor rm)
 	{
 		// Validate the breakpoint context

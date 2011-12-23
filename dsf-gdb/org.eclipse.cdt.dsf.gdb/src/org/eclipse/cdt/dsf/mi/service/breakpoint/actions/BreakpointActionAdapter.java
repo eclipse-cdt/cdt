@@ -34,6 +34,7 @@ public class BreakpointActionAdapter implements IAdaptable {
     }
 
     @SuppressWarnings("rawtypes")
+	@Override
 	public Object getAdapter(Class adapter) {
         if (adapter.equals(ILogActionEnabler.class)) {
             return new MILogActionEnabler(fExecutor, fServiceTracker, fContext);

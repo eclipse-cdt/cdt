@@ -199,6 +199,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
     /**
      * @since 3.0
      */
+	@Override
     public CommandFactory getCommandFactory() {
     	return fCommandFactory;
     }
@@ -291,6 +292,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
      * @see org.eclipse.cdt.dsf.debug.service.command.ICommandControl#addCommand(org.eclipse.cdt.dsf.debug.service.command.ICommand, org.eclipse.cdt.dsf.concurrent.RequestMonitor)
      */
     
+	@Override
     public <V extends ICommandResult> ICommandToken queueCommand(final ICommand<V> command, DataRequestMonitor<V> rm) {
 
         // Cast the command to MI Command type.  This will cause a cast exception to be 
@@ -323,6 +325,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
                 // In a separate dispatch cycle.  This allows command listeners 
             	// to respond to the command queued event.  
                 getExecutor().execute(new DsfRunnable() {
+                	@Override
                     public void run() {
                         processNextQueuedCommand();
                     }
@@ -396,6 +399,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
      * (non-Javadoc)
      * @see org.eclipse.cdt.dsf.mi.service.command.IDebuggerControl#removeCommand(org.eclipse.cdt.dsf.mi.service.command.commands.ICommand)
      */
+	@Override
     public void removeCommand(ICommandToken token) {
     	
     	synchronized(fCommandQueue) {
@@ -406,6 +410,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
     				
     				final CommandHandle finalHandle = handle;
                     getExecutor().execute(new DsfRunnable() {
+                    	@Override
                         public void run() {
                         	processCommandRemoved(finalHandle);
                         }
@@ -423,6 +428,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
      * (non-Javadoc)
      * @see org.eclipse.cdt.dsf.mi.service.command.IDebuggerControl#addCommandListener(org.eclipse.cdt.dsf.mi.service.command.IDebuggerControl.ICommandListener)
      */
+	@Override
     public void addCommandListener(ICommandListener processor) { fCommandProcessors.add(processor); }
     
     /*
@@ -430,6 +436,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
      * (non-Javadoc)
      * @see org.eclipse.cdt.dsf.mi.service.command.IDebuggerControl#removeCommandListener(org.eclipse.cdt.dsf.mi.service.command.IDebuggerControl.ICommandListener)
      */
+	@Override
     public void removeCommandListener(ICommandListener processor) { fCommandProcessors.remove(processor); }
     
     /*
@@ -438,6 +445,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
      * (non-Javadoc)
      * @see org.eclipse.cdt.dsf.mi.service.command.IDebuggerControl#addEventListener(org.eclipse.cdt.dsf.mi.service.command.IDebuggerControl.IEventListener)
      */
+	@Override
     public void addEventListener(IEventListener processor) { fEventProcessors.add(processor); }
     
     /*
@@ -446,6 +454,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
      * (non-Javadoc)
      * @see org.eclipse.cdt.dsf.mi.service.command.IDebuggerControl#removeEventListener(org.eclipse.cdt.dsf.mi.service.command.IDebuggerControl.IEventListener)
      */
+	@Override
     public void removeEventListener(IEventListener processor) { fEventProcessors.remove(processor); }
     
     abstract public MIControlDMContext getControlDMContext();
@@ -453,6 +462,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
     /**
      * @since 1.1
      */
+	@Override
     public boolean isActive() {
         return !fStoppedCommandProcessing;
     }
@@ -525,6 +535,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
             fTokenId = -1; // Only initialize to a real value when needed
         }
         
+    	@Override
         public MICommand<MIInfo> getCommand() { return fCommand; }
         public DataRequestMonitor<MIInfo> getRequestMonitor() { return fRequestMonitor; }
         // This method allows us to generate the token Id when we area actually going to use
@@ -891,6 +902,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
 						 */
 						final ICommandResult finalResult = result;
 						getExecutor().execute(new DsfRunnable() {
+							@Override
 	                        public void run() {
 	                        	/*
 	                        	 *  Complete the specific command.
@@ -918,6 +930,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
 						 */
 						final ICommandResult finalResult = result;
 						getExecutor().execute(new DsfRunnable() {
+							@Override
 	                        public void run() {
 	                            processCommandDone(commandHandle, finalResult);
 	                        }
@@ -937,6 +950,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
                     final MIOutput response = new MIOutput(rr, new MIOOBRecord[0]);
 
                     getExecutor().execute(new DsfRunnable() {
+                    	@Override
                         public void run() {
                             processEvent(response);
                         }
@@ -979,6 +993,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
             	 *   be done on the DSF thread for integrity.
             	 */
                 getExecutor().execute(new DsfRunnable() {
+                	@Override
                     public void run() {
                         processEvent(response);
                     }
@@ -990,6 +1005,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
             }
             
             getExecutor().execute(new DsfRunnable() {
+            	@Override
             	public void run() {
         			processNextQueuedCommand();
             	}
@@ -1030,6 +1046,7 @@ public abstract class AbstractMIControl extends AbstractDsfService
             		final MIOOBRecord oob = fMiParser.parseMIOOBRecord("&"+line+"\n");  //$NON-NLS-1$//$NON-NLS-2$
                     final MIOutput response = new MIOutput(oob, new MIStreamRecord[0]);
                     getExecutor().execute(new DsfRunnable() {
+                    	@Override
                         public void run() {
                             processEvent(response);
                         }

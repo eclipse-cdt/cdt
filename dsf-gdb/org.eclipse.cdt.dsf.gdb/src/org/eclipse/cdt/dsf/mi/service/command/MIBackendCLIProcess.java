@@ -132,6 +132,7 @@ public class MIBackendCLIProcess extends AbstractCLIProcess {
         }
         try {
             getSession().getExecutor().submit(new Callable<Object>() { 
+            	@Override
                 public Object call() throws Exception {
                     if (fMIBackend.getState() != IMIBackend.State.TERMINATED) {
                         throw new IllegalThreadStateException("Backend Process has not exited"); //$NON-NLS-1$
@@ -153,7 +154,7 @@ public class MIBackendCLIProcess extends AbstractCLIProcess {
     @Override
     public void destroy() {
         try {
-            getSession().getExecutor().execute(new DsfRunnable() { public void run() {
+            getSession().getExecutor().execute(new DsfRunnable() { 	@Override public void run() {
                 if (!DsfSession.isSessionActive(getSession().getId())) return;
                 if (isDisposed()) return;
 

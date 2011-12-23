@@ -70,6 +70,7 @@ public class GdbMemoryBlock extends DsfMemoryBlock implements IMemorySpaceAwareM
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.dsf.debug.service.IMemorySpaces.IMemorySpaceDMContext#getMemorySpaceId()
 		 */
+		@Override
 		public String getMemorySpaceId() {
 			return fMemorySpaceId;
 		}
@@ -245,6 +246,7 @@ public class GdbMemoryBlock extends DsfMemoryBlock implements IMemorySpaceAwareM
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.core.model.provisional.IMemorySpaceAwareMemoryBlock#getMemorySpaceID()
 	 */
+	@Override
 	public String getMemorySpaceID() {
 		return fMemorySpaceID;
 	}

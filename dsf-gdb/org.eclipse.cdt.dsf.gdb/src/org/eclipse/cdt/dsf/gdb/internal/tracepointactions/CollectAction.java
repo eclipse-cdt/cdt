@@ -37,6 +37,7 @@ public class CollectAction extends AbstractTracepointAction {
 	
 	private String fCollectString = ""; //$NON-NLS-1$
 	
+	@Override
 	public String getDefaultName() {
 		return MessagesForTracepointActions.TracepointActions_Untitled_Collect;
 	}
@@ -49,10 +50,12 @@ public class CollectAction extends AbstractTracepointAction {
 		fCollectString = str;
 	}
 
+	@Override
 	public String getIdentifier() {
 		return COLLECT_ACTION_ID;
 	}
 
+	@Override
 	public String getMemento() {
 		String collectData = new String(""); //$NON-NLS-1$
 
@@ -86,14 +89,17 @@ public class CollectAction extends AbstractTracepointAction {
 		return collectData;
 	}
 
+	@Override
 	public String getSummary() {
 		return MessageFormat.format(MessagesForTracepointActions.TracepointActions_Collect_text, new Object[] { fCollectString });
 	}
 
+	@Override
 	public String getTypeName() {
 		return MessagesForTracepointActions.TracepointActions_Collect_Name;
 	}
 
+	@Override
 	public void initializeFromMemento(String data) {
 		Element root = null;
 		DocumentBuilder parser;

@@ -29,10 +29,12 @@ public class ExprMetaCommand<V extends ICommandResult> implements ICommand<V> {
      * The result is a new third command which represent the two
      * original command.
      */
+	@Override
     public ICommand<? extends ICommandResult> coalesceWith( ICommand<? extends ICommandResult> command ) {
         return null ;
     }  
 
+	@Override
     public IDMContext getContext(){
     	return fCtx;
     }

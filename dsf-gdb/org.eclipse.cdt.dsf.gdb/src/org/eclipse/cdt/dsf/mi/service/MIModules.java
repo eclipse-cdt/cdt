@@ -121,30 +121,37 @@ public class MIModules extends AbstractDsfService implements IModules, ICachingS
         	fIsSymbolsRead = isSymsRead;
         }
         
+    	@Override
         public String getFile() {
             return fFile;
         }
         
+    	@Override
         public String getName() {
             return fFile;
         }
         
+    	@Override
         public long getTimeStamp() {
             return 0;
         }
         
-        public String getBaseAddress() {
+    	@Override
+    	public String getBaseAddress() {
             return fFromAddress;
         }
 
+    	@Override
         public String getToAddress() {
             return fToAddress;
         }
 
+    	@Override
         public boolean isSymbolsLoaded() {
             return fIsSymbolsRead;
         }
         
+    	@Override
     	public long getSize() {
     		long result = 0;
     		if(getBaseAddress() == null || getToAddress() == null)
@@ -158,6 +165,7 @@ public class MIModules extends AbstractDsfService implements IModules, ICachingS
 
     }
     
+	@Override
     public void getModules(final ISymbolDMContext symCtx, final DataRequestMonitor<IModuleDMContext[]> rm) {
     	if(symCtx != null){
     		fModulesCache.execute(fCommandFactory.createCLIInfoSharedLibrary(symCtx),
@@ -186,6 +194,7 @@ public class MIModules extends AbstractDsfService implements IModules, ICachingS
     	return modules;
     }
     
+	@Override
     public void getModuleData(final IModuleDMContext dmc, final DataRequestMonitor<IModuleDMData> rm) {
         assert dmc != null; 
         if (dmc instanceof ModuleDMContext) {
@@ -213,11 +222,13 @@ public class MIModules extends AbstractDsfService implements IModules, ICachingS
     	
     }
     
+    @Override
     public void calcAddressInfo(ISymbolDMContext symCtx, String file, int line, int col, DataRequestMonitor<AddressRange[]> rm) {
         rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Functionality not supported", null)); //$NON-NLS-1$
         rm.done();
     }
 
+	@Override
     public void calcLineInfo(ISymbolDMContext symCtx, IAddress address, DataRequestMonitor<LineInfo[]> rm) {
         rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Functionality not supported", null)); //$NON-NLS-1$
         rm.done();
@@ -227,6 +238,7 @@ public class MIModules extends AbstractDsfService implements IModules, ICachingS
      * {@inheritDoc}
      * @since 1.1
      */
+	@Override
 	public void flushCache(IDMContext context) {
 		fModulesCache.reset();		
 	}

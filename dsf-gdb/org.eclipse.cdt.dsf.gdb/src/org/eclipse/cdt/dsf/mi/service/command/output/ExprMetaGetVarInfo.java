@@ -101,6 +101,7 @@ public class ExprMetaGetVarInfo implements ICommandResult {
 		return isCollectionHint;
 	}
     
+	@Override
 	public <V extends ICommandResult> V getSubsetResult(ICommand<V> command) {
 		return null;
 	}

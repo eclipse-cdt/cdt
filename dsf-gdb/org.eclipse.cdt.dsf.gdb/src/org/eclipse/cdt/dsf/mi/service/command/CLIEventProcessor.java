@@ -81,6 +81,7 @@ public class CLIEventProcessor
         fServicesTracker.dispose();
     }
     
+	@Override
     public void commandSent(ICommandToken token) {
         if (token.getCommand() instanceof CLICommand<?>) {
             processStateChanges( (CLICommand<?>)token.getCommand() );
@@ -90,6 +91,7 @@ public class CLIEventProcessor
         }
     }
     
+	@Override
     public void commandDone(ICommandToken token, ICommandResult result) {
         if (token.getCommand() instanceof CLICommand<?>) {
             processSettingChanges( (CLICommand<?>)token.getCommand() );
@@ -99,14 +101,17 @@ public class CLIEventProcessor
         }
     }
     
+	@Override
     public void commandQueued(ICommandToken token) {
         // No action 
     }
     
+	@Override
     public void commandRemoved(ICommandToken token) {
         // No action 
     }
     
+	@Override
     public void eventReceived(Object output) {
         for (MIOOBRecord oobr : ((MIOutput)output).getMIOOBRecords()) {
             if (oobr instanceof MIConsoleStreamOutput) {

@@ -205,6 +205,7 @@ public abstract class AbstractCLIProcess extends Process
 	}
 
 
+	@Override
     public void eventReceived(Object output) {
     	if (fSuppressConsoleOutputCounter > 0) return;
     	for (MIOOBRecord oobr : ((MIOutput)output).getMIOOBRecords()) {
@@ -250,10 +251,12 @@ public abstract class AbstractCLIProcess extends Process
         }
     }
     
+	@Override
     public void commandQueued(ICommandToken token) {
             // Ignore
     }
 
+	@Override
     public void commandSent(ICommandToken token) {
     	// Bug 285170
     	// Don't reset the fPrompt here, in case we are
@@ -340,10 +343,12 @@ public abstract class AbstractCLIProcess extends Process
     	return false;
     }
     
+	@Override
     public void commandRemoved(ICommandToken token) {
             // Ignore
     }
 
+	@Override
     public void commandDone(ICommandToken token, ICommandResult result) {
     	// Whenever we get a command that is completed, we know we must be in the primary prompt
     	fPrompt = PromptType.IN_PRIMARY_PROMPT;
@@ -405,7 +410,7 @@ public abstract class AbstractCLIProcess extends Process
                 final String bufString = buf.toString().trim();
                 buf.setLength(0);
                 try {
-                    fSession.getExecutor().execute(new DsfRunnable() { public void run() {
+                    fSession.getExecutor().execute(new DsfRunnable() { @Override public void run() {
                         try {
                             post(bufString);
                         } catch (IOException e) {
@@ -445,7 +450,7 @@ public abstract class AbstractCLIProcess extends Process
                 cmd = new ProcessCLICommand(getCommandControlService().getContext(), str);
             }
             final ICommand<MIInfo> finalCmd = cmd; 
-            fSession.getExecutor().execute(new DsfRunnable() { public void run() {
+            fSession.getExecutor().execute(new DsfRunnable() { @Override public void run() {
                 if (isDisposed()) return;
                 // Do not wait around for the answer.
                 getCommandControlService().queueCommand(finalCmd, null);

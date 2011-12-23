@@ -94,6 +94,7 @@ public class MIInfo implements ICommandResult {
      * result canot be calculated for the given command.  Deriving classes should
      * override this method as needed.
      */
+	@Override
     public <V extends ICommandResult> V getSubsetResult(ICommand<V> command) {
         return null;
     }

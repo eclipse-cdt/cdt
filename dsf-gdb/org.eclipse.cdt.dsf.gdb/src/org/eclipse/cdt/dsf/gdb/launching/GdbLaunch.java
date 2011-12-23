@@ -103,6 +103,7 @@ public class GdbLaunch extends DsfLaunch
     	fSession.registerModelAdapter(ILaunch.class, this);
 
         Runnable initRunnable = new DsfRunnable() { 
+        	@Override
             public void run() {
                 fTracker = new DsfServicesTracker(GdbPlugin.getBundleContext(), fSession.getId());
                 fSession.addServiceEventListener(GdbLaunch.this, null);
@@ -128,6 +129,7 @@ public class GdbLaunch extends DsfLaunch
         // Create a memory retrieval and register it with the session 
         try {
             fExecutor.submit( new Callable<Object>() {
+            	@Override
                 public Object call() throws CoreException {
                 	ICommandControlService commandControl = fTracker.getService(ICommandControlService.class);
                 	IMIProcesses procService = fTracker.getService(IMIProcesses.class);
@@ -160,6 +162,7 @@ public class GdbLaunch extends DsfLaunch
             // Add the CLI process object to the launch.
     		AbstractCLIProcess cliProc =
     			getDsfExecutor().submit( new Callable<AbstractCLIProcess>() {
+    				@Override
     				public AbstractCLIProcess call() throws CoreException {
     					IGDBControl gdb = fTracker.getService(IGDBControl.class);
     					if (gdb != null) {

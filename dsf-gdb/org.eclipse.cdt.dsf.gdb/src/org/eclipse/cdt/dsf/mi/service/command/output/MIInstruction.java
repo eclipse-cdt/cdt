@@ -29,26 +29,32 @@ public class MIInstruction extends AbstractInstruction {
         parse(tuple);
     }
 
+	@Override
     public BigInteger getAdress() {
         return address;
     }
 
+	@Override
     public String getFuntionName() {
         return function;
     }
 
+	@Override
     public long getOffset() {
         return offset;
     }
 
+	@Override
     public String getInstruction() {
         return opcode + " " + args; //$NON-NLS-1$;
     }
 
+	@Override
     public String getOpcode() {
         return opcode;
     }
 
+	@Override
     public String getArgs() {
         return args;
     }

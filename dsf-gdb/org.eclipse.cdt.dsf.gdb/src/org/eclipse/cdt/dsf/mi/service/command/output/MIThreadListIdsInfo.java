@@ -54,6 +54,7 @@ public class MIThreadListIdsInfo extends MIInfo {
 			// We need our own comparator to treat these strings as integers.
 			Arrays.sort(strThreadIds,
 					new Comparator<String>() {
+				        @Override
 						public int compare(String o1, String o2) {
 							int threadInt1;
 							int threadInt2;

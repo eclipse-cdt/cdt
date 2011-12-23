@@ -148,6 +148,7 @@ public class CSourceLookup extends AbstractDsfService implements ISourceLookup {
         super.shutdown(requestMonitor);
     }
 
+	@Override
     public void getDebuggerPath(ISourceLookupDMContext sourceLookupCtx, Object source, final DataRequestMonitor<String> rm) {
         if (!(source instanceof String)) {
             // In future if needed other elements such as URIs could be supported.
@@ -179,6 +180,7 @@ public class CSourceLookup extends AbstractDsfService implements ISourceLookup {
         }.schedule();       
     }
 
+	@Override
     public void getSource(ISourceLookupDMContext sourceLookupCtx, final String debuggerPath, final DataRequestMonitor<Object> rm) {
         if (!fDirectors.containsKey(sourceLookupCtx)) {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,

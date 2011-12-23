@@ -349,6 +349,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
         /**
          * @return The full expression string represented by this ExpressionDMC
          */
+    	@Override
         public String getExpression() {
             return exprInfo.getFullExpr();
         }
@@ -407,6 +408,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
             return baseToString() + ".invalid_expr[" + expression + "]"; //$NON-NLS-1$ //$NON-NLS-2$
         }
 
+    	@Override
         public String getExpression() {
             return expression;
         }
@@ -437,7 +439,9 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
     		}
     	}
 
+    	@Override
     	public IAddress getAddress() { return fAddr; }
+    	@Override
     	public int getSize() { return fSize; }
 		
 		@Override
@@ -468,14 +472,17 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
      */
     protected class InvalidDMAddress implements IExpressionDMLocation {
 
+    	@Override
 		public IAddress getAddress() {
 			return IExpressions.IExpressionDMLocation.INVALID_ADDRESS;
 		}
 
+    	@Override
 		public int getSize() {
 			return 0;
 		}
 
+    	@Override
 		public String getLocation() {
 			return ""; //$NON-NLS-1$
 		}
@@ -525,22 +532,27 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
             fBasicType = basicType;
         }
 
+    	@Override
 		public BasicType getBasicType() {
 		    return fBasicType;
 		}
 		
+    	@Override
 		public String getEncoding() {
 			return null;
 		}
 
+    	@Override
 		public Map<String, Integer> getEnumerations() {
 			return new HashMap<String, Integer>();
 		}
 
+    	@Override
 		public String getName() {
 			return relativeExpression;
 		}
 
+    	@Override
 		public IRegisterDMContext getRegister() {
 			return null;
 		}
@@ -550,10 +562,12 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 			return null;
 		}
 
+		@Override
 		public String getTypeId() {
 			return null;
 		}
 
+		@Override
 		public String getTypeName() {
 			return exprType;
 		}
@@ -586,6 +600,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 		/**
          * @since 4.0
          */
+		@Override
 		public boolean hasChildren() {
 		    return numChildrenHint > 0;
 		}
@@ -739,6 +754,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 	/**
 	 * Create an expression context with the same full and relative expression
 	 */
+	@Override
 	public IExpressionDMContext createExpression(IDMContext ctx, String expression) {
 		return createExpression(ctx, expression, expression);
 	}
@@ -797,6 +813,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 	 *         of an expression in a specific format. 
 	 */
 
+	@Override
 	public FormattedValueDMContext getFormattedValueContext(
 			IFormattedDataDMContext dmc, String formatId) {
 		return new FormattedValueDMContext(this, dmc, formatId);
@@ -813,6 +830,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 	 *  
 	 */
 
+	@Override
 	public void getAvailableFormats(IFormattedDataDMContext dmc,
 			final DataRequestMonitor<String[]> rm) {
 		rm.setData(FORMATS_SUPPORTED);
@@ -828,6 +846,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 	 * @param rm
 	 *            The data request monitor that will contain the requested data
 	 */
+	@Override
 	public void getExpressionData(
 			final IExpressionDMContext dmc,
 			final DataRequestMonitor<IExpressionDMData> rm) 
@@ -892,6 +911,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 	 * @param rm
 	 *            The data request monitor that will contain the requested data
 	 */
+	@Override
     public void getExpressionAddressData(
     		IExpressionDMContext dmc, 
     		final DataRequestMonitor<IExpressionDMAddress> rm) {
@@ -961,6 +981,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 	 * @param rm
 	 *            The data request monitor that will contain the requested data
 	 */
+	@Override
 	public void getFormattedExpressionValue(
 			final FormattedValueDMContext dmc,
 			final DataRequestMonitor<FormattedValueDMData> rm) 
@@ -1025,6 +1046,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.dsf.debug.service.IExpressions#getBaseExpressions(org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
 	 */
+	@Override
 	public void getBaseExpressions(IExpressionDMContext exprContext,
 			DataRequestMonitor<IExpressionDMContext[]> rm) {
 		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
@@ -1041,6 +1063,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 	 * @param rm
 	 *            The data request monitor that will contain the requested data
 	 */
+	@Override
 	public void getSubExpressions(final IExpressionDMContext dmc,
 			final DataRequestMonitor<IExpressionDMContext[]> rm) 
 	{		
@@ -1085,6 +1108,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 	 * @param rm
 	 *            The data request monitor that will contain the requested data
 	 */
+	@Override
 	public void getSubExpressions(final IExpressionDMContext exprCtx, final int startIndex,
 			final int length, final DataRequestMonitor<IExpressionDMContext[]> rm) {
 
@@ -1131,6 +1155,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 	/**
 	 * @since 4.0
 	 */
+	@Override
 	public void safeToAskForAllSubExpressions(IExpressionDMContext dmc,
 			final DataRequestMonitor<Boolean> rm) {
 	    if (dmc instanceof MIExpressionDMC) {
@@ -1157,6 +1182,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 	/**
 	 * @since 4.0
 	 */
+	@Override
 	public void getSubExpressionCount(IExpressionDMContext dmc,
 			final int numChildLimit, final DataRequestMonitor<Integer> rm) {
 
@@ -1188,6 +1214,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 	 * @param rm
 	 *            The data request monitor that will contain the requested data
 	 */
+	@Override
 	public void getSubExpressionCount(IExpressionDMContext dmc,
 			final DataRequestMonitor<Integer> rm) 
 	{
@@ -1202,6 +1229,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
      * @param rm Data Request monitor containing True if this expression's value can be edited.  False otherwise.
      */
 
+	@Override
 	public void canWriteExpression(IExpressionDMContext dmc, final DataRequestMonitor<Boolean> rm) {
         if (dmc instanceof MIExpressionDMC) {
             fExpressionCache.execute(
@@ -1236,6 +1264,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 	 * @param rm
 	 *            The request monitor that will indicate the completion of the operation
 	 */
+	@Override
 	public void writeExpression(final IExpressionDMContext dmc, String expressionValue, 
 			String formatId, final RequestMonitor rm) {
 
@@ -1305,6 +1334,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
      * {@inheritDoc}
      * @since 1.1
      */
+	@Override
     public void flushCache(IDMContext context) {
         fExpressionCache.reset(context);
         // We must also mark all variable objects as out-of-date
@@ -1331,6 +1361,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.dsf.debug.service.IExpressions2.ICastedExpressionDMContext#getCastInfo()
 		 */
+		@Override
 		public CastInfo getCastInfo() {
 			return fCastInfo;
 		}
@@ -1364,6 +1395,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 	 * @see org.eclipse.cdt.dsf.debug.service.IExpressions2#createCastedExpression(org.eclipse.cdt.dsf.datamodel.IDMContext, java.lang.String, org.eclipse.cdt.dsf.debug.service.IExpressions2.ICastedExpressionDMContext)
 	 */
 	/** @since 3.0 */
+	@Override
 	public ICastedExpressionDMContext createCastedExpression(IExpressionDMContext exprDMC, CastInfo castInfo) {
 		if (exprDMC instanceof MIExpressionDMC && castInfo != null) {
 			String castType = castInfo.getTypeString();
@@ -1400,6 +1432,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
      * @see org.eclipse.cdt.dsf.debug.service.IExpressions3#getExpressionDataExtension(org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
      */
     /** @since 4.0 */
+	@Override
     public void getExpressionDataExtension(IExpressionDMContext dmc, final DataRequestMonitor<IExpressionDMDataExtension> rm) {
         getExpressionData(dmc, new DataRequestMonitor<IExpressionDMData>(getExecutor(), rm) {
             @Override

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
 package org.eclipse.cdt.ui.tests.text;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -110,8 +111,8 @@ public class BasicCEditorTest extends BaseUITestCase {
 		}
 	}
 
-	private static CEditor fEditor;
-	private static SourceViewer fSourceViewer;
+	private CEditor fEditor;
+	private SourceViewer fSourceViewer;
 	private ICProject fCProject;
 	private IProject fNonCProject;
 	private StyledText fTextWidget;
@@ -441,6 +442,24 @@ public class BasicCEditorTest extends BaseUITestCase {
 		}
 		assertNotNull(part);
 		assertTrue(part instanceof CEditor);
+	}
+
+	public void testLeakingInstanceAfterClose() throws Exception {
+		final String file= "/ceditor/src/main.cpp";
+		fCProject= EditorTestHelper.createCProject("ceditor", "resources/ceditor", false, false);
+		setUpEditor(file);
+		fSourceViewer= EditorTestHelper.getSourceViewer(fEditor);
+		assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 0, 10000, 100));
+		WeakReference<CEditor> ref = new WeakReference<CEditor>(fEditor);
+		EditorTestHelper.closeEditor(fEditor);
+		fEditor = null;
+		fSourceViewer = null;
+		int ngc = 10;
+		while (ref.get() != null && ngc-- > 0) {
+			System.gc();
+			Thread.sleep(200);
+		}
+		assertNull("CEditor instance seems to be leaking after close", ref.get());		
 	}
 
 	/**

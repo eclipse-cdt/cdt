@@ -57,6 +57,7 @@ import org.eclipse.cdt.internal.core.parser.IMacroDictionary;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator.EvalException;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent.FileVersion;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent.InclusionKind;
+import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider.DependsOnOutdatedFileException;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
 import org.eclipse.cdt.internal.core.parser.scanner.MacroDefinitionParser.InvalidMacroDefinitionException;
 import org.eclipse.cdt.internal.core.parser.scanner.ScannerContext.BranchKind;
@@ -465,8 +466,14 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			fPreIncludedFiles= null;
 		}
         final String location = fLocationMap.getTranslationUnitPath();
-		InternalFileContent content= fFileContentProvider.getContentForContextToHeaderGap(location,
-				fMacroDictionaryFacade);
+		InternalFileContent content;
+		try {
+			content = fFileContentProvider.getContentForContextToHeaderGap(location,
+					fMacroDictionaryFacade);
+		} catch (DependsOnOutdatedFileException e) {
+			// Abort the parser, handled by the abstract indexer task.
+			throw new RuntimeException(e);
+		}
 		if (content != null && content.getKind() == InclusionKind.FOUND_IN_INDEX) {
 			processInclusionFromIndex(0, content, false);
 		}

@@ -24,6 +24,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
@@ -54,6 +55,7 @@ import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.index.IndexBasedFileContentProvider;
 import org.eclipse.cdt.internal.core.parser.IMacroDictionary;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider;
+import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider.DependsOnOutdatedFileException;
 import org.eclipse.cdt.internal.core.parser.util.LRUCache;
 import org.eclipse.cdt.utils.EFSExtensionManager;
 import org.eclipse.core.runtime.CoreException;
@@ -783,7 +785,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 					return;
 				final Object tu = locTask.fTu;
 				final IScannerInfo scannerInfo= fResolver.getBuildConfiguration(linkageID, tu);
-				parseFile(tu, linkageID, ifl, scannerInfo, null, monitor);
+				parseFile(tu, getLanguage(tu, linkageID), ifl, scannerInfo, null, monitor);
 			}
 		}
 		
@@ -817,7 +819,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 						return;
 					final Object tu = locTask.fTu;
 					final IScannerInfo scannerInfo= fResolver.getBuildConfiguration(linkageID, tu);
-					parseFile(tu, linkageID, ifl, scannerInfo, null, monitor);
+					parseFile(tu, getLanguage(tu, linkageID), ifl, scannerInfo, null, monitor);
 					if (locTask.isCompleted())
 						it.remove();
 					
@@ -870,8 +872,24 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 				return;
 			
 			final IScannerInfo scannerInfo= fResolver.getBuildConfiguration(linkageID, contextTu);
-			FileContext ctx= new FileContext(ctxFile, headerFile);
-			parseFile(tu, linkageID, ifl, scannerInfo, ctx, monitor);
+			final AbstractLanguage language = getLanguage(contextTu, linkageID);
+			final FileContext ctx= new FileContext(ctxFile, headerFile);
+			Set<IIndexFile> dependencies= null;
+			boolean done= false;
+			while (!done) {
+				done= true;
+				DependsOnOutdatedFileException d= parseFile(tu, language, ifl, scannerInfo, ctx, monitor);
+				if (d != null) {
+					// File was not parsed, because there is a dependency that needs to be
+					// handled before
+					if (dependencies == null)
+						dependencies= new HashSet<IIndexFile>();
+					if (dependencies.add(d.fIndexFile)) {
+						if (parseFile(d.fTu, language, d.fIndexFile.getLocation(), scannerInfo, new FileContext(ctxFile, d.fIndexFile), monitor) == null)
+							done= false;
+					}
+				} 
+			} 
 			if (!ctx.fLostPragmaOnceSemantics) 
 				return;
 
@@ -929,21 +947,9 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	}
 
 
-	private void parseFile(Object tu, int linkageID, IIndexFileLocation ifl, IScannerInfo scanInfo,
+	private DependsOnOutdatedFileException parseFile(Object tu, AbstractLanguage lang, IIndexFileLocation ifl, IScannerInfo scanInfo,
 			FileContext ctx, IProgressMonitor pm) throws CoreException, InterruptedException {
 		IPath path= getLabel(ifl);
-		AbstractLanguage[] langs= fResolver.getLanguages(tu, true);
-		AbstractLanguage lang= null;
-		for (AbstractLanguage lang2 : langs) {
-			if (lang2.getLinkageID() == linkageID) {
-				lang= lang2;
-				break;
-			}
-		}
-		if (lang == null) {
-			return;
-		}
-		
 		Throwable th= null;
 		try {
 			if (fShowActivity) {
@@ -951,18 +957,21 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			}
 			pm.subTask(getMessage(MessageKind.parsingFileTask,
 					path.lastSegment(), path.removeLastSegments(1).toString()));
-			long start= System.currentTimeMillis();
 			FileContent codeReader= fResolver.getCodeReader(tu);
-			IIndexFile[] ctxFiles = ctx == null ? null : new IIndexFile[] {ctx.fContext, ctx.fOldFile};
+			final boolean isSource = fResolver.isSourceUnit(tu);
 
-			IASTTranslationUnit ast= createAST(tu, lang, codeReader, scanInfo, fASTOptions, ctxFiles, pm);
+			long start= System.currentTimeMillis();
+			IASTTranslationUnit ast= createAST(lang, codeReader, scanInfo, isSource, fASTOptions, ctx, pm);
 			fStatistics.fParsingTime += System.currentTimeMillis() - start;
 			if (ast != null) {
-				writeToIndex(linkageID, ast, codeReader.getContentsHash(), ctx, pm);
+				writeToIndex(lang.getLinkageID(), ast, codeReader.getContentsHash(), ctx, pm);
 			}
 		} catch (CoreException e) {
 			th= e;
 		} catch (RuntimeException e) {
+			final Throwable cause = e.getCause();
+			if (cause instanceof DependsOnOutdatedFileException)
+				return (DependsOnOutdatedFileException) cause;
 			th= e;
 		} catch (StackOverflowError e) {
 			th= e;
@@ -976,6 +985,16 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		if (th != null) {
 			swallowError(path, th);
 		}
+		return null;
+	}
+
+	private AbstractLanguage getLanguage(Object tu, int linkageID) {
+		for (AbstractLanguage language : fResolver.getLanguages(tu, true)) {
+			if (language.getLinkageID() == linkageID) {
+				return language;
+			}
+		}
+		return null;
 	}
 	
 	private IPath getLabel(IIndexFileLocation ifl) {
@@ -1033,13 +1052,13 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		return e;
 	}
 
-	private final IASTTranslationUnit createAST(Object tu, AbstractLanguage language,
-			FileContent codeReader, IScannerInfo scanInfo, int options,
-			IIndexFile[] ctx2header, IProgressMonitor pm) throws CoreException {
+	private final IASTTranslationUnit createAST(AbstractLanguage language, FileContent codeReader,
+			IScannerInfo scanInfo, boolean isSource, int options,
+			FileContext ctx, IProgressMonitor pm) throws CoreException {
 		if (codeReader == null) {
 			return null;
 		}
-		if (fResolver.isSourceUnit(tu)) {
+		if (isSource) {
 			options |= ILanguage.OPTION_IS_SOURCE_UNIT;
 		}
 		if (fFileSizeLimit > 0 && fResolver.getFileSize(codeReader.getFileLocation()) > fFileSizeLimit) {
@@ -1048,6 +1067,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			}
 			return null;
 		}
+		final IIndexFile[] ctx2header = ctx == null ? null : new IIndexFile[] {ctx.fContext, ctx.fOldFile};
 		if (fCodeReaderFactory == null) {
 			InternalFileContentProvider fileContentProvider = createInternalFileContentProvider();
 			if (fIsFastIndexer) {
@@ -1163,14 +1183,14 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	}
 
 	public final IndexFileContent getFileContent(int linkageID, IIndexFileLocation ifl,
-			IIndexFile file) throws CoreException {
+			IIndexFile file) throws CoreException, DependsOnOutdatedFileException {
 		LinkageTask map = findRequestMap(linkageID);
 		if (map != null) {
 			LocationTask request= map.find(ifl);
 			if (request != null) {
 				FileVersionTask task= request.findVersion(file);
 				if (task != null && task.fOutdated)
-					return null;
+					throw new DependsOnOutdatedFileException(request.fTu, task.fIndexFile);
 			}
 		}
 		IndexFileContent fc= fIndexContentCache.get(file);

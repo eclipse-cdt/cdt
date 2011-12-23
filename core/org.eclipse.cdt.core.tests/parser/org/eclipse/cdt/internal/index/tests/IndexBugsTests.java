@@ -2394,7 +2394,8 @@ public class IndexBugsTests extends BaseTestCase {
 	    final Set<IFolder> folders = new HashSet<IFolder>();
 	    folders.add(root);
     	root.accept(new IResourceVisitor() {
-    		public boolean visit(final IResource resource) throws CoreException {
+    		@Override
+			public boolean visit(final IResource resource) throws CoreException {
     			if (resource instanceof IFile) {
     				files.add((IFile) resource);
     			} else if (resource instanceof IFolder) {
@@ -2429,6 +2430,44 @@ public class IndexBugsTests extends BaseTestCase {
 			}
 		} finally {
 			index.releaseReadLock();
+		}
+	}
+	
+	//	// context.c
+	//	#define A B
+	//	#include "b.h" // file name is important to reproduce the issue
+	//	#include "a.h" // file name is important to reproduce the issue
+
+	//	// a.h and b.h
+	//	int A;
+	public void testUpdatingHeaderInContext_367315() throws Exception {
+		String[] contents= getContentsForTest(2);
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		TestSourceReader.createFile(fCProject.getProject(), "context.c", contents[0]);
+		IFile ah= TestSourceReader.createFile(fCProject.getProject(), "a.h", contents[1]);
+		IFile bh= TestSourceReader.createFile(fCProject.getProject(), "b.h", contents[1]);
+		indexManager.reindex(fCProject);
+		waitForIndexer();
+		fIndex.acquireReadLock();
+		try {
+			IIndexBinding[] vars = fIndex.findBindings("B".toCharArray(), IndexFilter.ALL_DECLARED, new NullProgressMonitor());
+			assertEquals(1, vars.length);
+			assertEquals(2, fIndex.findDefinitions(vars[0]).length);
+		} finally {
+			fIndex.releaseReadLock();
+		}
+		
+		final CoreModel coreModel = CCorePlugin.getDefault().getCoreModel();
+		ICElement[] selection = new ICElement[] {coreModel.create(ah), coreModel.create(bh)};
+		indexManager.update(selection, IIndexManager.UPDATE_ALL);
+		waitForIndexer();
+		fIndex.acquireReadLock();
+		try {
+			IIndexBinding[] vars = fIndex.findBindings("B".toCharArray(), IndexFilter.ALL_DECLARED, new NullProgressMonitor());
+			assertEquals(1, vars.length);
+			assertEquals(2, fIndex.findDefinitions(vars[0]).length);
+		} finally {
+			fIndex.releaseReadLock();
 		}
 	}
 }

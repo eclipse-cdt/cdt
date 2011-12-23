@@ -1204,10 +1204,26 @@
 		  </option>
 		  <option
 			  defaultValue="false"
+			  name="%Option.Posix.Warn.extrawarn"
+			  category="gnu.c.compiler.category.warnings"
+			  command="-Wextra"
+			  id="gnu.c.compiler.option.warnings.extrawarn"
+			  valueType="boolean">
+		  </option>
+		  <option
+			  defaultValue="false"
 			  name="%Option.Posix.Warn.toerrs"
 			  category="gnu.c.compiler.category.warnings"
 			  command="-Werror"
 			  id="gnu.c.compiler.option.warnings.toerrors"
+			  valueType="boolean">
+		  </option>
+		  <option
+			  defaultValue="false"
+			  name="%Option.Posix.Warn.wconversion"
+			  category="gnu.c.compiler.category.warnings"
+			  command="-Wconversion"
+			  id="gnu.c.compiler.option.warnings.wconversion"
 			  valueType="boolean">
 		  </option>
 		  <optionCategory
@@ -1518,10 +1534,26 @@
 		  </option>
 		  <option
 			  defaultValue="false"
+			  name="%Option.Posix.Warn.extrawarn"
+			  category="gnu.cpp.compiler.category.warnings"
+			  command="-Wextra"
+			  id="gnu.cpp.compiler.option.warnings.extrawarn"
+			  valueType="boolean">
+		  </option>
+		  <option
+			  defaultValue="false"
 			  name="%Option.Posix.Warn.toerrs"
 			  category="gnu.cpp.compiler.category.warnings"
 			  command="-Werror"
 			  id="gnu.cpp.compiler.option.warnings.toerrors"
+			  valueType="boolean">
+		  </option>
+		  <option
+			  defaultValue="false"
+			  name="%Option.Posix.Warn.wconversion"
+			  category="gnu.cpp.compiler.category.warnings"
+			  command="-Wconversion"
+			  id="gnu.cpp.compiler.option.warnings.wconversion"
 			  valueType="boolean">
 		  </option>
 		  <optionCategory

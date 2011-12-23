@@ -48,6 +48,7 @@ public class ProcessPrompter implements IStatusHandler {
 	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus,
 	 *      java.lang.Object)
 	 */
+    @Override
 	public Object handleStatus(IStatus status, Object info) throws CoreException {
 		Shell shell = GdbUIPlugin.getShell();
 		if (shell == null) {

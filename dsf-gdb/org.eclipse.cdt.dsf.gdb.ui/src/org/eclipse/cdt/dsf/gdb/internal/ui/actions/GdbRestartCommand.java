@@ -45,6 +45,7 @@ public class GdbRestartCommand implements IRestartHandler {
         fTracker.dispose();
     }
 
+    @Override
     public void canExecute(final IEnabledStateRequest request) {
         if (request.getElements().length != 1) {
             request.setEnabled(false);
@@ -75,6 +76,7 @@ public class GdbRestartCommand implements IRestartHandler {
         });
 	}
     
+    @Override
     public boolean execute(final IDebugCommandRequest request) {
         if (request.getElements().length != 1) {
             request.done();
@@ -92,6 +94,7 @@ public class GdbRestartCommand implements IRestartHandler {
         
         fExecutor.submit(new DsfRunnable() {
         	@SuppressWarnings("unchecked")
+            @Override
 			public void run() {
             	IGDBProcesses procService = fTracker.getService(IGDBProcesses.class);
 

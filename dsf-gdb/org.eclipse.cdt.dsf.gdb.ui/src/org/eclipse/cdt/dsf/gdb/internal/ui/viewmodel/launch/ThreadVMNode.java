@@ -287,6 +287,7 @@ public class ThreadVMNode extends AbstractThreadVMNode
     /*
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#compareElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest[])
      */
+    @Override
     public void compareElements(IElementCompareRequest[] requests) {
         
         for ( IElementCompareRequest request : requests ) {
@@ -314,6 +315,7 @@ public class ThreadVMNode extends AbstractThreadVMNode
     /*
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#encodeElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest[])
      */
+    @Override
     public void encodeElements(IElementMementoRequest[] requests) {
     	
     	for ( IElementMementoRequest request : requests ) {

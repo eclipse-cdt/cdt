@@ -31,6 +31,7 @@ public class ReverseDebuggingPropertyTester extends PropertyTester {
 
     private static final String ENABLED = "isReverseDebuggingEnabled"; //$NON-NLS-1$
 
+    @Override
     public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
     	if (ENABLED.equals(property)) {
     		if (receiver instanceof IDMVMContext) {

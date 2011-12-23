@@ -202,6 +202,7 @@ public class GdbAdapterFactory
 
             fDebugModelProvider = new IDebugModelProvider() {
                 // @see org.eclipse.debug.core.model.IDebugModelProvider#getModelIdentifiers()
+                @Override
                 public String[] getModelIdentifiers() {
                     return new String[] { GdbLaunchDelegate.GDB_DEBUG_MODEL_ID, ICBreakpoint.C_BREAKPOINTS_DEBUG_MODEL_ID };
                 }
@@ -329,6 +330,7 @@ public class GdbAdapterFactory
      * This method only actually returns adapters for the launch object.
      */
     @SuppressWarnings("rawtypes")
+    @Override
     public Object getAdapter(Object adaptableObject, Class adapterType) {
         if (!(adaptableObject instanceof GdbLaunch)) return null;
 
@@ -379,6 +381,7 @@ public class GdbAdapterFactory
     }
 
     @SuppressWarnings("rawtypes")
+    @Override
     public Class[] getAdapterList() {
         return new Class[] {
             IElementContentProvider.class, IModelProxyFactory.class, ISuspendTrigger.class,
@@ -386,6 +389,7 @@ public class GdbAdapterFactory
             };
     }
 
+    @Override
     public void launchesRemoved(ILaunch[] launches) {
         // Dispose the set of adapters for a launch only after the launch is
         // removed.
@@ -396,12 +400,15 @@ public class GdbAdapterFactory
         }
     }
 
+    @Override
     public void launchesTerminated(ILaunch[] launches) {
     }
 
+    @Override
     public void launchesAdded(ILaunch[] launches) {
     }
     
+    @Override
     public void launchesChanged(ILaunch[] launches) {
     }
     

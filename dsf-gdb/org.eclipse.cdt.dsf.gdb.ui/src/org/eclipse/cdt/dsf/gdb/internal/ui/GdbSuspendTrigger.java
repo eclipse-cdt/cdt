@@ -39,7 +39,8 @@ public class GdbSuspendTrigger extends DsfSuspendTrigger {
     protected void getLaunchTopContainers(final DataRequestMonitor<IContainerDMContext[]> rm) {
         try {
             getSession().getExecutor().execute(new DsfRunnable() {
-                public void run() {
+                @Override
+				public void run() {
                     IProcesses processService = getServicesTracker().getService(IProcesses.class);
                     ICommandControlService controlService = getServicesTracker().getService(ICommandControlService.class);
                     if (processService == null || controlService == null) {

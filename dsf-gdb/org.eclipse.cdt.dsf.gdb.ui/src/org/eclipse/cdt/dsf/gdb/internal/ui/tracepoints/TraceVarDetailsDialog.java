@@ -168,6 +168,7 @@ public final class TraceVarDetailsDialog extends Dialog {
 		warningTextLabel = new Label(createButtonComposite, SWT.NONE);
 		warningTextLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		parent.addDisposeListener(new DisposeListener() {
+            @Override
 			public void widgetDisposed(DisposeEvent e) {
 				if (warningImage != null)
 					warningImage.dispose();
@@ -177,9 +178,11 @@ public final class TraceVarDetailsDialog extends Dialog {
 		// When the user goes into either input field, then pressing return
 		// should try to create the command
 		FocusListener clearWarningFocusListener = new FocusListener() {
+            @Override
 			public void focusGained(FocusEvent e) {
 				getShell().setDefaultButton(createButton);
 			}
+            @Override
 			public void focusLost(FocusEvent e) {
 			}
 		};
@@ -189,6 +192,7 @@ public final class TraceVarDetailsDialog extends Dialog {
 
 		// When the user modifies any entry in the input, we should clear any warning
 		ModifyListener clearWarningListener = new ModifyListener() {
+            @Override
 			public void modifyText(ModifyEvent e) {
 				setWarningVisible(false);
 			}

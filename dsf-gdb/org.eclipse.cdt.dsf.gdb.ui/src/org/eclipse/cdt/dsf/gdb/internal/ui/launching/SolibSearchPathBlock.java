@@ -269,6 +269,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.internal.ui.IMILaunchConfigurationComponent#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+    @Override
 	public void createControl(Composite parent) {
 		fShell = parent.getShell();
 		Composite comp = ControlFactory.createCompositeEx(parent, 2, GridData.FILL_BOTH);
@@ -287,6 +288,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.internal.ui.IMILaunchConfigurationComponent#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+    @Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		IProject project = null;
 		try {
@@ -340,6 +342,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.internal.ui.IMILaunchConfigurationComponent#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+    @Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_SOLIB_PATH, Collections.EMPTY_LIST);
 	}
@@ -347,6 +350,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.internal.ui.IMILaunchConfigurationComponent#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+    @Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		if (fDirList != null) {
 			
@@ -410,6 +414,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.internal.ui.IMILaunchConfigurationComponent#dispose()
 	 */
+    @Override
 	public void dispose() {
 		deleteObservers();
 	}
@@ -417,6 +422,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.internal.ui.IMILaunchConfigurationComponent#getControl()
 	 */
+    @Override
 	public Control getControl() {
 		return fControl;
 	}
@@ -424,6 +430,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.internal.ui.IMILaunchConfigurationComponent#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+    @Override
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		// TODO Auto-generated method stub
 		return false;
@@ -459,31 +466,31 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 		final HashSet<IPath> libs = new HashSet<IPath>(10);
 		if (generateLibraryList(dirList.toArray(new IPath[dirList.size()]), libs)) {
 			ITreeContentProvider cp = new ITreeContentProvider() {
-	
+                @Override
 				public Object[] getChildren(Object parentElement) {
 					return getElements(parentElement);
 				}
-	
+                @Override
 				public Object getParent(Object element) {
 					if (libs.contains(element))
 						return libs;
 					return null;
 				}
-	
+                @Override
 				public boolean hasChildren(Object element) {
 					return false;
 				}
-	
+                @Override
 				public Object[] getElements(Object inputElement) {
 					if (inputElement instanceof Set) {
 						return ((Set)inputElement).toArray();
 					}
 					return new Object[0];
 				}
-	
+                @Override
 				public void dispose() {
 				}
-	
+                @Override
 				public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 				}	
 			};
@@ -517,6 +524,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 		boolean result = true;
 
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
+            @Override
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 
 				for (int i = 0; i < paths.length; ++i) {
@@ -614,6 +622,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 		return (name.indexOf(".so.") >= 0); //$NON-NLS-1$
 	}
 
+    @Override
 	public void dialogFieldChanged(DialogField field) {
 		setChanged();
 		notifyObservers();

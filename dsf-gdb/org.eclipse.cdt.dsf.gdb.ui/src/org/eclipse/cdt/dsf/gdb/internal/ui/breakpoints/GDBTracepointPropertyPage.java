@@ -356,6 +356,7 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPropertyPage#getElement()
 	 */
+    @Override
 	public IAdaptable getElement() {
 		return fElement;
 	}
@@ -363,6 +364,7 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPropertyPage#setElement(org.eclipse.core.runtime.IAdaptable)
 	 */
+    @Override
 	public void setElement(IAdaptable element) {
 		fElement = element;
 	}
@@ -380,6 +382,7 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
 			/**
 			 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
 			 */
+            @Override
 			public void propertyChange(PropertyChangeEvent event) {
 				changedProperties.add(event.getProperty());
 			}
@@ -392,6 +395,7 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
 	protected void setBreakpointProperties(final List<String> changedProperties) {
 		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
 
+            @Override
 			public void run( IProgressMonitor monitor ) throws CoreException {
 				ICTracepoint tracepoint = getTracepoint();
 				Iterator<String> changed = changedProperties.iterator();

@@ -69,6 +69,7 @@ public class GdbSaveTraceDataCommand extends AbstractDebugCommand implements ISa
 
 		final String[] fileName = new String[1];
 		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+            @Override
 			public void run() {
 				fileName[0] = promptForFileName();
 			};

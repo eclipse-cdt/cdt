@@ -108,21 +108,25 @@ public class TracingConsoleManager implements ILaunchesListener2, IPropertyChang
 		}
 	}
 
+    @Override
 	public void launchesAdded(ILaunch[] launches) {
 		for (ILaunch launch : launches) {
 			addConsole(launch);
 		}
 	}
 
+    @Override
 	public void launchesChanged(ILaunch[] launches) {
 	}
 
+    @Override
 	public void launchesRemoved(ILaunch[] launches) {
 		for (ILaunch launch : launches) {
 			removeConsole(launch);
 		}
 	}
 	
+    @Override
 	public void launchesTerminated(ILaunch[] launches) {
 		for (ILaunch launch : launches) {
 			// Since we already had a console, don't get rid of it
@@ -131,6 +135,7 @@ public class TracingConsoleManager implements ILaunchesListener2, IPropertyChang
 		}
 	}
 	
+    @Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(IGdbDebugPreferenceConstants.PREF_TRACES_ENABLE)) {
 			fTracingEnabled = (Boolean)event.getNewValue();

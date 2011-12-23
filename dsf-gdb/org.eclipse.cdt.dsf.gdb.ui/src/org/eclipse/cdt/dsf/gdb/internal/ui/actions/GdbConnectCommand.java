@@ -84,6 +84,7 @@ public class GdbConnectCommand implements IConnect {
         fTracker.dispose();
     }
 
+    @Override
     public boolean canConnect() {
        	Query<Boolean> canConnectQuery = new Query<Boolean>() {
             @Override
@@ -210,6 +211,7 @@ public class GdbConnectCommand implements IConnect {
 
     			final String finalBinaryPath = binaryPath;
     			fExecutor.execute(new DsfRunnable() {
+                    @Override
     				public void run() {
     					IGDBProcesses procService = fTracker.getService(IGDBProcesses.class);
     					ICommandControlService commandControl = fTracker.getService(ICommandControlService.class);
@@ -239,6 +241,7 @@ public class GdbConnectCommand implements IConnect {
     	}
     }
 
+    @Override
     public void connect(RequestMonitor requestMonitor)
     {
     	// Create a fake rm to avoid null pointer exceptions
@@ -255,6 +258,7 @@ public class GdbConnectCommand implements IConnect {
     	// thread to prompt the user for the process to choose.
     	// This is why we simply use a DsfRunnable.
     	fExecutor.execute(new DsfRunnable() {
+            @Override
     		public void run() {
     			final IProcesses procService = fTracker.getService(IProcesses.class);
     			ICommandControlService commandControl = fTracker.getService(ICommandControlService.class);

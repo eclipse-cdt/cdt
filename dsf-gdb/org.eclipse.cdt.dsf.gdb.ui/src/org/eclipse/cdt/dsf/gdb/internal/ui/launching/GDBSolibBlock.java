@@ -54,6 +54,7 @@ public class GDBSolibBlock extends Observable implements IMILaunchConfigurationC
 		fAutoSolib = autoSolib;
 	}
 
+    @Override
 	public void createControl( Composite parent ) {
 		Composite subComp = ControlFactory.createCompositeEx( parent, 1, GridData.FILL_HORIZONTAL );
 		((GridLayout)subComp.getLayout()).makeColumnsEqualWidth = false;
@@ -89,6 +90,7 @@ public class GDBSolibBlock extends Observable implements IMILaunchConfigurationC
 		fControl = subComp;
 	}
 
+    @Override
 	public void initializeFrom( ILaunchConfiguration configuration ) {
 		if ( fSolibSearchPathBlock != null )
 			fSolibSearchPathBlock.initializeFrom( configuration );
@@ -104,6 +106,7 @@ public class GDBSolibBlock extends Observable implements IMILaunchConfigurationC
 		}
 	}
 
+    @Override
 	public void performApply( ILaunchConfigurationWorkingCopy configuration ) {
 		if ( fSolibSearchPathBlock != null )
 			fSolibSearchPathBlock.performApply( configuration );
@@ -121,6 +124,7 @@ public class GDBSolibBlock extends Observable implements IMILaunchConfigurationC
 		}
 	}
 
+    @Override
 	public void setDefaults( ILaunchConfigurationWorkingCopy configuration ) {
 		if ( fSolibSearchPathBlock != null )
 			fSolibSearchPathBlock.setDefaults( configuration );
@@ -131,6 +135,7 @@ public class GDBSolibBlock extends Observable implements IMILaunchConfigurationC
 	protected void updateButtons() {
 	}
 
+    @Override
 	public void dispose() {
 		deleteObservers();
 		if ( fSolibSearchPathBlock != null ) {
@@ -140,6 +145,7 @@ public class GDBSolibBlock extends Observable implements IMILaunchConfigurationC
 		}
 	}
 
+    @Override
 	public void update( Observable o, Object arg ) {
 		changed();
 	}
@@ -161,10 +167,12 @@ public class GDBSolibBlock extends Observable implements IMILaunchConfigurationC
 		}
 	}
 
+    @Override
 	public Control getControl() {
 		return fControl;
 	}
 
+    @Override
 	public boolean isValid( ILaunchConfiguration launchConfig ) {
 		// TODO Auto-generated method stub
 		return false;

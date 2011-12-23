@@ -53,6 +53,7 @@ public class GdbCoreDebuggerPage extends AbstractCDebuggerPage implements Observ
 	private IMILaunchConfigurationComponent fSolibBlock;
 	private boolean fIsInitializing = false;
 
+    @Override
 	public void createControl(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
 		comp.setLayout(new GridLayout());
@@ -64,6 +65,7 @@ public class GdbCoreDebuggerPage extends AbstractCDebuggerPage implements Observ
 		setControl(parent);
 	}
 
+    @Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		IPreferenceStore preferenceStore = GdbUIPlugin.getDefault().getPreferenceStore();
 		String defaultGdbCommand = preferenceStore.getString(IGdbDebugPreferenceConstants.PREF_DEFAULT_GDB_COMMAND);
@@ -88,6 +90,7 @@ public class GdbCoreDebuggerPage extends AbstractCDebuggerPage implements Observ
 		return valid;
 	}
 
+    @Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		setInitializing(true);
 		IPreferenceStore preferenceStore = GdbUIPlugin.getDefault().getPreferenceStore();
@@ -114,6 +117,7 @@ public class GdbCoreDebuggerPage extends AbstractCDebuggerPage implements Observ
 		setInitializing(false); 
 	}
 
+    @Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, 
 				                   fGDBCommandText.getText().trim());
@@ -124,6 +128,7 @@ public class GdbCoreDebuggerPage extends AbstractCDebuggerPage implements Observ
 			fSolibBlock.performApply(configuration);
 	}
 
+    @Override
 	public String getName() {
 		return LaunchUIMessages.getString("GDBDebuggerPage.tab_name"); //$NON-NLS-1$
 	}
@@ -149,6 +154,7 @@ public class GdbCoreDebuggerPage extends AbstractCDebuggerPage implements Observ
 	 * 
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */
+    @Override
 	public void update(Observable o, Object arg) {
 		if (!isInitializing())
 			updateLaunchConfigurationDialog();
@@ -181,7 +187,7 @@ public class GdbCoreDebuggerPage extends AbstractCDebuggerPage implements Observ
 		label.setLayoutData(gd);
 		fGDBCommandText = ControlFactory.createTextField(subComp, SWT.SINGLE | SWT.BORDER);
 		fGDBCommandText.addModifyListener(new ModifyListener() {
-
+            @Override
 			public void modifyText(ModifyEvent evt) {
 				if (!isInitializing())
 					updateLaunchConfigurationDialog();
@@ -218,7 +224,7 @@ public class GdbCoreDebuggerPage extends AbstractCDebuggerPage implements Observ
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fGDBInitText.setLayoutData(gd);
 		fGDBInitText.addModifyListener(new ModifyListener() {
-
+            @Override
 			public void modifyText(ModifyEvent evt) {
 				if (!isInitializing())
 					updateLaunchConfigurationDialog();

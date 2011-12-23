@@ -91,6 +91,7 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 	private Composite fContents;
 
     private IContentChangeListener fContentListener = new IContentChangeListener() {
+        @Override
         public void contentChanged() {
             contentsChanged();
         }
@@ -116,6 +117,7 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 	    return TAB_ID;
 	}
 
+    @Override
 	public void createControl(Composite parent) {
 		fContainer = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
 		fContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -162,6 +164,7 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 		}
 	}
 
+    @Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		setLaunchConfigurationWorkingCopy(config);
 		ICDebuggerPage dynamicTab = getDynamicTab();
@@ -199,6 +202,7 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 		}
 	}
 
+    @Override
 	public void initializeFrom(ILaunchConfiguration config) {
 		setInitializing(true);
 
@@ -217,6 +221,7 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 		setInitializing(false);
 	}
 
+    @Override
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		if (getDebuggerId() != null) {
 			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, getDebuggerId());
@@ -322,6 +327,7 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 			gridData.widthHint = 100;
 			fStopInMainSymbol.setLayoutData(gridData);
 			fStopInMainSymbol.addModifyListener(new ModifyListener() {
+                @Override
 				public void modifyText(ModifyEvent evt) {
 					update();
 				}
@@ -536,6 +542,7 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 		return LaunchImages.get(LaunchImages.IMG_VIEW_DEBUGGER_TAB);
 	}
 
+    @Override
 	public String getName() {
 		return LaunchMessages.getString("AbstractCDebuggerTab.Debugger"); //$NON-NLS-1$
 	}
@@ -551,6 +558,7 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 		fDCombo = new Combo(comboComp, SWT.READ_ONLY | SWT.DROP_DOWN);
 		fDCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fDCombo.addSelectionListener(new SelectionListener() {
+            @Override
 		    public void widgetSelected(SelectionEvent e) {
 		        if (!isInitializing()) {
 		            setInitializeDefault(true);
@@ -558,6 +566,7 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 		        }
 		    }
 
+            @Override
 		    public void widgetDefaultSelected(SelectionEvent e) {
 		    }
 		});

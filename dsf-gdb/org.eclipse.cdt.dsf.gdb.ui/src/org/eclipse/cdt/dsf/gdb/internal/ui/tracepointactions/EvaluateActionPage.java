@@ -52,13 +52,16 @@ public class EvaluateActionPage extends PlatformObject implements IBreakpointAct
 		return fEvalAction;
 	}
 
+    @Override
 	public void actionDialogCanceled() {
 	}
 
+    @Override
 	public void actionDialogOK() {
 		fEvalAction.setEvalString(fEvalString.getText());
 	}
 
+    @Override
 	public Composite createComposite(IBreakpointAction action, Composite composite, int style) {
 		fEvalAction = (EvaluateAction) action;
 		return createEvaluateActionComposite(composite, style);

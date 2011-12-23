@@ -124,6 +124,7 @@ public class TraceControlView extends ViewPart implements IViewPart, SessionEnde
 		@Override
 		public void run() {
 			asyncExec(new Runnable() {
+                @Override
 				public void run() {
 					exitVisualizationMode();
 					updateActionEnablement();
@@ -152,6 +153,7 @@ public class TraceControlView extends ViewPart implements IViewPart, SessionEnde
 		super.init(site);
 		site.getPage().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, 
 				                            fDebugViewListener = new ISelectionListener() {
+            @Override
 			public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 				updateDebugContext();
 			}});
@@ -221,6 +223,7 @@ public class TraceControlView extends ViewPart implements IViewPart, SessionEnde
 			if (ctx != null) {
 				getSession().getExecutor().execute(
 						new DsfRunnable() {	
+			                @Override
 							public void run() {
 								final IGDBTraceControl traceControl = getService(IGDBTraceControl.class);
 								if (traceControl != null) {
@@ -247,6 +250,7 @@ public class TraceControlView extends ViewPart implements IViewPart, SessionEnde
 													
 													final String finalStatus = traceStatus;
 													asyncExec(new Runnable() {
+										                @Override
 														public void run() {
 															fStatusText.setText(finalStatus);
 															updateActionEnablement();
@@ -257,6 +261,7 @@ public class TraceControlView extends ViewPart implements IViewPart, SessionEnde
 									fTracingSupported = false;
 
 									asyncExec(new Runnable() {
+						                @Override
 										public void run() {
 											fStatusText.setText(EMPTY_STRING);
 											updateActionEnablement();
@@ -287,6 +292,7 @@ public class TraceControlView extends ViewPart implements IViewPart, SessionEnde
 		
 		getSession().getExecutor().execute(
 				new DsfRunnable() {	
+	                @Override
 					public void run() {
 						final IGDBTraceControl traceControl = getService(IGDBTraceControl.class);
 						if (traceControl != null) {
@@ -316,6 +322,7 @@ public class TraceControlView extends ViewPart implements IViewPart, SessionEnde
 					try {
 						final DsfSession session = getSession();
 						session.getExecutor().execute(new DsfRunnable() {
+			                @Override
 							public void run() {
 								session.removeServiceEventListener(TraceControlView.this);
 							}
@@ -336,6 +343,7 @@ public class TraceControlView extends ViewPart implements IViewPart, SessionEnde
 				try {
 					final DsfSession session = getSession();
 					session.getExecutor().execute(new DsfRunnable() {
+		                @Override
 						public void run() {
 							session.removeServiceEventListener(TraceControlView.this);
 						}
@@ -363,6 +371,7 @@ public class TraceControlView extends ViewPart implements IViewPart, SessionEnde
 			try {
 				final DsfSession session = getSession();
 				session.getExecutor().execute(new DsfRunnable() {
+	                @Override
 					public void run() {
 						session.addServiceEventListener(TraceControlView.this, null);
 					}
@@ -395,9 +404,11 @@ public class TraceControlView extends ViewPart implements IViewPart, SessionEnde
 		}
 	}
 
+    @Override
 	public void sessionEnded(DsfSession session) {
 		if (session.getId().equals(fDebugSessionId)) {
 			asyncExec(new Runnable() {
+                @Override
 				public void run() {
 					setDebugContext(null);
 				}});

@@ -125,9 +125,11 @@ public class WhileSteppingActionPage extends PlatformObject implements IBreakpoi
 		return fWhileSteppingAction;
 	}
 
+    @Override
 	public void actionDialogCanceled() {
 	}
 
+    @Override
 	public void actionDialogOK() {
 		// Make sure we are dealing with an int
 		int count = 1;
@@ -141,6 +143,7 @@ public class WhileSteppingActionPage extends PlatformObject implements IBreakpoi
 		fWhileSteppingAction.setSubActionsContent(actionsList.getActionNames());
 	}
 
+    @Override
 	public Composite createComposite(IBreakpointAction action, Composite composite, int style) {
 		fWhileSteppingAction = (WhileSteppingAction)action;
 		return createWhileSteppingActionComposite(composite, style);

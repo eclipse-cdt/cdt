@@ -149,10 +149,12 @@ public class GdbReverseToggleCommand extends AbstractDebugCommand implements IRe
 		return true;
 	}
     
+    @Override
     public boolean toggleNeedsUpdating() {
     	return true;
     }
 
+    @Override
     public boolean isReverseToggled(Object context) {
     	IDMContext dmc;
 

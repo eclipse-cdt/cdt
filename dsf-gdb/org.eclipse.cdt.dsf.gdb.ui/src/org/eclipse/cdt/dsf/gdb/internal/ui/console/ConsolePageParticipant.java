@@ -45,6 +45,7 @@ public class ConsolePageParticipant implements IConsolePageParticipant, IDebugCo
     private IPageBookViewPage fPage;
     private IConsoleView fView;
 
+    @Override
 	public void init(IPageBookViewPage page, IConsole console) {
         fPage = page;
         fConsole = console;
@@ -98,10 +99,12 @@ public class ConsolePageParticipant implements IConsolePageParticipant, IDebugCo
 	}
 	
 	@SuppressWarnings("rawtypes")
+    @Override
 	public Object getAdapter(Class adapter) {
 		return null;
 	}
 	
+    @Override
 	public void dispose() {
         if (isConsoleInferior(fConsole) || isConsoleGdbCli(fConsole)) {
 			DebugUITools.getDebugContextManager().getContextService(fPage.getSite().getWorkbenchWindow()).removeDebugContextListener(this);
@@ -109,9 +112,11 @@ public class ConsolePageParticipant implements IConsolePageParticipant, IDebugCo
 		fConsole = null;
 	}
 
+    @Override
 	public void activated() {
 	}
 
+    @Override
 	public void deactivated() {
 	}
 
@@ -186,6 +191,7 @@ public class ConsolePageParticipant implements IConsolePageParticipant, IDebugCo
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener#contextEvent(org.eclipse.debug.internal.ui.contexts.provisional.DebugContextEvent)
 	 */
+    @Override
 	public void debugContextChanged(DebugContextEvent event) {
 		if ((event.getFlags() & DebugContextEvent.ACTIVATED) > 0) {
 			IProcess consoleProcess = getConsoleProcess();

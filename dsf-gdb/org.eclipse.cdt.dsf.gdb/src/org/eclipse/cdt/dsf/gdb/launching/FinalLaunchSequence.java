@@ -11,6 +11,7 @@
  *     IBM Corporation 
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *     Sergey Prigogin (Google)
+ *     Marc Khouzam (Ericsson) - Send target-async off in all-stop mode for GDB >= 7.0 (Bug 365471)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching;
 
@@ -27,11 +28,13 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
 import org.eclipse.cdt.dsf.datamodel.DataModelInitializedEvent;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
+import org.eclipse.cdt.dsf.debug.service.IDsfDebugServicesFactory;
 import org.eclipse.cdt.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.actions.IConnect;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactory;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
 import org.eclipse.cdt.dsf.gdb.service.SessionType;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
@@ -280,6 +283,20 @@ public class FinalLaunchSequence extends ReflectionSequence {
 						}
 					});
 		} else {
+			ILaunch launch = (ILaunch)fSession.getModelAdapter(ILaunch.class);
+			if (launch instanceof GdbLaunch) {
+				IDsfDebugServicesFactory factory = ((GdbLaunch)launch).getServiceFactory();
+				if (factory instanceof GdbDebugServicesFactory) {
+					String gdbVersion = ((GdbDebugServicesFactory)factory).getVersion();
+					if (GdbDebugServicesFactory.GDB_7_0_VERSION.compareTo(gdbVersion) <= 0) {
+						fCommandControl.queueCommand(
+								fCommandFactory.createMIGDBSetTargetAsync(fCommandControl.getContext(), false),
+								new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
+						return;
+					}
+				}
+			}
+
 			requestMonitor.done();
 		}
 	}

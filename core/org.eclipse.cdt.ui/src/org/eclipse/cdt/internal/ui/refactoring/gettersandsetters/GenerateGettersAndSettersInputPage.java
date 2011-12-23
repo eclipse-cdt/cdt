@@ -231,4 +231,11 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 			variableSelectionView.refresh();
 		}
 	}
+
+	@Override
+	public void dispose() {
+		super.dispose();
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(CUIPlugin.PLUGIN_ID);
+		node.removePreferenceChangeListener(this);
+	}
 }

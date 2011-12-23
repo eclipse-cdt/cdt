@@ -58,6 +58,7 @@ import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationMap;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTRewriteAnalyzer;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ASTWriter;
+import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ContainerNode;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ProblemRuntimeException;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 import org.eclipse.cdt.internal.core.dom.rewrite.util.FileHelper;
@@ -1016,6 +1017,13 @@ public class ChangeGenerator extends ASTVisitor {
 		if (modification.getKind() != ModificationKind.APPEND_CHILD)
 			return false;
 		IASTNode node = modification.getNewNode();
+		if (node instanceof ContainerNode) {
+			for (IASTNode containedNode : ((ContainerNode) node).getNodes()) {
+				if (!(containedNode instanceof IASTDeclaration || containedNode instanceof IASTStatement))
+					return false;
+			}
+			return true;
+		}
 		return node instanceof IASTDeclaration || node instanceof IASTStatement;
 	}
 

@@ -1400,7 +1400,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	/** The translation unit that was added by the editor to index, or <code>null</code>. */
 	private ITranslationUnit fTuAddedToIndex;
 
-	private IndexerPreferenceListener fIndexerPreferenceListener;
+	private final IndexerPreferenceListener fIndexerPreferenceListener;
 
 	private static final Set<String> angularIntroducers = new HashSet<String>();
 	static {
@@ -2200,6 +2200,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
      */
     @Override
 	public void dispose() {
+		fIndexerPreferenceListener.unregister();
     	updateIndexInclusion(null, true);
 
 		ISourceViewer sourceViewer = getSourceViewer();

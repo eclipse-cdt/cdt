@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2009 IBM Corporation and others.
+ * Copyright (c) 2002, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  * Contributors:
  *  David McKnight     (IBM)   [224906] [dstore] changes for getting properties and doing exit due to single-process capability
  *  David McKnight     (IBM)   [281712] [dstore] Warning message is needed when disk is full
+ *  David McKnight     (IBM)   [367424] [dstore] upload mechanism should provide backups of files
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -21,6 +22,8 @@ package org.eclipse.dstore.core.model;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
+import org.eclipse.dstore.internal.core.model.IDataStoreSystemProperties;
 
 /**
  * <p>
@@ -86,9 +89,15 @@ public class ByteStreamHandler implements IByteStreamHandler
 				}
 				else
 				{
+					// backup file on upload by default
+					String doBackups = System.getProperty("backupfiles"); //$NON-NLS-1$
+					if (doBackups == null || doBackups.equals("true")){ //$NON-NLS-1$
+						// backup the file first					
+						file.renameTo(new File(fileName+"~")); //$NON-NLS-1$
+					}
 				}
 
-				File newFile = new File(fileName);
+				File newFile = new File(fileName);				
 				FileOutputStream fileStream = new FileOutputStream(newFile);
 
 				if (binary)

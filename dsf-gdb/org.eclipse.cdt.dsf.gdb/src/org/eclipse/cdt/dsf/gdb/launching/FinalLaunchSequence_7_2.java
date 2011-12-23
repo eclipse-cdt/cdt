@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Ericsson - initial API and implementation
+ *     Marc Khouzam (Ericsson) - Use new FinalLaunchSequence_7_0 as base class (Bug 365471)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching;
 
@@ -34,7 +35,7 @@ import org.eclipse.core.runtime.Status;
  * 
  * @since 4.0
  */
-public class FinalLaunchSequence_7_2 extends FinalLaunchSequence {
+public class FinalLaunchSequence_7_2 extends FinalLaunchSequence_7_0 {
 
 	private IGDBControl fGdbControl;
 	private DsfSession fSession;
@@ -56,7 +57,7 @@ public class FinalLaunchSequence_7_2 extends FinalLaunchSequence {
 			List<String> orderList = new ArrayList<String>(Arrays.asList(super.getExecutionOrder(GROUP_TOP_LEVEL)));
 
 			// Now insert our steps right after the initialization of the base class.
-			orderList.add(orderList.indexOf("stepInitializeFinalLaunchSequence") + 1, "stepInitializeFinalLaunchSequence_7_2"); //$NON-NLS-1$ //$NON-NLS-2$
+			orderList.add(orderList.indexOf("stepInitializeFinalLaunchSequence_7_0") + 1, "stepInitializeFinalLaunchSequence_7_2"); //$NON-NLS-1$ //$NON-NLS-2$
 			orderList.add(orderList.indexOf("stepSetBreakpointPending") + 1, "stepDetachOnFork"); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			return orderList.toArray(new String[orderList.size()]);

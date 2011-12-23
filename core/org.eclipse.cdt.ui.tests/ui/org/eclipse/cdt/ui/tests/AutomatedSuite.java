@@ -24,6 +24,7 @@ import org.eclipse.cdt.ui.tests.outline.OutlineTestSuite;
 import org.eclipse.cdt.ui.tests.quickfix.AssistQuickFixTest;
 import org.eclipse.cdt.ui.tests.refactoring.RefactoringTestSuite;
 import org.eclipse.cdt.ui.tests.search.SearchTestSuite;
+import org.eclipse.cdt.ui.tests.templateengine.AllTemplateEngineTests;
 import org.eclipse.cdt.ui.tests.text.TextTestSuite;
 import org.eclipse.cdt.ui.tests.text.contentassist.ContentAssistTestSuite;
 import org.eclipse.cdt.ui.tests.text.contentassist2.ContentAssist2TestSuite;
@@ -101,5 +102,7 @@ public class AutomatedSuite extends TestSuite {
 
 		// tests from package org.eclipse.cdt.ui.tests.misc
 		addTest(MiscTestSuite.suite());
+
+		addTest(AllTemplateEngineTests.suite());
 	}
 }

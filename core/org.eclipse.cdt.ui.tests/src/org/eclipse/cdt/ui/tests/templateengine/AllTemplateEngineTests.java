@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Bala Torati (Symbian) - Initial API and implementation
+ *     Bala Torati (Symbian) - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.core.tests.templateengine;
+package org.eclipse.cdt.ui.tests.templateengine;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -20,7 +20,6 @@ import junit.framework.TestSuite;
  * 
  * @since 4.0
  */
-
 public class AllTemplateEngineTests extends TestSuite {
 
 	public static void main(String[] args) {
@@ -31,7 +30,7 @@ public class AllTemplateEngineTests extends TestSuite {
 	 * Since the TemplateEngine consists of UI(Wizard).
 	 * A TestWizard is created to which the dynamically generated
 	 * UIPages are added.  The Wizard is launched from here.
-	 * The TestCases created to test the TemplateEngine is initialised here.
+	 * The TestCases created to test the TemplateEngine is initialized here.
 	 * @return
      * 
      * @since 4.0

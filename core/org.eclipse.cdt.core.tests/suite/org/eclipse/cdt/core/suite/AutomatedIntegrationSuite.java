@@ -6,9 +6,9 @@
  *  http://www.eclipse.org/legal/epl-v10.html
  * 
  *  Contributors:
- *     IBM Corporation - initial API and implementation
- *     Markus Schorn (Wind River Systems)
- *     Norbert Ploett (Siemens AG)
+ *      IBM Corporation - initial API and implementation
+ *      Markus Schorn (Wind River Systems)
+ *      Norbert Ploett (Siemens AG)
  *******************************************************************************/
 package org.eclipse.cdt.core.suite;
 
@@ -30,7 +30,6 @@ import org.eclipse.cdt.core.model.tests.WorkingCopyTests;
 import org.eclipse.cdt.core.parser.tests.ParserTestSuite;
 import org.eclipse.cdt.core.parser.tests.rewrite.RewriteTests;
 import org.eclipse.cdt.core.resources.tests.RefreshScopeTests;
-import org.eclipse.cdt.core.tests.templateengine.AllTemplateEngineTests;
 import org.eclipse.cdt.internal.index.tests.IndexTests;
 import org.eclipse.cdt.internal.pdom.tests.PDOMTests;
 import org.eclipse.cdt.utils.CdtVariableResolverTest;
@@ -82,12 +81,9 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		// Add in PDOM tests
 		suite.addTest(PDOMTests.suite());
 		suite.addTest(IndexTests.suite());
-
-		suite.addTest(AllTemplateEngineTests.suite());
 		
 		suite.addTest(RefreshScopeTests.suite());
 
 		return suite;
 	}
-
 }

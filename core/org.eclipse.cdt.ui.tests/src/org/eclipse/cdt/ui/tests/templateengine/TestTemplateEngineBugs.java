@@ -8,7 +8,7 @@
  * Contributors:
  * Andrew Ferguson (Symbian) - Initial Implementation
  *******************************************************************************/
-package org.eclipse.cdt.core.tests.templateengine;
+package org.eclipse.cdt.ui.tests.templateengine;
 
 import java.util.Arrays;
 import java.util.HashSet;

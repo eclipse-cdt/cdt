@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial API and implementation
+ *     Andrew Ferguson (Symbian) - Initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.cdt.ui.tests.templateengine;
@@ -49,7 +49,7 @@ public class TestExtraPagesProvider implements IPagesAfterTemplateSelectionProvi
 	 * An example implementation of {@link IWizardDataPage} for test purposes.
 	 */
 	static class MyPage extends AbstractWizardDataPage implements IWizardDataPage {
-		String labelText , dataKey, dataValue;
+		String labelText, dataKey, dataValue;
 		
 		public MyPage(String labelText, String dataKey, String dataValue) {
 			super("CustomTestPageName", "Title", null);
@@ -59,7 +59,7 @@ public class TestExtraPagesProvider implements IPagesAfterTemplateSelectionProvi
 			this.dataValue= dataValue;
 		}
 		
-		public Map getPageData() {
+		public Map<String, String> getPageData() {
 			return Collections.singletonMap(dataKey, dataValue);
 		}
 

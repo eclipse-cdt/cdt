@@ -5644,7 +5644,19 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	int main() {
 	//		foo(0);
 	//	}
-	public void testSFINE_365981() throws Exception {
+	public void testSyntaxFailureInstantiatingFunctionTemplate_365981() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	template<typename _Tp> class vector {};
+	//	template<typename T> struct bar {
+	//	    void foo() {
+	//	        vector<T> index;
+	//	        for (const auto& entry : index) {
+	//	        }
+	//	    }
+	//	};
+	public void testResolvingAutoTypeWithDependentExpression_367472() throws Exception {
 		parseAndCheckBindings();
 	}
 }

@@ -6,8 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Bala Torati (Symbian) - Initial API and implementation
- * Mark Espiritu (VastSystems) - bug 215283
+ *     Bala Torati (Symbian) - Initial API and implementation
+ *     Mark Espiritu (VastSystems) - bug 215283
+ *     Raphael Zulliger (Indel AG) - [367482] fixed resource leak
  *******************************************************************************/
 package org.eclipse.cdt.core.templateengine.process;
 
@@ -20,7 +21,6 @@ import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
 import java.net.URL;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,9 +29,10 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
- * Acts as Helper class for process the processes i.e., copy, replace and append
- * files.
+ * Acts as helper class for process the processes i.e., copy, replace and append files.
  */
 public class ProcessHelper {
 	public static final String CONDITION = "condition"; //$NON-NLS-1$
@@ -45,15 +46,15 @@ public class ProcessHelper {
 	 * 
 	 * @param fileContents contents which are appended to the file.
 	 * @param toFile a file to append contents.
-	 * @throws IOException,
-	 *             exception while writing contents into a file
-     * 
+	 * @throws IOException exception while writing contents into a file
      * @since 4.0
 	 */
 	public static void appendFile(String fileContents, File toFile) throws IOException {
 		RandomAccessFile raf = null;
 		if (!toFile.exists()) {
-			throw new FileNotFoundException(" The specified destination file does not exists "); //$NON-NLS-1$
+			throw new FileNotFoundException(MessageFormat.format(
+					TemplateEngineMessages.getString("ProcessHelper.fileNotFound"), //$NON-NLS-1$
+					toFile.getPath()));
 		} else {
 			try {
 				raf = new RandomAccessFile(toFile, "rw"); //$NON-NLS-1$
@@ -69,7 +70,7 @@ public class ProcessHelper {
 
 	/**
 	 * This method returns a vector of all replace marker strings. (e.g.,
-	 * $(item), vector contains 'item' as one item. , ) is the end pattern.
+	 * $(item), vector contains 'item' as one item) is the end pattern.
 	 * 
 	 * @param str A given string possibly containing markers.
 	 * @return the set of names occurring within markers
@@ -77,14 +78,16 @@ public class ProcessHelper {
 	 */
 	public static Set<String> getReplaceKeys(String str) {
 		Set<String> replaceStrings = new HashSet<String>();
-		int start= 0, end= 0;
+		int start= 0;
+		int end= 0;
 		while ((start = str.indexOf(START_PATTERN, start)) >= 0) {
 			end = str.indexOf(END_PATTERN, start);
 			if (end != -1) {
 				replaceStrings.add(str.substring(start + START_PATTERN.length(), end));
 				start = end + END_PATTERN.length();
-			} else
+			} else {
 				start++;
+			}
 		}
 		return replaceStrings;
 	}
@@ -93,19 +96,18 @@ public class ProcessHelper {
 	 * This method takes a URL as parameter to read the contents, and to add
 	 * into a string buffer.
 	 * 
-	 * @param source
-	 *            URL to read the contents.
-	 * @return string, contents of a file specified in the URL source path.
-	 * @throws IOException 
-     * 
+	 * @param source URL to read the contents.
+	 * @return string contents of a file specified in the URL source path.
      * @since 4.0
 	 */
 	public static String readFromFile(URL source) throws IOException {
 		char[] chars = new char[4092];
 		InputStreamReader contentsReader = null;
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		if (!new java.io.File(source.getFile()).exists()) {
-			throw new FileNotFoundException(TemplateEngineMessages.getString("ProcessHelper.fileNotFound") + source.getFile()); //$NON-NLS-1$
+			throw new FileNotFoundException(MessageFormat.format(
+					TemplateEngineMessages.getString("ProcessHelper.fileNotFound"), //$NON-NLS-1$
+					source.getFile()));
 		} else {
 			contentsReader = new InputStreamReader(source.openStream());
 			int c;
@@ -124,12 +126,8 @@ public class ProcessHelper {
 	 * This method reads contents from source, and writes the contents into
 	 * destination file.
 	 * 
-	 * @param source
-	 *            URL to read the contents.
-	 * @param dest
-	 *            destination file to write the contents.
-	 * @throws IOException
-     * 
+	 * @param source URL to read the contents.
+	 * @param dest destination file to write the contents.
      * @since 4.0
 	 */
 	public static void copyBinaryFile(URL source, File dest) throws IOException {
@@ -137,22 +135,30 @@ public class ProcessHelper {
 		if (source != null && dest != null) {
 			File file = new File(source.getFile());
 			if (file.isFile()) {
-				FileInputStream fis = new FileInputStream(file);
-				FileOutputStream fos = new FileOutputStream(dest);
-				int ch;
-				while (true) {
-					ch = fis.read(bytes);
-					if (ch == -1) {
-						break;
+				FileInputStream in = null;
+				FileOutputStream out = null;
+				try {
+					in = new FileInputStream(file);
+					out = new FileOutputStream(dest);
+					int len;
+					while ((len = in.read(bytes)) != -1) {
+						out.write(bytes, 0, len);
 					}
-					fos.write(bytes, 0, ch);
+				} finally {
+					try {
+						if (in != null)
+							in.close();
+					} finally {
+						if (out != null)
+							out.close();
+					}
 				}
 			}
 		}
 	}
 
 	/**
-	 * This method Creates the Directories in the parent Folder.
+	 * This method creates the directories in the parent folder.
 	 * @param projectHandle
 	 * @param parentFolder
 	 * @throws CoreException
@@ -169,18 +175,17 @@ public class ProcessHelper {
 		parentFolder.create(true, true, null);
 	}
 
-
 	/**
 	 * @param string
 	 * @param macros
 	 * @param valueStore
-	 * @return the Macro Value after expanding the Macros.
+	 * @return the macro value after expanding the macros.
      * 
      * @since 4.0
 	 */
-	public static String getValueAfterExpandingMacros(String string, Set<String> macros, Map<String, String> valueStore) {
-		for (Iterator<String> i = macros.iterator(); i.hasNext();) {
-			String key = i.next();
+	public static String getValueAfterExpandingMacros(String string, Set<String> macros,
+			Map<String, String> valueStore) {
+		for (String key : macros) {
 			String value = valueStore.get(key);
 			if (value != null) {
 				string = string.replace(START_PATTERN + key + END_PATTERN, value);

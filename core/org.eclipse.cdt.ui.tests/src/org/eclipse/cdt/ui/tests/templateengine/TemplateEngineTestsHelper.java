@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Bala Torati (Symbian) - Initial API and implementation
+ *     Bala Torati (Symbian) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.templateengine;
 
@@ -34,26 +34,22 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 
 /**
- * 
  * All supporting functions which are not part of Testing class.
  * 
  * @since 4.0
 */
-
 public class TemplateEngineTestsHelper {
-	
-	public static final String LOGGER_FILE_NAME="TemplateEngineTests";	//$NON-NLS-1$
+	public static final String LOGGER_FILE_NAME = "TemplateEngineTests";	//$NON-NLS-1$
 	
 	/**
-	 * get the url of a xml template, by passing the xml file name.
+	 * Returns the url of a xml template, by passing the xml file name.
 	 * @param templateName
 	 * @return URL
 	 */
 	public static URL getTemplateURL(String templateName){
 		Bundle bundle = Platform.getBundle(CTestPlugin.PLUGIN_ID);
-		URL url = FileLocator.find(bundle, new Path("resources/templateengine/"+templateName), null); //$NON-NLS-1$
-		if ( url != null )
-		{ 
+		URL url = FileLocator.find(bundle, new Path("resources/templateengine/" + templateName), null); //$NON-NLS-1$
+		if (url != null) { 
 			try {
 				url = FileLocator.toFileURL(url);
 			} catch (IOException e) {
@@ -90,7 +86,7 @@ public class TemplateEngineTestsHelper {
 	}
 	
 	public static boolean failIfErrorStatus(IStatus[] statuses) {
-		for(int i=0; i<statuses.length; i++) {
+		for(int i = 0; i < statuses.length; i++) {
 			IStatus status = statuses[i];
 			if (status.getCode() == IStatus.ERROR) {
 				Assert.fail(status.getMessage());
@@ -112,5 +108,4 @@ public class TemplateEngineTestsHelper {
 		workspaceDesc.setAutoBuilding(false);
 		workspace.setDescription(workspaceDesc);
 	}
-	
 }

@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring;
 
@@ -28,7 +28,6 @@ import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
 public class IndexToASTNameHelper {
-
 	public static List<IASTName> findNamesIn(IASTTranslationUnit tu, IBinding binding, IIndex index) {
 		BindingToAstNameMatcher visitor = new BindingToAstNameMatcher(binding, index);
 		tu.accept(visitor);
@@ -69,7 +68,6 @@ public class IndexToASTNameHelper {
 }
 
 class IndexNameToAstNameMatcher extends ASTVisitor {
-
 	private IASTName result;
 	private IBinding bindingToFind;
 	private char[] charNameToFind;
@@ -104,8 +102,10 @@ class IndexNameToAstNameMatcher extends ASTVisitor {
 
 	private boolean matchesIndexName(IASTName candidate) {
 		IASTFileLocation candidateLocation = candidate.getFileLocation();
-		return locationToFind.getNodeOffset() == candidateLocation.getNodeOffset() && locationToFind.getNodeLength() == candidateLocation.getNodeLength()
-				&& locationToFind.getFileName().equals(candidateLocation.getFileName()) && CharArrayUtils.equals(candidate.getLookupKey(), charNameToFind);
+		return locationToFind.getNodeOffset() == candidateLocation.getNodeOffset() &&
+				locationToFind.getNodeLength() == candidateLocation.getNodeLength() &&
+				locationToFind.getFileName().equals(candidateLocation.getFileName()) &&
+				CharArrayUtils.equals(candidate.getLookupKey(), charNameToFind);
 	}
 
 	public IASTName getMatch() {
@@ -114,7 +114,6 @@ class IndexNameToAstNameMatcher extends ASTVisitor {
 }
 
 class BindingToAstNameMatcher extends ASTVisitor {
-
 	private List<IASTName> results = new ArrayList<IASTName>();
 	private IBinding bindingToFind;
 	private char[] toFindName;

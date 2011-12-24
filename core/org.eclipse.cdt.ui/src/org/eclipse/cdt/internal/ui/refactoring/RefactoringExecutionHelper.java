@@ -69,6 +69,7 @@ public class RefactoringExecutionHelper {
 			this.fCancelable = cancelable;
         }
 
+		@Override
 		public void run(IProgressMonitor pm) throws CoreException {
 			try {
 				pm.beginTask("", fForked && !fForkChangeExecution ? 7 : 11); //$NON-NLS-1$
@@ -80,6 +81,7 @@ public class RefactoringExecutionHelper {
 					final boolean[] canceled= { false };
 					if (fForked) {
 						fParent.getDisplay().syncExec(new Runnable() {
+							@Override
 							public void run() {
 								canceled[0]= showStatusDialog(status);
 							}
@@ -185,6 +187,7 @@ public class RefactoringExecutionHelper {
 		try {
 			try {
 				Runnable r= new Runnable() {
+					@Override
 					public void run() {
 						manager.beginRule(rule, null);
 					}

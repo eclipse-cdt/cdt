@@ -65,19 +65,19 @@ public class TemplateEngineTestsHelper {
 	
 	public static TemplateCore[] getTestTemplates() {
 		TemplateCore[] templates = TemplateEngine.getDefault().getTemplates();
-	    List testTemplates = new ArrayList();
-		for (int i =0; i < templates.length; i++) {
+	    List<TemplateCore> testTemplates = new ArrayList<TemplateCore>();
+		for (int i = 0; i < templates.length; i++) {
 			if (templates[i].getTemplateType().equals("TestTemplate")) {
 				testTemplates.add(templates[i]);
 			}
 		}
-		return (TemplateCore[]) testTemplates.toArray(new TemplateCore[testTemplates.size()]); 
+		return testTemplates.toArray(new TemplateCore[testTemplates.size()]); 
 	}
 	
 	public static int getChildCount(TemplateDescriptor templateDescriptor, String propertyGroupID){
-		List list = templateDescriptor.getPropertyGroupList();
+		List<Element> list = templateDescriptor.getPropertyGroupList();
 		for (int i = 0, l = list.size(); i < l; i++) {
-			Element element = (Element) list.get(i);
+			Element element = list.get(i);
 			NamedNodeMap attributes = element.getAttributes();
 			for (int j = 0, l1 = attributes.getLength(); j < l1; j++) {
 				String value = attributes.item(j).getNodeValue();

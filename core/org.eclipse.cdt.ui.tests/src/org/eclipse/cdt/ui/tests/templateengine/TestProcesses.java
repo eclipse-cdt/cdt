@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Bala Torati (Symbian) - Initial API and implementation
+ *     Bala Torati (Symbian) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.templateengine;
 
@@ -28,7 +28,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 
 public class TestProcesses extends BaseTestCase {
-	
 	private static final String workspaceLocation = ResourcesPlugin.getWorkspace().getRoot().getRawLocation().toOSString();
 	private static final String PROJECT_NAME = "TemplateEngineTestsProject"; //$NON-NLS-1$
 	private static final String SOURCE_FOLDER = "Source"; //$NON-NLS-1$
@@ -63,7 +62,7 @@ public class TestProcesses extends BaseTestCase {
 	
 	public void testAddFile() {
 		TemplateCore template = TemplateEngine.getDefault().getFirstTemplate(PROJECT_TYPE, null, ".*AddFile"); //$NON-NLS-1$
-		Map valueStore = template.getValueStore();
+		Map<String, String> valueStore = template.getValueStore();
 		valueStore.put("projectName", PROJECT_NAME); //$NON-NLS-1$
 		valueStore.put("projectType", PROJECT_TYPE); //$NON-NLS-1$
 		valueStore.put("location", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -84,7 +83,7 @@ public class TestProcesses extends BaseTestCase {
 
 	public void testAddFiles() {
 		TemplateCore template = TemplateEngine.getDefault().getFirstTemplate(PROJECT_TYPE, null, ".*AddFiles"); //$NON-NLS-1$
-		Map valueStore = template.getValueStore();
+		Map<String, String> valueStore = template.getValueStore();
 		valueStore.put("projectName", PROJECT_NAME); //$NON-NLS-1$
 		valueStore.put("projectType", PROJECT_TYPE); //$NON-NLS-1$
 		valueStore.put("location", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -105,7 +104,7 @@ public class TestProcesses extends BaseTestCase {
 
 	public void testAddLink() {
 		TemplateCore template = TemplateEngine.getDefault().getFirstTemplate(PROJECT_TYPE, null, ".*AddLink"); //$NON-NLS-1$
-		Map valueStore = template.getValueStore();
+		Map<String, String> valueStore = template.getValueStore();
 		valueStore.put("projectName", PROJECT_NAME); //$NON-NLS-1$
 		valueStore.put("projectType", PROJECT_TYPE); //$NON-NLS-1$
 		valueStore.put("location", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -131,7 +130,7 @@ public class TestProcesses extends BaseTestCase {
 
 	public void testAppend() {
 		TemplateCore template = TemplateEngine.getDefault().getFirstTemplate(PROJECT_TYPE, null, ".*Append"); //$NON-NLS-1$
-		Map valueStore = template.getValueStore();
+		Map<String, String> valueStore = template.getValueStore();
 		valueStore.put("projectName", PROJECT_NAME); //$NON-NLS-1$
 		valueStore.put("projectType", PROJECT_TYPE); //$NON-NLS-1$
 		valueStore.put("location", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -160,7 +159,7 @@ public class TestProcesses extends BaseTestCase {
 
 	public void testAppendCreate() {
 		TemplateCore template = TemplateEngine.getDefault().getFirstTemplate(PROJECT_TYPE, null, ".*AppendCreate"); //$NON-NLS-1$
-		Map valueStore = template.getValueStore();
+		Map<String, String> valueStore = template.getValueStore();
 		valueStore.put("projectName", PROJECT_NAME); //$NON-NLS-1$
 		valueStore.put("projectType", PROJECT_TYPE); //$NON-NLS-1$
 		valueStore.put("location", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -184,7 +183,7 @@ public class TestProcesses extends BaseTestCase {
 
 	public void testCopy() {
 		TemplateCore template = TemplateEngine.getDefault().getFirstTemplate(PROJECT_TYPE, null, ".*Copy"); //$NON-NLS-1$
-		Map valueStore = template.getValueStore();
+		Map<String, String> valueStore = template.getValueStore();
 		valueStore.put("projectName", PROJECT_NAME); //$NON-NLS-1$
 		valueStore.put("projectType", PROJECT_TYPE); //$NON-NLS-1$
 		valueStore.put("location", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -213,7 +212,7 @@ public class TestProcesses extends BaseTestCase {
 
 	public void testCreateResourceIdentifier() {
 		TemplateCore template = TemplateEngine.getDefault().getFirstTemplate(PROJECT_TYPE, null, ".*CreateResourceIdentifier"); //$NON-NLS-1$
-		Map valueStore = template.getValueStore();
+		Map<String, String> valueStore = template.getValueStore();
 		valueStore.put("projectName", PROJECT_NAME); //$NON-NLS-1$
 		valueStore.put("projectType", PROJECT_TYPE); //$NON-NLS-1$
 		valueStore.put("location", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -237,7 +236,7 @@ public class TestProcesses extends BaseTestCase {
 
 	public void testCreateSourceFolder() {
 		TemplateCore template = TemplateEngine.getDefault().getFirstTemplate(PROJECT_TYPE, null, ".*CreateSourceFolder"); //$NON-NLS-1$
-		Map valueStore = template.getValueStore();
+		Map<String, String> valueStore = template.getValueStore();
 		valueStore.put("projectName", PROJECT_NAME); //$NON-NLS-1$
 		valueStore.put("projectType", PROJECT_TYPE); //$NON-NLS-1$
 		valueStore.put("location", ""); //$NON-NLS-1$ //$NON-NLS-2$

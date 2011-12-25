@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *     Sergey Prigogin (Google)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
 import org.eclipse.osgi.util.NLS;
@@ -93,7 +92,8 @@ import org.eclipse.cdt.internal.ui.preferences.CPluginPreferencePage;
 
 public class RenameInformationPopup implements IWidgetTokenKeeper, IWidgetTokenKeeperExtension {
 
-	private class PopupVisibilityManager implements IPartListener2, ControlListener, MouseListener, KeyListener, ITextListener, IViewportListener {
+	private class PopupVisibilityManager implements IPartListener2, ControlListener, MouseListener,
+			KeyListener, ITextListener, IViewportListener {
 
 		public void start() {
 			fEditor.getSite().getWorkbenchWindow().getPartService().addPartListener(this);
@@ -106,6 +106,7 @@ public class RenameInformationPopup implements IWidgetTokenKeeper, IWidgetTokenK
 			viewer.addTextListener(this);
 			viewer.addViewportListener(this);
 			fPopup.addDisposeListener(new DisposeListener() {
+				@Override
 				public void widgetDisposed(DisposeEvent e) {
 					fEditor.getSite().getWorkbenchWindow().getPartService().removePartListener(PopupVisibilityManager.this);
 					if (!textWidget.isDisposed()) {
@@ -129,6 +130,7 @@ public class RenameInformationPopup implements IWidgetTokenKeeper, IWidgetTokenK
 			});
 		}
 
+		@Override
 		public void partActivated(IWorkbenchPartReference partRef) {
 			IWorkbenchPart fPart= fEditor.getEditorSite().getPart();
 			if (partRef.getPart(false) == fPart) {
@@ -136,12 +138,15 @@ public class RenameInformationPopup implements IWidgetTokenKeeper, IWidgetTokenK
 			}
 		}
 
+		@Override
 		public void partBroughtToTop(IWorkbenchPartReference partRef) {
 		}
 
+		@Override
 		public void partClosed(IWorkbenchPartReference partRef) {
 		}
 
+		@Override
 		public void partDeactivated(IWorkbenchPartReference partRef) {
 			IWorkbenchPart fPart= fEditor.getEditorSite().getPart();
 			if (fPopup != null && !fPopup.isDisposed() && partRef.getPart(false) == fPart) {
@@ -149,47 +154,59 @@ public class RenameInformationPopup implements IWidgetTokenKeeper, IWidgetTokenK
 			}
 		}
 
+		@Override
 		public void partHidden(IWorkbenchPartReference partRef) {
 		}
 
+		@Override
 		public void partInputChanged(IWorkbenchPartReference partRef) {
 		}
 
+		@Override
 		public void partOpened(IWorkbenchPartReference partRef) {
 		}
 
+		@Override
 		public void partVisible(IWorkbenchPartReference partRef) {
 		}
 
+		@Override
 		public void controlMoved(ControlEvent e) {
 			updatePopupLocation(true);
 			updateVisibility(); //only for hiding outside editor area
 		}
 
+		@Override
 		public void controlResized(ControlEvent e) {
 			updatePopupLocation(true);
 			updateVisibility(); //only for hiding outside editor area
 		}
 
+		@Override
 		public void mouseDoubleClick(MouseEvent e) {
 		}
 
+		@Override
 		public void mouseDown(MouseEvent e) {
 		}
 
+		@Override
 		public void mouseUp(MouseEvent e) {
 			updatePopupLocation(false);
 			updateVisibility();
 		}
 
+		@Override
 		public void keyPressed(KeyEvent e) {
 			updatePopupLocation(false);
 			updateVisibility();
 		}
 
+		@Override
 		public void keyReleased(KeyEvent e) {
 		}
 
+		@Override
 		public void textChanged(TextEvent event) {
 			if (!event.getViewerRedrawState())
 				return;
@@ -197,6 +214,7 @@ public class RenameInformationPopup implements IWidgetTokenKeeper, IWidgetTokenK
 			updateVisibility(); //only for hiding outside editor area
 		}
 
+		@Override
 		public void viewportChanged(int verticalOffset) {
 			updatePopupLocation(true);
 			updateVisibility(); //only for hiding outside editor area
@@ -309,7 +327,8 @@ public class RenameInformationPopup implements IWidgetTokenKeeper, IWidgetTokenK
 
 				final Shell editorShell= fEditor.getSite().getShell();
 				display.asyncExec(new Runnable() {
-					// post to UI thread since editor shell only gets activated after popup has lost focus
+					// Post to UI thread since editor shell only gets activated after popup has lost focus
+					@Override
 					public void run() {
 						Shell activeShell= display.getActiveShell();
 						if (activeShell != editorShell) {
@@ -322,6 +341,7 @@ public class RenameInformationPopup implements IWidgetTokenKeeper, IWidgetTokenK
 
 		if (!MAC) { // carbon and cocoa draw their own border...
 			fPopup.addPaintListener(new PaintListener() {
+				@Override
 				public void paintControl(PaintEvent pe) {
 					pe.gc.drawPolygon(getPolygon(true));
 				}
@@ -722,9 +742,12 @@ public class RenameInformationPopup implements IWidgetTokenKeeper, IWidgetTokenK
 		fMenuManager.setRemoveAllWhenShown(true);
 
 		fMenuManager.addMenuListener(new IMenuListener2() {
+			@Override
 			public void menuAboutToHide(IMenuManager manager) {
 				fIsMenuUp= false;
 			}
+
+			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 				boolean canRefactor= !fRenameLinkedMode.isOriginalName();
 				
@@ -840,14 +863,17 @@ public class RenameInformationPopup implements IWidgetTokenKeeper, IWidgetTokenK
 		fEditor.getSite().getShell().setActive();
 	}
 
+	@Override
 	public boolean requestWidgetToken(IWidgetTokenOwner owner) {
 		return false;
 	}
 
+	@Override
 	public boolean requestWidgetToken(IWidgetTokenOwner owner, int priority) {
 		return false;
 	}
 
+	@Override
 	public boolean setFocus(IWidgetTokenOwner owner) {
 		if (fToolBar != null && !fToolBar.isDisposed())
 			showMenu(fToolBar);

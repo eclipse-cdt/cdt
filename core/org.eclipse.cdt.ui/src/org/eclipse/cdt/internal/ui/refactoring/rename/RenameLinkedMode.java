@@ -83,6 +83,7 @@ import org.eclipse.cdt.internal.ui.text.correction.proposals.LinkedNamesAssistPr
 public class RenameLinkedMode {
 
 	private class FocusEditingSupport implements IEditingSupport {
+		@Override
 		public boolean ownsFocusShell() {
 			if (fInfoPopup == null)
 				return false;
@@ -97,12 +98,14 @@ public class RenameLinkedMode {
 			return false;
 		}
 
+		@Override
 		public boolean isOriginator(DocumentEvent event, IRegion subjectRegion) {
 			return false; //leave on external modification outside positions
 		}
 	}
 
 	private class EditorSynchronizer implements ILinkedModeListener {
+		@Override
 		public void left(LinkedModeModel model, int flags) {
 			linkedModeLeft();
 			if ((flags & ILinkedModeListener.UPDATE_CARET) != 0) {
@@ -110,9 +113,11 @@ public class RenameLinkedMode {
 			}
 		}
 
+		@Override
 		public void resume(LinkedModeModel model, int flags) {
 		}
 
+		@Override
 		public void suspend(LinkedModeModel model) {
 		}
 	}
@@ -194,7 +199,7 @@ public class RenameLinkedMode {
 
 			ASTProvider.getASTProvider().runOnAST(fEditor.getInputCElement(), ASTProvider.WAIT_ACTIVE_ONLY,
 					new NullProgressMonitor(), new ASTRunnable() {
-
+				@Override
 				public IStatus runOnAST(ILanguage lang, IASTTranslationUnit astRoot) throws CoreException {
 					if (astRoot == null)
 						return Status.CANCEL_STATUS;
@@ -225,7 +230,7 @@ public class RenameLinkedMode {
 
 			// Sort the locations starting with the one @ offset.
 			Arrays.sort(fLocations, new Comparator<IRegion>() {
-
+				@Override
 				public int compare(IRegion n1, IRegion n2) {
 					return rank(n1) - rank(n2);
 				}
@@ -384,6 +389,7 @@ public class RenameLinkedMode {
 		try {
 			if (!fOriginalName.equals(newName)) {
 				fEditor.getSite().getWorkbenchWindow().run(false, true, new IRunnableWithProgress() {
+					@Override
 					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 						if (viewer instanceof ITextViewerExtension6) {
 							IUndoManager undoManager= ((ITextViewerExtension6) viewer).getUndoManager();

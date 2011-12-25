@@ -200,7 +200,11 @@ public class RenameSupport {
         				processor.getSaveMode())) {
         			return DialogResult.OK;
         		}
-        		return dialogSkipped[0] ? DialogResult.SKIPPED : DialogResult.CANCELED;
+        		if (dialogSkipped[0]) {
+        			// If the dialog was not shown, it is our responsibility to close it.
+        			wizard.getContainer().getShell().close();
+        			return DialogResult.SKIPPED;
+        		}
         	} finally {
         		processor.unlockIndex();
         	}

@@ -369,11 +369,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 					public void run() {
 						if (viewer == null || viewer.getControl() == null || viewer.getControl().isDisposed())
 							return;
-						if (viewer instanceof AbstractTreeViewer) {
-							((AbstractTreeViewer) viewer).add(resource, affected.toArray());
-						} else {
-							viewer.refresh(resource);
-						}
+						viewer.refresh(resource);
 					}
 				});
 			}

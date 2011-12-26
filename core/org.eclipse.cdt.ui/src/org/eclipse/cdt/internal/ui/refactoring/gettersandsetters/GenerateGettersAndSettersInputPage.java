@@ -109,15 +109,15 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 		
 		Button selectAll = new Button(btComp, SWT.PUSH);
 		selectAll.setText(Messages.GenerateGettersAndSettersInputPage_SelectAll);
-		selectAll.addSelectionListener(new SelectionAdapter(){
+		selectAll.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Object[] items = context.getElements(null);
 				SortedSet<GetterSetterInsertEditProvider> checkedFunctions = context.selectedFunctions;
 				for (Object treeItem : items) {
 					variableSelectionView.setChecked(treeItem, true);
-					Object[] childs = context.getChildren(treeItem);
-					for(Object currentElement : childs){
+					Object[] children = context.getChildren(treeItem);
+					for (Object currentElement : children){
 						if (currentElement instanceof GetterSetterInsertEditProvider) {
 							GetterSetterInsertEditProvider editProvider = (GetterSetterInsertEditProvider) currentElement;
 							checkedFunctions.add(editProvider);

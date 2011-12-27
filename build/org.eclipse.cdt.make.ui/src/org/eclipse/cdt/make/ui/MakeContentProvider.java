@@ -47,7 +47,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -336,11 +335,12 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 					public void run() {
 						if (viewer == null || viewer.getControl() == null || viewer.getControl().isDisposed())
 							return;
-						if (viewer instanceof AbstractTreeViewer) {
-							((AbstractTreeViewer) viewer).remove(affected.toArray());
-						} else {
-							viewer.refresh(resource);
+
+						if (CCorePlugin.showSourceRootsAtTopOfProject()) {
+							// that will refresh equal TargetSourceContainer from the tree
+							viewer.refresh(new TargetSourceContainer(new CSourceEntry((IFolder) resource, null, 0)));
 						}
+						viewer.refresh(resource);
 					}
 				});
 			}

@@ -324,25 +324,18 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 		// Handle removed children. Issue one update for all removals.
 		affectedChildren = delta.getAffectedChildren(IResourceDelta.REMOVED);
 		if (affectedChildren.length > 0) {
-			final ArrayList<IResource> affected = new ArrayList<IResource>(affectedChildren.length);
 			for (int i = 0; i < affectedChildren.length; i++) {
 				if (affectedChildren[i].getResource().getType() == IResource.FOLDER) {
-					affected.add(affectedChildren[i].getResource());
-				}
-			}
-			if (!affected.isEmpty()) {
-				Display.getDefault().asyncExec(new Runnable() {
-					public void run() {
-						if (viewer == null || viewer.getControl() == null || viewer.getControl().isDisposed())
-							return;
-
-						if (CCorePlugin.showSourceRootsAtTopOfProject()) {
-							// that will refresh equal TargetSourceContainer from the tree
-							viewer.refresh(new TargetSourceContainer(new CSourceEntry((IFolder) resource, null, 0)));
+					Display.getDefault().asyncExec(new Runnable() {
+						public void run() {
+							if (viewer == null || viewer.getControl() == null || viewer.getControl().isDisposed())
+								return;
+							// refresh the whole view as deletion may cause parent nodes to get filtered out
+							viewer.refresh();
 						}
-						viewer.refresh(resource);
-					}
-				});
+					});
+					return;
+				}
 			}
 		}
 

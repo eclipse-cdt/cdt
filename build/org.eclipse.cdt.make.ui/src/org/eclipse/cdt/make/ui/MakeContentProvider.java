@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.CProjectDescriptionEvent;
+import org.eclipse.cdt.core.settings.model.CSourceEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICDescriptionDelta;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
@@ -34,6 +35,7 @@ import org.eclipse.cdt.make.core.IMakeTargetListener;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.MakeTargetEvent;
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -55,7 +57,7 @@ import org.eclipse.swt.widgets.Display;
 /**
  * Content provider for Make Targets view and for Make Targets dialog from
  * "Make Targets"->"Build..." in project context menu.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -76,7 +78,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param flat - {@code true} for "flat" representation for a table
 	 *    or {@code false} to represent as a tree.
 	 */
@@ -97,9 +99,9 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 		} else if (obj instanceof IContainer) {
 			IContainer container = (IContainer)obj;
 			ArrayList<Object> children = new ArrayList<Object>();
-			
+
 			boolean isAddingSourceRoots = !bFlatten && (container instanceof IProject) && CCorePlugin.showSourceRootsAtTopOfProject();
-			
+
 			// add source roots if necessary
 			if (isAddingSourceRoots) {
 				IProject project = (IProject) container;
@@ -110,7 +112,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 					}
 				}
 			}
-			
+
 			// add regular folders
 			try {
 				IResource[] resources = container.members();
@@ -124,7 +126,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 			} catch (CoreException e) {
 				MakeCorePlugin.log(e);
 			}
-				
+
 			// finally add targets
 			try {
 				IMakeTarget[] targets = MakeCorePlugin.getDefault().getTargetManager().getTargets(container);
@@ -133,7 +135,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 				MakeCorePlugin.log(e);
 			}
 			return children.toArray();
-			
+
 		} else if (obj instanceof TargetSourceContainer) {
 			ArrayList<Object> children = new ArrayList<Object>();
 			try {
@@ -358,6 +360,11 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 					public void run() {
 						if (viewer == null || viewer.getControl() == null || viewer.getControl().isDisposed())
 							return;
+
+						if (CCorePlugin.showSourceRootsAtTopOfProject()) {
+							// that will refresh equal TargetSourceContainer from the tree
+							viewer.refresh(new TargetSourceContainer(new CSourceEntry((IFolder) resource, null, 0)));
+						}
 						viewer.refresh(resource);
 					}
 				});
@@ -377,7 +384,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @since 7.1
 	 */
 	public void handleEvent(final CProjectDescriptionEvent event) {
@@ -387,19 +394,19 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 				ICDescriptionDelta delta = event.getDefaultSettingCfgDelta();
 				if (delta==null)
 					return;
-				
+
 				int flags = delta.getChangeFlags();
 				if ( ((flags & ICDescriptionDelta.SOURCE_ADDED) != 0) ||
 					 ((flags & ICDescriptionDelta.SOURCE_REMOVED) != 0) ) {
-					
+
 					IProject project = null;
 					ICSettingObject setting = delta.getOldSetting();
 					if (setting==null)
 						setting = delta.getNewSetting();
-					
+
 					if (setting instanceof ICConfigurationDescription)
 						project = ((ICConfigurationDescription) setting).getProjectDescription().getProject();
-					
+
 					if (project!=null)
 						viewer.refresh(project);
 					else
@@ -411,7 +418,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @since 7.1
 	 */
 	public void preferenceChange(PreferenceChangeEvent event) {
@@ -437,16 +444,16 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 				return srcEntries;
 			}
 		}
-		
+
 		return new ICSourceEntry[0];
 	}
 
 	/**
 	 * Check if the resource is in the list of source entries.
-	
+
 	 * @param rc - resource to check.
 	 * @return {@code true} if the resource is a source folder, {@code false} otherwise.
-	 * 
+	 *
 	 * @since 7.1
 	 */
 	public static boolean isSourceEntry(IResource rc) {

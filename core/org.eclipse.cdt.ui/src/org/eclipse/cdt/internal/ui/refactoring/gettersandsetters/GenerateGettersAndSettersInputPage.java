@@ -11,9 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.gettersandsetters;
 
-import java.util.Set;
-import java.util.SortedSet;
-
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
@@ -88,7 +85,7 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				String id = NameStylePreferencePage.PREF_ID;
-				PreferencesUtil.createPreferenceDialogOn(getShell(), id, new String [] { id }, null).open();
+				PreferencesUtil.createPreferenceDialogOn(getShell(), id, new String[] { id }, null).open();
 			}
 		});
 		link.setToolTipText(Messages.GenerateGettersAndSettersInputPage_LinkTooltip);
@@ -108,21 +105,14 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 		
 		Button selectAll = new Button(btComp, SWT.PUSH);
 		selectAll.setText(Messages.GenerateGettersAndSettersInputPage_SelectAll);
-		selectAll.addSelectionListener(new SelectionAdapter(){
+		selectAll.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Object[] items = context.getElements(null);
-				SortedSet<GetterSetterInsertEditProvider> checkedFunctions = context.selectedFunctions;
 				for (Object treeItem : items) {
 					variableSelectionView.setChecked(treeItem, true);
-					Object[] childs = context.getChildren(treeItem);
-					for(Object currentElement : childs){
-						if (currentElement instanceof GetterSetterInsertEditProvider) {
-							GetterSetterInsertEditProvider editProvider = (GetterSetterInsertEditProvider) currentElement;
-							checkedFunctions.add(editProvider);
-						}
-					}
 				}
+				updateSelectedFunctions();
 			}
 		});
 		
@@ -131,11 +121,10 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 		deselectAll.addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				Object[] items = context.getElements(null);
-				for (Object treeItem : items) {
+				for (Object treeItem : context.getElements(null)) {
 					variableSelectionView.setChecked(treeItem, false);
 				}
-				context.selectedFunctions.clear();
+				updateSelectedFunctions();
 			}
 		});
 		
@@ -161,23 +150,21 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 	}
 	
 	private void selectMethods(AccessorKind type) {
-		Object[] items = context.getElements(null);
-		Set<GetterSetterInsertEditProvider> checked = context.selectedFunctions;
-		for (Object treeItem : items) {
+		for (Object treeItem : context.getElements(null)) {
 			if (treeItem instanceof FieldWrapper) {
 				FieldWrapper field = (FieldWrapper) treeItem;
-				Object[] funtions = context.getChildren(field);
-				for (Object funct : funtions) {
-					if (funct instanceof GetterSetterInsertEditProvider) {
-						GetterSetterInsertEditProvider getSet = (GetterSetterInsertEditProvider) funct;
-						if(getSet.getType() == type) {
-							checked.add(getSet);
+				Object[] accessors = context.getChildren(field);
+				for (Object accessor : accessors) {
+					if (accessor instanceof GetterSetterInsertEditProvider) {
+						GetterSetterInsertEditProvider getSet = (GetterSetterInsertEditProvider) accessor;
+						if (getSet.getType() == type) {
 							variableSelectionView.setChecked(getSet, true);
 						}
 					}
 				}
 			}
 		}
+		updateSelectedFunctions();
 	}
 
 	private void createTree(Composite comp) {
@@ -198,25 +185,24 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 				}
 			}
 		}
-		Set<GetterSetterInsertEditProvider> checkedFunctions = context.selectedFunctions;
-		for (Object currentElement : variableSelectionView.getCheckedElements()) {
-			if (currentElement instanceof GetterSetterInsertEditProvider) {
-				GetterSetterInsertEditProvider editProvider = (GetterSetterInsertEditProvider) currentElement;
-				checkedFunctions.add(editProvider);
-			}
-		}
-		variableSelectionView.addCheckStateListener(new ICheckStateListener() {
 
+		updateSelectedFunctions();
+
+		variableSelectionView.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
-				Set<GetterSetterInsertEditProvider> checkedFunctions = context.selectedFunctions;
-				for (Object currentElement : variableSelectionView.getCheckedElements()) {
-					if (currentElement instanceof GetterSetterInsertEditProvider) {
-						GetterSetterInsertEditProvider editProvider = (GetterSetterInsertEditProvider) currentElement;
-						checkedFunctions.add(editProvider);
-					}
-				}
+				updateSelectedFunctions();
 			}
 		});
+	}
+
+	private void updateSelectedFunctions() {
+		context.selectedFunctions.clear();
+		for (Object currentElement : variableSelectionView.getCheckedElements()) {
+			if (currentElement instanceof GetterSetterInsertEditProvider) {
+				context.selectedFunctions.add((GetterSetterInsertEditProvider) currentElement);
+			}
+		}
+		setPageComplete(!context.selectedFunctions.isEmpty());
 	}
 
 	public void preferenceChange(PreferenceChangeEvent event) {

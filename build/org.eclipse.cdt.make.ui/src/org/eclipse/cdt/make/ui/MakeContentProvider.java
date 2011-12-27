@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.CProjectDescriptionEvent;
+import org.eclipse.cdt.core.settings.model.CSourceEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICDescriptionDelta;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
@@ -34,6 +35,7 @@ import org.eclipse.cdt.make.core.IMakeTargetListener;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.MakeTargetEvent;
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -369,6 +371,11 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 					public void run() {
 						if (viewer == null || viewer.getControl() == null || viewer.getControl().isDisposed())
 							return;
+
+						if (CCorePlugin.showSourceRootsAtTopOfProject()) {
+							// that will refresh equal TargetSourceContainer from the tree
+							viewer.refresh(new TargetSourceContainer(new CSourceEntry((IFolder) resource, null, 0)));
+						}
 						viewer.refresh(resource);
 					}
 				});

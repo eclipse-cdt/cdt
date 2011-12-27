@@ -51,20 +51,19 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 
 	@Override
 	public void createControl(Composite parent) {
-		Composite comp = new Composite(parent, SWT.NONE);
-		
 		setTitle(Messages.GettersAndSetters_Name);
 		setMessage(Messages.GenerateGettersAndSettersInputPage_header);
 		
+		Composite comp = new Composite(parent, SWT.NONE);
 		comp.setLayout(new GridLayout(2, false));
 		createTree(comp);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		variableSelectionView.getTree().setLayoutData(gd);
 		
-		Composite btComp = createButtonComposite(comp);
+		Composite buttonContainer = createButtonComposite(comp);
 		gd = new GridData();
 		gd.verticalAlignment = SWT.TOP;
-		btComp.setLayoutData(gd);
+		buttonContainer.setLayoutData(gd);
 
 		final Button definitionSeparate = new Button(comp, SWT.CHECK);
 		definitionSeparate.setText(Messages.GenerateGettersAndSettersInputPage_SeparateDefinition);
@@ -86,7 +85,7 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				String id = NameStylePreferencePage.PREF_ID;
-				PreferencesUtil.createPreferenceDialogOn(getShell(), id, new String [] { id }, null).open();
+				PreferencesUtil.createPreferenceDialogOn(getShell(), id, new String[] { id }, null).open();
 			}
 		});
 		link.setToolTipText(Messages.GenerateGettersAndSettersInputPage_LinkTooltip);
@@ -134,7 +133,7 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 		selectGetter.addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				selectMethods(AccessorKind.GETTER);
+				selectAccessors(AccessorKind.GETTER);
 			}
 		});
 		
@@ -143,23 +142,23 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 		selectSetter.addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				selectMethods(AccessorKind.SETTER);
+				selectAccessors(AccessorKind.SETTER);
 			}
 		});
 		
 		return btComp;
 	}
 	
-	private void selectMethods(AccessorKind type) {
+	private void selectAccessors(AccessorKind type) {
 		for (Object treeItem : context.getElements(null)) {
 			if (treeItem instanceof FieldWrapper) {
 				FieldWrapper field = (FieldWrapper) treeItem;
-				Object[] accessors = context.getChildren(field);
-				for (Object accessor : accessors) {
-					if (accessor instanceof GetterSetterInsertEditProvider) {
-						GetterSetterInsertEditProvider getSet = (GetterSetterInsertEditProvider) accessor;
-						if (getSet.getType() == type) {
-							variableSelectionView.setChecked(getSet, true);
+				Object[] children = context.getChildren(field);
+				for (Object child : children) {
+					if (child instanceof GetterSetterInsertEditProvider) {
+						GetterSetterInsertEditProvider accessor = (GetterSetterInsertEditProvider) child;
+						if (accessor.getType() == type) {
+							variableSelectionView.setChecked(accessor, true);
 						}
 					}
 				}
@@ -199,9 +198,9 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 
 	private void updateSelectedFunctions() {
 		context.selectedFunctions.clear();
-		for (Object currentElement : variableSelectionView.getCheckedElements()) {
-			if (currentElement instanceof GetterSetterInsertEditProvider) {
-				context.selectedFunctions.add((GetterSetterInsertEditProvider) currentElement);
+		for (Object element : variableSelectionView.getCheckedElements()) {
+			if (element instanceof GetterSetterInsertEditProvider) {
+				context.selectedFunctions.add((GetterSetterInsertEditProvider) element);
 			}
 		}
 		setPageComplete(!context.selectedFunctions.isEmpty());

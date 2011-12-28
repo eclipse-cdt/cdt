@@ -365,7 +365,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 						if (viewer == null || viewer.getControl() == null || viewer.getControl().isDisposed())
 							return;
 
-						if (CCorePlugin.showSourceRootsAtTopOfProject()) {
+						if (resource instanceof IFolder && CCorePlugin.showSourceRootsAtTopOfProject()) {
 							// that will refresh equal TargetSourceContainer from the tree
 							viewer.refresh(new TargetSourceContainer(new CSourceEntry((IFolder) resource, null, 0)));
 						}

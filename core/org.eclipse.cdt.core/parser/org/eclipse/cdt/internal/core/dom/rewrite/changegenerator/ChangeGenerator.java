@@ -62,13 +62,10 @@ import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ContainerNode;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ProblemRuntimeException;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 import org.eclipse.cdt.internal.core.dom.rewrite.util.FileHelper;
-import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.cdt.internal.formatter.CCodeFormatter;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -558,35 +555,29 @@ public class ChangeGenerator extends ASTVisitor {
 	}
 
 	private void handleAppends(IASTTranslationUnit tu) {
+		List<ASTModification> modifications = getModifications(tu, ModificationKind.APPEND_CHILD);
+		if (modifications.isEmpty())
+			return;
+
 		ASTWriter synthWriter = new ASTWriter();
 		synthWriter.setModificationStore(modificationStore);
 
-		for (ASTModification modification : getModifications(tu, ModificationKind.APPEND_CHILD)) {
-			IASTNode targetNode = modification.getTargetNode();
-			IASTFileLocation targetLocation = targetNode.getFileLocation();
-			String currentFile = targetLocation.getFileName();
-			IPath implPath = new Path(currentFile);
-			IFile relevantFile= ResourceLookup.selectFileForLocation(implPath, null);
-			if (relevantFile == null || !relevantFile.exists()) { // If not in workspace or local file system
-			    throw new UnhandledASTModificationException(modification);
-			}
-			MultiTextEdit edit;
-			if (changes.containsKey(relevantFile)) {
-				edit = changes.get(relevantFile);
-			} else {
-				edit = new MultiTextEdit();
-				changes.put(relevantFile, edit);
-			}
+		IASTFileLocation targetLocation = tu.getFileLocation();
+		IFile file = FileHelper.getFileFromNode(tu);
+		MultiTextEdit parentEdit = getEdit(tu, file);
+
+		IASTDeclaration[] declarations = tu.getDeclarations();
+
+		for (ASTModification modification : modifications) {
 			String code = synthWriter.write(modification.getNewNode(), commentMap);
 
-			if (targetNode instanceof IASTTranslationUnit &&
-					((IASTTranslationUnit) targetNode).getDeclarations().length > 0) {
-				IASTTranslationUnit targetTu = (IASTTranslationUnit) targetNode;
-				IASTDeclaration lastDecl = targetTu.getDeclarations()[targetTu.getDeclarations().length - 1];
+			if (declarations.length > 0) {
+				IASTDeclaration lastDecl = declarations[declarations.length - 1];
 				targetLocation = lastDecl.getFileLocation();
 			}
 			String lineDelimiter = FileHelper.determineLineDelimiter(tu.getRawSignature());
-			edit.addChild(new InsertEdit(endOffset(targetLocation),	lineDelimiter + lineDelimiter + code));
+			parentEdit.addChild(new InsertEdit(endOffset(targetLocation),
+					lineDelimiter + lineDelimiter + code));
 		}
 	}
 

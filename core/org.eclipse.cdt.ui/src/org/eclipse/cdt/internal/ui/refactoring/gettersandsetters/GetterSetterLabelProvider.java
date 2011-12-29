@@ -22,10 +22,9 @@ import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
  * @author Emanuel Graf IFS
  */
 public class GetterSetterLabelProvider extends LabelProvider {
-
 	@Override
 	public Image getImage(Object element) {
-		if (element instanceof GetterSetterInsertEditProvider) {
+		if (element instanceof AccessorDescriptor) {
 			return CElementImageProvider.getMethodImageDescriptor(ASTAccessVisibility.PUBLIC).createImage();
 		}
 		return null;

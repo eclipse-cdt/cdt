@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *   Anton Leherbauer (Wind River Systems) - initial API and implementation
- *   Markus Schorn (Wind River Systems)
- *   Mike Kucera (IBM)
+ *     Anton Leherbauer (Wind River Systems) - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Mike Kucera (IBM)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.parser;
 
@@ -106,14 +106,15 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 	protected abstract ParserLanguage getParserLanguage();
 	
 	@Deprecated
+	@Override
 	public IASTTranslationUnit getASTTranslationUnit(org.eclipse.cdt.core.parser.CodeReader reader,
 			IScannerInfo scanInfo, org.eclipse.cdt.core.dom.ICodeReaderFactory fileCreator, IIndex index,
 			IParserLogService log) throws CoreException {
 		return getASTTranslationUnit(reader, scanInfo, fileCreator, index, 0, log);
 	}
 	
-	@Override
 	@Deprecated
+	@Override
 	public IASTTranslationUnit getASTTranslationUnit(org.eclipse.cdt.core.parser.CodeReader reader,
 			IScannerInfo scanInfo, org.eclipse.cdt.core.dom.ICodeReaderFactory codeReaderFactory,
 			IIndex index, int options, IParserLogService log) throws CoreException {
@@ -136,6 +137,7 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 		if (log instanceof ICanceler) {
 			canceler= (ICanceler) log;
 			canceler.setCancelable(new ICancelable() {
+				@Override
 				public void cancel() {
 					scanner.cancel();
 					parser.cancel();
@@ -155,6 +157,7 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 	}
 
 	@Deprecated
+	@Override
 	public IASTCompletionNode getCompletionNode(org.eclipse.cdt.core.parser.CodeReader reader,
 			IScannerInfo scanInfo, org.eclipse.cdt.core.dom.ICodeReaderFactory fileCreator, IIndex index,
 			IParserLogService log, int offset) throws CoreException {
@@ -189,12 +192,13 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 	 */
 	protected ISourceCodeParser createParser(IScanner scanner, IParserLogService log, IIndex index, boolean forCompletion, int options) {
 		ParserMode mode;
-		if (forCompletion)
+		if (forCompletion) {
 			mode= ParserMode.COMPLETION_PARSE;
-		else if ((options & OPTION_SKIP_FUNCTION_BODIES) != 0)
+		} else if ((options & OPTION_SKIP_FUNCTION_BODIES) != 0) {
 			mode= ParserMode.STRUCTURAL_PARSE;
-		else
+		} else {
 			mode= ParserMode.COMPLETE_PARSE;
+		}
 
 		ISourceCodeParser parser= createParser(scanner, mode, log, index);
 		if ((options & OPTION_SKIP_TRIVIAL_EXPRESSIONS_IN_AGGREGATE_INITIALIZERS) != 0) {
@@ -224,6 +228,7 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 		return new CPreprocessor(content, scanInfo, getParserLanguage(), log, getScannerExtensionConfiguration(scanInfo), fcp);
 	}
 
+	@Override
 	@Deprecated
 	public IASTName[] getSelectedNames(IASTTranslationUnit ast, int start, int length) {
 		IASTNode selectedNode= ast.getNodeSelector(null).findNode(start, length);
@@ -243,12 +248,13 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 		return collector.getNames();
 	}
 	
+	@Override
 	public IContributedModelBuilder createModelBuilder(ITranslationUnit tu) {
 		// use default model builder
 		return null;
 	}
 
-	private ICLanguageKeywords cLanguageKeywords = null;
+	private ICLanguageKeywords cLanguageKeywords;
 	
 	private synchronized ICLanguageKeywords getCLanguageKeywords() {
 		if (cLanguageKeywords == null)
@@ -265,15 +271,18 @@ public abstract class AbstractCLikeLanguage extends AbstractLanguage implements 
 		return super.getAdapter(adapter);
 	}
 
-	// for backwards compatibility
+	// For backwards compatibility
+	@Override
 	public String[] getBuiltinTypes() {
 		return getCLanguageKeywords().getBuiltinTypes();
 	}
 
+	@Override
 	public String[] getKeywords() {
 		return getCLanguageKeywords().getKeywords();
 	}
 
+	@Override
 	public String[] getPreprocessorKeywords() {
 		return getCLanguageKeywords().getPreprocessorKeywords();
 	}

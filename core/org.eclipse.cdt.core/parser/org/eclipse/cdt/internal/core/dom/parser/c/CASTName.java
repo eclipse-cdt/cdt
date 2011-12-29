@@ -6,10 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM Rational Software) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    Yuan Zhang / Beth Tibbitts (IBM Research)
- *    Bryan Wilkinson (QNX)
+ *     John Camelon (IBM Rational Software) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Yuan Zhang / Beth Tibbitts (IBM Research)
+ *     Bryan Wilkinson (QNX)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -31,14 +31,12 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTInternalNameOwner;
  * Implementation for names in C translation units.
  */
 public class CASTName extends ASTNode implements IASTName, IASTCompletionContext {
-
     private final char[] name;
 
     private static final char[] EMPTY_CHAR_ARRAY = {};
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
-    private IBinding binding = null;
-
+    private IBinding binding;
     
     public CASTName(char[] name) {
         this.name = name;
@@ -48,10 +46,12 @@ public class CASTName extends ASTNode implements IASTName, IASTCompletionContext
         name = EMPTY_CHAR_ARRAY;
     }
 
-    public CASTName copy() {
+    @Override
+	public CASTName copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
     
+	@Override
 	public CASTName copy(CopyStyle style) {
 		CASTName copy = new CASTName(name == null ? null : name.clone());
 		copy.setOffsetAndLength(this);
@@ -61,7 +61,8 @@ public class CASTName extends ASTNode implements IASTName, IASTCompletionContext
 		return copy;
 	}
 
-    public IBinding resolveBinding() {
+    @Override
+	public IBinding resolveBinding() {
         if (binding == null) {
        		CVisitor.createBinding(this);
         }
@@ -69,19 +70,23 @@ public class CASTName extends ASTNode implements IASTName, IASTCompletionContext
         return binding;
     }
     
-    public IBinding resolvePreBinding() {
+    @Override
+	public IBinding resolvePreBinding() {
     	return resolveBinding();
     }
 
-    public IBinding getBinding() {
+    @Override
+	public IBinding getBinding() {
         return binding;
     }
     
-    public IBinding getPreBinding() {
+    @Override
+	public IBinding getPreBinding() {
         return binding;
     }
 
-    public IASTCompletionContext getCompletionContext() {
+    @Override
+	public IASTCompletionContext getCompletionContext() {
         IASTNode node = getParent();
     	while (node != null) {
     		if (node instanceof IASTCompletionContext) {
@@ -95,7 +100,8 @@ public class CASTName extends ASTNode implements IASTName, IASTCompletionContext
     	return null;
     }
 
-    public void setBinding(IBinding binding) {
+    @Override
+	public void setBinding(IBinding binding) {
         this.binding = binding;
     }
 
@@ -107,14 +113,17 @@ public class CASTName extends ASTNode implements IASTName, IASTCompletionContext
         return new String(name);
     }
 
-    public char[] toCharArray() {
+    @Override
+	public char[] toCharArray() {
         return name;
     }
 
+	@Override
 	public char[] getSimpleID() {
 		return name;
 	}
 	
+	@Override
 	public char[] getLookupKey() {
 		return name;
 	}
@@ -146,6 +155,7 @@ public class CASTName extends ASTNode implements IASTName, IASTCompletionContext
     }
 
 
+	@Override
 	public int getRoleOfName(boolean allowResolution) {
         IASTNode parent = getParent();
         if (parent instanceof IASTInternalNameOwner) {
@@ -157,7 +167,8 @@ public class CASTName extends ASTNode implements IASTName, IASTCompletionContext
         return IASTNameOwner.r_unclear;
 	}
 
-    public boolean isDeclaration() {
+    @Override
+	public boolean isDeclaration() {
         IASTNode parent = getParent();
         if (parent instanceof IASTNameOwner) {
             int role = ((IASTNameOwner) parent).getRoleForName(this);
@@ -172,8 +183,8 @@ public class CASTName extends ASTNode implements IASTName, IASTCompletionContext
         return false;
     }
 
-
-    public boolean isReference() {
+    @Override
+	public boolean isReference() {
         IASTNode parent = getParent();
         if (parent instanceof IASTNameOwner) {
             int role = ((IASTNameOwner) parent).getRoleForName(this);
@@ -187,7 +198,8 @@ public class CASTName extends ASTNode implements IASTName, IASTCompletionContext
         return false;
     }
 
-    public boolean isDefinition() {
+    @Override
+	public boolean isDefinition() {
         IASTNode parent = getParent();
         if (parent instanceof IASTNameOwner) {
             int role = ((IASTNameOwner) parent).getRoleForName(this);
@@ -201,10 +213,12 @@ public class CASTName extends ASTNode implements IASTName, IASTCompletionContext
         return false;
     }
 
+	@Override
 	public ILinkage getLinkage() {
 		return Linkage.C_LINKAGE;
 	}
 
+	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		IASTNode parent = getParent();
 		if (parent instanceof IASTElaboratedTypeSpecifier) {
@@ -247,6 +261,7 @@ public class CASTName extends ASTNode implements IASTName, IASTCompletionContext
 		return (IBinding[])ArrayUtil.removeNulls(IBinding.class, bindings);
 	}
 
+	@Override
 	public IASTName getLastName() {
 		return this;
 	}

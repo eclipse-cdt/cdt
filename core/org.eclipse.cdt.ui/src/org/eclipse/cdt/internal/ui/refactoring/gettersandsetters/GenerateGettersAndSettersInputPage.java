@@ -33,8 +33,7 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.preferences.NameStylePreferencePage;
-import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.GetterSetterContext.FieldWrapper;
-import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.GetterSetterInsertEditProvider.AccessorKind;
+import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.AccessorDescriptor.AccessorKind;
 
 public class GenerateGettersAndSettersInputPage extends UserInputWizardPage implements IPreferenceChangeListener {
 	private GetterSetterContext context;
@@ -42,7 +41,7 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 	private GetterSetterLabelProvider labelProvider;
 
 	public GenerateGettersAndSettersInputPage(GetterSetterContext context) {
-		super(Messages.GettersAndSetters_Name); 
+		super(Messages.GenerateGettersAndSettersInputPage_Name); 
 		this.context = context;
 		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(CUIPlugin.PLUGIN_ID);
 		// We are listening for changes in the Name Style preferences
@@ -50,20 +49,19 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 	}
 
 	public void createControl(Composite parent) {
+		setTitle(Messages.GenerateGettersAndSettersInputPage_Name);
+		setMessage(Messages.GenerateGettersAndSettersInputPage_Header);
+		
 		Composite comp = new Composite(parent, SWT.NONE);
-		
-		setTitle(Messages.GettersAndSetters_Name);
-		setMessage(Messages.GenerateGettersAndSettersInputPage_header);
-		
 		comp.setLayout(new GridLayout(2, false));
 		createTree(comp);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		variableSelectionView.getTree().setLayoutData(gd);
 		
-		Composite btComp = createButtonComposite(comp);
+		Composite buttonContainer = createButtonComposite(comp);
 		gd = new GridData();
 		gd.verticalAlignment = SWT.TOP;
-		btComp.setLayoutData(gd);
+		buttonContainer.setLayoutData(gd);
 
 		final Button definitionSeparate = new Button(comp, SWT.CHECK);
 		definitionSeparate.setText(Messages.GenerateGettersAndSettersInputPage_SeparateDefinition);
@@ -133,7 +131,7 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 		selectGetter.addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				selectMethods(AccessorKind.GETTER);
+				selectAccessors(AccessorKind.GETTER);
 			}
 		});
 		
@@ -142,23 +140,23 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 		selectSetter.addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				selectMethods(AccessorKind.SETTER);
+				selectAccessors(AccessorKind.SETTER);
 			}
 		});
 		
 		return btComp;
 	}
 	
-	private void selectMethods(AccessorKind type) {
+	private void selectAccessors(AccessorKind kind) {
 		for (Object treeItem : context.getElements(null)) {
-			if (treeItem instanceof FieldWrapper) {
-				FieldWrapper field = (FieldWrapper) treeItem;
-				Object[] accessors = context.getChildren(field);
-				for (Object accessor : accessors) {
-					if (accessor instanceof GetterSetterInsertEditProvider) {
-						GetterSetterInsertEditProvider getSet = (GetterSetterInsertEditProvider) accessor;
-						if (getSet.getType() == type) {
-							variableSelectionView.setChecked(getSet, true);
+			if (treeItem instanceof FieldDescriptor) {
+				FieldDescriptor field = (FieldDescriptor) treeItem;
+				Object[] children = context.getChildren(field);
+				for (Object child : children) {
+					if (child instanceof AccessorDescriptor) {
+						AccessorDescriptor accessor = (AccessorDescriptor) child;
+						if (accessor.getKind() == kind) {
+							variableSelectionView.setChecked(accessor, true);
 						}
 					}
 				}
@@ -174,11 +172,11 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 		variableSelectionView.setLabelProvider(labelProvider);
 
 		variableSelectionView.setAutoExpandLevel(3);
-		variableSelectionView.setInput(""); //$NON-NLS-1$
+		variableSelectionView.setInput(context);
 		if (context.selectedName != null) {
 			String rawSignature = context.selectedName.getRawSignature();
 			for (Object obj : variableSelectionView.getVisibleExpandedElements()) {
-				if (obj instanceof FieldWrapper) {
+				if (obj instanceof FieldDescriptor) {
 					if (obj.toString().contains(rawSignature)) {
 						variableSelectionView.setSubtreeChecked(obj, true);
 					}
@@ -196,13 +194,13 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 	}
 
 	private void updateSelectedFunctions() {
-		context.selectedFunctions.clear();
-		for (Object currentElement : variableSelectionView.getCheckedElements()) {
-			if (currentElement instanceof GetterSetterInsertEditProvider) {
-				context.selectedFunctions.add((GetterSetterInsertEditProvider) currentElement);
+		context.selectedAccessors.clear();
+		for (Object element : variableSelectionView.getCheckedElements()) {
+			if (element instanceof AccessorDescriptor) {
+				context.selectedAccessors.add((AccessorDescriptor) element);
 			}
 		}
-		setPageComplete(!context.selectedFunctions.isEmpty());
+		setPageComplete(!context.selectedAccessors.isEmpty());
 	}
 
 	public void preferenceChange(PreferenceChangeEvent event) {
@@ -211,15 +209,19 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 		}
 		
 		if (GetterSetterNameGenerator.getGenerateGetterSettersPreferenceKeys().contains(event.getKey())) {
-			context.refresh();
+			context.recreateFieldDescriptors();
 			variableSelectionView.refresh();
+			variableSelectionView.setInput(context); // Set input to trigger node expansion.
+			for (Object element : context.selectedAccessors) {
+				variableSelectionView.setChecked(element, true);
+			}
 		}
 	}
 
 	@Override
 	public void dispose() {
-		super.dispose();
 		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(CUIPlugin.PLUGIN_ID);
 		node.removePreferenceChangeListener(this);
+		super.dispose();
 	}
 }

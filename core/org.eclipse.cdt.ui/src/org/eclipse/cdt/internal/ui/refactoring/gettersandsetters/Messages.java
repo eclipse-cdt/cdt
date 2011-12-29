@@ -15,17 +15,17 @@ import org.eclipse.osgi.util.NLS;
 
 public final class Messages extends NLS {
 	public static String GenerateGettersAndSettersInputPage_DeselectAll;
-	public static String GenerateGettersAndSettersInputPage_header;
+	public static String GenerateGettersAndSettersInputPage_Header;
+	public static String GenerateGettersAndSettersInputPage_LinkDescription;
+	public static String GenerateGettersAndSettersInputPage_LinkTooltip;
+	public static String GenerateGettersAndSettersInputPage_Name;
 	public static String GenerateGettersAndSettersInputPage_SeparateDefinition;
 	public static String GenerateGettersAndSettersInputPage_SelectAll;
 	public static String GenerateGettersAndSettersInputPage_SelectGetters;
 	public static String GenerateGettersAndSettersInputPage_SelectSetters;
-	public static String GenerateGettersAndSettersInputPage_LinkDescription;
-	public static String GenerateGettersAndSettersInputPage_LinkTooltip;
-	public static String GenerateGettersAndSettersRefactoring_NoCassDefFound;
+	public static String GenerateGettersAndSettersRefactoring_NoClassDefFound;
 	public static String GenerateGettersAndSettersRefactoring_NoFields;
 	public static String GenerateGettersAndSettersRefactoring_NoImplFile;
-	public static String GettersAndSetters_Name;
 
 	static {
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);

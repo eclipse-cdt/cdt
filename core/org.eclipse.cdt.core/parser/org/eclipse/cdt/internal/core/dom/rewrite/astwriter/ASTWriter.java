@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.astwriter;
 
+import java.util.List;
+
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -144,6 +146,24 @@ public class ASTWriter {
 	 * @return <code>true</code> if the blank line between the nodes is needed.
 	 */
 	public static boolean requireBlankLineInBetween(IASTNode node1, IASTNode node2) {
+		if (node1 instanceof ContainerNode) {
+			List<IASTNode> nodes = ((ContainerNode) node1).getNodes();
+			if (!nodes.isEmpty()) {
+				node1 = nodes.get(nodes.size() - 1);
+			}
+		}
+		if (node2 instanceof ContainerNode) {
+			List<IASTNode> nodes = ((ContainerNode) node2).getNodes();
+			if (!nodes.isEmpty()) {
+				node2 = nodes.get(0);
+			}
+		}
+		while (node1 instanceof ICPPASTTemplateDeclaration) {
+			node1 = ((ICPPASTTemplateDeclaration) node1).getDeclaration();
+		}
+		while (node2 instanceof ICPPASTTemplateDeclaration) {
+			node2 = ((ICPPASTTemplateDeclaration) node2).getDeclaration();
+		}
 		if (node1 instanceof ICPPASTVisibilityLabel && node2 instanceof ICPPASTVisibilityLabel) {
 			return true;
 		}

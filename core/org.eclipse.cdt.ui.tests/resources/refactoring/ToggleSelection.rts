@@ -1,4 +1,4 @@
-//!TestZeroLengthSelection
+//!Test zero length selection
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
 filename=A.h
@@ -16,8 +16,7 @@ class A {
 inline void A::member() {
 	return;
 }
-
-//!TestSubstringSelection
+//!Test substring selection
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
 filename=A.h
@@ -35,8 +34,7 @@ class A {
 inline void A::member() {
 	return;
 }
-
-//!TestBodySelection
+//!Test body selection
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
 filename=A.h
@@ -54,8 +52,7 @@ class A {
 inline void A::member() {
 	return;
 }
-
-//!TestBodySelectionWithConfusingName
+//!Test body selection with confusing name
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
 filename=A.h
@@ -75,8 +72,7 @@ inline void A::member() {
 	int abcd = 42;
 	return;
 }
-
-//!TestLeftBorderSelection
+//!Test left border selection
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
 filename=A.h
@@ -94,8 +90,7 @@ class A {
 inline void A::member() {
 	return;
 }
-
-//!TestRightBorderSelection
+//!Test right border selection
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
 filename=A.h
@@ -113,8 +108,7 @@ class A {
 inline void A::member() {
 	return;
 }
-
-//!TestOverlappingSelection
+//!Test overlapping selection
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
 filename=A.h
@@ -132,4 +126,3 @@ class A {
 inline void A::member() {
 	return;
 }
-

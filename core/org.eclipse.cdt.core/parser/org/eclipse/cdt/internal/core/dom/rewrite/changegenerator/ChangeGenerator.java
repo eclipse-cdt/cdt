@@ -75,7 +75,6 @@ import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
-import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.ReplaceEdit;
@@ -559,26 +558,47 @@ public class ChangeGenerator extends ASTVisitor {
 		if (modifications.isEmpty())
 			return;
 
-		ASTWriter synthWriter = new ASTWriter();
-		synthWriter.setModificationStore(modificationStore);
+		IASTNode prevNode = null;
+		IASTDeclaration[] declarations = tu.getDeclarations();
+		if (declarations.length != 0) {
+			prevNode = declarations[declarations.length - 1];
+		} else {
+			IASTPreprocessorStatement[] preprocessorStatements = tu.getAllPreprocessorStatements();
+			if (preprocessorStatements.length != 0) {
+				prevNode = preprocessorStatements[preprocessorStatements.length - 1];
+			}
+		}
+		int offset = prevNode != null ? getEndOffsetIncludingComments(prevNode) : 0;
+		String source = tu.getRawSignature();
+		int endOffset = skipTrailingBlankLines(source, offset);
 
-		IASTFileLocation targetLocation = tu.getFileLocation();
+		ChangeGeneratorWriterVisitor writer =
+				new ChangeGeneratorWriterVisitor(modificationStore, commentMap);
+		IASTNode newNode = null;
+		for (ASTModification modification : modifications) {
+			boolean first = newNode == null;
+			newNode = modification.getNewNode();
+			if (first) {
+				if (prevNode != null) {
+					writer.newLine();
+					if (ASTWriter.requireBlankLineInBetween(prevNode, newNode)) {
+						writer.newLine();
+					}
+				}
+			}
+			newNode.accept(writer);
+		}
+		if (prevNode != null) {
+			IASTNode nextNode = getNextSiblingOrPreprocessorNode(prevNode);
+			if (nextNode != null && ASTWriter.requireBlankLineInBetween(newNode, nextNode)) {
+				writer.newLine();
+			}
+		}
+
+		String code = writer.toString();
 		IFile file = FileHelper.getFileFromNode(tu);
 		MultiTextEdit parentEdit = getEdit(tu, file);
-
-		IASTDeclaration[] declarations = tu.getDeclarations();
-
-		for (ASTModification modification : modifications) {
-			String code = synthWriter.write(modification.getNewNode(), commentMap);
-
-			if (declarations.length > 0) {
-				IASTDeclaration lastDecl = declarations[declarations.length - 1];
-				targetLocation = lastDecl.getFileLocation();
-			}
-			String lineDelimiter = FileHelper.determineLineDelimiter(tu.getRawSignature());
-			parentEdit.addChild(new InsertEdit(endOffset(targetLocation),
-					lineDelimiter + lineDelimiter + code));
-		}
+		parentEdit.addChild(new ReplaceEdit(offset, endOffset - offset, code));
 	}
 
 	/**

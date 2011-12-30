@@ -93,7 +93,6 @@ void /*$*/member/*$$*/() {
 //@A.h
 
 //=
-
 void member() {
 	// body comment
 	return;
@@ -115,7 +114,6 @@ void /*$*/member/*$$*/() {
 //@A.h
 
 //=
-
 // Top comment
 void member() {
 	// body comment

@@ -20,7 +20,6 @@ class A {
 inline void A::member(int a, int b) {
 	return;
 }
-
 //!TestDefaultParameterInitializerInHeaderToImplementation
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
@@ -57,7 +56,6 @@ int main() {
 void A::member(int a, int b) {
 	return;
 }
-
 //!TestDefaultParameterInitializerInImplementationToClass
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config

@@ -6,8 +6,8 @@
  * which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
- * Contributors: 
- * 		Martin Schwab & Thomas Kallenberg - initial API and implementation 
+ * Contributors:
+ * 	   Martin Schwab & Thomas Kallenberg - initial API and implementation 
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.togglefunction;
 
@@ -29,7 +29,6 @@ import org.eclipse.cdt.internal.ui.refactoring.Container;
 import org.eclipse.cdt.internal.ui.refactoring.CreateFileChange;
 
 public class ToggleFileCreator {
-
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	private static final String H = ".h"; //$NON-NLS-1$
 	private ToggleRefactoringContext context;
@@ -71,7 +70,7 @@ public class ToggleFileCreator {
 		CreateFileChange change;
 		String filename = getNewFileName();
 		try {
-			change = new CreateFileChange(filename, new	Path(getPath()+filename), 
+			change = new CreateFileChange(filename, new	Path(getPath() + filename), 
 					EMPTY_STRING, context.getSelectionFile().getCharset());
 			change.perform(new NullProgressMonitor());
 		} catch (CoreException e) {
@@ -85,6 +84,7 @@ public class ToggleFileCreator {
 		}
 		final Container<Boolean> answer = new Container<Boolean>();
 		Runnable r = new Runnable() {
+			@Override
 			public void run() {
 				Shell shell = CUIPlugin.getDefault().getWorkbench().getWorkbenchWindows()[0].getShell();
 				String functionname;
@@ -103,7 +103,7 @@ public class ToggleFileCreator {
 	}
 
 	public String getIncludeStatement() {
-		return "#include \"" + ToggleNodeHelper.getFilenameWithoutExtension(getNewFileName()) + ".h\"";  //$NON-NLS-1$//$NON-NLS-2$
+		return "#include \"" + ToggleNodeHelper.getFilenameWithoutExtension(getNewFileName()) + ".h\"\n";  //$NON-NLS-1$//$NON-NLS-2$
 	}
 	
 	private String getNewFileName() {

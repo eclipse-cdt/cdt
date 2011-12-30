@@ -1173,7 +1173,6 @@ private:
 };
 
 #endif /* A_H_ */
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -1195,9 +1194,7 @@ inline void Person::setId(int id) {
 	this->id = id;
 }
 
-
 #endif /* A_H_ */
-
 //!No Methods Separate Definition
 //#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
 //@.config
@@ -1247,7 +1244,6 @@ inline int test::getI() const {
 inline void test::setI(int i) {
 	this->i = i;
 }
-
 
 #endif /* TEST_H_ */
 //!Bug 323780 "Generate Getters and Setters..." crashes
@@ -1349,7 +1345,6 @@ public:
 //@Test.cxx
 
 //=
-
 int Test::getTestField() const {
 	return testField;
 }
@@ -1390,7 +1385,6 @@ public:
 //@component_b/implementation/Test.cpp
 
 //=
-
 int Test::getTestField() const {
 	return testField;
 }

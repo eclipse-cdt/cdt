@@ -18,7 +18,6 @@ inline void A::member() {
 	// return comment
 	return;
 }
-
 //!ClassToHeaderTopCommentOrder
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
@@ -41,7 +40,6 @@ class A {
 inline void A::member() {
 	return;
 }
-
 //!ClassToHeaderCatchComment
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
@@ -68,7 +66,6 @@ try {
 catch (int i) {
 	// catch comment
 }
-
 //!ClassToHeaderTopComment
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
@@ -89,7 +86,6 @@ class A {
 inline void A::member() {
 	return;
 }
-
 //!ClassToHeaderTemplateTopComment
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
@@ -114,7 +110,6 @@ template<typename T>
 inline T A::member() {
 	return T();
 }
-
 //!ClassToHeaderTrailingComment
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
@@ -133,7 +128,6 @@ class A {
 inline void A::member() {
 	return;
 } // Trailing comment
-
 //!ClassToHeaderTrailingCommentWithTryBlock
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config

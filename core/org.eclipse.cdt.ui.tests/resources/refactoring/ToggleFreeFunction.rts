@@ -54,7 +54,6 @@ int main() {
 int freeFunction(int* a, int& b) {
 	return 42;
 }
-
 //!TestFreeFunctionToggleFromImplementationToHeaderWithDeclaration
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
@@ -172,7 +171,6 @@ try {
 }
 catch (std::exception& e) {
 }
-
 //!TestFreeFunction
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
@@ -260,4 +258,3 @@ void freefunction() {
 }
 
 }
-

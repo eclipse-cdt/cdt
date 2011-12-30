@@ -1,4 +1,4 @@
-//!TestSimpleFunctionInClassToInHeader
+//!Test simple function in class to in header
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
 filename=A.h
@@ -28,8 +28,7 @@ private:
 inline int A::function() {
 	return 0;
 }
-
-//!TestSimpleFunctionInHeaderToImplementation
+//!Test simple function in header to implementation
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
 filename=A.h
@@ -73,7 +72,6 @@ int main() {
 int A::function() {
 	return 0;
 }
-
 //!TestSimpleFunctionInImplementationToInClass
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config

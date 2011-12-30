@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.CProjectDescriptionEvent;
-import org.eclipse.cdt.core.settings.model.CSourceEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICDescriptionDelta;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
@@ -35,7 +34,6 @@ import org.eclipse.cdt.make.core.IMakeTargetListener;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.MakeTargetEvent;
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -48,9 +46,8 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChang
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -66,7 +63,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 	/** presentation of the content, i.e. for MakeView tree of for BuildTargetDialog table */
 	protected boolean bFlatten;
 
-	protected StructuredViewer viewer;
+	protected TreeViewer viewer;
 
 	/**
 	 * Default constructor.
@@ -85,9 +82,6 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 		bFlatten = flat;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
-	 */
 	@Override
 	public Object[] getChildren(Object obj) {
 		if (obj instanceof IWorkspaceRoot) {
@@ -155,9 +149,6 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 		return new Object[0];
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
-	 */
 	@Override
 	public Object getParent(Object obj) {
 		if (obj instanceof IMakeTarget) {
@@ -174,17 +165,11 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
-	 */
 	@Override
 	public boolean hasChildren(Object obj) {
 		return getChildren(obj).length > 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getElements(java.lang.Object)
-	 */
 	@Override
 	public Object[] getElements(Object obj) {
 		if (bFlatten) {
@@ -199,9 +184,6 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 		return getChildren(obj);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-	 */
 	@Override
 	public void dispose() {
 		if (viewer != null) {
@@ -209,15 +191,12 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		if (this.viewer == null) {
 			MakeCorePlugin.getDefault().getTargetManager().addListener(this);
 		}
-		this.viewer = (StructuredViewer) viewer;
+		this.viewer = (TreeViewer) viewer;
 		IWorkspace oldWorkspace = null;
 		IWorkspace newWorkspace = null;
 		if (oldInput instanceof IWorkspace) {
@@ -249,142 +228,96 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.make.core.IMakeTargetListener#targetChanged(org.eclipse.cdt.make.core.MakeTargetEvent)
+	/**
+	 * Refresh the project tree or the project subtree (in case of drill-down adapter) in the view.
 	 */
-	@Override
-	public void targetChanged(final MakeTargetEvent event) {
-		final Control ctrl = viewer.getControl();
-		if (ctrl != null && !ctrl.isDisposed()) {
-			switch (event.getType()) {
-				case MakeTargetEvent.PROJECT_ADDED :
-				case MakeTargetEvent.PROJECT_REMOVED :
-					ctrl.getDisplay().asyncExec(new Runnable() {
+	private void refreshProjectTree(final IProject project) {
+		Display.getDefault().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				if (viewer == null || viewer.getControl() == null || viewer.getControl().isDisposed())
+					return;
 
-						@Override
-						public void run() {
-							if (!ctrl.isDisposed()) {
-								viewer.refresh();
-							}
-						}
-					});
-					break;
-				case MakeTargetEvent.TARGET_ADD :
-				case MakeTargetEvent.TARGET_CHANGED :
-				case MakeTargetEvent.TARGET_REMOVED :
-					ctrl.getDisplay().asyncExec(new Runnable() {
+				if (viewer.getTree().getItemCount() <= 0) {
+					return;
+				}
 
-						@Override
-						public void run() {
-							if (!ctrl.isDisposed()) {
-								if (bFlatten) {
-									viewer.refresh();
-								} else {
-									//We can't just call refresh on the container target that
-									//has been created since it may be that the container has
-									//been filtered out and the filters in the viewer don't know
-									//any better how to call out to the filter selection again.
-									//Instead we walk to the root project container and refresh it.
-									Set<IContainer> containers = new HashSet<IContainer>();
-									IMakeTarget[] targets = event.getTargets();
-									for (IMakeTarget target : targets) {
-										IContainer container = target.getContainer();
-										while(!(container instanceof IProject) && container.getParent()!=null) {
-											container = container.getParent();
-										}
-										containers.add(container);
-									}
-									for (IContainer container : containers) {
-										viewer.refresh(container);
-									}
-								}
-							}
-						}
-					});
-					break;
+				Object firstItem = viewer.getTree().getItem(0).getData();
+				IContainer parentContainer = null;
+
+				boolean isDrilledDown = !(firstItem instanceof IProject);
+				if (!isDrilledDown) {
+					// view shows projects
+					viewer.refresh(project);
+				} else {
+					// drill-down adapter in the game
+					if (firstItem instanceof IResource) {
+						parentContainer = ((IResource) firstItem).getParent();
+					} else if (firstItem instanceof TargetSourceContainer) {
+						parentContainer = ((TargetSourceContainer) firstItem).getContainer().getParent();
+					} else if (firstItem instanceof IMakeTarget) {
+						parentContainer = ((IMakeTarget) firstItem).getContainer();
+					}
+
+					if (parentContainer != null && project.equals(parentContainer.getProject())) {
+						viewer.refresh();
+					}
+				}
 			}
+		});
+	}
+
+	@Override
+	public void targetChanged(MakeTargetEvent event) {
+		Set<IProject> affectedProjects = new HashSet<IProject>();
+		for (IMakeTarget target : event.getTargets()) {
+			IContainer container = target.getContainer();
+			affectedProjects.add(container.getProject());
+		}
+
+		// If the view is being filtered, adding/removing targets can
+		// result in showing or hiding containers or the project itself
+		for (IProject project : affectedProjects) {
+			refreshProjectTree(project);
 		}
 	}
 
-	private void processDelta(IResourceDelta delta) {
-		// Bail out if the widget was disposed.
-		Control ctrl = viewer.getControl();
-		if (ctrl == null || ctrl.isDisposed() || delta == null) {
+	private void collectAffectedProjects(IResourceDelta delta, Set<IProject> affectedProjects) {
+		if (affectedProjects.contains(delta.getResource().getProject())) {
 			return;
 		}
 
-		IResourceDelta[] affectedChildren = delta.getAffectedChildren(IResourceDelta.CHANGED);
-
-		// Not interested in Content changes.
-		for (int i = 0; i < affectedChildren.length; i++) {
-			if ((affectedChildren[i].getFlags() & IResourceDelta.TYPE) != 0) {
+		for (IResourceDelta d : delta.getAffectedChildren(IResourceDelta.ADDED | IResourceDelta.REMOVED)) {
+			IResource rc = d.getResource();
+			int rcType = rc.getType();
+			if (rcType == IResource.PROJECT || rcType == IResource.FOLDER) {
+				affectedProjects.add(rc.getProject());
 				return;
 			}
 		}
 
-		// Handle changed children recursively.
-		for (int i = 0; i < affectedChildren.length; i++) {
-			processDelta(affectedChildren[i]);
-		}
-
-		// Get the affected resource
-		final IResource resource = delta.getResource();
-
-		// Handle removed children. Issue one update for all removals.
-		affectedChildren = delta.getAffectedChildren(IResourceDelta.REMOVED);
-		if (affectedChildren.length > 0) {
-			for (int i = 0; i < affectedChildren.length; i++) {
-				if (affectedChildren[i].getResource().getType() == IResource.FOLDER) {
-					Display.getDefault().asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							if (viewer == null || viewer.getControl() == null || viewer.getControl().isDisposed())
-								return;
-							// refresh the whole view as deletion may cause parent nodes to get filtered out
-							viewer.refresh();
-						}
-					});
-					return;
-				}
-			}
-		}
-
-		// Handle added children. Issue one update for all insertions.
-		affectedChildren = delta.getAffectedChildren(IResourceDelta.ADDED);
-		if (affectedChildren.length > 0) {
-			final ArrayList<IResource> affected = new ArrayList<IResource>(affectedChildren.length);
-			for (int i = 0; i < affectedChildren.length; i++) {
-				if (affectedChildren[i].getResource().getType() == IResource.FOLDER) {
-					affected.add(affectedChildren[i].getResource());
-				}
-			}
-			if (!affected.isEmpty()) {
-				Display.getDefault().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						if (viewer == null || viewer.getControl() == null || viewer.getControl().isDisposed())
-							return;
-
-						if (resource instanceof IFolder && CCorePlugin.showSourceRootsAtTopOfProject()) {
-							// that will refresh equal TargetSourceContainer from the tree
-							viewer.refresh(new TargetSourceContainer(new CSourceEntry((IFolder) resource, null, 0)));
-						}
-						viewer.refresh(resource);
-					}
-				});
-			}
+		for (IResourceDelta d : delta.getAffectedChildren(IResourceDelta.CHANGED)) {
+			collectAffectedProjects(d, affectedProjects);
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
-	 */
 	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
-		final IResourceDelta delta = event.getDelta();
-		Control ctrl = viewer.getControl();
-		if (ctrl != null && !ctrl.isDisposed())
-			processDelta(delta);
+		IResourceDelta delta = event.getDelta();
+		if (delta == null) {
+			return;
+		}
+
+		Set<IProject> affectedProjects = new HashSet<IProject>();
+		collectAffectedProjects(delta, affectedProjects);
+
+		// If the view is being filtered or source roots shown,
+		// adding/removing resources can structurally affect the tree
+		// starting with the project
+		for (IProject project : affectedProjects) {
+			refreshProjectTree(project);
+		}
+
 	}
 
 	/**
@@ -393,34 +326,29 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 	 * @since 7.1
 	 */
 	@Override
-	public void handleEvent(final CProjectDescriptionEvent event) {
-		Display display = Display.getDefault();
-		display.asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				ICDescriptionDelta delta = event.getDefaultSettingCfgDelta();
-				if (delta==null)
-					return;
+	public void handleEvent(CProjectDescriptionEvent event) {
+		ICDescriptionDelta delta = event.getDefaultSettingCfgDelta();
+		if (delta==null)
+			return;
 
-				int flags = delta.getChangeFlags();
-				if ( ((flags & ICDescriptionDelta.SOURCE_ADDED) != 0) ||
-					 ((flags & ICDescriptionDelta.SOURCE_REMOVED) != 0) ) {
+		int flags = delta.getChangeFlags();
+		if ( ((flags & ICDescriptionDelta.SOURCE_ADDED) != 0) ||
+			 ((flags & ICDescriptionDelta.SOURCE_REMOVED) != 0) ) {
 
-					IProject project = null;
-					ICSettingObject setting = delta.getOldSetting();
-					if (setting==null)
-						setting = delta.getNewSetting();
+			IProject project = null;
+			ICSettingObject setting = delta.getOldSetting();
+			if (setting == null) {
+				setting = delta.getNewSetting();
+			}
 
-					if (setting instanceof ICConfigurationDescription)
-						project = ((ICConfigurationDescription) setting).getProjectDescription().getProject();
-
-					if (project!=null)
-						viewer.refresh(project);
-					else
-						viewer.refresh();
+			if (setting instanceof ICConfigurationDescription) {
+				project = ((ICConfigurationDescription) setting).getProjectDescription().getProject();
+				if (project != null) {
+					// refresh source roots under the project
+					refreshProjectTree(project);
 				}
 			}
-		});
+		}
 	}
 
 	/**

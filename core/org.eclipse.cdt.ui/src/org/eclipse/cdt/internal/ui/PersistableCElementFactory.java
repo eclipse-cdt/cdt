@@ -27,7 +27,7 @@ import org.eclipse.ui.IPersistableElement;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 
-/** 
+/**
  * The PersistableCElementFactory is used to save and recreate an ICElement object.
  * As such, it implements the IPersistableElement interface for storage
  * and the IElementFactory interface for recreation.
@@ -66,7 +66,8 @@ public class PersistableCElementFactory implements IElementFactory, IPersistable
     /**
      * @see IElementFactory
      */
-    public IAdaptable createElement(IMemento memento) {
+    @Override
+	public IAdaptable createElement(IMemento memento) {
         // Get the file name.
         String fileName = memento.getString(TAG_PATH);
         if (fileName == null) {
@@ -84,7 +85,7 @@ public class PersistableCElementFactory implements IElementFactory, IPersistable
         if (fCElement != null) {
         	return fCElement;
         }
-        
+
         final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
         Integer elementType= memento.getInteger(TAG_TYPE);
 		if (elementType == null) {
@@ -114,14 +115,16 @@ public class PersistableCElementFactory implements IElementFactory, IPersistable
     /**
      * @see IPersistableElement
      */
-    public String getFactoryId() {
+    @Override
+	public String getFactoryId() {
         return FACTORY_ID;
     }
 
     /**
      * @see IPersistableElement
      */
-    public void saveState(IMemento memento) {
+    @Override
+	public void saveState(IMemento memento) {
     	if (fCElement.getResource() != null) {
 	        memento.putString(TAG_PATH, fCElement.getResource().getFullPath().toString());
 	        memento.putInteger(TAG_TYPE, fCElement.getResource().getType());

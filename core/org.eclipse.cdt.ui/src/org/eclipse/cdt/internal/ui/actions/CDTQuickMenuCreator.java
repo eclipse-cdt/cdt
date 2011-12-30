@@ -11,20 +11,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.actions;
 
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.graphics.Point;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
-
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.source.ISourceViewer;
-
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.actions.QuickMenuCreator;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
@@ -33,7 +30,7 @@ import org.eclipse.cdt.internal.ui.text.CWordFinder;
 /**
  * C/C++ editor aware quick menu creator. In the given editor, the menu will be aligned with the word
  * at the current offset.
- * 
+ *
  * @since 5.2
  */
 public abstract class CDTQuickMenuCreator extends QuickMenuCreator {
@@ -94,11 +91,12 @@ public abstract class CDTQuickMenuCreator extends QuickMenuCreator {
 
 	/**
 	 * Returns a handler that can create and open the quick menu.
-	 * 
+	 *
 	 * @return a handler that can create and open the quick menu
 	 */
 	public IHandler createHandler() {
 		return new AbstractHandler() {
+			@Override
 			public Object execute(ExecutionEvent event) throws ExecutionException {
 				createMenu();
 				return null;

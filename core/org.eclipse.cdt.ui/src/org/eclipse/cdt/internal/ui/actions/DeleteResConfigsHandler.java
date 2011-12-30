@@ -58,14 +58,14 @@ import org.eclipse.cdt.ui.newui.AbstractPage;
 public class DeleteResConfigsHandler extends AbstractHandler {
 
 	protected ArrayList<IResource> objects;
-	private   ArrayList<ResCfgData> outData;		
+	private   ArrayList<ResCfgData> outData;
 
 	@Override
 	public void setEnabled(Object context) {
 		ISelection selection = getSelection(context);
 		setEnabledFromSelection(selection);
 	}
-	
+
 	protected ISelection getSelection(Object context) {
 		Object s = HandlerUtil.getVariable(context, ISources.ACTIVE_MENU_SELECTION_NAME);
         if (s instanceof ISelection) {
@@ -76,7 +76,7 @@ public class DeleteResConfigsHandler extends AbstractHandler {
 
 	public void setEnabledFromSelection(ISelection selection) {
 		objects = null;
-		
+
 		if ((selection != null) && !selection.isEmpty()) {
 			// case for context menu
 			Object[] obs = null;
@@ -100,10 +100,10 @@ public class DeleteResConfigsHandler extends AbstractHandler {
 					if (res != null) {
 						IProject p = res.getProject();
 						if (!p.isOpen()) continue;
-						
+
 						if (!CoreModel.getDefault().isNewStyleProject(p))
 							continue;
-	
+
 						IPath path = res.getProjectRelativePath();
 						// getting description in read-only mode
 						ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(p, false);
@@ -121,7 +121,7 @@ public class DeleteResConfigsHandler extends AbstractHandler {
 					}
 				}
 			}
-		} 
+		}
 		setBaseEnabled(objects != null);
 	}
 
@@ -141,19 +141,20 @@ public class DeleteResConfigsHandler extends AbstractHandler {
 		return null;
 	}
 
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		openDialog();
 		return null;
 	}
 
 	private void openDialog() {
-		if (objects == null || objects.size() == 0) return; 
+		if (objects == null || objects.size() == 0) return;
 		// create list of configurations to delete
-		
+
 		ListSelectionDialog dialog = new ListSelectionDialog(
-				CUIPlugin.getActiveWorkbenchShell(), 
-				objects, 
-				createSelectionDialogContentProvider(), 
+				CUIPlugin.getActiveWorkbenchShell(),
+				objects,
+				createSelectionDialogContentProvider(),
 				new LabelProvider() {}, ActionMessages.DeleteResConfigsAction_0);
 		dialog.setTitle(ActionMessages.DeleteResConfigsAction_1);
 		if (dialog.open() == Window.OK) {
@@ -173,12 +174,12 @@ public class DeleteResConfigsHandler extends AbstractHandler {
 		ICProjectDescription prjd;
 		ICConfigurationDescription cfgd;
 		ICResourceDescription rdesc;
-		
+
 		public ResCfgData(IResource res2, ICProjectDescription prjd2,
 				ICConfigurationDescription cfgd2, ICResourceDescription rdesc2) {
 			res = res2; prjd = prjd2; cfgd = cfgd2; rdesc = rdesc2;
 		}
-		
+
 		// performs deletion
 		public void delete() {
 			try {
@@ -191,16 +192,17 @@ public class DeleteResConfigsHandler extends AbstractHandler {
 			return "[" + cfgd.getName() + "] for " + res.getName();   //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
-	
-	
+
+
 	private IStructuredContentProvider createSelectionDialogContentProvider() {
 		outData = null;
-		
+
 		return new IStructuredContentProvider() {
 
+			@Override
 			public Object[] getElements(Object inputElement) {
 				if (outData != null) return outData.toArray();
-				
+
 				outData = new ArrayList<ResCfgData>();
 				List<?> ls = (List<?>)inputElement;
 				Iterator<?> it = ls.iterator();
@@ -220,16 +222,18 @@ public class DeleteResConfigsHandler extends AbstractHandler {
 					if (cfgds != null) {
 						for (ICConfigurationDescription cfgd : cfgds) {
 							ICResourceDescription rd = cfgd.getResourceDescription(path, true);
-							if (rd != null) 
+							if (rd != null)
 								outData.add(new ResCfgData(res, prjd, cfgd, rd));
 						}
 					}
 				}
 				return outData.toArray();
 			}
+			@Override
 			public void dispose() {}
+			@Override
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 		};
 	}
-	
+
 }

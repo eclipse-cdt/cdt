@@ -57,24 +57,24 @@ import org.eclipse.cdt.internal.ui.util.EditorUtility;
  * AST must be present, the indentation is computed using heuristics. The algorithm used is fast for
  * single lines, but does not store any information and therefore not so efficient for large line
  * ranges.
- * 
+ *
  * @see org.eclipse.cdt.internal.ui.text.CHeuristicScanner
  * @see org.eclipse.cdt.internal.ui.text.CIndenter
  */
 public class IndentAction extends TextEditorAction {
-	
+
 	/** The caret offset after an indent operation. */
 	private int fCaretOffset;
-	
+
 	/**
 	 * Whether this is the action invoked by TAB. When <code>true</code>, indentation behaves
 	 * differently to accommodate normal TAB operation.
 	 */
 	private final boolean fIsTabAction;
-	
+
 	/**
 	 * Creates a new instance.
-	 * 
+	 *
 	 * @param bundle the resource bundle
 	 * @param prefix the prefix to use for keys in <code>bundle</code>
 	 * @param editor the text editor
@@ -84,7 +84,7 @@ public class IndentAction extends TextEditorAction {
 		super(bundle, prefix, editor);
 		fIsTabAction= isTabAction;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
@@ -93,17 +93,17 @@ public class IndentAction extends TextEditorAction {
 		// update has been called by the framework
 		if (!isEnabled() || !validateEditorInputState())
 			return;
-		
+
 		ITextSelection selection= getSelection();
 		final IDocument document= getDocument();
-		
+
 		if (document != null) {
 			final int offset= selection.getOffset();
 			final int length= selection.getLength();
 			final Position end= new Position(offset + length);
 			final int firstLine, nLines;
 			fCaretOffset= -1;
-			
+
 			try {
 				firstLine= document.getLineOfOffset(offset);
 				// check for marginal (zero-length) lines
@@ -115,13 +115,14 @@ public class IndentAction extends TextEditorAction {
 				CUIPlugin.log(new Status(IStatus.ERROR, CUIPlugin.getPluginId(), IStatus.OK, "", e)); //$NON-NLS-1$
 				return;
 			}
-			
+
 			Runnable runnable= new Runnable() {
+				@Override
 				public void run() {
 					IRewriteTarget target= (IRewriteTarget)getTextEditor().getAdapter(IRewriteTarget.class);
 					if (target != null)
 						target.beginCompoundChange();
-					
+
 					try {
 						CHeuristicScanner scanner= new CHeuristicScanner(document);
 						CIndenter indenter= new CIndenter(document, scanner, getCProject());
@@ -130,7 +131,7 @@ public class IndentAction extends TextEditorAction {
 						for (int i= 0; i < nLines; i++) {
 							hasChanged |= indentLine(document, firstLine + i, offset, indenter, scanner, multiLine);
 						}
-						
+
 						// update caret position: move to new position when indenting just one line
 						// keep selection when indenting multiple
 						int newOffset, newLength;
@@ -141,12 +142,12 @@ public class IndentAction extends TextEditorAction {
 							newOffset= fCaretOffset;
 							newLength= 0;
 						}
-						
+
 						// always reset the selection if anything was replaced
 						// but not when we had a single line non-tab invocation
 						if (newOffset != -1 && (hasChanged || newOffset != offset || newLength != length))
 							selectAndReveal(newOffset, newLength);
-						
+
 					} catch (BadLocationException e) {
 						// will only happen on concurrent modification
 						CUIPlugin.log(new Status(IStatus.ERROR, CUIPlugin.getPluginId(), IStatus.OK, "ConcurrentModification in IndentAction", e)); //$NON-NLS-1$
@@ -157,7 +158,7 @@ public class IndentAction extends TextEditorAction {
 					}
 				}
 			};
-			
+
 			if (nLines > 50) {
 				Display display= getTextEditor().getEditorSite().getWorkbenchWindow().getShell().getDisplay();
 				BusyIndicator.showWhile(display, runnable);
@@ -166,10 +167,10 @@ public class IndentAction extends TextEditorAction {
 			}
 		}
 	}
-	
+
 	/**
 	 * Selects the given range on the editor.
-	 * 
+	 *
 	 * @param newOffset the selection offset
 	 * @param newLength the selection range
 	 */
@@ -190,7 +191,7 @@ public class IndentAction extends TextEditorAction {
 	/**
 	 * Indents a single line using the heuristic scanner. Multiline comments are
 	 * indented as specified by the <code>CCommentAutoIndentStrategy</code>.
-	 * 
+	 *
 	 * @param document the document
 	 * @param line the line to be indented
 	 * @param caret the caret position
@@ -204,7 +205,7 @@ public class IndentAction extends TextEditorAction {
 		IRegion currentLine= document.getLineInformation(line);
 		int offset= currentLine.getOffset();
 		int wsStart= offset; // where we start searching for non-WS; after the "//" in single line comments
-		
+
 		String indent= null;
 		if (offset < document.getLength()) {
 			ITypedRegion partition= TextUtilities.getPartition(document, ICPartitions.C_PARTITIONING, offset, true);
@@ -224,9 +225,9 @@ public class IndentAction extends TextEditorAction {
 					int slashes= 2;
 					while (slashes < max - 1 && document.get(offset + slashes, 2).equals("//")) //$NON-NLS-1$
 						slashes+= 2;
-					
+
 					wsStart= offset + slashes;
-					
+
 					StringBuilder computed= indenter.computeIndentation(offset);
 					if (computed == null)
 						computed= new StringBuilder(0);
@@ -243,15 +244,15 @@ public class IndentAction extends TextEditorAction {
 						} else {
 							break;
 						}
-						
+
 						computed.deleteCharAt(0);
 					}
-					
+
 					indent= document.get(offset, wsStart - offset) + computed;
 				}
 			}
 		}
-		
+
 		// standard C code indentation
 		if (indent == null) {
 			StringBuilder computed= indenter.computeIndentation(offset);
@@ -260,7 +261,7 @@ public class IndentAction extends TextEditorAction {
 			else
 				indent= ""; //$NON-NLS-1$
 		}
-		
+
 		// change document:
 		// get current white space
 		int lineLength= currentLine.getLength();
@@ -273,7 +274,7 @@ public class IndentAction extends TextEditorAction {
 		}
 		int length= end - offset;
 		String currentIndent= document.get(offset, length);
-		
+
 		// if we are right before the text start / line end, and already after the insertion point
 		// then just shift to the right
 		if (fIsTabAction && caret == end && whiteSpaceLength(currentIndent) >= whiteSpaceLength(indent)) {
@@ -286,13 +287,13 @@ public class IndentAction extends TextEditorAction {
 			fCaretOffset= offset + replacement.length();
 			return true;
 		}
-		
+
 		// set the caret offset so it can be used when setting the selection
 		if (caret >= offset && caret <= end)
 			fCaretOffset= offset + indent.length();
 		else
 			fCaretOffset= -1;
-		
+
 		// only change the document if it is a real change
 		if (!indent.equals(currentIndent)) {
 			document.replace(offset, length, indent);
@@ -303,7 +304,7 @@ public class IndentAction extends TextEditorAction {
 
 	/**
 	 * Strip trailing space characters.
-	 * 
+	 *
 	 * @param indent
 	 * @return string with trailing spaces removed
 	 */
@@ -317,7 +318,7 @@ public class IndentAction extends TextEditorAction {
 
 	/**
 	 * Computes and returns the indentation for a block comment line.
-	 * 
+	 *
 	 * @param document the document
 	 * @param line the line in document
 	 * @param scanner the scanner
@@ -328,10 +329,10 @@ public class IndentAction extends TextEditorAction {
 	private String computeCommentIndent(IDocument document, int line, CHeuristicScanner scanner, ITypedRegion partition) throws BadLocationException {
 		return IndentUtil.computeCommentIndent(document, line, scanner, partition);
 	}
-	
+
 	/**
 	 * Computes and returns the indentation for a preprocessor line.
-	 * 
+	 *
 	 * @param document the document
 	 * @param line the line in document
 	 * @param partition the comment partition
@@ -341,11 +342,11 @@ public class IndentAction extends TextEditorAction {
 	private String computePreprocessorIndent(IDocument document, int line, ITypedRegion partition) throws BadLocationException {
 		return IndentUtil.computePreprocessorIndent(document, line, partition);
 	}
-	
+
 	/**
 	 * Returns the size in characters of a string. All characters count one, tabs count the editor's
 	 * preference for the tab display
-	 * 
+	 *
 	 * @param indent the string to be measured.
 	 * @return the size in characters of a string
 	 */
@@ -358,27 +359,27 @@ public class IndentAction extends TextEditorAction {
 	/**
 	 * Returns whether spaces should be used exclusively for indentation, depending on the editor and
 	 * formatter preferences.
-	 * 
+	 *
 	 * @return <code>true</code> if only spaces should be used
 	 */
 	private boolean useSpaces() {
 		return CCorePlugin.SPACE.equals(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR));
 	}
-	
+
 	/**
 	 * Returns whether mixed tabs/spaces should be used for indentation, depending on the editor and
 	 * formatter preferences.
-	 * 
+	 *
 	 * @return <code>true</code> if tabs and spaces should be used
 	 */
 	private boolean useTabsAndSpaces() {
 		return DefaultCodeFormatterConstants.MIXED.equals(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR));
 	}
-	
+
 	/**
 	 * Returns the tab size used by the editor, which is deduced from the
 	 * formatter preferences.
-	 * 
+	 *
 	 * @return the tab size as defined in the current formatter preferences
 	 */
 	private int getTabSize() {
@@ -388,7 +389,7 @@ public class IndentAction extends TextEditorAction {
 	/**
 	 * Returns the indent size used by the editor, which is deduced from the
 	 * formatter preferences.
-	 * 
+	 *
 	 * @return the indent size as defined in the current formatter preferences
 	 */
 	private int getIndentSize() {
@@ -397,25 +398,25 @@ public class IndentAction extends TextEditorAction {
 
 	/**
 	 * Returns <code>true</code> if empty lines should be indented, <code>false</code> otherwise.
-	 * 
+	 *
 	 * @return <code>true</code> if empty lines should be indented, <code>false</code> otherwise
 	 */
 	private boolean indentEmptyLines() {
 		return DefaultCodeFormatterConstants.TRUE.equals(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_INDENT_EMPTY_LINES));
 	}
-	
+
 	/**
 	 * Returns <code>true</code> if line comments at column 0 should be indented inside, <code>false</code> otherwise.
-	 * 
+	 *
 	 * @return <code>true</code> if line comments at column 0 should be indented inside, <code>false</code> otherwise.
 	 */
 	private boolean indentInsideLineComments() {
 		return DefaultCodeFormatterConstants.TRUE.equals(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_INDENT_INSIDE_LINE_COMMENTS));
 	}
-	
+
 	/**
 	 * Returns the possibly project-specific core preference defined under <code>key</code>.
-	 * 
+	 *
 	 * @param key the key of the preference
 	 * @return the value of the preference
 	 */
@@ -429,7 +430,7 @@ public class IndentAction extends TextEditorAction {
 	/**
 	 * Returns the possibly project-specific core preference defined under <code>key</code>, or
 	 * <code>def</code> if the value is not a integer.
-	 * 
+	 *
 	 * @param key the key of the preference
 	 * @param def the default value
 	 * @return the value of the preference
@@ -445,7 +446,7 @@ public class IndentAction extends TextEditorAction {
 	/**
 	 * Returns the <code>ICProject</code> of the current editor input, or
 	 * <code>null</code> if it cannot be found.
-	 * 
+	 *
 	 * @return the <code>ICProject</code> of the current editor input, or
 	 *         <code>null</code> if it cannot be found
 	 */
@@ -453,13 +454,13 @@ public class IndentAction extends TextEditorAction {
 		ITextEditor editor= getTextEditor();
 		if (editor == null)
 			return null;
-		
+
 		return EditorUtility.getCProject(editor.getEditorInput());
 	}
 
 	/**
 	 * Returns the editor's selection provider.
-	 * 
+	 *
 	 * @return the editor's selection provider or <code>null</code>
 	 */
 	private ISelectionProvider getSelectionProvider() {
@@ -469,14 +470,14 @@ public class IndentAction extends TextEditorAction {
 		}
 		return null;
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
 	@Override
 	public void update() {
 		super.update();
-		
+
 		if (isEnabled()) {
 			if (fIsTabAction)
 				setEnabled(canModifyEditor() && isSmartMode() && isValidSelection());
@@ -484,29 +485,29 @@ public class IndentAction extends TextEditorAction {
 				setEnabled(canModifyEditor() && !getSelection().isEmpty());
 		}
 	}
-	
+
 	/**
 	 * Returns if the current selection is valid, i.e. whether it is empty and the caret in the
 	 * whitespace at the start of a line, or covers multiple lines.
-	 * 
+	 *
 	 * @return <code>true</code> if the selection is valid for an indent operation
 	 */
 	private boolean isValidSelection() {
 		ITextSelection selection= getSelection();
 		if (selection.isEmpty())
 			return false;
-		
+
 		int offset= selection.getOffset();
 		int length= selection.getLength();
-		
+
 		IDocument document= getDocument();
 		if (document == null)
 			return false;
-		
+
 		try {
 			IRegion firstLine= document.getLineInformationOfOffset(offset);
 			int lineOffset= firstLine.getOffset();
-			
+
 			// either the selection has to be empty and the caret in the WS at the line start
 			// or the selection has to extend over multiple lines
 			if (length == 0) {
@@ -516,28 +517,28 @@ public class IndentAction extends TextEditorAction {
 			return false; // only enable for empty selections for now
 		} catch (BadLocationException e) {
 		}
-		
+
 		return false;
 	}
-	
+
 	/**
 	 * Returns the smart preference state.
-	 * 
+	 *
 	 * @return <code>true</code> if smart mode is on, <code>false</code> otherwise
 	 */
 	private boolean isSmartMode() {
 		ITextEditor editor= getTextEditor();
-		
+
 		if (editor instanceof ITextEditorExtension3)
 			return ((ITextEditorExtension3) editor).getInsertMode() == ITextEditorExtension3.SMART_INSERT;
-		
+
 		return false;
 	}
-	
+
 	/**
 	 * Returns the document currently displayed in the editor, or <code>null</code> if none can be
 	 * obtained.
-	 * 
+	 *
 	 * @return the current document or <code>null</code>
 	 */
 	private IDocument getDocument() {
@@ -547,15 +548,15 @@ public class IndentAction extends TextEditorAction {
 			IEditorInput input= editor.getEditorInput();
 			if (provider != null && input != null)
 				return provider.getDocument(input);
-			
+
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the selection on the editor or an invalid selection if none can be obtained. Returns
 	 * never <code>null</code>.
-	 * 
+	 *
 	 * @return the current selection, never <code>null</code>
 	 */
 	private ITextSelection getSelection() {
@@ -565,7 +566,7 @@ public class IndentAction extends TextEditorAction {
 			if (selection instanceof ITextSelection)
 				return (ITextSelection) selection;
 		}
-		
+
 		// null object
 		return TextSelection.emptySelection();
 	}

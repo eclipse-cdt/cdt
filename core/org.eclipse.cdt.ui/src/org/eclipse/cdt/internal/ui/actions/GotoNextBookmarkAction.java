@@ -38,6 +38,7 @@ public class GotoNextBookmarkAction extends TextEditorAction {
 	 * Private class to handle comparison of markers using their line numbers.
 	 */
 	private class CompareMarker implements Comparator<IMarker> {
+		@Override
 		public int compare(IMarker m1, IMarker m2) {
 			int l1 = MarkerUtilities.getLineNumber(m1);
 			int l2 = MarkerUtilities.getLineNumber(m2);

@@ -15,10 +15,11 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.ui.actions.ActionGroup;
+
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 
 public class SurroundWithActionGroup extends ActionGroup {
@@ -56,6 +57,7 @@ public class SurroundWithActionGroup extends ActionGroup {
 		menu.appendToGroup(fGroup, subMenu);
 		subMenu.add(new Action() {});
 		subMenu.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 				manager.removeAll();
 				SurroundWithTemplateMenuAction.fillMenu(manager, fEditor);

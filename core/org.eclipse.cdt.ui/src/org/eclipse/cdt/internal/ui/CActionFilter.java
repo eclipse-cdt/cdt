@@ -25,6 +25,7 @@ public class CActionFilter implements IActionFilter {
 	public CActionFilter() {
 	}
 
+	@Override
 	public boolean testAttribute(Object target, String name, String value) {
 		ICElement element = (ICElement) target;
 		IResource resource = element.getResource();

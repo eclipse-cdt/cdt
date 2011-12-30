@@ -31,33 +31,35 @@ import org.eclipse.cdt.core.model.ICElement;
  * Implements basic UI support for C elements.
  */
 public class CElementAdapterFactory implements IAdapterFactory {
-	
+
 	private static Class<?>[] PROPERTIES= new Class[] {
 		IPropertySource.class,
 		IResource.class,
 		IWorkbenchAdapter.class,
 		IPersistableElement.class,
 		IDeferredWorkbenchAdapter.class,
-		IActionFilter.class 
+		IActionFilter.class
 	};
-	
+
 	private static CWorkbenchAdapter fgCWorkbenchAdapter;
 	private static CActionFilter fgCActionFilter;
-	
+
 	/**
 	 * @see CElementAdapterFactory#getAdapterList
 	 */
+	@Override
 	public Class<?>[] getAdapterList() {
 		return PROPERTIES;
 	}
 
 	/**
 	 * @see CElementAdapterFactory#getAdapter
-	 */	
+	 */
+	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Object getAdapter(Object element, Class key) {
 		ICElement celem = (ICElement) element;
-		
+
 		if (IPropertySource.class.equals(key)) {
 			return getPropertySource(celem);
 		} else if (IResource.class.isAssignableFrom(key)) {
@@ -74,12 +76,12 @@ public class CElementAdapterFactory implements IAdapterFactory {
 		} else if (IActionFilter.class.equals(key)) {
 			return getActionFilter(celem);
 		}
-		return null; 
+		return null;
 	}
 
 	private IPropertySource getPropertySource(ICElement celement) {
 		if (celement instanceof IBinary) {
-			return new BinaryPropertySource((IBinary)celement);				
+			return new BinaryPropertySource((IBinary)celement);
 		}
 		IResource res = celement.getResource();
 		if (res != null) {
@@ -88,7 +90,7 @@ public class CElementAdapterFactory implements IAdapterFactory {
 			}
 			return new ResourcePropertySource(res);
 		}
-		return new CElementPropertySource(celement);		
+		return new CElementPropertySource(celement);
 	}
 
 	private IResource getResource(ICElement celement) {
@@ -105,7 +107,7 @@ public class CElementAdapterFactory implements IAdapterFactory {
 		}
 		return fgCWorkbenchAdapter;
 	}
-	
+
 	private IActionFilter getActionFilter(ICElement celement) {
 		if (fgCActionFilter == null) {
 			fgCActionFilter = new CActionFilter();

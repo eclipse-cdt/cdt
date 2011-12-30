@@ -12,14 +12,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui;
 
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.model.IWorkbenchAdapter;
+
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IParent;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 import org.eclipse.cdt.ui.CElementLabelProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.model.IWorkbenchAdapter;
+
+import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 
 /**
  * An implementation of the IWorkbenchAdapter for CElements.
@@ -38,6 +40,7 @@ public class CWorkbenchAdapter implements IWorkbenchAdapter {
 	/**
 	 * @see IWorkbenchAdapter#getChildren
 	 */
+	@Override
 	public Object[] getChildren(Object o) {
 		if (o instanceof IParent) {
 			try {
@@ -55,6 +58,7 @@ public class CWorkbenchAdapter implements IWorkbenchAdapter {
 	/**
 	 * @see IWorkbenchAdapter#getImageDescriptor
 	 */
+	@Override
 	public ImageDescriptor getImageDescriptor(Object element) {
 		if (element instanceof ICElement) {
 			return fImageProvider.getCImageDescriptor(
@@ -67,6 +71,7 @@ public class CWorkbenchAdapter implements IWorkbenchAdapter {
 	/**
 	 * @see IWorkbenchAdapter#getLabel
 	 */
+	@Override
 	public String getLabel(Object o) {
 		if (o instanceof ICElement) {
 			return fLabelProvider.getText(o);
@@ -77,6 +82,7 @@ public class CWorkbenchAdapter implements IWorkbenchAdapter {
 	/**
 	 * @see IWorkbenchAdapter#getParent
 	 */
+	@Override
 	public Object getParent(Object o) {
 		if (o instanceof ICElement) {
 			return ((ICElement) o).getParent();

@@ -52,7 +52,7 @@ import org.eclipse.cdt.ui.CDTUITools;
 import org.eclipse.cdt.ui.CElementGrouping;
 import org.eclipse.cdt.ui.IncludesGrouping;
 import org.eclipse.cdt.ui.NamespacesGrouping;
- 
+
 /**
  * A base content provider for C elements. It provides access to the
  * C element hierarchy without listening to changes in the C model.
@@ -83,11 +83,11 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	protected boolean fNamespacesGrouping= false;
 	protected boolean fMemberGrouping= false;
 	protected boolean fMacroGrouping= false;
-	
+
 	public BaseCElementContentProvider() {
 		this(false, false);
 	}
-	
+
 	public BaseCElementContentProvider(boolean provideMembers, boolean provideWorkingCopy) {
 	    fProvideMembers= provideMembers;
 		fProvideWorkingCopy= provideWorkingCopy;
@@ -161,7 +161,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	public boolean isMemberGroupingEnabled() {
 		return fMemberGrouping;
 	}
-	
+
 	/**
 	 * Enable/disable member grouping by common namespace.
 	 * @param enable
@@ -169,14 +169,14 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	public void setMemberGrouping(boolean enable) {
 		fMemberGrouping = enable;
 	}
-	
+
 	/**
 	 * @return whether grouping of macros is enabled
 	 */
 	public boolean isMacroGroupingEnabled() {
 		return fMacroGrouping;
 	}
-	
+
 	/**
 	 * Enable/disable marco grouping
 	 * @param enable
@@ -188,25 +188,29 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	/* (non-Cdoc)
 	 * Method declared on IContentProvider.
 	 */
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 	}
 
 	/* (non-Cdoc)
 	 * Method declared on IContentProvider.
 	 */
+	@Override
 	public void dispose() {
 	}
 
 	/* (non-Cdoc)
 	 * Method declared on IStructuredContentProvider.
 	 */
+	@Override
 	public Object[] getElements(Object parent) {
 		return getChildren(parent);
 	}
-	
+
 	/* (non-Cdoc)
 	 * Method declared on ITreeContentProvider.
 	 */
+	@Override
 	public Object[] getChildren(Object element) {
 		if (!exists(element))
 			return NO_CHILDREN;
@@ -263,6 +267,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	 *
 	 * @see ITreeContentProvider
 	 */
+	@Override
 	public boolean hasChildren(Object element) {
 		if (fProvideMembers) {
 			// assume TUs and binary files are never empty
@@ -303,7 +308,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 				return true;
 			}
 		}
-		
+
 		if (element instanceof CElementGrouping) {
 			return true;
 		}
@@ -311,10 +316,11 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		Object[] children= getChildren(element);
 		return (children != null) && children.length > 0;
 	}
-	 
+
 	/* (non-Cdoc)
 	 * Method declared on ITreeContentProvider.
 	 */
+	@Override
 	public Object getParent(Object element) {
 		if (!exists(element)) {
 			return null;
@@ -398,7 +404,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		}
 		return parent;
 	}
-	
+
 	protected Object[] getCProjects(ICModel cModel) throws CModelException {
 		Object[] objects = cModel.getCProjects();
 		try {
@@ -415,7 +421,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	protected Object[] getSourceRoots(ICProject cproject) throws CModelException {
 		if (!cproject.getProject().isOpen())
 			return NO_CHILDREN;
-			
+
 		List<ICElement> list= new ArrayList<ICElement>();
 		ICElement[] children = cproject.getChildren();
 		for (ICElement child : children) {
@@ -426,8 +432,8 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 					list.add(c2[k]);
 			} else if (CCorePlugin.showSourceRootsAtTopOfProject()) {
 				list.add(child);
-			} else if (child instanceof ISourceRoot && 
-						child.getResource().getParent().equals(cproject.getProject())) {	
+			} else if (child instanceof ISourceRoot &&
+						child.getResource().getParent().equals(cproject.getProject())) {
 				list.add(child);
 		}
 		}
@@ -579,7 +585,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			}
 		} catch (CModelException e) {
 		}
-		
+
 		Object[] result = children;
 		if (missingElements.size() > 0) {
             result = concatenate(result, missingElements.toArray());
@@ -593,7 +599,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	}
 
 	private List<ICElement> getMissingElements(ICContainer container, ICElement[] elements) {
-		// nested source roots may be filtered out below the project root, 
+		// nested source roots may be filtered out below the project root,
 		// we need to find them to add them back in
 		List<ICElement> missingElements = new ArrayList<ICElement>();
 		try {
@@ -643,7 +649,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		}
 		return filterNonCResources(members, cproject);
 	}
-	
+
 	private Object[] filterNonCResources(Object[] objects, ICProject cproject) throws CModelException {
 		ICElement[] binaries = null;
 		ICElement[] archives = null;

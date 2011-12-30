@@ -30,7 +30,7 @@ public class ASTLiteralNode implements IASTNode {
 	public ASTLiteralNode(String code) {
 		fCode= code;
 	}
-	
+
 	@Override
 	public String getRawSignature() {
 		return fCode;

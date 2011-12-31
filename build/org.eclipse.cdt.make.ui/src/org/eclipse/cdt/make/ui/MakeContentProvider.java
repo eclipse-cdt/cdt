@@ -223,6 +223,17 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 	}
 
 	/**
+	 * Refresh the whole view.
+	 */
+	private void refreshView() {
+		Display.getDefault().asyncExec(new Runnable() {
+			public void run() {
+				viewer.refresh();
+			}
+		});
+	}
+
+	/**
 	 * Refresh the project tree or the project subtree (in case of drill-down adapter) in the view.
 	 */
 	private void refreshProjectTree(final IProject project) {
@@ -261,6 +272,18 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 	}
 
 	public void targetChanged(MakeTargetEvent event) {
+		// Additions/removal of projects. Only notifications for projects having applicable builder come here.
+		int type = event.getType();
+		if (type == MakeTargetEvent.PROJECT_ADDED || type == MakeTargetEvent.PROJECT_REMOVED) {
+			refreshView();
+			return;
+		}
+
+		IMakeTarget[] targets = event.getTargets();
+		if (targets == null) {
+			return;
+		}
+
 		Set<IProject> affectedProjects = new HashSet<IProject>();
 		for (IMakeTarget target : event.getTargets()) {
 			IContainer container = target.getContainer();
@@ -280,11 +303,14 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 		}
 
 		for (IResourceDelta d : delta.getAffectedChildren(IResourceDelta.ADDED | IResourceDelta.REMOVED)) {
+			// handle folders only, additions/removal of projects are dealt with in #targetChanged(MakeTargetEvent)
 			IResource rc = d.getResource();
-			int rcType = rc.getType();
-			if (rcType == IResource.PROJECT || rcType == IResource.FOLDER) {
-				affectedProjects.add(rc.getProject());
-				return;
+			if (rc.getType() == IResource.FOLDER) {
+				IProject project = rc.getProject();
+				if (MakeCorePlugin.getDefault().getTargetManager().hasTargetBuilder(project)) {
+					affectedProjects.add(project);
+					return;
+				}
 			}
 		}
 
@@ -348,11 +374,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 	 */
 	public void preferenceChange(PreferenceChangeEvent event) {
 		if (event.getKey().equals(CCorePreferenceConstants.SHOW_SOURCE_ROOTS_AT_TOP_LEVEL_OF_PROJECT)) {
-			Display.getDefault().asyncExec(new Runnable() {
-				public void run() {
-					viewer.refresh();
-				}
-			});
+			refreshView();
 		}
 	}
 

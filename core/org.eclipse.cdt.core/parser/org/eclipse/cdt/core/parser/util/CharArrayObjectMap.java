@@ -20,7 +20,7 @@ import java.util.List;
  * @author Doug Schaefer
  */
 public class CharArrayObjectMap <T> extends CharTable {
-    public static final CharArrayObjectMap<Object> EMPTY_MAP = new CharArrayObjectMap<Object>(0) {
+    public static final CharArrayObjectMap<?> EMPTY_MAP = new CharArrayObjectMap<Object>(0) {
         @Override
 		public Object clone() { return this; }
         @Override

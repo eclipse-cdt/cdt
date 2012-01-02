@@ -341,7 +341,7 @@ public class LookupData {
         if (foundItems instanceof Object[])
             return ((Object[]) foundItems).length != 0;
         if (foundItems instanceof CharArrayObjectMap)
-            return ((CharArrayObjectMap) foundItems).size() != 0;
+            return ((CharArrayObjectMap<?>) foundItems).size() != 0;
         return false;
     }
 

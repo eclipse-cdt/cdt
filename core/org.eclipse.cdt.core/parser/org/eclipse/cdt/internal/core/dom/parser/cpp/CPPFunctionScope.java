@@ -38,7 +38,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
  */
 public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
 
-    private CharArrayObjectMap labels = CharArrayObjectMap.EMPTY_MAP;
+    private CharArrayObjectMap<IBinding> labels = CharArrayObjectMap.emptyMap();
     
 	/**
 	 * @param physicalNode
@@ -47,6 +47,7 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
 		super(physicalNode);
 	}
 	
+	@Override
 	public EScopeKind getKind() {
 		return EScopeKind.eLocal;
 	}
@@ -61,7 +62,7 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
 	        return;
 	    
 	    if (labels == CharArrayObjectMap.EMPTY_MAP)
-	        labels = new CharArrayObjectMap(2);
+	        labels = new CharArrayObjectMap<IBinding>(2);
 	    
 	    labels.put(binding.getNameCharArray(), binding);
 	}
@@ -70,7 +71,7 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#getBinding(int, char[])
 	 */
 	public IBinding getBinding(IASTName name) {
-	    return (IBinding) labels.get(name.getLookupKey());
+	    return labels.get(name.getLookupKey());
 	}
 
 	/* (non-Javadoc)
@@ -84,7 +85,7 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
 	    for (int i = 0; i < labels.size(); i++) {
 	    	char[] key = labels.keyAt(i);
 	    	if (CharArrayUtils.equals(key, n)) {
-	    		bindings.add((IBinding) labels.get(key));
+	    		bindings.add(labels.get(key));
 	    	}
 	    }
 	    
@@ -108,7 +109,8 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope#getBodyScope()
      */
-    public IScope getBodyScope() {
+    @Override
+	public IScope getBodyScope() {
         IASTFunctionDeclarator fnDtor = (IASTFunctionDeclarator) getPhysicalNode();
         IASTNode parent = fnDtor.getParent();
         if (parent instanceof IASTFunctionDefinition) {

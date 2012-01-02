@@ -96,6 +96,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.Value;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArrayType;
@@ -1130,7 +1131,7 @@ public class CPPTemplates {
 					IType newMemberOfClass = instantiateType(memberOfClass, tpMap, packOffset, within);
 					if (!(newMemberOfClass instanceof ICPPClassType || newMemberOfClass instanceof UniqueType 
 							|| newMemberOfClass instanceof ICPPUnknownBinding)) {
-						newMemberOfClass = memberOfClass;
+						return new ProblemType(ISemanticProblem.BINDING_INVALID_TYPE);
 					}
 					if (newNestedType != nestedType || newMemberOfClass != memberOfClass) {
 						return new CPPPointerToMemberType(newNestedType, newMemberOfClass,

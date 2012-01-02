@@ -293,7 +293,7 @@ public class TemplateArgumentDeduction {
 		p= getArgumentTypeForDeduction(p, a instanceof ICPPReferenceType);
 		a= SemanticUtil.getNestedType(a, SemanticUtil.REF | SemanticUtil.TDEF);
 		TemplateArgumentDeduction deduct= new TemplateArgumentDeduction(tmplParams, null, map, 0);
-		if (!deduct.fromType(p, a, false)) {
+		if (!deduct.fromType(p, a, true)) {
 			return null;
 		}
 		
@@ -664,18 +664,24 @@ public class TemplateArgumentDeduction {
 			} else if (p instanceof ICPPPointerToMemberType) {
 				if (!(a instanceof ICPPPointerToMemberType))
 					return false;
-				if (!fromType(((ICPPPointerToMemberType) p).getMemberOfClass(),
-						((ICPPPointerToMemberType) a).getMemberOfClass(), false)) {
+				final ICPPPointerToMemberType ptrP = (ICPPPointerToMemberType) p;
+				final ICPPPointerToMemberType ptrA = (ICPPPointerToMemberType) a;
+				if (!allowCVQConversion && (ptrP.isConst() != ptrA.isConst() || ptrP.isVolatile() != ptrA.isVolatile()))
+					return false;
+				if (!fromType(ptrP.getMemberOfClass(), ptrA.getMemberOfClass(), false)) {
 					return false;
 				}
-				p = ((ICPPPointerToMemberType) p).getType();
-				a = ((ICPPPointerToMemberType) a).getType();
+				p = ptrP.getType();
+				a = ptrA.getType();
 			} else if (p instanceof IPointerType) {
-				if (!(a instanceof IPointerType)) {
+				if (!(a instanceof IPointerType)) 
 					return false;
-				}
-				p = ((IPointerType) p).getType();
-				a = ((IPointerType) a).getType();
+				final IPointerType ptrP = (IPointerType) p;
+				final IPointerType ptrA = (IPointerType) a;
+				if (!allowCVQConversion && (ptrP.isConst() != ptrA.isConst() || ptrP.isVolatile() != ptrA.isVolatile()))
+					return false;
+				p = ptrP.getType();
+				a = ptrA.getType();
 			} else if (p instanceof ICPPReferenceType) {
 				if (!(a instanceof ICPPReferenceType)) {
 					return false;
@@ -730,10 +736,10 @@ public class TemplateArgumentDeduction {
 				if (remaining != CVQualifier.NONE) {
 					a= SemanticUtil.addQualifiers(a, remaining.isConst(), remaining.isVolatile(), remaining.isRestrict());
 				}
-			} else if (p instanceof IFunctionType) {
-				if (!(a instanceof IFunctionType))
+			} else if (p instanceof ICPPFunctionType) {
+				if (!(a instanceof ICPPFunctionType))
 					return false;
-				return fromFunctionType((IFunctionType) p, (IFunctionType) a);
+				return fromFunctionType((ICPPFunctionType) p, (ICPPFunctionType) a);
 			} else if (p instanceof ICPPTemplateParameter) {
 				ICPPTemplateArgument current= fDeducedArgs.getArgument(((ICPPTemplateParameter) p).getParameterID(), fPackOffset);
 				if (current != null) {
@@ -820,7 +826,10 @@ public class TemplateArgumentDeduction {
 		return true;
 	}
 
-	private boolean fromFunctionType(IFunctionType ftp, IFunctionType fta) throws DOMException {
+	private boolean fromFunctionType(ICPPFunctionType ftp, ICPPFunctionType fta) throws DOMException {
+		if (ftp.isConst() != fta.isConst() || ftp.isVolatile() != fta.isVolatile())
+			return false;
+		
 		if (!fromType(ftp.getReturnType(), fta.getReturnType(), false)) 
 			return false;
 		

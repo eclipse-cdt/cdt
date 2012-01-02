@@ -5677,4 +5677,16 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testPackExpansionsAsArguments_367560() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <typename> class A;
+	//	template <typename T> class A<void (T::*)()> {};
+	//	template <typename T> class A<void (T::*)() const> {};
+	//
+	//	struct S {};
+	//	int main()  {
+	//	    A<void (S::*)()> m;
+	//	}
+	public void testDeductionForConstFunctionType_367562() throws Exception {
+		parseAndCheckBindings();
+	}
 }

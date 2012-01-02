@@ -5668,4 +5668,13 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testResolvingAutoTypeWithDependentExpression_367472() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	void foo(int, int);
+	//	template <typename... Args> void bar(Args... args) {
+	//	    foo(1,2,args...);
+	//	    foo(args...);
+	//	}
+	public void testPackExpansionsAsArguments_367560() throws Exception {
+		parseAndCheckBindings();
+	}
 }

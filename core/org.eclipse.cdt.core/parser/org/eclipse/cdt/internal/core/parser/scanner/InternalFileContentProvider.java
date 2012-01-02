@@ -134,5 +134,12 @@ public abstract class InternalFileContentProvider extends IncludeFileContentProv
 			}
 			list.add(sig);
 		}
+	}
+
+	/** 
+	 * Return the path of the context of <code>null</code>, if there is no context.
+	 */
+	public String getContextPath() {
+		return null;
 	}		
 }

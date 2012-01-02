@@ -297,11 +297,14 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
         fMacroExpander= new MacroExpander(this, fMacroDictionary, fLocationMap, fLexOptions);
         fIncludeFileResolutionHeuristics= fFileContentProvider.getIncludeHeuristics();
 
-        final String filePath= fRootContent.getFileLocation();
-        configureIncludeSearchPath(new File(filePath).getParentFile(), info);
+        String contextPath= fFileContentProvider.getContextPath();
+        if (contextPath == null) {
+        	contextPath= fRootContent.getFileLocation();
+        }
+        configureIncludeSearchPath(new File(contextPath).getParentFile(), info);
         setupMacroDictionary(configuration, info, language);		
 
-        ILocationCtx ctx= fLocationMap.pushTranslationUnit(filePath, fRootContent.getSource());
+        ILocationCtx ctx= fLocationMap.pushTranslationUnit(fRootContent.getFileLocation(), fRootContent.getSource());
         Lexer lexer = new Lexer(fRootContent.getSource(), fLexOptions, this, this);
         fRootContext= fCurrentContext= new ScannerContext(ctx, null, lexer);
         if (info instanceof IExtendedScannerInfo) {

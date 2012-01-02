@@ -295,4 +295,14 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 		}
 		return IIndexFile.EMPTY_FILE_ARRAY;
 	}
+	
+	@Override
+	public String getContextPath() {
+		if (fContextToHeaderGap != null)
+			try {
+				return fPathResolver.getASTPath(fContextToHeaderGap[0].getLocation());
+			} catch (CoreException e) {
+			}
+		return null;
+	}
 }

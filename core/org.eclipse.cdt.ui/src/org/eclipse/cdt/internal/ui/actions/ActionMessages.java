@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2001, 2010 IBM Corporation and others.
+ *  Copyright (c) 2001, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -91,6 +91,9 @@ public class ActionMessages extends NLS {
 	public static String FormatAllAction_failedvalidateedit_message;
 	public static String FormatAllAction_noundo_title;
 	public static String FormatAllAction_noundo_message;
+	public static String CollapseAllAction_label;
+	public static String CollapseAllAction_tooltip;
+	public static String CollapseAllAction_description;
 
 	static {
 		// Initialize resource bundle.

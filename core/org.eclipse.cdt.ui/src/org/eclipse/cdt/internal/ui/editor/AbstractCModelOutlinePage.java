@@ -21,6 +21,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -46,6 +47,8 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
+import org.eclipse.ui.handlers.CollapseAllHandler;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.IShowInSource;
@@ -71,6 +74,7 @@ import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.actions.AbstractToggleLinkingAction;
 import org.eclipse.cdt.internal.ui.actions.ActionMessages;
+import org.eclipse.cdt.internal.ui.actions.CollapseAllAction;
 import org.eclipse.cdt.internal.ui.cview.SelectionTransferDragAdapter;
 import org.eclipse.cdt.internal.ui.cview.SelectionTransferDropAdapter;
 import org.eclipse.cdt.internal.ui.dnd.CDTViewerDragAdapter;
@@ -294,6 +298,10 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 	 * @since 3.0
 	 */
 	private ActionGroup fCustomFiltersActionGroup;
+	/**
+	 * @since 5.4
+	 */
+	private CollapseAllAction fCollapseAllAction;
 
 	/**
 	 * Create a new outline page for the given editor.
@@ -520,6 +528,9 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 		
 		fTreeViewer.setInput(fInput);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(control, ICHelpContextIds.COUTLINE_VIEW);
+		
+		IHandlerService handlerService= (IHandlerService)site.getService(IHandlerService.class);
+		handlerService.activateHandler(CollapseAllHandler.COMMAND_ID, new ActionHandler(fCollapseAllAction));
 	}
 
 	@Override
@@ -582,6 +593,8 @@ public abstract class AbstractCModelOutlinePage extends Page implements IContent
 	protected void registerActionBars(IActionBars actionBars) {
 		IToolBarManager toolBarManager= actionBars.getToolBarManager();
 		
+		fCollapseAllAction = new CollapseAllAction(fTreeViewer);
+		toolBarManager.add(fCollapseAllAction);
 		LexicalSortingAction action= new LexicalSortingAction(getTreeViewer());
 		toolBarManager.add(action);
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -927,12 +927,6 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 			return viewer.getInput();
 		}
 		return null;
-	}
-
-	public void collapseAll() {
-		viewer.getControl().setRedraw(false);
-		viewer.collapseToLevel(getViewPartInput(), AbstractTreeViewer.ALL_LEVELS);
-		viewer.getControl().setRedraw(true);
 	}
 
 	void restoreState(IMemento memento) {

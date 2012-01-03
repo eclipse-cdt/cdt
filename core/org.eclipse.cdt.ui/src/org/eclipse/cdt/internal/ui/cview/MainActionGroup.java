@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,6 +45,7 @@ import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
 import org.eclipse.cdt.ui.refactoring.actions.CRefactoringActionGroup;
 
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
+import org.eclipse.cdt.internal.ui.actions.CollapseAllAction;
 import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
 import org.eclipse.cdt.internal.ui.editor.OpenIncludeAction;
 import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
@@ -133,6 +134,7 @@ public class MainActionGroup extends CViewActionGroup {
 		//sortByTypeAction = new SortViewAction(this, true);
 
 		IPropertyChangeListener workingSetUpdater = new IPropertyChangeListener() {
+			@Override
 			public void propertyChange(PropertyChangeEvent event) {
 				String property = event.getProperty();
                                  
@@ -158,7 +160,7 @@ public class MainActionGroup extends CViewActionGroup {
 		importAction = new ImportResourcesAction(getCView().getSite().getWorkbenchWindow());
 		exportAction = new ExportResourcesAction(getCView().getSite().getWorkbenchWindow());
 
-		collapseAllAction = new CollapseAllAction(getCView());
+		collapseAllAction = new CollapseAllAction(getCView().getViewer());
 
 		toggleLinkingAction = new ToggleLinkingAction(getCView()); 
 		toggleLinkingAction.setImageDescriptor(getImageDescriptor("elcl16/synced.gif"));//$NON-NLS-1$

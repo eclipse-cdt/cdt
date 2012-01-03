@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,9 +25,6 @@ public final class CViewMessages extends NLS {
 	public static String BuildAction_label;
 	public static String RebuildAction_label;
 	public static String CleanAction_label;
-	public static String CollapseAllAction_label;
-	public static String CollapseAllAction_tooltip;
-	public static String CollapseAllAction_description;
 	public static String CopyAction_title;
 	public static String CopyAction_toolTip;
 	public static String PasteAction_title;

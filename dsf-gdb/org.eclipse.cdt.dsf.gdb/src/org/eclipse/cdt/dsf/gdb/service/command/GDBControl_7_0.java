@@ -11,6 +11,7 @@
  *     Ericsson           - New version for 7_0
  *     Vladimir Prus (CodeSourcery) - Support for -data-read-memory-bytes (bug 322658)
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
+ *     Marc Khouzam (Ericsson) - Remove the use of 'maintenance set python print-stack' for GDB >= 7.4 (Bug 367788)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service.command;
 
@@ -34,10 +35,13 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
+import org.eclipse.cdt.dsf.debug.service.IDsfDebugServicesFactory;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.FinalLaunchSequence;
+import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
+import org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactory;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceRecordSelectedChangedDMEvent;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend;
@@ -479,7 +483,28 @@ public class GDBControl_7_0 extends AbstractMIControl implements IGDBControl {
 	 * @since 4.0
 	 */
 	public void setPrintPythonErrors(boolean enabled, RequestMonitor rm) {
+		// With GDB 7.4, the command 'maintenance set python print-stack' is not supported.
+		// The new command "set python print-stack none|full|message" has replaced it, with
+		// the default being 'message'.  This new default is good enough for us, so no
+		// need to do anything for GDB >= 7.4.
+		//
+		// We do this fix locally here for the maintenance branch to avoid adding APIs
+		// Bug 367788
+		ILaunch launch = (ILaunch)getSession().getModelAdapter(ILaunch.class);
+		if (launch instanceof GdbLaunch) {
+			IDsfDebugServicesFactory factory = ((GdbLaunch)launch).getServiceFactory();
+			if (factory instanceof GdbDebugServicesFactory) {
+				String gdbVersion = ((GdbDebugServicesFactory)factory).getVersion();
+				// Version 7.3.50 of GDB is the version of the 7.4 'pre-release'.
+				// Once GDB 7.4 is released, we can change this number to "7.4"
+				if ("7.3.50".compareTo(gdbVersion) <= 0) { //$NON-NLS-1$
+					rm.done();
+					return;
+				}
+			}
+		}
 		
+		// For 7.0 =< GDB < 7.4
 		String subCommand = "set python print-stack " + (enabled ? "on" : "off");   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 		
 		queueCommand(

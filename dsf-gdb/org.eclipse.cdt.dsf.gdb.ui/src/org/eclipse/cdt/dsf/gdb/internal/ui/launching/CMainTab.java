@@ -107,6 +107,7 @@ public class CMainTab extends CAbstractMainTab {
 	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+    @Override
 	public void createControl(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
@@ -149,6 +150,7 @@ public class CMainTab extends CAbstractMainTab {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fProgText.setLayoutData(gd);
 		fProgText.addModifyListener(new ModifyListener() {
+            @Override
 			public void modifyText(ModifyEvent evt) {
 				updateLaunchConfigurationDialog();
 			}
@@ -208,6 +210,7 @@ public class CMainTab extends CAbstractMainTab {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fCoreText.setLayoutData(gd);
 		fCoreText.addModifyListener(new ModifyListener() {
+            @Override
 			public void modifyText(ModifyEvent evt) {
 				updateLaunchConfigurationDialog();
 			}
@@ -237,11 +240,13 @@ public class CMainTab extends CAbstractMainTab {
 		});
 		
 		fCoreTypeCombo.addSelectionListener(new SelectionListener() {
+            @Override
 			public void widgetSelected(SelectionEvent e) {
 				updateCoreFileLabel();
 				updateLaunchConfigurationDialog();
 			}
 
+            @Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
@@ -268,6 +273,7 @@ public class CMainTab extends CAbstractMainTab {
 	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+    @Override
 	public void initializeFrom(ILaunchConfiguration config) {
 		filterPlatform = getPlatform(config);
 		updateProjectFromConfig(config);
@@ -500,6 +506,7 @@ public class CMainTab extends CAbstractMainTab {
 	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+    @Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		// We set empty attributes for project & program so that when one config is
 		// compared to another, the existence of empty attributes doesn't cause and
@@ -592,6 +599,7 @@ public class CMainTab extends CAbstractMainTab {
 	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
+    @Override
 	public String getName() {
 		return LaunchMessages.getString("CMainTab.Main"); //$NON-NLS-1$
 	}

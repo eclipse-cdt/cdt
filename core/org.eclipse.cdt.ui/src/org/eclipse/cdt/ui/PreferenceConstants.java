@@ -23,17 +23,12 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.text.ICColorConstants;
 
-import org.eclipse.cdt.internal.ui.ICThemeConstants;
 import org.eclipse.cdt.internal.ui.preferences.formatter.FormatterProfileManager;
 import org.eclipse.cdt.internal.ui.text.spelling.SpellCheckEngine;
 
@@ -553,6 +548,45 @@ public class PreferenceConstants {
 	 * @since 5.0
 	 */
 	public final static String EDITOR_ASM_DIRECTIVE_ITALIC= ICColorConstants.ASM_DIRECTIVE + EDITOR_ITALIC_SUFFIX;
+
+	/**
+	 * A named preference that holds the color used to render doxygen tags.
+	 * <p>
+	 * Value is of type <code>String</code>. A RGB color value encoded as a string
+	 * using class <code>PreferenceConverter</code>
+	 * </p>
+	 *
+	 * @see org.eclipse.jface.resource.StringConverter
+	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 * @since 5.4
+	 */
+	public static final String DOXYGEN_TAG_COLOR= "org.eclipse.cdt.internal.ui.text.doctools.doxygen.recognizedTag"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that holds the color used to render doxygen single line comments.
+	 * <p>
+	 * Value is of type <code>String</code>. A RGB color value encoded as a string
+	 * using class <code>PreferenceConverter</code>
+	 * </p>
+	 *
+	 * @see org.eclipse.jface.resource.StringConverter
+	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 * @since 5.4
+	 */
+	public static final String DOXYGEN_SINGLE_LINE_COLOR= "org.eclipse.cdt.internal.ui.text.doctools.doxygen.single"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that holds the color used to render doxygen multi-line comments.
+	 * <p>
+	 * Value is of type <code>String</code>. A RGB color value encoded as a string
+	 * using class <code>PreferenceConverter</code>
+	 * </p>
+	 *
+	 * @see org.eclipse.jface.resource.StringConverter
+	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 * @since 5.4
+	 */
+	public static final String DOXYGEN_MULTI_LINE_COLOR= "org.eclipse.cdt.internal.ui.text.doctools.doxygen.multi"; //$NON-NLS-1$
 
 	/**
 	 * The symbolic font name for the C/C++ editor text font
@@ -1859,8 +1893,6 @@ public class PreferenceConstants {
      * @param store the preference store to be initialized
      */
     public static void initializeDefaultValues(IPreferenceStore store) {
-		ColorRegistry registry= PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry();
-
 		store.setDefault(PreferenceConstants.EDITOR_CORRECTION_INDICATION, false);
 		store.setDefault(PreferenceConstants.EDITOR_SHOW_SEGMENTS, false);
 		store.setDefault(PreferenceConstants.PREF_SHOW_CU_CHILDREN, true);
@@ -1875,64 +1907,49 @@ public class PreferenceConstants {
 
 		store.setDefault(EDITOR_SOURCE_HOVER_BACKGROUND_COLOR_SYSTEM_DEFAULT, true);
 
-		// Coloring
-		PreferenceConverter.setDefault(store, EDITOR_MULTI_LINE_COMMENT_COLOR, new RGB(63, 127, 95));
+		// Syntax highlighting
 		store.setDefault(EDITOR_MULTI_LINE_COMMENT_BOLD, false);
 		store.setDefault(EDITOR_MULTI_LINE_COMMENT_ITALIC, false);
 
-		PreferenceConverter.setDefault(store, EDITOR_SINGLE_LINE_COMMENT_COLOR, new RGB(63, 127, 95));
 		store.setDefault(EDITOR_SINGLE_LINE_COMMENT_BOLD, false);
 		store.setDefault(EDITOR_SINGLE_LINE_COMMENT_ITALIC, false);
 
-        PreferenceConverter.setDefault(store, PreferenceConstants.EDITOR_TASK_TAG_COLOR, new RGB(127, 159, 191));
-        store.setDefault(PreferenceConstants.EDITOR_TASK_TAG_BOLD, true);
-        store.setDefault(PreferenceConstants.EDITOR_TASK_TAG_ITALIC, false);
+		store.setDefault(EDITOR_TASK_TAG_BOLD, true);
+        store.setDefault(EDITOR_TASK_TAG_ITALIC, false);
 
-        PreferenceConverter.setDefault(store, EDITOR_C_KEYWORD_COLOR, new RGB(127, 0, 85));
 		store.setDefault(EDITOR_C_KEYWORD_BOLD, true);
 		store.setDefault(EDITOR_C_KEYWORD_ITALIC, false);
 
-		PreferenceConverter.setDefault(store, EDITOR_C_BUILTIN_TYPE_COLOR, new RGB(127, 0, 85));
 		store.setDefault(EDITOR_C_BUILTIN_TYPE_BOLD, true);
 		store.setDefault(EDITOR_C_BUILTIN_TYPE_ITALIC, false);
 
-		PreferenceConverter.setDefault(store, EDITOR_C_STRING_COLOR, new RGB(42, 0, 255));
 		store.setDefault(EDITOR_C_STRING_BOLD, false);
 		store.setDefault(EDITOR_C_STRING_ITALIC, false);
 
-		PreferenceConverter.setDefault(store, EDITOR_C_DEFAULT_COLOR, new RGB(0, 0, 0));
 		store.setDefault(EDITOR_C_DEFAULT_BOLD, false);
 		store.setDefault(EDITOR_C_DEFAULT_ITALIC, false);
 
-        PreferenceConverter.setDefault(store, EDITOR_C_OPERATOR_COLOR, new RGB(0, 0, 0));
         store.setDefault(EDITOR_C_OPERATOR_BOLD, false);
         store.setDefault(EDITOR_C_OPERATOR_ITALIC, false);
 
-        PreferenceConverter.setDefault(store, EDITOR_C_BRACES_COLOR, new RGB(0, 0, 0));
         store.setDefault(EDITOR_C_BRACES_BOLD, false);
         store.setDefault(EDITOR_C_BRACES_ITALIC, false);
 
-        PreferenceConverter.setDefault(store, EDITOR_C_NUMBER_COLOR, new RGB(0, 0, 0));
         store.setDefault(EDITOR_C_NUMBER_BOLD, false);
         store.setDefault(EDITOR_C_NUMBER_ITALIC, false);
 
-        PreferenceConverter.setDefault(store, EDITOR_PP_DIRECTIVE_COLOR, new RGB(127, 0, 85));
 		store.setDefault(EDITOR_PP_DIRECTIVE_BOLD, true);
 		store.setDefault(EDITOR_PP_DIRECTIVE_ITALIC, false);
 
-        PreferenceConverter.setDefault(store, EDITOR_PP_HEADER_COLOR, new RGB(42, 0, 255));
         store.setDefault(EDITOR_PP_HEADER_BOLD, false);
         store.setDefault(EDITOR_PP_HEADER_ITALIC, false);
 
-        PreferenceConverter.setDefault(store, EDITOR_PP_DEFAULT_COLOR, new RGB(0, 0, 0));
         store.setDefault(EDITOR_PP_DEFAULT_BOLD, false);
         store.setDefault(EDITOR_PP_DEFAULT_ITALIC, false);
 
-        PreferenceConverter.setDefault(store, EDITOR_ASM_LABEL_COLOR, new RGB(127, 0, 85));
 		store.setDefault(EDITOR_ASM_LABEL_BOLD, true);
 		store.setDefault(EDITOR_ASM_LABEL_ITALIC, false);
 
-        PreferenceConverter.setDefault(store, EDITOR_ASM_DIRECTIVE_COLOR, new RGB(127, 0, 85));
 		store.setDefault(EDITOR_ASM_DIRECTIVE_BOLD, true);
 		store.setDefault(EDITOR_ASM_DIRECTIVE_ITALIC, false);
 
@@ -1971,23 +1988,6 @@ public class PreferenceConstants {
 		store.setDefault(PreferenceConstants.CODEASSIST_CATEGORY_ORDER, "org.eclipse.cdt.ui.parserProposalCategory:65539\0org.eclipse.cdt.ui.textProposalCategory:65541\0org.eclipse.cdt.ui.templateProposalCategory:2\0org.eclipse.cdt.ui.helpProposalCategory:5\0"); //$NON-NLS-1$
 
 		store.setDefault(PreferenceConstants.CODEASSIST_PROPOSALS_TIMEOUT, 5000);
-
-		setDefaultAndFireEvent(
-				store,
-				PreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND,
-				findRGB(registry, ICThemeConstants.CODEASSIST_PROPOSALS_BACKGROUND, new RGB(255, 255, 255)));
-		setDefaultAndFireEvent(
-				store,
-				PreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND,
-				findRGB(registry, ICThemeConstants.CODEASSIST_PROPOSALS_FOREGROUND, new RGB(0, 0, 0)));
-		setDefaultAndFireEvent(
-				store,
-				PreferenceConstants.CODEASSIST_PARAMETERS_BACKGROUND,
-				findRGB(registry, ICThemeConstants.CODEASSIST_PARAMETERS_BACKGROUND, new RGB(255, 255, 255)));
-		setDefaultAndFireEvent(
-				store,
-				PreferenceConstants.CODEASSIST_PARAMETERS_FOREGROUND,
-				findRGB(registry, ICThemeConstants.CODEASSIST_PARAMETERS_FOREGROUND, new RGB(0, 0, 0)));
 
 		// Refactoring.
 		store.setDefault(PreferenceConstants.REFACTOR_SAVE_ALL_EDITORS, false);
@@ -2081,6 +2081,9 @@ public class PreferenceConstants {
 		store.setDefault(NAME_STYLE_CPP_TEST_PREFIX, ""); //$NON-NLS-1$
 		store.setDefault(NAME_STYLE_CPP_TEST_SUFFIX, "_test.cpp"); //$NON-NLS-1$
 		store.setDefault(NAME_STYLE_CPP_TEST_WORD_DELIMITER, ""); //$NON-NLS-1$
+
+		// Colors that are set by the current theme
+		CUIPreferenceInitializer.setThemeBasedPreferences(store, false);
     }
 
     /**
@@ -2149,39 +2152,4 @@ public class PreferenceConstants {
 		return getPreferenceNode(key, project).getBoolean(key, defaultValue);
 	}
 
-	/**
-	 * Sets the default value and fires a property
-	 * change event if necessary.
-	 *
-	 * @param store	the preference store
-	 * @param key the preference key
-	 * @param newValue the new value
-	 * @since 5.0
-	 */
-	private static void setDefaultAndFireEvent(IPreferenceStore store, String key, RGB newValue) {
-		RGB oldValue= null;
-		if (store.isDefault(key))
-			oldValue= PreferenceConverter.getDefaultColor(store, key);
-
-		PreferenceConverter.setDefault(store, key, newValue);
-
-		if (oldValue != null && !oldValue.equals(newValue))
-			store.firePropertyChangeEvent(key, oldValue, newValue);
-	}
-
-	/**
-	 * Returns the RGB for the given key in the given color registry.
-	 *
-	 * @param registry the color registry
-	 * @param key the key for the constant in the registry
-	 * @param defaultRGB the default RGB if no entry is found
-	 * @return RGB the RGB
-	 * @since 5.0
-	 */
-	private static RGB findRGB(ColorRegistry registry, String key, RGB defaultRGB) {
-		RGB rgb= registry.getRGB(key);
-		if (rgb != null)
-			return rgb;
-		return defaultRGB;
-	}
 }

@@ -70,6 +70,7 @@ public class TracingConsole extends IOConsole {
 	protected void init() {
         super.init();
         fSession.getExecutor().submit(new DsfRunnable() {
+            @Override
         	public void run() {
         		fSession.addServiceEventListener(TracingConsole.this, null);
         	}
@@ -84,6 +85,7 @@ public class TracingConsole extends IOConsole {
 		}
         try {
         	fSession.getExecutor().submit(new DsfRunnable() {
+                @Override
         		public void run() {
         			fSession.removeServiceEventListener(TracingConsole.this);
         		}
@@ -99,6 +101,7 @@ public class TracingConsole extends IOConsole {
     private void setStreamInService() {
     	try {
     		fSession.getExecutor().submit(new DsfRunnable() {
+                @Override
     			public void run() {
     				DsfServicesTracker tracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), fSession.getId());
     				IGDBControl control = tracker.getService(IGDBControl.class);
@@ -146,6 +149,7 @@ public class TracingConsole extends IOConsole {
     	String name = getName();
     	if (!name.equals(newName)) {
     		Runnable r = new Runnable() {
+                @Override
     			public void run() {
     				setName(newName);
     			}

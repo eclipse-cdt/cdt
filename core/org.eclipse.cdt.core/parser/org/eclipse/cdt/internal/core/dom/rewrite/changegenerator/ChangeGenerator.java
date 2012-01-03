@@ -58,16 +58,14 @@ import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationMap;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTRewriteAnalyzer;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ASTWriter;
+import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ContainerNode;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ProblemRuntimeException;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 import org.eclipse.cdt.internal.core.dom.rewrite.util.FileHelper;
-import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.cdt.internal.formatter.CCodeFormatter;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -77,7 +75,6 @@ import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
-import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.ReplaceEdit;
@@ -557,36 +554,51 @@ public class ChangeGenerator extends ASTVisitor {
 	}
 
 	private void handleAppends(IASTTranslationUnit tu) {
-		ASTWriter synthWriter = new ASTWriter();
-		synthWriter.setModificationStore(modificationStore);
+		List<ASTModification> modifications = getModifications(tu, ModificationKind.APPEND_CHILD);
+		if (modifications.isEmpty())
+			return;
 
-		for (ASTModification modification : getModifications(tu, ModificationKind.APPEND_CHILD)) {
-			IASTNode targetNode = modification.getTargetNode();
-			IASTFileLocation targetLocation = targetNode.getFileLocation();
-			String currentFile = targetLocation.getFileName();
-			IPath implPath = new Path(currentFile);
-			IFile relevantFile= ResourceLookup.selectFileForLocation(implPath, null);
-			if (relevantFile == null || !relevantFile.exists()) { // If not in workspace or local file system
-			    throw new UnhandledASTModificationException(modification);
+		IASTNode prevNode = null;
+		IASTDeclaration[] declarations = tu.getDeclarations();
+		if (declarations.length != 0) {
+			prevNode = declarations[declarations.length - 1];
+		} else {
+			IASTPreprocessorStatement[] preprocessorStatements = tu.getAllPreprocessorStatements();
+			if (preprocessorStatements.length != 0) {
+				prevNode = preprocessorStatements[preprocessorStatements.length - 1];
 			}
-			MultiTextEdit edit;
-			if (changes.containsKey(relevantFile)) {
-				edit = changes.get(relevantFile);
-			} else {
-				edit = new MultiTextEdit();
-				changes.put(relevantFile, edit);
-			}
-			String code = synthWriter.write(modification.getNewNode(), commentMap);
-
-			if (targetNode instanceof IASTTranslationUnit &&
-					((IASTTranslationUnit) targetNode).getDeclarations().length > 0) {
-				IASTTranslationUnit targetTu = (IASTTranslationUnit) targetNode;
-				IASTDeclaration lastDecl = targetTu.getDeclarations()[targetTu.getDeclarations().length - 1];
-				targetLocation = lastDecl.getFileLocation();
-			}
-			String lineDelimiter = FileHelper.determineLineDelimiter(tu.getRawSignature());
-			edit.addChild(new InsertEdit(endOffset(targetLocation),	lineDelimiter + lineDelimiter + code));
 		}
+		int offset = prevNode != null ? getEndOffsetIncludingComments(prevNode) : 0;
+		String source = tu.getRawSignature();
+		int endOffset = skipTrailingBlankLines(source, offset);
+
+		ChangeGeneratorWriterVisitor writer =
+				new ChangeGeneratorWriterVisitor(modificationStore, commentMap);
+		IASTNode newNode = null;
+		for (ASTModification modification : modifications) {
+			boolean first = newNode == null;
+			newNode = modification.getNewNode();
+			if (first) {
+				if (prevNode != null) {
+					writer.newLine();
+					if (ASTWriter.requireBlankLineInBetween(prevNode, newNode)) {
+						writer.newLine();
+					}
+				}
+			}
+			newNode.accept(writer);
+		}
+		if (prevNode != null) {
+			IASTNode nextNode = getNextSiblingOrPreprocessorNode(prevNode);
+			if (nextNode != null && ASTWriter.requireBlankLineInBetween(newNode, nextNode)) {
+				writer.newLine();
+			}
+		}
+
+		String code = writer.toString();
+		IFile file = FileHelper.getFileFromNode(tu);
+		MultiTextEdit parentEdit = getEdit(tu, file);
+		parentEdit.addChild(new ReplaceEdit(offset, endOffset - offset, code));
 	}
 
 	/**
@@ -1016,6 +1028,13 @@ public class ChangeGenerator extends ASTVisitor {
 		if (modification.getKind() != ModificationKind.APPEND_CHILD)
 			return false;
 		IASTNode node = modification.getNewNode();
+		if (node instanceof ContainerNode) {
+			for (IASTNode containedNode : ((ContainerNode) node).getNodes()) {
+				if (!(containedNode instanceof IASTDeclaration || containedNode instanceof IASTStatement))
+					return false;
+			}
+			return true;
+		}
 		return node instanceof IASTDeclaration || node instanceof IASTStatement;
 	}
 

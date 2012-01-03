@@ -1,4 +1,4 @@
-//!TestSimpleNamespaceInClassToInHeader
+//!Test simple namespace in class to in header
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
 filename=A.h
@@ -30,7 +30,7 @@ inline void A::foo() {
 }
 
 }
-//!TestSimpleNamespaceInHeaderToImplementationWithinNSDefinition
+//!Test simple namespace in header to implementation within namespace definition
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
 filename=A.h
@@ -80,8 +80,7 @@ void A::foo() {
 }
 
 }
-
-//!TestSimpleNamespaceInHeaderToImplementationWithNSDefinitionInImpl
+//!Test simple namespace in header to implementation with namespace definition in implementation
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
 filename=A.h
@@ -134,7 +133,7 @@ void A::foo() {
 }
 
 }
-//!TestSimpleNamespaceInHeaderToImplementationWithNamespaceQualifiedName
+//!Test simple namespace in header to implementation with namespace qualified name
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
 filename=A.h
@@ -184,7 +183,6 @@ void A::foo() {
 }
 
 }
-
 //!TestSimpleNamespaceFromImplementationToInHeader
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config

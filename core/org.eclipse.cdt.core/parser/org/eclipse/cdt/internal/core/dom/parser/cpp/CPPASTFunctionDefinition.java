@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     IBM - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -35,10 +35,10 @@ public class CPPASTFunctionDefinition extends ASTNode
     private IASTDeclSpecifier declSpecifier;
     private IASTFunctionDeclarator declarator;
     private IASTStatement bodyStatement;
-    private ICPPASTConstructorChainInitializer[] memInits = null;
+    private ICPPASTConstructorChainInitializer[] memInits;
     private int memInitPos= -1;
-    private boolean fDeleted= false;
-    private boolean fDefaulted= false;
+    private boolean fDeleted;
+    private boolean fDefaulted;
 
     public CPPASTFunctionDefinition() {
 	}
@@ -50,10 +50,12 @@ public class CPPASTFunctionDefinition extends ASTNode
 		setBody(bodyStatement);
 	}
 	
+	@Override
 	public CPPASTFunctionDefinition copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CPPASTFunctionDefinition copy(CopyStyle style) {
 		CPPASTFunctionDefinition copy = new CPPASTFunctionDefinition();
 		copy.setDeclSpecifier(declSpecifier == null ? null : declSpecifier.copy(style));
@@ -61,8 +63,7 @@ public class CPPASTFunctionDefinition extends ASTNode
 		if (declarator != null) {
 			IASTDeclarator outer = ASTQueries.findOutermostDeclarator(declarator);
 			outer = outer.copy(style);
-			copy.setDeclarator((IASTFunctionDeclarator) ASTQueries
-					.findTypeRelevantDeclarator(outer));
+			copy.setDeclarator((IASTFunctionDeclarator) ASTQueries.findTypeRelevantDeclarator(outer));
 		}
 
 		copy.setBody(bodyStatement == null ? null : bodyStatement.copy(style));
@@ -79,11 +80,13 @@ public class CPPASTFunctionDefinition extends ASTNode
 		return copy;
 	}
 
+	@Override
 	public IASTDeclSpecifier getDeclSpecifier() {
         return declSpecifier;
     }
 
-    public void setDeclSpecifier(IASTDeclSpecifier declSpec) {
+    @Override
+	public void setDeclSpecifier(IASTDeclSpecifier declSpec) {
         assertNotFrozen();
         declSpecifier = declSpec;
         if (declSpec != null) {
@@ -92,11 +95,13 @@ public class CPPASTFunctionDefinition extends ASTNode
 		}
     }
 
-    public IASTFunctionDeclarator getDeclarator() {
+    @Override
+	public IASTFunctionDeclarator getDeclarator() {
         return declarator;
     }
 
-    public void setDeclarator(IASTFunctionDeclarator declarator) {
+    @Override
+	public void setDeclarator(IASTFunctionDeclarator declarator) {
         assertNotFrozen();
         this.declarator = declarator;
         if (declarator != null) {
@@ -106,11 +111,13 @@ public class CPPASTFunctionDefinition extends ASTNode
 		}
     }
 
-    public IASTStatement getBody() {
+    @Override
+	public IASTStatement getBody() {
         return bodyStatement;
     }
 
-    public void setBody(IASTStatement statement) {
+    @Override
+	public void setBody(IASTStatement statement) {
         assertNotFrozen();
         bodyStatement = statement;
         if (statement != null) {
@@ -119,6 +126,7 @@ public class CPPASTFunctionDefinition extends ASTNode
 		} 
     }
 
+	@Override
 	public void addMemberInitializer(ICPPASTConstructorChainInitializer initializer) {
         assertNotFrozen();
     	if (initializer != null) {
@@ -128,6 +136,7 @@ public class CPPASTFunctionDefinition extends ASTNode
     	}
 	}
 
+	@Override
 	public ICPPASTConstructorChainInitializer[] getMemberInitializers() {
         if (memInits == null) 
         	return ICPPASTConstructorChainInitializer.EMPTY_CONSTRUCTORCHAININITIALIZER_ARRAY;
@@ -136,23 +145,28 @@ public class CPPASTFunctionDefinition extends ASTNode
         		ICPPASTConstructorChainInitializer.class, memInits, memInitPos);
 	}
 
+	@Override
 	public IScope getScope() {
 		return ((ICPPASTFunctionDeclarator) declarator).getFunctionScope();
 	}
 
+	@Override
 	public boolean isDefaulted() {
 		return fDefaulted;
 	}
 
+	@Override
 	public boolean isDeleted() {
 		return fDeleted;
 	}
 
+	@Override
 	public void setIsDefaulted(boolean isDefaulted) {
 		assertNotFrozen();
 		fDefaulted= isDefaulted;
 	}
 
+	@Override
 	public void setIsDeleted(boolean isDeleted) {
 		assertNotFrozen();
 		fDeleted= isDeleted;
@@ -203,6 +217,7 @@ public class CPPASTFunctionDefinition extends ASTNode
 		return true;
 	}
 
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
         if (bodyStatement == child) {
             other.setPropertyInParent(bodyStatement.getPropertyInParent());

@@ -59,6 +59,7 @@ abstract public class RetargetDebugContextCommand extends AbstractHandler implem
         update();
     }
 
+    @Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		fCommandId = event.getCommand().getId();
 		
@@ -137,6 +138,7 @@ abstract public class RetargetDebugContextCommand extends AbstractHandler implem
         fTargetAdapter = null;
     }
     
+    @Override
     public void debugContextChanged(DebugContextEvent event) {
         fDebugContext = event.getContext();
         update();

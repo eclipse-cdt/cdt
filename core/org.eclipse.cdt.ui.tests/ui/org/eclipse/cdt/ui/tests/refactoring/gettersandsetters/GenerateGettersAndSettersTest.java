@@ -13,9 +13,7 @@
  ******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.gettersandsetters;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Properties;
 
 import org.eclipse.core.resources.IFile;
@@ -23,12 +21,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
-import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.ui.tests.refactoring.RefactoringTest;
 import org.eclipse.cdt.ui.tests.refactoring.TestSourceFile;
 
+import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.AccessorDescriptor.AccessorKind;
 import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.GenerateGettersAndSettersRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.GetterSetterContext;
 
@@ -38,11 +36,11 @@ import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.GetterSetterCon
 public class GenerateGettersAndSettersTest extends RefactoringTest {
 	protected boolean fatalError;
 	private int warnings;
-	private List<String> selectedGetters;
-	private List<String> selectedSetters;
+	private int infos;
+	private String[] selectedGetters;
+	private String[] selectedSetters;
 	private GenerateGettersAndSettersRefactoring refactoring;
 	private boolean definitionSeparate;
-	private int infos;
 
 	/**
 	 * @param name
@@ -88,17 +86,11 @@ public class GenerateGettersAndSettersTest extends RefactoringTest {
 	private void selectFields() {
 		GetterSetterContext context = refactoring.getContext();
 	
-		for (IASTSimpleDeclaration currentDecl : context.existingFields) {
-			String name = currentDecl.getDeclarators()[0].getName().getRawSignature();
-			if (selectedGetters.contains(name)) {
-				selectedGetters.remove(name);
-				context.selectedFunctions.add(context.createGetterInserter(currentDecl));
-			}
-
-			if (selectedSetters.contains(name)) {
-				selectedSetters.remove(name);
-				context.selectedFunctions.add(context.createSetterInserter(currentDecl));
-			}
+		for (String name : selectedGetters) {
+			context.selectAccessorForField(name, AccessorKind.GETTER);
+		}
+		for (String name : selectedSetters) {
+			context.selectAccessorForField(name, AccessorKind.SETTER);
 		}
 	}
 	
@@ -111,13 +103,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTest {
 		String setters = refactoringProperties.getProperty("setters", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		definitionSeparate = Boolean.valueOf(refactoringProperties.getProperty("definitionSeparate", "false"));
 		
-		selectedGetters = new ArrayList<String>();	
-		for (String getterName : getters.split(",")) { //$NON-NLS-1$
-			selectedGetters.add(getterName);
-		}
-		selectedSetters = new ArrayList<String>();
-		for (String setterName : setters.split(",")) { //$NON-NLS-1$
-			selectedSetters.add(setterName);
-		}
+		selectedGetters = getters.split(",");	
+		selectedSetters = setters.split(",");
 	}
 }

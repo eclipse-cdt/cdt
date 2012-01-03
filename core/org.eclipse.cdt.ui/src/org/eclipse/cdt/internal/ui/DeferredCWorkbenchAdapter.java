@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui;
 
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 import org.eclipse.ui.progress.IElementCollector;
+
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IParent;
 
 public class DeferredCWorkbenchAdapter extends CWorkbenchAdapter implements IDeferredWorkbenchAdapter {
 
@@ -28,11 +29,12 @@ public class DeferredCWorkbenchAdapter extends CWorkbenchAdapter implements IDef
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#fetchDeferredChildren(java.lang.Object,
 	 *           org.eclipse.jface.progress.IElementCollector,
 	 *           org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void fetchDeferredChildren(Object object, IElementCollector collector, IProgressMonitor monitor) {
 		Object[] children = getChildren(object);
 		if (monitor.isCanceled()) {
@@ -44,18 +46,20 @@ public class DeferredCWorkbenchAdapter extends CWorkbenchAdapter implements IDef
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#isContainer()
 	 */
+	@Override
 	public boolean isContainer() {
 		return fCElement instanceof IParent;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#getRule(java.lang.Object)
 	 */
+	@Override
 	public ISchedulingRule getRule(final Object object) {
     	return fCElement.getResource();
 	}

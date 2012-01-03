@@ -1927,7 +1927,7 @@ public class CPPVisitor extends ASTQueries {
 					beginExpr= expr.copy();
 				} else if (type instanceof ICPPClassType) {
 					ICPPClassType ct= (ICPPClassType) type;
-					if (ct.getCompositeScope().find(BEGIN_STR).length > 0) {
+					if (CPPSemantics.findBindings(ct.getCompositeScope(), BEGIN_STR, true).length > 0) {
 						final CPPASTName name = new CPPASTName(BEGIN);
 						name.setOffset(((ASTNode) forInit).getOffset());
 						beginExpr= new CPPASTFunctionCallExpression(

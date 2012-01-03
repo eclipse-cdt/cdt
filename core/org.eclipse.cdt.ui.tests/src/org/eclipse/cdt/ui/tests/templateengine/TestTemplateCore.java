@@ -8,7 +8,7 @@
  * Contributors:
  * Bala Torati (Symbian) - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.core.tests.templateengine;
+package org.eclipse.cdt.ui.tests.templateengine;
 
 import org.eclipse.cdt.core.templateengine.TemplateCore;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;

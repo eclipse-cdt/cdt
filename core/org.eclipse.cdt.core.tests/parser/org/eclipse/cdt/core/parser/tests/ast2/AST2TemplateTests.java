@@ -5638,4 +5638,55 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testTemplateAmbiguityInDeleteExpression_364225() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <typename T> void foo(T);
+	//	template <typename T> void foo(T, typename T::type* = 0);
+	//	int main() {
+	//		foo(0);
+	//	}
+	public void testSyntaxFailureInstantiatingFunctionTemplate_365981a() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	template <typename T> bool bar(T);
+	//	template <typename T> bool bar(T, void(T::*)() = 0);
+	//	void test() {
+	//	    bar(0);  
+	//	}
+	public void testSyntaxFailureInstantiatingFunctionTemplate_365981b() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	template<typename _Tp> class vector {};
+	//	template<typename T> struct bar {
+	//	    void foo() {
+	//	        vector<T> index;
+	//	        for (const auto& entry : index) {
+	//	        }
+	//	    }
+	//	};
+	public void testResolvingAutoTypeWithDependentExpression_367472() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	void foo(int, int);
+	//	template <typename... Args> void bar(Args... args) {
+	//	    foo(1,2,args...);
+	//	    foo(args...);
+	//	}
+	public void testPackExpansionsAsArguments_367560() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	template <typename> class A;
+	//	template <typename T> class A<void (T::*)()> {};
+	//	template <typename T> class A<void (T::*)() const> {};
+	//
+	//	struct S {};
+	//	int main()  {
+	//	    A<void (S::*)()> m;
+	//	}
+	public void testDeductionForConstFunctionType_367562() throws Exception {
+		parseAndCheckBindings();
+	}
 }

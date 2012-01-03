@@ -64,19 +64,23 @@ class PDOMCPPClassTemplateSpecialization extends PDOMCPPClassSpecialization
 		return IIndexCPPBindingConstants.CPP_CLASS_TEMPLATE_SPECIALIZATION;
 	}
 		
+	@Override
 	public ICPPTemplateParameter[] getTemplateParameters() {
 		ICPPClassTemplate template = (ICPPClassTemplate) getSpecializedBinding();
 		return template.getTemplateParameters();
 	}
 
+	@Override
 	public ICPPTemplateInstance getInstance(ICPPTemplateArgument[] arguments) {
 		return PDOMInstanceCache.getCache(this).getInstance(arguments);	
 	}
 
+	@Override
 	public void addInstance(ICPPTemplateArgument[] arguments, ICPPTemplateInstance instance) {
 		PDOMInstanceCache.getCache(this).addInstance(arguments, instance);	
 	}
 
+	@Override
 	public ICPPTemplateInstance[] getAllInstances() {
 		return PDOMInstanceCache.getCache(this).getAllInstances();	
 	}
@@ -153,7 +157,8 @@ class PDOMCPPClassTemplateSpecialization extends PDOMCPPClassSpecialization
 		return ((ICPPClassType) owner1).isSameType((ICPPClassType) owner2);
 	}
 	
-	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() throws DOMException {
+	@Override
+	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() {
 		ICPPClassTemplate origTemplate= (ICPPClassTemplate) getSpecializedBinding();
 		ICPPClassTemplatePartialSpecialization[] orig = origTemplate.getPartialSpecializations();
 		ICPPClassTemplatePartialSpecialization[] spec = new ICPPClassTemplatePartialSpecialization[orig.length];
@@ -163,6 +168,7 @@ class PDOMCPPClassTemplateSpecialization extends PDOMCPPClassSpecialization
 		return spec;
 	}
 	
+	@Override
 	public ICPPDeferredClassInstance asDeferredInstance() throws DOMException  {
 		PDOMInstanceCache cache= PDOMInstanceCache.getCache(this);
 		synchronized (cache) {

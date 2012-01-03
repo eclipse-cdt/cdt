@@ -12,7 +12,6 @@ package org.eclipse.cdt.internal.ui.callhierarchy;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -38,6 +37,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICExternalBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionCallExpression;
@@ -325,7 +325,8 @@ public class CallHierarchyUI {
 		
 		if (binding instanceof IVariable) {
 			try {
-				if (binding.getScope().getKind() == EScopeKind.eLocal)
+				final IScope scope = binding.getScope();
+				if (scope != null && scope.getKind() == EScopeKind.eLocal)
 					return false;
 			} catch (DOMException e) {
 			}
@@ -382,8 +383,7 @@ public class CallHierarchyUI {
 	 */
 	static void clearHistory() {
 		setHistoryEntries(new ICElement[0]);
-		for (Iterator<CHViewPart> iter= fLRUCallHierarchyViews.iterator(); iter.hasNext();) {
-			CHViewPart part= iter.next();
+		for (CHViewPart part : fLRUCallHierarchyViews) {
 			part.setInput(null);
 		}
 	}
@@ -396,8 +396,7 @@ public class CallHierarchyUI {
 	 */
 	private static CHViewPart findLRUCallHierarchyViewPart(IWorkbenchPage page) {
 		boolean viewFoundInPage= false;
-		for (Iterator<CHViewPart> iter= fLRUCallHierarchyViews.iterator(); iter.hasNext();) {
-			CHViewPart view= iter.next();
+		for (CHViewPart view : fLRUCallHierarchyViews) {
 			if (page.equals(view.getSite().getPage())) {
 				if (!view.isPinned()) {
 					return view;
@@ -408,8 +407,7 @@ public class CallHierarchyUI {
 		if (!viewFoundInPage) {
 			// find unresolved views
 			IViewReference[] viewReferences= page.getViewReferences();
-			for (int i= 0; i < viewReferences.length; i++) {
-				IViewReference curr= viewReferences[i];
+			for (IViewReference curr : viewReferences) {
 				if (CUIPlugin.ID_CALL_HIERARCHY.equals(curr.getId()) && page.equals(curr.getPage())) {
 					CHViewPart view= (CHViewPart)curr.getView(true);
 					if (view != null && !view.isPinned()) {

@@ -159,7 +159,7 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring2 {
 		if (compositeTypeSpecifier != null) {
 			findDeclarations(compositeTypeSpecifier);
 		} else {
-			initStatus.addFatalError(Messages.GenerateGettersAndSettersRefactoring_NoCassDefFound);
+			initStatus.addFatalError(Messages.GenerateGettersAndSettersRefactoring_NoClassDefFound);
 		}
 	}
 	
@@ -230,17 +230,17 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring2 {
 			throws CoreException, OperationCanceledException {
 		List<IASTNode> getterAndSetters = new ArrayList<IASTNode>();
 		List<IASTFunctionDefinition> definitions = new ArrayList<IASTFunctionDefinition>();
-		for (GetterSetterInsertEditProvider currentProvider : context.selectedFunctions) {
+		for (AccessorDescriptor accessor : context.selectedAccessors) {
 			if (context.isDefinitionSeparate()) {
-				getterAndSetters.add(currentProvider.getFunctionDeclaration());
-				IASTFunctionDefinition functionDefinition = currentProvider.getFunctionDefinition(true);
+				getterAndSetters.add(accessor.getAccessorDeclaration());
+				IASTFunctionDefinition functionDefinition = accessor.getAccessorDefinition(true);
 				// Standalone definitions in a header file have to be declared inline. 
 				if (definitionInsertLocation.getTranslationUnit().isHeaderUnit()) {
 					functionDefinition.getDeclSpecifier().setInline(true);
 				}
 				definitions.add(functionDefinition);
 			} else {
-				getterAndSetters.add(currentProvider.getFunctionDefinition(false));
+				getterAndSetters.add(accessor.getAccessorDefinition(false));
 			}
 		}
 		if (context.isDefinitionSeparate()) {

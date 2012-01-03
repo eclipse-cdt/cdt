@@ -25,6 +25,7 @@ public abstract class AbstractTracepointAction extends AbstractBreakpointAction 
 	/**
 	 * Tracepoint commands, by default, are not executed in Eclipse, but are executed by the backend.
 	 */
+	@Override
 	public IStatus execute(IBreakpoint breakpoint, IAdaptable context, IProgressMonitor monitor) {
 		return new Status(IStatus.OK, GdbPlugin.PLUGIN_ID, null);
 	}

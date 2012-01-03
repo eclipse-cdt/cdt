@@ -42,6 +42,7 @@ public class MILogActionEnabler implements ILogActionEnabler {
         fContext = DMContexts.getAncestorOfType(context, IBreakpointsTargetDMContext.class);
     }
 
+	@Override
     public String evaluateExpression(final String expression) throws Exception {
         // Use a Query to synchronize the call
         Query<String> query = new Query<String>() {

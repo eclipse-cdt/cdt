@@ -805,6 +805,7 @@ public class ASTManager implements IDisposable {
 	/**
 	 * @see IDisposable#dispose()
 	 */
+	@Override
 	public void dispose() {
         Assert.isTrue(!fDisposed, "ASTManager.dispose() called more than once"); //$NON-NLS-1$
 		fDisposed = true;

@@ -5,6 +5,7 @@
      <extension-point id="CDebuggerPage" name="%CDebuggerPage" schema="schema/CDebuggerPage.exsd"/>
      <extension-point id="BreakpointActionPage" name="%BreakpointActionPage" schema="schema/BreakpointActionPage.exsd"/>
      <extension-point id="breakpointContribution" name="%breakpointContribution" schema="schema/BreakpointUIContribution.exsd"/>
+     <extension-point id="disassemblyRulerColumns" name="%extPoint.disassemblyRulerColumn" schema="schema/disassemblyRulerColumns.exsd"/>
 
 <!-- Extensions -->
    <extension
@@ -1306,6 +1307,14 @@
             presentationLayer="3"
             textPreferenceKey="breakpointIndication"
             textPreferenceValue="false"
+            textStylePreferenceKey="breakpointTextStyle"
+            textStylePreferenceValue="SQUIGGLES"
+            showInNextPrevDropdownToolbarActionKey="showBreakpointIndicationInNextPrevDropdownToolbarAction"
+            showInNextPrevDropdownToolbarAction="true"
+            isGoToNextNavigationTargetKey="isBreakpointIndicationGoToNextNavigationTarget"
+            isGoToNextNavigationTarget="false"
+            isGoToPreviousNavigationTargetKey="isBreakpointIndicationGoToPreviousNavigationTarget"
+            isGoToPreviousNavigationTarget="false"
             verticalRulerPreferenceKey="breakpointVerticalRuler"
             verticalRulerPreferenceValue="true">
       </specification>

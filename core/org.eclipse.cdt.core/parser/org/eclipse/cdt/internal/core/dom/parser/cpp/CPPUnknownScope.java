@@ -44,7 +44,7 @@ public class CPPUnknownScope implements ICPPInternalUnknownScope {
      * This field needs to be protected when used in PDOMCPPUnknownScope, 
      * don't use it outside of {@link #getOrCreateBinding(IASTName, int)}
      */
-    private CharArrayObjectMap map;
+    private CharArrayObjectMap<IBinding[]> map;
 
     public CPPUnknownScope(ICPPUnknownBinding binding, IASTName name) {
         super();
@@ -57,41 +57,26 @@ public class CPPUnknownScope implements ICPPInternalUnknownScope {
 		return EScopeKind.eClassType;
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IScope#getScopeName()
-     */
     @Override
 	public IName getScopeName() {
         return scopeName;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IScope#getParent()
-     */
     @Override
 	public IScope getParent() throws DOMException {
         return binding.getScope();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
-     */
     @Override
 	public IBinding[] find(String name) {
-        return null;
+        return IBinding.EMPTY_BINDING_ARRAY;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IScope#getPhysicalNode()
-     */
     @Override
 	public IASTNode getPhysicalNode() {
         return scopeName;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IScope#addName(org.eclipse.cdt.core.dom.ast.IASTName)
-     */
     @Override
 	public void addName(IASTName name) {
     }
@@ -101,9 +86,6 @@ public class CPPUnknownScope implements ICPPInternalUnknownScope {
 		return getBinding(name, resolve, IIndexFileSet.EMPTY);
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IScope#getBinding(org.eclipse.cdt.core.dom.ast.IASTName, boolean)
-     */
     @Override
 	public IBinding getBinding(final IASTName name, boolean resolve, IIndexFileSet fileSet) {
     	boolean type= false;
@@ -152,10 +134,10 @@ public class CPPUnknownScope implements ICPPInternalUnknownScope {
 
 	protected IBinding getOrCreateBinding(final IASTName name, int idx) {
 		if (map == null)
-            map = new CharArrayObjectMap(2);
+            map = new CharArrayObjectMap<IBinding[]>(2);
 
         final char[] c = name.getLookupKey();
-		IBinding[] o = (IBinding[]) map.get(c);
+		IBinding[] o = map.get(c);
 		if (o == null) {
 			o = new IBinding[3];
 			map.put(c, o);
@@ -210,9 +192,6 @@ public class CPPUnknownScope implements ICPPInternalUnknownScope {
 		// do nothing, this is part of template magic and not a normal scope
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope#getUnknownBinding()
-	 */
 	@Override
 	public ICPPBinding getScopeBinding() {
 		return binding;

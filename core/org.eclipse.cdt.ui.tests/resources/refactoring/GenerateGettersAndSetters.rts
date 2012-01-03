@@ -467,12 +467,12 @@ public:
 		return name;
 	}
 
-	int getSystemId() const {
-		return systemId;
-	}
-
 	void setName(char* name) {
 		this->name = name;
+	}
+
+	int getSystemId() const {
+		return systemId;
 	}
 
 	void setSystemId(int systemId) {
@@ -542,12 +542,12 @@ public:
 		return i;
 	}
 
-	bool isOk() const {
-		return ok;
-	}
-
 	void setI(int i) {
 		this->i = i;
+	}
+
+	bool isOk() const {
+		return ok;
 	}
 
 	void setOk(bool ok) {
@@ -1173,7 +1173,6 @@ private:
 };
 
 #endif /* A_H_ */
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -1195,9 +1194,7 @@ inline void Person::setId(int id) {
 	this->id = id;
 }
 
-
 #endif /* A_H_ */
-
 //!No Methods Separate Definition
 //#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
 //@.config
@@ -1247,7 +1244,6 @@ inline int test::getI() const {
 inline void test::setI(int i) {
 	this->i = i;
 }
-
 
 #endif /* TEST_H_ */
 //!Bug 323780 "Generate Getters and Setters..." crashes
@@ -1349,7 +1345,6 @@ public:
 //@Test.cxx
 
 //=
-
 int Test::getTestField() const {
 	return testField;
 }
@@ -1390,7 +1385,6 @@ public:
 //@component_b/implementation/Test.cpp
 
 //=
-
 int Test::getTestField() const {
 	return testField;
 }
@@ -1451,7 +1445,7 @@ public:
 	int test;
 };
 #endif /* A_H_ */
-//!Bug ??? - Getter for an array field
+//!Bug 319278 - Getter for an array field
 //#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
 //@.config
 filename=A.h
@@ -1476,6 +1470,39 @@ private:
 public:
 	const int* getA() const {
 		return a;
+	}
+};
+#endif /* A_H_ */
+//!Bug 352258 - Avoiding reserved names
+//#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
+//@.config
+filename=A.h
+getters=mClass
+setters=mClass
+//@A.h
+#ifndef A_H_
+#define A_H_
+
+class getClass {
+private:
+	int /*$*/mClass/*$$*/;
+};
+#endif /* A_H_ */
+//=
+#ifndef A_H_
+#define A_H_
+
+class getClass {
+private:
+	int mClass;
+
+public:
+	int getClass1() const {
+		return mClass;
+	}
+
+	void setClass(int _class) {
+		mClass = _class;
 	}
 };
 #endif /* A_H_ */

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- * Markus Schorn - initial API and implementation 
+ *     Markus Schorn - initial API and implementation 
  ******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
@@ -25,7 +25,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
-
 public class CRefactoringMatchStore {
     private Map<IFile, IPath> fFileToPathMap= new HashMap<IFile, IPath>();
     private Map<IPath, SortedMap<CRefactoringMatch, CRefactoringMatch>> fPathToMatches= new HashMap<IPath, SortedMap<CRefactoringMatch, CRefactoringMatch>>();
@@ -33,7 +32,8 @@ public class CRefactoringMatchStore {
 
     public CRefactoringMatchStore() {
         fOffsetComparator= new Comparator<CRefactoringMatch>() {
-            public int compare(CRefactoringMatch o1, CRefactoringMatch o2) {
+            @Override
+			public int compare(CRefactoringMatch o1, CRefactoringMatch o2) {
                 return o1.getOffset() - o2.getOffset();
             }
         };

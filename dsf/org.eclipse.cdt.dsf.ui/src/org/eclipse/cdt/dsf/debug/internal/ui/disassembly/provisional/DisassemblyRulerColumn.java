@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,11 +10,15 @@
  *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
-package org.eclipse.cdt.dsf.debug.internal.ui.disassembly;
+package org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional;
 
 import java.util.Arrays;
 
+import org.eclipse.cdt.debug.ui.disassembly.rulers.AbstractContributedRulerColumn;
+import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -26,7 +30,8 @@ import org.eclipse.jface.text.IViewportListener;
 import org.eclipse.jface.text.TextEvent;
 import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.jface.text.source.IAnnotationModel;
-import org.eclipse.jface.text.source.IVerticalRulerColumn;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
@@ -46,11 +51,13 @@ import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.editors.text.EditorsUI;
 
 /**
  * Vertical ruler column for use with disassembly parts.
@@ -58,7 +65,7 @@ import org.eclipse.swt.widgets.Display;
  * Derived from {@link org.eclipse.jface.text.source.LineNumberRulerColumn}.
  * </p>
  */
-public class DisassemblyRulerColumn implements IVerticalRulerColumn {
+public class DisassemblyRulerColumn extends AbstractContributedRulerColumn implements IPropertyChangeListener {
 	protected final static String DOTS =   "......................................................................"; //$NON-NLS-1$
 	protected final static String SPACES = "                                                                      "; //$NON-NLS-1$
 
@@ -70,6 +77,7 @@ public class DisassemblyRulerColumn implements IVerticalRulerColumn {
 		/*
 		 * @see IViewportListener#viewportChanged(int)
 		 */
+		@Override
 		public void viewportChanged(int verticalPosition) {
 			if (verticalPosition != fScrollPos)
 				redraw();
@@ -78,6 +86,7 @@ public class DisassemblyRulerColumn implements IVerticalRulerColumn {
 		/*
 		 * @see ITextListener#textChanged(TextEvent)
 		 */
+		@Override
 		public void textChanged(TextEvent event) {
 
 			if (updateNumberOfDigits()) {
@@ -97,6 +106,7 @@ public class DisassemblyRulerColumn implements IVerticalRulerColumn {
 		/*
 		 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 		 */
+		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			postRedraw();
 		}
@@ -119,6 +129,7 @@ public class DisassemblyRulerColumn implements IVerticalRulerColumn {
 		/*
 		 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
 		 */
+		@Override
 		public void mouseUp(MouseEvent event) {
 			// see bug 45700
 			if (event.button == 1) {
@@ -131,6 +142,7 @@ public class DisassemblyRulerColumn implements IVerticalRulerColumn {
 		/*
 		 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
 		 */
+		@Override
 		public void mouseDown(MouseEvent event) {
 			fParentRuler.setLocationOfLastMouseButtonActivity(event.x, event.y);
 			// see bug 45700
@@ -142,6 +154,7 @@ public class DisassemblyRulerColumn implements IVerticalRulerColumn {
 		/*
 		 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
 		 */
+		@Override
 		public void mouseDoubleClick(MouseEvent event) {
 			fParentRuler.setLocationOfLastMouseButtonActivity(event.x, event.y);
 			stopSelecting();
@@ -151,6 +164,7 @@ public class DisassemblyRulerColumn implements IVerticalRulerColumn {
 		/*
 		 * @see org.eclipse.swt.events.MouseMoveListener#mouseMove(org.eclipse.swt.events.MouseEvent)
 		 */
+		@Override
 		public void mouseMove(MouseEvent event) {
 			if (!autoScroll(event)) {
 				int newLine = fParentRuler.toDocumentLineNumber(event.y);
@@ -161,18 +175,21 @@ public class DisassemblyRulerColumn implements IVerticalRulerColumn {
 		/*
 		 * @see org.eclipse.swt.events.MouseTrackListener#mouseEnter(org.eclipse.swt.events.MouseEvent)
 		 */
+		@Override
 		public void mouseEnter(MouseEvent event) {
 		}
 
 		/*
 		 * @see org.eclipse.swt.events.MouseTrackListener#mouseExit(org.eclipse.swt.events.MouseEvent)
 		 */
+		@Override
 		public void mouseExit(MouseEvent event) {
 		}
 
 		/*
 		 * @see org.eclipse.swt.events.MouseTrackListener#mouseHover(org.eclipse.swt.events.MouseEvent)
 		 */
+		@Override
 		public void mouseHover(MouseEvent event) {
 		}
 
@@ -283,6 +300,7 @@ public class DisassemblyRulerColumn implements IVerticalRulerColumn {
 			switch (direction) {
 			case SWT.UP:
 				timer = new Runnable() {
+					@Override
 					public void run() {
 						if (fAutoScrollDirection == SWT.UP) {
 							int top = getInclusiveTopIndex();
@@ -297,6 +315,7 @@ public class DisassemblyRulerColumn implements IVerticalRulerColumn {
 				break;
 			case SWT.DOWN:
 				timer = new Runnable() {
+					@Override
 					public void run() {
 						if (fAutoScrollDirection == SWT.DOWN) {
 							int top = getInclusiveTopIndex();
@@ -372,6 +391,7 @@ public class DisassemblyRulerColumn implements IVerticalRulerColumn {
 	 * Redraw runnable
 	 */
 	private Runnable fRunnable = new Runnable() {
+		@Override
 		public void run() {
 			synchronized (fRunnableLock) {
 				fIsRunnablePosted = false;
@@ -400,6 +420,18 @@ public class DisassemblyRulerColumn implements IVerticalRulerColumn {
 		fAlignRight = (align & SWT.RIGHT) != 0;
 		fPaintSelectionBackground = paintSelection;
 		fPaintStyleBackground = paintStyle;
+	}
+
+	@Override
+	public void columnCreated() {
+		super.columnCreated();
+		getPreferenceStore().addPropertyChangeListener(this);
+	}
+
+	@Override
+	public void columnRemoved() {
+		getPreferenceStore().removePropertyChangeListener(this);
+		super.columnRemoved();
 	}
 
 	/**
@@ -446,9 +478,14 @@ public class DisassemblyRulerColumn implements IVerticalRulerColumn {
 		return fBackground;
 	}
 
+	public IPreferenceStore getPreferenceStore() {
+		return DsfUIPlugin.getDefault().getPreferenceStore();
+	}
+
 	/*
 	 * @see IVerticalRulerColumn#getControl()
 	 */
+	@Override
 	public Control getControl() {
 		return fCanvas;
 	}
@@ -456,6 +493,7 @@ public class DisassemblyRulerColumn implements IVerticalRulerColumn {
 	/*
 	 * @see IVerticalRuleColumnr#getWidth
 	 */
+	@Override
 	public int getWidth() {
 		return fIndentation[0];
 	}
@@ -556,6 +594,7 @@ public class DisassemblyRulerColumn implements IVerticalRulerColumn {
 	/*
 	 * @see IVerticalRulerColumn#createControl(CompositeRuler, Composite)
 	 */
+	@Override
 	public Control createControl(CompositeRuler parentRuler, Composite parentControl) {
 
 		fParentRuler= parentRuler;
@@ -567,6 +606,7 @@ public class DisassemblyRulerColumn implements IVerticalRulerColumn {
 		fCanvas.setForeground(fForeground);
 
 		fCanvas.addPaintListener(new PaintListener() {
+			@Override
 			public void paintControl(PaintEvent event) {
 				if (fCachedTextViewer != null)
 					doubleBufferPaint(event.gc);
@@ -574,6 +614,7 @@ public class DisassemblyRulerColumn implements IVerticalRulerColumn {
 		});
 
 		fCanvas.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				handleDispose();
 				fCachedTextViewer= null;
@@ -618,6 +659,14 @@ public class DisassemblyRulerColumn implements IVerticalRulerColumn {
 			fBuffer.dispose();
 			fBuffer= null;
 		}
+	}
+
+	protected Color getColor(String key) {
+		return EditorsUI.getSharedTextColors().getColor(PreferenceConverter.getColor(getPreferenceStore(), key));
+	}
+
+	protected Color getColor(RGB color) {
+		return EditorsUI.getSharedTextColors().getColor(color);
 	}
 
 	/**
@@ -769,7 +818,7 @@ public class DisassemblyRulerColumn implements IVerticalRulerColumn {
 	 *            the line number for which the string is generated
 	 * @return the string to be printed on the ruler column for <code>line</code>
 	 */
-	String createDisplayString(int line) {
+	protected String createDisplayString(int line) {
 		return Integer.toString(line + 1);
 	}
 
@@ -941,6 +990,7 @@ public class DisassemblyRulerColumn implements IVerticalRulerColumn {
 	/*
 	 * @see IVerticalRulerColumn#redraw()
 	 */
+	@Override
 	public void redraw() {
 
 		if (fRelayoutRequired) {
@@ -958,12 +1008,14 @@ public class DisassemblyRulerColumn implements IVerticalRulerColumn {
 	/*
 	 * @see IVerticalRulerColumn#setModel(IAnnotationModel)
 	 */
+	@Override
 	public void setModel(IAnnotationModel model) {
 	}
 
 	/*
 	 * @see IVerticalRulerColumn#setFont(Font)
 	 */
+	@Override
 	public void setFont(Font font) {
 		fFont= font;
 		if (fCanvas != null && !fCanvas.isDisposed()) {
@@ -980,6 +1032,10 @@ public class DisassemblyRulerColumn implements IVerticalRulerColumn {
 	 */
 	protected CompositeRuler getParentRuler() {
 		return fParentRuler;
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent event) {
 	}
 
 }

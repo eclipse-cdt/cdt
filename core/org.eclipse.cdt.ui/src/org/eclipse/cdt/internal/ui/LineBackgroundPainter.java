@@ -34,13 +34,13 @@ import org.eclipse.swt.graphics.Rectangle;
 
 /**
  * A painter for configurable background painting a range of text lines.
- * Replicates also the functionality of the 
+ * Replicates also the functionality of the
  * {@link org.eclipse.jface.text.CursorLinePainter}
  * because only one {@link LineBackgroundListener} is allowed
  * per {@link StyledText} widget.
- * 
+ *
  * @author anton.leherbauer@windriver.com
- * 
+ *
  * @since 4.0
  */
 public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
@@ -89,7 +89,7 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 
 	/**
 	 * Sets the color in which to draw the background of the given position type.
-	 * 
+	 *
 	 * @param positionType  the position type for which to specify the background color
 	 * @param color  the color in which to draw the background of the given position type
 	 */
@@ -99,7 +99,7 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 
 	/**
 	 * Sets the color in which to draw the background of the cursor line.
-	 * 
+	 *
 	 * @param cursorLineColor the color in which to draw the background of the cursor line
 	 */
 	public void setCursorLineColor(Color cursorLineColor) {
@@ -108,7 +108,7 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 
 	/**
 	 * Sets the color in which to draw the background of untyped positions.
-	 * 
+	 *
 	 * @param color  the color in which to draw the background of untyped positions
 	 */
 	public void setDefaultColor(Color color) {
@@ -117,7 +117,7 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 
 	/**
 	 * Enable/disable cursor line highlighting.
-	 * 
+	 *
 	 * @param enable
 	 */
 	public void enableCursorLine(boolean enable) {
@@ -131,7 +131,7 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	/**
 	 * Set highlight positions. It is assumed that all positions
 	 * are up-to-date with respect to the text viewer document.
-	 * 
+	 *
 	 * @param positions a list of <code>Position</code>s
 	 */
 	public void setHighlightPositions(List<Position> positions) {
@@ -148,7 +148,7 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	/**
 	 * Add highlight positions. It is assumed that all positions
 	 * are up-to-date with respect to the text viewer document.
-	 * 
+	 *
 	 * @param positions a list of <code>Position</code>s
 	 */
 	public void addHighlightPositions(List<Position> positions) {
@@ -162,7 +162,7 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 
 	/**
 	 * Remove highlight positions by identity.
-	 * 
+	 *
 	 * @param positions a list of <code>Position</code>s
 	 */
 	public void removeHighlightPositions(List<Position> positions) {
@@ -176,7 +176,7 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 
 	/**
 	 * Replace given highlight positions in one step.
-	 * 
+	 *
 	 * @param removePositions a list of <code>Position</code>s to remove
 	 * @param addPositions a list of <code>Position</code>s to add
 	 */
@@ -232,6 +232,7 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	/*
 	 * @see org.eclipse.jface.text.IPainter#dispose()
 	 */
+	@Override
 	public void dispose() {
 		// no deactivate!
 		fIsActive= false;
@@ -252,10 +253,11 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	public boolean isDisposed() {
 		return fTextViewer == null;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.IPainter#paint(int)
 	 */
+	@Override
 	public void paint(int reason) {
 		IDocument document= fTextViewer.getDocument();
 		if (document == null) {
@@ -365,7 +367,7 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 
 	/**
 	 * Trigger redraw of given text positions.
-	 * 
+	 *
 	 * @param positions
 	 */
 	private void redrawPositions(List<Position> positions) {
@@ -429,6 +431,7 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	/*
 	 * @see org.eclipse.jface.text.IPainter#deactivate(boolean)
 	 */
+	@Override
 	public void deactivate(boolean redraw) {
 		if (fIsActive) {
 			fIsActive= false;
@@ -443,6 +446,7 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	/*
 	 * @see org.eclipse.jface.text.IPainter#setPositionManager(org.eclipse.jface.text.IPaintPositionManager)
 	 */
+	@Override
 	public void setPositionManager(IPaintPositionManager manager) {
 		fPositionManager= manager;
 	}
@@ -485,6 +489,7 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	/*
 	 * @see org.eclipse.swt.custom.LineBackgroundListener#lineGetBackground(org.eclipse.swt.custom.LineBackgroundEvent)
 	 */
+	@Override
 	public void lineGetBackground(LineBackgroundEvent event) {
 		if (fTextWidget != null) {
 			Position match= findIncludingPosition(getDocumentOffset(event.lineOffset));
@@ -541,7 +546,7 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 			IDocument document= fTextViewer.getDocument();
 			if (document != null) {
 				int lineNumber= document.getLineOfOffset(getDocumentOffset(fTextWidget.getCaretOffset()));
-	
+
 				fCursorLine.isDeleted= false;
 				fCursorLine.offset= document.getLineOffset(lineNumber);
 				fCursorLine.length= 0;

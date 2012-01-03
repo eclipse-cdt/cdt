@@ -11,9 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.gettersandsetters;
 
-import java.util.Set;
-import java.util.SortedSet;
-
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
@@ -36,8 +33,7 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.preferences.NameStylePreferencePage;
-import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.GetterSetterContext.FieldWrapper;
-import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.GetterSetterInsertEditProvider.AccessorKind;
+import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.AccessorDescriptor.AccessorKind;
 
 public class GenerateGettersAndSettersInputPage extends UserInputWizardPage implements IPreferenceChangeListener {
 	private GetterSetterContext context;
@@ -45,7 +41,7 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 	private GetterSetterLabelProvider labelProvider;
 
 	public GenerateGettersAndSettersInputPage(GetterSetterContext context) {
-		super(Messages.GettersAndSetters_Name); 
+		super(Messages.GenerateGettersAndSettersInputPage_Name); 
 		this.context = context;
 		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(CUIPlugin.PLUGIN_ID);
 		// We are listening for changes in the Name Style preferences
@@ -54,20 +50,19 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 
 	@Override
 	public void createControl(Composite parent) {
+		setTitle(Messages.GenerateGettersAndSettersInputPage_Name);
+		setMessage(Messages.GenerateGettersAndSettersInputPage_Header);
+		
 		Composite comp = new Composite(parent, SWT.NONE);
-		
-		setTitle(Messages.GettersAndSetters_Name);
-		setMessage(Messages.GenerateGettersAndSettersInputPage_header);
-		
 		comp.setLayout(new GridLayout(2, false));
 		createTree(comp);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		variableSelectionView.getTree().setLayoutData(gd);
 		
-		Composite btComp = createButtonComposite(comp);
+		Composite buttonContainer = createButtonComposite(comp);
 		gd = new GridData();
 		gd.verticalAlignment = SWT.TOP;
-		btComp.setLayoutData(gd);
+		buttonContainer.setLayoutData(gd);
 
 		final Button definitionSeparate = new Button(comp, SWT.CHECK);
 		definitionSeparate.setText(Messages.GenerateGettersAndSettersInputPage_SeparateDefinition);
@@ -89,7 +84,7 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				String id = NameStylePreferencePage.PREF_ID;
-				PreferencesUtil.createPreferenceDialogOn(getShell(), id, new String [] { id }, null).open();
+				PreferencesUtil.createPreferenceDialogOn(getShell(), id, new String[] { id }, null).open();
 			}
 		});
 		link.setToolTipText(Messages.GenerateGettersAndSettersInputPage_LinkTooltip);
@@ -109,21 +104,14 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 		
 		Button selectAll = new Button(btComp, SWT.PUSH);
 		selectAll.setText(Messages.GenerateGettersAndSettersInputPage_SelectAll);
-		selectAll.addSelectionListener(new SelectionAdapter(){
+		selectAll.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Object[] items = context.getElements(null);
-				SortedSet<GetterSetterInsertEditProvider> checkedFunctions = context.selectedFunctions;
 				for (Object treeItem : items) {
 					variableSelectionView.setChecked(treeItem, true);
-					Object[] childs = context.getChildren(treeItem);
-					for(Object currentElement : childs){
-						if (currentElement instanceof GetterSetterInsertEditProvider) {
-							GetterSetterInsertEditProvider editProvider = (GetterSetterInsertEditProvider) currentElement;
-							checkedFunctions.add(editProvider);
-						}
-					}
 				}
+				updateSelectedFunctions();
 			}
 		});
 		
@@ -132,11 +120,10 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 		deselectAll.addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				Object[] items = context.getElements(null);
-				for (Object treeItem : items) {
+				for (Object treeItem : context.getElements(null)) {
 					variableSelectionView.setChecked(treeItem, false);
 				}
-				context.selectedFunctions.clear();
+				updateSelectedFunctions();
 			}
 		});
 		
@@ -145,7 +132,7 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 		selectGetter.addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				selectMethods(AccessorKind.GETTER);
+				selectAccessors(AccessorKind.GETTER);
 			}
 		});
 		
@@ -154,31 +141,29 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 		selectSetter.addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				selectMethods(AccessorKind.SETTER);
+				selectAccessors(AccessorKind.SETTER);
 			}
 		});
 		
 		return btComp;
 	}
 	
-	private void selectMethods(AccessorKind type) {
-		Object[] items = context.getElements(null);
-		Set<GetterSetterInsertEditProvider> checked = context.selectedFunctions;
-		for (Object treeItem : items) {
-			if (treeItem instanceof FieldWrapper) {
-				FieldWrapper field = (FieldWrapper) treeItem;
-				Object[] funtions = context.getChildren(field);
-				for (Object funct : funtions) {
-					if (funct instanceof GetterSetterInsertEditProvider) {
-						GetterSetterInsertEditProvider getSet = (GetterSetterInsertEditProvider) funct;
-						if (getSet.getType() == type) {
-							checked.add(getSet);
-							variableSelectionView.setChecked(getSet, true);
+	private void selectAccessors(AccessorKind kind) {
+		for (Object treeItem : context.getElements(null)) {
+			if (treeItem instanceof FieldDescriptor) {
+				FieldDescriptor field = (FieldDescriptor) treeItem;
+				Object[] children = context.getChildren(field);
+				for (Object child : children) {
+					if (child instanceof AccessorDescriptor) {
+						AccessorDescriptor accessor = (AccessorDescriptor) child;
+						if (accessor.getKind() == kind) {
+							variableSelectionView.setChecked(accessor, true);
 						}
 					}
 				}
 			}
 		}
+		updateSelectedFunctions();
 	}
 
 	private void createTree(Composite comp) {
@@ -188,36 +173,36 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 		variableSelectionView.setLabelProvider(labelProvider);
 
 		variableSelectionView.setAutoExpandLevel(3);
-		variableSelectionView.setInput(""); //$NON-NLS-1$
+		variableSelectionView.setInput(context);
 		if (context.selectedName != null) {
 			String rawSignature = context.selectedName.getRawSignature();
 			for (Object obj : variableSelectionView.getVisibleExpandedElements()) {
-				if (obj instanceof FieldWrapper) {
+				if (obj instanceof FieldDescriptor) {
 					if (obj.toString().contains(rawSignature)) {
 						variableSelectionView.setSubtreeChecked(obj, true);
 					}
 				}
 			}
 		}
-		Set<GetterSetterInsertEditProvider> checkedFunctions = context.selectedFunctions;
-		for (Object currentElement : variableSelectionView.getCheckedElements()) {
-			if (currentElement instanceof GetterSetterInsertEditProvider) {
-				GetterSetterInsertEditProvider editProvider = (GetterSetterInsertEditProvider) currentElement;
-				checkedFunctions.add(editProvider);
-			}
-		}
+
+		updateSelectedFunctions();
+
 		variableSelectionView.addCheckStateListener(new ICheckStateListener() {
 			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
-				Set<GetterSetterInsertEditProvider> checkedFunctions = context.selectedFunctions;
-				for (Object currentElement : variableSelectionView.getCheckedElements()) {
-					if (currentElement instanceof GetterSetterInsertEditProvider) {
-						GetterSetterInsertEditProvider editProvider = (GetterSetterInsertEditProvider) currentElement;
-						checkedFunctions.add(editProvider);
-					}
-				}
+				updateSelectedFunctions();
 			}
 		});
+	}
+
+	private void updateSelectedFunctions() {
+		context.selectedAccessors.clear();
+		for (Object element : variableSelectionView.getCheckedElements()) {
+			if (element instanceof AccessorDescriptor) {
+				context.selectedAccessors.add((AccessorDescriptor) element);
+			}
+		}
+		setPageComplete(!context.selectedAccessors.isEmpty());
 	}
 
 	@Override
@@ -227,8 +212,19 @@ public class GenerateGettersAndSettersInputPage extends UserInputWizardPage impl
 		}
 		
 		if (GetterSetterNameGenerator.getGenerateGetterSettersPreferenceKeys().contains(event.getKey())) {
-			context.refresh();
+			context.recreateFieldDescriptors();
 			variableSelectionView.refresh();
+			variableSelectionView.setInput(context); // Set input to trigger node expansion.
+			for (Object element : context.selectedAccessors) {
+				variableSelectionView.setChecked(element, true);
+			}
 		}
+	}
+
+	@Override
+	public void dispose() {
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(CUIPlugin.PLUGIN_ID);
+		node.removePreferenceChangeListener(this);
+		super.dispose();
 	}
 }

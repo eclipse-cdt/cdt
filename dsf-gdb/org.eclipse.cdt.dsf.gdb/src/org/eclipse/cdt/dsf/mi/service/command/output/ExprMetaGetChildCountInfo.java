@@ -23,6 +23,7 @@ public class ExprMetaGetChildCountInfo implements ICommandResult {
     
     public int getChildNum() { return childNum; }
 	
+	@Override
 	public <V extends ICommandResult> V getSubsetResult(ICommand<V> command) {
 		return null;
 	}

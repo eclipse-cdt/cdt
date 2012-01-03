@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom;
 
@@ -15,15 +15,14 @@ import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.core.runtime.CoreException;
 
 public class Linkage implements ILinkage {
-
 	public static final ILinkage NO_LINKAGE = new Linkage(NO_LINKAGE_ID, NO_LINKAGE_NAME);
 	public static final ILinkage C_LINKAGE = new Linkage(C_LINKAGE_ID, C_LINKAGE_NAME);
 	public static final ILinkage CPP_LINKAGE = new Linkage(CPP_LINKAGE_ID, CPP_LINKAGE_NAME);
 	public static final ILinkage FORTRAN_LINKAGE = new Linkage(FORTRAN_LINKAGE_ID, FORTRAN_LINKAGE_NAME);
 	public static final ILinkage OBJC_LINKAGE = new Linkage(OBJC_LINKAGE_ID, OBJC_LINKAGE_NAME);
 	
-	private static final ILinkage[] LINKAGES= {C_LINKAGE, CPP_LINKAGE, FORTRAN_LINKAGE, OBJC_LINKAGE};
-	private static final ILinkage[] INDEX_LINKAGES= {C_LINKAGE, CPP_LINKAGE, FORTRAN_LINKAGE};
+	private static final ILinkage[] LINKAGES= { C_LINKAGE, CPP_LINKAGE, FORTRAN_LINKAGE, OBJC_LINKAGE };
+	private static final ILinkage[] INDEX_LINKAGES= { C_LINKAGE, CPP_LINKAGE, FORTRAN_LINKAGE };
 	
 	public static final ILinkage[] getIndexerLinkages() {
 		return INDEX_LINKAGES;
@@ -46,13 +45,18 @@ public class Linkage implements ILinkage {
 
 	private int fID;
 	private String fName;
+
 	private Linkage(int id, String name) {
 		fID= id;
 		fName= name;
 	}
+
+	@Override
 	public int getLinkageID() {
 		return fID;
 	}
+
+	@Override
 	public String getLinkageName() {
 		return fName;
 	}

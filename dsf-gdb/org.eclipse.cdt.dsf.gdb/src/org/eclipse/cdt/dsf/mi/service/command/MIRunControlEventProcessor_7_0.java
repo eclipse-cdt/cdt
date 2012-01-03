@@ -113,6 +113,7 @@ public class MIRunControlEventProcessor_7_0
         fServicesTracker.dispose();
     }
     
+	@Override
     public void eventReceived(Object output) {
     	for (MIOOBRecord oobr : ((MIOutput)output).getMIOOBRecords()) {
 			List<MIEvent<?>> events = new LinkedList<MIEvent<?>>();
@@ -366,18 +367,22 @@ public class MIRunControlEventProcessor_7_0
     	return event;
     }
     
+	@Override
     public void commandQueued(ICommandToken token) {
         // Do nothing.
     }
     
+	@Override
     public void commandSent(ICommandToken token) {
         // Do nothing.
     }
     
+	@Override
     public void commandRemoved(ICommandToken token) {
         // Do nothing.
     }
     
+	@Override
     public void commandDone(ICommandToken token, ICommandResult result) {
         ICommand<?> cmd = token.getCommand();
     	MIInfo cmdResult = (MIInfo) result ;

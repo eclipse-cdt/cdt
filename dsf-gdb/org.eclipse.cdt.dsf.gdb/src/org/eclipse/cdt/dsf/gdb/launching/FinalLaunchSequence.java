@@ -11,6 +11,7 @@
  *     IBM Corporation 
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *     Sergey Prigogin (Google)
+ *     Marc Khouzam (Ericsson) - No longer call method to check non-stop for GDB < 7.0 (Bug 365471)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching;
 
@@ -79,7 +80,6 @@ public class FinalLaunchSequence extends ReflectionSequence {
 					"stepSetBreakpointPending",    //$NON-NLS-1$
 					"stepEnablePrettyPrinting",    //$NON-NLS-1$
 					"stepSourceGDBInitFile",   //$NON-NLS-1$
-					"stepSetNonStop",   //$NON-NLS-1$
 					"stepSetAutoLoadSharedLibrarySymbols",   //$NON-NLS-1$
 					"stepSetSharedLibraryPaths",   //$NON-NLS-1$
 					
@@ -251,6 +251,9 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	 * Enable non-stop mode if requested.
 	 * @since 4.0 
 	 */
+	// Keep this method in this class for backwards-compatibility, although
+	// it is called only by sub-classes.
+	// It could be moved to FinalLaunchSequence_7_0, otherwise.
 	@Execute
 	public void stepSetNonStop(final RequestMonitor requestMonitor) {
 		boolean isNonStop = CDebugUtils.getAttribute(
@@ -280,7 +283,17 @@ public class FinalLaunchSequence extends ReflectionSequence {
 						}
 					});
 		} else {
-			requestMonitor.done();
+			// Explicitly set target-async to off for all-stop mode.
+			fCommandControl.queueCommand(
+					fCommandFactory.createMIGDBSetTargetAsync(fCommandControl.getContext(), false),
+					new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
+						@Override
+						protected void handleError() {
+							// We should only be calling this for GDB >= 7.0,
+							// but just in case, accept errors for older GDBs
+							requestMonitor.done();
+						}
+					});
 		}
 	}
 

@@ -29,9 +29,6 @@ public final class DisassemblyMessages extends NLS {
 		return fgBundleForConstructedKeys;
 	}
 
-	public static String Disassembly_action_ShowAddresses_label;
-	public static String Disassembly_action_ShowFunctionOffsets_label;
-	public static String Disassembly_action_ShowOpcode_label;
 	public static String Disassembly_action_ShowSource_label;
 	public static String Disassembly_action_ShowSymbols_label;
 	public static String Disassembly_action_GotoPC_label;
@@ -52,6 +49,7 @@ public final class DisassemblyMessages extends NLS {
 	public static String Disassembly_log_error_expression_eval;
 	public static String Disassembly_log_error_locateFile;
 	public static String Disassembly_log_error_readFile;
+	public static String DisassemblyPart_showRulerColumn_label;
 	public static String DisassemblyPreferencePage_addressFormatTooltip;
 	public static String DisassemblyPreferencePage_addressRadix;
 	public static String DisassemblyPreferencePage_showAddressRadix;

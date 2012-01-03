@@ -47,7 +47,6 @@ import org.eclipse.core.runtime.CoreException;
  * Code reader factory, that fakes code readers for header files already stored in the index.
  */
 public final class IndexBasedFileContentProvider extends InternalFileContentProvider {
-	private static final class NeedToParseException extends Exception {}
 	private static final String GAP = "__gap__"; //$NON-NLS-1$
 
 	private final IIndex fIndex;
@@ -135,7 +134,7 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 					// Report pragma once inclusions, only if no exception was thrown.
 					fPragmaOnce.putAll(newPragmaOnce);
 					return new InternalFileContent(path, macros, directives, files, toList(preLoaded));
-				} catch (NeedToParseException e) {
+				} catch (DependsOnOutdatedFileException e) {
 				}
 			} 
 		} catch (CoreException e) {
@@ -188,7 +187,7 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 			Map<IIndexFileLocation, IFileNomination> newPragmaOnce,
 			LinkedHashSet<IIndexFile> preLoaded, List<IIndexFile> files,
 			List<IIndexMacro> macros, List<ICPPUsingDirective> usingDirectives,
-			Set<IIndexFile> preventRecursion) throws CoreException, NeedToParseException {
+			Set<IIndexFile> preventRecursion) throws CoreException, DependsOnOutdatedFileException {
 		if (file.equals(stopAt))
 			return true;
 		
@@ -211,8 +210,6 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 		final Object[] pds;
 		if (fRelatedIndexerTask != null) {
 			IndexFileContent content= fRelatedIndexerTask.getFileContent(fLinkage, ifl, file);
-			if (content == null) 
-				throw new NeedToParseException();
 			uds= content.getUsingDirectives();
 			pds= content.getPreprocessingDirectives();
 		} else {
@@ -252,7 +249,7 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 
 	@Override
 	public InternalFileContent getContentForContextToHeaderGap(String path,
-			IMacroDictionary macroDictionary) {
+			IMacroDictionary macroDictionary) throws DependsOnOutdatedFileException {
 		if (fContextToHeaderGap == null) {
 			return null;
 		}
@@ -268,12 +265,8 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 			ArrayList<IIndexMacro> macros= new ArrayList<IIndexMacro>();
 			ArrayList<ICPPUsingDirective> directives= new ArrayList<ICPPUsingDirective>();
 			LinkedHashSet<IIndexFile> preLoaded= new LinkedHashSet<IIndexFile>();
-			try {
-				if (!collectFileContent(contextFile, targetFile, newPragmaOnce, preLoaded,
-						filesIncluded, macros, directives, new HashSet<IIndexFile>())) {
-					return null;
-				}
-			} catch (NeedToParseException e) {
+			if (!collectFileContent(contextFile, targetFile, newPragmaOnce, preLoaded,
+					filesIncluded, macros, directives, new HashSet<IIndexFile>())) {
 				return null;
 			}
 
@@ -301,5 +294,15 @@ public final class IndexBasedFileContentProvider extends InternalFileContentProv
 			return fIndex.getFiles(fLinkage, ifl);
 		}
 		return IIndexFile.EMPTY_FILE_ARRAY;
+	}
+	
+	@Override
+	public String getContextPath() {
+		if (fContextToHeaderGap != null)
+			try {
+				return fPathResolver.getASTPath(fContextToHeaderGap[0].getLocation());
+			} catch (CoreException e) {
+			}
+		return null;
 	}
 }

@@ -68,6 +68,7 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+    @Override
 	public void createControl(Composite parent) {
     Font font = parent.getFont();
     Composite comp = new Composite(parent, SWT.NONE);
@@ -111,6 +112,7 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 		fPrgmArgumentsText.setLayoutData(gd);
     fPrgmArgumentsText.setFont(font);
 		fPrgmArgumentsText.addModifyListener(new ModifyListener() {
+            @Override
 			public void modifyText(ModifyEvent evt) {
 				updateLaunchConfigurationDialog();
 			}
@@ -187,6 +189,7 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+    @Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, (String) null);
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String) null);
@@ -195,6 +198,7 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+    @Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
 			fPrgmArgumentsText.setText(configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, "")); //$NON-NLS-1$
@@ -209,6 +213,7 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+    @Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(
 			ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
@@ -239,6 +244,7 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
+    @Override
 	public String getName() {
 		return LaunchMessages.getString("CArgumentsTab.Arguments"); //$NON-NLS-1$
 	}

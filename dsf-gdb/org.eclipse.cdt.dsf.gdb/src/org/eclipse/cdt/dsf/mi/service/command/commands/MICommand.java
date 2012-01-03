@@ -190,11 +190,13 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
      * The result is a new third command which represent the two
      * original command.
      */
+	@Override
     public ICommand<? extends ICommandResult> coalesceWith( ICommand<? extends ICommandResult> command ) {
         return null ;
     }
     
 
+	@Override
     public IDMContext getContext(){
     	return fCtx;
     }
@@ -289,6 +291,7 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
 			super(option);
 		}
 
+		@Override
 		public String getAdjustedValue() {
 			StringBuilder builder = new StringBuilder();
 			String option = value;
@@ -322,6 +325,7 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
 			super(parameter);
 		}
 
+		@Override
 		public String getAdjustedValue() {
 			StringBuilder builder = new StringBuilder();
 			for (int j = 0; j < value.length(); j++) {
@@ -361,6 +365,7 @@ public class MICommand<V extends MIInfo> implements ICommand<V> {
 			this.value = value;
 		}
 
+		@Override
 		public String getValue() {
 			return value;
 		}

@@ -27,6 +27,7 @@ public class ConnectActionDelegate extends AbstractVMProviderActionDelegate {
 	/*
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+    @Override
 	public void run(IAction action) {
 		if (action.isEnabled()) {
 			// disable the action so it cannot be run again until an event or 

@@ -38,6 +38,7 @@ public class FetchMoreChildrenAction extends AbstractVMProviderActionDelegate
 
 	private ISelection selection;
 	
+    @Override
 	public void run(IAction action) {
 		IncompleteChildrenVMC incompleteChildrenVmc = getIncompleteChildrenVMC();
 
@@ -53,6 +54,7 @@ public class FetchMoreChildrenAction extends AbstractVMProviderActionDelegate
 				final FetchMoreChildrenEvent fetchMoreChildrenEvent = new FetchMoreChildrenEvent(exprCtx, path);
 				final AbstractVMProvider vmProvider = (AbstractVMProvider) getVMProvider();
 				vmProvider.getExecutor().execute(new DsfRunnable() {
+	                @Override
 					public void run() {
 						vmProvider.handleEvent(fetchMoreChildrenEvent);
 					}
@@ -89,6 +91,7 @@ public class FetchMoreChildrenAction extends AbstractVMProviderActionDelegate
 		getAction().setEnabled(enabled);
 	}
 
+    @Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		if (targetPart instanceof IViewPart) {
 			init((IViewPart) targetPart);

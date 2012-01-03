@@ -1,4 +1,4 @@
-//!TestTemplateFunctionInClassToInHeader
+//!Test template function in class to in header
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
 filename=A.h
@@ -27,8 +27,7 @@ template<typename T, typename U>
 inline T A<T, U>::B::member() {
 	return T();
 }
-
-//!TestTemplateFunctionInHeaderToInClass
+//!Test template function in header to in class
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
 filename=A.h
@@ -57,7 +56,7 @@ class A {
 		}
 	};
 };
-//!TestTemplateFunctionInHeaderToInClassWithTemplateSelected
+//!Test template function in header to in class with template selected
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
 filename=A.h
@@ -78,8 +77,7 @@ template<typename T>
 inline T A::foo() {
 	return T();
 }
-
-//!TestComplexTemplateFunctionFromInClassToInheader
+//!Test complex template function from in class to in header
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
 filename=A.h
@@ -105,8 +103,7 @@ template<typename U, typename V>
 inline void A<T, S>::foo(const U& u, const V& v) {
 	return;
 }
-
-//!TestComplexTemplateFunctionFromInHeaderToInClass
+//!Test complex template function from in header to in class
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
 filename=A.h

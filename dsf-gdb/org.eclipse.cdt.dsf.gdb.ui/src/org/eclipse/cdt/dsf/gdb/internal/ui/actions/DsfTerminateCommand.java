@@ -42,6 +42,7 @@ public class DsfTerminateCommand implements ITerminateHandler {
     }
 
     // Run control may not be avilable after a connection is terminated and shut down.
+    @Override
     public void canExecute(final IEnabledStateRequest request) {
         if (request.getElements().length != 1 || 
             !(request.getElements()[0] instanceof IDMVMContext) ) 
@@ -64,6 +65,7 @@ public class DsfTerminateCommand implements ITerminateHandler {
         try {
             fExecutor.execute(
                 new DsfRunnable() { 
+                    @Override
                     public void run() {
                         // Get the processes service and the exec context.
                     	IProcesses procService = fTracker.getService(IProcesses.class);
@@ -88,6 +90,7 @@ public class DsfTerminateCommand implements ITerminateHandler {
         }
     }
 
+    @Override
     public boolean execute(final IDebugCommandRequest request) {
         if (request.getElements().length != 1 || 
         	!(request.getElements()[0] instanceof IDMVMContext)) {
@@ -106,6 +109,7 @@ public class DsfTerminateCommand implements ITerminateHandler {
 
         try {
             fExecutor.execute(new DsfRunnable() { 
+                @Override
                 public void run() {
                 	IProcesses procService = fTracker.getService(IProcesses.class);
                     if (procService != null) {

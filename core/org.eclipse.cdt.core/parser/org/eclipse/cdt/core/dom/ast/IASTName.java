@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    Bryan Wilkinson (QNX)
+ *     IBM - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Bryan Wilkinson (QNX)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -23,7 +23,6 @@ import org.eclipse.cdt.core.dom.IName;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTName extends IASTNode, IName {
-
 	/**
 	 * Constant sentinel.
 	 */
@@ -32,12 +31,14 @@ public interface IASTName extends IASTNode, IName {
 	/**
 	 * Returns the name including qualification and template arguments. 
 	 */
+	@Override
 	public char[] toCharArray();
 	
 	/**
 	 * Same as {@link #toCharArray()}.
 	 * @since 5.1
 	 */
+	@Override
 	public String toString();
 
 	/**
@@ -101,11 +102,13 @@ public interface IASTName extends IASTNode, IName {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IASTName copy();
 	
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public IASTName copy(CopyStyle style);
 
 	/** 

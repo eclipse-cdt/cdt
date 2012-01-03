@@ -21,14 +21,11 @@ import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
-import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMProjectIndexLocationConverter;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
-import org.osgi.framework.Bundle;
 
 /**
  * Tests behavior related to location representation in the PDOM
@@ -40,15 +37,13 @@ public class PDOMLocationTests extends BaseTestCase {
 		return suite(PDOMLocationTests.class);
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		cproject= CProjectHelper.createCCProject("PDOMLocationTests"+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
-		
-		Bundle b = CTestPlugin.getDefault().getBundle();
-		CharSequence[] testData = TestSourceReader.getContentsForTest(b, "parser", getClass(), getName(), 3);
-		
 		super.setUp();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		if (cproject != null) {
 			cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());

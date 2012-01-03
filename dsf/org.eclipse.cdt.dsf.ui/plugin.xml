@@ -789,6 +789,59 @@
             name="%disassemblyView.name">
       </editor>
    </extension>
-
+   <extension
+         point="org.eclipse.cdt.debug.ui.disassemblyRulerColumns">
+      <column
+            class="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.AddressRulerColumn"
+            enabled="true"
+            global="false"
+            id="org.eclipse.cdt.dsf.ui.disassemblyColumn.address"
+            includeInMenu="true"
+            name="%disassemblyRulerColumn.addresses">
+         <placement
+               gravity="0.9">
+         </placement>
+         <targetClass
+               class="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyPart">
+         </targetClass>
+      </column>
+      <column
+            class="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.FunctionOffsetRulerColumn"
+            enabled="false"
+            global="true"
+            id="org.eclipse.cdt.dsf.ui.disassemblyColumn.functionOffsets"
+            includeInMenu="true"
+            name="%disassemblyRulerColumn.functionOffsets">
+         <placement
+               gravity="0.9">
+            <after
+                  id="org.eclipse.cdt.dsf.ui.disassemblyColumn.address">
+            </after>
+            <after
+                  id="org.eclipse.cdt.dsf.ui.disassemblyColumn.opcodes">
+            </after>
+         </placement>
+         <targetClass
+               class="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyPart">
+         </targetClass>
+      </column>
+      <column
+            class="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.OpcodeRulerColumn"
+            enabled="false"
+            global="true"
+            id="org.eclipse.cdt.dsf.ui.disassemblyColumn.opcodes"
+            includeInMenu="true"
+            name="%disassemblyRulerColumn.opcodes">
+         <placement
+               gravity="0.9">
+            <after
+                  id="org.eclipse.cdt.dsf.ui.disassemblyColumn.address">
+            </after>
+         </placement>
+         <targetClass
+               class="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyPart">
+         </targetClass>
+      </column>
+   </extension>
 
 </plugin>

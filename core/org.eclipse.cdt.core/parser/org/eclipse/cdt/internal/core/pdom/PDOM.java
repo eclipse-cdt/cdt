@@ -212,10 +212,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  120.0 - Enumerators in global index, bug 356235
 	 *  120.1 - Specializations of using declarations, bug 357293.
 	 *  121.0 - Multiple variants of included header file, bug 197989.
+	 *  122.0 - Compacting strings
 	 */
-	private static final int MIN_SUPPORTED_VERSION= version(121, 0);
-	private static final int MAX_SUPPORTED_VERSION= version(121, Short.MAX_VALUE);
-	private static final int DEFAULT_VERSION = version(121, 0);
+	private static final int MIN_SUPPORTED_VERSION= version(122, 0);
+	private static final int MAX_SUPPORTED_VERSION= version(122, Short.MAX_VALUE);
+	private static final int DEFAULT_VERSION = version(122, 0);
 
 	private static int version(int major, int minor) {
 		return (major << 16) + minor;

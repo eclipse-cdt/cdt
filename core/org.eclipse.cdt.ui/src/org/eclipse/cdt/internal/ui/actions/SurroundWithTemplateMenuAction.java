@@ -15,24 +15,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.swt.events.MenuAdapter;
-import org.eclipse.swt.events.MenuEvent;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.core.runtime.Assert;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionProvider;
-
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IEditingSupport;
@@ -44,7 +32,15 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension2;
-
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.swt.events.MenuAdapter;
+import org.eclipse.swt.events.MenuEvent;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IWorkbenchPart;
@@ -55,6 +51,7 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
+
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.text.contentassist.CContentAssistInvocationContext;
 import org.eclipse.cdt.internal.ui.text.contentassist.TemplateCompletionProposalComputer;
@@ -68,7 +65,7 @@ public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownD
 	private static final String TEMPLATE_GROUP= "templateGroup"; //$NON-NLS-1$
 
 	private static final String CONFIG_GROUP= "configGroup"; //$NON-NLS-1$
-	
+
 	private static class ConfigureTemplatesAction extends Action {
 
 		public ConfigureTemplatesAction() {
@@ -103,19 +100,24 @@ public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownD
 	private IPartService fPartService;
 	private IPartListener fPartListener= new IPartListener() {
 
+		@Override
 		public void partActivated(IWorkbenchPart part) {
 		}
 
+		@Override
 		public void partBroughtToTop(IWorkbenchPart part) {
 		}
 
+		@Override
 		public void partClosed(IWorkbenchPart part) {
 		}
 
+		@Override
 		public void partDeactivated(IWorkbenchPart part) {
 			disposeMenuItems();
 		}
 
+		@Override
 		public void partOpened(IWorkbenchPart part) {
 		}
 	};
@@ -136,6 +138,7 @@ public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownD
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Menu getMenu(Menu parent) {
 		setMenu(new Menu(parent));
 		fillMenu(fMenu);
@@ -146,6 +149,7 @@ public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownD
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Menu getMenu(Control parent) {
 		setMenu(new Menu(parent));
 		fillMenu(fMenu);
@@ -170,6 +174,7 @@ public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownD
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void dispose() {
 		if (fPartService != null) {
 			fPartService.removePartListener(fPartListener);
@@ -181,6 +186,7 @@ public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownD
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void init(IWorkbenchWindow window) {
 		if (fPartService != null) {
 			fPartService.removePartListener(fPartListener);
@@ -199,6 +205,7 @@ public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownD
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void run(IAction action) {
 		IWorkbenchPart activePart= CUIPlugin.getActivePage().getActivePart();
 		if (!(activePart instanceof CEditor))
@@ -217,6 +224,7 @@ public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownD
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		// Default do nothing
 	}
@@ -280,18 +288,18 @@ public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownD
 		ITextSelection textSelection= getTextSelection(editor);
 		if (textSelection == null || textSelection.getLength() == 0)
 			return null;
-			
+
 		ITranslationUnit tu= CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput());
 		if (tu == null)
 			return null;
 
 		TemplateCompletionProposalComputer templateComputer = new TemplateCompletionProposalComputer();
 		CContentAssistInvocationContext context = new CContentAssistInvocationContext( editor.getViewer(), textSelection.getOffset(), editor, true, false );
-	
+
 		List<ICompletionProposal> proposals= templateComputer.computeCompletionProposals(context, null);
 		if (proposals == null || proposals.isEmpty())
 			return null;
-		
+
 		return getActionsFromProposals(proposals, context.getInvocationOffset(), editor.getViewer());
 	}
 
@@ -344,10 +352,12 @@ public class SurroundWithTemplateMenuAction implements IWorkbenchWindowPulldownD
 		IEditingSupportRegistry registry= null;
 		IEditingSupport helper= new IEditingSupport() {
 
+			@Override
 			public boolean isOriginator(DocumentEvent event, IRegion focus) {
 				return focus.getOffset() <= offset && focus.getOffset() + focus.getLength() >= offset;
 			}
 
+			@Override
 			public boolean ownsFocusShell() {
 				return false;
 			}

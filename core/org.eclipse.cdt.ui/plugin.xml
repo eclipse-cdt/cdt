@@ -136,14 +136,54 @@
             class="org.eclipse.cdt.internal.ui.filters.NonCElementFilter"
             id="org.eclipse.cdt.internal.ui.CView.NonCElementFilter">
       </filter>
-<!-- C/C++ Outline Page -->
       <filter
-            targetId="org.eclipse.cdt.ui.COutlinePage"
+            targetId="org.eclipse.cdt.ui.CView"
+            name="%HideAnonymousStruct.label"
+            enabled="true"
+            description="%HideAnonymousStruct.description"
+            class="org.eclipse.cdt.internal.ui.filters.AnonymousStructFilter"
+            id="org.eclipse.cdt.internal.ui.CView.AnonymousStructFilter">
+      </filter>
+      <filter
+            targetId="org.eclipse.cdt.ui.CView"
+            name="%ForwardDeclarationFilter.label"
+            enabled="true"
+            description="%ForwardDeclarationFilter.description" 
+            class="org.eclipse.cdt.internal.ui.filters.ForwardDeclarationFilter"
+            id="org.eclipse.cdt.internal.ui.CView.ForwardDeclarationFilter">
+      </filter>
+      <filter
+            targetId="org.eclipse.cdt.ui.CView"
+            name="%HideMacroDirective.label"
+            enabled="false"
+            description="%HideMacroDirective.description"
+            class="org.eclipse.cdt.internal.ui.filters.MacroDirectiveFilter"
+            id="org.eclipse.cdt.internal.ui.CView.MacroDirectiveFilter">
+      </filter>
+      <filter
+            targetId="org.eclipse.cdt.ui.CView"
             name="%HideUsingDirective.label"
             enabled="false"
             description="%HideUsingDirective.description"
             class="org.eclipse.cdt.internal.ui.filters.UsingDirectiveFilter"
-            id="org.eclipse.cdt.ui.COutlinePage.UsingDeclarationFilter">
+            id="org.eclipse.cdt.internal.ui.CView.UsingDeclarationFilter">
+      </filter>
+<!-- C/C++ Outline Page -->
+      <filter
+            targetId="org.eclipse.cdt.ui.COutlinePage"
+            name="%HideAnonymousStruct.label"
+            enabled="false"
+            description="%HideAnonymousStruct.description"
+            class="org.eclipse.cdt.internal.ui.filters.AnonymousStructFilter"
+            id="org.eclipse.cdt.ui.COutlinePage.AnonymousStructFilter">
+      </filter>
+      <filter
+            targetId="org.eclipse.cdt.ui.COutlinePage"
+            name="%ForwardDeclarationFilter.label"
+            enabled="false"
+            description="%ForwardDeclarationFilter.description" 
+            class="org.eclipse.cdt.internal.ui.filters.ForwardDeclarationFilter"
+            id="org.eclipse.cdt.ui.COutlinePage.ForwardDeclarationFilter">
       </filter>
       <filter
             targetId="org.eclipse.cdt.ui.COutlinePage"
@@ -155,11 +195,11 @@
       </filter>
       <filter
             targetId="org.eclipse.cdt.ui.COutlinePage"
-            name="%ForwardDeclarationFilter.label"
+            name="%HideUsingDirective.label"
             enabled="false"
-            description="%ForwardDeclarationFilter.description" 
-            class="org.eclipse.cdt.internal.ui.filters.ForwardDeclarationFilter"
-            id="org.eclipse.cdt.ui.COutlinePage.ForwardDeclarationFilter">
+            description="%HideUsingDirective.description"
+            class="org.eclipse.cdt.internal.ui.filters.UsingDirectiveFilter"
+            id="org.eclipse.cdt.ui.COutlinePage.UsingDeclarationFilter">
       </filter>
 <!-- Asm Outline Page -->
       <filter
@@ -578,6 +618,258 @@
             label="%Dummy.label"
             value="240, 216, 168">
       </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.c_multi_line_comment"
+            isEditable="false"
+            label="%Dummy.label"
+            value="63, 127, 95">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.c_single_line_comment"
+            isEditable="false"
+            label="%Dummy.label"
+            value="63, 127, 95">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.c_keyword"
+            isEditable="false"
+            label="%Dummy.label"
+            value="127, 0, 85">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.c_type"
+            isEditable="false"
+            label="%Dummy.label"
+            value="127, 0, 85">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.c_string"
+            isEditable="false"
+            label="%Dummy.label"
+            value="42, 0, 255">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.c_operators"
+            isEditable="false"
+            label="%Dummy.label"
+            value="0, 0, 0">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.c_braces"
+            isEditable="false"
+            label="%Dummy.label"
+            value="0, 0, 0">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.c_numbers"
+            isEditable="false"
+            label="%Dummy.label"
+            value="0, 0, 0">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.c_default"
+            isEditable="false"
+            label="%Dummy.label"
+            value="0, 0, 0">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.pp_directive"
+            isEditable="false"
+            label="%Dummy.label"
+            value="127, 0, 85">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.pp_directive"
+            isEditable="false"
+            label="%Dummy.label"
+            value="127, 0, 85">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.pp_default"
+            isEditable="false"
+            label="%Dummy.label"
+            value="0, 0, 0">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.pp_header"
+            isEditable="false"
+            label="%Dummy.label"
+            value="42, 0, 255">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.asm_directive"
+            isEditable="false"
+            label="%Dummy.label"
+            value="127, 0, 85">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.asm_label"
+            isEditable="false"
+            label="%Dummy.label"
+            value="127, 0, 85">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.c_comment_task_tag"
+            isEditable="false"
+            label="%Dummy.label"
+            value="127, 159, 191">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.internal.ui.text.doctools.doxygen.multi"
+            isEditable="false"
+            label="%Dummy.label"
+            value="63, 95, 191">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.internal.ui.text.doctools.doxygen.single"
+            isEditable="false"
+            label="%Dummy.label"
+            value="63, 95, 191">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.internal.ui.text.doctools.doxygen.recognizedTag"
+            isEditable="false"
+            label="%Dummy.label"
+            value="127, 159, 191">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.staticFieldHighlighting"
+            isEditable="false"
+            label="%Dummy.label"
+            value="0, 0, 192">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.fieldHighlighting"
+            isEditable="false"
+            label="%Dummy.label"
+            value="0, 0, 192">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.methodDeclarationHighlighting"
+            isEditable="false"
+            label="%Dummy.label"
+            value="0, 0, 0">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.staticMethodHighlighting"
+            isEditable="false"
+            label="%Dummy.label"
+            value="0, 0, 0">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.functionDeclarationHighlighting"
+            isEditable="false"
+            label="%Dummy.label"
+            value="0, 0, 0">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.functionHighlighting"
+            isEditable="false"
+            label="%Dummy.label"
+            value="0, 0, 0">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.localVariableDeclarationHighlighting"
+            isEditable="false"
+            label="%Dummy.label"
+            value="128, 0, 0">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.localVariableHighlighting"
+            isEditable="false"
+            label="%Dummy.label"
+            value="0, 0, 0">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.globalVariableHighlighting"
+            isEditable="false"
+            label="%Dummy.label"
+            value="0, 0, 0">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.parameterVariableHighlighting"
+            isEditable="false"
+            label="%Dummy.label"
+            value="0, 0, 0">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.templateParameterHighlighting"
+            isEditable="false"
+            label="%Dummy.label"
+            value="100, 70, 50">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.methodHighlighting"
+            isEditable="false"
+            label="%Dummy.label"
+            value="0, 0, 0">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.classHighlighting"
+            isEditable="false"
+            label="%Dummy.label"
+            value="0, 80, 50">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.enumHighlighting"
+            isEditable="false"
+            label="%Dummy.label"
+            value="100, 70, 50">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.macroSubstitutionHighlighting"
+            isEditable="false"
+            label="%Dummy.label"
+            value="0, 0, 0">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.macroDefinitionHighlighting"
+            isEditable="false"
+            label="%Dummy.label"
+            value="0, 0, 0">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.typedefHighlighting"
+            isEditable="false"
+            label="%Dummy.label"
+            value="0, 80, 50">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.namespaceHighlighting"
+            isEditable="false"
+            label="%Dummy.label"
+            value="0, 0, 0">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.labelHighlighting"
+            isEditable="false"
+            label="%Dummy.label"
+            value="0, 0, 0">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.enumeratorHighlighting"
+            isEditable="false"
+            label="%Dummy.label"
+            value="0, 0, 192">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.problemHighlighting"
+            isEditable="false"
+            label="%Dummy.label"
+            value="224, 0, 0">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.externalSDKHighlighting"
+            isEditable="false"
+            label="%Dummy.label"
+            value="100, 40, 128">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.cdt.ui.overloadedOperatorHighlighting"
+            isEditable="false"
+            label="%Dummy.label"
+            value="200, 100, 0">
+      </colorDefinition>
       <theme
          id="org.eclipse.ui.ide.systemDefault">
          <colorOverride
@@ -594,6 +886,170 @@
          </colorOverride>
          <colorOverride
             id="org.eclipse.cdt.ui.content_assist_parameters_foreground"
+            value="COLOR_LIST_FOREGROUND">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.ui.c_multi_line_comment"
+            value="COLOR_LIST_SELECTION">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.ui.c_single_line_comment"
+            value="COLOR_LIST_SELECTION">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.ui.c_keyword"
+            value="COLOR_LIST_FOREGROUND">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.ui.c_type"
+            value="COLOR_LIST_FOREGROUND">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.ui.c_string"
+            value="COLOR_LIST_FOREGROUND">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.ui.c_operators"
+            value="COLOR_LIST_FOREGROUND">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.ui.c_braces"
+            value="COLOR_LIST_FOREGROUND">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.ui.c_numbers"
+            value="COLOR_LIST_FOREGROUND">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.ui.c_default"
+            value="COLOR_LIST_FOREGROUND">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.ui.pp_directive"
+            value="COLOR_LIST_FOREGROUND">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.ui.pp_default"
+            value="COLOR_LIST_FOREGROUND">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.ui.pp_header"
+            value="COLOR_LIST_FOREGROUND">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.ui.asm_directive"
+            value="COLOR_LIST_FOREGROUND">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.ui.asm_label"
+            value="COLOR_LIST_FOREGROUND">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.ui.c_comment_task_tag"
+            value="COLOR_WIDGET_NORMAL_SHADOW">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.internal.ui.text.doctools.doxygen.multi"
+            value="COLOR_LIST_SELECTION">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.internal.ui.text.doctools.doxygen.single"
+            value="COLOR_LIST_SELECTION">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.internal.ui.text.doctools.doxygen.recognizedTag"
+            value="COLOR_WIDGET_NORMAL_SHADOW">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.ui.staticFieldHighlighting"
+            value="COLOR_LIST_SELECTION">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.ui.fieldHighlighting"
+            value="COLOR_LIST_SELECTION">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.ui.methodDeclarationHighlighting"
+            value="COLOR_LIST_FOREGROUND">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.ui.staticMethodHighlighting"
+            value="COLOR_LIST_FOREGROUND">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.ui.functionDeclarationHighlighting"
+            value="COLOR_LIST_FOREGROUND">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.ui.functionHighlighting"
+            value="COLOR_LIST_FOREGROUND">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.ui.localVariableDeclarationHighlighting"
+            value="COLOR_LIST_FOREGROUND">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.ui.localVariableHighlighting"
+            value="COLOR_LIST_FOREGROUND">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.ui.globalVariableHighlighting"
+            value="COLOR_LIST_FOREGROUND">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.ui.parameterVariableHighlighting"
+            value="COLOR_LIST_FOREGROUND">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.ui.templateParameterHighlighting"
+            value="COLOR_WIDGET_DARK_SHADOW">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.ui.methodHighlighting"
+            value="COLOR_LIST_FOREGROUND">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.ui.classHighlighting"
+            value="COLOR_WIDGET_DARK_SHADOW">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.ui.enumHighlighting"
+            value="COLOR_WIDGET_DARK_SHADOW">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.ui.macroSubstitutionHighlighting"
+            value="COLOR_LIST_FOREGROUND">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.ui.macroDefinitionHighlighting"
+            value="COLOR_LIST_FOREGROUND">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.ui.typedefHighlighting"
+            value="COLOR_LIST_FOREGROUND">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.ui.namespaceHighlighting"
+            value="COLOR_LIST_FOREGROUND">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.ui.labelHighlighting"
+            value="COLOR_LIST_FOREGROUND">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.ui.enumeratorHighlighting"
+            value="COLOR_LIST_FOREGROUND">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.ui.problemHighlighting"
+            value="COLOR_WIDGET_DARK_SHADOW">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.ui.externalSDKHighlighting"
+            value="COLOR_LIST_FOREGROUND">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.ui.overloadedOperatorHighlighting"
             value="COLOR_LIST_FOREGROUND">
          </colorOverride>
       </theme>
@@ -2958,10 +3414,6 @@
          point="org.eclipse.core.runtime.preferences">
       <initializer class="org.eclipse.cdt.ui.CUIPreferenceInitializer"/>
    </extension>
-   <extension
-         point="org.eclipse.core.runtime.preferences">
-      <initializer class="org.eclipse.cdt.ui.text.doctools.doxygen.DoxygenHelper"/>
-   </extension>
    
 <!-- Default folding -->
 	<extension
@@ -3405,6 +3857,28 @@
           description="%HideNonCElements.description"
           id="org.eclipse.cdt.ui.navigator.filters.NonCElementFilter"
           name="%HideNonCElements.label"/>
+    <commonFilter
+          activeByDefault="true"
+          class="org.eclipse.cdt.internal.ui.filters.AnonymousStructFilter"
+          description="%HideAnonymousStruct.description"
+          id="org.eclipse.cdt.ui.navigator.filters.AnonymousStructFilter"
+          name="%HideAnonymousStruct.navigator.label"/>
+    <commonFilter
+          activeByDefault="true"
+          class="org.eclipse.cdt.internal.ui.filters.ForwardDeclarationFilter"
+          description="%ForwardDeclarationFilter.description"
+          id="org.eclipse.cdt.ui.navigator.filters.ForwardDeclarationFilter"
+          name="%ForwardDeclarationFilter.navigator.label"/>
+    <commonFilter
+          class="org.eclipse.cdt.internal.ui.filters.MacroDirectiveFilter"
+          description="%HideMacroDirective.description"
+          id="org.eclipse.cdt.ui.navigator.filters.MacroDirectiveFilter"
+          name="%HideMacroDirective.navigator.label"/>
+    <commonFilter
+          class="org.eclipse.cdt.internal.ui.filters.UsingDirectiveFilter"
+          description="%HideUsingDirective.description"
+          id="org.eclipse.cdt.ui.navigator.filters.UsingDirectiveFilter"
+          name="%HideUsingDirective.navigator.label"/>
   </extension>
   <extension
          point="org.eclipse.ui.navigator.linkHelper">

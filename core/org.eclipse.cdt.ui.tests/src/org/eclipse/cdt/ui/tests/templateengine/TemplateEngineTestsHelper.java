@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Bala Torati (Symbian) - Initial API and implementation
+ *     Bala Torati (Symbian) - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.core.tests.templateengine;
+package org.eclipse.cdt.ui.tests.templateengine;
 
 import java.io.IOException;
 import java.net.URL;
@@ -34,26 +34,22 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 
 /**
- * 
  * All supporting functions which are not part of Testing class.
  * 
  * @since 4.0
 */
-
 public class TemplateEngineTestsHelper {
-	
-	public static final String LOGGER_FILE_NAME="TemplateEngineTests";	//$NON-NLS-1$
+	public static final String LOGGER_FILE_NAME = "TemplateEngineTests";	//$NON-NLS-1$
 	
 	/**
-	 * get the url of a xml template, by passing the xml file name.
+	 * Returns the url of a xml template, by passing the xml file name.
 	 * @param templateName
 	 * @return URL
 	 */
 	public static URL getTemplateURL(String templateName){
 		Bundle bundle = Platform.getBundle(CTestPlugin.PLUGIN_ID);
-		URL url = FileLocator.find(bundle, new Path("resources/templateengine/"+templateName), null); //$NON-NLS-1$
-		if ( url != null )
-		{ 
+		URL url = FileLocator.find(bundle, new Path("resources/templateengine/" + templateName), null); //$NON-NLS-1$
+		if (url != null) { 
 			try {
 				url = FileLocator.toFileURL(url);
 			} catch (IOException e) {
@@ -65,19 +61,19 @@ public class TemplateEngineTestsHelper {
 	
 	public static TemplateCore[] getTestTemplates() {
 		TemplateCore[] templates = TemplateEngine.getDefault().getTemplates();
-	    List testTemplates = new ArrayList();
-		for (int i =0; i < templates.length; i++) {
+	    List<TemplateCore> testTemplates = new ArrayList<TemplateCore>();
+		for (int i = 0; i < templates.length; i++) {
 			if (templates[i].getTemplateType().equals("TestTemplate")) {
 				testTemplates.add(templates[i]);
 			}
 		}
-		return (TemplateCore[]) testTemplates.toArray(new TemplateCore[testTemplates.size()]); 
+		return testTemplates.toArray(new TemplateCore[testTemplates.size()]); 
 	}
 	
 	public static int getChildCount(TemplateDescriptor templateDescriptor, String propertyGroupID){
-		List list = templateDescriptor.getPropertyGroupList();
+		List<Element> list = templateDescriptor.getPropertyGroupList();
 		for (int i = 0, l = list.size(); i < l; i++) {
-			Element element = (Element) list.get(i);
+			Element element = list.get(i);
 			NamedNodeMap attributes = element.getAttributes();
 			for (int j = 0, l1 = attributes.getLength(); j < l1; j++) {
 				String value = attributes.item(j).getNodeValue();
@@ -90,7 +86,7 @@ public class TemplateEngineTestsHelper {
 	}
 	
 	public static boolean failIfErrorStatus(IStatus[] statuses) {
-		for(int i=0; i<statuses.length; i++) {
+		for(int i = 0; i < statuses.length; i++) {
 			IStatus status = statuses[i];
 			if (status.getCode() == IStatus.ERROR) {
 				Assert.fail(status.getMessage());
@@ -112,5 +108,4 @@ public class TemplateEngineTestsHelper {
 		workspaceDesc.setAutoBuilding(false);
 		workspace.setDescription(workspaceDesc);
 	}
-	
 }

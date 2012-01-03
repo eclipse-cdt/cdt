@@ -136,6 +136,7 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
     		fRegisterDmc = registerDMC;
         }
         
+    	@Override
 		public IRegisterDMContext getDMContext() {
 			return fRegisterDmc;
 		}
@@ -221,6 +222,7 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
 
     public boolean isValid() { return true; }
     
+	@Override
     public void getFormattedExpressionValue(FormattedValueDMContext dmc, DataRequestMonitor<FormattedValueDMData> rm) {
         if (dmc.getParents().length == 1 && dmc.getParents()[0] instanceof MIRegisterDMC) {
                 getRegisterDataValue( (MIRegisterDMC) dmc.getParents()[0], dmc.getFormatID(), rm);
@@ -230,13 +232,16 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
         }
     }
     
+	@Override
     public void getRegisterGroupData(IRegisterGroupDMContext regGroupDmc, DataRequestMonitor<IRegisterGroupDMData> rm) {
         /**
          * For the GDB GDBMI implementation there is only on group. The GPR and FPU registers are grouped into 
          * one set. We are going to hard wire this set as the "General Registers".
          */
         class RegisterGroupData implements IRegisterGroupDMData {
+        	@Override
             public String getName() { return "General Registers"; } //$NON-NLS-1$
+        	@Override
             public String getDescription() { return "General Purpose and FPU Register Group"; } //$NON-NLS-1$
         }
 
@@ -244,6 +249,7 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
         rm.done();
     }
 
+	@Override
     public void getBitFieldData(IBitFieldDMContext dmc, DataRequestMonitor<IBitFieldDMData> rm) {
         rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Bit fields not yet supported", null));  //$NON-NLS-1$
         rm.done();
@@ -254,6 +260,7 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
      * this group as a single list we maintain within this service. So we
      * need to search this list to see if we have a current value.
      */
+	@Override
     public void getRegisterData(IRegisterDMContext regDmc , final DataRequestMonitor<IRegisterDMData> rm) {
         if (regDmc instanceof MIRegisterDMC) {
             final MIRegisterDMC miRegDmc = (MIRegisterDMC)regDmc;
@@ -362,15 +369,24 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
             fIsFloat = isFloat;
     	}
     	
+    	@Override
     	public boolean isReadable() { return true; }
+    	@Override
         public boolean isReadOnce() { return false; }
+    	@Override
         public boolean isWriteable() { return true; }
+    	@Override
         public boolean isWriteOnce() { return false; }
+    	@Override
         public boolean hasSideEffects() { return false; }
+    	@Override
         public boolean isVolatile() { return true; }
 
+    	@Override
         public boolean isFloat() { return fIsFloat; }
+    	@Override
         public String getName() { return fRegName; }
+    	@Override
         public String getDescription() { return fRegDesc; }
     }
 
@@ -443,6 +459,7 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
      * (non-Javadoc)
      * @see org.eclipse.cdt.dsf.debug.service.IRegisters#getRegisterGroups(org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext, org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
      */
+	@Override
     public void getRegisterGroups(IDMContext ctx, DataRequestMonitor<IRegisterGroupDMContext[]> rm ) {
     	IContainerDMContext contDmc = DMContexts.getAncestorOfType(ctx, IContainerDMContext.class);
         if (contDmc == null) {
@@ -464,6 +481,7 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
      * (non-Javadoc)
      * @see org.eclipse.cdt.dsf.debug.service.IRegisters#getRegisters(org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterGroupDMContext, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
      */
+	@Override
     public void getRegisters(final IDMContext dmc, final DataRequestMonitor<IRegisterDMContext[]> rm) {
     	final MIRegisterGroupDMC groupDmc = DMContexts.getAncestorOfType(dmc, MIRegisterGroupDMC.class);
         if ( groupDmc == null ) { 
@@ -513,6 +531,7 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
      * (non-Javadoc)
      * @see org.eclipse.cdt.dsf.debug.service.IRegisters#getBitFields(org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterDMContext, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
      */
+	@Override
     public void getBitFields( IDMContext regDmc , DataRequestMonitor<IBitFieldDMContext[]> rm ) {
         rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "BitField not supported", null)); //$NON-NLS-1$
         rm.done();
@@ -522,6 +541,7 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
      * (non-Javadoc)
      * @see org.eclipse.cdt.dsf.debug.service.IRegisters#writeRegister(org.eclipse.cdt.dsf.debug.service.IRegisters.IRegisterDMContext, java.lang.String, java.lang.String, org.eclipse.cdt.dsf.concurrent.RequestMonitor)
      */
+	@Override
     public void writeRegister(IRegisterDMContext regCtx, final String regValue, final String formatId, final RequestMonitor rm) {
       MIRegisterGroupDMC grpDmc = DMContexts.getAncestorOfType(regCtx, MIRegisterGroupDMC.class);
       if ( grpDmc == null ) { 
@@ -569,6 +589,7 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
      * (non-Javadoc)
      * @see org.eclipse.cdt.dsf.debug.service.IRegisters#writeBitField(org.eclipse.cdt.dsf.debug.service.IRegisters.IBitFieldDMContext, java.lang.String, java.lang.String, org.eclipse.cdt.dsf.concurrent.RequestMonitor)
      */
+	@Override
     public void writeBitField(IBitFieldDMContext bitFieldCtx, String bitFieldValue, String formatId, RequestMonitor rm) {
         rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Writing bit field not supported", null)); //$NON-NLS-1$
         rm.done();
@@ -578,6 +599,7 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
      * (non-Javadoc)
      * @see org.eclipse.cdt.dsf.debug.service.IRegisters#writeBitField(org.eclipse.cdt.dsf.debug.service.IRegisters.IBitFieldDMContext, org.eclipse.cdt.dsf.debug.service.IRegisters.IMnemonic, org.eclipse.cdt.dsf.concurrent.RequestMonitor)
      */
+	@Override
     public void writeBitField(IBitFieldDMContext bitFieldCtx, IMnemonic mnemonic, RequestMonitor rm) {
         rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Writing bit field not supported", null)); //$NON-NLS-1$
         rm.done();
@@ -587,6 +609,7 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
      * (non-Javadoc)
      * @see org.eclipse.cdt.dsf.debug.service.IFormattedValues#getAvailableFormats(org.eclipse.cdt.dsf.debug.service.IFormattedValues.IFormattedDataDMContext, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
      */
+	@Override
     public void getAvailableFormats(IFormattedDataDMContext dmc, DataRequestMonitor<String[]> rm) {
         
         rm.setData(new String[] { HEX_FORMAT, DECIMAL_FORMAT, OCTAL_FORMAT, BINARY_FORMAT, NATURAL_FORMAT });
@@ -597,6 +620,7 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
      * (non-Javadoc)
      * @see org.eclipse.cdt.dsf.debug.service.IFormattedValues#getFormattedValueContext(org.eclipse.cdt.dsf.debug.service.IFormattedValues.IFormattedDataDMContext, java.lang.String)
      */
+	@Override
     public FormattedValueDMContext getFormattedValueContext(IFormattedDataDMContext dmc, String formatId) {
         if ( dmc instanceof MIRegisterDMC ) {
             MIRegisterDMC regDmc = (MIRegisterDMC) dmc;
@@ -609,6 +633,7 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
      * (non-Javadoc)
      * @see org.eclipse.cdt.dsf.debug.service.IRegisters#findRegisterGroup(org.eclipse.cdt.dsf.datamodel.IDMContext, java.lang.String, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
      */
+	@Override
     public void findRegisterGroup(IDMContext ctx, String name, DataRequestMonitor<IRegisterGroupDMContext> rm) {
         rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Finding a Register Group context not supported", null)); //$NON-NLS-1$
         rm.done();
@@ -618,6 +643,7 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
      * (non-Javadoc)
      * @see org.eclipse.cdt.dsf.debug.service.IRegisters#findRegister(org.eclipse.cdt.dsf.datamodel.IDMContext, java.lang.String, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
      */
+	@Override
     public void findRegister(IDMContext ctx, String name, DataRequestMonitor<IRegisterDMContext> rm) {
         rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Finding a Register context not supported", null)); //$NON-NLS-1$
         rm.done();
@@ -627,6 +653,7 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
      * (non-Javadoc)
      * @see org.eclipse.cdt.dsf.debug.service.IRegisters#findBitField(org.eclipse.cdt.dsf.datamodel.IDMContext, java.lang.String, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
      */
+	@Override
     public void findBitField(IDMContext ctx, String name, DataRequestMonitor<IBitFieldDMContext> rm) {
         rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Finding a Register Group context not supported", null)); //$NON-NLS-1$
         rm.done();
@@ -636,6 +663,7 @@ public class MIRegisters extends AbstractDsfService implements IRegisters, ICach
      * {@inheritDoc}
      * @since 1.1
      */
+	@Override
     public void flushCache(IDMContext context) {
         fRegisterNameCache.reset(context);
         fRegisterValueCache.reset(context);

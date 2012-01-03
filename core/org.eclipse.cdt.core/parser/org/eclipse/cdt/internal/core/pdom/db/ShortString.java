@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 QNX Software Systems and others.
+ * Copyright (c) 2006, 2011 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
 package org.eclipse.cdt.internal.core.pdom.db;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -28,57 +29,53 @@ public class ShortString implements IString {
 	private static final int LENGTH = 0;
 	private static final int CHARS = 4;
 	
-	public static final int MAX_LENGTH = (Database.MAX_MALLOC_SIZE - CHARS) / 2;
+	public static final int MAX_BYTE_LENGTH = Database.MAX_MALLOC_SIZE - CHARS;
 	
 	public ShortString(Database db, long offset) {
 		this.db = db;
 		this.record = offset;
 	}
 
-	public ShortString(Database db, char[] chars) throws CoreException {
+	public ShortString(Database db, char[] chars, boolean useBytes) throws CoreException {
+		final int n = chars.length;
 		this.db = db;
-		this.record = db.malloc(CHARS + chars.length * 2);
 		
+		this.record = db.malloc(CHARS + (useBytes ? n : 2*n));
 		Chunk chunk = db.getChunk(record);
-		chunk.putInt(record + LENGTH, (char)chars.length);
-		int n = chars.length;
+		chunk.putInt(record + LENGTH, useBytes ? -n : n);
 		long p = record + CHARS;
-		for (int i = 0; i < n; ++i) {
-			chunk.putChar(p, chars[i]);
-			p += 2;
+		if (useBytes) {
+			chunk.putCharsAsBytes(p, chars, 0, n);
+		} else {
+			chunk.putChars(p, chars, 0, n);
 		}
 	}
 	
-	public ShortString(Database db, String string) throws CoreException {
-		this.db = db;
-		this.record = db.malloc(CHARS + string.length() * 2);
-		
-		Chunk chunk = db.getChunk(record);
-		chunk.putInt(record + LENGTH, string.length());
-		int n = string.length();
-		long p = record + CHARS;
-		for (int i = 0; i < n; ++i) {
-			chunk.putChar(p, string.charAt(i));
-			p += 2;
-		}
-	}
-	
+	@Override
 	public long getRecord() {
 		return record;
 	}
 	
+	@Override
 	public void delete() throws CoreException {
 		db.free(record);
 	}
 	
+	@Override
 	public char[] getChars() throws CoreException {
-		Chunk chunk = db.getChunk(record);
-		int length = chunk.getInt(record + LENGTH);
-		char[] chars = new char[length];
-		chunk.getCharArray(record + CHARS, chars);
+		final Chunk chunk = db.getChunk(record);
+		final int l = chunk.getInt(record + LENGTH);
+		final int length = Math.abs(l);
+		final char[] chars = new char[length];
+		if (l < 0) {
+			chunk.getCharsFromBytes(record + CHARS, chars, 0, length);
+		} else {
+			chunk.getChars(record + CHARS, chars, 0, length);
+		}
 		return chars;
 	}
 	
+	@Override
 	public String getString() throws CoreException {
 		return new String(getChars());
 	}
@@ -102,49 +99,22 @@ public class ShortString implements IString {
 				if (n1 != n2)
 					return false;
 				
-				long p1 = record + CHARS;
-				long p2 = string.record + CHARS;
-				for (int i = 0; i < n1; ++i) {
-					if (chunk1.getChar(p1) != chunk2.getChar(p2))
-						return false;
-					p1 += 2;
-					p2 += 2;
-				}
-				return true;
-			} else if (obj instanceof char[]) {
+				return CharArrayUtils.equals(getChars(), string.getChars());
+			} 
+			if (obj instanceof char[]) {
 				char[] chars = (char[])obj;
-				Chunk chunk = db.getChunk(record);
 
 				// Make sure size is the same
-				int n = chunk.getInt(record);
-				if (n != chars.length)
+				if (getLength() != chars.length)
 					return false;
 				
-				// Check each character
-				long p = record + CHARS;
-				for (int i = 0; i < n; ++i) {
-					if (chunk.getChar(p) != chars[i])
-						return false;
-					p += 2;
-				}
-				return true;
+				return CharArrayUtils.equals(getChars(), chars);
 			} else if (obj instanceof String) {
 				String string = (String)obj;
-				Chunk chunk = db.getChunk(record);
-
-				// Make sure size is the same
-				int n = chunk.getInt(record);
-				if (n != string.length())
+				if (getLength() != string.length())
 					return false;
 				
-				// Check each character
-				long p = record + CHARS;
-				for (int i = 0; i < n; ++i) {
-					if (chunk.getChar(p) != string.charAt(i))
-						return false;
-					p += 2;
-				}
-				return true;
+				return CharArrayUtils.equals(getChars(), string.toCharArray());
 			}
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -173,112 +143,48 @@ public class ShortString implements IString {
 		return h;
 	}
 	
+	public static int compare(final char[] chars, char[] other, boolean caseSensitive) {
+		final int n = Math.min(chars.length, other.length);
+		for (int i=0; i<n; i++) {
+			int cmp= compareChars(chars[i], other[i], caseSensitive);
+			if (cmp != 0)
+				return cmp;
+		}
+		return chars.length - other.length;
+	}
+
+	@Override
 	public int compare(char[] other, boolean caseSensitive) throws CoreException {
-		Chunk chunk = db.getChunk(record);
-		
-		long i1 = record + CHARS;
-		int i2 = 0;
-		long n1 = i1 + chunk.getInt(record + LENGTH) * 2;
-		int n2 = other.length;
-		
-		while (i1 < n1 && i2 < n2) {
-			int cmp= compareChars(chunk.getChar(i1), other[i2], caseSensitive);
-			if (cmp != 0)
-				return cmp;
-			
-			i1 += 2;
-			++i2;
-		}
-
-		if (i1 == n1 && i2 != n2)
-			return -1;
-		else if (i2 == n2 && i1 != n1)
-			return 1;
-		else
-			return 0;
+		return compare(getChars(), other, caseSensitive);
 	}
-	
+
+	@Override
 	public int compare(IString string, boolean caseSensitive) throws CoreException {
-		if (string instanceof ShortString)
-			return compare((ShortString)string, caseSensitive);
-		else if (string instanceof LongString)
-			return - ((LongString)string).compare(this, caseSensitive);
-		else
-			throw new IllegalArgumentException();
+		return compare(getChars(), string.getChars(), caseSensitive);
 	}
-	
-	public int compare(ShortString other, boolean caseSensitive) throws CoreException {
-		Chunk chunk1 = db.getChunk(record);
-		Chunk chunk2 = other.db.getChunk(other.record);
-
-		long i1 = record + CHARS;
-		long i2 = other.record + CHARS;
-		long n1 = i1 + chunk1.getInt(record + LENGTH) * 2;
-		long n2 = i2 + chunk2.getInt(other.record + LENGTH) * 2;
 		
-		while (i1 < n1 && i2 < n2) {
-			int cmp= compareChars(chunk1.getChar(i1), chunk2.getChar(i2), caseSensitive);
-			if (cmp != 0)
-				return cmp;
-			
-			i1 += 2;
-			i2 += 2;
-		}
-
-		if (i1 == n1 && i2 != n2)
-			return -1;
-		else if (i2 == n2 && i1 != n1)
-			return 1;
-		else
-			return 0;
-	}
-	
+	@Override
 	public int compare(String other, boolean caseSensitive) throws CoreException {
-		Chunk chunk = db.getChunk(record);
-		
-		long i1 = record + CHARS;
-		int i2 = 0;
-		long n1 = i1 + chunk.getInt(record + LENGTH) * 2;
-		int n2 = other.length();
-		
-		while (i1 < n1 && i2 < n2) {
-			int cmp= compareChars(chunk.getChar(i1), other.charAt(i2), caseSensitive);
-			if (cmp != 0)
-				return cmp;
-			
-			i1 += 2;
-			++i2;
-		}
-
-		if (i1 == n1 && i2 != n2)
-			return -1;
-		else if (i2 == n2 && i1 != n1)
-			return 1;
-		else
-			return 0;
+		return compare(getChars(), other.toCharArray(), caseSensitive);
 	}
 
+	@Override
 	public int compareCompatibleWithIgnoreCase(IString string) throws CoreException {
-		if (string instanceof ShortString)
-			return compareCompatibleWithIgnoreCase((ShortString)string);
-		else if (string instanceof LongString)
-			return - ((LongString)string).compareCompatibleWithIgnoreCase(this);
-		else
-			throw new IllegalArgumentException();
+		return compareCompatibleWithIgnoreCase(string.getChars());
 	}
 	
-	public int compareCompatibleWithIgnoreCase(ShortString other) throws CoreException {
-		Chunk chunk1 = db.getChunk(record);
-		Chunk chunk2 = other.db.getChunk(other.record);
+	@Override
+	public int compareCompatibleWithIgnoreCase(char[] other) throws CoreException {
+		return compareCompatibleWithIgnoreCase(getChars(), other);
+	}
 
-		long i1 = record + CHARS;
-		long i2 = other.record + CHARS;
-		long n1 = i1 + chunk1.getInt(record + LENGTH) * 2;
-		long n2 = i2 + chunk2.getInt(other.record + LENGTH) * 2;
+	public static int compareCompatibleWithIgnoreCase(final char[] chars, char[] other) {
+		final int n = Math.min(chars.length, other.length);
 		int sensitiveCmp= 0;
-		while (i1 < n1 && i2 < n2) {
-			final char c1= chunk1.getChar(i1);
-			final char c2= chunk2.getChar(i2);
+
+		for (int i=0; i<n; i++) {
+			final char c1= chars[i];
+			final char c2= other[i];
 			if (c1 != c2) {
 				int cmp= compareChars(c1, c2, false); // insensitive
 				if (cmp != 0)
@@ -287,93 +193,40 @@ public class ShortString implements IString {
 				if (sensitiveCmp == 0) {
 					if (c1 < c2) {
 						sensitiveCmp= -1;
-					}
-					else {
+					} else {
 						sensitiveCmp= 1;
 					}
 				}
 			}
-			
-			i1 += 2;
-			i2 += 2;
 		}
+		int cmp= chars.length - other.length;
+		if (cmp != 0)
+			return cmp;
 		
-		if (i1 == n1 && i2 != n2)
-			return -1;
-		else if (i2 == n2 && i1 != n1)
-			return 1;
-
-		return sensitiveCmp;
-	}
-
-	public int compareCompatibleWithIgnoreCase(char[] chars) throws CoreException {
-		Chunk chunk1 = db.getChunk(record);
-
-		long i1 = record + CHARS;
-		int i2 = 0;
-		long n1 = i1 + chunk1.getInt(record + LENGTH) * 2;
-		int n2 = chars.length;
-		int sensitiveCmp= 0;
-		while (i1 < n1 && i2 < n2) {
-			final char c1= chunk1.getChar(i1);
-			final char c2= chars[i2];
-			if (c1 != c2) {
-				int cmp= compareChars(c1, c2, false); // insensitive
-				if (cmp != 0)
-					return cmp;
-				
-				if (sensitiveCmp == 0) {
-					if (c1 < c2) {
-						sensitiveCmp= -1;
-					}
-					else {
-						sensitiveCmp= 1;
-					}
-				}
-			}
-			
-			i1 += 2;
-			i2++;
-		}
-		
-		if (i1 == n1 && i2 != n2)
-			return -1;
-		else if (i2 == n2 && i1 != n1)
-			return 1;
-
 		return sensitiveCmp;
 	}
 	
+	@Override
 	public int comparePrefix(char[] other, boolean caseSensitive) throws CoreException {
-		Chunk chunk = db.getChunk(record);
+		return comparePrefix(getChars(), other, caseSensitive);
+	}
+
+	public static int comparePrefix(final char[] chars, char[] other, boolean caseSensitive) {
+		final int n = Math.min(chars.length, other.length);
 		
-		long i1 = record + CHARS;
-		int i2 = 0;
-		long n1 = i1 + chunk.getInt(record + LENGTH) * 2;
-		int n2 = other.length;
-		
-		while (i1 < n1 && i2 < n2) {
-			int cmp= compareChars(chunk.getChar(i1), other[i2], caseSensitive);
+		for (int i=0; i<n; i++) {
+			int cmp= compareChars(chars[i], other[i], caseSensitive);
 			if (cmp != 0)
 				return cmp;
-			
-			i1 += 2;
-			++i2;
 		}
-
-		if (i1 == n1 && i2 != n2)
+		if (chars.length < other.length)
 			return -1;
-		else
-			return 0;
+			
+		return 0;
 	}
 	
-	public char charAt(int i) throws CoreException {
-		long ptr = record + CHARS + (i * 2);
-		return db.getChar(ptr);
-	}
-	
-	public int getLength() throws CoreException {
-		return db.getInt(record + LENGTH);
+	public final int getLength() throws CoreException {
+		return Math.abs(db.getInt(record + LENGTH));
 	}
 	
 	/**

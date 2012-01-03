@@ -54,6 +54,7 @@ public class MIBreakCondition extends MICommand<MIInfo>
 			super(param);
 		}
 
+		@Override
 		public String getAdjustedValue() {
 			return getValue();
 		}

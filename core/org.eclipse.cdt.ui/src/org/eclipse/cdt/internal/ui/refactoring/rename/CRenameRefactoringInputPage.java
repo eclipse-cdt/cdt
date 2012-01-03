@@ -73,8 +73,8 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
         return (fOptions & options) == options;
     }
 
-    // overrider
-    public void createControl(Composite parent) {
+    @Override
+	public void createControl(Composite parent) {
         CRenameProcessor processor= getRenameProcessor();
         fSearchString= processor.getArgument().getName();
         fOptions= processor.getAvailableOptions();
@@ -226,7 +226,7 @@ public class CRenameRefactoringInputPage extends UserInputWizardPage {
 
     private void hookSelectionListeners() {
     	fNewName.addModifyListener(new ModifyListener() {
-    		
+			@Override
 			public void modifyText(ModifyEvent e) {
 				onKeyReleaseInNameField();
 			}

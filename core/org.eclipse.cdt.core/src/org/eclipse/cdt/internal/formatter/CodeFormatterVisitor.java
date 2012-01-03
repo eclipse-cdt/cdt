@@ -2623,59 +2623,89 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 			return formatOverloadedLeftShiftChain(node);
 		}
 
+		// To improve speed of the algorithm we flatten homogeneous nested binary expressions
+		// to reduce overall depth of the expression tree.
+		List<IASTExpression> operands = getOperandsOfMultiExpression(node);
+		
 		Runnable tailFormatter = endsWithMacroExpansion(node) ? null : scribe.takeTailFormatter();
 
-		Alignment expressionAlignment= scribe.createAlignment(
+		Alignment alignment= scribe.createAlignment(
 				Alignment.BINARY_EXPRESSION,
 				preferences.alignment_for_binary_expression,
 				Alignment.R_OUTERMOST,
-				2,
+				operands.size(),
 				scribe.scanner.getCurrentPosition());
 
-		scribe.enterAlignment(expressionAlignment);
+		scribe.enterAlignment(alignment);
     	boolean ok = false;
     	do {
     		try {
-    			final IASTExpression op1= node.getOperand1();
-    			// Left operand
-    			op1.accept(this);
-    			scribe.printTrailingComment();
+    			for (int i = 0; i < operands.size(); i++) {
+    				final IASTExpression operand = operands.get(i);
+        			// In case of macros we may have already passed the operator position.
+        			if (i > 0 && scribe.scanner.getCurrentPosition() < operand.getFileLocation().getNodeOffset()) {
+        				scribe.alignFragment(alignment, i);
 
-    			// In case of macros we may have already passed the operator position.
-    			if (scribe.scanner.getCurrentPosition() < node.getOperand2().getFileLocation().getNodeOffset()) {
-    				scribe.alignFragment(expressionAlignment, 1);
+    	    			// Operator
+    	    			final int nextToken= peekNextToken();
+    	    			// In case of C++ alternative operators, like 'and', 'or', etc. a space
+    	    			boolean forceSpace= Character.isJavaIdentifierStart(peekNextChar());
 
-	    			// Operator
-	    			final int nextToken= peekNextToken();
-	    			// In case of C++ alternative operators, like 'and', 'not', etc. a space
-	    			boolean forceSpace= Character.isJavaIdentifierStart(peekNextChar());
+    					switch (node.getOperator()) {
+    					case IASTBinaryExpression.op_pmdot:
+    					case IASTBinaryExpression.op_pmarrow:
+    	    				scribe.printNextToken(nextToken, false);
+    	    				break;
 
-					switch (node.getOperator()) {
-					case IASTBinaryExpression.op_pmdot:
-					case IASTBinaryExpression.op_pmarrow:
-	    				scribe.printNextToken(nextToken, false);
-	    				break;
-	    			default:
-	    				scribe.printNextToken(nextToken, forceSpace || preferences.insert_space_before_binary_operator);
-	    				if (forceSpace || preferences.insert_space_after_binary_operator) {
-	    					scribe.space();
-	    				}
-	    			}
-    			}
+    	    			default:
+    	    				scribe.printNextToken(nextToken, forceSpace || preferences.insert_space_before_binary_operator);
+    	    				if (forceSpace || preferences.insert_space_after_binary_operator) {
+    	    					scribe.space();
+    	    				}
+    	    			}
+						scribe.printTrailingComment();
+        			}
+					if (i == alignment.fragmentCount - 1) {
+						scribe.setTailFormatter(tailFormatter);
+					}
+       				operand.accept(this);
+        			scribe.restartAtOffset(getNodeEndLocation(operand));
+        			scribe.printTrailingComment();
+				}
 
-   				// Right operand
-   				final IASTExpression op2= node.getOperand2();
-   				op2.accept(this);
-
-   				if (tailFormatter != null)
-   					tailFormatter.run();
+   				scribe.runTailFormatter();
     			ok = true;
     		} catch (AlignmentException e) {
     			scribe.redoAlignment(e);
     		}
     	} while (!ok);
-    	scribe.exitAlignment(expressionAlignment, true);
+    	scribe.exitAlignment(alignment, true);
     	return PROCESS_SKIP;
+	}
+
+	/**
+	 * Traverses a chain of nested homogeneous left-to-right-associative binary expressions and
+	 * returns a list of their operands in left-to-right order. For example, for the expression
+	 * a + b * c + d, it will return a list containing expressions: a, b * c, and d.
+	 *  
+	 * @param binaryExpression the top-level binary expression
+	 * @return a list of expression operands from left to right
+	 */
+	private List<IASTExpression> getOperandsOfMultiExpression(IASTBinaryExpression binaryExpression) {
+		int operator = binaryExpression.getOperator();
+		List<IASTExpression> operands = new ArrayList<IASTExpression>(2);
+		IASTExpression node;
+		do {
+			operands.add(binaryExpression.getOperand2());
+			node = binaryExpression.getOperand1();
+			if (!(node instanceof IASTBinaryExpression)) {
+				break;
+			}
+			binaryExpression = (IASTBinaryExpression) node;
+		} while (binaryExpression.getOperator() == operator);
+		operands.add(node);
+		Collections.reverse(operands);
+		return operands;
 	}
 
 	private int formatAssignment(IASTBinaryExpression node) {

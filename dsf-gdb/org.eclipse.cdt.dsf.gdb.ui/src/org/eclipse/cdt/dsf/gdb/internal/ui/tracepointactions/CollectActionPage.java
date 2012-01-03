@@ -51,13 +51,16 @@ public class CollectActionPage extends PlatformObject implements IBreakpointActi
 		return fCollectAction;
 	}
 
+    @Override
 	public void actionDialogCanceled() {
 	}
 
+    @Override
 	public void actionDialogOK() {
 		fCollectAction.setCollectString(fCollectString.getText());
 	}
 
+    @Override
 	public Composite createComposite(IBreakpointAction action, Composite composite, int style) {
 		fCollectAction = (CollectAction) action;
 		return createCollectActionComposite(composite, style);

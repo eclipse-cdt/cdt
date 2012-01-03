@@ -106,6 +106,7 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.core.model.provisional.IMemorySpaceAwareMemoryBlockRetrieval#getExtendedMemoryBlock(java.lang.String, java.lang.Object, java.lang.String)
 	 */
+	@Override
 	public IMemorySpaceAwareMemoryBlock getMemoryBlock(String expression, Object context, String memorySpaceID) throws DebugException {
         // Drill for the actual DMC
         IMemoryDMContext memoryDmc = null;
@@ -185,6 +186,7 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
 	 * implementation of
 	 *    @see org.eclipse.cdt.debug.internal.core.model.provisional.IMemorySpaceManagement#getMemorySpaces(Object context)
 	 */
+	@Override
 	public void getMemorySpaces(final Object context, final GetMemorySpacesRequest request) {
 		Query<String[]> query = new Query<String[]>() {
 			@Override
@@ -227,6 +229,7 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.core.model.provisional.IMemorySpaceAwareMemoryBlockRetrieval#encodeAddress(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public String encodeAddress(String expression, String memorySpaceID) {
 		String result = null;
     	IMemorySpaces service = (IMemorySpaces)fMemorySpaceServiceTracker.getService();
@@ -244,13 +247,16 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.core.model.provisional.IMemorySpaceAwareMemoryBlockRetrieval#decodeAddress(java.lang.String)
 	 */
+	@Override
 	public DecodeResult decodeAddress(String str) throws CoreException {
     	IMemorySpaces service = (IMemorySpaces)fMemorySpaceServiceTracker.getService();
     	if (service != null) {
     		final IMemorySpaces.DecodeResult result = service.decodeAddress(str);
     		if (result != null) {	// service can return null to tell use to use default decoding 
 	    		return new DecodeResult() {
+	    			@Override
 					public String getMemorySpaceId() { return result.getMemorySpaceId(); }
+	    			@Override
 					public String getExpression() { return result.getExpression(); }
 				};
     		}
@@ -265,7 +271,9 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
 		final String memorySpaceID = str.substring(0, index);
 		final String expression = (index < str.length()-1) ? str.substring(index+1) : ""; //$NON-NLS-1$
 		return new DecodeResult() {
+			@Override
 			public String getMemorySpaceId() { return memorySpaceID; }
+			@Override
 			public String getExpression() { return expression; }
 		};
  
@@ -365,6 +373,7 @@ public class GdbMemoryBlockRetrieval extends DsfMemoryBlockRetrieval implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.provisional.IMemorySpaceAwareMemoryBlockRetrieval#creatingBlockRequiresMemorySpaceID()
 	 */
+	@Override
 	public boolean creatingBlockRequiresMemorySpaceID() {
 		IMemorySpaces service = (IMemorySpaces)fMemorySpaceServiceTracker.getService();
         if (service != null) {

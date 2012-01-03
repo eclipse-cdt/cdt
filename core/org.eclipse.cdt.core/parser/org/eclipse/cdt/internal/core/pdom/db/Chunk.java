@@ -252,17 +252,47 @@ final class Chunk {
 		fBuffer[++idx]= (byte)(value);
 	}
 	
+	public void putChars(final long offset, char[] chars, int start, int len) {
+		assert fLocked;
+		fDirty= true;
+		int idx= recPtrToIndex(offset)-1;
+		final int end= start+len;
+		for (int i = start; i < end; i++) {
+			char value= chars[i];
+			fBuffer[++idx]= (byte)(value >> 8);
+			fBuffer[++idx]= (byte)(value);
+		}
+	}
+
+	public void putCharsAsBytes(final long offset, char[] chars, int start, int len) {
+		assert fLocked;
+		fDirty= true;
+		int idx= recPtrToIndex(offset)-1;
+		final int end= start+len;
+		for (int i = start; i < end; i++) {
+			char value= chars[i];
+			fBuffer[++idx]= (byte)(value);
+		}
+	}
+
 	public char getChar(final long offset) {
 		int idx= recPtrToIndex( offset );
 		return (char) (((fBuffer[idx] << 8) | (fBuffer[++idx] & 0xff)));
 	}
 
-	public void getCharArray(final long offset, final char[] result) {
+	public void getChars(final long offset, final char[] result, int start, int len) {
 		final ByteBuffer buf= ByteBuffer.wrap(fBuffer);
 		buf.position(recPtrToIndex( offset ));
-		buf.asCharBuffer().get(result);
+		buf.asCharBuffer().get(result, start, len);
 	}
-	
+
+	public void getCharsFromBytes(final long offset, final char[] result, int start, int len) {
+		final int pos = recPtrToIndex(offset);
+		for (int i = 0; i < len; i++) {
+			result[start+i] =  (char) (fBuffer[pos+i] & 0xff);
+		}
+	}
+
 	void clear(final long offset, final int length) {
 		assert fLocked;
 		fDirty= true;

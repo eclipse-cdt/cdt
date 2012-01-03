@@ -70,6 +70,7 @@ public class GdbExpressionVMProvider extends ExpressionVMProvider {
         }
 
         fPreferencesListener = new IPropertyChangeListener() {
+            @Override
 			public void propertyChange(final PropertyChangeEvent event) {
 				handlePropertyChanged(store, event);
 			}};
@@ -190,6 +191,7 @@ public class GdbExpressionVMProvider extends ExpressionVMProvider {
 							final FetchMoreChildrenEvent fetchMoreChildrenEvent = new FetchMoreChildrenEvent(
 									exprCtx, path);
             				getExecutor().execute(new DsfRunnable() {
+            	                @Override
             					public void run() {
             						handleEvent(fetchMoreChildrenEvent, rm);
             					}
@@ -225,6 +227,7 @@ public class GdbExpressionVMProvider extends ExpressionVMProvider {
 	        }
 	        
 			getExecutor().execute(new DsfRunnable() {
+                @Override
 			    public void run() {
 			        handleEvent(event);
 			    }

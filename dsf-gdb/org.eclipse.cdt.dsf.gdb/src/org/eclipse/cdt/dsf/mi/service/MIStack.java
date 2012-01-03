@@ -70,6 +70,7 @@ public class MIStack extends AbstractDsfService
             fLevel = level;
         }
         
+    	@Override
         public int getLevel() { return fLevel; }
         
         @Override
@@ -244,10 +245,12 @@ public class MIStack extends AbstractDsfService
         return new MIFrameDMC(getSession().getId(), execDmc, level);
     }
     
+	@Override
     public void getFrames(final IDMContext ctx, final DataRequestMonitor<IFrameDMContext[]> rm) {
     	getFrames(ctx, 0, ALL_FRAMES, rm);
     }
 
+	@Override
 	public void getFrames(final IDMContext ctx, final int startIndex, final int endIndex, final DataRequestMonitor<IFrameDMContext[]> rm) {
 
 	    if (startIndex < 0 || endIndex > 0 && endIndex < startIndex) {
@@ -304,6 +307,7 @@ public class MIStack extends AbstractDsfService
             });
 	}
     
+	@Override
     public void getTopFrame(final IDMContext ctx, final DataRequestMonitor<IFrameDMContext> rm) {     
         final IMIExecutionDMContext execDmc = DMContexts.getAncestorOfType(ctx, IMIExecutionDMContext.class);
         if (execDmc == null) {
@@ -357,6 +361,7 @@ public class MIStack extends AbstractDsfService
     
 
     
+	@Override
     public void getFrameData(final IFrameDMContext frameDmc, final DataRequestMonitor<IFrameDMData> rm) {
         if (!(frameDmc instanceof MIFrameDMC)) {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid context type " + frameDmc, null)); //$NON-NLS-1$
@@ -381,6 +386,7 @@ public class MIStack extends AbstractDsfService
         {
             abstract protected MIFrame getMIFrame();
 
+        	@Override
             public IAddress getAddress() {
                 String addr = getMIFrame().getAddress();
                 if (addr == null || addr.length() == 0) {
@@ -396,11 +402,16 @@ public class MIStack extends AbstractDsfService
                 }                    
             }
 
+        	@Override
             public int getColumn() { return 0; }
 
+        	@Override
             public String getFile() { return getMIFrame().getFile(); }
+        	@Override
             public int getLine() { return getMIFrame().getLine(); }
+        	@Override
             public String getFunction() { return getMIFrame().getFunction(); }
+        	@Override
             public String getModule() { return ""; }//$NON-NLS-1$
             
             @Override
@@ -494,6 +505,7 @@ public class MIStack extends AbstractDsfService
             }); 
     }
 
+	@Override
 	public void getArguments(final IFrameDMContext frameDmc, final DataRequestMonitor<IVariableDMContext[]> rm) {
         final IMIExecutionDMContext execDmc = DMContexts.getAncestorOfType(frameDmc, IMIExecutionDMContext.class);
 	    if (execDmc == null) { 
@@ -578,6 +590,7 @@ public class MIStack extends AbstractDsfService
             }); 
     }
 	
+	@Override
     public void getVariableData(IVariableDMContext variableDmc, final DataRequestMonitor<IVariableDMData> rm) {
         if (!(variableDmc instanceof MIVariableDMC)) {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE, "Invalid context type " + variableDmc, null)); //$NON-NLS-1$
@@ -610,7 +623,9 @@ public class MIStack extends AbstractDsfService
     		VariableData(MIArg arg){
     			dsfMIArg = arg;
     		}
+    		@Override
     		public String getName() { return dsfMIArg.getName(); }
+    		@Override
     		public String getValue() { return dsfMIArg.getValue(); }
     		@Override
     		public String toString() { return dsfMIArg.toString(); }	
@@ -753,6 +768,7 @@ public class MIStack extends AbstractDsfService
     }
     
     
+	@Override
     public void getLocals(final IFrameDMContext frameDmc, final DataRequestMonitor<IVariableDMContext[]> rm) {
 
         final List<IVariableDMContext> localsList = new ArrayList<IVariableDMContext>();
@@ -811,6 +827,7 @@ public class MIStack extends AbstractDsfService
                 }); 
     }
 
+	@Override
     public void getStackDepth(final IDMContext dmc, final int maxDepth, final DataRequestMonitor<Integer> rm) {
         final IMIExecutionDMContext execDmc = DMContexts.getAncestorOfType(dmc, IMIExecutionDMContext.class);
 	    if (execDmc != null) {
@@ -939,6 +956,7 @@ public class MIStack extends AbstractDsfService
      * {@inheritDoc}
      * @since 1.1
      */
+	@Override
 	public void flushCache(IDMContext context) {
         fMICommandCache.reset(context);
        	fStackDepthCache.clear(context);

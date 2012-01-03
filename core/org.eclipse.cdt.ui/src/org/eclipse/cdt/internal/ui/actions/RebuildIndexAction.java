@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.actions;
 
@@ -27,9 +27,11 @@ public class RebuildIndexAction implements IObjectActionDelegate {
 
 	private ISelection fSelection;
 
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 	}
-	
+
+	@Override
 	public void run(IAction action) {
 		IStructuredSelection cElements= SelectionConverter.convertSelectionToCElements(fSelection);
 		for (Iterator<?> i = cElements.iterator(); i.hasNext();) {
@@ -39,10 +41,11 @@ public class RebuildIndexAction implements IObjectActionDelegate {
 			}
 		}
 	}
-	
+
 	/**
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		fSelection= selection;
 	}

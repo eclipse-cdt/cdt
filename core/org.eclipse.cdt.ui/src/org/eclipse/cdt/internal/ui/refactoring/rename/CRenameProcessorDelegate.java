@@ -323,7 +323,8 @@ public abstract class CRenameProcessorDelegate {
             return null;
         }
         Collections.sort(fMatches, new Comparator<CRefactoringMatch>() {
-            public int compare(CRefactoringMatch m1, CRefactoringMatch m2) {
+            @Override
+			public int compare(CRefactoringMatch m1, CRefactoringMatch m2) {
                 IFile f1= m1.getFile();
                 IFile f2= m2.getFile();
                 int cmp= f1.getName().compareTo(f2.getName());

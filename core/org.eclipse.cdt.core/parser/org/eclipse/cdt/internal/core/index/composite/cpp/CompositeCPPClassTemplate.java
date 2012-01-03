@@ -36,7 +36,8 @@ public class CompositeCPPClassTemplate extends CompositeCPPClassType
 		super(cf, ct);
 	}
 	
-	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() throws DOMException {
+	@Override
+	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() {
 		try {
 			final CIndex cIndex = (CIndex) ((CPPCompositesFactory) cf).getContext();
 			IIndexFragmentBinding[] bindings = cIndex.findEquivalentBindings(rbinding);
@@ -59,22 +60,27 @@ public class CompositeCPPClassTemplate extends CompositeCPPClassType
 		}
 	}
 
+	@Override
 	public ICPPTemplateParameter[] getTemplateParameters() {
 		return TemplateInstanceUtil.convert(cf, ((ICPPClassTemplate) rbinding).getTemplateParameters());
 	}
 
+	@Override
 	public ICPPTemplateInstance getInstance(ICPPTemplateArgument[] arguments) {
 		return CompositeInstanceCache.getCache(cf, rbinding).getInstance(arguments);	
 	}
 
+	@Override
 	public void addInstance(ICPPTemplateArgument[] arguments, ICPPTemplateInstance instance) {
 		CompositeInstanceCache.getCache(cf, rbinding).addInstance(arguments, instance);	
 	}
 
+	@Override
 	public ICPPTemplateInstance[] getAllInstances() {
 		return CompositeInstanceCache.getCache(cf, rbinding).getAllInstances();
 	}
 	
+	@Override
 	public ICPPDeferredClassInstance asDeferredInstance() throws DOMException  {
 		CompositeInstanceCache cache= CompositeInstanceCache.getCache(cf, rbinding);
 		synchronized (cache) {

@@ -12,8 +12,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui;
 
-import org.eclipse.cdt.internal.ui.wizards.CWizardRegistry;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
@@ -21,8 +19,12 @@ import org.eclipse.ui.IPerspectiveFactory;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.navigator.resources.ProjectExplorer;
 
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.wizards.CWizardRegistry;
+
 public class CPerspectiveFactory implements IPerspectiveFactory {
-		
+
 	/**
 	 * Constructs a new Default layout engine.
 	 */
@@ -33,34 +35,35 @@ public class CPerspectiveFactory implements IPerspectiveFactory {
 	/**
 	 * @see IPerspectiveFactory#createInitialLayout
 	 */
+	@Override
 	public void createInitialLayout(IPageLayout layout) {
  		String editorArea = layout.getEditorArea();
-		
+
 		IFolderLayout folder1= layout.createFolder("topLeft", IPageLayout.LEFT, (float)0.25, editorArea); //$NON-NLS-1$
 		folder1.addView(ProjectExplorer.VIEW_ID);
 		folder1.addPlaceholder(CUIPlugin.CVIEW_ID);
 		folder1.addPlaceholder(IPageLayout.ID_RES_NAV);
 		folder1.addPlaceholder(IPageLayout.ID_BOOKMARKS);
-		
+
 		IFolderLayout folder2= layout.createFolder("bottom", IPageLayout.BOTTOM, (float)0.75, editorArea); //$NON-NLS-1$
 		folder2.addView(IPageLayout.ID_PROBLEM_VIEW);
 		folder2.addView(IPageLayout.ID_TASK_LIST);
 		folder2.addView(IConsoleConstants.ID_CONSOLE_VIEW);
 		folder2.addView(IPageLayout.ID_PROP_SHEET);
-		
+
 		IFolderLayout folder3= layout.createFolder("topRight", IPageLayout.RIGHT,(float)0.75, editorArea); //$NON-NLS-1$
 		folder3.addView(IPageLayout.ID_OUTLINE);
 
 		layout.addActionSet(CUIPlugin.SEARCH_ACTION_SET_ID);
 		layout.addActionSet(CUIPlugin.ID_CELEMENT_CREATION_ACTION_SET);
 		layout.addActionSet(IPageLayout.ID_NAVIGATE_ACTION_SET);
-		
+
 		// views - build console
 		layout.addShowViewShortcut(IConsoleConstants.ID_CONSOLE_VIEW);
-		
+
 		// views - searching
 		layout.addShowViewShortcut(NewSearchUI.SEARCH_VIEW_ID);
-		
+
 		// views - standard workbench
 		layout.addShowViewShortcut(IPageLayout.ID_OUTLINE);
 		layout.addShowViewShortcut(IPageLayout.ID_PROBLEM_VIEW);
@@ -71,7 +74,7 @@ public class CPerspectiveFactory implements IPerspectiveFactory {
 
 		addCWizardShortcuts(layout);
 	}
-	
+
 	private void addCWizardShortcuts(IPageLayout layout) {
 		// new actions - C project creation wizard
 		String[] wizIDs = CWizardRegistry.getProjectWizardIDs();
@@ -93,6 +96,6 @@ public class CPerspectiveFactory implements IPerspectiveFactory {
 		for (int i = 0; i < wizIDs.length; ++i) {
 			layout.addNewWizardShortcut(wizIDs[i]);
 		}
-		
+
 	}
 }

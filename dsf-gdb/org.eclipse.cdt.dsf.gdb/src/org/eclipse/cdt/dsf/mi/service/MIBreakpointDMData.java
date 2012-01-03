@@ -218,6 +218,7 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 	// IBreakpointDMData
 	///////////////////////////////////////////////////////////////////////////
 
+	@Override
 	public String getBreakpointType() {
 		return (String) fProperties.get(MIBreakpoints.BREAKPOINT_TYPE);
 	}
@@ -226,36 +227,44 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 		return fBreakpoint.getNumber();
 	}
 
+	@Override
 	public IAddress[] getAddresses() {
 		IAddress[] addresses = new IAddress[1];
 		addresses[0] = new Addr64(fBreakpoint.getAddress());
 		return addresses;
 	}
 
+	@Override
 	public String getCondition() {
 		return fBreakpoint.getCondition();
 	}
 
+	@Override
 	public String getExpression() {
 		return fBreakpoint.getExpression();
 	}
 
+	@Override
 	public String getFileName() {
 		return fBreakpoint.getFile();
 	}
 
+	@Override
 	public String getFunctionName() {
 		return fBreakpoint.getFunction();
 	}
 
+	@Override
 	public int getIgnoreCount() {
 		return fBreakpoint.getIgnoreCount();
 	}
 
+	@Override
 	public int getLineNumber() {
 		return fBreakpoint.getLine();
 	}
 
+	@Override
 	public boolean isEnabled() {
 		return fBreakpoint.isEnabled();
 	}

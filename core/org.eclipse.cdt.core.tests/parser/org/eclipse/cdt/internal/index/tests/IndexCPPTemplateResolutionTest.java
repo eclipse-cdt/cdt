@@ -76,13 +76,6 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		public ProjectWithDepProj() {setStrategy(new ReferencedProject(true));}
 		public static TestSuite suite() {return suite(ProjectWithDepProj.class);}
 		
-		// template <typename T= int> class XT;
-		
-	    // #include "header.h"
-		// template <typename T> class XT {};
-		// void test() {
-		//    XT<> x;
-		// };		
 		@Override
 		public void testDefaultTemplateArgInHeader_264988() throws Exception {
 			// Not supported across projects (the composite index does not merge
@@ -1908,4 +1901,33 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public void testUsageOfClassTemplateOutsideOfClassBody_357320() throws Exception {
 		getBindingFromASTName("m1", 0, ICPPMethod.class);
 	}
+	
+	//	template <typename> struct foo;
+	//	template <> struct foo<int> {
+	//	    typedef int type;
+	//	};
+
+	// #include "header.h"
+	//	template <typename>	struct foo {};
+	//	int main() {
+	//	    typedef foo<int>::type type;  // ERROR HERE: 'foo<int>::type' could not be
+	//	}
+	public void testSpecializationInIndex_367563a() throws Exception {
+		getBindingFromASTName("type type", 4, ITypedef.class);
+	}
+
+	//	template <typename> struct foo;
+	//	template <typename T> struct foo<T*> {
+	//	    typedef int type;
+	//	};
+
+	// #include "header.h"
+	//	template <typename>	struct foo {};
+	//	int main() {
+	//	    typedef foo<int*>::type type;  // ERROR HERE: 'foo<int>::type' could not be
+	//	}
+	public void testSpecializationInIndex_367563b() throws Exception {
+		getBindingFromASTName("type type", 4, ITypedef.class);
+	}
+
 }

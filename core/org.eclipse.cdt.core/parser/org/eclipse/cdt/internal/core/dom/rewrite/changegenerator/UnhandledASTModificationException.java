@@ -7,15 +7,13 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.changegenerator;
 
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification;
 
 public class UnhandledASTModificationException extends RuntimeException {
-
-	private static final long serialVersionUID = 1L;
 	private final ASTModification illegalModification;
 
 	public UnhandledASTModificationException(ASTModification illegalModification) {

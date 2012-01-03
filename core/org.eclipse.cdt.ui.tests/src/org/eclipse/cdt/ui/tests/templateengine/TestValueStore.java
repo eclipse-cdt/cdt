@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Bala Torati (Symbian) - Initial API and implementation
+ *     Bala Torati (Symbian) - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.core.tests.templateengine;
+package org.eclipse.cdt.ui.tests.templateengine;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -17,13 +17,10 @@ import org.eclipse.cdt.core.templateengine.TemplateCore;
 import org.eclipse.cdt.core.templateengine.TemplateDescriptor;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 
-
 /**
  * Test the functionality of the ValueStore class.
  */
 public class TestValueStore extends BaseTestCase {
-
-
 	/**
 	 * setUp is called before execution of test method.
 	 */
@@ -44,12 +41,11 @@ public class TestValueStore extends BaseTestCase {
 
 	/**
 	 * Test ValueStore for Not Null condition.
-	 *
 	 */
 	public void testValueStoreNotNull(){
 		TemplateCore[] templates = TemplateEngineTestsHelper.getTestTemplates();
-		for (int i=0; i <templates.length; i++) {
-			Map valueStore = templates[i].getValueStore();
+		for (int i = 0; i < templates.length; i++) {
+			Map<String, String> valueStore = templates[i].getValueStore();
 			assertNotNull(valueStore);
 		}
 	}
@@ -60,18 +56,16 @@ public class TestValueStore extends BaseTestCase {
 	 */
 	public void testCompareValueStoreWithTemplateDefaluts(){
 		TemplateCore[] templates = TemplateEngineTestsHelper.getTestTemplates();
-		for (int i=0; i <templates.length; i++) {
-			Map valueStore = templates[i].getValueStore();
+		for (int i = 0; i < templates.length; i++) {
+			Map<String, String> valueStore = templates[i].getValueStore();
 			TemplateDescriptor templateDescriptor = templates[i].getTemplateDescriptor();
-	        Map templateDefaults = templateDescriptor.getTemplateDefaults(templateDescriptor.getRootElement());
+	        Map<String, String> templateDefaults = templateDescriptor.getTemplateDefaults(templateDescriptor.getRootElement());
 
-	        Iterator defaultsIterator = templateDefaults.keySet().iterator();
-			while(defaultsIterator.hasNext()){
-			  String key = (String)defaultsIterator.next();
+	        Iterator<String> defaultsIterator = templateDefaults.keySet().iterator();
+			while (defaultsIterator.hasNext()){
+			  String key = defaultsIterator.next();
 			  assertNotNull(valueStore.get(key));
 			}
 		}
 	}
-	 
-	
 }

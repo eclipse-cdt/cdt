@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Bala Torati (Symbian) - Initial API and implementation
+ *     Bala Torati (Symbian) - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.core.tests.templateengine;
+package org.eclipse.cdt.ui.tests.templateengine;
 
 import org.eclipse.cdt.core.templateengine.TemplateEngine;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
@@ -17,8 +17,6 @@ import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
  * Test the functionality of TemplateEngine.
  */
 public class TestTemplateEngine extends BaseTestCase {
-
-    
     TemplateEngine templateEngine = null;
     
 	/*
@@ -26,7 +24,6 @@ public class TestTemplateEngine extends BaseTestCase {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
-		
 		templateEngine = TemplateEngine.getDefault();
 	}
 
@@ -59,5 +56,4 @@ public class TestTemplateEngine extends BaseTestCase {
 	public void testSingleton() {
 		assertSame(templateEngine, TemplateEngine.getDefault());
 	}
-
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.dsf.debug.internal.ui.disassembly;
+package org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional;
 
 import java.util.Iterator;
 
@@ -24,15 +24,12 @@ import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.IVerticalRulerColumn;
 import org.eclipse.jface.text.source.SourceViewer;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
-import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
@@ -43,15 +40,11 @@ import org.eclipse.swt.widgets.Composite;
 public class DisassemblyViewer extends SourceViewer {
 
 	class ResizeListener implements ControlListener {
-		/*
-		 * @see ControlListener#controlResized(ControlEvent)
-		 */
+		@Override
 		public void controlResized(ControlEvent e) {
 			updateViewportListeners(RESIZE);
 		}
-		/*
-		 * @see ControlListener#controlMoved(ControlEvent)
-		 */
+		@Override
 		public void controlMoved(ControlEvent e) {
 		}
 	}
@@ -59,11 +52,6 @@ public class DisassemblyViewer extends SourceViewer {
 	private boolean fUserTriggeredScrolling;
 	private int fCachedLastTopPixel;
 	
-	// extra resize listener to workaround bug 171018
-	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=171018
-	private ResizeListener fResizeListener;
-	private DisassemblyPart fPart;
-
 	/**
 	 * Create a new DisassemblyViewer.
 	 * @param parent
@@ -72,9 +60,8 @@ public class DisassemblyViewer extends SourceViewer {
 	 * @param showsAnnotationOverview
 	 * @param styles
 	 */
-	public DisassemblyViewer(DisassemblyPart part, Composite parent, IVerticalRuler ruler, IOverviewRuler overviewRuler, boolean showsAnnotationOverview, int styles) {
+	public DisassemblyViewer(Composite parent, IVerticalRuler ruler, IOverviewRuler overviewRuler, boolean showsAnnotationOverview, int styles) {
 		super(parent, ruler, overviewRuler, showsAnnotationOverview, styles);
-		fPart = part;
 		// always readonly
 		setEditable(false);
 	}
@@ -86,30 +73,9 @@ public class DisassemblyViewer extends SourceViewer {
 	protected void createControl(Composite parent, int styles) {
 		super.createControl(parent, styles);
 		StyledText textWidget = getTextWidget();
+		// extra resize listener to workaround bug 171018
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=171018
-		textWidget.addControlListener(fResizeListener= new ResizeListener());
-		textWidget.addVerifyKeyListener(new VerifyKeyListener() {
-			public void verifyKey(VerifyEvent event) {
-				switch (event.keyCode) {
-				case SWT.PAGE_UP:
-				case SWT.PAGE_DOWN:
-				case SWT.ARROW_UP:
-				case SWT.ARROW_DOWN:
-					event.doit = !fPart.keyScroll(event.keyCode);
-				}
-			}
-		});
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.source.SourceViewer#handleDispose()
-	 */
-	@Override
-	protected void handleDispose() {
-		if (fResizeListener != null) {
-			getTextWidget().removeControlListener(fResizeListener);
-		}
-		super.handleDispose();
+		textWidget.addControlListener(new ResizeListener());
 	}
 
 	/*
@@ -150,7 +116,7 @@ public class DisassemblyViewer extends SourceViewer {
 	 * @throws BadLocationException
 	 */
 	public String getSelectedText() throws BadLocationException {
-		StringBuffer text = new StringBuffer(200);
+		StringBuilder text = new StringBuilder(200);
 		String lineSeparator = System.getProperty("line.separator"); //$NON-NLS-1$
 		DisassemblyDocument doc = (DisassemblyDocument)getDocument();
 		Point selection = getSelectedRange();
@@ -204,7 +170,7 @@ public class DisassemblyViewer extends SourceViewer {
 	 * @return the prefix string with trailing blank or the empty string
 	 */
 	public String getLinePrefix(int line) {
-		StringBuffer prefix = new StringBuffer(10);
+		StringBuilder prefix = new StringBuilder(10);
 		IVerticalRuler ruler = getVerticalRuler();
 		if (ruler instanceof CompositeRuler) {
 			for (Iterator<?> iter = ((CompositeRuler)ruler).getDecoratorIterator(); iter.hasNext();) {
@@ -280,10 +246,11 @@ public class DisassemblyViewer extends SourceViewer {
 		return -1;
 	}
 
-	int getLastTopPixel() {
+	public int getLastTopPixel() {
 		return fCachedLastTopPixel;
 	}
-	boolean isUserTriggeredScrolling() {
+	
+	public boolean isUserTriggeredScrolling() {
 		return fUserTriggeredScrolling;
 	}
 

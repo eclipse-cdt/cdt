@@ -239,18 +239,27 @@ public class MIListThreadGroupsInfo extends MIInfo {
 			return name;
 		}
 		
+		@Override
 		public String getGroupId() { return fGroupId; }
+		@Override
 		public String getPid() { return fPid; }
 
+		@Override
 		public String getName() { return fName;	}
 
+		@Override
 		public String getDesciption() { return fDescription; }
+		@Override
 		public String[] getCores() { return fCores; }
+		@Override
 		public String getUser() { return fUser;	}
 
+		@Override
 		public String getType() { return fType;	}
+		@Override
 		public String getExecutable() { return fExecutable; }
 
+		@Override
 		public MIThread[] getThreads() { return fThreadList; }
 	}
 	

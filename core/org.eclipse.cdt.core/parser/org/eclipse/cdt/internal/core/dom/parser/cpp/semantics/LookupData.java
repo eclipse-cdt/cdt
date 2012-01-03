@@ -52,6 +52,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPackExpansionExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
@@ -341,7 +342,7 @@ public class LookupData {
         if (foundItems instanceof Object[])
             return ((Object[]) foundItems).length != 0;
         if (foundItems instanceof CharArrayObjectMap)
-            return ((CharArrayObjectMap) foundItems).size() != 0;
+            return ((CharArrayObjectMap<?>) foundItems).size() != 0;
         return false;
     }
 
@@ -531,6 +532,17 @@ public class LookupData {
 		if (functionArgs != null)
 			return functionArgs.length;
 		return 0;
+	}
+
+	public int getFunctionArgumentPackExpansionCount() {
+		int count= 0;
+		if (functionArgs != null) {
+			for (IASTInitializerClause arg : functionArgs) {
+				if (arg instanceof ICPPASTPackExpansionExpression)
+					count++;
+			}
+		}
+		return count;
 	}
 
 	public boolean hasFunctionArguments() {

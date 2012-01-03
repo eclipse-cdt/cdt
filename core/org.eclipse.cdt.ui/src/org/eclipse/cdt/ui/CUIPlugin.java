@@ -48,6 +48,8 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
@@ -56,6 +58,7 @@ import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.templates.ContributionContextTypeRegistry;
 import org.eclipse.ui.editors.text.templates.ContributionTemplateStore;
@@ -64,6 +67,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.ConfigurationElementSorter;
+import org.eclipse.ui.themes.IThemeManager;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -118,11 +122,11 @@ public class CUIPlugin extends AbstractUIPlugin {
 	public static final String C_PROBLEMMARKER = PLUGIN_CORE_ID + ".problem"; //$NON-NLS-1$
 
 	public static final String ID_COMMENT_OWNER= PLUGIN_ID+".DocCommentOwner"; //$NON-NLS-1$
-	
+
     public static final String ID_INCLUDE_BROWSER= PLUGIN_ID + ".includeBrowser"; //$NON-NLS-1$
     public static final String ID_CALL_HIERARCHY= PLUGIN_ID + ".callHierarchy"; //$NON-NLS-1$
 	public static final String ID_TYPE_HIERARCHY = PLUGIN_ID + ".typeHierarchy"; //$NON-NLS-1$
-    
+
 	public static final String C_PROJECT_WIZARD_ID = PLUGIN_ID + ".wizards.StdCWizard"; //$NON-NLS-1$
 	public static final String CPP_PROJECT_WIZARD_ID = PLUGIN_ID + ".wizards.StdCCWizard"; //$NON-NLS-1$
 
@@ -130,7 +134,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	/** @deprecated This wizard category has been merged with the {@link #CWIZARD_CATEGORY_ID c wizard category} */
 	@Deprecated
 	public final static String CCWIZARD_CATEGORY_ID = "org.eclipse.cdt.ui.newCCWizards"; //$NON-NLS-1$
-	
+
 	public static final String SEARCH_ACTION_SET_ID = PLUGIN_ID + ".SearchActionSet"; //$NON-NLS-1$
 	public static final String BUILDER_ID = PLUGIN_CORE_ID + ".cbuilder"; //$NON-NLS-1$
 
@@ -142,22 +146,22 @@ public class CUIPlugin extends AbstractUIPlugin {
 	/**
 	 * The id of the C perspective
 	 * (value <code>"org.eclipse.cdt.ui.CPerspective"</code>).
-	 */	
+	 */
 	public static final String ID_CPERSPECTIVE = PLUGIN_ID + ".CPerspective"; //$NON-NLS-1$
 
 	/**
 	 * The id of the C hierarchy perspective
 	 * (value <code>"org.eclipse.cdt.ui.CHierarchyPerspective"</code>).
-	 * 
+	 *
 	 * @deprecated This perspective no longer exists.
-	 */	
+	 */
 	@Deprecated
 	public static final String ID_CHIERARCHY_PERSPECTIVE = PLUGIN_ID + ".CHierarchyPerspective"; //$NON-NLS-1$
 
 	/**
 	 * The id of the C Browsing Perspective
 	 * (value <code>"org.eclipse.cdt.ui.CBrowsingPerspective"</code>).
-	 * 
+	 *
 	 * @since 2.0
 	 * @deprecated This perspective no longer exists.
 	 */
@@ -167,7 +171,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	/**
 	 * The view part id of the C Browsing Projects view
 	 * (value <code>"org.eclipse.cdt.ui.ProjectsView"</code>).
-	 * 
+	 *
 	 * @since 2.0
 	 * @deprecated This view no longer exists.
 	 * @noreference This field is not intended to be referenced by clients.
@@ -178,7 +182,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	/**
 	 * The view part id of the C Browsing Namespaces view
 	 * (value <code>"org.eclipse.cdt.ui.NamespacesView"</code>).
-	 * 
+	 *
 	 * @since 2.0
 	 * @deprecated This view no longer exists.
 	 * @noreference This field is not intended to be referenced by clients.
@@ -189,7 +193,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	/**
 	 * The view part id of the C Browsing Types view
 	 * (value <code>"org.eclipse.cdt.ui.TypesView"</code>).
-	 * 
+	 *
 	 * @since 2.0
 	 * @deprecated This view no longer exists.
 	 * @noreference This field is not intended to be referenced by clients.
@@ -200,7 +204,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	/**
 	 * The view part id of the C Browsing Members view
 	 * (value <code>"org.eclipse.cdt.ui.MembersView"</code>).
-	 * 
+	 *
 	 * @since 2.0
 	 * @deprecated This view no longer exists.
 	 * @noreference This field is not intended to be referenced by clients.
@@ -209,7 +213,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	public static String ID_MEMBERS_VIEW = PLUGIN_ID + ".MembersView"; //$NON-NLS-1$
 
 	/**
-	 * The key to store customized templates. 
+	 * The key to store customized templates.
 	 * @since 3.0
 	 */
 	private static final String CUSTOM_TEMPLATES_KEY= "org.eclipse.cdt.ui.text.templates.custom"; //$NON-NLS-1$
@@ -217,20 +221,20 @@ public class CUIPlugin extends AbstractUIPlugin {
 	/**
 	 * The id of the C Element Creation action set
 	 * (value <code>"org.eclipse.cdt.ui.CElementCreationActionSet"</code>).
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	public static final String ID_CELEMENT_CREATION_ACTION_SET= "org.eclipse.cdt.ui.CElementCreationActionSet"; //$NON-NLS-1$
-	
+
 	/**
 	 * The id of the scope used by all the CDT views
 	 * (value <code>"org.eclipse.cdt.ui.scope"</code>).
 	 * @since 4.0
 	 */
 	public static final String CVIEWS_SCOPE = "org.eclipse.cdt.ui.cViewScope"; //$NON-NLS-1$
-	
+
 	/**
-	 * The key to store customized code templates. 
+	 * The key to store customized code templates.
 	 * @since 5.0
 	 */
 	private static final String CODE_TEMPLATES_KEY= "org.eclipse.cdt.ui.text.custom_code_templates"; //$NON-NLS-1$
@@ -253,11 +257,11 @@ public class CUIPlugin extends AbstractUIPlugin {
 	public synchronized IBufferFactory getBufferFactory() {
 		return ((WorkingCopyManager) getWorkingCopyManager()).getBufferFactory();
 	}
-	
+
 	public static IWorkingCopy[] getSharedWorkingCopies() {
 		return getDefault().getWorkingCopyManager().getSharedWorkingCopies();
 	}
-	
+
 	public static String getResourceString(String key) {
 		try {
 			return fgResourceBundle.getString(key);
@@ -271,7 +275,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	public static IWorkspace getWorkspace() {
 		return ResourcesPlugin.getWorkspace();
 	}
-	
+
 	public static String getFormattedString(String key, String arg) {
 		return MessageFormat.format(getResourceString(key), new Object[] {arg});
 	}
@@ -283,7 +287,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	public static ResourceBundle getResourceBundle() {
 		return fgResourceBundle;
 	}
-	
+
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
 		return getDefault().getWorkbench().getActiveWorkbenchWindow();
 	}
@@ -319,7 +323,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
 	}
-	
+
 	/**
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
@@ -342,7 +346,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	public static void errorDialog(Shell shell, String title, String message, IStatus s, boolean logError) {
 		if (logError)
 		    log(s);
-		
+
 		// if the 'message' resource string and the IStatus' message are the same,
 		// don't show both in the dialog
 		if (s != null && message.equals(s.getMessage())) {
@@ -358,7 +362,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	public static void errorDialog(Shell shell, String title, String message, Throwable t, boolean logError) {
 		if (logError)
 			log(message, t);
-		
+
 		IStatus status;
 		if (t instanceof CoreException) {
 			status = ((CoreException) t).getStatus();
@@ -368,7 +372,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 				message = null;
 			}
 		} else {
-			status = new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, -1, "Internal Error: ", t); //$NON-NLS-1$	
+			status = new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, -1, "Internal Error: ", t); //$NON-NLS-1$
 		}
 		ErrorDialog.openError(shell, title, message, status);
 	}
@@ -405,14 +409,14 @@ public class CUIPlugin extends AbstractUIPlugin {
 	private ResourceAdapterFactory fResourceAdapterFactory;
 	private CElementAdapterFactory fCElementAdapterFactory;
 
-	/** 
-	 * The template context type registry for the C editor. 
+	/**
+	 * The template context type registry for the C editor.
 	 * @since 3.0
 	 */
 	private ContributionContextTypeRegistry fContextTypeRegistry;
 
 	/**
-	 * The template store for the C editor. 
+	 * The template store for the C editor.
 	 * @since 3.0
 	 */
 	private TemplateStore fTemplateStore;
@@ -423,28 +427,34 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 */
 	private ASTProvider fASTProvider;
 
-	/** 
-	 * The code template context type registry for the C editor. 
+	/**
+	 * The code template context type registry for the C editor.
 	 * @since 5.0
 	 */
 	private ContextTypeRegistry fCodeTemplateContextTypeRegistry;
-	
+
 	/**
-	 * The code template store for the C editor. 
+	 * The code template store for the C editor.
 	 * @since 5.0
 	 */
 	private TemplateStore fCodeTemplateStore;
 
+	/**
+	 * Theme listener.
+	 * @since 5.4
+	 */
+	private IPropertyChangeListener fThemeListener;
+
 	public CUIPlugin() {
 		fgCPlugin = this;
 		fDocumentProvider = null;
-		fTextTools = null;		
+		fTextTools = null;
 		fBuildConsoleManagers = new HashMap<String, BuildConsoleManager>();
 	}
-		
+
 	/**
 	 * Returns the used document provider.
-	 * 
+	 *
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public synchronized CDocumentProvider getDocumentProvider() {
@@ -453,7 +463,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 		}
 		return fDocumentProvider;
 	}
-	
+
 	/**
 	 * Returns the working copy manager
 	 * @return IWorkingCopyManager
@@ -487,11 +497,11 @@ public class CUIPlugin extends AbstractUIPlugin {
 	/**
 	 * Obtain a console manager with the given id. If a manager has not been created yet,
 	 * it is created and its console created and activated.
-	 * 
+	 *
 	 * @param name - console name.
 	 * @param contextId - console id matching context id in the Console view dropdown.
 	 * @return console manager.
-	 * 
+	 *
 	 * Note that this method is rather internal and should not be referenced by clients.
 	 * To create a build console, use {@link CCorePlugin#getBuildConsole(String, String, URL)}
 	 */
@@ -502,7 +512,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	/**
 	 * Obtain a console manager with the given id. If a manager has not been created yet,
 	 * it is created and its console created and activated with the given attributes.
-	 * 
+	 *
 	 * @param name - console name.
 	 * @param contextId - console id matching context id in the Console view dropdown.
 	 *    Can't be {@code null}.
@@ -510,7 +520,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 *    view. The url is expected to point to an image in eclipse OSGi bundle.
 	 *    {@code iconUrl} can be <b>null</b>, in that case the default image is used.
 	 * @return console manager.
-	 * 
+	 *
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public IBuildConsoleManager getConsoleManager(String name, String contextId, URL iconUrl) {
@@ -531,6 +541,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	public void startGlobalConsole() {
 		GlobalBuildConsoleManager.startGlobalConsole();
 	}
+
 	/*
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
@@ -540,22 +551,34 @@ public class CUIPlugin extends AbstractUIPlugin {
 
 		//Set debug tracing options
 		configurePluginDebugOptions();
-		
+
 		registerAdapters();
 		IWorkingCopyProvider workingCopyProvider = new IWorkingCopyProvider() {
+			@Override
 			public IWorkingCopy[] getWorkingCopies() {
 				return CUIPlugin.getSharedWorkingCopies();
 			}
 		};
 		CCorePlugin.getDefault().getDOM().setWorkingCopyProvider(workingCopyProvider);
-		
-		// init ast provider
-		getASTProvider();
+
+		if (PlatformUI.isWorkbenchRunning()) {
+			// Initialize AST provider
+			getASTProvider();
+
+			fThemeListener= new IPropertyChangeListener() {
+				@Override
+				public void propertyChange(PropertyChangeEvent event) {
+					if (IThemeManager.CHANGE_CURRENT_THEME.equals(event.getProperty()))
+						CUIPreferenceInitializer.setThemeBasedPreferences(PreferenceConstants.getPreferenceStore(), true);
+				}
+			};
+			PlatformUI.getWorkbench().getThemeManager().addPropertyChangeListener(fThemeListener);
+		}
 		CDTContextActivator.getInstance().install();
-		
+
 		DocCommentOwnerManager.getInstance().addListener(new EditorReopener());
 		ASTRewriteAnalyzer.setCTextFileChangeFactory(new CTextFileChangeFactory());
-		
+
 		// A workaround for black console bug 320723.
 		BuildConsolePreferencePage.initDefaults(getPreferenceStore());
 		//initialize ContentAssistMatcherPreference
@@ -612,7 +635,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 			}
 			fBuildConsoleManagers.clear();
 		}
-		
+
 		GlobalBuildConsoleManager.stop();
 
 		unregisterAdapters();
@@ -621,13 +644,18 @@ public class CUIPlugin extends AbstractUIPlugin {
 			fWorkingCopyManager.shutdown();
 			fWorkingCopyManager= null;
 		}
-                
+
 		if (fDocumentProvider != null) {
 			fDocumentProvider.shutdown();
 			fDocumentProvider= null;
 		}
-		
+
 		ContentAssistPreference.shutdown();
+
+		if (fThemeListener != null) {
+			PlatformUI.getWorkbench().getThemeManager().removePropertyChangeListener(fThemeListener);
+			fThemeListener= null;
+		}
 
 		// Do this last.
 		super.stop(context);
@@ -656,7 +684,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns the problem marker manager.
-	 * 
+	 *
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public ProblemMarkerManager getProblemMarkerManager() {
@@ -673,14 +701,14 @@ public class CUIPlugin extends AbstractUIPlugin {
 		manager.registerAdapters(fResourceAdapterFactory, IResource.class);
 		manager.registerAdapters(fCElementAdapterFactory, ICElement.class);
 	}
-        
+
 	private void unregisterAdapters() {
 		IAdapterManager manager = Platform.getAdapterManager();
 		manager.unregisterAdapters(fResourceAdapterFactory);
 		manager.unregisterAdapters(fCElementAdapterFactory);
 	}
 
-	/** 
+	/**
 	 * @deprecated Use {@link EditorsUI#getSharedTextColors()} instead.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
@@ -688,7 +716,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	public ISharedTextColors getSharedTextColors() {
 		return EditorsUI.getSharedTextColors();
 	}
-	
+
 	public void configurePluginDebugOptions() {
 		if (isDebugging()) {
 			String option = Platform.getDebugOption(CONTENTASSIST);
@@ -699,17 +727,17 @@ public class CUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns a combined preference store, this store is read-only.
-	 * 
+	 *
 	 * @return the combined preference store
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public IPreferenceStore getCombinedPreferenceStore() {
 		if (fCombinedPreferenceStore == null) {
-			fCombinedPreferenceStore= new ChainedPreferenceStore(new IPreferenceStore[] { 
-					getPreferenceStore(), 
-					getCorePreferenceStore(), 
-					EditorsUI.getPreferenceStore() 
+			fCombinedPreferenceStore= new ChainedPreferenceStore(new IPreferenceStore[] {
+					getPreferenceStore(),
+					getCorePreferenceStore(),
+					EditorsUI.getPreferenceStore()
 			});
 		}
 		return fCombinedPreferenceStore;
@@ -744,11 +772,11 @@ public class CUIPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Returns an array of all editors that have an unsaved content. If the identical content is 
+	 * Returns an array of all editors that have an unsaved content. If the identical content is
 	 * presented in more than one editor, only one of those editor parts is part of the result.
-	 * 
+	 *
 	 * @return an array of all dirty editor parts.
-	 */	
+	 */
 	public static IEditorPart[] getDirtyEditors() {
 		Set<IEditorInput> inputs= new HashSet<IEditorInput>();
 		List<IEditorPart> result= new ArrayList<IEditorPart>(0);
@@ -770,7 +798,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 		return result.toArray(new IEditorPart[result.size()]);
 	}
 	/**
-	 * Returns an array of all instanciated editors. 
+	 * Returns an array of all instanciated editors.
 	 */
 	public static IEditorPart[] getInstanciatedEditors() {
 		List<IEditorPart> result= new ArrayList<IEditorPart>(0);
@@ -800,8 +828,8 @@ public class CUIPlugin extends AbstractUIPlugin {
 		if (display == null) {
 			display= Display.getDefault();
 		}
-		return display;		
-	}	
+		return display;
+	}
 
 	/**
 	 * Creates the CUIplugin standard groups in a context menu.
@@ -826,9 +854,9 @@ public class CUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns all C editor text hovers contributed to the workbench.
-	 * 
+	 *
 	 * @return an array of CEditorTextHoverDescriptor
-	 * 
+	 *
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public CEditorTextHoverDescriptor[] getCEditorTextHoverDescriptors() {
@@ -844,7 +872,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 				}
 			};
 			sorter.sort(fCEditorTextHoverDescriptors);
-		
+
 			// The Problem hover has to be the first and the Annotation hover has to be the last one in the CDT UI's hover list
 			int length= fCEditorTextHoverDescriptors.length;
 			int first= -1;
@@ -861,7 +889,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 				}
 				if (first == -1)
 					first= i;
-				
+
 				if (fCEditorTextHoverDescriptors[i].getId().equals("org.eclipse.cdt.ui.AnnotationHover")) { //$NON-NLS-1$
 					annotationHoverIndex= i;
 					continue;
@@ -871,9 +899,9 @@ public class CUIPlugin extends AbstractUIPlugin {
 					continue;
 				}
 			}
-	
+
 			CEditorTextHoverDescriptor hoverDescriptor= null;
-			
+
 			if (first > -1 && problemHoverIndex > -1 && problemHoverIndex > first) {
 				// move problem hover to beginning
 				hoverDescriptor= fCEditorTextHoverDescriptors[problemHoverIndex];
@@ -884,7 +912,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 				if (annotationHoverIndex >= first && annotationHoverIndex < problemHoverIndex)
 					annotationHoverIndex++;
 			}
-			
+
 			if (annotationHoverIndex > -1 && annotationHoverIndex < last) {
 				// move annotation hover to end
 				hoverDescriptor= fCEditorTextHoverDescriptors[annotationHoverIndex];
@@ -903,11 +931,11 @@ public class CUIPlugin extends AbstractUIPlugin {
 					}
 					break;
 				}
-				
+
 			}
 		}
 		return fCEditorTextHoverDescriptors;
-	} 
+	}
 
 	/**
 	 * Resets the C editor text hovers contributed to the workbench.
@@ -915,7 +943,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 * This will force a rebuild of the descriptors the next time
 	 * a client asks for them.
 	 * </p>
-	 * 
+	 *
 	 */
 	public void resetCEditorTextHoverDescriptors() {
 		fCEditorTextHoverDescriptors= null;
@@ -924,9 +952,9 @@ public class CUIPlugin extends AbstractUIPlugin {
 	/**
 	 * Returns the registry of the extensions to the <code>org.eclipse.cdt.ui.foldingStructureProviders</code>
 	 * extension point.
-	 * 
+	 *
 	 * @return the registry of contributed <code>ICFoldingStructureProvider</code>
-	 * 
+	 *
 	 * @noreference This method is not intended to be referenced by clients.
 	 * @since 3.0
 	 */
@@ -938,7 +966,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns the template context type registry for the C plugin.
-	 * 
+	 *
 	 * @return the template context type registry for the C plugin
 	 * @since 3.0
 	 */
@@ -954,7 +982,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns the template store for the C editor templates.
-	 * 
+	 *
 	 * @return the template store for the C editor templates
 	 * @since 3.0
 	 */
@@ -973,7 +1001,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	/**
 	 * Returns the template context type registry for the code generation
 	 * templates.
-	 * 
+	 *
 	 * @return the template context type registry for the code generation
 	 *         templates
 	 * @since 5.0
@@ -981,17 +1009,17 @@ public class CUIPlugin extends AbstractUIPlugin {
 	public ContextTypeRegistry getCodeTemplateContextRegistry() {
 		if (fCodeTemplateContextTypeRegistry == null) {
 			fCodeTemplateContextTypeRegistry= new ContributionContextTypeRegistry("org.eclipse.cdt.ui.codeTemplates"); //$NON-NLS-1$
-			
+
 			CodeTemplateContextType.registerContextTypes(fCodeTemplateContextTypeRegistry);
 			FileTemplateContextType.registerContextTypes(fCodeTemplateContextTypeRegistry);
 		}
 
 		return fCodeTemplateContextTypeRegistry;
 	}
-	
+
 	/**
 	 * Returns the template store for the code generation templates.
-	 * 
+	 *
 	 * @return the template store for the code generation templates
 	 * @since 5.0
 	 */
@@ -1005,30 +1033,30 @@ public class CUIPlugin extends AbstractUIPlugin {
 			} catch (IOException e) {
 				log(e);
 			}
-			
+
 			fCodeTemplateStore.startListeningForPreferenceChanges();
 		}
-		
+
 		return fCodeTemplateStore;
 	}
-	
+
 	/**
 	 * Returns the AST provider.
-	 * 
+	 *
 	 * @return the AST provider
-	 * 
+	 *
 	 * @noreference This method is not intended to be referenced by clients.
 	 * @since 4.0
 	 */
 	public synchronized ASTProvider getASTProvider() {
 		if (fASTProvider == null)
 			fASTProvider= new ASTProvider();
-		
+
 		return fASTProvider;
 	}
-		
+
 	/**
-	 * Answers the <code>Shell</code> associated with the active workbench, or 
+	 * Answers the <code>Shell</code> associated with the active workbench, or
 	 * one of the windows associated with the workbench.
 	 */
 	public Shell getShell() {

@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.cdt.dsf.ui" version="2">
+    <resource path="src/org/eclipse/cdt/dsf/debug/internal/ui/disassembly/DisassemblyColumnSupport.java" type="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyColumnSupport">
+        <filter comment="Bug 366942 - [disassembly] Extension point for contributing ruler columns" id="574619656">
+            <message_arguments>
+                <message_argument value="IColumnSupport"/>
+                <message_argument value="DisassemblyColumnSupport"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/cdt/dsf/debug/internal/ui/disassembly/DisassemblyPart.java" type="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyPart">
         <filter id="571473929">
             <message_arguments>

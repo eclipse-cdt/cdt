@@ -61,9 +61,11 @@ public class GdbPinProvider implements IPinProvider {
 		GdbPinElementColorDescriptor(int color) {
 			fColor = color;
 		}
+        @Override
 		public int getOverlayColor() {
 			return fColor;
 		}
+        @Override
 		public ImageDescriptor getToolbarIconDescriptor() {
 			return null;
 		}
@@ -89,6 +91,7 @@ public class GdbPinProvider implements IPinProvider {
 		fSession = session;
 		
 		session.getExecutor().execute(new Runnable() {			
+            @Override
 			public void run() {
 				fSession.addServiceEventListener(GdbPinProvider.this, null);
 			}
@@ -101,6 +104,7 @@ public class GdbPinProvider implements IPinProvider {
 	public void dispose() {
 		try {
 			fSession.getExecutor().execute(new Runnable() {			
+                @Override
 				public void run() {
 					fSession.removeServiceEventListener(GdbPinProvider.this);
 				}
@@ -190,6 +194,7 @@ public class GdbPinProvider implements IPinProvider {
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.ui.IPinProvider#isPinnable(org.eclipse.ui.IWorkbenchPart, java.lang.Object)
 	 */
+    @Override
 	public boolean isPinnable(IWorkbenchPart part, Object debugContext) {
 		if (debugContext instanceof IAdaptable) {
 			return ((IAdaptable) debugContext).getAdapter(IDMContext.class) != null;
@@ -201,6 +206,7 @@ public class GdbPinProvider implements IPinProvider {
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.ui.IPinProvider#pin(org.eclipse.ui.IWorkbenchPart, java.lang.Object, org.eclipse.cdt.debug.ui.IPinModelListener)
 	 */
+    @Override
 	public IPinElementHandle pin(IWorkbenchPart part, Object debugContext, IPinModelListener listener) {
 		Object pinContext = debugContext;
 		String label = ""; //$NON-NLS-1$
@@ -242,6 +248,7 @@ public class GdbPinProvider implements IPinProvider {
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.ui.IPinProvider#unpin(org.eclipse.ui.IWorkbenchPart, org.eclipse.cdt.debug.ui.IPinProvider.IPinElementHandle)
 	 */
+    @Override
 	public void unpin(IWorkbenchPart part, IPinElementHandle handle) {
 		// remove the handle from the cache
 		gsPinnedHandles.remove(handle);		
@@ -260,6 +267,7 @@ public class GdbPinProvider implements IPinProvider {
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.ui.IPinProvider#isPinnedTo(java.lang.Object, org.eclipse.cdt.debug.ui.IPinProvider.IPinElementHandle)
 	 */
+    @Override
 	public boolean isPinnedTo(Object debugContext, IPinElementHandle handle) {
 		Object handleDebugContext = handle.getDebugContext();
 		

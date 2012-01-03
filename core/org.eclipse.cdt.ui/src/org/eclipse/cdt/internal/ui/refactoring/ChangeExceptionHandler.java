@@ -54,10 +54,12 @@ public class ChangeExceptionHandler {
 		public NotCancelableProgressMonitor(IProgressMonitor monitor) {
 			super(monitor);
 		}
+
 		@Override
 		public void setCanceled(boolean b) {
 			// ignore set cancel
 		}
+
 		@Override
 		public boolean isCanceled() {
 			return false;
@@ -142,6 +144,7 @@ public class ChangeExceptionHandler {
 
 	private void performUndo(final Change undo) {
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				monitor.beginTask("", 11);  //$NON-NLS-1$
 				try {

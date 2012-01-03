@@ -93,6 +93,7 @@ public class ShutdownSequence extends Sequence {
 			}
 			Collections.sort( services, new Comparator<IDsfService>() {
 
+				@Override
 				public int compare( IDsfService o1, IDsfService o2 ) {
 					return o2.getStartupNumber() - o1.getStartupNumber();
 				}

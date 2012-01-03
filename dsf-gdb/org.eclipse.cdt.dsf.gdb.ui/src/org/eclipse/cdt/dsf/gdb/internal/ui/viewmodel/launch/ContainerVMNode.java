@@ -328,6 +328,7 @@ public class ContainerVMNode extends AbstractContainerVMNode
      */
     private final String MEMENTO_NAME = "CONTAINER_MEMENTO_NAME"; //$NON-NLS-1$
     
+    @Override
     public void compareElements(IElementCompareRequest[] requests) {
     	for (final IElementCompareRequest request : requests) {
 
@@ -347,6 +348,7 @@ public class ContainerVMNode extends AbstractContainerVMNode
     					if (procDmc != null) {
     						try {
     							getSession().getExecutor().execute(new DsfRunnable() {
+    				                @Override
     								public void run() {
     									final IProcesses processService = getServicesTracker().getService(IProcesses.class);
     									if (processService != null) {
@@ -384,6 +386,7 @@ public class ContainerVMNode extends AbstractContainerVMNode
      * (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#encodeElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest[])
      */
+    @Override
     public void encodeElements(IElementMementoRequest[] requests) {
     	for (final IElementMementoRequest request : requests) {
 
@@ -401,6 +404,7 @@ public class ContainerVMNode extends AbstractContainerVMNode
     				if (procDmc != null) {
     					try {
     						getSession().getExecutor().execute(new DsfRunnable() {
+    			                @Override
     							public void run() {
     								final IProcesses processService = getServicesTracker().getService(IProcesses.class);
     								if (processService != null) {

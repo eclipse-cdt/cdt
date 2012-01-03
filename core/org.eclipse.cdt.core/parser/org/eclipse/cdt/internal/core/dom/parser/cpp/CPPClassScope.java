@@ -77,6 +77,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 		super(physicalNode);
 	}
 
+	@Override
 	public EScopeKind getKind() {
 		return EScopeKind.eClassType;
 	}
@@ -270,6 +271,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 		return true;
 	}
 
+	@Override
 	public ICPPConstructor[] getConstructors() {
 		return getConstructors(null, true);
 	}
@@ -277,7 +279,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	private ICPPConstructor[] getConstructors(IASTName forName, boolean forceResolve) {
 		populateCache();
 
-		final CharArrayObjectMap nameMap = bindings;
+		final CharArrayObjectMap<Object> nameMap = bindings;
 		if (nameMap == null)
 			return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
 
@@ -365,6 +367,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope#getClassType()
 	 */
+	@Override
 	public ICPPClassType getClassType() {
 		ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
 		final IASTName name = compSpec.getName();
@@ -378,6 +381,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope#getImplicitMethods()
 	 */
+	@Override
 	public ICPPMethod[] getImplicitMethods() {
 		if (implicits == null)
 			return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;

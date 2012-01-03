@@ -2276,7 +2276,8 @@ public class CPPSemantics {
 	private static ICPPFunction[] selectByArgumentCount(LookupData data, ICPPFunction[] functions) throws DOMException {
 	    assert data.forDeclaration() == null;
 
-	    int argumentCount = data.getFunctionArgumentCount();
+	    final int argumentCount = data.getFunctionArgumentCount();
+	    final int packExpansionCount= data.getFunctionArgumentPackExpansionCount();
 
 	    // Trim the list down to the set of viable functions
 	    ICPPFunction[] result= new ICPPFunction[functions.length];
@@ -2300,11 +2301,11 @@ public class CPPSemantics {
 					numArgs--;
 
 				boolean ok;
-				if (numArgs > numPars) {
-					// more arguments than parameters --> need ellipsis or parameter pack
+				if (numArgs-packExpansionCount > numPars) {
+					// More arguments than parameters --> need ellipsis or parameter pack
 					ok= fn.takesVarArgs() || fn.hasParameterPack();
 				} else {
-					ok = numArgs >= fn.getRequiredArgumentCount();
+					ok = numArgs >= fn.getRequiredArgumentCount() || packExpansionCount > 0;
 				}
 				if (ok) {
 					if (fn instanceof IIndexBinding) {

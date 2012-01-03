@@ -103,6 +103,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 		setShowRadixPrefix(false);
 		fNumberOfInstructions = 0;
 		fMeanSizeOfInstructions = 4;
+		fMaxFunctionLength = 0;
 	}
 
 	/**
@@ -120,9 +121,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 			fi.dispose();
 		}
 		fFileInfoMap.clear();
-		
 		fInvalidAddressRanges.clear();
-		
 		fInvalidSource.clear();
 	}
 
@@ -141,8 +140,8 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 		return fInvalidAddressRanges.toArray(new AddressRangePosition[fInvalidAddressRanges.size()]);
 	}
 
-	public void setMaxFunctionLength(int opcodeLength) {
-		fMaxFunctionLength = opcodeLength;
+	public void setMaxFunctionLength(int functionLength) {
+		fMaxFunctionLength = functionLength;
 	}
 
 	public int getMaxFunctionLength() {
@@ -1019,6 +1018,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyDocument#insertDisassemblyLine(org.eclipse.cdt.debug.internal.ui.disassembly.dsf.AddressRangePosition, java.math.BigInteger, int, java.lang.String, java.lang.String, java.lang.String, int)
 	 */
+	@Override
 	public AddressRangePosition insertDisassemblyLine(AddressRangePosition pos, BigInteger address, int length, String functionOffset, String instruction, String file, int lineNr)
 		throws BadLocationException {
 		return insertDisassemblyLine(pos, address, length, functionOffset, null, instruction, file, lineNr);
@@ -1027,6 +1027,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyDocument#insertDisassemblyLine(org.eclipse.cdt.debug.internal.ui.disassembly.dsf.AddressRangePosition, java.math.BigInteger, int, java.lang.String, java.lang.String, java.lang.String, int)
 	 */
+	@Override
 	public AddressRangePosition insertDisassemblyLine(AddressRangePosition pos, BigInteger address, int length, String functionOffset, BigInteger opcode, String instruction, String file, int lineNr)
 		throws BadLocationException {
 		assert isGuiThread();
@@ -1194,6 +1195,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyDocument#insertLabel(org.eclipse.cdt.debug.internal.ui.disassembly.dsf.AddressRangePosition, java.math.BigInteger, java.lang.String, boolean)
 	 */
+	@Override
 	public AddressRangePosition insertLabel(AddressRangePosition pos, BigInteger address, String label, boolean showLabels)
 		throws BadLocationException {
 		assert isGuiThread();
@@ -1552,6 +1554,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 		}
 	}
 
+	@Override
 	public void addInvalidAddressRange(AddressRangePosition pos) {
 		assert isGuiThread();
 		if (DEBUG) System.out.println("Adding to invalid range list: " + pos); //$NON-NLS-1$

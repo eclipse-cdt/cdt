@@ -103,6 +103,7 @@ public class ProcessPrompterDialog extends TwoPaneElementSelector {
     	
     	// Now add a listener to prevent selection
     	list.addListener(SWT.EraseItem, new Listener() {
+            @Override
     	    public void handleEvent(Event event) {
     	    	if ((event.detail & SWT.SELECTED) != 0) {
     	    		event.detail &= ~SWT.SELECTED;

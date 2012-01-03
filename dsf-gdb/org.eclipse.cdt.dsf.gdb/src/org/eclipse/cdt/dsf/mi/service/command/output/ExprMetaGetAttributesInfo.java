@@ -23,6 +23,7 @@ public class ExprMetaGetAttributesInfo implements ICommandResult {
     
     public boolean getEditable() { return editable; }
 	
+	@Override
 	public <V extends ICommandResult> V getSubsetResult(ICommand<V> command) {
 		return null;
 	}

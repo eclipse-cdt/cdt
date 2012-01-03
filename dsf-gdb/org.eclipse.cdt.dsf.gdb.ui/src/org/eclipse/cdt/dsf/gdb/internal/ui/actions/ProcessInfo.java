@@ -32,18 +32,22 @@ class ProcessInfo implements IProcessExtendedInfo, Comparable<ProcessInfo> {
 		this.ownerId = owner;
 	}
 	
+    @Override
 	public String getName() {
 		return name;
 	}
 
+    @Override
 	public int getPid() {
 		return pid;
 	}
 
+    @Override
 	public String[] getCores() {
 		return cores;
 	}
 
+    @Override
 	public String getOwner() {
 		return ownerId;
 	}
@@ -52,6 +56,7 @@ class ProcessInfo implements IProcessExtendedInfo, Comparable<ProcessInfo> {
 	 * Sort by name, then by pid.
 	 * No need to sort any further since pids are unique.
 	 */
+    @Override
 	public int compareTo(ProcessInfo other) {
 	    int nameCompare = getName().compareTo(other.getName());
 	    if (nameCompare != 0) return nameCompare;

@@ -26,20 +26,22 @@ public class ResourceAdapterFactory implements IAdapterFactory {
 	private static Class<?>[] PROPERTIES= new Class[] {
 		ICElement.class
 	};
-	
+
 	//private static CElementFactory celementFactory= new CElementFactory();
 	private static CoreModel celementFactory= CoreModel.getDefault();
 
 	/**
 	 * @see IAdapterFactory#getAdapterList
-	 */	
+	 */
+	@Override
 	public Class<?>[] getAdapterList() {
 		return PROPERTIES;
 	}
-	
+
 	/**
 	 * @see IAdapterFactory#getAdapter
 	 */
+	@Override
 	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Object element, Class key) {
 		if (ICElement.class.equals(key)) {
@@ -60,5 +62,5 @@ public class ResourceAdapterFactory implements IAdapterFactory {
 			//}
 		}
 		return null;
-	}	
+	}
 }

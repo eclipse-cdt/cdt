@@ -37,6 +37,7 @@ public class GdbDisconnectCommand implements IDisconnectHandler {
         fTracker.dispose();
     }
 
+    @Override
     public void canExecute(final IEnabledStateRequest request) {
         if (request.getElements().length != 1) {
             request.setEnabled(false);
@@ -67,6 +68,7 @@ public class GdbDisconnectCommand implements IDisconnectHandler {
         });
 	}
 
+    @Override
 	public boolean execute(final IDebugCommandRequest request) {
         if (request.getElements().length != 1) {
             request.done();

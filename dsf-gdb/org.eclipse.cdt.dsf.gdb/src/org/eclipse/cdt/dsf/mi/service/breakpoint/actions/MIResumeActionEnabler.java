@@ -35,8 +35,10 @@ public class MIResumeActionEnabler implements IResumeActionEnabler {
         fContext = (IExecutionDMContext) context;
     }
 
+	@Override
     public void resume() throws Exception {
     	fExecutor.execute(new DsfRunnable() { 
+    		@Override
     		public void run() {
     			final IRunControl runControlService = fServiceTracker.getService(IRunControl.class);
     			if (runControlService != null) {

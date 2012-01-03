@@ -132,6 +132,7 @@ public class ASTWriterVisitor extends ASTVisitor {
 	}
 
 	public void visit(ASTLiteralNode lit) {
+		insertBlankLineIfNeeded(lit);
 		scribe.print(lit.getRawSignature());
 	}
 

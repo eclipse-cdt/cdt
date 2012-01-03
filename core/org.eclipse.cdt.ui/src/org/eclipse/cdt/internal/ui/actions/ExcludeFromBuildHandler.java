@@ -68,7 +68,7 @@ public class ExcludeFromBuildHandler extends AbstractHandler {
 		ISelection selection = getSelection(context);
 		setEnabledFromSelection(selection);
 	}
-	
+
 	protected ISelection getSelection(Object context) {
 		Object s = HandlerUtil.getVariable(context, ISources.ACTIVE_MENU_SELECTION_NAME);
         if (s instanceof ISelection) {
@@ -81,7 +81,7 @@ public class ExcludeFromBuildHandler extends AbstractHandler {
 		objects = null;
 		cfgNames = null;
 		boolean cfgsOK = true;
-		
+
 		if ((selection != null) && !selection.isEmpty()) {
 			// case for context menu
 			Object[] obs = null;
@@ -97,7 +97,7 @@ public class ExcludeFromBuildHandler extends AbstractHandler {
 				for (int i=0; i<obs.length && cfgsOK; i++) {
 					// if project selected, don't do anything
 					if ((obs[i] instanceof IProject) || (obs[i] instanceof ICProject)) {
-						cfgsOK=false; 
+						cfgsOK=false;
 						break;
 					}
 					IResource res = null;
@@ -111,12 +111,12 @@ public class ExcludeFromBuildHandler extends AbstractHandler {
 					if (res != null) {
 						ICConfigurationDescription[] cfgds = getCfgsRead(res);
 						if (cfgds == null || cfgds.length == 0) continue;
-						
+
 						if (objects == null) objects = new ArrayList<IResource>();
 						objects.add(res);
 						if (cfgNames == null) {
 							cfgNames = new ArrayList<String>(cfgds.length);
-							for (int j=0; j<cfgds.length; j++) { 
+							for (int j=0; j<cfgds.length; j++) {
 								if (!canExclude(res, cfgds[j])) {
 									cfgNames = null;
 									cfgsOK = false;
@@ -140,7 +140,7 @@ public class ExcludeFromBuildHandler extends AbstractHandler {
 					}
 				}
 			}
-		} 
+		}
 		setBaseEnabled(cfgsOK && (objects != null));
 	}
 
@@ -173,14 +173,15 @@ public class ExcludeFromBuildHandler extends AbstractHandler {
 			cfg.setSourceEntries(newEntries);
 		} catch (CoreException e) {
 			CUIPlugin.log(e);
-		}					
+		}
 	}
-	
+
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		openDialog();
 		return null;
 	}
-	
+
 	private ICConfigurationDescription[] getCfgsRead(IResource res) {
 		IProject p = res.getProject();
 		if (!p.isOpen()) return null;
@@ -189,19 +190,19 @@ public class ExcludeFromBuildHandler extends AbstractHandler {
 		if (prjd == null) return null;
 		return prjd.getConfigurations();
 	}
-	
+
 	private void openDialog() {
-		if (objects == null || objects.size() == 0) return; 
+		if (objects == null || objects.size() == 0) return;
 		// create list of configurations to delete
-		
+
 		ListSelectionDialog dialog = new ListSelectionDialog(
-				CUIPlugin.getActiveWorkbenchShell(), 
-				cfgNames, 
-				createSelectionDialogContentProvider(), 
-				new LabelProvider() {}, 
+				CUIPlugin.getActiveWorkbenchShell(),
+				cfgNames,
+				createSelectionDialogContentProvider(),
+				new LabelProvider() {},
 				ActionMessages.ExcludeFromBuildAction_0);
 		dialog.setTitle(ActionMessages.ExcludeFromBuildAction_1);
-		
+
 		boolean[] status = new boolean[cfgNames.size()];
 		Iterator<IResource> it = objects.iterator();
 		while (it.hasNext()) {
@@ -214,11 +215,11 @@ public class ExcludeFromBuildHandler extends AbstractHandler {
 			}
 		}
 		ArrayList<String> lst = new ArrayList<String>();
-		for (int i=0; i<status.length; i++) 
+		for (int i=0; i<status.length; i++)
 			if (status[i]) lst.add(cfgNames.get(i));
 		if (lst.size() > 0)
 			dialog.setInitialElementSelections(lst);
-		
+
 		if (dialog.open() == Window.OK) {
 			Object[] selected = dialog.getResult(); // may be empty
 			Iterator<IResource> it2 = objects.iterator();
@@ -243,7 +244,7 @@ public class ExcludeFromBuildHandler extends AbstractHandler {
 				try {
 					CoreModel.getDefault().setProjectDescription(p, prjd);
 				} catch (CoreException e) {
-					CUIPlugin.logError(Messages.AbstractPage_11 + e.getLocalizedMessage()); 
+					CUIPlugin.logError(Messages.AbstractPage_11 + e.getLocalizedMessage());
 				}
 				AbstractPage.updateViews(res);
 			}
@@ -252,10 +253,13 @@ public class ExcludeFromBuildHandler extends AbstractHandler {
 
 	private IStructuredContentProvider createSelectionDialogContentProvider() {
 		return new IStructuredContentProvider() {
+			@Override
 			public Object[] getElements(Object inputElement) { return cfgNames.toArray(); }
+			@Override
 			public void dispose() {}
+			@Override
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 		};
 	}
-	
+
 }

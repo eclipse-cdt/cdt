@@ -17,8 +17,6 @@ public:
 
 inline bool X::a(int int1) const {
 }
-
-
 //!Param const and reference and pointer two params
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
@@ -38,8 +36,6 @@ public:
 
 inline bool X::xy(int int1, int i) const {
 }
-
-
 //!Test if TemplateMethod stays in header
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
@@ -62,15 +58,13 @@ public:
 template<class T>
 inline void A<T>::test() {
 }
-
-
 //@A.cpp
 #include "A.h"
 
 //=
 #include "A.h"
 
-//!class template member functions
+//!Class template member functions
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
 filename=A.h
@@ -102,9 +96,7 @@ A<T>::A() {
 template<class T>
 inline void A<T>::test() {
 }
-
-
-//!member class
+//!Member class
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
 filename=A.h
@@ -144,8 +136,6 @@ public:
 
 inline void A::test() {
 }
-
-
 //!Method declared in otherwise empty class
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
@@ -165,7 +155,6 @@ public:
 //@A.cpp
 
 //=
-
 void A::test() {
 }
 //!Implement in existing namespace
@@ -205,7 +194,7 @@ void ClassInNamespace::test2() {
 }
 
 }
-//!virtual method in the middle of con/destructor, without parameters and void return value
+//!Virtual method in the middle of con/destructor, without parameters and void return value
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
 filename=A.h
@@ -287,8 +276,6 @@ A::A() {
 
 void A::foo() {
 }
-
-
 //!Method at beginning, without parameters, void return value and const
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
@@ -348,8 +335,6 @@ A::A() {
 
 int A::foo() {
 }
-
-
 //!Method with two int parameters
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
@@ -379,8 +364,6 @@ A::A() {
 
 int A::foo(int param1, int param2) {
 }
-
-
 //!Method defined in header
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
@@ -408,8 +391,6 @@ A::A() {
 
 inline void A::test() {
 }
-
-
 //!Implement a function at end of source file
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
@@ -426,7 +407,6 @@ void function_with_impl() {
 
 void function() {
 }
-
 //!Implement with namespace
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
@@ -453,7 +433,6 @@ void Namespace::ClassInNamespace::other_test() {
 
 void Namespace::ClassInNamespace::test() {
 }
-
 //!Implement function within namespace
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
@@ -524,7 +503,7 @@ int test2() {
 
 }
 }
-//!class template member functions with multiple templates
+//!Class template member functions with multiple templates
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
 filename=A.h
@@ -538,7 +517,7 @@ public:
 };
 
 template<class T, class U>
-A<T,U>::A() {
+A<T, U>::A() {
 }
 
 //=
@@ -550,15 +529,13 @@ public:
 };
 
 template<class T, class U>
-A<T,U>::A() {
+A<T, U>::A() {
 }
 
 template<class T, class U>
 inline void A<T, U>::test() {
 }
-
-
-//!with default parameters
+//!With default parameters
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
 filename=A.h
@@ -578,7 +555,7 @@ public:
 
 void Class::test(int param1, int param2, int param3) {
 }
-//!static method
+//!Static method
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
 filename=A.h
@@ -672,7 +649,6 @@ class TestClass {
 inline void nspace::TestClass::testMethod() {
 }
 
-
 #endif /* TESTCLASS_H_ */
 
 //!Bug 290110 Source-> Implement Method
@@ -736,8 +712,6 @@ A::~A() {
 
 void n1::n2::A::B::testmethod2() {
 }
-
-
 //!Bug 337040 - Insert definition in empty implementation file (.cxx)
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
@@ -753,7 +727,6 @@ public:
 //@A.cxx
 
 //=
-
 void TestClass::foo() {
 }
 //!Bug 355006 - NPE implementing template function
@@ -773,7 +746,6 @@ void func(T&);
 template<typename T>
 inline void func(T&) {
 }
-
 //!Bug 363111 - Remove explicit in constructor definition
 //#org.eclipse.cdt.ui.tests.refactoring.implementmethod.ImplementMethodRefactoringTest
 //@.config
@@ -789,6 +761,5 @@ public:
 //@A.cpp
 
 //=
-
 TestClass::TestClass() {
 }

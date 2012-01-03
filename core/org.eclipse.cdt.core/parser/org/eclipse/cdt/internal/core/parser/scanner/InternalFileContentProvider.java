@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.internal.core.dom.IIncludeFileResolutionHeuristics;
+import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.parser.IMacroDictionary;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent.InclusionKind;
 
@@ -32,6 +33,15 @@ import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent.Inclusio
  * Internal implementation of the file content providers
  */
 public abstract class InternalFileContentProvider extends IncludeFileContentProvider {
+	public static final class DependsOnOutdatedFileException extends Exception {
+		public final Object fTu;
+		public final IIndexFragmentFile fIndexFile;
+		public DependsOnOutdatedFileException(Object tu, IIndexFragmentFile file) {
+			fTu= tu;
+			fIndexFile= file;
+		}
+	}
+
 	private IIncludeFileResolutionHeuristics fIncludeResolutionHeuristics;
     private final Map<String, IFileNomination> fPragmaOnce= new HashMap<String, IFileNomination>();
     private final Map<String, List<ISignificantMacros>> fLoadedVersions= new HashMap<String, List<ISignificantMacros>>();
@@ -64,9 +74,10 @@ public abstract class InternalFileContentProvider extends IncludeFileContentProv
 	 * or <code>null</code> if this cannot be done.
 	 * @param filePath the absolute location of the file.
 	 * @param macroDictionary macros defined at the inclusion point.
+	 * @throws DependsOnOutdatedFileException 
 	 */
 	public InternalFileContent getContentForContextToHeaderGap(String filePath,
-			IMacroDictionary macroDictionary) {
+			IMacroDictionary macroDictionary) throws DependsOnOutdatedFileException {
 		return null;
 	}
 
@@ -123,5 +134,12 @@ public abstract class InternalFileContentProvider extends IncludeFileContentProv
 			}
 			list.add(sig);
 		}
+	}
+
+	/** 
+	 * Return the path of the context of <code>null</code>, if there is no context.
+	 */
+	public String getContextPath() {
+		return null;
 	}		
 }

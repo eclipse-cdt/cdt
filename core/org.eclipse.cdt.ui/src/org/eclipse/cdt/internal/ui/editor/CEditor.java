@@ -254,6 +254,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		/*
 		 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#gotoMarker(org.eclipse.core.resources.IMarker)
 		 */
+		@Override
 		public void gotoMarker(IMarker marker) {
 			if (fIsUpdatingMarkerViews)
 				return;
@@ -433,6 +434,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		/*
 		 * @see org.eclipse.jface.text.link.LinkedModeUI$IExitPolicy#doExit(org.eclipse.jface.text.link.LinkedModeModel, org.eclipse.swt.events.VerifyEvent, int, int)
 		 */
+		@Override
 		public ExitFlags doExit(LinkedModeModel model, VerifyEvent event, int offset, int length) {
 			if (fSize == fStack.size() && !isMasked(offset)) {
 				if (event.character == fExitCharacter) {
@@ -497,6 +499,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		/*
 		 * @see org.eclipse.jface.text.IPositionUpdater#update(org.eclipse.jface.text.DocumentEvent)
 		 */
+		@Override
 		public void update(DocumentEvent event) {
 			int eventOffset = event.getOffset();
 			int eventOldLength = event.getLength();
@@ -589,6 +592,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		/*
 		 * @see org.eclipse.swt.custom.VerifyKeyListener#verifyKey(org.eclipse.swt.events.VerifyEvent)
 		 */
+		@Override
 		public void verifyKey(VerifyEvent event) {
 
 			// early pruning to slow down normal typing as little as possible
@@ -746,6 +750,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		/*
 		 * @see org.eclipse.jface.text.link.ILinkedModeListener#left(org.eclipse.jface.text.link.LinkedModeModel, int)
 		 */
+		@Override
 		public void left(LinkedModeModel environment, int flags) {
 
 			final BracketLevel level = fBracketLevelStack.pop();
@@ -760,6 +765,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 				IDocumentExtension extension = (IDocumentExtension) document;
 				extension.registerPostNotificationReplace(null, new IDocumentExtension.IReplace() {
 
+					@Override
 					public void perform(IDocument d, IDocumentListener owner) {
 						if ((level.fFirstPosition.isDeleted || level.fFirstPosition.length == 0)
 								&& !level.fSecondPosition.isDeleted
@@ -789,12 +795,14 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		/*
 		 * @see org.eclipse.jface.text.link.ILinkedModeListener#suspend(org.eclipse.jface.text.link.LinkedModeModel)
 		 */
+		@Override
 		public void suspend(LinkedModeModel environment) {
 		}
 
 		/*
 		 * @see org.eclipse.jface.text.link.ILinkedModeListener#resume(org.eclipse.jface.text.link.LinkedModeModel, int)
 		 */
+		@Override
 		public void resume(LinkedModeModel environment, int flags) {
 		}
 	}
@@ -809,6 +817,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		/**
 		 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 		 */
+		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			// XXX: see https://bugs.eclipse.org/bugs/show_bug.cgi?id=56161
 			CEditor.this.selectionChanged();
@@ -978,6 +987,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		/*
 		 * @see org.eclipse.ui.texteditor.IUpdate#update()
 		 */
+		@Override
 		public void update() {
 			setEnabled(isEditorInputModifiable());
 		}
@@ -1181,6 +1191,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		/*
 		 * @see org.eclipse.ui.texteditor.IUpdate#update()
 		 */
+		@Override
 		public void update() {
 			setEnabled(isEditorInputModifiable());
 		}
@@ -1225,6 +1236,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	private class IndexerPreferenceListener implements IPreferenceChangeListener {
 		private IProject fProject;
 
+		@Override
 		public void preferenceChange(PreferenceChangeEvent event) {
 			if (IndexerPreferences.KEY_INDEX_ON_OPEN.equals(event.getKey())) {
 				ICElement element= getInputCElement();
@@ -1398,7 +1410,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	/** The translation unit that was added by the editor to index, or <code>null</code>. */
 	private ITranslationUnit fTuAddedToIndex;
 
-	private IndexerPreferenceListener fIndexerPreferenceListener;
+	private final IndexerPreferenceListener fIndexerPreferenceListener;
 
 	private static final Set<String> angularIntroducers = new HashSet<String>();
 	static {
@@ -1643,6 +1655,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 			return getOutlinePage();
 		} else if (required == IShowInTargetList.class) {
 			return new IShowInTargetList() {
+				@Override
 				@SuppressWarnings("deprecation")
 				public String[] getShowInTargetIds() {
 					return new String[] { IPageLayout.ID_PROJECT_EXPLORER, IPageLayout.ID_OUTLINE, IPageLayout.ID_RES_NAV };
@@ -1656,6 +1669,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 			}
 			final ISelection selection= ce != null ? new StructuredSelection(ce) : null;
 			return new IShowInSource() {
+				@Override
 				public ShowInContext getShowInContext() {
 					return new ShowInContext(getEditorInput(), selection);
 				}
@@ -1824,6 +1838,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 					if (PreferenceConstants.SCALABILITY_RECONCILER.equals(property) ||
 							PreferenceConstants.SCALABILITY_SYNTAX_COLOR.equals(property)) {
 						BusyIndicator.showWhile(getSite().getShell().getDisplay(), new Runnable() {
+							@Override
 							public void run() {
 								setOutlinePageInput(fOutlinePage, getEditorInput());
 								asv.unconfigure();
@@ -1980,6 +1995,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	 * React to changed selection in the outline view.
 	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		ISelection sel = event.getSelection();
 		if (sel instanceof IStructuredSelection) {
@@ -2198,6 +2214,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
      */
     @Override
 	public void dispose() {
+		fIndexerPreferenceListener.unregister();
     	updateIndexInclusion(null, true);
 
 		ISourceViewer sourceViewer = getSourceViewer();
@@ -2578,6 +2595,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		// bug 291008 - register custom help listener
 		final IWorkbenchHelpSystem helpSystem = PlatformUI.getWorkbench().getHelpSystem();
 		parent.addHelpListener(new HelpListener() {
+			@Override
 			public void helpRequested(HelpEvent e) {
 				IContextProvider provider = (IContextProvider) CEditor.this.getAdapter(IContextProvider.class);
 				if (provider != null) {
@@ -2884,6 +2902,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		fProjectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.warning"); //$NON-NLS-1$
 		fProjectionSupport.addSummarizableAnnotationType("org.eclipse.search.results"); //$NON-NLS-1$
 		fProjectionSupport.setHoverControlCreator(new IInformationControlCreator() {
+			@Override
 			public IInformationControl createInformationControl(Shell shell) {
 				return new SourceViewerInformationControl(shell, false, getOrientation(), null);
 			}
@@ -3163,6 +3182,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	 * @see org.eclipse.cdt.internal.ui.text.ICReconcilingListener#aboutToBeReconciled()
 	 * @since 4.0
 	 */
+	@Override
 	public void aboutToBeReconciled() {
 		fIsReconciling= true;
 
@@ -3180,6 +3200,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	 * @see org.eclipse.cdt.internal.ui.text.ICReconcilingListener#reconciled(IASTTranslationUnit, boolean, IProgressMonitor)
 	 * @since 4.0
 	 */
+	@Override
 	public void reconciled(IASTTranslationUnit ast, boolean force, IProgressMonitor progressMonitor) {
 		fIsReconciling= false;
 
@@ -3417,6 +3438,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		/*
 		 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
 		 */
+		@Override
 		public void documentAboutToBeChanged(DocumentEvent event) {
 			if (fOccurrencesAnnotationUpdaterJob != null)
 				fOccurrencesAnnotationUpdaterJob.doCancel();
@@ -3425,12 +3447,14 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		/*
 		 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
 		 */
+		@Override
 		public void documentChanged(DocumentEvent event) {
 		}
 
 		/*
 		 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentAboutToBeChanged(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IDocument)
 		 */
+		@Override
 		public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
 			if (oldInput == null)
 				return;
@@ -3441,6 +3465,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		/*
 		 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentChanged(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IDocument)
 		 */
+		@Override
 		public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
 			if (newInput == null)
 				return;
@@ -3536,6 +3561,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		fMarkOccurrenceAnnotations= true;
 
 		fPostSelectionListenerWithAST= new ISelectionListenerWithAST() {
+			@Override
 			public void selectionChanged(IEditorPart part, ITextSelection selection, IASTTranslationUnit astRoot) {
 				updateOccurrenceAnnotations(selection, astRoot);
 			}
@@ -3544,6 +3570,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		if (forceUpdate && getSelectionProvider() != null) {
 			fForcedMarkOccurrencesSelection= getSelectionProvider().getSelection();
 			ASTProvider.getASTProvider().runOnAST(getInputCElement(), ASTProvider.WAIT_NO, getProgressMonitor(), new ASTRunnable() {
+				@Override
 				public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
 					updateOccurrenceAnnotations((ITextSelection) fForcedMarkOccurrencesSelection, ast);
 					return Status.OK_STATUS;
@@ -3733,6 +3760,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		ICElement inputCElement = getInputCElement();
 		if (provideAST && inputCElement instanceof ITranslationUnit) {
 			ASTProvider.getASTProvider().runOnAST(inputCElement, ASTProvider.WAIT_ACTIVE_ONLY, getProgressMonitor(), new ASTRunnable() {
+				@Override
 				public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
 					if (ast != null)
 						fOverrideIndicatorManager.reconciled(ast, true, getProgressMonitor());

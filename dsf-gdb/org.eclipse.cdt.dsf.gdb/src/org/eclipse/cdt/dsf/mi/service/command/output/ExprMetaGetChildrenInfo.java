@@ -24,6 +24,7 @@ public class ExprMetaGetChildrenInfo implements ICommandResult {
     
     public ExpressionInfo[] getChildrenExpressions() { return childrenExpressions; }
     
+	@Override
 	public <V extends ICommandResult> V getSubsetResult(ICommand<V> command) {
 		return null;
 	}

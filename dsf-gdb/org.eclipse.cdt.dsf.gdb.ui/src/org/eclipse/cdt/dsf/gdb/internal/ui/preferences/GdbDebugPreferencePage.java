@@ -65,6 +65,7 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 		setDescription(MessagesForPreferences.GdbDebugPreferencePage_description);
 	}
 
+    @Override
 	public void init(IWorkbench workbench) {
 	}
 

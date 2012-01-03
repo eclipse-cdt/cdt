@@ -40,11 +40,13 @@ public class CPPClassTemplatePartialSpecializationSpecialization extends CPPClas
 		fClassTemplate= template;
 	}
 
+	@Override
 	public ICPPTemplateParameter[] getTemplateParameters() {
 		ICPPClassTemplatePartialSpecialization template = (ICPPClassTemplatePartialSpecialization) getSpecializedBinding();
 		return template.getTemplateParameters();
 	}
 
+	@Override
 	public synchronized final void addInstance(ICPPTemplateArgument[] arguments, ICPPTemplateInstance instance) {
 		if (instances == null)
 			instances = new ObjectMap(2);
@@ -52,6 +54,7 @@ public class CPPClassTemplatePartialSpecializationSpecialization extends CPPClas
 		instances.put(key, instance);
 	}
 
+	@Override
 	public synchronized final ICPPTemplateInstance getInstance(ICPPTemplateArgument[] arguments) {
 		if (instances != null) {
 			String key= ASTTypeUtil.getArgumentListString(arguments, true);
@@ -60,6 +63,7 @@ public class CPPClassTemplatePartialSpecializationSpecialization extends CPPClas
 		return null;
 	}
 
+	@Override
 	public synchronized ICPPTemplateInstance[] getAllInstances() {
 		if (instances != null) {
 			ICPPTemplateInstance[] result= new ICPPTemplateInstance[instances.size()];
@@ -71,10 +75,12 @@ public class CPPClassTemplatePartialSpecializationSpecialization extends CPPClas
 		return ICPPTemplateInstance.EMPTY_TEMPLATE_INSTANCE_ARRAY;
 	}
 
+	@Override
 	public IBinding resolveTemplateParameter(ICPPTemplateParameter param) {
 		return param;
 	}
 	
+	@Override
 	public ICPPDeferredClassInstance asDeferredInstance() throws DOMException {
 		if (fDeferredInstance == null) {
 			ICPPTemplateArgument[] args = CPPTemplates.templateParametersAsArguments(getTemplateParameters());
@@ -83,10 +89,12 @@ public class CPPClassTemplatePartialSpecializationSpecialization extends CPPClas
 		return fDeferredInstance;
 	}
 
+	@Override
 	public ICPPClassTemplate getPrimaryClassTemplate() {
 		return fClassTemplate;
 	}
 
+	@Override
 	public ICPPTemplateArgument[] getTemplateArguments() throws DOMException {
 		ICPPTemplateArgument[] args = ((ICPPClassTemplatePartialSpecialization) getSpecializedBinding()).getTemplateArguments();
 		final IBinding owner = getOwner();
@@ -96,10 +104,12 @@ public class CPPClassTemplatePartialSpecializationSpecialization extends CPPClas
 		return CPPTemplates.instantiateArguments(args, getTemplateParameterMap(), -1, null);
 	}
 	
+	@Override
 	public void addPartialSpecialization(ICPPClassTemplatePartialSpecialization spec) {
 	}
 
-	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() throws DOMException {
+	@Override
+	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() {
 		return ICPPClassTemplatePartialSpecialization.EMPTY_PARTIAL_SPECIALIZATION_ARRAY;
 	}
 	
@@ -118,11 +128,13 @@ public class CPPClassTemplatePartialSpecializationSpecialization extends CPPClas
 		return CPPTemplates.getArgumentMap(getPrimaryClassTemplate(), getTemplateParameterMap());
 	}
 	
+	@Override
 	@Deprecated
 	public IType[] getArguments() throws DOMException {
 		return CPPTemplates.getArguments(getTemplateArguments());
 	}
 	
+	@Override
 	public ICPPTemplateArgument getDefaultArgFromIndex(int paramPos) throws DOMException {
 		// no default arguments for partial specializations
 		return null;

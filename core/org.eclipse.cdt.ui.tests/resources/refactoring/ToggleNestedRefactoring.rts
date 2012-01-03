@@ -24,7 +24,6 @@ class A {
 inline void A::B::member(int a, int b) {
 	return;
 }
-
 //!TestNestedClassInHeaderToImplementation
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
@@ -65,7 +64,6 @@ int main() {
 void A::B::member(int a, int b) {
 	return;
 }
-
 //!TestNestedClassInImplementationToClass
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config

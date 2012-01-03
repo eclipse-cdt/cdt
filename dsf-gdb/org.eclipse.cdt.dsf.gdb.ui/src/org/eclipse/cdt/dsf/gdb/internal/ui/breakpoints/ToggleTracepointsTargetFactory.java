@@ -53,6 +53,7 @@ public class ToggleTracepointsTargetFactory implements IToggleBreakpointsTargetF
 	public ToggleTracepointsTargetFactory() {
 	}
 
+    @Override
 	public IToggleBreakpointsTarget createToggleTarget(String targetID) {
 		if (TOGGLE_C_TRACEPOINT_TARGET_ID.equals(targetID)) {
 			return fgDisassemblyToggleTracepointsTarget;
@@ -60,10 +61,12 @@ public class ToggleTracepointsTargetFactory implements IToggleBreakpointsTargetF
 		return null;
 	}
 
+    @Override
 	public String getDefaultToggleTarget(IWorkbenchPart part, ISelection selection) {
 		return null;
 	}
 
+    @Override
 	public String getToggleTargetDescription(String targetID) {
 		if (TOGGLE_C_TRACEPOINT_TARGET_ID.equals(targetID)) {
 			return Messages.ToggleTracepointsTargetFactory_description;
@@ -71,6 +74,7 @@ public class ToggleTracepointsTargetFactory implements IToggleBreakpointsTargetF
 		return null;
 	}
 
+    @Override
 	public String getToggleTargetName(String targetID) {
 		if (TOGGLE_C_TRACEPOINT_TARGET_ID.equals(targetID)) {
 			return Messages.ToggleTracepointsTargetFactory_name;
@@ -78,6 +82,7 @@ public class ToggleTracepointsTargetFactory implements IToggleBreakpointsTargetF
 		return null;
 	}
 
+    @Override
 	public Set<String> getToggleTargets(IWorkbenchPart part, ISelection selection) {
 		if (part instanceof IDisassemblyPart) {
 			return TOGGLE_TARGET_IDS_ALL;

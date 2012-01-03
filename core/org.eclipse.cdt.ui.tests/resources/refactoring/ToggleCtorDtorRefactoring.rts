@@ -34,7 +34,6 @@ public:
 inline A::A(int x, int y) :
 		a(x), b(y) {
 }
-
 //!TestConstructorToggleInHeaderToImplementation
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
@@ -85,7 +84,6 @@ int main() {
 A::A(int x, int y) :
 		a(x), b(y) {
 }
-
 //!TestConstructorToggleInImplementationToClass
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
@@ -154,7 +152,6 @@ public:
 
 inline A::~A() {
 }
-
 //!TestDestructorToggleInHeaderToImplementation
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config
@@ -199,7 +196,6 @@ int main() {
 
 A::~A() {
 }
-
 //!TestDestructorToggleInImplementationToClass
 //#org.eclipse.cdt.ui.tests.refactoring.togglefunction.ToggleRefactoringTest
 //@.config

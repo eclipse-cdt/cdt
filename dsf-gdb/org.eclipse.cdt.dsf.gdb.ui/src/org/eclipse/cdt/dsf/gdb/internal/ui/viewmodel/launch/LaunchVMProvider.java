@@ -144,6 +144,7 @@ public class LaunchVMProvider extends AbstractLaunchVMProvider
         super.refresh();
         try {
             getSession().getExecutor().execute(new DsfRunnable() {
+                @Override
                 public void run() {
                     DsfServicesTracker tracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), getSession().getId());
                     IProcesses processesService = tracker.getService(IProcesses.class);

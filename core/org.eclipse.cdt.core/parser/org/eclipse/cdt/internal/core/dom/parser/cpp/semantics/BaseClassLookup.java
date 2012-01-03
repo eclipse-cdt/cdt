@@ -320,7 +320,9 @@ class BaseClassLookup {
 			return;
 		fCollected= true;
 		
-		data.foundItems = CPPSemantics.mergePrefixResults((CharArrayObjectMap) data.foundItems, fBindings, true);
+		@SuppressWarnings("unchecked")
+		final CharArrayObjectMap<Object> resultMap = (CharArrayObjectMap<Object>) data.foundItems;
+		data.foundItems = CPPSemantics.mergePrefixResults(resultMap, fBindings, true);
 		for (int i= 0; i < fChildren.size(); i++) {
 			BaseClassLookup child = fChildren.get(i);
 			child.collectResultForContentAssist(data);

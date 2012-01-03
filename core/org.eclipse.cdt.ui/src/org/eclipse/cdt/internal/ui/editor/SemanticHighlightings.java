@@ -64,7 +64,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 /**
  * Semantic highlightings.
  * Derived from JDT.
- * 
+ *
  * @since 4.0
  */
 public class SemanticHighlightings {
@@ -135,12 +135,12 @@ public class SemanticHighlightings {
 	 * A named preference part that controls the highlighting of classes.
 	 */
 	public static final String CLASS="class"; //$NON-NLS-1$
-	
+
 	/**
 	 * A named preference part that controls the highlighting of enums.
 	 */
 	public static final String ENUM="enum"; //$NON-NLS-1$
-	
+
 	/**
 	 * A named preference part that controls the highlighting of macro references.
 	 */
@@ -180,16 +180,16 @@ public class SemanticHighlightings {
 	 * A named preference part that controls the highlighting of external SDK.
 	 */
 	public static final String EXTERNAL_SDK="externalSDK"; //$NON-NLS-1$
-	
+
 	/**
 	 * A named preference part that controls the highlighting of operators that have been overloaded.
 	 */
 	public static final String OVERLOADED_OPERATOR="overloadedOperator"; //$NON-NLS-1$
-	
+
 
 	/** Init debugging mode */
 	private static final boolean DEBUG= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.cdt.ui/debug/SemanticHighlighting"));  //$NON-NLS-1$//$NON-NLS-2$
-	
+
 	/**
 	 * Semantic highlightings
 	 */
@@ -209,10 +209,10 @@ public class SemanticHighlightings {
 		}
 
 		/*
-		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultTextColor()
+		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultDefaultTextColor()
 		 */
 		@Override
-		public RGB getDefaultTextColor() {
+		public RGB getDefaultDefaultTextColor() {
 			return new RGB(0, 0, 192);
 		}
 
@@ -245,7 +245,7 @@ public class SemanticHighlightings {
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.SemanticHighlighting_staticField; 
+			return CEditorMessages.SemanticHighlighting_staticField;
 		}
 
 		/*
@@ -282,10 +282,10 @@ public class SemanticHighlightings {
 		}
 
 		/*
-		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultTextColor()
+		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultDefaultTextColor()
 		 */
 		@Override
-		public RGB getDefaultTextColor() {
+		public RGB getDefaultDefaultTextColor() {
 			return new RGB(0, 0, 192);
 		}
 
@@ -318,7 +318,7 @@ public class SemanticHighlightings {
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.SemanticHighlighting_field; 
+			return CEditorMessages.SemanticHighlighting_field;
 		}
 
 		/*
@@ -355,10 +355,10 @@ public class SemanticHighlightings {
 		}
 
 		/*
-		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultTextColor()
+		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultDefaultTextColor()
 		 */
 		@Override
-		public RGB getDefaultTextColor() {
+		public RGB getDefaultDefaultTextColor() {
 			return RGB_BLACK;
 		}
 
@@ -391,7 +391,7 @@ public class SemanticHighlightings {
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.SemanticHighlighting_methodDeclaration; 
+			return CEditorMessages.SemanticHighlighting_methodDeclaration;
 		}
 
 		/*
@@ -454,10 +454,10 @@ public class SemanticHighlightings {
 		}
 
 		/*
-		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultTextColor()
+		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultDefaultTextColor()
 		 */
 		@Override
-		public RGB getDefaultTextColor() {
+		public RGB getDefaultDefaultTextColor() {
 			return RGB_BLACK;
 		}
 
@@ -490,7 +490,7 @@ public class SemanticHighlightings {
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.SemanticHighlighting_staticMethodInvocation; 
+			return CEditorMessages.SemanticHighlighting_staticMethodInvocation;
 		}
 
 		/*
@@ -530,10 +530,10 @@ public class SemanticHighlightings {
 		}
 
 		/*
-		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultTextColor()
+		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultDefaultTextColor()
 		 */
 		@Override
-		public RGB getDefaultTextColor() {
+		public RGB getDefaultDefaultTextColor() {
 			return RGB_BLACK;
 		}
 
@@ -566,7 +566,7 @@ public class SemanticHighlightings {
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.SemanticHighlighting_method; 
+			return CEditorMessages.SemanticHighlighting_method;
 		}
 
 		/*
@@ -606,10 +606,10 @@ public class SemanticHighlightings {
 		}
 
 		/*
-		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultTextColor()
+		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultDefaultTextColor()
 		 */
 		@Override
-		public RGB getDefaultTextColor() {
+		public RGB getDefaultDefaultTextColor() {
 			return RGB_BLACK;
 		}
 
@@ -642,7 +642,7 @@ public class SemanticHighlightings {
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.SemanticHighlighting_functionDeclaration; 
+			return CEditorMessages.SemanticHighlighting_functionDeclaration;
 		}
 
 		/*
@@ -658,7 +658,7 @@ public class SemanticHighlightings {
 				IASTName name= (IASTName)node;
 				if (name.isDeclaration()) {
 					IBinding binding= token.getBinding();
-					if (binding instanceof IFunction 
+					if (binding instanceof IFunction
 							&& !(binding instanceof ICPPMethod)) {
 						return true;
 					} else if (binding instanceof IProblemBinding) {
@@ -700,10 +700,10 @@ public class SemanticHighlightings {
 		}
 
 		/*
-		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultTextColor()
+		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultDefaultTextColor()
 		 */
 		@Override
-		public RGB getDefaultTextColor() {
+		public RGB getDefaultDefaultTextColor() {
 			return RGB_BLACK;
 		}
 
@@ -736,7 +736,7 @@ public class SemanticHighlightings {
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.SemanticHighlighting_function; 
+			return CEditorMessages.SemanticHighlighting_function;
 		}
 
 		/*
@@ -760,7 +760,7 @@ public class SemanticHighlightings {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Semantic highlighting for local variable declarations.
 	 */
@@ -775,10 +775,10 @@ public class SemanticHighlightings {
 		}
 
 		/*
-		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultTextColor()
+		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultDefaultTextColor()
 		 */
 		@Override
-		public RGB getDefaultTextColor() {
+		public RGB getDefaultDefaultTextColor() {
 			return new RGB(128, 0, 0);
 		}
 
@@ -811,7 +811,7 @@ public class SemanticHighlightings {
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.SemanticHighlighting_localVariableDeclaration; 
+			return CEditorMessages.SemanticHighlighting_localVariableDeclaration;
 		}
 
 		/*
@@ -835,7 +835,7 @@ public class SemanticHighlightings {
 							}
 						} catch (DOMException exc) {
 							CUIPlugin.log(exc);
-						} 
+						}
 					}
 				}
 			}
@@ -858,10 +858,10 @@ public class SemanticHighlightings {
 		}
 
 		/*
-		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultTextColor()
+		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultDefaultTextColor()
 		 */
 		@Override
-		public RGB getDefaultTextColor() {
+		public RGB getDefaultDefaultTextColor() {
 			return RGB_BLACK;
 		}
 
@@ -894,7 +894,7 @@ public class SemanticHighlightings {
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.SemanticHighlighting_localVariable; 
+			return CEditorMessages.SemanticHighlighting_localVariable;
 		}
 
 		/*
@@ -918,7 +918,7 @@ public class SemanticHighlightings {
 							}
 						} catch (DOMException exc) {
 							CUIPlugin.log(exc);
-						} 
+						}
 					}
 				}
 			}
@@ -956,10 +956,10 @@ public class SemanticHighlightings {
 		}
 
 		/*
-		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultTextColor()
+		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultDefaultTextColor()
 		 */
 		@Override
-		public RGB getDefaultTextColor() {
+		public RGB getDefaultDefaultTextColor() {
 			return RGB_BLACK;
 		}
 
@@ -992,7 +992,7 @@ public class SemanticHighlightings {
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.SemanticHighlighting_globalVariable; 
+			return CEditorMessages.SemanticHighlighting_globalVariable;
 		}
 
 		/*
@@ -1019,12 +1019,12 @@ public class SemanticHighlightings {
 						}
 					} catch (DOMException exc) {
 						CUIPlugin.log(exc);
-					} 
+					}
 				}
 			}
 			return false;
 		}
-		
+
 	}
 
 	/**
@@ -1041,10 +1041,10 @@ public class SemanticHighlightings {
 		}
 
 		/*
-		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultTextColor()
+		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultDefaultTextColor()
 		 */
 		@Override
-		public RGB getDefaultTextColor() {
+		public RGB getDefaultDefaultTextColor() {
 			return RGB_BLACK;
 		}
 
@@ -1077,7 +1077,7 @@ public class SemanticHighlightings {
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.SemanticHighlighting_parameterVariable; 
+			return CEditorMessages.SemanticHighlighting_parameterVariable;
 		}
 
 		/*
@@ -1107,10 +1107,10 @@ public class SemanticHighlightings {
 		}
 
 		/*
-		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultTextColor()
+		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultDefaultTextColor()
 		 */
 		@Override
-		public RGB getDefaultTextColor() {
+		public RGB getDefaultDefaultTextColor() {
 			return new RGB(100, 70, 50);
 		}
 
@@ -1143,7 +1143,7 @@ public class SemanticHighlightings {
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.SemanticHighlighting_templateParameter; 
+			return CEditorMessages.SemanticHighlighting_templateParameter;
 		}
 
 		/*
@@ -1161,7 +1161,7 @@ public class SemanticHighlightings {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Semantic highlighting for classes.
 	 */
@@ -1176,10 +1176,10 @@ public class SemanticHighlightings {
 		}
 
 		/*
-		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultTextColor()
+		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultDefaultTextColor()
 		 */
 		@Override
-		public RGB getDefaultTextColor() {
+		public RGB getDefaultDefaultTextColor() {
 			return new RGB(0, 80, 50);
 		}
 
@@ -1212,7 +1212,7 @@ public class SemanticHighlightings {
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.SemanticHighlighting_classes; 
+			return CEditorMessages.SemanticHighlighting_classes;
 		}
 
 		/*
@@ -1238,7 +1238,7 @@ public class SemanticHighlightings {
 	 * Semantic highlighting for enums.
 	 */
 	private static final class EnumHighlighting extends SemanticHighlighting {
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getPreferenceKey()
 		 */
@@ -1246,15 +1246,15 @@ public class SemanticHighlightings {
 		public String getPreferenceKey() {
 			return ENUM;
 		}
-		
+
 		/*
-		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultTextColor()
+		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultDefaultTextColor()
 		 */
 		@Override
-		public RGB getDefaultTextColor() {
+		public RGB getDefaultDefaultTextColor() {
 			return new RGB(100, 70, 50);
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultTextStyleBold()
 		 */
@@ -1262,7 +1262,7 @@ public class SemanticHighlightings {
 		public boolean isBoldByDefault() {
 			return false;
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#isItalicByDefault()
 		 */
@@ -1270,7 +1270,7 @@ public class SemanticHighlightings {
 		public boolean isItalicByDefault() {
 			return false;
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#isEnabledByDefault()
 		 */
@@ -1278,15 +1278,15 @@ public class SemanticHighlightings {
 		public boolean isEnabledByDefault() {
 			return false;
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDisplayName()
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.SemanticHighlighting_enums; 
+			return CEditorMessages.SemanticHighlighting_enums;
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#consumes(org.eclipse.cdt.internal.ui.editor.SemanticToken)
 		 */
@@ -1302,12 +1302,12 @@ public class SemanticHighlightings {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Semantic highlighting for macro references.
 	 */
 	private static final class MacroReferenceHighlighting extends SemanticHighlighting {
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getPreferenceKey()
 		 */
@@ -1315,15 +1315,15 @@ public class SemanticHighlightings {
 		public String getPreferenceKey() {
 			return MACRO_REFERENCE;
 		}
-		
+
 		/*
-		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultTextColor()
+		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultDefaultTextColor()
 		 */
 		@Override
-		public RGB getDefaultTextColor() {
+		public RGB getDefaultDefaultTextColor() {
 			return RGB_BLACK;
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultTextStyleBold()
 		 */
@@ -1331,7 +1331,7 @@ public class SemanticHighlightings {
 		public boolean isBoldByDefault() {
 			return false;
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#isItalicByDefault()
 		 */
@@ -1339,7 +1339,7 @@ public class SemanticHighlightings {
 		public boolean isItalicByDefault() {
 			return false;
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#isEnabledByDefault()
 		 */
@@ -1347,15 +1347,15 @@ public class SemanticHighlightings {
 		public boolean isEnabledByDefault() {
 			return false;
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDisplayName()
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.SemanticHighlighting_macroSubstitution; 
+			return CEditorMessages.SemanticHighlighting_macroSubstitution;
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#consumes(org.eclipse.cdt.internal.ui.editor.SemanticToken)
 		 */
@@ -1371,12 +1371,12 @@ public class SemanticHighlightings {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Semantic highlighting for macro definitions.
 	 */
 	private static final class MacroDefinitionHighlighting extends SemanticHighlighting {
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getPreferenceKey()
 		 */
@@ -1384,15 +1384,15 @@ public class SemanticHighlightings {
 		public String getPreferenceKey() {
 			return MACRO_DEFINITION;
 		}
-		
+
 		/*
-		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultTextColor()
+		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultDefaultTextColor()
 		 */
 		@Override
-		public RGB getDefaultTextColor() {
+		public RGB getDefaultDefaultTextColor() {
 			return RGB_BLACK;
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultTextStyleBold()
 		 */
@@ -1400,7 +1400,7 @@ public class SemanticHighlightings {
 		public boolean isBoldByDefault() {
 			return false;
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#isItalicByDefault()
 		 */
@@ -1408,7 +1408,7 @@ public class SemanticHighlightings {
 		public boolean isItalicByDefault() {
 			return false;
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#isEnabledByDefault()
 		 */
@@ -1416,15 +1416,15 @@ public class SemanticHighlightings {
 		public boolean isEnabledByDefault() {
 			return false;
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDisplayName()
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.SemanticHighlighting_macroDefintion; 
+			return CEditorMessages.SemanticHighlighting_macroDefintion;
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#consumes(org.eclipse.cdt.internal.ui.editor.SemanticToken)
 		 */
@@ -1440,12 +1440,12 @@ public class SemanticHighlightings {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Semantic highlighting for typedefs.
 	 */
 	private static final class TypedefHighlighting extends SemanticHighlighting {
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getPreferenceKey()
 		 */
@@ -1453,15 +1453,15 @@ public class SemanticHighlightings {
 		public String getPreferenceKey() {
 			return TYPEDEF;
 		}
-		
+
 		/*
-		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultTextColor()
+		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultDefaultTextColor()
 		 */
 		@Override
-		public RGB getDefaultTextColor() {
+		public RGB getDefaultDefaultTextColor() {
 			return new RGB(0, 80, 50);
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultTextStyleBold()
 		 */
@@ -1469,7 +1469,7 @@ public class SemanticHighlightings {
 		public boolean isBoldByDefault() {
 			return false;
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#isItalicByDefault()
 		 */
@@ -1477,7 +1477,7 @@ public class SemanticHighlightings {
 		public boolean isItalicByDefault() {
 			return false;
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#isEnabledByDefault()
 		 */
@@ -1485,15 +1485,15 @@ public class SemanticHighlightings {
 		public boolean isEnabledByDefault() {
 			return true;
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDisplayName()
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.SemanticHighlighting_typeDef; 
+			return CEditorMessages.SemanticHighlighting_typeDef;
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#consumes(org.eclipse.cdt.internal.ui.editor.SemanticToken)
 		 */
@@ -1513,12 +1513,12 @@ public class SemanticHighlightings {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Semantic highlighting for namespaces.
 	 */
 	private static final class NamespaceHighlighting extends SemanticHighlighting {
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getPreferenceKey()
 		 */
@@ -1526,15 +1526,15 @@ public class SemanticHighlightings {
 		public String getPreferenceKey() {
 			return NAMESPACE;
 		}
-		
+
 		/*
-		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultTextColor()
+		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultDefaultTextColor()
 		 */
 		@Override
-		public RGB getDefaultTextColor() {
+		public RGB getDefaultDefaultTextColor() {
 			return RGB_BLACK;
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultTextStyleBold()
 		 */
@@ -1542,7 +1542,7 @@ public class SemanticHighlightings {
 		public boolean isBoldByDefault() {
 			return false;
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#isItalicByDefault()
 		 */
@@ -1550,7 +1550,7 @@ public class SemanticHighlightings {
 		public boolean isItalicByDefault() {
 			return false;
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#isEnabledByDefault()
 		 */
@@ -1558,15 +1558,15 @@ public class SemanticHighlightings {
 		public boolean isEnabledByDefault() {
 			return false;
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDisplayName()
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.SemanticHighlighting_namespace; 
+			return CEditorMessages.SemanticHighlighting_namespace;
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#consumes(org.eclipse.cdt.internal.ui.editor.SemanticToken)
 		 */
@@ -1579,12 +1579,12 @@ public class SemanticHighlightings {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Semantic highlighting for labels.
 	 */
 	private static final class LabelHighlighting extends SemanticHighlighting {
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getPreferenceKey()
 		 */
@@ -1592,15 +1592,15 @@ public class SemanticHighlightings {
 		public String getPreferenceKey() {
 			return LABEL;
 		}
-		
+
 		/*
-		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultTextColor()
+		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultDefaultTextColor()
 		 */
 		@Override
-		public RGB getDefaultTextColor() {
+		public RGB getDefaultDefaultTextColor() {
 			return RGB_BLACK;
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultTextStyleBold()
 		 */
@@ -1608,7 +1608,7 @@ public class SemanticHighlightings {
 		public boolean isBoldByDefault() {
 			return false;
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#isItalicByDefault()
 		 */
@@ -1616,7 +1616,7 @@ public class SemanticHighlightings {
 		public boolean isItalicByDefault() {
 			return false;
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#isEnabledByDefault()
 		 */
@@ -1624,15 +1624,15 @@ public class SemanticHighlightings {
 		public boolean isEnabledByDefault() {
 			return false;
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDisplayName()
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.SemanticHighlighting_label; 
+			return CEditorMessages.SemanticHighlighting_label;
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#consumes(org.eclipse.cdt.internal.ui.editor.SemanticToken)
 		 */
@@ -1645,12 +1645,12 @@ public class SemanticHighlightings {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Semantic highlighting for enumerators.
 	 */
 	private static final class EnumeratorHighlighting extends SemanticHighlighting {
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getPreferenceKey()
 		 */
@@ -1658,15 +1658,15 @@ public class SemanticHighlightings {
 		public String getPreferenceKey() {
 			return ENUMERATOR;
 		}
-		
+
 		/*
-		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultTextColor()
+		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultDefaultTextColor()
 		 */
 		@Override
-		public RGB getDefaultTextColor() {
+		public RGB getDefaultDefaultTextColor() {
 			return new RGB(0, 0, 192);
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultTextStyleBold()
 		 */
@@ -1674,7 +1674,7 @@ public class SemanticHighlightings {
 		public boolean isBoldByDefault() {
 			return false;
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#isItalicByDefault()
 		 */
@@ -1682,7 +1682,7 @@ public class SemanticHighlightings {
 		public boolean isItalicByDefault() {
 			return true;
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#isEnabledByDefault()
 		 */
@@ -1690,15 +1690,15 @@ public class SemanticHighlightings {
 		public boolean isEnabledByDefault() {
 			return true;
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDisplayName()
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.SemanticHighlighting_enumerator; 
+			return CEditorMessages.SemanticHighlighting_enumerator;
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#consumes(org.eclipse.cdt.internal.ui.editor.SemanticToken)
 		 */
@@ -1718,12 +1718,12 @@ public class SemanticHighlightings {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Semantic highlighting for problems.
 	 */
 	private static final class ProblemHighlighting extends SemanticHighlighting {
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getPreferenceKey()
 		 */
@@ -1731,15 +1731,15 @@ public class SemanticHighlightings {
 		public String getPreferenceKey() {
 			return PROBLEM;
 		}
-		
+
 		/*
-		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultTextColor()
+		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultDefaultTextColor()
 		 */
 		@Override
-		public RGB getDefaultTextColor() {
+		public RGB getDefaultDefaultTextColor() {
 			return new RGB(224, 0, 0);
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultTextStyleBold()
 		 */
@@ -1747,7 +1747,7 @@ public class SemanticHighlightings {
 		public boolean isBoldByDefault() {
 			return true;
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#isStrikethroughByDefault()
 		 */
@@ -1763,7 +1763,7 @@ public class SemanticHighlightings {
 		public boolean isItalicByDefault() {
 			return false;
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#isEnabledByDefault()
 		 */
@@ -1771,15 +1771,15 @@ public class SemanticHighlightings {
 		public boolean isEnabledByDefault() {
 			return false;
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDisplayName()
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.SemanticHighlighting_problem; 
+			return CEditorMessages.SemanticHighlighting_problem;
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#consumes(org.eclipse.cdt.internal.ui.editor.SemanticToken)
 		 */
@@ -1796,12 +1796,12 @@ public class SemanticHighlightings {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Semantic highlighting for external SDK references.
 	 */
 	private static final class ExternalSDKHighlighting extends SemanticHighlighting {
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getPreferenceKey()
 		 */
@@ -1809,15 +1809,15 @@ public class SemanticHighlightings {
 		public String getPreferenceKey() {
 			return EXTERNAL_SDK;
 		}
-		
+
 		/*
-		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultTextColor()
+		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultDefaultTextColor()
 		 */
 		@Override
-		public RGB getDefaultTextColor() {
+		public RGB getDefaultDefaultTextColor() {
 			return new RGB(100, 40, 128);
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultTextStyleBold()
 		 */
@@ -1825,7 +1825,7 @@ public class SemanticHighlightings {
 		public boolean isBoldByDefault() {
 			return true;
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#isStrikethroughByDefault()
 		 */
@@ -1841,7 +1841,7 @@ public class SemanticHighlightings {
 		public boolean isItalicByDefault() {
 			return false;
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#isEnabledByDefault()
 		 */
@@ -1849,15 +1849,15 @@ public class SemanticHighlightings {
 		public boolean isEnabledByDefault() {
 			return true;
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDisplayName()
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.SemanticHighlighting_externalSDK; 
+			return CEditorMessages.SemanticHighlighting_externalSDK;
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#consumes(org.eclipse.cdt.internal.ui.editor.SemanticToken)
 		 */
@@ -1910,7 +1910,7 @@ public class SemanticHighlightings {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Semantic highlighting for functions.
 	 */
@@ -1924,7 +1924,7 @@ public class SemanticHighlightings {
 			return OVERLOADED_OPERATOR;
 		}
 
-		
+
 		@Override
 		public boolean requiresImplicitNames() {
 			return true;
@@ -1932,10 +1932,10 @@ public class SemanticHighlightings {
 
 
 		/*
-		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultTextColor()
+		 * @see org.eclipse.cdt.internal.ui.editor.SemanticHighlighting#getDefaultDefaultTextColor()
 		 */
 		@Override
-		public RGB getDefaultTextColor() {
+		public RGB getDefaultDefaultTextColor() {
 			return new RGB(200, 100, 0); // orange
 		}
 
@@ -1968,7 +1968,7 @@ public class SemanticHighlightings {
 		 */
 		@Override
 		public String getDisplayName() {
-			return CEditorMessages.SemanticHighlighting_overloadedOperators; 
+			return CEditorMessages.SemanticHighlighting_overloadedOperators;
 		}
 
 		/*
@@ -1999,7 +1999,7 @@ public class SemanticHighlightings {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * A named preference that controls the given semantic highlighting's color.
 	 *

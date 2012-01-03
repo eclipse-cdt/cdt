@@ -61,6 +61,7 @@ public class TracepointActionsPreferencePage extends PreferencePage implements I
 	}
 
 
+    @Override
 	public void init(IWorkbench workbench) {
 	}
 

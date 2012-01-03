@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Ericsson and others.
+ * Copyright (c) 2008, 2012 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Ericsson - initial API and implementation
  *     Nokia - create and use backend service. 
  *     Onur Akdemir (TUBITAK BILGEM-ITI) - Multi-process debugging (Bug 237306)
+ *     Marc Khouzam (Ericsson) - Support for GDB 7.4 (Bug 367788)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -29,6 +30,7 @@ import org.eclipse.cdt.dsf.gdb.service.command.CommandFactory_6_8;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_0;
 import org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_2;
+import org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_4;
 import org.eclipse.cdt.dsf.mi.service.CSourceLookup;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpoints;
@@ -55,7 +57,11 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	public static final String GDB_7_2_VERSION = "7.2"; //$NON-NLS-1$
 	/** @since 4.1 */
 	public static final String GDB_7_2_1_VERSION = "7.2.1"; //$NON-NLS-1$
-	
+
+	// Keep private until GDB 7.4 is released and we can change the constant
+	// to its proper value of 7.4
+	private static final String GDB_7_4_VERSION = "7.3.50"; //$NON-NLS-1$
+
 	private final String fVersion;
 	
 	public GdbDebugServicesFactory(String version) {
@@ -112,6 +118,9 @@ public class GdbDebugServicesFactory extends AbstractDsfDebugServicesFactory {
 	}
 	
 	protected ICommandControl createCommandControl(DsfSession session, ILaunchConfiguration config) {
+		if (GDB_7_4_VERSION.compareTo(fVersion) <= 0) {
+			return new GDBControl_7_4(session, config, new CommandFactory_6_8());
+		}
 		if (GDB_7_2_VERSION.compareTo(fVersion) <= 0) {
 			return new GDBControl_7_2(session, config, new CommandFactory_6_8());
 		}

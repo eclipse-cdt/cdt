@@ -23,7 +23,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.resources.IResourceProxyVisitor;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -57,54 +56,66 @@ public class FilterEmtpyFoldersAction extends Action {
 		setToolTipText(MakeUIPlugin.getResourceString("FilterEmptyFolderAction.tooltip")); //$NON-NLS-1$
 		setChecked(getSettings().getBoolean(FILTER_EMPTY_FOLDERS));
 		MakeUIImages.setImageDescriptors(this, "tool16", MakeUIImages.IMG_TOOLS_MAKE_TARGET_FILTER); //$NON-NLS-1$
-		fViewer.addFilter(new ViewerFilter() {
-			//Check the make targets of the specified container, and if they don't exist, run
-			//through the children looking for the first match that we can find that contains
-			//a make target.
-			private boolean hasMakeTargets(IContainer container) throws CoreException {
-				IMakeTarget [] targets = MakeCorePlugin.getDefault().getTargetManager().getTargets(container);
-				if(targets != null && targets.length > 0) {
-					return true;
-				}
 
+		fViewer.addFilter(new ViewerFilter() {
+			/**
+			 * Run through the children looking for the first match that we can find that contains
+			 * a make target.
+			 */
+			private boolean hasMakeTargets(final IContainer parentContainer) {
 				final boolean [] haveTargets = new boolean[1];
 				haveTargets[0] = false;
 
 				IResourceProxyVisitor visitor = new IResourceProxyVisitor() {
 					@Override
-					public boolean visit(IResourceProxy proxy) throws CoreException {
+					public boolean visit(IResourceProxy proxy) {
 						if(haveTargets[0]) {
-							return false;	//We found what we were looking for
+							return false; // We found what we were looking for
 						}
 
-						if(proxy.getType() != IResource.FOLDER) {
-							return true;	//We only look at folders for content
+						int rcType = proxy.getType();
+						if(rcType != IResource.PROJECT && rcType != IResource.FOLDER) {
+							return false; // Ignore non-containers
 						}
 
-						IContainer folder = (IContainer) proxy.requestResource();
-						IMakeTarget [] targets = MakeCorePlugin.getDefault().getTargetManager().getTargets(folder);
-						if(targets != null && targets.length > 0) {
-							haveTargets[0] = true;
-							return false;
+						IContainer subFolder = (IContainer) proxy.requestResource();
+
+						if (!(parentContainer instanceof IProject) && !subFolder.equals(parentContainer)
+								&& CCorePlugin.showSourceRootsAtTopOfProject() && MakeContentProvider.isSourceEntry(subFolder)) {
+							return false; // Skip source folders showing up second time as regular folders
 						}
-						return true;		//Keep looking
+
+						try {
+							IMakeTarget [] targets = MakeCorePlugin.getDefault().getTargetManager().getTargets(subFolder);
+							if(targets != null && targets.length > 0) {
+								haveTargets[0] = true;
+								return false; // Found a target
+							}
+						} catch (Exception e) {
+							// log any problem then ignore it
+							MakeUIPlugin.log(e);
+						}
+						return true; // Keep looking
 					}
 				};
-				container.accept(visitor, IResource.NONE);
+
+				try {
+					parentContainer.accept(visitor, IResource.NONE);
+				} catch (Exception e) {
+					// log any problem then ignore it
+					MakeUIPlugin.log(e);
+				}
 
 				return haveTargets[0];
 			}
 
-			/* (non-Javadoc)
-			 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-			 */
 			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
 				if (isChecked()) {
 					IContainer container = null;
 					if (element instanceof IContainer) {
-						container = (IContainer)element;
-						if (!(container instanceof IProject)) {
+						container = (IContainer) element;
+						if (parentElement instanceof IProject && !(container instanceof IProject)) {
 							// under subfolders do not show source roots second time (when filtered)
 							if (CCorePlugin.showSourceRootsAtTopOfProject() && MakeContentProvider.isSourceEntry(container))
 								return false;
@@ -113,12 +124,8 @@ public class FilterEmtpyFoldersAction extends Action {
 						container = ((TargetSourceContainer) element).getContainer();
 					}
 
-					if (container!=null) {
-						try {
-							return hasMakeTargets(container);
-						} catch(Exception ex) {
-							return false;
-						}
+					if (container != null) {
+						return hasMakeTargets(container);
 					}
 				}
 				return true;
@@ -126,9 +133,6 @@ public class FilterEmtpyFoldersAction extends Action {
 		});
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
 	@Override
 	public void run() {
 		fViewer.refresh();

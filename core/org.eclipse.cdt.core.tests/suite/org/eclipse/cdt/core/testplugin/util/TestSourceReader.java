@@ -105,9 +105,12 @@ public class TestSourceReader {
 	    				contents.remove(0);
 	    			content = new StringBuilder();
 	    		}
-	    		int idx= line.indexOf(testName);
-	    		if (idx != -1 && !Character.isJavaIdentifierPart(line.charAt(idx + testName.length()))) {
-	    			return contents.toArray(new StringBuilder[contents.size()]);
+	    		if (line.length() > 0 && !contents.isEmpty()) {
+	    			int idx= line.indexOf(testName);
+	    			if (idx != -1 && !Character.isJavaIdentifierPart(line.charAt(idx + testName.length()))) {
+	    				return contents.toArray(new StringBuilder[contents.size()]);
+	    			}
+	    			contents.clear();
 	    		}
 	    	}
 	    }
@@ -229,6 +232,7 @@ public class TestSourceReader {
 		final IWorkspace ws = ResourcesPlugin.getWorkspace();
 		final IFile result[] = new IFile[1];
 		ws.run(new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				//Obtain file handle
 				IFile file = container.getFile(filePath);

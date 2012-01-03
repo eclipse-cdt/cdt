@@ -12,6 +12,8 @@ package org.eclipse.cdt.internal.index.tests;
 
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
@@ -136,4 +138,50 @@ public class IndexMultiVariantHeaderTest extends IndexBindingResolutionTestBase 
 		getBindingFromASTName("y = 0", 1, ICPPVariable.class);
 		getBindingFromASTName("z = 0", 1, ICPPVariable.class);
 	}
+	
+	//	b.h
+	//	#ifndef _B
+	//	#define _B
+	//	#define SIG   // This internal modification is not propagated
+	//	#endif
+	
+	//	a.h
+	//	#include "b.h"
+	//	#ifdef SIG    // Not significant, because it is defined in "b.h"
+	//	#endif
+
+	//	a.cpp *
+	//	#include "a.h"
+	public void testSignificantMacroDetection_367753a() throws Exception {
+		IASTName includeName= findName("a.h", 0);
+		IASTPreprocessorIncludeStatement inc= (IASTPreprocessorIncludeStatement) includeName.getParent();
+		assertTrue(inc.isResolved());
+		assertEquals("{}", inc.getSignificantMacros().toString());
+		assertNotNull(inc.getImportedIndexFile());
+	}
+	
+	//  c.h
+	//	#define SIG   // This internal modification is not propagated
+	
+	//	b.h
+	//	#ifndef _B
+	//	#define _B
+	//	#include "c.h"  
+	//	#endif
+	
+	//	a.h
+	//	#include "b.h"
+	//	#ifdef SIG    // Not significant, because it is defined in "c.h"
+	//	#endif
+
+	//	a.cpp *
+	//	#include "a.h"
+	public void testSignificantMacroDetection_367753b() throws Exception {
+		IASTName includeName= findName("a.h", 0);
+		IASTPreprocessorIncludeStatement inc= (IASTPreprocessorIncludeStatement) includeName.getParent();
+		assertTrue(inc.isResolved());
+		assertEquals("{}", inc.getSignificantMacros().toString());
+		assertNotNull(inc.getImportedIndexFile());
+	}
+
 }

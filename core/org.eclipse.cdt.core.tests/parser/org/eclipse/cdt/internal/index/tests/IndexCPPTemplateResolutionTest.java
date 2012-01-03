@@ -76,13 +76,6 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		public ProjectWithDepProj() {setStrategy(new ReferencedProject(true));}
 		public static TestSuite suite() {return suite(ProjectWithDepProj.class);}
 		
-		// template <typename T= int> class XT;
-		
-	    // #include "header.h"
-		// template <typename T> class XT {};
-		// void test() {
-		//    XT<> x;
-		// };		
 		@Override
 		public void testDefaultTemplateArgInHeader_264988() throws Exception {
 			// Not supported across projects (the composite index does not merge

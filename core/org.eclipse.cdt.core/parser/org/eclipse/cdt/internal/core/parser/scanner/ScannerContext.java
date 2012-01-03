@@ -330,10 +330,23 @@ final class ScannerContext {
 	}
 
 	public void internalModification(char[] macroName) {
-		if (fInternalModifications != null)
-			fInternalModifications.put(macroName);
+		final CharArraySet collector = findModificationCollector();
+		if (collector != null)
+			collector.put(macroName);
 	}
 	
+	private CharArraySet findModificationCollector() {
+		ScannerContext ctx= this;
+		do {
+			final CharArraySet collector = ctx.fInternalModifications;
+			if (collector != null)
+				return collector;
+			ctx= ctx.getParent();
+		} while (ctx != null);
+
+		return null;
+	}
+
 	public void significantMacro(IMacroBinding macro) {
 		final char[] macroName= macro.getNameCharArray();
 		if (fInternalModifications != null && !fInternalModifications.containsKey(macroName)) {
@@ -372,23 +385,28 @@ final class ScannerContext {
 			return;
 		
 		if (fParent != null) {
-			final CharArraySet local = fParent.fInternalModifications;
-			if (local != null) {
-				final CharArrayObjectMap<char[]> significant = fParent.fSignificantMacros;
-				for (int i=0; i<fSignificantMacros.size(); i++) {
-					final char[] name = fSignificantMacros.keyAt(i);
-					if (!local.containsKey(name)) {
-						final char[] value= fSignificantMacros.getAt(i);
-						if (value == SignificantMacros.DEFINED) {
-							if (!local.containsKey(name)) {
-								fParent.addSignificantMacroDefined(name);
+			CharArraySet collector = fParent.findModificationCollector();
+			if (collector != null) {
+				// Propagate internal modifications to first interested parent.
+				collector.addAll(fInternalModifications);
+				
+				// Propagate significant macros to direct parent, if it is interested.
+				if (collector == fParent.fInternalModifications) {
+					final CharArrayObjectMap<char[]> significant = fParent.fSignificantMacros;
+					for (int i=0; i<fSignificantMacros.size(); i++) {
+						final char[] name = fSignificantMacros.keyAt(i);
+						if (!collector.containsKey(name)) {
+							final char[] value= fSignificantMacros.getAt(i);
+							if (value == SignificantMacros.DEFINED) {
+								if (!collector.containsKey(name)) {
+									fParent.addSignificantMacroDefined(name);
+								}
+							} else {
+								significant.put(name, value);
 							}
-						} else {
-							significant.put(name, value);
 						}
 					}
 				}
-				local.addAll(fInternalModifications);
 			}
 		}
 		fInternalModifications= null;

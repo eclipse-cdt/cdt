@@ -135,6 +135,14 @@
             class="org.eclipse.cdt.internal.ui.filters.NonCElementFilter"
             id="org.eclipse.cdt.internal.ui.CView.NonCElementFilter">
       </filter>
+      <filter
+            targetId="org.eclipse.cdt.ui.CView"
+            name="%HideAnonymousStruct.label"
+            enabled="true"
+            description="%HideAnonymousStruct.description"
+            class="org.eclipse.cdt.internal.ui.filters.AnonymousStructFilter"
+            id="org.eclipse.cdt.internal.ui.CView.AnonymousStructFilter">
+      </filter>
 <!-- C/C++ Outline Page -->
       <filter
             targetId="org.eclipse.cdt.ui.COutlinePage"
@@ -159,6 +167,14 @@
             description="%ForwardDeclarationFilter.description" 
             class="org.eclipse.cdt.internal.ui.filters.ForwardDeclarationFilter"
             id="org.eclipse.cdt.ui.COutlinePage.ForwardDeclarationFilter">
+      </filter>
+      <filter
+            targetId="org.eclipse.cdt.ui.COutlinePage"
+            name="%HideAnonymousStruct.label"
+            enabled="false"
+            description="%HideAnonymousStruct.description"
+            class="org.eclipse.cdt.internal.ui.filters.AnonymousStructFilter"
+            id="org.eclipse.cdt.ui.COutlinePage.AnonymousStructFilter">
       </filter>
 <!-- Asm Outline Page -->
       <filter
@@ -3805,6 +3821,12 @@
           description="%HideNonCElements.description"
           id="org.eclipse.cdt.ui.navigator.filters.NonCElementFilter"
           name="%HideNonCElements.label"/>
+    <commonFilter
+          activeByDefault="true"
+          class="org.eclipse.cdt.internal.ui.filters.AnonymousStructFilter"
+          description="%HideAnonymousStruct.description"
+          id="org.eclipse.cdt.ui.navigator.filters.AnonymousStructFilter"
+          name="%HideAnonymousStruct.navigator.label"/>
   </extension>
   <extension
          point="org.eclipse.ui.navigator.linkHelper">

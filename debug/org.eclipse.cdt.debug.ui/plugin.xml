@@ -1307,6 +1307,14 @@
             presentationLayer="3"
             textPreferenceKey="breakpointIndication"
             textPreferenceValue="false"
+            textStylePreferenceKey="breakpointTextStyle"
+            textStylePreferenceValue="SQUIGGLES"
+            showInNextPrevDropdownToolbarActionKey="showBreakpointIndicationInNextPrevDropdownToolbarAction"
+            showInNextPrevDropdownToolbarAction="true"
+            isGoToNextNavigationTargetKey="isBreakpointIndicationGoToNextNavigationTarget"
+            isGoToNextNavigationTarget="false"
+            isGoToPreviousNavigationTargetKey="isBreakpointIndicationGoToPreviousNavigationTarget"
+            isGoToPreviousNavigationTarget="false"
             verticalRulerPreferenceKey="breakpointVerticalRuler"
             verticalRulerPreferenceValue="true">
       </specification>

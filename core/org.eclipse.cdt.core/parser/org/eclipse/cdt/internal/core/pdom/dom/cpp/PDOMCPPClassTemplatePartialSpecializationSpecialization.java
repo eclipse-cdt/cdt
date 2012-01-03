@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
@@ -67,7 +66,7 @@ class PDOMCPPClassTemplatePartialSpecializationSpecialization extends PDOMCPPCla
 	}
 		
 	@Override
-	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() throws DOMException {
+	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() {
 		return ICPPClassTemplatePartialSpecialization.EMPTY_PARTIAL_SPECIALIZATION_ARRAY;
 	}
 	
@@ -102,6 +101,7 @@ class PDOMCPPClassTemplatePartialSpecializationSpecialization extends PDOMCPPCla
 		return CPPClassTemplatePartialSpecialization.isSamePartialClassSpecialization(this, rhs);
 	}
 
+	@Override
 	public ICPPClassTemplate getPrimaryClassTemplate() {
 		if (fPrimaryTemplate == null) {
 			try {
@@ -114,6 +114,7 @@ class PDOMCPPClassTemplatePartialSpecializationSpecialization extends PDOMCPPCla
 		return fPrimaryTemplate;
 	}
 	
+	@Override
 	public void setArguments(ICPPTemplateArgument[] templateArguments) throws CoreException {
 		final Database db = getPDOM().getDB();
 		long oldRec = db.getRecPtr(record+ARGUMENTS);
@@ -124,6 +125,7 @@ class PDOMCPPClassTemplatePartialSpecializationSpecialization extends PDOMCPPCla
 		}
 	}
 
+	@Override
 	public ICPPTemplateArgument[] getTemplateArguments() {
 		try {
 			final long rec= getPDOM().getDB().getRecPtr(record+ARGUMENTS);
@@ -134,6 +136,7 @@ class PDOMCPPClassTemplatePartialSpecializationSpecialization extends PDOMCPPCla
 		}
 	}
 
+	@Override
 	@Deprecated
 	public IType[] getArguments() {
 		return CPPTemplates.getArguments(getTemplateArguments());

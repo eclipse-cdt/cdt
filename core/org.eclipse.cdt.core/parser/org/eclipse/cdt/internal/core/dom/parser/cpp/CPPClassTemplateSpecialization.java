@@ -39,7 +39,8 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 		super(orig, owner, argumentMap);
 	}
 
-	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() throws DOMException {
+	@Override
+	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() {
 		if (fPartialSpecs == null) {
 			ICPPClassTemplate origTemplate= (ICPPClassTemplate) getSpecializedBinding();
 			ICPPClassTemplatePartialSpecialization[] orig = origTemplate.getPartialSpecializations();
@@ -52,6 +53,7 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 		return fPartialSpecs;
 	}
 
+	@Override
 	public ICPPTemplateParameter[] getTemplateParameters() {
 		// mstodo if we specialize the template parameters (because of its default values), it will
 		// be less error prone to use the defaults.
@@ -59,6 +61,7 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 		return template.getTemplateParameters();
 	}
 
+	@Override
 	public synchronized final void addInstance(ICPPTemplateArgument[] arguments, ICPPTemplateInstance instance) {
 		if (instances == null)
 			instances = new ObjectMap(2);
@@ -66,6 +69,7 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 		instances.put(key, instance);
 	}
 
+	@Override
 	public synchronized final ICPPTemplateInstance getInstance(ICPPTemplateArgument[] arguments) {
 		if (instances != null) {
 			String key= ASTTypeUtil.getArgumentListString(arguments, true);
@@ -74,6 +78,7 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 		return null;
 	}
 
+	@Override
 	public synchronized ICPPTemplateInstance[] getAllInstances() {
 		if (instances != null) {
 			ICPPTemplateInstance[] result= new ICPPTemplateInstance[instances.size()];
@@ -85,6 +90,7 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 		return ICPPTemplateInstance.EMPTY_TEMPLATE_INSTANCE_ARRAY;
 	}
 
+	@Override
 	public void addPartialSpecialization(ICPPClassTemplatePartialSpecialization spec) {
 	}
 
@@ -93,10 +99,12 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 		return getName();
 	}
 	
+	@Override
 	public IBinding resolveTemplateParameter(ICPPTemplateParameter param) {
 		return param;
 	}
 	
+	@Override
 	public ICPPDeferredClassInstance asDeferredInstance() throws DOMException {
 		if (fDeferredInstance == null) {
 			ICPPTemplateArgument[] args = CPPTemplates.templateParametersAsArguments(getTemplateParameters());
@@ -105,6 +113,7 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 		return fDeferredInstance;
 	}
 	
+	@Override
 	public ICPPTemplateArgument getDefaultArgFromIndex(int paramPos) throws DOMException {
 		return null;
 	}

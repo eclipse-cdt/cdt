@@ -57,10 +57,12 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 		fIsParameterPack= isPack;
 	}
 
+	@Override
 	public final boolean isParameterPack() {
 		return fIsParameterPack;
 	}
 
+	@Override
 	public ICPPScope asScope() {
 	    if (unknownScope == null) {
 	    	IASTName n = null;
@@ -72,6 +74,7 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 	    return unknownScope;
 	}
 	
+	@Override
 	public ICPPTemplateParameter[] getTemplateParameters() {
 		if (templateParameters == null) {
 			ICPPASTTemplatedTypeTemplateParameter template = (ICPPASTTemplatedTypeTemplateParameter) getPrimaryDeclaration().getParent();
@@ -88,6 +91,7 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 		return templateParameters;
 	}
 
+	@Override
 	public IBinding resolveTemplateParameter(ICPPTemplateParameter templateParameter) {
 		return templateParameter;
 	}
@@ -96,6 +100,7 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 		return ICPPClassTemplatePartialSpecialization.EMPTY_PARTIAL_SPECIALIZATION_ARRAY;
 	}
 
+	@Override
 	public IType getDefault() {
 		IASTName[] nds = getDeclarations();
 		if (nds == null || nds.length == 0)
@@ -120,6 +125,7 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 		return null;
 	}
 	
+	@Override
 	public ICPPTemplateArgument getDefaultValue() {
 		IType d= getDefault();
 		if (d == null)
@@ -128,46 +134,59 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 		return new CPPTemplateArgument(d);
 	}
 
+	@Override
 	public ICPPBase[] getBases() {
 		return ICPPBase.EMPTY_BASE_ARRAY;
 	}
+	@Override
 	public IField[] getFields() {
 		return IField.EMPTY_FIELD_ARRAY;
 	}
+	@Override
 	public IField findField(String name) {
 		return null;
 	}
+	@Override
 	public ICPPField[] getDeclaredFields() {
 		return ICPPField.EMPTY_CPPFIELD_ARRAY;
 	}
+	@Override
 	public ICPPMethod[] getMethods() {
 		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 	}
+	@Override
 	public ICPPMethod[] getAllDeclaredMethods() {
 		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 	}
+	@Override
 	public ICPPMethod[] getDeclaredMethods() {
 		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 	}
+	@Override
 	public ICPPConstructor[] getConstructors() {
 		return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
 	}
+	@Override
 	public IBinding[] getFriends() {
 		return IBinding.EMPTY_BINDING_ARRAY;
 	}
+	@Override
 	public ICPPClassType[] getNestedClasses() {
 		return ICPPClassType.EMPTY_CLASS_ARRAY;
 	}
 
+	@Override
 	public int getKey() {
 		return 0;
 	}
 
+	@Override
 	public IScope getCompositeScope() {
 		return null;
 	}
 
-    public boolean isSameType(IType type) {
+    @Override
+	public boolean isSameType(IType type) {
 		if (type == this)
 			return true;
 		if (type instanceof ITypedef)
@@ -178,10 +197,12 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 		return getParameterID() == ((ICPPTemplateParameter) type).getParameterID();
 	}
 
-	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() throws DOMException {
+	@Override
+	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() {
 		return ICPPClassTemplatePartialSpecialization.EMPTY_PARTIAL_SPECIALIZATION_ARRAY;
 	}
 
+	@Override
 	public final void addInstance(ICPPTemplateArgument[] arguments, ICPPTemplateInstance instance) {
 		if (instances == null)
 			instances = new ObjectMap(2);
@@ -189,6 +210,7 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 		instances.put(key, instance);
 	}
 
+	@Override
 	public final ICPPTemplateInstance getInstance(ICPPTemplateArgument[] arguments) {
 		if (instances != null) {
 			String key= ASTTypeUtil.getArgumentListString(arguments, true);
@@ -197,6 +219,7 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 		return null;
 	}
 
+	@Override
 	public ICPPTemplateInstance[] getAllInstances() {
 		if (instances != null) {
 			ICPPTemplateInstance[] result= new ICPPTemplateInstance[instances.size()];
@@ -208,14 +231,17 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 		return ICPPTemplateInstance.EMPTY_TEMPLATE_INSTANCE_ARRAY;
 	}
 	
+	@Override
 	public IASTName getUnknownName() {
 		return new CPPASTName(getNameCharArray());
 	}
 
+	@Override
 	public boolean isAnonymous() {
 		return false;
 	}
 	
+	@Override
 	public ICPPDeferredClassInstance asDeferredInstance() {
 		return null;
 	}

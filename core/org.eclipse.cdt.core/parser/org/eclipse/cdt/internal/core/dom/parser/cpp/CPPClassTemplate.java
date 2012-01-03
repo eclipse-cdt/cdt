@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -36,8 +35,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
-import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 
@@ -47,26 +46,26 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClassTemplate,
 		ICPPInternalClassTemplate, ICPPInternalClassTypeMixinHost {
 
-	private ICPPClassTemplate fIndexBinding= null;
-	private boolean checkedIndex= false;
-	
-
 	private ICPPClassTemplatePartialSpecialization[] partialSpecializations = null;
 	private ICPPDeferredClassInstance fDeferredInstance;
+	private boolean addedPartialSpecializationsOfIndex;
 
 	public CPPClassTemplate(IASTName name) {
 		super(name);
 	}
 
-	public void checkForDefinition() {
+	@Override
+	public void checkForDefinition() { 
 		// Ambiguity resolution ensures that definitions are resolved.
 	}
 	
+	@Override
 	public void addPartialSpecialization(ICPPClassTemplatePartialSpecialization spec) {
 		partialSpecializations = (ICPPClassTemplatePartialSpecialization[]) ArrayUtil.append(
 				ICPPClassTemplatePartialSpecialization.class, partialSpecializations, spec);
 	}
 
+	@Override
 	public ICPPASTCompositeTypeSpecifier getCompositeTypeSpecifier() {
 		if (definition != null) {
 			IASTNode node = definition.getParent();
@@ -78,6 +77,7 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClass
 		return null;
 	}
 
+	@Override
 	public ICPPClassScope getCompositeScope() {
 		if (definition == null) {
 			checkForDefinition();
@@ -93,15 +93,16 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClass
 		}
 		
 		// Forward declarations must be backed up from the index.
-		checkForIndexBinding();
-		if (fIndexBinding != null) {
-			IScope scope = fIndexBinding.getCompositeScope();
+		ICPPClassTemplate ib = getIndexBinding();
+		if (ib != null) {
+			IScope scope = ib.getCompositeScope();
 			if (scope instanceof ICPPClassScope)
 				return (ICPPClassScope) scope;
 		}
 		return null;
 	}
 
+	@Override
 	public int getKey() {
 		if (definition != null) {
 			ICPPASTCompositeTypeSpecifier cts= getCompositeTypeSpecifier();
@@ -124,11 +125,25 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClass
 		return ICPPASTElaboratedTypeSpecifier.k_class;
 	}
 	
+	@Override
 	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() {
+		if (!addedPartialSpecializationsOfIndex) {
+			addedPartialSpecializationsOfIndex= true;
+			ICPPClassTemplate ib = getIndexBinding();
+			if (ib != null) {
+				IIndexFileSet fs = getTemplateName().getTranslationUnit().getIndexFileSet();
+				for (ICPPClassTemplatePartialSpecialization spec : ib.getPartialSpecializations()) {
+					if (spec instanceof IIndexBinding && fs.containsDeclaration((IIndexBinding) spec)) {
+						addPartialSpecialization(spec);
+					}
+				}
+			}
+		}
 		partialSpecializations = (ICPPClassTemplatePartialSpecialization[]) ArrayUtil.trim(ICPPClassTemplatePartialSpecialization.class, partialSpecializations);
 		return partialSpecializations;
 	}
 	
+	@Override
 	public boolean isSameType(IType type) {
 		if (type == this)
 			return true;
@@ -137,42 +152,52 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClass
 		return false;
 	}
 	
+	@Override
 	public ICPPBase[] getBases() {
 		return ClassTypeHelper.getBases(this);
 	}
 
+	@Override
 	public IField[] getFields() {
 		return ClassTypeHelper.getFields(this);
 	}
 
+	@Override
 	public ICPPField[] getDeclaredFields() {
 		return ClassTypeHelper.getDeclaredFields(this);
 	}
 
+	@Override
 	public ICPPMethod[] getMethods() {
 		return ClassTypeHelper.getMethods(this);
 	}
 
+	@Override
 	public ICPPMethod[] getAllDeclaredMethods() {
 		return ClassTypeHelper.getAllDeclaredMethods(this);
 	}
 
+	@Override
 	public ICPPMethod[] getDeclaredMethods() {
 		return ClassTypeHelper.getDeclaredMethods(this);
 	}
 
+	@Override
 	public ICPPConstructor[] getConstructors() {
 		return ClassTypeHelper.getConstructors(this);
 	}
 
+	@Override
 	public IBinding[] getFriends() {
 		return ClassTypeHelper.getFriends(this);
 	}
 	
+	@Override
 	public ICPPClassType[] getNestedClasses() {
 		return ClassTypeHelper.getNestedClasses(this);
 	}
 
+	@Override
 	public IField findField(String name) {
 		return ClassTypeHelper.findField(this, name);
 	}
@@ -194,10 +219,12 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClass
 		return ASTTypeUtil.getType(this);
 	}
 
+	@Override
 	public boolean isAnonymous() {
 		return false;
 	}
 
+	@Override
 	public final ICPPDeferredClassInstance asDeferredInstance() throws DOMException {
 		if (fDeferredInstance == null) {
 			fDeferredInstance= createDeferredInstance();
@@ -210,32 +237,16 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClass
 		return new CPPDeferredClassInstance(this, args, getCompositeScope());
 	}
 
+	@Override
 	public ICPPTemplateArgument getDefaultArgFromIndex(int paramPos) throws DOMException {
-		checkForIndexBinding();
-		if (fIndexBinding != null) {
-			ICPPTemplateParameter[] params = fIndexBinding.getTemplateParameters();
+		ICPPClassTemplate ib = getIndexBinding();
+		if (ib != null) {
+			ICPPTemplateParameter[] params = ib.getTemplateParameters();
 			if (paramPos < params.length) {
 				ICPPTemplateParameter param = params[paramPos];
 				return param.getDefaultValue();
 			}
 		}
 		return null;
-	}
-
-	private void checkForIndexBinding() {
-		if (checkedIndex)
-			return;
-		
-		checkedIndex= true;
-		IASTTranslationUnit tu;
-		if (definition != null) {
-			tu= definition.getTranslationUnit();
-		} else {
-			tu= declarations[0].getTranslationUnit();
-		}
-		IIndex index= tu.getIndex();
-		if (index != null) {
-			fIndexBinding= (ICPPClassTemplate) index.adaptBinding(this);
-		}
 	}
 }

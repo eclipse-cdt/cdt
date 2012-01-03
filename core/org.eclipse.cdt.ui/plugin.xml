@@ -143,22 +143,38 @@
             class="org.eclipse.cdt.internal.ui.filters.AnonymousStructFilter"
             id="org.eclipse.cdt.internal.ui.CView.AnonymousStructFilter">
       </filter>
-<!-- C/C++ Outline Page -->
       <filter
-            targetId="org.eclipse.cdt.ui.COutlinePage"
-            name="%HideUsingDirective.label"
-            enabled="false"
-            description="%HideUsingDirective.description"
-            class="org.eclipse.cdt.internal.ui.filters.UsingDirectiveFilter"
-            id="org.eclipse.cdt.ui.COutlinePage.UsingDeclarationFilter">
+            targetId="org.eclipse.cdt.ui.CView"
+            name="%ForwardDeclarationFilter.label"
+            enabled="true"
+            description="%ForwardDeclarationFilter.description" 
+            class="org.eclipse.cdt.internal.ui.filters.ForwardDeclarationFilter"
+            id="org.eclipse.cdt.internal.ui.CView.ForwardDeclarationFilter">
       </filter>
       <filter
-            targetId="org.eclipse.cdt.ui.COutlinePage"
+            targetId="org.eclipse.cdt.ui.CView"
             name="%HideMacroDirective.label"
             enabled="false"
             description="%HideMacroDirective.description"
             class="org.eclipse.cdt.internal.ui.filters.MacroDirectiveFilter"
-            id="org.eclipse.cdt.ui.COutlinePage.MacroDirectiveFilter">
+            id="org.eclipse.cdt.internal.ui.CView.MacroDirectiveFilter">
+      </filter>
+      <filter
+            targetId="org.eclipse.cdt.ui.CView"
+            name="%HideUsingDirective.label"
+            enabled="false"
+            description="%HideUsingDirective.description"
+            class="org.eclipse.cdt.internal.ui.filters.UsingDirectiveFilter"
+            id="org.eclipse.cdt.internal.ui.CView.UsingDeclarationFilter">
+      </filter>
+<!-- C/C++ Outline Page -->
+      <filter
+            targetId="org.eclipse.cdt.ui.COutlinePage"
+            name="%HideAnonymousStruct.label"
+            enabled="false"
+            description="%HideAnonymousStruct.description"
+            class="org.eclipse.cdt.internal.ui.filters.AnonymousStructFilter"
+            id="org.eclipse.cdt.ui.COutlinePage.AnonymousStructFilter">
       </filter>
       <filter
             targetId="org.eclipse.cdt.ui.COutlinePage"
@@ -170,11 +186,19 @@
       </filter>
       <filter
             targetId="org.eclipse.cdt.ui.COutlinePage"
-            name="%HideAnonymousStruct.label"
+            name="%HideMacroDirective.label"
             enabled="false"
-            description="%HideAnonymousStruct.description"
-            class="org.eclipse.cdt.internal.ui.filters.AnonymousStructFilter"
-            id="org.eclipse.cdt.ui.COutlinePage.AnonymousStructFilter">
+            description="%HideMacroDirective.description"
+            class="org.eclipse.cdt.internal.ui.filters.MacroDirectiveFilter"
+            id="org.eclipse.cdt.ui.COutlinePage.MacroDirectiveFilter">
+      </filter>
+      <filter
+            targetId="org.eclipse.cdt.ui.COutlinePage"
+            name="%HideUsingDirective.label"
+            enabled="false"
+            description="%HideUsingDirective.description"
+            class="org.eclipse.cdt.internal.ui.filters.UsingDirectiveFilter"
+            id="org.eclipse.cdt.ui.COutlinePage.UsingDeclarationFilter">
       </filter>
 <!-- Asm Outline Page -->
       <filter
@@ -3827,6 +3851,22 @@
           description="%HideAnonymousStruct.description"
           id="org.eclipse.cdt.ui.navigator.filters.AnonymousStructFilter"
           name="%HideAnonymousStruct.navigator.label"/>
+    <commonFilter
+          activeByDefault="true"
+          class="org.eclipse.cdt.internal.ui.filters.ForwardDeclarationFilter"
+          description="%ForwardDeclarationFilter.description"
+          id="org.eclipse.cdt.ui.navigator.filters.ForwardDeclarationFilter"
+          name="%ForwardDeclarationFilter.navigator.label"/>
+    <commonFilter
+          class="org.eclipse.cdt.internal.ui.filters.MacroDirectiveFilter"
+          description="%HideMacroDirective.description"
+          id="org.eclipse.cdt.ui.navigator.filters.MacroDirectiveFilter"
+          name="%HideMacroDirective.navigator.label"/>
+    <commonFilter
+          class="org.eclipse.cdt.internal.ui.filters.UsingDirectiveFilter"
+          description="%HideUsingDirective.description"
+          id="org.eclipse.cdt.ui.navigator.filters.UsingDirectiveFilter"
+          name="%HideUsingDirective.navigator.label"/>
   </extension>
   <extension
          point="org.eclipse.ui.navigator.linkHelper">

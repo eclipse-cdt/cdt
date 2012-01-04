@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -7,8 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
- * Marc-Andre Laperle
+ *     Institute for Software - initial API and implementation
+ *     Marc-Andre Laperle
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.implementmethod;
 
@@ -91,14 +91,20 @@ public class ImplementMethodRefactoring extends CRefactoring2 {
 		super.checkInitialConditions(sm.newChild(6));
 
 		if (!initStatus.hasFatalError()) {
-			data.setMethodDeclarations(findUnimplementedMethodDeclarations(pm));
+			List<IASTSimpleDeclaration> unimplementedMethodDeclarations = findUnimplementedMethodDeclarations(pm);
+			if (unimplementedMethodDeclarations.isEmpty()) {
+				initStatus.addFatalError(Messages.ImplementMethodRefactoring_NoMethodToImplement);
+			}
+			else {
+				data.setMethodDeclarations(unimplementedMethodDeclarations);
 
-			if (selectedRegion.getLength() > 0) {
-				IASTSimpleDeclaration methodDeclaration = SelectionHelper.findFirstSelectedDeclaration(selectedRegion, astCache.getAST(tu, pm));
-				if (NodeHelper.isMethodDeclaration(methodDeclaration)) {
-					for (MethodToImplementConfig config : data.getMethodDeclarations()) {
-						if (config.getDeclaration() == methodDeclaration) {
-							config.setChecked(true);
+				if (selectedRegion.getLength() > 0) {
+					IASTSimpleDeclaration methodDeclaration = SelectionHelper.findFirstSelectedDeclaration(selectedRegion, astCache.getAST(tu, pm));
+					if (NodeHelper.isMethodDeclaration(methodDeclaration)) {
+						for (MethodToImplementConfig config : data.getMethodDeclarations()) {
+							if (config.getDeclaration() == methodDeclaration) {
+								config.setChecked(true);
+							}
 						}
 					}
 				}

@@ -120,12 +120,12 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 			len= section.length()+len;
 		}
 		IASTName name= findName(section, len);
-		assertNotNull("name not found for \""+section+"\"", name);
+		assertNotNull("Name not found for \"" + section + "\"", name);
 		assertEquals(section.substring(0, len), name.getRawSignature());
 		
 		IBinding binding = name.resolveBinding();
-		assertNotNull("No binding for "+name.getRawSignature(), binding);
-		assertFalse("Binding is a ProblemBinding for name "+name.getRawSignature(), IProblemBinding.class.isAssignableFrom(name.resolveBinding().getClass()));
+		assertNotNull("No binding for " + name.getRawSignature(), binding);
+		assertFalse("Binding is a ProblemBinding for name \"" + name.getRawSignature() + "\"", IProblemBinding.class.isAssignableFrom(name.resolveBinding().getClass()));
 		assertInstance(binding, clazz, cs);
 		return clazz.cast(binding);
 	}
@@ -135,15 +135,15 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	 */
 	protected <T extends IBinding> T getBindingFromASTName(String section, int len) {
 		if (len <= 0)
-			len+= section.length();
+			len += section.length();
 		
 		IASTName name= findName(section, len);
-		assertNotNull("name not found for \""+section+"\"", name);
+		assertNotNull("Name not found for \"" + section + "\"", name);
 		assertEquals(section.substring(0, len), name.getRawSignature());
 		
 		IBinding binding = name.resolveBinding();
-		assertNotNull("No binding for "+name.getRawSignature(), binding);
-		assertFalse("Binding is a ProblemBinding for name "+name.getRawSignature(), IProblemBinding.class.isAssignableFrom(name.resolveBinding().getClass()));
+		assertNotNull("No binding for " + name.getRawSignature(), binding);
+		assertFalse("Binding is a ProblemBinding for name \"" + name.getRawSignature() + "\"", IProblemBinding.class.isAssignableFrom(name.resolveBinding().getClass()));
 		return (T) binding;
 	}
 
@@ -155,12 +155,12 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	 */
 	protected IBinding getProblemFromASTName(String section, int len) {
 		IASTName name= findName(section, len);
-		assertNotNull("name not found for \""+section+"\"", name);
+		assertNotNull("Name not found for \"" + section + "\"", name);
 		assertEquals(section.substring(0, len), name.getRawSignature());
 		
 		IBinding binding = name.resolveBinding();
-		assertNotNull("No binding for "+name.getRawSignature(), binding);
-		assertTrue("Binding is not a ProblemBinding for name "+name.getRawSignature(), IProblemBinding.class.isAssignableFrom(name.resolveBinding().getClass()));
+		assertNotNull("No binding for " + name.getRawSignature(), binding);
+		assertTrue("Binding is not a ProblemBinding for name \"" + name.getRawSignature() + "\"", IProblemBinding.class.isAssignableFrom(name.resolveBinding().getClass()));
 		return name.resolveBinding();
 	}
 	
@@ -200,10 +200,10 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	}
 
 	protected static <T> T assertInstance(Object o, Class<T> clazz, Class ... cs) {
-		assertNotNull("Expected "+clazz.getName()+" but got null", o);
-		assertTrue("Expected "+clazz.getName()+" but got "+o.getClass().getName(), clazz.isInstance(o));
+		assertNotNull("Expected " + clazz.getName() + " but got null", o);
+		assertTrue("Expected " + clazz.getName() + " but got " + o.getClass().getName(), clazz.isInstance(o));
 		for (Class c : cs) {
-			assertTrue("Expected "+clazz.getName()+" but got "+o.getClass().getName(), c.isInstance(o));
+			assertTrue("Expected " + clazz.getName() + " but got " + o.getClass().getName(), c.isInstance(o));
 		}
 		return clazz.cast(o);
 	}

@@ -36,8 +36,10 @@ public abstract class AbstractCache<V> implements ICache<V> {
     private static final IStatus INVALID_STATUS = new Status(IStatus.ERROR, DsfPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_STATE, "Cache invalid", null); //$NON-NLS-1$
     
     private class RequestCanceledListener implements RequestMonitor.ICanceledListener {
+        @Override
         public void requestCanceled(final RequestMonitor canceledRm) {
             fExecutor.getDsfExecutor().execute(new Runnable() {
+                @Override
                 public void run() {
                     handleCanceledRm(canceledRm);
                 }
@@ -61,6 +63,7 @@ public abstract class AbstractCache<V> implements ICache<V> {
         fExecutor = executor;
     }
 
+    @Override
     public DsfExecutor getExecutor() {
         return fExecutor.getDsfExecutor();
     }
@@ -95,10 +98,12 @@ public abstract class AbstractCache<V> implements ICache<V> {
     @ThreadSafe
     abstract protected void canceled();
     
+    @Override
     public boolean isValid() {
         return fValid;
     }
 
+    @Override
     public V getData() {
         if (!fValid) {
             throw new IllegalStateException("Cache is not valid.  Cache data can be read only when cache is valid."); //$NON-NLS-1$
@@ -106,6 +111,7 @@ public abstract class AbstractCache<V> implements ICache<V> {
         return fData;
     }
     
+    @Override
     public IStatus getStatus() {
         if (!fValid) {
             throw new IllegalStateException("Cache is not valid.  Cache status can be read only when cache is valid."); //$NON-NLS-1$
@@ -113,6 +119,7 @@ public abstract class AbstractCache<V> implements ICache<V> {
         return fStatus;
     }
     
+    @Override
     public void update(RequestMonitor rm) { 
         assert fExecutor.getDsfExecutor().isInExecutorThread();
 
@@ -266,6 +273,7 @@ public abstract class AbstractCache<V> implements ICache<V> {
         if (canceledRms != null) {
             final List<RequestMonitor> _canceledRms = canceledRms;
             fExecutor.getDsfExecutor().execute(new DsfRunnable() {
+                @Override
                 public void run() {
                     for (RequestMonitor canceledRm : _canceledRms) {
                         handleCanceledRm(canceledRm);

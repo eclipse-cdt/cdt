@@ -96,22 +96,27 @@ public class DisabledExpressionVMNode extends AbstractVMNode
         super(provider);
     }
     
+    @Override
     public boolean canParseExpression(IExpression expression) {
         return expression instanceof IWatchExpression && !((IWatchExpression)expression).isEnabled();
     }
 
+    @Override
     public int getDeltaFlagsForExpression(IExpression expression, Object event) {
         return IModelDelta.NO_CHANGE;
     }
 
+    @Override
     public int getDeltaFlags(Object event) {
         return IModelDelta.NO_CHANGE;
     }
 
+    @Override
     public void buildDelta(Object event, VMDelta parent, int nodeOffset, RequestMonitor requestMonitor) {
         requestMonitor.done();
     }
 
+    @Override
     public void update(IChildrenCountUpdate[] updates) {
         for (IViewerUpdate update : updates) {
             update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "Not supported", null)); //$NON-NLS-1$
@@ -119,6 +124,7 @@ public class DisabledExpressionVMNode extends AbstractVMNode
         }
     }
 
+    @Override
     public void update(IChildrenUpdate[] updates) {
         for (IViewerUpdate update : updates) {
             update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "Not supported", null)); //$NON-NLS-1$
@@ -126,6 +132,7 @@ public class DisabledExpressionVMNode extends AbstractVMNode
         }
     }
 
+    @Override
     public void update(IHasChildrenUpdate[] updates) {
         for (IViewerUpdate update : updates) {
             update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "Not supported", null)); //$NON-NLS-1$
@@ -133,22 +140,26 @@ public class DisabledExpressionVMNode extends AbstractVMNode
         }
     }
 
+    @Override
     public void update(IExpressionUpdate update) {
         update.setExpressionElement(new DisabledExpressionVMContext(this, update.getExpression()));
         update.done();
     }
 
+    @Override
     public void buildDeltaForExpression(IExpression expression, int elementIdx, Object event, VMDelta parentDelta, 
         TreePath path, RequestMonitor rm) 
     {
         rm.done();
     }
 
+    @Override
     public void buildDeltaForExpressionElement(Object element, int elementIdx, Object event, VMDelta parentDelta,
         RequestMonitor rm) {
         rm.done();
     }
     
+    @Override
     public CellEditor getCellEditor(IPresentationContext context, String columnId, Object element, Composite parent) {
         if (IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(columnId)) {
             return new TextCellEditor(parent);
@@ -156,6 +167,7 @@ public class DisabledExpressionVMNode extends AbstractVMNode
         return null;
     }
     
+    @Override
     public ICellModifier getCellModifier(IPresentationContext context, Object element) {
         return fWatchExpressionCellModifier;
     }

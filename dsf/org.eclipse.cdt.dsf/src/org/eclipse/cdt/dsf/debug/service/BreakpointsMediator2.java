@@ -130,14 +130,17 @@ public class BreakpointsMediator2 extends AbstractDsfService implements IBreakpo
     		fAttributes = attrs;
     	}
     	
+        @Override
     	public Map<String, Object> getAttributes() {
 			return fAttributes;
 		}
     	
+        @Override
     	public IBreakpointDMContext getTargetBreakpoint() {
 			return fTargetBPContext;
 		}
     	
+        @Override
     	public IStatus getStatus() {
 			return fStatus;
 		}
@@ -632,6 +635,7 @@ public class BreakpointsMediator2 extends AbstractDsfService implements IBreakpo
      * @noreference This method is not intended to be referenced by clients.
      */
     @ThreadSafeAndProhibitedFromDsfExecutor("getExecutor()")
+    @Override
 	public void breakpointsAdded(final IBreakpoint[] bps) {
 		doBreakpointsAdded(bps, null, null);
 	}
@@ -652,6 +656,7 @@ public class BreakpointsMediator2 extends AbstractDsfService implements IBreakpo
 
 		try {
             getExecutor().execute(new DsfRunnable() {
+                @Override
 				public void run() {
 					Collection<IBreakpointsTargetDMContext> dmcs = new ArrayList<IBreakpointsTargetDMContext>();
 					if (bpsTargetDmc == null)
@@ -797,6 +802,7 @@ public class BreakpointsMediator2 extends AbstractDsfService implements IBreakpo
      * @noreference This method is not intended to be referenced by clients.
      */
 	@ThreadSafeAndProhibitedFromDsfExecutor("getExecutor()")
+    @Override
 	public void breakpointsChanged(IBreakpoint[] bps, IMarkerDelta[] deltas) {
 		if (fAttributeTranslator2 == null)
 			return;
@@ -808,6 +814,7 @@ public class BreakpointsMediator2 extends AbstractDsfService implements IBreakpo
 		
 		try {
 	        getExecutor().execute( new DsfRunnable() { 
+	            @Override
 	            public void run() {
 	            	Map<String, Object> tmp = new HashMap<String, Object>(1);
 					tmp.put(IBreakpoint.ENABLED, true);
@@ -942,8 +949,10 @@ public class BreakpointsMediator2 extends AbstractDsfService implements IBreakpo
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
     @ThreadSafeAndProhibitedFromDsfExecutor("getExecutor()")
+    @Override
 	public void breakpointsRemoved(final IBreakpoint[] bps, IMarkerDelta delta[]) {
 		getExecutor().execute(new DsfRunnable() {
+		    @Override
 			public void run() {
 				for (IBreakpoint bp : bps)
 					fBreakpointAttributes.remove(bp);
@@ -973,6 +982,7 @@ public class BreakpointsMediator2 extends AbstractDsfService implements IBreakpo
 		
 		try {
 	        getExecutor().execute(new DsfRunnable() {
+	            @Override
 	        	public void run() {
 					Collection<IBreakpointsTargetDMContext> contexts = new ArrayList<IBreakpointsTargetDMContext>();
 					if (bpsTargetDmc == null)

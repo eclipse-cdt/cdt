@@ -175,7 +175,8 @@ public class FormattedValueRetriever {
     	            }
     	            try {
     	                service.getExecutor().execute(new DsfRunnable() {
-    	                    public void run() {
+    	                    @Override
+							public void run() {
     	                        retrieveAvailableFormats(
     	                            calcOutstandingAvailableFormatsUpdates(updates, cachedAvailableFormatsMap), 
     	                            new DataRequestMonitor<Map<IPropertiesUpdate, String[]>>(fNode.getVMProvider().getExecutor(), rm) {
@@ -452,7 +453,8 @@ public class FormattedValueRetriever {
         }
         try {
             service.getExecutor().execute(new DsfRunnable() {
-                public void run() {
+                @Override
+				public void run() {
                     doUpdateWithRequestedFormats(outstandingUpdates, requestedFormatsMap, activeFormatsMap, rm);
                 }
             });

@@ -46,7 +46,8 @@ public class VMChildrenCountUpdate extends VMViewerUpdate implements IChildrenCo
         fCountRequestMonitor = rm;
     }
 
-    public void setChildCount(int count) {
+    @Override
+	public void setChildCount(int count) {
         fCountRequestMonitor.setData(count);
     }
     

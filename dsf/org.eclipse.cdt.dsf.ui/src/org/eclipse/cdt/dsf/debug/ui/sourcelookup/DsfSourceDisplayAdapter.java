@@ -182,7 +182,8 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
             }
             
 			final SourceLookupResult result = performLookup();
-            executeFromJob(new DsfRunnable() { public void run() {
+            executeFromJob(new DsfRunnable() { @Override
+			public void run() {
                 if (!monitor.isCanceled()) { 
                     fPrevResult = result;
                     fPrevFrameData = fFrameData;
@@ -264,7 +265,8 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 		private final FrameData fFrameData;
 
 		private final DsfRunnable fDisplayJobFinishedRunnable = new DsfRunnable() { 
-            public void run() {
+            @Override
+			public void run() {
                 // If the current display job does not match up with "this", it means that this job got canceled
                 // after it already completed and after this runnable was queued into the dispatch thread.
                 if (fRunningDisplayJob == DisplayJob.this) {
@@ -389,6 +391,7 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
         private IEditorPart openEditor(final IWorkbenchPage page, final IEditorInput input, final String id) {
             final IEditorPart[] editor = new IEditorPart[] {null};
             Runnable r = new Runnable() {
+				@Override
 				public void run() {
                     if (!page.getWorkbenchWindow().getWorkbench().isClosing()) {
                         try {
@@ -545,7 +548,8 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
          */
         @Override
         public IStatus runInUIThread(IProgressMonitor monitor) {
-            DsfRunnable clearingJobFinishedRunnable = new DsfRunnable() { public void run() {
+            DsfRunnable clearingJobFinishedRunnable = new DsfRunnable() { @Override
+			public void run() {
                 assert fRunningClearingJob == ClearingJob.this;
                 fRunningClearingJob = null;
                 serviceDisplayAndClearingJobs();
@@ -612,7 +616,8 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
         final IInstructionPointerPresentation ipPresentation = (IInstructionPointerPresentation) session.getModelAdapter(IInstructionPointerPresentation.class);
 		fIPManager = new InstructionPointerManager(ipPresentation);
         
-        fExecutor.execute(new DsfRunnable() { public void run() {
+        fExecutor.execute(new DsfRunnable() { @Override
+		public void run() {
         	fSession.addServiceEventListener(DsfSourceDisplayAdapter.this, null);
         }});
 
@@ -641,7 +646,8 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 		}
 		
 		try {
-			fExecutor.execute(new DsfRunnable() { public void run() {
+			fExecutor.execute(new DsfRunnable() { @Override
+			public void run() {
 				fSession.removeServiceEventListener(DsfSourceDisplayAdapter.this);
 			}});
 		} catch (RejectedExecutionException e) {
@@ -657,6 +663,7 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
         Display display = Display.getDefault();
         if (!display.isDisposed()) {
         	display.asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					enableLineBackgroundPainter();
 			        fIPManager.removeAllAnnotations();
@@ -667,6 +674,7 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.contexts.ISourceDisplayAdapter#displaySource(java.lang.Object, org.eclipse.ui.IWorkbenchPage, boolean)
 	 */
+	@Override
 	public void displaySource(Object context, final IWorkbenchPage page,
 			final boolean force) {
 		fStepCount = 0;
@@ -691,7 +699,8 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
     		return;
     	}
         // Re-dispatch to executor thread before accessing job lists.
-        fExecutor.execute(new DsfRunnable() { public void run() {
+        fExecutor.execute(new DsfRunnable() { @Override
+		public void run() {
             // We need to retrieve the frame level and line number from the service.  
         	IStack stackService = fServicesTracker.getService(IStack.class); 
             if (stackService == null) {
@@ -799,7 +808,8 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
         	if (dmc != null) {
         		try {
         			fController.getExecutor().execute(new DsfRunnable() {
-        				public void run() {
+        				@Override
+						public void run() {
         					fController.doneStepping(dmc, DsfSourceDisplayAdapter.this);
         				};
         			});
@@ -879,6 +889,7 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
     	    if (DEBUG) System.out.println("[DsfSourceDisplayAdapter] eventDispatched e="+e); //$NON-NLS-1$
 	        // trigger source display immediately (should be optional?)
 	        Display.getDefault().asyncExec(new Runnable() {
+				@Override
 				public void run() {
 			        Object context = DebugUITools.getDebugContext();
 			        if (context instanceof IDMVMContext) {

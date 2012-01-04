@@ -60,7 +60,8 @@ public class DefaultVMContentProviderStrategy implements IElementContentProvider
         return fVMProvider;
     }
 
-    public void update(final IHasChildrenUpdate[] updates) {
+    @Override
+	public void update(final IHasChildrenUpdate[] updates) {
         if (updates.length == 0)
             return;
 
@@ -174,7 +175,8 @@ public class DefaultVMContentProviderStrategy implements IElementContentProvider
         }
     }
 
-    public void update(final IChildrenCountUpdate[] updates) {
+    @Override
+	public void update(final IChildrenCountUpdate[] updates) {
         for (final IChildrenCountUpdate update : updates) {
             IVMNode node = getNodeForElement(update.getElement());
 
@@ -214,7 +216,8 @@ public class DefaultVMContentProviderStrategy implements IElementContentProvider
         }
     }
 
-    public void update(final IChildrenUpdate[] updates) {
+    @Override
+	public void update(final IChildrenUpdate[] updates) {
         for (final IChildrenUpdate update : updates) {
             // Get the VM Context for last element in path.
             final IVMNode node = getNodeForElement(update.getElement());

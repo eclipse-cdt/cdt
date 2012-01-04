@@ -65,6 +65,7 @@ public abstract class AbstractDisassemblyAction extends Action implements IUpdat
 	@Override
 	public abstract void run();
 
+	@Override
 	public void update() {
 		boolean enabled= fDisassemblyPart == null || fDisassemblyPart.isConnected();
 		setEnabled(enabled);
@@ -73,6 +74,7 @@ public abstract class AbstractDisassemblyAction extends Action implements IUpdat
 	/*
 	 * @see org.eclipse.ui.IPropertyListener#propertyChanged(java.lang.Object, int)
 	 */
+	@Override
 	public void propertyChanged(Object source, int propId) {
 		if (source == fDisassemblyPart && (propId & 0x500) != 0) {
 			update();

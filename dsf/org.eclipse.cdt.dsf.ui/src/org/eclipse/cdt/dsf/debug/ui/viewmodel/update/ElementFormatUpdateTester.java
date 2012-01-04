@@ -34,6 +34,7 @@ public class ElementFormatUpdateTester implements IElementUpdateTesterExtension 
 		this.propertiesWithPrefixes = propertiesWithPrefixes;
 	}
 
+	@Override
 	public int getUpdateFlags(Object viewerInput, TreePath path) {
 		Set<Object> elements = formatEvent.getElements();
 		if (elements.contains(viewerInput)) {
@@ -59,11 +60,13 @@ public class ElementFormatUpdateTester implements IElementUpdateTesterExtension 
 		return 0;
 	}
 
+	@Override
 	public Collection<String> getPropertiesToFlush(Object viewerInput,
 			TreePath path, boolean isDirty) {
 		return propertiesWithPrefixes;
 	}
 
+	@Override
 	public boolean includes(IElementUpdateTester tester) {
 		if (tester.equals(this)) {
 			return true;

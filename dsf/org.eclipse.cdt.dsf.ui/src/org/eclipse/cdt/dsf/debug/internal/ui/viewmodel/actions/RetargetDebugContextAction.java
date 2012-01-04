@@ -44,7 +44,8 @@ abstract public class RetargetDebugContextAction implements IWorkbenchWindowActi
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
      */
-    public void init(IWorkbenchWindow window) {
+    @Override
+	public void init(IWorkbenchWindow window) {
         fWindow = window;
         IDebugContextService debugContextService = DebugUITools.getDebugContextManager().getContextService(fWindow);
         debugContextService.addPostDebugContextListener(this);
@@ -53,18 +54,21 @@ abstract public class RetargetDebugContextAction implements IWorkbenchWindowActi
     }
 
 
-    public void selectionChanged(IAction action, ISelection selection) {
+    @Override
+	public void selectionChanged(IAction action, ISelection selection) {
         if (fAction != action) {
             fAction = action;
         }
         // Update on debug context changed events
     }
     
-    public void runWithEvent(IAction action, Event event) {
+    @Override
+	public void runWithEvent(IAction action, Event event) {
         run(action);
     }
     
-    public void run(IAction action) {
+    @Override
+	public void run(IAction action) {
         if (fTargetAdapter != null) {
             try {
                 performAction(fTargetAdapter, fDebugContext);
@@ -100,7 +104,8 @@ abstract public class RetargetDebugContextAction implements IWorkbenchWindowActi
      */
     protected abstract Class<?> getAdapterClass();
 
-    public void init(IAction action) {
+    @Override
+	public void init(IAction action) {
         fAction = action;
     }
 
@@ -128,12 +133,14 @@ abstract public class RetargetDebugContextAction implements IWorkbenchWindowActi
         fAction.setEnabled(false);
     }
 
-    public void dispose() {
+    @Override
+	public void dispose() {
         DebugUITools.getDebugContextManager().getContextService(fWindow).removePostDebugContextListener(this);
         fTargetAdapter = null;
     }
     
-    public void debugContextChanged(DebugContextEvent event) {
+    @Override
+	public void debugContextChanged(DebugContextEvent event) {
         fDebugContext = event.getContext();
         update();
     }

@@ -127,7 +127,8 @@ public class VariableCellModifier extends WatchExpressionCellModifier {
                 
                 fDataAccess.writeVariable(element, (String) value, formatId);
                 fProvider.getExecutor().execute(new DsfRunnable() {
-                    public void run() {
+                    @Override
+					public void run() {
                         fProvider.handleEvent(new UserEditEvent(element));
                     }
                 });

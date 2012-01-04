@@ -154,9 +154,11 @@ public class ModulesVMNode extends AbstractDMVMNode
     /*
      * @since 2.0
      */    
+    @Override
     public void update(final IPropertiesUpdate[] updates) {
         try {
             getSession().getExecutor().execute(new DsfRunnable() {
+                @Override
                 public void run() {
                     updatePropertiesInSessionThread(updates);
                 }});
@@ -167,6 +169,7 @@ public class ModulesVMNode extends AbstractDMVMNode
         }
     }
     
+    @Override
     public void update(final ILabelUpdate[] updates) {
         fLabelProvider.update(updates);
     }
@@ -205,6 +208,7 @@ public class ModulesVMNode extends AbstractDMVMNode
         update.setProperty(PROP_IS_LOADED, data.isSymbolsLoaded());
     }    
 
+    @Override
     public int getDeltaFlags(Object e) {
         if (e instanceof IRunControl.ISuspendedDMEvent) {
             return IModelDelta.CONTENT;
@@ -212,6 +216,7 @@ public class ModulesVMNode extends AbstractDMVMNode
         return IModelDelta.NO_CHANGE;
     }
 
+    @Override
     public void buildDelta(Object e, VMDelta parentDelta, int nodeOffset, RequestMonitor rm) {
         if (e instanceof IRunControl.ISuspendedDMEvent) {
             // Create a delta that indicates all groups have changed

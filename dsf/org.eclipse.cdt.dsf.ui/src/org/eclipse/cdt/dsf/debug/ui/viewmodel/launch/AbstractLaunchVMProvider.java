@@ -82,6 +82,7 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
         }
         
         fPreferencesListener = new IPropertyChangeListener() {
+			@Override
 			public void propertyChange(final PropertyChangeEvent event) {
 				handlePropertyChanged(store, event);
 			}};
@@ -105,14 +106,16 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
 		};
     }
     
-    public void handleDebugEvents(final DebugEvent[] events) {
+    @Override
+	public void handleDebugEvents(final DebugEvent[] events) {
         if (isDisposed()) return;
         
 		// We're in session's executor thread. Re-dispatch to our executor thread
 		// and then call root layout node.
         try {
             getExecutor().execute(new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
                     if (isDisposed()) return;
     
                     for (final DebugEvent event : events) {
@@ -140,7 +143,8 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
 						// replace double click event with expand stack event
 						final ExpandStackEvent expandStackEvent = new ExpandStackEvent(exeCtx);
 						getExecutor().execute(new DsfRunnable() {
-						    public void run() {
+						    @Override
+							public void run() {
 						        handleEvent(expandStackEvent, null);
 						    }
 						});
@@ -163,10 +167,12 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
     		try {
         		refreshStackFramesFuture = getSession().getExecutor().schedule(
     	            new DsfRunnable() { 
-    	                public void run() {
+    	                @Override
+						public void run() {
     	                    if (getSession().isActive()) {
     	                        getExecutor().execute(new Runnable() {
-    	                            public void run() {
+    	                            @Override
+									public void run() {
     	                                // trigger full stack frame update
     	                                ScheduledFuture<?> future= fRefreshStackFramesFutures.get(exeContext);
     	                                if (future != null && !isDisposed()) {
@@ -220,19 +226,23 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
         super.dispose();
     }
     
-    public void launchesAdded(ILaunch[] launches) {
+    @Override
+	public void launchesAdded(ILaunch[] launches) {
         handleLaunchesEvent(new LaunchesEvent(launches, LaunchesEvent.Type.ADDED)); 
     }
     
-    public void launchesRemoved(ILaunch[] launches) {
+    @Override
+	public void launchesRemoved(ILaunch[] launches) {
         handleLaunchesEvent(new LaunchesEvent(launches, LaunchesEvent.Type.REMOVED)); 
     }
     
-    public void launchesChanged(ILaunch[] launches) {
+    @Override
+	public void launchesChanged(ILaunch[] launches) {
         handleLaunchesEvent(new LaunchesEvent(launches, LaunchesEvent.Type.CHANGED)); 
     }
     
-    public void launchesTerminated(ILaunch[] launches) {
+    @Override
+	public void launchesTerminated(ILaunch[] launches) {
         handleLaunchesEvent(new LaunchesEvent(launches, LaunchesEvent.Type.TERMINATED)); 
     }
     
@@ -243,7 +253,8 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
 		// and then call root layout node.
         try {
             getExecutor().execute(new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
                     if (isDisposed()) return;
     
                     IRootVMNode rootLayoutNode = getRootVMNode();
@@ -300,7 +311,8 @@ public class AbstractLaunchVMProvider extends AbstractDMVMProvider
 		
 		if (processEvent) {
 			getExecutor().execute(new DsfRunnable() {
-			    public void run() {
+			    @Override
+				public void run() {
 			        handleEvent(event);
 			    }
 			});

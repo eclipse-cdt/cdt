@@ -45,11 +45,13 @@ public class RunToLine implements IRunToLine, IRunToAddress {
         fContext = context;
     }
     
-    public boolean canRunToLine(final IFile file, final int lineNumber) {
+    @Override
+	public boolean canRunToLine(final IFile file, final int lineNumber) {
     	return canRunToLine(file.getLocation().makeAbsolute().toOSString(), lineNumber);
      }
 
-    public boolean canRunToLine(final String fileName, final int lineNumber) {
+    @Override
+	public boolean canRunToLine(final String fileName, final int lineNumber) {
         DsfSession session = DsfSession.getSession(fContext.getSessionId());
         if (session != null && session.isActive()) {
             try {
@@ -79,11 +81,13 @@ public class RunToLine implements IRunToLine, IRunToAddress {
         return false;
     }
 
-    public void runToLine(IFile file, int lineNumber, boolean skipBreakpoints) throws DebugException {
+    @Override
+	public void runToLine(IFile file, int lineNumber, boolean skipBreakpoints) throws DebugException {
     	runToLine(file.getLocation().makeAbsolute().toOSString(), lineNumber, skipBreakpoints);
     }
     
-    public void runToLine(final String fileName, final int lineNumber, final boolean skipBreakpoints) throws DebugException {
+    @Override
+	public void runToLine(final String fileName, final int lineNumber, final boolean skipBreakpoints) throws DebugException {
         DsfSession session = DsfSession.getSession(fContext.getSessionId());
         if (session != null && session.isActive()) {
             Throwable exception = null;
@@ -122,6 +126,7 @@ public class RunToLine implements IRunToLine, IRunToAddress {
         }
     }
     
+	@Override
 	public boolean canRunToAddress(final IAddress address) {
         DsfSession session = DsfSession.getSession(fContext.getSessionId());
         if (session != null && session.isActive()) {
@@ -152,6 +157,7 @@ public class RunToLine implements IRunToLine, IRunToAddress {
         return false;
     }
 
+	@Override
 	public void runToAddress(final IAddress address, final boolean skipBreakpoints) throws DebugException {
         DsfSession session = DsfSession.getSession(fContext.getSessionId());
         if (session != null && session.isActive()) {

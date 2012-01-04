@@ -47,7 +47,8 @@ public class VMHasChildrenUpdate extends VMViewerUpdate implements IHasChildrenU
         fHasElemsRequestMonitor = rm;        
     }
 
-    public void setHasChilren(boolean hasChildren) {
+    @Override
+	public void setHasChilren(boolean hasChildren) {
         fHasElemsRequestMonitor.setData(hasChildren);
     }
 

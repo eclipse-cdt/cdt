@@ -208,10 +208,12 @@ public class VariableVMNode extends AbstractExpressionVMNode
     
     protected class VariableExpressionFactory implements IWatchExpressionFactoryAdapter2 {
 
+        @Override
         public boolean canCreateWatchExpression(Object element) {
             return element instanceof VariableExpressionVMC;
         }
 
+        @Override
         public String createWatchExpression(Object element) throws CoreException {
             
             VariableExpressionVMC exprVmc = (VariableExpressionVMC) element;
@@ -382,6 +384,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
     	}
 
     	fPreferenceChangeListener = new IPropertyChangeListener() {
+    	    @Override
     		public void propertyChange(PropertyChangeEvent event) {
     			if ( event.getProperty().equals(IDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND) ) {
     				columnIdValueBackground.setBackground(DebugUITools.getPreferenceColor(IDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND).getRGB());
@@ -650,7 +653,8 @@ public class VariableVMNode extends AbstractExpressionVMNode
     }
     
     
-    public void update(final ILabelUpdate[] updates) {
+    @Override
+	public void update(final ILabelUpdate[] updates) {
         fLabelProvider.update(updates);
     }
 
@@ -664,7 +668,8 @@ public class VariableVMNode extends AbstractExpressionVMNode
      * 
      * @since 2.0
      */    
-    public void update(final IPropertiesUpdate[] updates) {
+    @Override
+	public void update(final IPropertiesUpdate[] updates) {
         final CountingRequestMonitor countingRm = new CountingRequestMonitor(ImmediateExecutor.getInstance(), null) {
             @Override
             protected void handleCompleted() {
@@ -688,7 +693,8 @@ public class VariableVMNode extends AbstractExpressionVMNode
 
         try {
             getSession().getExecutor().execute(new DsfRunnable() {
-                public void run() {
+                @Override
+				public void run() {
                     updatePropertiesInSessionThread(subUpdates);
                 }});
         } catch (RejectedExecutionException e) {
@@ -839,7 +845,8 @@ public class VariableVMNode extends AbstractExpressionVMNode
     		update.setProperty(PROP_VARIABLE_ADDRESS, "0x" + address.getAddress().toString(16)); //$NON-NLS-1$
     }
     
-    public CellEditor getCellEditor(IPresentationContext context, String columnId, Object element, Composite parent) {
+    @Override
+	public CellEditor getCellEditor(IPresentationContext context, String columnId, Object element, Composite parent) {
         if (IDebugVMConstants.COLUMN_ID__VALUE.equals(columnId)) {
             return new TextCellEditor(parent);
         }
@@ -850,11 +857,13 @@ public class VariableVMNode extends AbstractExpressionVMNode
         return null;
     }
 
-    public ICellModifier getCellModifier(IPresentationContext context, Object element) {
+    @Override
+	public ICellModifier getCellModifier(IPresentationContext context, Object element) {
         return new VariableCellModifier(getDMVMProvider(), fSyncVariableDataAccess);
     }
     
-    public boolean canParseExpression(IExpression expression) {
+    @Override
+	public boolean canParseExpression(IExpression expression) {
     	// At this point we are going to say we will allow anything as an expression.
     	// Since the evaluation  of VM Node implementations searches  in the order of
     	// registration  and we always make sure we register the VariableVMNode last,
@@ -871,7 +880,8 @@ public class VariableVMNode extends AbstractExpressionVMNode
     public void update(final IExpressionUpdate update) {
         try {
             getSession().getExecutor().execute(new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
                     final IExpressions expressionService = getServicesTracker().getService(IExpressions.class);
                     if (expressionService != null) {
                         IExpressionDMContext expressionDMC = createExpression(expressionService, 
@@ -1193,6 +1203,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
     	return exprDMC;
 	}
 
+	@Override
 	public int getDeltaFlags(Object e) {
         if ( e instanceof ISuspendedDMEvent || 
              e instanceof IMemoryChangedEvent ||
@@ -1207,6 +1218,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
         return IModelDelta.NO_CHANGE;
     }
 
+    @Override
     public void buildDelta(final Object e, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor requestMonitor) {
 
         // The following events can affect any expression's values, 
@@ -1224,6 +1236,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
         requestMonitor.done();
     }
     
+    @Override
     public int getDeltaFlagsForExpression(IExpression expression, Object event) {
         if ( event instanceof IExpressionChangedDMEvent ||
              event instanceof IMemoryChangedEvent ||
@@ -1242,6 +1255,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
         return IModelDelta.NO_CHANGE;
     }
     
+    @Override
     public void buildDeltaForExpression(IExpression expression, int elementIdx, Object event, VMDelta parentDelta, 
         TreePath path, RequestMonitor rm) 
     {
@@ -1258,6 +1272,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
         rm.done();
     }
     
+    @Override
     public void buildDeltaForExpressionElement(Object element, int elementIdx, Object event, VMDelta parentDelta,
         RequestMonitor rm) 
     {
@@ -1283,6 +1298,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
 
     private final String MEMENTO_NAME = "VARIABLE_MEMENTO_NAME"; //$NON-NLS-1$
     
+    @Override
     public void compareElements(IElementCompareRequest[] requests) {
         
         for ( IElementCompareRequest request : requests ) {
@@ -1307,6 +1323,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
         }
     }
     
+    @Override
     public void encodeElements(IElementMementoRequest[] requests) {
     	
     	for ( IElementMementoRequest request : requests ) {

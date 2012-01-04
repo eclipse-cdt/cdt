@@ -126,7 +126,8 @@ public class PropertiesBasedLabelProvider
 	 * 
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider#update(org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate[])
 	 */
-    public void update(final ILabelUpdate[] labelUpdates) {
+    @Override
+	public void update(final ILabelUpdate[] labelUpdates) {
         IElementPropertiesProvider propertiesProvider = getElementPropertiesProvider(labelUpdates[0].getElement());
         if (propertiesProvider == null) {
             for (ILabelUpdate update : labelUpdates) {

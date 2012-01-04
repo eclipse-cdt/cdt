@@ -35,6 +35,7 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class CSourceNotFoundDescriptionFactory implements IAdapterFactory {
 
+	@Override
 	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (adapterType.equals(ICSourceNotFoundDescription.class) &&
@@ -43,6 +44,7 @@ public class CSourceNotFoundDescriptionFactory implements IAdapterFactory {
 			final IFrameDMContext frameDMC = (IFrameDMContext) adaptableObject;
 			return new ICSourceNotFoundDescription() {
 
+				@Override
 				public String getDescription() {
 		               Query<IStack.IFrameDMData> query = new Query<IStack.IFrameDMData>() {
 		                    @Override
@@ -77,6 +79,7 @@ public class CSourceNotFoundDescriptionFactory implements IAdapterFactory {
 		return null;
 	}
 
+	@Override
 	@SuppressWarnings("rawtypes")
 	public Class[] getAdapterList() {
 		return new Class[] { ICSourceNotFoundDescription.class };

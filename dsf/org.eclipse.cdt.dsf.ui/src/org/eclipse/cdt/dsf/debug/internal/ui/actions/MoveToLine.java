@@ -41,6 +41,7 @@ public class MoveToLine implements IMoveToLine, IMoveToAddress {
         fContext = context;
     }
 
+    @Override
 	public boolean canMoveToLine(final String fileName, final int lineNumber) {
         DsfSession session = DsfSession.getSession(fContext.getSessionId());
         if (session != null && session.isActive()) {
@@ -71,6 +72,7 @@ public class MoveToLine implements IMoveToLine, IMoveToAddress {
         return false;
     }
 
+    @Override
 	public void moveToLine(final String fileName, final int lineNumber) throws DebugException {
         DsfSession session = DsfSession.getSession(fContext.getSessionId());
         if (session != null && session.isActive()) {
@@ -110,6 +112,7 @@ public class MoveToLine implements IMoveToLine, IMoveToAddress {
         }
     }
 	
+    @Override
 	public boolean canMoveToAddress(final IAddress address) {
         DsfSession session = DsfSession.getSession(fContext.getSessionId());
         if (session != null && session.isActive()) {
@@ -140,6 +143,7 @@ public class MoveToLine implements IMoveToLine, IMoveToAddress {
         return false;
     }
 
+    @Override
 	public void moveToAddress(final IAddress address) throws DebugException {
         DsfSession session = DsfSession.getSession(fContext.getSessionId());
         if (session != null && session.isActive()) {

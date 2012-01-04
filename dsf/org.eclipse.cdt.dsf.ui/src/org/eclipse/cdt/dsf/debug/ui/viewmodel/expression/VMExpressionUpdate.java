@@ -52,12 +52,14 @@ class VMExpressionUpdate extends VMViewerUpdate implements IExpressionUpdate {
     }
 
 
-    public IExpression getExpression() {
+    @Override
+	public IExpression getExpression() {
         return fExpression;
     }
 
 
-    public void setExpressionElement(Object element) {
+    @Override
+	public void setExpressionElement(Object element) {
         fExpressionElement = element;
     }
 

@@ -42,6 +42,7 @@ class DisassemblyHyperlinkDetector extends AbstractHyperlinkDetector {
 		/*
 		 * @see org.eclipse.jface.text.hyperlink.IHyperlink#getHyperlinkRegion()
 		 */
+		@Override
 		public IRegion getHyperlinkRegion() {
 			return fRegion;
 		}
@@ -49,6 +50,7 @@ class DisassemblyHyperlinkDetector extends AbstractHyperlinkDetector {
 		/*
 		 * @see org.eclipse.jface.text.hyperlink.IHyperlink#getHyperlinkText()
 		 */
+		@Override
 		public String getHyperlinkText() {
 			return null;
 		}
@@ -56,6 +58,7 @@ class DisassemblyHyperlinkDetector extends AbstractHyperlinkDetector {
 		/*
 		 * @see org.eclipse.jface.text.hyperlink.IHyperlink#getTypeLabel()
 		 */
+		@Override
 		public String getTypeLabel() {
 			return null;
 		}
@@ -63,6 +66,7 @@ class DisassemblyHyperlinkDetector extends AbstractHyperlinkDetector {
 		/*
 		 * @see org.eclipse.jface.text.hyperlink.IHyperlink#open()
 		 */
+		@Override
 		public void open() {
 			if (fPart != null) {
  				fPart.gotoSymbol(fSymbol);
@@ -80,6 +84,7 @@ class DisassemblyHyperlinkDetector extends AbstractHyperlinkDetector {
 	/*
 	 * @see org.eclipse.jface.text.hyperlink.IHyperlinkDetector#detectHyperlinks(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion, boolean)
 	 */
+	@Override
 	public IHyperlink[] detectHyperlinks(ITextViewer textViewer,
 			IRegion region, boolean canShowMultipleHyperlinks) {
 		IDocument document= textViewer.getDocument();

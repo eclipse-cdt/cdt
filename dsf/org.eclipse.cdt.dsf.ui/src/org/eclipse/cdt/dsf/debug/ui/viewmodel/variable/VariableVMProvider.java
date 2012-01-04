@@ -43,7 +43,8 @@ public class VariableVMProvider extends AbstractDMVMProvider
     implements IColumnPresentationFactory 
 {
     private IPropertyChangeListener fPreferencesListener = new IPropertyChangeListener() {
-        public void propertyChange(PropertyChangeEvent event) {
+        @Override
+		public void propertyChange(PropertyChangeEvent event) {
             String property = event.getProperty();
 			if (property.equals(IDsfDebugUIConstants.PREF_WAIT_FOR_VIEW_UPDATE_AFTER_STEP_ENABLE)) {
                 IPreferenceStore store = DsfDebugUITools.getPreferenceStore();
@@ -53,9 +54,11 @@ public class VariableVMProvider extends AbstractDMVMProvider
     };
 
     private IPropertyChangeListener fPresentationContextListener = new IPropertyChangeListener() {
-        public void propertyChange(final PropertyChangeEvent event) {
+        @Override
+		public void propertyChange(final PropertyChangeEvent event) {
             getExecutor().execute(new DsfRunnable() {
-                public void run() {
+                @Override
+				public void run() {
                     handleEvent(event);                    
                 };
             });
@@ -112,7 +115,8 @@ public class VariableVMProvider extends AbstractDMVMProvider
 			final VariableVMNode variableNode) {
 		 try {
             getSession().getExecutor().execute(new DsfRunnable() {
-                public void run() {
+                @Override
+				public void run() {
                     DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), getSession().getId());
                     IExpressions2 expressions2 = tracker.getService(IExpressions2.class);
                     if (expressions2 != null) {
@@ -156,7 +160,8 @@ public class VariableVMProvider extends AbstractDMVMProvider
         super.refresh();
         try {
             getSession().getExecutor().execute(new DsfRunnable() {
-                public void run() {
+                @Override
+				public void run() {
                     DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), getSession().getId());
                     IExpressions expressionsService = tracker.getService(IExpressions.class);
                     if (expressionsService instanceof ICachingService) {

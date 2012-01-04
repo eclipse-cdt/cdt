@@ -64,6 +64,7 @@ public class DsfSourceLookupParticipant implements ISourceLookupParticipant {
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant#init(org.eclipse.debug.core.sourcelookup.ISourceLookupDirector)
      */
+    @Override
     public void init(ISourceLookupDirector director) {
         fDirector = director;
     }
@@ -71,6 +72,7 @@ public class DsfSourceLookupParticipant implements ISourceLookupParticipant {
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant#dispose()
      */
+    @Override
     public void dispose() {
         fServicesTracker.dispose();
         fDirector = null;
@@ -79,6 +81,7 @@ public class DsfSourceLookupParticipant implements ISourceLookupParticipant {
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant#findSourceElements(java.lang.Object)
      */
+    @Override
     public Object[] findSourceElements(Object object) throws CoreException {
         CoreException single = null;
         MultiStatus multiStatus = null;
@@ -171,6 +174,7 @@ public class DsfSourceLookupParticipant implements ISourceLookupParticipant {
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant#sourceContainersChanged(org.eclipse.debug.core.sourcelookup.ISourceLookupDirector)
      */
+    @Override
     public void sourceContainersChanged(ISourceLookupDirector director) {
         fLookupCache.clear();
     }
@@ -178,6 +182,7 @@ public class DsfSourceLookupParticipant implements ISourceLookupParticipant {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupParticipant#getSourceName(java.lang.Object)
 	 */
+    @Override
 	public String getSourceName(Object object) throws CoreException {
 		if ( !(object instanceof IDMContext) || 
              !((IDMContext)object).getSessionId().equals(fSessionId) ) 

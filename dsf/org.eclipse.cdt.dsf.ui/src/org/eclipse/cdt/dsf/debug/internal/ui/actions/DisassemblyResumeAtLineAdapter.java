@@ -37,6 +37,7 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class DisassemblyResumeAtLineAdapter implements IResumeAtLineTarget {
 
+	@Override
 	public void resumeAtLine(IWorkbenchPart part, ISelection selection,	ISuspendResume target) throws CoreException {
 		if (part instanceof IDisassemblyPart && selection instanceof ITextSelection) {
 			if (!(selection instanceof IDisassemblySelection)) {
@@ -59,6 +60,7 @@ public class DisassemblyResumeAtLineAdapter implements IResumeAtLineTarget {
 		}
 	}
 
+	@Override
 	public boolean canResumeAtLine(IWorkbenchPart part, ISelection selection, ISuspendResume target) {
 		if (target instanceof IAdaptable && part instanceof IDisassemblyPart && selection instanceof ITextSelection) {
 			IResumeAtAddress resumeAtAddress = (IResumeAtAddress)((IAdaptable)target).getAdapter(IResumeAtAddress.class);

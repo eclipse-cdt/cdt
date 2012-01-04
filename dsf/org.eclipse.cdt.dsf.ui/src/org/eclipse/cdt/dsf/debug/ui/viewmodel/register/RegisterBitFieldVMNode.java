@@ -137,6 +137,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
 
     protected class BitFieldExpressionFactory implements IWatchExpressionFactoryAdapter2 {
         
+        @Override
         public boolean canCreateWatchExpression(Object element) {
             return element instanceof BitFieldVMC;
         }
@@ -144,6 +145,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
         /**
          * Expected format: GRP( GroupName ).REG( RegisterName ).BFLD( BitFieldname )
          */
+        @Override
         public String createWatchExpression(Object element) throws CoreException {
             IRegisterGroupDMData groupData = getSyncRegisterDataAccess().getRegisterGroupDMData(element);
             IRegisterDMData registerData   = getSyncRegisterDataAccess().getRegisterDMData(element);
@@ -494,6 +496,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
     	return fBitFieldExpressionFactory;
     }
     
+    @Override
     public void update(final ILabelUpdate[] updates) {
         fLabelProvider.update(updates);
     }
@@ -508,6 +511,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
      * 
      * @since 2.0
      */    
+    @Override
     public void update(final IPropertiesUpdate[] updates) {
         final CountingRequestMonitor countingRm = new CountingRequestMonitor(ImmediateExecutor.getInstance(), null) {
             @Override
@@ -532,6 +536,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
 
         try {
             getSession().getExecutor().execute(new DsfRunnable() {
+                @Override
                 public void run() {
                     updatePropertiesInSessionThread(subUpdates);
                 }});
@@ -689,6 +694,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
      * (non-Javadoc)
      * @see org.eclipse.cdt.dsf.ui.viewmodel.IVMNode#getDeltaFlags(java.lang.Object)
      */
+    @Override
     public int getDeltaFlags(Object e) {
         if ( e instanceof ISuspendedDMEvent || 
              e instanceof IMemoryChangedEvent ||
@@ -710,6 +716,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
      * (non-Javadoc)
      * @see org.eclipse.cdt.dsf.ui.viewmodel.IVMNode#buildDelta(java.lang.Object, org.eclipse.cdt.dsf.ui.viewmodel.VMDelta, int, org.eclipse.cdt.dsf.concurrent.RequestMonitor)
      */
+    @Override
     public void buildDelta(Object e, VMDelta parentDelta, int nodeOffset, RequestMonitor rm) {
         // The following events can affect any bit field's values, 
         // refresh the contents of the parent element (i.e. all the registers). 
@@ -734,6 +741,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
      * (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor#getCellEditor(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String, java.lang.Object, org.eclipse.swt.widgets.Composite)
      */
+    @Override
     public CellEditor getCellEditor(IPresentationContext context, String columnId, Object element, Composite parent) {
         
         if (IDebugVMConstants.COLUMN_ID__VALUE.equals(columnId)) {
@@ -784,6 +792,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
      * (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor#getCellModifier(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.Object)
      */
+    @Override
     public ICellModifier getCellModifier(IPresentationContext context, Object element) {
         
         /*
@@ -820,6 +829,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
      * Expected format: GRP( GroupName ).REG( RegisterName ).BFLD( BitFieldname )
      */
     
+    @Override
     public boolean canParseExpression(IExpression expression) {
         return parseExpressionForBitFieldName(expression.getExpressionText()) != null;
     }
@@ -902,7 +912,8 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
         final String bitFieldName = parseExpressionForBitFieldName(expression.getExpressionText());
         try {
             getSession().getExecutor().execute(new DsfRunnable() {
-                public void run() {
+                @Override
+				public void run() {
                     IRegisters registersService = getServicesTracker().getService(IRegisters.class);
                     if (registersService != null) {
                         registersService.getBitFieldData(
@@ -941,6 +952,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
      * (non-Javadoc)
      * @see org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.IExpressionVMNode#getDeltaFlagsForExpression(org.eclipse.debug.core.model.IExpression, java.lang.Object)
      */
+    @Override
     public int getDeltaFlagsForExpression(IExpression expression, Object event) {
         if (event instanceof ISuspendedDMEvent) {
             return IModelDelta.CONTENT;
@@ -962,6 +974,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
      * (non-Javadoc)
      * @see org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.IExpressionVMNode#buildDeltaForExpression(org.eclipse.debug.core.model.IExpression, int, java.lang.Object, org.eclipse.cdt.dsf.ui.viewmodel.VMDelta, org.eclipse.jface.viewers.TreePath, org.eclipse.cdt.dsf.concurrent.RequestMonitor)
      */
+    @Override
     public void buildDeltaForExpression(final IExpression expression, final int elementIdx, final Object event, final VMDelta parentDelta, final TreePath path, final RequestMonitor rm) 
     {
         // Always refresh the contents of the view upon suspended event.
@@ -976,6 +989,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
      * (non-Javadoc)
      * @see org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.IExpressionVMNode#buildDeltaForExpressionElement(java.lang.Object, int, java.lang.Object, org.eclipse.cdt.dsf.ui.viewmodel.VMDelta, org.eclipse.cdt.dsf.concurrent.RequestMonitor)
      */
+    @Override
     public void buildDeltaForExpressionElement(Object element, int elementIdx, Object event, VMDelta parentDelta, final RequestMonitor rm) 
     {
         // The following events can affect register values, refresh the state 
@@ -997,6 +1011,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
      */
     private final String MEMENTO_NAME = "BITFIELD_MEMENTO_NAME"; //$NON-NLS-1$
     
+    @Override
     public void compareElements(IElementCompareRequest[] requests) {
         for ( final IElementCompareRequest request : requests ) {
             final String mementoName = request.getMemento().getString(MEMENTO_NAME);
@@ -1010,6 +1025,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
             //  Now go get the model data for the single register group found.
             try {
                 getSession().getExecutor().execute(new DsfRunnable() {
+                    @Override
                     public void run() {
                         final IRegisters regService = getServicesTracker().getService(IRegisters.class);
                         if ( regService != null ) {
@@ -1040,6 +1056,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
      * (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#encodeElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest[])
      */
+    @Override
     public void encodeElements(IElementMementoRequest[] requests) {
         for ( final IElementMementoRequest request : requests ) {
             final IBitFieldDMContext regDmc = findDmcInPath(request.getViewerInput(), request.getElementPath(), IBitFieldDMContext.class);
@@ -1051,6 +1068,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
             //  Now go get the model data for the single register group found.
             try {
                 getSession().getExecutor().execute(new DsfRunnable() {
+                    @Override
                     public void run() {
                         final IRegisters regService = getServicesTracker().getService(IRegisters.class);
                         if ( regService != null ) {

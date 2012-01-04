@@ -49,6 +49,7 @@ public class DelayedStackRefreshUpdatePolicy extends UpdatePolicyDecorator {
 		    fBaseTester = baseTester;
 		    fLazyStackFrameMode = lazyStackFrameMode;
 		}
+		@Override
 		public int getUpdateFlags(Object viewerInput, TreePath path) {
             Object element = path.getSegmentCount() != 0 ? path.getLastSegment() : viewerInput;
 			if (element instanceof IDMVMContext) {
@@ -69,6 +70,7 @@ public class DelayedStackRefreshUpdatePolicy extends UpdatePolicyDecorator {
 			return FLUSH;
 		}
 
+		@Override
 		public boolean includes(IElementUpdateTester tester) {
 		    // A non-lazy tester includes a lazy tester, but not vice versa.  
 		    // This allows entries that were marked as dirty by a flush with
@@ -109,7 +111,8 @@ public class DelayedStackRefreshUpdatePolicy extends UpdatePolicyDecorator {
             fRefreshAll = refreshAll;
         }
 
-        public int getUpdateFlags(Object viewerInput, TreePath path) {
+        @Override
+		public int getUpdateFlags(Object viewerInput, TreePath path) {
             Object element = path.getSegmentCount() != 0 ? path.getLastSegment() : viewerInput;
             
             if (!fRefreshAll && element instanceof IDMVMContext) {
@@ -124,7 +127,8 @@ public class DelayedStackRefreshUpdatePolicy extends UpdatePolicyDecorator {
             return FLUSH;
         }
         
-        public boolean includes(IElementUpdateTester tester) {
+        @Override
+		public boolean includes(IElementUpdateTester tester) {
             // A refresh-all tester includes a non-refresh-all tester, but not 
             // vice versa. This allows entries that were marked as dirty by 
             // a flush with
@@ -174,11 +178,13 @@ public class DelayedStackRefreshUpdatePolicy extends UpdatePolicyDecorator {
 		}
 	}
 	
+	@Override
 	public Object[] getInitialRootElementChildren(Object rootElement) {
 	    return null;
 	}
 
-    public Map<String, Object> getInitialRootElementProperties(Object rootElement) {
+    @Override
+	public Map<String, Object> getInitialRootElementProperties(Object rootElement) {
         return null;
     }
 }

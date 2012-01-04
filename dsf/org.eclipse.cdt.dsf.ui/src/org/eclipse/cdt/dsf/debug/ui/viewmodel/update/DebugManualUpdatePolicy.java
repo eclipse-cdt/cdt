@@ -99,15 +99,18 @@ public class DebugManualUpdatePolicy extends ManualUpdatePolicy implements IVMUp
      */
     private IElementUpdateTester fNumberFormatPropertyEventUpdateTester = new IElementUpdateTesterExtension() {
         
-        public int getUpdateFlags(Object viewerInput, TreePath path) {
+        @Override
+		public int getUpdateFlags(Object viewerInput, TreePath path) {
             return FLUSH_PARTIAL_PROPERTIES; 
         }  
         
-        public Collection<String> getPropertiesToFlush(Object viewerInput, TreePath path, boolean isDirty) {
+        @Override
+		public Collection<String> getPropertiesToFlush(Object viewerInput, TreePath path, boolean isDirty) {
             return fActiveNumberFormatPropertiesWithPrefixes;
         }
         
-        public boolean includes(IElementUpdateTester tester) {
+        @Override
+		public boolean includes(IElementUpdateTester tester) {
         	// includes ElementFormatUpdateTester as well?
             return tester.equals(this);
         }
@@ -132,7 +135,8 @@ public class DebugManualUpdatePolicy extends ManualUpdatePolicy implements IVMUp
         return super.getElementUpdateTester(event);
     }
     
-    public boolean canUpdateDirtyProperty(ICacheEntry entry, String property) {
+    @Override
+	public boolean canUpdateDirtyProperty(ICacheEntry entry, String property) {
         return fActiveNumberFormatPropertiesWithPrefixes.contains(property);
     }
 }

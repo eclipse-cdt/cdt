@@ -41,11 +41,13 @@ public class SelectUpdatePolicyAction implements IMenuCreator, IViewActionDelega
 	private IAction fAction = null;
     private IMemoryBlock fMemoryBlock = null;
 	
-    public void dispose() {
+    @Override
+	public void dispose() {
 		// do nothing
 		
 	}
 
+	@Override
 	public void runWithEvent(IAction action, Event event) {
 		// do nothing
 	}
@@ -73,26 +75,31 @@ public class SelectUpdatePolicyAction implements IMenuCreator, IViewActionDelega
     }
 
 
-    public Menu getMenu(Control parent) {
+    @Override
+	public Menu getMenu(Control parent) {
         // Never called
         return null;
     }
     
     protected IAction getAction() { return fAction; }
     
-    public void init(IViewPart view) {
+    @Override
+	public void init(IViewPart view) {
     }
 
-    public void init(IAction action) {
+    @Override
+	public void init(IAction action) {
     	fAction = action;
         action.setMenuCreator(this);
     }
     
-    public void run(IAction action) {
+    @Override
+	public void run(IAction action) {
         // Do nothing, this is a pull-down menu
     }
 
-    public void selectionChanged(IAction action, ISelection selection) {
+    @Override
+	public void selectionChanged(IAction action, ISelection selection) {
     	fMemoryBlock = null;
     	action.setEnabled(false);
     	if(selection instanceof IStructuredSelection)
@@ -112,10 +119,12 @@ public class SelectUpdatePolicyAction implements IMenuCreator, IViewActionDelega
     	}
     }
     
-    public void debugContextChanged(DebugContextEvent event) {
+    @Override
+	public void debugContextChanged(DebugContextEvent event) {
     }
     
-    public Menu getMenu(Menu parent) {
+    @Override
+	public Menu getMenu(Menu parent) {
         Menu menu = new Menu(parent);
         menu.addMenuListener(new MenuAdapter() {
             @Override

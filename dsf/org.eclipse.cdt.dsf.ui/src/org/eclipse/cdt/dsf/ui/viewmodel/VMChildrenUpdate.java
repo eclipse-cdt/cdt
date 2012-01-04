@@ -63,15 +63,18 @@ public class VMChildrenUpdate extends VMViewerUpdate implements IChildrenUpdate 
         fElements = length > 0 ? new ArrayList<Object>(length) : new ArrayList<Object>();
     }
 
-    public int getOffset() {
+    @Override
+	public int getOffset() {
         return fOffset;
     }
 
-    public int getLength() {
+    @Override
+	public int getLength() {
         return fLength;
     }
 
-    public void setChild(Object element, int offset) {
+    @Override
+	public void setChild(Object element, int offset) {
         // Calculate the index in array based on configured offset.
         int idx = offset - (fOffset > 0 ? fOffset : 0);
         

@@ -19,14 +19,17 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 
 public class ModuleDetailPaneFactory implements IDetailPaneFactory {
 	public static final String MODULE_DETAIL_PANE_ID = ModuleDetailPane.ID;
+	@Override
 	public IDetailPane createDetailPane(String paneID) {
 		return new ModuleDetailPane();
 	}
 
+	@Override
 	public String getDefaultDetailPane(IStructuredSelection selection) {
 		return null;
 	}
 
+	@Override
 	public String getDetailPaneDescription(String paneID) {
 		if (paneID.equals(ModuleDetailPane.ID)){
 			return ModuleDetailPane.DESCRIPTION;
@@ -34,6 +37,7 @@ public class ModuleDetailPaneFactory implements IDetailPaneFactory {
 		return null;
 	}
 
+	@Override
 	public String getDetailPaneName(String paneID) {
 		if (paneID.equals(ModuleDetailPane.ID)){
 			return ModuleDetailPane.NAME;
@@ -41,6 +45,7 @@ public class ModuleDetailPaneFactory implements IDetailPaneFactory {
 		return null;
 	}
 
+	@Override
 	public Set<?> getDetailPaneTypes(IStructuredSelection selection) {
 		Set<String> possibleIDs = new HashSet<String>(1);
 		possibleIDs.add(ModuleDetailPane.ID);

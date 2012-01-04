@@ -34,15 +34,18 @@ public class VMDelegatingPropertiesUpdate extends VMViewerUpdate implements IPro
         fParentUpdate = parentUpdate;
     }
 
-    public Set<String> getProperties() {
+    @Override
+	public Set<String> getProperties() {
         return fParentUpdate.getProperties();
     }
 
-    public void setProperty(String property, Object value) {
+    @Override
+	public void setProperty(String property, Object value) {
         fParentUpdate.setProperty(property, value);
     }
     
-    public void setAllProperties(Map<String, Object> properties) {
+    @Override
+	public void setAllProperties(Map<String, Object> properties) {
         fParentUpdate.setAllProperties(properties);
     }
     

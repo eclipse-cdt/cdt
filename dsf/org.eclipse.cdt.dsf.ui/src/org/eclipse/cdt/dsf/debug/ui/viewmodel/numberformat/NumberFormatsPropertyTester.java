@@ -61,7 +61,8 @@ public class NumberFormatsPropertyTester extends PropertyTester {
         AVAILABLE_FORMATS.add(IFormattedValues.STRING_FORMAT);
     };
     
-    public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
+    @Override
+	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
         if (receiver instanceof IVMContext) {
             IVMProvider provider = ((IVMContext)receiver).getVMNode().getVMProvider();
             if (provider != null) {

@@ -100,6 +100,7 @@ public class DisassemblySelection implements IDisassemblySelection {
 	/*
 	 * @see org.eclipse.jface.viewers.ISelection#isEmpty()
 	 */
+	@Override
 	public boolean isEmpty() {
 		return fTextSelection.isEmpty();
 	}
@@ -107,6 +108,7 @@ public class DisassemblySelection implements IDisassemblySelection {
 	/*
 	 * @see org.eclipse.jface.text.ITextSelection#getEndLine()
 	 */
+	@Override
 	public int getEndLine() {
 		return fTextSelection.getEndLine();
 	}
@@ -114,6 +116,7 @@ public class DisassemblySelection implements IDisassemblySelection {
 	/*
 	 * @see org.eclipse.jface.text.ITextSelection#getLength()
 	 */
+	@Override
 	public int getLength() {
 		return fTextSelection.getLength();
 	}
@@ -121,6 +124,7 @@ public class DisassemblySelection implements IDisassemblySelection {
 	/*
 	 * @see org.eclipse.jface.text.ITextSelection#getOffset()
 	 */
+	@Override
 	public int getOffset() {
 		return fTextSelection.getOffset();
 	}
@@ -128,6 +132,7 @@ public class DisassemblySelection implements IDisassemblySelection {
 	/*
 	 * @see org.eclipse.jface.text.ITextSelection#getStartLine()
 	 */
+	@Override
 	public int getStartLine() {
 		return fTextSelection.getStartLine();
 	}
@@ -135,6 +140,7 @@ public class DisassemblySelection implements IDisassemblySelection {
 	/*
 	 * @see org.eclipse.jface.text.ITextSelection#getText()
 	 */
+	@Override
 	public String getText() {
 		return fTextSelection.getText();
 	}
@@ -142,6 +148,7 @@ public class DisassemblySelection implements IDisassemblySelection {
 	/*
 	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.IDisassemblySelection#getSourceFile()
 	 */
+	@Override
 	public IFile getSourceFile() {
 		if (fSourceFile != null) {
 			IResource resource = (IResource) fSourceFile.getAdapter(IResource.class);
@@ -155,6 +162,7 @@ public class DisassemblySelection implements IDisassemblySelection {
 	/*
 	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.IDisassemblySelection#getSourceLine()
 	 */
+	@Override
 	public int getSourceLine() {
 		if (fSourceFile != null) {
 			return fSourceLine;
@@ -165,6 +173,7 @@ public class DisassemblySelection implements IDisassemblySelection {
 	/*
 	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.IDisassemblySelection#getSourceLocationURI()
 	 */
+	@Override
 	public URI getSourceLocationURI() {
 		if (fSourceFile != null) {
 			IResource resource = (IResource) fSourceFile.getAdapter(IResource.class);
@@ -183,6 +192,7 @@ public class DisassemblySelection implements IDisassemblySelection {
 	/*
 	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.IDisassemblySelection#getStartAddress()
 	 */
+	@Override
 	public IAddress getStartAddress() {
 		return fStartAddress;
 	}
@@ -190,6 +200,7 @@ public class DisassemblySelection implements IDisassemblySelection {
 	/**
 	 * @since 2.2
 	 */
+	@Override
 	public String getLabel() {
 		return fLabel;
 	}

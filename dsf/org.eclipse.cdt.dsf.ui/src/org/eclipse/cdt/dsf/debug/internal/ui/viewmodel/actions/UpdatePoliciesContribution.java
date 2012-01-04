@@ -104,7 +104,8 @@ public class UpdatePoliciesContribution extends CompoundContributionItem impleme
         return items;
     }
     
-    public void initialize(IServiceLocator serviceLocator) {
+    @Override
+	public void initialize(IServiceLocator serviceLocator) {
         fServiceLocator = serviceLocator;
     }
 }

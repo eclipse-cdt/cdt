@@ -67,6 +67,7 @@ public class DsfSuspendTrigger implements ISuspendTrigger {
         fServicesTracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), fSession.getId());
         try {
             fSession.getExecutor().execute(new DsfRunnable() {
+                @Override
                 public void run() {
                     if (!fDisposed) {
                         fSession.addServiceEventListener(DsfSuspendTrigger.this, null);
@@ -78,6 +79,7 @@ public class DsfSuspendTrigger implements ISuspendTrigger {
     }
     
     @ThreadSafe
+    @Override
     public void addSuspendTriggerListener(final ISuspendTriggerListener listener) {
         fListeners.add(listener);
 
@@ -102,6 +104,7 @@ public class DsfSuspendTrigger implements ISuspendTrigger {
     }
 
     @ThreadSafe
+    @Override
     public void removeSuspendTriggerListener(ISuspendTriggerListener listener) { 
         fListeners.remove(listener);
     }
@@ -110,6 +113,7 @@ public class DsfSuspendTrigger implements ISuspendTrigger {
     public void dispose() {
         try {
             fSession.getExecutor().execute(new DsfRunnable() {
+                @Override
                 public void run() {
                     if (fEventListenerRegisterd) {
                         fSession.removeServiceEventListener(DsfSuspendTrigger.this);
@@ -201,10 +205,12 @@ public class DsfSuspendTrigger implements ISuspendTrigger {
                     for (int i = 0; i < listeners.length; i++) {
                         final ISuspendTriggerListener listener = (ISuspendTriggerListener) listeners[i];
                         SafeRunner.run(new ISafeRunnable() {
-                            public void run() throws Exception {
+                            @Override
+                           public void run() throws Exception {
                                 listener.suspended(fLaunch, context);
                             }
                         
+                            @Override
                             public void handleException(Throwable exception) {
                                 status.add(new Status(
                                     IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, "Exception while calling suspend trigger listeners", exception)); //$NON-NLS-1$

@@ -62,7 +62,8 @@ public class SimpleDisplayExecutor implements Executor{
         fDisplay = display;
     }
 
-    public void execute(Runnable command) {
+    @Override
+	public void execute(Runnable command) {
         try {
             fDisplay.asyncExec(command);
         } catch (SWTException e) {

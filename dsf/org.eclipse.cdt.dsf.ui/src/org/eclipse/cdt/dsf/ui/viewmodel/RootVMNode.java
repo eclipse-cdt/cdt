@@ -29,14 +29,17 @@ public class RootVMNode extends AbstractVMNode implements IRootVMNode {
         super(provider);
     }
 
+    @Override
     public void update(IChildrenUpdate[] updates) {
         throw new UnsupportedOperationException("Root view model node should never be queried for list of elements."); //$NON-NLS-1$
     }
     
+    @Override
     public void update(IChildrenCountUpdate[] updates) {
         throw new UnsupportedOperationException("Root view model node should never be queried for list of elements."); //$NON-NLS-1$
     }
 
+    @Override
     public void update(IHasChildrenUpdate[] updates) {
         throw new UnsupportedOperationException("Root view model node should never be queried for list of elements."); //$NON-NLS-1$
     }
@@ -45,6 +48,7 @@ public class RootVMNode extends AbstractVMNode implements IRootVMNode {
      * Default implementation does not examine the event and assumes that every
      * event should be processed to generate a delta.
      */
+    @Override
     public boolean isDeltaEvent(Object rootObject, Object event) {
         if (event instanceof ModelProxyInstalledEvent) {
             return rootObject.equals( ((ModelProxyInstalledEvent)event).getRootElement() ); 
@@ -56,16 +60,19 @@ public class RootVMNode extends AbstractVMNode implements IRootVMNode {
      * Default implementation creates a delta assuming that the root layout node
      * is the input object into the view.  
      */
+    @Override
     public void createRootDelta(Object rootObject, Object event, final DataRequestMonitor<VMDelta> rm) {
         rm.setData(new VMDelta(rootObject, 0, IModelDelta.NO_CHANGE));
         rm.done();
     }
     
     
+    @Override
     public int getDeltaFlags(Object event) {
         return IModelDelta.NO_CHANGE;
     }
     
+    @Override
     public void buildDelta(Object event, VMDelta parent, int nodeOffset, RequestMonitor requestMonitor) {
         requestMonitor.done();
     }

@@ -23,6 +23,7 @@ public class DisassemblyBackendDsfFactory implements IAdapterFactory {
 
 	private static final Class<?>[] ADAPTERS = { IDisassemblyBackend.class };
 
+	@Override
 	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (IDisassemblyBackend.class.equals(adapterType)) {							
@@ -43,6 +44,7 @@ public class DisassemblyBackendDsfFactory implements IAdapterFactory {
 		return null;
 	}
 
+	@Override
 	@SuppressWarnings("rawtypes")
 	public Class[] getAdapterList() {
 		return ADAPTERS;

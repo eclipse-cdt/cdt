@@ -47,6 +47,7 @@ public abstract class AbstractDisassemblyBreakpointsTarget implements IToggleBre
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#toggleLineBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void toggleLineBreakpoints( IWorkbenchPart part, ISelection selection ) throws CoreException {
 		assert part instanceof IDisassemblyPart && selection instanceof ITextSelection;
 
@@ -69,6 +70,7 @@ public abstract class AbstractDisassemblyBreakpointsTarget implements IToggleBre
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#canToggleLineBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public boolean canToggleLineBreakpoints( IWorkbenchPart part, ISelection selection ) {
 		return part instanceof IDisassemblyPart && selection instanceof ITextSelection;
 	}
@@ -76,12 +78,14 @@ public abstract class AbstractDisassemblyBreakpointsTarget implements IToggleBre
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#toggleMethodBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void toggleMethodBreakpoints( IWorkbenchPart part, ISelection selection ) throws CoreException {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#canToggleMethodBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public boolean canToggleMethodBreakpoints( IWorkbenchPart part, ISelection selection ) {
 		return false;
 	}
@@ -89,12 +93,14 @@ public abstract class AbstractDisassemblyBreakpointsTarget implements IToggleBre
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#toggleWatchpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void toggleWatchpoints( IWorkbenchPart part, ISelection selection ) throws CoreException {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#canToggleWatchpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public boolean canToggleWatchpoints( IWorkbenchPart part, ISelection selection ) {
 		return false;
 	}
@@ -102,6 +108,7 @@ public abstract class AbstractDisassemblyBreakpointsTarget implements IToggleBre
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension#toggleBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void toggleBreakpoints( IWorkbenchPart part, ISelection selection ) throws CoreException {
 		toggleLineBreakpoints( part, selection );
 	}
@@ -109,6 +116,7 @@ public abstract class AbstractDisassemblyBreakpointsTarget implements IToggleBre
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension#canToggleBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public boolean canToggleBreakpoints( IWorkbenchPart part, ISelection selection ) {
 		return canToggleLineBreakpoints( part, selection );
 	}

@@ -117,6 +117,7 @@ public class ExpressionManagerVMNode extends AbstractVMNode
         return (ExpressionVMProvider)getVMProvider();
     }
 
+    @Override
     public void update(IHasChildrenUpdate[] updates) {
         // Test availability of children based on whether there are any expressions 
         // in the manager.  We assume that the getExpressions() will just read 
@@ -128,6 +129,7 @@ public class ExpressionManagerVMNode extends AbstractVMNode
         }
     }
     
+    @Override
     public void update(IChildrenCountUpdate[] updates) {
         for (IChildrenCountUpdate update : updates) {
             if (!checkUpdate(update)) continue;
@@ -139,6 +141,7 @@ public class ExpressionManagerVMNode extends AbstractVMNode
         }
     }
     
+    @Override
     public void update(final IChildrenUpdate[] updates) {
         for (IChildrenUpdate update : updates) {
             doUpdateChildren(update);
@@ -203,7 +206,8 @@ public class ExpressionManagerVMNode extends AbstractVMNode
         multiRm.setDoneCount(multiRmCount);
     }
 
-    public void update(ILabelUpdate[] updates) {
+    @Override
+	public void update(ILabelUpdate[] updates) {
         // The label update handler only handles labels for the invalid expression VMCs.
         // The expression layout nodes are responsible for supplying label providers 
         // for their VMCs.
@@ -240,7 +244,8 @@ public class ExpressionManagerVMNode extends AbstractVMNode
         update.done();
     }
 
-    public int getDeltaFlags(Object event) {
+    @Override
+	public int getDeltaFlags(Object event) {
         int retVal = 0;
         
         // Add a flag if the list of expressions in the global expression manager has changed.
@@ -255,7 +260,8 @@ public class ExpressionManagerVMNode extends AbstractVMNode
         return retVal;
     }
 
-    public void buildDelta(final Object event, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor requestMonitor) {
+    @Override
+	public void buildDelta(final Object event, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor requestMonitor) {
         if (event instanceof ExpressionsChangedEvent) {
             buildDeltaForExpressionsChangedEvent((ExpressionsChangedEvent)event, parentDelta, nodeOffset, requestMonitor);
         } else {
@@ -314,7 +320,8 @@ public class ExpressionManagerVMNode extends AbstractVMNode
      * (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor#getCellEditor(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String, java.lang.Object, org.eclipse.swt.widgets.Composite)
      */
-    public CellEditor getCellEditor(IPresentationContext context, String columnId, Object element, Composite parent) {
+    @Override
+	public CellEditor getCellEditor(IPresentationContext context, String columnId, Object element, Composite parent) {
         if (IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(columnId)) {
             return new TextCellEditor(parent);
         } 
@@ -325,7 +332,8 @@ public class ExpressionManagerVMNode extends AbstractVMNode
      * (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor#getCellModifier(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.Object)
      */
-    public ICellModifier getCellModifier(IPresentationContext context, Object element) {
+    @Override
+	public ICellModifier getCellModifier(IPresentationContext context, Object element) {
         if ( fWatchExpressionCellModifier == null ) {
         	fWatchExpressionCellModifier = createCellModifier();
         }

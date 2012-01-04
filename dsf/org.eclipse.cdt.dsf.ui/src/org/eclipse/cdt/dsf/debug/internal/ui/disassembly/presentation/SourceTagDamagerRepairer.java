@@ -325,11 +325,13 @@ public class SourceTagDamagerRepairer extends DefaultDamagerRepairer implements 
 		}
 	}
 
+	@Override
 	public void sourceTagsChanged(ISourceTagProvider sourceTagProvider) {
 		fSourceTags.clear();
 		if (sourceTagProvider != null) {
 			sourceTagProvider.getSourceTags(fSourceTags);
 			Collections.sort(fSourceTags, new Comparator<Object>() {
+				@Override
 				public int compare(Object o1, Object o2) {
 					ISourceRange sr1 = ((ISourceTag)o1).getRangeOfIdentifier();
 					ISourceRange sr2 = ((ISourceTag)o2).getRangeOfIdentifier();

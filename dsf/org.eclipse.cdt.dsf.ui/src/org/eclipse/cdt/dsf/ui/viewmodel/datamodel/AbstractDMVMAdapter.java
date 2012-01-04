@@ -49,7 +49,8 @@ abstract public class AbstractDMVMAdapter extends AbstractVMAdapter
         // Add ourselves as listener for DM events events.
         try {
             session.getExecutor().execute(new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
                     if (DsfSession.isSessionActive(getSession().getId())) {
                         getSession().addServiceEventListener(AbstractDMVMAdapter.this, null);
                         fRegisteredAsEventListener = true;
@@ -65,7 +66,8 @@ abstract public class AbstractDMVMAdapter extends AbstractVMAdapter
     public void dispose() {
         try {
             getSession().getExecutor().execute(new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
                     if (fRegisteredAsEventListener && getSession().isActive()) {
                         fSession.removeServiceEventListener(AbstractDMVMAdapter.this);
                     }

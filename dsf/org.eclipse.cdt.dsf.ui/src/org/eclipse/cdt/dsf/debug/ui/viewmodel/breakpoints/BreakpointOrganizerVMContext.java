@@ -45,15 +45,18 @@ public class BreakpointOrganizerVMContext extends AbstractVMContext implements I
         return getOrganizer().hashCode() + getVMNode().hashCode() + fCategory.hashCode();
     }
 
-    public IBreakpointOrganizer getOrganizer() {
+    @Override
+	public IBreakpointOrganizer getOrganizer() {
         return ((BreakpointOrganizerVMNode)getVMNode()).getOrganizer();
     }
     
-    public IAdaptable getCategory() {
+    @Override
+	public IAdaptable getCategory() {
         return fCategory;
     }
     
-    public boolean contains(IBreakpoint breakpoint) {
+    @Override
+	public boolean contains(IBreakpoint breakpoint) {
         for (IBreakpoint bp : fBreakpoints) {
             if (bp.equals(breakpoint)) {
                 return true;
@@ -62,7 +65,8 @@ public class BreakpointOrganizerVMContext extends AbstractVMContext implements I
         return false;
     }
     
-    public IBreakpoint[] getBreakpoints() {
+    @Override
+	public IBreakpoint[] getBreakpoints() {
         return fBreakpoints;
     }
     

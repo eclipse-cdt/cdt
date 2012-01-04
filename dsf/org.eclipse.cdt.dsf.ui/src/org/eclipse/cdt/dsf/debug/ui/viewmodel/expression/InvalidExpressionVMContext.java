@@ -69,7 +69,8 @@ public class InvalidExpressionVMContext extends AbstractVMContext implements IEl
     /**
      * Updates the label for the InvalidExpressionVMC.
      */
-    public void update(ILabelUpdate[] updates) {
+    @Override
+	public void update(ILabelUpdate[] updates) {
         for (ILabelUpdate update : updates) {
             String[] columnIds = update.getColumnIds() != null ? 
                 update.getColumnIds() : new String[] { IDebugVMConstants.COLUMN_ID__NAME };

@@ -40,27 +40,31 @@ public class ManualUpdatePolicy implements IVMUpdatePolicy {
 
     private static class BlankDataElement implements IElementContentProvider, IElementLabelProvider {
         
-        public void update(IHasChildrenUpdate[] updates) {
+        @Override
+		public void update(IHasChildrenUpdate[] updates) {
             for (IHasChildrenUpdate update : updates) {
                 update.setHasChilren(false);
                 update.done();
             }
         }
         
-        public void update(IChildrenCountUpdate[] updates) {
+        @Override
+		public void update(IChildrenCountUpdate[] updates) {
             for (IChildrenCountUpdate update : updates) {
                 update.setChildCount(0);
                 update.done();
             }
         }
         
-        public void update(IChildrenUpdate[] updates) {
+        @Override
+		public void update(IChildrenUpdate[] updates) {
             for (IChildrenUpdate update : updates) {
                 update.done();
             }
         }
         
-        public void update(ILabelUpdate[] updates) {
+        @Override
+		public void update(ILabelUpdate[] updates) {
             RGB staleDataForeground = JFaceResources.getColorRegistry().getRGB(
                 IDsfDebugUIConstants.PREF_COLOR_STALE_DATA_FOREGROUND);
             RGB staleDataBackground = JFaceResources.getColorRegistry().getRGB(
@@ -86,7 +90,8 @@ public class ManualUpdatePolicy implements IVMUpdatePolicy {
             fElements = elements;
         }
 
-        public int getUpdateFlags(Object viewerInput, TreePath path) {
+        @Override
+		public int getUpdateFlags(Object viewerInput, TreePath path) {
             if (fElements.contains(viewerInput)) {
                 return FLUSH;
             }
@@ -98,7 +103,8 @@ public class ManualUpdatePolicy implements IVMUpdatePolicy {
             return 0;
         }
         
-        public boolean includes(IElementUpdateTester tester) {
+        @Override
+		public boolean includes(IElementUpdateTester tester) {
             return 
                 tester instanceof UserEditEventUpdateTester &&
                 fElements.equals(((UserEditEventUpdateTester)tester).fElements);
@@ -111,11 +117,13 @@ public class ManualUpdatePolicy implements IVMUpdatePolicy {
     }
     
     private static IElementUpdateTester fgUpdateTester = new IElementUpdateTester() {
-        public int getUpdateFlags(Object viewerInput, TreePath path) {
+        @Override
+		public int getUpdateFlags(Object viewerInput, TreePath path) {
             return DIRTY; 
         }  
         
-        public boolean includes(IElementUpdateTester tester) {
+        @Override
+		public boolean includes(IElementUpdateTester tester) {
             return tester.equals(this);
         }
         
@@ -126,11 +134,13 @@ public class ManualUpdatePolicy implements IVMUpdatePolicy {
     };
 
     private static IElementUpdateTester fgRefreshUpdateTester = new IElementUpdateTester() {
-        public int getUpdateFlags(Object viewerInput, TreePath path) {
+        @Override
+		public int getUpdateFlags(Object viewerInput, TreePath path) {
             return FLUSH | ARCHIVE; 
         }  
         
-        public boolean includes(IElementUpdateTester tester) {
+        @Override
+		public boolean includes(IElementUpdateTester tester) {
             return tester.equals(this) || tester.equals(fgUpdateTester) || tester instanceof UserEditEventUpdateTester;
         }
 
@@ -140,15 +150,18 @@ public class ManualUpdatePolicy implements IVMUpdatePolicy {
         }
     };
     
-    public String getID() {
+    @Override
+	public String getID() {
         return MANUAL_UPDATE_POLICY_ID;
     }
 
-    public String getName() {
+    @Override
+	public String getName() {
         return ViewModelUpdateMessages.ManualUpdatePolicy_name;
     }
 
-    public IElementUpdateTester getElementUpdateTester(Object event) {
+    @Override
+	public IElementUpdateTester getElementUpdateTester(Object event) {
         if (event.equals(REFRESH_EVENT)) {
             return fgRefreshUpdateTester;
         } else if (event instanceof UserEditEvent) {
@@ -157,13 +170,15 @@ public class ManualUpdatePolicy implements IVMUpdatePolicy {
         return fgUpdateTester;
     }
 
-    public Object[] getInitialRootElementChildren(Object rootElement) {
+    @Override
+	public Object[] getInitialRootElementChildren(Object rootElement) {
         // Return an dummy element to show in the view.  The user will 
         // need to refresh the view to retrieve this data from the model.
         return new Object[] { new BlankDataElement() };
     }
 
-    public Map<String, Object> getInitialRootElementProperties(Object rootElement) {
+    @Override
+	public Map<String, Object> getInitialRootElementProperties(Object rootElement) {
         // Return an empty set of properties for the root element.  The user will 
         // need to refresh the view to retrieve this data from the model.
         return Collections.emptyMap();

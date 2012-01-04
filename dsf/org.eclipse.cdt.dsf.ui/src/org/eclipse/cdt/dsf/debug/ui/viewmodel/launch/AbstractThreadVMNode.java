@@ -151,7 +151,8 @@ public abstract class AbstractThreadVMNode extends AbstractExecutionContextVMNod
 
 
     
-    public void update(final ILabelUpdate[] updates) {
+    @Override
+	public void update(final ILabelUpdate[] updates) {
         fLabelProvider.update(updates);
     }
 
@@ -160,10 +161,12 @@ public abstract class AbstractThreadVMNode extends AbstractExecutionContextVMNod
      * 
      * @since 2.0
      */    
-    public void update(final IPropertiesUpdate[] updates) {
+    @Override
+	public void update(final IPropertiesUpdate[] updates) {
         try {
             getSession().getExecutor().execute(new DsfRunnable() {
-                public void run() {
+                @Override
+				public void run() {
                     updatePropertiesInSessionThread(updates);
                 }});
         } catch (RejectedExecutionException e) {
@@ -293,7 +296,8 @@ public abstract class AbstractThreadVMNode extends AbstractExecutionContextVMNod
                 protected void handleSuccess() {
                     try {
                         getSession().getExecutor().execute(new DsfRunnable() {
-                            public void run() {
+                            @Override
+							public void run() {
                                 final IRunControl runControl = getServicesTracker().getService(IRunControl.class);
                                 if (runControl != null) {
                                     int vmcIdx = -1;
@@ -336,7 +340,8 @@ public abstract class AbstractThreadVMNode extends AbstractExecutionContextVMNod
     }
     
     
-    public int getDeltaFlags(Object e) {
+    @Override
+	public int getDeltaFlags(Object e) {
         IDMContext dmc = e instanceof IDMEvent<?> ? ((IDMEvent<?>)e).getDMContext() : null;
 
         if (dmc instanceof IContainerDMContext) {
@@ -357,7 +362,8 @@ public abstract class AbstractThreadVMNode extends AbstractExecutionContextVMNod
         return IModelDelta.NO_CHANGE;
     }
 
-    public void buildDelta(Object e, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
+    @Override
+	public void buildDelta(Object e, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
         IDMContext dmc = e instanceof IDMEvent<?> ? ((IDMEvent<?>)e).getDMContext() : null;
 
         if(dmc instanceof IContainerDMContext) {

@@ -80,33 +80,42 @@ public class VMViewerUpdate extends DsfExecutable implements IViewerUpdate {
          */
         final private IPresentationContext fPresentationContext;
 
-        public void cancel() {
+        @Override
+		public void cancel() {
             fCanceled = true;
         }
         
-        public boolean isCanceled() { 
+        @Override
+		public boolean isCanceled() { 
             return fCanceled; 
         }
 
-        public IPresentationContext getPresentationContext() {
+        @Override
+		public IPresentationContext getPresentationContext() {
             return fPresentationContext;
         }
 
-        public Object getElement() {
+        @Override
+		public Object getElement() {
             return fElementPath.getSegmentCount() != 0 ? fElementPath.getLastSegment() : fViewerInput;
         }
 
-        public TreePath getElementPath() {
+        @Override
+		public TreePath getElementPath() {
             return fElementPath;
         }
 
-        public Object getViewerInput() {
+        @Override
+		public Object getViewerInput() {
             return fViewerInput;
         }
         
-        public void done() { assert false; } // not used
-        public void setStatus(IStatus status) {assert false; } // not used
-        public IStatus getStatus() { assert false; return null; } // not used
+        @Override
+		public void done() { assert false; } // not used
+        @Override
+		public void setStatus(IStatus status) {assert false; } // not used
+        @Override
+		public IStatus getStatus() { assert false; return null; } // not used
 
     }
     
@@ -166,21 +175,30 @@ public class VMViewerUpdate extends DsfExecutable implements IViewerUpdate {
         return fRequestMonitor;
     }
     
-    public Object getViewerInput() { return fClientUpdate.getViewerInput(); }
-    public Object getElement() { return fClientUpdate.getElement(); }
-    public TreePath getElementPath() { return fClientUpdate.getElementPath(); }
-    public IPresentationContext getPresentationContext() { return fClientUpdate.getPresentationContext(); }
-    public IStatus getStatus() { return fRequestMonitor.getStatus(); }
-    public void setStatus(IStatus status) { fRequestMonitor.setStatus(status); }
+    @Override
+	public Object getViewerInput() { return fClientUpdate.getViewerInput(); }
+    @Override
+	public Object getElement() { return fClientUpdate.getElement(); }
+    @Override
+	public TreePath getElementPath() { return fClientUpdate.getElementPath(); }
+    @Override
+	public IPresentationContext getPresentationContext() { return fClientUpdate.getPresentationContext(); }
+    @Override
+	public IStatus getStatus() { return fRequestMonitor.getStatus(); }
+    @Override
+	public void setStatus(IStatus status) { fRequestMonitor.setStatus(status); }
     
-    public boolean isCanceled() { 
+    @Override
+	public boolean isCanceled() { 
         return fClientUpdate.isCanceled();
     }
-    public void cancel() {
+    @Override
+	public void cancel() {
         fClientUpdate.cancel();
     }
 
-    public void done() { 
+    @Override
+	public void done() { 
     	setSubmitted();
         if ( isCanceled() ) {
             fRequestMonitor.cancel();

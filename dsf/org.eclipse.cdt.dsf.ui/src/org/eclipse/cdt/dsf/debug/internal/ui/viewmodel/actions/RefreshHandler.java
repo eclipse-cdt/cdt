@@ -19,7 +19,8 @@ import org.eclipse.core.commands.ExecutionException;
 
 public class RefreshHandler extends AbstractHandler  {
 
-    public Object execute(ExecutionEvent event) throws ExecutionException {
+    @Override
+	public Object execute(ExecutionEvent event) throws ExecutionException {
         IVMProvider vmProvider = VMHandlerUtils.getActiveVMProvider(event);
         
         if (vmProvider instanceof ICachingVMProvider) {

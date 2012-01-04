@@ -35,6 +35,7 @@ public final class REDFileRider implements IFileRider {
 	/*
 	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.text.IFileRider#seek(int)
 	 */
+	@Override
 	public void seek(int pos) throws IOException {
 		fFile.seek(pos);
 		fEof = false;
@@ -86,62 +87,75 @@ public final class REDFileRider implements IFileRider {
 		return fFile;
 	}
 
+	@Override
 	public void writeChar(char c) throws IOException {
 		fOneCharBuf[0] = c;
 		writeChars(fOneCharBuf, 0, 1);
 	}
 
+	@Override
 	public void writeChars(char[] buf) throws IOException {
 		writeChars(buf, 0, buf.length);
 	}
 
+	@Override
 	public void writeChars(char[] buf, int n) throws IOException {
 		writeChars(buf, 0, n);
 	}
 
+	@Override
 	public void writeChars(char[] buf, int off, int n) throws IOException {
 		fFile.writeBuffered(buf, off, n);
 		fResult = 0;
 	}
 
+	@Override
 	public void writeChars(String buf, int off, int n) throws IOException {
 		fFile.writeBuffered(buf, off, n);
 		fResult = 0;
 	}
 
+	@Override
 	public char readChar() throws IOException {
 		readChars(fOneCharBuf, 0, 1);
 		return fEof ? '\0' : fOneCharBuf[0];
 	}
 
+	@Override
 	public void readChars(char[] buf) throws IOException {
 		readChars(buf, 0, buf.length);
 	}
 
+	@Override
 	public void readChars(char[] buf, int n) throws IOException {
 		readChars(buf, 0, n);
 	}
 
+	@Override
 	public void readChars(char[] buf, int off, int n) throws IOException {
 		int count = fFile.readBuffered(buf, off, n);
 		fResult = n-count;
 		fEof = fResult > 0;
 	}
 
+	@Override
 	public void readChars(StringBuffer buf, int n) throws IOException {
 		int count = fFile.readBuffered(buf, n);
 		fResult = n-count;
 		fEof = fResult > 0;
 	}
 
+	@Override
 	public int length() {
 		return fFile.length();
 	}
 
+	@Override
 	public int limit() {
 		return fLimit;
 	}
 
+	@Override
 	public boolean isReadonly() {
 		return fFile.isReadonly();
 	}

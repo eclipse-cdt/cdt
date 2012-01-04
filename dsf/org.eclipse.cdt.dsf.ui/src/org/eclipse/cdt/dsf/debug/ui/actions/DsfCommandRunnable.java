@@ -67,7 +67,8 @@ public abstract class DsfCommandRunnable extends DsfRunnable {
         fRequest = request;
     }
     
-    public final void run() {
+    @Override
+	public final void run() {
         if (fRequest.isCanceled()) {
             fRequest.done();
             return;

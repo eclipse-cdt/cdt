@@ -58,7 +58,8 @@ public class ModulesVMProvider extends AbstractDMVMProvider {
         super.refresh();
         try {
             getSession().getExecutor().execute(new DsfRunnable() {
-                public void run() {
+                @Override
+				public void run() {
                     DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), getSession().getId());
                     IModules modulesService = tracker.getService(IModules.class);
                     if (modulesService instanceof ICachingService) {

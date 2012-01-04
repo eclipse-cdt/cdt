@@ -53,6 +53,7 @@ public class SingleExpressionVMNode extends AbstractVMNode implements IElementLa
 			super(node);
 			fDmc = dmc;
 		}
+	    @Override
 		public IDMContext getDMContext() {
 			return fDmc;
 		}
@@ -96,24 +97,31 @@ public class SingleExpressionVMNode extends AbstractVMNode implements IElementLa
 		SimpleExpression(String text) {
 			fExpressionText = text;
 		}
+	    @Override
 		public void dispose() {
 		}
+	    @Override
 		public IDebugTarget getDebugTarget() {
 			return null;
 		}
+	    @Override
 		public String getExpressionText() {
 			return fExpressionText;
 		}
+	    @Override
 		public IValue getValue() {
 			return null;
 		}
+	    @Override
 		public ILaunch getLaunch() {
 			return null;
 		}
+	    @Override
 		public String getModelIdentifier() {
 			return null;
 		}
 		@SuppressWarnings("rawtypes")
+	    @Override
 		public Object getAdapter(Class adapter) {
 			return null;
 		}
@@ -165,6 +173,7 @@ public class SingleExpressionVMNode extends AbstractVMNode implements IElementLa
         return (ExpressionVMProvider)getVMProvider();
     }
 
+    @Override
 	public void update(IHasChildrenUpdate[] updates) {
         // Test availability of children based on whether there are any expressions 
         // in the manager.  We assume that the getExpressions() will just read 
@@ -176,6 +185,7 @@ public class SingleExpressionVMNode extends AbstractVMNode implements IElementLa
         }
     }
     
+    @Override
 	public void update(IChildrenCountUpdate[] updates) {
         for (IChildrenCountUpdate update : updates) {
             if (!checkUpdate(update)) continue;
@@ -187,6 +197,7 @@ public class SingleExpressionVMNode extends AbstractVMNode implements IElementLa
         }
     }
     
+    @Override
 	public void update(final IChildrenUpdate[] updates) {
         for (IChildrenUpdate update : updates) {
             doUpdateChildren(update);
@@ -247,6 +258,7 @@ public class SingleExpressionVMNode extends AbstractVMNode implements IElementLa
         multiRm.setDoneCount(multiRmCount);
     }
 
+    @Override
     public void update(ILabelUpdate[] updates) {
         // The label update handler only handles labels for the invalid expression VMCs.
         // The expression layout nodes are responsible for supplying label providers 
@@ -256,6 +268,7 @@ public class SingleExpressionVMNode extends AbstractVMNode implements IElementLa
         }
     }
 
+    @Override
     public int getDeltaFlags(Object event) {
         int retVal = 0;
 
@@ -271,6 +284,7 @@ public class SingleExpressionVMNode extends AbstractVMNode implements IElementLa
         return retVal;
     }
 
+    @Override
     public void buildDelta(final Object event, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor requestMonitor) {
         if (event instanceof ExpressionsChangedEvent) {
             buildDeltaForExpressionsChangedEvent((ExpressionsChangedEvent)event, parentDelta, nodeOffset, requestMonitor);

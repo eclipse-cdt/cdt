@@ -49,6 +49,7 @@ public class BreakpointVMNode extends AbstractBreakpointVMNode implements IEleme
         return new BreakpointVMContext(this, bp);
     }
 
+    @Override
     public void update(ILabelUpdate[] updates) {
         Map<IElementLabelProvider, List<ILabelUpdate>> delegatesMap = new HashMap<IElementLabelProvider, List<ILabelUpdate>>(1,1);
         
@@ -66,27 +67,43 @@ public class BreakpointVMNode extends AbstractBreakpointVMNode implements IEleme
                 delegatesMap.put(provider, delegatesList);
             }
             delegatesList.add(new ICheckUpdate() {
+                @Override
                 public void setChecked(boolean checked, boolean grayed) {
                     if (update instanceof ICheckUpdate) {
                         ((ICheckUpdate)update).setChecked(checked, grayed);
                     }
                 }
+                @Override
                 public String[] getColumnIds() { return update.getColumnIds(); }
+                @Override
                 public void setLabel(String text, int columnIndex) { 
                 	update.setLabel(text, columnIndex); 
                 	}
+                @Override
                 public void setFontData(FontData fontData, int columnIndex) { update.setFontData(fontData, columnIndex); }
+                @Override
                 public void setImageDescriptor(ImageDescriptor image, int columnIndex) { update.setImageDescriptor(image, columnIndex); }
+                @Override
                 public void setForeground(RGB foreground, int columnIndex) { update.setForeground(foreground, columnIndex); }
+                @Override
                 public void setBackground(RGB background, int columnIndex) { update.setBackground(background, columnIndex); }
+                @Override
                 public IPresentationContext getPresentationContext() { return update.getPresentationContext(); }
+                @Override
                 public Object getElement() { return bp; }
+                @Override
                 public TreePath getElementPath() { return update.getElementPath().getParentPath().createChildPath(bp); }
+                @Override
                 public Object getViewerInput() { return update.getViewerInput(); }
+                @Override
                 public void setStatus(IStatus status) { update.setStatus(status); }
+                @Override
                 public IStatus getStatus() { return update.getStatus(); }
+                @Override
                 public void done() { update.done(); }
+                @Override
                 public void cancel() { update.cancel(); }
+                @Override
                 public boolean isCanceled() { return update.isCanceled(); }
             });
         }
@@ -97,6 +114,7 @@ public class BreakpointVMNode extends AbstractBreakpointVMNode implements IEleme
         }
     }
     
+    @Override
     public void encodeElements(IElementMementoRequest[] updates) {
         Map<IElementMementoProvider, List<IElementMementoRequest>> delegatesMap = new HashMap<IElementMementoProvider, List<IElementMementoRequest>>(1,1);
         
@@ -114,15 +132,25 @@ public class BreakpointVMNode extends AbstractBreakpointVMNode implements IEleme
                 delegatesMap.put(provider, delegatesList);
             }
             delegatesList.add(new IElementMementoRequest() {
+                @Override
                 public IMemento getMemento() { return update.getMemento(); }
+                @Override
                 public IPresentationContext getPresentationContext() { return update.getPresentationContext(); }
+                @Override
                 public Object getElement() { return bp; }
+                @Override
                 public TreePath getElementPath() { return update.getElementPath().getParentPath().createChildPath(bp); }
+                @Override
                 public Object getViewerInput() { return update.getViewerInput(); }
+                @Override
                 public void setStatus(IStatus status) { update.setStatus(status); }
+                @Override
                 public IStatus getStatus() { return update.getStatus(); }
+                @Override
                 public void done() { update.done(); }
+                @Override
                 public void cancel() { update.cancel(); }
+                @Override
                 public boolean isCanceled() { return update.isCanceled(); }
             });
         }
@@ -133,6 +161,7 @@ public class BreakpointVMNode extends AbstractBreakpointVMNode implements IEleme
         }
     }
     
+    @Override
     public void compareElements(IElementCompareRequest[] updates) {
         Map<IElementMementoProvider, List<IElementCompareRequest>> delegatesMap = new HashMap<IElementMementoProvider, List<IElementCompareRequest>>(1,1);
         
@@ -150,16 +179,27 @@ public class BreakpointVMNode extends AbstractBreakpointVMNode implements IEleme
                 delegatesMap.put(provider, delegatesList);
             }
             delegatesList.add(new IElementCompareRequest() {
+                @Override
                 public IMemento getMemento() { return update.getMemento(); }
+                @Override
                 public void setEqual(boolean equal) { update.setEqual(equal);}
+                @Override
                 public IPresentationContext getPresentationContext() { return update.getPresentationContext(); }
+                @Override
                 public Object getElement() { return bp; }
+                @Override
                 public TreePath getElementPath() { return update.getElementPath().getParentPath().createChildPath(bp); }
+                @Override
                 public Object getViewerInput() { return update.getViewerInput(); }
+                @Override
                 public void setStatus(IStatus status) { update.setStatus(status); }
+                @Override
                 public IStatus getStatus() { return update.getStatus(); }
+                @Override
                 public void done() { update.done(); }
+                @Override
                 public void cancel() { update.cancel(); }
+                @Override
                 public boolean isCanceled() { return update.isCanceled(); }
             });
         }

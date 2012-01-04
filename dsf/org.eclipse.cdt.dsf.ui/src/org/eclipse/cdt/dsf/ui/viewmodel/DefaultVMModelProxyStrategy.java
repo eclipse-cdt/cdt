@@ -75,10 +75,12 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
         fRootElement = rootElement;
     }
     
+    @Override
     public boolean isDeltaEvent(Object event) {
         return getEventDeltaFlags(event) != IModelDelta.NO_CHANGE; 
     }
 
+    @Override
     public int getEventDeltaFlags(Object event) {
         IRootVMNode rootNode = getVMProvider().getRootVMNode();
         if (rootNode != null && 
@@ -103,24 +105,29 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
         return fListeners.getListeners();
     }
 
+    @Override
     public void addModelChangedListener(IModelChangedListener listener) {
         fListeners.add(listener);
     }
 
+    @Override
     public void removeModelChangedListener(IModelChangedListener listener) {
         fListeners.remove(listener);
     }
 
+    @Override
     public Object getRootElement() {
         return fRootElement;
     }
     
     /** @since 1.1 */
-   public Object getViewerInput() {
+    @Override
+    public Object getViewerInput() {
         return fRootElement;
     }
     
-   /** @since 1.1 */
+    /** @since 1.1 */
+    @Override
     public TreePath getRootPath() {
         return TreePath.EMPTY;
     }
@@ -130,16 +137,19 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
      * 
      * @param delta model delta to broadcast
      */
+    @Override
     public void fireModelChanged(IModelDelta delta) {
         final IModelDelta root = getRootDelta(delta);
         Object[] listeners = getListeners();
         for (int i = 0; i < listeners.length; i++) {
             final IModelChangedListener listener = (IModelChangedListener) listeners[i];
             ISafeRunnable safeRunnable = new ISafeRunnable() {
+                @Override
                 public void handleException(Throwable exception) {
                     DebugUIPlugin.log(exception);
                 }
 
+                @Override
                 public void run() throws Exception {
                     listener.modelChanged(root, DefaultVMModelProxyStrategy.this);
                 }
@@ -167,6 +177,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.IModelProxy#dispose()
      */
+    @Override
     public void dispose() {
         fDisposed = true;
         if (fViewer instanceof StructuredViewer && fDoubleClickListener != null) {
@@ -178,6 +189,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.IModelProxy#init(org.eclipse.debug.internal.ui.viewers.IPresentationContext)
      */
+    @Override
     public void init(IPresentationContext context) {
         fDisposed = false;
         fContext = context;
@@ -199,15 +211,18 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
      * 
      * @see org.eclipse.debug.internal.ui.viewers.provisional.IModelProxy#installed(org.eclipse.jface.viewers.Viewer)
      */
+    @Override
     public void installed(final Viewer viewer) {  
         fViewer = viewer;
         getVMProvider().getExecutor().execute( new DsfRunnable() {
+            @Override
             public void run() {
                 fProvider.handleEvent(new ModelProxyInstalledEvent(DefaultVMModelProxyStrategy.this, viewer, fRootElement));
             }
         });
         if (fViewer instanceof StructuredViewer && fDoubleClickListener == null) {
         	((StructuredViewer) fViewer).addDoubleClickListener(fDoubleClickListener= new IDoubleClickListener() {
+        	    @Override
         		public void doubleClick(DoubleClickEvent e) {
         			handleDoubleClick(e);
         		}
@@ -231,6 +246,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
 	    	    final Object input = e.getViewer().getInput();
 	    	    
 	            vmProvider.getExecutor().execute( new DsfRunnable() {
+	                @Override
 	                public void run() {
 	                    Object rootElement = getRootElement();
 	                    boolean eventContainsRootElement = rootElement.equals(input);
@@ -254,6 +270,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
      * 
      * @since 1.1
      */
+    @Override
     public Viewer getViewer() {
         return fViewer;
     }
@@ -261,6 +278,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy#isDisposed()
      */
+    @Override
     public boolean isDisposed() {
         return fDisposed;
     }
@@ -326,6 +344,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
      * Default implementation creates a delta assuming that the root node
      * is the input object into the view.  
      */
+    @Override
     public void createDelta(final Object event, final DataRequestMonitor<IModelDelta> rm) {
         final IRootVMNode rootNode = getVMProvider().getRootVMNode(); 
         
@@ -369,6 +388,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
 
     protected VMDelta pruneDelta(VMDelta delta) {
         delta.accept(new IModelDeltaVisitor() {
+            @Override
             public boolean visit(IModelDelta deltaNode, int depth) {
                 if ((deltaNode.getFlags() & (IModelDelta.CONTENT | IModelDelta.STATE)) != 0) {
                     VMDelta parent = (VMDelta)deltaNode.getParentDelta();

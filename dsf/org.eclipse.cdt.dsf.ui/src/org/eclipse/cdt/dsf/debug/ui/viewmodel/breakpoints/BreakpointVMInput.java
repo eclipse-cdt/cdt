@@ -30,18 +30,21 @@ public class BreakpointVMInput extends AbstractVMContext implements IElementMeme
         fDMContext = dmc;
     }
 
-    public IDMContext getDMContext() {
+    @Override
+	public IDMContext getDMContext() {
         return fDMContext;
     }
     
-    public void encodeElements(IElementMementoRequest[] requests) {
+    @Override
+	public void encodeElements(IElementMementoRequest[] requests) {
         for (IElementMementoRequest request : requests) {
             request.getMemento().putString("ELEMENT_NAME", "BreakpointInputMemento");  //$NON-NLS-1$//$NON-NLS-2$
             request.done();
         }
     }
     
-    public void compareElements(IElementCompareRequest[] requests) {
+    @Override
+	public void compareElements(IElementCompareRequest[] requests) {
         for (IElementCompareRequest request : requests) {
             request.setEqual( "BreakpointInputMemento".equals(request.getMemento().getString("ELEMENT_NAME")) );  //$NON-NLS-1$//$NON-NLS-2$
             request.done();

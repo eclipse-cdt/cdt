@@ -76,7 +76,8 @@ public class ExpressionVMProvider extends AbstractDMVMProvider
     private IExpressionVMNode[] fExpressionNodes;
 
     private IPropertyChangeListener fPreferencesListener = new IPropertyChangeListener() {
-        public void propertyChange(PropertyChangeEvent event) {
+        @Override
+		public void propertyChange(PropertyChangeEvent event) {
             String property = event.getProperty();
 			if (property.equals(IDsfDebugUIConstants.PREF_WAIT_FOR_VIEW_UPDATE_AFTER_STEP_ENABLE)) {
                 IPreferenceStore store = DsfDebugUITools.getPreferenceStore();
@@ -86,7 +87,8 @@ public class ExpressionVMProvider extends AbstractDMVMProvider
     };
 
     private IPropertyChangeListener fPresentationContextListener = new IPropertyChangeListener() {
-        public void propertyChange(PropertyChangeEvent event) {
+        @Override
+		public void propertyChange(PropertyChangeEvent event) {
             handleEvent(event);
         }        
     };
@@ -280,7 +282,8 @@ public class ExpressionVMProvider extends AbstractDMVMProvider
 			final VariableVMNode variableNode) {
 		 try {
             getSession().getExecutor().execute(new DsfRunnable() {
-                public void run() {
+                @Override
+				public void run() {
                     DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), getSession().getId());
                     IExpressions2 expressions2 = tracker.getService(IExpressions2.class);
                     if (expressions2 != null) {
@@ -355,23 +358,28 @@ public class ExpressionVMProvider extends AbstractDMVMProvider
             new ExpressionsBreakpointHitUpdatePolicy() };
     }
 
-    public void expressionsAdded(IExpression[] expressions) {
+    @Override
+	public void expressionsAdded(IExpression[] expressions) {
         expressionsListChanged(ExpressionsChangedEvent.Type.ADDED, expressions, -1);
     }
     
-    public void expressionsRemoved(IExpression[] expressions) {
+    @Override
+	public void expressionsRemoved(IExpression[] expressions) {
         expressionsListChanged(ExpressionsChangedEvent.Type.REMOVED, expressions, -1);
     }
     
-    public void expressionsInserted(IExpression[] expressions, int index) {
+    @Override
+	public void expressionsInserted(IExpression[] expressions, int index) {
         expressionsListChanged(ExpressionsChangedEvent.Type.INSERTED, expressions, index);
     }
 
-    public void expressionsMoved(IExpression[] expressions, int index) {
+    @Override
+	public void expressionsMoved(IExpression[] expressions, int index) {
         expressionsListChanged(ExpressionsChangedEvent.Type.MOVED, expressions, index);
     }
     
-    public void expressionsChanged(IExpression[] expressions) {
+    @Override
+	public void expressionsChanged(IExpression[] expressions) {
         expressionsListChanged(ExpressionsChangedEvent.Type.CHANGED, expressions, -1);
     }
     
@@ -396,7 +404,8 @@ public class ExpressionVMProvider extends AbstractDMVMProvider
         super.refresh();
         try {
             getSession().getExecutor().execute(new DsfRunnable() {
-                public void run() {
+                @Override
+				public void run() {
                     DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), getSession().getId());
                     IExpressions expressionsService = tracker.getService(IExpressions.class);
                     if (expressionsService instanceof ICachingService) {

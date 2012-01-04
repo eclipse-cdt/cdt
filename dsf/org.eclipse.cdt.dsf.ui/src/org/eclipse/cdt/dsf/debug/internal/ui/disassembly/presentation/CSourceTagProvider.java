@@ -36,19 +36,23 @@ public class CSourceTagProvider implements ISourceTagProvider {
 		fUnit= unit;
 	}
 
+	@Override
 	public void addSourceTagListener(ISourceTagListener listener) {
 		fListenerList.add(listener);
 	}
 
+	@Override
 	public int[] getActiveCodePositions() {
 		// unsupported
 		return null;
 	}
 
+	@Override
 	public long getSnapshotTime() {
 		return 0;
 	}
 
+	@Override
 	public void getSourceTags(Collection<ISourceTag> target) {
 		try {
 			convertToSourceTags(fUnit.getChildren(), target);
@@ -88,6 +92,7 @@ public class CSourceTagProvider implements ISourceTagProvider {
 	/*
 	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.presentation.ISourceTagProvider#removeSourceTagListener(org.eclipse.cdt.dsf.debug.internal.ui.disassembly.presentation.ISourceTagListener)
 	 */
+	@Override
 	public void removeSourceTagListener(ISourceTagListener listener) {
 		fListenerList.remove(listener);
 	}

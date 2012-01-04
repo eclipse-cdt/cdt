@@ -27,15 +27,18 @@ public abstract class UpdatePolicyDecorator implements IVMUpdatePolicy {
     	return fBasePolicy;
     }
    
-    public final String getID() {
+    @Override
+	public final String getID() {
     	return fBasePolicy.getID();
     }
 
-    public String getName() {
+    @Override
+	public String getName() {
     	return fBasePolicy.getName();
     }
 
-    public IElementUpdateTester getElementUpdateTester(Object event) {
+    @Override
+	public IElementUpdateTester getElementUpdateTester(Object event) {
         return fBasePolicy.getElementUpdateTester(event);
     }
 }

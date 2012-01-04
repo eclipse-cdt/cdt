@@ -56,6 +56,7 @@ public class DefaultDsfSelectionPolicy implements IModelSelectionPolicy {
 	/*
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicy#contains(org.eclipse.jface.viewers.ISelection, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext)
 	 */
+	@Override
 	public boolean contains(ISelection selection, IPresentationContext context) {
 		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(context.getId())) {
 			if (selection instanceof IStructuredSelection) {
@@ -76,6 +77,7 @@ public class DefaultDsfSelectionPolicy implements IModelSelectionPolicy {
 	/*
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicy#isSticky(org.eclipse.jface.viewers.ISelection, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext)
 	 */
+	@Override
 	public boolean isSticky(ISelection selection, IPresentationContext context) {
 		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(context.getId())) {
 			if (selection instanceof IStructuredSelection) {
@@ -136,6 +138,7 @@ public class DefaultDsfSelectionPolicy implements IModelSelectionPolicy {
 	/*
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicy#overrides(org.eclipse.jface.viewers.ISelection, org.eclipse.jface.viewers.ISelection, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext)
 	 */
+	@Override
 	public boolean overrides(ISelection existing, ISelection candidate, IPresentationContext context) {
 		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(context.getId())) {
 			if (existing instanceof IStructuredSelection && candidate instanceof IStructuredSelection) {
@@ -243,6 +246,7 @@ public class DefaultDsfSelectionPolicy implements IModelSelectionPolicy {
 	/*
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicy#replaceInvalidSelection(org.eclipse.jface.viewers.ISelection, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public ISelection replaceInvalidSelection(ISelection invalidSelection, ISelection newSelection) {
         if (invalidSelection instanceof ITreeSelection) {
             ITreeSelection treeSelection = (ITreeSelection)invalidSelection;

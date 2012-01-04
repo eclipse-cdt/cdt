@@ -42,7 +42,8 @@ public class DisassemblyTextHover implements ITextHover {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.ITextHover#getHoverRegion(org.eclipse.jface.text.ITextViewer, int)
 	 */
-    public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
+    @Override
+	public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
 		IDocument doc = textViewer.getDocument();
 		return CWordFinder.findWord(doc, offset);
 	}
@@ -50,6 +51,7 @@ public class DisassemblyTextHover implements ITextHover {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.ITextHover#getHoverInfo(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
 	 */
+	@Override
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 		DisassemblyDocument doc = (DisassemblyDocument)textViewer.getDocument();
 		int offset = hoverRegion.getOffset();

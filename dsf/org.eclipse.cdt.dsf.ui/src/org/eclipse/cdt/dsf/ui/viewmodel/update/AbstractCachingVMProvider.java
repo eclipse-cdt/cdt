@@ -255,15 +255,24 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
                 ", oldProperties=" + fArchiveProperties + "]"; //$NON-NLS-1$ //$NON-NLS-2$ 
         }
 
-        public IVMNode getNode() { return ((ElementDataKey)fKey).fNode; }
-        public Object getViewerInput() { return ((ElementDataKey)fKey).fViewerInput; }
-        public TreePath getElementPath() { return ((ElementDataKey)fKey).fPath; }
-        public boolean isDirty() { return fDirty; }
-        public Boolean getHasChildren() { return fHasChildren; }
-        public Integer getChildCount() { return fChildrenCount; }
-        public Map<Integer, Object> getChildren() { return fChildren; }
-        public Map<String, Object> getProperties() { return fProperties; }
-        public java.util.Map<String,Object> getArchiveProperties() { return fArchiveProperties; }
+        @Override
+		public IVMNode getNode() { return ((ElementDataKey)fKey).fNode; }
+        @Override
+		public Object getViewerInput() { return ((ElementDataKey)fKey).fViewerInput; }
+        @Override
+		public TreePath getElementPath() { return ((ElementDataKey)fKey).fPath; }
+        @Override
+		public boolean isDirty() { return fDirty; }
+        @Override
+		public Boolean getHasChildren() { return fHasChildren; }
+        @Override
+		public Integer getChildCount() { return fChildrenCount; }
+        @Override
+		public Map<Integer, Object> getChildren() { return fChildren; }
+        @Override
+		public Map<String, Object> getProperties() { return fProperties; }
+        @Override
+		public java.util.Map<String,Object> getArchiveProperties() { return fArchiveProperties; }
     }
 
     /**
@@ -397,11 +406,13 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
         return new IVMUpdatePolicy[] { new AutomaticUpdatePolicy() };
     }
        
-    public IVMUpdatePolicy[] getAvailableUpdatePolicies() {
+    @Override
+	public IVMUpdatePolicy[] getAvailableUpdatePolicies() {
         return fAvailableUpdatePolicies;
     }
 
-    public IVMUpdatePolicy getActiveUpdatePolicy() {
+    @Override
+	public IVMUpdatePolicy getActiveUpdatePolicy() {
         String updateModeId = (String)getPresentationContext().getProperty(SELECTED_UPDATE_MODE);
         if (updateModeId != null) {
             for (IVMUpdatePolicy updateMode : getAvailableUpdatePolicies()) {
@@ -415,7 +426,8 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
         return getAvailableUpdatePolicies()[0];
     }
 
-    public void setActiveUpdatePolicy(IVMUpdatePolicy updatePolicy) {
+    @Override
+	public void setActiveUpdatePolicy(IVMUpdatePolicy updatePolicy) {
         getPresentationContext().setProperty(SELECTED_UPDATE_MODE, updatePolicy.getID());
 
         // Repaint the view to allow elements using the PROP_UPDATE_POLICY_ID 
@@ -427,7 +439,8 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
         }
     }
     
-    public void refresh() {
+    @Override
+	public void refresh() {
         IElementUpdateTester elementTester =  getActiveUpdatePolicy().getElementUpdateTester(ManualUpdatePolicy.REFRESH_EVENT);
         
         for (final IVMModelProxy proxyStrategy : getActiveModelProxies()) {
@@ -441,7 +454,8 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
         }
     }
     
-    public ICacheEntry getCacheEntry(IVMNode node, Object viewerInput, TreePath path) {
+    @Override
+	public ICacheEntry getCacheEntry(IVMNode node, Object viewerInput, TreePath path) {
         ElementDataKey key = makeEntryKey(node, viewerInput, path);
         return getElementDataEntry(key, false);
     }
@@ -819,11 +833,13 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
             }
         }
         
-        public synchronized void viewerUpdatesComplete() {
+        @Override
+		public synchronized void viewerUpdatesComplete() {
             done();
         }
 
-        public void modelChanged(IModelDelta delta, IModelProxy proxy) {
+        @Override
+		public void modelChanged(IModelDelta delta, IModelProxy proxy) {
             synchronized (this) {
                 if (!fViewerChangeStarted) {
                     done();
@@ -831,7 +847,8 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
             }
         }
         
-        public void viewerUpdatesBegin() {
+        @Override
+		public void viewerUpdatesBegin() {
             synchronized(this) {
                 fViewerChangeStarted = true;
             }
@@ -845,8 +862,10 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
             }
         }
         
-        public void updateStarted(IViewerUpdate update) {}
-        public void updateComplete(IViewerUpdate update) {}
+        @Override
+		public void updateStarted(IViewerUpdate update) {}
+        @Override
+		public void updateComplete(IViewerUpdate update) {}
         
     }
     
@@ -1072,7 +1091,8 @@ public class AbstractCachingVMProvider extends AbstractVMProvider
     /**
      * @since 2.0
      */
-    public void update(IPropertiesUpdate[] updates) {
+    @Override
+	public void update(IPropertiesUpdate[] updates) {
         if (updates.length == 0)
             return;
 

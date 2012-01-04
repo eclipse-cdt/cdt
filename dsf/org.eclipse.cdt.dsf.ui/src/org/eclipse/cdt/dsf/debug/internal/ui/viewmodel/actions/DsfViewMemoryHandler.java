@@ -67,6 +67,7 @@ public class DsfViewMemoryHandler extends AbstractHandler {
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		ISelection selection = HandlerUtil.getCurrentSelection(event);
 		if (selection instanceof IStructuredSelection) {
@@ -184,6 +185,7 @@ public class DsfViewMemoryHandler extends AbstractHandler {
 					continue;
 				}
 				executor.execute(new DsfRunnable() {
+					@Override
 					public void run() {
 						DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), session.getId());
 						IExpressions service = tracker.getService(IExpressions.class);

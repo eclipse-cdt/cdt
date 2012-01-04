@@ -198,6 +198,7 @@ abstract public class AbstractDsfDebugTextHover extends AbstractDebugTextHover i
 		}
 
 		return new IInformationControlCreator() {
+			@Override
 			public IInformationControl createInformationControl(Shell parent) {
 				return new DefaultInformationControl(parent, EditorsUI.getTooltipAffordanceString());
 			}
@@ -207,6 +208,7 @@ abstract public class AbstractDsfDebugTextHover extends AbstractDebugTextHover i
 	/*
 	 * @see org.eclipse.jface.text.ITextHoverExtension2#getHoverInfo2(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
 	 */
+	@Override
 	public Object getHoverInfo2(ITextViewer textViewer, IRegion hoverRegion) {
     	final String simpleInfo = getHoverInfo(textViewer, hoverRegion);
 		if (!useExpressionExplorer() || simpleInfo == null) {
@@ -222,6 +224,7 @@ abstract public class AbstractDsfDebugTextHover extends AbstractDebugTextHover i
 				final DsfSession dsfSession = DsfSession.getSession(frameDmc.getSessionId());
 				if (dsfSession != null) {
 					Callable<IExpressionDMContext> callable = new Callable<IExpressionDMContext>() {
+						@Override
 						public IExpressionDMContext call() throws Exception {
 							DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), frameDmc.getSessionId());
 							try {

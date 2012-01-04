@@ -54,6 +54,7 @@ public class DetailPaneMaxLengthDialog extends TrayDialog {
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		fValue = Integer.toString(DsfUIPlugin.getDefault().getPreferenceStore().getInt(IDebugUIConstants.PREF_MAX_DETAIL_LENGTH));
 		fValidator = new IInputValidator() {
+					@Override
 					public String isValid(String newText) {
 						try {
 							int num = Integer.parseInt(newText);
@@ -109,7 +110,8 @@ public class DetailPaneMaxLengthDialog extends TrayDialog {
         fTextWidget.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
         fTextWidget.setText(fValue);
         fTextWidget.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent e) {
+            @Override
+			public void modifyText(ModifyEvent e) {
                 validateInput();
                 fValue = fTextWidget.getText();
             }

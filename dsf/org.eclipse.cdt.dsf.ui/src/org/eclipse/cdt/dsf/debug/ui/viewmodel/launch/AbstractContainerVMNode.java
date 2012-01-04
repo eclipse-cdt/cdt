@@ -118,6 +118,7 @@ public abstract class AbstractContainerVMNode extends AbstractExecutionContextVM
     }
     
 	
+	@Override
 	public void update(final ILabelUpdate[] updates) {
         fLabelProvider.update(updates);
     }
@@ -127,10 +128,12 @@ public abstract class AbstractContainerVMNode extends AbstractExecutionContextVM
      * 
      * @since 2.0
      */    
-    public void update(final IPropertiesUpdate[] updates) {
+    @Override
+	public void update(final IPropertiesUpdate[] updates) {
         try {
             getSession().getExecutor().execute(new DsfRunnable() {
-                public void run() {
+                @Override
+				public void run() {
                     updatePropertiesInSessionThread(updates);
                 }});
         } catch (RejectedExecutionException e) {
@@ -228,7 +231,8 @@ public abstract class AbstractContainerVMNode extends AbstractExecutionContextVM
                 protected void handleSuccess() {
                     try {
                         getSession().getExecutor().execute(new DsfRunnable() {
-                            public void run() {
+                            @Override
+							public void run() {
                                 final IRunControl runControl = getServicesTracker().getService(IRunControl.class);
                                 if (runControl != null) {
                                     int vmcIdx = -1;
@@ -270,7 +274,8 @@ public abstract class AbstractContainerVMNode extends AbstractExecutionContextVM
             }));
     }
 
-    public int getDeltaFlags(Object e) {
+    @Override
+	public int getDeltaFlags(Object e) {
         IDMContext dmc = e instanceof IDMEvent<?> ? ((IDMEvent<?>)e).getDMContext() : null;
 
 	    if (e instanceof IContainerResumedDMEvent) {
@@ -301,6 +306,7 @@ public abstract class AbstractContainerVMNode extends AbstractExecutionContextVM
 	    return IModelDelta.NO_CHANGE;
 	}
 
+	@Override
 	public void buildDelta(Object e, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor requestMonitor) {
 	    IDMContext dmc = e instanceof IDMEvent<?> ? ((IDMEvent<?>)e).getDMContext() : null;
 	    

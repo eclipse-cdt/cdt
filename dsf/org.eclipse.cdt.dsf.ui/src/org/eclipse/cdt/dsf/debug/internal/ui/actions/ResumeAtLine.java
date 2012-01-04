@@ -42,10 +42,12 @@ public class ResumeAtLine implements IResumeAtLine, IResumeAtAddress {
         fContext = context;
     }
 
+	@Override
 	public boolean canResumeAtLine(IFile file, final int lineNumber) {
 		return canResumeAtLine(file.getLocation().makeAbsolute().toOSString(), lineNumber);
 	}
 
+	@Override
 	public boolean canResumeAtLine(final String fileName, final int lineNumber) {
         DsfSession session = DsfSession.getSession(fContext.getSessionId());
         if (session != null && session.isActive()) {
@@ -76,10 +78,12 @@ public class ResumeAtLine implements IResumeAtLine, IResumeAtAddress {
         return false;
     }
 	
+	@Override
 	public void resumeAtLine(IFile file, int lineNumber) throws DebugException {
 		resumeAtLine(file.getLocation().makeAbsolute().toOSString(), lineNumber);
 	}
 	
+	@Override
 	public void resumeAtLine(final String fileName, final int lineNumber) throws DebugException {
         DsfSession session = DsfSession.getSession(fContext.getSessionId());
         if (session != null && session.isActive()) {
@@ -119,6 +123,7 @@ public class ResumeAtLine implements IResumeAtLine, IResumeAtAddress {
         }
     }
 	
+	@Override
 	public boolean canResumeAtAddress(final IAddress address) {
         DsfSession session = DsfSession.getSession(fContext.getSessionId());
         if (session != null && session.isActive()) {
@@ -149,6 +154,7 @@ public class ResumeAtLine implements IResumeAtLine, IResumeAtAddress {
         return false;
     }
 
+	@Override
 	public void resumeAtAddress(final IAddress address) throws DebugException {
         DsfSession session = DsfSession.getSession(fContext.getSessionId());
         if (session != null && session.isActive()) {

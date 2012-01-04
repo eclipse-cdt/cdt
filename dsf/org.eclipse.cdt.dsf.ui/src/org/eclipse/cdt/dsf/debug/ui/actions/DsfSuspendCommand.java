@@ -40,7 +40,8 @@ public class DsfSuspendCommand implements ISuspendHandler {
         fTracker.dispose();
     }
 
-    public void canExecute(final IEnabledStateRequest request) {
+    @Override
+	public void canExecute(final IEnabledStateRequest request) {
         if (request.getElements().length != 1) {
             request.setEnabled(false);
             request.done();
@@ -62,7 +63,8 @@ public class DsfSuspendCommand implements ISuspendHandler {
         });
     }
 
-    public boolean execute(final IDebugCommandRequest request) {
+    @Override
+	public boolean execute(final IDebugCommandRequest request) {
         if (request.getElements().length != 1) {
             request.done();
             return false;

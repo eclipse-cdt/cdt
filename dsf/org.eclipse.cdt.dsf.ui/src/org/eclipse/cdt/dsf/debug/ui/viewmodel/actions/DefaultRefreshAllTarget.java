@@ -26,7 +26,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  */
 public class DefaultRefreshAllTarget implements IRefreshAllTarget {
 
-    public void refresh(ISelection debugContext) throws CoreException {
+    @Override
+	public void refresh(ISelection debugContext) throws CoreException {
         IVMAdapter adapter = getActiveVMAdapter( debugContext );
 
         if (adapter != null) {

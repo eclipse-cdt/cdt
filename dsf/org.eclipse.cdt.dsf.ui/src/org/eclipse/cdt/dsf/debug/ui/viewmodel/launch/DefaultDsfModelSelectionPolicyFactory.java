@@ -27,6 +27,7 @@ public class DefaultDsfModelSelectionPolicyFactory implements IModelSelectionPol
 	/*
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicyFactory#createModelSelectionPolicyAdapter(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext)
 	 */
+	@Override
 	public IModelSelectionPolicy createModelSelectionPolicyAdapter(Object element, IPresentationContext context) {
 		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(context.getId())) {
 			if (element instanceof IDMVMContext) {

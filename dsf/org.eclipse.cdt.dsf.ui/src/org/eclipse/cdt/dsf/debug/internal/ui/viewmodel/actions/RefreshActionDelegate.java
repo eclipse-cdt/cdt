@@ -25,7 +25,8 @@ import org.eclipse.ui.IViewPart;
  */
 public class RefreshActionDelegate extends AbstractVMProviderActionDelegate {
 
-    public void run(IAction action) {
+    @Override
+	public void run(IAction action) {
         IVMProvider provider = VMHandlerUtils.getVMProviderForPart(getView());
         if (provider instanceof ICachingVMProvider) {
             ((ICachingVMProvider)provider).refresh();

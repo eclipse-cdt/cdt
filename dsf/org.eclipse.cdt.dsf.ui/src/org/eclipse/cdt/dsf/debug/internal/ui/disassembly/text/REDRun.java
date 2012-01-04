@@ -124,6 +124,7 @@ public class REDRun implements CharSequence {
 	/*
 	 * @see java.lang.CharSequence#charAt(int)
 	 */
+	@Override
 	public char charAt(int pos) {
 		try {
 			fRider.seek(fOffset + pos);
@@ -136,6 +137,7 @@ public class REDRun implements CharSequence {
 	/*
 	 * @see java.lang.CharSequence#subSequence(int, int)
 	 */
+	@Override
 	public CharSequence subSequence(int start, int end) {
 		return new REDRun(fRider, fOffset + start, end - start);
 	}
@@ -143,6 +145,7 @@ public class REDRun implements CharSequence {
 	/*
 	 * @see java.lang.CharSequence#length()
 	 */
+	@Override
 	public int length() {
 		return fLength;
 	}

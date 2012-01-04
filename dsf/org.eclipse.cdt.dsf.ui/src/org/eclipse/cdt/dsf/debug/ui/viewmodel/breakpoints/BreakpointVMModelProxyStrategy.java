@@ -31,7 +31,8 @@ public class BreakpointVMModelProxyStrategy extends DefaultVMModelProxyStrategy 
         super(provider, rootElement);
     }
     
-    public boolean setChecked(IPresentationContext context, Object viewerInput, TreePath path, boolean checked) {
+    @Override
+	public boolean setChecked(IPresentationContext context, Object viewerInput, TreePath path, boolean checked) {
         Object lastSegment = path.getLastSegment();
         if (lastSegment instanceof IBreakpointContainer) {
             IBreakpoint[] breakpoints = ((IBreakpointContainer) lastSegment).getBreakpoints();

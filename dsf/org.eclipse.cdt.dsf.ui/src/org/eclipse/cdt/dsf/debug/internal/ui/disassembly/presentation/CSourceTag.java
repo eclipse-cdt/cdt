@@ -24,18 +24,22 @@ public class CSourceTag implements ISourceTag {
 	 */
 	public class NullRange implements ISourceRange {
 
+		@Override
 		public boolean contains(int offset) {
 			return false;
 		}
 
+		@Override
 		public int getBeginOffset() {
 			return 0;
 		}
 
+		@Override
 		public int getEndOffset() {
 			return -1;
 		}
 
+		@Override
 		public int compareTo(ISourceRange other) {
 			if (this == other) {
 				return 0;
@@ -59,18 +63,22 @@ public class CSourceTag implements ISourceTag {
 			fRange= sourceRange;
 		}
 
+		@Override
 		public boolean contains(int offset) {
 			return fRange.getStartPos() <= offset && offset - fRange.getStartPos() < fRange.getLength();
 		}
 
+		@Override
 		public int getBeginOffset() {
 			return fRange.getStartPos();
 		}
 
+		@Override
 		public int getEndOffset() {
 			return fRange.getStartPos() + fRange.getLength() - 1;
 		}
 
+		@Override
 		public int compareTo(ISourceRange other) {
 			int delta= this.getBeginOffset() - other.getBeginOffset();
 			if (delta == 0) {
@@ -92,18 +100,22 @@ public class CSourceTag implements ISourceTag {
 			fRange= sourceRange;
 		}
 
+		@Override
 		public boolean contains(int offset) {
 			return fRange.getIdStartPos() <= offset && offset - fRange.getIdStartPos() < fRange.getIdLength();
 		}
 
+		@Override
 		public int getBeginOffset() {
 			return fRange.getIdStartPos();
 		}
 
+		@Override
 		public int getEndOffset() {
 			return fRange.getIdStartPos() + fRange.getIdLength() - 1;
 		}
 
+		@Override
 		public int compareTo(ISourceRange other) {
 			int delta= this.getBeginOffset() - other.getBeginOffset();
 			if (delta == 0) {
@@ -128,6 +140,7 @@ public class CSourceTag implements ISourceTag {
 		fType= elementType;
 	}
 
+	@Override
 	public ISourceRange getFullRange() {
 		try {
 			return new CSourceRange(fReference.getSourceRange());
@@ -136,14 +149,17 @@ public class CSourceTag implements ISourceTag {
 		return new NullRange();
 	}
 
+	@Override
 	public String getName() {
 		return ((ICElement)fReference).getElementName();
 	}
 
+	@Override
 	public String getQualifiedName() {
 		return getName();
 	}
 
+	@Override
 	public ISourceRange getRangeOfIdentifier() {
 		try {
 			return new CIdentifierRange(fReference.getSourceRange());
@@ -152,10 +168,12 @@ public class CSourceTag implements ISourceTag {
 		return new NullRange();
 	}
 
+	@Override
 	public long getSnapshotTime() {
 		return 0;
 	}
 
+	@Override
 	public int getStyleCode() {
 		switch (fType) {
 		case ICElement.C_METHOD :

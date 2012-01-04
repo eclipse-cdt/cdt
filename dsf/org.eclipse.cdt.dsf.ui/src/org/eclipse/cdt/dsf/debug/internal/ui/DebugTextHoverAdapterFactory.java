@@ -28,7 +28,8 @@ public class DebugTextHoverAdapterFactory implements IAdapterFactory {
     private static final Class<?>[] TYPES = { ICEditorTextHover.class };
     private static final Object fDebugTextHover= new DsfDebugTextHover();
     
-    @SuppressWarnings("rawtypes")
+    @Override
+	@SuppressWarnings("rawtypes")
     public Object getAdapter(Object adaptableObject, Class adapterType) {
         if (adaptableObject instanceof IDMVMContext) {
         	IDMContext dmc = ((IDMVMContext) adaptableObject).getDMContext();
@@ -46,7 +47,8 @@ public class DebugTextHoverAdapterFactory implements IAdapterFactory {
         return null;
     }
 
-    @SuppressWarnings("rawtypes")
+    @Override
+	@SuppressWarnings("rawtypes")
     public Class[] getAdapterList() {
         return TYPES;
     }

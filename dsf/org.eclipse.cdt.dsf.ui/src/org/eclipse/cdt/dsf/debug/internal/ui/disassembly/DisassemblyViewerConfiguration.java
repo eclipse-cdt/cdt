@@ -43,12 +43,14 @@ public class DisassemblyViewerConfiguration extends TextSourceViewerConfiguratio
 		/*
 		 * @see org.eclipse.jface.text.presentation.IPresentationDamager#setDocument(org.eclipse.jface.text.IDocument)
 		 */
+		@Override
 		public void setDocument(IDocument document) {
 		}
 
 		/*
 		 * @see org.eclipse.jface.text.presentation.IPresentationDamager#getDamageRegion(org.eclipse.jface.text.ITypedRegion, org.eclipse.jface.text.DocumentEvent, boolean)
 		 */
+		@Override
 		public IRegion getDamageRegion(ITypedRegion partition, DocumentEvent e, boolean documentPartitioningChanged) {
 			int start= e.fOffset;
 			int end= e.getOffset() + (e.getText() == null ? 0 : e.getText().length());
@@ -58,6 +60,7 @@ public class DisassemblyViewerConfiguration extends TextSourceViewerConfiguratio
 		/*
 		 * @see org.eclipse.jface.text.presentation.IPresentationRepairer#createPresentation(org.eclipse.jface.text.TextPresentation, org.eclipse.jface.text.ITypedRegion)
 		 */
+		@Override
 		public void createPresentation(TextPresentation presentation, ITypedRegion damage) {
 			// do nothing
 		}

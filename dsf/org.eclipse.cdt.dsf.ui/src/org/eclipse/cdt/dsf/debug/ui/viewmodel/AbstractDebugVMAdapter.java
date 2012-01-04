@@ -35,7 +35,8 @@ public class AbstractDebugVMAdapter extends AbstractDMVMAdapter
         fController = controller;
         try {
             fController.getExecutor().execute(new DsfRunnable() {
-                public void run() {
+                @Override
+				public void run() {
                     fController.addSteppingControlParticipant(AbstractDebugVMAdapter.this);
                 }
             });
@@ -54,7 +55,8 @@ public class AbstractDebugVMAdapter extends AbstractDMVMAdapter
         if (event instanceof IRunControl.ISuspendedDMEvent) {
             final ISuspendedDMEvent suspendedEvent= (IRunControl.ISuspendedDMEvent) event;
             fController.getExecutor().execute(new DsfRunnable() {
-                public void run() {
+                @Override
+				public void run() {
                     fController.doneStepping(suspendedEvent.getDMContext(), AbstractDebugVMAdapter.this);
                 };
             });
@@ -65,7 +67,8 @@ public class AbstractDebugVMAdapter extends AbstractDMVMAdapter
     public void dispose() {
         try {
 	        fController.getExecutor().execute(new DsfRunnable() {
-	            public void run() {
+	            @Override
+				public void run() {
 	                fController.removeSteppingControlParticipant(AbstractDebugVMAdapter.this);
 	            }
 	        });

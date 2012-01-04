@@ -126,6 +126,7 @@ public final class SteppingController {
 		
 		private final IExecutionDMContext fDmc;
 		
+		@Override
 		public void run() {
 			fTimedOutFutures.remove(fDmc);
 
@@ -187,7 +188,8 @@ public final class SteppingController {
         final IPreferenceStore store= DsfUIPlugin.getDefault().getPreferenceStore();
 
         fPreferencesListener = new IPropertyChangeListener() {
-            public void propertyChange(final PropertyChangeEvent event) {
+            @Override
+			public void propertyChange(final PropertyChangeEvent event) {
                 handlePropertyChanged(store, event);
             }};
         store.addPropertyChangeListener(fPreferencesListener);
@@ -199,7 +201,8 @@ public final class SteppingController {
     public void dispose() {
         try {
             fSession.getExecutor().execute(new DsfRunnable() {
-                public void run() {
+                @Override
+				public void run() {
                     if (fRunControl != null) {
                         getSession().removeServiceEventListener(SteppingController.this);
                     }
@@ -492,6 +495,7 @@ public final class SteppingController {
 			final int stepDelay = getStepDelay(execCtx);
 			if (stepDelay > 0) {
 				getExecutor().schedule(new DsfRunnable() {
+					@Override
 					public void run() {
 						processStepQueue(execCtx);
 					}

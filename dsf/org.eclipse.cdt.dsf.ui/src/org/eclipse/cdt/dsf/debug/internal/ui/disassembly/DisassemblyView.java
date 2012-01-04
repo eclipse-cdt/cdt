@@ -43,6 +43,7 @@ public class DisassemblyView extends DisassemblyPart implements IViewPart {
 	/*
 	 * @see org.eclipse.ui.IViewPart#getViewSite()
 	 */
+	@Override
 	public IViewSite getViewSite() {
 		return (IViewSite)getSite();
 	}
@@ -50,6 +51,7 @@ public class DisassemblyView extends DisassemblyPart implements IViewPart {
 	/*
 	 * @see org.eclipse.ui.IViewPart#init(org.eclipse.ui.IViewSite)
 	 */
+	@Override
 	public void init(IViewSite site) throws PartInitException {
 		setSite(site);
 	}
@@ -57,6 +59,7 @@ public class DisassemblyView extends DisassemblyPart implements IViewPart {
 	/*
 	 * @see org.eclipse.ui.IViewPart#init(org.eclipse.ui.IViewSite, org.eclipse.ui.IMemento)
 	 */
+	@Override
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		setSite(site);
         if (memento != null) {
@@ -72,6 +75,7 @@ public class DisassemblyView extends DisassemblyPart implements IViewPart {
 	/*
 	 * @see org.eclipse.ui.IViewPart#saveState(org.eclipse.ui.IMemento)
 	 */
+	@Override
 	public void saveState(IMemento memento) {
 		memento.putBoolean(DisassemblyPreferenceConstants.TRACK_EXPRESSION, isTrackExpression());
 		memento.putBoolean(DisassemblyPreferenceConstants.SYNC_ACTIVE_CONTEXT, isSyncWithActiveDebugContext());

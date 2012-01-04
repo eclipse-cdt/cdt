@@ -37,6 +37,7 @@ public class BreakpointOrganizerVMNode extends AbstractVMNode {
     private final IBreakpointOrganizer fOrganizer;
 
     private final IPropertyChangeListener fOrganizerListener = new IPropertyChangeListener() {
+        @Override
         public void propertyChange(PropertyChangeEvent event) {
             ((BreakpointVMProvider)getVMProvider()).handleEventInExecThread(event);
         }
@@ -58,6 +59,7 @@ public class BreakpointOrganizerVMNode extends AbstractVMNode {
         return fOrganizer;
     }
     
+    @Override
     public void update(final IHasChildrenUpdate[] updates) {
         for (final IHasChildrenUpdate update : updates) {
             if (!checkUpdate(update)) continue;
@@ -73,6 +75,7 @@ public class BreakpointOrganizerVMNode extends AbstractVMNode {
         }
     }
 
+    @Override
     public void update(final IChildrenCountUpdate[] updates) {
         for (final IChildrenCountUpdate update : updates) {
             if (!checkUpdate(update)) continue;
@@ -88,6 +91,7 @@ public class BreakpointOrganizerVMNode extends AbstractVMNode {
         }
     }
     
+    @Override
     public void update(IChildrenUpdate[] updates) {
         for (final IChildrenUpdate update : updates) {
             if (!checkUpdate(update)) continue;
@@ -114,6 +118,7 @@ public class BreakpointOrganizerVMNode extends AbstractVMNode {
         return new BreakpointOrganizerVMContext(this, category, breakpoints);
     }
     
+    @Override
     public int getDeltaFlags(Object event) {
         if (event instanceof BreakpointsChangedEvent) {
             return IModelDelta.CONTENT;
@@ -132,6 +137,7 @@ public class BreakpointOrganizerVMNode extends AbstractVMNode {
         return 0;
     }
 
+    @Override
     public void buildDelta(Object event, VMDelta parent, int nodeOffset, RequestMonitor requestMonitor) {
         if (event instanceof BreakpointsChangedEvent) {
             parent.setFlags(parent.getFlags() | IModelDelta.CONTENT);

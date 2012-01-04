@@ -62,6 +62,7 @@ abstract public class AbstractDsfService
         fSession = session;
     }
 
+    @Override
     public DsfExecutor getExecutor() { return fSession.getExecutor(); }
 
 	/**
@@ -75,18 +76,23 @@ abstract public class AbstractDsfService
 	 * @see org.eclipse.cdt.dsf.service.IDsfService#getProperties()
 	 */
     @SuppressWarnings("rawtypes")
+    @Override
     public Dictionary getProperties() { return fProperties; }
     
+    @Override
     public String getServiceFilter() { return fFilter; }
     
+    @Override
     public int getStartupNumber() { return fStartupNumber; }
     
+    @Override
     public void initialize(RequestMonitor rm) {
         fTracker = new DsfServicesTracker(getBundleContext(), fSession.getId());
         fStartupNumber = fSession.getAndIncrementServiceStartupCounter();
         rm.done();
     }
         
+    @Override
     public void shutdown(RequestMonitor rm) {
         fTracker.dispose();
         fTracker = null;
@@ -96,11 +102,13 @@ abstract public class AbstractDsfService
     /**
 	 * @since 2.0
 	 */
+    @Override
     public boolean isRegistered() {
         return getServiceRegistration() != null;
     }
 
     /** Returns the session object for this service */
+    @Override
     public DsfSession getSession() { return fSession; }
 
     /**

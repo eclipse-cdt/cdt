@@ -45,15 +45,18 @@ abstract public class AbstractVMNode implements IVMNode {
         return fProvider.getExecutor();
     }
 
-    public IVMProvider getVMProvider() {
+    @Override
+	public IVMProvider getVMProvider() {
         return fProvider;
     }
     
-    public void dispose() {
+    @Override
+	public void dispose() {
         fDisposed = true;
     }
 
-    public void getContextsForEvent(VMDelta parentDelta, Object event, DataRequestMonitor<IVMContext[]> rm) {
+    @Override
+	public void getContextsForEvent(VMDelta parentDelta, Object event, DataRequestMonitor<IVMContext[]> rm) {
         rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfStatusConstants.NOT_SUPPORTED, "", null)); //$NON-NLS-1$
         rm.done();
     }

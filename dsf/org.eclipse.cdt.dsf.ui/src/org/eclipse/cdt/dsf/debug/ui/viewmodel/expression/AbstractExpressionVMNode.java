@@ -52,7 +52,8 @@ public abstract class AbstractExpressionVMNode extends AbstractDMVMNode
         super(provider, session, dmcClassType);
     }
 
-    public void update(final IExpressionUpdate update) {
+    @Override
+	public void update(final IExpressionUpdate update) {
         if (!canParseExpression(update.getExpression())) {
             // This method should not be called if canParseExpression() returns false.
             // Return an internal error status.

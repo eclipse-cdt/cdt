@@ -210,7 +210,7 @@ public class DsfSession
         synchronized(fgActiveSessions) {
             final DsfSession newSession = new DsfSession(executor, ownerId, Integer.toString(fgSessionIdCounter++));
             fgActiveSessions.add(newSession);
-            executor.submit( new DsfRunnable() { public void run() {
+            executor.submit( new DsfRunnable() { @Override public void run() {
                 SessionStartedListener[] listeners = fSessionStartedListeners.toArray(
                     new SessionStartedListener[fSessionStartedListeners.size()]);
                 for (int i = 0; i < listeners.length; i++) {
@@ -234,7 +234,7 @@ public class DsfSession
                 throw new IllegalArgumentException();
             }
             fgActiveSessions.remove(session);
-            session.getExecutor().submit( new DsfRunnable() { public void run() {
+            session.getExecutor().submit( new DsfRunnable() { @Override public void run() {
                 SessionEndedListener[] listeners = fSessionEndedListeners.toArray(
                     new SessionEndedListener[fSessionEndedListeners.size()]);
                 for (int i = 0; i < listeners.length; i++) {
@@ -386,6 +386,7 @@ public class DsfSession
         	DsfPlugin.debug(msg);
         }
         getExecutor().submit(new DsfRunnable() { 
+            @Override
             public void run() { doDispatchEvent(event, serviceProperties);}
             @Override
             public String toString() { return "Event: " + event + ", from service " + serviceProperties; }  //$NON-NLS-1$ //$NON-NLS-2$
@@ -467,6 +468,7 @@ public class DsfSession
         
         // Build a list of listeners;
         SortedMap<ListenerEntry,List<Method>> listeners = new TreeMap<ListenerEntry,List<Method>>(new Comparator<ListenerEntry>() {
+            @Override
                 public int compare(ListenerEntry o1, ListenerEntry o2) {
                     if (o1.fListener == o2.fListener) {
                         return 0;

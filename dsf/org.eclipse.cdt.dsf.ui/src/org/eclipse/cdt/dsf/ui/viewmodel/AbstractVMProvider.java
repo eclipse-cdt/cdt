@@ -186,10 +186,12 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
         fContentStrategy = createContentStrategy();
     }    
 
+    @Override
     public IPresentationContext getPresentationContext() {
         return fPresentationContext;
     }
 
+    @Override
     public AbstractVMAdapter getVMAdapter() {
         return fVMAdapter;
     }
@@ -254,6 +256,7 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
      * {@inheritDoc}
 	 * @since 1.1
 	 */
+    @Override
     public void handleEvent(final Object event, RequestMonitor rm) {
         if (DEBUG_DELTA && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
         	trace(event, null, null, EventHandlerAction.received);
@@ -418,14 +421,17 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
     }
     
     /** @since 1.1 */
+    @Override
     public boolean shouldWaitHandleEventToComplete() {
         return false;
     }
     
+    @Override
     public IRootVMNode getRootVMNode() {
         return fRootNode;
     }
 
+    @Override
     public IVMNode[] getAllVMNodes() {
         if (fNodesListCache != null) {
             return fNodesListCache;
@@ -440,6 +446,7 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
         return fNodesListCache; 
     }
         
+    @Override
     public IVMNode[] getChildVMNodes(IVMNode node) {
         IVMNode[] retVal = fChildNodesMap.get(node);
         if (retVal != null) {
@@ -525,20 +532,24 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
     }
     
     /** Called to dispose the provider. */ 
+    @Override
     public void dispose() {
         clearNodes();
         fRootNode = null;
         fDisposed = true;
     }
     
+    @Override
     public void update(final IHasChildrenUpdate[] updates) {
         fContentStrategy.update(updates);
     }
     
+    @Override
     public void update(final IChildrenCountUpdate[] updates) {
         fContentStrategy.update(updates);
     }
     
+    @Override
     public void update(final IChildrenUpdate[] updates) {
         fContentStrategy.update(updates);
     }
@@ -557,6 +568,7 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
 	 * represent that type. It represents the type of the potential children
 	 * (frame, e.g.)
 	 */
+    @Override
     public void updateNode(final IVMNode node, IHasChildrenUpdate[] updates) {
         IHasChildrenUpdate[] updateProxies = new IHasChildrenUpdate[updates.length];
         for (int i = 0; i < updates.length; i++) {
@@ -611,6 +623,7 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
      * overrides this method to optionally return the results for an update from
      * a cache. 
      */
+    @Override
     public void updateNode(final IVMNode node, final IChildrenCountUpdate update) {
         if (DEBUG_CONTENT_PROVIDER && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
             DsfUIPlugin.debug("updateNodeChildCount(node = " + node + ", update = " + update + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -660,6 +673,7 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
      * overrides this method to optionally return the results for an update from
      * a cache. 
      */
+    @Override
     public void updateNode(IVMNode node, IChildrenUpdate update) {
         if (DEBUG_CONTENT_PROVIDER && (DEBUG_PRESENTATION_ID == null || getPresentationContext().getId().equals(DEBUG_PRESENTATION_ID))) {
             DsfUIPlugin.debug("updateNodeChildren(node = " + node + ", update = " + update + ")");  //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
@@ -684,10 +698,12 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
      * need to worry about the executor throwing the {@link RejectedExecutionException}
      * exception. 
      */
+    @Override
     public Executor getExecutor() { 
         return fExecutor; 
     }
     
+    @Override
     public IModelProxy createModelProxy(Object element, IPresentationContext context) {
         
         // Iterate through the current active proxies to try to find a proxy with the same
@@ -739,6 +755,7 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
      * 
      * @see IColumnPresentationFactory#createColumnPresentation(IPresentationContext, Object)
      */
+    @Override
     public IColumnPresentation createColumnPresentation(IPresentationContext context, Object element) {
         return null;
     }
@@ -758,6 +775,7 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
      * 
      * @see IColumnEditorFactory#getColumnEditorId(IPresentationContext, Object)
      */
+    @Override
     public String getColumnPresentationId(IPresentationContext context, Object element) {
         return null;
     }
@@ -771,6 +789,7 @@ abstract public class AbstractVMProvider implements IVMProvider, IVMEventListene
      * 
      * @see IViewerInputProvider
      */
+    @Override
     public void update(IViewerInputUpdate update) {
         update.setInputElement(update.getElement());
         update.done();

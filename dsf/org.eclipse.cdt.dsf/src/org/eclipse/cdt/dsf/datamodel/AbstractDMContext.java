@@ -116,7 +116,9 @@ abstract public class AbstractDMContext extends PlatformObject
         return retVal.toString(); 
     }
     
+    @Override
     public String getSessionId() { return fSession.getId(); }
+    @Override
     public IDMContext[] getParents() { return fParents; }
         
     /**

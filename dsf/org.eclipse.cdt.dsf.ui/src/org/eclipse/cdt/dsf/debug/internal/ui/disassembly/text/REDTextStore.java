@@ -157,6 +157,7 @@ public final class REDTextStore implements ITextStore {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.ITextStore#get(int)
 	 */
+	@Override
 	public char get(int offset) {
 		synchronized (fRunSpec) {
 			RunSpec spec = findNextRun(offset, null);
@@ -170,6 +171,7 @@ public final class REDTextStore implements ITextStore {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.ITextStore#get(int, int)
 	 */
+	@Override
 	public String get(int offset, int length) {
 		synchronized (fRunSpec) {
 			// special case: long in-memory text in full length (about to be swapped)
@@ -184,6 +186,7 @@ public final class REDTextStore implements ITextStore {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.ITextStore#getLength()
 	 */
+	@Override
 	public int getLength() {
 		synchronized (fRunSpec) {
 			return fLength;
@@ -193,6 +196,7 @@ public final class REDTextStore implements ITextStore {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.ITextStore#set(java.lang.String)
 	 */
+	@Override
 	public void set(String text) {
 		synchronized (fRunSpec) {
 			dispose();
@@ -210,6 +214,7 @@ public final class REDTextStore implements ITextStore {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.ITextStore#replace(int, int, java.lang.String)
 	 */
+	@Override
 	public void replace(int offset, int length, String text) {
 		synchronized (fRunSpec) {
 			if (text == null || text.length() == 0) {

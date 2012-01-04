@@ -43,7 +43,8 @@ public class SuspendResumeAdapterFactory implements IAdapterFactory {
             fResumeAtLine = new ResumeAtLine(execCtx);
         }
         
-        @SuppressWarnings("rawtypes")
+        @Override
+		@SuppressWarnings("rawtypes")
         public Object getAdapter(Class adapter) {
             if (adapter.isInstance(fRunToLine)) {
                 return fRunToLine;
@@ -57,17 +58,23 @@ public class SuspendResumeAdapterFactory implements IAdapterFactory {
             return null;
         }
 
-        public boolean canResume() { return false; }
-        public boolean canSuspend() { return false; }
+        @Override
+		public boolean canResume() { return false; }
+        @Override
+		public boolean canSuspend() { return false; }
         // This must return true because the platform
         // RunToLineActionDelegate will only enable the
         // action if we are suspended
-        public boolean isSuspended() { return true; }
-        public void resume() throws DebugException {}
-        public void suspend() throws DebugException {}
+        @Override
+		public boolean isSuspended() { return true; }
+        @Override
+		public void resume() throws DebugException {}
+        @Override
+		public void suspend() throws DebugException {}
     }
     
-    @SuppressWarnings("rawtypes")
+    @Override
+	@SuppressWarnings("rawtypes")
     public Object getAdapter(Object adaptableObject, Class adapterType) {
         if (ISuspendResume.class.equals(adapterType)) {
             if (adaptableObject instanceof IDMVMContext) {
@@ -84,7 +91,8 @@ public class SuspendResumeAdapterFactory implements IAdapterFactory {
         return null;
     }
 
-    @SuppressWarnings("rawtypes")
+    @Override
+	@SuppressWarnings("rawtypes")
     public Class[] getAdapterList() {
         return new Class[] { ISuspendResume.class };
     }

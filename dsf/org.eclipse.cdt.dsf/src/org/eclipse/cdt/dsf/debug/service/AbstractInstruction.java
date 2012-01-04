@@ -20,6 +20,7 @@ public abstract class AbstractInstruction implements IInstructionWithSize {
     /*
      * @see org.eclipse.cdt.dsf.debug.service.IInstructionWithSize#getSize()
      */
+    @Override
     public Integer getSize() {
         // unkown size
         return null;

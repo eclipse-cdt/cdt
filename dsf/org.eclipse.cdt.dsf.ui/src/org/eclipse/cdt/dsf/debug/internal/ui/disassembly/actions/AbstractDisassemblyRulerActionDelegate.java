@@ -60,6 +60,7 @@ public abstract class AbstractDisassemblyRulerActionDelegate extends ActionDeleg
 	/*
 	 * @see IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
 	 */
+	@Override
 	public void setActiveEditor(IAction callerAction, IEditorPart targetEditor) {
 		setTargetPart(callerAction, targetEditor);
 	}
@@ -67,7 +68,8 @@ public abstract class AbstractDisassemblyRulerActionDelegate extends ActionDeleg
     /*
      * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
      */
-    public void init(IViewPart view) {
+    @Override
+	public void init(IViewPart view) {
     	setTargetPart(fCallerAction, view);
     }
 
@@ -142,6 +144,7 @@ public abstract class AbstractDisassemblyRulerActionDelegate extends ActionDeleg
 	/*
 	 * @see IMenuListener#menuAboutToShow(org.eclipse.jface.action.IMenuManager)
 	 */
+	@Override
 	public void menuAboutToShow(IMenuManager manager) {
 		update();
 	}
@@ -149,12 +152,14 @@ public abstract class AbstractDisassemblyRulerActionDelegate extends ActionDeleg
 	/*
 	 * @see MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
 	 */
+	@Override
 	public void mouseDoubleClick(MouseEvent e) {
 	}
 
 	/*
 	 * @see MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
 	 */
+	@Override
 	public void mouseDown(MouseEvent e) {
 		update();
 	}
@@ -162,6 +167,7 @@ public abstract class AbstractDisassemblyRulerActionDelegate extends ActionDeleg
 	/*
 	 * @see MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
 	 */
+	@Override
 	public void mouseUp(MouseEvent e) {
 	}
 }

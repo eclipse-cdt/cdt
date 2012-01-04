@@ -66,6 +66,7 @@ class SourceColorerJob extends UIJob implements Runnable {
 	/*
 	 * @see java.lang.Runnable#run()
 	 */
+	@Override
 	public void run() {
 		IWorkbenchSiteProgressService progressService = (IWorkbenchSiteProgressService)fDisassemblyPart.getSite().getAdapter(IWorkbenchSiteProgressService.class);
 		if(progressService != null) {

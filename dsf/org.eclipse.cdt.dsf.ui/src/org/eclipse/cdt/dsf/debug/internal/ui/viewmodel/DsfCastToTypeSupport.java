@@ -117,6 +117,7 @@ public class DsfCastToTypeSupport  {
 		 * (non-Javadoc)
 		 * @see org.eclipse.cdt.debug.core.model.ICastToType#canCast()
 		 */
+	    @Override
         public boolean canCast() {
         	return isValid();
 		}
@@ -125,6 +126,7 @@ public class DsfCastToTypeSupport  {
 		 * (non-Javadoc)
 		 * @see org.eclipse.cdt.debug.core.model.ICastToType#getCurrentType()
 		 */
+	    @Override
         public String getCurrentType() {
         	// get expected casted type first, if possible (if there's an error in the type,
         	// the expression might not evaluate successfully)
@@ -144,6 +146,7 @@ public class DsfCastToTypeSupport  {
 		 * (non-Javadoc)
 		 * @see org.eclipse.cdt.debug.core.model.ICastToType#cast(java.lang.String)
 		 */
+	    @Override
         public void cast(String type) throws DebugException {
         	throwIfNotValid();
         	
@@ -159,6 +162,7 @@ public class DsfCastToTypeSupport  {
          * (non-Javadoc)
          * @see org.eclipse.cdt.debug.core.model.ICastToType#restoreOriginal()
          */
+	    @Override
 		public void restoreOriginal() throws DebugException {
 			throwIfNotValid();
         	fCastedExpressionStorage.remove(memento);
@@ -169,6 +173,7 @@ public class DsfCastToTypeSupport  {
 		 * (non-Javadoc)
 		 * @see org.eclipse.cdt.debug.core.model.ICastToType#isCasted()
 		 */
+	    @Override
 		public boolean isCasted() {
 			if (isValid())
 				return fCastedExpressionStorage.containsKey(memento);
@@ -180,6 +185,7 @@ public class DsfCastToTypeSupport  {
 		 * (non-Javadoc)
 		 * @see org.eclipse.cdt.debug.core.model.ICastToArray#canCastToArray()
 		 */
+	    @Override
 		public boolean canCastToArray() {
 			return isValid();
 		}
@@ -188,6 +194,7 @@ public class DsfCastToTypeSupport  {
 		 * (non-Javadoc)
 		 * @see org.eclipse.cdt.debug.core.model.ICastToArray#castToArray(int, int)
 		 */
+	    @Override
 		public void castToArray(int startIndex, int length)
 				throws DebugException {
 			throwIfNotValid();

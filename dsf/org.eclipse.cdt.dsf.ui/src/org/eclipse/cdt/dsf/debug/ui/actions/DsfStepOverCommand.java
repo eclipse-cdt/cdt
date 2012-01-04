@@ -44,6 +44,7 @@ public class DsfStepOverCommand implements IStepOverHandler {
         fTracker.dispose();
     }
     
+    @Override
     public void canExecute(final IEnabledStateRequest request) {
         if (request.getElements().length != 1) {
             request.setEnabled(false);
@@ -73,6 +74,7 @@ public class DsfStepOverCommand implements IStepOverHandler {
         });
     }
     
+    @Override
 	public boolean execute(final IDebugCommandRequest request) {
         if (request.getElements().length != 1) {
             request.done();

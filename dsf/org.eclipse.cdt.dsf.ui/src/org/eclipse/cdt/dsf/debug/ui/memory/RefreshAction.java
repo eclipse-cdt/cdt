@@ -35,10 +35,12 @@ public class RefreshAction implements IViewActionDelegate {
 	
 	private IMemoryRenderingSite fsite;
 	
+	@Override
 	public void init(IViewPart view) {
 		fsite = (IMemoryRenderingSite) view;
 	}
 
+	@Override
 	public void run(IAction action) {
 		
 		if(fMemoryBlock instanceof IMemoryBlockUpdatePolicyProvider)
@@ -60,6 +62,7 @@ public class RefreshAction implements IViewActionDelegate {
 		}
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		fMemoryBlock = null;
     	action.setEnabled(false);

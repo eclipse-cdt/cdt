@@ -409,6 +409,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
         }
     }
     
+    @Override
     public void update(final ILabelUpdate[] updates) {
         fLabelProvider.update(updates);
     }
@@ -418,9 +419,11 @@ public class StackFramesVMNode extends AbstractDMVMNode
      * 
      * @since 2.0
      */    
+    @Override
     public void update(final IPropertiesUpdate[] updates) {
         try {
             getSession().getExecutor().execute(new DsfRunnable() {
+                @Override
                 public void run() {
                     updatePropertiesInSessionThread(updates);
                 }});
@@ -597,6 +600,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
      * (non-Javadoc)
      * @see org.eclipse.cdt.dsf.ui.viewmodel.IVMNode#getDeltaFlags(java.lang.Object)
      */
+    @Override
     public int getDeltaFlags(Object e) {
         // This node generates delta if the timers have changed, or if the 
         // label has changed.
@@ -634,6 +638,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
      * (non-Javadoc)
      * @see org.eclipse.cdt.dsf.ui.viewmodel.IVMNode#buildDelta(java.lang.Object, org.eclipse.cdt.dsf.ui.viewmodel.VMDelta, int, org.eclipse.cdt.dsf.concurrent.RequestMonitor)
      */
+    @Override
     public void buildDelta(final Object e, final VMDelta parent, final int nodeOffset, final RequestMonitor rm) {
         if (e instanceof IContainerSuspendedDMEvent) {
             // Clear the limit on the stack frames for all stack frames under a given container.
@@ -729,7 +734,8 @@ public class StackFramesVMNode extends AbstractDMVMNode
 	protected void buildDeltaForFullStackRefreshEvent(final IExecutionDMContext executionCtx, final IExecutionDMContext triggeringCtx, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
 	    try {
     	    getSession().getExecutor().execute(new DsfRunnable() {
-    	        public void run() {
+    	        @Override
+				public void run() {
     	            IRunControl runControlService = getServicesTracker().getService(IRunControl.class); 
     	            IStack stackService = getServicesTracker().getService(IStack.class);
     	            if (stackService == null || runControlService == null) {
@@ -867,7 +873,8 @@ public class StackFramesVMNode extends AbstractDMVMNode
      * (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#compareElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest[])
      */
-    public void compareElements(IElementCompareRequest[] requests) {
+    @Override
+	public void compareElements(IElementCompareRequest[] requests) {
         
         for ( IElementCompareRequest request : requests ) {
         	
@@ -895,7 +902,8 @@ public class StackFramesVMNode extends AbstractDMVMNode
      * (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#encodeElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest[])
      */
-    public void encodeElements(IElementMementoRequest[] requests) {
+    @Override
+	public void encodeElements(IElementMementoRequest[] requests) {
     	
     	for ( IElementMementoRequest request : requests ) {
     		

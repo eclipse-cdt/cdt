@@ -23,19 +23,23 @@ public class RegisterColumnPresentation implements IColumnPresentation {
 
     public static final String ID = DsfUIPlugin.PLUGIN_ID + ".REGISTERS_COLUMN_PRESENTATION_ID"; //$NON-NLS-1$
 
-    public void init(IPresentationContext context) {
+    @Override
+	public void init(IPresentationContext context) {
     }
     
-    public void dispose() {
+    @Override
+	public void dispose() {
     }
 
     // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getAvailableColumns()
-    public String[] getAvailableColumns() {
+    @Override
+	public String[] getAvailableColumns() {
         return new String[] { IDebugVMConstants.COLUMN_ID__NAME, IDebugVMConstants.COLUMN_ID__TYPE, IDebugVMConstants.COLUMN_ID__VALUE, IDebugVMConstants.COLUMN_ID__DESCRIPTION,  };
     }
 
     // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getHeader(java.lang.String)
-    public String getHeader(String id) {
+    @Override
+	public String getHeader(String id) {
         if (IDebugVMConstants.COLUMN_ID__NAME.equals(id)) {
             return MessagesForRegisterVM.RegisterColumnPresentation_name; 
         } else if (IDebugVMConstants.COLUMN_ID__TYPE.equals(id)) {
@@ -49,23 +53,27 @@ public class RegisterColumnPresentation implements IColumnPresentation {
     }
 
     // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getId()
-    public String getId() {
+    @Override
+	public String getId() {
         return ID;
     }
     
-    public ImageDescriptor getImageDescriptor(String id) {
+    @Override
+	public ImageDescriptor getImageDescriptor(String id) {
         return null;
     } 
 
 
     
     // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getInitialColumns()
-    public String[] getInitialColumns() {
+    @Override
+	public String[] getInitialColumns() {
         return new String[] { IDebugVMConstants.COLUMN_ID__NAME, IDebugVMConstants.COLUMN_ID__VALUE, IDebugVMConstants.COLUMN_ID__DESCRIPTION };
     }
     
     // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#isOptional()
-    public boolean isOptional() {
+    @Override
+	public boolean isOptional() {
         return true;
     }
 

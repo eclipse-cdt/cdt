@@ -37,6 +37,7 @@ public class DsfDebugUITools {
 	public static void enableActivity(final String activityID, final boolean enableit)
 	{
 		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI.getWorkbench().getActivitySupport();
 				IActivityManager activityManager = workbenchActivitySupport.getActivityManager();

@@ -58,6 +58,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
         }
         
         Thread fThread;
+        @Override
         public Thread newThread(Runnable r) {
             assert fThread == null;  // Should be called only once.
             fThread = new Thread(new ThreadGroup(fThreadName), r, fThreadName, 0); 
@@ -84,6 +85,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
         }
     }
     
+    @Override
     public boolean isInExecutorThread() {
         return Thread.currentThread().equals( ((DsfThreadFactory)getThreadFactory()).fThread );
     }
@@ -363,6 +365,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
         @Override
         protected Object getExecutable() { return fRunnable; }
         
+        @Override
         public void run() {
             traceExecution();
 
@@ -405,6 +408,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
         @Override
         protected Object getExecutable() { return fCallable; }
 
+        @Override
         public T call() throws Exception {
             traceExecution();
             

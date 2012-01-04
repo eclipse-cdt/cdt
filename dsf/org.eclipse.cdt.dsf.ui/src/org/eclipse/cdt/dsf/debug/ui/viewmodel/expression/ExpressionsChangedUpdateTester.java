@@ -23,7 +23,8 @@ class ExpressionsChangedUpdateTester implements IElementUpdateTester {
         fEvent = event;
     }
 
-    public int getUpdateFlags(Object viewerInput, TreePath path) {
+    @Override
+	public int getUpdateFlags(Object viewerInput, TreePath path) {
         // Check whether the element in the cache matches the expression manager element.
         Object element = path.getSegmentCount() == 0 ? viewerInput : path.getLastSegment();
         if (fEvent.getExpressionManagerElements().contains(element)) {
@@ -57,7 +58,8 @@ class ExpressionsChangedUpdateTester implements IElementUpdateTester {
         return false;
     }
     
-    public boolean includes(IElementUpdateTester tester) {
+    @Override
+	public boolean includes(IElementUpdateTester tester) {
         return tester instanceof ExpressionsChangedUpdateTester;
     }
     

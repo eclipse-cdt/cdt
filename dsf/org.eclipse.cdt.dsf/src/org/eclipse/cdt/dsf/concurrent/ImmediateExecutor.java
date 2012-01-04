@@ -53,6 +53,7 @@ public class ImmediateExecutor implements Executor {
         return fInstance;
     }
     
+    @Override
     public void execute(Runnable command) {
         // Check if executable wasn't executed already.
         if (DEBUG_EXECUTOR && command instanceof DsfExecutable) {

@@ -84,10 +84,12 @@ public abstract class DsfDebugViewLayoutCommand implements IDebugCommandHandler{
     	return ret.toArray(new IExecutionDMContext[0]);
     }
     
+	@Override
 	public void canExecute(final IEnabledStateRequest request) {
 		final IExecutionDMContext[] executionContexts = getDMContexts( request);
 		if( executionContexts.length > 0 && !fExecutor.isTerminated()) {
 	        fExecutor.submit(new DsfRunnable() {
+				@Override
 				public void run() {
 					IExecutionContextTranslator translator = fTracker.getService(IExecutionContextTranslator.class);
 					if( translator != null) {
@@ -114,10 +116,12 @@ public abstract class DsfDebugViewLayoutCommand implements IDebugCommandHandler{
 		}
 	}
 
+	@Override
 	public boolean execute(final IDebugCommandRequest request) {
 		final IExecutionDMContext[] executionContexts = getDMContexts( request);
 		if( executionContexts.length > 0 && !fExecutor.isTerminated()) {
 	        fExecutor.submit(new DsfRunnable() {
+				@Override
 				public void run() {
 					IExecutionContextTranslator translator = fTracker.getService(IExecutionContextTranslator.class);
 					if( translator != null) {

@@ -70,7 +70,8 @@ public class VMPropertiesUpdate extends VMViewerUpdate implements IPropertiesUpd
     }
     
     
-    public Set<String> getProperties() {
+    @Override
+	public Set<String> getProperties() {
         return fProperties;
     }
 
@@ -81,7 +82,8 @@ public class VMPropertiesUpdate extends VMViewerUpdate implements IPropertiesUpd
         return fValues;
     }
     
-    public synchronized void setProperty(String property, Object value) {
+    @Override
+	public synchronized void setProperty(String property, Object value) {
         if (!fCreatedOwnMap) {
             fCreatedOwnMap = true;
             Map<String, Object> curValues = fValues;
@@ -93,7 +95,8 @@ public class VMPropertiesUpdate extends VMViewerUpdate implements IPropertiesUpd
         fValues.put(property, value);
     }
     
-    public synchronized void setAllProperties(Map<String, Object> properties) {
+    @Override
+	public synchronized void setAllProperties(Map<String, Object> properties) {
         if (fCreatedOwnMap) {
             fValues.putAll(properties);
         }

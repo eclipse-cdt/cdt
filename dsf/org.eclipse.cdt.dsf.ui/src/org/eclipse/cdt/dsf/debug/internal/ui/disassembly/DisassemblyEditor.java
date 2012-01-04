@@ -92,6 +92,7 @@ public class DisassemblyEditor extends DisassemblyPart implements IEditorPart {
 	/*
 	 * @see org.eclipse.ui.IEditorPart#getEditorInput()
 	 */
+	@Override
 	public IEditorInput getEditorInput() {
 		return fInput;
 	}
@@ -99,6 +100,7 @@ public class DisassemblyEditor extends DisassemblyPart implements IEditorPart {
 	/*
 	 * @see org.eclipse.ui.IEditorPart#getEditorSite()
 	 */
+	@Override
 	public IEditorSite getEditorSite() {
 		return (IEditorSite)getSite();
 	}
@@ -106,6 +108,7 @@ public class DisassemblyEditor extends DisassemblyPart implements IEditorPart {
 	/*
 	 * @see org.eclipse.ui.IEditorPart#init(org.eclipse.ui.IEditorSite, org.eclipse.ui.IEditorInput)
 	 */
+	@Override
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 		setSite(site);
 		setInput(input);
@@ -114,18 +117,21 @@ public class DisassemblyEditor extends DisassemblyPart implements IEditorPart {
 	/*
 	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void doSave(IProgressMonitor monitor) {
 	}
 
 	/*
 	 * @see org.eclipse.ui.ISaveablePart#doSaveAs()
 	 */
+	@Override
 	public void doSaveAs() {
 	}
 
 	/*
 	 * @see org.eclipse.ui.ISaveablePart#isDirty()
 	 */
+	@Override
 	public boolean isDirty() {
 		return false;
 	}
@@ -133,6 +139,7 @@ public class DisassemblyEditor extends DisassemblyPart implements IEditorPart {
 	/*
 	 * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
 	 */
+	@Override
 	public boolean isSaveAsAllowed() {
 		return false;
 	}
@@ -140,6 +147,7 @@ public class DisassemblyEditor extends DisassemblyPart implements IEditorPart {
 	/*
 	 * @see org.eclipse.ui.ISaveablePart#isSaveOnCloseNeeded()
 	 */
+	@Override
 	public boolean isSaveOnCloseNeeded() {
 		return false;
 	}

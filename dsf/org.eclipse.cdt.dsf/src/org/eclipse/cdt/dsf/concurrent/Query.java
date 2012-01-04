@@ -97,6 +97,7 @@ abstract public class Query<V> extends DsfRunnable
      */
     public Query() {}
 
+    @Override
     public V get() throws InterruptedException, ExecutionException { 
         IStatus status;
         V data;
@@ -116,6 +117,7 @@ abstract public class Query<V> extends DsfRunnable
         return data;
     }
 
+    @Override
     public V get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
         long timeLeft = unit.toMillis(timeout);
         long timeoutTime = System.currentTimeMillis() + unit.toMillis(timeout);
@@ -146,6 +148,7 @@ abstract public class Query<V> extends DsfRunnable
      * Don't try to interrupt the DSF executor thread, just ignore the request 
      * if set.
      */
+    @Override
     public boolean cancel(boolean mayInterruptIfRunning) {
         boolean completed = false;
         synchronized (fRm) {
@@ -158,8 +161,10 @@ abstract public class Query<V> extends DsfRunnable
         return !completed; 
     }
 
+    @Override
     public boolean isCancelled() { return fRm.isCanceled(); }
 
+    @Override
     public boolean isDone() {
         synchronized (fRm) {
             // If future is canceled, return right away.
@@ -170,6 +175,7 @@ abstract public class Query<V> extends DsfRunnable
     
     abstract protected void execute(DataRequestMonitor<V> rm);
     
+    @Override
     public void run() {
         if (fRm.setExecuted()) {
             execute(fRm);

@@ -28,6 +28,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
  */
 public class RulerToggleBreakpointHandler extends AbstractHandler {
 
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IWorkbenchPart part = HandlerUtil.getActivePartChecked(event);
 		if (part instanceof IDisassemblyPart) {

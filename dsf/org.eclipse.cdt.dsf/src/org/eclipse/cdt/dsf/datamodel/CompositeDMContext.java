@@ -49,6 +49,7 @@ public class CompositeDMContext implements IDMContext {
      * the fact that this method may not return a reliable result is acceptable.
      * </p>
      */
+    @Override
     public String getSessionId() {
         IDMContext[] parents = getParents(); 
         if (parents.length > 0) {
@@ -62,6 +63,7 @@ public class CompositeDMContext implements IDMContext {
      * Returns the list of parents that this composite context is based on.  Subclasses
      * may override this method to calculate their own set of parents.
      */
+    @Override
     public IDMContext[] getParents() {
         return fParents;
     }
@@ -73,6 +75,7 @@ public class CompositeDMContext implements IDMContext {
      * @see #getSessionId()
      */
     @SuppressWarnings("unchecked")
+    @Override
     public Object getAdapter(Class adapterType) {
         IDMContext[] parents = getParents(); 
         if (parents.length > 0) {

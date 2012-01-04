@@ -98,6 +98,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#dispose()
 	 */
+	@Override
 	public void dispose() {
 		DsfSession.removeSessionEndedListener(this);
 	}
@@ -141,6 +142,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
     /* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#supportsDebugContext(org.eclipse.core.runtime.IAdaptable)
 	 */
+	@Override
 	public boolean supportsDebugContext(IAdaptable context) {
 		return supportsDebugContext_(context);
 	}
@@ -148,6 +150,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#hasDebugContext()
 	 */
+	@Override
 	public boolean hasDebugContext() {
 		return fTargetContext != null;
 	}
@@ -155,6 +158,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#setDebugContext(org.eclipse.core.runtime.IAdaptable)
 	 */
+	@Override
 	public SetDebugContextResult setDebugContext(IAdaptable context) {
 		assert supportsDebugContext(context) : "caller should not have invoked us"; //$NON-NLS-1$
 		IDMVMContext vmContext = (IDMVMContext) context.getAdapter(IDMVMContext.class);
@@ -187,7 +191,8 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 		        	if (prevSession != null) {
 		        		try {
 		        			prevSession.getExecutor().execute(new DsfRunnable() {
-		        				public void run() {
+		        				@Override
+								public void run() {
 		        					prevSession.removeServiceEventListener(DisassemblyBackendDsf.this);
 		        				}
 		        			});
@@ -208,7 +213,8 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 	        	if (newSession != null) {
 	        		try {
 	        			newSession.getExecutor().execute(new DsfRunnable() {
-	        				public void run() {
+	        				@Override
+							public void run() {
 	        					newSession.addServiceEventListener(DisassemblyBackendDsf.this, null);
 	        				}
 	        			});
@@ -248,11 +254,13 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#clearDebugContext()
 	 */
+	@Override
 	public void clearDebugContext() {
 		final DsfSession session = DsfSession.getSession(fDsfSessionId);
 		if (session != null) {
 			try {
 				session.getExecutor().execute(new DsfRunnable() {
+					@Override
 					public void run() {
 						session.removeServiceEventListener(DisassemblyBackendDsf.this);
 					}
@@ -271,9 +279,11 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#retrieveFrameAddress(int)
 	 */
+	@Override
 	public void retrieveFrameAddress(final int frame) {
 		final DsfExecutor executor= getSession().getExecutor();
 		executor.execute(new DsfRunnable() {
+			@Override
 			public void run() {
 				retrieveFrameAddressInSessionThread(frame);
 			}});
@@ -322,6 +332,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 					final BigInteger addressValue= address.getValue();
 					if (DEBUG) System.out.println("retrieveFrameAddress done "+ DisassemblyUtils.getAddressText(addressValue)); //$NON-NLS-1$
 					fCallback.asyncExec(new Runnable() {
+						@Override
 						public void run() {
 							if (address.getSize() * 8 != fCallback.getAddressSize()) {
 								fCallback.addressSizeChanged(address.getSize() * 8);
@@ -346,6 +357,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#isSuspended()
 	 */
+	@Override
 	public boolean isSuspended() {
 		DsfSession session = getSession();
 		if (session == null || !session.isActive()) {
@@ -410,6 +422,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 		if (context.equals(fTargetContext)
 				|| DMContexts.isAncestorOf(fTargetContext, context)) {
 			fCallback.asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					fCallback.handleTargetEnded();
 				}});
@@ -443,6 +456,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.dsf.service.DsfSession.SessionEndedListener#sessionEnded(org.eclipse.cdt.dsf.service.DsfSession)
 	 */
+	@Override
 	public void sessionEnded(DsfSession session) {
 		if (session.getId().equals(fDsfSessionId)) {
 			clearDebugContext();
@@ -453,6 +467,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#getFrameLevel()
 	 */
+	@Override
 	public int getFrameLevel() {
 		if (fTargetFrameContext != null) {
 			return fTargetFrameContext.getLevel();
@@ -463,6 +478,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#hasFrameContext()
 	 */
+	@Override
 	public boolean hasFrameContext() {
 		return fTargetFrameContext != null;
 	}
@@ -471,6 +487,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#getFrameFile()
 	 */
+	@Override
 	public String getFrameFile() {
 		return fTargetFrameData.getFile();
 	}
@@ -478,6 +495,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#getFrameLine()
 	 */
+	@Override
 	public int getFrameLine() {
 		return fTargetFrameData.getLine();
 	}
@@ -485,6 +503,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.IDisassemblyBackend#retrieveDisassembly(java.math.BigInteger, java.math.BigInteger, java.lang.String, int, int, boolean, boolean, boolean, int)
 	 */
+	@Override
 	public void retrieveDisassembly(final BigInteger startAddress, BigInteger endAddress, final String file, final int lineNumber, final int lines, final boolean mixed, final boolean showSymbols, final boolean showDisassembly, final int linesHint) {
 		// make sure address range is no less than 32 bytes
 		// this is an attempt to get better a response from the backend (bug 302505)
@@ -501,6 +520,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 		
 		// align the start address first (bug 328168)
 		executor.execute(new Runnable() {			
+			@Override
 			public void run() {
 				alignOpCodeAddress(startAddress, new DataRequestMonitor<BigInteger>(executor, null) {
 					
@@ -514,6 +534,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 									final IMixedInstruction[] data= getData();
 									if (!isCanceled() && data != null) {
 										fCallback.asyncExec(new Runnable() {
+											@Override
 											public void run() {
 												if (!insertDisassembly(finalStartAddress, finalEndAddress, data, showSymbols, showDisassembly)) {
 													// retry in non-mixed mode
@@ -525,14 +546,17 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 										if (status != null && !status.isOK()) {
 											if( file != null )	{
 												fCallback.asyncExec(new Runnable() {
+													@Override
 													public void run() {
 														fCallback.retrieveDisassembly(finalStartAddress, finalEndAddress, linesHint, true, true);
 													}});
 											}
 											else {
 												fCallback.asyncExec(new Runnable() {
+													@Override
 													public void run() {
 														fCallback.doScrollLocked(new Runnable() {
+															@Override
 															public void run() {
 																fCallback.insertError(finalStartAddress, status.getMessage());
 															}
@@ -546,6 +570,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 							};
 							if (file != null) {
 								executor.execute(new Runnable() {
+									@Override
 									public void run() {
 										final IDisassembly disassembly= fServicesTracker.getService(IDisassembly.class);
 										if (disassembly == null) {
@@ -557,6 +582,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 									}});
 							} else {
 								executor.execute(new Runnable() {
+									@Override
 									public void run() {
 										final IDisassembly disassembly= fServicesTracker.getService(IDisassembly.class);
 										if (disassembly == null) {
@@ -573,9 +599,11 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 								public void handleCompleted() {
 									if (!isCanceled() && getData() != null) {
 										fCallback.asyncExec(new Runnable() {
+											@Override
 											public void run() {
 												if (!insertDisassembly(finalStartAddress, finalEndAddress, getData(), showSymbols, showDisassembly)) {
 													fCallback.doScrollLocked(new Runnable() {
+														@Override
 														public void run() {
 															fCallback.insertError(finalStartAddress, DisassemblyMessages.DisassemblyBackendDsf_error_UnableToRetrieveData);
 														}
@@ -586,8 +614,10 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 										final IStatus status= getStatus();
 										if (status != null && !status.isOK()) {
 											fCallback.asyncExec(new Runnable() {
+												@Override
 												public void run() {
 													fCallback.doScrollLocked(new Runnable() {
+														@Override
 														public void run() {
 															fCallback.insertError(finalStartAddress, status.getMessage());
 														}
@@ -599,6 +629,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 								}
 							};
 							executor.execute(new Runnable() {
+								@Override
 								public void run() {
 									final IDisassembly disassembly= fServicesTracker.getService(IDisassembly.class);
 									if (disassembly == null) {
@@ -850,6 +881,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#insertSource(org.eclipse.jface.text.Position, java.math.BigInteger, java.lang.String, int)
 	 */
+	@Override
 	public Object insertSource(Position pos, BigInteger address, final String file, int lineNumber) {
 		Object sourceElement = null;
 		final ISourceLookupDMContext ctx= DMContexts.getAncestorOfType(fTargetContext, ISourceLookupDMContext.class);
@@ -882,6 +914,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#gotoSymbol(java.lang.String)
 	 */
+	@Override
 	public void gotoSymbol(final String symbol) {
 		evaluateAddressExpression(symbol, false, new DataRequestMonitor<BigInteger>(getSession().getExecutor(), null) {			
 			@Override
@@ -889,6 +922,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 				final BigInteger address = getData();
 				if (address != null) {
 					fCallback.asyncExec(new Runnable() {
+						@Override
 						public void run() {
 							fCallback.gotoAddress(address);
 						}});
@@ -935,7 +969,8 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
                 if (address != null && address != IExpressionDMLocation.INVALID_ADDRESS) {
                     final BigInteger addressValue = address.getValue();
                     fCallback.asyncExec(new Runnable() {
-                        public void run() {
+                        @Override
+						public void run() {
                             fCallback.gotoAddress(addressValue);
                         }
                     });
@@ -986,6 +1021,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#retrieveDisassembly(java.lang.String, int, java.math.BigInteger, boolean, boolean, boolean)
 	 */
+	@Override
 	public void retrieveDisassembly(final String file, final int lines, final BigInteger endAddress, boolean mixed, final boolean showSymbols, final boolean showDisassembly) {
 		String debuggerPath= file;
 		// try reverse lookup
@@ -1023,6 +1059,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 				final IMixedInstruction[] data= getData();
 				if (!isCanceled() && data != null) {
 					fCallback.asyncExec(new Runnable() {
+						@Override
 						public void run() {
 							if (!insertDisassembly(null, endAddress, data, showSymbols, showDisassembly)) {
 								// retry in non-mixed mode
@@ -1041,6 +1078,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 		assert !fCallback.getUpdatePending();
 		fCallback.setUpdatePending(true);
 		executor.execute(new Runnable() {
+			@Override
 			public void run() {
 				final IDisassembly disassembly= fServicesTracker.getService(IDisassembly.class);
 				if (disassembly == null) {
@@ -1055,6 +1093,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#evaluateExpression(java.lang.String)
 	 */
+	@Override
 	public String evaluateExpression(final String expression) {
 		if (fTargetFrameContext == null) {
 			return null;

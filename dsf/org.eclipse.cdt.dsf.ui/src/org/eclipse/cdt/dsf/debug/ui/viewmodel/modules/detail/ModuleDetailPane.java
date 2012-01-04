@@ -96,6 +96,7 @@ public class ModuleDetailPane extends ModulesAbstractDetailPane implements IAdap
      * of selected modules will be displayed.
      */
     private SourceViewer fSourceViewer;
+    @Override
     public Control createControl(Composite parent) {
         createSourceViewer(parent);
         
@@ -109,6 +110,7 @@ public class ModuleDetailPane extends ModulesAbstractDetailPane implements IAdap
 	}
     
     private DetailJob fDetailJob = null;
+    @Override
 	public void display(IStructuredSelection selection) {
         if (selection == null){
             clearSourceViewer();
@@ -157,16 +159,20 @@ public class ModuleDetailPane extends ModulesAbstractDetailPane implements IAdap
         }
 		
 	}
+    @Override
 	public String getDescription() {
         return DESCRIPTION;
 	}
+    @Override
 	public String getID() {
         return ID;
 	}
+    @Override
 	public String getName() {
         return NAME;
 	}
 	
+    @Override
 	public boolean setFocus() {
         if (fSourceViewer != null){
             fSourceViewer.getTextWidget().setFocus();
@@ -176,6 +182,7 @@ public class ModuleDetailPane extends ModulesAbstractDetailPane implements IAdap
 	}
 	
 	@SuppressWarnings("rawtypes")
+    @Override
 	public Object getAdapter(Class adapter) {
         if (ITextViewer.class.equals(adapter)) {
             return fSourceViewer;
@@ -183,6 +190,7 @@ public class ModuleDetailPane extends ModulesAbstractDetailPane implements IAdap
         return null;
 	}
 	
+    @Override
 	public void propertyChange(PropertyChangeEvent event) {
         String propertyName= event.getProperty();
         if (propertyName.equals(IDebugUIConstants.PREF_DETAIL_PANE_FONT)) {
@@ -233,7 +241,9 @@ public class ModuleDetailPane extends ModulesAbstractDetailPane implements IAdap
         
         // Add a document listener so actions get updated when the document changes
         getDetailDocument().addDocumentListener(new IDocumentListener() {
+            @Override
             public void documentAboutToBeChanged(DocumentEvent event) {}
+            @Override
             public void documentChanged(DocumentEvent event) {
                 updateSelectionDependentActions();
             }
@@ -241,6 +251,7 @@ public class ModuleDetailPane extends ModulesAbstractDetailPane implements IAdap
         
         // Add the selection listener so selection dependent actions get updated.
         fSourceViewer.getSelectionProvider().addSelectionChangedListener(new ISelectionChangedListener() {
+            @Override
             public void selectionChanged(SelectionChangedEvent event) {
                 updateSelectionDependentActions();
             }
@@ -285,6 +296,7 @@ public class ModuleDetailPane extends ModulesAbstractDetailPane implements IAdap
         MenuManager menuMgr= new MenuManager(); 
         menuMgr.setRemoveAllWhenShown(true);
         menuMgr.addMenuListener(new IMenuListener() {
+            @Override
             public void menuAboutToShow(IMenuManager mgr) {
                 fillDetailContextMenu(mgr);
             }

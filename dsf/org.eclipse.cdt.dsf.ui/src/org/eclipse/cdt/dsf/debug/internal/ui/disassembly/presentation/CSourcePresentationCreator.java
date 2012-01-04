@@ -263,6 +263,7 @@ public class CSourcePresentationCreator extends PresentationReconciler implement
 					if (fSourceTagProvider != null) {
 						if (fSourceTagListener == null) {
 							fSourceTagListener= new ISourceTagListener() {
+								@Override
 								public void sourceTagsChanged(ISourceTagProvider provider) {
 									handleSourceTagsChanged();
 								}};
@@ -280,6 +281,7 @@ public class CSourcePresentationCreator extends PresentationReconciler implement
 	/*
 	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.presentation.ISourcePresentationCreator#dispose()
 	 */
+	@Override
 	public void dispose() {
 		fViewer= null;
 		fPresentation= null;
@@ -303,6 +305,7 @@ public class CSourcePresentationCreator extends PresentationReconciler implement
 	/*
 	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.presentation.ISourcePresentationCreator#getPresentation(org.eclipse.jface.text.IRegion, org.eclipse.jface.text.IDocument)
 	 */
+	@Override
 	public TextPresentation getPresentation(IRegion region, IDocument document) {
 		assert fViewer != null;
 		if (fViewer == null) {
@@ -334,6 +337,7 @@ public class CSourcePresentationCreator extends PresentationReconciler implement
 				Display display= fViewer.getTextWidget().getDisplay();
 				if (display.getThread() != Thread.currentThread()) {
 					display.asyncExec(new Runnable() {
+						@Override
 						public void run() {
 							if (fViewer != null) {
 								fViewer.invalidateTextPresentation();
@@ -375,6 +379,7 @@ public class CSourcePresentationCreator extends PresentationReconciler implement
 	/*
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (fSourceViewerConfiguration.affectsBehavior(event)) {
 			fSourceViewerConfiguration.handlePropertyChangeEvent(event);

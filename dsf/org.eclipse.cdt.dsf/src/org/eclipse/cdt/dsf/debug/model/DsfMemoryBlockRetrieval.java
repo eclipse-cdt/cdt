@@ -217,6 +217,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
             if (memento != null && memento.trim().length() != 0) {
                 // Submit the runnable to install the monitors on dispatch thread.
                 getExecutor().submit(new Runnable() {
+                    @Override
                     public void run() {
                         try {
                             createBlocksFromConfiguration(memoryCtx, memento);
@@ -368,6 +369,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 	 * 
 	 * @see org.eclipse.debug.core.model.IMemoryBlockRetrieval#supportsStorageRetrieval()
 	 */
+    @Override
 	public boolean supportsStorageRetrieval() {
 		return true;
 	}
@@ -375,6 +377,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockRetrieval#getMemoryBlock(long, long)
 	 */
+    @Override
 	public IMemoryBlock getMemoryBlock(final long startAddress,	final long length) throws DebugException {
 	    throw new DebugException(new Status(
 	        IStatus.ERROR, DsfPlugin.PLUGIN_ID, DebugException.NOT_SUPPORTED, 
@@ -391,6 +394,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 	 * @see org.eclipse.debug.core.model.IMemoryBlockRetrievalExtension#getExtendedMemoryBlock(java.lang.String,
 	 *      java.lang.Object)
 	 */
+    @Override
 	public IMemoryBlockExtension getExtendedMemoryBlock(String expression, Object context) throws DebugException {
         // Drill for the actual DMC
         IMemoryDMContext memoryDmc = null;

@@ -37,6 +37,7 @@ abstract public class StorageEditorInput implements IStorageEditorInput {
 	/**
 	 * @see IStorageEditorInput#getStorage()
 	 */
+	@Override
 	public IStorage getStorage() {
 		return fStorage;
 	}
@@ -53,6 +54,7 @@ abstract public class StorageEditorInput implements IStorageEditorInput {
 	/**
 	 * @see IEditorInput#getImageDescriptor()
 	 */
+	@Override
 	public ImageDescriptor getImageDescriptor() {
 		return null;
 	}
@@ -60,6 +62,7 @@ abstract public class StorageEditorInput implements IStorageEditorInput {
 	/**
 	 * @see IEditorInput#getName()
 	 */
+	@Override
 	public String getName() {
 		return getStorage().getName();
 	}
@@ -67,6 +70,7 @@ abstract public class StorageEditorInput implements IStorageEditorInput {
 	/**
 	 * @see IEditorInput#getPersistable()
 	 */
+	@Override
 	public IPersistableElement getPersistable() {
 		return null;
 	}
@@ -74,6 +78,7 @@ abstract public class StorageEditorInput implements IStorageEditorInput {
 	/**
 	 * @see IEditorInput#getToolTipText()
 	 */
+	@Override
 	public String getToolTipText() {
 		return getStorage().getFullPath().toOSString();
 	}
@@ -102,6 +107,7 @@ abstract public class StorageEditorInput implements IStorageEditorInput {
 		return getStorage().hashCode();
 	}
 
+	@Override
 	@SuppressWarnings("rawtypes")
     public Object getAdapter(Class adapter) {
 		return null;

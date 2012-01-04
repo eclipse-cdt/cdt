@@ -106,6 +106,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 
         try {
             fRetrieval.getExecutor().execute(new Runnable() {
+                @Override
                 public void run() {
                     fRetrieval.getSession().addServiceEventListener(DsfMemoryBlock.this, null);
                 }
@@ -138,6 +139,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.model.IDebugElement#getDebugTarget()
      */
+    @Override
     public IDebugTarget getDebugTarget() {
         return fDebugTarget;
     }
@@ -145,6 +147,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.model.IDebugElement#getModelIdentifier()
      */
+    @Override
     public String getModelIdentifier() {
         return fModelId;
     }
@@ -152,6 +155,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.model.IDebugElement#getLaunch()
      */
+    @Override
     public ILaunch getLaunch() {
         return fLaunch;
     }
@@ -163,6 +167,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.model.IMemoryBlock#getStartAddress()
      */
+    @Override
     public long getStartAddress() {
     	// Not implemented (obsolete)
     	return 0;
@@ -171,6 +176,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.model.IMemoryBlock#getLength()
      */
+    @Override
     public long getLength() {
     	// Not implemented (obsolete)
         return 0;
@@ -179,6 +185,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.model.IMemoryBlock#getBytes()
      */
+    @Override
     public byte[] getBytes() throws DebugException {
     	// Not implemented (obsolete)
     	return new byte[0];
@@ -187,6 +194,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.model.IMemoryBlock#supportsValueModification()
      */
+    @Override
     public boolean supportsValueModification() {
     	return fRetrieval.supportsValueModification();
     }
@@ -194,6 +202,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.model.IMemoryBlock#setValue(long, byte[])
      */
+    @Override
     public void setValue(long offset, byte[] bytes) throws DebugException {
     	// Not implemented (obsolete)
     }
@@ -205,6 +214,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getExpression()
 	 */
+    @Override
 	public String getExpression() {
 		return fExpression;
 	}
@@ -212,6 +222,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getBigBaseAddress()
 	 */
+    @Override
 	public BigInteger getBigBaseAddress() throws DebugException {
         return fBaseAddress;
 	}
@@ -219,6 +230,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getMemoryBlockStartAddress()
 	 */
+    @Override
 	public BigInteger getMemoryBlockStartAddress() throws DebugException {
 		// Null indicates that memory can be retrieved at addresses lower than the block base address
 		return null;
@@ -227,6 +239,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getMemoryBlockEndAddress()
 	 */
+    @Override
 	public BigInteger getMemoryBlockEndAddress() throws DebugException {
 		// Null indicates that memory can be retrieved at addresses higher the block base address
 		return null;
@@ -235,6 +248,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getBigLength()
 	 */
+    @Override
 	public BigInteger getBigLength() throws DebugException {
 		// -1 indicates that memory block is unbounded
 		return BigInteger.valueOf(-1);
@@ -243,6 +257,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getAddressSize()
 	 */
+    @Override
 	public int getAddressSize() throws DebugException {
 		return fRetrieval.getAddressSize();
 	}
@@ -250,6 +265,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#supportBaseAddressModification()
 	 */
+    @Override
 	public boolean supportBaseAddressModification() throws DebugException {
 		return fRetrieval.supportBaseAddressModification();
 	}
@@ -257,6 +273,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#supportsChangeManagement()
 	 */
+    @Override
 	public boolean supportsChangeManagement() {
 		return true;
 	}
@@ -264,6 +281,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#setBaseAddress(java.math.BigInteger)
 	 */
+    @Override
 	public void setBaseAddress(BigInteger address) throws DebugException {
 		fBlockAddress = address;
 	}
@@ -271,12 +289,14 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getBytesFromOffset(java.math.BigInteger, long)
 	 */
+    @Override
 	public MemoryByte[] getBytesFromOffset(BigInteger offset, long units) throws DebugException {
 		return getBytesFromAddress(fBlockAddress.add(offset), units);
 	}
 	
 	private boolean fUseCachedData = false;
 	
+    @Override
 	public void clearCache() {
 		fUseCachedData = false;
 	}
@@ -302,6 +322,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
      * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getBytesFromAddress(java.math.BigInteger, long)
      */
     @SuppressWarnings("null")
+    @Override
     public MemoryByte[] getBytesFromAddress(BigInteger address, long units) throws DebugException {
 
         if (isUseCacheData() && fBlockAddress.compareTo(address) == 0 && units * getAddressableSize() <= fBlock.length)
@@ -486,6 +507,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#setValue(java.math.BigInteger, byte[])
 	 */
+    @Override
 	public void setValue(BigInteger offset, byte[] bytes) throws DebugException {
 		writeMemoryBlock(offset.longValue(), bytes);
 	}
@@ -493,6 +515,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#connect(java.lang.Object)
 	 */
+    @Override
 	public void connect(Object client) {
 		if (!fConnections.contains(client))
 			fConnections.add(client);
@@ -503,6 +526,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#disconnect(java.lang.Object)
 	 */
+    @Override
 	public void disconnect(Object client) {
 		if (fConnections.contains(client))
 			fConnections.remove(client);
@@ -513,6 +537,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getConnections()
 	 */
+    @Override
 	public Object[] getConnections() {
 		return fConnections.toArray();
 	}
@@ -528,9 +553,11 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#dispose()
 	 */
+    @Override
 	public void dispose() throws DebugException {
 		try {
     		fRetrieval.getExecutor().execute(new Runnable() {
+    		    @Override
     		    public void run() {
     		        fRetrieval.getSession().removeServiceEventListener(DsfMemoryBlock.this);
     		    }
@@ -543,6 +570,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getMemoryBlockRetrieval()
 	 */
+    @Override
 	public IMemoryBlockRetrieval getMemoryBlockRetrieval() {
 		return fRetrieval;
 	}
@@ -550,6 +578,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getAddressableSize()
 	 */
+    @Override
 	public int getAddressableSize() throws DebugException {
 		return fRetrieval.getAddressableSize();
 	}
@@ -694,20 +723,24 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 		}
 	}
 
+    @Override
 	public String[] getUpdatePolicies() {
 		return new String[] {UPDATE_POLICY_AUTOMATIC, UPDATE_POLICY_MANUAL, UPDATE_POLICY_BREAKPOINT};
 	}
     
+    @Override
     public String getUpdatePolicy()
     {
     	return fUpdatePolicy;
     }
     
+    @Override
     public void setUpdatePolicy(String policy)
     {
     	fUpdatePolicy = policy;
     }
     
+    @Override
     public String getUpdatePolicyDescription(String id) {
 		return id;
 	}

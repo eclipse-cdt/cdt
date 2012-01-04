@@ -44,16 +44,20 @@ public class BreakpointPropertiesRulerAction extends AbstractDisassemblyBreakpoi
 		if ( fContext != null ) {
 			PropertyDialogAction action = new PropertyDialogAction( getDisassemblyPart().getSite(), new ISelectionProvider() {
 
+			    @Override
 				public void addSelectionChangedListener( ISelectionChangedListener listener ) {
 				}
 
+			    @Override
 				public ISelection getSelection() {
 					return new StructuredSelection( fContext );
 				}
 
+			    @Override
 				public void removeSelectionChangedListener( ISelectionChangedListener listener ) {
 				}
 
+			    @Override
 				public void setSelection( ISelection selection ) {
 				}
 			} );

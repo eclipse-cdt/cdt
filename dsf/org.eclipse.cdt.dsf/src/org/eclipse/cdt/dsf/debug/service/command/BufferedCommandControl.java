@@ -33,26 +33,31 @@ public class BufferedCommandControl implements ICommandControl {
     private int fDepth;
     
     private ICommandListener fCommandListener = new ICommandListener() {
-        public void commandQueued(ICommandToken token) {
+        @Override
+       public void commandQueued(ICommandToken token) {
             for (ICommandListener processor : fCommandProcessors) {
                 processor.commandQueued(token);
             }
         };
             
+        @Override
         public void commandRemoved(ICommandToken token) {
             for (ICommandListener processor : fCommandProcessors) {
                 processor.commandRemoved(token);
             }
         };
             
+        @Override
         public void commandSent(final ICommandToken token) {
             for (ICommandListener processor : fCommandProcessors) {
                 processor.commandSent(token);
             }
         };
         
+        @Override
         public void commandDone(final ICommandToken token, final ICommandResult result) {
             buffer(fDepth, new DsfRunnable() {
+                @Override
                 public void run() {
                     for (ICommandListener processor : fCommandProcessors) {
                         processor.commandDone(token, result);
@@ -63,8 +68,10 @@ public class BufferedCommandControl implements ICommandControl {
     };
 
     private IEventListener fEventListener = new IEventListener() {
+        @Override
         public void eventReceived(final Object output) {
             buffer(fDepth, new DsfRunnable() {
+                @Override
                 public void run() {
                     for (IEventListener processor : fEventProcessors) {
                         processor.eventReceived(output);
@@ -84,6 +91,7 @@ public class BufferedCommandControl implements ICommandControl {
         assert fDepth > 0;
     }
     
+    @Override
     public void addCommandListener(ICommandListener listener) {
         if (fCommandProcessors.isEmpty()) {
             fControlDelegate.addCommandListener(fCommandListener);
@@ -92,6 +100,7 @@ public class BufferedCommandControl implements ICommandControl {
     }
 
 
+    @Override
     public void removeCommandListener(ICommandListener listener) {
         fCommandProcessors.remove(listener);
         if (fCommandProcessors.isEmpty()) {
@@ -99,6 +108,7 @@ public class BufferedCommandControl implements ICommandControl {
         }
     }
 
+    @Override
     public void addEventListener(IEventListener listener) {
         if (fEventProcessors.isEmpty()) {
             fControlDelegate.addEventListener(fEventListener);
@@ -106,6 +116,7 @@ public class BufferedCommandControl implements ICommandControl {
         fEventProcessors.add(listener);
     }
 
+    @Override
     public void removeEventListener(IEventListener listener) {
         fEventProcessors.remove(listener);
         if (fEventProcessors.isEmpty()) {
@@ -113,6 +124,7 @@ public class BufferedCommandControl implements ICommandControl {
         }
     }
 
+    @Override
     public <V extends ICommandResult> ICommandToken queueCommand(final ICommand<V> command, final DataRequestMonitor<V> rm) {
         return fControlDelegate.queueCommand(
             command, 
@@ -120,6 +132,7 @@ public class BufferedCommandControl implements ICommandControl {
                 @Override
                 protected void handleCompleted() {
                     buffer(fDepth, new DsfRunnable() {
+                        @Override
                         public void run() {
                             rm.setData(getData());
                             rm.setStatus(getStatus());
@@ -130,6 +143,7 @@ public class BufferedCommandControl implements ICommandControl {
             });
     }
 
+    @Override
     public void removeCommand(ICommandToken token) {
         fControlDelegate.removeCommand(token);
     }
@@ -139,6 +153,7 @@ public class BufferedCommandControl implements ICommandControl {
             runnable.run();
         } else {
             fExecutor.execute(new DsfRunnable() {
+                @Override
                 public void run() {
                     buffer(depth - 1, runnable);
                 }

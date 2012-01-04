@@ -76,7 +76,8 @@ public class DisplayDsfExecutor extends DefaultDsfExecutor
 		super("Display DSF Executor"); //$NON-NLS-1$
 		fDisplay = display;
 		fDisplay.addListener(SWT.Dispose, new Listener() {
-		    public void handleEvent(Event event) {
+		    @Override
+			public void handleEvent(Event event) {
 		        if (event.type == SWT.Dispose) {
                     DisplayDsfExecutor.super.shutdownNow();
 		        }
@@ -109,6 +110,7 @@ public class DisplayDsfExecutor extends DefaultDsfExecutor
         }
 
 	    return new Callable<V>() {
+			@Override
 			@SuppressWarnings("unchecked")
             public V call() throws Exception {
 				final Object[] v = new Object[1];
@@ -116,7 +118,8 @@ public class DisplayDsfExecutor extends DefaultDsfExecutor
 				
                 try {
     				fDisplay.syncExec(new Runnable() {
-    					public void run() {
+    					@Override
+						public void run() {
     						try {
     							v[0] = callable.call();
     						} catch(Throwable exception) {
@@ -159,10 +162,12 @@ public class DisplayDsfExecutor extends DefaultDsfExecutor
         }
 
 	    return new Runnable() {
+			@Override
 			public void run() {
 				try {
     				fDisplay.syncExec(new Runnable() {
-    					public void run() {
+    					@Override
+						public void run() {
     					    runnable.run();
     					}
     				});

@@ -49,7 +49,8 @@ public class TextViewerAction extends Action implements IUpdate {
      * 
      * @see org.eclipse.jface.action.Action#firePropertyChange(String, Object, Object)
      */
-    public void update() {
+    @Override
+	public void update() {
 
         boolean wasEnabled= isEnabled();
         boolean isEnabled= (fOperationTarget != null && fOperationTarget.canDoOperation(fOperationCode));

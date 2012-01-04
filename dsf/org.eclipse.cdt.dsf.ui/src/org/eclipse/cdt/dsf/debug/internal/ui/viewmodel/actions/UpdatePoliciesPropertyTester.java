@@ -44,7 +44,8 @@ public class UpdatePoliciesPropertyTester extends PropertyTester {
     private static final String AVAILABLE = "isUpdatePolicyAvailable"; //$NON-NLS-1$
     private static final String ACTIVE = "isUpdatePolicyActive"; //$NON-NLS-1$
 
-    public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
+    @Override
+	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
         if (receiver instanceof IVMContext) {
             IVMProvider provider = ((IVMContext)receiver).getVMNode().getVMProvider();
             if (provider instanceof ICachingVMProvider) {

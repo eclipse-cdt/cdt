@@ -23,18 +23,22 @@ public class VariableColumnPresentation implements IColumnPresentation {
     public static final String ID = DsfUIPlugin.PLUGIN_ID + ".VARIABLES_COLUMN_PRESENTATION_ID"; //$NON-NLS-1$
     
     // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#init(org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
-    public void init(IPresentationContext context) {}
+    @Override
+	public void init(IPresentationContext context) {}
 
     // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#dispose()
-    public void dispose() {}
+    @Override
+	public void dispose() {}
 
     // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getAvailableColumns()
-    public String[] getAvailableColumns() {
+    @Override
+	public String[] getAvailableColumns() {
         return new String[] { IDebugVMConstants.COLUMN_ID__NAME, IDebugVMConstants.COLUMN_ID__TYPE, IDebugVMConstants.COLUMN_ID__VALUE, IDebugVMConstants.COLUMN_ID__ADDRESS };
     }
 
     // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getHeader(java.lang.String)
-    public String getHeader(String id) {
+    @Override
+	public String getHeader(String id) {
         if (IDebugVMConstants.COLUMN_ID__NAME.equals(id)) {
             return MessagesForVariablesVM.VariableColumnPresentation_name; 
         } else if (IDebugVMConstants.COLUMN_ID__TYPE.equals(id)) {
@@ -48,22 +52,26 @@ public class VariableColumnPresentation implements IColumnPresentation {
     }
 
     // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getId()
-    public String getId() {
+    @Override
+	public String getId() {
         return ID;
     }
 
     // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getImageDescriptor(java.lang.String)
-    public ImageDescriptor getImageDescriptor(String id) {
+    @Override
+	public ImageDescriptor getImageDescriptor(String id) {
         return null;
     }
 
     // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#getInitialColumns()
-    public String[] getInitialColumns() {
+    @Override
+	public String[] getInitialColumns() {
         return new String[] { IDebugVMConstants.COLUMN_ID__NAME, IDebugVMConstants.COLUMN_ID__TYPE, IDebugVMConstants.COLUMN_ID__VALUE };
     }
 
     // @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation#isOptional()
-    public boolean isOptional() {
+    @Override
+	public boolean isOptional() {
         return true;
     }
 

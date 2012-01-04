@@ -27,6 +27,7 @@ abstract public class AbstractDMEvent<V extends IDMContext> implements IDMEvent<
         fModelContext = context;
     }
     
+    @Override
     public V getDMContext() {
         return fModelContext;
     }

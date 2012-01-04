@@ -118,7 +118,8 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.IDetailPane#init(org.eclipse.ui.IWorkbenchPartSite)
      */
-    public void init(IWorkbenchPartSite workbench) {
+    @Override
+	public void init(IWorkbenchPartSite workbench) {
         fWorkbenchPartSite = workbench;
 
     }
@@ -379,7 +380,8 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
         /* (non-Javadoc)
          * @see org.eclipse.debug.ui.IValueDetailListener#detailComputed(org.eclipse.debug.core.model.IValue, java.lang.String)
          */
-        public void detailComputed(IValue value, final String result) {
+        @Override
+		public void detailComputed(IValue value, final String result) {
         	synchronized (this) {
 			}
             if (!fMonitor.isCanceled()) {
@@ -448,7 +450,8 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.IDetailPane#createControl(org.eclipse.swt.widgets.Composite)
      */
-    public Control createControl(Composite parent) {
+    @Override
+	public Control createControl(Composite parent) {
         
         createTextViewer(parent);
         
@@ -489,15 +492,18 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
         
         // Add a document listener so actions get updated when the document changes
         getDetailDocument().addDocumentListener(new IDocumentListener() {
-            public void documentAboutToBeChanged(DocumentEvent event) {}
-            public void documentChanged(DocumentEvent event) {
+            @Override
+			public void documentAboutToBeChanged(DocumentEvent event) {}
+            @Override
+			public void documentChanged(DocumentEvent event) {
                 updateSelectionDependentActions();
             }
         });
         
         // Add the selection listener so selection dependent actions get updated.
         fTextViewer.getSelectionProvider().addSelectionChangedListener(new ISelectionChangedListener() {
-            public void selectionChanged(SelectionChangedEvent event) {
+            @Override
+			public void selectionChanged(SelectionChangedEvent event) {
                 updateSelectionDependentActions();
             }
         });
@@ -565,7 +571,8 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
         MenuManager menuMgr= new MenuManager(); 
         menuMgr.setRemoveAllWhenShown(true);
         menuMgr.addMenuListener(new IMenuListener() {
-            public void menuAboutToShow(IMenuManager mgr) {
+            @Override
+			public void menuAboutToShow(IMenuManager mgr) {
                 fillDetailContextMenu(mgr);
             }
         });
@@ -596,7 +603,8 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.IDetailPane#display(org.eclipse.jface.viewers.IStructuredSelection)
      */
-    public void display(IStructuredSelection selection) {
+    @Override
+	public void display(IStructuredSelection selection) {
         
         if (selection == null){
             clearTextViewer();
@@ -658,7 +666,8 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.IDetailPane#setFocus()
      */
-    public boolean setFocus(){
+    @Override
+	public boolean setFocus(){
         if (fTextViewer != null){
             fTextViewer.getTextWidget().setFocus();
             return true;
@@ -669,7 +678,8 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
     /*
      * 
      */
-    public void dispose(){
+    @Override
+	public void dispose(){
         fActionMap.clear();
         fSelectionActions.clear();
         
@@ -689,28 +699,32 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.IDetailPane#getDescription()
      */
-    public String getDescription() {
+    @Override
+	public String getDescription() {
         return MessagesForDetailPane.NumberFormatDetailPane_Description;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.IDetailPane#getID()
      */
-    public String getID() {
+    @Override
+	public String getID() {
         return ID;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.IDetailPane#getName()
      */
-    public String getName() {
+    @Override
+	public String getName() {
         return MessagesForDetailPane.NumberFormatDetailPane_Name;
     }
     
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
      */
-    @SuppressWarnings("rawtypes")
+    @Override
+	@SuppressWarnings("rawtypes")
     public Object getAdapter(Class required) {
         if (IFindReplaceTarget.class.equals(required)) {
             return fTextViewer.getFindReplaceTarget();
@@ -783,7 +797,8 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
     /* (non-Javadoc)
      * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
      */
-    public void propertyChange(PropertyChangeEvent event) {
+    @Override
+	public void propertyChange(PropertyChangeEvent event) {
         String propertyName= event.getProperty();
         if (propertyName.equals(IDebugUIConstants.PREF_DETAIL_PANE_FONT)) {
             fTextViewer.getTextWidget().setFont(JFaceResources.getFont(IDebugUIConstants.PREF_DETAIL_PANE_FONT));
@@ -798,6 +813,7 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
 	/*
 	 * @see org.eclipse.debug.ui.IDetailPane2#getSelectionProvider()
 	 */
+	@Override
 	public ISelectionProvider getSelectionProvider() {
 		if (fTextViewer != null) {
 			return fTextViewer.getSelectionProvider();

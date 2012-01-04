@@ -42,6 +42,7 @@ public class DisassemblyRunToLineAdapter implements IRunToLineTarget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IRunToLineTarget#runToLine(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection, org.eclipse.debug.core.model.ISuspendResume)
 	 */
+	@Override
 	public void runToLine(IWorkbenchPart part, ISelection selection, ISuspendResume target) throws CoreException {
 		if (part instanceof IDisassemblyPart && selection instanceof ITextSelection) {
 			if (!(selection instanceof IDisassemblySelection)) {
@@ -68,6 +69,7 @@ public class DisassemblyRunToLineAdapter implements IRunToLineTarget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IRunToLineTarget#canRunToLine(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection, org.eclipse.debug.core.model.ISuspendResume)
 	 */
+	@Override
 	public boolean canRunToLine(IWorkbenchPart part, ISelection selection, ISuspendResume target) {
 		if (target instanceof IAdaptable && part instanceof IDisassemblyPart && selection instanceof ITextSelection) {
 			IRunToAddress runToAddress = (IRunToAddress)((IAdaptable)target).getAdapter(IRunToAddress.class);

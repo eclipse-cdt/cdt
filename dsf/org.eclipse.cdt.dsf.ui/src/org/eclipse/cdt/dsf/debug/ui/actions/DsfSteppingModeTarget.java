@@ -37,6 +37,7 @@ public class DsfSteppingModeTarget implements ISteppingModeTarget, ITargetProper
 	/*
 	 * @see org.eclipse.cdt.debug.core.model.ISteppingModeTarget#enableInstructionStepping(boolean)
 	 */
+	@Override
 	public void enableInstructionStepping(boolean enabled) {
 		fPreferences.setValue(PREF_INSTRUCTION_STEPPING_MODE, enabled);
 		if (enabled) {
@@ -54,6 +55,7 @@ public class DsfSteppingModeTarget implements ISteppingModeTarget, ITargetProper
 	/*
 	 * @see org.eclipse.cdt.debug.core.model.ISteppingModeTarget#isInstructionSteppingEnabled()
 	 */
+	@Override
 	public boolean isInstructionSteppingEnabled() {
 		return fPreferences.getBoolean(PREF_INSTRUCTION_STEPPING_MODE);
 	}
@@ -61,6 +63,7 @@ public class DsfSteppingModeTarget implements ISteppingModeTarget, ITargetProper
 	/*
 	 * @see org.eclipse.cdt.debug.core.model.ISteppingModeTarget#supportsInstructionStepping()
 	 */
+	@Override
 	public boolean supportsInstructionStepping() {
 		return true;
 	}
@@ -68,6 +71,7 @@ public class DsfSteppingModeTarget implements ISteppingModeTarget, ITargetProper
 	/*
 	 * @see org.eclipse.cdt.debug.core.model.ITargetProperties#addPropertyChangeListener(org.eclipse.core.runtime.Preferences.IPropertyChangeListener)
 	 */
+	@Override
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
 		fPreferences.addPropertyChangeListener(listener);
 	}
@@ -75,6 +79,7 @@ public class DsfSteppingModeTarget implements ISteppingModeTarget, ITargetProper
 	/*
 	 * @see org.eclipse.cdt.debug.core.model.ITargetProperties#removePropertyChangeListener(org.eclipse.core.runtime.Preferences.IPropertyChangeListener)
 	 */
+	@Override
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 		fPreferences.removePropertyChangeListener(listener);
 	}

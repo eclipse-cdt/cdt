@@ -117,6 +117,7 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
     
     protected class RegisterGroupExpressionFactory implements IWatchExpressionFactoryAdapter2 {
         
+        @Override
         public boolean canCreateWatchExpression(Object element) {
             return element instanceof RegisterGroupVMC;
         }
@@ -124,6 +125,7 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
         /**
          * Expected format: Group(GroupName)
          */
+        @Override
         public String createWatchExpression(Object element) throws CoreException {
             IRegisterGroupDMData groupData = getSyncRegisterDataAccess().getRegisterGroupDMData(element);
             if (groupData != null) {
@@ -263,6 +265,7 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
         return provider;
     }
 
+    @Override
     public void update(final ILabelUpdate[] updates) {
         fLabelProvider.update(updates);
     }
@@ -272,9 +275,11 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
      * 
      * @since 2.0
      */    
+    @Override
     public void update(final IPropertiesUpdate[] updates) {
         try {
             getSession().getExecutor().execute(new DsfRunnable() {
+                @Override
                 public void run() {
                     updatePropertiesInSessionThread(updates);
                 }});
@@ -337,6 +342,7 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
         }
     }
 
+    @Override
     public int getDeltaFlags(Object e) {
         if (e instanceof ISuspendedDMEvent) {
             return IModelDelta.CONTENT;
@@ -350,6 +356,7 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
         return IModelDelta.NO_CHANGE;
     }
 
+    @Override
     public void buildDelta(Object e, VMDelta parentDelta, int nodeOffset, RequestMonitor rm) {
         // Although the register groups themselves are not affected by the 
         // suspended event, typically all the registers are.  Add a CONTENT changed
@@ -369,6 +376,7 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
         rm.done();
     }
     
+    @Override
     public boolean canParseExpression(IExpression expression) {
         return parseExpressionForGroupName(expression.getExpressionText()) != null;
     }
@@ -397,6 +405,7 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
      * (non-Javadoc)
      * @see org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.IExpressionVMNode#getDeltaFlagsForExpression(org.eclipse.debug.core.model.IExpression, java.lang.Object)
      */
+    @Override
     public int getDeltaFlagsForExpression(IExpression expression, Object event) {
 
         if (event instanceof ISuspendedDMEvent ||
@@ -416,6 +425,7 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
      * (non-Javadoc)
      * @see org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.IExpressionVMNode#buildDeltaForExpression(org.eclipse.debug.core.model.IExpression, int, java.lang.Object, org.eclipse.cdt.dsf.ui.viewmodel.VMDelta, org.eclipse.jface.viewers.TreePath, org.eclipse.cdt.dsf.concurrent.RequestMonitor)
      */
+    @Override
     public void buildDeltaForExpression(IExpression expression, int elementIdx, Object event, VMDelta parentDelta, 
         TreePath path, RequestMonitor rm) 
     {
@@ -439,6 +449,7 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
      * (non-Javadoc)
      * @see org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.IExpressionVMNode#buildDeltaForExpressionElement(java.lang.Object, int, java.lang.Object, org.eclipse.cdt.dsf.ui.viewmodel.VMDelta, org.eclipse.cdt.dsf.concurrent.RequestMonitor)
      */
+    @Override
     public void buildDeltaForExpressionElement(Object element, int elementIdx, Object event, VMDelta parentDelta, final RequestMonitor rm) 
     {
         if (event instanceof IGroupChangedDMEvent) {
@@ -468,6 +479,7 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
         final String groupName = parseExpressionForGroupName(expression.getExpressionText());
         try {
             getSession().getExecutor().execute(new DsfRunnable() {
+                @Override
                 public void run() {
                     IRegisters registersService = getServicesTracker().getService(IRegisters.class);
                     if (registersService != null) {
@@ -507,6 +519,7 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
      * (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor#getCellEditor(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String, java.lang.Object, org.eclipse.swt.widgets.Composite)
      */
+    @Override
     public CellEditor getCellEditor(IPresentationContext context, String columnId, Object element, Composite parent) {
         if (IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(columnId)) {
             return new TextCellEditor(parent);
@@ -518,6 +531,7 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
      * (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor#getCellModifier(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.Object)
      */
+    @Override
     public ICellModifier getCellModifier(IPresentationContext context, Object element) {
         return fWatchExpressionCellModifier;
     }
@@ -528,6 +542,7 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
      */
     private final String MEMENTO_NAME = "GROUP_MEMENTO_NAME"; //$NON-NLS-1$
     
+    @Override
     public void compareElements(IElementCompareRequest[] requests) {
         for (final IElementCompareRequest request : requests ) {
             final IRegisterGroupDMContext regDmc = findDmcInPath(request.getViewerInput(), request.getElementPath(), IRegisterGroupDMContext.class);
@@ -541,6 +556,7 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
         	// Now go get the model data for the single register group found.
         	try {
                 getSession().getExecutor().execute(new DsfRunnable() {
+                    @Override
                     public void run() {
                     	final IRegisters regService = getServicesTracker().getService(IRegisters.class);
                     	if ( regService != null ) {
@@ -571,6 +587,7 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
      * (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#encodeElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest[])
      */
+    @Override
     public void encodeElements(IElementMementoRequest[] requests) {
     	for ( final IElementMementoRequest request : requests ) {
             final IRegisterGroupDMContext regDmc = findDmcInPath(request.getViewerInput(), request.getElementPath(), IRegisterGroupDMContext.class);
@@ -582,6 +599,7 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
             //  Now go get the model data for the single register group found.
         	try {
                 getSession().getExecutor().execute(new DsfRunnable() {
+                    @Override
                     public void run() {
                     	final IRegisters regService = getServicesTracker().getService(IRegisters.class);
                     	if ( regService != null ) {

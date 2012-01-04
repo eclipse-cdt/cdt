@@ -34,6 +34,7 @@ class DisassemblySelectionProvider implements ISelectionProvider {
 
 	private final ListenerList fListenerList = new ListenerList(ListenerList.IDENTITY);
 	private final ISelectionChangedListener fListener = new ISelectionChangedListener() {
+		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			fireSelectionChanged(event);
 		}
@@ -57,6 +58,7 @@ class DisassemblySelectionProvider implements ISelectionProvider {
 	/*
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
 	 */
+	@Override
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
 		fListenerList.add(listener);			
 	}
@@ -64,6 +66,7 @@ class DisassemblySelectionProvider implements ISelectionProvider {
 	/*
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#getSelection()
 	 */
+	@Override
 	public ISelection getSelection() {
 		final ISourceViewer textViewer= fPart.getTextViewer();
 		ISelectionProvider provider = textViewer.getSelectionProvider();
@@ -76,6 +79,7 @@ class DisassemblySelectionProvider implements ISelectionProvider {
 	/*
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#removeSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
 	 */
+	@Override
 	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
 		fListenerList.remove(listener);
 	}
@@ -83,6 +87,7 @@ class DisassemblySelectionProvider implements ISelectionProvider {
 	/*
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void setSelection(ISelection selection) {
 		ISelectionProvider provider = fPart.getTextViewer().getSelectionProvider();
 		if (provider != null) {

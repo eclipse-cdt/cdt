@@ -62,7 +62,8 @@ abstract public class AbstractVMAdapter implements IVMAdapter
     public AbstractVMAdapter() {
     }    
 
-    @ThreadSafe
+    @Override
+	@ThreadSafe
     public IVMProvider getVMProvider(IPresentationContext context) {
         synchronized(fViewModelProviders) {
             if (fDisposed) return null;
@@ -83,7 +84,8 @@ abstract public class AbstractVMAdapter implements IVMAdapter
      * 
 	 * @since 1.1
 	 */
-    public IVMProvider[] getActiveProviders() {
+    @Override
+	public IVMProvider[] getActiveProviders() {
         synchronized(fViewModelProviders) {
             return fViewModelProviders.values().toArray(new IVMProvider[fViewModelProviders.size()]);
         }
@@ -100,7 +102,8 @@ abstract public class AbstractVMAdapter implements IVMAdapter
         for (final IVMProvider provider : providers) {
             try {
                 provider.getExecutor().execute(new Runnable() {
-                    public void run() {
+                    @Override
+					public void run() {
                         provider.dispose();
                     }
                 });
@@ -119,15 +122,18 @@ abstract public class AbstractVMAdapter implements IVMAdapter
 		return fDisposed;
 	}
 
-    public void update(IHasChildrenUpdate[] updates) {
+    @Override
+	public void update(IHasChildrenUpdate[] updates) {
     	handleUpdate(updates);
     }
     
-    public void update(IChildrenCountUpdate[] updates) {
+    @Override
+	public void update(IChildrenCountUpdate[] updates) {
     	handleUpdate(updates);
     }
     
-    public void update(final IChildrenUpdate[] updates) {
+    @Override
+	public void update(final IChildrenUpdate[] updates) {
     	handleUpdate(updates);
     }
     
@@ -147,7 +153,8 @@ abstract public class AbstractVMAdapter implements IVMAdapter
     private void updateProvider(final IVMProvider provider, final IViewerUpdate[] updates) {
         try {
             provider.getExecutor().execute(new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
                     if (updates instanceof IHasChildrenUpdate[]) {
                         provider.update((IHasChildrenUpdate[])updates);
                     } else if (updates instanceof IChildrenCountUpdate[]) {
@@ -166,7 +173,8 @@ abstract public class AbstractVMAdapter implements IVMAdapter
         }            
     }
     
-    public IModelProxy createModelProxy(Object element, IPresentationContext context) {
+    @Override
+	public IModelProxy createModelProxy(Object element, IPresentationContext context) {
         IVMProvider provider = getVMProvider(context);
         if (provider != null) {
             return provider.createModelProxy(element, context);
@@ -174,7 +182,8 @@ abstract public class AbstractVMAdapter implements IVMAdapter
         return null;
     }
     
-    public IColumnPresentation createColumnPresentation(IPresentationContext context, Object element) {
+    @Override
+	public IColumnPresentation createColumnPresentation(IPresentationContext context, Object element) {
         final IVMProvider provider = getVMProvider(context);
         if (provider != null) {
             return provider.createColumnPresentation(context, element);
@@ -182,7 +191,8 @@ abstract public class AbstractVMAdapter implements IVMAdapter
         return null;
     }
     
-    public String getColumnPresentationId(IPresentationContext context, Object element) {
+    @Override
+	public String getColumnPresentationId(IPresentationContext context, Object element) {
         final IVMProvider provider = getVMProvider(context);
         if (provider != null) {
             return provider.getColumnPresentationId(context, element);
@@ -191,7 +201,8 @@ abstract public class AbstractVMAdapter implements IVMAdapter
     }
 
 
-    public void update(IViewerInputUpdate update) {
+    @Override
+	public void update(IViewerInputUpdate update) {
         final IVMProvider provider = getVMProvider(update.getPresentationContext());
         if (provider != null) {
             provider.update(update);
@@ -247,6 +258,7 @@ abstract public class AbstractVMAdapter implements IVMAdapter
 			    }
 			    final RequestMonitor finalListenerRm = listenerRm;
 			    vmEventListener.getExecutor().execute(new DsfRunnable() {
+					@Override
 					public void run() {
 						vmEventListener.handleEvent(event, finalListenerRm);
 					}});

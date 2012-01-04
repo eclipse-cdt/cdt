@@ -38,6 +38,7 @@ abstract public class AbstractVMProviderActionDelegate implements IViewActionDel
     private IAction fAction = null;
     private ISelection fDebugContext;
 	
+    @Override
 	public void init(IViewPart view) {
         fView = view;
         
@@ -47,24 +48,29 @@ abstract public class AbstractVMProviderActionDelegate implements IViewActionDel
         fDebugContext = debugContextService.getActiveContext(); 
 	}
 
+    @Override
     public void selectionChanged(IAction action, ISelection selection) {
         if (fAction != action) {
             fAction = action;
         }
     }
     
+    @Override
     public void runWithEvent(IAction action, Event event) {
         run(action);
     }
 
+    @Override
     public void init(IAction action) {
         fAction = action;
     }
 
+    @Override
     public void dispose() {
         DebugUITools.getDebugContextManager().getContextService(getView().getSite().getWorkbenchWindow()).removePostDebugContextListener(this);
     }
     
+    @Override
     public void debugContextChanged(DebugContextEvent event) {
         fDebugContext = event.getContext();
     }

@@ -31,6 +31,7 @@ public class StringTextStore implements ITextStore {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.ITextStore#get(int)
 	 */
+	@Override
 	public char get(int offset) {
 		return fText.charAt(offset);
 	}
@@ -38,6 +39,7 @@ public class StringTextStore implements ITextStore {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.ITextStore#get(int, int)
 	 */
+	@Override
 	public String get(int offset, int length) {
 		if (length == fText.length()) {
 			return fText;
@@ -48,6 +50,7 @@ public class StringTextStore implements ITextStore {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.ITextStore#getLength()
 	 */
+	@Override
 	public int getLength() {
 		return fText.length();
 	}
@@ -55,6 +58,7 @@ public class StringTextStore implements ITextStore {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.ITextStore#replace(int, int, java.lang.String)
 	 */
+	@Override
 	public void replace(int offset, int length, String text) {
 		// unmodifiable
 		throw new UnsupportedOperationException();
@@ -63,6 +67,7 @@ public class StringTextStore implements ITextStore {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.ITextStore#set(java.lang.String)
 	 */
+	@Override
 	public void set(String text) {
 		fText = text != null ? text : ""; //$NON-NLS-1$
 	}

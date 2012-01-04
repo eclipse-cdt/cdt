@@ -33,6 +33,7 @@ public class ExpandStackAction extends AbstractVMProviderActionDelegate implemen
 	/*
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		Object element = getViewerInput();
 		if (element instanceof IncompleteStackVMContext) {
@@ -44,7 +45,8 @@ public class ExpandStackAction extends AbstractVMProviderActionDelegate implemen
 				final ExpandStackEvent event = new ExpandStackEvent(exeCtx);
 				final AbstractLaunchVMProvider vmProvider = (AbstractLaunchVMProvider) getVMProvider();
 				vmProvider.getExecutor().execute(new DsfRunnable() {
-				    public void run() {
+				    @Override
+					public void run() {
 				        vmProvider.handleEvent(event);
 				    }
 				});
@@ -79,6 +81,7 @@ public class ExpandStackAction extends AbstractVMProviderActionDelegate implemen
 		getAction().setEnabled(enabled);
 	}
 
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		if (targetPart instanceof IViewPart) {
 			init((IViewPart) targetPart);

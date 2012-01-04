@@ -88,6 +88,7 @@ public class AddressBarContributionItem extends ContributionItem {
 
 		parent.addDisposeListener(new DisposeListener() {
 
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				if (warningImage != null)
 					warningImage.dispose();
@@ -198,10 +199,12 @@ public class AddressBarContributionItem extends ContributionItem {
 			// [nmehregani]: Support Ctrl+C in address bar
 			KeyListener keyListener = new KeyListener() {
 
+				@Override
 				public void keyPressed(KeyEvent e) {
 					/* Not used */
 				}
 
+				@Override
 				public void keyReleased(KeyEvent e) {
 					if (e.stateMask == SWT.CTRL
 							&& (((char) e.keyCode) == 'c' || ((char) e.keyCode) == 'C')) {
@@ -234,6 +237,7 @@ public class AddressBarContributionItem extends ContributionItem {
 
 			};
 
+			@Override
 			public void focusGained(FocusEvent e) {
 				// [nmehregani] bugzilla 297387: 'Home' shouldn't jump to PC address when focus is on location combo box
 				if (action instanceof JumpToAddressAction) 
@@ -250,6 +254,7 @@ public class AddressBarContributionItem extends ContributionItem {
 				addressBox.addKeyListener(keyListener);
 			}
 
+			@Override
 			public void focusLost(FocusEvent e) {
 				// [nmehregani] bugzilla 297387: 'Home' shouldn't jump to PC address when focus is on location combo box
 				if (action instanceof JumpToAddressAction) 
@@ -268,6 +273,7 @@ public class AddressBarContributionItem extends ContributionItem {
 
 		addressBox.addTraverseListener(new TraverseListener() {
 
+			@Override
 			public void keyTraversed(TraverseEvent e) {
 				if (e.detail == SWT.TRAVERSE_RETURN) {
 					String addressBoxStr = addressBox.getText();

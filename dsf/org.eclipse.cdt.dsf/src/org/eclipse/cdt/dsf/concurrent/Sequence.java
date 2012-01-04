@@ -266,6 +266,7 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
         
         if (fRequestMonitor != null) {
             fRequestMonitor.addCancelListener(new ICanceledListener() {
+                @Override
                 public void requestCanceled(RequestMonitor rm) {
                     fSync.doCancel();
                 }
@@ -298,6 +299,7 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
      * The get method blocks until sequence is complete, but always returns null.
      * @see java.concurrent.Future#get
      */
+    @Override
     public Object get() throws InterruptedException, ExecutionException { 
         fSync.doGet();
         return null;
@@ -308,6 +310,7 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
      * reached, but always returns null.
      * @see java.concurrent.Future#get
      */
+    @Override
     public Object get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
     	fSync.doGet(unit.toNanos(timeout));
         return null;
@@ -322,6 +325,7 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
      * 
      * @see RequestMonitor#cancel()
      */
+    @Override
     public boolean cancel(boolean mayInterruptIfRunning) {
         // Cancel the request monitor first, to avoid a situation where
         // the request monitor is not canceled but the status is set
@@ -332,11 +336,14 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
         return fSync.doCancel();
     }
 
+    @Override
     public boolean isCancelled() { return fSync.doIsCancelled(); }
 
+    @Override
     public boolean isDone() { return fSync.doIsDone(); }
 
     
+    @Override
     public void run() {
         // Change the state to running.
         if (fSync.doRun()) {

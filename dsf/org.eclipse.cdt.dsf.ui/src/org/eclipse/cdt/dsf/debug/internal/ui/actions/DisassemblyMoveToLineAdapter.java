@@ -37,6 +37,7 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class DisassemblyMoveToLineAdapter implements IMoveToLineTarget {
 
+	@Override
 	public void moveToLine(IWorkbenchPart part, ISelection selection, ISuspendResume target) throws CoreException {
 		if (part instanceof IDisassemblyPart && selection instanceof ITextSelection) {
 			if (!(selection instanceof IDisassemblySelection)) {
@@ -59,6 +60,7 @@ public class DisassemblyMoveToLineAdapter implements IMoveToLineTarget {
 		}
 	}
 
+	@Override
 	public boolean canMoveToLine(IWorkbenchPart part, ISelection selection, ISuspendResume target) {
 		if (target instanceof IAdaptable && part instanceof IDisassemblyPart && selection instanceof ITextSelection) {
 			IMoveToAddress moveToAddress = (IMoveToAddress)((IAdaptable)target).getAdapter(IMoveToAddress.class);

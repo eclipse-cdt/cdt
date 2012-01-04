@@ -44,6 +44,7 @@ public class StandardProcessVMNode extends AbstractVMNode {
         return "StandardProcessVMNode";  //$NON-NLS-1$ 
     }
 
+    @Override
     public void update(IChildrenUpdate[] updates) {
         for (IChildrenUpdate update : updates) {
             ILaunch launch = findLaunch(update.getElementPath());
@@ -67,6 +68,7 @@ public class StandardProcessVMNode extends AbstractVMNode {
         }
     }
     
+    @Override
     public void update(final IChildrenCountUpdate[] updates) {
         for (IChildrenCountUpdate update : updates) {
             if (!checkUpdate(update)) continue;
@@ -84,6 +86,7 @@ public class StandardProcessVMNode extends AbstractVMNode {
     }
 
     // @see org.eclipse.cdt.dsf.ui.viewmodel.IViewModelLayoutNode#hasElements(org.eclipse.cdt.dsf.ui.viewmodel.IVMContext, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
+    @Override
     public void update(IHasChildrenUpdate[] updates) {
         for (IHasChildrenUpdate update : updates) {
             ILaunch launch = findLaunch(update.getElementPath());
@@ -125,6 +128,7 @@ public class StandardProcessVMNode extends AbstractVMNode {
         return null;
     }
     
+    @Override
     public int getDeltaFlags(Object e) {
         int myFlags = 0;
         if (e instanceof DebugEvent) {
@@ -140,6 +144,7 @@ public class StandardProcessVMNode extends AbstractVMNode {
         return myFlags;
     }
     
+    @Override
     public void buildDelta(Object e, VMDelta parent, int nodeOffset, RequestMonitor requestMonitor) {
         if (e instanceof DebugEvent && ((DebugEvent)e).getSource() instanceof IProcess) {
             DebugEvent de = (DebugEvent)e;

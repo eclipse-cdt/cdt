@@ -59,7 +59,8 @@ abstract public class AbstractDMVMNode extends AbstractVMNode implements IVMNode
             fDmc = dmc;
         }
         
-        public IDMContext getDMContext() { return fDmc; }
+        @Override
+		public IDMContext getDMContext() { return fDmc; }
         
         /**
          * The IAdaptable implementation.  If the adapter is the DM context, 
@@ -176,10 +177,12 @@ abstract public class AbstractDMVMNode extends AbstractVMNode implements IVMNode
         return true;
     }
 
-    public void update(final IHasChildrenUpdate[] updates) {
+    @Override
+	public void update(final IHasChildrenUpdate[] updates) {
         try {
             getSession().getExecutor().execute(new DsfRunnable() {
-                public void run() {
+                @Override
+				public void run() {
                     for (IHasChildrenUpdate update : updates) {
                         if (!checkUpdate(update)) continue;
                         updateHasElementsInSessionThread(update);
@@ -198,10 +201,12 @@ abstract public class AbstractDMVMNode extends AbstractVMNode implements IVMNode
         update.done();
     }
 
-    public void update(final IChildrenCountUpdate[] updates) {
+    @Override
+	public void update(final IChildrenCountUpdate[] updates) {
         try {
             getSession().getExecutor().execute(new DsfRunnable() {
-                public void run() {
+                @Override
+				public void run() {
                     for (IChildrenCountUpdate update : updates) {
                         if (!checkUpdate(update)) continue;
                         updateElementCountInSessionThread(update);                        
@@ -220,10 +225,12 @@ abstract public class AbstractDMVMNode extends AbstractVMNode implements IVMNode
         update.done();
     }
         
-    public void update(final IChildrenUpdate[] updates) {
+    @Override
+	public void update(final IChildrenUpdate[] updates) {
         try {
             getSession().getExecutor().execute(new DsfRunnable() {
-                public void run() {
+                @Override
+				public void run() {
                     // After every dispatch, must check if update still valid. 
                     for (IChildrenUpdate update : updates) {
                         if (!checkUpdate(update)) continue;

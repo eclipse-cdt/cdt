@@ -73,20 +73,24 @@ import org.eclipse.ui.IWorkbenchWindow;
 public class BreakpointVMProvider extends AbstractVMProvider 
 {
     private IPropertyChangeListener fPresentationContextListener = new IPropertyChangeListener() {
+        @Override
         public void propertyChange(PropertyChangeEvent event) {
             handleEventInExecThread(event);
         }        
     };
 
     private IBreakpointsListener fBreakpointsListener = new IBreakpointsListener() {
+        @Override
         public void breakpointsRemoved(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
             handleEventInExecThread(new BreakpointsChangedEvent(BreakpointsChangedEvent.Type.REMOVED, breakpoints));
         }
         
+        @Override
         public void breakpointsChanged(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
             handleEventInExecThread(new BreakpointsChangedEvent(BreakpointsChangedEvent.Type.CHANGED, breakpoints));
         }
         
+        @Override
         public void breakpointsAdded(IBreakpoint[] breakpoints) {
             handleEventInExecThread(new BreakpointsChangedEvent(BreakpointsChangedEvent.Type.ADDED, breakpoints));
         }
@@ -94,6 +98,7 @@ public class BreakpointVMProvider extends AbstractVMProvider
     };
  
     private IDebugContextListener fDebugContextListener = new IDebugContextListener() {
+        @Override
         public void debugContextChanged(final DebugContextEvent event) {
             handleEventInExecThread(event);
         }
@@ -332,6 +337,7 @@ public class BreakpointVMProvider extends AbstractVMProvider
     
     public void handleEventInExecThread(final Object event) {
         getExecutor().execute(new DsfRunnable() {
+            @Override
             public void run() {
                 handleEvent(event);
             }

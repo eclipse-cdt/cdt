@@ -95,6 +95,7 @@ public class DsfServicesTracker {
     private final String fServiceFilter;
 
     private final ServiceListener fListner = new ServiceListener() {
+        @Override
         public void serviceChanged(final ServiceEvent event) {
             // Only listen to unregister events.
             if (event.getType() != ServiceEvent.UNREGISTERING) {
@@ -113,6 +114,7 @@ public class DsfServicesTracker {
             } else {
                 try {
                     session.getExecutor().execute(new DsfRunnable() {
+                        @Override
                        public void run() {
                            handleUnregisterEvent(event);
                        }; 
@@ -247,6 +249,7 @@ public class DsfServicesTracker {
             try {
                 if (!session.getExecutor().isInExecutorThread()) {
                     session.getExecutor().execute(new DsfRunnable() {
+                        @Override
                         public void run() {
                             doDispose();
                         }

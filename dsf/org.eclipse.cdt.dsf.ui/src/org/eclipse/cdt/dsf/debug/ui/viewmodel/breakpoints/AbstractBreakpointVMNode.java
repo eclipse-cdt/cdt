@@ -55,7 +55,8 @@ public abstract class AbstractBreakpointVMNode extends AbstractVMNode {
      */
     abstract protected Object createBreakpiontElement(IBreakpoint bp);
     
-    public void update(final IHasChildrenUpdate[] updates) {
+    @Override
+	public void update(final IHasChildrenUpdate[] updates) {
         for (final IHasChildrenUpdate update : updates) {
             if (!checkUpdate(update)) continue;
             ((BreakpointVMProvider)getVMProvider()).getNestingCategoryBreakpoints(
@@ -74,7 +75,8 @@ public abstract class AbstractBreakpointVMNode extends AbstractVMNode {
         }
     }
 
-    public void update(final IChildrenCountUpdate[] updates) {
+    @Override
+	public void update(final IChildrenCountUpdate[] updates) {
         for (final IChildrenCountUpdate update : updates) {
             if (!checkUpdate(update)) continue;
             ((BreakpointVMProvider)getVMProvider()).getNestingCategoryBreakpoints(
@@ -93,7 +95,8 @@ public abstract class AbstractBreakpointVMNode extends AbstractVMNode {
         }
     }
     
-    public void update(IChildrenUpdate[] updates) {
+    @Override
+	public void update(IChildrenUpdate[] updates) {
         for (final IChildrenUpdate update : updates) {
             if (!checkUpdate(update)) continue;
             ((BreakpointVMProvider)getVMProvider()).getNestingCategoryBreakpoints(
@@ -126,7 +129,8 @@ public abstract class AbstractBreakpointVMNode extends AbstractVMNode {
         }
     }
     
-    public int getDeltaFlags(Object event) {
+    @Override
+	public int getDeltaFlags(Object event) {
         if (event instanceof BreakpointsChangedEvent) {
             BreakpointsChangedEvent bpChangedEvent = ((BreakpointsChangedEvent)event);
             if (BreakpointsChangedEvent.Type.ADDED.equals(bpChangedEvent.getType())) {
@@ -167,7 +171,8 @@ public abstract class AbstractBreakpointVMNode extends AbstractVMNode {
         return 0;
     }
 
-    public void buildDelta(Object event, VMDelta parent, int nodeOffset, RequestMonitor rm) {
+    @Override
+	public void buildDelta(Object event, VMDelta parent, int nodeOffset, RequestMonitor rm) {
         if (event instanceof BreakpointsChangedEvent) {
             BreakpointsChangedEvent bpChangedEvent = ((BreakpointsChangedEvent)event);
             if (BreakpointsChangedEvent.Type.ADDED.equals(bpChangedEvent.getType())) {

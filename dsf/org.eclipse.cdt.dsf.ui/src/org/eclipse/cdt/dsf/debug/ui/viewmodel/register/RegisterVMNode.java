@@ -137,6 +137,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
 
     protected class RegisterExpressionFactory implements IWatchExpressionFactoryAdapter2 {
 
+        @Override
         public boolean canCreateWatchExpression(Object element) {
             return element instanceof RegisterVMC;
         }
@@ -144,6 +145,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
         /**
          * Expected format: GRP( GroupName ).REG( RegisterName )
          */
+        @Override
         public String createWatchExpression(Object element) throws CoreException {
             IRegisterGroupDMData groupData = getSyncRegisterDataAccess().getRegisterGroupDMData(element);
             IRegisterDMData registerData = getSyncRegisterDataAccess().getRegisterDMData(element);
@@ -262,6 +264,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
     	}
 
     	fPreferenceChangeListener = new IPropertyChangeListener() {
+    	    @Override
     		public void propertyChange(PropertyChangeEvent event) {
     			if ( event.getProperty().equals(IDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND) ) {
     				columnIdValueBackground.setBackground(DebugUITools.getPreferenceColor(IDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND).getRGB());
@@ -458,6 +461,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
     	return fRegisterExpressionFactory;
     }
         
+    @Override
     public void update(final ILabelUpdate[] updates) {
         fLabelProvider.update(updates);
     }
@@ -472,6 +476,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
      * 
      * @since 2.0
      */    
+    @Override
     public void update(final IPropertiesUpdate[] updates) {
         final CountingRequestMonitor countingRm = new CountingRequestMonitor(ImmediateExecutor.getInstance(), null) {
             @Override
@@ -496,6 +501,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
 
         try {
             getSession().getExecutor().execute(new DsfRunnable() {
+                @Override
                 public void run() {
                     updatePropertiesInSessionThread(subUpdates);
                 }});
@@ -663,6 +669,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
      * (non-Javadoc)
      * @see org.eclipse.cdt.dsf.ui.viewmodel.IVMNode#getDeltaFlags(java.lang.Object)
      */
+    @Override
     public int getDeltaFlags(Object e) {
         if ( e instanceof ISuspendedDMEvent || 
              e instanceof IMemoryChangedEvent ||
@@ -685,6 +692,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
      * (non-Javadoc)
      * @see org.eclipse.cdt.dsf.ui.viewmodel.IVMNode#buildDelta(java.lang.Object, org.eclipse.cdt.dsf.ui.viewmodel.VMDelta, int, org.eclipse.cdt.dsf.concurrent.RequestMonitor)
      */
+    @Override
     public void buildDelta(Object e, VMDelta parentDelta, int nodeOffset, RequestMonitor rm) {
         // The following events can affect any register's values, 
         // refresh the contents of the parent element (i.e. all the registers). 
@@ -710,6 +718,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
      * Expected format: GRP( GroupName ).REG( RegisterName )
      *              or: $RegisterName
      */
+    @Override
     public boolean canParseExpression(IExpression expression) {
         return parseExpressionForRegisterName(expression.getExpressionText()) != null;
     }
@@ -782,6 +791,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
         final String regName = parseExpressionForRegisterName(expression.getExpressionText());
         try {
             getSession().getExecutor().execute(new DsfRunnable() {
+                @Override
                 public void run() {
                     IRegisters registersService = getServicesTracker().getService(IRegisters.class);
                     if (registersService != null) {
@@ -821,6 +831,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
      * (non-Javadoc)
      * @see org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.IExpressionVMNode#getDeltaFlagsForExpression(org.eclipse.debug.core.model.IExpression, java.lang.Object)
      */
+    @Override
     public int getDeltaFlagsForExpression(IExpression expression, Object event) {
         if ( event instanceof IRegisterChangedDMEvent ||
              event instanceof IMemoryChangedEvent ||
@@ -844,6 +855,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
      * (non-Javadoc)
      * @see org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.IExpressionVMNode#buildDeltaForExpression(org.eclipse.debug.core.model.IExpression, int, java.lang.Object, org.eclipse.cdt.dsf.ui.viewmodel.VMDelta, org.eclipse.jface.viewers.TreePath, org.eclipse.cdt.dsf.concurrent.RequestMonitor)
      */
+    @Override
     public void buildDeltaForExpression(IExpression expression, int elementIdx, Object event, VMDelta parentDelta, 
         TreePath path, RequestMonitor rm) 
     {
@@ -867,6 +879,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
      * (non-Javadoc)
      * @see org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.IExpressionVMNode#buildDeltaForExpressionElement(java.lang.Object, int, java.lang.Object, org.eclipse.cdt.dsf.ui.viewmodel.VMDelta, org.eclipse.cdt.dsf.concurrent.RequestMonitor)
      */
+    @Override
     public void buildDeltaForExpressionElement(Object element, int elementIdx, Object event, VMDelta parentDelta, final RequestMonitor rm) 
     {
         // The following events can affect register values, refresh the state 
@@ -886,6 +899,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
      * (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor#getCellEditor(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String, java.lang.Object, org.eclipse.swt.widgets.Composite)
      */
+    @Override
     public CellEditor getCellEditor(IPresentationContext context, String columnId, Object element, Composite parent) {
         if (IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(columnId)) {
             return new TextCellEditor(parent);
@@ -908,6 +922,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
      * (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor#getCellModifier(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.Object)
      */
+    @Override
     public ICellModifier getCellModifier(IPresentationContext context, Object element) {
         return new RegisterCellModifier( getDMVMProvider(), getSyncRegisterDataAccess() );
     }
@@ -918,6 +933,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
      */
     private final String MEMENTO_NAME = "REGISTER_MEMENTO_NAME"; //$NON-NLS-1$
     
+    @Override
     public void compareElements(IElementCompareRequest[] requests) {
         for ( final IElementCompareRequest request : requests ) {
             final IRegisterDMContext regDmc = findDmcInPath(request.getViewerInput(), request.getElementPath(), IRegisterDMContext.class);
@@ -930,6 +946,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
             //  Now go get the model data for the single register group found.
             try {
                 getSession().getExecutor().execute(new DsfRunnable() {
+                    @Override
                     public void run() {
                         final IRegisters regService = getServicesTracker().getService(IRegisters.class);
                         if ( regService != null ) {
@@ -960,6 +977,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
      * (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#encodeElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest[])
      */
+    @Override
     public void encodeElements(IElementMementoRequest[] requests) {
         for ( final IElementMementoRequest request : requests ) {
             final IRegisterDMContext regDmc = findDmcInPath(request.getViewerInput(), request.getElementPath(), IRegisterDMContext.class);
@@ -971,6 +989,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
             //  Now go get the model data for the single register group found.
             try {
                 getSession().getExecutor().execute(new DsfRunnable() {
+                    @Override
                     public void run() {
                         final IRegisters regService = getServicesTracker().getService(IRegisters.class);
                         if ( regService != null ) {

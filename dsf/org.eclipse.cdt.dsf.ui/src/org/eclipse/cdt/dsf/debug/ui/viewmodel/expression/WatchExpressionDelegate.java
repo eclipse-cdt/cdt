@@ -21,13 +21,19 @@ import org.eclipse.debug.core.model.IWatchExpressionResult;
  * 
  */
 public class WatchExpressionDelegate implements IWatchExpressionDelegate {
-    public void evaluateExpression(final String expression, IDebugElement context, IWatchExpressionListener listener) {
+    @Override
+	public void evaluateExpression(final String expression, IDebugElement context, IWatchExpressionListener listener) {
         listener.watchEvaluationFinished(new IWatchExpressionResult() {
-            public String[] getErrorMessages() { return new String[0]; }
-            public DebugException getException() { return null; }
-            public String getExpressionText() { return expression; }
-            public IValue getValue() { return null; }
-            public boolean hasErrors() { return false; }
+            @Override
+			public String[] getErrorMessages() { return new String[0]; }
+            @Override
+			public DebugException getException() { return null; }
+            @Override
+			public String getExpressionText() { return expression; }
+            @Override
+			public IValue getValue() { return null; }
+            @Override
+			public boolean hasErrors() { return false; }
         });
     }
 }

@@ -26,11 +26,13 @@ public class AutomaticUpdatePolicy implements IVMUpdatePolicy {
     public static String AUTOMATIC_UPDATE_POLICY_ID = "org.eclipse.cdt.dsf.ui.viewmodel.update.defaultUpdatePolicy";  //$NON-NLS-1$
     
     public static IElementUpdateTester fgUpdateTester = new IElementUpdateTester() {
-        public int getUpdateFlags(Object viewerInput, TreePath path) {
+        @Override
+		public int getUpdateFlags(Object viewerInput, TreePath path) {
             return FLUSH | ARCHIVE; 
         }  
         
-        public boolean includes(IElementUpdateTester tester) {
+        @Override
+		public boolean includes(IElementUpdateTester tester) {
             return tester.equals(this);
         }
 
@@ -40,23 +42,28 @@ public class AutomaticUpdatePolicy implements IVMUpdatePolicy {
         }
     };
     
-    public String getID() {
+    @Override
+	public String getID() {
         return AUTOMATIC_UPDATE_POLICY_ID;
     }
 
-    public String getName() {
+    @Override
+	public String getName() {
         return ViewModelUpdateMessages.AutomaticUpdatePolicy_name;
     }
 
-    public IElementUpdateTester getElementUpdateTester(Object event) {
+    @Override
+	public IElementUpdateTester getElementUpdateTester(Object event) {
         return fgUpdateTester;
     }
 
-    public Object[] getInitialRootElementChildren(Object rootElement) {
+    @Override
+	public Object[] getInitialRootElementChildren(Object rootElement) {
         return null;
     }
     
-    public Map<String, Object> getInitialRootElementProperties(Object rootElement) {
+    @Override
+	public Map<String, Object> getInitialRootElementProperties(Object rootElement) {
         return null;
     }
 }

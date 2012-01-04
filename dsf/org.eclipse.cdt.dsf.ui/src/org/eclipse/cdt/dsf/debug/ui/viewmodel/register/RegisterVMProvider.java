@@ -47,7 +47,8 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 public class RegisterVMProvider extends AbstractDMVMProvider 
 {
     private IPropertyChangeListener fPreferencesListener = new IPropertyChangeListener() {
-        public void propertyChange(PropertyChangeEvent event) {
+        @Override
+		public void propertyChange(PropertyChangeEvent event) {
             String property = event.getProperty();
 			if (property.equals(IDsfDebugUIConstants.PREF_WAIT_FOR_VIEW_UPDATE_AFTER_STEP_ENABLE)) {
                 IPreferenceStore store = DsfDebugUITools.getPreferenceStore();
@@ -57,7 +58,8 @@ public class RegisterVMProvider extends AbstractDMVMProvider
     };
 
     private IPropertyChangeListener fPresentationContextListener = new IPropertyChangeListener() {
-        public void propertyChange(PropertyChangeEvent event) {
+        @Override
+		public void propertyChange(PropertyChangeEvent event) {
             handleEvent(event);
         }        
     };
@@ -209,6 +211,7 @@ public class RegisterVMProvider extends AbstractDMVMProvider
 			fDMContext = dmc;
 		}
 	    
+		@Override
 		public IDMContext getDMContext() {
 			return fDMContext;
 		}
@@ -253,7 +256,8 @@ public class RegisterVMProvider extends AbstractDMVMProvider
         super.refresh();
         try {
             getSession().getExecutor().execute(new DsfRunnable() {
-                public void run() {
+                @Override
+				public void run() {
                     DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), getSession().getId());
                     IRegisters registerService = tracker.getService(IRegisters.class);
                     if (registerService instanceof ICachingService) {

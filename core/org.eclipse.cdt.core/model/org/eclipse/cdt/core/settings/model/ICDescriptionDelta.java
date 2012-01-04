@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
-
+/**
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
+ */
 public interface ICDescriptionDelta {
 	/*
 	 * delta kinds
@@ -18,8 +21,8 @@ public interface ICDescriptionDelta {
 	/**
 	 * kind specifying that the setting object returned by
 	 * the {@link #getSetting()} was removed
-	 * the {@link #getNewSetting()} returns null 
-	 * the {@link #getOldSetting()} returns the same object as {@link #getSetting()}  
+	 * the {@link #getNewSetting()} returns null
+	 * the {@link #getOldSetting()} returns the same object as {@link #getSetting()}
 	 */
 	int REMOVED = 1;
 
@@ -27,29 +30,33 @@ public interface ICDescriptionDelta {
 	 * kind specifying that the setting object returned by
 	 * the {@link #getSetting()} was added
 	 * the {@link #getNewSetting()} returns the same object as {@link #getSetting()}
-	 * the {@link #getOldSetting()} returns null  
+	 * the {@link #getOldSetting()} returns null
 	 */
 	int ADDED = 2;
 
 	/**
 	 * kind specifying that the setting object was changed
-	 * the {@link #getNewSetting()} returns new object 
-	 * the {@link #getOldSetting()} returns old object  
+	 * the {@link #getNewSetting()} returns new object
+	 * the {@link #getOldSetting()} returns old object
 	 * the {@link #getSetting()} returns the same object as {@link #getNewSetting()}
 	 */
 	int CHANGED = 3;
-	
+
 	/*
 	 * delta change flags
 	 */
-	
+
 	int ACTIVE_CFG = 1;
 	int NAME = 1 << 1;
 	int DESCRIPTION = 1 << 2;
 //	int PATH = 1 << 3;
 	int LANGUAGE_ID = 1 << 4;
 	int SOURCE_CONTENT_TYPE = 1 << 5;
-	int SOURCE_ENTENSIONS = 1 << 6;
+	/** @since 5.4 */
+	int SOURCE_EXTENSIONS = 1 << 6;
+	/** @deprecated Use ICDescriptionDelta.SOURCE_EXTENSIONS */
+	@Deprecated
+	int SOURCE_ENTENSIONS = SOURCE_EXTENSIONS;
 //	int HEADER_CONTENT_TYPE = 1 << 7;
 //	int HEADER_ENTENSIONS = 1 << 8;
 	int SETTING_ENTRIES = 1 << 9;
@@ -66,17 +73,19 @@ public interface ICDescriptionDelta {
 	int OWNER = 1 << 20;
 	int INDEX_CFG = 1 << 21;
 	int SETTING_CFG = INDEX_CFG;
-	
+	/** @since 5.4 */
+	int LANGUAGE_SETTINGS_PROVIDERS = 1 << 22;
+
 	/**
 	 * specifies that the project "isCdtProjectCreating" state was set to false
 	 * the PROJECT_CREAION_COMPLETED delta gets notified ONLY in case
-	 * the project previously contained the project description with 
+	 * the project previously contained the project description with
 	 * the true "isCdtProjectCreating" state
-	 * 
+	 *
 	 * in case the initial project description does NOT contain the true "isCdtProjectCreating"
-	 * the project is considered as initialized from the very beginning 
+	 * the project is considered as initialized from the very beginning
 	 * and the PROJECT_CREAION_COMPLETED delta is NOT notified
-	 * 
+	 *
 	 * @see ICProjectDescription#isCdtProjectCreating()
 	 * @see ICProjectDescription#setCdtProjectCreated()
 	 * @see ICProjectDescriptionManager#createProjectDescription(org.eclipse.core.resources.IProject, boolean, boolean)
@@ -85,19 +94,19 @@ public interface ICDescriptionDelta {
 
 	/**
 	 * returns the kind
-	 * @see #ADDED 
-	 * @see #REMOVED 
+	 * @see #ADDED
+	 * @see #REMOVED
 	 * @see #CHANGED
-	 * 
+	 *
 	 * @return int
 	 */
 	int getDeltaKind();
-	
+
 	/**
 	 * @return ored delta flags
 	 */
 	int getChangeFlags();
-	
+
 	int getSettingType();
 
 	int getAddedEntriesKinds();
@@ -111,8 +120,8 @@ public interface ICDescriptionDelta {
 	ICSettingObject getNewSetting();
 
 	ICSettingObject getSetting();
-	
+
 	ICSettingObject getOldSetting();
-	
+
 	ICDescriptionDelta getParent();
 }

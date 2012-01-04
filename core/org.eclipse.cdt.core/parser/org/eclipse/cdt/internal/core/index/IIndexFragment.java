@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,6 +58,7 @@ public interface IIndexFragment {
 	 */
 	final int FIND_ALL_OCCURRENCES = IIndex.FIND_ALL_OCCURRENCES;
 
+	final int FIND_NON_LOCAL_ONLY= 0x10000;
 	/**
 	 * Property key for the fragment ID. The fragment ID should uniquely identify the fragments
 	 * usage within a logical index.
@@ -223,8 +224,8 @@ public interface IIndexFragment {
 	 * Searches for all names that resolve to the given binding. You can limit the result to
 	 * references, declarations or definitions, or a combination of those.
 	 * @param binding a binding for which names are searched for
-	 * @param flags a combination of {@link #FIND_DECLARATIONS}, {@link #FIND_DEFINITIONS} and
-	 *     {@link #FIND_REFERENCES}
+	 * @param flags a combination of {@link #FIND_DECLARATIONS}, {@link #FIND_DEFINITIONS}, 
+	 *     {@link #FIND_REFERENCES} and {@link #FIND_NON_LOCAL_ONLY}
 	 * @return an array of names
 	 * @throws CoreException
 	 */

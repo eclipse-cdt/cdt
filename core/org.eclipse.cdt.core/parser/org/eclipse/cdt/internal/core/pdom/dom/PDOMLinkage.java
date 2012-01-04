@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 QNX Software Systems and others.
+ * Copyright (c) 2005, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -146,9 +146,11 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 			getIndex().accept((IBTreeVisitor) visitor);
 		} else {
 			getIndex().accept(new IBTreeVisitor() {
+				@Override
 				public int compare(long record) throws CoreException {
 					return 0;
 				}
+				@Override
 				public boolean visit(long record) throws CoreException {
 					PDOMNode node= getNode(record);
 					if (node != null) {
@@ -217,7 +219,11 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		return (PDOMBinding) fPDOM.getCachedResult(binding);
 	}
 
-	public abstract PDOMBinding adaptBinding(IBinding binding) throws CoreException;
+	public final PDOMBinding adaptBinding(IBinding binding) throws CoreException {
+		return adaptBinding(binding, true);
+	}
+	
+	public abstract PDOMBinding adaptBinding(IBinding binding, boolean includeLocal) throws CoreException;
 
 	public abstract PDOMBinding addBinding(IASTName name) throws CoreException;
 
@@ -256,7 +262,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 			}
 
 			if (checkIfInSourceOnly) {
-				IASTNode node= ASTInternal.getDeclaredInSourceFileOnly(binding, requireDefinition, glob);
+				IASTNode node= ASTInternal.getDeclaredInSourceFileOnly(getPDOM(), binding, requireDefinition, glob);
 				if (node != null) {
 					return wpdom.getFileForASTNode(getLinkageID(), node);
 				}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 QNX Software Systems and others.
+ * Copyright (c) 2006, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,10 +62,12 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 		return LINKAGE;
 	}
 	
+	@Override
 	public String getLinkageName() {
 		return C_LINKAGE_NAME;
 	}
 
+	@Override
 	public int getLinkageID() {
 		return C_LINKAGE_ID;
 	}
@@ -226,8 +228,8 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 	}
 
 	@Override
-	public final PDOMBinding adaptBinding(final IBinding inputBinding) throws CoreException {
-		return adaptBinding(null, inputBinding, FILE_LOCAL_REC_DUMMY);
+	public final PDOMBinding adaptBinding(final IBinding inputBinding, boolean includeLocal) throws CoreException {
+		return adaptBinding(null, inputBinding, includeLocal ? FILE_LOCAL_REC_DUMMY : null);
 	}
 	
 	private final PDOMBinding adaptBinding(final PDOMNode parent, IBinding inputBinding, long[] localToFileHolder) throws CoreException {
@@ -264,6 +266,9 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 			final int[] bindingTypes = new int[] {getBindingType(binding)};
 			final char[] nameChars = binding.getNameCharArray();
 			PDOMBinding nonLocal= FindBinding.findBinding(getIndex(), this, nameChars, bindingTypes, 0);
+			if (localToFileHolder == null)
+				return nonLocal;
+			
 			long localToFileRec= getLocalToFileRec(parent, binding, nonLocal);
 			if (localToFileRec == 0)
 				return nonLocal;
@@ -274,6 +279,9 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 			final int[] bindingTypes = new int[] {getBindingType(binding)};
 			final char[] nameChars = binding.getNameCharArray();
 			PDOMBinding nonLocal= FindBinding.findBinding(parent, this, nameChars, bindingTypes, 0);
+			if (localToFileHolder == null)
+				return nonLocal;
+
 			long localToFileRec= getLocalToFileRec(parent, binding, nonLocal);
 			if (localToFileRec == 0)
 				return nonLocal;

@@ -1855,7 +1855,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 			String[] newExts = newLs.getSourceExtensions();
 			String[] oldExts = oldLs.getSourceExtensions();
 			if(!Arrays.equals(newExts, oldExts))
-				delta.addChangeFlags(ICDescriptionDelta.SOURCE_ENTENSIONS);
+				delta.addChangeFlags(ICDescriptionDelta.SOURCE_EXTENSIONS);
 
 
 //			newCt = newLs.getHeaderContentType();

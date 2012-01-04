@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 QNX Software Systems and others.
+ * Copyright (c) 2005, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -609,8 +609,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	}
 
 	@Override
-	public final PDOMBinding adaptBinding(final IBinding inputBinding) throws CoreException {
-		return adaptBinding(null, inputBinding, FILE_LOCAL_REC_DUMMY);
+	public final PDOMBinding adaptBinding(final IBinding inputBinding, boolean includeLocal) throws CoreException {
+		return adaptBinding(null, inputBinding, includeLocal ? FILE_LOCAL_REC_DUMMY : null);
 	}
 
 	private final PDOMBinding adaptBinding(final PDOMNode parent, IBinding inputBinding, long[] fileLocalRecHolder) throws CoreException {
@@ -661,6 +661,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		}
 		if (parent == this) {
 			PDOMBinding glob= CPPFindBinding.findBinding(getIndex(), this, binding, 0);
+			if (fileLocalRecHolder == null)
+				return glob;
 			final long loc= getLocalToFileRec(parent, binding, glob);
 			if (loc == 0) 
 				return glob;
@@ -670,6 +672,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		if (parent instanceof PDOMCPPNamespace) {
 			final BTree btree = ((PDOMCPPNamespace) parent).getIndex();
 			PDOMBinding glob= CPPFindBinding.findBinding(btree, this, binding, 0);
+			if (fileLocalRecHolder == null)
+				return glob;
 			final long loc= getLocalToFileRec(parent, binding, glob);
 			if (loc == 0) 
 				return glob;
@@ -993,7 +997,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 					file= wpdom.getFileForASTNode(getLinkageID(), node);
 				}
 			} else if (binding instanceof ICPPNamespaceAlias) {
-				IASTNode node= ASTInternal.getDeclaredInSourceFileOnly(binding, false, glob);
+				IASTNode node= ASTInternal.getDeclaredInSourceFileOnly(getPDOM(), binding, false, glob);
 				if (node != null) {
 					file= wpdom.getFileForASTNode(getLinkageID(), node);
 				}
@@ -1002,7 +1006,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				IBinding owner= binding.getOwner();
 				if (owner instanceof ICPPNamespace) {
 					if (owner.getNameCharArray().length == 0) {
-						IASTNode node= ASTInternal.getDeclaredInSourceFileOnly(owner, false, glob);
+						IASTNode node= ASTInternal.getDeclaredInSourceFileOnly(getPDOM(), owner, false, glob);
 						if (node != null) {
 							file= wpdom.getFileForASTNode(getLinkageID(), node);
 						}

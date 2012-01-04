@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 QNX Software Systems and others.
+ * Copyright (c) 2005, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -532,7 +532,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		if (binding != null) {
 			PDOMLinkage linkage= adaptLinkage(name.getLinkage());
 			if (linkage != null) {
-				return findBindingInLinkage(linkage, binding);
+				return findBindingInLinkage(linkage, binding, true);
 			}
 		} else if (name.getPropertyInParent() == IASTPreprocessorStatement.MACRO_NAME) {
 			PDOMLinkage linkage= adaptLinkage(name.getLinkage());
@@ -993,6 +993,10 @@ public class PDOM extends PlatformObject implements IPDOM {
 
 	@Override
 	public IIndexFragmentBinding adaptBinding(IBinding binding) throws CoreException {
+		return adaptBinding(binding, true);
+	}
+
+	private IIndexFragmentBinding adaptBinding(IBinding binding, boolean includeLocal) throws CoreException {
 		if (binding == null) {
 			return null;
 		}
@@ -1003,16 +1007,16 @@ public class PDOM extends PlatformObject implements IPDOM {
 
 		PDOMLinkage linkage= adaptLinkage(binding.getLinkage());
 		if (linkage != null) {
-			return findBindingInLinkage(linkage, binding);
+			return findBindingInLinkage(linkage, binding, includeLocal);
 		}
 		return null;
 	}
 
-	private IIndexFragmentBinding findBindingInLinkage(PDOMLinkage linkage, IBinding binding) throws CoreException {
+	private IIndexFragmentBinding findBindingInLinkage(PDOMLinkage linkage, IBinding binding, boolean includeLocal) throws CoreException {
 		if (binding instanceof IMacroBinding || binding instanceof IIndexMacroContainer) {
 			return linkage.findMacroContainer(binding.getNameCharArray());
 		}
-		return linkage.adaptBinding(binding);
+		return linkage.adaptBinding(binding, includeLocal);
 	}
 
 	public IIndexFragmentBinding findBinding(IIndexFragmentName indexName) throws CoreException {

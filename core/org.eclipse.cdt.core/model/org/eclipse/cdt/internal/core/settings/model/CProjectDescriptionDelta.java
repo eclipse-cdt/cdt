@@ -168,7 +168,7 @@ public class CProjectDescriptionDelta implements ICDescriptionDelta {
 		if ((flags&DESCRIPTION)!=0) str.append("DESCRIPTION|");
 		if ((flags&LANGUAGE_ID)!=0) str.append("LANGUAGE_ID|");
 		if ((flags&SOURCE_CONTENT_TYPE)!=0) str.append("SOURCE_CONTENT_TYPE|");
-		if ((flags&SOURCE_ENTENSIONS)!=0) str.append("SOURCE_ENTENSIONS|");
+		if ((flags&SOURCE_EXTENSIONS)!=0) str.append("SOURCE_EXTENSIONS|");
 		if ((flags&SETTING_ENTRIES)!=0) str.append("SETTING_ENTRIES|");
 		if ((flags&BINARY_PARSER_IDS)!=0) str.append("BINARY_PARSER_IDS|");
 		if ((flags&ERROR_PARSER_IDS)!=0) str.append("ERROR_PARSER_IDS|");

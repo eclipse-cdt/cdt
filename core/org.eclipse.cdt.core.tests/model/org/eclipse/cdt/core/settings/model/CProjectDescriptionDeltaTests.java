@@ -345,7 +345,7 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 		ICConfigurationDescription cfgDescription = prjDescription.getConfigurations()[0];
 		assertNotNull(cfgDescription);
 
-		// Modification SOURCE_ENTENSIONS
+		// Modification SOURCE_EXTENSIONS
 		ICLanguageSetting langSetting = cfgDescription.getLanguageSettingForFile(file.getProjectRelativePath(), false);
 		final String testContentType = CCorePlugin.CONTENT_TYPE_ASMSOURCE;
 		langSetting.setSourceContentTypeIds(new String[] {testContentType});
@@ -362,11 +362,11 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 		// Analyze delta
 		ICDescriptionDelta rootDelta = listener.getDelta();
 		assertNotNull(rootDelta);
-		List<ICDescriptionDelta> deltas = findDeltas(rootDelta, ICDescriptionDelta.SOURCE_ENTENSIONS);
+		List<ICDescriptionDelta> deltas = findDeltas(rootDelta, ICDescriptionDelta.SOURCE_EXTENSIONS);
 		assertEquals(1, deltas.size());
 		ICDescriptionDelta delta = deltas.get(0);
 		assertNotNull(delta);
-//		assertEquals(ICDescriptionDelta.SOURCE_ENTENSIONS, delta.getChangeFlags());
+//		assertEquals(ICDescriptionDelta.SOURCE_EXTENSIONS, delta.getChangeFlags());
 
 		// Check old setting
 		assertTrue(delta.getOldSetting() instanceof ICLanguageSetting);

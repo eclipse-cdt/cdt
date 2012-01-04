@@ -114,7 +114,11 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 			fReason = reason;
 			fDetails = details;
 		}
+
+		@Override
 		public StateChangeReason getStateChangeReason() { return fReason; }
+
+		@Override
 		public String getDetails() { return fDetails; }
 	}
 
@@ -137,6 +141,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 			fMIInfo = miInfo;
 		}
 
+		@Override
 		public T getMIEvent() { return fMIInfo; }
 	}
 
@@ -152,6 +157,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 			super(ctx, miInfo);
 		}
 
+		@Override
 		public StateChangeReason getReason() {
 			if (getMIEvent() instanceof MICatchpointHitEvent) {	// must precede MIBreakpointHitEvent
 				return StateChangeReason.EVENT_BREAKPOINT;
@@ -212,6 +218,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
             fBreakpoints = new IBreakpointDMContext[] { bpCtx };
         }
         
+    	@Override
         public IBreakpointDMContext[] getBreakpoints() {
             return fBreakpoints;
         }
@@ -228,6 +235,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 			super(ctx, miInfo);
 		}
 
+		@Override
 		public StateChangeReason getReason() {
 			if (getMIEvent() != null) {
 				switch(getMIEvent().getType()) {
@@ -431,6 +439,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	// Suspend
 	// ------------------------------------------------------------------------
 
+	@Override
 	public boolean isSuspended(IExecutionDMContext context) {
 
 		// Thread case
@@ -458,6 +467,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		return false;
 	}
 
+	@Override
 	public void canSuspend(IExecutionDMContext context, DataRequestMonitor<Boolean> rm) {
 		if (fRunControlOperationsEnabled == false) {
 			rm.setData(false);
@@ -495,6 +505,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		return (threadState == null) ? false : !fTerminated && !threadState.fSuspended;
 	}
 
+	@Override
 	public void suspend(IExecutionDMContext context, final RequestMonitor rm) {
 
 		assert context != null;
@@ -539,6 +550,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	// Resume
 	// ------------------------------------------------------------------------
 
+	@Override
 	public void canResume(IExecutionDMContext context, DataRequestMonitor<Boolean> rm) {
 		if (fRunControlOperationsEnabled == false) {
 			rm.setData(false);
@@ -576,6 +588,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		return (threadState == null) ? false : !fTerminated && threadState.fSuspended && !threadState.fResumePending;
 	}
 
+	@Override
 	public void resume(IExecutionDMContext context, final RequestMonitor rm) {
 
 		assert context != null;
@@ -635,6 +648,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	// Step
 	// ------------------------------------------------------------------------
 
+	@Override
 	public boolean isStepping(IExecutionDMContext context) {
 
 		// If it's a thread, just look it up
@@ -647,6 +661,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		return false;
 	}
 
+	@Override
 	public void canStep(final IExecutionDMContext context, StepType stepType, final DataRequestMonitor<Boolean> rm) {
 		if (fRunControlOperationsEnabled == false) {
 			rm.setData(false);
@@ -687,6 +702,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 		rm.done();
 	}
 
+	@Override
 	public void step(IExecutionDMContext context, StepType stepType, final RequestMonitor rm) {
 
 		assert context != null;
@@ -874,6 +890,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	// Support functions
 	// ------------------------------------------------------------------------
 
+	@Override
 	public void getExecutionContexts(final IContainerDMContext containerDmc, final DataRequestMonitor<IExecutionDMContext[]> rm) {
         IMIProcesses procService = getServicesTracker().getService(IMIProcesses.class);
 		procService.getProcessesBeingDebugged(
@@ -891,6 +908,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 				});
 	}
 
+	@Override
 	public void getExecutionData(IExecutionDMContext dmc, DataRequestMonitor<IExecutionDMData> rm) {
 		MIThreadRunState threadState = fThreadRunStates.get(dmc);
 		if (threadState == null) {
@@ -1134,6 +1152,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	/**
 	 * @since 3.0
 	 */
+	@Override
 	public void executeWithTargetAvailable(IDMContext ctx, final Sequence.Step[] steps, final RequestMonitor rm) {
 		if (!fOngoingOperation) {
 			// We are the first operation of this kind currently requested
@@ -1610,6 +1629,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
     public void eventDispatched(ITraceRecordSelectedChangedDMEvent e) {
     }
     
+	@Override
 	public void flushCache(IDMContext context) {
 		refreshThreadStates();
 	}
@@ -1693,6 +1713,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	/**
 	 * @since 3.0
 	 */
+	@Override
 	public void canRunToLine(IExecutionDMContext context, String sourceFile,
 			int lineNumber, DataRequestMonitor<Boolean> rm) {
 		canResume(context, rm);
@@ -1704,6 +1725,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	/**
 	 * @since 3.0
 	 */
+	@Override
 	public void runToLine(IExecutionDMContext context, String sourceFile,
 			int lineNumber, boolean skipBreakpoints, RequestMonitor rm) {
 		
@@ -1719,6 +1741,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	/**
 	 * @since 3.0
 	 */
+	@Override
 	public void canRunToAddress(IExecutionDMContext context, IAddress address,
 			DataRequestMonitor<Boolean> rm) {
 		canResume(context, rm);
@@ -1730,6 +1753,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	/**
 	 * @since 3.0
 	 */
+	@Override
 	public void runToAddress(IExecutionDMContext context, IAddress address,
 			boolean skipBreakpoints, RequestMonitor rm) {
 		runToLocation(context, "*0x" + address.toString(16), skipBreakpoints, rm); //$NON-NLS-1$
@@ -1741,6 +1765,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	/**
 	 * @since 3.0
 	 */
+	@Override
 	public void canMoveToLine(IExecutionDMContext context, String sourceFile,
 			int lineNumber, boolean resume, DataRequestMonitor<Boolean> rm) {
 		canResume(context, rm);	}
@@ -1751,6 +1776,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	/**
 	 * @since 3.0
 	 */
+	@Override
 	public void moveToLine(IExecutionDMContext context, String sourceFile,
 			int lineNumber, boolean resume, RequestMonitor rm) {
 		IMIExecutionDMContext threadExecDmc = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
@@ -1784,6 +1810,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	/**
 	 * @since 3.0
 	 */
+	@Override
 	public void canMoveToAddress(IExecutionDMContext context, IAddress address,
 			boolean resume, DataRequestMonitor<Boolean> rm) {
 		canResume(context, rm);
@@ -1793,6 +1820,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	 * @see org.eclipse.cdt.dsf.debug.service.IRunControl2#moveToAddress(org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext, org.eclipse.cdt.core.IAddress, boolean, org.eclipse.cdt.dsf.concurrent.RequestMonitor)
 	 * @since 3.0
 	 */
+	@Override
 	public void moveToAddress(IExecutionDMContext context, IAddress address,
 			boolean resume, RequestMonitor rm) {
 		IMIExecutionDMContext threadExecDmc = DMContexts.getAncestorOfType(context, IMIExecutionDMContext.class);
@@ -1821,11 +1849,13 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService implements IMIRunCo
 	}
 
 	/** @since 4.0 */
+	@Override
 	public IRunMode getRunMode() {
 		return MIRunMode.NON_STOP;
 	}
 
 	/** @since 4.0 */
+	@Override
 	public boolean isTargetAcceptingCommands() {
 		// Always accepting commands in non-stop mode
 		return true;

@@ -169,6 +169,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
         
     }        
 
+	@Override
     public String getId() {
         return fMIBackend.getId();
     }
@@ -178,10 +179,12 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
         return fControlDmc;
     }
     
+	@Override
     public ICommandControlDMContext getContext() {
         return fControlDmc;
     }
     
+	@Override
     public void terminate(final RequestMonitor rm) {
         if (fTerminated) {
             rm.done();
@@ -203,6 +206,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
         // runnable will kill the task.
         final Future<?> forceQuitTask = getExecutor().schedule(
             new DsfRunnable() {
+            	@Override
                 public void run() {
                     fMIBackend.destroy();
                     rm.done();
@@ -233,6 +237,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
         );
     }
 
+	@Override
     public AbstractCLIProcess getCLIProcess() { 
         return fCLIProcess; 
     }
@@ -240,11 +245,13 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 	/**
 	 * @since 2.0
 	 */
+	@Override
 	public void setTracingStream(OutputStream tracingStream) {
 		setMITracingStream(tracingStream);
 	}
 	
 	/** @since 3.0 */
+	@Override
 	public void setEnvironment(Properties props, boolean clear, final RequestMonitor rm) {
 		int count = 0;
 		CountingRequestMonitor countingRm = new CountingRequestMonitor(getExecutor(), rm);
@@ -273,6 +280,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 	 * @since 4.0
 	 */
 	@SuppressWarnings("unchecked")
+	@Override
 	public void completeInitialization(final RequestMonitor rm) {
 		// We take the attributes from the launchConfiguration
 		ILaunch launch = (ILaunch)getSession().getModelAdapter(ILaunch.class);
@@ -441,7 +449,9 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
      * return empty list.
      */
 	private final List<String> fFeatures = new ArrayList<String>();
+
 	/** @since 4.0 */
+	@Override
 	public List<String> getFeatures() {
 		return fFeatures;
 	}
@@ -449,6 +459,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 	/**
 	 * @since 4.0
 	 */
+	@Override
 	public void enablePrettyPrintingForMIVariableObjects(RequestMonitor rm) {
 		rm.done();
 	}
@@ -456,6 +467,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 	/**
 	 * @since 4.0
 	 */
+	@Override
 	public void setPrintPythonErrors(boolean enabled, RequestMonitor rm) {
 		rm.done();
 	}

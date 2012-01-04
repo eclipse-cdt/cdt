@@ -74,6 +74,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 		}
 
 		/** @since 4.0 */
+		@Override
 		public String getRecordId() {
 			return fReference;
 		}
@@ -120,6 +121,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 		}
 
 		/** @since 4.0 */
+		@Override
 		public String getRecordId() {
 			return null;
 		}
@@ -160,14 +162,17 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 			fValue = value;
 		}
 		
+		@Override
 		public String getName() {
 			return fName;
 		}
 
+		@Override
 		public String getValue() {
 			return fValue;
 		}
 
+		@Override
 		public String getInitialValue() {
 			return fInitialValue;
 		}
@@ -186,18 +191,22 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 			fFrameNumber = frameNumber;
 		}
 
+		@Override
 		public String getContent() {
 			return fContent;
 		}
 
+		@Override
 		public String getTracepointNumber() {
 			return fTracepointNum;
 		}
 		
+		@Override
 		public String getRecordId() {
 			return fFrameNumber;
 		}
 
+		@Override
 		public String getTimestamp() {
 			return fTimestamp;
 		}
@@ -241,30 +250,37 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 			fTracingSupported = false;
 		}
 		
+		@Override
 		public int getFreeBufferSize() {
 			return fFreeBufferSize;
 		}
 		
+		@Override
 		public int getNumberOfCollectedFrame() {
 			return fNumberOfCollectedFrames;
 		}
 		
+		@Override
 		public int getTotalBufferSize() {
 			return fTotalBufferSize;
 		}
 		
+		@Override
 		public boolean isTracingActive() {
 			return fTracingActive;
 		}
 		
+		@Override
 		public boolean isTracingSupported() {
 			return fTracingSupported;
 		}
 		
+		@Override
 		public STOP_REASON_ENUM getStopReason() {
 			return fStopReason;
 		}
 		
+		@Override
 		public Integer getStoppingTracepoint() {
 			if (fStopReason == null) {
 				return null;
@@ -338,6 +354,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
         	fTracingSupported = supported;
         }
 
+    	@Override
 		public boolean isTracingSupported() {
 			return fTracingSupported;
 		}
@@ -366,6 +383,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
         	fVisualModeEnabled = !(context instanceof InvalidTraceRecordDMContext);
         }
 
+    	@Override
 		public boolean isVisualizationModeEnabled() {
 			return fVisualModeEnabled;
 		}
@@ -449,6 +467,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 		return GdbPlugin.getBundleContext();
 	}
 
+	@Override
     public void canStartTracing(ITraceTargetDMContext context, final DataRequestMonitor<Boolean> rm) {
     	if (context == null) {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid context", null)); //$NON-NLS-1$
@@ -479,6 +498,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
  		rm.done();
     }
     
+	@Override
     public void startTracing(final ITraceTargetDMContext context, final RequestMonitor rm) {
     	if (context == null) {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid context", null)); //$NON-NLS-1$
@@ -521,6 +541,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
     	});
     }
     
+	@Override
     public void canStopTracing(ITraceTargetDMContext context, DataRequestMonitor<Boolean> rm) {
     	if (context == null) {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid context", null)); //$NON-NLS-1$
@@ -550,6 +571,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
        	isTracing(context, rm);
     }
     
+	@Override
     public void stopTracing(final ITraceTargetDMContext context, final RequestMonitor rm) {
     	if (context == null) {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid context", null)); //$NON-NLS-1$
@@ -589,6 +611,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
     	});    	
     }
     
+	@Override
     public void isTracing(ITraceTargetDMContext context, final DataRequestMonitor<Boolean> rm) {
     	if (context == null) {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid context", null)); //$NON-NLS-1$
@@ -611,6 +634,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
     	rm.done();
     }
     
+	@Override
 	public void canSaveTraceData(ITraceTargetDMContext context, DataRequestMonitor<Boolean> rm) {
     	if (context == null) {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid context", null)); //$NON-NLS-1$
@@ -634,6 +658,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 		rm.done();
 	}
 
+	@Override
 	public void saveTraceData(final ITraceTargetDMContext context, final String file, 
 			                  final boolean remoteSave, final RequestMonitor rm) {
     	if (context == null) {
@@ -658,6 +683,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
     	});
 	}
 
+	@Override
 	public void canLoadTraceData(ITraceTargetDMContext context, DataRequestMonitor<Boolean> rm) {
     	if (context == null) {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid context", null)); //$NON-NLS-1$
@@ -672,6 +698,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 		rm.done();
 	}
 
+	@Override
 	public void loadTraceData(final ITraceTargetDMContext context, final String file, final RequestMonitor rm) {
     	if (context == null) {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid context", null)); //$NON-NLS-1$
@@ -712,6 +739,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
     	});
 	}
 	
+	@Override
     public void getTraceStatus(final ITraceTargetDMContext context, final DataRequestMonitor<ITraceStatusDMData> rm) {
     	if (context == null) {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid context", null)); //$NON-NLS-1$
@@ -780,6 +808,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
         		});
     }
     
+	@Override
 	public void createTraceVariable(ITraceTargetDMContext context,
 									String varName, 
 									String varValue,
@@ -808,6 +837,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
 	}
 	
 
+	@Override
     public void getTraceVariables(ITraceTargetDMContext context, final DataRequestMonitor<ITraceVariableDMData[]> rm) {
     	if (context == null) {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_STATE, "Invalid context", null)); //$NON-NLS-1$
@@ -846,10 +876,12 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
      * Create a trace record context
      * @since 4.0
      */
+	@Override
     public ITraceRecordDMContext createTraceRecordContext(ITraceTargetDMContext ctx, String recordId) {
     	return new MITraceRecordDMContext(getSession(), ctx, recordId);
     }
 
+	@Override
     public ITraceRecordDMContext createNextRecordContext(ITraceRecordDMContext ctx) {
     	ITraceTargetDMContext targetDmc = DMContexts.getAncestorOfType(ctx, ITraceTargetDMContext.class);
     	if (ctx instanceof InvalidTraceRecordDMContext) {
@@ -871,6 +903,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
     	return null;
     }
 
+	@Override
     public ITraceRecordDMContext createPrevRecordContext(ITraceRecordDMContext ctx) {
     	if (ctx instanceof MITraceRecordDMContext) {
         	ITraceTargetDMContext targetDmc = DMContexts.getAncestorOfType(ctx, ITraceTargetDMContext.class);
@@ -889,6 +922,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
     }
 
 
+	@Override
     public void getCurrentTraceRecordContext(ITraceTargetDMContext context, DataRequestMonitor<ITraceRecordDMContext> drm) {
     	if (fCurrentRecordDmc == null) {
     		drm.setData(new InvalidTraceRecordDMContext(getSession(), context));
@@ -898,6 +932,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
     	drm.done();
     }
 
+	@Override
     public void selectTraceRecord(final ITraceRecordDMContext context, final RequestMonitor rm) {
     	if (fIsTracingCurrentlySupported == false) {
     		rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Tracing not supported", null)); //$NON-NLS-1$
@@ -1042,6 +1077,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
     			});
     }
     
+	@Override
 	public void getTraceRecordData(final ITraceRecordDMContext context, final DataRequestMonitor<ITraceRecordDMData> rm) {
     	if (context instanceof MITraceRecordDMContext) {
     		
@@ -1082,6 +1118,7 @@ public class GDBTraceControl_7_2 extends AbstractDsfService implements IGDBTrace
     	}
 	}
 	
+	@Override
 	public void flushCache(IDMContext context) {
         fTraceCache.reset(context);
 	}

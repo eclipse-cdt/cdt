@@ -230,6 +230,7 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
     /**
 	 * @since 4.0
 	 */
+	@Override
     public void attachDebuggerToProcess(final IProcessDMContext procCtx, String binaryPath, final DataRequestMonitor<IDMContext> rm) {
 		final IMIContainerDMContext containerDmc = createContainerContext(procCtx, MIProcesses.UNIQUE_GROUP_ID);
 
@@ -406,12 +407,14 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 	}
 	
     /** @since 4.0 */
+	@Override
     public IMIExecutionDMContext[] getExecutionContexts(IMIContainerDMContext containerDmc) {
     	assert false; // This is not being used before GDB 7.0
     	return null;
     }
     
 	/** @since 4.0 */
+	@Override
 	public void canRestart(IContainerDMContext containerDmc, DataRequestMonitor<Boolean> rm) {		
     	if (fBackend.getIsAttachSession() || fBackend.getSessionType() == SessionType.CORE) {
         	rm.setData(false);
@@ -436,6 +439,7 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 	}
 	
 	/** @since 4.0 */
+	@Override
 	public void restart(IContainerDMContext containerDmc, Map<String, Object> attributes, DataRequestMonitor<IContainerDMContext> rm) {
 		// Before performing the restart, check if the process is properly suspended.
 		// Don't need to worry about non-stop before GDB 7.0, so we can simply
@@ -456,6 +460,7 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 	}
 	
 	/** @since 4.0 */
+	@Override
 	public void start(IContainerDMContext containerDmc, Map<String, Object> attributes, DataRequestMonitor<IContainerDMContext> rm) {
 		startOrRestart(containerDmc, attributes, false, rm);
 	}
@@ -518,6 +523,7 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 				// Add the inferior to the launch.
 				// This cannot be done on the executor or things deadlock.
 				DebugPlugin.getDefault().asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						if (restart) {
 							// For a restart, remove the old inferior

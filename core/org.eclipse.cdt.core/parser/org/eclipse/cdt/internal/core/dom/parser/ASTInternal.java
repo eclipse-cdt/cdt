@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.dom.parser;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -22,6 +23,7 @@ import org.eclipse.cdt.internal.core.dom.parser.c.ICInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.c.ICInternalFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction;
+import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.core.runtime.CoreException;
 
@@ -72,7 +74,7 @@ public class ASTInternal {
 		}
 	}
 
-	public static IASTNode getDeclaredInSourceFileOnly(IBinding binding, boolean requireDefinition, PDOMBinding nonLocal) {
+	public static IASTNode getDeclaredInSourceFileOnly(IIndexFragment forFragment, IBinding binding, boolean requireDefinition, PDOMBinding nonLocal) {
 		IASTNode[] decls;
 		IASTNode def;
 		if (binding instanceof ICPPInternalBinding) {
@@ -105,12 +107,21 @@ public class ASTInternal {
 				}
 			}
 		}
+		if (result == null)
+			return null;
+		
 		if (requireDefinition && nonLocal != null) {
 			try {
 				if (nonLocal.hasDeclaration())
 					return null;
 			} catch (CoreException e) {
 			}
+		}
+		
+		IASTTranslationUnit tu= result.getTranslationUnit();
+		if (tu != null) {
+			if (tu.getIndexFileSet().containsNonLocalDeclaration(binding, forFragment))
+				return null;
 		}
 		return result;
 	}

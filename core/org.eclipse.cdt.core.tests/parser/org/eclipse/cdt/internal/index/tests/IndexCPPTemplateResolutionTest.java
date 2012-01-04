@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2012 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -283,9 +283,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertInstance(b0, ICPPMethod.class);
     	assertEquals(1, getIndex().findNames(b0, IIndex.FIND_REFERENCES).length);
 		IParameter[] parameters = ((ICPPMethod) b0).getParameters();
-		System.out.println(String.valueOf(parameters));
 		IFunctionType type = ((ICPPMethod) b0).getType();
-		System.out.println(String.valueOf(type));
 	}
 
 	// template<typename T>

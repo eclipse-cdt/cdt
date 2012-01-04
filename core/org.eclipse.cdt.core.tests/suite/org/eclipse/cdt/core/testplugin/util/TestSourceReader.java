@@ -70,7 +70,19 @@ public class TestSourceReader {
 	 */
 	public static StringBuilder[] getContentsForTest(Bundle bundle, String srcRoot, Class clazz,
 			final String testName, int sections) throws IOException {
+		// Walk up the class inheritance chain until we find the test method.
+		try {
+			while (clazz.getMethod(testName).getDeclaringClass() != clazz) {
+				clazz = clazz.getSuperclass();
+			}
+		} catch (SecurityException e) {
+			Assert.fail(e.getMessage());
+		} catch (NoSuchMethodException e) {
+			Assert.fail(e.getMessage());
+		}
+
 		while (true) {
+			// Find and open the .java file for the class clazz.
 			String fqn = clazz.getName().replace('.', '/');
 			fqn = fqn.indexOf("$") == -1 ? fqn : fqn.substring(0, fqn.indexOf("$"));
 			String classFile = fqn + ".java";
@@ -94,6 +106,7 @@ public class TestSourceReader {
 		    
 		    BufferedReader br = new BufferedReader(new InputStreamReader(in));
 		    try {
+		    	// Read the java file collecting comments until we encounter the test method.
 			    List<StringBuilder> contents = new ArrayList<StringBuilder>();
 			    StringBuilder content = new StringBuilder();
 			    for (String line = br.readLine(); line != null; line = br.readLine()) {

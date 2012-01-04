@@ -7,10 +7,9 @@
  *
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
- *     Sergey Prigogin, Google
+ *     Sergey Prigogin (Google)
  *     Andrew Ferguson (Symbian)
  *******************************************************************************/
-
 package org.eclipse.cdt.ui.tests.text;
 
 import java.util.HashMap;
@@ -36,12 +35,11 @@ import org.eclipse.cdt.ui.text.doctools.DefaultMultilineCommentAutoEditStrategy;
 import org.eclipse.cdt.internal.ui.text.CAutoIndentStrategy;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
 
-
 /**
  * Testing the auto indent strategies.
  */
 public class DefaultCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
-	private HashMap<String,String> fOptions;
+	private HashMap<String, String> fOptions;
 
 	/**
 	 * @param name

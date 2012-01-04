@@ -102,6 +102,7 @@ public class SerialPortSettingsBlock extends Observable {
 		field.setLabelText(LaunchUIMessages.getString("SerialPortSettingsBlock.0")); //$NON-NLS-1$
 		field.setDialogFieldListener(new IDialogFieldListener() {
 
+			@Override
 			public void dialogFieldChanged(DialogField f) {
 				deviceFieldChanged();
 			}
@@ -115,6 +116,7 @@ public class SerialPortSettingsBlock extends Observable {
 		field.setItems(fSpeedChoices);
 		field.setDialogFieldListener(new IDialogFieldListener() {
 
+			@Override
 			public void dialogFieldChanged(DialogField f) {
 				speedFieldChanged();
 			}

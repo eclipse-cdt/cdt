@@ -57,8 +57,10 @@ public class GDBProcesses_7_1 extends GDBProcesses_7_0 {
 			fCores = cores;
 		}
 
+		@Override
 		public String[] getCores() { return fCores; }
 
+		@Override
 		public String getOwner() { return null; }
 	}
 

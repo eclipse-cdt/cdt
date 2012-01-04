@@ -7,10 +7,12 @@
  *
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
- *     Sergey Prigogin, Google
+ *     Sergey Prigogin (Google)
  *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.doctools.doxygen;
+
+import java.util.HashMap;
 
 import junit.framework.Test;
 
@@ -20,13 +22,14 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.tests.text.DefaultCCommentAutoEditStrategyTest;
+import org.eclipse.cdt.ui.tests.text.AbstractAutoEditTest;
 import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.ui.text.doctools.DefaultMultilineCommentAutoEditStrategy;
 import org.eclipse.cdt.ui.text.doctools.doxygen.DoxygenMultilineAutoEditStrategy;
@@ -36,13 +39,13 @@ import org.eclipse.cdt.internal.core.model.TranslationUnit;
 import org.eclipse.cdt.internal.ui.text.CAutoIndentStrategy;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
 
-
 /**
  * Testing the auto indent strategies.
  */
-public class DoxygenCCommentAutoEditStrategyTest extends DefaultCCommentAutoEditStrategyTest {
+public class DoxygenCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
+	private HashMap<String, String> fOptions;
 	protected ICProject fCProject;
-	
+
 	/**
 	 * @param name
 	 */
@@ -57,7 +60,8 @@ public class DoxygenCCommentAutoEditStrategyTest extends DefaultCCommentAutoEdit
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		fCProject= CProjectHelper.createCCProject("test"+System.currentTimeMillis(), null);
+		fOptions= CCorePlugin.getOptions();
+		fCProject= CProjectHelper.createCCProject("test" + System.currentTimeMillis(), null);
 	}
 
 	/*
@@ -65,6 +69,7 @@ public class DoxygenCCommentAutoEditStrategyTest extends DefaultCCommentAutoEdit
 	 */
 	@Override
 	protected void tearDown() throws Exception {
+		CCorePlugin.setOptions(fOptions);
 		CProjectHelper.delete(fCProject);
 		super.tearDown();
 	}
@@ -74,7 +79,6 @@ public class DoxygenCCommentAutoEditStrategyTest extends DefaultCCommentAutoEdit
 		IDocument doc = new Document();
 		textTools.setupCDocument(doc);
 		AutoEditTester tester = new AutoEditTester(doc, ICPartitions.C_PARTITIONING);
-
 
 		tester.setAutoEditStrategy(IDocument.DEFAULT_CONTENT_TYPE, new CAutoIndentStrategy(ICPartitions.C_PARTITIONING, null));
 		tester.setAutoEditStrategy(ICPartitions.C_MULTI_LINE_COMMENT, new DefaultMultilineCommentAutoEditStrategy());

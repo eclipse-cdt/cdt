@@ -6,10 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Ferguson (Symbian) - Initial implementation
- *    Markus Schorn (Wind River Systems)
- *    IBM Corporation
- *    Ed Swartz (Nokia)
+ *     Andrew Ferguson (Symbian) - Initial implementation
+ *     Markus Schorn (Wind River Systems)
+ *     IBM Corporation
+ *     Ed Swartz (Nokia)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.search;
 
@@ -67,9 +67,10 @@ public class BasicSearchTest extends BaseUITestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		fCProject = CProjectHelper.createCCProject(getName()+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER); 
+		fCProject = CProjectHelper.createCCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER); 
 		Bundle b = CTestPlugin.getDefault().getBundle();
 		testData = TestSourceReader.getContentsForTest(b, "ui", this.getClass(), getName(), 2);
+		assertEquals("Incomplete test data", 2, testData.length);
 
 		IFile file = TestSourceReader.createFile(fCProject.getProject(), new Path("header.h"), testData[0].toString());
 		CCorePlugin.getIndexManager().setIndexerId(fCProject, IPDOMManager.ID_FAST_INDEXER);
@@ -142,7 +143,8 @@ public class BasicSearchTest extends BaseUITestCase {
 	}
 
 	// int x, y, xx, yy;
-	
+
+	// // empty
 	public void testNoIndexerEnabled_158955() throws Exception {
 		// rebuild the index with no indexer
 		CCorePlugin.getIndexManager().setIndexerId(fCProject, IPDOMManager.ID_NO_INDEXER);
@@ -156,7 +158,7 @@ public class BasicSearchTest extends BaseUITestCase {
 		
 		ISearchResultViewPart vp= NewSearchUI.getSearchResultView();
 		ISearchResultPage page= vp.getActivePage();
-		assertTrue(""+page, page instanceof PDOMSearchViewPage);
+		assertTrue("" + page, page instanceof PDOMSearchViewPage);
 		
 		PDOMSearchViewPage pdomsvp= (PDOMSearchViewPage) page;
 		StructuredViewer viewer= pdomsvp.getViewer();
@@ -177,7 +179,8 @@ public class BasicSearchTest extends BaseUITestCase {
 	final int INDEXER_IN_PROGRESS_STRUCT_COUNT = 100;
 	
 	// #include "hugeHeader0.h"
-	
+
+	// // empty
 	public void testIndexerInProgress() throws Exception {
 		// make an external file
 		File dir= CProjectHelper.freshDir();

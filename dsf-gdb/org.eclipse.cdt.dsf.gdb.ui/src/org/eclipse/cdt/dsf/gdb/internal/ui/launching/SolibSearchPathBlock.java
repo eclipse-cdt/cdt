@@ -108,6 +108,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 			fText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
 			fText.addModifyListener(new ModifyListener() {
 
+				@Override
 				public void modifyText(ModifyEvent e) {
 					updateOKButton();
 				}
@@ -243,9 +244,11 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 				buttonLabels[i] = customButtonLabels[i - fgStaticButtonLabels.length];
 		}
 		IListAdapter listAdapter = new IListAdapter() {
+			@Override
 			public void customButtonPressed(DialogField field, int index) {
 				buttonPressed(index);
 			}
+			@Override
 			public void selectionChanged(DialogField field) {
 			}
 		};

@@ -84,6 +84,7 @@ public class GdbServerDebuggerPage extends GdbDebuggerPage {
 		field.setItems(fConnections);
 		field.setDialogFieldListener(new IDialogFieldListener() {
 
+			@Override
 			public void dialogFieldChanged(DialogField f) {
 				if (!isInitializing())
 					connectionTypeChanged();

@@ -328,6 +328,7 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 		// Add the inferior to the launch.  
 		// This cannot be done on the executor or things deadlock.
 		DebugPlugin.getDefault().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				String label = pathLabel;
 

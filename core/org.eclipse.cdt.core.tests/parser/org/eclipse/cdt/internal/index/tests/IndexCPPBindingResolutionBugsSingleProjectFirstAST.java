@@ -16,8 +16,11 @@ public class IndexCPPBindingResolutionBugsSingleProjectFirstAST extends IndexCPP
 	public IndexCPPBindingResolutionBugsSingleProjectFirstAST() {
 		setStrategy(new SinglePDOMTestFirstASTStrategy(true));
 	}
-	public static TestSuite suite() {return suite(IndexCPPBindingResolutionBugsSingleProjectFirstAST.class);}
-	// invalid tests for this strategy, they assume that the second file is already indexed.
+	public static TestSuite suite() {
+		return suite(IndexCPPBindingResolutionBugsSingleProjectFirstAST.class);
+	}
+	
+	// Invalid tests for this strategy, they assume that the second file is already indexed.
 	@Override public void testBug208558() {}
 	@Override public void testBug176708_CCE() {}
 	@Override public void testIsSameAnonymousType_Bug193962() {}

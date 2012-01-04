@@ -251,12 +251,14 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
     }
     
     /** @since 2.0 */
+	@Override
 	public void canReverseResume(IExecutionDMContext context, DataRequestMonitor<Boolean> rm) {
 		rm.setData(fReverseModeEnabled && doCanResume(context));
 		rm.done();
 	}
 
     /** @since 2.0 */
+	@Override
 	public void canReverseStep(final IExecutionDMContext context, StepType stepType, final DataRequestMonitor<Boolean> rm) {
 	   	if (context instanceof IContainerDMContext) {
     		rm.setData(false);
@@ -299,11 +301,13 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
 	}
 
     /** @since 2.0 */
+	@Override
 	public boolean isReverseStepping(IExecutionDMContext context) {
 		return !isTerminated() && fReverseStepping;
 	}
 
     /** @since 2.0 */
+	@Override
 	public void reverseResume(final IExecutionDMContext context, final RequestMonitor rm) {
 		if (fReverseModeEnabled && doCanResume(context)) {
 			ICommand<MIInfo> cmd = null;
@@ -340,6 +344,7 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
 	}
 
     /** @since 2.0 */
+	@Override
 	public void reverseStep(final IExecutionDMContext context, StepType stepType, final RequestMonitor rm) {
     	assert context != null;
 
@@ -408,18 +413,21 @@ public class GDBRunControl_7_0 extends MIRunControl implements IReverseRunContro
 	}
 
     /** @since 2.0 */
+	@Override
 	public void canEnableReverseMode(ICommandControlDMContext context, DataRequestMonitor<Boolean> rm) {
 		rm.setData(fReverseSupported);
 		rm.done();
 	}
 
     /** @since 2.0 */
+	@Override
     public void isReverseModeEnabled(ICommandControlDMContext context, DataRequestMonitor<Boolean> rm) {
 		rm.setData(fReverseModeEnabled);
 		rm.done();
 	}
 
     /** @since 2.0 */
+	@Override
     public void enableReverseMode(ICommandControlDMContext context, final boolean enable, final RequestMonitor rm) {
     	if (!fReverseSupported) {
             rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED, "Reverse mode is not supported.", null)); //$NON-NLS-1$

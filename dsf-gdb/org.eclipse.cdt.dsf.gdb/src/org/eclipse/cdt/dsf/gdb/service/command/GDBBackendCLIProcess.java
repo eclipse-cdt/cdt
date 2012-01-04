@@ -46,7 +46,7 @@ public class GDBBackendCLIProcess extends MIBackendCLIProcess {
            // in Debug View. We need to kill inferior too. Fix bug                                  
            //   https://bugs.eclipse.org/bugs/show_bug.cgi?id=234467                                
            //         
-           getSession().getExecutor().execute(new DsfRunnable() { public void run() {
+           getSession().getExecutor().execute(new DsfRunnable() { @Override public void run() {
                if (!DsfSession.isSessionActive(getSession().getId())) return;
                if (isDisposed()) return;
 

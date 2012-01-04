@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
- *     Sergey Prigogin, Google
+ *     Sergey Prigogin (Google)
  *     Andrew Ferguson (Symbian)
  *     Andrew Gvozdev
  *******************************************************************************/
@@ -42,8 +42,7 @@ public class AbstractAutoEditTest extends BaseTestCase {
 	 * Split out from CAutoIndentTest.
 	 */
 	protected static class AutoEditTester {
-
-		private IAutoEditStrategy tabsToSpacesConverter=null;
+		private IAutoEditStrategy tabsToSpacesConverter;
 		private Map<String, IAutoEditStrategy> fStrategyMap = new HashMap<String, IAutoEditStrategy>();
 		IDocument fDoc;
 		private String fPartitioning;
@@ -236,8 +235,8 @@ public class AbstractAutoEditTest extends BaseTestCase {
 	protected CharSequence[] getTestContents() {
 		try {
 			return TestSourceReader.getContentsForTest(CTestPlugin.getDefault().getBundle(), "ui", this.getClass(), getName(), 2);
-		} catch(IOException ioe) {
-			fail(ioe.getMessage());
+		} catch (IOException e) {
+			fail(e.getMessage());
 		}
 		return null;
 	}
@@ -245,8 +244,8 @@ public class AbstractAutoEditTest extends BaseTestCase {
 	protected CharSequence[] getTestContents1() {
 		try {
 			return TestSourceReader.getContentsForTest(CTestPlugin.getDefault().getBundle(), "ui", this.getClass(), getName(), 1);
-		} catch(IOException ioe) {
-			fail(ioe.getMessage());
+		} catch (IOException e) {
+			fail(e.getMessage());
 		}
 		return null;
 	}

@@ -27,7 +27,7 @@ public class ChangeTreeSet {
 	private static final class ChangePositionComparator implements Comparator<CTextFileChange> {
 		@Override
 		public int compare(CTextFileChange o1, CTextFileChange o2) {
-			if(o1.getFile().equals(o2.getFile())){
+			if (o1.getFile().equals(o2.getFile())) {
 				return o2.getEdit().getOffset() - o1.getEdit().getOffset();
 			}
 			return o2.getFile().hashCode() - o1.getFile().hashCode();

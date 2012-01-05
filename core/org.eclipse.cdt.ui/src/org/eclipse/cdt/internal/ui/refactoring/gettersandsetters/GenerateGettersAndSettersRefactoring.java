@@ -226,7 +226,7 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring2 {
 	}
 
 	@Override
-	protected void collectModifications(IProgressMonitor pm,ModificationCollector collector)
+	protected void collectModifications(IProgressMonitor pm, ModificationCollector collector)
 			throws CoreException, OperationCanceledException {
 		List<IASTNode> getterAndSetters = new ArrayList<IASTNode>();
 		List<IASTFunctionDefinition> definitions = new ArrayList<IASTFunctionDefinition>();

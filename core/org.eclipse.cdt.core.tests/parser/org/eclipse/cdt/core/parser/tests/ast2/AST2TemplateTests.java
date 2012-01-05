@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -5688,5 +5688,19 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	}
 	public void testDeductionForConstFunctionType_367562() throws Exception {
 		parseAndCheckBindings();
+	}
+	
+	//	template <typename> struct base {
+	//	    typedef int type;
+	//	};
+	//	template <typename A, typename B> struct derived;
+	//	template <typename B> struct derived<int, B> : public base<B> {
+	//	    typedef typename derived::type type;  // ERROR HERE
+	//	};
+	public void testTemplateShortNameInQualifiedName_367607() throws Exception {
+		parseAndCheckBindings();
+		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
+		ICPPDeferredClassInstance shortHand= bh.assertNonProblem("derived:", -1);
+		assertTrue(shortHand.getClassTemplate() instanceof ICPPClassTemplatePartialSpecialization);
 	}
 }

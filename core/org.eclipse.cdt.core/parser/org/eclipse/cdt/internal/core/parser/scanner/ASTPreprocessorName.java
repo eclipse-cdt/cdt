@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,40 +37,52 @@ class ASTPreprocessorName extends ASTPreprocessorNode implements IASTName {
 		fBinding= binding;
 	}
 
+	@Override
 	public IBinding resolveBinding() {
 		return fBinding;
 	}
+	@Override
 	public IBinding resolvePreBinding() {
 		return fBinding;
 	}
+	@Override
 	public IBinding getBinding() {
 		return fBinding;
 	}
+	@Override
 	public IBinding getPreBinding() {
 		return fBinding;
 	}
+	@Override
 	public ILinkage getLinkage() {
 		final IASTTranslationUnit tu= getTranslationUnit();
 		return tu == null ? Linkage.NO_LINKAGE : tu.getLinkage();
 	}
+	@Override
 	public IASTCompletionContext getCompletionContext() {
 		return null;
 	}
+	@Override
 	public boolean isDeclaration() {
 		return false;
 	}
+	@Override
 	public boolean isDefinition() {
 		return false;
 	}
+	@Override
 	public boolean isReference() {
 		return false;
 	}
+	@Override
 	public char[] toCharArray() {
 		return fName;
 	}    	
+	@Override
 	public char[] getSimpleID() {
 		return fName;
 	}
+	@Override
 	public char[] getLookupKey() {
 		return fName;
 	}
@@ -79,13 +91,20 @@ class ASTPreprocessorName extends ASTPreprocessorNode implements IASTName {
 	public String toString() {
 		return new String(fName);
 	}
+	@Override
 	public void setBinding(IBinding binding) {assert false;}
 
+	@Override
 	public int getRoleOfName(boolean allowResolution) {
 		return IASTNameOwner.r_unclear;
 	}
+	@Override
 	public IASTName getLastName() {
 		return this;
+	}
+	@Override
+	public boolean isQualified() {
+		return false;
 	}
 	@Override
 	public IASTName copy() {

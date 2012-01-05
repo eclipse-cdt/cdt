@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Wind River Systems and others.
+ * Copyright (c) 2007, 2012 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,11 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
- *     Patrick Chuong (Texas Instruments) - Bug fix (326670)
- *     Patrick Chuong (Texas Instruments) - Bug fix (329682)
- *     Patrick Chuong (Texas Instruments) - bug fix (330259)
+ *     Patrick Chuong (Texas Instruments) - Bug 326670
+ *     Patrick Chuong (Texas Instruments) - Bug 329682
+ *     Patrick Chuong (Texas Instruments) - bug 330259
  *     Patrick Chuong (Texas Instruments) - Pin and Clone Supports (331781)
+ *     Patrick Chuong (Texas Instruments) - Bug 364405
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly;
 
@@ -56,6 +57,7 @@ import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.DisassemblyDocume
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.SourceFileInfo;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.preferences.DisassemblyPreferenceConstants;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.presentation.DisassemblyIPAnnotation;
+import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.DisassemblyAnnotationModel;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.DisassemblyRulerColumn;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.DisassemblyViewer;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.IDisassemblyPart;
@@ -196,6 +198,11 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	 * Annotation model attachment key for breakpoint annotations.
 	 */
 	private final static String BREAKPOINT_ANNOTATIONS= "breakpoints"; //$NON-NLS-1$
+	
+	/**
+	 * Annotation model attachment key for extended PC annotations.
+	 */
+	private final static String EXTENDED_PC_ANNOTATIONS = "ExtendedPCAnnotations"; //$NON-NLS-1$
 
 	private final static BigInteger PC_UNKNOWN = BigInteger.valueOf(-1);
 	private final static BigInteger PC_RUNNING = BigInteger.valueOf(-2);
@@ -354,6 +361,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 	private Action fJumpToAddressAction = new JumpToAddressAction(this);
 
     private IDebugContextListener fDebugContextListener;
+    private DisassemblyAnnotationModel fExtPCAnnotationModel;
 
 	private IColumnSupport fColumnSupport;
 
@@ -1849,7 +1857,10 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		fDebugSessionId = null;
 		boolean needUpdate = false;
 		if (context != null) {
-			if (prevBackend != null && prevBackend.supportsDebugContext(context)) {
+			IDisassemblyBackend contextBackend = (IDisassemblyBackend)context.getAdapter(IDisassemblyBackend.class);
+			// Need to compare the backend classes to prevent reusing the same backend object.
+			// sub class can overwrite the standard disassembly backend to provide its own customization.
+			if ((prevBackend != null) && (contextBackend != null) && prevBackend.getClass().equals(contextBackend.getClass()) && prevBackend.supportsDebugContext(context)) {
 				newBackend = prevBackend;
 			} else {
 				needUpdate = true;
@@ -1957,6 +1968,15 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		firePropertyChange(PROP_SUSPENDED);
 	}
 
+	private void attachExtendedPCAnnotationModel() {
+		IAnnotationModel annotationModel = fViewer.getAnnotationModel();
+		if (annotationModel instanceof IAnnotationModelExtension) {
+			IAnnotationModelExtension ame= (IAnnotationModelExtension) annotationModel;
+			fExtPCAnnotationModel = new DisassemblyAnnotationModel();
+			ame.addAnnotationModel(EXTENDED_PC_ANNOTATIONS, fExtPCAnnotationModel);
+		}
+	}
+	
 	private void attachBreakpointsAnnotationModel() {
 		IAnnotationModel annotationModel = fViewer.getAnnotationModel();
 		if (annotationModel instanceof IAnnotationModelExtension) {
@@ -2030,6 +2050,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 
 	private void resetViewer() {
 		// clear all state and cache
+		fExtPCAnnotationModel = null;
 		fPCAnnotationUpdatePending = false;
 		fGotoFramePending = false;
 		fPCAddress = fFrameAddress = PC_RUNNING;
@@ -2044,6 +2065,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		fViewer.setDocument(fDocument, new AnnotationModel());
         if (fDebugSessionId != null) {
             attachBreakpointsAnnotationModel();
+            attachExtendedPCAnnotationModel();
 			fDocument.insertInvalidAddressRange(0, 0, fStartAddress, fEndAddress);
         }
 	}
@@ -2457,6 +2479,11 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 			pos = updateAddressAnnotation(fSecondaryPCAnnotation, fFrameAddress);
 		}
 		fPCAnnotationUpdatePending = pos == null && fFrameAddress.compareTo(BigInteger.ZERO) >= 0;
+		
+		if (fExtPCAnnotationModel != null) {
+			fBackend.updateExtendedPCAnnotation(fExtPCAnnotationModel);
+		}
+		
 		return pos;
 	}
 

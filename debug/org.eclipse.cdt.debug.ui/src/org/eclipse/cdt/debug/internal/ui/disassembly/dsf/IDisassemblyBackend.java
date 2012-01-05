@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2010, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Freescale Semiconductor - refactoring
+ *     Patrick Chuong (Texas Instruments) - Bug 364405
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.disassembly.dsf;
 
@@ -15,6 +16,7 @@ import java.math.BigInteger;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.IAnnotationModel;
 
 /**
  * This is the main interface that connects the DSF Disassembly view to CDI and
@@ -191,4 +193,9 @@ public interface IDisassemblyBackend {
 	 * Called when the Disassembly view has no further use for this backend.
 	 */
 	void dispose();
+	
+	/**
+	 * Update the extended PC annotation.  
+	 */
+	void updateExtendedPCAnnotation(IAnnotationModel model);
 }

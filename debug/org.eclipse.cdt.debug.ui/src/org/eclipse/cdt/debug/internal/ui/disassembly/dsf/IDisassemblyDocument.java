@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2010, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Freescale Semiconductor - refactoring
+ *     Patrick Chuong (Texas Instruments) - Bug 364405
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.disassembly.dsf;
 
@@ -35,4 +36,8 @@ public interface IDisassemblyDocument {
 			BigInteger address, int length, String functionOffset, BigInteger opcode, 
 			String instruction, String compilationPath, int lineNumber) 
 			throws BadLocationException;
+	
+	AddressRangePosition getDisassemblyPosition(BigInteger address);
+	BigInteger getAddressOfLine(int line);
+	int getNumberOfLines();
 }

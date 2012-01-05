@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.osgi.util.NLS;
@@ -40,37 +40,27 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
 public class AddDeclarationNodeToClassChange {
 	private final ICPPASTCompositeTypeSpecifier classNode;
 	private final VisibilityEnum visibility;
-	private List<IASTNode> fieldNodes = new ArrayList<IASTNode>();
+	private final List<IASTNode> nodesToAdd;
 	private final ModificationCollector collector;
 	
-	public static void createChange(ICPPASTCompositeTypeSpecifier nodeClass,
-			VisibilityEnum visibility, IASTNode fieldNodes, boolean isField,
+	public static void createChange(ICPPASTCompositeTypeSpecifier classNode,
+			VisibilityEnum visibility, IASTNode nodeToAdd, boolean isField,
 			ModificationCollector collector) {
-		new AddDeclarationNodeToClassChange(nodeClass, visibility, fieldNodes, collector, isField);
+		createChange(classNode, visibility,	Collections.singletonList(nodeToAdd), isField, collector);
 	}
 
 	public static void createChange(ICPPASTCompositeTypeSpecifier classNode,
-			VisibilityEnum visibility, List<IASTNode> fieldNodes, boolean isField,
+			VisibilityEnum visibility, List<IASTNode> nodesToAdd, boolean isField,
 			ModificationCollector collector) {
-		new AddDeclarationNodeToClassChange(classNode, visibility, fieldNodes, collector, isField);
+		new AddDeclarationNodeToClassChange(classNode, visibility, nodesToAdd, collector, isField);
 	}	
 
 	private AddDeclarationNodeToClassChange(ICPPASTCompositeTypeSpecifier classNode,
-			VisibilityEnum visibility, List<IASTNode> fieldNodes,
-			ModificationCollector collector, boolean isField) {
-		this.fieldNodes = fieldNodes;
-		this.classNode = classNode;		
-		this.visibility = visibility;
-		this.collector = collector;
-		createRewrites(isField);
-	}
-	
-	private AddDeclarationNodeToClassChange(ICPPASTCompositeTypeSpecifier classNode,
-			VisibilityEnum visibility, IASTNode fieldNodes, ModificationCollector collector,
+			VisibilityEnum visibility, List<IASTNode> nodesToAdd, ModificationCollector collector,
 			boolean isField) {
+		this.nodesToAdd = nodesToAdd;
 		this.classNode = classNode;		
 		this.visibility = visibility;
-		this.fieldNodes.add(fieldNodes);
 		this.collector = collector;
 		createRewrites(isField);
 	}
@@ -137,7 +127,7 @@ public class AddDeclarationNodeToClassChange {
 
 	private void insertBefore(IASTNode nextNode) {			
 		ASTRewrite rewrite = collector.rewriterForTranslationUnit(nextNode.getTranslationUnit());
-		for (IASTNode node : fieldNodes) {
+		for (IASTNode node : nodesToAdd) {
 			rewrite.insertBefore(nextNode.getParent(), nextNode, node, createEditDescription());
 		}
 	}
@@ -151,7 +141,7 @@ public class AddDeclarationNodeToClassChange {
 			rewrite.insertBefore(classNode, null, label, createEditDescription());
 		}
 		
-		for (IASTNode node : fieldNodes) {
+		for (IASTNode node : nodesToAdd) {
 			rewrite.insertBefore(classNode, null, node, createEditDescription());
 		}
 	}

@@ -117,8 +117,8 @@ public class ClassTests extends PDOMTestBase {
 		bindings = ns.find("testRef");
 		assertEquals(1, bindings.length);
 		IName[] refs = pdom.findNames(bindings[0], IIndex.FIND_REFERENCES);
-		for (int i = 0; i < refs.length; ++i)
-			System.out.println(refs[i].getFileLocation().getNodeOffset());
+//		for (int i = 0; i < refs.length; ++i)
+//			System.out.println(refs[i].getFileLocation().getNodeOffset());
 		assertEquals(5, refs.length);
 	}
 	

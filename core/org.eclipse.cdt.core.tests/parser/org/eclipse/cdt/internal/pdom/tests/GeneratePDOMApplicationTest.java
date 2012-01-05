@@ -274,6 +274,7 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 		IIndexerStateListener listener= null;
 		if(stateCount != null) {
 			listener= new IIndexerStateListener() {
+				@Override
 				public void indexChanged(IIndexerStateEvent event) {
 					stateCount[0]++;
 				}
@@ -299,8 +300,14 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 	}
 	
 	private void doGenerate(String[] args) throws CoreException {
-		GeneratePDOMApplication app = new GeneratePDOMApplication();
-		IApplicationContext ac= new MockApplicationContext(args);
+		GeneratePDOMApplication app = new GeneratePDOMApplication() {
+			@Override
+			protected void output(String s) {}
+		};
+		String[] newArgs= new String[args.length+1];
+		newArgs[0]= GeneratePDOMApplication.OPT_QUIET;
+		System.arraycopy(args, 0, newArgs, 1, args.length);
+		IApplicationContext ac= new MockApplicationContext(newArgs);
 		app.start(ac);
 	}
 
@@ -309,73 +316,93 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 	 */
 	
 	public static class TestProjectProvider1 implements IExportProjectProvider {
+		@Override
 		public ICProject createProject() throws CoreException {return null;}
+		@Override
 		public Map getExportProperties() {return null;}
+		@Override
 		public IIndexLocationConverter getLocationConverter(ICProject cproject) {return null;}
+		@Override
 		public void setApplicationArguments(String[] arguments) {}
 	}
 
 	public static class TestProjectProvider2 implements IExportProjectProvider {
+		@Override
 		public ICProject createProject() throws CoreException {
 			ICProject cproject= CProjectHelper.createCCProject("test"+System.currentTimeMillis(), null, IPDOMManager.ID_NO_INDEXER);
 			toDeleteOnTearDown.add(cproject);
 			CProjectHelper.importSourcesFromPlugin(cproject, CTestPlugin.getDefault().getBundle(), LOC_TSTPRJ1);
 			return cproject;
 		}
+		@Override
 		public Map getExportProperties() {return null;}
+		@Override
 		public IIndexLocationConverter getLocationConverter(ICProject cproject) {return null;}
+		@Override
 		public void setApplicationArguments(String[] arguments) {}
 	}
 
 	public static class TestProjectProvider3 implements IExportProjectProvider {
+		@Override
 		public ICProject createProject() throws CoreException {
 			ICProject cproject= CProjectHelper.createCCProject("test"+System.currentTimeMillis(), null, IPDOMManager.ID_NO_INDEXER);
 			toDeleteOnTearDown.add(cproject);
 			CProjectHelper.importSourcesFromPlugin(cproject, CTestPlugin.getDefault().getBundle(), LOC_TSTPRJ1);
 			return cproject;
 		}
+		@Override
 		public Map getExportProperties() {return null;}
+		@Override
 		public IIndexLocationConverter getLocationConverter(ICProject cproject) {
 			return new ResourceContainerRelativeLocationConverter(cproject.getProject());
 		}
+		@Override
 		public void setApplicationArguments(String[] arguments) {}
 	}
 
 	public static class TestProjectProvider4 implements IExportProjectProvider {		
+		@Override
 		public ICProject createProject() throws CoreException {
 			ICProject cproject= CProjectHelper.createCCProject("test"+System.currentTimeMillis(), null, IPDOMManager.ID_NO_INDEXER);
 			toDeleteOnTearDown.add(cproject);
 			CProjectHelper.importSourcesFromPlugin(cproject, CTestPlugin.getDefault().getBundle(), LOC_TSTPRJ1);
 			return cproject;
 		}
+		@Override
 		public Map getExportProperties() {
 			Map map= new HashMap();
 			map.put(SDK_VERSION, "4.0.1");
 			map.put(IIndexFragment.PROPERTY_FRAGMENT_ID, ACME_SDK_ID);
 			return map;
 		}
+		@Override
 		public IIndexLocationConverter getLocationConverter(ICProject cproject) {
 			return new ResourceContainerRelativeLocationConverter(cproject.getProject());
 		}
+		@Override
 		public void setApplicationArguments(String[] arguments) {}
 	}
 	
 	public static class TestProjectProvider5 implements IExportProjectProvider {		
+		@Override
 		public ICProject createProject() throws CoreException {
 			ICProject cproject= CProjectHelper.createCProject("test"+System.currentTimeMillis(), null, IPDOMManager.ID_NO_INDEXER);
 			toDeleteOnTearDown.add(cproject);
 			CProjectHelper.importSourcesFromPlugin(cproject, CTestPlugin.getDefault().getBundle(), LOC_TSTPRJ3);
 			return cproject;
 		}
+		@Override
 		public Map getExportProperties() {
 			Map map= new HashMap();
 			map.put(SDK_VERSION, "4.0.1");
 			map.put(IIndexFragment.PROPERTY_FRAGMENT_ID, ACME_SDK_ID);
 			return map;
 		}
+		@Override
 		public IIndexLocationConverter getLocationConverter(ICProject cproject) {
 			return new ResourceContainerRelativeLocationConverter(cproject.getProject());
 		}
+		@Override
 		public void setApplicationArguments(String[] arguments) {}
 	}
 }
@@ -386,13 +413,22 @@ class MockApplicationContext implements IApplicationContext {
 		arguments= new HashMap();
 		arguments.put(APPLICATION_ARGS, appArgs);
 	}
+	@Override
 	public void applicationRunning() {}
+	@Override
 	public Map getArguments() {return arguments;}
+	@Override
 	public String getBrandingApplication() {return null;}
+	@Override
 	public Bundle getBrandingBundle() {return null;}
+	@Override
 	public String getBrandingDescription() {return null;}
+	@Override
 	public String getBrandingId() {return null;}
+	@Override
 	public String getBrandingName() {return null;}
+	@Override
 	public String getBrandingProperty(String key) {return null;}
+	@Override
 	public void setResult(Object result, IApplication application) {}
 }

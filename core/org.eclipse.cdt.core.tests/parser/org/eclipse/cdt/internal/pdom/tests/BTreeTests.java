@@ -36,13 +36,13 @@ import org.eclipse.core.runtime.CoreException;
  *
  */
 public class BTreeTests extends BaseTestCase {
+	private static int DEBUG= 0;
 	protected File dbFile;
 	protected Database db;
 	protected BTree btree;
 	protected int rootRecord;
 	protected IBTreeComparator comparator;
 
-	protected boolean debugMode = false;
 
 	public static Test suite() {
 		return suite(BTreeTests.class);
@@ -80,7 +80,8 @@ public class BTreeTests extends BaseTestCase {
 
 		for(int i=0; i<noTrials; i++) {
 			int seed = seeder.nextInt();
-			System.out.println("Iteration #"+i);
+			if (DEBUG > 0)
+				System.out.println("Iteration #"+i);
 			trial(seed, false);
 		}
 	}
@@ -95,7 +96,8 @@ public class BTreeTests extends BaseTestCase {
 
 		for(int i=0; i<6; i++) {
 			int seed = seeder.nextInt();
-			System.out.println("Iteration #"+i);
+			if (DEBUG > 0)
+				System.out.println("Iteration #"+i);
 			trialImp(seed, false, new Random(seed*2), 1);
 		}
 	}
@@ -124,7 +126,8 @@ public class BTreeTests extends BaseTestCase {
 		
 		init(degree);
 		
-		System.out.print("\t "+seed+" "+(nIterations/1000)+"K: ");
+		if (DEBUG > 0)
+			System.out.print("\t "+seed+" "+(nIterations/1000)+"K: ");
 		for(int i=0; i<nIterations; i++) {
 			if(random.nextDouble()<pInsert) {
 				Integer value = new Integer(random.nextInt(Integer.MAX_VALUE));
@@ -132,7 +135,7 @@ public class BTreeTests extends BaseTestCase {
 				if(newEntry) {
 					BTMockRecord btValue = new BTMockRecord(db, value.intValue());
 					history.add(btValue);
-					if(debugMode)
+					if(DEBUG > 1)
 						System.out.println("Add: "+value+" @ "+btValue.record);
 					btree.insert(btValue.getRecord());
 				}
@@ -142,12 +145,12 @@ public class BTreeTests extends BaseTestCase {
 					BTMockRecord btValue = (BTMockRecord) history.get(index);
 					history.remove(index);
 					expected.remove(new Integer(btValue.intValue()));
-					if(debugMode)
+					if(DEBUG > 1)
 						System.out.println("Remove: "+btValue.intValue()+" @ "+btValue.record);
 					btree.delete(btValue.getRecord());
 				}
 			}
-			if(i % 1000 == 0) {
+			if(i % 1000 == 0 && DEBUG > 0) {
 				System.out.print(".");
 			}
 			if(checkCorrectnessEachIteration) {
@@ -155,7 +158,8 @@ public class BTreeTests extends BaseTestCase {
 				assertBTreeInvariantsHold("[iteration "+i+"] ");
 			}
 		}
-		System.out.println();
+		if (DEBUG > 0)
+			System.out.println();
 
 		assertBTreeMatchesSortedSet("[Trial end] ", btree, expected);
 		assertBTreeInvariantsHold("[Trial end]");
@@ -174,9 +178,11 @@ public class BTreeTests extends BaseTestCase {
 		final Iterator i = expected.iterator();
 		btree.accept(new IBTreeVisitor(){
 			int k;
+			@Override
 			public int compare(long record) throws CoreException {
 				return 0;
 			}
+			@Override
 			public boolean visit(long record) throws CoreException {
 				if(record!=0) {
 					BTMockRecord btValue = new BTMockRecord(record, db);
@@ -227,6 +233,7 @@ public class BTreeTests extends BaseTestCase {
 	}
 
 	private class BTMockRecordComparator implements IBTreeComparator {
+		@Override
 		public int compare(long record1, long record2) throws CoreException {
 			return db.getInt(record1) - db.getInt(record2); 
 		}

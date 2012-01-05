@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -24,7 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
  * @noimplement This interface is not intended to be implemented by clients.
  * @since 5.3
  */
-public interface ICPPASTRangeBasedForStatement extends IASTStatement {
+public interface ICPPASTRangeBasedForStatement extends IASTStatement, IASTImplicitNameOwner {
 	public static final ASTNodeProperty DECLARATION = new ASTNodeProperty(
 			"ICPPASTRangeBasedForStatement.DECLARATION [IASTDeclaration]"); //$NON-NLS-1$
 	public static final ASTNodeProperty INITIALIZER = new ASTNodeProperty(
@@ -53,8 +54,10 @@ public interface ICPPASTRangeBasedForStatement extends IASTStatement {
 	 */
 	public IScope getScope();
 
+	@Override
 	public ICPPASTRangeBasedForStatement copy();
 
+	@Override
 	public ICPPASTRangeBasedForStatement copy(CopyStyle style);
 
 

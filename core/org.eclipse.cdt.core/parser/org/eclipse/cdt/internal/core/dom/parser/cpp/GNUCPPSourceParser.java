@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2011 IBM Corporation and others.
+ * Copyright (c) 2002, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -3211,17 +3211,17 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 				if (name instanceof ICPPASTConversionName)
 					return;
 			
-				// accept destructor
-				final char[] nchars= name.getLookupKey();
-				if (nchars.length > 0 && nchars[0] == '~') 
-					return; 
 
 				if (opt == DeclarationOptions.CPP_MEMBER) {
-					// accept constructor within class body
-					if (CharArrayUtils.equals(nchars, currentClassName))
-						return;
+					// Accept constructor and destructor within class body
+					final char[] nchars= name.getLookupKey();
+					if (nchars.length > 0 && currentClassName != null) {
+						final int start= nchars[0] == '~' ? 1 : 0;
+						if (CharArrayUtils.equals(nchars, start, nchars.length-start, currentClassName))
+							return;
+					}
 				} else if (isQualified) {
-					// accept qualified constructor outside of class body
+					// Accept qualified constructor or destructor outside of class body
 					return;
 				}
 			}

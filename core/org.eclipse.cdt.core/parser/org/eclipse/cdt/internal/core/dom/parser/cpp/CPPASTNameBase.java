@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalNameOwner;
@@ -151,6 +152,22 @@ public abstract class CPPASTNameBase extends ASTNode implements IASTName {
 	public IASTName getLastName() {
 		return this;
 	}
+
+	@Override
+	public boolean isQualified() {
+		IASTNode parent= getParent();
+		if (parent instanceof ICPPASTQualifiedName) {
+			ICPPASTQualifiedName qn= (ICPPASTQualifiedName) parent;
+			if (qn.isFullyQualified())
+				return true;
+			IASTName[] qns = qn.getNames();
+			if (qns.length > 0 && qns[0] == this)
+				return false;
+			return true;
+		}
+		return false;
+	}
+
 	
 	@Override
 	public final String toString() {

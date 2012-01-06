@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,144 +51,179 @@ public class PDOMASTAdapter {
 		public AnonymousASTName(IASTName name, final IASTFileLocation loc) {
 			fDelegate= name;
 			fLocation= new IASTFileLocation() {
+				@Override
 				public int getEndingLineNumber() {
 					return loc.getStartingLineNumber();
 				}
 
+				@Override
 				public String getFileName() {
 					return loc.getFileName();
 				}
 
+				@Override
 				public int getStartingLineNumber() {
 					return loc.getStartingLineNumber();
 				}
 
+				@Override
 				public IASTFileLocation asFileLocation() {
 					return loc.asFileLocation();
 				}
 
+				@Override
 				public int getNodeLength() {
 					return 0;
 				}
 
+				@Override
 				public int getNodeOffset() {
 					return loc.getNodeOffset();
 				}
 
+				@Override
 				public IASTPreprocessorIncludeStatement getContextInclusionStatement() {
 					return loc.getContextInclusionStatement();
 				}
 			};
 		}
 
+		@Override
 		public boolean accept(ASTVisitor visitor) {
 			return fDelegate.accept(visitor);
 		}
 
+		@Override
 		public boolean contains(IASTNode node) {
 			return fDelegate.contains(node);
 		}
 
+		@Override
 		public IBinding getBinding() {
 			return fDelegate.getBinding();
 		}
 
+		@Override
 		public IBinding getPreBinding() {
 			return fDelegate.getPreBinding();
 		}
 
+		@Override
 		public String getContainingFilename() {
 			return fLocation.getFileName();
 		}
 
+		@Override
 		public IASTFileLocation getFileLocation() {
 			return fLocation;
 		}
 
+		@Override
 		public ILinkage getLinkage() {
 			return fDelegate.getLinkage();
 		}
 
+		@Override
 		public IASTNodeLocation[] getNodeLocations() {
 			return fDelegate.getNodeLocations();
 		}
 
+		@Override
 		public IASTNode getParent() {
 			return fDelegate.getParent();
 		}
 
+		@Override
 		public IASTNode[] getChildren() {
 			return fDelegate.getChildren();
 		}
 
+		@Override
 		public ASTNodeProperty getPropertyInParent() {
 			return fDelegate.getPropertyInParent();
 		}
 
+		@Override
 		public String getRawSignature() {
 			return fDelegate.getRawSignature();
 		}
 
+		@Override
 		public IASTTranslationUnit getTranslationUnit() {
 			return fDelegate.getTranslationUnit();
 		}
 
+		@Override
 		public int getRoleOfName(boolean allowResolution) {
 			return fDelegate.getRoleOfName(allowResolution);
 		}
 
+		@Override
 		public boolean isDeclaration() {
 			return fDelegate.isDeclaration();
 		}
 
+		@Override
 		public boolean isDefinition() {
 			return fDelegate.isDefinition();
 		}
 
+		@Override
 		public boolean isReference() {
 			return fDelegate.isReference();
 		}
 
+		@Override
 		public IBinding resolveBinding() {
 			return fDelegate.resolveBinding();
 		}
 
+		@Override
 		public IBinding resolvePreBinding() {
 			return fDelegate.resolvePreBinding();
 		}
 
+		@Override
 		public IASTCompletionContext getCompletionContext() {
 			return fDelegate.getCompletionContext();
 		}
 
+		@Override
 		public void setBinding(IBinding binding) {
 			fDelegate.setBinding(binding);
 		}
 
+		@Override
 		public void setParent(IASTNode node) {
 			fDelegate.setParent(node);
 		}
 
+		@Override
 		public void setPropertyInParent(ASTNodeProperty property) {
 			fDelegate.setPropertyInParent(property);
 		}
 
+		@Override
 		public char[] toCharArray() {
 			return fDelegate.toCharArray();
 		}
 
+		@Override
 		public char[] getSimpleID() {
 			return fDelegate.getSimpleID();
 		}
 		
+		@Override
 		public char[] getLookupKey() {
 			return fDelegate.getLookupKey();
 		}
 
+		@Override
 		public IASTImageLocation getImageLocation() {
 			return null;
 		}
 
+		@Override
 		public boolean isPartOfTranslationUnitFile() {
 			return fLocation.getFileName().equals(fDelegate.getTranslationUnit().getFilePath());
 		}
@@ -198,39 +233,52 @@ public class PDOMASTAdapter {
 			return fDelegate.toString();
 		}
 
+		@Override
 		public IASTName getLastName() {
 			return this;
 		}
 
+		@Override
 		public IToken getSyntax() throws ExpansionOverlapsBoundaryException,
 				UnsupportedOperationException {
 			return fDelegate.getSyntax();
 		}
 
+		@Override
 		public IToken getLeadingSyntax() throws ExpansionOverlapsBoundaryException,
 				UnsupportedOperationException {
 			return fDelegate.getLeadingSyntax();
 		}
 
+		@Override
 		public IToken getTrailingSyntax() throws ExpansionOverlapsBoundaryException,
 				UnsupportedOperationException {
 			return fDelegate.getTrailingSyntax();
 		}
 		
+		@Override
 		public boolean isFrozen() {
 			return fDelegate.isFrozen();
 		}
 			
+		@Override
 		public boolean isActive() {
 			return fDelegate.isFrozen();
 		}
 
+		@Override
 		public IASTName copy() {
 			throw new UnsupportedOperationException();
 		}
 
+		@Override
 		public IASTName copy(CopyStyle style) {
 			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public boolean isQualified() {
+			return fDelegate.isQualified();
 		}
 	}
 
@@ -248,43 +296,53 @@ public class PDOMASTAdapter {
 			throw new UnsupportedOperationException();
 		}
 
+		@Override
 		@SuppressWarnings("rawtypes")
 		public Object getAdapter(Class adapter) {
 			return fDelegate.getAdapter(adapter);
 		}
 
+		@Override
 		public IEnumerator[] getEnumerators() throws DOMException {
 			return fDelegate.getEnumerators();
 		}
 
+		@Override
 		public ILinkage getLinkage() {
 			return fDelegate.getLinkage();
 		}
 
+		@Override
 		public String getName() {
 			return new String(fName);
 		}
 
+		@Override
 		public char[] getNameCharArray() {
 			return fName;
 		}
 
+		@Override
 		public IScope getScope() throws DOMException {
 			return fDelegate.getScope();
 		}
 
+		@Override
 		public boolean isSameType(IType type) {
 			return fDelegate.isSameType(type);
 		}
 
+		@Override
 		public IBinding getOwner() {
 			return fDelegate.getOwner();
 		}
 		
+		@Override
 		public long getMinValue() {
 			return fDelegate.getMinValue();
 		}
 
+		@Override
 		public long getMaxValue() {
 			return fDelegate.getMaxValue();
 		}
@@ -304,51 +362,63 @@ public class PDOMASTAdapter {
 			throw new UnsupportedOperationException();
 		}
 
+		@Override
 		public IField findField(String name) {
 			return fDelegate.findField(name);
 		}
 
+		@Override
 		@SuppressWarnings("rawtypes")
 		public Object getAdapter(Class adapter) {
 			return fDelegate.getAdapter(adapter);
 		}
 
+		@Override
 		public IScope getCompositeScope() {
 			return fDelegate.getCompositeScope();
 		}
 
+		@Override
 		public IField[] getFields() {
 			return fDelegate.getFields();
 		}
 
+		@Override
 		public int getKey() {
 			return fDelegate.getKey();
 		}
 
+		@Override
 		public ILinkage getLinkage() {
 			return fDelegate.getLinkage();
 		}
 
+		@Override
 		public String getName() {
 			return new String(fName);
 		}
 
+		@Override
 		public char[] getNameCharArray() {
 			return fName;
 		}
 
+		@Override
 		public IScope getScope() throws DOMException {
 			return fDelegate.getScope();
 		}
 
+		@Override
 		public boolean isSameType(IType type) {
 			return fDelegate.isSameType(type);
 		}
 		
+		@Override
 		public IBinding getOwner() {
 			return fDelegate.getOwner();
 		}
 
+		@Override
 		public boolean isAnonymous() {
 			return fDelegate.isAnonymous();
 		}
@@ -368,14 +438,17 @@ public class PDOMASTAdapter {
 			throw new UnsupportedOperationException();
 		}
 
+		@Override
 		public String getName() {
 			return new String(fName);
 		}
 
+		@Override
 		public char[] getNameCharArray() {
 			return fName;
 		}
 
+		@Override
 		public String[] getQualifiedName() throws DOMException {
 			String[] qn= fDelegate.getQualifiedName();
 			if (qn.length < 1) {
@@ -385,6 +458,7 @@ public class PDOMASTAdapter {
 			return qn;
 		}
 
+		@Override
 		public char[][] getQualifiedNameCharArray() throws DOMException {
 			char[][] qn= fDelegate.getQualifiedNameCharArray();
 			if (qn.length < 1) {
@@ -394,23 +468,28 @@ public class PDOMASTAdapter {
 			return qn;
 		}
 
+		@Override
 		@SuppressWarnings("rawtypes")
 		public Object getAdapter(Class adapter) {
 			return fDelegate.getAdapter(adapter);
 		}
 
+		@Override
 		public ILinkage getLinkage() {
 			return fDelegate.getLinkage();
 		}
 
+		@Override
 		public IScope getScope() throws DOMException {
 			return fDelegate.getScope();
 		}
 
+		@Override
 		public boolean isGloballyQualified() throws DOMException {
 			return fDelegate.isGloballyQualified();
 		}
 
+		@Override
 		public IBinding getOwner() {
 			return fDelegate.getOwner();
 		}
@@ -421,30 +500,37 @@ public class PDOMASTAdapter {
 			super(name, (ICPPBinding) delegate);
 		}
 
+		@Override
 		public IEnumerator[] getEnumerators() throws DOMException {
 			return ((IEnumeration) fDelegate).getEnumerators();
 		}
 
+		@Override
 		public boolean isSameType(IType type) {
 			return ((IEnumeration) fDelegate).isSameType(type);
 		}
 		
+		@Override
 		public long getMinValue() {
 			return ((IEnumeration)fDelegate).getMinValue();
 		}
 
+		@Override
 		public long getMaxValue() {
 			return ((IEnumeration)fDelegate).getMaxValue();
 		}
 
+		@Override
 		public boolean isScoped() {
 			return ((ICPPEnumeration)fDelegate).isScoped();
 		}
 
+		@Override
 		public IType getFixedType() {
 			return ((ICPPEnumeration)fDelegate).getFixedType();
 		}
 
+		@Override
 		public ICPPScope asScope() {
 			return ((ICPPEnumeration)fDelegate).asScope();
 		}
@@ -455,58 +541,72 @@ public class PDOMASTAdapter {
 			super(name, delegate);
 		}
 		
+		@Override
 		public IField findField(String name) {
 			return ((ICPPClassType) fDelegate).findField(name);
 		}
 
+		@Override
 		public ICPPMethod[] getAllDeclaredMethods() {
 			return ((ICPPClassType) fDelegate).getAllDeclaredMethods();
 		}
 
+		@Override
 		public ICPPBase[] getBases() {
 			return ((ICPPClassType) fDelegate).getBases();
 		}
 
+		@Override
 		public IScope getCompositeScope() {
 			return ((ICPPClassType) fDelegate).getCompositeScope();
 		}
 
+		@Override
 		public ICPPConstructor[] getConstructors() {
 			return ((ICPPClassType) fDelegate).getConstructors();
 		}
 
+		@Override
 		public ICPPField[] getDeclaredFields() {
 			return ((ICPPClassType) fDelegate).getDeclaredFields();
 		}
 
+		@Override
 		public ICPPMethod[] getDeclaredMethods() {
 			return ((ICPPClassType) fDelegate).getDeclaredMethods();
 		}
 
+		@Override
 		public IField[] getFields() {
 			return ((ICPPClassType) fDelegate).getFields();
 		}
 
+		@Override
 		public IBinding[] getFriends() {
 			return ((ICPPClassType) fDelegate).getFriends();
 		}
 
+		@Override
 		public int getKey() {
 			return ((ICPPClassType) fDelegate).getKey();
 		}
 
+		@Override
 		public ICPPMethod[] getMethods() {
 			return ((ICPPClassType) fDelegate).getMethods();
 		}
 
+		@Override
 		public ICPPClassType[] getNestedClasses() {
 			return ((ICPPClassType) fDelegate).getNestedClasses();
 		}
 
+		@Override
 		public boolean isSameType(IType type) {
 			return ((ICPPClassType) fDelegate).isSameType(type);
 		}
 
+		@Override
 		public boolean isAnonymous() {
 			return ((ICPPClassType) fDelegate).isAnonymous();
 		}

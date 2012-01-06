@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2011, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Freescale Semiconductor - refactoring
  *     Patrick Chuong (Texas Instruments) - Bug 329682
  *     Patrick Chuong (Texas Instruments) - Bug 353351
+ *     Patrick Chuong (Texas Instruments) - Bug 364405
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.disassembly.dsf;
 
@@ -17,6 +18,7 @@ import java.math.BigInteger;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.text.source.IAnnotationModel;
 
 public abstract class AbstractDisassemblyBackend implements IDisassemblyBackend {
 
@@ -62,5 +64,11 @@ public abstract class AbstractDisassemblyBackend implements IDisassemblyBackend 
 				ErrorDialog.openError(fCallback.getSite().getShell(), "Error", null, status); //$NON-NLS-1$
 			}
 		});				
+	}
+
+	/**
+	 * Do nothing, sub-class can override to update PC annotation.
+	 */
+	public void updateExtendedPCAnnotation(IAnnotationModel model) {
 	}
 }

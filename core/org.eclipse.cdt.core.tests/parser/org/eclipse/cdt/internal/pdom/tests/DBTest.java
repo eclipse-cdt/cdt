@@ -255,8 +255,8 @@ public class DBTest extends BaseTestCase {
 			int expected = caseSensitive ? a.compareTo(b) : a.compareToIgnoreCase(b);
 			assertCMP(a, expected, b, caseSensitive);
 		}
-		System.out.print("Trials: "+n+" Max length: "+max+" ignoreCase: "+!caseSensitive);
-		System.out.println(" Time: "+(System.currentTimeMillis()-start));
+//		System.out.print("Trials: "+n+" Max length: "+max+" ignoreCase: "+!caseSensitive);
+//		System.out.println(" Time: "+(System.currentTimeMillis()-start));
 	}
 	
 	private String randomString(int min, int max, Random r) {

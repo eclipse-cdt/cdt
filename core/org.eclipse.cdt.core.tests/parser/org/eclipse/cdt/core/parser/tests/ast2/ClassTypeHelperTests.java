@@ -14,9 +14,7 @@ import java.io.IOException;
 
 import junit.framework.TestSuite;
 
-import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.parser.util.ASTPrinter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
@@ -39,13 +37,6 @@ public class ClassTypeHelperTests extends AST2BaseTest {
 	protected BindingAssertionHelper getAssertionHelper() throws ParserException, IOException {
 		String code= getAboveComment();
 		return new BindingAssertionHelper(code, true);
-	}
-
-	//  int a;
-	//	const int& b;
-	public void testTemp() throws Exception {
-		BindingAssertionHelper helper = getAssertionHelper();
-		ASTPrinter.print(helper.getTranslationUnit());
 	}
 
 	//	struct A {

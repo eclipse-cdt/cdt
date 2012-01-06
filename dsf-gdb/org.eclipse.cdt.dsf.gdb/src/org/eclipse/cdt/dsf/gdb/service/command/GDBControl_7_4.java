@@ -10,30 +10,31 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service.command;
 
+import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
 /**
  * With GDB 7.4, the command 'maintenance set python print-stack' is not supported.
- * The new command "set python print-stack none|full|message" has replaced it, with
- * the default being 'message'.  With this new default 
+ * The new command "set python print-stack none|full|message" has replaced it.
  * @since 4.1
  */
 public class GDBControl_7_4 extends GDBControl_7_2 implements IGDBControl {
     public GDBControl_7_4(DsfSession session, ILaunchConfiguration config, CommandFactory factory) {
     	super(session, config, factory);
-    	setUseThreadGroupOptions(true);
     }
     
 	@Override
 	public void setPrintPythonErrors(boolean enabled, RequestMonitor rm) {
-		// With GDB 7.4, the command 'maintenance set python print-stack' is not supported.
-		// The new command "set python print-stack none|full|message" has replaced it, with
-		// the default being 'message'.  This new default is good enough for us, so no
-		// need to do anything anymore.
-		// Bug 367788 
-		rm.done();
+		// With GDB 7.4, the command 'maintenance set python print-stack' has been replaced by
+		// the new command "set python print-stack none|full|message".
+		// Bug 367788
+		String errorOption = enabled ? "full" : "none"; //$NON-NLS-1$ //$NON-NLS-2$
+		queueCommand(
+			getCommandFactory().createMIGDBSetPythonPrintStack(getContext(), errorOption),
+			new DataRequestMonitor<MIInfo>(getExecutor(), rm));	
 	}
 }

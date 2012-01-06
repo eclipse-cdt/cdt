@@ -35,7 +35,7 @@ public class LanguageSettingsImages {
 	/**
 	 * @return the base key for the image.
 	 */
-	private static String getImageKey(int kind, int flag, boolean isProjectRelative) {
+	public static String getImageKey(int kind, int flag, boolean isProjectRelative) {
 		String imageKey = null;
 	
 		boolean isWorkspacePath = (flag & ICSettingEntry.VALUE_WORKSPACE_PATH) != 0;

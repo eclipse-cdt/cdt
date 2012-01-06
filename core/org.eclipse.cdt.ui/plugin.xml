@@ -4043,10 +4043,39 @@
             label="%indexedFilesDecorator.label"
             lightweight="true"
             state="false">
+         <description>%indexedFilesDecorator.description</description>
          <enablement>
             <or>
                <objectClass name="org.eclipse.cdt.core.model.ITranslationUnit"/>
                <objectClass name="org.eclipse.core.resources.IFile"/>
+            </or>
+         </enablement>
+      </decorator>
+      <decorator
+            adaptable="true"
+            class="org.eclipse.cdt.internal.ui.viewsupport.ExcludedFileDecorator"
+            id="org.eclipse.cdt.managedbuilder.ui.excludedFile"
+            label="%excludedFile.name"
+            lightweight="true"
+            state="true">
+         <description>%excludedFile.description</description>
+         <enablement>
+            <objectClass name="org.eclipse.core.resources.IFile" />
+         </enablement>
+      </decorator>
+      <decorator
+            adaptable="true"
+            class="org.eclipse.cdt.internal.ui.viewsupport.IncludeFolderDecorator"
+            id="org.eclipse.cdt.managedbuilder.ui.includeFolder"
+            label="%includeFolderDecorator.name"
+            lightweight="true"
+            location="BOTTOM_LEFT"
+            state="true">
+         <description>%includeFolderDecorator.description</description>
+         <enablement>
+            <or>
+               <objectClass name="org.eclipse.cdt.internal.ui.cview.IncludeReferenceProxy" />
+               <objectClass name="org.eclipse.cdt.core.model.IIncludeReference" />
             </or>
          </enablement>
       </decorator>
@@ -4247,16 +4276,6 @@
          </complexArray>
       </processType>
    </extension>
-	<extension point="org.eclipse.ui.decorators">
-		<decorator adaptable="true"
-			class="org.eclipse.cdt.internal.ui.viewsupport.ExcludedFileDecorator"
-			id="org.eclipse.cdt.managedbuilder.ui.excludedFile" label="%excluded-file.name"
-			lightweight="true" state="true">
-			<enablement>
-				<objectClass name="org.eclipse.core.resources.IFile" />
-			</enablement>
-		</decorator>
-	</extension>
  <extension
        point="org.eclipse.ui.commands">
     <command

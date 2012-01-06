@@ -21,24 +21,25 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.graphics.Image;
 
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IIncludeReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CElementImageDescriptor;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.corext.util.Strings;
 
+import org.eclipse.cdt.internal.ui.newui.LanguageSettingsImages;
 import org.eclipse.cdt.internal.ui.viewsupport.AppearanceAwareLabelProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 
 /*
- * CViewLabelProvider 
+ * CViewLabelProvider
  */
 public class CViewLabelProvider extends AppearanceAwareLabelProvider {
-	
+
 	public CViewLabelProvider(long textFlags, int imageFlags) {
 		super(textFlags, imageFlags);
 	}
@@ -92,14 +93,14 @@ public class CViewLabelProvider extends AppearanceAwareLabelProvider {
 					p = p.removeFirstSegments(parentLocation.segmentCount());
 				}
 				return decorateText(p.toString(), element);
-			}			
+			}
 		}
 		return super.getText(element);
 	}
-	
+
 	@Override
 	public StyledString getStyledText(Object element) {
-		return Strings.markLTR(new StyledString(getText(element)));								
+		return Strings.markLTR(new StyledString(getText(element)));
 	}
 
 	/* (non-Javadoc)
@@ -107,20 +108,28 @@ public class CViewLabelProvider extends AppearanceAwareLabelProvider {
 	 */
 	@Override
 	public Image getImage(Object element) {
+		String imageKey = null;
 		if (element instanceof IncludeReferenceProxy) {
 			IIncludeReference reference = ((IncludeReferenceProxy)element).getReference();
-			IPath path = reference.getPath();
-			IContainer container = reference.getCModel().getWorkspace().getRoot().getContainerForLocation(path);
-			if (container != null && container.isAccessible()) {
-				ImageDescriptor desc = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_INCLUDES_FOLDER_WORKSPACE);
-				desc = new CElementImageDescriptor(desc, 0, CElementImageProvider.SMALL_SIZE);
-				return CUIPlugin.getImageDescriptorRegistry().get(desc);
+			IContainer container = ResourcesPlugin.getWorkspace().getRoot().getContainerForLocation(reference.getPath());
+			if (container != null) {
+				ICProject cproject = reference.getCProject();
+				IProject project = (cproject != null) ? cproject.getProject() : null;
+				boolean isProjectRelative = container.getProject().equals(project);
+				imageKey = LanguageSettingsImages.getImageKey(ICSettingEntry.INCLUDE_PATH, ICSettingEntry.VALUE_WORKSPACE_PATH, isProjectRelative);
+			} else {
+				imageKey = CDTSharedImages.IMG_OBJS_INCLUDES_FOLDER;
 			}
 		} else if (element instanceof IIncludeReference) {
-			ImageDescriptor desc = CElementImageProvider.getImageDescriptor(ICElement.C_CCONTAINER);
+			imageKey = CDTSharedImages.IMG_OBJS_CFOLDER;
+		}
+
+		if (imageKey != null) {
+			ImageDescriptor desc = CDTSharedImages.getImageDescriptor(imageKey);
 			desc = new CElementImageDescriptor(desc, 0, CElementImageProvider.SMALL_SIZE);
 			return CUIPlugin.getImageDescriptorRegistry().get(desc);
 		}
+
 		return super.getImage(element);
 	}
 }

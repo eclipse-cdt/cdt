@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.ui.cview;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -44,7 +45,7 @@ public class CViewContentProvider extends CElementContentProvider {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public CViewContentProvider(TreeViewer viewer, IWorkbenchPartSite site) {
 		super();
@@ -84,7 +85,7 @@ public class CViewContentProvider extends CElementContentProvider {
 				objs = fManager.getChildren(element);
 			}
 		}
-		
+
 		if (objs == null) {
 			objs = super.getChildren(element);
 		}
@@ -125,14 +126,14 @@ public class CViewContentProvider extends CElementContentProvider {
 		}
 		return ref.getChildren();
 	}
-	
+
 	private Object[] getProjectChildren(ICProject cproject) throws CModelException {
 		Object[] extras = null;
-		IArchiveContainer archive = cproject.getArchiveContainer(); 
+		IArchiveContainer archive = cproject.getArchiveContainer();
 		if (getArchives(archive).length > 0) {
 			extras = new Object[] {archive};
 		}
-		IBinaryContainer bin = cproject.getBinaryContainer(); 
+		IBinaryContainer bin = cproject.getBinaryContainer();
 		if (getExecutables(bin).length > 0) {
 			Object[] o = new Object[] {bin};
 			if (extras != null && extras.length > 0) {
@@ -151,7 +152,7 @@ public class CViewContentProvider extends CElementContentProvider {
 				extras = o;
 			}
 		}
-		
+
 		IncludeRefContainer incRefCont = new IncludeRefContainer(cproject);
 		Object[] incRefs = incRefCont.getChildren(cproject);
 		if (incRefs != null && incRefs.length > 0) {
@@ -230,17 +231,16 @@ public class CViewContentProvider extends CElementContentProvider {
 				return (ars != null) && ars.length > 0;
 			} catch (CModelException e) {
 				return false;
-			}			
+			}
 		} else if (element instanceof IncludeReferenceProxy) {
-			IIncludeReference ref = ((IncludeReferenceProxy)element).getReference();
-			IPath location = ref.getPath();
-			IContainer[] containers = ref.getCModel().getWorkspace().getRoot().findContainersForLocation(location);
-			for (int i = 0; i < containers.length; ++i) {
-				if (containers[i].isAccessible()) {
-					return false;
-				}
+			IIncludeReference reference = ((IncludeReferenceProxy)element).getReference();
+			IContainer container = ResourcesPlugin.getWorkspace().getRoot().getContainerForLocation(reference.getPath());
+			if (container != null) {
+				// do not allow to navigate to workspace containers inside "Includes" node
+				return false;
 			}
 
+			return reference.hasChildren();
 		}
 		return super.hasChildren(element);
 	}
@@ -266,5 +266,5 @@ public class CViewContentProvider extends CElementContentProvider {
 		}
 		super.inputChanged(viewer, oldInput, newInput);
 	}
-	
+
 }

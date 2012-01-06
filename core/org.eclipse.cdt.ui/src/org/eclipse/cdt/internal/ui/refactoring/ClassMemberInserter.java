@@ -5,7 +5,7 @@
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
  * http://www.eclipse.org/legal/epl-v10.html  
- *  
+ *
  * Contributors: 
  *     Institute for Software - initial API and implementation
  *     Sergey Prigogin (Google)
@@ -48,10 +48,6 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
  * @author Mirko Stocker
  */
 public class ClassMemberInserter {
-	private final ICPPASTCompositeTypeSpecifier classNode;
-	private final VisibilityEnum visibility;
-	private final List<IASTNode> nodesToAdd;
-	private final ModificationCollector collector;
 	
 	public static void createChange(ICPPASTCompositeTypeSpecifier classNode,
 			VisibilityEnum visibility, IASTNode nodeToAdd, boolean isField,
@@ -62,25 +58,12 @@ public class ClassMemberInserter {
 	public static void createChange(ICPPASTCompositeTypeSpecifier classNode,
 			VisibilityEnum visibility, List<IASTNode> nodesToAdd, boolean isField,
 			ModificationCollector collector) {
-		new ClassMemberInserter(classNode, visibility, nodesToAdd, collector, isField);
-	}	
-
-	private ClassMemberInserter(ICPPASTCompositeTypeSpecifier classNode,
-			VisibilityEnum visibility, List<IASTNode> nodesToAdd, ModificationCollector collector,
-			boolean isField) {
-		this.nodesToAdd = new ArrayList<IASTNode>(nodesToAdd);
-		this.classNode = classNode;		
-		this.visibility = visibility;
-		this.collector = collector;
-		createRewrites(isField);
-	}
-	
-	private void createRewrites(boolean isField) {
+		nodesToAdd = new ArrayList<IASTNode>(nodesToAdd);
 		VisibilityEnum defaultVisibility = classNode.getKey() == IASTCompositeTypeSpecifier.k_struct ?
 				VisibilityEnum.v_public : VisibilityEnum.v_private;
 		VisibilityEnum currentVisibility = defaultVisibility;
 
-		boolean ascendingVisibilityOrder = isAscendingVisibilityOrder();
+		boolean ascendingVisibilityOrder = isAscendingVisibilityOrder(classNode);
 		int lastFunctionIndex = -1;
 		int lastFieldIndex = -1;
 		int lastMatchingVisibilityIndex = -1;
@@ -134,16 +117,20 @@ public class ClassMemberInserter {
 
 		ASTRewrite rewrite = collector.rewriterForTranslationUnit(classNode.getTranslationUnit());
 		for (IASTNode node : nodesToAdd) {
-			rewrite.insertBefore(classNode, nextNode, node, createEditDescription());
+			rewrite.insertBefore(classNode, nextNode, node, createEditDescription(classNode));
 		}
+	}	
+
+	// Not instantiatable. All methods are static.
+	private ClassMemberInserter() {
 	}
-	
-	private TextEditGroup createEditDescription() {
+
+	private static TextEditGroup createEditDescription(ICPPASTCompositeTypeSpecifier classNode) {
 		return new TextEditGroup(NLS.bind(Messages.AddDeclarationNodeToClassChange_AddDeclaration,
 				classNode.getName()));
 	}
 
-	private boolean isAscendingVisibilityOrder() {
+	private static boolean isAscendingVisibilityOrder(ICPPASTCompositeTypeSpecifier classNode) {
 		IPreferencesService preferences = Platform.getPreferencesService();
 		IASTTranslationUnit ast = classNode.getTranslationUnit();
 		ITranslationUnit tu = ast.getOriginatingTranslationUnit();

@@ -163,8 +163,6 @@ public interface ICHelpContextIds {
 	public static final String CPROJECT_VIEW = PREFIX + "projects_view"; //$NON-NLS-1$
 	public static final String C_SEARCH_VIEW = PREFIX + "search_view"; //$NON-NLS-1$
 
-	public static final String PATHENTRY_VARIABLES_PREFERENCE_PAGE= PREFIX + "pathentry_variables_preference_page_context"; //$NON-NLS-1$
-
 	public static final String SAVE_ACTIONS_PREFERENCE_PAGE = PREFIX + "save_actions_preference_page_context"; //$NON-NLS-1$
 	public static final String SCALABILITY_PREFERENCE_PAGE = PREFIX + "scalability_preference_page_context"; //$NON-NLS-1$
 }

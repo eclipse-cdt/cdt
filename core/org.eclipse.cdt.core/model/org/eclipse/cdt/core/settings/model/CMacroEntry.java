@@ -35,15 +35,28 @@ public final class CMacroEntry extends ACSettingEntry implements ICMacroEntry{
 	}
 
 	@Override
-	public boolean equals(Object other) {
-		if(!super.equals(other))
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
 			return false;
-		return fValue.equals(((CMacroEntry)other).fValue);
+		if (getClass() != obj.getClass())
+			return false;
+		CMacroEntry other = (CMacroEntry) obj;
+		if (fValue == null) {
+			if (other.fValue != null)
+				return false;
+		} else if (!fValue.equals(other.fValue))
+			return false;
+		return true;
 	}
 
 	@Override
 	public int hashCode() {
-		return super.hashCode() + fValue.hashCode();
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((fValue == null) ? 0 : fValue.hashCode());
+		return result;
 	}
 
 	@Override

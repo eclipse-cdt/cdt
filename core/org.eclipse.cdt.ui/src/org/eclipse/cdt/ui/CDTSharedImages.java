@@ -47,7 +47,7 @@ import org.eclipse.swt.graphics.Image;
  *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
- * 
+ *
  * @since 5.3
  */
 public class CDTSharedImages {
@@ -116,6 +116,8 @@ public class CDTSharedImages {
 	public static final String IMG_OBJS_INCLUDES_FOLDER_WORKSPACE = "icons/obj16/wsp_includefolder.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_QUOTE_INCLUDES_FOLDER = "icons/obj16/hfolder_quote_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_INCLUDES_FOLDER_SYSTEM = "icons/obj16/fldr_sys_obj.gif"; //$NON-NLS-1$
+	/** @since 5.4 */
+	public static final String IMG_OBJS_FRAMEWORKS_FOLDER = "icons/obj16/frameworks.png"; //$NON-NLS-1$
 	public static final String IMG_OBJS_MACROS_FILE= "icons/obj16/macros_file.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_LIBRARY_FOLDER=  "icons/obj16/fldr_lib_obj.gif"; // $NON-NLS-1$  //$NON-NLS-1$
 	public static final String IMG_OBJS_ORDER = "icons/obj16/cp_order_obj.gif"; //$NON-NLS-1$
@@ -184,21 +186,21 @@ public class CDTSharedImages {
 	public static final String IMG_OVR_ERROR = "icons/ovr16/error_co.gif"; //$NON-NLS-1$
 	public static final String IMG_OVR_SETTING = "icons/ovr16/setting_nav.gif"; //$NON-NLS-1$
 	public static final String IMG_OVR_INACTIVE = "icons/ovr16/inactive_co.gif"; //$NON-NLS-1$
-	
+
 	// Pin & Clone
     public static final String IMG_THREAD_SUSPENDED_R_PINNED = "icons/obj16/threads_obj_r.gif"; //$NON-NLS-1$
     public static final String IMG_THREAD_SUSPENDED_G_PINNED = "icons/obj16/threads_obj_g.gif"; //$NON-NLS-1$
     public static final String IMG_THREAD_SUSPENDED_B_PINNED = "icons/obj16/threads_obj_b.gif"; //$NON-NLS-1$
-    
+
     public static final String IMG_THREAD_RUNNING_R_PINNED = "icons/obj16/thread_obj_r.gif"; //$NON-NLS-1$
     public static final String IMG_THREAD_RUNNING_G_PINNED = "icons/obj16/thread_obj_g.gif"; //$NON-NLS-1$
-    public static final String IMG_THREAD_RUNNING_B_PINNED = "icons/obj16/thread_obj_b.gif"; //$NON-NLS-1$    
-    
+    public static final String IMG_THREAD_RUNNING_B_PINNED = "icons/obj16/thread_obj_b.gif"; //$NON-NLS-1$
+
     public static final String IMG_CONTAINER_SUSPENDED_R_PINNED = "icons/obj16/debugts_obj_r.gif"; //$NON-NLS-1$
     public static final String IMG_CONTAINER_SUSPENDED_G_PINNED = "icons/obj16/debugts_obj_g.gif"; //$NON-NLS-1$
     public static final String IMG_CONTAINER_SUSPENDED_B_PINNED = "icons/obj16/debugts_obj_b.gif"; //$NON-NLS-1$
-    
-    public static final String IMG_CONTAINER_RUNNING_R_PINNED = "icons/obj16/debugt_obj_r.gif"; //$NON-NLS-1$    
+
+    public static final String IMG_CONTAINER_RUNNING_R_PINNED = "icons/obj16/debugt_obj_r.gif"; //$NON-NLS-1$
     public static final String IMG_CONTAINER_RUNNING_G_PINNED = "icons/obj16/debugt_obj_g.gif"; //$NON-NLS-1$
     public static final String IMG_CONTAINER_RUNNING_B_PINNED = "icons/obj16/debugt_obj_b.gif"; //$NON-NLS-1$
 

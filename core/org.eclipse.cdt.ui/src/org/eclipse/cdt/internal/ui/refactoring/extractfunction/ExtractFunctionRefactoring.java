@@ -95,7 +95,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNodeFactory;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVariableReadWriteFlags;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 
-import org.eclipse.cdt.internal.ui.refactoring.AddDeclarationNodeToClassChange;
+import org.eclipse.cdt.internal.ui.refactoring.ClassMemberInserter;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoringDescription;
 import org.eclipse.cdt.internal.ui.refactoring.Container;
@@ -419,7 +419,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 
 		IASTSimpleDeclaration methodDeclaration = getDeclaration(collector, astMethodName);
 
-		AddDeclarationNodeToClassChange.createChange(classDeclaration, info.getVisibility(),
+		ClassMemberInserter.createChange(classDeclaration, info.getVisibility(),
 				methodDeclaration, false, collector);
 	}
 

@@ -1480,7 +1480,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -1491,15 +1490,14 @@ public:
 	virtual ~A();
 	int foo();
 
-private:
-	int help();
-
 protected:
 	void exp(int& i);
+
+private:
+	int help();
 };
 
 #endif /*A_H_*/
-
 //@A.cpp
 #include "A.h"
 
@@ -1519,7 +1517,6 @@ int A::foo() {
 int A::help() {
 	return 42;
 }
-
 //=
 #include "A.h"
 
@@ -1543,7 +1540,6 @@ int A::foo() {
 int A::help() {
 	return 42;
 }
-
 //@.config
 filename=A.cpp
 methodname=exp

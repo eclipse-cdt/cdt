@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     John Camelon (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
@@ -22,10 +22,8 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICPPASTCompositeTypeSpecifier extends IASTCompositeTypeSpecifier, ICPPASTDeclSpecifier {
-
 	/**
-	 * <code>k_class</code> C++ introduces the class concept for composite
-	 * types.
+	 * <code>k_class</code> C++ introduces the class concept for composite types.
 	 */
 	public static final int k_class = IASTCompositeTypeSpecifier.k_last + 1;
 
@@ -52,15 +50,14 @@ public interface ICPPASTCompositeTypeSpecifier extends IASTCompositeTypeSpecifie
 	 * 
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
-	public static interface ICPPASTBaseSpecifier extends IASTNode, IASTNameOwner, ICPPASTPackExpandable  {
-		public static final ICPPASTBaseSpecifier[] EMPTY_BASESPECIFIER_ARRAY = new ICPPASTBaseSpecifier[0];
+	public static interface ICPPASTBaseSpecifier extends IASTNode, IASTNameOwner, ICPPASTPackExpandable {
+		public static final ICPPASTBaseSpecifier[] EMPTY_BASESPECIFIER_ARRAY = {};
 
 		/**
 		 * Relation between base specifier and its name.
 		 */
 		public static final ASTNodeProperty NAME = new ASTNodeProperty(
 				"ICPPASTBaseSpecifier.NAME - Name of base class"); //$NON-NLS-1$
-
 		
 		public static final int v_public = 1;
 		public static final int v_protected = 2;

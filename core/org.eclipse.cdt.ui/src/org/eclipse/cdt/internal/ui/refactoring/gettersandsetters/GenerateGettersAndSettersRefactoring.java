@@ -47,7 +47,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ContainerNode;
 
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring2;
-import org.eclipse.cdt.internal.ui.refactoring.AddDeclarationNodeToClassChange;
+import org.eclipse.cdt.internal.ui.refactoring.ClassMemberInserter;
 import org.eclipse.cdt.internal.ui.refactoring.Container;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
 import org.eclipse.cdt.internal.ui.refactoring.RefactoringASTCache;
@@ -226,7 +226,7 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring2 {
 	}
 
 	@Override
-	protected void collectModifications(IProgressMonitor pm,ModificationCollector collector)
+	protected void collectModifications(IProgressMonitor pm, ModificationCollector collector)
 			throws CoreException, OperationCanceledException {
 		List<IASTNode> getterAndSetters = new ArrayList<IASTNode>();
 		List<IASTFunctionDefinition> definitions = new ArrayList<IASTFunctionDefinition>();
@@ -249,7 +249,7 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring2 {
 		ICPPASTCompositeTypeSpecifier classDefinition =
 				(ICPPASTCompositeTypeSpecifier) context.existingFields.get(context.existingFields.size() - 1).getParent();
 
-		AddDeclarationNodeToClassChange.createChange(classDefinition, VisibilityEnum.v_public,
+		ClassMemberInserter.createChange(classDefinition, VisibilityEnum.v_public,
 				getterAndSetters, false, collector);
 	}
 

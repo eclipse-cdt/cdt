@@ -17,9 +17,12 @@ package org.eclipse.cdt.ui;
 
 import java.util.Locale;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -597,7 +600,8 @@ public class PreferenceConstants {
 	public final static String EDITOR_TEXT_FONT= "org.eclipse.cdt.ui.editors.textfont"; //$NON-NLS-1$
 
 	/**
-	 * A named preference that controls whether the cview's selection is linked to the active editor.
+	 * A named preference that controls whether the cview's selection is linked to the active
+	 * editor.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
@@ -605,7 +609,8 @@ public class PreferenceConstants {
 	public static final String PREF_LINK_TO_EDITOR= "org.eclipse.cdt.ui.editor.linkToEditor"; //$NON-NLS-1$
 
 	/**
-	 * A named preference that speficies whether children of a translation unit are shown in the CView.
+	 * A named preference that specifies whether children of a translation unit are shown in
+	 * the CView.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
@@ -613,7 +618,8 @@ public class PreferenceConstants {
 	public static final String PREF_SHOW_CU_CHILDREN= "org.eclipse.cdt.ui.editor.CUChildren"; //$NON-NLS-1$
 
 	/**
-	 * A named preference that speficies whether to use the parser's structural mode to build the CModel.
+	 * A named preference that speficies whether to use the parser's structural mode to build
+	 * the CModel.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
@@ -621,7 +627,8 @@ public class PreferenceConstants {
 	public static final String PREF_USE_STRUCTURAL_PARSE_MODE= "org.eclipse.cdt.ui.editor.UseStructuralMode"; //$NON-NLS-1$
 
 	/**
-	 * A named preference that controls if segmented view (show selected element only) is turned on or off.
+	 * A named preference that controls if segmented view (show selected element only) is turned
+	 * on or off.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
@@ -818,8 +825,8 @@ public class PreferenceConstants {
 	public static final String OUTLINE_LINK_TO_EDITOR = "org.eclipse.cdt.ui.outline.linktoeditor"; //$NON-NLS-1$
 
 	/**
-	 * A named preference that controls whether include directives should be grouped in the
-	 * C/C++ Projects view and the Project Explorer view.
+	 * A named preference that controls whether include directives should be grouped in
+	 * the C/C++ Projects view and the Project Explorer view.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
@@ -827,8 +834,8 @@ public class PreferenceConstants {
 	public static final String CVIEW_GROUP_INCLUDES= "org.eclipse.cdt.ui.cview.groupincludes"; //$NON-NLS-1$
 	
 	/**
-	 * A named preference that controls whether macro defintions should be grouped in the
-	 * C/C++ Projects view and the Project Explorer view.
+	 * A named preference that controls whether macro definitions should be grouped in
+	 * the C/C++ Projects view and the Project Explorer view.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
@@ -837,8 +844,8 @@ public class PreferenceConstants {
 	public static final String CVIEW_GROUP_MACROS= "org.eclipse.cdt.ui.cview.groupmacros"; //$NON-NLS-1$
 
 	/**
-	 * A named preference that controls whether header and source files should be separated in the
-	 * C/C++ Projects view and the Project Explorer view.
+	 * A named preference that controls whether header and source files should be separated in
+	 * the C/C++ Projects view and the Project Explorer view.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
@@ -1879,6 +1886,18 @@ public class PreferenceConstants {
 	public static final int NAME_STYLE_CAPITALIZATION_LOWER_CAMEL_CASE = 4;
 	
 	/**
+	 * A named preference that controls order of private/protected/public class members in generated
+	 * code.
+	 * <p>
+	 * Value is of type <code>Boolean</code>. The <code>true</code> value means that private members
+	 * are before public ones. The default is to put public members before private ones.
+	 * 
+	 * @since 5.4
+	 */
+	public static final String CLASS_MEMBER_ASCENDING_VISIBILITY_ORDER = "class_member_ascending_visibility_order"; //$NON-NLS-1$
+
+
+	/**
 	 * Returns the CDT-UI preference store.
 	 *
 	 * @return the CDT-UI preference store
@@ -2089,9 +2108,9 @@ public class PreferenceConstants {
     /**
      * Returns the node in the preference in the given context.
      * @param key The preference key.
-     * @param project The current context or <code>null</code> if no context is available and the
-	 * workspace setting should be taken. Note that passing <code>null</code> should
-	 * be avoided.
+     * @param project The current context or <code>null</code> if no context is available and
+     *     the workspace setting should be taken. Note that passing <code>null</code> should
+     *     be avoided.
      * @return Returns the node matching the given context.
      */
 	private static IEclipsePreferences getPreferenceNode(String key, ICProject project) {
@@ -2108,15 +2127,20 @@ public class PreferenceConstants {
 			return node;
 		}
 		
+		node = ConfigurationScope.INSTANCE.getNode(CUIPlugin.PLUGIN_ID);
+		if (node.get(key, null) != null) {
+			return node;
+		}
+
 		return DefaultScope.INSTANCE.getNode(CUIPlugin.PLUGIN_ID);
 	}
 
 	/**
 	 * Returns the string value for the given key in the given context.
 	 * @param key The preference key
-	 * @param project The current context or <code>null</code> if no context is available and the
-	 * workspace setting should be taken. Note that passing <code>null</code> should
-	 * be avoided.
+	 * @param project The current context or <code>null</code> if no context is available and
+	 *     the workspace setting should be taken. Note that passing <code>null</code> should
+	 *     be avoided.
 	 * @return Returns the current value for the string.
 	 * @since 5.0
 	 */
@@ -2127,9 +2151,9 @@ public class PreferenceConstants {
 	/**
 	 * Returns the integer value for the given key in the given context.
 	 * @param key The preference key
-	 * @param project The current context or <code>null</code> if no context is available and the
-	 * workspace setting should be taken. Note that passing <code>null</code> should
-	 * be avoided.
+	 * @param project The current context or <code>null</code> if no context is available and
+	 *     the workspace setting should be taken. Note that passing <code>null</code> should
+	 *     be avoided.
 	 * @param defaultValue The default value if not specified in the preferences.
 	 * @return Returns the current value for the string.
 	 * @since 5.1
@@ -2141,9 +2165,9 @@ public class PreferenceConstants {
 	/**
 	 * Returns the boolean value for the given key in the given context.
 	 * @param key The preference key
-	 * @param project The current context or <code>null</code> if no context is available and the
-	 * workspace setting should be taken. Note that passing <code>null</code> should
-	 * be avoided.
+	 * @param project The current context or <code>null</code> if no context is available and
+	 *     the workspace setting should be taken. Note that passing <code>null</code> should
+	 *     be avoided.
 	 * @param defaultValue The default value if not specified in the preferences.
 	 * @return Returns the current value for the string.
 	 * @since 5.1
@@ -2152,4 +2176,16 @@ public class PreferenceConstants {
 		return getPreferenceNode(key, project).getBoolean(key, defaultValue);
 	}
 
+	/**
+	 * Returns the scopes for preference lookup.
+	 * 
+	 * @param project a project or <code>null</code>
+	 * @return the scopes for preference lookup.
+	 * @since 5.4
+	 */
+	public static IScopeContext[] getPreferenceScopes(IProject project) {
+		return project != null ?
+				new IScopeContext[] { new ProjectScope(project), InstanceScope.INSTANCE, ConfigurationScope.INSTANCE, DefaultScope.INSTANCE } :
+				new IScopeContext[] { InstanceScope.INSTANCE, ConfigurationScope.INSTANCE, DefaultScope.INSTANCE };
+	}
 }

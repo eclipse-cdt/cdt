@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM Rational Software) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    Yuan Zhang / Beth Tibbitts (IBM Research)
+ *     John Camelon (IBM Rational Software) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Yuan Zhang / Beth Tibbitts (IBM Research)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -27,13 +27,12 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
  */
 public class CASTCompositeTypeSpecifier extends CASTBaseDeclSpecifier implements
         ICASTCompositeTypeSpecifier, IASTAmbiguityParent {
-
     private int fKey;
     private IASTName fName;
-    private IASTDeclaration[] fActiveDeclarations= null;
-    private IASTDeclaration [] fAllDeclarations = null;
-    private int fDeclarationsPos=-1;
-    private IScope fScope = null;
+    private IASTDeclaration[] fActiveDeclarations;
+    private IASTDeclaration[] fAllDeclarations;
+    private int fDeclarationsPos = -1;
+    private IScope fScope;
     
     public CASTCompositeTypeSpecifier() {
 	}
@@ -43,10 +42,12 @@ public class CASTCompositeTypeSpecifier extends CASTBaseDeclSpecifier implements
 		setName(name);
 	}
     
+	@Override
 	public CASTCompositeTypeSpecifier copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CASTCompositeTypeSpecifier copy(CopyStyle style) {
 		CASTCompositeTypeSpecifier copy = new CASTCompositeTypeSpecifier();
 		copyCompositeTypeSpecifier(copy, style);
@@ -60,24 +61,28 @@ public class CASTCompositeTypeSpecifier extends CASTBaseDeclSpecifier implements
 		copyBaseDeclSpec(copy);
 		copy.setKey(fKey);
 		copy.setName(fName == null ? null : fName.copy(style));
-		for(IASTDeclaration member : getMembers())
+		for (IASTDeclaration member : getMembers())
 			copy.addMemberDeclaration(member == null ? null : member.copy(style));
 	}
 	
-    public int getKey() {
+    @Override
+	public int getKey() {
         return fKey;
     }
 
-    public void setKey(int key) {
+    @Override
+	public void setKey(int key) {
         assertNotFrozen();
         this.fKey = key;
     }
 
-    public IASTName getName() {
+    @Override
+	public IASTName getName() {
         return fName;
     }
     
-    public void setName(IASTName name) {
+    @Override
+	public void setName(IASTName name) {
         assertNotFrozen();
         this.fName = name;
         if (name != null) {
@@ -86,51 +91,57 @@ public class CASTCompositeTypeSpecifier extends CASTBaseDeclSpecifier implements
 		}
     }
 
+	@Override
 	public IASTDeclaration[] getMembers() {
 		IASTDeclaration[] active= fActiveDeclarations;
 		if (active == null) {
-			active = ASTQueries.extractActiveDeclarations(fAllDeclarations, fDeclarationsPos+1);
+			active = ASTQueries.extractActiveDeclarations(fAllDeclarations, fDeclarationsPos + 1);
 			fActiveDeclarations= active;
 		}
 		return active;
 	}
 
+	@Override
 	public final IASTDeclaration[] getDeclarations(boolean includeInactive) {
 		if (includeInactive) {
-			fAllDeclarations= (IASTDeclaration[]) ArrayUtil.removeNullsAfter(IASTDeclaration.class, fAllDeclarations, fDeclarationsPos);
+			fAllDeclarations= ArrayUtil.trimAt(IASTDeclaration.class, fAllDeclarations,
+					fDeclarationsPos);
 			return fAllDeclarations;
 		}
 		return getMembers();
 	}
 
-    public void addMemberDeclaration(IASTDeclaration declaration) {
+    @Override
+	public void addMemberDeclaration(IASTDeclaration declaration) {
         assertNotFrozen();
     	if (declaration != null) {
     		declaration.setParent(this);
     		declaration.setPropertyInParent(MEMBER_DECLARATION);
-			fAllDeclarations = (IASTDeclaration[]) ArrayUtil.append(IASTDeclaration.class, fAllDeclarations,
+			fAllDeclarations = ArrayUtil.appendAt(IASTDeclaration.class, fAllDeclarations,
 					++fDeclarationsPos, declaration);
 			fActiveDeclarations= null;
     	}
     }
     
-    public void addDeclaration(IASTDeclaration declaration) {
+    @Override
+	public void addDeclaration(IASTDeclaration declaration) {
     	addMemberDeclaration(declaration);
     }
-    
-    public IScope getScope() {
-        if( fScope == null )
-            fScope = new CCompositeTypeScope( this );
+
+    @Override
+	public IScope getScope() {
+        if (fScope == null)
+            fScope = new CCompositeTypeScope(this);
         return fScope;
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
+	public boolean accept(ASTVisitor action){
 		if (action.shouldVisitDeclSpecifiers) {
 			switch (action.visit(this)) {
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
 		if (fName != null && !fName.accept(action))
@@ -138,7 +149,8 @@ public class CASTCompositeTypeSpecifier extends CASTBaseDeclSpecifier implements
            
 		IASTDeclaration[] decls= getDeclarations(action.includeInactiveNodes);
 		for (int i = 0; i < decls.length; i++) {
-			if (!decls[i].accept(action)) return false;
+			if (!decls[i].accept(action))
+				return false;
 		}
         
 		if (action.shouldVisitDeclSpecifiers) {
@@ -151,13 +163,15 @@ public class CASTCompositeTypeSpecifier extends CASTBaseDeclSpecifier implements
         return true;
     }
 
+	@Override
 	public int getRoleForName(IASTName n) {
-		if( n == this.fName )
+		if (n == this.fName)
 			return r_definition;
 		return r_unclear;
 	}
 
-    public void replace(IASTNode child, IASTNode other) {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
 		assert child.isActive() == other.isActive();
 		for (int i = 0; i <= fDeclarationsPos; ++i) {
 			if (fAllDeclarations[i] == child) {

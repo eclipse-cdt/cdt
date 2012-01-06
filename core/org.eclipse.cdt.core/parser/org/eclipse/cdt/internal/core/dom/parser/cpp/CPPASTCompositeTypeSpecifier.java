@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM) - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     John Camelon (IBM) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -27,17 +27,15 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
  */
 public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
         implements ICPPASTCompositeTypeSpecifier, IASTAmbiguityParent {
-
     private int fKey;
     private IASTName fName;
     private CPPClassScope fScope;
 	private IASTDeclaration[] fAllDeclarations;
 	private IASTDeclaration[] fActiveDeclarations;
-    private int fDeclarationsPos=-1;
-	private ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier[] baseSpecs = null;
+    private int fDeclarationsPos = -1;
+	private ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier[] baseSpecs;
 	private int baseSpecsPos = -1;
-	private boolean fAmbiguitiesResolved= false;
-
+	private boolean fAmbiguitiesResolved;
 
     public CPPASTCompositeTypeSpecifier() {
 	}
@@ -54,13 +52,15 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
 		fAmbiguitiesResolved= true;
 	}
 	
+	@Override
 	public CPPASTCompositeTypeSpecifier copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CPPASTCompositeTypeSpecifier copy(CopyStyle style) {
-		CPPASTCompositeTypeSpecifier copy = new CPPASTCompositeTypeSpecifier(fKey, fName == null
-				? null : fName.copy(style));
+		CPPASTCompositeTypeSpecifier copy =
+				new CPPASTCompositeTypeSpecifier(fKey, fName == null ? null : fName.copy(style));
 		copyBaseDeclSpec(copy);
 		for (IASTDeclaration member : getMembers())
 			copy.addMemberDeclaration(member == null ? null : member.copy(style));
@@ -73,35 +73,43 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
 		return copy;
 	}
 
-    public ICPPASTBaseSpecifier[] getBaseSpecifiers() {
-        if( baseSpecs == null ) return ICPPASTBaseSpecifier.EMPTY_BASESPECIFIER_ARRAY;
-        baseSpecs = (ICPPASTBaseSpecifier[]) ArrayUtil.removeNullsAfter( ICPPASTBaseSpecifier.class, baseSpecs, baseSpecsPos );
+    @Override
+	public ICPPASTBaseSpecifier[] getBaseSpecifiers() {
+        if (baseSpecs == null)
+        	return ICPPASTBaseSpecifier.EMPTY_BASESPECIFIER_ARRAY;
+        baseSpecs = ArrayUtil.trimAt(ICPPASTBaseSpecifier.class, baseSpecs, baseSpecsPos);
         return baseSpecs;
     }
 
-    public void addBaseSpecifier(ICPPASTBaseSpecifier baseSpec) {
+    @Override
+	public void addBaseSpecifier(ICPPASTBaseSpecifier baseSpec) {
         assertNotFrozen();
     	if (baseSpec != null) {
     		baseSpec.setParent(this);
 			baseSpec.setPropertyInParent(BASE_SPECIFIER);
-    		baseSpecs = (ICPPASTBaseSpecifier[]) ArrayUtil.append( ICPPASTBaseSpecifier.class, baseSpecs, ++baseSpecsPos, baseSpec );
+    		baseSpecs = ArrayUtil.appendAt(ICPPASTBaseSpecifier.class, baseSpecs, ++baseSpecsPos,
+    				baseSpec);
     	}
     }
 
-    public int getKey() {
+    @Override
+	public int getKey() {
         return fKey;
     }
 
-    public void setKey(int key) {
+    @Override
+	public void setKey(int key) {
         assertNotFrozen();
         fKey = key;
     }
 
-    public IASTName getName() {
+    @Override
+	public IASTName getName() {
         return fName;
     }
 
-    public void setName(IASTName name) {
+    @Override
+	public void setName(IASTName name) {
         assertNotFrozen();
         this.fName = name;
         if (name != null) {
@@ -110,23 +118,27 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
 		}
     }
 
+	@Override
 	public IASTDeclaration[] getMembers() {
 		IASTDeclaration[] active= fActiveDeclarations;
 		if (active == null) {
-			active = ASTQueries.extractActiveDeclarations(fAllDeclarations, fDeclarationsPos+1);
+			active = ASTQueries.extractActiveDeclarations(fAllDeclarations, fDeclarationsPos + 1);
 			fActiveDeclarations= active;
 		}
 		return active;
 	}
 
+	@Override
 	public final IASTDeclaration[] getDeclarations(boolean includeInactive) {
 		if (includeInactive) {
-			fAllDeclarations= (IASTDeclaration[]) ArrayUtil.removeNullsAfter(IASTDeclaration.class, fAllDeclarations, fDeclarationsPos);
+			fAllDeclarations= ArrayUtil.trimAt(IASTDeclaration.class, fAllDeclarations,
+					fDeclarationsPos);
 			return fAllDeclarations;
 		}
 		return getMembers();
 	}
 
+	@Override
 	public void addMemberDeclaration(IASTDeclaration decl) {
 		if (decl == null)
 			return;
@@ -138,15 +150,17 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
 		assertNotFrozen();
 		decl.setParent(this);
 		decl.setPropertyInParent(decl instanceof ICPPASTVisibilityLabel ? VISIBILITY_LABEL : MEMBER_DECLARATION);
-		fAllDeclarations = (IASTDeclaration[]) ArrayUtil.append(IASTDeclaration.class, fAllDeclarations,
+		fAllDeclarations = ArrayUtil.appendAt(IASTDeclaration.class, fAllDeclarations,
 				++fDeclarationsPos, decl);
 		fActiveDeclarations= null;
 	}
     
-    public final void addDeclaration(IASTDeclaration decl) {
+    @Override
+	public final void addDeclaration(IASTDeclaration decl) {
     	addMemberDeclaration(decl);
     }
 
+	@Override
 	public ICPPClassScope getScope() {
 		if (fScope == null) {
 			fScope = new CPPClassScope(this);
@@ -172,12 +186,14 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
 
 		ICPPASTBaseSpecifier[] bases = getBaseSpecifiers();
 		for (int i = 0; i < bases.length; i++) {
-			if (!bases[i].accept(action)) return false;
+			if (!bases[i].accept(action))
+				return false;
 		}
 
 		IASTDeclaration[] decls = getDeclarations(action.includeInactiveNodes);
 		for (int i = 0; i < decls.length; i++) {
-			if (!decls[i].accept(action)) return false;
+			if (!decls[i].accept(action))
+				return false;
 		}
 		
 		if (action.shouldVisitDeclSpecifiers && action.leave(this) == ASTVisitor.PROCESS_ABORT) 
@@ -186,12 +202,14 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
 		return true;
 	}
 	
+	@Override
 	public int getRoleForName(IASTName name) {
-		if( name == this.fName )
+		if (name == this.fName)
 			return r_definition;
 		return r_unclear;
 	}
 
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
 		assert child.isActive() == other.isActive();
 		for (int i = 0; i <= fDeclarationsPos; ++i) {

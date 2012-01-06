@@ -42,12 +42,12 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTVisibilityLabel;
 import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
 
 /**
- * Adds a declaration to an existing class via the ModificationCollector. It automatically searches 
- * the correct insertion point for the desired visibility.
+ * Adds a declaration to an existing class via the ModificationCollector. Automatically determines 
+ * an appropriate insertion point for the desired visibility.
  * 
  * @author Mirko Stocker
  */
-public class AddDeclarationNodeToClassChange {
+public class ClassMemberInserter {
 	private final ICPPASTCompositeTypeSpecifier classNode;
 	private final VisibilityEnum visibility;
 	private final List<IASTNode> nodesToAdd;
@@ -62,10 +62,10 @@ public class AddDeclarationNodeToClassChange {
 	public static void createChange(ICPPASTCompositeTypeSpecifier classNode,
 			VisibilityEnum visibility, List<IASTNode> nodesToAdd, boolean isField,
 			ModificationCollector collector) {
-		new AddDeclarationNodeToClassChange(classNode, visibility, nodesToAdd, collector, isField);
+		new ClassMemberInserter(classNode, visibility, nodesToAdd, collector, isField);
 	}	
 
-	private AddDeclarationNodeToClassChange(ICPPASTCompositeTypeSpecifier classNode,
+	private ClassMemberInserter(ICPPASTCompositeTypeSpecifier classNode,
 			VisibilityEnum visibility, List<IASTNode> nodesToAdd, ModificationCollector collector,
 			boolean isField) {
 		this.nodesToAdd = new ArrayList<IASTNode>(nodesToAdd);

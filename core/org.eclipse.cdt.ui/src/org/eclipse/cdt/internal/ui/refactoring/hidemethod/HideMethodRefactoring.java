@@ -46,7 +46,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 
-import org.eclipse.cdt.internal.ui.refactoring.AddDeclarationNodeToClassChange;
+import org.eclipse.cdt.internal.ui.refactoring.ClassMemberInserter;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoringDescription;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
@@ -277,7 +277,7 @@ public class HideMethodRefactoring extends CRefactoring {
 				TextEditGroup editGroup = new TextEditGroup(Messages.HideMethodRefactoring_FILE_CHANGE_TEXT+ methodToHide.getRawSignature());
 
 				ICPPASTCompositeTypeSpecifier classDefinition = (ICPPASTCompositeTypeSpecifier) methodToHideDecl.getParent();
-				AddDeclarationNodeToClassChange.createChange(classDefinition, VisibilityEnum.v_private, methodToHideDecl, false, collector);
+				ClassMemberInserter.createChange(classDefinition, VisibilityEnum.v_private, methodToHideDecl, false, collector);
 
 				rewriter.remove(methodToHideDecl, editGroup);
 			} finally {

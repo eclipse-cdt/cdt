@@ -117,7 +117,7 @@ public class CDTSharedImages {
 	public static final String IMG_OBJS_QUOTE_INCLUDES_FOLDER = "icons/obj16/hfolder_quote_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_INCLUDES_FOLDER_SYSTEM = "icons/obj16/fldr_sys_obj.gif"; //$NON-NLS-1$
 	/** @since 5.4 */
-	public static final String IMG_OBJS_FRAMEWORKS_FOLDER = "icons/obj16/frameworks.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_FRAMEWORKS_FOLDER = "icons/obj16/frameworks.png"; //$NON-NLS-1$
 	public static final String IMG_OBJS_MACROS_FILE= "icons/obj16/macros_file.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_LIBRARY_FOLDER=  "icons/obj16/fldr_lib_obj.gif"; // $NON-NLS-1$  //$NON-NLS-1$
 	public static final String IMG_OBJS_ORDER = "icons/obj16/cp_order_obj.gif"; //$NON-NLS-1$

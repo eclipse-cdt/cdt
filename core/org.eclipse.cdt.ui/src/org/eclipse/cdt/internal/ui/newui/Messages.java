@@ -187,6 +187,9 @@ public class Messages extends NLS {
 	public static String IncludeTab_2;
 	public static String IncludeTab_export;
 	public static String IncludeTab_import;
+	public static String LanguageSettingsImages_FileDoesNotExist;
+	public static String LanguageSettingsImages_FolderDoesNotExist;
+	public static String LanguageSettingsImages_UsingRelativePathsNotRecommended;
 	public static String LanguageSettingsProviderTab_AreYouSureToResetProviders;
 	public static String LanguageSettingsProviderTab_Clear;
 	public static String LanguageSettingsProviderTab_Configure;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Andrew Gvozdev and others.
+ * Copyright (c) 2010, 2012 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.cdt.core.settings.model.ACPathEntry;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
@@ -31,6 +32,8 @@ import org.eclipse.cdt.ui.CUIPlugin;
  * Helper class to provide unified images for {@link ICLanguageSettingEntry}.
  */
 public class LanguageSettingsImages {
+	// AG FIXME - replace usage with version taking cfgDescription
+	@Deprecated
 	public static Image getImage(int kind, int flags, boolean isProjectRelative) {
 		String imageKey = getImageKey(kind, flags, isProjectRelative);
 		if (imageKey!=null) {
@@ -45,14 +48,64 @@ public class LanguageSettingsImages {
 
 	/**
 	 * Returns image for the given entry from internally managed repository including
-	 * necessary overlays. This method is shortcut for {@link #getImage(ICLanguageSettingEntry, String)}
+	 * necessary overlays. This method is shortcut for {@link #getImage(ICLanguageSettingEntry, String, ICConfigurationDescription)}
 	 * when no project is available.
 	 *
 	 * @param entry - language settings entry to get an image for.
 	 * @return the image for the entry with appropriate overlays.
+	 * 
+	 * AG FIXME - replace usage with version taking cfgDescription
 	 */
+	@Deprecated
 	public static Image getImage(ICLanguageSettingEntry entry) {
-		return getImage(entry, null);
+		return getImage(entry, null, null);
+	}
+
+	/**
+	 * @return the base key for the image.
+	 */
+	private static String getImageKey(int kind, int flag, boolean isProjectRelative) {
+		String imageKey = null;
+	
+		boolean isWorkspacePath = (flag & ICSettingEntry.VALUE_WORKSPACE_PATH) != 0;
+		boolean isBuiltin = (flag & ICSettingEntry.BUILTIN) != 0;
+		boolean isFramework = (flag & ICSettingEntry.FRAMEWORKS_MAC) != 0;
+	
+		switch (kind) {
+		case ICSettingEntry.INCLUDE_PATH:
+			if (isWorkspacePath) {
+				if (isProjectRelative) {
+					imageKey = CDTSharedImages.IMG_OBJS_INCLUDES_FOLDER_PROJECT;
+				} else {
+					imageKey = CDTSharedImages.IMG_OBJS_INCLUDES_FOLDER_WORKSPACE;
+				}
+			} else if (isFramework) {
+				imageKey = CDTSharedImages.IMG_OBJS_FRAMEWORKS_FOLDER;
+			} else if (isBuiltin) {
+				imageKey = CDTSharedImages.IMG_OBJS_INCLUDES_FOLDER_SYSTEM;
+			} else {
+				imageKey = CDTSharedImages.IMG_OBJS_INCLUDES_FOLDER;
+			}
+			break;
+		case ICSettingEntry.INCLUDE_FILE:
+			imageKey = CDTSharedImages.IMG_OBJS_TUNIT_HEADER;
+			break;
+		case ICSettingEntry.MACRO:
+			imageKey = CDTSharedImages.IMG_OBJS_MACRO;
+			break;
+		case ICSettingEntry.MACRO_FILE:
+			imageKey = CDTSharedImages.IMG_OBJS_MACROS_FILE;
+			break;
+		case ICSettingEntry.LIBRARY_PATH:
+			imageKey = CDTSharedImages.IMG_OBJS_LIBRARY_FOLDER;
+			break;
+		case ICSettingEntry.LIBRARY_FILE:
+			imageKey = CDTSharedImages.IMG_OBJS_LIBRARY;
+			break;
+		}
+		if (imageKey == null)
+			imageKey = CDTSharedImages.IMG_OBJS_UNKNOWN_TYPE;
+		return imageKey;
 	}
 
 	/**
@@ -60,26 +113,27 @@ public class LanguageSettingsImages {
 	 * necessary overlays.
 	 *
 	 * @param entry - language settings entry to get an image for.
-	 * @param projectName - pass project name if available. That lets to put "project" metaphor
+	 * @param projectName - pass project name if available. That lets put "project" metaphor
 	 *    on the image. Pass {@code null} if no project name is available.
+	 * @param cfgDescription - configuration description of the entry.
 	 * @return the image for the entry with appropriate overlays.
 	 */
-	public static Image getImage(ICLanguageSettingEntry entry, String projectName) {
+	public static Image getImage(ICLanguageSettingEntry entry, String projectName, ICConfigurationDescription cfgDescription) {
 		int kind = entry.getKind();
-		boolean isWorkspacePath = (entry.getFlags() & ICSettingEntry.VALUE_WORKSPACE_PATH) != 0;
-		String path = entry.getName();
-		boolean isProjectRelative = projectName!=null && isWorkspacePath && path.startsWith(IPath.SEPARATOR+projectName+IPath.SEPARATOR);
-		// FIXME
-		isProjectRelative = isProjectRelative || (isWorkspacePath && path.charAt(0)!=IPath.SEPARATOR);
 		int flags = entry.getFlags();
+		boolean isWorkspacePath = (flags & ICSettingEntry.VALUE_WORKSPACE_PATH) != 0;
+		String path = entry.getName();
+		boolean isProjectRelative = (projectName != null) && isWorkspacePath && path.startsWith(IPath.SEPARATOR + projectName + IPath.SEPARATOR);
+
 		String imageKey = getImageKey(kind, flags, isProjectRelative);
-		if (imageKey!=null) {
-			if ((entry.getFlags()&ICSettingEntry.UNDEFINED) == ICSettingEntry.UNDEFINED)
+		if (imageKey != null) {
+			if ((flags & ICSettingEntry.UNDEFINED) != 0) {
 				return CDTSharedImages.getImageOverlaid(imageKey, CDTSharedImages.IMG_OVR_INACTIVE, IDecoration.BOTTOM_LEFT);
+			}
 
 			if (entry instanceof ACPathEntry) {
 				String overlayKey=null;
-				IStatus status = getStatus(entry);
+				IStatus status = getStatus(entry, cfgDescription);
 				switch (status.getSeverity()) {
 				case IStatus.ERROR:
 					overlayKey = CDTSharedImages.IMG_OVR_ERROR;
@@ -100,18 +154,15 @@ public class LanguageSettingsImages {
 
 	/**
 	 * Checking if the entry points to existing or accessible location.
+	 * @param entry - resolved entry
 	 */
 	private static boolean isLocationOk(ACPathEntry entry) {
-		// have to trust paths which contain variables
-		if (entry.getName().contains("${")) //$NON-NLS-1$
-			return true;
-
 		boolean exists = true;
 		boolean isWorkspacePath = (entry.getFlags() & ICSettingEntry.VALUE_WORKSPACE_PATH) != 0;
 		if (isWorkspacePath) {
 			IPath path = new Path(entry.getValue());
 			IResource rc = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
-			exists = rc!=null && rc.isAccessible();
+			exists = (rc !=null) && rc.isAccessible();
 		} else {
 			String pathname = entry.getName();
 			java.io.File file = new java.io.File(pathname);
@@ -124,80 +175,34 @@ public class LanguageSettingsImages {
 	 * Defines status object for the status message line.
 	 *
 	 * @param entry - the entry to check status on.
+	 * @param cfgDescription - configuration description of the entry.
 	 * @return a status object defining severity and message.
 	 */
-	public static IStatus getStatus(ICLanguageSettingEntry entry) {
+	public static IStatus getStatus(ICLanguageSettingEntry entry, ICConfigurationDescription cfgDescription) {
 		if (entry instanceof ACPathEntry) {
 			if (!entry.isResolved()) {
-				ICLanguageSettingEntry[] entries = CDataUtil.resolveEntries(new ICLanguageSettingEntry[] {entry}, null);
+				ICLanguageSettingEntry[] entries = CDataUtil.resolveEntries(new ICLanguageSettingEntry[] {entry}, cfgDescription);
 				if (entries != null && entries.length > 0) {
 					entry = entries[0];
 				}
-
 			}
+
 			ACPathEntry acEntry = (ACPathEntry)entry;
 			String acEntryName = acEntry.getName();
 			IPath path = new Path(acEntryName);
 			if (!path.isAbsolute()) {
-				String msg = "Using relative paths is ambiguous and not recommended. It can cause unexpected side-effects.";
-				return new Status(IStatus.INFO, CUIPlugin.PLUGIN_ID, msg);
+				return new Status(IStatus.INFO, CUIPlugin.PLUGIN_ID, Messages.LanguageSettingsImages_UsingRelativePathsNotRecommended);
 			}
 			if (!isLocationOk(acEntry)) {
-				String msg;
-				if (acEntry.isFile())
-					msg = "The selected file does not exist or not accessible.";
-				else
-					msg = "The selected folder does not exist or not accessible.";
-				return new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, msg);
+				if (acEntry.isFile()) {
+					return new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, Messages.LanguageSettingsImages_FileDoesNotExist);
+				} else {
+					return new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, Messages.LanguageSettingsImages_FolderDoesNotExist);
+				}
 			}
 
 		}
 		return Status.OK_STATUS;
-	}
-
-	/**
-	 * @return the base key for the image.
-	 */
-	private static String getImageKey(int kind, int flag, boolean isProjectRelative) {
-		String imageKey = null;
-
-		boolean isWorkspacePath = (flag & ICSettingEntry.VALUE_WORKSPACE_PATH) != 0;
-		boolean isBuiltin = (flag & ICSettingEntry.BUILTIN) != 0;
-		boolean isFramework = (flag & ICSettingEntry.FRAMEWORKS_MAC) != 0;
-
-		switch (kind) {
-		case ICSettingEntry.INCLUDE_PATH:
-			if (isWorkspacePath)
-				if (isProjectRelative)
-					imageKey = CDTSharedImages.IMG_OBJS_INCLUDES_FOLDER_PROJECT;
-				else
-					imageKey = CDTSharedImages.IMG_OBJS_INCLUDES_FOLDER_WORKSPACE;
-			else if (isFramework)
-				imageKey = CDTSharedImages.IMG_OBJS_FRAMEWORKS_FOLDER;
-			else if (isBuiltin)
-				imageKey = CDTSharedImages.IMG_OBJS_INCLUDES_FOLDER_SYSTEM;
-			else
-				imageKey = CDTSharedImages.IMG_OBJS_INCLUDES_FOLDER;
-			break;
-		case ICSettingEntry.INCLUDE_FILE:
-			imageKey = CDTSharedImages.IMG_OBJS_TUNIT_HEADER;
-			break;
-		case ICSettingEntry.MACRO:
-			imageKey = CDTSharedImages.IMG_OBJS_MACRO;
-			break;
-		case ICSettingEntry.MACRO_FILE:
-			imageKey = CDTSharedImages.IMG_OBJS_MACROS_FILE;
-			break;
-		case ICSettingEntry.LIBRARY_PATH:
-			imageKey = CDTSharedImages.IMG_OBJS_LIBRARY_FOLDER;
-			break;
-		case ICSettingEntry.LIBRARY_FILE:
-			imageKey = CDTSharedImages.IMG_OBJS_LIBRARY;
-			break;
-		}
-		if (imageKey==null)
-			imageKey = CDTSharedImages.IMG_OBJS_UNKNOWN_TYPE;
-		return imageKey;
 	}
 
 }

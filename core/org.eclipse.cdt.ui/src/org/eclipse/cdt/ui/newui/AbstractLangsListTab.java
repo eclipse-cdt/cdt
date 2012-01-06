@@ -9,7 +9,7 @@
  *     Intel Corporation - initial API and implementation
  *     IBM Corporation
  *     Markus Schorn (Wind River Systems)
- *     Andrew Gvozdev (Quoin Inc.)
+ *     Andrew Gvozdev
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
@@ -261,7 +261,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	 * Multiline selection is not supported.
 	 */
 	private void updateStatusLine() {
-		fStatusLine.setErrorStatus(LanguageSettingsImages.getStatus(getSelectedEntry()));
+		fStatusLine.setErrorStatus(LanguageSettingsImages.getStatus(getSelectedEntry(), getResDesc().getConfiguration()));
 	}
 
 	/**
@@ -731,7 +731,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 			if (columnIndex==0 && (element instanceof ICLanguageSettingEntry)) {
 				ICConfigurationDescription cfg = getResDesc().getConfiguration();
 				IProject project = cfg.getProjectDescription().getProject();
-				return LanguageSettingsImages.getImage((ICLanguageSettingEntry) element, project.getName());
+				return LanguageSettingsImages.getImage((ICLanguageSettingEntry) element, project.getName(), cfg);
 			}
 			return null;
 		}

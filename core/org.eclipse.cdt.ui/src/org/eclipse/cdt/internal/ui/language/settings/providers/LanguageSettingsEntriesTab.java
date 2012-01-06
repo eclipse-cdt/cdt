@@ -551,7 +551,8 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 	private void updateStatusLine() {
 		IStatus status=null;
 		if (enableProvidersCheckBox.getSelection()==true) {
-			status = LanguageSettingsImages.getStatus(getSelectedEntry());
+			ICConfigurationDescription cfgDescription = getConfigurationDescription();
+			status = LanguageSettingsImages.getStatus(getSelectedEntry(), cfgDescription);
 		}
 		if (status==null || status==Status.OK_STATUS) {
 			ILanguageSettingsProvider provider = getSelectedProvider();

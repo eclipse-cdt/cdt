@@ -46,6 +46,8 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChang
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Display;
@@ -63,7 +65,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 	/** presentation of the content, i.e. for MakeView tree of for BuildTargetDialog table */
 	protected boolean bFlatten;
 
-	protected TreeViewer viewer;
+	protected StructuredViewer viewer;
 
 	/**
 	 * Default constructor.
@@ -190,7 +192,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 		if (this.viewer == null) {
 			MakeCorePlugin.getDefault().getTargetManager().addListener(this);
 		}
-		this.viewer = (TreeViewer) viewer;
+		this.viewer = (StructuredViewer) viewer;
 		IWorkspace oldWorkspace = null;
 		IWorkspace newWorkspace = null;
 		if (oldInput instanceof IWorkspace) {
@@ -242,11 +244,23 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 				if (viewer == null || viewer.getControl() == null || viewer.getControl().isDisposed())
 					return;
 
-				if (viewer.getTree().getItemCount() <= 0) {
+				int itemCount = 0;
+				if (viewer instanceof TreeViewer) {
+					((TreeViewer) viewer).getTree().getItemCount();
+				} else if (viewer instanceof TableViewer) {
+					((TableViewer) viewer).getTable().getItemCount();
+				}
+				if (itemCount <= 0) {
 					return;
 				}
 
-				Object firstItem = viewer.getTree().getItem(0).getData();
+				Object firstItem = null;
+				if (viewer instanceof TreeViewer) {
+					firstItem = ((TreeViewer) viewer).getTree().getItem(0).getData();
+				} else if (viewer instanceof TableViewer) {
+					firstItem = ((TableViewer) viewer).getTable().getItem(0).getData();
+				}
+
 				IContainer parentContainer = null;
 
 				boolean isDrilledDown = !(firstItem instanceof IProject);

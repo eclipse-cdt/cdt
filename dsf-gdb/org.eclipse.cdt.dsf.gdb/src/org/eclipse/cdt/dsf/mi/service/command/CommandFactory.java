@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 QNX Software Systems and others.
+ * Copyright (c) 2000, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@
  *     Onur Akdemir (TUBITAK BILGEM-ITI) - Multi-process debugging (Bug 237306)
  *     Abeer Bagul - Support for -exec-arguments (bug 337687)
  *     Marc Khouzam (Ericsson) - New methods for new MIDataDisassemble (Bug 357073)
+ *     Marc Khouzam (Ericsson) - New method for new MIGDBSetPythonPrintStack (Bug 367788)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command;
@@ -101,6 +102,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetDetachOnFork;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetEnv;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetNonStop;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetPagination;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetPythonPrintStack;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetSchedulerLocking;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetSolibAbsolutePrefix;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetSolibSearchPath;
@@ -630,6 +632,11 @@ public class CommandFactory {
 	public ICommand<MIInfo> createMIGDBSetPagination(ICommandControlDMContext ctx, boolean isSet) {
 		return new MIGDBSetPagination(ctx, isSet);
 	}
+
+	/** @since 4.1 */
+	public ICommand<MIInfo> createMIGDBSetPythonPrintStack(ICommandControlDMContext ctx, String option) {
+		return new MIGDBSetPythonPrintStack(ctx, option);
+	}	
 
 	/** @since 4.1 */
 	public ICommand<MIInfo> createMIGDBSetSchedulerLocking(ICommandControlDMContext ctx, String mode) {

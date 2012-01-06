@@ -18,11 +18,14 @@ import java.util.Properties;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.tests.refactoring.RefactoringTest;
 import org.eclipse.cdt.ui.tests.refactoring.TestSourceFile;
 
@@ -41,6 +44,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTest {
 	private String[] selectedSetters;
 	private GenerateGettersAndSettersRefactoring refactoring;
 	private boolean definitionSeparate;
+	private String ascendingVisibilityOrder;
 
 	/**
 	 * @param name
@@ -52,21 +56,30 @@ public class GenerateGettersAndSettersTest extends RefactoringTest {
 
 	@Override
 	protected void runTest() throws Throwable {
-		IFile file = project.getFile(fileName);
-		ICElement element = CoreModel.getDefault().create(file);
-		refactoring = new GenerateGettersAndSettersRefactoring(element, selection, cproject, astCache);
-		RefactoringStatus initialConditions = refactoring.checkInitialConditions(NULL_PROGRESS_MONITOR);
-
-		if (fatalError) {
-			assertConditionsFatalError(initialConditions);
-			return;
-		} else {
-			assertConditionsOk(initialConditions);
-			executeRefactoring();
+		try {
+			IFile file = project.getFile(fileName);
+			ICElement element = CoreModel.getDefault().create(file);
+			refactoring = new GenerateGettersAndSettersRefactoring(element, selection, cproject, astCache);
+			RefactoringStatus initialConditions = refactoring.checkInitialConditions(NULL_PROGRESS_MONITOR);
+	
+			if (fatalError) {
+				assertConditionsFatalError(initialConditions);
+				return;
+			} else {
+				assertConditionsOk(initialConditions);
+				executeRefactoring();
+			}
+		} finally {
+			IPreferenceStore store= CUIPlugin.getDefault().getPreferenceStore();
+			store.setToDefault(PreferenceConstants.CLASS_MEMBER_ASCENDING_VISIBILITY_ORDER);
 		}
 	}
 
 	private void executeRefactoring() throws CoreException, Exception {
+		if (ascendingVisibilityOrder != null) {
+			IPreferenceStore store= CUIPlugin.getDefault().getPreferenceStore();
+			store.setValue(PreferenceConstants.CLASS_MEMBER_ASCENDING_VISIBILITY_ORDER, ascendingVisibilityOrder);
+		}
 		selectFields();
 		refactoring.getContext().setDefinitionSeparate(definitionSeparate);
 		RefactoringStatus finalConditions = refactoring.checkFinalConditions(NULL_PROGRESS_MONITOR);
@@ -102,6 +115,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTest {
 		String getters = refactoringProperties.getProperty("getters", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		String setters = refactoringProperties.getProperty("setters", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		definitionSeparate = Boolean.valueOf(refactoringProperties.getProperty("definitionSeparate", "false"));
+		ascendingVisibilityOrder = refactoringProperties.getProperty("ascendingVisibilityOrder", null);
 		
 		selectedGetters = getters.split(",");	
 		selectedSetters = setters.split(",");

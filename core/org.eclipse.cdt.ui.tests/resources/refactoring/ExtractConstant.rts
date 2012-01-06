@@ -397,7 +397,6 @@ public:
 };
 
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -413,7 +412,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //@A.cpp
 #include "A.h"
 
@@ -426,7 +424,6 @@ A::~A() {
 int A::foo() {
 	return /*$*/42/*$$*/;
 }
-
 //=
 #include "A.h"
 
@@ -439,8 +436,7 @@ A::~A() {
 int A::foo() {
 	return theAnswer;
 }
-
-//!Bug 246062 [Refactoring] NPE extracting a constant from an inlined method
+//!Bug 246062 - Extracting a constant from an inlined method
 //#org.eclipse.cdt.ui.tests.refactoring.extractconstant.ExtractConstantRefactoringTest
 //@.config
 filename=A.h
@@ -450,18 +446,17 @@ class X {
 		int a = /*$*/42/*$$*/;
 	}
 };
-
 //=
 class X {
+public:
+	static const int theAnswer = 42;
+
+private:
 	void method() {
 		int a = theAnswer;
 	}
-
-public:
-	static const int theAnswer = 42;
 };
-
-//!ExtractConstantString
+//!Extract constant string
 //#org.eclipse.cdt.ui.tests.refactoring.extractconstant.ExtractConstantRefactoringTest
 //@.config
 visibility=private

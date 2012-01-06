@@ -71,16 +71,16 @@ public:
 
 	int	 GetUniqueId();
 
-	char* getName() const {
-		return name;
-	}
-
 	int getSystemId() {
 		return systemId;
 	}
 
 	void setSystemId(int systemId) {
 		this->systemId = systemId;
+	}
+
+	char* getName() const {
+		return name;
 	}
 };
 
@@ -176,16 +176,16 @@ public:
 
 	int	 GetUniqueId();
 
-	char* getName() const {
-		return name;
-	}
-
 	int getSystemId() {
 		return systemId;
 	}
 
 	void setSystemId(int systemId) {
 		this->systemId = systemId;
+	}
+
+	char* getName() const {
+		return name;
 	}
 };
 
@@ -246,7 +246,6 @@ public:
 	}
 };
 
-
 int gooo = 1;
 
 #endif /* A_H_ */
@@ -278,10 +277,6 @@ public:
 
 	int	 GetUniqueId();
 
-	void setName(char* name) {
-		this->name = name;
-	}
-
 	int getSystemId() {
 		return systemId;
 	}
@@ -289,8 +284,11 @@ public:
 	void setSystemId(int systemId) {
 		this->systemId = systemId;
 	}
-};
 
+	void setName(char* name) {
+		this->name = name;
+	}
+};
 
 int gooo = 1;
 
@@ -379,20 +377,20 @@ public:
 
 	int	 GetUniqueId();
 
-	char* getName() const {
-		return name;
-	}
-
-	void setName(char* name) {
-		this->name = name;
-	}
-
 	int getSystemId() {
 		return systemId;
 	}
 
 	void setSystemId(int systemId) {
 		this->systemId = systemId;
+	}
+
+	char* getName() const {
+		return name;
+	}
+
+	void setName(char* name) {
+		this->name = name;
 	}
 };
 
@@ -463,6 +461,18 @@ public:
 
 	Person myFriend;
 
+	Person(int socSecNo); // constructor
+
+	~Person(); // destructor
+
+	char*   Name();
+
+	void	Print();
+
+	int	 SocSecNo();
+
+	int	 GetUniqueId();
+
 	char* getName() const {
 		return name;
 	}
@@ -478,18 +488,6 @@ public:
 	void setSystemId(int systemId) {
 		this->systemId = systemId;
 	}
-
-	Person(int socSecNo); // constructor
-
-	~Person(); // destructor
-
-	char*   Name();
-
-	void	Print();
-
-	int	 SocSecNo();
-
-	int	 GetUniqueId();
 };
 
 int gooo = 1;
@@ -567,7 +565,7 @@ GaS::Getters() {
 
 GaS::~Getters() {
 }
-//!Generate Getters and Setters no Methods
+//!Generate Getters and Setters no methods
 //#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
 //@.config
 filename=A.h
@@ -588,9 +586,6 @@ private:
 #define A_H_
 
 class Person {
-private:
-	int id;
-
 public:
 	int getId() const {
 		return id;
@@ -599,15 +594,19 @@ public:
 	void setId(int id) {
 		this->id = id;
 	}
+
+private:
+	int id;
 };
 
 #endif /* A_H_ */
-//!Generate Getters and Setters no Methods
+//!Generate Getters and Setters no methods ascending visibility order
 //#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
 //@.config
 filename=A.h
 getters=i
 setters=i
+ascendingVisibilityOrder=true
 //@A.h
 /*
  * test.h
@@ -624,7 +623,6 @@ class test {
 };
 
 #endif /* TEST_H_ */
-
 //=
 /*
  * test.h
@@ -650,8 +648,7 @@ public:
 };
 
 #endif /* TEST_H_ */
-
-//!Generate Getters and Setters no Fields
+//!Generate Getters and Setters no fields
 //#org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTest
 //@.config
 filename=A.h
@@ -759,8 +756,6 @@ public:
 
 	Person myFriend;
 
-	const FullName& getName() const;
-	void setName(const FullName& name);
 	Person(int socSecNo); // constructor
 
 	~Person(); // destructor
@@ -776,6 +771,8 @@ public:
 	int getSystemId();
 
 	void setSystemId(int systemId);
+	const FullName& getName() const;
+	void setName(const FullName& name);
 };
 
 int gooo = 1;
@@ -886,7 +883,6 @@ public:
 	int	 SocSecNo();
 
 	int	 GetUniqueId();
-	char* getName() const;
 
 	int getSystemId() {
 		return systemId;
@@ -895,6 +891,8 @@ public:
 	void setSystemId(int systemId) {
 		this->systemId = systemId;
 	}
+
+	char* getName() const;
 };
 
 }
@@ -1005,7 +1003,6 @@ public:
 	int	 SocSecNo();
 
 	int	 GetUniqueId();
-	void setName(char* name);
 
 	int getSystemId() {
 		return systemId;
@@ -1014,6 +1011,8 @@ public:
 	void setSystemId(int systemId) {
 		this->systemId = systemId;
 	}
+
+	void setName(char* name);
 };
 
 int gooo = 1;
@@ -1115,8 +1114,6 @@ public:
 	int	 SocSecNo();
 
 	int	 GetUniqueId();
-	char* getName() const;
-	void setName(char* name);
 
 	int getSystemId() {
 		return systemId;
@@ -1125,6 +1122,9 @@ public:
 	void setSystemId(int systemId) {
 		this->systemId = systemId;
 	}
+
+	char* getName() const;
+	void setName(char* name);
 };
 
 int gooo = 1;
@@ -1178,12 +1178,12 @@ private:
 #define A_H_
 
 class Person {
-private:
-	int id;
-
 public:
 	int getId() const;
 	void setId(int id);
+
+private:
+	int id;
 };
 
 inline int Person::getId() const {
@@ -1228,13 +1228,14 @@ class test {
 
 //comment1
 class test {
-	int i; //comment2
-	char* b;
-	//comment3
-
 public:
 	int getI() const;
 	void setI(int i);
+
+private:
+	int i; //comment2
+	char* b;
+	//comment3
 };
 
 inline int test::getI() const {
@@ -1275,12 +1276,13 @@ class Test {
 namespace foo {
 
 class Test {
-	int testField;
-	void foo();
-
 public:
 	int getTestField() const;
 	void setTestField(int testField);
+
+private:
+	int testField;
+	void foo();
 };
 
 } // namespace foo
@@ -1334,11 +1336,12 @@ class Test {
 #define TEST_H_
 
 class Test {
-	int testField;
-
 public:
 	int getTestField() const;
 	void setTestField(int testField);
+
+private:
+	int testField;
 };
 
 #endif
@@ -1374,11 +1377,12 @@ class Test {
 #define TEST_H_
 
 class Test {
-	int testField;
-
 public:
 	int getTestField() const;
 	void setTestField(int testField);
+
+private:
+	int testField;
 };
 
 #endif
@@ -1464,13 +1468,13 @@ private:
 #define A_H_
 
 class A {
-private:
-	int a[2];
-
 public:
 	const int* getA() const {
 		return a;
 	}
+
+private:
+	int a[2];
 };
 #endif /* A_H_ */
 //!Bug 352258 - Avoiding reserved names
@@ -1493,9 +1497,6 @@ private:
 #define A_H_
 
 class getClass {
-private:
-	int mClass;
-
 public:
 	int getClass1() const {
 		return mClass;
@@ -1504,5 +1505,8 @@ public:
 	void setClass(int _class) {
 		mClass = _class;
 	}
+
+private:
+	int mClass;
 };
 #endif /* A_H_ */

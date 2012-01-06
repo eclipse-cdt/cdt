@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.utils;
 
@@ -17,22 +17,26 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBas
 /**
  * Enum that represents C++ visibilities, with methods to convert to
  * and from ICPPASTVisiblityLabel.
- *
  */
 public enum VisibilityEnum {
-	
-	v_public(Messages.VisibilityEnum_public),  
-	v_protected(Messages.VisibilityEnum_protected),  
-	v_private(Messages.VisibilityEnum_private); 
+	// The values are ordered by increasing visibility.
+	v_private(Messages.VisibilityEnum_private, ICPPASTVisibilityLabel.v_private, ICPPASTBaseSpecifier.v_private), 
+	v_protected(Messages.VisibilityEnum_protected, ICPPASTVisibilityLabel.v_protected, ICPPASTBaseSpecifier.v_protected),  
+	v_public(Messages.VisibilityEnum_public, ICPPASTVisibilityLabel.v_public, ICPPASTBaseSpecifier.v_public);
 
 	private final String stringRepresentation;
+	private final int visibilityLabelValue;
+	private final int baseSpecifierValue;
 	
-	VisibilityEnum(String stringRepresentation) {
+	private VisibilityEnum(String stringRepresentation, int visibilityLabelValue,
+			int baseSpecifierValue) {
 		this.stringRepresentation = stringRepresentation;
+		this.visibilityLabelValue = visibilityLabelValue;
+		this.baseSpecifierValue = baseSpecifierValue;
 	}
 	
 	public static VisibilityEnum from(ICPPASTVisibilityLabel visibility) {
-		switch(visibility.getVisibility()){
+		switch (visibility.getVisibility()) {
 		case ICPPASTVisibilityLabel.v_private:
 			return VisibilityEnum.v_private;
 		case ICPPASTVisibilityLabel.v_protected:
@@ -43,36 +47,20 @@ public enum VisibilityEnum {
 		return null;
 	}
 	
-	public int getASTBaseSpecifierVisibility() {
-		switch (this) {
-		case v_private:
-			return ICPPASTBaseSpecifier.v_private;
-		case v_protected:
-			return ICPPASTBaseSpecifier.v_protected;
-		case v_public:
-			return ICPPASTBaseSpecifier.v_public;
-		}
-		return 0;
+	public int getBaseSpecifierValue() {
+		return baseSpecifierValue;
 	}
 	
-	public int getICPPASTVisiblityLabelVisibility() {
-		switch (this) {
-		case v_private:
-			return ICPPASTVisibilityLabel.v_private;
-		case v_protected:
-			return ICPPASTVisibilityLabel.v_protected;
-		case v_public:
-			return ICPPASTVisibilityLabel.v_public;
-		}
-		return 0;
+	public int getVisibilityLabelValue() {
+		return visibilityLabelValue;
 	}
 	
-	public static VisibilityEnum getEnumForStringRepresentation(String visibility){
-		if( VisibilityEnum.v_private.toString().equals( visibility ) ) {
+	public static VisibilityEnum getEnumForStringRepresentation(String visibility) {
+		if (VisibilityEnum.v_private.toString().equals(visibility)) {
 			return VisibilityEnum.v_private;
-		}else if( VisibilityEnum.v_protected.toString().equals( visibility ) ) {
+		} else if (VisibilityEnum.v_protected.toString().equals(visibility)) {
 			return VisibilityEnum.v_protected;
-		}else if ( VisibilityEnum.v_public.toString().equals( visibility ) ) {
+		} else if (VisibilityEnum.v_public.toString().equals(visibility)) {
 			return VisibilityEnum.v_public;
 		}
 		return null;

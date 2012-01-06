@@ -8,12 +8,17 @@
  *  
  * Contributors: 
  *     Institute for Software - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.text.edits.TextEditGroup;
 
@@ -23,9 +28,14 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTVisibilityLabel;
 
@@ -58,7 +68,7 @@ public class AddDeclarationNodeToClassChange {
 	private AddDeclarationNodeToClassChange(ICPPASTCompositeTypeSpecifier classNode,
 			VisibilityEnum visibility, List<IASTNode> nodesToAdd, ModificationCollector collector,
 			boolean isField) {
-		this.nodesToAdd = nodesToAdd;
+		this.nodesToAdd = new ArrayList<IASTNode>(nodesToAdd);
 		this.classNode = classNode;		
 		this.visibility = visibility;
 		this.collector = collector;
@@ -66,88 +76,80 @@ public class AddDeclarationNodeToClassChange {
 	}
 	
 	private void createRewrites(boolean isField) {
-		int lastFunctionDeclaration = -1;
-		int lastFieldDeclaration = -1;
+		VisibilityEnum defaultVisibility = classNode.getKey() == IASTCompositeTypeSpecifier.k_struct ?
+				VisibilityEnum.v_public : VisibilityEnum.v_private;
+		VisibilityEnum currentVisibility = defaultVisibility;
+
+		boolean ascendingVisibilityOrder = isAscendingVisibilityOrder();
+		int lastFunctionIndex = -1;
+		int lastFieldIndex = -1;
+		int lastMatchingVisibilityIndex = -1;
+		int lastPrecedingVisibilityIndex = -1;
 		IASTDeclaration[] members = classNode.getMembers();
 		
-		VisibilityEnum currentVisibility = classNode.getKey() == IASTCompositeTypeSpecifier.k_struct ?
-				VisibilityEnum.v_public : VisibilityEnum.v_private;
-	
 		// Find the insert location by iterating over the elements of the class 
-		// and remembering the last element with the matching visibility
+		// and remembering the last element with the matching visibility and the last element
+		// with preceding visibility (according to the visibility order preference).  
 		for (int i = 0; i < members.length; i++) {
 			IASTDeclaration declaration = members[i];
 			
 			if (declaration instanceof ICPPASTVisibilityLabel) {
 				currentVisibility = VisibilityEnum.from((ICPPASTVisibilityLabel) declaration);
-			} else if (declaration instanceof IASTSimpleDeclaration && currentVisibility.equals(visibility)) {
-				IASTSimpleDeclaration simple = (IASTSimpleDeclaration) declaration;
-				IASTDeclarator[] declarators = simple.getDeclarators();
-				if (declarators.length > 0 && declarators[0] != null) {
-					if (declarators[0] instanceof IASTFunctionDeclarator) {
-						lastFunctionDeclaration = i;
-					} else {
-						lastFieldDeclaration = i;
+			}
+			if (currentVisibility == visibility) {
+				lastMatchingVisibilityIndex = i;
+				if (declaration instanceof IASTSimpleDeclaration) {
+					IASTDeclarator[] declarators = ((IASTSimpleDeclaration) declaration).getDeclarators();
+					if (declarators.length > 0 && declarators[0] != null) {
+						if (declarators[0] instanceof IASTFunctionDeclarator) {
+							lastFunctionIndex = i;
+						} else {
+							lastFieldIndex = i;
+						}
 					}
+				} else if (declaration instanceof ICPPASTFunctionDefinition) {
+					lastFunctionIndex = i;
 				}
+			} else if (currentVisibility.compareTo(visibility) < 0 == ascendingVisibilityOrder) {
+				lastPrecedingVisibilityIndex = i;
 			}
 		}
 
-		IASTDeclaration nextFunctionDeclaration = null;
-		if (lastFunctionDeclaration < members.length - 1 && lastFunctionDeclaration >= 0)
-			nextFunctionDeclaration = members[lastFunctionDeclaration + 1];
-
-		IASTDeclaration nextFieldDeclaration = null;
-		if (lastFieldDeclaration < members.length - 1 && lastFieldDeclaration >= 0)
-			nextFieldDeclaration = members[lastFieldDeclaration + 1];
+		int index = isField && lastFieldIndex >= 0 || !isField && lastFunctionIndex < 0 ?
+				lastFieldIndex : lastFunctionIndex;
+		if (index < 0)
+			index = lastMatchingVisibilityIndex;
+		if (index < 0)
+			index = lastPrecedingVisibilityIndex;
+		index++;
+		IASTNode nextNode = index < members.length ? members[index] : null;
 		
-		createInsert(isField, nextFunctionDeclaration, nextFieldDeclaration, currentVisibility);
-	}
-
-	private void createInsert(boolean isField, IASTDeclaration nextFunctionDeclaration,
-			IASTDeclaration nextFieldDeclaration, VisibilityEnum currentVisibility) {
-		if (isField) {
-			if (nextFieldDeclaration != null) {
-				insertBefore(nextFieldDeclaration);
-			} else if (nextFunctionDeclaration != null) {
-				insertBefore(nextFunctionDeclaration);
-			} else {
-				insertAtTheEnd(currentVisibility);
-			}
-		} else {
-			if (nextFunctionDeclaration != null) {
-				insertBefore(nextFunctionDeclaration);
-			} else if (nextFieldDeclaration != null) {
-				insertBefore(nextFieldDeclaration);
-			} else {
-				insertAtTheEnd(currentVisibility);
+		if (lastMatchingVisibilityIndex < 0 &&
+				!(index == 0 && classNode.getKey() == IASTCompositeTypeSpecifier.k_struct && visibility == defaultVisibility)) {
+			nodesToAdd.add(0, new CPPASTVisibilityLabel(visibility.getVisibilityLabelValue()));
+			if (index == 0 && nextNode != null && !(nextNode instanceof ICPPASTVisibilityLabel)) {
+				nodesToAdd.add(new CPPASTVisibilityLabel(defaultVisibility.getVisibilityLabelValue()));
 			}
 		}
-	}
 
-	private void insertBefore(IASTNode nextNode) {			
-		ASTRewrite rewrite = collector.rewriterForTranslationUnit(nextNode.getTranslationUnit());
-		for (IASTNode node : nodesToAdd) {
-			rewrite.insertBefore(nextNode.getParent(), nextNode, node, createEditDescription());
-		}
-	}
-
-	private void insertAtTheEnd(VisibilityEnum currentVisibility) {
 		ASTRewrite rewrite = collector.rewriterForTranslationUnit(classNode.getTranslationUnit());
-		
-		if (!currentVisibility.equals(visibility)) {
-			ICPPASTVisibilityLabel label =
-					new CPPASTVisibilityLabel(visibility.getICPPASTVisiblityLabelVisibility());
-			rewrite.insertBefore(classNode, null, label, createEditDescription());
-		}
-		
 		for (IASTNode node : nodesToAdd) {
-			rewrite.insertBefore(classNode, null, node, createEditDescription());
+			rewrite.insertBefore(classNode, nextNode, node, createEditDescription());
 		}
 	}
 	
 	private TextEditGroup createEditDescription() {
 		return new TextEditGroup(NLS.bind(Messages.AddDeclarationNodeToClassChange_AddDeclaration,
 				classNode.getName()));
+	}
+
+	private boolean isAscendingVisibilityOrder() {
+		IPreferencesService preferences = Platform.getPreferencesService();
+		IASTTranslationUnit ast = classNode.getTranslationUnit();
+		ITranslationUnit tu = ast.getOriginatingTranslationUnit();
+		IProject project = tu != null ? tu.getCProject().getProject() : null;
+		return preferences.getBoolean(CUIPlugin.PLUGIN_ID,
+    			PreferenceConstants.CLASS_MEMBER_ASCENDING_VISIBILITY_ORDER, false,
+    			PreferenceConstants.getPreferenceScopes(project));
 	}
 }

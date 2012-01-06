@@ -82,6 +82,7 @@ public class ControlStatementsTabPage extends FormatterTabPage {
 		fSimpleIfPref= createOption(ifElseGroup, numColumns - 1, FormatterMessages.ControlStatementsTabPage_if_else_group_keep_simple_if_on_one_line, DefaultCodeFormatterConstants.FORMATTER_KEEP_SIMPLE_IF_ON_ONE_LINE, FALSE_TRUE); 
 		
 		fThenStatementPref.addObserver( new Observer() {
+			@Override
 			public void update(Observable o, Object arg) {
 				fSimpleIfPref.setEnabled(!fThenStatementPref.getChecked());
 			}

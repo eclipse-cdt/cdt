@@ -37,9 +37,11 @@ public abstract class AbstractMixedPreferencePage extends AbstractPreferencePage
 
 	private Map<Button, String> corePrefsCheckBoxes = new HashMap<Button, String>();
 	private SelectionListener corePrefsCheckBoxListener = new SelectionListener() {
+		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
 
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Button button = (Button) e.widget;
 			corePrefsOverlayStore.setValue(corePrefsCheckBoxes.get(button), button.getSelection());

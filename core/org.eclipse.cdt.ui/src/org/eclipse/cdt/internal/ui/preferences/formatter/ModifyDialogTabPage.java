@@ -61,6 +61,7 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 	 * updates the page's preview on each change. 
 	 */
 	protected final Observer fUpdater= new Observer() {
+		@Override
 		public void update(Observable o, Object arg) {
 			doUpdatePreview();
 			notifyValuesModified();
@@ -352,15 +353,18 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 			updateWidget();
 			
 			fNumberText.addFocusListener(new FocusListener() {
+				@Override
 				public void focusGained(FocusEvent e) {
 				    NumberPreference.this.focusGained();
 				}
-                public void focusLost(FocusEvent e) {
+                @Override
+				public void focusLost(FocusEvent e) {
 				    NumberPreference.this.focusLost();
 				}
 			});
 			
 			fNumberText.addModifyListener(new ModifyListener() {
+				@Override
 				public void modifyText(ModifyEvent e) {
 					fieldModified();
 				}
@@ -630,6 +634,7 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void setWorkingValues(Map<String, String> workingValues) {
 		fWorkingValues= workingValues;
 	}
@@ -637,6 +642,7 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void setModifyListener(IModifyDialogTabPage.IModificationListener modifyListener) {
 		fModifyListener= modifyListener;
 	}
@@ -648,6 +654,7 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 	 * @param parent The parent composite
 	 * @return Created content control
 	 */
+	@Override
 	public final Composite createContents(Composite parent) {
 		final int numColumns= 4;
 		
@@ -698,9 +705,11 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 		
 		scroll.addControlListener(new ControlListener() {
 
+			@Override
 			public void controlMoved(ControlEvent e) {
 			}
 
+			@Override
 			public void controlResized(ControlEvent e) {
 				settingsContainer.setSize(settingsContainer.computeSize(SWT.DEFAULT, SWT.DEFAULT));	
 			}
@@ -772,6 +781,7 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	final public void makeVisible() {
 		fDefaultFocusManager.resetFocus();
 		doUpdatePreview();
@@ -788,7 +798,8 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
     /**
 	 * {@inheritDoc}
 	 */
-    public void setInitialFocus() {
+    @Override
+	public void setInitialFocus() {
 		if (fDefaultFocusManager.isUsed()) {
 			fDefaultFocusManager.restoreFocus();
 		}

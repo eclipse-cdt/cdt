@@ -258,6 +258,7 @@ public class CEditorPreferencePage extends AbstractPreferencePage {
 		Link link = new Link(parent, SWT.NONE);
 		link.setText(text);
 		link.addListener (SWT.Selection, new Listener () {
+			@Override
 			public void handleEvent(Event event) {
 				String u = event.text;
 				PreferencesUtil.createPreferenceDialogOn(getShell(), u, null, null);
@@ -310,6 +311,7 @@ public class CEditorPreferencePage extends AbstractPreferencePage {
 			fAppearanceColorList.add(element[0]);
 		}
 		fAppearanceColorList.getDisplay().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				fAppearanceColorList.select(0);
 				handleAppearanceColorListSelection();

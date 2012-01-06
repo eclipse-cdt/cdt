@@ -26,10 +26,12 @@ public class ProfileVersioner implements IProfileVersioner {
 	public static final int CURRENT_VERSION= VERSION_1;
 	
 	
+	@Override
 	public int getFirstVersion() {
 	    return VERSION_1;
     }
 
+	@Override
 	public int getCurrentVersion() {
 	    return CURRENT_VERSION;
     }
@@ -37,10 +39,12 @@ public class ProfileVersioner implements IProfileVersioner {
 	/**
      * {@inheritDoc}
      */
-    public String getProfileKind() {
+    @Override
+	public String getProfileKind() {
 	    return CODE_FORMATTER_PROFILE_KIND;
     }
 
+	@Override
 	public void update(CustomProfile profile) {
 		final Map<String, String> oldSettings= profile.getSettings();
 		Map<String, String> newSettings= updateAndComplete(oldSettings, profile.getVersion());

@@ -207,8 +207,10 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 	
 	private Map<Object, String> fCheckBoxes= new HashMap<Object, String>();
 	private SelectionListener fCheckBoxListener= new SelectionListener() {
+		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Button button= (Button) e.widget;
 			fStore.setValue(fCheckBoxes.get(button), button.getSelection());
@@ -218,6 +220,7 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 	
 	private Map<Object, String> fTextFields= new HashMap<Object, String>();
 	private ModifyListener fTextFieldListener= new ModifyListener() {
+		@Override
 		public void modifyText(ModifyEvent e) {
 			Text text= (Text) e.widget;
 			fStore.setValue(fTextFields.get(text), text.getText());
@@ -226,6 +229,7 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 
 	private ArrayList<Text> fNumberFields= new ArrayList<Text>();
 	private ModifyListener fNumberFieldListener= new ModifyListener() {
+		@Override
 		public void modifyText(ModifyEvent e) {
 			numberFieldChanged((Text) e.widget);
 		}
@@ -356,6 +360,7 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 		Assert.isTrue(slaves.length > 0);
 		indent(slaves[0]);
 		SelectionListener listener= new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean state= master.getSelection();
 				for (Control slave : slaves) {
@@ -363,6 +368,7 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 				}
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {}
 		};
 		master.addSelectionListener(listener);
@@ -373,6 +379,7 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 		((GridData) control.getLayoutData()).horizontalIndent+= INDENT;
 	}
 
+	@Override
 	public void initialize() {
 		initializeFields();
 	}
@@ -403,9 +410,11 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
         updateStatus(new StatusInfo());
 	}
 
+	@Override
 	public void performOk() {
 	}
 
+	@Override
 	public void performDefaults() {
 		initializeFields();
 	}
@@ -419,6 +428,7 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 	/*
 	 * @see org.eclipse.cdt.internal.ui.preferences.IPreferenceConfigurationBlock#dispose()
 	 */
+	@Override
 	public void dispose() {
 	}
 	

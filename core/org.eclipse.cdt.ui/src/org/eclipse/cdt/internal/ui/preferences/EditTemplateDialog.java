@@ -80,6 +80,7 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.IUpdate;
+
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.ICPartitions;
@@ -98,9 +99,8 @@ import org.eclipse.cdt.internal.ui.text.template.TemplateVariableProcessor;
 public class EditTemplateDialog extends StatusDialog {
 
 	private static class TextViewerAction extends Action implements IUpdate {
-	
 		private int fOperationCode= -1;
-		private ITextOperationTarget fOperationTarget;
+		private final ITextOperationTarget fOperationTarget;
 	
 		/**
 		 * Creates a new action.
@@ -120,6 +120,7 @@ public class EditTemplateDialog extends StatusDialog {
 		 * 
 		 * @see Action#firePropertyChange(String, Object, Object)
 		 */
+		@Override
 		public void update() {
 			// XXX: workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=206111
 			if (fOperationCode == ITextOperationTarget.REDO)
@@ -158,8 +159,8 @@ public class EditTemplateDialog extends StatusDialog {
 
 	private StatusInfo fValidationStatus;
 	private boolean fSuppressError= true; // https://bugs.eclipse.org/bugs/show_bug.cgi?id=4354
-	private Map<String, TextViewerAction> fGlobalActions= new HashMap<String, TextViewerAction>(10);
-	private List<String> fSelectionActions = new ArrayList<String>(3);
+	private final Map<String, TextViewerAction> fGlobalActions= new HashMap<String, TextViewerAction>(10);
+	private final List<String> fSelectionActions = new ArrayList<String>(3);
 	private String[][] fContextTypes;
 	
 	private ContextTypeRegistry fContextTypeRegistry;
@@ -200,6 +201,7 @@ public class EditTemplateDialog extends StatusDialog {
 				contexts.add(0, new String[] { type.getId(), type.getName(), "" }); //$NON-NLS-1$
 		}
 		Collections.sort(contexts, new Comparator<String[]>() {
+			@Override
 			public int compare(String[] s1, String[] s2) {
 				return s1[1].compareTo(s2[1]);
 			}});
@@ -213,17 +215,11 @@ public class EditTemplateDialog extends StatusDialog {
 		fTemplateProcessor.setContextType(type);
 	}
 
-	/*
-	 * @see org.eclipse.jface.dialogs.Dialog#isResizable()
-	 */
 	@Override
 	protected boolean isResizable() {
 		return true;
 	}
 	
-	/*
-	 * @see org.eclipse.cdt.internal.ui.dialogs.StatusDialog#create()
-	 */
 	@Override
 	public void create() {
 		super.create();
@@ -231,9 +227,6 @@ public class EditTemplateDialog extends StatusDialog {
 		getButton(IDialogConstants.OK_ID).setEnabled(getStatus().isOK());
 	}
 	
-	/*
-	 * @see Dialog#createDialogArea(Composite)
-	 */
 	@Override
 	protected Control createDialogArea(Composite ancestor) {
 		Composite parent= new Composite(ancestor, SWT.NONE);
@@ -243,6 +236,7 @@ public class EditTemplateDialog extends StatusDialog {
 		parent.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		ModifyListener listener= new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				doTextWidgetChanged(e.widget);
 			}
@@ -261,10 +255,11 @@ public class EditTemplateDialog extends StatusDialog {
 			
 			fNameText= createText(composite);
 			fNameText.addFocusListener(new FocusListener() {
-				
+				@Override
 				public void focusGained(FocusEvent e) {
 				}
 				
+				@Override
 				public void focusLost(FocusEvent e) {
 					if (fSuppressError) {
 						fSuppressError= false;
@@ -314,11 +309,13 @@ public class EditTemplateDialog extends StatusDialog {
 		fInsertVariableButton.setLayoutData(getButtonGridData());
 		fInsertVariableButton.setText(PreferencesMessages.EditTemplateDialog_insert_variable);
 		fInsertVariableButton.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fPatternEditor.getTextWidget().setFocus();
 				fPatternEditor.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {}
 		});
 
@@ -444,6 +441,7 @@ public class EditTemplateDialog extends StatusDialog {
 		control.setLayoutData(data);
 		
 		viewer.addTextListener(new ITextListener() {
+			@Override
 			public void textChanged(TextEvent event) {
 				if (event .getDocumentEvent() != null)
 					doSourceChanged(event.getDocumentEvent().getDocument());
@@ -451,6 +449,7 @@ public class EditTemplateDialog extends StatusDialog {
 		});
 
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateSelectionDependentActions();
 			}
@@ -482,6 +481,7 @@ public class EditTemplateDialog extends StatusDialog {
 		final ArrayList<IHandlerActivation> handlerActivations= new ArrayList<IHandlerActivation>(3);
 		final IHandlerService handlerService= (IHandlerService) PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
 		getShell().addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				handlerService.deactivateHandlers(handlerActivations);
 			}
@@ -528,6 +528,7 @@ public class EditTemplateDialog extends StatusDialog {
 		MenuManager manager= new MenuManager(null, null);
 		manager.setRemoveAllWhenShown(true);
 		manager.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager mgr) {
 				fillContextMenu(mgr);
 			}
@@ -552,7 +553,6 @@ public class EditTemplateDialog extends StatusDialog {
 		menu.add(new Separator(IContextMenuConstants.GROUP_GENERATE));
 		menu.appendToGroup(IContextMenuConstants.GROUP_GENERATE, fGlobalActions.get("ContentAssistProposal")); //$NON-NLS-1$
 	}
-	
 
 	protected void updateSelectionDependentActions() {
 		Iterator<String> iterator= fSelectionActions.iterator();
@@ -567,7 +567,6 @@ public class EditTemplateDialog extends StatusDialog {
 	}
 
 	private int getIndex(String contextid) {
-		
 		if (contextid == null)
 			return -1;
 		
@@ -639,9 +638,6 @@ public class EditTemplateDialog extends StatusDialog {
 		}
 	}
 	
-	/*
-	 * @see org.eclipse.jface.dialogs.Dialog#getInitialSize()
-	 */
 	@Override
 	protected Point getInitialSize() {
 		Point defaultSize= getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
@@ -652,9 +648,6 @@ public class EditTemplateDialog extends StatusDialog {
 		return restoredSize;
 	}
 
-	/*
-	 * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
-	 */
 	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
 		String sectionName= getClass().getName() + "_dialogBounds"; //$NON-NLS-1$
@@ -664,5 +657,4 @@ public class EditTemplateDialog extends StatusDialog {
 			section= settings.addNewSection(sectionName);
 		return section;
 	}
-
 }

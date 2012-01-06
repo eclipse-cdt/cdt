@@ -8,12 +8,10 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.preferences;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
@@ -59,15 +57,13 @@ import org.eclipse.cdt.internal.ui.text.folding.CFoldingStructureProviderRegistr
 class FoldingConfigurationBlock implements IPreferenceConfigurationBlock {
 	
 	private static class ErrorPreferences implements ICFoldingPreferenceBlock {
-		private String fMessage;
+		private final String fMessage;
 		
 		protected ErrorPreferences(String message) {
 			fMessage= message;
 		}
 		
-		/*
-		 * @see org.eclipse.cdt.internal.ui.text.folding.ICFoldingPreferences#createControl(org.eclipse.swt.widgets.Group)
-		 */
+		@Override
 		public Control createControl(Composite composite) {
 			Composite inner= new Composite(composite, SWT.NONE);
 			inner.setLayout(new FillLayout(SWT.VERTICAL));
@@ -78,18 +74,21 @@ class FoldingConfigurationBlock implements IPreferenceConfigurationBlock {
 			return inner;
 		}
 
+		@Override
 		public void initialize() {
 		}
 
+		@Override
 		public void performOk() {
 		}
 
+		@Override
 		public void performDefaults() {
 		}
 
+		@Override
 		public void dispose() {
 		}
-		
 	}
 
 	/** The overlay preference store. */
@@ -101,8 +100,8 @@ class FoldingConfigurationBlock implements IPreferenceConfigurationBlock {
 	private ComboViewer fProviderViewer;
 	protected Map<String, CFoldingStructureProviderDescriptor> fProviderDescriptors;
 	private Composite fGroup;
-	private Map<String, ICFoldingPreferenceBlock> fProviderPreferences;
-	private Map<String, Control> fProviderControls;
+	private final Map<String, ICFoldingPreferenceBlock> fProviderPreferences;
+	private final Map<String, Control> fProviderControls;
 	private StackLayout fStackLayout;
 	
 
@@ -138,9 +137,7 @@ class FoldingConfigurationBlock implements IPreferenceConfigurationBlock {
 		return keys;
 	}
 
-	/*
-	 * @see org.eclipse.cdt.internal.ui.preferences.IPreferenceConfigurationBlock#createControl(org.eclipse.swt.widgets.Composite)
-	 */
+	@Override
 	public Control createControl(Composite parent) {
 
 		Composite composite= new Composite(parent, SWT.NULL);
@@ -160,12 +157,14 @@ class FoldingConfigurationBlock implements IPreferenceConfigurationBlock {
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING);
 		fFoldingCheckbox.setLayoutData(gd);
 		fFoldingCheckbox.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean enabled= fFoldingCheckbox.getSelection(); 
 				fStore.setValue(PreferenceConstants.EDITOR_FOLDING_ENABLED, enabled);
 				updateCheckboxDependencies();
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
@@ -197,45 +196,32 @@ class FoldingConfigurationBlock implements IPreferenceConfigurationBlock {
 		/* list viewer */
 		fProviderViewer= new ComboViewer(fProviderCombo);
 		fProviderViewer.setContentProvider(new IStructuredContentProvider() {
-
-			/*
-			 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-			 */
+			@Override
 			public void dispose() {
 			}
 
-			/*
-			 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-			 */
+			@Override
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			}
 
-			/*
-			 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-			 */
+			@Override
 			public Object[] getElements(Object inputElement) {
 				return fProviderDescriptors.values().toArray();
 			}
 		});
 		fProviderViewer.setLabelProvider(new LabelProvider() {
-			/*
-			 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
-			 */
 			@Override
 			public Image getImage(Object element) {
 				return null;
 			}
 			
-			/*
-			 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
-			 */
 			@Override
 			public String getText(Object element) {
 				return ((CFoldingStructureProviderDescriptor) element).getName();
 			}
 		});
 		fProviderViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection sel= (IStructuredSelection) event.getSelection();
 				if (!sel.isEmpty()) {
@@ -309,40 +295,29 @@ class FoldingConfigurationBlock implements IPreferenceConfigurationBlock {
 		prefs.initialize();
 	}
 
-	/*
-	 * @see org.eclipse.cdt.internal.ui.preferences.IPreferenceConfigurationBlock#initialize()
-	 */
+	@Override
 	public void initialize() {
 		restoreFromPreferences();
 	}
 
-	/*
-	 * @see org.eclipse.cdt.internal.ui.preferences.IPreferenceConfigurationBlock#performOk()
-	 */
+	@Override
 	public void performOk() {
-		for (Iterator<ICFoldingPreferenceBlock> it= fProviderPreferences.values().iterator(); it.hasNext();) {
-			ICFoldingPreferenceBlock prefs= it.next();
+		for (ICFoldingPreferenceBlock prefs : fProviderPreferences.values()) {
 			prefs.performOk();
 		}
 	}
 	
-	/*
-	 * @see org.eclipse.cdt.internal.ui.preferences.IPreferenceConfigurationBlock#performDefaults()
-	 */
+	@Override
 	public void performDefaults() {
 		restoreFromPreferences();
-		for (Iterator<ICFoldingPreferenceBlock> it= fProviderPreferences.values().iterator(); it.hasNext();) {
-			ICFoldingPreferenceBlock prefs= it.next();
+		for (ICFoldingPreferenceBlock prefs : fProviderPreferences.values()) {
 			prefs.performDefaults();
 		}
 	}
 	
-	/*
-	 * @see org.eclipse.cdt.internal.ui.preferences.IPreferenceConfigurationBlock#dispose()
-	 */
+	@Override
 	public void dispose() {
-		for (Iterator<ICFoldingPreferenceBlock> it= fProviderPreferences.values().iterator(); it.hasNext();) {
-			ICFoldingPreferenceBlock prefs= it.next();
+		for (ICFoldingPreferenceBlock prefs : fProviderPreferences.values()) {
 			prefs.dispose();
 		}
 	}
@@ -360,4 +335,3 @@ class FoldingConfigurationBlock implements IPreferenceConfigurationBlock {
 		}
 	}
 }
-

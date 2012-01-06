@@ -78,6 +78,7 @@ public class CFileTypeDialog extends Dialog {
 		}
 
 		fTextPattern.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				getOkayButton().setEnabled(getPatternFromControl().length() > 0);
 			}

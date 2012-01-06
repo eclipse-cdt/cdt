@@ -60,6 +60,7 @@ public abstract class ProfileConfigurationBlock {
 			fProfileManager.addObserver(this);
 		}
 
+		@Override
 		public void update(Observable o, Object arg) {
 			try {
 				fPreferenceListenerEnabled= false;
@@ -98,13 +99,16 @@ public abstract class ProfileConfigurationBlock {
 			updateSelection();
 		}
 
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			final int index= fProfileCombo.getSelectionIndex();
 			fProfileManager.setSelected(fSortedProfiles.get(index));
 		}
 
+		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {}
 
+		@Override
 		public void update(Observable o, Object arg) {
 			if (arg == null) return;
 			final int value= ((Integer)arg).intValue();
@@ -141,12 +145,14 @@ public abstract class ProfileConfigurationBlock {
 			update(fProfileManager, null);
 		}
 
+		@Override
 		public void update(Observable o, Object arg) {
 			Profile selected= ((ProfileManager)o).getSelected();
 			final boolean notBuiltIn= !selected.isBuiltInProfile(); 
 			fDeleteButton.setEnabled(notBuiltIn);
 		}
 
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			final Button button= (Button)e.widget;
 			if (button == fEditButton)
@@ -159,6 +165,7 @@ public abstract class ProfileConfigurationBlock {
 				loadButtonPressed();
 		}
 
+		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
 
@@ -290,6 +297,7 @@ public abstract class ProfileConfigurationBlock {
 		
 		fPreferenceListenerEnabled= true;
 		fPreferenceListener= new IPreferenceChangeListener() {
+			@Override
 			public void preferenceChange(PreferenceChangeEvent event) {
 				if (fPreferenceListenerEnabled) {
 					preferenceChanged(event);

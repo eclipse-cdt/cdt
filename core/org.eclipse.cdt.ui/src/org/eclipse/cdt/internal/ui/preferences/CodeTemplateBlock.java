@@ -86,10 +86,12 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 			implements ITreeListAdapter<Object>, IDialogFieldListener {
 		private final Object[] NO_CHILDREN= new Object[0];
 
+		@Override
 		public void customButtonPressed(TreeListDialogField<Object> field, int index) {
 			doButtonPressed(index, field.getSelectedElements());
 		}
 		
+		@Override
 		public void selectionChanged(TreeListDialogField<Object> field) {
 			List<Object> selected= field.getSelectedElements();
 			field.enableButton(IDX_ADD, canAdd(selected));
@@ -100,6 +102,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 			updateSourceViewerInput(selected);
 		}
 
+		@Override
 		public void doubleClicked(TreeListDialogField<Object> field) {
 			List<Object> selected= field.getSelectedElements();
 			if (canEdit(selected)) {
@@ -107,6 +110,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 			}
 		}
 
+		@Override
 		public Object[] getChildren(TreeListDialogField<Object> field, Object element) {
 			if (element == COMMENT_NODE || element == CODE_NODE) {
 				return getCodeTemplatesOfCategory(element == COMMENT_NODE);
@@ -118,6 +122,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 			return NO_CHILDREN;
 		}
 
+		@Override
 		public Object getParent(TreeListDialogField<Object> field, Object element) {
 			if (element instanceof TemplatePersistenceData) {
 				TemplatePersistenceData data= (TemplatePersistenceData) element;
@@ -134,16 +139,19 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 			return null;
 		}
 
+		@Override
 		public boolean hasChildren(TreeListDialogField<Object> field, Object element) {
 			return (element == COMMENT_NODE || element == CODE_NODE || element == FILE_NODE || element instanceof TemplateContextType);
 		}
 
+		@Override
 		public void dialogFieldChanged(DialogField field) {
 			if (field == fGenerateComments) {
 				setValue(PREF_GENERATE_COMMENTS, fGenerateComments.isSelected());
 			}
 		}
 
+		@Override
 		public void keyPressed(TreeListDialogField<Object> field, KeyEvent event) {
 		}
 		

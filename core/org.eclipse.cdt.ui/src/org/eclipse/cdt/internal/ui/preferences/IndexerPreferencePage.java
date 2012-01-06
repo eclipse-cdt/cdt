@@ -38,9 +38,9 @@ public class IndexerPreferencePage extends PreferencePage implements
 	// bug 217860, allow to hide build configuration
 	private static final String SHOW_BUILD_SPECIFIC_CONFIG = "show.build.specific.indexer.config"; //$NON-NLS-1$
 
-	private IndexerBlock fOptionBlock;
-	private CacheSizeBlock fCacheBlock;
-	private IndexerStrategyBlock fStrategyBlock;
+	private final IndexerBlock fOptionBlock;
+	private final CacheSizeBlock fCacheBlock;
+	private final IndexerStrategyBlock fStrategyBlock;
 	
 	public IndexerPreferencePage(){
 		fOptionBlock = new IndexerBlock();
@@ -70,9 +70,11 @@ public class IndexerPreferencePage extends PreferencePage implements
 		return composite;
 	}
 
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 
+	@Override
 	public void updateContainer() {
 		if (!fOptionBlock.isValid()) {
 			setErrorMessage(fOptionBlock.getErrorMessage());
@@ -92,10 +94,12 @@ public class IndexerPreferencePage extends PreferencePage implements
 		}
 	}
 
+	@Override
 	public IProject getProject() {
 		return null;
 	}
 
+	@Override
 	@SuppressWarnings("deprecation")
 	public org.eclipse.core.runtime.Preferences getPreferences() {
 		throw new UnsupportedOperationException();
@@ -110,7 +114,7 @@ public class IndexerPreferencePage extends PreferencePage implements
 		} catch (CoreException e) {}
 		return true;
 	}
-	
+
 	@Override
 	public void performDefaults() {
 		fOptionBlock.performDefaults();

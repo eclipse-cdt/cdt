@@ -87,10 +87,12 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 	
 	private class CEditorTextHoverDescriptorLabelProvider implements ITableLabelProvider {
 
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			return null;
 		}
 		
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			switch (columnIndex) {
 			case ENABLED_PROP:
@@ -108,16 +110,20 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 			return null;
 		}
 
+		@Override
 		public void addListener(ILabelProviderListener listener) {
 		}
 		
+		@Override
 		public void dispose() {
 		}
 
+		@Override
 		public boolean isLabelProperty(Object element, String property) {
 			return false;
 		}
 
+		@Override
 		public void removeListener(ILabelProviderListener listener) {
 		}
 	}
@@ -125,13 +131,16 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 	
 	private class CEditorTextHoverDescriptorContentProvider implements IStructuredContentProvider {
 		
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			// Do nothing since the viewer listens to resource deltas
 		}
 		
+		@Override
 		public void dispose() {
 		}
 				
+		@Override
 		public Object[] getElements(Object element) {
 			return (Object[])element;
 		}
@@ -179,6 +188,7 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 	 * @param parent the parent composite
 	 * @return the control for the preference page
 	 */
+	@Override
 	public Control createControl(Composite parent) {
 
 		ScrolledPageContent scrolled= new ScrolledPageContent(parent, SWT.H_SCROLL | SWT.V_SCROLL);
@@ -221,9 +231,11 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 		layouter.setLayoutData(gd);
 
 		fHoverTable.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleHoverListSelection();
 			}
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
@@ -248,6 +260,7 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 			/*
 			 * @see org.eclipse.jface.viewers.ICheckStateListener#checkStateChanged(org.eclipse.jface.viewers.CheckStateChangedEvent)
 			 */
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				String id= ((CEditorTextHoverDescriptor)event.getElement()).getId();
 				if (id == null)
@@ -277,10 +290,12 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 
 		fModifierEditor.addKeyListener(new KeyListener() {
 			private boolean isModifierCandidate;
+			@Override
 			public void keyPressed(KeyEvent e) {
 				isModifierCandidate= e.keyCode > 0 && e.character == 0 && e.stateMask == 0;
 			}
 		
+			@Override
 			public void keyReleased(KeyEvent e) {
 				if (isModifierCandidate && e.stateMask > 0 && e.stateMask == e.stateMask && e.character == 0) {// && e.time -time < 1000) {
 					String text= fModifierEditor.getText();
@@ -315,6 +330,7 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 		});
 
 		fModifierEditor.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				handleModifierModified();
 			}
@@ -354,6 +370,7 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 	/*
 	 * @see org.eclipse.cdt.internal.ui.preferences.IPreferenceConfigurationBlock#initialize()
 	 */
+	@Override
 	public void initialize() {
 		CEditorTextHoverDescriptor[] hoverDescs= getContributedHovers();
 		fHoverConfigs= new HoverConfig[hoverDescs.length];
@@ -377,6 +394,7 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 	/*
 	 * @see org.eclipse.cdt.internal.ui.preferences.IPreferenceConfigurationBlock#performOk()
 	 */
+	@Override
 	public void performOk() {
 		StringBuffer buf= new StringBuffer();
 		StringBuffer maskBuf= new StringBuffer();
@@ -405,6 +423,7 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 	/*
 	 * @see org.eclipse.cdt.internal.ui.preferences.IPreferenceConfigurationBlock#performDefaults()
 	 */
+	@Override
 	public void performDefaults() {
 		restoreFromPreferences();
 		initializeFields();
@@ -541,6 +560,7 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 	/*
 	 * @see DialogPage#dispose()
 	 */
+	@Override
 	public void dispose() {
 		// nothing to dispose
 	}

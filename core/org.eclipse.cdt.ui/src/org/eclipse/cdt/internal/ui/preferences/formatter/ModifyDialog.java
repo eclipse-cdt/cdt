@@ -153,6 +153,7 @@ public abstract class ModifyDialog extends StatusDialog implements IModifyDialog
 		fProfileNameField.getLabelControl(nameComposite).setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		fProfileNameField.getTextControl(nameComposite).setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		fProfileNameField.setDialogFieldListener(new IDialogFieldListener() {
+			@Override
 			public void dialogFieldChanged(DialogField field) {
 				doValidate();
             }
@@ -169,7 +170,9 @@ public abstract class ModifyDialog extends StatusDialog implements IModifyDialog
 		applyDialogFont(composite);
 		
 		fTabFolder.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {}
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				final TabItem tabItem= (TabItem)e.item;
 				final IModifyDialogTabPage page= (IModifyDialogTabPage)tabItem.getData();
@@ -326,6 +329,7 @@ public abstract class ModifyDialog extends StatusDialog implements IModifyDialog
 		fTabPages.add(tabPage);
 	}
 
+	@Override
 	public void valuesModified() {
 		doValidate();
 	}

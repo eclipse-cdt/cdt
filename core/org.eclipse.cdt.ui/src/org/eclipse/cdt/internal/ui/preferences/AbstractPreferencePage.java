@@ -64,6 +64,7 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 
 	protected Map<Object, String> fTextFields = new HashMap<Object, String>();
 	private ModifyListener fTextFieldListener = new ModifyListener() {
+		@Override
 		public void modifyText(ModifyEvent e) {
 			Text text = (Text) e.widget;
 			fOverlayStore.setValue(fTextFields.get(text), text.getText());
@@ -72,6 +73,7 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 	
 	protected Map<Object, String> fComboBoxes = new HashMap<Object, String>();
 	private ModifyListener fComboBoxListener = new ModifyListener() {
+		@Override
 		public void modifyText(ModifyEvent e) {
 			Combo combo = (Combo) e.widget;
 			String state = ProposalFilterPreferencesUtil.comboStateAsString(combo);
@@ -82,8 +84,10 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 
 	protected Map<Object, String> fCheckBoxes = new HashMap<Object, String>();
 	private SelectionListener fCheckBoxListener = new SelectionListener() {
+		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Button button = (Button) e.widget;
 			fOverlayStore.setValue(fCheckBoxes.get(button), button.getSelection());
@@ -92,6 +96,7 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 
 	protected ArrayList<Text> fNumberFields = new ArrayList<Text>();
 	private ModifyListener fNumberFieldListener = new ModifyListener() {
+		@Override
 		public void modifyText(ModifyEvent e) {
 			numberFieldChanged((Text) e.widget);
 		}
@@ -99,8 +104,10 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 
 	protected Map<Object, String> fColorButtons = new HashMap<Object, String>();
 	private SelectionListener fColorButtonListener = new SelectionListener() {
+		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			ColorSelector editor = (ColorSelector) e.widget.getData();
 			PreferenceConverter.setValue(fOverlayStore, fColorButtons.get(editor), editor.getColorValue());
@@ -209,10 +216,12 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 		boolean masterState= fOverlayStore.getBoolean(masterKey);
 		slave.setEnabled(masterState);
 		SelectionListener listener= new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				slave.setEnabled(master.getSelection());
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {}
 		};
 		master.addSelectionListener(listener);
@@ -342,6 +351,7 @@ public abstract class AbstractPreferencePage extends PreferencePage implements I
 	 * 
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 

@@ -106,9 +106,11 @@ public class CPluginPreferencePage extends PreferencePage implements IWorkbenchP
 		clearButton.setText(PreferencesMessages.CPluginPreferencePage_clear_button);
 		clearButton.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, false, false));
 		clearButton.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				OptionalMessageDialog.clearAllRememberedStates();
 			}
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				OptionalMessageDialog.clearAllRememberedStates();
 			}
@@ -188,6 +190,7 @@ public class CPluginPreferencePage extends PreferencePage implements IWorkbenchP
 	/**
 	 * @see IWorkbenchPreferencePage#init
 	 */
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 	

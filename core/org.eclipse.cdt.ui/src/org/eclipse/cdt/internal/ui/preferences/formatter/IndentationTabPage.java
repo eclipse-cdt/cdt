@@ -104,11 +104,13 @@ public class IndentationTabPage extends FormatterTabPage {
 		String tabchar= fWorkingValues.get(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR);
 		updateTabPreferences(tabchar, tabSize, indentSize, onlyForLeading);
 		tabPolicy.addObserver(new Observer() {
+			@Override
 			public void update(Observable o, Object arg) {
 				updateTabPreferences((String) arg, tabSize, indentSize, onlyForLeading);
 			}
 		});
 		tabSize.addObserver(new Observer() {
+			@Override
 			public void update(Observable o, Object arg) {
 				indentSize.updateWidget();
 			}

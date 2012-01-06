@@ -64,8 +64,8 @@ import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 public abstract class OptionsConfigurationBlock {
 
 	public static final class Key {
-		private String fQualifier;
-		private String fKey;
+		private final String fQualifier;
+		private final String fKey;
 
 		public Key(String qualifier, String key) {
 			fQualifier= qualifier;
@@ -120,8 +120,8 @@ public abstract class OptionsConfigurationBlock {
 	}
 
 	protected static class ControlData {
-		private Key fKey;
-		private String[] fValues;
+		private final Key fKey;
+		private final String[] fValues;
 
 		public ControlData(Key key, String[] values) {
 			fKey= key;
@@ -175,7 +175,7 @@ public abstract class OptionsConfigurationBlock {
 	private Shell fShell;
 
 	private final IWorkingCopyManager fManager;
-	private IWorkbenchPreferenceContainer fContainer;
+	private final IWorkbenchPreferenceContainer fContainer;
 
 	private Map<Key, String> fDisabledProjectSettings; // null when project specific settings are turned off
 
@@ -556,8 +556,10 @@ public abstract class OptionsConfigurationBlock {
 	protected SelectionListener getSelectionListener() {
 		if (fSelectionListener == null) {
 			fSelectionListener= new SelectionListener() {
+				@Override
 				public void widgetDefaultSelected(SelectionEvent e) {}
 
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					controlChanged(e.widget);
 				}
@@ -569,6 +571,7 @@ public abstract class OptionsConfigurationBlock {
 	protected ModifyListener getTextModifyListener() {
 		if (fTextModifyListener == null) {
 			fTextModifyListener= new ModifyListener() {
+				@Override
 				public void modifyText(ModifyEvent e) {
 					textChanged((Text) e.widget);
 				}

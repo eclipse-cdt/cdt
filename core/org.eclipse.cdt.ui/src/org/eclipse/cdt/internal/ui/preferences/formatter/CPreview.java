@@ -55,7 +55,8 @@ public abstract class CPreview {
 	private final class CSourcePreviewerUpdater {
 
 	    final IPropertyChangeListener fontListener= new IPropertyChangeListener() {
-	        public void propertyChange(PropertyChangeEvent event) {
+	        @Override
+			public void propertyChange(PropertyChangeEvent event) {
 	            if (event.getProperty().equals(PreferenceConstants.EDITOR_TEXT_FONT)) {
 					final Font font= JFaceResources.getFont(PreferenceConstants.EDITOR_TEXT_FONT);
 					fSourceViewer.getTextWidget().setFont(font);
@@ -67,6 +68,7 @@ public abstract class CPreview {
 		};
 		
 	    final IPropertyChangeListener propertyListener= new IPropertyChangeListener() {
+			@Override
 			public void propertyChange(PropertyChangeEvent event) {
 				if (fViewerConfiguration.affectsTextPresentation(event)) {
 					fViewerConfiguration.handlePropertyChangeEvent(event);
@@ -80,6 +82,7 @@ public abstract class CPreview {
 		    fPreferenceStore.addPropertyChangeListener(propertyListener);
 			
 			fSourceViewer.getTextWidget().addDisposeListener(new DisposeListener() {
+				@Override
 				public void widgetDisposed(DisposeEvent e) {
 					JFaceResources.getFontRegistry().removeListener(fontListener);
 					fPreferenceStore.removePropertyChangeListener(propertyListener);

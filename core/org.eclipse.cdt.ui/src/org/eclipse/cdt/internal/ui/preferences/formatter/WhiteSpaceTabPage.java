@@ -85,19 +85,25 @@ public class WhiteSpaceTabPage extends FormatterTabPage {
             
 	        fTreeViewer= new ContainerCheckedTreeViewer(fComposite, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL);
 			fTreeViewer.setContentProvider(new ITreeContentProvider() {
+				@Override
 				public Object[] getElements(Object inputElement) {
 					return ((Collection<?>)inputElement).toArray();
 				}
+				@Override
 				public Object[] getChildren(Object parentElement) {
 					return ((Node)parentElement).getChildren().toArray();
 				}
+				@Override
 				public Object getParent(Object element) {
 				    return ((Node)element).getParent(); 
 				}
+				@Override
 				public boolean hasChildren(Object element) {
 					return ((Node)element).hasChildren();
 				}
+				@Override
 				public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
+				@Override
 				public void dispose() {}
 			});
 			fTreeViewer.setLabelProvider(new LabelProvider());
@@ -127,6 +133,7 @@ public class WhiteSpaceTabPage extends FormatterTabPage {
 		    doUpdatePreview();
 		}
 
+		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 		    final IStructuredSelection selection= (IStructuredSelection)event.getSelection();
 		    if (selection.isEmpty())
@@ -141,6 +148,7 @@ public class WhiteSpaceTabPage extends FormatterTabPage {
 		    fLastSelected= node;
 		}
 
+		@Override
 		public void checkStateChanged(CheckStateChangedEvent event) {
 			final Node node= (Node)event.getElement();
 			node.setChecked(event.getChecked());
@@ -166,7 +174,8 @@ public class WhiteSpaceTabPage extends FormatterTabPage {
 			}
 		}
 
-        public void doubleClick(DoubleClickEvent event) {
+        @Override
+		public void doubleClick(DoubleClickEvent event) {
             final ISelection selection= event.getSelection();
             if (selection instanceof IStructuredSelection) {
                 final Node node= (Node)((IStructuredSelection)selection).getFirstElement();
@@ -216,9 +225,11 @@ public class WhiteSpaceTabPage extends FormatterTabPage {
 			fInnerViewer= new TreeViewer(sashForm, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL);
 
 			fInnerViewer.setContentProvider(new ITreeContentProvider() {
+				@Override
 				public Object[] getElements(Object inputElement) {
 					return ((Collection<?>)inputElement).toArray();
 				}
+				@Override
 				public Object[] getChildren(Object parentElement) {
 				    final List<Node> children= ((Node)parentElement).getChildren();
 				    final ArrayList<Object> innerChildren= new ArrayList<Object>();
@@ -227,18 +238,22 @@ public class WhiteSpaceTabPage extends FormatterTabPage {
                     }
 				    return innerChildren.toArray();
 				}
+				@Override
 				public Object getParent(Object element) {
 				    if (element instanceof InnerNode)
 				        return ((InnerNode)element).getParent();
 				    return null;
 				}
+				@Override
 				public boolean hasChildren(Object element) {
 				    final List<?> children= ((Node)element).getChildren();
 				    for (Object child : children)
 						if (child instanceof InnerNode) return true;
 				    return false;
 				}
+				@Override
 				public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
+				@Override
 				public void dispose() {}
 			});
 			
@@ -311,7 +326,8 @@ public class WhiteSpaceTabPage extends FormatterTabPage {
 	        return fComposite;
 	    }
 
-        public void selectionChanged(SelectionChangedEvent event) {
+        @Override
+		public void selectionChanged(SelectionChangedEvent event) {
             final IStructuredSelection selection= (IStructuredSelection)event.getSelection();
 
             if (selection.isEmpty() || !(selection.getFirstElement() instanceof Node))
@@ -352,7 +368,8 @@ public class WhiteSpaceTabPage extends FormatterTabPage {
 			doUpdatePreview();
         }
         
-        public void checkStateChanged(CheckStateChangedEvent event) {
+        @Override
+		public void checkStateChanged(CheckStateChangedEvent event) {
 			final OptionNode option= (OptionNode)event.getElement();
 			if (option != null)
 			    option.setChecked(event.getChecked());

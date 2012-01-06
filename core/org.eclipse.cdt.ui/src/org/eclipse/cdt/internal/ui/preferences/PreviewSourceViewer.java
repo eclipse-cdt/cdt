@@ -8,7 +8,6 @@
  * Contributors:
  *     Qnx Software Systems - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.preferences;
 
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -30,7 +29,6 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
  */
 @Deprecated
 class PreviewSourceViewer extends SourceViewer implements IPropertyChangeListener {
-
 	/**
 	 * This viewer's foreground color.
 	 * 
@@ -251,6 +249,7 @@ class PreviewSourceViewer extends SourceViewer implements IPropertyChangeListene
 	/*
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		String property = event.getProperty();
 		if (AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND.equals(property)

@@ -99,10 +99,12 @@ public class SpellingConfigurationBlock extends OptionsConfigurationBlock {
 	 */
 	protected static void createSelectionDependency(final Button master, final Control slave) {
 		master.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent event) {
 				// Do nothing
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				slave.setEnabled(master.getSelection());
 			}
@@ -485,6 +487,7 @@ public class SpellingConfigurationBlock extends OptionsConfigurationBlock {
 
 		// Redirect status messages from the field editor to the status change listener  
 		DialogPage fakePage= new DialogPage() {
+			@Override
 			public void createControl(Composite c) {
 			}
 			@Override

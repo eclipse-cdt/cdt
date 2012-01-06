@@ -7,22 +7,18 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Sergey Prigogin, Google
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.preferences;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ProjectScope;
-
 import org.eclipse.ui.preferences.IWorkingCopyManager;
-
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
@@ -57,9 +53,7 @@ public class PreferencesAccess {
 	public void applyChanges() throws BackingStoreException {
 	}
 	
-	
 	private static class WorkingCopyPreferencesAccess extends PreferencesAccess {
-		
 		private final IWorkingCopyManager fWorkingCopyManager;
 
 		private WorkingCopyPreferencesAccess(IWorkingCopyManager workingCopyManager) {
@@ -85,9 +79,6 @@ public class PreferencesAccess {
 			return getWorkingCopyScopeContext(super.getProjectScope(project));
 		}
 		
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.internal.ui.preferences.PreferencesAccess#applyChanges()
-		 */
 		@Override
 		public void applyChanges() throws BackingStoreException {
 			fWorkingCopyManager.applyChanges();
@@ -95,7 +86,6 @@ public class PreferencesAccess {
 	}
 	
 	private static class WorkingCopyScopeContext implements IScopeContext {
-		
 		private final IWorkingCopyManager fWorkingCopyManager;
 		private final IScopeContext fOriginal;
 
@@ -104,23 +94,17 @@ public class PreferencesAccess {
 			fOriginal= original;	
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.preferences.IScopeContext#getName()
-		 */
+		@Override
 		public String getName() {
 			return fOriginal.getName();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.preferences.IScopeContext#getNode(java.lang.String)
-		 */
+		@Override
 		public IEclipsePreferences getNode(String qualifier) {
 			return fWorkingCopyManager.getWorkingCopy(fOriginal.getNode(qualifier));
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.preferences.IScopeContext#getLocation()
-		 */
+		@Override
 		public IPath getLocation() {
 			return fOriginal.getLocation();
 		}

@@ -46,7 +46,6 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 
 public class ProjectSelectionDialog extends SelectionStatusDialog {
-
 	// the visual selection widget group
 	private TableViewer fTableViewer;
 	private Set<ICProject> fProjectsWithSpecifics;
@@ -89,11 +88,13 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 
 		fTableViewer= new TableViewer(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		fTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				doSelectionChanged(((IStructuredSelection) event.getSelection()).toArray());
 			}
 		});
 		fTableViewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
                 okPressed();
 			}
@@ -112,9 +113,11 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 		checkbox.setText(PreferencesMessages.ProjectSelectionDialog_filter); 
 		checkbox.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, true, false));
 		checkbox.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateFilter(((Button) e.widget).getSelection());
 			}
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				updateFilter(((Button) e.widget).getSelection());
 			}

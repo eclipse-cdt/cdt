@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *     Sergey Prigogin (Google)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.preferences;
 
 import java.util.ArrayList;
@@ -40,15 +39,16 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringDialogField;
 public class TodoTaskInputDialog extends StatusDialog {
 	
 	private class CompilerTodoTaskInputAdapter implements IDialogFieldListener {
+		@Override
 		public void dialogFieldChanged(DialogField field) {
 			doValidation();
 		}			
 	}
 	
-	private StringDialogField fNameDialogField;
-	private ComboDialogField fPriorityDialogField;
+	private final StringDialogField fNameDialogField;
+	private final ComboDialogField fPriorityDialogField;
 	
-	private List<String> fExistingNames;
+	private final List<String> fExistingNames;
 		
 	public TodoTaskInputDialog(Shell parent, TodoTask task, List<TodoTask> existingEntries) {
 		super(parent);

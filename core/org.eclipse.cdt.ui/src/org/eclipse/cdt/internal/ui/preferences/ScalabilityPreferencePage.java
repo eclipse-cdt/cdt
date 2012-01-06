@@ -9,10 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.preferences;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -40,14 +38,15 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 
+import com.ibm.icu.text.MessageFormat;
+
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.Separator;
 
-public class ScalabilityPreferencePage extends PreferencePage implements
-		IWorkbenchPreferencePage {
+public class ScalabilityPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	
 	// Files with this number of lines will trigger scalability mode
 	private IntegerFieldEditor fLinesToTrigger;
@@ -64,14 +63,14 @@ public class ScalabilityPreferencePage extends PreferencePage implements
 	
 	private Button fContentAssistAutoActivation;
 	
-	private Map<Object, String> fCheckBoxes= new HashMap<Object, String>();
+	private final Map<Object, String> fCheckBoxes= new HashMap<Object, String>();
 	
 	/**
 	 * List of master/slave listeners when there's a dependency.
 	 * 
 	 * @see #createDependency(Button, String, Control)
 	 */
-	private ArrayList<Object> fMasterSlaveListeners= new ArrayList<Object>();
+	private final ArrayList<Object> fMasterSlaveListeners= new ArrayList<Object>();
 	
 	public ScalabilityPreferencePage() {
 		setPreferenceStore(PreferenceConstants.getPreferenceStore());
@@ -196,6 +195,7 @@ public class ScalabilityPreferencePage extends PreferencePage implements
 		fLinesToTrigger.load();
 		fLinesToTrigger.setPropertyChangeListener( new IPropertyChangeListener() {
 
+			@Override
 			public void propertyChange( PropertyChangeEvent event ) {
 				if ( event.getProperty().equals( FieldEditor.IS_VALID ) )
 					setValid( fLinesToTrigger.isValid() );
@@ -246,6 +246,7 @@ public class ScalabilityPreferencePage extends PreferencePage implements
 		}
 		
 		SelectionListener listener= new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				slave.setEnabled(!master.getSelection());
 				if (master.getSelection()) {
@@ -253,6 +254,7 @@ public class ScalabilityPreferencePage extends PreferencePage implements
 				}
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {}
 		};
 		master.addSelectionListener(listener);
@@ -262,6 +264,7 @@ public class ScalabilityPreferencePage extends PreferencePage implements
 	/*
 	 * @see IWorkbenchPreferencePage#init(IWorkbench)
 	 */
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 	

@@ -37,7 +37,7 @@ public final class FoldingPreferencePage extends AbstractConfigurationBlockPrefe
 	 */
 	@Override
 	protected void setDescription() {
-		String description= PreferencesMessages.CEditorPreferencePage_folding_title; 
+		String description= PreferencesMessages.FoldingPreferencePage_folding_title; 
 		setDescription(description);
 	}
 	

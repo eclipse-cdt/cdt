@@ -151,7 +151,7 @@ public final class PreferencesMessages extends NLS {
 	public static String BuildLogPreferencePage_LogLocation;
 	public static String GlobalBuildLogPreferencePage_EnableLogging;
 	public static String GlobalBuildLogPreferencePage_LogLocation;
-	public static String CEditorPreferencePage_folding_title;
+	public static String FoldingPreferencePage_folding_title;
 	public static String FoldingConfigurationBlock_enable;
 	public static String FoldingConfigurationBlock_combo_caption;
 	public static String FoldingConfigurationBlock_info_no_preferences;
@@ -193,6 +193,11 @@ public final class PreferencesMessages extends NLS {
 
 	public static String CodeFormatterPreferencePage_title;
 	public static String CodeFormatterPreferencePage_description;
+
+	public static String CodeStylePreferencePage_title;
+	public static String CodeStyleBlock_class_member_order;
+	public static String CodeStyleBlock_public_private;
+	public static String CodeStyleBlock_private_public;
 
 	public static String TodoTaskPreferencePage_title;
 	public static String TodoTaskPreferencePage_description;

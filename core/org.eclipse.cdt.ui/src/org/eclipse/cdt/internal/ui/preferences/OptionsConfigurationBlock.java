@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
@@ -39,6 +40,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
@@ -62,6 +64,8 @@ import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
  * an options configuration page.
  */
 public abstract class OptionsConfigurationBlock {
+	protected static final String[] FALSE_TRUE = new String[] { "false", "true" };  //$NON-NLS-1$//$NON-NLS-2$
+	protected static final String[] TRUE_FALSE = new String[] { "true", "false" };  //$NON-NLS-1$//$NON-NLS-2$
 
 	public static final class Key {
 		private final String fQualifier;
@@ -106,9 +110,6 @@ public abstract class OptionsConfigurationBlock {
 			}
 		}
 
-		/* (non-Javadoc)
-		 * @see java.lang.Object#toString()
-		 */
 		@Override
 		public String toString() {
 			return fQualifier + '/' + fKey;
@@ -149,7 +150,7 @@ public abstract class OptionsConfigurationBlock {
 					}
 				}
 			}
-			return fValues.length -1; // assume the last option is the least severe
+			return fValues.length - 1; // assume the last option is the least severe
 		}
 	}
 
@@ -380,6 +381,30 @@ public abstract class OptionsConfigurationBlock {
 		return checkBox;
 	}
 
+	protected Button addRadioButton(Composite parent, String label, Key key, String[] values, int indent) {
+		ControlData data= new ControlData(key, values);
+
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan= 3;
+		gd.horizontalIndent= indent;
+
+		Button radioButton= new Button(parent, SWT.RADIO);
+		radioButton.setFont(JFaceResources.getDialogFont());
+		radioButton.setText(label);
+		radioButton.setData(data);
+		radioButton.setLayoutData(gd);
+		radioButton.addSelectionListener(getSelectionListener());
+
+		makeScrollableCompositeAware(radioButton);
+
+		String currValue= getValue(key);
+		radioButton.setSelection(data.getSelection(currValue) == 0);
+
+		fCheckBoxes.add(radioButton);
+
+		return radioButton;
+	}
+	
 	protected Combo addComboBox(Composite parent, String label, Key key, String[] values,
 			String[] valueLabels, int indent) {
 		GridData gd= new GridData(GridData.FILL, GridData.CENTER, false, false, 2, 1);
@@ -479,6 +504,14 @@ public abstract class OptionsConfigurationBlock {
 
 		fTextBoxes.add(textBox);
 		return textBox;
+	}
+
+	protected Composite addSubsection(Composite parent, String label) {
+		Group group= new Group(parent, SWT.SHADOW_NONE);
+		group.setText(label);
+		GridData data= new GridData(SWT.FILL, SWT.CENTER, true, false);
+		group.setLayoutData(data);
+		return group;
 	}
 
 	protected ScrolledPageContent getParentScrolledComposite(Control control) {

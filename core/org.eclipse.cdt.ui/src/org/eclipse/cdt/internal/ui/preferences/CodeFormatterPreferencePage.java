@@ -7,12 +7,10 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
- *     Sergey Prigogin, Google
+ *     Sergey Prigogin (Google)
  *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.preferences;
-
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
@@ -31,7 +29,6 @@ import org.eclipse.cdt.internal.ui.preferences.formatter.CodeFormatterConfigurat
  * The page to configure the code formatter options.
  */
 public class CodeFormatterPreferencePage extends PropertyAndPreferencePage {
-
 	public static final String PREF_ID= "org.eclipse.cdt.ui.preferences.CodeFormatterPreferencePage"; //$NON-NLS-1$
 	public static final String PROP_ID= "org.eclipse.cdt.ui.propertyPages.CodeFormatterPreferencePage"; //$NON-NLS-1$
 	

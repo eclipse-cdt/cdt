@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- * Institute for Software - initial API and implementation 
+ *     Institute for Software - initial API and implementation 
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 
@@ -22,12 +22,10 @@ import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 
 /**
  * @author Emanuel Graf IFS
- *
  */
 class NonExtractableStmtFinder extends ASTVisitor{
-
-	private boolean containsContinueStmt = false;
-	private boolean containsBreakStmt = false;
+	private boolean containsContinueStmt;
+	private boolean containsBreakStmt;
 	
 	{
 		shouldVisitStatements = true;
@@ -38,12 +36,12 @@ class NonExtractableStmtFinder extends ASTVisitor{
 		if (statement instanceof IASTContinueStatement) {
 			containsContinueStmt = true;
 			return ASTVisitor.PROCESS_SKIP;
-		}else if (statement instanceof IASTBreakStatement) {
+		} else if (statement instanceof IASTBreakStatement) {
 			containsBreakStmt = true;
 			return ASTVisitor.PROCESS_SKIP;
-		}else if(statement instanceof IASTForStatement||  //Extracting hole loop statements is ok
-				statement instanceof IASTWhileStatement||
-				statement instanceof IASTSwitchStatement||
+		} else if (statement instanceof IASTForStatement ||  //Extracting hole loop statements is ok
+				statement instanceof IASTWhileStatement ||
+				statement instanceof IASTSwitchStatement ||
 				statement instanceof IASTDoStatement) {
 			return ASTVisitor.PROCESS_SKIP;
 		}

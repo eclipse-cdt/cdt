@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 
@@ -31,14 +31,11 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.ASTHelper;
 
 /**
  * @author Mirko Stocker
- * 
  */
 public class ExtractStatement extends ExtractedFunctionConstructionHelper {
-
 	@Override
-	public void constructMethodBody(IASTCompoundStatement compound,
-			List<IASTNode> list, ASTRewrite rewrite, TextEditGroup group) {
-
+	public void constructMethodBody(IASTCompoundStatement compound, List<IASTNode> list,
+			ASTRewrite rewrite, TextEditGroup group) {
 		for (IASTNode each : list) {
 			rewrite.insertBefore(compound, null, each, group);
 		}
@@ -46,18 +43,18 @@ public class ExtractStatement extends ExtractedFunctionConstructionHelper {
 
 	@Override
 	public IASTDeclSpecifier determineReturnType(IASTNode extractedNode, NameInformation returnVariable) {
-		
-		if(returnVariable != null) {
+		if (returnVariable != null) {
 			IASTNode decl = ASTHelper.getDeclarationForNode(returnVariable.getDeclaration());
 			return ASTHelper.getDeclarationSpecifier(decl).copy(CopyStyle.withLocations);
 		}
 		IASTDeclSpecifier declSpec = new CPPASTSimpleDeclSpecifier();
-		((IASTSimpleDeclSpecifier)declSpec).setType(IASTSimpleDeclSpecifier.t_void);
+		((IASTSimpleDeclSpecifier) declSpec).setType(IASTSimpleDeclSpecifier.t_void);
 		return declSpec.copy(CopyStyle.withLocations);
 	}
 
 	@Override
-	public IASTNode createReturnAssignment(IASTNode node, IASTExpressionStatement stmt, IASTExpression callExpression) {
+	public IASTNode createReturnAssignment(IASTNode node, IASTExpressionStatement stmt,
+			IASTExpression callExpression) {
 		stmt.setExpression(callExpression);
 		return stmt;
 	}

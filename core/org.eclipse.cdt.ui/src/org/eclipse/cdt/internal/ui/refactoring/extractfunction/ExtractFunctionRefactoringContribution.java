@@ -21,7 +21,6 @@ import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContribution;
  * @author Emanuel Graf IFS
  */
 public class ExtractFunctionRefactoringContribution extends CRefactoringContribution {
-
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public RefactoringDescriptor createDescriptor(String id, String project, String description,

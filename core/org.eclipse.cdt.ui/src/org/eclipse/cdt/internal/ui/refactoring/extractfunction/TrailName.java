@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 
@@ -22,10 +22,9 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 import org.eclipse.cdt.internal.ui.refactoring.utils.ASTHelper;
 
-class TrailName extends ASTNode{
-
+class TrailName extends ASTNode {
 	private int nameNumber;
-	private IASTNode declaration = null;
+	private final IASTNode declaration = null;
 	private IASTName realName = null;
 	
 	public TrailName(IASTName realName) {
@@ -61,10 +60,12 @@ class TrailName extends ASTNode{
 		return false;
 	}
 
+	@Override
 	public IASTNode copy() {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public IASTNode copy(CopyStyle style) {
 		throw new UnsupportedOperationException();
 	}

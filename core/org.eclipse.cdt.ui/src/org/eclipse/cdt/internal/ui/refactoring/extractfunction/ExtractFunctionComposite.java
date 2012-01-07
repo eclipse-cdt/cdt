@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 
@@ -26,13 +26,13 @@ import org.eclipse.cdt.internal.ui.refactoring.dialogs.NameAndVisibilityComposit
 import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
 
 public class ExtractFunctionComposite extends Composite {
-	
 	private Button replaceSimilar;
 	private ChooserComposite comp;
 	private NameAndVisibilityComposite nameVisiComp;
 	private final ExtractFunctionInformation info;
 	
-	public ExtractFunctionComposite(Composite parent, ExtractFunctionInformation info, ExtractFunctionInputPage ip) {
+	public ExtractFunctionComposite(Composite parent, ExtractFunctionInformation info,
+			ExtractFunctionInputPage ip) {
 		super(parent, SWT.NONE);
 		this.info = info;
 		setLayout(new GridLayout());
@@ -46,12 +46,11 @@ public class ExtractFunctionComposite extends Composite {
 		
 		if (info.getMethodContext().getType() == MethodContext.ContextType.METHOD) {
 			visibilityPanelSetVisible(true);
-		}else {
+		} else {
 			visibilityPanelSetVisible(false);
 		}
 		layout();
 	}
-
 
 	private Group createReturnGroup(Composite parent) {
 		Group returnGroup = new Group(parent,SWT.NONE);
@@ -65,18 +64,15 @@ public class ExtractFunctionComposite extends Composite {
 		return returnGroup;
 	}
 
-
-	private void createReturnValueChooser(Composite parent, ExtractFunctionInformation info, ExtractFunctionInputPage ip) {
-		
+	private void createReturnValueChooser(Composite parent, ExtractFunctionInformation info,
+			ExtractFunctionInputPage ip) {
 		GridData gridData = new GridData();
 		gridData.horizontalAlignment = GridData.FILL;
 		gridData.grabExcessHorizontalSpace = true;
 		comp = new ChooserComposite(parent, info, ip);
 		comp.setLayoutData(gridData);
 		comp.redraw();
-
 	}
-
 
 	public Text getMethodNameText() {
 		return nameVisiComp.getConstantNameText();
@@ -91,11 +87,10 @@ public class ExtractFunctionComposite extends Composite {
 	}
 
 	private void createNewMethodNameComposite(Composite parent) {
-
 		String label;
 		if (info.getMethodContext().getType() == MethodContext.ContextType.METHOD) {
 			label = Messages.ExtractFunctionComposite_MethodName;
-		}else {
+		} else {
 			label = Messages.ExtractFunctionComposite_FunctionName;
 		}
 		nameVisiComp = new NameAndVisibilityComposite(parent, label, VisibilityEnum.v_private, "");  //$NON-NLS-1$
@@ -106,15 +101,12 @@ public class ExtractFunctionComposite extends Composite {
 		final Button virtual = new Button(nameVisiComp, SWT.CHECK);
 		virtual.setText(Messages.ExtractFunctionComposite_Virtual);
 		virtual.addSelectionListener(new SelectionAdapter() {
-
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				info.setVirtual(virtual.getSelection());
 			}
-			
 		});
 	}
-
 	
 	private void createReplaceCheckBox(Composite parent) {
 		replaceSimilar = new Button(parent, SWT.CHECK | SWT.LEFT);
@@ -123,7 +115,6 @@ public class ExtractFunctionComposite extends Composite {
 		replaceSimilar.setLayoutData(buttonLayoutData);
 		replaceSimilar.setText(Messages.ExtractFunctionComposite_ReplaceDuplicates);
 	}
-
 	
 	public ChooserComposite getReturnChooser() {
 		return comp;
@@ -133,9 +124,7 @@ public class ExtractFunctionComposite extends Composite {
 		return nameVisiComp.getConstantNameText().getText();
 	}
 
-
 	public Composite getVisibiltyGroup() {
-		
 		return nameVisiComp.getVisibiltyGroup();
 	}
 }

@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Andrew Ferguson (Symbian) - Initial implementation
- *    Markus Schorn (Wind River Systems)
+ *     Andrew Ferguson (Symbian) - Initial implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite;
 
@@ -38,24 +38,26 @@ public abstract class CompositeScope implements IIndexScope {
 	protected final IIndexFragmentBinding rbinding;
 
 	public CompositeScope(ICompositesFactory cf, IIndexFragmentBinding rbinding) {
-		if(cf==null || rbinding==null)
+		if (cf == null || rbinding == null)
 			throw new NullPointerException();
 		this.cf = cf;
 		this.rbinding = rbinding;
 	}
 	
+	@Override
 	public IIndexScope getParent() {
 		IIndexScope rscope = rbinding.getScope();
-		if(rscope!=null) {
+		if (rscope != null) {
 			return cf.getCompositeScope(rscope);
 		}
 		return null;
 	}
 
+	@Override
 	public IIndexName getScopeName() {
-		if(rbinding instanceof IIndexScope)
+		if (rbinding instanceof IIndexScope)
 			return ((IIndexScope) rbinding).getScopeName();
-		if(rbinding instanceof ICPPClassType) 
+		if (rbinding instanceof ICPPClassType) 
 			return (IIndexName) ((ICPPClassType) rbinding).getCompositeScope().getScopeName();
 		return null;
 	}
@@ -76,22 +78,22 @@ public abstract class CompositeScope implements IIndexScope {
 	 * @return a suitable binding at the composite layer 
 	 */
 	protected final IBinding processUncertainBinding(IBinding binding) {
-		if(binding instanceof IIndexFragmentBinding) {
+		if (binding instanceof IIndexFragmentBinding) {
 			return cf.getCompositeBinding((IIndexFragmentBinding)binding);				
-		} else if(binding instanceof ProblemBinding) {
+		} else if (binding instanceof ProblemBinding) {
 			return binding;
-		} else if(binding instanceof CPPCompositeBinding /* AST composite */) {
+		} else if (binding instanceof CPPCompositeBinding /* AST composite */) {
 			return new CPPCompositeBinding(
-				processUncertainBindings(((CPPCompositeBinding)binding).getBindings())
+				processUncertainBindings(((CPPCompositeBinding) binding).getBindings())
 			);
-		} else if(binding instanceof CPPUsingDeclaration) {
+		} else if (binding instanceof CPPUsingDeclaration) {
 			return binding;
-		} else if(binding == null) {
+		} else if (binding == null) {
 			return null;
-		} else if(binding instanceof ICPPSpecialization) {
+		} else if (binding instanceof ICPPSpecialization) {
 			return binding;
 		}
-		CCorePlugin.log("CompositeFactory unsure how to process: "+binding.getClass().getName()); //$NON-NLS-1$
+		CCorePlugin.log("CompositeFactory unsure how to process: " + binding.getClass().getName()); //$NON-NLS-1$
 		return binding;
 	}
 	
@@ -102,9 +104,9 @@ public abstract class CompositeScope implements IIndexScope {
 	 * @return a non-null IBinding[] 
 	 */
 	protected final IBinding[] processUncertainBindings(IBinding[] frgBindings) {
-		if(frgBindings != null) {
+		if (frgBindings != null) {
 			IBinding[] result= new IBinding[frgBindings.length];
-			for(int i=0; i<result.length; i++) {
+			for(int i= 0; i < result.length; i++) {
 				result[i]= processUncertainBinding(frgBindings[i]);
 			}
 			return result;
@@ -112,19 +114,21 @@ public abstract class CompositeScope implements IIndexScope {
 		return IBinding.EMPTY_BINDING_ARRAY;
 	}
 
+	@Override
 	public final IBinding getBinding(IASTName name, boolean resolve) {
 		return getBinding(name, resolve, IIndexFileSet.EMPTY);
 	}
 
+	@Override
 	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix) {
 		return getBindings(name, resolve, prefix, IIndexFileSet.EMPTY);
 	}
 	
-	@Override
 	/**
 	 * The c++-name resolution stores scopes in hash-maps, we need to make sure equality is detected
 	 * in order to prevent infinite loops.
 	 */
+	@Override
 	public final boolean equals(Object other) {
 		if (other instanceof CompositeScope) {
 			return rbinding.equals(((CompositeScope)other).rbinding);
@@ -132,11 +136,11 @@ public abstract class CompositeScope implements IIndexScope {
 		return false;
 	}
 	
-	@Override
 	/**
 	 * The c++-name resolution stores scopes in hash-maps, we need to make sure equality is detected
 	 * in order to prevent infinite loops.
 	 */
+	@Override
 	public final int hashCode() {
 		return rbinding.hashCode();
 	}

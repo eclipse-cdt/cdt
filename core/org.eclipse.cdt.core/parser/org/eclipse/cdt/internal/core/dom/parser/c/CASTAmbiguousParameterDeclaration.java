@@ -41,7 +41,7 @@ public class CASTAmbiguousParameterDeclaration extends ASTAmbiguousNode implemen
 	public void addParameterDeclaration(IASTParameterDeclaration d) {
         assertNotFrozen();
     	if (d != null) {
-    		paramDecls = (IASTParameterDeclaration[]) ArrayUtil.append(IASTParameterDeclaration.class, paramDecls, ++declPos, d);
+    		paramDecls = (IASTParameterDeclaration[]) ArrayUtil.appendAt(IASTParameterDeclaration.class, paramDecls, ++declPos, d);
     		d.setParent(this);
 			d.setPropertyInParent(SUBDECLARATION);
     	}
@@ -57,7 +57,7 @@ public class CASTAmbiguousParameterDeclaration extends ASTAmbiguousNode implemen
 	}
 
     public IASTParameterDeclaration[] getParameterDeclarations() {
-    	paramDecls = (IASTParameterDeclaration[]) ArrayUtil.removeNullsAfter(IASTParameterDeclaration.class, paramDecls, declPos ); 
+    	paramDecls = (IASTParameterDeclaration[]) ArrayUtil.trimAt(IASTParameterDeclaration.class, paramDecls, declPos ); 
         return paramDecls;
     }
 

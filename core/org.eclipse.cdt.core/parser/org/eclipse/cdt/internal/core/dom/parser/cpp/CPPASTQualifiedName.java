@@ -113,7 +113,7 @@ public class CPPASTQualifiedName extends CPPASTNameBase
         assertNotFrozen();
 		assert !(name instanceof ICPPASTQualifiedName);
 		if (name != null) {
-			names = (IASTName[]) ArrayUtil.append(IASTName.class, names, ++namesPos, name);
+			names = (IASTName[]) ArrayUtil.appendAt(IASTName.class, names, ++namesPos, name);
 			name.setParent(this);
 			name.setPropertyInParent(SEGMENT_NAME);
 		}
@@ -123,7 +123,7 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 		if (namesPos < 0)
 			return IASTName.EMPTY_NAME_ARRAY;
         
-		names = (IASTName[]) ArrayUtil.removeNullsAfter(IASTName.class, names, namesPos);
+		names = (IASTName[]) ArrayUtil.trimAt(IASTName.class, names, namesPos);
 		return names;
 	}
 

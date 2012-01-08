@@ -40,14 +40,14 @@ public class CPPASTAmbiguousExpression extends ASTAmbiguousNode implements
 	public void addExpression(IASTExpression e) {
         assertNotFrozen();
     	if (e != null) {
-    		exp = (IASTExpression[]) ArrayUtil.append( IASTExpression.class, exp, ++expPos, e );
+    		exp = (IASTExpression[]) ArrayUtil.appendAt( IASTExpression.class, exp, ++expPos, e );
     		e.setParent(this);
 			e.setPropertyInParent(SUBEXPRESSION);
     	}
     }
 
     public IASTExpression[] getExpressions() {
-        exp = (IASTExpression[]) ArrayUtil.removeNullsAfter( IASTExpression.class, exp, expPos );
+        exp = (IASTExpression[]) ArrayUtil.trimAt( IASTExpression.class, exp, expPos );
     	return exp;
     }
 

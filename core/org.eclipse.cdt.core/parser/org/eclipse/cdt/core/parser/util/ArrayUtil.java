@@ -16,6 +16,8 @@ package org.eclipse.cdt.core.parser.util;
 
 import java.lang.reflect.Array;
 
+import org.eclipse.core.runtime.Assert;
+
 /**
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -28,11 +30,12 @@ public abstract class ArrayUtil {
      * If the array is null or not large enough, a larger one is allocated, using
      * the given class object.
      */
-    static public Object[] append(Class<?> c, Object[] array, Object obj) {
+	@SuppressWarnings("unchecked")
+	static public <T> T[] append(Class<? extends T> c, T[] array, T obj) {
     	if (obj == null)
     		return array;
     	if (array == null || array.length == 0) {
-    		array = (Object[]) Array.newInstance(c, DEFAULT_LENGTH);
+    		array = (T[]) Array.newInstance(c, DEFAULT_LENGTH);
     		array[0] = obj;
     		return array;
     	}
@@ -43,7 +46,7 @@ public abstract class ArrayUtil {
     		return array;
     	}
 
-    	Object[] temp = (Object[]) Array.newInstance(c, Math.max(array.length * 2, DEFAULT_LENGTH));
+    	T[] temp = (T[]) Array.newInstance(c, Math.max(array.length * 2, DEFAULT_LENGTH));
     	System.arraycopy(array, 0, temp, 0, array.length);
     	temp[array.length] = obj;
     	return temp;
@@ -71,36 +74,10 @@ public abstract class ArrayUtil {
 
     /**
      * Assumes that array contains nulls at the end, only. 
-     * Appends object using the current length of the array.
-     * @since 4.0
-     */
-    static public Object[] append(Class<?> c, Object[] array, int currentLength, Object obj) {
-    	if (obj == null)
-    		return array;
-    	if (array == null || array.length == 0) {
-    		array = (Object[]) Array.newInstance(c, DEFAULT_LENGTH);
-    		array[0] = obj;
-    		return array;
-    	}
-
-    	if (currentLength < array.length) {
-    		assert array[currentLength] == null;
-    		assert currentLength == 0 || array[currentLength - 1] != null;
-    		array[currentLength]= obj;
-    		return array;
-    	}
-
-    	Object[] temp = (Object[]) Array.newInstance(c, array.length * 2);
-    	System.arraycopy(array, 0, temp, 0, array.length);
-    	temp[array.length] = obj;
-    	return temp;
-    }
-
-    /**
-     * Assumes that array contains nulls at the end, only. 
      * Appends element after the last non-null element. 
      * If the array is not large enough, a larger one is allocated.
-     * Null <code>array</code> is supported for backward compatibility only and only when T is Object.
+     * Null <code>array</code> is supported for backward compatibility only and only when T is
+     * Object.
      */
     @SuppressWarnings("unchecked")
 	static public <T> T[] append(T[] array, T obj) {
@@ -127,12 +104,41 @@ public abstract class ArrayUtil {
     }
 
     /**
-     * Type safe version of {@link #append(Class, Object[], int, Object)}
+     * @deprecated Use {@link #appendAt(Class, Object[], int, Object)} instead.
+     * @since 4.0
+     */
+    @Deprecated
+	@SuppressWarnings("unchecked")
+	static public Object[] append(Class<?> c, Object[] array, int currentLength, Object obj) {
+    	return appendAt((Class<Object>) c, array, currentLength, obj);
+    }
+
+    /**
+     * Assumes that array contains nulls at the end, only. 
+     * Appends object using the current length of the array.
      * @since 5.1
      */
     @SuppressWarnings("unchecked")
 	static public <T> T[] appendAt(Class<T> c, T[] array, int currentLength, T obj) {
-    	return (T[]) append(c, array, currentLength, obj);
+    	if (obj == null)
+    		return array;
+    	if (array == null || array.length == 0) {
+    		array = (T[]) Array.newInstance(c, DEFAULT_LENGTH);
+    		array[0] = obj;
+    		return array;
+    	}
+
+    	if (currentLength < array.length) {
+    		Assert.isTrue(array[currentLength] == null);
+    		Assert.isTrue(currentLength == 0 || array[currentLength - 1] != null);
+    		array[currentLength]= obj;
+    		return array;
+    	}
+
+    	T[] temp = (T[]) Array.newInstance(c, array.length * 2);
+    	System.arraycopy(array, 0, temp, 0, array.length);
+    	temp[array.length] = obj;
+    	return temp;
     }
 
     /**
@@ -147,9 +153,10 @@ public abstract class ArrayUtil {
      * @param array the array to be trimmed
      * @param forceNew
      */
-    static public Object[] trim(Class<?> c, Object[] array, boolean forceNew) {
+    @SuppressWarnings("unchecked")
+	static public <T> T[] trim(Class<? extends T> c, T[] array, boolean forceNew) {
         if (array == null)
-            return (Object[]) Array.newInstance(c, 0);
+            return (T[]) Array.newInstance(c, 0);
 
         int i = array.length;
         if (i == 0 || array[i - 1] != null) {
@@ -158,15 +165,15 @@ public abstract class ArrayUtil {
         	}
         } else {
         	i= findFirstNull(array);
-        	assert i >= 0;
+        	Assert.isTrue(i >= 0);
         }
 
-        Object[] temp = (Object[]) Array.newInstance(c, i);
+        T[] temp = (T[]) Array.newInstance(c, i);
         System.arraycopy(array, 0, temp, 0, i);
         return temp;
     }
 
-    public static Object[] trim(Class<?> c, Object[] array) {
+    public static <T> T[] trim(Class<? extends T> c, T[] array) {
         return trim(c, array, false);
     }
 
@@ -190,7 +197,7 @@ public abstract class ArrayUtil {
         	}
         } else {
         	i= findFirstNull(array);
-        	assert i >= 0;
+        	Assert.isTrue(i >= 0);
         }
 
         T[] temp = (T[]) Array.newInstance(array.getClass().getComponentType(), i);
@@ -219,7 +226,8 @@ public abstract class ArrayUtil {
      * @param source The source array. May not be <code>null</code>. 
      * @return The concatenated array, which may be the same as the first parameter. 
      */
-    public static Object[] addAll(Class<?> c, Object[] dest, Object[] source) {
+    @SuppressWarnings("unchecked")
+	public static <T> T[] addAll(Class<? extends T> c, T[] dest, T[] source) {
         if (source == null || source.length == 0)
             return dest;
 
@@ -232,7 +240,7 @@ public abstract class ArrayUtil {
         }
 
         if (dest == null || dest.length == 0) {
-            dest = (Object[]) Array.newInstance(c, numToAdd);
+            dest = (T[]) Array.newInstance(c, numToAdd);
             System.arraycopy(source, 0, dest, 0, numToAdd);
             return dest;
         }
@@ -246,7 +254,7 @@ public abstract class ArrayUtil {
             System.arraycopy(source, 0, dest, firstFree, numToAdd);
             return dest;
         }
-        Object[] temp = (Object[]) Array.newInstance(c, firstFree + numToAdd);
+        T[] temp = (T[]) Array.newInstance(c, firstFree + numToAdd);
         System.arraycopy(dest, 0, temp, 0, firstFree);
         System.arraycopy(source, 0, temp, firstFree, numToAdd);
         return temp;
@@ -302,21 +310,22 @@ public abstract class ArrayUtil {
      * object identity.
      * @param array the array to search
      * @param obj the object to search for
-     * @return true if the specified array contains the specified object, or the specified array is null
+     * @return <code>true</code> if the specified array contains the specified object, or
+     *     the specified array is <code>null</code>
      */
-    public static boolean contains(Object[] array, Object obj) {
+    public static <T> boolean contains(T[] array, T obj) {
     	return indexOf(array, obj) >= 0;
     }
 
     /**
-     * Returns the index into the specified array of the specified object, or -1 if the array does not
-     * contain the object, or if the array is null.  Comparison is by object identity.
+     * Returns the index into the specified array of the specified object, or -1 if the array does
+     * not contain the object, or if the array is null.  Comparison is by object identity.
      * @param array the array to search
      * @param obj the object to search for
-     * @return the index into the specified array of the specified object, or -1 if the array does not
-     * contain the object, or if the array is null
+     * @return the index into the specified array of the specified object, or -1 if the array does
+     *     not contain the object, or if the array is <code>null</code>
      */
-    public static int indexOf(Object[] array, Object obj) {
+    public static <T> int indexOf(T[] array, T obj) {
     	int result = -1;
     	if (array != null) {
     		for (int i = 0; i < array.length; i++) {
@@ -333,22 +342,23 @@ public abstract class ArrayUtil {
      * object identity.
      * @param array the array to search
      * @param obj the object to search for
-     * @return true if the specified array contains the specified object, or the specified array is null
+     * @return true if the specified array contains the specified object, or the specified array is
+     *     <code>null</code>
      */
-    public static boolean containsEqual(Object[] array, Object obj) {
+    public static <T> boolean containsEqual(T[] array, T obj) {
     	return indexOfEqual(array, obj) != -1;
     }
 
     /**
      * Assumes that array contains nulls at the end, only. 
-     * Returns the index into the specified array of the specified object, or -1 if the array does not
-     * contain the object, or if the array is null.  Comparison is by equals().
+     * Returns the index into the specified array of the specified object, or -1 if the array does
+     * not contain the object, or if the array is null.  Comparison is by equals().
      * @param comments the array to search
      * @param comment the object to search for
-     * @return the index into the specified array of the specified object, or -1 if the array does not
-     * contain an equal object, or if the array is null
+     * @return the index into the specified array of the specified object, or -1 if the array does
+     *     not contain an equal object, or if the array is <code>null</code>
      */    
-	public static int indexOfEqual(Object[] comments, Object comment) {
+	public static <T> int indexOfEqual(T[] comments, T comment) {
     	int result = -1;
     	if (comments != null) {
     		for (int i= 0; (i < comments.length) && (comments[i] != null); i++) {
@@ -368,9 +378,10 @@ public abstract class ArrayUtil {
      *
      * If there are no nulls in the original array then the original array is returned.
 	 */
-	public static Object[] removeNulls(Class<?> c, Object[] array) {
+	@SuppressWarnings("unchecked")
+	public static <T> T[] removeNulls(Class<? extends T> c, T[] array) {
         if (array == null)
-            return (Object[]) Array.newInstance(c, 0);
+            return (T[]) Array.newInstance(c, 0);
 
         int i;
 		int validEntries = 0;
@@ -382,7 +393,7 @@ public abstract class ArrayUtil {
 		if (array.length == validEntries) 
 			return array;
 
-		Object[] newArray = (Object[]) Array.newInstance(c, validEntries);
+		T[] newArray = (T[]) Array.newInstance(c, validEntries);
 		int j = 0;
         for (i = 0; i < array.length; i++) {
             if (array[i] != null)
@@ -404,9 +415,8 @@ public abstract class ArrayUtil {
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T[] removeNulls(T[] array) {
-        int i;
 		int validEntries = 0;
-		for (i = 0; i < array.length; i++) {
+		for (int i = 0; i < array.length; i++) {
 	         if (array[i] != null)
 	        	 validEntries++;
 	    }
@@ -416,7 +426,7 @@ public abstract class ArrayUtil {
 
 		T[] newArray = (T[]) Array.newInstance(array.getClass().getComponentType(), validEntries);
 		int j = 0;
-        for (i = 0; i < array.length; i++) {
+        for (int i = 0; i < array.length; i++) {
             if (array[i] != null)
             	newArray[j++] = array[i];
         }
@@ -425,40 +435,45 @@ public abstract class ArrayUtil {
 	}
 
 	/**
-	 * To improve performance, this method should be used instead of ArrayUtil#removeNulls(Class, Object[]) when
-	 * all of the non-null elements in the array are grouped together at the beginning of the array
-	 * and all of the nulls are at the end of the array.  
-	 * The position of the last non-null element in the array must also be known. 
+	 * @deprecated Use {@link #trimAt(Class, Object[], int)} instead
 	 */
+	@SuppressWarnings("unchecked")
+	@Deprecated
 	public static Object[] removeNullsAfter(Class<?> c, Object[] array, int index) {
+		return trimAt((Class<Object>) c, array, index);
+	}
+
+	/**
+	 * To improve performance, this method should be used instead of
+	 * {@link #removeNulls(Class, Object[])} when all of the non-<code>null</code> elements in
+	 * the array are grouped together at the beginning of the array and all of the nulls are at
+	 * the end of the array. The position of the last non-null element in the array must also
+	 * be known. 
+	 *
+	 * @since 5.1
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> T[] trimAt(Class<T> c, T[] array, int index) {
         final int newLen= index + 1;
         if (array != null && array.length == newLen)
 			return array;
 
-        Object[] newArray = (Object[]) Array.newInstance(c, newLen);
+        T[] newArray = (T[]) Array.newInstance(c, newLen);
         if (array != null && newLen > 0)
         	System.arraycopy(array, 0, newArray, 0, newLen);
 		return newArray;
 	}
 
 	/**
-	 * Type safe version of {@link #removeNullsAfter(Class, Object[], int)}
-	 * @since 5.1
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T> T[] trimAt(Class<T> c, T[] array, int index) {
-		return (T[]) removeNullsAfter(c, array, index);
-	}
-
-	/**
 	 * Inserts the obj at the beginning of the array, shifting the whole thing one index
 	 * Assumes that array contains nulls at the end, only. 
 	 */
-	public static Object[] prepend(Class<?> c, Object[] array, Object obj) {
+	@SuppressWarnings("unchecked")
+	public static <T> T[] prepend(Class<? extends T> c, T[] array, T obj) {
 		if (obj == null)
     		return array;
         if (array == null || array.length == 0) {
-            array = (Object[]) Array.newInstance(c, DEFAULT_LENGTH);
+            array = (T[]) Array.newInstance(c, DEFAULT_LENGTH);
             array[0] = obj;
             return array;
         }
@@ -468,7 +483,7 @@ public abstract class ArrayUtil {
 			System.arraycopy(array, 0, array, 1, i);
 			array[0] = obj;
         } else {
-			Object[] temp = (Object[]) Array.newInstance(c, array.length * 2);
+			T[] temp = (T[]) Array.newInstance(c, array.length * 2);
 	        System.arraycopy(array, 0, temp, 1, array.length);
 	        temp[0] = obj;
 	        array = temp;
@@ -484,7 +499,7 @@ public abstract class ArrayUtil {
 	 * @since 5.2
 	 */
 	public static <T> T[] prepend(T[] array, T obj) {
-		assert array != null;
+		Assert.isNotNull(array);
 		
 		if (obj == null)
     		return array;
@@ -517,7 +532,7 @@ public abstract class ArrayUtil {
 	 * Removes first occurrence of element in array and moves objects behind up front.
 	 * @since 4.0
 	 */
-	public static void remove(Object[] array, Object element) {
+	public static <T> void remove(T[] array, T element) {
 		if (array != null) {
 			for (int i = 0; i < array.length; i++) {
 				if (element == array[i]) {

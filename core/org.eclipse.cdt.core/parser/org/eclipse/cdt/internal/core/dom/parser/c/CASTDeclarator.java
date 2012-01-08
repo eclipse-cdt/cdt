@@ -76,7 +76,7 @@ public class CASTDeclarator extends ASTNode implements IASTDeclarator, IASTAmbig
 	
 	public IASTPointerOperator[] getPointerOperators() {
         if (pointerOps == null) return IASTPointerOperator.EMPTY_ARRAY;
-        pointerOps = (IASTPointerOperator[]) ArrayUtil.removeNullsAfter(IASTPointerOperator.class, pointerOps, pointerOpsPos);
+        pointerOps = (IASTPointerOperator[]) ArrayUtil.trimAt(IASTPointerOperator.class, pointerOps, pointerOpsPos);
         return pointerOps;
     }
 
@@ -106,7 +106,7 @@ public class CASTDeclarator extends ASTNode implements IASTDeclarator, IASTAmbig
     	if (operator != null) {
     		operator.setParent(this);
     		operator.setPropertyInParent(POINTER_OPERATOR);
-    		pointerOps = (IASTPointerOperator[]) ArrayUtil.append(IASTPointerOperator.class, pointerOps, ++pointerOpsPos, operator);
+    		pointerOps = (IASTPointerOperator[]) ArrayUtil.appendAt(IASTPointerOperator.class, pointerOps, ++pointerOpsPos, operator);
     	}
     }
 

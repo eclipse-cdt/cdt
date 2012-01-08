@@ -62,7 +62,7 @@ public class CASTFunctionDeclarator extends CASTDeclarator implements IASTStanda
 	
 	public IASTParameterDeclaration[] getParameters() {
         if( parameters == null ) return IASTParameterDeclaration.EMPTY_PARAMETERDECLARATION_ARRAY;
-        parameters = (IASTParameterDeclaration[]) ArrayUtil.removeNullsAfter( IASTParameterDeclaration.class, parameters, parametersPos );
+        parameters = (IASTParameterDeclaration[]) ArrayUtil.trimAt( IASTParameterDeclaration.class, parameters, parametersPos );
         return parameters;
     }
 
@@ -71,7 +71,7 @@ public class CASTFunctionDeclarator extends CASTDeclarator implements IASTStanda
     	if (parameter != null) {
     		parameter.setParent(this);
 			parameter.setPropertyInParent(FUNCTION_PARAMETER);
-    		parameters = (IASTParameterDeclaration[]) ArrayUtil.append( IASTParameterDeclaration.class, parameters, ++parametersPos, parameter );
+    		parameters = (IASTParameterDeclaration[]) ArrayUtil.appendAt( IASTParameterDeclaration.class, parameters, ++parametersPos, parameter );
     	}        
     }
 

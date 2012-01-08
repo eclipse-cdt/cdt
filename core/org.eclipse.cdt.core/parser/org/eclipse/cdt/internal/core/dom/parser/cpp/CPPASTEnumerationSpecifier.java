@@ -75,7 +75,7 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 		if (enumerator != null) {
 			enumerator.setParent(this);
 			enumerator.setPropertyInParent(ENUMERATOR);
-			fItems = (IASTEnumerator[]) ArrayUtil.append( IASTEnumerator.class, fItems, ++fItemPos, enumerator );
+			fItems = (IASTEnumerator[]) ArrayUtil.appendAt( IASTEnumerator.class, fItems, ++fItemPos, enumerator );
 		}
 	}
 
@@ -83,7 +83,7 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 		if (fItems == null)
 			return IASTEnumerator.EMPTY_ENUMERATOR_ARRAY;
 		
-		fItems = (IASTEnumerator[]) ArrayUtil.removeNullsAfter(IASTEnumerator.class, fItems, fItemPos);
+		fItems = (IASTEnumerator[]) ArrayUtil.trimAt(IASTEnumerator.class, fItems, fItemPos);
 		return fItems;
 	}
 

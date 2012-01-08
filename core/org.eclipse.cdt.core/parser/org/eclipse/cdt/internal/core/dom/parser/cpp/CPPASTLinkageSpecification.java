@@ -65,7 +65,7 @@ public class CPPASTLinkageSpecification extends ASTNode implements
 		if (decl != null) {
 			decl.setParent(this);
 			decl.setPropertyInParent(OWNED_DECLARATION);
-			fAllDeclarations = (IASTDeclaration[]) ArrayUtil.append( IASTDeclaration.class, fAllDeclarations, ++fLastDeclaration, decl);
+			fAllDeclarations = (IASTDeclaration[]) ArrayUtil.appendAt( IASTDeclaration.class, fAllDeclarations, ++fLastDeclaration, decl);
 			fActiveDeclarations= null;
 		}
 	}
@@ -81,7 +81,7 @@ public class CPPASTLinkageSpecification extends ASTNode implements
 
 	public final IASTDeclaration[] getDeclarations(boolean includeInactive) {
 		if (includeInactive) {
-			fAllDeclarations= (IASTDeclaration[]) ArrayUtil.removeNullsAfter(IASTDeclaration.class, fAllDeclarations, fLastDeclaration);
+			fAllDeclarations= (IASTDeclaration[]) ArrayUtil.trimAt(IASTDeclaration.class, fAllDeclarations, fLastDeclaration);
 			return fAllDeclarations;
 		}
 		return getDeclarations();

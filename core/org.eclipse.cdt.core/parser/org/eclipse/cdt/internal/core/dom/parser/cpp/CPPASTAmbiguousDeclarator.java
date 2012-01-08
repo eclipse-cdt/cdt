@@ -74,14 +74,14 @@ public class CPPASTAmbiguousDeclarator extends ASTAmbiguousNode implements IASTA
 	public void addDeclarator(IASTDeclarator d) {
         assertNotFrozen();
     	if (d != null) {
-    		dtors = (IASTDeclarator[]) ArrayUtil.append(IASTDeclarator.class, dtors, ++dtorPos, d);
+    		dtors = (IASTDeclarator[]) ArrayUtil.appendAt(IASTDeclarator.class, dtors, ++dtorPos, d);
     		d.setParent(this);
 			d.setPropertyInParent(SUBDECLARATOR);
     	}
     }
 
     public IASTDeclarator[] getDeclarators() {
-    	dtors = (IASTDeclarator[]) ArrayUtil.removeNullsAfter(IASTDeclarator.class, dtors, dtorPos ); 
+    	dtors = (IASTDeclarator[]) ArrayUtil.trimAt(IASTDeclarator.class, dtors, dtorPos ); 
         return dtors;
     }
 

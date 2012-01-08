@@ -84,7 +84,7 @@ public class CPPASTInitializerList extends ASTNode implements ICPPASTInitializer
 	public void addClause(IASTInitializerClause d) {
         assertNotFrozen();
     	if (d != null) {
-    		initializers = (IASTInitializerClause[]) ArrayUtil.append( IASTInitializerClause.class, initializers, ++initializersPos, d );
+    		initializers = (IASTInitializerClause[]) ArrayUtil.appendAt( IASTInitializerClause.class, initializers, ++initializersPos, d );
     		d.setParent(this);
 			d.setPropertyInParent(NESTED_INITIALIZER);
     	}

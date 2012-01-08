@@ -89,7 +89,7 @@ public class CPPASTTemplateDeclaration extends ASTNode
     @Override
 	public ICPPASTTemplateParameter[] getTemplateParameters() {
         if (parameters == null) return ICPPASTTemplateParameter.EMPTY_TEMPLATEPARAMETER_ARRAY;
-        parameters = (ICPPASTTemplateParameter[]) ArrayUtil.removeNullsAfter(ICPPASTTemplateParameter.class, parameters, parametersPos);
+        parameters = (ICPPASTTemplateParameter[]) ArrayUtil.trimAt(ICPPASTTemplateParameter.class, parameters, parametersPos);
         return parameters;
     }
 
@@ -97,7 +97,7 @@ public class CPPASTTemplateDeclaration extends ASTNode
 	public void addTemplateParameter(ICPPASTTemplateParameter parm) {
         assertNotFrozen();
     	if (parm != null) {
-    		parameters = (ICPPASTTemplateParameter[]) ArrayUtil.append(ICPPASTTemplateParameter.class, parameters, ++parametersPos, parm);
+    		parameters = (ICPPASTTemplateParameter[]) ArrayUtil.appendAt(ICPPASTTemplateParameter.class, parameters, ++parametersPos, parm);
     		parm.setParent(this);
 			parm.setPropertyInParent(PARAMETER);
     	}

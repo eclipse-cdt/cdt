@@ -61,7 +61,7 @@ public class CASTSimpleDeclaration extends ASTNode implements IASTSimpleDeclarat
     public IASTDeclarator[] getDeclarators() {
         if (declarators == null)
         	return IASTDeclarator.EMPTY_DECLARATOR_ARRAY;
-        declarators = (IASTDeclarator[]) ArrayUtil.removeNullsAfter(IASTDeclarator.class, declarators, declaratorsPos);
+        declarators = (IASTDeclarator[]) ArrayUtil.trimAt(IASTDeclarator.class, declarators, declaratorsPos);
         return declarators;
     }
     
@@ -70,7 +70,7 @@ public class CASTSimpleDeclaration extends ASTNode implements IASTSimpleDeclarat
     	if (d != null) {
     		d.setParent(this);
 			d.setPropertyInParent(DECLARATOR);
-    		declarators = (IASTDeclarator[]) ArrayUtil.append(IASTDeclarator.class, declarators, ++declaratorsPos, d);    		
+    		declarators = (IASTDeclarator[]) ArrayUtil.appendAt(IASTDeclarator.class, declarators, ++declaratorsPos, d);    		
     	}
     }
     

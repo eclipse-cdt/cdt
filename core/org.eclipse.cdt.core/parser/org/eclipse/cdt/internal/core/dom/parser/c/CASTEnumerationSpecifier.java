@@ -69,14 +69,14 @@ public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier
     	if (enumerator != null) {
     		enumerator.setParent(this);
 			enumerator.setPropertyInParent(ENUMERATOR);
-    		enumerators = (IASTEnumerator[]) ArrayUtil.append( IASTEnumerator.class, enumerators, ++enumeratorsPos, enumerator );
+    		enumerators = (IASTEnumerator[]) ArrayUtil.appendAt( IASTEnumerator.class, enumerators, ++enumeratorsPos, enumerator );
     	}
     }
 
     
     public IASTEnumerator[] getEnumerators() {        
         if( enumerators == null ) return IASTEnumerator.EMPTY_ENUMERATOR_ARRAY;
-        enumerators = (IASTEnumerator[]) ArrayUtil.removeNullsAfter( IASTEnumerator.class, enumerators, enumeratorsPos );
+        enumerators = (IASTEnumerator[]) ArrayUtil.trimAt( IASTEnumerator.class, enumerators, enumeratorsPos );
         return enumerators;
     }
 

@@ -57,7 +57,7 @@ public class CASTArrayDeclarator extends CASTDeclarator implements IASTArrayDecl
 	public IASTArrayModifier[] getArrayModifiers() {
         if (arrayMods == null)
         	return IASTArrayModifier.EMPTY_ARRAY;
-        arrayMods = (IASTArrayModifier[]) ArrayUtil.removeNullsAfter(IASTArrayModifier.class,
+        arrayMods = (IASTArrayModifier[]) ArrayUtil.trimAt(IASTArrayModifier.class,
         		arrayMods, arrayModsPos);
         return arrayMods;
  
@@ -69,7 +69,7 @@ public class CASTArrayDeclarator extends CASTDeclarator implements IASTArrayDecl
     	if (arrayModifier != null) {
     		arrayModifier.setParent(this);
 			arrayModifier.setPropertyInParent(ARRAY_MODIFIER);
-            arrayMods = (IASTArrayModifier[]) ArrayUtil.append(IASTArrayModifier.class, arrayMods,
+            arrayMods = (IASTArrayModifier[]) ArrayUtil.appendAt(IASTArrayModifier.class, arrayMods,
             		++arrayModsPos, arrayModifier);    		
     	}
     }

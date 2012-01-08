@@ -31,14 +31,14 @@ public class CASTAmbiguousExpression extends ASTAmbiguousNode implements IASTAmb
 	public void addExpression(IASTExpression e) {
         assertNotFrozen();
     	if (e != null) {
-    		expressions = (IASTExpression[]) ArrayUtil.append( IASTExpression.class, expressions, ++expressionsPos, e );
+    		expressions = (IASTExpression[]) ArrayUtil.appendAt( IASTExpression.class, expressions, ++expressionsPos, e );
     		e.setParent(this);
 			e.setPropertyInParent(SUBEXPRESSION);
     	}
     }
 
     public IASTExpression[] getExpressions() {
-    	expressions = (IASTExpression[]) ArrayUtil.removeNullsAfter( IASTExpression.class, expressions, expressionsPos ); 
+    	expressions = (IASTExpression[]) ArrayUtil.trimAt( IASTExpression.class, expressions, expressionsPos ); 
         return expressions;
     }
 

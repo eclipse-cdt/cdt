@@ -52,7 +52,7 @@ public class CPPASTTryBlockStatement extends ASTNode implements ICPPASTTryBlockS
 	public void addCatchHandler(ICPPASTCatchHandler statement) {
         assertNotFrozen();
     	if (statement != null) {
-    		catchHandlers = (ICPPASTCatchHandler[]) ArrayUtil.append( ICPPASTCatchHandler.class, catchHandlers, ++catchHandlersPos, statement );
+    		catchHandlers = (ICPPASTCatchHandler[]) ArrayUtil.appendAt( ICPPASTCatchHandler.class, catchHandlers, ++catchHandlersPos, statement );
     		statement.setParent(this);
 			statement.setPropertyInParent(CATCH_HANDLER);
     	}
@@ -61,7 +61,7 @@ public class CPPASTTryBlockStatement extends ASTNode implements ICPPASTTryBlockS
 
     public ICPPASTCatchHandler[] getCatchHandlers() {
         if( catchHandlers == null ) return ICPPASTCatchHandler.EMPTY_CATCHHANDLER_ARRAY;
-        catchHandlers = (ICPPASTCatchHandler[]) ArrayUtil.removeNullsAfter( ICPPASTCatchHandler.class, catchHandlers, catchHandlersPos );
+        catchHandlers = (ICPPASTCatchHandler[]) ArrayUtil.trimAt( ICPPASTCatchHandler.class, catchHandlers, catchHandlersPos );
         return catchHandlers;
     }
 

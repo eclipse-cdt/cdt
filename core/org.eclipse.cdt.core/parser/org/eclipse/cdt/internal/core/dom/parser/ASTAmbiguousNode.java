@@ -45,7 +45,7 @@ public abstract class ASTAmbiguousNode extends ASTNode  {
 		}
 
 		public IASTName[] getNames() {
-			names = (IASTName[]) ArrayUtil.removeNullsAfter(IASTName.class, names, namesPos);
+			names = (IASTName[]) ArrayUtil.trimAt(IASTName.class, names, namesPos);
 			return names;
 		}
 	}

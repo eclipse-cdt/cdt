@@ -24,7 +24,7 @@ public class CPPCompositeBinding extends PlatformObject implements IBinding {
 	IBinding[] bindings;
 
 	public CPPCompositeBinding(IBinding[] bindingList) {
-		bindings = (IBinding[]) ArrayUtil.trim(IBinding.class, bindingList, true);
+		bindings = ArrayUtil.trim(bindingList, true);
 	}
 	
 	@Override

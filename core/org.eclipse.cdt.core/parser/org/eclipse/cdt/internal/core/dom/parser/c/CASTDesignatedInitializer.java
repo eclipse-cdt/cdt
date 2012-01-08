@@ -61,14 +61,14 @@ public class CASTDesignatedInitializer extends ASTNode implements ICASTDesignate
     	if (designator != null) {
     		designator.setParent(this);
     		designator.setPropertyInParent(DESIGNATOR);
-    		designators = (ICASTDesignator[]) ArrayUtil.append( ICASTDesignator.class, designators, ++designatorsPos, designator );
+    		designators = (ICASTDesignator[]) ArrayUtil.appendAt( ICASTDesignator.class, designators, ++designatorsPos, designator );
     	}
     }
 
     
     public ICASTDesignator[] getDesignators() {
         if( designators == null ) return ICASTDesignatedInitializer.EMPTY_DESIGNATOR_ARRAY;
-        designators = (ICASTDesignator[]) ArrayUtil.removeNullsAfter( ICASTDesignator.class, designators, designatorsPos );
+        designators = (ICASTDesignator[]) ArrayUtil.trimAt( ICASTDesignator.class, designators, designatorsPos );
         return designators;
     }
 

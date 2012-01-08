@@ -32,6 +32,7 @@ public class IndexChangeEvent implements IIndexChangeEvent {
 		fChangeEvent= new ChangeEvent();
 	}
 
+	@Override
 	public ICProject getAffectedProject() {
 		return fAffectedProject;
 	}
@@ -41,22 +42,27 @@ public class IndexChangeEvent implements IIndexChangeEvent {
 		fChangeEvent= e;
 	}
 
+	@Override
 	public Set<IIndexFileLocation> getFilesCleared() {
 		return fChangeEvent.fClearedFiles;
 	}
 
+	@Override
 	public Set<IIndexFileLocation> getFilesWritten() {
 		return fChangeEvent.fFilesWritten;
 	}
 
+	@Override
 	public boolean isCleared() {
 		return fChangeEvent.isCleared();
 	}
 
+	@Override
 	public boolean isReloaded() {
 		return fChangeEvent.isReloaded();
 	}
 
+	@Override
 	public boolean hasNewFile() {
 		return fChangeEvent.hasNewFiles();
 	}

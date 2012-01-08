@@ -33,5 +33,6 @@ public interface ICPPTemplateTypeParameter extends ICPPTemplateParameter, IType 
 	 * 
 	 * @since 5.1
 	 */
+	@Override
 	public boolean isSameType(IType type);
 }

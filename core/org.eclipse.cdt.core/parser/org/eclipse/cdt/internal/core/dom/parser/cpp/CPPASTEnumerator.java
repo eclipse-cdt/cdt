@@ -28,10 +28,12 @@ public class CPPASTEnumerator extends ASTEnumerator {
 		super(name, value);
 	}
 	
+	@Override
 	public CPPASTEnumerator copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CPPASTEnumerator copy(CopyStyle style) {
 		CPPASTEnumerator copy = new CPPASTEnumerator();
 		copyAbstractEnumerator(copy, style);

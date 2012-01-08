@@ -162,10 +162,12 @@ public interface IASTUnaryExpression extends IASTExpression {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IASTUnaryExpression copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public IASTUnaryExpression copy(CopyStyle style);
 }

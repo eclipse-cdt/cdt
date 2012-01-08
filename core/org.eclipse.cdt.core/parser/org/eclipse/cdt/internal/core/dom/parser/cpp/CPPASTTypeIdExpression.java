@@ -33,10 +33,12 @@ public class CPPASTTypeIdExpression extends ASTNode implements ICPPASTTypeIdExpr
 		setTypeId(typeId);
 	}
 
+	@Override
 	public CPPASTTypeIdExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CPPASTTypeIdExpression copy(CopyStyle style) {
 		CPPASTTypeIdExpression copy = new CPPASTTypeIdExpression(op, typeId == null ? null
 				: typeId.copy(style));
@@ -47,16 +49,19 @@ public class CPPASTTypeIdExpression extends ASTNode implements ICPPASTTypeIdExpr
 		return copy;
 	}
 
+	@Override
 	public int getOperator() {
         return op;
     }
 
-    public void setOperator(int value) {
+    @Override
+	public void setOperator(int value) {
         assertNotFrozen();
         this.op = value;
     }
 
-    public void setTypeId(IASTTypeId typeId) {
+    @Override
+	public void setTypeId(IASTTypeId typeId) {
         assertNotFrozen();
        this.typeId = typeId;
        if (typeId != null) {
@@ -65,7 +70,8 @@ public class CPPASTTypeIdExpression extends ASTNode implements ICPPASTTypeIdExpr
        } 
     }
 
-    public IASTTypeId getTypeId() {
+    @Override
+	public IASTTypeId getTypeId() {
         return typeId;
     }
 
@@ -91,6 +97,7 @@ public class CPPASTTypeIdExpression extends ASTNode implements ICPPASTTypeIdExpr
         return true;
     }
     
+	@Override
 	public IType getExpressionType() {
 		switch (getOperator()) {
 		case op_sizeof:
@@ -117,6 +124,7 @@ public class CPPASTTypeIdExpression extends ASTNode implements ICPPASTTypeIdExpr
 		return CPPVisitor.createType(getTypeId());
 	}
 
+	@Override
 	public boolean isLValue() {
 		switch (getOperator()) {
 		case op_typeid:
@@ -125,6 +133,7 @@ public class CPPASTTypeIdExpression extends ASTNode implements ICPPASTTypeIdExpr
 		return false;
 	}
 
+	@Override
 	public ValueCategory getValueCategory() {
 		return isLValue() ? LVALUE : PRVALUE;
 	}

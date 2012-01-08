@@ -63,11 +63,13 @@ public interface ICPPASTTemplatedTypeTemplateParameter extends ICPPASTTemplatePa
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICPPASTTemplatedTypeTemplateParameter copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICPPASTTemplatedTypeTemplateParameter copy(CopyStyle style);
 
 	/**

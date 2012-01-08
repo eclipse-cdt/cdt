@@ -34,11 +34,13 @@ public class CPPFunctionTemplateSpecialization extends CPPFunctionSpecialization
 		super(original, owner, argumentMap);
 	}
 
+	@Override
 	public ICPPTemplateParameter[] getTemplateParameters() {
 		ICPPFunctionTemplate template = (ICPPFunctionTemplate) getSpecializedBinding();
 		return template.getTemplateParameters();
 	}
 
+	@Override
 	public synchronized final void addInstance(ICPPTemplateArgument[] arguments, ICPPTemplateInstance instance) {
 		if (instances == null)
 			instances = new ObjectMap(2);
@@ -46,6 +48,7 @@ public class CPPFunctionTemplateSpecialization extends CPPFunctionSpecialization
 		instances.put(key, instance);
 	}
 
+	@Override
 	public synchronized final ICPPTemplateInstance getInstance(ICPPTemplateArgument[] arguments) {
 		if (instances != null) {
 			String key= ASTTypeUtil.getArgumentListString(arguments, true);
@@ -54,6 +57,7 @@ public class CPPFunctionTemplateSpecialization extends CPPFunctionSpecialization
 		return null;
 	}
 	
+	@Override
 	public synchronized ICPPTemplateInstance[] getAllInstances() {
 		if (instances != null) {
 			ICPPTemplateInstance[] result= new ICPPTemplateInstance[instances.size()];
@@ -65,6 +69,7 @@ public class CPPFunctionTemplateSpecialization extends CPPFunctionSpecialization
 		return ICPPTemplateInstance.EMPTY_TEMPLATE_INSTANCE_ARRAY;
 	}
 	
+	@Override
 	public IBinding resolveTemplateParameter(ICPPTemplateParameter param) {
 		return param;
 	}

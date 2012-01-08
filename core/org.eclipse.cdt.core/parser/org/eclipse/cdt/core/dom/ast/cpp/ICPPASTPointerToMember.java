@@ -46,6 +46,7 @@ public interface ICPPASTPointerToMember extends IASTPointer, IASTNameOwner {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICPPASTPointerToMember copy();
 
 }

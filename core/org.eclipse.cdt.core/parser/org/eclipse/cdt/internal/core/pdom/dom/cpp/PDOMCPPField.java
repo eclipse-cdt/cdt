@@ -47,10 +47,12 @@ class PDOMCPPField extends PDOMCPPVariable implements ICPPField {
 		return IIndexCPPBindingConstants.CPPFIELD;
 	}
 	
+	@Override
 	public ICPPClassType getClassOwner() {
 		return (ICPPClassType) getOwner();
 	}
 
+	@Override
 	public int getVisibility() {
 		return PDOMCPPAnnotation.getVisibility(getByte(record + ANNOTATIONS));
 	}
@@ -88,6 +90,7 @@ class PDOMCPPField extends PDOMCPPVariable implements ICPPField {
 		return false; 
 	}
 
+	@Override
 	public ICompositeType getCompositeTypeOwner() {
 		return getClassOwner();
 	}

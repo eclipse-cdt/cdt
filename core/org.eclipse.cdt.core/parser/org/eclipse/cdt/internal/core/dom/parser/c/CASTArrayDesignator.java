@@ -35,10 +35,12 @@ public class CASTArrayDesignator extends ASTNode implements
 		setSubscriptExpression(exp);
 	}
 
+	@Override
 	public CASTArrayDesignator copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CASTArrayDesignator copy(CopyStyle style) {
 		CASTArrayDesignator copy = new CASTArrayDesignator(exp == null ? null : exp.copy(style));
 		copy.setOffsetAndLength(this);
@@ -48,11 +50,13 @@ public class CASTArrayDesignator extends ASTNode implements
 		return copy;
 	}
 	
-    public IASTExpression getSubscriptExpression() {
+    @Override
+	public IASTExpression getSubscriptExpression() {
         return exp;
     }
 
-    public void setSubscriptExpression(IASTExpression value) {
+    @Override
+	public void setSubscriptExpression(IASTExpression value) {
         assertNotFrozen();
         exp = value;
         if(value != null) {
@@ -79,7 +83,8 @@ public class CASTArrayDesignator extends ASTNode implements
 		return true;
     }
 
-    public void replace(IASTNode child, IASTNode other) {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
         if( child == exp )
         {
             other.setPropertyInParent( child.getPropertyInParent() );

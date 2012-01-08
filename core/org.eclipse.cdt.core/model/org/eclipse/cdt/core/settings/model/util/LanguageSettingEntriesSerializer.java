@@ -103,25 +103,25 @@ public class LanguageSettingEntriesSerializer {
 
 		
 		switch(kind){
-		case ICLanguageSettingEntry.INCLUDE_PATH:
+		case ICSettingEntry.INCLUDE_PATH:
 			return new CIncludePathEntry(name, flags);
-		case ICLanguageSettingEntry.INCLUDE_FILE:
+		case ICSettingEntry.INCLUDE_FILE:
 			return new CIncludeFileEntry(name, flags);
-		case ICLanguageSettingEntry.MACRO:
+		case ICSettingEntry.MACRO:
 			String value = el.getAttribute(ATTRIBUTE_VALUE);
 			return new CMacroEntry(name, value, flags);
-		case ICLanguageSettingEntry.MACRO_FILE:
+		case ICSettingEntry.MACRO_FILE:
 			return new CMacroFileEntry(name, flags);
-		case ICLanguageSettingEntry.LIBRARY_PATH:
+		case ICSettingEntry.LIBRARY_PATH:
 			return new CLibraryPathEntry(name, flags);
-		case ICLanguageSettingEntry.LIBRARY_FILE:
+		case ICSettingEntry.LIBRARY_FILE:
 			IPath srcPath = loadPath(el, ATTRIBUTE_SOURCE_ATTACHMENT_PATH);
 			IPath srcRootPath = loadPath(el, ATTRIBUTE_SOURCE_ATTACHMENT_ROOT_PATH);
 			IPath srcPrefixMapping = loadPath(el, ATTRIBUTE_SOURCE_ATTACHMENT_PREFIX_MAPPING);
 			return new CLibraryFileEntry(name, flags, srcPath, srcRootPath, srcPrefixMapping);
-		case ICLanguageSettingEntry.OUTPUT_PATH:
+		case ICSettingEntry.OUTPUT_PATH:
 			return new COutputEntry(name, loadExclusions(el), flags);
-		case ICLanguageSettingEntry.SOURCE_PATH:
+		case ICSettingEntry.SOURCE_PATH:
 			return new CSourceEntry(name, loadExclusions(el), flags);
 		}
 		return null;
@@ -183,16 +183,16 @@ public class LanguageSettingEntriesSerializer {
 		element.setAttribute(ATTRIBUTE_FLAGS, flags);
 		element.setAttribute(ATTRIBUTE_NAME, name);
 		switch(entry.getKind()){
-		case ICLanguageSettingEntry.MACRO:
+		case ICSettingEntry.MACRO:
 			String value = entry.getValue();
 			element.setAttribute(ATTRIBUTE_VALUE, value);
 			break;
-		case ICLanguageSettingEntry.SOURCE_PATH:
-		case ICLanguageSettingEntry.OUTPUT_PATH:
+		case ICSettingEntry.SOURCE_PATH:
+		case ICSettingEntry.OUTPUT_PATH:
 			IPath paths[] = ((ICExclusionPatternPathEntry)entry).getExclusionPatterns();
 			storeExclusions(element, paths);
 			break;
-		case ICLanguageSettingEntry.LIBRARY_FILE:
+		case ICSettingEntry.LIBRARY_FILE:
 			ICLibraryFileEntry libFile = (ICLibraryFileEntry)entry;
 			IPath path = libFile.getSourceAttachmentPath();
 			if(path != null)
@@ -210,21 +210,21 @@ public class LanguageSettingEntriesSerializer {
 	
 	public static String kindToString(int kind){
 		switch(kind){
-		case ICLanguageSettingEntry.INCLUDE_PATH:
+		case ICSettingEntry.INCLUDE_PATH:
 			return INCLUDE_PATH;
-		case ICLanguageSettingEntry.INCLUDE_FILE:
+		case ICSettingEntry.INCLUDE_FILE:
 			return INCLUDE_FILE;
-		case ICLanguageSettingEntry.MACRO:
+		case ICSettingEntry.MACRO:
 			return MACRO;
-		case ICLanguageSettingEntry.MACRO_FILE:
+		case ICSettingEntry.MACRO_FILE:
 			return MACRO_FILE;
-		case ICLanguageSettingEntry.LIBRARY_PATH:
+		case ICSettingEntry.LIBRARY_PATH:
 			return LIBRARY_PATH;
-		case ICLanguageSettingEntry.LIBRARY_FILE:
+		case ICSettingEntry.LIBRARY_FILE:
 			return LIBRARY_FILE;
-		case ICLanguageSettingEntry.SOURCE_PATH:
+		case ICSettingEntry.SOURCE_PATH:
 			return SOURCE_PATH;
-		case ICLanguageSettingEntry.OUTPUT_PATH:
+		case ICSettingEntry.OUTPUT_PATH:
 			return OUTPUT_PATH;
 		}
 		throw new IllegalArgumentException();
@@ -232,49 +232,49 @@ public class LanguageSettingEntriesSerializer {
 
 	public static int stringToKind(String kind){
 		if(INCLUDE_PATH.equals(kind))
-			return ICLanguageSettingEntry.INCLUDE_PATH;
+			return ICSettingEntry.INCLUDE_PATH;
 		if(INCLUDE_FILE.equals(kind))
-			return ICLanguageSettingEntry.INCLUDE_FILE;
+			return ICSettingEntry.INCLUDE_FILE;
 		if(MACRO.equals(kind))
-			return ICLanguageSettingEntry.MACRO;
+			return ICSettingEntry.MACRO;
 		if(MACRO_FILE.equals(kind))
-			return ICLanguageSettingEntry.MACRO_FILE;
+			return ICSettingEntry.MACRO_FILE;
 		if(LIBRARY_PATH.equals(kind))
-			return ICLanguageSettingEntry.LIBRARY_PATH;
+			return ICSettingEntry.LIBRARY_PATH;
 		if(LIBRARY_FILE.equals(kind))
-			return ICLanguageSettingEntry.LIBRARY_FILE;
+			return ICSettingEntry.LIBRARY_FILE;
 		if(SOURCE_PATH.equals(kind))
-			return ICLanguageSettingEntry.SOURCE_PATH;
+			return ICSettingEntry.SOURCE_PATH;
 		if(OUTPUT_PATH.equals(kind))
-			return ICLanguageSettingEntry.OUTPUT_PATH;
+			return ICSettingEntry.OUTPUT_PATH;
 		return 0;
 //		throw new UnsupportedOperationException();
 	}
 
 	public static String composeFlagsString(int flags){
 		StringBuffer buf = new StringBuffer();
-		if((flags & ICLanguageSettingEntry.BUILTIN) != 0){
+		if((flags & ICSettingEntry.BUILTIN) != 0){
 			buf.append(BUILTIN);
 		}
-		if((flags & ICLanguageSettingEntry.READONLY) != 0){
+		if((flags & ICSettingEntry.READONLY) != 0){
 			if(buf.length() != 0)
 				buf.append(FLAGS_SEPARATOR);
 			
 			buf.append(READONLY);
 		}
-		if((flags & ICLanguageSettingEntry.LOCAL) != 0){
+		if((flags & ICSettingEntry.LOCAL) != 0){
 			if(buf.length() != 0)
 				buf.append(FLAGS_SEPARATOR);
 			
 			buf.append(LOCAL);
 		}
-		if((flags & ICLanguageSettingEntry.VALUE_WORKSPACE_PATH) != 0){
+		if((flags & ICSettingEntry.VALUE_WORKSPACE_PATH) != 0){
 			if(buf.length() != 0)
 				buf.append(FLAGS_SEPARATOR);
 			
 			buf.append(VALUE_WORKSPACE_PATH);
 		}
-		if((flags & ICLanguageSettingEntry.RESOLVED) != 0){
+		if((flags & ICSettingEntry.RESOLVED) != 0){
 			if(buf.length() != 0)
 				buf.append(FLAGS_SEPARATOR);
 			
@@ -293,15 +293,15 @@ public class LanguageSettingEntriesSerializer {
 		while(tokenizer.hasMoreElements()){
 			f = tokenizer.nextToken();
 			if(BUILTIN.equals(f))
-				flags |= ICLanguageSettingEntry.BUILTIN; 
+				flags |= ICSettingEntry.BUILTIN; 
 			if(READONLY.equals(f))
-				flags |= ICLanguageSettingEntry.READONLY; 
+				flags |= ICSettingEntry.READONLY; 
 			if(LOCAL.equals(f))
-				flags |= ICLanguageSettingEntry.LOCAL; 
+				flags |= ICSettingEntry.LOCAL; 
 			if(VALUE_WORKSPACE_PATH.equals(f))
-				flags |= ICLanguageSettingEntry.VALUE_WORKSPACE_PATH; 
+				flags |= ICSettingEntry.VALUE_WORKSPACE_PATH; 
 			if(RESOLVED.equals(f))
-				flags |= ICLanguageSettingEntry.RESOLVED; 
+				flags |= ICSettingEntry.RESOLVED; 
 		}
 		
 		return flags;

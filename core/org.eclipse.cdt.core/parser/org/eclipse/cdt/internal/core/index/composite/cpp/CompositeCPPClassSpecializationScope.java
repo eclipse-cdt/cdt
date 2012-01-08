@@ -39,18 +39,22 @@ public class CompositeCPPClassSpecializationScope extends CompositeScope impleme
 		return (ICPPClassSpecialization) cf.getCompositeBinding(rbinding);
 	}
 
+	@Override
 	public ICPPClassType getOriginalClassType() {
 		return specialization().getSpecializedBinding();
 	}
 
+	@Override
 	public EScopeKind getKind() {
 		return EScopeKind.eClassType;
 	}
 
+	@Override
 	public ICPPClassSpecialization getClassType() {
 		return (ICPPClassSpecialization) cf.getCompositeBinding(rbinding);
 	}
 
+	@Override
 	public IIndexBinding getScopeBinding() {
 		return (IIndexBinding) getClassType();
 	}
@@ -61,52 +65,62 @@ public class CompositeCPPClassSpecializationScope extends CompositeScope impleme
 		}
 	}
 
+	@Override
 	public ICPPMethod[] getImplicitMethods() {
 		createDelegate();
 		return fDelegate.getImplicitMethods();
 	}
 
+	@Override
 	public IBinding[] find(String name) {
 		createDelegate();
 		return fDelegate.find(name);
 	}
 
+	@Override
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet acceptLocalBindings) {
 		createDelegate();
 		return fDelegate.getBinding(name, resolve, acceptLocalBindings);
 	}
 
+	@Override
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup,
 			IIndexFileSet acceptLocalBindings) {
 		createDelegate();
 		return fDelegate.getBindings(name, resolve, prefixLookup, acceptLocalBindings);
 	}
 
+	@Override
 	public ICPPConstructor[] getConstructors() {
 		createDelegate();
 		return fDelegate.getConstructors();
 	}
 
+	@Override
 	public ICPPMethod[] getDeclaredMethods() {
 		createDelegate();
 		return fDelegate.getDeclaredMethods();
 	}
 
+	@Override
 	public ICPPBase[] getBases() {
 		createDelegate();
 		return fDelegate.getBases();
 	}
 
+	@Override
 	public ICPPField[] getDeclaredFields() {
 		createDelegate();
 		return fDelegate.getDeclaredFields();
 	}
 
+	@Override
 	public IBinding[] getFriends() {
 		createDelegate();
 		return fDelegate.getFriends();
 	}
 
+	@Override
 	public ICPPClassType[] getNestedClasses() {
 		createDelegate();
 		return fDelegate.getNestedClasses();

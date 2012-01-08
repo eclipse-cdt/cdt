@@ -150,7 +150,7 @@ public class CStructure extends PlatformObject implements ICompositeType, ICInte
 		}
 		ICASTCompositeTypeSpecifier compSpec = (ICASTCompositeTypeSpecifier) definition.getParent();
 		IField[] fields = collectFields(compSpec, null);
-		return (IField[]) ArrayUtil.trim(IField.class, fields);
+		return ArrayUtil.trim(IField.class, fields);
 	}
 
 	private IField[] collectFields(ICASTCompositeTypeSpecifier compSpec, IField[] fields) {
@@ -251,7 +251,7 @@ public class CStructure extends PlatformObject implements ICompositeType, ICInte
 			declarations[0] = decl;
 			decl = first;
 		}
-		declarations = (IASTName[]) ArrayUtil.append(IASTName.class, declarations, decl);
+		declarations = ArrayUtil.append(IASTName.class, declarations, decl);
 	}
 
 	@Override

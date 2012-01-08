@@ -49,10 +49,12 @@ public class CPPASTAmbiguousCondition extends ASTAmbiguousNode implements IASTAm
 		}
 	}
 
+	@Override
 	public IASTExpression copy() {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public IASTExpression copy(CopyStyle style) {
 		throw new UnsupportedOperationException();
 	}

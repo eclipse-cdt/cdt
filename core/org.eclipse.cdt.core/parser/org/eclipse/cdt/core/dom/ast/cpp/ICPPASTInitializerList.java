@@ -21,10 +21,12 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
  */
 public interface ICPPASTInitializerList extends IASTInitializerList, ICPPASTPackExpandable {
 
+	@Override
 	ICPPASTInitializerList copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	ICPPASTInitializerList copy(CopyStyle style);
 }

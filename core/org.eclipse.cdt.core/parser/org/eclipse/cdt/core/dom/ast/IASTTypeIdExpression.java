@@ -169,10 +169,12 @@ public interface IASTTypeIdExpression extends IASTExpression {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IASTTypeIdExpression copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public IASTTypeIdExpression copy(CopyStyle style);
 }

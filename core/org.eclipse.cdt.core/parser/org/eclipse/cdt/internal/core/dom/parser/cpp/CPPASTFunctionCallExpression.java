@@ -66,10 +66,12 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
 		setArguments(args);
 	}
 
+	@Override
 	public CPPASTFunctionCallExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CPPASTFunctionCallExpression copy(CopyStyle style) {
 		IASTInitializerClause[] args = null;
 		if (fArguments.length > 0) {
@@ -88,10 +90,12 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
 		return copy;
 	}
 	
-    public IASTExpression getFunctionNameExpression() {
+    @Override
+	public IASTExpression getFunctionNameExpression() {
         return functionName;
     }
 
+	@Override
 	public void setFunctionNameExpression(IASTExpression expression) {
         assertNotFrozen();
         this.functionName = expression;
@@ -101,11 +105,13 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
 		}
     }
 	
+	@Override
 	public IASTInitializerClause[] getArguments() {
         return fArguments;
     }
 
-    public void setArguments(IASTInitializerClause[] arguments) {
+    @Override
+	public void setArguments(IASTInitializerClause[] arguments) {
         assertNotFrozen();
         if (arguments == null) {
         	fArguments= IASTExpression.EMPTY_EXPRESSION_ARRAY;
@@ -118,7 +124,8 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
 		}
     }
 
-    public IASTImplicitName[] getImplicitNames() {
+    @Override
+	public IASTImplicitName[] getImplicitNames() {
     	if (implicitNames == null) {
     		ICPPFunction overload = getOperator();
 			if (overload == null)
@@ -206,6 +213,7 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
         return true;
     }
 
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
 		if (child == functionName) {
 			other.setPropertyInParent(child.getPropertyInParent());
@@ -247,7 +255,8 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
     	return overload;
     }
     
-    public IType getExpressionType() {
+    @Override
+	public IType getExpressionType() {
 		// Handle explicit type conversion in functional notation.
     	IType t= isExplicitTypeConversion();
     	if (t != null) {
@@ -290,10 +299,12 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
 		return null;
 	}
 
+	@Override
 	public boolean isLValue() {
     	return getValueCategory() == LVALUE;
 	}
     
+	@Override
 	public ValueCategory getValueCategory() {
 		if (isExplicitTypeConversion() != null) 
 			return PRVALUE;
@@ -317,6 +328,7 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
 		return ValueCategory.PRVALUE;
     }
 	
+	@Override
 	@Deprecated
     public IASTExpression getParameterExpression() {
     	if (fArguments.length == 0)
@@ -339,6 +351,7 @@ public class CPPASTFunctionCallExpression extends ASTNode implements
         return result;
     }
 
+	@Override
 	@Deprecated
     public void setParameterExpression(IASTExpression expression) {
         assertNotFrozen();

@@ -52,7 +52,8 @@ public class CPPTypedefSpecialization extends CPPSpecialization implements IType
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.ITypedef#getType()
      */
-    public IType getType() {
+    @Override
+	public IType getType() {
     	return getType(MAX_TYPE_NESTING);
     }
     
@@ -114,7 +115,8 @@ public class CPPTypedefSpecialization extends CPPSpecialization implements IType
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
      */
-    public boolean isSameType(IType o) {
+    @Override
+	public boolean isSameType(IType o) {
         if (o == this)
             return true;
 	    if (o instanceof ITypedef) {
@@ -130,6 +132,7 @@ public class CPPTypedefSpecialization extends CPPSpecialization implements IType
 	    return false;
     }
 
+	@Override
 	public void setType(IType type) {
 		this.type = type;
 	}

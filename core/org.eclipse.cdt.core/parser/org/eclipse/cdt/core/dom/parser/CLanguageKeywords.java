@@ -49,6 +49,7 @@ public class CLanguageKeywords implements ICLanguageKeywords {
 		this.config = config;
 	}
 	
+	@Override
 	public String[] getKeywords() {
 		if (keywords == null) {
 			Set<String> keywordSet = new HashSet<String>(KeywordSets.getKeywords(KeywordSetKey.KEYWORDS, language));
@@ -64,6 +65,7 @@ public class CLanguageKeywords implements ICLanguageKeywords {
 		return keywords;
 	}
 	
+	@Override
 	public String[] getBuiltinTypes() {
 		if (builtinTypes == null) {
 			Set<String> types = KeywordSets.getKeywords(KeywordSetKey.TYPES, language);
@@ -72,6 +74,7 @@ public class CLanguageKeywords implements ICLanguageKeywords {
 		return builtinTypes;
 	}
 
+	@Override
 	public String[] getPreprocessorKeywords() {
 		if (preprocessorKeywords == null) {
 			Set<String> keywords = new HashSet<String>(KeywordSets.getKeywords(KeywordSetKey.PP_DIRECTIVE, language));

@@ -75,11 +75,13 @@ public interface IASTEnumerationSpecifier extends IASTDeclSpecifier, IASTNameOwn
 		/**
 		 * @since 5.1
 		 */
+		@Override
 		public IASTEnumerator copy();
 
 		/**
 		 * @since 5.3
 		 */
+		@Override
 		public IASTEnumerator copy(CopyStyle style);
 
 	}
@@ -129,10 +131,12 @@ public interface IASTEnumerationSpecifier extends IASTDeclSpecifier, IASTNameOwn
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IASTEnumerationSpecifier copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public IASTEnumerationSpecifier copy(CopyStyle style);
 }

@@ -36,12 +36,15 @@ public final class CollectionUtils {
 		return new Iterator<T>() {	
 			ListIterator<T> iterator = list.listIterator(list.size());
 			
+			@Override
 			public boolean hasNext() {
 				return iterator.hasPrevious();
 			}
+			@Override
 			public T next() {
 				return iterator.previous();
 			}
+			@Override
 			public void remove() {
 				throw new UnsupportedOperationException("remove() not supported"); //$NON-NLS-1$
 			}
@@ -80,6 +83,7 @@ public final class CollectionUtils {
 			throw new NullPointerException("iter parameter is null"); //$NON-NLS-1$
 			
 		return new Iterable<T>() {
+			@Override
 			public Iterator<T> iterator() {
 				return iter;
 			}

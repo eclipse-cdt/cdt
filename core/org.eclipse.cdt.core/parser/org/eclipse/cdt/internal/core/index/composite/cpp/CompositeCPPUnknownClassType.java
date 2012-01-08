@@ -34,6 +34,7 @@ class CompositeCPPUnknownClassType extends CompositeCPPUnknownBinding implements
 		super(cf, rbinding);
 	}
 
+	@Override
 	public IField findField(String name) {
 		IField preResult = ((ICPPClassType) rbinding).findField(name);
 		return (IField) cf.getCompositeBinding((IIndexFragmentBinding)preResult);
@@ -42,6 +43,7 @@ class CompositeCPPUnknownClassType extends CompositeCPPUnknownBinding implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getBases()
 	 */
+	@Override
 	public ICPPBase[] getBases() {
 		return ICPPBase.EMPTY_BASE_ARRAY;
 	}
@@ -49,6 +51,7 @@ class CompositeCPPUnknownClassType extends CompositeCPPUnknownBinding implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getFields()
 	 */
+	@Override
 	public IField[] getFields() {
 		return IField.EMPTY_FIELD_ARRAY;
 	}
@@ -56,6 +59,7 @@ class CompositeCPPUnknownClassType extends CompositeCPPUnknownBinding implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getDeclaredFields()
 	 */
+	@Override
 	public ICPPField[] getDeclaredFields() {
 		return ICPPField.EMPTY_CPPFIELD_ARRAY;
 	}
@@ -63,6 +67,7 @@ class CompositeCPPUnknownClassType extends CompositeCPPUnknownBinding implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getMethods()
 	 */
+	@Override
 	public ICPPMethod[] getMethods() {
 		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 	}
@@ -70,6 +75,7 @@ class CompositeCPPUnknownClassType extends CompositeCPPUnknownBinding implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getAllDeclaredMethods()
 	 */
+	@Override
 	public ICPPMethod[] getAllDeclaredMethods() {
 		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 	}
@@ -77,6 +83,7 @@ class CompositeCPPUnknownClassType extends CompositeCPPUnknownBinding implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getDeclaredMethods()
 	 */
+	@Override
 	public ICPPMethod[] getDeclaredMethods() {
 		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 	}
@@ -84,6 +91,7 @@ class CompositeCPPUnknownClassType extends CompositeCPPUnknownBinding implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getConstructors()
 	 */
+	@Override
 	public ICPPConstructor[] getConstructors() {
 		return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
 	}
@@ -91,10 +99,12 @@ class CompositeCPPUnknownClassType extends CompositeCPPUnknownBinding implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getFriends()
 	 */
+	@Override
 	public IBinding[] getFriends() {
 		return IBinding.EMPTY_BINDING_ARRAY;
 	}
 
+	@Override
 	public ICPPClassType[] getNestedClasses() {
 		ICPPClassType[] result = ((ICPPClassType) rbinding).getNestedClasses();
 		for (int i = 0; i < result.length; i++) {
@@ -103,14 +113,17 @@ class CompositeCPPUnknownClassType extends CompositeCPPUnknownBinding implements
 		return result;
 	}
 
+	@Override
 	public IScope getCompositeScope() {
 		return new CompositeCPPClassScope(cf, rbinding);
 	}
 
+	@Override
 	public int getKey() {
 		return ((ICPPClassType) rbinding).getKey();
 	}
 
+	@Override
 	public boolean isSameType(IType type) {
 		return ((ICPPClassType) rbinding).isSameType(type);
 	}
@@ -123,6 +136,7 @@ class CompositeCPPUnknownClassType extends CompositeCPPUnknownBinding implements
     	return unknownScope;
     }
 
+	@Override
 	public boolean isAnonymous() {
 		return false;
 	}

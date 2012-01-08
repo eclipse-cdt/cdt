@@ -40,11 +40,13 @@ public interface ICPPASTFieldReference extends IASTFieldReference, IASTImplicitN
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICPPASTFieldReference copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICPPASTFieldReference copy(CopyStyle style);
 
 	/**

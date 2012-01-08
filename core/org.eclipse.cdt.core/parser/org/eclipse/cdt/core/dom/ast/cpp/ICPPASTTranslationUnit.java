@@ -30,10 +30,12 @@ public interface ICPPASTTranslationUnit extends IASTTranslationUnit {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICPPASTTranslationUnit copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICPPASTTranslationUnit copy(CopyStyle style);
 }

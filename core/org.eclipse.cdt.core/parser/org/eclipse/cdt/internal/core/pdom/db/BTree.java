@@ -633,10 +633,14 @@ public class BTree {
 
 		public String getMsg() { return msg; }
 		public boolean isValid() { return valid; }
+		@Override
 		public void postNode(long node) throws CoreException { depth--; }
+		@Override
 		public int compare(long record) throws CoreException { return 0; }
+		@Override
 		public boolean visit(long record) throws CoreException { return true; }
 
+		@Override
 		public void preNode(long node) throws CoreException {
 			depth++;
 

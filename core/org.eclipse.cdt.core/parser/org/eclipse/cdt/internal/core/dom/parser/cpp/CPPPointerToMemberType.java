@@ -67,6 +67,7 @@ public class CPPPointerToMemberType extends CPPPointerType implements ICPPPointe
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType#getMemberOfClass()
 	 */
+	@Override
 	public IType getMemberOfClass() {
 		if (classType == null) {
 			IASTName name;

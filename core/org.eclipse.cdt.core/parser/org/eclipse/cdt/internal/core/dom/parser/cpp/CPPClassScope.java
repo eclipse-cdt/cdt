@@ -249,16 +249,16 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	    if ((!prefixLookup && CharArrayUtils.equals(c, compName.getLookupKey()))
 				|| (prefixLookup && ContentAssistMatcherFactory.getInstance().match(c, compName.getLookupKey()))) {
 	        if (shallReturnConstructors(name, prefixLookup)) {
-	            result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, getConstructors(name, resolve));
+	            result = ArrayUtil.addAll(IBinding.class, result, getConstructors(name, resolve));
 	        }
             //9.2 ... The class-name is also inserted into the scope of the class itself
-            result = (IBinding[]) ArrayUtil.append(IBinding.class, result, compName.resolveBinding());
+            result = ArrayUtil.append(IBinding.class, result, compName.resolveBinding());
             if (!prefixLookup)
-            	return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
+            	return ArrayUtil.trim(IBinding.class, result);
 	    }
-	    result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result,
+	    result = ArrayUtil.addAll(IBinding.class, result,
 	    		super.getBindings(name, resolve, prefixLookup, fileSet, checkPointOfDecl));
-	    return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
+	    return ArrayUtil.trim(IBinding.class, result);
 	}
 
 	static protected boolean shouldResolve(boolean force, IASTName candidate, IASTName forName) {
@@ -295,7 +295,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
         				IASTName n = (IASTName) obj;
         				binding = shouldResolve(forceResolve, n, forName) ? n.resolveBinding() : n.getBinding();
         				if (binding instanceof ICPPConstructor) {
-    						bs = (IBinding[]) ArrayUtil.append(ICPPConstructor.class, bs, binding);
+    						bs = ArrayUtil.append(ICPPConstructor.class, bs, binding);
         				}
         			} else if (obj instanceof ICPPConstructor) {
 						bs = (IBinding[]) ArrayUtil.append(ICPPConstructor.class, bs, obj);

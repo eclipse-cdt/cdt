@@ -73,10 +73,12 @@ public interface IASTExpression extends IASTInitializerClause {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IASTExpression copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public IASTExpression copy(CopyStyle style);
 }

@@ -24,6 +24,7 @@ public class CPPTemplateTemplateParameterScope extends CPPScope {
 		super(parameter);
 	}
 
+	@Override
 	public EScopeKind getKind() {
 		return EScopeKind.eLocal;
 	}

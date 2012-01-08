@@ -33,6 +33,7 @@ public class SOMParser extends AbstractCExtension implements IBinaryParser {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IBinaryParser#getBinary(byte[], org.eclipse.core.runtime.IPath)
 	 */
+	@Override
 	public IBinaryFile getBinary(byte[] hints, IPath path) throws IOException {
 		if (path == null) {
 			throw new IOException(CCorePlugin.getResourceString("Util.exception.nullPath")); //$NON-NLS-1$
@@ -82,6 +83,7 @@ public class SOMParser extends AbstractCExtension implements IBinaryParser {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IBinaryParser#getBinary(org.eclipse.core.runtime.IPath)
 	 */
+	@Override
 	public IBinaryFile getBinary(IPath path) throws IOException {
 		return getBinary(null, path);
 	}
@@ -89,6 +91,7 @@ public class SOMParser extends AbstractCExtension implements IBinaryParser {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IBinaryParser#getFormat()
 	 */
+	@Override
 	public String getFormat() {
 		return "SOM"; //$NON-NLS-1$
 	}
@@ -96,6 +99,7 @@ public class SOMParser extends AbstractCExtension implements IBinaryParser {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IBinaryParser#isBinary(byte[], org.eclipse.core.runtime.IPath)
 	 */
+	@Override
 	public boolean isBinary(byte[] hints, IPath path) {
 		return SOM.isSOMHeader(hints) || AR.isARHeader(hints);
 	}
@@ -103,6 +107,7 @@ public class SOMParser extends AbstractCExtension implements IBinaryParser {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IBinaryParser#getHintBufferSize()
 	 */
+	@Override
 	public int getHintBufferSize() {
 		return 512;	// size of file header
 	}

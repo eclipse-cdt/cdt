@@ -71,6 +71,7 @@ public interface ICPPASTTypenameExpression extends ICPPASTSimpleTypeConstructorE
 	 * @param expressionList
 	 *            <code>IASTExpression</code>
 	 */
+	@Override
 	public void setInitialValue(IASTExpression expressionList);
 
 	/**
@@ -78,11 +79,13 @@ public interface ICPPASTTypenameExpression extends ICPPASTSimpleTypeConstructorE
 	 * 
 	 * @return <code>IASTExpression</code>
 	 */
+	@Override
 	public IASTExpression getInitialValue();
 	
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICPPASTTypenameExpression copy();
 
 }

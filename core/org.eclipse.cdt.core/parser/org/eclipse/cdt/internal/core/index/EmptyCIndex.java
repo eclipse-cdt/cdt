@@ -39,136 +39,168 @@ final public class EmptyCIndex implements IIndex {
 	private EmptyCIndex() {
 	}
 
+	@Override
 	public IIndexName[] findDeclarations(IBinding binding) {
 		return IIndexFragmentName.EMPTY_NAME_ARRAY;
 	}
 
+	@Override
 	public IIndexName[] findDefinitions(IBinding binding) {
 		return IIndexFragmentName.EMPTY_NAME_ARRAY;
 	}
 
+	@Override
 	public IIndexName[] findReferences(IBinding binding) {
 		return IIndexFragmentName.EMPTY_NAME_ARRAY;
 	}
 
+	@Override
 	public IIndexName[] findNames(IBinding binding, int flags) {
 		return IIndexFragmentName.EMPTY_NAME_ARRAY;
 	}
 
+	@Override
 	@Deprecated
 	public IIndexFile getFile(int linkageID, IIndexFileLocation location) {
 		return null;
 	}
 
+	@Override
 	public IIndexFile getFile(int linkageID, IIndexFileLocation location,
 			ISignificantMacros significantFiles) throws CoreException {
 		return null;
 	}
 
+	@Override
 	public IIndexFile[] getFiles(int linkageID, IIndexFileLocation location) throws CoreException {
 		return IIndexFile.EMPTY_FILE_ARRAY;
 	}
 
+	@Override
 	public IIndexFile[] getFiles(IIndexFileLocation location) {
 		return IIndexFile.EMPTY_FILE_ARRAY;
 	}
 
+	@Override
 	public IIndexFile resolveInclude(IIndexInclude include) {
 		return null;
 	}
 
+	@Override
 	public IIndexInclude[] findIncludedBy(IIndexFile file) {
 		return IIndexInclude.EMPTY_INCLUDES_ARRAY;
 	}
 
+	@Override
 	public IIndexInclude[] findIncludedBy(IIndexFile file, int depth) {
 		return IIndexInclude.EMPTY_INCLUDES_ARRAY;
 	}
 
+	@Override
 	public IIndexInclude[] findIncludes(IIndexFile file) {
 		return IIndexInclude.EMPTY_INCLUDES_ARRAY;
 	}
 
+	@Override
 	public IIndexInclude[] findIncludes(IIndexFile file, int depth) {
 		return IIndexInclude.EMPTY_INCLUDES_ARRAY;
 	}
 
+	@Override
 	public void acquireReadLock() {
 	}
 
+	@Override
 	public void releaseReadLock() {
 	}
 
+	@Override
 	public boolean hasWaitingReaders() {
 		return false;
 	}
 
+	@Override
 	public long getLastWriteAccess() {
 		return 0;
 	}
 
+	@Override
 	public IIndexBinding findBinding(IName name) {
 		return null;
 	}
 
+	@Override
 	public IIndexBinding[] findBindings(Pattern pattern, boolean isFullyQualified,
 			IndexFilter filter, IProgressMonitor monitor) {
 		return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
 
+	@Override
 	public IIndexBinding[] findBindings(Pattern[] pattern, boolean isFullyQualified,
 			IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
 
+	@Override
 	public IIndexBinding adaptBinding(IBinding binding) {
 		return null;
 	}
 
+	@Override
 	public IIndexBinding[] findBindingsForPrefix(char[] prefix, boolean filescope,
 			IndexFilter filter, IProgressMonitor monitor) {
 		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
 
+	@Override
 	public IIndexBinding[] findBindingsForContentAssist(char[] prefix, boolean filescope,
 			IndexFilter filter, IProgressMonitor monitor) {
 		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
 
+	@Override
 	public IIndexBinding[] findBindings(char[][] names, IndexFilter filter,
 			IProgressMonitor monitor) {
 		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
 
+	@Override
 	public IIndexBinding[] findBindings(char[] names, IndexFilter filter,
 			IProgressMonitor monitor)  {
 		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
 
+	@Override
 	public IIndexMacro[] findMacros(char[] name, IndexFilter filter, IProgressMonitor monitor) {
 		return IIndexMacro.EMPTY_INDEX_MACRO_ARRAY;
 	}
 
+	@Override
 	public IIndexMacro[] findMacrosForPrefix(char[] prefix, IndexFilter filter, IProgressMonitor monitor) {
 		return IIndexMacro.EMPTY_INDEX_MACRO_ARRAY;
 	}
 
+	@Override
 	public IIndexFileSet createFileSet() {
 		return new IndexFileSet();
 	}
 
+	@Override
 	public IIndexFile[] getAllFiles() {
 		return IIndexFile.EMPTY_FILE_ARRAY;
 	}
 
+	@Override
 	public IIndexBinding[] findBindings(char[] name, boolean fileScopeOnly,	IndexFilter filter, IProgressMonitor monitor) {
 		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
 
+	@Override
 	public IIndexBinding[] findMacroContainers(Pattern pattern, IndexFilter filter, IProgressMonitor monitor) {
 		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
 
+	@Override
 	public IScope[] getInlineNamespaces() {
 		return new IScope[0];
 	}

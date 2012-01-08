@@ -81,14 +81,17 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPSpecialization
 		return IIndexCPPBindingConstants.CPP_DEFERRED_CLASS_INSTANCE;
 	}
 	
+	@Override
 	public boolean isExplicitSpecialization() {
 		return false;
 	}
 
+	@Override
 	public IScope getCompositeScope() {
 		return asScope();
 	}
 		
+	@Override
 	public boolean isSameType(IType type) {
 		if (type instanceof ITypedef) {
 			return type.isSameType(this);
@@ -112,6 +115,7 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPSpecialization
 		return false;
 	}
 
+	@Override
 	public ICPPClassTemplate getClassTemplate() {
 		return (ICPPClassTemplate) getSpecializedBinding();
 	}
@@ -129,47 +133,58 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPSpecialization
 		list.accept(visitor);
 	}
 		
-    public ICPPBase[] getBases() {
+    @Override
+	public ICPPBase[] getBases() {
         return ICPPBase.EMPTY_BASE_ARRAY;
     }
 
-    public IField[] getFields() {
+    @Override
+	public IField[] getFields() {
         return IField.EMPTY_FIELD_ARRAY;
     }
 
-    public IField findField(String name) {
+    @Override
+	public IField findField(String name) {
         return null;
     }
 
-    public ICPPField[] getDeclaredFields() {
+    @Override
+	public ICPPField[] getDeclaredFields() {
         return ICPPField.EMPTY_CPPFIELD_ARRAY;
     }
 
-    public ICPPMethod[] getMethods() {
+    @Override
+	public ICPPMethod[] getMethods() {
         return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
     }
 
-    public ICPPMethod[] getAllDeclaredMethods() {
+    @Override
+	public ICPPMethod[] getAllDeclaredMethods() {
         return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
     }
 
-    public ICPPMethod[] getDeclaredMethods() {
+    @Override
+	public ICPPMethod[] getDeclaredMethods() {
         return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
     }
 
-    public ICPPConstructor[] getConstructors() {
+    @Override
+	public ICPPConstructor[] getConstructors() {
         return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
     }
 
-    public IBinding[] getFriends() {
+    @Override
+	public IBinding[] getFriends() {
         return IBinding.EMPTY_BINDING_ARRAY;
     }
 
+	@Override
 	public ICPPClassType[] getNestedClasses() {
 		return ICPPClassType.EMPTY_CLASS_ARRAY;
 	}
 
-    public int getKey(){
+    @Override
+	public int getKey(){
         return getClassTemplate().getKey();
     }
 
@@ -178,6 +193,7 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPSpecialization
 		throw new UnsupportedOperationException(); 
 	}
 
+	@Override
 	public ICPPScope asScope() {
 		if (unknownScope == null) {
 			unknownScope= new PDOMCPPUnknownScope(this, getUnknownName());
@@ -185,14 +201,17 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPSpecialization
 		return unknownScope;
 	}
 
+	@Override
 	public IASTName getUnknownName() {
 		return new CPPASTName(getNameCharArray());
 	}
 
+	@Override
 	public ICPPTemplateDefinition getTemplateDefinition() {
 		return (ICPPTemplateDefinition) getSpecializedBinding();
 	}
 	
+	@Override
 	public ICPPTemplateArgument[] getTemplateArguments() {
 		try {
 			final long rec= getPDOM().getDB().getRecPtr(record+ARGUMENTS);
@@ -203,6 +222,7 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPSpecialization
 		}
 	}
 
+	@Override
 	public boolean isAnonymous() {
 		return false;
 	}
@@ -219,6 +239,7 @@ class PDOMCPPDeferredClassInstance extends PDOMCPPSpecialization
 		return map;
 	}
 	
+	@Override
 	@Deprecated
 	public IType[] getArguments() {
 		return CPPTemplates.getArguments(getTemplateArguments());

@@ -372,7 +372,7 @@ public class ChangeGenerator extends ASTVisitor {
 					DefaultCodeFormatterConstants.FALSE);
 			CodeFormatter formatter = ToolFactory.createCodeFormatter(options);
 			code = document.get();
-			TextEdit[] formatEdits = formatter.format(CCodeFormatter.K_TRANSLATION_UNIT, code,
+			TextEdit[] formatEdits = formatter.format(CodeFormatter.K_TRANSLATION_UNIT, code,
 					regionsAfter, TextUtilities.getDefaultLineDelimiter(document));
 
 			// For each of the regions we apply formatting changes and create a ReplaceEdit using

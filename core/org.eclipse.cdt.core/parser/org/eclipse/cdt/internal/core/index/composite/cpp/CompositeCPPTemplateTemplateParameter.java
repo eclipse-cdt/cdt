@@ -43,27 +43,33 @@ public class CompositeCPPTemplateTemplateParameter extends CompositeCPPBinding
 		super(cf, binding);
 	}
 
+	@Override
 	public IType getDefault() throws DOMException {
 		IType preresult= ((ICPPTemplateTemplateParameter)rbinding).getDefault();
 		return cf.getCompositeType(preresult);
 	}
 
+	@Override
 	public short getParameterPosition() {
 		return ((ICPPTemplateParameter)rbinding).getParameterPosition();
 	}
 
+	@Override
 	public short getTemplateNestingLevel() {
 		return ((ICPPTemplateParameter)rbinding).getTemplateNestingLevel();
 	}
 	
+	@Override
 	public int getParameterID() {
 		return ((ICPPTemplateParameter)rbinding).getParameterID();
 	}
 
+	@Override
 	public boolean isParameterPack() {
 		return ((ICPPTemplateParameter)rbinding).isParameterPack();
 	}
 
+	@Override
 	public boolean isSameType(IType type) {
 		return ((IType)rbinding).isSameType(type);
 	}
@@ -73,6 +79,7 @@ public class CompositeCPPTemplateTemplateParameter extends CompositeCPPBinding
 		fail(); return null; 
 	}
 
+	@Override
 	public ICPPScope asScope() {
 		if (unknownScope == null) {
 			unknownScope= new CompositeCPPUnknownScope(this, getUnknownName());
@@ -80,10 +87,12 @@ public class CompositeCPPTemplateTemplateParameter extends CompositeCPPBinding
 		return unknownScope;
 	}
 
+	@Override
 	public IASTName getUnknownName() {
 		return new CPPASTName(getNameCharArray());
 	}
 	
+	@Override
 	public ICPPTemplateArgument getDefaultValue() {
 		try {
 			return TemplateInstanceUtil.convert(cf, ((ICPPTemplateTemplateParameter)rbinding).getDefaultValue());
@@ -92,66 +101,82 @@ public class CompositeCPPTemplateTemplateParameter extends CompositeCPPBinding
 		}
 	}
 
+	@Override
 	public ICPPTemplateParameter[] getTemplateParameters() {
 		return TemplateInstanceUtil.convert(cf, ((ICPPTemplateTemplateParameter)rbinding).getTemplateParameters());
 	}
 
+	@Override
 	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() {
 		return ICPPClassTemplatePartialSpecialization.EMPTY_PARTIAL_SPECIALIZATION_ARRAY;
 	}
 
+	@Override
 	public IField findField(String name) {
 		return null;
 	}
 
+	@Override
 	public ICPPMethod[] getAllDeclaredMethods() {
 		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 	}
 
+	@Override
 	public ICPPBase[] getBases() {
 		return ICPPBase.EMPTY_BASE_ARRAY;
 	}
 
+	@Override
 	public ICPPConstructor[] getConstructors() {
 		return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
 	}
 
+	@Override
 	public ICPPField[] getDeclaredFields() {
 		return ICPPField.EMPTY_CPPFIELD_ARRAY;
 	}
 
+	@Override
 	public ICPPMethod[] getDeclaredMethods() {
 		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 	}
 
+	@Override
 	public IField[] getFields() {
 		return ICPPField.EMPTY_CPPFIELD_ARRAY;
 	}
 
+	@Override
 	public IBinding[] getFriends() {
 		return IBinding.EMPTY_BINDING_ARRAY;
 	}
 
+	@Override
 	public ICPPMethod[] getMethods() {
 		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 	}
 
+	@Override
 	public ICPPClassType[] getNestedClasses() {
 		return ICPPClassType.EMPTY_CLASS_ARRAY;
 	}
 
+	@Override
 	public IScope getCompositeScope() {
 		return asScope();
 	}
 
+	@Override
 	public int getKey() {
 		return 0;
 	}
 
+	@Override
 	public boolean isAnonymous() {
 		return false;
 	}
 	
+	@Override
 	public ICPPDeferredClassInstance asDeferredInstance() {
 		return null;
 	}

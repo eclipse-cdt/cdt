@@ -61,10 +61,12 @@ public interface ICPPASTUsingDeclaration extends IASTDeclaration, IASTNameOwner 
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICPPASTUsingDeclaration copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICPPASTUsingDeclaration copy(CopyStyle style);
 }

@@ -29,10 +29,12 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 public class CASTExpressionList extends ASTNode implements IASTExpressionList,
         IASTAmbiguityParent {
 
+	@Override
 	public CASTExpressionList copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CASTExpressionList copy(CopyStyle style) {
 		CASTExpressionList copy = new CASTExpressionList();
 		for(IASTExpression expr : getExpressions())
@@ -44,15 +46,17 @@ public class CASTExpressionList extends ASTNode implements IASTExpressionList,
 		return copy;
 	}
 	
-    public IASTExpression[] getExpressions() {
+    @Override
+	public IASTExpression[] getExpressions() {
         if (expressions == null)
             return IASTExpression.EMPTY_EXPRESSION_ARRAY;
-        return (IASTExpression[]) ArrayUtil.trim( IASTExpression.class, expressions );
+        return ArrayUtil.trim( IASTExpression.class, expressions );
     }
 
-    public void addExpression(IASTExpression expression) {
+    @Override
+	public void addExpression(IASTExpression expression) {
         assertNotFrozen();
-        expressions = (IASTExpression[]) ArrayUtil.append( IASTExpression.class, expressions, expression );
+        expressions = ArrayUtil.append( IASTExpression.class, expressions, expression );
         if(expression != null) {
         	expression.setParent(this);
     		expression.setPropertyInParent(NESTED_EXPRESSION);
@@ -92,7 +96,8 @@ public class CASTExpressionList extends ASTNode implements IASTExpressionList,
         return true;
     }
 
-    public void replace(IASTNode child, IASTNode other) {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
         if( expressions == null ) return;
         for (int i = 0; i < expressions.length; ++i) {
             if (child == expressions[i]) {
@@ -103,7 +108,8 @@ public class CASTExpressionList extends ASTNode implements IASTExpressionList,
         }
     }
     
-    public IType getExpressionType() {
+    @Override
+	public IType getExpressionType() {
     	for (int i = expressions.length-1; i >= 0; i--) {
     		IASTExpression expr= expressions[i];
     		if (expr != null)
@@ -112,6 +118,7 @@ public class CASTExpressionList extends ASTNode implements IASTExpressionList,
     	return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
     }
 
+	@Override
 	public boolean isLValue() {
     	for (int i = expressions.length-1; i >= 0; i--) {
     		IASTExpression expr= expressions[i];
@@ -121,6 +128,7 @@ public class CASTExpressionList extends ASTNode implements IASTExpressionList,
     	return false;
 	}
 	
+	@Override
 	public final ValueCategory getValueCategory() {
 		return isLValue() ? ValueCategory.LVALUE : ValueCategory.PRVALUE;
 	}

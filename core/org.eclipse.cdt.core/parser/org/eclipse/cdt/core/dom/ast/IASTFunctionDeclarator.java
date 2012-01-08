@@ -22,10 +22,12 @@ public interface IASTFunctionDeclarator extends IASTDeclarator {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IASTFunctionDeclarator copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public IASTFunctionDeclarator copy(CopyStyle style);
 }

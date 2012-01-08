@@ -29,10 +29,12 @@ public class CPPASTVisibilityLabel extends ASTNode implements ICPPASTVisibilityL
 		this.visibility = visibility;
 	}
 
+	@Override
 	public CPPASTVisibilityLabel copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CPPASTVisibilityLabel copy(CopyStyle style) {
 		CPPASTVisibilityLabel copy = new CPPASTVisibilityLabel(visibility);
 		copy.setOffsetAndLength(this);
@@ -42,11 +44,13 @@ public class CPPASTVisibilityLabel extends ASTNode implements ICPPASTVisibilityL
 		return copy;
 	}
 
+	@Override
 	public int getVisibility() {
         return visibility;
     }
 
-    public void setVisibility(int visibility) {
+    @Override
+	public void setVisibility(int visibility) {
         assertNotFrozen();
         this.visibility = visibility;
     }

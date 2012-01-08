@@ -56,5 +56,6 @@ public interface IASTTypeIdInitializerExpression extends IASTExpression {
 	 */
 	public void setInitializer(IASTInitializer initializer);
 	
+	@Override
 	public IASTTypeIdInitializerExpression copy();
 }

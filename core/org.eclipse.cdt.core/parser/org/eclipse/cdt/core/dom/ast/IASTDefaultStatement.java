@@ -24,10 +24,12 @@ public interface IASTDefaultStatement extends IASTStatement {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IASTDefaultStatement copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public IASTDefaultStatement copy(CopyStyle style);
 }

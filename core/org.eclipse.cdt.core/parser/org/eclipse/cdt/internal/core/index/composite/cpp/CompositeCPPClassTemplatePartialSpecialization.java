@@ -30,19 +30,23 @@ public class CompositeCPPClassTemplatePartialSpecialization extends CompositeCPP
 		super(cf, delegate);
 	}
 
+	@Override
 	public ICPPClassTemplate getPrimaryClassTemplate() {
 		ICPPClassTemplate preresult= ((ICPPClassTemplatePartialSpecialization)rbinding).getPrimaryClassTemplate();
 		return (ICPPClassTemplate) cf.getCompositeBinding((IIndexFragmentBinding)preresult);
 	}
 
+	@Override
 	public IBinding getSpecializedBinding() {
 		return TemplateInstanceUtil.getSpecializedBinding(cf, rbinding);
 	}
 
+	@Override
 	public int getSignatureHash() throws CoreException {
 		return ((IPDOMOverloader) rbinding).getSignatureHash();
 	}
 
+	@Override
 	public ICPPTemplateParameterMap getTemplateParameterMap() {
 		IBinding owner= getOwner();
 		if (owner instanceof ICPPSpecialization) {
@@ -51,15 +55,18 @@ public class CompositeCPPClassTemplatePartialSpecialization extends CompositeCPP
 		return CPPTemplateParameterMap.EMPTY;
 	}
 
+	@Override
 	public ICPPTemplateArgument[] getTemplateArguments() {
 		return TemplateInstanceUtil.getTemplateArguments(cf, (ICPPClassTemplatePartialSpecialization) rbinding);
 	}
 
+	@Override
 	@Deprecated
 	public ObjectMap getArgumentMap() {
 		return TemplateInstanceUtil.getArgumentMap(cf, rbinding);
 	}
 
+	@Override
 	@Deprecated
 	public IType[] getArguments() {
 		return TemplateInstanceUtil.getArguments(cf, (ICPPClassTemplatePartialSpecialization) rbinding);

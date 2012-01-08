@@ -39,6 +39,7 @@ public class StandaloneIndexerFallbackReaderFactory extends AbstractCodeReaderFa
 		super(null);
 	}
 
+	@Override
 	public CodeReader createCodeReaderForInclusion(String path) {
 		try {
 			if (!new File(path).isFile())
@@ -49,6 +50,7 @@ public class StandaloneIndexerFallbackReaderFactory extends AbstractCodeReaderFa
 		}
 	}
 
+	@Override
 	public CodeReader createCodeReaderForTranslationUnit(String path) {
 		try {
 			if (!new File(path).isFile())
@@ -59,10 +61,12 @@ public class StandaloneIndexerFallbackReaderFactory extends AbstractCodeReaderFa
 		}
 	}
 
+	@Override
 	public ICodeReaderCache getCodeReaderCache() {
 		return null;
 	}
 
+	@Override
 	public int getUniqueIdentifier() {
 		return 0;
 	}

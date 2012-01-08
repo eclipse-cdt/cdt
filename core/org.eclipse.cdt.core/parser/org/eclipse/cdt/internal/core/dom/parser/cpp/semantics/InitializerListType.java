@@ -29,6 +29,7 @@ class InitializerListType implements IType {
 		fInitializerList= list;
 	}
 
+	@Override
 	public boolean isSameType(IType type) {
 		return false;
 	}

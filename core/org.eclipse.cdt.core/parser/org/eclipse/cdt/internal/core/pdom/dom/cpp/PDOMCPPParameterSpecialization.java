@@ -65,6 +65,7 @@ class PDOMCPPParameterSpecialization extends PDOMCPPSpecialization implements IC
 		return rec;
 	}
 	
+	@Override
 	public IType getType() {
 		return fType;
 	}
@@ -104,38 +105,47 @@ class PDOMCPPParameterSpecialization extends PDOMCPPSpecialization implements IC
 		return (ICPPParameter) getSpecializedBinding();
 	}
 	
+	@Override
 	public boolean hasDefaultValue() {
 		return getParameter().hasDefaultValue();
 	}
 
+	@Override
 	public boolean isParameterPack() {
 		return getType() instanceof ICPPParameterPackType;
 	}
 
+	@Override
 	public boolean isAuto() {
 		return getParameter().isAuto();
 	}
 
+	@Override
 	public boolean isRegister() {
 		return getParameter().isRegister();
 	}
 
+	@Override
 	public boolean isExtern() {
 		return false;
 	}
 
+	@Override
 	public boolean isExternC() {
 		return false;
 	}
 
+	@Override
 	public boolean isStatic() {
 		return false;
 	}
 
+	@Override
 	public boolean isMutable() {
 		return false;
 	}
 
+	@Override
 	public IValue getInitialValue() {
 		return null;
 	}

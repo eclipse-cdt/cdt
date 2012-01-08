@@ -72,10 +72,12 @@ public interface IGCCASTArrayRangeDesignator extends ICASTDesignator {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IGCCASTArrayRangeDesignator copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public IGCCASTArrayRangeDesignator copy(CopyStyle style);
 }

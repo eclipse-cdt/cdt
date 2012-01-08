@@ -30,5 +30,6 @@ public interface ICPPDeferredClassInstance extends ICPPUnknownClassType, ICPPTem
 	 * arguments of this instance.
 	 * @since 5.1
 	 */
+	@Override
 	public ICPPTemplateParameterMap getTemplateParameterMap();
 }

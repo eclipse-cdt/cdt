@@ -41,6 +41,7 @@ public interface IGPPASTBinaryExpression extends ICPPASTBinaryExpression {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IGPPASTBinaryExpression copy();
 
 }

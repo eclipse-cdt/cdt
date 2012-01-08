@@ -54,6 +54,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 		return (ICPPClassType) super.getSpecializedBinding();
 	}
 	
+	@Override
 	public IBinding specializeMember(IBinding original) {		
 		synchronized(this) {
 			IBinding result= (IBinding) specializationMap.get(original);
@@ -73,10 +74,12 @@ public class CPPClassSpecialization extends CPPSpecialization
 		}
 	}
 	
+	@Override
 	public void checkForDefinition() {
 		// Ambiguity resolution ensures that declarations and definitions are resolved.
 	}
 
+	@Override
 	public ICPPASTCompositeTypeSpecifier getCompositeTypeSpecifier() {
 		IASTNode definition= getDefinition();
 		if (definition != null) {
@@ -89,6 +92,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 		return null;
 	}
 	
+	@Override
 	public ICPPBase[] getBases() {
 		ICPPClassSpecializationScope scope= getSpecializationScope();
 		if (scope == null)
@@ -97,6 +101,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 		return scope.getBases();
 	}
 
+	@Override
 	public ICPPField[] getDeclaredFields() {
 		ICPPClassSpecializationScope scope= getSpecializationScope();
 		if (scope == null)
@@ -105,6 +110,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 		return scope.getDeclaredFields();
 	}
 
+	@Override
 	public ICPPMethod[] getDeclaredMethods() {
 		ICPPClassSpecializationScope scope= getSpecializationScope();
 		if (scope == null)
@@ -113,6 +119,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 		return scope.getDeclaredMethods();
 	}
 
+	@Override
 	public ICPPConstructor[] getConstructors() {
 		ICPPClassSpecializationScope scope= getSpecializationScope();
 		if (scope == null)
@@ -121,6 +128,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 		return scope.getConstructors();
 	}
 
+	@Override
 	public IBinding[] getFriends() {
 		ICPPClassSpecializationScope scope= getSpecializationScope();
 		if (scope == null)
@@ -129,6 +137,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 		return scope.getFriends();
 	}
 	
+	@Override
 	public ICPPClassType[] getNestedClasses() {
 		ICPPClassSpecializationScope scope= getSpecializationScope();
 		if (scope == null)
@@ -137,18 +146,22 @@ public class CPPClassSpecialization extends CPPSpecialization
 		return scope.getNestedClasses();
 	}
 
+	@Override
 	public IField[] getFields() {
 		return ClassTypeHelper.getFields(this);
 	}
 
+	@Override
 	public IField findField(String name) {
 		return ClassTypeHelper.findField(this, name);
 	}
 
+	@Override
 	public ICPPMethod[] getMethods() {
 		return ClassTypeHelper.getMethods(this);
 	}
 
+	@Override
 	public ICPPMethod[] getAllDeclaredMethods() {
 		return ClassTypeHelper.getAllDeclaredMethods(this);
 	}
@@ -156,6 +169,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getKey()
 	 */
+	@Override
 	public int getKey() {
 		if (getDefinition() != null)
 			return getCompositeTypeSpecifier().getKey();
@@ -166,6 +180,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getCompositeScope()
 	 */
+	@Override
 	public ICPPClassScope getCompositeScope() {
 		final ICPPClassScope specScope= getSpecializationScope();
 		if (specScope != null)
@@ -193,6 +208,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
 	 */
+	@Override
 	public boolean isSameType(IType type) {
 		if (type == this)
 			return true;
@@ -211,6 +227,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 		return this;
 	}
 
+	@Override
 	public boolean isAnonymous() {
 		if (getNameCharArray().length > 0) 
 			return false;

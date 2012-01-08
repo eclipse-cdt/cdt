@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
  */
 public interface ICPPTemplateTemplateParameter extends ICPPTemplateParameter, ICPPClassTemplate {
 
+	@Override
 	public ICPPTemplateParameter[] getTemplateParameters();
 	
 	/**
@@ -36,5 +37,6 @@ public interface ICPPTemplateTemplateParameter extends ICPPTemplateParameter, IC
 	 * 
 	 * @since 5.1
 	 */
+	@Override
 	public boolean isSameType(IType type);
 }

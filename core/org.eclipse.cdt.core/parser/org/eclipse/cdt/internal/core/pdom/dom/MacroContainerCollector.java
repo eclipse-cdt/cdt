@@ -79,6 +79,7 @@ public final class MacroContainerCollector implements IBTreeVisitor {
 		monitor= pm;
 	}
 	
+	@Override
 	final public int compare(long record) throws CoreException {
 		if (monitor != null)
 			checkCancelled();
@@ -104,6 +105,7 @@ public final class MacroContainerCollector implements IBTreeVisitor {
 		return cmp;
 	}
 	
+	@Override
 	final public boolean visit(long record) throws CoreException {
 		if (monitor != null)
 			checkCancelled();

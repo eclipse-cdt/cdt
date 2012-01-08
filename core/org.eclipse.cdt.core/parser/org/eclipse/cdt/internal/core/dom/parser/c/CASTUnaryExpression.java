@@ -39,10 +39,12 @@ public class CASTUnaryExpression extends ASTNode implements IASTUnaryExpression,
 		setOperand(operand);
 	}
 
+	@Override
 	public CASTUnaryExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CASTUnaryExpression copy(CopyStyle style) {
 		CASTUnaryExpression copy = new CASTUnaryExpression(operator, operand == null ? null
 				: operand.copy(style));
@@ -53,20 +55,24 @@ public class CASTUnaryExpression extends ASTNode implements IASTUnaryExpression,
 		return copy;
 	}
 
+	@Override
 	public int getOperator() {
         return operator;
     }
 
-    public void setOperator(int value) {
+    @Override
+	public void setOperator(int value) {
         assertNotFrozen();
         this.operator = value;
     }
 
-    public IASTExpression getOperand() {
+    @Override
+	public IASTExpression getOperand() {
         return operand;
     }
 
-    public void setOperand(IASTExpression expression) {
+    @Override
+	public void setOperand(IASTExpression expression) {
         assertNotFrozen();
         operand = expression;
         if (expression != null) {
@@ -97,7 +103,8 @@ public class CASTUnaryExpression extends ASTNode implements IASTUnaryExpression,
         return true;
     }
     
-    public void replace(IASTNode child, IASTNode other) {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
         if( child == operand )
         {
             other.setPropertyInParent( child.getPropertyInParent() );
@@ -106,6 +113,7 @@ public class CASTUnaryExpression extends ASTNode implements IASTUnaryExpression,
         }
     }
     
+	@Override
 	public IType getExpressionType() {
 		int op = getOperator();
 		if (op == op_sizeof) {
@@ -133,6 +141,7 @@ public class CASTUnaryExpression extends ASTNode implements IASTUnaryExpression,
 		return exprType; // return the original
 	}
 
+	@Override
 	public boolean isLValue() {
 		switch (getOperator()) {
 		case op_bracketedPrimary:
@@ -146,6 +155,7 @@ public class CASTUnaryExpression extends ASTNode implements IASTUnaryExpression,
 		}
 	}
 	
+	@Override
 	public final ValueCategory getValueCategory() {
 		return isLValue() ? ValueCategory.LVALUE : ValueCategory.PRVALUE;
 	}

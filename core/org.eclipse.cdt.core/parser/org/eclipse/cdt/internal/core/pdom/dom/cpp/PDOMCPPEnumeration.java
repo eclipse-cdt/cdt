@@ -99,6 +99,7 @@ class PDOMCPPEnumeration extends PDOMCPPBinding implements IPDOMCPPEnumType, IPD
 		return IIndexCPPBindingConstants.CPPENUMERATION;
 	}
 
+	@Override
 	public IEnumerator[] getEnumerators() {
 		return PDOMCPPEnumScope.getEnumerators(this);
 	}
@@ -122,6 +123,7 @@ class PDOMCPPEnumeration extends PDOMCPPBinding implements IPDOMCPPEnumType, IPD
 		return true;
 	}
 
+	@Override
 	public boolean isSameType(IType type) {
 		if (type instanceof ITypedef) {
 			return type.isSameType(this);
@@ -148,6 +150,7 @@ class PDOMCPPEnumeration extends PDOMCPPBinding implements IPDOMCPPEnumType, IPD
 		return false;
 	}
 
+	@Override
 	public long getMinValue() {
 		if (fMinValue != null) {
 			return fMinValue.longValue();
@@ -161,6 +164,7 @@ class PDOMCPPEnumeration extends PDOMCPPBinding implements IPDOMCPPEnumType, IPD
 		return minValue;
 	}
 
+	@Override
 	public long getMaxValue() {
 		if (fMaxValue != null) {
 			return fMaxValue.longValue();
@@ -179,6 +183,7 @@ class PDOMCPPEnumeration extends PDOMCPPBinding implements IPDOMCPPEnumType, IPD
     	throw new IllegalArgumentException("Enums must not be cloned"); //$NON-NLS-1$
     }
 
+	@Override
 	public boolean isScoped() {
 		try {
 			return getDB().getByte(record + OFFSET_FLAGS) != 0;
@@ -187,6 +192,7 @@ class PDOMCPPEnumeration extends PDOMCPPBinding implements IPDOMCPPEnumType, IPD
 		}
 	}
 
+	@Override
 	public IType getFixedType() {
 		if (fFixedType == ProblemBinding.NOT_INITIALIZED) {
 			fFixedType= loadFixedType();
@@ -203,6 +209,7 @@ class PDOMCPPEnumeration extends PDOMCPPBinding implements IPDOMCPPEnumType, IPD
 		}
 	}
 
+	@Override
 	public ICPPScope asScope() {
 		if (fScope == null) {
 			fScope= new PDOMCPPEnumScope(this);
@@ -210,10 +217,12 @@ class PDOMCPPEnumeration extends PDOMCPPBinding implements IPDOMCPPEnumType, IPD
 		return fScope;
 	}
 
+	@Override
 	public void loadEnumerators(final CharArrayMap<PDOMCPPEnumerator> map) {
 		try {
 			PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + OFFSET_ENUMERATOR_LIST);
 			list.accept(new IPDOMVisitor() {
+				@Override
 				public boolean visit(IPDOMNode node) throws CoreException {
 					if (node instanceof PDOMCPPEnumerator) {
 						final PDOMCPPEnumerator item = (PDOMCPPEnumerator) node;
@@ -221,6 +230,7 @@ class PDOMCPPEnumeration extends PDOMCPPBinding implements IPDOMCPPEnumType, IPD
 					}
 					return true;
 				}
+				@Override
 				public void leave(IPDOMNode node) {}
 			});
 		} catch (CoreException e) {

@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
  */
 public interface ICPPClassSpecialization extends ICPPSpecialization, ICPPClassType {
 	
+	@Override
 	ICPPClassType getSpecializedBinding();
 
 	/**

@@ -25,10 +25,12 @@ public class CASTEqualsInitializer extends ASTEqualsInitializer {
 		super(arg);
 	}
 
+	@Override
 	public CASTEqualsInitializer copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CASTEqualsInitializer copy(CopyStyle style) {
 		IASTInitializerClause arg = getInitializerClause();
 		CASTEqualsInitializer copy = new CASTEqualsInitializer(arg == null ? null : arg.copy(style));

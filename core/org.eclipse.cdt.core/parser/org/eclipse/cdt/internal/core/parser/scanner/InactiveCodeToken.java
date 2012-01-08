@@ -25,10 +25,12 @@ public class InactiveCodeToken extends Token implements IInactiveCodeToken {
 		fNewNesting= newNesting;
 	}
 
+	@Override
 	public int getOldNesting() {
 		return fOldNesting;
 	}
 
+	@Override
 	public int getNewNesting() {
 		return fNewNesting;
 	}

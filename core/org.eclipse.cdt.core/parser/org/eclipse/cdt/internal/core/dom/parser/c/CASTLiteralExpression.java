@@ -38,10 +38,12 @@ public class CASTLiteralExpression extends ASTNode implements IASTLiteralExpress
 		this.value = value;
 	}
 	
+	@Override
 	public CASTLiteralExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CASTLiteralExpression copy(CopyStyle style) {
 		CASTLiteralExpression copy = new CASTLiteralExpression(kind, value == null ? null : value.clone());
 		copy.setOffsetAndLength(this);
@@ -51,20 +53,24 @@ public class CASTLiteralExpression extends ASTNode implements IASTLiteralExpress
 		return copy;
 	}
 
+	@Override
 	public int getKind() {
         return kind;
     }
 
-    public void setKind(int value) {
+    @Override
+	public void setKind(int value) {
         assertNotFrozen();
         kind = value;
     }
 
-    public char[] getValue() {
+    @Override
+	public char[] getValue() {
     	return value;
     }
 
-    public void setValue(char[] value) {
+    @Override
+	public void setValue(char[] value) {
         assertNotFrozen();
     	this.value= value;
     }
@@ -93,6 +99,7 @@ public class CASTLiteralExpression extends ASTNode implements IASTLiteralExpress
         return true;
     }
     
+	@Override
 	public IType getExpressionType() {
 		switch (getKind()) {
 		case IASTLiteralExpression.lk_char_constant:
@@ -109,10 +116,12 @@ public class CASTLiteralExpression extends ASTNode implements IASTLiteralExpress
 		return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
 	}
 	
+	@Override
 	public boolean isLValue() {
 		return getKind() == IASTLiteralExpression.lk_string_literal;
 	}
 
+	@Override
 	public final ValueCategory getValueCategory() {
 		return isLValue() ? ValueCategory.LVALUE : ValueCategory.PRVALUE;
 	}
@@ -175,7 +184,8 @@ public class CASTLiteralExpression extends ASTNode implements IASTLiteralExpress
     /**
      * @deprecated, use {@link #setValue(char[])}, instead.
      */
-    @Deprecated
+    @Override
+	@Deprecated
 	public void setValue(String value) {
         assertNotFrozen();
         this.value = value.toCharArray();

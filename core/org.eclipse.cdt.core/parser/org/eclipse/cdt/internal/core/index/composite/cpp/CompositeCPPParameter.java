@@ -20,10 +20,12 @@ class CompositeCPPParameter extends CompositeCPPVariable implements ICPPParamete
 		super(cf, rbinding);
 	}
 
+	@Override
 	public boolean hasDefaultValue() {
 		return ((ICPPParameter)rbinding).hasDefaultValue();
 	}
 
+	@Override
 	public boolean isParameterPack() {
 		return ((ICPPParameter)rbinding).isParameterPack();
 	}

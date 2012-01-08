@@ -21,5 +21,6 @@ public interface IGPPASTPointer extends IASTPointer {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IGPPASTPointer copy();
 }

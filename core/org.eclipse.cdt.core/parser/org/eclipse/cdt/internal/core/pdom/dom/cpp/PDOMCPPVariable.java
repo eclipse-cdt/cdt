@@ -89,11 +89,13 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 		return IIndexCPPBindingConstants.CPPVARIABLE;
 	}
 	
+	@Override
 	public boolean isMutable() {
 		// ISO/IEC 14882:2003 7.1.1.8
 		return false; 
 	}
 
+	@Override
 	public IType getType() {
 		try {
 			return getLinkage().loadType(record + TYPE_OFFSET);
@@ -103,6 +105,7 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 		}
 	}
 	
+	@Override
 	public IValue getInitialValue() {
 		try {
 			return getLinkage().loadValue(record + VALUE_OFFSET);
@@ -112,22 +115,27 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 		}
 	}
 
+	@Override
 	public boolean isAuto() {
 		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.AUTO_OFFSET);
 	}
 
+	@Override
 	public boolean isExtern() {
 		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.EXTERN_OFFSET);
 	}
 
+	@Override
 	public boolean isExternC() {
 		return getBit(getByte(record + ANNOTATIONS), PDOMCPPAnnotation.EXTERN_C_OFFSET);
 	}
 
+	@Override
 	public boolean isRegister() {
 		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.REGISTER_OFFSET);
 	}
 
+	@Override
 	public boolean isStatic() {
 		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.STATIC_OFFSET);
 	}

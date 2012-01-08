@@ -62,10 +62,12 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 		setOperand(operand);
 	}
 
+	@Override
 	public CPPASTUnaryExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CPPASTUnaryExpression copy(CopyStyle style) {
 		CPPASTUnaryExpression copy = new CPPASTUnaryExpression(op, operand == null ? null
 				: operand.copy(style));
@@ -76,20 +78,24 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 		return copy;
 	}
 
+	@Override
 	public int getOperator() {
         return op;
     }
 
-    public void setOperator(int operator) {
+    @Override
+	public void setOperator(int operator) {
         assertNotFrozen();
         op = operator;
     }
 
-    public IASTExpression getOperand() {
+    @Override
+	public IASTExpression getOperand() {
         return operand;
     }
 
-    public void setOperand(IASTExpression expression) {
+    @Override
+	public void setOperand(IASTExpression expression) {
         assertNotFrozen();
         operand = expression;
         if (expression != null) {
@@ -105,7 +111,8 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
     /**
      * @see org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner#getImplicitNames()
      */
-    public IASTImplicitName[] getImplicitNames() {
+    @Override
+	public IASTImplicitName[] getImplicitNames() {
 		if (implicitNames == null) {
 			ICPPFunction overload = getOverload();
 			if (overload == null || overload instanceof CPPImplicitFunction) {
@@ -161,7 +168,8 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
         return true;
     }
 
-    public void replace(IASTNode child, IASTNode other) {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
         if (child == operand) {
             other.setPropertyInParent(child.getPropertyInParent());
             other.setParent(child.getParent());
@@ -211,7 +219,8 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 		return null;
     }
 
-    public IType getExpressionType() {
+    @Override
+	public IType getExpressionType() {
     	final int op= getOperator();
 		switch (op) {
 		case op_sizeof:
@@ -286,7 +295,8 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 		return typeOfOperand;
     }
 
-    public ValueCategory getValueCategory() {
+    @Override
+	public ValueCategory getValueCategory() {
     	final int op= getOperator();
 		switch (op) {
 		case op_typeid:
@@ -315,6 +325,7 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 		return PRVALUE;
     }
     
+	@Override
 	public boolean isLValue() {
 		return getValueCategory() == LVALUE;
 	}

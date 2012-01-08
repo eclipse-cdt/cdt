@@ -21,10 +21,12 @@ public interface IASTContinueStatement extends IASTStatement {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IASTContinueStatement copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public IASTContinueStatement copy(CopyStyle style);
 }

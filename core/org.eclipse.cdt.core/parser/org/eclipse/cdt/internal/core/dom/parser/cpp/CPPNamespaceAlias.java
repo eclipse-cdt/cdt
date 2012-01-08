@@ -36,35 +36,43 @@ public class CPPNamespaceAlias extends PlatformObject implements ICPPNamespaceAl
         this.alias = aliasName;
     }
 
-    public ICPPNamespaceScope getNamespaceScope() {
+    @Override
+	public ICPPNamespaceScope getNamespaceScope() {
         return namespace.getNamespaceScope();
     }
 
-    public IBinding getBinding() {
+    @Override
+	public IBinding getBinding() {
         return namespace;
     }
 
-    public String getName() {
+    @Override
+	public String getName() {
     	return new String(getNameCharArray());
     }
 
-    public char[] getNameCharArray() {
+    @Override
+	public char[] getNameCharArray() {
         return alias.getSimpleID();
     }
 
-    public String[] getQualifiedName() {
+    @Override
+	public String[] getQualifiedName() {
         return CPPVisitor.getQualifiedName( this );
     }
 
-    public char[][] getQualifiedNameCharArray() {
+    @Override
+	public char[][] getQualifiedNameCharArray() {
         return CPPVisitor.getQualifiedNameCharArray( this );
     }
 
-    public IScope getScope() {
+    @Override
+	public IScope getScope() {
         return CPPVisitor.getContainingScope( alias );
     }
 
-    public boolean isGloballyQualified() throws DOMException {
+    @Override
+	public boolean isGloballyQualified() throws DOMException {
         IScope scope = getScope();
         while( scope != null ){
             if( scope instanceof ICPPBlockScope )
@@ -74,32 +82,40 @@ public class CPPNamespaceAlias extends PlatformObject implements ICPPNamespaceAl
         return true;
     }
 
-    public IASTNode[] getDeclarations() {
+    @Override
+	public IASTNode[] getDeclarations() {
         return null;
     }
 
-    public IASTNode getDefinition() {
+    @Override
+	public IASTNode getDefinition() {
         return alias;
     }
 
+	@Override
 	public void addDefinition(IASTNode node) {
 	}
 
+	@Override
 	public void addDeclaration(IASTNode node) {
 	}
 
+	@Override
 	public IBinding[] getMemberBindings() {
 		return namespace.getMemberBindings();
 	}
 	
+	@Override
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
 	}
 	
+	@Override
 	public IBinding getOwner() {
 		return CPPVisitor.findDeclarationOwner(alias, false);
 	}
 
+	@Override
 	public boolean isInline() {
 		return false;
 	}

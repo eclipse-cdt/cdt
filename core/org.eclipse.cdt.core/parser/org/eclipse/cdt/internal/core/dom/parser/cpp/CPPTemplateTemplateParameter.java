@@ -86,7 +86,7 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 					result = (ICPPTemplateParameter[]) ArrayUtil.append(ICPPTemplateParameter.class, result, binding);
 				}
 			}
-			templateParameters = (ICPPTemplateParameter[]) ArrayUtil.trim(ICPPTemplateParameter.class, result);
+			templateParameters = ArrayUtil.trim(ICPPTemplateParameter.class, result);
 		}
 		return templateParameters;
 	}

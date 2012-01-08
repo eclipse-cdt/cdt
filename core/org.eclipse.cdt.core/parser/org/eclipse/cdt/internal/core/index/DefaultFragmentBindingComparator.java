@@ -18,6 +18,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
  * this implementation is too slow.
  */
 public class DefaultFragmentBindingComparator implements IIndexFragmentBindingComparator {
+	@Override
 	public int compare(IIndexFragmentBinding a, IIndexFragmentBinding b) {
 		int cmp= compareQualifiedNames(CPPVisitor.getQualifiedName(a), CPPVisitor.getQualifiedName(b));
 		if (cmp == 0) {

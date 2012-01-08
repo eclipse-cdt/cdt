@@ -34,10 +34,12 @@ public class CASTExpressionStatement extends ASTNode implements
 		setExpression(expression);
 	}
 
+	@Override
 	public CASTExpressionStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CASTExpressionStatement copy(CopyStyle style) {
 		CASTExpressionStatement copy = new CASTExpressionStatement();
 		copy.setExpression(expression == null ? null : expression.copy(style));
@@ -48,11 +50,13 @@ public class CASTExpressionStatement extends ASTNode implements
 		return copy;
 	}
 	
+	@Override
 	public IASTExpression getExpression() {
         return expression;
     }
 
-    public void setExpression(IASTExpression expression) {
+    @Override
+	public void setExpression(IASTExpression expression) {
         assertNotFrozen();
         this.expression = expression;
         if (expression != null) {
@@ -91,7 +95,8 @@ public class CASTExpressionStatement extends ASTNode implements
         return true;
     }
 
-    public void replace(IASTNode child, IASTNode other) {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
         if (child == expression) {
             other.setPropertyInParent(child.getPropertyInParent());
             other.setParent(child.getParent());

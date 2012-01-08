@@ -44,10 +44,12 @@ public interface IASTInitializerExpression extends IASTEqualsInitializer {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IASTInitializerExpression copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public IASTInitializerExpression copy(CopyStyle style);
 }

@@ -45,10 +45,12 @@ public interface IASTFieldDeclarator extends IASTDeclarator {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IASTFieldDeclarator copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public IASTFieldDeclarator copy(CopyStyle style);
 }

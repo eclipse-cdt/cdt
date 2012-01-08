@@ -22,11 +22,13 @@ class CompositeCTypedef extends CompositeCBinding implements ITypedef, IIndexTyp
 		super(cf, rbinding);
 	}
 
+	@Override
 	public IType getType() {
 		IType type = ((ITypedef)rbinding).getType();
 		return cf.getCompositeType(type);
 	}
 
+	@Override
 	public boolean isSameType(IType type) {
 		return ((ITypedef)rbinding).isSameType(type);
 	}
@@ -36,6 +38,7 @@ class CompositeCTypedef extends CompositeCBinding implements ITypedef, IIndexTyp
 		fail(); return null;
 	}
 
+	@Override
 	public void setType(IType type) {
 		fail();
 	}

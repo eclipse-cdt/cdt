@@ -533,7 +533,7 @@ public class CPPTemplates {
 				parent = parent.getParent();
 				templates = (ICPPASTTemplateDeclaration[]) ArrayUtil.append(ICPPASTTemplateDeclaration.class, templates, parent);
 			}
-			templates = (ICPPASTTemplateDeclaration[]) ArrayUtil.trim(ICPPASTTemplateDeclaration.class, templates);
+			templates = ArrayUtil.trim(ICPPASTTemplateDeclaration.class, templates);
 
 			ICPPASTTemplateDeclaration templateDeclaration = templates[0];
 			IASTDeclaration decl = templateDeclaration.getDeclaration();

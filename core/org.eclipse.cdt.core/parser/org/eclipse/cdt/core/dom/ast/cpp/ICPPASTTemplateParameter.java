@@ -31,10 +31,12 @@ public interface ICPPASTTemplateParameter extends IASTNode {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICPPASTTemplateParameter copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICPPASTTemplateParameter copy(CopyStyle style);
 }

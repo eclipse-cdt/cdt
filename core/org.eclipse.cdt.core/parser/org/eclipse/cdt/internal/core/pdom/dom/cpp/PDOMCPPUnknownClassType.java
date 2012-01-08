@@ -66,6 +66,7 @@ class PDOMCPPUnknownClassType extends PDOMCPPUnknownBinding implements ICPPClass
 		super(linkage, bindingRecord);
 	}
 
+	@Override
 	public EScopeKind getKind() {
 		return EScopeKind.eClassType;
 	}
@@ -106,10 +107,12 @@ class PDOMCPPUnknownClassType extends PDOMCPPUnknownBinding implements ICPPClass
 		list.accept(visitor);
 	}
 
+	@Override
 	public ICPPMethod[] getImplicitMethods() {
 		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 	}
 
+	@Override
 	public IScope getCompositeScope() {
 		return this;
 	}
@@ -122,10 +125,12 @@ class PDOMCPPUnknownClassType extends PDOMCPPUnknownBinding implements ICPPClass
     	return unknownScope;
     }
     
+	@Override
 	public IIndexBinding getScopeBinding() {
 		return this;
 	}
 
+	@Override
 	public ICPPClassType getClassType() {
 		return this;
 	}
@@ -140,6 +145,7 @@ class PDOMCPPUnknownClassType extends PDOMCPPUnknownBinding implements ICPPClass
 		return IBinding.EMPTY_BINDING_ARRAY;
 	}
 	
+	@Override
 	public IBinding[] find(String name) {
 		return CPPSemantics.findBindings(this, name, false);
 	}
@@ -151,6 +157,7 @@ class PDOMCPPUnknownClassType extends PDOMCPPUnknownBinding implements ICPPClass
 		throw new UnsupportedOperationException(); 
 	}
 	
+	@Override
 	public IField findField(String name) {
 		return null; 
 	}
@@ -163,70 +170,80 @@ class PDOMCPPUnknownClassType extends PDOMCPPUnknownBinding implements ICPPClass
 	/* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getBases()
      */
-    public ICPPBase[] getBases() {
+    @Override
+	public ICPPBase[] getBases() {
         return ICPPBase.EMPTY_BASE_ARRAY;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getFields()
      */
-    public IField[] getFields() {
+    @Override
+	public IField[] getFields() {
         return IField.EMPTY_FIELD_ARRAY;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getDeclaredFields()
      */
-    public ICPPField[] getDeclaredFields() {
+    @Override
+	public ICPPField[] getDeclaredFields() {
         return ICPPField.EMPTY_CPPFIELD_ARRAY;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getMethods()
      */
-    public ICPPMethod[] getMethods() {
+    @Override
+	public ICPPMethod[] getMethods() {
         return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getAllDeclaredMethods()
      */
-    public ICPPMethod[] getAllDeclaredMethods() {
+    @Override
+	public ICPPMethod[] getAllDeclaredMethods() {
         return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getDeclaredMethods()
      */
-    public ICPPMethod[] getDeclaredMethods() {
+    @Override
+	public ICPPMethod[] getDeclaredMethods() {
         return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getConstructors()
      */
-    public ICPPConstructor[] getConstructors() {
+    @Override
+	public ICPPConstructor[] getConstructors() {
         return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getFriends()
      */
-    public IBinding[] getFriends() {
+    @Override
+	public IBinding[] getFriends() {
         return IBinding.EMPTY_BINDING_ARRAY;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getKey()
      */
-    public int getKey() {
+    @Override
+	public int getKey() {
         return 0;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
      */
-    public boolean isSameType(IType type) {
+    @Override
+	public boolean isSameType(IType type) {
 		if (type instanceof ITypedef) {
 			return type.isSameType(this);
 		}
@@ -255,10 +272,12 @@ class PDOMCPPUnknownClassType extends PDOMCPPUnknownBinding implements ICPPClass
 		return false;
     }
 
+	@Override
 	public ICPPClassType[] getNestedClasses() {
 		return ICPPClassType.EMPTY_CLASS_ARRAY;
 	}
 	
+	@Override
 	public boolean isAnonymous() {
 		return false;
 	}

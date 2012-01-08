@@ -35,11 +35,13 @@ abstract class CASTProblemOwner extends ASTNode implements IASTProblemHolder {
 		copy.setOffsetAndLength(this);
 	}
 	
+	@Override
 	public IASTProblem getProblem() {
         return problem;
     }
     
-    public void setProblem(IASTProblem p) {
+    @Override
+	public void setProblem(IASTProblem p) {
         assertNotFrozen();
         problem = p;
         if (p != null) {

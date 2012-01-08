@@ -356,6 +356,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 		}
 	}
 
+	@Override
 	public String[] getSourceFiles() {
 		if (!m_parsed) {
 			m_fileCollection.clear();
@@ -484,6 +485,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 	/**
 	 * @since 5.2
 	 */
+	@Override
 	public String[] getSourceFiles(IProgressMonitor monitor) {
 		return getSourceFiles();
 	}

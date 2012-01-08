@@ -23,35 +23,43 @@ class CompositeCPPVariable extends CompositeCPPBinding implements ICPPVariable {
 		super(cf, delegate);
 	}
 	
+	@Override
 	public boolean isMutable() {
 		return ((ICPPVariable)rbinding).isMutable();
 	}
 
+	@Override
 	public boolean isExternC() {
 		return ((ICPPVariable)rbinding).isExternC();
 	}
 
+	@Override
 	public IType getType() {
 		IType rtype = ((ICPPVariable)rbinding).getType();
 		return cf.getCompositeType(rtype);
 	}
 
+	@Override
 	public boolean isAuto() {
 		return ((ICPPVariable)rbinding).isAuto();
 	}
 
+	@Override
 	public boolean isExtern() {
 		return ((ICPPVariable)rbinding).isExtern();
 	}
 
+	@Override
 	public boolean isRegister() {
 		return ((ICPPVariable)rbinding).isRegister();
 	}
 
+	@Override
 	public boolean isStatic() {
 		return ((ICPPVariable)rbinding).isStatic();
 	}
 	
+	@Override
 	public IValue getInitialValue() {
 		return ((ICPPVariable)rbinding).getInitialValue();
 	}

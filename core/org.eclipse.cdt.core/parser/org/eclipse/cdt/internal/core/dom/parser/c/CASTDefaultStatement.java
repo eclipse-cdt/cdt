@@ -39,10 +39,12 @@ public class CASTDefaultStatement extends ASTNode implements IASTDefaultStatemen
         return true;
     }
     
-    public CASTDefaultStatement copy() {
+    @Override
+	public CASTDefaultStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CASTDefaultStatement copy(CopyStyle style) {
 		CASTDefaultStatement copy = new CASTDefaultStatement();
 		copy.setOffsetAndLength(this);

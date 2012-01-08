@@ -36,10 +36,12 @@ public class CPPASTConversionName extends CPPASTNameBase implements ICPPASTConve
 		setTypeId(typeId);
 	}
 	
+	@Override
 	public CPPASTConversionName copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CPPASTConversionName copy(CopyStyle style) {
 		CPPASTConversionName copy = new CPPASTConversionName();
 		copy.setTypeId(typeId == null ? null : typeId.copy(style));
@@ -50,10 +52,12 @@ public class CPPASTConversionName extends CPPASTNameBase implements ICPPASTConve
 		return copy;
 	}
 
+	@Override
 	public IASTTypeId getTypeId() {
 		return typeId;
 	}
 
+	@Override
 	public void setTypeId(IASTTypeId typeId) {
         assertNotFrozen();
 		this.typeId=typeId;
@@ -96,6 +100,7 @@ public class CPPASTConversionName extends CPPASTNameBase implements ICPPASTConve
 		return CPPVisitor.createBinding(this);
 	}
 
+	@Override
 	public char[] toCharArray() {
 		if (fName == null) {
 			IType t= null;
@@ -123,10 +128,12 @@ public class CPPASTConversionName extends CPPASTNameBase implements ICPPASTConve
 		return name;
 	}
 
+	@Override
 	public char[] getSimpleID() {
 		return toCharArray();
 	}
 	
+	@Override
 	public char[] getLookupKey() {
 		return Keywords.cOPERATOR;
 	}

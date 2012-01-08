@@ -225,7 +225,7 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 						if (fileSet != null) {
 							bindings= fileSet.filterFileLocalBindings(bindings);
 						}
-						result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, bindings);
+						result = ArrayUtil.addAll(IBinding.class, result, bindings);
 					} catch (CoreException e) {
 						CCorePlugin.log(e);
 					}
@@ -239,7 +239,7 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 							if (fileSet != null) {
 								bindings= fileSet.filterFileLocalBindings(bindings);
 							}
-							result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, bindings);
+							result = ArrayUtil.addAll(IBinding.class, result, bindings);
 						}
 					} catch (CoreException e) {
 						CCorePlugin.log(e);
@@ -248,7 +248,7 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 			}
 		}
 
-		return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
+		return ArrayUtil.trim(IBinding.class, result);
 	}
 
 
@@ -289,7 +289,7 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 	        	result = addCandidate(obj, name, forceResolve, checkPointOfDecl, result);
 	        }
 	    }
-	    return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
+	    return ArrayUtil.trim(IBinding.class, result);
 	}
 
 	private IBinding[] addCandidate(Object candidate, IASTName name, boolean forceResolve, 
@@ -319,7 +319,7 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 			binding= (IBinding) candidate;
 		}
 
-		return (IBinding[]) ArrayUtil.append(IBinding.class, result, binding);
+		return ArrayUtil.append(IBinding.class, result, binding);
 	}
 	
 	@Override

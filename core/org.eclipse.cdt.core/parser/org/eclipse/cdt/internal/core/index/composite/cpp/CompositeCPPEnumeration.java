@@ -26,6 +26,7 @@ class CompositeCPPEnumeration extends CompositeCPPBinding implements ICPPEnumera
 		super(cf, rbinding);
 	}
 
+	@Override
 	public IEnumerator[] getEnumerators() throws DOMException {
 		IEnumerator[] result = ((IEnumeration)rbinding).getEnumerators();
 		for (int i= 0; i < result.length; i++)
@@ -33,6 +34,7 @@ class CompositeCPPEnumeration extends CompositeCPPBinding implements ICPPEnumera
 		return result;
 	}
 
+	@Override
 	public boolean isSameType(IType type) {
 		return ((IEnumeration)rbinding).isSameType(type);
 	}
@@ -44,22 +46,27 @@ class CompositeCPPEnumeration extends CompositeCPPBinding implements ICPPEnumera
 	public String toString() {
 		return getName();
 	}
+	@Override
 	public long getMinValue() {
 		return ((IEnumeration)rbinding).getMinValue();
 	}
 
+	@Override
 	public long getMaxValue() {
 		return ((IEnumeration)rbinding).getMaxValue();
 	}
 
+	@Override
 	public boolean isScoped() {
 		return ((ICPPEnumeration)rbinding).isScoped();
 	}
 
+	@Override
 	public IType getFixedType() {
 		return ((ICPPEnumeration)rbinding).getFixedType();
 	}
 
+	@Override
 	public ICPPScope asScope() {
 		return new CompositeCPPEnumScope(cf, rbinding);
 	}

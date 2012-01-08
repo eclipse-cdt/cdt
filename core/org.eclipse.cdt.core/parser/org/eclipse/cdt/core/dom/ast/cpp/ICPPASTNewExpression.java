@@ -74,11 +74,13 @@ public interface ICPPASTNewExpression extends IASTExpression, IASTImplicitNameOw
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICPPASTNewExpression copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICPPASTNewExpression copy(CopyStyle style);
 
 	

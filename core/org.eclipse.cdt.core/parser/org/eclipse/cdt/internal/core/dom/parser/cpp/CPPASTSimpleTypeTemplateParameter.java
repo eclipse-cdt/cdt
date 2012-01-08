@@ -36,10 +36,12 @@ public class CPPASTSimpleTypeTemplateParameter extends ASTNode implements ICPPAS
 		setDefaultType(typeId);
 	}
 	
+	@Override
 	public CPPASTSimpleTypeTemplateParameter copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CPPASTSimpleTypeTemplateParameter copy(CopyStyle style) {
 		CPPASTSimpleTypeTemplateParameter copy = new CPPASTSimpleTypeTemplateParameter();
 		copy.fUsesKeywordClass = fUsesKeywordClass;
@@ -53,29 +55,35 @@ public class CPPASTSimpleTypeTemplateParameter extends ASTNode implements ICPPAS
 		return copy;
 	}
 
+	@Override
 	public boolean isParameterPack() {
 		return fIsParameterPack;
 	}
 
+	@Override
 	public void setIsParameterPack(boolean val) {
 		assertNotFrozen();
 		fIsParameterPack= val;
 	}
 
+	@Override
 	public int getParameterType() {
         return fUsesKeywordClass ? st_class : st_typename;
     }
 
-    public void setParameterType(int value) {
+    @Override
+	public void setParameterType(int value) {
         assertNotFrozen();
         fUsesKeywordClass = value == st_class;
     }
 
-    public IASTName getName() {
+    @Override
+	public IASTName getName() {
         return fName;
     }
 
-    public void setName(IASTName name) {
+    @Override
+	public void setName(IASTName name) {
         assertNotFrozen();
         this.fName = name;
         if (name != null) {
@@ -84,11 +92,13 @@ public class CPPASTSimpleTypeTemplateParameter extends ASTNode implements ICPPAS
 		}
     }
 
-    public IASTTypeId getDefaultType() {
+    @Override
+	public IASTTypeId getDefaultType() {
         return fTypeId;
     }
 
-    public void setDefaultType(IASTTypeId typeId) {
+    @Override
+	public void setDefaultType(IASTTypeId typeId) {
         assertNotFrozen();
         this.fTypeId = typeId;
         if (typeId != null) {
@@ -118,6 +128,7 @@ public class CPPASTSimpleTypeTemplateParameter extends ASTNode implements ICPPAS
     	return true;
     }
 
+	@Override
 	public int getRoleForName(IASTName n) {
 		if (n == fName)
 			return r_declaration;

@@ -30,5 +30,6 @@ public interface ICPPInternalNamespaceScope extends ICPPNamespaceScope {
 	/**
 	 * Returns the inline namespace scopes mapped back to the AST.
 	 */
+	@Override
 	public ICPPInternalNamespaceScope[] getInlineNamespaces();
 }

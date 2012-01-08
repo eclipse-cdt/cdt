@@ -44,6 +44,7 @@ public class CPPASTPointerToMember extends CPPASTPointer implements ICPPASTPoint
 		return copy;
 	}
 
+	@Override
 	public void setName(IASTName name) {
         assertNotFrozen();
         n = name;
@@ -54,7 +55,8 @@ public class CPPASTPointerToMember extends CPPASTPointer implements ICPPASTPoint
     }
 
 
-    public IASTName getName() {
+    @Override
+	public IASTName getName() {
         return n;
     }
 
@@ -74,6 +76,7 @@ public class CPPASTPointerToMember extends CPPASTPointer implements ICPPASTPoint
 		return true;	    
     }
 
+	@Override
 	public int getRoleForName(IASTName name ) {
 		if( name  == this.n )
 			return r_reference;

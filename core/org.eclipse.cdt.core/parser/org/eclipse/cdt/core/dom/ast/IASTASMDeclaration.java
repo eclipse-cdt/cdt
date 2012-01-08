@@ -35,10 +35,12 @@ public interface IASTASMDeclaration extends IASTDeclaration {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IASTASMDeclaration copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public IASTASMDeclaration copy(CopyStyle style);
 }

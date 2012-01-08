@@ -24,15 +24,18 @@ class CompositeCStructure extends CompositeCBinding implements ICompositeType, I
 		super(cf, rbinding);
 	}
 
+	@Override
 	public IField findField(String name) {
 		IField preresult = ((ICompositeType) rbinding).findField(name);
 		return (IField) cf.getCompositeBinding((IIndexFragmentBinding) preresult);
 	}
 
+	@Override
 	public IScope getCompositeScope() {
 		return new CompositeCCompositeScope(cf, rbinding); 
 	}
 
+	@Override
 	public IField[] getFields() {
 		IField[] result = ((ICompositeType) rbinding).getFields();
 		for (int i= 0; i < result.length; i++)
@@ -40,10 +43,12 @@ class CompositeCStructure extends CompositeCBinding implements ICompositeType, I
 		return result;
 	}
 
+	@Override
 	public int getKey() {
 		return ((ICompositeType) rbinding).getKey();
 	}
 
+	@Override
 	public boolean isSameType(IType type) {
 		return ((ICompositeType) rbinding).isSameType(type);
 	}
@@ -53,6 +58,7 @@ class CompositeCStructure extends CompositeCBinding implements ICompositeType, I
 		fail(); return null;
 	}
 
+	@Override
 	public boolean isAnonymous() {
 		return ((ICompositeType) rbinding).isAnonymous();
 	}

@@ -28,10 +28,12 @@ public class ApplyVisitor implements IBTreeVisitor, IPDOMVisitor {
 		this.visitor= visitor;
 	}
 	
+	@Override
 	public int compare(long record) throws CoreException {
 		return 0; // visit all nodes in a b-tree
 	}
 	
+	@Override
 	public boolean visit(IPDOMNode node) throws CoreException {
 		if(node instanceof PDOMBinding) {
 			((PDOMBinding)node).accept(visitor);
@@ -40,6 +42,7 @@ public class ApplyVisitor implements IBTreeVisitor, IPDOMVisitor {
 		return false; // don't visit children of the node
 	}
 	
+	@Override
 	public boolean visit(long record) throws CoreException {
 		if (record == 0)
 			return true;
@@ -51,6 +54,7 @@ public class ApplyVisitor implements IBTreeVisitor, IPDOMVisitor {
 		return true;
 	}
 
+	@Override
 	public void leave(IPDOMNode node) throws CoreException {
 	}	
 }

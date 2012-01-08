@@ -76,6 +76,7 @@ public class TypeReference implements ITypeReference {
 		this(workingCopy, project, 0, 0);
 	}
 
+	@Override
 	public IPath getPath() {
 		if (fWorkingCopy != null) {
 			return fWorkingCopy.getPath();
@@ -86,6 +87,7 @@ public class TypeReference implements ITypeReference {
 		}
 	}
 	
+	@Override
 	public IPath getLocation() {
 		if (fWorkingCopy != null) {
 			IResource resource = fWorkingCopy.getUnderlyingResource();
@@ -104,14 +106,17 @@ public class TypeReference implements ITypeReference {
 		}
 	}
 	
+	@Override
 	public IResource getResource() {
 		return fResource;
 	}
 
+	@Override
 	public IWorkingCopy getWorkingCopy() {
 		return fWorkingCopy;
 	}
 	
+	@Override
 	public IProject getProject() {
 		if (fProject != null) {
 			return fProject;
@@ -129,6 +134,7 @@ public class TypeReference implements ITypeReference {
 		}
 	}
 	
+	@Override
 	public ITranslationUnit getTranslationUnit() {
 		ITranslationUnit unit = null;
 		if (fWorkingCopy != null) {
@@ -172,6 +178,7 @@ public class TypeReference implements ITypeReference {
 		return null;
 	}
 
+	@Override
 	public ICElement[] getCElements() {
 		ITranslationUnit unit = getTranslationUnit();
 		if (unit != null) {
@@ -189,14 +196,17 @@ public class TypeReference implements ITypeReference {
 		return null;
 	}
 	
+	@Override
 	public int getOffset() {
 		return fOffset;
 	}
 	
+	@Override
 	public int getLength() {
 		return fLength;
 	}
 	
+	@Override
 	public IPath getRelativeIncludePath(IProject project) {
 		IPath path = getLocation();
 		if (path != null) {
@@ -207,6 +217,7 @@ public class TypeReference implements ITypeReference {
 		return path;
 	}
 	
+	@Override
 	public IPath getRelativePath(IPath relativeToPath) {
 		IPath path = getPath();
 		if (path != null) {
@@ -246,7 +257,8 @@ public class TypeReference implements ITypeReference {
 		return toString().equals(ref.toString());
 	}
 
-    public boolean isLineNumber() {
+    @Override
+	public boolean isLineNumber() {
         return offsetIsLineNumber;
     }
 }

@@ -70,6 +70,7 @@ class PDOMCEnumerator extends PDOMBinding implements IEnumerator {
 			storeValue(getDB(), (IEnumerator) newBinding);
 	}
 
+	@Override
 	public IType getType() throws DOMException {
 		IIndexFragmentBinding owner = getOwner();
 		if (owner instanceof IType)
@@ -77,6 +78,7 @@ class PDOMCEnumerator extends PDOMBinding implements IEnumerator {
 		return null;
 	}
 	
+	@Override
 	public IValue getValue() {
 		try {
 			int val= getDB().getInt(record + VALUE);

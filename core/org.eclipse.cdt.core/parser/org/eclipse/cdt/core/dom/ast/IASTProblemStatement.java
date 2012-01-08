@@ -22,10 +22,12 @@ public interface IASTProblemStatement extends IASTStatement, IASTProblemHolder {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IASTProblemStatement copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public IASTProblemStatement copy(CopyStyle style);
 }

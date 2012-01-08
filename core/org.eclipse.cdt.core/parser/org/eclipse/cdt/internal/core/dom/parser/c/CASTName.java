@@ -258,7 +258,7 @@ public class CASTName extends ASTNode implements IASTName, IASTCompletionContext
 				bindings[i]= null;
 			}
 		}
-		return (IBinding[])ArrayUtil.removeNulls(IBinding.class, bindings);
+		return ArrayUtil.removeNulls(IBinding.class, bindings);
 	}
 
 	@Override

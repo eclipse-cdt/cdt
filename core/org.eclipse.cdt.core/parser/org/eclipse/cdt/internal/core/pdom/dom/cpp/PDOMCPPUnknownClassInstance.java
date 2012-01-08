@@ -71,10 +71,12 @@ class PDOMCPPUnknownClassInstance extends PDOMCPPUnknownClassType implements ICP
 		return IIndexCPPBindingConstants.CPP_UNKNOWN_CLASS_INSTANCE;
 	}
 
+	@Override
 	public int getSignatureHash() throws CoreException {
 		return getDB().getInt(record + SIGNATURE_HASH);
 	}
 
+	@Override
 	public ICPPTemplateArgument[] getArguments() {
 		if (arguments == null) {
 			try {

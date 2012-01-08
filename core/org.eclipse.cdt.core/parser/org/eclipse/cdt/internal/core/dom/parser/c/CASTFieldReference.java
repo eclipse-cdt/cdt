@@ -51,10 +51,12 @@ public class CASTFieldReference extends ASTNode implements IASTFieldReference, I
 		this.ptr = ptr;
 	}
 	
+	@Override
 	public CASTFieldReference copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CASTFieldReference copy(CopyStyle style) {
 		CASTFieldReference copy = new CASTFieldReference();
 		copy.setFieldOwner(owner == null ? null : owner.copy(style));
@@ -67,11 +69,13 @@ public class CASTFieldReference extends ASTNode implements IASTFieldReference, I
 		return copy;
 	}
 
+	@Override
 	public IASTExpression getFieldOwner() {
         return owner;
     }
 
-    public void setFieldOwner(IASTExpression expression) {
+    @Override
+	public void setFieldOwner(IASTExpression expression) {
         assertNotFrozen();
         this.owner = expression;
         if (expression != null) {
@@ -80,11 +84,13 @@ public class CASTFieldReference extends ASTNode implements IASTFieldReference, I
 		}
     }
 
-    public IASTName getFieldName() {
+    @Override
+	public IASTName getFieldName() {
         return name;
     }
 
-    public void setFieldName(IASTName name) {
+    @Override
+	public void setFieldName(IASTName name) {
         assertNotFrozen();
         this.name = name;
         if (name != null) {
@@ -93,11 +99,13 @@ public class CASTFieldReference extends ASTNode implements IASTFieldReference, I
 		}
     }
 
-    public boolean isPointerDereference() {
+    @Override
+	public boolean isPointerDereference() {
         return ptr;
     }
 
-    public void setIsPointerDereference(boolean value) {
+    @Override
+	public void setIsPointerDereference(boolean value) {
         assertNotFrozen();
         ptr = value;
     }
@@ -125,13 +133,15 @@ public class CASTFieldReference extends ASTNode implements IASTFieldReference, I
         return true;
     }
 
+	@Override
 	public int getRoleForName(IASTName n ) {
 		if( n  == this.name )
 			return r_reference;
 		return r_unclear;
 	}
 
-    public void replace(IASTNode child, IASTNode other) {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
         if( child == owner)
         {
             other.setPropertyInParent( child.getPropertyInParent() );
@@ -140,7 +150,8 @@ public class CASTFieldReference extends ASTNode implements IASTFieldReference, I
         }
     }
     
-    public IType getExpressionType() {
+    @Override
+	public IType getExpressionType() {
         IBinding binding = getFieldName().resolveBinding();
 		if (binding instanceof IVariable) {
 			return ((IVariable)binding).getType();
@@ -149,6 +160,7 @@ public class CASTFieldReference extends ASTNode implements IASTFieldReference, I
     }
 
     
+	@Override
 	public boolean isLValue() {
 		if (isPointerDereference())
 			return true;
@@ -156,10 +168,12 @@ public class CASTFieldReference extends ASTNode implements IASTFieldReference, I
 		return getFieldOwner().isLValue();
 	}
 
+	@Override
 	public final ValueCategory getValueCategory() {
 		return isLValue() ? ValueCategory.LVALUE : ValueCategory.PRVALUE;
 	}
 
+	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		return CVisitor.findBindingsForContentAssist(n, isPrefix);
 	}

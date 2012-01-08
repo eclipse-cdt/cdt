@@ -22,27 +22,33 @@ class CompositeCParameter extends CompositeCBinding implements IParameter {
 		super(cf, rbinding);
 	}
 
+	@Override
 	public IType getType() {
 		IType rtype = ((IParameter)rbinding).getType();
 		return cf.getCompositeType(rtype);
 	}
 
+	@Override
 	public boolean isAuto() {
 		return ((IParameter)rbinding).isAuto();
 	}
 
+	@Override
 	public boolean isExtern() {
 		return ((IParameter)rbinding).isExtern();
 	}
 
+	@Override
 	public boolean isRegister() {
 		return ((IParameter)rbinding).isRegister();
 	}
 
+	@Override
 	public boolean isStatic() {
 		return ((IParameter)rbinding).isStatic();
 	}
 
+	@Override
 	public IValue getInitialValue() {
 		return null;
 	}

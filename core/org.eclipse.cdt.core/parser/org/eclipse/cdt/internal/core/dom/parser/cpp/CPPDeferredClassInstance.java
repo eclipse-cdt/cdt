@@ -53,10 +53,12 @@ public class CPPDeferredClassInstance extends CPPUnknownClass implements ICPPDef
 		return fClassTemplate.getOwner();
 	}
 
+	@Override
 	public ICPPClassTemplate getClassTemplate() {
 		return (ICPPClassTemplate) getSpecializedBinding();
 	}
 
+	@Override
 	public boolean isExplicitSpecialization() {
 		return false;
 	}
@@ -92,23 +94,28 @@ public class CPPDeferredClassInstance extends CPPUnknownClass implements ICPPDef
     	return getClassTemplate().getKey();
     }
     
+	@Override
 	@Deprecated
 	public IType[] getArguments() {
 		return CPPTemplates.getArguments(getTemplateArguments());
 	}
 
+	@Override
 	public ICPPTemplateArgument[] getTemplateArguments() {
 		return fArguments;
 	}
 
+	@Override
 	public ICPPTemplateDefinition getTemplateDefinition() {
 		return fClassTemplate;
 	}
 
+	@Override
 	public ObjectMap getArgumentMap() {
 		return ObjectMap.EMPTY_MAP;
 	}
 	
+	@Override
 	public CPPTemplateParameterMap getTemplateParameterMap() {
 		ICPPTemplateParameter[] params = fClassTemplate.getTemplateParameters();
 		int size = Math.min(fArguments.length, params.length);
@@ -119,6 +126,7 @@ public class CPPDeferredClassInstance extends CPPUnknownClass implements ICPPDef
 		return map;
 	}
 
+	@Override
 	public IBinding getSpecializedBinding() {
 		return getTemplateDefinition();
 	}

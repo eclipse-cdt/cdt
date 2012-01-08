@@ -105,6 +105,7 @@ public interface IASTSimpleDeclSpecifier extends IASTDeclSpecifier {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IASTSimpleDeclSpecifier copy();
 
 	/**

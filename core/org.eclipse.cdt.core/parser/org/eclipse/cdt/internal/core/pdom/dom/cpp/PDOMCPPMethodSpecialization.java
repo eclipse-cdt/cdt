@@ -78,22 +78,27 @@ class PDOMCPPMethodSpecialization extends PDOMCPPFunctionSpecialization
 		return IIndexCPPBindingConstants.CPP_METHOD_SPECIALIZATION;
 	}
 	
+	@Override
 	public boolean isDestructor() {
 		return getBit(getByte(record + ANNOTATION1), PDOMCPPAnnotation.DESTRUCTOR_OFFSET);
 	}
 
+	@Override
 	public boolean isImplicit() {
 		return getBit(getByte(record + ANNOTATION1), PDOMCPPAnnotation.IMPLICIT_METHOD_OFFSET);
 	}
 
+	@Override
 	public boolean isExplicit() {
 		return getBit(getByte(record + ANNOTATION1), PDOMCPPAnnotation.EXPLICIT_METHOD_OFFSET);
 	}
 
+	@Override
 	public boolean isVirtual() {
 		return getBit(getByte(record + ANNOTATION1), PDOMCPPAnnotation.VIRTUAL_OFFSET);
 	}
 
+	@Override
 	public boolean isPureVirtual() {
 		return getBit(getByte(record + ANNOTATION1), PDOMCPPAnnotation.PURE_VIRTUAL_OFFSET);
 	}
@@ -109,10 +114,12 @@ class PDOMCPPMethodSpecialization extends PDOMCPPFunctionSpecialization
 		return false;
 	}
 
+	@Override
 	public ICPPClassType getClassOwner() {
 		return (ICPPClassType) getOwner();
 	}
 
+	@Override
 	public int getVisibility() {
 		return PDOMCPPAnnotation.getVisibility(getByte(record + ANNOTATION_OFFSET));
 	}

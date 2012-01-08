@@ -29,15 +29,18 @@ public class CPPReferenceType implements ICPPReferenceType, ITypeContainer, ISer
     	setType(type);
     }
 
-    public IType getType() {
+    @Override
+	public IType getType() {
         return fType;
     }
     
+	@Override
 	public boolean isRValueReference() {
 		return fIsRValue;
 	}
 
-    public void setType(IType t) {
+    @Override
+	public void setType(IType t) {
     	if (t instanceof ICPPReferenceType) {
     		final ICPPReferenceType rt = (ICPPReferenceType) t;
 			fIsRValue = fIsRValue && rt.isRValueReference();
@@ -47,7 +50,8 @@ public class CPPReferenceType implements ICPPReferenceType, ITypeContainer, ISer
     	fType= t;
     }
 
-    public boolean isSameType(IType obj) {
+    @Override
+	public boolean isSameType(IType obj) {
         if (obj == this)
             return true;
         if (obj instanceof ITypedef)
@@ -103,6 +107,7 @@ public class CPPReferenceType implements ICPPReferenceType, ITypeContainer, ISer
 		return ASTTypeUtil.getType(this);
 	}
 
+	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
 		int firstByte= ITypeMarshalBuffer.REFERENCE;
 		if (isRValueReference()) {

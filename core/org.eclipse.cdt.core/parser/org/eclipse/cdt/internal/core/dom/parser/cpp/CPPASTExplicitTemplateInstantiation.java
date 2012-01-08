@@ -35,10 +35,12 @@ public class CPPASTExplicitTemplateInstantiation extends ASTNode implements
 		setDeclaration(declaration);
 	}
 
+	@Override
 	public CPPASTExplicitTemplateInstantiation copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CPPASTExplicitTemplateInstantiation copy(CopyStyle style) {
 		CPPASTExplicitTemplateInstantiation copy = new CPPASTExplicitTemplateInstantiation();
 		copy.setDeclaration(declaration == null ? null : declaration.copy(style));
@@ -50,11 +52,13 @@ public class CPPASTExplicitTemplateInstantiation extends ASTNode implements
 		return copy;
 	}
 
+	@Override
 	public IASTDeclaration getDeclaration() {
         return declaration;
     }
 
-    public void setDeclaration(IASTDeclaration declaration) {
+    @Override
+	public void setDeclaration(IASTDeclaration declaration) {
         assertNotFrozen();
         this.declaration = declaration;
         if (declaration != null) {
@@ -64,10 +68,12 @@ public class CPPASTExplicitTemplateInstantiation extends ASTNode implements
     }
 
     
-    public int getModifier() {
+    @Override
+	public int getModifier() {
 		return modifier;
 	}
 
+	@Override
 	public void setModifier(int mod) {
 		assertNotFrozen();
 		modifier= mod;
@@ -96,7 +102,8 @@ public class CPPASTExplicitTemplateInstantiation extends ASTNode implements
     }
 
 
-    public void replace(IASTNode child, IASTNode other) {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
         if( declaration == child )
         {
             other.setParent( child.getParent() );

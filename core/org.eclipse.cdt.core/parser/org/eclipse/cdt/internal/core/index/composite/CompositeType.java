@@ -25,6 +25,7 @@ public abstract class CompositeType implements IIndexType {
 		this.cf = cf;
 	}
 	
+	@Override
 	public boolean isSameType(IType other) {
 		return type.isSameType(other);
 	}

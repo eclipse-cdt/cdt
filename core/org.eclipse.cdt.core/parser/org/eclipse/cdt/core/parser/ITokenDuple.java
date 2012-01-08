@@ -33,6 +33,7 @@ public interface ITokenDuple {
 	public int getSegmentCount();
 	
 	public abstract Iterator<IToken> iterator();
+	@Override
 	public abstract String toString();
 	public char [] toCharArray();
 			

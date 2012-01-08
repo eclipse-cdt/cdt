@@ -24,10 +24,12 @@ public interface ICASTTypedefNameSpecifier extends IASTNamedTypeSpecifier, ICAST
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICASTTypedefNameSpecifier copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICASTTypedefNameSpecifier copy(CopyStyle style);
 }

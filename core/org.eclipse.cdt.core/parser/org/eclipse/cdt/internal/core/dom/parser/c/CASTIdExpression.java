@@ -46,10 +46,12 @@ public class CASTIdExpression extends ASTNode implements IASTIdExpression, IASTC
 		setName(name);
 	}
 
+	@Override
 	public CASTIdExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CASTIdExpression copy(CopyStyle style) {
 		CASTIdExpression copy = new CASTIdExpression(name == null ? null : name.copy(style));
 		copy.setOffsetAndLength(this);
@@ -59,11 +61,13 @@ public class CASTIdExpression extends ASTNode implements IASTIdExpression, IASTC
 		return copy;
 	}
 
+	@Override
 	public IASTName getName() {
         return name;
     }
 
-    public void setName(IASTName name) {
+    @Override
+	public void setName(IASTName name) {
         assertNotFrozen();
         this.name = name;
         if (name != null) {
@@ -94,11 +98,13 @@ public class CASTIdExpression extends ASTNode implements IASTIdExpression, IASTC
         return true;
     }
 
+	@Override
 	public int getRoleForName(IASTName n) {
 		if( n == name )	return r_reference;
 		return r_unclear;
 	}
 	
+	@Override
 	public IType getExpressionType() {
 		IBinding binding = getName().resolveBinding();
 		try {
@@ -120,15 +126,18 @@ public class CASTIdExpression extends ASTNode implements IASTIdExpression, IASTC
 		return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
 	}
 	
+	@Override
 	public boolean isLValue() {
 		return true;
 	}
 	
+	@Override
 	public final ValueCategory getValueCategory() {
 		return ValueCategory.LVALUE;
 	}
 
 
+	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		IBinding[] bindings = CVisitor.findBindingsForContentAssist(n, isPrefix);
 
@@ -138,6 +147,6 @@ public class CASTIdExpression extends ASTNode implements IASTIdExpression, IASTC
 			}
 		}
 		
-		return (IBinding[]) ArrayUtil.removeNulls(IBinding.class, bindings);
+		return ArrayUtil.removeNulls(IBinding.class, bindings);
 	}
 }

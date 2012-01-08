@@ -69,7 +69,7 @@ public class CPPASTFunctionWithTryBlock extends CPPASTFunctionDefinition impleme
 	public void addCatchHandler(ICPPASTCatchHandler statement) {
         assertNotFrozen();
     	if (statement != null) {
-    		catchHandlers = (ICPPASTCatchHandler[]) ArrayUtil.appendAt(ICPPASTCatchHandler.class, catchHandlers, ++catchHandlersPos, statement);
+    		catchHandlers = ArrayUtil.appendAt(ICPPASTCatchHandler.class, catchHandlers, ++catchHandlersPos, statement);
     		statement.setParent(this);
 			statement.setPropertyInParent(CATCH_HANDLER);
     	}
@@ -78,7 +78,7 @@ public class CPPASTFunctionWithTryBlock extends CPPASTFunctionDefinition impleme
     @Override
 	public ICPPASTCatchHandler[] getCatchHandlers() {
         if (catchHandlers == null) return ICPPASTCatchHandler.EMPTY_CATCHHANDLER_ARRAY;
-        catchHandlers = (ICPPASTCatchHandler[]) ArrayUtil.trimAt(ICPPASTCatchHandler.class, catchHandlers, catchHandlersPos);
+        catchHandlers = ArrayUtil.trimAt(ICPPASTCatchHandler.class, catchHandlers, catchHandlersPos);
         return catchHandlers;
     }
 

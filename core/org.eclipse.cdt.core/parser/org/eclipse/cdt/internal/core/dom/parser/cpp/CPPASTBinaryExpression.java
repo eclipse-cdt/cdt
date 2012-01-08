@@ -55,10 +55,12 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 		setInitOperand2(operand2);
 	}
 
+	@Override
 	public CPPASTBinaryExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CPPASTBinaryExpression copy(CopyStyle style) {
 		CPPASTBinaryExpression copy = new CPPASTBinaryExpression();
 		copy.op = op;
@@ -71,30 +73,36 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 		return copy;
 	}
 
+	@Override
 	public int getOperator() {
         return op;
     }
 
-    public IASTExpression getOperand1() {
+    @Override
+	public IASTExpression getOperand1() {
         return operand1;
     }
 
-    public IASTInitializerClause getInitOperand2() {
+    @Override
+	public IASTInitializerClause getInitOperand2() {
     	return operand2;
     }
 
-    public IASTExpression getOperand2() {
+    @Override
+	public IASTExpression getOperand2() {
     	if (operand2 instanceof IASTExpression)
     		return (IASTExpression) operand2;
     	return null;
     }
 
-    public void setOperator(int op) {
+    @Override
+	public void setOperator(int op) {
         assertNotFrozen();
         this.op = op;
     }
 
-    public void setOperand1(IASTExpression expression) {
+    @Override
+	public void setOperand1(IASTExpression expression) {
         assertNotFrozen();
         operand1 = expression;
         if (expression != null) {
@@ -112,13 +120,15 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 		}
     }
 
-    public void setOperand2(IASTExpression expression) {
+    @Override
+	public void setOperand2(IASTExpression expression) {
     	setInitOperand2(expression);
     }
 
     /**
      * @see org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner#getImplicitNames()
      */
+	@Override
 	public IASTImplicitName[] getImplicitNames() {
 		if (implicitNames == null) {
 			ICPPFunction overload = getOverload();
@@ -233,6 +243,7 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 		return true;
 	}
 
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
 		if (child == operand1) {
 			other.setPropertyInParent(child.getPropertyInParent());
@@ -246,21 +257,24 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 		}
 	}
 
-    public IType getExpressionType() {
+    @Override
+	public IType getExpressionType() {
     	if (type == null) {
     		type= createExpressionType();
     	}
     	return type;
     }
 
-    public ICPPFunction getOverload() {
+    @Override
+	public ICPPFunction getOverload() {
     	if (overload != UNINITIALIZED_FUNCTION)
     		return overload;
     	
     	return overload = CPPSemantics.findOverloadedOperator(this);
     }
 
-    public ValueCategory getValueCategory() {
+    @Override
+	public ValueCategory getValueCategory() {
     	ICPPFunction op = getOverload();
 		if (op != null) {
 			return valueCategoryFromFunctionCall(op);
@@ -294,6 +308,7 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
 		return PRVALUE;
     }
     
+	@Override
 	public boolean isLValue() {
 		return getValueCategory() == LVALUE;
 	}

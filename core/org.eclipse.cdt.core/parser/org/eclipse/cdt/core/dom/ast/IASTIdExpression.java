@@ -42,10 +42,12 @@ public interface IASTIdExpression extends IASTExpression, IASTNameOwner {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IASTIdExpression copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public IASTIdExpression copy(CopyStyle style);
 }

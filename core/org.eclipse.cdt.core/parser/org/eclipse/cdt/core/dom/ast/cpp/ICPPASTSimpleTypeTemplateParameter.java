@@ -86,10 +86,12 @@ public interface ICPPASTSimpleTypeTemplateParameter extends ICPPASTTemplateParam
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICPPASTSimpleTypeTemplateParameter copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICPPASTSimpleTypeTemplateParameter copy(CopyStyle style);
 }

@@ -65,6 +65,7 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 			fResult = result;
 		}
 
+		@Override
 		public boolean visit(IPDOMNode node) throws CoreException {
 			if (node instanceof PDOMBinding) {
 				final PDOMBinding binding= (PDOMBinding) node;
@@ -82,6 +83,7 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 			return false;
 		}
 
+		@Override
 		public void leave(IPDOMNode node){}
 	}
 
@@ -100,22 +102,27 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 		fBinding= binding;
 	}
 	
+	@Override
 	public EScopeKind getKind() {
 		return EScopeKind.eClassType;
 	}
 
+	@Override
 	public ICPPClassType getClassType() {
 		return fBinding;
 	}
 
+	@Override
 	public IBinding getBinding(IASTName name, boolean resolve) {
 		return getBinding(name, resolve, null);
 	}
 
+	@Override
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup) {
 		return getBindings(name, resolve, prefixLookup, null);
 	}
 
+	@Override
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) {
 		try {
 		    final char[] nameChars = name.getSimpleID();
@@ -140,6 +147,7 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 		return fBinding;
 	}
 	
+	@Override
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
 		try {
 			if (name instanceof ICPPASTConversionName) {
@@ -243,14 +251,17 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 		return map;
 	}
 
+	@Override
 	public IBinding[] find(String name) {
 		return CPPSemantics.findBindings( this, name, false );
 	}
 	
+	@Override
 	public IIndexBinding getScopeBinding() {
 		return fBinding;
 	}
 
+	@Override
 	public ICPPMethod[] getImplicitMethods() {
 		try {
 			PDOMClassUtil.MethodCollector methods = new PDOMClassUtil.MethodCollector(true, false);
@@ -261,14 +272,17 @@ class PDOMCPPClassScope implements ICPPClassScope, IIndexScope {
 		}
 	}
 
+	@Override
 	public ICPPConstructor[] getConstructors() {
 		return fBinding.getConstructors();
 	}
 
+	@Override
 	public IIndexScope getParent() {
 		return fBinding.getScope();
 	}
 
+	@Override
 	public IIndexName getScopeName() {
 		return fBinding.getScopeName();
 	}

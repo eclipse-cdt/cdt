@@ -66,6 +66,7 @@ public class GNUElfBinaryObject extends ElfBinaryObject {
 				starttime = System.currentTimeMillis();
 				Runnable worker = new Runnable() {
 
+					@Override
 					public void run() {
 
 						long diff = System.currentTimeMillis() - starttime;

@@ -34,10 +34,12 @@ public class CASTTypeIdExpression extends ASTNode implements IASTTypeIdExpressio
 		setTypeId(typeId);
 	}
 	
+	@Override
 	public CASTTypeIdExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CASTTypeIdExpression copy(CopyStyle style) {
 		CASTTypeIdExpression copy = new CASTTypeIdExpression(op, typeId == null ? null
 				: typeId.copy(style));
@@ -48,16 +50,19 @@ public class CASTTypeIdExpression extends ASTNode implements IASTTypeIdExpressio
 		return copy;
 	}
 
+	@Override
 	public int getOperator() {
         return op;
     }
 
-    public void setOperator(int value) {
+    @Override
+	public void setOperator(int value) {
         assertNotFrozen();
         this.op = value;
     }
 
-    public void setTypeId(IASTTypeId typeId) {
+    @Override
+	public void setTypeId(IASTTypeId typeId) {
        assertNotFrozen();
        this.typeId = typeId;
        if (typeId != null) {
@@ -66,7 +71,8 @@ public class CASTTypeIdExpression extends ASTNode implements IASTTypeIdExpressio
 		}
     }
 
-    public IASTTypeId getTypeId() {
+    @Override
+	public IASTTypeId getTypeId() {
         return typeId;
     }
 
@@ -92,17 +98,20 @@ public class CASTTypeIdExpression extends ASTNode implements IASTTypeIdExpressio
         return true;
     }
     
-    public IType getExpressionType() {
+    @Override
+	public IType getExpressionType() {
     	if (getOperator() == op_sizeof) {
 			return CVisitor.get_SIZE_T(this);
 		}
     	return CVisitor.createType(typeId.getAbstractDeclarator());
     }
 
+	@Override
 	public boolean isLValue() {
 		return false;
 	}
 	
+	@Override
 	public ValueCategory getValueCategory() {
 		return ValueCategory.PRVALUE;
 	}

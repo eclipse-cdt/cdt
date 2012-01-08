@@ -31,6 +31,7 @@ public class CPPASTPackExpansionExpression extends ASTNode implements ICPPASTPac
 		setPattern(pattern);
 	}
 
+	@Override
 	public void setPattern(IASTExpression pattern) {
 		assertNotFrozen();
 		
@@ -41,14 +42,17 @@ public class CPPASTPackExpansionExpression extends ASTNode implements ICPPASTPac
 		}
 	}
 
+	@Override
 	public IASTExpression getPattern() {
 		return fPattern;
 	}
 	
+	@Override
 	public CPPASTPackExpansionExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CPPASTPackExpansionExpression copy(CopyStyle style) {
 		CPPASTPackExpansionExpression copy = new CPPASTPackExpansionExpression(fPattern.copy(style));
 		copy.setOffsetAndLength(this);
@@ -58,6 +62,7 @@ public class CPPASTPackExpansionExpression extends ASTNode implements ICPPASTPac
 		return copy;
 	}
 
+	@Override
 	public IType getExpressionType() {
 		final IType type = fPattern.getExpressionType();
 		if (type == null)
@@ -66,10 +71,12 @@ public class CPPASTPackExpansionExpression extends ASTNode implements ICPPASTPac
 		return new CPPParameterPackType(type);
 	}
 
+	@Override
 	public boolean isLValue() {
 		return fPattern.isLValue();
 	}
 	
+	@Override
 	public ValueCategory getValueCategory() {
 		return fPattern.getValueCategory();
 	}
@@ -92,6 +99,7 @@ public class CPPASTPackExpansionExpression extends ASTNode implements ICPPASTPac
         return true;
     }
 
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
 		if (child == fPattern) {
             other.setPropertyInParent(child.getPropertyInParent());

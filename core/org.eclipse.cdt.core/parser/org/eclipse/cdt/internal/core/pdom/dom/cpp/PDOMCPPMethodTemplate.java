@@ -79,6 +79,7 @@ class PDOMCPPMethodTemplate extends PDOMCPPFunctionTemplate implements ICPPMetho
 		return IIndexCPPBindingConstants.CPP_METHOD_TEMPLATE;
 	}
 
+	@Override
 	public boolean isDestructor() {
 		return getBit(getAnnotation1(), PDOMCPPAnnotation.DESTRUCTOR_OFFSET);
 	}
@@ -89,22 +90,27 @@ class PDOMCPPMethodTemplate extends PDOMCPPFunctionTemplate implements ICPPMetho
 		return annotation1;
 	}
 
+	@Override
 	public boolean isImplicit() {
 		return getBit(getAnnotation1(), PDOMCPPAnnotation.IMPLICIT_METHOD_OFFSET);
 	}
 
+	@Override
 	public boolean isExplicit() {
 		return getBit(getAnnotation1(), PDOMCPPAnnotation.EXPLICIT_METHOD_OFFSET);
 	}
 
+	@Override
 	public boolean isVirtual() {
 		return getBit(getAnnotation1(), PDOMCPPAnnotation.VIRTUAL_OFFSET);
 	}
 
+	@Override
 	public ICPPClassType getClassOwner() {
 		return (ICPPClassType) getOwner();
 	}
 
+	@Override
 	public int getVisibility() {
 		return PDOMCPPAnnotation.getVisibility(getAnnotation());
 	}
@@ -140,6 +146,7 @@ class PDOMCPPMethodTemplate extends PDOMCPPFunctionTemplate implements ICPPMetho
 		return false;
 	}
 
+	@Override
 	public boolean isPureVirtual() {
 		return false;
 	}

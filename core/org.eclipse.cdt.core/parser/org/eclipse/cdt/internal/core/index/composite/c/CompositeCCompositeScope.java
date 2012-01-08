@@ -27,33 +27,40 @@ class CompositeCCompositeScope extends CompositeScope implements ICCompositeType
 		super(cf, rbinding);
 	}
 
+	@Override
 	public IBinding getBinding(char[] name) {
 		fail(); return null;
 	}
 
+	@Override
 	public ICompositeType getCompositeType() {
 		return (ICompositeType) cf.getCompositeBinding(rbinding);
 	}
 
+	@Override
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) {
 		IBinding binding = ((ICompositeType)rbinding).getCompositeScope().getBinding(name, resolve, fileSet);
 		return processUncertainBinding(binding);
 	}
 	
+	@Override
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
 		IBinding[] bindings = ((ICompositeType)rbinding).getCompositeScope().getBindings(name, resolve, prefixLookup, fileSet);
 		return processUncertainBindings(bindings);
 	}
 	
+	@Override
 	public IBinding[] find(String name) {
 		IBinding[] preresult = ((ICompositeType)rbinding).getCompositeScope().find(name);
 		return processUncertainBindings(preresult);	
 	}
 	
+	@Override
 	public IIndexBinding getScopeBinding() {
 		return (IIndexBinding) getCompositeType();
 	}
 
+	@Override
 	public EScopeKind getKind() {
 		return EScopeKind.eClassType;
 	}

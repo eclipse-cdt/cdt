@@ -111,7 +111,7 @@ public class CPPASTName extends CPPASTNameBase implements ICPPASTCompletionConte
 					}
 				}
 			}
-			return (IBinding[])ArrayUtil.removeNulls(IBinding.class, bindings);
+			return ArrayUtil.removeNulls(IBinding.class, bindings);
 		}
 		return null;
 	}
@@ -142,7 +142,7 @@ public class CPPASTName extends CPPASTNameBase implements ICPPASTCompletionConte
 				bindings[i]= null;
 			}
 		}
-		return (IBinding[])ArrayUtil.removeNulls(IBinding.class, bindings);
+		return ArrayUtil.removeNulls(IBinding.class, bindings);
 	}
 
     @Override

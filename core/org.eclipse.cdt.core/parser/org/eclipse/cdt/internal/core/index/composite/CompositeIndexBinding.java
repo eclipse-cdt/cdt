@@ -46,18 +46,22 @@ public abstract class CompositeIndexBinding implements IIndexBinding {
 		this.rbinding = rbinding;
 	}
 	
+	@Override
 	public ILinkage getLinkage() {
 		return rbinding.getLinkage();
 	}
 
+	@Override
 	public String getName() {
 		return rbinding.getName();
 	}
 
+	@Override
 	public char[] getNameCharArray() {
 		return rbinding.getNameCharArray();
 	}
 
+	@Override
 	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class adapter) {
 		if (adapter.isInstance(rbinding)) {
@@ -66,10 +70,12 @@ public abstract class CompositeIndexBinding implements IIndexBinding {
 		return null;
 	}
 
+	@Override
 	public String[] getQualifiedName() {
 		return new String[] { getName() };
 	}
 	
+	@Override
 	public IIndexScope getScope() {
 		return cf.getCompositeScope(rbinding.getScope());
 	}
@@ -87,10 +93,12 @@ public abstract class CompositeIndexBinding implements IIndexBinding {
 		return rbinding.toString();
 	}
 	
+	@Override
 	public boolean isFileLocal() throws CoreException {
 		return rbinding != null && rbinding.isFileLocal();
 	}
 
+	@Override
 	public IIndexFile getLocalToFile() throws CoreException {
 		return rbinding != null ? rbinding.getLocalToFile() : null;
 	}
@@ -110,6 +118,7 @@ public abstract class CompositeIndexBinding implements IIndexBinding {
 		return rbinding.hashCode();
 	}
 	
+	@Override
 	public IIndexBinding getOwner() {
 		final IIndexFragmentBinding owner= rbinding.getOwner();
 		if (owner == null)

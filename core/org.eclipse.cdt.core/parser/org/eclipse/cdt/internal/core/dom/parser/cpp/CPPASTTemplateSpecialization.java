@@ -40,10 +40,12 @@ public class CPPASTTemplateSpecialization extends ASTNode implements
 		setDeclaration(declaration);
 	}
 	
+	@Override
 	public CPPASTTemplateSpecialization copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CPPASTTemplateSpecialization copy(CopyStyle style) {
 		CPPASTTemplateSpecialization copy = new CPPASTTemplateSpecialization();
 		copy.setDeclaration(declaration == null ? null : declaration.copy(style));
@@ -54,11 +56,13 @@ public class CPPASTTemplateSpecialization extends ASTNode implements
 		return copy;
 	}
 
+	@Override
 	public IASTDeclaration getDeclaration() {
         return declaration;
     }
 
-    public void setDeclaration(IASTDeclaration declaration) {
+    @Override
+	public void setDeclaration(IASTDeclaration declaration) {
         assertNotFrozen();
         this.declaration = declaration;
         if (declaration != null) {
@@ -89,34 +93,41 @@ public class CPPASTTemplateSpecialization extends ASTNode implements
         return true;
     }
 
+	@Override
 	public boolean isExported() {
 		return false;
 	}
 
+	@Override
 	public void setExported(boolean value) {
         assertNotFrozen();
 	}
 
+	@Override
 	public ICPPASTTemplateParameter[] getTemplateParameters() {
 		return ICPPASTTemplateParameter.EMPTY_TEMPLATEPARAMETER_ARRAY;
 	}
 
+	@Override
 	public void addTemplateParameter(ICPPASTTemplateParameter param) {
         assertNotFrozen();
 	}
 
+	@Override
 	@Deprecated
 	public void addTemplateParamter(ICPPASTTemplateParameter param) {
 		addTemplateParameter(param);
 	}
 
+	@Override
 	public ICPPTemplateScope getScope() {
 		if (templateScope == null)
 			templateScope = new CPPTemplateScope(this);
 		return templateScope;
 	}
     
-    public void replace(IASTNode child, IASTNode other) {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
         if (declaration == child) {
             other.setParent(child.getParent());
             other.setPropertyInParent(child.getPropertyInParent());
@@ -124,6 +135,7 @@ public class CPPASTTemplateSpecialization extends ASTNode implements
         }
     }
     
+	@Override
 	public short getNestingLevel() {
 		if (nestingLevel == -1) {
 			CPPTemplates.associateTemplateDeclarations(this);
@@ -132,6 +144,7 @@ public class CPPASTTemplateSpecialization extends ASTNode implements
 		return nestingLevel;
 	}
 
+	@Override
 	public boolean isAssociatedWithLastName() {
 		if (isAssociatedWithLastName == -1)
 			CPPTemplates.associateTemplateDeclarations(this);
@@ -140,10 +153,12 @@ public class CPPASTTemplateSpecialization extends ASTNode implements
 		return isAssociatedWithLastName != 0;
 	}
 	
+	@Override
 	public void setAssociatedWithLastName(boolean value) {
 		isAssociatedWithLastName= value ? (byte) 1 : (byte) 0;
 	}
 
+	@Override
 	public void setNestingLevel(short level) {
 		assert level >= 0;
 		nestingLevel= level;

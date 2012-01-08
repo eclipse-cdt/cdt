@@ -34,6 +34,7 @@ public interface IASTMacroExpansion extends IASTNodeLocation {
 	 * nodes within the same macro-expansion. However, it does not serve as an offset
 	 * into a file.
 	 */
+	@Override
 	public int getNodeOffset();
 
 	/**
@@ -41,6 +42,7 @@ public interface IASTMacroExpansion extends IASTNodeLocation {
 	 * with others from within the same macro-expansion. However, the length does not neccessarily
 	 * relate to a length in terms of characters.
 	 */
+	@Override
 	public int getNodeLength();
 
 	/**

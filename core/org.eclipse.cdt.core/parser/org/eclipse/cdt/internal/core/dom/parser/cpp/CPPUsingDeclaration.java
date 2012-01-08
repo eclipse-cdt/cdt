@@ -38,19 +38,23 @@ public class CPPUsingDeclaration extends PlatformObject implements ICPPUsingDecl
         this.delegates= bindings;
     }
         
-    public IBinding[] getDelegates() {
+    @Override
+	public IBinding[] getDelegates() {
         return delegates;
     }
 
-    public String[] getQualifiedName() {
+    @Override
+	public String[] getQualifiedName() {
     	return CPPVisitor.getQualifiedName(this);
     }
 
-    public char[][] getQualifiedNameCharArray() {
+    @Override
+	public char[][] getQualifiedNameCharArray() {
     	return CPPVisitor.getQualifiedNameCharArray(this);
     }
 
-    public boolean isGloballyQualified() throws DOMException {
+    @Override
+	public boolean isGloballyQualified() throws DOMException {
         IScope scope = getScope();
         while (scope != null) {
             if(scope instanceof ICPPBlockScope)
@@ -60,23 +64,28 @@ public class CPPUsingDeclaration extends PlatformObject implements ICPPUsingDecl
         return true;
     }
 
-    public String getName() {
+    @Override
+	public String getName() {
     	return new String(getNameCharArray());
     }
 
-    public char[] getNameCharArray() {
+    @Override
+	public char[] getNameCharArray() {
     	return name.getSimpleID();
     }
 
-    public IScope getScope() {
+    @Override
+	public IScope getScope() {
         return CPPVisitor.getContainingScope(name.getParent());
     }
 
-    public IASTNode[] getDeclarations() {
+    @Override
+	public IASTNode[] getDeclarations() {
         return null;
     }
 
-    public IASTNode getDefinition() {
+    @Override
+	public IASTNode getDefinition() {
         IASTNode n = name.getParent();
         if (n instanceof ICPPASTTemplateId)
             n = n.getParent();
@@ -84,16 +93,20 @@ public class CPPUsingDeclaration extends PlatformObject implements ICPPUsingDecl
         return n;
     }
 
-    public void addDefinition(IASTNode node) {
+    @Override
+	public void addDefinition(IASTNode node) {
     }
 
-    public void addDeclaration(IASTNode node) {
+    @Override
+	public void addDeclaration(IASTNode node) {
     }
 
+	@Override
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
 	}
 	
+	@Override
 	public IBinding getOwner() {
 		return CPPVisitor.findDeclarationOwner(name, true);
 	}

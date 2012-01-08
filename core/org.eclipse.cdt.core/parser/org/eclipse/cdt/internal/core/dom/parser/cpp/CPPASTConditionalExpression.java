@@ -63,10 +63,12 @@ public class CPPASTConditionalExpression extends ASTNode implements IASTConditio
     	setNegativeResultExpression(negative);
 	}
 
+	@Override
 	public CPPASTConditionalExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CPPASTConditionalExpression copy(CopyStyle style) {
 		CPPASTConditionalExpression copy = new CPPASTConditionalExpression();
 		copy.setLogicalConditionExpression(fCondition == null ? null : fCondition.copy(style));
@@ -79,11 +81,13 @@ public class CPPASTConditionalExpression extends ASTNode implements IASTConditio
 		return copy;
 	}
 
+	@Override
 	public IASTExpression getLogicalConditionExpression() {
         return fCondition;
     }
 
-    public void setLogicalConditionExpression(IASTExpression expression) {
+    @Override
+	public void setLogicalConditionExpression(IASTExpression expression) {
         assertNotFrozen();
         fCondition = expression;
         if (expression != null) {
@@ -92,11 +96,13 @@ public class CPPASTConditionalExpression extends ASTNode implements IASTConditio
 		}
     }
 
-    public IASTExpression getPositiveResultExpression() {
+    @Override
+	public IASTExpression getPositiveResultExpression() {
         return fPositive;
     }
 
-    public void setPositiveResultExpression(IASTExpression expression) {
+    @Override
+	public void setPositiveResultExpression(IASTExpression expression) {
         assertNotFrozen();
         this.fPositive = expression;
         if (expression != null) {
@@ -105,11 +111,13 @@ public class CPPASTConditionalExpression extends ASTNode implements IASTConditio
 		}
     }
 
-    public IASTExpression getNegativeResultExpression() {
+    @Override
+	public IASTExpression getNegativeResultExpression() {
         return fNegative;
     }
 
-    public void setNegativeResultExpression(IASTExpression expression) {
+    @Override
+	public void setNegativeResultExpression(IASTExpression expression) {
         assertNotFrozen();
         this.fNegative = expression;
         if (expression != null) {
@@ -141,6 +149,7 @@ public class CPPASTConditionalExpression extends ASTNode implements IASTConditio
         return true;
     }
 
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
 		if (child == fCondition) {
 			other.setPropertyInParent(child.getPropertyInParent());
@@ -159,16 +168,19 @@ public class CPPASTConditionalExpression extends ASTNode implements IASTConditio
 		}
 	}
     
-    public IType getExpressionType() {
+    @Override
+	public IType getExpressionType() {
     	evaluate();
     	return fType;
     }
     
-    public ValueCategory getValueCategory() {
+    @Override
+	public ValueCategory getValueCategory() {
     	evaluate();
     	return fValueCategory;
     }
     
+	@Override
 	public boolean isLValue() {
 		return getValueCategory() == LVALUE;
 	}

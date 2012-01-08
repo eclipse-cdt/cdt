@@ -36,10 +36,12 @@ public class CASTLabelStatement extends ASTNode implements IASTLabelStatement, I
 		setNestedStatement(nestedStatement);
 	}
 	
+	@Override
 	public CASTLabelStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CASTLabelStatement copy(CopyStyle style) {
 		CASTLabelStatement copy = new CASTLabelStatement();
 		copy.setName(name == null ? null : name.copy(style));
@@ -51,11 +53,13 @@ public class CASTLabelStatement extends ASTNode implements IASTLabelStatement, I
 		return copy;
 	}
 
+	@Override
 	public IASTName getName() {
         return name;
     }
 
-    public void setName(IASTName name) {
+    @Override
+	public void setName(IASTName name) {
         assertNotFrozen();
         this.name = name;
         if (name != null) {
@@ -86,16 +90,19 @@ public class CASTLabelStatement extends ASTNode implements IASTLabelStatement, I
     }
 
 
+	@Override
 	public int getRoleForName(IASTName n) {
 		if( n == name )	return r_declaration;
 		return r_unclear;
 	}
     
-    public IASTStatement getNestedStatement() {
+    @Override
+	public IASTStatement getNestedStatement() {
         return nestedStatement;
     }
 
-    public void setNestedStatement(IASTStatement s) {
+    @Override
+	public void setNestedStatement(IASTStatement s) {
         assertNotFrozen();
         nestedStatement = s;
         if (s != null) {
@@ -104,7 +111,8 @@ public class CASTLabelStatement extends ASTNode implements IASTLabelStatement, I
 		}
     }
 
-    public void replace(IASTNode child, IASTNode other) {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
         if( child == nestedStatement )
         {
             other.setParent( this );

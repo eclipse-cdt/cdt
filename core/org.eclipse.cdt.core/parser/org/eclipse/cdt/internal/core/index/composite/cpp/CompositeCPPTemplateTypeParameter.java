@@ -33,27 +33,33 @@ public class CompositeCPPTemplateTypeParameter extends CompositeCPPBinding
 		super(cf, binding);
 	}
 
+	@Override
 	public IType getDefault() throws DOMException {
 		IType preresult= ((ICPPTemplateTypeParameter)rbinding).getDefault();
 		return cf.getCompositeType(preresult);
 	}
 
+	@Override
 	public short getParameterPosition() {
 		return ((ICPPTemplateParameter)rbinding).getParameterPosition();
 	}
 
+	@Override
 	public short getTemplateNestingLevel() {
 		return ((ICPPTemplateParameter)rbinding).getTemplateNestingLevel();
 	}
 	
+	@Override
 	public int getParameterID() {
 		return ((ICPPTemplateParameter)rbinding).getParameterID();
 	}
 
+	@Override
 	public boolean isParameterPack() {
 		return ((ICPPTemplateParameter)rbinding).isParameterPack();
 	}
 
+	@Override
 	public boolean isSameType(IType type) {
 		return ((IType)rbinding).isSameType(type);
 	}
@@ -63,6 +69,7 @@ public class CompositeCPPTemplateTypeParameter extends CompositeCPPBinding
 		fail(); return null; 
 	}
 
+	@Override
 	public ICPPScope asScope() {
 		if (unknownScope == null) {
 			unknownScope= new CompositeCPPUnknownScope(this, getUnknownName());
@@ -70,10 +77,12 @@ public class CompositeCPPTemplateTypeParameter extends CompositeCPPBinding
 		return unknownScope;
 	}
 
+	@Override
 	public IASTName getUnknownName() {
 		return new CPPASTName(getNameCharArray());
 	}
 	
+	@Override
 	public ICPPTemplateArgument getDefaultValue() {
 		try {
 			return TemplateInstanceUtil.convert(cf, ((ICPPTemplateTypeParameter)rbinding).getDefaultValue());

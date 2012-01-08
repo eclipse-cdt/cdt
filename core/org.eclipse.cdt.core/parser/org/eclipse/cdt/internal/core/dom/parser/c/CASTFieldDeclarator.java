@@ -47,12 +47,14 @@ public class CASTFieldDeclarator extends CASTDeclarator implements IASTFieldDecl
 		return copy;
 	}
 
+	@Override
 	public IASTExpression getBitFieldSize() {
         return bitFieldSize;
     }
 
 
-    public void setBitFieldSize(IASTExpression size) {
+    @Override
+	public void setBitFieldSize(IASTExpression size) {
         assertNotFrozen();
         bitFieldSize = size;
         if (size != null) {

@@ -73,7 +73,8 @@ public class CPPEnumeration extends PlatformObject implements ICPPEnumeration, I
 		name.setBinding(this);
     }
 
-    public IASTNode[] getDeclarations() {
+    @Override
+	public IASTNode[] getDeclarations() {
     	fDeclarations= ArrayUtil.trim(fDeclarations);
     	return fDeclarations;
     }
@@ -120,17 +121,20 @@ public class CPPEnumeration extends PlatformObject implements ICPPEnumeration, I
 		}
 	}
 
-    public IASTName getDefinition() {
+    @Override
+	public IASTName getDefinition() {
     	if (fDefinition == NOT_INITIALIZED)
     		return null;
         return fDefinition;
     }
 
-    public String getName() {
+    @Override
+	public String getName() {
         return new String(getNameCharArray());
     }
 
-    public char[] getNameCharArray() {
+    @Override
+	public char[] getNameCharArray() {
     	return getADeclaration().getSimpleID();
     }
 
@@ -140,6 +144,7 @@ public class CPPEnumeration extends PlatformObject implements ICPPEnumeration, I
     	return fDeclarations[0];
 	}
 
+	@Override
 	public IScope getScope() {
         return CPPVisitor.getContainingScope(getADeclaration());
     }
@@ -149,15 +154,18 @@ public class CPPEnumeration extends PlatformObject implements ICPPEnumeration, I
     	throw new IllegalArgumentException("Enums must not be cloned"); //$NON-NLS-1$
     }
 
-    public String[] getQualifiedName() {
+    @Override
+	public String[] getQualifiedName() {
         return CPPVisitor.getQualifiedName(this);
     }
 
-    public char[][] getQualifiedNameCharArray() {
+    @Override
+	public char[][] getQualifiedNameCharArray() {
         return CPPVisitor.getQualifiedNameCharArray(this);
     }
 
-    public boolean isGloballyQualified() throws DOMException {
+    @Override
+	public boolean isGloballyQualified() throws DOMException {
         IScope scope = getScope();
         while (scope != null) {
             if (scope instanceof ICPPBlockScope)
@@ -167,11 +175,13 @@ public class CPPEnumeration extends PlatformObject implements ICPPEnumeration, I
         return true;
     }
 
+	@Override
 	public void addDefinition(IASTNode node) {
 		assert fDefinition == null || fDefinition == NOT_INITIALIZED;
 		fDefinition= (IASTName) node;
 	}
 
+	@Override
 	public void addDeclaration(IASTNode node) {
 		assert node instanceof IASTName;
 		if (fDeclarations == null) {
@@ -181,7 +191,8 @@ public class CPPEnumeration extends PlatformObject implements ICPPEnumeration, I
 		}
 	}
 	
-    public boolean isSameType(IType type) {
+    @Override
+	public boolean isSameType(IType type) {
         if (type == this)
             return true;
         if (type instanceof ITypedef || type instanceof IIndexBinding)
@@ -189,10 +200,12 @@ public class CPPEnumeration extends PlatformObject implements ICPPEnumeration, I
         return false;
     }
     
+	@Override
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
 	}
 
+	@Override
 	public IBinding getOwner() {
 		return CPPVisitor.findDeclarationOwner(getADeclaration(), true);
 	}
@@ -202,6 +215,7 @@ public class CPPEnumeration extends PlatformObject implements ICPPEnumeration, I
 		return getName();
 	}
 	
+	@Override
 	public long getMinValue() {
 		if (fMinValue != null)
 			return fMinValue.longValue();
@@ -224,6 +238,7 @@ public class CPPEnumeration extends PlatformObject implements ICPPEnumeration, I
 		return minValue;
 	}
 
+	@Override
 	public long getMaxValue() {
 		if (fMaxValue != null)
 			return fMaxValue.longValue();
@@ -246,15 +261,18 @@ public class CPPEnumeration extends PlatformObject implements ICPPEnumeration, I
 		return maxValue;
 	}
 
+	@Override
 	public boolean isScoped() {
 		return fIsScoped;
 	}
 
+	@Override
 	public IType getFixedType() {
 		return fFixedType;
 	}
 
-    public IEnumerator[] getEnumerators() {
+    @Override
+	public IEnumerator[] getEnumerators() {
     	findDefinition();
     	final IASTName definition = getDefinition();
 		if (definition == null) {
@@ -287,6 +305,7 @@ public class CPPEnumeration extends PlatformObject implements ICPPEnumeration, I
 		return fIndexBinding;
 	}
 
+	@Override
 	public ICPPScope asScope() {
 		findDefinition();
 		IASTName def = getDefinition();

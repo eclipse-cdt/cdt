@@ -22,10 +22,12 @@ class CompositeCEnumerator extends CompositeCBinding implements IEnumerator {
 		super(cf, rbinding);
 	}
 
+	@Override
 	public IType getType() throws DOMException {
 		return cf.getCompositeType(((IEnumerator) rbinding).getType());
 	}
 
+	@Override
 	public IValue getValue() {
 		return ((IEnumerator) rbinding).getValue();
 	}

@@ -78,34 +78,42 @@ public class CBasicType implements ICBasicType, ISerializableType {
 		}
 	}
 
+	@Override
 	public Kind getKind() {
 		return fKind;
 	}
 	
+	@Override
 	public int getModifiers() {
 		return fModifiers;
 	}
 
+	@Override
 	public boolean isSigned() {
 		return (fModifiers & IS_SIGNED) != 0;
 	}
 
+	@Override
 	public boolean isUnsigned() {
 		return (fModifiers & IS_UNSIGNED) != 0;
 	}
 
+	@Override
 	public boolean isShort() {
 		return (fModifiers & IS_SHORT) != 0;
 	}
 
+	@Override
 	public boolean isLong() {
 		return (fModifiers & IS_LONG) != 0;
 	}
 
+	@Override
 	public boolean isLongLong() {
 		return (fModifiers & IS_LONG_LONG) != 0;
 	}
 
+	@Override
 	public boolean isSameType(IType obj) {
 		if (obj == this)
 			return true;
@@ -139,7 +147,8 @@ public class CBasicType implements ICBasicType, ISerializableType {
         return t;
     }
 
-    @Deprecated
+    @Override
+	@Deprecated
 	public IASTExpression getValue() {
 		return value;
 	}
@@ -147,6 +156,7 @@ public class CBasicType implements ICBasicType, ISerializableType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.c.ICBasicType#isComplex()
 	 */
+	@Override
 	public boolean isComplex() {
 		return (fModifiers & IS_COMPLEX) != 0;
 	}
@@ -154,10 +164,12 @@ public class CBasicType implements ICBasicType, ISerializableType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.c.ICBasicType#isImaginary()
 	 */
+	@Override
 	public boolean isImaginary() {
 		return (fModifiers & IS_IMAGINARY) != 0;
 	}
 
+	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
 		final int kind= getKind().ordinal();
 		final int shiftedKind=  kind * ITypeMarshalBuffer.FLAG1;
@@ -184,6 +196,7 @@ public class CBasicType implements ICBasicType, ISerializableType {
 		return new CBasicType(Kind.values()[kind], modifiers);
 	}
 
+	@Override
 	@Deprecated
 	public int getType() {
 		switch (fKind) {

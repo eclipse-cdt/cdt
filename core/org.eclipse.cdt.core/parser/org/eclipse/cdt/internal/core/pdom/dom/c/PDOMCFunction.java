@@ -135,6 +135,7 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 		return IIndexCBindingConstants.CFUNCTION;
 	}
 
+	@Override
 	public IFunctionType getType() {
 		try {
 			return (IFunctionType) getLinkage().loadType(record + FUNCTION_TYPE);
@@ -144,14 +145,17 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 		}
 	}
 
+	@Override
 	public boolean isStatic() {
 		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.STATIC_OFFSET);
 	}
 
+	@Override
 	public boolean isExtern() {
 		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.EXTERN_OFFSET);
 	}
 
+	@Override
 	public IParameter[] getParameters() {
 		try {
 			PDOMLinkage linkage= getLinkage();
@@ -176,24 +180,29 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 		}
 	}
 	
+	@Override
 	public boolean isAuto() {
 		// ISO/IEC 9899:TC1 6.9.1.4
 		return false;
 	}
 
+	@Override
 	public boolean isRegister() {
 		// ISO/IEC 9899:TC1 6.9.1.4
 		return false;
 	}
 
+	@Override
 	public boolean isInline() {
 		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.INLINE_OFFSET);
 	}
 
+	@Override
 	public boolean takesVarArgs() {
 		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.VARARGS_OFFSET);
 	}
 	
+	@Override
 	public IScope getFunctionScope() {
 		return null;
 	}

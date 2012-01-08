@@ -29,49 +29,64 @@ class PDOMMacroDefinitionName implements IIndexFragmentName {
 		return fMacro;
 	}
 	
+	@Override
 	public boolean couldBePolymorphicMethodCall() throws CoreException {
 		return false;
 	}
+	@Override
 	public IIndexName[] getEnclosedNames() throws CoreException {
 		return IIndexName.EMPTY_ARRAY;
 	}
+	@Override
 	public IIndexName getEnclosingDefinition() throws CoreException {
 		return null;
 	}
+	@Override
 	public IIndexFile getFile() throws CoreException {
 		return fMacro.getFile();
 	}
+	@Override
 	public int getNodeLength() {
 		return fMacro.getNodeLength();
 	}
+	@Override
 	public int getNodeOffset() {
 		return fMacro.getNodeOffset();
 	}
+	@Override
 	public boolean isBaseSpecifier() throws CoreException {
 		return false;
 	}
+	@Override
 	public boolean isReadAccess() throws CoreException {
 		return false;
 	}
+	@Override
 	public boolean isWriteAccess() throws CoreException {
 		return false;
 	}
+	@Override
 	public IASTFileLocation getFileLocation() {
 		return fMacro;
 	}
+	@Override
 	public boolean isDeclaration() {
 		return false;
 	}
+	@Override
 	public boolean isDefinition() {
 		return true;
 	}
+	@Override
 	public boolean isReference() {
 		return false;
 	}
+	@Override
 	public boolean isInlineNamespaceDefinition() {
 		return false;
 	}
 
+	@Override
 	@Deprecated
 	public char[] toCharArray() {
 		return fMacro.getNameCharArray();
@@ -81,12 +96,15 @@ class PDOMMacroDefinitionName implements IIndexFragmentName {
 		return new String(getSimpleID());
 	}
 	
+	@Override
 	public char[] getSimpleID() {
 		return fMacro.getNameCharArray();
 	}
+	@Override
 	public IIndexFragmentBinding getBinding() {
 		return fMacro;
 	}
+	@Override
 	public IIndexFragment getIndexFragment() {
 		return fMacro.getFragment();
 	}

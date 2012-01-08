@@ -20,6 +20,7 @@ class UniqueType implements IType {
 		fForParameterPack= forParameterPack;
 	}
 
+	@Override
 	public boolean isSameType(IType type) {
 		return type == this;
 	}

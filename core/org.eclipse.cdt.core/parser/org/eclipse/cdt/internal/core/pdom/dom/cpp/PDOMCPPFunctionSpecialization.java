@@ -151,6 +151,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 		return IIndexCPPBindingConstants.CPP_FUNCTION_SPECIALIZATION;
 	}
 
+	@Override
 	public boolean isInline() {
 		return getBit(readAnnotation(), PDOMCAnnotation.INLINE_OFFSET);
 	}
@@ -166,14 +167,17 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 		return fAnnotation;
 	}
 
+	@Override
 	public boolean isMutable() {
 		return false;
 	}
 
+	@Override
 	public IScope getFunctionScope() {
 		return null;
 	}
 
+	@Override
 	public ICPPParameter[] getParameters() {
 		try {
 			PDOMLinkage linkage= getLinkage();
@@ -198,6 +202,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 		}
 	}
 
+	@Override
 	public ICPPFunctionType getType() {		
 		if (fType == null) {
 			try {
@@ -210,33 +215,40 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 		return fType;
 	}
 
+	@Override
 	public boolean isAuto() {
 		// ISO/IEC 14882:2003 7.1.1.2
 		return false; 
 	}
 
+	@Override
 	public boolean isExtern() {
 		return getBit(readAnnotation(), PDOMCAnnotation.EXTERN_OFFSET);
 	}
 
+	@Override
 	public boolean isExternC() {
 		return getBit(readAnnotation(), PDOMCPPAnnotation.EXTERN_C_OFFSET);
 	}
 
+	@Override
 	public boolean isRegister() {
 		// ISO/IEC 14882:2003 7.1.1.2
 		return false; 
 	}
 
+	@Override
 	public boolean isStatic() {
 		return getBit(readAnnotation(), PDOMCAnnotation.STATIC_OFFSET);
 	}
 
+	@Override
 	public boolean takesVarArgs() {
 		return getBit(readAnnotation(), PDOMCAnnotation.VARARGS_OFFSET);
 	}
 
 	
+	@Override
 	public int getRequiredArgumentCount() {
 		if (fRequiredArgCount == -1) {
 			try {
@@ -248,10 +260,12 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 		return fRequiredArgCount;
 	}
 
+	@Override
 	public boolean hasParameterPack() {
 		return getBit(readAnnotation(), ANNOT_PARAMETER_PACK);
 	}
 
+	@Override
 	public boolean isDeleted() {
 		return getBit(readAnnotation(), ANNOT_IS_DELETED);
 	}
@@ -274,6 +288,7 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 		return cmp==0 ? PDOMCPPFunction.compareSignatures(this, other) : cmp;
 	}
 
+	@Override
 	public IType[] getExceptionSpecification() {
 		try {
 			final long rec = getPDOM().getDB().getRecPtr(record+EXCEPTION_SPEC);

@@ -23,10 +23,12 @@ class CompositeCPPUsingDeclarationSpecialization extends CompositeCPPUsingDeclar
 		super(cf, delegate);
 	}
 
+	@Override
 	public IBinding getSpecializedBinding() {
 		return TemplateInstanceUtil.getSpecializedBinding(cf, rbinding);
 	}	
 
+	@Override
 	public ICPPTemplateParameterMap getTemplateParameterMap() {
 		IBinding owner= getOwner();
 		if (owner instanceof ICPPSpecialization) {
@@ -35,6 +37,7 @@ class CompositeCPPUsingDeclarationSpecialization extends CompositeCPPUsingDeclar
 		return CPPTemplateParameterMap.EMPTY;
 	}
 
+	@Override
 	@Deprecated
 	public ObjectMap getArgumentMap() {
 		return TemplateInstanceUtil.getArgumentMap(cf, rbinding);

@@ -45,10 +45,12 @@ public interface ICPPASTTemplateSpecialization extends IASTDeclaration {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICPPASTTemplateSpecialization copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICPPASTTemplateSpecialization copy(CopyStyle style);
 }

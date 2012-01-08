@@ -86,6 +86,7 @@ class PDOMCEnumeration extends PDOMBinding implements IEnumeration, IIndexType, 
 		return IIndexCBindingConstants.CENUMERATION;
 	}
 
+	@Override
 	public IEnumerator[] getEnumerators() {
 		List<PDOMCEnumerator> result = getCachedEnumerators(true);
 		return result.toArray(new IEnumerator[result.size()]);
@@ -111,12 +112,14 @@ class PDOMCEnumeration extends PDOMBinding implements IEnumeration, IIndexType, 
 		try {
 			PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + OFFSET_ENUMERATOR_LIST);
 			list.accept(new IPDOMVisitor() {
+				@Override
 				public boolean visit(IPDOMNode node) throws CoreException {
 					if (node instanceof PDOMCEnumerator) {
 						result.add((PDOMCEnumerator) node);
 					}
 					return true;
 				}
+				@Override
 				public void leave(IPDOMNode node) {}
 			});
 		} catch (CoreException e) {
@@ -151,6 +154,7 @@ class PDOMCEnumeration extends PDOMBinding implements IEnumeration, IIndexType, 
 	}
 
 
+	@Override
 	public long getMinValue() {
 		if (fMinValue != null) {
 			return fMinValue.longValue();
@@ -164,6 +168,7 @@ class PDOMCEnumeration extends PDOMBinding implements IEnumeration, IIndexType, 
 		return minValue;
 	}
 
+	@Override
 	public long getMaxValue() {
 		if (fMaxValue != null) {
 			return fMaxValue.longValue();
@@ -177,6 +182,7 @@ class PDOMCEnumeration extends PDOMBinding implements IEnumeration, IIndexType, 
 		return maxValue;
 	}
 
+	@Override
 	public boolean isSameType(IType type) {
 		if (type instanceof ITypedef) {
 			return type.isSameType(this);

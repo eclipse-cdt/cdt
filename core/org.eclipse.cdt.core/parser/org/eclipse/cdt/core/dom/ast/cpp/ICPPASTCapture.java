@@ -24,8 +24,10 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 public interface ICPPASTCapture extends IASTNode, ICPPASTPackExpandable {
 	ASTNodeProperty IDENTIFIER = new ASTNodeProperty("ICPPASTCapture - IDENTIFIER [IASTName]"); //$NON-NLS-1$
 
+	@Override
 	ICPPASTCapture copy();
 	
+	@Override
 	ICPPASTCapture copy(CopyStyle style);
 
 	/**

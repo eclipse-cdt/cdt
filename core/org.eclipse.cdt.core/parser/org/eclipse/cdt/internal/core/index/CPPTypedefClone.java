@@ -27,6 +27,7 @@ public class CPPTypedefClone implements ITypedef, ITypeContainer, IIndexType, IC
 		this.delegate = typedef;
 	}
 
+	@Override
 	public IType getType() {
 		if (type == null) {
 			return delegate.getType();
@@ -34,31 +35,38 @@ public class CPPTypedefClone implements ITypedef, ITypeContainer, IIndexType, IC
 		return type;
 	}
 
+	@Override
 	public ILinkage getLinkage() {
 		return delegate.getLinkage();
 	}
 
+	@Override
 	public String getName() {
 		return delegate.getName();
 	}
 
+	@Override
 	public char[] getNameCharArray() {
 		return delegate.getNameCharArray();
 	}
 
+	@Override
 	public IScope getScope() throws DOMException {
 		return delegate.getScope();
 	}
 
+	@Override
 	public IBinding getOwner() {
 		return delegate.getOwner();
 	}
 
+	@Override
 	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class adapter) {
 		return delegate.getAdapter(adapter);
 	}
 
+	@Override
 	public boolean isSameType(IType type) {
 		IType myrtype = getType();
 		if (myrtype == null)
@@ -70,18 +78,22 @@ public class CPPTypedefClone implements ITypedef, ITypeContainer, IIndexType, IC
 		return myrtype.isSameType(type);
 	}
 
+	@Override
 	public void setType(IType type) {
 		this.type = type;
 	}
 
+	@Override
 	public String[] getQualifiedName() throws DOMException {
 		return ((ICPPBinding) delegate).getQualifiedName();
 	}
 
+	@Override
 	public char[][] getQualifiedNameCharArray() throws DOMException {
 		return ((ICPPBinding) delegate).getQualifiedNameCharArray();
 	}
 
+	@Override
 	public boolean isGloballyQualified() throws DOMException {
 		return ((ICPPBinding) delegate).isGloballyQualified();
 	}

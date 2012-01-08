@@ -66,11 +66,13 @@ public interface IASTDoStatement extends IASTStatement {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IASTDoStatement copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public IASTDoStatement copy(CopyStyle style);
 
 }

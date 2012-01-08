@@ -127,9 +127,11 @@ public class DBProperties {
 	 */
 	public void clear() throws CoreException {
 		index.accept(new IBTreeVisitor(){
+			@Override
 			public int compare(long record) throws CoreException {
 				return 0;
 			}
+			@Override
 			public boolean visit(long record) throws CoreException {
 				new DBProperty(db, record).delete();
 				return false; // there should never be duplicates
@@ -204,6 +206,7 @@ public class DBProperties {
 		
 		public static IBTreeComparator getComparator(final Database db) {
 			return new IBTreeComparator() {
+				@Override
 				public int compare(long record1, long record2) throws CoreException {
 					IString left= db.getString(db.getRecPtr(record1 + KEY));
 					IString right= db.getString(db.getRecPtr(record2 + KEY));
@@ -215,9 +218,11 @@ public class DBProperties {
 		public static DBProperty search(final Database db, final BTree index, final String key) throws CoreException {
 			final DBProperty[] result= new DBProperty[1];
 			index.accept(new IBTreeVisitor(){
+				@Override
 				public int compare(long record) throws CoreException {
 					return db.getString(db.getRecPtr(record + KEY)).compare(key, true);
 				}
+				@Override
 				public boolean visit(long record) throws CoreException {
 					result[0] = new DBProperty(db, record);
 					return false; // there should never be duplicates
@@ -229,9 +234,11 @@ public class DBProperties {
 		public static Set<String> getKeySet(final Database db, final BTree index) throws CoreException {
 			final Set<String> result= new HashSet<String>();
 			index.accept(new IBTreeVisitor(){
+				@Override
 				public int compare(long record) throws CoreException {
 					return 0;
 				}
+				@Override
 				public boolean visit(long record) throws CoreException {
 					result.add(new DBProperty(db, record).getKey().getString());
 					return true; // there should never be duplicates

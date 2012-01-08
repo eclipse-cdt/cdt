@@ -28,11 +28,13 @@ public interface IASTFileLocation extends IASTNodeLocation {
 	/**
 	 * Returns the offset within the file where this location starts.
 	 */
+	@Override
 	public int getNodeOffset();
 
 	/**
 	 * Returns the length of this location in terms of characters.
 	 */
+	@Override
 	public int getNodeLength();
 
     /**

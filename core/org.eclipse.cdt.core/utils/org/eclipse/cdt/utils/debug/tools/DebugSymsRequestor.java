@@ -71,6 +71,7 @@ public class DebugSymsRequestor implements IDebugEntryRequestor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.debug.IDebugEntryRequestor#enterCompilationUnit(java.lang.String, long)
 	 */
+	@Override
 	public void enterCompilationUnit(String name, long address) {
 		DebugSym sym = new DebugSym();
 		sym.name = name;
@@ -84,6 +85,7 @@ public class DebugSymsRequestor implements IDebugEntryRequestor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.debug.IDebugEntryRequestor#exitCompilationUnit(long)
 	 */
+	@Override
 	public void exitCompilationUnit(long address) {
 		if (currentCU != null) {
 			currentCU.size = address;
@@ -94,18 +96,21 @@ public class DebugSymsRequestor implements IDebugEntryRequestor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.debug.IDebugEntryRequestor#enterInclude(java.lang.String)
 	 */
+	@Override
 	public void enterInclude(String name) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.debug.IDebugEntryRequestor#exitInclude()
 	 */
+	@Override
 	public void exitInclude() {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.debug.IDebugEntryRequestor#enterFunction(java.lang.String, int, boolean, long)
 	 */
+	@Override
 	public void enterFunction(String name, DebugType type, boolean isGlobal, long address) {
 		DebugSym sym = new DebugSym();
 		sym.name = name;
@@ -121,6 +126,7 @@ public class DebugSymsRequestor implements IDebugEntryRequestor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.debug.IDebugEntryRequestor#exitFunction(long)
 	 */
+	@Override
 	public void exitFunction(long address) {
 		if (currentFunction != null) {
 			currentFunction.size = address;
@@ -131,18 +137,21 @@ public class DebugSymsRequestor implements IDebugEntryRequestor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.debug.IDebugEntryRequestor#enterCodeBlock(long)
 	 */
+	@Override
 	public void enterCodeBlock(long offset) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.debug.IDebugEntryRequestor#exitCodeBlock(long)
 	 */
+	@Override
 	public void exitCodeBlock(long offset) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.debug.IDebugEntryRequestor#acceptStatement(int, long)
 	 */
+	@Override
 	public void acceptStatement(int line, long address) {
 		DebugSym sym = new DebugSym();
 		sym.name = ""; //$NON-NLS-1$
@@ -164,24 +173,28 @@ public class DebugSymsRequestor implements IDebugEntryRequestor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.debug.IDebugEntryRequestor#acceptIntegerConst(java.lang.String, long)
 	 */
+	@Override
 	public void acceptIntegerConst(String name, int value) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.debug.IDebugEntryRequestor#acceptFloatConst(java.lang.String, double)
 	 */
+	@Override
 	public void acceptFloatConst(String name, double value) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.debug.IDebugEntryRequestor#acceptTypeConst(java.lang.String, org.eclipse.cdt.utils.debug.DebugType, int)
 	 */
+	@Override
 	public void acceptTypeConst(String name, DebugType type, int value) {
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.debug.IDebugEntryRequestor#acceptParameter(java.lang.String, int, int, long)
 	 */
+	@Override
 	public void acceptParameter(String name, DebugType type, DebugParameterKind kind, long offset) {
 		DebugSym sym = new DebugSym();
 		sym.name = name;
@@ -196,6 +209,7 @@ public class DebugSymsRequestor implements IDebugEntryRequestor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.debug.IDebugEntryRequestor#acceptVariable(java.lang.String, int, int, long)
 	 */
+	@Override
 	public void acceptVariable(String name, DebugType type, DebugVariableKind kind, long address) {
 		DebugSym sym = new DebugSym();
 		sym.name = name;
@@ -210,12 +224,14 @@ public class DebugSymsRequestor implements IDebugEntryRequestor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.debug.IDebugEntryRequestor#acceptCaughtException(java.lang.String, org.eclipse.cdt.utils.debug.DebugType, long)
 	 */
+	@Override
 	public void acceptCaughtException(String name, DebugType type, long address) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.debug.IDebugEntryRequestor#acceptTypeDef(java.lang.String, org.eclipse.cdt.utils.debug.DebugType)
 	 */
+	@Override
 	public void acceptTypeDef(String name, DebugType type) {		
 	}
 

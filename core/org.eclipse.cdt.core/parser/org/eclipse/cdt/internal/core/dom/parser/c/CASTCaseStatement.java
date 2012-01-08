@@ -33,10 +33,12 @@ public class CASTCaseStatement extends ASTNode implements IASTCaseStatement, IAS
 		setExpression(expression);
 	}
 	
+	@Override
 	public CASTCaseStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CASTCaseStatement copy(CopyStyle style) {
 		CASTCaseStatement copy = new CASTCaseStatement(expression == null ? null : expression.copy());
 		copy.setOffsetAndLength(this);
@@ -46,11 +48,13 @@ public class CASTCaseStatement extends ASTNode implements IASTCaseStatement, IAS
 		return copy;
 	}
 
+	@Override
 	public IASTExpression getExpression() {
         return expression;
     }
 
-    public void setExpression(IASTExpression expression) {
+    @Override
+	public void setExpression(IASTExpression expression) {
         assertNotFrozen();
         this.expression = expression;
         if (expression != null) {
@@ -80,7 +84,8 @@ public class CASTCaseStatement extends ASTNode implements IASTCaseStatement, IAS
         return true;
     }
 
-    public void replace(IASTNode child, IASTNode other) {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
         if( child == expression )
         {
             other.setPropertyInParent( child.getPropertyInParent() );

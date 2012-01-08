@@ -22,10 +22,12 @@ public interface IASTDeclaration extends IASTNode {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IASTDeclaration copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public IASTDeclaration copy(CopyStyle style);
 }

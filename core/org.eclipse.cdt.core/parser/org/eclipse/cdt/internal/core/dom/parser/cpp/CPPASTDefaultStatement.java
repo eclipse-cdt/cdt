@@ -38,10 +38,12 @@ public class CPPASTDefaultStatement extends ASTNode implements IASTDefaultStatem
         return true;
     }
     
-    public CPPASTDefaultStatement copy() {
+    @Override
+	public CPPASTDefaultStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CPPASTDefaultStatement copy(CopyStyle style) {
 		CPPASTDefaultStatement copy = new CPPASTDefaultStatement();
 		copy.setOffsetAndLength(this);

@@ -97,17 +97,17 @@ public class KindBasedStore<T> implements Cloneable {
 
 	private int kindToIndex(int kind){
 		switch (kind){
-		case ICLanguageSettingEntry.INCLUDE_PATH:
+		case ICSettingEntry.INCLUDE_PATH:
 			return INDEX_INCLUDE_PATH;
-		case ICLanguageSettingEntry.INCLUDE_FILE:
+		case ICSettingEntry.INCLUDE_FILE:
 			return INDEX_INCLUDE_FILE;
-		case ICLanguageSettingEntry.MACRO:
+		case ICSettingEntry.MACRO:
 			return INDEX_MACRO;
-		case ICLanguageSettingEntry.MACRO_FILE:
+		case ICSettingEntry.MACRO_FILE:
 			return INDEX_MACRO_FILE;
-		case ICLanguageSettingEntry.LIBRARY_PATH:
+		case ICSettingEntry.LIBRARY_PATH:
 			return INDEX_LIBRARY_PATH;
-		case ICLanguageSettingEntry.LIBRARY_FILE:
+		case ICSettingEntry.LIBRARY_FILE:
 			return INDEX_LIBRARY_FILE;
 		case ICSettingEntry.SOURCE_PATH:
 			if(INDEX_SOURCE_PATH < fEntryStorage.length)
@@ -132,17 +132,17 @@ public class KindBasedStore<T> implements Cloneable {
 	private int indexToKind(int index){
 		switch (index){
 		case INDEX_INCLUDE_PATH:
-			return ICLanguageSettingEntry.INCLUDE_PATH;
+			return ICSettingEntry.INCLUDE_PATH;
 		case INDEX_INCLUDE_FILE:
-			return ICLanguageSettingEntry.INCLUDE_FILE;
+			return ICSettingEntry.INCLUDE_FILE;
 		case INDEX_MACRO:
-			return ICLanguageSettingEntry.MACRO;
+			return ICSettingEntry.MACRO;
 		case INDEX_MACRO_FILE:
-			return ICLanguageSettingEntry.MACRO_FILE;
+			return ICSettingEntry.MACRO_FILE;
 		case INDEX_LIBRARY_PATH:
-			return ICLanguageSettingEntry.LIBRARY_PATH;
+			return ICSettingEntry.LIBRARY_PATH;
 		case INDEX_LIBRARY_FILE:
-			return ICLanguageSettingEntry.LIBRARY_FILE;
+			return ICSettingEntry.LIBRARY_FILE;
 		case INDEX_SOURCE_PATH:
 			return ICSettingEntry.SOURCE_PATH;
 		case INDEX_OUPUT_PATH:

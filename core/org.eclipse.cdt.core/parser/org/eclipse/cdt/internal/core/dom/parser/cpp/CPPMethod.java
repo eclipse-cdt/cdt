@@ -89,6 +89,7 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMember#getVisibility()
 	 */
+	@Override
 	public int getVisibility() {
 		IASTDeclaration decl = getPrimaryDeclaration();
 		if (decl == null) {
@@ -119,6 +120,7 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 		return ICPPASTVisibilityLabel.v_public;
 	}
 
+	@Override
 	public ICPPClassType getClassOwner() {
 		ICPPClassScope scope = (ICPPClassScope)getScope();
 		return scope.getClassType();
@@ -144,7 +146,8 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isVirtual()
      */
-    public boolean isVirtual() {
+    @Override
+	public boolean isVirtual() {
     	IASTDeclaration decl = getPrimaryDeclaration();
 		if (decl != null) {
 			ICPPASTDeclSpecifier declSpec = getDeclSpec(decl);
@@ -203,6 +206,7 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 	/* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isDestructor()
      */
+	@Override
 	public boolean isDestructor() {
 		char[] name = getNameCharArray();
 		if (name.length > 1 && name[0] == '~')
@@ -211,6 +215,7 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 		return false;
 	}
 
+	@Override
 	public boolean isImplicit() {
 		return false;
 	}
@@ -218,7 +223,8 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isPureVirtual()
      */
-    public boolean isPureVirtual() {
+    @Override
+	public boolean isPureVirtual() {
     	if (declarations != null) {
 			for (IASTDeclarator dtor : declarations) {
 				if (dtor == null)
@@ -237,7 +243,8 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
     	return false;
     }
 
-    public boolean isExplicit() {
+    @Override
+	public boolean isExplicit() {
     	IASTDeclaration decl= getPrimaryDeclaration();
     	if (decl != null) {
     		ICPPASTDeclSpecifier declspec= getDeclSpec(decl);

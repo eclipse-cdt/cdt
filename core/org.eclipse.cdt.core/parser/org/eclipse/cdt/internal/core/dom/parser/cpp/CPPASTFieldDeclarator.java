@@ -54,11 +54,13 @@ public class CPPASTFieldDeclarator extends CPPASTDeclarator implements
 		return copy;
 	}
 	 
+	@Override
 	public IASTExpression getBitFieldSize() {
         return bitField;
     }
 
-    public void setBitFieldSize(IASTExpression size) {
+    @Override
+	public void setBitFieldSize(IASTExpression size) {
         assertNotFrozen();
         this.bitField = size;
         if (size != null) {
@@ -75,7 +77,8 @@ public class CPPASTFieldDeclarator extends CPPASTDeclarator implements
 		return super.postAccept(action);
 	}
 
-    public void replace(IASTNode child, IASTNode other) {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
         if( child == bitField )
         {
             other.setPropertyInParent( child.getPropertyInParent() );

@@ -62,6 +62,7 @@ public class PDOMCPPUsingDirective implements ICPPUsingDirective, IPDOMNode {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective#getNamespace()
 	 */
+	@Override
 	public ICPPNamespaceScope getNominatedScope() {
 		try {
 			long rec = fLinkage.getDB().getRecPtr(fRecord + NOMINATED_NAMESPACE);
@@ -79,6 +80,7 @@ public class PDOMCPPUsingDirective implements ICPPUsingDirective, IPDOMNode {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective#getContainingScope()
 	 */
+	@Override
 	public IScope getContainingScope() {
 		try {
 			long rec = fLinkage.getDB().getRecPtr(fRecord + CONTAINER_NAMESPACE);
@@ -97,6 +99,7 @@ public class PDOMCPPUsingDirective implements ICPPUsingDirective, IPDOMNode {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective#getPointOfDeclaration()
 	 */
+	@Override
 	public int getPointOfDeclaration() {
 		final Database db= fLinkage.getDB();
 		try {
@@ -118,9 +121,11 @@ public class PDOMCPPUsingDirective implements ICPPUsingDirective, IPDOMNode {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.IPDOMNode#accept(org.eclipse.cdt.core.dom.IPDOMVisitor)
 	 */
+	@Override
 	public void accept(IPDOMVisitor visitor) throws CoreException {
 	}
 
+	@Override
 	public void delete(PDOMLinkage linkage) throws CoreException {
 		fLinkage.getDB().free(fRecord);
 	}

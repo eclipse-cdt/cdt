@@ -36,6 +36,7 @@ public abstract class BinaryFile extends PlatformObject implements IBinaryFile {
 		this.type = type;
 	}
 
+	@Override
 	public final IBinaryParser getBinaryParser() {
 		return parser;
 	}
@@ -43,6 +44,7 @@ public abstract class BinaryFile extends PlatformObject implements IBinaryFile {
 	/**
 	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryFile#getPath()
 	 */
+	@Override
 	public final IPath getPath() {
 		return path;
 	}
@@ -50,6 +52,7 @@ public abstract class BinaryFile extends PlatformObject implements IBinaryFile {
 	/**
 	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryFile#getType()
 	 */
+	@Override
 	public final int getType() {
 		return type;
 	}
@@ -58,6 +61,7 @@ public abstract class BinaryFile extends PlatformObject implements IBinaryFile {
 	 * @throws IOException
 	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryFile#getContents()
 	 */
+	@Override
 	public InputStream getContents() throws IOException {
 		InputStream stream = null;
 		if (path != null) {

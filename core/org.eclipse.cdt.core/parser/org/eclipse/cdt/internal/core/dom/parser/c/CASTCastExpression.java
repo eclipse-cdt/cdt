@@ -39,10 +39,12 @@ public class CASTCastExpression extends ASTNode implements IASTCastExpression, I
 		setTypeId(typeId);
 	}
 	
+	@Override
 	public CASTCastExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CASTCastExpression copy(CopyStyle style) {
 		CASTCastExpression copy = new CASTCastExpression();
 		copy.setTypeId(typeId == null ? null : typeId.copy(style));
@@ -55,20 +57,24 @@ public class CASTCastExpression extends ASTNode implements IASTCastExpression, I
 		return copy;
 	}
 
+	@Override
 	public int getOperator() {
         return operator;
     }
 
-    public void setOperator(int value) {
+    @Override
+	public void setOperator(int value) {
         assertNotFrozen();
         this.operator = value;
     }
 
-    public IASTExpression getOperand() {
+    @Override
+	public IASTExpression getOperand() {
         return operand;
     }
 
-    public void setOperand(IASTExpression expression) {
+    @Override
+	public void setOperand(IASTExpression expression) {
         assertNotFrozen();
         operand = expression;
         if (expression != null) {
@@ -77,6 +83,7 @@ public class CASTCastExpression extends ASTNode implements IASTCastExpression, I
 		}
     }
     
+	@Override
 	public void setTypeId(IASTTypeId typeId) {
         assertNotFrozen();
         this.typeId = typeId;
@@ -86,7 +93,8 @@ public class CASTCastExpression extends ASTNode implements IASTCastExpression, I
 		}
     }
 
-    public IASTTypeId getTypeId() {
+    @Override
+	public IASTTypeId getTypeId() {
         return typeId;
     }
 
@@ -116,6 +124,7 @@ public class CASTCastExpression extends ASTNode implements IASTCastExpression, I
         return true;
     }
     
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
 		if (child == operand) {
 			other.setPropertyInParent(child.getPropertyInParent());
@@ -124,15 +133,18 @@ public class CASTCastExpression extends ASTNode implements IASTCastExpression, I
 		} 
 	}
     
+	@Override
 	public IType getExpressionType() {
         IASTTypeId id= getTypeId();
         return CVisitor.createType(id.getAbstractDeclarator());
     }
 
+	@Override
 	public boolean isLValue() {
 		return false;
 	}
 	
+	@Override
 	public final ValueCategory getValueCategory() {
 		return ValueCategory.PRVALUE;
 	}

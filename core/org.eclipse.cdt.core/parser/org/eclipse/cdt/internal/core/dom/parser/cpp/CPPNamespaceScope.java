@@ -56,6 +56,7 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 		super(physicalNode);
 	}
 
+	@Override
 	public EScopeKind getKind() {
 		if (getPhysicalNode() instanceof IASTTranslationUnit)
 			return  EScopeKind.eGlobal;
@@ -66,6 +67,7 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope#getUsingDirectives()
 	 */
+	@Override
 	public ICPPUsingDirective[] getUsingDirectives() {
 		initUsingDirectives();
 		populateCache();
@@ -87,6 +89,7 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope#addUsingDirective(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective)
 	 */
+	@Override
 	public void addUsingDirective(ICPPUsingDirective directive) {
 		initUsingDirectives();
 		fUsingDirectives.add(directive);
@@ -145,6 +148,7 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
     	return result[0];
     }
 
+	@Override
 	public boolean isInlineNamepace() {
 		if (!fIsInlineInitialized) {
 			fIsInline= computeIsInline();
@@ -186,6 +190,7 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 		return false;
 	}
 
+	@Override
 	public ICPPNamespaceScope[] getEnclosingNamespaceSet() {
 		if (fEnclosingNamespaceSet == null) {
 			return fEnclosingNamespaceSet= computeEnclosingNamespaceSet(this);
@@ -193,6 +198,7 @@ public class CPPNamespaceScope extends CPPScope implements ICPPInternalNamespace
 		return fEnclosingNamespaceSet;
 	}
 	
+	@Override
 	public ICPPInternalNamespaceScope[] getInlineNamespaces() {
 		if (getKind() == EScopeKind.eLocal)
 			return NO_NAMESPACE_SCOPES;

@@ -63,10 +63,12 @@ public class PDOMUpdateTask implements IPDOMIndexerTask {
 		return progress;
 	}
 
+	@Override
 	public IPDOMIndexer getIndexer() {
 		return fIndexer;
 	}
 
+	@Override
 	public void run(IProgressMonitor monitor) throws InterruptedException {
 		monitor.subTask(NLS.bind(Messages.PDOMIndexerTask_collectingFilesTask, 
 				fIndexer.getProject().getElementName()));
@@ -143,10 +145,12 @@ public class PDOMUpdateTask implements IPDOMIndexerTask {
 		}
 	}
 
+	@Override
 	public synchronized IndexerProgress getProgressInformation() {
 		return fDelegate != null ? fDelegate.getProgressInformation() : fProgress;
 	}
 
+	@Override
 	public synchronized boolean acceptUrgentTask(IPDOMIndexerTask task) {
 		return fDelegate != null && fDelegate.acceptUrgentTask(task);
 	}

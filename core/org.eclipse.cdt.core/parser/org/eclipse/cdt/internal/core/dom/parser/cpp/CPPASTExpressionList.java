@@ -52,10 +52,12 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
 	private IASTImplicitName[] implicitNames;
 	private ICPPFunction[] overloads = null;
 	
+	@Override
 	public CPPASTExpressionList copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CPPASTExpressionList copy(CopyStyle style) {
 		CPPASTExpressionList copy = new CPPASTExpressionList();
 		for(IASTExpression expr : getExpressions())
@@ -67,12 +69,14 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
 		return copy;
 	}
 	
+	@Override
 	public IASTExpression[] getExpressions() {
         if (expressions == null) return IASTExpression.EMPTY_EXPRESSION_ARRAY;
-        return (IASTExpression[]) ArrayUtil.trim(IASTExpression.class, expressions);
+        return ArrayUtil.trim(IASTExpression.class, expressions);
     }
 
-    public void addExpression(IASTExpression expression) {
+    @Override
+	public void addExpression(IASTExpression expression) {
         assertNotFrozen();
 		expressions = ArrayUtil.append(expressions, expression);
         if (expression != null) {
@@ -144,8 +148,9 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
 		return implicitNames;
 	}
 
-    public IASTImplicitName[] getImplicitNames() {
-    	return (IASTImplicitName[])ArrayUtil.removeNulls(IASTImplicitName.class, computeImplicitNames());
+    @Override
+	public IASTImplicitName[] getImplicitNames() {
+    	return ArrayUtil.removeNulls(IASTImplicitName.class, computeImplicitNames());
     }
 
     private ICPPFunction[] getOverloads() {
@@ -187,7 +192,8 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
     	return overloads;
     }
 
-    public void replace(IASTNode child, IASTNode other) {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
         if (expressions == null) return;
         for (int i = 0; i < expressions.length; ++i) {
             if (child == expressions[i]) {
@@ -198,6 +204,7 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
         }
     }
     
+	@Override
 	public IType getExpressionType() {
 		ICPPFunction[] overloads = getOverloads();
 		if (overloads.length > 0) {
@@ -216,6 +223,7 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
     	return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
 	}
     
+	@Override
 	public ValueCategory getValueCategory() {
 		ICPPFunction[] overloads = getOverloads();
 		if (overloads.length > 0) {
@@ -233,6 +241,7 @@ public class CPPASTExpressionList extends ASTNode implements ICPPASTExpressionLi
     	return PRVALUE;
 	}
 	
+	@Override
 	public boolean isLValue() {
 		return getValueCategory() == LVALUE;
 	}

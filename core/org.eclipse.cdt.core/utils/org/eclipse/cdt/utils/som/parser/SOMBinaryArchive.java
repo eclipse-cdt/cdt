@@ -43,6 +43,7 @@ public class SOMBinaryArchive extends BinaryFile implements IBinaryArchive {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryArchive#getObjects()
 	 */
+	@Override
 	public IBinaryObject[] getObjects() {
 		if (hasChanged()) {
 			children.clear();

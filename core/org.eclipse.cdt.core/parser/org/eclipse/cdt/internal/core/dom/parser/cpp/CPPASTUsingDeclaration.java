@@ -38,10 +38,12 @@ public class CPPASTUsingDeclaration extends ASTNode
 		setName(name);	
 	}
 
+	@Override
 	public CPPASTUsingDeclaration copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CPPASTUsingDeclaration copy(CopyStyle style) {
 		CPPASTUsingDeclaration copy = new CPPASTUsingDeclaration(name == null ? null
 				: name.copy(style));
@@ -53,20 +55,24 @@ public class CPPASTUsingDeclaration extends ASTNode
 		return copy;
 	}
 
+	@Override
 	public void setIsTypename(boolean value) {
         assertNotFrozen();
         this.typeName = value;
     }
 
-    public boolean isTypename() {
+    @Override
+	public boolean isTypename() {
         return typeName;
     }
 
-    public IASTName getName() {
+    @Override
+	public IASTName getName() {
         return name;
     }
 
-    public void setName(IASTName name) {
+    @Override
+	public void setName(IASTName name) {
         assertNotFrozen();
         this.name = name;
         if (name != null) {
@@ -97,12 +103,14 @@ public class CPPASTUsingDeclaration extends ASTNode
         return true;
     }
 
+	@Override
 	public int getRoleForName(IASTName n) {
 		if (n == name)
 			return r_declaration;
 		return r_unclear;
 	}
 	
+	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix, String[] namespaces) {
 		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix, namespaces);
 		List<IBinding> filtered = new ArrayList<IBinding>();
@@ -121,6 +129,7 @@ public class CPPASTUsingDeclaration extends ASTNode
 		return name.toString();
 	}
 	
+	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		return findBindings(n, isPrefix, null);
 	}

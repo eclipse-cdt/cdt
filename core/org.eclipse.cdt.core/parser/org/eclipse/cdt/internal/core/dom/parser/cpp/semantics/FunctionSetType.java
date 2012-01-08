@@ -34,6 +34,7 @@ public class FunctionSetType implements IType {
 		fPointerType= addressOf;
 	}
 
+	@Override
 	public boolean isSameType(IType type) {
 		return type == this;
 	}

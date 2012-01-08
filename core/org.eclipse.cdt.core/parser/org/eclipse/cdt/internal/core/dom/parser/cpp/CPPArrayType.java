@@ -39,16 +39,19 @@ public class CPPArrayType implements IArrayType, ITypeContainer, ISerializableTy
     	setType(type);
     }
     
-    public IType getType() {
+    @Override
+	public IType getType() {
         return type;
     }
     
-    public void setType(IType t) {
+    @Override
+	public void setType(IType t) {
     	assert t != null;
         this.type = t;
     }
     
-    public boolean isSameType(IType obj) {
+    @Override
+	public boolean isSameType(IType obj) {
         if (obj == this)
             return true;
         if (obj instanceof ITypedef)
@@ -72,7 +75,8 @@ public class CPPArrayType implements IArrayType, ITypeContainer, ISerializableTy
     	return false;
     }
 
-    public IValue getSize() {
+    @Override
+	public IValue getSize() {
     	if (value != Value.NOT_INITIALIZED)
     		return value;
     	
@@ -82,7 +86,8 @@ public class CPPArrayType implements IArrayType, ITypeContainer, ISerializableTy
     	return value= Value.create(sizeExpression, Value.MAX_RECURSION_DEPTH);
     }
     
-    @Deprecated
+    @Override
+	@Deprecated
     public IASTExpression getArraySizeExpression() {
         return sizeExpression;
     }
@@ -103,6 +108,7 @@ public class CPPArrayType implements IArrayType, ITypeContainer, ISerializableTy
 		return ASTTypeUtil.getType(this);
 	}
 
+	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
 		final byte firstByte = ITypeMarshalBuffer.ARRAY;
 

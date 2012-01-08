@@ -27,10 +27,12 @@ public class CPPASTASMDeclaration extends ASTNode implements IASTASMDeclaration 
 		setAssembly(assembly);
 	}
 
+	@Override
 	public CPPASTASMDeclaration copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CPPASTASMDeclaration copy(CopyStyle style) {
 		CPPASTASMDeclaration copy = new CPPASTASMDeclaration();
 		copy.assembly = assembly.clone();
@@ -41,13 +43,15 @@ public class CPPASTASMDeclaration extends ASTNode implements IASTASMDeclaration 
 		return copy;
 	}
 
+	@Override
 	public String getAssembly() {
         if( assembly == null ) 
         	return ""; //$NON-NLS-1$
         return new String( assembly );
     }
 
-    public void setAssembly(String assembly) {
+    @Override
+	public void setAssembly(String assembly) {
         assertNotFrozen();
         this.assembly = assembly.toCharArray();
     }

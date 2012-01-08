@@ -46,10 +46,12 @@ public interface ICASTFieldDesignator extends ICASTDesignator {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICASTFieldDesignator copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICASTFieldDesignator copy(CopyStyle style);
 }

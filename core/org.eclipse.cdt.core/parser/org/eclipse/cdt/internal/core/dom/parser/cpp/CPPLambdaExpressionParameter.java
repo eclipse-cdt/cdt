@@ -38,22 +38,27 @@ public class CPPLambdaExpressionParameter extends PlatformObject implements ICPP
 		fDeclaration = name;
 	}
 		
-    public boolean isParameterPack() {
+    @Override
+	public boolean isParameterPack() {
 		return getType() instanceof ICPPParameterPackType;
 	}
 
+	@Override
 	public String getName() {
 		return new String(getNameCharArray());
 	}
 
+	@Override
 	public char[] getNameCharArray() {
 		return fDeclaration.getSimpleID();
 	}
 
+	@Override
 	public IScope getScope() {
 		return CPPVisitor.getContainingScope(fDeclaration);
 	}
 
+	@Override
 	public IType getType() {
 		if (fType == null) {
 			IASTNode parent= fDeclaration.getParent();
@@ -68,34 +73,42 @@ public class CPPLambdaExpressionParameter extends PlatformObject implements ICPP
 		return fType;
 	}
 
-    public boolean isStatic() {
+    @Override
+	public boolean isStatic() {
         return false;
     }
-    public String[] getQualifiedName() {
+    @Override
+	public String[] getQualifiedName() {
         return new String[] { getName() };
     }
-    public char[][] getQualifiedNameCharArray() {
+    @Override
+	public char[][] getQualifiedNameCharArray() {
         return new char[][] { getNameCharArray() };
     }
-    public boolean isGloballyQualified() {
+    @Override
+	public boolean isGloballyQualified() {
         return false;
     }
 
-    public boolean isExtern() {
+    @Override
+	public boolean isExtern() {
         //7.1.1-5 extern can not be used in the declaration of a parameter
         return false;
     }
 
-    public boolean isMutable() {
+    @Override
+	public boolean isMutable() {
         //7.1.1-8 mutable can only apply to class members
         return false;
     }
 
-    public boolean isAuto() {
+    @Override
+	public boolean isAuto() {
         return hasStorageClass(IASTDeclSpecifier.sc_auto);
     }
 
-    public boolean isRegister() {
+    @Override
+	public boolean isRegister() {
         return hasStorageClass(IASTDeclSpecifier.sc_register);
     }
     
@@ -111,14 +124,17 @@ public class CPPLambdaExpressionParameter extends PlatformObject implements ICPP
 		return false;
 	}
 
+	@Override
 	public boolean hasDefaultValue() {
 		return false;
 	}
 	
+	@Override
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
 	}
 
+	@Override
 	public boolean isExternC() {
 		return false;
 	}
@@ -129,6 +145,7 @@ public class CPPLambdaExpressionParameter extends PlatformObject implements ICPP
 		return name.length() != 0 ? name : "<unnamed>"; //$NON-NLS-1$
 	}
 	
+	@Override
 	public IBinding getOwner() {
 		IASTNode node= fDeclaration;
 		while (node != null && !(node instanceof ICPPASTLambdaExpression))
@@ -143,6 +160,7 @@ public class CPPLambdaExpressionParameter extends PlatformObject implements ICPP
 		return null;
 	}
 
+	@Override
 	public IValue getInitialValue() {
 		return null;
 	}

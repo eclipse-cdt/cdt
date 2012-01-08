@@ -25,10 +25,12 @@ public class CPPASTEqualsInitializer extends ASTEqualsInitializer {
 		super(arg);
 	}
 
+	@Override
 	public CPPASTEqualsInitializer copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CPPASTEqualsInitializer copy(CopyStyle style) {
 		IASTInitializerClause arg = getInitializerClause();
 		CPPASTEqualsInitializer copy = new CPPASTEqualsInitializer(arg == null ? null

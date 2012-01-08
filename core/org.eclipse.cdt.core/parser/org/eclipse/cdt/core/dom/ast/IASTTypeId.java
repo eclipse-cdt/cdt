@@ -63,10 +63,12 @@ public interface IASTTypeId extends IASTNode {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IASTTypeId copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public IASTTypeId copy(CopyStyle style);
 }

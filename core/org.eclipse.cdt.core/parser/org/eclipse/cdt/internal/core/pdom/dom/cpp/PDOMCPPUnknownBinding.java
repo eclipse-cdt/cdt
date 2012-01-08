@@ -46,7 +46,8 @@ class PDOMCPPUnknownBinding extends PDOMCPPBinding implements ICPPUnknownBinding
 		return IIndexCPPBindingConstants.CPP_UNKNOWN_BINDING;
 	}
 	
-    public ICPPScope asScope() {
+    @Override
+	public ICPPScope asScope() {
     	return null;
     }
     
@@ -55,6 +56,7 @@ class PDOMCPPUnknownBinding extends PDOMCPPBinding implements ICPPUnknownBinding
 		return false;
 	}
 
+	@Override
 	public IASTName getUnknownName() {
 		return new CPPASTName(getNameCharArray());
 	}

@@ -44,10 +44,12 @@ public class CPPASTSwitchStatement extends ASTNode
 		setBody(body);
 	}
     
-    public CPPASTSwitchStatement copy() {
+    @Override
+	public CPPASTSwitchStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CPPASTSwitchStatement copy(CopyStyle style) {
 		CPPASTSwitchStatement copy = new CPPASTSwitchStatement();
 		copy.setControllerDeclaration(controllerDeclaration == null ?
@@ -62,11 +64,13 @@ public class CPPASTSwitchStatement extends ASTNode
 		return copy;
 	}
 
+	@Override
 	public IASTExpression getControllerExpression() {
         return controllerExpression;
     }
 
-    public void setControllerExpression(IASTExpression controller) {
+    @Override
+	public void setControllerExpression(IASTExpression controller) {
         assertNotFrozen();
         this.controllerExpression = controller;
         if (controller != null) {
@@ -76,11 +80,13 @@ public class CPPASTSwitchStatement extends ASTNode
 		}
     }
 
-    public IASTStatement getBody() {
+    @Override
+	public IASTStatement getBody() {
         return body;
     }
     
-    public void setBody(IASTStatement body) {
+    @Override
+	public void setBody(IASTStatement body) {
         assertNotFrozen();
         this.body = body;
         if (body != null) {
@@ -112,7 +118,8 @@ public class CPPASTSwitchStatement extends ASTNode
         return true;
     }
     
-    public void replace(IASTNode child, IASTNode other) {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
 		if (body == child) {
 			other.setPropertyInParent(child.getPropertyInParent());
 			other.setParent(child.getParent());
@@ -126,11 +133,13 @@ public class CPPASTSwitchStatement extends ASTNode
 		}
 	}
 
-    public IASTDeclaration getControllerDeclaration() {
+    @Override
+	public IASTDeclaration getControllerDeclaration() {
         return controllerDeclaration;
     }
 
-    public void setControllerDeclaration(IASTDeclaration d) {
+    @Override
+	public void setControllerDeclaration(IASTDeclaration d) {
         assertNotFrozen();
         controllerDeclaration = d;
         if (d != null) {
@@ -140,6 +149,7 @@ public class CPPASTSwitchStatement extends ASTNode
 		}
     }
 
+	@Override
 	public IScope getScope() {
 		if (scope == null)
             scope = new CPPBlockScope(this);

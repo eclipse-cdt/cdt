@@ -27,6 +27,7 @@ public class CPPMethodTemplateSpecialization extends CPPFunctionTemplateSpeciali
 		super(specialized, owner, ctmap);
 	}
 
+	@Override
 	public boolean isVirtual() {
 		IBinding m = getSpecializedBinding();
 		if (m instanceof ICPPMethod)
@@ -34,6 +35,7 @@ public class CPPMethodTemplateSpecialization extends CPPFunctionTemplateSpeciali
 		return false;
 	}
 
+	@Override
 	public int getVisibility() {
 		IBinding m = getSpecializedBinding();
 		if (m instanceof ICPPMethod)
@@ -41,10 +43,12 @@ public class CPPMethodTemplateSpecialization extends CPPFunctionTemplateSpeciali
 		return 0;
 	}
 	
+	@Override
 	public ICPPClassType getClassOwner() {
 		return (ICPPClassType) getOwner();
 	}
 
+	@Override
 	public boolean isDestructor() {
 		char[] name = getNameCharArray();
 		if (name.length > 1 && name[0] == '~')
@@ -53,6 +57,7 @@ public class CPPMethodTemplateSpecialization extends CPPFunctionTemplateSpeciali
 		return false;
 	}
 
+	@Override
 	public boolean isImplicit() {
 		IBinding m = getSpecializedBinding();
 		if (m instanceof ICPPMethod)
@@ -60,6 +65,7 @@ public class CPPMethodTemplateSpecialization extends CPPFunctionTemplateSpeciali
 		return false;
 	}
 	
+	@Override
 	public boolean isExplicit() {
 		IBinding m = getSpecializedBinding();
 		if (m instanceof ICPPMethod)
@@ -67,6 +73,7 @@ public class CPPMethodTemplateSpecialization extends CPPFunctionTemplateSpeciali
 		return false;
 	}
 
+	@Override
 	public boolean isPureVirtual() {
 		IBinding m = getSpecializedBinding();
 		if (m instanceof ICPPMethod)

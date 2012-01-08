@@ -36,19 +36,23 @@ public class CPPASTStaticAssertionDeclaration extends ASTNode implements ICPPAST
 		}
 	}
 	
+	@Override
 	public IASTExpression getCondition() {
 		return fCondition;
 	}
 
+	@Override
 	public ICPPASTLiteralExpression getMessage() {
 		return fMessage;
 	}
 
 
+	@Override
 	public CPPASTStaticAssertionDeclaration copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CPPASTStaticAssertionDeclaration copy(CopyStyle style) {
 		final IASTExpression condCopy = fCondition == null ? null : fCondition.copy(style);
 		final ICPPASTLiteralExpression msgCopy = fMessage == null ? null : fMessage.copy(style);
@@ -80,7 +84,8 @@ public class CPPASTStaticAssertionDeclaration extends ASTNode implements ICPPAST
         return true;
     }
     
-    public void replace(IASTNode child, IASTNode other) {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
     	if (child == fCondition) {
     		fCondition= (IASTExpression) other;
     		other.setParent(child.getParent());

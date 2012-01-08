@@ -43,10 +43,12 @@ public class CASTElaboratedTypeSpecifier extends CASTBaseDeclSpecifier implement
 		setName(name);
 	}
 
+	@Override
 	public CASTElaboratedTypeSpecifier copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CASTElaboratedTypeSpecifier copy(CopyStyle style) {
 		CASTElaboratedTypeSpecifier copy = new CASTElaboratedTypeSpecifier(kind, name == null
 				? null : name.copy(style));
@@ -57,20 +59,24 @@ public class CASTElaboratedTypeSpecifier extends CASTBaseDeclSpecifier implement
 		return copy;
 	}
 
+	@Override
 	public int getKind() {
         return kind;
     }
 
-    public void setKind(int value) {
+    @Override
+	public void setKind(int value) {
         assertNotFrozen();
         this.kind = value;
     }
 
-    public IASTName getName() {
+    @Override
+	public IASTName getName() {
         return name;
     }
 
-    public void setName(IASTName name) {
+    @Override
+	public void setName(IASTName name) {
         assertNotFrozen();
         this.name = name;
         if (name != null) {
@@ -99,6 +105,7 @@ public class CASTElaboratedTypeSpecifier extends CASTBaseDeclSpecifier implement
         return true;
     }
 
+	@Override
 	public int getRoleForName(IASTName n ) {
 		if( n != name ) return r_unclear;
 		
@@ -122,6 +129,7 @@ public class CASTElaboratedTypeSpecifier extends CASTBaseDeclSpecifier implement
 		return r_reference;
 	}
 
+	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		IBinding[] result= CVisitor.findBindingsForContentAssist(n, isPrefix);
 		int nextPos= 0;

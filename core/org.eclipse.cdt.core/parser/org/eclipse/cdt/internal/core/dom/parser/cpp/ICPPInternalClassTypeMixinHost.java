@@ -26,7 +26,8 @@ interface ICPPInternalClassTypeMixinHost extends ICPPClassType, ICPPInternalBind
 	 /**
 	  * {@inheritDoc}
 	  */
-	 ICPPClassScope getCompositeScope();
+	 @Override
+	ICPPClassScope getCompositeScope();
 
 	 /**
 	  * Ensures the ICPPInternalBinding definition is set, if this is possible.

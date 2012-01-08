@@ -2364,9 +2364,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         				markBeforDtor= null;
         				dtor= addInitializer(e, declOption);
         			}
-        			declarators = (IASTDeclarator[]) ArrayUtil.append(IASTDeclarator.class, declarators, dtor);
+        			declarators = ArrayUtil.append(IASTDeclarator.class, declarators, dtor);
         		}
-        		declarators = (IASTDeclarator[]) ArrayUtil.removeNulls(IASTDeclarator.class, declarators);
+        		declarators = ArrayUtil.removeNulls(IASTDeclarator.class, declarators);
         	}
         }
 

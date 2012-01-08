@@ -461,6 +461,7 @@ public class Elf {
 			return (st_info >> 4) & 0xf;
 		}
 
+		@Override
 		public int compareTo(Object obj) {
 			/*
 			 * long thisVal = 0; long anotherVal = 0; if ( obj instanceof Symbol ) {
@@ -499,6 +500,7 @@ public class Elf {
 	class SymbolComparator implements Comparator<Object> {
 
 		IAddress val1, val2;
+		@Override
 		public int compare(Object o1, Object o2) {
 
 			if (o1 instanceof IAddress) {

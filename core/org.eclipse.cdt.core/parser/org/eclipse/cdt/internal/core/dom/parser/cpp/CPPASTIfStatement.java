@@ -47,10 +47,12 @@ public class CPPASTIfStatement extends ASTNode implements ICPPASTIfStatement, IA
 		setElseClause(elseClause);
 	}
     
-    public CPPASTIfStatement copy() {
+    @Override
+	public CPPASTIfStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CPPASTIfStatement copy(CopyStyle style) {
 		CPPASTIfStatement copy = new CPPASTIfStatement();
 		copy.setConditionDeclaration(condDecl == null ? null : condDecl.copy(style));
@@ -64,11 +66,13 @@ public class CPPASTIfStatement extends ASTNode implements ICPPASTIfStatement, IA
 		return copy;
 	}
     
+	@Override
 	public IASTExpression getConditionExpression() {
         return condition;
     }
 
-    public void setConditionExpression(IASTExpression condition) {
+    @Override
+	public void setConditionExpression(IASTExpression condition) {
         assertNotFrozen();
         this.condition = condition;
         if (condition != null) {
@@ -78,11 +82,13 @@ public class CPPASTIfStatement extends ASTNode implements ICPPASTIfStatement, IA
 		}
     }
 
-    public IASTStatement getThenClause() {
+    @Override
+	public IASTStatement getThenClause() {
         return thenClause;
     }
 
-    public void setThenClause(IASTStatement thenClause) {
+    @Override
+	public void setThenClause(IASTStatement thenClause) {
         assertNotFrozen();
         this.thenClause = thenClause;
         if (thenClause != null) {
@@ -91,11 +97,13 @@ public class CPPASTIfStatement extends ASTNode implements ICPPASTIfStatement, IA
 		}
     }
 
-    public IASTStatement getElseClause() {
+    @Override
+	public IASTStatement getElseClause() {
         return elseClause;
     }
 
-    public void setElseClause(IASTStatement elseClause) {
+    @Override
+	public void setElseClause(IASTStatement elseClause) {
         assertNotFrozen();
         this.elseClause = elseClause;
         if (elseClause != null) {
@@ -162,6 +170,7 @@ public class CPPASTIfStatement extends ASTNode implements ICPPASTIfStatement, IA
         return true;
     }
     
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
 		if (thenClause == child) {
 			other.setParent(child.getParent());
@@ -180,11 +189,13 @@ public class CPPASTIfStatement extends ASTNode implements ICPPASTIfStatement, IA
 		}
 	}
 
-    public IASTDeclaration getConditionDeclaration() {
+    @Override
+	public IASTDeclaration getConditionDeclaration() {
         return condDecl;
     }
 
-    public void setConditionDeclaration(IASTDeclaration d) {
+    @Override
+	public void setConditionDeclaration(IASTDeclaration d) {
         assertNotFrozen();
         condDecl = d;
         if (d != null) {
@@ -194,6 +205,7 @@ public class CPPASTIfStatement extends ASTNode implements ICPPASTIfStatement, IA
 		}
     }
     
+	@Override
 	public IScope getScope() {
 		if( scope == null )
             scope = new CPPBlockScope( this );

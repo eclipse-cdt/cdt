@@ -49,5 +49,6 @@ public interface ICPPASTCastExpression extends IASTCastExpression {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICPPASTCastExpression copy();
 }

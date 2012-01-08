@@ -38,10 +38,12 @@ public class CPPASTNullStatement extends ASTNode implements IASTNullStatement {
         return true;
     }
 
-    public CPPASTNullStatement copy() {
+    @Override
+	public CPPASTNullStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CPPASTNullStatement copy(CopyStyle style) {
 		CPPASTNullStatement copy = new CPPASTNullStatement();
 		copy.setOffsetAndLength(this);

@@ -32,5 +32,6 @@ public interface IPDOMBinding extends IPDOMNode, IIndexFragmentBinding {
 	/**
 	 * Returns the linkage of the binding.
 	 */
+	@Override
 	PDOMLinkage getLinkage();
 }

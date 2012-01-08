@@ -77,6 +77,7 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 		return getDB().getByte(record + FLAGS);
 	}
 
+	@Override
 	public PDOMName getBaseClassSpecifierName() {
 		try {
 			long rec = getDB().getRecPtr(record + BASECLASS_SPECIFIER);
@@ -89,6 +90,7 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 		return null;
 	}
 	
+	@Override
 	public IBinding getBaseClass() {
 		if (fCachedBaseClass != null)
 			return fCachedBaseClass;
@@ -108,6 +110,7 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 		return null;
 	}
 
+	@Override
 	public int getVisibility() {
 		try {
 			return getFlags() & 0x3;
@@ -118,6 +121,7 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 		
 	}
 
+	@Override
 	public boolean isVirtual() {
 		try {
 			return (getFlags() & 0x4) != 0;
@@ -131,6 +135,7 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 		getDB().free(record);
 	}
 	
+	@Override
 	public void setBaseClass(IBinding binding) {
 		throw new UnsupportedOperationException(); 
 	}
@@ -147,21 +152,26 @@ class PDOMCPPBase implements ICPPBase, ICPPInternalBase {
 		public PDOMCPPBaseClone(ICPPBase base) {
 			this.base = base;
 		}
+		@Override
 		public IBinding getBaseClass() {
 			if (baseClass == null) {
 				return base.getBaseClass();
 			}
 			return baseClass;
 		}
+		@Override
 		public IName getBaseClassSpecifierName() {
 			return base.getBaseClassSpecifierName();
 		}
+		@Override
 		public int getVisibility() {
 			return base.getVisibility();
 		}
+		@Override
 		public boolean isVirtual() {
 			return base.isVirtual();
 		}
+		@Override
 		public void setBaseClass(IBinding binding) {
 			baseClass = binding;
 		}

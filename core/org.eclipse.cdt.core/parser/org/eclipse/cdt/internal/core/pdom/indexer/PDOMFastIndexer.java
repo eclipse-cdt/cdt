@@ -24,10 +24,12 @@ public class PDOMFastIndexer extends AbstractPDOMIndexer {
 	// Must match extension id
 	public static final String ID = IPDOMManager.ID_FAST_INDEXER;
 		
+	@Override
 	public String getID() {
 		return ID;
 	}
 
+	@Override
 	public IPDOMIndexerTask createTask(ITranslationUnit[] added, ITranslationUnit[] changed, ITranslationUnit[] removed) {
 		return new PDOMFastIndexerTask(this, added, changed, removed);
 	}

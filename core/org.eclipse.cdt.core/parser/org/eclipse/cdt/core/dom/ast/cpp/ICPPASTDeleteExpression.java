@@ -76,11 +76,13 @@ public interface ICPPASTDeleteExpression extends IASTExpression, IASTImplicitNam
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICPPASTDeleteExpression copy();
 	
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICPPASTDeleteExpression copy(CopyStyle style);
 
 }

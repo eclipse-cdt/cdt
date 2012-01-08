@@ -37,9 +37,11 @@ public abstract class AbstractScannerExtensionConfiguration implements IScannerE
 			fExpansion= expansion;
 		}
 		
+		@Override
 		public char[] getSignature() {
 			return fSignature;
 		}
+		@Override
 		public char[] getExpansion() {
 			return fExpansion;
 		}
@@ -51,6 +53,7 @@ public abstract class AbstractScannerExtensionConfiguration implements IScannerE
 	/*
 	 * @see org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration#support$InIdentifiers()
 	 */
+	@Override
 	public boolean support$InIdentifiers() {
 		return false;
 	}
@@ -59,6 +62,7 @@ public abstract class AbstractScannerExtensionConfiguration implements IScannerE
 	 * {@inheritDoc}
 	 * @since 5.1
 	 */
+	@Override
 	public boolean supportAtSignInIdentifiers() {
 		return false;
 	}
@@ -68,6 +72,7 @@ public abstract class AbstractScannerExtensionConfiguration implements IScannerE
 	 * {@inheritDoc}
 	 * @since 5.1
 	 */
+	@Override
 	public boolean supportUTFLiterals() {
 		return true;
 	}
@@ -77,6 +82,7 @@ public abstract class AbstractScannerExtensionConfiguration implements IScannerE
 	 * {@inheritDoc}
 	 * @since 5.1
 	 */
+	@Override
 	public boolean supportSlashPercentComments() {
 		return false;
 	}
@@ -84,6 +90,7 @@ public abstract class AbstractScannerExtensionConfiguration implements IScannerE
 	/*
 	 * @see org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration#supportAdditionalNumericLiteralSuffixes()
 	 */
+	@Override
 	public char[] supportAdditionalNumericLiteralSuffixes() {
 		return null;
 	}
@@ -91,18 +98,22 @@ public abstract class AbstractScannerExtensionConfiguration implements IScannerE
 	/*
 	 * @see org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration#supportMinAndMaxOperators()
 	 */
+	@Override
 	public boolean supportMinAndMaxOperators() {
 		return false;
 	}
 
+	@Override
 	public CharArrayIntMap getAdditionalPreprocessorKeywords() {
 		return fAddPreprocessorKeywords;
 	}
 	
+	@Override
 	public CharArrayIntMap getAdditionalKeywords() {
 		return fAddKeywords;
 	}
 
+	@Override
 	public IMacro[] getAdditionalMacros() {
 		if (fAddMacros == null) {
 			if (fAddMacroList == null) {
@@ -190,6 +201,7 @@ public abstract class AbstractScannerExtensionConfiguration implements IScannerE
 	/**
 	 * @deprecated see {@link IScannerExtensionConfiguration#initializeMacroValuesTo1()}
 	 */
+	@Override
 	@Deprecated
 	public boolean initializeMacroValuesTo1() {
 		return false;

@@ -19,6 +19,7 @@ import java.util.Comparator;
 @SuppressWarnings("rawtypes")
 @Deprecated
 public class SymbolSortCompare implements Comparator {
+	@Override
 	public int compare( Object o1, Object o2 ) {
         String s1 = o1.toString();
         String s2 = o2.toString();

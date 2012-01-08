@@ -48,10 +48,12 @@ public class CPPASTBaseSpecifier extends ASTNode implements ICPPASTBaseSpecifier
 		setName(name);
 	}
 
+	@Override
 	public CPPASTBaseSpecifier copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CPPASTBaseSpecifier copy(CopyStyle style) {
 		CPPASTBaseSpecifier copy = new CPPASTBaseSpecifier(name == null ? null : name.copy(style));
 		copy.isVirtual = isVirtual;
@@ -64,29 +66,35 @@ public class CPPASTBaseSpecifier extends ASTNode implements ICPPASTBaseSpecifier
 		return copy;
 	}
 	
+	@Override
 	public boolean isVirtual() {
         return isVirtual;
     }
 
-    public void setVirtual(boolean value) {
+    @Override
+	public void setVirtual(boolean value) {
         assertNotFrozen();
         isVirtual = value;
     }
 
-    public int getVisibility() {
+    @Override
+	public int getVisibility() {
         return visibility;
     }
 
-    public void setVisibility(int visibility) {
+    @Override
+	public void setVisibility(int visibility) {
         assertNotFrozen();
         this.visibility = visibility;
     }
 
-    public IASTName getName() {
+    @Override
+	public IASTName getName() {
         return name;
     }
 
-    public void setName(IASTName name) {
+    @Override
+	public void setName(IASTName name) {
         assertNotFrozen();
         this.name = name;
         if (name != null) {
@@ -114,11 +122,13 @@ public class CPPASTBaseSpecifier extends ASTNode implements ICPPASTBaseSpecifier
         return true;
     }
 
+	@Override
 	public int getRoleForName(IASTName n) {
 		if (name == n) return r_reference;
 		return r_unclear;
 	}
 
+	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix, String[] namespaces) {
 		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix, namespaces);
 		List<IBinding> filtered = new ArrayList<IBinding>();
@@ -146,15 +156,18 @@ public class CPPASTBaseSpecifier extends ASTNode implements ICPPASTBaseSpecifier
 		return filtered.toArray(new IBinding[filtered.size()]);
 	}
 
+	@Override
 	public boolean isPackExpansion() {
 		return fIsPackExpansion;
 	}
 
+	@Override
 	public void setIsPackExpansion(boolean val) {
 		assertNotFrozen();
 		fIsPackExpansion= val;
 	}
 
+	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		return findBindings(n, isPrefix, null);
 	}

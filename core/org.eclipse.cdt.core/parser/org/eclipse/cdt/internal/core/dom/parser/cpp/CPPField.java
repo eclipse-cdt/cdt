@@ -40,12 +40,15 @@ public class CPPField extends CPPVariable implements ICPPField {
             super( node, id, arg );
             fOwner= owner;
         }
-        public int getVisibility() {
+        @Override
+		public int getVisibility() {
             return v_private;
         }
-        public ICPPClassType getClassOwner() {
+        @Override
+		public ICPPClassType getClassOwner() {
             return fOwner;
         }
+		@Override
 		public ICompositeType getCompositeTypeOwner() {
 			return getClassOwner();
 		}
@@ -101,6 +104,7 @@ public class CPPField extends CPPVariable implements ICPPField {
 		return null;
 	}
 
+	@Override
 	public int getVisibility() {
 		ICPPASTVisibilityLabel vis = null;
 		IASTDeclaration decl = getPrimaryDeclaration();
@@ -124,6 +128,7 @@ public class CPPField extends CPPVariable implements ICPPField {
 		return ICPPASTVisibilityLabel.v_public;
 	}
 	
+	@Override
 	public ICPPClassType getClassOwner() {
 		ICPPClassScope scope = (ICPPClassScope) getScope();
 		return scope.getClassType();
@@ -153,6 +158,7 @@ public class CPPField extends CPPVariable implements ICPPField {
         return false;
     }
     
+	@Override
 	public ICompositeType getCompositeTypeOwner() {
 		return getClassOwner();
 	}

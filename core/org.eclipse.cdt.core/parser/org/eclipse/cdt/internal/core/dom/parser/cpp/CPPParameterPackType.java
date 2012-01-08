@@ -28,16 +28,19 @@ public class CPPParameterPackType implements ICPPParameterPackType, ITypeContain
     	setType(type);
     }
 
-    public IType getType() {
+    @Override
+	public IType getType() {
         return fType;
     }
     
-    public void setType(IType t) {
+    @Override
+	public void setType(IType t) {
     	assert t != null;
     	fType= t;
     }
 
-    public boolean isSameType(IType obj) {
+    @Override
+	public boolean isSameType(IType obj) {
         if (obj == this)
             return true;
         if (obj instanceof ITypedef)
@@ -67,6 +70,7 @@ public class CPPParameterPackType implements ICPPParameterPackType, ITypeContain
 		return ASTTypeUtil.getType(this);
 	}
 
+	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
 		int firstByte= ITypeMarshalBuffer.PACK_EXPANSION;
 		buffer.putByte((byte) firstByte);

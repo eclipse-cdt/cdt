@@ -92,6 +92,7 @@ public abstract class CPPTemplateParameter extends PlatformObject
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
 	 */
+	@Override
 	public final String getName() {
 		return new String(getNameCharArray());
 	}
@@ -99,6 +100,7 @@ public abstract class CPPTemplateParameter extends PlatformObject
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
 	 */
+	@Override
 	public final char[] getNameCharArray() {
 		// Search for the first declaration that has a name.
 		for (IASTName decl : declarations) {
@@ -112,14 +114,17 @@ public abstract class CPPTemplateParameter extends PlatformObject
 		return CharArrayUtils.EMPTY;
 	}
 
+	@Override
 	public int getParameterID() {
 		return fParameterID;
 	}
 
+	@Override
 	public short getParameterPosition() {
 		return (short) fParameterID;
 	}
 
+	@Override
 	public short getTemplateNestingLevel() {
 		return (short) (fParameterID >> 16);
 	}
@@ -139,6 +144,7 @@ public abstract class CPPTemplateParameter extends PlatformObject
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
 	 */
+	@Override
 	public IScope getScope() {
 		return CPPVisitor.getContainingScope(getPrimaryDeclaration());
 	}
@@ -146,6 +152,7 @@ public abstract class CPPTemplateParameter extends PlatformObject
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#getQualifiedName()
 	 */
+	@Override
 	public String[] getQualifiedName() {
 		return new String[] { getName() };
 	}
@@ -153,6 +160,7 @@ public abstract class CPPTemplateParameter extends PlatformObject
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#getQualifiedNameCharArray()
 	 */
+	@Override
 	public char[][] getQualifiedNameCharArray() {
 		return new char[][] {getNameCharArray() };
 	}
@@ -160,6 +168,7 @@ public abstract class CPPTemplateParameter extends PlatformObject
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#isGloballyQualified()
 	 */
+	@Override
 	public boolean isGloballyQualified() {
 		return false;
 	}
@@ -167,6 +176,7 @@ public abstract class CPPTemplateParameter extends PlatformObject
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#getDeclarations()
 	 */
+	@Override
 	public IASTName[] getDeclarations() {
 		return declarations;
 	}
@@ -174,6 +184,7 @@ public abstract class CPPTemplateParameter extends PlatformObject
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#getDefinition()
 	 */
+	@Override
 	public IASTNode getDefinition() {
 		if (declarations != null && declarations.length > 0)
 			return declarations[0];
@@ -183,6 +194,7 @@ public abstract class CPPTemplateParameter extends PlatformObject
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDefinition(org.eclipse.cdt.core.dom.ast.IASTNode)
 	 */
+	@Override
 	public void addDefinition(IASTNode node) {
 		addDeclaration(node);
 	}
@@ -190,6 +202,7 @@ public abstract class CPPTemplateParameter extends PlatformObject
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDeclaration(org.eclipse.cdt.core.dom.ast.IASTNode)
 	 */
+	@Override
 	public void addDeclaration(IASTNode node) {
 		if (!(node instanceof IASTName))
 			return;
@@ -201,13 +214,14 @@ public abstract class CPPTemplateParameter extends PlatformObject
 	            return;
 			// keep the lowest offset declaration in [0]
 			if (declarations.length > 0 && ((ASTNode)node).getOffset() < ((ASTNode)declarations[0]).getOffset()) {
-				declarations = (IASTName[]) ArrayUtil.prepend(IASTName.class, declarations, name);
+				declarations = ArrayUtil.prepend(IASTName.class, declarations, name);
 			} else {
-				declarations = (IASTName[]) ArrayUtil.append(IASTName.class, declarations, name);
+				declarations = ArrayUtil.append(IASTName.class, declarations, name);
 			}
 	    }
 	}
 	
+	@Override
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
 	}
@@ -217,6 +231,7 @@ public abstract class CPPTemplateParameter extends PlatformObject
 		return getName();
 	}	
 	
+	@Override
 	public IBinding getOwner() {
 		if (declarations == null || declarations.length == 0)
 			return null;
@@ -232,6 +247,7 @@ public abstract class CPPTemplateParameter extends PlatformObject
 		return CPPTemplates.getContainingTemplate((ICPPASTTemplateParameter) node);
 	}
 	
+	@Override
 	public IBinding resolveFinalBinding(CPPASTNameBase name) {
 		// check if the binding has been updated.
 		IBinding current= name.getPreBinding();

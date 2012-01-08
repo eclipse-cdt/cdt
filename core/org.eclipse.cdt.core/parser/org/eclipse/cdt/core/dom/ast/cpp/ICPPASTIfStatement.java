@@ -45,10 +45,12 @@ public interface ICPPASTIfStatement extends IASTIfStatement {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICPPASTIfStatement copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICPPASTIfStatement copy(CopyStyle style);
 }

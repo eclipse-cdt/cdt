@@ -41,10 +41,12 @@ public class CASTConditionalExpression extends ASTNode implements
 		setNegativeResultExpression(negative);
 	}
 	
+	@Override
 	public CASTConditionalExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CASTConditionalExpression copy(CopyStyle style) {
 		CASTConditionalExpression copy = new CASTConditionalExpression();
 		copy.setLogicalConditionExpression(condition == null ? null : condition.copy(style));
@@ -57,11 +59,13 @@ public class CASTConditionalExpression extends ASTNode implements
 		return copy;
 	}
 
+	@Override
 	public IASTExpression getLogicalConditionExpression() {
         return condition;
     }
 
-    public void setLogicalConditionExpression(IASTExpression expression) {
+    @Override
+	public void setLogicalConditionExpression(IASTExpression expression) {
         assertNotFrozen();
         condition = expression;
         if (expression != null) {
@@ -70,11 +74,13 @@ public class CASTConditionalExpression extends ASTNode implements
 		}
     }
 
-    public IASTExpression getPositiveResultExpression() {
+    @Override
+	public IASTExpression getPositiveResultExpression() {
         return positive;
     }
 
-    public void setPositiveResultExpression(IASTExpression expression) {
+    @Override
+	public void setPositiveResultExpression(IASTExpression expression) {
         assertNotFrozen();
         this.positive = expression;
         if (expression != null) {
@@ -83,11 +89,13 @@ public class CASTConditionalExpression extends ASTNode implements
 		}
     }
 
-    public IASTExpression getNegativeResultExpression() {
+    @Override
+	public IASTExpression getNegativeResultExpression() {
         return negative;
     }
 
-    public void setNegativeResultExpression(IASTExpression expression) {
+    @Override
+	public void setNegativeResultExpression(IASTExpression expression) {
         assertNotFrozen();
         this.negative = expression;
         if (expression != null) {
@@ -119,7 +127,8 @@ public class CASTConditionalExpression extends ASTNode implements
         return true;
     }
     
-    public void replace(IASTNode child, IASTNode other) {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
         if( child == condition )
         {
             other.setPropertyInParent( child.getPropertyInParent() );
@@ -140,7 +149,8 @@ public class CASTConditionalExpression extends ASTNode implements
         }
     }
     
-    public IType getExpressionType() {
+    @Override
+	public IType getExpressionType() {
 		IASTExpression positiveExpression = getPositiveResultExpression();
 		if (positiveExpression == null) {
 			positiveExpression= getLogicalConditionExpression();
@@ -152,10 +162,12 @@ public class CASTConditionalExpression extends ASTNode implements
 		return t2;
 	}
     
+	@Override
 	public boolean isLValue() {
 		return false;
 	}
 	
+	@Override
 	public final ValueCategory getValueCategory() {
 		return ValueCategory.PRVALUE;
 	}

@@ -128,6 +128,7 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 		return linkage.getPDOM();
 	}
 	
+	@Override
 	public PDOMBinding getBinding() throws CoreException {
 		long bindingrec = getRecField(BINDING_REC_OFFSET);
 		return linkage.getBinding(bindingrec);
@@ -164,6 +165,7 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 		setNameField(BINDING_NEXT_OFFSET, name);
 	}
 	
+	@Override
 	public PDOMFile getFile() throws CoreException {
 		long filerec = linkage.getDB().getRecPtr(record + FILE_REC_OFFSET);
 		return filerec != 0 ? new PDOMFile(linkage, filerec) : null;
@@ -177,6 +179,7 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 		linkage.getDB().putRecPtr(record + FILE_REC_OFFSET, file != null ? file.getRecord() : 0);
 	}
 
+	@Override
 	public IIndexName getEnclosingDefinition() throws CoreException {
 		long namerec = getEnclosingDefinitionRecord();
 		return namerec != 0 ? new PDOMName(linkage, namerec) : null;
@@ -197,11 +200,13 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 	/**
 	 * @deprecated use {@link #getSimpleID()}, instead.
 	 */
+	@Override
 	@Deprecated
 	public char[] toCharArray() {
 		return getSimpleID();
 	}
 
+	@Override
 	public char[] getSimpleID() {
 		try {
 			Database db = linkage.getDB();
@@ -245,26 +250,32 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 		return getFlags(INHERIT_FRIEND_INLINE_MASK) == IS_FRIEND_SPEC;
 	}
 
+	@Override
 	public boolean isBaseSpecifier() throws CoreException {
 		return getFlags(INHERIT_FRIEND_INLINE_MASK) == IS_INHERITANCE_SPEC;
 	}
 	
+	@Override
 	public boolean isInlineNamespaceDefinition() throws CoreException {
 		return getFlags(INHERIT_FRIEND_INLINE_MASK) == IS_INLINE_NAMESPACE;
 	}
 
+	@Override
 	public boolean couldBePolymorphicMethodCall() throws CoreException {
 		return getFlags(COULD_BE_POLYMORPHIC_METHOD_CALL) == COULD_BE_POLYMORPHIC_METHOD_CALL;
 	}
 
+	@Override
 	public boolean isReadAccess() throws CoreException {
 		return getFlags(READ_ACCESS) == READ_ACCESS;
 	}
 
+	@Override
 	public boolean isWriteAccess() throws CoreException {
 		return getFlags(WRITE_ACCESS) == WRITE_ACCESS;
 	}
 
+	@Override
 	public boolean isDeclaration() {
 		try {
 			int flags = getFlags(DECL_DEF_REF_MASK);
@@ -275,6 +286,7 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 		}
 	}
 
+	@Override
 	public boolean isReference() {
 		try {
 			int flags = getFlags(DECL_DEF_REF_MASK);
@@ -285,6 +297,7 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 		}
 	}
 
+	@Override
 	public boolean isDefinition() {
 		try {
 			int flags = getFlags(DECL_DEF_REF_MASK);
@@ -295,10 +308,12 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 		}
 	}
 
+	@Override
 	public IASTFileLocation getFileLocation() {
 		return this;
 	}
 
+	@Override
 	public String getFileName() {
 		try {
 			IIndexFile file = getFile();
@@ -316,22 +331,27 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 		return null;
 	}
 
+	@Override
 	public int getStartingLineNumber() {
 		return 0;
 	}
 
+	@Override
 	public int getEndingLineNumber() {
 		return 0;
 	}
 
+	@Override
 	public IASTPreprocessorIncludeStatement getContextInclusionStatement() {
 		return null;
 	}
 
+	@Override
 	public IASTFileLocation asFileLocation() {
 		return this;
 	}
 
+	@Override
 	public int getNodeLength() {
 		try {
 			return (linkage.getDB().getShort(record + NODE_LENGTH_OFFSET)) & 0xffff;
@@ -341,6 +361,7 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 		}
 	}
 
+	@Override
 	public int getNodeOffset() {
 		try {
 			return linkage.getDB().get3ByteUnsignedInt(record + NODE_OFFSET_OFFSET);
@@ -377,10 +398,12 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 		linkage.getDB().free(record);
 	}
 
+	@Override
 	public IIndexFragment getIndexFragment() {
 		return linkage.getPDOM();
 	}
 
+	@Override
 	public IIndexName[] getEnclosedNames() throws CoreException {
 		ArrayList<PDOMName> result= new ArrayList<PDOMName>();
 		PDOMName name= getNextInFile();

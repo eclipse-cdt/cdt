@@ -25,10 +25,12 @@ public class CompositeCPPParameterSpecialization extends CompositeCPPParameter i
 		super(cf, rbinding);
 	}
 
+	@Override
 	public IBinding getSpecializedBinding() {
 		return TemplateInstanceUtil.getSpecializedBinding(cf, rbinding);
 	}
 
+	@Override
 	public ICPPTemplateParameterMap getTemplateParameterMap() {
 		IBinding owner= getOwner();
 		if (owner instanceof ICPPSpecialization) {
@@ -37,6 +39,7 @@ public class CompositeCPPParameterSpecialization extends CompositeCPPParameter i
 		return CPPTemplateParameterMap.EMPTY;
 	}
 
+	@Override
 	@Deprecated
 	public ObjectMap getArgumentMap() {
 		return TemplateInstanceUtil.getArgumentMap(cf, rbinding);

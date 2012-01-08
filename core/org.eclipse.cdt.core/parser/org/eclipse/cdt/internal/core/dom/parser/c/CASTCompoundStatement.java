@@ -28,10 +28,12 @@ public class CASTCompoundStatement extends ASTNode implements IASTCompoundStatem
     private IASTStatement [] statements = null;
     private IScope scope = null;
 
-    public CASTCompoundStatement copy() {
+    @Override
+	public CASTCompoundStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
     
+	@Override
 	public CASTCompoundStatement copy(CopyStyle style) {
 		CASTCompoundStatement copy = new CASTCompoundStatement();
 		for (IASTStatement statement : getStatements())
@@ -43,21 +45,24 @@ public class CASTCompoundStatement extends ASTNode implements IASTCompoundStatem
 		return copy;
 	}
 
-    public IASTStatement[] getStatements() {
+    @Override
+	public IASTStatement[] getStatements() {
         if (statements == null) return IASTStatement.EMPTY_STATEMENT_ARRAY;
-        return (IASTStatement[]) ArrayUtil.trim(IASTStatement.class, statements);
+        return ArrayUtil.trim(IASTStatement.class, statements);
     }
 
-    public void addStatement(IASTStatement statement) {
+    @Override
+	public void addStatement(IASTStatement statement) {
         assertNotFrozen();
-        statements = (IASTStatement[]) ArrayUtil.append(IASTStatement.class, statements, statement);
+        statements = ArrayUtil.append(IASTStatement.class, statements, statement);
         if (statement != null) {
         	statement.setParent(this);
         	statement.setPropertyInParent(NESTED_STATEMENT);
         }
     }
 
-    public IScope getScope() {
+    @Override
+	public IScope getScope() {
         if (scope == null)
             scope = new CScope(this, EScopeKind.eLocal);
         return scope;
@@ -86,7 +91,8 @@ public class CASTCompoundStatement extends ASTNode implements IASTCompoundStatem
         return true;
     }
 
-    public void replace(IASTNode child, IASTNode other) {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
         if (statements == null) return;
         for (int i = 0; i < statements.length; ++i) {
             if (statements[i] == child) {

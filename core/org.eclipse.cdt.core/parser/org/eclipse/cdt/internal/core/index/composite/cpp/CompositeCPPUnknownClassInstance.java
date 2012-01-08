@@ -26,6 +26,7 @@ class CompositeCPPUnknownClassInstance extends CompositeCPPUnknownClassType
 		super(cf, rbinding);
 	}
 
+	@Override
 	public ICPPTemplateArgument[] getArguments() {
 		ICPPTemplateArgument[] arguments = ((ICPPUnknownClassInstance) rbinding).getArguments();
 		return TemplateInstanceUtil.convert(cf, arguments);

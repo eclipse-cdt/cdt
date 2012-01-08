@@ -57,15 +57,18 @@ public interface ICPPASTLinkageSpecification extends IASTDeclaration, IASTDeclar
 	 * @param declaration
 	 *            <code>IASTDeclaration</code>
 	 */
+	@Override
 	public void addDeclaration(IASTDeclaration declaration);
 	
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICPPASTLinkageSpecification copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICPPASTLinkageSpecification copy(CopyStyle style);
 }

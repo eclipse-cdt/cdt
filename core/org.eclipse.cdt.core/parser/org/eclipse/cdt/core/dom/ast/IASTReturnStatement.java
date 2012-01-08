@@ -48,10 +48,12 @@ public interface IASTReturnStatement extends IASTStatement {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IASTReturnStatement copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public IASTReturnStatement copy(CopyStyle style);
 }

@@ -64,6 +64,7 @@ public abstract class AbstractCompositeFactory implements ICompositesFactory {
 	/**
 	 * @see ICompositesFactory#getCompositeBindings(IIndexFragmentBinding[][])
 	 */
+	@Override
 	public final IIndexBinding[] getCompositeBindings(IIndexFragmentBinding[][] fragmentBindings) {
 		return getCompositeBindings(mergeBindingArrays(fragmentBindings));
 	}
@@ -75,6 +76,7 @@ public abstract class AbstractCompositeFactory implements ICompositesFactory {
 		return result;
 	}
 
+	@Override
 	public final IIndexFragmentBinding[] findEquivalentBindings(IBinding binding) {
 		CIndex cindex= (CIndex) index;
 		try {
@@ -139,6 +141,7 @@ public abstract class AbstractCompositeFactory implements ICompositesFactory {
 			this.comparators= comparators;
 		}
 		
+		@Override
 		public int compare(IIndexFragmentBinding f1, IIndexFragmentBinding f2) {
 			for (IIndexFragmentBindingComparator comparator : comparators) {
 				int cmp= comparator.compare(f1, f2);

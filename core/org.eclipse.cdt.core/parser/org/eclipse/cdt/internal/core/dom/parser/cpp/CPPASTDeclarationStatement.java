@@ -31,10 +31,12 @@ public class CPPASTDeclarationStatement extends ASTNode
 		setDeclaration(declaration);
 	}
 
+	@Override
 	public CPPASTDeclarationStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CPPASTDeclarationStatement copy(CopyStyle style) {
 		CPPASTDeclarationStatement copy = new CPPASTDeclarationStatement();
 		copy.setDeclaration(declaration == null ? null : declaration.copy(style));
@@ -45,11 +47,13 @@ public class CPPASTDeclarationStatement extends ASTNode
 		return copy;
 	}
 
+	@Override
 	public IASTDeclaration getDeclaration() {
         return declaration;
     }
 
-    public void setDeclaration(IASTDeclaration declaration) {
+    @Override
+	public void setDeclaration(IASTDeclaration declaration) {
         assertNotFrozen();
         this.declaration = declaration;
         if (declaration != null) {
@@ -78,7 +82,8 @@ public class CPPASTDeclarationStatement extends ASTNode
         return true;
     }
 
-    public void replace(IASTNode child, IASTNode other) {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
         if (declaration == child) {
             other.setParent(child.getParent());
             other.setPropertyInParent(child.getPropertyInParent());

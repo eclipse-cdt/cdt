@@ -38,10 +38,12 @@ public class CPPASTContinueStatement extends ASTNode implements IASTContinueStat
         return true;
     }
     
-    public CPPASTContinueStatement copy() {
+    @Override
+	public CPPASTContinueStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CPPASTContinueStatement copy(CopyStyle style) {
 		CPPASTContinueStatement copy = new CPPASTContinueStatement();
 		copy.setOffsetAndLength(this);

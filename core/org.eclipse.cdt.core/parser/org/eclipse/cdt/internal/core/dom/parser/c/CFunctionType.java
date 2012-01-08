@@ -27,7 +27,8 @@ public class CFunctionType implements IFunctionType, ISerializableType {
         this.parameters = types;
     }
 
-    public boolean isSameType( IType o ){
+    @Override
+	public boolean isSameType( IType o ){
         if( o == this )
             return true;
         if( o instanceof ITypedef )
@@ -50,14 +51,16 @@ public class CFunctionType implements IFunctionType, ISerializableType {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IFunctionType#getReturnType()
      */
-    public IType getReturnType() {
+    @Override
+	public IType getReturnType() {
         return returnType;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IFunctionType#getParameterTypes()
      */
-    public IType[] getParameterTypes() {
+    @Override
+	public IType[] getParameterTypes() {
         return parameters;
     }
 
@@ -72,6 +75,7 @@ public class CFunctionType implements IFunctionType, ISerializableType {
         return t;
     }
 
+	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
 		int firstByte= ITypeMarshalBuffer.FUNCTION_TYPE;
 

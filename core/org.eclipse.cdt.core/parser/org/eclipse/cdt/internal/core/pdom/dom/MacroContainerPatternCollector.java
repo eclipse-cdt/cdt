@@ -39,12 +39,14 @@ public final class MacroContainerPatternCollector implements IBTreeVisitor {
 	}
 
 	
+	@Override
 	final public int compare(long record) throws CoreException {
 		if (fMonitor != null)
 			checkCancelled();
 		return 0;
 	}
 	
+	@Override
 	final public boolean visit(long record) throws CoreException {
 		if (record == 0)
 			return true;

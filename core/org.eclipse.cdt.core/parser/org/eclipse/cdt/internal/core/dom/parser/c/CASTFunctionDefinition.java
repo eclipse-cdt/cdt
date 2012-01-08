@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
 /**
@@ -43,18 +44,20 @@ public class CASTFunctionDefinition extends ASTNode implements IASTFunctionDefin
     	setBody(bodyStatement);
 	}
 
+	@Override
 	public CASTFunctionDefinition copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CASTFunctionDefinition copy(CopyStyle style) {
 		CASTFunctionDefinition copy = new CASTFunctionDefinition();
 		copy.setDeclSpecifier(declSpecifier == null ? null : declSpecifier.copy(style));
 		
 		if (declarator != null) {
-			IASTDeclarator outer = CVisitor.findOutermostDeclarator(declarator);
+			IASTDeclarator outer = ASTQueries.findOutermostDeclarator(declarator);
 			outer = outer.copy(style);
-			copy.setDeclarator((IASTFunctionDeclarator) CVisitor.findTypeRelevantDeclarator(outer));
+			copy.setDeclarator((IASTFunctionDeclarator) ASTQueries.findTypeRelevantDeclarator(outer));
 		}	
 		
 		copy.setBody(bodyStatement == null ? null : bodyStatement.copy(style));
@@ -66,11 +69,13 @@ public class CASTFunctionDefinition extends ASTNode implements IASTFunctionDefin
 		return copy;
 	}
 	
+	@Override
 	public IASTDeclSpecifier getDeclSpecifier() {
         return declSpecifier;
     }
 
-    public void setDeclSpecifier(IASTDeclSpecifier declSpec) {
+    @Override
+	public void setDeclSpecifier(IASTDeclSpecifier declSpec) {
         assertNotFrozen();
         declSpecifier = declSpec;
         if (declSpec != null) {
@@ -79,25 +84,29 @@ public class CASTFunctionDefinition extends ASTNode implements IASTFunctionDefin
 		}
     }
 
-    public IASTFunctionDeclarator getDeclarator() {
+    @Override
+	public IASTFunctionDeclarator getDeclarator() {
         return declarator;
     }
 
-    public void setDeclarator(IASTFunctionDeclarator declarator) {
+    @Override
+	public void setDeclarator(IASTFunctionDeclarator declarator) {
         assertNotFrozen();
         this.declarator = declarator;
         if (declarator != null) {
-        	IASTDeclarator outerDtor= CVisitor.findOutermostDeclarator(declarator);
+        	IASTDeclarator outerDtor= ASTQueries.findOutermostDeclarator(declarator);
         	outerDtor.setParent(this);
         	outerDtor.setPropertyInParent(DECLARATOR);
 		}
     }
 
-    public IASTStatement getBody() {
+    @Override
+	public IASTStatement getBody() {
         return bodyStatement;
     }
 
-    public void setBody(IASTStatement statement) {
+    @Override
+	public void setBody(IASTStatement statement) {
         assertNotFrozen();
         bodyStatement = statement;
         if (statement != null) {
@@ -106,6 +115,7 @@ public class CASTFunctionDefinition extends ASTNode implements IASTFunctionDefin
 		}
     }
 
+	@Override
 	public IScope getScope() {
 		if (scope == null)
 			scope = new CFunctionScope(this);
@@ -123,7 +133,7 @@ public class CASTFunctionDefinition extends ASTNode implements IASTFunctionDefin
 		}
         
         if (declSpecifier != null && !declSpecifier.accept(action)) return false;
-        final IASTDeclarator outerDtor= CVisitor.findOutermostDeclarator(declarator);
+        final IASTDeclarator outerDtor= ASTQueries.findOutermostDeclarator(declarator);
         if (outerDtor != null && !outerDtor.accept(action)) return false;
         if (bodyStatement != null && !bodyStatement.accept(action)) return false;
       
@@ -137,7 +147,8 @@ public class CASTFunctionDefinition extends ASTNode implements IASTFunctionDefin
         return true;
     }
 
-    public void replace(IASTNode child, IASTNode other) {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
         if (bodyStatement == child) {
             other.setPropertyInParent(bodyStatement.getPropertyInParent());
             other.setParent(bodyStatement.getParent());

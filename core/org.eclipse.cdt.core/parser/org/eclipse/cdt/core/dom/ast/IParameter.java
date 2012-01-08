@@ -25,5 +25,6 @@ public interface IParameter extends IVariable {
 	 * Inherited from {@link IVariable}, always returns <code>null</code>.
 	 * @since 5.1
 	 */
+	@Override
 	IValue getInitialValue();
 }

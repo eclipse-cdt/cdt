@@ -39,7 +39,8 @@ public class CCompositeTypeScope extends CScope implements ICCompositeTypeScope 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope#getBinding(char[])
      */
-    public IBinding getBinding( char[] name ) {
+    @Override
+	public IBinding getBinding( char[] name ) {
         return super.getBinding( NAMESPACE_TYPE_OTHER, name );
     }
 
@@ -58,14 +59,15 @@ public class CCompositeTypeScope extends CScope implements ICCompositeTypeScope 
             if( b == null ) continue;
             try {
                 if( b.getScope() == this )
-                    result = (IBinding[]) ArrayUtil.append( IBinding.class, result, b );
+                    result = ArrayUtil.append( IBinding.class, result, b );
             } catch ( DOMException e ) {
             }
         }
             
-        return (IBinding[]) ArrayUtil.trim( IBinding.class, result );
+        return ArrayUtil.trim( IBinding.class, result );
     }
 
+	@Override
 	public ICompositeType getCompositeType() {
 		ICASTCompositeTypeSpecifier compSpec = (ICASTCompositeTypeSpecifier) getPhysicalNode();
 		IBinding binding = compSpec.getName().resolveBinding();

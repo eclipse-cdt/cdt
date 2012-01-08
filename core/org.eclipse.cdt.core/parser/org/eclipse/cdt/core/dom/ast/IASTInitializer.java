@@ -26,10 +26,12 @@ public interface IASTInitializer extends IASTNode {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IASTInitializer copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public IASTInitializer copy(CopyStyle style);
 }

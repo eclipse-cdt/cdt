@@ -33,10 +33,12 @@ abstract class CompositeCPPBinding extends CompositeIndexBinding implements ICPP
 		}
 	}
 	
+	@Override
 	public char[][] getQualifiedNameCharArray() throws DOMException {
 		return ((ICPPBinding)rbinding).getQualifiedNameCharArray();
 	}
 
+	@Override
 	public boolean isGloballyQualified() throws DOMException {
 		return ((ICPPBinding)rbinding).isGloballyQualified();
 	}

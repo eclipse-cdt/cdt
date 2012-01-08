@@ -48,6 +48,7 @@ public abstract class AbstractExportProjectProvider implements IExportProjectPro
 	/*
 	 * @see org.eclipse.cdt.core.index.export.IExportProjectProvider#setApplicationArguments(java.lang.String[])
 	 */
+	@Override
 	public void setApplicationArguments(String[] arguments) {
 		this.appArguments= arguments.clone();
 		this.arguments= Collections.unmodifiableMap(CLIUtil.parseToMap(arguments));

@@ -96,61 +96,74 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 		return IIndexCPPBindingConstants.CPPPARAMETER;
 	}
 	
+	@Override
 	public String[] getQualifiedName() {
 		return new String[] {getName()};
 	}
 
+	@Override
 	public char[][] getQualifiedNameCharArray() throws DOMException {
 		return new char[][]{getNameCharArray()};
 	}
 
+	@Override
 	public boolean isGloballyQualified() {
 		return false;
 	}
 
+	@Override
 	public boolean isMutable() {
 		// ISO/IEC 14882:2003 7.1.1.8
 		return false; 
 	}
 
+	@Override
 	public IType getType() {
 		return fType;
 	}
 
+	@Override
 	public boolean isAuto() {
 		// ISO/IEC 14882:2003 7.1.1.2
 		byte flag = 1<<PDOMCAnnotation.AUTO_OFFSET;
 		return hasFlag(flag, true, ANNOTATIONS);
 	}
 
+	@Override
 	public boolean isExtern() {
 		// ISO/IEC 14882:2003 7.1.1.5
 		return false; 
 	}
 
+	@Override
 	public boolean isExternC() {
 		return false;
 	}
 
+	@Override
 	public boolean isRegister() {
 		// ISO/IEC 14882:2003 7.1.1.2
 		byte flag = 1<<PDOMCAnnotation.REGISTER_OFFSET;
 		return hasFlag(flag, true, ANNOTATIONS);
 	}
 
+	@Override
 	public boolean isStatic() {
 		// ISO/IEC 14882:2003 7.1.1.4
 		return false; 
 	}
 
+	@Override
 	public String getName() {
 		return new String(getNameCharArray());
 	}
 
+	@Override
 	public IIndexScope getScope() {
 		return null;
 	}
 
+	@Override
 	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class adapter) {
 		return null;
@@ -166,10 +179,12 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 		}
 	}
 
+	@Override
 	public boolean hasDefaultValue() {
 		return hasFlag(FLAG_DEFAULT_VALUE, false, FLAGS);
 	}
 
+	@Override
 	public boolean isParameterPack() {
 		return getType() instanceof ICPPParameterPackType;
 	}
@@ -184,20 +199,24 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 		return defValue;
 	}
 	
+	@Override
 	public IIndexFragment getFragment() {
 		return getPDOM();
 	}	
 	
+	@Override
 	public boolean hasDefinition() throws CoreException {
 		// parameter bindings do not span index fragments
 		return true;
 	}
 
+	@Override
 	public boolean hasDeclaration() throws CoreException {
 		// parameter bindings do not span index fragments
 		return true;
 	}
 	
+	@Override
 	public int getBindingConstant() {
 		return getNodeType();
 	}
@@ -223,14 +242,17 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IPDOMBind
 		return rec;
 	}
 
+	@Override
 	public boolean isFileLocal() throws CoreException {
 		return false;
 	}
 	
+	@Override
 	public IIndexFile getLocalToFile() throws CoreException {
 		return null;
 	}
 
+	@Override
 	public IValue getInitialValue() {
 		return null;
 	}

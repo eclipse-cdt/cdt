@@ -69,6 +69,7 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 				starttime = System.currentTimeMillis();
 				Runnable worker = new Runnable() {
 
+					@Override
 					public void run() {
 
 						long diff = System.currentTimeMillis() - starttime;

@@ -117,6 +117,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 	/**
 	 * Called to populate the cache for the bindings in the class scope.
 	 */
+	@Override
 	public void acceptUncached(IPDOMVisitor visitor) throws CoreException {
 		super.accept(visitor);
 		PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + MEMBERLIST);
@@ -202,6 +203,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		}
 	}
 
+	@Override
 	public ICPPClassScope getCompositeScope() {
 		if (fScope == null) {
 			fScope= new PDOMCPPClassScope(this);
@@ -209,6 +211,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		return fScope;
 	}
 
+	@Override
 	public int getKey() {
 		try {
 			return getDB().getByte(record + KEY);
@@ -218,6 +221,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		}
 	}
 
+	@Override
 	public boolean isAnonymous() {
 		try {
 			return getDB().getByte(record + ANONYMOUS) != 0;
@@ -227,6 +231,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		}
 	}
 
+	@Override
 	public boolean isSameType(IType type) {
 		if (type instanceof ITypedef) {
 			return type.isSameType(this);
@@ -260,6 +265,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		return key == k_class ? k_struct : key;
 	}
 
+	@Override
 	public ICPPBase[] getBases() {
 		Long key= record + PDOMCPPLinkage.CACHE_BASES;
 		ICPPBase[] bases= (ICPPBase[]) getPDOM().getCachedResult(key);
@@ -280,6 +286,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		}
 	}
 
+	@Override
 	public ICPPConstructor[] getConstructors() {
 		PDOMClassUtil.ConstructorCollector visitor= new PDOMClassUtil.ConstructorCollector();
 		try {
@@ -291,6 +298,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		}
 	}
 
+	@Override
 	public ICPPMethod[] getDeclaredMethods() {
 		try {
 			PDOMClassUtil.MethodCollector methods = new PDOMClassUtil.MethodCollector(false);
@@ -302,6 +310,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		}
 	}
 
+	@Override
 	public ICPPField[] getDeclaredFields() {
 		try {
 			PDOMClassUtil.FieldCollector visitor = new PDOMClassUtil.FieldCollector();
@@ -313,6 +322,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		}
 	}
 
+	@Override
 	public ICPPClassType[] getNestedClasses() {
 		try {
 			PDOMClassUtil.NestedClassCollector visitor = new PDOMClassUtil.NestedClassCollector();
@@ -324,6 +334,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		}
 	}
 
+	@Override
 	public IBinding[] getFriends() {
 		try {
 			final List<IBinding> list = new ArrayList<IBinding>();
@@ -338,18 +349,22 @@ class PDOMCPPClassType extends PDOMCPPBinding implements IPDOMCPPClassType, IPDO
 		}
 	}
 
+	@Override
 	public ICPPMethod[] getMethods() { 
 		return ClassTypeHelper.getMethods(this);
 	}
 
+	@Override
 	public ICPPMethod[] getAllDeclaredMethods() {
 		return ClassTypeHelper.getAllDeclaredMethods(this);
 	}
 	
+	@Override
 	public IField[] getFields() {
 		return ClassTypeHelper.getFields(this);
 	}
 	
+	@Override
 	public IField findField(String name) {
 		return ClassTypeHelper.findField(this, name);
 	}

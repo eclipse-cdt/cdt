@@ -35,30 +35,37 @@ public class CPPTemplateArgument implements ICPPTemplateArgument {
 		fValue= null;
 	}
 	
+	@Override
 	public boolean isTypeValue() {
 		return fValue == null;
 	}
 
+	@Override
 	public boolean isNonTypeValue() {
 		return fValue != null;
 	}
 
+	@Override
 	public IType getTypeValue() {
 		return isTypeValue() ? fType : null;
 	}
 
+	@Override
 	public IValue getNonTypeValue() {
 		return fValue;
 	}
 	
+	@Override
 	public IType getTypeOfNonTypeValue() {
 		return isNonTypeValue() ? fType : null;
 	}
 	
+	@Override
 	public boolean isPackExpansion() {
 		return fType instanceof ICPPParameterPackType;
 	}
 
+	@Override
 	public ICPPTemplateArgument getExpansionPattern() {
 		if (fType instanceof ICPPParameterPackType) {
 			IType t= ((ICPPParameterPackType) fType).getType();
@@ -72,6 +79,7 @@ public class CPPTemplateArgument implements ICPPTemplateArgument {
 		return null;
 	}
 
+	@Override
 	public boolean isSameValue(ICPPTemplateArgument arg) {
 		if (fValue != null) {
 			return fValue.equals(arg.getNonTypeValue());

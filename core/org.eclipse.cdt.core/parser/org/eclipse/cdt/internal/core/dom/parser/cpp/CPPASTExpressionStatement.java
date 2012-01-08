@@ -32,10 +32,12 @@ public class CPPASTExpressionStatement extends ASTNode implements
 		setExpression(expression);
 	}
 
+	@Override
 	public CPPASTExpressionStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CPPASTExpressionStatement copy(CopyStyle style) {
 		CPPASTExpressionStatement copy = new CPPASTExpressionStatement();
 		copy.setExpression(expression == null ? null : expression.copy(style));
@@ -46,11 +48,13 @@ public class CPPASTExpressionStatement extends ASTNode implements
 		return copy;
 	}
 	
+	@Override
 	public IASTExpression getExpression() {
         return expression;
     }
 
-    public void setExpression(IASTExpression expression) {
+    @Override
+	public void setExpression(IASTExpression expression) {
         assertNotFrozen();
         this.expression = expression;
         if (expression != null) {
@@ -79,7 +83,8 @@ public class CPPASTExpressionStatement extends ASTNode implements
         return true;
     }
 
-    public void replace(IASTNode child, IASTNode other) {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
         if (child == expression) {
             other.setPropertyInParent(child.getPropertyInParent());
             other.setParent(child.getParent());

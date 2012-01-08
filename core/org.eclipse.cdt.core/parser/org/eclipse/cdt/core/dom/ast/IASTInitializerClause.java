@@ -18,10 +18,12 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTInitializerClause extends IASTNode {
 	
+	@Override
 	IASTInitializerClause copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	IASTInitializerClause copy(CopyStyle style);
 }

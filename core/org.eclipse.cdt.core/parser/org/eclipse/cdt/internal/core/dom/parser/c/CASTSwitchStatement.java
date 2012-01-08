@@ -36,10 +36,12 @@ public class CASTSwitchStatement extends ASTNode implements
 		setBody(body);
 	}
 	
+	@Override
 	public CASTSwitchStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CASTSwitchStatement copy(CopyStyle style) {
 		CASTSwitchStatement copy = new CASTSwitchStatement();
 		copy.setControllerExpression(controller == null ? null : controller.copy(style));
@@ -51,11 +53,13 @@ public class CASTSwitchStatement extends ASTNode implements
 		return copy;
 	}
 
+	@Override
 	public IASTExpression getControllerExpression() {
         return controller;
     }
 
-    public void setControllerExpression(IASTExpression controller) {
+    @Override
+	public void setControllerExpression(IASTExpression controller) {
         assertNotFrozen();
         this.controller = controller;
         if (controller != null) {
@@ -64,11 +68,13 @@ public class CASTSwitchStatement extends ASTNode implements
 		}
     }
 
-    public IASTStatement getBody() {
+    @Override
+	public IASTStatement getBody() {
         return body;
     }
 
-    public void setBody(IASTStatement body) {
+    @Override
+	public void setBody(IASTStatement body) {
         assertNotFrozen();
         this.body = body;
         if (body != null) {
@@ -99,7 +105,8 @@ public class CASTSwitchStatement extends ASTNode implements
         return true;
     }
 
-    public void replace(IASTNode child, IASTNode other) {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
         if( body == child )
         {
             other.setPropertyInParent( child.getPropertyInParent() );

@@ -62,6 +62,7 @@ public class GeneratePDOMApplication implements IApplication {
 	 * Starts this application
 	 * @throws CoreException on an unexpected failure
 	 */
+	@Override
 	public Object start(IApplicationContext context) throws CoreException {
 		Object result= IApplication.EXIT_OK;
 		try {
@@ -151,6 +152,7 @@ public class GeneratePDOMApplication implements IApplication {
 		System.out.println(s);
 	}
 
+	@Override
 	public void stop() {
 		// do nothing
 	}
@@ -248,15 +250,19 @@ public class GeneratePDOMApplication implements IApplication {
 			return true;
 		}
 
+		@Override
 		public void done() {
 		}
+		@Override
 		public void worked(int work) {
 			internalWorked(work);
 		}
+		@Override
 		public void beginTask(String name, int total) {
 			this.taskName = name;
 			this.totalWork = total;
 		}
+		@Override
 		public void internalWorked(double work) {
 			synchronized(mutex) {
 				worked += work;
@@ -267,16 +273,20 @@ public class GeneratePDOMApplication implements IApplication {
 			}
 		}
 
+		@Override
 		public boolean isCanceled() {
 			return canceled;
 		}
 
+		@Override
 		public void setCanceled(boolean value) {
 			canceled = value;
 		}
+		@Override
 		public void setTaskName(String name) {
 			taskName = name;
 		}
+		@Override
 		public void subTask(String name) {
 			subTask = name;
 		}

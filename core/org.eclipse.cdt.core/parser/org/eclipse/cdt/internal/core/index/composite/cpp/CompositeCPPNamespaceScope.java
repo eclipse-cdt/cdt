@@ -33,18 +33,22 @@ class CompositeCPPNamespaceScope extends CompositeScope implements ICPPNamespace
 		this.namespaces = namespaces;
 	}
 	
+	@Override
 	public EScopeKind getKind() {
 		return EScopeKind.eNamespace;
 	}
 
+	@Override
 	public void addUsingDirective(ICPPUsingDirective directive) {
 		fail();
 	}
 
+	@Override
 	public ICPPUsingDirective[] getUsingDirectives() {
 		return new ICPPUsingDirective[0]; // same behavior as PDOMCPPNamespace
 	}
 
+	@Override
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) {
 		IBinding preresult = null;
 		for(int i=0; preresult==null && i<namespaces.length; i++) {
@@ -53,6 +57,7 @@ class CompositeCPPNamespaceScope extends CompositeScope implements ICPPNamespace
 		return processUncertainBinding(preresult);
 	}
 	
+	@Override
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
 		IIndexFragmentBinding[][] preresult = new IIndexFragmentBinding[namespaces.length][];
 		for(int i=0; i<namespaces.length; i++) {
@@ -63,6 +68,7 @@ class CompositeCPPNamespaceScope extends CompositeScope implements ICPPNamespace
 		return cf.getCompositeBindings(preresult);
 	}
 	
+	@Override
 	final public IBinding[] find(String name) {
 		IIndexFragmentBinding[][] preresult = new IIndexFragmentBinding[namespaces.length][];
 		for(int i=0; i<namespaces.length; i++) {
@@ -73,6 +79,7 @@ class CompositeCPPNamespaceScope extends CompositeScope implements ICPPNamespace
 		return cf.getCompositeBindings(preresult);
 	}
 	
+	@Override
 	public IIndexBinding getScopeBinding() {
 		return cf.getCompositeBinding(rbinding);
 	}
@@ -93,6 +100,7 @@ class CompositeCPPNamespaceScope extends CompositeScope implements ICPPNamespace
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope#getInlineNamespaces()
 	 */
+	@Override
 	public ICPPNamespaceScope[] getInlineNamespaces() {
 		IIndexFragmentBinding[][] preresult = new IIndexFragmentBinding[namespaces.length][];
 		for(int i=0; i<namespaces.length; i++) {

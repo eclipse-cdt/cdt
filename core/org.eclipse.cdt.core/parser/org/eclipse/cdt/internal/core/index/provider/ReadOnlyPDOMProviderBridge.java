@@ -31,6 +31,7 @@ public class ReadOnlyPDOMProviderBridge implements IIndexFragmentProvider {
 		this.provider= provider;
 	}
 
+	@Override
 	public IIndexFragment[] getIndexFragments(ICConfigurationDescription config) throws CoreException {
 		List<PDOM> result = new ArrayList<PDOM>();
 		IPDOMDescriptor[] descriptions = provider.getDescriptors(config);
@@ -48,6 +49,7 @@ public class ReadOnlyPDOMProviderBridge implements IIndexFragmentProvider {
 		return result.toArray(new IIndexFragment[result.size()]);
 	}
 
+	@Override
 	public boolean providesFor(ICProject cproject) throws CoreException {
 		return provider.providesFor(cproject);
 	}

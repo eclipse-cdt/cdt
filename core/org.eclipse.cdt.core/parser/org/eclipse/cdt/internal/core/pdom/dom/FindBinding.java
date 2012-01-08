@@ -35,6 +35,7 @@ public class FindBinding {
 			this.database= linkage.getDB();
 		}
 
+		@Override
 		public int compare(long record1, long record2) throws CoreException {
 			IString nm1 = PDOMNamedNode.getDBName(database, record1);
 			IString nm2 = PDOMNamedNode.getDBName(database, record2);
@@ -72,6 +73,7 @@ public class FindBinding {
 		}
 		
 		// IBTreeVisitor
+		@Override
 		public int compare(long record) throws CoreException {
 			final Database db = fLinkage.getDB();
 			IString nm1 = PDOMNamedNode.getDBName(db, record);
@@ -85,6 +87,7 @@ public class FindBinding {
 		}
 	
 		// IBTreeVisitor
+		@Override
 		public boolean visit(long record) throws CoreException {
 			final PDOMNamedNode nnode = (PDOMNamedNode) fLinkage.getNode(record);
 			if (nnode instanceof PDOMBinding) {
@@ -113,6 +116,7 @@ public class FindBinding {
 			return fResult;
 		}
 		// IPDOMVisitor
+		@Override
 		public boolean visit(IPDOMNode node) throws CoreException {
 			if (node instanceof PDOMBinding) {
 				final PDOMBinding nnode = (PDOMBinding) node;
@@ -124,6 +128,7 @@ public class FindBinding {
 			return false; /* do not visit children of node */
 		}
 		// IPDOMVisitor
+		@Override
 		public void leave(IPDOMNode node) throws CoreException {
 		}
 	}
@@ -153,6 +158,7 @@ public class FindBinding {
 		public MacroBTreeComparator(Database database) {
 			db= database;
 		}
+		@Override
 		public int compare(long record1, long record2) throws CoreException {
 			return compare(PDOMNamedNode.getDBName(db, record1), PDOMNamedNode.getDBName(db, record2));	// compare names
 		}

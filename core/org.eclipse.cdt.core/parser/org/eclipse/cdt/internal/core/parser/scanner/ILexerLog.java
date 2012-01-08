@@ -18,7 +18,9 @@ import org.eclipse.cdt.core.parser.IProblem;
  */
 public interface ILexerLog {
 	ILexerLog NULL = new ILexerLog() {
+		@Override
 		public void handleComment(boolean isBlockComment, int offset, int endOffset) {}
+		@Override
 		public void handleProblem(int problemID, char[] info, int offset, int endOffset) {}
 	};
 

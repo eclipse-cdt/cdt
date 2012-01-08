@@ -100,9 +100,9 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 			// keep the lowest offset declaration at the first position
 			if (fDeclarations.length > 0
 					&& ((ASTNode) node).getOffset() < ((ASTNode) fDeclarations[0]).getOffset()) {
-				fDeclarations = (IASTName[]) ArrayUtil.prepend(IASTName.class, fDeclarations, name);
+				fDeclarations = ArrayUtil.prepend(IASTName.class, fDeclarations, name);
 			} else {
-				fDeclarations = (IASTName[]) ArrayUtil.append(IASTName.class, fDeclarations, name);
+				fDeclarations = ArrayUtil.append(IASTName.class, fDeclarations, name);
 			}
 		}
 		// array types may be incomplete

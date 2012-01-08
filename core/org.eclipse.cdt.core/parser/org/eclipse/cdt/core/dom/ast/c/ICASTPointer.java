@@ -24,10 +24,12 @@ public interface ICASTPointer extends IASTPointer {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICASTPointer copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICASTPointer copy(CopyStyle style);
 }

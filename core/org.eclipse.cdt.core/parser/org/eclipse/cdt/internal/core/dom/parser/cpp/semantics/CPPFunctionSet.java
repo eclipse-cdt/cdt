@@ -29,18 +29,22 @@ public class CPPFunctionSet implements ICPPTwoPhaseBinding {
 		fBindings = ArrayUtil.removeNulls(bindingList);
 	}
 	
+	@Override
 	public String getName() {
 		return fBindings[0].getName();
 	}
 
+	@Override
 	public char[] getNameCharArray() {
 		return fBindings[0].getNameCharArray();
 	}
 
+	@Override
 	public IScope getScope() throws DOMException {
 		return fBindings[0].getScope();
 	}
 
+	@Override
 	public IBinding getOwner() {
 		return fBindings[0].getOwner();
 	}
@@ -49,15 +53,18 @@ public class CPPFunctionSet implements ICPPTwoPhaseBinding {
 		return fBindings;
 	}
 
+	@Override
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
 	}
 
+	@Override
 	public IBinding resolveFinalBinding(CPPASTNameBase astName) {
 		return CPPSemantics.resolveTargetedFunction(astName, fBindings);
 	}
 
 	
+	@Override
 	@SuppressWarnings("unchecked")
 	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
 		if (adapter.isAssignableFrom(getClass())) 

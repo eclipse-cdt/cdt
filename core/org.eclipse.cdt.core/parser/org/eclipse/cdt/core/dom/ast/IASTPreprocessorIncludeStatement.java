@@ -53,6 +53,7 @@ public interface IASTPreprocessorIncludeStatement extends IASTPreprocessorStatem
 	 * Returns whether this include directive was actually taken.
 	 * @since 4.0
 	 */
+	@Override
 	public boolean isActive();
 
 	/**

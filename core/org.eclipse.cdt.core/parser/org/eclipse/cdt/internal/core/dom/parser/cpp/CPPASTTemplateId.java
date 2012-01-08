@@ -48,10 +48,12 @@ public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateI
 		setTemplateName(templateName);
 	}
 
+	@Override
 	public CPPASTTemplateId copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CPPASTTemplateId copy(CopyStyle style) {
 		CPPASTTemplateId copy = new CPPASTTemplateId(templateName == null ?
 				null : templateName.copy(style));
@@ -64,19 +66,23 @@ public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateI
 		return copy;
 	}
 
+	@Override
 	public char[] getSimpleID() {
 		return templateName.getSimpleID();
 	}
 
+	@Override
 	public char[] getLookupKey() {
 		return templateName.getLookupKey();
 	}
 	
+	@Override
 	public IASTName getTemplateName() {
         return templateName;
     }
 
-    public void setTemplateName(IASTName name) {
+    @Override
+	public void setTemplateName(IASTName name) {
         assertNotFrozen();
     	assert !(name instanceof ICPPASTQualifiedName) && !(name instanceof ICPPASTTemplateId);
         templateName = name;
@@ -88,28 +94,32 @@ public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateI
     
     private void internalAddTemplateArgument(IASTNode node) {
 		assertNotFrozen();
-	    templateArguments = (IASTNode[]) ArrayUtil.append(IASTNode.class, templateArguments, node);
+	    templateArguments = ArrayUtil.append(IASTNode.class, templateArguments, node);
 	    if (node != null) {
 	    	node.setParent(this);
 	    	node.setPropertyInParent(TEMPLATE_ID_ARGUMENT);
  		}
     }
 
-    public void addTemplateArgument(IASTTypeId typeId) {
+    @Override
+	public void addTemplateArgument(IASTTypeId typeId) {
     	internalAddTemplateArgument(typeId);
     }
 
-    public void addTemplateArgument(IASTExpression expression) {
+    @Override
+	public void addTemplateArgument(IASTExpression expression) {
     	internalAddTemplateArgument(expression);
     }
     
-    public void addTemplateArgument(ICPPASTAmbiguousTemplateArgument ata) {
+    @Override
+	public void addTemplateArgument(ICPPASTAmbiguousTemplateArgument ata) {
     	internalAddTemplateArgument(ata);
     }
 
-    public IASTNode[] getTemplateArguments() {
+    @Override
+	public IASTNode[] getTemplateArguments() {
         if (templateArguments == null) return ICPPASTTemplateId.EMPTY_ARG_ARRAY;
-        return (IASTNode[]) ArrayUtil.trim(IASTNode.class, templateArguments);
+        return ArrayUtil.trim(IASTNode.class, templateArguments);
     }
 
     @Override
@@ -117,7 +127,8 @@ public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateI
        return CPPTemplates.createBinding(this);
     }
 
-    public char[] toCharArray() {
+    @Override
+	public char[] toCharArray() {
     	assert sAllowNameComputation;
     	
     	StringBuilder buf= new StringBuilder();
@@ -195,13 +206,15 @@ public class CPPASTTemplateId extends CPPASTNameBase implements ICPPASTTemplateI
 		return true; //for now this seems to be true
 	}
 
+	@Override
 	public int getRoleForName(IASTName n) {
 		if (n == templateName)
 			return r_reference;
 		return r_unclear;
 	}
 
-    public void replace(IASTNode child, IASTNode other) {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
         if (templateArguments == null) return;
         for (int i = 0; i < templateArguments.length; ++i) {
             if (child == templateArguments[i]) {

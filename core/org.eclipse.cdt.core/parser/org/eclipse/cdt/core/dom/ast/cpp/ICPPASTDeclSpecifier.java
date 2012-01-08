@@ -70,11 +70,13 @@ public interface ICPPASTDeclSpecifier extends IASTDeclSpecifier {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICPPASTDeclSpecifier copy();
 	
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICPPASTDeclSpecifier copy(CopyStyle style);
 
 	/**

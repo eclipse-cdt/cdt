@@ -37,7 +37,7 @@ class CSettingsRefInfo {
 	CSettingsRefInfo(ICStorageElement el) {
 		for (ICStorageElement child : el.getChildren()) {
 			String name = child.getName();
-			if(CRefSettingsHolder.ELEMENT_EXT_SETTINGS_CONTAINER.equals(name)) {
+			if(CExternalSettingsHolder.ELEMENT_EXT_SETTINGS_CONTAINER.equals(name)) {
 				CRefSettingsHolder h = new CRefSettingsHolder(child);
 				CContainerRef r = h.getContainerInfo();
 				fESHolderMap.put(r, h);
@@ -74,7 +74,7 @@ class CSettingsRefInfo {
 
 	void serialize(ICStorageElement element){
 		for (CRefSettingsHolder h : fESHolderMap.values()) {
-			ICStorageElement child = element.createChild(CRefSettingsHolder.ELEMENT_EXT_SETTINGS_CONTAINER);
+			ICStorageElement child = element.createChild(CExternalSettingsHolder.ELEMENT_EXT_SETTINGS_CONTAINER);
 			h.serialize(child);
 		}
 	}

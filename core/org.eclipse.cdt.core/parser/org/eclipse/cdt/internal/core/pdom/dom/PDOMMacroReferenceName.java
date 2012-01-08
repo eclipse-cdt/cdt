@@ -113,6 +113,7 @@ public final class PDOMMacroReferenceName implements IIndexFragmentName, IASTFil
 		setNameField(CONTAINER_NEXT_OFFSET, name);
 	}
 	
+	@Override
 	public PDOMFile getFile() throws CoreException {
 		long filerec = linkage.getDB().getRecPtr(record + FILE_REC_OFFSET);
 		return filerec != 0 ? new PDOMFile(linkage, filerec) : null;
@@ -137,11 +138,13 @@ public final class PDOMMacroReferenceName implements IIndexFragmentName, IASTFil
 	/**
 	 * @deprecated use {@link #getSimpleID()}.
 	 */
+	@Override
 	@Deprecated
 	public char[] toCharArray() {
 		return getSimpleID();
 	}
 	
+	@Override
 	public char[] getSimpleID() {
 		try {
 			return getContainer().getNameCharArray();
@@ -156,42 +159,52 @@ public final class PDOMMacroReferenceName implements IIndexFragmentName, IASTFil
 		return new String(getSimpleID());
 	}
 	
+	@Override
 	public boolean isBaseSpecifier() throws CoreException {
 		return false;
 	}
 	
+	@Override
 	public boolean couldBePolymorphicMethodCall() throws CoreException {
 		return false;
 	}
 
+	@Override
 	public boolean isInlineNamespaceDefinition() {
 		return false;
 	}
 
+	@Override
 	public boolean isReadAccess() throws CoreException {
 		return false;
 	}
 
+	@Override
 	public boolean isWriteAccess() throws CoreException {
 		return false;
 	}
 
+	@Override
 	public boolean isDeclaration() {
 		return false;
 	}
 
+	@Override
 	public boolean isReference() {
 		return true;
 	}
 
+	@Override
 	public boolean isDefinition() {
 		return false;
 	}
 
+	@Override
 	public IASTFileLocation getFileLocation() {
 		return this;
 	}
 
+	@Override
 	public String getFileName() {
 		try {
 			IIndexFile file = getFile();
@@ -209,22 +222,27 @@ public final class PDOMMacroReferenceName implements IIndexFragmentName, IASTFil
 		return null;
 	}
 
+	@Override
 	public int getStartingLineNumber() {
 		return 0;
 	}
 
+	@Override
 	public int getEndingLineNumber() {
 		return 0;
 	}
 
+	@Override
 	public IASTPreprocessorIncludeStatement getContextInclusionStatement() {
 		return null;
 	}
 
+	@Override
 	public IASTFileLocation asFileLocation() {
 		return this;
 	}
 
+	@Override
 	public int getNodeLength() {
 		try {
 			return (linkage.getDB().getShort(record + NODE_LENGTH_OFFSET)) & 0xffff;
@@ -234,6 +252,7 @@ public final class PDOMMacroReferenceName implements IIndexFragmentName, IASTFil
 		}
 	}
 
+	@Override
 	public int getNodeOffset() {
 		try {
 			return linkage.getDB().getInt(record + NODE_OFFSET_OFFSET);
@@ -260,18 +279,22 @@ public final class PDOMMacroReferenceName implements IIndexFragmentName, IASTFil
 		linkage.getDB().free(record);
 	}
 
+	@Override
 	public IIndexFragment getIndexFragment() {
 		return linkage.getPDOM();
 	}
 
+	@Override
 	public IIndexName[] getEnclosedNames() throws CoreException {
 		return IIndexName.EMPTY_ARRAY;
 	}
 
+	@Override
 	public IIndexFragmentBinding getBinding() throws CoreException {
 		return getContainer();
 	}
 
+	@Override
 	public IIndexName getEnclosingDefinition() throws CoreException {
 		return null;
 	}

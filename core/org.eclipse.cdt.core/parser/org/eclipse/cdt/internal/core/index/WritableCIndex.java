@@ -38,37 +38,45 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 		return result;
 	}
 
+	@Override
 	public IWritableIndexFragment getWritableFragment() {
 		return fWritableFragment;
 	}
 	
+	@Override
 	public IIndexFragmentFile getWritableFile(int linkageID, IIndexFileLocation location,
 			ISignificantMacros macroDictionary) throws CoreException {
 		return fWritableFragment.getFile(linkageID, location, macroDictionary);
 	}
 
+	@Override
 	public IIndexFragmentFile[] getWritableFiles(int linkageID, IIndexFileLocation location) throws CoreException {
 		return fWritableFragment.getFiles(linkageID, location);
 	}
 
+	@Override
 	public IIndexFragmentFile[] getWritableFiles(IIndexFileLocation location) throws CoreException {
 		return fWritableFragment.getFiles(location);
 	}
 
+	@Override
 	public IIndexFragmentFile addFile(int linkageID, IIndexFileLocation location,
 			ISignificantMacros macroDictionary) throws CoreException {
 		return fWritableFragment.addFile(linkageID, location, macroDictionary);
 	}
 
+	@Override
 	public IIndexFragmentFile addUncommittedFile(int linkageID, IIndexFileLocation location,
 			ISignificantMacros macroDictionary) throws CoreException {
 		return fWritableFragment.addUncommittedFile(linkageID, location, macroDictionary);
 	}
 
+	@Override
 	public IIndexFragmentFile commitUncommittedFile() throws CoreException {
 		return fWritableFragment.commitUncommittedFile();
 	}
 
+	@Override
 	public void clearUncommittedFile() throws CoreException {
 		fWritableFragment.clearUncommittedFile();
 	}
@@ -77,6 +85,7 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 		return frag == fWritableFragment;
 	}
 
+	@Override
 	public void setFileContent(IIndexFragmentFile file, int linkageID, IncludeInformation[] includes,
 			IASTPreprocessorStatement[] macros, IASTName[][] names, ASTFilePathResolver resolver,
 			YieldableIndexLock lock) throws CoreException, InterruptedException {
@@ -94,15 +103,18 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 		}
 	}
 
+	@Override
 	public void clear() throws CoreException {
 		fWritableFragment.clear();
 	}
 
+	@Override
 	public boolean isWritableFile(IIndexFile file) {
 		return file instanceof IIndexFragmentFile && 
 				isWritableFragment(((IIndexFragmentFile)file).getIndexFragment());
 	}
 	
+	@Override
 	public void clearFile(IIndexFragmentFile file) throws CoreException {
 		IIndexFragment indexFragment = file.getIndexFragment();
 		if (!isWritableFragment(indexFragment)) {
@@ -128,6 +140,7 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 			fThread= null;
 	}
 
+	@Override
 	public void acquireWriteLock() throws InterruptedException {
 		checkThread();
 		assert !fIsWriteLocked: "Multiple write locks is not allowed"; //$NON-NLS-1$
@@ -136,10 +149,12 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 		fIsWriteLocked= true;
 	}
 
+	@Override
 	public void releaseWriteLock() {
 		releaseWriteLock(true);
 	}
 
+	@Override
 	public void releaseWriteLock(boolean flush) {
 		checkThread();
 		assert fIsWriteLocked: "No write lock to be released"; //$NON-NLS-1$
@@ -173,15 +188,18 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 		super.clearResultCache();
 	}
 
+	@Override
 	public void flush() throws CoreException {
 		assert !fIsWriteLocked;
 		fWritableFragment.flush();
 	}
 
+	@Override
 	public long getDatabaseSizeBytes() {
 		return fWritableFragment.getDatabaseSizeBytes();
 	}
 
+	@Override
 	public void transferIncluders(IIndexFragmentFile source, IIndexFragmentFile target) throws CoreException {
 		if (source == null || target == null || !isWritableFile(source) || !isWritableFile(target))
 			throw new IllegalArgumentException();
@@ -190,6 +208,7 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 		target.transferIncluders(source);
 	}
 	
+	@Override
 	public void transferContext(IIndexFragmentFile source, IIndexFragmentFile target) throws CoreException {
 		if (source == null || target == null || !isWritableFile(source) || !isWritableFile(target))
 			throw new IllegalArgumentException();

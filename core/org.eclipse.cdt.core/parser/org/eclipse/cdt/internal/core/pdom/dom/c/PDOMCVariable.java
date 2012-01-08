@@ -90,6 +90,7 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 		return IIndexCBindingConstants.CVARIABLE;
 	}
 	
+	@Override
 	public IType getType() {
 		try {
 			return getLinkage().loadType(record + TYPE_OFFSET);
@@ -99,6 +100,7 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 		}
 	}
 
+	@Override
 	public IValue getInitialValue() {
 		try {
 			return getLinkage().loadValue(record + VALUE_OFFSET);
@@ -108,18 +110,22 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 		}
 	}
 
+	@Override
 	public boolean isStatic() {
 		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.STATIC_OFFSET);
 	}
 
+	@Override
 	public boolean isExtern() {
 		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.EXTERN_OFFSET);
 	}
 
+	@Override
 	public boolean isAuto() {
 		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.AUTO_OFFSET);
 	}
 
+	@Override
 	public boolean isRegister() {
 		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.REGISTER_OFFSET);
 	}

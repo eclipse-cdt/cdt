@@ -25,11 +25,13 @@ public interface ICPPASTEnumerationSpecifier extends IASTEnumerationSpecifier, I
 	public static final ASTNodeProperty BASE_TYPE = new ASTNodeProperty(
 			"ICPPASTEnumerationSpecifier.BASE_TYPE [ICPPASTDeclSpecifier]"); //$NON-NLS-1$
 
+	@Override
 	public ICPPASTEnumerationSpecifier copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICPPASTEnumerationSpecifier copy(CopyStyle style);
 
 	/**

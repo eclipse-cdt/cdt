@@ -237,7 +237,7 @@ public class ClassTypeHelper {
 				}
 			}
 		}
-		return (ICPPField[]) ArrayUtil.trim(ICPPField.class, result);
+		return ArrayUtil.trim(ICPPField.class, result);
 	}
 
 	/**
@@ -291,9 +291,9 @@ public class ClassTypeHelper {
 		ICPPMethod[] methods= ct.getDeclaredMethods();
 		ICPPClassType[] bases= getAllBases(ct);
 		for (ICPPClassType base : bases) {
-			methods = (ICPPMethod[]) ArrayUtil.addAll(ICPPMethod.class, methods, base.getDeclaredMethods());
+			methods = ArrayUtil.addAll(ICPPMethod.class, methods, base.getDeclaredMethods());
 		}
-		return (ICPPMethod[]) ArrayUtil.trim(ICPPMethod.class, methods);
+		return ArrayUtil.trim(ICPPMethod.class, methods);
 	}
 
 	public static ICPPMethod[] getMethods(ICPPClassType ct) {
@@ -376,7 +376,7 @@ public class ClassTypeHelper {
 				}
 			}
 		}
-		return (ICPPMethod[]) ArrayUtil.trim(ICPPMethod.class, result);
+		return ArrayUtil.trim(ICPPMethod.class, result);
 	}
 
 	/* (non-Javadoc)
@@ -421,16 +421,16 @@ public class ClassTypeHelper {
 					result = (ICPPClassType[])ArrayUtil.append(ICPPClassType.class, result, binding);
 			} 
 		}
-		return (ICPPClassType[]) ArrayUtil.trim(ICPPClassType.class, result);
+		return ArrayUtil.trim(ICPPClassType.class, result);
 	}
 
 	public static IField[] getFields(ICPPClassType ct) {
 		IField[] fields = ct.getDeclaredFields();
 		ICPPClassType[] bases = getAllBases(ct);
 		for (ICPPClassType base : bases) {
-			fields = (IField[]) ArrayUtil.addAll(IField.class, fields, base.getDeclaredFields());
+			fields = ArrayUtil.addAll(IField.class, fields, base.getDeclaredFields());
 		}
-		return (IField[]) ArrayUtil.trim(IField.class, fields);
+		return ArrayUtil.trim(IField.class, fields);
 	}
 
 	public static IField findField(ICPPClassType ct, String name) {

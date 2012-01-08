@@ -44,10 +44,12 @@ public class CASTBinaryExpression extends ASTNode implements
 		setOperand2(operand2);
 	}
 	
+	@Override
 	public CASTBinaryExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CASTBinaryExpression copy(CopyStyle style) {
 		CASTBinaryExpression copy = new CASTBinaryExpression();
 		copy.op = op;
@@ -60,31 +62,37 @@ public class CASTBinaryExpression extends ASTNode implements
 		return copy;
 	}
 
+	@Override
 	public int getOperator() {
         return op;
     }
 
-    public IASTExpression getOperand1() {
+    @Override
+	public IASTExpression getOperand1() {
         return operand1;
     }
 
-    public IASTExpression getOperand2() {
+    @Override
+	public IASTExpression getOperand2() {
         return operand2;
     }
 
-    public IASTInitializerClause getInitOperand2() {
+    @Override
+	public IASTInitializerClause getInitOperand2() {
         return operand2;
 	}
 
 	/**
      * @param op An op_X field from {@link IASTBinaryExpression}
      */
-    public void setOperator(int op) {
+    @Override
+	public void setOperator(int op) {
         assertNotFrozen();
         this.op = op;
     }
 
-    public void setOperand1(IASTExpression expression) {
+    @Override
+	public void setOperand1(IASTExpression expression) {
         assertNotFrozen();
         operand1 = expression;
         if (expression != null) {
@@ -93,7 +101,8 @@ public class CASTBinaryExpression extends ASTNode implements
 		}
     }
 
-    public void setOperand2(IASTExpression expression) {
+    @Override
+	public void setOperand2(IASTExpression expression) {
         assertNotFrozen();
         operand2 = expression;
         if (expression != null) {
@@ -186,7 +195,8 @@ public class CASTBinaryExpression extends ASTNode implements
 	}
 
     
-    public void replace(IASTNode child, IASTNode other) {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
         if( child == operand1 )
         {
             other.setPropertyInParent( child.getPropertyInParent() );
@@ -201,7 +211,8 @@ public class CASTBinaryExpression extends ASTNode implements
         }
     }
     
-    public IType getExpressionType() {
+    @Override
+	public IType getExpressionType() {
         final int op = getOperator();
         final IType t1= CVisitor.unwrapTypedefs(getOperand1().getExpressionType());
     	final IType t2= CVisitor.unwrapTypedefs(getOperand2().getExpressionType());
@@ -248,6 +259,7 @@ public class CASTBinaryExpression extends ASTNode implements
 				(type.isVolatile() ? CPointerType.IS_VOLATILE : 0));
 	}
     
+	@Override
 	public boolean isLValue() {
 		switch (getOperator()) {
 		case op_assign:
@@ -266,6 +278,7 @@ public class CASTBinaryExpression extends ASTNode implements
 		return false;
 	}
 	
+	@Override
 	public final ValueCategory getValueCategory() {
 		return isLValue() ? ValueCategory.LVALUE : ValueCategory.PRVALUE;
 	}

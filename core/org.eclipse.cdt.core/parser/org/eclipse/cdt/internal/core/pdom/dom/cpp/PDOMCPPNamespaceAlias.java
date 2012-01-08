@@ -68,6 +68,7 @@ class PDOMCPPNamespaceAlias extends PDOMCPPBinding implements ICPPNamespaceAlias
 		return IIndexCPPBindingConstants.CPPNAMESPACEALIAS;
 	}
 	
+	@Override
 	public ICPPNamespaceScope getNamespaceScope() {
 		return getNamespaceScope(this, 20);	// avoid an infinite loop.
 	}
@@ -87,6 +88,7 @@ class PDOMCPPNamespaceAlias extends PDOMCPPBinding implements ICPPNamespaceAlias
 		return null;
 	}
 
+	@Override
 	public IBinding[] getMemberBindings() {
 		ICPPNamespace ns= this;
 		for (int i = 0; i < 20; i++) {
@@ -104,6 +106,7 @@ class PDOMCPPNamespaceAlias extends PDOMCPPBinding implements ICPPNamespaceAlias
 		return ns.getMemberBindings();
 	}
 
+	@Override
 	public IBinding getBinding() {
 		try {
 			return (IBinding) getLinkage().getNode(getPDOM().getDB().getRecPtr(record + NAMESPACE_BINDING));
@@ -113,6 +116,7 @@ class PDOMCPPNamespaceAlias extends PDOMCPPBinding implements ICPPNamespaceAlias
 		return null;
 	}
 
+	@Override
 	public boolean isInline() {
 		return false;
 	}

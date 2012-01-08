@@ -31,16 +31,19 @@ public class CPPASTTypeIdInitializerExpression extends ASTTypeIdInitializerExpre
 		super(typeId, initializer);
 	}
 
+	@Override
 	public IASTTypeIdInitializerExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public IASTTypeIdInitializerExpression copy(CopyStyle style) {
 		CPPASTTypeIdInitializerExpression expr = new CPPASTTypeIdInitializerExpression();
 		initializeCopy(expr, style);
 		return expr;
 	}
 
+	@Override
 	public IType getExpressionType() {
 		final IASTTypeId typeId = getTypeId();
 		return prvalueType(CPPVisitor.createType(typeId.getAbstractDeclarator()));

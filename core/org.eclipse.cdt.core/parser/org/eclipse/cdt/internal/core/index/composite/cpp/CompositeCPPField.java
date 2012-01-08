@@ -23,15 +23,18 @@ class CompositeCPPField extends CompositeCPPVariable implements ICPPField {
 		super(cf, rbinding);
 	}
 	
+	@Override
 	public ICPPClassType getClassOwner() {
 		IIndexFragmentBinding rowner = (IIndexFragmentBinding) ((ICPPField)rbinding).getClassOwner();
 		return (ICPPClassType) cf.getCompositeBinding(rowner);
 	}
 
+	@Override
 	public int getVisibility() {
 		return ((ICPPField)rbinding).getVisibility();
 	}
 	
+	@Override
 	public ICompositeType getCompositeTypeOwner() {
 		IBinding preresult = ((IField)rbinding).getCompositeTypeOwner();
 		return (ICompositeType) cf.getCompositeBinding((IIndexFragmentBinding) preresult);

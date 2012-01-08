@@ -48,6 +48,7 @@ public class CPPASTImplicitName extends CPPASTName implements IASTImplicitName {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public boolean isAlternate() {
 		return alternate;
 	}
@@ -128,6 +129,7 @@ public class CPPASTImplicitName extends CPPASTName implements IASTImplicitName {
 		this.isOperator = isOperator;
 	}
 
+	@Override
 	public boolean isOperator() {
 		return isOperator;
 	}

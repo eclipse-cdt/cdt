@@ -61,7 +61,7 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClass
 	
 	@Override
 	public void addPartialSpecialization(ICPPClassTemplatePartialSpecialization spec) {
-		partialSpecializations = (ICPPClassTemplatePartialSpecialization[]) ArrayUtil.append(
+		partialSpecializations = ArrayUtil.append(
 				ICPPClassTemplatePartialSpecialization.class, partialSpecializations, spec);
 	}
 
@@ -139,7 +139,7 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClass
 				}
 			}
 		}
-		partialSpecializations = (ICPPClassTemplatePartialSpecialization[]) ArrayUtil.trim(ICPPClassTemplatePartialSpecialization.class, partialSpecializations);
+		partialSpecializations = ArrayUtil.trim(ICPPClassTemplatePartialSpecialization.class, partialSpecializations);
 		return partialSpecializations;
 	}
 	

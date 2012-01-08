@@ -44,10 +44,12 @@ public class CPPASTDeleteExpression extends ASTNode implements ICPPASTDeleteExpr
 		setOperand(from.operand);
 	}
 	
+	@Override
 	public CPPASTDeleteExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CPPASTDeleteExpression copy(CopyStyle style) {
 		CPPASTDeleteExpression copy = new CPPASTDeleteExpression(operand == null ? null
 				: operand.copy(style));
@@ -60,11 +62,13 @@ public class CPPASTDeleteExpression extends ASTNode implements ICPPASTDeleteExpr
 		return copy;
 	}
 
+	@Override
 	public IASTExpression getOperand() {
         return operand;
     }
 
-    public void setOperand(IASTExpression expression) {
+    @Override
+	public void setOperand(IASTExpression expression) {
         assertNotFrozen();
         operand = expression;
         if (expression != null) {
@@ -73,28 +77,33 @@ public class CPPASTDeleteExpression extends ASTNode implements ICPPASTDeleteExpr
 		}
     }
 
-    public void setIsGlobal(boolean global) {
+    @Override
+	public void setIsGlobal(boolean global) {
         assertNotFrozen();
         isGlobal = global;
     }
 
-    public boolean isGlobal() {
+    @Override
+	public boolean isGlobal() {
         return isGlobal;
     }
 
-    public void setIsVectored(boolean vectored) {
+    @Override
+	public void setIsVectored(boolean vectored) {
         assertNotFrozen();
         isVectored = vectored;
     }
 
-    public boolean isVectored() {
+    @Override
+	public boolean isVectored() {
         return isVectored;
     }
 
     /**
      * Try to resolve both the destructor and operator delete.
      */
-    public IASTImplicitName[] getImplicitNames() {
+    @Override
+	public IASTImplicitName[] getImplicitNames() {
     	if (implicitNames == null) {
 	    	List<IASTImplicitName> names = new ArrayList<IASTImplicitName>();
 	    	
@@ -158,14 +167,17 @@ public class CPPASTDeleteExpression extends ASTNode implements ICPPASTDeleteExpr
         return true;
     }
 
-    public IType getExpressionType() {
+    @Override
+	public IType getExpressionType() {
     	return CPPSemantics.VOID_TYPE;
     }
 
+	@Override
 	public boolean isLValue() {
 		return false;
 	}
 
+	@Override
 	public ValueCategory getValueCategory() {
 		return PRVALUE;
 	}

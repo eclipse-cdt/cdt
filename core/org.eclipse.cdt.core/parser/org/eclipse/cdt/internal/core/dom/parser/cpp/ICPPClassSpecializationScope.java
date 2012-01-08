@@ -33,6 +33,7 @@ public interface ICPPClassSpecializationScope extends ICPPClassScope {
 	/**
 	 * The specialized class.
 	 */
+	@Override
 	ICPPClassSpecialization getClassType();
 
 	/**

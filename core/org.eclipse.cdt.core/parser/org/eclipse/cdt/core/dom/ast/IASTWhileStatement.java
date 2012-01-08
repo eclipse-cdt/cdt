@@ -62,10 +62,12 @@ public interface IASTWhileStatement extends IASTStatement {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IASTWhileStatement copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public IASTWhileStatement copy(CopyStyle style);
 }

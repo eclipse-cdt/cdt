@@ -43,11 +43,13 @@ public interface ICPPASTBinaryExpression extends IASTBinaryExpression, IASTImpli
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICPPASTBinaryExpression copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICPPASTBinaryExpression copy(CopyStyle style);
 
 	/**

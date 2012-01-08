@@ -21,10 +21,12 @@ public interface IASTNullStatement extends IASTStatement {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IASTNullStatement copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public IASTNullStatement copy(CopyStyle style);
 }

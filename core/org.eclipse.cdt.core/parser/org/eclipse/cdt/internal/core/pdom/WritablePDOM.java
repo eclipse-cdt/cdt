@@ -301,6 +301,7 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.index.IWritableIndexFragment#getDatabaseSizeBytes()
 	 */
+	@Override
 	public long getDatabaseSizeBytes() {
 		return getDB().getSizeBytes();
 	}

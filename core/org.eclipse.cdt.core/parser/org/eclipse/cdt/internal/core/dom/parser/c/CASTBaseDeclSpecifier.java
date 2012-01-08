@@ -26,47 +26,57 @@ public abstract class CASTBaseDeclSpecifier extends ASTNode implements ICASTDecl
     protected boolean isInline;
 
     
+	@Override
 	public boolean isRestrict() {
         return isRestrict;
     }
 
-    public int getStorageClass() {
+    @Override
+	public int getStorageClass() {
         return storageClass;
     }
 
-    public boolean isConst() {
+    @Override
+	public boolean isConst() {
         return isConst;
     }
 
-    public boolean isVolatile() {
+    @Override
+	public boolean isVolatile() {
         return isVolatile;
     }
 
-    public boolean isInline() {
+    @Override
+	public boolean isInline() {
         return isInline;
     }
     
-    public void setStorageClass(int storageClass) {
+    @Override
+	public void setStorageClass(int storageClass) {
         assertNotFrozen();
         this.storageClass = storageClass;
     }
 
-    public void setConst(boolean value) {
+    @Override
+	public void setConst(boolean value) {
         assertNotFrozen();
         this.isConst = value;
     }
     
-    public void setVolatile(boolean value) {
+    @Override
+	public void setVolatile(boolean value) {
         assertNotFrozen();
         this.isVolatile = value;
     }
     
-    public void setRestrict(boolean value) {
+    @Override
+	public void setRestrict(boolean value) {
         assertNotFrozen();
         this.isRestrict = value;
     }
     
-    public void setInline(boolean value) {
+    @Override
+	public void setInline(boolean value) {
         assertNotFrozen();
         this.isInline = value;
     }

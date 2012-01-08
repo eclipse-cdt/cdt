@@ -23,10 +23,12 @@ public interface IASTProblem extends IProblem, IASTNode {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IASTProblem copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public IASTProblem copy(CopyStyle style);
 }

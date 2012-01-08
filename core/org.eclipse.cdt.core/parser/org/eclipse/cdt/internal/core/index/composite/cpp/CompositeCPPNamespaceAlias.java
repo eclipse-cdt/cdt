@@ -22,6 +22,7 @@ class CompositeCPPNamespaceAlias extends CompositeCPPBinding implements ICPPName
 		super(cf, alias);
 	}
 	
+	@Override
 	public IBinding[] getMemberBindings() {
 		IBinding[] result= ((ICPPNamespaceAlias)rbinding).getMemberBindings();
 		for(int i=0; i<result.length; i++) {
@@ -30,15 +31,18 @@ class CompositeCPPNamespaceAlias extends CompositeCPPBinding implements ICPPName
 		return result;
 	}
 
+	@Override
 	public ICPPNamespaceScope getNamespaceScope() {
 		return (ICPPNamespaceScope) cf.getCompositeScope((IIndexScope) ((ICPPNamespaceAlias)rbinding).getNamespaceScope());
 	}
 
+	@Override
 	public IBinding getBinding() {
 		IIndexFragmentBinding ns = (IIndexFragmentBinding) ((ICPPNamespaceAlias)rbinding).getBinding();
 		return cf.getCompositeBinding(ns);
 	}
 
+	@Override
 	public boolean isInline() {
 		return false;
 	}

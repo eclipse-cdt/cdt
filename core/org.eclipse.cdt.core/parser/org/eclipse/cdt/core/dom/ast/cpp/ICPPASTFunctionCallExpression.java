@@ -21,10 +21,12 @@ import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
  */
 public interface ICPPASTFunctionCallExpression extends IASTFunctionCallExpression, IASTImplicitNameOwner {
 
+	@Override
 	ICPPASTFunctionCallExpression copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	ICPPASTFunctionCallExpression copy(CopyStyle style);
 }

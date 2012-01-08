@@ -29,6 +29,7 @@ final public class TranslationUnitCollector implements ICElementVisitor {
 		fProgressMonitor= pm;
 	}
 
+	@Override
 	public boolean visit(ICElement element) throws CoreException {
 		if (fProgressMonitor.isCanceled()) {
 			return false;

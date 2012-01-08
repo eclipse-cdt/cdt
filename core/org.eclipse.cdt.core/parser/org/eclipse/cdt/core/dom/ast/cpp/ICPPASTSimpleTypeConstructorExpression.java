@@ -53,11 +53,13 @@ public interface ICPPASTSimpleTypeConstructorExpression extends IASTExpression {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICPPASTSimpleTypeConstructorExpression copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICPPASTSimpleTypeConstructorExpression copy(CopyStyle style);
 
 	/**

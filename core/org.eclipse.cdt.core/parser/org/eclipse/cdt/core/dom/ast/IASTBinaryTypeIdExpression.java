@@ -54,6 +54,8 @@ public interface IASTBinaryTypeIdExpression extends IASTExpression {
 	 */
 	public void setOperand2(IASTTypeId typeId);
 
+	@Override
 	public IASTBinaryTypeIdExpression copy();
+	@Override
 	public IASTBinaryTypeIdExpression copy(CopyStyle style);
 }

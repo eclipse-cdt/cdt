@@ -74,7 +74,8 @@ public class CEnumeration extends PlatformObject implements IEnumeration, ICInte
         declarations = tmp;
     }
     
-    public IASTNode getPhysicalNode() {
+    @Override
+	public IASTNode getPhysicalNode() {
         if (definition != null)
             return definition;
         
@@ -95,13 +96,15 @@ public class CEnumeration extends PlatformObject implements IEnumeration, ICInte
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
      */
-    public String getName() {
+    @Override
+	public String getName() {
         if (definition != null)
             return definition.toString();
         
         return declarations[0].toString();
     }
-    public char[] getNameCharArray() {
+    @Override
+	public char[] getNameCharArray() {
         if (definition != null)
             return definition.toCharArray();
         
@@ -111,7 +114,8 @@ public class CEnumeration extends PlatformObject implements IEnumeration, ICInte
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
      */
-    public IScope getScope() {
+    @Override
+	public IScope getScope() {
         return CVisitor.getContainingScope(definition != null ? definition : declarations[0].getParent());
     }
 
@@ -129,7 +133,8 @@ public class CEnumeration extends PlatformObject implements IEnumeration, ICInte
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IEnumeration#getEnumerators()
      */
-    public IEnumerator[] getEnumerators() {
+    @Override
+	public IEnumerator[] getEnumerators() {
         if (definition == null) {
             checkForDefinition();
             if (definition == null)
@@ -154,7 +159,8 @@ public class CEnumeration extends PlatformObject implements IEnumeration, ICInte
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
      */
-    public boolean isSameType(IType type) {
+    @Override
+	public boolean isSameType(IType type) {
         if (type == this)
             return true;
         if (type instanceof ITypedef || type instanceof IIndexBinding)
@@ -163,18 +169,22 @@ public class CEnumeration extends PlatformObject implements IEnumeration, ICInte
         return false;
     }
     
+	@Override
 	public ILinkage getLinkage() {
 		return Linkage.C_LINKAGE;
 	}
 
+	@Override
 	public IASTNode[] getDeclarations() {
 		return declarations;
 	}
 
+	@Override
 	public IASTNode getDefinition() {
 		return definition;
 	}
 	
+	@Override
 	public IBinding getOwner() {
 		IASTNode node= definition;
 		if (node == null && declarations != null && declarations.length > 0) {
@@ -189,6 +199,7 @@ public class CEnumeration extends PlatformObject implements IEnumeration, ICInte
 		return getName();
 	}
 	
+	@Override
 	public long getMinValue() {
 		if (fMinValue != null)
 			return fMinValue.longValue();
@@ -211,6 +222,7 @@ public class CEnumeration extends PlatformObject implements IEnumeration, ICInte
 		return minValue;
 	}
 
+	@Override
 	public long getMaxValue() {
 		if (fMaxValue != null)
 			return fMaxValue.longValue();

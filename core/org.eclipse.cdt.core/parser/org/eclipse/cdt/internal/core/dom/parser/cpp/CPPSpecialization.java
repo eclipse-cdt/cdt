@@ -92,22 +92,27 @@ public abstract class CPPSpecialization extends PlatformObject implements ICPPSp
 		}
 	}
 
+	@Override
 	public IBinding getSpecializedBinding() {
 		return specialized;
 	}
 
+	@Override
 	public IASTNode[] getDeclarations() {
 		return declarations;
 	}
 
+	@Override
 	public IASTNode getDefinition() {
 		return definition;
 	}
 
+	@Override
 	public void addDefinition(IASTNode node) {
 		definition = node;
 	}
 
+	@Override
 	public void addDeclaration(IASTNode node) {
 		if (declarations == null) {
 	        declarations = new IASTNode[] { node };
@@ -115,25 +120,29 @@ public abstract class CPPSpecialization extends PlatformObject implements ICPPSp
 	        // keep the lowest offset declaration in [0]
 			if (declarations.length > 0 &&
 					((ASTNode) node).getOffset() < ((ASTNode) declarations[0]).getOffset()) {
-				declarations = (IASTNode[]) ArrayUtil.prepend(IASTNode.class, declarations, node);
+				declarations = ArrayUtil.prepend(IASTNode.class, declarations, node);
 			} else {
-				declarations = (IASTNode[]) ArrayUtil.append(IASTNode.class, declarations, node);
+				declarations = ArrayUtil.append(IASTNode.class, declarations, node);
 			}
 	    }
 	}
 
+	@Override
 	public String getName() {
 		return specialized.getName();
 	}
 
+	@Override
 	public char[] getNameCharArray() {
 		return specialized.getNameCharArray();
 	}
 
+	@Override
 	public IBinding getOwner() {
 		return owner;
 	}
 	
+	@Override
 	public IScope getScope() throws DOMException {
 		if (owner instanceof ICPPClassType) {
 			return ((ICPPClassType) owner).getCompositeScope();
@@ -150,29 +159,35 @@ public abstract class CPPSpecialization extends PlatformObject implements ICPPSp
 		return specialized.getScope();
 	}
 
+	@Override
 	public String[] getQualifiedName() {
 		return CPPVisitor.getQualifiedName(this);
 	}
 
+	@Override
 	public char[][] getQualifiedNameCharArray() {
 		return CPPVisitor.getQualifiedNameCharArray(this);
 	}
 
+	@Override
 	public boolean isGloballyQualified() throws DOMException {
 		if (specialized instanceof ICPPBinding)
 			return ((ICPPBinding) specialized).isGloballyQualified();
 		return false;
 	}
 
+	@Override
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
 	}
 
+	@Override
 	@Deprecated
 	public ObjectMap getArgumentMap() {
 		return CPPTemplates.getArgumentMap(this, getTemplateParameterMap());
 	}
 	
+	@Override
 	public ICPPTemplateParameterMap getTemplateParameterMap() {
 		return argumentMap;
 	}

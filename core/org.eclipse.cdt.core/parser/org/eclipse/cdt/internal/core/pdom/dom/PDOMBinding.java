@@ -60,6 +60,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 		super(linkage, record);
 	}
 	
+	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Object getAdapter(Class adapter) {
 		if (adapter.isAssignableFrom(PDOMBinding.class))
@@ -85,6 +86,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 				&& db.getRecPtr(record + FIRST_REF_OFFSET) == 0;
 	}
 	
+	@Override
 	public final boolean hasDeclaration() throws CoreException {
 		if (hasDeclaration == -1) {
 			final Database db = getDB();
@@ -156,6 +158,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 		getDB().putRecPtr(record + FIRST_REF_OFFSET, namerec);
 	}
 	
+	@Override
 	public final PDOMFile getLocalToFile() throws CoreException {
 		final long filerec = getLocalToFileRec(getDB(), record);
 		return filerec == 0 ? null : new PDOMFile(getLinkage(), filerec);
@@ -173,6 +176,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 		getDB().putRecPtr(record + LOCAL_TO_FILE, rec);
 	}
 
+	@Override
 	public String getName() {
 		try {
 			return super.getDBName().getString();
@@ -204,6 +208,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 		return null;
 	}
 	
+	@Override
 	public final IIndexScope getScope() {
 		// The parent node in the binding hierarchy is the scope. 
 		try {
@@ -232,6 +237,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 		return null;
 	}
 	
+	@Override
 	public IIndexFragment getFragment() {
 		return getPDOM();
 	}
@@ -303,14 +309,17 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 		}
 	}
 
+	@Override
 	public String[] getQualifiedName() {
 		return new String[] { getName() };
 	}
 	
+	@Override
 	final public boolean isFileLocal() throws CoreException {
 		return getDB().getRecPtr(record + LOCAL_TO_FILE) != 0;
 	}
 
+	@Override
 	public boolean hasDefinition() throws CoreException {
 		return getDB().getRecPtr(record + FIRST_DEF_OFFSET) != 0;
 	}
@@ -382,6 +391,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 		return pdomCompareTo(other)==0;
 	}
 	
+	@Override
 	public final int getBindingConstant() {
 		return getNodeType();
 	}

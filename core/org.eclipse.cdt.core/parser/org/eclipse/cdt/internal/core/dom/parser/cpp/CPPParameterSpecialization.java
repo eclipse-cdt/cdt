@@ -36,10 +36,12 @@ public class CPPParameterSpecialization extends CPPSpecialization implements ICP
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IVariable#getType()
 	 */
+	@Override
 	public IType getType() {
 		return fType;
 	}
 	
+	@Override
 	public boolean isParameterPack() {
 		return fType instanceof ICPPParameterPackType;
 	}
@@ -53,6 +55,7 @@ public class CPPParameterSpecialization extends CPPSpecialization implements ICP
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IVariable#isStatic()
 	 */
+	@Override
 	public boolean isStatic() {
 		return false;
 	}
@@ -60,39 +63,46 @@ public class CPPParameterSpecialization extends CPPSpecialization implements ICP
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isExtern()
      */
-    public boolean isExtern() {
+    @Override
+	public boolean isExtern() {
         return false;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isAuto()
      */
-    public boolean isAuto() {
+    @Override
+	public boolean isAuto() {
         return getParameter().isAuto();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isRegister()
      */
-    public boolean isRegister() {
+    @Override
+	public boolean isRegister() {
         return getParameter().isRegister();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable#isMutable()
      */
-    public boolean isMutable() {
+    @Override
+	public boolean isMutable() {
         return false;
     }
 
+	@Override
 	public boolean hasDefaultValue() {
 		return getParameter().hasDefaultValue();
 	}
 
+	@Override
 	public boolean isExternC() {
 		return false;
 	}
 
+	@Override
 	public IValue getInitialValue() {
 		return null;
 	}

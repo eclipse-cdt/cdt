@@ -73,6 +73,7 @@ class PDOMCPPTypedefSpecialization extends PDOMCPPSpecialization implements ITyp
 		return IIndexCPPBindingConstants.CPP_TYPEDEF_SPECIALIZATION;
 	}
 
+	@Override
 	public IType getType() {
 		try {
 			return getLinkage().loadType(record + TYPE_OFFSET);
@@ -82,6 +83,7 @@ class PDOMCPPTypedefSpecialization extends PDOMCPPSpecialization implements ITyp
 		}
 	}
 
+	@Override
 	public boolean isSameType(IType o) {
         if( this.equals(o) )
             return true;
@@ -98,6 +100,7 @@ class PDOMCPPTypedefSpecialization extends PDOMCPPSpecialization implements ITyp
 	    return false;
 	}
 
+	@Override
 	public void setType(IType type) { 
 		throw new UnsupportedOperationException(); 
 	}

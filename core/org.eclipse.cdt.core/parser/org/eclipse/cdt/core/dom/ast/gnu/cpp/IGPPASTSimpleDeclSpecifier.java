@@ -39,6 +39,7 @@ public interface IGPPASTSimpleDeclSpecifier extends IGPPASTDeclSpecifier, ICPPAS
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IGPPASTSimpleDeclSpecifier copy();
 
 	/**

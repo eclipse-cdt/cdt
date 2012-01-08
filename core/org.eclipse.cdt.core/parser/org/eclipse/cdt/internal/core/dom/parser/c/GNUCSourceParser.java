@@ -342,9 +342,9 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         			markBeforDtor= null;
         			dtor= addInitializer(e, declOption);
         		}
-        		declarators= (IASTDeclarator[]) ArrayUtil.append( IASTDeclarator.class, declarators, dtor);
+        		declarators= ArrayUtil.append( IASTDeclarator.class, declarators, dtor);
         	}
-        	declarators= (IASTDeclarator[]) ArrayUtil.removeNulls( IASTDeclarator.class, declarators );
+        	declarators= ArrayUtil.removeNulls( IASTDeclarator.class, declarators );
         }
         
         final int lt1= LTcatchEOF(1);
@@ -1543,7 +1543,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 						}
 					}
 
-					parmDeclarations = (IASTDeclaration[]) ArrayUtil.removeNulls( IASTDeclaration.class, parmDeclarations );
+					parmDeclarations = ArrayUtil.removeNulls( IASTDeclaration.class, parmDeclarations );
 		            ICASTKnRFunctionDeclarator functionDecltor = nodeFactory.newKnRFunctionDeclarator(parmNames, parmDeclarations);
 		            ((ASTNode) functionDecltor).setOffsetAndLength(startOffset, endOffset-startOffset);
 		            return functionDecltor;

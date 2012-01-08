@@ -43,41 +43,51 @@ public class CPPUnknownBinding extends PlatformObject
         fOwner= owner;
     }
 
-    public IASTNode[] getDeclarations() {
+    @Override
+	public IASTNode[] getDeclarations() {
         return null;
     }
 
-    public IASTNode getDefinition() {
+    @Override
+	public IASTNode getDefinition() {
         return null;
     }
 
-    public void addDefinition(IASTNode node) {
+    @Override
+	public void addDefinition(IASTNode node) {
     }
 
-    public void addDeclaration(IASTNode node) {
+    @Override
+	public void addDeclaration(IASTNode node) {
     }
 
-    public String[] getQualifiedName() {
+    @Override
+	public String[] getQualifiedName() {
         return CPPVisitor.getQualifiedName(this);
     }
 
-    public char[][] getQualifiedNameCharArray() {
+    @Override
+	public char[][] getQualifiedNameCharArray() {
     	return CPPVisitor.getQualifiedNameCharArray(this);
     }
 
-    public boolean isGloballyQualified() {
+    @Override
+	public boolean isGloballyQualified() {
         return false;
     }
 
-    public String getName() {
+    @Override
+	public String getName() {
         return name.toString();
     }
 
-    public char[] getNameCharArray() {
+    @Override
+	public char[] getNameCharArray() {
         return name.getSimpleID();
     }
 
-    public IScope getScope() throws DOMException {
+    @Override
+	public IScope getScope() throws DOMException {
     	// Use getOwner(), it is overridden by derived classes.
     	final IBinding owner = getOwner();
 		if (owner instanceof ICPPUnknownBinding) {
@@ -92,13 +102,15 @@ public class CPPUnknownBinding extends PlatformObject
     	return null;
     }
 
-    public ICPPScope asScope() {
+    @Override
+	public ICPPScope asScope() {
         if (unknownScope == null) {
             unknownScope = new CPPUnknownScope(this, name);
         }
         return unknownScope;
     }
 
+	@Override
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
 	}
@@ -117,10 +129,12 @@ public class CPPUnknownBinding extends PlatformObject
 		return getName();
 	}
 	
+	@Override
 	public IASTName getUnknownName() {
 		return name;
 	}
 
+	@Override
 	public IBinding getOwner() {
 		return fOwner;
 	}

@@ -41,8 +41,10 @@ public interface ICPPNodeFactory extends INodeFactory {
 	/**
 	 * @since 5.2
 	 */
+	@Override
 	public ICPPASTArrayDeclarator newArrayDeclarator(IASTName name);
 	
+	@Override
 	public ICPPASTArraySubscriptExpression newArraySubscriptExpression(IASTExpression arrayExpr, IASTExpression subscript);
 	
 	/**
@@ -52,6 +54,7 @@ public interface ICPPNodeFactory extends INodeFactory {
 	
 	public ICPPASTBaseSpecifier newBaseSpecifier(IASTName name, int visibility, boolean isVirtual);
 	
+	@Override
 	public ICPPASTBinaryExpression newBinaryExpression(int op, IASTExpression expr1, IASTExpression expr2);
 	
 	/**
@@ -69,10 +72,12 @@ public interface ICPPNodeFactory extends INodeFactory {
 	 */
 	public ICPPASTCapture newCapture();
 	
+	@Override
 	public ICPPASTCastExpression newCastExpression(int operator, IASTTypeId typeId, IASTExpression operand);
 	
 	public ICPPASTCatchHandler newCatchHandler(IASTDeclaration decl, IASTStatement body);
 
+	@Override
 	public ICPPASTCompositeTypeSpecifier newCompositeTypeSpecifier(int key, IASTName name);
 	
 	/**
@@ -102,10 +107,12 @@ public interface ICPPNodeFactory extends INodeFactory {
 	/**
 	 * @since 5.2
 	 */
+	@Override
 	public ICPPASTDeclarator newDeclarator(IASTName name);
 	
 	public ICPPASTDeleteExpression newDeleteExpression(IASTExpression operand);
 
+	@Override
 	public ICPPASTElaboratedTypeSpecifier newElaboratedTypeSpecifier(int kind, IASTName name);
 
 	/**
@@ -121,13 +128,16 @@ public interface ICPPNodeFactory extends INodeFactory {
 	@Deprecated
 	public org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTExplicitTemplateInstantiation newExplicitTemplateInstantiationGPP(IASTDeclaration declaration);
 
+	@Override
 	public ICPPASTExpressionList newExpressionList();
 	
 	/**
 	 * @since 5.2
 	 */
+	@Override
 	public ICPPASTFieldDeclarator newFieldDeclarator(IASTName name, IASTExpression bitFieldSize);
 	
+	@Override
 	public ICPPASTFieldReference newFieldReference(IASTName name, IASTExpression owner);
 	
 	public ICPPASTForStatement newForStatement();
@@ -135,22 +145,27 @@ public interface ICPPNodeFactory extends INodeFactory {
 	public ICPPASTForStatement newForStatement(IASTStatement init, IASTDeclaration condition,
 			IASTExpression iterationExpression, IASTStatement body);
 	
+	@Override
 	public ICPPASTForStatement newForStatement(IASTStatement init, IASTExpression condition,
 			IASTExpression iterationExpression, IASTStatement body);
 	
 	/**
 	 * @deprecated Replaced by {@link #newFunctionCallExpression(IASTExpression, IASTInitializerClause[])}.
 	 */
+	@Override
 	@Deprecated
 	public ICPPASTFunctionCallExpression newFunctionCallExpression(IASTExpression idExpr, IASTExpression argList);
 	
 	/**
 	 * @since 5.2
 	 */
+	@Override
 	public ICPPASTFunctionCallExpression newFunctionCallExpression(IASTExpression idExpr, IASTInitializerClause[] arguments);
 	
+	@Override
 	public ICPPASTFunctionDeclarator newFunctionDeclarator(IASTName name);
 	
+	@Override
 	public ICPPASTFunctionDefinition newFunctionDefinition(IASTDeclSpecifier declSpecifier,
 			IASTFunctionDeclarator declarator, IASTStatement bodyStatement);
 	
@@ -161,11 +176,13 @@ public interface ICPPNodeFactory extends INodeFactory {
 	
 	public ICPPASTIfStatement newIfStatement(IASTDeclaration condition, IASTStatement then, IASTStatement elseClause);
 
+	@Override
 	public ICPPASTIfStatement newIfStatement(IASTExpression condition, IASTStatement then, IASTStatement elseClause);
 
 	/**
 	 * @since 5.2
 	 */
+	@Override
 	public ICPPASTInitializerList newInitializerList();
 	
 	/**
@@ -175,6 +192,7 @@ public interface ICPPNodeFactory extends INodeFactory {
 
 	public ICPPASTLinkageSpecification newLinkageSpecification(String literal);
 
+	@Override
 	public ICPPASTLiteralExpression newLiteralExpression(int kind, String rep);
 	
 	public ICPPASTNamespaceAlias newNamespaceAlias(IASTName alias, IASTName qualifiedName);
@@ -200,6 +218,7 @@ public interface ICPPNodeFactory extends INodeFactory {
 	 */
 	public ICPPASTPackExpansionExpression newPackExpansionExpression(IASTExpression pattern);
 	
+	@Override
 	public ICPPASTParameterDeclaration newParameterDeclaration(IASTDeclSpecifier declSpec, IASTDeclarator declarator);
 
 	/**
@@ -242,6 +261,7 @@ public interface ICPPNodeFactory extends INodeFactory {
 	 */
 	public IASTReturnStatement newReturnStatement(IASTInitializerClause retValue);
 
+	@Override
 	public ICPPASTSimpleDeclSpecifier newSimpleDeclSpecifier();
 
 	/**
@@ -273,6 +293,7 @@ public interface ICPPNodeFactory extends INodeFactory {
 
 	public ICPPASTSwitchStatement newSwitchStatement(IASTDeclaration controller, IASTStatement body);
 
+	@Override
 	public ICPPASTSwitchStatement newSwitchStatement(IASTExpression controlloer, IASTStatement body);
 	
 	public ICPPASTTemplateDeclaration newTemplateDeclaration(IASTDeclaration declaration);
@@ -286,6 +307,7 @@ public interface ICPPNodeFactory extends INodeFactory {
 	/**
 	 * @deprecated Replaced by {@link #newTranslationUnit(IScanner)}.
 	 */
+	@Override
 	@Deprecated
 	public ICPPASTTranslationUnit newTranslationUnit();
 
@@ -295,17 +317,21 @@ public interface ICPPNodeFactory extends INodeFactory {
 	 * @scanner the preprocessor the translation unit interacts with.
 	 * @since 5.2
 	 */
+	@Override
 	public ICPPASTTranslationUnit newTranslationUnit(IScanner scanner);
 	
 	public ICPPASTTryBlockStatement newTryBlockStatement(IASTStatement body);
 	
+	@Override
 	public ICPPASTNamedTypeSpecifier newTypedefNameSpecifier(IASTName name);
 
 	/**
 	 * @since 5.2
 	 */
+	@Override
 	public ICPPASTTypeId newTypeId(IASTDeclSpecifier declSpecifier, IASTDeclarator declarator);
 	
+	@Override
 	public ICPPASTTypeIdExpression newTypeIdExpression(int operator, IASTTypeId typeId);
 
 	/**
@@ -314,6 +340,7 @@ public interface ICPPNodeFactory extends INodeFactory {
 	@Deprecated
 	public ICPPASTTypenameExpression newTypenameExpression(IASTName qualifiedName, IASTExpression expr, boolean isTemplate);
 
+	@Override
 	public ICPPASTUnaryExpression newUnaryExpression(int operator, IASTExpression operand);
 
 	public ICPPASTUsingDeclaration newUsingDeclaration(IASTName name);
@@ -326,5 +353,6 @@ public interface ICPPNodeFactory extends INodeFactory {
 
 	public ICPPASTWhileStatement newWhileStatement(IASTDeclaration condition, IASTStatement body);
 	
+	@Override
 	public ICPPASTWhileStatement newWhileStatement(IASTExpression condition, IASTStatement body);
 }

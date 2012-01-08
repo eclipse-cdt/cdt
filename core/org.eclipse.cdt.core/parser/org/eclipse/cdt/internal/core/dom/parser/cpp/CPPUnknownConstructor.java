@@ -23,30 +23,37 @@ public class CPPUnknownConstructor extends CPPUnknownFunction implements ICPPCon
 		super(owner, owner.getNameCharArray());
 	}
 
+	@Override
 	public boolean isExplicit() {
 		return false;
 	}
 
+	@Override
 	public boolean isDestructor() {
 		return false;
 	}
 
+	@Override
 	public boolean isImplicit() {
 		return false;
 	}
 
+	@Override
 	public boolean isPureVirtual() {
 		return false;
 	}
 
+	@Override
 	public boolean isVirtual() {
 		return false;
 	}
 
+	@Override
 	public ICPPClassType getClassOwner() {
 		return (ICPPClassType) getOwner();
 	}
 
+	@Override
 	public int getVisibility() {
 		return v_public;
 	}

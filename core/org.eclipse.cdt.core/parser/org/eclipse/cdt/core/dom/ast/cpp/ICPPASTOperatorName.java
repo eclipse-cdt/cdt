@@ -23,10 +23,12 @@ public interface ICPPASTOperatorName extends IASTName {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICPPASTOperatorName copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICPPASTOperatorName copy(CopyStyle style);
 }

@@ -31,10 +31,12 @@ public interface ICPPASTTypeIdExpression extends IASTTypeIdExpression {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICPPASTTypeIdExpression copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICPPASTTypeIdExpression copy(CopyStyle style);
 }

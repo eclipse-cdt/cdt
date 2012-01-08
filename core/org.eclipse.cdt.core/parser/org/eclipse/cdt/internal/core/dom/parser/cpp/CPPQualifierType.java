@@ -31,7 +31,8 @@ public class CPPQualifierType implements IQualifierType, ITypeContainer, ISerial
         setType(type);
     }
     
-    public boolean isSameType(IType o) {
+    @Override
+	public boolean isSameType(IType o) {
 		if (o instanceof ITypedef)
 			return o.isSameType(this);
 		if (!(o instanceof IQualifierType))
@@ -46,25 +47,29 @@ public class CPPQualifierType implements IQualifierType, ITypeContainer, ISerial
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IQualifierType#isConst()
      */
-    public boolean isConst() {
+    @Override
+	public boolean isConst() {
         return isConst;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IQualifierType#isVolatile()
      */
-    public boolean isVolatile() {
+    @Override
+	public boolean isVolatile() {
         return isVolatile;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IQualifierType#getType()
      */
-    public IType getType() {
+    @Override
+	public IType getType() {
         return type;
     }
     
-    public void setType(IType t) {
+    @Override
+	public void setType(IType t) {
     	assert t != null;
         type = t;
     }
@@ -85,6 +90,7 @@ public class CPPQualifierType implements IQualifierType, ITypeContainer, ISerial
 		return ASTTypeUtil.getType(this);
 	}
 
+	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
 		int firstByte= ITypeMarshalBuffer.CVQUALIFIER;
 		if (isConst()) firstByte |= ITypeMarshalBuffer.FLAG1;

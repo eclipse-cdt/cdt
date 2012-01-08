@@ -314,6 +314,7 @@ public final class IndexProviderManager implements IElementChangedListener {
 		return provisionMap.get(key).booleanValue();
 	}
 
+	@Override
 	public void elementChanged(ElementChangedEvent event) {
 		try {
 			if (event.getType() == ElementChangedEvent.POST_CHANGE) {

@@ -793,6 +793,7 @@ public class MachO64 {
 			return (n_type & REFERENCE_TYPE) == val;
 		}
 
+		@Override
 		public int compareTo(Object obj) {
 			long thisVal = 0;
 			long anotherVal = 0;
@@ -943,6 +944,7 @@ public class MachO64 {
 	 */
 	public static class SymbolComparator implements Comparator<Object> {
 		long val1, val2;
+		@Override
 		public int compare(Object o1, Object o2) {
 			if (o1 instanceof Long) {
 				val1 = ((Long) o1).longValue();
@@ -972,6 +974,7 @@ public class MachO64 {
 		public String file;
 		public String function;
 		
+		@Override
 		public int compareTo(Object obj) {
 			long thisVal = 0;
 			long anotherVal = 0;

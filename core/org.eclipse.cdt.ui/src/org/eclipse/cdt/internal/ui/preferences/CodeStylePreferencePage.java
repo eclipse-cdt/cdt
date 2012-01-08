@@ -40,12 +40,12 @@ public class CodeStylePreferencePage extends ConfigurationBlockPropertyAndPrefer
 	}
 
 	@Override
-	protected String getPreferencePageID() {
+	protected String getPreferencePageId() {
 		return PREF_ID;
 	}
 
 	@Override
-	protected String getPropertyPageID() {
+	protected String getPropertyPageId() {
 		return null;
 		// TODO(sprigogin): Project specific settings
 //		return PROP_ID;

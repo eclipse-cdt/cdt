@@ -76,11 +76,11 @@ public abstract class PropertyAndPreferencePage extends PreferencePage implement
 	protected abstract Control createPreferenceContent(Composite composite);
 	protected abstract boolean hasProjectSpecificOptions(IProject project);
 	
-	protected abstract String getPreferencePageID();
-	protected abstract String getPropertyPageID();
+	protected abstract String getPreferencePageId();
+	protected abstract String getPropertyPageId();
 	
 	protected boolean supportsProjectSpecificOptions() {
-		return getPropertyPageID() != null;
+		return getPropertyPageId() != null;
 	}
 	
 	protected boolean offerLink() {
@@ -219,12 +219,12 @@ public abstract class PropertyAndPreferencePage extends PreferencePage implement
 	}
 	
 	protected final void openWorkspacePreferences(Object data) {
-		String id= getPreferencePageID();
+		String id= getPreferencePageId();
 		PreferencesUtil.createPreferenceDialogOn(getShell(), id, new String[] { id }, data).open();
 	}
 	
 	protected final void openProjectProperties(IProject project, Object data) {
-		String id= getPropertyPageID();
+		String id= getPropertyPageId();
 		if (id != null) {
 			PreferencesUtil.createPropertyDialogOn(getShell(), project, id, new String[] { id }, data).open();
 		}

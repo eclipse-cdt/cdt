@@ -28,7 +28,7 @@ import org.eclipse.cdt.core.parser.tests.scanner.ScannerTestSuite;
 public class ParserTestSuite extends TestCase {
 	public static Test suite() {
 		TestSuite suite= new TestSuite(ParserTestSuite.class.getName());
-		suite.addTestSuite(ArrayUtilsTest.class);
+		suite.addTestSuite(ArrayUtilTest.class);
 		suite.addTestSuite(CharArrayUtilsTest.class);
 		suite.addTestSuite(SegmentMatcherTest.class);
 		suite.addTestSuite(ContentAssistMatcherFactoryTest.class);

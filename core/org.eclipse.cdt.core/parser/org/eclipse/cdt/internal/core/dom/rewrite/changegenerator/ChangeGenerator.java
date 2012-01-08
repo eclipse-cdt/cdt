@@ -62,7 +62,6 @@ import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ContainerNode;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ProblemRuntimeException;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 import org.eclipse.cdt.internal.core.dom.rewrite.util.FileHelper;
-import org.eclipse.cdt.internal.formatter.CCodeFormatter;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.Assert;
@@ -89,7 +88,7 @@ public class ChangeGenerator extends ASTVisitor {
 	private CompositeChange change;
 
 	private final ASTModificationStore modificationStore;
-	private NodeCommentMap commentMap;
+	private final NodeCommentMap commentMap;
 
 	{
 		shouldVisitArrayModifiers= true;

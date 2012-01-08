@@ -72,18 +72,23 @@ public class CFunctionSummary implements IFunctionSummary {
 		fps = new FunctionPrototypeSummary(type + SP + name + LB + args + RB);	
 	}
 	
+	@Override
 	public String getDescription() {
 		return desc;
 	}
+	@Override
 	public IRequiredInclude[] getIncludes() { 
 		return incs; 
 	}
+	@Override
 	public String getName() {
 		return name;
 	}
+	@Override
 	public String getNamespace() {
 		return null;
 	}
+	@Override
 	public IFunctionPrototypeSummary getPrototype() {
 		return fps;
 	}
@@ -99,9 +104,11 @@ public class CFunctionSummary implements IFunctionSummary {
 			iname = s;
 			std = b;
 		}
+		@Override
 		public String getIncludeName() {
 			return iname;
 		}
+		@Override
 		public boolean isStandard() {
 			return std;
 		}

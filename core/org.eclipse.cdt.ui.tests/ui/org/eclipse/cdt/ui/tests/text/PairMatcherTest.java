@@ -37,6 +37,7 @@ public class PairMatcherTest extends TestCase {
 		super(name);
 	}
 	
+	@Override
 	protected void setUp() {
 		Document document= new Document("xx(yy(xx)yy)xx");
 		String[] types= new String[] {
@@ -58,6 +59,7 @@ public class PairMatcherTest extends TestCase {
 		return new TestSuite(PairMatcherTest.class); 
 	}
 	
+	@Override
 	protected void tearDown () {
 		fDocument= null;
 		fPairMatcher= null;

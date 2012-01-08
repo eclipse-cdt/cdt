@@ -114,6 +114,7 @@ public class CDescriptorTests extends BaseTestCase {
 
 	static public class CDescriptorListener implements ICDescriptorListener {
 
+		@Override
 		public void descriptorChanged(CDescriptorEvent event) {
 			fLastEvent = event;
 		}
@@ -122,6 +123,7 @@ public class CDescriptorTests extends BaseTestCase {
 	static void oneTimeSetUp() throws Exception {
 		CTestPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				IWorkspaceRoot root = CTestPlugin.getWorkspace().getRoot();
 				IProject project = root.getProject("testDescriptorProject");
@@ -149,6 +151,7 @@ public class CDescriptorTests extends BaseTestCase {
 	public void testDescriptorCreation() throws Exception {
 		CTestPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				CCorePlugin.getDefault().mapCProjectOwner(fProject, projectId, false);
 			}
@@ -179,6 +182,7 @@ public class CDescriptorTests extends BaseTestCase {
 			fProject.close(null);
 			fProject.open(null);
 			Thread t= new Thread() {
+				@Override
 				public void run() {
 					try {
 						CCorePlugin.getDefault().getCProjectDescription(fProject, true);
@@ -227,6 +231,7 @@ public class CDescriptorTests extends BaseTestCase {
 					public void run() {
 						try {
 							ICDescriptorOperation operation= new ICDescriptorOperation() {
+								@Override
 								public void execute(ICDescriptor descriptor, IProgressMonitor monitor) throws CoreException {
 //									assertFalse(descriptor.getConfigurationDescription().isReadOnly());
 									ICStorageElement data = fdesc.getProjectStorageElement("testElement");
@@ -268,6 +273,7 @@ public class CDescriptorTests extends BaseTestCase {
 	public void testConcurrentDifferentStorageElementModification() throws Exception {
 		for (int i=0; i < 100; ++i) {
 			Thread t= new Thread() {
+				@Override
 				public void run() {
 					try {
 						ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject, true);
@@ -300,6 +306,7 @@ public class CDescriptorTests extends BaseTestCase {
 	public void testConcurrentSameStorageElementModification() throws Exception {
 		for (int i=0; i < 100; ++i) {
 			Thread t= new Thread() {
+				@Override
 				public void run() {
 					try {
 						ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject, true);
@@ -332,6 +339,7 @@ public class CDescriptorTests extends BaseTestCase {
 			oneTimeTearDown();
 			oneTimeSetUp();
 			Thread t= new Thread() {
+				@Override
 				public void run() {
 					try {
 						ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject, true);

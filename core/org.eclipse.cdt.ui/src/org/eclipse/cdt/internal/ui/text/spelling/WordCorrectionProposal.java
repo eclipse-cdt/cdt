@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.ui.text.spelling;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.IContextInformation;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 
@@ -82,6 +83,7 @@ public class WordCorrectionProposal implements ICCompletionProposal {
 	/*
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#apply(org.eclipse.jface.text.IDocument)
 	 */
+	@Override
 	public final void apply(final IDocument document) {
 		try {
 			document.replace(fOffset, fLength, fWord);
@@ -93,6 +95,7 @@ public class WordCorrectionProposal implements ICCompletionProposal {
 	/*
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getAdditionalProposalInfo()
 	 */
+	@Override
 	public String getAdditionalProposalInfo() {
 		return fLine;
 	}
@@ -100,6 +103,7 @@ public class WordCorrectionProposal implements ICCompletionProposal {
 	/*
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getContextInformation()
 	 */
+	@Override
 	public final IContextInformation getContextInformation() {
 		return null;
 	}
@@ -107,13 +111,15 @@ public class WordCorrectionProposal implements ICCompletionProposal {
 	/*
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getDisplayString()
 	 */
+	@Override
 	public String getDisplayString() {
-		return Messages.bind(Messages.Spelling_correct_label, fWord);
+		return NLS.bind(Messages.Spelling_correct_label, fWord);
 	}
 
 	/*
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_CORRECTION_RENAME);
 	}
@@ -121,6 +127,7 @@ public class WordCorrectionProposal implements ICCompletionProposal {
 	/*
 	 * @see org.eclipse.cdt.ui.text.java.IJavaCompletionProposal#getRelevance()
 	 */
+	@Override
 	public final int getRelevance() {
 		return fRelevance;
 	}
@@ -128,6 +135,7 @@ public class WordCorrectionProposal implements ICCompletionProposal {
 	/*
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getSelection(org.eclipse.jface.text.IDocument)
 	 */
+	@Override
 	public final Point getSelection(final IDocument document) {
 		int offset= fContext.getSelectionOffset();
 		int length= fContext.getSelectionLength();
@@ -166,6 +174,7 @@ public class WordCorrectionProposal implements ICCompletionProposal {
 		return buffer.toString();
 	}
 
+	@Override
 	public String getIdString() {
 		return fWord;
 	}

@@ -38,6 +38,7 @@ public class CNavigatorLinkHelper implements ILinkHelper {
 	/*
 	 * @see org.eclipse.ui.navigator.ILinkHelper#activateEditor(org.eclipse.ui.IWorkbenchPage, org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	public void activateEditor(IWorkbenchPage page, IStructuredSelection selection) {
 		if (selection == null || selection.isEmpty())
 			return;
@@ -55,6 +56,7 @@ public class CNavigatorLinkHelper implements ILinkHelper {
 	/*
 	 * @see org.eclipse.ui.navigator.ILinkHelper#findSelection(org.eclipse.ui.IEditorInput)
 	 */
+	@Override
 	public IStructuredSelection findSelection(IEditorInput input) {
 		IWorkingCopyManager mgr= CUIPlugin.getDefault().getWorkingCopyManager();
 		Object element= mgr.getWorkingCopy(input);

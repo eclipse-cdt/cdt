@@ -54,11 +54,13 @@ public class CHelpProvider implements ICHelpProvider {
 	
 	ICHelpBook[] hbs = null;
 	
+	@Override
 	public ICHelpBook[] getCHelpBooks() {
 		waitForDone();
 		return hbs;
 	}
 
+	@Override
 	public IFunctionSummary getFunctionInfo(
 			ICHelpInvocationContext context,
 			ICHelpBook[] helpBooks, 
@@ -73,6 +75,7 @@ public class CHelpProvider implements ICHelpProvider {
 		return null;
 	}
 
+	@Override
 	public ICHelpResourceDescriptor[] getHelpResources(
 			ICHelpInvocationContext context, ICHelpBook[] helpBooks, String name) {
 
@@ -90,6 +93,7 @@ public class CHelpProvider implements ICHelpProvider {
 		return null;
 	}
 
+	@Override
 	public IFunctionSummary[] getMatchingFunctions(
 			ICHelpInvocationContext context, ICHelpBook[] helpBooks,
 			String prefix) {
@@ -106,6 +110,7 @@ public class CHelpProvider implements ICHelpProvider {
 		return null;
 	}
 
+	@Override
 	public void initialize() {
 //		(new Thread() {
 //		public void run() {

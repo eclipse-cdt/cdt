@@ -46,8 +46,10 @@ public class DefaultCFoldingPreferenceBlock implements ICFoldingPreferenceBlock 
 	protected Map<Button, String> fCheckBoxes= new HashMap<Button, String>();
 
 	private SelectionListener fCheckBoxListener= new SelectionListener() {
+		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Button button= (Button) e.widget;
 			String key= fCheckBoxes.get(button);
@@ -83,6 +85,7 @@ public class DefaultCFoldingPreferenceBlock implements ICFoldingPreferenceBlock 
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.folding.ICFoldingPreferences#createControl(org.eclipse.swt.widgets.Group)
 	 */
+	@Override
 	public Control createControl(Composite composite) {
 		fOverlayStore.load();
 		fOverlayStore.start();
@@ -145,6 +148,7 @@ public class DefaultCFoldingPreferenceBlock implements ICFoldingPreferenceBlock 
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.folding.AbstractCFoldingPreferences#performOk()
 	 */
+	@Override
 	public void performOk() {
 		fOverlayStore.propagate();
 	}
@@ -153,6 +157,7 @@ public class DefaultCFoldingPreferenceBlock implements ICFoldingPreferenceBlock 
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.folding.AbstractCFoldingPreferences#initialize()
 	 */
+	@Override
 	public void initialize() {
 		initializeFields();
 	}
@@ -160,6 +165,7 @@ public class DefaultCFoldingPreferenceBlock implements ICFoldingPreferenceBlock 
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.folding.AbstractCFoldingPreferences#performDefaults()
 	 */
+	@Override
 	public void performDefaults() {
 		fOverlayStore.loadDefaults();
 		initializeFields();
@@ -168,6 +174,7 @@ public class DefaultCFoldingPreferenceBlock implements ICFoldingPreferenceBlock 
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.folding.AbstractCFoldingPreferences#dispose()
 	 */
+	@Override
 	public void dispose() {
 		fOverlayStore.stop();
 	}

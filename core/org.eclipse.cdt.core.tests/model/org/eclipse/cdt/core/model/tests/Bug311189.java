@@ -78,6 +78,7 @@ public class Bug311189 extends BaseTestCase {
 		// Path entry update should now be running...
 		// Tick a workspace job through the workspace so we get when it's finished
 		ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 			}
 		}, null);

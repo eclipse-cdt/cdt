@@ -48,6 +48,7 @@ public class CHeuristicScannerTest extends TestCase {
 	/*
 	 * @see junit.framework.TestCase#setUp()
 	 */
+	@Override
 	protected void setUp() {
 		if (CCorePlugin.getDefault() != null) {
 			HashMap<String, String> options= CCorePlugin.getDefaultOptions();
@@ -81,6 +82,7 @@ public class CHeuristicScannerTest extends TestCase {
 	/*
 	 * @see junit.framework.TestCase#tearDown()
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		fDocument.setDocumentPartitioner(ICPartitions.C_PARTITIONING, null);
 		fPartitioner.disconnect();

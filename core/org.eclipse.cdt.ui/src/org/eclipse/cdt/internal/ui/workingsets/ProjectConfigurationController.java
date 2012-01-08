@@ -54,10 +54,12 @@ public class ProjectConfigurationController implements IWorkingSetProjectConfigu
 		this.config = config;
 	}
 
+	@Override
 	public ISnapshot getProjectConfiguration() {
 		return config;
 	}
 
+	@Override
 	public void checkStateChanged(Object element, boolean checked, IControllerContext context) {
 		if (!context.isReadOnly() && (element instanceof ICConfigurationDescription)) {
 
@@ -89,6 +91,7 @@ public class ProjectConfigurationController implements IWorkingSetProjectConfigu
 		}
 	}
 
+	@Override
 	public void updateCheckState(IControllerContext context) {
 		ICConfigurationDescription sel = getProjectConfiguration().resolveSelectedConfiguration();
 
@@ -100,10 +103,12 @@ public class ProjectConfigurationController implements IWorkingSetProjectConfigu
 		context.setGrayed(getProjectConfiguration(), true);
 	}
 
+	@Override
 	public ITreeContentProvider getContentProvider() {
 		return new ContentProvider(getProjectConfiguration());
 	}
 
+	@Override
 	public ILabelProvider getLabelProvider(Viewer viewer) {
 		return new LabelProvider(viewer, getProjectConfiguration());
 	}
@@ -123,26 +128,32 @@ public class ProjectConfigurationController implements IWorkingSetProjectConfigu
 			this.configs = new java.util.HashSet<ICConfigurationDescription>(project.resolveConfigurations());
 		}
 
+		@Override
 		public Object[] getChildren(Object parentElement) {
 			return (parentElement == project) ? project.resolveConfigurations().toArray() : NO_OBJECTS;
 		}
 
+		@Override
 		public Object getParent(Object element) {
 			return (element == project) ? null : configs.contains(element) ? project : null;
 		}
 
+		@Override
 		public boolean hasChildren(Object element) {
 			return element == project;
 		}
 
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return new Object[] { project };
 		}
 
+		@Override
 		public void dispose() {
 			// nothing to dispose
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			// nothing to do
 		}
@@ -190,6 +201,7 @@ public class ProjectConfigurationController implements IWorkingSetProjectConfigu
 			return wbLabels.getImage(element);
 		}
 
+		@Override
 		public Font getFont(Object element) {
 			if (element instanceof ICConfigurationDescription) {
 				ICConfigurationDescription config = (ICConfigurationDescription) element;

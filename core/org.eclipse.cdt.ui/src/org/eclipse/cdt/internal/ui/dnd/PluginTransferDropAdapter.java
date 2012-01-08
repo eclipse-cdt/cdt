@@ -38,6 +38,7 @@ public class PluginTransferDropAdapter extends PluginDropAdapter implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.ui.dnd.TransferDropTargetListener#getTransfer()
 	 */
+	@Override
 	public Transfer getTransfer() {
 		return PluginTransfer.getInstance();
 	}
@@ -46,6 +47,7 @@ public class PluginTransferDropAdapter extends PluginDropAdapter implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.ui.dnd.TransferDropTargetListener#isEnabled(org.eclipse.swt.dnd.DropTargetEvent)
 	 */
+	@Override
 	public boolean isEnabled(DropTargetEvent event) {
 		Object target= event.item != null ? event.item.getData() : null;
 		if (target == null) {

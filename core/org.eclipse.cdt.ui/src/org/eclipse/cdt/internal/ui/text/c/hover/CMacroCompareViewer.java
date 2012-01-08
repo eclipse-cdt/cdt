@@ -67,6 +67,7 @@ class CMacroCompareViewer extends CMergeViewer {
 		/*
 		 * @see org.eclipse.jface.text.ITextPresentationListener#applyTextPresentation(org.eclipse.jface.text.TextPresentation)
 		 */
+		@Override
 		public void applyTextPresentation(TextPresentation textPresentation) {
 			for (int i = 0; i < fStarts.length; i++) {
 				textPresentation.mergeStyleRange(new StyleRange(fStarts[i], fLengths[i], null, fBackground));
@@ -79,18 +80,23 @@ class CMacroCompareViewer extends CMergeViewer {
 	 * A dummy {@link ITokenComparator}.
 	 */
 	private static class NullTokenComparator implements ITokenComparator {
+		@Override
 		public int getTokenLength(int index) {
 			return 0;
 		}
+		@Override
 		public int getTokenStart(int index) {
 			return 0;
 		}
+		@Override
 		public int getRangeCount() {
 			return 0;
 		}
+		@Override
 		public boolean rangesEqual(int thisIndex, IRangeComparator other, int otherIndex) {
 			return true;
 		}
+		@Override
 		public boolean skipRangeComparison(int length, int maxLength, IRangeComparator other) {
 			return true;
 		}

@@ -18,11 +18,13 @@ import org.eclipse.cdt.internal.core.pdom.indexer.AbstractPDOMIndexer;
 public class FakeIndexer extends AbstractPDOMIndexer {
 	static final String ID = "org.eclipse.cdt.core.tests.FakeIndexer";
 
+	@Override
 	public IPDOMIndexerTask createTask(ITranslationUnit[] added,
 			ITranslationUnit[] changed, ITranslationUnit[] removed) {
 		return null;
 	}
 
+	@Override
 	public String getID() {
 		return ID;
 	}

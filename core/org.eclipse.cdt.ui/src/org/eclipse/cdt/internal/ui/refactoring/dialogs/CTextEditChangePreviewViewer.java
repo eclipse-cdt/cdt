@@ -100,12 +100,14 @@ public class CTextEditChangePreviewViewer  implements IChangePreviewViewer {
 	
 	private class CTextEditChangePreviewViewerContentProvider implements IMergeViewerContentProvider{
 
+		@Override
 		public Object getAncestorContent(Object input) {
 			if (input instanceof ICompareInput)
 				return ((ICompareInput) input).getAncestor();
 			return null;
 		}
 
+		@Override
 		public Image getAncestorImage(Object input) {
 			if (input instanceof ICompareInput) {
 				ITypedElement ancestor = ((ICompareInput) input).getAncestor();
@@ -116,6 +118,7 @@ public class CTextEditChangePreviewViewer  implements IChangePreviewViewer {
 			return null;
 		}
 
+		@Override
 		public String getAncestorLabel(Object input) {
 			if (input instanceof ICompareInput) {
 				ITypedElement ancestor = ((ICompareInput) input).getAncestor();
@@ -126,63 +129,76 @@ public class CTextEditChangePreviewViewer  implements IChangePreviewViewer {
 			return null;
 		}
 
+		@Override
 		public Object getLeftContent(Object input) {
 			if (input instanceof ICompareInput)
 				return ((ICompareInput) input).getLeft();
 			return null;
 		}
 
+		@Override
 		public Image getLeftImage(Object input) {
 			if (input instanceof ICompareInput)
 				return ((ICompareInput) input).getLeft().getImage();
 			return null;
 		}
 
+		@Override
 		public String getLeftLabel(Object input) {
 			return Messages.CTextEditChangePreviewViewer_OrgSource; 
 		}
 
+		@Override
 		public Object getRightContent(Object input) {
 			if (input instanceof ICompareInput)
 				return ((ICompareInput) input).getRight();
 			return null;
 		}
 
+		@Override
 		public Image getRightImage(Object input) {
 			if (input instanceof ICompareInput)
 				return ((ICompareInput) input).getRight().getImage();
 			return null;
 		}
 
+		@Override
 		public String getRightLabel(Object input) {
 			return Messages.CTextEditChangePreviewViewer_RefactoredSource; 
 		}
 
+		@Override
 		public boolean isLeftEditable(Object input) {
 			return false;
 		}
 
+		@Override
 		public boolean isRightEditable(Object input) {
 			return false;
 		}
 
+		@Override
 		public void saveLeftContent(Object input, byte[] bytes) {
 			//No Edits
 		}
 
+		@Override
 		public void saveRightContent(Object input, byte[] bytes) {
 			//No Edits
 		}
 
+		@Override
 		public boolean showAncestor(Object input) {
 			//no Ancestor
 			return false;
 		}
 
+		@Override
 		public void dispose() {
 			//
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			//Nothing to do
 		}
@@ -199,15 +215,19 @@ public class CTextEditChangePreviewViewer  implements IChangePreviewViewer {
 			fType= type;
 			fResource= resource;
 		}
+		@Override
 		public String getName() {
 			return ""; //$NON-NLS-1$
 		}
+		@Override
 		public Image getImage() {
 			return null;
 		}
+		@Override
 		public String getType() {
 			return fType;
 		}
+		@Override
 		public InputStream getContents() throws CoreException {
 			try {
 				return new ByteArrayInputStream(fContent.getBytes(ENCODING));
@@ -215,14 +235,17 @@ public class CTextEditChangePreviewViewer  implements IChangePreviewViewer {
 				return new ByteArrayInputStream(fContent.getBytes());
 			}
 		}
+		@Override
 		public String getCharset() {
 			return ENCODING;
 		}
+		@Override
 		public IResource getResource() {
 			return fResource;
 		}
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		CompareConfiguration compConfig = new CompareConfiguration();
 		compConfig.setLeftEditable(false);
@@ -234,10 +257,12 @@ public class CTextEditChangePreviewViewer  implements IChangePreviewViewer {
 		viewerPane.setContent(viewer.getControl());
 	}
 
+	@Override
 	public Control getControl() {
 		return viewerPane;
 	}
 
+	@Override
 	public void setInput(ChangePreviewViewerInput input) {
 		try {
 			Change change= input.getChange();

@@ -71,6 +71,7 @@ public class SelectionListenerWithASTManager {
 			fAstListeners= new ListenerList(ListenerList.IDENTITY);
 			
 			fSelectionListener= new ISelectionChangedListener() {
+				@Override
 				public void selectionChanged(SelectionChangedEvent event) {
 					ISelection selection= event.getSelection();
 					if (selection instanceof ITextSelection) {
@@ -80,6 +81,7 @@ public class SelectionListenerWithASTManager {
 			};
 			
 			fPostSelectionListener= new ISelectionListener() {
+				@Override
 				public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 					if (part == fPart && selection instanceof ITextSelection)
 						firePostSelectionChanged((ITextSelection) selection);
@@ -166,6 +168,7 @@ public class SelectionListenerWithASTManager {
 
 		protected IStatus calculateASTandInform(final IWorkingCopy workingCopy, final ITextSelection selection, final IProgressMonitor monitor) {
 			return ASTProvider.getASTProvider().runOnAST(workingCopy, ASTProvider.WAIT_ACTIVE_ONLY, monitor, new ASTRunnable() {
+				@Override
 				public IStatus runOnAST(ILanguage lang, IASTTranslationUnit astRoot) {
 					if (astRoot != null && !monitor.isCanceled() && isSelectionValid(selection)) {
 						Object[] listeners;

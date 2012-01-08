@@ -123,10 +123,12 @@ public abstract class AbstractSourceViewerInformationControl extends org.eclipse
 
 		final StyledText text= fSourceViewer.getTextWidget();
 		text.addKeyListener(new KeyListener() {
+			@Override
 			public void keyPressed(KeyEvent e)  {
 				if (e.character == 0x1B) // ESC
 					dispose();
 			}
+			@Override
 			public void keyReleased(KeyEvent e) {
 				// do nothing
 			}
@@ -197,6 +199,7 @@ public abstract class AbstractSourceViewerInformationControl extends org.eclipse
 		fSourceViewer.setDocument(doc);
 	}
 
+	@Override
 	public void setInput(Object input) {
 		if (input instanceof String)
 			setInformation((String)input);
@@ -219,10 +222,12 @@ public abstract class AbstractSourceViewerInformationControl extends org.eclipse
 	 * Subclasses may extend.
 	 * </p>
 	 */
+	@Override
 	public void widgetDisposed(DisposeEvent event) {
 		fSourceViewer= null;
 	}
 
+	@Override
 	public boolean hasContents() {
 		return fSourceViewer != null && fSourceViewer.getDocument() != null;
 	}

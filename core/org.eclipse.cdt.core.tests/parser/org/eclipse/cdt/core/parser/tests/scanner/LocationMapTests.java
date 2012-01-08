@@ -62,24 +62,31 @@ public class LocationMapTests extends BaseTestCase {
 			fOffset= offset;
 			fEndOffset= endOffset;
 		}
+		@Override
 		public int getEndingLineNumber() {
 			return 0;
 		}
+		@Override
 		public String getFileName() {
 			return fFile;
 		}
+		@Override
 		public int getNodeLength() {
 			return fEndOffset-fOffset;
 		}
+		@Override
 		public int getNodeOffset() {
 			return fOffset;
 		}
+		@Override
 		public int getStartingLineNumber() {
 			return 0;
 		}
+		@Override
 		public IASTFileLocation asFileLocation() {
 			return this;
 		}
+		@Override
 		public IASTPreprocessorIncludeStatement getContextInclusionStatement() {
 			return null;
 		}

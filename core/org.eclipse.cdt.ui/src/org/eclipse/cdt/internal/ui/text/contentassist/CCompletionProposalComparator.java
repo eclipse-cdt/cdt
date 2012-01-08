@@ -34,6 +34,7 @@ public class CCompletionProposalComparator implements Comparator<ICCompletionPro
 	/*
 	 * @see Comparator#compare(Object, Object)
 	 */
+	@Override
 	public int compare(ICCompletionProposal c1, ICCompletionProposal c2) {
 		if (!fOrderAlphabetically) {
 			int relevanceDif= c2.getRelevance() - c1.getRelevance();

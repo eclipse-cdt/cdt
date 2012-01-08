@@ -435,11 +435,14 @@ public class BracketInserterTest extends TestCase {
 	private void linkedType(char character, boolean nested, int expectedExitFlags) {
 		final int[] exitFlags= { -1 };
 		assertModel(nested).addLinkingListener(new ILinkedModeListener() {
+			@Override
 			public void left(LinkedModeModel model, int flags) {
 				exitFlags[0]= flags;
 			}
+			@Override
 			public void resume(LinkedModeModel model, int flags) {
 			}
+			@Override
 			public void suspend(LinkedModeModel model) {
 			}
 		});

@@ -42,6 +42,7 @@ public class ProjectCreationStateTests  extends BaseTestCase{
 			fProjName = projName;
 		}
 		
+		@Override
 		public void handleEvent(CProjectDescriptionEvent event) {
 			if(!event.getProject().getName().equals(fProjName))
 				return;
@@ -89,6 +90,7 @@ public class ProjectCreationStateTests  extends BaseTestCase{
 		return suite(ProjectCreationStateTests.class, "_");
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 //		p1 = CProjectHelper.createNewStileCProject(PROJ_NAME_PREFIX + "a", IPDOMManager.ID_NO_INDEXER);
 	}
@@ -362,6 +364,7 @@ public class ProjectCreationStateTests  extends BaseTestCase{
 	}
 
 	
+	@Override
 	protected void tearDown() throws Exception {
 		if(listener != null){
 			CoreModel.getDefault().getProjectDescriptionManager().removeCProjectDescriptionListener(listener);

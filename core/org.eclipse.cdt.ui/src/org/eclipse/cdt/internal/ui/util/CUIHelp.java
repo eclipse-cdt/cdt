@@ -54,6 +54,7 @@ public class CUIHelp {
 		* @see HelpListener#helpRequested(HelpEvent)
 		* 
 		*/
+		@Override
 		public void helpRequested(HelpEvent e) {
 			try {
 				CHelpDisplayContext.displayHelp(fContextId, fEditor);
@@ -83,6 +84,7 @@ public class CUIHelp {
 		/*
 		 * @see org.eclipse.help.IContextProvider#getContext(java.lang.Object)
 		 */
+		@Override
 		public IContext getContext(Object target) {
 			String selected = getSelectedString(fEditor);
 			IContext context= HelpSystem.getContext(ICHelpContextIds.CEDITOR_VIEW);
@@ -100,6 +102,7 @@ public class CUIHelp {
 		/*
 		 * @see org.eclipse.help.IContextProvider#getContextChangeMask()
 		 */
+		@Override
 		public int getContextChangeMask() {
 			return SELECTION;
 		}
@@ -107,6 +110,7 @@ public class CUIHelp {
 		/*
 		 * @see org.eclipse.help.IContextProvider#getSearchExpression(java.lang.Object)
 		 */
+		@Override
 		public String getSearchExpression(Object target) {
 			return getSelectedString(fEditor);
 		}

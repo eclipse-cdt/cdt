@@ -56,6 +56,7 @@ public class WorkingCopyTests extends TestCase {
 		super(name);
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		monitor = new NullProgressMonitor();
 	
@@ -75,6 +76,7 @@ public class WorkingCopyTests extends TestCase {
 		}
 	}
 
+	@Override
 	protected void tearDown()  {
 		CProjectHelper.delete(fCProject);
 	}	

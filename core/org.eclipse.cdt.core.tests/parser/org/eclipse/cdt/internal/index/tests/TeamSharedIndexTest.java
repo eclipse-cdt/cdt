@@ -101,6 +101,7 @@ public class TeamSharedIndexTest extends IndexTestBase {
 		try {
 			final IProject prjHandle= workspace.getRoot().getProject(prjName);
 			workspace.run(new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					IProjectDescription desc= IDEWorkbenchPlugin.getPluginWorkspace().newProjectDescription(prjName);
 					prjHandle.create(desc, npm());

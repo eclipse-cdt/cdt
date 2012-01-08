@@ -52,6 +52,7 @@ public class EditorReopener implements IDocCommentOwnershipListener {
 	/*
 	 * @see org.eclipse.cdt.ui.text.doctools.IDocCommentOwnershipListener#ownershipChanged(org.eclipse.core.resources.IResource, boolean, org.eclipse.cdt.ui.text.doctools.IDocCommentOwner, org.eclipse.cdt.ui.text.doctools.IDocCommentOwner)
 	 */
+	@Override
 	public void ownershipChanged(IResource resource, boolean recursive,
 			IDocCommentOwner old, IDocCommentOwner newOwner) {
 		IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
@@ -70,6 +71,7 @@ public class EditorReopener implements IDocCommentOwnershipListener {
 	/*
 	 * @see org.eclipse.cdt.ui.text.doctools.IDocCommentOwnershipListener#workspaceOwnershipChanged(org.eclipse.cdt.ui.text.doctools.IDocCommentOwner, org.eclipse.cdt.ui.text.doctools.IDocCommentOwner)
 	 */
+	@Override
 	public void workspaceOwnershipChanged(IDocCommentOwner old, IDocCommentOwner newOwner) {
 		IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if(window!=null) {

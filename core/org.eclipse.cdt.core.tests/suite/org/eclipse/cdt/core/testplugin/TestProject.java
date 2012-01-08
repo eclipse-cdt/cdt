@@ -17,10 +17,12 @@ import org.eclipse.core.runtime.CoreException;
 
 public class TestProject implements ICOwner {
 
+	@Override
 	public void configure(ICDescriptor cDescriptor) throws CoreException {
 		cDescriptor.create(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID, TestScannerProvider.SCANNER_ID);
 	}
 
+	@Override
 	public void update(ICDescriptor cDescriptor, String extensionID) throws CoreException {
 		if ( extensionID.equals(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID)) {
 			cDescriptor.create(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID, TestScannerProvider.SCANNER_ID);

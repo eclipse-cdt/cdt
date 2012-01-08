@@ -35,24 +35,29 @@ public class SelectionProviderMediator implements ISelectionProvider {
 
 	public SelectionProviderMediator() {
 		fSelectionChangedListener= new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				onSelectionChanged(event);
 			}
 		};
 		fFocusListener = new FocusListener() {
+			@Override
 			public void focusGained(FocusEvent e) {
 				onFocusGained(e);
 			}
+			@Override
 			public void focusLost(FocusEvent e) {
 			}
 		};
 	}
 
-    final public void addSelectionChangedListener(ISelectionChangedListener listener) {
+    @Override
+	final public void addSelectionChangedListener(ISelectionChangedListener listener) {
     	fListenerList.add(listener);
     }
 
-    final public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+    @Override
+	final public void removeSelectionChangedListener(ISelectionChangedListener listener) {
     	fListenerList.remove(listener);
     }
 
@@ -79,6 +84,7 @@ public class SelectionProviderMediator implements ISelectionProvider {
 	}
 
 	// overrider
+	@Override
 	public ISelection getSelection() {
 		if (fActiveProvider != null) {
 			return fActiveProvider.getSelection();
@@ -86,6 +92,7 @@ public class SelectionProviderMediator implements ISelectionProvider {
 		return StructuredSelection.EMPTY;
 	}
 	// overrider
+	@Override
 	public void setSelection(ISelection selection) {
 		if (fActiveProvider != null) {
 			fActiveProvider.setSelection(selection);

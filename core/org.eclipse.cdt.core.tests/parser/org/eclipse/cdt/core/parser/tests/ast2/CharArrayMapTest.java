@@ -36,6 +36,7 @@ public class CharArrayMapTest extends TestCase {
 			this.length = length;
 			this.start = start;
 		}
+		@Override
 		public String toString() {
 			return new String(chars, start, length);
 		}

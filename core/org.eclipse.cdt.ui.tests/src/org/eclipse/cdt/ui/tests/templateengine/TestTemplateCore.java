@@ -20,7 +20,8 @@ public class TestTemplateCore extends BaseTestCase {
 
     public TemplateCore[] templates = null;
     
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
 		super.setUp();
 		templates = TemplateEngineTestsHelper.getTestTemplates();
 	}
@@ -28,6 +29,7 @@ public class TestTemplateCore extends BaseTestCase {
 	/*
 	 * @see TestCase#tearDown()
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 	}

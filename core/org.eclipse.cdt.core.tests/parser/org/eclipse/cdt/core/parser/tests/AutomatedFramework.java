@@ -99,6 +99,7 @@ public abstract class AutomatedFramework extends TestCase {
 		fail( "Unable to load properties file." ); //$NON-NLS-1$
 	}
 	
+	@Override
 	protected void runTest() throws Throwable {
 		String name = getName();
 		
@@ -165,6 +166,7 @@ public abstract class AutomatedFramework extends TestCase {
 	
 	static private class Filter implements FilenameFilter
 	{
+		@Override
 		public boolean accept(File dir, String name) {
 			if( name.endsWith(".cpp") 	||  //$NON-NLS-1$
 				name.endsWith(".c") 	||  //$NON-NLS-1$

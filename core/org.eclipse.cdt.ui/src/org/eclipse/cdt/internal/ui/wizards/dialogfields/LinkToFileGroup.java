@@ -154,6 +154,7 @@ public class LinkToFileGroup extends StringButtonDialogField {
 			linkTargetField.setFont(parent.getFont());
 			linkTargetField.setEnabled(createLink);
 			linkTargetField.addModifyListener(new ModifyListener() {
+				@Override
 				public void modifyText(ModifyEvent e) {
 					resolveVariable();
 					if (listener != null)

@@ -93,6 +93,7 @@ public abstract class RefactoringBaseTest extends BaseTestFramework implements I
 		super.tearDown();
 	}
 
+	@Override
 	public void logging(IStatus status, String plugin) {
 		Throwable ex = status.getException();
 		StringBuffer stackTrace = new StringBuffer();

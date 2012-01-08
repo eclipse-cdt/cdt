@@ -72,6 +72,7 @@ import org.eclipse.ui.wizards.datatransfer.IImportStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
@@ -91,6 +92,7 @@ import org.eclipse.cdt.internal.ui.text.CompositeReconcilingStrategy;
 public class EditorTestHelper {
 	
 	private static class ImportOverwriteQuery implements IOverwriteQuery {
+		@Override
 		public String queryOverwrite(String file) {
 			return ALL;
 		}	
@@ -414,6 +416,7 @@ public class EditorTestHelper {
 	
 	public static void closeAllPopUps(SourceViewer sourceViewer) {
 		IWidgetTokenKeeper tokenKeeper= new IWidgetTokenKeeper() {
+			@Override
 			public boolean requestWidgetToken(IWidgetTokenOwner owner) {
 				return true;
 			}
@@ -443,7 +446,7 @@ public class EditorTestHelper {
 	}
 
 	public static ICProject createCProject(String project, String externalSourceFolder, boolean linkSourceFolder, boolean useIndexer) throws CoreException {
-		ICProject cProject= CProjectHelper.createCCProject(project, "bin", useIndexer ? IIndexManager.ID_FAST_INDEXER : IIndexManager.ID_NO_INDEXER);
+		ICProject cProject= CProjectHelper.createCCProject(project, "bin", useIndexer ? IPDOMManager.ID_FAST_INDEXER : IPDOMManager.ID_NO_INDEXER);
 		IFolder folder;
 		if (linkSourceFolder) {
 			File file= FileTool.getFileInPlugin(CTestPlugin.getDefault(), new Path(externalSourceFolder));
@@ -466,6 +469,7 @@ public class EditorTestHelper {
 		final IWorkspace ws = ResourcesPlugin.getWorkspace();
 		final IProject newProject[] = new IProject[1];
 		ws.run(new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				IWorkspaceRoot root = ws.getRoot();
 				IProject project = root.getProject(projectName);

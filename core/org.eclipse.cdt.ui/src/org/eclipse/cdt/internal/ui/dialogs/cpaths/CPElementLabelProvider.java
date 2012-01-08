@@ -422,6 +422,7 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 	 * 
 	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
 	 */
+	@Override
 	public Color getForeground(Object element) {
 		if (element instanceof CPElement) {
 			if ( ((CPElement)element).getInherited() != null) {
@@ -436,6 +437,7 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 	 * 
 	 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
 	 */
+	@Override
 	public Color getBackground(Object element) {
 		// TODO Auto-generated method stub
 		return null;

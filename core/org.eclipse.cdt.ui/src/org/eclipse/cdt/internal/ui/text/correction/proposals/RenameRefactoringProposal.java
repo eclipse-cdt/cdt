@@ -48,6 +48,7 @@ public class RenameRefactoringProposal implements ICCompletionProposal, IComplet
 	/*
 	 * @see ICompletionProposal#apply(IDocument)
 	 */
+	@Override
 	public void apply(IDocument document) {
 		CRenameAction action= new CRenameAction();
 		action.setEditor(fEditor);
@@ -57,6 +58,7 @@ public class RenameRefactoringProposal implements ICCompletionProposal, IComplet
 	/*
 	 * @see ICompletionProposal#getSelection(IDocument)
 	 */
+	@Override
 	public Point getSelection(IDocument document) {
 		return null;
 	}
@@ -64,6 +66,7 @@ public class RenameRefactoringProposal implements ICCompletionProposal, IComplet
 	/*
 	 * @see ICompletionProposal#getAdditionalProposalInfo()
 	 */
+	@Override
 	public String getAdditionalProposalInfo() {
 		return CorrectionMessages.RenameRefactoringProposal_additionalInfo;
 	}
@@ -71,6 +74,7 @@ public class RenameRefactoringProposal implements ICCompletionProposal, IComplet
 	/*
 	 * @see ICompletionProposal#getDisplayString()
 	 */
+	@Override
 	public String getDisplayString() {
 		String shortCutString= CorrectionCommandHandler.getShortCutString(getCommandId());
 		if (shortCutString != null) {
@@ -83,6 +87,7 @@ public class RenameRefactoringProposal implements ICCompletionProposal, IComplet
 	/*
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension6#getStyledDisplayString()
 	 */
+	@Override
 	public StyledString getStyledDisplayString() {
 		StyledString str= new StyledString(fLabel);
 
@@ -98,6 +103,7 @@ public class RenameRefactoringProposal implements ICCompletionProposal, IComplet
 	/*
 	 * @see ICompletionProposal#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_CORRECTION_LINKED_RENAME);
 	}
@@ -105,6 +111,7 @@ public class RenameRefactoringProposal implements ICCompletionProposal, IComplet
 	/*
 	 * @see ICompletionProposal#getContextInformation()
 	 */
+	@Override
 	public IContextInformation getContextInformation() {
 		return null;
 	}
@@ -112,6 +119,7 @@ public class RenameRefactoringProposal implements ICCompletionProposal, IComplet
 	/*
 	 * @see ICCompletionProposal#getRelevance()
 	 */
+	@Override
 	public int getRelevance() {
 		return fRelevance;
 	}
@@ -119,6 +127,7 @@ public class RenameRefactoringProposal implements ICCompletionProposal, IComplet
 	/*
 	 * @see ICCompletionProposal#getIdString()
 	 */
+	@Override
 	public String getIdString() {
 		return getCommandId();
 	}
@@ -126,6 +135,7 @@ public class RenameRefactoringProposal implements ICCompletionProposal, IComplet
 	/*
 	 * @see ICommandAccess#getCommandId()
 	 */
+	@Override
 	public String getCommandId() {
 		return ICEditorActionDefinitionIds.RENAME_ELEMENT;
 	}

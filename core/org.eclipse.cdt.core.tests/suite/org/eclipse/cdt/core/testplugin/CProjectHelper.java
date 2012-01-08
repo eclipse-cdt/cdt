@@ -67,6 +67,7 @@ import org.osgi.framework.Bundle;
 public class CProjectHelper {
 
 	private final static IOverwriteQuery OVERWRITE_QUERY= new IOverwriteQuery() {
+		@Override
 		public String queryOverwrite(String file) {
 			return ALL;
 		}
@@ -84,6 +85,7 @@ public class CProjectHelper {
 		final ICProject newProject[] = new ICProject[1];
 		ws.run(new IWorkspaceRunnable() {
 
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				IWorkspaceRoot root = ws.getRoot();
 				IProject project = root.getProject(projectName);
@@ -165,6 +167,7 @@ public class CProjectHelper {
 		final String finalCfgProviderId = cfgProviderId;
 		ws.run(new IWorkspaceRunnable() {
 
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				IWorkspaceRoot root = ws.getRoot();
 				IProject project = root.getProject(projectName);
@@ -219,6 +222,7 @@ public class CProjectHelper {
 		final ICProject newProject[] = new ICProject[1];
 		ws.run(new IWorkspaceRunnable() {
 
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				ICProject cproject = createCProject(projectName, binFolderName, indexerID);
 				if (!cproject.getProject().hasNature(CCProjectNature.CC_NATURE_ID)) {

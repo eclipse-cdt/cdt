@@ -42,6 +42,7 @@ public class FailureDialog extends Dialog {
 	/* (non-Javadoc)
 	 * Method declared on Window.
 	 */
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText("Dialog Test Failed");
@@ -49,6 +50,7 @@ public class FailureDialog extends Dialog {
 	/* (non-Javadoc)
 	 * Method declared on Dialog.
 	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, IDialogConstants.OK_ID, "&OK", true);
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
@@ -56,6 +58,7 @@ public class FailureDialog extends Dialog {
 	/* (non-Javadoc)
 	 * Method declared on Dialog.
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		// page group
 		Composite composite = (Composite)super.createDialogArea(parent);
@@ -76,6 +79,7 @@ public class FailureDialog extends Dialog {
 	/* (non-Javadoc)
 	 * Method declared on Dialog.
 	 */
+	@Override
 	protected void okPressed() {		
 		_log = _text.getText();
 		super.okPressed();
@@ -103,6 +107,7 @@ public class FailureDialog extends Dialog {
 	 * Returns a string representation of this class which
 	 * the text contained in the input area of the dialog.
 	 */
+	@Override
 	public String toString() {
 		return getText();
 	}

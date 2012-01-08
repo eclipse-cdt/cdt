@@ -85,10 +85,12 @@ public class CountNodeAction extends IndexAction {
 				pdom.acquireReadLock();
 				try {
 					pdom.getFileIndex().accept(new IBTreeVisitor() {
+						@Override
 						public int compare(long record) throws CoreException {
 							return 0;
 						}
 
+						@Override
 						public boolean visit(long record) throws CoreException {
 							if (record != 0) {
 								PDOMFile file = PDOMFile.recreateFile(pdom, record);
@@ -103,6 +105,7 @@ public class CountNodeAction extends IndexAction {
 						}
 					});
 					pdom.accept(new IPDOMVisitor() {
+						@Override
 						public boolean visit(IPDOMNode node)
 								throws CoreException {
 							++count[SYMBOLS];
@@ -124,6 +127,7 @@ public class CountNodeAction extends IndexAction {
 							return true;
 						}
 
+						@Override
 						public void leave(IPDOMNode node) throws CoreException {
 						}
 					});

@@ -23,24 +23,28 @@ public class FocusTestPass implements IDialogTestPass {
 	/**
 	 * @see IDialogTestPass#title()
 	 */
+	@Override
 	public String title() {
 		return "Test Pass: Initial Focus";
 	}
 	/**
 	 * @see IDialogTestPass#description()
 	 */
+	@Override
 	public String description() {
 		return "Verify the initial focus of the dialogs.";
 	}
 	/**
 	 * @see IDialogTestPass#label()
 	 */
+	@Override
 	public String label() {
 		return "&Initial Focus";
 	}	
 	/**
 	 * @see IDialogTestPass#checkListTexts()
 	 */
+	@Override
 	public ArrayList checkListTexts() {
 		ArrayList list = new ArrayList(CHECKLIST_SIZE);
 		list.add("&1) the initial focus is appropriate.");
@@ -51,6 +55,7 @@ public class FocusTestPass implements IDialogTestPass {
 	 * Size of the return array must be the same size as the checkListTexts'
 	 * ArrayList.
 	 */
+	@Override
 	public String[] failureTexts() {
 		String[] failureText = new String[CHECKLIST_SIZE];
 		failureText[0] = "The initial focus is inappropriate.";
@@ -59,12 +64,14 @@ public class FocusTestPass implements IDialogTestPass {
 	/**
 	 * @see IDialogTestPass#queryText()
 	 */
+	@Override
 	public String queryText() {
 		return "Is the initial focus of the dialog correct?";
 	}
 	/**
 	 * @see IDialogTestPass#getID()
 	 */
+	@Override
 	public int getID() {
 		return VerifyDialog.TEST_FOCUS;
 	}

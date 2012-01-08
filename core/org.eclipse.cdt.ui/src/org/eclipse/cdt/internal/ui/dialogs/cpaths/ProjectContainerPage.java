@@ -61,14 +61,17 @@ public class ProjectContainerPage extends WizardPage implements IPathEntryContai
 		validatePage();
 	}
 
+	@Override
 	public void initialize(ICProject project, IPathEntry[] currentEntries) {
 		fCProject = project;
 	}
 
+	@Override
 	public boolean finish() {
 		return true;
 	}
 
+	@Override
 	public IContainerEntry[] getNewContainers() {
 		return new IContainerEntry[0];
 	}
@@ -93,9 +96,11 @@ public class ProjectContainerPage extends WizardPage implements IPathEntryContai
 		}
 	}
 	
+	@Override
 	public void setSelection(IContainerEntry containerEntry) {
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		// create a composite with standard margins and spacing
 		Composite container = new Composite(parent, SWT.NONE);
@@ -113,6 +118,7 @@ public class ProjectContainerPage extends WizardPage implements IPathEntryContai
 		viewer.setLabelProvider(new WorkbenchLabelProvider());
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				validatePage();
 			}

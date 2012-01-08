@@ -60,6 +60,7 @@ public class GenericTagCompletionProposalComputer implements ICompletionProposal
 	/*
 	 * @see org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer#computeCompletionProposals(org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public List<ICompletionProposal> computeCompletionProposals(ContentAssistInvocationContext context, IProgressMonitor monitor) {
 		IDocument doc= context.getDocument();
 		int ivcOffset= context.getInvocationOffset();
@@ -94,6 +95,7 @@ public class GenericTagCompletionProposalComputer implements ICompletionProposal
 	/*
 	 * @see org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer#computeContextInformation(org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public List<IContextInformation> computeContextInformation(ContentAssistInvocationContext context, IProgressMonitor monitor) {
 		return Collections.emptyList();
 	}
@@ -101,6 +103,7 @@ public class GenericTagCompletionProposalComputer implements ICompletionProposal
 	/*
 	 * @see org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer#getErrorMessage()
 	 */
+	@Override
 	public String getErrorMessage() {
 		return null;
 	}
@@ -108,10 +111,12 @@ public class GenericTagCompletionProposalComputer implements ICompletionProposal
 	/*
 	 * @see org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer#sessionEnded()
 	 */
+	@Override
 	public void sessionEnded() {}
 	
 	/*
 	 * @see org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer#sessionStarted()
 	 */
+	@Override
 	public void sessionStarted() {}
 }

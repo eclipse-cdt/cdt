@@ -16,6 +16,7 @@ import junit.framework.Test;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
@@ -50,15 +51,17 @@ public class ResolveBindingTests extends BaseUITestCase  {
 		return suite(ResolveBindingTests.class);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		fCProject= CProjectHelper.createCCProject("ResolveBindingTests", "bin", IPDOMManager.ID_FAST_INDEXER);
 		fIndex= CCorePlugin.getIndexManager().getIndex(fCProject);
 	}
 		
+	@Override
 	protected void tearDown() throws Exception {
 		if (fCProject != null) {
-			fCProject.getProject().delete(IProject.FORCE | IProject.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+			fCProject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
 		}
 		super.tearDown();
 	}

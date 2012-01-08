@@ -103,6 +103,7 @@ abstract public class BaseTestFramework extends TestCase {
 		initProject();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
         if (project == null || !project.exists())
             return;

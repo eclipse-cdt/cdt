@@ -351,6 +351,7 @@ public class CProjectDescriptionStorageTests extends BaseTestCase {
 		csettings.create(true, false, null);
 
 		csettings_back.accept(new IResourceVisitor() {
+			@Override
 			public boolean visit(IResource resource) throws CoreException {
 				assertTrue(resource instanceof IFile);
 				csettings.getFile(resource.getName()).create(((IFile)resource).getContents(), false, null);
@@ -448,6 +449,7 @@ public class CProjectDescriptionStorageTests extends BaseTestCase {
 	private static class OurResourceChangeListener implements IResourceChangeListener {
 		boolean changeDetected;
 		private Set<IPath> filesToWatch = new HashSet<IPath>();
+		@Override
 		public synchronized void resourceChanged(IResourceChangeEvent event) {
 			IResourceDelta delta = event.getDelta();
 			if (delta == null)

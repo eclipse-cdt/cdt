@@ -43,6 +43,7 @@ public class StatusBarUpdater implements ISelectionChangedListener {
 	/*
 	 * @see ISelectionChangedListener#selectionChanged
 	 */
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		String statusBarMessage= formatMessage(event.getSelection());
 		fStatusLineManager.setMessage(statusBarMessage);

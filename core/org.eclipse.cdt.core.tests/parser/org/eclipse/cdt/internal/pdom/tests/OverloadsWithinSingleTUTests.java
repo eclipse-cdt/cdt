@@ -36,6 +36,7 @@ public class OverloadsWithinSingleTUTests extends PDOMTestBase {
 		return suite(OverloadsWithinSingleTUTests.class);
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		if (pdom == null) {
 			ICProject project = createProject("overloadsWithinSingleTU");
@@ -44,6 +45,7 @@ public class OverloadsWithinSingleTUTests extends PDOMTestBase {
 		pdom.acquireReadLock();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		pdom.releaseReadLock();
 	}

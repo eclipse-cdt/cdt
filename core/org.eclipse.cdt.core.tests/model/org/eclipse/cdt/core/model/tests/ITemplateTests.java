@@ -46,6 +46,7 @@ public class ITemplateTests extends IntegratedCModelTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.tests.IntegratedCModelTest#getSourcefileSubdir()
 	 */
+	@Override
 	public String getSourcefileSubdir() {
 		return "resources/cmodel/";
 	}
@@ -53,6 +54,7 @@ public class ITemplateTests extends IntegratedCModelTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.tests.IntegratedCModelTest#getSourcefileResource()
 	 */
+	@Override
 	public String getSourcefileResource() {
 		return "ITemplate.cpp";
 	}

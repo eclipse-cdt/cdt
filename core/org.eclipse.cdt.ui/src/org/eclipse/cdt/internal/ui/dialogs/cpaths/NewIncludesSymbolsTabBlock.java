@@ -111,6 +111,7 @@ public class NewIncludesSymbolsTabBlock extends AbstractPathOptionBlock implemen
 	 * 
 	 * @see org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener#statusChanged(org.eclipse.core.runtime.IStatus)
 	 */
+	@Override
 	public void statusChanged(IStatus status) {
 		switch (status.getSeverity()) {
 			case IStatus.ERROR :

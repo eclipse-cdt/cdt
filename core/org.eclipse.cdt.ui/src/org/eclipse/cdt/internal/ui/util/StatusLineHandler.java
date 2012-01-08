@@ -35,6 +35,7 @@ public abstract class StatusLineHandler {
 			/* (non-Javadoc)
 			 * @see java.lang.Runnable#run()
 			 */
+			@Override
 			public void run() {
 				IStatusLineManager statusManager = null;
 				 if (site instanceof IViewSite){
@@ -55,6 +56,7 @@ public abstract class StatusLineHandler {
 			/* (non-Javadoc)
 			 * @see java.lang.Runnable#run()
 			 */
+			@Override
 			public void run() {
 				IStatusLineManager statusManager = null;
 				 if (site instanceof IViewSite){

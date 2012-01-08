@@ -54,6 +54,7 @@ public class StructuralStructureTests extends IStructureTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.tests.IStructureTests#testAnonymousStructObject()
 	 */
+	@Override
 	public void testAnonymousStructObject() throws CModelException {
 		setStructuralParse(true);
 		super.testAnonymousStructObject();
@@ -61,6 +62,7 @@ public class StructuralStructureTests extends IStructureTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.tests.IStructureTests#testGetAccessControl()
 	 */
+	@Override
 	public void testGetAccessControl() throws CModelException {
 		setStructuralParse(true);
 		super.testGetAccessControl();
@@ -68,6 +70,7 @@ public class StructuralStructureTests extends IStructureTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.tests.IStructureTests#testGetBaseTypes()
 	 */
+	@Override
 	public void testGetBaseTypes() throws CModelException {
 		setStructuralParse(true);
 		super.testGetBaseTypes();
@@ -75,6 +78,7 @@ public class StructuralStructureTests extends IStructureTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.tests.IStructureTests#testGetChildrenOfTypeClass()
 	 */
+	@Override
 	public void testGetChildrenOfTypeClass() throws CModelException {
 		setStructuralParse(true);
 		super.testGetChildrenOfTypeClass();
@@ -82,6 +86,7 @@ public class StructuralStructureTests extends IStructureTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.tests.IStructureTests#testGetChildrenOfTypeStruct()
 	 */
+	@Override
 	public void testGetChildrenOfTypeStruct() throws CModelException {
 		setStructuralParse(true);
 		super.testGetChildrenOfTypeStruct();
@@ -89,6 +94,7 @@ public class StructuralStructureTests extends IStructureTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.tests.IStructureTests#testGetField()
 	 */
+	@Override
 	public void testGetField() throws CModelException {
 		setStructuralParse(true);
 		super.testGetField();
@@ -96,6 +102,7 @@ public class StructuralStructureTests extends IStructureTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.tests.IStructureTests#testGetFields()
 	 */
+	@Override
 	public void testGetFields() throws CModelException {
 		setStructuralParse(true);
 		super.testGetFields();
@@ -103,6 +110,7 @@ public class StructuralStructureTests extends IStructureTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.tests.IStructureTests#testGetFieldsHack()
 	 */
+	@Override
 	public void testGetFieldsHack() throws CModelException {
 		setStructuralParse(true);
 		super.testGetFieldsHack();
@@ -110,6 +118,7 @@ public class StructuralStructureTests extends IStructureTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.tests.IStructureTests#testGetMethod()
 	 */
+	@Override
 	public void testGetMethod() throws CModelException {
 		setStructuralParse(true);
 		super.testGetMethod();
@@ -117,6 +126,7 @@ public class StructuralStructureTests extends IStructureTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.tests.IStructureTests#testGetMethods()
 	 */
+	@Override
 	public void testGetMethods() throws CModelException {
 		setStructuralParse(true);
 		super.testGetMethods();
@@ -124,6 +134,7 @@ public class StructuralStructureTests extends IStructureTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.tests.IStructureTests#testGetMethodsHack()
 	 */
+	@Override
 	public void testGetMethodsHack() throws CModelException {
 		setStructuralParse(true);
 		super.testGetMethodsHack();
@@ -131,6 +142,7 @@ public class StructuralStructureTests extends IStructureTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.tests.IStructureTests#testGetStructureInfo()
 	 */
+	@Override
 	public void testGetStructureInfo() {
 		setStructuralParse(true);
 		super.testGetStructureInfo();
@@ -138,6 +150,7 @@ public class StructuralStructureTests extends IStructureTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.tests.IStructureTests#testInnerStruct()
 	 */
+	@Override
 	public void testInnerStruct() throws CModelException {
 		setStructuralParse(true);
 		super.testInnerStruct();
@@ -145,6 +158,7 @@ public class StructuralStructureTests extends IStructureTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.tests.IStructureTests#testIsAbstract()
 	 */
+	@Override
 	public void testIsAbstract() throws CModelException {
 		setStructuralParse(true);
 		super.testIsAbstract();
@@ -152,6 +166,7 @@ public class StructuralStructureTests extends IStructureTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.tests.IStructureTests#testIsClass()
 	 */
+	@Override
 	public void testIsClass() throws CModelException {
 		setStructuralParse(true);
 		super.testIsClass();
@@ -159,6 +174,7 @@ public class StructuralStructureTests extends IStructureTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.tests.IStructureTests#testIsStruct()
 	 */
+	@Override
 	public void testIsStruct() throws CModelException {
 		setStructuralParse(true);
 		super.testIsStruct();
@@ -166,6 +182,7 @@ public class StructuralStructureTests extends IStructureTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.tests.IStructureTests#testIsUnion()
 	 */
+	@Override
 	public void testIsUnion() throws CModelException {
 		setStructuralParse(true);
 		super.testIsUnion();

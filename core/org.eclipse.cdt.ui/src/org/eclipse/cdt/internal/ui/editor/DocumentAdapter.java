@@ -66,64 +66,84 @@ public class DocumentAdapter implements IBuffer, IDocumentListener, IAdaptable {
 	 */
 	static private class NullBuffer implements IBuffer {
 			
+		@Override
 		public void addBufferChangedListener(IBufferChangedListener listener) {}
 		
+		@Override
 		public void append(char[] text) {}
 		
+		@Override
 		public void append(String text) {}
 		
+		@Override
 		public void close() {}
 		
+		@Override
 		public char getChar(int position) {
 			return 0;
 		}
 		
+		@Override
 		public char[] getCharacters() {
 			return null;
 		}
 		
+		@Override
 		public String getContents() {
 			return null;
 		}
 		
+		@Override
 		public int getLength() {
 			return 0;
 		}
 		
+		@Override
 		public IOpenable getOwner() {
 			return null;
 		}
 		
+		@Override
 		public String getText(int offset, int length) {
 			return null;
 		}
 		
+		@Override
 		public IResource getUnderlyingResource() {
 			return null;
 		}
 		
+		@Override
 		public boolean hasUnsavedChanges() {
 			return false;
 		}
 		
+		@Override
 		public boolean isClosed() {
 			return false;
 		}
 		
+		@Override
 		public boolean isReadOnly() {
 			return true;
 		}
 		
+		@Override
 		public void removeBufferChangedListener(IBufferChangedListener listener) {}
 		
+		@Override
 		public void replace(int position, int length, char[] text) {}
 		
+		@Override
 		public void replace(int position, int length, String text) {}
 		
+		@Override
 		public void save(IProgressMonitor progress, boolean force) throws CModelException {}
 		
+		@Override
 		public void setContents(char[] contents) {}
 		
+		@Override
 		public void setContents(String contents) {}
 	}
 		
@@ -138,6 +158,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener, IAdaptable {
 		
 		private String fContents;
 		
+		@Override
 		public void run() {
 			fDocument.set(fContents);
 		}
@@ -157,6 +178,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener, IAdaptable {
 		private int fLength;
 		private String fText;
 		
+		@Override
 		public void run() {
 			try {
 				fDocument.replace(fOffset, fLength, fText);
@@ -267,6 +289,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener, IAdaptable {
 	/*
 	 * @see IBuffer#addBufferChangedListener(IBufferChangedListener)
 	 */
+	@Override
 	public void addBufferChangedListener(IBufferChangedListener listener) {
 		Assert.isNotNull(listener);
 		if (!fBufferListeners.contains(listener))
@@ -276,6 +299,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener, IAdaptable {
 	/*
 	 * @see IBuffer#removeBufferChangedListener(IBufferChangedListener)
 	 */
+	@Override
 	public void removeBufferChangedListener(IBufferChangedListener listener) {
 		Assert.isNotNull(listener);
 		fBufferListeners.remove(listener);
@@ -285,6 +309,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener, IAdaptable {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBuffer#append(char[])
 	 */
+	@Override
 	public void append(char[] text) {
 		append(new String(text));
 	}
@@ -292,6 +317,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener, IAdaptable {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBuffer#append(java.lang.String)
 	 */
+	@Override
 	public void append(String text) {
 		if (DEBUG_LINE_DELIMITERS) {
 			validateLineDelimiters(text);
@@ -303,6 +329,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener, IAdaptable {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBuffer#close()
 	 */
+	@Override
 	public void close() {
 		
 		if (isClosed())
@@ -333,6 +360,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener, IAdaptable {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBuffer#getChar(int)
 	 */
+	@Override
 	public char getChar(int position) {
 		try {
 			return fDocument.getChar(position);
@@ -344,6 +372,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener, IAdaptable {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBuffer#getCharacters()
 	 */
+	@Override
 	public char[] getCharacters() {
 		String content= getContents();
 		return content == null ? null : content.toCharArray();
@@ -352,6 +381,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener, IAdaptable {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBuffer#getContents()
 	 */
+	@Override
 	public String getContents() {
 		return fDocument.get();
 	}
@@ -359,6 +389,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener, IAdaptable {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBuffer#getLength()
 	 */
+	@Override
 	public int getLength() {
 		return fDocument.getLength();
 	}
@@ -366,6 +397,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener, IAdaptable {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBuffer#getOwner()
 	 */
+	@Override
 	public IOpenable getOwner() {
 		return fOwner;
 	}
@@ -373,6 +405,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener, IAdaptable {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBuffer#getText(int, int)
 	 */
+	@Override
 	public String getText(int offset, int length) {
 		try {
 			return fDocument.get(offset, length);
@@ -384,6 +417,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener, IAdaptable {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBuffer#getUnderlyingResource()
 	 */
+	@Override
 	public IResource getUnderlyingResource() {
 		return fFile;
 	}
@@ -391,6 +425,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener, IAdaptable {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBuffer#hasUnsavedChanges()
 	 */
+	@Override
 	public boolean hasUnsavedChanges() {
 		return fTextFileBuffer != null ? fTextFileBuffer.isDirty() : false;
 	}
@@ -398,6 +433,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener, IAdaptable {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBuffer#isClosed()
 	 */
+	@Override
 	public boolean isClosed() {
 		return fDocument == null;
 	}
@@ -405,6 +441,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener, IAdaptable {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBuffer#isReadOnly()
 	 */
+	@Override
 	public boolean isReadOnly() {
 		IResource resource= getUnderlyingResource();
 		if (resource != null) {
@@ -419,6 +456,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener, IAdaptable {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBuffer#replace(int, int, char[])
 	 */
+	@Override
 	public void replace(int position, int length, char[] text) {
 		replace(position, length, new String(text));
 	}
@@ -426,6 +464,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener, IAdaptable {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBuffer#replace(int, int, java.lang.String)
 	 */
+	@Override
 	public void replace(int position, int length, String text) {
 		if (DEBUG_LINE_DELIMITERS) {
 			validateLineDelimiters(text);
@@ -436,6 +475,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener, IAdaptable {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBuffer#save(org.eclipse.core.runtime.IProgressMonitor, boolean)
 	 */
+	@Override
 	public void save(IProgressMonitor progress, boolean force) throws CModelException {
 		try {
 			if (fTextFileBuffer != null)
@@ -448,6 +488,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener, IAdaptable {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBuffer#setContents(char[])
 	 */
+	@Override
 	public void setContents(char[] contents) {
 		setContents(new String(contents));
 	}
@@ -455,6 +496,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener, IAdaptable {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBuffer#setContents(java.lang.String)
 	 */
+	@Override
 	public void setContents(String contents) {
 		int oldLength= fDocument.getLength();
 		
@@ -525,6 +567,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener, IAdaptable {
 	/*
 	 * @see IDocumentListener#documentAboutToBeChanged(DocumentEvent)
 	 */
+	@Override
 	public void documentAboutToBeChanged(DocumentEvent event) {
 		// there is nothing to do here
 	}
@@ -532,6 +575,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener, IAdaptable {
 	/*
 	 * @see IDocumentListener#documentChanged(DocumentEvent)
 	 */
+	@Override
 	public void documentChanged(DocumentEvent event) {
 		fireBufferChanged(new BufferChangedEvent(this, event.getOffset(), event.getLength(), event.getText()));
 	}
@@ -544,6 +588,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener, IAdaptable {
 		}
 	}
 
+	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Object getAdapter(Class adapter) {
 		if (adapter.isAssignableFrom(ITextFileBuffer.class)) {

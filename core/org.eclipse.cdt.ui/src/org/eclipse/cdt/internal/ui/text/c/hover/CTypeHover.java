@@ -43,6 +43,7 @@ public class CTypeHover implements ICEditorTextHover, ITextHoverExtension, IText
 	/*
 	 * @see ICEditorTextHover#setEditor(IEditorPart)
 	 */
+	@Override
 	public void setEditor(IEditorPart editor) {
 		fProblemHover.setEditor(editor);
 		fCDocHover.setEditor(editor);
@@ -53,6 +54,7 @@ public class CTypeHover implements ICEditorTextHover, ITextHoverExtension, IText
 	/*
 	 * @see ITextHover#getHoverRegion(ITextViewer, int)
 	 */
+	@Override
 	public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
 		return fCDocHover.getHoverRegion(textViewer, offset);
 	}
@@ -60,6 +62,7 @@ public class CTypeHover implements ICEditorTextHover, ITextHoverExtension, IText
 	/*
 	 * @see ITextHover#getHoverInfo(ITextViewer, IRegion)
 	 */
+	@Override
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 		Object info= getHoverInfo2(textViewer, hoverRegion);
 		if (info != null) {
@@ -71,6 +74,7 @@ public class CTypeHover implements ICEditorTextHover, ITextHoverExtension, IText
 	/*
 	 * @see org.eclipse.jface.text.ITextHoverExtension2#getHoverInfo2(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
 	 */
+	@Override
 	public Object getHoverInfo2(ITextViewer textViewer, IRegion hoverRegion) {
 		Object hoverInfo= fProblemHover.getHoverInfo2(textViewer, hoverRegion);
 		if (hoverInfo != null) {
@@ -94,6 +98,7 @@ public class CTypeHover implements ICEditorTextHover, ITextHoverExtension, IText
 	/*
 	 * @see org.eclipse.jface.text.ITextHoverExtension#getHoverControlCreator()
 	 */
+	@Override
 	public IInformationControlCreator getHoverControlCreator() {
 		return fCurrentHover == null ? null : fCurrentHover.getHoverControlCreator();
 	}
@@ -101,6 +106,7 @@ public class CTypeHover implements ICEditorTextHover, ITextHoverExtension, IText
 	/*
 	 * @see org.eclipse.jface.text.information.IInformationProviderExtension2#getInformationPresenterControlCreator()
 	 */
+	@Override
 	public IInformationControlCreator getInformationPresenterControlCreator() {
 		return fCurrentHover == null ? null : fCurrentHover.getInformationPresenterControlCreator();
 	}

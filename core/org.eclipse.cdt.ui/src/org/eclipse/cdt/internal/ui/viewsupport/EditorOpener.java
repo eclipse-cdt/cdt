@@ -76,6 +76,7 @@ public class EditorOpener {
 	private static void showStatus(final IWorkbenchPartSite site, int duration, String msg) {
 		StatusLineHandler.showStatusLineMessage(site, msg);
 		 Display.getCurrent().timerExec(duration, new Runnable() {
+			@Override
 			public void run() {
 				StatusLineHandler.clearStatusLine(site);
 			}

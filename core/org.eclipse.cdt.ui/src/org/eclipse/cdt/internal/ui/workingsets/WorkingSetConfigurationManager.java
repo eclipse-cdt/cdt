@@ -67,10 +67,12 @@ public class WorkingSetConfigurationManager {
 
 	private final ISchedulingRule saveRule = new ISchedulingRule() {
 
+		@Override
 		public boolean isConflicting(ISchedulingRule rule) {
 			return rule == this;
 		}
 
+		@Override
 		public boolean contains(ISchedulingRule rule) {
 			return rule == this;
 		}
@@ -343,6 +345,7 @@ public class WorkingSetConfigurationManager {
 			WS_MGR.addPropertyChangeListener(this);
 		}
 
+		@Override
 		public void propertyChange(PropertyChangeEvent event) {
 			String property = event.getProperty();
 

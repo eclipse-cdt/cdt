@@ -43,6 +43,7 @@ public class DelegatingDragAdapter implements DragSourceListener {
 	/* non Java-doc
 	 * @see DragSourceListener
 	 */
+	@Override
 	public void dragStart(DragSourceEvent event) {
 		fFinishListener= null;
 		boolean saveDoit= event.doit;
@@ -70,6 +71,7 @@ public class DelegatingDragAdapter implements DragSourceListener {
 	/* non Java-doc
 	 * @see DragSourceListener
 	 */
+	@Override
 	public void dragSetData(DragSourceEvent event) {
 		fFinishListener= getListener(event.dataType);
 		if (fFinishListener != null) {
@@ -80,6 +82,7 @@ public class DelegatingDragAdapter implements DragSourceListener {
 	/* non Java-doc
 	 * @see DragSourceListener
 	 */
+	@Override
 	public void dragFinished(DragSourceEvent event) {
 		try{
 			if (fFinishListener != null) {

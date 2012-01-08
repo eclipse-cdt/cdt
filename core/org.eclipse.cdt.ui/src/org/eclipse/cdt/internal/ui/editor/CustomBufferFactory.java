@@ -39,6 +39,7 @@ public class CustomBufferFactory implements IBufferFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.model.IBufferFactory#createBuffer(org.eclipse.cdt.core.model.IOpenable)
 	 */
+	@Override
 	public IBuffer createBuffer(IOpenable owner) {
 		if (owner instanceof IWorkingCopy) {
 

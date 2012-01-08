@@ -57,6 +57,7 @@ public abstract class GenericErrorParserTests extends TestCase {
 	/*
 	 * @see TestCase#setUp()
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		fTempProject = ResourcesPlugin.getWorkspace().getRoot().getProject("temp-" + System.currentTimeMillis());
@@ -68,6 +69,7 @@ public abstract class GenericErrorParserTests extends TestCase {
 	/*
 	 * @see TestCase#tearDown()
 	 */
+	@Override
 	protected void tearDown() {
 		try {
 			super.tearDown();
@@ -174,6 +176,7 @@ public abstract class GenericErrorParserTests extends TestCase {
 		 * 
 		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public int compare(Object arg0, Object arg1) {
 			try {
 				IFile f0 = (IFile)arg0;
@@ -199,6 +202,7 @@ public abstract class GenericErrorParserTests extends TestCase {
 		public List<String> descriptions;
 		private Comparator fFileNameComparator;
 
+		@Override
 		public void addMarker(IResource file, int lineNumber, String errorDesc, int severity, String errorVar) {
 			ProblemMarkerInfo problemMarkerInfo = new ProblemMarkerInfo(file, lineNumber, errorDesc, severity, errorVar, null);
 			addMarker(problemMarkerInfo);
@@ -208,6 +212,7 @@ public abstract class GenericErrorParserTests extends TestCase {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.core.IMarkerGenerator#addMarker(org.eclipse.cdt.core.ProblemMarkerInfo)
 		 */
+		@Override
 		public void addMarker(ProblemMarkerInfo problemMarkerInfo) {
 			int index = Collections.binarySearch(uniqFiles, problemMarkerInfo.file, fFileNameComparator);
 			if (index < 0) {
@@ -250,6 +255,7 @@ public abstract class GenericErrorParserTests extends TestCase {
 			fProject = project;
 		}
 
+		@Override
 		public IFile findFileName(String fileName) {
 			if (fileName==null || fileName.trim().length()==0) {
 				return null;
@@ -270,6 +276,7 @@ public abstract class GenericErrorParserTests extends TestCase {
 			return file;
 		}
 
+		@Override
 		protected IFile findFileInWorkspace(IPath path) {
 			IFile file = fProject.getFile(path.lastSegment());
 			if (!file.exists()) {

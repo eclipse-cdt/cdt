@@ -121,6 +121,7 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 					// Otherwise the drag source (e.g., Windows Explorer) will be blocked 
 					// while the operation executes. Fixes bug 35796.
 					Display.getCurrent().asyncExec(new Runnable() {
+						@Override
 						public void run() {
 							getShell().forceActive();
 							CopyFilesAndFoldersOperation op= new CopyFilesAndFoldersOperation(getShell());
@@ -374,6 +375,7 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 			}
 			final ICElement[] siblings = neighbours;
 			IRunnableWithProgress runnable = new IRunnableWithProgress() {
+				@Override
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
 						CoreModel.getDefault().getCModel().copy(cElements, containers, siblings, null, false, monitor);
@@ -412,6 +414,7 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 			}
 			final ICElement[] siblings = neighbours;
 			IRunnableWithProgress runnable = new IRunnableWithProgress() {
+				@Override
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
 						CoreModel.getDefault().getCModel().move(cElements, containers, siblings, null, false, monitor);

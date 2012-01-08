@@ -60,6 +60,7 @@ public class WorkingSetConfiguration implements IWorkingSetConfiguration {
 	 * 
 	 * @return my parent
 	 */
+	@Override
 	public IWorkingSetProxy getWorkingSet() {
 		return workingSet;
 	}
@@ -69,6 +70,7 @@ public class WorkingSetConfiguration implements IWorkingSetConfiguration {
 	 * 
 	 * @return my name
 	 */
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -132,14 +134,17 @@ public class WorkingSetConfiguration implements IWorkingSetConfiguration {
 		projects.put(projectConfig.getProjectName(), projectConfig);
 	}
 
+	@Override
 	public IWorkingSetProjectConfiguration getProjectConfiguration(String projectName) {
 		return getProjects().get(projectName);
 	}
 
+	@Override
 	public java.util.Collection<IWorkingSetProjectConfiguration> getProjectConfigurations() {
 		return getProjects().values();
 	}
 
+	@Override
 	public boolean isActive() {
 		boolean result = !getProjects().isEmpty();
 
@@ -155,6 +160,7 @@ public class WorkingSetConfiguration implements IWorkingSetConfiguration {
 		return result;
 	}
 
+	@Override
 	public void activate() {
 		if (!isActive()) {
 			for (IWorkingSetProjectConfiguration next : getProjectConfigurations()) {
@@ -169,6 +175,7 @@ public class WorkingSetConfiguration implements IWorkingSetConfiguration {
 		}
 	}
 
+	@Override
 	public IStatus build(IProgressMonitor monitor) {
 		MultiStatus result = new MultiStatus(CUIPlugin.PLUGIN_ID, 0,
 				WorkingSetMessages.WSConfig_build_problems, null);
@@ -208,6 +215,7 @@ public class WorkingSetConfiguration implements IWorkingSetConfiguration {
 		return result.isOK() ? Status.OK_STATUS : result;
 	}
 
+	@Override
 	public void saveState(IMemento memento) {
 		memento.putString(ATTR_NAME, getName());
 
@@ -216,6 +224,7 @@ public class WorkingSetConfiguration implements IWorkingSetConfiguration {
 		}
 	}
 
+	@Override
 	public void loadState(IMemento memento) {
 		setName(memento.getString(ATTR_NAME));
 
@@ -252,6 +261,7 @@ public class WorkingSetConfiguration implements IWorkingSetConfiguration {
 		return result;
 	}
 
+	@Override
 	public ISnapshot createSnapshot(IWorkingSetProxy.ISnapshot workingSet, WorkspaceSnapshot workspace) {
 
 		return new Snapshot(workingSet, this, workspace);
@@ -346,6 +356,7 @@ public class WorkingSetConfiguration implements IWorkingSetConfiguration {
 			return (IWorkingSetProxy.ISnapshot) super.getWorkingSet();
 		}
 
+		@Override
 		public final WorkspaceSnapshot getWorkspaceSnapshot() {
 			return workspace;
 		}
@@ -356,6 +367,7 @@ public class WorkingSetConfiguration implements IWorkingSetConfiguration {
 		 * 
 		 * @return whether I am read-only
 		 */
+		@Override
 		public final boolean isReadOnly() {
 			return readOnly;
 		}

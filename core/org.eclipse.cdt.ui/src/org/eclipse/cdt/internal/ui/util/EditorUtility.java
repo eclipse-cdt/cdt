@@ -902,6 +902,7 @@ public class EditorUtility {
 				/*
 				 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
 				 */
+				@Override
 				public void handleException(Throwable exception) {
 					CUIPlugin.log(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID,
 							ICStatusConstants.EDITOR_CHANGED_REGION_CALCULATION, exception.getLocalizedMessage(),
@@ -915,6 +916,7 @@ public class EditorUtility {
 				/*
 				 * @see org.eclipse.core.runtime.ISafeRunnable#run()
 				 */
+				@Override
 				public void run() throws Exception {
 					monitor.beginTask(Messages.EditorUtility_calculatingChangedRegions_message, 20);
 					IFileStore fileStore= buffer.getFileStore();

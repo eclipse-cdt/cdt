@@ -28,6 +28,7 @@ public class ProjectSettingsWizardPageMock implements IProjectSettingsWizardPage
 		this.path = path;
 	}
 	
+	@Override
 	public String getDestinationFilePath() {
 		return path;
 	}
@@ -36,6 +37,7 @@ public class ProjectSettingsWizardPageMock implements IProjectSettingsWizardPage
 		this.selectedConfiguration = config;
 	}
 
+	@Override
 	public ICConfigurationDescription getSelectedConfiguration() {
 		return selectedConfiguration;
 	}
@@ -44,6 +46,7 @@ public class ProjectSettingsWizardPageMock implements IProjectSettingsWizardPage
 		this.selectedSettingsProcessors = processors;
 	}
 	
+	@Override
 	public List<ISettingsProcessor> getSelectedSettingsProcessors() {
 		return selectedSettingsProcessors;
 	}
@@ -52,18 +55,22 @@ public class ProjectSettingsWizardPageMock implements IProjectSettingsWizardPage
 		this.settingsProcessors = processors;
 	}
 	
+	@Override
 	public List<ISettingsProcessor> getSettingsProcessors() {
 		return settingsProcessors;
 	}
 		
+	@Override
 	public void setDisplayedSettingsProcessors( List<ISettingsProcessor> processors) {
 		// do nothing
 	}
 
+	@Override
 	public void setMessage(String message, int flag) {
 		// do nothing
 	}
 
+	@Override
 	public void showErrorDialog(String dialogTitle, String message) {
 		// do nothing
 	}

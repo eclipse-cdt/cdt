@@ -51,18 +51,23 @@ public class CInformationProvider implements IInformationProvider, IInformationP
 	 * Part listener handling editor close.
 	 */
 	class EditorWatcher implements IPartListener {
+		@Override
 		public void partOpened(IWorkbenchPart part) {
 		}
+		@Override
 		public void partDeactivated(IWorkbenchPart part) {
 		}
+		@Override
 		public void partClosed(IWorkbenchPart part) {
 			if (part == fEditor) {
 				fEditor.getSite().getWorkbenchWindow().getPartService().removePartListener(fPartListener);
 				fPartListener= null;
 			}
 		}
+		@Override
 		public void partActivated(IWorkbenchPart part) {
 		}
+		@Override
 		public void partBroughtToTop(IWorkbenchPart part) {
 		}
 	}
@@ -92,6 +97,7 @@ public class CInformationProvider implements IInformationProvider, IInformationP
 	/*
 	 * @see IInformationProvider#getSubject(ITextViewer, int)
 	 */
+	@Override
 	public IRegion getSubject(ITextViewer textViewer, int offset) {
 		if (textViewer != null && fImplementation != null) {
 			return fImplementation.getHoverRegion(textViewer, offset);
@@ -102,6 +108,7 @@ public class CInformationProvider implements IInformationProvider, IInformationP
 	/*
 	 * @see IInformationProvider#getInformation(ITextViewer, IRegion)
 	 */
+	@Override
 	public String getInformation(ITextViewer textViewer, IRegion subject) {
 		if (fImplementation != null) {
 			String s= fImplementation.getHoverInfo(textViewer, subject);
@@ -115,6 +122,7 @@ public class CInformationProvider implements IInformationProvider, IInformationP
 	/*
 	 * @see org.eclipse.jface.text.information.IInformationProviderExtension#getInformation2(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
 	 */
+	@Override
 	public Object getInformation2(ITextViewer textViewer, IRegion subject) {
 		if (fImplementation == null)
 			return null;
@@ -124,6 +132,7 @@ public class CInformationProvider implements IInformationProvider, IInformationP
 	/*
 	 * @see IInformationProviderExtension2#getInformationPresenterControlCreator()
 	 */
+	@Override
 	public IInformationControlCreator getInformationPresenterControlCreator() {
 		if (fImplementation != null) {
 			return ((IInformationProviderExtension2) fImplementation).getInformationPresenterControlCreator();

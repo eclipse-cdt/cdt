@@ -35,7 +35,8 @@ public class ExpectedStringsTests extends TestCase {
      * Example code test the packages in the project 
      *  "com.qnx.tools.ide.cdt.core"
      */
-    protected void setUp() {
+    @Override
+	protected void setUp() {
 
 
     }
@@ -45,7 +46,8 @@ public class ExpectedStringsTests extends TestCase {
      *
      * Called after every test case method.
      */
-    protected void tearDown() {
+    @Override
+	protected void tearDown() {
        // release resources here and clean-up
     }
     

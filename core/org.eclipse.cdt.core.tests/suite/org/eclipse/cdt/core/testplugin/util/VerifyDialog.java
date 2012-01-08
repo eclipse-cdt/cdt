@@ -73,6 +73,7 @@ public class VerifyDialog extends TitleAreaDialog {
 	/* (non-Javadoc)
 	 * Method declared on Window.
 	 */
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText("Dialog Verification");
@@ -81,6 +82,7 @@ public class VerifyDialog extends TitleAreaDialog {
 	/* (non-Javadoc)
 	 * Method declared on Dialog.
 	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		_yesButton = createButton(parent, IDialogConstants.YES_ID, IDialogConstants.YES_LABEL, true);
 		createButton(parent, IDialogConstants.NO_ID, IDialogConstants.NO_LABEL, false);
@@ -88,6 +90,7 @@ public class VerifyDialog extends TitleAreaDialog {
 	/* (non-Javadoc)
 	 * Method declared on Dialog.
 	 */
+	@Override
 	protected void buttonPressed(int buttonId) {
 		if (IDialogConstants.YES_ID == buttonId) {
 			setReturnCode(IDialogConstants.YES_ID);
@@ -102,6 +105,7 @@ public class VerifyDialog extends TitleAreaDialog {
 	/* (non-Javadoc)
 	 * Method declared on Dialog.
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		// top level composite
 		Composite parentComposite = (Composite)super.createDialogArea(parent);
@@ -144,6 +148,7 @@ public class VerifyDialog extends TitleAreaDialog {
 			radio.setText( _dialogTests[i].label() );
 			final int testID = _dialogTests[i].getID();
 			radio.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					TEST_TYPE = testID;
 					initializeTest();
@@ -174,6 +179,7 @@ public class VerifyDialog extends TitleAreaDialog {
 		}
 		_checkList = new Button[checkListSize];
 		SelectionAdapter selectionAdapter = new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				checkYesEnable();
 			}
@@ -229,6 +235,7 @@ public class VerifyDialog extends TitleAreaDialog {
 	 * opening.  Should use open(Dialog) instead.
 	 * 
 	 */
+	@Override
 	public int open() {
 		_failureText = "Testing dialog is required, use VerifyDialog::open(Dialog)";
 		return IDialogConstants.NO_ID;
@@ -262,6 +269,7 @@ public class VerifyDialog extends TitleAreaDialog {
 		_testDialog.getShell().setLocation(getShell().getSize().x + 1, 0);
 		_testDialog.getShell().setSize(_testDialogSize);
 		_testDialog.getShell().addShellListener(new ShellAdapter() {
+			@Override
 			public void shellClosed(ShellEvent e) {				
 				e.doit = false;
 			}
@@ -306,6 +314,7 @@ public class VerifyDialog extends TitleAreaDialog {
 	 * In case the shell was closed by a means other than
 	 * the NO button.
 	 */
+	@Override
 	protected void handleShellCloseEvent() {
 		handleFailure();
 	}

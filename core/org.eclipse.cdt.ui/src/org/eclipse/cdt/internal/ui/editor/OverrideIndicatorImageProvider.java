@@ -31,6 +31,7 @@ public class OverrideIndicatorImageProvider implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.IAnnotationImageProvider#getManagedImage(org.eclipse.jface.text.source.Annotation)
 	 */
+	@Override
 	public Image getManagedImage(Annotation annotation) {
 		return null;
 	}
@@ -38,6 +39,7 @@ public class OverrideIndicatorImageProvider implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.IAnnotationImageProvider#getImageDescriptorId(org.eclipse.jface.text.source.Annotation)
 	 */
+	@Override
 	public String getImageDescriptorId(Annotation annotation) {
 		if (!isImageProviderFor(annotation)) {
 			return null;
@@ -57,6 +59,7 @@ public class OverrideIndicatorImageProvider implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.IAnnotationImageProvider#getImageDescriptor(java.lang.String)
 	 */
+	@Override
 	public ImageDescriptor getImageDescriptor(String imageDescritporId) {
 		if (imageDescritporId.equals(OVERRIDE_IMG_DESC_ID)) {
 			return CPluginImages.DESC_OBJS_OVERRIDES;

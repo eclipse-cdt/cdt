@@ -41,6 +41,7 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 			fDelta = null;
 		}
 		
+		@Override
 		public void handleEvent(CProjectDescriptionEvent event) {
 			if(!event.getProject().getName().equals(fProjName))
 				return;
@@ -66,9 +67,11 @@ public class CProjectDescriptionDeltaTests  extends BaseTestCase{
 		return suite(CProjectDescriptionDeltaTests.class, "_");
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		ResourceHelper.cleanUp();
 	}

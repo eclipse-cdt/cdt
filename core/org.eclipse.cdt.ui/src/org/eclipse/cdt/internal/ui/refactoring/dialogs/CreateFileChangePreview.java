@@ -53,6 +53,7 @@ public class CreateFileChangePreview implements IChangePreviewViewer {
 	private SourceViewer srcViewer;
 	private CTextTools textTools;
 	
+	@Override
 	public void createControl(Composite parent) {
 		control =  new CreateFileChangePane(parent, SWT.BORDER | SWT.FLAT);
 		Dialog.applyDialogFont(control);
@@ -65,10 +66,12 @@ public class CreateFileChangePreview implements IChangePreviewViewer {
 		control.setContent(srcViewer.getControl());
 	}
 
+	@Override
 	public Control getControl() {
 		return control;
 	}
 
+	@Override
 	public void setInput(ChangePreviewViewerInput input) {
 		Assert.isNotNull(input);
 		if(control != null) {

@@ -211,9 +211,11 @@ public class IndexProviderManagerTest extends IndexTestBase {
 					new MockPDOM("contentID.bar", "91"),
 					new MockPDOM("contentID.baz", "89")
 				};
+				@Override
 				public IIndexFragment[] getIndexFragments(ICConfigurationDescription config) {
 					return fragments;
 				}
+				@Override
 				public boolean providesFor(ICProject project) throws CoreException {
 					return true;
 				}
@@ -223,9 +225,11 @@ public class IndexProviderManagerTest extends IndexTestBase {
 						new MockPDOM("contentID.baz", "90"),
 						new MockPDOM("contentID.contentA", "38"),
 				};
+				@Override
 				public IIndexFragment[] getIndexFragments(ICConfigurationDescription config) {
 					return fragments;
 				}
+				@Override
 				public boolean providesFor(ICProject project) throws CoreException {
 					return true;
 				}
@@ -267,9 +271,11 @@ public class IndexProviderManagerTest extends IndexTestBase {
 					new MockPDOM("contentID.bar", "91"),
 					new MockPDOM("contentID.baz", "89")
 				};
+				@Override
 				public IIndexFragment[] getIndexFragments(ICConfigurationDescription config) {
 					return fragments;
 				}
+				@Override
 				public boolean providesFor(ICProject project) throws CoreException {
 					return true;
 				}
@@ -278,9 +284,11 @@ public class IndexProviderManagerTest extends IndexTestBase {
 				IIndexFragment[] fragments= new IIndexFragment[] {
 					new MockPDOM("contentID.contentA", "41"),
 				};
+				@Override
 				public IIndexFragment[] getIndexFragments(ICConfigurationDescription config) {
 					return fragments;
 				}
+				@Override
 				public boolean providesFor(ICProject project) throws CoreException {
 					return true;
 				}
@@ -520,6 +528,7 @@ class MockStateIndexProvider implements IIndexProvider {
 		this.targetProject = cproject;
 	}
 
+	@Override
 	public boolean providesFor(ICProject cproject) throws CoreException {
 		return this.targetProject.equals(cproject);
 	}
@@ -542,6 +551,7 @@ class MockStateIndexFragmentProvider extends MockStateIndexProvider implements I
 		}
 	}
 
+	@Override
 	public IIndexFragment[] getIndexFragments(ICConfigurationDescription config) throws CoreException {
 		int index = MockState.states.indexOf(config.getId());
 		index = invert ? (fragments.length-1)-index : index;
@@ -564,145 +574,199 @@ class MockConfig implements ICConfigurationDescription {
 		this.project= project;
 	}
 
+	@Override
 	public String getId() {
 		return id;
 	}
 
+	@Override
 	public ICConfigExtensionReference create(String extensionPoint,
 			String extension) throws CoreException {
 		return null;
 	}
 
+	@Override
 	public ICExternalSetting createExternalSetting(String[] languageIDs,
 			String[] contentTypeIds, String[] extensions,
 			ICSettingEntry[] entries) throws WriteAccessException {
 		return null;
 	}
 
+	@Override
 	public ICFileDescription createFileDescription(IPath path,
 			ICResourceDescription base) throws CoreException,
 			WriteAccessException {
 		return null;
 	}
 
+	@Override
 	public ICFolderDescription createFolderDescription(IPath path,
 			ICFolderDescription base) throws CoreException,
 			WriteAccessException {
 		return null;
 	}
 
+	@Override
 	public ICConfigExtensionReference[] get(String extensionPointID) {
 		return null;
 	}
 
+	@Override
 	public ICBuildSetting getBuildSetting() {
 		return null;
 	}
 
+	@Override
 	public String getBuildSystemId() {
 		return null;
 	}
 
+	@Override
 	public ICdtVariablesContributor getBuildVariablesContributor() {
 		return null;
 	}
 
+	@Override
 	public CConfigurationData getConfigurationData() {
 		return null;
 	}
 
+	@Override
 	public String getDescription() {
 		return null;
 	}
 
+	@Override
 	public ICExternalSetting[] getExternalSettings() {
 		return null;
 	}
 
+	@Override
 	public ICFileDescription[] getFileDescriptions() {
 		return null;
 	}
 
+	@Override
 	public ICFolderDescription[] getFolderDescriptions() {
 		return null;
 	}
 
+	@Override
 	public ICProjectDescription getProjectDescription() {
 		return CoreModel.getDefault().getProjectDescription(project);
 	}
 
+	@Override
 	public Map getReferenceInfo() {
 		return null;
 	}
 
+	@Override
 	public ICResourceDescription getResourceDescription(IPath path,
 			boolean exactPath) {
 		return null;
 	}
 
+	@Override
 	public ICResourceDescription[] getResourceDescriptions() {
 		return null;
 	}
 
+	@Override
 	public ICFolderDescription getRootFolderDescription() {return null;}
+	@Override
 	public Object getSessionProperty(QualifiedName name) {return null;}
+	@Override
 	public ICSourceEntry[] getSourceEntries() {return null;}
+	@Override
 	public ICTargetPlatformSetting getTargetPlatformSetting() {return null;}
+	@Override
 	public boolean isActive() {return false;}
+	@Override
 	public boolean isModified() {return false;}
+	@Override
 	public boolean isPreferenceConfiguration() {return false;}
+	@Override
 	public void remove(ICConfigExtensionReference ext) throws CoreException {}
+	@Override
 	public void remove(String extensionPoint) throws CoreException {}
+	@Override
 	public void removeExternalSetting(ICExternalSetting setting) throws WriteAccessException {}
+	@Override
 	public void removeExternalSettings() throws WriteAccessException {}
+	@Override
 	public void removeResourceDescription(ICResourceDescription des)
 	throws CoreException, WriteAccessException {}
+	@Override
 	public void setActive() throws WriteAccessException {}
+	@Override
 	public void setConfigurationData(String buildSystemId,
 			CConfigurationData data) throws WriteAccessException {}
+	@Override
 	public void setDescription(String des) throws WriteAccessException {}
+	@Override
 	public void setName(String name) throws WriteAccessException {}
+	@Override
 	public void setReferenceInfo(Map<String, String> refs) throws WriteAccessException {}
+	@Override
 	public void setSessionProperty(QualifiedName name, Object value) {}
+	@Override
 	public void setSourceEntries(ICSourceEntry[] entries) throws CoreException,
 	WriteAccessException {}
+	@Override
 	public ICSettingObject[] getChildSettings() {return null;}
+	@Override
 	public ICConfigurationDescription getConfiguration() {return null;}
+	@Override
 	public String getName() {return null;}
+	@Override
 	public ICSettingContainer getParent() {return null;}
+	@Override
 	public int getType() {return 0;}
+	@Override
 	public boolean isReadOnly() {return false;}
+	@Override
 	public boolean isValid() {return false;}
+	@Override
 	public ICStorageElement getStorage(String id, boolean create) throws CoreException {
 		return null;
 	}
+	@Override
 	public ICStorageElement importStorage(String id, ICStorageElement storage) {
 		return null;
 	}
 
+	@Override
 	public void removeStorage(String id) throws CoreException {
 	}
 
+	@Override
 	public ICLanguageSetting getLanguageSettingForFile(IPath path, boolean ignoreExludeStatus) {
 		return null;
 	}
 
+	@Override
 	public String[] getExternalSettingsProviderIds() {
 		return null;
 	}
 
+	@Override
 	public void setExternalSettingsProviderIds(String[] ids) {}
 
+	@Override
 	public void updateExternalSettingsProviders(String[] ids) {}
 
+	@Override
 	public ICSourceEntry[] getResolvedSourceEntries() {
 		return null;
 	}
 
+	@Override
 	public CConfigurationStatus getConfigurationStatus() {
 		return CConfigurationStatus.CFG_STATUS_OK;
 	}
 
+	@Override
 	public void setReadOnly(boolean readOnly, boolean keepModify) {}
 }
 

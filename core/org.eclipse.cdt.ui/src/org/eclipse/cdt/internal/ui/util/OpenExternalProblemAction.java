@@ -45,6 +45,7 @@ public class OpenExternalProblemAction extends ActionDelegate implements IObject
 	public OpenExternalProblemAction() {
 	}
 
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		
 	}

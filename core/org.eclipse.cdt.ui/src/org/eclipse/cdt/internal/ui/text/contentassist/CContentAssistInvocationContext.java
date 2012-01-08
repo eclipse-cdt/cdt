@@ -92,6 +92,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 	 * 
 	 * @return the translation unit that content assist is invoked in, possibly <code>null</code>
 	 */
+	@Override
 	public ITranslationUnit getTranslationUnit() {
 		if (!fTUComputed) {
 			fTUComputed= true;
@@ -106,11 +107,13 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 	 * 
 	 * @return the current C project, possibly <code>null</code>
 	 */
+	@Override
 	public ICProject getProject() {
 		ITranslationUnit unit= getTranslationUnit();
 		return unit == null ? null : unit.getCProject();
 	}
 		
+	@Override
 	public IASTCompletionNode getCompletionNode() {
 		
 		//for scalability
@@ -164,6 +167,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		return fCN;
 	}
 	
+	@Override
 	public int getParseOffset() {
 		if (!fParseOffsetComputed) {
 			fParseOffsetComputed= true;
@@ -183,6 +187,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 	/**
 	 * @return the offset where context information (parameter hints) starts.
 	 */
+	@Override
 	public int getContextInformationOffset() {
 		getParseOffset();
 		return fContextInfoPosition;
@@ -270,10 +275,12 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 	 * 
 	 * @return the editor, may be <code>null</code>
 	 */
+	@Override
 	public IEditorPart getEditor() {
 		return fEditor;
 	}
 
+	@Override
 	public boolean isContextInformationStyle() {
 		return !fIsCompletion || (getParseOffset() != getInvocationOffset());
 	}

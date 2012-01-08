@@ -36,10 +36,12 @@ public class FileTransferDropAdapter extends CDTViewerDropAdapter implements Tra
 
 	//---- TransferDropTargetListener interface ---------------------------------------
 	
+	@Override
 	public Transfer getTransfer() {
 		return FileTransfer.getInstance();
 	}
 	
+	@Override
 	public boolean isEnabled(DropTargetEvent event) {
 		Object target= event.item != null ? event.item.getData() : null;
 		if (target == null) {
@@ -88,6 +90,7 @@ public class FileTransferDropAdapter extends CDTViewerDropAdapter implements Tra
 		// Otherwise the drag source (e.g., Windows Explorer) will be blocked 
 		// while the operation executes. Fixes bug 35796.
 		Display.getCurrent().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				getShell().forceActive();
 				new CopyFilesAndFoldersOperation(getShell()).copyFiles((String[]) data, target);

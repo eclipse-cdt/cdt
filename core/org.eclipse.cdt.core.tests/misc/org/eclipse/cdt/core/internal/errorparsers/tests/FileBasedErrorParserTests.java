@@ -30,6 +30,7 @@ public class FileBasedErrorParserTests extends GenericErrorParserTests {
 		errorFile = file;
 	}
 	
+	@Override
 	public String getName() {
 		return super.getName() + " " + errorFile.getName();
 	}

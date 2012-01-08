@@ -178,11 +178,13 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 
 		fText.addKeyListener(new KeyListener() {
 
+			@Override
 			public void keyPressed(KeyEvent e)  {
 				if (e.character == 0x1B) // ESC
 					fShell.dispose();
 			}
 
+			@Override
 			public void keyReleased(KeyEvent e) {}
 		});
 
@@ -306,6 +308,7 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	/*
 	 * @see IInformationControl#setInformation(String)
 	 */
+	@Override
 	public void setInformation(String content) {
 		if (content == null) {
 			fViewer.setInput(null);
@@ -320,6 +323,7 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	/*
 	 * @see IInformationControl#setVisible(boolean)
 	 */
+	@Override
 	public void setVisible(boolean visible) {
 		fShell.setVisible(visible);
 	}
@@ -328,6 +332,7 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	 * {@inheritDoc}
 	 * @since 3.0
 	 */
+	@Override
 	public void widgetDisposed(DisposeEvent event) {
 		if (fStatusTextFont != null && !fStatusTextFont.isDisposed())
 			fStatusTextFont.dispose();
@@ -345,6 +350,7 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public final void dispose() {
 		if (!fIsSystemBackgroundColor)
 			fBackgroundColor.dispose();
@@ -357,6 +363,7 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	/*
 	 * @see IInformationControl#setSize(int, int)
 	 */
+	@Override
 	public void setSize(int width, int height) {
 		fShell.setSize(width, height);
 	}
@@ -364,6 +371,7 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	/*
 	 * @see IInformationControl#setLocation(Point)
 	 */
+	@Override
 	public void setLocation(Point location) {
 		fShell.setLocation(location);
 	}
@@ -371,6 +379,7 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	/*
 	 * @see IInformationControl#setSizeConstraints(int, int)
 	 */
+	@Override
 	public void setSizeConstraints(int maxWidth, int maxHeight) {
 		fMaxWidth= maxWidth;
 		fMaxHeight= maxHeight;
@@ -379,6 +388,7 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	/*
 	 * @see IInformationControl#computeSizeHint()
 	 */
+	@Override
 	public Point computeSizeHint() {
 		// compute the preferred size
 		int x= SWT.DEFAULT;
@@ -399,6 +409,7 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	/*
 	 * @see IInformationControl#addDisposeListener(DisposeListener)
 	 */
+	@Override
 	public void addDisposeListener(DisposeListener listener) {
 		fShell.addDisposeListener(listener);
 	}
@@ -406,6 +417,7 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	/*
 	 * @see IInformationControl#removeDisposeListener(DisposeListener)
 	 */
+	@Override
 	public void removeDisposeListener(DisposeListener listener) {
 		fShell.removeDisposeListener(listener);
 	}
@@ -413,6 +425,7 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	/*
 	 * @see IInformationControl#setForegroundColor(Color)
 	 */
+	@Override
 	public void setForegroundColor(Color foreground) {
 		fText.setForeground(foreground);
 	}
@@ -420,6 +433,7 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	/*
 	 * @see IInformationControl#setBackgroundColor(Color)
 	 */
+	@Override
 	public void setBackgroundColor(Color background) {
 		fText.setBackground(background);
 	}
@@ -427,6 +441,7 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	/*
 	 * @see IInformationControl#isFocusControl()
 	 */
+	@Override
 	public boolean isFocusControl() {
 		return fShell.getDisplay().getActiveShell() == fShell;
 	}
@@ -434,6 +449,7 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	/*
 	 * @see IInformationControl#setFocus()
 	 */
+	@Override
 	public void setFocus() {
 		fShell.forceFocus();
 		fText.setFocus();
@@ -442,6 +458,7 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	/*
 	 * @see IInformationControl#addFocusListener(FocusListener)
 	 */
+	@Override
 	public void addFocusListener(FocusListener listener) {
 		fText.addFocusListener(listener);
 	}
@@ -449,6 +466,7 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	/*
 	 * @see IInformationControl#removeFocusListener(FocusListener)
 	 */
+	@Override
 	public void removeFocusListener(FocusListener listener) {
 		fText.removeFocusListener(listener);
 	}
@@ -456,6 +474,7 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	/*
 	 * @see IInformationControlExtension#hasContents()
 	 */
+	@Override
 	public boolean hasContents() {
 		return fText.getCharCount() > 0;
 	}
@@ -468,6 +487,7 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	 * @see org.eclipse.jface.text.IInformationControlExtension3#computeTrim()
 	 * @since 5.0
 	 */
+	@Override
 	public Rectangle computeTrim() {
 		Rectangle trim= fShell.computeTrim(0, 0, 0, 0);
 		addInternalTrim(trim);
@@ -498,6 +518,7 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	 * @see org.eclipse.jface.text.IInformationControlExtension3#getBounds()
 	 * @since 5.0
 	 */
+	@Override
 	public Rectangle getBounds() {
 		return fShell.getBounds();
 	}
@@ -506,6 +527,7 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	 * @see org.eclipse.jface.text.IInformationControlExtension3#restoresLocation()
 	 * @since 5.0
 	 */
+	@Override
 	public boolean restoresLocation() {
 		return false;
 	}
@@ -514,6 +536,7 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	 * @see org.eclipse.jface.text.IInformationControlExtension3#restoresSize()
 	 * @since 5.0
 	 */
+	@Override
 	public boolean restoresSize() {
 		return false;
 	}
@@ -522,8 +545,10 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	 * @see org.eclipse.jface.text.IInformationControlExtension5#getInformationPresenterControlCreator()
 	 * @since 5.0
 	 */
+	@Override
 	public IInformationControlCreator getInformationPresenterControlCreator() {
 		return new IInformationControlCreator() {
+			@Override
 			public IInformationControl createInformationControl(Shell parent) {
 				return new SourceViewerInformationControl(parent, true, fOrientation, null);
 			}
@@ -534,6 +559,7 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	 * @see org.eclipse.jface.text.IInformationControlExtension5#containsControl(org.eclipse.swt.widgets.Control)
 	 * @since 5.0
 	 */
+	@Override
 	public boolean containsControl(Control control) {
 		do {
 			if (control == fShell)
@@ -549,6 +575,7 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	 * @see org.eclipse.jface.text.IInformationControlExtension5#isVisible()
 	 * @since 5.0
 	 */
+	@Override
 	public boolean isVisible() {
 		return fShell != null && !fShell.isDisposed() && fShell.isVisible();
 	}
@@ -556,6 +583,7 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	/*
 	 * @see org.eclipse.jface.text.IInformationControlExtension5#computeSizeConstraints(int, int)
 	 */
+	@Override
 	public Point computeSizeConstraints(int widthInChars, int heightInChars) {
 		GC gc= new GC(fText);
 		gc.setFont(fTextFont);

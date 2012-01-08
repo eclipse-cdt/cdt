@@ -66,6 +66,7 @@ public class ElementDeltaTests extends TestCase implements IElementChangedListen
 		super(name);
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		monitor = new NullProgressMonitor();
 
@@ -91,6 +92,7 @@ public class ElementDeltaTests extends TestCase implements IElementChangedListen
 		changedElements = new Vector(20);
 	}
 
+	@Override
 	protected void tearDown()  {
 		  CProjectHelper.delete(fCProject);
 	}	
@@ -237,6 +239,7 @@ public class ElementDeltaTests extends TestCase implements IElementChangedListen
 		return found;						
 	}
 	
+	@Override
 	public void elementChanged(ElementChangedEvent event){
 		try {
 			addedElements.clear();

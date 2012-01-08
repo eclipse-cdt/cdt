@@ -69,6 +69,7 @@ public class DeleteTaskAction extends ActionDelegate implements IObjectActionDel
 	/**
 	 * @see IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
 	 */
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 	}
 

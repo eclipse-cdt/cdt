@@ -54,13 +54,16 @@ public class IBHistoryListAction extends Action {
 			};
 					
 			IListAdapter<ITranslationUnit> adapter= new IListAdapter<ITranslationUnit>() {
+				@Override
 				public void customButtonPressed(ListDialogField<ITranslationUnit> field, int index) {
 					doCustomButtonPressed();
 				}
+				@Override
 				public void selectionChanged(ListDialogField<ITranslationUnit> field) {
 					doSelectionChanged();
 				}
 				
+				@Override
 				public void doubleClicked(ListDialogField<ITranslationUnit> field) {
 					doDoubleClicked();
 				}				

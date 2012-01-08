@@ -45,15 +45,18 @@ public class AsyncViewerTest extends BaseUITestCase {
             this(label, new Node[0], 0);
         }
         
-        public String toString() {
+        @Override
+		public String toString() {
             return fLabel;
         }
         
-        public int hashCode() {
+        @Override
+		public int hashCode() {
             return fLabel.hashCode();
         }
         
-        public boolean equals(Object rhs) {
+        @Override
+		public boolean equals(Object rhs) {
             if (rhs instanceof Node) {
                 return fLabel.equals(((Node) rhs).fLabel);
             }
@@ -66,7 +69,8 @@ public class AsyncViewerTest extends BaseUITestCase {
             super(disp);
         }
 
-        protected Object[] asyncronouslyComputeChildren(Object parentElement, IProgressMonitor monitor) {
+        @Override
+		protected Object[] asyncronouslyComputeChildren(Object parentElement, IProgressMonitor monitor) {
             Node n= (Node) parentElement;
             try {
                 Thread.sleep(n.fAsync);
@@ -76,7 +80,8 @@ public class AsyncViewerTest extends BaseUITestCase {
             return n.fChildren;
         }
 
-        protected Object[] syncronouslyComputeChildren(Object parentElement) {
+        @Override
+		protected Object[] syncronouslyComputeChildren(Object parentElement) {
             Node n= (Node) parentElement;
             if (n.fAsync != 0) {
                 return null;
@@ -86,7 +91,8 @@ public class AsyncViewerTest extends BaseUITestCase {
     };
     
     private class MyLabelProvider extends LabelProvider {
-        public String getText(Object element) {
+        @Override
+		public String getText(Object element) {
             if (element instanceof AsyncTreeWorkInProgressNode) {
                 return "...";
             }
@@ -104,7 +110,8 @@ public class AsyncViewerTest extends BaseUITestCase {
             fUseExtendedViewer= useExtendedViewer;
         }
 
-        protected Control createDialogArea(Composite parent) {
+        @Override
+		protected Control createDialogArea(Composite parent) {
             fContentProvider= new ContentProvider(getShell().getDisplay());
             
             Composite comp= (Composite) super.createDialogArea(parent);
@@ -117,7 +124,8 @@ public class AsyncViewerTest extends BaseUITestCase {
 
 	private TestDialog fDialog;
     
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
     	if (fDialog != null) {
     		fDialog.close();
     	}

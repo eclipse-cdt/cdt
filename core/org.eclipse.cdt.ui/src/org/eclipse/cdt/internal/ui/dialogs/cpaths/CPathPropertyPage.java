@@ -177,6 +177,7 @@ public class CPathPropertyPage extends PropertyPage implements IStatusChangeList
 			Shell shell = getControl().getShell();
 			IRunnableWithProgress runnable = new IRunnableWithProgress() {
 
+				@Override
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
 						fCPathsBlock.configureCProject(monitor);
@@ -206,6 +207,7 @@ public class CPathPropertyPage extends PropertyPage implements IStatusChangeList
 	 * 
 	 * @see IStatusChangeListener#statusChanged
 	 */
+	@Override
 	public void statusChanged(IStatus status) {
 		setValid(!status.matches(IStatus.ERROR));
 		StatusUtil.applyToStatusLine(this, status);

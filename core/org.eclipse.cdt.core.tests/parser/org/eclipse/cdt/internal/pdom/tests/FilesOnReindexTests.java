@@ -41,6 +41,7 @@ public class FilesOnReindexTests extends PDOMTestBase {
 		return suite(FilesOnReindexTests.class);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		if (pdom == null) {
 			project = createProject("filesOnReindex");
@@ -49,6 +50,7 @@ public class FilesOnReindexTests extends PDOMTestBase {
 		pdom.acquireReadLock();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		pdom.releaseReadLock();
 		if (project != null) {

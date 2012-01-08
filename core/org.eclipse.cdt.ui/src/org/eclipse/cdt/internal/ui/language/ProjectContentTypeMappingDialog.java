@@ -76,6 +76,7 @@ public class ProjectContentTypeMappingDialog extends ContentTypeMappingDialog {
 		fConfiguration.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		configureConfigurations(fConfiguration);
 		fConfiguration.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				int index = fConfiguration.getSelectionIndex();
 				if (index <= 0) {
@@ -106,6 +107,7 @@ public class ProjectContentTypeMappingDialog extends ContentTypeMappingDialog {
 		fContentType.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		
 		fContentType.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				fSelectedContentTypeName = fContentType.getText();
 				fSelectedContentTypeID = fContentTypeNamesToIDsMap.get(fSelectedContentTypeName);
@@ -121,6 +123,7 @@ public class ProjectContentTypeMappingDialog extends ContentTypeMappingDialog {
 		fLanguage.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		fLanguage.setItems(getLanguages());
 		fLanguage.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				fSelectedLanguageName = fLanguage.getText();
 				fSelectedLanguageID = fLanguageNamesToIDsMap.get(fSelectedLanguageName);

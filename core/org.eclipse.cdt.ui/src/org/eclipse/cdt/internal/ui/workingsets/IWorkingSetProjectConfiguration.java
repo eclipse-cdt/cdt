@@ -157,6 +157,7 @@ public interface IWorkingSetProjectConfiguration extends IWorkingSetConfiguratio
 	 * @since 6.0
 	 */
 	interface ISnapshot extends IWorkingSetProjectConfiguration, IWorkingSetConfigurationElement.ISnapshot {
+		@Override
 		IWorkingSetConfiguration.ISnapshot getWorkingSetConfiguration();
 
 		/**

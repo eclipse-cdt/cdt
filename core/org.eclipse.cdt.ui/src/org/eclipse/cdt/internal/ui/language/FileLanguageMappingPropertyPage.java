@@ -155,6 +155,7 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 		final IProject project = file.getProject();
 
 		fTable.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				Control oldEditor = editor.getEditor();
 				if (oldEditor != null) {
@@ -171,6 +172,7 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 				populateLanguages(project, file, data.configuration, data.languageId, newEditor);
 				
 				newEditor.addListener(SWT.Selection, new Listener() {
+					@Override
 					public void handleEvent(Event event) {
 						CCombo combo = (CCombo) editor.getEditor();
 						int index = combo.getSelectionIndex();

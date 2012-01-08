@@ -115,6 +115,7 @@ public class IndexIncludeTest extends IndexTestBase {
 		waitForIndexer();
 		
 		ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				file.setContents(new ByteArrayInputStream("int included; int CONTEXT;\n".getBytes()), false, false, npm());
 				file.setLocalTimeStamp(timestamp + 1000); 
@@ -501,6 +502,7 @@ public class IndexIncludeTest extends IndexTestBase {
 			h1Contents.replace(pos, pos + "int".length(), "float");
 		}
 		ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				h1.setContents(new ByteArrayInputStream(h1Contents.toString().getBytes()), false, false, npm());
 				h1.setLocalTimeStamp(timestamp + 1000); 
@@ -582,6 +584,7 @@ public class IndexIncludeTest extends IndexTestBase {
 		final long t1= System.currentTimeMillis();
 		final String changedContents = contents[4].toString();
 		ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				h1.setContents(new ByteArrayInputStream(changedContents.getBytes()), false, false, npm());
 				h1.setLocalTimeStamp(t1 + 1000); 
@@ -606,6 +609,7 @@ public class IndexIncludeTest extends IndexTestBase {
 		// Change h1.h back to the original state without the pragma-once semantics. 
 		final long t2= System.currentTimeMillis();
 		ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				h1.setContents(new ByteArrayInputStream(h1Contents.toString().getBytes()), false, false, npm());
 				h1.setLocalTimeStamp(t2 + 2000); 

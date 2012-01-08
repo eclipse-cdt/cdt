@@ -41,14 +41,17 @@ public class IncludePathsSettingsProcessor extends SettingsProcessor {
 	private static final String WORKSPACE_PATH_ATTR = "workspace_path"; //$NON-NLS-1$
 	
 	
+	@Override
 	public Image getIcon() {
 		return CUIPlugin.getImageDescriptorRegistry().get(CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_INCLUDES_FOLDER));
 	}
 
+	@Override
 	public String getDisplayName() {
 		return Messages.ProjectSettingsWizardPage_Processor_Includes;
 	}
 	
+	@Override
 	public String getSectionName() {
 		return SECTION_NAME;
 	}
@@ -98,7 +101,7 @@ public class IncludePathsSettingsProcessor extends SettingsProcessor {
 			return;
 		
 		// need to do this or existing settings will disappear
-		includes.addAll(setting.getSettingEntriesList(ICLanguageSettingEntry.INCLUDE_PATH));
+		includes.addAll(setting.getSettingEntriesList(ICSettingEntry.INCLUDE_PATH));
 		setting.setSettingEntries(ICSettingEntry.INCLUDE_PATH, includes);
 	}
 }

@@ -32,6 +32,7 @@ import org.eclipse.cdt.ui.templateengine.IWizardDataPage;
 public class TestExtraPagesProvider implements IPagesAfterTemplateSelectionProvider {
 	IWizardDataPage[] pages;
 	
+	@Override
 	public IWizardDataPage[] createAdditionalPages(IWorkbenchWizard wizard,
 			IWorkbench workbench, IStructuredSelection selection) {
 		pages= new IWizardDataPage[3];
@@ -41,6 +42,7 @@ public class TestExtraPagesProvider implements IPagesAfterTemplateSelectionProvi
 		return pages;
 	}
 
+	@Override
 	public IWizardDataPage[] getCreatedPages(IWorkbenchWizard wizard) {
 		return pages;
 	}
@@ -59,10 +61,12 @@ public class TestExtraPagesProvider implements IPagesAfterTemplateSelectionProvi
 			this.dataValue= dataValue;
 		}
 		
+		@Override
 		public Map<String, String> getPageData() {
 			return Collections.singletonMap(dataKey, dataValue);
 		}
 
+		@Override
 		public void createControl(Composite parent) {
 			Label l= new Label(parent, SWT.NONE);
 			l.setText(labelText);

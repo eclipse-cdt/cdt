@@ -21,6 +21,7 @@ public class TestProposalFilter implements IProposalFilter {
 	/**
 	 * This dummy filter method will return the original proposals unmodified.
 	 */
+	@Override
 	public ICCompletionProposal[] filterProposals(
 			ICCompletionProposal[] proposals) {
 		return proposals ;

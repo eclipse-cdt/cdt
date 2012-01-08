@@ -43,22 +43,26 @@ public class TestRenameParticipant extends RenameParticipant {
         sConditionCheck= sCreateChange= 0;
     }
 
-    protected boolean initialize(Object element) {
+    @Override
+	protected boolean initialize(Object element) {
         sElement= element;
         return true;
     }
 
-    public String getName() {
+    @Override
+	public String getName() {
         return "TestRenameParticipant"; //$NON-NLS-1$
     }
 
-    public RefactoringStatus checkConditions(IProgressMonitor pm, CheckConditionsContext context) throws OperationCanceledException {
+    @Override
+	public RefactoringStatus checkConditions(IProgressMonitor pm, CheckConditionsContext context) throws OperationCanceledException {
         sConditionCheck++;
         sArguments= getArguments();
         return new RefactoringStatus();
     }
 
-    public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
+    @Override
+	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
         sCreateChange++;
         return null;
     }

@@ -20,24 +20,28 @@ public class AccessibilityTestPass implements IDialogTestPass {
 	/**
 	 * @see IDialogTestPass#title()
 	 */
+	@Override
 	public String title() {
 		return "Test Pass: Accessibility";
 	}
 	/**
 	 * @see IDialogTestPass#description()
 	 */
+	@Override
 	public String description() {
 		return "Verify the accessibility of the dialogs.";
 	}
 	/**
 	 * @see IDialogTestPass#label()
 	 */
+	@Override
 	public String label() {
 		return "&Accessibility";
 	}	
 	/**
 	 * @see IDialogTestPass#checkListTexts()
 	 */
+	@Override
 	public ArrayList checkListTexts() {
 		ArrayList list = new ArrayList(CHECKLIST_SIZE);
 		list.add("&1) all widgets are accessible by tabbing.");
@@ -52,6 +56,7 @@ public class AccessibilityTestPass implements IDialogTestPass {
 	 * Size of the return array must be the same size as the checkListTexts'
 	 * ArrayList.
 	 */
+	@Override
 	public String[] failureTexts() {
 		String[] failureText = new String[CHECKLIST_SIZE];
 		failureText[0] = "Some widgets aren't accessible by tabbing.";
@@ -64,12 +69,14 @@ public class AccessibilityTestPass implements IDialogTestPass {
 	/**
 	 * @see IDialogTestPass#queryText()
 	 */
+	@Override
 	public String queryText() {
 		return "Is the accessibility of the dialog acceptable?";
 	}
 	/**
 	 * @see IDialogTestPass#getID()
 	 */
+	@Override
 	public int getID() {
 		return VerifyDialog.TEST_ACCESS;
 	}

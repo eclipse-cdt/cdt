@@ -119,6 +119,7 @@ class ProjectConfigsController implements ICheckStateListener, DisposeListener {
 		return workingSet;
 	}
 
+	@Override
 	public void checkStateChanged(CheckStateChangedEvent event) {
 		Object element = event.getElement();
 		IWorkingSetProjectConfigurationController controller = controllerContext
@@ -133,6 +134,7 @@ class ProjectConfigsController implements ICheckStateListener, DisposeListener {
 		}
 	}
 
+	@Override
 	public void widgetDisposed(DisposeEvent e) {
 		dispose();
 	}
@@ -237,22 +239,27 @@ class ProjectConfigsController implements ICheckStateListener, DisposeListener {
 			return labelProviders.get(elementToControllerMap.get(element));
 		}
 
+		@Override
 		public void activationStateChanged(IWorkingSetProjectConfiguration projectConfiguration) {
 			workingSetController.projectSelectionsChanged(projectConfiguration);
 		}
 
+		@Override
 		public boolean isReadOnly() {
 			return getWorkingSetConfiguration().isReadOnly();
 		}
 
+		@Override
 		public void setChecked(Object element, boolean checked) {
 			tree.setChecked(element, checked);
 		}
 
+		@Override
 		public void setGrayed(Object element, boolean grayed) {
 			tree.setGrayChecked(element, grayed);
 		}
 
+		@Override
 		public void update(Object element) {
 			if ((element instanceof IWorkingSetConfiguration) || (element instanceof IWorkingSetProxy)) {
 				// TODO: Talk to the WS controller
@@ -295,14 +302,17 @@ class ProjectConfigsController implements ICheckStateListener, DisposeListener {
 			return delegateFor(element, ILabelProvider.class).getImage(element);
 		}
 
+		@Override
 		public Font getFont(Object element) {
 			return delegateFor(element, IFontProvider.class).getFont(element);
 		}
 
+		@Override
 		public Color getBackground(Object element) {
 			return delegateFor(element, IColorProvider.class).getBackground(element);
 		}
 
+		@Override
 		public Color getForeground(Object element) {
 			return delegateFor(element, IColorProvider.class).getForeground(element);
 		}
@@ -326,32 +336,38 @@ class ProjectConfigsController implements ICheckStateListener, DisposeListener {
 	private class DelegatingContentProvider implements ITreeContentProvider {
 		private final Object[] NO_OBJECTS = new Object[0];
 
+		@Override
 		public Object[] getChildren(Object parentElement) {
 			ITreeContentProvider delegate = delegateFor(parentElement);
 
 			return (delegate != null) ? delegate.getChildren(parentElement) : NO_OBJECTS;
 		}
 
+		@Override
 		public Object getParent(Object element) {
 			ITreeContentProvider delegate = delegateFor(element);
 
 			return (delegate != null) ? delegate.getParent(element) : null;
 		}
 
+		@Override
 		public boolean hasChildren(Object element) {
 			ITreeContentProvider delegate = delegateFor(element);
 
 			return (delegate != null) && delegate.hasChildren(element);
 		}
 
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return getWorkingSetConfiguration().getProjectConfigurations().toArray();
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			// nothing to do
 		}
 
+		@Override
 		public void dispose() {
 			// nothing of my own to dispose
 		}
@@ -370,14 +386,17 @@ class ProjectConfigsController implements ICheckStateListener, DisposeListener {
 	 */
 	private static class NullLabelProvider extends LabelProvider implements IFontProvider, IColorProvider {
 
+		@Override
 		public Font getFont(Object element) {
 			return null;
 		}
 
+		@Override
 		public Color getBackground(Object element) {
 			return null;
 		}
 
+		@Override
 		public Color getForeground(Object element) {
 			return null;
 		}

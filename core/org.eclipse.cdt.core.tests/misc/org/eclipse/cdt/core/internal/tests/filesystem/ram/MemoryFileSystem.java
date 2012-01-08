@@ -42,10 +42,12 @@ public class MemoryFileSystem extends FileSystem {
 		super();
 	}
 
+	@Override
 	public IFileStore getStore(URI uri) {
 		return new MemoryFileStore(Path.fromPortableString(uri.getSchemeSpecificPart()));
 	}
 
+	@Override
 	public boolean isCaseSensitive() {
 		return true;
 	}

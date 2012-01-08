@@ -72,18 +72,22 @@ public class FunctionPrototypeSummary implements IFunctionSummary.IFunctionProto
 		}
 	}
 
+	@Override
 	public String getName() {
 		return fname;
 	}
 
+	@Override
 	public String getReturnType() {
 		return freturn;
 	}
 		
+	@Override
 	public String getArguments() {
 		return farguments;
 	}
 		
+	@Override
 	public String getPrototypeString(boolean namefirst) {
 		return getPrototypeString(namefirst, true);
 	}

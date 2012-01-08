@@ -34,6 +34,7 @@ public class TestUserAndDiscoveredEntriesCfgDataProvider extends UserAndDiscover
 		ENTRIES_STORES[0].put(ICSettingEntry.MACRO, entries);
 	}
 
+	@Override
 	protected ICLanguageSettingEntry[] getAllDiscoveredEntries(
 			LanguageData data, int kind) {
 		ICLanguageSettingEntry entries[] = (ICLanguageSettingEntry[])ENTRIES_STORES[0].get(kind);

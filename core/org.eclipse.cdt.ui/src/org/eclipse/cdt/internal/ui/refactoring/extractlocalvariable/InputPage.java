@@ -47,6 +47,7 @@ public class InputPage extends UserInputWizardPage {
 		return info.getName();
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		control = new InputForm(parent, label);
 
@@ -56,6 +57,7 @@ public class InputPage extends UserInputWizardPage {
 		Text nameText = control.getVariableNameText();
 		nameText.setText(info.getName());
 		nameText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				info.setName(control.getVariableNameText().getText());
 				checkName();

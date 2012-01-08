@@ -222,6 +222,7 @@ public class IBViewPart extends ViewPart implements IShowInSource, IShowInTarget
 							final ITranslationUnit alt= CoreModelUtil.findTranslationUnitForLocation(input.getLocation(), input.getCProject());
 							if (alt != null && IndexUI.isIndexed(index, alt)) {
 								display.asyncExec(new Runnable() {
+									@Override
 									public void run() {
 										if (fTreeViewer.getInput() == input) {
 											setInput(alt);
@@ -231,6 +232,7 @@ public class IBViewPart extends ViewPart implements IShowInSource, IShowInTarget
 							} else {
 								final String msg = IndexUI.getFileNotIndexedMessage(input);
 								display.asyncExec(new Runnable() {
+									@Override
 									public void run() {
 										if (fTreeViewer.getInput() == input) {
 											setMessage(msg);
@@ -391,7 +393,8 @@ public class IBViewPart extends ViewPart implements IShowInSource, IShowInTarget
         MenuManager manager = new MenuManager();
         manager.setRemoveAllWhenShown(true);
         manager.addMenuListener(new IMenuListener() {
-            public void menuAboutToShow(IMenuManager m) {
+            @Override
+			public void menuAboutToShow(IMenuManager m) {
                 onContextMenuAboutToShow(m);
             }
         });
@@ -416,7 +419,8 @@ public class IBViewPart extends ViewPart implements IShowInSource, IShowInTarget
         fTreeViewer.setLabelProvider(fLabelProvider);
         fTreeViewer.setAutoExpandLevel(2);     
         fTreeViewer.addOpenListener(new IOpenListener() {
-            public void open(OpenEvent event) {
+            @Override
+			public void open(OpenEvent event) {
                 onShowInclude(event.getSelection());
             }
         });
@@ -806,11 +810,13 @@ public class IBViewPart extends ViewPart implements IShowInSource, IShowInTarget
         }
     }
 
-    public ShowInContext getShowInContext() {
+    @Override
+	public ShowInContext getShowInContext() {
         return new ShowInContext(null, IBConversions.nodeSelectionToRepresentedTUSelection(fTreeViewer.getSelection()));
     }
 
-    public boolean show(ShowInContext context) {
+    @Override
+	public boolean show(ShowInContext context) {
         ITranslationUnit tu= IBConversions.selectionToTU(context.getSelection());
         if (tu == null) {
             tu= IBConversions.objectToTU(context.getInput());
@@ -824,7 +830,8 @@ public class IBViewPart extends ViewPart implements IShowInSource, IShowInTarget
         return true;
     }
     
-    public String[] getShowInTargetIds() {
+    @Override
+	public String[] getShowInTargetIds() {
         return new String[] {
         		ProjectExplorer.VIEW_ID, 
         		IPageLayout.ID_PROJECT_EXPLORER

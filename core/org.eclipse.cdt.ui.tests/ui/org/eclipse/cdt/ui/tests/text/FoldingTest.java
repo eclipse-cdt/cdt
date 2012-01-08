@@ -51,9 +51,11 @@ public class FoldingTest extends TestCase {
 			super(offset, length);
 			fCaptionOffset= captionOffset;
 		}
+		@Override
 		public int computeCaptionOffset(IDocument document) throws BadLocationException {
 			return fCaptionOffset;
 		}
+		@Override
 		public IRegion[] computeProjectionRegions(IDocument document) throws BadLocationException {
 			return new IRegion[] { this };
 		}
@@ -189,6 +191,7 @@ public class FoldingTest extends TestCase {
 			positions.add(pos);
 		}
 		Collections.sort(positions, new Comparator<Position>() {
+			@Override
 			public int compare(Position p0, Position p1) {
 				return p0.offset - p1.offset;
 			}});

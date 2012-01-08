@@ -62,11 +62,13 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	/*
 	 * @see org.eclipse.ui.navigator.ICommonContentProvider#init(org.eclipse.ui.navigator.ICommonContentExtensionSite)
 	 */
+	@Override
 	public void init(ICommonContentExtensionSite commonContentExtensionSite) {
 		IMemento memento= commonContentExtensionSite.getMemento();
 		restoreState(memento);
 
 		fPropertyChangeListener= new IPropertyChangeListener() {
+			@Override
 			public void propertyChange(PropertyChangeEvent event) {
 				boolean refreshViewer= false;
 				String property= event.getProperty();
@@ -95,9 +97,11 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 		
 		// Note that this listener listens to CCorePlugin preferences
 		fPreferenceChangeListener = new IPreferenceChangeListener() {
+			@Override
 			public void preferenceChange(PreferenceChangeEvent event) {
 				if (event.getKey().equals(CCorePreferenceConstants.SHOW_SOURCE_ROOTS_AT_TOP_LEVEL_OF_PROJECT)) {
 					Display.getDefault().asyncExec(new Runnable() {
+						@Override
 						public void run() {
 							getViewer().refresh();
 						}
@@ -127,6 +131,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	/*
 	 * @see org.eclipse.ui.navigator.IMementoAware#restoreState(org.eclipse.ui.IMemento)
 	 */
+	@Override
 	public void restoreState(IMemento memento) {
 		IPreferenceStore store= PreferenceConstants.getPreferenceStore();
 		boolean showCUChildren= store.getBoolean(PreferenceConstants.PREF_SHOW_CU_CHILDREN);
@@ -152,6 +157,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	/*
 	 * @see org.eclipse.ui.navigator.IMementoAware#saveState(org.eclipse.ui.IMemento)
 	 */
+	@Override
 	public void saveState(IMemento memento) {
 		if (memento != null) {
 			memento.putString(PreferenceConstants.PREF_SHOW_CU_CHILDREN, String.valueOf(getProvideMembers()));
@@ -249,6 +255,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	/*
 	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#getPipelinedChildren(java.lang.Object, java.util.Set)
 	 */
+	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void getPipelinedChildren(Object parent, Set currentChildren) {
 		customizeCElements(getChildren(parent), currentChildren);
@@ -257,6 +264,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	/*
 	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#getPipelinedElements(java.lang.Object, java.util.Set)
 	 */
+	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void getPipelinedElements(Object input, Set currentElements) {
 		// only replace plain resource elements with custom elements
@@ -298,6 +306,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	/*
 	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#getPipelinedParent(java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public Object getPipelinedParent(Object object, Object suggestedParent) {
 		return getParent(object);
 	}
@@ -305,6 +314,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	/*
 	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#interceptAdd(org.eclipse.ui.navigator.PipelinedShapeModification)
 	 */
+	@Override
 	public PipelinedShapeModification interceptAdd(PipelinedShapeModification addModification) {
 		Object parent = addModification.getParent();
 		if (parent instanceof ICProject) {
@@ -336,6 +346,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	/*
 	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#interceptRefresh(org.eclipse.ui.navigator.PipelinedViewerUpdate)
 	 */
+	@Override
 	public boolean interceptRefresh(PipelinedViewerUpdate refreshSynchronization) {
 		@SuppressWarnings("unchecked")
 		final Set<Object> refreshTargets = refreshSynchronization.getRefreshTargets();
@@ -345,6 +356,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	/*
 	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#interceptRemove(org.eclipse.ui.navigator.PipelinedShapeModification)
 	 */
+	@Override
 	public PipelinedShapeModification interceptRemove(PipelinedShapeModification removeModification) {
 		@SuppressWarnings("unchecked")
 		final Set<Object> children = removeModification.getChildren();
@@ -355,6 +367,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	/*
 	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#interceptUpdate(org.eclipse.ui.navigator.PipelinedViewerUpdate)
 	 */
+	@Override
 	public boolean interceptUpdate(PipelinedViewerUpdate updateSynchronization) {
 		@SuppressWarnings("unchecked")
 		final Set<Object> refreshTargets = updateSynchronization.getRefreshTargets();

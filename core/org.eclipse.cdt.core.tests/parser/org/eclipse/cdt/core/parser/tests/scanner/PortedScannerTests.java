@@ -130,6 +130,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 			System.arraycopy(v, 0, values, 0, length);
 		}
 
+		@Override
 		public String toString() {
 			StringBuffer s = new StringBuffer();
 			for (int i = 0; i < length; ++i) {

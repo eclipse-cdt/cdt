@@ -320,11 +320,13 @@ public class CommentOwnerManagerTests extends BaseTestCase {
 
 class TestListener implements IDocCommentOwnershipListener {
 	public int prjEvents, wkspcEvents;
+	@Override
 	public void ownershipChanged(IResource resource,
 			boolean submappingsRemoved, IDocCommentOwner oldOwner,
 			IDocCommentOwner newOwner) {
 		prjEvents++;
 	}
+	@Override
 	public void workspaceOwnershipChanged(IDocCommentOwner oldOwner,
 			IDocCommentOwner newOwner) {
 		wkspcEvents++;

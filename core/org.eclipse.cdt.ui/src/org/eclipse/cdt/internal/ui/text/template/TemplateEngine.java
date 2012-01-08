@@ -70,6 +70,7 @@ public class TemplateEngine {
 		@Override
 		public IInformationControlCreator getInformationControlCreator() {
 			return new IInformationControlCreator() {
+				@Override
 				public IInformationControl createInformationControl(Shell parent) {
 					int orientation = SWT.LEFT_TO_RIGHT;
 					return new SourceViewerInformationControl(parent, false, orientation, null);
@@ -81,7 +82,8 @@ public class TemplateEngine {
 			super(template, context, region, image, RelevanceConstants.CASE_MATCH_RELEVANCE + RelevanceConstants.TEMPLATE_TYPE_RELEVANCE);
 		}
 
-        public String getIdString() {
+        @Override
+		public String getIdString() {
             return getDisplayString();
         }
         

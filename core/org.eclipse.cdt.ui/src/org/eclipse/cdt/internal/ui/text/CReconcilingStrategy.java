@@ -49,12 +49,14 @@ public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingS
 	/*
 	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#setDocument(org.eclipse.jface.text.IDocument)
 	 */
+	@Override
 	public void setDocument(IDocument document) {
 	}
 
 	/*
 	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#reconcile(org.eclipse.jface.text.reconciler.DirtyRegion, org.eclipse.jface.text.IRegion)
 	 */
+	@Override
 	public void reconcile(DirtyRegion dirtyRegion, IRegion subRegion) {
 		// only called for incremental reconciler
 	}
@@ -62,6 +64,7 @@ public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingS
 	/*
 	 * @see IReconcilingStrategyExtension#setProgressMonitor(IProgressMonitor)
 	 */
+	@Override
 	public void setProgressMonitor(IProgressMonitor monitor) {
 		fProgressMonitor= monitor;
 	}
@@ -69,6 +72,7 @@ public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingS
 	/*
 	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#reconcile(org.eclipse.jface.text.IRegion)
 	 */
+	@Override
 	public void reconcile(IRegion region) {
 		reconcile(false);
 	}
@@ -128,6 +132,7 @@ public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingS
 	/*
 	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension#initialReconcile()
 	 */
+	@Override
 	public void initialReconcile() {
 		reconcile(true);
 		fInitialProcessDone= true;

@@ -36,10 +36,12 @@ import org.eclipse.cdt.ui.IPropertyChangeParticipant;
  */
 public final class TaskTagRule extends CombinedWordRule implements IPropertyChangeParticipant {	
 	private static class TaskTagDetector implements IWordDetector {
+		@Override
 		public boolean isWordStart(char c) {
 			return c == '@' || c == '\\' || Character.isJavaIdentifierStart(c);
 		}
 
+		@Override
 		public boolean isWordPart(char c) {
 			return c == '.' || Character.isJavaIdentifierPart(c);
 		}
@@ -177,6 +179,7 @@ public final class TaskTagRule extends CombinedWordRule implements IPropertyChan
 	/*
 	 * @see org.eclipse.cdt.ui.IPropertyChangeParticipant#affectsBehavior(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	public boolean affectsBehavior(PropertyChangeEvent event) {
 		return event.getProperty().equals(TODO_TASK_TAGS) || event.getProperty().equals(TODO_TASK_CASE_SENSITIVE);
 	}
@@ -184,6 +187,7 @@ public final class TaskTagRule extends CombinedWordRule implements IPropertyChan
 	/*
 	 * @see org.eclipse.cdt.ui.IPropertyChangeParticipant#adaptToPreferenceChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	public void adaptToPreferenceChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(TODO_TASK_TAGS)) {
 			Object value= event.getNewValue();

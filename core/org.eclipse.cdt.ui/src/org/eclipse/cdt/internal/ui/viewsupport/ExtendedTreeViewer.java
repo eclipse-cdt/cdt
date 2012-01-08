@@ -28,7 +28,8 @@ public class ExtendedTreeViewer extends TreeViewer {
 
     public void refresh(final Object[] elements) {
         preservingSelection(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 for (int i = 0; i < elements.length; i++) {
                     refresh(elements[i]);
                 }

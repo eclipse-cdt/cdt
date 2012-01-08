@@ -32,6 +32,7 @@ public class LanguageMappingLinkListener implements Listener {
 		fElement = element;
 	}
 
+	@Override
 	public void handleEvent(Event event) {
 		if (WORKSPACE_LINK.equals(event.text)) {
 			PreferencesUtil.createPreferenceDialogOn(fShell, WORKSPACE_PREFERENCE_PAGE, null, null).open();

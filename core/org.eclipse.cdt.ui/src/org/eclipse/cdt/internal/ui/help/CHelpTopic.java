@@ -26,9 +26,11 @@ public class CHelpTopic implements IHelpResource {
 		if (title == null || title.length() == 0)
 			title = defTitle;
 	}
+	@Override
 	public String getHref() {
 		return href;
 	}
+	@Override
 	public String getLabel() {
 		return title;
 	}

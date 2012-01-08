@@ -63,6 +63,7 @@ public class CPathFilterPage extends WizardPage {
 		validatePage();
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
@@ -78,6 +79,7 @@ public class CPathFilterPage extends WizardPage {
 		viewer.setLabelProvider(new CPElementLabelProvider(false, false));
 		viewer.addCheckStateListener(new ICheckStateListener() {
 
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				validatePage();
 			}

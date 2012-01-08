@@ -95,6 +95,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 				final Shell shell= getShell();
 				if (shell != null && !shell.isDisposed()) {
 					Runnable update= new Runnable() {
+						@Override
 						public void run() {
 							if (!shell.isDisposed() && !monitor.isCanceled()) {
 								setListElements(elements);
@@ -127,6 +128,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 			final Shell shell= getShell();
 			if (shell != null && !shell.isDisposed()) {
 				Runnable update= new Runnable() {
+					@Override
 					public void run() {
 						if (!shell.isDisposed() && fDone) {
 							fMonitor.done();
@@ -142,6 +144,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 			final Shell shell= getShell();
 			if (shell != null && !shell.isDisposed()) {
 				Runnable update= new Runnable() {
+					@Override
 					public void run() {
 						if (!shell.isDisposed() && !fDone) {
 							fMonitor.beginTask(OpenTypeMessages.ElementSelectionDialog_UpdateElementsJob_inProgress, IProgressMonitor.UNKNOWN);
@@ -153,9 +156,11 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 	}
 
 	private static final ISchedulingRule SINGLE_INSTANCE_RULE = new ISchedulingRule() {
+		@Override
 		public boolean contains(ISchedulingRule rule) {
 			return rule == this;
 		}
+		@Override
 		public boolean isConflicting(ISchedulingRule rule) {
 			return rule == this;
 		}};
@@ -353,7 +358,8 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 	protected Text createFilterText(Composite parent) {
 		final Text result = super.createFilterText(parent);
 		Listener listener = new Listener() {
-            public void handleEvent(Event e) {
+            @Override
+			public void handleEvent(Event e) {
                 scheduleUpdate(result.getText());
             }
         };

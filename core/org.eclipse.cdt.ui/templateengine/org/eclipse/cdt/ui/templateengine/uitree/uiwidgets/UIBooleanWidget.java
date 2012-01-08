@@ -65,7 +65,7 @@ public class UIBooleanWidget extends InputUIElement {
 	@Override
 	public Map<String, String> getValues() {
 		Map<String, String> values = new HashMap<String, String>();
-		values.put(uiAttributes.get(InputUIElement.ID), Boolean.toString(booleanValue));
+		values.put(uiAttributes.get(UIElement.ID), Boolean.toString(booleanValue));
 		return values;
 	}
 
@@ -74,7 +74,7 @@ public class UIBooleanWidget extends InputUIElement {
 	 */
 	@Override
 	public void setValues(Map<String, String> valueMap) {
-		booleanValue = new Boolean(valueMap.get(uiAttributes.get(InputUIElement.ID))).booleanValue();
+		booleanValue = new Boolean(valueMap.get(uiAttributes.get(UIElement.ID))).booleanValue();
 	}
 
 	/*
@@ -88,7 +88,7 @@ public class UIBooleanWidget extends InputUIElement {
 		label = new Label(uiComposite, SWT.LEFT);
 		label.setText(uiAttributes.get(InputUIElement.WIDGETLABEL));
 
-		if (uiAttributes.get(InputUIElement.DESCRIPTION) != null){
+		if (uiAttributes.get(UIElement.DESCRIPTION) != null){
 			String tipText = uiAttributes.get(UIElement.DESCRIPTION);
 			tipText = tipText.replaceAll("\\\\r\\\\n", "\r\n"); //$NON-NLS-1$ //$NON-NLS-2$
 			label.setToolTipText(tipText);

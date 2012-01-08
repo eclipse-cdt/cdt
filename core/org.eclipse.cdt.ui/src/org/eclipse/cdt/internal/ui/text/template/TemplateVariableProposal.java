@@ -57,6 +57,7 @@ public class TemplateVariableProposal implements ICompletionProposal {
 	/*
 	 * @see ICompletionProposal#apply(IDocument)
 	 */
+	@Override
 	public void apply(IDocument document) {
 
 		try {
@@ -82,6 +83,7 @@ public class TemplateVariableProposal implements ICompletionProposal {
 	/*
 	 * @see ICompletionProposal#getSelection(IDocument)
 	 */
+	@Override
 	public Point getSelection(IDocument document) {
 		return fSelection;
 	}
@@ -89,6 +91,7 @@ public class TemplateVariableProposal implements ICompletionProposal {
 	/*
 	 * @see ICompletionProposal#getAdditionalProposalInfo()
 	 */
+	@Override
 	public String getAdditionalProposalInfo() {
 		return fResolver.getDescription();
 	}
@@ -96,6 +99,7 @@ public class TemplateVariableProposal implements ICompletionProposal {
 	/*
 	 * @see ICompletionProposal#getDisplayString()
 	 */
+	@Override
 	public String getDisplayString() {
 		return fResolver.getType();
 	}
@@ -103,6 +107,7 @@ public class TemplateVariableProposal implements ICompletionProposal {
 	/*
 	 * @see ICompletionProposal#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return null;
 	}
@@ -110,6 +115,7 @@ public class TemplateVariableProposal implements ICompletionProposal {
 	/*
 	 * @see ICompletionProposal#getContextInformation()
 	 */
+	@Override
 	public IContextInformation getContextInformation() {
 		return null;
 	}

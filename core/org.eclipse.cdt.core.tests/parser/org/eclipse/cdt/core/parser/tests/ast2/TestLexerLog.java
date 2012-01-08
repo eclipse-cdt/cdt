@@ -24,10 +24,12 @@ public class TestLexerLog implements ILexerLog {
 		fInput= input;
 	}
 
+	@Override
 	public void handleComment(boolean isBlockComment, int offset, int endOffset) {
 		fComments.add(fInput.substring(offset, endOffset));
 	}
 
+	@Override
 	public void handleProblem(int problemID, char[] arg, int offset, int endOffset) {
 		fProblems.add(createString(problemID, new String(arg)));
 	}

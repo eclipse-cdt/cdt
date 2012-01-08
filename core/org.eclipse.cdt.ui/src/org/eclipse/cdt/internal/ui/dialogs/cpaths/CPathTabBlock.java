@@ -48,6 +48,7 @@ public class CPathTabBlock extends AbstractPathOptionBlock {
 	private class BuildPathAdapter implements IDialogFieldListener {
 
 		// ---------- IDialogFieldListener --------
+		@Override
 		public void dialogFieldChanged(DialogField field) {
 			buildPathDialogFieldChanged(field);
 		}

@@ -314,6 +314,7 @@ protected String searchForPlugins(String start) {
  */
 protected String searchForBoot(String start) {
 	FileFilter filter = new FileFilter() {
+		@Override
 		public boolean accept(File candidate) {
 			return candidate.getName().startsWith(PI_BOOT);
 		}

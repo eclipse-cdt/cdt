@@ -82,14 +82,17 @@ public class PDOMProviderTests extends PDOMTestBase {
 		IndexProviderManager ipm= CCoreInternals.getPDOMManager().getIndexProviderManager();
 		ipm.addIndexProvider(new ReadOnlyPDOMProviderBridge(
 				new IReadOnlyPDOMProvider() {
+					@Override
 					public IPDOMDescriptor[] getDescriptors(
 							ICConfigurationDescription config) {
 						return new IPDOMDescriptor[] {
 								new IPDOMDescriptor() {
+									@Override
 									public IIndexLocationConverter getIndexLocationConverter() {
 										return new URIRelativeLocationConverter(baseURI);
 									}
 
+									@Override
 									public IPath getLocation() {
 										return new Path(tempPDOM.getAbsolutePath());
 									}
@@ -97,6 +100,7 @@ public class PDOMProviderTests extends PDOMTestBase {
 								}
 						};
 					}
+					@Override
 					public boolean providesFor(ICProject project)
 					throws CoreException {
 						return cproject2.equals(project);
@@ -161,14 +165,17 @@ public class PDOMProviderTests extends PDOMTestBase {
 		IndexProviderManager ipm= CCoreInternals.getPDOMManager().getIndexProviderManager();
 		ipm.addIndexProvider(new ReadOnlyPDOMProviderBridge(
 				new IReadOnlyPDOMProvider() {
+					@Override
 					public IPDOMDescriptor[] getDescriptors(
 							ICConfigurationDescription config) {
 						return new IPDOMDescriptor[] {
 								new IPDOMDescriptor() {
+									@Override
 									public IIndexLocationConverter getIndexLocationConverter() {
 										return new URIRelativeLocationConverter(baseURI);
 									}
 
+									@Override
 									public IPath getLocation() {
 										return new Path(tempPDOM.getAbsolutePath());
 									}
@@ -176,6 +183,7 @@ public class PDOMProviderTests extends PDOMTestBase {
 								}
 						};
 					}
+					@Override
 					public boolean providesFor(ICProject project)
 					throws CoreException {
 						return cproject2.equals(project) || cproject3.equals(project);
@@ -278,14 +286,17 @@ public class PDOMProviderTests extends PDOMTestBase {
 		IndexProviderManager ipm= CCoreInternals.getPDOMManager().getIndexProviderManager();
 		ipm.addIndexProvider(new ReadOnlyPDOMProviderBridge(
 				new IReadOnlyPDOMProvider() {
+					@Override
 					public IPDOMDescriptor[] getDescriptors(
 							ICConfigurationDescription config) {
 						return new IPDOMDescriptor[] {
 								new IPDOMDescriptor() {
+									@Override
 									public IIndexLocationConverter getIndexLocationConverter() {
 										return new URIRelativeLocationConverter(baseURI);
 									}
 
+									@Override
 									public IPath getLocation() {
 										return new Path(tempPDOM.getAbsolutePath());
 									}
@@ -293,6 +304,7 @@ public class PDOMProviderTests extends PDOMTestBase {
 								}
 						};
 					}
+					@Override
 					public boolean providesFor(ICProject project)
 					throws CoreException {
 						return cproject2.equals(project);

@@ -328,7 +328,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 			if (name.isDefinition())
 				declNames[i]= null;
 		}
-		declNames= (IName[]) ArrayUtil.removeNulls(IName.class, declNames);
+		declNames= ArrayUtil.removeNulls(IName.class, declNames);
 		if (declNames.length == 0) {
 			declNames= index.findNames(binding, IIndex.FIND_DECLARATIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 		}
@@ -663,7 +663,7 @@ class OpenDeclarationsJob extends Job implements ASTRunnable {
 								names[i] = null;
 							}
 						}
-						names = (IName[]) ArrayUtil.removeNulls(IName.class, names);
+						names = ArrayUtil.removeNulls(IName.class, names);
 						convertToCElements(project, fIndex, names, elems);
 					}
 					// In case we did not find anything, consider the secondary bindings.

@@ -281,6 +281,7 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 				throw new RuntimeException("ambiguous input"); //$NON-NLS-1$
 			}
 			runInUIThread(new Runnable() {
+				@Override
 				public void run() {
 					ElementListSelectionDialog dialog=
 						new ElementListSelectionDialog(getShell(), new LabelProvider());
@@ -481,12 +482,15 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 	private IFunctionSummary findContribution(final String name) {
 		final IFunctionSummary[] fs = new IFunctionSummary[1];
 		IRunnableWithProgress op = new IRunnableWithProgress() {
+			@Override
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				ICHelpInvocationContext context = new ICHelpInvocationContext() {
+					@Override
 					public IProject getProject() {
 						return fProject;
 					}
 
+					@Override
 					public ITranslationUnit getTranslationUnit() {
 						return fTu;
 					}
@@ -701,6 +705,7 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.ui.IRequiredInclude#getIncludeName()
 		 */
+		@Override
 		public String getIncludeName() {
 			return includeName;
 		}
@@ -708,6 +713,7 @@ public class AddIncludeOnSelectionAction extends TextEditorAction {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.ui.IRequiredInclude#isStandard()
 		 */
+		@Override
 		public boolean isStandard() {
 			return isSystem;
 		}

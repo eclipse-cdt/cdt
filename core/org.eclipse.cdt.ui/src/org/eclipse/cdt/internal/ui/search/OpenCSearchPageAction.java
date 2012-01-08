@@ -33,10 +33,12 @@ public class OpenCSearchPageAction implements IWorkbenchWindowActionDelegate {
 		// TODO Auto-generated constructor stub
 	}
 
+	@Override
 	public void init(IWorkbenchWindow window) {
 		fWindow= window;
 	}
 
+	@Override
 	public void run(IAction action) {
 		if (fWindow == null || fWindow.getActivePage() == null) {
 			beep();
@@ -45,10 +47,12 @@ public class OpenCSearchPageAction implements IWorkbenchWindowActionDelegate {
 		NewSearchUI.openSearchDialog(fWindow, PDOMSearchPage.EXTENSION_ID);
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		// do nothing since the action isn't selection dependent.
 	}
 
+	@Override
 	public void dispose() {
 		fWindow= null;
 	}

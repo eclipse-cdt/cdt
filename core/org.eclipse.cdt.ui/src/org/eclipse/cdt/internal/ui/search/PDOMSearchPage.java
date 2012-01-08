@@ -177,6 +177,7 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 	}
 
 
+	@Override
 	public boolean performAction() {
 	    fLineManager.setErrorMessage(null);
 
@@ -318,6 +319,7 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 		return true;
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		initializeDialogUnits(parent);
 		
@@ -435,6 +437,7 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 		// Pattern combo
 		patternCombo = new Combo(result, SWT.SINGLE | SWT.BORDER);
 		patternCombo.addVerifyListener(new VerifyListener() {
+			@Override
 			public void verifyText(VerifyEvent event) {
 				final String text = patternCombo.getText();
 				final char[] newChars= event.text.toCharArray();
@@ -485,6 +488,7 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 		});
 		
 		patternCombo.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				setPerformActionEnabled();
 			}
@@ -519,6 +523,7 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 		result.setLayout(layout);
 
 		Listener limitToListener = new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				Button me = (Button)event.widget;
 				if (me == limitToButtons[limitToAllButtonIndex]) {
@@ -598,6 +603,7 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 		return result;		
 	}
 	
+	@Override
 	public void setContainer(ISearchPageContainer container) {
 		pageContainer = container;
 	}

@@ -73,6 +73,7 @@ public class CProposalContextInformation implements IContextInformation, IContex
 	/*
 	 * @see IContextInformation#getInformationDisplayString()
 	 */
+	@Override
 	public String getInformationDisplayString() {
 		return fInformationDisplayString;
 	}
@@ -80,6 +81,7 @@ public class CProposalContextInformation implements IContextInformation, IContex
 	/*
 	 * @see IContextInformation#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return fImage;
 	}
@@ -87,6 +89,7 @@ public class CProposalContextInformation implements IContextInformation, IContex
 	/*
 	 * @see IContextInformation#getContextDisplayString()
 	 */
+	@Override
 	public String getContextDisplayString() {
 		if (fContextDisplayString != null)
 			return fContextDisplayString;
@@ -95,6 +98,7 @@ public class CProposalContextInformation implements IContextInformation, IContex
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.contentassist.IContextInformationExtension#getContextInformationPosition()
 	 */
+	@Override
 	public int getContextInformationPosition() {
 		return fInformationPosition;
 	}

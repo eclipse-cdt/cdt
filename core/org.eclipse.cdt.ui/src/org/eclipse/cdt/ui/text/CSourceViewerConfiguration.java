@@ -805,6 +805,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	@Override
 	public IInformationControlCreator getInformationControlCreator(ISourceViewer sourceViewer) {
 		return new IInformationControlCreator() {
+			@Override
 			public IInformationControl createInformationControl(Shell parent) {
 				return new DefaultInformationControl(parent, false);
 			}
@@ -822,6 +823,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 */
 	protected IInformationControlCreator getInformationPresenterControlCreator(ISourceViewer sourceViewer) {
 		return new IInformationControlCreator() {
+			@Override
 			public IInformationControl createInformationControl(Shell parent) {
 				return new DefaultInformationControl(parent, true);
 			}
@@ -905,7 +907,8 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
             /**
              * @see org.eclipse.jface.text.IInformationControlCreator#createInformationControl(org.eclipse.swt.widgets.Shell)
              */
-            public IInformationControl createInformationControl(Shell parent) {
+            @Override
+			public IInformationControl createInformationControl(Shell parent) {
                 int shellStyle= SWT.RESIZE;
                 int treeStyle= SWT.V_SCROLL | SWT.H_SCROLL;
                 return new COutlineInformationControl(parent, shellStyle, treeStyle);
@@ -923,7 +926,8 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
             /**
              * @see org.eclipse.jface.text.IInformationControlCreator#createInformationControl(org.eclipse.swt.widgets.Shell)
              */
-            public IInformationControl createInformationControl(Shell parent) {
+            @Override
+			public IInformationControl createInformationControl(Shell parent) {
                 int shellStyle= SWT.RESIZE;
                 int treeStyle= SWT.V_SCROLL | SWT.H_SCROLL;
                 return new THInformationControl(parent, shellStyle, treeStyle);
@@ -1019,7 +1023,8 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
      */
     protected IInformationControlCreator getMacroExplorationControlCreator() {
         final IInformationControlCreator conrolCreator = new IInformationControlCreator() {
-            public IInformationControl createInformationControl(Shell parent) {
+            @Override
+			public IInformationControl createInformationControl(Shell parent) {
                 return new CMacroExpansionExplorationControl(parent);
             }
         };
@@ -1037,6 +1042,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 
 	protected ITokenStoreFactory getTokenStoreFactory() {
 		return new ITokenStoreFactory() {
+			@Override
 			public ITokenStore createTokenStore(String[] propertyColorNames) {
 				return new TokenStore(getColorManager(), fPreferenceStore, propertyColorNames);
 			}

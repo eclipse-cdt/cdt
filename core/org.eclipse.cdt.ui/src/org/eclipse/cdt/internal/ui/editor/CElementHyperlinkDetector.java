@@ -51,6 +51,7 @@ public class CElementHyperlinkDetector extends AbstractHyperlinkDetector {
 	public CElementHyperlinkDetector() {
 	}
 
+	@Override
 	public IHyperlink[] detectHyperlinks(final ITextViewer textViewer, final IRegion region, boolean canShowMultipleHyperlinks) {
 		ITextEditor textEditor= (ITextEditor) getAdapter(ITextEditor.class);
 		if (region == null || !(textEditor instanceof CEditor))
@@ -70,6 +71,7 @@ public class CElementHyperlinkDetector extends AbstractHyperlinkDetector {
 		// Do not wait for AST if it's not available yet. Waiting for AST would block the UI thread
 		// for the duration of the parsing.
 		IStatus status= ASTProvider.getASTProvider().runOnAST(workingCopy, ASTProvider.WAIT_NO, null, new ASTRunnable() {
+			@Override
 			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
 				if (ast == null)
 					return Status.CANCEL_STATUS;

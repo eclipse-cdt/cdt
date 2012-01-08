@@ -214,7 +214,8 @@ public class RemoteTreeViewer extends ProblemTreeViewer {
     
     private void addDisposeListener() {
         getControl().addDisposeListener(new DisposeListener() {
-            public void widgetDisposed(DisposeEvent e) {
+            @Override
+			public void widgetDisposed(DisposeEvent e) {
                 cancelJobs();
             }
         });
@@ -370,7 +371,8 @@ public class RemoteTreeViewer extends ProblemTreeViewer {
             final Item[] currentChildren = getChildren(widget);
             if (offset < currentChildren.length) {
                 preservingSelection(new Runnable() {
-                    public void run() {
+                    @Override
+					public void run() {
                         for (int i = offset; i < currentChildren.length; i++) {
                             if (currentChildren[i].getData() != null) {
                                 disassociate(currentChildren[i]);
@@ -385,7 +387,8 @@ public class RemoteTreeViewer extends ProblemTreeViewer {
 
     public synchronized void replace(final Object parent, final Object[] children, final int offset) {
         preservingSelection(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 Widget widget = findItem(parent);
                 if (widget == null) {
                     add(parent, children);

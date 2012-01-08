@@ -70,6 +70,7 @@ public class CorrectionCommandHandler extends AbstractHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		doExecute();
 		return null;
@@ -137,6 +138,7 @@ public class CorrectionCommandHandler extends AbstractHandler {
 		ASTProvider.getASTProvider().runOnAST(context.getTranslationUnit(), ASTProvider.WAIT_ACTIVE_ONLY,
 				new NullProgressMonitor(), new ASTRunnable() {
 
+			@Override
 			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit astRoot) throws CoreException {
 				IASTNodeSelector selector= astRoot.getNodeSelector(null);
 				IASTName name= selector.findEnclosingName(context.getSelectionOffset(), context.getSelectionLength());

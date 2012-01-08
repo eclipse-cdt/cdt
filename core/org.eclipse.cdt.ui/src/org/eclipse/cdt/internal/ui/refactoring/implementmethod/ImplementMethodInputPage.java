@@ -54,6 +54,7 @@ public class ImplementMethodInputPage extends UserInputWizardPage{
 
 
 
+	@Override
 	public void createControl(Composite parent) {
 		
 		setTitle(Messages.ImplementMethodInputPage_PageTitle);
@@ -120,6 +121,7 @@ public class ImplementMethodInputPage extends UserInputWizardPage{
 		
 		tree.addCheckStateListener(new ICheckStateListener() {
 
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				MethodToImplementConfig config = ((MethodToImplementConfig)event.getElement());
 				config.setChecked(event.getChecked());

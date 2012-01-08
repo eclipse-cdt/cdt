@@ -38,7 +38,8 @@ public abstract class AbstractWizardDropDownAction extends Action implements IMe
 		
 		// listen for changes to wizard extensions
 		fListener = new IRegistryChangeListener() {
-		    public void registryChanged(IRegistryChangeEvent event) {
+		    @Override
+			public void registryChanged(IRegistryChangeEvent event) {
 		        refreshActions();
 		    }
 		};
@@ -57,6 +58,7 @@ public abstract class AbstractWizardDropDownAction extends Action implements IMe
 			oldMenu.dispose();
 	}
 
+	@Override
 	public void dispose() {
 		if (fListener != null) {
 			Platform.getExtensionRegistry().removeRegistryChangeListener(fListener);
@@ -65,10 +67,12 @@ public abstract class AbstractWizardDropDownAction extends Action implements IMe
 		refreshActions();
 	}
 
+	@Override
 	public Menu getMenu(Menu parent) {
 		return null;
 	}
 
+	@Override
 	public Menu getMenu(Control parent) {
 		synchronized(fLock) {
 			fMenu= new Menu(parent);
@@ -123,12 +127,14 @@ public abstract class AbstractWizardDropDownAction extends Action implements IMe
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void init(IWorkbenchWindow window) {
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		run();
 	}
@@ -136,6 +142,7 @@ public abstract class AbstractWizardDropDownAction extends Action implements IMe
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 	}
 

@@ -76,6 +76,7 @@ public class AddIncludesOperation implements IWorkspaceRunnable {
 		return ResourcesPlugin.getWorkspace().getRoot();
 	}
 
+	@Override
 	public void run(IProgressMonitor monitor) throws CoreException {
 		if (monitor == null) {
 			monitor= new NullProgressMonitor();

@@ -60,6 +60,7 @@ public class ParameterNamesInputPage extends UserInputWizardPage {
 		this.wizard = wizard;
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		
 		Composite superComposite = new Composite(parent, SWT.NONE);
@@ -167,6 +168,7 @@ public class ParameterNamesInputPage extends UserInputWizardPage {
 			private void setPreviewText(final String text) {
 				if (getShell() != null && getShell().getDisplay() != null) {
 					getShell().getDisplay().asyncExec(new Runnable() {
+						@Override
 						public void run() {
 							if (translationUnitPreview.getControl() != null && !translationUnitPreview.getControl().isDisposed()) {
 								translationUnitPreview.setPreviewText(text);

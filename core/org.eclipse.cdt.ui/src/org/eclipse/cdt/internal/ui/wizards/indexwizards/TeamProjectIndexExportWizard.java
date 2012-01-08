@@ -47,6 +47,7 @@ public class TeamProjectIndexExportWizard extends Wizard implements IExportWizar
         return fMainPage.finish();
     }
 
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
         fSelection= selection;
         setWindowTitle(Messages.TeamProjectIndexExportWizard_title);

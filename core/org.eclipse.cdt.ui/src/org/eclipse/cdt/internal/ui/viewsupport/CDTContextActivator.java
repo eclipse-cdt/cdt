@@ -106,17 +106,21 @@ public class CDTContextActivator implements IWindowListener, IPartListener2 {
 		fWindows.remove(wnd);
 	}
 
+	@Override
 	public void windowOpened(IWorkbenchWindow window) {
 		register(window);
 	}
 
+	@Override
 	public void windowClosed(IWorkbenchWindow window) {
 		unregister(window);
 	}
 
+	@Override
 	public void windowActivated(IWorkbenchWindow window) {
 	}
 	
+	@Override
 	public void windowDeactivated(IWorkbenchWindow window) {
 	}
 
@@ -168,6 +172,7 @@ public class CDTContextActivator implements IWindowListener, IPartListener2 {
 			}
 		}
 		
+		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			onNewSelection(event.getSelection());
 		}
@@ -205,6 +210,7 @@ public class CDTContextActivator implements IWindowListener, IPartListener2 {
 		fActivationPerNavigator.remove(part);
 	}
 
+	@Override
 	public void partActivated(IWorkbenchPartReference partRef) {
 		IWorkbenchPart part= partRef.getPart(false);
 		if (part instanceof ContentOutline) {
@@ -215,6 +221,7 @@ public class CDTContextActivator implements IWindowListener, IPartListener2 {
 		}
 	}
 
+	@Override
 	public void partClosed(IWorkbenchPartReference partRef) {
 		IWorkbenchPart part= partRef.getPart(false);
 		if (part instanceof ContentOutline) {
@@ -225,21 +232,27 @@ public class CDTContextActivator implements IWindowListener, IPartListener2 {
 		}
 	}
 
+	@Override
 	public void partBroughtToTop(IWorkbenchPartReference partRef) {
 	}
 
+	@Override
 	public void partDeactivated(IWorkbenchPartReference partRef) {
 	}
 
+	@Override
 	public void partOpened(IWorkbenchPartReference partRef) {
 	}
 
+	@Override
 	public void partHidden(IWorkbenchPartReference partRef) {
 	}
 
+	@Override
 	public void partVisible(IWorkbenchPartReference partRef) {
 	}
 
+	@Override
 	public void partInputChanged(IWorkbenchPartReference partRef) {
 	}
 }

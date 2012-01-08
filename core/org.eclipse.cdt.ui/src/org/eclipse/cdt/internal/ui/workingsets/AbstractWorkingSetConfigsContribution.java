@@ -39,6 +39,7 @@ abstract class AbstractWorkingSetConfigsContribution extends CompoundContributio
 	private Comparator<IWorkingSetConfiguration> configOrdering = new Comparator<IWorkingSetConfiguration>() {
 		private Collator collator = Collator.getInstance();
 
+		@Override
 		public int compare(IWorkingSetConfiguration o1, IWorkingSetConfiguration o2) {
 			return collator.compare(o1.getName(), o2.getName());
 		}

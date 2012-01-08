@@ -93,6 +93,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 	/*
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		initializeDialogUnits(parent);
 
@@ -110,6 +111,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 		fWorkingSetName.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
 		fWorkingSetName.addModifyListener(
 			new ModifyListener() {
+				@Override
 				public void modifyText(ModifyEvent e) {
 					validateInput();
 				}
@@ -144,18 +146,22 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 		fTree.setInput(CoreModel.create(CUIPlugin.getWorkspace().getRoot()));
 
 		fTree.addCheckStateListener(new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				handleCheckStateChange(event);
 			}
 		});
 
 		fTree.addTreeListener(new ITreeViewerListener() {
+			@Override
 			public void treeCollapsed(TreeExpansionEvent event) {
 			}
+			@Override
 			public void treeExpanded(TreeExpansionEvent event) {
 				final Object element = event.getElement();
 				if (fTree.getGrayed(element) == false)
 					BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+						@Override
 						public void run() {
 							setSubtreeChecked(element, fTree.getChecked(element), false);
 						}
@@ -177,6 +183,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 	/*
 	 * @see org.eclipse.ui.dialogs.IWorkingSetPage#finish()
 	 */
+	@Override
 	public void finish() {
 		String workingSetName= fWorkingSetName.getText();
 		ArrayList<Object> elements= new ArrayList<Object>(10);
@@ -212,6 +219,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 	/*
 	 * @see org.eclipse.ui.dialogs.IWorkingSetPage#getSelection()
 	 */
+	@Override
 	public IWorkingSet getSelection() {
 		return fWorkingSet;
 	}
@@ -223,6 +231,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 	 */
 	void handleCheckStateChange(final CheckStateChangedEvent event) {
 		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				IAdaptable element= (IAdaptable) event.getElement();
 				boolean state = event.getChecked();
@@ -282,6 +291,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 	 */
 	private void initializeCheckedState() {
 		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				Object[] elements;
 				if (fWorkingSet == null) {
@@ -356,6 +366,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 	/*
 	 * @see org.eclipse.ui.dialogs.IWorkingSetPage#setSelection(org.eclipse.ui.IWorkingSet)
 	 */
+	@Override
 	public void setSelection(IWorkingSet workingSet) {
 		if (workingSet == null) {
 			throw new IllegalArgumentException("Working set must not be null"); //$NON-NLS-1$

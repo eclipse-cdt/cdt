@@ -98,7 +98,8 @@ public class FileBasePluginTest extends TestCase {
 	    }
     }
 
-    protected void tearDown() throws Exception {
+    @Override
+	protected void tearDown() throws Exception {
         if( project == null || !project.exists() )
             return;
         

@@ -45,6 +45,7 @@ public class DisableSpellCheckingProposal implements ICCompletionProposal {
 	/*
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#apply(org.eclipse.jface.text.IDocument)
 	 */
+	@Override
 	public final void apply(final IDocument document) {
 		IPreferenceStore store= EditorsUI.getPreferenceStore();
 		store.setValue(SpellingService.PREFERENCE_SPELLING_ENABLED, false);
@@ -53,6 +54,7 @@ public class DisableSpellCheckingProposal implements ICCompletionProposal {
 	/*
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getAdditionalProposalInfo()
 	 */
+	@Override
 	public String getAdditionalProposalInfo() {
 		return Messages.Spelling_disable_info;
 	}
@@ -60,6 +62,7 @@ public class DisableSpellCheckingProposal implements ICCompletionProposal {
 	/*
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getContextInformation()
 	 */
+	@Override
 	public final IContextInformation getContextInformation() {
 		return null;
 	}
@@ -67,6 +70,7 @@ public class DisableSpellCheckingProposal implements ICCompletionProposal {
 	/*
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getDisplayString()
 	 */
+	@Override
 	public String getDisplayString() {
 		return Messages.Spelling_disable_label;
 	}
@@ -74,6 +78,7 @@ public class DisableSpellCheckingProposal implements ICCompletionProposal {
 	/*
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_NLS_NEVER_TRANSLATE);
 	}
@@ -81,6 +86,7 @@ public class DisableSpellCheckingProposal implements ICCompletionProposal {
 	/*
 	 * @see org.eclipse.cdt.ui.text.java.IJavaCompletionProposal#getRelevance()
 	 */
+	@Override
 	public final int getRelevance() {
 		return Integer.MIN_VALUE + 1;
 	}
@@ -88,10 +94,12 @@ public class DisableSpellCheckingProposal implements ICCompletionProposal {
 	/*
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getSelection(org.eclipse.jface.text.IDocument)
 	 */
+	@Override
 	public final Point getSelection(final IDocument document) {
 		return new Point(fContext.getSelectionOffset(), fContext.getSelectionLength());
 	}
 	
+	@Override
 	public String getIdString() {
 		return ID_DISABLE;
 	}

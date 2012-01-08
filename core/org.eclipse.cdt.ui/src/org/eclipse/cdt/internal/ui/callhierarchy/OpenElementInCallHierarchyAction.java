@@ -39,6 +39,7 @@ public class OpenElementInCallHierarchyAction implements IWorkbenchWindowActionD
 	public OpenElementInCallHierarchyAction() {
 	}
 
+	@Override
 	public void run(IAction action) {
 		ElementSelectionDialog dialog = new ElementSelectionDialog(getShell());
 		configureDialog(dialog);
@@ -93,14 +94,17 @@ public class OpenElementInCallHierarchyAction implements IWorkbenchWindowActionD
 		return fWorkbenchWindow.getShell();
 	}
 
+	@Override
 	public void dispose() {
 		fWorkbenchWindow= null;
 	}
 	
+	@Override
 	public void init(IWorkbenchWindow window) {
 		fWorkbenchWindow= window;
 	}
 	
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 	}
 }

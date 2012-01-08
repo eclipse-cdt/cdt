@@ -94,6 +94,7 @@ public class TestExtSettingsProvider extends CExternalSettingProvider {
 
 	private static int variantNum;
 	
+	@Override
 	public CExternalSetting[] getSettings(IProject project,
 			ICConfigurationDescription cfg) {
 		return SETTINGS_VARIANTS[variantNum].clone();

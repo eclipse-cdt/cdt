@@ -57,6 +57,7 @@ public class NewSourceFileCreationWizardPage extends AbstractFileCreationWizardP
 
 		fNewFileDialogField = new StringDialogField();
 		fNewFileDialogField.setDialogFieldListener(new IDialogFieldListener() {
+			@Override
 			public void dialogFieldChanged(DialogField field) {
 				handleFieldChanged(NEW_FILE_ID);
 			}

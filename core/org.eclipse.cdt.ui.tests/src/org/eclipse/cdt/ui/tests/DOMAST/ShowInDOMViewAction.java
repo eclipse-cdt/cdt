@@ -53,6 +53,7 @@ public class ShowInDOMViewAction extends ActionDelegate implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
 	 */
+	@Override
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
 		if (targetEditor instanceof CEditor)
 			editor = (CEditor)targetEditor;
@@ -61,6 +62,7 @@ public class ShowInDOMViewAction extends ActionDelegate implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.ActionDelegate#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
 	 */
+	@Override
 	public void runWithEvent(IAction action, Event event) {
 		TextSelection selection = null;
 		
@@ -169,6 +171,7 @@ public class ShowInDOMViewAction extends ActionDelegate implements
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.action.Action#run()
 		 */
+		@Override
 		public void run() {
 			if (view instanceof DOMAST) {
 				IContentProvider provider = ((DOMAST)view).getContentProvider();

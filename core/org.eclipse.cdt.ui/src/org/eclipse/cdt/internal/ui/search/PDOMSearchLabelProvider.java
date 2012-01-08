@@ -160,6 +160,7 @@ public class PDOMSearchLabelProvider extends LabelProvider implements IStyledLab
 		return fPage.getInput().getMatchCount(element);
 	}
 
+	@Override
 	public StyledString getStyledText(Object element) {
 		if (!(element instanceof LineSearchElement))
 			return new StyledString(getText(element));

@@ -28,6 +28,7 @@ public class CfgSettingsTests extends BaseTestCase {
 		return suite(CfgSettingsTests.class, "_");
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 	}
 	
@@ -147,6 +148,7 @@ public class CfgSettingsTests extends BaseTestCase {
 		return ICProjectDescriptionPreferences.CONFIGS_INDEPENDENT;
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		try {
 			if(p1 != null){

@@ -33,17 +33,21 @@ public class IndexedFilesLabelProvider implements ILightweightLabelDecorator {
     public IndexedFilesLabelProvider() {
     }
 
-    public void addListener(ILabelProviderListener listener) {
+    @Override
+	public void addListener(ILabelProviderListener listener) {
     }
 
-    public void dispose() {
+    @Override
+	public void dispose() {
     }
 
-    public boolean isLabelProperty(Object element, String property) {
+    @Override
+	public boolean isLabelProperty(Object element, String property) {
         return false;
     }
 
-    public void removeListener(ILabelProviderListener listener) {
+    @Override
+	public void removeListener(ILabelProviderListener listener) {
     }
 
     /**
@@ -54,7 +58,8 @@ public class IndexedFilesLabelProvider implements ILightweightLabelDecorator {
      * @param decoration  The decoration we are adding to
      * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#decorate(Object, IDecoration)
      */
-    public void decorate(Object element, IDecoration decoration) {
+    @Override
+	public void decorate(Object element, IDecoration decoration) {
     	IIndexFileLocation ifl= null;
     	IProject project= null;
         if (element instanceof IFile) {

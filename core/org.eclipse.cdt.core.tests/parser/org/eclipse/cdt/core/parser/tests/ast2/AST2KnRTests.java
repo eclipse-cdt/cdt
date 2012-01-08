@@ -69,7 +69,7 @@ public class AST2KnRTests extends AST2BaseTest {
 	}
 
 	public void testSimpleKRCTest1() throws Exception {
-    	StringBuffer buffer = new StringBuffer(); //$NON-NLS-1$
+    	StringBuffer buffer = new StringBuffer(); 
     	buffer.append( "int f(char x);\n" ); //$NON-NLS-1$
     	buffer.append( "int f(x) char x;\n" ); //$NON-NLS-1$
     	buffer.append( "{ return x == 0; }\n" ); //$NON-NLS-1$
@@ -104,7 +104,7 @@ public class AST2KnRTests extends AST2BaseTest {
     }
 
     public void testSimpleKRCTest2() throws Exception {
-    	StringBuffer buffer = new StringBuffer(); //$NON-NLS-1$
+    	StringBuffer buffer = new StringBuffer(); 
     	buffer.append( "int f();\n" ); //$NON-NLS-1$
     	buffer.append( "int f(x) char x;\n" ); //$NON-NLS-1$
     	buffer.append( "{ return x == 0; }\n" ); //$NON-NLS-1$
@@ -135,7 +135,7 @@ public class AST2KnRTests extends AST2BaseTest {
     }
 
     public void testSimpleKRCTest3() throws Exception {
-    	StringBuffer buffer = new StringBuffer(); //$NON-NLS-1$
+    	StringBuffer buffer = new StringBuffer(); 
     	buffer.append( "int const *f();\n" ); //$NON-NLS-1$
     	buffer.append( "int const *f(x) char x;\n" ); //$NON-NLS-1$
     	buffer.append( "{ return x == 0; }\n" ); //$NON-NLS-1$
@@ -158,7 +158,7 @@ public class AST2KnRTests extends AST2BaseTest {
     }
     
     public void testKRC_1() throws Exception {
-    	StringBuffer buffer = new StringBuffer(); //$NON-NLS-1$
+    	StringBuffer buffer = new StringBuffer(); 
     	buffer.append( "int isroot (x, y) /* comment */ \n" ); //$NON-NLS-1$
     	buffer.append( "int x;\n" ); //$NON-NLS-1$
     	buffer.append( "int y;\n" ); //$NON-NLS-1$
@@ -204,7 +204,7 @@ public class AST2KnRTests extends AST2BaseTest {
     }
 
     public void testKRCWithTypes() throws Exception {
-    	StringBuffer buffer = new StringBuffer(); //$NON-NLS-1$
+    	StringBuffer buffer = new StringBuffer(); 
     	buffer.append( "typedef char c;\n" ); //$NON-NLS-1$
     	buffer.append( "int isroot (c);\n" ); //$NON-NLS-1$
     	buffer.append( "int isroot (x) \n" ); //$NON-NLS-1$
@@ -258,7 +258,7 @@ public class AST2KnRTests extends AST2BaseTest {
     }
 
     public void testKRCProblem1() throws Exception {
-    	StringBuffer buffer = new StringBuffer(); //$NON-NLS-1$
+    	StringBuffer buffer = new StringBuffer(); 
     	buffer.append( "int f(x) char\n" ); //$NON-NLS-1$
     	buffer.append( "{ return x == 0; }\n" ); //$NON-NLS-1$
     	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C, true, false );
@@ -268,7 +268,7 @@ public class AST2KnRTests extends AST2BaseTest {
     }
     
     public void testKRCProblem2() throws Exception {
-    	StringBuffer buffer = new StringBuffer(); //$NON-NLS-1$
+    	StringBuffer buffer = new StringBuffer(); 
     	buffer.append( "int i=0;\n" ); //$NON-NLS-1$
     	buffer.append( "int f(x) i++;\n" ); //$NON-NLS-1$
     	buffer.append( "{ return x == 0; }\n" ); //$NON-NLS-1$
@@ -279,7 +279,7 @@ public class AST2KnRTests extends AST2BaseTest {
 	}
 
     public void testKRCProblem3() throws Exception {
-    	StringBuffer buffer = new StringBuffer(); //$NON-NLS-1$
+    	StringBuffer buffer = new StringBuffer(); 
     	buffer.append( "int f(x) char y;\n" ); //$NON-NLS-1$
     	buffer.append( "{ return x == 0; }\n" ); //$NON-NLS-1$
     	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C, true, false );
@@ -304,7 +304,7 @@ public class AST2KnRTests extends AST2BaseTest {
     }
 
     public void testKRCProblem4() throws Exception {
-    	StringBuffer buffer = new StringBuffer(); //$NON-NLS-1$
+    	StringBuffer buffer = new StringBuffer(); 
     	buffer.append( "int f(x,y,z) char x,y,z; int a;\n" ); //$NON-NLS-1$
     	buffer.append( "{ return x == 0; }\n" ); //$NON-NLS-1$
     	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C, true, false );
@@ -354,7 +354,7 @@ public class AST2KnRTests extends AST2BaseTest {
     }
 
     public void testKRCProblem5() throws Exception {
-    	StringBuffer buffer = new StringBuffer(); //$NON-NLS-1$
+    	StringBuffer buffer = new StringBuffer(); 
     	buffer.append( "int f(x) char x,a;\n" ); //$NON-NLS-1$
     	buffer.append( "{ return x == 0; }\n" ); //$NON-NLS-1$
     	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C, true, false );
@@ -380,7 +380,7 @@ public class AST2KnRTests extends AST2BaseTest {
     
     
     public void testKRC_monop_cards1() throws Exception {
-    	StringBuffer buffer = new StringBuffer(); //$NON-NLS-1$
+    	StringBuffer buffer = new StringBuffer(); 
     	buffer.append( "#ifdef __STDC__\n" ); //$NON-NLS-1$
     	buffer.append( "#define __P(x) x\n" ); //$NON-NLS-1$
     	buffer.append( "#else\n" ); //$NON-NLS-1$
@@ -505,7 +505,7 @@ public class AST2KnRTests extends AST2BaseTest {
     }
     
     public void testKRC_monop_cards2() throws Exception {
-    	StringBuffer buffer = new StringBuffer(); //$NON-NLS-1$
+    	StringBuffer buffer = new StringBuffer(); 
     	buffer.append( "int\n" ); //$NON-NLS-1$
     	buffer.append( "getinp(prompt, list)\n" ); //$NON-NLS-1$
     	buffer.append( "        const char *prompt, *const list[];\n" ); //$NON-NLS-1$
@@ -547,7 +547,7 @@ public class AST2KnRTests extends AST2BaseTest {
     }
     
     public void testKRC_getParametersOrder() throws Exception {
-    	StringBuffer buffer = new StringBuffer(); //$NON-NLS-1$
+    	StringBuffer buffer = new StringBuffer(); 
     	buffer.append( "int f(a, b) int b,a;{}\n" ); //$NON-NLS-1$
     	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C, true );
     	
@@ -562,7 +562,7 @@ public class AST2KnRTests extends AST2BaseTest {
     }
 
     public void testKRC_Ethereal_1() throws Exception {
-    	StringBuffer buffer = new StringBuffer(); //$NON-NLS-1$
+    	StringBuffer buffer = new StringBuffer(); 
     	buffer.append( "struct symbol {\n" ); //$NON-NLS-1$
     	buffer.append( "int lambda;\n};\n" ); //$NON-NLS-1$
     	buffer.append( "struct lemon {\n" ); //$NON-NLS-1$

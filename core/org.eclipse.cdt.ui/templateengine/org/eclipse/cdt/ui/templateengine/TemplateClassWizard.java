@@ -82,7 +82,7 @@ public class TemplateClassWizard extends TemplatesChoiceWizard implements INewWi
 
 	@Override
 	public Template[] getTemplates() {
-		SortedSet<TemplateCore> templateList = new TreeSet<TemplateCore>(Template.TEMPLATE_ID_CASE_INSENSITIVE_COMPARATOR);
+		SortedSet<TemplateCore> templateList = new TreeSet<TemplateCore>(TemplateCore.TEMPLATE_ID_CASE_INSENSITIVE_COMPARATOR);
 		templateList.addAll(Arrays.asList(TemplateEngineUI.getDefault().getTemplates()));
 		return templateList.toArray(new Template[templateList.size()]);
 	}

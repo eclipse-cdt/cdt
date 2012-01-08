@@ -83,7 +83,7 @@ public class SettingsImportExportTest extends BaseUITestCase {
 	
 	private static String getFilePath(String fileName) {
 		IPath workspaceLocation = ResourcesPlugin.getWorkspace().getRoot().getLocation();
-		return workspaceLocation.toOSString() + Path.SEPARATOR + fileName;
+		return workspaceLocation.toOSString() + IPath.SEPARATOR + fileName;
 	}
 	
 	

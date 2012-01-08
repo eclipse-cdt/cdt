@@ -56,6 +56,7 @@ public class ASTCacheTests extends BaseTestCase {
 			fCache= cache;
 			setDaemon(true);
 		}
+		@Override
 		public void run() {
 			while (!fStopped) {
 				try {
@@ -98,6 +99,7 @@ public class ASTCacheTests extends BaseTestCase {
 	private final String SOURCE1= "void foo1() {}"; //$NON-NLS-1$
 	private final String SOURCE2= "void foo2() {}"; //$NON-NLS-1$
 
+	@Override
 	public void setUp() throws Exception {
 		super.setUp();
 		IProgressMonitor npm= new NullProgressMonitor();
@@ -116,6 +118,7 @@ public class ASTCacheTests extends BaseTestCase {
 		fIndex.acquireReadLock();
 	}
 
+	@Override
 	public void tearDown() throws Exception {
 		if (fIndex != null) {
 			fIndex.releaseReadLock();
@@ -158,6 +161,7 @@ public class ASTCacheTests extends BaseTestCase {
 		final int[] counter= {0};
 		cache.setActiveElement(fTU1);
 		IStatus status= cache.runOnAST(fTU1, false, null, new ASTRunnable() {
+			@Override
 			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
 				assertNull(ast);
 				counter[0]++;
@@ -169,6 +173,7 @@ public class ASTCacheTests extends BaseTestCase {
 		IProgressMonitor npm= new NullProgressMonitor();
 		npm.setCanceled(true);
 		status= cache.runOnAST(fTU1, true, npm, new ASTRunnable() {
+			@Override
 			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
 				assertNull(ast);
 				counter[0]++;
@@ -179,6 +184,7 @@ public class ASTCacheTests extends BaseTestCase {
 
 		npm.setCanceled(false);
 		status= cache.runOnAST(fTU1, true, npm, new ASTRunnable() {
+			@Override
 			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
 				assertNotNull(ast);
 				counter[0]++;
@@ -204,6 +210,7 @@ public class ASTCacheTests extends BaseTestCase {
 			}
 			reconciler1.fStopped= true;
 			IStatus status= cache.runOnAST(fTU1, true, null, new ASTRunnable() {
+				@Override
 				public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
 					assertNotNull(ast);
 					assertTrue(cache.isActiveElement(fTU1));
@@ -226,6 +233,7 @@ public class ASTCacheTests extends BaseTestCase {
 			reconciler2.fStopped= true;
 			
 			status= cache.runOnAST(fTU2, true, null, new ASTRunnable() {
+				@Override
 				public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
 					assertNotNull(ast);
 					assertTrue(cache.isActiveElement(fTU2));
@@ -257,6 +265,7 @@ public class ASTCacheTests extends BaseTestCase {
 				cache.setActiveElement(fTU1);
 				Thread.sleep(50);
 				waitForAST(cache, fTU1, new ASTRunnable() {
+					@Override
 					public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
 						assertNotNull(ast);
 						assertEquals("void foo1() {}", ast.getDeclarations()[0].getRawSignature());
@@ -265,6 +274,7 @@ public class ASTCacheTests extends BaseTestCase {
 				});
 
 				waitForAST(cache, fTU2, new ASTRunnable() {
+					@Override
 					public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
 						assertNotNull(ast);
 						assertEquals("void foo2() {}", ast.getDeclarations()[0].getRawSignature());
@@ -276,6 +286,7 @@ public class ASTCacheTests extends BaseTestCase {
 				cache.setActiveElement(fTU2);
 				Thread.sleep(50);
 				waitForAST(cache, fTU2, new ASTRunnable() {
+					@Override
 					public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
 						assertNotNull(ast);
 						assertEquals("void foo2() {}", ast.getDeclarations()[0].getRawSignature());
@@ -284,6 +295,7 @@ public class ASTCacheTests extends BaseTestCase {
 				});
 
 				waitForAST(cache, fTU1, new ASTRunnable() {
+					@Override
 					public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
 						assertNotNull(ast);
 						assertEquals("void foo1() {}", ast.getDeclarations()[0].getRawSignature());

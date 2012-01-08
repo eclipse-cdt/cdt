@@ -73,6 +73,7 @@ public class PDOMTestBase extends BaseTestCase {
 			final File rootDir = CTestPlugin.getDefault().getFileInPlugin(rootPath.append(folderName));
 			final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 			workspace.run(new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					// Create the project
 					ICProject cproject= cpp ? CProjectHelper.createCCProject(projectName, null, IPDOMManager.ID_NO_INDEXER)
@@ -81,6 +82,7 @@ public class PDOMTestBase extends BaseTestCase {
 					// Import the files at the root
 					ImportOperation importOp = new ImportOperation(cproject.getProject().getFullPath(),
 							rootDir, FileSystemStructureProvider.INSTANCE, new IOverwriteQuery() {
+						@Override
 						public String queryOverwrite(String pathString) {
 							return IOverwriteQuery.ALL;
 						}

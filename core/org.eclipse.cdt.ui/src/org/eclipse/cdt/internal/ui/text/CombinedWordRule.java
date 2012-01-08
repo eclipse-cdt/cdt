@@ -329,6 +329,7 @@ public class CombinedWordRule implements IRule {
 	/*
 	 * @see IRule#evaluate(ICharacterScanner)
 	 */
+	@Override
 	public IToken evaluate(ICharacterScanner scanner) {
 		int c= scanner.read();
 		if (fDetector.isWordStart((char) c)) {

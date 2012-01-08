@@ -85,7 +85,8 @@ public class TeamProjectIndexExportWizardPage extends WizardPage implements List
         setDescription(Messages.TeamProjectIndexExportWizardPage_description); 
     }
 
-    public void createControl(Composite parent) {
+    @Override
+	public void createControl(Composite parent) {
         initializeDialogUnits(parent);
 
         Composite composite = new Composite(parent, SWT.NULL);
@@ -129,7 +130,8 @@ public class TeamProjectIndexExportWizardPage extends WizardPage implements List
 		fProjectViewer.setContentProvider(new ListContentProvider());
 		fProjectViewer.setLabelProvider(new CElementLabelProvider());        
         ICheckStateListener checkListener = new ICheckStateListener() {
-            public void checkStateChanged(CheckStateChangedEvent event) {
+            @Override
+			public void checkStateChanged(CheckStateChangedEvent event) {
                 updateWidgetEnablements();
             }
         };
@@ -328,6 +330,7 @@ public class TeamProjectIndexExportWizardPage extends WizardPage implements List
     	final boolean exportResourceSnapshot = fResourceSnapshotButton.getSelection();
 
     	IRunnableWithProgress op= new IRunnableWithProgress() {
+			@Override
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				monitor.beginTask("", projects.length); //$NON-NLS-1$
 				for (ICProject project : projects) {
@@ -412,6 +415,7 @@ public class TeamProjectIndexExportWizardPage extends WizardPage implements List
     }
     
 
+	@Override
 	public void handleEvent(Event event) {
 		updateWidgetEnablements();
 	}

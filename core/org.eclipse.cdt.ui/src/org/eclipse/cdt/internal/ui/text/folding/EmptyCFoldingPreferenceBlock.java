@@ -30,6 +30,7 @@ public class EmptyCFoldingPreferenceBlock implements ICFoldingPreferenceBlock {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.folding.ICFoldingPreferences#createControl(org.eclipse.swt.widgets.Group)
 	 */
+	@Override
 	public Control createControl(Composite composite) {
 		Composite inner= new Composite(composite, SWT.NONE);
 		inner.setLayout(new GridLayout(3, false));
@@ -55,24 +56,28 @@ public class EmptyCFoldingPreferenceBlock implements ICFoldingPreferenceBlock {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.folding.ICFoldingPreferenceBlock#initialize()
 	 */
+	@Override
 	public void initialize() {
 	}
 
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.folding.ICFoldingPreferenceBlock#performOk()
 	 */
+	@Override
 	public void performOk() {
 	}
 
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.folding.ICFoldingPreferenceBlock#performDefaults()
 	 */
+	@Override
 	public void performDefaults() {
 	}
 
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.folding.ICFoldingPreferenceBlock#dispose()
 	 */
+	@Override
 	public void dispose() {
 	}
 

@@ -107,7 +107,8 @@ public class RemoteTreeContentManager {
          *  (non-Javadoc)
          * @see org.eclipse.jface.progress.IElementCollector#add(java.lang.Object, org.eclipse.core.runtime.IProgressMonitor)
          */
-        public void add(Object element, IProgressMonitor monitor) {
+        @Override
+		public void add(Object element, IProgressMonitor monitor) {
             add(new Object[] { element }, monitor);
         }
 
@@ -115,7 +116,8 @@ public class RemoteTreeContentManager {
          *  (non-Javadoc)
          * @see org.eclipse.jface.progress.IElementCollector#add(java.lang.Object[], org.eclipse.core.runtime.IProgressMonitor)
          */
-        public void add(Object[] elements, IProgressMonitor monitor) {
+        @Override
+		public void add(Object[] elements, IProgressMonitor monitor) {
             Object[] filtered = fViewer.filter(elements);
             fViewer.getSorter().sort(fViewer, filtered);
             if (filtered.length > 0) {
@@ -129,7 +131,8 @@ public class RemoteTreeContentManager {
          * 
          * @see org.eclipse.jface.progress.IElementCollector#done()
          */
-        public void done() {
+        @Override
+		public void done() {
             prune(fParent, offset);
         }
     }

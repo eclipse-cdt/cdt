@@ -26,6 +26,7 @@ public class CWordIteratorTest extends BreakIteratorTest {
 	/*
 	 * @see junit.framework.TestCase#setUp()
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		fBreakIterator= new CWordIterator();
 	}

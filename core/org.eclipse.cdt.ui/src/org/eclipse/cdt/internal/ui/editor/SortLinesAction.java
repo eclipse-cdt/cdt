@@ -260,14 +260,17 @@ public final class SortLinesAction extends TextEditorAction {
 					document.get(collationLine.getOffset(), collationLine.getLength())), tabWidth);
 		}
 
+		@Override
 		public int compareTo(SortElement other) {
 			return collator.compare(collationKey, other.collationKey);
 		}
 
+		@Override
 		public int getOffset() {
 			return region.getOffset();
 		}
 
+		@Override
 		public int getLength() {
 			return region.getLength();
 		}
@@ -298,6 +301,7 @@ public final class SortLinesAction extends TextEditorAction {
 		/**
 		 * Offset of the line in the document.
 		 */
+		@Override
 		public int getOffset() {
 			return offset;
 		}
@@ -305,6 +309,7 @@ public final class SortLinesAction extends TextEditorAction {
 		/**
 		 * Length of the line including line delimiter.
 		 */
+		@Override
 		public int getLength() {
 			return length;
 		}

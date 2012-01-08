@@ -53,9 +53,11 @@ public class CSpellingService extends SpellingService {
 					fEngine = new CSpellingEngine();
 				}
 				ISafeRunnable runnable= new ISafeRunnable() {
+					@Override
 					public void run() throws Exception {
 						fEngine.check(document, regions, context, collector, monitor);
 					}
+					@Override
 					public void handleException(Throwable x) {
 					}
 				};

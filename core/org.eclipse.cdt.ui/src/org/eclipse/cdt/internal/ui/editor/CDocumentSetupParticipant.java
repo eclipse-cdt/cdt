@@ -36,6 +36,7 @@ public class CDocumentSetupParticipant implements IDocumentSetupParticipant, IDo
 	/*
 	 * @see org.eclipse.core.filebuffers.IDocumentSetupParticipant#setup(org.eclipse.jface.text.IDocument)
 	 */
+	@Override
 	public void setup(IDocument document) {
 		setup(document, null, null);
 	}
@@ -43,6 +44,7 @@ public class CDocumentSetupParticipant implements IDocumentSetupParticipant, IDo
 	/*
 	 * @see org.eclipse.core.filebuffers.IDocumentSetupParticipantExtension#setup(org.eclipse.jface.text.IDocument, org.eclipse.core.runtime.IPath, org.eclipse.core.filebuffers.LocationKind)
 	 */
+	@Override
 	public void setup(IDocument document, IPath location, LocationKind locationKind) {
 		CTextTools tools= CUIPlugin.getDefault().getTextTools();
 		tools.setupCDocument(document, location, locationKind);

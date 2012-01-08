@@ -59,6 +59,7 @@ public class ToggleFromInHeaderToClassStrategy implements IToggleRefactoringStra
 				IASTCompositeTypeSpecifier.class) == null);
 	}
 
+	@Override
 	public void run(ModificationCollector modifications) {
 		ASTRewrite rewriter = removeDefinition(modifications);
 		IASTFunctionDefinition newDefinition = getNewDefinition();

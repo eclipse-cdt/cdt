@@ -47,6 +47,7 @@ public class CMacroExpansionHover extends AbstractCEditorTextHover {
 	@Override
 	public IInformationControlCreator getHoverControlCreator() {
 		return new IInformationControlCreator() {
+			@Override
 			public IInformationControl createInformationControl(Shell parent) {
 				return new CMacroExpansionControl(parent, getTooltipAffordanceString());
 			}
@@ -59,6 +60,7 @@ public class CMacroExpansionHover extends AbstractCEditorTextHover {
 	@Override
 	public IInformationControlCreator getInformationPresenterControlCreator() {
 		return new IInformationControlCreator() {
+			@Override
 			public IInformationControl createInformationControl(Shell parent) {
 				IEditorPart editor= getEditor();
 				int orientation= SWT.NONE;

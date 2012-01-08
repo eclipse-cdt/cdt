@@ -56,6 +56,7 @@ public class TypedElementSelectionValidator implements ISelectionStatusValidator
 	/*
 	 * @see org.eclipse.ui.dialogs.ISelectionValidator#isValid(java.lang.Object)
 	 */
+	@Override
 	public IStatus validate(Object[] elements) {
 		if (isValid(elements)) {
 			return fgOKStatus;

@@ -38,6 +38,7 @@ public class TestProcesses extends BaseTestCase {
 
 	private static final String PROJECT_TYPE = "org.eclipse.cdt.core.tests.projectType"; //$NON-NLS-1$
 
+	@Override
 	protected void setUp() throws Exception {
 		TemplateEngineTestsHelper.turnOffAutoBuild();
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(PROJECT_NAME);

@@ -80,6 +80,7 @@ public class CPathEntryTest extends BaseTestCase {
 		 * 
 		 * @see org.eclipse.cdt.core.model.IElementChangedListener#elementChanged(org.eclipse.cdt.core.model.ElementChangedEvent)
 		 */
+		@Override
 		public void elementChanged(ElementChangedEvent event) {
 			processDelta(event.getDelta());
 		}
@@ -101,6 +102,7 @@ public class CPathEntryTest extends BaseTestCase {
 	 * Called before every test case method.
 	 *  
 	 */
+	@Override
 	protected void setUp() throws CoreException {
 		/***************************************************************************************************************************
 		 * The test of the tests assume that they have a working workspace and workspace root object to use to create
@@ -126,6 +128,7 @@ public class CPathEntryTest extends BaseTestCase {
 	 * 
 	 * Called after every test case method.
 	 */
+	@Override
 	protected void tearDown() {
 		// release resources here and clean-up
 	}
@@ -205,6 +208,7 @@ public class CPathEntryTest extends BaseTestCase {
 		IContainerEntry containerEntry = CoreModel.newContainerEntry(containerID);
 		IPathEntryContainer container = new IPathEntryContainer() {
 
+			@Override
 			public IPathEntry[] getPathEntries() {
 				IPathEntry[] entries = new IPathEntry[3];
 				entries[0] = CoreModel.newIncludeEntry(new Path(""), null, new Path("/usr/include"), true);
@@ -213,10 +217,12 @@ public class CPathEntryTest extends BaseTestCase {
 				return entries;
 			}
 
+			@Override
 			public String getDescription() {
 				return "Testing container"; //$NON-NLS-1$
 			}
 
+			@Override
 			public IPath getPath() {
 				return containerID;
 			}

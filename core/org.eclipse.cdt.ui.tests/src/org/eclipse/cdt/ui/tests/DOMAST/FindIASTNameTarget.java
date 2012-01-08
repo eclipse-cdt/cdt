@@ -266,6 +266,7 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.IFindReplaceTarget#canPerformFind()
 	 */
+	@Override
 	public boolean canPerformFind() {
 		return true;
 	}
@@ -340,6 +341,7 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.IFindReplaceTarget#findAndSelect(int, java.lang.String, boolean, boolean, boolean)
 	 */
+	@Override
 	public int findAndSelect(int widgetOffset, String findString,
 			boolean searchForward, boolean caseSensitive, boolean wholeWord) {
 		return findAndSelect(widgetOffset, findString, searchForward, caseSensitive, wholeWord, false);
@@ -348,6 +350,7 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.IFindReplaceTarget#getSelection()
 	 */
+	@Override
 	public Point getSelection() {
 		IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
 		
@@ -361,6 +364,7 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.IFindReplaceTarget#getSelectionText()
 	 */
+	@Override
 	public String getSelectionText() {
 		// TODO Auto-generated method stub
 		return null;
@@ -369,6 +373,7 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.IFindReplaceTarget#isEditable()
 	 */
+	@Override
 	public boolean isEditable() {
 		// TODO Auto-generated method stub
 		return false;
@@ -377,6 +382,7 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.IFindReplaceTarget#replaceSelection(java.lang.String)
 	 */
+	@Override
 	public void replaceSelection(String text) {
 		// TODO Auto-generated method stub
 
@@ -390,6 +396,7 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.IFindReplaceTargetExtension3#findAndSelect(int, java.lang.String, boolean, boolean, boolean, boolean)
 	 */
+	@Override
 	public int findAndSelect(int offset, String findString, boolean searchForward, boolean caseSensitive, boolean wholeWord, boolean regExSearch) {
 		// find the next name in the list of names
 		IASTName foundName = null;
@@ -433,6 +440,7 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.IFindReplaceTargetExtension3#replaceSelection(java.lang.String, boolean)
 	 */
+	@Override
 	public void replaceSelection(String text, boolean regExReplace) {
 		// TODO Auto-generated method stub
 		

@@ -202,6 +202,7 @@ public class IncludesSymbolsPropertyPage extends PropertyPage implements IStatus
 			Shell shell = getControl().getShell();
 			IRunnableWithProgress runnable = new IRunnableWithProgress() {
 
+				@Override
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
 						fIncludesSymbolsBlock.configureCProject(monitor);
@@ -231,6 +232,7 @@ public class IncludesSymbolsPropertyPage extends PropertyPage implements IStatus
 	 * 
 	 * @see IStatusChangeListener#statusChanged
 	 */
+	@Override
 	public void statusChanged(IStatus status) {
 		setValid(!status.matches(IStatus.ERROR));
 		StatusUtil.applyToStatusLine(this, status);
@@ -254,12 +256,14 @@ public class IncludesSymbolsPropertyPage extends PropertyPage implements IStatus
 	 * 
 	 * @see org.eclipse.cdt.core.resources.IPathEntryStoreListener#pathEntryStoreChanged(org.eclipse.cdt.core.resources.PathEntryStoreChangedEvent)
 	 */
+	@Override
 	public void pathEntryStoreChanged(PathEntryStoreChangedEvent event) {
 		if (event.hasContentChanged()) {
 			Control control = getControl();
 			if (control != null && !control.isDisposed()) {
 				control.getDisplay().asyncExec(new Runnable() {
 
+					@Override
 					public void run() {
 						Control control = getControl();
 						if (control != null && !control.isDisposed()) {

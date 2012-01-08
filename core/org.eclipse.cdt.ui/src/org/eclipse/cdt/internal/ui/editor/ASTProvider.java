@@ -107,6 +107,7 @@ public final class ASTProvider {
 		/*
 		 * @see org.eclipse.ui.IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
 		 */
+		@Override
 		public void partActivated(IWorkbenchPartReference ref) {
 			if (isCEditor(ref) && !isActiveEditor(ref))
 				activeEditorChanged(ref.getPart(true));
@@ -115,6 +116,7 @@ public final class ASTProvider {
 		/*
 		 * @see org.eclipse.ui.IPartListener2#partBroughtToTop(org.eclipse.ui.IWorkbenchPartReference)
 		 */
+		@Override
 		public void partBroughtToTop(IWorkbenchPartReference ref) {
 			if (isCEditor(ref) && !isActiveEditor(ref))
 				activeEditorChanged(ref.getPart(true));
@@ -123,6 +125,7 @@ public final class ASTProvider {
 		/*
 		 * @see org.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
 		 */
+		@Override
 		public void partClosed(IWorkbenchPartReference ref) {
 			if (isActiveEditor(ref)) {
 				activeEditorChanged(null);
@@ -132,12 +135,14 @@ public final class ASTProvider {
 		/*
 		 * @see org.eclipse.ui.IPartListener2#partDeactivated(org.eclipse.ui.IWorkbenchPartReference)
 		 */
+		@Override
 		public void partDeactivated(IWorkbenchPartReference ref) {
 		}
 
 		/*
 		 * @see org.eclipse.ui.IPartListener2#partOpened(org.eclipse.ui.IWorkbenchPartReference)
 		 */
+		@Override
 		public void partOpened(IWorkbenchPartReference ref) {
 			if (isCEditor(ref) && !isActiveEditor(ref))
 				activeEditorChanged(ref.getPart(true));
@@ -146,12 +151,14 @@ public final class ASTProvider {
 		/*
 		 * @see org.eclipse.ui.IPartListener2#partHidden(org.eclipse.ui.IWorkbenchPartReference)
 		 */
+		@Override
 		public void partHidden(IWorkbenchPartReference ref) {
 		}
 
 		/*
 		 * @see org.eclipse.ui.IPartListener2#partVisible(org.eclipse.ui.IWorkbenchPartReference)
 		 */
+		@Override
 		public void partVisible(IWorkbenchPartReference ref) {
 			if (isCEditor(ref) && !isActiveEditor(ref))
 				activeEditorChanged(ref.getPart(true));
@@ -160,6 +167,7 @@ public final class ASTProvider {
 		/*
 		 * @see org.eclipse.ui.IPartListener2#partInputChanged(org.eclipse.ui.IWorkbenchPartReference)
 		 */
+		@Override
 		public void partInputChanged(IWorkbenchPartReference ref) {
 			if (isCEditor(ref) && isActiveEditor(ref))
 				activeEditorChanged(ref.getPart(true));
@@ -168,6 +176,7 @@ public final class ASTProvider {
 		/*
 		 * @see org.eclipse.ui.IWindowListener#windowActivated(org.eclipse.ui.IWorkbenchWindow)
 		 */
+		@Override
 		public void windowActivated(IWorkbenchWindow window) {
 			IWorkbenchPartReference ref= window.getPartService().getActivePartReference();
 			if (isCEditor(ref) && !isActiveEditor(ref))
@@ -177,12 +186,14 @@ public final class ASTProvider {
 		/*
 		 * @see org.eclipse.ui.IWindowListener#windowDeactivated(org.eclipse.ui.IWorkbenchWindow)
 		 */
+		@Override
 		public void windowDeactivated(IWorkbenchWindow window) {
 		}
 
 		/*
 		 * @see org.eclipse.ui.IWindowListener#windowClosed(org.eclipse.ui.IWorkbenchWindow)
 		 */
+		@Override
 		public void windowClosed(IWorkbenchWindow window) {
 			if (fActiveEditor != null && fActiveEditor.getSite() != null && window == fActiveEditor.getSite().getWorkbenchWindow()) {
 				activeEditorChanged(null);
@@ -193,6 +204,7 @@ public final class ASTProvider {
 		/*
 		 * @see org.eclipse.ui.IWindowListener#windowOpened(org.eclipse.ui.IWorkbenchWindow)
 		 */
+		@Override
 		public void windowOpened(IWorkbenchWindow window) {
 			window.getPartService().addPartListener(this);
 		}

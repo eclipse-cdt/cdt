@@ -71,7 +71,8 @@ public class TranslationUnitBaseTest extends TestCase
          * Example code test the packages in the project 
          *  "com.qnx.tools.ide.cdt.core"
          */
-    protected void setUp() throws Exception
+    @Override
+	protected void setUp() throws Exception
     {
         /***
          * The rest of the tests assume that they have a working workspace
@@ -145,7 +146,8 @@ public class TranslationUnitBaseTest extends TestCase
          *
          * Called after every test case method.
          */
-    protected void tearDown() 
+    @Override
+	protected void tearDown() 
     {
        // release resources here and clean-up
        try {

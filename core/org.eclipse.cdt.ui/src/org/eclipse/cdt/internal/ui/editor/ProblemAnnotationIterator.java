@@ -43,6 +43,7 @@ public class ProblemAnnotationIterator implements Iterator<IProblemAnnotation> {
 	/*
 	 * @see Iterator#hasNext()
 	 */
+	@Override
 	public boolean hasNext() {
 		return fNext != null;
 	}
@@ -50,6 +51,7 @@ public class ProblemAnnotationIterator implements Iterator<IProblemAnnotation> {
 	/*
 	 * @see Iterator#next()
 	 */
+	@Override
 	public IProblemAnnotation next() {
 		try {
 			return fNext;
@@ -61,6 +63,7 @@ public class ProblemAnnotationIterator implements Iterator<IProblemAnnotation> {
 	/*
 	 * @see Iterator#remove()
 	 */
+	@Override
 	public void remove() {
 		throw new UnsupportedOperationException();
 	}

@@ -108,6 +108,7 @@ public class CDTViewerDropAdapter implements DropTargetListener {
 	 * </code>.
 	 * @see DropTargetListener#drop(org.eclipse.swt.dnd.DropTargetEvent)
 	 */	 
+	@Override
 	public void drop(DropTargetEvent event) {
 		drop(fTarget, event);
 	}
@@ -141,15 +142,18 @@ public class CDTViewerDropAdapter implements DropTargetListener {
 	public void validateDrop(Object target, DropTargetEvent event, int operation) {
 	}
 	
+	@Override
 	public void dragEnter(DropTargetEvent event) {
 		dragOperationChanged(event);
 	}
 	
+	@Override
 	public void dragLeave(DropTargetEvent event) {
 		fTarget= null;
 		fLocation= LOCATION_NONE;
 	}
 	
+	@Override
 	public void dragOperationChanged(DropTargetEvent event) {
 		fRequestedOperation= event.detail;
 		fTarget= computeTarget(event);
@@ -159,6 +163,7 @@ public class CDTViewerDropAdapter implements DropTargetListener {
 		computeFeedback(event);
 	}
 	
+	@Override
 	public void dragOver(DropTargetEvent event) {
 		Object oldTarget= fTarget;
 		fTarget= computeTarget(event);
@@ -175,6 +180,7 @@ public class CDTViewerDropAdapter implements DropTargetListener {
 		computeFeedback(event);
 	}
 	
+	@Override
 	public void dropAccept(DropTargetEvent event) {
 		fTarget= computeTarget(event);
 		validateDrop(event);

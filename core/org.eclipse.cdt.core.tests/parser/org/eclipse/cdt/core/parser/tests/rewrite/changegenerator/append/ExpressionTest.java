@@ -51,7 +51,7 @@ public class ExpressionTest extends ChangeGeneratorTest {
 					expressionList.getExpressions();
 					CPPASTIdExpression idExpression = new CPPASTIdExpression(new CPPASTName("c".toCharArray()));
 					CPPASTBinaryExpression binEx = new CPPASTBinaryExpression(IASTBinaryExpression.op_assign,
-							idExpression, new CPPASTLiteralExpression(0, "9".toCharArray())); //$NON-NLS-1$ //$NON-NLS-2$
+							idExpression, new CPPASTLiteralExpression(0, "9".toCharArray())); //$NON-NLS-1$ 
 					ASTModification modification = new ASTModification(ASTModification.ModificationKind.APPEND_CHILD,
 							expressionList, binEx, null);
 					modStore.storeModification(null, modification);

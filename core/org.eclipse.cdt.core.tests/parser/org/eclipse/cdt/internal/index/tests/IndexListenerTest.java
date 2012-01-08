@@ -58,6 +58,7 @@ public class IndexListenerTest extends BaseTestCase {
 		assertTrue(im.joinIndexer(10000, npm()));
 		
 		IIndexerStateListener listener = new IIndexerStateListener() {
+			@Override
 			public void indexChanged(IIndexerStateEvent event) {
 				synchronized (mutex) {
 					if (event.indexerIsIdle()) {
@@ -100,6 +101,7 @@ public class IndexListenerTest extends BaseTestCase {
 		
 		assertTrue(im.joinIndexer(10000, npm()));
 		IIndexChangeListener listener = new IIndexChangeListener() {
+			@Override
 			public void indexChanged(IIndexChangeEvent event) {
 				if (!event.getFilesWritten().isEmpty()) {
 					synchronized (mutex) {

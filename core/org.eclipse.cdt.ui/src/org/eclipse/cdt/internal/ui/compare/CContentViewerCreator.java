@@ -27,6 +27,7 @@ import org.eclipse.jface.viewers.Viewer;
  */
 public class CContentViewerCreator implements IViewerCreator {
 	
+	@Override
 	public Viewer createViewer(Composite parent, CompareConfiguration mp) {
 		return new CMergeViewer(parent, SWT.NULL, mp);
 	}

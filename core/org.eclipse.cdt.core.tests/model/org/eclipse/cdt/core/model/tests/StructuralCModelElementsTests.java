@@ -69,6 +69,7 @@ public class StructuralCModelElementsTests extends TestCase {
 		super(name);
 	}
 		
+	@Override
 	protected void setUp() throws Exception {
 		monitor = new NullProgressMonitor();
 		fCProject= CProjectHelper.createCCProject("TestProject1", "bin", IPDOMManager.ID_FAST_INDEXER); //$NON-NLS-1$ //$NON-NLS-2$
@@ -92,6 +93,7 @@ public class StructuralCModelElementsTests extends TestCase {
 	}
 
 	
+	@Override
 	protected void tearDown() {
 		  CProjectHelper.delete(fCProject);
 	}	

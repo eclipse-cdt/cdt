@@ -71,6 +71,7 @@ public class CEditorErrorTickUpdater implements IProblemChangedListener {
 	/* (non-Javadoc)
 	 * @see IProblemChangedListener#problemsChanged(IResource[], boolean)
 	 */
+	@Override
 	public void problemsChanged(IResource[] resourcesChanged, boolean isMarkerChange) {
 		if (!isMarkerChange) {
 			return;
@@ -108,6 +109,7 @@ public class CEditorErrorTickUpdater implements IProblemChangedListener {
 		Shell shell= fCEditor.getEditorSite().getShell();
 		if (shell != null && !shell.isDisposed()) {
 			shell.getDisplay().syncExec(new Runnable() {
+				@Override
 				public void run() {
 					fCEditor.updatedTitleImage(newImage);
 				}

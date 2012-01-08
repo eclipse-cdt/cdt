@@ -30,59 +30,74 @@ public abstract class AbstractMethodStub implements IMethodStub {
         fIsInline = isInline;
     }
     
-    public String getName() {
+    @Override
+	public String getName() {
         return fName;
     }
 
-    public String getDescription() {
+    @Override
+	public String getDescription() {
         return fDescription;
     }
 
-    public ASTAccessVisibility getAccess() {
+    @Override
+	public ASTAccessVisibility getAccess() {
         return fAccess;
     }
 
-    public void setAccess(ASTAccessVisibility access) {
+    @Override
+	public void setAccess(ASTAccessVisibility access) {
         fAccess = access;
     }
 
-    public boolean isVirtual() {
+    @Override
+	public boolean isVirtual() {
         return fIsVirtual;
     }
     
-    public void setVirtual(boolean isVirtual) {
+    @Override
+	public void setVirtual(boolean isVirtual) {
         fIsVirtual = isVirtual;
     }
 
-    public boolean isInline() {
+    @Override
+	public boolean isInline() {
         return fIsInline;
     }
 
-    public void setInline(boolean isInline) {
+    @Override
+	public void setInline(boolean isInline) {
         fIsInline = isInline;
     }
     
-    public boolean canModifyAccess() {
+    @Override
+	public boolean canModifyAccess() {
         return true;
     }
 
-    public boolean canModifyVirtual() {
+    @Override
+	public boolean canModifyVirtual() {
         return true;
     }
 
-    public boolean canModifyInline() {
+    @Override
+	public boolean canModifyInline() {
         return true;
     }
 
-    public boolean isConstructor() {
+    @Override
+	public boolean isConstructor() {
         return false;
     }
 
-    public boolean isDestructor() {
+    @Override
+	public boolean isDestructor() {
         return false;
     }
 	
-    public abstract String createMethodDeclaration(ITranslationUnit tu, String className, IBaseClassInfo[] baseClasses, String lineDelimiter) throws CoreException;
+    @Override
+	public abstract String createMethodDeclaration(ITranslationUnit tu, String className, IBaseClassInfo[] baseClasses, String lineDelimiter) throws CoreException;
     
-    public abstract String createMethodImplementation(ITranslationUnit tu, String className, IBaseClassInfo[] baseClasses, String lineDelimiter) throws CoreException;
+    @Override
+	public abstract String createMethodImplementation(ITranslationUnit tu, String className, IBaseClassInfo[] baseClasses, String lineDelimiter) throws CoreException;
 }

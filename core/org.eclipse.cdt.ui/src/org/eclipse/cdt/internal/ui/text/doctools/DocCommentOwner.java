@@ -34,6 +34,7 @@ public class DocCommentOwner implements IDocCommentOwner {
 	/*
 	 * @see org.eclipse.cdt.ui.text.ICCommentOwner#getID()
 	 */
+	@Override
 	public String getID() {
 		return id;
 	}
@@ -41,6 +42,7 @@ public class DocCommentOwner implements IDocCommentOwner {
 	/*
 	 * @see org.eclipse.cdt.ui.text.ICCommentOwner#getName()
 	 */
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -48,6 +50,7 @@ public class DocCommentOwner implements IDocCommentOwner {
 	/*
 	 * @see org.eclipse.cdt.ui.text.ICCommentOwner#getMultilineConfiguration()
 	 */
+	@Override
 	public IDocCommentViewerConfiguration getMultilineConfiguration() {
 		return multi;
 	}
@@ -55,6 +58,7 @@ public class DocCommentOwner implements IDocCommentOwner {
 	/*
 	 * @see org.eclipse.cdt.ui.text.ICCommentOwner#getSinglelineConfiguration()
 	 */
+	@Override
 	public IDocCommentViewerConfiguration getSinglelineConfiguration() {
 		return single;
 	}

@@ -95,6 +95,7 @@ public class CPathContainerSelectionPage extends WizardPage {
 	/* (non-Javadoc)
 	 * @see IDialogPage#createControl(Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		fListViewer= new TableViewer(parent, SWT.SINGLE | SWT.BORDER);
 		fListViewer.setLabelProvider(new CPathContainerLabelProvider());
@@ -102,11 +103,13 @@ public class CPathContainerSelectionPage extends WizardPage {
 		fListViewer.setSorter(new CPathContainerSorter());
 		fListViewer.setInput(Arrays.asList(fContainers));
 		fListViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				validatePage();
 			}
 		});
 		fListViewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				doDoubleClick();
 			}

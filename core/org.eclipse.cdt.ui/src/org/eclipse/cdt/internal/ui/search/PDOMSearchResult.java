@@ -99,6 +99,7 @@ public class PDOMSearchResult extends AbstractTextSearchResult implements IEdito
 		return null;
 	}
 	
+	@Override
 	public boolean isShownInEditor(Match match, IEditorPart editor) {
 		final String fileName= getFileName(editor);
 		if (fileName != null && match instanceof PDOMSearchMatch) {
@@ -125,6 +126,7 @@ public class PDOMSearchResult extends AbstractTextSearchResult implements IEdito
 		return list.toArray(new Match[list.size()]);
 	}
 	
+	@Override
 	public Match[] computeContainedMatches(AbstractTextSearchResult result, IEditorPart editor) {
 		try {
 			String filename = getFileName(editor);
@@ -136,6 +138,7 @@ public class PDOMSearchResult extends AbstractTextSearchResult implements IEdito
 		return new Match[0];
 	}
 
+	@Override
 	public Match[] computeContainedMatches(AbstractTextSearchResult result, IFile file) {
 		try {
 			String filename = file.getLocation().toOSString();
@@ -146,6 +149,7 @@ public class PDOMSearchResult extends AbstractTextSearchResult implements IEdito
 		return new Match[0];
 	}
 
+	@Override
 	public IFile getFile(Object element) {
 		if (element instanceof IIndexName) {
 			IIndexName name = (IIndexName)element;
@@ -165,19 +169,23 @@ public class PDOMSearchResult extends AbstractTextSearchResult implements IEdito
 		return null;
 	}
 
+	@Override
 	public String getLabel() {
 		// Report pattern and number of matches
 		return query.getResultLabel(getMatchCount());
 	}
 
+	@Override
 	public String getTooltip() {
 		return null;
 	}
 
+	@Override
 	public ImageDescriptor getImageDescriptor() {
 		return null;
 	}
 
+	@Override
 	public ISearchQuery getQuery() {
 		return query;
 	}

@@ -108,6 +108,7 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 						if (fTranslationUnit != null) {
 							final ASTProvider astProvider= CUIPlugin.getDefault().getASTProvider();
 							result= astProvider.runOnAST(fTranslationUnit, ASTProvider.WAIT_IF_OPEN, monitor, new ASTCache.ASTRunnable() {
+								@Override
 								public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
 									reconciled(ast, true, monitor);
 									return Status.OK_STATUS;
@@ -185,18 +186,21 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.ICReconcilingListener#aboutToBeReconciled()
 	 */
+	@Override
 	public void aboutToBeReconciled() {
 	}
 
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.ICReconcilingListener#reconciled(IASTTranslationUnit, boolean, IProgressMonitor)
 	 */
+	@Override
 	public void reconciled(IASTTranslationUnit ast, final boolean force, IProgressMonitor progressMonitor) {
 		if (progressMonitor != null && progressMonitor.isCanceled()) {
 			return;
 		}
 		final List<Position> newInactiveCodePositions= collectInactiveCodePositions(ast);
 		Runnable updater = new Runnable() {
+			@Override
 			public void run() {
 				if (fEditor != null && fLineBackgroundPainter != null && !fLineBackgroundPainter.isDisposed()) {
 					fLineBackgroundPainter.replaceHighlightPositions(fInactiveCodePositions, newInactiveCodePositions);
@@ -335,6 +339,7 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 	/*
 	 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentAboutToBeChanged(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IDocument)
 	 */
+	@Override
 	public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
 		if (fEditor != null && fLineBackgroundPainter != null && !fLineBackgroundPainter.isDisposed()) {
 			fLineBackgroundPainter.removeHighlightPositions(fInactiveCodePositions);
@@ -345,6 +350,7 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 	/*
 	 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentChanged(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IDocument)
 	 */
+	@Override
 	public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
 		fDocument= newInput;
 	}

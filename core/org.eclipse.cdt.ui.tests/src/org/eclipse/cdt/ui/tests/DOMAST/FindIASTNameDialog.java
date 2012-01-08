@@ -75,6 +75,7 @@ class FindIASTNameDialog extends Dialog {
 		/*
 		 * @see ShellListener#shellActivated(ShellEvent)
 		 */
+		@Override
 		public void shellActivated(ShellEvent e) {
 			
 			String oldText= fFindField.getText(); // XXX workaround for 10766
@@ -125,6 +126,7 @@ class FindIASTNameDialog extends Dialog {
 		/*
 		 * @see ShellListener#shellDeactivated(ShellEvent)
 		 */
+		@Override
 		public void shellDeactivated(ShellEvent e) {
 			fGiveFocusToFindField= fFindField.isFocusControl();
 
@@ -153,11 +155,12 @@ class FindIASTNameDialog extends Dialog {
 		/*
 		 * @see ModifyListener#modifyText(ModifyEvent)
 		 */
+		@Override
 		public void modifyText(ModifyEvent e) {
 			searchTextChanged = true;
 			
 			if (isIncrementalSearch() && !isRegExSearchAvailableAndChecked()) {
-				if (fFindField.getText().equals(BLANK_STRING) && fTarget != null) { //$NON-NLS-1$
+				if (fFindField.getText().equals(BLANK_STRING) && fTarget != null) { 
 					// empty selection at base location
 					int offset= fIncrementalBaseLocation.x;
 
@@ -165,7 +168,7 @@ class FindIASTNameDialog extends Dialog {
 						offset= offset + fIncrementalBaseLocation.y;
 
 					fNeedsInitialFindBeforeReplace= false;
-					findAndSelect(offset, BLANK_STRING, isForwardSearch(), isCaseSensitiveSearch(), isWholeWordSearch(), isRegExSearchAvailableAndChecked()); //$NON-NLS-1$
+					findAndSelect(offset, BLANK_STRING, isForwardSearch(), isCaseSensitiveSearch(), isWholeWordSearch(), isRegExSearchAvailableAndChecked()); 
 				} else {
 					performSearch(false);
 				}
@@ -270,6 +273,7 @@ class FindIASTNameDialog extends Dialog {
 	 * Returns this dialog's parent shell.
 	 * @return the dialog's parent shell
 	 */
+	@Override
 	public Shell getParentShell() {
 		return super.getParentShell();
 	}
@@ -288,6 +292,7 @@ class FindIASTNameDialog extends Dialog {
 	/*
 	 * @see org.eclipse.jface.window.Window#create()
 	 */
+	@Override
 	public void create() {
 		
 		super.create();
@@ -330,7 +335,8 @@ class FindIASTNameDialog extends Dialog {
 		layout.numColumns= 1;
 		panel.setLayout(layout);
 		
-		fFindNextButton= makeButton(panel, FIND_NEXT_LABEL, 102, true, new SelectionAdapter() { //$NON-NLS-1$
+		fFindNextButton= makeButton(panel, FIND_NEXT_LABEL, 102, true, new SelectionAdapter() { 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (fTarget instanceof FindIASTNameTarget && searchTextChanged) {
 					((FindIASTNameTarget)fTarget).clearMatchingNames();
@@ -379,6 +385,7 @@ class FindIASTNameDialog extends Dialog {
 	/*
 	 * @see org.eclipse.jface.window.Window#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 
 		Composite panel= new Composite(parent, SWT.NULL);
@@ -428,11 +435,13 @@ class FindIASTNameDialog extends Dialog {
 		group.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		SelectionListener selectionListener= new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (isIncrementalSearch() && !isRegExSearchAvailableAndChecked())
 					initIncrementalBaseLocation();
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		};
@@ -530,7 +539,7 @@ class FindIASTNameDialog extends Dialog {
 		panel.setLayout(layout);
 
 		Group group= new Group(panel, SWT.SHADOW_NONE);
-		group.setText(OPTIONS_LABEL); //$NON-NLS-1$
+		group.setText(OPTIONS_LABEL); 
 		GridLayout groupLayout= new GridLayout();
 		groupLayout.numColumns= 2;
 		groupLayout.makeColumnsEqualWidth= true;		
@@ -538,28 +547,30 @@ class FindIASTNameDialog extends Dialog {
 		group.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		SelectionListener selectionListener= new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				storeSettings();
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		};
 
 		fCaseCheckBox= new Button(group, SWT.CHECK | SWT.LEFT);
-		fCaseCheckBox.setText(CASE_SENSITIVE_LABEL); //$NON-NLS-1$
+		fCaseCheckBox.setText(CASE_SENSITIVE_LABEL); 
 		setGridData(fCaseCheckBox, GridData.BEGINNING, false, GridData.CENTER, false);
 		fCaseCheckBox.setSelection(fCaseInit);
 		fCaseCheckBox.addSelectionListener(selectionListener);
 
 		fWholeWordCheckBox= new Button(group, SWT.CHECK | SWT.LEFT);
-		fWholeWordCheckBox.setText(WHOLE_WORD_LABEL); //$NON-NLS-1$
+		fWholeWordCheckBox.setText(WHOLE_WORD_LABEL); 
 		setGridData(fWholeWordCheckBox, GridData.BEGINNING, false, GridData.CENTER, false);
 		fWholeWordCheckBox.setSelection(fWholeWordInit);
 		fWholeWordCheckBox.addSelectionListener(selectionListener);
 
 		fIsRegExCheckBox= new Button(group, SWT.CHECK | SWT.LEFT);
-		fIsRegExCheckBox.setText(REGULAR_EXPRESSIONS_LABEL); //$NON-NLS-1$
+		fIsRegExCheckBox.setText(REGULAR_EXPRESSIONS_LABEL); 
 		setGridData(fIsRegExCheckBox, GridData.BEGINNING, false, GridData.CENTER, false);
 		((GridData)fIsRegExCheckBox.getLayoutData()).horizontalSpan= 2;
 		fIsRegExCheckBox.setSelection(fIsRegExInit);
@@ -567,6 +578,7 @@ class FindIASTNameDialog extends Dialog {
 			/*
 			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean newState= fIsRegExCheckBox.getSelection();
 				if (fTarget instanceof FindIASTNameTarget)
@@ -581,6 +593,7 @@ class FindIASTNameDialog extends Dialog {
 			/*
 			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (fTarget instanceof FindIASTNameTarget)
 					((FindIASTNameTarget)fTarget).clearMatchingNames();
@@ -619,6 +632,7 @@ class FindIASTNameDialog extends Dialog {
 	/*
 	 * @see Dialog#buttonPressed
 	 */
+	@Override
 	protected void buttonPressed(int buttonID) {
 		if (buttonID == 101)
 			close();
@@ -778,7 +792,7 @@ class FindIASTNameDialog extends Dialog {
 		if (okToUse(fFindField)) {
 			return fFindField.getText();
 		}
-		return BLANK_STRING; //$NON-NLS-1$
+		return BLANK_STRING; 
 	}
 	
 	// ------- init / close ---------------------------------------
@@ -802,6 +816,7 @@ class FindIASTNameDialog extends Dialog {
 	/**
 	 * @see org.eclipse.jface.window.Window#close()
 	 */
+	@Override
 	public boolean close() {
 		handleDialogClose();
 		return super.close();
@@ -845,7 +860,7 @@ class FindIASTNameDialog extends Dialog {
 			return;
 		String selection= fTarget.getSelectionText();
 		if (selection == null)
-			selection= BLANK_STRING; //$NON-NLS-1$
+			selection= BLANK_STRING; 
 
 		IDialogSettings s= getDialogSettings();
 		s.put("selection", selection); //$NON-NLS-1$
@@ -885,11 +900,11 @@ class FindIASTNameDialog extends Dialog {
 					fUseSelectedLines= true;
 				}
 			} else {
-				if (BLANK_STRING.equals(fFindField.getText())) { //$NON-NLS-1$
+				if (BLANK_STRING.equals(fFindField.getText())) { 
 					if (fFindHistory.size() > 0)
 						fFindField.setText((String) fFindHistory.get(0));
 					else
-						fFindField.setText(BLANK_STRING); //$NON-NLS-1$				
+						fFindField.setText(BLANK_STRING); 
 				}
 			}
 			fFindField.setSelection(new Point(0, fFindField.getText().length()));
@@ -1104,9 +1119,9 @@ class FindIASTNameDialog extends Dialog {
 			try {
 				boolean somethingFound= findNext(findString, isForwardSearch(), isCaseSensitiveSearch(), isWrapSearch(), isWholeWordSearch(), isIncrementalSearch() && !isRegExSearchAvailableAndChecked(), isRegExSearchAvailableAndChecked());
 				if (somethingFound) {
-					statusMessage(BLANK_STRING); //$NON-NLS-1$
+					statusMessage(BLANK_STRING); 
 				} else {
-					statusMessage(NAME_NOT_FOUND); //$NON-NLS-1$
+					statusMessage(NAME_NOT_FOUND); 
 				}
 			} catch (PatternSyntaxException ex) {
 				statusError(ex.getLocalizedMessage());
@@ -1264,6 +1279,7 @@ class FindIASTNameDialog extends Dialog {
 	 *
 	 * @param shell the new parent shell
 	 */
+	@Override
 	public void setParentShell(Shell shell) {
 		if (shell != fParentShell) {
 			

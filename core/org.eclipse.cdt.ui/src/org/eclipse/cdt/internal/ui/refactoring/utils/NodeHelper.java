@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexName;
 
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamespaceDefinition;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
@@ -111,7 +112,7 @@ public class NodeHelper {
 				found = true;
 				context.setType(MethodContext.ContextType.FUNCTION);
 			} else if (node instanceof IASTFunctionDefinition) {
-				name = CPPVisitor.findInnermostDeclarator(((IASTFunctionDefinition) node).getDeclarator()).getName();
+				name = ASTQueries.findInnermostDeclarator(((IASTFunctionDefinition) node).getDeclarator()).getName();
 				found = true;
 				context.setType(MethodContext.ContextType.FUNCTION);
 			} 

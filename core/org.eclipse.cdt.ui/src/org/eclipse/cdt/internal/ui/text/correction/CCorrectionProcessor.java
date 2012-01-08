@@ -155,14 +155,17 @@ public class CCorrectionProcessor implements org.eclipse.jface.text.quickassist.
 		fAssistant= assistant;
 		fAssistant.addCompletionListener(new ICompletionListener() {
 		
+			@Override
 			public void assistSessionEnded(ContentAssistEvent event) {
 				fAssistant.setStatusLineVisible(false);
 			}
 		
+			@Override
 			public void assistSessionStarted(ContentAssistEvent event) {
 				fAssistant.setStatusLineVisible(true);
 			}
 
+			@Override
 			public void selectionChanged(ICompletionProposal proposal, boolean smartToggle) {
 				if (proposal instanceof IStatusLineProposal) {
 					IStatusLineProposal statusLineProposal= (IStatusLineProposal)proposal;
@@ -182,6 +185,7 @@ public class CCorrectionProcessor implements org.eclipse.jface.text.quickassist.
 	/*
 	 * @see IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
 	 */
+	@Override
 	public ICompletionProposal[] computeQuickAssistProposals(IQuickAssistInvocationContext quickAssistContext) {
 		ISourceViewer viewer= quickAssistContext.getSourceViewer();
 		int documentOffset= quickAssistContext.getOffset();
@@ -298,12 +302,14 @@ public class CCorrectionProcessor implements org.eclipse.jface.text.quickassist.
 			SafeRunner.run(this);
 		}
 
+		@Override
 		public void run() throws Exception {
 			safeRun(fDescriptor);
 		}
 
 		protected abstract void safeRun(ContributedProcessorDescriptor processor) throws Exception;
 
+		@Override
 		public void handleException(Throwable exception) {
 			if (fMulti == null) {
 				fMulti= new MultiStatus(CUIPlugin.PLUGIN_ID, IStatus.OK, CorrectionMessages.CCorrectionProcessor_error_status, null);
@@ -475,6 +481,7 @@ public class CCorrectionProcessor implements org.eclipse.jface.text.quickassist.
 	/*
 	 * @see IContentAssistProcessor#getErrorMessage()
 	 */
+	@Override
 	public String getErrorMessage() {
 		return fErrorMessage;
 	}
@@ -482,6 +489,7 @@ public class CCorrectionProcessor implements org.eclipse.jface.text.quickassist.
 	/*
 	 * @see org.eclipse.jface.text.quickassist.IQuickAssistProcessor#canFix(org.eclipse.jface.text.source.Annotation)
 	 */
+	@Override
 	public boolean canFix(Annotation annotation) {
 		return hasCorrections(annotation);
 	}
@@ -489,6 +497,7 @@ public class CCorrectionProcessor implements org.eclipse.jface.text.quickassist.
 	/*
 	 * @see org.eclipse.jface.text.quickassist.IQuickAssistProcessor#canAssist(org.eclipse.jface.text.quickassist.IQuickAssistInvocationContext)
 	 */
+	@Override
 	public boolean canAssist(IQuickAssistInvocationContext invocationContext) {
 		if (invocationContext instanceof CorrectionContext)
 			return hasAssists((CorrectionContext) invocationContext);

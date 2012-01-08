@@ -107,6 +107,7 @@ public class CDescriptorOldTests extends TestCase {
 
 	static public class CDescriptorListener implements ICDescriptorListener {
 
+		@Override
 		public void descriptorChanged(CDescriptorEvent event) {
 			fLastEvent = event;
 		}
@@ -115,6 +116,7 @@ public class CDescriptorOldTests extends TestCase {
 	static void oneTimeSetUp() throws Exception {
 		CTestPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				IWorkspaceRoot root = CTestPlugin.getWorkspace().getRoot();
 				IProject project = root.getProject("testDescriptorProject");
@@ -142,6 +144,7 @@ public class CDescriptorOldTests extends TestCase {
 	public void testDescriptorCreation() throws Exception {
 		CTestPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				CCorePlugin.getDefault().mapCProjectOwner(fProject, projectId, false);
 			}
@@ -205,6 +208,7 @@ public class CDescriptorOldTests extends TestCase {
 					public void run() {
 						try {
 							ICDescriptorOperation operation= new ICDescriptorOperation() {
+								@Override
 								public void execute(ICDescriptor descriptor, IProgressMonitor monitor) throws CoreException {
 									assertFalse(descriptor.getConfigurationDescription().isReadOnly());
 									Element data = descriptor.getProjectData("testElement");

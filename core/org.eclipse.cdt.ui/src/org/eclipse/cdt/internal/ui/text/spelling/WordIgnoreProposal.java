@@ -16,6 +16,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.quickassist.IQuickAssistInvocationContext;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.texteditor.spelling.SpellingProblem;
@@ -51,6 +52,7 @@ public class WordIgnoreProposal implements ICCompletionProposal {
 	/*
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#apply(org.eclipse.jface.text.IDocument)
 	 */
+	@Override
 	public final void apply(final IDocument document) {
         final ISpellCheckEngine engine= SpellCheckEngine.getInstance();
         final ISpellChecker checker= engine.getSpellChecker();
@@ -68,13 +70,15 @@ public class WordIgnoreProposal implements ICCompletionProposal {
 	/*
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getAdditionalProposalInfo()
 	 */
+	@Override
 	public String getAdditionalProposalInfo() {
-		return Messages.bind(Messages.Spelling_ignore_info, WordCorrectionProposal.getHtmlRepresentation(fWord));
+		return NLS.bind(Messages.Spelling_ignore_info, WordCorrectionProposal.getHtmlRepresentation(fWord));
 	}
 
 	/*
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getContextInformation()
 	 */
+	@Override
 	public final IContextInformation getContextInformation() {
 		return null;
 	}
@@ -82,19 +86,22 @@ public class WordIgnoreProposal implements ICCompletionProposal {
 	/*
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getDisplayString()
 	 */
+	@Override
 	public String getDisplayString() {
-		return Messages.bind(Messages.Spelling_ignore_label, fWord);
+		return NLS.bind(Messages.Spelling_ignore_label, fWord);
 	}
 
 	/*
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_NLS_NEVER_TRANSLATE);
 	}
 	/*
 	 * @see org.eclipse.cdt.ui.text.java.IJavaCompletionProposal#getRelevance()
 	 */
+	@Override
 	public final int getRelevance() {
 		return Integer.MIN_VALUE + 1;
 	}
@@ -102,10 +109,12 @@ public class WordIgnoreProposal implements ICCompletionProposal {
 	/*
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getSelection(org.eclipse.jface.text.IDocument)
 	 */
+	@Override
 	public final Point getSelection(final IDocument document) {
 		return new Point(fContext.getSelectionOffset(), fContext.getSelectionLength());
 	}
 
+	@Override
 	public String getIdString() {
 		return fWord;
 	}

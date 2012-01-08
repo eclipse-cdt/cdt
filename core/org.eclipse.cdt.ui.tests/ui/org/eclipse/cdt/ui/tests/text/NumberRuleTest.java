@@ -42,6 +42,7 @@ public class NumberRuleTest extends TestCase {
 		return new TestSuite(NumberRuleTest.class);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		fScanner = new RuleBasedScanner() {};
@@ -51,6 +52,7 @@ public class NumberRuleTest extends TestCase {
 		fDocument = new Document();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 	}

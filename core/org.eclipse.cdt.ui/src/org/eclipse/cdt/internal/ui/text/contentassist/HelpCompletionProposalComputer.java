@@ -70,18 +70,22 @@ public class HelpCompletionProposalComputer extends ParsingBasedProposalComputer
 		// Find matching functions
 		ICHelpInvocationContext helpContext = new IContentAssistHelpInvocationContext() {
 
+			@Override
 			public IProject getProject() {
 				return tu.getCProject().getProject();
 			}
 
+			@Override
 			public ITranslationUnit getTranslationUnit() {
 				return tu;
 			}
 			
+			@Override
 			public int getInvocationOffset() {
 				return cc;
 			}
 			
+			@Override
 			public IASTCompletionNode getCompletionNode() {
 				return cn;
 			}

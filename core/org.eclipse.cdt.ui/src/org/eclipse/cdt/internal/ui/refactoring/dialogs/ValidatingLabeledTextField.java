@@ -194,6 +194,7 @@ public class ValidatingLabeledTextField extends Composite {
 				}
 			}
 			
+			@Override
 			public void handleEvent(Event event) {
 				checkField();
 			}};

@@ -132,7 +132,8 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 	/**
      * @see org.eclipse.cdt.core.model.IElementChangedListener#elementChanged(org.eclipse.cdt.core.model.ElementChangedEvent)
 	 */
-    public void elementChanged(final ElementChangedEvent event) {
+    @Override
+	public void elementChanged(final ElementChangedEvent event) {
 		try {
 			processDelta(event.getDelta());
 		} catch(CModelException e) {
@@ -324,7 +325,8 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 			this.container = container;
 			this.project = project;
 		}
-	    public void refresh() {
+	    @Override
+		public void refresh() {
 			if (container.hasChildren()) {
 				if (fViewer.testFindItem(container) != null) {
 					fViewer.refresh(container);
@@ -353,6 +355,7 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 		public RefreshElement(Object element) {
 			this.element = element;
 		}
+		@Override
 		public void refresh() {
 			if (element instanceof IWorkingCopy){
 				if (fViewer.testFindItem(element) != null){
@@ -385,6 +388,7 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 		public RefreshProjectState(Object element) {
 			this.element = element;
 		}
+		@Override
 		public void refresh() {
 			fViewer.refresh(element, true);
 			// trigger a syntetic selection change so that action refresh their
@@ -436,6 +440,7 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 				return;
 			pendingRefreshes.add(r);
 			ctrl.getDisplay().asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					pendingRefreshes.remove(r);
 					Control ctrl= fViewer.getControl();
@@ -450,7 +455,8 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
     /*
      * @see org.eclipse.jface.text.information.IInformationProvider#getSubject(org.eclipse.jface.text.ITextViewer, int)
      */
-    public IRegion getSubject(ITextViewer textViewer, int offset) {
+    @Override
+	public IRegion getSubject(ITextViewer textViewer, int offset) {
 		if (textViewer != null && fEditor != null) {
 			IRegion region = CWordFinder.findWord(textViewer.getDocument(),
 					offset);
@@ -466,7 +472,8 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 	 * @see org.eclipse.jface.text.information.IInformationProvider#getInformation(org.eclipse.jface.text.ITextViewer,
 	 *      org.eclipse.jface.text.IRegion)
 	 */
-    public String getInformation(ITextViewer textViewer, IRegion subject) {
+    @Override
+	public String getInformation(ITextViewer textViewer, IRegion subject) {
     	// deprecated API - not used anymore
         Object info = getInformation2(textViewer, subject);
         if (info != null) {
@@ -478,7 +485,8 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
     /*
      * @see org.eclipse.jface.text.information.IInformationProviderExtension#getInformation2(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
      */
-    public Object getInformation2(ITextViewer textViewer, IRegion subject) {
+    @Override
+	public Object getInformation2(ITextViewer textViewer, IRegion subject) {
 		if (fEditor == null)
 			return null;
 		try {

@@ -27,34 +27,42 @@ final class TestMacro implements IMacroBinding {
 		fParams= params;
 	}
 
+	@Override
 	public char[] getExpansion() {
 		return fExpansion.toCharArray();
 	}
 
+	@Override
 	public boolean isFunctionStyle() {
 		return fParams != null;
 	}
 
+	@Override
 	public ILinkage getLinkage() {
 		return null;
 	}
 
+	@Override
 	public String getName() {
 		return fName;
 	}
 
+	@Override
 	public char[] getNameCharArray() {
 		return fName.toCharArray();
 	}
 
+	@Override
 	public IScope getScope() throws DOMException {
 		return null;
 	}
 
+	@Override
 	public Object getAdapter(Class adapter) {
 		return null;
 	}
 
+	@Override
 	public char[][] getParameterList() {
 		if (fParams == null) {
 			return null;
@@ -66,18 +74,22 @@ final class TestMacro implements IMacroBinding {
 		return result;
 	}
 
+	@Override
 	public char[] getExpansionImage() {
 		return getExpansion();
 	}
 
+	@Override
 	public char[][] getParameterPlaceholderList() {
 		return getParameterList();
 	}
 
+	@Override
 	public boolean isDynamic() {
 		return false;
 	}
 
+	@Override
 	public IBinding getOwner() {
 		return null;
 	}

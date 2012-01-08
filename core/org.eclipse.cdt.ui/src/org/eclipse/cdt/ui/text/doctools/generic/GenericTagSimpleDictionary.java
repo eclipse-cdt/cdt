@@ -36,6 +36,7 @@ public class GenericTagSimpleDictionary implements IDocCommentSimpleDictionary {
 	/**
 	 * @return an array of non-null words to be added to the dictionary when spell-checking
 	 */
+	@Override
 	public String[] getAdditionalWords() {
 		return fTags;
 	}

@@ -26,26 +26,32 @@ public class NullDocCommentViewerConfiguration implements IDocCommentViewerConfi
 	public NullDocCommentViewerConfiguration() {
 	}
 	
+	@Override
 	public IAutoEditStrategy createAutoEditStrategy() {		
 		return null;
 	}
 
+	@Override
 	public ICTokenScanner createCommentScanner(ITokenStoreFactory tokenStoreFactory) {
 		return null;
 	}
 
+	@Override
 	public ITextDoubleClickStrategy createDoubleClickStrategy() {
 		return null;
 	}
 
+	@Override
 	public ICompletionProposalComputer createProposalComputer() {
 		return null;
 	}
 
+	@Override
 	public boolean isDocumentationComment(IDocument doc, int offset, int length) {
 		return false;
 	}
 	
+	@Override
 	public IDocCommentDictionary getSpellingDictionary() {
 		return null;
 	}

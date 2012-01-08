@@ -270,7 +270,8 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
             	final ITextSelection textSel = (ITextSelection)sel;
             	ITranslationUnit tu= CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput());
         		IStatus ok= ASTProvider.getASTProvider().runOnAST(tu, ASTProvider.WAIT_IF_OPEN, monitor, new ASTRunnable() {
-        			public IStatus runOnAST(ILanguage language, IASTTranslationUnit ast) throws CoreException {
+        			@Override
+					public IStatus runOnAST(ILanguage language, IASTTranslationUnit ast) throws CoreException {
         				result[0]= ast.getNodeSelector(null).findName(textSel.getOffset(), textSel.getLength());        	
         				return Status.OK_STATUS;
         			}

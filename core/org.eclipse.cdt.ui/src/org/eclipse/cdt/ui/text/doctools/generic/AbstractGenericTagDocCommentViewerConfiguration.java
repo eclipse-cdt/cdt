@@ -53,6 +53,7 @@ public abstract class AbstractGenericTagDocCommentViewerConfiguration implements
 	/*
 	 * @see org.eclipse.cdt.ui.text.doctools.IDocCommentViewerConfiguration#createCommentScanner(org.eclipse.cdt.ui.text.ITokenStoreFactory, java.lang.String)
 	 */
+	@Override
 	public ICTokenScanner createCommentScanner(ITokenStoreFactory tokenStoreFactory) {
 		return new GenericTagCommentScanner(fTags, fTagMarkers, tokenStoreFactory, fDefaultToken, fTagToken);
 	}
@@ -60,6 +61,7 @@ public abstract class AbstractGenericTagDocCommentViewerConfiguration implements
 	/*
 	 * @see org.eclipse.cdt.ui.text.doctools.IDocCommentViewerConfiguration#createDoubleClickStrategy()
 	 */
+	@Override
 	public ITextDoubleClickStrategy createDoubleClickStrategy() {
 		return fDCStrategy;
 	}
@@ -67,6 +69,7 @@ public abstract class AbstractGenericTagDocCommentViewerConfiguration implements
 	/*
 	 * @see org.eclipse.cdt.ui.text.doctools.IDocCommentViewerConfiguration#createProposalComputer()
 	 */
+	@Override
 	public ICompletionProposalComputer createProposalComputer() {
 		return fCPComputer;
 	}
@@ -74,6 +77,7 @@ public abstract class AbstractGenericTagDocCommentViewerConfiguration implements
 	/*
 	 * @see org.eclipse.cdt.ui.text.doctools.IDocCommentViewerConfiguration#getSpellingDictionary()
 	 */
+	@Override
 	public IDocCommentDictionary getSpellingDictionary() {
 		return fDictionary;
 	}

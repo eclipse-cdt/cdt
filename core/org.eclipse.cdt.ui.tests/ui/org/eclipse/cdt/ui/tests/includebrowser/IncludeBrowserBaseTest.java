@@ -43,6 +43,7 @@ public class IncludeBrowserBaseTest extends BaseUITestCase {
 		super(name);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		fCProject= CProjectHelper.createCCProject("__ibTest__", "bin", IPDOMManager.ID_FAST_INDEXER);
@@ -52,6 +53,7 @@ public class IncludeBrowserBaseTest extends BaseUITestCase {
 		fIndex= CCorePlugin.getIndexManager().getIndex(fCProject);
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		if (fCProject != null) {
 			CProjectHelper.delete(fCProject);

@@ -50,6 +50,7 @@ public class CModelIdentifierTests extends BaseTestCase {
 	private ICProject fCProject;
 	private IFile fHeaderFile;
 
+	@Override
 	protected void setUp() throws Exception {
 		// reusing project setup from CModelElementsTests
 		NullProgressMonitor monitor= new NullProgressMonitor();
@@ -69,6 +70,7 @@ public class CModelIdentifierTests extends BaseTestCase {
 		CCorePlugin.getIndexManager().joinIndexer(10000, new NullProgressMonitor());
 	}
 
+	@Override
 	protected void tearDown() {
 		CProjectHelper.delete(fCProject);
 	}	
@@ -91,6 +93,7 @@ public class CModelIdentifierTests extends BaseTestCase {
 		final List elements= new ArrayList();
 		final List identifiers= new ArrayList();
 		ICElementVisitor visitor= new ICElementVisitor() {
+			@Override
 			public boolean visit(ICElement element) throws CoreException {
 				elements.add(element);
 				identifiers.add(element.getHandleIdentifier());

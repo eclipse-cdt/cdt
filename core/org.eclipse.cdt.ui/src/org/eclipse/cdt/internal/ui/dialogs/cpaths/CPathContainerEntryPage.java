@@ -140,22 +140,27 @@ public class CPathContainerEntryPage extends CPathBasePage {
 		private final Object[] EMPTY_ARR = new Object[0];
 
 		// -------- IListAdapter --------
+		@Override
 		public void customButtonPressed(TreeListDialogField<CPElement> field, int index) {
 			containerPageCustomButtonPressed(field, index);
 		}
 
+		@Override
 		public void selectionChanged(TreeListDialogField<CPElement> field) {
 			containerPageSelectionChanged(field);
 		}
 
+		@Override
 		public void doubleClicked(TreeListDialogField<CPElement> field) {
 			containerPageDoubleClicked(field);
 		}
 
+		@Override
 		public void keyPressed(TreeListDialogField<CPElement> field, KeyEvent event) {
 			containerPageKeyPressed(field, event);
 		}
 
+		@Override
 		public Object[] getChildren(TreeListDialogField<CPElement> field, Object element) {
 			if (element instanceof CPElement) {
 				return ((CPElement)element).getChildren();
@@ -165,6 +170,7 @@ public class CPathContainerEntryPage extends CPathBasePage {
 			return EMPTY_ARR;
 		}
 
+		@Override
 		public Object getParent(TreeListDialogField<CPElement> field, Object element) {
 			if (element instanceof CPElementAttribute) {
 				return ((CPElementAttribute)element).getParent();
@@ -174,6 +180,7 @@ public class CPathContainerEntryPage extends CPathBasePage {
 			return null;
 		}
 
+		@Override
 		public boolean hasChildren(TreeListDialogField<CPElement> field, Object element) {
 			if (element instanceof CPElementGroup) {
 				return true;
@@ -186,6 +193,7 @@ public class CPathContainerEntryPage extends CPathBasePage {
 
 		// ---------- IDialogFieldListener --------
 
+		@Override
 		public void dialogFieldChanged(DialogField field) {
 			containerPageDialogFieldChanged(field);
 		}

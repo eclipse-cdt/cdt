@@ -51,7 +51,7 @@ public class DOMASTNodeParent extends DOMASTNodeLeaf {
         }
         
 		if (index==children.length) {
-			children = (DOMASTNodeLeaf[])ArrayUtil.append(DOMASTNodeLeaf.class, children, child);
+			children = ArrayUtil.append(DOMASTNodeLeaf.class, children, child);
 			index++;
 		} else {
 			children[index++] = child;
@@ -116,7 +116,7 @@ public class DOMASTNodeParent extends DOMASTNodeLeaf {
 	
     public void cleanChildren() {
         // remove null elements
-        children = (DOMASTNodeLeaf[])ArrayUtil.removeNulls(DOMASTNodeLeaf.class, children);
+        children = ArrayUtil.removeNulls(DOMASTNodeLeaf.class, children);
         
         // sort the elements
 		//if (indexFirstPreproStmnt >= 0) { // TODO Devin what if it's ALL preprocessor statements ?
@@ -159,14 +159,14 @@ public class DOMASTNodeParent extends DOMASTNodeLeaf {
 				}
 			}
 	//	}
-		children = (DOMASTNodeLeaf[])ArrayUtil.removeNulls(DOMASTNodeLeaf.class, children);
+		children = ArrayUtil.removeNulls(DOMASTNodeLeaf.class, children);
         
         // need to also clean up the children's children, to make sure all nulls are removed (prevent expansion sign when there isn't one)
         for(int i=0; i<children.length; i++) {
             if (children[i] instanceof DOMASTNodeParent) {
                 DOMASTNodeLeaf[] kids = ((DOMASTNodeParent)children[i]).children;
                 // remove null elements
-                kids = (DOMASTNodeLeaf[])ArrayUtil.removeNulls(DOMASTNodeLeaf.class, kids);
+                kids = ArrayUtil.removeNulls(DOMASTNodeLeaf.class, kids);
                 ((DOMASTNodeParent)children[i]).setChildren(kids);
             }
         }
@@ -200,10 +200,10 @@ public class DOMASTNodeParent extends DOMASTNodeLeaf {
         IASTNode[] nodeChain = new IASTNode[DEFAULT_NODE_CHAIN_SIZE];
         IASTNode topNode = node.getParent();
         ArrayUtil.append(IASTNode.class, nodeChain, node);
-        nodeChain = (IASTNode[])ArrayUtil.append(IASTNode.class, nodeChain, topNode);
+        nodeChain = ArrayUtil.append(IASTNode.class, nodeChain, topNode);
         while(topNode.getParent() != null && !(topNode.getParent() instanceof IASTTranslationUnit)) {
             topNode = topNode.getParent();
-            nodeChain = (IASTNode[])ArrayUtil.append(IASTNode.class, nodeChain, topNode);
+            nodeChain = ArrayUtil.append(IASTNode.class, nodeChain, topNode);
         }
         
         // loop through the chain of nodes and use it to only search the necessary children required to find the node
@@ -253,10 +253,10 @@ public class DOMASTNodeParent extends DOMASTNodeLeaf {
 		IASTNode[] nodeChain = new IASTNode[DEFAULT_NODE_CHAIN_SIZE];
 		IASTNode topNode = node.getParent();
 		ArrayUtil.append(IASTNode.class, nodeChain, node);
-		nodeChain = (IASTNode[])ArrayUtil.append(IASTNode.class, nodeChain, topNode);
+		nodeChain = ArrayUtil.append(IASTNode.class, nodeChain, topNode);
 		while(topNode.getParent() != null && !(topNode.getParent() instanceof IASTTranslationUnit)) {
 			topNode = topNode.getParent();
-			nodeChain = (IASTNode[])ArrayUtil.append(IASTNode.class, nodeChain, topNode);
+			nodeChain = ArrayUtil.append(IASTNode.class, nodeChain, topNode);
 		}
 		
 		// loop through the chain of nodes and use it to only search the necessary children required to find the node
@@ -296,6 +296,7 @@ public class DOMASTNodeParent extends DOMASTNodeLeaf {
 		return null; // nothing found
 	}
 
+	@Override
 	public int relativeNodePosition( IASTNode n ){
 	    ASTNode astNode = (ASTNode) n;
 	    if( !cleanupedElements ){

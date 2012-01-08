@@ -74,6 +74,7 @@ public class CheckedListDialogField<T> extends ListDialogField<T> {
 		Table table= new Table(parent, SWT.CHECK + getListStyle());
 		CheckboxTableViewer tableViewer= new CheckboxTableViewer(table);
 		tableViewer.addCheckStateListener(new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent e) {
 				doCheckStateChanged(e);
 			}

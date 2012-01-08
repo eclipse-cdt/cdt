@@ -21,35 +21,41 @@ public class THContentProvider implements ITreeContentProvider {
 	public THContentProvider() {
 	}
     
-    final public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+    @Override
+	final public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
     	fModel= (THHierarchyModel) newInput;
     }
 
-    public void dispose() {
+    @Override
+	public void dispose() {
     	fModel= null;
     }
 
-    final public Object[] getElements(Object inputElement) {
+    @Override
+	final public Object[] getElements(Object inputElement) {
     	if (fModel == null) {
     		return NO_CHILDREN;
     	}
         return fModel.getHierarchyRootElements();
     }
 
-    final public boolean hasChildren(Object element) {
+    @Override
+	final public boolean hasChildren(Object element) {
     	if (element instanceof THNode) {
     		return ((THNode) element).hasChildren();
     	}
     	return false;
     }
 
-    public Object[] getChildren(Object element) {
+    @Override
+	public Object[] getChildren(Object element) {
     	if (element instanceof THNode) {
     		return ((THNode) element).getChildren();
     	}
     	return NO_CHILDREN;
     }
 
+	@Override
 	public Object getParent(Object element) {
     	if (element instanceof THNode) {
     		return ((THNode) element).getParent();

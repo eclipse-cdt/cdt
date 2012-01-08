@@ -66,6 +66,7 @@ public class SemanticHighlightingPresenter implements ITextPresentationListener,
 		/*
 		 * @see org.eclipse.jface.text.IPositionUpdater#update(org.eclipse.jface.text.DocumentEvent)
 		 */
+		@Override
 		public void update(DocumentEvent event) {
 
 			int eventOffset= event.getOffset();
@@ -343,6 +344,7 @@ public class SemanticHighlightingPresenter implements ITextPresentationListener,
 			return null;
 
 		Runnable runnable= new Runnable() {
+			@Override
 			public void run() {
 				updatePresentation(textPresentation, added, removed);
 			}
@@ -541,6 +543,7 @@ public class SemanticHighlightingPresenter implements ITextPresentationListener,
 	/*
 	 * @see org.eclipse.jface.text.ITextPresentationListener#applyTextPresentation(org.eclipse.jface.text.TextPresentation)
 	 */
+	@Override
 	public void applyTextPresentation(TextPresentation textPresentation) {
 		IRegion region= textPresentation.getExtent();
 		int i= computeIndexAtOffset(fPositions, region.getOffset()), n= computeIndexAtOffset(fPositions, region.getOffset() + region.getLength());
@@ -566,6 +569,7 @@ public class SemanticHighlightingPresenter implements ITextPresentationListener,
 	/*
 	 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentAboutToBeChanged(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IDocument)
 	 */
+	@Override
 	public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
 		setCanceled(true);
 		releaseDocument(oldInput);
@@ -575,6 +579,7 @@ public class SemanticHighlightingPresenter implements ITextPresentationListener,
 	/*
 	 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentChanged(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IDocument)
 	 */
+	@Override
 	public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
 		manageDocument(newInput);
 	}
@@ -582,6 +587,7 @@ public class SemanticHighlightingPresenter implements ITextPresentationListener,
 	/*
 	 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
 	 */
+	@Override
 	public void documentAboutToBeChanged(DocumentEvent event) {
 		setCanceled(true);
 	}
@@ -589,6 +595,7 @@ public class SemanticHighlightingPresenter implements ITextPresentationListener,
 	/*
 	 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
 	 */
+	@Override
 	public void documentChanged(DocumentEvent event) {
 	}
 

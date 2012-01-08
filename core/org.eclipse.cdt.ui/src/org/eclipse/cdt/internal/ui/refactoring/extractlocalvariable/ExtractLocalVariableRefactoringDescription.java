@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ltk.core.refactoring.Refactoring;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 import org.eclipse.cdt.core.model.ICProject;
@@ -35,7 +36,7 @@ public class ExtractLocalVariableRefactoringDescription extends CRefactoringDesc
 	public ExtractLocalVariableRefactoringDescription(String project, String description,
 			String comment, Map<String, String> arguments) {
 		super(ExtractLocalVariableRefactoring.ID, project, description, comment,
-				CRefactoringDescription.MULTI_CHANGE, arguments);
+				RefactoringDescriptor.MULTI_CHANGE, arguments);
 	}
 
 	@Override

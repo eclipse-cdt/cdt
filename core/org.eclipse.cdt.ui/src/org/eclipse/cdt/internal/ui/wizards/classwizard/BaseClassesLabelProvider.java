@@ -42,6 +42,7 @@ public final class BaseClassesLabelProvider implements ITableLabelProvider {
 	/*
 	 * @see ITableLabelProvider#getColumnImage(Object, int)
 	 */
+	@Override
 	public Image getColumnImage(Object element, int columnIndex) {
 		if (columnIndex != 0)
 			return null;
@@ -53,6 +54,7 @@ public final class BaseClassesLabelProvider implements ITableLabelProvider {
 	/*
 	 * @see ITableLabelProvider#getColumnText(Object, int)
 	 */
+	@Override
 	public String getColumnText(Object element, int columnIndex) {
 	    IBaseClassInfo info = (IBaseClassInfo) element;
 		
@@ -71,18 +73,21 @@ public final class BaseClassesLabelProvider implements ITableLabelProvider {
 	/*
 	 * @see IBaseLabelProvider#addListener(ILabelProviderListener)
 	 */
+	@Override
 	public void addListener(ILabelProviderListener listener) {
 	}
 
 	/*
 	 * @see IBaseLabelProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
 	}
 
 	/*
 	 * @see IBaseLabelProvider#isLabelProperty(Object, String)
 	 */
+	@Override
 	public boolean isLabelProperty(Object element, String property) {
 		return false;
 	}
@@ -90,6 +95,7 @@ public final class BaseClassesLabelProvider implements ITableLabelProvider {
 	/*
 	 * @see IBaseLabelProvider#removeListener(ILabelProviderListener)
 	 */
+	@Override
 	public void removeListener(ILabelProviderListener listener) {
 	}
 }

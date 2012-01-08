@@ -26,9 +26,11 @@ public class PathSettingsContainerTests extends BaseTestCase {
 		return suite(PathSettingsContainerTests.class, "_");
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 	}
 

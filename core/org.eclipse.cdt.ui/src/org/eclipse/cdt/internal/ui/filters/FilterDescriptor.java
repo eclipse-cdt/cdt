@@ -118,6 +118,7 @@ public class FilterDescriptor implements Comparable<FilterDescriptor> {
 			/*
 			 * @see org.eclipse.core.runtime.ISafeRunnable#run()
 			 */
+			@Override
 			public void run() throws Exception {
 				result[0]= (ViewerFilter)fElement.createExecutableExtension(CLASS_ATTRIBUTE);
 			}
@@ -230,6 +231,7 @@ public class FilterDescriptor implements Comparable<FilterDescriptor> {
 	/* 
 	 * Implements a method from IComparable 
 	 */ 
+	@Override
 	public int compareTo(FilterDescriptor o) {
 		return Collator.getInstance().compare(getName(), (o).getName());
 	}
@@ -248,6 +250,7 @@ public class FilterDescriptor implements Comparable<FilterDescriptor> {
 
 				final FilterDescriptor[] desc= new FilterDescriptor[1];
 				SafeRunnable.run(new SafeRunnable(FilterMessages.FilterDescriptor_filterDescriptionCreationError_message) { 
+					@Override
 					public void run() throws Exception {
 						desc[0]= new FilterDescriptor(element);
 					}

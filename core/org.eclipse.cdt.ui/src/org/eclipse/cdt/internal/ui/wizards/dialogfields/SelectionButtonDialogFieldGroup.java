@@ -153,9 +153,11 @@ public class SelectionButtonDialogFieldGroup extends DialogField {
 			fButtonComposite.setLayout(layout);
 			
 			SelectionListener listener= new SelectionListener() {
+				@Override
 				public void widgetDefaultSelected(SelectionEvent e) {
 					doWidgetSelected(e);
 				}
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					doWidgetSelected(e);
 				}

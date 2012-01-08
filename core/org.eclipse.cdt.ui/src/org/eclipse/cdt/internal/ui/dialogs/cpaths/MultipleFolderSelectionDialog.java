@@ -159,6 +159,7 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 
 		BusyIndicator.showWhile(null, new Runnable() {
 
+			@Override
 			public void run() {
 				access$superCreate();
 
@@ -191,6 +192,7 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 		fViewer.setLabelProvider(fLabelProvider);
 		fViewer.addCheckStateListener(new ICheckStateListener() {
 
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				updateOKStatus();
 			}
@@ -264,6 +266,7 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 		}
 		treeViewer.addCheckStateListener(new ICheckStateListener() {
 
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				forceExistingChecked(event);
 			}
@@ -312,6 +315,7 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 	 * 
 	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		updateNewFolderButtonState();
 	}

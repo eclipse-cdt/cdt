@@ -329,6 +329,7 @@ public class WorkingSetConfigurationBlock {
 	private class WSConfigsContentProvider implements ITreeContentProvider {
 		private Collection<IWorkingSetProxy> workingSets;
 
+		@Override
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement == workingSets) {
 				Collection<IWorkingSetProxy> filtered = filterWorkingSets(workingSets);
@@ -356,23 +357,28 @@ public class WorkingSetConfigurationBlock {
 			return result;
 		}
 
+		@Override
 		public Object getParent(Object element) {
 			return (element instanceof IWorkingSetConfiguration) ? ((IWorkingSetConfiguration) element)
 					.getWorkingSet() : null;
 		}
 
+		@Override
 		public boolean hasChildren(Object element) {
 			return (element != null) && !(element instanceof IWorkingSetConfiguration);
 		}
 
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return getChildren(inputElement);
 		}
 
+		@Override
 		public void dispose() {
 			// nothing to dispose
 		}
 
+		@Override
 		@SuppressWarnings("unchecked")
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			workingSets = (Collection<IWorkingSetProxy>) newInput;
@@ -433,6 +439,7 @@ public class WorkingSetConfigurationBlock {
 			super.dispose();
 		}
 
+		@Override
 		public Font getFont(Object element) {
 			if (element instanceof IWorkingSetConfiguration) {
 				IWorkingSetConfiguration config = (IWorkingSetConfiguration) element;

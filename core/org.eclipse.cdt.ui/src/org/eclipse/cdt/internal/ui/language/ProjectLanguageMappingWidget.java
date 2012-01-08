@@ -113,6 +113,7 @@ public class ProjectLanguageMappingWidget extends LanguageMappingWidget {
 		addButton.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 		addButton.setText(PreferencesMessages.ProjectLanguagesPropertyPage_addMappingButton);
 		addButton.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				IProject project = (IProject) getElement().getAdapter(IProject.class);
 				ICProjectDescription description = CoreModel.getDefault().getProjectDescription(project, false);
@@ -149,6 +150,7 @@ public class ProjectLanguageMappingWidget extends LanguageMappingWidget {
 		removeButton.setText(PreferencesMessages.ProjectLanguagesPropertyPage_removeMappingButton);
 		removeButton.addListener(SWT.Selection, new Listener() {
 
+			@Override
 			public void handleEvent(Event event) {
 				TableItem[] selection = fTable.getSelection();
 

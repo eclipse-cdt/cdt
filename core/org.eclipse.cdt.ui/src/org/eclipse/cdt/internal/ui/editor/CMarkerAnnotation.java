@@ -44,6 +44,7 @@ public class CMarkerAnnotation extends MarkerAnnotation implements IProblemAnnot
 	/**
 	 * @see IProblemAnnotation#getMessage()
 	 */
+	@Override
 	public String getMessage() {
 		if (fIsProblemMarker)
 			return getMarker().getAttribute(IMarker.MESSAGE, ""); //$NON-NLS-1$
@@ -53,6 +54,7 @@ public class CMarkerAnnotation extends MarkerAnnotation implements IProblemAnnot
 	/**
 	 * @see IProblemAnnotation#isError()
 	 */
+	@Override
 	public boolean isError() {
 		if (fIsProblemMarker) {
 			int markerSeverity= getMarker().getAttribute(IMarker.SEVERITY, -1);
@@ -64,6 +66,7 @@ public class CMarkerAnnotation extends MarkerAnnotation implements IProblemAnnot
 	/**
 	 * @see IProblemAnnotation#isWarning()
 	 */
+	@Override
 	public boolean isWarning() {
 		if (fIsProblemMarker) {
 			int markerSeverity= getMarker().getAttribute(IMarker.SEVERITY, -1);
@@ -75,6 +78,7 @@ public class CMarkerAnnotation extends MarkerAnnotation implements IProblemAnnot
 	/**
 	 * @see IProblemAnnotation#isTemporaryProblem()
 	 */
+	@Override
 	public boolean isTemporaryProblem() {
 		return false;
 	}
@@ -82,6 +86,7 @@ public class CMarkerAnnotation extends MarkerAnnotation implements IProblemAnnot
 	/**
 	 * @see IProblemAnnotation#getArguments()
 	 */
+	@Override
 	public String[] getArguments() {
 		String [] s = {"problem", "here"}; //$NON-NLS-1$ //$NON-NLS-2$
 		//if (fIsProblemMarker)
@@ -93,6 +98,7 @@ public class CMarkerAnnotation extends MarkerAnnotation implements IProblemAnnot
 	/**
 	 * @see IProblemAnnotation#getId()
 	 */
+	@Override
 	public int getId() {
 		if (fIsProblemMarker)
 			return getMarker().getAttribute(ICModelMarker.C_MODEL_PROBLEM_MARKER, -1);
@@ -102,6 +108,7 @@ public class CMarkerAnnotation extends MarkerAnnotation implements IProblemAnnot
 	/*
 	 * @see org.eclipse.cdt.internal.ui.editor.IProblemAnnotation#isProblem()
 	 */
+	@Override
 	public boolean isProblem() {
 		return fIsProblemMarker;
 	}
@@ -126,6 +133,7 @@ public class CMarkerAnnotation extends MarkerAnnotation implements IProblemAnnot
 	/*
 	 * @see ICAnnotation#hasOverlay()
 	 */
+	@Override
 	public boolean hasOverlay() {
 		return fOverlay != null;
 	}
@@ -133,6 +141,7 @@ public class CMarkerAnnotation extends MarkerAnnotation implements IProblemAnnot
 	/*
 	 * @see org.eclipse.cdt.internal.ui.editor.ICAnnotation#getOverlay()
 	 */
+	@Override
 	public ICAnnotation getOverlay() {
 		return fOverlay;
 	}
@@ -140,6 +149,7 @@ public class CMarkerAnnotation extends MarkerAnnotation implements IProblemAnnot
 	/*
 	 * @see ICAnnotation#addOverlaid(ICAnnotation)
 	 */
+	@Override
 	public void addOverlaid(ICAnnotation annotation) {
 		// not supported
 	}
@@ -147,6 +157,7 @@ public class CMarkerAnnotation extends MarkerAnnotation implements IProblemAnnot
 	/*
 	 * @see ICAnnotation#removeOverlaid(ICAnnotation)
 	 */
+	@Override
 	public void removeOverlaid(ICAnnotation annotation) {
 		// not supported
 	}
@@ -154,6 +165,7 @@ public class CMarkerAnnotation extends MarkerAnnotation implements IProblemAnnot
 	/*
 	 * @see ICAnnotation#getOverlaidIterator()
 	 */
+	@Override
 	public Iterator<ICAnnotation> getOverlaidIterator() {
 		// not supported
 		return null;
@@ -162,6 +174,7 @@ public class CMarkerAnnotation extends MarkerAnnotation implements IProblemAnnot
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.ui.javaeditor.IJavaAnnotation#getCompilationUnit()
 	 */
+	@Override
 	public ITranslationUnit getTranslationUnit() {
 		ICElement element= CoreModel.getDefault().create(getMarker().getResource());
 		if (element instanceof ITranslationUnit) {
@@ -170,6 +183,7 @@ public class CMarkerAnnotation extends MarkerAnnotation implements IProblemAnnot
 		return null;
 	}
 
+	@Override
 	public String getMarkerType() {
 		IMarker marker= getMarker();
 		if (marker == null || !marker.exists())

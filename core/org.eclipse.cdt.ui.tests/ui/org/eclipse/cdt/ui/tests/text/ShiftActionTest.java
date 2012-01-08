@@ -21,6 +21,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.ui.texteditor.ShiftAction;
 
@@ -114,11 +115,11 @@ public class ShiftActionTest extends BaseUITestCase {
 	}
 	
 	private void shiftLeft() throws Exception {
-		new ShiftAction(new EmptyBundle(), "prefix", fEditor, SourceViewer.SHIFT_LEFT).run();
+		new ShiftAction(new EmptyBundle(), "prefix", fEditor, ITextOperationTarget.SHIFT_LEFT).run();
 	}
 
 	private void shiftRight() throws Exception {
-		new ShiftAction(new EmptyBundle(), "prefix", fEditor, SourceViewer.SHIFT_RIGHT).run();
+		new ShiftAction(new EmptyBundle(), "prefix", fEditor, ITextOperationTarget.SHIFT_RIGHT).run();
 	}
 
 	private void selectAll() {

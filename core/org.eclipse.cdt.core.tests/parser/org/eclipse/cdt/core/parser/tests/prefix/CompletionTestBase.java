@@ -114,6 +114,7 @@ public class CompletionTestBase extends BaseTestCase {
 	}
 	
 	private static class BindingsComparator implements Comparator {
+		@Override
 		public int compare(Object o1, Object o2) {
 			IBinding b1 = (IBinding)o1;
 			IBinding b2 = (IBinding)o2;

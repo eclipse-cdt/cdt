@@ -97,6 +97,7 @@ public abstract class AbstractCScanner extends BufferedRuleBasedScanner implemen
 	/*
 	 * @see org.eclipse.cdt.ui.IPropertyChangeParticipant#adaptToPreferenceChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	public void adaptToPreferenceChange(PropertyChangeEvent event) {
 		if(fTokenStore.affectsBehavior(event)) {
 			fTokenStore.adaptToPreferenceChange(event);
@@ -109,6 +110,7 @@ public abstract class AbstractCScanner extends BufferedRuleBasedScanner implemen
 	/*
 	 * @see org.eclipse.cdt.ui.IPropertyChangeParticipant#affectsBehavior(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	public boolean affectsBehavior(PropertyChangeEvent event) {
 		boolean result= fTokenStore.affectsBehavior(event);
 		for(Iterator<IPropertyChangeParticipant> i= fParticipants.iterator(); !result && i.hasNext(); ) {

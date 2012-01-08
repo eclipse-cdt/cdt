@@ -44,6 +44,7 @@ public class ExternalEditorInputFactory implements IElementFactory {
 	/*
 	 * @see org.eclipse.ui.IElementFactory#createElement(org.eclipse.ui.IMemento)
 	 */
+	@Override
 	public IAdaptable createElement(IMemento memento) {
         // Get the file name.
         String fileName = memento.getString(TAG_PATH);

@@ -50,6 +50,7 @@ public class ToggleFromImplementationToHeaderOrClassStrategy implements IToggleR
 		return definition.getDeclarator().getName() instanceof ICPPASTQualifiedName;
 	}
 	
+	@Override
 	public void run(ModificationCollector modifications) {
 		newFileCheck();
 		ASTRewrite implast = modifications.rewriterForTranslationUnit(context.getDefinitionUnit());

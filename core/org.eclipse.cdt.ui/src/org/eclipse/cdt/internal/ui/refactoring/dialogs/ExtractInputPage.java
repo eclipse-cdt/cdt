@@ -46,12 +46,14 @@ public abstract class ExtractInputPage extends UserInputWizardPage {
 		this.info = info;
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		control = new NameAndVisibilityComposite(parent, label, info.getName());
 		setTitle(getName());
 		setPageComplete(false);
 		control.getConstantNameText().addModifyListener(new ModifyListener() {
 	
+			@Override
 			public void modifyText(ModifyEvent e) {
 				info.setName(control.getConstantNameText().getText());
 				checkName();

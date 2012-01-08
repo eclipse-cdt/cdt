@@ -218,6 +218,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 		return fCurrCElement.getCProject();
 	}
 
+	@Override
 	public IProject getProject() {
 		return getCProject().getProject();
 	}
@@ -255,6 +256,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 	 * 
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionContainer#updateContainer()
 	 */
+	@Override
 	public void updateContainer() {
 		update();
 	}
@@ -276,6 +278,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 		fBuildPathStatus.setOK();
 	}
 
+	@Override
 	public Preferences getPreferences() {
 		return null;
 	}

@@ -132,6 +132,7 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 	
 	// -------- UI Creation ---------
 
+	@Override
 	public void createControl(Composite parent) {
         initializeDialogUnits(parent);
         
@@ -453,7 +454,8 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
             this.fieldID = fieldID;
         }
         
-        public void focusGained(FocusEvent e) {
+        @Override
+		public void focusGained(FocusEvent e) {
             fLastFocusedField = this.fieldID;
             if (isFirstTime) {
             	isFirstTime = false;
@@ -462,13 +464,15 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
         	doStatusUpdate();
         }
         
-        public void focusLost(FocusEvent e) {
+        @Override
+		public void focusLost(FocusEvent e) {
             fLastFocusedField = 0;
             doStatusUpdate();
         }
     }
 
     private class SourceFolderFieldAdapter implements IStringButtonAdapter, IDialogFieldListener {
+		@Override
 		public void changeControlPressed(DialogField field) {
 		    IPath oldFolderPath = getSourceFolderFullPath();
 			IPath newFolderPath = chooseSourceFolder(oldFolderPath);
@@ -478,6 +482,7 @@ public abstract class AbstractFileCreationWizardPage extends NewElementWizardPag
 			}
 		}
 		
+		@Override
 		public void dialogFieldChanged(DialogField field) {
 			handleFieldChanged(ALL_FIELDS);
 		}

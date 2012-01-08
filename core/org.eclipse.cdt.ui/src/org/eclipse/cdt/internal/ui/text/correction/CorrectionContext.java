@@ -39,6 +39,7 @@ public class CorrectionContext extends TextInvocationContext implements IInvocat
 	 * Returns the translation unit.
 	 * @return an <code>ITranslationUnit</code>
 	 */
+	@Override
 	public ITranslationUnit getTranslationUnit() {
 		return fTranslationUnit;
 	}
@@ -47,6 +48,7 @@ public class CorrectionContext extends TextInvocationContext implements IInvocat
 	 * Returns the length.
 	 * @return int
 	 */
+	@Override
 	public int getSelectionLength() {
 		return Math.max(getLength(), 0);
 	}
@@ -55,6 +57,7 @@ public class CorrectionContext extends TextInvocationContext implements IInvocat
 	 * Returns the offset.
 	 * @return int
 	 */
+	@Override
 	public int getSelectionOffset() {
 		return getOffset();
 	}

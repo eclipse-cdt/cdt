@@ -280,6 +280,7 @@ public class PDOMSearchViewPage extends AbstractTextSearchViewPage {
 	protected TableViewer createTableViewer(Composite parent) {
 		TableViewer tableViewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
 		tableViewer.getControl().addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				saveColumnWidths();
 			}

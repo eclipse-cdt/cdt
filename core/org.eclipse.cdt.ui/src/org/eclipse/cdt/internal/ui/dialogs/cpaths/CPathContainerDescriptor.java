@@ -69,6 +69,7 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.ui.wizards.IPathEntryContainerPage#initialize(org.eclipse.cdt.core.model.ICProject, org.eclipse.cdt.core.model.IPathEntry[])
 		 */
+		@Override
 		public void initialize(ICProject project, IPathEntry[] currentEntries) {
 			fPage.initialize(project, currentEntries);
 		}
@@ -76,6 +77,7 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.ui.wizards.IPathEntryContainerPage#finish()
 		 */
+		@Override
 		public boolean finish() {
 			return fPage.finish();
 		}
@@ -83,6 +85,7 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.ui.wizards.IPathEntryContainerPage#getNewContainers()
 		 */
+		@Override
 		public IContainerEntry[] getNewContainers() {
 			IPathEntry[] entries = fPage.getContainerEntries();
 			IContainerEntry[] containers = new IContainerEntry[entries.length];
@@ -93,6 +96,7 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.ui.wizards.IPathEntryContainerPage#setSelection(org.eclipse.cdt.core.model.IContainerEntry)
 		 */
+		@Override
 		public void setSelection(IContainerEntry containerEntry) {
 			fPage.setSelection(containerEntry);
 		}
@@ -100,6 +104,7 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 		 */
+		@Override
 		public void createControl(Composite parent) {
 			fPage.createControl(parent);
 
@@ -108,6 +113,7 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.wizard.IWizardPage#canFlipToNextPage()
 		 */
+		@Override
 		public boolean canFlipToNextPage() {
 			return fPage.canFlipToNextPage();
 		}
@@ -115,6 +121,7 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.wizard.IWizardPage#getName()
 		 */
+		@Override
 		public String getName() {
 			return fPage.getName();
 		}
@@ -122,6 +129,7 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.wizard.IWizardPage#getNextPage()
 		 */
+		@Override
 		public IWizardPage getNextPage() {
 			return fPage.getNextPage();
 		}
@@ -129,6 +137,7 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.wizard.IWizardPage#getPreviousPage()
 		 */
+		@Override
 		public IWizardPage getPreviousPage() {
 			return fPage.getPreviousPage();
 		}
@@ -136,6 +145,7 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.wizard.IWizardPage#getWizard()
 		 */
+		@Override
 		public IWizard getWizard() {
 			return fPage.getWizard();
 		}
@@ -143,6 +153,7 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.wizard.IWizardPage#isPageComplete()
 		 */
+		@Override
 		public boolean isPageComplete() {
 			return fPage.isPageComplete();
 		}
@@ -150,6 +161,7 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.wizard.IWizardPage#setPreviousPage(org.eclipse.jface.wizard.IWizardPage)
 		 */
+		@Override
 		public void setPreviousPage(IWizardPage page) {
 			fPage.setPreviousPage(page);
 		}
@@ -157,6 +169,7 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.wizard.IWizardPage#setWizard(org.eclipse.jface.wizard.IWizard)
 		 */
+		@Override
 		public void setWizard(IWizard newWizard) {
 			fPage.setWizard(newWizard);
 		}
@@ -164,6 +177,7 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
 		 */
+		@Override
 		public void dispose() {
 			fPage.dispose();
 		}
@@ -171,6 +185,7 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.dialogs.IDialogPage#getControl()
 		 */
+		@Override
 		public Control getControl() {
 			return fPage.getControl();
 		}
@@ -178,6 +193,7 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.dialogs.IDialogPage#getDescription()
 		 */
+		@Override
 		public String getDescription() {
 			return fPage.getDescription();
 		}
@@ -185,6 +201,7 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.dialogs.IDialogPage#getErrorMessage()
 		 */
+		@Override
 		public String getErrorMessage() {
 			return fPage.getErrorMessage();
 		}
@@ -192,6 +209,7 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.dialogs.IDialogPage#getImage()
 		 */
+		@Override
 		public Image getImage() {
 			return fPage.getImage();
 		}
@@ -199,6 +217,7 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.dialogs.IDialogPage#getMessage()
 		 */
+		@Override
 		public String getMessage() {
 			return fPage.getMessage();
 		}
@@ -206,6 +225,7 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.dialogs.IDialogPage#getTitle()
 		 */
+		@Override
 		public String getTitle() {
 			return fPage.getTitle();
 		}
@@ -213,6 +233,7 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.dialogs.IDialogPage#performHelp()
 		 */
+		@Override
 		public void performHelp() {
 			fPage.performHelp();
 		}
@@ -220,6 +241,7 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.dialogs.IDialogPage#setDescription(java.lang.String)
 		 */
+		@Override
 		public void setDescription(String description) {
 			fPage.setDescription(description);
 		}
@@ -227,6 +249,7 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.dialogs.IDialogPage#setImageDescriptor(org.eclipse.jface.resource.ImageDescriptor)
 		 */
+		@Override
 		public void setImageDescriptor(ImageDescriptor image) {
 			fPage.setImageDescriptor(image);
 		}
@@ -234,6 +257,7 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.dialogs.IDialogPage#setTitle(java.lang.String)
 		 */
+		@Override
 		public void setTitle(String title) {
 			fPage.setTitle(title);
 		}
@@ -241,6 +265,7 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.dialogs.IDialogPage#setVisible(boolean)
 		 */
+		@Override
 		public void setVisible(boolean visible) {
 			fPage.setVisible(visible);
 		}
@@ -275,6 +300,7 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 		}
 	}
 
+	@Override
 	public IPathEntryContainerPage createPage() throws CoreException {
 		Object elem = CoreUtility.createExtension(fConfigElement, ATT_PAGE_CLASS);
 		if (elem instanceof IPathEntryContainerPage) {
@@ -289,10 +315,12 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 				"Invalid extension (page not of type IClasspathContainerPage): " + id, null)); //$NON-NLS-1$
 	}
 
+	@Override
 	public String getName() {
 		return fConfigElement.getAttribute(ATT_NAME);
 	}
 
+	@Override
 	public Image getImage() {
 		if (pageImage == null) {
 			String imageName = fConfigElement.getAttribute(ATT_ICON);
@@ -328,6 +356,7 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 		return fConfigElement.getAttribute(ATT_PAGE_CLASS);
 	}
 
+	@Override
 	public boolean canEdit(IPathEntry entry) {
 		String id = fConfigElement.getAttribute(ATT_ID);
 		if (entry.getEntryKind() == IPathEntry.CDT_CONTAINER) {

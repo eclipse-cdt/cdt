@@ -107,7 +107,8 @@ public final class BufferedDocumentScanner implements ICharacterScanner {
     /*
      * @see ICharacterScanner#read()
      */
-    public final int read() {
+    @Override
+	public final int read() {
         
         if (fOffset >= fBufferLength) {
             if (fBufferOffset + fBufferLength >= fRangeOffset + fRangeLength)
@@ -122,7 +123,8 @@ public final class BufferedDocumentScanner implements ICharacterScanner {
     /*
      * @see ICharacterScanner#unread
      */
-    public final void unread() {
+    @Override
+	public final void unread() {
 
         if (fOffset <= 0) {
             if (fBufferOffset <= fRangeOffset) {
@@ -139,7 +141,8 @@ public final class BufferedDocumentScanner implements ICharacterScanner {
     /*
      * @see ICharacterScanner#getColumn()
      */
-    public final int getColumn() {
+    @Override
+	public final int getColumn() {
 
         try {
             final int offset= fBufferOffset + fOffset;
@@ -157,7 +160,8 @@ public final class BufferedDocumentScanner implements ICharacterScanner {
     /*
      * @see ICharacterScanner#getLegalLineDelimiters()
      */
-    public final char[][] getLegalLineDelimiters() {
+    @Override
+	public final char[][] getLegalLineDelimiters() {
         return fDelimiters;
     }
 

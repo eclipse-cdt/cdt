@@ -54,10 +54,12 @@ public class SelectionTransferDropAdapter extends CDTViewerDropAdapter implement
 
 	//---- TransferDropTargetListener interface ---------------------------------------
 	
+	@Override
 	public Transfer getTransfer() {
 		return LocalSelectionTransfer.getTransfer();
 	}
 	
+	@Override
 	public boolean isEnabled(DropTargetEvent event) {
 		Object target= event.item != null ? event.item.getData() : null;
 		if (target == null) {
@@ -242,6 +244,7 @@ public class SelectionTransferDropAdapter extends CDTViewerDropAdapter implement
 			}
 			final ICElement[] siblings = neighbours;
 			IRunnableWithProgress runnable = new IRunnableWithProgress() {
+				@Override
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
 						CoreModel.getDefault().getCModel().move(cElements, containers, siblings, null, false, monitor);
@@ -305,6 +308,7 @@ public class SelectionTransferDropAdapter extends CDTViewerDropAdapter implement
 			}
 			final ICElement[] siblings = neighbours;
 			IRunnableWithProgress runnable = new IRunnableWithProgress() {
+				@Override
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
 						CoreModel.getDefault().getCModel().copy(cElements, containers, siblings, null, false, monitor);

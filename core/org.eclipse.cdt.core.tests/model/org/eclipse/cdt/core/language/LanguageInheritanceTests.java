@@ -52,6 +52,7 @@ public class LanguageInheritanceTests extends BaseTestCase {
 		return suite(LanguageInheritanceTests.class);
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		String name = getClass().getName() + "_" + getName();
 		fCProject = CProjectHelper.createCCProject(name , BIN_FOLDER, IPDOMManager.ID_NO_INDEXER);
@@ -71,6 +72,7 @@ public class LanguageInheritanceTests extends BaseTestCase {
 		fManager.storeWorkspaceLanguageConfiguration(EMPTY_CONTENT_TYPES);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		CProjectHelper.delete(fCProject);
 	}

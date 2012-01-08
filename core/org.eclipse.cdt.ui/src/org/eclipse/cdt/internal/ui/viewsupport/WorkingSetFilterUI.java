@@ -57,13 +57,15 @@ public abstract class WorkingSetFilterUI {
             }
         }
         fWorkingSetListener = new IPropertyChangeListener() {
-            public void propertyChange(org.eclipse.jface.util.PropertyChangeEvent event) {
+            @Override
+			public void propertyChange(org.eclipse.jface.util.PropertyChangeEvent event) {
                 onWorkingSetPropertyChange(event);
             }
         }; 
         fWSManager.addPropertyChangeListener(fWorkingSetListener);
         IPropertyChangeListener workingSetUpdater = new IPropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent event) {
+            @Override
+			public void propertyChange(PropertyChangeEvent event) {
                 onWorkingSetFilterUpdate(event);
             }
         };

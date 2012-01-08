@@ -79,9 +79,11 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 			fRenderer, fIgnoreCase);
 		
 		fSelectionList.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				handleDoubleClick();
 			}
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				verifyCurrentSelection();
 			}
@@ -200,6 +202,7 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 	@Override
 	public int open() {
 		BusyIndicator.showWhile(null, new Runnable() {
+			@Override
 			public void run() {
 				access$superOpen();
 			}

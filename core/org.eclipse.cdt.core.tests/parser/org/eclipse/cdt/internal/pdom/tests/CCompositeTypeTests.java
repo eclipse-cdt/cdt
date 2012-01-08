@@ -38,6 +38,7 @@ public class CCompositeTypeTests extends PDOMTestBase {
 		return new TestSuite(CCompositeTypeTests.class);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		CCompositeTypeTests foo = null;
 		
@@ -46,6 +47,7 @@ public class CCompositeTypeTests extends PDOMTestBase {
 		pdom.acquireReadLock();
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		pdom.releaseReadLock();
 		if (project != null) {

@@ -48,6 +48,7 @@ public class ResourceTransferDropAdapter extends CDTViewerDropAdapter implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.ui.drag.TransferDropTargetListener#getTransfer()
 	 */
+	@Override
 	public Transfer getTransfer() {
 		return ResourceTransfer.getInstance();
 	}
@@ -55,6 +56,7 @@ public class ResourceTransferDropAdapter extends CDTViewerDropAdapter implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.ui.drag.TransferDropTargetListener#isEnabled(org.eclipse.swt.dnd.DropTargetEvent)
 	 */
+	@Override
 	public boolean isEnabled(DropTargetEvent event) {
 		Object target= event.item != null ? event.item.getData() : null;
 		if (target == null) {

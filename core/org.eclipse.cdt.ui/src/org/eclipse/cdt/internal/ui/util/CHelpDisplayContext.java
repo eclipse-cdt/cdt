@@ -74,6 +74,7 @@ public class CHelpDisplayContext implements IContext {
 		
 		ICHelpInvocationContext invocationContext = new ICHelpInvocationContext() {
 
+			@Override
 			public IProject getProject() {
 				ITranslationUnit unit = getTranslationUnit();
 				if (unit != null) {
@@ -82,6 +83,7 @@ public class CHelpDisplayContext implements IContext {
 				return null;
 			}
 
+			@Override
 			public ITranslationUnit getTranslationUnit() {
 				IEditorInput editorInput= editor.getEditorInput();
 				return CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editorInput);
@@ -113,10 +115,12 @@ public class CHelpDisplayContext implements IContext {
 		}
 	}
 
+	@Override
 	public IHelpResource[] getRelatedTopics() {
 		return fHelpResources;
 	}
 
+	@Override
 	public String getText() {
 		return fText;
 	}

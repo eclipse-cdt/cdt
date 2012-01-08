@@ -4072,7 +4072,10 @@
             state="true">
          <description>%excludedFile.description</description>
          <enablement>
-            <objectClass name="org.eclipse.core.resources.IFile" />
+            <or>
+               <objectClass name="org.eclipse.core.resources.IFile" />
+               <objectClass name="org.eclipse.core.resources.IFolder" />
+            </or>
          </enablement>
       </decorator>
       <decorator

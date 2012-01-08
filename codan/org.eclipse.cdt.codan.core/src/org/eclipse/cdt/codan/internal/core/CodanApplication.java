@@ -37,6 +37,7 @@ public class CodanApplication implements IApplication {
 	private boolean verbose = false;
 	private boolean all = false;
 
+	@Override
 	public Object start(IApplicationContext context) throws Exception {
 		String[] args = (String[]) context.getArguments().get("application.args"); //$NON-NLS-1$
 		if (args == null || args.length == 0) {
@@ -107,6 +108,7 @@ public class CodanApplication implements IApplication {
 		System.out.println(Messages.CodanApplication_verbose_option);
 	}
 
+	@Override
 	public void stop() {
 		// nothing
 	}

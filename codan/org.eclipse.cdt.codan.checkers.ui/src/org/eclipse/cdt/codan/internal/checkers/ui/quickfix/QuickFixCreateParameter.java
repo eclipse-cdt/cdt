@@ -38,6 +38,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 
 public class QuickFixCreateParameter extends AbstractAstRewriteQuickFix {
+	@Override
 	public String getLabel() {
 		return Messages.QuickFixCreateParameter_0;
 	}

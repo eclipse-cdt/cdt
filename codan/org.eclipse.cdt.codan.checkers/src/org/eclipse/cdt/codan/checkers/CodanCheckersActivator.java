@@ -37,6 +37,7 @@ public class CodanCheckersActivator extends Plugin {
 	 * org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext
 	 * )
 	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
@@ -49,6 +50,7 @@ public class CodanCheckersActivator extends Plugin {
 	 * org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext
 	 * )
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		super.stop(context);
@@ -71,7 +73,7 @@ public class CodanCheckersActivator extends Plugin {
 	}
 
 	public static void log(String message) {
-		getDefault().getLog().log(new Status(Status.ERROR, PLUGIN_ID, message));
+		getDefault().getLog().log(new Status(IStatus.ERROR, PLUGIN_ID, message));
 	}
 
 	/**
@@ -79,6 +81,6 @@ public class CodanCheckersActivator extends Plugin {
 	 * @return
 	 */
 	public static IStatus getStatus(Throwable e) {
-		return new Status(Status.ERROR, PLUGIN_ID, e.getLocalizedMessage(), e);
+		return new Status(IStatus.ERROR, PLUGIN_ID, e.getLocalizedMessage(), e);
 	}
 }

@@ -27,6 +27,7 @@ public class RunCodanCommand extends AbstractHandler {
 	public RunCodanCommand() {
 	}
 
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		ISelection currentSelection = HandlerUtil.getCurrentSelection(event);
 		RunCodeAnalysis action = new RunCodeAnalysis();

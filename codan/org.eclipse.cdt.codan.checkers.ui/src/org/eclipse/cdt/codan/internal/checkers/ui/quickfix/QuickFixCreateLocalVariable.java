@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.ltk.core.refactoring.Change;
 
 public class QuickFixCreateLocalVariable extends AbstractAstRewriteQuickFix {
+	@Override
 	public String getLabel() {
 		return Messages.QuickFixCreateLocalVariable_0;
 	}
@@ -38,6 +39,7 @@ public class QuickFixCreateLocalVariable extends AbstractAstRewriteQuickFix {
 	 * @param astName
 	 * @param r
 	 */
+	@Override
 	public void modifyAST(IIndex index, IMarker marker) {
 		CxxAstUtils utils = CxxAstUtils.getInstance();
 		IASTTranslationUnit ast;

@@ -25,6 +25,7 @@ public class BasicProblemPreference extends AbstractProblemPreference {
 	protected Object value;
 	private PreferenceType type = PreferenceType.TYPE_STRING;
 
+	@Override
 	public PreferenceType getType() {
 		return type;
 	}
@@ -78,6 +79,7 @@ public class BasicProblemPreference extends AbstractProblemPreference {
 		return value;
 	}
 
+	@Override
 	public String exportValue() {
 		Pattern pat = Pattern.compile("^[A-Za-z0-9._-]+$"); //$NON-NLS-1$
 		String x = String.valueOf(getValue());

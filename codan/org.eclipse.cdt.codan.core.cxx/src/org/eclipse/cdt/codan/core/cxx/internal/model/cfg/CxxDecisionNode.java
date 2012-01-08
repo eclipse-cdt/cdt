@@ -35,6 +35,7 @@ public class CxxDecisionNode extends DecisionNode {
 	/**
 	 * @return
 	 */
+	@Override
 	public String toStringData() {
 		if (getNode() == null)
 			return ""; //$NON-NLS-1$

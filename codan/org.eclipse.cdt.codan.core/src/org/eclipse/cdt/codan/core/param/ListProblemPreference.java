@@ -42,6 +42,7 @@ public class ListProblemPreference extends AbstractProblemPreference implements 
 		setLabel(label);
 	}
 
+	@Override
 	public PreferenceType getType() {
 		return PreferenceType.TYPE_LIST;
 	}
@@ -69,6 +70,7 @@ public class ListProblemPreference extends AbstractProblemPreference implements 
 	 *
 	 * @return read only preference matching the key
 	 */
+	@Override
 	public IProblemPreference addChildDescriptor(IProblemPreference desc) {
 		Object value = desc.getValue();
 		String key = desc.getKey();
@@ -107,6 +109,7 @@ public class ListProblemPreference extends AbstractProblemPreference implements 
 	 * @throws NumberFormatException
 	 *         if key is not number
 	 */
+	@Override
 	public IProblemPreference getChildDescriptor(String key) throws NumberFormatException {
 		if (key == null || key.equals(COMMON_DESCRIPTOR_KEY)) {
 			// return common descriptor
@@ -125,6 +128,7 @@ public class ListProblemPreference extends AbstractProblemPreference implements 
 	/**
 	 * Return array of clones values of child preferences.
 	 */
+	@Override
 	public IProblemPreference[] getChildDescriptors() {
 		IProblemPreference[] res = new IProblemPreference[list.size()];
 		for (int i = 0; i < res.length; i++) {
@@ -133,6 +137,7 @@ public class ListProblemPreference extends AbstractProblemPreference implements 
 		return res;
 	}
 
+	@Override
 	public Object getChildValue(String key) {
 		int index = Integer.parseInt(key);
 		return getChildValue(index);
@@ -146,6 +151,7 @@ public class ListProblemPreference extends AbstractProblemPreference implements 
 		return list.get(index);
 	}
 
+	@Override
 	public void setChildValue(String key, Object value) {
 		int i = Integer.valueOf(key).intValue();
 		setChildValue(i, value);
@@ -180,6 +186,7 @@ public class ListProblemPreference extends AbstractProblemPreference implements 
 	/**
 	 * Removes child value by key
 	 */
+	@Override
 	public void removeChildValue(String key) {
 		int index = Integer.parseInt(key);
 		list.remove(index);
@@ -197,6 +204,7 @@ public class ListProblemPreference extends AbstractProblemPreference implements 
 		return list1;
 	}
 
+	@Override
 	public String exportValue() {
 		StringBuffer buf = new StringBuffer("("); //$NON-NLS-1$
 		for (Iterator<Object> iterator = list.iterator(); iterator.hasNext();) {
@@ -258,6 +266,7 @@ public class ListProblemPreference extends AbstractProblemPreference implements 
 	 * If info key is '#' resets common descriptor to null, otherwise removes
 	 * value
 	 */
+	@Override
 	public void removeChildDescriptor(IProblemPreference info) {
 		if (info.getKey().equals(COMMON_DESCRIPTOR_KEY))
 			setChildDescriptor(null);

@@ -29,6 +29,7 @@ public interface ICheckersRegistry extends Iterable<IChecker> {
 	 * 
 	 * @return iterator for registered checkers
 	 */
+	@Override
 	public Iterator<IChecker> iterator();
 
 	/**

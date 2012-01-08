@@ -24,16 +24,19 @@ public class PlainNode extends AbstractSingleIncomingNode implements IPlainNode 
 		super();
 	}
 
+	@Override
 	public IBasicBlock[] getOutgoingNodes() {
 		return new IBasicBlock[] { next };
 	}
 
+	@Override
 	public int getOutgoingSize() {
 		if (next == null)
 			return 0;
 		return 1;
 	}
 
+	@Override
 	public IBasicBlock getOutgoing() {
 		return next;
 	}

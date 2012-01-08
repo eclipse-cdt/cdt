@@ -45,6 +45,7 @@ public class CodanProblemMarkerResolutionGenerator implements IMarkerResolutionG
 		}
 	}
 
+	@Override
 	public IMarkerResolution[] getResolutions(IMarker marker) {
 		if (resolutionsLoaded == false) {
 			readExtensions();

@@ -35,6 +35,7 @@ public class SuggestedParenthesisChecker extends AbstractIndexAstChecker {
 	public static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.SuggestedParenthesisProblem"; //$NON-NLS-1$
 	public static final String PARAM_NOT = "paramNot"; //$NON-NLS-1$
 
+	@Override
 	public void processAst(IASTTranslationUnit ast) {
 		// traverse the ast using the visitor pattern.
 		ast.accept(new ExpressionVisitor());
@@ -45,6 +46,7 @@ public class SuggestedParenthesisChecker extends AbstractIndexAstChecker {
 			shouldVisitExpressions = true;
 		}
 
+		@Override
 		public int visit(IASTExpression expression) {
 			int precedence = getPrecedence(expression);
 			IASTNode parent = expression.getParent();

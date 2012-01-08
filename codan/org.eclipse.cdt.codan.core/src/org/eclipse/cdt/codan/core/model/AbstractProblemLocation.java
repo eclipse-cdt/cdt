@@ -63,6 +63,7 @@ public abstract class AbstractProblemLocation implements IProblemLocation {
 	 * 
 	 * @see org.eclipse.cdt.codan.core.model.IProblemLocation#getData()
 	 */
+	@Override
 	public Object getData() {
 		return extra;
 	}
@@ -81,6 +82,7 @@ public abstract class AbstractProblemLocation implements IProblemLocation {
 	 * 
 	 * @see org.eclipse.cdt.codan.core.model.IProblemLocation#getFile()
 	 */
+	@Override
 	public IResource getFile() {
 		return file;
 	}
@@ -96,6 +98,7 @@ public abstract class AbstractProblemLocation implements IProblemLocation {
 	/**
 	 * Problem line number referenced in problem view in location field
 	 */
+	@Override
 	public int getLineNumber() {
 		return getStartingLineNumber();
 	}
@@ -112,6 +115,7 @@ public abstract class AbstractProblemLocation implements IProblemLocation {
 	 * 
 	 * @see org.eclipse.cdt.codan.core.model.IProblemLocation#getStartPos()
 	 */
+	@Override
 	public int getStartingChar() {
 		return posStart;
 	}
@@ -121,6 +125,7 @@ public abstract class AbstractProblemLocation implements IProblemLocation {
 	 * 
 	 * @see org.eclipse.cdt.codan.core.model.IProblemLocation#getEndingChar()
 	 */
+	@Override
 	public int getEndingChar() {
 		return posEnd;
 	}

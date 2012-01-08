@@ -27,14 +27,17 @@ public abstract class AbstractSingleOutgoingNode extends AbstractBasicBlock impl
 		super();
 	}
 
+	@Override
 	public IBasicBlock[] getOutgoingNodes() {
 		return new IBasicBlock[] { next };
 	}
 
+	@Override
 	public int getOutgoingSize() {
 		return 1;
 	}
 
+	@Override
 	public IBasicBlock getOutgoing() {
 		return next;
 	}

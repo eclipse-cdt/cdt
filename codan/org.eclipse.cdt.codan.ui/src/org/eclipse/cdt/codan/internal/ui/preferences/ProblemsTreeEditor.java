@@ -62,6 +62,7 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 		 * org.eclipse.jface.viewers.ICheckStateProvider#isChecked(java.lang
 		 * .Object)
 		 */
+		@Override
 		public boolean isChecked(Object element) {
 			if (element instanceof IProblem) {
 				IProblem p = (IProblem) element;
@@ -88,6 +89,7 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 		 * org.eclipse.jface.viewers.ICheckStateProvider#isGrayed(java.lang.
 		 * Object)
 		 */
+		@Override
 		public boolean isGrayed(Object element) {
 			if (element instanceof IProblem) {
 				IProblem p = (IProblem) element;
@@ -130,14 +132,17 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 	}
 
 	class ProblemsContentProvider implements IContentProvider, ITreeContentProvider {
+		@Override
 		public void dispose() {
 			// TODO Auto-generated method stub
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			// TODO Auto-generated method stub
 		}
 
+		@Override
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement instanceof Object[])
 				return (Object[]) parentElement;
@@ -150,14 +155,17 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 			return new Object[0];
 		}
 
+		@Override
 		public Object getParent(Object element) {
 			return null;
 		}
 
+		@Override
 		public boolean hasChildren(Object element) {
 			return getChildren(element).length > 0;
 		}
 
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return getChildren(inputElement);
 		}

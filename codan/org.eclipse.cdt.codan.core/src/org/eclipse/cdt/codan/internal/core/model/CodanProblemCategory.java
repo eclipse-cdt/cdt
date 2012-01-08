@@ -32,10 +32,12 @@ public class CodanProblemCategory extends CodanProblemElement implements IProble
 		this.name = name;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public String getId() {
 		return id;
 	}
@@ -45,6 +47,7 @@ public class CodanProblemCategory extends CodanProblemElement implements IProble
 		return name;
 	}
 
+	@Override
 	public IProblemElement[] getChildren() {
 		return list.toArray(new IProblemElement[list.size()]);
 	}

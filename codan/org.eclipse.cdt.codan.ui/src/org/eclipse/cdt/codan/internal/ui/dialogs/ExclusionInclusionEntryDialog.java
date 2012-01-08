@@ -139,10 +139,12 @@ public class ExclusionInclusionEntryDialog extends StatusDialog {
 	// -------- ExclusionPatternAdapter --------
 	private class ExclusionPatternAdapter implements IDialogFieldListener, IStringButtonAdapter {
 		// -------- IDialogFieldListener
+		@Override
 		public void dialogFieldChanged(DialogField field) {
 			doStatusLineUpdate();
 		}
 
+		@Override
 		public void changeControlPressed(DialogField field) {
 			doChangeControlPressed();
 		}

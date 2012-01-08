@@ -39,6 +39,7 @@ public class CaseBreakQuickFixBreak extends AbstractAstRewriteQuickFix {
 		return true;
 	}
 
+	@Override
 	public String getLabel() {
 		return Messages.CaseBreakQuickFixBreak_Label;
 	}

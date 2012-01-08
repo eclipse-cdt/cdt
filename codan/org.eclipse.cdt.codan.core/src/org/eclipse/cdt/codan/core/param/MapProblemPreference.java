@@ -52,6 +52,7 @@ public class MapProblemPreference extends AbstractProblemPreference implements I
 		setLabel(label);
 	}
 
+	@Override
 	public PreferenceType getType() {
 		return PreferenceType.TYPE_MAP;
 	}
@@ -60,6 +61,7 @@ public class MapProblemPreference extends AbstractProblemPreference implements I
 	 * Get parameter preference for element by key
 	 *
 	 */
+	@Override
 	public IProblemPreference getChildDescriptor(String key) {
 		return hash.get(key);
 	}
@@ -71,6 +73,7 @@ public class MapProblemPreference extends AbstractProblemPreference implements I
 	 *
 	 * @param desc
 	 */
+	@Override
 	public IProblemPreference addChildDescriptor(IProblemPreference desc) {
 		((AbstractProblemPreference) desc).setParent(this);
 		hash.put(desc.getKey(), desc);
@@ -83,6 +86,7 @@ public class MapProblemPreference extends AbstractProblemPreference implements I
 	 * and not assume that modifying its elements would modify actual child
 	 * values.
 	 */
+	@Override
 	public IProblemPreference[] getChildDescriptors() {
 		return hash.values().toArray(new IProblemPreference[hash.values().size()]);
 	}
@@ -90,6 +94,7 @@ public class MapProblemPreference extends AbstractProblemPreference implements I
 	/**
 	 * Returns value of the child element by its key
 	 */
+	@Override
 	public Object getChildValue(String key) {
 		IProblemPreference childInfo = getChildDescriptor(key);
 		return childInfo.getValue();
@@ -98,6 +103,7 @@ public class MapProblemPreference extends AbstractProblemPreference implements I
 	/**
 	 * Set child value by its key
 	 */
+	@Override
 	public void setChildValue(String key, Object value) {
 		IProblemPreference pref = getChildDescriptor(key);
 		if (pref == null)
@@ -110,6 +116,7 @@ public class MapProblemPreference extends AbstractProblemPreference implements I
 	/**
 	 * Removes child value and descriptor by key
 	 */
+	@Override
 	public void removeChildValue(String key) {
 		hash.remove(key);
 	}
@@ -125,6 +132,7 @@ public class MapProblemPreference extends AbstractProblemPreference implements I
 		return map;
 	}
 
+	@Override
 	public String exportValue() {
 		StringBuffer buf = new StringBuffer("{"); //$NON-NLS-1$
 		for (Iterator<String> iterator = hash.keySet().iterator(); iterator.hasNext();) {
@@ -205,6 +213,7 @@ public class MapProblemPreference extends AbstractProblemPreference implements I
 	/**
 	 * Removes child descriptor by its key
 	 */
+	@Override
 	public void removeChildDescriptor(IProblemPreference info) {
 		hash.remove(info.getKey());
 	}

@@ -23,6 +23,7 @@ public class OpenProblemPreferences implements IObjectActionDelegate {
 	public OpenProblemPreferences() {
 	}
 
+	@Override
 	public void run(IAction action) {
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ss = (IStructuredSelection) selection;
@@ -45,10 +46,12 @@ public class OpenProblemPreferences implements IObjectActionDelegate {
 		}
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		this.selection = selection;
 	}
 
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		this.targetPart = targetPart;
 	}

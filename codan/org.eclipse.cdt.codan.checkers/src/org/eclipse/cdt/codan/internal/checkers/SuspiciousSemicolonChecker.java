@@ -28,6 +28,7 @@ public class SuspiciousSemicolonChecker extends AbstractIndexAstChecker {
 	public static final String PARAM_ELSE = "else"; //$NON-NLS-1$
 	public static final String PARAM_ALFTER_ELSE = "afterelse"; //$NON-NLS-1$
 
+	@Override
 	public void processAst(IASTTranslationUnit ast) {
 		ast.accept(new ASTVisitor() {
 			{
@@ -74,6 +75,7 @@ public class SuspiciousSemicolonChecker extends AbstractIndexAstChecker {
 		return macro != null;
 	}
 
+	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);
 		addPreference(problem, PARAM_ELSE, CheckersMessages.SuspiciousSemicolonChecker_ParamElse, Boolean.FALSE);

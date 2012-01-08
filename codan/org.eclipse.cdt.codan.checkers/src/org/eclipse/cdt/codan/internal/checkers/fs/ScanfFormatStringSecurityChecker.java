@@ -78,6 +78,7 @@ public class ScanfFormatStringSecurityChecker extends AbstractIndexAstChecker {
 			new VulnerableFunction("sscanf", 1) //$NON-NLS-1$
 	};
 
+	@Override
 	public void processAst(IASTTranslationUnit ast) {
 		ast.accept(new FormatStringVisitor());
 	}
@@ -111,6 +112,7 @@ public class ScanfFormatStringSecurityChecker extends AbstractIndexAstChecker {
 			shouldVisitExpressions = true;
 		}
 
+		@Override
 		public int visit(IASTExpression expression) {
 			if (expression instanceof IASTFunctionCallExpression) {
 				IASTFunctionCallExpression callExpression = (IASTFunctionCallExpression) expression;

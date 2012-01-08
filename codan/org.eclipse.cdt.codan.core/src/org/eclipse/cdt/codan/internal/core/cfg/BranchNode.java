@@ -25,6 +25,7 @@ public class BranchNode extends PlainNode implements IBranchNode {
 		this.label = label;
 	}
 
+	@Override
 	public String getLabel() {
 		return label;
 	}

@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers;
 
-import java.util.Stack;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Stack;
 
 import org.eclipse.cdt.codan.core.cxx.model.AbstractIndexAstChecker;
 import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -36,7 +37,6 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -57,6 +57,7 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 	public static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.ClassMembersInitialization"; //$NON-NLS-1$
 	public static final String PARAM_SKIP = "skip"; //$NON-NLS-1$
 
+	@Override
 	public void processAst(IASTTranslationUnit ast) {
 		ast.accept(new OnEachClass());
 	}
@@ -64,7 +65,7 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 	class OnEachClass extends ASTVisitor {
 		
 		// NOTE: Classes can be nested and even can be declared in constructors of the other classes
-		private Stack< Set<IField> > constructorsStack = new Stack< Set<IField> >();
+		private final Stack< Set<IField> > constructorsStack = new Stack< Set<IField> >();
 
 		OnEachClass() {
 			shouldVisitDeclarations = true;
@@ -72,6 +73,7 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 			shouldVisitExpressions = skipConstructorsWithFCalls();
 		}
 
+		@Override
 		public int visit(IASTDeclaration declaration) {
 			ICPPConstructor constructor = getConstructor(declaration);
 			if (constructor != null) {
@@ -87,6 +89,7 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 			return PROCESS_CONTINUE;
 		}
 
+		@Override
 		public int leave(IASTDeclaration declaration) {
 			if (getConstructor(declaration) != null) {
 				for (IField field : constructorsStack.pop()) {
@@ -96,6 +99,7 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 			return PROCESS_CONTINUE;
 		}
 		
+		@Override
 		public int visit(IASTExpression expression) {
 			if (!constructorsStack.empty() && expression instanceof IASTFunctionCallExpression) {
 				Set<IField> actualConstructorFields = constructorsStack.peek();
@@ -141,15 +145,16 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 			} else if (expr instanceof ICPPASTUnaryExpression) {
 				ICPPASTUnaryExpression unExpr = (ICPPASTUnaryExpression)expr;
 				switch (unExpr.getOperator()) {
-					case ICPPASTUnaryExpression.op_amper:
-					case ICPPASTUnaryExpression.op_star:
-					case ICPPASTUnaryExpression.op_bracketedPrimary:
+					case IASTUnaryExpression.op_amper:
+					case IASTUnaryExpression.op_star:
+					case IASTUnaryExpression.op_bracketedPrimary:
 						return referencesThis(unExpr.getOperand());
 				}
 			}
 			return false;
 		}
 
+		@Override
 		public int visit(IASTName name) {
 			if (!constructorsStack.empty()) {
 				Set<IField> actualConstructorFields = constructorsStack.peek();
@@ -198,7 +203,7 @@ public class ClassMembersInitializationChecker extends AbstractIndexAstChecker {
 				IBinding binding = functionDefinition.getDeclarator().getName().resolveBinding();
 				if (binding instanceof ICPPConstructor) {
 					ICPPConstructor constructor = (ICPPConstructor) binding;
-					if (constructor.getClassOwner().getKey()!=ICPPClassType.k_union) {
+					if (constructor.getClassOwner().getKey()!=ICompositeType.k_union) {
 						return constructor;
 					}
 				}

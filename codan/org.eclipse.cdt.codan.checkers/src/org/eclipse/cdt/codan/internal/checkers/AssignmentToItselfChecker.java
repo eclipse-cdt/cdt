@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 public class AssignmentToItselfChecker extends AbstractIndexAstChecker {
 	private static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.AssignmentToItselfProblem"; //$NON-NLS-1$
 
+	@Override
 	public void processAst(IASTTranslationUnit ast) {
 		// traverse the ast using the visitor pattern.
 		ast.accept(new ASTVisitor() {
@@ -32,6 +33,7 @@ public class AssignmentToItselfChecker extends AbstractIndexAstChecker {
 			}
 
 			// visit expressions
+			@Override
 			public int visit(IASTExpression expression) {
 				if (isAssignmentToItself(expression)) {
 					reportProblem(ER_ID, expression, expression.getRawSignature());

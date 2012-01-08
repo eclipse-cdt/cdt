@@ -12,6 +12,7 @@ import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.MalformedTreeException;
 
 public class CaseBreakQuickFixComment extends AbstractCodanCMarkerResolution {
+	@Override
 	public String getLabel() {
 		return Messages.CaseBreakQuickFixComment_Label;
 	}

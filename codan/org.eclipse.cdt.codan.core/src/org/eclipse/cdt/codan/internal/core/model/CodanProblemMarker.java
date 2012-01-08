@@ -40,6 +40,7 @@ public class CodanProblemMarker implements ICodanProblemMarker {
 	private IProblem problem;
 	private Object args[];
 
+	@Override
 	public Object[] getArgs() {
 		return args;
 	}
@@ -60,6 +61,7 @@ public class CodanProblemMarker implements ICodanProblemMarker {
 	 * 
 	 * @see org.eclipse.cdt.codan.core.model.ICodanProblemMarker#getLocation()
 	 */
+	@Override
 	public IProblemLocation getLocation() {
 		return loc;
 	}
@@ -69,6 +71,7 @@ public class CodanProblemMarker implements ICodanProblemMarker {
 	 * 
 	 * @see org.eclipse.cdt.codan.core.model.ICodanProblemMarker#getProblem()
 	 */
+	@Override
 	public IProblem getProblem() {
 		return problem;
 	}
@@ -78,6 +81,7 @@ public class CodanProblemMarker implements ICodanProblemMarker {
 	 * 
 	 * @see org.eclipse.cdt.codan.core.model.ICodanProblemMarker#getResource()
 	 */
+	@Override
 	public IResource getResource() {
 		return loc.getFile();
 	}
@@ -87,6 +91,7 @@ public class CodanProblemMarker implements ICodanProblemMarker {
 	 * 
 	 * @see org.eclipse.cdt.codan.core.model.ICodanProblemMarker#createMarker()
 	 */
+	@Override
 	public IMarker createMarker() throws CoreException {
 		IResource file = loc.getFile();
 		int lineNumber = loc.getLineNumber();
@@ -112,6 +117,7 @@ public class CodanProblemMarker implements ICodanProblemMarker {
 	 * 
 	 * @see org.eclipse.cdt.codan.core.model.ICodanProblemMarker#createMessage()
 	 */
+	@Override
 	public String createMessage() {
 		String messagePattern = problem.getMessagePattern();
 		String message = problem.getId();

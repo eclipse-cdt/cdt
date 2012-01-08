@@ -35,6 +35,7 @@ public abstract class AbstractCheckerWithProblemPreferences extends AbstractChec
 	/**
 	 * Checker that actually has parameter must override this
 	 */
+	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {
 		getTopLevelPreference(problem); // initialize
 	}

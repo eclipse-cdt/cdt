@@ -20,6 +20,7 @@ import org.eclipse.core.resources.IResource;
  * @since 2.0
  */
 public abstract class AbstractProblemReporter implements IProblemReporter {
+	@Override
 	public void reportProblem(String id, IProblemLocation loc, Object... args) {
 		IResource file = loc.getFile();
 		if (file == null)

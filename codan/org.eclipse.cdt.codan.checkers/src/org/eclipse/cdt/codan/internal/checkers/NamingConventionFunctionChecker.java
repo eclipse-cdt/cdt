@@ -37,6 +37,7 @@ public class NamingConventionFunctionChecker extends AbstractIndexAstChecker imp
 	public static final String PARAM_METHODS = "macro"; //$NON-NLS-1$
 	public static final String PARAM_EXCEPT_ARG_LIST = "exceptions"; //$NON-NLS-1$
 
+	@Override
 	public void processAst(IASTTranslationUnit ast) {
 		final List<IProblem> pts = getProblemsByMainId(ER_ID, getFile());
 		try {
@@ -45,6 +46,7 @@ public class NamingConventionFunctionChecker extends AbstractIndexAstChecker imp
 					shouldVisitDeclarations = true;
 				}
 
+				@Override
 				public int visit(IASTDeclaration element) {
 					if (element instanceof IASTFunctionDefinition) {
 						IASTName astName = ((IASTFunctionDefinition) element).getDeclarator().getName();
@@ -109,6 +111,7 @@ public class NamingConventionFunctionChecker extends AbstractIndexAstChecker imp
 	 * org.eclipse.cdt.codan.core.model.ICheckerWithPreferences#initParameters
 	 * (org.eclipse.cdt.codan.core.model.IProblemWorkingCopy)
 	 */
+	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);
 		addPreference(problem, PARAM_KEY, CheckersMessages.NamingConventionFunctionChecker_LabelNamePattern, "^[a-z]"); //$NON-NLS-1$

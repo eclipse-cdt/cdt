@@ -18,6 +18,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 
 public class SuggestedParenthesisQuickFix extends AbstractCodanCMarkerResolution {
+	@Override
 	public String getLabel() {
 		return Messages.SuggestedParenthesisQuickFix_Message;
 	}

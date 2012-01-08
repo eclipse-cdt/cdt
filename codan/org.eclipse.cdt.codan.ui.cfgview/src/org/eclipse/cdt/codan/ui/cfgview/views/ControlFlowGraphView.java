@@ -100,20 +100,25 @@ public class ControlFlowGraphView extends ViewPart {
 	}
 
 	class ViewContentProvider implements IStructuredContentProvider, ITreeContentProvider {
+		@Override
 		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
 		}
 
+		@Override
 		public void dispose() {
 		}
 
+		@Override
 		public Object[] getElements(Object parent) {
 			return getChildren(parent);
 		}
 
+		@Override
 		public Object getParent(Object child) {
 			return null;
 		}
 
+		@Override
 		public Object[] getChildren(Object parent) {
 			if (parent instanceof Collection) {
 				return ((Collection) parent).toArray();
@@ -122,7 +127,7 @@ public class ControlFlowGraphView extends ViewPart {
 				DeadNodes dead = new DeadNodes();
 				Iterator<IBasicBlock> iter = ((IControlFlowGraph) parent).getUnconnectedNodeIterator();
 				for (; iter.hasNext();) {
-					IBasicBlock iBasicBlock = (IBasicBlock) iter.next();
+					IBasicBlock iBasicBlock = iter.next();
 					dead.add(iBasicBlock);
 				}
 				ArrayList all = new ArrayList();
@@ -146,6 +151,7 @@ public class ControlFlowGraphView extends ViewPart {
 			return new Object[0];
 		}
 
+		@Override
 		public boolean hasChildren(Object parent) {
 			return getChildren(parent).length > 0;
 		}
@@ -169,6 +175,7 @@ public class ControlFlowGraphView extends ViewPart {
 	}
 
 	class ViewLabelProvider extends LabelProvider {
+		@Override
 		public String getText(Object obj) {
 			if (obj == null)
 				return null;
@@ -192,6 +199,7 @@ public class ControlFlowGraphView extends ViewPart {
 			return "0x" + Integer.toHexString(System.identityHashCode(obj));
 		}
 
+		@Override
 		public Image getImage(Object obj) {
 			String imageKey = "task.png";
 			if (obj instanceof IDecisionNode || obj instanceof IControlFlowGraph)
@@ -220,6 +228,7 @@ public class ControlFlowGraphView extends ViewPart {
 	 * This is a callback that will allow us to create the viewer and initialize
 	 * it.
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		drillDownAdapter = new DrillDownAdapter(viewer);
@@ -236,6 +245,7 @@ public class ControlFlowGraphView extends ViewPart {
 		MenuManager menuMgr = new MenuManager("#PopupMenu");
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 				ControlFlowGraphView.this.fillContextMenu(manager);
 			}
@@ -272,6 +282,7 @@ public class ControlFlowGraphView extends ViewPart {
 
 	private void makeActions() {
 		action1 = new Action() {
+			@Override
 			public void run() {
 				IEditorPart e = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
 				ITranslationUnit tu = (ITranslationUnit) CDTUITools.getEditorInputCElement(e.getEditorInput());
@@ -289,6 +300,7 @@ public class ControlFlowGraphView extends ViewPart {
 		action1.setToolTipText("Synchronize");
 		action1.setImageDescriptor(ControlFlowGraphPlugin.getDefault().getImageDescriptor("icons/refresh_view.gif"));
 		doubleClickAction = new Action() {
+			@Override
 			public void run() {
 				ISelection selection = viewer.getSelection();
 				Object obj = ((IStructuredSelection) selection).getFirstElement();
@@ -299,6 +311,7 @@ public class ControlFlowGraphView extends ViewPart {
 
 	private void hookDoubleClickAction() {
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				doubleClickAction.run();
 			}
@@ -316,6 +329,7 @@ public class ControlFlowGraphView extends ViewPart {
 				shouldVisitDeclarations = true;
 			}
 
+			@Override
 			public int visit(IASTDeclaration decl) {
 				if (decl instanceof IASTFunctionDefinition) {
 					CxxControlFlowGraph graph = new ControlFlowGraphBuilder().build((IASTFunctionDefinition) decl);
@@ -327,6 +341,7 @@ public class ControlFlowGraphView extends ViewPart {
 		};
 		ast.accept(visitor);
 		viewer.getControl().getDisplay().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				// TODO Auto-generated method stub
 				viewer.setInput(functions);
@@ -337,6 +352,7 @@ public class ControlFlowGraphView extends ViewPart {
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */
+	@Override
 	public void setFocus() {
 		viewer.getControl().setFocus();
 	}
@@ -410,6 +426,7 @@ public class ControlFlowGraphView extends ViewPart {
 
 	private void hookSingleClickAction() {
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				new ASTHighlighterAction(null).run();
 			}

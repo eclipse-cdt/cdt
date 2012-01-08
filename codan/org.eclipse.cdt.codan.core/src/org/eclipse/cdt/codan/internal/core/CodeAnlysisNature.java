@@ -26,6 +26,7 @@ public class CodeAnlysisNature implements IProjectNature {
 	public static final String NATURE_ID = "org.eclipse.cdt.codan.core.codanNature"; //$NON-NLS-1$
 	private IProject project;
 
+	@Override
 	public void configure() throws CoreException {
 		IProjectDescription desc = project.getDescription();
 		ICommand[] commands = desc.getBuildSpec();
@@ -43,6 +44,7 @@ public class CodeAnlysisNature implements IProjectNature {
 		project.setDescription(desc, null);
 	}
 
+	@Override
 	public void deconfigure() throws CoreException {
 		IProjectDescription description = getProject().getDescription();
 		ICommand[] commands = description.getBuildSpec();
@@ -58,10 +60,12 @@ public class CodeAnlysisNature implements IProjectNature {
 		}
 	}
 
+	@Override
 	public IProject getProject() {
 		return project;
 	}
 
+	@Override
 	public void setProject(IProject project) {
 		this.project = project;
 	}

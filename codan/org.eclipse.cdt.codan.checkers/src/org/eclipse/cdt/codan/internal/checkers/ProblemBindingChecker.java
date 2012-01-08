@@ -71,6 +71,7 @@ public class ProblemBindingChecker extends AbstractIndexAstChecker {
 		getLaunchModePreference(problem).enableInLaunchModes(CheckerLaunchMode.RUN_AS_YOU_TYPE, CheckerLaunchMode.RUN_ON_DEMAND);
 	}
 
+	@Override
 	public void processAst(IASTTranslationUnit ast) {
 		try {
 			ast.accept(new ASTVisitor() {

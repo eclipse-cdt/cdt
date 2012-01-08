@@ -31,18 +31,22 @@ public abstract class AbstractProblemPreference implements IProblemPreference {
 	private String uiInfo;
 	private IProblemPreference parent;
 
+	@Override
 	public String getLabel() {
 		return label;
 	}
 
+	@Override
 	public String getToolTip() {
 		return toolTip;
 	}
 
+	@Override
 	public String getKey() {
 		return key;
 	}
 
+	@Override
 	public String getUiInfo() {
 		return uiInfo;
 	}
@@ -104,10 +108,12 @@ public abstract class AbstractProblemPreference implements IProblemPreference {
 		this.uiInfo = uiinfo;
 	}
 
+	@Override
 	public Object getValue() {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public void setValue(Object value) {
 		throw new UnsupportedOperationException();
 	}
@@ -142,6 +148,7 @@ public abstract class AbstractProblemPreference implements IProblemPreference {
 		return tokenizer;
 	}
 
+	@Override
 	public IProblemPreference getParent() {
 		return parent;
 	}
@@ -154,6 +161,7 @@ public abstract class AbstractProblemPreference implements IProblemPreference {
 		this.parent = parent;
 	}
 
+	@Override
 	public String getQualifiedKey() {
 		if (parent == null)
 			return getKey();
@@ -166,6 +174,7 @@ public abstract class AbstractProblemPreference implements IProblemPreference {
 	 */
 	public abstract void importValue(StreamTokenizer tokenizer) throws IOException;
 
+	@Override
 	public void importValue(String str) {
 		StreamTokenizer tokenizer = getImportTokenizer(str);
 		try {

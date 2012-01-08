@@ -36,6 +36,7 @@ public class CxxExitNode extends ExitNode implements IExitNode {
 	/**
 	 * @return
 	 */
+	@Override
 	public String toStringData() {
 		if (getNode() == null)
 			return "return; // fake"; //$NON-NLS-1$

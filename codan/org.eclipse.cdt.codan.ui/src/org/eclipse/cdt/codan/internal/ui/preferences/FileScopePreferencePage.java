@@ -212,6 +212,7 @@ public class FileScopePreferencePage extends PreferencePage {
 		 * @see org.eclipse.jdt.internal.ui.wizards.dialogfields.IListAdapter#customButtonPressed(org.eclipse.jdt.internal.ui.wizards.dialogfields.ListDialogField,
 		 *      int)
 		 */
+		@Override
 		public void customButtonPressed(ListDialogField field, int index) {
 			doCustomButtonPressed(field, index);
 		}
@@ -219,6 +220,7 @@ public class FileScopePreferencePage extends PreferencePage {
 		/**
 		 * @see org.eclipse.jdt.internal.ui.wizards.dialogfields.IListAdapter#selectionChanged(org.eclipse.jdt.internal.ui.wizards.dialogfields.ListDialogField)
 		 */
+		@Override
 		public void selectionChanged(ListDialogField field) {
 			doSelectionChanged(field);
 		}
@@ -226,6 +228,7 @@ public class FileScopePreferencePage extends PreferencePage {
 		/**
 		 * @see org.eclipse.jdt.internal.ui.wizards.dialogfields.IListAdapter#doubleClicked(org.eclipse.jdt.internal.ui.wizards.dialogfields.ListDialogField)
 		 */
+		@Override
 		public void doubleClicked(ListDialogField field) {
 			doDoubleClicked(field);
 		}
@@ -233,6 +236,7 @@ public class FileScopePreferencePage extends PreferencePage {
 		/**
 		 * @see org.eclipse.jdt.internal.ui.wizards.dialogfields.IDialogFieldListener#dialogFieldChanged(org.eclipse.jdt.internal.ui.wizards.dialogfields.DialogField)
 		 */
+		@Override
 		public void dialogFieldChanged(DialogField field) {
 		}
 	}

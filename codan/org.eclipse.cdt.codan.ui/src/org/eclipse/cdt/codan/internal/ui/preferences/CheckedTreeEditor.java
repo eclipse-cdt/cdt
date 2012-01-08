@@ -71,6 +71,7 @@ public abstract class CheckedTreeEditor extends FieldEditor implements ICheckSta
 	/*
 	 * (non-Javadoc) Method declared on FieldEditor.
 	 */
+	@Override
 	protected void adjustForNumColumns(int numColumns) {
 		Control control = getLabelControl();
 		if (control != null) {
@@ -84,6 +85,7 @@ public abstract class CheckedTreeEditor extends FieldEditor implements ICheckSta
 	/*
 	 * (non-Javadoc) Method declared on FieldEditor.
 	 */
+	@Override
 	protected void doFillIntoGrid(Composite parent, int numColumns) {
 		doFillLabelIntoGrid(parent, numColumns);
 		doFillBoxIntoGrid(parent, numColumns);
@@ -113,6 +115,7 @@ public abstract class CheckedTreeEditor extends FieldEditor implements ICheckSta
 	/*
 	 * (non-Javadoc) Method declared on FieldEditor.
 	 */
+	@Override
 	protected void doLoad() {
 		if (getTreeControl() != null) {
 			String s = getPreferenceStore().getString(getPreferenceName());
@@ -140,6 +143,7 @@ public abstract class CheckedTreeEditor extends FieldEditor implements ICheckSta
 	 * @Override
 	 * @see org.eclipse.jface.viewers.ICheckStateListener#checkStateChanged(org.eclipse.jface.viewers.CheckStateChangedEvent)
 	 */
+	@Override
 	public void checkStateChanged(CheckStateChangedEvent event) {
 		Object element = event.getElement();
 		treeViewer.setGrayed(element, false);
@@ -185,6 +189,7 @@ public abstract class CheckedTreeEditor extends FieldEditor implements ICheckSta
 	/*
 	 * (non-Javadoc) Method declared on FieldEditor.
 	 */
+	@Override
 	protected void doLoadDefault() {
 		if (getTreeControl() != null) {
 			String s = getPreferenceStore().getDefaultString(getPreferenceName());
@@ -195,6 +200,7 @@ public abstract class CheckedTreeEditor extends FieldEditor implements ICheckSta
 	/*
 	 * (non-Javadoc) Method declared on FieldEditor.
 	 */
+	@Override
 	protected void doStore() {
 		String s = modelToString(getViewer().getInput());
 		if (s != null) {
@@ -230,6 +236,7 @@ public abstract class CheckedTreeEditor extends FieldEditor implements ICheckSta
 	/*
 	 * (non-Javadoc) Method declared on FieldEditor.
 	 */
+	@Override
 	public int getNumberOfControls() {
 		return 2;
 	}
@@ -250,6 +257,7 @@ public abstract class CheckedTreeEditor extends FieldEditor implements ICheckSta
 	/*
 	 * (non-Javadoc) Method declared on FieldEditor.
 	 */
+	@Override
 	public void setFocus() {
 		if (getTreeControl() != null) {
 			getTreeControl().setFocus();
@@ -259,6 +267,7 @@ public abstract class CheckedTreeEditor extends FieldEditor implements ICheckSta
 	/*
 	 * @see FieldEditor.setEnabled(boolean,Composite).
 	 */
+	@Override
 	public void setEnabled(boolean enabled, Composite parent) {
 		super.setEnabled(enabled, parent);
 		createListControl(parent).setEnabled(enabled);
@@ -276,6 +285,7 @@ public abstract class CheckedTreeEditor extends FieldEditor implements ICheckSta
 	 */
 	protected abstract String modelToString(Object model);
 
+	@Override
 	protected void createControl(Composite parent) {
 		GridLayout ly = (GridLayout) parent.getLayout();
 		doFillIntoGrid(parent, ly.numColumns);
@@ -295,6 +305,7 @@ public abstract class CheckedTreeEditor extends FieldEditor implements ICheckSta
 	/*
 	 * (non-Javadoc) Method declared on FieldEditor.
 	 */
+	@Override
 	public boolean isValid() {
 		return isValid;
 	}
@@ -302,6 +313,7 @@ public abstract class CheckedTreeEditor extends FieldEditor implements ICheckSta
 	/*
 	 * (non-Javadoc) Method declared on FieldEditor.
 	 */
+	@Override
 	protected void refreshValidState() {
 		isValid = checkState();
 	}

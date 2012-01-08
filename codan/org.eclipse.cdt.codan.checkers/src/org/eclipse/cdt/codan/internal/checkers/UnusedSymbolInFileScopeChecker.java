@@ -101,6 +101,7 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 				!staticVariableDeclarations.isEmpty();
 	}
 
+	@Override
 	public void processAst(IASTTranslationUnit ast) {
 		if (ast.isHeaderUnit())
 			return;

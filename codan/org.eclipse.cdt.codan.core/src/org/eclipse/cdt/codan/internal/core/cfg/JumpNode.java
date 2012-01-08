@@ -27,10 +27,12 @@ public class JumpNode extends AbstractSingleIncomingNode implements IJumpNode {
 		super();
 	}
 
+	@Override
 	public IBasicBlock[] getOutgoingNodes() {
 		return new IBasicBlock[] { jump };
 	}
 
+	@Override
 	public int getOutgoingSize() {
 		return 1;
 	}
@@ -40,14 +42,17 @@ public class JumpNode extends AbstractSingleIncomingNode implements IJumpNode {
 	 * 
 	 * @see org.eclipse.cdt.codan.core.model.cfg.IJumpNode#getJumpNode()
 	 */
+	@Override
 	public IConnectorNode getJumpNode() {
 		return jump;
 	}
 
+	@Override
 	public IBasicBlock getOutgoing() {
 		return jump;
 	}
 
+	@Override
 	public boolean isBackwardArc() {
 		return backward;
 	}

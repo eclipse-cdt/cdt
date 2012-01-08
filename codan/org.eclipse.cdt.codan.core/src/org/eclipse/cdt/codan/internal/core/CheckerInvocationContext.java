@@ -34,10 +34,12 @@ public class CheckerInvocationContext implements ICheckerInvocationContext {
 		objectStorage = new HashMap<Class<?>, Object>();
 	}
 
+	@Override
 	public IResource getResource() {
 		return resource;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public synchronized <T> T get(Class<T> objectClass) {
 		T object = (T) objectStorage.get(objectClass);
@@ -54,6 +56,7 @@ public class CheckerInvocationContext implements ICheckerInvocationContext {
 	 * (non-Javadoc)
 	 * @see ICheckerInvocationContext#add(Object)
 	 */
+	@Override
 	public synchronized <T extends ICodanDisposable> void add(T object) {
 		Object old = objectStorage.put(object.getClass(), object);
 		if (old != null && object != old) {
@@ -66,6 +69,7 @@ public class CheckerInvocationContext implements ICheckerInvocationContext {
 	 * (non-Javadoc)
 	 * @see IDisposableCache#dispose()
 	 */
+	@Override
 	public void dispose() {
 		for (Map.Entry<Class<?>, Object> entry : objectStorage.entrySet()) {
 			Object obj = entry.getValue();

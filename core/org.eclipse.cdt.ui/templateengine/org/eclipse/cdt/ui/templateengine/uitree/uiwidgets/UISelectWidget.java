@@ -131,7 +131,7 @@ public class UISelectWidget extends InputUIElement {
 	}
 
 	private PatternEvent createPatternEvent() {
-		String msg= MessageFormat.format(Messages.getString("UISelectWidget_ErrorNoneSelected0"), new String[] {label.getText()}); //$NON-NLS-1$
+		String msg= MessageFormat.format(Messages.getString("UISelectWidget_ErrorNoneSelected0"), label.getText()); //$NON-NLS-1$
 		return new PatternEvent(this, msg, isValid());
 	}
 

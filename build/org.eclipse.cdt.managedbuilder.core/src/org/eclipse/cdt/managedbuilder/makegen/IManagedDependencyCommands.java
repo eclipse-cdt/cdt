@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Intel Corporation and others.
+ * Copyright (c) 2006, 2012 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,7 +53,7 @@ import org.eclipse.core.runtime.IPath;
  *         dependency files are not required for the current build, but for 
  *         the next build.  C/C++ builds can be treated in this manner as is 
  *         described in the following link: 
- *         http://sourceware.org/automake/automake.html#Dependency-Tracking-Evolution
+ *         http://www.gnu.org/software/automake/manual/html_node/Dependency-Tracking-Evolution.html#Dependency-Tracking-Evolution
  *
  *         Use the IManagedDependencyCommands interface defined in this file 
  *         for this mode.

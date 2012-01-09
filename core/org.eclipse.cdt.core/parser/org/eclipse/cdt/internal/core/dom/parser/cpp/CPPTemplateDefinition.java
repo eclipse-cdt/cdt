@@ -224,7 +224,7 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 			for (ICPPASTTemplateParameter param : params) {
 				p= CPPTemplates.getTemplateParameterName(param).resolveBinding();
 				if (p instanceof ICPPTemplateParameter) {
-					result = (ICPPTemplateParameter[]) ArrayUtil.append(ICPPTemplateParameter.class, result, p);
+					result = ArrayUtil.append(ICPPTemplateParameter.class, result, (ICPPTemplateParameter) p);
 				}
 			}
 			templateParameters = ArrayUtil.trim(ICPPTemplateParameter.class, result);

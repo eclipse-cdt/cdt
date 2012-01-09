@@ -221,7 +221,7 @@ public class ClassTypeHelper {
 				for (IASTDeclarator dtor : dtors) {
 					binding = ASTQueries.findInnermostDeclarator(dtor).getName().resolveBinding();
 					if (binding instanceof ICPPField)
-						result = (ICPPField[]) ArrayUtil.append(ICPPField.class, result, binding);
+						result = ArrayUtil.append(ICPPField.class, result, (ICPPField) binding);
 				}
 			} else if (decl instanceof ICPPASTUsingDeclaration) {
 				IASTName n = ((ICPPASTUsingDeclaration)decl).getName();
@@ -230,10 +230,10 @@ public class ClassTypeHelper {
 					IBinding[] bs = ((ICPPUsingDeclaration)binding).getDelegates();
 					for (IBinding element : bs) {
 						if (element instanceof ICPPField)
-							result = (ICPPField[]) ArrayUtil.append(ICPPField.class, result, element);
+							result = ArrayUtil.append(ICPPField.class, result, (ICPPField) element);
 					}
 				} else if (binding instanceof ICPPField) {
-					result = (ICPPField[]) ArrayUtil.append(ICPPField.class, result, binding);
+					result = ArrayUtil.append(ICPPField.class, result, (ICPPField) binding);
 				}
 			}
 		}
@@ -349,7 +349,7 @@ public class ClassTypeHelper {
 					for (IASTDeclarator dtor : dtors) {
 						binding = ASTQueries.findInnermostDeclarator(dtor).getName().resolveBinding();
 						if (binding instanceof ICPPMethod)
-							result = (ICPPMethod[]) ArrayUtil.append(ICPPMethod.class, result, binding);
+							result = ArrayUtil.append(ICPPMethod.class, result, (ICPPMethod) binding);
 					}
 				}
 			} else if (decl instanceof IASTFunctionDefinition) {
@@ -359,7 +359,7 @@ public class ClassTypeHelper {
 					dtor = ASTQueries.findInnermostDeclarator(dtor);
 					binding = dtor.getName().resolveBinding();
 					if (binding instanceof ICPPMethod) {
-						result = (ICPPMethod[]) ArrayUtil.append(ICPPMethod.class, result, binding);
+						result = ArrayUtil.append(ICPPMethod.class, result, (ICPPMethod) binding);
 					}
 				}
 			} else if (decl instanceof ICPPASTUsingDeclaration) {
@@ -369,10 +369,10 @@ public class ClassTypeHelper {
 					IBinding[] bs = ((ICPPUsingDeclaration)binding).getDelegates();
 					for (IBinding element : bs) {
 						if (element instanceof ICPPMethod)
-							result = (ICPPMethod[]) ArrayUtil.append(ICPPMethod.class, result, element);
+							result = ArrayUtil.append(ICPPMethod.class, result, (ICPPMethod) element);
 					}
 				} else if (binding instanceof ICPPMethod) {
-					result = (ICPPMethod[]) ArrayUtil.append(ICPPMethod.class, result, binding);
+					result = ArrayUtil.append(ICPPMethod.class, result, (ICPPMethod) binding);
 				}
 			}
 		}
@@ -418,7 +418,7 @@ public class ClassTypeHelper {
 					binding = ((ICPPASTElaboratedTypeSpecifier)declSpec).getName().resolveBinding();
 				}
 				if (binding instanceof ICPPClassType)
-					result = (ICPPClassType[])ArrayUtil.append(ICPPClassType.class, result, binding);
+					result = ArrayUtil.append(ICPPClassType.class, result, (ICPPClassType) binding);
 			} 
 		}
 		return ArrayUtil.trim(ICPPClassType.class, result);

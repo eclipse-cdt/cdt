@@ -19,7 +19,17 @@ import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.typeOrFunctionSet;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.valueCat;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.ALLCVQ;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.ARRAY;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.MPTR;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.PTR;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.calculateInheritanceDepth;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateTypeUptoPointers;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.isConversionOperator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1782,10 +1792,11 @@ public class CPPSemantics {
 	    
         IBinding[] result = null;
         for (Object binding : bindings) {
-            if (binding instanceof IASTName)
+            if (binding instanceof IASTName) {
                 result = ArrayUtil.append(IBinding.class, result, ((IASTName) binding).resolveBinding());
-            else if (binding instanceof IBinding)
-                result = (IBinding[]) ArrayUtil.append(IBinding.class, result, binding);
+            } else if (binding instanceof IBinding) {
+                result = ArrayUtil.append(IBinding.class, result, (IBinding) binding);
+            }
         }
         return new CPPCompositeBinding(result);
 	}
@@ -2019,13 +2030,13 @@ public class CPPSemantics {
 	            }
 	        }
 
-	        IBinding[] bindings = null;
+	        IBinding[] bindings = IBinding.EMPTY_BINDING_ARRAY;
 	        if (cmp > 0) {
-	            bindings = ArrayUtil.append(IBinding.class, bindings, obj);
-	            bindings = ArrayUtil.append(IBinding.class, bindings, type);
+	            bindings = ArrayUtil.append(bindings, obj);
+	            bindings = ArrayUtil.append(bindings, type);
 	        } else {
-	            bindings = ArrayUtil.append(IBinding.class, bindings, type);
-	            bindings = (IBinding[]) ArrayUtil.addAll(IBinding.class, bindings, fns.keyArray());
+	            bindings = ArrayUtil.append(bindings, type);
+	            bindings = ArrayUtil.addAll(bindings, fns.keyArray());
 	        }
 	        bindings = ArrayUtil.trim(IBinding.class, bindings);
 	        ICPPUsingDeclaration composite = new CPPUsingDeclaration(data.astName, bindings);

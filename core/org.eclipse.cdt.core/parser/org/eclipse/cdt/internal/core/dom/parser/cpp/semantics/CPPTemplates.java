@@ -531,7 +531,7 @@ public class CPPTemplates {
 
 			while (parent.getParent() instanceof ICPPASTTemplateDeclaration) {
 				parent = parent.getParent();
-				templates = (ICPPASTTemplateDeclaration[]) ArrayUtil.append(ICPPASTTemplateDeclaration.class, templates, parent);
+				templates = ArrayUtil.append(ICPPASTTemplateDeclaration.class, templates, (ICPPASTTemplateDeclaration) parent);
 			}
 			templates = ArrayUtil.trim(ICPPASTTemplateDeclaration.class, templates);
 

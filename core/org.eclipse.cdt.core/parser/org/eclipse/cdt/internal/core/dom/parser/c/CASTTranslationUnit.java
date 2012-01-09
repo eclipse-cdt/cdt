@@ -13,7 +13,6 @@
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ILinkage;
-import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
@@ -80,13 +79,13 @@ public class CASTTranslationUnit extends ASTTranslationUnit implements IASTAmbig
 		if (binding instanceof IMacroBinding) {
 			return getMacroDefinitionsInAST((IMacroBinding) binding);
         }
-    	IName[] names = CVisitor.getDeclarations(this, binding);
+    	IASTName[] names = CVisitor.getDeclarations(this, binding);
     	for (int i = 0; i < names.length; i++) {
     		if (!names[i].isDefinition())
     			names[i] = null;
     	}
     	// nulls can be anywhere, don't use trim()
-    	return (IASTName[])ArrayUtil.removeNulls(IASTName.class, names);
+    	return ArrayUtil.removeNulls(IASTName.class, names);
     }
     
 	/*

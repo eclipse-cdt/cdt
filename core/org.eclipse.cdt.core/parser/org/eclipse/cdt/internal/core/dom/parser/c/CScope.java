@@ -112,7 +112,7 @@ public class CScope implements ICScope, IASTInternalScope {
     private IASTNode physicalNode = null;
     private boolean isCached = false;
     
-    private CharArrayObjectMap<?> mapsToNameOrBinding[] = { CharArrayObjectMap.EMPTY_MAP, CharArrayObjectMap.EMPTY_MAP };
+    private final CharArrayObjectMap<?> mapsToNameOrBinding[] = { CharArrayObjectMap.EMPTY_MAP, CharArrayObjectMap.EMPTY_MAP };
 	private final EScopeKind kind;
     
 	public CScope(IASTNode physical, EScopeKind eKind) {
@@ -134,7 +134,7 @@ public class CScope implements ICScope, IASTInternalScope {
     }
 
     protected static class CollectNamesAction extends ASTVisitor {
-        private char[] name;
+        private final char[] name;
         private IASTName[] result = null;
         
         CollectNamesAction(char[] n) {
@@ -376,7 +376,7 @@ public class CScope implements ICScope, IASTInternalScope {
         
 		for (Object element : obj) {
 			if (element instanceof IBinding) {
-				result = (IBinding[]) ArrayUtil.append(IBinding.class, result, element);
+				result = ArrayUtil.append(IBinding.class, result, (IBinding) element);
 			} else {
 				IASTName n= null;
 				if (element instanceof IASTName) {

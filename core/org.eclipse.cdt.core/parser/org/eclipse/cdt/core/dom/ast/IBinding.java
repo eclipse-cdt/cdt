@@ -26,7 +26,8 @@ import org.eclipse.core.runtime.IAdaptable;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IBinding extends IAdaptable {
-    public static final IBinding[] EMPTY_BINDING_ARRAY = new IBinding[0];
+    public static final IBinding[] EMPTY_BINDING_ARRAY = {};
+
 	/**
 	 * Returns the unqualified name of the binding as a string.
 	 */

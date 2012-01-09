@@ -132,8 +132,8 @@ public class CStructure extends PlatformObject implements ICompositeType, ICInte
 
 	@Override
 	public IScope getScope() throws DOMException {
-		IASTDeclSpecifier declSpec = (IASTDeclSpecifier) ((definition != null) ? (IASTNode) definition
-				.getParent() : declarations[0].getParent());
+		IASTDeclSpecifier declSpec = (IASTDeclSpecifier) ((definition != null) ?
+				(IASTNode) definition.getParent() : declarations[0].getParent());
 		IScope scope = CVisitor.getContainingScope(declSpec);
 		while (scope instanceof ICCompositeTypeScope) {
 			scope = scope.getParent();
@@ -149,8 +149,8 @@ public class CStructure extends PlatformObject implements ICompositeType, ICInte
 					IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, getNameCharArray()) };
 		}
 		ICASTCompositeTypeSpecifier compSpec = (ICASTCompositeTypeSpecifier) definition.getParent();
-		IField[] fields = collectFields(compSpec, null);
-		return ArrayUtil.trim(IField.class, fields);
+		IField[] fields = collectFields(compSpec, IField.EMPTY_FIELD_ARRAY);
+		return ArrayUtil.trim(fields);
 	}
 
 	private IField[] collectFields(ICASTCompositeTypeSpecifier compSpec, IField[] fields) {
@@ -171,7 +171,7 @@ public class CStructure extends PlatformObject implements ICompositeType, ICInte
 							IASTName name = ASTQueries.findInnermostDeclarator(declarator).getName();
 							IBinding binding = name.resolveBinding();
 							if (binding != null)
-								fields = (IField[]) ArrayUtil.append(IField.class, fields, binding);
+								fields = ArrayUtil.append(fields, (IField) binding);
 						}
 					}
 				}

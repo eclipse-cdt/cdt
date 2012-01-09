@@ -26,6 +26,7 @@
  * Noriaki Takatsu  (IBM) - [283656] [dstore][multithread] Serviceability issue
  * Noriaki Takatsu  (IBM) - [289678][api][breaking] ServerSocket creation in multiple IP addresses
  * David McKnight   (IBM) - [283613] [dstore] Create a Constants File for all System Properties we support
+ * David McKnight   (IBM) - [368072] [dstore][ssl] no exception logged upon bind error
  *******************************************************************************/
 
 package org.eclipse.dstore.core.server;
@@ -352,13 +353,31 @@ public class ConnectionEstablisher
 						{
 							serverSocket = sslContext.getServerSocketFactory().createServerSocket(i, backlog, bindAddr);
 						}
+						catch (BindException e)
+						{
+							_msg = ServerReturnCodes.RC_BIND_ERROR  + " on port " + port + ": " + e.getMessage(); //$NON-NLS-1$ //$NON-NLS-2$
+							System.err.println(_msg);
+							_dataStore.trace(_msg);
+						}
 						catch (Exception e)
 						{
 						}
 					}
 					else
 					{
-						serverSocket = new ServerSocket(i, backlog, bindAddr);
+						try
+						{
+							serverSocket = new ServerSocket(i, backlog, bindAddr);
+						}						
+						catch (BindException e)
+						{
+							_msg = ServerReturnCodes.RC_BIND_ERROR  + " on port " + port + ": " + e.getMessage(); //$NON-NLS-1$ //$NON-NLS-2$
+							System.err.println(_msg);
+							_dataStore.trace(_msg);
+						}
+						catch (Exception e)
+						{
+						}
 					}
 				}
 				catch (Exception e)
@@ -390,6 +409,7 @@ public class ConnectionEstablisher
 				catch (BindException e){
 					_msg = ServerReturnCodes.RC_BIND_ERROR  + " on port " + port + ": " + e.getMessage(); //$NON-NLS-1$ //$NON-NLS-2$
 					System.err.println(_msg);
+					_dataStore.trace(_msg);
 				}
 				catch (Exception e)
 				{
@@ -405,6 +425,7 @@ public class ConnectionEstablisher
 				catch (BindException e){
 					_msg = ServerReturnCodes.RC_BIND_ERROR  + " on port " + port + ": " + e.getMessage(); //$NON-NLS-1$ //$NON-NLS-2$
 					System.err.println(_msg);
+					_dataStore.trace(_msg);
 				}
 				catch (Exception e)
 				{

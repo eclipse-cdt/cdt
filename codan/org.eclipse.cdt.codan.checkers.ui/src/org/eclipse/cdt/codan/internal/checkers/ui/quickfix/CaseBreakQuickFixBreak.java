@@ -53,7 +53,7 @@ public class CaseBreakQuickFixBreak extends AbstractAstRewriteQuickFix {
 		IASTNode containedNode = nodeSelector.findFirstContainedNode(lineInformation.getOffset(), lineInformation.getLength());
 		IASTNode beforeBreakNode = null;
 		if (containedNode != null)
-			beforeBreakNode = CxxAstUtils.getInstance().getEnclosingStatement(containedNode);
+			beforeBreakNode = CxxAstUtils.getEnclosingStatement(containedNode);
 		else
 			beforeBreakNode = nodeSelector.findEnclosingNode(lineInformation.getOffset(), lineInformation.getLength());
 		if (beforeBreakNode instanceof IASTCompoundStatement) {

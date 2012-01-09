@@ -204,13 +204,14 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 	 * @return
 	 */
 	private boolean isCompoundStatement(IASTStatement last) {
-		return last instanceof IASTIfStatement || last instanceof IASTWhileStatement || last instanceof IASTDoStatement
-				|| last instanceof IASTForStatement || last instanceof IASTSwitchStatement || last instanceof IASTCompoundStatement;
+		return last instanceof IASTIfStatement || last instanceof IASTWhileStatement ||
+				last instanceof IASTDoStatement	|| last instanceof IASTForStatement ||
+				last instanceof IASTSwitchStatement || last instanceof IASTCompoundStatement;
 	}
 
 	protected boolean isFuncExitStatement(IASTStatement statement) {
-		CxxAstUtils utils = CxxAstUtils.getInstance();
-		return statement instanceof IASTReturnStatement || utils.isThrowStatement(statement) || utils.isExitStatement(statement);
+		return statement instanceof IASTReturnStatement || CxxAstUtils.isThrowStatement(statement) ||
+				CxxAstUtils.isExitStatement(statement);
 	}
 
 	/**
@@ -300,7 +301,7 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 			type = ((IASTSimpleDeclSpecifier) declSpecifier).getType();
 		} else if (declSpecifier instanceof IASTNamedTypeSpecifier) {
 			IBinding binding = ((IASTNamedTypeSpecifier) declSpecifier).getName().resolveBinding();
-			IType utype = CxxAstUtils.getInstance().unwindTypedef((IType) binding);
+			IType utype = CxxAstUtils.unwindTypedef((IType) binding);
 			if (isVoid(utype))
 				return IASTSimpleDeclSpecifier.t_void;
 		}

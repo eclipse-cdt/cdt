@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Marc-Andre Laperle - Initial API and implementation
- * Tomasz Wesolowski  - Extension for fixes
+ *     Marc-Andre Laperle - Initial API and implementation
+ *     Tomasz Wesolowski  - Extension for fixes
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers;
 
@@ -179,11 +179,10 @@ public class ProblemBindingChecker extends AbstractIndexAstChecker {
 	}
 
 	private boolean isInClassContext(IASTName name) {
-		CxxAstUtils utils = CxxAstUtils.getInstance();
-		if (utils.getEnclosingCompositeTypeSpecifier(name) != null) {
+		if (CxxAstUtils.getEnclosingCompositeTypeSpecifier(name) != null) {
 			return true;
 		}
-		IASTFunctionDefinition function = utils.getEnclosingFunction(name);
+		IASTFunctionDefinition function = CxxAstUtils.getEnclosingFunction(name);
 		if (function == null) {
 			return false;
 		}
@@ -194,8 +193,7 @@ public class ProblemBindingChecker extends AbstractIndexAstChecker {
 	}
 
 	private boolean isInFunctionContext(IASTName name) {
-		CxxAstUtils utils = CxxAstUtils.getInstance();
-		IASTFunctionDefinition function = utils.getEnclosingFunction(name);
+		IASTFunctionDefinition function = CxxAstUtils.getEnclosingFunction(name);
 		return (function != null);
 	}
 

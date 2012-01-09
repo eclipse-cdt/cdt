@@ -71,10 +71,9 @@ public class CaseBreakChecker extends AbstractIndexAstChecker implements IChecke
 		 *         - "exit"
 		 */
 		protected boolean isBreakOrExitStatement(IASTStatement statement) {
-			CxxAstUtils utils = CxxAstUtils.getInstance();
 			return (statement instanceof IASTBreakStatement) || statement instanceof IASTReturnStatement
 					|| statement instanceof IASTContinueStatement || statement instanceof IASTGotoStatement
-					|| utils.isThrowStatement(statement) || utils.isExitStatement(statement);
+					|| CxxAstUtils.isThrowStatement(statement) || CxxAstUtils.isExitStatement(statement);
 		}
 
 		@Override

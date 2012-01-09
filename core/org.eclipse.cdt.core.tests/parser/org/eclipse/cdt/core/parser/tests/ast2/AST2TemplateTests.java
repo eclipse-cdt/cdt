@@ -5703,4 +5703,14 @@ public class AST2TemplateTests extends AST2BaseTest {
 		ICPPDeferredClassInstance shortHand= bh.assertNonProblem("derived:", -1);
 		assertTrue(shortHand.getClassTemplate() instanceof ICPPClassTemplatePartialSpecialization);
 	}
+	
+	//	template <typename> class A {};
+	//	template <typename T, typename=void> struct B {};
+	//	template <typename T> struct B<A<T> > {
+	//	    typedef int type;
+	//	};
+	//	typedef B<A<int> >::type type;  // ERROR HERE
+	public void testPartialClassTemplateSpecUsingDefaultArgument_367997() throws Exception {
+		parseAndCheckBindings();
+	}
 }

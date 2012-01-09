@@ -33,17 +33,15 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 public class CPPClassTemplatePartialSpecialization extends CPPClassTemplate 
 		implements ICPPClassTemplatePartialSpecialization, ICPPSpecialization {
 
-	private ICPPTemplateArgument[] arguments;
+	private final ICPPTemplateArgument[] arguments;
 
-	public CPPClassTemplatePartialSpecialization(ICPPASTTemplateId name) {
+	public CPPClassTemplatePartialSpecialization(ICPPASTTemplateId name, ICPPTemplateArgument[] arguments) {
 		super(name);
+		this.arguments= arguments;
 	}
 
 	@Override
 	public ICPPTemplateArgument[] getTemplateArguments() throws DOMException {
-		if (arguments == null) {
-			arguments= CPPTemplates.createTemplateArgumentArray((ICPPASTTemplateId) getTemplateName());
-		}
 		return arguments;
 	}
 

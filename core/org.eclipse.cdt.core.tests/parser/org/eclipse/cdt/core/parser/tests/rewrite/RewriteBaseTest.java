@@ -13,9 +13,9 @@ package org.eclipse.cdt.core.parser.tests.rewrite;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.Vector;
 
 import org.eclipse.cdt.core.tests.BaseTestFramework;
 import org.eclipse.core.resources.IFile;
@@ -38,8 +38,8 @@ public abstract class RewriteBaseTest extends BaseTestFramework implements ILogL
 	protected RewriteBaseTest(String name) {
 		super(name);
 	}
-	
-	public RewriteBaseTest(String name, Vector<TestSourceFile> files) {
+
+	public RewriteBaseTest(String name, List<TestSourceFile> files) {
 		super(name);
 		for (TestSourceFile file : files) {
 			fileMap.put(file.getName(), file);

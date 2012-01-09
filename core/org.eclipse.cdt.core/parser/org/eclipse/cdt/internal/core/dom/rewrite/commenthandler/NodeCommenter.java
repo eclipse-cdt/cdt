@@ -12,7 +12,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite.commenthandler;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
@@ -63,13 +64,13 @@ public class NodeCommenter {
 	protected ASTVisitor visitor;
 	protected CommentHandler commHandler;
 	protected NodeCommentMap commentMap;
-	protected Vector<IASTNode> children;
+	protected List<IASTNode> children;
 
 	public NodeCommenter(ASTVisitor visitor, CommentHandler commHandler, NodeCommentMap commentMap) {
 		this.visitor = visitor;
 		this.commHandler = commHandler;
 		this.commentMap = commentMap;
-		this.children = new Vector<IASTNode>();
+		this.children = new ArrayList<IASTNode>();
 	}
 
 	protected void writeNodeList(IASTNode[] nodes) {

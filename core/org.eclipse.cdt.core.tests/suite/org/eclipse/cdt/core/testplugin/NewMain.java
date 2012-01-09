@@ -14,17 +14,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 /** 
  * Application is responsible for calling core launch api
  */
-
 public class NewMain extends Main {
 	private static final String DEFAULT_APPLICATION= "org.eclipse.ui.workbench";
-	
 	
 	public NewMain(String application, String location, URL pluginPathLocation, String bootLocation, boolean debug) throws IOException {
 		this.application= application;
@@ -44,17 +43,16 @@ public class NewMain extends Main {
 		System.exit(0);
 	}
 	
-
 	/**
 	 * Run this launcher with the arguments specified in the given string.
 	 * This is a short cut method for people running the launcher from
 	 * a scrapbook (i.e., swip-and-doit facility).
 	 */
 	public static void main(String argString) throws Exception {
-		Vector list= new Vector(5);
+		List<String> list= new ArrayList<String>(5);
 		for (StringTokenizer tokens= new StringTokenizer(argString, " "); tokens.hasMoreElements();)
-			list.addElement(tokens.nextElement());
-		main((String[]) list.toArray(new String[list.size()]));
+			list.add((String) tokens.nextElement());
+		main(list.toArray(new String[list.size()]));
 	}
 	
 	public static String getLocationFromProperties(String key) {

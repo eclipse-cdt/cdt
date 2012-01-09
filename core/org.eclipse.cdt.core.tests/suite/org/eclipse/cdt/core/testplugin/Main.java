@@ -22,8 +22,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
-import java.util.Vector;
 /**
  * Startup class for Eclipse. Creates a class loader using
  * supplied URL of platform installation, loads and calls
@@ -181,14 +181,14 @@ protected Object basicRun(String[] args) throws Exception {
 private String[] getArrayFromList(String prop) {
 	if (prop == null || prop.trim().equals(""))
 		return new String[0];
-	Vector list = new Vector();
+	List<String> list = new ArrayList<String>();
 	StringTokenizer tokens = new StringTokenizer(prop, ",");
 	while (tokens.hasMoreTokens()) {
 		String token = tokens.nextToken().trim();
 		if (!token.equals(""))
-			list.addElement(token);
+			list.add(token);
 	}
-	return list.isEmpty() ? new String[0] : (String[]) list.toArray(new String[0]);
+	return list.toArray(new String[list.size()]);
 }
 /**
  * Creates and returns a platform <code>BootLoader</code> which can be used to start
@@ -404,10 +404,10 @@ public static void endSplash() {
  * @exception Exception thrown if a problem occurs during launching
  */
 public static void main(String argString) throws Exception {
-	Vector list = new Vector(5);
+	List<String> list = new ArrayList<String>(5);
 	for (StringTokenizer tokens = new StringTokenizer(argString, " "); tokens.hasMoreElements();)
-		list.addElement(tokens.nextElement());
-	main((String[]) list.toArray(new String[list.size()]));
+		list.add((String) tokens.nextElement());
+	main(list.toArray(new String[list.size()]));
 }
 
 /**

@@ -24,5 +24,6 @@ public interface IGNUASTUnaryExpression extends IASTUnaryExpression {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IGNUASTUnaryExpression copy();
 }

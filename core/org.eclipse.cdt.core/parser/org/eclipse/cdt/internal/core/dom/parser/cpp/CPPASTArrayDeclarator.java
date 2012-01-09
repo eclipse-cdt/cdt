@@ -58,7 +58,7 @@ public class CPPASTArrayDeclarator extends CPPASTDeclarator implements ICPPASTAr
 	public IASTArrayModifier[] getArrayModifiers() {
         if (arrayMods == null)
         	return IASTArrayModifier.EMPTY_ARRAY;
-        arrayMods = (IASTArrayModifier[]) ArrayUtil.removeNullsAfter(IASTArrayModifier.class,
+        arrayMods = ArrayUtil.trimAt(IASTArrayModifier.class,
         		arrayMods, arrayModsPos);
         return arrayMods;
     }
@@ -67,7 +67,7 @@ public class CPPASTArrayDeclarator extends CPPASTDeclarator implements ICPPASTAr
 	public void addArrayModifier(IASTArrayModifier arrayModifier) {
         assertNotFrozen();
     	if (arrayModifier != null) {
-    		arrayMods = (IASTArrayModifier[]) ArrayUtil.append(IASTArrayModifier.class, arrayMods,
+    		arrayMods = ArrayUtil.appendAt(IASTArrayModifier.class, arrayMods,
     				++arrayModsPos, arrayModifier);
     		arrayModifier.setParent(this);
 			arrayModifier.setPropertyInParent(ARRAY_MODIFIER);

@@ -43,6 +43,7 @@ public class CPartitionScanner extends RuleBasedPartitionScanner implements ICPa
 		/*
 		 * @see IWordDetector#isWordStart
 		 */
+		@Override
 		public boolean isWordStart(char c) {
 			return (c == '/');
 		}
@@ -50,6 +51,7 @@ public class CPartitionScanner extends RuleBasedPartitionScanner implements ICPa
 		/*
 		 * @see IWordDetector#isWordPart
 		 */
+		@Override
 		public boolean isWordPart(char c) {
 			return (c == '*' || c == '/');
 		}
@@ -74,6 +76,7 @@ public class CPartitionScanner extends RuleBasedPartitionScanner implements ICPa
 		/*
 		 * @see IPredicateRule#evaluate(ICharacterScanner, boolean)
 		 */
+		@Override
 		public IToken evaluate(ICharacterScanner scanner, boolean resume) {
 			return evaluate(scanner);
 		}
@@ -81,6 +84,7 @@ public class CPartitionScanner extends RuleBasedPartitionScanner implements ICPa
 		/*
 		 * @see IPredicateRule#getSuccessToken()
 		 */
+		@Override
 		public IToken getSuccessToken() {
 			return fSuccessToken;
 		}

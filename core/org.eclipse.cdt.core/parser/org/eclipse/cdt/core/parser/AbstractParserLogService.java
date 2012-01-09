@@ -24,6 +24,7 @@ public abstract class AbstractParserLogService implements IParserLogService {
 		return new ParserLogServiceWrapper(log);
 	}
 	
+	@Override
 	public void traceLog(String message) {
 	}
 
@@ -46,6 +47,7 @@ public abstract class AbstractParserLogService implements IParserLogService {
 	public void errorLog(String message) {
 	}
 
+	@Override
 	public boolean isTracing(){
 		return false;
 	}

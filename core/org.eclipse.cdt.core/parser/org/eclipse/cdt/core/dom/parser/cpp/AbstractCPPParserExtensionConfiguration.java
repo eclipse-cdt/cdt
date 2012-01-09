@@ -26,6 +26,7 @@ public abstract class AbstractCPPParserExtensionConfiguration implements ICPPPar
 	/*
 	 * @see org.eclipse.cdt.core.dom.parser.cpp.ICPPParserExtensionConfiguration#allowRestrictPointerOperators()
 	 */
+	@Override
 	public boolean allowRestrictPointerOperators() {
 		return false;
 	}
@@ -33,6 +34,7 @@ public abstract class AbstractCPPParserExtensionConfiguration implements ICPPPar
 	/*
 	 * @see org.eclipse.cdt.core.dom.parser.cpp.ICPPParserExtensionConfiguration#supportAlignOfUnaryExpression()
 	 */
+	@Override
 	public boolean supportAlignOfUnaryExpression() {
 		return false;
 	}
@@ -40,6 +42,7 @@ public abstract class AbstractCPPParserExtensionConfiguration implements ICPPPar
 	/*
 	 * @see org.eclipse.cdt.core.dom.parser.cpp.ICPPParserExtensionConfiguration#supportAttributeSpecifiers()
 	 */
+	@Override
 	public boolean supportAttributeSpecifiers() {
 		return false;
 	}
@@ -47,6 +50,7 @@ public abstract class AbstractCPPParserExtensionConfiguration implements ICPPPar
 	/*
 	 * @see org.eclipse.cdt.core.dom.parser.cpp.ICPPParserExtensionConfiguration#supportComplexNumbers()
 	 */
+	@Override
 	public boolean supportComplexNumbers() {
 		return false;
 	}
@@ -54,6 +58,7 @@ public abstract class AbstractCPPParserExtensionConfiguration implements ICPPPar
 	/*
 	 * @see org.eclipse.cdt.core.dom.parser.cpp.ICPPParserExtensionConfiguration#supportDeclspecSpecifiers()
 	 */
+	@Override
 	public boolean supportDeclspecSpecifiers() {
 		return false;
 	}
@@ -61,6 +66,7 @@ public abstract class AbstractCPPParserExtensionConfiguration implements ICPPPar
 	/*
 	 * @see org.eclipse.cdt.core.dom.parser.cpp.ICPPParserExtensionConfiguration#supportExtendedTemplateSyntax()
 	 */
+	@Override
 	public boolean supportExtendedTemplateSyntax() {
 		return false;
 	}
@@ -68,6 +74,7 @@ public abstract class AbstractCPPParserExtensionConfiguration implements ICPPPar
 	/*
 	 * @see org.eclipse.cdt.core.dom.parser.cpp.ICPPParserExtensionConfiguration#supportGCCOtherBuiltinSymbols()
 	 */
+	@Override
 	public boolean supportGCCOtherBuiltinSymbols() {
 		return false;
 	}
@@ -75,6 +82,7 @@ public abstract class AbstractCPPParserExtensionConfiguration implements ICPPPar
 	/*
 	 * @see org.eclipse.cdt.core.dom.parser.cpp.ICPPParserExtensionConfiguration#supportKnRC()
 	 */
+	@Override
 	public boolean supportKnRC() {
 		return false;
 	}
@@ -82,6 +90,7 @@ public abstract class AbstractCPPParserExtensionConfiguration implements ICPPPar
 	/*
 	 * @see org.eclipse.cdt.core.dom.parser.cpp.ICPPParserExtensionConfiguration#supportLongLongs()
 	 */
+	@Override
 	public boolean supportLongLongs() {
 		return false;
 	}
@@ -89,6 +98,7 @@ public abstract class AbstractCPPParserExtensionConfiguration implements ICPPPar
 	/*
 	 * @see org.eclipse.cdt.core.dom.parser.cpp.ICPPParserExtensionConfiguration#supportMinAndMaxOperators()
 	 */
+	@Override
 	public boolean supportMinAndMaxOperators() {
 		return false;
 	}
@@ -96,6 +106,7 @@ public abstract class AbstractCPPParserExtensionConfiguration implements ICPPPar
 	/*
 	 * @see org.eclipse.cdt.core.dom.parser.cpp.ICPPParserExtensionConfiguration#supportRestrictKeyword()
 	 */
+	@Override
 	public boolean supportRestrictKeyword() {
 		return false;
 	}
@@ -103,6 +114,7 @@ public abstract class AbstractCPPParserExtensionConfiguration implements ICPPPar
 	/*
 	 * @see org.eclipse.cdt.core.dom.parser.cpp.ICPPParserExtensionConfiguration#supportStatementsInExpressions()
 	 */
+	@Override
 	public boolean supportStatementsInExpressions() {
 		return false;
 	}
@@ -110,6 +122,7 @@ public abstract class AbstractCPPParserExtensionConfiguration implements ICPPPar
 	/*
 	 * @see org.eclipse.cdt.core.dom.parser.cpp.ICPPParserExtensionConfiguration#supportTypeofUnaryExpressions()
 	 */
+	@Override
 	public boolean supportTypeofUnaryExpressions() {
 		return false;
 	}
@@ -118,6 +131,7 @@ public abstract class AbstractCPPParserExtensionConfiguration implements ICPPPar
 	 * {@inheritDoc}
 	 * @since 5.1
 	 */
+	@Override
 	public boolean supportParameterInfoBlock() {
 		return false;
 	}
@@ -126,6 +140,7 @@ public abstract class AbstractCPPParserExtensionConfiguration implements ICPPPar
 	 * {@inheritDoc}
 	 * @since 5.1
 	 */
+	@Override
 	public boolean supportExtendedSizeofOperator() {
 		return false;
 	}
@@ -134,6 +149,7 @@ public abstract class AbstractCPPParserExtensionConfiguration implements ICPPPar
 	 * {@inheritDoc}
 	 * @since 5.1
 	 */
+	@Override
 	public boolean supportFunctionStyleAssembler() {
 		return false;
 	}
@@ -141,6 +157,7 @@ public abstract class AbstractCPPParserExtensionConfiguration implements ICPPPar
 	/*
 	 * @see org.eclipse.cdt.core.dom.parser.cpp.ICPPParserExtensionConfiguration#getBuiltinBindingsProvider()
 	 */
+	@Override
 	public IBuiltinBindingsProvider getBuiltinBindingsProvider() {
 		return new GCCBuiltinSymbolProvider(ParserLanguage.CPP, supportGCCOtherBuiltinSymbols());
 	}

@@ -44,5 +44,6 @@ public interface IGNUASTTypeIdExpression extends IASTTypeIdExpression {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IGNUASTTypeIdExpression copy();
 }

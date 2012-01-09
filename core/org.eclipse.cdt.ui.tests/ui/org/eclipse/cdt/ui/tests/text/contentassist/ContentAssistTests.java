@@ -89,7 +89,9 @@ public class ContentAssistTests extends BaseUITestCase {
         //disable the help books so we don't get proposals we weren't expecting
         CHelpBookDescriptor helpBooks[];
 		helpBooks = CHelpProviderManager.getDefault().getCHelpBookDescriptors(new ICHelpInvocationContext(){
+			@Override
 			public IProject getProject(){return project;}
+			@Override
 			public ITranslationUnit getTranslationUnit(){return null;}
 			}
 		);

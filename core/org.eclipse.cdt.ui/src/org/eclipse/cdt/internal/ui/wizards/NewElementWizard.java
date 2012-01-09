@@ -49,6 +49,7 @@ public abstract class NewElementWizard extends Wizard implements INewWizard {
 			final Display display= getShell().getDisplay();
 			if (display != null) {
 				display.asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						try {
 							IDE.openEditor(activePage, resource, true);
@@ -95,6 +96,7 @@ public abstract class NewElementWizard extends Wizard implements INewWizard {
 	@Override
 	public boolean performFinish() {
 		IWorkspaceRunnable op= new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException, OperationCanceledException {
 				try {
 					finishPage(monitor);
@@ -117,6 +119,7 @@ public abstract class NewElementWizard extends Wizard implements INewWizard {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench, org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
 		fWorkbench= workbench;
 		fSelection= currentSelection;

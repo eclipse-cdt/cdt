@@ -48,36 +48,42 @@ public class StatusInfo implements IStatus {
 	/**
 	 * @see IStatus#getChildren()
 	 */
+	@Override
 	public IStatus[] getChildren() {
 		return new IStatus[0];
 	}
 	/**
 	 * @see IStatus#getCode()
 	 */
+	@Override
 	public int getCode() {
 		return fSeverity;
 	}
 	/**
 	 * @see IStatus#getException()
 	 */
+	@Override
 	public Throwable getException() {
 		return null;
 	}
 	/**
 	 * @see IStatus#getMessage
 	 */
+	@Override
 	public String getMessage() {
 		return fStatusMessage;
 	}
 	/**
 	 * @see IStatus#getPlugin()
 	 */
+	@Override
 	public String getPlugin() {
 		return CUIPlugin.PLUGIN_ID;
 	}
 	/**
 	 * @see IStatus#getSeverity()
 	 */
+	@Override
 	public int getSeverity() {
 		return fSeverity;
 	}
@@ -90,9 +96,11 @@ public class StatusInfo implements IStatus {
 	/**
 	 * @see IStatus#isMultiStatus()
 	 */
+	@Override
 	public boolean isMultiStatus() {
 		return false;
 	}
+	@Override
 	public boolean isOK() {
 		return fSeverity == IStatus.OK;
 	}
@@ -102,6 +110,7 @@ public class StatusInfo implements IStatus {
 	/**
 	 * @see IStatus#matches(int)
 	 */
+	@Override
 	public boolean matches(int severityMask) {
 		return (fSeverity & severityMask) != 0;
 	}

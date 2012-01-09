@@ -25,10 +25,12 @@ public class CompositeCPPClassInstance extends CompositeCPPClassSpecialization i
 		super(cf, rbinding);
 	}
 
+	@Override
 	public ICPPTemplateDefinition getTemplateDefinition() {
 		return TemplateInstanceUtil.getTemplateDefinition(cf, rbinding);
 	}
 
+	@Override
 	public ICPPTemplateArgument[] getTemplateArguments() {
 		return TemplateInstanceUtil.getTemplateArguments(cf, (ICPPTemplateInstance) rbinding);
 	}
@@ -38,10 +40,12 @@ public class CompositeCPPClassInstance extends CompositeCPPClassSpecialization i
 		return TemplateInstanceUtil.getTemplateParameterMap(cf, (ICPPTemplateInstance) rbinding);
 	}
 	
+	@Override
 	public boolean isExplicitSpecialization() {
 		return ((ICPPTemplateInstance) rbinding).isExplicitSpecialization();
 	}
 
+	@Override
 	@Deprecated
 	public IType[] getArguments() {
 		return TemplateInstanceUtil.getArguments(cf, (ICPPTemplateInstance) rbinding);

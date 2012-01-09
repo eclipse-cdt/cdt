@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.settings.model.ICLibraryFileEntry;
 import org.eclipse.cdt.core.settings.model.ICLibraryPathEntry;
 import org.eclipse.cdt.core.settings.model.ICMacroEntry;
 import org.eclipse.cdt.core.settings.model.ICMacroFileEntry;
+import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 
 public class EntryStore {
 	private KindBasedStore<ArrayList<ICLanguageSettingEntry>> fStore = new KindBasedStore<ArrayList<ICLanguageSettingEntry>>();
@@ -67,17 +68,17 @@ public class EntryStore {
 		if(list == null)
 			list = new ArrayList<ICLanguageSettingEntry>(0);
 		switch(kind){
-		case ICLanguageSettingEntry.INCLUDE_PATH:
+		case ICSettingEntry.INCLUDE_PATH:
 			return list.toArray(new ICIncludePathEntry[list.size()]);
-		case ICLanguageSettingEntry.INCLUDE_FILE:
+		case ICSettingEntry.INCLUDE_FILE:
 			return list.toArray(new ICIncludeFileEntry[list.size()]);
-		case ICLanguageSettingEntry.MACRO:
+		case ICSettingEntry.MACRO:
 			return list.toArray(new ICMacroEntry[list.size()]);
-		case ICLanguageSettingEntry.MACRO_FILE:
+		case ICSettingEntry.MACRO_FILE:
 			return list.toArray(new ICMacroFileEntry[list.size()]);
-		case ICLanguageSettingEntry.LIBRARY_PATH:
+		case ICSettingEntry.LIBRARY_PATH:
 			return list.toArray(new ICLibraryPathEntry[list.size()]);
-		case ICLanguageSettingEntry.LIBRARY_FILE:
+		case ICSettingEntry.LIBRARY_FILE:
 			return list.toArray(new ICLibraryFileEntry[list.size()]);
 		default:
 			throw new IllegalArgumentException();

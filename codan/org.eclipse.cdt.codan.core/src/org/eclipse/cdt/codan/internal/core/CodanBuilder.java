@@ -51,6 +51,7 @@ public class CodanBuilder extends IncrementalProjectBuilder implements ICodanBui
 			this.monitor = monitor;
 		}
 
+		@Override
 		public boolean visit(IResourceDelta delta) throws CoreException {
 			IResource resource = delta.getResource();
 			switch (delta.getKind()) {
@@ -93,6 +94,7 @@ public class CodanBuilder extends IncrementalProjectBuilder implements ICodanBui
 		return null;
 	}
 
+	@Override
 	public void processResource(IResource resource, IProgressMonitor monitor) {
 		processResource(resource, monitor, null, CheckerLaunchMode.RUN_ON_FULL_BUILD);
 	}
@@ -105,6 +107,7 @@ public class CodanBuilder extends IncrementalProjectBuilder implements ICodanBui
 	 * @param mode - launch mode, @see {@link CheckerLaunchMode}
 	 * @since 2.0
 	 */
+	@Override
 	public void processResource(IResource resource, IProgressMonitor monitor, CheckerLaunchMode mode) {
 		processResource(resource, monitor, null, mode);
 	}

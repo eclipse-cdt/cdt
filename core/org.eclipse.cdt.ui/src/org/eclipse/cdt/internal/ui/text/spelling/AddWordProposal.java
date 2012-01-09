@@ -17,6 +17,7 @@ import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.quickassist.IQuickAssistInvocationContext;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
@@ -60,6 +61,7 @@ public class AddWordProposal implements ICCompletionProposal {
 	/*
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#apply(org.eclipse.jface.text.IDocument)
 	 */
+	@Override
 	public final void apply(final IDocument document) {
 		final ISpellCheckEngine engine= SpellCheckEngine.getInstance();
 		final ISpellChecker checker= engine.getSpellChecker();
@@ -128,13 +130,15 @@ public class AddWordProposal implements ICCompletionProposal {
 	/*
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getAdditionalProposalInfo()
 	 */
+	@Override
 	public String getAdditionalProposalInfo() {
-		return Messages.bind(Messages.Spelling_add_info, WordCorrectionProposal.getHtmlRepresentation(fWord));
+		return NLS.bind(Messages.Spelling_add_info, WordCorrectionProposal.getHtmlRepresentation(fWord));
 	}
 
 	/*
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getContextInformation()
 	 */
+	@Override
 	public final IContextInformation getContextInformation() {
 		return null;
 	}
@@ -142,13 +146,15 @@ public class AddWordProposal implements ICCompletionProposal {
 	/*
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getDisplayString()
 	 */
+	@Override
 	public String getDisplayString() {
-		return Messages.bind(Messages.Spelling_add_label, fWord);
+		return NLS.bind(Messages.Spelling_add_label, fWord);
 	}
 
 	/*
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_CORRECTION_ADD);
 	}
@@ -156,6 +162,7 @@ public class AddWordProposal implements ICCompletionProposal {
 	/*
 	 * @see org.eclipse.cdt.ui.text.java.IJavaCompletionProposal#getRelevance()
 	 */
+	@Override
 	public int getRelevance() {
 		return Integer.MIN_VALUE;
 	}
@@ -163,10 +170,12 @@ public class AddWordProposal implements ICCompletionProposal {
 	/*
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getSelection(org.eclipse.jface.text.IDocument)
 	 */
+	@Override
 	public final Point getSelection(final IDocument document) {
 		return new Point(fContext.getSelectionOffset(), fContext.getSelectionLength());
 	}
 
+	@Override
 	public String getIdString() {
 		return fWord;
 	}

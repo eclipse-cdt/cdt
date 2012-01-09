@@ -158,22 +158,27 @@ public class CPathSourceEntryPage extends CPathBasePage {
 		private final Object[] EMPTY_ARR = new Object[0];
 
 		// -------- IListAdapter --------
+		@Override
 		public void customButtonPressed(TreeListDialogField<CPElement> field, int index) {
 			sourcePageCustomButtonPressed(field, index);
 		}
 
+		@Override
 		public void selectionChanged(TreeListDialogField<CPElement> field) {
 			sourcePageSelectionChanged(field);
 		}
 
+		@Override
 		public void doubleClicked(TreeListDialogField<CPElement> field) {
 			sourcePageDoubleClicked(field);
 		}
 
+		@Override
 		public void keyPressed(TreeListDialogField<CPElement> field, KeyEvent event) {
 			sourcePageKeyPressed(field, event);
 		}
 
+		@Override
 		public Object[] getChildren(TreeListDialogField<CPElement> field, Object element) {
 			if (element instanceof CPElement) {
 				return ((CPElement)element).getChildren();
@@ -181,6 +186,7 @@ public class CPathSourceEntryPage extends CPathBasePage {
 			return EMPTY_ARR;
 		}
 
+		@Override
 		public Object getParent(TreeListDialogField<CPElement> field, Object element) {
 			if (element instanceof CPElementAttribute) {
 				return ((CPElementAttribute)element).getParent();
@@ -188,11 +194,13 @@ public class CPathSourceEntryPage extends CPathBasePage {
 			return null;
 		}
 
+		@Override
 		public boolean hasChildren(TreeListDialogField<CPElement> field, Object element) {
 			return (element instanceof CPElement);
 		}
 
 		// ---------- IDialogFieldListener --------
+		@Override
 		public void dialogFieldChanged(DialogField field) {
 			sourcePageDialogFieldChanged(field);
 		}

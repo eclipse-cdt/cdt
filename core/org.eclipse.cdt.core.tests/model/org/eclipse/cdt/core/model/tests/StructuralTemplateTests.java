@@ -47,6 +47,7 @@ public class StructuralTemplateTests extends ITemplateTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.tests.ITemplateTests#testGetChildrenOfTypeTemplate()
 	 */
+	@Override
 	public void testGetChildrenOfTypeTemplate() throws CModelException {
 		setStructuralParse(true);
 		ITranslationUnit tu = getTU();
@@ -116,6 +117,7 @@ public class StructuralTemplateTests extends ITemplateTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.tests.ITemplateTests#testGetNumberOfTemplateParameters()
 	 */
+	@Override
 	public void testGetNumberOfTemplateParameters() throws CModelException {
 		setStructuralParse(true);
 		ITranslationUnit tu = getTU();
@@ -145,6 +147,7 @@ public class StructuralTemplateTests extends ITemplateTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.tests.ITemplateTests#testGetTemplateParameterTypes()
 	 */
+	@Override
 	public void testGetTemplateParameterTypes() throws CModelException {
 		setStructuralParse(true);
 		ITranslationUnit tu = getTU();
@@ -195,6 +198,7 @@ public class StructuralTemplateTests extends ITemplateTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.tests.ITemplateTests#testGetTemplateSignature()
 	 */
+	@Override
 	public void testGetTemplateSignature() throws CModelException {
 		setStructuralParse(true);
 		ITranslationUnit tu = getTU();

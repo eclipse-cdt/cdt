@@ -31,6 +31,7 @@ public class SelectionHistory {
 		fEditor= editor;
 		fHistory= new Stack<ISourceRange>();
 		fSelectionListener= new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				if (fSelectionChangeListenerCounter == 0)
 					flush();

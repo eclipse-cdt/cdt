@@ -25,6 +25,7 @@ public abstract class AbstractCParserExtensionConfiguration implements ICParserE
 	/*
 	 * @see org.eclipse.cdt.core.dom.parser.c.ICParserExtensionConfiguration#supportAlignOfUnaryExpression()
 	 */
+	@Override
 	public boolean supportAlignOfUnaryExpression() {
 		return false;
 	}
@@ -32,6 +33,7 @@ public abstract class AbstractCParserExtensionConfiguration implements ICParserE
 	/*
 	 * @see org.eclipse.cdt.core.dom.parser.c.ICParserExtensionConfiguration#supportAttributeSpecifiers()
 	 */
+	@Override
 	public boolean supportAttributeSpecifiers() {
 		return false;
 	}
@@ -39,6 +41,7 @@ public abstract class AbstractCParserExtensionConfiguration implements ICParserE
 	/*
 	 * @see org.eclipse.cdt.core.dom.parser.c.ICParserExtensionConfiguration#supportDeclspecSpecifiers()
 	 */
+	@Override
 	public boolean supportDeclspecSpecifiers() {
 		return false;
 	}
@@ -46,6 +49,7 @@ public abstract class AbstractCParserExtensionConfiguration implements ICParserE
 	/*
 	 * @see org.eclipse.cdt.core.dom.parser.c.ICParserExtensionConfiguration#supportGCCOtherBuiltinSymbols()
 	 */
+	@Override
 	public boolean supportGCCOtherBuiltinSymbols() {
 		return false;
 	}
@@ -53,6 +57,7 @@ public abstract class AbstractCParserExtensionConfiguration implements ICParserE
 	/*
 	 * @see org.eclipse.cdt.core.dom.parser.c.ICParserExtensionConfiguration#supportGCCStyleDesignators()
 	 */
+	@Override
 	public boolean supportGCCStyleDesignators() {
 		return false;
 	}
@@ -60,6 +65,7 @@ public abstract class AbstractCParserExtensionConfiguration implements ICParserE
 	/*
 	 * @see org.eclipse.cdt.core.dom.parser.c.ICParserExtensionConfiguration#supportKnRC()
 	 */
+	@Override
 	public boolean supportKnRC() {
 		return false;
 	}
@@ -67,6 +73,7 @@ public abstract class AbstractCParserExtensionConfiguration implements ICParserE
 	/*
 	 * @see org.eclipse.cdt.core.dom.parser.c.ICParserExtensionConfiguration#supportStatementsInExpressions()
 	 */
+	@Override
 	public boolean supportStatementsInExpressions() {
 		return false;
 	}
@@ -74,6 +81,7 @@ public abstract class AbstractCParserExtensionConfiguration implements ICParserE
 	/*
 	 * @see org.eclipse.cdt.core.dom.parser.c.ICParserExtensionConfiguration#supportTypeofUnaryExpressions()
 	 */
+	@Override
 	public boolean supportTypeofUnaryExpressions() {
 		return false;
 	}
@@ -81,6 +89,7 @@ public abstract class AbstractCParserExtensionConfiguration implements ICParserE
 	/*
 	 * @see org.eclipse.cdt.core.dom.parser.c.ICParserExtensionConfiguration#getBuiltinSymbolProvider()
 	 */
+	@Override
 	public IBuiltinBindingsProvider getBuiltinBindingsProvider() {
 		return new GCCBuiltinSymbolProvider(ParserLanguage.C, supportGCCOtherBuiltinSymbols());
 	}
@@ -89,6 +98,7 @@ public abstract class AbstractCParserExtensionConfiguration implements ICParserE
 	 * {@inheritDoc}
 	 * @since 5.1
 	 */
+	@Override
 	public boolean supportParameterInfoBlock() {
 		return false;
 	}
@@ -97,6 +107,7 @@ public abstract class AbstractCParserExtensionConfiguration implements ICParserE
 	 * {@inheritDoc}
 	 * @since 5.1
 	 */
+	@Override
 	public boolean supportExtendedSizeofOperator() {
 		return false;
 	}
@@ -105,6 +116,7 @@ public abstract class AbstractCParserExtensionConfiguration implements ICParserE
 	 * {@inheritDoc}
 	 * @since 5.1
 	 */
+	@Override
 	public boolean supportFunctionStyleAssembler() {
 		return false;
 	}

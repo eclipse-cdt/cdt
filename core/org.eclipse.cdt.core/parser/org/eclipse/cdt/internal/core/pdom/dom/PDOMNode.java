@@ -76,6 +76,7 @@ public abstract class PDOMNode implements IInternalPDOMNode {
 
 	public abstract int getNodeType();
 
+	@Override
 	public final long getRecord() {
 		return record;
 	}
@@ -114,6 +115,7 @@ public abstract class PDOMNode implements IInternalPDOMNode {
 		return System.identityHashCode(getPDOM()) + (int) (41 * record);
 	}
 
+	@Override
 	public void accept(IPDOMVisitor visitor) throws CoreException {
 		// No children here.
 	}
@@ -168,6 +170,7 @@ public abstract class PDOMNode implements IInternalPDOMNode {
 	 * @param linkage 
 	 * @throws CoreException 
 	 */
+	@Override
 	public void delete(PDOMLinkage linkage) throws CoreException {
 		getDB().free(record);
 	}

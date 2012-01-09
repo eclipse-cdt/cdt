@@ -28,19 +28,24 @@ public class TestScannerInfo implements IExtendedScannerInfo {
 		fIncludeFiles= includeFiles;
 		fMacroFiles= macroFiles;
 	}
+	@Override
 	public Map getDefinedSymbols() {
 		return EMPTY_MAP;
 	}
 
+	@Override
 	public String[] getIncludePaths() {
 		return fIncludes == null ? EMPTY : fIncludes;
 	}
+	@Override
 	public String[] getIncludeFiles() {
 		return fIncludeFiles == null ? EMPTY: fIncludeFiles;
 	}
+	@Override
 	public String[] getLocalIncludePath() {
 		return null;
 	}
+	@Override
 	public String[] getMacroFiles() {
 		return fMacroFiles == null ? EMPTY: fMacroFiles;
 	}

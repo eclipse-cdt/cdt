@@ -37,14 +37,17 @@ public class ContentAssistMatcherFactory {
 			matcher = new SegmentMatcher(pattern);
 		}
 		
+		@Override
 		public char[] getPrefixForBinarySearch() {
 			return matcher.getPrefixForBinarySearch();
 		}
 		
+		@Override
 		public boolean matchRequiredAfterBinarySearch() {
 			return matcher.matchRequiredAfterBinarySearch();
 		}
 
+		@Override
 		public boolean match(char[] name) {
 			return matcher.match(name);
 		}
@@ -58,14 +61,17 @@ public class ContentAssistMatcherFactory {
 			this.prefix = prefix;
 		}
 		
+		@Override
 		public char[] getPrefixForBinarySearch() {
 			return prefix;
 		}
 
+		@Override
 		public boolean matchRequiredAfterBinarySearch() {
 			return false;
 		}
 
+		@Override
 		public boolean match(char[] name) {
 			return CharArrayUtils.equals(name, 0, prefix.length, prefix, true);
 		}

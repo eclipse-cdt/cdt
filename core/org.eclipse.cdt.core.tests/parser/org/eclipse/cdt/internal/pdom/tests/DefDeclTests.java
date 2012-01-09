@@ -59,6 +59,7 @@ public class DefDeclTests extends PDOMTestBase {
 		return suite(DefDeclTests.class);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		String requiredName = "defDeclTests";
 		cproject = createProject(requiredName);
@@ -67,6 +68,7 @@ public class DefDeclTests extends PDOMTestBase {
 		pdom.acquireReadLock();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		pdom.releaseReadLock();
 		if (cproject != null) {

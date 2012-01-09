@@ -371,6 +371,7 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 
 	private ITokenStoreFactory getTokenStoreFactory() {
 		return new ITokenStoreFactory() {
+			@Override
 			public ITokenStore createTokenStore(String[] propertyColorNames) {
 				return new TokenStore(getColorManager(), fPreferenceStore, propertyColorNames);
 			}

@@ -39,10 +39,12 @@ public class CPPASTCompoundStatementExpression extends ASTNode implements IGNUAS
 		setCompoundStatement(statement);
 	}
 
+	@Override
 	public CPPASTCompoundStatementExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CPPASTCompoundStatementExpression copy(CopyStyle style) {
 		CPPASTCompoundStatementExpression copy = new CPPASTCompoundStatementExpression();
 		copy.setCompoundStatement(statement == null ? null : statement.copy(style));
@@ -53,11 +55,13 @@ public class CPPASTCompoundStatementExpression extends ASTNode implements IGNUAS
 		return copy;
 	}
 
+	@Override
 	public IASTCompoundStatement getCompoundStatement() {
         return statement;
     }
 
-    public void setCompoundStatement(IASTCompoundStatement statement) {
+    @Override
+	public void setCompoundStatement(IASTCompoundStatement statement) {
         assertNotFrozen();
         this.statement = statement;
         if (statement != null) {
@@ -88,7 +92,8 @@ public class CPPASTCompoundStatementExpression extends ASTNode implements IGNUAS
         return true;
     }
     
-    public IType getExpressionType() {
+    @Override
+	public IType getExpressionType() {
 		IASTCompoundStatement compound = getCompoundStatement();
 		IASTStatement[] statements = compound.getStatements();
 		if (statements.length > 0) {
@@ -99,10 +104,12 @@ public class CPPASTCompoundStatementExpression extends ASTNode implements IGNUAS
 		return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
 	}
     
+	@Override
 	public boolean isLValue() {
 		return false;
 	}
 
+	@Override
 	public ValueCategory getValueCategory() {
 		return PRVALUE;
 	}

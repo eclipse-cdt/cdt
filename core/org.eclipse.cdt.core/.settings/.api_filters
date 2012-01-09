@@ -14,4 +14,42 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="parser/org/eclipse/cdt/core/parser/util/ArrayUtil.java" type="org.eclipse.cdt.core.parser.util.ArrayUtil">
+        <filter id="420679712">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.core.parser.util.ArrayUtil.addAll(Class&lt;?&gt;, Object[], Object[])"/>
+                <message_argument value="T"/>
+            </message_arguments>
+        </filter>
+        <filter id="420679712">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.core.parser.util.ArrayUtil.append(Class&lt;?&gt;, Object[], Object)"/>
+                <message_argument value="T"/>
+            </message_arguments>
+        </filter>
+        <filter id="420679712">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.core.parser.util.ArrayUtil.prepend(Class&lt;?&gt;, Object[], Object)"/>
+                <message_argument value="T"/>
+            </message_arguments>
+        </filter>
+        <filter id="420679712">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.core.parser.util.ArrayUtil.removeNulls(Class&lt;?&gt;, Object[])"/>
+                <message_argument value="T"/>
+            </message_arguments>
+        </filter>
+        <filter id="420679712">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.core.parser.util.ArrayUtil.trim(Class&lt;?&gt;, Object[])"/>
+                <message_argument value="T"/>
+            </message_arguments>
+        </filter>
+        <filter id="420679712">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.core.parser.util.ArrayUtil.trim(Class&lt;?&gt;, Object[], boolean)"/>
+                <message_argument value="T"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>

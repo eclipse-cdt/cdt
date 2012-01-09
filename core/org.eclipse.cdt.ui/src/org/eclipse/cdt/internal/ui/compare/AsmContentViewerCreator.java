@@ -24,6 +24,7 @@ public class AsmContentViewerCreator  implements IViewerCreator {
 	/*
 	 * @see org.eclipse.compare.IViewerCreator#createViewer(org.eclipse.swt.widgets.Composite, org.eclipse.compare.CompareConfiguration)
 	 */
+	@Override
 	public Viewer createViewer(Composite parent, CompareConfiguration config) {
 		return new AsmMergeViewer(parent, SWT.NULL, config);
 	}

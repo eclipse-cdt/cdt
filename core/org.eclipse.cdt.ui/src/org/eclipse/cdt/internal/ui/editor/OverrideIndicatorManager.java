@@ -398,9 +398,11 @@ public class OverrideIndicatorManager implements ICReconcilingListener {
 		return null;
 	}
 
+	@Override
 	public void aboutToBeReconciled() {
 	}
 
+	@Override
 	public void reconciled(IASTTranslationUnit ast, boolean force, IProgressMonitor progressMonitor) {
 		if (ast == null) {
 			return;

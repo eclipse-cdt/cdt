@@ -51,9 +51,6 @@ public class SaveActionsPreferencePage extends AbstractPreferencePage {
 		return keys;
 	}
 
-	/*
-	 * @see PreferencePage#createControl(Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
@@ -61,14 +58,17 @@ public class SaveActionsPreferencePage extends AbstractPreferencePage {
 				ICHelpContextIds.SAVE_ACTIONS_PREFERENCE_PAGE);
 	}
 
-	// sets enabled flag for a control and all its sub-tree
+	/**
+	 * Sets enabled flag for a control and all its sub-tree.
+	 */
 	protected static void setEnabled(Control control, boolean enable) {
 		control.setEnabled(enable);
 		if (control instanceof Composite) {
 			Composite composite = (Composite) control;
 			Control[] children = composite.getChildren();
-			for (Control element : children)
+			for (Control element : children) {
 				setEnabled(element, enable);
+			}
 		}
 	}
 
@@ -96,9 +96,6 @@ public class SaveActionsPreferencePage extends AbstractPreferencePage {
 		return composite;
 	}
 
-	/*
-	 * @see PreferencePage#createContents(Composite)
-	 */
 	@Override
 	protected Control createContents(Composite parent) {
 		fOverlayStore.load();

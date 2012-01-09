@@ -69,6 +69,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 		/*
 		 * @see FilteredList.FilterMatcher#setFilter(String, boolean)
 		 */
+		@Override
 		public void setFilter(String pattern, boolean ignoreCase, boolean ignoreWildCards) {
 			// parse pattern into segments
 			QualifiedTypeName qualifiedName = new QualifiedTypeName(pattern);
@@ -123,6 +124,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 		/*
 		 * @see FilteredList.FilterMatcher#match(Object)
 		 */
+		@Override
 		public boolean match(Object element) {
 			if (!(element instanceof ITypeInfo))
 				return false;
@@ -181,7 +183,8 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 	}
 	
 	private static class StringComparator implements Comparator<String> {
-	    public int compare(String left, String right) {
+	    @Override
+		public int compare(String left, String right) {
 	     	int result = left.compareToIgnoreCase(right);			
 			if (result == 0)
 				result = left.compareTo(right);

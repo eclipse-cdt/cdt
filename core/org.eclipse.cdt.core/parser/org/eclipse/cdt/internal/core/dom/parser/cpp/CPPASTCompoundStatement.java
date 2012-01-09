@@ -49,13 +49,13 @@ public class CPPASTCompoundStatement extends ASTNode
 	public IASTStatement[] getStatements() {
         if (statements == null)
         	return IASTStatement.EMPTY_STATEMENT_ARRAY;
-        return (IASTStatement[]) ArrayUtil.trim(IASTStatement.class, statements);
+        return ArrayUtil.trim(IASTStatement.class, statements);
     }
 
     @Override
 	public void addStatement(IASTStatement statement) {
         assertNotFrozen();
-        statements = (IASTStatement[]) ArrayUtil.append(IASTStatement.class, statements, statement);
+        statements = ArrayUtil.append(IASTStatement.class, statements, statement);
         if (statement != null) {
 			statement.setParent(this);
 			statement.setPropertyInParent(NESTED_STATEMENT);

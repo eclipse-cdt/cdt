@@ -21,6 +21,7 @@ import org.eclipse.cdt.ui.text.contentassist.IProposalFilter;
  */
 public class DefaultProposalFilter implements IProposalFilter {
 
+	@Override
 	public ICCompletionProposal[] filterProposals(
 			ICCompletionProposal[] proposals) {
 

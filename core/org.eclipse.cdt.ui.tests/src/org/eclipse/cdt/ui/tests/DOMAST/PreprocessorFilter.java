@@ -22,6 +22,7 @@ public class PreprocessorFilter extends ViewerFilter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		if (element instanceof DOMASTNodeLeaf) {
 			int flag = ((DOMASTNodeLeaf)element).getFiltersFlag() & DOMASTNodeLeaf.FLAG_PREPROCESSOR;

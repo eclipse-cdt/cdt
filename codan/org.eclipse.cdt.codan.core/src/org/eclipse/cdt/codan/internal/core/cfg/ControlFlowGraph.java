@@ -39,10 +39,12 @@ public class ControlFlowGraph implements IControlFlowGraph {
 		this.start = start;
 	}
 
+	@Override
 	public Iterator<IExitNode> getExitNodeIterator() {
 		return exitNodes.iterator();
 	}
 
+	@Override
 	public int getExitNodeSize() {
 		return exitNodes.size();
 	}
@@ -63,6 +65,7 @@ public class ControlFlowGraph implements IControlFlowGraph {
 	 * @seeorg.eclipse.cdt.codan.provisional.core.model.cfg.IControlFlowGraph#
 	 * getStartNode()
 	 */
+	@Override
 	public IStartNode getStartNode() {
 		return start;
 	}
@@ -97,6 +100,7 @@ public class ControlFlowGraph implements IControlFlowGraph {
 	 * @seeorg.eclipse.cdt.codan.provisional.core.model.cfg.IControlFlowGraph#
 	 * getUnconnectedNodeIterator()
 	 */
+	@Override
 	public Iterator<IBasicBlock> getUnconnectedNodeIterator() {
 		return deadNodes.iterator();
 	}
@@ -107,6 +111,7 @@ public class ControlFlowGraph implements IControlFlowGraph {
 	 * @seeorg.eclipse.cdt.codan.provisional.core.model.cfg.IControlFlowGraph#
 	 * getUnconnectedNodeSize()
 	 */
+	@Override
 	public int getUnconnectedNodeSize() {
 		return deadNodes.size();
 	}
@@ -116,6 +121,7 @@ public class ControlFlowGraph implements IControlFlowGraph {
 	 * 
 	 * @see org.eclipse.cdt.codan.core.model.cfg.IControlFlowGraph#getNodes ()
 	 */
+	@Override
 	public Collection<IBasicBlock> getNodes() {
 		Collection<IBasicBlock> result = new LinkedHashSet<IBasicBlock>();
 		getNodes(getStartNode(), result);

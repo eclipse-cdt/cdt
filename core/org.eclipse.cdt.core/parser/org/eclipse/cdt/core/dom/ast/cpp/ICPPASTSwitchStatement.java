@@ -53,10 +53,12 @@ public interface ICPPASTSwitchStatement extends IASTSwitchStatement {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICPPASTSwitchStatement copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICPPASTSwitchStatement copy(CopyStyle style);
 }

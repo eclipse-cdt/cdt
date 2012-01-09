@@ -246,6 +246,7 @@ public class XCOFFBinaryObject extends BinaryObjectAdapter {
 				starttime = System.currentTimeMillis();
 				Runnable worker = new Runnable() {
 
+					@Override
 					public void run() {
 						long diff = System.currentTimeMillis() - starttime;
 						while (diff < 10000) {

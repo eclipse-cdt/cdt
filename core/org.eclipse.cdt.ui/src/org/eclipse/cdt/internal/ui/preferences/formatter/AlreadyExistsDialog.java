@@ -88,27 +88,32 @@ public class AlreadyExistsDialog extends StatusDialog {
 		fNameText.setFocus();
 		
 		fNameText.addModifyListener( new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				doValidation();
 			}
 		});
 		
 		fRenameRadio.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fNameText.setEnabled(true);
 				fNameText.setFocus();
 				fNameText.setSelection(0, fNameText.getText().length());
 				doValidation();
 			}
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
 		
 		fOverwriteRadio.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fNameText.setEnabled(false);
 				doValidation();
 			}
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});

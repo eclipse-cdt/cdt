@@ -27,6 +27,7 @@ public class CdtVariableResolverTest extends TestCase {
 
 	private class MockSubstitutor implements IVariableSubstitutor {
 
+		@Override
 		public String resolveToString(String macroName)
 				throws CdtVariableException {
 			if (macroName.equals("null")) {
@@ -44,6 +45,7 @@ public class CdtVariableResolverTest extends TestCase {
 			return "#"+macroName+"#";
 		}
 
+		@Override
 		public String[] resolveToStringList(String macroName)
 				throws CdtVariableException {
 			

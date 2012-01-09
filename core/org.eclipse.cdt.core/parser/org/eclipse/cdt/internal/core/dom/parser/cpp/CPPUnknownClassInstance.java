@@ -31,6 +31,7 @@ public class CPPUnknownClassInstance extends CPPUnknownClass implements ICPPUnkn
 		this.arguments = arguments;
 	}
 
+	@Override
 	public ICPPTemplateArgument[] getArguments() {
 		return arguments;
 	}

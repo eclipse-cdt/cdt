@@ -136,6 +136,7 @@ public class Profiler {
 			List<Map.Entry<String, Timer>> list =
 					new ArrayList<Map.Entry<String, Timer>>(profiler.timers.entrySet());
 			Comparator<Map.Entry<String, Timer>> c = new Comparator<Map.Entry<String, Timer>>() {
+				@Override
 				public int compare(Entry<String, Timer> o1, Entry<String, Timer> o2) {
 					long diff = o2.getValue().getElapsedTime() - o1.getValue().getElapsedTime();
 					return diff < 0 ? -1 : diff > 0 ? 1 : 0; 
@@ -152,6 +153,7 @@ public class Profiler {
 				List<Map.Entry<String, int[]>> keyList =
 					new ArrayList<Map.Entry<String, int[]>>(profiler.counters.entrySet());
 				Comparator<Map.Entry<String, int[]>> c2 = new Comparator<Map.Entry<String, int[]>>() {
+					@Override
 					public int compare(Entry<String, int[]> o1, Entry<String, int[]> o2) {
 						return o2.getValue()[0] - o1.getValue()[0];
 					}

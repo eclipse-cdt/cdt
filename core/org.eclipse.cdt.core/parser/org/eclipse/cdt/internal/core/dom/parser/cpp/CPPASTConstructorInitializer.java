@@ -36,10 +36,12 @@ public class CPPASTConstructorInitializer extends ASTNode implements ICPPASTCons
 		setArguments(args);
 	}
 
+	@Override
 	public CPPASTConstructorInitializer copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CPPASTConstructorInitializer copy(CopyStyle style) {
 		IASTInitializerClause[] args = null;
 		if (fArguments != null) {
@@ -56,11 +58,13 @@ public class CPPASTConstructorInitializer extends ASTNode implements ICPPASTCons
 		return copy;
 	}
 
+	@Override
 	public IASTInitializerClause[] getArguments() {
         return fArguments;
     }
 
-    public void setArguments(IASTInitializerClause[] arguments) {
+    @Override
+	public void setArguments(IASTInitializerClause[] arguments) {
         assertNotFrozen();
         if (arguments == null) {
         	fArguments= IASTExpression.EMPTY_EXPRESSION_ARRAY;
@@ -94,6 +98,7 @@ public class CPPASTConstructorInitializer extends ASTNode implements ICPPASTCons
 		return true;
     }
 
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
 		for (int i = 0; i < fArguments.length; ++i) {
 			if (child == fArguments[i]) {
@@ -104,7 +109,8 @@ public class CPPASTConstructorInitializer extends ASTNode implements ICPPASTCons
 		}
 	}
 
-    @Deprecated
+    @Override
+	@Deprecated
 	public IASTExpression getExpression() {
     	if (fArguments.length == 0)
     		return null;
@@ -126,7 +132,8 @@ public class CPPASTConstructorInitializer extends ASTNode implements ICPPASTCons
         return result;
     }
 
-    @Deprecated
+    @Override
+	@Deprecated
 	public void setExpression(IASTExpression expression) {
         assertNotFrozen();
         if (expression == null) {

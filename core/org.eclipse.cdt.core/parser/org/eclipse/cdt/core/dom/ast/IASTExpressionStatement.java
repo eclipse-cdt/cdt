@@ -42,10 +42,12 @@ public interface IASTExpressionStatement extends IASTStatement {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IASTExpressionStatement copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public IASTExpressionStatement copy(CopyStyle style);
 }

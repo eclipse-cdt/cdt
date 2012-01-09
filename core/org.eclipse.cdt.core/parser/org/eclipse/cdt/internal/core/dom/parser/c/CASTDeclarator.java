@@ -51,10 +51,12 @@ public class CASTDeclarator extends ASTNode implements IASTDeclarator, IASTAmbig
 		setName(name);
 	}
 	
+	@Override
 	public CASTDeclarator copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CASTDeclarator copy(CopyStyle style) {
 		CASTDeclarator copy = new CASTDeclarator();
 		copyBaseDeclarator(copy, style);
@@ -74,25 +76,30 @@ public class CASTDeclarator extends ASTNode implements IASTDeclarator, IASTAmbig
 	}
 	
 	
+	@Override
 	public IASTPointerOperator[] getPointerOperators() {
         if (pointerOps == null) return IASTPointerOperator.EMPTY_ARRAY;
-        pointerOps = (IASTPointerOperator[]) ArrayUtil.removeNullsAfter(IASTPointerOperator.class, pointerOps, pointerOpsPos);
+        pointerOps = ArrayUtil.trimAt(IASTPointerOperator.class, pointerOps, pointerOpsPos);
         return pointerOps;
     }
 
-    public IASTDeclarator getNestedDeclarator() {
+    @Override
+	public IASTDeclarator getNestedDeclarator() {
         return nestedDeclarator;
     }
 
-    public IASTName getName() {
+    @Override
+	public IASTName getName() {
         return name;
     }
 
-    public IASTInitializer getInitializer() {
+    @Override
+	public IASTInitializer getInitializer() {
         return initializer;
     }
 
-    public void setInitializer(IASTInitializer initializer) {
+    @Override
+	public void setInitializer(IASTInitializer initializer) {
         assertNotFrozen();
         this.initializer = initializer;
         if (initializer != null) {
@@ -101,16 +108,18 @@ public class CASTDeclarator extends ASTNode implements IASTDeclarator, IASTAmbig
 		}
     }
 
-    public void addPointerOperator(IASTPointerOperator operator) {
+    @Override
+	public void addPointerOperator(IASTPointerOperator operator) {
         assertNotFrozen();
     	if (operator != null) {
     		operator.setParent(this);
     		operator.setPropertyInParent(POINTER_OPERATOR);
-    		pointerOps = (IASTPointerOperator[]) ArrayUtil.append(IASTPointerOperator.class, pointerOps, ++pointerOpsPos, operator);
+    		pointerOps = ArrayUtil.appendAt(IASTPointerOperator.class, pointerOps, ++pointerOpsPos, operator);
     	}
     }
 
-    public void setNestedDeclarator(IASTDeclarator nested) {
+    @Override
+	public void setNestedDeclarator(IASTDeclarator nested) {
         assertNotFrozen();
         this.nestedDeclarator = nested;
         if (nested != null) {
@@ -119,7 +128,8 @@ public class CASTDeclarator extends ASTNode implements IASTDeclarator, IASTAmbig
 		}
     }
 
-    public void setName(IASTName name) {
+    @Override
+	public void setName(IASTName name) {
         assertNotFrozen();
         this.name = name;
         if (name != null) {
@@ -176,6 +186,7 @@ public class CASTDeclarator extends ASTNode implements IASTDeclarator, IASTAmbig
 		return true;
     }
 	
+	@Override
 	public int getRoleForName(IASTName n) {
 		if (n == this.name) {
 			IASTNode getParent = getParent();
@@ -226,6 +237,7 @@ public class CASTDeclarator extends ASTNode implements IASTDeclarator, IASTAmbig
 		return r_unclear;
 	}
 
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
         if (child == nestedDeclarator) {
             other.setPropertyInParent(child.getPropertyInParent());

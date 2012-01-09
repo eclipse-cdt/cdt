@@ -30,6 +30,7 @@ public class SimplePositionTracker extends PositionTracker implements
 	/*
 	 * @see org.eclipse.jface.text.IPositionUpdater#update(org.eclipse.jface.text.DocumentEvent)
 	 */
+	@Override
 	public void update(DocumentEvent event) {
         String text = event.getText();
         int insertLen = text != null ? text.length() : 0;

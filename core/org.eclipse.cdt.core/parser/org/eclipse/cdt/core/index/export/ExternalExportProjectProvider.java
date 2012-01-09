@@ -74,6 +74,7 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.core.index.export.IProjectForExportManager#createProject(java.util.Map)
 	 */
+	@Override
 	public ICProject createProject() throws CoreException {
 		// -source
 		File source= new File(getSingleString(OPT_SOURCE));
@@ -115,6 +116,7 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 		final ICProject newProject[] = new ICProject[1];
 
 		ws.run(new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				IWorkspace workspace= ResourcesPlugin.getWorkspace();
 				IProject project= workspace.getRoot().getProject("__prebuilt_index_temp__" + System.currentTimeMillis()); //$NON-NLS-1$
@@ -181,6 +183,7 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 	/*
 	 * @see org.eclipse.cdt.core.index.export.IExportProjectProvider#getLocationConverter(org.eclipse.cdt.core.model.ICProject)
 	 */
+	@Override
 	public IIndexLocationConverter getLocationConverter(final ICProject cproject) {
 		return new ResourceContainerRelativeLocationConverter(content);
 	}
@@ -188,6 +191,7 @@ public class ExternalExportProjectProvider extends AbstractExportProjectProvider
 	/*
 	 * @see org.eclipse.cdt.core.index.export.IExportProjectProvider#getExportProperties()
 	 */
+	@Override
 	public Map<String, String> getExportProperties() {
 		Map<String, String> properties= new HashMap<String, String>();
 		Date now= Calendar.getInstance().getTime();

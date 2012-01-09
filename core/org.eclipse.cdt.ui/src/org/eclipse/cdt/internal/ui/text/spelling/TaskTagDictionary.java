@@ -53,6 +53,7 @@ public class TaskTagDictionary extends AbstractSpellDictionary implements IPrope
 	/*
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (CCorePreferenceConstants.TODO_TASK_TAGS.equals(event.getProperty()))
 			updateTaskTags();

@@ -119,11 +119,13 @@ public class IBLabelProvider extends LabelProvider implements IColorProvider {
         return result;
     }
 
-    public Color getBackground(Object element) {
+    @Override
+	public Color getBackground(Object element) {
         return null;
     }
 
-    public Color getForeground(Object element) {
+    @Override
+	public Color getForeground(Object element) {
         if (element instanceof IBNode) {
             IBNode node= (IBNode) element;
             if (!node.isActiveCode()) {

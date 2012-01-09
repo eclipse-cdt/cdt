@@ -49,13 +49,20 @@ public class MultiMacroExpansionExplorer extends MacroExpansionExplorer {
 			fOffset= offset;
 			fLength= length;
 		}
+		@Override
 		public int getNodeOffset() { return fOffset; }
+		@Override
 		public int getNodeLength() { return fLength; }
+		@Override
 		public String getFileName() { return fFilePath; }
 
+		@Override
 		public int getStartingLineNumber() { return 0; }
+		@Override
 		public int getEndingLineNumber() { return 0; }
+		@Override
 		public IASTFileLocation asFileLocation() { return this; }
+		@Override
 		public IASTPreprocessorIncludeStatement getContextInclusionStatement() { return null; }
 	}
 

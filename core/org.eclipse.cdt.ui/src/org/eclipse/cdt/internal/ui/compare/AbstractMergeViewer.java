@@ -80,6 +80,7 @@ abstract class AbstractMergeViewer extends TextMergeViewer {
 		if (fPreferenceStore == null) {
 			fPreferenceStore= CUIPlugin.getDefault().getCombinedPreferenceStore();
 			fPreferenceChangeListener= new IPropertyChangeListener() {
+				@Override
 				public void propertyChange(PropertyChangeEvent event) {
 					handlePropertyChange(event);
 				}

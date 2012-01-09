@@ -263,6 +263,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	 * Listen to cursor position changes.
 	 */
 	private final class SelectionListener implements ISelectionChangedListener {
+		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			ISelection s= event.getSelection();
 			if (s instanceof ITextSelection) {
@@ -281,6 +282,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		/*
 		 * @see org.eclipse.cdt.internal.ui.text.ICReconcilingListener#aboutToBeReconciled()
 		 */
+		@Override
 		public void aboutToBeReconciled() {
 			
 		}
@@ -288,6 +290,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		/*
 		 * @see org.eclipse.cdt.internal.ui.text.ICReconcilingListener#reconciled(IASTTranslationUnit, boolean, IProgressMonitor)
 		 */
+		@Override
 		public void reconciled(IASTTranslationUnit ast, boolean force, IProgressMonitor progressMonitor) {
 			if (fInput == null || progressMonitor.isCanceled()) {
 				return;
@@ -578,6 +581,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		/*
 		 * @see org.eclipse.jface.text.source.projection.IProjectionPosition#computeFoldingRegions(org.eclipse.jface.text.IDocument)
 		 */
+		@Override
 		public IRegion[] computeProjectionRegions(IDocument document) throws BadLocationException {
 			DocumentCharacterIterator sequence= new DocumentCharacterIterator(document, offset, offset + length);
 			int prefixEnd= 0;
@@ -636,6 +640,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		/*
 		 * @see org.eclipse.jface.text.source.projection.IProjectionPosition#computeCaptionOffset(org.eclipse.jface.text.IDocument)
 		 */
+		@Override
 		public int computeCaptionOffset(IDocument document) {
 			DocumentCharacterIterator sequence= new DocumentCharacterIterator(document, offset, offset + length);
 			return findFirstContent(sequence, 0);
@@ -665,6 +670,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		/*
 		 * @see org.eclipse.jface.text.source.projection.IProjectionPosition#computeFoldingRegions(org.eclipse.jface.text.IDocument)
 		 */
+		@Override
 		public IRegion[] computeProjectionRegions(IDocument document) throws BadLocationException {
 			int captionOffset= offset;
 			try {
@@ -726,6 +732,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		/*
 		 * @see org.eclipse.jface.text.source.projection.IProjectionPosition#computeCaptionOffset(org.eclipse.jface.text.IDocument)
 		 */
+		@Override
 		public int computeCaptionOffset(IDocument document) throws BadLocationException {
 			int captionOffset= offset;
 			try {
@@ -778,6 +785,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		/*
 		 * @see org.eclipse.jface.text.source.projection.IProjectionListener#projectionEnabled()
 		 */
+		@Override
 		public void projectionEnabled() {
 			handleProjectionEnabled();
 		}
@@ -785,6 +793,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		/*
 		 * @see org.eclipse.jface.text.source.projection.IProjectionListener#projectionDisabled()
 		 */
+		@Override
 		public void projectionDisabled() {
 			handleProjectionDisabled();
 		}
@@ -876,6 +885,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	/*
 	 * @see org.eclipse.cdt.ui.text.folding.ICFoldingStructureProvider#install(org.eclipse.ui.texteditor.ITextEditor, org.eclipse.jface.text.source.projection.ProjectionViewer)
 	 */
+	@Override
 	public void install(ITextEditor editor, ProjectionViewer viewer) {
 		Assert.isLegal(editor != null);
 		Assert.isLegal(viewer != null);
@@ -891,6 +901,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	/*
 	 * @see org.eclipse.cdt.ui.text.folding.ICFoldingStructureProvider#uninstall()
 	 */
+	@Override
 	public void uninstall() {
 		internalUninstall();
 	}
@@ -966,6 +977,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	/*
 	 * @see org.eclipse.cdt.ui.text.folding.ICFoldingStructureProvider#initialize()
 	 */
+	@Override
 	public final void initialize() {
 		if (DEBUG) System.out.println("DefaultCFoldingStructureProvider.initialize()"); //$NON-NLS-1$
 		fInitialReconcilePending= true;
@@ -1240,6 +1252,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		}
 
 		Comparator<Tuple> comparator= new Comparator<Tuple>() {
+			@Override
 			public int compare(Tuple t1, Tuple t2) {
 				return t1.position.getOffset() - t2.position.getOffset();
 			}
@@ -1271,6 +1284,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 				final WAIT_FLAG waitFlag= ASTProvider.WAIT_ACTIVE_ONLY;
 				final ASTProvider astProvider= CUIPlugin.getDefault().getASTProvider();
 				IStatus status= astProvider.runOnAST(getInputElement(), waitFlag, null, new ASTCache.ASTRunnable() {
+					@Override
 					public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
 						if (ast != null) {
 							ctx.fAST= ast;

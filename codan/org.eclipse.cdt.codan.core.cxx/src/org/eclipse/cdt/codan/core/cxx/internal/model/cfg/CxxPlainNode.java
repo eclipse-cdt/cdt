@@ -35,6 +35,7 @@ public class CxxPlainNode extends PlainNode {
 	/**
 	 * @return
 	 */
+	@Override
 	public String toStringData() {
 		if (getNode() == null)
 			return ""; //$NON-NLS-1$

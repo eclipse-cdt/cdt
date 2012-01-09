@@ -44,10 +44,12 @@ public class CPPASTWhileStatement extends ASTNode
 		setBody(body);
 	}
 
-    public CPPASTWhileStatement copy() {
+    @Override
+	public CPPASTWhileStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
     
+	@Override
 	public CPPASTWhileStatement copy(CopyStyle style) {
 		CPPASTWhileStatement copy = new CPPASTWhileStatement();
 		copy.setConditionDeclaration(condition2 == null ? null : condition2.copy(style));
@@ -60,11 +62,13 @@ public class CPPASTWhileStatement extends ASTNode
 		return copy;
 	}
 
+	@Override
 	public IASTExpression getCondition() {
         return condition;
     }
 
-    public void setCondition(IASTExpression condition) {
+    @Override
+	public void setCondition(IASTExpression condition) {
         assertNotFrozen();
         this.condition = condition;
         if (condition != null) {
@@ -74,11 +78,13 @@ public class CPPASTWhileStatement extends ASTNode
 		}
     }
 
-    public IASTStatement getBody() {
+    @Override
+	public IASTStatement getBody() {
         return body;
     }
 
-    public void setBody(IASTStatement body) {
+    @Override
+	public void setBody(IASTStatement body) {
         assertNotFrozen();
         this.body = body;
         if (body != null) {
@@ -87,10 +93,12 @@ public class CPPASTWhileStatement extends ASTNode
 		}
     }
 
+	@Override
 	public IASTDeclaration getConditionDeclaration() {
 		return condition2;
 	}
 
+	@Override
 	public void setConditionDeclaration(IASTDeclaration declaration) {
         assertNotFrozen();
 		condition2 = declaration;
@@ -124,6 +132,7 @@ public class CPPASTWhileStatement extends ASTNode
         return true;
     }
     
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
 		if (body == child) {
 			other.setPropertyInParent(child.getPropertyInParent());
@@ -139,6 +148,7 @@ public class CPPASTWhileStatement extends ASTNode
 		}
 	}
 
+	@Override
 	public IScope getScope() {
 		if (scope == null)
             scope = new CPPBlockScope(this);

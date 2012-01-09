@@ -32,6 +32,7 @@ public class IndexerStateEvent implements IIndexerStateEvent {
 		fState= state;
 	}
 
+	@Override
 	public boolean indexerIsIdle() {
 		return fState == STATE_IDLE;
 	}

@@ -46,6 +46,7 @@ public interface IQualifiedTypeName extends Comparable<IQualifiedTypeName> {
 	
 	public boolean equals(IQualifiedTypeName typeName);
 	public boolean equalsIgnoreCase(IQualifiedTypeName typeName);
+	@Override
 	public int compareTo(IQualifiedTypeName typeName);
 	public int compareToIgnoreCase(IQualifiedTypeName typeName);
 }

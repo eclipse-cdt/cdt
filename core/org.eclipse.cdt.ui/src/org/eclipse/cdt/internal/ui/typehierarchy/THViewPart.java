@@ -197,7 +197,8 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
         fPagebook.setFocus();
     }
 
-    public void setMessage(String msg) {
+    @Override
+	public void setMessage(String msg) {
         fInfoText.setText(msg);
         fPagebook.showPage(fInfoText);
         fShowsMessage= true;
@@ -368,7 +369,8 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
     	MenuManager manager = new MenuManager();
     	manager.setRemoveAllWhenShown(true);
     	manager.addMenuListener(new IMenuListener() {
-    		public void menuAboutToShow(IMenuManager m) {
+    		@Override
+			public void menuAboutToShow(IMenuManager m) {
     			onContextMenuAboutToShow(m, true);
     		}
     	});
@@ -379,7 +381,8 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
     	manager = new MenuManager();
     	manager.setRemoveAllWhenShown(true);
     	manager.addMenuListener(new IMenuListener() {
-    		public void menuAboutToShow(IMenuManager m) {
+    		@Override
+			public void menuAboutToShow(IMenuManager m) {
     			onContextMenuAboutToShow(m, false);
     		}
     	});
@@ -428,8 +431,10 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 		fSplitter= new SashForm(fPagebook, SWT.VERTICAL);
 		fSplitter.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fSplitter.addControlListener(new ControlListener() {
+			@Override
 			public void controlMoved(ControlEvent e) {
 			}
+			@Override
 			public void controlResized(ControlEvent e) {
 				if (fAutomaticOrientation.isChecked()) {
 					setOrientation(ORIENTATION_AUTOMATIC);
@@ -456,11 +461,13 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 		fMemberViewer.setContentProvider(new THMemberContentProvider());
 		fMemberViewer.setLabelProvider(new DecoratingCLabelProvider(fMemberLabelProvider, true));
 		fMemberViewer.addOpenListener(new IOpenListener() {
+			@Override
 			public void open(OpenEvent event) {
 				onOpenElement(event.getSelection());
 			}
 		});
     	fMemberViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(final SelectionChangedEvent event) {
 				onMemberSelectionChanged(event);
 			}
@@ -528,12 +535,14 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
     	fHierarchyTreeViewer.setSorter(new ViewerSorter());
     	fHierarchyTreeViewer.setUseHashlookup(true);
     	fHierarchyTreeViewer.addOpenListener(new IOpenListener() {
+			@Override
 			public void open(OpenEvent event) {
 				onOpenElement(event.getSelection());
 			}
 		});
 
     	fHierarchyTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(final SelectionChangedEvent event) {
 				onHierarchySelectionChanged(event);
 			}
@@ -1113,6 +1122,7 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 		return ORIENTATION_HORIZONTAL;
 	}
 
+	@Override
 	public void onEvent(int event) {
 		switch (event) {
 		case THHierarchyModel.END_OF_COMPUTATION:
@@ -1121,6 +1131,7 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 		}		
 	}
 
+	@Override
 	public IWorkbenchSiteProgressService getProgressService() {
 		return (IWorkbenchSiteProgressService) getSite().getAdapter(IWorkbenchSiteProgressService.class);	
 	}

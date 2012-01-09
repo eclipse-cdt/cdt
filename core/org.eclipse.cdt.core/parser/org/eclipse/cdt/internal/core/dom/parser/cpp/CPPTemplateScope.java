@@ -27,14 +27,17 @@ public class CPPTemplateScope extends CPPScope implements ICPPTemplateScope {
 		super(physicalNode);
 	}
 
+	@Override
 	public EScopeKind getKind() {
 		return EScopeKind.eTemplateDeclaration;
 	}
 
+	@Override
 	public ICPPTemplateDefinition getTemplateDefinition() {
 		return null;
 	}
 	
+	@Override
 	public ICPPASTTemplateDeclaration getTemplateDeclaration() {
 		return (ICPPASTTemplateDeclaration) getPhysicalNode();
 	}

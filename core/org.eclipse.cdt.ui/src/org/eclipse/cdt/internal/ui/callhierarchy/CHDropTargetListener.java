@@ -36,7 +36,8 @@ public class CHDropTargetListener implements DropTargetListener {
     	fEnabled= val;
     }
     
-    public void dragEnter(DropTargetEvent event) {
+    @Override
+	public void dragEnter(DropTargetEvent event) {
     	fInput= null;
         checkOperation(event);
         if (event.detail != DND.DROP_NONE) {
@@ -69,17 +70,21 @@ public class CHDropTargetListener implements DropTargetListener {
 		return null;
 	}
 
-    public void dragLeave(DropTargetEvent event) {
+    @Override
+	public void dragLeave(DropTargetEvent event) {
     }
 
-    public void dragOperationChanged(DropTargetEvent event) {
+    @Override
+	public void dragOperationChanged(DropTargetEvent event) {
         checkOperation(event);
     }
 
-    public void dragOver(DropTargetEvent event) {
+    @Override
+	public void dragOver(DropTargetEvent event) {
     }
 
-    public void drop(DropTargetEvent event) {
+    @Override
+	public void drop(DropTargetEvent event) {
     	if (fInput == null) {
             Display.getCurrent().beep();
         } else {
@@ -87,7 +92,8 @@ public class CHDropTargetListener implements DropTargetListener {
         }
     }
 
-    public void dropAccept(DropTargetEvent event) {
+    @Override
+	public void dropAccept(DropTargetEvent event) {
     }
     
     private void checkOperation(DropTargetEvent event) {

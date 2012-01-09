@@ -45,7 +45,8 @@ public class CPPFunctionType implements ICPPFunctionType, ISerializableType {
         this.takesVarargs= takesVarargs;
     }
 
-    public boolean isSameType(IType o) {
+    @Override
+	public boolean isSameType(IType o) {
         if (o instanceof ITypedef)
             return o.isSameType(this);
         if (o instanceof ICPPFunctionType) {
@@ -82,14 +83,16 @@ public class CPPFunctionType implements ICPPFunctionType, ISerializableType {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IFunctionType#getReturnType()
      */
-    public IType getReturnType() {
+    @Override
+	public IType getReturnType() {
         return returnType;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IFunctionType#getParameterTypes()
      */
-    public IType[] getParameterTypes() {
+    @Override
+	public IType[] getParameterTypes() {
         return parameters;
     }
 
@@ -104,19 +107,23 @@ public class CPPFunctionType implements ICPPFunctionType, ISerializableType {
         return t;
     }
 
-    @Deprecated
+    @Override
+	@Deprecated
     public IPointerType getThisType() {
         return null;
     }
 
+	@Override
 	public final boolean isConst() {
 		return isConst;
 	}
 
+	@Override
 	public final boolean isVolatile() {
 		return isVolatile;
 	}
 
+	@Override
 	public boolean takesVarArgs() {
 		return takesVarargs;
 	}
@@ -126,6 +133,7 @@ public class CPPFunctionType implements ICPPFunctionType, ISerializableType {
 		return ASTTypeUtil.getType(this);
 	}
 
+	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
 		int firstByte= ITypeMarshalBuffer.FUNCTION_TYPE;
 		if (isConst()) firstByte |= ITypeMarshalBuffer.FLAG1;

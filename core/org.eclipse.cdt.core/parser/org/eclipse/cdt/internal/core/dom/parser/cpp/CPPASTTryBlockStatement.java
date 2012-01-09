@@ -33,10 +33,12 @@ public class CPPASTTryBlockStatement extends ASTNode implements ICPPASTTryBlockS
 		setTryBody(tryBody);
 	}
 
+	@Override
 	public CPPASTTryBlockStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CPPASTTryBlockStatement copy(CopyStyle style) {
 		CPPASTTryBlockStatement copy = new CPPASTTryBlockStatement(tryBody == null ? null
 				: tryBody.copy(style));
@@ -49,19 +51,21 @@ public class CPPASTTryBlockStatement extends ASTNode implements ICPPASTTryBlockS
 		return copy;
 	}
 
+	@Override
 	public void addCatchHandler(ICPPASTCatchHandler statement) {
         assertNotFrozen();
     	if (statement != null) {
-    		catchHandlers = (ICPPASTCatchHandler[]) ArrayUtil.append( ICPPASTCatchHandler.class, catchHandlers, ++catchHandlersPos, statement );
+    		catchHandlers = ArrayUtil.appendAt( ICPPASTCatchHandler.class, catchHandlers, ++catchHandlersPos, statement );
     		statement.setParent(this);
 			statement.setPropertyInParent(CATCH_HANDLER);
     	}
     }
 
 
-    public ICPPASTCatchHandler[] getCatchHandlers() {
+    @Override
+	public ICPPASTCatchHandler[] getCatchHandlers() {
         if( catchHandlers == null ) return ICPPASTCatchHandler.EMPTY_CATCHHANDLER_ARRAY;
-        catchHandlers = (ICPPASTCatchHandler[]) ArrayUtil.removeNullsAfter( ICPPASTCatchHandler.class, catchHandlers, catchHandlersPos );
+        catchHandlers = ArrayUtil.trimAt( ICPPASTCatchHandler.class, catchHandlers, catchHandlersPos );
         return catchHandlers;
     }
 
@@ -70,7 +74,8 @@ public class CPPASTTryBlockStatement extends ASTNode implements ICPPASTTryBlockS
     private int catchHandlersPos=-1;
     private IASTStatement tryBody;
 
-    public void setTryBody(IASTStatement tryBlock) {
+    @Override
+	public void setTryBody(IASTStatement tryBlock) {
         assertNotFrozen();
         tryBody = tryBlock;
         if (tryBlock != null) {
@@ -80,7 +85,8 @@ public class CPPASTTryBlockStatement extends ASTNode implements ICPPASTTryBlockS
     }
 
  
-    public IASTStatement getTryBody() {
+    @Override
+	public IASTStatement getTryBody() {
         return tryBody;
     }
 
@@ -110,7 +116,8 @@ public class CPPASTTryBlockStatement extends ASTNode implements ICPPASTTryBlockS
         return true;
     }
 
-    public void replace(IASTNode child, IASTNode other) {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
         if( tryBody == child )
         {
             other.setPropertyInParent( child.getPropertyInParent() );

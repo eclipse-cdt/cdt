@@ -32,10 +32,12 @@ public class CASTTypeId extends ASTNode implements IASTTypeId {
 		setAbstractDeclarator(declarator);
 	}
 	
+	@Override
 	public CASTTypeId copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CASTTypeId copy(CopyStyle style) {
 		CASTTypeId copy = new CASTTypeId();
 		copy.setDeclSpecifier(declSpecifier == null ? null : declSpecifier.copy(style));
@@ -47,11 +49,13 @@ public class CASTTypeId extends ASTNode implements IASTTypeId {
 		return copy;
 	}
 
+	@Override
 	public IASTDeclSpecifier getDeclSpecifier() {
         return declSpecifier;
     }
 
-    public void setDeclSpecifier(IASTDeclSpecifier declSpec) {
+    @Override
+	public void setDeclSpecifier(IASTDeclSpecifier declSpec) {
         assertNotFrozen();
         this.declSpecifier = declSpec;
         if (declSpec != null) {
@@ -60,11 +64,13 @@ public class CASTTypeId extends ASTNode implements IASTTypeId {
 		}
     }
 
-    public IASTDeclarator getAbstractDeclarator() {
+    @Override
+	public IASTDeclarator getAbstractDeclarator() {
         return declarator;
     }
 
-    public void setAbstractDeclarator(IASTDeclarator abstractDeclarator) {
+    @Override
+	public void setAbstractDeclarator(IASTDeclarator abstractDeclarator) {
         assertNotFrozen();
         declarator = abstractDeclarator;
         if (abstractDeclarator != null) {

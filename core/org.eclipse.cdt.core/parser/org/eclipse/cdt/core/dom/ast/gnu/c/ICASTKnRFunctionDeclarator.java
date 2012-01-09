@@ -78,10 +78,12 @@ public interface ICASTKnRFunctionDeclarator extends IASTFunctionDeclarator {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICASTKnRFunctionDeclarator copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICASTKnRFunctionDeclarator copy(CopyStyle style);
 }

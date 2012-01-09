@@ -2289,9 +2289,9 @@ public class CPPVisitor extends ASTQueries {
 		    	continue;
 		    }
 		
-		    ns = (String[]) ArrayUtil.append(String.class, ns, n);
+		    ns = ArrayUtil.append(String.class, ns, n);
 		}
-        ns = (String[]) ArrayUtil.trim(String.class, ns);
+        ns = ArrayUtil.trim(String.class, ns);
         String[] result = new String[ns.length + 1];
         for (int i = ns.length - 1; i >= 0; i--) {
             result[ns.length - i - 1] = ns[i];
@@ -2311,10 +2311,10 @@ public class CPPVisitor extends ASTQueries {
 		    if (owner instanceof ICPPNamespace && n.length == 0)
 		    	continue;
 		
-		    ns = (char[][]) ArrayUtil.append(n.getClass(), ns, n);
+		    ns = ArrayUtil.append(n.getClass(), ns, n);
 		}
         final char[] bname = binding.getNameCharArray();
-        ns = (char[][]) ArrayUtil.trim(bname.getClass(), ns);
+        ns = ArrayUtil.trim(bname.getClass(), ns);
         char[][] result = new char[ns.length + 1][];
         for (int i = ns.length - 1; i >= 0; i--) {
             result[ns.length - i - 1] = ns[i];

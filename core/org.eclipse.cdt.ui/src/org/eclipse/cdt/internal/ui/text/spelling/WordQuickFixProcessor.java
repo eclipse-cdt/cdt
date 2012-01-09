@@ -42,6 +42,7 @@ public class WordQuickFixProcessor implements IQuickFixProcessor {
 	/*
 	 * @see org.eclipse.cdt.ui.text.java.IQuickFixProcessor#getCorrections(org.eclipse.cdt.ui.text.java.ContentAssistInvocationContext,org.eclipse.cdt.ui.text.java.IProblemLocation[])
 	 */
+	@Override
 	public ICCompletionProposal[] getCorrections(IInvocationContext context, IProblemLocation[] locations) throws CoreException {
 		final int threshold= SpellingPreferences.spellingProposalThreshold();
 
@@ -107,6 +108,7 @@ public class WordQuickFixProcessor implements IQuickFixProcessor {
 	/*
 	 * @see org.eclipse.cdt.ui.text.java.IQuickFixProcessor#hasCorrections(org.eclipse.cdt.core.ICompilationUnit,int)
 	 */
+	@Override
 	public final boolean hasCorrections(ITranslationUnit unit, int id) {
 		return id == CSpellingReconcileStrategy.SPELLING_PROBLEM_ID;
 	}

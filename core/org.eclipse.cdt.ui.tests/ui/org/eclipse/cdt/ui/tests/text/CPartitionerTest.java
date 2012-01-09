@@ -58,6 +58,7 @@ public class CPartitionerTest extends TestCase {
 
 		fDocumentPartitioningChanged= false;
 		fDocument.addDocumentPartitioningListener(new IDocumentPartitioningListener() {
+			@Override
 			public void documentPartitioningChanged(IDocument document) {
 				fDocumentPartitioningChanged= true;
 			}

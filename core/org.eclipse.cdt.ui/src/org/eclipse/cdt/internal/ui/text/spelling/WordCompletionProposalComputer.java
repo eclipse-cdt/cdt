@@ -46,6 +46,7 @@ public final class WordCompletionProposalComputer implements ICompletionProposal
 	/*
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalComputer#computeCompletionProposals(org.eclipse.jface.text.contentassist.TextContentAssistInvocationContext, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public List<ICompletionProposal> computeCompletionProposals(ContentAssistInvocationContext context, IProgressMonitor monitor) {
 		if (contributes()) {
 			try {
@@ -106,6 +107,7 @@ public final class WordCompletionProposalComputer implements ICompletionProposal
 	/*
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalComputer#computeContextInformation(org.eclipse.jface.text.contentassist.TextContentAssistInvocationContext, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public List<IContextInformation> computeContextInformation(ContentAssistInvocationContext context, IProgressMonitor monitor) {
 		return Collections.emptyList();
 	}
@@ -113,6 +115,7 @@ public final class WordCompletionProposalComputer implements ICompletionProposal
 	/*
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalComputer#getErrorMessage()
 	 */
+	@Override
 	public String getErrorMessage() {
 		return null; // no error message available
 	}
@@ -120,12 +123,14 @@ public final class WordCompletionProposalComputer implements ICompletionProposal
 	/*
 	 * @see org.eclipse.cdt.ui.text.java.IJavaCompletionProposalComputer#sessionStarted()
 	 */
+	@Override
 	public void sessionStarted() {
 	}
 
 	/*
 	 * @see org.eclipse.cdt.ui.text.java.IJavaCompletionProposalComputer#sessionEnded()
 	 */
+	@Override
 	public void sessionEnded() {
 	}
 }

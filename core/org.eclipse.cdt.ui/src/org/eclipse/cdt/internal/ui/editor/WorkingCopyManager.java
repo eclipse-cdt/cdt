@@ -55,6 +55,7 @@ public class WorkingCopyManager implements IWorkingCopyManager, IWorkingCopyMana
 	/*
 	 * @see org.eclipse.cdt.ui.IWorkingCopyManager#connect(org.eclipse.ui.IEditorInput)
 	 */
+	@Override
 	public void connect(IEditorInput input) throws CoreException {
 		fDocumentProvider.connect(input);
 	}
@@ -62,6 +63,7 @@ public class WorkingCopyManager implements IWorkingCopyManager, IWorkingCopyMana
 	/*
 	 * @see org.eclipse.cdt.ui.IWorkingCopyManager#disconnect(org.eclipse.ui.IEditorInput)
 	 */
+	@Override
 	public void disconnect(IEditorInput input) {
 		fDocumentProvider.disconnect(input);
 	}
@@ -69,6 +71,7 @@ public class WorkingCopyManager implements IWorkingCopyManager, IWorkingCopyMana
 	/*
 	 * @see org.eclipse.cdt.ui.IWorkingCopyManager#shutdown()
 	 */
+	@Override
 	public void shutdown() {
 		if (!fIsShuttingDown) {
 			fIsShuttingDown= true;
@@ -87,6 +90,7 @@ public class WorkingCopyManager implements IWorkingCopyManager, IWorkingCopyMana
 	/*
 	 * @see org.eclipse.cdt.ui.IWorkingCopyManager#getWorkingCopy(org.eclipse.ui.IEditorInput)
 	 */
+	@Override
 	public IWorkingCopy getWorkingCopy(IEditorInput input) {
 		IWorkingCopy unit= fMap == null ? null : fMap.get(input);
 		return unit != null ? unit : fDocumentProvider.getWorkingCopy(input);
@@ -95,6 +99,7 @@ public class WorkingCopyManager implements IWorkingCopyManager, IWorkingCopyMana
 	/*
 	 * @see org.eclipse.cdt.internal.ui.editor.IWorkingCopyManagerExtension#setWorkingCopy(org.eclipse.ui.IEditorInput, org.eclipse.cdt.core.model.ITranslationUnit)
 	 */
+	@Override
 	public void setWorkingCopy(IEditorInput input, IWorkingCopy workingCopy) {
 		if (fDocumentProvider.getDocument(input) != null) {
 			if (fMap == null)
@@ -106,6 +111,7 @@ public class WorkingCopyManager implements IWorkingCopyManager, IWorkingCopyMana
 	/*
 	 * @see org.eclipse.cdt.internal.ui.editor.IWorkingCopyManagerExtension#removeWorkingCopy(org.eclipse.ui.IEditorInput)
 	 */
+	@Override
 	public void removeWorkingCopy(IEditorInput input) {
 		fMap.remove(input);
 		if (fMap.isEmpty())
@@ -122,14 +128,17 @@ public class WorkingCopyManager implements IWorkingCopyManager, IWorkingCopyMana
 		return fBufferFactory;
 	}
 
+	@Override
 	public IWorkingCopy findSharedWorkingCopy(ITranslationUnit tu) {
 		return CModelManager.getDefault().findSharedWorkingCopy(getBufferFactory(), tu);
 	}
 
+	@Override
 	public IWorkingCopy[] getSharedWorkingCopies() {
 		return CModelManager.getDefault().getSharedWorkingCopies(getBufferFactory());
 	}
 
+	@Override
 	public IWorkingCopy getSharedWorkingCopy(ITranslationUnit original, IProblemRequestor requestor,
 			IProgressMonitor progressMonitor) throws CModelException {
 		return CModelManager.getDefault().getSharedWorkingCopy(getBufferFactory(), original, requestor, progressMonitor);

@@ -83,11 +83,13 @@ public interface IASTFieldReference extends IASTExpression, IASTNameOwner {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IASTFieldReference copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public IASTFieldReference copy(CopyStyle style);
 
 }

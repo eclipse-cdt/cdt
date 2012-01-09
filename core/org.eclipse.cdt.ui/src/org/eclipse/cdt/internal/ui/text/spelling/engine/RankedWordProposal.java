@@ -36,6 +36,7 @@ public class RankedWordProposal implements Comparable<RankedWordProposal> {
 	/*
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
+	@Override
 	public final int compareTo(RankedWordProposal word) {
 
 		final int rank= word.getRank();

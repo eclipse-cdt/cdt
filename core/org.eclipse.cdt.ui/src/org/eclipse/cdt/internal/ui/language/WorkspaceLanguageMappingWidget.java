@@ -93,6 +93,7 @@ public class WorkspaceLanguageMappingWidget extends LanguageMappingWidget {
 			addButton.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 			addButton.setText(PreferencesMessages.ProjectLanguagesPropertyPage_addMappingButton);
 			addButton.addListener(SWT.Selection, new Listener() {
+				@Override
 				public void handleEvent(Event event) {
 					WorkspaceContentTypeMappingDialog dialog = new WorkspaceContentTypeMappingDialog(fContents.getShell());
 					dialog.setContentTypeFilter(fContentTypeMappings.keySet());
@@ -115,6 +116,7 @@ public class WorkspaceLanguageMappingWidget extends LanguageMappingWidget {
 			removeButton.setText(PreferencesMessages.ProjectLanguagesPropertyPage_removeMappingButton);
 			removeButton.addListener(SWT.Selection, new Listener() {
 	
+				@Override
 				public void handleEvent(Event event) {
 					TableItem[] selection = fTable.getSelection();
 	

@@ -118,6 +118,7 @@ public class TypeHierarchyUI {
 							final ICElement[] elems= findInput(project, editorInput, reg);
 							if (elems != null && elems.length == 2) {
 								display.asyncExec(new Runnable() {
+									@Override
 									public void run() {
 										openInViewPart(editor.getSite().getWorkbenchWindow(), elems[0], elems[1]);
 									}});

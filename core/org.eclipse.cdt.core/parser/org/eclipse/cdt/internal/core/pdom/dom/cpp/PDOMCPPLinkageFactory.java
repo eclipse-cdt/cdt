@@ -22,10 +22,12 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class PDOMCPPLinkageFactory implements IPDOMLinkageFactory {
 
+	@Override
 	public PDOMLinkage getLinkage(PDOM pdom, long record) {
 		return new PDOMCPPLinkage(pdom, record);
 	}
 
+	@Override
 	public PDOMLinkage createLinkage(PDOM pdom) throws CoreException {
 		return new PDOMCPPLinkage(pdom);
 	}

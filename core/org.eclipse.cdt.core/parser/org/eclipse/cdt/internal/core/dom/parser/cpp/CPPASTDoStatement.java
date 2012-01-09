@@ -35,10 +35,12 @@ public class CPPASTDoStatement extends ASTNode implements IASTDoStatement, IASTA
 		setCondition(condition);
 	}
 
+	@Override
 	public CPPASTDoStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CPPASTDoStatement copy(CopyStyle style) {
 		CPPASTDoStatement copy = new CPPASTDoStatement();
 		copy.setBody(body == null ? null : body.copy(style));
@@ -50,11 +52,13 @@ public class CPPASTDoStatement extends ASTNode implements IASTDoStatement, IASTA
 		return copy;
 	}
 
+	@Override
 	public IASTStatement getBody() {
         return body;
     }
 
-    public void setBody(IASTStatement body) {
+    @Override
+	public void setBody(IASTStatement body) {
         assertNotFrozen();
         this.body = body;
         if (body != null) {
@@ -63,11 +67,13 @@ public class CPPASTDoStatement extends ASTNode implements IASTDoStatement, IASTA
 		}
     }
 
-    public IASTExpression getCondition() {
+    @Override
+	public IASTExpression getCondition() {
         return condition;
     }
 
-    public void setCondition(IASTExpression condition) {
+    @Override
+	public void setCondition(IASTExpression condition) {
         assertNotFrozen();
         this.condition = condition;
         if (condition != null) {
@@ -97,7 +103,8 @@ public class CPPASTDoStatement extends ASTNode implements IASTDoStatement, IASTA
         return true;
     }
     
-    public void replace(IASTNode child, IASTNode other) {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
         if( body == child )
         {
             other.setPropertyInParent( body.getPropertyInParent() );

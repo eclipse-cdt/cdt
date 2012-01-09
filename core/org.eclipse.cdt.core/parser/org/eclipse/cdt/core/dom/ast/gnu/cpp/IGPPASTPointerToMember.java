@@ -21,5 +21,6 @@ public interface IGPPASTPointerToMember extends IGPPASTPointer, ICPPASTPointerTo
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IGPPASTPointerToMember copy();
 }

@@ -20,6 +20,7 @@ import java.util.List;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
@@ -57,6 +58,7 @@ public class ProjectSettingsExportStrategy implements IProjectSettingsWizardPage
 	
 	
 	
+	@Override
 	public String getMessage(MessageType type) {
 		switch(type) {
 		case TITLE:    return Messages.ProjectSettingsWizardPage_Export_title;
@@ -69,11 +71,13 @@ public class ProjectSettingsExportStrategy implements IProjectSettingsWizardPage
 	}
 	
 
+	@Override
 	public void pageCreated(IProjectSettingsWizardPage page) {
 		// do nothing
 	}
 
 	
+	@Override
 	public void fileSelected(IProjectSettingsWizardPage page) {
 		// do nothing
 	}
@@ -91,8 +95,9 @@ public class ProjectSettingsExportStrategy implements IProjectSettingsWizardPage
 	/**
 	 * Exports the selected project settings to an XML file.
 	 */
+	@Override
 	public boolean finish(IProjectSettingsWizardPage page) {
-		SAXTransformerFactory factory = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
+		SAXTransformerFactory factory = (SAXTransformerFactory) TransformerFactory.newInstance();
 		TransformerHandler handler = null;
 		try {
 			handler = factory.newTransformerHandler();

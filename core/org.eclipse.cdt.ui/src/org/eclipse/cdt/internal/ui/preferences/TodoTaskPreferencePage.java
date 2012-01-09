@@ -81,7 +81,7 @@ public class TodoTaskPreferencePage extends PropertyAndPreferencePage {
 	 * @see org.eclipse.cdt.internal.ui.preferences.PropertyAndPreferencePage#getPreferencePageID()
 	 */
 	@Override
-	protected String getPreferencePageID() {
+	protected String getPreferencePageId() {
 		return PREF_ID;
 	}
 	
@@ -89,7 +89,7 @@ public class TodoTaskPreferencePage extends PropertyAndPreferencePage {
 	 * @see org.eclipse.cdt.internal.ui.preferences.PropertyAndPreferencePage#getPropertyPageID()
 	 */
 	@Override
-	protected String getPropertyPageID() {
+	protected String getPropertyPageId() {
 	//  TODO: Project specific settings are not supported yet.
 //		return PROP_ID;
 		return null;

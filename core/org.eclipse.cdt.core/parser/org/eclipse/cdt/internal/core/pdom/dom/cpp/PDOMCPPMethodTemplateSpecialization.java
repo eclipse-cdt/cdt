@@ -42,6 +42,7 @@ class PDOMCPPMethodTemplateSpecialization extends
 		return IIndexCPPBindingConstants.CPP_METHOD_TEMPLATE_SPECIALIZATION;
 	}
 	
+	@Override
 	public boolean isDestructor() {
 		IBinding spec = getSpecializedBinding();
 		if (spec instanceof ICPPMethod) {
@@ -50,6 +51,7 @@ class PDOMCPPMethodTemplateSpecialization extends
 		return false;
 	}
 
+	@Override
 	public boolean isImplicit() {
 		IBinding spec = getSpecializedBinding();
 		if (spec instanceof ICPPMethod) {
@@ -58,6 +60,7 @@ class PDOMCPPMethodTemplateSpecialization extends
 		return false;
 	}
 	
+	@Override
 	public boolean isExplicit() {
 		IBinding spec = getSpecializedBinding();
 		if (spec instanceof ICPPMethod) {
@@ -66,6 +69,7 @@ class PDOMCPPMethodTemplateSpecialization extends
 		return false;
 	}
 
+	@Override
 	public boolean isVirtual() {
 		IBinding spec = getSpecializedBinding();
 		if (spec instanceof ICPPMethod) {
@@ -74,10 +78,12 @@ class PDOMCPPMethodTemplateSpecialization extends
 		return false;
 	}
 
+	@Override
 	public ICPPClassType getClassOwner() {
 		return (ICPPClassType) getOwner();
 	}
 
+	@Override
 	public int getVisibility() {
 		IBinding spec = getSpecializedBinding();
 		if (spec instanceof ICPPMethod) {
@@ -91,6 +97,7 @@ class PDOMCPPMethodTemplateSpecialization extends
 		return false;
 	}
 
+	@Override
 	public boolean isPureVirtual() {
 		return false;
 	}

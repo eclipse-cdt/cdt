@@ -51,6 +51,7 @@ public class ProblemMarkerManager implements IResourceChangeListener, IAnnotatio
 			fChangedElements = changedElements;
 		}
 
+		@Override
 		public boolean visit(IResourceDelta delta) throws CoreException {
 			IResource res = delta.getResource();
 			if (res instanceof IProject && delta.getKind() == IResourceDelta.CHANGED) {
@@ -103,6 +104,7 @@ public class ProblemMarkerManager implements IResourceChangeListener, IAnnotatio
 	/*
 	 * @see IResourceChangeListener#resourceChanged
 	 */
+	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		HashSet<IResource> changedElements = new HashSet<IResource>();
 
@@ -126,6 +128,7 @@ public class ProblemMarkerManager implements IResourceChangeListener, IAnnotatio
 	 * 
 	 * @see IAnnotationModelListener#modelChanged(IAnnotationModel)
 	 */
+	@Override
 	public void modelChanged(IAnnotationModel model) {
 		// no action
 	}
@@ -135,6 +138,7 @@ public class ProblemMarkerManager implements IResourceChangeListener, IAnnotatio
 	 * 
 	 * @see IAnnotationModelListenerExtension#modelChanged(AnnotationModelEvent)
 	 */
+	@Override
 	public void modelChanged(AnnotationModelEvent event) {
 		if (event instanceof TranslationUnitAnnotationModelEvent) {
 			TranslationUnitAnnotationModelEvent cuEvent = (TranslationUnitAnnotationModelEvent)event;
@@ -176,6 +180,7 @@ public class ProblemMarkerManager implements IResourceChangeListener, IAnnotatio
 		if (display != null && !display.isDisposed()) {
 			display.asyncExec(new Runnable() {
 
+				@Override
 				public void run() {
 					Object[] listeners = fListeners.getListeners();
 					for (Object listener : listeners) {

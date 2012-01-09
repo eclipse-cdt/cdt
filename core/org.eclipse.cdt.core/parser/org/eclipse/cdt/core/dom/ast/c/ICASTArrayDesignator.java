@@ -47,10 +47,12 @@ public interface ICASTArrayDesignator extends ICASTDesignator {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICASTArrayDesignator copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICASTArrayDesignator copy(CopyStyle style);
 }

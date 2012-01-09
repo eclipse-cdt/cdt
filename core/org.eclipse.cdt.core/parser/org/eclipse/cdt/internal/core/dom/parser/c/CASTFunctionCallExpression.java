@@ -45,10 +45,12 @@ public class CASTFunctionCallExpression extends ASTNode implements
 		setArguments(args);
 	}
 
+	@Override
 	public CASTFunctionCallExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CASTFunctionCallExpression copy(CopyStyle style) {
 		IASTInitializerClause[] args = null;
 		if (fArguments.length > 0) {
@@ -67,6 +69,7 @@ public class CASTFunctionCallExpression extends ASTNode implements
 		return copy;
 	}
 
+	@Override
 	public void setFunctionNameExpression(IASTExpression expression) {
         assertNotFrozen();
         this.functionName = expression;
@@ -76,15 +79,18 @@ public class CASTFunctionCallExpression extends ASTNode implements
 		}
     }
 
-    public IASTExpression getFunctionNameExpression() {
+    @Override
+	public IASTExpression getFunctionNameExpression() {
         return functionName;
     }
 
+	@Override
 	public IASTInitializerClause[] getArguments() {
         return fArguments;
     }
 
-    public void setArguments(IASTInitializerClause[] arguments) {
+    @Override
+	public void setArguments(IASTInitializerClause[] arguments) {
         assertNotFrozen();
         if (arguments == null) {
         	fArguments= IASTExpression.EMPTY_EXPRESSION_ARRAY;
@@ -121,7 +127,8 @@ public class CASTFunctionCallExpression extends ASTNode implements
 		return true;
     }
 
-    public void replace(IASTNode child, IASTNode other) {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
 		if (child == functionName) {
 			other.setPropertyInParent(child.getPropertyInParent());
 			other.setParent(child.getParent());
@@ -136,6 +143,7 @@ public class CASTFunctionCallExpression extends ASTNode implements
 		}
 	}
 
+	@Override
 	public IType getExpressionType() {
 		IType type = getFunctionNameExpression().getExpressionType();
 		while (type instanceof ITypeContainer)
@@ -145,14 +153,17 @@ public class CASTFunctionCallExpression extends ASTNode implements
 		return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
 	}
 
+	@Override
 	public boolean isLValue() {
 		return false;
 	}
 	
+	@Override
 	public final ValueCategory getValueCategory() {
 		return ValueCategory.PRVALUE;
 	}
 	
+	@Override
 	@Deprecated
     public IASTExpression getParameterExpression() {
     	if (fArguments.length == 0)
@@ -175,6 +186,7 @@ public class CASTFunctionCallExpression extends ASTNode implements
         return result;
     }
 
+	@Override
 	@Deprecated
     public void setParameterExpression(IASTExpression expression) {
         assertNotFrozen();

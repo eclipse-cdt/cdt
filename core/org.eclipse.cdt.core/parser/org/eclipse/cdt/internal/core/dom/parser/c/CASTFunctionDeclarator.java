@@ -60,26 +60,30 @@ public class CASTFunctionDeclarator extends CASTDeclarator implements IASTStanda
 		return copy;
 	}
 	
+	@Override
 	public IASTParameterDeclaration[] getParameters() {
         if( parameters == null ) return IASTParameterDeclaration.EMPTY_PARAMETERDECLARATION_ARRAY;
-        parameters = (IASTParameterDeclaration[]) ArrayUtil.removeNullsAfter( IASTParameterDeclaration.class, parameters, parametersPos );
+        parameters = ArrayUtil.trimAt( IASTParameterDeclaration.class, parameters, parametersPos );
         return parameters;
     }
 
-    public void addParameterDeclaration(IASTParameterDeclaration parameter) {
+    @Override
+	public void addParameterDeclaration(IASTParameterDeclaration parameter) {
         assertNotFrozen();
     	if (parameter != null) {
     		parameter.setParent(this);
 			parameter.setPropertyInParent(FUNCTION_PARAMETER);
-    		parameters = (IASTParameterDeclaration[]) ArrayUtil.append( IASTParameterDeclaration.class, parameters, ++parametersPos, parameter );
+    		parameters = ArrayUtil.appendAt( IASTParameterDeclaration.class, parameters, ++parametersPos, parameter );
     	}        
     }
 
-    public boolean takesVarArgs() {
+    @Override
+	public boolean takesVarArgs() {
         return varArgs;
     }
 
-    public void setVarArgs(boolean value) {
+    @Override
+	public void setVarArgs(boolean value) {
         assertNotFrozen();
         varArgs = value;
     }
@@ -109,6 +113,7 @@ public class CASTFunctionDeclarator extends CASTDeclarator implements IASTStanda
         super.replace(child, other);
 	}
 	
+	@Override
 	public IScope getFunctionScope() {
         if (scope != null)
             return scope;

@@ -63,6 +63,7 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 	/**
 	 * @see org.eclipse.jface.text.IAutoEditStrategy#customizeDocumentCommand(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.DocumentCommand)
 	 */
+	@Override
 	public void customizeDocumentCommand(IDocument doc, DocumentCommand cmd) {
 		fgDefaultLineDelim = TextUtilities.getDefaultLineDelimiter(doc);
 		if (doc instanceof IDocumentExtension4) {

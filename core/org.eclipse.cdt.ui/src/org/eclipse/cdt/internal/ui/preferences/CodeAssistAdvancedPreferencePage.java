@@ -45,12 +45,12 @@ public final class CodeAssistAdvancedPreferencePage extends PropertyAndPreferenc
 	}
 
 	@Override
-	protected String getPreferencePageID() {
+	protected String getPreferencePageId() {
 		return "org.eclipse.cdt.ui.preferences.CodeAssistPreferenceAdvanced"; //$NON-NLS-1$
 	}
 
 	@Override
-	protected String getPropertyPageID() {
+	protected String getPropertyPageId() {
 		// no project settings supported
 		return null;
 	}

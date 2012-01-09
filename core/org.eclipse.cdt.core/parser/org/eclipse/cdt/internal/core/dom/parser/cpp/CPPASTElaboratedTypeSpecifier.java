@@ -39,10 +39,12 @@ public class CPPASTElaboratedTypeSpecifier extends CPPASTBaseDeclSpecifier
 		setName(name);
 	}
 
+	@Override
 	public CPPASTElaboratedTypeSpecifier copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CPPASTElaboratedTypeSpecifier copy(CopyStyle style) {
 		CPPASTElaboratedTypeSpecifier copy = new CPPASTElaboratedTypeSpecifier(kind, name == null
 				? null : name.copy(style));
@@ -53,20 +55,24 @@ public class CPPASTElaboratedTypeSpecifier extends CPPASTBaseDeclSpecifier
 		return copy;
 	}
 
+	@Override
 	public int getKind() {
         return kind;
     }
 
-    public void setKind(int value) {
+    @Override
+	public void setKind(int value) {
         assertNotFrozen();
         this.kind = value;
     }
 
-    public IASTName getName() {
+    @Override
+	public IASTName getName() {
         return name;
     }
 
-    public void setName(IASTName name) {
+    @Override
+	public void setName(IASTName name) {
         assertNotFrozen();
         this.name = name;
         if (name != null) {
@@ -95,10 +101,12 @@ public class CPPASTElaboratedTypeSpecifier extends CPPASTBaseDeclSpecifier
         return true;
     }
 
+	@Override
 	public int getRoleForName(IASTName n) {
 		return getRoleForName(n, true);
 	}
 	
+	@Override
 	public int getRoleForName(IASTName n, boolean allowResolution) {
 		if (n != name) return r_unclear;
 		

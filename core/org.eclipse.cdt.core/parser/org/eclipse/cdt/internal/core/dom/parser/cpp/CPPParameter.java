@@ -62,24 +62,28 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 	    fPosition= pos;
 	}
 	
-    public boolean isParameterPack() {
+    @Override
+	public boolean isParameterPack() {
 		return getType() instanceof ICPPParameterPackType;
 	}
 
 	/* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPBinding#getDeclarations()
      */
-    public IASTNode[] getDeclarations() {
+    @Override
+	public IASTNode[] getDeclarations() {
         return fDeclarations;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPBinding#getDefinition()
      */
-    public IASTNode getDefinition() {
+    @Override
+	public IASTNode getDefinition() {
         return null;
     }
 
+	@Override
 	public void addDeclaration(IASTNode node) {
 		if (!(node instanceof IASTName))
 			return;
@@ -88,9 +92,9 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 	        fDeclarations = new IASTName[] { name };
 		} else {
 	        if (isDeclaredBefore((ASTNode)node, (ASTNode)fDeclarations[0])) {
-				fDeclarations = (IASTName[]) ArrayUtil.prepend(IASTName.class, fDeclarations, name);
+				fDeclarations = ArrayUtil.prepend(IASTName.class, fDeclarations, name);
 			} else {
-				fDeclarations = (IASTName[]) ArrayUtil.append(IASTName.class, fDeclarations, name);
+				fDeclarations = ArrayUtil.append(IASTName.class, fDeclarations, name);
 			}
 	    }
 	}
@@ -120,6 +124,7 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
 	 */
+	@Override
 	public String getName() {
 		return new String(getNameCharArray());
 	}
@@ -127,6 +132,7 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
 	 */
+	@Override
 	public char[] getNameCharArray() {
 	    IASTName name = getPrimaryDeclaration();
 	    if (name != null)
@@ -137,6 +143,7 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
 	 */
+	@Override
 	public IScope getScope() {
 		return CPPVisitor.getContainingScope(getPrimaryDeclaration());
 	}
@@ -153,6 +160,7 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IVariable#getType()
 	 */
+	@Override
 	public IType getType() {
 		if (fType == null && fDeclarations != null) {
 			IASTNode parent= fDeclarations[0].getParent();
@@ -170,34 +178,39 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isStatic()
      */
-    public boolean isStatic() {
+    @Override
+	public boolean isStatic() {
         return false;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedName()
      */
-    public String[] getQualifiedName() {
+    @Override
+	public String[] getQualifiedName() {
         return new String[] { getName() };
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedNameCharArray()
      */
-    public char[][] getQualifiedNameCharArray() {
+    @Override
+	public char[][] getQualifiedNameCharArray() {
         return new char[][] { getNameCharArray() };
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#isGloballyQualified()
      */
-    public boolean isGloballyQualified() {
+    @Override
+	public boolean isGloballyQualified() {
         return false;
     }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDefinition(org.eclipse.cdt.core.dom.ast.IASTNode)
 	 */
+	@Override
 	public void addDefinition(IASTNode node) {
 		addDeclaration(node);
 	}
@@ -205,7 +218,8 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isExtern()
      */
-    public boolean isExtern() {
+    @Override
+	public boolean isExtern() {
         //7.1.1-5 extern can not be used in the declaration of a parameter
         return false;
     }
@@ -213,7 +227,8 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable#isMutable()
      */
-    public boolean isMutable() {
+    @Override
+	public boolean isMutable() {
         //7.1.1-8 mutable can only apply to class members
         return false;
     }
@@ -221,14 +236,16 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isAuto()
      */
-    public boolean isAuto() {
+    @Override
+	public boolean isAuto() {
         return hasStorageClass(IASTDeclSpecifier.sc_auto);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isRegister()
      */
-    public boolean isRegister() {
+    @Override
+	public boolean isRegister() {
         return hasStorageClass(IASTDeclSpecifier.sc_register);
     }
     
@@ -264,14 +281,17 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 		return null;
 	}
 	
+	@Override
 	public boolean hasDefaultValue() {
 		return getDefaultValue() != null;
 	}
 	
+	@Override
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
 	}
 
+	@Override
 	public boolean isExternC() {
 		return false;
 	}
@@ -282,14 +302,17 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 		return name.length() != 0 ? name : "<unnamed>"; //$NON-NLS-1$
 	}
 	
+	@Override
 	public IBinding getOwner() {
 		return CPPVisitor.findEnclosingFunction(fDeclarations[0]);
 	}
 
+	@Override
 	public IValue getInitialValue() {
 		return null;
 	}
 
+	@Override
 	public IBinding resolveFinalBinding(CPPASTNameBase name) {
 		// check if the binding has been updated.
 		IBinding current= name.getPreBinding();

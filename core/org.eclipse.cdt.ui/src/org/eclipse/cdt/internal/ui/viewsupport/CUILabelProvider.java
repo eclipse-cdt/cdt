@@ -173,6 +173,7 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider, I
 		return decorateText(result, element);
 	}
 
+	@Override
 	public StyledString getStyledText(Object element) {
 		StyledString string= CElementLabels.getStyledTextLabel(element, (evaluateTextFlags(element) | CElementLabels.COLORIZE));
 		if (string.length() == 0 && (element instanceof IStorage)) {
@@ -254,6 +255,7 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider, I
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
 	 */
+	@Override
 	public Color getForeground(Object element) {
 		if (element instanceof ISourceReference) {
 			ISourceReference sref= (ISourceReference)element;
@@ -271,6 +273,7 @@ public class CUILabelProvider extends LabelProvider implements IColorProvider, I
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
 	 */
+	@Override
 	public Color getBackground(Object element) {
 		return null;
 	}	

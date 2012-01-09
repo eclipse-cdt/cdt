@@ -25,10 +25,12 @@ class CompositeCPPUnknownBinding extends CompositeCPPBinding implements ICPPUnkn
 		fail(); return null;
 	}
 
+	@Override
 	public ICPPScope asScope() {
     	return null;
     }
 
+	@Override
 	public IASTName getUnknownName() {
 		return ((ICPPUnknownBinding) rbinding).getUnknownName();
 	}

@@ -146,9 +146,11 @@ public class ResourceExclusionContributor extends RefreshExclusionContributor {
 						WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider(),
 						new ITreeContentProvider() {
 
+							@Override
 							public void dispose() {
 							}
 
+							@Override
 							public Object[] getChildren(Object parentElement) {
 								if (parentElement instanceof IContainer) {
 									IContainer container = (IContainer) parentElement;
@@ -171,10 +173,12 @@ public class ResourceExclusionContributor extends RefreshExclusionContributor {
 								return new Object[0];
 							}
 
+							@Override
 							public Object[] getElements(Object inputElement) {
 								return getChildren(inputElement);
 							}
 
+							@Override
 							public Object getParent(Object element) {
 								if (element instanceof IResource) {
 									return ((IResource) element).getParent();
@@ -182,10 +186,12 @@ public class ResourceExclusionContributor extends RefreshExclusionContributor {
 								return null;
 							}
 
+							@Override
 							public boolean hasChildren(Object element) {
 								return getChildren(element).length > 0;
 							}
 
+							@Override
 							public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 							}
 						});

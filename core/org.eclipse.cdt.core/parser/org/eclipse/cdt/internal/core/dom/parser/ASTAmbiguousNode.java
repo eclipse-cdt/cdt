@@ -39,13 +39,13 @@ public abstract class ASTAmbiguousNode extends ASTNode  {
 		public int visit(IASTName name) {
 			if (name != null) {
 				namesPos++;
-				names = (IASTName[]) ArrayUtil.append(IASTName.class, names, name);
+				names = ArrayUtil.append(IASTName.class, names, name);
 			}
 			return PROCESS_CONTINUE;
 		}
 
 		public IASTName[] getNames() {
-			names = (IASTName[]) ArrayUtil.removeNullsAfter(IASTName.class, names, namesPos);
+			names = ArrayUtil.trimAt(IASTName.class, names, namesPos);
 			return names;
 		}
 	}

@@ -33,6 +33,7 @@ public class TestCfgDataProvider extends CDefaultConfigurationDataProvider {
 	// Overriden so it supports saving Library file and Library path entries
 	private static final class TestDataFactory extends CDataFactory {
 
+		@Override
 		public CLanguageData createLanguageData(CConfigurationData cfg, 
 				CResourceData rcBase,
 				CLanguageData base,
@@ -43,6 +44,7 @@ public class TestCfgDataProvider extends CDefaultConfigurationDataProvider {
 			return new CDefaultLanguageData(id, base);
 		}
 
+		@Override
 		public CLanguageData createLanguageData(CConfigurationData cfg, 
 				CResourceData rcBase,
 				String id,

@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.model.IWorkingCopy;
 
 public class CViewElementComparer implements IElementComparer {
 
+	@Override
 	public boolean equals(Object o1, Object o2) {
 		if (o1 == o2)	// this handles also the case that both are null
 			return true;
@@ -58,6 +59,7 @@ public class CViewElementComparer implements IElementComparer {
 		return c1.equals(c2);
 	}
 
+	@Override
 	public int hashCode(Object o1) {
 		return o1.hashCode();
 	}

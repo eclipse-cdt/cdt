@@ -146,6 +146,7 @@ public class DefaultSpellChecker implements ISpellChecker {
 	/*
 	 * @see org.eclipse.spelling.done.ISpellChecker#addDictionary(org.eclipse.spelling.done.ISpellDictionary)
 	 */
+	@Override
 	public final void addDictionary(final ISpellDictionary dictionary) {
 		// synchronizing is necessary as this is a write access
 		fDictionaries.add(dictionary);
@@ -154,6 +155,7 @@ public class DefaultSpellChecker implements ISpellChecker {
 	/*
 	 * @see org.eclipse.spelling.done.ISpellChecker#addListener(org.eclipse.spelling.done.ISpellEventListener)
 	 */
+	@Override
 	public final void addListener(final ISpellEventListener listener) {
 		// synchronizing is necessary as this is a write access
 		fListeners.add(listener);
@@ -162,6 +164,7 @@ public class DefaultSpellChecker implements ISpellChecker {
 	/*
 	 * @see org.eclipse.cdt.ui.text.spelling.engine.ISpellChecker#acceptsWords()
 	 */
+	@Override
 	public boolean acceptsWords() {
 		// synchronizing might not be needed here since acceptWords is
 		// a read-only access and only called in the same thread as
@@ -183,6 +186,7 @@ public class DefaultSpellChecker implements ISpellChecker {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellChecker#addWord(java.lang.String)
 	 */
+	@Override
 	public void addWord(final String word) {
 		// synchronizing is necessary as this is a write access
 		Set<ISpellDictionary> copy;
@@ -200,6 +204,7 @@ public class DefaultSpellChecker implements ISpellChecker {
 	/*
 	 * @see org.eclipse.cdt.ui.text.spelling.engine.ISpellChecker#checkWord(java.lang.String)
 	 */
+	@Override
 	public final void checkWord(final String word) {
 		// synchronizing is necessary as this is a write access
 		fIgnored.remove(word.toLowerCase());
@@ -208,6 +213,7 @@ public class DefaultSpellChecker implements ISpellChecker {
 	/*
 	 * @see org.eclipse.spelling.done.ISpellChecker#execute(org.eclipse.spelling.ISpellCheckTokenizer)
 	 */
+	@Override
 	public void execute(final ISpellCheckIterator iterator) {
 		final boolean ignoreDigits= SpellingPreferences.isIgnoreDigits();
 		final boolean ignoreMixed= SpellingPreferences.isIgnoreMixed();
@@ -271,6 +277,7 @@ public class DefaultSpellChecker implements ISpellChecker {
 	/*
 	 * @see org.eclipse.spelling.done.ISpellChecker#getProposals(java.lang.String,boolean)
 	 */
+	@Override
 	public Set<RankedWordProposal> getProposals(final String word, final boolean sentence) {
 		// synchronizing might not be needed here since getProposals is
 		// a read-only access and only called in the same thread as
@@ -293,6 +300,7 @@ public class DefaultSpellChecker implements ISpellChecker {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellChecker#ignoreWord(java.lang.String)
 	 */
+	@Override
 	public final void ignoreWord(final String word) {
 		// synchronizing is necessary as this is a write access
 		fIgnored.add(word.toLowerCase());
@@ -301,6 +309,7 @@ public class DefaultSpellChecker implements ISpellChecker {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellChecker#isCorrect(java.lang.String)
 	 */
+	@Override
 	public final boolean isCorrect(final String word) {
 		// synchronizing is necessary as this is called from execute
 		Set<ISpellDictionary> copy;
@@ -323,6 +332,7 @@ public class DefaultSpellChecker implements ISpellChecker {
 	/*
 	 * @see org.eclipse.spelling.done.ISpellChecker#removeDictionary(org.eclipse.spelling.done.ISpellDictionary)
 	 */
+	@Override
 	public final void removeDictionary(final ISpellDictionary dictionary) {
 		// synchronizing is necessary as this is a write access
 		fDictionaries.remove(dictionary);
@@ -331,6 +341,7 @@ public class DefaultSpellChecker implements ISpellChecker {
 	/*
 	 * @see org.eclipse.spelling.done.ISpellChecker#removeListener(org.eclipse.spelling.done.ISpellEventListener)
 	 */
+	@Override
 	public final void removeListener(final ISpellEventListener listener) {
 		// synchronizing is necessary as this is a write access
 		fListeners.remove(listener);
@@ -339,6 +350,7 @@ public class DefaultSpellChecker implements ISpellChecker {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellChecker#getLocale()
 	 */
+	@Override
 	public Locale getLocale() {
 		return fLocale;
 	}

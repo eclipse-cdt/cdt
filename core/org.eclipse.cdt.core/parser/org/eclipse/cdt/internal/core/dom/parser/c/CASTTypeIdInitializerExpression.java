@@ -32,16 +32,19 @@ public class CASTTypeIdInitializerExpression extends ASTTypeIdInitializerExpress
 		super(typeId, initializer);
 	}
 
+	@Override
 	public CASTTypeIdInitializerExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CASTTypeIdInitializerExpression copy(CopyStyle style) {
 		CASTTypeIdInitializerExpression copy = new CASTTypeIdInitializerExpression();
 		initializeCopy(copy, style);
 		return copy;
 	}
 
+	@Override
 	public IType getExpressionType() {
 		return CVisitor.createType(getTypeId().getAbstractDeclarator());
 	}

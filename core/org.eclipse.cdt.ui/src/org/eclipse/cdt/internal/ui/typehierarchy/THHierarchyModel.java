@@ -312,6 +312,7 @@ class THHierarchyModel {
 		if (fJob == job) {
 			fJob= null;
 			fDisplay.asyncExec(new Runnable(){
+				@Override
 				public void run() {
 					fGraph= graph;
 					THGraphNode inputNode= fGraph.getInputNode();

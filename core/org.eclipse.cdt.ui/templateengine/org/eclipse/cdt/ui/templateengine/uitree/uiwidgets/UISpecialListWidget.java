@@ -59,7 +59,7 @@ public class UISpecialListWidget extends UIStringListWidget {
 		gd.verticalIndent = 5;
 		label.setLayoutData(gd);
 
-		if (uiAttributes.get(InputUIElement.DESCRIPTION) != null){
+		if (uiAttributes.get(UIElement.DESCRIPTION) != null){
 			String tipText = uiAttributes.get(UIElement.DESCRIPTION);
 			tipText = tipText.replaceAll("\\\\r\\\\n", "\r\n"); //$NON-NLS-1$, //$NON-NLS-2$
 			label.setToolTipText(tipText);

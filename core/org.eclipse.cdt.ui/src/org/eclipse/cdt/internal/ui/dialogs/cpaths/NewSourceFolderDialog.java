@@ -134,6 +134,7 @@ public class NewSourceFolderDialog extends StatusDialog {
 
 		// -------- IDialogFieldListener
 
+		@Override
 		public void dialogFieldChanged(DialogField field) {
 			doStatusLineUpdate();
 		}

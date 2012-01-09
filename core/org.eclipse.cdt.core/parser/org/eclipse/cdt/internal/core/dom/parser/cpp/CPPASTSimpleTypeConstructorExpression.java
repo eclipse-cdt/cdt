@@ -40,10 +40,12 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode implements
 		setInitializer(init);
 	}
 
+	@Override
 	public CPPASTSimpleTypeConstructorExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CPPASTSimpleTypeConstructorExpression copy(CopyStyle style) {
 		CPPASTSimpleTypeConstructorExpression copy = new CPPASTSimpleTypeConstructorExpression();
 		copy.setDeclSpecifier(fDeclSpec == null ? null : fDeclSpec.copy(style));
@@ -55,14 +57,17 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode implements
 		return copy;
 	}
 
+	@Override
 	public ICPPASTDeclSpecifier getDeclSpecifier() {
 		return fDeclSpec;
 	}
 
+	@Override
 	public IASTInitializer getInitializer() {
 		return fInitializer;
 	}
 
+	@Override
 	public void setDeclSpecifier(ICPPASTDeclSpecifier declSpec) {
     	assertNotFrozen();
     	fDeclSpec = declSpec;
@@ -72,6 +77,7 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode implements
     	}
     }
 
+	@Override
 	public void setInitializer(IASTInitializer initializer) {
     	assertNotFrozen();
     	fInitializer = initializer;
@@ -81,17 +87,20 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode implements
     	}
     }
 
-    public IType getExpressionType() {
+    @Override
+	public IType getExpressionType() {
 		if (fType == null) {
 			fType= prvalueType(CPPVisitor.createType(fDeclSpec));
 		}
 		return fType;
 	}
 
+	@Override
 	public boolean isLValue() {
 		return false;
 	}
 	
+	@Override
 	public ValueCategory getValueCategory() {
 		return PRVALUE;
 	}
@@ -122,7 +131,8 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode implements
         return true;
     }
 
-    @Deprecated
+    @Override
+	@Deprecated
     public int getSimpleType() {
     	IType type= getExpressionType();
     	if (type instanceof ICPPBasicType) {
@@ -158,7 +168,8 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode implements
 		return t_unspecified;
     }
     
-    @Deprecated
+    @Override
+	@Deprecated
     public void setSimpleType(int value) {
 		CPPASTSimpleDeclSpecifier declspec = new CPPASTSimpleDeclSpecifier();
     	switch(value) {
@@ -206,7 +217,8 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode implements
     	setDeclSpecifier(declspec);
     }
     
-    @Deprecated
+    @Override
+	@Deprecated
     public IASTExpression getInitialValue() {
     	if (fInitializer instanceof ICPPASTConstructorInitializer) {
     		return ((ICPPASTConstructorInitializer) fInitializer).getExpression();
@@ -214,7 +226,8 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode implements
     	return null;
     }
     
-    @Deprecated
+    @Override
+	@Deprecated
     public void setInitialValue(IASTExpression expression) {
     	ICPPASTConstructorInitializer init= new CPPASTConstructorInitializer();
     	init.setExpression(expression);

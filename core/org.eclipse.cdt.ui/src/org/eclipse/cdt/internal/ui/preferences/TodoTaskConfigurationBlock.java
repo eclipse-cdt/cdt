@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *     Sergey Prigogin (Google)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.preferences;
 
 import java.util.ArrayList;
@@ -88,12 +87,14 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
 		 */
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			return null;
 		}
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
 		 */
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			TodoTask task = (TodoTask) element;
 			if (columnIndex == 0) {
@@ -116,6 +117,7 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
 		 */
+		@Override
 		public Font getFont(Object element) {
 			if (isDefaultTask((TodoTask) element)) {
 				return JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT);
@@ -138,8 +140,8 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 	private static final int IDX_DEFAULT = 4;
 	
 	private IStatus fTaskTagsStatus;
-	private ListDialogField<TodoTask> fTodoTasksList;
-	private SelectionButtonDialogField fCaseSensitiveCheckBox;
+	private final ListDialogField<TodoTask> fTodoTasksList;
+	private final SelectionButtonDialogField fCaseSensitiveCheckBox;
 
 
 	public TodoTaskConfigurationBlock(IStatusChangeListener context, IProject project, IWorkbenchPreferenceContainer container) {
@@ -212,22 +214,26 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 			return selectedElements.size() == 1 && !isDefaultTask(selectedElements.get(0));
 		}
 
+		@Override
 		public void customButtonPressed(ListDialogField<TodoTask> field, int index) {
 			doTodoButtonPressed(index);
 		}
 
+		@Override
 		public void selectionChanged(ListDialogField<TodoTask> field) {
 			List<TodoTask> selectedElements = field.getSelectedElements();
 			field.enableButton(IDX_EDIT, canEdit(selectedElements));
 			field.enableButton(IDX_DEFAULT, canSetToDefault(selectedElements));
 		}
 			
+		@Override
 		public void doubleClicked(ListDialogField<TodoTask> field) {
 			if (canEdit(field.getSelectedElements())) {
 				doTodoButtonPressed(IDX_EDIT);
 			}
 		}
 
+		@Override
 		public void dialogFieldChanged(DialogField field) {
 			updateModel(field);
 		}			

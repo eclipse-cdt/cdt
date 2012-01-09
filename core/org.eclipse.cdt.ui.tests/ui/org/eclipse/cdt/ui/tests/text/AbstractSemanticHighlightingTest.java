@@ -102,14 +102,17 @@ public class AbstractSemanticHighlightingTest extends TestCase {
 			IndexProviderManager ipm= CCoreInternals.getPDOMManager().getIndexProviderManager();
 			ipm.addIndexProvider(new ReadOnlyPDOMProviderBridge(
 					new IReadOnlyPDOMProvider() {
+						@Override
 						public IPDOMDescriptor[] getDescriptors(
 								ICConfigurationDescription config) {
 							return new IPDOMDescriptor[] {
 									new IPDOMDescriptor() {
+										@Override
 										public IIndexLocationConverter getIndexLocationConverter() {
 											return new URIRelativeLocationConverter(baseURI);
 										}
 
+										@Override
 										public IPath getLocation() {
 											return new Path(sdk.getAbsolutePath());
 										}
@@ -117,6 +120,7 @@ public class AbstractSemanticHighlightingTest extends TestCase {
 									}
 							};
 						}
+						@Override
 						public boolean providesFor(ICProject project)
 						throws CoreException {
 							return associatedProject.equals(project);

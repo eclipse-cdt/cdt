@@ -277,22 +277,22 @@ public class CDataUtil {
 
 	public static ICLanguageSettingEntry createEntry(ICLanguageSettingEntry entry, int flags){
 		switch (entry.getKind()){
-		case ICLanguageSettingEntry.INCLUDE_PATH:
+		case ICSettingEntry.INCLUDE_PATH:
 			entry = new CIncludePathEntry(entry.getName(), flags);
 			break;
-		case ICLanguageSettingEntry.MACRO:
+		case ICSettingEntry.MACRO:
 			entry = new CMacroEntry(entry.getName(), entry.getValue(), flags);
 			break;
-		case ICLanguageSettingEntry.INCLUDE_FILE:
+		case ICSettingEntry.INCLUDE_FILE:
 			entry = new CIncludeFileEntry(entry.getName(), flags);
 			break;
-		case ICLanguageSettingEntry.MACRO_FILE:
+		case ICSettingEntry.MACRO_FILE:
 			entry = new CMacroFileEntry(entry.getName(), flags);
 			break;
-		case ICLanguageSettingEntry.LIBRARY_PATH:
+		case ICSettingEntry.LIBRARY_PATH:
 			entry = new CLibraryPathEntry(entry.getName(), flags);
 			break;
-		case ICLanguageSettingEntry.LIBRARY_FILE:
+		case ICSettingEntry.LIBRARY_FILE:
 			ICLibraryFileEntry libFile = (ICLibraryFileEntry)entry;
 			entry = new CLibraryFileEntry(entry.getName(),
 					flags,
@@ -603,10 +603,10 @@ public class CDataUtil {
 
 			if(addLang){
 				CLanguageData lData = factory.createLanguageData(cfgData, data, genId(data.getId()), des.getName(), des.getId(),
-						ICLanguageSettingEntry.INCLUDE_FILE
-						| ICLanguageSettingEntry.INCLUDE_PATH
-						| ICLanguageSettingEntry.MACRO
-						| ICLanguageSettingEntry.MACRO_FILE,
+						ICSettingEntry.INCLUDE_FILE
+						| ICSettingEntry.INCLUDE_PATH
+						| ICSettingEntry.MACRO
+						| ICSettingEntry.MACRO_FILE,
 						ctypeIds, true);
 				factory.link(data, lData);
 			}
@@ -798,11 +798,11 @@ public class CDataUtil {
 		ICSourceEntry entry;
 		if(absolute){
 			if(project != null)
-				entry = new CSourceEntry(project.getFullPath(), null, ICSettingEntry.VALUE_WORKSPACE_PATH | ICSourceEntry.RESOLVED);
+				entry = new CSourceEntry(project.getFullPath(), null, ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED);
 			else
-				entry = new CSourceEntry(Path.EMPTY, null, ICSettingEntry.VALUE_WORKSPACE_PATH | ICSourceEntry.RESOLVED);
+				entry = new CSourceEntry(Path.EMPTY, null, ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED);
 		} else {
-			entry = new CSourceEntry(Path.EMPTY, null, ICSettingEntry.VALUE_WORKSPACE_PATH | ICSourceEntry.RESOLVED);
+			entry = new CSourceEntry(Path.EMPTY, null, ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED);
 		}
 		return new ICSourceEntry[]{entry};
 	}
@@ -811,11 +811,11 @@ public class CDataUtil {
 		ICOutputEntry entry;
 		if(absolute){
 			if(project != null)
-				entry = new COutputEntry(project.getFullPath(), null, ICSettingEntry.VALUE_WORKSPACE_PATH | ICSourceEntry.RESOLVED);
+				entry = new COutputEntry(project.getFullPath(), null, ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED);
 			else
-				entry = new COutputEntry(Path.EMPTY, null, ICSettingEntry.VALUE_WORKSPACE_PATH | ICSourceEntry.RESOLVED);
+				entry = new COutputEntry(Path.EMPTY, null, ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED);
 		} else {
-			entry = new COutputEntry(Path.EMPTY, null, ICSettingEntry.VALUE_WORKSPACE_PATH | ICSourceEntry.RESOLVED);
+			entry = new COutputEntry(Path.EMPTY, null, ICSettingEntry.VALUE_WORKSPACE_PATH | ICSettingEntry.RESOLVED);
 		}
 		return new ICOutputEntry[]{entry};
 	}

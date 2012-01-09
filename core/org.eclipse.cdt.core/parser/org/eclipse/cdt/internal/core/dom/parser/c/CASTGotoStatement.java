@@ -30,10 +30,12 @@ public class CASTGotoStatement extends ASTNode implements IASTGotoStatement {
 		setName(name);
 	}
 
+	@Override
 	public CASTGotoStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CASTGotoStatement copy(CopyStyle style) {
 		CASTGotoStatement copy = new CASTGotoStatement(name == null ? null : name.copy(style));
 		copy.setOffsetAndLength(this);
@@ -43,11 +45,13 @@ public class CASTGotoStatement extends ASTNode implements IASTGotoStatement {
 		return copy;
 	}
 	
+	@Override
 	public IASTName getName() {
         return this.name;
     }
 
-    public void setName(IASTName name) {
+    @Override
+	public void setName(IASTName name) {
         assertNotFrozen();
        this.name = name;
        if (name != null) {
@@ -77,6 +81,7 @@ public class CASTGotoStatement extends ASTNode implements IASTGotoStatement {
         return true;
     }
 
+	@Override
 	public int getRoleForName(IASTName n) {
 		if( n == name ) return r_reference;
 		return r_unclear;

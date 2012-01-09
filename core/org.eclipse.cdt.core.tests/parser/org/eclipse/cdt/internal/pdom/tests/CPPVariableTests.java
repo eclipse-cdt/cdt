@@ -35,12 +35,14 @@ public class CPPVariableTests extends PDOMTestBase {
 		return suite(CPPVariableTests.class);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		project = createProject("variableTests");
 		pdom = (PDOM) CCoreInternals.getPDOMManager().getPDOM(project);
 		pdom.acquireReadLock();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		pdom.releaseReadLock();
 		if (project != null) {

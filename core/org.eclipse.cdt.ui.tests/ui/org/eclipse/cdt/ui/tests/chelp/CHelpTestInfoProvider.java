@@ -49,6 +49,7 @@ public class CHelpTestInfoProvider implements ICHelpProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.ICHelpProvider#initialize()
 	 */
+	@Override
 	public void initialize() {
 		Assert.assertFalse("initialize is called several times",fIsInitialized);
 		fIsInitialized = true;
@@ -57,6 +58,7 @@ public class CHelpTestInfoProvider implements ICHelpProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.ICHelpProvider#getCHelpBooks()
 	 */
+	@Override
 	public ICHelpBook[] getCHelpBooks() {
 		if (!fgEnabled) {
 			return new ICHelpBook[0];
@@ -68,6 +70,7 @@ public class CHelpTestInfoProvider implements ICHelpProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.ICHelpProvider#getFunctionInfo(org.eclipse.cdt.ui.text.ICHelpInvocationContext, org.eclipse.cdt.ui.ICHelpBook[], java.lang.String)
 	 */
+	@Override
 	public IFunctionSummary getFunctionInfo(ICHelpInvocationContext context,
 			ICHelpBook[] helpBooks, String name) {
 		if (!fgEnabled) {
@@ -80,6 +83,7 @@ public class CHelpTestInfoProvider implements ICHelpProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.ICHelpProvider#getMatchingFunctions(org.eclipse.cdt.ui.text.ICHelpInvocationContext, org.eclipse.cdt.ui.ICHelpBook[], java.lang.String)
 	 */
+	@Override
 	public IFunctionSummary[] getMatchingFunctions(
 			ICHelpInvocationContext context, ICHelpBook[] helpBooks,
 			String prefix) {
@@ -94,6 +98,7 @@ public class CHelpTestInfoProvider implements ICHelpProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.ICHelpProvider#getHelpResources(org.eclipse.cdt.ui.text.ICHelpInvocationContext, org.eclipse.cdt.ui.ICHelpBook[], java.lang.String)
 	 */
+	@Override
 	public ICHelpResourceDescriptor[] getHelpResources(
 			ICHelpInvocationContext context, ICHelpBook[] helpBooks, String name) {
 		if (!fgEnabled) {

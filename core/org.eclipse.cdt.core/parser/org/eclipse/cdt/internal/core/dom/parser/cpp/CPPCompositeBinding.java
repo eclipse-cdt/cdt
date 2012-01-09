@@ -21,54 +21,42 @@ import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.core.runtime.PlatformObject;
 
 public class CPPCompositeBinding extends PlatformObject implements IBinding {
+	IBinding[] bindings;
 
-	IBinding [] bindings = null;
-	
-	public CPPCompositeBinding( IBinding[] bindingList ){
-		bindings = (IBinding[]) ArrayUtil.trim( IBinding.class, bindingList, true );
+	public CPPCompositeBinding(IBinding[] bindingList) {
+		bindings = ArrayUtil.trim(bindingList, true);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
-	 */
+	@Override
 	public String getName() {
 		return bindings[0].getName();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
-	 */
+	@Override
 	public char[] getNameCharArray() {
 		return bindings[0].getNameCharArray();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
-	 */
+	@Override
 	public IScope getScope() throws DOMException {
 		return bindings[0].getScope();
 	}
 
+	@Override
 	public IBinding getOwner() {
 		return bindings[0].getOwner();
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getPhysicalNode()
-	 */
 	public IASTNode getPhysicalNode() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPCompositeBinding#getBindings()
-	 */
 	public IBinding[] getBindings() {
 		return bindings;
 	}
 
+	@Override
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
 	}
-
 }

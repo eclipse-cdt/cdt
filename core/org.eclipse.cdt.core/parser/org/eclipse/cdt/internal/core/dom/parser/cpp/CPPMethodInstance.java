@@ -27,10 +27,12 @@ public class CPPMethodInstance extends CPPFunctionInstance implements ICPPMethod
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMember#getVisibility()
 	 */
+	@Override
 	public int getVisibility() {
 		return ((ICPPMethod)getTemplateDefinition()).getVisibility();
 	}
 
+	@Override
 	public ICPPClassType getClassOwner() {
 		return (ICPPClassType) getOwner();
 	}
@@ -38,17 +40,20 @@ public class CPPMethodInstance extends CPPFunctionInstance implements ICPPMethod
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isVirtual()
      */
-    public boolean isVirtual() {
+    @Override
+	public boolean isVirtual() {
         return ((ICPPMethod)getTemplateDefinition()).isVirtual();
     }
 
 	/* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isPureVirtual()
      */
+	@Override
 	public boolean isPureVirtual() {
         return ((ICPPMethod)getTemplateDefinition()).isPureVirtual();
 	}
 	
+	@Override
 	public boolean isExplicit() {
 		return ((ICPPMethod) getTemplateDefinition()).isExplicit();
 	}
@@ -56,6 +61,7 @@ public class CPPMethodInstance extends CPPFunctionInstance implements ICPPMethod
 	/* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod#isDestructor()
      */
+	@Override
 	public boolean isDestructor() {
 		char[] name = getNameCharArray();
 		if (name.length > 1 && name[0] == '~')
@@ -64,6 +70,7 @@ public class CPPMethodInstance extends CPPFunctionInstance implements ICPPMethod
 		return false;
 	}
 
+	@Override
 	public boolean isImplicit() {
 		return false;
 	}

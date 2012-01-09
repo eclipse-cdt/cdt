@@ -22,24 +22,28 @@ class SizingTestPass implements IDialogTestPass {
 	/**
 	 * @see IDialogTestPass#title()
 	 */
+	@Override
 	public String title() {
 		return "Test Pass: Sizing and Display";
 	}
 	/**
 	 * @see IDialogTestPass#description()
 	 */
+	@Override
 	public String description() {
 		return "Verify the sizing and display of the dialogs and widgets.";
 	}
 	/**
 	 * @see IDialogTestPass#label()
 	 */
+	@Override
 	public String label() {
 		return "&Sizing and Display";
 	}	
 	/**
 	 * @see IDialogTestPass#checkListTexts()
 	 */
+	@Override
 	public ArrayList checkListTexts() {
 		ArrayList list = new ArrayList(CHECKLIST_SIZE);
 		list.add("&1) the correct dialog displays.");
@@ -54,6 +58,7 @@ class SizingTestPass implements IDialogTestPass {
 	 * Size of the return array must be the same size as the checkListTexts'
 	 * ArrayList.
 	 */
+	@Override
 	public String[] failureTexts() {
 		String[] failureText = new String[CHECKLIST_SIZE];
 		failureText[0] = "The wrong dialog displayed.";
@@ -66,12 +71,14 @@ class SizingTestPass implements IDialogTestPass {
 	/**
 	 * @see IDialogTestPass#queryText()
 	 */
+	@Override
 	public String queryText() {
 		return "Is the sizing and display of the dialog correct?";
 	}
 	/**
 	 * @see IDialogTestPass#getID()
 	 */
+	@Override
 	public int getID() {
 		return VerifyDialog.TEST_SIZING;
 	}

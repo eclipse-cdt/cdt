@@ -62,6 +62,7 @@ public class CStructureCreator extends StructureCreator {
 	public CStructureCreator() {
 	}
 
+	@Override
 	public String getName() {
 		return CUIPlugin.getResourceString(NAME);
 	}
@@ -69,6 +70,7 @@ public class CStructureCreator extends StructureCreator {
 	/*
 	 * @see IStructureCreator#getContents
 	 */
+	@Override
 	public String getContents(Object node, boolean ignoreWhitespace) {
 		if (node instanceof IDocumentRange) {
 			IDocumentRange documentRange= (IDocumentRange)node;

@@ -46,6 +46,7 @@ public class ToggleFromClassToInHeaderStrategy implements IToggleRefactoringStra
 				ICPPASTCompositeTypeSpecifier.class) != null;
 	}
 
+	@Override
 	public void run(ModificationCollector modifications) {
 		IASTNode parentNamespace = getParentNamespace();
 		IASTNode newDefinition = getNewDefinition(parentNamespace);

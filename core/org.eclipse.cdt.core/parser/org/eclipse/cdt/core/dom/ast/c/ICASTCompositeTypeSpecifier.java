@@ -23,10 +23,12 @@ public interface ICASTCompositeTypeSpecifier extends IASTCompositeTypeSpecifier,
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICASTCompositeTypeSpecifier copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICASTCompositeTypeSpecifier copy(CopyStyle style);
 }

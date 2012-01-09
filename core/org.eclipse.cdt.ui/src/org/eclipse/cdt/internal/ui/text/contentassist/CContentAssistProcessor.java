@@ -79,6 +79,7 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 		/*
 		 * @see org.eclipse.cdt.ui.text.ICCompletionProposal#getIdString()
 		 */
+		@Override
 		public String getIdString() {
 			return fWrappedProposal.getDisplayString();
 		}
@@ -86,6 +87,7 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 		/*
 		 * @see org.eclipse.cdt.ui.text.ICCompletionProposal#getRelevance()
 		 */
+		@Override
 		public int getRelevance() {
 			return RelevanceConstants.CASE_MATCH_RELEVANCE + RelevanceConstants.KEYWORD_TYPE_RELEVANCE;
 		}
@@ -93,6 +95,7 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 		/*
 		 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#apply(org.eclipse.jface.text.IDocument)
 		 */
+		@Override
 		public void apply(IDocument document) {
 			throw new UnsupportedOperationException();
 		}
@@ -100,6 +103,7 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 		/*
 		 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getAdditionalProposalInfo()
 		 */
+		@Override
 		public String getAdditionalProposalInfo() {
 			return fWrappedProposal.getAdditionalProposalInfo();
 		}
@@ -107,6 +111,7 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 		/*
 		 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getContextInformation()
 		 */
+		@Override
 		public IContextInformation getContextInformation() {
 			return fWrappedProposal.getContextInformation();
 		}
@@ -114,6 +119,7 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 		/*
 		 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getDisplayString()
 		 */
+		@Override
 		public String getDisplayString() {
 			return fWrappedProposal.getDisplayString();
 		}
@@ -121,6 +127,7 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 		/*
 		 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getImage()
 		 */
+		@Override
 		public Image getImage() {
 			return fWrappedProposal.getImage();
 		}
@@ -128,6 +135,7 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 		/*
 		 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getSelection(org.eclipse.jface.text.IDocument)
 		 */
+		@Override
 		public Point getSelection(IDocument document) {
 			return fWrappedProposal.getSelection(document);
 		}

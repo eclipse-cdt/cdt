@@ -36,21 +36,25 @@ public class ASTCompletionNode implements IASTCompletionNode {
 	}
 
 
+	@Override
 	public String getPrefix() {
 		return completionToken.getType() == IToken.tEOC ? "" : completionToken.getImage(); //$NON-NLS-1$
 	}
 
 
+	@Override
 	public int getLength() {
 		return completionToken.getLength();
 	}
 
 
+	@Override
 	public IASTName[] getNames() {
 		return names.toArray(new IASTName[names.size()]);
 	}
 
 
+	@Override
 	public IASTTranslationUnit getTranslationUnit() {
 		return translationUnit;
 	}

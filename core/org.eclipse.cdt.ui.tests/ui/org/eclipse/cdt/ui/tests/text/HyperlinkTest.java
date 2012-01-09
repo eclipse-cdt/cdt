@@ -114,6 +114,7 @@ public class HyperlinkTest extends TestCase {
 			IWorkingCopyManager manager = CUIPlugin.getDefault().getWorkingCopyManager();
 			IWorkingCopy workingCopy = manager.getWorkingCopy(editor.getEditorInput());
 			IStatus status= ASTProvider.getASTProvider().runOnAST(workingCopy, ASTProvider.WAIT_IF_OPEN, null, new ASTRunnable() {
+				@Override
 				public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
 					return Status.OK_STATUS;
 				}

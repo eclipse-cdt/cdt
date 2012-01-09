@@ -40,7 +40,8 @@ public class NumberRule implements IRule
     /**
      * @see org.eclipse.jface.text.rules.IRule#evaluate(org.eclipse.jface.text.rules.ICharacterScanner)
      */
-    public IToken evaluate(ICharacterScanner scanner)
+    @Override
+	public IToken evaluate(ICharacterScanner scanner)
     {
         int startCh = scanner.read();
         int ch;

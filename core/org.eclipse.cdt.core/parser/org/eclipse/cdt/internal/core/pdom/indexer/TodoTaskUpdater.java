@@ -95,6 +95,7 @@ public class TodoTaskUpdater implements ITodoTaskUpdater {
         taskParser = new TodoTaskParser(taskTags, taskPriorities, isTaskCaseSensitive);
 	}
 
+	@Override
 	public void updateTasks(IASTComment[] comments, IIndexFileLocation[] filesToUpdate) {
 		class TaskList {
 			IFile fFile;

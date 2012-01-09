@@ -318,6 +318,7 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 	/*
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		String property= event.getProperty();
 		if (AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND.equals(property)

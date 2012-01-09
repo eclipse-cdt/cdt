@@ -31,6 +31,7 @@ import org.eclipse.core.runtime.CoreException;
 class PDOMClassUtil {
 	static class FieldCollector implements IPDOMVisitor {
 		private List<ICPPField> fields = new ArrayList<ICPPField>();
+		@Override
 		public boolean visit(IPDOMNode node) throws CoreException {
 			if (node instanceof ICPPField) {
 				ICPPField field= (ICPPField) node;
@@ -40,6 +41,7 @@ class PDOMClassUtil {
 			}
 			return false;
 		}
+		@Override
 		public void leave(IPDOMNode node) throws CoreException {
 		}
 		public ICPPField[] getFields() {
@@ -49,6 +51,7 @@ class PDOMClassUtil {
 	
 	static class ConstructorCollector implements IPDOMVisitor {
 		private List<ICPPConstructor> fConstructors = new ArrayList<ICPPConstructor>();
+		@Override
 		public boolean visit(IPDOMNode node) throws CoreException {
 			if (node instanceof ICPPConstructor) {
 				ICPPConstructor cons= (ICPPConstructor) node;
@@ -64,6 +67,7 @@ class PDOMClassUtil {
 			}
 			return false;
 		}
+		@Override
 		public void leave(IPDOMNode node) throws CoreException {
 		}
 		public ICPPConstructor[] getConstructors() {
@@ -83,6 +87,7 @@ class PDOMClassUtil {
 			this.acceptNonImplicit= acceptNonImplicit;
 			this.filter= acceptImplicit ? IndexFilter.ALL_DECLARED_OR_IMPLICIT : IndexFilter.ALL_DECLARED;
 		}
+		@Override
 		public boolean visit(IPDOMNode node) throws CoreException {
 			if (node instanceof ICPPMethod) {
 				ICPPMethod method= (ICPPMethod) node;
@@ -94,6 +99,7 @@ class PDOMClassUtil {
 			}
 			return false; // don't visit the method
 		}
+		@Override
 		public void leave(IPDOMNode node) throws CoreException {
 		}
 		public ICPPMethod[] getMethods() {
@@ -103,11 +109,13 @@ class PDOMClassUtil {
 	
 	static class NestedClassCollector implements IPDOMVisitor {
 		private List<IPDOMNode> nestedClasses = new ArrayList<IPDOMNode>();
+		@Override
 		public boolean visit(IPDOMNode node) throws CoreException {
 			if (node instanceof ICPPClassType)
 				nestedClasses.add(node);
 			return false;
 		}
+		@Override
 		public void leave(IPDOMNode node) throws CoreException {
 		}
 		public ICPPClassType[] getNestedClasses() {

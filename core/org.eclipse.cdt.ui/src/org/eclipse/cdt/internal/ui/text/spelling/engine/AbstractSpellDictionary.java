@@ -242,6 +242,7 @@ public abstract class AbstractSpellDictionary implements ISpellDictionary {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellDictionary#getProposals(java.lang.String,boolean)
 	 */
+	@Override
 	public Set<RankedWordProposal> getProposals(final String word, final boolean sentence) {
 
 		try {
@@ -389,6 +390,7 @@ public abstract class AbstractSpellDictionary implements ISpellDictionary {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellDictionary#isCorrect(java.lang.String)
 	 */
+	@Override
 	public boolean isCorrect(String word) {
 		word= stripNonLetters(word);
 		try {
@@ -425,6 +427,7 @@ public abstract class AbstractSpellDictionary implements ISpellDictionary {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellDictionary#setStripNonLetters(boolean)
 	 */
+	@Override
 	public void setStripNonLetters(boolean state) {
 		fIsStrippingNonLetters= state;
 	}
@@ -458,6 +461,7 @@ public abstract class AbstractSpellDictionary implements ISpellDictionary {
 	/*
 	 * @see org.eclipse.cdt.ui.text.spelling.engine.ISpellDictionary#isLoaded()
 	 */
+	@Override
 	public final synchronized boolean isLoaded() {
 		return fLoaded || fHashBuckets.size() > 0;
 	}
@@ -581,6 +585,7 @@ public abstract class AbstractSpellDictionary implements ISpellDictionary {
 	/*
 	 * @see org.eclipse.cdt.ui.text.spelling.engine.ISpellDictionary#unload()
 	 */
+	@Override
 	public synchronized void unload() {
 		fLoaded= false;
 		fMustLoad= true;
@@ -590,6 +595,7 @@ public abstract class AbstractSpellDictionary implements ISpellDictionary {
 	/*
 	 * @see org.eclipse.cdt.ui.text.spelling.engine.ISpellDictionary#acceptsWords()
 	 */
+	@Override
 	public boolean acceptsWords() {
 		return false;
 	}
@@ -597,6 +603,7 @@ public abstract class AbstractSpellDictionary implements ISpellDictionary {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellDictionary#addWord(java.lang.String)
 	 */
+	@Override
 	public void addWord(final String word) {
 		// Do nothing
 	}

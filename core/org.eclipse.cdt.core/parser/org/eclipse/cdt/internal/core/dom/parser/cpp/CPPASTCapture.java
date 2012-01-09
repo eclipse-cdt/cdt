@@ -26,10 +26,12 @@ public class CPPASTCapture extends ASTNode implements ICPPASTCapture {
 	public CPPASTCapture() {
 	}
 
+	@Override
 	public CPPASTCapture copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CPPASTCapture copy(CopyStyle style) {
 		final CPPASTCapture result = new CPPASTCapture();
 		if (fIdentifier != null)
@@ -43,18 +45,22 @@ public class CPPASTCapture extends ASTNode implements ICPPASTCapture {
 		return result;
 	}
 
+	@Override
 	public boolean capturesThisPointer() {
 		return fIdentifier == null;
 	}
 
+	@Override
 	public boolean isByReference() {
 		return fByReference;
 	}
 
+	@Override
 	public boolean isPackExpansion() {
 		return fPackExpansion;
 	}
 
+	@Override
 	public IASTName getIdentifier() {
 		return fIdentifier;
 	}
@@ -78,6 +84,7 @@ public class CPPASTCapture extends ASTNode implements ICPPASTCapture {
         return true;
     }
 
+	@Override
 	public void setIdentifier(IASTName identifier) {
 		assertNotFrozen();
 		if (identifier != null) {
@@ -87,11 +94,13 @@ public class CPPASTCapture extends ASTNode implements ICPPASTCapture {
 		fIdentifier= identifier;
 	}
 
+	@Override
 	public void setIsByReference(boolean value) {
 		assertNotFrozen();
 		fByReference= value;
 	}
 
+	@Override
 	public void setIsPackExpansion(boolean val) {
 		assertNotFrozen();
 		fPackExpansion= val;

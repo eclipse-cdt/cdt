@@ -64,10 +64,12 @@ class PDOMCPPFieldSpecialization extends PDOMCPPSpecialization implements ICPPFi
 		return (ICPPField) getSpecializedBinding();
 	}
 	
+	@Override
 	public ICompositeType getCompositeTypeOwner() {
 		return getClassOwner();
 	}
 
+	@Override
 	public IType getType() {
 		try {
 			return getLinkage().loadType(record + TYPE_OFFSET);
@@ -77,6 +79,7 @@ class PDOMCPPFieldSpecialization extends PDOMCPPSpecialization implements ICPPFi
 		}
 	}
 
+	@Override
 	public IValue getInitialValue() {
 		try {
 			return getLinkage().loadValue(record + VALUE_OFFSET);
@@ -86,34 +89,42 @@ class PDOMCPPFieldSpecialization extends PDOMCPPSpecialization implements ICPPFi
 		}
 	}
 
+	@Override
 	public boolean isAuto() {
 		return getField().isAuto();
 	}
 
+	@Override
 	public boolean isExtern() {
 		return getField().isExtern();
 	}
 
+	@Override
 	public boolean isExternC() {
 		return false;
 	}
 
+	@Override
 	public boolean isRegister() {
 		return getField().isRegister();
 	}
 
+	@Override
 	public boolean isStatic() {
 		return getField().isStatic();
 	}
 
+	@Override
 	public ICPPClassType getClassOwner() {
 		return (ICPPClassType) getOwner();
 	}
 
+	@Override
 	public int getVisibility() {
 		return getField().getVisibility();
 	}
 
+	@Override
 	public boolean isMutable() {
 		return getField().isMutable();
 	}

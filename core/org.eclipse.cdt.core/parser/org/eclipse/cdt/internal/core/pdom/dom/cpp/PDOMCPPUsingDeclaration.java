@@ -91,6 +91,7 @@ class PDOMCPPUsingDeclaration extends PDOMCPPBinding implements	ICPPUsingDeclara
 		return IIndexCPPBindingConstants.CPP_USING_DECLARATION;
 	}
 
+	@Override
 	public IBinding[] getDelegates() {
 		if (delegates == null) {
 			delegates = new IBinding[1];
@@ -100,13 +101,13 @@ class PDOMCPPUsingDeclaration extends PDOMCPPBinding implements	ICPPUsingDeclara
 				do {
 					IBinding delegate = alias.getBinding();
 					if (delegate != null) {
-						delegates= (IBinding[]) ArrayUtil.append(IBinding.class, delegates, i++, delegate);
+						delegates= ArrayUtil.appendAt(IBinding.class, delegates, i++, delegate);
 					}
 				} while ((alias = alias.getNext()) != null);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
 			}
-			delegates = (IBinding[]) ArrayUtil.trim(IBinding.class, delegates);
+			delegates = ArrayUtil.trim(IBinding.class, delegates);
 		}
 		return delegates;
 	}

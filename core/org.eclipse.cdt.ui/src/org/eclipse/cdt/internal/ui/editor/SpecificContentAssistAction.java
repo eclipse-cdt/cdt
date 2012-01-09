@@ -146,7 +146,8 @@ final class SpecificContentAssistAction extends Action implements IUpdate {
 	/*
      * @see org.eclipse.ui.texteditor.IUpdate#update()
      */
-    public void update() {
+    @Override
+	public void update() {
     	setEnabled(computeEnablement(fEditor));
     }
 }

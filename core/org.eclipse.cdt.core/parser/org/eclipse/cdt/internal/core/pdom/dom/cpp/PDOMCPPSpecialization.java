@@ -64,6 +64,7 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements ICPPSpeci
 		super(linkage, bindingRecord);
 	}
 
+	@Override
 	public IBinding getSpecializedBinding() {
 		if (fSpecializedCache == null) {
 			try {
@@ -80,11 +81,13 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements ICPPSpeci
 		return (IPDOMBinding) getLinkage().getNode(specializedRec);
 	}
 		
+	@Override
 	@Deprecated
 	public ObjectMap getArgumentMap() {
 		return CPPTemplates.getArgumentMap(this, getTemplateParameterMap());
 	}
 	
+	@Override
 	public ICPPTemplateParameterMap getTemplateParameterMap() {
 		if (fArgMap == null) {
 			try {
@@ -104,6 +107,7 @@ abstract class PDOMCPPSpecialization extends PDOMCPPBinding implements ICPPSpeci
 		return fArgMap;
 	}
 	
+	@Override
 	public int getSignatureHash() throws CoreException {
 		return getDB().getInt(record + SIGNATURE_HASH);
 	}

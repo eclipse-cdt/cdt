@@ -62,6 +62,7 @@ public class CDocHover extends AbstractCEditorTextHover {
 
 			ICHelpInvocationContext context = new IHoverHelpInvocationContext() {
 
+				@Override
 				public IProject getProject() {
 					ITranslationUnit unit = getTranslationUnit();
 					if (unit != null) {
@@ -70,11 +71,13 @@ public class CDocHover extends AbstractCEditorTextHover {
 					return null;
 				}
 
+				@Override
 				public ITranslationUnit getTranslationUnit() {
 					IEditorInput editorInput= getEditor().getEditorInput();
 					return CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editorInput);
 				}
 
+				@Override
 				public IRegion getHoverRegion() {
 					return hoverRegion; 
 				}

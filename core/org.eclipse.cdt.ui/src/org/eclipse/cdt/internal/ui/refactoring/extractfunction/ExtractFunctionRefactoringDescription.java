@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- * Institute for Software (IFS)- initial API and implementation 
+ *     Institute for Software (IFS)- initial API and implementation 
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 
@@ -27,16 +27,16 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
 
 /**
  * @author Emanuel Graf IFS
- *
  */
 public class ExtractFunctionRefactoringDescription extends CRefactoringDescription {
 	protected static final String NAME = "name"; //$NON-NLS-1$
 	protected static final String VISIBILITY = "visibility"; //$NON-NLS-1$
 	protected static final String REPLACE_DUPLICATES = "replaceDuplicates"; //$NON-NLS-1$
 
-	public ExtractFunctionRefactoringDescription(String project, String description,
-			String comment, Map<String, String> arguments) {
-		super(ExtractFunctionRefactoring.ID, project, description, comment, RefactoringDescriptor.MULTI_CHANGE, arguments);
+	public ExtractFunctionRefactoringDescription(String project, String description, String comment,
+			Map<String, String> arguments) {
+		super(ExtractFunctionRefactoring.ID, project, description, comment,
+				RefactoringDescriptor.MULTI_CHANGE, arguments);
 	}
 
 	@Override
@@ -55,5 +55,4 @@ public class ExtractFunctionRefactoringDescription extends CRefactoringDescripti
 		ISelection selection = getSelection();
 		return new ExtractFunctionRefactoring(file, selection, info, proj);
 	}
-
 }

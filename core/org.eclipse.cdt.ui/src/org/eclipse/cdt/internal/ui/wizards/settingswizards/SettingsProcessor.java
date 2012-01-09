@@ -62,6 +62,7 @@ public abstract class SettingsProcessor implements ISettingsProcessor {
 	
 	
 
+	@Override
 	public void writeSectionXML(ICFolderDescription projectRoot, ContentHandler content) throws SettingsImportExportException {
 		ICLanguageSetting[] languages = projectRoot.getLanguageSettings();
 		AttributesImpl attributes = new AttributesImpl();
@@ -95,6 +96,7 @@ public abstract class SettingsProcessor implements ISettingsProcessor {
 	
 	
 	
+	@Override
 	public void readSectionXML(ICFolderDescription projectRoot, Element section) throws SettingsImportExportException {
 		ICLanguageSetting[] languageSettings = projectRoot.getLanguageSettings();
 		

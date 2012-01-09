@@ -108,7 +108,7 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 						allProjects[i] = null;
 					}
 				}
-				projects = (ICProject[]) ArrayUtil.removeNulls(ICProject.class, allProjects);
+				projects = ArrayUtil.removeNulls(ICProject.class, allProjects);
 			} else {
 				Map<String, ICProject> projectMap = new HashMap<String, ICProject>();
 				Set<String> pathFilter = new HashSet<String>();

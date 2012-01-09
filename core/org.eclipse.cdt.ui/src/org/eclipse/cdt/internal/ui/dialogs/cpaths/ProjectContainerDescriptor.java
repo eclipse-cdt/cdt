@@ -29,19 +29,23 @@ public class ProjectContainerDescriptor implements IContainerDescriptor {
 		fFilterType = filterType;
 	}
 
+	@Override
 	public IPathEntryContainerPage createPage() throws CoreException {
 		return new ProjectContainerPage(fFilterType);
 	}
 
+	@Override
 	public String getName() {
 		return CPathEntryMessages.ProjectContainer_label; 
 	}
 	
+	@Override
 	public Image getImage() {
 		return CUIPlugin.getDefault().getWorkbench().getSharedImages().getImage(IDE.SharedImages.IMG_OBJ_PROJECT);
 
 	}
 
+	@Override
 	public boolean canEdit(IPathEntry entry) {
 		return false;
 	}

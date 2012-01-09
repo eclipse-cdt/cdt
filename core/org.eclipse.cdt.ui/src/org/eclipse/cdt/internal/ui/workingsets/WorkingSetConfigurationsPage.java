@@ -56,6 +56,7 @@ public class WorkingSetConfigurationsPage extends PropertyPage {
 			block = new WorkingSetConfigurationBlock(workspace, workingSet);
 			block.setWorkingSetFilter(new IFilter() {
 
+				@Override
 				public boolean select(Object toTest) {
 					return toTest == workingSet;
 				}

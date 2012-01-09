@@ -63,6 +63,7 @@ public class RefreshScopeTests extends TestCase {
 		
 		// create project
 		CTestPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				ICProject cProject = CProjectHelper.createNewStileCProject("testRefreshScope", IPDOMManager.ID_NO_INDEXER, false);
 				fProject = cProject.getProject();
@@ -99,6 +100,7 @@ public class RefreshScopeTests extends TestCase {
 		fFolder6 = folder6;
 		
 		CTestPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				
 				folder1.create(true, true, monitor);

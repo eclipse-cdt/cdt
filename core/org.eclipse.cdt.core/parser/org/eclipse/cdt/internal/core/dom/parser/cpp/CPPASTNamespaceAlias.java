@@ -27,10 +27,12 @@ public class CPPASTNamespaceAlias extends ASTNode implements ICPPASTNamespaceAli
 		setMappingName(qualifiedName);
 	}
 
+	@Override
 	public CPPASTNamespaceAlias copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CPPASTNamespaceAlias copy(CopyStyle style) {
 		CPPASTNamespaceAlias copy = new CPPASTNamespaceAlias(
 				alias == null ? null : alias.copy(style),
@@ -42,11 +44,13 @@ public class CPPASTNamespaceAlias extends ASTNode implements ICPPASTNamespaceAli
 		return copy;
 	}
 	
+	@Override
 	public IASTName getAlias() {
         return alias;
     }
 
-    public void setAlias(IASTName name) {
+    @Override
+	public void setAlias(IASTName name) {
         assertNotFrozen();
         this.alias = name;
         if (name != null) {
@@ -55,11 +59,13 @@ public class CPPASTNamespaceAlias extends ASTNode implements ICPPASTNamespaceAli
 		}
     }
 
-    public IASTName getMappingName() {
+    @Override
+	public IASTName getMappingName() {
         return qualifiedName;
     }
 
-    public void setMappingName(IASTName qualifiedName) {
+    @Override
+	public void setMappingName(IASTName qualifiedName) {
         assertNotFrozen();
         this.qualifiedName = qualifiedName;
         if (qualifiedName != null) {
@@ -91,6 +97,7 @@ public class CPPASTNamespaceAlias extends ASTNode implements ICPPASTNamespaceAli
         return true;
     }
 
+	@Override
 	public int getRoleForName(IASTName n) {
 		if (alias == n) return r_definition;
 		if (qualifiedName == n) return r_reference;

@@ -35,6 +35,7 @@ public class CEnumerator extends PlatformObject implements IEnumerator {
         public CEnumeratorProblem(IASTNode node, int id, char[] arg) {
             super(node, id, arg);
         }
+		@Override
 		public IValue getValue() {
 			return Value.UNKNOWN;
 		}
@@ -54,38 +55,45 @@ public class CEnumerator extends PlatformObject implements IEnumerator {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
      */
-    public String getName() {
+    @Override
+	public String getName() {
         return enumeratorName.toString();
     }
 
-    public char[] getNameCharArray() {
+    @Override
+	public char[] getNameCharArray() {
         return enumeratorName.toCharArray();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
      */
-    public IScope getScope() {
+    @Override
+	public IScope getScope() {
         return CVisitor.getContainingScope(enumeratorName.getParent());
     }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IEnumerator#getType()
 	 */
+	@Override
 	public IType getType() {
 		return (IType) getOwner();
 	}
 
+	@Override
 	public ILinkage getLinkage() {
 		return Linkage.C_LINKAGE;
 	}
 
+	@Override
 	public IBinding getOwner() {
 	    IASTEnumerator etor = (IASTEnumerator) enumeratorName.getParent();
 		IASTEnumerationSpecifier enumSpec = (IASTEnumerationSpecifier) etor.getParent();
 		return enumSpec.getName().resolveBinding();
 	}
 
+	@Override
 	public IValue getValue() {
 		IASTNode parent= enumeratorName.getParent();
 		if (parent instanceof ASTEnumerator) 

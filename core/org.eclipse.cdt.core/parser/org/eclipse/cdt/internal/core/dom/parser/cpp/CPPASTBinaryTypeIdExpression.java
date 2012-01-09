@@ -36,10 +36,12 @@ public class CPPASTBinaryTypeIdExpression extends ASTNode implements IASTBinaryT
 		setOperand2(typeId2);
 	}
 
+	@Override
 	public CPPASTBinaryTypeIdExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CPPASTBinaryTypeIdExpression copy(CopyStyle style) {
 		CPPASTBinaryTypeIdExpression copy = new CPPASTBinaryTypeIdExpression(fOperator, 
 				fOperand1 == null ? null : fOperand1.copy(),
@@ -51,16 +53,19 @@ public class CPPASTBinaryTypeIdExpression extends ASTNode implements IASTBinaryT
 		return copy;
 	}
 
+	@Override
 	public Operator getOperator() {
         return fOperator;
     }
 
-    public void setOperator(Operator value) {
+    @Override
+	public void setOperator(Operator value) {
         assertNotFrozen();
         fOperator = value;
     }
 
-    public void setOperand1(IASTTypeId typeId) {
+    @Override
+	public void setOperand1(IASTTypeId typeId) {
     	assertNotFrozen();
        	fOperand1 = typeId;
        	if (typeId != null) {
@@ -69,7 +74,8 @@ public class CPPASTBinaryTypeIdExpression extends ASTNode implements IASTBinaryT
        	} 
     }
 
-    public void setOperand2(IASTTypeId typeId) {
+    @Override
+	public void setOperand2(IASTTypeId typeId) {
     	assertNotFrozen();
        	fOperand2 = typeId;
        	if (typeId != null) {
@@ -78,11 +84,13 @@ public class CPPASTBinaryTypeIdExpression extends ASTNode implements IASTBinaryT
        	} 
     }
 
-    public IASTTypeId getOperand1() {
+    @Override
+	public IASTTypeId getOperand1() {
     	return fOperand1;
     }
 
-    public IASTTypeId getOperand2() {
+    @Override
+	public IASTTypeId getOperand2() {
     	return fOperand2;
     }
 
@@ -107,6 +115,7 @@ public class CPPASTBinaryTypeIdExpression extends ASTNode implements IASTBinaryT
         return true;
     }
     
+	@Override
 	public IType getExpressionType() {
 		switch (getOperator()) {
 		case __is_base_of:
@@ -115,10 +124,12 @@ public class CPPASTBinaryTypeIdExpression extends ASTNode implements IASTBinaryT
 		return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
 	}
 	
+	@Override
 	public boolean isLValue() {
 		return false;
 	}
 
+	@Override
 	public ValueCategory getValueCategory() {
 		return isLValue() ? LVALUE : PRVALUE;
 	}

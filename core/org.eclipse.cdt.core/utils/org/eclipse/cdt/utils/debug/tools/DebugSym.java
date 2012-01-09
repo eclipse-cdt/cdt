@@ -25,6 +25,7 @@ public class DebugSym implements Comparable<Object> {
 	public DebugSym() {
 	}
 
+	@Override
 	public int compareTo(Object obj) {
 		long thisVal = 0;
 		long anotherVal = 0;

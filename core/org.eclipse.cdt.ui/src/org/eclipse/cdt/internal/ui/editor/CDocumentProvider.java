@@ -130,6 +130,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		/*
 		 * @see ICAnnotation#getArguments()
 		 */
+		@Override
 		public String[] getArguments() {
 			return fArguments;
 		}
@@ -137,6 +138,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		/*
 		 * @see ICAnnotation#getId()
 		 */
+		@Override
 		public int getId() {
 			return fId;
 		}
@@ -144,6 +146,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		/*
 		 * @see ICAnnotation#isProblem()
 		 */
+		@Override
 		public boolean isProblem() {
 			return fIsProblem;
 		}
@@ -151,6 +154,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		/*
 		 * @see ICAnnotation#hasOverlay()
 		 */
+		@Override
 		public boolean hasOverlay() {
 			return false;
 		}
@@ -158,6 +162,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		/*
 		 * @see ICAnnotation#getOverlay()
 		 */
+		@Override
 		public ICAnnotation getOverlay() {
 			return null;
 		}
@@ -165,6 +170,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		/*
 		 * @see ICAnnotation#addOverlaid(ICAnnotation)
 		 */
+		@Override
 		public void addOverlaid(ICAnnotation annotation) {
 			if (fOverlaids == null)
 				fOverlaids= new ArrayList<ICAnnotation>(1);
@@ -174,6 +180,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		/*
 		 * @see ICAnnotation#removeOverlaid(ICAnnotation)
 		 */
+		@Override
 		public void removeOverlaid(ICAnnotation annotation) {
 			if (fOverlaids != null) {
 				fOverlaids.remove(annotation);
@@ -185,6 +192,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		/*
 		 * @see ICAnnotation#getOverlaidIterator()
 		 */
+		@Override
 		public Iterator<ICAnnotation> getOverlaidIterator() {
 			if (fOverlaids != null)
 				return fOverlaids.iterator();
@@ -194,6 +202,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		/*
 		 * @see org.eclipse.cdt.internal.ui.editor.ICAnnotation#getTranslationUnit()
 		 */
+		@Override
 		public ITranslationUnit getTranslationUnit() {
 			return fTranslationUnit;
 		}
@@ -201,6 +210,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		/*
 		 * @see org.eclipsecjdt.internal.ui.editor.ICAnnotation#getMarkerType()
 		 */
+		@Override
 		public String getMarkerType() {
 			return fMarkerType;
 		}
@@ -301,6 +311,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		/*
 		 * @see org.eclipse.ui.texteditor.IMarkerUpdater#getAttribute()
 		 */
+		@Override
 		public String[] getAttribute() {
 			return null;
 		}
@@ -308,6 +319,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		/*
 		 * @see org.eclipse.ui.texteditor.IMarkerUpdater#getMarkerType()
 		 */
+		@Override
 		public String getMarkerType() {
 			return ICModelMarker.C_MODEL_PROBLEM_MARKER;
 		}
@@ -315,6 +327,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		/*
 		 * @see org.eclipse.ui.texteditor.IMarkerUpdater#updateMarker(org.eclipse.core.resources.IMarker, org.eclipse.jface.text.IDocument, org.eclipse.jface.text.Position)
 		 */
+		@Override
 		public boolean updateMarker(IMarker marker, IDocument document, Position position) {
 			if (position == null) {
 				return true;
@@ -430,6 +443,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		/*
 		 * @see IProblemRequestor#beginReporting()
 		 */
+		@Override
 		public void beginReporting() {
 			ProblemRequestorState state= fProblemRequestorState.get();
 			if (state == null)
@@ -439,6 +453,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		/*
 		 * @see org.eclipse.cdt.internal.ui.text.java.IProblemRequestorExtension#beginReportingSequence()
 		 */
+		@Override
 		public void beginReportingSequence() {
 			ProblemRequestorState state= fProblemRequestorState.get();
 			if (state == null)
@@ -466,6 +481,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		/*
 		 * @see IProblemRequestor#acceptProblem(IProblem)
 		 */
+		@Override
 		public void acceptProblem(IProblem problem) {
 			if (isActive()) {
 				ProblemRequestorState state= fProblemRequestorState.get();
@@ -477,6 +493,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		/*
 		 * @see IProblemRequestor#endReporting()
 		 */
+		@Override
 		public void endReporting() {
 			ProblemRequestorState state= fProblemRequestorState.get();
 			if (state != null && !state.fInsideReportingSequence)
@@ -486,6 +503,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		/*
 		 * @see org.eclipse.cdt.internal.ui.text.java.IProblemRequestorExtension#endReportingSequence()
 		 */
+		@Override
 		public void endReportingSequence() {
 			ProblemRequestorState state= fProblemRequestorState.get();
 			if (state != null && state.fInsideReportingSequence)
@@ -618,6 +636,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		/*
 		 * @see IProblemRequestor#isActive()
 		 */
+		@Override
 		public boolean isActive() {
 			return fIsActive;
 		}
@@ -625,6 +644,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		/*
 		 * @see IProblemRequestorExtension#setProgressMonitor(IProgressMonitor)
 		 */
+		@Override
 		public void setProgressMonitor(IProgressMonitor monitor) {
 			fProgressMonitor= monitor;
 		}
@@ -632,6 +652,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		/*
 		 * @see IProblemRequestorExtension#setIsActive(boolean)
 		 */
+		@Override
 		public void setIsActive(boolean isActive) {
 			if (fIsActive != isActive) {
 				fIsActive= isActive;
@@ -717,6 +738,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		/**
 		 * @see IAnnotationModelListener#modelChanged(IAnnotationModel)
 		 */
+		@Override
 		public void modelChanged(IAnnotationModel model) {
 			Object[] listeners= fListenerList.getListeners();
 			for (Object listener : listeners) {
@@ -727,6 +749,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		/**
 		 * @see IAnnotationModelListenerExtension#modelChanged(AnnotationModelEvent)
 		 */
+		@Override
 		public void modelChanged(AnnotationModelEvent event) {
 			Object[] listeners= fListenerList.getListeners();
 			for (Object curr : listeners) {
@@ -763,6 +786,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		setParentDocumentProvider(parentProvider);
 		fGlobalAnnotationModelListener= new GlobalAnnotationModelListener();
 		fPropertyListener= new IPropertyChangeListener() {
+			@Override
 			public void propertyChange(PropertyChangeEvent event) {
 				if (HANDLE_TEMPORARY_PROBLEMS.equals(event.getProperty()))
 					enableHandlingTemporaryProblems();

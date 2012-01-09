@@ -40,10 +40,12 @@ public class CPPASTNamedTypeSpecifier extends CPPASTBaseDeclSpecifier implements
 		setName(name);
 	}
 
+	@Override
 	public CPPASTNamedTypeSpecifier copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CPPASTNamedTypeSpecifier copy(CopyStyle style) {
 		CPPASTNamedTypeSpecifier copy = new CPPASTNamedTypeSpecifier(name == null ? null
 				: name.copy(style));
@@ -55,21 +57,25 @@ public class CPPASTNamedTypeSpecifier extends CPPASTBaseDeclSpecifier implements
 		return copy;
 	}
 	
+	@Override
 	public boolean isTypename() {
         return typename;
     }
 
-    public void setIsTypename(boolean value) {
+    @Override
+	public void setIsTypename(boolean value) {
         assertNotFrozen();
         typename = value;
     }
 
-    public IASTName getName() {
+    @Override
+	public IASTName getName() {
         return name;
     }
 
 
-    public void setName(IASTName name) {
+    @Override
+	public void setName(IASTName name) {
         assertNotFrozen();
         this.name = name;
         if (name != null) {
@@ -106,12 +112,14 @@ public class CPPASTNamedTypeSpecifier extends CPPASTBaseDeclSpecifier implements
         return true;
     }
 	
+	@Override
 	public int getRoleForName(IASTName n) {
 		if (n == name)
 			return r_reference;
 		return r_unclear;
 	}
 
+	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix, String[] namespaces) {
 		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix, namespaces);
 		List<IBinding> filtered = new ArrayList<IBinding>();
@@ -129,6 +137,7 @@ public class CPPASTNamedTypeSpecifier extends CPPASTBaseDeclSpecifier implements
 		return filtered.toArray(new IBinding[filtered.size()]);
 	}
 	
+	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		return findBindings(n, isPrefix, null);
 	}

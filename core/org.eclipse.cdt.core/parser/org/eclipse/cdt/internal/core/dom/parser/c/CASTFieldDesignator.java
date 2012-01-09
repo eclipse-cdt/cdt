@@ -34,10 +34,12 @@ public class CASTFieldDesignator extends ASTNode implements ICASTFieldDesignator
 		setName(name);
 	}
 	
+	@Override
 	public CASTFieldDesignator copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CASTFieldDesignator copy(CopyStyle style) {
 		CASTFieldDesignator copy = new CASTFieldDesignator(name == null ? null : name.copy(style));
 		copy.setOffsetAndLength(this);
@@ -47,11 +49,13 @@ public class CASTFieldDesignator extends ASTNode implements ICASTFieldDesignator
 		return copy;
 	}
 
+	@Override
 	public IASTName getName() {
         return name;
     }
 
-    public void setName(IASTName name) {
+    @Override
+	public void setName(IASTName name) {
         assertNotFrozen();
         this.name = name;
         if (name != null) {
@@ -77,6 +81,7 @@ public class CASTFieldDesignator extends ASTNode implements ICASTFieldDesignator
         return true;
     }
     
+	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		return CVisitor.findBindingsForContentAssist(n, isPrefix);
 	}

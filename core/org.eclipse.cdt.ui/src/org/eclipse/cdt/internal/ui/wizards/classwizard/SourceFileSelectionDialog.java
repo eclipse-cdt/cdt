@@ -99,7 +99,8 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
         }
         
         // -- ISelectionChangedListener --
-        public void selectionChanged(SelectionChangedEvent event) {
+        @Override
+		public void selectionChanged(SelectionChangedEvent event) {
             setResult(((IStructuredSelection) event.getSelection()).toList());
             ISelection sel = event.getSelection();
             if (sel instanceof IStructuredSelection) {
@@ -122,7 +123,8 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
         }
         
         // -- IDoubleClickListener --
-        public void doubleClick(DoubleClickEvent event) {
+        @Override
+		public void doubleClick(DoubleClickEvent event) {
             doStatusUpdate();
             
             ISelection selection = event.getSelection();
@@ -143,7 +145,8 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
         }
 
         // -- IDialogFieldListener --
-        public void dialogFieldChanged(DialogField field) {
+        @Override
+		public void dialogFieldChanged(DialogField field) {
             if (field == fFolderNameDialogField) {
     			fFolderNameStatus = folderNameChanged();
     			fFileNameStatus = fileNameChanged();
@@ -379,7 +382,8 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
     @Override
 	public void create() {
         BusyIndicator.showWhile(null, new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 superCreate();
                 fViewer.setSelection(new StructuredSelection(getInitialElementSelections()), true);
                 setPathFields(fInitialFolderName, fInitialFileName);
@@ -527,7 +531,8 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
 		            final ICElement[] foundElem = {/*base_folder*/ null, /*exact_folder*/ null, /*exact_file*/ null};
 		            try {
 			            fInput.accept(new ICElementVisitor() {
-			                public boolean visit(ICElement elem) {
+			                @Override
+							public boolean visit(ICElement elem) {
 			                    IPath path = elem.getPath();
 			                    if (path.isPrefixOf(folderPath)) {
 			                        if (foundElem[0] == null || path.segmentCount() > foundElem[0].getPath().segmentCount()) {

@@ -68,6 +68,7 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding implements IPDOMMem
 		return IIndexCPPBindingConstants.CPP_TEMPLATE_NON_TYPE_PARAMETER;
 	}
 	
+	@Override
 	public ICPPTemplateArgument getDefaultValue() {
 		try {
 			IValue val= getLinkage().loadValue(record + DEFAULTVAL);
@@ -96,25 +97,30 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding implements IPDOMMem
 		}
 	}
 
+	@Override
 	public void forceDelete(PDOMLinkage linkage) throws CoreException {
 		getDBName().delete();
 		linkage.storeType(record+TYPE_OFFSET, null);
 		linkage.storeValue(record+DEFAULTVAL, null);
 	}
 
+	@Override
 	public short getParameterPosition() {
 		return (short) getParameterID();
 	}
 	
+	@Override
 	public short getTemplateNestingLevel() {
 		readParamID();
 		return (short)(getParameterID() >> 16);
 	}
 	
+	@Override
 	public boolean isParameterPack() {
 		return getType() instanceof ICPPParameterPackType;
 	}
 
+	@Override
 	public int getParameterID() {
 		readParamID();
 		return fCachedParamID;
@@ -136,6 +142,7 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding implements IPDOMMem
 		linkage.storeType(record + TYPE_OFFSET, newType);
 	}
 
+	@Override
 	public void configure(ICPPTemplateParameter param) {
 		try {
 			if (param instanceof ICPPTemplateNonTypeParameter) {
@@ -161,6 +168,7 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding implements IPDOMMem
 		}
 	}
 
+	@Override
 	public IType getType() {
 		if (fType == null) {
 			try {
@@ -172,24 +180,31 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding implements IPDOMMem
 		return fType;
 	}
 
+	@Override
 	public IValue getInitialValue() {
 		return null;
 	}
+	@Override
 	public boolean isAuto() {
 		return false;
 	}
+	@Override
 	public boolean isExtern() {
 		return false;
 	}
+	@Override
 	public boolean isRegister() {
 		return false;
 	}
+	@Override
 	public boolean isStatic() {
 		return false;
 	}
+	@Override
 	public boolean isExternC() {
 		return false;
 	}
+	@Override
 	public boolean isMutable() {
 		return false;
 	}
@@ -201,6 +216,7 @@ class PDOMCPPTemplateNonTypeParameter extends PDOMCPPBinding implements IPDOMMem
 	/**
 	 * @deprecated
 	 */
+	@Override
 	@Deprecated
 	public IASTExpression getDefault() {
 		return null;

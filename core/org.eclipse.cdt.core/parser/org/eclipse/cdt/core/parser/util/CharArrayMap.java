@@ -109,7 +109,8 @@ public final class CharArrayMap<V> {
         }
         
         
-        public int compareTo(Key other) {
+        @Override
+		public int compareTo(Key other) {
         	char[] b1 = buffer, b2 = other.buffer;
         	
         	for(int i = start, j = other.start; i < b1.length && j < b2.length; i++, j++) {

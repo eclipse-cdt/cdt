@@ -93,6 +93,7 @@ public abstract class RewriteBaseTest extends BaseTestFramework implements ILogL
 		super.tearDown();
 	}
 
+	@Override
 	public void logging(IStatus status, String plugin) {
 		Throwable ex = status.getException();
 		StringBuilder stackTrace = new StringBuilder();

@@ -36,9 +36,11 @@ import org.eclipse.cdt.ui.IPropertyChangeParticipant;
 @Deprecated
 public final class TaskTagRule extends WordRule implements IPropertyChangeParticipant {	
 	private static class TaskTagDetector implements IWordDetector {
+		@Override
 		public boolean isWordStart(char c) {
 			return Character.isLetter(c);
 		}
+		@Override
 		public boolean isWordPart(char c) {
 			return Character.isLetter(c);
 		}
@@ -101,6 +103,7 @@ public final class TaskTagRule extends WordRule implements IPropertyChangePartic
 	/*
 	 * @see org.eclipse.cdt.ui.IPropertyChangeParticipant#affectsBehavior(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	public boolean affectsBehavior(PropertyChangeEvent event) {
 		return event.getProperty().equals(CCorePreferenceConstants.TODO_TASK_TAGS);
 	}
@@ -108,6 +111,7 @@ public final class TaskTagRule extends WordRule implements IPropertyChangePartic
 	/*
 	 * @see org.eclipse.cdt.ui.IPropertyChangeParticipant#adaptToPreferenceChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	public void adaptToPreferenceChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(CCorePreferenceConstants.TODO_TASK_TAGS)) {
 			Object value= event.getNewValue();

@@ -38,6 +38,7 @@ public class OverloadsWithinCommonHeaderTests extends PDOMTestBase {
 		return suite(OverloadsWithinCommonHeaderTests.class);
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		if (pdom == null) {
 			ICProject project = createProject("overloadsWithinCommonHeader", true);
@@ -46,6 +47,7 @@ public class OverloadsWithinCommonHeaderTests extends PDOMTestBase {
 		pdom.acquireReadLock();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		pdom.releaseReadLock();
 	}

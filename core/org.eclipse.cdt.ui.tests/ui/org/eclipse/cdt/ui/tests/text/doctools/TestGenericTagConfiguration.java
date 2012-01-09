@@ -34,6 +34,7 @@ public class TestGenericTagConfiguration extends AbstractGenericTagDocCommentVie
 		fCommentMarkers= commentMarkers.toCharArray();
 	}
 	
+	@Override
 	public IAutoEditStrategy createAutoEditStrategy() {
 		return null;
 	}
@@ -46,6 +47,7 @@ public class TestGenericTagConfiguration extends AbstractGenericTagDocCommentVie
 		return tags;
 	}
 	
+	@Override
 	public boolean isDocumentationComment(IDocument doc, int offset, int length) {
 		try {
 			if(offset+2 < doc.getLength()) {

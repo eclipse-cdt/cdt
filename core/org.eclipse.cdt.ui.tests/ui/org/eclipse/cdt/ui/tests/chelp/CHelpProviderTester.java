@@ -62,10 +62,12 @@ public class CHelpProviderTester{
 			fTitle = generateBookTitle(providerID,type);
 		}
 			
+		@Override
 		public String getTitle(){
 			return fTitle;
 		}
 			
+		@Override
 		public int getCHelpType(){
 			return fCHelpType;
 		}
@@ -85,20 +87,24 @@ public class CHelpProviderTester{
 			fLabel = generateHelpString(helpBook, string, providerID);
 			fResources = new IHelpResource[1];
 			fResources[0] = new IHelpResource(){
+				@Override
 				public String getHref(){
 					return fHref;
 				}
 				
+				@Override
 				public String getLabel(){
 					return fLabel;
 				}				
 			};
 		}
 	
+		@Override
 		public ICHelpBook getCHelpBook(){
 			return fBook;
 		}
 		
+		@Override
 		public IHelpResource[] getHelpResources(){
 			return fResources;
 		}
@@ -119,11 +125,13 @@ public class CHelpProviderTester{
         		include = file;
         	}
         	
-        	public String getIncludeName() {
+        	@Override
+			public String getIncludeName() {
         		return include;
         	}
         	
-        	public boolean isStandard() {
+        	@Override
+			public boolean isStandard() {
         		return true;
         	}
         }
@@ -134,10 +142,14 @@ public class CHelpProviderTester{
         }
 
         public class FunctionPrototypeSummary implements IFunctionPrototypeSummary {
-            public String getName()             { return fName; }
-            public String getReturnType()       { return fReturnType; }
-            public String getArguments()        { return fPrototype; }
-            public String getPrototypeString(boolean namefirst) {
+            @Override
+			public String getName()             { return fName; }
+            @Override
+			public String getReturnType()       { return fReturnType; }
+            @Override
+			public String getArguments()        { return fPrototype; }
+            @Override
+			public String getPrototypeString(boolean namefirst) {
                 if (true == namefirst) {
                     return fName + " (" + fPrototype + ") " + fReturnType;
                 }
@@ -147,12 +159,17 @@ public class CHelpProviderTester{
             }
         }
 
-        public String getName()                         { return fName; }
-        public String getNamespace()                    { return "dummy namespace"; }
-        public String getDescription()                  { return fSummary; }
-        public IFunctionPrototypeSummary getPrototype() { return new FunctionPrototypeSummary(); }
+        @Override
+		public String getName()                         { return fName; }
+        @Override
+		public String getNamespace()                    { return "dummy namespace"; }
+        @Override
+		public String getDescription()                  { return fSummary; }
+        @Override
+		public IFunctionPrototypeSummary getPrototype() { return new FunctionPrototypeSummary(); }
         
-        public IRequiredInclude[] getIncludes() {
+        @Override
+		public IRequiredInclude[] getIncludes() {
         	return incs; 
         }
         

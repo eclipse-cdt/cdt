@@ -80,6 +80,7 @@ public class LinkedNamesAssistProposal implements ICCompletionProposal, IComplet
 			fDocument= document;
 		}
 
+		@Override
 		public ExitFlags doExit(LinkedModeModel model, VerifyEvent event, int offset, int length) {
 			if (length == 0 && (event.character == SWT.BS || event.character == SWT.DEL)) {
 				LinkedPosition position= model.findPosition(new LinkedPosition(fDocument, offset, 0, LinkedPositionGroup.NO_STOP));
@@ -127,6 +128,7 @@ public class LinkedNamesAssistProposal implements ICCompletionProposal, IComplet
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#apply(org.eclipse.jface.text.ITextViewer, char, int, int)
 	 */
+	@Override
 	public void apply(final ITextViewer viewer, char trigger, int stateMask, final int offset) {
 		try {
 			fLocations = null;
@@ -137,6 +139,7 @@ public class LinkedNamesAssistProposal implements ICCompletionProposal, IComplet
 			ASTProvider.getASTProvider().runOnAST(fTranslationUnit, ASTProvider.WAIT_ACTIVE_ONLY,
 					new NullProgressMonitor(), new ASTRunnable() {
 
+				@Override
 				public IStatus runOnAST(ILanguage lang, IASTTranslationUnit astRoot) throws CoreException {
 					if (astRoot == null)
 						return Status.CANCEL_STATUS;
@@ -157,6 +160,7 @@ public class LinkedNamesAssistProposal implements ICCompletionProposal, IComplet
 			// Sort the locations starting with the one @ offset.
 			Arrays.sort(fLocations, new Comparator<IRegion>() {
 
+				@Override
 				public int compare(IRegion n1, IRegion n2) {
 					return rank(n1) - rank(n2);
 				}
@@ -226,6 +230,7 @@ public class LinkedNamesAssistProposal implements ICCompletionProposal, IComplet
 	/*
 	 * @see ICompletionProposal#apply(IDocument)
 	 */
+	@Override
 	public void apply(IDocument document) {
 		// can't do anything
 	}
@@ -233,6 +238,7 @@ public class LinkedNamesAssistProposal implements ICCompletionProposal, IComplet
 	/*
 	 * @see ICompletionProposal#getSelection(IDocument)
 	 */
+	@Override
 	public Point getSelection(IDocument document) {
 		return null;
 	}
@@ -240,6 +246,7 @@ public class LinkedNamesAssistProposal implements ICCompletionProposal, IComplet
 	/*
 	 * @see ICompletionProposal#getAdditionalProposalInfo()
 	 */
+	@Override
 	public String getAdditionalProposalInfo() {
 		return CorrectionMessages.LinkedNamesAssistProposal_proposalinfo;
 	}
@@ -247,6 +254,7 @@ public class LinkedNamesAssistProposal implements ICCompletionProposal, IComplet
 	/*
 	 * @see ICompletionProposal#getDisplayString()
 	 */
+	@Override
 	public String getDisplayString() {
 		String shortCutString= CorrectionCommandHandler.getShortCutString(getCommandId());
 		if (shortCutString != null) {
@@ -259,6 +267,7 @@ public class LinkedNamesAssistProposal implements ICCompletionProposal, IComplet
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension6#getStyledDisplayString()
 	 */
+	@Override
 	public StyledString getStyledDisplayString() {
 		StyledString str= new StyledString(fLabel);
 		
@@ -274,6 +283,7 @@ public class LinkedNamesAssistProposal implements ICCompletionProposal, IComplet
 	/*
 	 * @see ICompletionProposal#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_CORRECTION_LINKED_RENAME);
 	}
@@ -281,6 +291,7 @@ public class LinkedNamesAssistProposal implements ICCompletionProposal, IComplet
 	/*
 	 * @see ICompletionProposal#getContextInformation()
 	 */
+	@Override
 	public IContextInformation getContextInformation() {
 		return null;
 	}
@@ -288,6 +299,7 @@ public class LinkedNamesAssistProposal implements ICCompletionProposal, IComplet
 	/*
 	 * @see ICCompletionProposal#getRelevance()
 	 */
+	@Override
 	public int getRelevance() {
 		return fRelevance;
 	}
@@ -295,18 +307,21 @@ public class LinkedNamesAssistProposal implements ICCompletionProposal, IComplet
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#selected(org.eclipse.jface.text.ITextViewer, boolean)
 	 */
+	@Override
 	public void selected(ITextViewer textViewer, boolean smartToggle) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#unselected(org.eclipse.jface.text.ITextViewer)
 	 */
+	@Override
 	public void unselected(ITextViewer textViewer) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#validate(org.eclipse.jface.text.IDocument, int, org.eclipse.jface.text.DocumentEvent)
 	 */
+	@Override
 	public boolean validate(IDocument document, int offset, DocumentEvent event) {
 		return false;
 	}
@@ -314,6 +329,7 @@ public class LinkedNamesAssistProposal implements ICCompletionProposal, IComplet
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.ui.text.correction.ICommandAccess#getCommandId()
 	 */
+	@Override
 	public String getCommandId() {
 		return ASSIST_ID;
 	}
@@ -322,6 +338,7 @@ public class LinkedNamesAssistProposal implements ICCompletionProposal, IComplet
 		fRelevance= relevance;
 	}
 
+	@Override
 	public String getIdString() {
 		return ASSIST_ID;
 	}

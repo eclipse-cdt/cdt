@@ -68,28 +68,34 @@ final class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBin
 		return IIndexCBindingConstants.CPARAMETER;
 	}
 		
+	@Override
 	public IType getType() {
 		return fType;
 	}
 
+	@Override
 	public boolean isAuto() {
 		byte flag = 1<<PDOMCAnnotation.AUTO_OFFSET;
 		return hasFlag(flag, true);
 	}
 
+	@Override
 	public boolean isRegister() {
 		byte flag = 1<<PDOMCAnnotation.REGISTER_OFFSET;
 		return hasFlag(flag, false);
 	}
 
+	@Override
 	public String getName() {
 		return new String(getNameCharArray());
 	}
 
+	@Override
 	public IIndexScope getScope() {
 		return null;
 	}
 
+	@Override
 	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class adapter) {
 		return null;
@@ -105,24 +111,29 @@ final class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBin
 		}
 	}
 
+	@Override
 	public IIndexFragment getFragment() {
 		return getPDOM();
 	}
 
+	@Override
 	public boolean hasDefinition() throws CoreException {
 		// parameter bindings do not span index fragments
 		return true;
 	}
 
+	@Override
 	public boolean hasDeclaration() throws CoreException {
 		// parameter bindings do not span index fragments
 		return true;
 	}
 
+	@Override
 	public String[] getQualifiedName() {
 		return new String[] {getName()};
 	}
 
+	@Override
 	public int getBindingConstant() {
 		return getNodeType();
 	}
@@ -149,14 +160,17 @@ final class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBin
 		return rec;
 	}
 
+	@Override
 	public boolean isFileLocal() throws CoreException {
 		return false;
 	}
 	
+	@Override
 	public IIndexFile getLocalToFile() throws CoreException {
 		return null;
 	}
 
+	@Override
 	public IValue getInitialValue() {
 		return null;
 	}
@@ -180,10 +194,12 @@ final class PDOMCParameter extends PDOMNamedNode implements IParameter, IPDOMBin
 	}
 	
 	
+	@Override
 	public boolean isExtern() {
 		return false;
 	}
 
+	@Override
 	public boolean isStatic() {
 		return false;
 	}

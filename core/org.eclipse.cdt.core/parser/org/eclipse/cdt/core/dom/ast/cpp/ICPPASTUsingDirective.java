@@ -52,11 +52,13 @@ public interface ICPPASTUsingDirective extends IASTDeclaration, IASTNameOwner {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICPPASTUsingDirective copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICPPASTUsingDirective copy(CopyStyle style);
 
 }

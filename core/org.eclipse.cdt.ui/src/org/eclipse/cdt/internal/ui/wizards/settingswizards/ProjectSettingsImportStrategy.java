@@ -48,6 +48,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 public class ProjectSettingsImportStrategy implements IProjectSettingsWizardPageStrategy {
 
 
+	@Override
 	public String getMessage(MessageType type) {
 		switch(type) {
 		case TITLE:    return Messages.ProjectSettingsWizardPage_Import_title;
@@ -63,6 +64,7 @@ public class ProjectSettingsImportStrategy implements IProjectSettingsWizardPage
 	/*
 	 * Start with an empty list of processors.
 	 */
+	@Override
 	public void pageCreated(IProjectSettingsWizardPage page) {
 		page.setDisplayedSettingsProcessors(Collections.<ISettingsProcessor>emptyList());
 	}
@@ -72,6 +74,7 @@ public class ProjectSettingsImportStrategy implements IProjectSettingsWizardPage
 	 * Collects the importers that can be applied to the file and displays 
 	 * them to the user.
 	 */
+	@Override
 	public void fileSelected(IProjectSettingsWizardPage page) {
 		List<ImporterSectionPair> pairs = Collections.emptyList();
 		try {
@@ -96,6 +99,7 @@ public class ProjectSettingsImportStrategy implements IProjectSettingsWizardPage
 	/*
 	 * Parse the file again and this time actually do the import.
 	 */
+	@Override
 	public boolean finish(IProjectSettingsWizardPage page) {
 		// get the selected project and configuration
 		ICConfigurationDescription config = page.getSelectedConfiguration();
@@ -196,12 +200,15 @@ public class ProjectSettingsImportStrategy implements IProjectSettingsWizardPage
 	 * of any kind of problem.
 	 */
 	private static ErrorHandler ABORTING_ERROR_HANDER = new ErrorHandler() {
+		@Override
 		public void error(SAXParseException e) throws SAXException {
 			throw e;
 		}
+		@Override
 		public void fatalError(SAXParseException e) throws SAXException {
 			throw e;
 		}
+		@Override
 		public void warning(SAXParseException e) throws SAXException {
 			throw e;
 		}

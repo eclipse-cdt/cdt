@@ -61,10 +61,12 @@ public class CPPASTDeclarator extends ASTNode implements ICPPASTDeclarator, IAST
 		setInitializer(initializer);
 	}
 
-    public CPPASTDeclarator copy() {
+    @Override
+	public CPPASTDeclarator copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CPPASTDeclarator copy(CopyStyle style) {
 		CPPASTDeclarator copy = new CPPASTDeclarator();
 		copyBaseDeclarator(copy, style);
@@ -84,29 +86,35 @@ public class CPPASTDeclarator extends ASTNode implements ICPPASTDeclarator, IAST
 		copy.setOffsetAndLength(this);
     }
 
+	@Override
 	public boolean declaresParameterPack() {
 		return isPackExpansion;
 	}
 
+	@Override
 	public IASTPointerOperator[] getPointerOperators() {
         if (pointerOps == null) return IASTPointerOperator.EMPTY_ARRAY;
-        pointerOps = (IASTPointerOperator[]) ArrayUtil.trim(IASTPointerOperator.class, pointerOps);
+        pointerOps = ArrayUtil.trim(IASTPointerOperator.class, pointerOps);
         return pointerOps;
     }
 
-    public IASTDeclarator getNestedDeclarator() {
+    @Override
+	public IASTDeclarator getNestedDeclarator() {
         return nested;
     }
 
-    public IASTName getName() {
+    @Override
+	public IASTName getName() {
         return name;
     }
 
-    public IASTInitializer getInitializer() {
+    @Override
+	public IASTInitializer getInitializer() {
         return initializer;
     }
 
-    public void setInitializer(IASTInitializer initializer) {
+    @Override
+	public void setInitializer(IASTInitializer initializer) {
         assertNotFrozen();
         this.initializer = initializer;
         if (initializer != null) {
@@ -115,16 +123,18 @@ public class CPPASTDeclarator extends ASTNode implements ICPPASTDeclarator, IAST
 		}
     }
 
-    public void addPointerOperator(IASTPointerOperator operator) {
+    @Override
+	public void addPointerOperator(IASTPointerOperator operator) {
         assertNotFrozen();
     	if (operator != null) {
     		operator.setParent(this);
 			operator.setPropertyInParent(POINTER_OPERATOR);
-    		pointerOps = (IASTPointerOperator[]) ArrayUtil.append(IASTPointerOperator.class, pointerOps, operator);
+    		pointerOps = ArrayUtil.append(IASTPointerOperator.class, pointerOps, operator);
     	}
     }
 
-    public void setNestedDeclarator(IASTDeclarator nested) {
+    @Override
+	public void setNestedDeclarator(IASTDeclarator nested) {
         assertNotFrozen();
         this.nested = nested;
         if (nested != null) {
@@ -133,7 +143,8 @@ public class CPPASTDeclarator extends ASTNode implements ICPPASTDeclarator, IAST
 		}
     }
 
-    public void setName(IASTName name) {
+    @Override
+	public void setName(IASTName name) {
         assertNotFrozen();
         this.name = name;
         if (name != null) {
@@ -142,7 +153,8 @@ public class CPPASTDeclarator extends ASTNode implements ICPPASTDeclarator, IAST
 		}
     }
 
-    public void setDeclaresParameterPack(boolean val) {
+    @Override
+	public void setDeclaresParameterPack(boolean val) {
     	assertNotFrozen();
     	isPackExpansion= val;
 	}
@@ -196,6 +208,7 @@ public class CPPASTDeclarator extends ASTNode implements ICPPASTDeclarator, IAST
 		return initializer == null || initializer.accept(action);
     }
 
+	@Override
 	public int getRoleForName(IASTName n) {
 		// 3.1.2
         IASTNode parent = ASTQueries.findOutermostDeclarator(this).getParent();
@@ -257,6 +270,7 @@ public class CPPASTDeclarator extends ASTNode implements ICPPASTDeclarator, IAST
 	/**
 	 * @see IASTImplicitNameOwner#getImplicitNames()
 	 */
+	@Override
 	public IASTImplicitName[] getImplicitNames() {
 		if (implicitNames == null) {
 			ICPPConstructor ctor = CPPSemantics.findImplicitlyCalledConstructor(this);

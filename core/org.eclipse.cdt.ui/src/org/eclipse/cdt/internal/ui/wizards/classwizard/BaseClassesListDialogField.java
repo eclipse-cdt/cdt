@@ -44,12 +44,14 @@ public class BaseClassesListDialogField extends ListDialogField<IBaseClassInfo> 
     static final Integer INDEX_PRIVATE = new Integer(2);
     
     private final class CellHandler implements ICellModifier {
-        public boolean canModify(Object element, String property) {
+        @Override
+		public boolean canModify(Object element, String property) {
             return (element instanceof IBaseClassInfo)
             	&& (property.equals(CP_ACCESS) || property.equals(CP_VIRTUAL));
         }
         
-        public Object getValue(Object element, String property) {
+        @Override
+		public Object getValue(Object element, String property) {
             if (!(element instanceof IBaseClassInfo))
                 return null;
             
@@ -70,7 +72,8 @@ public class BaseClassesListDialogField extends ListDialogField<IBaseClassInfo> 
             return null;
         }
         
-        public void modify(Object element, String property, Object value) {
+        @Override
+		public void modify(Object element, String property, Object value) {
             IBaseClassInfo baseClass = null;
             if (element instanceof IBaseClassInfo) {
                 baseClass = (IBaseClassInfo) element;

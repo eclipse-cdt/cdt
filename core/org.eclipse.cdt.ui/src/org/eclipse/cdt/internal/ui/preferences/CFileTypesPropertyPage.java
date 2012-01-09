@@ -128,6 +128,7 @@ public class CFileTypesPropertyPage extends PropertyPage {
 		fUseWorkspace = new Button(radioPane, SWT.RADIO);
 		fUseWorkspace.setText(PreferencesMessages.CFileTypesPropertyPage_useWorkspaceSettings); 
 		fUseWorkspace.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event e) {
 				if (fUseWorkspace.getSelection()) {
 					fPrefsBlock.setInput(null);
@@ -142,6 +143,7 @@ public class CFileTypesPropertyPage extends PropertyPage {
 		fUseProject = new Button(radioPane, SWT.RADIO);
 		fUseProject.setText(PreferencesMessages.CFileTypesPropertyPage_useProjectSettings); 
 		fUseProject.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event e) {
 				if (fUseProject.getSelection()) {
 					fPrefsBlock.setInput(project);

@@ -164,23 +164,28 @@ public class CPathIncludeSymbolEntryPerFilePage extends CPathIncludeSymbolEntryB
         private final Object[] EMPTY_ARR = new Object[0];
 
         // -------- IListAdapter --------
-        public void customButtonPressed(TreeListDialogField<CPElementGroup> field, int index) {
+        @Override
+		public void customButtonPressed(TreeListDialogField<CPElementGroup> field, int index) {
             listCustomButtonPressed(field, index);
         }
 
-        public void selectionChanged(TreeListDialogField<CPElementGroup> field) {
+        @Override
+		public void selectionChanged(TreeListDialogField<CPElementGroup> field) {
             listPageSelectionChanged(field);
         }
 
-        public void doubleClicked(TreeListDialogField<CPElementGroup> field) {
+        @Override
+		public void doubleClicked(TreeListDialogField<CPElementGroup> field) {
             listPageDoubleClicked(field);
         }
 
-        public void keyPressed(TreeListDialogField<CPElementGroup> field, KeyEvent event) {
+        @Override
+		public void keyPressed(TreeListDialogField<CPElementGroup> field, KeyEvent event) {
             listPageKeyPressed(field, event);
         }
 
-        public Object[] getChildren(TreeListDialogField<CPElementGroup> field, Object element) {
+        @Override
+		public Object[] getChildren(TreeListDialogField<CPElementGroup> field, Object element) {
             if (element instanceof CPElement) {
                 return ((CPElement)element).getChildren();
             } else if (element instanceof CPElementGroup) {
@@ -189,7 +194,8 @@ public class CPathIncludeSymbolEntryPerFilePage extends CPathIncludeSymbolEntryB
             return EMPTY_ARR;
         }
 
-        public Object getParent(TreeListDialogField<CPElementGroup> field, Object element) {
+        @Override
+		public Object getParent(TreeListDialogField<CPElementGroup> field, Object element) {
             if (element instanceof CPElementGroup) {
                 return ((CPElementGroup)element).getParent();
             } else if (element instanceof CPElement) {
@@ -198,7 +204,8 @@ public class CPathIncludeSymbolEntryPerFilePage extends CPathIncludeSymbolEntryB
             return null;
         }
 
-        public boolean hasChildren(TreeListDialogField<CPElementGroup> field, Object element) {
+        @Override
+		public boolean hasChildren(TreeListDialogField<CPElementGroup> field, Object element) {
             if (element instanceof CPElementGroup) {
                 return true;
             }
@@ -210,7 +217,8 @@ public class CPathIncludeSymbolEntryPerFilePage extends CPathIncludeSymbolEntryB
 
         // ---------- IDialogFieldListener --------
 
-        public void dialogFieldChanged(DialogField field) {
+        @Override
+		public void dialogFieldChanged(DialogField field) {
             listPageDialogFieldChanged(field);
         }
 

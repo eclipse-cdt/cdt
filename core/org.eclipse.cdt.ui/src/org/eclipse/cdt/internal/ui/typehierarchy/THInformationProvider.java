@@ -26,14 +26,17 @@ public class THInformationProvider implements IInformationProviderExtension, IIn
 		fEditor= editor;
 	}
 
+	@Override
 	public Object getInformation2(ITextViewer textViewer, IRegion subject) {
 		return fEditor == null ? null : TypeHierarchyUI.getInput(fEditor, subject);
 	}
 
+	@Override
 	public String getInformation(ITextViewer textViewer, IRegion subject) {
 		return null;
 	}
 
+	@Override
 	public IRegion getSubject(ITextViewer textViewer, int offset) {
 		return new Region(offset, 0);
 	}

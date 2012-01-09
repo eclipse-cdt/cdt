@@ -36,10 +36,12 @@ public class CASTParameterDeclaration extends ASTNode implements IASTParameterDe
 		setDeclarator(declarator);
 	}
 
+	@Override
 	public CASTParameterDeclaration copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CASTParameterDeclaration copy(CopyStyle style) {
 		CASTParameterDeclaration copy = new CASTParameterDeclaration();
 		copy.setDeclSpecifier(declSpec == null ? null : declSpec.copy(style));
@@ -51,15 +53,18 @@ public class CASTParameterDeclaration extends ASTNode implements IASTParameterDe
 		return copy;
 	}
 	
+	@Override
 	public IASTDeclSpecifier getDeclSpecifier() {
         return declSpec;
     }
 
-    public IASTDeclarator getDeclarator() {
+    @Override
+	public IASTDeclarator getDeclarator() {
         return declarator;
     }
 
-    public void setDeclSpecifier(IASTDeclSpecifier declSpec) {
+    @Override
+	public void setDeclSpecifier(IASTDeclSpecifier declSpec) {
         assertNotFrozen();
         this.declSpec = declSpec;
         if (declSpec != null) {
@@ -68,7 +73,8 @@ public class CASTParameterDeclaration extends ASTNode implements IASTParameterDe
 		}
     }
 
-    public void setDeclarator(IASTDeclarator declarator) {
+    @Override
+	public void setDeclarator(IASTDeclarator declarator) {
         assertNotFrozen();
         this.declarator = declarator;
         if (declarator != null) {
@@ -99,6 +105,7 @@ public class CASTParameterDeclaration extends ASTNode implements IASTParameterDe
         return true;
     }
 
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
         if (child == declarator) {
             other.setPropertyInParent(child.getPropertyInParent());

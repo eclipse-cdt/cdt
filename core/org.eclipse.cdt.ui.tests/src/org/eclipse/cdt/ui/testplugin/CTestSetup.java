@@ -19,13 +19,16 @@ public class CTestSetup extends TestSetup {
 	 * @deprecated
 	 * Not needed anymore. No added value
 	 */
+	@Deprecated
 	public CTestSetup(Test test) {
 		super(test);
 	}	
 	
+	@Override
 	protected void setUp() throws Exception {
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 	}
 	

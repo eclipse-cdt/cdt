@@ -73,6 +73,7 @@ public class CAutoIndentTest extends AbstractAutoEditTest {
 
 		fStatusLog= Collections.synchronizedList(new ArrayList<IStatus>());
 		fLogListener= new ILogListener() {
+			@Override
 			public void logging(IStatus status, String plugin) {
 				if(!status.isOK()) {
 					fStatusLog.add(status);
@@ -111,7 +112,7 @@ public class CAutoIndentTest extends AbstractAutoEditTest {
 	}
 
 	public void testCAutoIndent() throws BadLocationException {
-		AutoEditTester tester = createAutoEditTester(); //$NON-NLS-1$
+		AutoEditTester tester = createAutoEditTester(); 
 		tester.type("void main() {\n"); //$NON-NLS-1$
 		assertEquals(1, tester.getCaretLine());
 		// Nested statement is indented by one.
@@ -149,7 +150,7 @@ public class CAutoIndentTest extends AbstractAutoEditTest {
 	}
 
 	public void testPasteAutoIndent() throws BadLocationException {
-		AutoEditTester tester = createAutoEditTester(); //$NON-NLS-1$
+		AutoEditTester tester = createAutoEditTester(); 
 		tester.type("class A {\n"); //$NON-NLS-1$
 		tester.goTo(1, 0);
 		tester.paste("class B {\n" +
@@ -176,7 +177,7 @@ public class CAutoIndentTest extends AbstractAutoEditTest {
 	}
 
 	public void testDefaultAutoIndent() throws BadLocationException {
-		AutoEditTester tester = createAutoEditTester(); //$NON-NLS-1$
+		AutoEditTester tester = createAutoEditTester(); 
 		tester.type("   initial indent=5\n"); //$NON-NLS-1$
 		assertEquals(1, tester.getCaretLine());
 		assertEquals(5, tester.getCaretColumn());
@@ -198,7 +199,7 @@ public class CAutoIndentTest extends AbstractAutoEditTest {
 	}
 
 	public void testCCommentAutoIndent() throws BadLocationException {
-		AutoEditTester tester = createAutoEditTester(); //$NON-NLS-1$
+		AutoEditTester tester = createAutoEditTester(); 
 		tester.type("/*\n"); //$NON-NLS-1$
 		assertEquals(ICPartitions.C_MULTI_LINE_COMMENT, tester.getContentType(tester.getCaretOffset()-1));
 		assertEquals(1, tester.getCaretLine());
@@ -215,7 +216,7 @@ public class CAutoIndentTest extends AbstractAutoEditTest {
 	}
 
 	public void testPreprocessorAutoIndent() throws BadLocationException {
-		AutoEditTester tester = createAutoEditTester(); //$NON-NLS-1$
+		AutoEditTester tester = createAutoEditTester(); 
 		tester.type("void main() {\n"); //$NON-NLS-1$
 		assertEquals(1, tester.getCaretLine());
 		// Nested statement is indented by one.
@@ -237,7 +238,7 @@ public class CAutoIndentTest extends AbstractAutoEditTest {
 	}
 
 	public void testPasteBlockCommentAutoIndent() throws BadLocationException {
-		AutoEditTester tester = createAutoEditTester(); //$NON-NLS-1$
+		AutoEditTester tester = createAutoEditTester(); 
 		tester.type("class A {\n};"); //$NON-NLS-1$
 		tester.goTo(1, 0);
 		tester.paste("/*\n" +
@@ -250,7 +251,7 @@ public class CAutoIndentTest extends AbstractAutoEditTest {
 	}
 
 	public void testPasteLineCommentAutoIndent() throws BadLocationException {
-		AutoEditTester tester = createAutoEditTester(); //$NON-NLS-1$
+		AutoEditTester tester = createAutoEditTester(); 
 		tester.type("class A {\n};"); //$NON-NLS-1$
 		tester.goTo(1, 0);
 		tester.paste("// int f;\n");
@@ -353,7 +354,7 @@ public class CAutoIndentTest extends AbstractAutoEditTest {
 	public void testBracketIndentForConstructorDefinition_Bug183814() throws BadLocationException {
 		DefaultCodeFormatterOptions whitesmiths= DefaultCodeFormatterOptions.getWhitesmithsSettings();
 		CCorePlugin.setOptions(new HashMap<String, String>(whitesmiths.getMap()));
-		AutoEditTester tester = createAutoEditTester(); //$NON-NLS-1$
+		AutoEditTester tester = createAutoEditTester(); 
 		
 		tester.type("Foo::Foo()\n{");
 		assertEquals("Foo::Foo()\n    {", tester.fDoc.get());
@@ -362,7 +363,7 @@ public class CAutoIndentTest extends AbstractAutoEditTest {
 	public void testSmartPasteWhitesmiths_Bug180531() throws Exception {
 		DefaultCodeFormatterOptions whitesmiths= DefaultCodeFormatterOptions.getWhitesmithsSettings();
 		CCorePlugin.setOptions(new HashMap<String, String>(whitesmiths.getMap()));
-		AutoEditTester tester = createAutoEditTester(); //$NON-NLS-1$
+		AutoEditTester tester = createAutoEditTester(); 
 		
 		tester.type("A::~A()\n{");
 		assertEquals("A::~A()\n    {", tester.fDoc.get());
@@ -394,7 +395,7 @@ public class CAutoIndentTest extends AbstractAutoEditTest {
 	}
 	
 	public void testSmartPaste_Bug215310() throws Exception  {
-		AutoEditTester tester = createAutoEditTester(); //$NON-NLS-1$
+		AutoEditTester tester = createAutoEditTester(); 
 		
 		tester.type("#define S \\ \n");
 		tester.type("d\n");
@@ -408,7 +409,7 @@ public class CAutoIndentTest extends AbstractAutoEditTest {
 	}
 
 	public void testAutoIndentDisabled_Bug219923() throws Exception  {
-		AutoEditTester tester = createAutoEditTester(); //$NON-NLS-1$
+		AutoEditTester tester = createAutoEditTester(); 
 		IPreferenceStore store= PreferenceConstants.getPreferenceStore();
 		try {
 			store.setValue(PreferenceConstants.EDITOR_AUTO_INDENT, false);

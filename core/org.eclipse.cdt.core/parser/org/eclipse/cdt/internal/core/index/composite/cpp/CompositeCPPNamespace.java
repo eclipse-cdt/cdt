@@ -24,6 +24,7 @@ class CompositeCPPNamespace extends CompositeCPPBinding implements ICPPNamespace
 		this.namespaces = namespaces;
 	}
 
+	@Override
 	public IBinding[] getMemberBindings() {
 		IIndexFragmentBinding[][] memberBindings = new IIndexFragmentBinding[namespaces.length][];
 		for(int i=0; i<namespaces.length; i++) {
@@ -34,10 +35,12 @@ class CompositeCPPNamespace extends CompositeCPPBinding implements ICPPNamespace
 		return cf.getCompositeBindings(memberBindings);
 	}
 
+	@Override
 	public ICPPNamespaceScope getNamespaceScope() {
 		return new CompositeCPPNamespaceScope(cf, namespaces);
 	}
 
+	@Override
 	public boolean isInline() {
 		for (ICPPNamespace namespace : namespaces) {
 			if (namespace.isInline())

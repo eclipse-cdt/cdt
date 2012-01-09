@@ -48,6 +48,7 @@ public abstract class BinaryObjectAdapter extends BinaryFile implements IBinaryO
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryObject#getSymbol(long)
 	 */
+	@Override
 	public ISymbol getSymbol(IAddress addr) {
 		ISymbol[] syms = getSymbols();
 		int insertion = Arrays.binarySearch(syms, addr);
@@ -68,6 +69,7 @@ public abstract class BinaryObjectAdapter extends BinaryFile implements IBinaryO
 	/**
 	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryObject#getBSS()
 	 */
+	@Override
 	public long getBSS() {
 		BinaryObjectInfo info = getBinaryObjectInfo();
 		if (info != null) {
@@ -79,6 +81,7 @@ public abstract class BinaryObjectAdapter extends BinaryFile implements IBinaryO
 	/**
 	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryObject#getCPU()
 	 */
+	@Override
 	public String getCPU() {
 		BinaryObjectInfo info = getBinaryObjectInfo();
 		if (info != null) {
@@ -90,6 +93,7 @@ public abstract class BinaryObjectAdapter extends BinaryFile implements IBinaryO
 	/**
 	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryObject#getData()
 	 */
+	@Override
 	public long getData() {
 		BinaryObjectInfo info = getBinaryObjectInfo();
 		if (info != null) {
@@ -101,6 +105,7 @@ public abstract class BinaryObjectAdapter extends BinaryFile implements IBinaryO
 	/**
 	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryObject#getText()
 	 */
+	@Override
 	public long getText() {
 		BinaryObjectInfo info = getBinaryObjectInfo();
 		if (info != null) {
@@ -112,6 +117,7 @@ public abstract class BinaryObjectAdapter extends BinaryFile implements IBinaryO
 	/**
 	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryObject#hasDebug()
 	 */
+	@Override
 	public boolean hasDebug() {
 		BinaryObjectInfo info = getBinaryObjectInfo();
 		if (info != null) {
@@ -123,6 +129,7 @@ public abstract class BinaryObjectAdapter extends BinaryFile implements IBinaryO
 	/**
 	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryObject#isLittleEndian()
 	 */
+	@Override
 	public boolean isLittleEndian() {
 		BinaryObjectInfo info = getBinaryObjectInfo();
 		if (info != null) {
@@ -156,6 +163,7 @@ public abstract class BinaryObjectAdapter extends BinaryFile implements IBinaryO
 	/**
 	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryObject#getName()
 	 */
+	@Override
 	public String getName() {
 		return getPath().lastSegment().toString();
 	}
@@ -168,7 +176,9 @@ public abstract class BinaryObjectAdapter extends BinaryFile implements IBinaryO
 	/**
 	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryObject#getSymbols()
 	 */
+	@Override
 	public abstract ISymbol[] getSymbols();
+	@Override
 	public abstract IAddressFactory getAddressFactory();
 
 	protected abstract BinaryObjectInfo getBinaryObjectInfo();

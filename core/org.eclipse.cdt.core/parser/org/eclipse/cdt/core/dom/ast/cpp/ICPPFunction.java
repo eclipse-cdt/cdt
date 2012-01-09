@@ -30,7 +30,8 @@ public interface ICPPFunction extends IFunction, ICPPBinding {
     /**
      * is this an inline function
      */
-    public boolean isInline();
+    @Override
+	public boolean isInline();
     
     /**
      * Returns whether this function is declared as extern "C".
@@ -49,12 +50,14 @@ public interface ICPPFunction extends IFunction, ICPPBinding {
      * {@inheritDoc}
 	 * @since 5.1
 	 */
-    public ICPPFunctionType getType();
+    @Override
+	public ICPPFunctionType getType();
     
     /**
 	 * @since 5.2
 	 */
-    public ICPPParameter[] getParameters();
+    @Override
+	public ICPPParameter[] getParameters();
     
     /**
      * @since 5.2

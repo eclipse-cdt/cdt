@@ -36,10 +36,12 @@ public class CASTTypedefNameSpecifier extends CASTBaseDeclSpecifier implements
 		setName(name);
 	}
 
+	@Override
 	public CASTTypedefNameSpecifier copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CASTTypedefNameSpecifier copy(CopyStyle style) {
 		CASTTypedefNameSpecifier copy = new CASTTypedefNameSpecifier(name == null ? null
 				: name.copy(style));
@@ -50,11 +52,13 @@ public class CASTTypedefNameSpecifier extends CASTBaseDeclSpecifier implements
 		return copy;
 	}
 
+	@Override
 	public IASTName getName() {
         return name;
     }
    
-    public void setName(IASTName name) {
+    @Override
+	public void setName(IASTName name) {
         assertNotFrozen();
         this.name = name;
         if (name != null) {
@@ -83,11 +87,13 @@ public class CASTTypedefNameSpecifier extends CASTBaseDeclSpecifier implements
         return true;
     }
 
+	@Override
 	public int getRoleForName(IASTName n) {
 		if( n == name )	return r_reference;
 		return r_unclear;
 	}
 
+	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		IBinding[] bindings = CVisitor.findBindingsForContentAssist(n, isPrefix);
 
@@ -97,6 +103,6 @@ public class CASTTypedefNameSpecifier extends CASTBaseDeclSpecifier implements
 			}
 		}
 		
-		return (IBinding[]) ArrayUtil.removeNulls(IBinding.class, bindings);
+		return ArrayUtil.removeNulls(IBinding.class, bindings);
 	}
 }

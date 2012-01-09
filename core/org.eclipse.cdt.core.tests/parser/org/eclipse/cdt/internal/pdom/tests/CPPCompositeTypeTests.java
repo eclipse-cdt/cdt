@@ -32,6 +32,7 @@ public class CPPCompositeTypeTests extends PDOMTestBase {
 		return new TestSuite(CPPCompositeTypeTests.class);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		CPPCompositeTypeTests foo = null;
 		
@@ -40,6 +41,7 @@ public class CPPCompositeTypeTests extends PDOMTestBase {
 		pdom.acquireReadLock();
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		pdom.releaseReadLock();
 	}

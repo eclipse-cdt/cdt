@@ -68,10 +68,12 @@ public interface IASTSwitchStatement extends IASTStatement {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IASTSwitchStatement copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public IASTSwitchStatement copy(CopyStyle style);
 }

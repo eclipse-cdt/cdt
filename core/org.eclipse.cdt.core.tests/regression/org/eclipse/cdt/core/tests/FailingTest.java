@@ -45,7 +45,8 @@ public class FailingTest extends TestCase {
     /* (non-Javadoc)
      * @see junit.framework.Test#run(junit.framework.TestResult)
      */
-    public void run( TestResult result ) {
+    @Override
+	public void run( TestResult result ) {
         result.startTest( this );
         
         TestResult r = new TestResult();

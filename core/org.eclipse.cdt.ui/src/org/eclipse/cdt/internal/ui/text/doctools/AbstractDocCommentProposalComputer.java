@@ -40,23 +40,28 @@ abstract class AbstractDocCommentProposalComputer implements ICompletionProposal
 		return getConfiguration(owner);
 	}
 	
+	@Override
 	public List<ICompletionProposal> computeCompletionProposals(ContentAssistInvocationContext context, IProgressMonitor monitor) {
 		return getConfiguration().createProposalComputer().computeCompletionProposals(context, monitor);
 	}
 
+	@Override
 	public List<IContextInformation> computeContextInformation(
 			ContentAssistInvocationContext context, IProgressMonitor monitor) {
 		return getConfiguration().createProposalComputer().computeContextInformation(context, monitor);
 	}
 
+	@Override
 	public String getErrorMessage() {
 		return getConfiguration().createProposalComputer().getErrorMessage();
 	}
 
+	@Override
 	public void sessionEnded() {
 		// XXX
 	}
 
+	@Override
 	public void sessionStarted() {
 		// XXX
 	}

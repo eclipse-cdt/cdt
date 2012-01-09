@@ -120,6 +120,7 @@ public class LineWrappingTabPage extends FormatterTabPage {
 //			fCategoriesList.add(category);
 //		}
 
+		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 		    if (event != null)
 		        fSelection= (IStructuredSelection)event.getSelection();
@@ -177,7 +178,8 @@ public class LineWrappingTabPage extends FormatterTabPage {
 			fCategoriesViewer.setSelection(new StructuredSelection(new Category[] { category }));
 		}
 
-        public void doubleClick(DoubleClickEvent event) {
+        @Override
+		public void doubleClick(DoubleClickEvent event) {
             final ISelection selection= event.getSelection();
             if (selection instanceof IStructuredSelection) {
                 final Category node= (Category)((IStructuredSelection)selection).getFirstElement();
@@ -708,17 +710,23 @@ public class LineWrappingTabPage extends FormatterTabPage {
 
 		fCategoriesViewer= new TreeViewer(composite /*categoryGroup*/, SWT.MULTI | SWT.BORDER | SWT.READ_ONLY | SWT.V_SCROLL );
 		fCategoriesViewer.setContentProvider(new ITreeContentProvider() {
+			@Override
 			public Object[] getElements(Object inputElement) {
 				return ((Collection<?>) inputElement).toArray();
 			}
+			@Override
 			public Object[] getChildren(Object parentElement) {
 				return ((Category) parentElement).children.toArray();
 			}
+			@Override
 			public Object getParent(Object element) { return null; }
+			@Override
 			public boolean hasChildren(Object element) {
 				return !((Category) element).children.isEmpty();
 			}
+			@Override
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
+			@Override
 			public void dispose() {}
 		});
 		fCategoriesViewer.setLabelProvider(new LabelProvider());
@@ -771,6 +779,7 @@ public class LineWrappingTabPage extends FormatterTabPage {
 		fDefaultFocusManager.add(previewLineWidth);
 		previewLineWidth.addObserver(fUpdater);
 		previewLineWidth.addObserver(new Observer() {
+			@Override
 			public void update(Observable o, Object arg) {
 				fDialogSettings.put(PREF_PREVIEW_LINE_WIDTH, fPreviewPreferences.get(LINE_SPLIT));
 			}

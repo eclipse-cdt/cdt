@@ -284,15 +284,20 @@ public class BasicSearchTest extends BaseUITestCase {
 	protected PDOMSearchResult runQuery(PDOMSearchQuery query) {
 		final ISearchResult result[]= new ISearchResult[1];
 		IQueryListener listener= new IQueryListener() {
+			@Override
 			public void queryAdded(ISearchQuery query) {}
+			@Override
 			public void queryFinished(ISearchQuery query) {
 				result[0]= query.getSearchResult();
 			}
+			@Override
 			public void queryRemoved(ISearchQuery query) {}
+			@Override
 			public void queryStarting(ISearchQuery query) {}
 		};
 		NewSearchUI.addQueryListener(listener);
 		NewSearchUI.runQueryInForeground(new IRunnableContext() {
+			@Override
 			public void run(boolean fork, boolean cancelable,
 					IRunnableWithProgress runnable)
 					throws InvocationTargetException, InterruptedException {

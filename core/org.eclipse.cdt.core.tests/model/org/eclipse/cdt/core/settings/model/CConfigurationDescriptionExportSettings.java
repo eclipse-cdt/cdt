@@ -433,6 +433,7 @@ public class CConfigurationDescriptionExportSettings extends BaseTestCase {
 
 		// Now replace the .cproject with .cproject_back. The exported settings should be picked up in the referenced config
 		ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				libCproject.setContents(libCproject_back.getContents(), IResource.NONE, null);
 				mainCproject.setContents(mainCproject_back.getContents(), IResource.NONE, null);

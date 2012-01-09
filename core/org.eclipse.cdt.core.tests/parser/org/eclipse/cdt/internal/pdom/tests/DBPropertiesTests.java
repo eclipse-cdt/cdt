@@ -34,6 +34,7 @@ public class DBPropertiesTests extends BaseTestCase {
 		return suite(DBPropertiesTests.class);
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		dbLoc = File.createTempFile("test", "db");
 		dbLoc.deleteOnExit();
@@ -41,6 +42,7 @@ public class DBPropertiesTests extends BaseTestCase {
 		db.setExclusiveLock();
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		db.close();
 	}

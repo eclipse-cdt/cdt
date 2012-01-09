@@ -118,6 +118,7 @@ public class CPathProjectsEntryPage extends CPathBasePage {
 
 		// ---------- IDialogFieldListener --------
 
+		@Override
 		public void dialogFieldChanged(DialogField field) {
 			if (fCurrCProject != null) {
 				// already initialized

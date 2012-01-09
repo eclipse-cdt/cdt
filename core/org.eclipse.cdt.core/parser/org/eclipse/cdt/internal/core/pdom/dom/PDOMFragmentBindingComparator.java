@@ -18,6 +18,7 @@ import org.eclipse.cdt.internal.core.index.IIndexFragmentBindingComparator;
  *
  */
 public class PDOMFragmentBindingComparator implements IIndexFragmentBindingComparator {
+	@Override
 	public int compare(IIndexFragmentBinding a, IIndexFragmentBinding b) {
 		if(a instanceof PDOMBinding && b instanceof PDOMBinding) {
 			return ((PDOMBinding) a).pdomCompareTo((PDOMBinding) b);			

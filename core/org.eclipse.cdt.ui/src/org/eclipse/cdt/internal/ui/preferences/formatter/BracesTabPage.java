@@ -127,6 +127,7 @@ public class BracesTabPage extends FormatterTabPage {
 		final CheckboxPreference arrayInitCheckBox= createIndentedCheckboxPref(group, numColumns, FormatterMessages.BracesTabPage_option_keep_empty_initializer_list_on_one_line, DefaultCodeFormatterConstants.FORMATTER_KEEP_EMPTY_INITIALIZER_LIST_ON_ONE_LINE, FALSE_TRUE); 
 
 		arrayInitOption.addObserver(new Observer() {
+			@Override
 			public void update(Observable o, Object arg) {
 				updateOptionEnablement((ComboPreference) o, arrayInitCheckBox);
 			}

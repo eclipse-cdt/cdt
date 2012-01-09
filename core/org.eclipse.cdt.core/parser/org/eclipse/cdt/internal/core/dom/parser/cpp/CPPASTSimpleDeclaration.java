@@ -59,7 +59,7 @@ public class CPPASTSimpleDeclaration extends ASTNode implements IASTSimpleDeclar
 	public IASTDeclarator[] getDeclarators() {
         if (declarators == null)
         	return IASTDeclarator.EMPTY_DECLARATOR_ARRAY;
-        declarators = (IASTDeclarator[]) ArrayUtil.removeNullsAfter(IASTDeclarator.class, declarators, declaratorsPos);
+        declarators = ArrayUtil.trimAt(IASTDeclarator.class, declarators, declaratorsPos);
         return declarators;
     }
     
@@ -67,7 +67,7 @@ public class CPPASTSimpleDeclaration extends ASTNode implements IASTSimpleDeclar
 	public void addDeclarator(IASTDeclarator d) {
         assertNotFrozen();
     	if (d != null) {
-    		declarators = (IASTDeclarator[]) ArrayUtil.append(IASTDeclarator.class, declarators, ++declaratorsPos, d);
+    		declarators = ArrayUtil.appendAt(IASTDeclarator.class, declarators, ++declaratorsPos, d);
     		d.setParent(this);
 			d.setPropertyInParent(DECLARATOR);
     	}

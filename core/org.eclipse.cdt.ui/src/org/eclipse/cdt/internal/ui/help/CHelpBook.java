@@ -74,10 +74,12 @@ public class CHelpBook implements ICHelpBook {
 		}
 	}
 	
+	@Override
 	public int getCHelpType() {
 		return type;
 	}
 	
+	@Override
 	public String getTitle() {
 		return title;
 	}
@@ -155,9 +157,11 @@ public class CHelpBook implements ICHelpBook {
 			book = _book;
 			res  = _res;
 		}
+		@Override
 		public ICHelpBook getCHelpBook() {
 			return book;
 		}
+		@Override
 		public IHelpResource[] getHelpResources() {
 			return res;
 		}

@@ -33,22 +33,27 @@ public class CompositeCPPTemplateNonTypeParameter extends CompositeCPPVariable i
 		fail(); return null; 
 	}
 
+	@Override
 	public short getParameterPosition() {
 		return ((ICPPTemplateParameter)rbinding).getParameterPosition();
 	}
 
+	@Override
 	public short getTemplateNestingLevel() {
 		return ((ICPPTemplateParameter)rbinding).getTemplateNestingLevel();
 	}
 	
+	@Override
 	public int getParameterID() {
 		return ((ICPPTemplateParameter)rbinding).getParameterID();
 	}
 	
+	@Override
 	public boolean isParameterPack() {
 		return ((ICPPTemplateParameter)rbinding).isParameterPack();
 	}
 
+	@Override
 	public ICPPTemplateArgument getDefaultValue() {
 		try {
 			return TemplateInstanceUtil.convert(cf, ((ICPPTemplateNonTypeParameter)rbinding).getDefaultValue());
@@ -57,6 +62,7 @@ public class CompositeCPPTemplateNonTypeParameter extends CompositeCPPVariable i
 		}
 	}
 
+	@Override
 	@Deprecated
 	public IASTExpression getDefault() {
 		return null;

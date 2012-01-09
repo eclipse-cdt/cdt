@@ -22,6 +22,7 @@ public class TestTemplateEngine extends BaseTestCase {
 	/*
 	 * @see TestCase#setUp()
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		templateEngine = TemplateEngine.getDefault();
@@ -30,6 +31,7 @@ public class TestTemplateEngine extends BaseTestCase {
 	/*
 	 * @see TestCase#tearDown()
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 	}

@@ -41,5 +41,6 @@ public interface IGPPASTExplicitTemplateInstantiation extends
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IGPPASTExplicitTemplateInstantiation copy();
 }

@@ -43,5 +43,6 @@ public interface IASTNamedTypeSpecifier extends IASTDeclSpecifier, IASTNameOwner
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IASTNamedTypeSpecifier copy();
 }

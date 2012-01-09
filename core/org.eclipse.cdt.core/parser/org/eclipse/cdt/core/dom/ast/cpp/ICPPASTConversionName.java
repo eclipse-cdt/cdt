@@ -42,10 +42,12 @@ public interface ICPPASTConversionName extends IASTName {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICPPASTConversionName copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICPPASTConversionName copy(CopyStyle style);
 }

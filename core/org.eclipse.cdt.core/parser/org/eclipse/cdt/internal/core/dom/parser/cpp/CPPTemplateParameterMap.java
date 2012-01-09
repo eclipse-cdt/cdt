@@ -73,6 +73,7 @@ public class CPPTemplateParameterMap implements ICPPTemplateParameterMap {
 	/**
 	 * Returns the value for the given parameter.
 	 */
+	@Override
 	public ICPPTemplateArgument getArgument(ICPPTemplateParameter param) {
 		if (param == null)
 			return null;
@@ -83,6 +84,7 @@ public class CPPTemplateParameterMap implements ICPPTemplateParameterMap {
 	 * Returns the value for the template parameter with the given id.
 	 * @see ICPPTemplateParameter#getParameterID()
 	 */
+	@Override
 	public ICPPTemplateArgument getArgument(int paramID) {
 		final Object object = fMap.get(paramID);
 		if (object instanceof ICPPTemplateArgument) {
@@ -94,6 +96,7 @@ public class CPPTemplateParameterMap implements ICPPTemplateParameterMap {
 	/**
 	 * Returns the values for the given template parameter pack.
 	 */
+	@Override
 	public ICPPTemplateArgument[] getPackExpansion(ICPPTemplateParameter tpar) {
 		return getPackExpansion(tpar.getParameterID());
 	}
@@ -102,6 +105,7 @@ public class CPPTemplateParameterMap implements ICPPTemplateParameterMap {
 	 * Returns the values for the template parameter pack with the given id.
 	 * @see ICPPTemplateParameter#getParameterID()
 	 */
+	@Override
 	public ICPPTemplateArgument[] getPackExpansion(int paramID) {
 		final Object object = fMap.get(paramID);
 		if (object instanceof ICPPTemplateArgument[]) {
@@ -197,6 +201,7 @@ public class CPPTemplateParameterMap implements ICPPTemplateParameterMap {
 	/**
 	 * Returns the array of template parameter positions, for which a mapping exists.
 	 */
+	@Override
 	public Integer[] getAllParameterPositions() {
 		return fMap.keyArray(Integer.class);
 	}

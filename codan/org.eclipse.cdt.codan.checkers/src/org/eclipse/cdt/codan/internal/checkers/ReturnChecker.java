@@ -42,7 +42,6 @@ import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
@@ -66,7 +65,7 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 	public static final String RET_NORET_ID = "org.eclipse.cdt.codan.checkers.errnoreturn"; //$NON-NLS-1$
 
 	class ReturnStmpVisitor extends ASTVisitor {
-		private IASTFunctionDefinition func;
+		private final IASTFunctionDefinition func;
 		boolean hasret;
 
 		ReturnStmpVisitor(IASTFunctionDefinition func) {
@@ -77,12 +76,14 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 			this.hasret = false;
 		}
 
+		@Override
 		public int visit(IASTDeclaration element) {
 			if (element != func)
 				return PROCESS_SKIP; // skip inner functions
 			return PROCESS_CONTINUE;
 		}
 
+		@Override
 		public int visit(IASTExpression expr) {
 			if (expr instanceof ICPPASTLambdaExpression) {
 				return PROCESS_SKIP;
@@ -90,6 +91,7 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 			return PROCESS_CONTINUE;
 		}
 
+		@Override
 		public int visit(IASTStatement stmt) {
 			if (stmt instanceof IASTReturnStatement) {
 				IASTReturnStatement ret = (IASTReturnStatement) stmt;
@@ -246,7 +248,7 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 	 * @return
 	 */
 	protected boolean isExplicitReturn(IASTFunctionDefinition func) {
-		return getDeclSpecType(func) != ICASTSimpleDeclSpecifier.t_unspecified;
+		return getDeclSpecType(func) != IASTSimpleDeclSpecifier.t_unspecified;
 	}
 
 	/**
@@ -306,6 +308,7 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 	}
 
 	/* checker must implement @link ICheckerWithPreferences */
+	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);
 		if (problem.getId().equals(RET_NO_VALUE_ID) || problem.getId().equals(RET_NORET_ID)) {

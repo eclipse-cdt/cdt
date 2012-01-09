@@ -21,6 +21,7 @@ class CompositeCField extends CompositeCVariable implements IField {
 		super(cf, rbinding);
 	}
 	
+	@Override
 	public ICompositeType getCompositeTypeOwner() {
 		IBinding preresult = ((IField)rbinding).getCompositeTypeOwner();
 		return (ICompositeType) cf.getCompositeBinding((IIndexFragmentBinding)preresult);

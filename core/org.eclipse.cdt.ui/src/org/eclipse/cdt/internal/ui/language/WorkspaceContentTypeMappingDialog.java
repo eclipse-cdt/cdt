@@ -51,6 +51,7 @@ public class WorkspaceContentTypeMappingDialog extends ContentTypeMappingDialog 
 		fContentType.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		configureContentTypes(fContentType);
 		fContentType.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				fSelectedContentTypeName = fContentType.getText();
 				fSelectedContentTypeID = fContentTypeNamesToIDsMap.get(fSelectedContentTypeName);
@@ -65,6 +66,7 @@ public class WorkspaceContentTypeMappingDialog extends ContentTypeMappingDialog 
 		fLanguage.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		fLanguage.setItems(getLanguages());
 		fLanguage.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				fSelectedLanguageName = fLanguage.getText();
 				fSelectedLanguageID = fLanguageNamesToIDsMap.get(fSelectedLanguageName);

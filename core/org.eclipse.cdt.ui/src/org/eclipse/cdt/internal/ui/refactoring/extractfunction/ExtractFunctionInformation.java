@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 
@@ -19,9 +19,7 @@ import org.eclipse.cdt.internal.ui.refactoring.MethodContext;
 import org.eclipse.cdt.internal.ui.refactoring.NodeContainer.NameInformation;
 import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
 
-
 public class ExtractFunctionInformation {
-
 	public final int VISIBILITY_PRIVATE = 1;
 	public final int VISIBILITY_PROTECTED = 3;
 	public final int VISIBILITY_PUBLIC = 2;
@@ -68,10 +66,10 @@ public class ExtractFunctionInformation {
 	}
 
 	public ArrayList<NameInformation> getAllAfterUsedNames() {
-		if(allAfterUsedNames == null){
+		if (allAfterUsedNames == null) {
 			allAfterUsedNames = new ArrayList<NameInformation>();
 			for (NameInformation name : getAllUsedNames()) {
-				if(name.isReference()||name.isReturnValue()){
+				if (name.isReference()||name.isReturnValue()) {
 					allAfterUsedNames.add(name);
 				}
 			}
@@ -89,7 +87,7 @@ public class ExtractFunctionInformation {
 	}
 
 	public void setReturnVariable(NameInformation returnVariable) {
-		if(returnVariable != null) {
+		if (returnVariable != null) {
 			returnVariable.setUserSetIsReturnValue(true);
 		}
 		this.returnVariable = returnVariable;

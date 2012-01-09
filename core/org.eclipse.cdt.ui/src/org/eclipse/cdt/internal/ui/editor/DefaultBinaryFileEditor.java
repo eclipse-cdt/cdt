@@ -69,6 +69,7 @@ public class DefaultBinaryFileEditor extends AbstractTextEditor {
 		/*
 		 * @see org.eclipse.ui.IEditorInput#exists()
 		 */
+		@Override
 		public boolean exists() {
 			return fBinary.exists();
 		}
@@ -76,6 +77,7 @@ public class DefaultBinaryFileEditor extends AbstractTextEditor {
 		/*
 		 * @see org.eclipse.ui.IEditorInput#getImageDescriptor()
 		 */
+		@Override
 		public ImageDescriptor getImageDescriptor() {
 			IFile file= (IFile)fBinary.getResource();
 			IContentType contentType= IDE.getContentType(file);
@@ -86,6 +88,7 @@ public class DefaultBinaryFileEditor extends AbstractTextEditor {
 		/*
 		 * @see org.eclipse.ui.IEditorInput#getName()
 		 */
+		@Override
 		public String getName() {
 			return fBinary.getElementName();
 		}
@@ -93,6 +96,7 @@ public class DefaultBinaryFileEditor extends AbstractTextEditor {
 		/*
 		 * @see org.eclipse.ui.IEditorInput#getPersistable()
 		 */
+		@Override
 		public IPersistableElement getPersistable() {
 			return null;
 		}
@@ -100,6 +104,7 @@ public class DefaultBinaryFileEditor extends AbstractTextEditor {
 		/*
 		 * @see org.eclipse.ui.IEditorInput#getToolTipText()
 		 */
+		@Override
 		public String getToolTipText() {
 			return fBinary.getResource().getFullPath().toString();
 		}
@@ -107,6 +112,7 @@ public class DefaultBinaryFileEditor extends AbstractTextEditor {
 		/*
 		 * @see org.eclipse.ui.IStorageEditorInput#getStorage()
 		 */
+		@Override
 		public IStorage getStorage() throws CoreException {
 			if (fStorage == null) {
 				IBinaryParser.IBinaryObject object= (IBinaryParser.IBinaryObject)fBinary.getAdapter(IBinaryParser.IBinaryObject.class);

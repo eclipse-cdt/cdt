@@ -21,10 +21,12 @@ import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
  */
 public interface ICPPASTArraySubscriptExpression extends IASTArraySubscriptExpression, IASTImplicitNameOwner {
 
+	@Override
 	public ICPPASTArraySubscriptExpression copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICPPASTArraySubscriptExpression copy(CopyStyle style);
 }

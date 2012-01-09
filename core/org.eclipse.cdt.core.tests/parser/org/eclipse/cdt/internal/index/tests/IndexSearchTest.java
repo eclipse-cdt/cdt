@@ -291,6 +291,7 @@ public class IndexSearchTest extends IndexTestBase {
 		PDOM pdom= (PDOM) ((CIndex) fIndex).getPrimaryFragments()[0];
 		pdom.accept(new IPDOMVisitor() {
 			LinkedList stack= new LinkedList();
+			@Override
 			public boolean visit(IPDOMNode node) throws CoreException {
 				if (!stack.isEmpty()) {
 					Object last= stack.getLast();
@@ -301,6 +302,7 @@ public class IndexSearchTest extends IndexTestBase {
 				stack.add(node);
 				return true;
 			}
+			@Override
 			public void leave(IPDOMNode node) throws CoreException {
 				assertEquals(stack.removeLast(), node);
 			}

@@ -77,9 +77,11 @@ public class BasicCEditorTest extends BaseUITestCase {
 	final static class TestDocListener implements IDocumentListener {
 		public boolean fDocChanged;
 
+		@Override
 		public void documentAboutToBeChanged(DocumentEvent event) {
 		}
 
+		@Override
 		public void documentChanged(DocumentEvent event) {
 			fDocChanged= true;
 		}

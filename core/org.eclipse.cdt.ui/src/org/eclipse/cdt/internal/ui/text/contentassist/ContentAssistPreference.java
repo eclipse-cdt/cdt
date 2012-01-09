@@ -271,6 +271,7 @@ public class ContentAssistPreference {
 	
 	private final IPropertyChangeListener propertyListener = new IPropertyChangeListener() {
 			
+		@Override
 		public void propertyChange(PropertyChangeEvent event) {
 			String prop = event.getProperty();
 			if (prop.equals(ContentAssistPreference.SHOW_CAMEL_CASE_MATCHES)) {

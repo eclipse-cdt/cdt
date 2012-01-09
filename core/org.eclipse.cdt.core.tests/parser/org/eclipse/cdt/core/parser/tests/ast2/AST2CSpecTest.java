@@ -1204,7 +1204,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("// a is a pointer to a VLA with n*m+300 elements\n"); //$NON-NLS-1$
 		buffer.append("a[i][j] += x;\n"); //$NON-NLS-1$
 		buffer.append("}\n");
-		String code = buffer.toString(); //$NON-NLS-1$
+		String code = buffer.toString(); 
 		// no valid c++ code
 		parse(code, ParserLanguage.C, true, 0);
 	}

@@ -40,11 +40,13 @@ public interface ICPPASTNamedTypeSpecifier extends IASTNamedTypeSpecifier,
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICPPASTNamedTypeSpecifier copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICPPASTNamedTypeSpecifier copy(CopyStyle style);
 
 }

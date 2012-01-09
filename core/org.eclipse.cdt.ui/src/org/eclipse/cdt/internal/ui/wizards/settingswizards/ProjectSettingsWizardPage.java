@@ -136,11 +136,13 @@ abstract public class ProjectSettingsWizardPage extends WizardPage implements IP
 	}
 	
 	
+	@Override
 	public List<ISettingsProcessor> getSettingsProcessors() {
 		return Collections.unmodifiableList(processors);
 	}
 	
 	
+	@Override
 	public List<ISettingsProcessor> getSelectedSettingsProcessors() {
 		List<ISettingsProcessor> selected = new ArrayList<ISettingsProcessor>();
 		for(Object element : settingsViewer.getCheckedElements()) {
@@ -149,6 +151,7 @@ abstract public class ProjectSettingsWizardPage extends WizardPage implements IP
 		return selected;
 	}
 	
+	@Override
 	public String getDestinationFilePath() {
 		return filePathText.getText();
 	}
@@ -159,10 +162,12 @@ abstract public class ProjectSettingsWizardPage extends WizardPage implements IP
 	}
 	
 	
+	@Override
 	public ICConfigurationDescription getSelectedConfiguration() {
 		return selectedConfiguration;
 	}
 	
+	@Override
 	public void setDisplayedSettingsProcessors(List<ISettingsProcessor> processors) {
 		settingsViewer.setInput(processors);
 		settingsViewer.refresh();
@@ -171,6 +176,7 @@ abstract public class ProjectSettingsWizardPage extends WizardPage implements IP
 	}
 	
 	
+	@Override
 	public void showErrorDialog(String dialogTitle, String message) {
 		Shell shell = Display.getCurrent().getActiveShell();
 		Status status = new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0, message, null);
@@ -178,6 +184,7 @@ abstract public class ProjectSettingsWizardPage extends WizardPage implements IP
 	}
 	
 	
+	@Override
 	public void createControl(Composite parent) {
 		setTitle(strategy.getMessage(MessageType.TITLE));
 		setMessage(strategy.getMessage(MessageType.MESSAGE));
@@ -231,6 +238,7 @@ abstract public class ProjectSettingsWizardPage extends WizardPage implements IP
 		projectViewer.setLabelProvider(new CElementLabelProvider());
 		List<ICProject> openProjects = getAllOpenCProjects();
 		Collections.sort(openProjects, new Comparator<ICProject>() {
+			@Override
 			public int compare(ICProject o1, ICProject o2) {
 				return o1.getProject().getName().compareTo(o2.getProject().getName());
 			}
@@ -343,6 +351,7 @@ abstract public class ProjectSettingsWizardPage extends WizardPage implements IP
 		settingsViewer.setContentProvider(new ListContentProvider());
 		
 		settingsViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateWidgetEnablements();
 			}
@@ -407,6 +416,7 @@ abstract public class ProjectSettingsWizardPage extends WizardPage implements IP
 		filePathText = new Text(fileSelectionGroup, SWT.SINGLE | SWT.BORDER);
 		filePathText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		filePathText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				updateWidgetEnablements();
 				strategy.fileSelected(ProjectSettingsWizardPage.this);

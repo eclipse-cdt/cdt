@@ -40,10 +40,12 @@ public class CASTArraySubscriptExpression extends ASTNode implements
 		setSubscriptExpression(subscript);
 	}
 
+	@Override
 	public CASTArraySubscriptExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CASTArraySubscriptExpression copy(CopyStyle style) {
 		CASTArraySubscriptExpression copy = new CASTArraySubscriptExpression();
 		copy.setArrayExpression(array == null ? null : array.copy(style));
@@ -55,11 +57,13 @@ public class CASTArraySubscriptExpression extends ASTNode implements
 		return copy;
 	}
 
+	@Override
 	public IASTExpression getArrayExpression() {
         return array;
     }
 
-    public void setArrayExpression(IASTExpression expression) {
+    @Override
+	public void setArrayExpression(IASTExpression expression) {
         assertNotFrozen();
         array = expression;
         if(expression != null) {
@@ -68,11 +72,13 @@ public class CASTArraySubscriptExpression extends ASTNode implements
         }
     }
 
-    public IASTExpression getSubscriptExpression() {
+    @Override
+	public IASTExpression getSubscriptExpression() {
         return subscript;
     }
 
-    public void setSubscriptExpression(IASTExpression expression) {
+    @Override
+	public void setSubscriptExpression(IASTExpression expression) {
         assertNotFrozen();
         this.subscript = expression;
         if(expression != null) {
@@ -81,10 +87,12 @@ public class CASTArraySubscriptExpression extends ASTNode implements
         }
     }
 
-    public IASTInitializerClause getArgument() {
+    @Override
+	public IASTInitializerClause getArgument() {
 		return getSubscriptExpression();
 	}
 
+	@Override
 	public void setArgument(IASTInitializerClause expression) {
 		if (expression instanceof IASTExpression) {
 			setSubscriptExpression((IASTExpression) expression);
@@ -116,7 +124,8 @@ public class CASTArraySubscriptExpression extends ASTNode implements
         return true;
     }
     
-    public void replace(IASTNode child, IASTNode other) {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
         if( child == array )
         {
             other.setPropertyInParent( child.getPropertyInParent() );
@@ -131,7 +140,8 @@ public class CASTArraySubscriptExpression extends ASTNode implements
         }
     }
     
-    public IType getExpressionType() {
+    @Override
+	public IType getExpressionType() {
 		IType t = getArrayExpression().getExpressionType();
 		t = CVisitor.unwrapTypedefs(t);
 		if (t instanceof IPointerType)
@@ -141,10 +151,12 @@ public class CASTArraySubscriptExpression extends ASTNode implements
 		return t;
     }
 
+	@Override
 	public boolean isLValue() {
 		return true;
 	}
 	
+	@Override
 	public final ValueCategory getValueCategory() {
 		return ValueCategory.LVALUE;
 	}

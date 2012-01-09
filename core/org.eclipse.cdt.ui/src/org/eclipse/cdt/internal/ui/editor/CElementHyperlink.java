@@ -39,18 +39,22 @@ public class CElementHyperlink implements IHyperlink {
 		fOpenAction= openAction;
 	}
 	
+	@Override
 	public IRegion getHyperlinkRegion() {
 		return fRegion;
 	}
 
+	@Override
 	public void open() {
 		fOpenAction.run();
 	}
 
+	@Override
 	public String getTypeLabel() {
 		return null;
 	}
 
+	@Override
 	public String getHyperlinkText() {
 		return Action.removeMnemonics(fOpenAction.getText());
 	}

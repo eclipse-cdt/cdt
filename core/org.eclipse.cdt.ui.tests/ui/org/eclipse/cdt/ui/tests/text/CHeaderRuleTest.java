@@ -37,6 +37,7 @@ public class CHeaderRuleTest extends TestCase {
 		super(name);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		fToken = new Token(HEADER);
 		fScanner = new RuleBasedScanner();

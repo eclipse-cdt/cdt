@@ -172,9 +172,11 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 		project.getFile(".settings/org.eclipse.cdt.core.prefs").setContents(new ByteArrayInputStream(env.getBytes("UTF-8")), true, false, null);
 
 		ISchedulingRule incompatibleRule = new ISchedulingRule() {
+			@Override
 			public boolean isConflicting(ISchedulingRule rule) {
 				return rule == this || rule instanceof IResource;
 			}
+			@Override
 			public boolean contains(ISchedulingRule rule) {
 				return rule == this;
 			}

@@ -53,6 +53,7 @@ public class PDOMSearchTextSelectionQuery extends PDOMSearchQuery {
 	@Override
 	protected IStatus runWithIndex(final IIndex index, IProgressMonitor monitor) {
 		return ASTProvider.getASTProvider().runOnAST(tu, ASTProvider.WAIT_ACTIVE_ONLY, monitor, new ASTRunnable() {
+			@Override
 			public IStatus runOnAST(ILanguage language, IASTTranslationUnit ast) throws CoreException {
 				if (ast != null) {
 					IASTName searchName= ast.getNodeSelector(null).findEnclosingName(selection.getOffset(), selection.getLength());

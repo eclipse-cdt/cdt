@@ -6,20 +6,19 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.core.parser.tests;
 
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
-public class ArrayUtilsTest extends TestCase {
-	private Object o1= new Object();
-	private Object o2= new Object();
-	private Object o3= new Object();
-	private Object o4= new Object();
+public class ArrayUtilTest extends TestCase {
+	private final Object o1= new Object();
+	private final Object o2= new Object();
+	private final Object o3= new Object();
+	private final Object o4= new Object();
 	
 	public void testAppend() {
 		Object[] array= null;
@@ -30,9 +29,9 @@ public class ArrayUtilsTest extends TestCase {
 		assertEquals(o2, array[1]);
 		assertEquals(o3, array[2]);
 
-		array= ArrayUtil.append(Object.class, null, 0, o1);
-		array= ArrayUtil.append(Object.class, array, 1, o2);
-		array= ArrayUtil.append(Object.class, array, 2, o3);
+		array= ArrayUtil.appendAt(Object.class, null, 0, o1);
+		array= ArrayUtil.appendAt(Object.class, array, 1, o2);
+		array= ArrayUtil.appendAt(Object.class, array, 2, o3);
 		assertEquals(o1, array[0]);
 		assertEquals(o2, array[1]);
 		assertEquals(o3, array[2]);

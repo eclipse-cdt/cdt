@@ -184,6 +184,7 @@ public class CEditorTextHoverDescriptor implements Comparable<CEditorTextHoverDe
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public int compareTo(CEditorTextHoverDescriptor o) {
 		return Collator.getInstance().compare(getLabel(), o.getLabel());
 	}

@@ -69,10 +69,12 @@ public interface IASTSimpleDeclaration extends IASTDeclaration {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IASTSimpleDeclaration copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public IASTSimpleDeclaration copy(CopyStyle style);
 }

@@ -39,6 +39,7 @@ public class IndexTestBase extends BaseTestCase {
 		final ICProject[] result= new ICProject[] {null};
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		workspace.run(new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				String name= "IndexTest_" + System.currentTimeMillis();
 				if (useCpp) {

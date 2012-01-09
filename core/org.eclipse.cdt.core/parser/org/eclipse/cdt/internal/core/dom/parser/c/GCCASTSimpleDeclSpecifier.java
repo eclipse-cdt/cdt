@@ -42,10 +42,12 @@ public class GCCASTSimpleDeclSpecifier extends CASTSimpleDeclSpecifier implement
 		return copy;
 	}
 
+	@Override
 	public void setTypeofExpression(IASTExpression expr) {
 		setDeclTypeExpression(expr);
 	}
 
+	@Override
 	public IASTExpression getTypeofExpression() {
 		return getDeclTypeExpression();
 	}

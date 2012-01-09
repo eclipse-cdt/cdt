@@ -142,11 +142,13 @@ public class DOMLocationInclusionTests extends AST2FileBasePluginTest {
 
         }
 
-        public IScannerInfo getScannerInfo() {
+        @Override
+		public IScannerInfo getScannerInfo() {
             return info;
         }
 
-        public String getParserDialect() {
+        @Override
+		public String getParserDialect() {
             return dialect;
         }
 

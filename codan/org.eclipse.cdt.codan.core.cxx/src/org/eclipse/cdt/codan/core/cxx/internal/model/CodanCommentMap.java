@@ -36,6 +36,7 @@ public class CodanCommentMap implements ICodanCommentMap {
 	 * @see org.eclipse.cdt.codan.core.cxx.model.ICodanCommentMap#
 	 * getTrailingCommentsForNode(org.eclipse.cdt.core.dom.ast.IASTNode)
 	 */
+	@Override
 	public List<IASTComment> getTrailingCommentsForNode(IASTNode node) {
 		return commentedNodeMap.getTrailingCommentsForNode(node);
 	}
@@ -46,6 +47,7 @@ public class CodanCommentMap implements ICodanCommentMap {
 	 * @see org.eclipse.cdt.codan.core.cxx.model.ICodanCommentMap#
 	 * getLeadingCommentsForNode(org.eclipse.cdt.core.dom.ast.IASTNode)
 	 */
+	@Override
 	public List<IASTComment> getLeadingCommentsForNode(IASTNode node) {
 		return commentedNodeMap.getLeadingCommentsForNode(node);
 	}
@@ -57,6 +59,7 @@ public class CodanCommentMap implements ICodanCommentMap {
 	 * org.eclipse.cdt.codan.core.cxx.model.ICodanCommentMap#getFreestandingForNode
 	 * (org.eclipse.cdt.core.dom.ast.IASTStatement)
 	 */
+	@Override
 	public List<IASTComment> getFreestandingForNode(IASTNode node) {
 		return commentedNodeMap.getFreestandingCommentsForNode(node);
 	}
@@ -65,6 +68,7 @@ public class CodanCommentMap implements ICodanCommentMap {
 	 * @param node
 	 * @return
 	 */
+	@Override
 	public IASTComment getLastLeadingCommentForNode(IASTNode node) {
 		IASTComment comment = null;
 		List<IASTComment> comms = getLeadingCommentsForNode(node);
@@ -78,6 +82,7 @@ public class CodanCommentMap implements ICodanCommentMap {
 	 * @param node
 	 * @return
 	 */
+	@Override
 	public IASTComment getFirstTrailingCommentForNode(IASTNode node) {
 		IASTComment comment = null;
 		List<IASTComment> comms = getTrailingCommentsForNode(node);
@@ -91,6 +96,7 @@ public class CodanCommentMap implements ICodanCommentMap {
 	 * @param node
 	 * @return
 	 */
+	@Override
 	public IASTComment getLastFreestandingCommentForNode(IASTNode node) {
 		IASTComment comment = null;
 		List<IASTComment> comms = getFreestandingForNode(node);

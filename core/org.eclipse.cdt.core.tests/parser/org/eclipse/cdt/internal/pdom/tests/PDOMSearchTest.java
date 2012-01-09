@@ -45,6 +45,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
  */
 public class PDOMSearchTest extends PDOMTestBase {
 	final Comparator<IBinding> BINDING_COMPARATOR = new Comparator<IBinding>() {
+		@Override
 		public int compare(IBinding o1, IBinding o2) {
 			return o1.getName().compareTo(o2.getName());
 		}};

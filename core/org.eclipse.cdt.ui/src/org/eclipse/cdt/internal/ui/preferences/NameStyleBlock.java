@@ -440,7 +440,7 @@ public class NameStyleBlock extends OptionsConfigurationBlock {
 		private Key prefixKey;
 		private Key alternativePrefixKey;
 		private Key suffixKey;
-		private String seedName;
+		private final String seedName;
 		private Category seedNameGenerator;
 		private NameValidator nameValidator;
 
@@ -630,31 +630,39 @@ public class NameStyleBlock extends OptionsConfigurationBlock {
 	private class NameStyleAdapter extends ViewerComparator
 			implements ITreeListAdapter<Category>, IDialogFieldListener {
 
+		@Override
 		public void selectionChanged(TreeListDialogField<Category> field) {
 			updateConfigurationBlock(field.getSelectedElements());
 		}
 
+		@Override
 		public void customButtonPressed(TreeListDialogField<Category> field, int index) {
 		}
 
+		@Override
 		public void doubleClicked(TreeListDialogField<Category> field) {
 		}
 
+		@Override
 		public Category[] getChildren(TreeListDialogField<Category> field, Object element) {
 			return ((Category) element).getChildren();
 		}
 
+		@Override
 		public Category getParent(TreeListDialogField<Category> field, Object element) {
 			return ((Category) element).parent;
 		}
 
+		@Override
 		public boolean hasChildren(TreeListDialogField<Category> field, Object element) {
 			return ((Category) element).hasChildren();
 		}
 
+		@Override
 		public void dialogFieldChanged(DialogField field) {
 		}
 
+		@Override
 		public void keyPressed(TreeListDialogField<Category> field, KeyEvent event) {
 		}
 

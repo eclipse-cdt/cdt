@@ -37,6 +37,7 @@ public class ConnectorNode extends AbstractSingleOutgoingNode implements IConnec
 	 * @seeorg.eclipse.cdt.codan.provisional.core.model.cfg.IBasicBlock#
 	 * getIncomingIterator()
 	 */
+	@Override
 	public IBasicBlock[] getIncomingNodes() {
 		return incoming.toArray(new IBasicBlock[incoming.size()]);
 	}
@@ -46,6 +47,7 @@ public class ConnectorNode extends AbstractSingleOutgoingNode implements IConnec
 	 * 
 	 * @see org.eclipse.cdt.codan.core.model.cfg.IBasicBlock#getIncomingSize ()
 	 */
+	@Override
 	public int getIncomingSize() {
 		return incoming.size();
 	}
@@ -56,6 +58,7 @@ public class ConnectorNode extends AbstractSingleOutgoingNode implements IConnec
 	 * @seeorg.eclipse.cdt.codan.provisional.core.model.cfg.IConnectorNode#
 	 * hasBackwardIncoming()
 	 */
+	@Override
 	public boolean hasBackwardIncoming() {
 		for (IBasicBlock node : incoming) {
 			if (node instanceof IJumpNode) {

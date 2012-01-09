@@ -46,7 +46,8 @@ public class CModelExceptionTest extends TestCase {
      * Example code test the packages in the project 
      *  "com.qnx.tools.ide.cdt.core"
      */
-    protected void setUp() {
+    @Override
+	protected void setUp() {
         // create shared resources and setup the test fixture
         cModelStatus = new CModelStatus();
         coreException = new CoreException(cModelStatus);
@@ -57,7 +58,8 @@ public class CModelExceptionTest extends TestCase {
      *
      * Called after every test case method.
      */
-    protected void tearDown() {
+    @Override
+	protected void tearDown() {
        // release resources here and clean-up
     }
     

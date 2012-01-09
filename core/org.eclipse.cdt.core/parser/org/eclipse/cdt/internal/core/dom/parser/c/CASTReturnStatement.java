@@ -32,10 +32,12 @@ public class CASTReturnStatement extends ASTNode implements
 		setReturnValue(retValue);
 	}
 	
+	@Override
 	public CASTReturnStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CASTReturnStatement copy(CopyStyle style) {
 		CASTReturnStatement copy = new CASTReturnStatement(retValue == null ? null
 				: retValue.copy(style));
@@ -46,11 +48,13 @@ public class CASTReturnStatement extends ASTNode implements
 		return copy;
 	}
 
+	@Override
 	public IASTExpression getReturnValue() {
         return retValue;
     }
 
-    public void setReturnValue(IASTExpression returnValue) {
+    @Override
+	public void setReturnValue(IASTExpression returnValue) {
         assertNotFrozen();
         retValue = returnValue;
         if (returnValue != null) {
@@ -59,10 +63,12 @@ public class CASTReturnStatement extends ASTNode implements
 		}
     }
 
-    public IASTInitializerClause getReturnArgument() {
+    @Override
+	public IASTInitializerClause getReturnArgument() {
     	return getReturnValue();
 	}
 
+	@Override
 	public void setReturnArgument(IASTInitializerClause returnValue) {
 		if (returnValue instanceof IASTExpression) {
 			setReturnValue((IASTExpression) returnValue);
@@ -91,7 +97,8 @@ public class CASTReturnStatement extends ASTNode implements
         return true;
     }
 
-    public void replace(IASTNode child, IASTNode other) {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
         if( child == retValue )
         {
             other.setPropertyInParent( child.getPropertyInParent() );

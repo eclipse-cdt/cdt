@@ -43,46 +43,57 @@ public class CBuiltinParameter extends PlatformObject implements IParameter {
 		this.type = type;
 	}
 	
+	@Override
 	public IType getType() {
 		return type;
 	}
 
+	@Override
 	public boolean isStatic() {
 		return false;
 	}
 
+	@Override
 	public boolean isExtern() {
 		return false;
 	}
 
+	@Override
 	public boolean isAuto() {
 		return false;
 	}
 
+	@Override
 	public boolean isRegister() {
 		return false;
 	}
 
+	@Override
 	public String getName() {
 		return ""; //$NON-NLS-1$
 	}
 
+	@Override
 	public char[] getNameCharArray() {
 		return CharArrayUtils.EMPTY;
 	}
 
+	@Override
 	public IScope getScope() {
 		return null;
 	}
 
+	@Override
 	public ILinkage getLinkage() {
 		return Linkage.C_LINKAGE;
 	}
 	
+	@Override
 	public IBinding getOwner() {
 		return null;
 	}
 
+	@Override
 	public IValue getInitialValue() {
 		return null;
 	}

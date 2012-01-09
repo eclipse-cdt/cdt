@@ -44,7 +44,8 @@ import org.eclipse.cdt.internal.ui.text.util.CColorManager;
 public class AsmTextTools {
 	
     private class PreferenceListener implements IPropertyChangeListener {
-        public void propertyChange(PropertyChangeEvent event) {
+        @Override
+		public void propertyChange(PropertyChangeEvent event) {
             adaptToPreferenceChange(event);
         }
     }
@@ -77,6 +78,7 @@ public class AsmTextTools {
     	fColorManager= new CColorManager();
     	
 		ITokenStoreFactory factory= new ITokenStoreFactory() {
+			@Override
 			public ITokenStore createTokenStore(String[] propertyColorNames) {
 				return new TokenStore(fColorManager, fPreferenceStore, propertyColorNames);
 			}

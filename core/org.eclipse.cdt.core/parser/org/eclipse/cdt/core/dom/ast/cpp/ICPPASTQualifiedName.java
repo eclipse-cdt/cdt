@@ -47,6 +47,7 @@ public interface ICPPASTQualifiedName extends IASTName, IASTNameOwner {
 	 * The last name is often semantically significant.
 	 * 
 	 */
+	@Override
 	public IASTName getLastName();
 	
 	/**
@@ -74,10 +75,12 @@ public interface ICPPASTQualifiedName extends IASTName, IASTNameOwner {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICPPASTQualifiedName copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICPPASTQualifiedName copy(CopyStyle style);
 }

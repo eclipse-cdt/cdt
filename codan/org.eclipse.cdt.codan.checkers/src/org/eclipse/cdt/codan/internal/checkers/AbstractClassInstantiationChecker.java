@@ -61,6 +61,7 @@ public class AbstractClassInstantiationChecker extends AbstractIndexAstChecker {
 				CheckerLaunchMode.RUN_ON_DEMAND);
 	}
 
+	@Override
 	public void processAst(IASTTranslationUnit ast) {
 		try {
 			ast.accept(new OnEachClass());
@@ -77,6 +78,7 @@ public class AbstractClassInstantiationChecker extends AbstractIndexAstChecker {
 			shouldVisitParameterDeclarations = true;
 		}
 
+		@Override
 		public int visit(IASTDeclaration declaration) {
 			// Looking for the variables declarations.
 			if (declaration instanceof IASTSimpleDeclaration) {
@@ -96,6 +98,7 @@ public class AbstractClassInstantiationChecker extends AbstractIndexAstChecker {
 			return PROCESS_CONTINUE;
 		}
 
+		@Override
 		public int visit(IASTParameterDeclaration parameterDecl) {
 			// Looking for parameters declaration. Skip references & pointers.
 			if (!hasPointerOrReference(parameterDecl.getDeclarator())) {
@@ -122,6 +125,7 @@ public class AbstractClassInstantiationChecker extends AbstractIndexAstChecker {
 			}
 		}
 		
+		@Override
 		public int visit(IASTExpression expression) {
 			if (expression instanceof ICPPASTNewExpression) {
 				// New expression.

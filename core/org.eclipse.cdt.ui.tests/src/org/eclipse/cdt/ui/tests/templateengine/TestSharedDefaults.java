@@ -27,6 +27,7 @@ public class TestSharedDefaults extends BaseTestCase {
 	/*
 	 * @see TestCase#setUp()
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		sharedDefaults = SharedDefaults.getInstance();
 	}
@@ -34,6 +35,7 @@ public class TestSharedDefaults extends BaseTestCase {
 	/*
 	 * @see TestCase#tearDown()
 	 */
+	@Override
 	protected void tearDown(){
 		sharedDefaults = null;
 	}

@@ -67,6 +67,7 @@ public class AdaptingSelectionProvider implements ISelectionProvider, ISelection
 		return null;
 	}
 
+	@Override
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
 		if (fListenerList.isEmpty()) {
 			fProvider.addSelectionChangedListener(this);
@@ -74,10 +75,12 @@ public class AdaptingSelectionProvider implements ISelectionProvider, ISelection
 		fListenerList.add(listener);
 	}
 
+	@Override
 	public ISelection getSelection() {
 		return convertSelection(fProvider.getSelection());
 	}
 
+	@Override
 	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
 		fListenerList.remove(listener);
 		if (fListenerList.isEmpty()) {
@@ -85,10 +88,12 @@ public class AdaptingSelectionProvider implements ISelectionProvider, ISelection
 		}
 	}
 
+	@Override
 	public void setSelection(ISelection selection) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		SelectionChangedEvent event2= new SelectionChangedEvent(this, convertSelection(event.getSelection()));
 		Object[] listeners= fListenerList.getListeners();

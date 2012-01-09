@@ -43,6 +43,7 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 	public static final String PARAM_MACRO_ID = "macro"; //$NON-NLS-1$
 	public static final String PARAM_EXCEPT_ARG_LIST = "exceptions"; //$NON-NLS-1$
 
+	@Override
 	public void processAst(IASTTranslationUnit ast) {
 		ast.accept(new CheckStmpVisitor());
 	}

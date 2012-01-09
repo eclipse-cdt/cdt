@@ -34,6 +34,7 @@ public class CompositeCPPDeferredClassInstance extends CompositeCPPClassType imp
 		super(cf, rbinding);
 	}
 
+	@Override
 	public ICPPTemplateDefinition getTemplateDefinition() {
 		ICPPTemplateDefinition preresult= ((ICPPTemplateInstance)rbinding).getTemplateDefinition();
 		return (ICPPTemplateDefinition) cf.getCompositeBinding((IIndexFragmentBinding)preresult);
@@ -44,14 +45,17 @@ public class CompositeCPPDeferredClassInstance extends CompositeCPPClassType imp
 		return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
 	}
 
+	@Override
 	public ICPPTemplateParameterMap getTemplateParameterMap() {
 		return TemplateInstanceUtil.getTemplateParameterMap(cf, (ICPPTemplateInstance) rbinding);
 	}
 
+	@Override
 	public IBinding getSpecializedBinding() {
 		return TemplateInstanceUtil.getSpecializedBinding(cf, rbinding);
 	}
 
+	@Override
 	public IASTName getUnknownName() {
 		return ((ICPPDeferredClassInstance) rbinding).getUnknownName();
 	}
@@ -61,6 +65,7 @@ public class CompositeCPPDeferredClassInstance extends CompositeCPPClassType imp
 		return asScope();
 	}
 
+	@Override
 	public ICPPScope asScope() {
 		if (unknownScope == null) {
 			unknownScope= new CompositeCPPUnknownScope(this, getUnknownName());
@@ -68,23 +73,28 @@ public class CompositeCPPDeferredClassInstance extends CompositeCPPClassType imp
 		return unknownScope;
 	}
 
+	@Override
 	public ICPPClassTemplate getClassTemplate() {
 		return (ICPPClassTemplate) cf.getCompositeBinding((IIndexFragmentBinding) ((ICPPDeferredClassInstance) rbinding).getClassTemplate());
 	}
 	
+	@Override
 	public ICPPTemplateArgument[] getTemplateArguments() {
 		return TemplateInstanceUtil.getTemplateArguments(cf, (ICPPTemplateInstance) rbinding);
 	}
 
+	@Override
 	public boolean isExplicitSpecialization() {
 		return false;
 	}
 
+	@Override
 	@Deprecated
 	public IType[] getArguments() {
 		return TemplateInstanceUtil.getArguments(cf, (ICPPTemplateInstance) rbinding);
 	}
 
+	@Override
 	@Deprecated
 	public ObjectMap getArgumentMap() {
 		return TemplateInstanceUtil.getArgumentMap(cf, rbinding);

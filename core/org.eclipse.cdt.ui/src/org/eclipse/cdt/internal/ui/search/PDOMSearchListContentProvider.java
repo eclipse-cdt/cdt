@@ -45,6 +45,7 @@ public class PDOMSearchListContentProvider implements
 		fPage= page;
 	}
 
+	@Override
 	public Object[] getElements(Object inputElement) {
 		Set<String> uncoveredProjects = new HashSet<String>(); 
 		
@@ -105,15 +106,18 @@ public class PDOMSearchListContentProvider implements
 					new Object[] { project.getProject().getName() }));
 	}
 
+	@Override
 	public void dispose() {
 	}
 
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		this.viewer = (TableViewer)viewer;
 		result = (PDOMSearchResult)newInput;
 		viewer.refresh();
 	}
 
+	@Override
 	public void elementsChanged(Object[] elements) {
 		if (result == null)
 			return;
@@ -130,6 +134,7 @@ public class PDOMSearchListContentProvider implements
 		}
 	}
 	
+	@Override
 	public void clear() {
 		viewer.refresh();
 	}

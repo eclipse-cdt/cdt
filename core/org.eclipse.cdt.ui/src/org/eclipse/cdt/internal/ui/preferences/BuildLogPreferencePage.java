@@ -82,6 +82,7 @@ public class BuildLogPreferencePage extends PropertyPage implements ICOptionCont
 			String logLocation = prefs.get(BuildConsoleManager.KEY_LOG_LOCATION, consoleManager.getDefaultConsoleLogLocation(project));
 			logLocationText.setText(logLocation);
 			logLocationText.addModifyListener(new ModifyListener() {
+				@Override
 				public void modifyText(ModifyEvent e) {
 				}
 			});
@@ -146,6 +147,7 @@ public class BuildLogPreferencePage extends PropertyPage implements ICOptionCont
 		return true;
 	}
 
+	@Override
 	public IProject getProject(){
 		IProject project= null;
 		IAdaptable elem = getElement();
@@ -161,11 +163,13 @@ public class BuildLogPreferencePage extends PropertyPage implements ICOptionCont
 		return (BuildConsoleManager)CUIPlugin.getDefault().getConsoleManager();
 	}
 
+	@Override
 	@Deprecated
 	public org.eclipse.core.runtime.Preferences getPreferences() {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public void updateContainer() {
 	}
 

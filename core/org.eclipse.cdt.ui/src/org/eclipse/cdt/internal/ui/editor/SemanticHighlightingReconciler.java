@@ -322,6 +322,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.java.ICReconcilingListener#aboutToBeReconciled()
 	 */
+	@Override
 	public void aboutToBeReconciled() {
 		// Do nothing
 	}
@@ -329,6 +330,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.ICReconcilingListener#reconciled(IASTTranslationUnit, boolean, IProgressMonitor)
 	 */
+	@Override
 	public void reconciled(IASTTranslationUnit ast, boolean force, IProgressMonitor progressMonitor) {
 		// ensure at most one thread can be reconciling at any time
 		synchronized (fReconcileLock) {
@@ -410,6 +412,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		fRemovedPositions= newPositions;
 		// positions need to be sorted by ascending offset
 		Collections.sort(fAddedPositions, new Comparator<Position>() {
+			@Override
 			public int compare(final Position p1, final Position p2) {
 				return p1.getOffset() - p2.getOffset();
 			}});
@@ -523,6 +526,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 						final Job me= this;
 						ASTProvider astProvider= CUIPlugin.getDefault().getASTProvider();
 						IStatus status= astProvider.runOnAST(element, ASTProvider.WAIT_IF_OPEN, monitor, new ASTCache.ASTRunnable() {
+							@Override
 							public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
 								reconciled(ast, true, monitor);
 								synchronized (fJobLock) {

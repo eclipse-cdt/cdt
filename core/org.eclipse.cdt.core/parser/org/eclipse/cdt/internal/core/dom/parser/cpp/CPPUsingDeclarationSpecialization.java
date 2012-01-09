@@ -32,6 +32,7 @@ public class CPPUsingDeclarationSpecialization extends CPPSpecialization impleme
         super(specialized, owner, tpmap);
     }
 
+	@Override
 	public IBinding[] getDelegates() {
 		if (fDelegates == null) {
 			fDelegates= specializeDelegates();

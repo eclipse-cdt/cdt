@@ -25,6 +25,7 @@ public class PDOMCPPClassSpecializationScope extends AbstractCPPClassSpecializat
 		super(specialization);
 	}
 
+	@Override
 	public IIndexBinding getScopeBinding() {
 		return (IIndexBinding) getClassType();
 	}

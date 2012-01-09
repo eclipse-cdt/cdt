@@ -35,10 +35,12 @@ public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier
 		setName(name);
 	}
 
+	@Override
 	public CASTEnumerationSpecifier copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CASTEnumerationSpecifier copy(CopyStyle style) {
 		CASTEnumerationSpecifier copy = new CASTEnumerationSpecifier();
 		copyEnumerationSpecifier(copy, style);
@@ -56,6 +58,7 @@ public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier
 	}
 	
 	
+	@Override
 	public boolean startValueComputation() {
 		if (valuesComputed)
 			return false;
@@ -64,19 +67,21 @@ public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier
 		return true;
 	}
 
+	@Override
 	public void addEnumerator(IASTEnumerator enumerator) {
         assertNotFrozen();
     	if (enumerator != null) {
     		enumerator.setParent(this);
 			enumerator.setPropertyInParent(ENUMERATOR);
-    		enumerators = (IASTEnumerator[]) ArrayUtil.append( IASTEnumerator.class, enumerators, ++enumeratorsPos, enumerator );
+    		enumerators = ArrayUtil.appendAt( IASTEnumerator.class, enumerators, ++enumeratorsPos, enumerator );
     	}
     }
 
     
-    public IASTEnumerator[] getEnumerators() {        
+    @Override
+	public IASTEnumerator[] getEnumerators() {        
         if( enumerators == null ) return IASTEnumerator.EMPTY_ENUMERATOR_ARRAY;
-        enumerators = (IASTEnumerator[]) ArrayUtil.removeNullsAfter( IASTEnumerator.class, enumerators, enumeratorsPos );
+        enumerators = ArrayUtil.trimAt( IASTEnumerator.class, enumerators, enumeratorsPos );
         return enumerators;
     }
 
@@ -84,7 +89,8 @@ public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier
     private int enumeratorsPos=-1;
 
  
-    public void setName(IASTName name) {
+    @Override
+	public void setName(IASTName name) {
         assertNotFrozen();
         this.name = name;
         if (name != null) {
@@ -93,7 +99,8 @@ public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier
 		}
     }
 
-    public IASTName getName() {
+    @Override
+	public IASTName getName() {
         return name;
     }
 
@@ -121,6 +128,7 @@ public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier
         return true;
     }
 
+	@Override
 	public int getRoleForName(IASTName n ) {
 		if( this.name == n  )
 			return r_definition;

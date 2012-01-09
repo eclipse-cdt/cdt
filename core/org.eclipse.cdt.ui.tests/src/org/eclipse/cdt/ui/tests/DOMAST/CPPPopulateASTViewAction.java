@@ -93,7 +93,7 @@ public class CPPPopulateASTViewAction extends ASTGenericVisitor implements IPopu
             tree.setFiltersFlag(DOMASTNodeLeaf.FLAG_PROBLEM);
             
             if (node instanceof IASTProblemHolder)
-                astProblems = (IASTProblem[])ArrayUtil.append(IASTProblem.class, astProblems, ((IASTProblemHolder)node).getProblem());
+                astProblems = ArrayUtil.append(IASTProblem.class, astProblems, ((IASTProblemHolder)node).getProblem());
             else
                 astProblems = (IASTProblem[])ArrayUtil.append(IASTProblem.class, astProblems, node);
         }
@@ -131,6 +131,7 @@ public class CPPPopulateASTViewAction extends ASTGenericVisitor implements IPopu
 		return leaf;
 	}
 	
+	@Override
 	public DOMASTNodeLeaf[] mergePreprocessorStatements(IASTPreprocessorStatement[] statements) {
 		DOMASTNodeLeaf[] leaves = new DOMASTNodeLeaf[statements.length];
 		for(int i=0; i<statements.length; i++) {
@@ -143,6 +144,7 @@ public class CPPPopulateASTViewAction extends ASTGenericVisitor implements IPopu
 		return leaves;
 	}
 	
+	@Override
 	public void mergePreprocessorProblems(IASTProblem[] problems) {
 		for (IASTProblem problem : problems) {
 			if (monitor != null && monitor.isCanceled()) return;
@@ -152,10 +154,12 @@ public class CPPPopulateASTViewAction extends ASTGenericVisitor implements IPopu
 		}
 	}
 	
+	@Override
 	public DOMASTNodeParent getTree() {
 		return root;
 	}
 	
+	@Override
 	public void groupIncludes(DOMASTNodeLeaf[] treeIncludes) {
 		// loop through the includes and make sure that all of the nodes 
 		// that are children of the TU are in the proper include (based on offset)

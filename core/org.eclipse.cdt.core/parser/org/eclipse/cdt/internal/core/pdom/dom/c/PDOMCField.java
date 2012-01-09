@@ -69,6 +69,7 @@ class PDOMCField extends PDOMCVariable implements IField {
 		return false;
 	}
 
+	@Override
 	public ICompositeType getCompositeTypeOwner() {
 		try {
 			return (ICompositeType)getParentNode();

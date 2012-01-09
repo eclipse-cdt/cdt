@@ -46,6 +46,7 @@ public class CPPUsingDirective implements ICPPUsingDirective {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective#getNamespaceScope()
 	 */
+	@Override
 	public ICPPNamespaceScope getNominatedScope() throws DOMException {
 		IBinding binding= fNamespaceName.resolveBinding();
 		if (binding instanceof ICPPNamespace) {
@@ -57,6 +58,7 @@ public class CPPUsingDirective implements ICPPUsingDirective {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective#getPointOfDeclaration()
 	 */
+	@Override
 	public int getPointOfDeclaration() {
 		final ASTNode astNode = (ASTNode) fNamespaceName;
 		return astNode.getOffset() + astNode.getLength();
@@ -65,6 +67,7 @@ public class CPPUsingDirective implements ICPPUsingDirective {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective#getContainingScope()
 	 */
+	@Override
 	public IScope getContainingScope() {
 		return CPPVisitor.getContainingScope(fNamespaceName);
 	}

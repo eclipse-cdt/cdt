@@ -39,6 +39,7 @@ public class StructuralMacroTests extends IMacroTests {
 	}
 	
 	
+	@Override
 	public void testGetElementName() throws CModelException {
 		setStructuralParse(true);
 		super.testGetElementName();

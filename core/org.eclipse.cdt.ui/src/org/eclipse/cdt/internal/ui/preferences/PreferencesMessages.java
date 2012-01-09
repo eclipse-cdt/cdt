@@ -151,35 +151,11 @@ public final class PreferencesMessages extends NLS {
 	public static String BuildLogPreferencePage_LogLocation;
 	public static String GlobalBuildLogPreferencePage_EnableLogging;
 	public static String GlobalBuildLogPreferencePage_LogLocation;
-	public static String CEditorPreferencePage_folding_title;
+	public static String FoldingPreferencePage_folding_title;
 	public static String FoldingConfigurationBlock_enable;
 	public static String FoldingConfigurationBlock_combo_caption;
 	public static String FoldingConfigurationBlock_info_no_preferences;
 	public static String FoldingConfigurationBlock_error_not_exist;
-	public static String PathEntryVariablePreference_explanation;
-	public static String PathEntryVariableDialog_shellTitle_newVariable;
-	public static String PathEntryVariableDialog_shellTitle_existingVariable;
-	public static String PathEntryVariableDialog_dialogTitle_newVariable;
-	public static String PathEntryVariableDialog_dialogTitle_existingVariable;
-	public static String PathEntryVariableDialog_message_newVariable;
-	public static String PathEntryVariableDialog_message_existingVariable;
-	public static String PathEntryVariableDialog_variableName;
-	public static String PathEntryVariableDialog_variableValue;
-	public static String PathEntryVariableDialog_variableNameEmptyMessage;
-	public static String PathEntryVariableDialog_variableValueEmptyMessage;
-	public static String PathEntryVariableDialog_variableValueInvalidMessage;
-	public static String PathEntryVariableDialog_file;
-	public static String PathEntryVariableDialog_folder;
-	public static String PathEntryVariableDialog_selectFileTitle;
-	public static String PathEntryVariableDialog_selectFolderTitle;
-	public static String PathEntryVariableDialog_selectFolderMessage;
-	public static String PathEntryVariableDialog_variableAlreadyExistsMessage;
-	public static String PathEntryVariableDialog_pathIsRelativeMessage;
-	public static String PathEntryVariableDialog_pathDoesNotExistMessage;
-	public static String PathEntryVariablesBlock_variablesLabel;
-	public static String PathEntryVariablesBlock_addVariableButton;
-	public static String PathEntryVariablesBlock_editVariableButton;
-	public static String PathEntryVariablesBlock_removeVariableButton;
 	public static String ProposalFilterPreferencesUtil_defaultFilterName;
 
 	public static String CEditorPreferencePage_typing_tabTitle;
@@ -217,6 +193,11 @@ public final class PreferencesMessages extends NLS {
 
 	public static String CodeFormatterPreferencePage_title;
 	public static String CodeFormatterPreferencePage_description;
+
+	public static String CodeStylePreferencePage_title;
+	public static String CodeStyleBlock_class_member_order;
+	public static String CodeStyleBlock_public_private;
+	public static String CodeStyleBlock_private_public;
 
 	public static String TodoTaskPreferencePage_title;
 	public static String TodoTaskPreferencePage_description;

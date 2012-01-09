@@ -80,6 +80,7 @@ public class WorkspaceLanguageMappingPreferencePage extends PreferencePage imple
 		fMappingWidget.setMappings(fMappings.getWorkspaceMappings());
 	}
 
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 	

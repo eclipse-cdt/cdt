@@ -27,14 +27,17 @@ public abstract class AbstractSingleIncomingNode extends AbstractBasicBlock impl
 		super();
 	}
 
+	@Override
 	public IBasicBlock[] getIncomingNodes() {
 		return new IBasicBlock[] { prev };
 	}
 
+	@Override
 	public int getIncomingSize() {
 		return 1;
 	}
 
+	@Override
 	public IBasicBlock getIncoming() {
 		return prev;
 	}

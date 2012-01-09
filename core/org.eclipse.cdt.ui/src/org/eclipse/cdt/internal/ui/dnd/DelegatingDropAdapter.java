@@ -46,6 +46,7 @@ public class DelegatingDropAdapter implements DropTargetListener {
 	 * @param event the drop target event
 	 * @see DropTargetListener#dragEnter(DropTargetEvent)
 	 */
+	@Override
 	public void dragEnter(DropTargetEvent event) {
 		fOriginalDropType= event.detail;
 		updateCurrentListener(event);
@@ -58,6 +59,7 @@ public class DelegatingDropAdapter implements DropTargetListener {
 	 * @param event the drop target event
 	 * @see DropTargetListener#dragLeave(DropTargetEvent)
 	 */
+	@Override
 	public void dragLeave(final DropTargetEvent event) {
 		setCurrentListener(null, event);
 	}
@@ -70,6 +72,7 @@ public class DelegatingDropAdapter implements DropTargetListener {
 	 * @param event the drop target event
 	 * @see DropTargetListener#dragOperationChanged(DropTargetEvent)
 	 */
+	@Override
 	public void dragOperationChanged(final DropTargetEvent event) {
 		fOriginalDropType= event.detail;
 		TransferDropTargetListener oldListener= getCurrentListener();
@@ -80,6 +83,7 @@ public class DelegatingDropAdapter implements DropTargetListener {
 		// followed by a dragOperationChanged with the exact same event.
 		if (newListener != null && newListener == oldListener) {
 			SafeRunner.run(new SafeRunnable() {
+				@Override
 				public void run() throws Exception {
 					newListener.dragOperationChanged(event);
 				}
@@ -96,6 +100,7 @@ public class DelegatingDropAdapter implements DropTargetListener {
 	 * @param event the drop target event
 	 * @see DropTargetListener#dragOver(DropTargetEvent)
 	 */
+	@Override
 	public void dragOver(final DropTargetEvent event) {
 		TransferDropTargetListener oldListener= getCurrentListener();
 		updateCurrentListener(event);
@@ -106,6 +111,7 @@ public class DelegatingDropAdapter implements DropTargetListener {
 		// followed by a dragOver with the exact same event.
 		if (newListener != null && newListener == oldListener) {
 			SafeRunner.run(new SafeRunnable() {
+				@Override
 				public void run() throws Exception {
 					newListener.dragOver(event);
 				}
@@ -120,10 +126,12 @@ public class DelegatingDropAdapter implements DropTargetListener {
 	 * @param event the drop target event
 	 * @see DropTargetListener#drop(DropTargetEvent)
 	 */
+	@Override
 	public void drop(final DropTargetEvent event) {
 		updateCurrentListener(event);
 		if (getCurrentListener() != null) {
 			SafeRunner.run(new SafeRunnable() {
+				@Override
 				public void run() throws Exception {
 					getCurrentListener().drop(event);
 				}
@@ -138,9 +146,11 @@ public class DelegatingDropAdapter implements DropTargetListener {
 	 * @param event the drop target event
 	 * @see DropTargetListener#dropAccept(DropTargetEvent)
 	 */
+	@Override
 	public void dropAccept(final DropTargetEvent event) {
 		if (getCurrentListener() != null) {
 			SafeRunner.run(new SafeRunnable() {
+				@Override
 				public void run() throws Exception {
 					getCurrentListener().dropAccept(event);
 				}
@@ -204,6 +214,7 @@ public class DelegatingDropAdapter implements DropTargetListener {
 			return false;
 		if (fCurrentListener != null) {
 			SafeRunner.run(new SafeRunnable() {
+				@Override
 				public void run() throws Exception {
 					fCurrentListener.dragLeave(event);
 				}
@@ -212,6 +223,7 @@ public class DelegatingDropAdapter implements DropTargetListener {
 		fCurrentListener= listener;
 		if (fCurrentListener != null) {
 			SafeRunner.run(new SafeRunnable() {
+				@Override
 				public void run() throws Exception {
 					fCurrentListener.dragEnter(event);
 				}

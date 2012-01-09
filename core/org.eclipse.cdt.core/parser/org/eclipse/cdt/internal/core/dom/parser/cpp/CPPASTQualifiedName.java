@@ -63,10 +63,12 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 	public CPPASTQualifiedName() {
 	}
 
+	@Override
 	public CPPASTQualifiedName copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CPPASTQualifiedName copy(CopyStyle style) {
 		CPPASTQualifiedName copy = new CPPASTQualifiedName();
 		for (IASTName name : getNames())
@@ -109,21 +111,23 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 	}
 
 
+	@Override
 	public void addName(IASTName name) {
         assertNotFrozen();
 		assert !(name instanceof ICPPASTQualifiedName);
 		if (name != null) {
-			names = (IASTName[]) ArrayUtil.append(IASTName.class, names, ++namesPos, name);
+			names = ArrayUtil.appendAt(IASTName.class, names, ++namesPos, name);
 			name.setParent(this);
 			name.setPropertyInParent(SEGMENT_NAME);
 		}
 	}
 
+	@Override
 	public IASTName[] getNames() {
 		if (namesPos < 0)
 			return IASTName.EMPTY_NAME_ARRAY;
         
-		names = (IASTName[]) ArrayUtil.removeNullsAfter(IASTName.class, names, namesPos);
+		names = ArrayUtil.trimAt(IASTName.class, names, namesPos);
 		return names;
 	}
 
@@ -135,14 +139,17 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 		return names[namesPos];
 	}
 
+	@Override
 	public char[] getSimpleID() {
 		return names[namesPos].getSimpleID();
 	}
 	
+	@Override
 	public char[] getLookupKey() {
 		return names[namesPos].getLookupKey();
 	}
 	
+	@Override
 	public char[] toCharArray() {
 		if (signature == null) {
 			StringBuilder buf= new StringBuilder();
@@ -160,10 +167,12 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 		return signature;
 	}
 
+	@Override
 	public boolean isFullyQualified() {
 		return isFullyQualified;
 	}
 
+	@Override
 	public void setFullyQualified(boolean isFullyQualified) {
         assertNotFrozen();
 		this.isFullyQualified = isFullyQualified;
@@ -224,6 +233,7 @@ public class CPPASTQualifiedName extends CPPASTNameBase
         return IASTNameOwner.r_unclear;
 	}
 
+	@Override
 	public int getRoleForName(IASTName n) {
 		for (int i=0; i < namesPos; ++i) {
 			if (names[i] == n) 
@@ -238,6 +248,7 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 		return r_unclear;
 	}
 	
+	@Override
 	public boolean isConversionOrOperator() {
 		final IASTName lastName= getLastName();
 		if (lastName instanceof ICPPASTConversionName || lastName instanceof ICPPASTOperatorName) {
@@ -255,6 +266,7 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 		return false;
 	}
     
+	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix, String[] namespaces) {
 		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix, namespaces);
 		
@@ -348,6 +360,7 @@ public class CPPASTQualifiedName extends CPPASTNameBase
 		return null;
 	}
 	
+	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		return findBindings(n, isPrefix, null);
 	}

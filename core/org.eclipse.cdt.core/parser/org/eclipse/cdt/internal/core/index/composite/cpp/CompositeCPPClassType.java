@@ -36,10 +36,12 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 		fail(); return null;
 	}
 
+	@Override
 	public final IField findField(String name) {
 		return ClassTypeHelper.findField(this, name);
 	}
 
+	@Override
 	public final ICPPMethod[] getAllDeclaredMethods() {
 		return ClassTypeHelper.getAllDeclaredMethods(this);
 	}
@@ -58,6 +60,7 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 			this.writable= writable; 
 		}
 		
+		@Override
 		public IBinding getBaseClass() {
 			if (baseClass != null) {
 				return baseClass;
@@ -66,18 +69,22 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 			}
 		}
 
+		@Override
 		public IName getBaseClassSpecifierName() {
 			return base.getBaseClassSpecifierName();
 		}
 
+		@Override
 		public int getVisibility() {
 			return base.getVisibility();
 		}
 
+		@Override
 		public boolean isVirtual() {
 			return base.isVirtual();
 		}
 
+		@Override
 		public void setBaseClass(IBinding binding) {
 			if (writable) {
 				baseClass= binding;
@@ -92,6 +99,7 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 	    }
 	}
 	
+	@Override
 	public ICPPBase[] getBases() {
 		final ICPPBase[] preresult = ((ICPPClassType) rbinding).getBases();
 		ICPPBase[] result = new ICPPBase[preresult.length];
@@ -101,6 +109,7 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 		return result;
 	}
 
+	@Override
 	public ICPPConstructor[] getConstructors() {
 		ICPPConstructor[] result = ((ICPPClassType) rbinding).getConstructors();
 		for (int i= 0; i < result.length; i++) {
@@ -109,6 +118,7 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 		return result;
 	}
 
+	@Override
 	public ICPPField[] getDeclaredFields() {
 		ICPPField[] result = ((ICPPClassType) rbinding).getDeclaredFields();
 		for (int i= 0; i < result.length; i++) {
@@ -117,6 +127,7 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 		return result;
 	}
 
+	@Override
 	public ICPPMethod[] getDeclaredMethods() {
 		ICPPMethod[] result = ((ICPPClassType) rbinding).getDeclaredMethods();
 		for (int i= 0; i < result.length; i++) {
@@ -125,10 +136,12 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 		return result;
 	}
 
+	@Override
 	public final IField[] getFields() {
 		return ClassTypeHelper.getFields(this);
 	}
 
+	@Override
 	public IBinding[] getFriends() {
 		IBinding[] preResult = ((ICPPClassType) rbinding).getFriends();
 		IBinding[] result = new IBinding[preResult.length];
@@ -138,10 +151,12 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 		return result;
 	}
 
+	@Override
 	public final ICPPMethod[] getMethods() {
 		return ClassTypeHelper.getMethods(this);
 	}
 
+	@Override
 	public ICPPClassType[] getNestedClasses() {
 		ICPPClassType[] result = ((ICPPClassType) rbinding).getNestedClasses();
 		for (int i= 0; i < result.length; i++) {
@@ -150,18 +165,22 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 		return result;
 	}
 
+	@Override
 	public ICPPScope getCompositeScope() {
 		return new CompositeCPPClassScope(cf, rbinding);
 	}
 
+	@Override
 	public int getKey() {
 		return ((ICPPClassType) rbinding).getKey();
 	}
 
+	@Override
 	public boolean isSameType(IType type) {
 		return ((ICPPClassType) rbinding).isSameType(type);
 	}
 
+	@Override
 	public boolean isAnonymous() {
 		return ((ICPPClassType) rbinding).isAnonymous();
 	}

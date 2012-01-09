@@ -52,6 +52,7 @@ public class Symbol implements ISymbol {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getBinarObject()
 	 */
+	@Override
 	public IBinaryObject getBinaryObject() {
 		return binary;
 	}
@@ -59,6 +60,7 @@ public class Symbol implements ISymbol {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getFilename()
 	 */
+	@Override
 	public IPath getFilename() {
 		return sourceFile;
 	}
@@ -66,6 +68,7 @@ public class Symbol implements ISymbol {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getName()
 	 */
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -73,6 +76,7 @@ public class Symbol implements ISymbol {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getType()
 	 */
+	@Override
 	public int getType() {
 		return type;
 	}
@@ -82,6 +86,7 @@ public class Symbol implements ISymbol {
 	 * 
 	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getAdress()
 	 */
+	@Override
 	public IAddress getAddress() {
 		return addr;
 	}
@@ -91,6 +96,7 @@ public class Symbol implements ISymbol {
 	 * 
 	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getEndLine()
 	 */
+	@Override
 	public int getEndLine() {
 		return endLine;
 	}
@@ -100,6 +106,7 @@ public class Symbol implements ISymbol {
 	 * 
 	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getStartLine()
 	 */
+	@Override
 	public int getStartLine() {
 		return startLine;
 	}
@@ -109,6 +116,7 @@ public class Symbol implements ISymbol {
 	 * 
 	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getLineNumber(long)
 	 */
+	@Override
 	public int getLineNumber(long offset) {
 		return -1;
 	}
@@ -118,10 +126,12 @@ public class Symbol implements ISymbol {
 	 * 
 	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getSize()
 	 */
+	@Override
 	public long getSize() {
 		return size;
 	}
 
+	@Override
 	public int compareTo(Object obj) {
 		IAddress thisVal = this.addr;
 		IAddress anotherVal = null;

@@ -51,6 +51,7 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		return (ICPPFunction) getSpecializedBinding();
 	}
 
+	@Override
 	public ICPPParameter[] getParameters() {
 		if (fParams == null) {
 			ICPPFunction function = getFunction();
@@ -75,18 +76,22 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		return fParams;
 	}
 
+	@Override
 	public int getRequiredArgumentCount() {
 		return ((ICPPFunction) getSpecializedBinding()).getRequiredArgumentCount();
 	}
 
+	@Override
 	public boolean hasParameterPack() {
 		return ((ICPPFunction) getSpecializedBinding()).hasParameterPack();
 	}
 
+	@Override
 	public IScope getFunctionScope() {
 		return null;
 	}
 
+	@Override
 	public ICPPFunctionType getType() {
 		if (type == null) {
 			ICPPFunction function = (ICPPFunction) getSpecializedBinding();
@@ -96,10 +101,12 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		return type;
 	}
 
+	@Override
 	public boolean isMutable() {
 		return false;
 	}
 
+	@Override
 	public boolean isDeleted() {
 		IASTNode def = getDefinition();
 		if (def != null)
@@ -112,6 +119,7 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		return false;
 	}
 
+	@Override
 	public boolean isInline() {
 		if (getDefinition() != null) {
 			IASTNode def = getDefinition();
@@ -122,6 +130,7 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		return getFunction().isInline();
 	}
 	
+	@Override
 	public boolean isExternC() {
 		if (CPPVisitor.isExternC(getDefinition())) {
 			return true;
@@ -129,9 +138,11 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		return getFunction().isExternC();
 	}
 
+	@Override
 	public boolean isStatic() {
 		return isStatic(true);
 	}
+	@Override
 	public boolean isStatic(boolean resolveAll) {
 		//TODO resolveAll
 		IBinding f = getSpecializedBinding();
@@ -143,6 +154,7 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		return CPPFunction.hasStorageClass(this, IASTDeclSpecifier.sc_static);
 	}
 
+	@Override
 	public boolean isExtern() {
 		ICPPFunction f = (ICPPFunction) getSpecializedBinding();
 		if (f != null)
@@ -150,6 +162,7 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		return CPPFunction.hasStorageClass(this, IASTDeclSpecifier.sc_extern);
 	}
 
+	@Override
 	public boolean isAuto() {
 		ICPPFunction f = (ICPPFunction) getSpecializedBinding();
 		if (f != null)
@@ -157,6 +170,7 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		return CPPFunction.hasStorageClass(this, IASTDeclSpecifier.sc_auto);
 	}
 
+	@Override
 	public boolean isRegister() {
 		ICPPFunction f = (ICPPFunction) getSpecializedBinding();
 		if (f != null)
@@ -164,6 +178,7 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		return CPPFunction.hasStorageClass(this, IASTDeclSpecifier.sc_register);
 	}
 
+	@Override
 	public boolean takesVarArgs() {
 		ICPPFunction f = (ICPPFunction) getSpecializedBinding();
 		if (f != null)
@@ -180,7 +195,8 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
         return false;
 	}
 
-    public IBinding resolveParameter(CPPParameter param) {
+    @Override
+	public IBinding resolveParameter(CPPParameter param) {
 		int pos= param.getParameterPosition();
 		
     	final IASTNode[] decls= getDeclarations();
@@ -288,6 +304,7 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		return result.toString();
 	}
 
+	@Override
 	public IType[] getExceptionSpecification() {
 		if (specializedExceptionSpec == null) {
 			ICPPFunction function = (ICPPFunction) getSpecializedBinding();

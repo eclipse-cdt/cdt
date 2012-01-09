@@ -28,10 +28,12 @@ public class CPPASTProblemTypeId extends CPPASTProblemOwner implements IASTProbl
 		super(problem);
 	}
 
+	@Override
 	public CPPASTProblemTypeId copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CPPASTProblemTypeId copy(CopyStyle style) {
 		CPPASTProblemTypeId copy = new CPPASTProblemTypeId();
 		copyBaseProblem(copy, style);
@@ -60,17 +62,21 @@ public class CPPASTProblemTypeId extends CPPASTProblemOwner implements IASTProbl
         return true;
     }
 
+	@Override
 	public IASTDeclSpecifier getDeclSpecifier() {
 		return null;
 	}
 
+	@Override
 	public void setDeclSpecifier(IASTDeclSpecifier declSpec) {
 	}
 
+	@Override
 	public IASTDeclarator getAbstractDeclarator() {
 		return null;
 	}
 
+	@Override
 	public void setAbstractDeclarator(IASTDeclarator abstractDeclarator) {
 	}
 }

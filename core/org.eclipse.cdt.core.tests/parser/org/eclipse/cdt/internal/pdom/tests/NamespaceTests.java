@@ -47,6 +47,7 @@ public class NamespaceTests extends PDOMTestBase {
 		return suite(NamespaceTests.class);
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		if (pdom == null) {
 			project = createProject("namespaceTests", true);
@@ -55,6 +56,7 @@ public class NamespaceTests extends PDOMTestBase {
 		pdom.acquireReadLock();
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		pdom.releaseReadLock();
 		if (project != null) {

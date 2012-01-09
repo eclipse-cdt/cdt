@@ -20,6 +20,7 @@ public class CompositeTypeContainer extends CompositeType implements ITypeContai
 		super(rtype, cf);
 	}
 
+	@Override
 	public final IType getType() {
 		return cf.getCompositeType(((ITypeContainer) type).getType());
 	}

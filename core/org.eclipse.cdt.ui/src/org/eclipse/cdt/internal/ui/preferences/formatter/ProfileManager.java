@@ -158,6 +158,7 @@ public abstract class ProfileManager extends Observable {
 			return fID; 
 		}
 		
+		@Override
 		public final int compareTo(Profile o) {
 			if (o instanceof BuiltInProfile) {
 				return fOrder - ((BuiltInProfile)o).fOrder;
@@ -254,6 +255,7 @@ public abstract class ProfileManager extends Observable {
 			fVersion= version;
 		}
 		
+		@Override
 		public int compareTo(Profile o) {
 			if (o instanceof SharedProfile) {
 				return -1;

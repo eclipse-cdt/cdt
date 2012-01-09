@@ -22,27 +22,33 @@ class CompositeCVariable extends CompositeCBinding implements IVariable {
 		super(cf, rbinding);
 	}
 
+	@Override
 	public IType getType() {
 		IType rtype = ((IVariable)rbinding).getType();
 		return cf.getCompositeType(rtype);
 	}
 
+	@Override
 	public boolean isAuto() {
 		return ((IVariable)rbinding).isAuto();
 	}
 
+	@Override
 	public boolean isExtern() {
 		return ((IVariable)rbinding).isExtern();
 	}
 
+	@Override
 	public boolean isRegister() {
 		return ((IVariable)rbinding).isRegister();
 	}
 
+	@Override
 	public boolean isStatic() {
 		return ((IVariable)rbinding).isStatic();
 	}
 
+	@Override
 	public IValue getInitialValue() {
 		return ((IVariable)rbinding).getInitialValue();
 	}

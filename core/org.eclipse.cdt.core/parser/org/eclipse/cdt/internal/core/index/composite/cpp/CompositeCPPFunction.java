@@ -26,22 +26,27 @@ class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction {
 		super(cf, rbinding);
 	}
 
+	@Override
 	public boolean isExternC() {
 		return ((ICPPFunction)rbinding).isExternC();
 	}
 
+	@Override
 	public boolean isInline() {
 		return ((ICPPFunction)rbinding).isInline();
 	}
 
+	@Override
 	public boolean isMutable() {
 		return ((ICPPFunction)rbinding).isMutable();
 	}
 
+	@Override
 	public IScope getFunctionScope() {
 		return null;
 	}
 
+	@Override
 	public ICPPParameter[] getParameters() {
 		ICPPParameter[] result = ((ICPPFunction)rbinding).getParameters();
 		for(int i=0; i<result.length; i++) {
@@ -50,39 +55,48 @@ class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction {
 		return result;
 	}
 
+	@Override
 	public ICPPFunctionType getType() {
 		IType rtype = ((ICPPFunction)rbinding).getType();
 		return (ICPPFunctionType) cf.getCompositeType(rtype);
 	}
 
+	@Override
 	public boolean isDeleted() {
 		return ((ICPPFunction)rbinding).isDeleted();
 	}
 
+	@Override
 	public boolean isAuto() {
 		return ((ICPPFunction)rbinding).isAuto();
 	}
 
+	@Override
 	public boolean isExtern() {
 		return ((ICPPFunction)rbinding).isExtern();
 	}
 
+	@Override
 	public boolean isRegister() {
 		return ((ICPPFunction)rbinding).isRegister();
 	}
 
+	@Override
 	public boolean isStatic() {
 		return ((ICPPFunction)rbinding).isStatic();
 	}
 
+	@Override
 	public boolean takesVarArgs() {
 		return ((ICPPFunction)rbinding).takesVarArgs();
 	}
 	
+	@Override
 	public int getRequiredArgumentCount() {
 		return ((ICPPFunction)rbinding).getRequiredArgumentCount();
 	}
 
+	@Override
 	public boolean hasParameterPack() {
 		return ((ICPPFunction)rbinding).hasParameterPack();
 	}
@@ -99,6 +113,7 @@ class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction {
 		return result.toString();
 	}
 
+	@Override
 	public IType[] getExceptionSpecification() {
 		IType[] es= ((ICPPFunction)rbinding).getExceptionSpecification();
 		if (es == null || es.length == 0)

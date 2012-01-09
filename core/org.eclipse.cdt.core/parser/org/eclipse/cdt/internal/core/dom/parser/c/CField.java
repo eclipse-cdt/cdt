@@ -26,6 +26,7 @@ public class CField extends CVariable implements IField {
 			fOwner = owner;
 		}
 
+		@Override
 		public ICompositeType getCompositeTypeOwner() {
 			return fOwner;
 		}
@@ -35,6 +36,7 @@ public class CField extends CVariable implements IField {
 		super(name);
 	}
 
+	@Override
 	public ICompositeType getCompositeTypeOwner() {
 		ICCompositeTypeScope scope = (ICCompositeTypeScope) getScope();
 		return scope.getCompositeType();

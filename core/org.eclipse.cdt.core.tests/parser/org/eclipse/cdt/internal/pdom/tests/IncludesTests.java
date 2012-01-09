@@ -36,6 +36,7 @@ public class IncludesTests extends PDOMTestBase {
 		return suite(IncludesTests.class);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		if (index == null) {
 			project = createProject("includesTests");
@@ -44,6 +45,7 @@ public class IncludesTests extends PDOMTestBase {
 		index.acquireReadLock();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		index.releaseReadLock();
 	}

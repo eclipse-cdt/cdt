@@ -77,26 +77,32 @@ public class Addr32 implements IAddress, Serializable {
 		this(Long.parseLong(addr, radix), truncate);
 	}
 	
+	@Override
 	public IAddress add(BigInteger offset) {
 		return new Addr32(this.address + offset.longValue());
 	}
 
+	@Override
 	public IAddress add(long offset) {
 		return new Addr32(this.address + offset);
 	}
 
+	@Override
 	public BigInteger getMaxOffset() {
 		return MAX_OFFSET;
 	}
 	
+	@Override
 	public BigInteger getValue() {
 		return BigInteger.valueOf(address);
 	}
 
+	@Override
 	public BigInteger distanceTo(IAddress other) {
 		return other.getValue().subtract(getValue());
 	}
 
+	@Override
 	public int compareTo(Object other) {
 		if (!(other instanceof IAddress)) {
 			throw new IllegalArgumentException();
@@ -105,10 +111,12 @@ public class Addr32 implements IAddress, Serializable {
 		return getValue().compareTo(((IAddress)other).getValue());
 	}
 
+	@Override
 	public boolean isMax() {
 		return address == MAX.address;
 	}
 
+	@Override
 	public boolean isZero() {
 		return address == ZERO.address;
 	}
@@ -118,6 +126,7 @@ public class Addr32 implements IAddress, Serializable {
 		return toString(10);
 	}
 
+	@Override
 	public String toString(int radix) {
 		return Long.toString(address, radix);
 	}
@@ -136,6 +145,7 @@ public class Addr32 implements IAddress, Serializable {
 		return (int)(address ^ (address >> 32));
 	}
 	
+	@Override
 	public String toHexAddressString() {
 		String addressString = Long.toString(address, 16);
 		StringBuffer sb = new StringBuffer(CHARS_NUM);
@@ -148,6 +158,7 @@ public class Addr32 implements IAddress, Serializable {
 		return sb.toString();
 	}
 
+	@Override
 	public String toBinaryAddressString() {
 		String addressString = Long.toString(address, 2);
 		StringBuffer sb = new StringBuffer(BINARY_CHARS_NUM);
@@ -160,10 +171,12 @@ public class Addr32 implements IAddress, Serializable {
 		return sb.toString();
 	}
 
+	@Override
 	public int getCharsNum() {
 		return CHARS_NUM;
 	}
 
+	@Override
 	public int getSize() {
 		return BYTES_NUM;
 	}

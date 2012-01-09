@@ -43,10 +43,12 @@ public class CASTForStatement extends ASTNode implements IASTForStatement, IASTA
     	setBody(body);
 	}
 
+	@Override
 	public CASTForStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CASTForStatement copy(CopyStyle style) {
 		CASTForStatement copy = new CASTForStatement();
 		copyForStatement(copy, style);
@@ -65,11 +67,13 @@ public class CASTForStatement extends ASTNode implements IASTForStatement, IASTA
 		copy.setOffsetAndLength(this);
 	}
 	
+	@Override
 	public IASTExpression getConditionExpression() {
         return condition;
     }
 
-    public void setConditionExpression(IASTExpression condition) {
+    @Override
+	public void setConditionExpression(IASTExpression condition) {
         assertNotFrozen();
         this.condition = condition;
         if (condition != null) {
@@ -78,11 +82,13 @@ public class CASTForStatement extends ASTNode implements IASTForStatement, IASTA
 		}
     }
 
-    public IASTExpression getIterationExpression() {
+    @Override
+	public IASTExpression getIterationExpression() {
         return iterationExpression;
     }
 
-    public void setIterationExpression(IASTExpression iterator) {
+    @Override
+	public void setIterationExpression(IASTExpression iterator) {
         assertNotFrozen();
         this.iterationExpression = iterator;
         if (iterator != null) {
@@ -91,11 +97,13 @@ public class CASTForStatement extends ASTNode implements IASTForStatement, IASTA
 		}
     }
     
-    public IASTStatement getInitializerStatement() {
+    @Override
+	public IASTStatement getInitializerStatement() {
         return init;
     }
 
-    public void setInitializerStatement(IASTStatement statement) {
+    @Override
+	public void setInitializerStatement(IASTStatement statement) {
         assertNotFrozen();
         init = statement;
         if (statement != null) {
@@ -103,11 +111,13 @@ public class CASTForStatement extends ASTNode implements IASTForStatement, IASTA
 			statement.setPropertyInParent(INITIALIZER);
 		}
     }
-    public IASTStatement getBody() {
+    @Override
+	public IASTStatement getBody() {
         return body;
     }
 
-    public void setBody(IASTStatement statement) {
+    @Override
+	public void setBody(IASTStatement statement) {
         assertNotFrozen();
         body = statement;
         if (statement != null) {
@@ -116,7 +126,8 @@ public class CASTForStatement extends ASTNode implements IASTForStatement, IASTA
 		}
     }
 
-    public IScope getScope() {
+    @Override
+	public IScope getScope() {
         if( scope == null )
             scope = new CScope( this, EScopeKind.eLocal);
         return scope;
@@ -147,7 +158,8 @@ public class CASTForStatement extends ASTNode implements IASTForStatement, IASTA
         return true;
     }
 
-    public void replace(IASTNode child, IASTNode other) {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
         if( body == child )
         {
             other.setPropertyInParent( child.getPropertyInParent() );

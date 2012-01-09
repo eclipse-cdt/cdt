@@ -20,10 +20,12 @@ import org.eclipse.jface.text.IDocument;
  * quick fix for catch by value
  */
 public class CatchByConstReferenceQuickFix extends AbstractCodanCMarkerResolution {
+	@Override
 	public String getLabel() {
 		return Messages.CatchByConstReferenceQuickFix_Message;
 	}
 
+	@Override
 	public void apply(IMarker marker, IDocument document) {
 		CatchByReferenceQuickFix.applyCatchByReferenceQuickFix(marker, document, true);
 	}

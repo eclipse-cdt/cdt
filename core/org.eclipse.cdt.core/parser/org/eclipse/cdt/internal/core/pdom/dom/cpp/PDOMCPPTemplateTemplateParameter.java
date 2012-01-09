@@ -94,20 +94,24 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 		return IIndexCPPBindingConstants.CPP_TEMPLATE_TEMPLATE_PARAMETER;
 	}
 	
+	@Override
 	public short getParameterPosition() {
 		return (short) getParameterID();
 	}
 	
+	@Override
 	public short getTemplateNestingLevel() {
 		readParamID();
 		return (short)(getParameterID() >> 16);
 	}
 	
+	@Override
 	public boolean isParameterPack() {
 		readParamID();
 		return (fCachedParamID & PACK_BIT) != 0;
 	}
 
+	@Override
 	public int getParameterID() {
 		readParamID();
 		return fCachedParamID & ~PACK_BIT;
@@ -137,6 +141,7 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 		list.accept(visitor);
 	}
 	
+	@Override
 	public boolean isSameType(IType type) {
 		if (type instanceof ITypedef) {
 			return type.isSameType(this);
@@ -148,6 +153,7 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
         return getParameterID() == ((ICPPTemplateParameter) type).getParameterID();
 	}
 
+	@Override
 	public IType getDefault() {
 		try {
 			return getLinkage().loadType(record + DEFAULT_TYPE);
@@ -157,6 +163,7 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 		return null;
 	}
 		
+	@Override
 	public ICPPTemplateArgument getDefaultValue() {
 		IType d= getDefault();
 		if (d == null)
@@ -171,6 +178,7 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 	}
 
 
+	@Override
 	public ICPPScope asScope() {
 		if (fUnknownScope == null) {
 			fUnknownScope= new PDOMCPPUnknownScope(this, new CPPASTName(getNameCharArray()));
@@ -178,10 +186,12 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 		return fUnknownScope;
 	}
 
+	@Override
 	public IASTName getUnknownName() {
 		return new CPPASTName(getNameCharArray());
 	}
 
+	@Override
 	public void configure(ICPPTemplateParameter param) {
 		try {
 			ICPPTemplateArgument val= param.getDefaultValue();
@@ -227,6 +237,7 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 		}
 	}
 
+	@Override
 	public void forceDelete(PDOMLinkage linkage) throws CoreException {
 		getDBName().delete();
 		linkage.storeType(record + DEFAULT_TYPE, null);
@@ -241,6 +252,7 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 		} 
 	}
 
+	@Override
 	public IPDOMCPPTemplateParameter[] getTemplateParameters() {
 		if (params == null) {
 			try {
@@ -258,62 +270,77 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 		return params;
 	}
 
+	@Override
 	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() {
 		return ICPPClassTemplatePartialSpecialization.EMPTY_PARTIAL_SPECIALIZATION_ARRAY;
 	}
 
+	@Override
 	public IField findField(String name) {
 		return null;
 	}
 
+	@Override
 	public ICPPMethod[] getAllDeclaredMethods() {
 		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 	}
 
+	@Override
 	public ICPPBase[] getBases() {
 		return ICPPBase.EMPTY_BASE_ARRAY;
 	}
 
+	@Override
 	public ICPPConstructor[] getConstructors() {
 		return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
 	}
 
+	@Override
 	public ICPPField[] getDeclaredFields() {
 		return ICPPField.EMPTY_CPPFIELD_ARRAY;
 	}
 
+	@Override
 	public ICPPMethod[] getDeclaredMethods() {
 		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 	}
 
+	@Override
 	public IField[] getFields() {
 		return ICPPField.EMPTY_CPPFIELD_ARRAY;
 	}
 
+	@Override
 	public IBinding[] getFriends() {
 		return IBinding.EMPTY_BINDING_ARRAY;
 	}
 
+	@Override
 	public ICPPMethod[] getMethods() {
 		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
 	}
 
+	@Override
 	public ICPPClassType[] getNestedClasses() {
 		return ICPPClassType.EMPTY_CLASS_ARRAY;
 	}
 
+	@Override
 	public IScope getCompositeScope() {
 		return asScope();
 	}
 
+	@Override
 	public int getKey() {
 		return 0;
 	}
 
+	@Override
 	public boolean isAnonymous() {
 		return false;
 	}
 
+	@Override
 	public ICPPTemplateParameter adaptTemplateParameter(ICPPTemplateParameter param) {
 		int pos = param.getParameterPosition();
 		ICPPTemplateParameter[] pars = getTemplateParameters();
@@ -335,6 +362,7 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 		return null;
 	}
 
+	@Override
 	public ICPPDeferredClassInstance asDeferredInstance() throws DOMException {
 		return null;
 	}

@@ -1449,7 +1449,7 @@ public class CPPSemantics {
 		    if (item instanceof ICPPASTLinkageSpecification) {
 		        IASTDeclaration[] decls = ((ICPPASTLinkageSpecification) item).getDeclarations();
 		        if (decls != null && decls.length > 0) {
-			        nodeStack = (IASTNode[][]) ArrayUtil.append(IASTNode[].class, nodeStack, nodes);
+			        nodeStack = ArrayUtil.append(IASTNode[].class, nodeStack, nodes);
 			        nodeIdxStack = ArrayUtil.setInt(nodeIdxStack, ++nodeStackPos, idx);
 			        nodes = ((ICPPASTLinkageSpecification) item).getDeclarations();
 			        idx = 0;
@@ -1783,7 +1783,7 @@ public class CPPSemantics {
         IBinding[] result = null;
         for (Object binding : bindings) {
             if (binding instanceof IASTName)
-                result = (IBinding[]) ArrayUtil.append(IBinding.class, result, ((IASTName) binding).resolveBinding());
+                result = ArrayUtil.append(IBinding.class, result, ((IASTName) binding).resolveBinding());
             else if (binding instanceof IBinding)
                 result = (IBinding[]) ArrayUtil.append(IBinding.class, result, binding);
         }
@@ -2021,13 +2021,13 @@ public class CPPSemantics {
 
 	        IBinding[] bindings = null;
 	        if (cmp > 0) {
-	            bindings = (IBinding[]) ArrayUtil.append(IBinding.class, bindings, obj);
-	            bindings = (IBinding[]) ArrayUtil.append(IBinding.class, bindings, type);
+	            bindings = ArrayUtil.append(IBinding.class, bindings, obj);
+	            bindings = ArrayUtil.append(IBinding.class, bindings, type);
 	        } else {
-	            bindings = (IBinding[]) ArrayUtil.append(IBinding.class, bindings, type);
+	            bindings = ArrayUtil.append(IBinding.class, bindings, type);
 	            bindings = (IBinding[]) ArrayUtil.addAll(IBinding.class, bindings, fns.keyArray());
 	        }
-	        bindings = (IBinding[]) ArrayUtil.trim(IBinding.class, bindings);
+	        bindings = ArrayUtil.trim(IBinding.class, bindings);
 	        ICPPUsingDeclaration composite = new CPPUsingDeclaration(data.astName, bindings);
 	        return composite;	
 	    }
@@ -2328,7 +2328,7 @@ public class CPPSemantics {
 	}
 	
 	public static IBinding resolveFunction(LookupData data, ICPPFunction[] fns, boolean allowUDC) throws DOMException {
-	    fns= (ICPPFunction[]) ArrayUtil.trim(ICPPFunction.class, fns);
+	    fns= ArrayUtil.trim(ICPPFunction.class, fns);
 	    if (fns == null || fns.length == 0)
 	        return null;
 	    
@@ -2413,7 +2413,7 @@ public class CPPSemantics {
 				bestFnCost= fnCost;
 				ambiguousFunctions= null;
 			} else if (cmp == 0) {
-				ambiguousFunctions= (IFunction[]) ArrayUtil.append(IFunction.class, ambiguousFunctions, fn);
+				ambiguousFunctions= ArrayUtil.append(IFunction.class, ambiguousFunctions, fn);
 			}
 		}
 		
@@ -2425,7 +2425,7 @@ public class CPPSemantics {
 						bestFnCost= fnCost;
 						ambiguousFunctions= null;
 					} else if (cmp == 0) {
-						ambiguousFunctions= (IFunction[]) ArrayUtil.append(IFunction.class, ambiguousFunctions, fnCost.getFunction());
+						ambiguousFunctions= ArrayUtil.append(IFunction.class, ambiguousFunctions, fnCost.getFunction());
 					}
 				}
 			}
@@ -2435,7 +2435,7 @@ public class CPPSemantics {
 			return null;
 		
 		if (ambiguousFunctions != null) {
-			ambiguousFunctions= (IFunction[]) ArrayUtil.append(IFunction.class, ambiguousFunctions, bestFnCost.getFunction());
+			ambiguousFunctions= ArrayUtil.append(IFunction.class, ambiguousFunctions, bestFnCost.getFunction());
 			return new ProblemBinding(data.astName, IProblemBinding.SEMANTIC_AMBIGUOUS_LOOKUP,
 					ambiguousFunctions);
 		}

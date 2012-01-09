@@ -35,7 +35,8 @@ public class IBDragSourceListener implements DragSourceListener {
         fTreeViewer= viewer;
     }
 
-    public void dragStart(DragSourceEvent event) {
+    @Override
+	public void dragStart(DragSourceEvent event) {
     	if (fDropTargetListener != null) {
     		fDropTargetListener.setEnabled(false);
     	}
@@ -56,7 +57,8 @@ public class IBDragSourceListener implements DragSourceListener {
     	fDropTargetListener= dl;
     }
     
-    public void dragSetData(DragSourceEvent event) {
+    @Override
+	public void dragSetData(DragSourceEvent event) {
         if (ResourceTransfer.getInstance().isSupportedType(event.dataType)) {
             event.data= getResources();
         }
@@ -92,7 +94,8 @@ public class IBDragSourceListener implements DragSourceListener {
         return files.toArray(new IFile[files.size()]);
     }
 
-    public void dragFinished(DragSourceEvent event) {
+    @Override
+	public void dragFinished(DragSourceEvent event) {
     	if (fDropTargetListener != null) {
     		fDropTargetListener.setEnabled(true);
     	}

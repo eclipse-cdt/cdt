@@ -108,12 +108,15 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 		public CDiffNode(int type, String id, IDocument doc, int start, int length) {
 			super(type, id, doc, start, length);
 		}
+		@Override
 		public String getName() {
 			return getId();
 		}
+		@Override
 		public String getType() {
 			return "c2"; //$NON-NLS-1$
 		}
+		@Override
 		public Image getImage() {
 			return null;
 		}
@@ -142,14 +145,17 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 		super(parent, new ToolBarManager(SWT.FLAT));
 		setMacroExpansionInput(input);
 		addFocusListener(new FocusListener() {
+			@Override
 			public void focusGained(FocusEvent e) {
 				registerCommandHandlers();
 			}
+			@Override
 			public void focusLost(FocusEvent e) {
 				unregisterCommandHandlers();
 			}
 		});
 		getShell().addListener(SWT.Close, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				widgetClosed();
 			}});
@@ -286,19 +292,22 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 			return;
 		}
         IHandler backwardHandler= new AbstractHandler() {
-            public Object execute(ExecutionEvent event) throws ExecutionException {
+            @Override
+			public Object execute(ExecutionEvent event) throws ExecutionException {
                 backward();
                 return null;
             }
         };
         IHandler forwardHandler= new AbstractHandler() {
-            public Object execute(ExecutionEvent event) throws ExecutionException {
+            @Override
+			public Object execute(ExecutionEvent event) throws ExecutionException {
                 forward();
                 return null;
             }
         };
         IHandler gotoDefinitionHandler= new AbstractHandler() {
-            public Object execute(ExecutionEvent event) throws ExecutionException {
+            @Override
+			public Object execute(ExecutionEvent event) throws ExecutionException {
                 gotoMacroDefinition();
                 return null;
             }
@@ -526,7 +535,7 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 		final ITypedElement left= getContentForIndex(fIndex, true);
 		final ITypedElement right= getContentForIndex(fIndex, false);
 		
-		setTitleText(CHoverMessages.bind(CHoverMessages.CMacroExpansionControl_title_macroExpansionExploration, getStepCount()));
+		setTitleText(NLS.bind(CHoverMessages.CMacroExpansionControl_title_macroExpansionExploration, getStepCount()));
 		fMacroViewer.getDocument().set(getMacroText(fIndex));
 		final StyledText textWidget= fMacroViewer.getTextWidget();
 		final Point size= textWidget.computeSize(SWT.DEFAULT, SWT.DEFAULT);

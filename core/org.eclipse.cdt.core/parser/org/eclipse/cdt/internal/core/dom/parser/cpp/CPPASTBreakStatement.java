@@ -39,10 +39,12 @@ public class CPPASTBreakStatement extends ASTNode implements IASTBreakStatement 
         return true;
     }
 
-    public CPPASTBreakStatement copy() {
+    @Override
+	public CPPASTBreakStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CPPASTBreakStatement copy(CopyStyle style) {
 		CPPASTBreakStatement copy = new CPPASTBreakStatement();
 		copy.setOffsetAndLength(this);

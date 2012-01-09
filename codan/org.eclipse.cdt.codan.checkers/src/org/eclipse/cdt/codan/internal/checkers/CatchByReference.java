@@ -45,6 +45,7 @@ public class CatchByReference extends AbstractIndexAstChecker {
 	public static final String PARAM_EXCEPT_ARG_LIST = "exceptions"; //$NON-NLS-1$
 	public static final String PARAM_UNKNOWN_TYPE = "unknown"; //$NON-NLS-1$
 
+	@Override
 	public void processAst(IASTTranslationUnit ast) {
 		// traverse the ast using the visitor pattern.
 		ast.accept(new OnCatch());
@@ -55,6 +56,7 @@ public class CatchByReference extends AbstractIndexAstChecker {
 			shouldVisitStatements = true;
 		}
 
+		@Override
 		public int visit(IASTStatement stmt) {
 			if (stmt instanceof ICPPASTTryBlockStatement) {
 				try {

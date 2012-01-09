@@ -57,11 +57,13 @@ public interface ICASTDesignatedInitializer extends IASTInitializer, IASTInitial
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICASTDesignatedInitializer copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICASTDesignatedInitializer copy(CopyStyle style);
 
 	/**

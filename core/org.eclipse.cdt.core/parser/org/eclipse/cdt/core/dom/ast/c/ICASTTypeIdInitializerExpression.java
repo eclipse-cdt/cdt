@@ -27,10 +27,12 @@ public interface ICASTTypeIdInitializerExpression extends IASTTypeIdInitializerE
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICASTTypeIdInitializerExpression copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICASTTypeIdInitializerExpression copy(CopyStyle style);
 }

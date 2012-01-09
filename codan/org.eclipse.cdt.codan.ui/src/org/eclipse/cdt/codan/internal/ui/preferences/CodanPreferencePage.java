@@ -65,6 +65,7 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements IWork
 		setPreferenceStore(new ScopedPreferenceStore(new InstanceScope(), CodanCorePlugin.PLUGIN_ID));
 		// setDescription("Code Analysis Preference Page");
 		problemSelectionListener = new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				if (infoButton != null) {
 					if (event.getSelection() instanceof ITreeSelection) {
@@ -99,6 +100,7 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements IWork
 		addField(checkedTreeEditor);
 		checkedTreeEditor.getTreeViewer().addSelectionChangedListener(problemSelectionListener);
 		checkedTreeEditor.getTreeViewer().addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				openCustomizeDialog();
 			}
@@ -213,6 +215,7 @@ public class CodanPreferencePage extends FieldEditorOverlayPage implements IWork
 	 * @see
 	 * org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 

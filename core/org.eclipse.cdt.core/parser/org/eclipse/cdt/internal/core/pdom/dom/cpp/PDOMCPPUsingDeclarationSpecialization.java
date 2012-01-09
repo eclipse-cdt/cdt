@@ -64,18 +64,21 @@ class PDOMCPPUsingDeclarationSpecialization extends PDOMCPPSpecialization implem
 		return IIndexCPPBindingConstants.CPP_USING_DECLARATION;
 	}
 
+	@Override
 	public IBinding[] getDelegates() {
 		if (delegates == null) {
 			PDOMNodeLinkedList list= new PDOMNodeLinkedList(getLinkage(), record+TARGET_BINDINGS);
 			final List<IBinding> result= new ArrayList<IBinding>();
 			try {
 				list.accept(new IPDOMVisitor() {
+					@Override
 					public boolean visit(IPDOMNode node) {
 						if (node instanceof IBinding) {
 							result.add((IBinding) node);
 						}
 						return true;
 					}
+					@Override
 					public void leave(IPDOMNode node) {
 					}
 				});

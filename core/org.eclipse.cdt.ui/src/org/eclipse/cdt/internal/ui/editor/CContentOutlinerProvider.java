@@ -86,6 +86,7 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 	public void contentUpdated() {
 		if (treeViewer != null && !treeViewer.getControl().isDisposed()) {
 			treeViewer.getControl().getDisplay().asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					if (!treeViewer.getControl().isDisposed()) {
 						if (fInitialDeltaPending) {
@@ -245,6 +246,7 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 		/**
 		 * @see org.eclipse.cdt.core.model.IElementChangedListener#elementChanged(org.eclipse.cdt.core.model.ElementChangedEvent)
 		 */
+		@Override
 		public void elementChanged(final ElementChangedEvent e) {
 			if (e.getType() == ElementChangedEvent.POST_SHIFT && e.getDelta() instanceof CShiftData) {
 				contentShift((CShiftData)(e.getDelta()));
@@ -334,6 +336,7 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 		/**
 		 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 		 */
+		@Override
 		public void propertyChange(PropertyChangeEvent event) {
 			String prop = event.getProperty();
 			if (prop.equals(PreferenceConstants.OUTLINE_GROUP_INCLUDES)) {

@@ -48,6 +48,7 @@ public class PDOMSearchElement implements IAdaptable {
 		return location;
 	}
 	
+	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Object getAdapter(Class adapterType) {
 		if (adapterType.isAssignableFrom(IFile.class)) {

@@ -53,6 +53,7 @@ public class OccurrencesFinder implements IOccurrencesFinder {
 		super();
 	}
 	
+	@Override
 	public String initialize(IASTTranslationUnit root, IASTNode node) {
 		if (!(node instanceof IASTName))
 			return CSearchMessages.OccurrencesFinder_no_element; 
@@ -123,6 +124,7 @@ public class OccurrencesFinder implements IOccurrencesFinder {
 		return false;
 	}
 
+	@Override
 	public OccurrenceLocation[] getOccurrences() {
 		performSearch();
 		if (fResult.isEmpty())
@@ -130,6 +132,7 @@ public class OccurrencesFinder implements IOccurrencesFinder {
 		return fResult.toArray(new OccurrenceLocation[fResult.size()]);
 	}
 
+	@Override
 	public IASTTranslationUnit getASTRoot() {
 		return fRoot;
 	}
@@ -141,6 +144,7 @@ public class OccurrencesFinder implements IOccurrencesFinder {
 		return CSearchMessages.OccurrencesFinder_searchfor ; 
 	}
 	
+	@Override
 	public String getElementName() {
 		if (fSelectedNode != null) {
 			return new String(fSelectedNode.toCharArray());
@@ -148,10 +152,12 @@ public class OccurrencesFinder implements IOccurrencesFinder {
 		return null;
 	}
 	
+	@Override
 	public String getUnformattedPluralLabel() {
 		return CSearchMessages.OccurrencesFinder_label_plural;
 	}
 	
+	@Override
 	public String getUnformattedSingularLabel() {
 		return CSearchMessages.OccurrencesFinder_label_singular;
 	}
@@ -185,10 +191,12 @@ public class OccurrencesFinder implements IOccurrencesFinder {
 		return false;
 	}
 
+	@Override
 	public int getSearchKind() {
 		return K_OCCURRENCE;
 	}
 	
+	@Override
 	public String getID() {
 		return ID;
 	}

@@ -37,7 +37,8 @@ public class CPPBaseClause implements ICPPBase, ICPPInternalBase {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBase#getBaseClass()
      */
-    public IBinding getBaseClass() {
+    @Override
+	public IBinding getBaseClass() {
 		if (baseClass == null) {
 	    	IBinding b = base.getName().resolveBinding();
 	    	if (b instanceof IProblemBinding) {
@@ -60,7 +61,8 @@ public class CPPBaseClause implements ICPPBase, ICPPInternalBase {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBase#getVisibility()
      */
-    public int getVisibility() {
+    @Override
+	public int getVisibility() {
 		int vis = base.getVisibility();
 		
 		if (vis == 0) {
@@ -77,14 +79,17 @@ public class CPPBaseClause implements ICPPBase, ICPPInternalBase {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBase#isVirtual()
      */
-    public boolean isVirtual() {
+    @Override
+	public boolean isVirtual() {
         return base.isVirtual();
     }
 
+	@Override
 	public void setBaseClass(IBinding cls) {
 		baseClass = cls;
 	}
 
+	@Override
 	public IName getBaseClassSpecifierName() {
 		return base.getName();
 	}

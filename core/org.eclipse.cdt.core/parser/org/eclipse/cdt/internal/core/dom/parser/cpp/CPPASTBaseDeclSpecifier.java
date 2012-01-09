@@ -29,74 +29,90 @@ public abstract class CPPASTBaseDeclSpecifier extends ASTNode implements ICPPAST
     private boolean virtual;
     private boolean explicit;
     
-    public boolean isFriend() {
+    @Override
+	public boolean isFriend() {
         return friend;
     }
 
-    public int getStorageClass() {
+    @Override
+	public int getStorageClass() {
         return sc;
     }
 
-    public void setStorageClass(int storageClass) {
+    @Override
+	public void setStorageClass(int storageClass) {
         assertNotFrozen();
         sc = storageClass;
     }
 
-    public boolean isConst() {
+    @Override
+	public boolean isConst() {
         return isConst;
     }
 
-    public void setConst(boolean value) {
+    @Override
+	public void setConst(boolean value) {
         assertNotFrozen();
         isConst = value;
     }
 
-    public boolean isVolatile() {
+    @Override
+	public boolean isVolatile() {
         return isVolatile;
     }
 
-    public void setVolatile(boolean value) {
+    @Override
+	public void setVolatile(boolean value) {
         assertNotFrozen();
         isVolatile = value;
     }
 
-    public boolean isRestrict() {
+    @Override
+	public boolean isRestrict() {
         return isRestrict;
     }
 
-    public void setRestrict(boolean value) {
+    @Override
+	public void setRestrict(boolean value) {
         assertNotFrozen();
         isRestrict = value;
     }
 
-    public boolean isInline() {
+    @Override
+	public boolean isInline() {
         return inline;
     }
 
-    public void setInline(boolean value) {
+    @Override
+	public void setInline(boolean value) {
         assertNotFrozen();
         this.inline = value;
     }
 
-    public void setFriend(boolean value) {
+    @Override
+	public void setFriend(boolean value) {
         assertNotFrozen();
         friend = value;
     }
 
-    public boolean isVirtual() {
+    @Override
+	public boolean isVirtual() {
         return virtual;
     }
 
-    public void setVirtual(boolean value) {
+    @Override
+	public void setVirtual(boolean value) {
         assertNotFrozen();
         virtual = value;
     }
 
-    public boolean isExplicit() {
+    @Override
+	public boolean isExplicit() {
         return explicit;
     }
 
-    public void setExplicit(boolean value) {
+    @Override
+	public void setExplicit(boolean value) {
         assertNotFrozen();
         this.explicit = value;
     }

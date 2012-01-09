@@ -36,10 +36,12 @@ public class CASTCompoundStatementExpression extends ASTNode implements IGNUASTC
 		setCompoundStatement(statement);
 	}
 	
+	@Override
 	public CASTCompoundStatementExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CASTCompoundStatementExpression copy(CopyStyle style) {
 		CASTCompoundStatementExpression copy = new CASTCompoundStatementExpression();
 		copy.setCompoundStatement(statement == null ? null : statement.copy(style));
@@ -50,11 +52,13 @@ public class CASTCompoundStatementExpression extends ASTNode implements IGNUASTC
 		return copy;
 	}
 
+	@Override
 	public IASTCompoundStatement getCompoundStatement() {
         return statement;
     }
 
-    public void setCompoundStatement(IASTCompoundStatement statement) {
+    @Override
+	public void setCompoundStatement(IASTCompoundStatement statement) {
         assertNotFrozen();
         this.statement = statement;
         if (statement != null) {
@@ -84,7 +88,8 @@ public class CASTCompoundStatementExpression extends ASTNode implements IGNUASTC
         return true;
     }
     
-    public IType getExpressionType() {
+    @Override
+	public IType getExpressionType() {
 		IASTCompoundStatement compound = getCompoundStatement();
 		IASTStatement[] statements = compound.getStatements();
 		if (statements.length > 0) {
@@ -95,6 +100,7 @@ public class CASTCompoundStatementExpression extends ASTNode implements IGNUASTC
 		return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
 	}
 
+	@Override
 	public boolean isLValue() {
 		IASTCompoundStatement compound = getCompoundStatement();
 		IASTStatement[] statements = compound.getStatements();
@@ -106,6 +112,7 @@ public class CASTCompoundStatementExpression extends ASTNode implements IGNUASTC
 		return false;
 	}
 	
+	@Override
 	public final ValueCategory getValueCategory() {
 		return isLValue() ? ValueCategory.LVALUE : ValueCategory.PRVALUE;
 	}

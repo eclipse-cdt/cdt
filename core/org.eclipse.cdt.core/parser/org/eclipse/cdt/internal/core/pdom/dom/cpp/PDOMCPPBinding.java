@@ -39,10 +39,12 @@ public abstract class PDOMCPPBinding extends PDOMBinding implements ICPPBinding 
 		return CPPVisitor.getQualifiedName(this);
 	}
 
+	@Override
 	final public char[][] getQualifiedNameCharArray() {
 		return CPPVisitor.getQualifiedNameCharArray(this);
 	}
 
+	@Override
 	public final boolean isGloballyQualified() throws DOMException {
 		// local stuff is not stored in the index.
 		return true;

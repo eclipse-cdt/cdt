@@ -43,6 +43,7 @@ public abstract class AbstractCEditorTextHover implements ICEditorTextHover, ITe
 	/*
 	 * @see ICEditorTextHover#setEditor(IEditorPart)
 	 */
+	@Override
 	public void setEditor(IEditorPart editor) {
 		fEditor = editor;
 	}
@@ -54,6 +55,7 @@ public abstract class AbstractCEditorTextHover implements ICEditorTextHover, ITe
 	/*
 	 * @see ITextHover#getHoverRegion(ITextViewer, int)
 	 */
+	@Override
 	public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
 		if (textViewer != null) {
 			/*
@@ -74,11 +76,13 @@ public abstract class AbstractCEditorTextHover implements ICEditorTextHover, ITe
 	/*
 	 * @see ITextHover#getHoverInfo(ITextViewer, IRegion)
 	 */
+	@Override
 	public abstract String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion);
 
 	/*
 	 * @see ITextHoverExtension2#getHoverInfo2(ITextViewer, IRegion)
 	 */
+	@Override
 	public Object getHoverInfo2(ITextViewer textViewer, IRegion hoverRegion) {
 		return getHoverInfo(textViewer, hoverRegion);
 	}
@@ -87,8 +91,10 @@ public abstract class AbstractCEditorTextHover implements ICEditorTextHover, ITe
 	 * @see ITextHoverExtension#getHoverControlCreator()
 	 * @since 3.0
 	 */
+	@Override
 	public IInformationControlCreator getHoverControlCreator() {
 		return new IInformationControlCreator() {
+			@Override
 			public IInformationControl createInformationControl(Shell parent) {
 				return new DefaultInformationControl(parent, getTooltipAffordanceString());
 			}
@@ -99,8 +105,10 @@ public abstract class AbstractCEditorTextHover implements ICEditorTextHover, ITe
 	 * @see org.eclipse.jface.text.ITextHoverExtension2#getInformationPresenterControlCreator()
 	 * @since 5.0
 	 */
+	@Override
 	public IInformationControlCreator getInformationPresenterControlCreator() {
 		return new IInformationControlCreator() {
+			@Override
 			public IInformationControl createInformationControl(Shell shell) {
 				return new DefaultInformationControl(shell, true);
 			}

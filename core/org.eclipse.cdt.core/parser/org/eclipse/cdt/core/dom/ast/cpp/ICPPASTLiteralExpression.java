@@ -45,10 +45,12 @@ public interface ICPPASTLiteralExpression extends IASTLiteralExpression {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICPPASTLiteralExpression copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICPPASTLiteralExpression copy(CopyStyle style);
 }

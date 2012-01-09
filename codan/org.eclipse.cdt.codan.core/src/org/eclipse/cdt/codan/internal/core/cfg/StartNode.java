@@ -22,10 +22,12 @@ public class StartNode extends AbstractSingleOutgoingNode implements IStartNode 
 		super();
 	}
 
+	@Override
 	public IBasicBlock[] getIncomingNodes() {
 		return EMPTY_LIST;
 	}
 
+	@Override
 	public int getIncomingSize() {
 		return 0;
 	}

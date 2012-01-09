@@ -140,7 +140,7 @@ public class CodeTemplatePreferencePage extends PropertyAndPreferencePage {
 	 * @see org.eclipse.cdt.internal.ui.preferences.PropertyAndPreferencePage#getPreferencePageID()
 	 */
 	@Override
-	protected String getPreferencePageID() {
+	protected String getPreferencePageId() {
 		return PREF_ID;
 	}
 	
@@ -148,7 +148,7 @@ public class CodeTemplatePreferencePage extends PropertyAndPreferencePage {
 	 * @see org.eclipse.cdt.internal.ui.preferences.PropertyAndPreferencePage#getPropertyPageID()
 	 */
 	@Override
-	protected String getPropertyPageID() {
+	protected String getPropertyPageId() {
 		return null;
 		// TODO project specific settings
 //		return PROP_ID;

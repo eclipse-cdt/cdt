@@ -211,10 +211,12 @@ public class DOMAST extends ViewPart {
       	return tu;
       }
 	  
-      public void dispose() {
+      @Override
+	public void dispose() {
       }
 
-      public Object[] getElements(Object parent) {
+      @Override
+	public Object[] getElements(Object parent) {
          if (parent.equals(getViewSite())) {
             if (invisibleRoot == null)
                initialize();
@@ -223,21 +225,24 @@ public class DOMAST extends ViewPart {
          return getChildren(parent);
       }
 
-      public Object getParent(Object child) {
+      @Override
+	public Object getParent(Object child) {
          if (child instanceof DOMASTNodeLeaf) {
             return ((DOMASTNodeLeaf) child).getParent();
          }
          return null;
       }
 
-      public Object[] getChildren(Object parent) {
+      @Override
+	public Object[] getChildren(Object parent) {
          if (parent instanceof DOMASTNodeParent) {
             return ((DOMASTNodeParent) parent).getChildren();
          }
          return new Object[0];
       }
 
-      public boolean hasChildren(Object parent) {
+      @Override
+	public boolean hasChildren(Object parent) {
          if (parent instanceof DOMASTNodeParent)
             return ((DOMASTNodeParent) parent).hasChildren();
          return false;
@@ -271,6 +276,7 @@ public class DOMAST extends ViewPart {
 	    	// if there are objects to expand then do so now
 	    	if (expanded != null) {
 	    		CTestPlugin.getStandardDisplay().asyncExec(new Runnable() {
+					@Override
 					public void run() {
 			         	// set the expansion of the view based on the original snapshot (educated guess)
 			         	Tree tree = viewer.getTree();
@@ -464,6 +470,7 @@ public class DOMAST extends ViewPart {
 			/* (non-Javadoc)
 			 * @see java.lang.Runnable#run()
 			 */
+			@Override
 			public void run() {
 				if (view == null) return;
 				if (view.getTree().isDisposed())
@@ -483,6 +490,7 @@ public class DOMAST extends ViewPart {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public void inputChanged(Viewer aViewer, Object oldInput, Object newInput) {
 		}
 		
@@ -675,6 +683,7 @@ public void createPartControl(Composite parent) {
    
    private class UpdatePropertiesListener implements ISelectionChangedListener {
 
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		ISelection selection = viewer.getSelection();
 		IViewPart propertyPart = getSite().getPage().findView(PROPERTIES_VIEW);
@@ -760,7 +769,8 @@ public void createPartControl(Composite parent) {
 			  }
 		  }
 		  
-         public void menuAboutToShow(IMenuManager manager) {
+         @Override
+		public void menuAboutToShow(IMenuManager manager) {
             DOMAST.this.fillContextMenu(manager);
             hideMenuItems(manager);
          }
@@ -1070,7 +1080,8 @@ public void createPartControl(Composite parent) {
 
    private void hookSingleClickAction() {
       viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-         public void selectionChanged(SelectionChangedEvent event) {
+         @Override
+		public void selectionChanged(SelectionChangedEvent event) {
             singleClickAction.run();
          }
       });

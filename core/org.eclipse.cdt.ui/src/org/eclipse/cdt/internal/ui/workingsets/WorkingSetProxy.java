@@ -24,6 +24,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkingSet;
 
 import com.ibm.icu.text.UCharacterIterator;
+import com.ibm.icu.text.UForwardCharacterIterator;
 
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 
@@ -47,6 +48,7 @@ public class WorkingSetProxy implements IWorkingSetProxy {
 		super();
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -62,10 +64,12 @@ public class WorkingSetProxy implements IWorkingSetProxy {
 		this.name = name;
 	}
 
+	@Override
 	public IWorkingSet resolve() {
 		return WorkingSetConfigurationManager.WS_MGR.getWorkingSet(name);
 	}
 
+	@Override
 	public Collection<IProject> resolveProjects() {
 		Set<IProject> result = new java.util.HashSet<IProject>();
 
@@ -83,6 +87,7 @@ public class WorkingSetProxy implements IWorkingSetProxy {
 		return result;
 	}
 
+	@Override
 	public boolean isValid() {
 		return !resolveProjects().isEmpty();
 	}
@@ -95,14 +100,17 @@ public class WorkingSetProxy implements IWorkingSetProxy {
 		return configurations;
 	}
 
+	@Override
 	public IWorkingSetConfiguration getConfiguration(String name) {
 		return getConfigurationsMap().get(name);
 	}
 
+	@Override
 	public Collection<IWorkingSetConfiguration> getConfigurations() {
 		return getConfigurationsMap().values();
 	}
 
+	@Override
 	public void saveState(IMemento memento) {
 		memento.putString(ATTR_NAME, getName());
 
@@ -126,6 +134,7 @@ public class WorkingSetProxy implements IWorkingSetProxy {
 		return false;
 	}
 
+	@Override
 	public void loadState(IMemento memento) {
 		setName(memento.getString(ATTR_NAME));
 
@@ -166,6 +175,7 @@ public class WorkingSetProxy implements IWorkingSetProxy {
 		getConfigurationsMap().put(config.getName(), config);
 	}
 
+	@Override
 	public ISnapshot createSnapshot(WorkspaceSnapshot workspace) {
 		Snapshot result = new Snapshot(this, workspace);
 
@@ -211,10 +221,12 @@ public class WorkingSetProxy implements IWorkingSetProxy {
 			}
 		}
 
+		@Override
 		public final WorkspaceSnapshot getWorkspaceSnapshot() {
 			return workspace;
 		}
 
+		@Override
 		public IWorkingSetConfiguration.ISnapshot createConfiguration(String name) {
 			if ((name == null) || (name.length() == 0)) {
 				throw new IllegalArgumentException("name is empty"); //$NON-NLS-1$
@@ -263,7 +275,7 @@ public class WorkingSetProxy implements IWorkingSetProxy {
 			StringBuilder result = new StringBuilder(configurationName.length());
 
 			UCharacterIterator iter = UCharacterIterator.getInstance(configurationName);
-			for (int cp = iter.nextCodePoint(); cp != UCharacterIterator.DONE; cp = iter.nextCodePoint()) {
+			for (int cp = iter.nextCodePoint(); cp != UForwardCharacterIterator.DONE; cp = iter.nextCodePoint()) {
 				if (Character.isLetterOrDigit(cp)) {
 					result.appendCodePoint(cp);
 				}
@@ -280,6 +292,7 @@ public class WorkingSetProxy implements IWorkingSetProxy {
 			return new WorkingSetConfiguration.Snapshot(this, workspace);
 		}
 
+		@Override
 		public void removeConfiguration(IWorkingSetConfiguration config) {
 			if (WorkingSetConfiguration.isReadOnly(config)) {
 				throw new IllegalArgumentException("config is read-only"); //$NON-NLS-1$
@@ -288,6 +301,7 @@ public class WorkingSetProxy implements IWorkingSetProxy {
 			basicRemoveConfiguration(config);
 		}
 
+		@Override
 		public boolean updateActiveConfigurations() {
 			boolean result = getConfigurations().isEmpty();
 

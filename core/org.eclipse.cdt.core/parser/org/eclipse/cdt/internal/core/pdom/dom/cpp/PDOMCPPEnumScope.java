@@ -47,18 +47,22 @@ class PDOMCPPEnumScope implements ICPPScope, IIndexScope {
 		fBinding= binding;
 	}
 	
+	@Override
 	public EScopeKind getKind() {
 		return EScopeKind.eEnumeration;
 	}
 
+	@Override
 	public IBinding getBinding(IASTName name, boolean resolve) {
 		return getBinding(name, resolve, null);
 	}
 
+	@Override
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup) {
 		return getBindings(name, resolve, prefixLookup, null);
 	}
 
+	@Override
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) {
 		try {
 			CharArrayMap<PDOMCPPEnumerator> map= getBindingMap(fBinding);
@@ -69,6 +73,7 @@ class PDOMCPPEnumScope implements ICPPScope, IIndexScope {
 		}
 	}
 
+	@Override
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
 		try {
 			CharArrayMap<PDOMCPPEnumerator> map= getBindingMap(fBinding);
@@ -93,18 +98,22 @@ class PDOMCPPEnumScope implements ICPPScope, IIndexScope {
 		return IBinding.EMPTY_BINDING_ARRAY;
 	}
 
+	@Override
 	public IBinding[] find(String name) {
 		return CPPSemantics.findBindings(this, name, false);
 	}
 	
+	@Override
 	public IIndexBinding getScopeBinding() {
 		return fBinding;
 	}
 
+	@Override
 	public IIndexScope getParent() {
 		return fBinding.getScope();
 	}
 
+	@Override
 	public IIndexName getScopeName() {
 		return fBinding.getScopeName();
 	}

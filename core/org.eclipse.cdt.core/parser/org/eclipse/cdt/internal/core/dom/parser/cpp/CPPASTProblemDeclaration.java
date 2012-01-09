@@ -28,10 +28,12 @@ public class CPPASTProblemDeclaration extends CPPASTProblemOwner implements IAST
 		super(problem);
 	}
 
+	@Override
 	public CPPASTProblemDeclaration copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CPPASTProblemDeclaration copy(CopyStyle style) {
 		CPPASTProblemDeclaration copy = new CPPASTProblemDeclaration();
 		copyBaseProblem(copy, style);

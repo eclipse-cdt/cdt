@@ -240,6 +240,7 @@ public class OpenIncludeAction extends Action {
 	private void findFile(IContainer parent, final IPath name, final ArrayList<IPath> list) throws CoreException {
 		parent.accept(new IResourceProxyVisitor() {
 
+			@Override
 			public boolean visit(IResourceProxy proxy) throws CoreException {
 				if (proxy.getType() == IResource.FILE && proxy.getName().equalsIgnoreCase(name.lastSegment())) {
 					IPath rPath = proxy.requestResource().getLocation();

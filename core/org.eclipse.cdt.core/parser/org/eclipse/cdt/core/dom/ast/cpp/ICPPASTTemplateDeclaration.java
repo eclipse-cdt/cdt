@@ -94,10 +94,12 @@ public interface ICPPASTTemplateDeclaration extends IASTDeclaration {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICPPASTTemplateDeclaration copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICPPASTTemplateDeclaration copy(CopyStyle style);
 }

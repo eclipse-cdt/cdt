@@ -50,6 +50,7 @@ class PDOMCPPMethodInstance extends PDOMCPPFunctionInstance implements ICPPMetho
 		return IIndexCPPBindingConstants.CPP_METHOD_INSTANCE;
 	}
 	
+	@Override
 	public boolean isDestructor() {
 		return ((ICPPMethod)getTemplateDefinition()).isDestructor();
 	}
@@ -59,26 +60,32 @@ class PDOMCPPMethodInstance extends PDOMCPPFunctionInstance implements ICPPMetho
 		return false;
 	}
 
+	@Override
 	public boolean isImplicit() {
 		return ((ICPPMethod)getTemplateDefinition()).isImplicit();
 	}
 
+	@Override
 	public boolean isVirtual() {
 		return ((ICPPMethod)getTemplateDefinition()).isVirtual();
 	}
 
+	@Override
 	public boolean isPureVirtual() {
 		return ((ICPPMethod)getTemplateDefinition()).isPureVirtual();		
 	}
 
+	@Override
 	public boolean isExplicit() {
 		return ((ICPPMethod)getTemplateDefinition()).isExplicit();
 	}
 	
+	@Override
 	public ICPPClassType getClassOwner() {
 		return (ICPPClassType) getOwner();
 	}
 
+	@Override
 	public int getVisibility() {
 		return ((ICPPMethod)getTemplateDefinition()).getVisibility();
 	}

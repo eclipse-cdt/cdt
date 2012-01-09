@@ -101,20 +101,23 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 	        if (tu != null) {
 	            CPPVisitor.getDeclarations(tu, this);
 	        }
-	        declarations = (IASTDeclarator[]) ArrayUtil.trim(IASTDeclarator.class, declarations);
+	        declarations = ArrayUtil.trim(IASTDeclarator.class, declarations);
 	        bits |= FULLY_RESOLVED;
 	        bits &= ~RESOLUTION_IN_PROGRESS;
 	    }
 	}
 	
-    public IASTDeclarator[] getDeclarations() {
+    @Override
+	public IASTDeclarator[] getDeclarations() {
         return declarations;
     }
 
-    public ICPPASTFunctionDeclarator getDefinition() {
+    @Override
+	public ICPPASTFunctionDeclarator getDefinition() {
         return definition;
     }
     
+	@Override
 	public final void addDefinition(IASTNode node) {
 		IASTDeclarator dtor = extractRelevantDtor(node);
 		if (dtor instanceof ICPPASTFunctionDeclarator) {
@@ -124,6 +127,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 		}
 	}
 	
+	@Override
 	public final void addDeclaration(IASTNode node) {
 		IASTDeclarator dtor = extractRelevantDtor(node);
 		if (dtor == null) {
@@ -155,6 +159,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 		return ASTQueries.findTypeRelevantDeclarator((IASTDeclarator) node);
 	}
 
+	@Override
 	public ICPPParameter[] getParameters() {
 	    IASTStandardFunctionDeclarator dtor = getPreferredDtor();
 	    if (dtor == null) {
@@ -179,6 +184,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 		return result;
 	}
 
+	@Override
 	public IScope getFunctionScope() {
 	    resolveAllDeclarations();
 	    if (definition != null) {
@@ -195,10 +201,12 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 	    return null;
 	}
 
+	@Override
 	public String getName() {
 	    return getASTName().toString();
 	}
 
+	@Override
 	public char[] getNameCharArray() {
 		return getASTName().getSimpleID();
 	}
@@ -214,6 +222,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 	    return name;
 	}
 
+	@Override
 	public IScope getScope() {
 	    IASTName n = getASTName();
 	    IScope scope = CPPVisitor.getContainingScope(n);
@@ -240,7 +249,8 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 		return scope;
 	}
 
-    public ICPPFunctionType getType() {
+    @Override
+	public ICPPFunctionType getType() {
         if (type == null) {
 			final IType t = getNestedType(CPPVisitor.createType((definition != null) ? definition : declarations[0]), TDEF);
 			if (t instanceof ICPPFunctionType) {
@@ -255,7 +265,8 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
         return type;
     }
 
-    public IBinding resolveParameter(CPPParameter param) {
+    @Override
+	public IBinding resolveParameter(CPPParameter param) {
 		int pos= param.getParameterPosition();
 		
     	int tdeclLen= declarations == null ? 0 : declarations.length;
@@ -323,11 +334,13 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
     	}
     }
 
-    public final boolean isStatic() {
+    @Override
+	public final boolean isStatic() {
         return isStatic(true);
     }
 
-    public boolean isStatic(boolean resolveAll) {
+    @Override
+	public boolean isStatic(boolean resolveAll) {
         if (resolveAll && (bits & FULLY_RESOLVED) == 0) {
             resolveAllDeclarations();
         }
@@ -365,15 +378,18 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 //        return false;
 //    }
     
-    public String[] getQualifiedName() {
+    @Override
+	public String[] getQualifiedName() {
         return CPPVisitor.getQualifiedName(this);
     }
 
-    public char[][] getQualifiedNameCharArray() {
+    @Override
+	public char[][] getQualifiedNameCharArray() {
         return CPPVisitor.getQualifiedNameCharArray(this);
     }
 
-    public boolean isGloballyQualified() throws DOMException {
+    @Override
+	public boolean isGloballyQualified() throws DOMException {
         IScope scope = getScope();
         while (scope != null) {
             if (scope instanceof ICPPBlockScope)
@@ -413,6 +429,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
         return false;
 	}
 	
+	@Override
 	public boolean isDeleted() {
 		return isDeletedDefinition(getDefinition());
 	}
@@ -427,11 +444,13 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 		return false;
 	}
 
+	@Override
 	public boolean isMutable() {
         return false;
     }
 
-    public boolean isInline() {
+    @Override
+	public boolean isInline() {
     	IASTDeclarator dtor = getDefinition();
         IASTDeclarator[] ds = getDeclarations();
         int i = -1;
@@ -458,7 +477,8 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
         return false;
     }
 
-    public boolean isExternC() {
+    @Override
+	public boolean isExternC() {
 	    if (CPPVisitor.isExternC(getDefinition())) {
 	    	return true;
 	    }
@@ -473,23 +493,28 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
         return false;
     }
 
-    public boolean isExtern() {
+    @Override
+	public boolean isExtern() {
         return hasStorageClass(this, IASTDeclSpecifier.sc_extern);
     }
 
-    public boolean isAuto() {
+    @Override
+	public boolean isAuto() {
         return hasStorageClass(this, IASTDeclSpecifier.sc_auto);
     }
 
-    public boolean isRegister() {
+    @Override
+	public boolean isRegister() {
         return hasStorageClass(this, IASTDeclSpecifier.sc_register);
     }
 
-    public boolean takesVarArgs() {
+    @Override
+	public boolean takesVarArgs() {
         ICPPASTFunctionDeclarator dtor= getPreferredDtor();
         return dtor != null ? dtor.takesVarArgs() : false;
     }
     
+	@Override
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
 	}
@@ -503,10 +528,12 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 		return result.toString();
 	}
 	
+	@Override
 	public IBinding getOwner() {
 		return CPPVisitor.findNameOwner(getASTName(), false);
 	}
 
+	@Override
 	public IType[] getExceptionSpecification() {
 		ICPPASTFunctionDeclarator declarator = getPreferredDtor();
 		if (declarator != null) {
@@ -541,6 +568,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
         return null;
 	}
 
+	@Override
 	public int getRequiredArgumentCount() {
 		return getRequiredArgumentCount(getParameters());
 	}
@@ -561,6 +589,7 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 		return 0;
 	}
 
+	@Override
 	public boolean hasParameterPack() {
 		ICPPParameter[] pars= getParameters();
 		return pars.length > 0 && pars[pars.length-1].isParameterPack();

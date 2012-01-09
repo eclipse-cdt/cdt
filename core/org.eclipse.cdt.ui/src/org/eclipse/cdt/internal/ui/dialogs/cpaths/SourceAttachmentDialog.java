@@ -63,6 +63,7 @@ public class SourceAttachmentDialog extends StatusDialog {
 		fApplyChanges= applyChanges;
 
 		IStatusChangeListener listener= new IStatusChangeListener() {
+			@Override
 			public void statusChanged(IStatus status) {
 				updateStatus(status);
 			}

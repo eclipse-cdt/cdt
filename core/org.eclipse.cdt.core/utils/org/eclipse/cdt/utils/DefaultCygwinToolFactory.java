@@ -32,6 +32,7 @@ public class DefaultCygwinToolFactory extends DefaultGnuToolFactory implements I
 	 * 
 	 * @see org.eclipse.cdt.utils.CygwinToolsProvider#getCygPath()
 	 */
+	@Override
 	public CygPath getCygPath() {
 		IPath cygPathPath = getCygPathPath();
 		CygPath cygpath = null;

@@ -200,18 +200,22 @@ public class ExclusionPatternDialog extends StatusDialog {
 	// -------- ExclusionPatternAdapter --------
 
 	private class ExclusionPatternAdapter implements IListAdapter<String>, IDialogFieldListener {
+		@Override
 		public void customButtonPressed(ListDialogField<String> field, int index) {
 			doCustomButtonPressed(field, index);
 		}
 
+		@Override
 		public void selectionChanged(ListDialogField<String> field) {
 			doSelectionChanged(field);
 		}
 
+		@Override
 		public void doubleClicked(ListDialogField<String> field) {
 			doDoubleClicked(field);
 		}
 
+		@Override
 		public void dialogFieldChanged(DialogField field) {
 		}
 		

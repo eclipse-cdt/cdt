@@ -26,6 +26,7 @@ public class ReturnStyleChecker extends AbstractIndexAstChecker {
 		return true;
 	}
 
+	@Override
 	public void processAst(IASTTranslationUnit ast) {
 		ast.accept(new ASTVisitor() {
 			{

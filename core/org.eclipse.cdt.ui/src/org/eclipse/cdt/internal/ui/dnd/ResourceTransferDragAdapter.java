@@ -53,19 +53,23 @@ public class ResourceTransferDragAdapter implements TransferDragSourceListener {
 		Assert.isNotNull(provider);
 	}
 
+	@Override
 	public Transfer getTransfer() {
 		return ResourceTransfer.getInstance();
 	}
 
+	@Override
 	public void dragStart(DragSourceEvent event) {
 		IResource[] resources = getSelectedResources();
 		event.doit = resources.length > 0;
 	}
 
+	@Override
 	public void dragSetData(DragSourceEvent event) {
 		event.data = getSelectedResources();
 	}
 
+	@Override
 	public void dragFinished(DragSourceEvent event) {
 		if (event.doit && event.detail == DND.DROP_MOVE) {
 			IResource[] resources = getSelectedResources();

@@ -31,6 +31,7 @@ public class DefaultGnuToolFactory implements IGnuToolFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.IGnuToolProvider#getAddr2line(org.eclipse.core.runtime.IPath)
 	 */
+	@Override
 	public Addr2line getAddr2line(IPath path) {
 		IPath addr2LinePath = getAddr2linePath();
 		Addr2line addr2line = null;
@@ -46,6 +47,7 @@ public class DefaultGnuToolFactory implements IGnuToolFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.IGnuToolProvider#getCPPFilt()
 	 */
+	@Override
 	public CPPFilt getCPPFilt() {
 		IPath cppFiltPath = getCPPFiltPath();
 		CPPFilt cppfilt = null;
@@ -61,6 +63,7 @@ public class DefaultGnuToolFactory implements IGnuToolFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.IGnuToolProvider#getObjdump(org.eclipse.core.runtime.IPath)
 	 */
+	@Override
 	public Objdump getObjdump(IPath path) {
 		IPath objdumpPath = getObjdumpPath();
 		String objdumpArgs = getObjdumpArgs();
@@ -77,6 +80,7 @@ public class DefaultGnuToolFactory implements IGnuToolFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.IGnuToolProvider#getObjdump(org.eclipse.core.runtime.IPath)
 	 */
+	@Override
 	public NM getNM(IPath path) {
 		IPath nmPath = getNMPath();
 		String nmArgs = getNMArgs();

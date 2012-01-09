@@ -35,6 +35,7 @@ public class CodeViewReader implements ISymbolReader {
 		fileList = new ArrayList<String>();
 	}
 
+	@Override
 	public String[] getSourceFiles() {
 		if (!parsed) {
 			try {
@@ -169,6 +170,7 @@ public class CodeViewReader implements ISymbolReader {
 	/**
 	 * @since 5.2
 	 */
+	@Override
 	public String[] getSourceFiles(IProgressMonitor monitor) {
 		return getSourceFiles();
 	}

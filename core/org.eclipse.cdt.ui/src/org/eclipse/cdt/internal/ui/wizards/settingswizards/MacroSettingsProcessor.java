@@ -45,14 +45,17 @@ public class MacroSettingsProcessor extends SettingsProcessor {
 	private static final String VALUE_ELEMENT = "value"; //$NON-NLS-1$
 	
 	
+	@Override
 	public Image getIcon() {
 		return CUIPlugin.getImageDescriptorRegistry().get(CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_MACRO));
 	}
 
+	@Override
 	public String getDisplayName() {
 		return Messages.ProjectSettingsWizardPage_Processor_Macros;
 	}
 
+	@Override
 	public String getSectionName() {
 		return SECTION_NAME;
 	}
@@ -135,7 +138,7 @@ public class MacroSettingsProcessor extends SettingsProcessor {
 			return;
 		
 		// need to do this or existing settings will disappear
-		macros.addAll(setting.getSettingEntriesList(ICLanguageSettingEntry.MACRO));
+		macros.addAll(setting.getSettingEntriesList(ICSettingEntry.MACRO));
 		setting.setSettingEntries(ICSettingEntry.MACRO, macros);
 	}
 	

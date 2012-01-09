@@ -36,38 +36,42 @@ import org.eclipse.cdt.internal.ui.refactoring.NodeContainer.NameInformation;
 
 /**
  * @author Mirko Stocker
- * 
  */
 public abstract class ExtractedFunctionConstructionHelper {
 	
-	public static ExtractedFunctionConstructionHelper createFor (List<IASTNode> list) {
-		if(list.get(0) instanceof IASTExpression) {
+	public static ExtractedFunctionConstructionHelper createFor(List<IASTNode> list) {
+		if (list.get(0) instanceof IASTExpression) {
 			return new ExtractExpression();
 		}
 		return new ExtractStatement();
 	}
 	
-	public abstract void constructMethodBody(IASTCompoundStatement compound,
-			List<IASTNode> list, ASTRewrite rewrite, TextEditGroup group);
+	public abstract void constructMethodBody(IASTCompoundStatement compound, List<IASTNode> list,
+			ASTRewrite rewrite, TextEditGroup group);
 
-	public abstract IASTDeclSpecifier determineReturnType(IASTNode extractedNode, NameInformation returnVariable);
+	public abstract IASTDeclSpecifier determineReturnType(IASTNode extractedNode,
+			NameInformation returnVariable);
 
-	public abstract IASTNode createReturnAssignment(IASTNode node, IASTExpressionStatement stmt, IASTExpression callExpression);
+	public abstract IASTNode createReturnAssignment(IASTNode node, IASTExpressionStatement stmt,
+			IASTExpression callExpression);
 	
 	protected boolean isReturnTypeAPointer(IASTNode node) {
 		return false;
 	}
 
-	IASTStandardFunctionDeclarator createFunctionDeclarator(IASTName name, IASTStandardFunctionDeclarator functionDeclarator, NameInformation returnVariable, List<IASTNode> nodesToWrite, Collection<NameInformation> allUsedNames, INodeFactory nodeFactory) {
+	IASTStandardFunctionDeclarator createFunctionDeclarator(IASTName name,
+			IASTStandardFunctionDeclarator functionDeclarator, NameInformation returnVariable,
+			List<IASTNode> nodesToWrite, Collection<NameInformation> allUsedNames, INodeFactory nodeFactory) {
 		IASTStandardFunctionDeclarator declarator = nodeFactory.newFunctionDeclarator(name);
 	
-		if (functionDeclarator instanceof ICPPASTFunctionDeclarator && declarator instanceof ICPPASTFunctionDeclarator) {
+		if (functionDeclarator instanceof ICPPASTFunctionDeclarator &&
+				declarator instanceof ICPPASTFunctionDeclarator) {
 			if (((ICPPASTFunctionDeclarator) functionDeclarator).isConst()) {
 				((ICPPASTFunctionDeclarator) declarator).setConst(true);
 			}
 		}
 		
-		if(returnVariable != null) {
+		if (returnVariable != null) {
 			IASTDeclarator decl = (IASTDeclarator) returnVariable.getDeclaration().getParent();
 			IASTPointerOperator[] pointers = decl.getPointerOperators();
 			for (IASTPointerOperator operator : pointers) {
@@ -79,7 +83,7 @@ public abstract class ExtractedFunctionConstructionHelper {
 			declarator.addParameterDeclaration(param);
 		}
 		
-		if(isReturnTypeAPointer(nodesToWrite.get(0))) {
+		if (isReturnTypeAPointer(nodesToWrite.get(0))) {
 			declarator.addPointerOperator(nodeFactory.newPointer());
 		}
 		
@@ -89,7 +93,7 @@ public abstract class ExtractedFunctionConstructionHelper {
 	public Collection<IASTParameterDeclaration> getParameterDeclarations(Collection<NameInformation> allUsedNames, INodeFactory nodeFactory) {
 		Collection<IASTParameterDeclaration> result = new ArrayList<IASTParameterDeclaration>();		
 		for (NameInformation name : allUsedNames) {
-			if(!name.isDeclarationInScope()){
+			if (!name.isDeclarationInScope()) {
 				result.add(name.getParameterDeclaration(name.isUserSetIsReference(), nodeFactory));
 			}
 		}

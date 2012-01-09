@@ -79,6 +79,7 @@ public class GenericTagDoubleClickStrategy implements ITextDoubleClickStrategy {
 		/*
 		 * @see CharacterIterator#first()
 		 */
+		@Override
 		public char first() {
 			fIndex= fOffset;
 			return current();
@@ -87,6 +88,7 @@ public class GenericTagDoubleClickStrategy implements ITextDoubleClickStrategy {
 		/*
 		 * @see CharacterIterator#last()
 		 */
+		@Override
 		public char last() {
 			fIndex= fOffset < fEndOffset ? fEndOffset -1 : fEndOffset;
 			return current();
@@ -95,6 +97,7 @@ public class GenericTagDoubleClickStrategy implements ITextDoubleClickStrategy {
 		/*
 		 * @see CharacterIterator#current()
 		 */
+		@Override
 		public char current() {
 			if (fOffset <= fIndex && fIndex < fEndOffset) {
 				try {
@@ -108,6 +111,7 @@ public class GenericTagDoubleClickStrategy implements ITextDoubleClickStrategy {
 		/*
 		 * @see CharacterIterator#next()
 		 */
+		@Override
 		public char next() {
 			++fIndex;
 			int end= getEndIndex();
@@ -121,6 +125,7 @@ public class GenericTagDoubleClickStrategy implements ITextDoubleClickStrategy {
 		/*
 		 * @see CharacterIterator#previous()
 		 */
+		@Override
 		public char previous() {
 			if (fIndex == fOffset)
 				return DONE;
@@ -134,6 +139,7 @@ public class GenericTagDoubleClickStrategy implements ITextDoubleClickStrategy {
 		/*
 		 * @see CharacterIterator#setIndex(int)
 		 */
+		@Override
 		public char setIndex(int index) {
 			fIndex= index;
 			return current();
@@ -142,6 +148,7 @@ public class GenericTagDoubleClickStrategy implements ITextDoubleClickStrategy {
 		/*
 		 * @see CharacterIterator#getBeginIndex()
 		 */
+		@Override
 		public int getBeginIndex() {
 			return fOffset;
 		}
@@ -149,6 +156,7 @@ public class GenericTagDoubleClickStrategy implements ITextDoubleClickStrategy {
 		/*
 		 * @see CharacterIterator#getEndIndex()
 		 */
+		@Override
 		public int getEndIndex() {
 			return fEndOffset;
 		}
@@ -156,6 +164,7 @@ public class GenericTagDoubleClickStrategy implements ITextDoubleClickStrategy {
 		/*
 		 * @see CharacterIterator#getIndex()
 		 */
+		@Override
 		public int getIndex() {
 			return fIndex;
 		}
@@ -184,6 +193,7 @@ public class GenericTagDoubleClickStrategy implements ITextDoubleClickStrategy {
 	/*
 	 * @see org.eclipse.jface.text.ITextDoubleClickStrategy#doubleClicked(org.eclipse.jface.text.ITextViewer)
 	 */
+	@Override
 	public void doubleClicked(ITextViewer text) {
 
 		int position= text.getSelectedRange().x;

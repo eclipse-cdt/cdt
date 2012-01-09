@@ -55,10 +55,12 @@ public class GCCLanguage extends AbstractCLikeLanguage {
 		return super.getAdapter(adapter);
 	}
 	
+	@Override
 	public String getId() {
 		return ID; 
 	}
 
+	@Override
 	public int getLinkageID() {
 		return ILinkage.C_LINKAGE_ID;
 	}

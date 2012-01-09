@@ -40,6 +40,7 @@ public class AISResultPrinter extends ResultPrinter {
 	/* (non-Javadoc)
 	 * @see junit.framework.TestListener#addFailure(junit.framework.Test, junit.framework.AssertionFailedError)
 	 */
+	@Override
 	public void addFailure(Test test, AssertionFailedError t) {
 		super.addFailure(test, t);
 		getWriter().print("---> ");
@@ -48,6 +49,7 @@ public class AISResultPrinter extends ResultPrinter {
 	/* (non-Javadoc)
 	 * @see junit.framework.TestListener#addError(junit.framework.Test, java.lang.Throwable)
 	 */
+	@Override
 	public void addError(Test test, Throwable t) {
 		super.addError(test, t);
 		getWriter().print("---> ");
@@ -56,6 +58,7 @@ public class AISResultPrinter extends ResultPrinter {
 	/* (non-Javadoc)
 	 * @see junit.framework.TestListener#startTest(junit.framework.Test)
 	 */
+	@Override
 	public void startTest(Test test) {
 		getWriter().print(".");
 	}

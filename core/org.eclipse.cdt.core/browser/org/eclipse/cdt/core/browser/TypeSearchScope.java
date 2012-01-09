@@ -57,19 +57,24 @@ public class TypeSearchScope implements ITypeSearchScope {
 		add(project);
 	}
 
+	@Override
 	public Collection<IPath> pathSet() {
 		return fPathSet;
 	}
+	@Override
 	public Collection<IPath> containerSet() {
 		return fContainerSet;
 	}
+	@Override
 	public Collection<ICProject> projectSet() {
 		return fProjectSet;
 	}
+	@Override
 	public Collection<ICProject> enclosingProjectSet() {
 		return fEnclosingProjectSet;
 	}
 
+	@Override
 	public boolean encloses(ITypeSearchScope scope) {
 		if (isWorkspaceScope())
 			return true;
@@ -104,6 +109,7 @@ public class TypeSearchScope implements ITypeSearchScope {
 		return true;
 	}
 
+	@Override
 	public boolean encloses(ICProject project) {
 		if (isWorkspaceScope())
 			return true;
@@ -115,6 +121,7 @@ public class TypeSearchScope implements ITypeSearchScope {
 		return false;
 	}
 	
+	@Override
 	public boolean encloses(IPath path) {
 		if (isWorkspaceScope())
 			return true;
@@ -155,18 +162,22 @@ public class TypeSearchScope implements ITypeSearchScope {
 		return false;
 	}
 
+	@Override
 	public boolean encloses(String path) {
 		return encloses(new Path(path));
 	}
 
+	@Override
 	public boolean encloses(ICElement element) {
 		return encloses(element.getPath());
 	}
 
+	@Override
 	public boolean encloses(IWorkingCopy workingCopy) {
 		return encloses(workingCopy.getOriginalElement().getPath());
 	}
 	
+	@Override
 	public ICProject[] getEnclosingProjects() {
 		if (isWorkspaceScope()) {
 			return getAllProjects();
@@ -242,22 +253,27 @@ public class TypeSearchScope implements ITypeSearchScope {
 		}
 	}
 	
+	@Override
 	public boolean isPathScope() {
 		return !fPathSet.isEmpty();
 	}
 
+	@Override
 	public boolean isProjectScope() {
 		return !fProjectSet.isEmpty();
 	}
 
+	@Override
 	public boolean isWorkspaceScope() {
 		return fWorkspaceScope;
 	}
 
+	@Override
 	public boolean isEmpty() {
 		return (!isWorkspaceScope() && fPathSet.isEmpty() && fContainerSet.isEmpty() && fProjectSet.isEmpty());
 	}
 	
+	@Override
 	public void add(IWorkingCopy workingCopy) {
 		IPath path = workingCopy.getOriginalElement().getPath();
 		ICProject cProject = workingCopy.getCProject();
@@ -265,6 +281,7 @@ public class TypeSearchScope implements ITypeSearchScope {
 		addEnclosingProject(cProject);
 	}
 
+	@Override
 	public void add(IPath path, boolean addSubfolders, ICProject enclosingProject) {
 		if (addSubfolders) {
 			fContainerSet.add(path);
@@ -289,6 +306,7 @@ public class TypeSearchScope implements ITypeSearchScope {
 		}
 	}
 
+	@Override
 	public void add(ICProject project) {
 		fProjectSet.add(project);
 		fProjects = null;
@@ -300,12 +318,14 @@ public class TypeSearchScope implements ITypeSearchScope {
 		fEnclosingProjectSet.add(project);
 	}
 
+	@Override
 	public void addWorkspace() {
 		fWorkspaceScope = true;
 		fProjects = null;
 		fAllProjects = null;
 	}
 	
+	@Override
 	public void add(ICElement elem) {
 		if (elem == null)
 			return;
@@ -349,6 +369,7 @@ public class TypeSearchScope implements ITypeSearchScope {
 		}
 	}
 
+	@Override
 	public void add(ITypeSearchScope scope) {
 		fPathSet.addAll(scope.pathSet());
 		fContainerSet.addAll(scope.containerSet());
@@ -360,6 +381,7 @@ public class TypeSearchScope implements ITypeSearchScope {
 		fWorkspaceScope |= scope.isWorkspaceScope();
 	}
 	
+	@Override
 	public void clear() {
 		fPathSet.clear();
 		fContainerSet.clear();

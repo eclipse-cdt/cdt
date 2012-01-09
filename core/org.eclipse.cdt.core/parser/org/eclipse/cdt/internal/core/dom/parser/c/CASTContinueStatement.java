@@ -39,10 +39,12 @@ public class CASTContinueStatement extends ASTNode implements IASTContinueStatem
         return true;
     }
     
-    public CASTContinueStatement copy() {
+    @Override
+	public CASTContinueStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CASTContinueStatement copy(CopyStyle style) {
 		CASTContinueStatement copy = new CASTContinueStatement();
 		copy.setOffsetAndLength(this);

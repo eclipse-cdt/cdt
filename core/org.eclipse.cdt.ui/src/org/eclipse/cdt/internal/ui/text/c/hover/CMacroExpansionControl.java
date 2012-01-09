@@ -86,6 +86,7 @@ public class CMacroExpansionControl extends AbstractSourceViewerInformationContr
 	@Override
 	public IInformationControlCreator getInformationPresenterControlCreator() {
 		return new IInformationControlCreator() {
+			@Override
 			public IInformationControl createInformationControl(Shell parent) {
 				if (fInput != null && fInput.fExplorer.getExpansionStepCount() > 1) {
 					return new CMacroExpansionExplorationControl(parent, true);

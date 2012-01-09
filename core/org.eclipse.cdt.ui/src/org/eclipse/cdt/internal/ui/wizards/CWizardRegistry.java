@@ -385,10 +385,12 @@ public class CWizardRegistry {
 			fElement = element;
 		}
     	
+		@Override
 		public String getLocalId() {
 			return fElement.getAttribute("id"); //$NON-NLS-1$
 		}
 
+		@Override
 		public String getPluginId() {
 			return fElement.getContributor().getName();
 		}

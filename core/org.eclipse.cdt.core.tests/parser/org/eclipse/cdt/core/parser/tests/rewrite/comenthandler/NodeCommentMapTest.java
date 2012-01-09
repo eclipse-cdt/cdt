@@ -128,23 +128,28 @@ public class NodeCommentMapTest extends TestCase {
 	private class Comment extends ASTNode implements IASTComment {
 		private char[] comment;
 		
+		@Override
 		public char[] getComment() {
 			return comment;
 		}
 
+		@Override
 		public void setComment(char[] comment) {
 			this.comment = comment;
 		}
 
 		// not used
+		@Override
 		public boolean isBlockComment() {
 			return false;
 		}
 
+		@Override
 		public IASTNode copy() {
 			return null;
 		}
 
+		@Override
 		public IASTNode copy(CopyStyle style) {
 			return null;
 		}

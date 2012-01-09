@@ -44,11 +44,13 @@ public class GPPASTSimpleDeclSpecifier extends CPPASTSimpleDeclSpecifier impleme
 		return copy;
 	}
 
-    public void setTypeofExpression(IASTExpression typeofExpression) {
+    @Override
+	public void setTypeofExpression(IASTExpression typeofExpression) {
     	setDeclTypeExpression(typeofExpression);
     }
 
-    public IASTExpression getTypeofExpression() {
+    @Override
+	public IASTExpression getTypeofExpression() {
         return getDeclTypeExpression();
     }
 }

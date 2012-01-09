@@ -57,6 +57,7 @@ public class CodeReaderCacheTest extends CDOMBaseTest {
 			this.code = code;
 		}
 		
+		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			while(!monitor.isCanceled()) {
 				try {

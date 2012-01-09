@@ -79,6 +79,7 @@ public class TokenStore implements ITokenStore {
 	 * In the case where at the time of IToken construction, the Display was not
 	 * ready to construct colors. 
 	 */
+	@Override
 	public void ensureTokensInitialised() {
 		if (fNeedsLazyColorLoading && Display.getCurrent() != null) {
 			for (int i= 0; i < fPropertyNamesColor.length; i++) {
@@ -146,6 +147,7 @@ public class TokenStore implements ITokenStore {
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.text.ITokenStore#getToken(java.lang.String)
 	 */
+	@Override
 	public IToken getToken(String key) {
 		return getTokenInner(key);
 	}
@@ -182,6 +184,7 @@ public class TokenStore implements ITokenStore {
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.IPropertyChangeParticipant#affectsBehavior(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	public boolean affectsBehavior(PropertyChangeEvent event) {
 		return indexOf(event.getProperty()) >= 0;
 	}
@@ -190,6 +193,7 @@ public class TokenStore implements ITokenStore {
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.IPropertyChangeParticipant#adaptToPreferenceChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	public void adaptToPreferenceChange(PropertyChangeEvent event) {
 		String property= event.getProperty();
 		int i= indexOf(property);
@@ -265,6 +269,7 @@ public class TokenStore implements ITokenStore {
 	 *
 	 * @since 3.0
 	 */
+	@Override
 	public IPreferenceStore getPreferenceStore() {
 		return fPreferenceStore;
 	}

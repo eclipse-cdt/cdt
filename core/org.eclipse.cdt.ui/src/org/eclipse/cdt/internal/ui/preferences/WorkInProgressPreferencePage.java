@@ -35,10 +35,9 @@ import org.eclipse.cdt.ui.CUIPlugin;
  * Preference page for work in progress.
  */
 public class WorkInProgressPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
-
-	private List<Button> fCheckBoxes;
-	private List<Button> fRadioButtons;
-	private List<Text> fTextControls;
+	private final List<Button> fCheckBoxes;
+	private final List<Button> fRadioButtons;
+	private final List<Text> fTextControls;
 	
 	/**
 	 * creates a new preference page.
@@ -95,6 +94,7 @@ public class WorkInProgressPreferencePage extends PreferencePage implements IWor
 	/*
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 

@@ -41,6 +41,7 @@ public class MacroTests extends IntegratedCModelTest {
 	/**
 	 * @see org.eclipse.cdt.internal.core.model.IntegratedCModelTest
 	 */
+	@Override
 	public String getSourcefileSubdir() {
 		return "resources/cmodel/";
 	}
@@ -48,6 +49,7 @@ public class MacroTests extends IntegratedCModelTest {
 	/**
 	 * @see org.eclipse.cdt.internal.core.model.IntegratedCModelTest
 	 */
+	@Override
 	public String getSourcefileResource() {
 		return "MacroTests.cpp";
 	}

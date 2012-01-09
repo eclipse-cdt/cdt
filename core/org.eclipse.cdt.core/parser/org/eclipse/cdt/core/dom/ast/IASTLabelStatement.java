@@ -46,11 +46,13 @@ public interface IASTLabelStatement extends IASTStatement, IASTNameOwner {
     /**
 	 * @since 5.1
 	 */
+	@Override
 	public IASTLabelStatement copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public IASTLabelStatement copy(CopyStyle style);
 
 }

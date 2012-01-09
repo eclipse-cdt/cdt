@@ -41,6 +41,7 @@ public class OpenTypeInHierarchyAction implements IWorkbenchWindowActionDelegate
 	public OpenTypeInHierarchyAction() {
 	}
 
+	@Override
 	public void run(IAction action) {
 		ElementSelectionDialog dialog = new ElementSelectionDialog(getShell());
 		configureDialog(dialog);
@@ -95,14 +96,17 @@ public class OpenTypeInHierarchyAction implements IWorkbenchWindowActionDelegate
 		return fWorkbenchWindow.getShell();
 	}
 
+	@Override
 	public void dispose() {
 		fWorkbenchWindow= null;
 	}
 	
+	@Override
 	public void init(IWorkbenchWindow window) {
 		fWorkbenchWindow= window;
 	}
 	
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 	}
 }

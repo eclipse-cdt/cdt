@@ -82,12 +82,14 @@ public class GenericTagCommentScanner extends BufferedRuleBasedScanner implement
 		List<IRule> result= new ArrayList<IRule>();
 
 		class TagDetector implements IWordDetector {
+			@Override
 			public boolean isWordStart(char c) {
 				for (int i= 0; i < fTagMarkers.length; i++)
 					if (fTagMarkers[i] == c)
 						return true;
 				return false;
 			}
+			@Override
 			public boolean isWordPart(char c) {
 				return c == '.' || Character.isJavaIdentifierPart(c);
 			}
@@ -114,6 +116,7 @@ public class GenericTagCommentScanner extends BufferedRuleBasedScanner implement
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.AbstractJavaScanner#affectsBehavior(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	public boolean affectsBehavior(PropertyChangeEvent event) {
 		return fTaskTagRule.affectsBehavior(event) || fTokenStore.affectsBehavior(event);
 	}
@@ -121,6 +124,7 @@ public class GenericTagCommentScanner extends BufferedRuleBasedScanner implement
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.AbstractJavaScanner#adaptToPreferenceChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	public void adaptToPreferenceChange(PropertyChangeEvent event) {
 		if (fTokenStore.affectsBehavior(event)) {
 			fTokenStore.adaptToPreferenceChange(event);

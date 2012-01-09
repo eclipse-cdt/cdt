@@ -67,6 +67,7 @@ class PDOMCPPEnumerator extends PDOMCPPBinding implements IEnumerator {
 			storeValue((IEnumerator) newBinding);
 	}
 
+	@Override
 	public IType getType() throws DOMException {
 		IIndexFragmentBinding owner = getOwner();
 		if (owner instanceof IType)
@@ -74,6 +75,7 @@ class PDOMCPPEnumerator extends PDOMCPPBinding implements IEnumerator {
 		return null;
 	}
 	
+	@Override
 	public IValue getValue() {
 		try {
 			int val= getDB().getInt(record + VALUE);

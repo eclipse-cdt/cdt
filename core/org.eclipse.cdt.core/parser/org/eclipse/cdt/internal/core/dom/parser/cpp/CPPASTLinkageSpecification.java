@@ -37,10 +37,12 @@ public class CPPASTLinkageSpecification extends ASTNode implements
 		this.fLiteral = literal;
 	}
 	
+	@Override
 	public CPPASTLinkageSpecification copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CPPASTLinkageSpecification copy(CopyStyle style) {
 		CPPASTLinkageSpecification copy = new CPPASTLinkageSpecification(fLiteral);
 		for (IASTDeclaration declaration : getDeclarations())
@@ -52,24 +54,28 @@ public class CPPASTLinkageSpecification extends ASTNode implements
 		return copy;
 	}
 
+	@Override
 	public String getLiteral() {
         return fLiteral;
     }
 
-    public void setLiteral(String value) {
+    @Override
+	public void setLiteral(String value) {
         assertNotFrozen();
         this.fLiteral = value;
     }
 
+	@Override
 	public final void addDeclaration(IASTDeclaration decl) {
 		if (decl != null) {
 			decl.setParent(this);
 			decl.setPropertyInParent(OWNED_DECLARATION);
-			fAllDeclarations = (IASTDeclaration[]) ArrayUtil.append( IASTDeclaration.class, fAllDeclarations, ++fLastDeclaration, decl);
+			fAllDeclarations = ArrayUtil.appendAt( IASTDeclaration.class, fAllDeclarations, ++fLastDeclaration, decl);
 			fActiveDeclarations= null;
 		}
 	}
 
+	@Override
 	public final IASTDeclaration[] getDeclarations() {
 		IASTDeclaration[] active= fActiveDeclarations;
 		if (active == null) {
@@ -79,9 +85,10 @@ public class CPPASTLinkageSpecification extends ASTNode implements
 		return active;
 	}
 
+	@Override
 	public final IASTDeclaration[] getDeclarations(boolean includeInactive) {
 		if (includeInactive) {
-			fAllDeclarations= (IASTDeclaration[]) ArrayUtil.removeNullsAfter(IASTDeclaration.class, fAllDeclarations, fLastDeclaration);
+			fAllDeclarations= ArrayUtil.trimAt(IASTDeclaration.class, fAllDeclarations, fLastDeclaration);
 			return fAllDeclarations;
 		}
 		return getDeclarations();
@@ -109,7 +116,8 @@ public class CPPASTLinkageSpecification extends ASTNode implements
         return true;
     }
 
-    public final void replace(IASTNode child, IASTNode other) {
+    @Override
+	public final void replace(IASTNode child, IASTNode other) {
 		assert child.isActive() == other.isActive();
 		for (int i = 0; i <= fLastDeclaration; ++i) {
 			if (fAllDeclarations[i] == child) {

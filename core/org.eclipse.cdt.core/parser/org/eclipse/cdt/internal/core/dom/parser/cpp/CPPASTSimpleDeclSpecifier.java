@@ -30,10 +30,12 @@ public class CPPASTSimpleDeclSpecifier extends CPPASTBaseDeclSpecifier implement
     private boolean isImaginary=false;
 	private IASTExpression fDeclTypeExpression;
 
-    public CPPASTSimpleDeclSpecifier copy() {
+    @Override
+	public CPPASTSimpleDeclSpecifier copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
     
+	@Override
 	public CPPASTSimpleDeclSpecifier copy(CopyStyle style) {
 		CPPASTSimpleDeclSpecifier copy = new CPPASTSimpleDeclSpecifier();
 		copySimpleDeclSpec(copy, style);
@@ -61,16 +63,19 @@ public class CPPASTSimpleDeclSpecifier extends CPPASTBaseDeclSpecifier implement
 	/**
      * @see org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier
      */
-    public int getType() {
+    @Override
+	public int getType() {
         return type;
     }
 
-    public void setType(int type) {
+    @Override
+	public void setType(int type) {
         assertNotFrozen();
         this.type = type;
     }
 
-    public void setType(Kind kind) {
+    @Override
+	public void setType(Kind kind) {
     	setType(getType(kind));
     }
     
@@ -100,73 +105,89 @@ public class CPPASTSimpleDeclSpecifier extends CPPASTBaseDeclSpecifier implement
     	return t_unspecified;
     }
     
-    public boolean isSigned() {
+    @Override
+	public boolean isSigned() {
         return isSigned;
     }
 
-    public boolean isUnsigned() {
+    @Override
+	public boolean isUnsigned() {
         return isUnsigned;
     }
 
-    public boolean isShort() {
+    @Override
+	public boolean isShort() {
         return isShort;
     }
 
-    public boolean isLong() {
+    @Override
+	public boolean isLong() {
         return isLong;
     }
 
-    public boolean isLongLong() {
+    @Override
+	public boolean isLongLong() {
 		return isLonglong;
 	}
 
+	@Override
 	public boolean isComplex() {
 		return isComplex;
 	}
 
+	@Override
 	public boolean isImaginary() {
 		return isImaginary;
 	}
 
+	@Override
 	public IASTExpression getDeclTypeExpression() {
 		return fDeclTypeExpression;
 	}
 
+	@Override
 	public void setSigned(boolean value) {
         assertNotFrozen();
         isSigned = value;
     }
 
-    public void setUnsigned(boolean value) {
+    @Override
+	public void setUnsigned(boolean value) {
         assertNotFrozen();
         isUnsigned = value;
     }
 
-    public void setLong(boolean value) {
+    @Override
+	public void setLong(boolean value) {
         assertNotFrozen();
         isLong = value;
     }
 
-    public void setShort(boolean value) {
+    @Override
+	public void setShort(boolean value) {
         assertNotFrozen();
         isShort = value;
     }
 
-    public void setLongLong(boolean value) {
+    @Override
+	public void setLongLong(boolean value) {
         assertNotFrozen();
         isLonglong = value;
 	}
 
+	@Override
 	public void setComplex(boolean value) {
         assertNotFrozen();
         isComplex = value;
 	}
 
+	@Override
 	public void setImaginary(boolean value) {
         assertNotFrozen();
         isImaginary = value;
 	}
 
+	@Override
 	public void setDeclTypeExpression(IASTExpression expression) {
         assertNotFrozen();
         fDeclTypeExpression = expression;
@@ -199,6 +220,7 @@ public class CPPASTSimpleDeclSpecifier extends CPPASTBaseDeclSpecifier implement
         return true;
     }
 
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
 		if (child == fDeclTypeExpression) {
 			other.setPropertyInParent(child.getPropertyInParent());

@@ -172,6 +172,7 @@ public interface IWorkingSetProjectConfigurationFactory {
 
 			if (result.length > 0) {
 				Arrays.sort(result, new Comparator<String>() {
+					@Override
 					public int compare(String nature1, String nature2) {
 						Set<String> required1 = projectNaturePartOrdering.get(nature1);
 						Set<String> required2 = projectNaturePartOrdering.get(nature2);
@@ -286,21 +287,25 @@ public interface IWorkingSetProjectConfigurationFactory {
 				}
 			}
 
+			@Override
 			public String getID() {
 				return id;
 			}
 
+			@Override
 			public IWorkingSetProjectConfiguration createProjectConfiguration(
 					IWorkingSetConfiguration parent, IProject project) {
 				return resolve().createProjectConfiguration(parent, project);
 			}
 
+			@Override
 			public IWorkingSetProjectConfigurationController createProjectConfigurationController(
 					IWorkingSetProjectConfiguration.ISnapshot config) {
 
 				return resolve().createProjectConfigurationController(config);
 			}
 
+			@Override
 			public ProjectState createProjectState(IProject project, ICProjectDescription desc) {
 				return resolve().createProjectState(project, desc);
 			}
@@ -356,6 +361,7 @@ public interface IWorkingSetProjectConfigurationFactory {
 				super();
 			}
 
+			@Override
 			public IWorkingSetProjectConfiguration createProjectConfiguration(
 					IWorkingSetConfiguration parent, IProject project) {
 
@@ -369,20 +375,24 @@ public interface IWorkingSetProjectConfigurationFactory {
 				return new WorkingSetProjectConfiguration(parent);
 			}
 
+			@Override
 			public IWorkingSetProjectConfigurationController createProjectConfigurationController(
 					IWorkingSetProjectConfiguration.ISnapshot config) {
 
 				return new ProjectConfigurationController(config);
 			}
 
+			@Override
 			public ProjectState createProjectState(IProject project, ICProjectDescription desc) {
 				return new WorkspaceSnapshot.ProjectState(project, desc);
 			}
 
+			@Override
 			public String getID() {
 				return id;
 			}
 
+			@Override
 			public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
 					throws CoreException {
 

@@ -116,10 +116,12 @@ public interface IASTForStatement extends IASTStatement {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IASTForStatement copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public IASTForStatement copy(CopyStyle style);
 }

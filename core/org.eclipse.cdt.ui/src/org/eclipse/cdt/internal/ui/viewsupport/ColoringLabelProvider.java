@@ -74,6 +74,7 @@ public class ColoringLabelProvider extends DecoratingStyledCellLabelProvider imp
 		return super.prepareStyleRange(styleRange, applyColors);
 	}
 	
+	@Override
 	public String getText(Object element) {
 		return getStyledText(element).getString();
 	}

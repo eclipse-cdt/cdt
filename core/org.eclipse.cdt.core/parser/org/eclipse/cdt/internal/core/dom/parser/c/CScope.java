@@ -148,7 +148,7 @@ public class CScope implements ICScope, IASTInternalScope {
                 prop == IASTCompositeTypeSpecifier.TYPE_NAME ||
                 prop == IASTDeclarator.DECLARATOR_NAME) {
                 if (CharArrayUtils.equals(n.toCharArray(), name))
-                    result = (IASTName[]) ArrayUtil.append(IASTName.class, result, n);    
+                    result = ArrayUtil.append(IASTName.class, result, n);    
             }
             
             return PROCESS_CONTINUE; 
@@ -162,7 +162,7 @@ public class CScope implements ICScope, IASTInternalScope {
         }
 
         public IASTName[] getNames() {
-            return (IASTName[]) ArrayUtil.trim(IASTName.class, result);
+            return ArrayUtil.trim(IASTName.class, result);
         }
     }
     
@@ -221,7 +221,7 @@ public class CScope implements ICScope, IASTInternalScope {
 				if (n == name)
 					return;
 			}
-			final IASTName[] newNames= (IASTName[]) ArrayUtil.append(IASTName.class, names, name);
+			final IASTName[] newNames= ArrayUtil.append(IASTName.class, names, name);
 			if (newNames != names)
 				map.put(nchars, newNames);
 		} else {
@@ -392,13 +392,13 @@ public class CScope implements ICScope, IASTInternalScope {
 						}
 					}
 					if (b != null) {
-						result = (IBinding[]) ArrayUtil.append(IBinding.class, result, b);
+						result = ArrayUtil.append(IBinding.class, result, b);
 					}
 				}
 			}
 		}
 
-        return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
+        return ArrayUtil.trim(IBinding.class, result);
     }
     
     /**

@@ -27,10 +27,12 @@ public class PDOMNullIndexer extends AbstractPDOMIndexer {
 		fProperties.clear(); // don't accept any properties
 	}
 	
+	@Override
 	public String getID() {
 		return ID;
 	}
 
+	@Override
 	public IPDOMIndexerTask createTask(ITranslationUnit[] added,
 			ITranslationUnit[] changed, ITranslationUnit[] removed) {
 		return null;

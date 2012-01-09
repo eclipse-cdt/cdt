@@ -36,10 +36,12 @@ public class CASTWhileStatement extends ASTNode implements IASTWhileStatement, I
 		setBody(body);
 	}
 
+	@Override
 	public CASTWhileStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CASTWhileStatement copy(CopyStyle style) {
 		CASTWhileStatement copy = new CASTWhileStatement();
 		copy.setCondition(condition == null ? null : condition.copy(style));
@@ -51,11 +53,13 @@ public class CASTWhileStatement extends ASTNode implements IASTWhileStatement, I
 		return copy;
 	}
 
+	@Override
 	public IASTExpression getCondition() {
         return condition;
     }
 
-    public void setCondition(IASTExpression condition) {
+    @Override
+	public void setCondition(IASTExpression condition) {
         assertNotFrozen();
         this.condition = condition;
         if (condition != null) {
@@ -64,11 +68,13 @@ public class CASTWhileStatement extends ASTNode implements IASTWhileStatement, I
 		}
     }
 
-    public IASTStatement getBody() {
+    @Override
+	public IASTStatement getBody() {
         return body;
     }
 
-    public void setBody(IASTStatement body) {
+    @Override
+	public void setBody(IASTStatement body) {
         assertNotFrozen();
         this.body = body;
         if (body != null) {
@@ -99,7 +105,8 @@ public class CASTWhileStatement extends ASTNode implements IASTWhileStatement, I
         return true;
     }
 
-    public void replace(IASTNode child, IASTNode other) {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
         if( body == child )
         {
             other.setPropertyInParent( child.getPropertyInParent() );

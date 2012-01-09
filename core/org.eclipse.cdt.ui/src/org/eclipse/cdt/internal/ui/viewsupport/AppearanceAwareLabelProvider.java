@@ -43,6 +43,7 @@ public class AppearanceAwareLabelProvider extends CUILabelProvider implements IP
 	/*
 	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
 	 */
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 	}
 

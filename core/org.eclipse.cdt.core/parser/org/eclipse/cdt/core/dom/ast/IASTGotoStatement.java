@@ -38,11 +38,13 @@ public interface IASTGotoStatement extends IASTStatement, IASTNameOwner {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IASTGotoStatement copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public IASTGotoStatement copy(CopyStyle style);
 
 }

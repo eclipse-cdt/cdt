@@ -54,6 +54,7 @@ public interface IIndexFragmentFile extends IIndexFile {
 	/**
 	 * Returns the id of the linkage this file belongs to.
 	 */
+	@Override
 	int getLinkageID() throws CoreException;
 
 	/**

@@ -28,10 +28,12 @@ public interface ICPPASTForStatement extends IASTForStatement {
     /**
 	 * @since 5.1
 	 */
+	@Override
 	public ICPPASTForStatement copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICPPASTForStatement copy(CopyStyle style);
 }

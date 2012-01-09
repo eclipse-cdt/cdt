@@ -71,10 +71,12 @@ public class CPPASTFieldReference extends ASTNode implements ICPPASTFieldReferen
 		setFieldOwner(owner);
 	}
 	
+	@Override
 	public CPPASTFieldReference copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CPPASTFieldReference copy(CopyStyle style) {
 		CPPASTFieldReference copy = new CPPASTFieldReference();
 		copy.setFieldName(name == null ? null : name.copy(style));
@@ -88,20 +90,24 @@ public class CPPASTFieldReference extends ASTNode implements ICPPASTFieldReferen
 		return copy;
 	}
 
+	@Override
 	public boolean isTemplate() {
         return isTemplate;
     }
 
-    public void setIsTemplate(boolean value) {
+    @Override
+	public void setIsTemplate(boolean value) {
         assertNotFrozen();
         isTemplate = value;
     }
 
-    public IASTExpression getFieldOwner() {
+    @Override
+	public IASTExpression getFieldOwner() {
         return owner;
     }
 
-    public void setFieldOwner(IASTExpression expression) {
+    @Override
+	public void setFieldOwner(IASTExpression expression) {
         assertNotFrozen();
         owner = expression;
         if (expression != null) {
@@ -110,11 +116,13 @@ public class CPPASTFieldReference extends ASTNode implements ICPPASTFieldReferen
 		}
     }
 
-    public IASTName getFieldName() {
+    @Override
+	public IASTName getFieldName() {
         return name;
     }
 
-    public void setFieldName(IASTName name) {
+    @Override
+	public void setFieldName(IASTName name) {
         assertNotFrozen();
         this.name = name;
         if (name != null) {
@@ -123,16 +131,19 @@ public class CPPASTFieldReference extends ASTNode implements ICPPASTFieldReferen
 		}
     }
 
-    public boolean isPointerDereference() {
+    @Override
+	public boolean isPointerDereference() {
         return isDeref;
     }
 
-    public void setIsPointerDereference(boolean value) {
+    @Override
+	public void setIsPointerDereference(boolean value) {
         assertNotFrozen();
         isDeref = value;
     }
     
-    public IASTImplicitName[] getImplicitNames() {
+    @Override
+	public IASTImplicitName[] getImplicitNames() {
     	if (implicitNames == null) {
     		if (!isDeref)
     			return implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
@@ -193,13 +204,15 @@ public class CPPASTFieldReference extends ASTNode implements ICPPASTFieldReferen
         return true;
     }
 
+	@Override
 	public int getRoleForName(IASTName n) {
 		if (n == name)
 			return r_reference;
 		return r_unclear;
 	}
 
-    public void replace(IASTNode child, IASTNode other) {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
         if (child == owner) {
             other.setPropertyInParent(child.getPropertyInParent());
             other.setParent(child.getParent());
@@ -207,7 +220,8 @@ public class CPPASTFieldReference extends ASTNode implements ICPPASTFieldReferen
         }
     }
 
-    public IType getExpressionType() {
+    @Override
+	public IType getExpressionType() {
 		IASTName name= getFieldName();
 		IBinding binding = name.resolvePreBinding();
 		try {
@@ -268,6 +282,7 @@ public class CPPASTFieldReference extends ASTNode implements ICPPASTFieldReferen
 	}
 
     
+	@Override
 	public ValueCategory getValueCategory() {
 		IASTName name= getFieldName();
 		IBinding binding = name.resolvePreBinding();
@@ -291,10 +306,12 @@ public class CPPASTFieldReference extends ASTNode implements ICPPASTFieldReferen
 		return PRVALUE;
 	}
 	
+	@Override
 	public boolean isLValue() {
 		return getValueCategory() == LVALUE;
 	}
 
+	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix, String[] namespaces) {
 		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix, namespaces);
 		List<IBinding> filtered = new ArrayList<IBinding>();
@@ -312,6 +329,7 @@ public class CPPASTFieldReference extends ASTNode implements ICPPASTFieldReferen
 		return filtered.toArray(new IBinding[filtered.size()]);
 	}
 	
+	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		return findBindings(n, isPrefix, null);
 	}
@@ -320,7 +338,8 @@ public class CPPASTFieldReference extends ASTNode implements ICPPASTFieldReferen
      * For a pointer dereference expression e1->e2, return the type that e1 ultimately evaluates to
      * after chaining overloaded class member access operators <code>operator->()</code> calls.
      */
-    public IType getFieldOwnerType() {
+    @Override
+	public IType getFieldOwnerType() {
     	return getFieldOwnerType(null);
     }
     

@@ -41,6 +41,7 @@ public class IBSetInputJob extends Job {
     	if (CCorePlugin.getIndexManager().joinIndexer(IIndexManager.FOREVER, monitor)) {
     		try {
 				fDisplay.asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						fViewPart.setInput(fInput);
 					}

@@ -190,6 +190,7 @@ public class NewSourceFolderWizardPage extends NewElementWizardPage {
 	/*
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		initializeDialogUnits(parent);
 		
@@ -234,11 +235,13 @@ public class NewSourceFolderWizardPage extends NewElementWizardPage {
 	private class RootFieldAdapter implements IStringButtonAdapter, IDialogFieldListener {
 
 		// -------- IStringButtonAdapter
+		@Override
 		public void changeControlPressed(DialogField field) {
 			packRootChangeControlPressed(field);
 		}
 		
 		// -------- IDialogFieldListener
+		@Override
 		public void dialogFieldChanged(DialogField field) {
 			packRootDialogFieldChanged(field);
 		}

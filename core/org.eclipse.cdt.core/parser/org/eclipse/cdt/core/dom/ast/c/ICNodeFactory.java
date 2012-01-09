@@ -33,10 +33,12 @@ public interface ICNodeFactory extends INodeFactory {
 
 	public ICASTArrayDesignator newArrayDesignator(IASTExpression exp);
 
+	@Override
 	public ICASTArrayModifier newArrayModifier(IASTExpression expr);
 	
 	public IGCCASTArrayRangeDesignator newArrayRangeDesignatorGCC(IASTExpression floor, IASTExpression ceiling);
 	
+	@Override
 	public ICASTCompositeTypeSpecifier newCompositeTypeSpecifier(int key, IASTName name);
 	
 	/**
@@ -50,16 +52,20 @@ public interface ICNodeFactory extends INodeFactory {
 	 */
 	public ICASTDesignatedInitializer newDesignatedInitializer(IASTInitializerClause initializer);
 
+	@Override
 	public ICASTElaboratedTypeSpecifier newElaboratedTypeSpecifier(int kind, IASTName name);
 	
+	@Override
 	public ICASTEnumerationSpecifier newEnumerationSpecifier(IASTName name);
 
 	public ICASTFieldDesignator newFieldDesignator(IASTName name);
 
 	public ICASTKnRFunctionDeclarator newKnRFunctionDeclarator(IASTName[] parameterNames, IASTDeclaration[] parameterDeclarations);
 
+	@Override
 	public ICASTPointer newPointer();
 
+	@Override
 	public ICASTSimpleDeclSpecifier newSimpleDeclSpecifier();
 
 	/**
@@ -68,7 +74,9 @@ public interface ICNodeFactory extends INodeFactory {
 	@Deprecated
 	public org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTSimpleDeclSpecifier newSimpleDeclSpecifierGCC(IASTExpression typeofExpression);
 
+	@Override
 	public ICASTTypedefNameSpecifier newTypedefNameSpecifier(IASTName name);
 
+	@Override
 	public ICASTTypeIdInitializerExpression newTypeIdInitializerExpression(IASTTypeId typeId, IASTInitializer initializer);
 }

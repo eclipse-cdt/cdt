@@ -6,9 +6,9 @@
  *  http://www.eclipse.org/legal/epl-v10.html
  * 
  *  Contributors:
- *     IBM Corporation - initial API and implementation
- *     Sergey Prigogin, Google
- *     Anton Leherbauer (Wind River Systems)
+ *      IBM Corporation - initial API and implementation
+ *      Sergey Prigogin (Google)
+ *      Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
@@ -54,7 +54,6 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.SelectionButtonDialogFie
  * Base for project property and preference pages
  */
 public abstract class PropertyAndPreferencePage extends PreferencePage implements IWorkbenchPreferencePage, IWorkbenchPropertyPage {
-	
 	private Control fConfigurationBlockControl;
 	private ControlEnableState fBlockEnableState;
 	private Link fChangeWorkspaceSettings;
@@ -63,7 +62,7 @@ public abstract class PropertyAndPreferencePage extends PreferencePage implement
 	private Composite fParentComposite;
 	
 	private IProject fProject; // project or null
-	private Map <?,?> fData; // page data
+	private Map<?, ?> fData; // page data
 	
 	public static final String DATA_NO_LINK= "PropertyAndPreferencePage.nolink"; //$NON-NLS-1$
 	
@@ -77,11 +76,11 @@ public abstract class PropertyAndPreferencePage extends PreferencePage implement
 	protected abstract Control createPreferenceContent(Composite composite);
 	protected abstract boolean hasProjectSpecificOptions(IProject project);
 	
-	protected abstract String getPreferencePageID();
-	protected abstract String getPropertyPageID();
+	protected abstract String getPreferencePageId();
+	protected abstract String getPropertyPageId();
 	
 	protected boolean supportsProjectSpecificOptions() {
-		return getPropertyPageID() != null;
+		return getPropertyPageId() != null;
 	}
 	
 	protected boolean offerLink() {
@@ -102,6 +101,7 @@ public abstract class PropertyAndPreferencePage extends PreferencePage implement
 			composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 			
 			IDialogFieldListener listener= new IDialogFieldListener() {
+				@Override
 				public void dialogFieldChanged(DialogField field) {
 					enableProjectSpecificSettings(((SelectionButtonDialogField)field).isSelected());
 				}
@@ -162,10 +162,12 @@ public abstract class PropertyAndPreferencePage extends PreferencePage implement
 		link.setFont(composite.getFont());
 		link.setText("<A>" + text + "</A>");  //$NON-NLS-1$//$NON-NLS-2$
 		link.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				doLinkActivated((Link) e.widget);
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				doLinkActivated((Link) e.widget);
 			}
@@ -217,17 +219,16 @@ public abstract class PropertyAndPreferencePage extends PreferencePage implement
 	}
 	
 	protected final void openWorkspacePreferences(Object data) {
-		String id= getPreferencePageID();
+		String id= getPreferencePageId();
 		PreferencesUtil.createPreferenceDialogOn(getShell(), id, new String[] { id }, data).open();
 	}
 	
 	protected final void openProjectProperties(IProject project, Object data) {
-		String id= getPropertyPageID();
+		String id= getPropertyPageId();
 		if (id != null) {
 			PreferencesUtil.createPropertyDialogOn(getShell(), project, id, new String[] { id }, data).open();
 		}
 	}
-	
 	
 	protected void enableProjectSpecificSettings(boolean useProjectSpecificSettings) {
 		fUseProjectSettings.setSelection(useProjectSpecificSettings);
@@ -245,7 +246,6 @@ public abstract class PropertyAndPreferencePage extends PreferencePage implement
 			fChangeWorkspaceSettings.setEnabled(!useProjectSettings());
 		}
 	}
-	
 
 	protected void setPreferenceContentStatus(IStatus status) {
 		fBlockStatus= status;
@@ -259,6 +259,7 @@ public abstract class PropertyAndPreferencePage extends PreferencePage implement
 	 */
 	protected IStatusChangeListener getNewStatusChangedListener() {
 		return new IStatusChangeListener() {
+			@Override
 			public void statusChanged(IStatus status) {
 				setPreferenceContentStatus(status);
 			}
@@ -290,9 +291,6 @@ public abstract class PropertyAndPreferencePage extends PreferencePage implement
 		}
 	}
 	
-	/*
-	 * @see org.eclipse.jface.preference.IPreferencePage#performDefaults()
-	 */
 	@Override
 	protected void performDefaults() {
 		if (useProjectSettings()) {
@@ -306,34 +304,24 @@ public abstract class PropertyAndPreferencePage extends PreferencePage implement
 		StatusUtil.applyToStatusLine(this, status);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-	 */
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPropertyPage#getElement()
-	 */
+	@Override
 	public IAdaptable getElement() {
 		return fProject;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPropertyPage#setElement(org.eclipse.core.runtime.IAdaptable)
-	 */
+	@Override
 	public void setElement(IAdaptable element) {
 		fProject= (IProject) element.getAdapter(IResource.class);
 	}
 	
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#applyData(java.lang.Object)
-	 */
 	@Override
 	public void applyData(Object data) {
 		if (data instanceof Map<?, ?>) {
-			fData= (Map<?,?>) data;
+			fData= (Map<?, ?>) data;
 		}
 		if (fChangeWorkspaceSettings != null) {
 			if (!offerLink()) {
@@ -343,7 +331,7 @@ public abstract class PropertyAndPreferencePage extends PreferencePage implement
 		}
  	}
 	
-	protected Map<?,?> getData() {
+	protected Map<?, ?> getData() {
 		return fData;
 	}
 }

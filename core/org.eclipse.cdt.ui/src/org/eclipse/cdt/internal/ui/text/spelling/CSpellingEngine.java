@@ -53,16 +53,21 @@ public class CSpellingEngine extends SpellingEngine {
 	 * A dummy token store for use with a token scanner.
 	 */
 	private static class SimpleTokenStore implements ITokenStore {
+		@Override
 		public void ensureTokensInitialised() {
 		}
+		@Override
 		public IPreferenceStore getPreferenceStore() {
 			return null;
 		}
+		@Override
 		public IToken getToken(String property) {
 			return new Token(property);
 		}
+		@Override
 		public void adaptToPreferenceChange(PropertyChangeEvent event) {
 		}
+		@Override
 		public boolean affectsBehavior(PropertyChangeEvent event) {
 			return false;
 		}
@@ -121,6 +126,7 @@ public class CSpellingEngine extends SpellingEngine {
 						
 						if (type.equals(ICPartitions.C_PREPROCESSOR)) {
 							RuleBasedScanner scanner = new CPreprocessorScanner(new ITokenStoreFactory() {
+								@Override
 								public ITokenStore createTokenStore(String[] propertyColorNames) {
 									return new SimpleTokenStore();
 								}}, GPPLanguage.getDefault());

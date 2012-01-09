@@ -117,7 +117,7 @@ public class CPopulateASTViewAction extends ASTVisitor implements IPopulateDOMAS
             tree.setFiltersFlag(DOMASTNodeLeaf.FLAG_PROBLEM);
             
             if (node instanceof IASTProblemHolder)
-                astProblems = (IASTProblem[])ArrayUtil.append(IASTProblem.class, astProblems, ((IASTProblemHolder)node).getProblem());
+                astProblems = ArrayUtil.append(IASTProblem.class, astProblems, ((IASTProblemHolder)node).getProblem());
             else
                 astProblems = (IASTProblem[])ArrayUtil.append(IASTProblem.class, astProblems, node);
         }
@@ -132,6 +132,7 @@ public class CPopulateASTViewAction extends ASTVisitor implements IPopulateDOMAS
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processDeclaration(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
 	 */
+	@Override
 	public int visit(IASTDeclaration declaration) {
 		DOMASTNodeLeaf temp = addRoot(declaration);
 		if (temp == null)
@@ -145,6 +146,7 @@ public class CPopulateASTViewAction extends ASTVisitor implements IPopulateDOMAS
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processDeclarator(org.eclipse.cdt.core.dom.ast.IASTDeclarator)
 	 */
+	@Override
 	public int visit(IASTDeclarator declarator) {
 		DOMASTNodeLeaf temp = addRoot(declarator);
 		
@@ -169,6 +171,7 @@ public class CPopulateASTViewAction extends ASTVisitor implements IPopulateDOMAS
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processDesignator(org.eclipse.cdt.core.dom.ast.c.ICASTDesignator)
 	 */
+	@Override
 	public int visit(ICASTDesignator designator) {
 		DOMASTNodeLeaf temp = addRoot(designator);
 		if (temp == null)
@@ -182,6 +185,7 @@ public class CPopulateASTViewAction extends ASTVisitor implements IPopulateDOMAS
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processDeclSpecifier(org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier)
 	 */
+	@Override
 	public int visit(IASTDeclSpecifier declSpec) {
 		DOMASTNodeLeaf temp = addRoot(declSpec);
 		if (temp == null)
@@ -195,6 +199,7 @@ public class CPopulateASTViewAction extends ASTVisitor implements IPopulateDOMAS
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processEnumerator(org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator)
 	 */
+	@Override
 	public int visit(IASTEnumerator enumerator) {
 		DOMASTNodeLeaf temp = addRoot(enumerator);
 		if (temp == null)
@@ -208,6 +213,7 @@ public class CPopulateASTViewAction extends ASTVisitor implements IPopulateDOMAS
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processExpression(org.eclipse.cdt.core.dom.ast.IASTExpression)
 	 */
+	@Override
 	public int visit(IASTExpression expression) {
 		DOMASTNodeLeaf temp = addRoot(expression);
 		if (temp == null)
@@ -221,6 +227,7 @@ public class CPopulateASTViewAction extends ASTVisitor implements IPopulateDOMAS
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processInitializer(org.eclipse.cdt.core.dom.ast.IASTInitializer)
 	 */
+	@Override
 	public int visit(IASTInitializer initializer) {
 		DOMASTNodeLeaf temp = addRoot(initializer);
 		if (temp == null)
@@ -234,6 +241,7 @@ public class CPopulateASTViewAction extends ASTVisitor implements IPopulateDOMAS
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processName(org.eclipse.cdt.core.dom.ast.IASTName)
 	 */
+	@Override
 	public int visit(IASTName name) {
 		DOMASTNodeLeaf temp = null;
 		if ( name.toString() != null )
@@ -251,6 +259,7 @@ public class CPopulateASTViewAction extends ASTVisitor implements IPopulateDOMAS
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processParameterDeclaration(org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration)
 	 */
+	@Override
 	public int visit(
 			IASTParameterDeclaration parameterDeclaration) {
 		DOMASTNodeLeaf temp = addRoot(parameterDeclaration);
@@ -265,6 +274,7 @@ public class CPopulateASTViewAction extends ASTVisitor implements IPopulateDOMAS
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processStatement(org.eclipse.cdt.core.dom.ast.IASTStatement)
 	 */
+	@Override
 	public int visit(IASTStatement statement) {
 		DOMASTNodeLeaf temp = addRoot(statement);
 		if (temp == null)
@@ -278,6 +288,7 @@ public class CPopulateASTViewAction extends ASTVisitor implements IPopulateDOMAS
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processTypeId(org.eclipse.cdt.core.dom.ast.IASTTypeId)
 	 */
+	@Override
 	public int visit(IASTTypeId typeId) {
 		DOMASTNodeLeaf temp = addRoot(typeId);
 		if (temp == null)
@@ -297,6 +308,7 @@ public class CPopulateASTViewAction extends ASTVisitor implements IPopulateDOMAS
 		return temp;
 	}
 	
+	@Override
 	public DOMASTNodeLeaf[] mergePreprocessorStatements(IASTPreprocessorStatement[] statements) {
 		DOMASTNodeLeaf[] leaves = new DOMASTNodeLeaf[statements.length];
 		for(int i=0; i<statements.length; i++) {
@@ -309,6 +321,7 @@ public class CPopulateASTViewAction extends ASTVisitor implements IPopulateDOMAS
 		return leaves;
 	}
 	
+	@Override
 	public void mergePreprocessorProblems(IASTProblem[] problems) {
 		for (IASTProblem problem : problems) {
 			if (monitor != null && monitor.isCanceled()) return;
@@ -318,10 +331,12 @@ public class CPopulateASTViewAction extends ASTVisitor implements IPopulateDOMAS
 		}
 	}
 	
+	@Override
 	public DOMASTNodeParent getTree() {
 		return root;
 	}
 	
+	@Override
 	public void groupIncludes(DOMASTNodeLeaf[] treeIncludes) {
 		// loop through the includes and make sure that all of the nodes 
 		// that are children of the TU are in the proper include (based on offset)

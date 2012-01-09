@@ -87,6 +87,7 @@ public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
 		monitor= pm;
 	}
 		
+	@Override
 	final public int compare(long record) throws CoreException {
 		if (monitor != null)
 			checkCancelled();
@@ -112,6 +113,7 @@ public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
 		return cmp;
 	}
 	
+	@Override
 	final public boolean visit(long record) throws CoreException {
 		if (monitor != null)
 			checkCancelled();
@@ -145,6 +147,7 @@ public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
 		return nodes.toArray(new PDOMNamedNode[nodes.size()]);
 	}
 
+	@Override
 	final public boolean visit(IPDOMNode node) throws CoreException {
 		if (monitor != null)
 			checkCancelled();
@@ -164,6 +167,7 @@ public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
 		}
 	}
 
+	@Override
 	final public void leave(IPDOMNode node) throws CoreException {
 	}
 }

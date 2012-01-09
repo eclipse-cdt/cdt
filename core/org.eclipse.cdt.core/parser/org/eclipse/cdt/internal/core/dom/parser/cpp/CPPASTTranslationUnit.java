@@ -128,7 +128,7 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
                 names[i] = null;
         }
     	// nulls can be anywhere, don't use trim()
-        return (IASTName[]) ArrayUtil.removeNulls(IASTName.class, names);
+        return ArrayUtil.removeNulls(IASTName.class, names);
     }
 
     @Override

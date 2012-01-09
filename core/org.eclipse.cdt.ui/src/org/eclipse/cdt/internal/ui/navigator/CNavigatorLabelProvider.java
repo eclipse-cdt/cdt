@@ -50,6 +50,7 @@ public class CNavigatorLabelProvider extends CViewLabelProvider implements IComm
 	/*
 	 * @see org.eclipse.ui.navigator.ICommonLabelProvider#init(org.eclipse.ui.navigator.ICommonContentExtensionSite)
 	 */
+	@Override
 	public void init(ICommonContentExtensionSite extensionSite) {
 		// no-op
 	}
@@ -57,6 +58,7 @@ public class CNavigatorLabelProvider extends CViewLabelProvider implements IComm
 	/*
 	 * @see org.eclipse.ui.navigator.IMementoAware#restoreState(org.eclipse.ui.IMemento)
 	 */
+	@Override
 	public void restoreState(IMemento memento) {
 		// no-op
 	}
@@ -64,6 +66,7 @@ public class CNavigatorLabelProvider extends CViewLabelProvider implements IComm
 	/*
 	 * @see org.eclipse.ui.navigator.IMementoAware#saveState(org.eclipse.ui.IMemento)
 	 */
+	@Override
 	public void saveState(IMemento memento) {
 		// no-op
 	}
@@ -71,6 +74,7 @@ public class CNavigatorLabelProvider extends CViewLabelProvider implements IComm
 	/*
 	 * @see org.eclipse.ui.navigator.IDescriptionProvider#getDescription(java.lang.Object)
 	 */
+	@Override
 	public String getDescription(Object element) {
 		if (element instanceof IResource) {
 			return ((IResource) element).getFullPath().makeRelative().toString();

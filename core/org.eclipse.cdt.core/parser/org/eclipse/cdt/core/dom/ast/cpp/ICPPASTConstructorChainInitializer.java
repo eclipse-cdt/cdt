@@ -52,11 +52,13 @@ public interface ICPPASTConstructorChainInitializer extends IASTInitializer, ICP
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICPPASTConstructorChainInitializer copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICPPASTConstructorChainInitializer copy(CopyStyle style);
 
 	/**

@@ -118,6 +118,7 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 			ICElement element= input;
 			if (!IndexUI.isIndexed(index, input)) {
 				getDisplay().asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						fView.reportNotIndexed(input);
 					}
@@ -126,6 +127,7 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 				element= IndexUI.attemptConvertionToHandle(index, input);
 				final ICElement finalElement= element;
 				getDisplay().asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						fView.reportInputReplacement(input, finalElement);
 					}

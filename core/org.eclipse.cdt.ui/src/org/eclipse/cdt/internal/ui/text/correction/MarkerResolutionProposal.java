@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.IContextInformation;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IMarkerResolution;
@@ -39,6 +40,7 @@ public class MarkerResolutionProposal implements ICCompletionProposal {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#apply(org.eclipse.jface.text.IDocument)
 	 */
+	@Override
 	public void apply(IDocument document) {
 		fResolution.run(fMarker);
 	}
@@ -46,6 +48,7 @@ public class MarkerResolutionProposal implements ICCompletionProposal {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getAdditionalProposalInfo()
 	 */
+	@Override
 	public String getAdditionalProposalInfo() {
 		if (fResolution instanceof IMarkerResolution2) {
 			return ((IMarkerResolution2) fResolution).getDescription();
@@ -55,7 +58,7 @@ public class MarkerResolutionProposal implements ICCompletionProposal {
 		}
 		try {
 			String problemDesc= (String) fMarker.getAttribute(IMarker.MESSAGE);
-			return CorrectionMessages.bind(CorrectionMessages.MarkerResolutionProposal_additionaldesc,
+			return NLS.bind(CorrectionMessages.MarkerResolutionProposal_additionaldesc,
 					problemDesc);
 		} catch (CoreException e) {
 			CUIPlugin.log(e);
@@ -66,6 +69,7 @@ public class MarkerResolutionProposal implements ICCompletionProposal {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getContextInformation()
 	 */
+	@Override
 	public IContextInformation getContextInformation() {
 		return null;
 	}
@@ -73,6 +77,7 @@ public class MarkerResolutionProposal implements ICCompletionProposal {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getDisplayString()
 	 */
+	@Override
 	public String getDisplayString() {
 		return fResolution.getLabel();
 	}
@@ -80,6 +85,7 @@ public class MarkerResolutionProposal implements ICCompletionProposal {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		if (fResolution instanceof IMarkerResolution2) {
 			return ((IMarkerResolution2) fResolution).getImage();
@@ -93,6 +99,7 @@ public class MarkerResolutionProposal implements ICCompletionProposal {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.ui.text.java.ICCompletionProposal#getRelevance()
 	 */
+	@Override
 	public int getRelevance() {
 		if (fResolution instanceof ICCompletionProposal) {
 			return ((ICCompletionProposal) fResolution).getRelevance();
@@ -103,6 +110,7 @@ public class MarkerResolutionProposal implements ICCompletionProposal {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getSelection(org.eclipse.jface.text.IDocument)
 	 */
+	@Override
 	public Point getSelection(IDocument document) {
 		if (fResolution instanceof ICCompletionProposal) {
 			return ((ICCompletionProposal) fResolution).getSelection(document);
@@ -110,6 +118,7 @@ public class MarkerResolutionProposal implements ICCompletionProposal {
 		return null;
 	}
 
+	@Override
 	public String getIdString() {
 		return getDisplayString();
 	}

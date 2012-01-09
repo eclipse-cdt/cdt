@@ -37,6 +37,7 @@ public class MachOBinaryArchive64 extends BinaryFile implements IBinaryArchive {
 	/**
 	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryArchive#getObjects()
 	 */
+	@Override
 	public IBinaryObject[] getObjects() {
 		if (hasChanged()) {
 			children.clear();

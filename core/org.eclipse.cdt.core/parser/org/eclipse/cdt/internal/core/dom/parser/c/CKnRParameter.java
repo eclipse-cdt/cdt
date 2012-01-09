@@ -42,6 +42,7 @@ public class CKnRParameter extends PlatformObject implements IParameter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IVariable#getType()
 	 */
+	@Override
 	public IType getType() {
 		IASTDeclSpecifier declSpec = null;
 		if (declaration instanceof IASTSimpleDeclaration)
@@ -61,6 +62,7 @@ public class CKnRParameter extends PlatformObject implements IParameter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
 	 */
+	@Override
 	public String getName() {
 		return name.toString();
 	}
@@ -68,6 +70,7 @@ public class CKnRParameter extends PlatformObject implements IParameter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
 	 */
+	@Override
 	public char[] getNameCharArray() {
 		return name.toCharArray();
 	}
@@ -75,6 +78,7 @@ public class CKnRParameter extends PlatformObject implements IParameter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
 	 */
+	@Override
 	public IScope getScope() {
 		return CVisitor.getContainingScope( declaration );
 	}
@@ -89,21 +93,24 @@ public class CKnRParameter extends PlatformObject implements IParameter {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isStatic()
      */
-    public boolean isStatic() {
+    @Override
+	public boolean isStatic() {
         return false;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isExtern()
      */
-    public boolean isExtern() {
+    @Override
+	public boolean isExtern() {
         return false;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isAuto()
      */
-    public boolean isAuto() {
+    @Override
+	public boolean isAuto() {
         if( declaration instanceof IASTSimpleDeclaration )
             return ((IASTSimpleDeclaration)declaration).getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_auto;
         return false;
@@ -112,20 +119,24 @@ public class CKnRParameter extends PlatformObject implements IParameter {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isRegister()
      */
-    public boolean isRegister() {
+    @Override
+	public boolean isRegister() {
         if( declaration instanceof IASTSimpleDeclaration )
             return ((IASTSimpleDeclaration)declaration).getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_register;
         return false;
     }
     
+	@Override
 	public ILinkage getLinkage() {
 		return Linkage.C_LINKAGE;
 	}
 	
+	@Override
 	public IBinding getOwner() {
 		return CVisitor.findEnclosingFunction(declaration);
 	}
 
+	@Override
 	public IValue getInitialValue() {
 		return null;
 	}

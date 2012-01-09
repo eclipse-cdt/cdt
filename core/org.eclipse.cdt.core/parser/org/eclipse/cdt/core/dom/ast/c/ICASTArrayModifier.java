@@ -99,10 +99,12 @@ public interface ICASTArrayModifier extends IASTArrayModifier {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICASTArrayModifier copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICASTArrayModifier copy(CopyStyle style);
 }

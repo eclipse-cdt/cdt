@@ -108,6 +108,7 @@ class WorkingSetConfigsController implements SelectionListener, ISelectionChange
 			if (!workspace.getWorkingSets().isEmpty()) {
 				tree.getTree().getDisplay().asyncExec(new Runnable() {
 
+					@Override
 					public void run() {
 						Object initialSelection;
 
@@ -223,6 +224,7 @@ class WorkingSetConfigsController implements SelectionListener, ISelectionChange
 		}
 	}
 
+	@Override
 	public void widgetDefaultSelected(SelectionEvent e) {
 		// not interesting
 	}
@@ -230,6 +232,7 @@ class WorkingSetConfigsController implements SelectionListener, ISelectionChange
 	/**
 	 * Handles button presses in the working set configurations pane.
 	 */
+	@Override
 	public void widgetSelected(SelectionEvent e) {
 		// handle button press
 		if (e.widget == addButton) {
@@ -250,6 +253,7 @@ class WorkingSetConfigsController implements SelectionListener, ISelectionChange
 	 * injects the working-set configuration selection into the project configurations controller and updates
 	 * the enablement of the buttons.
 	 */
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		currentConfig = null;
 		currentWorkingSet = null;
@@ -286,6 +290,7 @@ class WorkingSetConfigsController implements SelectionListener, ISelectionChange
 				WorkingSetMessages.WSConfigsController_addDlg_msg,
 				WorkingSetMessages.WSConfigsController_addDlg_defaultName, new IInputValidator() {
 
+					@Override
 					public String isValid(String newText) {
 						if (currentWorkingSet.getConfiguration(newText) != null) {
 							return WorkingSetMessages.WSConfigsController_addDlg_nameExists;
@@ -330,6 +335,7 @@ class WorkingSetConfigsController implements SelectionListener, ISelectionChange
 				WorkingSetMessages.WSConfigsController_renameDlg_msg, currentConfig.getName(),
 				new IInputValidator() {
 
+					@Override
 					public String isValid(String newText) {
 						if (newText.equals(currentConfig.getName())) {
 							return ""; //$NON-NLS-1$
@@ -401,6 +407,7 @@ class WorkingSetConfigsController implements SelectionListener, ISelectionChange
 			ProgressMonitorDialog dlg = new ProgressMonitorDialog(tree.getControl().getShell());
 			dlg.run(true, true, new IRunnableWithProgress() {
 
+				@Override
 				public void run(IProgressMonitor monitor) {
 					IStatus status = currentConfig.build(monitor);
 					if (status.matches(IStatus.WARNING | IStatus.ERROR)) {

@@ -111,6 +111,7 @@ public class CreateProfileDialog extends StatusDialog {
 		fNameText= new Text(composite, SWT.SINGLE | SWT.BORDER);
 		fNameText.setLayoutData(gd);
 		fNameText.addModifyListener( new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				doValidation();
 			}
@@ -135,9 +136,11 @@ public class CreateProfileDialog extends StatusDialog {
 		fEditCheckbox= new Button(composite, SWT.CHECK);
 		fEditCheckbox.setText(FormatterMessages.CreateProfileDialog_open_edit_dialog_checkbox_text); 
 		fEditCheckbox.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fOpenEditDialog= ((Button)e.widget).getSelection();
 			}
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});

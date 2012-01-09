@@ -28,10 +28,12 @@ public class CASTProblemStatement extends CASTProblemOwner implements IASTProble
 		super(problem);
 	}
 
+	@Override
 	public CASTProblemStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CASTProblemStatement copy(CopyStyle style) {
 		CASTProblemStatement copy = new CASTProblemStatement();
 		copyBaseProblem(copy, style);

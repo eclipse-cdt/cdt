@@ -36,6 +36,7 @@ public class CodanProblem extends CodanProblemElement implements IProblemWorking
 		this.multiple = multiple;
 	}
 
+	@Override
 	public CodanSeverity getSeverity() {
 		return severity;
 	}
@@ -49,10 +50,12 @@ public class CodanProblem extends CodanProblemElement implements IProblemWorking
 		this.name = name;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public String getId() {
 		return id;
 	}
@@ -70,10 +73,12 @@ public class CodanProblem extends CodanProblemElement implements IProblemWorking
 		return name;
 	}
 
+	@Override
 	public boolean isEnabled() {
 		return enabled;
 	}
 
+	@Override
 	public void setSeverity(CodanSeverity sev) {
 		if (sev == null)
 			throw new NullPointerException();
@@ -82,6 +87,7 @@ public class CodanProblem extends CodanProblemElement implements IProblemWorking
 		notifyChanged(ProblemProfileChangeEvent.PROBLEM_KEY);
 	}
 
+	@Override
 	public void setEnabled(boolean checked) {
 		checkSet();
 		this.enabled = checked;
@@ -103,6 +109,7 @@ public class CodanProblem extends CodanProblemElement implements IProblemWorking
 		return prob;
 	}
 
+	@Override
 	public void setPreference(IProblemPreference value) {
 		if (value == null)
 			throw new NullPointerException();
@@ -110,6 +117,7 @@ public class CodanProblem extends CodanProblemElement implements IProblemWorking
 		notifyChanged(ProblemProfileChangeEvent.PROBLEM_PREF_KEY);
 	}
 
+	@Override
 	public IProblemPreference getPreference() {
 		return rootPreference;
 	}
@@ -119,6 +127,7 @@ public class CodanProblem extends CodanProblemElement implements IProblemWorking
 	 * 
 	 * @see org.eclipse.cdt.codan.core.model.IProblem#getMessagePattern()
 	 */
+	@Override
 	public String getMessagePattern() {
 		return messagePattern;
 	}
@@ -127,6 +136,7 @@ public class CodanProblem extends CodanProblemElement implements IProblemWorking
 	 * @param messagePattern
 	 *        the message to set
 	 */
+	@Override
 	public void setMessagePattern(String messagePattern) {
 		checkSet();
 		this.messagePattern = messagePattern;
@@ -137,6 +147,7 @@ public class CodanProblem extends CodanProblemElement implements IProblemWorking
 	 * 
 	 * @see org.eclipse.cdt.codan.core.model.IProblem#getDescription()
 	 */
+	@Override
 	public String getDescription() {
 		return description;
 	}
@@ -148,6 +159,7 @@ public class CodanProblem extends CodanProblemElement implements IProblemWorking
 	 * org.eclipse.cdt.codan.core.model.IProblemWorkingCopy#setDescription(java
 	 * .lang.String)
 	 */
+	@Override
 	public void setDescription(String desc) {
 		checkSet();
 		this.description = desc;
@@ -158,6 +170,7 @@ public class CodanProblem extends CodanProblemElement implements IProblemWorking
 	 * 
 	 * @see org.eclipse.cdt.codan.core.model.IProblem#getMarkerType()
 	 */
+	@Override
 	public String getMarkerType() {
 		return markerType;
 	}
@@ -177,6 +190,7 @@ public class CodanProblem extends CodanProblemElement implements IProblemWorking
 	 * 
 	 * @see org.eclipse.cdt.codan.core.model.IProblemMultiple#isMultiple()
 	 */
+	@Override
 	public boolean isMultiple() {
 		return multiple;
 	}
@@ -186,6 +200,7 @@ public class CodanProblem extends CodanProblemElement implements IProblemWorking
 	 * 
 	 * @see org.eclipse.cdt.codan.core.model.IProblemMultiple#isOriginal()
 	 */
+	@Override
 	public boolean isOriginal() {
 		return !id.contains(CheckersRegistry.CLONE_SUFFIX);
 	}

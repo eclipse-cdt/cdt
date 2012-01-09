@@ -40,74 +40,92 @@ public class CPPBuiltinParameter extends PlatformObject implements ICPPParameter
         this.type = type;
     }
 
-    public IType getType() {
+    @Override
+	public IType getType() {
         return type;
     }
 
-    public boolean isStatic() {
+    @Override
+	public boolean isStatic() {
         return false;
     }
 
-    public boolean isExtern() {
+    @Override
+	public boolean isExtern() {
         return false;
     }
 
+	@Override
 	public boolean isExternC() {
 		return false;
 	}
 
-    public boolean isAuto() {
+    @Override
+	public boolean isAuto() {
         return false;
     }
 
-    public boolean isRegister() {
+    @Override
+	public boolean isRegister() {
         return false;
     }
 
-    public String getName() {
+    @Override
+	public String getName() {
         return ""; //$NON-NLS-1$
     }
 
-    public char[] getNameCharArray() {
+    @Override
+	public char[] getNameCharArray() {
     	return CharArrayUtils.EMPTY;
     }
 
-    public IScope getScope() {
+    @Override
+	public IScope getScope() {
         return null;
     }
 
-    public boolean hasDefaultValue() {
+    @Override
+	public boolean hasDefaultValue() {
         return false;
     }
 
-    public boolean isMutable() {
+    @Override
+	public boolean isMutable() {
         return false;
     }
 
-    public String[] getQualifiedName() {
+    @Override
+	public String[] getQualifiedName() {
         return new String[0];
     }
 
-    public char[][] getQualifiedNameCharArray() {
+    @Override
+	public char[][] getQualifiedNameCharArray() {
         return new char[0][];
     }
 
-    public boolean isGloballyQualified() {
+    @Override
+	public boolean isGloballyQualified() {
         return false;
     }
 
+	@Override
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
 	}
 
+	@Override
 	public IBinding getOwner() {
 		return null;
 	}
 
+	@Override
 	public IValue getInitialValue() {
 		return null;
 	}
 
+	@Override
 	public boolean isParameterPack() {
 		return false;
 	}

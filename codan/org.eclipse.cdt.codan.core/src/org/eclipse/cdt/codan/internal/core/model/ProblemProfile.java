@@ -45,6 +45,7 @@ public class ProblemProfile implements IProblemProfile, Cloneable {
 	 * org.eclipse.cdt.codan.core.model.IProblemProfile#getProblem(java.lang
 	 * .String)
 	 */
+	@Override
 	public IProblem findProblem(String id) {
 		return CodanProblemCategory.findProblem(getRoot(), id);
 	}
@@ -54,6 +55,7 @@ public class ProblemProfile implements IProblemProfile, Cloneable {
 	 * 
 	 * @see org.eclipse.cdt.codan.core.model.IProblemProfile#getProblems()
 	 */
+	@Override
 	public IProblem[] getProblems() {
 		Collection<IProblem> problems = new ArrayList<IProblem>();
 		collectProblems(getRoot(), problems);
@@ -76,6 +78,7 @@ public class ProblemProfile implements IProblemProfile, Cloneable {
 		}
 	}
 
+	@Override
 	public IProblemCategory getRoot() {
 		return rootCategory;
 	}
@@ -86,6 +89,7 @@ public class ProblemProfile implements IProblemProfile, Cloneable {
 		((CodanProblemCategory) cat).addChild(p);
 	}
 
+	@Override
 	public IProblemCategory findCategory(String id) {
 		return CodanProblemCategory.findCategory(getRoot(), id);
 	}
@@ -124,6 +128,7 @@ public class ProblemProfile implements IProblemProfile, Cloneable {
 	 * 
 	 * @see org.eclipse.cdt.codan.core.model.IProblemElement#getProfile()
 	 */
+	@Override
 	public IProblemProfile getProfile() {
 		return this;
 	}
@@ -133,6 +138,7 @@ public class ProblemProfile implements IProblemProfile, Cloneable {
 	 * 
 	 * @see org.eclipse.cdt.codan.core.model.IProblemElement#getParentCategory()
 	 */
+	@Override
 	public IProblemCategory getParentCategory() {
 		return getRoot();
 	}
@@ -141,6 +147,7 @@ public class ProblemProfile implements IProblemProfile, Cloneable {
 	/**
 	 * @param listener
 	 */
+	@Override
 	public void addProfileChangeListener(IProblemProfileChangeListener listener) {
 		if (preferenceChangeListeners == null)
 			preferenceChangeListeners = new ListenerList();
@@ -150,6 +157,7 @@ public class ProblemProfile implements IProblemProfile, Cloneable {
 	/**
 	 * @param listener
 	 */
+	@Override
 	public void removeProfileChangeListener(IProblemProfileChangeListener listener) {
 		if (preferenceChangeListeners == null)
 			return;
@@ -169,10 +177,12 @@ public class ProblemProfile implements IProblemProfile, Cloneable {
 		for (int i = 0; i < listeners.length; i++) {
 			final IProblemProfileChangeListener listener = (IProblemProfileChangeListener) listeners[i];
 			ISafeRunnable job = new ISafeRunnable() {
+				@Override
 				public void handleException(Throwable exception) {
 					// already logged in Platform#run()
 				}
 
+				@Override
 				public void run() throws Exception {
 					listener.profileChange(event);
 				}
@@ -186,6 +196,7 @@ public class ProblemProfile implements IProblemProfile, Cloneable {
 	 * 
 	 * @see org.eclipse.cdt.codan.core.model.IProblemProfile#getResource()
 	 */
+	@Override
 	public Object getResource() {
 		return resource;
 	}

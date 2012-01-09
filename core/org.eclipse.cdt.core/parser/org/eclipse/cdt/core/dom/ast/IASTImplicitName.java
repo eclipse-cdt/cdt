@@ -31,6 +31,7 @@ public interface IASTImplicitName extends IASTName {
 	 * Will not return null or a problem binding.
      * Implicit names are not generated unless they resolve to something.
 	 */
+	@Override
 	public IBinding resolveBinding();
 
 	/**
@@ -58,5 +59,6 @@ public interface IASTImplicitName extends IASTName {
 	 * 
 	 * @throws UnsupportedOperationException always
 	 */
+	@Override
 	IASTName copy() throws UnsupportedOperationException;
 }

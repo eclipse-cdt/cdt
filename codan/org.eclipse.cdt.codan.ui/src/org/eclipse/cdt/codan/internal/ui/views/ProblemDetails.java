@@ -107,6 +107,7 @@ public class ProblemDetails extends ViewPart {
 		description.addSelectionListener(linkSelAdapter);
 		ISelectionService ser = (ISelectionService) getSite().getService(ISelectionService.class);
 		ser.addSelectionListener(new ISelectionListener() {
+			@Override
 			public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 				if (part.getSite().getId().equals(problemsViewId)) {
 					processSelection(selection);

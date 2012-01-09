@@ -52,7 +52,7 @@ public class IndexFactory {
 	}
 
 	public IIndex getIndex(ICProject[] projects, int options) throws CoreException {
-		projects = (ICProject[]) ArrayUtil.removeNulls(ICProject.class, projects);
+		projects = ArrayUtil.removeNulls(ICProject.class, projects);
 
 		boolean addDependencies= (options & ADD_DEPENDENCIES) != 0;
 		boolean addDependent= (options & ADD_DEPENDENT) != 0;

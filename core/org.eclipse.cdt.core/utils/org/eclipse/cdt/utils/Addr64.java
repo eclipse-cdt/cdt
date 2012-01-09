@@ -81,34 +81,42 @@ public class Addr64 implements IAddress, Serializable {
 	}
 	
 	
+	@Override
 	public IAddress add(BigInteger offset) {
 		return new Addr64(this.address.add(offset));
 	}
 
+	@Override
 	public IAddress add(long offset) {
 		return new Addr64(this.address.add(BigInteger.valueOf(offset)));
 	}
 
+	@Override
 	public BigInteger getMaxOffset() {
 		return MAX_OFFSET;
 	}
 
+	@Override
 	public BigInteger distanceTo(IAddress other) {
 		return other.getValue().subtract(getValue());
 	}
 
+	@Override
 	public boolean isMax() {
 		return address.equals(MAX.getValue());
 	}
 
+	@Override
 	public boolean isZero() {
 		return address.equals(ZERO.getValue());
 	}
 
+	@Override
 	public BigInteger getValue() {
 		return address;
 	}
 
+	@Override
 	public int compareTo(Object other) {
 		if (!(other instanceof IAddress)) {
 			throw new IllegalArgumentException();
@@ -136,10 +144,12 @@ public class Addr64 implements IAddress, Serializable {
 		return toString(10);
 	}
 
+	@Override
 	public String toString(int radix) {
 		return address.toString(radix);
 	}
 
+	@Override
 	public String toHexAddressString() {
 		String addressString = address.toString(16);
 		StringBuffer sb = new StringBuffer(CHARS_NUM);
@@ -152,6 +162,7 @@ public class Addr64 implements IAddress, Serializable {
 		return sb.toString();
 	}
 
+	@Override
 	public String toBinaryAddressString() {
 		String addressString = address.toString(2);
 		StringBuffer sb = new StringBuffer(BINARY_CHARS_NUM);
@@ -164,10 +175,12 @@ public class Addr64 implements IAddress, Serializable {
 		return sb.toString();
 	}
 
+	@Override
 	public int getCharsNum() {
 		return CHARS_NUM;
 	}
 
+	@Override
 	public int getSize() {
 		return BYTES_NUM;
 	}

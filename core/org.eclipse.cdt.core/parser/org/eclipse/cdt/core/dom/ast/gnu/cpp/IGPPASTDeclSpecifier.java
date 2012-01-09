@@ -25,5 +25,6 @@ public interface IGPPASTDeclSpecifier extends IASTDeclSpecifier {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IGPPASTDeclSpecifier copy();
 }

@@ -145,6 +145,7 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 		return CUIPlugin.getDefault().getPreferenceStore().getInt(PREF_BUILDCONSOLE_LINES);
 	}
 
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 

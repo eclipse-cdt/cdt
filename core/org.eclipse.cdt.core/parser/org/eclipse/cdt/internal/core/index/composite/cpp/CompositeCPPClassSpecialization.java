@@ -44,10 +44,12 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 		return (ICPPClassScope) cf.getCompositeScope((IIndexScope) ((ICPPClassType) rbinding).getCompositeScope());
 	}
 
+	@Override
 	public ICPPClassType getSpecializedBinding() {
 		return (ICPPClassType) TemplateInstanceUtil.getSpecializedBinding(cf, rbinding);
 	}
 	
+	@Override
 	public ICPPTemplateParameterMap getTemplateParameterMap() {
 		IBinding owner= getOwner();
 		if (owner instanceof ICPPSpecialization) {
@@ -56,6 +58,7 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 		return CPPTemplateParameterMap.EMPTY;
 	}
 
+	@Override
 	public IBinding specializeMember(IBinding original) {
 		if (specializationMap == null) {
 			final Object key= CPPCompositesFactory.createSpecializationKey(cf, rbinding);
@@ -156,6 +159,7 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 		return super.getNestedClasses();
 	}
 	
+	@Override
 	@Deprecated
 	public ObjectMap getArgumentMap() {
 		return TemplateInstanceUtil.getArgumentMap(cf, rbinding);

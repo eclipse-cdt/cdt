@@ -31,11 +31,13 @@ public class CFunctionScope extends CScope implements ICFunctionScope {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.c.ICFunctionScope#getBinding(char[])
      */
-    public IBinding getBinding( char[] name ) {
+    @Override
+	public IBinding getBinding( char[] name ) {
         return super.getBinding( NAMESPACE_TYPE_OTHER, name );
     }
 
     
+	@Override
 	public IScope getBodyScope(){
 	    IASTNode node = getPhysicalNode();
 	    IASTStatement statement = ((IASTFunctionDefinition)node).getBody();
@@ -59,7 +61,7 @@ public class CFunctionScope extends CScope implements ICFunctionScope {
 		            result = (ILabel[]) ArrayUtil.append( ILabel.class, result, binding );
 		    }
 	    }
-	    return (ILabel[]) ArrayUtil.trim( ILabel.class, result );
+	    return ArrayUtil.trim( ILabel.class, result );
 	}
 	
 	static private class FindLabelsAction extends ASTVisitor {

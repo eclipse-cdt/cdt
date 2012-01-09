@@ -24,6 +24,7 @@ class CompositeCEnumeration extends CompositeCBinding implements IEnumeration, I
 		super(cf, rbinding);
 	}
 
+	@Override
 	public IEnumerator[] getEnumerators() throws DOMException {
 		IEnumerator[] result = ((IEnumeration)rbinding).getEnumerators();
 		for (int i= 0; i < result.length; i++)
@@ -31,6 +32,7 @@ class CompositeCEnumeration extends CompositeCBinding implements IEnumeration, I
 		return result;
 	}
 
+	@Override
 	public boolean isSameType(IType type) {
 		return ((IEnumeration)rbinding).isSameType(type);
 	}
@@ -43,10 +45,12 @@ class CompositeCEnumeration extends CompositeCBinding implements IEnumeration, I
 		return getName();
 	}
 
+	@Override
 	public long getMinValue() {
 		return ((IEnumeration)rbinding).getMinValue();
 	}
 
+	@Override
 	public long getMaxValue() {
 		return ((IEnumeration)rbinding).getMaxValue();
 	}

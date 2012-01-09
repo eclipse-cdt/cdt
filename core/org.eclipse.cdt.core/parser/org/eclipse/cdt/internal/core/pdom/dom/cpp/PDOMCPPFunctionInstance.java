@@ -65,10 +65,12 @@ class PDOMCPPFunctionInstance extends PDOMCPPFunctionSpecialization implements I
 		return IIndexCPPBindingConstants.CPP_FUNCTION_INSTANCE;
 	}
 	
+	@Override
 	public ICPPTemplateDefinition getTemplateDefinition() {
 		return (ICPPTemplateDefinition) getSpecializedBinding();
 	}
 	
+	@Override
 	public boolean isExplicitSpecialization() {
 		try {
 			return hasDeclaration();
@@ -77,6 +79,7 @@ class PDOMCPPFunctionInstance extends PDOMCPPFunctionSpecialization implements I
 		}
 	}
 
+	@Override
 	public ICPPTemplateArgument[] getTemplateArguments() {
 		try {
 			final long rec= getPDOM().getDB().getRecPtr(record+ARGUMENTS);
@@ -98,6 +101,7 @@ class PDOMCPPFunctionInstance extends PDOMCPPFunctionSpecialization implements I
 		}
 	}
 
+	@Override
 	@Deprecated
 	public IType[] getArguments() {
 		return CPPTemplates.getArguments(getTemplateArguments());

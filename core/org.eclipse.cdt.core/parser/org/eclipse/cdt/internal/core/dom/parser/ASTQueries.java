@@ -137,7 +137,7 @@ public class ASTQueries {
 					active[j++]= d;
 				}
 			}
-			active= (IASTDeclaration[]) ArrayUtil.removeNullsAfter(IASTDeclaration.class, active, j-1);
+			active= ArrayUtil.trimAt(IASTDeclaration.class, active, j-1);
 		}
 		return active;
 	}

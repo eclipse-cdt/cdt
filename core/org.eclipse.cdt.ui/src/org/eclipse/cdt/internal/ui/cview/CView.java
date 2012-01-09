@@ -27,7 +27,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -154,27 +153,33 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 
 	private IPartListener partListener = new IPartListener() {
 
+		@Override
 		public void partActivated(IWorkbenchPart part) {
 			if (part instanceof IEditorPart) {
 				editorActivated((IEditorPart) part);
 			}
 		}
 
+		@Override
 		public void partBroughtToTop(IWorkbenchPart part) {
 		}
 
+		@Override
 		public void partClosed(IWorkbenchPart part) {
 		}
 
+		@Override
 		public void partDeactivated(IWorkbenchPart part) {
 		}
 
+		@Override
 		public void partOpened(IWorkbenchPart part) {
 		}
 	};
 
 	private IPropertyChangeListener workingSetListener = new IPropertyChangeListener() {
 
+		@Override
 		public void propertyChange(PropertyChangeEvent ev) {
 			String property = ev.getProperty();
 			Object newValue = ev.getNewValue();
@@ -213,6 +218,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 	 * 
 	 * @see ISetSelectionTarget#selectReveal(ISelection)
 	 */
+	@Override
 	public void selectReveal(ISelection selection) {
 		IStructuredSelection ssel = SelectionConverter.convertSelectionToCElements(selection, true);
 		if (!ssel.isEmpty()) {
@@ -279,6 +285,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 		if (isLinkingEnabled()) {
 			getSite().getShell().getDisplay().asyncExec(new Runnable() {
 
+				@Override
 				public void run() {
 					if (dragDetected == false) {
 						// only synchronize with editor when the selection is
@@ -370,6 +377,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 
 		dragDetectListener = new Listener() {
 
+			@Override
 			public void handleEvent(Event event) {
 				dragDetected = true;
 			}
@@ -446,6 +454,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
 
+			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 				CView.this.fillContextMenu(manager);
 			}
@@ -486,6 +495,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 	protected void initListeners(TreeViewer viewer) {
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				handleDoubleClick(event);
 			}
@@ -493,12 +503,14 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				handleSelectionChanged(event);
 			}
 		});
 
 		viewer.addOpenListener(new IOpenListener() {
+			@Override
 			public void open(OpenEvent event) {
 				handleOpen(event);
 			}
@@ -827,6 +839,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 		}
 	}
 
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (viewer == null) return;
 
@@ -1063,6 +1076,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 	 * 
 	 * @see org.eclipse.ui.part.IShowInTarget#show(org.eclipse.ui.part.ShowInContext)
 	 */
+	@Override
 	public boolean show(ShowInContext context) {
 		ISelection selection= context.getSelection();
 		if (selection != null && !selection.isEmpty() && selection instanceof IStructuredSelection) {
@@ -1085,13 +1099,15 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 	 */
 	protected IShowInSource getShowInSource() {
 		return new IShowInSource() {
+			@Override
 			public ShowInContext getShowInContext() {
 				return new ShowInContext(getViewer().getInput(), getViewer().getSelection());
 			}
 		};
 	}
 
-    public String[] getShowInTargetIds() {
+    @Override
+	public String[] getShowInTargetIds() {
         return new String[]{IPageLayout.ID_RES_NAV};
     }
 }

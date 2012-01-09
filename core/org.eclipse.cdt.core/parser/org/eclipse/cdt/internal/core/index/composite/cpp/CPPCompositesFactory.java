@@ -87,6 +87,7 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.index.composite.cpp.ICompositesFactory#getCompositeScope(org.eclipse.cdt.core.index.IIndex, org.eclipse.cdt.core.dom.ast.IScope)
 	 */
+	@Override
 	public IIndexScope getCompositeScope(IIndexScope rscope) {
 		try {
 			if (rscope == null) {
@@ -124,6 +125,7 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.index.composite.cpp.ICompositesFactory#getCompositeType(org.eclipse.cdt.core.index.IIndex, org.eclipse.cdt.core.dom.ast.IType)
 	 */
+	@Override
 	public IType getCompositeType(IType rtype) {
 		if (rtype instanceof IIndexFragmentBinding) {
 			return (IType) getCompositeBinding((IIndexFragmentBinding) rtype);
@@ -204,6 +206,7 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 		throw new CompositingNotImplementedError();
 	}
 	
+	@Override
 	public IValue getCompositeValue(IValue v) {
 		if (v == null)
 			return null;
@@ -239,6 +242,7 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.index.composite.cpp.ICompositesFactory#getCompositeBinding(org.eclipse.cdt.core.index.IIndex, org.eclipse.cdt.core.dom.ast.IBinding)
 	 */
+	@Override
 	public IIndexBinding getCompositeBinding(IIndexFragmentBinding binding) {
 		IIndexBinding result;
 

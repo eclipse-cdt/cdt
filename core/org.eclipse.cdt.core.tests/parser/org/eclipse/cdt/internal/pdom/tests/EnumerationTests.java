@@ -40,6 +40,7 @@ public class EnumerationTests extends PDOMTestBase {
 		return suite(EnumerationTests.class);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		if (pdom == null) {
 			ICProject project = createProject("enumerationTests");
@@ -48,6 +49,7 @@ public class EnumerationTests extends PDOMTestBase {
 		pdom.acquireReadLock();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		pdom.releaseReadLock();
 	}
@@ -63,6 +65,7 @@ public class EnumerationTests extends PDOMTestBase {
 		assertEquals(3, enumerators.length);
 		// Enumerators are returned in arbitrary order. Sort them to make checking easier.
 		Arrays.sort(enumerators, new Comparator<IEnumerator>() {
+			@Override
 			public int compare(IEnumerator o1, IEnumerator o2) {
 				return o1.getName().compareTo(o2.getName());
 			}
@@ -101,6 +104,7 @@ public class EnumerationTests extends PDOMTestBase {
 		assertEquals(3, enumerators.length);
 		// Enumerators are returned in arbitrary order. Sort them to make checking easier.
 		Arrays.sort(enumerators, new Comparator<IEnumerator>() {
+			@Override
 			public int compare(IEnumerator o1, IEnumerator o2) {
 				return o1.getName().compareTo(o2.getName());
 			}

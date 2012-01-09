@@ -154,10 +154,12 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 		public Children() {
 			fNodes= new ArrayList<IPDOMNode>();
 		}
+		@Override
 		public boolean visit(IPDOMNode node) throws CoreException {
 			fNodes.add(node);
 			return false;
 		}
+		@Override
 		public void leave(IPDOMNode node) throws CoreException {
 		}
 		public IPDOMNode[] getNodes() {
@@ -319,7 +321,8 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
             private void hideMenuItems(IMenuManager manager) {
             }
 
-            public void menuAboutToShow(IMenuManager manager) {
+            @Override
+			public void menuAboutToShow(IMenuManager manager) {
                 IndexView.this.fillContextMenu(manager);
                 hideMenuItems(manager);
             }
@@ -330,6 +333,7 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
         
         getSite().setSelectionProvider(viewer);
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				handleSelectionChanged(event);
 			}
@@ -365,6 +369,7 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 				IndexView.this.fillContextMenu(manager);
 			}
@@ -390,6 +395,7 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 	
 	private void hookDoubleClickAction() {
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				openDefinitionAction.run();
 			}
@@ -413,6 +419,7 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 		viewer.getControl().setFocus();
 	}
 
+	@Override
 	public void handleChange(PDOM pdom, PDOM.ChangeEvent e) {
 		requestUpdate();
 	}
@@ -421,6 +428,7 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 		if (!fUpdateRequested) {
 			fUpdateRequested= true;
 			viewer.getControl().getDisplay().asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					fUpdateRequested= false;
 					if (!viewer.getControl().isDisposed()) {
@@ -431,6 +439,7 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 		}
 	}
 	
+	@Override
 	public void elementChanged(ElementChangedEvent event) {
 		// Only respond to post change events
 		if (event.getType() != ElementChangedEvent.POST_CHANGE)

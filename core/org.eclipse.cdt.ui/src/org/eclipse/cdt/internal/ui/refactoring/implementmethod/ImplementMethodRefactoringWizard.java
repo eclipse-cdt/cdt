@@ -72,6 +72,7 @@ public class ImplementMethodRefactoringWizard extends RefactoringWizard {
 		if (isOnePreviewJobRunning) {
 			try {
 				getContainer().run(false, false, new IRunnableWithProgress() {
+					@Override
 					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 						monitor.beginTask(Messages.ImplementMethodRefactoringWizard_CancelingPreviewGeneration,
 								pagesMap.size() + 1);

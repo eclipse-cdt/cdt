@@ -62,9 +62,11 @@ public class CMacroExpansionInput {
 
 	private static class SingletonRule implements ISchedulingRule {
 		public static final ISchedulingRule INSTANCE = new SingletonRule();
+		@Override
 		public boolean contains(ISchedulingRule rule) {
 			return rule == this;
 		}
+		@Override
 		public boolean isConflicting(ISchedulingRule rule) {
 			return rule == this;
 		}
@@ -89,6 +91,7 @@ public class CMacroExpansionInput {
 		/*
 		 * @see org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable#runOnAST(org.eclipse.cdt.core.dom.ast.IASTTranslationUnit)
 		 */
+		@Override
 		public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
 			if (ast != null) {
 				final IASTNodeSelector nodeSelector = ast.getNodeSelector(ast.getFilePath());

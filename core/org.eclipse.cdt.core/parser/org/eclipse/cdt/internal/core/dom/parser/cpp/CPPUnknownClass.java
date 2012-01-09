@@ -37,51 +37,63 @@ public class CPPUnknownClass extends CPPUnknownBinding implements ICPPUnknownCla
         super(binding, name);
     }
 
-    public ICPPBase[] getBases() {
+    @Override
+	public ICPPBase[] getBases() {
         return ICPPBase.EMPTY_BASE_ARRAY;
     }
 
-    public IField[] getFields() {
+    @Override
+	public IField[] getFields() {
         return IField.EMPTY_FIELD_ARRAY;
     }
 
-    public IField findField(String name) {
+    @Override
+	public IField findField(String name) {
         return null;
     }
 
-    public ICPPField[] getDeclaredFields() {
+    @Override
+	public ICPPField[] getDeclaredFields() {
         return ICPPField.EMPTY_CPPFIELD_ARRAY;
     }
 
-    public ICPPMethod[] getMethods() {
+    @Override
+	public ICPPMethod[] getMethods() {
         return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
     }
 
-    public ICPPMethod[] getAllDeclaredMethods() {
+    @Override
+	public ICPPMethod[] getAllDeclaredMethods() {
         return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
     }
 
-    public ICPPMethod[] getDeclaredMethods() {
+    @Override
+	public ICPPMethod[] getDeclaredMethods() {
         return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
     }
 
-    public ICPPConstructor[] getConstructors() {
+    @Override
+	public ICPPConstructor[] getConstructors() {
         return ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
     }
 
-    public IBinding[] getFriends() {
+    @Override
+	public IBinding[] getFriends() {
         return IBinding.EMPTY_BINDING_ARRAY;
     }
 
-    public int getKey(){
+    @Override
+	public int getKey(){
         return 0;
     }
 
-    public final IScope getCompositeScope() {
+    @Override
+	public final IScope getCompositeScope() {
         return asScope();
     }
 
-    public boolean isSameType(IType type) {
+    @Override
+	public boolean isSameType(IType type) {
     	if (this == type) 
     		return true;
     	
@@ -103,10 +115,12 @@ public class CPPUnknownClass extends CPPUnknownBinding implements ICPPUnknownCla
 		return false;
     }
 
+	@Override
 	public ICPPClassType[] getNestedClasses() {
 		return ICPPClassType.EMPTY_CLASS_ARRAY;
 	}
 	
+	@Override
 	public boolean isAnonymous() {
 		return false;
 	}

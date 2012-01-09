@@ -99,6 +99,7 @@ public class CCorrectionAssistant extends QuickAssistAssistant {
 
 	private IInformationControlCreator getInformationControlCreator() {
 		return new IInformationControlCreator() {
+			@Override
 			public IInformationControl createInformationControl(Shell parent) {
 				return new DefaultInformationControl(parent, false);
 			}
@@ -246,6 +247,7 @@ public class CCorrectionAssistant extends QuickAssistAssistant {
 		if (inputElement instanceof ITranslationUnit) {
 			final ASTProvider astProvider= CUIPlugin.getDefault().getASTProvider();
 			astProvider.runOnAST((ITranslationUnit) inputElement, ASTProvider.WAIT_ACTIVE_ONLY, null, new ASTCache.ASTRunnable() {
+				@Override
 				public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
 					return Status.OK_STATUS;
 				}

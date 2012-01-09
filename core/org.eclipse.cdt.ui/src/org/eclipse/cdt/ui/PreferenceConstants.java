@@ -2101,6 +2101,9 @@ public class PreferenceConstants {
 		store.setDefault(NAME_STYLE_CPP_TEST_SUFFIX, "_test.cpp"); //$NON-NLS-1$
 		store.setDefault(NAME_STYLE_CPP_TEST_WORD_DELIMITER, ""); //$NON-NLS-1$
 
+		// Code style
+		store.setDefault(CLASS_MEMBER_ASCENDING_VISIBILITY_ORDER, false);
+
 		// Colors that are set by the current theme
 		CUIPreferenceInitializer.setThemeBasedPreferences(store, false);
     }

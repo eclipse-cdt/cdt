@@ -71,6 +71,7 @@ public class CColorManager implements IColorManager {
 	/*
 	 * @see IColorManager#getColor(RGB)
 	 */
+	@Override
 	public Color getColor(RGB rgb) {
 		
 		if (rgb == null)
@@ -83,6 +84,7 @@ public class CColorManager implements IColorManager {
 			fDisplayTable.put(display, colorTable);
 			if (fAutoDisposeOnDisplayDispose) {
 				display.disposeExec(new Runnable() {
+					@Override
 					public void run() {
 						dispose(display);
 					}
@@ -102,6 +104,7 @@ public class CColorManager implements IColorManager {
 	/*
 	 * @see IColorManager#dispose
 	 */
+	@Override
 	public void dispose() {
 		if (!fAutoDisposeOnDisplayDispose)
 			dispose(Display.getCurrent());
@@ -110,6 +113,7 @@ public class CColorManager implements IColorManager {
 	/*
 	 * @see IColorManager#getColor(String)
 	 */
+	@Override
 	public Color getColor(String key) {
 		
 		if (key == null)
@@ -122,6 +126,7 @@ public class CColorManager implements IColorManager {
 	/*
 	 * @see IColorManager#bindColor(String, RGB)
 	 */
+	@Override
 	public void bindColor(String key, RGB rgb) {
 		Object value= fKeyTable.get(key);
 		if (value != null)
@@ -133,6 +138,7 @@ public class CColorManager implements IColorManager {
 	/*
 	 * @see IColorManager#unbindColor(String)
 	 */
+	@Override
 	public void unbindColor(String key) {
 		fKeyTable.remove(key);
 	}

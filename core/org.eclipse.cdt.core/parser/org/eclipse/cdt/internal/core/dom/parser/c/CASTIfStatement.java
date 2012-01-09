@@ -45,10 +45,12 @@ public class CASTIfStatement extends ASTNode implements IASTIfStatement, IASTAmb
 		setElseClause(elseClause);
 	}
 
+	@Override
 	public CASTIfStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CASTIfStatement copy(CopyStyle style) {
 		CASTIfStatement copy = new CASTIfStatement();
 		copy.setConditionExpression(condition == null ? null : condition.copy(style));
@@ -61,11 +63,13 @@ public class CASTIfStatement extends ASTNode implements IASTIfStatement, IASTAmb
 		return copy;
 	}
 	
+	@Override
 	public IASTExpression getConditionExpression() {
         return condition;
     }
 
-    public void setConditionExpression(IASTExpression condition) {
+    @Override
+	public void setConditionExpression(IASTExpression condition) {
         assertNotFrozen();
         this.condition = condition;
         if (condition != null) {
@@ -74,11 +78,13 @@ public class CASTIfStatement extends ASTNode implements IASTIfStatement, IASTAmb
 		}
     }
 
-    public IASTStatement getThenClause() {
+    @Override
+	public IASTStatement getThenClause() {
         return thenClause;
     }
 
-    public void setThenClause(IASTStatement thenClause) {
+    @Override
+	public void setThenClause(IASTStatement thenClause) {
         assertNotFrozen();
         this.thenClause = thenClause;
         if (thenClause != null) {
@@ -87,11 +93,13 @@ public class CASTIfStatement extends ASTNode implements IASTIfStatement, IASTAmb
 		}
     }
 
-    public IASTStatement getElseClause() {
+    @Override
+	public IASTStatement getElseClause() {
         return elseClause;
     }
 
-    public void setElseClause(IASTStatement elseClause) {
+    @Override
+	public void setElseClause(IASTStatement elseClause) {
         assertNotFrozen();
         this.elseClause = elseClause;
         if (elseClause != null) {
@@ -155,7 +163,8 @@ public class CASTIfStatement extends ASTNode implements IASTIfStatement, IASTAmb
         return true;
     }
 
-    public void replace(IASTNode child, IASTNode other) {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
         if( thenClause == child )
         {
             other.setParent( child.getParent() );

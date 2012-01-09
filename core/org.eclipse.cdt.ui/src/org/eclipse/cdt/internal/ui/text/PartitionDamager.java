@@ -30,6 +30,7 @@ public class PartitionDamager implements IPresentationDamager {
 	/*
 	 * @see org.eclipse.jface.text.presentation.IPresentationDamager#getDamageRegion(org.eclipse.jface.text.ITypedRegion, org.eclipse.jface.text.DocumentEvent, boolean)
 	 */
+	@Override
 	public IRegion getDamageRegion(ITypedRegion partition, DocumentEvent event,
 			boolean documentPartitioningChanged) {
 		if (!documentPartitioningChanged && event.getOffset() == partition.getOffset() + partition.getLength()) {
@@ -49,6 +50,7 @@ public class PartitionDamager implements IPresentationDamager {
 	/*
 	 * @see org.eclipse.jface.text.presentation.IPresentationDamager#setDocument(org.eclipse.jface.text.IDocument)
 	 */
+	@Override
 	public void setDocument(IDocument document) {
 	}
 

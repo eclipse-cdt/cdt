@@ -62,11 +62,12 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 					&& ASTQueries.findOutermostDeclarator(declarator).getParent() instanceof IASTFunctionDefinition) {
 				definition = (IASTFunctionDeclarator) declarator;
 			} else {
-				declarators = (IASTDeclarator[]) ArrayUtil.append(IASTDeclarator.class, declarators, declarator);
+				declarators = ArrayUtil.append(IASTDeclarator.class, declarators, declarator);
 			}
 		}
 	}
 	
+	@Override
 	public IASTDeclarator getPhysicalNode() {
 		if (definition != null)
 			return definition;
@@ -75,6 +76,7 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 		return null;
 	}
 
+	@Override
 	public void addDeclarator(IASTDeclarator fnDeclarator) {
 		if (!fnDeclarator.isActive())
 			return;
@@ -100,7 +102,7 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 	        if( tu != null ){
 	            CVisitor.getDeclarations( tu, this );
 	        }
-			declarators = (IASTDeclarator[]) ArrayUtil.trim(IASTDeclarator.class, declarators);
+			declarators = ArrayUtil.trim(IASTDeclarator.class, declarators);
 	        bits |= FULLY_RESOLVED;
 	        bits &= ~RESOLUTION_IN_PROGRESS;
 	    }
@@ -109,6 +111,7 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IFunction#getParameters()
 	 */
+	@Override
 	public IParameter[] getParameters() {
 		int j=-1;
 		int len = declarators != null ? declarators.length : 0;
@@ -162,10 +165,12 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
 	 */
+	@Override
 	public String getName() {
 		return getASTName().toString();
 	}
 	
+	@Override
 	public char[] getNameCharArray(){
 		return getASTName().toCharArray();
 	}
@@ -177,6 +182,7 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
 	 */
+	@Override
 	public IScope getScope() {
 	    IASTDeclarator dtor = getPhysicalNode();
 		if (dtor != null)
@@ -187,6 +193,7 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IFunction#getFunctionScope()
 	 */
+	@Override
 	public IScope getFunctionScope() {
 		if (definition != null) {
 			IASTFunctionDefinition def = (IASTFunctionDefinition) definition.getParent();
@@ -195,7 +202,8 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 		return null;
 	}
 
-    public IFunctionType getType() {
+    @Override
+	public IFunctionType getType() {
 		if (type == null) {
 			type = createType();
 		}
@@ -329,11 +337,13 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IFunction#isStatic()
      */
-    public boolean isStatic() {
+    @Override
+	public boolean isStatic() {
     	return isStatic(true);
     }
     
-    public boolean isStatic(boolean resolveAll) {
+    @Override
+	public boolean isStatic(boolean resolveAll) {
         if( resolveAll && (bits & FULLY_RESOLVED) == 0 ){
             resolveAllDeclarations();
         }
@@ -371,7 +381,8 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 	}
 	
 
-    public boolean isExtern() {
+    @Override
+	public boolean isExtern() {
     	return isExtern(true);
     }
     
@@ -383,7 +394,8 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
     }
 
 
-    public boolean isAuto() {
+    @Override
+	public boolean isAuto() {
         if( (bits & FULLY_RESOLVED) == 0 ){
             resolveAllDeclarations();
         }
@@ -391,7 +403,8 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
     }
 
   
-    public boolean isRegister() {
+    @Override
+	public boolean isRegister() {
         if( (bits & FULLY_RESOLVED) == 0 ){
             resolveAllDeclarations();
         }
@@ -399,7 +412,8 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
     }
 
  
-    public boolean isInline() {
+    @Override
+	public boolean isInline() {
         if( (bits & FULLY_RESOLVED) == 0 ){
             resolveAllDeclarations();
         }
@@ -431,6 +445,7 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
     }
 
 
+	@Override
 	public boolean takesVarArgs() {
 		if ((bits & FULLY_RESOLVED) == 0) {
 			resolveAllDeclarations();
@@ -452,6 +467,7 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 		return false;
 	}
 
+	@Override
 	public void setFullyResolved(boolean resolved) {
 		if( resolved )
 			bits |= FULLY_RESOLVED;
@@ -459,18 +475,22 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 			bits &= ~FULLY_RESOLVED;
 	}
 
+	@Override
 	public ILinkage getLinkage() {
 		return Linkage.C_LINKAGE;
 	}
 
+	@Override
 	public IASTNode[] getDeclarations() {
 		return declarators;
 	}
 
+	@Override
 	public IASTNode getDefinition() {
 		return definition;
 	}
 	
+	@Override
 	public IBinding getOwner() {
 		return null;
 	}

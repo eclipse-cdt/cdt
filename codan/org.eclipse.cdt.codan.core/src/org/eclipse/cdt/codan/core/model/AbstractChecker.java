@@ -41,6 +41,7 @@ public abstract class AbstractChecker implements IChecker {
 	 * @return true if checker is enabled in context of resource, if returns
 	 *         false checker's "processResource" method won't be called
 	 */
+	@Override
 	public boolean enabledInContext(IResource res) {
 		return res instanceof IFile;
 	}
@@ -120,6 +121,7 @@ public abstract class AbstractChecker implements IChecker {
 	 * @return problem reporter for given checker
 	 * @since 2.0
 	 */
+	@Override
 	public IProblemReporter getProblemReporter() {
 		return problemReporter;
 	}
@@ -166,6 +168,7 @@ public abstract class AbstractChecker implements IChecker {
 	 * Defines if checker should be run as user type in editor. Override this
 	 * method is checker is too heavy for that (runs too long)
 	 */
+	@Override
 	public boolean runInEditor() {
 		return this instanceof IRunnableInEditorChecker;
 	}
@@ -202,6 +205,7 @@ public abstract class AbstractChecker implements IChecker {
 	/**
 	 * @since 2.0
 	 */
+	@Override
 	public void before(IResource resource) {
 		IProblemReporter problemReporter = CodanRuntime.getInstance().getProblemReporter();
 		this.problemReporter = problemReporter;
@@ -220,6 +224,7 @@ public abstract class AbstractChecker implements IChecker {
 	/**
 	 * @since 2.0
 	 */
+	@Override
 	public void after(IResource resource) {
 		if (problemReporter instanceof IProblemReporterSessionPersistent) {
 			// Delete general markers
@@ -241,6 +246,7 @@ public abstract class AbstractChecker implements IChecker {
 	 * @see IChecker#processResource(IResource, ICheckerInvocationContext)
 	 * @since 2.0
 	 */
+	@Override
 	public synchronized boolean processResource(IResource resource, ICheckerInvocationContext context)
 			throws OperationCanceledException {
 		this.setContext(context);

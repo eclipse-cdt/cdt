@@ -80,20 +80,24 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMember
 		return IIndexCPPBindingConstants.CPP_TEMPLATE_TYPE_PARAMETER;
 	}
 	
+	@Override
 	public short getParameterPosition() {
 		return (short) getParameterID();
 	}
 	
+	@Override
 	public short getTemplateNestingLevel() {
 		readParamID();
 		return (short)(getParameterID() >> 16);
 	}
 	
+	@Override
 	public boolean isParameterPack() {
 		readParamID();
 		return (fCachedParamID & PACK_BIT) != 0;
 	}
 
+	@Override
 	public int getParameterID() {
 		readParamID();
 		return fCachedParamID & ~PACK_BIT;
@@ -123,6 +127,7 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMember
 		list.accept(visitor);
 	}
 	
+	@Override
 	public boolean isSameType(IType type) {
 		if (type instanceof ITypedef) {
 			return type.isSameType(this);
@@ -134,6 +139,7 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMember
         return getParameterID() == ((ICPPTemplateParameter) type).getParameterID();
 	}
 
+	@Override
 	public IType getDefault() {
 		try {
 			return getLinkage().loadType(record + DEFAULT_TYPE);
@@ -143,6 +149,7 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMember
 		return null;
 	}
 		
+	@Override
 	public ICPPTemplateArgument getDefaultValue() {
 		IType d= getDefault();
 		if (d == null)
@@ -156,6 +163,7 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMember
 		throw new UnsupportedOperationException(); 
 	}
 
+	@Override
 	public ICPPScope asScope() {
 		if (fUnknownScope == null) {
 			fUnknownScope= new PDOMCPPUnknownScope(this, new CPPASTName(getNameCharArray()));
@@ -163,10 +171,12 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMember
 		return fUnknownScope;
 	}
 
+	@Override
 	public IASTName getUnknownName() {
 		return new CPPASTName(getNameCharArray());
 	}
 
+	@Override
 	public void configure(ICPPTemplateParameter param) {
 		try {
 			ICPPTemplateArgument val= param.getDefaultValue();
@@ -198,6 +208,7 @@ class PDOMCPPTemplateTypeParameter extends PDOMCPPBinding implements IPDOMMember
 		}
 	}
 	
+	@Override
 	public void forceDelete(PDOMLinkage linkage) throws CoreException {
 		getDBName().delete();
 		getLinkage().storeType(record + DEFAULT_TYPE, null);

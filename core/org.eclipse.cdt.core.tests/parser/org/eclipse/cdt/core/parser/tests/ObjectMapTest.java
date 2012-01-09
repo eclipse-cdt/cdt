@@ -28,7 +28,8 @@ public class ObjectMapTest extends TestCase {
         HashObject( int h ){
             hash = h;
         }
-        public int hashCode(){
+        @Override
+		public int hashCode(){
             return hash;
         }
         final public int hash;

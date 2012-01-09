@@ -25,31 +25,38 @@ public class CompositeCPPMethodTemplateSpecialization
 		super(cf, ft);
 	}
 	
+	@Override
 	public boolean isDestructor() {
 		return ((ICPPMethod)rbinding).isDestructor();
 	}
 
+	@Override
 	public boolean isImplicit() {
 		return ((ICPPMethod)rbinding).isImplicit();
 	}
 
+	@Override
 	public boolean isExplicit() {
 		return ((ICPPMethod)rbinding).isExplicit();
 	}
 
+	@Override
 	public boolean isVirtual() {
 		return ((ICPPMethod)rbinding).isVirtual();
 	}
 
+	@Override
 	public ICPPClassType getClassOwner() {
 		IIndexFragmentBinding rowner = (IIndexFragmentBinding) ((ICPPMethod)rbinding).getClassOwner();
 		return (ICPPClassType) cf.getCompositeBinding(rowner);
 	}
 
+	@Override
 	public int getVisibility() {
 		return ((ICPPMethod)rbinding).getVisibility();
 	}
 
+	@Override
 	public boolean isPureVirtual() {
 		return ((ICPPMethod)rbinding).isPureVirtual();
 	}

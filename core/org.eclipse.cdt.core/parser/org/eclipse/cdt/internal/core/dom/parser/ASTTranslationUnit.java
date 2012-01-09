@@ -91,7 +91,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 		if (d != null) {
 			d.setParent(this);
 			d.setPropertyInParent(OWNED_DECLARATION);
-			fAllDeclarations = (IASTDeclaration[]) ArrayUtil.append(IASTDeclaration.class,
+			fAllDeclarations = ArrayUtil.appendAt(IASTDeclaration.class,
 					fAllDeclarations, ++fLastDeclaration, d);
 			fActiveDeclarations= null;
 		}
@@ -110,7 +110,7 @@ public abstract class ASTTranslationUnit extends ASTNode implements IASTTranslat
 	@Override
 	public final IASTDeclaration[] getDeclarations(boolean includeInactive) {
 		if (includeInactive) {
-			fAllDeclarations= (IASTDeclaration[]) ArrayUtil.removeNullsAfter(IASTDeclaration.class,
+			fAllDeclarations= ArrayUtil.trimAt(IASTDeclaration.class,
 					fAllDeclarations, fLastDeclaration);
 			return fAllDeclarations;
 		}

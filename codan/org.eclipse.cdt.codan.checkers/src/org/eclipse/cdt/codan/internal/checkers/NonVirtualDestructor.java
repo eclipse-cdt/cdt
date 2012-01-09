@@ -34,6 +34,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 public class NonVirtualDestructor extends AbstractIndexAstChecker {
 	public static final String PROBLEM_ID = "org.eclipse.cdt.codan.internal.checkers.NonVirtualDestructorProblem"; //$NON-NLS-1$
 
+	@Override
 	public void processAst(IASTTranslationUnit ast) {
 		// Traverse the AST using the visitor pattern.
 		ast.accept(new OnEachClass());
@@ -70,6 +71,7 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 			shouldVisitDeclSpecifiers = true;
 		}
 
+		@Override
 		public int visit(IASTDeclSpecifier decl) {
 			if (decl instanceof ICPPASTCompositeTypeSpecifier) {
 				ICPPASTCompositeTypeSpecifier spec = (ICPPASTCompositeTypeSpecifier) decl;

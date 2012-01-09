@@ -93,6 +93,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 
 	private static final Comparator<CompletionProposalCategory> ORDER_COMPARATOR= new Comparator<CompletionProposalCategory>() {
 
+		@Override
 		public int compare(CompletionProposalCategory d1, CompletionProposalCategory d2) {
 			return d1.getSortOrder() - d2.getSortOrder();
 		}
@@ -126,6 +127,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 			/*
 			 * @see org.eclipse.jface.text.contentassist.ICompletionListener#assistSessionStarted(org.eclipse.jface.text.contentassist.ContentAssistEvent)
 			 */
+			@Override
 			public void assistSessionStarted(ContentAssistEvent event) {
 				if (event.processor != ContentAssistProcessor.this)
 					return;
@@ -165,6 +167,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 			/*
 			 * @see org.eclipse.jface.text.contentassist.ICompletionListener#assistSessionEnded(org.eclipse.jface.text.contentassist.ContentAssistEvent)
 			 */
+			@Override
 			public void assistSessionEnded(ContentAssistEvent event) {
 				if (event.processor != ContentAssistProcessor.this)
 					return;
@@ -192,6 +195,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 			/*
 			 * @see org.eclipse.jface.text.contentassist.ICompletionListener#selectionChanged(org.eclipse.jface.text.contentassist.ICompletionProposal, boolean)
 			 */
+			@Override
 			public void selectionChanged(ICompletionProposal proposal, boolean smartToggle) {}
 			
 		});
@@ -200,6 +204,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 	/*
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeCompletionProposals(org.eclipse.jface.text.ITextViewer, int)
 	 */
+	@Override
 	public final ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
 		long start= DEBUG ? System.currentTimeMillis() : 0;
 		
@@ -294,6 +299,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 	/*
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeContextInformation(org.eclipse.jface.text.ITextViewer, int)
 	 */
+	@Override
 	public IContextInformation[] computeContextInformation(ITextViewer viewer, int offset) {
 		clearState();
 
@@ -360,6 +366,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 	/*
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
 	 */
+	@Override
 	public char[] getCompletionProposalAutoActivationCharacters() {
 		return fCompletionAutoActivationCharacters;
 	}
@@ -367,6 +374,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 	/*
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getContextInformationAutoActivationCharacters()
 	 */
+	@Override
 	public char[] getContextInformationAutoActivationCharacters() {
 		return null;
 	}
@@ -374,6 +382,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 	/*
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getErrorMessage()
 	 */
+	@Override
 	public String getErrorMessage() {
 		if (fNumberOfComputedResults > 0)
 			return null;
@@ -385,6 +394,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 	/*
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getContextInformationValidator()
 	 */
+	@Override
 	public IContextInformationValidator getContextInformationValidator() {
 		return null;
 	}

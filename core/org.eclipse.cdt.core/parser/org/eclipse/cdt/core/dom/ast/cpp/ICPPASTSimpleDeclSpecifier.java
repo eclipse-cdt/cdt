@@ -23,11 +23,13 @@ public interface ICPPASTSimpleDeclSpecifier extends IASTSimpleDeclSpecifier, ICP
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICPPASTSimpleDeclSpecifier copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICPPASTSimpleDeclSpecifier copy(CopyStyle style);
 
 	/**

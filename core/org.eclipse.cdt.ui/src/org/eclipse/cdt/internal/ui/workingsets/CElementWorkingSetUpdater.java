@@ -43,9 +43,11 @@ public class CElementWorkingSetUpdater implements IWorkingSetUpdater, IElementCh
 
 	private static class SingletonRule implements ISchedulingRule {
 		public static final ISchedulingRule INSTANCE = new SingletonRule();
+		@Override
 		public boolean contains(ISchedulingRule rule) {
 			return rule == this;
 		}
+		@Override
 		public boolean isConflicting(ISchedulingRule rule) {
 			return rule == this;
 		}
@@ -114,6 +116,7 @@ public class CElementWorkingSetUpdater implements IWorkingSetUpdater, IElementCh
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void add(final IWorkingSet workingSet) {
 		// delay the check for existence - this may be called very early in the bootstrap
 		// otherwise it is causing all kinds of weird exceptions
@@ -135,6 +138,7 @@ public class CElementWorkingSetUpdater implements IWorkingSetUpdater, IElementCh
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean remove(IWorkingSet workingSet) {
 		boolean result;
 		synchronized(fWorkingSets) {
@@ -146,6 +150,7 @@ public class CElementWorkingSetUpdater implements IWorkingSetUpdater, IElementCh
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean contains(IWorkingSet workingSet) {
 		synchronized(fWorkingSets) {
 			return fWorkingSets.contains(workingSet);
@@ -155,6 +160,7 @@ public class CElementWorkingSetUpdater implements IWorkingSetUpdater, IElementCh
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void dispose() {
 		synchronized(fWorkingSets) {
 			fWorkingSets.clear();
@@ -165,6 +171,7 @@ public class CElementWorkingSetUpdater implements IWorkingSetUpdater, IElementCh
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void elementChanged(ElementChangedEvent event) {
 		IWorkingSet[] workingSets;
 		synchronized(fWorkingSets) {

@@ -32,34 +32,42 @@ public class CompositeCPPClassTemplatePartialSpecializationSpecialization extend
 		super(cf, rbinding);
 	}
 
+	@Override
 	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() {
 		return ICPPClassTemplatePartialSpecialization.EMPTY_PARTIAL_SPECIALIZATION_ARRAY;
 	}
 
+	@Override
 	public ICPPTemplateParameter[] getTemplateParameters() {
 		return TemplateInstanceUtil.convert(cf, ((ICPPClassTemplate) rbinding).getTemplateParameters());
 	}
 
+	@Override
 	public ICPPTemplateInstance getInstance(ICPPTemplateArgument[] arguments) {
 		return CompositeInstanceCache.getCache(cf, rbinding).getInstance(arguments);	
 	}
 
+	@Override
 	public void addInstance(ICPPTemplateArgument[] arguments, ICPPTemplateInstance instance) {
 		CompositeInstanceCache.getCache(cf, rbinding).addInstance(arguments, instance);	
 	}
 
+	@Override
 	public ICPPTemplateInstance[] getAllInstances() {
 		return CompositeInstanceCache.getCache(cf, rbinding).getAllInstances();
 	}
 
+	@Override
 	public ICPPClassTemplate getPrimaryClassTemplate() {
 		return (ICPPClassTemplate) cf.getCompositeBinding((IIndexFragmentBinding) ((ICPPClassTemplatePartialSpecializationSpecialization) rbinding).getPrimaryClassTemplate());
 	}
 
+	@Override
 	public ICPPTemplateArgument[] getTemplateArguments() {
 		return TemplateInstanceUtil.getTemplateArguments(cf, (ICPPClassTemplatePartialSpecialization) rbinding);
 	}
 
+	@Override
 	public ICPPDeferredClassInstance asDeferredInstance() throws DOMException  {
 		CompositeInstanceCache cache= CompositeInstanceCache.getCache(cf, rbinding);
 		synchronized (cache) {
@@ -77,6 +85,7 @@ public class CompositeCPPClassTemplatePartialSpecializationSpecialization extend
 		return new CPPDeferredClassInstance(this, args, getCompositeScope());
 	}
 	
+	@Override
 	@Deprecated
 	public IType[] getArguments() {
 		return TemplateInstanceUtil.getArguments(cf, (ICPPClassTemplatePartialSpecialization) rbinding);

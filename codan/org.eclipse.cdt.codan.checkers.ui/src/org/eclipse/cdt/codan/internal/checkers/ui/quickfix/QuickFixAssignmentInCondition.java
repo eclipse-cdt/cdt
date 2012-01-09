@@ -22,6 +22,7 @@ import org.eclipse.jface.text.IDocument;
  * quick fix for assignment in condition
  */
 public class QuickFixAssignmentInCondition extends AbstractCodanCMarkerResolution {
+	@Override
 	public String getLabel() {
 		return Messages.QuickFixAssignmentInCondition_Message;
 	}

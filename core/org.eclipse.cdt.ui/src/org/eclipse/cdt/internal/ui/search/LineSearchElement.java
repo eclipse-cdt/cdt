@@ -82,6 +82,7 @@ public class LineSearchElement extends PDOMSearchElement {
 	}
 
 	private static final class MatchesComparator implements Comparator<Match> {
+		@Override
 		public int compare(Match m1, Match m2) {
 			int diff= m1.getOffset() - m2.getOffset();
 			if (diff == 0)

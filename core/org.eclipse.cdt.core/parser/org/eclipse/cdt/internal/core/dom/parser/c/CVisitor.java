@@ -631,10 +631,10 @@ public class CVisitor extends ASTQueries {
 		IField[] fields = ct.getFields();
 		for (IField field : fields) {
 			if (matcher.match(field.getNameCharArray())) {
-		        result = (IBinding[]) ArrayUtil.append(IBinding.class, result, field);
+		        result = ArrayUtil.append(IBinding.class, result, field);
 		    }
 		}
-		return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
+		return ArrayUtil.trim(IBinding.class, result);
 	}
 	
 	static IType getPtrDiffType(IASTBinaryExpression expr) {
@@ -1087,7 +1087,7 @@ public class CVisitor extends ASTQueries {
 					final char[] n= b.getNameCharArray();
 					// consider binding only if no binding with the same name was found in another scope.
 					if (!handled.containsKey(n)) {
-						result= (IBinding[]) ArrayUtil.append(IBinding.class, result, b);
+						result= ArrayUtil.append(IBinding.class, result, b);
 					}
 				}
 				// store names of bindings
@@ -1099,7 +1099,7 @@ public class CVisitor extends ASTQueries {
 			scope= scope.getParent();
 		}
 		
-		return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
+		return ArrayUtil.trim(IBinding.class, result);
 	}
 
 	private static IBinding externalBinding(IASTTranslationUnit tu, IASTName name) {
@@ -1488,7 +1488,7 @@ public class CVisitor extends ASTQueries {
 			} catch (DOMException e) {
 	        }
         }
-        return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
+        return ArrayUtil.trim(IBinding.class, result);
     }
     
 	private static IBinding[] findBindingForContentAssist(ICASTFieldDesignator fd, boolean isPrefix) {

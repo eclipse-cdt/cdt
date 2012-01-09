@@ -33,19 +33,23 @@ public class CPPFunctionInstance extends CPPFunctionSpecialization implements IC
 		fArguments = args;
 	}
 
+	@Override
 	public ICPPTemplateDefinition getTemplateDefinition() {
 		return (ICPPTemplateDefinition) getSpecializedBinding();
 	}
 
+	@Override
 	@Deprecated
 	public IType[] getArguments() {
 		return CPPTemplates.getArguments(fArguments);
 	}
 
+	@Override
 	public ICPPTemplateArgument[] getTemplateArguments() {
 		return fArguments;
 	}
 
+	@Override
 	public boolean isExplicitSpecialization() {
 		if (getDefinition() != null)
 			return true;

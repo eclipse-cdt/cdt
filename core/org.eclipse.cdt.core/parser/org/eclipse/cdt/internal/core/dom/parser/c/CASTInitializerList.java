@@ -32,10 +32,12 @@ public class CASTInitializerList extends ASTNode implements IASTInitializerList,
     private int initializersPos=-1;
     private int actualSize;
 
+	@Override
 	public CASTInitializerList copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CASTInitializerList copy(CopyStyle style) {
 		CASTInitializerList copy = new CASTInitializerList();
 		for (IASTInitializerClause initializer : getClauses())
@@ -48,10 +50,12 @@ public class CASTInitializerList extends ASTNode implements IASTInitializerList,
 		return copy;
 	}
 	
+	@Override
 	public int getSize() {
 		return actualSize;
 	}
 
+	@Override
 	public IASTInitializerClause[] getClauses() {
 		if (initializers == null)
 			return IASTExpression.EMPTY_EXPRESSION_ARRAY;
@@ -59,6 +63,7 @@ public class CASTInitializerList extends ASTNode implements IASTInitializerList,
 		return initializers;
 	}
 
+	@Override
 	@Deprecated
 	public IASTInitializer[] getInitializers() {
 		IASTInitializerClause[] clauses= getClauses();
@@ -80,16 +85,18 @@ public class CASTInitializerList extends ASTNode implements IASTInitializerList,
 		return inits;
 	}
 
+	@Override
 	public void addClause(IASTInitializerClause d) {
         assertNotFrozen();
     	if (d != null) {
-    		initializers = (IASTInitializerClause[]) ArrayUtil.append( IASTInitializerClause.class, initializers, ++initializersPos, d );
+    		initializers = ArrayUtil.appendAt( IASTInitializerClause.class, initializers, ++initializersPos, d );
     		d.setParent(this);
 			d.setPropertyInParent(NESTED_INITIALIZER);
     	}
     	actualSize++;
     }
 
+	@Override
 	@Deprecated
 	public void addInitializer(IASTInitializer d) {
         assertNotFrozen();
@@ -126,6 +133,7 @@ public class CASTInitializerList extends ASTNode implements IASTInitializerList,
         return true;
     }
 
+	@Override
 	public void replace(IASTNode child, IASTNode other) {
 		if (initializers != null) {
 			for (int i = 0; i < initializers.length; ++i) {

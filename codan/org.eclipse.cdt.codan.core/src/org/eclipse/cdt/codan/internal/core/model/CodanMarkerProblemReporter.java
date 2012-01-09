@@ -60,10 +60,12 @@ public class CodanMarkerProblemReporter extends AbstractProblemReporter implemen
 		this.checker = checker;
 	}
 
+	@Override
 	public IResource getResource() {
 		return resource;
 	}
 
+	@Override
 	public IChecker getChecker() {
 		return checker;
 	}
@@ -89,6 +91,7 @@ public class CodanMarkerProblemReporter extends AbstractProblemReporter implemen
 		}
 	}
 
+	@Override
 	public void deleteProblems(IResource file) {
 		try {
 			file.deleteMarkers(GENERIC_CODE_ANALYSIS_MARKER_TYPE, true, IResource.DEPTH_ZERO);
@@ -97,6 +100,7 @@ public class CodanMarkerProblemReporter extends AbstractProblemReporter implemen
 		}
 	}
 
+	@Override
 	public void deleteAllProblems() {
 		try {
 			ResourcesPlugin.getWorkspace().getRoot().deleteMarkers(GENERIC_CODE_ANALYSIS_MARKER_TYPE,
@@ -106,9 +110,11 @@ public class CodanMarkerProblemReporter extends AbstractProblemReporter implemen
 		}
 	}
 
+	@Override
 	public void deleteProblems(final IResource file, final IChecker checker) {
 		try {
 			ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					Collection<IMarker> markers = findResourceMarkers(file, checker);
 					for (Iterator<IMarker> iterator = markers.iterator(); iterator.hasNext();) {
@@ -156,15 +162,18 @@ public class CodanMarkerProblemReporter extends AbstractProblemReporter implemen
 	 * @return session aware problem reporter
 	 * @since 1.1
 	 */
+	@Override
 	public IProblemReporterSessionPersistent createReporter(IResource resource, IChecker checker) {
 		return new CodanMarkerProblemReporter(resource, checker);
 	}
 
+	@Override
 	public void start() {
 		if (checker == null)
 			deleteProblems(false);
 	}
 
+	@Override
 	public void done() {
 		if (checker != null) {
 			if (toAdd.size() == 0)
@@ -178,6 +187,7 @@ public class CodanMarkerProblemReporter extends AbstractProblemReporter implemen
 	protected void reconcileMarkers() {
 		try {
 			ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					Collection<IMarker> markers = findResourceMarkers(resource, checker);
 					for (Iterator<IMarker> iterator = markers.iterator(); iterator.hasNext();) {
@@ -271,6 +281,7 @@ public class CodanMarkerProblemReporter extends AbstractProblemReporter implemen
 	 *
 	 * @see IProblemReporterSessionPersistent#deleteProblems(boolean)
 	 */
+	@Override
 	public void deleteProblems(boolean all) {
 		if (all)
 			throw new UnsupportedOperationException();

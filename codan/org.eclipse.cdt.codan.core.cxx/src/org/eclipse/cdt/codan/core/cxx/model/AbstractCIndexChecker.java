@@ -53,6 +53,7 @@ public abstract class AbstractCIndexChecker extends AbstractCheckerWithProblemPr
 		}
 	}
 
+	@Override
 	public synchronized boolean processResource(IResource resource) {
 		if (resource instanceof IFile) {
 			IFile file = (IFile) resource;

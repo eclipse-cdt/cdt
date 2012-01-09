@@ -42,11 +42,13 @@ public interface ICPPASTConstructorInitializer extends IASTInitializer {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICPPASTConstructorInitializer copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICPPASTConstructorInitializer copy(CopyStyle style);
 
 

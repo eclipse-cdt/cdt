@@ -81,7 +81,7 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 	@Override
 	public Map<String, String> getValues() {
 		Map<String, String> retMap = new HashMap<String, String>();
-		retMap.put(uiAttributes.get(InputUIElement.ID), textValue);
+		retMap.put(uiAttributes.get(UIElement.ID), textValue);
 
 		return retMap;
 	}
@@ -93,7 +93,7 @@ public class UITextWidget extends InputUIElement implements ModifyListener {
 	 */
 	@Override
 	public void setValues(Map<String, String> valueMap) {
-		String val = valueMap.get(uiAttributes.get(InputUIElement.ID));
+		String val = valueMap.get(uiAttributes.get(UIElement.ID));
 		String key = null;
 		String subString = null;
 		if (val != null) {

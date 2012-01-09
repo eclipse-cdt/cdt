@@ -89,10 +89,12 @@ public interface IASTIfStatement extends IASTStatement {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IASTIfStatement copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public IASTIfStatement copy(CopyStyle style);
 }

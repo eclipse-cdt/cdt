@@ -72,7 +72,8 @@ public abstract class AsyncTreeContentProvider implements ITreeContentProvider {
      * It returns <code>null</code> for all other elements. It should be overridden and
      * called by derived classes.
      */
-    public Object getParent(Object element) {
+    @Override
+	public Object getParent(Object element) {
         if (element instanceof AsyncTreeWorkInProgressNode) {
             AsyncTreeWorkInProgressNode wipNode = (AsyncTreeWorkInProgressNode) element;
             return wipNode.getParent();
@@ -151,7 +152,8 @@ public abstract class AsyncTreeContentProvider implements ITreeContentProvider {
         }
     }
     
-    final public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+    @Override
+	final public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
         if (newInput != oldInput) {
             clear();
             fInput= newInput;
@@ -168,11 +170,13 @@ public abstract class AsyncTreeContentProvider implements ITreeContentProvider {
         return fInput;
     }
     
-    final public Object[] getElements(Object inputElement) {
+    @Override
+	final public Object[] getElements(Object inputElement) {
         return getChildren(inputElement);
     }
 
-    final public Object[] getChildren(Object parentElement) {
+    @Override
+	final public Object[] getChildren(Object parentElement) {
         Object[] children = internalGetChildren(parentElement);
         if (children == null) {
             scheduleQuery(parentElement, PRIORITY_HIGH);
@@ -181,7 +185,8 @@ public abstract class AsyncTreeContentProvider implements ITreeContentProvider {
         return children;
     }
 
-    final public boolean hasChildren(Object element) {
+    @Override
+	final public boolean hasChildren(Object element) {
         assert Display.getCurrent() != null;
 
         Object[] children= internalGetChildren(element);
@@ -192,7 +197,8 @@ public abstract class AsyncTreeContentProvider implements ITreeContentProvider {
         return children.length > 0;
     }
 
-    public void dispose() {
+    @Override
+	public void dispose() {
         fTreeViewer= null;
         clear();
     }
@@ -243,7 +249,8 @@ public abstract class AsyncTreeContentProvider implements ITreeContentProvider {
                 return;
             }
             runme= fScheduledViewupdate= new Runnable(){
-                public void run() {
+                @Override
+				public void run() {
                     HashMap<Object, Object[]> updates= null;
                     synchronized(fHighPriorityTasks) {
                         if (fViewUpdates.isEmpty()) {
@@ -343,7 +350,8 @@ public abstract class AsyncTreeContentProvider implements ITreeContentProvider {
                 final Object[] finalChildren= children;
                 fChildNodes.put(parentElement, children);
                 fDisplay.asyncExec(new Runnable() {
-                    public void run() {
+                    @Override
+					public void run() {
                         checkForAutoExpand(finalChildren);
                     }});
             }

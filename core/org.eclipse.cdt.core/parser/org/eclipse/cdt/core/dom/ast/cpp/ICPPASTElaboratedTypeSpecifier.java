@@ -34,11 +34,13 @@ public interface ICPPASTElaboratedTypeSpecifier extends
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICPPASTElaboratedTypeSpecifier copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICPPASTElaboratedTypeSpecifier copy(CopyStyle style);
 
 }

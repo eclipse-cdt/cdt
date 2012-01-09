@@ -85,6 +85,7 @@ public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandA
 	/*
 	 * @see ICompletionProposal#apply(IDocument)
 	 */
+	@Override
 	public void apply(IDocument document) {
 		try {
 			performChange(CUIPlugin.getActivePage().getActiveEditor(), document);
@@ -149,6 +150,7 @@ public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandA
 	/*
 	 * @see ICompletionProposal#getAdditionalProposalInfo()
 	 */
+	@Override
 	public String getAdditionalProposalInfo() {
 		StringBuffer buf= new StringBuffer();
 		buf.append("<p>"); //$NON-NLS-1$
@@ -175,6 +177,7 @@ public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandA
 	/*
 	 * @see ICompletionProposal#getContextInformation()
 	 */
+	@Override
 	public IContextInformation getContextInformation() {
 		return null;
 	}
@@ -182,6 +185,7 @@ public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandA
 	/*
 	 * @see ICompletionProposal#getDisplayString()
 	 */
+	@Override
 	public String getDisplayString() {
 		String shortCutString= CorrectionCommandHandler.getShortCutString(getCommandId());
 		if (shortCutString != null) {
@@ -193,6 +197,7 @@ public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandA
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension6#getStyledDisplayString()
 	 */
+	@Override
 	public StyledString getStyledDisplayString() {
 		StyledString str= new StyledString(getName());
 		
@@ -216,6 +221,7 @@ public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandA
 	/*
 	 * @see ICompletionProposal#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return fImage;
 	}
@@ -223,6 +229,7 @@ public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandA
 	/*
 	 * @see ICompletionProposal#getSelection(IDocument)
 	 */
+	@Override
 	public Point getSelection(IDocument document) {
 		return null;
 	}
@@ -276,6 +283,7 @@ public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandA
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.text.c.ICCompletionProposal#getRelevance()
 	 */
+	@Override
 	public int getRelevance() {
 		return fRelevance;
 	}
@@ -291,6 +299,7 @@ public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandA
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.ui.text.correction.IShortcutProposal#getProposalId()
 	 */
+	@Override
 	public String getCommandId() {
 		return fCommandId;
 	}
@@ -305,6 +314,7 @@ public class ChangeCorrectionProposal implements ICCompletionProposal, ICommandA
 		fCommandId= commandId;
 	}
 
+	@Override
 	public String getIdString() {
 		return fCommandId;
 	}

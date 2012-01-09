@@ -7,10 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Sergey Prigogin, Google
+ *     Sergey Prigogin (Google)
  *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.preferences;
 
 import java.util.ArrayList;
@@ -53,7 +52,6 @@ import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
  * @since 4.0
  */
 abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlock {
-
 	/**
 	 * Use as follows:
 	 * 
@@ -73,9 +71,9 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 	protected final class SectionManager {
 		/** The preference setting for keeping no section open. */
 		private static final String __NONE= "__none"; //$NON-NLS-1$
-		private Set<ExpandableComposite> fSections= new HashSet<ExpandableComposite>();
+		private final Set<ExpandableComposite> fSections= new HashSet<ExpandableComposite>();
 		private boolean fIsBeingManaged= false;
-		private ExpansionAdapter fListener= new ExpansionAdapter() {
+		private final ExpansionAdapter fListener= new ExpansionAdapter() {
 			@Override
 			public void expansionStateChanged(ExpansionEvent e) {
 				ExpandableComposite source= (ExpandableComposite) e.getSource();
@@ -107,10 +105,12 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 				}
 			}
 		};
+
 		private Composite fBody;
 		private final String fLastOpenKey;
 		private final IPreferenceStore fDialogSettingsStore;
-		private ExpandableComposite fFirstChild= null;
+		private ExpandableComposite fFirstChild;
+
 		/**
 		 * Creates a new section manager.
 		 */
@@ -203,12 +203,15 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 	}
 
 	protected static final int INDENT= 20;
-	private OverlayPreferenceStore fStore;
+	private final OverlayPreferenceStore fStore;
 	
-	private Map<Object, String> fCheckBoxes= new HashMap<Object, String>();
-	private SelectionListener fCheckBoxListener= new SelectionListener() {
+	private final Map<Object, String> fCheckBoxes= new HashMap<Object, String>();
+	private final SelectionListener fCheckBoxListener= new SelectionListener() {
+		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
+
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Button button= (Button) e.widget;
 			fStore.setValue(fCheckBoxes.get(button), button.getSelection());
@@ -216,16 +219,18 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 	};
 	
 	
-	private Map<Object, String> fTextFields= new HashMap<Object, String>();
-	private ModifyListener fTextFieldListener= new ModifyListener() {
+	private final Map<Object, String> fTextFields= new HashMap<Object, String>();
+	private final ModifyListener fTextFieldListener= new ModifyListener() {
+		@Override
 		public void modifyText(ModifyEvent e) {
 			Text text= (Text) e.widget;
 			fStore.setValue(fTextFields.get(text), text.getText());
 		}
 	};
 
-	private ArrayList<Text> fNumberFields= new ArrayList<Text>();
-	private ModifyListener fNumberFieldListener= new ModifyListener() {
+	private final ArrayList<Text> fNumberFields= new ArrayList<Text>();
+	private final ModifyListener fNumberFieldListener= new ModifyListener() {
+		@Override
 		public void modifyText(ModifyEvent e) {
 			numberFieldChanged((Text) e.widget);
 		}
@@ -237,7 +242,7 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 	 * @see #createDependency(Button, Control)
 	 * @since 3.0
 	 */
-	private ArrayList<Object> fMasterSlaveListeners= new ArrayList<Object>();
+	private final ArrayList<Object> fMasterSlaveListeners= new ArrayList<Object>();
 	
 	private StatusInfo fStatus;
 	private final PreferencePage fMainPage;
@@ -322,8 +327,8 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 	 * @param isNumber		<code>true</code> iff this text field is used to e4dit a number
 	 * @return the controls added
 	 */
-	protected Control[] addLabelledTextField(Composite composite, String label, String key, int textLimit, int indentation, boolean isNumber) {
-		
+	protected Control[] addLabelledTextField(Composite composite, String label, String key,
+			int textLimit, int indentation, boolean isNumber) {
 		PixelConverter pixelConverter= new PixelConverter(composite);
 		
 		Label labelControl= new Label(composite, SWT.NONE);
@@ -356,6 +361,7 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 		Assert.isTrue(slaves.length > 0);
 		indent(slaves[0]);
 		SelectionListener listener= new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean state= master.getSelection();
 				for (Control slave : slaves) {
@@ -363,6 +369,7 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 				}
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {}
 		};
 		master.addSelectionListener(listener);
@@ -370,15 +377,15 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 	}
 
 	protected static void indent(Control control) {
-		((GridData) control.getLayoutData()).horizontalIndent+= INDENT;
+		((GridData) control.getLayoutData()).horizontalIndent += INDENT;
 	}
 
+	@Override
 	public void initialize() {
 		initializeFields();
 	}
 
 	private void initializeFields() {
-		
 		Iterator<Object> iter= fCheckBoxes.keySet().iterator();
 		while (iter.hasNext()) {
 			Button b= (Button) iter.next();
@@ -403,9 +410,11 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
         updateStatus(new StatusInfo());
 	}
 
+	@Override
 	public void performOk() {
 	}
 
+	@Override
 	public void performDefaults() {
 		initializeFields();
 	}
@@ -416,9 +425,7 @@ abstract class AbstractConfigurationBlock implements IPreferenceConfigurationBlo
 		return fStatus;
 	}
 
-	/*
-	 * @see org.eclipse.cdt.internal.ui.preferences.IPreferenceConfigurationBlock#dispose()
-	 */
+	@Override
 	public void dispose() {
 	}
 	

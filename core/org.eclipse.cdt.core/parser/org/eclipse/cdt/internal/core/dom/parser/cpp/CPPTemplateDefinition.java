@@ -227,7 +227,7 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 					result = (ICPPTemplateParameter[]) ArrayUtil.append(ICPPTemplateParameter.class, result, p);
 				}
 			}
-			templateParameters = (ICPPTemplateParameter[]) ArrayUtil.trim(ICPPTemplateParameter.class, result);
+			templateParameters = ArrayUtil.trim(ICPPTemplateParameter.class, result);
 		}
 		return templateParameters;
 	}
@@ -271,9 +271,9 @@ public abstract class CPPTemplateDefinition extends PlatformObject implements IC
 		} else {
 	        // keep the lowest offset declaration in[0]
 			if (declarations.length > 0 && ((ASTNode) node).getOffset() < ((ASTNode) declarations[0]).getOffset()) {
-				declarations = (IASTName[]) ArrayUtil.prepend(IASTName.class, declarations, declName);
+				declarations = ArrayUtil.prepend(IASTName.class, declarations, declName);
 			} else {
-				declarations = (IASTName[]) ArrayUtil.append(IASTName.class, declarations, declName);
+				declarations = ArrayUtil.append(IASTName.class, declarations, declName);
 			}
 	    }
 	}	

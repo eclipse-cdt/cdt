@@ -27,31 +27,38 @@ public class CompositeCPPFunctionInstance extends CompositeCPPFunction implement
 		super(cf, rbinding);
 	}
 
+	@Override
 	public ICPPTemplateDefinition getTemplateDefinition() {
 		return TemplateInstanceUtil.getTemplateDefinition(cf, rbinding);
 	}
 
+	@Override
 	public IBinding getSpecializedBinding() {
 		return TemplateInstanceUtil.getSpecializedBinding(cf, rbinding);
 	}
 	
+	@Override
 	public ICPPTemplateArgument[] getTemplateArguments() {
 		return TemplateInstanceUtil.getTemplateArguments(cf, (ICPPTemplateInstance) rbinding);
 	}
 
+	@Override
 	public ICPPTemplateParameterMap getTemplateParameterMap() {
 		return TemplateInstanceUtil.getTemplateParameterMap(cf, (ICPPTemplateInstance) rbinding);
 	}
 
+	@Override
 	public boolean isExplicitSpecialization() {
 		return ((ICPPTemplateInstance) rbinding).isExplicitSpecialization();
 	}
 
+	@Override
 	@Deprecated
 	public IType[] getArguments() {
 		return TemplateInstanceUtil.getArguments(cf, (ICPPTemplateInstance) rbinding);
 	}
 
+	@Override
 	@Deprecated
 	public ObjectMap getArgumentMap() {
 		return TemplateInstanceUtil.getArgumentMap(cf, rbinding);

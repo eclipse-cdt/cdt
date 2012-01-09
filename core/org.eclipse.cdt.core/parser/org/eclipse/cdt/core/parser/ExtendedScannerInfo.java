@@ -63,6 +63,7 @@ public class ExtendedScannerInfo extends ScannerInfo implements IExtendedScanner
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IExtendedScannerInfo#getMacroFiles()
 	 */
+	@Override
 	public String[] getMacroFiles() {
 		if (macroFiles == null)
 			return EMPTY_STRING_ARRAY;
@@ -72,6 +73,7 @@ public class ExtendedScannerInfo extends ScannerInfo implements IExtendedScanner
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IExtendedScannerInfo#getIncludeFiles()
 	 */
+	@Override
 	public String[] getIncludeFiles() {
 		if (includeFiles == null)
 			return EMPTY_STRING_ARRAY;
@@ -81,6 +83,7 @@ public class ExtendedScannerInfo extends ScannerInfo implements IExtendedScanner
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IExtendedScannerInfo#getLocalIncludePath()
 	 */
+	@Override
 	public String[] getLocalIncludePath() {
 		if (localIncludePaths == null)
 			return EMPTY_STRING_ARRAY;

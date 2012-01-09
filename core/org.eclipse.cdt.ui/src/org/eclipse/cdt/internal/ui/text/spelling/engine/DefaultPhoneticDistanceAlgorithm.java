@@ -38,6 +38,7 @@ public final class DefaultPhoneticDistanceAlgorithm implements IPhoneticDistance
 	/*
 	 * @see org.eclipse.spelling.done.IPhoneticDistanceAlgorithm#getDistance(java.lang.String,java.lang.String)
 	 */
+	@Override
 	public final int getDistance(final String from, final String to) {
 
 		final char[] first= (" " + from).toCharArray(); //$NON-NLS-1$

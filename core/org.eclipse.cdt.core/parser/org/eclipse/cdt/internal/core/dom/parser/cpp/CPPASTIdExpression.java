@@ -62,10 +62,12 @@ public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, ICP
 		setName(name);
 	}
 
+	@Override
 	public CPPASTIdExpression copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CPPASTIdExpression copy(CopyStyle style) {
 		CPPASTIdExpression copy = new CPPASTIdExpression(name == null ? null : name.copy());
 		copy.setOffsetAndLength(this);
@@ -75,11 +77,13 @@ public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, ICP
 		return copy;
 	}
 
+	@Override
 	public IASTName getName() {
         return name;
     }
 
-    public void setName(IASTName name) {
+    @Override
+	public void setName(IASTName name) {
         assertNotFrozen();
         this.name = name;
         if (name != null) {
@@ -110,11 +114,13 @@ public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, ICP
         return true;
     }
 
+	@Override
 	public int getRoleForName(IASTName n) {
 		if (name == n) return r_reference;
 		return r_unclear;
 	}
 
+	@Override
 	public IType getExpressionType() {
         IBinding binding = name.resolvePreBinding();
         if (binding instanceof CPPFunctionSet)
@@ -208,10 +214,12 @@ public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, ICP
 		return fTransformedExpression != null;
 	}
 
+	@Override
 	public boolean isLValue() {
 		return getValueCategory() == LVALUE;
 	}
 	
+	@Override
 	public ValueCategory getValueCategory() {
         IBinding binding = name.resolvePreBinding();
         if (checkForTransformation(binding)) {
@@ -226,6 +234,7 @@ public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, ICP
 		return ValueCategory.PRVALUE;
 	}
 
+	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix, String[] namespaces) {
 		return CPPSemantics.findBindingsForContentAssist(n, isPrefix, namespaces);
 	}
@@ -235,6 +244,7 @@ public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, ICP
 		return name != null ? name.toString() : "<unnamed>"; //$NON-NLS-1$
 	}
 	
+	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		return findBindings(n, isPrefix, null);
 	}

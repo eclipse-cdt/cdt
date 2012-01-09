@@ -45,10 +45,12 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 		setBaseType(baseType);
 	}
 	
+	@Override
 	public CPPASTEnumerationSpecifier copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CPPASTEnumerationSpecifier copy(CopyStyle style) {
 		CPPASTEnumerationSpecifier copy = new CPPASTEnumerationSpecifier(fIsScoped, fName == null
 				? null : fName.copy(style), fBaseType == null ? null : fBaseType.copy(style));
@@ -62,6 +64,7 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 		return copy;
 	}
 	
+	@Override
 	public boolean startValueComputation() {
 		if (fValuesComputed)
 			return false;
@@ -70,23 +73,26 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 		return true;
 	}
 
+	@Override
 	public void addEnumerator(IASTEnumerator enumerator) {
         assertNotFrozen();
 		if (enumerator != null) {
 			enumerator.setParent(this);
 			enumerator.setPropertyInParent(ENUMERATOR);
-			fItems = (IASTEnumerator[]) ArrayUtil.append( IASTEnumerator.class, fItems, ++fItemPos, enumerator );
+			fItems = ArrayUtil.appendAt( IASTEnumerator.class, fItems, ++fItemPos, enumerator );
 		}
 	}
 
+	@Override
 	public IASTEnumerator[] getEnumerators() {
 		if (fItems == null)
 			return IASTEnumerator.EMPTY_ENUMERATOR_ARRAY;
 		
-		fItems = (IASTEnumerator[]) ArrayUtil.removeNullsAfter(IASTEnumerator.class, fItems, fItemPos);
+		fItems = ArrayUtil.trimAt(IASTEnumerator.class, fItems, fItemPos);
 		return fItems;
 	}
 
+	@Override
 	public void setName(IASTName name) {
         assertNotFrozen();
 		fName = name;
@@ -96,6 +102,7 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 		}
 	}
 
+	@Override
 	public IASTName getName() {
 		return fName;
 	}
@@ -130,21 +137,25 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 		return true;
 	}
 
+	@Override
 	public int getRoleForName(IASTName n) {
 		if (fName == n)
 			return isOpaque() ? r_declaration : r_definition;
 		return r_unclear;
 	}
 
+	@Override
 	public void setIsScoped(boolean isScoped) {
 		assertNotFrozen();
 		fIsScoped= isScoped;
 	}
 
+	@Override
 	public boolean isScoped() {
 		return fIsScoped;
 	}
 
+	@Override
 	public void setBaseType(ICPPASTDeclSpecifier baseType) {
 		assertNotFrozen();
 		fBaseType= baseType;
@@ -154,19 +165,23 @@ public class CPPASTEnumerationSpecifier extends CPPASTBaseDeclSpecifier
 		}
 	}
 
+	@Override
 	public ICPPASTDeclSpecifier getBaseType() {
 		return fBaseType;
 	}
 
+	@Override
 	public void setIsOpaque(boolean isOpaque) {
 		assertNotFrozen();
 		fIsOpaque= isOpaque;
 	}
 
+	@Override
 	public boolean isOpaque() {
 		return fIsOpaque;
 	}
 
+	@Override
 	public ICPPScope getScope() {
 		if (isOpaque())
 			return null;

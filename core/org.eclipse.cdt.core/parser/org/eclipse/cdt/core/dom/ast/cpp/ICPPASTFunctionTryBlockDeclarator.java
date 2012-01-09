@@ -46,5 +46,6 @@ public interface ICPPASTFunctionTryBlockDeclarator extends
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICPPASTFunctionTryBlockDeclarator copy();
 }

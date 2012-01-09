@@ -37,10 +37,12 @@ public class CASTArrayModifier extends ASTNode implements ICASTArrayModifier, IA
 		setConstantExpression(exp);
 	}
 
+	@Override
 	public CASTArrayModifier copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CASTArrayModifier copy(CopyStyle style) {
 		CASTArrayModifier copy = new CASTArrayModifier(exp == null ? null : exp.copy(style));
 		copy.setOffsetAndLength(this);
@@ -55,11 +57,13 @@ public class CASTArrayModifier extends ASTNode implements ICASTArrayModifier, IA
 		return copy;
 	}
 	
-    public IASTExpression getConstantExpression() {
+    @Override
+	public IASTExpression getConstantExpression() {
         return exp;
     }
 
-    public void setConstantExpression(IASTExpression expression) {
+    @Override
+	public void setConstantExpression(IASTExpression expression) {
         assertNotFrozen();
         this.exp = expression;
         if(expression != null) {
@@ -68,47 +72,57 @@ public class CASTArrayModifier extends ASTNode implements ICASTArrayModifier, IA
         }
     }
 	
+	@Override
 	public boolean isConst() {
         return isConst;
     }
 
-    public boolean isStatic() {
+    @Override
+	public boolean isStatic() {
         return isStatic;
     }
 
-    public boolean isRestrict() {
+    @Override
+	public boolean isRestrict() {
         return isRestrict;
     }
 
-    public boolean isVolatile() {
+    @Override
+	public boolean isVolatile() {
         return isVolatile;
     }
 
-    public void setConst(boolean value) {
+    @Override
+	public void setConst(boolean value) {
         assertNotFrozen();
         this.isConst = value;
     }
 
-    public void setVolatile(boolean value) {
+    @Override
+	public void setVolatile(boolean value) {
         assertNotFrozen();
         this.isVolatile = value;
     }
 
-    public void setRestrict(boolean value) {
+    @Override
+	public void setRestrict(boolean value) {
         assertNotFrozen();
         this.isRestrict = value;
     }
 
-    public void setStatic(boolean value) {
+    @Override
+	public void setStatic(boolean value) {
         assertNotFrozen();
         this.isStatic = value;
     }
 
-    public boolean isVariableSized() {
+    @Override
+	public boolean isVariableSized() {
         return isVarSized;
     }
 
-    public void setVariableSized(boolean value) {
+    @Override
+	public void setVariableSized(boolean value) {
         assertNotFrozen();
         isVarSized = value;
     }
@@ -131,7 +145,8 @@ public class CASTArrayModifier extends ASTNode implements ICASTArrayModifier, IA
         return true;
     }
 
-    public void replace(IASTNode child, IASTNode other) {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
         if( child == exp )
         {
             other.setPropertyInParent( child.getPropertyInParent() );

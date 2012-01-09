@@ -84,7 +84,7 @@ public class CPPASTAmbiguousStatement extends ASTAmbiguousNode implements
 	public void addStatement(IASTStatement s) {
         assertNotFrozen();
     	if (s != null) {
-    		stmts = (IASTStatement[]) ArrayUtil.append( IASTStatement.class, stmts, ++stmtsPos, s );
+    		stmts = ArrayUtil.appendAt( IASTStatement.class, stmts, ++stmtsPos, s );
     		s.setParent(this);
 			s.setPropertyInParent(STATEMENT);
     	}
@@ -92,7 +92,7 @@ public class CPPASTAmbiguousStatement extends ASTAmbiguousNode implements
 
     @Override
 	public IASTStatement[] getStatements() {
-        stmts = (IASTStatement[]) ArrayUtil.removeNullsAfter( IASTStatement.class, stmts, stmtsPos );
+        stmts = ArrayUtil.trimAt( IASTStatement.class, stmts, stmtsPos );
     	return stmts;
     }
     

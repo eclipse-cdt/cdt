@@ -162,10 +162,12 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 		this(rhs.fqn, rhs.fileLocal, rhs.elementType, rhs.index, rhs.params, rhs.returnType, ref);
 	}
 
+	@Override
 	public int getCElementType() {
 		return elementType;
 	}
 
+	@Override
 	public ICProject getEnclosingProject() {
 		if(getResolvedReference()!=null) {
 			IProject project = reference.getProject();
@@ -176,10 +178,12 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 		return null;
 	}
 
+	@Override
 	public String getName() {
 		return fqn[fqn.length-1];
 	}
 
+	@Override
 	public IQualifiedTypeName getQualifiedTypeName() {
 		return new QualifiedTypeName(fqn);
 	}
@@ -187,6 +191,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	/*
 	 * @see org.eclipse.cdt.internal.core.browser.IFunctionInfo#getParameters()
 	 */
+	@Override
 	public String[] getParameters() {
 		return params;
 	}
@@ -194,6 +199,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	/*
 	 * @see org.eclipse.cdt.internal.core.browser.IFunctionInfo#getReturnType()
 	 */
+	@Override
 	public String getReturnType() {
 		return returnType;
 	}
@@ -242,6 +248,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 		return fileLocal != null;
 	}
 
+	@Override
 	public ITypeReference getResolvedReference() {
 		if(reference==null) {
 			if (elementType == ICElement.C_MACRO) {
@@ -369,6 +376,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 		return null;
 	}
 
+	@Override
 	public ITypeReference[] getReferences() {
 		if (elementType == ICElement.C_MACRO) {
 			return getMacroReferences();
@@ -472,6 +480,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public void addDerivedReference(ITypeReference location) {
 		throw new UnsupportedOperationException();
@@ -481,6 +490,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public void addReference(ITypeReference location) {
 		throw new UnsupportedOperationException();
@@ -490,6 +500,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public boolean canSubstituteFor(ITypeInfo info) {
 		throw new UnsupportedOperationException();
@@ -499,6 +510,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public boolean encloses(ITypeInfo info) {
 		throw new UnsupportedOperationException();
@@ -508,6 +520,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public boolean exists() {
 		throw new UnsupportedOperationException();
@@ -517,6 +530,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public ITypeReference[] getDerivedReferences() {
 		throw new UnsupportedOperationException();
@@ -526,6 +540,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public ITypeInfo[] getEnclosedTypes() {
 		throw new UnsupportedOperationException();
@@ -535,6 +550,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public ITypeInfo[] getEnclosedTypes(int[] kinds) {
 		throw new UnsupportedOperationException();
@@ -544,6 +560,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public ITypeInfo getEnclosingNamespace(boolean includeGlobalNamespace) {
 		throw new UnsupportedOperationException();
@@ -554,6 +571,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public ITypeInfo getEnclosingType() {
 		// TODO not sure
@@ -564,6 +582,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public ITypeInfo getEnclosingType(int[] kinds) {
 		throw new UnsupportedOperationException();
@@ -574,6 +593,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public ITypeInfo getRootNamespace(boolean includeGlobalNamespace) {
 		throw new UnsupportedOperationException();
@@ -583,6 +603,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public ITypeInfo[] getSubTypes() {
 		throw new UnsupportedOperationException();
@@ -592,6 +613,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public ASTAccessVisibility getSuperTypeAccess(ITypeInfo subType) {
 		throw new UnsupportedOperationException();
@@ -601,6 +623,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public ITypeInfo[] getSuperTypes() {
 		throw new UnsupportedOperationException();
@@ -610,6 +633,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public boolean hasEnclosedTypes() {
 		throw new UnsupportedOperationException();
@@ -619,6 +643,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public boolean hasSubTypes() {
 		throw new UnsupportedOperationException();
@@ -628,6 +653,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public boolean hasSuperTypes() {
 		throw new UnsupportedOperationException();
@@ -637,6 +663,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public boolean isClass() {
 		throw new UnsupportedOperationException();
@@ -646,6 +673,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public boolean isEnclosed(ITypeInfo info) {
 		throw new UnsupportedOperationException();
@@ -655,6 +683,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public boolean isEnclosed(ITypeSearchScope scope) {
 		throw new UnsupportedOperationException();
@@ -664,6 +693,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public boolean isEnclosedType() {
 		throw new UnsupportedOperationException();
@@ -673,6 +703,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public boolean isEnclosingType() {
 		throw new UnsupportedOperationException();
@@ -682,6 +713,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public boolean isReferenced(ITypeSearchScope scope) {
 		throw new UnsupportedOperationException();
@@ -691,6 +723,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public boolean isUndefinedType() {
 		throw new UnsupportedOperationException();
@@ -700,6 +733,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public void setCElementType(int type) {
 		throw new UnsupportedOperationException();

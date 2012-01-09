@@ -46,9 +46,11 @@ class IndexedFilesCache implements IIndexChangeListener, IIndexerStateListener, 
 	private static final String DECORATOR_ID = "org.eclipse.cdt.ui.indexedFiles"; //$NON-NLS-1$
 	private static final IndexedFilesCache INSTANCE = new IndexedFilesCache();
 	private static final ISchedulingRule RULE = new ISchedulingRule() {
+		@Override
 		public boolean contains(ISchedulingRule rule) {
 			return rule == this;
 		}
+		@Override
 		public boolean isConflicting(ISchedulingRule rule) {
 			return rule == this;
 		}
@@ -155,6 +157,7 @@ class IndexedFilesCache implements IIndexChangeListener, IIndexerStateListener, 
 		}
 	}
 
+	@Override
 	public void indexChanged(IIndexChangeEvent e) {
 		// the index manager has reported a change to an index
 		ICProject cproject= e.getAffectedProject();
@@ -200,6 +203,7 @@ class IndexedFilesCache implements IIndexChangeListener, IIndexerStateListener, 
 		}
 	}
 
+	@Override
 	public void indexChanged(IIndexerStateEvent event) {
 		if (event.indexerIsIdle()) {
 			checkTriggerDecorator(0);
@@ -236,6 +240,7 @@ class IndexedFilesCache implements IIndexChangeListener, IIndexerStateListener, 
 			final IWorkbench workbench= PlatformUI.getWorkbench();
 			try {
 				workbench.getDisplay().asyncExec(new Runnable(){
+					@Override
 					public void run() {
 						workbench.getDecoratorManager().update(DECORATOR_ID);			
 					}
@@ -264,6 +269,7 @@ class IndexedFilesCache implements IIndexChangeListener, IIndexerStateListener, 
 		return h1 + ifl.getURI().hashCode();
 	}
 
+	@Override
 	public void labelProviderChanged(LabelProviderChangedEvent event) {
 		final Object src= event.getSource();
 		if (src instanceof IDecoratorManager) {

@@ -97,6 +97,7 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 		}
 	}
 
+	@Override
 	public boolean isSameType(IType object) {
 		if (object == this)
 			return true;
@@ -118,34 +119,42 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 		return fModifiers == t.getModifiers();
 	}
 
+	@Override
 	public Kind getKind() {
 		return fKind;
 	}
 	
+	@Override
 	public boolean isSigned() {
 		return (fModifiers & IS_SIGNED) != 0;
 	}
 
+	@Override
 	public boolean isUnsigned() {
 		return (fModifiers & IS_UNSIGNED) != 0;
 	}
 
+	@Override
 	public boolean isShort() {
 		return (fModifiers & IS_SHORT) != 0;
 	}
 
+	@Override
 	public boolean isLong() {
 		return (fModifiers & IS_LONG) != 0;
 	}
 
+	@Override
 	public boolean isLongLong() {
 		return (fModifiers & IS_LONG_LONG) != 0;
 	}
 
+	@Override
 	public boolean isComplex() {
 		return (fModifiers & IS_COMPLEX) != 0;
 	}
 
+	@Override
 	public boolean isImaginary() {
 		return (fModifiers & IS_IMAGINARY) != 0;
 	}
@@ -172,6 +181,7 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 		return fExpression;
 	}
 	
+	@Override
 	public int getModifiers() {
 		return fModifiers;
 	}
@@ -181,6 +191,7 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 		return ASTTypeUtil.getType(this);
 	}
 	
+	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
 		final int kind= getKind().ordinal();
 		final int shiftedKind=  kind * ITypeMarshalBuffer.FLAG1;
@@ -207,11 +218,13 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
 		return new CPPBasicType(Kind.values()[kind], modifiers);
 	}
 
+	@Override
 	@Deprecated
 	public int getQualifierBits() {
 		return getModifiers();
 	}
 
+	@Override
 	@Deprecated
 	public int getType() {
 		switch (fKind) {
@@ -240,6 +253,7 @@ public class CPPBasicType implements ICPPBasicType, ISerializableType {
     /**
      * @deprecated types don't have values
      */
+	@Override
 	@Deprecated
 	public IASTExpression getValue() {
 		return fExpression;

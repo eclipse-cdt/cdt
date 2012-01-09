@@ -98,10 +98,12 @@ public class ErrorParserManagerTest extends TestCase {
 		cProject = createProject("errorparsersanity");
 		markerGenerator = new IMarkerGenerator() {
 
+			@Override
 			public void addMarker(IResource file, int lineNumber, String errorDesc, int severity, String errorVar) {
 				// Obsolete
 			}
 
+			@Override
 			public void addMarker(ProblemMarkerInfo problemMarkerInfo) {
 				errorList.add(problemMarkerInfo);
 
@@ -210,10 +212,12 @@ public class ErrorParserManagerTest extends TestCase {
 
 	public static class TestParser1 implements IErrorParser2 {
 		String last = null;
+		@Override
 		public int getProcessLineBehaviour() {
 			return KEEP_UNTRIMMED;
 		}
 
+		@Override
 		public boolean processLine(String line, ErrorParserManager eoParser) {
 			if (line.startsWith(" ") && last!=null) {
 				eoParser.generateExternalMarker(null, 1, last+line, 1, "", null);
@@ -242,10 +246,12 @@ public class ErrorParserManagerTest extends TestCase {
 	}
 	
 	public static class TestParser2 implements IErrorParser2 {
+		@Override
 		public int getProcessLineBehaviour() {
 			return KEEP_LONGLINES;
 		}
 
+		@Override
 		public boolean processLine(String line, ErrorParserManager eoParser) {
 			if (line.startsWith("errorT: ")) {
 				eoParser.generateExternalMarker(null, 1, line, 1, "", null);
@@ -274,10 +280,12 @@ public class ErrorParserManagerTest extends TestCase {
 		assertEquals("a la la 99",end);
 	}
 	public static class TestParser3 implements IErrorParser2 {
+		@Override
 		public int getProcessLineBehaviour() {
 			return KEEP_LONGLINES | KEEP_UNTRIMMED;
 		}
 
+		@Override
 		public boolean processLine(String line, ErrorParserManager eoParser) {
 			if (line.startsWith("errorT: ")) {
 				eoParser.generateExternalMarker(null, 1, line, 1, "", null);
@@ -307,6 +315,7 @@ public class ErrorParserManagerTest extends TestCase {
 	}
 
 	public static class TestParser4 implements IErrorParser {
+		@Override
 		public boolean processLine(String line, ErrorParserManager eoParser) {
 			ProblemMarkerInfo problemMarkerInfo = new ProblemMarkerInfo(null, 0, "Workspace level marker", IMarker.SEVERITY_INFO, null);
 			eoParser.addProblemMarker(problemMarkerInfo);

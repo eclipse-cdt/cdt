@@ -26,23 +26,28 @@ public class BaseClassInfo implements IBaseClassInfo {
         fIsVirtual = isVirtual;
     }
 
-    public ITypeInfo getType() {
+    @Override
+	public ITypeInfo getType() {
         return fType;
     }
     
-    public ASTAccessVisibility getAccess() {
+    @Override
+	public ASTAccessVisibility getAccess() {
         return fAccess;
     }
     
+	@Override
 	public boolean isVirtual() {
 	    return fIsVirtual;
 	}
 
-    public void setAccess(ASTAccessVisibility access) {
+    @Override
+	public void setAccess(ASTAccessVisibility access) {
         fAccess = access;
     }
 
-    public void setVirtual(boolean isVirtual) {
+    @Override
+	public void setVirtual(boolean isVirtual) {
         fIsVirtual = isVirtual;
     }
 }

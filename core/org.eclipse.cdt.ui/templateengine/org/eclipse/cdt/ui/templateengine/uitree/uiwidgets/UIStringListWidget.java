@@ -141,7 +141,7 @@ public class UIStringListWidget extends InputUIElement {
 	}
 
 	protected PatternEvent createPatternEvent() {
-		String msg= MessageFormat.format("Please add an item to {0}", new String[] {label.getText()}); //$NON-NLS-1$
+		String msg= MessageFormat.format("Please add an item to {0}", label.getText()); //$NON-NLS-1$
 		return new PatternEvent(this, msg, isValid());
 	}
 

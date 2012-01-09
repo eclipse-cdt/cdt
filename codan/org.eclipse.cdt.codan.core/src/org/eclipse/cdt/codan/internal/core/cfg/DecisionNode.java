@@ -44,6 +44,7 @@ public class DecisionNode extends AbstractSingleIncomingNode implements IDecisio
 	 * @seeorg.eclipse.cdt.codan.provisional.core.model.cfg.IBasicBlock#
 	 * getOutgoingIterator()
 	 */
+	@Override
 	public IBasicBlock[] getOutgoingNodes() {
 		return next.toArray(new IBasicBlock[next.size()]);
 	}
@@ -53,6 +54,7 @@ public class DecisionNode extends AbstractSingleIncomingNode implements IDecisio
 	 * 
 	 * @see org.eclipse.cdt.codan.core.model.cfg.IBasicBlock#getOutgoingSize ()
 	 */
+	@Override
 	public int getOutgoingSize() {
 		return next.size();
 	}
@@ -63,6 +65,7 @@ public class DecisionNode extends AbstractSingleIncomingNode implements IDecisio
 	 * @seeorg.eclipse.cdt.codan.provisional.core.model.cfg.IDecisionNode#
 	 * getConnectionNode()
 	 */
+	@Override
 	public IConnectorNode getMergeNode() {
 		return conn;
 	}

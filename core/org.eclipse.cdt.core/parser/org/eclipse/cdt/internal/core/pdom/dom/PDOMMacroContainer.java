@@ -114,6 +114,7 @@ public class PDOMMacroContainer extends PDOMNamedNode implements IIndexMacroCont
 		super.delete(linkage);
 	}
 
+	@Override
 	public int getBindingConstant() {
 		return IIndexBindingConstants.MACRO_CONTAINER;
 	}
@@ -121,30 +122,37 @@ public class PDOMMacroContainer extends PDOMNamedNode implements IIndexMacroCont
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.index.IIndexFragmentBinding#getFragment()
 	 */
+	@Override
 	public IIndexFragment getFragment() {
 		return getPDOM();
 	}
 
+	@Override
 	public IIndexScope getScope() {
 		return null;
 	}
 
+	@Override
 	public boolean hasDeclaration() throws CoreException {
 		return false;
 	}
 
+	@Override
 	public boolean hasDefinition() throws CoreException {
 		return getDB().getRecPtr(record + FIRST_DEF_OFFSET) != 0;
 	}
 
+	@Override
 	public IIndexFile getLocalToFile() throws CoreException {
 		return null;
 	}
 
+	@Override
 	public String[] getQualifiedName() {
 		return new String[]{getName()};
 	}
 
+	@Override
 	public boolean isFileLocal() throws CoreException {
 		return false;
 	}
@@ -159,10 +167,12 @@ public class PDOMMacroContainer extends PDOMNamedNode implements IIndexMacroCont
 		return CharArrayUtils.EMPTY;
 	}
 
+	@Override
 	public String getName() {
 		return new String(getNameCharArray());
 	}
 
+	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Object getAdapter(Class adapter) {
 		if (adapter.isAssignableFrom(PDOMMacroContainer.class)) {

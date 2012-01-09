@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.preferences;
 
 import java.util.ArrayList;
@@ -44,14 +43,15 @@ import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey
  * @since 5.0
  */
 class MarkOccurrencesConfigurationBlock implements IPreferenceConfigurationBlock {
-
-	private OverlayPreferenceStore fStore;
+	private final OverlayPreferenceStore fStore;
 	
-	
-	private Map<Object, String> fCheckBoxes= new HashMap<Object, String>();
-	private SelectionListener fCheckBoxListener= new SelectionListener() {
+	private final Map<Object, String> fCheckBoxes= new HashMap<Object, String>();
+	private final SelectionListener fCheckBoxListener= new SelectionListener() {
+		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
+
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Button button= (Button) e.widget;
 			fStore.setValue(fCheckBoxes.get(button), button.getSelection());
@@ -63,7 +63,7 @@ class MarkOccurrencesConfigurationBlock implements IPreferenceConfigurationBlock
 	 * 
 	 * @see #createDependency(Button, String, Control)
 	 */
-	private ArrayList<Object> fMasterSlaveListeners= new ArrayList<Object>();
+	private final ArrayList<Object> fMasterSlaveListeners= new ArrayList<Object>();
 	
 	private StatusInfo fStatus;
 
@@ -93,8 +93,8 @@ class MarkOccurrencesConfigurationBlock implements IPreferenceConfigurationBlock
 	 * @param parent the parent composite
 	 * @return the control for the preference page
 	 */
+	@Override
 	public Control createControl(final Composite parent) {
-	
 		Composite composite= new Composite(parent, SWT.NONE);
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 1;
@@ -166,10 +166,12 @@ class MarkOccurrencesConfigurationBlock implements IPreferenceConfigurationBlock
 		boolean masterState= fStore.getBoolean(masterKey);
 		slave.setEnabled(masterState);
 		SelectionListener listener= new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				slave.setEnabled(master.getSelection());
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {}
 		};
 		master.addSelectionListener(listener);
@@ -182,6 +184,7 @@ class MarkOccurrencesConfigurationBlock implements IPreferenceConfigurationBlock
 		control.setLayoutData(gridData);		
 	}
 
+	@Override
 	public void initialize() {
 		initializeFields();
 	}
@@ -204,9 +207,11 @@ class MarkOccurrencesConfigurationBlock implements IPreferenceConfigurationBlock
         
 	}
 
+	@Override
 	public void performOk() {
 	}
 
+	@Override
 	public void performDefaults() {
 		restoreFromPreferences();
 		initializeFields();
@@ -225,6 +230,7 @@ class MarkOccurrencesConfigurationBlock implements IPreferenceConfigurationBlock
 	/*
 	 * @see org.eclipse.jdt.internal.ui.preferences.IPreferenceConfigurationBlock#dispose()
 	 */
+	@Override
 	public void dispose() {
 	}
 }

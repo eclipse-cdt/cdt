@@ -62,7 +62,6 @@ import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ContainerNode;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ProblemRuntimeException;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 import org.eclipse.cdt.internal.core.dom.rewrite.util.FileHelper;
-import org.eclipse.cdt.internal.formatter.CCodeFormatter;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.Assert;
@@ -89,7 +88,7 @@ public class ChangeGenerator extends ASTVisitor {
 	private CompositeChange change;
 
 	private final ASTModificationStore modificationStore;
-	private NodeCommentMap commentMap;
+	private final NodeCommentMap commentMap;
 
 	{
 		shouldVisitArrayModifiers= true;
@@ -372,7 +371,7 @@ public class ChangeGenerator extends ASTVisitor {
 					DefaultCodeFormatterConstants.FALSE);
 			CodeFormatter formatter = ToolFactory.createCodeFormatter(options);
 			code = document.get();
-			TextEdit[] formatEdits = formatter.format(CCodeFormatter.K_TRANSLATION_UNIT, code,
+			TextEdit[] formatEdits = formatter.format(CodeFormatter.K_TRANSLATION_UNIT, code,
 					regionsAfter, TextUtilities.getDefaultLineDelimiter(document));
 
 			// For each of the regions we apply formatting changes and create a ReplaceEdit using

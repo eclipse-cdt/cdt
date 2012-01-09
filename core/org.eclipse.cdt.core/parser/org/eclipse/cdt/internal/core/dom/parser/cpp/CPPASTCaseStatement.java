@@ -31,10 +31,12 @@ public class CPPASTCaseStatement extends ASTNode implements IASTCaseStatement, I
 		setExpression(expression);
 	}
 	
+	@Override
 	public CPPASTCaseStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CPPASTCaseStatement copy(CopyStyle style) {
 		CPPASTCaseStatement copy = new CPPASTCaseStatement(expression == null ? null
 				: expression.copy(style));
@@ -45,11 +47,13 @@ public class CPPASTCaseStatement extends ASTNode implements IASTCaseStatement, I
 		return copy;
 	}
 
+	@Override
 	public IASTExpression getExpression() {
         return expression;
     }
 
-    public void setExpression(IASTExpression expression) {
+    @Override
+	public void setExpression(IASTExpression expression) {
         assertNotFrozen();
         this.expression = expression;
         if (expression != null) {
@@ -79,7 +83,8 @@ public class CPPASTCaseStatement extends ASTNode implements IASTCaseStatement, I
         return true;
     }
 
-    public void replace(IASTNode child, IASTNode other) {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
         if( child == expression )
         {
             other.setPropertyInParent( child.getPropertyInParent() );

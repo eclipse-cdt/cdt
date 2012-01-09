@@ -36,10 +36,12 @@ public class CPPASTUsingDirective extends ASTNode implements
 		setQualifiedName(name);
 	}
 
+	@Override
 	public CPPASTUsingDirective copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CPPASTUsingDirective copy(CopyStyle style) {
 		CPPASTUsingDirective copy = new CPPASTUsingDirective(name == null ? null : name.copy(style));
 		copy.setOffsetAndLength(this);
@@ -49,11 +51,13 @@ public class CPPASTUsingDirective extends ASTNode implements
 		return copy;
 	}
 
+	@Override
 	public IASTName getQualifiedName() {
         return name;
     }
 
-    public void setQualifiedName(IASTName qualifiedName) {
+    @Override
+	public void setQualifiedName(IASTName qualifiedName) {
         assertNotFrozen();
         this.name = qualifiedName;
         if (qualifiedName != null) {
@@ -86,12 +90,14 @@ public class CPPASTUsingDirective extends ASTNode implements
     }
 
 
+	@Override
 	public int getRoleForName(IASTName n) {
 		if( n == name )
 			return r_reference;
 		return r_unclear;
 	}
 
+	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix, String[] namespaces) {
 		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix, namespaces);
 		List<IBinding> filtered = new ArrayList<IBinding>();
@@ -105,6 +111,7 @@ public class CPPASTUsingDirective extends ASTNode implements
 		return filtered.toArray(new IBinding[filtered.size()]);
 	}
 	
+	@Override
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		return findBindings(n, isPrefix, null);
 	}

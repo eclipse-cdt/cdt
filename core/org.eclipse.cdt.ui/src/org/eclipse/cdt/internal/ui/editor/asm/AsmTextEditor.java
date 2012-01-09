@@ -78,6 +78,7 @@ public class AsmTextEditor extends TextEditor implements ISelectionChangedListen
 		/*
 		 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 		 */
+		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			AsmTextEditor.this.selectionChanged();
 		}
@@ -391,6 +392,7 @@ public class AsmTextEditor extends TextEditor implements ISelectionChangedListen
 	 * React to changed selection in the outline view.
 	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		ISelection sel = event.getSelection();
 		if (sel instanceof IStructuredSelection) {

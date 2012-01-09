@@ -54,10 +54,12 @@ public interface ICPPASTWhileStatement extends IASTWhileStatement {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICPPASTWhileStatement copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICPPASTWhileStatement copy(CopyStyle style);
 }

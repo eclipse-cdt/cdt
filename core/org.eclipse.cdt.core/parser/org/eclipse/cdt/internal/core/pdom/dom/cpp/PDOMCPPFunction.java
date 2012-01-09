@@ -208,6 +208,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		getLinkage().storeType(record+FUNCTION_TYPE, ft);
 	}
 	
+	@Override
 	public int getSignatureHash() throws CoreException {
 		return getDB().getInt(record + SIGNATURE_HASH);
 	}
@@ -235,11 +236,13 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		return rec != 0 ? new PDOMCPPParameter(getLinkage(), rec, type) : null;
 	}
 	
+	@Override
 	public boolean isInline() {
 		return getBit(getAnnotation(), PDOMCAnnotation.INLINE_OFFSET);
 	}
 
 	
+	@Override
 	public int getRequiredArgumentCount() {
 		if (fRequiredArgCount == -1) {
 			try {
@@ -262,18 +265,22 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		return fAnnotation;
 	}
 
+	@Override
 	public boolean isExternC() {
 		return getBit(getAnnotation(), PDOMCPPAnnotation.EXTERN_C_OFFSET);
 	}
 
+	@Override
 	public boolean isMutable() {
 		return false;
 	}
 
+	@Override
 	public IScope getFunctionScope() {
 		return null;
 	}
 
+	@Override
 	public ICPPParameter[] getParameters() {
 		try {
 			PDOMLinkage linkage= getLinkage();
@@ -298,6 +305,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		}
 	}
 
+	@Override
 	public final ICPPFunctionType getType() {	
 		if (fType == null) {
 			try {
@@ -310,32 +318,39 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		return fType;
 	}
 	
+	@Override
 	public boolean isAuto() {
 		// ISO/IEC 14882:2003 7.1.1.2
 		return false; 
 	}
 
+	@Override
 	public boolean isDeleted() {
 		return getBit(getAnnotation(), ANNOT_IS_DELETED);
 	}
 	
+	@Override
 	public boolean isExtern() {
 		return getBit(getAnnotation(), PDOMCAnnotation.EXTERN_OFFSET);
 	}
 
+	@Override
 	public boolean isRegister() {
 		// ISO/IEC 14882:2003 7.1.1.2
 		return false; 
 	}
 
+	@Override
 	public boolean isStatic() {
 		return getBit(getAnnotation(), PDOMCAnnotation.STATIC_OFFSET);
 	}
 
+	@Override
 	public boolean takesVarArgs() {
 		return getBit(getAnnotation(), PDOMCAnnotation.VARARGS_OFFSET);
 	}
 
+	@Override
 	public boolean hasParameterPack() {
 		return getBit(getAnnotation(), ANNOT_PARAMETER_PACK);
 	}
@@ -367,6 +382,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		return 0;
 	}
 
+	@Override
 	public IType[] getExceptionSpecification() {
 		try {
 			final long rec = getPDOM().getDB().getRecPtr(record+EXCEPTION_SPEC);

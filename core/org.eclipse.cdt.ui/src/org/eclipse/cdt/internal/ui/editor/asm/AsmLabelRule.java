@@ -48,6 +48,7 @@ final class AsmLabelRule implements IRule {
 	/*
 	 * @see IRule#evaluate
 	 */
+	@Override
 	public IToken evaluate(ICharacterScanner scanner) {
 		int c= scanner.read();
 		if (fDetector.isWordStart((char) c)) {

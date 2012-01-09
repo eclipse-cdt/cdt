@@ -77,6 +77,7 @@ public abstract class CElementGrouping extends WorkbenchAdapter implements IAdap
 	/*
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(Class)
 	 */
+	@Override
 	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class clas) {
 		if (clas == IWorkbenchAdapter.class)

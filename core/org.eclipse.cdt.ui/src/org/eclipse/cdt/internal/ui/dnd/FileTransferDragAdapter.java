@@ -55,18 +55,22 @@ public class FileTransferDragAdapter implements TransferDragSourceListener {
 		Assert.isNotNull(provider);
 	}
 
+	@Override
 	public Transfer getTransfer() {
 		return FileTransfer.getInstance();
 	}
 
+	@Override
 	public void dragStart(DragSourceEvent event) {
 		event.doit = !getResources().isEmpty();
 	}
 
+	@Override
 	public void dragSetData(DragSourceEvent event) {
 		event.data = getResourceLocations(getResources());
 	}
 
+	@Override
 	public void dragFinished(DragSourceEvent event) {
 		if (event.doit) {
 			if (event.detail == DND.DROP_MOVE) {

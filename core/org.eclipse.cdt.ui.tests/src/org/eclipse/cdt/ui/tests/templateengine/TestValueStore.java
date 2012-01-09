@@ -24,6 +24,7 @@ public class TestValueStore extends BaseTestCase {
 	/**
 	 * setUp is called before execution of test method.
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 	}
@@ -31,6 +32,7 @@ public class TestValueStore extends BaseTestCase {
 	/**
 	 * release resources held.
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 	}

@@ -1128,10 +1128,10 @@
           <keywordReference id="org.eclipse.cdt.ui.common"/>
       </page>
       <page
-            name="%CodeFormatterPreferencePage.name"
+            name="%CodeStylePreferencePage.name"
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
-            class="org.eclipse.cdt.internal.ui.preferences.CodeFormatterPreferencePage"
-            id="org.eclipse.cdt.ui.preferences.CodeFormatterPreferencePage">
+            class="org.eclipse.cdt.internal.ui.preferences.CodeStylePreferencePage"
+            id="org.eclipse.cdt.ui.preferences.CodeStylePreferencePage">
           <keywordReference id="org.eclipse.cdt.ui.codestyle"/>
           <keywordReference id="org.eclipse.cdt.ui.common"/>
       </page>
@@ -1197,15 +1197,23 @@
       </page>
       <page
             name="%codeTemplatePreferencePage.name"
-            category="org.eclipse.cdt.ui.preferences.CodeFormatterPreferencePage"
+            category="org.eclipse.cdt.ui.preferences.CodeStylePreferencePage"
             class="org.eclipse.cdt.internal.ui.preferences.CodeTemplatePreferencePage"
             id="org.eclipse.cdt.ui.preferences.CodeTemplatePreferencePage">
           <keywordReference id="org.eclipse.cdt.ui.codetemplates"/>
           <keywordReference id="org.eclipse.cdt.ui.common"/>
       </page>
       <page
+            name="%codeFormatterPreferencePage.name"
+            category="org.eclipse.cdt.ui.preferences.CodeStylePreferencePage"
+            class="org.eclipse.cdt.internal.ui.preferences.CodeFormatterPreferencePage"
+            id="org.eclipse.cdt.ui.preferences.CodeFormatterPreferencePage">
+          <keywordReference id="org.eclipse.cdt.ui.codestyle"/>
+          <keywordReference id="org.eclipse.cdt.ui.common"/>
+      </page>
+      <page
             name="%nameStylePreferencePage.name"
-            category="org.eclipse.cdt.ui.preferences.CodeFormatterPreferencePage"
+            category="org.eclipse.cdt.ui.preferences.CodeStylePreferencePage"
             class="org.eclipse.cdt.internal.ui.preferences.NameStylePreferencePage"
             id="org.eclipse.cdt.ui.preferences.NameStylePreferencePage">
           <keywordReference id="org.eclipse.cdt.ui.namestyle"/>
@@ -1264,6 +1272,9 @@
       <keyword
             label="%preferenceKeywords.namestyle"
             id="org.eclipse.cdt.ui.namestyle"/>
+      <keyword
+            label="%preferenceKeywords.codeformatter"
+            id="org.eclipse.cdt.ui.codeformatter"/>
       <keyword
             label="%preferenceKeywords.todo"
             id="org.eclipse.cdt.ui.todo"/>            

@@ -95,9 +95,9 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNodeFactory;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVariableReadWriteFlags;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 
-import org.eclipse.cdt.internal.ui.refactoring.ClassMemberInserter;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoringDescription;
+import org.eclipse.cdt.internal.ui.refactoring.ClassMemberInserter;
 import org.eclipse.cdt.internal.ui.refactoring.Container;
 import org.eclipse.cdt.internal.ui.refactoring.MethodContext;
 import org.eclipse.cdt.internal.ui.refactoring.MethodContext.ContextType;
@@ -389,7 +389,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 	}
 
 	private IASTBinaryExpression getRootBinExp(IASTBinaryExpression binExp, List<IASTNode> nodeList) {
-		while(binExp.getParent() instanceof IASTBinaryExpression && nodeList.contains(((IASTBinaryExpression) binExp.getParent()).getOperand2())) {
+		while (binExp.getParent() instanceof IASTBinaryExpression && nodeList.contains(((IASTBinaryExpression) binExp.getParent()).getOperand2())) {
 			binExp = (IASTBinaryExpression) binExp.getParent();
 		}
 		return binExp;
@@ -412,10 +412,10 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		}
 	}
 
-	private void createMethodDeclaration(final IASTName astMethodName,
-			MethodContext context, ModificationCollector collector) {
-		ICPPASTCompositeTypeSpecifier classDeclaration = (ICPPASTCompositeTypeSpecifier) context
-				.getMethodDeclaration().getParent();
+	private void createMethodDeclaration(final IASTName astMethodName, MethodContext context,
+			ModificationCollector collector) {
+		ICPPASTCompositeTypeSpecifier classDeclaration =
+				(ICPPASTCompositeTypeSpecifier) context.getMethodDeclaration().getParent();
 
 		IASTSimpleDeclaration methodDeclaration = getDeclaration(collector, astMethodName);
 
@@ -831,7 +831,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 
 			@Override
 			public int visit(IASTStatement stmt) {
-				if ( SelectionHelper.isSelectedFile(region, stmt, file)) {
+				if (SelectionHelper.isSelectedFile(region, stmt, file)) {
 					container.add(stmt);
 					return PROCESS_SKIP;
 				}
@@ -875,7 +875,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 	@Override
 	protected RefactoringDescriptor getRefactoringDescriptor() {
 		Map<String, String> arguments = getArgumentMap();
-		RefactoringDescriptor desc = new ExtractFunctionRefactoringDescription( project.getProject().getName(), "Extract Method Refactoring", "Create method " + info.getMethodName(), arguments);  //$NON-NLS-1$//$NON-NLS-2$
+		RefactoringDescriptor desc = new ExtractFunctionRefactoringDescription(project.getProject().getName(), "Extract Method Refactoring", "Create method " + info.getMethodName(), arguments);  //$NON-NLS-1$//$NON-NLS-2$
 		return desc;
 	}
 

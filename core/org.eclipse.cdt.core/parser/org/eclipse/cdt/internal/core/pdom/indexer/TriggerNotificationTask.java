@@ -31,20 +31,24 @@ public class TriggerNotificationTask implements IPDOMIndexerTask {
 		fPDOM= pdom;
 	}
 
+	@Override
 	public IPDOMIndexer getIndexer() {
 		return null;
 	}
 
+	@Override
 	public IndexerProgress getProgressInformation() {
 		return new IndexerProgress();
 	}
 
+	@Override
 	public void run(IProgressMonitor monitor) {
 		ChangeEvent event= new ChangeEvent();
 		event.setReloaded();
 		fManager.handleChange(fPDOM, event);
 	}
 
+	@Override
 	public boolean acceptUrgentTask(IPDOMIndexerTask task) {
 		return false;
 	}

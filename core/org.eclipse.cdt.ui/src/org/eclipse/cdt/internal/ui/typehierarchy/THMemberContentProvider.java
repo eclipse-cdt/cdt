@@ -21,15 +21,18 @@ public class THMemberContentProvider implements IStructuredContentProvider {
 	public THMemberContentProvider() {
 	}
     
-    final public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+    @Override
+	final public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
     	fModel= (THHierarchyModel) newInput;
     }
 
-    public void dispose() {
+    @Override
+	public void dispose() {
     	fModel= null;
     }
 
-    final public Object[] getElements(Object inputElement) {
+    @Override
+	final public Object[] getElements(Object inputElement) {
     	if (fModel == null) {
     		return NO_CHILDREN;
     	}

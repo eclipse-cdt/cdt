@@ -38,6 +38,7 @@ public class WorkingSetPropertyTester extends PropertyTester {
 		super();
 	}
 
+	@Override
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
 		if (P_HAS_C_PROJECTS.equals(property)) {
 			return hasCProjects(getWorkingSet(receiver));

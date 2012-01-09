@@ -149,7 +149,7 @@ public class DOMASTNodeLeaf implements IAdaptable {
 				}				
 			} 
 			if (!done) {
-				search.addAll(Arrays.asList((Class<?>[])clazz.getInterfaces()));
+				search.addAll(Arrays.asList(clazz.getInterfaces()));
 				final Class<?> superclass = clazz.getSuperclass();
 				if (superclass != null)
 					search.add(superclass);
@@ -325,6 +325,7 @@ public class DOMASTNodeLeaf implements IAdaptable {
 		return name;
 	}
 	
+	@Override
 	public Object getAdapter(@SuppressWarnings("rawtypes") Class key) {
 		if (key == IPropertySource.class)
 			return new ASTPropertySource(getNode());
@@ -404,9 +405,11 @@ public class DOMASTNodeLeaf implements IAdaptable {
 			this.node = node;
 		}
 		
+		@Override
 		public Object getEditableValue() {
 			return null;
 		}
+		@Override
 		public IPropertyDescriptor[] getPropertyDescriptors() {
             if (node instanceof IASTTranslationUnit) // skip the properties for the TU (too expensive)
                 return BLANK_DESCRIPTORS;
@@ -417,20 +420,20 @@ public class DOMASTNodeLeaf implements IAdaptable {
 				IPropertyDescriptor[] desc = getPropertyDescriptors(((IASTName)node).resolveBinding());
 				if (desc != null)
 					for (IPropertyDescriptor element : desc)
-						descriptors = (IPropertyDescriptor[])ArrayUtil.append(IPropertyDescriptor.class, descriptors, element);
+						descriptors = ArrayUtil.append(IPropertyDescriptor.class, descriptors, element);
 				desc = getPropertyDescriptors(node);
 				if (desc != null)
 					for (IPropertyDescriptor element : desc)
-						descriptors = (IPropertyDescriptor[])ArrayUtil.append(IPropertyDescriptor.class, descriptors, element);
+						descriptors = ArrayUtil.append(IPropertyDescriptor.class, descriptors, element);
 				
 			} else {
 				IPropertyDescriptor[] desc = getPropertyDescriptors(node);
 				if (desc != null)
 					for (IPropertyDescriptor element : desc)
-						descriptors = (IPropertyDescriptor[])ArrayUtil.append(IPropertyDescriptor.class, descriptors, element);
+						descriptors = ArrayUtil.append(IPropertyDescriptor.class, descriptors, element);
 			}
 			
-			return (IPropertyDescriptor[])ArrayUtil.trim(IPropertyDescriptor.class, descriptors);
+			return ArrayUtil.trim(IPropertyDescriptor.class, descriptors);
 		}
 		
 		private IPropertyDescriptor[] getPropertyDescriptors(Object obj) {
@@ -460,12 +463,12 @@ public class DOMASTNodeLeaf implements IAdaptable {
 							text.setCategory(IBINDING_TAG + ((IASTName)node).resolveBinding().getClass().getName().substring(((IASTName)node).resolveBinding().getClass().getName().lastIndexOf(PERIOD) + 1) + COLON_SEPARATOR + getValueString(((IASTName)node).resolveBinding()));
 						else
 							text.setCategory(objClass.getName().substring(objClass.getName().lastIndexOf(PERIOD) + 1) + COLON_SEPARATOR + getValueString(node));
-						desc = (IPropertyDescriptor[])ArrayUtil.append(IPropertyDescriptor.class, desc, text);
+						desc = ArrayUtil.append(IPropertyDescriptor.class, desc, text);
 					}
 				}
 			}
 			
-			return (IPropertyDescriptor[])ArrayUtil.trim(IPropertyDescriptor.class, desc);
+			return ArrayUtil.trim(IPropertyDescriptor.class, desc);
 		}
 		
 		private boolean alreadyEncountered(Method method, IPropertyDescriptor[] desc) {
@@ -484,6 +487,7 @@ public class DOMASTNodeLeaf implements IAdaptable {
 			return false;
 		}
 		
+		@Override
 		public Object getPropertyValue(Object id) {
 			if (!(id instanceof String))
 				return BLANK_STRING;
@@ -654,11 +658,14 @@ public class DOMASTNodeLeaf implements IAdaptable {
 			return true;
 		}
 		
+		@Override
 		public boolean isPropertySet(Object id) {
 			return false;
 		}
+		@Override
 		public void resetPropertyValue(Object id) {
 		}
+		@Override
 		public void setPropertyValue(Object id, Object value) {
 		}
 	}

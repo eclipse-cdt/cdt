@@ -38,10 +38,11 @@ public class CASTAmbiguousParameterDeclaration extends ASTAmbiguousNode implemen
 			addParameterDeclaration(d);
 	}
 
+	@Override
 	public void addParameterDeclaration(IASTParameterDeclaration d) {
         assertNotFrozen();
     	if (d != null) {
-    		paramDecls = (IASTParameterDeclaration[]) ArrayUtil.append(IASTParameterDeclaration.class, paramDecls, ++declPos, d);
+    		paramDecls = ArrayUtil.appendAt(IASTParameterDeclaration.class, paramDecls, ++declPos, d);
     		d.setParent(this);
 			d.setPropertyInParent(SUBDECLARATION);
     	}
@@ -56,8 +57,9 @@ public class CASTAmbiguousParameterDeclaration extends ASTAmbiguousNode implemen
 		}
 	}
 
-    public IASTParameterDeclaration[] getParameterDeclarations() {
-    	paramDecls = (IASTParameterDeclaration[]) ArrayUtil.removeNullsAfter(IASTParameterDeclaration.class, paramDecls, declPos ); 
+    @Override
+	public IASTParameterDeclaration[] getParameterDeclarations() {
+    	paramDecls = ArrayUtil.trimAt(IASTParameterDeclaration.class, paramDecls, declPos ); 
         return paramDecls;
     }
 
@@ -66,28 +68,34 @@ public class CASTAmbiguousParameterDeclaration extends ASTAmbiguousNode implemen
         return getParameterDeclarations();
     }
 
+	@Override
 	public IASTDeclSpecifier getDeclSpecifier() {
 		return paramDecls[0].getDeclSpecifier();
 	}
 
+	@Override
 	public IASTDeclarator getDeclarator() {
 		return paramDecls[0].getDeclarator();
 	}
 
+	@Override
 	public void setDeclSpecifier(IASTDeclSpecifier declSpec) {
         assertNotFrozen();
 		Assert.isLegal(false);
 	}
 
+	@Override
 	public void setDeclarator(IASTDeclarator declarator) {
         assertNotFrozen();
 		Assert.isLegal(false);
 	}
 
+	@Override
 	public IASTParameterDeclaration copy() {
 		throw new UnsupportedOperationException();
 	}
 	
+	@Override
 	public IASTParameterDeclaration copy(CopyStyle style) {
 		throw new UnsupportedOperationException();
 	}

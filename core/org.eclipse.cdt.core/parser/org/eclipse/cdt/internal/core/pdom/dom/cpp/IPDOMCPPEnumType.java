@@ -27,6 +27,7 @@ public interface IPDOMCPPEnumType extends ICPPEnumeration, IPDOMBinding, IIndexT
 	 */
 	IIndexName getScopeName();
 	
+	@Override
 	IEnumerator[] getEnumerators();
 
 	/**

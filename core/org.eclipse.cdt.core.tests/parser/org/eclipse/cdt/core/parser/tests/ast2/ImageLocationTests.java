@@ -116,6 +116,7 @@ public class ImageLocationTests extends AST2BaseTest {
 			{
 				shouldVisitNames= true;
 			}
+			@Override
 			public int visit(IASTName name) {
 				result[0]= name;
 				return PROCESS_ABORT;

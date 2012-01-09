@@ -21,10 +21,12 @@ import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
  */
 public interface ICPPASTExpressionList extends IASTExpressionList, IASTImplicitNameOwner {
 
+	@Override
 	public ICPPASTExpressionList copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICPPASTExpressionList copy(CopyStyle style);
 }

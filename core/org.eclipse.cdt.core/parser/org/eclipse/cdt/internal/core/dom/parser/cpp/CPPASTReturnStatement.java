@@ -30,10 +30,12 @@ public class CPPASTReturnStatement extends ASTNode implements IASTReturnStatemen
 		setReturnArgument(retValue);
 	}
 
+	@Override
 	public CPPASTReturnStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 	
+	@Override
 	public CPPASTReturnStatement copy(CopyStyle style) {
 		CPPASTReturnStatement copy = new CPPASTReturnStatement(retValue == null ? null
 				: retValue.copy(style));
@@ -44,10 +46,12 @@ public class CPPASTReturnStatement extends ASTNode implements IASTReturnStatemen
 		return copy;
 	}
 
+	@Override
 	public IASTInitializerClause getReturnArgument() {
 		return retValue;
 	}
 	
+	@Override
 	public IASTExpression getReturnValue() {
         if (retValue instanceof IASTExpression) {
         	return (IASTExpression) retValue;
@@ -56,11 +60,13 @@ public class CPPASTReturnStatement extends ASTNode implements IASTReturnStatemen
     }
 
 	
-    public void setReturnValue(IASTExpression returnValue) {
+    @Override
+	public void setReturnValue(IASTExpression returnValue) {
     	setReturnArgument(returnValue);
     }
     
-    public void setReturnArgument(IASTInitializerClause arg) {
+    @Override
+	public void setReturnArgument(IASTInitializerClause arg) {
         assertNotFrozen();
         retValue = arg;
         if (arg != null) {
@@ -94,7 +100,8 @@ public class CPPASTReturnStatement extends ASTNode implements IASTReturnStatemen
         return true;
     }
 
-    public void replace(IASTNode child, IASTNode other) {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
         if (child == retValue) {
             other.setPropertyInParent(child.getPropertyInParent());
             other.setParent(child.getParent());

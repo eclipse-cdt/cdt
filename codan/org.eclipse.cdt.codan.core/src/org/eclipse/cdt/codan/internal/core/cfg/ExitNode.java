@@ -25,14 +25,17 @@ public class ExitNode extends AbstractSingleIncomingNode implements IExitNode {
 		super();
 	}
 
+	@Override
 	public IBasicBlock[] getOutgoingNodes() {
 		return EMPTY_LIST;
 	}
 
+	@Override
 	public int getOutgoingSize() {
 		return 0;
 	}
 
+	@Override
 	public IStartNode getStartNode() {
 		return start;
 	}

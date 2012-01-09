@@ -49,10 +49,12 @@ public class QuickAssistProcessor implements IQuickAssistProcessor {
 		super();
 	}
 
+	@Override
 	public boolean hasAssists(final IInvocationContext context) throws CoreException {
 		IStatus status = ASTProvider.getASTProvider().runOnAST(context.getTranslationUnit(),
 				ASTProvider.WAIT_ACTIVE_ONLY, new NullProgressMonitor(), new ASTRunnable() {
 
+			@Override
 			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit astRoot) throws CoreException {
 				IASTNodeSelector selector= astRoot.getNodeSelector(null);
 				IASTName name= selector.findEnclosingName(context.getSelectionOffset(), context.getSelectionLength());
@@ -70,6 +72,7 @@ public class QuickAssistProcessor implements IQuickAssistProcessor {
 		return status.isOK();
 	}
 
+	@Override
 	public ICCompletionProposal[] getAssists(final IInvocationContext context,
 			final IProblemLocation[] problemLocations) throws CoreException {
 		final ArrayList<ICCompletionProposal> proposals= new ArrayList<ICCompletionProposal>();
@@ -78,6 +81,7 @@ public class QuickAssistProcessor implements IQuickAssistProcessor {
 				new NullProgressMonitor(),
 				new ASTRunnable() {
 
+			@Override
 			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit astRoot) throws CoreException {
 				IASTNodeSelector selector= astRoot.getNodeSelector(null);
 				IASTName name= selector.findEnclosingName(context.getSelectionOffset(), context.getSelectionLength());

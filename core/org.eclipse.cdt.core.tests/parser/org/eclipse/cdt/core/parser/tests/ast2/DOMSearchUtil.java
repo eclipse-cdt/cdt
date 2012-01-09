@@ -207,10 +207,10 @@ public class DOMSearchUtil {
             names = tu.getDefinitionsInAST(binding);
         } else if (limitTo == ALL_OCCURRENCES){
             names = tu.getDeclarationsInAST(binding);
-            names = (IASTName[])ArrayUtil.addAll(IASTName.class, names, tu.getReferences(binding));
+            names = ArrayUtil.addAll(IASTName.class, names, tu.getReferences(binding));
         } else {  // assume ALL
             names = tu.getDeclarationsInAST(binding);
-            names = (IASTName[])ArrayUtil.addAll(IASTName.class, names, tu.getReferences(binding));
+            names = ArrayUtil.addAll(IASTName.class, names, tu.getReferences(binding));
         }
 		
 		return names;

@@ -55,6 +55,7 @@ public class PDOMSearchTreeContentProvider implements ITreeContentProvider, IPDO
 		fPage= page;
 	}
 
+	@Override
 	public Object[] getChildren(Object parentElement) {
 		Set<Object> children = tree.get(parentElement);
 		if (children == null)
@@ -62,6 +63,7 @@ public class PDOMSearchTreeContentProvider implements ITreeContentProvider, IPDO
 		return children.toArray();
 	}
 
+	@Override
 	public Object getParent(Object element) {
 		Iterator<Object> p = tree.keySet().iterator();
 		while (p.hasNext()) {
@@ -73,17 +75,21 @@ public class PDOMSearchTreeContentProvider implements ITreeContentProvider, IPDO
 		return null;
 	}
 
- 	public boolean hasChildren(Object element) {
+ 	@Override
+	public boolean hasChildren(Object element) {
  		return tree.get(element) != null;
 	}
 
+	@Override
 	public Object[] getElements(Object inputElement) {
 		return getChildren(inputElement);
 	}
 
+	@Override
 	public void dispose() {
 	}
 
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		this.viewer = (TreeViewer)viewer;
 		this.result = (PDOMSearchResult) newInput;
@@ -171,6 +177,7 @@ public class PDOMSearchTreeContentProvider implements ITreeContentProvider, IPDO
 		}
 	}
 	
+	@Override
 	public void elementsChanged(Object[] elements) {
 		if (elements != null) {
 			for (int i = 0; i < elements.length; ++i) {
@@ -207,6 +214,7 @@ public class PDOMSearchTreeContentProvider implements ITreeContentProvider, IPDO
 		return false;
 	}
 	
+	@Override
 	public void clear() {
 		initialize(result);
 	}

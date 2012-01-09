@@ -182,6 +182,7 @@ public class CommentHandlingTest extends RewriteBaseTest {
 	}
 	
 	private final class NodeOffsetComparator implements Comparator<IASTNode> {
+		@Override
 		public int compare(IASTNode o1, IASTNode o2) {
 			int offDif = o1.getFileLocation().getNodeOffset() - o2.getFileLocation().getNodeOffset();
 			if (offDif == 0) {

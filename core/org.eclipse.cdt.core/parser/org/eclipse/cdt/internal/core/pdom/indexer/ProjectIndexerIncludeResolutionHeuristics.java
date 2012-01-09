@@ -43,6 +43,7 @@ public class ProjectIndexerIncludeResolutionHeuristics implements IIncludeFileRe
 		fIgnoreCase= resolver.isCaseInsensitiveFileSystem();
 	}
 
+	@Override
 	public String findInclusion(String include, String currentFile) {
 		final IIndexFileLocation ifl= fResolver.resolveASTPath(currentFile);
 		if (ifl == null || ifl.getFullPath() == null) {

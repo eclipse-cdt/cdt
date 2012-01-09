@@ -57,6 +57,7 @@ public class FileScopeProblemPreference extends AbstractProblemPreference {
 		setLabel(Messages.FileScopeProblemPreference_Label);
 	}
 
+	@Override
 	public PreferenceType getType() {
 		return PreferenceType.TYPE_CUSTOM;
 	}
@@ -130,6 +131,7 @@ public class FileScopeProblemPreference extends AbstractProblemPreference {
 			return true;
 		return false;
 	}
+	@Override
 	public String exportValue() {
 		return exportPathList(INCLUSION, inclusion) + "," //$NON-NLS-1$
 				+ exportPathList(EXCLUSION, exclusion);

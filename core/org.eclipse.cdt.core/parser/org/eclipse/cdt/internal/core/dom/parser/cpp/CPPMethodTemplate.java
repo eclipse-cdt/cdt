@@ -100,6 +100,7 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod
 		return null;
 	}
 	
+	@Override
 	public int getVisibility() {
 		IASTDeclaration decl = getPrimaryDeclaration();
 		if( decl == null ){
@@ -126,6 +127,7 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod
 		return ICPPASTVisibilityLabel.v_public;
 	}
 	
+	@Override
 	public ICPPClassType getClassOwner() {
 		IScope scope= getScope();
 		if (scope instanceof ICPPTemplateScope) {
@@ -141,7 +143,8 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod
 		return null;
 	}
 
-    public boolean isVirtual() {
+    @Override
+	public boolean isVirtual() {
 		IASTDeclaration decl = getPrimaryDeclaration();
 		if (decl instanceof ICPPASTTemplateDeclaration) {
 			ICPPASTDeclSpecifier declSpec= getDeclSpecifier(((ICPPASTTemplateDeclaration) decl).getDeclaration());
@@ -174,6 +177,7 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod
 		return super.isInline();
 	}
 
+	@Override
 	public boolean isDestructor() {
 		char[] name = getNameCharArray();
 		if (name.length > 1 && name[0] == '~')
@@ -182,10 +186,12 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod
 		return false;
 	}
 
+	@Override
 	public boolean isImplicit() {
 		return false;
 	}
 	
+	@Override
 	public boolean isExplicit() {
 		IASTDeclaration decl = getPrimaryDeclaration();
 		if (decl instanceof ICPPASTTemplateDeclaration) {
@@ -197,6 +203,7 @@ public class CPPMethodTemplate extends CPPFunctionTemplate implements ICPPMethod
 		return false;
 	}
 
+	@Override
 	public boolean isPureVirtual() {
 		if (declarations != null && declarations.length > 0) {
 			IASTName decl= declarations[0];

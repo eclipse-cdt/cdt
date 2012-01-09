@@ -24,10 +24,12 @@ class CompositeCPPTypedefSpecialization extends CompositeCPPTypedef implements I
 		super(cf, delegate);
 	}
 
+	@Override
 	public IBinding getSpecializedBinding() {
 		return TemplateInstanceUtil.getSpecializedBinding(cf, rbinding);
 	}	
 	
+	@Override
 	public ICPPTemplateParameterMap getTemplateParameterMap() {
 		IBinding owner= getOwner();
 		if (owner instanceof ICPPSpecialization) {
@@ -36,6 +38,7 @@ class CompositeCPPTypedefSpecialization extends CompositeCPPTypedef implements I
 		return CPPTemplateParameterMap.EMPTY;
 	}
 
+	@Override
 	@Deprecated
 	public ObjectMap getArgumentMap() {
 		return TemplateInstanceUtil.getArgumentMap(cf, rbinding);

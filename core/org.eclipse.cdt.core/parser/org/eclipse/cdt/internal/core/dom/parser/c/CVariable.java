@@ -51,7 +51,7 @@ public class CVariable extends PlatformObject implements IInternalVariable, ICIn
 
 	public void addDeclaration(IASTName name) {
 		if (name != null && name.isActive()) {
-			declarations = (IASTName[]) ArrayUtil.append(IASTName.class, declarations, name);
+			declarations = ArrayUtil.append(IASTName.class, declarations, name);
 		}
 	}
 

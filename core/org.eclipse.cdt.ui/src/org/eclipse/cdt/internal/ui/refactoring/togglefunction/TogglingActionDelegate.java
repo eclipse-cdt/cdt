@@ -37,11 +37,13 @@ public class TogglingActionDelegate implements IWorkbenchWindowActionDelegate {
 	private ICProject project;
 	private IFile file;
 	
+	@Override
 	public void init(IWorkbenchWindow window) {
 		this.window = window;
 		assert (window != null);
 	}
 	
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		boolean isTextSelection = selection != null
 				&& selection instanceof TextSelection;
@@ -52,6 +54,7 @@ public class TogglingActionDelegate implements IWorkbenchWindowActionDelegate {
 		this.selection = (TextSelection) CUIPlugin.getActivePage().getActiveEditor().getEditorSite().getSelectionProvider().getSelection();
 	}
 
+	@Override
 	public void run(IAction action) {
 		if (!isWorkbenchReady())
 			return;
@@ -74,6 +77,7 @@ public class TogglingActionDelegate implements IWorkbenchWindowActionDelegate {
 		return project != null && file != null;
 	}
 
+	@Override
 	public void dispose() {
 	}
 }

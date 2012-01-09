@@ -113,6 +113,7 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 	/*
 	 * @see org.eclipse.jface.text.rules.ITokenScanner#nextToken()
 	 */
+	@Override
 	public IToken nextToken() {
 
 		fTokenOffset += fTokenLength;
@@ -665,6 +666,7 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 	/*
 	 * @see IPartitionTokenScanner#setPartialRange(IDocument, int, int, String, int)
 	 */
+	@Override
 	public void setPartialRange(IDocument document, int offset, int length, String contentType, int partitionOffset) {
 		fDocument= document;
 		fScanner.setRange(document, offset, length);
@@ -706,6 +708,7 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 	/*
 	 * @see ITokenScanner#setRange(IDocument, int, int)
 	 */
+	@Override
 	public void setRange(IDocument document, int offset, int length) {
 		fDocument= document;
 		fScanner.setRange(document, offset, length);
@@ -726,6 +729,7 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 	/*
 	 * @see ITokenScanner#getTokenLength()
 	 */
+	@Override
 	public int getTokenLength() {
 		return fTokenLength;
 	}
@@ -733,6 +737,7 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 	/*
 	 * @see ITokenScanner#getTokenOffset()
 	 */
+	@Override
 	public int getTokenOffset() {
 		return fTokenOffset;
 	}

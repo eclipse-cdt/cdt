@@ -20,6 +20,7 @@ public class ASTTypeMatcher implements IObjectMatcher {
 	/**
 	 * Returns <code>true</code> if the two objects are equal or represent the same type.
 	 */
+	@Override
 	public boolean isEquivalent(Object o1, Object o2) {
 		if (o1 == o2) {
 			return true;

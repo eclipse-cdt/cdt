@@ -42,103 +42,128 @@ class AutoTypeResolver implements ICPPFunctionTemplate {
 		functionType = new CPPFunctionType(new CPPBasicType(Kind.eVoid, 0), new IType[] { paramType });
 	}
 	
+	@Override
 	public ICPPTemplateParameter[] getTemplateParameters() {
 		return TEMPLATE_PARAMETERS;
 	}
 	
+	@Override
 	public ICPPFunctionType getType() {
 		return functionType;
 	}
 
+	@Override
 	public boolean isMutable() {
 		return false;
 	}
 
+	@Override
 	public boolean isInline() {
 		return false;
 	}
 
+	@Override
 	public boolean isExternC() {
 		return false;
 	}
 
+	@Override
 	public boolean isDeleted() {
 		return false;
 	}
 
+	@Override
 	public IType[] getExceptionSpecification() {
 		return null;
 	}
 
+	@Override
 	public ICPPParameter[] getParameters() {
 		throw new UnsupportedOperationException(UNEXPECTED_CALL);
 	}
 
+	@Override
 	public int getRequiredArgumentCount() {
 		return 1;
 	}
 
+	@Override
 	public boolean hasParameterPack() {
 		return false;
 	}
 
+	@Override
 	public IScope getFunctionScope() {
 		throw new UnsupportedOperationException(UNEXPECTED_CALL);
 	}
 
+	@Override
 	public boolean isStatic() {
 		return false;
 	}
 
+	@Override
 	public boolean isExtern() {
 		return false;
 	}
 
+	@Override
 	public boolean isAuto() {
 		return false;
 	}
 
+	@Override
 	public boolean isRegister() {
 		return false;
 	}
 
+	@Override
 	public boolean takesVarArgs() {
 		return false;
 	}
 
+	@Override
 	public String getName() {
 		throw new UnsupportedOperationException(UNEXPECTED_CALL);
 	}
 
+	@Override
 	public char[] getNameCharArray() {
 		throw new UnsupportedOperationException(UNEXPECTED_CALL);
 	}
 
+	@Override
 	public ILinkage getLinkage() {
 		throw new UnsupportedOperationException(UNEXPECTED_CALL);
 	}
 
+	@Override
 	public IBinding getOwner() {
 		throw new UnsupportedOperationException(UNEXPECTED_CALL);
 	}
 
+	@Override
 	public IScope getScope() throws DOMException {
 		throw new UnsupportedOperationException(UNEXPECTED_CALL);
 	}
 
+	@Override
 	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class adapter) {
 		throw new UnsupportedOperationException(UNEXPECTED_CALL);
 	}
 
+	@Override
 	public String[] getQualifiedName() throws DOMException {
 		throw new UnsupportedOperationException(UNEXPECTED_CALL);
 	}
 
+	@Override
 	public char[][] getQualifiedNameCharArray() throws DOMException {
 		throw new UnsupportedOperationException(UNEXPECTED_CALL);
 	}
 
+	@Override
 	public boolean isGloballyQualified() throws DOMException {
 		throw new UnsupportedOperationException(UNEXPECTED_CALL);
 	}

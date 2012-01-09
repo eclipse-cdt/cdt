@@ -107,26 +107,32 @@ public class ASTTypeInfo implements ITypeInfo, IFunctionInfo {
 		this.reference= reference;
 	}
 	
+	@Override
 	public int getCElementType() {
 		return elementType;
 	}
 
+	@Override
 	public String getName() {
 		return fqn[fqn.length-1];
 	}
 
+	@Override
 	public IQualifiedTypeName getQualifiedTypeName() {
 		return new QualifiedTypeName(fqn);
 	}
 
+	@Override
 	public ITypeReference getResolvedReference() {
 		return reference;
 	}
 
+	@Override
 	public ITypeReference[] getReferences() {
 		return new ITypeReference[] {reference};
 	}
 
+	@Override
 	public ICProject getEnclosingProject() {
 		if(getResolvedReference()!=null) {
 			IProject project = reference.getProject();
@@ -137,6 +143,7 @@ public class ASTTypeInfo implements ITypeInfo, IFunctionInfo {
 		return null;
 	}
 
+	@Override
 	public String[] getParameters() {
 		return params;
 	}
@@ -144,6 +151,7 @@ public class ASTTypeInfo implements ITypeInfo, IFunctionInfo {
 	/*
 	 * @see org.eclipse.cdt.internal.core.browser.IFunctionInfo#getReturnType()
 	 */
+	@Override
 	public String getReturnType() {
 		return returnType;
 	}
@@ -206,132 +214,158 @@ public class ASTTypeInfo implements ITypeInfo, IFunctionInfo {
 		return null;
 	}
 	
+	@Override
 	@Deprecated
 	public void addDerivedReference(ITypeReference location) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	@Deprecated
 	public void addReference(ITypeReference location) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	@Deprecated
 	public boolean canSubstituteFor(ITypeInfo info) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	@Deprecated
 	public boolean encloses(ITypeInfo info) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	@Deprecated
 	public boolean exists() {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	@Deprecated
 	public ITypeReference[] getDerivedReferences() {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	@Deprecated
 	public ITypeInfo[] getEnclosedTypes() {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	@Deprecated
 	public ITypeInfo[] getEnclosedTypes(int[] kinds) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	@Deprecated
 	public ITypeInfo getEnclosingNamespace(boolean includeGlobalNamespace) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	@Deprecated
 	public ITypeInfo getEnclosingType() {
 		// TODO not sure
 		return null;
 	}
 
+	@Override
 	@Deprecated
 	public ITypeInfo getEnclosingType(int[] kinds) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	@Deprecated
 	public ITypeInfo getRootNamespace(boolean includeGlobalNamespace) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	@Deprecated
 	public ITypeInfo[] getSubTypes() {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	@Deprecated
 	public ASTAccessVisibility getSuperTypeAccess(ITypeInfo subType) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	@Deprecated
 	public ITypeInfo[] getSuperTypes() {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	@Deprecated
 	public boolean hasEnclosedTypes() {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	@Deprecated
 	public boolean hasSubTypes() {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	@Deprecated
 	public boolean hasSuperTypes() {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	@Deprecated
 	public boolean isClass() {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	@Deprecated
 	public boolean isEnclosed(ITypeInfo info) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	@Deprecated
 	public boolean isEnclosed(ITypeSearchScope scope) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	@Deprecated
 	public boolean isEnclosedType() {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	@Deprecated
 	public boolean isEnclosingType() {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	@Deprecated
 	public boolean isReferenced(ITypeSearchScope scope) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	@Deprecated
 	public boolean isUndefinedType() {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	@Deprecated
 	public void setCElementType(int type) {
 		throw new UnsupportedOperationException();

@@ -28,13 +28,16 @@ public class TestScannerProvider extends AbstractCExtension implements IScannerI
 		sIncludes= sIncludeFiles= sMacroFiles= null;
 	}
 	
+	@Override
 	public IScannerInfo getScannerInformation(IResource resource) {
 		return new TestScannerInfo(sIncludes, sIncludeFiles, sMacroFiles);
 	}
 
+	@Override
 	public void subscribe(IResource resource, IScannerInfoChangeListener listener) {
 	}
 
+	@Override
 	public void unsubscribe(IResource resource, IScannerInfoChangeListener listener) {
 	}
 }

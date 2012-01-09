@@ -69,6 +69,7 @@ public abstract class SharedASTJob extends Job {
 			return Status.CANCEL_STATUS;
 		}
 		return provider.runOnAST(fUnit, ASTProvider.WAIT_ACTIVE_ONLY, monitor, new ASTRunnable() {
+			@Override
 			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
 				return SharedASTJob.this.runOnAST(lang, ast);
 			}});

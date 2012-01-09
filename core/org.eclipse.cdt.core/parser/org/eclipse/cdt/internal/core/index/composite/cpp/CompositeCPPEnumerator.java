@@ -21,11 +21,13 @@ class CompositeCPPEnumerator extends CompositeCPPBinding implements IEnumerator 
 		super(cf, rbinding);
 	}
 
+	@Override
 	public IType getType() throws DOMException {
 		IType type = ((IEnumerator) rbinding).getType();
 		return cf.getCompositeType(type);
 	}
 	
+	@Override
 	public IValue getValue() {
 		return ((IEnumerator) rbinding).getValue();
 	}

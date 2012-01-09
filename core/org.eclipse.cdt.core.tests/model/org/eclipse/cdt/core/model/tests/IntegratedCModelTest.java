@@ -68,6 +68,7 @@ public abstract class IntegratedCModelTest extends TestCase {
 	 */
 	abstract public String getSourcefileResource();
 
+	@Override
 	public void setUp() throws Exception {
 		monitor = new NullProgressMonitor();
 		fCProject= CProjectHelper.createCCProject("TestProject1", "bin", IPDOMManager.ID_FAST_INDEXER);
@@ -86,6 +87,7 @@ public abstract class IntegratedCModelTest extends TestCase {
 		CCorePlugin.getIndexManager().joinIndexer(2000, new NullProgressMonitor());
 	}
 
+	@Override
 	protected void tearDown() {
 		CProjectHelper.delete(fCProject);
 	}	

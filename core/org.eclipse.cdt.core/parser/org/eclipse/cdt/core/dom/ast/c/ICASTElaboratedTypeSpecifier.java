@@ -25,10 +25,12 @@ public interface ICASTElaboratedTypeSpecifier extends
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICASTElaboratedTypeSpecifier copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICASTElaboratedTypeSpecifier copy(CopyStyle style);
 }

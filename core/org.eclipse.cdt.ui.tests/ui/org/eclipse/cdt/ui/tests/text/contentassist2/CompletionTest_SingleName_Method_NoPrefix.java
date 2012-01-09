@@ -70,6 +70,7 @@ public class CompletionTest_SingleName_Method_NoPrefix  extends CompletionPropos
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
 	 */
+	@Override
 	protected int getCompletionPosition() {
 		return getBuffer().indexOf("    ") + 2;
 	}
@@ -77,6 +78,7 @@ public class CompletionTest_SingleName_Method_NoPrefix  extends CompletionPropos
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getExpectedPrefix()
 	 */
+	@Override
 	protected String getExpectedPrefix() {
 		return expectedPrefix;
 	}
@@ -84,6 +86,7 @@ public class CompletionTest_SingleName_Method_NoPrefix  extends CompletionPropos
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getExpectedResultsValues()
 	 */
+	@Override
 	protected String[] getExpectedResultsValues() {
 		return expectedResults;
 	}
@@ -91,6 +94,7 @@ public class CompletionTest_SingleName_Method_NoPrefix  extends CompletionPropos
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getFileName()
 	 */
+	@Override
 	protected String getFileName() {
 		return fileName;
 	}
@@ -98,12 +102,14 @@ public class CompletionTest_SingleName_Method_NoPrefix  extends CompletionPropos
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getFileFullPath()
 	 */
+	@Override
 	protected String getFileFullPath() {
 		return fileFullPath;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getHeaderFileFullPath()
 	 */
+	@Override
 	protected String getHeaderFileFullPath() {
 		return headerFileFullPath;
 	}
@@ -111,6 +117,7 @@ public class CompletionTest_SingleName_Method_NoPrefix  extends CompletionPropos
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getHeaderFileName()
 	 */
+	@Override
 	protected String getHeaderFileName() {
 		return headerFileName;
 	}

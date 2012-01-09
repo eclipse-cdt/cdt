@@ -40,6 +40,7 @@ public class AsmWordDetector implements IWordDetector {
 	/*
 	 * @see org.eclipse.jface.text.rules.IWordDetector#isWordStart(char)
 	 */
+	@Override
 	public boolean isWordStart(char c) {
 		if(fPrefix != 0) {
 			return (fPrefix == c);
@@ -52,6 +53,7 @@ public class AsmWordDetector implements IWordDetector {
 	/*
 	 * @see org.eclipse.jface.text.rules.IWordDetector#isWordPart(char)
 	 */
+	@Override
 	public boolean isWordPart(char c) {
 		return Character.isJavaIdentifierPart(c);
 	}

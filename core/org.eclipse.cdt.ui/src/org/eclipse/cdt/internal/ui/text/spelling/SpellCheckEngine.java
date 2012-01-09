@@ -243,6 +243,7 @@ public class SpellCheckEngine implements ISpellCheckEngine, IPropertyChangeListe
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellCheckEngine#getSpellChecker()
 	 */
+	@Override
 	public final synchronized ISpellChecker getSpellChecker() throws IllegalStateException {
 		if (fGlobalDictionaries == null)
 			throw new IllegalStateException("spell checker has been shut down"); //$NON-NLS-1$
@@ -295,6 +296,7 @@ public class SpellCheckEngine implements ISpellCheckEngine, IPropertyChangeListe
 	/*
 	 * @see org.eclipse.cdt.ui.text.spelling.engine.ISpellCheckEngine#getLocale()
 	 */
+	@Override
 	public synchronized final Locale getLocale() {
 		if (fChecker == null)
 			return null;
@@ -305,6 +307,7 @@ public class SpellCheckEngine implements ISpellCheckEngine, IPropertyChangeListe
 	/*
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	public final void propertyChange(final PropertyChangeEvent event) {
 		if (event.getProperty().equals(SpellingPreferences.SPELLING_LOCALE)) {
 			resetSpellChecker();
@@ -364,6 +367,7 @@ public class SpellCheckEngine implements ISpellCheckEngine, IPropertyChangeListe
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellCheckEngine#registerDictionary(org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellDictionary)
 	 */
+	@Override
 	public synchronized final void registerGlobalDictionary(final ISpellDictionary dictionary) {
 		fGlobalDictionaries.add(dictionary);
 		resetSpellChecker();
@@ -372,6 +376,7 @@ public class SpellCheckEngine implements ISpellCheckEngine, IPropertyChangeListe
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellCheckEngine#registerDictionary(java.util.Locale, org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellDictionary)
 	 */
+	@Override
 	public synchronized final void registerDictionary(final Locale locale, final ISpellDictionary dictionary) {
 		fLocaleDictionaries.put(locale, dictionary);
 		resetSpellChecker();
@@ -380,6 +385,7 @@ public class SpellCheckEngine implements ISpellCheckEngine, IPropertyChangeListe
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellCheckEngine#unload()
 	 */
+	@Override
 	public synchronized final void shutdown() {
 		SpellingPreferences.removePropertyChangeListener(this);
 
@@ -409,6 +415,7 @@ public class SpellCheckEngine implements ISpellCheckEngine, IPropertyChangeListe
 	/*
 	 * @see org.eclipse.cdt.ui.text.spelling.engine.ISpellCheckEngine#unregisterDictionary(org.eclipse.cdt.ui.text.spelling.engine.ISpellDictionary)
 	 */
+	@Override
 	public synchronized final void unregisterDictionary(final ISpellDictionary dictionary) {
 		fGlobalDictionaries.remove(dictionary);
 		fLocaleDictionaries.values().remove(dictionary);

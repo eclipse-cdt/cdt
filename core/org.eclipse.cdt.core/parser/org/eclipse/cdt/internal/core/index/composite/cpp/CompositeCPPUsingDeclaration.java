@@ -26,6 +26,7 @@ class CompositeCPPUsingDeclaration extends CompositeCPPBinding implements ICPPUs
 		fail(); return null;
 	}
 
+	@Override
 	public IBinding[] getDelegates() {
 		IBinding[] delegates = ((ICPPUsingDeclaration) rbinding).getDelegates();
 		IBinding[] composites = new IBinding[delegates.length];
@@ -36,6 +37,6 @@ class CompositeCPPUsingDeclaration extends CompositeCPPBinding implements ICPPUs
 				composites[j++] = cf.getCompositeBinding((IIndexFragmentBinding) binding);
 			}
 		}
-		return (IBinding[]) ArrayUtil.trim(IBinding.class, composites);
+		return ArrayUtil.trim(IBinding.class, composites);
 	}
 }

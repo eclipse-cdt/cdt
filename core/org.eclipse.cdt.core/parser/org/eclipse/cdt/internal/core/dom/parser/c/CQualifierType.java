@@ -51,6 +51,7 @@ public class CQualifierType implements ICQualifierType, ITypeContainer, ISeriali
 		this.isRestrict = isRestrict;
 	}
 	
+	@Override
 	public boolean isSameType(IType obj) {
 	    if (obj == this)
 	        return true;
@@ -73,6 +74,7 @@ public class CQualifierType implements ICQualifierType, ITypeContainer, ISeriali
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IQualifierType#isConst()
 	 */
+	@Override
 	public boolean isConst() {
 		return isConst;
 	}
@@ -80,6 +82,7 @@ public class CQualifierType implements ICQualifierType, ITypeContainer, ISeriali
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IQualifierType#isVolatile()
 	 */
+	@Override
 	public boolean isVolatile() {
 		return isVolatile;
 	}
@@ -87,6 +90,7 @@ public class CQualifierType implements ICQualifierType, ITypeContainer, ISeriali
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.c.ICQualifierType#isRestrict()
 	 */
+	@Override
 	public boolean isRestrict() {
 		return isRestrict; 
 	}
@@ -117,10 +121,12 @@ public class CQualifierType implements ICQualifierType, ITypeContainer, ISeriali
 		return new ProblemType(ISemanticProblem.TYPE_UNRESOLVED_NAME);
 	}
 	
+	@Override
 	public IType getType() {
 		return type;
 	}
 
+	@Override
 	public void setType(IType t) {
 	    type = t;
 	}
@@ -136,6 +142,7 @@ public class CQualifierType implements ICQualifierType, ITypeContainer, ISeriali
         return t;
     }
 
+	@Override
 	public void marshal(ITypeMarshalBuffer buffer) throws CoreException {
 		int firstByte= ITypeMarshalBuffer.CVQUALIFIER;
 		if (isConst()) firstByte |= ITypeMarshalBuffer.FLAG1;

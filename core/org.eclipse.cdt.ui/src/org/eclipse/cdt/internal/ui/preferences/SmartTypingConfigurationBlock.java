@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Sergey Prigogin, Google
+ *     Sergey Prigogin (Google)
  *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
@@ -73,6 +73,7 @@ class SmartTypingConfigurationBlock extends AbstractConfigurationBlock {
 	 * @param parent the parent composite
 	 * @return the control for the preference page
 	 */
+	@Override
 	public Control createControl(Composite parent) {
 		ScrolledPageContent scrolled= new ScrolledPageContent(parent, SWT.H_SCROLL | SWT.V_SCROLL);
 		scrolled.setExpandHorizontal(true);
@@ -190,10 +191,13 @@ class SmartTypingConfigurationBlock extends AbstractConfigurationBlock {
 		String linkTooltip= PreferencesMessages.SmartTypingConfigurationBlock_tabs_message_tooltip; 
 		String text;
 		String indentMode= CUIPlugin.getDefault().getCombinedPreferenceStore().getString(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR);
-		if (CCorePlugin.TAB.equals(indentMode))
-			text= Messages.format(PreferencesMessages.SmartTypingConfigurationBlock_tabs_message_tab_text, Integer.toString(getTabDisplaySize()));
-		else
-			text= Messages.format(PreferencesMessages.SmartTypingConfigurationBlock_tabs_message_others_text, Integer.toString(getTabDisplaySize()), Integer.toString(getIndentSize()), getIndentMode()); 
+		if (CCorePlugin.TAB.equals(indentMode)) {
+			text= Messages.format(PreferencesMessages.SmartTypingConfigurationBlock_tabs_message_tab_text,
+					Integer.toString(getTabDisplaySize()));
+		} else {
+			text= Messages.format(PreferencesMessages.SmartTypingConfigurationBlock_tabs_message_others_text,
+					Integer.toString(getTabDisplaySize()), Integer.toString(getIndentSize()), getIndentMode());
+		}
 		
 		final Link link= new Link(composite, SWT.NONE);
 		link.setText(text);
@@ -204,13 +208,15 @@ class SmartTypingConfigurationBlock extends AbstractConfigurationBlock {
 		link.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				PreferencesUtil.createPreferenceDialogOn(link.getShell(), "org.eclipse.cdt.ui.preferences.CodeFormatterPreferencePage", null, null); //$NON-NLS-1$
+				PreferencesUtil.createPreferenceDialogOn(link.getShell(),
+						"org.eclipse.cdt.ui.preferences.CodeFormatterPreferencePage", null, null); //$NON-NLS-1$
 			}
 		});
 		
 		final IPreferenceStore combinedStore= CUIPlugin.getDefault().getCombinedPreferenceStore();
 		final IPropertyChangeListener propertyChangeListener= new IPropertyChangeListener() {
 			private boolean fHasRun= false;
+			@Override
 			public void propertyChange(PropertyChangeEvent event) {
 				if (fHasRun)
 					return;
@@ -230,6 +236,7 @@ class SmartTypingConfigurationBlock extends AbstractConfigurationBlock {
 		};
 		combinedStore.addPropertyChangeListener(propertyChangeListener);
 		link.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(org.eclipse.swt.events.DisposeEvent e) {
 				combinedStore.removePropertyChangeListener(propertyChangeListener);
 			}

@@ -180,6 +180,7 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	/*
 	 * @see ICompletionProposalExtension#apply(IDocument, char, int)
 	 */
+	@Override
 	public void apply(IDocument document, char trigger, int offset) {
 		try {
 			// patch replacement length
@@ -299,6 +300,7 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 		/*
 		 * @see org.eclipse.jdt.internal.ui.text.link.LinkedPositionUI.ExitPolicy#doExit(org.eclipse.jdt.internal.ui.text.link.LinkedPositionManager, org.eclipse.swt.events.VerifyEvent, int, int)
 		 */
+		@Override
 		public ExitFlags doExit(LinkedModeModel environment, VerifyEvent event, int offset, int length) {
 			
 			if (event.character == fExitCharacter) {
@@ -328,6 +330,7 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	/*
 	 * @see ICompletionProposal#apply
 	 */
+	@Override
 	public void apply(IDocument document) {
 		apply(document, (char) 0, fReplacementOffset + fReplacementLength);
 	}
@@ -335,6 +338,7 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	/*
 	 * @see ICompletionProposal#getSelection
 	 */
+	@Override
 	public Point getSelection(IDocument document) {
 		return new Point(fReplacementOffset + fCursorPosition, 0);
 	}
@@ -342,6 +346,7 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	/*
 	 * @see ICompletionProposal#getContextInformation()
 	 */
+	@Override
 	public IContextInformation getContextInformation() {
 		return fContextInformation;
 	}
@@ -349,6 +354,7 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	/*
 	 * @see ICompletionProposal#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return fImage;
 	}
@@ -356,6 +362,7 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	/*
 	 * @see ICompletionProposal#getDisplayString()
 	 */
+	@Override
 	public String getDisplayString() {
 		return fDisplayString;
 	}
@@ -365,13 +372,15 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
      * 
      * @return the string representing the display name without the return type (if any).
      */
-    public String getIdString() {
+    @Override
+	public String getIdString() {
         return fIdString;
     }
     
 	/*
 	 * @see ICompletionProposal#getAdditionalProposalInfo()
 	 */
+	@Override
 	public String getAdditionalProposalInfo() {
 		if (fProposalInfo != null) {
 			return fProposalInfo;
@@ -382,6 +391,7 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	/*
 	 * @see ICompletionProposalExtension#getTriggerCharacters()
 	 */
+	@Override
 	public char[] getTriggerCharacters() {
 		return fTriggerCharacters;
 	}
@@ -389,6 +399,7 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	/*
 	 * @see ICompletionProposalExtension#getContextInformationPosition()
 	 */
+	@Override
 	public int getContextInformationPosition() {
 		return fReplacementOffset + fContextInformationPosition;
 	}
@@ -404,6 +415,7 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	/*
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension3#getCompletionOffset()
 	 */
+	@Override
 	public int getPrefixCompletionStart(IDocument document, int completionOffset) {
 		return getReplacementOffset();
 	}
@@ -445,6 +457,7 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	/*
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension3#getReplacementText()
 	 */
+	@Override
 	public CharSequence getPrefixCompletionText(IDocument document, int completionOffset) {
 		String string= getReplacementString();
 		int pos= string.indexOf('(');
@@ -472,6 +485,7 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	/*
 	 * @see ICompletionProposalExtension#isValidFor(IDocument, int)
 	 */
+	@Override
 	public boolean isValidFor(IDocument document, int offset) {
 		return validate(document, offset, null);
 	}
@@ -479,6 +493,7 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	/*
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#validate(org.eclipse.jface.text.IDocument, int, org.eclipse.jface.text.DocumentEvent)
 	 */
+	@Override
 	public boolean validate(IDocument document, int offset, DocumentEvent event) {
 
 		if (offset < fReplacementOffset)
@@ -499,6 +514,7 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	 * Gets the proposal's relevance.
 	 * @return Returns a int
 	 */
+	@Override
 	public int getRelevance() {
 		return fRelevance;
 	}
@@ -541,6 +557,7 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	/*
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension1#apply(org.eclipse.jface.text.ITextViewer, char, int, int)
 	 */
+	@Override
 	public void apply(ITextViewer viewer, char trigger, int stateMask, int offset) {
 
 		IDocument document= viewer.getDocument();
@@ -640,6 +657,7 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	/*
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#selected(ITextViewer, boolean)
 	 */
+	@Override
 	public void selected(ITextViewer viewer, boolean smartToggle) {
 		if (!insertCompletion() ^ smartToggle)
 			updateStyle(viewer);
@@ -652,6 +670,7 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	/*
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#unselected(ITextViewer)
 	 */
+	@Override
 	public void unselected(ITextViewer viewer) {
 		repairPresentation(viewer);
 		fRememberedStyleRange= null;
@@ -660,6 +679,7 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	/*
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension3#getInformationControlCreator()
 	 */
+	@Override
 	public IInformationControlCreator getInformationControlCreator() {
 		return null;
 	}

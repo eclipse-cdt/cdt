@@ -52,9 +52,11 @@ public class CHelpTest extends TestCase {
 		if(fDefaultCCHelpContext == null){
 			final IProject project = getCCProject().getProject();
 			fDefaultCCHelpContext = new ICHelpInvocationContext(){
+				@Override
 				public IProject getProject(){
 					return project;
 				}
+				@Override
 				public ITranslationUnit getTranslationUnit(){
 					return null;
 				}
@@ -67,9 +69,11 @@ public class CHelpTest extends TestCase {
 		if(fDefaultCHelpContext == null){
 			final IProject project = getCProject().getProject();
 			fDefaultCHelpContext = new ICHelpInvocationContext(){
+				@Override
 				public IProject getProject(){
 					return project;
 				}
+				@Override
 				public ITranslationUnit getTranslationUnit(){
 					return null;
 				}

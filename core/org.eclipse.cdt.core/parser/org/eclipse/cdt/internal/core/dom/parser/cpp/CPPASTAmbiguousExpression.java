@@ -29,25 +29,29 @@ public class CPPASTAmbiguousExpression extends ASTAmbiguousNode implements
 	}
 
     
-    public IASTExpression copy() {
+    @Override
+	public IASTExpression copy() {
 		throw new UnsupportedOperationException();
 	}
     
+	@Override
 	public IASTExpression copy(CopyStyle style) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public void addExpression(IASTExpression e) {
         assertNotFrozen();
     	if (e != null) {
-    		exp = (IASTExpression[]) ArrayUtil.append( IASTExpression.class, exp, ++expPos, e );
+    		exp = ArrayUtil.appendAt( IASTExpression.class, exp, ++expPos, e );
     		e.setParent(this);
 			e.setPropertyInParent(SUBEXPRESSION);
     	}
     }
 
-    public IASTExpression[] getExpressions() {
-        exp = (IASTExpression[]) ArrayUtil.removeNullsAfter( IASTExpression.class, exp, expPos );
+    @Override
+	public IASTExpression[] getExpressions() {
+        exp = ArrayUtil.trimAt( IASTExpression.class, exp, expPos );
     	return exp;
     }
 

@@ -137,6 +137,7 @@ public class CxxModelsCache implements ICodanDisposable {
 	 * @see IDisposable#dispose()
 	 * This method should not be called concurrently with any other method.
 	 */
+	@Override
 	public void dispose() {
         Assert.isTrue(!disposed, "CxxASTCache.dispose() called more than once."); //$NON-NLS-1$
 		disposed = true;

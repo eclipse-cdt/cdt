@@ -28,6 +28,7 @@ public class TypeInfo implements ITypeInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public void addReference(ITypeReference location) {
 		throw new UnsupportedOperationException();
@@ -37,6 +38,7 @@ public class TypeInfo implements ITypeInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public ITypeReference[] getReferences() {
 		throw new UnsupportedOperationException();
@@ -46,6 +48,7 @@ public class TypeInfo implements ITypeInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public ITypeReference getResolvedReference() {
 		throw new UnsupportedOperationException();
@@ -64,6 +67,7 @@ public class TypeInfo implements ITypeInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public boolean isReferenced(ITypeSearchScope scope) {
 		throw new UnsupportedOperationException();
@@ -73,6 +77,7 @@ public class TypeInfo implements ITypeInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public boolean isUndefinedType() {
 		throw new UnsupportedOperationException();
@@ -82,6 +87,7 @@ public class TypeInfo implements ITypeInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public boolean canSubstituteFor(ITypeInfo info) {
 		throw new UnsupportedOperationException();
@@ -95,6 +101,7 @@ public class TypeInfo implements ITypeInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public boolean exists() {
 		throw new UnsupportedOperationException();
@@ -104,6 +111,7 @@ public class TypeInfo implements ITypeInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public int getCElementType() {
 		throw new UnsupportedOperationException();
@@ -113,6 +121,7 @@ public class TypeInfo implements ITypeInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public void setCElementType(int type) {
 		throw new UnsupportedOperationException();
@@ -122,6 +131,7 @@ public class TypeInfo implements ITypeInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public IQualifiedTypeName getQualifiedTypeName() {
 		throw new UnsupportedOperationException();
@@ -131,6 +141,7 @@ public class TypeInfo implements ITypeInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public String getName() {
 		throw new UnsupportedOperationException();
@@ -140,6 +151,7 @@ public class TypeInfo implements ITypeInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public boolean isEnclosedType() {
 		throw new UnsupportedOperationException();
@@ -149,6 +161,7 @@ public class TypeInfo implements ITypeInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public ITypeInfo getEnclosingType(int kinds[]) {
 		throw new UnsupportedOperationException();
@@ -158,6 +171,7 @@ public class TypeInfo implements ITypeInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public ITypeInfo getEnclosingType() {
 		throw new UnsupportedOperationException();
@@ -167,6 +181,7 @@ public class TypeInfo implements ITypeInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public ITypeInfo getEnclosingNamespace(boolean includeGlobalNamespace) {
 		throw new UnsupportedOperationException();
@@ -176,6 +191,7 @@ public class TypeInfo implements ITypeInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public ITypeInfo getRootNamespace(boolean includeGlobalNamespace) {
 		throw new UnsupportedOperationException();
@@ -185,6 +201,7 @@ public class TypeInfo implements ITypeInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public boolean isEnclosingType() {
 		throw new UnsupportedOperationException();
@@ -194,6 +211,7 @@ public class TypeInfo implements ITypeInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public boolean encloses(ITypeInfo info) {
 		throw new UnsupportedOperationException();
@@ -203,6 +221,7 @@ public class TypeInfo implements ITypeInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public boolean isEnclosed(ITypeInfo info) {
 		throw new UnsupportedOperationException();
@@ -212,6 +231,7 @@ public class TypeInfo implements ITypeInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public boolean hasEnclosedTypes() {
 		throw new UnsupportedOperationException();
@@ -221,6 +241,7 @@ public class TypeInfo implements ITypeInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public ITypeInfo[] getEnclosedTypes() {
 		throw new UnsupportedOperationException();
@@ -230,6 +251,7 @@ public class TypeInfo implements ITypeInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public ITypeInfo[] getEnclosedTypes(int kinds[]) {
 		throw new UnsupportedOperationException();
@@ -239,6 +261,7 @@ public class TypeInfo implements ITypeInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public ICProject getEnclosingProject() {
 		throw new UnsupportedOperationException();
@@ -248,6 +271,7 @@ public class TypeInfo implements ITypeInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public boolean isEnclosed(ITypeSearchScope scope) {
 		throw new UnsupportedOperationException();
@@ -266,6 +290,7 @@ public class TypeInfo implements ITypeInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public void addDerivedReference(ITypeReference location) {
 		throw new UnsupportedOperationException();
@@ -275,6 +300,7 @@ public class TypeInfo implements ITypeInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public ITypeReference[] getDerivedReferences() {
 		throw new UnsupportedOperationException();
@@ -284,6 +310,7 @@ public class TypeInfo implements ITypeInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public boolean hasSubTypes() {
 		throw new UnsupportedOperationException();
@@ -293,6 +320,7 @@ public class TypeInfo implements ITypeInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public ITypeInfo[] getSubTypes() {
 		throw new UnsupportedOperationException();
@@ -302,6 +330,7 @@ public class TypeInfo implements ITypeInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public boolean hasSuperTypes() {
 		throw new UnsupportedOperationException();
@@ -311,6 +340,7 @@ public class TypeInfo implements ITypeInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public ITypeInfo[] getSuperTypes() {
 		throw new UnsupportedOperationException();
@@ -320,6 +350,7 @@ public class TypeInfo implements ITypeInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public ASTAccessVisibility getSuperTypeAccess(ITypeInfo superType) {
 		throw new UnsupportedOperationException();
@@ -329,6 +360,7 @@ public class TypeInfo implements ITypeInfo {
 	 * @deprecated
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
+	@Override
 	@Deprecated
 	public boolean isClass() {
 		throw new UnsupportedOperationException();

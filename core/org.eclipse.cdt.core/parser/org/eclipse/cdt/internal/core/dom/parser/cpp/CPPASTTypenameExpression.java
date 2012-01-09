@@ -50,13 +50,15 @@ public class CPPASTTypenameExpression extends CPPASTSimpleTypeConstructorExpress
 		return copy;
 	}
 
-    public void setName(IASTName name) {
+    @Override
+	public void setName(IASTName name) {
     	CPPASTNamedTypeSpecifier spec= new CPPASTNamedTypeSpecifier(name);
     	spec.setOffsetAndLength(this);
     	setDeclSpecifier(spec);
     }
 
-    public IASTName getName() {
+    @Override
+	public IASTName getName() {
     	IASTDeclSpecifier spec= getDeclSpecifier();
     	if (spec instanceof ICPPASTNamedTypeSpecifier) {
     		return ((ICPPASTNamedTypeSpecifier) spec).getName();
@@ -64,16 +66,19 @@ public class CPPASTTypenameExpression extends CPPASTSimpleTypeConstructorExpress
     	return null;
     }
 
+	@Override
 	public int getRoleForName(IASTName n) {
 		if (n == getName())
 			return r_reference;
 		return r_unclear;
 	}
 
+	@Override
 	@Deprecated
 	public void setIsTemplate(boolean val) {
     }
 
+	@Override
 	@Deprecated
     public boolean isTemplate() {
         return false;

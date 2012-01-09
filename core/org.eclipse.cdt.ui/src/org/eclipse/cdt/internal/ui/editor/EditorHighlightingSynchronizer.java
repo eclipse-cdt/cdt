@@ -46,6 +46,7 @@ public class EditorHighlightingSynchronizer implements ILinkedModeListener {
 	/*
 	 * @see org.eclipse.jface.text.link.ILinkedModeListener#left(org.eclipse.jface.text.link.LinkedModeModel, int)
 	 */
+	@Override
 	public void left(LinkedModeModel environment, int flags) {
 		if (fWasOccurrencesOn && !isEditorDisposed())
 			fEditor.installOccurrencesFinder(true);
@@ -58,12 +59,14 @@ public class EditorHighlightingSynchronizer implements ILinkedModeListener {
 	/*
 	 * @see org.eclipse.jface.text.link.ILinkedModeListener#suspend(org.eclipse.jface.text.link.LinkedModeModel)
 	 */
+	@Override
 	public void suspend(LinkedModeModel environment) {
 	}
 
 	/*
 	 * @see org.eclipse.jface.text.link.ILinkedModeListener#resume(org.eclipse.jface.text.link.LinkedModeModel, int)
 	 */
+	@Override
 	public void resume(LinkedModeModel environment, int flags) {
 	}
 

@@ -70,6 +70,7 @@ public class DeleteIProblemMarkerAction extends ActionDelegate implements IObjec
 	/**
 	 * @see IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
 	 */
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 	}
 

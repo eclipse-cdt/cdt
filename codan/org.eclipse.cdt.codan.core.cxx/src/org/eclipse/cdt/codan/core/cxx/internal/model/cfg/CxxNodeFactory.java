@@ -27,14 +27,17 @@ public class CxxNodeFactory extends NodeFactory implements INodeFactory {
 		super();
 	}
 
+	@Override
 	public IPlainNode createPlainNode() {
 		return new CxxPlainNode();
 	}
 
+	@Override
 	public IDecisionNode createDecisionNode() {
 		return new CxxDecisionNode();
 	}
 
+	@Override
 	public IExitNode createExitNode() {
 		return new CxxExitNode();
 	}

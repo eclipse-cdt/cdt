@@ -7,8 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
- * IBM Corporation
+ *     Institute for Software - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 
@@ -27,34 +27,29 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.IdentifierHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.IdentifierResult;
 import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
 
-
 public class ExtractFunctionInputPage extends UserInputWizardPage {
-
 	private final ExtractFunctionInformation info;
 	private ExtractFunctionComposite comp;
 	protected final String NO_NAME_ERROR_LABEL = Messages.ExtractFunctionInputPage_EnterName; 
-
 
 	public ExtractFunctionInputPage(String name, ExtractFunctionInformation info) {
 		super(name);
 		this.info = info;
 	}
 
+	@Override
 	public void createControl(final Composite parent) {
-
 		comp = new ExtractFunctionComposite(parent, info, this);
 		
 		setPageComplete(false);
 		
 		comp.getMethodNameText().addModifyListener(new ModifyListener() {
-
+			@Override
 			public void modifyText(ModifyEvent e) {
 				info.setMethodName(comp.getMethodName());	
 				checkName();
 			}
-			
 		});
-		
 		
 		for (Control buttons : comp.getVisibiltyGroup().getChildren()) {
 			buttons.addMouseListener(new MouseAdapter() {
@@ -67,46 +62,42 @@ public class ExtractFunctionInputPage extends UserInputWizardPage {
 			});
 		}
 		
-		comp.getReplaceSimilarButton().addSelectionListener(new SelectionListener(){
-
+		comp.getReplaceSimilarButton().addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				info.setReplaceDuplicates(comp.getReplaceSimilarButton().isEnabled());	
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				widgetDefaultSelected(e);		
 			}
-			
 		});
 		
 		setControl(comp);
-		
 	}
 
 	protected void visibilityChange(String text) {
 		info.setVisibility(VisibilityEnum.getEnumForStringRepresentation(text));
-		
 	}
 
 	private void checkName() {
-
 		String methodName = comp.getMethodName();
 		IdentifierResult result = IdentifierHelper.checkIdentifierName(methodName);
-		if(result.isCorrect()){
+		if (result.isCorrect()) {
 			setErrorMessage(null);
 			setPageComplete(true);
-		}
-		else{
+		} else {
 			setErrorMessage(Messages.ExtractFunctionInputPage_CheckFunctionName + " " + result.getMessage());  //$NON-NLS-1$
 			setPageComplete(false);
 		}
 	}
 	
 	public void errorWithAfterUsedVariable(String variableUsedAfterBlock ) {
-		if(variableUsedAfterBlock == null) {
+		if (variableUsedAfterBlock == null) {
 			setErrorMessage(null);
 			checkName();	
-		}else {
+		} else {
 			setErrorMessage("The parameter '" + variableUsedAfterBlock + "' " + Messages.ExtractFunctionInputPage_1);  //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}

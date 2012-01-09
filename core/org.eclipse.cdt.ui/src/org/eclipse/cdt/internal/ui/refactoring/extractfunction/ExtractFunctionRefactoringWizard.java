@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 
@@ -16,8 +16,7 @@ import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
 import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
 
 public class ExtractFunctionRefactoringWizard extends RefactoringWizard {
-
-	private ExtractFunctionInformation info;
+	private final ExtractFunctionInformation info;
 
 	public ExtractFunctionRefactoringWizard(Refactoring refactoring, ExtractFunctionInformation info) {
 		super(refactoring, WIZARD_BASED_USER_INTERFACE);
@@ -26,11 +25,10 @@ public class ExtractFunctionRefactoringWizard extends RefactoringWizard {
 
 	@Override
 	protected void addUserInputPages() {
-		UserInputWizardPage page = new ExtractFunctionInputPage(Messages.ExtractFunctionRefactoringWizard_FunctionName,info); 
+		UserInputWizardPage page = new ExtractFunctionInputPage(
+				Messages.ExtractFunctionRefactoringWizard_FunctionName,info); 
 		page.setTitle(Messages.ExtractFunctionRefactoringWizard_FunctionName); 
 		addPage(page);
-
 	}
-
 }
 

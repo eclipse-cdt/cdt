@@ -23,10 +23,12 @@ public abstract class AbstractBasicBlock implements IBasicBlock, ICfgData {
 	public final static IBasicBlock[] EMPTY_LIST = new IBasicBlock[0];
 	private Object data;
 
+	@Override
 	public Object getData() {
 		return data;
 	}
 
+	@Override
 	public void setData(Object data) {
 		this.data = data;
 	}

@@ -46,6 +46,7 @@ public interface IASTPreprocessorMacroDefinition extends IASTPreprocessorStateme
 	 * Returns whether this macro definition occurs in active code.
 	 * @since 5.1
 	 */
+	@Override
 	public boolean isActive();
 
 	/**

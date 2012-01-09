@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Alex Collins (Broadcom Corp.) - Initial implementation
+ *     Alex Collins (Broadcom Corp.) - Initial implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
@@ -65,6 +65,7 @@ public class GlobalBuildLogPreferencePage extends FieldEditorPreferencePage impl
 		addField(logLocation);
 	}
 
+	@Override
 	public void init(IWorkbench workbench) {
 		initDefaults(GlobalBuildConsoleManager.getBuildLogPreferenceStore());
 	}

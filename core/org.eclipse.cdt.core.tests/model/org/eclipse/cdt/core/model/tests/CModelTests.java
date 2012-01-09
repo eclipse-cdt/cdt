@@ -502,7 +502,8 @@ public class CModelTests extends TestCase {
         final boolean binContainerChanged[] = { false };
         
         IElementChangedListener elementChangedListener = new IElementChangedListener() {
-            public void elementChanged(ElementChangedEvent event) {
+            @Override
+			public void elementChanged(ElementChangedEvent event) {
                 ICElementDelta delta = event.getDelta();
                 processDelta(delta);
             }
@@ -560,7 +561,8 @@ public class CModelTests extends TestCase {
             String baseDir= FileLocator.toFileURL(FileLocator.find(bundle, new Path(sources), null)).getFile();
             ImportOperation importOp = new ImportOperation(project.getProject().getFullPath(),
                     new File(baseDir), FileSystemStructureProvider.INSTANCE, new IOverwriteQuery() {
-                        public String queryOverwrite(String file) {
+                        @Override
+						public String queryOverwrite(String file) {
                             return ALL;
                         }});
             importOp.setCreateContainerStructure(true);

@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- * Institute for Software - initial API and implementation 
+ *     Institute for Software - initial API and implementation 
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 
@@ -17,13 +17,10 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 
 /**
  * @author Emanuel Graf IFS
- *
  */
 class ReturnStatementFinder extends ASTVisitor{
+	private boolean containsReturnStmt;
 
-	private boolean containsReturnStmt = false;
-
-	
 	{
 		shouldVisitStatements = true;
 	}
@@ -40,5 +37,4 @@ class ReturnStatementFinder extends ASTVisitor{
 	public boolean containsReturn() {
 		return containsReturnStmt;
 	}
-
 }

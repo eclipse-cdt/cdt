@@ -53,13 +53,16 @@ public class THHistoryListAction extends Action {
 			};
 					
 			IListAdapter<ICElement> adapter= new IListAdapter<ICElement>() {
+				@Override
 				public void customButtonPressed(ListDialogField<ICElement> field, int index) {
 					doCustomButtonPressed();
 				}
+				@Override
 				public void selectionChanged(ListDialogField<ICElement> field) {
 					doSelectionChanged();
 				}
 				
+				@Override
 				public void doubleClicked(ListDialogField<ICElement> field) {
 					doDoubleClicked();
 				}				

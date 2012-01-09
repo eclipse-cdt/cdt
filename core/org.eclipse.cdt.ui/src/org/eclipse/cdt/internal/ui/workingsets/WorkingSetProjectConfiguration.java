@@ -59,10 +59,12 @@ public class WorkingSetProjectConfiguration implements IWorkingSetProjectConfigu
 		this.workingSetConfig = parent;
 	}
 
+	@Override
 	public IWorkingSetConfiguration getWorkingSetConfiguration() {
 		return workingSetConfig;
 	}
 
+	@Override
 	public String getProjectName() {
 		return projectName;
 	}
@@ -78,6 +80,7 @@ public class WorkingSetProjectConfiguration implements IWorkingSetProjectConfigu
 		this.projectName = projectName;
 	}
 
+	@Override
 	public IProject resolveProject() {
 		IProject result = ResourcesPlugin.getWorkspace().getRoot().getProject(getProjectName());
 
@@ -88,6 +91,7 @@ public class WorkingSetProjectConfiguration implements IWorkingSetProjectConfigu
 		return result;
 	}
 
+	@Override
 	public String getSelectedConfigurationID() {
 		return selectedConfiguration;
 	}
@@ -96,6 +100,7 @@ public class WorkingSetProjectConfiguration implements IWorkingSetProjectConfigu
 		this.selectedConfiguration = id;
 	}
 
+	@Override
 	public ICConfigurationDescription resolveSelectedConfiguration() {
 		ICConfigurationDescription result = null;
 
@@ -111,6 +116,7 @@ public class WorkingSetProjectConfiguration implements IWorkingSetProjectConfigu
 		return result;
 	}
 
+	@Override
 	public Collection<ICConfigurationDescription> resolveConfigurations() {
 		ICConfigurationDescription[] result = null;
 
@@ -127,12 +133,14 @@ public class WorkingSetProjectConfiguration implements IWorkingSetProjectConfigu
 				.asList(result);
 	}
 
+	@Override
 	public boolean isActive() {
 		ICConfigurationDescription desc = resolveSelectedConfiguration();
 
 		return (desc != null) && desc.isActive();
 	}
 
+	@Override
 	public void activate() {
 		ICConfigurationDescription config = resolveSelectedConfiguration();
 
@@ -151,6 +159,7 @@ public class WorkingSetProjectConfiguration implements IWorkingSetProjectConfigu
 		}
 	}
 
+	@Override
 	public IStatus build(IProgressMonitor monitor) {
 		IStatus result = Status.OK_STATUS;
 
@@ -183,6 +192,7 @@ public class WorkingSetProjectConfiguration implements IWorkingSetProjectConfigu
 		return result;
 	}
 
+	@Override
 	public void saveState(IMemento memento) {
 		memento.putString(ATTR_NAME, getProjectName());
 
@@ -191,11 +201,13 @@ public class WorkingSetProjectConfiguration implements IWorkingSetProjectConfigu
 		}
 	}
 
+	@Override
 	public void loadState(IMemento memento) {
 		projectName = memento.getString(ATTR_NAME);
 		selectedConfiguration = memento.getString(ATTR_CONFIG);
 	}
 
+	@Override
 	public ISnapshot createSnapshot(IWorkingSetConfiguration.ISnapshot workingSetConfig,
 			WorkspaceSnapshot workspace) {
 
@@ -251,6 +263,7 @@ public class WorkingSetProjectConfiguration implements IWorkingSetProjectConfigu
 			return (IWorkingSetConfiguration.ISnapshot) super.getWorkingSetConfiguration();
 		}
 
+		@Override
 		public final WorkspaceSnapshot getWorkspaceSnapshot() {
 			return workspace;
 		}

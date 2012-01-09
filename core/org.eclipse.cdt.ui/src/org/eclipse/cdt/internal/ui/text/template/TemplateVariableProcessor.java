@@ -30,6 +30,7 @@ import org.eclipse.jface.text.templates.TemplateVariableResolver;
 public class TemplateVariableProcessor implements IContentAssistProcessor {
 
 	private static Comparator<TemplateVariableProposal> fgTemplateVariableProposalComparator= new Comparator<TemplateVariableProposal>() {
+		@Override
 		public int compare(TemplateVariableProposal arg0, TemplateVariableProposal arg1) {
 			return arg0.getDisplayString().compareTo(arg1.getDisplayString());
 		}
@@ -65,6 +66,7 @@ public class TemplateVariableProcessor implements IContentAssistProcessor {
 	/*
 	 * @see IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
 	 */
+	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer,	int documentOffset) {
 
 		if (fContextType == null)
@@ -136,6 +138,7 @@ public class TemplateVariableProcessor implements IContentAssistProcessor {
 	/*
 	 * @see IContentAssistProcessor#computeContextInformation(ITextViewer, int)
 	 */
+	@Override
 	public IContextInformation[] computeContextInformation(ITextViewer viewer, int documentOffset) {
 		return null;
 	}
@@ -143,6 +146,7 @@ public class TemplateVariableProcessor implements IContentAssistProcessor {
 	/*
 	 * @see IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
 	 */
+	@Override
 	public char[] getCompletionProposalAutoActivationCharacters() {
 		return new char[] {'$'};
 	}
@@ -150,6 +154,7 @@ public class TemplateVariableProcessor implements IContentAssistProcessor {
 	/*
 	 * @see IContentAssistProcessor#getContextInformationAutoActivationCharacters()
 	 */
+	@Override
 	public char[] getContextInformationAutoActivationCharacters() {
 		return null;
 	}
@@ -157,6 +162,7 @@ public class TemplateVariableProcessor implements IContentAssistProcessor {
 	/*
 	 * @see IContentAssistProcessor#getErrorMessage()
 	 */
+	@Override
 	public String getErrorMessage() {
 		return null;
 	}
@@ -164,6 +170,7 @@ public class TemplateVariableProcessor implements IContentAssistProcessor {
 	/*
 	 * @see IContentAssistProcessor#getContextInformationValidator()
 	 */
+	@Override
 	public IContextInformationValidator getContextInformationValidator() {
 		return null;
 	}

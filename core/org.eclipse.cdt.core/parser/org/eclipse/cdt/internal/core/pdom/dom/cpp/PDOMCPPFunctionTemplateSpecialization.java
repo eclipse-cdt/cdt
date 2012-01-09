@@ -44,19 +44,23 @@ class PDOMCPPFunctionTemplateSpecialization extends	PDOMCPPFunctionSpecializatio
 		return IIndexCPPBindingConstants.CPP_FUNCTION_TEMPLATE_SPECIALIZATION;
 	}
 	
+	@Override
 	public ICPPTemplateParameter[] getTemplateParameters() {
 		ICPPFunctionTemplate template = (ICPPFunctionTemplate) getSpecializedBinding();
 		return template.getTemplateParameters();
 	}
 
+	@Override
 	public ICPPTemplateInstance getInstance(ICPPTemplateArgument[] arguments) {
 		return PDOMInstanceCache.getCache(this).getInstance(arguments);	
 	}
 
+	@Override
 	public void addInstance(ICPPTemplateArgument[] arguments, ICPPTemplateInstance instance) {
 		PDOMInstanceCache.getCache(this).addInstance(arguments, instance);	
 	}
 	
+	@Override
 	public ICPPTemplateInstance[] getAllInstances() {
 		return PDOMInstanceCache.getCache(this).getAllInstances();	
 	}

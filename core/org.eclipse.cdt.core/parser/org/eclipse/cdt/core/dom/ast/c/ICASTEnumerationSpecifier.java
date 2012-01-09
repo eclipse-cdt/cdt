@@ -24,10 +24,12 @@ public interface ICASTEnumerationSpecifier extends ICASTDeclSpecifier,
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICASTEnumerationSpecifier copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICASTEnumerationSpecifier copy(CopyStyle style);
 }

@@ -42,6 +42,7 @@ public class TypesTests extends PDOMTestBase {
 		return suite(TypesTests.class);
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		if (pdom == null) {
 			ICProject project = createProject("types");
@@ -50,6 +51,7 @@ public class TypesTests extends PDOMTestBase {
 		pdom.acquireReadLock();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		pdom.releaseReadLock();
 	}

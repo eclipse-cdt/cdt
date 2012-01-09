@@ -38,10 +38,12 @@ public class CPPClassInstance extends CPPClassSpecialization implements ICPPTemp
 		this.arguments= args;
 	}
 
+	@Override
 	public ICPPTemplateDefinition getTemplateDefinition() {
 		return (ICPPTemplateDefinition) getSpecializedBinding();
 	}
 	
+	@Override
 	public ICPPTemplateArgument[] getTemplateArguments() {
 		return arguments;
 	}
@@ -57,10 +59,12 @@ public class CPPClassInstance extends CPPClassSpecialization implements ICPPTemp
 		return super.getSpecializationScope();
 	}
 
+	@Override
 	public boolean isExplicitSpecialization() {
 		return !(getCompositeScope() instanceof ICPPClassSpecializationScope);
 	}
 
+	@Override
 	@Deprecated
 	public IType[] getArguments() {
 		return CPPTemplates.getArguments(getTemplateArguments());

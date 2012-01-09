@@ -30,10 +30,12 @@ public class CASTProblemDeclaration extends CASTProblemOwner implements
 		super(problem);
 	}
 
+	@Override
 	public CASTProblemDeclaration copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CASTProblemDeclaration copy(CopyStyle style) {
 		CASTProblemDeclaration copy = new CASTProblemDeclaration();
 		copyBaseProblem(copy, style);

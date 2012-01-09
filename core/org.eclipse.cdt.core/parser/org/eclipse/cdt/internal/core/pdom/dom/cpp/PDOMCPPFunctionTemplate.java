@@ -73,6 +73,7 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction
 		return IIndexCPPBindingConstants.CPP_FUNCTION_TEMPLATE;
 	}
 
+	@Override
 	public IPDOMCPPTemplateParameter[] getTemplateParameters() {
 		if (params == null) {
 			try {
@@ -90,18 +91,22 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction
 		return params;
 	}
 	
+	@Override
 	public ICPPTemplateInstance getInstance(ICPPTemplateArgument[] arguments) {
 		return PDOMInstanceCache.getCache(this).getInstance(arguments);	
 	}
 
+	@Override
 	public void addInstance(ICPPTemplateArgument[] arguments, ICPPTemplateInstance instance) {
 		PDOMInstanceCache.getCache(this).addInstance(arguments, instance);	
 	}
 	
+	@Override
 	public ICPPTemplateInstance[] getAllInstances() {
 		return PDOMInstanceCache.getCache(this).getAllInstances();	
 	}
 
+	@Override
 	public ICPPTemplateParameter adaptTemplateParameter(ICPPTemplateParameter param) {
 		// Template parameters are identified by their position in the parameter list.
 		int pos = param.getParameterPosition();

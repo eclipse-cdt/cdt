@@ -38,6 +38,7 @@ public abstract class ParsingBasedProposalComputer implements ICompletionProposa
 
 	private String fErrorMessage = null;
 	
+	@Override
 	public List<ICompletionProposal> computeCompletionProposals(
 			ContentAssistInvocationContext context, IProgressMonitor monitor) {
 		try {
@@ -67,6 +68,7 @@ public abstract class ParsingBasedProposalComputer implements ICompletionProposa
 			IASTCompletionNode completionNode,
 			String prefix) throws CoreException;
 	
+	@Override
 	public List<IContextInformation> computeContextInformation(
 			ContentAssistInvocationContext context, IProgressMonitor monitor) {
 		Collection<ICompletionProposal> proposals= computeCompletionProposals(context, monitor);
@@ -84,13 +86,16 @@ public abstract class ParsingBasedProposalComputer implements ICompletionProposa
 		return result;
 	}
 
+	@Override
 	public String getErrorMessage() {
 		return fErrorMessage;
 	}
 
+	@Override
 	public void sessionEnded() {
 	}
 
+	@Override
 	public void sessionStarted() {
 		fErrorMessage = null;
 	}

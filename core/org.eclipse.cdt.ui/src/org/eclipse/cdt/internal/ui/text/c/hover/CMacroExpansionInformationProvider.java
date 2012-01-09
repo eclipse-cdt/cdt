@@ -39,6 +39,7 @@ public class CMacroExpansionInformationProvider implements IInformationProvider,
 	/*
 	 * @see org.eclipse.jface.text.information.IInformationProvider#getInformation(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
 	 */
+	@Override
 	public String getInformation(ITextViewer textViewer, IRegion subject) {
 		return null;
 	}
@@ -46,6 +47,7 @@ public class CMacroExpansionInformationProvider implements IInformationProvider,
 	/*
 	 * @see org.eclipse.jface.text.information.IInformationProvider#getSubject(org.eclipse.jface.text.ITextViewer, int)
 	 */
+	@Override
 	public IRegion getSubject(ITextViewer textViewer, int offset) {
 		Point selection= textViewer.getSelectedRange();
 		return new Region(selection.x, selection.y);
@@ -54,6 +56,7 @@ public class CMacroExpansionInformationProvider implements IInformationProvider,
 	/*
 	 * @see org.eclipse.jface.text.information.IInformationProviderExtension#getInformation2(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
 	 */
+	@Override
 	public Object getInformation2(ITextViewer textViewer, IRegion subject) {
 		return CMacroExpansionInput.create(fEditor, subject, true);
 	}
@@ -61,8 +64,10 @@ public class CMacroExpansionInformationProvider implements IInformationProvider,
 	/*
 	 * @see org.eclipse.jface.text.information.IInformationProviderExtension2#getInformationPresenterControlCreator()
 	 */
+	@Override
 	public IInformationControlCreator getInformationPresenterControlCreator() {
 		return new IInformationControlCreator() {
+			@Override
 			public IInformationControl createInformationControl(Shell parent) {
 				return new CMacroExpansionExplorationControl(parent);
 			}

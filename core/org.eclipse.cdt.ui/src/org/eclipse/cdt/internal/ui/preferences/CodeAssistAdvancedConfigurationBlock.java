@@ -97,6 +97,7 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
 		/*
 		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
 		 */
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			if (columnIndex == 0)
 				return ((ModelElement) element).getImage();
@@ -106,6 +107,7 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
 		/*
 		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
 		 */
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			switch (columnIndex) {
 	            case 0:
@@ -132,6 +134,7 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
 		/*
 		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
 		 */
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			if (columnIndex == 0)
 				return ((ModelElement) element).getImage();
@@ -141,6 +144,7 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
 		/*
 		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
 		 */
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			switch (columnIndex) {
 				case 0:
@@ -153,6 +157,7 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
 	}
 
 	private final Comparator<ModelElement> fCategoryComparator= new Comparator<ModelElement>() {
+		@Override
 		public int compare(ModelElement o1, ModelElement o2) {
 			return o1.getRank() - o2.getRank();
 		}
@@ -441,6 +446,7 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
 		keyColumn.setResizable(true);
 		
 		fDefaultViewer.addCheckStateListener(new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				boolean checked= event.getChecked();
 				ModelElement element= (ModelElement) event.getElement();
@@ -536,6 +542,7 @@ final class CodeAssistAdvancedConfigurationBlock extends OptionsConfigurationBlo
 		nameColumn.setWidth(minNameWidth);
 		
 		fSeparateViewer.addCheckStateListener(new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				boolean checked= event.getChecked();
 				ModelElement element= (ModelElement) event.getElement();

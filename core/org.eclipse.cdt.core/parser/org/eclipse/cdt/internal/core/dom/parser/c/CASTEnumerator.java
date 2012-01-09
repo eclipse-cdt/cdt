@@ -27,10 +27,12 @@ public class CASTEnumerator extends ASTEnumerator {
 		super(name, value);
 	}
 	
+	@Override
 	public CASTEnumerator copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CASTEnumerator copy(CopyStyle style) {
 		CASTEnumerator copy = new CASTEnumerator();
 		copyAbstractEnumerator(copy, style);

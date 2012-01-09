@@ -62,11 +62,13 @@ public class ColoredViewersManager implements IPropertyChangeListener {
 		}
 	}
 				
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		String property= event.getProperty();
 		if (property.equals(JFacePreferences.QUALIFIER_COLOR) || property.equals(JFacePreferences.COUNTER_COLOR) || property.equals(JFacePreferences.DECORATIONS_COLOR)
 				|| property.equals(HIGHLIGHT_BG_COLOR_NAME) || property.equals(IWorkbenchPreferenceConstants.USE_COLORED_LABELS) || property.equals(HIGHLIGHT_WRITE_BG_COLOR_NAME)) {
 			Display.getDefault().asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					refreshAllViewers();
 				}

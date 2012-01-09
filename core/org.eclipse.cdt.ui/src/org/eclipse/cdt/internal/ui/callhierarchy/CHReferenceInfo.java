@@ -14,6 +14,7 @@ import java.util.Comparator;
 
 public class CHReferenceInfo {
 	public static final Comparator<CHReferenceInfo> COMPARE_OFFSET = new Comparator<CHReferenceInfo>() {
+		@Override
 		public int compare(CHReferenceInfo r1, CHReferenceInfo r2) {
 			return r1.fOffset - r2.fOffset;
 		}

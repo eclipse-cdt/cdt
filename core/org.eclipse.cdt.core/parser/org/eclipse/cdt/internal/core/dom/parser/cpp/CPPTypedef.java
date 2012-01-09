@@ -154,9 +154,9 @@ public class CPPTypedef extends PlatformObject implements ITypedef, ITypeContain
 	        // Keep the lowest offset declaration in [0]
 			if (declarations.length > 0 &&
 					((ASTNode) node).getOffset() < ((ASTNode) declarations[0]).getOffset()) {
-				declarations = (IASTName[]) ArrayUtil.prepend(IASTName.class, declarations, name);
+				declarations = ArrayUtil.prepend(IASTName.class, declarations, name);
 			} else {
-				declarations = (IASTName[]) ArrayUtil.append(IASTName.class, declarations, name);
+				declarations = ArrayUtil.append(IASTName.class, declarations, name);
 			}
 	    }
 	}

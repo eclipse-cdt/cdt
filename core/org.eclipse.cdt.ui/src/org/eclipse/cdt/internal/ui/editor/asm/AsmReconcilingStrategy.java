@@ -44,6 +44,7 @@ public class AsmReconcilingStrategy implements IReconcilingStrategy, IReconcilin
 	/*
 	 * @see IReconcilingStrategy#reconcile(org.eclipse.jface.text.IRegion)
 	 */
+	@Override
 	public void reconcile(IRegion partition) {
 		reconcile(false);
 	}
@@ -51,6 +52,7 @@ public class AsmReconcilingStrategy implements IReconcilingStrategy, IReconcilin
 	/*
 	 * @see IReconcilingStrategy#reconcile(org.eclipse.jface.text.reconciler.DirtyRegion, org.eclipse.jface.text.IRegion)
 	 */
+	@Override
 	public void reconcile(DirtyRegion dirtyRegion, IRegion subRegion) {
 		// unused - non-incremental reconciler
 	}
@@ -58,6 +60,7 @@ public class AsmReconcilingStrategy implements IReconcilingStrategy, IReconcilin
 	/*
 	 * @see IReconcilingStrategy#setDocument(org.eclipse.jface.text.IDocument)
 	 */
+	@Override
 	public void setDocument(IDocument document) {
 		// no-op
 	}
@@ -65,6 +68,7 @@ public class AsmReconcilingStrategy implements IReconcilingStrategy, IReconcilin
 	/*
 	 * @see IReconcilingStrategyExtension#setProgressMonitor(IProgressMonitor)
 	 */
+	@Override
 	public void setProgressMonitor(IProgressMonitor monitor) {
 		fProgressMonitor= monitor;
 	}
@@ -72,6 +76,7 @@ public class AsmReconcilingStrategy implements IReconcilingStrategy, IReconcilin
 	/*
 	 * @see IReconcilingStrategyExtension#initialReconcile()
 	 */
+	@Override
 	public void initialReconcile() {
 		reconcile(true);
 	}

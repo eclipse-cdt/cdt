@@ -197,6 +197,7 @@ public final class DefaultPhoneticHashProvider implements IPhoneticHashProvider 
 	/*
 	 * @see org.eclipse.spelling.done.IPhoneticHasher#getHash(java.lang.String)
 	 */
+	@Override
 	public final String getHash(final String word) {
 		final String input= word.toUpperCase() + "     "; //$NON-NLS-1$
 		final char[] hashable= input.toCharArray();
@@ -664,6 +665,7 @@ public final class DefaultPhoneticHashProvider implements IPhoneticHashProvider 
 	/*
 	 * @see org.eclipse.spelling.done.IPhoneticHasher#getMutators()
 	 */
+	@Override
 	public final char[] getMutators() {
 		return MUTATOR_CHARACTERS;
 	}

@@ -26,25 +26,30 @@ class CompositeCPPEnumScope extends CompositeScope implements ICPPScope {
 		super(cf, rbinding);
 	}
 
+	@Override
 	public EScopeKind getKind() {
 		return EScopeKind.eEnumeration;
 	}
 
+	@Override
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) {
 		IBinding binding = ((ICPPEnumeration)rbinding).asScope().getBinding(name, resolve, fileSet);
 		return processUncertainBinding(binding);
 	}
 
+	@Override
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
 		IBinding[] bindings = ((ICPPEnumeration)rbinding).asScope().getBindings(name, resolve, prefixLookup, fileSet);
 		return processUncertainBindings(bindings);
 	}
 	
+	@Override
 	public IBinding[] find(String name) {
 		IBinding[] preresult = ((ICPPEnumeration)rbinding).asScope().find(name);
 		return processUncertainBindings(preresult);	
 	}
 	
+	@Override
 	public IIndexBinding getScopeBinding() {
 		return cf.getCompositeBinding(rbinding);
 	}

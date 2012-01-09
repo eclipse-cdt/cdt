@@ -36,14 +36,17 @@ public class CPPFieldSpecialization extends CPPSpecialization implements ICPPFie
 		return (ICPPField) getSpecializedBinding();
 	}
 	
+	@Override
 	public int getVisibility() {
 		return getField().getVisibility();
 	}
 
+	@Override
 	public ICPPClassType getClassOwner() {
 		return getField().getClassOwner();
 	}
 	
+	@Override
 	public IType getType() {
 		if (type == null) {
 			type= specializeType(getField().getType());
@@ -51,38 +54,47 @@ public class CPPFieldSpecialization extends CPPSpecialization implements ICPPFie
 		return type;
 	}
 
+	@Override
 	public boolean isStatic() {
 		return getField().isStatic();
 	}
 
-    public boolean isExtern() {
+    @Override
+	public boolean isExtern() {
         return getField().isExtern();
     }
 
-    public boolean isAuto() {
+    @Override
+	public boolean isAuto() {
         return getField().isAuto();
     }
 
-    public boolean isRegister() {
+    @Override
+	public boolean isRegister() {
         return getField().isRegister();
     }
 
-    public boolean isMutable() {
+    @Override
+	public boolean isMutable() {
         return getField().isMutable();
     }
 
-    public boolean isExternC() {
+    @Override
+	public boolean isExternC() {
     	return false;
     }
 
+	@Override
 	public ICompositeType getCompositeTypeOwner() {
 		return getClassOwner();
 	}
 
+	@Override
 	public IValue getInitialValue() {
 		return getInitialValue(Value.MAX_RECURSION_DEPTH);
 	}
 
+	@Override
 	public IValue getInitialValue(int maxRecursionDepth) {
 		if (value == null) {
 			ICPPField field= getField();

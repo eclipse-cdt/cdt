@@ -65,6 +65,7 @@ public class SelectionList extends Composite {
 		fList= new Table(this, style);
 		fList.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fList.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				fRenderer.dispose();
 			}
@@ -79,6 +80,7 @@ public class SelectionList extends Composite {
 		spec.verticalAlignment= GridData.BEGINNING;
 		fText.setLayoutData(spec);
 		Listener l= new Listener() {
+			@Override
 			public void handleEvent(Event evt) {
 				filter(false);
 			}

@@ -29,14 +29,17 @@ class CompositeCPPClassScope extends CompositeScope implements ICPPClassScope {
 		super(cf, rbinding);
 	}
 
+	@Override
 	public EScopeKind getKind() {
 		return EScopeKind.eClassType;
 	}
 
+	@Override
 	public ICPPClassType getClassType() {
 		return (ICPPClassType) cf.getCompositeBinding(rbinding);
 	}
 
+	@Override
 	public ICPPMethod[] getImplicitMethods() {
 		ICPPClassScope rscope = (ICPPClassScope) ((ICPPClassType)rbinding).getCompositeScope();
 		ICPPMethod[] result = rscope.getImplicitMethods();
@@ -46,6 +49,7 @@ class CompositeCPPClassScope extends CompositeScope implements ICPPClassScope {
 		return result;
 	}
 
+	@Override
 	public ICPPConstructor[] getConstructors() {
 		ICPPClassScope rscope = (ICPPClassScope) ((ICPPClassType)rbinding).getCompositeScope();
 		ICPPConstructor[] result = rscope.getConstructors();
@@ -55,21 +59,25 @@ class CompositeCPPClassScope extends CompositeScope implements ICPPClassScope {
 		return result;
 	}
 
+	@Override
 	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) {
 		IBinding binding = ((ICPPClassType)rbinding).getCompositeScope().getBinding(name, resolve, fileSet);
 		return processUncertainBinding(binding);
 	}
 
+	@Override
 	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
 		IBinding[] bindings = ((ICPPClassType)rbinding).getCompositeScope().getBindings(name, resolve, prefixLookup, fileSet);
 		return processUncertainBindings(bindings);
 	}
 	
+	@Override
 	public IBinding[] find(String name) {
 		IBinding[] preresult = ((ICPPClassType)rbinding).getCompositeScope().find(name);
 		return processUncertainBindings(preresult);	
 	}
 	
+	@Override
 	public IIndexBinding getScopeBinding() {
 		return (IIndexBinding) getClassType();
 	}

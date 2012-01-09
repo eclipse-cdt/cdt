@@ -39,12 +39,14 @@ public class CPPFieldTests extends PDOMTestBase {
 		return suite(CPPFieldTests.class);
 	}
 	
+	@Override
 	protected void setUp() throws Exception {
 		project = createProject("fieldTests");
 		pdom = (PDOM) CCoreInternals.getPDOMManager().getPDOM(project);
 		pdom.acquireReadLock();
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		pdom.releaseReadLock();
 		if (project != null) {

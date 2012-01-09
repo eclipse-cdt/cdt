@@ -31,10 +31,12 @@ public interface IIndexScope extends IScope {
 	/**
 	 * Returns the parent scope or <code>null</code> if the scope is nested in the global scope.
 	 */
+	@Override
 	IIndexScope getParent();
 	
 	/**
 	 * Returns the name of this scope.
 	 */
+	@Override
 	IIndexName getScopeName();
 }

@@ -75,6 +75,7 @@ public class SpellingEngineDispatcher implements ISpellingEngine {
 	/*
 	 * @see org.eclipse.ui.texteditor.spelling.ISpellingEngine#check(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IRegion[], org.eclipse.ui.texteditor.spelling.SpellingContext, org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void check(IDocument document, IRegion[] regions, SpellingContext context, ISpellingProblemCollector collector, IProgressMonitor monitor) {
 		ISpellingEngine engine= getEngine(context.getContentType());
 		if (engine == null)

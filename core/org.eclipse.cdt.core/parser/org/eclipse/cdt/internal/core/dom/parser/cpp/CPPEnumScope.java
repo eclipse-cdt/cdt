@@ -22,6 +22,7 @@ public class CPPEnumScope extends CPPScope {
 		super(specifier);
 	}
 
+	@Override
 	public EScopeKind getKind() {
 		return EScopeKind.eNamespace;
 	}

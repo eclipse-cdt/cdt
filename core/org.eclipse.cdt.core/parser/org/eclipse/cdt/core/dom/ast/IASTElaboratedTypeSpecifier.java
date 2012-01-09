@@ -78,5 +78,6 @@ public interface IASTElaboratedTypeSpecifier extends IASTDeclSpecifier, IASTName
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public IASTElaboratedTypeSpecifier copy();
 }

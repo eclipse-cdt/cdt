@@ -42,12 +42,14 @@ public class AsmPartitionerTest extends TestCase {
 		super(name);
 	}
 
+	@Override
 	protected void setUp() {
 		fDocument= new Document("xxx\n/*xxx*/\nxxx\n/**xxx*/\nxxx\n/**/\nxxx\n/***/\nxxx");
 		setupDefaultPartitioner();
 
 		fDocumentPartitioningChanged= false;
 		fDocument.addDocumentPartitioningListener(new IDocumentPartitioningListener() {
+			@Override
 			public void documentPartitioningChanged(IDocument document) {
 				fDocumentPartitioningChanged= true;
 			}
@@ -82,6 +84,7 @@ public class AsmPartitionerTest extends TestCase {
 		return new TestSuite(AsmPartitionerTest.class);
 	}
 
+	@Override
 	protected void tearDown () {
 		IDocumentPartitioner partitioner= fDocument.getDocumentPartitioner();
 		if (partitioner != null) {

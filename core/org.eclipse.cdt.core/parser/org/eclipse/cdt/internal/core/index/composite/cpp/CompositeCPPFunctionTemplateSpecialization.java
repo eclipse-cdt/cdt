@@ -26,18 +26,22 @@ public class CompositeCPPFunctionTemplateSpecialization	extends CompositeCPPFunc
 		super(cf, ft);
 	}
 
+	@Override
 	public ICPPTemplateParameter[] getTemplateParameters() {
 		return TemplateInstanceUtil.convert(cf, ((ICPPFunctionTemplate) rbinding).getTemplateParameters());
 	}
 
+	@Override
 	public ICPPTemplateInstance getInstance(ICPPTemplateArgument[] arguments) {
 		return CompositeInstanceCache.getCache(cf, rbinding).getInstance(arguments);	
 	}
 
+	@Override
 	public void addInstance(ICPPTemplateArgument[] arguments, ICPPTemplateInstance instance) {
 		CompositeInstanceCache.getCache(cf, rbinding).addInstance(arguments, instance);	
 	}
 
+	@Override
 	public ICPPTemplateInstance[] getAllInstances() {
 		return CompositeInstanceCache.getCache(cf, rbinding).getAllInstances();
 	}

@@ -81,6 +81,7 @@ public class CoreSpellingProblem extends AbstractPersistableProblem {
 	/*
 	 * @see org.eclipse.cdt.core.parser.IProblem#getArguments()
 	 */
+	@Override
 	public String[] getArguments() {
 		String prefix= ""; //$NON-NLS-1$
 		String postfix= ""; //$NON-NLS-1$
@@ -99,6 +100,7 @@ public class CoreSpellingProblem extends AbstractPersistableProblem {
 	/*
 	 * @see org.eclipse.cdt.core.parser.IProblem#getID()
 	 */
+	@Override
 	public int getID() {
 		return CSpellingReconcileStrategy.SPELLING_PROBLEM_ID;
 	}
@@ -106,6 +108,7 @@ public class CoreSpellingProblem extends AbstractPersistableProblem {
 	/*
 	 * @see org.eclipse.cdt.core.parser.IProblem#getMessage()
 	 */
+	@Override
 	public String getMessage() {
 		return fMessage;
 	}
@@ -114,6 +117,7 @@ public class CoreSpellingProblem extends AbstractPersistableProblem {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IProblem#getMessageWithLocation()
 	 */
+	@Override
 	public String getMessageWithLocation() {
 		return NLS.bind(Messages.Spelling_msgWithLocation, new Object[] {fMessage, fOrigin, fLineNumber});
 	}
@@ -121,6 +125,7 @@ public class CoreSpellingProblem extends AbstractPersistableProblem {
 	/*
 	 * @see org.eclipse.cdt.core.parser.IProblem#getOriginatingFileName()
 	 */
+	@Override
 	public char[] getOriginatingFileName() {
 		return fOrigin.toCharArray();
 	}
@@ -128,6 +133,7 @@ public class CoreSpellingProblem extends AbstractPersistableProblem {
 	/*
 	 * @see org.eclipse.cdt.core.parser.IProblem#getSourceEnd()
 	 */
+	@Override
 	public int getSourceEnd() {
 		return fSourceEnd;
 	}
@@ -135,6 +141,7 @@ public class CoreSpellingProblem extends AbstractPersistableProblem {
 	/*
 	 * @see org.eclipse.cdt.core.parser.IProblem#getSourceLineNumber()
 	 */
+	@Override
 	public int getSourceLineNumber() {
 		return fLineNumber;
 	}
@@ -142,6 +149,7 @@ public class CoreSpellingProblem extends AbstractPersistableProblem {
 	/*
 	 * @see org.eclipse.cdt.core.parser.IProblem#getSourceStart()
 	 */
+	@Override
 	public int getSourceStart() {
 		return fSourceStart;
 	}
@@ -149,6 +157,7 @@ public class CoreSpellingProblem extends AbstractPersistableProblem {
 	/*
 	 * @see org.eclipse.cdt.core.parser.IProblem#isError()
 	 */
+	@Override
 	public boolean isError() {
 		return false;
 	}
@@ -156,6 +165,7 @@ public class CoreSpellingProblem extends AbstractPersistableProblem {
 	/*
 	 * @see org.eclipse.cdt.core.parser.IProblem#isWarning()
 	 */
+	@Override
 	public boolean isWarning() {
 		return true;
 	}
@@ -184,10 +194,12 @@ public class CoreSpellingProblem extends AbstractPersistableProblem {
 	/*
 	 * @see org.eclipse.cdt.core.parser.CategorizedProblem#getMarkerType()
 	 */
+	@Override
 	public String getMarkerType() {
 		return MARKER_TYPE;
 	}
 	
+	@Override
 	public boolean checkCategory(int bitmask) {
 		return (getID() & bitmask) != 0;
 	}

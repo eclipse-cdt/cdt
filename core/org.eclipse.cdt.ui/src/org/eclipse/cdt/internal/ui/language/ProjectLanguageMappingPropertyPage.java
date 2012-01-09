@@ -80,10 +80,12 @@ public class ProjectLanguageMappingPropertyPage extends PropertyPage {
 		fetchWorkspaceMappings();
 		fInheritedMappingWidget.createContents(group, null);
 		fInheritedMappingsChangeListener = new ILanguageMappingChangeListener() {
+			@Override
 			public void handleLanguageMappingChangeEvent(final ILanguageMappingChangeEvent event) {
 				if (event.getType() == ILanguageMappingChangeEvent.TYPE_WORKSPACE) {
 					if (ProjectLanguageMappingPropertyPage.this.isControlCreated()) {
 						Display.getDefault().asyncExec(new Runnable() {
+							@Override
 							public void run() {
 								if (!ProjectLanguageMappingPropertyPage.this.getControl().isDisposed()) {
 									fetchWorkspaceMappings();
@@ -96,6 +98,7 @@ public class ProjectLanguageMappingPropertyPage extends PropertyPage {
 				else if (event.getType() == ILanguageMappingChangeEvent.TYPE_PROJECT) {
 					if (ProjectLanguageMappingPropertyPage.this.isControlCreated()) {
 						Display.getDefault().asyncExec(new Runnable() {
+							@Override
 							public void run() {
 								if (!ProjectLanguageMappingPropertyPage.this.getControl().isDisposed()) {
 									fetchMappings(event.getProject());

@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 public class AssignmentInConditionChecker extends AbstractIndexAstChecker {
 	private static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.AssignmentInConditionProblem"; //$NON-NLS-1$
 
+	@Override
 	public void processAst(IASTTranslationUnit ast) {
 		// traverse the ast using the visitor pattern.
 		ast.accept(new CheckCodeVisitor());
@@ -36,6 +37,7 @@ public class AssignmentInConditionChecker extends AbstractIndexAstChecker {
 			shouldVisitExpressions = true;
 		}
 
+		@Override
 		public int visit(IASTExpression expression) {
 			if (isAssignmentExpression(expression) && isUsedAsCondition(expression)) {
 				reportProblem(ER_ID, expression, expression.getRawSignature());

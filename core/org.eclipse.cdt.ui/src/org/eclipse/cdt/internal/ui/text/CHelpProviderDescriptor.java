@@ -101,10 +101,12 @@ public class CHelpProviderDescriptor {
 			final ICHelpProvider c = provider;
 			// Run the initialiser the class
 			ISafeRunnable runnable = new ISafeRunnable() {
+				@Override
 				public void run() throws Exception {
 					// Initialize
 					c.initialize();
 				}
+				@Override
 				public void handleException(Throwable exception) {
 				}
 			};

@@ -36,14 +36,17 @@ class CNode extends DocumentRangeNode implements ITypedElement {
 		this(parent, type, id, parent.getDocument(), start, length);
 	}
 
+	@Override
 	public String getName() {
 		return getId();
 	}
 
+	@Override
 	public String getType() {
 		return "c2"; //$NON-NLS-1$
 	}
 
+	@Override
 	public Image getImage() {
 		ImageDescriptor descriptor = CElementImageProvider.getImageDescriptor(getTypeCode());
 		return CUIPlugin.getImageDescriptorRegistry().get(descriptor);

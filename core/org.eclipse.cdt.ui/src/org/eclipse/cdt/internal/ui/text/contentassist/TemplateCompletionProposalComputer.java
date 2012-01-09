@@ -73,6 +73,7 @@ public class TemplateCompletionProposalComputer implements ICompletionProposalCo
 	/*
 	 * @see org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer#computeCompletionProposals(org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public List<ICompletionProposal> computeCompletionProposals(ContentAssistInvocationContext context, IProgressMonitor monitor) {
 		ITextViewer viewer= context.getViewer();
 		int offset= context.getInvocationOffset();
@@ -123,6 +124,7 @@ public class TemplateCompletionProposalComputer implements ICompletionProposalCo
 	/*
 	 * @see org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer#computeContextInformation(org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public List<IContextInformation> computeContextInformation(ContentAssistInvocationContext context, IProgressMonitor monitor) {
 		return Collections.emptyList();
 	}
@@ -130,6 +132,7 @@ public class TemplateCompletionProposalComputer implements ICompletionProposalCo
 	/*
 	 * @see org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer#getErrorMessage()
 	 */
+	@Override
 	public String getErrorMessage() {
 		return null;
 	}
@@ -137,12 +140,14 @@ public class TemplateCompletionProposalComputer implements ICompletionProposalCo
 	/*
 	 * @see org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer#sessionStarted()
 	 */
+	@Override
 	public void sessionStarted() {
 	}
 
 	/*
 	 * @see org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer#sessionEnded()
 	 */
+	@Override
 	public void sessionEnded() {
 		if (fCommentTemplateEngine != null) {
 			fCommentTemplateEngine.reset();

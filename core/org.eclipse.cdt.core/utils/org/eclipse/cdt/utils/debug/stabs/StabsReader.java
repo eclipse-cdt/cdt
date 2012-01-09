@@ -42,6 +42,7 @@ public class StabsReader implements ISymbolReader {
 		fileList = new ArrayList<String>();
 	}
 
+	@Override
 	public String[] getSourceFiles() {
 		if (!parsed) {
 			parse();
@@ -249,6 +250,7 @@ public class StabsReader implements ISymbolReader {
 	/**
 	 * @since 5.2
 	 */
+	@Override
 	public String[] getSourceFiles(IProgressMonitor monitor) {
 		return getSourceFiles();
 	}

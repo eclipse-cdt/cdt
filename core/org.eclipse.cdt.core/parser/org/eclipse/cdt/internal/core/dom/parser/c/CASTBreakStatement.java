@@ -41,10 +41,12 @@ public class CASTBreakStatement extends ASTNode implements IASTBreakStatement {
         return true;
     }
     
-    public CASTBreakStatement copy() {
+    @Override
+	public CASTBreakStatement copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CASTBreakStatement copy(CopyStyle style) {
 		CASTBreakStatement copy = new CASTBreakStatement();
 		copy.setOffsetAndLength(this);

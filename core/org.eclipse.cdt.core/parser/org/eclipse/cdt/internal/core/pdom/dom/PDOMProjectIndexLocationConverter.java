@@ -47,6 +47,7 @@ public class PDOMProjectIndexLocationConverter implements IIndexLocationConverte
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.pdom.dom.IIndexLocationConverter#fromInternalFormat(java.lang.String)
 	 */
+	@Override
 	public IIndexFileLocation fromInternalFormat(String raw) {
 		String fullPath = null;
 		URI uri= null;
@@ -73,6 +74,7 @@ public class PDOMProjectIndexLocationConverter implements IIndexLocationConverte
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.pdom.dom.IIndexLocationConverter#toRaw(java.net.URI)
 	 */
+	@Override
 	public String toInternalFormat(IIndexFileLocation location) {
 		String fullPath= location.getFullPath();
 		if(fullPath!=null) {

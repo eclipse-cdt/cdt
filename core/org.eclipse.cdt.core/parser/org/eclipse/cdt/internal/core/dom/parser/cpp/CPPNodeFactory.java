@@ -125,75 +125,93 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 		return DEFAULT_INSTANCE;
 	}
 	
+	@Override
 	public ICPPASTArrayDeclarator newArrayDeclarator(IASTName name) {
 		return new CPPASTArrayDeclarator(name);
 	}
 	
+	@Override
 	public IASTArrayModifier newArrayModifier(IASTExpression expr) {
 		return new CPPASTArrayModifier(expr);
 	}
 
+	@Override
 	public ICPPASTArraySubscriptExpression newArraySubscriptExpression(IASTExpression arrayExpr, IASTExpression subscript) {
 		return new CPPASTArraySubscriptExpression(arrayExpr, subscript);
 	}
 	
+	@Override
 	public ICPPASTArraySubscriptExpression newArraySubscriptExpression(IASTExpression arrayExpr,
 			IASTInitializerClause subscript) {
 		return new CPPASTArraySubscriptExpression(arrayExpr, subscript);
 	}
 	
+	@Override
 	public IASTASMDeclaration newASMDeclaration(String assembly) {
 		return new CPPASTASMDeclaration(assembly);
 	}
 
+	@Override
 	public ICPPASTBaseSpecifier newBaseSpecifier(IASTName name, int visibility, boolean isVirtual) {
 		return new CPPASTBaseSpecifier(name, visibility, isVirtual);
 	}
 
+	@Override
 	public ICPPASTBinaryExpression newBinaryExpression(int op, IASTExpression expr1, IASTExpression expr2) {
 		return new CPPASTBinaryExpression(op, expr1, expr2);
 	}
 
+	@Override
 	public ICPPASTBinaryExpression newBinaryExpression(int op, IASTExpression expr1, IASTInitializerClause expr2) {
 		return new CPPASTBinaryExpression(op, expr1, expr2);
 	}
 
+	@Override
 	public IASTExpression newBinaryTypeIdExpression(Operator op, IASTTypeId type1, IASTTypeId type2) {
 		return new CPPASTBinaryTypeIdExpression(op, type1, type2);
 	}
 	
+	@Override
 	public IASTBreakStatement newBreakStatement() {
 		return new CPPASTBreakStatement();
 	}
 
+	@Override
 	public ICPPASTCapture newCapture() {
 		return new CPPASTCapture();
 	}
 
+	@Override
 	public IASTCaseStatement newCaseStatement(IASTExpression expr) {
 		return new CPPASTCaseStatement(expr);
 	}
 
+	@Override
 	public ICPPASTCastExpression newCastExpression(int operator, IASTTypeId typeId, IASTExpression operand) {
 		return new CPPASTCastExpression(operator, typeId, operand);
 	}
 
+	@Override
 	public ICPPASTCatchHandler newCatchHandler(IASTDeclaration decl, IASTStatement body) {
 		return new CPPASTCatchHandler(decl, body);
 	}
 
+	@Override
 	public ICPPASTCompositeTypeSpecifier newCompositeTypeSpecifier(int key, IASTName name) {
 		return new CPPASTCompositeTypeSpecifier(key, name);
 	}
 
+	@Override
 	public IASTCompoundStatement newCompoundStatement() {
 		return new CPPASTCompoundStatement();
 	}
 
+	@Override
 	public IASTConditionalExpression newConditionalExpession(IASTExpression condition, IASTExpression positive, IASTExpression negative) {
 		return new CPPASTConditionalExpression(condition, positive, negative);
 	}
 
+	@Override
 	@Deprecated
 	public ICPPASTConstructorChainInitializer newConstructorChainInitializer(IASTName id, IASTExpression expression) {
 		ICPPASTConstructorChainInitializer result= new CPPASTConstructorChainInitializer(id, null);
@@ -201,10 +219,12 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 		return result;
 	}
 
+	@Override
 	public ICPPASTConstructorChainInitializer newConstructorChainInitializer(IASTName id, IASTInitializer init) {
 		return new CPPASTConstructorChainInitializer(id, init);
 	}
 
+	@Override
 	@Deprecated
 	public ICPPASTConstructorInitializer newConstructorInitializer(IASTExpression exp) {
 		ICPPASTConstructorInitializer result= new CPPASTConstructorInitializer(null);
@@ -212,98 +232,121 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 		return result;
 	}
 
+	@Override
 	public ICPPASTConstructorInitializer newConstructorInitializer(IASTInitializerClause[] args) {
 		return new CPPASTConstructorInitializer(args);
 	}
 
+	@Override
 	public IASTContinueStatement newContinueStatement() {
 		return new CPPASTContinueStatement();
 	}
 	
+	@Override
 	public ICPPASTConversionName newConversionName(IASTTypeId typeId) {
 		return new CPPASTConversionName(typeId);
 	}
 
+	@Override
 	public IASTDeclarationStatement newDeclarationStatement(IASTDeclaration declaration) {
 		return new CPPASTDeclarationStatement(declaration);
 	}
 	
+	@Override
 	public ICPPASTDeclarator newDeclarator(IASTName name) {
 		return new CPPASTDeclarator(name);
 	}
 
+	@Override
 	public IASTDefaultStatement newDefaultStatement() {
 		return new CPPASTDefaultStatement();
 	}
 
+	@Override
 	public ICPPASTDeleteExpression newDeleteExpression(IASTExpression operand) {
 		return new CPPASTDeleteExpression(operand);
 	}
 
+	@Override
 	public IASTDoStatement newDoStatement(IASTStatement body, IASTExpression condition) {
 		return new CPPASTDoStatement(body, condition);
 	}
 
+	@Override
 	public ICPPASTElaboratedTypeSpecifier newElaboratedTypeSpecifier(int kind, IASTName name) {
 		return new CPPASTElaboratedTypeSpecifier(kind, name);
 	}
 
+	@Override
 	public ICPPASTEnumerationSpecifier newEnumerationSpecifier(boolean isScoped, IASTName name,
 			ICPPASTDeclSpecifier baseType) {
 		return new CPPASTEnumerationSpecifier(isScoped, name, baseType);
 	}
 
+	@Override
 	public ICPPASTEnumerationSpecifier newEnumerationSpecifier(IASTName name) {
 		return new CPPASTEnumerationSpecifier(false, name, null);
 	}
 
+	@Override
 	public IASTEnumerator newEnumerator(IASTName name, IASTExpression value) {
 		return new CPPASTEnumerator(name, value);
 	}
 
+	@Override
 	public IASTEqualsInitializer newEqualsInitializer(IASTInitializerClause initClause) {
 		return new CPPASTEqualsInitializer(initClause);
 	}
 
+	@Override
 	public ICPPASTExplicitTemplateInstantiation newExplicitTemplateInstantiation(IASTDeclaration declaration) {
 		return new CPPASTExplicitTemplateInstantiation(declaration);
 	}
 
+	@Override
 	@Deprecated
 	public org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTExplicitTemplateInstantiation newExplicitTemplateInstantiationGPP(IASTDeclaration declaration) {
 		return new GPPASTExplicitTemplateInstantiation(declaration);
 	}
 	
+	@Override
 	public ICPPASTExpressionList newExpressionList() {
 		return new CPPASTExpressionList();
 	}
 	
+	@Override
 	public IASTExpressionStatement newExpressionStatement(IASTExpression expression) {
 		return new CPPASTExpressionStatement(expression);
 	}
 
+	@Override
 	public ICPPASTFieldDeclarator newFieldDeclarator(IASTName name, IASTExpression bitFieldSize) {
 		return new CPPASTFieldDeclarator(name, bitFieldSize);
 	}
 	
+	@Override
 	public ICPPASTFieldReference newFieldReference(IASTName name, IASTExpression owner) {
 		return new CPPASTFieldReference(name, owner);
 	}
 
+	@Override
 	public ICPPASTForStatement newForStatement() {
 		return new CPPASTForStatement();
 	}
 
+	@Override
 	public ICPPASTForStatement newForStatement(IASTStatement init, IASTDeclaration condition, 
 			IASTExpression iterationExpression, IASTStatement body) {
 		return new CPPASTForStatement(init, condition, iterationExpression, body);
 	}
 	
+	@Override
 	public ICPPASTForStatement newForStatement(IASTStatement init, IASTExpression condition, 
 			IASTExpression iterationExpr, IASTStatement body) {
 		return new CPPASTForStatement(init, condition, iterationExpr, body);
 	}
 
+	@Override
 	@Deprecated
 	public ICPPASTFunctionCallExpression newFunctionCallExpression(IASTExpression idExpr, IASTExpression argList) {
 		CPPASTFunctionCallExpression result = new CPPASTFunctionCallExpression(idExpr, null);
@@ -311,89 +354,110 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 		return result;
 	}
 
+	@Override
 	public ICPPASTFunctionCallExpression newFunctionCallExpression(IASTExpression idExpr, IASTInitializerClause[] arguments) {
 		return new CPPASTFunctionCallExpression(idExpr, arguments);
 	}
 
+	@Override
 	public ICPPASTFunctionDeclarator newFunctionDeclarator(IASTName name) {
 		return new CPPASTFunctionDeclarator(name);
 	}
 
+	@Override
 	public ICPPASTFunctionDefinition newFunctionDefinition(IASTDeclSpecifier declSpecifier, IASTFunctionDeclarator declarator,
 			IASTStatement bodyStatement) {
 		return new CPPASTFunctionDefinition(declSpecifier, declarator, bodyStatement);
 	}
 
+	@Override
 	public ICPPASTFunctionWithTryBlock newFunctionTryBlock(IASTDeclSpecifier declSpecifier, IASTFunctionDeclarator declarator,
 			IASTStatement bodyStatement) {
 		return new CPPASTFunctionWithTryBlock(declSpecifier, declarator, bodyStatement);
 	}
 	
+	@Override
 	public IGNUASTCompoundStatementExpression newGNUCompoundStatementExpression(IASTCompoundStatement compoundStatement) {
 		return new CPPASTCompoundStatementExpression(compoundStatement);
 	}
 	
+	@Override
 	public IASTGotoStatement newGotoStatement(IASTName name) {
 		return new CPPASTGotoStatement(name);
 	}
 
+	@Override
 	public IASTIdExpression newIdExpression(IASTName name) {
 		return new CPPASTIdExpression(name);
 	}
 
+	@Override
 	public ICPPASTIfStatement newIfStatement() {
 		return new CPPASTIfStatement();
 	}
 
+	@Override
 	public ICPPASTIfStatement newIfStatement(IASTDeclaration condition, IASTStatement then, IASTStatement elseClause) {
 		return new CPPASTIfStatement(condition, then, elseClause);
 	}
 
+	@Override
 	public ICPPASTIfStatement newIfStatement(IASTExpression condition, IASTStatement then, IASTStatement elseClause) {
 		return new CPPASTIfStatement(condition, then, elseClause);
 	}
 
+	@Override
 	@Deprecated
 	public org.eclipse.cdt.core.dom.ast.IASTInitializerExpression newInitializerExpression(IASTExpression expression) {
 		return new CPPASTInitializerExpression(expression);
 	}
 
+	@Override
 	public ICPPASTInitializerList newInitializerList() {
 		return new CPPASTInitializerList();
 	}
 	
+	@Override
 	public IASTLabelStatement newLabelStatement(IASTName name, IASTStatement nestedStatement) {
 		return new CPPASTLabelStatement(name, nestedStatement);
 	}
 
+	@Override
 	public ICPPASTLambdaExpression newLambdaExpression() {
 		return new CPPASTLambdaExpression();
 	}
 	
+	@Override
 	public ICPPASTLinkageSpecification newLinkageSpecification(String literal) {
 		return new CPPASTLinkageSpecification(literal);
 	}
 
+	@Override
 	public ICPPASTLiteralExpression newLiteralExpression(int kind, String rep) {
 		return new CPPASTLiteralExpression(kind, rep.toCharArray());
 	}
 
+	@Override
 	public IASTName newName() {
 		return new CPPASTName();
 	}
 
+	@Override
 	public IASTName newName(char[] name) {
 		return new CPPASTName(name);
 	}
 
+	@Override
 	public ICPPASTNamespaceAlias newNamespaceAlias(IASTName alias, IASTName qualifiedName) {
 		return new CPPASTNamespaceAlias(alias, qualifiedName);
 	}
 
+	@Override
 	public ICPPASTNamespaceDefinition newNamespaceDefinition(IASTName name) {
 		return new CPPASTNamespaceDefinition(name);
 	}
 
+	@Override
 	@Deprecated
 	public ICPPASTNewExpression newNewExpression(IASTExpression placement, IASTExpression initializer, IASTTypeId typeId) {
 		final ICPPASTNewExpression result = new CPPASTNewExpression(null, null, typeId);
@@ -402,106 +466,131 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 		return result;
 	}
 
+	@Override
 	public ICPPASTNewExpression newNewExpression(IASTInitializerClause[] placement, IASTInitializer initializer, IASTTypeId typeId) {
 		return new CPPASTNewExpression(placement, initializer, typeId);
 	}
 
+	@Override
 	public IASTNullStatement newNullStatement() {
 		return new CPPASTNullStatement();
 	}
 
+	@Override
 	public ICPPASTOperatorName newOperatorName(char[] name) {
 		return new CPPASTOperatorName(name);
 	}
 
+	@Override
 	public ICPPASTPackExpansionExpression newPackExpansionExpression(IASTExpression pattern) {
 		return new CPPASTPackExpansionExpression(pattern);
 	}
 
+	@Override
 	public ICPPASTParameterDeclaration newParameterDeclaration(IASTDeclSpecifier declSpec, IASTDeclarator declarator) {
 		return new CPPASTParameterDeclaration(declSpec, declarator);
 	}
 	
+	@Override
 	public IASTPointer newPointer() {
 		return new CPPASTPointer();
 	}
 
+	@Override
 	@Deprecated
 	public org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer newPointerGPP() {
 		return new GPPASTPointer();
 	}
 
+	@Override
 	public ICPPASTPointerToMember newPointerToMember(IASTName name) {
 		return new CPPASTPointerToMember(name);
 	}
 
+	@Override
 	@Deprecated
 	public org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointerToMember newPointerToMemberGPP(IASTName name) {
 		return new GPPASTPointerToMember(name);
 	}
 
+	@Override
 	public IASTProblem newProblem(int id, char[] arg, boolean error) {
 		return new CPPASTProblem(id, arg, error);
 	}
 
+	@Override
 	public IASTProblemDeclaration newProblemDeclaration(IASTProblem problem) {
 		return new CPPASTProblemDeclaration(problem);
 	}
 
+	@Override
 	public IASTProblemExpression newProblemExpression(IASTProblem problem) {
 		return new CPPASTProblemExpression(problem);
 	}
 
+	@Override
 	public IASTProblemStatement newProblemStatement(IASTProblem problem) {
 		return new CPPASTProblemStatement(problem);
 	}
 
+	@Override
 	public IASTProblemTypeId newProblemTypeId(IASTProblem problem) {
 		return new CPPASTProblemTypeId(problem);
 	}
 
+	@Override
 	public ICPPASTQualifiedName newQualifiedName() {
 		return new CPPASTQualifiedName();
 	}
 
+	@Override
 	public ICPPASTRangeBasedForStatement newRangeBasedForStatement() {
 		return new CPPASTRangeBasedForStatement();
 	}
 
+	@Override
 	public ICPPASTReferenceOperator newReferenceOperator() {
 		return new CPPASTReferenceOperator(false);
 	}
 
+	@Override
 	public ICPPASTReferenceOperator newReferenceOperator(boolean isRValueReference) {
 		return new CPPASTReferenceOperator(isRValueReference);
 	}
 	
+	@Override
 	public IASTReturnStatement newReturnStatement(IASTExpression retValue) {
 		return new CPPASTReturnStatement(retValue);
 	}
 
+	@Override
 	public IASTReturnStatement newReturnStatement(IASTInitializerClause retValue) {
 		return new CPPASTReturnStatement(retValue);
 	}
 
+	@Override
 	public IASTSimpleDeclaration newSimpleDeclaration(IASTDeclSpecifier declSpecifier) {
 		return new CPPASTSimpleDeclaration(declSpecifier);
 	}
 	
+	@Override
 	public ICPPASTSimpleDeclSpecifier newSimpleDeclSpecifier() {
 		return new CPPASTSimpleDeclSpecifier();
 	}
 
+	@Override
 	@Deprecated
 	public org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier newSimpleDeclSpecifierGPP() {
 		return new GPPASTSimpleDeclSpecifier();
 	}
 
+	@Override
 	public ICPPASTSimpleTypeConstructorExpression newSimpleTypeConstructorExpression(
 			ICPPASTDeclSpecifier declSpec, IASTInitializer initializer) {
 		return new CPPASTSimpleTypeConstructorExpression(declSpec, initializer);
 	}
 
+	@Override
 	@Deprecated
 	public ICPPASTSimpleTypeConstructorExpression newSimpleTypeConstructorExpression(int type, IASTExpression expression) {
 		CPPASTSimpleTypeConstructorExpression result = new CPPASTSimpleTypeConstructorExpression();
@@ -510,47 +599,58 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 		return result;
 	}
 
+	@Override
 	public ICPPASTSimpleTypeTemplateParameter newSimpleTypeTemplateParameter(int type, IASTName name, IASTTypeId typeId) {
 		return new CPPASTSimpleTypeTemplateParameter(type, name, typeId);
 	}
 
+	@Override
 	public ICPPASTStaticAssertDeclaration newStaticAssertion(IASTExpression condition,
 			ICPPASTLiteralExpression message) {
 		return new CPPASTStaticAssertionDeclaration(condition, message);
 	}
 
+	@Override
 	public ICPPASTSwitchStatement newSwitchStatement() {
 		return new CPPASTSwitchStatement();
 	}
 
+	@Override
 	public ICPPASTSwitchStatement newSwitchStatement(IASTDeclaration controller, IASTStatement body) {
 		return new CPPASTSwitchStatement(controller, body);
 	}
 	
+	@Override
 	public ICPPASTSwitchStatement newSwitchStatement(IASTExpression controller, IASTStatement body) {
 		return new CPPASTSwitchStatement(controller, body);
 	}
 
+	@Override
 	public ICPPASTTemplateDeclaration newTemplateDeclaration(IASTDeclaration declaration) {
 		return new CPPASTTemplateDeclaration(declaration);
 	}
 
+	@Override
 	public ICPPASTTemplatedTypeTemplateParameter newTemplatedTypeTemplateParameter(IASTName name, IASTExpression defaultValue) {
 		return new CPPASTTemplatedTypeTemplateParameter(name, defaultValue);
 	}
 
+	@Override
 	public ICPPASTTemplateId newTemplateId(IASTName templateName) {
 		return new CPPASTTemplateId(templateName);
 	}
 
+	@Override
 	public ICPPASTTemplateSpecialization newTemplateSpecialization(IASTDeclaration declaration) {
 		return new CPPASTTemplateSpecialization(declaration);
 	}
 
+	@Override
 	public ICPPASTTranslationUnit newTranslationUnit() {
 		return newTranslationUnit(null);
 	}
 
+	@Override
 	public ICPPASTTranslationUnit newTranslationUnit(IScanner scanner) {
 		CPPASTTranslationUnit tu = new CPPASTTranslationUnit();
 		
@@ -564,55 +664,68 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 		return tu;
 	}
 
+	@Override
 	public ICPPASTTryBlockStatement newTryBlockStatement(IASTStatement body) {
 		return new CPPASTTryBlockStatement(body);
 	}
 
+	@Override
 	public ICPPASTNamedTypeSpecifier newTypedefNameSpecifier(IASTName name) {
 		return new CPPASTNamedTypeSpecifier(name);
 	}
 
+	@Override
 	public ICPPASTTypeId newTypeId(IASTDeclSpecifier declSpecifier, IASTDeclarator declarator) {
 		return new CPPASTTypeId(declSpecifier, declarator);
 	}
 	
+	@Override
 	public ICPPASTTypeIdExpression newTypeIdExpression(int operator, IASTTypeId typeId) {
 		return new CPPASTTypeIdExpression(operator, typeId);
 	}
 
+	@Override
 	public IASTTypeIdInitializerExpression newTypeIdInitializerExpression(IASTTypeId typeId, IASTInitializer initializer) {
 		return new CPPASTTypeIdInitializerExpression(typeId, initializer);
 	}
 
+	@Override
 	@Deprecated
 	public org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression newTypenameExpression(IASTName qualifiedName, IASTExpression expr, boolean isTemplate) {
 		return new CPPASTTypenameExpression(qualifiedName, expr);
 	}
 
+	@Override
 	public ICPPASTUnaryExpression newUnaryExpression(int operator, IASTExpression operand) {
 		return new CPPASTUnaryExpression(operator, operand);
 	}
 
+	@Override
 	public ICPPASTUsingDeclaration newUsingDeclaration(IASTName name) {
 		return new CPPASTUsingDeclaration(name);
 	}
 
+	@Override
 	public ICPPASTUsingDirective newUsingDirective(IASTName name) {
 		return new CPPASTUsingDirective(name);
 	}
 
+	@Override
 	public ICPPASTVisibilityLabel newVisibilityLabel(int visibility) {
 		return new CPPASTVisibilityLabel(visibility);
 	}
 
+	@Override
 	public ICPPASTWhileStatement newWhileStatement() {
 		return new CPPASTWhileStatement();
 	}
 
+	@Override
 	public ICPPASTWhileStatement newWhileStatement(IASTDeclaration condition, IASTStatement body) {
 		return new CPPASTWhileStatement(condition, body);
 	}
 
+	@Override
 	public ICPPASTWhileStatement newWhileStatement(IASTExpression condition, IASTStatement body) {
 		return new CPPASTWhileStatement(condition, body);
 	}

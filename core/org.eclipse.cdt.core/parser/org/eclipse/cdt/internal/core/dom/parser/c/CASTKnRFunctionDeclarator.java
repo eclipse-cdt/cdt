@@ -71,6 +71,7 @@ public class CASTKnRFunctionDeclarator extends CASTDeclarator implements ICASTKn
 		return copy;
 	}
 
+	@Override
 	public void setParameterNames(IASTName[] names) {
         assertNotFrozen();
 		parameterNames = names;
@@ -85,11 +86,13 @@ public class CASTKnRFunctionDeclarator extends CASTDeclarator implements ICASTKn
 	}
 
 
+	@Override
 	public IASTName[] getParameterNames() {
 		return parameterNames;
 	}
 
 
+	@Override
 	public void setParameterDeclarations(IASTDeclaration[] decls) {
         assertNotFrozen();
 		parameterDeclarations = decls;
@@ -104,6 +107,7 @@ public class CASTKnRFunctionDeclarator extends CASTDeclarator implements ICASTKn
 	}
 
 
+	@Override
 	public IASTDeclaration[] getParameterDeclarations() {
 		return parameterDeclarations;
 	}
@@ -125,6 +129,7 @@ public class CASTKnRFunctionDeclarator extends CASTDeclarator implements ICASTKn
 		return super.postAccept(action);
 	}
 	
+	@Override
 	public IASTDeclarator getDeclaratorForParameterName(IASTName name) {
 		boolean found=false;
 		for(int i=0; i<parameterNames.length; i++) {

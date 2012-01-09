@@ -35,10 +35,12 @@ public class CASTArrayRangeDesignator extends ASTNode implements
 		setRangeCeiling(ceiling);
 	}
 
+	@Override
 	public CASTArrayRangeDesignator copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CASTArrayRangeDesignator copy(CopyStyle style) {
 		CASTArrayRangeDesignator copy = new CASTArrayRangeDesignator();
 		copy.setRangeFloor(floor == null ? null : floor.copy(style));
@@ -50,11 +52,13 @@ public class CASTArrayRangeDesignator extends ASTNode implements
 		return copy;
 	}
 	
+	@Override
 	public IASTExpression getRangeFloor() {
         return this.floor;
     }
 
-    public void setRangeFloor(IASTExpression expression) {
+    @Override
+	public void setRangeFloor(IASTExpression expression) {
         assertNotFrozen();
         floor = expression;
         if(expression != null) {
@@ -63,11 +67,13 @@ public class CASTArrayRangeDesignator extends ASTNode implements
         }
     }
 
-    public IASTExpression getRangeCeiling() {
+    @Override
+	public IASTExpression getRangeCeiling() {
         return ceiling;        
     }
 
-    public void setRangeCeiling(IASTExpression expression) {
+    @Override
+	public void setRangeCeiling(IASTExpression expression) {
         assertNotFrozen();
         ceiling = expression;
         if(expression != null) {
@@ -96,7 +102,8 @@ public class CASTArrayRangeDesignator extends ASTNode implements
         return true;
     }
     
-    public void replace(IASTNode child, IASTNode other) {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
         if( child == floor )
         {
             other.setPropertyInParent( child.getPropertyInParent() );

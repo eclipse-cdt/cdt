@@ -84,10 +84,12 @@ public class CPPASTAmbiguousTemplateArgument extends ASTAmbiguousNode implements
 	}
 
 
+	@Override
 	public IASTNode copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public IASTNode copy(CopyStyle style) {
 
 		int sizeOfNodes = fNodes.size();
@@ -111,16 +113,19 @@ public class CPPASTAmbiguousTemplateArgument extends ASTAmbiguousNode implements
 		return fNodes.toArray(new IASTNode[fNodes.size()]);
 	}
 
+	@Override
 	public void addTypeId(IASTTypeId typeId) {
         assertNotFrozen();
 		addNode(typeId);
 	}
 	
+	@Override
 	public void addIdExpression(IASTIdExpression idExpression) {
         assertNotFrozen();
 		addNode(idExpression);
 	}
 
+	@Override
 	public void addIdExpression(IASTExpression idExpression) {
         assertNotFrozen();
 		addNode(idExpression);

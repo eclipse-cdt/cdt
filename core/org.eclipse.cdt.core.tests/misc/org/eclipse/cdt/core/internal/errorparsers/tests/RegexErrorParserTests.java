@@ -49,8 +49,10 @@ public class RegexErrorParserTests extends TestCase {
 
 	private final IMarkerGenerator markerGenerator = new IMarkerGenerator() {
 		// deprecated
+		@Override
 		public void addMarker(IResource file, int lineNumber, String errorDesc, int severity, String errorVar) {}
 
+		@Override
 		public void addMarker(ProblemMarkerInfo problemMarkerInfo) {
 			errorList.add(problemMarkerInfo);
 		}
@@ -66,6 +68,7 @@ public class RegexErrorParserTests extends TestCase {
 		public DummyErrorParser() {
 		}
 
+		@Override
 		public boolean processLine(String line, ErrorParserManager eoParser) {
 			return false;
 		}

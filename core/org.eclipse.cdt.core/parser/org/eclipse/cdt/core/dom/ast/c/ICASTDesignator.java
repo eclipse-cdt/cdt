@@ -23,10 +23,12 @@ public interface ICASTDesignator extends IASTNode {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICASTDesignator copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICASTDesignator copy(CopyStyle style);
 }

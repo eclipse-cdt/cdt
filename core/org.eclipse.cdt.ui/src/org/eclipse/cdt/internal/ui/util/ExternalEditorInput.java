@@ -102,6 +102,7 @@ public final class ExternalEditorInput extends FileStoreEditorInput implements I
 	/*
 	 * @see org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput#getTranslationUnit()
 	 */
+	@Override
 	public ITranslationUnit getTranslationUnit() {
 		return unit;
 	}

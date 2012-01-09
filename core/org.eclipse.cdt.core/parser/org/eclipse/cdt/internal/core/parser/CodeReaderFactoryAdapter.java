@@ -44,6 +44,7 @@ public class CodeReaderFactoryAdapter extends AbstractCodeReaderFactory {
 		fDelegate= fcp;
 	}
 
+	@Override
 	public org.eclipse.cdt.core.parser.CodeReader createCodeReaderForInclusion(String path) {
 		return CodeReaderAdapter.adapt(fDelegate.getContentForInclusion(path, null));
 	}
@@ -54,15 +55,18 @@ public class CodeReaderFactoryAdapter extends AbstractCodeReaderFactory {
 		return CodeReaderAdapter.adapt(fDelegate.getContentForInclusion(ifl, astPath));
 	}
 
+	@Override
 	public org.eclipse.cdt.core.parser.CodeReader createCodeReaderForTranslationUnit(String path) {
 		return CodeReaderAdapter.adapt(fDelegate.getContentForInclusion(path, null));
 	}
 
+	@Override
 	@Deprecated
 	public org.eclipse.cdt.core.parser.ICodeReaderCache getCodeReaderCache() {
 		return null;
 	}
 
+	@Override
 	public int getUniqueIdentifier() {
 		return 0;
 	}

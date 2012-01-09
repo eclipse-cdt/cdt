@@ -24,10 +24,12 @@ class CompositeCFunction extends CompositeCBinding implements IFunction {
 		super(cf, rbinding);
 	}
 
+	@Override
 	public IScope getFunctionScope() {
 		return null;
 	}
 	
+	@Override
 	public IParameter[] getParameters() {
 		IParameter[] preResult = ((IFunction)rbinding).getParameters();
 		IParameter[] result = new IParameter[preResult.length];
@@ -37,31 +39,38 @@ class CompositeCFunction extends CompositeCBinding implements IFunction {
 		return result;
 	}
 	
+	@Override
 	public IFunctionType getType() {
 		IType rtype = ((IFunction)rbinding).getType();
 		return (IFunctionType) cf.getCompositeType(rtype);
 	}
 
+	@Override
 	public boolean isAuto() {
 		return ((IFunction)rbinding).isAuto();
 	}
 
+	@Override
 	public boolean isExtern() {
 		return ((IFunction)rbinding).isExtern();
 	}
 
+	@Override
 	public boolean isInline() {
 		return ((IFunction)rbinding).isInline();
 	}
 
+	@Override
 	public boolean isRegister() {
 		return ((IFunction)rbinding).isRegister();
 	}
 
+	@Override
 	public boolean isStatic() {
 		return ((IFunction)rbinding).isStatic();
 	}
 
+	@Override
 	public boolean takesVarArgs() {
 		return ((IFunction)rbinding).takesVarArgs();
 	}

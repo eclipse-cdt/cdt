@@ -22,6 +22,7 @@ public class CWordDetector implements IWordDetector {
 	/*
 	 * @see org.eclipse.jface.text.rules.IWordDetector#isWordStart(char)
 	 */
+	@Override
 	public boolean isWordStart(char c) {
 		return Character.isJavaIdentifierStart(c) || c == '@';
 	}
@@ -29,6 +30,7 @@ public class CWordDetector implements IWordDetector {
 	/*
 	 * @see org.eclipse.jface.text.rules.IWordDetector#isWordPart(char)
 	 */
+	@Override
 	public boolean isWordPart(char c) {
 		return Character.isJavaIdentifierPart(c);
 	}

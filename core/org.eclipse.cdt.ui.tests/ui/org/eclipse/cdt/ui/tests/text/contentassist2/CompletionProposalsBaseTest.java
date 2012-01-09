@@ -45,6 +45,7 @@ public abstract class CompletionProposalsBaseTest extends AbstractContentAssistT
 	/*
 	 * @see junit.framework.TestCase#getName()
 	 */
+	@Override
 	public String getName() {
 		if (fFailingTest) {
 			return "[Failing] " + super.getName();
@@ -55,6 +56,7 @@ public abstract class CompletionProposalsBaseTest extends AbstractContentAssistT
 	/*
 	 * @see org.eclipse.cdt.core.testplugin.util.BaseTestCase#setExpectFailure(int)
 	 */
+	@Override
 	public void setExpectFailure(int bugnumber) {
 		super.setExpectFailure(bugnumber);
 		fFailingTest= true;
@@ -74,6 +76,7 @@ public abstract class CompletionProposalsBaseTest extends AbstractContentAssistT
 	protected abstract String getExpectedPrefix();
 	protected abstract String[] getExpectedResultsValues();
 
+	@Override
 	protected IFile setUpProjectContent(IProject project) throws FileNotFoundException {
 		IFile headerFile = project.getFile(getHeaderFileName());
 		String fileName = getFileName();

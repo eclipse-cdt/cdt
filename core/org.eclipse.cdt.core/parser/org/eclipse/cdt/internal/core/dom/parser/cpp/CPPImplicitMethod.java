@@ -45,6 +45,7 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 		super(name, scope, type, params, false);
 	}
    
+	@Override
 	public int getVisibility() {
 		IASTDeclaration decl= getPrimaryDeclaration();
 		if (decl == null) {
@@ -76,6 +77,7 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
         return ICPPASTVisibilityLabel.v_public;
     }
 	
+	@Override
 	public ICPPClassType getClassOwner() {
 		ICPPClassScope scope = (ICPPClassScope)getScope();
 		return scope.getClassType();
@@ -157,10 +159,12 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 		return null;
 	}
 
-    public boolean isVirtual() {
+    @Override
+	public boolean isVirtual() {
         return false;
     }
 
+	@Override
 	public boolean isDestructor() {
 		char [] n = getNameCharArray();
 		if( n != null && n.length > 0 )
@@ -168,14 +172,17 @@ public class CPPImplicitMethod extends CPPImplicitFunction implements ICPPMethod
 		return false;
 	}
 
+	@Override
 	public boolean isImplicit() {
 		return getPrimaryDeclaration() == null;
 	}
 	
-    public boolean isExplicit() {
+    @Override
+	public boolean isExplicit() {
         return false;
     }
 	
+	@Override
 	public boolean isPureVirtual() {
 		return false;
 	}

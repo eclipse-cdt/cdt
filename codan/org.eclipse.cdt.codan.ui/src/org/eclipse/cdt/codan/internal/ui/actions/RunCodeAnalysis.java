@@ -31,10 +31,12 @@ import org.eclipse.ui.IWorkbenchPart;
 public class RunCodeAnalysis implements IObjectActionDelegate {
 	private ISelection sel;
 
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		// nothing
 	}
 
+	@Override
 	public void run(IAction action) {
 		Job job = new Job(CodanUIMessages.Job_TitleRunningAnalysis) {
 			@SuppressWarnings("unchecked")
@@ -67,6 +69,7 @@ public class RunCodeAnalysis implements IObjectActionDelegate {
 		job.schedule();
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		this.sel = selection;
 	}

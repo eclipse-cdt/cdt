@@ -87,11 +87,13 @@ public interface ICPPASTTemplateId extends IASTName, IASTNameOwner {
 	/**
 	 * @since 5.1
 	 */
+	@Override
 	public ICPPASTTemplateId copy();
 
 	/**
 	 * @since 5.3
 	 */
+	@Override
 	public ICPPASTTemplateId copy(CopyStyle style);
 
 }

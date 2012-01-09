@@ -23,6 +23,7 @@ public class CWhitespaceDetector implements IWhitespaceDetector {
 	/*
 	 * @see IWhitespaceDetector#isWhitespace(char)
 	 */
+	@Override
 	public boolean isWhitespace(char c) {
 		switch (c) {
 		case ' ':

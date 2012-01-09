@@ -36,10 +36,12 @@ public class CASTSimpleDeclaration extends ASTNode implements IASTSimpleDeclarat
 		setDeclSpecifier(declSpecifier);
 	}
 
+	@Override
 	public CASTSimpleDeclaration copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
 
+	@Override
 	public CASTSimpleDeclaration copy(CopyStyle style) {
 		CASTSimpleDeclaration copy = new CASTSimpleDeclaration();
 		copy.setDeclSpecifier(declSpecifier == null ? null : declSpecifier.copy(style));
@@ -54,27 +56,31 @@ public class CASTSimpleDeclaration extends ASTNode implements IASTSimpleDeclarat
 		return copy;
 	}
 	
+	@Override
 	public IASTDeclSpecifier getDeclSpecifier() {
         return declSpecifier;
     }
 
-    public IASTDeclarator[] getDeclarators() {
+    @Override
+	public IASTDeclarator[] getDeclarators() {
         if (declarators == null)
         	return IASTDeclarator.EMPTY_DECLARATOR_ARRAY;
-        declarators = (IASTDeclarator[]) ArrayUtil.removeNullsAfter(IASTDeclarator.class, declarators, declaratorsPos);
+        declarators = ArrayUtil.trimAt(IASTDeclarator.class, declarators, declaratorsPos);
         return declarators;
     }
     
-    public void addDeclarator(IASTDeclarator d) {
+    @Override
+	public void addDeclarator(IASTDeclarator d) {
         assertNotFrozen();
     	if (d != null) {
     		d.setParent(this);
 			d.setPropertyInParent(DECLARATOR);
-    		declarators = (IASTDeclarator[]) ArrayUtil.append(IASTDeclarator.class, declarators, ++declaratorsPos, d);    		
+    		declarators = ArrayUtil.appendAt(IASTDeclarator.class, declarators, ++declaratorsPos, d);    		
     	}
     }
     
-    public void setDeclSpecifier(IASTDeclSpecifier declSpecifier) {
+    @Override
+	public void setDeclSpecifier(IASTDeclSpecifier declSpecifier) {
         assertNotFrozen();
         this.declSpecifier = declSpecifier;
         if (declSpecifier != null) {
@@ -111,7 +117,8 @@ public class CASTSimpleDeclaration extends ASTNode implements IASTSimpleDeclarat
         return true;
     }
     
-    public void replace(IASTNode child, IASTNode other) {
+    @Override
+	public void replace(IASTNode child, IASTNode other) {
     	if (declSpecifier == child) {
 			other.setParent(child.getParent());
 			other.setPropertyInParent(child.getPropertyInParent());

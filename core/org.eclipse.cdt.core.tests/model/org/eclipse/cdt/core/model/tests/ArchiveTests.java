@@ -78,7 +78,8 @@ public class ArchiveTests extends TestCase {
      * Example code test the packages in the project 
      *  "com.qnx.tools.ide.cdt.core"
      */
-    protected void setUp() throws Exception {
+    @Override
+	protected void setUp() throws Exception {
             
         /***
          * Setup the various files, paths and projects that are needed by the
@@ -134,7 +135,8 @@ public class ArchiveTests extends TestCase {
      *
      * Called after every test case method.
      */
-    protected void tearDown()  {
+    @Override
+	protected void tearDown()  {
 		  CProjectHelper.delete(testProject);
     }
     

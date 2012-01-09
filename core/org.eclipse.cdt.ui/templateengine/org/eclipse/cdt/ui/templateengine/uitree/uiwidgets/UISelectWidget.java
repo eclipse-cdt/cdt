@@ -71,7 +71,7 @@ public class UISelectWidget extends InputUIElement {
 	public Map<String, String> getValues() {
 		Map<String, String> values = new HashMap<String, String>();
 		if(currentValue != null) {
-			values.put(uiAttributes.get(InputUIElement.ID), currentValue);
+			values.put(uiAttributes.get(UIElement.ID), currentValue);
 		}
 		return values;
 	}
@@ -81,7 +81,7 @@ public class UISelectWidget extends InputUIElement {
 	 */
 	@Override
 	public void setValues(Map<String, String> valueMap) {
-		defaultValue= valueMap.get(uiAttributes.get(InputUIElement.ID));
+		defaultValue= valueMap.get(uiAttributes.get(UIElement.ID));
 		if (combo != null) {
 			String[] items= combo.getItems();
 			for (int i=0; i < items.length; i++) {
@@ -131,7 +131,7 @@ public class UISelectWidget extends InputUIElement {
 	}
 
 	private PatternEvent createPatternEvent() {
-		String msg= MessageFormat.format(Messages.getString("UISelectWidget_ErrorNoneSelected0"), new String[] {label.getText()}); //$NON-NLS-1$
+		String msg= MessageFormat.format(Messages.getString("UISelectWidget_ErrorNoneSelected0"), label.getText()); //$NON-NLS-1$
 		return new PatternEvent(this, msg, isValid());
 	}
 
@@ -143,7 +143,7 @@ public class UISelectWidget extends InputUIElement {
 	public boolean isValid() {
 		boolean retVal = true;
 		if(Boolean.parseBoolean(uiAttributes.get(InputUIElement.MANDATORY))
-				&& ! InputUIElement.SELECTTYPE.equals(uiAttributes.get(InputUIElement.TYPE)) ) {
+				&& ! InputUIElement.SELECTTYPE.equals(uiAttributes.get(UIElement.TYPE)) ) {
 			retVal= currentValue!= null && currentValue.trim().length()>0;
 		}
 		return retVal;

@@ -80,6 +80,7 @@ public class THNode implements IAdaptable {
 		return fElement;
 	}
 	
+	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Object getAdapter(Class adapter) {
 		if (adapter.isAssignableFrom(ICElement.class)) {

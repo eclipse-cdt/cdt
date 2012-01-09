@@ -13,8 +13,8 @@ package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 import java.util.Map.Entry;
+import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.text.edits.TextEditGroup;
@@ -34,52 +34,49 @@ final class SimilarFinderVisitor extends ASTVisitor {
 
 	private final Vector<IASTNode> trail;
 	private final IASTName name;
-	private final List<IASTNode> stmts;
-	private int i;
+	private final List<IASTNode> statements;
+	private int statementCount;
 	private NodeContainer similarContainer;
 	private final List<IASTStatement> stmtToReplace = new ArrayList<IASTStatement>();
 
 	private final ModificationCollector collector;
 
-	SimilarFinderVisitor(ExtractFunctionRefactoring refactoring,
-			ModificationCollector collector, Vector<IASTNode> trail, IFile file, IASTName name,
-			List<IASTNode> stmts, String title) {
+	SimilarFinderVisitor(ExtractFunctionRefactoring refactoring, ModificationCollector collector,
+			Vector<IASTNode> trail, IFile file, IASTName name, List<IASTNode> statements,
+			String title) {
 		this.refactoring = refactoring;
 		this.trail = trail;
 		this.name = name;
-		this.stmts = stmts;
+		this.statements = statements;
 		this.collector = collector;
 		this.similarContainer = new NodeContainer();
 		shouldVisitStatements = true;
 	}
 
 	@Override
-	public int visit(IASTStatement stmt) {
-		boolean isAllreadyInMainRefactoring = isInSelection(stmt);
+	public int visit(IASTStatement statement) {
+		if (!isInSelection(statement) &&
+				refactoring.isStatementInTrail(statement, trail, refactoring.getIndex())) {
+			stmtToReplace.add(statement);
+			similarContainer.add(statement);	
+			++statementCount;
 
-		if ((!isAllreadyInMainRefactoring)
-				&& this.refactoring.isStatementInTrail(stmt, trail, this.refactoring.getIndex())) {
-			stmtToReplace.add(stmt);
-			similarContainer.add(stmt);	
-			++i;
-
-			if (i == stmts.size()) {
+			if (statementCount == statements.size()) {
 				// Found similar code
-
 				boolean similarOnReturnWays = true;
 				for (NameInformation nameInfo : similarContainer.getAllAfterUsedNames()) {
-					if (this.refactoring.names.containsKey(nameInfo.getDeclaration().getRawSignature())) {
-						Integer nameOrderNumber = this.refactoring.names.get(nameInfo.getDeclaration().getRawSignature());
-						if (this.refactoring.nameTrail.containsValue(nameOrderNumber)) {
+					if (refactoring.names.containsKey(nameInfo.getDeclaration().getRawSignature())) {
+						Integer nameOrderNumber = refactoring.names.get(nameInfo.getDeclaration().getRawSignature());
+						if (refactoring.nameTrail.containsValue(nameOrderNumber)) {
 							String orgName = null;
 							boolean found = false;
-							for (Entry<String, Integer> entry : this.refactoring.nameTrail.entrySet()) {
+							for (Entry<String, Integer> entry : refactoring.nameTrail.entrySet()) {
 								if (entry.getValue().equals(nameOrderNumber)) {
 									orgName = entry.getKey();
 								}
 							}
 							if (orgName != null) {
-								for (NameInformation orgNameInfo : this.refactoring.container.getAllAfterUsedNamesChoosenByUser()) {
+								for (NameInformation orgNameInfo : refactoring.container.getAllAfterUsedNamesChoosenByUser()) {
 									if (orgName.equals(orgNameInfo.getDeclaration().getRawSignature())) {
 										found = true;
 									}
@@ -95,8 +92,8 @@ final class SimilarFinderVisitor extends ASTVisitor {
 
 				if (similarOnReturnWays) {
 					IASTNode call = refactoring.getMethodCall(name,
-							this.refactoring.nameTrail, this.refactoring.names,
-							this.refactoring.container, similarContainer);
+							refactoring.nameTrail, refactoring.names,
+							refactoring.container, similarContainer);
 					ASTRewrite rewrite =
 							collector.rewriterForTranslationUnit(stmtToReplace.get(0).getTranslationUnit());
 					TextEditGroup editGroup = new TextEditGroup(Messages.SimilarFinderVisitor_replaceDuplicateCode);
@@ -112,12 +109,12 @@ final class SimilarFinderVisitor extends ASTVisitor {
 			return PROCESS_SKIP;
 		} else {
 			clear();
-			return super.visit(stmt);
+			return super.visit(statement);
 		}
 	}
 
 	private boolean isInSelection(IASTStatement stmt) {
-		List<IASTNode>nodes = this.refactoring.container.getNodesToWrite();
+		List<IASTNode>nodes = refactoring.container.getNodesToWrite();
 		for (IASTNode node : nodes) {
 			if (node.equals(stmt)) {
 				return true;
@@ -127,11 +124,11 @@ final class SimilarFinderVisitor extends ASTVisitor {
 	}
 
 	private void clear() {
-		i = 0;
-		this.refactoring.names.clear();
+		statementCount = 0;
+		refactoring.names.clear();
 		similarContainer = new NodeContainer();
-		this.refactoring.namesCounter.setObject(ExtractFunctionRefactoring.NULL_INTEGER);
-		this.refactoring.trailPos.setObject(ExtractFunctionRefactoring.NULL_INTEGER);
+		refactoring.namesCounter.setObject(ExtractFunctionRefactoring.NULL_INTEGER);
+		refactoring.trailPos.setObject(ExtractFunctionRefactoring.NULL_INTEGER);
 		stmtToReplace.clear();
 	}
 }

@@ -31,6 +31,11 @@ public class CPPASTTypeIdInitializerExpression extends ASTTypeIdInitializerExpre
 	public CPPASTTypeIdInitializerExpression(IASTTypeId typeId, IASTInitializer initializer) {
 		super(typeId, initializer);
 	}
+	@Override
+	public ICPPInitClauseEvaluation getEvaluation() {
+		// mstodo Auto-generated method stub
+		return null;
+	}
 
 	@Override
 	public IASTTypeIdInitializerExpression copy() {

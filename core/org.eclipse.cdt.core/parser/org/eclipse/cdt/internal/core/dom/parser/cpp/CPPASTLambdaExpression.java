@@ -39,6 +39,11 @@ public class CPPASTLambdaExpression extends ASTNode implements ICPPASTLambdaExpr
 	public CPPASTLambdaExpression() {
 		fCaptureDefault= CaptureDefault.UNSPECIFIED;
 	}
+	@Override
+	public ICPPInitClauseEvaluation getEvaluation() {
+		// mstodo Auto-generated method stub
+		return null;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IASTExpression#copy()

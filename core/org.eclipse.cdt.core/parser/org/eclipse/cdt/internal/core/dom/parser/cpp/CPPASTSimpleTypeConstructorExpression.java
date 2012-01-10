@@ -39,6 +39,11 @@ public class CPPASTSimpleTypeConstructorExpression extends ASTNode implements
 		setDeclSpecifier(declSpec);
 		setInitializer(init);
 	}
+	@Override
+	public ICPPInitClauseEvaluation getEvaluation() {
+		// mstodo Auto-generated method stub
+		return null;
+	}
 
 	@Override
 	public CPPASTSimpleTypeConstructorExpression copy() {

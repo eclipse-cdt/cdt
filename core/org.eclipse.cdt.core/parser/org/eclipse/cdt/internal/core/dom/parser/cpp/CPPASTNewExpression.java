@@ -58,7 +58,12 @@ public class CPPASTNewExpression extends ASTNode implements ICPPASTNewExpression
 		setTypeId(typeId);
 		setInitializer(initializer);
 	}
-	
+	@Override
+	public ICPPInitClauseEvaluation getEvaluation() {
+		// mstodo Auto-generated method stub
+		return null;
+	}
+
 	@Override
 	public CPPASTNewExpression copy() {
 		return copy(CopyStyle.withoutLocations);

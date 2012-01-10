@@ -38,6 +38,11 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 
     public CPPASTLiteralExpression() {
 	}
+	@Override
+	public ICPPInitClauseEvaluation getEvaluation() {
+		// mstodo Auto-generated method stub
+		return null;
+	}
 
 	public CPPASTLiteralExpression(int kind, char[] value) {
 		this.kind = kind;

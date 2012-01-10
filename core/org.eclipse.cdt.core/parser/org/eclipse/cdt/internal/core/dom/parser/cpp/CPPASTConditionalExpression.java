@@ -54,6 +54,11 @@ public class CPPASTConditionalExpression extends ASTNode implements IASTConditio
     
     public CPPASTConditionalExpression() {
 	}
+	@Override
+	public ICPPInitClauseEvaluation getEvaluation() {
+		// mstodo Auto-generated method stub
+		return null;
+	}
 
 	public CPPASTConditionalExpression(IASTExpression condition, IASTExpression postive, IASTExpression negative) {
     	setLogicalConditionExpression(condition);

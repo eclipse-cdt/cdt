@@ -71,6 +71,11 @@ public class CPPASTFunctionCallExpression extends ASTNode
 		setFunctionNameExpression(functionName);
 		setArguments(args);
 	}
+	@Override
+	public ICPPInitClauseEvaluation getEvaluation() {
+		// mstodo Auto-generated method stub
+		return null;
+	}
 
 	@Override
 	public CPPASTFunctionCallExpression copy() {

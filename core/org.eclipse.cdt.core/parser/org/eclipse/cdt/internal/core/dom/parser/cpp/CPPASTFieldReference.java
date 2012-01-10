@@ -73,7 +73,12 @@ public class CPPASTFieldReference extends ASTNode
 		setFieldName(name);
 		setFieldOwner(owner);
 	}
-	
+	@Override
+	public ICPPInitClauseEvaluation getEvaluation() {
+		// mstodo Auto-generated method stub
+		return null;
+	}
+
 	@Override
 	public CPPASTFieldReference copy() {
 		return copy(CopyStyle.withoutLocations);

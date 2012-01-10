@@ -9,16 +9,22 @@
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 
-package org.eclipse.cdt.core.dom.ast.cpp;
+package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
+import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IValue;
 
 /**
- * Interface for c++ expressions.
- * @noextend This interface is not intended to be extended by clients.
- * @noimplement This interface is not intended to be implemented by clients.
- * @since 5.4
+ * Assists in evaluating expressions.
  */
-public interface ICPPASTExpression extends IASTExpression, ICPPASTInitializerClause {
+public interface ICPPInitClauseEvaluation {
 	
+	boolean isInitializerList();
+	boolean isTypeDependent();
+	boolean isValueDependent();
+	
+	IType getTypeOrFunctionSet();
+	IValue getValue();
+	ValueCategory getCategory();
 }

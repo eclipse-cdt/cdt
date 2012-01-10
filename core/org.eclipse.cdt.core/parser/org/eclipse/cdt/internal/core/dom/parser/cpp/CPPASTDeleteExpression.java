@@ -32,6 +32,11 @@ public class CPPASTDeleteExpression extends ASTNode implements ICPPASTDeleteExpr
     private boolean isVectored;
 
     private IASTImplicitName[] implicitNames = null;
+	@Override
+	public ICPPInitClauseEvaluation getEvaluation() {
+		// mstodo Auto-generated method stub
+		return null;
+	}
 
     public CPPASTDeleteExpression() {
 	}

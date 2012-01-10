@@ -41,6 +41,11 @@ public class CPPASTPackExpansionExpression extends ASTNode implements ICPPASTPac
 			pattern.setPropertyInParent(ICPPASTPackExpansionExpression.PATTERN);
 		}
 	}
+	@Override
+	public ICPPInitClauseEvaluation getEvaluation() {
+		// mstodo Auto-generated method stub
+		return null;
+	}
 
 	@Override
 	public IASTExpression getPattern() {

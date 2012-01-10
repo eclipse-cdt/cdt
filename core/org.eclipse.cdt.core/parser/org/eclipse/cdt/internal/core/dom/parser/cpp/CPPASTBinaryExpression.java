@@ -15,11 +15,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.glvalueType;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.prvalueType;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.restoreTypedefs;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.typeFromFunctionCall;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.valueCategoryFromFunctionCall;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.*;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -50,7 +46,12 @@ public class CPPASTBinaryExpression extends ASTNode implements ICPPASTBinaryExpr
     private IASTInitializerClause operand2;
     private IType type;
     private ICPPFunction overload= UNINITIALIZED_FUNCTION;
-    private IASTImplicitName[] implicitNames;
+    private IASTImplicitName[] implicitNames = null;
+	@Override
+	public ICPPInitClauseEvaluation getEvaluation() {
+		// mstodo Auto-generated method stub
+		return null;
+	}
 
     public CPPASTBinaryExpression() {
 	}

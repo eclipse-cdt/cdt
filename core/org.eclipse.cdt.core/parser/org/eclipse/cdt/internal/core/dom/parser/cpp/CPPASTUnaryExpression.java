@@ -60,6 +60,11 @@ public class CPPASTUnaryExpression extends ASTNode implements ICPPASTUnaryExpres
 
     public CPPASTUnaryExpression() {
 	}
+	@Override
+	public ICPPInitClauseEvaluation getEvaluation() {
+		// mstodo Auto-generated method stub
+		return null;
+	}
 
 	public CPPASTUnaryExpression(int operator, IASTExpression operand) {
 		op = operator;

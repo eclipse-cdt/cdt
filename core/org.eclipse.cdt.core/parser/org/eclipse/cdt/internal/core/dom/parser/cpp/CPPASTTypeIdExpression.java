@@ -32,6 +32,11 @@ public class CPPASTTypeIdExpression extends ASTNode implements ICPPASTTypeIdExpr
 		this.op = op;
 		setTypeId(typeId);
 	}
+	@Override
+	public ICPPInitClauseEvaluation getEvaluation() {
+		// mstodo Auto-generated method stub
+		return null;
+	}
 
 	@Override
 	public CPPASTTypeIdExpression copy() {

@@ -44,6 +44,11 @@ public class CPPASTArraySubscriptExpression extends ASTNode
     private ICPPFunction overload= UNINITIALIZED_FUNCTION;
 
     private IASTImplicitName[] implicitNames;
+	@Override
+	public ICPPInitClauseEvaluation getEvaluation() {
+		// mstodo Auto-generated method stub
+		return null;
+	}
     
     public CPPASTArraySubscriptExpression() {
 	}

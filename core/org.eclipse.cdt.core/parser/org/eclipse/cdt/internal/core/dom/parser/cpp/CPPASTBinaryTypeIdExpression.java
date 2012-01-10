@@ -27,6 +27,11 @@ public class CPPASTBinaryTypeIdExpression extends ASTNode implements ICPPASTExpr
     private Operator fOperator;
     private IASTTypeId fOperand1;
     private IASTTypeId fOperand2;
+	@Override
+	public ICPPInitClauseEvaluation getEvaluation() {
+		// mstodo Auto-generated method stub
+		return null;
+	}
 
     public CPPASTBinaryTypeIdExpression() {
 	}

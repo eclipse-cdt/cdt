@@ -34,6 +34,11 @@ public class CPPASTCastExpression extends ASTNode implements ICPPASTCastExpressi
 	private IASTTypeId typeId;
 	private IType fType;
 	private ValueCategory fValueCategory;
+	@Override
+	public ICPPInitClauseEvaluation getEvaluation() {
+		// mstodo Auto-generated method stub
+		return null;
+	}
 	
     public CPPASTCastExpression() {
 	}

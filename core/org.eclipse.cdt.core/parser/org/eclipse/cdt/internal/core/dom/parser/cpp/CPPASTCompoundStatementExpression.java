@@ -35,6 +35,11 @@ public class CPPASTCompoundStatementExpression extends ASTNode implements IGNUAS
     
     public CPPASTCompoundStatementExpression() {
 	}
+	@Override
+	public ICPPInitClauseEvaluation getEvaluation() {
+		// mstodo Auto-generated method stub
+		return null;
+	}
 
 	public CPPASTCompoundStatementExpression(IASTCompoundStatement statement) {
 		setCompoundStatement(statement);

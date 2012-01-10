@@ -58,6 +58,11 @@ public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, ICP
 
     public CPPASTIdExpression() {
 	}
+	@Override
+	public ICPPInitClauseEvaluation getEvaluation() {
+		// mstodo Auto-generated method stub
+		return null;
+	}
 
 	public CPPASTIdExpression(IASTName name) {
 		setName(name);

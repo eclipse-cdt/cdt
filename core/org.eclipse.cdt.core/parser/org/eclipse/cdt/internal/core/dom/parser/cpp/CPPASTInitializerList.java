@@ -35,7 +35,12 @@ public class CPPASTInitializerList extends ASTNode implements ICPPASTInitializer
 	public CPPASTInitializerList copy() {
 		return copy(CopyStyle.withoutLocations);
 	}
-	
+	@Override
+	public ICPPInitClauseEvaluation getEvaluation() {
+		// mstodo Auto-generated method stub
+		return null;
+	}
+
 	@Override
 	public CPPASTInitializerList copy(CopyStyle style) {
 		CPPASTInitializerList copy = new CPPASTInitializerList();

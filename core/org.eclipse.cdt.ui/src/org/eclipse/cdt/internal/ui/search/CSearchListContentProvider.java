@@ -6,10 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Ed Swartz (Nokia)
+ *     QNX - Initial API and implementation
+ *     Ed Swartz (Nokia)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.search;
 
 import java.util.ArrayList;
@@ -32,16 +31,13 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * @author Doug Schaefer
- *
  */
-public class PDOMSearchListContentProvider implements
-		IStructuredContentProvider, IPDOMSearchContentProvider {
-
+public class CSearchListContentProvider implements IStructuredContentProvider, IPDOMSearchContentProvider {
 	private TableViewer viewer;
-	private PDOMSearchResult result;
-	private final PDOMSearchViewPage fPage;
+	private CSearchResult result;
+	private final CSearchViewPage fPage;
 
-	PDOMSearchListContentProvider(PDOMSearchViewPage page) {
+	CSearchListContentProvider(CSearchViewPage page) {
 		fPage= page;
 	}
 
@@ -49,15 +45,15 @@ public class PDOMSearchListContentProvider implements
 	public Object[] getElements(Object inputElement) {
 		Set<String> uncoveredProjects = new HashSet<String>(); 
 		
-		PDOMSearchResult result = (PDOMSearchResult) inputElement;
+		CSearchResult result = (CSearchResult) inputElement;
 		
 		Object[] results = result.getElements();
 		List<Object> resultList = new ArrayList<Object>();
 	
 		// see which projects returned results
 		for (int i = 0; i < results.length; i++) {
-			if (results[i] instanceof PDOMSearchElement) {
-				PDOMSearchElement searchElement = (PDOMSearchElement) results[i];
+			if (results[i] instanceof CSearchElement) {
+				CSearchElement searchElement = (CSearchElement) results[i];
 				String path = searchElement.getLocation().getFullPath();
 				if (path != null) {
 					uncoveredProjects.add(new Path(path).segment(0));
@@ -74,7 +70,7 @@ public class PDOMSearchListContentProvider implements
 		}
 
 		// add message for all the projects which have no results
-		ICProject[] projects = ((PDOMSearchQuery)result.getQuery()).getProjects();
+		ICProject[] projects = ((CSearchQuery)result.getQuery()).getProjects();
 		for (int i = 0; i < projects.length; ++i) {
 			ICProject project = projects[i];
 			boolean foundProject = uncoveredProjects.contains(project.getProject().getName());
@@ -113,7 +109,7 @@ public class PDOMSearchListContentProvider implements
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		this.viewer = (TableViewer)viewer;
-		result = (PDOMSearchResult)newInput;
+		result = (CSearchResult)newInput;
 		viewer.refresh();
 	}
 

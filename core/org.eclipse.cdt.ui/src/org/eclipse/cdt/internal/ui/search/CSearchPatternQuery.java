@@ -40,12 +40,10 @@ import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICElement;
 
-
 /**
  * @author Doug Schaefer
  */
-public class PDOMSearchPatternQuery extends PDOMSearchQuery {
-
+public class CSearchPatternQuery extends CSearchQuery {
 	// First bit after the FINDs in PDOMSearchQuery.
 	public static final int FIND_CLASS_STRUCT = 0x10;
 	public static final int FIND_FUNCTION = 0x20;
@@ -58,16 +56,16 @@ public class PDOMSearchPatternQuery extends PDOMSearchQuery {
 	public static final int FIND_NAMESPACE = 0x4000;
 	public static final int FIND_TYPEDEF = 0x10000;
 	public static final int FIND_MACRO = 0x20000;
-	public static final int FIND_ALL_TYPES
-		= FIND_CLASS_STRUCT | FIND_FUNCTION | FIND_VARIABLE
-		| FIND_UNION | FIND_METHOD | FIND_FIELD | FIND_ENUM
-		| FIND_ENUMERATOR | FIND_NAMESPACE | FIND_TYPEDEF | FIND_MACRO;
+	public static final int FIND_ALL_TYPES =
+			FIND_CLASS_STRUCT | FIND_FUNCTION | FIND_VARIABLE |
+			FIND_UNION | FIND_METHOD | FIND_FIELD | FIND_ENUM |
+			FIND_ENUMERATOR | FIND_NAMESPACE | FIND_TYPEDEF | FIND_MACRO;
 	
-	private String scopeDesc;
-	private String patternStr;
-	private Pattern[] pattern;
+	private final String scopeDesc;
+	private final String patternStr;
+	private final Pattern[] pattern;
 	
-	public PDOMSearchPatternQuery(
+	public CSearchPatternQuery(
 			ICElement[] scope,
 			String scopeDesc,
 			String patternStr,

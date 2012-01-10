@@ -14,7 +14,7 @@ package org.eclipse.cdt.internal.ui.search.actions;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.search.CSearchMessages;
-import org.eclipse.cdt.internal.ui.search.PDOMSearchQuery;
+import org.eclipse.cdt.internal.ui.search.CSearchQuery;
 import org.eclipse.ui.IWorkbenchSite;
 
 
@@ -56,6 +56,6 @@ public class FindDeclarationsAction extends FindAction {
 	
 	@Override
 	protected int getLimitTo() {
-		return PDOMSearchQuery.FIND_DECLARATIONS_DEFINITIONS;
+		return CSearchQuery.FIND_DECLARATIONS_DEFINITIONS;
 	}
 }

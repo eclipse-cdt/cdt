@@ -44,7 +44,7 @@ public class OpenCSearchPageAction implements IWorkbenchWindowActionDelegate {
 			beep();
 			return;
 		}
-		NewSearchUI.openSearchDialog(fWindow, PDOMSearchPage.EXTENSION_ID);
+		NewSearchUI.openSearchDialog(fWindow, CSearchPage.EXTENSION_ID);
 	}
 
 	@Override

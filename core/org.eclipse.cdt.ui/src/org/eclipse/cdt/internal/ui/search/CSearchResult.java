@@ -46,15 +46,15 @@ import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 /**
  * @author Doug Schaefer
  */
-public class PDOMSearchResult extends AbstractTextSearchResult implements IEditorMatchAdapter, IFileMatchAdapter {
+public class CSearchResult extends AbstractTextSearchResult implements IEditorMatchAdapter, IFileMatchAdapter {
 	private static final String KEY_SHOW_POLYMORPHIC_CALLS = "ShowPolymorphicCalls"; //$NON-NLS-1$
 	final static MatchFilter[] ALL_FILTERS = new MatchFilter[] {HidePolymorphicCalls.FILTER};
 	final static MatchFilter[] NO_FILTERS = {};
 
-	private PDOMSearchQuery query;
+	private CSearchQuery query;
 	private boolean indexerBusy;
 	
-	public PDOMSearchResult(PDOMSearchQuery query) {
+	public CSearchResult(CSearchQuery query) {
 		super();
 		this.query = query;
 	}
@@ -102,9 +102,9 @@ public class PDOMSearchResult extends AbstractTextSearchResult implements IEdito
 	@Override
 	public boolean isShownInEditor(Match match, IEditorPart editor) {
 		final String fileName= getFileName(editor);
-		if (fileName != null && match instanceof PDOMSearchMatch) {
+		if (fileName != null && match instanceof CSearchMatch) {
 			final IPath filePath= new Path(fileName);
-			return filePath.equals(IndexLocationFactory.getAbsolutePath(((PDOMSearchMatch)match).getLocation()));
+			return filePath.equals(IndexLocationFactory.getAbsolutePath(((CSearchMatch)match).getLocation()));
 		}
 		return false;
 	}
@@ -114,10 +114,10 @@ public class PDOMSearchResult extends AbstractTextSearchResult implements IEdito
 		List<Match> list = new ArrayList<Match>(); 
 		Object[] elements = result.getElements();
 		for (int i = 0; i < elements.length; ++i) {
-			if (pfilename.equals(IndexLocationFactory.getAbsolutePath(((PDOMSearchElement)elements[i]).getLocation()))) {
+			if (pfilename.equals(IndexLocationFactory.getAbsolutePath(((CSearchElement)elements[i]).getLocation()))) {
 				Match[] matches = result.getMatches(elements[i]);
 				for (int j = 0; j < matches.length; ++j) {
-					if (matches[j] instanceof PDOMSearchMatch) {
+					if (matches[j] instanceof CSearchMatch) {
 						list.add(matches[j]);
 					}
 				}
@@ -159,8 +159,8 @@ public class PDOMSearchResult extends AbstractTextSearchResult implements IEdito
 					return ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(location.getFullPath()));
 				}
 			} catch(CoreException ce) { /* fall-through to return null */ }
-		} else if (element instanceof PDOMSearchElement) {
-			PDOMSearchElement searchElement = (PDOMSearchElement)element;
+		} else if (element instanceof CSearchElement) {
+			CSearchElement searchElement = (CSearchElement)element;
 			IIndexFileLocation location = searchElement.getLocation();
 			if(location.getFullPath()!=null) {
 				return ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(location.getFullPath()));

@@ -16,7 +16,7 @@ import org.eclipse.ui.IWorkingSet;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.search.CSearchMessages;
-import org.eclipse.cdt.internal.ui.search.PDOMSearchQuery;
+import org.eclipse.cdt.internal.ui.search.CSearchQuery;
 
 public class FindDeclarationsInWorkingSetAction extends FindInWorkingSetAction {
 
@@ -36,6 +36,6 @@ public class FindDeclarationsInWorkingSetAction extends FindInWorkingSetAction {
 
 	@Override
 	protected int getLimitTo() {
-		return PDOMSearchQuery.FIND_DECLARATIONS_DEFINITIONS;
+		return CSearchQuery.FIND_DECLARATIONS_DEFINITIONS;
 	}
 }

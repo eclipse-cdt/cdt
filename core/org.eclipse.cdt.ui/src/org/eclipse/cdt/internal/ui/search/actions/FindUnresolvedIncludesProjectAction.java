@@ -27,7 +27,7 @@ import org.eclipse.cdt.core.model.ICProject;
 
 import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
 import org.eclipse.cdt.internal.ui.search.CSearchMessages;
-import org.eclipse.cdt.internal.ui.search.PDOMSearchUnresolvedIncludesQuery;
+import org.eclipse.cdt.internal.ui.search.CSearchUnresolvedIncludesQuery;
 import org.eclipse.cdt.internal.ui.util.StatusLineHandler;
 
 /**
@@ -57,7 +57,7 @@ public class FindUnresolvedIncludesProjectAction implements IObjectActionDelegat
 	 		return;
 	 	}
 
-	 	ISearchQuery searchJob= new PDOMSearchUnresolvedIncludesQuery(projects.toArray(new ICProject[projects.size()]));
+	 	ISearchQuery searchJob= new CSearchUnresolvedIncludesQuery(projects.toArray(new ICProject[projects.size()]));
 
 		StatusLineHandler.clearStatusLine(fSite);
 		NewSearchUI.activateSearchResultView();

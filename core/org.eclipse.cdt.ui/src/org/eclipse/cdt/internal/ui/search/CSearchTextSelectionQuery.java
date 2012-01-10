@@ -38,12 +38,12 @@ import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 /**
  * Query for searching the index based on a text selection.
  */
-public class PDOMSearchTextSelectionQuery extends PDOMSearchQuery {
+public class CSearchTextSelectionQuery extends CSearchQuery {
 	private ITranslationUnit tu;
 	private ITextSelection selection;
 	private String label;
 	
-	public PDOMSearchTextSelectionQuery(ICElement[] scope, ITranslationUnit tu, ITextSelection selection, int flags) {
+	public CSearchTextSelectionQuery(ICElement[] scope, ITranslationUnit tu, ITextSelection selection, int flags) {
 		super(scope, flags | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 		this.tu = tu;
 		this.selection = selection;

@@ -15,7 +15,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.search.CSearchMessages;
-import org.eclipse.cdt.internal.ui.search.PDOMSearchQuery;
+import org.eclipse.cdt.internal.ui.search.CSearchQuery;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -73,7 +73,7 @@ public class FindRefsProjectAction extends FindAction {
 
 	@Override
 	protected int getLimitTo() {
-		return PDOMSearchQuery.FIND_REFERENCES;
+		return CSearchQuery.FIND_REFERENCES;
 	}
 
 }

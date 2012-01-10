@@ -19,7 +19,7 @@ public class HidePolymorphicCalls extends MatchFilter {
 
 	@Override
 	public boolean filters(Match match) {
-		return match instanceof PDOMSearchMatch && ((PDOMSearchMatch) match).isPolymorphicCall();
+		return match instanceof CSearchMatch && ((CSearchMatch) match).isPolymorphicCall();
 	}
 
 	@Override

@@ -27,14 +27,14 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.CCoreInternals;
 
-import org.eclipse.cdt.internal.ui.search.PDOMSearchQuery;
+import org.eclipse.cdt.internal.ui.search.CSearchQuery;
 
 /**
  * @author Doug Schaefer
  * 
  * This is the search query to be used for searching the PDOM.
  */
-public class IndexViewSearchQuery extends PDOMSearchQuery {
+public class IndexViewSearchQuery extends CSearchQuery {
 
 	private IIndexBinding fBinding;
 	private long fLastWrite;

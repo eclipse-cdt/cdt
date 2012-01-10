@@ -31,7 +31,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
 /**
  * Element representing a line with one ore more matches.
  */
-public class LineSearchElement extends PDOMSearchElement {
+public class LineSearchElement extends CSearchElement {
 	public static final class Match {
 		private final int fOffset;
 		private final int fLength;

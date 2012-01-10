@@ -41,7 +41,7 @@ public interface IPDOMSearchContentProvider {
 	 * TODO: it would be better if IIndexManager told us which projects specifically
 	 * were being indexed at the time, so we could annotate per-project whose results are suspicious
 	 * (which may be none at all for a given search).  
-	 * See the handling of {@link PDOMSearchResult#wasIndexerBusy()}.
+	 * See the handling of {@link CSearchResult#wasIndexerBusy()}.
 	 */
 	static IStatus INCOMPLETE_RESULTS_NODE = 
 		new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID,

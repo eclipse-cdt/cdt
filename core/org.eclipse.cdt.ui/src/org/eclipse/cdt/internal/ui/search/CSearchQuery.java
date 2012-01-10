@@ -74,7 +74,7 @@ import org.eclipse.cdt.internal.ui.util.Messages;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 
-public abstract class PDOMSearchQuery implements ISearchQuery {
+public abstract class CSearchQuery implements ISearchQuery {
 	public static final int FIND_DECLARATIONS = IIndex.FIND_DECLARATIONS;
 	public static final int FIND_DEFINITIONS = IIndex.FIND_DEFINITIONS;
 	public static final int FIND_REFERENCES = IIndex.FIND_REFERENCES;
@@ -86,15 +86,15 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 			CElementLabels.ALL_FULLY_QUALIFIED |
 			CElementLabels.TEMPLATE_ARGUMENTS;
 
-	protected PDOMSearchResult result;
+	protected CSearchResult result;
 	protected int flags;
 
 	protected ICElement[] scope;
 	protected ICProject[] projects;
 	private Set<String> fullPathFilter;
 
-	protected PDOMSearchQuery(ICElement[] scope, int flags) {
-		result = new PDOMSearchResult(this);
+	protected CSearchQuery(ICElement[] scope, int flags) {
+		result = new CSearchResult(this);
 		this.flags = flags;
 		this.scope = scope;
 
@@ -319,7 +319,7 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 				for (Match lineMatch : searchElement.getMatches()) {
 					int offset = lineMatch.getOffset();
 					int length = lineMatch.getLength();
-					PDOMSearchMatch match = new PDOMSearchMatch(searchElement, offset, length);
+					CSearchMatch match = new CSearchMatch(searchElement, offset, length);
 					if (lineMatch.isPolymorphicCall())
 						match.setIsPolymorphicCall();
 					result.addMatch(match);
@@ -470,7 +470,7 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 				for (Match lineMatch : searchElement.getMatches()) {
 					int offset = lineMatch.getOffset();
 					int length = lineMatch.getLength();
-					PDOMSearchMatch match = new PDOMSearchMatch(searchElement, offset, length);
+					CSearchMatch match = new CSearchMatch(searchElement, offset, length);
 					result.addMatch(match);
 				}
 			}
@@ -487,7 +487,7 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 
 	@Override
 	public final IStatus run(IProgressMonitor monitor) throws OperationCanceledException {
-		PDOMSearchResult result= (PDOMSearchResult) getSearchResult();
+		CSearchResult result= (CSearchResult) getSearchResult();
 		result.removeAll();
 
 		result.setIndexerBusy(!CCorePlugin.getIndexManager().isIndexerIdle());

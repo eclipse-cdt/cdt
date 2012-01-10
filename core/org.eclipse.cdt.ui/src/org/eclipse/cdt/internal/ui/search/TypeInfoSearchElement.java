@@ -23,7 +23,7 @@ import org.eclipse.cdt.internal.core.browser.ASTTypeInfo;
 /**
  * Represents a a c/c++-entity in a search.
  */
-public class TypeInfoSearchElement extends PDOMSearchElement {
+public class TypeInfoSearchElement extends CSearchElement {
 	private final ITypeInfo typeInfo;
 
 	public TypeInfoSearchElement(IIndex index, IIndexName name, IIndexBinding binding) throws CoreException {

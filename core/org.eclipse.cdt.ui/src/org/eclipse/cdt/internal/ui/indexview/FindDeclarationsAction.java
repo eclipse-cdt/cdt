@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.CUIPlugin;
 
-import org.eclipse.cdt.internal.ui.search.PDOMSearchQuery;
+import org.eclipse.cdt.internal.ui.search.CSearchQuery;
 
 /**
  * @author Doug Schaefer
@@ -57,7 +57,7 @@ public class FindDeclarationsAction extends IndexAction {
 						null,
 						cproject, indexView.getLastWriteAccess(cproject),
 						(IIndexBinding) binding.fObject, binding.fText,
-						PDOMSearchQuery.FIND_DECLARATIONS | PDOMSearchQuery.FIND_DEFINITIONS);
+						CSearchQuery.FIND_DECLARATIONS | CSearchQuery.FIND_DEFINITIONS);
 
 				NewSearchUI.activateSearchResultView();
 				NewSearchUI.runQueryInBackground(query);

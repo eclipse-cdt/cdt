@@ -50,15 +50,13 @@ import org.eclipse.cdt.internal.ui.viewsupport.ColoringLabelProvider;
  * 		URI - for IIndexFileLocations not resolvable to the local filesystem, under URI_CONTAINER<br>
  * @author Doug Schaefer
  * @author Ed Swartz
- *
  */
-public class PDOMSearchLabelProvider extends LabelProvider implements IStyledLabelProvider {
-
-	protected final PDOMSearchViewPage fPage;
+public class CSearchLabelProvider extends LabelProvider implements IStyledLabelProvider {
+	protected final CSearchViewPage fPage;
 	private final TypeInfoLabelProvider fTypeInfoLabelProvider;
 	private final CUILabelProvider fCElementLabelProvider;
 	
-	public PDOMSearchLabelProvider(PDOMSearchViewPage page) {
+	public CSearchLabelProvider(CSearchViewPage page) {
 		fTypeInfoLabelProvider= new TypeInfoLabelProvider(TypeInfoLabelProvider.SHOW_FULLY_QUALIFIED | TypeInfoLabelProvider.SHOW_PARAMETERS);
 		fCElementLabelProvider= new CUILabelProvider(0, CElementImageProvider.SMALL_ICONS);
 		fPage= page;
@@ -152,8 +150,8 @@ public class PDOMSearchLabelProvider extends LabelProvider implements IStyledLab
 		if (element instanceof TranslationUnit) {
 			TranslationUnit translationUnit = (TranslationUnit) element;
 			AbstractTextSearchResult searchResult = fPage.getInput();
-			if (searchResult instanceof PDOMSearchResult) {
-				PDOMSearchResult pdomSearchResult = (PDOMSearchResult)searchResult;
+			if (searchResult instanceof CSearchResult) {
+				CSearchResult pdomSearchResult = (CSearchResult)searchResult;
 				return pdomSearchResult.computeContainedMatches(searchResult, translationUnit.getFile()).length;
 			}
 		}

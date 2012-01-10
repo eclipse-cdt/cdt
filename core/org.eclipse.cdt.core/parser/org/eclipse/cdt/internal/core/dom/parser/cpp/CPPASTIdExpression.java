@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
@@ -49,7 +50,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
-public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, ICPPASTCompletionContext {
+public class CPPASTIdExpression extends ASTNode implements IASTIdExpression, ICPPASTExpression, ICPPASTCompletionContext {
 	private static final ICPPASTFieldReference NOT_INITIALIZED = new CPPASTFieldReference();
 	
 	private IASTName name;

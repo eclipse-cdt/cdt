@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTTypeIdExpression extends IASTTypeIdExpression {
+public interface ICPPASTTypeIdExpression extends IASTTypeIdExpression, ICPPASTExpression {
 
 	public static final int op_typeid = IASTTypeIdExpression.op_typeid;
 

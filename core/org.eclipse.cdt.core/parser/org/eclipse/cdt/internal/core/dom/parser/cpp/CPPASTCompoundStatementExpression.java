@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
@@ -27,7 +28,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 /**
  * Gnu-extension: ({ ... })
  */
-public class CPPASTCompoundStatementExpression extends ASTNode implements IGNUASTCompoundStatementExpression {
+public class CPPASTCompoundStatementExpression extends ASTNode implements IGNUASTCompoundStatementExpression, ICPPASTExpression {
 	
     private IASTCompoundStatement statement;
 

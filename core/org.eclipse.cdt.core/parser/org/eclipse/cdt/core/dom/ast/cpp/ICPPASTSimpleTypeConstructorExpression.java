@@ -25,7 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializer;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTSimpleTypeConstructorExpression extends IASTExpression {
+public interface ICPPASTSimpleTypeConstructorExpression extends ICPPASTExpression {
 	/**
 	 * @since 5.2
 	 */

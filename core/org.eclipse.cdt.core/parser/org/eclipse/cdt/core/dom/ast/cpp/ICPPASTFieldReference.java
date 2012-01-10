@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTFieldReference extends IASTFieldReference, IASTImplicitNameOwner {
+public interface ICPPASTFieldReference extends IASTFieldReference, ICPPASTExpression, IASTImplicitNameOwner {
 	/**
 	 * Was template keyword used?
 	 */

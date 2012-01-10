@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTExpressionList extends IASTExpressionList, IASTImplicitNameOwner {
+public interface ICPPASTExpressionList extends IASTExpressionList, ICPPASTExpression, IASTImplicitNameOwner {
 
 	@Override
 	public ICPPASTExpressionList copy();

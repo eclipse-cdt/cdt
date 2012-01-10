@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTCastExpression extends IASTCastExpression {
+public interface ICPPASTCastExpression extends IASTCastExpression, ICPPASTExpression {
 	/**
 	 * <code>op_dynamic_cast</code> is used for dynamic_cast<>'s.
 	 */

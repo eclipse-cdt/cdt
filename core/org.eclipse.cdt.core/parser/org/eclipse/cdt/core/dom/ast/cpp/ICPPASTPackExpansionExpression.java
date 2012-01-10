@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
  * @noimplement This interface is not intended to be implemented by clients.
  * @since 5.2
  */
-public interface ICPPASTPackExpansionExpression extends IASTExpression {
+public interface ICPPASTPackExpansionExpression extends ICPPASTExpression {
 	
 	/**
 	 * Represents the relationship between a pack-expansion and its pattern.

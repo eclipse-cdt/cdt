@@ -19,10 +19,11 @@ import org.eclipse.cdt.core.dom.ast.IASTBinaryTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 
-public class CPPASTBinaryTypeIdExpression extends ASTNode implements IASTBinaryTypeIdExpression {
+public class CPPASTBinaryTypeIdExpression extends ASTNode implements ICPPASTExpression, IASTBinaryTypeIdExpression {
     private Operator fOperator;
     private IASTTypeId fOperand1;
     private IASTTypeId fOperand2;

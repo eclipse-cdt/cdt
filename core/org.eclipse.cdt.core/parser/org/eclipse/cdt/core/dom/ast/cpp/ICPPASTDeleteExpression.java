@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTDeleteExpression extends IASTExpression, IASTImplicitNameOwner {
+public interface ICPPASTDeleteExpression extends ICPPASTExpression, IASTImplicitNameOwner {
 	/**
 	 * <code>OPERAND</code> is the expression representing the pointer being
 	 * deleted.

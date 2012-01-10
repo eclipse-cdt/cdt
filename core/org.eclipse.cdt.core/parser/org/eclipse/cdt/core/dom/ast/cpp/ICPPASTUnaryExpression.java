@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface ICPPASTUnaryExpression extends IASTUnaryExpression, IASTImplicitNameOwner {
+public interface ICPPASTUnaryExpression extends IASTUnaryExpression, ICPPASTExpression, IASTImplicitNameOwner {
 	/**
 	 * <code>op_throw</code> throw exp
 	 */

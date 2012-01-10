@@ -16,13 +16,14 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.internal.core.dom.parser.ASTTypeIdInitializerExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
 /**
  * C++ variant of type id initializer expression. type-id { initializer }
  */
-public class CPPASTTypeIdInitializerExpression extends ASTTypeIdInitializerExpression {
+public class CPPASTTypeIdInitializerExpression extends ASTTypeIdInitializerExpression implements ICPPASTExpression {
 
 	private CPPASTTypeIdInitializerExpression() {
 	}

@@ -28,7 +28,6 @@ import org.eclipse.cdt.internal.core.dom.parser.VariableReadWriteFlags;
  * with the variable.
  */
 public final class CVariableReadWriteFlags extends VariableReadWriteFlags {
-	
 	private static CVariableReadWriteFlags INSTANCE= new CVariableReadWriteFlags();
 
 	public static int getReadWriteFlags(IASTName variable) {
@@ -73,15 +72,14 @@ public final class CVariableReadWriteFlags extends VariableReadWriteFlags {
 		if (indirection == 0) {
 			return READ;
 		}
-		while(indirection > 0 && (type instanceof IPointerType)) {
+		while (indirection > 0 && (type instanceof IPointerType)) {
 			type= ((IPointerType) type).getType();
 			indirection--;
 		}
 		if (indirection == 0) {
 			if (type instanceof IQualifierType) {
 				return ((IQualifierType) type).isConst() ? READ : READ | WRITE;
-			}
-			else if (type instanceof IPointerType) {
+			} else if (type instanceof IPointerType) {
 				return ((IPointerType) type).isConst() ? READ : READ | WRITE;
 			}
 		}

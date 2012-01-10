@@ -21,7 +21,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVariableReadWri
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 
 public class CSearchUtil {
-
 	public static int LRU_WORKINGSET_LIST_SIZE= 3;
 	private static LRUWorkingSets workingSetsCache;
 	
@@ -44,10 +43,10 @@ public class CSearchUtil {
 	}
 	
 	public static String toString(IWorkingSet[] workingSets) {
-		if( workingSets != null && workingSets.length > 0 ){
+		if (workingSets != null && workingSets.length > 0) {
 			String string = new String();
-			for( int i = 0; i < workingSets.length; i++ ){
-				if( i > 0 )
+			for (int i = 0; i < workingSets.length; i++) {
+				if (i > 0)
 					string += ", ";  //$NON-NLS-1$
 				string += workingSets[i].getName();
 			}
@@ -62,8 +61,7 @@ public class CSearchUtil {
 		boolean isWrite;
 		if (binding instanceof ICPPVariable) {
 			isWrite = ((CPPVariableReadWriteFlags.getReadWriteFlags(node) & PDOMName.WRITE_ACCESS) != 0);
-		}
-		else { 
+		} else { 
 			isWrite = ((CVariableReadWriteFlags.getReadWriteFlags(node) & PDOMName.WRITE_ACCESS) != 0);
 		}
 		return isWrite;

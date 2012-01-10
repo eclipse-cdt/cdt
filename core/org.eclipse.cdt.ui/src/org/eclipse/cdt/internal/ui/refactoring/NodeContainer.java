@@ -50,14 +50,14 @@ import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ASTWriter;
 public class NodeContainer {
 	public final NameInformation NULL_NAME_INFORMATION = new NameInformation(new CPPASTName());
 
-	private final ArrayList<IASTNode> vec;
-	private final ArrayList<NameInformation> names;
+	private final List<IASTNode> nodes;
+	private final List<NameInformation> names;
 
 	public class NameInformation {
 		private IASTName name;
 		private IASTName declaration;
-		private final ArrayList<IASTName> references;
-		private ArrayList<IASTName> referencesAfterCached;
+		private final List<IASTName> references;
+		private List<IASTName> referencesAfterCached;
 		private int lastCachedReferencesHash;
 		private boolean isReference;
 		private boolean isReturnValue;
@@ -103,9 +103,8 @@ public class NodeContainer {
 			references.add(name);
 		}
 
-		public ArrayList<IASTName> getReferencesAfterSelection() {
-			if (referencesAfterCached == null
-					|| lastCachedReferencesHash != references.hashCode()) {
+		public List<IASTName> getReferencesAfterSelection() {
+			if (referencesAfterCached == null || lastCachedReferencesHash != references.hashCode()) {
 				lastCachedReferencesHash = references.hashCode();
 				referencesAfterCached = new ArrayList<IASTName>();
 				for (IASTName ref : references) {
@@ -196,18 +195,17 @@ public class NodeContainer {
 			return writer.write(declSpec);
 		}
 
-		public boolean isDeclarationInScope() {
+		public boolean isDeclarationExtracted() {
 			if (declaration != null && declaration.toCharArray().length > 0) {
 				int declOffset = declaration.getFileLocation().getNodeOffset();
-				return declOffset >= getStartOffset()
-				&& declOffset <= getEndOffset();
+				return declOffset >= getStartOffset() && declOffset <= getEndOffset();
 			}
 			return true;
 		}
 
 		@Override
 		public String toString() {
-			return Messages.NodeContainer_Name + name + ' ' + isDeclarationInScope();
+			return name.toString() + ": " + (isDeclarationExtracted() ? "with declaration" : "without declaration");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 		}
 
 		public boolean isReference() {
@@ -269,24 +267,24 @@ public class NodeContainer {
 
 	public NodeContainer() {
 		super();
-		vec = new ArrayList<IASTNode>();
+		nodes = new ArrayList<IASTNode>();
 		names = new ArrayList<NameInformation>();
 	}
 
 	public final int size() {
-		return vec.size();
+		return nodes.size();
 	}
 
 	public final boolean isEmpty() {
-		return vec.isEmpty();
+		return nodes.isEmpty();
 	}
 
 	public void add(IASTNode node) {
-		vec.add(node);
+		nodes.add(node);
 	}
 
 	public void findAllNames() {
-		for (IASTNode node : vec) {
+		for (IASTNode node : nodes) {
 			node.accept(new ASTVisitor() {
 				{
 					shouldVisitNames = true;
@@ -343,7 +341,7 @@ public class NodeContainer {
 	 * Returns all local names in the selection which will be used after the
 	 * selection expected the ones which are pointers
 	 */
-	public ArrayList<NameInformation> getAllAfterUsedNames() {
+	public List<NameInformation> getAllAfterUsedNames() {
 		ArrayList<IASTName> declarations = new ArrayList<IASTName>();
 		ArrayList<NameInformation> usedAfter = new ArrayList<NameInformation>();
 
@@ -364,13 +362,12 @@ public class NodeContainer {
 		return usedAfter;
 	}
 
-	public ArrayList<NameInformation> getAllAfterUsedNamesChoosenByUser() {
+	public List<NameInformation> getAllAfterUsedNamesChoosenByUser() {
 		ArrayList<IASTName> declarations = new ArrayList<IASTName>();
 		ArrayList<NameInformation> usedAfter = new ArrayList<NameInformation>();
 
 		for (NameInformation nameInf : names) {
 			if (!declarations.contains(nameInf.getDeclaration())) {
-
 				declarations.add(nameInf.getDeclaration());
 				if (nameInf.isUserSetIsReference() || nameInf.isUserSetIsReturnValue()) {
 					usedAfter.add(nameInf);
@@ -381,7 +378,7 @@ public class NodeContainer {
 		return usedAfter;
 	}
 
-	public ArrayList<NameInformation> getUsedNamesUnique() {
+	public List<NameInformation> getUsedNamesUnique() {
 		ArrayList<IASTName> declarations = new ArrayList<IASTName>();
 		ArrayList<NameInformation> usedAfter = new ArrayList<NameInformation>();
 
@@ -411,18 +408,19 @@ public class NodeContainer {
 	 * selection expected the ones which are pointers
 	 * XXX Was soll dieser Kommentar aussagen? --Mirko
 	 */
-	public ArrayList<NameInformation> getAllDeclaredInScope() {
+	public List<NameInformation> getAllDeclaredInScope() {
 		ArrayList<IASTName> declarations = new ArrayList<IASTName>();
 		ArrayList<NameInformation> usedAfter = new ArrayList<NameInformation>();
 
-		for (NameInformation nameInf : names) {
-			if (nameInf.isDeclarationInScope()
-					&& !declarations.contains(nameInf.getDeclaration()) && nameInf.isUsedAfterReferences()) {
-				declarations.add(nameInf.getDeclaration());
-				usedAfter.add(nameInf);
-				// is return value candidate, set return value to true and reference to false
-				nameInf.setReturnValue(true);
-				nameInf.setReference(false);
+		for (NameInformation nameInfo : names) {
+			if (nameInfo.isDeclarationExtracted() &&
+					!declarations.contains(nameInfo.getDeclaration()) &&
+					nameInfo.isUsedAfterReferences()) {
+				declarations.add(nameInfo.getDeclaration());
+				usedAfter.add(nameInfo);
+				// Is return value candidate, set return value to true and reference to false
+				nameInfo.setReturnValue(true);
+				nameInfo.setReference(false);
 			}
 		}
 
@@ -430,7 +428,7 @@ public class NodeContainer {
 	}
 
 	public List<IASTNode> getNodesToWrite() {
-		return vec;
+		return nodes;
 	}
 
 	public int getStartOffset() {
@@ -444,7 +442,7 @@ public class NodeContainer {
 	private int getOffset(boolean includeComments) {
 		int start = Integer.MAX_VALUE;
 
-		for (IASTNode node : vec) {
+		for (IASTNode node : nodes) {
 			int nodeStart = Integer.MAX_VALUE;
 
 			IASTNodeLocation[] nodeLocations = node.getNodeLocations();
@@ -483,7 +481,7 @@ public class NodeContainer {
 	private int getEndOffset(boolean includeComments) {
 		int end = 0;
 
-		for (IASTNode node : vec) {
+		for (IASTNode node : nodes) {
 			int fileOffset = 0;
 			int length = 0;
 
@@ -514,7 +512,7 @@ public class NodeContainer {
 
 	@Override
 	public String toString() {
-		return vec.toString();
+		return nodes.toString();
 	}
 
 	public List<NameInformation> getNames() {

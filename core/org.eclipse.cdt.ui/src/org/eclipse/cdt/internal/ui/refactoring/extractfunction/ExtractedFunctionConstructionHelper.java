@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 
@@ -55,13 +55,14 @@ public abstract class ExtractedFunctionConstructionHelper {
 	public abstract IASTNode createReturnAssignment(IASTNode node, IASTExpressionStatement stmt,
 			IASTExpression callExpression);
 	
-	protected boolean isReturnTypeAPointer(IASTNode node) {
+	protected boolean hasPointerReturnType(IASTNode node) {
 		return false;
 	}
 
 	IASTStandardFunctionDeclarator createFunctionDeclarator(IASTName name,
 			IASTStandardFunctionDeclarator functionDeclarator, NameInformation returnVariable,
-			List<IASTNode> nodesToWrite, Collection<NameInformation> allUsedNames, INodeFactory nodeFactory) {
+			List<IASTNode> nodesToWrite, Collection<NameInformation> allUsedNames,
+			INodeFactory nodeFactory) {
 		IASTStandardFunctionDeclarator declarator = nodeFactory.newFunctionDeclarator(name);
 	
 		if (functionDeclarator instanceof ICPPASTFunctionDeclarator &&
@@ -83,17 +84,18 @@ public abstract class ExtractedFunctionConstructionHelper {
 			declarator.addParameterDeclaration(param);
 		}
 		
-		if (isReturnTypeAPointer(nodesToWrite.get(0))) {
+		if (hasPointerReturnType(nodesToWrite.get(0))) {
 			declarator.addPointerOperator(nodeFactory.newPointer());
 		}
 		
 		return declarator;
 	}
 	
-	public Collection<IASTParameterDeclaration> getParameterDeclarations(Collection<NameInformation> allUsedNames, INodeFactory nodeFactory) {
-		Collection<IASTParameterDeclaration> result = new ArrayList<IASTParameterDeclaration>();		
+	public List<IASTParameterDeclaration> getParameterDeclarations(
+			Collection<NameInformation> allUsedNames, INodeFactory nodeFactory) {
+		List<IASTParameterDeclaration> result = new ArrayList<IASTParameterDeclaration>();		
 		for (NameInformation name : allUsedNames) {
-			if (!name.isDeclarationInScope()) {
+			if (!name.isDeclarationExtracted()) {
 				result.add(name.getParameterDeclaration(name.isUserSetIsReference(), nodeFactory));
 			}
 		}

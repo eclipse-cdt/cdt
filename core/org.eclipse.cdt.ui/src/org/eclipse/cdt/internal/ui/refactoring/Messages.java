@@ -35,7 +35,6 @@ public final class Messages extends NLS {
 	public static String Refactoring_CantLoadTU;
 	public static String Refactoring_Ambiguity;
 	public static String Refactoring_ParsingError;
-	public static String NodeContainer_Name;
 	public static String NO_FILE;
 	public static String RefactoringSaveHelper_unexpected_exception;
 	public static String RefactoringSaveHelper_saving;

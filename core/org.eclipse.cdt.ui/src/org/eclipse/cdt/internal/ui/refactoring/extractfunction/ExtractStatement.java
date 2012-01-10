@@ -36,13 +36,14 @@ public class ExtractStatement extends ExtractedFunctionConstructionHelper {
 	@Override
 	public void constructMethodBody(IASTCompoundStatement compound, List<IASTNode> list,
 			ASTRewrite rewrite, TextEditGroup group) {
-		for (IASTNode each : list) {
-			rewrite.insertBefore(compound, null, each, group);
+		for (IASTNode node : list) {
+			rewrite.insertBefore(compound, null, node, group);
 		}
 	}
 
 	@Override
-	public IASTDeclSpecifier determineReturnType(IASTNode extractedNode, NameInformation returnVariable) {
+	public IASTDeclSpecifier determineReturnType(IASTNode extractedNode,
+			NameInformation returnVariable) {
 		if (returnVariable != null) {
 			IASTNode decl = ASTHelper.getDeclarationForNode(returnVariable.getDeclaration());
 			return ASTHelper.getDeclarationSpecifier(decl).copy(CopyStyle.withLocations);

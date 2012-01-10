@@ -201,7 +201,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 					info.getInScopeDeclaredVariable().setUserSetIsReturnValue(true);
 				}
 				for (int i = 0; i < info.getAllUsedNames().size(); i++) {
-					if (!info.getAllUsedNames().get(i).isDeclarationInScope()) {
+					if (!info.getAllUsedNames().get(i).isDeclarationExtracted()) {
 						NameInformation name = info.getAllUsedNames().get(i);
 						if (!name.isReturnValue()) {
 							name.setUserSetIsReference(name.isReference());
@@ -856,7 +856,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 
 	private void addParameterIfPossible(List<IASTInitializerClause> args,
 			List<IASTName> declarations, NameInformation nameInfо) {
-		if (!nameInfо.isDeclarationInScope()) {
+		if (!nameInfо.isDeclarationExtracted()) {
 			IASTName declaration = nameInfо.getDeclaration();
 			if (!declarations.contains(declaration)) {
 				declarations.add(declaration);

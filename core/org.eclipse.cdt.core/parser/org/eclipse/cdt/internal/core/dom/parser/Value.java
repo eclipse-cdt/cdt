@@ -580,13 +580,16 @@ public class Value implements IValue {
 		final int unaryOp= ue.getOperator();
 
 		if (unaryOp == IASTUnaryExpression.op_sizeof) {
-			IType type = ue.getExpressionType();
-			ASTTranslationUnit ast = (ASTTranslationUnit) ue.getTranslationUnit();
-			SizeofCalculator calculator = ast.getSizeofCalculator();
-			SizeAndAlignment info = calculator.sizeAndAlignment(type);
-			if (info == null)
-				throw UNKNOWN_EX;
-			return info.size;
+			final IASTExpression operand = ue.getOperand();
+			if (operand != null) {
+				IType type = operand.getExpressionType();
+				ASTTranslationUnit ast = (ASTTranslationUnit) ue.getTranslationUnit();
+				SizeofCalculator calculator = ast.getSizeofCalculator();
+				SizeAndAlignment info = calculator.sizeAndAlignment(type);
+				if (info != null)
+					return info.size;
+			}
+			throw UNKNOWN_EX;
 		}
 
 		if (unaryOp == IASTUnaryExpression.op_amper || unaryOp == IASTUnaryExpression.op_star ||

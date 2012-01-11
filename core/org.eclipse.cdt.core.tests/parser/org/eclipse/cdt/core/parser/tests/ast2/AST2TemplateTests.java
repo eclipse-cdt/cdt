@@ -5713,4 +5713,14 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testPartialClassTemplateSpecUsingDefaultArgument_367997() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	struct two { char x[2]; };
+	//	two check(...);
+	//	char check(int);
+	//	template <int> struct foo {};
+	//	template <> struct foo<1> { typedef int type; };
+	//	typedef foo<sizeof(check(0))>::type t;  // ERROR HERE
+	public void testValueForSizeofExpression_368309() throws Exception {
+		parseAndCheckBindings();
+	}
 }

@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.parser.InternalParserUtil;
+import org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask.UnusedHeaderStrategy;
 import org.eclipse.cdt.internal.core.pdom.IndexerInputAdapter;
 import org.eclipse.cdt.internal.core.resources.PathCanonicalizationStrategy;
 import org.eclipse.cdt.utils.UNCPathConverter;
@@ -193,7 +194,7 @@ public class ProjectIndexerInputAdapter extends IndexerInputAdapter {
 	}
 
 	@Override
-	public AbstractLanguage[] getLanguages(Object tuo, boolean bothForHeaders) {
+	public AbstractLanguage[] getLanguages(Object tuo, UnusedHeaderStrategy strategy) {
 		if (tuo instanceof PotentialTranslationUnit) {
 			if (fLangC != null) {
 				if (fLangCpp != null) {
@@ -211,14 +212,23 @@ public class ProjectIndexerInputAdapter extends IndexerInputAdapter {
 		try {
 			ILanguage lang= tu.getLanguage();
 			if (lang instanceof AbstractLanguage) {
-				if (bothForHeaders && tu.isHeaderUnit()) {
+				final boolean both = strategy == UnusedHeaderStrategy.useBoth;
+				final boolean useC = strategy == UnusedHeaderStrategy.useC;
+				final boolean useCpp = strategy == UnusedHeaderStrategy.useCPP;
+				if ((both || useC || useCpp) && tu.isHeaderUnit()) {
 					String filename= tu.getElementName();
 					if (filename.indexOf('.') >= 0) {
 						final String contentTypeId= tu.getContentTypeId();
 						if (contentTypeId.equals(CCorePlugin.CONTENT_TYPE_CXXHEADER) && fLangC != null) {
-							return new AbstractLanguage[] {(AbstractLanguage) lang, fLangC};
+							if (both) 
+								return new AbstractLanguage[] {(AbstractLanguage) lang, fLangC};
+							if (useC)
+								return new AbstractLanguage[] {fLangC};
 						} else if (contentTypeId.equals(CCorePlugin.CONTENT_TYPE_CHEADER) && fLangCpp != null) {
-							return new AbstractLanguage[] {(AbstractLanguage) lang, fLangCpp};
+							if (both) 
+								return new AbstractLanguage[] {(AbstractLanguage) lang, fLangCpp};
+							if (useCpp)
+								return new AbstractLanguage[] {fLangCpp};
 						}
 					}
 				}

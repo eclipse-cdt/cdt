@@ -71,7 +71,7 @@ public abstract class IndexerInputAdapter extends ASTFilePathResolver {
 	/**
 	 * Obtains the languages the input file should be parsed with.
 	 */
-	public abstract AbstractLanguage[] getLanguages(Object tu, boolean bothForHeaders);
+	public abstract AbstractLanguage[] getLanguages(Object tu, AbstractIndexerTask.UnusedHeaderStrategy strat);
 
 	/**
 	 * Obtains the scanner configuration for the input file.

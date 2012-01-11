@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.internal.core.index.IndexFileLocation;
 import org.eclipse.cdt.internal.core.parser.InternalParserUtil;
+import org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask.UnusedHeaderStrategy;
 import org.eclipse.cdt.internal.core.pdom.IndexerInputAdapter;
 import org.eclipse.cdt.internal.core.pdom.indexer.FileExistsCache;
 import org.eclipse.cdt.utils.UNCPathConverter;
@@ -178,7 +179,7 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 	}
 
 	@Override
-	public AbstractLanguage[] getLanguages(Object tu, boolean bothForHeaders) {
+	public AbstractLanguage[] getLanguages(Object tu, UnusedHeaderStrategy strat) {
 		ILanguage language = fIndexer.getLanguageMapper().getLanguage(tu.toString());
 		if (language instanceof AbstractLanguage) {
 			return new AbstractLanguage[] {(AbstractLanguage) language};

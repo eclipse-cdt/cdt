@@ -136,6 +136,9 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	public static final int[] IDS_FOR_LINKAGES_TO_INDEX = {
 		ILinkage.CPP_LINKAGE_ID, ILinkage.C_LINKAGE_ID, ILinkage.FORTRAN_LINKAGE_ID
 	};
+	public static final int[] IDS_FOR_LINKAGES_TO_INDEX_C_FIRST = {
+		ILinkage.C_LINKAGE_ID, ILinkage.CPP_LINKAGE_ID, ILinkage.FORTRAN_LINKAGE_ID
+	};
 
 	private final LinkedList<ICProject> fProjectQueue= new LinkedList<ICProject>();
 	private final PDOMSetupJob fSetupJob;

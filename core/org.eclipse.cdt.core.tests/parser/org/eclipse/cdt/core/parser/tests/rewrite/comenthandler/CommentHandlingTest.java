@@ -15,7 +15,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
-import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -85,7 +84,7 @@ public class CommentHandlingTest extends RewriteBaseTest {
 	private static final String TRAILING_COMMENT_TITLE = "<<<=== Trailing Comment Test Section ===>>>"; //$NON-NLS-1$
 	private static final String FREESTANDING_COMMENT_TITLE = "<<<=== Freestanding Comment Test Section ===>>>"; //$NON-NLS-1$
 	
-	public CommentHandlingTest(String name, Vector<TestSourceFile> files) {
+	public CommentHandlingTest(String name, List<TestSourceFile> files) {
 		super(name, files);
 	}
 

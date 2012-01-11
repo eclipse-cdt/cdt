@@ -53,7 +53,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.ui.refactoring.NodeContainer.NameInformation;
 
 /**
- * Handles the extraction of expression nodes, like return type determination.
+ * Handles the extraction of expression nodes, for example, return type determination.
  * 
  * @author Mirko Stocker
  */
@@ -64,7 +64,8 @@ public class ExtractExpression extends ExtractedFunctionConstructionHelper {
 	public void constructMethodBody(IASTCompoundStatement compound, List<IASTNode> list,
 			ASTRewrite rewrite, TextEditGroup group) {
 		CPPASTReturnStatement statement = new CPPASTReturnStatement();
-		IASTExpression nullReturnExp = new CPPASTLiteralExpression(IASTLiteralExpression.lk_integer_constant, ZERO); 
+		IASTExpression nullReturnExp =
+				new CPPASTLiteralExpression(IASTLiteralExpression.lk_integer_constant, ZERO); 
 		statement.setReturnValue(nullReturnExp);
 		ASTRewrite nestedRewrite = rewrite.insertBefore(compound, null, statement, group);
 		
@@ -72,11 +73,11 @@ public class ExtractExpression extends ExtractedFunctionConstructionHelper {
 	}
 
 	private IASTExpression getExpression(List<IASTNode> list) {
-		if (list.size()> 1) {
+		if (list.size() > 1) {
 			CPPASTBinaryExpression bExp = new CPPASTBinaryExpression();
 			bExp.setParent(list.get(0).getParent());
 			bExp.setOperand1((IASTExpression) list.get(0).copy(CopyStyle.withLocations));
-			bExp.setOperator(((IASTBinaryExpression)list.get(1).getParent()).getOperator());
+			bExp.setOperator(((IASTBinaryExpression) list.get(1).getParent()).getOperator());
 			bExp.setOperand2(getExpression(list.subList(1, list.size())));
 			return bExp;
 		} else {
@@ -154,7 +155,7 @@ public class ExtractExpression extends ExtractedFunctionConstructionHelper {
 	}
 
 	@Override
-	protected boolean isReturnTypeAPointer(IASTNode node) {
+	protected boolean hasPointerReturnType(IASTNode node) {
 		if (node instanceof ICPPASTNewExpression) {
 			return true;
 		} else if (!(node instanceof IASTFunctionCallExpression)) {
@@ -186,11 +187,13 @@ public class ExtractExpression extends ExtractedFunctionConstructionHelper {
 	}
 
 	private static boolean hasDeclaration(CPPFunction function) {
-		return function != null && function.getDeclarations() != null && function.getDeclarations().length > 0;
+		return function != null && function.getDeclarations() != null &&
+				function.getDeclarations().length > 0;
 	}
 	
 	@Override
-	public IASTNode createReturnAssignment(IASTNode node, IASTExpressionStatement stmt, IASTExpression callExpression) {
+	public IASTNode createReturnAssignment(IASTNode node, IASTExpressionStatement stmt,
+			IASTExpression callExpression) {
 		return callExpression;
 	}
 }

@@ -51,10 +51,10 @@ import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 import org.eclipse.cdt.ui.tests.BaseUITestCase;
 
-import org.eclipse.cdt.internal.ui.search.PDOMSearchPatternQuery;
-import org.eclipse.cdt.internal.ui.search.PDOMSearchQuery;
-import org.eclipse.cdt.internal.ui.search.PDOMSearchResult;
-import org.eclipse.cdt.internal.ui.search.PDOMSearchViewPage;
+import org.eclipse.cdt.internal.ui.search.CSearchPatternQuery;
+import org.eclipse.cdt.internal.ui.search.CSearchQuery;
+import org.eclipse.cdt.internal.ui.search.CSearchResult;
+import org.eclipse.cdt.internal.ui.search.CSearchViewPage;
 
 public class BasicSearchTest extends BaseUITestCase {
 	ICProject fCProject;
@@ -109,15 +109,15 @@ public class BasicSearchTest extends BaseUITestCase {
 		assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
 		
 		// open a query
-		PDOMSearchQuery query= makeProjectQuery("foo");
-		PDOMSearchResult result= runQuery(query);
+		CSearchQuery query= makeProjectQuery("foo");
+		CSearchResult result= runQuery(query);
 		assertEquals(2, result.getElements().length);
 		
 		ISearchResultViewPart vp= NewSearchUI.getSearchResultView();
 		ISearchResultPage page= vp.getActivePage();
-		assertTrue(""+page, page instanceof PDOMSearchViewPage);
+		assertTrue(""+page, page instanceof CSearchViewPage);
 		
-		PDOMSearchViewPage pdomsvp= (PDOMSearchViewPage) page;
+		CSearchViewPage pdomsvp= (CSearchViewPage) page;
 		StructuredViewer viewer= pdomsvp.getViewer();
 		ILabelProvider labpv= (ILabelProvider) viewer.getLabelProvider();
 		IStructuredContentProvider scp= (IStructuredContentProvider) viewer.getContentProvider();
@@ -152,15 +152,15 @@ public class BasicSearchTest extends BaseUITestCase {
 		assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
 		
 		// open a query
-		PDOMSearchQuery query= makeProjectQuery("x");
-		PDOMSearchResult result= runQuery(query);
+		CSearchQuery query= makeProjectQuery("x");
+		CSearchResult result= runQuery(query);
 		assertEquals(0, result.getElements().length);
 		
 		ISearchResultViewPart vp= NewSearchUI.getSearchResultView();
 		ISearchResultPage page= vp.getActivePage();
-		assertTrue("" + page, page instanceof PDOMSearchViewPage);
+		assertTrue("" + page, page instanceof CSearchViewPage);
 		
-		PDOMSearchViewPage pdomsvp= (PDOMSearchViewPage) page;
+		CSearchViewPage pdomsvp= (CSearchViewPage) page;
 		StructuredViewer viewer= pdomsvp.getViewer();
 		ILabelProvider labpv= (ILabelProvider) viewer.getLabelProvider();
 		IStructuredContentProvider scp= (IStructuredContentProvider) viewer.getContentProvider();
@@ -229,8 +229,8 @@ public class BasicSearchTest extends BaseUITestCase {
 	 */
 	private void coreTestIndexerInProgress(boolean expectComplete) {
 		// open a query
-		PDOMSearchQuery query= makeProjectQuery("data*");
-		PDOMSearchResult result= runQuery(query);
+		CSearchQuery query= makeProjectQuery("data*");
+		CSearchResult result= runQuery(query);
 		
 		final int maximumHits = INDEXER_IN_PROGRESS_FILE_COUNT * INDEXER_IN_PROGRESS_STRUCT_COUNT;
 		Object[] elements = result.getElements();
@@ -241,9 +241,9 @@ public class BasicSearchTest extends BaseUITestCase {
 
 		ISearchResultViewPart vp= NewSearchUI.getSearchResultView();
 		ISearchResultPage page= vp.getActivePage();
-		assertTrue(""+page, page instanceof PDOMSearchViewPage);
+		assertTrue(""+page, page instanceof CSearchViewPage);
 		
-		PDOMSearchViewPage pdomsvp= (PDOMSearchViewPage) page;
+		CSearchViewPage pdomsvp= (CSearchViewPage) page;
 		StructuredViewer viewer= pdomsvp.getViewer();
 		ILabelProvider labpv= (ILabelProvider) viewer.getLabelProvider();
 		IStructuredContentProvider scp= (IStructuredContentProvider) viewer.getContentProvider();
@@ -281,7 +281,7 @@ public class BasicSearchTest extends BaseUITestCase {
 	 * @param query
 	 * @return
 	 */
-	protected PDOMSearchResult runQuery(PDOMSearchQuery query) {
+	protected CSearchResult runQuery(CSearchQuery query) {
 		final ISearchResult result[]= new ISearchResult[1];
 		IQueryListener listener= new IQueryListener() {
 			@Override
@@ -304,9 +304,9 @@ public class BasicSearchTest extends BaseUITestCase {
 				runnable.run(npm());
 			}
 		}, query);
-		assertTrue(result[0] instanceof PDOMSearchResult);
+		assertTrue(result[0] instanceof CSearchResult);
 		runEventQueue(500);
-		return (PDOMSearchResult) result[0];
+		return (CSearchResult) result[0];
 	}
 	
 	// void foo() {}
@@ -315,7 +315,7 @@ public class BasicSearchTest extends BaseUITestCase {
 	//   foo();
 	// }
 	public void testNewResultsOnSearchAgainA() throws Exception {
-		PDOMSearchQuery query= makeProjectQuery("foo");
+		CSearchQuery query= makeProjectQuery("foo");
 		assertOccurrences(query, 2);
 		assertOccurrences(query, 2);
 		
@@ -332,7 +332,7 @@ public class BasicSearchTest extends BaseUITestCase {
 
 	// void bar() {foo();foo();foo();}
 	public void testNewResultsOnSearchAgainB() throws Exception {
-		PDOMSearchQuery query= makeProjectQuery("foo");
+		CSearchQuery query= makeProjectQuery("foo");
 		assertOccurrences(query, 4);
 		assertOccurrences(query, 4);
 		
@@ -355,14 +355,14 @@ public class BasicSearchTest extends BaseUITestCase {
 		assertOccurrences(query, 3);
 	}
 	
-	private PDOMSearchQuery makeProjectQuery(String pattern) {
+	private CSearchQuery makeProjectQuery(String pattern) {
 		String scope1= "Human Readable Description";
-		return new PDOMSearchPatternQuery(new ICElement[] {fCProject}, scope1, pattern, true, PDOMSearchQuery.FIND_ALL_OCCURRENCES | PDOMSearchPatternQuery.FIND_ALL_TYPES);
+		return new CSearchPatternQuery(new ICElement[] {fCProject}, scope1, pattern, true, CSearchQuery.FIND_ALL_OCCURRENCES | CSearchPatternQuery.FIND_ALL_TYPES);
 	}
 	
-	private void assertOccurrences(PDOMSearchQuery query, int expected) {
+	private void assertOccurrences(CSearchQuery query, int expected) {
 		query.run(npm());
-		PDOMSearchResult result= (PDOMSearchResult) query.getSearchResult();
+		CSearchResult result= (CSearchResult) query.getSearchResult();
 		assertEquals(expected, result.getMatchCount());
 	}
 	
@@ -383,7 +383,7 @@ public class BasicSearchTest extends BaseUITestCase {
 	//	  f<int>(&a);
 	//	}
 	public void testSearchAndTemplateIDs() throws Exception {
-		PDOMSearchQuery query= makeProjectQuery("CT");
+		CSearchQuery query= makeProjectQuery("CT");
 		assertOccurrences(query, 5); 
 		query= makeProjectQuery("f");
 		assertOccurrences(query, 6);

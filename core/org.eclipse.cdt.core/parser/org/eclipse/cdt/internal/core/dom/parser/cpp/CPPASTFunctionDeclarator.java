@@ -91,7 +91,7 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
     	if (parameter != null) {
     		parameter.setParent(this);
 			parameter.setPropertyInParent(FUNCTION_PARAMETER);
-    		parameters = (ICPPASTParameterDeclaration[]) ArrayUtil.append(ICPPASTParameterDeclaration.class, parameters, parameter);
+    		parameters = ArrayUtil.append(ICPPASTParameterDeclaration.class, parameters, (ICPPASTParameterDeclaration) parameter);
     	}
     }
 

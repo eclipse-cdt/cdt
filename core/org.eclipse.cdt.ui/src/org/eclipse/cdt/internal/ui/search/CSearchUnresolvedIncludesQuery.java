@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.ui.search;
 
@@ -28,9 +28,9 @@ import org.eclipse.cdt.internal.ui.util.Messages;
  * Query for searching unresolved includes in projects.
  * Could be extended to search resources selections.
  */
-public class PDOMSearchUnresolvedIncludesQuery extends PDOMSearchQuery {
+public class CSearchUnresolvedIncludesQuery extends CSearchQuery {
 
-	public PDOMSearchUnresolvedIncludesQuery(ICElement[] scope) {
+	public CSearchUnresolvedIncludesQuery(ICElement[] scope) {
 		super(scope, 0);
 	}
 
@@ -40,7 +40,7 @@ public class PDOMSearchUnresolvedIncludesQuery extends PDOMSearchQuery {
 			for (IIndexFile file : index.getAllFiles()) {
 				for (IIndexInclude include : file.getIncludes()) {
 					if (include.isActive() && !include.isResolved()) {
-						result.addMatch(new PDOMSearchMatch(new ProblemSearchElement(
+						result.addMatch(new CSearchMatch(new ProblemSearchElement(
 								IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, include.getFullName(),
 								include.getIncludedByLocation()), 
 								include.getNameOffset(), include.getNameLength()));

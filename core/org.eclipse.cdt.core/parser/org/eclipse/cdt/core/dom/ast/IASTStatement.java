@@ -20,7 +20,7 @@ public interface IASTStatement extends IASTNode {
 	/**
 	 * Constant.
 	 */
-	public static final IASTStatement[] EMPTY_STATEMENT_ARRAY = new IASTStatement[0];
+	public static final IASTStatement[] EMPTY_STATEMENT_ARRAY = {};
 	
 	/**
 	 * @since 5.1

@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2009,2010 QNX Software Systems
+ * Copyright (c) 2009, 2010 QNX Software Systems
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX Software Systems (Alena Laskavaia)  - initial API and implementation
+ *     QNX Software Systems (Alena Laskavaia)  - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.cxx;
 
@@ -31,13 +31,6 @@ import org.eclipse.cdt.core.dom.ast.c.ICBasicType;
  * Test CxxAstUtils
  */
 public class CxxAstUtilsTest extends CodanFastCxxAstTestCase {
-	private CxxAstUtils instance;
-
-	@Override
-	protected void setUp() throws Exception {
-		instance = CxxAstUtils.getInstance();
-	}
-
 	@Override
 	public IChecker getChecker() {
 		return null; // not testing checker
@@ -65,7 +58,7 @@ public class CxxAstUtilsTest extends CodanFastCxxAstTestCase {
 					if (spec instanceof IASTNamedTypeSpecifier) {
 						IASTName tname = ((IASTNamedTypeSpecifier) spec).getName();
 						IType typeName = (IType) tname.resolveBinding();
-						result[0] = instance.unwindTypedef(typeName);
+						result[0] = CxxAstUtils.unwindTypedef(typeName);
 					}
 				}
 				return PROCESS_CONTINUE;
@@ -95,7 +88,7 @@ public class CxxAstUtilsTest extends CodanFastCxxAstTestCase {
 			@Override
 			public int visit(IASTStatement stmt) {
 				if (stmt instanceof IASTExpressionStatement) {
-					boolean check = instance.isInMacro(((IASTExpressionStatement) stmt).getExpression());
+					boolean check = CxxAstUtils.isInMacro(((IASTExpressionStatement) stmt).getExpression());
 					result[i] = check;
 					i++;
 				}

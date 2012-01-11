@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Tomasz Wesolowski - initial API and implementation
+ *     Tomasz Wesolowski - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers.ui.quickfix;
 
@@ -40,19 +40,18 @@ public class QuickFixCreateField extends AbstractAstRewriteQuickFix {
 
 	@Override
 	public void modifyAST(IIndex index, IMarker marker) {
-		CxxAstUtils utils = CxxAstUtils.getInstance();
 		try {
 			IASTTranslationUnit ast = getTranslationUnitViaEditor(marker).getAST(index, ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
 			IASTName astName = getASTNameFromMarker(marker, ast);
 			if (astName == null) {
 				return;
 			}
-			IASTDeclaration declaration = utils.createDeclaration(astName, ast.getASTNodeFactory(), index);
-			IASTCompositeTypeSpecifier targetCompositeType = utils.getEnclosingCompositeTypeSpecifier(astName);
+			IASTDeclaration declaration = CxxAstUtils.createDeclaration(astName, ast.getASTNodeFactory(), index);
+			IASTCompositeTypeSpecifier targetCompositeType = CxxAstUtils.getEnclosingCompositeTypeSpecifier(astName);
 			if (targetCompositeType == null) {
 				// We're not in an inline method;
 				// check if we're in a method at all
-				targetCompositeType = utils.getCompositeTypeFromFunction(utils.getEnclosingFunction(astName), index);
+				targetCompositeType = CxxAstUtils.getCompositeTypeFromFunction(CxxAstUtils.getEnclosingFunction(astName), index);
 				if (targetCompositeType == null) {
 					return;
 				}

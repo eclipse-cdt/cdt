@@ -6,8 +6,8 @@
  *  http://www.eclipse.org/legal/epl-v10.html
  * 
  *  Contributors:
- *     IBM Corporation - initial API and implementation
- *     Markus Schorn (Wind River Systems)
+ *      IBM Corporation - initial API and implementation
+ *      Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
@@ -41,7 +41,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
  * Test the correctness of C/C++ searches
  * 
  * @author Vivian Kong
- * 
  */
 public class PDOMSearchTest extends PDOMTestBase {
 	final Comparator<IBinding> BINDING_COMPARATOR = new Comparator<IBinding>() {
@@ -72,11 +71,11 @@ public class PDOMSearchTest extends PDOMTestBase {
 	protected void tearDown() throws Exception {
 		pdom.releaseReadLock();
 	}
+
 	/**
 	 * Test the members inside namespaces
 	 */
 	public void testNamespaces() throws Exception {
-
 		/* Members in the namespace */
 		IBinding[] namespaces = pdom.findBindings(Pattern.compile("namespace1"), false, INDEX_FILTER, NULL_MONITOR);
 		assertEquals(1, namespaces.length);
@@ -117,7 +116,6 @@ public class PDOMSearchTest extends PDOMTestBase {
 		assertEquals(1, defs.length);
 		loc = defs[0].getFileLocation();
 		assertEquals(offset("Class1.h","namespace namespace1") + 10, loc.getNodeOffset()); //character offset	
-
 	}
 
 	public void testClasses() throws Exception {
@@ -223,7 +221,6 @@ public class PDOMSearchTest extends PDOMTestBase {
 	}
 
 	public void testFunction() throws Exception {
-
 		IBinding[] functions = pdom.findBindings(Pattern.compile("foo2"), false, INDEX_FILTER, NULL_MONITOR);
 		assertEquals(1, functions.length);
 		assertTrue(functions[0] instanceof ICPPFunction);
@@ -233,20 +230,16 @@ public class PDOMSearchTest extends PDOMTestBase {
 		assertEquals(1, functions.length);
 		assertTrue(functions[0] instanceof ICPPFunction);
 		assertEquals("main", getBindingQualifiedName(pdom.getLinkageImpls()[0].adaptBinding(functions[0])));
-
 	}
 
 	public void testMethods() throws Exception {
-
 		IBinding[] methods = pdom.findBindings(Pattern.compile("~Class2"), false, INDEX_FILTER, NULL_MONITOR);
 		assertEquals(1, methods.length);
 		assertTrue(methods[0] instanceof ICPPMethod);
 		assertEquals("Class2::~Class2", getBindingQualifiedName(pdom.getLinkageImpls()[0].adaptBinding(methods[0])));
-
 	}
 
 	public void testFields() throws Exception {
-
 		IBinding[] fields = pdom.findBindings(Pattern.compile("class1x"), false, INDEX_FILTER, NULL_MONITOR);
 		assertEquals(1, fields.length);
 		assertTrue(fields[0] instanceof ICPPField);
@@ -256,11 +249,9 @@ public class PDOMSearchTest extends PDOMTestBase {
 		assertEquals(1, fields.length);
 		assertTrue(fields[0] instanceof ICPPField);
 		assertEquals("namespace1::Class1::class1y", getBindingQualifiedName(pdom.getLinkageImpls()[0].adaptBinding(fields[0])));
-
 	}
 
 	public void testVariables() throws Exception {
-
 		IBinding[] variables = pdom.findBindings(Pattern.compile("var"), false, INDEX_FILTER, NULL_MONITOR);
 		assertEquals(1, variables.length);
 		assertTrue(variables[0] instanceof ICPPVariable);
@@ -283,7 +274,6 @@ public class PDOMSearchTest extends PDOMTestBase {
 		assertEquals(1, defs.length);
 		loc = defs[0].getFileLocation();
 		assertEquals(offset("main.cpp","int var;") + 4, loc.getNodeOffset()); //character offset	
-
 	}
 
 	/**

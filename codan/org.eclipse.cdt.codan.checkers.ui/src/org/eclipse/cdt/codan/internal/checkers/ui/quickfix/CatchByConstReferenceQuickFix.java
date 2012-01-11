@@ -17,7 +17,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.text.IDocument;
 
 /**
- * quick fix for catch by value
+ * Quick fix for catch by value
  */
 public class CatchByConstReferenceQuickFix extends AbstractCodanCMarkerResolution {
 	@Override

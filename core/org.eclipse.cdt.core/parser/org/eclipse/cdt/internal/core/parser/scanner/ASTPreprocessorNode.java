@@ -105,21 +105,35 @@ abstract class ASTPreprocessorNode extends ASTNode {
 	
 	@Override
 	public String toString() {
-		return String.valueOf(getSource(getOffset(), getLength()));
+		return String.valueOf(getRawSignatureChars());
 	}
 }
 
-
 class ASTComment extends ASTPreprocessorNode implements IASTComment {
 	private final boolean fIsBlockComment;
-	public ASTComment(IASTTranslationUnit parent, int startNumber, int endNumber, boolean isBlockComment) {
-		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, startNumber, endNumber);
+	private String fFilePath;
+	public ASTComment(IASTTranslationUnit parent, String filePath, int offset, int endOffset, boolean isBlockComment) {
+		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, offset, endOffset);
 		fIsBlockComment= isBlockComment;
+		fFilePath= filePath;
 	}
 
 	@Override
+	public int getOffset() {
+		if (fFilePath != null) {
+			// Perform lazy conversion to sequence number
+			ILocationResolver lr= (ILocationResolver) getTranslationUnit().getAdapter(ILocationResolver.class);
+			if (lr != null) {
+				setOffset(lr.getSequenceNumberForFileOffset(fFilePath, super.getOffset()));
+				fFilePath= null;
+			}
+		}
+		return super.getOffset();
+	}
+	
+	@Override
 	public char[] getComment() {
-		return getSource(getOffset(), getLength());
+		return getRawSignatureChars();
 	}
 
 	@Override

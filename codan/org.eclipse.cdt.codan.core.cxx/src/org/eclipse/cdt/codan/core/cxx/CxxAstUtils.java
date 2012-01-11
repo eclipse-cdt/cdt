@@ -75,7 +75,7 @@ public final class CxxAstUtils {
 		}
 	}
 	
-	private class FunctionNameFinderVisitor extends NameFinderVisitor {
+	private static class FunctionNameFinderVisitor extends NameFinderVisitor {
 		{
 			shouldVisitExpressions = true;
 		}
@@ -90,19 +90,11 @@ public final class CxxAstUtils {
 		}	
 	}
 	
-	private static CxxAstUtils instance;
-
+	// Not instantiatable. All methods are static.
 	private CxxAstUtils() {
-		// private constructor
 	}
 
-	public synchronized static CxxAstUtils getInstance() {
-		if (instance == null)
-			instance = new CxxAstUtils();
-		return instance;
-	}
-
-	public IType unwindTypedef(IType type) {
+	public static IType unwindTypedef(IType type) {
 		if (!(type instanceof IBinding))
 			return type;
 		IBinding typeName = (IBinding) type;
@@ -129,21 +121,21 @@ public final class CxxAstUtils {
 		return macro != null;
 	}
 
-	public IASTFunctionDefinition getEnclosingFunction(IASTNode node) {
+	public static IASTFunctionDefinition getEnclosingFunction(IASTNode node) {
 		while (node != null && !(node instanceof IASTFunctionDefinition)) {
 			node = node.getParent();
 		}
 		return (IASTFunctionDefinition) node;
 	}
 
-	public IASTCompositeTypeSpecifier getEnclosingCompositeTypeSpecifier(IASTNode node) {
+	public static IASTCompositeTypeSpecifier getEnclosingCompositeTypeSpecifier(IASTNode node) {
 		while (node != null && !(node instanceof IASTCompositeTypeSpecifier)) {
 			node = node.getParent();
 		}
 		return (IASTCompositeTypeSpecifier) node;
 	}
 
-	public IASTStatement getEnclosingStatement(IASTNode node) {
+	public static IASTStatement getEnclosingStatement(IASTNode node) {
 		while (node != null && !(node instanceof IASTStatement)) {
 			node = node.getParent();
 		}
@@ -158,7 +150,7 @@ public final class CxxAstUtils {
 	 * @param index
 	 * @return
 	 */
-	public IASTDeclaration createDeclaration(IASTName astName, INodeFactory factory, IIndex index) {
+	public static IASTDeclaration createDeclaration(IASTName astName, INodeFactory factory, IIndex index) {
 		// Depending on context, either a type or a declaration is easier to
 		// infer
 		IType inferredType = null;
@@ -193,7 +185,7 @@ public final class CxxAstUtils {
 	 * 
 	 * @return inferred type or null if couldn't infer
 	 */
-	private IType tryInferTypeFromBinaryExpr(IASTName astName) {
+	private static IType tryInferTypeFromBinaryExpr(IASTName astName) {
 		if (astName.getParent() instanceof IASTIdExpression && astName.getParent().getParent() instanceof IASTBinaryExpression) {
 			IASTNode binaryExpr = astName.getParent().getParent();
 			for (IASTNode node : binaryExpr.getChildren()) {
@@ -214,7 +206,7 @@ public final class CxxAstUtils {
 	 * 
 	 * @return a generated declaration or null if not suitable
 	 */
-	private IASTSimpleDeclaration tryInferTypeFromFunctionCall(IASTName astName, INodeFactory factory, IIndex index) {
+	private static IASTSimpleDeclaration tryInferTypeFromFunctionCall(IASTName astName, INodeFactory factory, IIndex index) {
 		if (astName.getParent() instanceof IASTIdExpression && astName.getParent().getParent() instanceof IASTFunctionCallExpression
 				&& astName.getParent().getPropertyInParent() == IASTFunctionCallExpression.ARGUMENT) {
 			IASTFunctionCallExpression call = (IASTFunctionCallExpression) astName.getParent().getParent();
@@ -304,14 +296,14 @@ public final class CxxAstUtils {
 		return null;
 	}
 
-	private void setNameInNestedDeclarator(IASTDeclarator declarator, IASTName astName) {
+	private static void setNameInNestedDeclarator(IASTDeclarator declarator, IASTName astName) {
 		while (declarator.getNestedDeclarator() != null) {
 			declarator = declarator.getNestedDeclarator();
 		}
 		declarator.setName(astName);
 	}
 
-	public ITranslationUnit getTranslationUnitFromIndexName(IIndexName decl) throws CoreException {
+	public static ITranslationUnit getTranslationUnitFromIndexName(IIndexName decl) throws CoreException {
 		Path path = new Path(decl.getFile().getLocation().getFullPath());
 		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 		ITranslationUnit tu = (ITranslationUnit) CoreModel.getDefault().create(file);
@@ -328,7 +320,7 @@ public final class CxxAstUtils {
 	 *        the index to use for name lookup
 	 * @return Either a type specifier or null
 	 */
-	public IASTCompositeTypeSpecifier getCompositeTypeFromFunction(final IASTFunctionDefinition function, final IIndex index) {
+	public static IASTCompositeTypeSpecifier getCompositeTypeFromFunction(final IASTFunctionDefinition function, final IIndex index) {
 		// return value to be set via visitor
 		final IASTCompositeTypeSpecifier returnSpecifier[] = { null };
 		final HashMap<ITranslationUnit, IASTTranslationUnit> astCache = new HashMap<ITranslationUnit, IASTTranslationUnit>();
@@ -389,7 +381,7 @@ public final class CxxAstUtils {
 	 * @param body
 	 * @return
 	 */
-	public boolean isThrowStatement(IASTNode body) {
+	public static boolean isThrowStatement(IASTNode body) {
 		if (!(body instanceof IASTExpressionStatement))
 			return false;
 		IASTExpression expression = ((IASTExpressionStatement) body).getExpression();
@@ -398,7 +390,7 @@ public final class CxxAstUtils {
 		return ((IASTUnaryExpression) expression).getOperator() == IASTUnaryExpression.op_throw;
 	}
 
-	public boolean isExitStatement(IASTNode body) {
+	public static boolean isExitStatement(IASTNode body) {
 		if (!(body instanceof IASTExpressionStatement))
 			return false;
 		IASTExpression expression = ((IASTExpressionStatement) body).getExpression();
@@ -407,6 +399,4 @@ public final class CxxAstUtils {
 		IASTExpression functionNameExpression = ((IASTFunctionCallExpression) expression).getFunctionNameExpression();
 		return functionNameExpression.getRawSignature().equals("exit"); //$NON-NLS-1$
 	}
-	
-
 }

@@ -15,6 +15,7 @@
 package org.eclipse.cdt.core.parser.util;
 
 import java.lang.reflect.Array;
+import java.util.Arrays;
 
 import org.eclipse.core.runtime.Assert;
 
@@ -31,7 +32,7 @@ public abstract class ArrayUtil {
      * the given class object.
      */
 	@SuppressWarnings("unchecked")
-	static public <T> T[] append(Class<? extends T> c, T[] array, T obj) {
+	static public <T> T[] append(Class<T> c, T[] array, T obj) {
     	if (obj == null)
     		return array;
     	if (array == null || array.length == 0) {
@@ -51,26 +52,6 @@ public abstract class ArrayUtil {
     	temp[array.length] = obj;
     	return temp;
     }
-
-    /**
-     * Assumes that array contains nulls at the end, only.
-     * @returns index of first null, or -1
-     */ 
-    private static int findFirstNull(Object[] array) {
-    	boolean haveNull= false;
-    	int left= 0;
-    	int right= array.length - 1;
-    	while (left <= right) {
-    		int mid= (left + right) / 2;
-    		if (array[mid] == null) {
-    			haveNull= true;
-    			right= mid - 1;
-    		} else {
-    			left= mid + 1;
-    		}
-    	}
-		return haveNull ? right + 1 : -1;
-	}
 
     /**
      * Assumes that array contains nulls at the end, only. 
@@ -102,6 +83,26 @@ public abstract class ArrayUtil {
     	temp[array.length] = obj;
     	return temp;
     }
+
+    /**
+     * Assumes that array contains nulls at the end, only.
+     * @returns index of first null, or -1
+     */ 
+    private static int findFirstNull(Object[] array) {
+    	boolean haveNull= false;
+    	int left= 0;
+    	int right= array.length - 1;
+    	while (left <= right) {
+    		int mid= (left + right) / 2;
+    		if (array[mid] == null) {
+    			haveNull= true;
+    			right= mid - 1;
+    		} else {
+    			left= mid + 1;
+    		}
+    	}
+		return haveNull ? right + 1 : -1;
+	}
 
     /**
      * @deprecated Use {@link #appendAt(Class, Object[], int, Object)} instead.
@@ -154,7 +155,7 @@ public abstract class ArrayUtil {
      * @param forceNew
      */
     @SuppressWarnings("unchecked")
-	static public <T> T[] trim(Class<? extends T> c, T[] array, boolean forceNew) {
+	static public <T> T[] trim(Class<T> c, T[] array, boolean forceNew) {
         if (array == null)
             return (T[]) Array.newInstance(c, 0);
 
@@ -173,7 +174,7 @@ public abstract class ArrayUtil {
         return temp;
     }
 
-    public static <T> T[] trim(Class<? extends T> c, T[] array) {
+    public static <T> T[] trim(Class<T> c, T[] array) {
         return trim(c, array, false);
     }
 
@@ -188,7 +189,6 @@ public abstract class ArrayUtil {
      * @param forceNew
      * @since 5.2
      */
-    @SuppressWarnings("unchecked")
 	static public <T> T[] trim(T[] array, boolean forceNew) {
         int i = array.length;
         if (i == 0 || array[i - 1] != null) {
@@ -200,9 +200,7 @@ public abstract class ArrayUtil {
         	Assert.isTrue(i >= 0);
         }
 
-        T[] temp = (T[]) Array.newInstance(array.getClass().getComponentType(), i);
-        System.arraycopy(array, 0, temp, 0, i);
-        return temp;
+        return Arrays.copyOf(array, i);
     }
 
     /**
@@ -227,7 +225,7 @@ public abstract class ArrayUtil {
      * @return The concatenated array, which may be the same as the first parameter. 
      */
     @SuppressWarnings("unchecked")
-	public static <T> T[] addAll(Class<? extends T> c, T[] dest, T[] source) {
+	public static <T> T[] addAll(Class<T> c, T[] dest, Object[] source) {
         if (source == null || source.length == 0)
             return dest;
 
@@ -254,10 +252,9 @@ public abstract class ArrayUtil {
             System.arraycopy(source, 0, dest, firstFree, numToAdd);
             return dest;
         }
-        T[] temp = (T[]) Array.newInstance(c, firstFree + numToAdd);
-        System.arraycopy(dest, 0, temp, 0, firstFree);
-        System.arraycopy(source, 0, temp, firstFree, numToAdd);
-        return temp;
+        dest = Arrays.copyOf(dest, firstFree + numToAdd);
+        System.arraycopy(source, 0, dest, firstFree, numToAdd);
+        return dest;
     }
 
     /**
@@ -270,7 +267,7 @@ public abstract class ArrayUtil {
      * @since 5.2
      */
     @SuppressWarnings("unchecked")
-	public static <T> T[] addAll(T[] dest, T[] source) {
+	public static <T> T[] addAll(T[] dest, Object[] source) {
         if (source == null || source.length == 0)
             return dest;
 
@@ -299,10 +296,9 @@ public abstract class ArrayUtil {
             System.arraycopy(source, 0, dest, firstFree, numToAdd);
             return dest;
         }
-        T[] temp = (T[]) Array.newInstance(dest.getClass().getComponentType(), firstFree + numToAdd);
-        System.arraycopy(dest, 0, temp, 0, firstFree);
-        System.arraycopy(source, 0, temp, firstFree, numToAdd);
-        return temp;
+        dest = Arrays.copyOf(dest, firstFree + numToAdd);
+        System.arraycopy(source, 0, dest, firstFree, numToAdd);
+        return dest;
     }
 
     /**
@@ -379,7 +375,7 @@ public abstract class ArrayUtil {
      * If there are no nulls in the original array then the original array is returned.
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> T[] removeNulls(Class<? extends T> c, T[] array) {
+	public static <T> T[] removeNulls(Class<T> c, T[] array) {
         if (array == null)
             return (T[]) Array.newInstance(c, 0);
 
@@ -469,7 +465,7 @@ public abstract class ArrayUtil {
 	 * Assumes that array contains nulls at the end, only. 
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> T[] prepend(Class<? extends T> c, T[] array, T obj) {
+	public static <T> T[] prepend(Class<T> c, T[] array, T obj) {
 		if (obj == null)
     		return array;
         if (array == null || array.length == 0) {
@@ -569,8 +565,8 @@ public abstract class ArrayUtil {
      * runtime type.
      * @param target the runtime type of the new array
      * @param source the source array
-     * @return the current array stored in a new array with the
-     * specified runtime type, or null if source is null.
+     * @return the current array stored in a new array with the specified runtime type,
+     *     or null if source is null.
      */
     @SuppressWarnings("unchecked")
     public static <S, T> T[] convert(Class<T> target, S[] source) {
@@ -582,6 +578,30 @@ public abstract class ArrayUtil {
     		}
     	}
     	return result;
+    }
+
+    /**
+     * Reverses order of elements in an array.
+     * @param array the array
+     * @since 5.4
+     */
+    public static void reverse(Object[] array) {
+    	reverse(array, 0, array.length);
+    }
+
+    /**
+     * Reverses order of elements in a subsection of an array.
+     * @param array the array
+     * @param fromIndex the index of the first affected element (inclusive)
+     * @param toIndex the index of the last affected element (exclusive)
+     * @since 5.4
+     */
+    public static void reverse(Object[] array, int fromIndex, int toIndex) {
+    	for (int i = fromIndex, j = toIndex; i < --j; i++) {
+    		Object tmp = array[i];
+    		array[i] = array[j];
+    		array[j] = tmp;
+    	}
     }
 
     /**

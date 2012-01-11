@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     QNX - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search;
 
@@ -18,25 +18,24 @@ import org.eclipse.cdt.core.index.IIndexFileLocation;
 /**
  * Base class for search matches found by various index searches. 
  */
-public class PDOMSearchMatch extends Match {
-
+public class CSearchMatch extends Match {
 	private boolean fIsPolymorphicCall;
 
-	public PDOMSearchMatch(PDOMSearchElement elem, int offset, int length) {
+	public CSearchMatch(CSearchElement elem, int offset, int length) {
 		super(elem, offset, length);
 	}
 
 	IIndexFileLocation getLocation() {
-		return ((PDOMSearchElement)getElement()).getLocation();
+		return ((CSearchElement)getElement()).getLocation();
 	}
 	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == this)
 			return true;
-		if (!(obj instanceof PDOMSearchMatch))
+		if (!(obj instanceof CSearchMatch))
 			return false;
-		PDOMSearchMatch other = (PDOMSearchMatch)obj;
+		CSearchMatch other = (CSearchMatch)obj;
 		return getElement().equals(other.getElement())
 			&& getOffset() == other.getOffset()
 			&& getLength() == other.getLength();

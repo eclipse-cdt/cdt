@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
@@ -38,13 +39,13 @@ public class ChooserComposite extends Composite {
 
 	private Button voidReturn;
 
-	private final ExtractFunctionInputPage ip;
+	private final ExtractFunctionInputPage page;
 
 	public ChooserComposite(Composite parent, final ExtractFunctionInformation info,
-			ExtractFunctionInputPage ip) {
+			ExtractFunctionInputPage page) {
 		super(parent, SWT.NONE);
 
-		this.ip = ip;
+		this.page = page;
 		
 		GridLayout layout = new GridLayout();		
 		setLayout(layout);
@@ -75,7 +76,7 @@ public class ChooserComposite extends Composite {
 		addColumnToTable(table, ""); //$NON-NLS-1$
 		
 		for (int i = 0; i < info.getAllUsedNames().size(); i++) {
-			if (!info.getAllUsedNames().get(i).isDeclarationInScope()) {
+			if (!info.getAllUsedNames().get(i).isDeclarationExtracted()) {
 				TableItem item = new TableItem(table, SWT.NONE);
 
 				TableEditor editor = new TableEditor(table);
@@ -212,15 +213,15 @@ public class ChooserComposite extends Composite {
 		column.setWidth(100);
 	}
 	
-	void onVisibilityOrReturnChange(ArrayList<NameInformation> name) {
+	void onVisibilityOrReturnChange(List<NameInformation> name) {
 		String variableUsedAfterBlock = null;
 		for (NameInformation information : name) {
-			if (information.isUsedAfterReferences() 
-					&& !(information.isUserSetIsReference() || information.isUserSetIsReturnValue())) {
+			if (information.isUsedAfterReferences() &&
+					!(information.isUserSetIsReference() || information.isUserSetIsReturnValue())) {
 				variableUsedAfterBlock = information.getName().toString();
 			}
 		}
 		
-		ip.errorWithAfterUsedVariable(variableUsedAfterBlock);
+		page.errorWithAfterUsedVariable(variableUsedAfterBlock);
 	}
 }

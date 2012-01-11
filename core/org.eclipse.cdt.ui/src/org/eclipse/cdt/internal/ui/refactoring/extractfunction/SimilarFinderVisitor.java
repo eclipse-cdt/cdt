@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.text.edits.TextEditGroup;
@@ -32,7 +31,7 @@ import org.eclipse.cdt.internal.ui.refactoring.NodeContainer.NameInformation;
 final class SimilarFinderVisitor extends ASTVisitor {
 	private final ExtractFunctionRefactoring refactoring;
 
-	private final Vector<IASTNode> trail;
+	private final List<IASTNode> trail;
 	private final IASTName name;
 	private final List<IASTNode> statements;
 	private int statementCount;
@@ -42,7 +41,7 @@ final class SimilarFinderVisitor extends ASTVisitor {
 	private final ModificationCollector collector;
 
 	SimilarFinderVisitor(ExtractFunctionRefactoring refactoring, ModificationCollector collector,
-			Vector<IASTNode> trail, IFile file, IASTName name, List<IASTNode> statements,
+			List<IASTNode> trail, IFile file, IASTName name, List<IASTNode> statements,
 			String title) {
 		this.refactoring = refactoring;
 		this.trail = trail;

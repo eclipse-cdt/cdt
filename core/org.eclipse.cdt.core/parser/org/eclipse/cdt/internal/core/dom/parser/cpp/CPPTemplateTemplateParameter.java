@@ -79,14 +79,14 @@ public class CPPTemplateTemplateParameter extends CPPTemplateParameter implement
 		if (templateParameters == null) {
 			ICPPASTTemplatedTypeTemplateParameter template = (ICPPASTTemplatedTypeTemplateParameter) getPrimaryDeclaration().getParent();
 			ICPPASTTemplateParameter[] params = template.getTemplateParameters();
-			ICPPTemplateParameter[] result = null;
+			ICPPTemplateParameter[] result = ICPPTemplateParameter.EMPTY_TEMPLATE_PARAMETER_ARRAY;
 			for (ICPPASTTemplateParameter param : params) {
 				IBinding binding = CPPTemplates.getTemplateParameterName(param).resolvePreBinding();
 				if (binding instanceof ICPPTemplateParameter) {
-					result = (ICPPTemplateParameter[]) ArrayUtil.append(ICPPTemplateParameter.class, result, binding);
+					result = ArrayUtil.append(result, (ICPPTemplateParameter) binding);
 				}
 			}
-			templateParameters = ArrayUtil.trim(ICPPTemplateParameter.class, result);
+			templateParameters = ArrayUtil.trim(result);
 		}
 		return templateParameters;
 	}

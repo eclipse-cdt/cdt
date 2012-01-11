@@ -6,10 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *   Doug Schaefer (QNX) - Initial API and implementation
- *   Markus Schorn (Wind River Systems)
+ *     Doug Schaefer (QNX) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.search;
 
 import java.util.HashSet;
@@ -72,10 +71,8 @@ import org.eclipse.cdt.internal.ui.util.RowLayouter;
 
 /**
  * @author Doug Schaefer
- *
  */
-public class PDOMSearchPage extends DialogPage implements ISearchPage {
-	
+public class CSearchPage extends DialogPage implements ISearchPage {
 	public static final String EXTENSION_ID = CUIPlugin.PLUGIN_ID + ".pdomSearchPage"; //$NON-NLS-1$
 	
 	//Dialog store id constants
@@ -106,18 +103,18 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 
 	// These must be in the same order as the Text
 	private static final Integer[] searchForData = {
-		new Integer(PDOMSearchPatternQuery.FIND_CLASS_STRUCT),
-		new Integer(PDOMSearchPatternQuery.FIND_FUNCTION),
-		new Integer(PDOMSearchPatternQuery.FIND_VARIABLE),
-		new Integer(PDOMSearchPatternQuery.FIND_UNION),
-		new Integer(PDOMSearchPatternQuery.FIND_METHOD),
-		new Integer(PDOMSearchPatternQuery.FIND_FIELD),
-		new Integer(PDOMSearchPatternQuery.FIND_ENUM),
-		new Integer(PDOMSearchPatternQuery.FIND_ENUMERATOR),
-		new Integer(PDOMSearchPatternQuery.FIND_NAMESPACE),
-		new Integer(PDOMSearchPatternQuery.FIND_TYPEDEF),
-		new Integer(PDOMSearchPatternQuery.FIND_MACRO),
-		new Integer(PDOMSearchPatternQuery.FIND_ALL_TYPES)
+		new Integer(CSearchPatternQuery.FIND_CLASS_STRUCT),
+		new Integer(CSearchPatternQuery.FIND_FUNCTION),
+		new Integer(CSearchPatternQuery.FIND_VARIABLE),
+		new Integer(CSearchPatternQuery.FIND_UNION),
+		new Integer(CSearchPatternQuery.FIND_METHOD),
+		new Integer(CSearchPatternQuery.FIND_FIELD),
+		new Integer(CSearchPatternQuery.FIND_ENUM),
+		new Integer(CSearchPatternQuery.FIND_ENUMERATOR),
+		new Integer(CSearchPatternQuery.FIND_NAMESPACE),
+		new Integer(CSearchPatternQuery.FIND_TYPEDEF),
+		new Integer(CSearchPatternQuery.FIND_MACRO),
+		new Integer(CSearchPatternQuery.FIND_ALL_TYPES)
 	};
 	
 	// the index of FIND_ALL_TYPES
@@ -132,10 +129,10 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 
 	// Must be in the same order as the text
 	private static Integer[] limitToData = {
-		new Integer(PDOMSearchQuery.FIND_DECLARATIONS),
-		new Integer(PDOMSearchQuery.FIND_DEFINITIONS),
-		new Integer(PDOMSearchQuery.FIND_REFERENCES),
-		new Integer(PDOMSearchQuery.FIND_ALL_OCCURRENCES),
+		new Integer(CSearchQuery.FIND_DECLARATIONS),
+		new Integer(CSearchQuery.FIND_DEFINITIONS),
+		new Integer(CSearchQuery.FIND_REFERENCES),
+		new Integer(CSearchQuery.FIND_ALL_OCCURRENCES),
 	};
 	
 	// The index of FIND_ALL_OCCURANCES
@@ -189,7 +186,7 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 	    // Get search flags
 	    int searchFlags = 0;
 	    if (searchForButtons[searchAllButtonIndex].getSelection()) {
-	    	searchFlags |= PDOMSearchPatternQuery.FIND_ALL_TYPES;
+	    	searchFlags |= CSearchPatternQuery.FIND_ALL_TYPES;
 	    } else {
 	    	for (int i = 0; i < searchForButtons.length; ++i) {
 	    		if (searchForButtons[i].getSelection())
@@ -277,7 +274,7 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 				null : elements.toArray(new ICElement[elements.size()]);
 		
 		try {
-			PDOMSearchPatternQuery job = new PDOMSearchPatternQuery(scope, scopeDescription, patternStr, 
+			CSearchPatternQuery job = new CSearchPatternQuery(scope, scopeDescription, patternStr, 
 					isCaseSensitive, searchFlags);
 
 			NewSearchUI.activateSearchResultView();
@@ -664,7 +661,7 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 				
 				IDialogSettings settings = getDialogSettings();
 				
-				int searchFlags = PDOMSearchPatternQuery.FIND_ALL_TYPES | PDOMSearchQuery.FIND_ALL_OCCURRENCES;
+				int searchFlags = CSearchPatternQuery.FIND_ALL_TYPES | CSearchQuery.FIND_ALL_OCCURRENCES;
 				try {
 					searchFlags = settings.getInt(STORE_SEARCH_FLAGS);
 				} catch (NumberFormatException e) {
@@ -686,45 +683,45 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 						ICElement element = (ICElement)obj;
 						patternCombo.setText(element.getElementName());
 						// Clear the type flags so we can set them correctly for what we have selected
-						searchFlags = searchFlags & ~PDOMSearchPatternQuery.FIND_ALL_TYPES;
+						searchFlags = searchFlags & ~CSearchPatternQuery.FIND_ALL_TYPES;
 						switch (element.getElementType()) {
 						case ICElement.C_CLASS:
 						case ICElement.C_STRUCT:
-							searchFlags |= PDOMSearchPatternQuery.FIND_CLASS_STRUCT;
+							searchFlags |= CSearchPatternQuery.FIND_CLASS_STRUCT;
 							break;
 						case ICElement.C_FUNCTION:
-							searchFlags |= PDOMSearchPatternQuery.FIND_FUNCTION;
+							searchFlags |= CSearchPatternQuery.FIND_FUNCTION;
 							break;
 						case ICElement.C_VARIABLE:
-							searchFlags |= PDOMSearchPatternQuery.FIND_VARIABLE;
+							searchFlags |= CSearchPatternQuery.FIND_VARIABLE;
 							break;
 						case ICElement.C_UNION:
-							searchFlags |= PDOMSearchPatternQuery.FIND_UNION;
+							searchFlags |= CSearchPatternQuery.FIND_UNION;
 							break;
 						case ICElement.C_METHOD:
-							searchFlags |= PDOMSearchPatternQuery.FIND_METHOD;
+							searchFlags |= CSearchPatternQuery.FIND_METHOD;
 							break;
 						case ICElement.C_FIELD:
-							searchFlags |= PDOMSearchPatternQuery.FIND_FIELD;
+							searchFlags |= CSearchPatternQuery.FIND_FIELD;
 							break;
 						case ICElement.C_ENUMERATION:
-							searchFlags |= PDOMSearchPatternQuery.FIND_ENUM;
+							searchFlags |= CSearchPatternQuery.FIND_ENUM;
 							break;
 						case ICElement.C_ENUMERATOR:
-							searchFlags |= PDOMSearchPatternQuery.FIND_ENUMERATOR;
+							searchFlags |= CSearchPatternQuery.FIND_ENUMERATOR;
 							break;
 						case ICElement.C_NAMESPACE:
-							searchFlags |= PDOMSearchPatternQuery.FIND_NAMESPACE;
+							searchFlags |= CSearchPatternQuery.FIND_NAMESPACE;
 							break;
 						case ICElement.C_TYPEDEF:
-							searchFlags |= PDOMSearchPatternQuery.FIND_TYPEDEF;
+							searchFlags |= CSearchPatternQuery.FIND_TYPEDEF;
 							break;
 						case ICElement.C_MACRO:
-							searchFlags |= PDOMSearchPatternQuery.FIND_MACRO;
+							searchFlags |= CSearchPatternQuery.FIND_MACRO;
 							break;
 						default:
 							// Not sure, set to all
-							searchFlags |= PDOMSearchPatternQuery.FIND_ALL_TYPES;
+							searchFlags |= CSearchPatternQuery.FIND_ALL_TYPES;
 							patternCombo.setText(""); //$NON-NLS-1$
 						}
 					}
@@ -740,7 +737,7 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 
 				caseSensitiveButton.setSelection(settings.getBoolean(STORE_CASE_SENSITIVE));
 				
-				if ((searchFlags & PDOMSearchPatternQuery.FIND_ALL_TYPES) == PDOMSearchPatternQuery.FIND_ALL_TYPES) {
+				if ((searchFlags & CSearchPatternQuery.FIND_ALL_TYPES) == CSearchPatternQuery.FIND_ALL_TYPES) {
 					searchForButtons[searchAllButtonIndex].setSelection(true);
 					for (int i = 0; i < searchForButtons.length; ++i) {
 						if (i != searchAllButtonIndex) {
@@ -758,7 +755,7 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 					}
 				}
 				
-				if ((searchFlags & PDOMSearchQuery.FIND_ALL_OCCURRENCES) == PDOMSearchQuery.FIND_ALL_OCCURRENCES) {
+				if ((searchFlags & CSearchQuery.FIND_ALL_OCCURRENCES) == CSearchQuery.FIND_ALL_OCCURRENCES) {
 					limitToButtons[limitToAllButtonIndex].setSelection(true);
 					for (int i = 0; i < limitToButtons.length; ++i) {
 						if (i != limitToAllButtonIndex) {

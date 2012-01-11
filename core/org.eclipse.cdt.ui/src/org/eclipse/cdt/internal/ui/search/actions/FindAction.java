@@ -27,9 +27,9 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.search.CSearchMessages;
-import org.eclipse.cdt.internal.ui.search.PDOMSearchElementQuery;
-import org.eclipse.cdt.internal.ui.search.PDOMSearchQuery;
-import org.eclipse.cdt.internal.ui.search.PDOMSearchTextSelectionQuery;
+import org.eclipse.cdt.internal.ui.search.CSearchElementQuery;
+import org.eclipse.cdt.internal.ui.search.CSearchQuery;
+import org.eclipse.cdt.internal.ui.search.CSearchTextSelectionQuery;
 import org.eclipse.cdt.internal.ui.text.CWordFinder;
 
 
@@ -76,12 +76,12 @@ public abstract class FindAction extends SelectionParseAction {
 		NewSearchUI.runQueryInBackground(searchJob);
 	}
 
-	protected PDOMSearchQuery createQuery(ISourceReference object) {
-		return new PDOMSearchElementQuery(getScope(), object, getLimitTo());
+	protected CSearchQuery createQuery(ISourceReference object) {
+		return new CSearchElementQuery(getScope(), object, getLimitTo());
 	}
 
-	protected PDOMSearchQuery createQuery(ICElement element, ITextSelection selNode) {
-		return new PDOMSearchTextSelectionQuery(getScope(),
+	protected CSearchQuery createQuery(ICElement element, ITextSelection selNode) {
+		return new CSearchTextSelectionQuery(getScope(),
 				(ITranslationUnit) element, selNode, getLimitTo());
 	}
 	

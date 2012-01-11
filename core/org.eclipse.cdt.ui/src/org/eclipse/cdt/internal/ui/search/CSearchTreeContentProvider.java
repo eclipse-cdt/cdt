@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
- *    Ed Swartz (Nokia)
+ *     QNX - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Ed Swartz (Nokia)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search;
 
@@ -42,16 +42,14 @@ import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 
 /**
  * @author Doug Schaefer
- *
  */
-public class PDOMSearchTreeContentProvider implements ITreeContentProvider, IPDOMSearchContentProvider {
-
+public class CSearchTreeContentProvider implements ITreeContentProvider, IPDOMSearchContentProvider {
 	private TreeViewer viewer;
-	private PDOMSearchResult result;
-	private Map<Object, Set<Object>> tree = new HashMap<Object, Set<Object>>();
-	private final PDOMSearchViewPage fPage;
+	private CSearchResult result;
+	private final Map<Object, Set<Object>> tree = new HashMap<Object, Set<Object>>();
+	private final CSearchViewPage fPage;
 
-	PDOMSearchTreeContentProvider(PDOMSearchViewPage page) {
+	CSearchTreeContentProvider(CSearchViewPage page) {
 		fPage= page;
 	}
 
@@ -92,7 +90,7 @@ public class PDOMSearchTreeContentProvider implements ITreeContentProvider, IPDO
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		this.viewer = (TreeViewer)viewer;
-		this.result = (PDOMSearchResult) newInput;
+		this.result = (CSearchResult) newInput;
 		initialize(result);
 		viewer.refresh();
 	}
@@ -128,7 +126,7 @@ public class PDOMSearchTreeContentProvider implements ITreeContentProvider, IPDO
 		return children.add(child);
 	}
 	
-	private void insertSearchElement(PDOMSearchElement element) {
+	private void insertSearchElement(CSearchElement element) {
 		IIndexFileLocation location= element.getLocation();
 		IFile[] files;
 		if(location.getFullPath()!=null) {
@@ -181,7 +179,7 @@ public class PDOMSearchTreeContentProvider implements ITreeContentProvider, IPDO
 	public void elementsChanged(Object[] elements) {
 		if (elements != null) {
 			for (int i = 0; i < elements.length; ++i) {
-				PDOMSearchElement element = (PDOMSearchElement)elements[i];
+				CSearchElement element = (CSearchElement)elements[i];
 				if (fPage.getDisplayedMatchCount(element) > 0) {
 					insertSearchElement(element);
 				} else {
@@ -219,7 +217,7 @@ public class PDOMSearchTreeContentProvider implements ITreeContentProvider, IPDO
 		initialize(result);
 	}
 	
-	private void initialize(final PDOMSearchResult result) {
+	private void initialize(final CSearchResult result) {
 		this.result = result;
 		tree.clear();
 		if (result != null) {
@@ -230,13 +228,13 @@ public class PDOMSearchTreeContentProvider implements ITreeContentProvider, IPDO
 			
 			Object[] elements = result.getElements();
 			for (int i = 0; i < elements.length; ++i) {
-				final PDOMSearchElement element = (PDOMSearchElement)elements[i];
+				final CSearchElement element = (CSearchElement)elements[i];
 				if (fPage.getDisplayedMatchCount(element) > 0)
 					insertSearchElement(element);
 			}
 
 			// add all the projects which have no results
-			ICProject[] projects = ((PDOMSearchQuery)result.getQuery()).getProjects();
+			ICProject[] projects = ((CSearchQuery)result.getQuery()).getProjects();
 			for (int i = 0; i < projects.length; ++i) {
 				ICProject project = projects[i];
 				Object projectResults = tree.get(project);

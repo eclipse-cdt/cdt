@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    QNX - Initial API and implementation
- *    Markus Schorn (Wind River Systems)
+ *     QNX - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search;
 
@@ -23,11 +23,11 @@ import org.eclipse.cdt.core.index.IIndexFileLocation;
  *  
  * @author Doug Schaefer
  */
-public class PDOMSearchElement implements IAdaptable {
+public class CSearchElement implements IAdaptable {
 
 	private final IIndexFileLocation location;
 	
-	public PDOMSearchElement(IIndexFileLocation loc) {
+	public CSearchElement(IIndexFileLocation loc) {
 		this.location= loc;
 	}
 	
@@ -38,9 +38,9 @@ public class PDOMSearchElement implements IAdaptable {
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof PDOMSearchElement))
+		if (!(obj instanceof CSearchElement))
 			return false;
-		PDOMSearchElement other = (PDOMSearchElement)obj;
+		CSearchElement other = (CSearchElement)obj;
 		return location.equals(other.location);
 	}
 

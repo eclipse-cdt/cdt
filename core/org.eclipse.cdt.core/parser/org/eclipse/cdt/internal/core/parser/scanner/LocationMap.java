@@ -245,9 +245,7 @@ public class LocationMap implements ILocationResolver {
 	}
 
 	public void encounteredComment(int offset, int endOffset, boolean isBlockComment) {
-		offset= getSequenceNumberForOffset(offset);
-		endOffset= getSequenceNumberForOffset(endOffset);
-		fComments.add(new ASTComment(fTranslationUnit, offset, endOffset, isBlockComment));
+		fComments.add(new ASTComment(fTranslationUnit, getCurrentFilePath(), offset, endOffset, isBlockComment));
 	}
 
 	public void encounterProblem(int id, char[] arg, int offset, int endOffset) {

@@ -15,7 +15,7 @@ import org.eclipse.cdt.core.index.IIndexFileLocation;
 /**
  * Represents a problem in a search.
  */
-public class ProblemSearchElement extends PDOMSearchElement {
+public class ProblemSearchElement extends CSearchElement {
 
 	private final int fProblemID;
 	private final String fDetail;

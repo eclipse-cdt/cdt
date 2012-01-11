@@ -21,9 +21,9 @@ import org.eclipse.cdt.internal.core.model.TranslationUnit;
 
 import org.eclipse.cdt.internal.ui.util.Messages;
 
-public class PDOMSearchTreeLabelProvider extends PDOMSearchLabelProvider {
+public class CSearchTreeLabelProvider extends CSearchLabelProvider {
 	
-	public PDOMSearchTreeLabelProvider(PDOMSearchViewPage page) {
+	public CSearchTreeLabelProvider(CSearchViewPage page) {
 		super(page);
 	}
 	

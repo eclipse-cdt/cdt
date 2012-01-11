@@ -13,7 +13,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.ALLCVQ;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateTypeUptoPointers;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -209,6 +213,7 @@ public class CPPVisitor extends ASTQueries {
 	private static final char[] PTRDIFF_T = "ptrdiff_t".toCharArray(); //$NON-NLS-1$
 	private static final char[] TYPE_INFO= "type_info".toCharArray(); //$NON-NLS-1$
 	private static final char[] INITIALIZER_LIST = "initializer_list".toCharArray(); //$NON-NLS-1$
+	private static final char[][] EMPTY_CHAR_ARRAY_ARRAY = {};
 	public static final IASTInitializerClause[] NO_ARGS = {};
 
 	// Thread-local set of DeclSpecifiers for which auto types are being created.
@@ -2301,7 +2306,8 @@ public class CPPVisitor extends ASTQueries {
 	}
 	
 	public static char[][] getQualifiedNameCharArray(IBinding binding) {
-		char[][] ns = null;
+		char[][] ns = EMPTY_CHAR_ARRAY_ARRAY;
+		ns = ArrayUtil.append(ns, binding.getNameCharArray());
 		for (IBinding owner= binding.getOwner(); owner != null; owner= owner.getOwner()) {
 			char[] n= owner.getNameCharArray();
 			if (n == null)
@@ -2311,16 +2317,11 @@ public class CPPVisitor extends ASTQueries {
 		    if (owner instanceof ICPPNamespace && n.length == 0)
 		    	continue;
 		
-		    ns = ArrayUtil.append(n.getClass(), ns, n);
+		    ns = ArrayUtil.append(ns, n);
 		}
-        final char[] bname = binding.getNameCharArray();
-        ns = ArrayUtil.trim(bname.getClass(), ns);
-        char[][] result = new char[ns.length + 1][];
-        for (int i = ns.length - 1; i >= 0; i--) {
-            result[ns.length - i - 1] = ns[i];
-        }
-		result[ns.length]= bname;
-	    return result;
+        ns = ArrayUtil.trim(ns);
+        ArrayUtil.reverse(ns);
+	    return ns;
 	}
 
 	private static IScope getParentScope(IScope scope, IASTTranslationUnit unit) throws DOMException {

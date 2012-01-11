@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Anton Gorenkov  - initial implementation
+ *     Anton Gorenkov  - initial implementation
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers;
 

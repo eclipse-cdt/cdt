@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import static org.eclipse.cdt.core.parser.ParserLanguage.CPP;
+
 import java.io.IOException;
 
 import junit.framework.TestSuite;
@@ -24,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
+import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
@@ -7386,5 +7389,16 @@ public class AST2Tests extends AST2BaseTest {
 			IValue v= at.getSize();
 			assertTrue(v.numericalValue() == 4);
 		}
-	}		
+	}	
+	
+	//	#define NULL_STATEMENT_MACRO ;;
+	//	void macro_test() {
+	//	    NULL_STATEMENT_MACRO //comment
+	//	}
+	public void testCommentAfterMacroExpansion_367827() throws Exception {
+		IASTTranslationUnit tu= parse(getAboveComment(), CPP);
+		IASTComment comment= tu.getComments()[0];
+		assertEquals("//comment", new String(comment.getComment()));
+		assertEquals("//comment", comment.getRawSignature());
+	}
 }

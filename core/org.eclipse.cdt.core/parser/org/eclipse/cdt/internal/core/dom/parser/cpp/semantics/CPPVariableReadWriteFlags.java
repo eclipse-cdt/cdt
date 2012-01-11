@@ -35,7 +35,6 @@ import org.eclipse.cdt.internal.core.dom.parser.VariableReadWriteFlags;
  * with the variable.
  */
 public final class CPPVariableReadWriteFlags extends VariableReadWriteFlags {
-	
 	private static CPPVariableReadWriteFlags INSTANCE= new CPPVariableReadWriteFlags();
 
 	public static int getReadWriteFlags(IASTName variable) {
@@ -109,8 +108,7 @@ public final class CPPVariableReadWriteFlags extends VariableReadWriteFlags {
 		if (indirection == 0) {
 			if (type instanceof IQualifierType) {
 				return ((IQualifierType) type).isConst() ? READ : READ | WRITE;
-			}
-			else if (type instanceof IPointerType) {
+			} else if (type instanceof IPointerType) {
 				return ((IPointerType) type).isConst() ? READ : READ | WRITE;
 			}
 		}

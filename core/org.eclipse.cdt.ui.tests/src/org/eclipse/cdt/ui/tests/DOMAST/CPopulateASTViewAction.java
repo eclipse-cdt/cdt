@@ -117,9 +117,9 @@ public class CPopulateASTViewAction extends ASTVisitor implements IPopulateDOMAS
             tree.setFiltersFlag(DOMASTNodeLeaf.FLAG_PROBLEM);
             
             if (node instanceof IASTProblemHolder)
-                astProblems = ArrayUtil.append(IASTProblem.class, astProblems, ((IASTProblemHolder)node).getProblem());
+                astProblems = ArrayUtil.append(IASTProblem.class, astProblems, ((IASTProblemHolder) node).getProblem());
             else
-                astProblems = (IASTProblem[])ArrayUtil.append(IASTProblem.class, astProblems, node);
+                astProblems = ArrayUtil.append(IASTProblem.class, astProblems, (IASTProblem) node);
         }
         if (node instanceof IASTPreprocessorStatement)
             tree.setFiltersFlag(DOMASTNodeLeaf.FLAG_PREPROCESSOR);

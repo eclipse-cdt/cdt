@@ -51,7 +51,7 @@ import org.eclipse.cdt.internal.ui.viewsupport.ColoringLabelProvider;
 /**
  * Implementation of the search view page for index based searches.
  */
-public class PDOMSearchViewPage extends AbstractTextSearchViewPage {
+public class CSearchViewPage extends AbstractTextSearchViewPage {
 	public static final int LOCATION_COLUMN_INDEX = 0; 
 	public static final int DEFINITION_COLUMN_INDEX = 1;
 	public static final int MATCH_COLUMN_INDEX = 2;
@@ -70,7 +70,7 @@ public class PDOMSearchViewPage extends AbstractTextSearchViewPage {
 	private IPDOMSearchContentProvider contentProvider;
 	private boolean fShowEnclosingDefinitions;
 	private ShowEnclosingDefinitionsAction fShowEnclosingDefinitionsAction;
-	private int[] fColumnWidths = { 300, 150, 300 };
+	private final int[] fColumnWidths = { 300, 150, 300 };
 	
 	private class ShowEnclosingDefinitionsAction extends Action {
 		public ShowEnclosingDefinitionsAction() {
@@ -84,11 +84,11 @@ public class PDOMSearchViewPage extends AbstractTextSearchViewPage {
 		}
 	}
 	
-	public PDOMSearchViewPage(int supportedLayouts) {
+	public CSearchViewPage(int supportedLayouts) {
 		super(supportedLayouts);
 	}
 
-	public PDOMSearchViewPage() {
+	public CSearchViewPage() {
 		super();
 	}
 
@@ -196,9 +196,6 @@ public class PDOMSearchViewPage extends AbstractTextSearchViewPage {
 	 *
 	 */
 	private class SearchViewerComparator extends ViewerComparator {
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-		 */
 		@Override
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			if (e1 instanceof LineSearchElement && e2 instanceof LineSearchElement) {
@@ -216,9 +213,6 @@ public class PDOMSearchViewPage extends AbstractTextSearchViewPage {
 			return super.compare(viewer, e1, e2);
 		}
 		
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ViewerComparator#category(java.lang.Object)
-		 */
 		@Override
 		public int category(Object element) {
 			// place status messages first
@@ -260,10 +254,10 @@ public class PDOMSearchViewPage extends AbstractTextSearchViewPage {
 	
 	@Override
 	protected void configureTreeViewer(TreeViewer viewer) {
-		contentProvider = new PDOMSearchTreeContentProvider(this);
+		contentProvider = new CSearchTreeContentProvider(this);
 		viewer.setComparator(new SearchViewerComparator());
-		viewer.setContentProvider((PDOMSearchTreeContentProvider)contentProvider);
-		PDOMSearchTreeLabelProvider innerLabelProvider = new PDOMSearchTreeLabelProvider(this);
+		viewer.setContentProvider((CSearchTreeContentProvider)contentProvider);
+		CSearchTreeLabelProvider innerLabelProvider = new CSearchTreeLabelProvider(this);
 		ColoringLabelProvider labelProvider = new ColoringLabelProvider(innerLabelProvider);
 		viewer.setLabelProvider(labelProvider);
 	}
@@ -271,9 +265,9 @@ public class PDOMSearchViewPage extends AbstractTextSearchViewPage {
 	@Override
 	protected void configureTableViewer(TableViewer viewer) {
 		createColumns(viewer);
-		contentProvider = new PDOMSearchListContentProvider(this);
+		contentProvider = new CSearchListContentProvider(this);
 		viewer.setComparator(new SearchViewerComparator());
-		viewer.setContentProvider((PDOMSearchListContentProvider)contentProvider);
+		viewer.setContentProvider((CSearchListContentProvider)contentProvider);
 	}
 	
 	@Override
@@ -303,7 +297,7 @@ public class PDOMSearchViewPage extends AbstractTextSearchViewPage {
 	private void createColumns(TableViewer viewer) {
 		for (int i = 0; i < fColumnLabels.length; i++) {
 			TableViewerColumn viewerColumn = new TableViewerColumn(viewer, SWT.NONE);
-			viewerColumn.setLabelProvider(new PDOMSearchListLabelProvider(this, i));
+			viewerColumn.setLabelProvider(new CSearchListLabelProvider(this, i));
 			TableColumn tableColumn = viewerColumn.getColumn();
 			tableColumn.setText(fColumnLabels[i]);
 			tableColumn.setWidth(fColumnWidths[i]);
@@ -321,16 +315,16 @@ public class PDOMSearchViewPage extends AbstractTextSearchViewPage {
 
 	@Override
 	protected void showMatch(Match match, int currentOffset, int currentLength, boolean activate) throws PartInitException {
-		if (!(match instanceof PDOMSearchMatch))
+		if (!(match instanceof CSearchMatch))
 			return;
 		
 		try {
-			Object element= ((PDOMSearchMatch)match).getElement();
-			IIndexFileLocation ifl= ((PDOMSearchElement)element).getLocation();
+			Object element= ((CSearchMatch) match).getElement();
+			IIndexFileLocation ifl= ((CSearchElement) element).getLocation();
 			IPath path = IndexLocationFactory.getPath(ifl);
 			IEditorPart editor = EditorUtility.openInEditor(path, null, activate);
 			if (editor instanceof ITextEditor) {
-				ITextEditor textEditor = (ITextEditor)editor;
+				ITextEditor textEditor = (ITextEditor) editor;
 				textEditor.selectAndReveal(currentOffset, currentLength);
 			}
 		} catch (CoreException e) {

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Alena Laskavaia  - initial API and implementation
+ *     Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers;
 
@@ -72,7 +72,7 @@ public class CatchByReference extends AbstractIndexAstChecker {
 								if (spec instanceof IASTNamedTypeSpecifier) {
 									IASTName tname = ((IASTNamedTypeSpecifier) spec).getName();
 									IType typeName = (IType) tname.resolveBinding();
-									typeName = CxxAstUtils.getInstance().unwindTypedef(typeName);
+									typeName = CxxAstUtils.unwindTypedef(typeName);
 									if (typeName instanceof IBasicType || typeName instanceof IPointerType || typeName == null)
 										continue;
 									if (typeName instanceof IProblemBinding && !shouldReportForUnknownType())

@@ -51,7 +51,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
  */
 public class AbstractClassInstantiationChecker extends AbstractIndexAstChecker {
 	public static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.AbstractClassCreation"; //$NON-NLS-1$
-	private HashMap<ICPPClassType, ICPPMethod[]> pureVirtualMethodsCache = new HashMap<ICPPClassType, ICPPMethod[]>(); 
+	private final HashMap<ICPPClassType, ICPPMethod[]> pureVirtualMethodsCache = new HashMap<ICPPClassType, ICPPMethod[]>(); 
 
 	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {
@@ -189,7 +189,7 @@ public class AbstractClassInstantiationChecker extends AbstractIndexAstChecker {
 		 *  If it is, reports violations on each pure virtual method 
 		 */
 		private void reportProblemsIfAbstract(IType typeToCheck, IASTNode problemNode ) {
-			IType unwindedType = CxxAstUtils.getInstance().unwindTypedef(typeToCheck);
+			IType unwindedType = CxxAstUtils.unwindTypedef(typeToCheck);
 			if (!(unwindedType instanceof ICPPClassType) || unwindedType instanceof IProblemBinding) {
 				return;
 			}

@@ -531,7 +531,7 @@ public class CPPTemplates {
 
 			while (parent.getParent() instanceof ICPPASTTemplateDeclaration) {
 				parent = parent.getParent();
-				templates = (ICPPASTTemplateDeclaration[]) ArrayUtil.append(ICPPASTTemplateDeclaration.class, templates, parent);
+				templates = ArrayUtil.append(ICPPASTTemplateDeclaration.class, templates, (ICPPASTTemplateDeclaration) parent);
 			}
 			templates = ArrayUtil.trim(ICPPASTTemplateDeclaration.class, templates);
 
@@ -677,10 +677,14 @@ public class CPPTemplates {
 					if (argsAreTrivial(classTemplate.getTemplateParameters(), args)) {
 						result= classTemplate;  
 					} else {
+						args= addDefaultArguments(classTemplate, args);
+						if (args == null) {
+							return new ProblemBinding(id, IProblemBinding.SEMANTIC_INVALID_TEMPLATE_ARGUMENTS, templateName.toCharArray());
+						}							
 						ICPPClassTemplatePartialSpecialization partialSpec= findPartialSpecialization(classTemplate, args);
 						if (isDeclaration || isDefinition) {
 							if (partialSpec == null) {
-								partialSpec = new CPPClassTemplatePartialSpecialization(id);
+								partialSpec = new CPPClassTemplatePartialSpecialization(id, args);
 								if (template instanceof ICPPInternalClassTemplate)
 									((ICPPInternalClassTemplate) template).addPartialSpecialization(partialSpec);
 								return partialSpec;

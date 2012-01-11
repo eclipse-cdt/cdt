@@ -10,7 +10,6 @@
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.search;
 
 import org.eclipse.core.runtime.CoreException;
@@ -29,12 +28,11 @@ import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 /**
  * @author Doug Schaefer
  */
-public class PDOMSearchElementQuery extends PDOMSearchQuery {
-
-	private ISourceReference element;
+public class CSearchElementQuery extends CSearchQuery {
+	private final ISourceReference element;
 	private String label;
 	
-	public PDOMSearchElementQuery(ICElement[] scope, ISourceReference element, int flags) {
+	public CSearchElementQuery(ICElement[] scope, ISourceReference element, int flags) {
 		super(scope, flags | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 		this.element = element;
 		this.label= (element instanceof ICElement) ?

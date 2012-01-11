@@ -25,12 +25,12 @@ import org.eclipse.cdt.internal.ui.viewsupport.ColoringLabelProvider;
 /**
  * @author Doug Schaefer
  */
-public class PDOMSearchListLabelProvider extends ColoringLabelProvider {
-	private final PDOMSearchViewPage fPage;
+public class CSearchListLabelProvider extends ColoringLabelProvider {
+	private final CSearchViewPage fPage;
 	private final int fColumnIndex;
 	
-	public PDOMSearchListLabelProvider(PDOMSearchViewPage page, int columnIndex) {
-		super(new PDOMSearchLabelProvider(page));
+	public CSearchListLabelProvider(CSearchViewPage page, int columnIndex) {
+		super(new CSearchLabelProvider(page));
 		fPage = page;
 		fColumnIndex = columnIndex;
 	}
@@ -39,7 +39,7 @@ public class PDOMSearchListLabelProvider extends ColoringLabelProvider {
 	public void update(ViewerCell cell) {
 		Object element = cell.getElement();
 		switch (fColumnIndex) {
-		case PDOMSearchViewPage.LOCATION_COLUMN_INDEX:
+		case CSearchViewPage.LOCATION_COLUMN_INDEX:
 			if (element instanceof LineSearchElement) {
 				LineSearchElement lineElement = (LineSearchElement) element;
 				String location = IndexLocationFactory.getPath(lineElement.getLocation()).toString();
@@ -48,7 +48,7 @@ public class PDOMSearchListLabelProvider extends ColoringLabelProvider {
 				cell.setImage(CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_SEARCH_LINE));
 			}
 			break;
-		case PDOMSearchViewPage.DEFINITION_COLUMN_INDEX:
+		case CSearchViewPage.DEFINITION_COLUMN_INDEX:
 			if (element instanceof LineSearchElement) {
 				LineSearchElement lineElement = (LineSearchElement) element;
 				ICElement enclosingElement = lineElement.getMatches()[0].getEnclosingElement();
@@ -60,7 +60,7 @@ public class PDOMSearchListLabelProvider extends ColoringLabelProvider {
 				}
 			}
 			break;
-		case PDOMSearchViewPage.MATCH_COLUMN_INDEX:
+		case CSearchViewPage.MATCH_COLUMN_INDEX:
 			super.update(cell);
 			cell.setImage(null);
 			break;

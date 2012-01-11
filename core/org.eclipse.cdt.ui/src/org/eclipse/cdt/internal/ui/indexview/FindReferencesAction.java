@@ -12,7 +12,7 @@
 
 package org.eclipse.cdt.internal.ui.indexview;
 
-import org.eclipse.cdt.internal.ui.search.PDOMSearchQuery;
+import org.eclipse.cdt.internal.ui.search.CSearchQuery;
 
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.model.ICProject;
@@ -56,7 +56,7 @@ public class FindReferencesAction extends IndexAction {
 						null,
 						cproject, indexView.getLastWriteAccess(cproject),
 						(IIndexBinding) binding.fObject, binding.fText,
-						PDOMSearchQuery.FIND_REFERENCES);
+						CSearchQuery.FIND_REFERENCES);
 
 				NewSearchUI.activateSearchResultView();
 				NewSearchUI.runQueryInBackground(query);

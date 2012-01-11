@@ -288,22 +288,22 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 			IBinding binding = null;
 	        if (o instanceof ObjectSet<?>) {
 	        	ObjectSet<?> set = (ObjectSet<?>) o;
-	        	IBinding[] bs = null;
+	        	ICPPConstructor[] bs = ICPPConstructor.EMPTY_CONSTRUCTOR_ARRAY;
         		for (int i = 0; i < set.size(); i++) {
         			Object obj = set.keyAt(i);
         			if (obj instanceof IASTName) {
         				IASTName n = (IASTName) obj;
         				binding = shouldResolve(forceResolve, n, forName) ? n.resolveBinding() : n.getBinding();
         				if (binding instanceof ICPPConstructor) {
-    						bs = ArrayUtil.append(ICPPConstructor.class, bs, binding);
+    						bs = ArrayUtil.append(bs, (ICPPConstructor) binding);
         				}
         			} else if (obj instanceof ICPPConstructor) {
-						bs = (IBinding[]) ArrayUtil.append(ICPPConstructor.class, bs, obj);
+						bs = ArrayUtil.append(bs, (ICPPConstructor) obj);
         			}
         		}
-        		return (ICPPConstructor[]) ArrayUtil.trim(ICPPConstructor.class, bs);
+        		return ArrayUtil.trim(ICPPConstructor.class, bs);
 	        } else if (o instanceof IASTName) {
-	        	if (shouldResolve(forceResolve, (IASTName) o, forName) || ((IASTName)o).getBinding() != null) {
+	        	if (shouldResolve(forceResolve, (IASTName) o, forName) || ((IASTName) o).getBinding() != null) {
 	        		// always store the name, rather than the binding, such that we can properly flush the scope.
 	        		nameMap.put(CONSTRUCTOR_KEY, o);
 	        		binding = ((IASTName)o).resolveBinding();
@@ -409,11 +409,11 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
  * @see chapter 12 of the ISO specification
  */
 class ImplicitsAnalysis {
-	private boolean hasUserDeclaredConstructor;
+	private final boolean hasUserDeclaredConstructor;
 	private boolean hasUserDeclaredCopyConstructor;
 	private boolean hasUserDeclaredCopyAssignmentOperator;
-	private boolean hasUserDeclaredDestructor;
-	private ICPPClassType classType;
+	private final boolean hasUserDeclaredDestructor;
+	private final ICPPClassType classType;
 
 	ImplicitsAnalysis(ICPPASTCompositeTypeSpecifier compSpec, ICPPClassType clsType) {
 		classType= clsType;

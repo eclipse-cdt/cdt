@@ -95,10 +95,10 @@ public class CCompositeTypeScope extends CScope implements ICCompositeTypeScope 
 					}
 					// anonymous structures and unions
 					if (declarators.length == 0 && ((IASTSimpleDeclaration) node).getDeclSpecifier() instanceof IASTCompositeTypeSpecifier) {
-						IASTCompositeTypeSpecifier declSpec = (IASTCompositeTypeSpecifier) ((IASTSimpleDeclaration) node).getDeclSpecifier();
+						ICASTCompositeTypeSpecifier declSpec = (ICASTCompositeTypeSpecifier) ((IASTSimpleDeclaration) node).getDeclSpecifier();
 						IASTName n = declSpec.getName();
 						if (n.toCharArray().length == 0) {
-							specStack = (ICASTCompositeTypeSpecifier[]) ArrayUtil.append(ICASTCompositeTypeSpecifier.class, specStack, declSpec);
+							specStack = ArrayUtil.append(ICASTCompositeTypeSpecifier.class, specStack, declSpec);
 						}
 					}
 				}

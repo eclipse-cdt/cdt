@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.index.IWritableIndexManager;
+import org.eclipse.cdt.internal.core.model.CProject;
 import org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask;
 import org.eclipse.cdt.internal.core.pdom.ITodoTaskUpdater;
 import org.eclipse.cdt.internal.core.pdom.IndexerProgress;
@@ -80,10 +81,11 @@ public abstract class PDOMIndexerTask extends AbstractIndexerTask implements IPD
 			boolean i1= checkProperty(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG);
 			boolean i2= checkProperty(IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_ALTERNATE_LANG);
 			UnusedHeaderStrategy strategy;
-			if (i1) {
-				strategy= i2 ? UnusedHeaderStrategy.useBoth : UnusedHeaderStrategy.useDefaultLanguage;
+			if (i1 == i2) {
+				strategy = i1 ? UnusedHeaderStrategy.useBoth : UnusedHeaderStrategy.skip;
 			} else {
-				strategy= i2 ? UnusedHeaderStrategy.useAlternateLanguage: UnusedHeaderStrategy.skip;
+				strategy = i1 == CProject.hasCCNature(getProject().getProject()) 
+						? UnusedHeaderStrategy.useCPP : UnusedHeaderStrategy.useC;
 			}
 			setIndexHeadersWithoutContext(strategy);
 		} else {

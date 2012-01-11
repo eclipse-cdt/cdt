@@ -3334,7 +3334,7 @@
       </page>
 
       <page
-            name="%CodeFormatterPreferencePage.name"
+            name="%codeFormatterPreferencePage.name"
             class="org.eclipse.cdt.internal.ui.preferences.CodeFormatterPreferencePage"
             category="org.eclipse.cdt.ui.newui.Page_head_general"
             id="org.eclipse.cdt.ui.propertyPages.CodeFormatterPreferencePage">

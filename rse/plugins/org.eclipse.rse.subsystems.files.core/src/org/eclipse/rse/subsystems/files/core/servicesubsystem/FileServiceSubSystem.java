@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,6 +46,7 @@
  * David McKnight   (IBM)        - [272882] [api] Handle exceptions in IService.initService()
  * David McKnight   (IBM)        - [244041] [files] Renaming a file looses Encoding property
  * David McKnight   (IBM)        - [320713] [dstore] xml file transfer error on zOS
+ * David McKnight   (IBM)        - [368454] provide thread safety for cachedRemoteFiles hashmap
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
@@ -1154,7 +1155,9 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 			IHost host = getHost();
 			IFileServiceSubSystemConfiguration config = (IFileServiceSubSystemConfiguration) newConfig;
 			// file subsystem specific bits
-			_cachedRemoteFiles.clear();
+			synchronized (_cachedRemoteFiles){
+				_cachedRemoteFiles.clear();
+			}
 			_languageUtilityFactory = null;
 			setFileService(config.getFileService(host));
 			setHostFileToRemoteFileAdapter(config.getHostFileAdapter());

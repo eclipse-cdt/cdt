@@ -18,6 +18,7 @@
  * David McKnight   (IBM)        - [223103] [cleanup] fix broken externalized strings
  * David McKnight   (IBM)        - [248339] [dnd][encodings] Cannot drag&drop / copy&paste files or folders with turkish or arabic names
  * David McKnight   (IBM)        - [330398] RSE leaks SWT resources
+ * David McKnight   (IBM)        - [368304] Copy paste from Remote System Explorer view has CR/LF
  *******************************************************************************/
 
 package org.eclipse.rse.ui.actions;
@@ -178,9 +179,13 @@ public class SystemCopyToClipboardAction extends SystemBaseAction implements  IV
 				if (adapter != null)
 				{					
 					String text = adapter.getAlternateText(dragObject);
+					if (textStream.length() > 0){
+						// append new line only if we've already got previous lines
+						textStream.append(getTextTransferAppend(dragObject, adapter));
+					}
+					
 					textStream.append(getTextTransferPrepend(dragObject, adapter));
-					textStream.append(text);	
-					textStream.append(getTextTransferAppend(dragObject, adapter));
+					textStream.append(text);						
 					
 					if (adapter.canDrag(dragObject))
 					{

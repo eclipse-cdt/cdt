@@ -1,4 +1,3 @@
-#Fri Jun 18 11:43:06 CDT 2010
 compilers.f.unresolved-features=0
 compilers.f.unresolved-plugins=0
 compilers.incompatible-environment=0
@@ -11,7 +10,7 @@ compilers.p.build.missing.output=2
 compilers.p.build.output.library=0
 compilers.p.build.source.library=0
 compilers.p.build.src.includes=0
-compilers.p.deprecated=0
+compilers.p.deprecated=1
 compilers.p.discouraged-class=0
 compilers.p.internal=0
 compilers.p.missing-packages=2
@@ -30,4 +29,4 @@ compilers.p.unresolved-import=0
 compilers.s.create-docs=false
 compilers.s.doc-folder=doc
 compilers.s.open-tags=0
-eclipse.preferences.version=0
+eclipse.preferences.version=1

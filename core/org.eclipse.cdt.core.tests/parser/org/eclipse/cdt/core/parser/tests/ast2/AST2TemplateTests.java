@@ -5723,4 +5723,32 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testValueForSizeofExpression_368309() throws Exception {
 		parseAndCheckBindings();
 	}
+	
+	//	template <class Value> struct iterator {
+	//	    Value operator*();
+	//	};
+	//	template <typename Iterator> struct range {
+	//	    Iterator begin();
+	//	};
+	//	template <typename T> struct A {
+	//	    struct iterator_t : public iterator<T> {};
+	//	    typedef range<iterator_t> range_t;
+	//	};
+	//	struct S {
+	//	    int x;
+	//	};
+	//
+	//	void test() {
+	//	    A<S>::range_t r;
+	//	    auto cur = r.begin(); // A<S>::iterator_t
+	//	    A<S>::iterator_t cur;
+	//	    auto e = *cur;
+	//	    e.x;            // ERROR HERE: "Field 'x' could not be resolved"
+	//	}
+	public void testAutoTypeWithTypedef_368311() throws Exception {
+		BindingAssertionHelper bh= new BindingAssertionHelper(getAboveComment(), true);
+		IVariable v= bh.assertNonProblem("cur = r.begin()", 3);
+		assertEquals("A<S>::iterator_t", ASTTypeUtil.getType(v.getType(), true));
+		parseAndCheckBindings();
+	}
 }

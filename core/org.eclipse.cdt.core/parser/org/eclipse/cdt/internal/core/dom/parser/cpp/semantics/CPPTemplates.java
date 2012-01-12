@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -1056,6 +1057,28 @@ public class CPPTemplates {
 			return arg;
 		return new CPPTemplateArgument(inst);
 	}
+	
+	private static CPPTemplateParameterMap instantiateArgumentMap(ICPPTemplateParameterMap orig, ICPPTemplateParameterMap tpMap,
+			int packOffset, ICPPClassSpecialization within) {
+		final Integer[] positions = orig.getAllParameterPositions();
+		CPPTemplateParameterMap newMap= new CPPTemplateParameterMap(positions.length);
+		for (Integer key : positions) {
+			ICPPTemplateArgument arg = orig.getArgument(key);
+			if (arg != null) {
+				newMap.put(key, instantiateArgument(arg, tpMap, packOffset, within));
+			} else {
+				ICPPTemplateArgument[] args = orig.getPackExpansion(key);
+				if (args != null) {
+					try {
+						newMap.put(key, instantiateArguments(args, tpMap, packOffset, within));
+					} catch (DOMException e) {
+						newMap.put(key, args);
+					}
+				}
+			}
+		}
+		return newMap;
+	}
 
 	/**
 	 * This method propagates the specialization of a member to the types used by the member.
@@ -1121,11 +1144,15 @@ public class CPPTemplates {
 				return type;
 			}
 
-			if (within != null && type instanceof IBinding && 
-					(type instanceof ITypedef || type instanceof ICPPClassType)) {
-				ICPPClassType originalClass= within.getSpecializedBinding();
-				if (originalClass.isSameType(type))
-					return within;
+			if (within != null && type instanceof IBinding) {
+				IType unwound= getNestedType(type, TDEF);
+				if (unwound instanceof ICPPClassType) {
+					// Convert (partial) class-templates (specializations) or typedefs to such to
+					// the actual instance.
+					ICPPClassType originalClass= within.getSpecializedBinding();
+					if (originalClass.isSameType(unwound))
+						return within;
+				}
 				
 				IBinding typeAsBinding= (IBinding) type;
 				IBinding typeOwner= typeAsBinding.getOwner();
@@ -1134,8 +1161,21 @@ public class CPPTemplates {
 					if (newOwner != typeOwner && newOwner instanceof ICPPClassSpecialization) {
 						return (IType) ((ICPPClassSpecialization) newOwner).specializeMember(typeAsBinding);
 					}
-					return type;
 				}
+				
+				if (unwound instanceof ICPPTemplateInstance && !(unwound instanceof ICPPDeferredClassInstance)) {
+					// Argument of a class specialization can be a nested class subject to specialization.
+					final ICPPTemplateInstance classInstance = (ICPPTemplateInstance) unwound;
+					final IBinding origClass = classInstance.getSpecializedBinding();
+					if (origClass instanceof ICPPClassType) {
+						ICPPTemplateArgument[] args = classInstance.getTemplateArguments();
+						ICPPTemplateArgument[] newArgs = instantiateArguments(args, tpMap, packOffset, within);
+						if (newArgs != args) {
+							CPPTemplateParameterMap tparMap = instantiateArgumentMap(classInstance.getTemplateParameterMap(), tpMap, packOffset, within);
+							return new CPPClassInstance((ICPPClassType) origClass, classInstance.getOwner(), tparMap, args);
+						}
+					}
+				}	
 			}		
 
 			if (type instanceof ITypeContainer) {

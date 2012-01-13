@@ -1927,5 +1927,25 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public void testSpecializationInIndex_367563b() throws Exception {
 		getBindingFromASTName("type type", 4, ITypedef.class);
 	}
+	
+	//	template <typename T> struct remove_const_impl {};
+	//	template <typename T> struct remove_const_impl<T*> {
+	//	    typedef T type;
+	//	};
+	//	template <typename T> struct remove_const_impl<const T*> {
+	//	    typedef T type;
+	//	};
+	//	template <typename T> struct remove_const {
+	//	    typedef typename remove_const_impl<T*>::type type;
+	//	};
 
+	//	template<typename Seq> struct foo;
+	//	template <> struct foo<int> {
+	//	    typedef int type;
+	//	};
+	//	typedef foo<remove_const<const int>::type>::type t;  // ERROR HERE
+	public void testCurrentInstanceOfClassTemplatePartialSpec_368404() throws Exception {
+		ITypedef tdef= getBindingFromASTName("type t;", 4, ITypedef.class);
+		assertEquals("int", ASTTypeUtil.getType(tdef, true));
+	}
 }

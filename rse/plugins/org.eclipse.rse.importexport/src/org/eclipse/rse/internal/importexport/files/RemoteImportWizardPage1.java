@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@
  * David McKnight   (IBM)        - [272708] [import/export] fix various bugs with the synchronization support
  * David McKnight   (IBM)        - [276535] File Conflict when Importing Remote Folder with Case-Differentiated-Only Filenames into Project
  * David McKnight   (IBM)        - [191558] [importexport][efs] Import to Project doesn't work with remote EFS projects
+ * David McKnight   (IBM)        - [368465] Import Files -RSE - Cyclic Symbolic Reference problem
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
@@ -141,6 +142,7 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 		private Object _fileSystemObject;
 		private IImportStructureProvider _provider;
 		private MinimizedFileSystemElement _element;
+		private List _resultsQueried;
 		private volatile boolean _isActive = false;
 
 		public QueryAllJob(Object fileSystemObject, IImportStructureProvider provider, MinimizedFileSystemElement element){
@@ -148,6 +150,7 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 			_fileSystemObject = fileSystemObject;
 			_provider = provider;
 			_element = element;
+			_resultsQueried = new ArrayList();
 		}
 
 
@@ -186,14 +189,18 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 
 			while (childrenEnum.hasNext()) {
 				Object child = childrenEnum.next();
-				String elementLabel = _provider.getLabel(child);
-				//Create one level below
-				MinimizedFileSystemElement result = new MinimizedFileSystemElement(elementLabel, element, _provider.isFolder(child));
-				result.setFileSystemObject(child);
-
-				if (child instanceof UniFilePlus){
-					if (((UniFilePlus)child).isDirectory()){
-						resultsToQuery.add(result);
+				if (!_resultsQueried.contains(child)){
+					_resultsQueried.add(child);
+				
+					String elementLabel = _provider.getLabel(child);
+					//Create one level below
+					MinimizedFileSystemElement result = new MinimizedFileSystemElement(elementLabel, element, _provider.isFolder(child));
+					result.setFileSystemObject(child);
+	
+					if (child instanceof UniFilePlus){
+						if (((UniFilePlus)child).isDirectory()){
+							resultsToQuery.add(result);
+						}
 					}
 				}
 			}

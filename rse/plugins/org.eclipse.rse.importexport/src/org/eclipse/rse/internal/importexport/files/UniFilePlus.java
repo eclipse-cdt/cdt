@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  * David Dykstal (IBM) [230821] fix IRemoteFileSubSystem API to be consistent with IFileService
  * Takuya Miyamoto - [185925] Integrate Platform/Team Synchronization
  * David McKnight   (IBM)        - [272708] [import/export] fix various bugs with the synchronization support
+ * David McKnight   (IBM)        - [368465] Import Files -RSE - Cyclic Symbolic Reference problem
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
@@ -57,13 +58,13 @@ public class UniFilePlus extends File {
 	public boolean canWrite() {
 		return remoteFile.canWrite();
 	}
-
+	
 	public int compareTo(File pathname) {
-		if (pathname instanceof UniFilePlus) return remoteFile.compareTo(pathname);
+		if (pathname instanceof UniFilePlus) 
+			return remoteFile.compareTo(pathname);
 		return super.compareTo(pathname);
 	}
-
-	/*
+/*
 	 public int compareTo(Object o)
 	 {
 	 return remoteFile.compareTo(o);
@@ -118,7 +119,13 @@ public class UniFilePlus extends File {
 	}
 
 	public boolean equals(Object obj) {
-		return remoteFile.equals(obj);
+		if (obj instanceof UniFilePlus){
+			UniFilePlus uniF = (UniFilePlus)obj;
+			return remoteFile.getCanonicalPath().equals(uniF.remoteFile.getCanonicalPath());
+		}
+		else {
+			return remoteFile.equals(obj);
+		}
 	}
 
 	public boolean exists() {

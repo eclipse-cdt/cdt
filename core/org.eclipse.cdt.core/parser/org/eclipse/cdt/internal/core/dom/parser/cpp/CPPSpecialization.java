@@ -53,29 +53,28 @@ public abstract class CPPSpecialization extends PlatformObject implements ICPPSp
 	}
 
 	public IType specializeType(IType type) {
+		return CPPTemplates.instantiateType(type, getTemplateParameterMap(), -1, getSpecializationContext());
+	}
+
+	protected ICPPClassSpecialization getSpecializationContext() {
 		if (owner instanceof ICPPClassSpecialization) {
-			ICPPClassSpecialization within = getWithin((ICPPClassSpecialization) owner);
-			return CPPTemplates.instantiateType(type, getTemplateParameterMap(), -1, within);
-		} else {
-			return CPPTemplates.instantiateType(type, getTemplateParameterMap(), -1, null);
-		}
+			ICPPClassSpecialization within = (ICPPClassSpecialization) owner;
+			ICPPClassType orig = within.getSpecializedBinding();
+			for(;;) {
+				IBinding o1 = within.getOwner();
+				IBinding o2 = orig.getOwner();
+				if (!(o1 instanceof ICPPClassSpecialization && o2 instanceof ICPPClassType)) 
+					return within;
+				ICPPClassSpecialization nextWithin = (ICPPClassSpecialization) o1;
+				orig= (ICPPClassType) o2;
+				if (orig.isSameType(nextWithin)) 
+					return within;
+				within= nextWithin;
+			}
+		}		
+		return null;
 	}
-
-	private ICPPClassSpecialization getWithin(ICPPClassSpecialization within) {
-		ICPPClassType orig = within.getSpecializedBinding();
-		for(;;) {
-			IBinding o1 = within.getOwner();
-			IBinding o2 = orig.getOwner();
-			if (!(o1 instanceof ICPPClassSpecialization && o2 instanceof ICPPClassType)) 
-				return within;
-			ICPPClassSpecialization nextWithin = (ICPPClassSpecialization) o1;
-			orig= (ICPPClassType) o2;
-			if (orig.isSameType(nextWithin)) 
-				return within;
-			within= nextWithin;
-		}
-	}
-
+	
 	public IType[] specializeTypePack(ICPPParameterPackType type) {
 		if (owner instanceof ICPPClassSpecialization) {
 			return CPPTemplates.instantiateTypes(new IType[]{type}, getTemplateParameterMap(), -1, (ICPPClassSpecialization) owner);

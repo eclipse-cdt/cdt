@@ -105,10 +105,9 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 	}
 	
 	@Override
-	public ICPPDeferredClassInstance asDeferredInstance() throws DOMException {
+	public final ICPPDeferredClassInstance asDeferredInstance() {
 		if (fDeferredInstance == null) {
-			ICPPTemplateArgument[] args = CPPTemplates.templateParametersAsArguments(getTemplateParameters());
-			fDeferredInstance= new CPPDeferredClassInstance(this, args, getCompositeScope());
+			fDeferredInstance= CPPTemplates.createDeferredInstance(this);
 		}
 		return fDeferredInstance;
 	}

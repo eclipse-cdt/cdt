@@ -19,17 +19,7 @@ import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.typeOrFunctionSet;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.valueCat;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.ALLCVQ;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.ARRAY;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.MPTR;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.PTR;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.calculateInheritanceDepth;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateTypeUptoPointers;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.isConversionOperator;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -337,9 +327,11 @@ public class CPPSemantics {
 			if (prop != ICPPASTTemplateId.TEMPLATE_NAME && !data.astName.isQualified()) {
 				// You cannot use a class template name outside of the class template scope,
 				// mark it as a problem.
-				IBinding replacement= CPPTemplates.isUsedInClassTemplateScope((ICPPClassTemplate) binding, data.astName);
-				if (replacement != null) {
-					binding= replacement;
+				IBinding user= CPPTemplates.isUsedInClassTemplateScope((ICPPClassTemplate) binding, data.astName);
+				if (user instanceof ICPPClassTemplate) {
+					binding= ((ICPPClassTemplate) user).asDeferredInstance();
+				} else if (user != null) {
+					binding= user;
 				} else {
 					boolean ok= false;
 					IASTNode node= data.astName.getParent();
@@ -372,10 +364,12 @@ public class CPPSemantics {
 			// try to replace binding by the one pointing to the enclosing template declaration.
 			ICPPDeferredClassInstance dcl= (ICPPDeferredClassInstance) binding;
 			IBinding usedHere= CPPTemplates.isUsedInClassTemplateScope(dcl.getClassTemplate(), data.astName);
-			if (usedHere instanceof ICPPDeferredClassInstance) {
-				ICPPDeferredClassInstance alt= (ICPPDeferredClassInstance) usedHere;
-				if (CPPTemplates.areSameArguments(alt.getTemplateArguments(), dcl.getTemplateArguments())) {
-					binding= alt;
+			if (usedHere instanceof ICPPClassTemplatePartialSpecialization) {
+				if (CPPTemplates.areSameArguments(((ICPPClassTemplatePartialSpecialization) usedHere).getTemplateArguments(), dcl.getTemplateArguments()))
+					binding= ((ICPPClassTemplatePartialSpecialization) usedHere).asDeferredInstance();
+			} else if (usedHere instanceof ICPPClassTemplate) {
+				if (CPPTemplates.areSameArguments(CPPTemplates.templateParametersAsArguments(((ICPPClassTemplate) usedHere).getTemplateParameters()), dcl.getTemplateArguments())) {
+					binding= ((ICPPClassTemplate) usedHere).asDeferredInstance();
 				}
 			}
 		}
@@ -544,12 +538,14 @@ public class CPPSemantics {
 	private static void doKoenigLookup(LookupData data) throws DOMException {
 		data.ignoreUsingDirectives = true;
 		data.forceQualified = true;
-		Set<ICPPNamespaceScope> associated = getAssociatedScopes(data);
+        Set<ICPPFunction> friendFns = new HashSet<ICPPFunction>(2);
+		Set<ICPPNamespaceScope> associated = getAssociatedScopes(data, friendFns);
 		for (ICPPNamespaceScope scope : associated) {
 			if (!data.visited.containsKey(scope)) {
 				lookup(data, scope);
 			}
 		}
+		mergeResults(data, friendFns.toArray(), false);
 	}
        
 	static IBinding checkDeclSpecifier(IBinding binding, IASTName name, IASTNode decl) {
@@ -645,7 +641,7 @@ public class CPPSemantics {
 		return data;
 	}
 
-    private static Set<ICPPNamespaceScope> getAssociatedScopes(LookupData data) {
+    private static Set<ICPPNamespaceScope> getAssociatedScopes(LookupData data, Set<ICPPFunction> friendFns) {
     	if (!data.hasFunctionArguments())
     		return Collections.emptySet();
     	
@@ -654,7 +650,7 @@ public class CPPSemantics {
         ObjectSet<IType> handled = new ObjectSet<IType>(2);
         for (IType p : ps) {
             try {
-                getAssociatedScopes(p, namespaces, handled, data.tu);
+                getAssociatedScopes(p, namespaces, friendFns, handled, data.tu);
             } catch (DOMException e) {
             }
         }
@@ -682,7 +678,7 @@ public class CPPSemantics {
 
     // 3.4.2-2 
     private static void getAssociatedScopes(IType t, Set<ICPPNamespaceScope> namespaces,
-    		ObjectSet<IType> handled, CPPASTTranslationUnit tu) throws DOMException {
+    		Set<ICPPFunction> friendFns, ObjectSet<IType> handled, CPPASTTranslationUnit tu) throws DOMException {
         t = getNestedType(t, TDEF | CVTYPE | PTR | ARRAY | REF);
     	if (t instanceof IBinding) {
             if (handled.containsKey(t))
@@ -691,7 +687,7 @@ public class CPPSemantics {
             
     		IBinding owner= ((IBinding) t).getOwner();
     		if (owner instanceof ICPPClassType) {
-    			getAssociatedScopes((IType) owner, namespaces, handled, tu);
+    			getAssociatedScopes((IType) owner, namespaces, friendFns, handled, tu);
     		} else {
     			getAssociatedNamespaceScopes(getContainingNamespaceScope((IBinding) t, tu), namespaces);
     		}
@@ -702,35 +698,40 @@ public class CPPSemantics {
 			for (ICPPBase base : bases) {
 				IBinding b = base.getBaseClass();
 				if (b instanceof IType)
-					getAssociatedScopes((IType) b, namespaces, handled, tu);
+					getAssociatedScopes((IType) b, namespaces, friendFns, handled, tu);
 			}
 			// Furthermore, if T is a class template ... 
 			// * ... types of the template arguments for template type parameters 
 			//       (excluding template template parameters); 
 			// * ... owners of which any template template arguments are members; 
 			if (ct instanceof ICPPTemplateInstance) {
+				for (IBinding friend : ct.getFriends()) {
+					if (friend instanceof ICPPFunction) {
+						friendFns.add((ICPPFunction) friend);
+					}
+				}
 				ICPPTemplateArgument[] args = ((ICPPTemplateInstance) ct).getTemplateArguments();
 				for (ICPPTemplateArgument arg : args) {
 					if (arg.isTypeValue()) {
-						getAssociatedScopes(arg.getTypeValue(), namespaces, handled, tu);
+						getAssociatedScopes(arg.getTypeValue(), namespaces, friendFns, handled, tu);
 					}
 				}
 			}
 		} else if (t instanceof IFunctionType) {
 		    IFunctionType ft = (IFunctionType) t;
-		    getAssociatedScopes(ft.getReturnType(), namespaces, handled, tu);
+		    getAssociatedScopes(ft.getReturnType(), namespaces, friendFns, handled, tu);
 		    IType[] ps = ft.getParameterTypes();
 		    for (IType pt : ps) {
-		        getAssociatedScopes(pt, namespaces, handled, tu);
+		        getAssociatedScopes(pt, namespaces, friendFns, handled, tu);
 		    }
 		} else if (t instanceof ICPPPointerToMemberType) {
 		    final ICPPPointerToMemberType pmt = (ICPPPointerToMemberType) t;
-			getAssociatedScopes(pmt.getMemberOfClass(), namespaces, handled, tu);
-	        getAssociatedScopes(pmt.getType(), namespaces, handled, tu);
+			getAssociatedScopes(pmt.getMemberOfClass(), namespaces, friendFns, handled, tu);
+	        getAssociatedScopes(pmt.getType(), namespaces, friendFns, handled, tu);
 		} else if (t instanceof FunctionSetType) {
 			FunctionSetType fst= (FunctionSetType) t;
 			for (ICPPFunction fn : fst.getFunctionSet()) { 
-				getAssociatedScopes(fn.getType(), namespaces, handled, tu);
+				getAssociatedScopes(fn.getType(), namespaces, friendFns, handled, tu);
 			}
 		}			
     }
@@ -2397,6 +2398,7 @@ public class CPPSemantics {
 
 		// Loop over all functions
 		List<FunctionCost> potentialCosts= null;
+		IFunction unknownFunction= null;
 		for (ICPPFunction fn : fns) {
 			if (fn == null) 
 				continue;
@@ -2407,9 +2409,9 @@ public class CPPSemantics {
 			
 			if (fnCost == CONTAINS_DEPENDENT_TYPES) {
 				if (viableCount == 1) 
-					return fns[0];
-				setTargetedFunctionsToUnknown(argTypes);
-				return CPPUnknownFunction.createForSample(fns[0]);
+					return fn;
+				unknownFunction = fn;
+				continue;
 			}
 			
 			if (fnCost.hasDeferredUDC()) {
@@ -2442,8 +2444,13 @@ public class CPPSemantics {
 			}
 		}
 
-		if (bestFnCost == null)
-			return null;
+		if (bestFnCost == null) {
+			if (unknownFunction == null) 
+				return null;
+			
+			setTargetedFunctionsToUnknown(argTypes);
+			return CPPUnknownFunction.createForSample(unknownFunction);
+		}
 		
 		if (ambiguousFunctions != null) {
 			ambiguousFunctions= ArrayUtil.append(IFunction.class, ambiguousFunctions, bestFnCost.getFunction());
@@ -2723,7 +2730,7 @@ public class CPPSemantics {
 		IType implicitType;
 		ICPPClassType owner= m.getClassOwner();
 		if (owner instanceof ICPPClassTemplate) {
-			owner= CPPTemplates.instantiateWithinClassTemplate((ICPPClassTemplate) owner);
+			owner= (ICPPClassType) ((ICPPClassTemplate) owner).asDeferredInstance();
 		}
 		ICPPFunctionType ft= m.getType();
 		implicitType= SemanticUtil.addQualifiers(owner, ft.isConst(), ft.isVolatile(), false);

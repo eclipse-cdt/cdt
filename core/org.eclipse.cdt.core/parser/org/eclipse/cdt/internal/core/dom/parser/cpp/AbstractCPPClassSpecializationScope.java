@@ -226,8 +226,8 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 
 	@Override
 	public IBinding[] getFriends() {
-		// not yet supported
-		return IBinding.EMPTY_BINDING_ARRAY;
+		IBinding[] friends = specialClass.getSpecializedBinding().getFriends();
+		return specializeMembers(friends);
 	}
 
 	@Override

@@ -363,7 +363,7 @@ public class PDOMCPPTemplateTemplateParameter extends PDOMCPPBinding
 	}
 
 	@Override
-	public ICPPDeferredClassInstance asDeferredInstance() throws DOMException {
+	public ICPPDeferredClassInstance asDeferredInstance() {
 		return null;
 	}
 }

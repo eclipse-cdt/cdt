@@ -628,6 +628,8 @@ public class AST2BaseTest extends BaseTestCase {
     	}
     	
     	public <T extends IBinding> T assertNonProblem(String section, int len, Class<T> type, Class... cs) {
+    		if (len <= 0)
+    			len+= section.length();
     		IBinding binding= binding(section, len);
     		assertTrue("ProblemBinding for name: " + section.substring(0, len),
     				!(binding instanceof IProblemBinding));

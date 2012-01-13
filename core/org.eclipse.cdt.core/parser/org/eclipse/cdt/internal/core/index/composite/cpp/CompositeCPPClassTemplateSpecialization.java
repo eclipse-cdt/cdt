@@ -11,14 +11,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInstanceCache;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
@@ -63,20 +61,15 @@ CompositeCPPClassSpecialization implements ICPPClassTemplate, ICPPInstanceCache{
 	
 	
 	@Override
-	public ICPPDeferredClassInstance asDeferredInstance() throws DOMException  {
+	public final ICPPDeferredClassInstance asDeferredInstance() {
 		CompositeInstanceCache cache= CompositeInstanceCache.getCache(cf, rbinding);
 		synchronized (cache) {
 			ICPPDeferredClassInstance dci= cache.getDeferredInstance();
 			if (dci == null) {
-				dci= createDeferredInstance();
+				dci= CPPTemplates.createDeferredInstance(this);
 				cache.putDeferredInstance(dci);
 			}
 			return dci;
 		}
-	}
-
-	protected ICPPDeferredClassInstance createDeferredInstance() throws DOMException {
-		ICPPTemplateArgument[] args = CPPTemplates.templateParametersAsArguments(getTemplateParameters());
-		return new CPPDeferredClassInstance(this, args, getCompositeScope());
 	}
 }

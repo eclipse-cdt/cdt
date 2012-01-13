@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
@@ -42,9 +43,22 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 	private ICPPFunctionType type = null;
 	private ICPPParameter[] fParams = null;
 	private IType[] specializedExceptionSpec = null;
+	private final ICPPClassSpecialization fContext;
 
 	public CPPFunctionSpecialization(ICPPFunction orig, IBinding owner, ICPPTemplateParameterMap argMap) {
+		this(orig, owner, argMap, null);
+	}
+	
+	public CPPFunctionSpecialization(ICPPFunction orig, IBinding owner, ICPPTemplateParameterMap argMap, ICPPClassSpecialization context) {
 		super(orig, owner, argMap);
+		fContext= context;
+	}
+	
+	@Override
+	protected ICPPClassSpecialization getSpecializationContext() {
+		if (fContext != null)
+			return fContext;
+		return super.getSpecializationContext(); 
 	}
 	
 	private ICPPFunction getFunction() {

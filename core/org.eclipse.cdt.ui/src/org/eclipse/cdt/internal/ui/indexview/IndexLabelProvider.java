@@ -23,7 +23,6 @@ import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
@@ -112,15 +111,11 @@ public class IndexLabelProvider extends LabelProvider {
 					StringBuffer buffer = new StringBuffer("Part: "); //$NON-NLS-1$
 					buffer.append(result);
 					buffer.append('<');
-					try {
-						ICPPTemplateArgument[] types = ((ICPPClassTemplatePartialSpecialization) element).getTemplateArguments();
-						for (int i = 0; i < types.length; i++) {
-							if (i > 0)
-								buffer.append(',');
-							buffer.append(ASTTypeUtil.getArgumentString(types[i], false));
-						}
-					} catch (DOMException e) {
-						buffer.append(e.getProblem().toString());
+					ICPPTemplateArgument[] types = ((ICPPClassTemplatePartialSpecialization) element).getTemplateArguments();
+					for (int i = 0; i < types.length; i++) {
+						if (i > 0)
+							buffer.append(',');
+						buffer.append(ASTTypeUtil.getArgumentString(types[i], false));
 					}
 					buffer.append('>');
 					result = buffer.toString();

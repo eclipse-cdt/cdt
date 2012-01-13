@@ -61,13 +61,7 @@ public class TemplateInstanceUtil {
 	}
 
 	public static ICPPTemplateArgument[] getTemplateArguments(ICompositesFactory cf, ICPPClassTemplatePartialSpecialization rbinding) {
-		try {
-			return convert(cf, rbinding.getTemplateArguments());
-		} catch (DOMException e) {
-			// index bindings don't throw DOMExceptions
-			assert false;
-		}
-		return ICPPTemplateArgument.EMPTY_ARGUMENTS;
+		return convert(cf, rbinding.getTemplateArguments());
 	}
 
 	public static IBinding getSpecializedBinding(ICompositesFactory cf, IIndexBinding rbinding) {

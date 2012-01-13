@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.core.runtime.CoreException;
@@ -53,6 +54,9 @@ public class IndexCPPSignatureUtil {
 	 */
 	public static String getSignature(IBinding binding) throws CoreException, DOMException {
 		StringBuilder buffer = new StringBuilder();
+		if (binding instanceof ICPPDeferredClassInstance) {
+			buffer.append(getSignature(((ICPPDeferredClassInstance) binding).getTemplateDefinition()));
+		}
 		if (binding instanceof ICPPTemplateInstance) {
 			ICPPTemplateInstance inst = (ICPPTemplateInstance) binding;
 			buffer.append(getTemplateArgString(inst.getTemplateArguments(), true));

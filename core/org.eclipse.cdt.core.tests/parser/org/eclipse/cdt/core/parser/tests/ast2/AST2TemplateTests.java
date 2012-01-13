@@ -3274,8 +3274,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	public void testBug238180_ClassCast() throws Exception {
 		// the code above used to trigger a ClassCastException
 		BindingAssertionHelper ba= new BindingAssertionHelper(getAboveComment(), true);
-		String tmplId= "str<true, true, false, A, B>";
-		ICPPClassType p= ba.assertNonProblem(tmplId, tmplId.length(), ICPPClassType.class);
+		ICPPClassType p= ba.assertNonProblem("str<true, true, false, A, B>", 0, ICPPClassType.class);
 		ICPPConstructor con= p.getConstructors()[1];
 		ICPPReferenceType reftype= (ICPPReferenceType) con.getType().getParameterTypes()[0];
 		IQualifierType qt= (IQualifierType) reftype.getType();
@@ -4197,7 +4196,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 	//	void test(A<int> x) {
 	//	  f(x);
 	//	}
-	public void _testInlineFriendFunction_284690_2() throws Exception {
+	public void testInlineFriendFunction_287409() throws Exception {
 		final String code = getAboveComment();
 		BindingAssertionHelper bh= new BindingAssertionHelper(code, true);
     	ICPPFunction func= bh.assertNonProblem("f(x)", 1, ICPPFunction.class);

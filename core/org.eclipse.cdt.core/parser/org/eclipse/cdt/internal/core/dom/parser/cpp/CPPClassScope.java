@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.IName;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -62,7 +61,6 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.parser.util.ContentAssistMatcherFactory;
@@ -99,10 +97,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 
         ICPPClassType clsType = (ICPPClassType) binding;
         if (clsType instanceof ICPPClassTemplate) {
-            try {
-            	clsType= CPPTemplates.instantiateWithinClassTemplate((ICPPClassTemplate) clsType);
-            } catch (DOMException e) {
-            }
+            clsType= (ICPPClassType) ((ICPPClassTemplate) clsType).asDeferredInstance();
         }
         char[] className = name.getLookupKey();
 

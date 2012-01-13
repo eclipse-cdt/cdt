@@ -225,16 +225,11 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements ICPPClass
 	}
 
 	@Override
-	public final ICPPDeferredClassInstance asDeferredInstance() throws DOMException {
+	public final ICPPDeferredClassInstance asDeferredInstance() {
 		if (fDeferredInstance == null) {
-			fDeferredInstance= createDeferredInstance();
+			fDeferredInstance= CPPTemplates.createDeferredInstance(this);
 		}
 		return fDeferredInstance;
-	}
-
-	protected ICPPDeferredClassInstance createDeferredInstance() throws DOMException {
-		ICPPTemplateArgument[] args = CPPTemplates.templateParametersAsArguments(getTemplateParameters());
-		return new CPPDeferredClassInstance(this, args, getCompositeScope());
 	}
 
 	@Override

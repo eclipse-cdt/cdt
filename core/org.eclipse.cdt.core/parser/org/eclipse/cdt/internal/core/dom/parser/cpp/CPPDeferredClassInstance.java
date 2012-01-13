@@ -35,7 +35,7 @@ public class CPPDeferredClassInstance extends CPPUnknownClass implements ICPPDef
 	private final ICPPScope fLookupScope;
 
 	public CPPDeferredClassInstance(ICPPClassTemplate template, ICPPTemplateArgument[] arguments,
-			ICPPScope lookupScope) throws DOMException {
+			ICPPScope lookupScope) {
 		// With template template parameters the owner must not be calculated, it'd lead to an infinite loop.
 		// Rather than that we override getOwner().
 		super(null, template.getNameCharArray());
@@ -44,7 +44,7 @@ public class CPPDeferredClassInstance extends CPPUnknownClass implements ICPPDef
 		fLookupScope= lookupScope;
 	}
 
-	public CPPDeferredClassInstance(ICPPClassTemplate template, ICPPTemplateArgument[] arguments) throws DOMException {
+	public CPPDeferredClassInstance(ICPPClassTemplate template, ICPPTemplateArgument[] arguments) {
 		this(template, arguments, null);
 	}
 	

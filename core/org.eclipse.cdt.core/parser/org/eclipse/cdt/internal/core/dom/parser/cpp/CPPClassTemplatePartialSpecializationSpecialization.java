@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
@@ -81,10 +82,9 @@ public class CPPClassTemplatePartialSpecializationSpecialization extends CPPClas
 	}
 	
 	@Override
-	public ICPPDeferredClassInstance asDeferredInstance() throws DOMException {
+	public ICPPDeferredClassInstance asDeferredInstance() {
 		if (fDeferredInstance == null) {
-			ICPPTemplateArgument[] args = CPPTemplates.templateParametersAsArguments(getTemplateParameters());
-			fDeferredInstance= new CPPDeferredClassInstance(this, args, getCompositeScope());
+			fDeferredInstance= CPPTemplates.createDeferredInstance(this);
 		}
 		return fDeferredInstance;
 	}
@@ -95,13 +95,18 @@ public class CPPClassTemplatePartialSpecializationSpecialization extends CPPClas
 	}
 
 	@Override
-	public ICPPTemplateArgument[] getTemplateArguments() throws DOMException {
+	public ICPPTemplateArgument[] getTemplateArguments() {
 		ICPPTemplateArgument[] args = ((ICPPClassTemplatePartialSpecialization) getSpecializedBinding()).getTemplateArguments();
-		final IBinding owner = getOwner();
-		if (owner instanceof ICPPClassSpecialization) {
-			return CPPTemplates.instantiateArguments(args, getTemplateParameterMap(), -1, (ICPPClassSpecialization) owner); 
+		try {
+			final IBinding owner = getOwner();
+			if (owner instanceof ICPPClassSpecialization) {
+				return CPPTemplates.instantiateArguments(args, getTemplateParameterMap(), -1,
+						(ICPPClassSpecialization) owner);
+			}
+			return CPPTemplates.instantiateArguments(args, getTemplateParameterMap(), -1, null);
+		} catch (DOMException e) {
+			return args;
 		}
-		return CPPTemplates.instantiateArguments(args, getTemplateParameterMap(), -1, null);
 	}
 	
 	@Override
@@ -114,12 +119,21 @@ public class CPPClassTemplatePartialSpecializationSpecialization extends CPPClas
 	}
 	
 	@Override
-	public String toString() {
-		try {
-			return super.toString() + ASTTypeUtil.getArgumentListString(getTemplateArguments(), true);
-		} catch (DOMException e) {
-			return super.toString() + '<' + e.getProblem().toString() + '>';
+	public boolean isSameType(IType type) {
+		if (type == this)
+			return true;
+		if (type instanceof ITypedef)
+			return type.isSameType(this);
+
+		if (type instanceof ICPPClassTemplatePartialSpecializationSpecialization) {
+			return CPPClassTemplatePartialSpecialization.isSamePartialClassSpecialization(this, (ICPPClassTemplatePartialSpecializationSpecialization) type);
 		}
+		return false;
+	}
+
+	@Override
+	public String toString() {
+		return super.toString() + ASTTypeUtil.getArgumentListString(getTemplateArguments(), true);
 	}
 	
 	@Override

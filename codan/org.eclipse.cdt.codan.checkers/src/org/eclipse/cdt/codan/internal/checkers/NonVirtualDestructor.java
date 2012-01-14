@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Alena Laskavaia 
+ * Copyright (c) 2009, 2012 Alena Laskavaia 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,8 @@
  *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers;
+
+import java.util.HashSet;
 
 import org.eclipse.cdt.codan.core.cxx.model.AbstractIndexAstChecker;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -33,6 +35,9 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
  */
 public class NonVirtualDestructor extends AbstractIndexAstChecker {
 	public static final String PROBLEM_ID = "org.eclipse.cdt.codan.internal.checkers.NonVirtualDestructorProblem"; //$NON-NLS-1$
+	
+	// Prevent stack overflow in case: class A: public A {};
+	private static HashSet<ICPPClassType> checkedClassTypes = new HashSet<ICPPClassType>();
 
 	public void processAst(IASTTranslationUnit ast) {
 		// Traverse the AST using the visitor pattern.
@@ -49,6 +54,7 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 	}
 
 	private static boolean hasVirtualDestructor(ICPPClassType classType) {
+		checkedClassTypes.add(classType);
 		ICPPMethod destructor = getDestructor(classType);
 		if (destructor != null && destructor.isVirtual()) {
 			return true;
@@ -57,7 +63,8 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 		for (ICPPBase base : bases) {
 			IBinding baseClass = base.getBaseClass();
 			if (baseClass instanceof ICPPClassType) {
-				if (hasVirtualDestructor((ICPPClassType) baseClass)) {
+				ICPPClassType cppClassType = (ICPPClassType) baseClass;
+				if (!checkedClassTypes.contains(cppClassType) && hasVirtualDestructor(cppClassType)) {
 					return true;
 				}
 			}
@@ -79,7 +86,9 @@ public class NonVirtualDestructor extends AbstractIndexAstChecker {
 					return PROCESS_SKIP;
 				}
 				ICPPClassType classType = (ICPPClassType) binding;
-				if (hasVirtualDestructor(classType)) {
+				boolean hasVirtualDestructor = hasVirtualDestructor(classType);
+				checkedClassTypes.clear();
+				if (hasVirtualDestructor) {
 					return PROCESS_SKIP;
 				}
 				ICPPMethod virtualMethod = null;

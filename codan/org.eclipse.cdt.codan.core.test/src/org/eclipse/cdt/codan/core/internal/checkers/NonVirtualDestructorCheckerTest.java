@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Patrick Hofer and others.
+ * Copyright (c) 2011, 2012 Patrick Hofer and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -180,5 +180,19 @@ public class NonVirtualDestructorCheckerTest extends CheckerTestCase {
 	public void testExplicitDtorInBaseClass() {
 		loadCodeAndRun(getAboveComment());
 		checkErrorLines(4);
+	}
+
+	// class C : public C {};
+	public void testBug368446_stackOverflow() throws Exception {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
+	}
+
+	// class B;
+	// class A : public B {};
+	// class B : public A {};
+	public void testBug368446_stackOverflow_indirect() throws Exception {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrors();
 	}
 }

@@ -54,6 +54,10 @@
 							<artifactId>org.eclipse.help.base</artifactId>
 							<type>eclipse-plugin</type>
 						</dependency>
+						<dependency>
+							<artifactId>org.eclipse.ant.core</artifactId>
+							<type>eclipse-plugin</type>
+						</dependency>
 					</dependencies>
 				</configuration>
 				<executions>

@@ -405,7 +405,7 @@
              class="org.eclipse.cdt.ui.wizards.CProjectWizard"
              finalPerspective="org.eclipse.cdt.ui.CPerspective"
              hasPages="true"
-             icon="icons/elcl16/newmngcc_app.gif"
+             icon="icons/elcl16/newmngc_app.gif"
              id="org.eclipse.cdt.ui.wizards.NewCWizard2"
              name="%Cproject"
              project="true">

@@ -13,6 +13,14 @@
 	<version>5.2.0-SNAPSHOT</version>
 	<artifactId>org.eclipse.cdt.doc.user</artifactId>
 	<packaging>eclipse-plugin</packaging>
+	
+	<!-- Remove when the tycho-eclipserun-plugin is in Maven central repo -->
+	<pluginRepositories>
+		<pluginRepository>
+			<id>oss-sonatype-releases</id>
+			<url>https://oss.sonatype.org/content/repositories/releases/</url>
+		</pluginRepository>
+	</pluginRepositories>
 
 	<build>
 		<plugins>
@@ -28,6 +36,32 @@
 					<execution>
 						<id>attach-source</id>
 						<phase>none</phase>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.google.code.tycho-eclipserun-plugin</groupId>
+				<artifactId>tycho-eclipserun-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<configuration>
+					<appArgLine>-application org.eclipse.ant.core.antRunner -buildfile customBuildCallbacks.xml build.index</appArgLine>
+					<dependencies>
+						<dependency>
+							<artifactId>org.apache.ant</artifactId>
+							<type>eclipse-plugin</type>
+						</dependency>
+						<dependency>
+							<artifactId>org.eclipse.help.base</artifactId>
+							<type>eclipse-plugin</type>
+						</dependency>
+					</dependencies>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>eclipse-run</goal>
+						</goals>
+						<phase>compile</phase>
 					</execution>
 				</executions>
 			</plugin>

@@ -73,5 +73,7 @@ public class ContentAssist2TestSuite extends TestSuite {
 		addTest(ParameterHintTests.suite());
 		
 		addTest(ShowCamelCasePreferenceTest.suite());
+		
+		addTest(TemplateProposalTest.suite());
 	}
 }

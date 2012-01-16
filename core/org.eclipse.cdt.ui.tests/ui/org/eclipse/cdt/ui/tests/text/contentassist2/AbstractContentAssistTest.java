@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -98,9 +98,8 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 		fCFile= null;
 		super.tearDown();
 	}
-
-	protected void assertContentAssistResults(int offset, String[] expected, boolean isCompletion, int compareType) throws Exception {
-
+	
+	protected void assertContentAssistResults(int offset, int length, String[] expected, boolean isCompletion, boolean isTemplate, int compareType) throws Exception {
 		if (CTestPlugin.getDefault().isDebugging())  {
 			System.out.println("\n\n\n\n\nTesting "+this.getClass().getName());
 		}
@@ -112,13 +111,18 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 		ContentAssistant assistant = new ContentAssistant();
 		CContentAssistProcessor processor = new CContentAssistProcessor(fEditor, assistant, contentType);
 		long startTime= System.currentTimeMillis();
+		sourceViewer.setSelectedRange(offset, length);
 		Object[] results = isCompletion
 			? (Object[]) processor.computeCompletionProposals(sourceViewer, offset)
 			: (Object[]) processor.computeContextInformation(sourceViewer, offset);
 		long endTime= System.currentTimeMillis();
 		assertTrue(results != null);
 
-		results= filterResults(results, isCode);
+		if(isTemplate) {
+			results= filterResultsKeepTemplates(results);
+		} else {
+			results= filterResults(results, isCode);
+		}
 		String[] resultStrings= toStringArray(results, compareType);
 		Arrays.sort(expected);
 		Arrays.sort(resultStrings);
@@ -161,6 +165,10 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 
 	}
 
+	protected void assertContentAssistResults(int offset, String[] expected, boolean isCompletion, int compareType) throws Exception {
+		assertContentAssistResults(offset, 0, expected, isCompletion, false, compareType);
+	}
+
 	/**
 	 * Filter out template and keyword proposals.
 	 * @param results
@@ -187,6 +195,20 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 				}
 				filtered.add(result);
 			} else if (result instanceof IContextInformation) {
+				filtered.add(result);
+			}
+		}
+		return filtered.toArray();
+	}
+	
+	/**
+	 * Filter out proposals, keep only templates
+	 */
+	private Object[] filterResultsKeepTemplates(Object[] results) {
+		List<Object> filtered= new ArrayList<Object>();
+		for (int i = 0; i < results.length; i++) {
+			Object result = results[i];
+			if (result instanceof TemplateProposal) {
 				filtered.add(result);
 			}
 		}

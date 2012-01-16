@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -129,8 +129,10 @@ public class TemplateEngine {
 
 	    IDocument document= viewer.getDocument();
 		Point selection= viewer.getSelectedRange();
-		boolean multipleLinesSelected= areMultipleLinesSelected(viewer);
-		if (multipleLinesSelected) {
+		boolean linesSelected= areLinesSelected(viewer);
+		boolean showLineSelectionTemplates = linesSelected;
+		boolean showWordSelectionTemplates = !linesSelected || isOnlyWordOnLine(viewer);
+		if (linesSelected) {
 			// adjust line selection to start at column 1 and end at line delimiter
 			try {
 				IRegion startLine = document.getLineInformationOfOffset(selection.x);
@@ -168,14 +170,15 @@ public class TemplateEngine {
 
 		} else {
 
-			if (multipleLinesSelected || context.getKey().length() == 0)
+			if (linesSelected || context.getKey().length() == 0)
 				context.setForceEvaluation(true);
 
 			for (int i= 0; i != templates.length; i++) {
 				Template template= templates[i];
 				if (context.canEvaluate(template) &&
 					template.getContextTypeId().equals(context.getContextType().getId()) &&
-					(!multipleLinesSelected && template.getPattern().indexOf($_WORD_SELECTION) != -1 || (multipleLinesSelected && template.getPattern().indexOf($_LINE_SELECTION) != -1)))
+					((showWordSelectionTemplates && template.getPattern().indexOf($_WORD_SELECTION)	!= -1 || 
+					 (showLineSelectionTemplates &&	template.getPattern().indexOf($_LINE_SELECTION) != -1))))
 				{
 					fProposals.add(new CTemplateProposal(templates[i], context, region, image));
 				}
@@ -191,7 +194,7 @@ public class TemplateEngine {
 	 * 
 	 * @return <code>true</code> if one or multiple lines are selected
 	 */
-	private boolean areMultipleLinesSelected(ITextViewer viewer) {
+	private boolean areLinesSelected(ITextViewer viewer) {
 		if (viewer == null)
 			return false;
 
@@ -213,6 +216,34 @@ public class TemplateEngine {
 			int lineContentLength = lineContent.trim().length();
 			
 			return s.x <= lineContentStart && s.x + s.y >= lineContentStart + lineContentLength;
+
+		} catch (BadLocationException x) {
+			return false;
+		}
+	}
+	
+	/**
+	 * Returns <code>true</code> if there's only one word on the line
+	 * 
+	 * @return <code>true</code> if only one word is on the line
+	 */
+	private boolean isOnlyWordOnLine(ITextViewer viewer) {
+		if (viewer == null)
+			return false;
+
+		Point s= viewer.getSelectedRange();
+		if (s.y == 0)
+			return false;
+
+		try {
+
+			IDocument document= viewer.getDocument();
+			int startLine= document.getLineOfOffset(s.x);
+			IRegion line= document.getLineInformation(startLine);
+			
+			String lineContent = document.get(line.getOffset(), line.getLength());
+			
+			return lineContent.trim().lastIndexOf(' ', s.x) == -1;
 
 		} catch (BadLocationException x) {
 			return false;

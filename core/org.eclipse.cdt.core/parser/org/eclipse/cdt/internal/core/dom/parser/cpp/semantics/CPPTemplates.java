@@ -255,19 +255,23 @@ public class CPPTemplates {
 
 	static IBinding isUsedInClassTemplateScope(ICPPClassTemplate ct, IASTName name) {
 		try {
-			IScope scope;
+			IScope scope= null;
 			IASTNode node= name;
 			while (node != null) {
-				if (node.getPropertyInParent() == IASTFunctionDefinition.DECLARATOR)
-					break;
+				if (node.getPropertyInParent() == IASTCompositeTypeSpecifier.TYPE_NAME)
+					return null;
 				if (node instanceof IASTFunctionDefinition) {
 					name= ASTQueries.findInnermostDeclarator(((IASTFunctionDefinition) node).getDeclarator()).getName().getLastName();
+					scope= CPPVisitor.getContainingScope(name);
+					break;
+				}
+				if (node instanceof ICPPASTCompositeTypeSpecifier) {
+					scope= ((ICPPASTCompositeTypeSpecifier) node).getScope();
 					break;
 				}
 				node= node.getParent();
 			}
 
-			scope= CPPVisitor.getContainingScope(name);
 			while (scope != null) {
 				if (scope instanceof ISemanticProblem)
 					return null;
@@ -1139,6 +1143,12 @@ public class CPPTemplates {
 			}
 
 			if (within != null && type instanceof IBinding) {
+				IType unwound= getNestedType(type, TDEF);
+				if (unwound instanceof ICPPClassType && unwound.isSameType(within.getSpecializedBinding())) {
+					// Convert (partial) class-templates (specializations) to the more specialized version.
+					if (within instanceof ICPPClassTemplate || !(unwound instanceof ICPPClassTemplate)) 
+						return within;
+				}
 				IBinding typeAsBinding= (IBinding) type;
 				IBinding owner= typeAsBinding.getOwner();
 				if (owner instanceof IType) {
@@ -1157,7 +1167,6 @@ public class CPPTemplates {
 					}
 				}
 				
-				IType unwound= getNestedType(type, TDEF);
 				if (unwound instanceof ICPPTemplateInstance && !(unwound instanceof ICPPDeferredClassInstance)) {
 					// Argument of a class specialization can be a nested class subject to specialization.
 					final ICPPTemplateInstance classInstance = (ICPPTemplateInstance) unwound;
@@ -2098,8 +2107,15 @@ public class CPPTemplates {
 		
 		if (param instanceof ICPPTemplateTemplateParameter) {
 			IType t= arg.getTypeValue();
-			if (!(t instanceof ICPPTemplateDefinition))
-				return null;
+			while (!(t instanceof ICPPTemplateDefinition)) {
+				if (t instanceof ICPPClassSpecialization) {
+					// Undo the effect of specializing a template when the unqualified name
+					// is used within the template itself.
+					t= ((ICPPClassSpecialization) t).getSpecializedBinding();
+				} else {
+					return null;
+				}
+			}
 
 			ICPPTemplateParameter[] pParams = null;
 			ICPPTemplateParameter[] aParams = null;

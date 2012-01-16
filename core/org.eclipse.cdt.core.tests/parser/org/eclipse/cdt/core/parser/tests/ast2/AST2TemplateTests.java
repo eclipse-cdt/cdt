@@ -5750,4 +5750,54 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertEquals("A<S>::iterator_t", ASTTypeUtil.getType(v.getType(), true));
 		parseAndCheckBindings();
 	}
+	
+	//	struct S {
+	//	    int x;
+	//	};
+	//	template <typename> struct iterator_base {
+	//	    S operator*();
+	//	};
+	//	template <typename> struct A {
+	//	    struct iterator : public iterator_base<iterator> {};
+	//	};
+	//	void test() {
+	//	    A<int>::iterator it;
+	//	    auto s = *it;
+	//	    s.x;  // ERROR HERE: "Field 'x' could not be resolved"
+	//	}
+	public void testSpecializationOfClassType_368610a() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	struct S {
+	//	    int x;
+	//	};
+	//	template <typename> struct iterator_base {
+	//	    S operator*();
+	//	};
+	//	template <typename> struct A {
+	//	    template<typename T> struct iterator : public iterator_base<iterator> {};
+	//	};
+	//	void test() {
+	//	    A<int>::iterator<int> it;
+	//	    auto s = *it;
+	//	    s.x;  // ERROR HERE: "Field 'x' could not be resolved"
+	//	}
+	public void testSpecializationOfClassType_368610b() throws Exception {
+		parseAndCheckBindings();
+	}
+	
+	//	template <template<typename T> class TT> struct  CTT {
+	//		int y;
+	//	};
+	//	template <typename T> struct CT {
+	//		CTT<CT> someFunc();
+	//	};
+	//	void test2() {
+	//		CT<int> x;
+	//		x.someFunc().y;
+	//	}
+	public void testSpecializationOfClassType_368610c() throws Exception {
+		parseAndCheckBindings();
+	}
 }

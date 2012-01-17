@@ -1,4 +1,4 @@
-//!ExtractFunctionRefactoringTest with duplicates
+//!Extract method with duplicates
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
 replaceduplicates=true
@@ -84,7 +84,7 @@ int A::help() {
 	return 42;
 }
 
-//!ExtractFunctionRefactoringTest duplicates with different Names
+//!Extract method duplicates with different Names
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
 replaceduplicates=true
@@ -170,11 +170,11 @@ int A::help() {
 	return 42;
 }
 
-//!ExtractFunctionRefactoringTest duplicate with field
+//!Extract method duplicate with field
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
 replaceduplicates=true
-returnvalue=true
+returnvalue=j
 //@A.h
 #ifndef A_H_
 #define A_H_
@@ -267,11 +267,11 @@ int A::help() {
 	return 42;
 }
 
-//!ExtractFunctionRefactoringTest duplicate with field in marked scope
+//!Extract method duplicate with field in marked scope
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
 replaceduplicates=true
-returnvalue=true
+returnvalue=j
 //@A.h
 #ifndef A_H_
 #define A_H_
@@ -366,11 +366,11 @@ void A::foo() {
 int A::help() {
 	return 42;
 }
-//!ExtractFunctionRefactoringTest duplicates with different Names and return type
+//!Extract method duplicates with different names and return type
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
 replaceduplicates=true
-returnvalue=true
+returnvalue=i
 //@A.h
 #ifndef A_H_
 #define A_H_
@@ -465,7 +465,7 @@ int A::help() {
 	return 42;
 }
 
-//!ExtractFunctionRefactoringTest duplicates with a lot of different Names an variable not used afterwards in the duplicate
+//!Extract method duplicates with a lot of different Names an variable not used afterwards in the duplicate
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
 replaceduplicates=true
@@ -558,7 +558,7 @@ int A::help() {
 	return 42;
 }
 
-//!ExtractFunctionRefactoringTest with duplicate name used afterwards in duplicate but not in original selection this is no duplicate
+//!Extract method with duplicate name used afterwards in duplicate but not in original selection this is no duplicate
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
 replaceduplicates=true
@@ -645,11 +645,11 @@ int A::help() {
 	return 42;
 }
 
-//!ExtractFunctionRefactoringTest with Return Value and a lot Ref Parameter and a method call
+//!Extract method with return value and a lot ref parameter and a method call
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
 replaceduplicates=true
-returnvalue=true
+returnvalue=i
 //@A.h
 #ifndef A_H_
 #define A_H_
@@ -667,7 +667,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -682,11 +681,10 @@ public:
 
 private:
 	int help();
-	int exp(int i, B*& b, int& y, float& x);
+	int exp(int i, B* b, int y, float x);
 };
 
 #endif /*A_H_*/
-
 //@A.cpp
 #include "A.h"
 
@@ -724,7 +722,6 @@ int A::foo() {
 int A::help() {
 	return 42;
 }
-
 //=
 #include "A.h"
 
@@ -742,7 +739,7 @@ A::~A() {
 	i++;
 }
 
-int A::exp(int i, B*& b, int& y, float& x) {
+int A::exp(int i, B* b, int y, float x) {
 	++i;
 	b->hello(y);
 	i = i + x;
@@ -764,13 +761,11 @@ int A::foo() {
 int A::help() {
 	return 42;
 }
-
 //@B.h
 #ifndef B_H_
 #define B_H_
 
-class B
-{
+class B {
 public:
 	B();
 	virtual ~B();
@@ -778,12 +773,11 @@ public:
 };
 
 #endif /*B_H_*/
-
-//!ExtractFunctionRefactoringTest with Return Value and a lot Ref Parameter and a method call, duplicate is not similar
+//!Extract method with return value and a lot ref parameter and a method call, duplicate is similar
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
 replaceduplicates=true
-returnvalue=true
+returnvalue=i
 //@A.h
 #ifndef A_H_
 #define A_H_
@@ -801,7 +795,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -816,11 +809,10 @@ public:
 
 private:
 	int help();
-	int exp(int i, B*& b, int& y, float x);
+	int exp(int i, B* b, int y, float x);
 };
 
 #endif /*A_H_*/
-
 //@A.cpp
 #include "A.h"
 
@@ -857,7 +849,6 @@ int A::foo() {
 int A::help() {
 	return 42;
 }
-
 //=
 #include "A.h"
 
@@ -869,16 +860,13 @@ A::~A() {
 	float x = i;
 	B* b = new B();
 	int y = x + i;
-	++i;
-	b->hello(y);
-	i = i + x;
-	help();
+	i = exp(i, b, y, x);
 	b->hello(y);
 	++x;
 	i++;
 }
 
-int A::exp(int i, B*& b, int& y, float x) {
+int A::exp(int i, B* b, int y, float x) {
 	++i;
 	b->hello(y);
 	i = i + x;
@@ -899,13 +887,11 @@ int A::foo() {
 int A::help() {
 	return 42;
 }
-
 //@B.h
 #ifndef B_H_
 #define B_H_
 
-class B
-{
+class B {
 public:
 	B();
 	virtual ~B();
@@ -913,8 +899,7 @@ public:
 };
 
 #endif /*B_H_*/
-
-//!ExtractFunctionRefactoringTest with duplicates and comments
+//!Extract method with duplicates and comments
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
 replaceduplicates=true

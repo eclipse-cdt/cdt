@@ -92,12 +92,10 @@ public abstract class ExtractedFunctionConstructionHelper {
 	}
 	
 	public List<IASTParameterDeclaration> getParameterDeclarations(
-			Collection<NameInformation> allUsedNames, INodeFactory nodeFactory) {
-		List<IASTParameterDeclaration> result = new ArrayList<IASTParameterDeclaration>();		
-		for (NameInformation name : allUsedNames) {
-			if (!name.isDeclaredInSelection()) {
-				result.add(name.getParameterDeclaration(name.isUserSetIsReference(), nodeFactory));
-			}
+			Collection<NameInformation> parameterNames, INodeFactory nodeFactory) {
+		List<IASTParameterDeclaration> result = new ArrayList<IASTParameterDeclaration>(parameterNames.size());		
+		for (NameInformation name : parameterNames) {
+			result.add(name.getParameterDeclaration(name.isUserSetIsReference(), nodeFactory));
 		}
 		return result;
 	}

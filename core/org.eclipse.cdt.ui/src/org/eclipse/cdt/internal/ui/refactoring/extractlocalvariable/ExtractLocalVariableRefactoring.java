@@ -135,7 +135,6 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 
 				sm.worked(1);
 
-				container.getNamesUsedAfter();
 				info.addNamesToUsedNames(findAllDeclaredNames());
 				sm.worked(1);
 

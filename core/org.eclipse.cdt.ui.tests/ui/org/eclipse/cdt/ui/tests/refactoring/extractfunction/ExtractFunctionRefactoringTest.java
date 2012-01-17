@@ -8,6 +8,7 @@
  *  
  * Contributors: 
  *     Institute for Software - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.extractfunction;
 
@@ -34,7 +35,7 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
 public class ExtractFunctionRefactoringTest extends RefactoringTest {
 	protected String methodName;
 	protected boolean replaceDuplicates;
-	protected boolean returnValue;
+	protected String returnValue;
 	protected int returnParameterIndex;
 	protected boolean fatalError;
 	private VisibilityEnum visibility;
@@ -74,29 +75,25 @@ public class ExtractFunctionRefactoringTest extends RefactoringTest {
 		info.setMethodName(methodName);
 		info.setReplaceDuplicates(replaceDuplicates);
 		if (info.getMandatoryReturnVariable() == null) {
-			if (returnValue) {
-				info.setReturnVariable(info.getNamesUsedAfter().get(returnParameterIndex));
-				info.getNamesUsedAfter().get(returnParameterIndex).setUserSetIsReference(false);
+			if (returnValue != null) {
+				for (NameInformation nameInfo : info.getParameterCandidates()) {
+					if (returnValue.equals(String.valueOf(nameInfo.getName().getSimpleID()))) {
+						info.setReturnVariable(nameInfo);
+						nameInfo.setUserSetIsReference(false);
+						break;
+					}
+				}
 			}
-		} else {
-			info.setReturnVariable(info.getMandatoryReturnVariable());
 		}
 		info.setVisibility(visibility);
 		info.setVirtual(virtual);
-		
-		for (NameInformation name : info.getNamesUsedAfter()) {
-			if (!name.isUserSetIsReturnValue()) {
-				name.setUserSetIsReference(name.isOutput());
-			}
-		}
 	}
 
 	@Override
 	protected void configureRefactoring(Properties refactoringProperties) {
 		methodName = refactoringProperties.getProperty("methodname", "exp"); //$NON-NLS-1$ //$NON-NLS-2$
 		replaceDuplicates = Boolean.valueOf(refactoringProperties.getProperty("replaceduplicates", "false")).booleanValue(); //$NON-NLS-1$ //$NON-NLS-2$
-		returnValue = Boolean.valueOf(refactoringProperties.getProperty("returnvalue", "false")).booleanValue();  //$NON-NLS-1$//$NON-NLS-2$
-		returnParameterIndex = new Integer(refactoringProperties.getProperty("returnparameterindex", "0")).intValue(); //$NON-NLS-1$ //$NON-NLS-2$
+		returnValue = refactoringProperties.getProperty("returnvalue", null);  //$NON-NLS-1$
 		fatalError = Boolean.valueOf(refactoringProperties.getProperty("fatalerror", "false")).booleanValue(); //$NON-NLS-1$ //$NON-NLS-2$
 		visibility = VisibilityEnum.getEnumForStringRepresentation(refactoringProperties.getProperty("visibility", VisibilityEnum.v_private.toString())); //$NON-NLS-1$
 		virtual = Boolean.valueOf(refactoringProperties.getProperty("virtual", "false")).booleanValue(); //$NON-NLS-1$ //$NON-NLS-2$

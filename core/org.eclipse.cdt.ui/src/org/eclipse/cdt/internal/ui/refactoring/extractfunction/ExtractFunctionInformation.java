@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
@@ -24,7 +23,6 @@ public class ExtractFunctionInformation {
 	private VisibilityEnum visibility = VisibilityEnum.v_private;
 	private String methodName;
 	private boolean replaceDuplicates;
-	private List<NameInformation> namesUsedAfter;
 	private List<NameInformation> parameterCandidates;
 	private NameInformation mandatoryReturnVariable; 
 	private NameInformation returnVariable;
@@ -62,23 +60,6 @@ public class ExtractFunctionInformation {
 		this.replaceDuplicates = replaceDuplicates;
 	}
 
-	public List<NameInformation> getNamesUsedAfter() {
-		if (namesUsedAfter == null) {
-			namesUsedAfter = new ArrayList<NameInformation>();
-			for (NameInformation name : getParameterCandidates()) {
-				if (name.isOutput() || name.isReturnValue()) {
-					namesUsedAfter.add(name);
-				}
-			}
-		}
-		
-		return namesUsedAfter;
-	}
-
-	public void setNamesUsedAfter(List<NameInformation> names) {
-		this.namesUsedAfter = names;
-	}
-
 	public NameInformation getReturnVariable() {
 		return returnVariable;
 	}
@@ -96,6 +77,7 @@ public class ExtractFunctionInformation {
 
 	public void setMandatoryReturnVariable(NameInformation variable) {
 		this.mandatoryReturnVariable = variable;
+		this.returnVariable = variable;
 	}
 
 	public List<NameInformation> getParameterCandidates() {

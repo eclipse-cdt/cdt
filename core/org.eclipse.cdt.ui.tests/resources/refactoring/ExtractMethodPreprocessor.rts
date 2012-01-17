@@ -83,11 +83,10 @@ int A::help() {
 	return 42;
 }
 
-//!Extract Method return value assinged to Macrocall Bug
+//!Extract method return value assigned to macro call
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
-returnvalue=true
-returnparameterindex=1
+returnvalue=b
 //@A.h
 #ifndef A_H_
 #define A_H_
@@ -103,7 +102,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -120,7 +118,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //@A.cpp
 #include "A.h"
 
@@ -145,7 +142,6 @@ int A::foo() {
 int A::help() {
 	return 42;
 }
-
 //=
 #include "A.h"
 
@@ -175,12 +171,10 @@ int A::foo() {
 int A::help() {
 	return 42;
 }
-
-//!Extract Method Methodlength with more than 1 Macrocall Bug
+//!Extract method with multiple macros
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
-returnvalue=true
-returnparameterindex=0
+returnvalue=bb
 replaceduplicates=true
 //@A.h
 #ifndef A_H_
@@ -197,7 +191,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -214,7 +207,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //@A.cpp
 #include "A.h"
 
@@ -239,7 +231,6 @@ int A::foo() {
 int A::help() {
 	return 42;
 }
-
 //=
 #include "A.h"
 
@@ -269,4 +260,3 @@ int A::foo() {
 int A::help() {
 	return 42;
 }
-

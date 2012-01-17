@@ -24,12 +24,12 @@ public class ExtractFunctionTestSuite extends TestSuite {
 	@SuppressWarnings("nls")
 	public static Test suite() throws Exception {
 		TestSuite suite = new ExtractFunctionTestSuite();
-		suite.addTest(RefactoringTester.suite("ExtractMethodRefactoringTests", "resources/refactoring/ExtractMethod.rts"));
-		suite.addTest(RefactoringTester.suite("Extract Expression", "resources/refactoring/ExtractExpression.rts"));
-		suite.addTest(RefactoringTester.suite("ExtractMethodPreprocessorRefactoringTests", "resources/refactoring/ExtractMethodPreprocessor.rts"));
-		suite.addTest(RefactoringTester.suite("Extract Function Templates Tests", "resources/refactoring/ExtractFunctionTemplates.rts"));
-		suite.addTest(RefactoringTester.suite("Extract Method History Test", "resources/refactoring/ExtractMethodHistory.rts"));
-		suite.addTest(RefactoringTester.suite("Extract Function Duplicates Test", "resources/refactoring/ExtractMethodDuplicates.rts"));
+		suite.addTest(RefactoringTester.suite("ExtractMethod.rts", "resources/refactoring/ExtractMethod.rts"));
+		suite.addTest(RefactoringTester.suite("ExtractExpression.rts", "resources/refactoring/ExtractExpression.rts"));
+		suite.addTest(RefactoringTester.suite("ExtractMethodPreprocessor.rts", "resources/refactoring/ExtractMethodPreprocessor.rts"));
+		suite.addTest(RefactoringTester.suite("ExtractFunctionTemplates.rts", "resources/refactoring/ExtractFunctionTemplates.rts"));
+		suite.addTest(RefactoringTester.suite("ExtractMethodHistory.rts", "resources/refactoring/ExtractMethodHistory.rts"));
+		suite.addTest(RefactoringTester.suite("ExtractFunctionDuplicates.rts", "resources/refactoring/ExtractMethodDuplicates.rts"));
 		return suite;
 	}
 }

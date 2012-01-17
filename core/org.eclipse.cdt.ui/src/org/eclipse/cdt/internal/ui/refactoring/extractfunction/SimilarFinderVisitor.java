@@ -8,6 +8,7 @@
  *  
  * Contributors: 
  *     Institute for Software - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 
@@ -63,7 +64,7 @@ final class SimilarFinderVisitor extends ASTVisitor {
 			if (statementCount == statements.size()) {
 				// Found similar code
 				boolean similarOnReturnWays = true;
-				for (NameInformation nameInfo : similarContainer.getNamesUsedAfter()) {
+				for (NameInformation nameInfo : similarContainer.getParameterCandidates()) {
 					if (refactoring.names.containsKey(nameInfo.getDeclaration().getRawSignature())) {
 						Integer nameOrderNumber = refactoring.names.get(nameInfo.getDeclaration().getRawSignature());
 						if (refactoring.nameTrail.containsValue(nameOrderNumber)) {
@@ -72,12 +73,15 @@ final class SimilarFinderVisitor extends ASTVisitor {
 							for (Entry<String, Integer> entry : refactoring.nameTrail.entrySet()) {
 								if (entry.getValue().equals(nameOrderNumber)) {
 									orgName = entry.getKey();
+									break;
 								}
 							}
 							if (orgName != null) {
-								for (NameInformation orgNameInfo : refactoring.container.getNamesUsedAfterChoosenByUser()) {
-									if (orgName.equals(orgNameInfo.getDeclaration().getRawSignature())) {
+								for (NameInformation orgNameInfo : refactoring.container.getParameterCandidates()) {
+									if (orgName.equals(orgNameInfo.getDeclaration().getRawSignature()) &&
+											(orgNameInfo.isOutput() || !nameInfo.isOutput())) {
 										found = true;
+										break;
 									}
 								}
 							}
@@ -90,9 +94,8 @@ final class SimilarFinderVisitor extends ASTVisitor {
 				}
 
 				if (similarOnReturnWays) {
-					IASTNode call = refactoring.getMethodCall(name,
-							refactoring.nameTrail, refactoring.names,
-							refactoring.container, similarContainer);
+					IASTNode call = refactoring.getMethodCall(name,	refactoring.nameTrail,
+							refactoring.names, refactoring.container, similarContainer);
 					ASTRewrite rewrite =
 							collector.rewriterForTranslationUnit(stmtToReplace.get(0).getTranslationUnit());
 					TextEditGroup editGroup = new TextEditGroup(Messages.SimilarFinderVisitor_replaceDuplicateCode);

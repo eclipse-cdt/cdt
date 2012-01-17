@@ -1,4 +1,4 @@
-//!ExtractFunctionRefactoringTest variable defined in scope
+//!Extract function with variable defined in scope
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@A.h
 #ifndef A_H_
@@ -74,7 +74,7 @@ int A::foo() {
 int A::help() {
 	return 42;
 }
-//!ExtractFunctionRefactoringTest with comment
+//!Extract function with comment
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@A.h
 #ifndef A_H_
@@ -156,10 +156,8 @@ int A::help() {
 filename=A.cpp
 methodname=exp
 replaceduplicates=false
-returnvalue=false
-returnparameterindex=0
 
-//!Extract Function first extracted statement with leading comment
+//!Extract function first extracted statement with leading comment
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@main.cpp
 int main() {
@@ -186,10 +184,8 @@ int main() {
 filename=main.cpp
 methodname=exp
 replaceduplicates=false
-returnvalue=false
-returnparameterindex=0
 
-//!Extract Function last extracted statement with trailling comment
+//!Extract function last extracted statement with trailling comment
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@main.cpp
 int main() {
@@ -213,10 +209,8 @@ int main() {
 filename=main.cpp
 methodname=exp
 replaceduplicates=false
-returnvalue=false
-returnparameterindex=0
 
-//!ExtractFunctionRefactoringTest with two variable defined in scope
+//!Extract function with two variable defined in scope
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
 fatalerror=true
@@ -259,7 +253,7 @@ int A::help() {
 	return 42;
 }
 
-//!ExtractFunctionRefactoringTest with named typed field
+//!Extract function with named typed field
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@A.h
 #ifndef A_H_
@@ -352,7 +346,7 @@ public:
 
 #endif /*B_H_*/
 
-//!ExtractFunctionRefactoringTest with named typed variable defined in scope
+//!Extract function with named typed variable defined in scope
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@A.h
 #ifndef A_H_
@@ -445,7 +439,7 @@ public:
 
 #endif /*B_H_*/
 
-//!ExtractFunctionRefactoringTest with ObjectStyleMacro
+//!Extract function with ObjectStyleMacro
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@A.h
 #ifndef A_H_
@@ -530,7 +524,7 @@ int A::help() {
 	return 42;
 }
 
-//!ExtractFunctionRefactoringTest with FunctionStyleMacro
+//!Extract function with FunctionStyleMacro
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@A.h
 #ifndef A_H_
@@ -615,7 +609,7 @@ int A::help() {
 	return 42;
 }
 
-//!ExtractMethod with Pointer
+//!Extract method with pointer
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@A.h
 #ifndef A_H_
@@ -645,7 +639,7 @@ public:
 
 private:
 	int help();
-	void exp(int*& i);
+	void exp(int* i);
 };
 
 #endif /*A_H_*/
@@ -679,7 +673,7 @@ A::A() {
 A::~A() {
 }
 
-void A::exp(int*& i) {
+void A::exp(int* i) {
 	++*i;
 	help();
 }
@@ -694,7 +688,7 @@ int A::help() {
 	return 42;
 }
 
-//!ExtractMethod with Pointer and Comment at the end
+//!Extract method with pointer and comment at the end
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@A.h
 #ifndef A_H_
@@ -711,7 +705,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -724,11 +717,10 @@ public:
 
 private:
 	int help();
-	void exp(int*& i);
+	void exp(int* i);
 };
 
 #endif /*A_H_*/
-
 //@A.cpp
 #include "A.h"
 
@@ -749,7 +741,6 @@ int A::foo() {
 int A::help() {
 	return 42;
 }
-
 //=
 #include "A.h"
 
@@ -759,7 +750,7 @@ A::A() {
 A::~A() {
 }
 
-void A::exp(int*& i) {
+void A::exp(int* i) {
 	++*i;
 	help();
 }
@@ -774,8 +765,7 @@ int A::foo() {
 int A::help() {
 	return 42;
 }
-
-//!ExtractMethod with Pointer and Comment
+//!Extract method with pointer and comment
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@A.h
 #ifndef A_H_
@@ -792,7 +782,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -805,11 +794,10 @@ public:
 
 private:
 	int help();
-	void exp(int*& i);
+	void exp(int* i);
 };
 
 #endif /*A_H_*/
-
 //@A.cpp
 #include "A.h"
 
@@ -830,7 +818,6 @@ int A::foo() {
 int A::help() {
 	return 42;
 }
-
 //=
 #include "A.h"
 
@@ -840,7 +827,7 @@ A::A() {
 A::~A() {
 }
 
-void A::exp(int*& i) {
+void A::exp(int* i) {
 	++*i;
 	help();
 }
@@ -855,12 +842,11 @@ int A::foo() {
 int A::help() {
 	return 42;
 }
-
-//!ExtractFunctionRefactoringTest with Return Value
+//!Extract function with return value
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
 replaceduplicates=true
-returnvalue=true
+returnvalue=i
 //@A.h
 #ifndef A_H_
 #define A_H_
@@ -876,7 +862,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -893,7 +878,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //@A.cpp
 #include "A.h"
 
@@ -913,7 +897,6 @@ int A::foo() {
 int A::help() {
 	return 42;
 }
-
 //=
 #include "A.h"
 
@@ -938,12 +921,11 @@ int A::foo() {
 int A::help() {
 	return 42;
 }
-
-//!ExtractFunctionRefactoringTest with Return Value and Ref Parameter
+//!Extract function with return value and ref parameter
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
 replaceduplicates=true
-returnvalue=true
+returnvalue=i
 //@A.h
 #ifndef A_H_
 #define A_H_
@@ -959,7 +941,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -972,11 +953,10 @@ public:
 
 private:
 	int help();
-	int exp(int i, int& b);
+	int exp(int i, int b);
 };
 
 #endif /*A_H_*/
-
 //@A.cpp
 #include "A.h"
 
@@ -999,7 +979,6 @@ int A::foo() {
 int A::help() {
 	return 42;
 }
-
 //=
 #include "A.h"
 
@@ -1009,7 +988,7 @@ A::A() {
 A::~A() {
 }
 
-int A::exp(int i, int& b) {
+int A::exp(int i, int b) {
 	++i;
 	i = i + b;
 	help();
@@ -1027,12 +1006,11 @@ int A::foo() {
 int A::help() {
 	return 42;
 }
-
-//!ExtractFunctionRefactoringTest with Return Value and Ref Parameter and some more not used aferwards
+//!Extract function with return value and ref parameter and some more not used afterwards
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
 replaceduplicates=true
-returnvalue=true
+returnvalue=i
 //@A.h
 #ifndef A_H_
 #define A_H_
@@ -1048,7 +1026,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -1061,11 +1038,10 @@ public:
 
 private:
 	int help();
-	int exp(int i, B* b, int y, float& x);
+	int exp(int i, B* b, int y, float x);
 };
 
 #endif /*A_H_*/
-
 //@A.cpp
 #include "A.h"
 
@@ -1091,7 +1067,6 @@ int A::foo() {
 int A::help() {
 	return 42;
 }
-
 //=
 #include "A.h"
 
@@ -1101,7 +1076,7 @@ A::A() {
 A::~A() {
 }
 
-int A::exp(int i, B* b, int y, float& x) {
+int A::exp(int i, B* b, int y, float x) {
 	++i;
 	b->hello(y);
 	i = i + x;
@@ -1122,12 +1097,11 @@ int A::foo() {
 int A::help() {
 	return 42;
 }
-
-//!ExtractFunctionRefactoringTest with Return Value take the second and Ref Parameter and some more not used aferwards
+//!Extract function with return value take the second and ref parameter and some more not used aferwards
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
 returnparameterindex=1
-returnvalue=true
+returnvalue=x
 //@A.h
 #ifndef A_H_
 #define A_H_
@@ -1145,7 +1119,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -1164,7 +1137,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //@A.cpp
 #include "A.h"
 
@@ -1190,7 +1162,6 @@ int A::foo() {
 int A::help() {
 	return 42;
 }
-
 //=
 #include "A.h"
 
@@ -1221,7 +1192,6 @@ int A::foo() {
 int A::help() {
 	return 42;
 }
-
 //@B.h
 #ifndef B_H_
 #define B_H_
@@ -1234,12 +1204,11 @@ public:
 };
 
 #endif /*B_H_*/
-
-//!ExtractFunctionRefactoringTest with Return Value and a lot Ref Parameter
+//!Extract function with return value and a lot ref parameter
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
 replaceduplicates=true
-returnvalue=true
+returnvalue=i
 //@A.h
 #ifndef A_H_
 #define A_H_
@@ -1257,7 +1226,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -1272,11 +1240,10 @@ public:
 
 private:
 	int help();
-	int exp(int i, B*& b, int& y, float& x);
+	int exp(int i, B* b, int y, float x);
 };
 
 #endif /*A_H_*/
-
 //@A.cpp
 #include "A.h"
 
@@ -1303,7 +1270,6 @@ int A::foo() {
 int A::help() {
 	return 42;
 }
-
 //=
 #include "A.h"
 
@@ -1313,7 +1279,7 @@ A::A() {
 A::~A() {
 }
 
-int A::exp(int i, B*& b, int& y, float& x) {
+int A::exp(int i, B* b, int y, float x) {
 	++i;
 	b->hello(y);
 	i = i + x;
@@ -1335,7 +1301,6 @@ int A::foo() {
 int A::help() {
 	return 42;
 }
-
 //@B.h
 #ifndef B_H_
 #define B_H_
@@ -1348,12 +1313,11 @@ public:
 };
 
 #endif /*B_H_*/
-
-//!ExtractFunctionRefactoringTest with Return Value take the second and Ref Parameter
+//!Extract function with return value take the second and ref parameter
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
 returnparameterindex=1
-returnvalue=true
+returnvalue=b
 //@A.h
 #ifndef A_H_
 #define A_H_
@@ -1371,7 +1335,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -1386,11 +1349,10 @@ public:
 
 private:
 	int help();
-	B* exp(int& i, B* b, int& y, float& x);
+	B* exp(int& i, B* b, int y, float x);
 };
 
 #endif /*A_H_*/
-
 //@A.cpp
 #include "A.h"
 
@@ -1417,7 +1379,6 @@ int A::foo() {
 int A::help() {
 	return 42;
 }
-
 //=
 #include "A.h"
 
@@ -1427,7 +1388,7 @@ A::A() {
 A::~A() {
 }
 
-B* A::exp(int& i, B* b, int& y, float& x) {
+B* A::exp(int& i, B* b, int y, float x) {
 	++i;
 	b->hello(y);
 	i = i + x;
@@ -1449,7 +1410,6 @@ int A::foo() {
 int A::help() {
 	return 42;
 }
-
 //@B.h
 #ifndef B_H_
 #define B_H_
@@ -1462,9 +1422,13 @@ public:
 };
 
 #endif /*B_H_*/
-
-//!ExtractFunctionRefactoringTest protected visibility
+//!Extract function with protected visibility
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@.config
+filename=A.cpp
+methodname=exp
+replaceduplicates=false
+visibility=protected
 //@A.h
 #ifndef A_H_
 #define A_H_
@@ -1540,16 +1504,13 @@ int A::foo() {
 int A::help() {
 	return 42;
 }
+//!Extract function with public visibility
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
 filename=A.cpp
 methodname=exp
 replaceduplicates=false
-returnvalue=false
-returnparameterindex=0
-visibility=protected
-
-//!ExtractFunctionRefactoringTest public visibility
-//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+visibility=public
 //@A.h
 #ifndef A_H_
 #define A_H_
@@ -1565,7 +1526,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -1582,7 +1542,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //@A.cpp
 #include "A.h"
 
@@ -1602,7 +1561,6 @@ int A::foo() {
 int A::help() {
 	return 42;
 }
-
 //=
 #include "A.h"
 
@@ -1626,17 +1584,12 @@ int A::foo() {
 int A::help() {
 	return 42;
 }
-
+//!Extract function with const Method Bug # 46
+//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
 filename=A.cpp
 methodname=exp
 replaceduplicates=false
-returnvalue=false
-returnparameterindex=0
-visibility=public
-
-//!ExtractFunctionRefactoringTest const Method Bug # 46
-//#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@A.h
 #ifndef A_H_
 #define A_H_
@@ -1652,7 +1605,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -1669,7 +1621,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //@A.cpp
 #include "A.h"
 
@@ -1689,7 +1640,6 @@ int A::foo() const {
 int A::help() {
 	return 42;
 }
-
 //=
 #include "A.h"
 
@@ -1713,14 +1663,6 @@ int A::foo() const {
 int A::help() {
 	return 42;
 }
-
-//@.config
-filename=A.cpp
-methodname=exp
-replaceduplicates=false
-returnvalue=false
-returnparameterindex=0
-
 //!Don't return variables that aren't used
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
@@ -1767,7 +1709,7 @@ void function() {
 			continue;/*$$*/
 	}
 }
-//! Bug #124 Extract Function with a Macro call in selected code "forgets" the macro
+//! Bug #124 Extract function with a Macro call in selected code "forgets" the macro
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
 filename=Test.cpp
@@ -1802,7 +1744,7 @@ void testFuerRainer() {
 	runTest(i);
 }
 
-//! Bug #124 with comments Extract Function with a Macro call in selected code "forgets" the macro
+//! Bug #124 with comments Extract function with a Macro call in selected code "forgets" the macro
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
 filename=Test.cpp
@@ -1833,7 +1775,7 @@ void testFuerRainer() {
 	runTest(i);
 }
 
-//! Bug #137 String Array problem in Extract Function
+//! Bug #137 String Array problem in Extract function
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
 filename=Test.cpp
@@ -1873,9 +1815,6 @@ int main() {
 
 //!Bug 239059: Double & in signature of extracted functions
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
-//@.config
-returnvalue=false
-returnparameterindex=0
 //@A.h
 #ifndef A_H_
 #define A_H_
@@ -2016,7 +1955,6 @@ void Test::test() {
 filename=Test.cpp
 methodname=startTag
 //@testString.h
-
 namespace test {
 
 class string {
@@ -2031,7 +1969,6 @@ public:
 };
 
 }
-
 //@Test.cpp
 #include "testString.h"
 
@@ -2044,11 +1981,10 @@ test::string toXML() {
 int main() {
 	return 0;
 }
-
 //=
 #include "testString.h"
 
-test::string startTag(test::string& name) {
+test::string startTag(test::string name) {
 	return "<" + name + ">";
 }
 
@@ -2061,7 +1997,6 @@ test::string toXML() {
 int main() {
 	return 0;
 }
-
 //!Bug 248238: Extract Method Produces Wrong Return Type Or Just Fails Typedef
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
@@ -2080,13 +2015,11 @@ public:
 	string2 operator+(const string2& rhs) { return rhs; }
 	string2(char* cp) {}
 	string2() {};
-
 };
 
 typedef string2 string;
 
 }
-
 //@Test.cpp
 #include "testString.h"
 
@@ -2099,11 +2032,10 @@ test::string toXML() {
 int main() {
 	return 0;
 }
-
 //=
 #include "testString.h"
 
-test::string startTag(test::string& name) {
+test::string startTag(test::string name) {
 	return "<" + name + ">";
 }
 
@@ -2116,7 +2048,6 @@ test::string toXML() {
 int main() {
 	return 0;
 }
-
 //!Bug 248622: Extract function fails to extract several expressions; Selection at the end
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
@@ -2219,7 +2150,7 @@ test::string toXML() {
 int main() {
 	return 0;
 }
-//!Bug#262000 refactoring "extract function" misinterprets artificial blocks
+//!Bug#262000 Extract function misinterprets artificial blocks
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
 filename=main.cpp
@@ -2349,7 +2280,7 @@ int Test::calculateStuff() {
 	return result;
 }
 
-//!Bug#281564 Extract Function fails when catching an unnamed exception
+//!Bug#281564 Extract function fails when catching an unnamed exception
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
 filename=main.cpp
@@ -2390,7 +2321,7 @@ int main() {
 	return a;
 }
 
-//!Bug#282004 Refactor->Extract Function in C Project (not C++) won't extract parameters
+//!Bug#282004 Extract function in C Project (not C++) won't extract parameters
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
 //@.config
 filename=main.c
@@ -2401,9 +2332,8 @@ int main() {
 	/*$*/b=a*2;/*$$*/
 	return a;
 }
-
 //=
-void exp(int b, int* a) {
+void exp(int b, int a) {
 	b = a * 2;
 }
 
@@ -2412,9 +2342,14 @@ int main() {
 	exp(b, a);
 	return a;
 }
-
-//!ExtractFunctionRefactoringTest virtual
+//!Extract function with virtual
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@.config
+filename=A.cpp
+methodname=exp
+replaceduplicates=false
+virtual=true
+visibility=public
 //@A.h
 #ifndef A_H_
 #define A_H_
@@ -2430,7 +2365,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //=
 #ifndef A_H_
 #define A_H_
@@ -2447,7 +2381,6 @@ private:
 };
 
 #endif /*A_H_*/
-
 //@A.cpp
 #include "A.h"
 
@@ -2468,7 +2401,6 @@ int A::foo() {
 int A::help() {
 	return 42;
 }
-
 //=
 #include "A.h"
 
@@ -2494,18 +2426,12 @@ int A::foo() {
 int A::help() {
 	return 42;
 }
-
-//@.config
-filename=A.cpp
-methodname=exp
-replaceduplicates=false
-returnvalue=false
-returnparameterindex=0
-virtual=true
-visibility=public
-
 //!Bug 288268: c-refactoring creates c++-parameters
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@.config
+filename=main.c
+methodname=test
+replaceduplicates=false
 //@main.c
 int main() {
 	int a, b;
@@ -2522,14 +2448,12 @@ int main() {
 	test(a, b);
 	return a;
 }
-//@.config
-filename=main.c
-methodname=test
-replaceduplicates=false
-returnvalue=false
-
 //!Handling of blank lines
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
+//@.config
+filename=main.c
+methodname=fib
+replaceduplicates=false
 //@main.c
 int main() {
 	int f;
@@ -2561,7 +2485,3 @@ int main() {
 	int b = fib();
 	f = b;
 }
-//@.config
-filename=main.c
-methodname=fib
-replaceduplicates=false

@@ -662,11 +662,9 @@ void foo() {
 }
 //! Extract macro
 //#org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest
-
 //@.config
 filename=test.cpp
 methodname=bar
-
 //@test.cpp
 #define five 5
 #define ADD(a, b) a + b
@@ -681,7 +679,7 @@ int main() {
 #define five 5
 #define ADD(a, b) a + b
 
-int bar(int& i) {
+int bar(int i) {
 	return ADD(i, five);
 }
 

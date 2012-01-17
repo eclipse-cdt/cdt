@@ -50,11 +50,6 @@ public class ChooserComposite extends Composite {
 		GridLayout layout = new GridLayout();		
 		setLayout(layout);
 
-		boolean hasNoPredefinedReturnValue = true;
-		if (info.getMandatoryReturnVariable() != null) {
-			hasNoPredefinedReturnValue = false;
-		}
-
 		final ArrayList<Button> returnButtons = new ArrayList<Button>();
 		final ArrayList<Button> referenceButtons = new ArrayList<Button>();
 
@@ -150,7 +145,7 @@ public class ChooserComposite extends Composite {
 				final Button returnButton = new Button(table, SWT.RADIO);
 				returnButton.setSelection(name.isReturnValue());
 				name.setUserSetIsReference(name.isOutput());
-				returnButton.setEnabled(hasNoPredefinedReturnValue);
+				returnButton.setEnabled(info.getMandatoryReturnVariable() == null);
 				returnButton.setBackground(table.getBackground());
 				returnButton.addSelectionListener(new SelectionListener() {
 					@Override
@@ -182,7 +177,7 @@ public class ChooserComposite extends Composite {
 		if (!info.isExtractExpression()) {
 			voidReturn = new Button(parent, SWT.CHECK | SWT.LEFT);
 			voidReturn.setText(Messages.ChooserComposite_NoReturnValue);
-			voidReturn.setEnabled(hasNoPredefinedReturnValue);
+			voidReturn.setEnabled(info.getMandatoryReturnVariable() == null);
 			voidReturn.addSelectionListener(new SelectionListener() {
 				@Override
 				public void widgetDefaultSelected(SelectionEvent e) {
@@ -213,9 +208,9 @@ public class ChooserComposite extends Composite {
 		column.setWidth(100);
 	}
 	
-	void onVisibilityOrReturnChange(List<NameInformation> name) {
+	void onVisibilityOrReturnChange(List<NameInformation> names) {
 		String variableUsedAfterBlock = null;
-		for (NameInformation information : name) {
+		for (NameInformation information : names) {
 			if (information.isReferencedAfterSelection() &&
 					!(information.isUserSetIsReference() || information.isUserSetIsReturnValue())) {
 				variableUsedAfterBlock = information.getName().toString();

@@ -8,10 +8,12 @@
  *  
  * Contributors: 
  *     Institute for Software - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -47,13 +49,16 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVariableReadWriteFlags;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ASTWriter;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 
 public class NodeContainer {
 	public final NameInformation NULL_NAME_INFORMATION = new NameInformation(new CPPASTName());
 
 	private final List<IASTNode> nodes;
 	private List<NameInformation> names;
+	private List<NameInformation> interfaceNames;
 
 	public class NameInformation {
 		private IASTName name;
@@ -214,8 +219,8 @@ public class NodeContainer {
 			return isOutput;
 		}
 
-		public void setOutput(boolean output) {
-			this.isOutput = output;
+		public void setOutput(boolean isOutput) {
+			this.isOutput = isOutput;
 		}
 
 		public boolean isReturnValue() {
@@ -334,96 +339,85 @@ public class NodeContainer {
 			IASTName name = nameInfo.getName();
 
 			IASTTranslationUnit unit = name.getTranslationUnit();
-			IASTName[] decls = unit.getDeclarationsInAST(name.resolveBinding());
-			for (IASTName declaration : decls) {
-				nameInfo.setDeclaration(declaration);
-			}
-			if (nameInfo.isReferencedAfterSelection()) {
-				nameInfo.setOutput(true);
+			IASTName[] nameDeclarations = unit.getDeclarationsInAST(name.resolveBinding());
+			if (nameDeclarations.length != 0) {
+				nameInfo.setDeclaration(nameDeclarations[nameDeclarations.length - 1]);
 			}
 		}
 	}
 
-	/*
-	 * Returns all local names in the selection which are referenced after the selection.
+	/**
+	 * Returns names that are either parameter or return value candidates.
 	 */
-	public List<NameInformation> getNamesUsedAfter() {
-		findAllNames();
-
-		Set<IASTName> declarations = new HashSet<IASTName>();
-		List<NameInformation> usedAfter = new ArrayList<NameInformation>();
-
-		for (NameInformation nameInfo : names) {
-			if (declarations.add(nameInfo.getDeclaration())) {
-				if (nameInfo.isReferencedAfterSelection()) {
-					usedAfter.add(nameInfo);
-				}
-			}
-		}
-
-		return usedAfter;
-	}
-
-	public List<NameInformation> getNamesUsedAfterChoosenByUser() {
-		findAllNames();
-
-		Set<IASTName> declarations = new HashSet<IASTName>();
-		List<NameInformation> usedAfter = new ArrayList<NameInformation>();
-
-		for (NameInformation nameInfo : names) {
-			if (declarations.add(nameInfo.getDeclaration())) {
-				if (nameInfo.isUserSetIsReference() || nameInfo.isUserSetIsReturnValue()) {
-					usedAfter.add(nameInfo);
-				}
-			}
-		}
-
-		return usedAfter;
-	}
-
-	public List<NameInformation> getUsedNamesUnique() {
-		findAllNames();
-
-		Set<IASTName> declarations = new HashSet<IASTName>();
-		List<NameInformation> usedAfter = new ArrayList<NameInformation>();
-
-		for (NameInformation nameInfo : names) {
-			if (declarations.add(nameInfo.getDeclaration())) {
-				usedAfter.add(nameInfo);
-			} else {
-				for (NameInformation nameInformation : usedAfter) {
-					if (nameInfo.isWriteAccess() &&
-							nameInfo.getDeclaration() == nameInformation.getDeclaration()) {
-						nameInformation.setWriteAccess(true);
+	private List<NameInformation> getInterfaceNames() {
+		if (interfaceNames == null) {
+			findAllNames();
+	
+			Set<IASTName> declarations = new HashSet<IASTName>();
+			interfaceNames = new ArrayList<NameInformation>();
+	
+			for (NameInformation nameInfo : names) {
+				if (declarations.add(nameInfo.getDeclaration())) {
+					if (nameInfo.isDeclaredInSelection()) {
+						if (nameInfo.isReferencedAfterSelection()) {
+							nameInfo.setReturnValue(true);
+							interfaceNames.add(nameInfo);
+						}
+					} else {
+						for (NameInformation n2 : names) {
+							if (n2.getDeclaration() == nameInfo.getDeclaration()) {
+								int flag = CPPVariableReadWriteFlags.getReadWriteFlags(n2.getName());
+								if ((flag & PDOMName.WRITE_ACCESS) != 0) {
+									nameInfo.setWriteAccess(true);
+									break;
+								}
+							}
+						}
+						if (nameInfo.isWriteAccess() && nameInfo.isReferencedAfterSelection()) {
+							nameInfo.setOutput(true);
+						}
+						interfaceNames.add(nameInfo);
 					}
 				}
 			}
 		}
 
-		return usedAfter;
+		return interfaceNames;
+	}
+
+	private List<NameInformation> getInterfaceNames(boolean isReturnValue) {
+		List<NameInformation> selectedNames = null;
+
+		for (NameInformation nameInfo : getInterfaceNames()) {
+			if (nameInfo.isReturnValue() == isReturnValue) {
+				if (selectedNames == null) {
+					selectedNames = new ArrayList<NameInformation>();
+				}
+				selectedNames.add(nameInfo);
+			}
+		}
+		if (selectedNames == null) {
+			selectedNames = Collections.emptyList();
+		}
+		return selectedNames;
 	}
 
 	/**
-	 * Returns all variables declared in the selection, which will are referenced after
-	 * the selection.
+	 * Returns names that are candidates to be used as function parameters.
+	 */
+	public List<NameInformation> getParameterCandidates() {
+		return getInterfaceNames(false);
+	}
+	
+
+	/**
+	 * Returns names that are candidates for being used as the function return value. Multiple
+	 * return value candidates mean that the function cannot be extracted.
 	 */
 	public List<NameInformation> getReturnValueCandidates() {
-		Set<IASTName> declarations = new HashSet<IASTName>();
-		List<NameInformation> usedAfter = new ArrayList<NameInformation>();
-
-		for (NameInformation nameInfo : names) {
-			if (nameInfo.isDeclaredInSelection() &&	nameInfo.isReferencedAfterSelection() &&
-					declarations.add(nameInfo.getDeclaration())) {
-				usedAfter.add(nameInfo);
-				// It's a return value candidate, set return value to true and reference to false
-				nameInfo.setReturnValue(true);
-				nameInfo.setOutput(false);
-			}
-		}
-
-		return usedAfter;
+		return getInterfaceNames(true);
 	}
-
+	
 	public List<IASTNode> getNodesToWrite() {
 		return nodes;
 	}

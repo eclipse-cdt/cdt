@@ -25,11 +25,13 @@ public class CBreakpointWorkbenchAdapterFactory implements IAdapterFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter( Object adaptableObject, Class adapterType ) {
 		if ( adapterType != IWorkbenchAdapter.class || !(adaptableObject instanceof ICBreakpoint) ) {
 			return null;
 		}
 		return new WorkbenchAdapter() {
+			@Override
 			public String getLabel( Object o ) {
 				// for now
 				if ( o instanceof ICLineBreakpoint ) {
@@ -46,6 +48,7 @@ public class CBreakpointWorkbenchAdapterFactory implements IAdapterFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
+	@Override
 	public Class[] getAdapterList() {
 		return new Class[] { IWorkbenchAdapter.class };
 	}

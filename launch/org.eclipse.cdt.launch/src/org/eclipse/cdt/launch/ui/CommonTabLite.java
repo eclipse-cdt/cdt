@@ -97,6 +97,7 @@ public class CommonTabLite extends AbstractLaunchConfigurationTab {
 			super(parentShell, initialRoot, allowNewContainerName, message);
 		}
 
+		@Override
 		protected IDialogSettings getDialogBoundsSettings() {
 			IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
 			IDialogSettings section = settings.getSection(SETTINGS_ID);
@@ -130,6 +131,7 @@ public class CommonTabLite extends AbstractLaunchConfigurationTab {
 	 * Modify listener that simply updates the owning launch configuration dialog.
 	 */
 	private ModifyListener fBasicModifyListener = new ModifyListener() {
+		@Override
 		public void modifyText(ModifyEvent evt) {
 			updateLaunchConfigurationDialog();
 		}
@@ -138,6 +140,7 @@ public class CommonTabLite extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {		
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
@@ -164,6 +167,7 @@ public class CommonTabLite extends AbstractLaunchConfigurationTab {
 		fFavoritesTable.setContentProvider(new FavoritesContentProvider());
 		fFavoritesTable.setLabelProvider(new FavoritesLabelProvider());
 		fFavoritesTable.addCheckStateListener(new ICheckStateListener() {
+				@Override
 				public void checkStateChanged(CheckStateChangedEvent event) {
 					updateLaunchConfigurationDialog();
 				}
@@ -184,12 +188,14 @@ public class CommonTabLite extends AbstractLaunchConfigurationTab {
 		fLocalRadioButton.setLayoutData(gd);
 		fSharedRadioButton = createRadioButton(comp, LaunchConfigurationsMessages.CommonTab_S_hared_4);
 		fSharedRadioButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				handleSharedRadioButtonSelected();
 			}
 		});
 		fSharedLocationText = SWTFactory.createSingleText(comp, 1);
 		fSharedLocationText.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			@Override
 			public void getName(AccessibleEvent e) {
 				e.result =  LaunchConfigurationsMessages.CommonTab_S_hared_4;
 			}
@@ -197,6 +203,7 @@ public class CommonTabLite extends AbstractLaunchConfigurationTab {
 		fSharedLocationText.addModifyListener(fBasicModifyListener);
 		fSharedLocationButton = createPushButton(comp, LaunchConfigurationsMessages.CommonTab__Browse_6, null);	 
 		fSharedLocationButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				handleSharedLocationButtonSelected();
 			}
@@ -282,6 +289,7 @@ public class CommonTabLite extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		boolean isShared = !configuration.isLocal();
 		fSharedRadioButton.setSelection(isShared);
@@ -429,6 +437,7 @@ public class CommonTabLite extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public boolean isValid(ILaunchConfiguration config) {
 		setMessage(null);
 		setErrorMessage(null);
@@ -458,6 +467,7 @@ public class CommonTabLite extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		config.setContainer(null);
 		setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, config, true, true);
@@ -466,6 +476,7 @@ public class CommonTabLite extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		updateConfigFromLocalShared(configuration);
 		updateConfigFromFavorites(configuration);
@@ -474,6 +485,7 @@ public class CommonTabLite extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
+	@Override
 	public String getName() {
 		return LaunchConfigurationsMessages.CommonTab__Common_15; 
 	}
@@ -483,6 +495,7 @@ public class CommonTabLite extends AbstractLaunchConfigurationTab {
 	 * 
 	 * @since 3.3
 	 */
+	@Override
 	public String getId() {
 		return "org.eclipse.debug.ui.commonTab"; //$NON-NLS-1$
 	}
@@ -490,6 +503,7 @@ public class CommonTabLite extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#canSave()
 	 */
+	@Override
 	public boolean canSave() {
 		return validateLocalShared();
 	}
@@ -497,6 +511,7 @@ public class CommonTabLite extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return DebugUITools.getImage(IInternalDebugUIConstants.IMG_OBJS_COMMON_TAB);
 	}
@@ -504,11 +519,13 @@ public class CommonTabLite extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {}
 
 	/**
@@ -516,6 +533,7 @@ public class CommonTabLite extends AbstractLaunchConfigurationTab {
 	 */
 	class FavoritesContentProvider implements IStructuredContentProvider {
 
+		@Override
 		public Object[] getElements(Object inputElement) {
 			ILaunchGroup[] groups = DebugUITools.getLaunchGroups();
 			List possibleGroups = new ArrayList();
@@ -530,8 +548,10 @@ public class CommonTabLite extends AbstractLaunchConfigurationTab {
 			return possibleGroups.toArray();
 		}
 
+		@Override
 		public void dispose() {}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 
 	}
@@ -544,6 +564,7 @@ public class CommonTabLite extends AbstractLaunchConfigurationTab {
 		
 		private Map fImages = new HashMap();
 
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			Image image = (Image)fImages.get(element);
 			if (image == null) {
@@ -556,13 +577,16 @@ public class CommonTabLite extends AbstractLaunchConfigurationTab {
 			return image;
 		}
 
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			String label = ((LaunchGroupExtension)element).getLabel();
 			return DebugUIPlugin.removeAccelerators(label);
 		}
 
+		@Override
 		public void addListener(ILabelProviderListener listener) {}
 
+		@Override
 		public void dispose() {
 			Iterator images = fImages.values().iterator();
 			while (images.hasNext()) {
@@ -571,8 +595,10 @@ public class CommonTabLite extends AbstractLaunchConfigurationTab {
 			}
 		}
 
+		@Override
 		public boolean isLabelProperty(Object element, String property) {return false;}
 
+		@Override
 		public void removeListener(ILabelProviderListener listener) {}		
 	}
 

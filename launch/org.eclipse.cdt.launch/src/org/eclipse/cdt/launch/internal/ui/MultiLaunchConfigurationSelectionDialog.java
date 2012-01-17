@@ -89,6 +89,7 @@ public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog imp
 		fFilters = null;
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		emptyTypeFilter = new ViewerFilter() {
+			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
 				if (element instanceof ILaunchConfigurationType) {
 					try {
@@ -109,6 +110,7 @@ public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog imp
 		return DebugPlugin.getDefault().getLaunchManager();
 	}
 
+	@Override
 	protected Control createContents(Composite parent) {
 		Control x = super.createContents(parent);
 		validate();
@@ -116,6 +118,7 @@ public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog imp
 		return x;
 	}
 
+	@Override
 	protected Control createDialogArea(Composite parent2) {
 		Composite comp = (Composite) super.createDialogArea(parent2);
 		
@@ -189,6 +192,7 @@ public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog imp
 		data.heightHint = Math.max(convertHeightInCharsToPixels(15), bounds.height);
 		data.widthHint = Math.max(convertWidthInCharsToPixels(40), bounds.width);
 		fStackComposite.getCombo().addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				mode = ((Combo) e.widget).getText();
 			}
@@ -200,6 +204,7 @@ public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog imp
 		Button checkBox = new Button(checkboxComp, SWT.CHECK);
 		checkBox.setText(LaunchMessages.MultiLaunchConfigurationSelectionDialog_5); 
 		checkBox.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				isDefaultMode = ((Button) e.widget).getSelection();
 			}
@@ -221,6 +226,7 @@ public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog imp
 		combo.add(LaunchElement.actionEnumToStr(EPostLaunchAction.WAIT_FOR_TERMINATION));
 		combo.add(LaunchElement.actionEnumToStr(EPostLaunchAction.DELAY));
 		combo.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				final String actionStr = ((Combo) e.widget).getText();
 				action = MultiLaunchConfigurationDelegate.LaunchElement.strToActionEnum(actionStr);
@@ -238,6 +244,7 @@ public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog imp
 		gridData.widthHint = convertWidthInCharsToPixels(8);
 		fDelayAmountWidget.setLayoutData(gridData);
 		fDelayAmountWidget.addModifyListener(new ModifyListener(){
+			@Override
 			public void modifyText(ModifyEvent e) {
 				String text = ((Text)e.widget).getText();
 				try {
@@ -294,6 +301,7 @@ public class MultiLaunchConfigurationSelectionDialog extends TitleAreaDialog imp
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		
 		// This listener gets called for a selection change in the launch

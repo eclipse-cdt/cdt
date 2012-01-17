@@ -48,10 +48,12 @@ public class VirtualSourceViewer extends SourceViewer {
     private void initControlListener() {
         getTextWidget().addControlListener( new ControlListener() {
 
-            public void controlMoved( ControlEvent e ) {
+            @Override
+			public void controlMoved( ControlEvent e ) {
             }
             
-            public void controlResized( ControlEvent e ) {
+            @Override
+			public void controlResized( ControlEvent e ) {
                 handleControlResized();
             }
         } );

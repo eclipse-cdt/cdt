@@ -32,6 +32,7 @@ public class ArrayType extends DerivedType implements ICDIArrayType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayType#getDimension()
 	 */
+	@Override
 	public int getDimension() {
 		if (derivedType == null) {
 			getComponentType();
@@ -42,6 +43,7 @@ public class ArrayType extends DerivedType implements ICDIArrayType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIArrayType#getComponentType()
 	 */
+	@Override
 	public ICDIType getComponentType() {
 		if (derivedType == null) {
 			String orig = getTypeName();

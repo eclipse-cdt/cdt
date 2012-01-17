@@ -47,12 +47,14 @@ public class RestoreDefaultTypeActionHandler extends AbstractHandler {
 		fCastableItems = castableItems;
 	}
 
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		if ( getCastToType() == null || getCastToType().length == 0 )
 			return null;
 		
 		BusyIndicator.showWhile( Display.getCurrent(), new Runnable() {
 
+			@Override
 			public void run() {
 				try {
 					doAction( getCastToType() );

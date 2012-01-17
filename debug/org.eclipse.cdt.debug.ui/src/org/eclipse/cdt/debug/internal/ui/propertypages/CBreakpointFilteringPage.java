@@ -28,6 +28,7 @@ public class CBreakpointFilteringPage extends PropertyPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents( Composite parent ) {
 		noDefaultAndApplyButton();
 		Composite mainComposite = new Composite( parent, SWT.NONE );
@@ -65,6 +66,7 @@ public class CBreakpointFilteringPage extends PropertyPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		doStore();
 		return super.performOk();

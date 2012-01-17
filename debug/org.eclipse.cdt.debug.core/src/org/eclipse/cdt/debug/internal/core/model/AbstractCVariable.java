@@ -55,6 +55,7 @@ public abstract class AbstractCVariable extends CDebugElement implements ICVaria
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter( Class adapter ) {
 		if ( IEnableDisableTarget.class.equals( adapter ) )
 			return this;

@@ -27,6 +27,7 @@ public class DefaultGDBJtagConnectionImpl extends DefaultGDBJtagDeviceImpl imple
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.IGDBJtagDevice#doDelay(int, java.util.Collection)
 	 */
+	@Override
 	public final void setDefaultDeviceConnection(String connection) {
 		this.connection = connection;
 	}
@@ -34,6 +35,7 @@ public class DefaultGDBJtagConnectionImpl extends DefaultGDBJtagDeviceImpl imple
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.IGDBJtagDevice#doRemote(java.lang.String, java.util.Collection)
 	 */
+	@Override
 	public void doRemote(String connection, Collection<String> commands) {
 		String cmd = ""; //$NON-NLS-1$
 		if (connection != null) {
@@ -50,14 +52,17 @@ public class DefaultGDBJtagConnectionImpl extends DefaultGDBJtagDeviceImpl imple
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.IGDBJtagDevice#getDefaultDeviceConnection()
 	 */
+	@Override
 	public String getDefaultDeviceConnection() {
 		return connection;
 	}
 
+	@Override
 	public String getDefaultIpAddress() {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public String getDefaultPortNumber() {
 		throw new UnsupportedOperationException();
 	}

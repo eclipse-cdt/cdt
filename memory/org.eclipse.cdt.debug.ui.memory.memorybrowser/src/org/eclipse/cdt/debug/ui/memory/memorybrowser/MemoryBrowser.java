@@ -82,14 +82,11 @@ import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.DragSource;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.DropTargetAdapter;
 import org.eclipse.swt.dnd.DropTargetEvent;
-import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -226,6 +223,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 		/*
 		 * @see org.eclipse.swt.dnd.DropTargetListener#drop(org.eclipse.swt.dnd.DropTargetEvent)
 		 */
+		@Override
 		public void drop(final DropTargetEvent event) {
 			if (TextTransfer.getInstance().isSupportedType( event.currentDataType )) {
 				if ( event.data instanceof String ) {
@@ -238,6 +236,7 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 		/*
 		 * @see org.eclipse.swt.dnd.DropTargetListener#dragEnter(org.eclipse.swt.dnd.DropTargetEvent)
 		 */
+		@Override
 		public void dragEnter(DropTargetEvent event) {
 			event.detail   = DND.DROP_COPY;
 			event.feedback = DND.FEEDBACK_NONE;
@@ -289,27 +288,32 @@ public class MemoryBrowser extends ViewPart implements IDebugContextListener, IM
 		}
 		
 		fGotoAddressBar.getButton(IDialogConstants.OK_ID).addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				performGo(false);
 			}
 		});
 		
 		fGotoAddressBar.getButton(GoToAddressBarWidget.ID_GO_NEW_TAB).addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				performGo(true);
 			}
 		});
 		
 		fGotoAddressBar.getExpressionWidget().addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				performGo(false);
 			}
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				performGo(false);
 			}
 		});
 		
 		fGotoMemorySpaceControl.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if(fGotoMemorySpaceControl.getItemCount() >= 2) {
 					final CTabFolder activeFolder = (CTabFolder) fStackLayout.topControl;

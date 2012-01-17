@@ -24,6 +24,7 @@ public class MIPreferenceInitializer extends AbstractPreferenceInitializer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
 	 */
+	@Override
 	public void initializeDefaultPreferences() {
 		MIPlugin.getDefault().getPluginPreferences().setDefault(IMIConstants.PREF_REQUEST_TIMEOUT, IMIConstants.DEF_REQUEST_TIMEOUT);
 		MIPlugin.getDefault().getPluginPreferences().setDefault(IMIConstants.PREF_REQUEST_LAUNCH_TIMEOUT, IMIConstants.DEF_REQUEST_LAUNCH_TIMEOUT);

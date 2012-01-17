@@ -32,6 +32,7 @@ class MacOSCLIInfoPID extends CLIInfoProc {
 		setOperation("info pid"); //$NON-NLS-1$
 	}
 
+	@Override
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();
@@ -75,6 +76,7 @@ class MacOSCLIInfoPID extends CLIInfoProc {
 			}
 		}
 
+		@Override
 		public int getPID() {
 			return pid;
 		}

@@ -39,14 +39,16 @@ public class DocumentContentUpdate extends DocumentUpdate implements IDocumentEl
     /* (non-Javadoc)
      * @see com.arm.eclipse.rvd.ui.disassembly.IDocumentElementContentUpdate#setLineCount(int)
      */
-    public void setLineCount( int lineCount ) {
+    @Override
+	public void setLineCount( int lineCount ) {
         fElements = new Object[lineCount];
     }
 
     /* (non-Javadoc)
      * @see com.arm.eclipse.rvd.ui.disassembly.IDocumentElementContentUpdate#addElement(int, java.lang.Object)
      */
-    public void addElement( int line, Object element ) throws IndexOutOfBoundsException {
+    @Override
+	public void addElement( int line, Object element ) throws IndexOutOfBoundsException {
         if ( line < 0 || line >= fElements.length )
             throw new IndexOutOfBoundsException( Integer.toString( line ) );
         fElements[line] = element;
@@ -55,28 +57,32 @@ public class DocumentContentUpdate extends DocumentUpdate implements IDocumentEl
     /* (non-Javadoc)
      * @see com.arm.eclipse.rvd.ui.disassembly.IDocumentElementContentUpdate#getOriginalOffset()
      */
-    public int getOriginalOffset() {
+    @Override
+	public int getOriginalOffset() {
         return fOriginalOffset;
     }
 
     /* (non-Javadoc)
      * @see com.arm.eclipse.rvd.ui.disassembly.IDocumentElementContentUpdate#getRequestedLineCount()
      */
-    public int getRequestedLineCount() {
+    @Override
+	public int getRequestedLineCount() {
         return fLineCount;
     }
 
     /* (non-Javadoc)
      * @see com.arm.eclipse.rvd.ui.disassembly.IDocumentElementContentUpdate#setOffset(int)
      */
-    public void setOffset( int offset ) {
+    @Override
+	public void setOffset( int offset ) {
         fOffset = offset;
     }
 
     /* (non-Javadoc)
      * @see com.arm.eclipse.rvd.ui.disassembly.IDocumentElementContentUpdate#reveal()
      */
-    public boolean reveal() {
+    @Override
+	public boolean reveal() {
         return fReveal;
     }
 

@@ -32,6 +32,7 @@ public class CygwinMIProcessAdapter extends MIProcessAdapter {
 		super(args, launchTimeout, monitor);
 	}
 
+	@Override
 	public void interrupt(MIInferior inferior) {
 		if (fGDBProcess instanceof Spawner) {
 			if (inferior.isRunning()) {

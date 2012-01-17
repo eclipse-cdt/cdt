@@ -39,6 +39,7 @@ public class AddWatchpointActionDelegate extends ActionDelegate implements IView
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
+	@Override
 	public void init( IViewPart view ) {
 		setView( view );
 	}
@@ -54,6 +55,7 @@ public class AddWatchpointActionDelegate extends ActionDelegate implements IView
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run( IAction action ) {
 		AddWatchpointDialog dlg = new AddWatchpointDialog( CDebugUIPlugin.getActiveWorkbenchShell(), getMemorySpaceManagement() );
 		if ( dlg.open() == Window.OK ) {

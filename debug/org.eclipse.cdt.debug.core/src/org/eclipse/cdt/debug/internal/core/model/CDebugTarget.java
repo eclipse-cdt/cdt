@@ -418,6 +418,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IDebugTarget#getProcess()
 	 */
+	@Override
 	public IProcess getProcess() {
 		return fDebuggeeProcess;
 	}
@@ -438,6 +439,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	 * 
 	 * @see org.eclipse.debug.core.model.IDebugTarget#getThreads()
 	 */
+	@Override
 	public IThread[] getThreads() {
 		List<CThread> threads = getThreadList();
 		return threads.toArray(new IThread[threads.size()]);
@@ -448,6 +450,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	 * 
 	 * @see org.eclipse.debug.core.model.IDebugTarget#hasThreads()
 	 */
+	@Override
 	public boolean hasThreads() throws DebugException {
 		return getThreadList().size() > 0;
 	}
@@ -457,6 +460,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	 * 
 	 * @see org.eclipse.debug.core.model.IDebugTarget#getName()
 	 */
+	@Override
 	public String getName() throws DebugException {
 		return fName;
 	}
@@ -473,6 +477,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IDebugTarget#supportsBreakpoint(org.eclipse.debug.core.model.IBreakpoint)
 	 */
+	@Override
 	public boolean supportsBreakpoint(IBreakpoint breakpoint) {
 		if (!getConfiguration().supportsBreakpoints())
 			return false;
@@ -482,6 +487,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchListener#launchRemoved(org.eclipse.debug.core.ILaunch)
 	 */
+	@Override
 	public void launchRemoved(ILaunch launch) {
 		if (!isAvailable()) {
 			return;
@@ -496,18 +502,21 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchListener#launchAdded(org.eclipse.debug.core.ILaunch)
 	 */
+	@Override
 	public void launchAdded(ILaunch launch) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchListener#launchChanged(org.eclipse.debug.core.ILaunch)
 	 */
+	@Override
 	public void launchChanged(ILaunch launch) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ITerminate#canTerminate()
 	 */
+	@Override
 	public boolean canTerminate() {
 		return supportsTerminate() && isAvailable();
 	}
@@ -515,6 +524,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ITerminate#isTerminated()
 	 */
+	@Override
 	public boolean isTerminated() {
 		return (getState().equals(CDebugElementState.TERMINATED));
 	}
@@ -522,6 +532,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ITerminate#terminate()
 	 */
+	@Override
 	public void terminate() throws DebugException {
 		if (!canTerminate()) {
 			return;
@@ -544,6 +555,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISuspendResume#canResume()
 	 */
+	@Override
 	public boolean canResume() {
 		return getConfiguration().supportsResume() && isSuspended();
 	}
@@ -551,6 +563,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISuspendResume#canSuspend()
 	 */
+	@Override
 	public boolean canSuspend() {
 		if (!getConfiguration().supportsSuspend())
 			return false;
@@ -570,6 +583,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISuspendResume#isSuspended()
 	 */
+	@Override
 	public boolean isSuspended() {
 		return (getState().equals(CDebugElementState.SUSPENDED));
 	}
@@ -577,6 +591,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISuspendResume#resume()
 	 */
+	@Override
 	public void resume() throws DebugException {
 		if (!canResume())
 			return;
@@ -598,6 +613,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISuspendResume#suspend()
 	 */
+	@Override
 	public void suspend() throws DebugException {
 		if (!canSuspend())
 			return;
@@ -699,18 +715,21 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IBreakpointListener#breakpointAdded(org.eclipse.debug.core.model.IBreakpoint)
 	 */
+	@Override
 	public void breakpointAdded(IBreakpoint breakpoint) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IBreakpointListener#breakpointRemoved(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.resources.IMarkerDelta)
 	 */
+	@Override
 	public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IBreakpointListener#breakpointChanged(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.resources.IMarkerDelta)
 	 */
+	@Override
 	public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
 	}
 
@@ -735,6 +754,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IDisconnect#canDisconnect()
 	 */
+	@Override
 	public boolean canDisconnect() {
 		return supportsDisconnect() && isAvailable();
 	}
@@ -742,6 +762,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IDisconnect#disconnect()
 	 */
+	@Override
 	public void disconnect() throws DebugException {
 		if (isDisconnecting()) {
 			return;
@@ -764,6 +785,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IDisconnect#isDisconnected()
 	 */
+	@Override
 	public boolean isDisconnected() {
 		return (getState().equals(CDebugElementState.DISCONNECTED));
 	}
@@ -771,6 +793,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockRetrieval#supportsStorageRetrieval()
 	 */
+	@Override
 	public boolean supportsStorageRetrieval() {
 		return false;
 	}
@@ -778,6 +801,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockRetrieval#getMemoryBlock(long, long)
 	 */
+	@Override
 	public IMemoryBlock getMemoryBlock(long startAddress, long length) throws DebugException {
 		return null;
 	}
@@ -870,6 +894,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvents(org.eclipse.cdt.debug.core.cdi.event.ICDIEvent[])
 	 */
+	@Override
 	public void handleDebugEvents(ICDIEvent[] events) {
 		for (int i = 0; i < events.length; i++) {
 			ICDIEvent event = events[i];
@@ -938,6 +963,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IRestart#canRestart()
 	 */
+	@Override
 	public boolean canRestart() {
 		return getConfiguration().supportsRestart() && isSuspended();
 	}
@@ -945,6 +971,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IRestart#restart()
 	 */
+	@Override
 	public void restart() throws DebugException {
 		if (!canRestart()) {
 			return;
@@ -1343,18 +1370,21 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IExpressionListener#expressionAdded(org.eclipse.debug.core.model.IExpression)
 	 */
+	@Override
 	public void expressionAdded(IExpression expression) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IExpressionListener#expressionChanged(org.eclipse.debug.core.model.IExpression)
 	 */
+	@Override
 	public void expressionChanged(IExpression expression) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IExpressionListener#expressionRemoved(org.eclipse.debug.core.model.IExpression)
 	 */
+	@Override
 	public void expressionRemoved(IExpression expression) {
 		if (expression instanceof CExpression && expression.getDebugTarget().equals(this)) {
 			((CExpression)expression).dispose();
@@ -1398,6 +1428,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IExecFileInfo#isLittleEndian()
 	 */
+	@Override
 	public boolean isLittleEndian() {
 		if (fIsLittleEndian == null) {
 			fIsLittleEndian = Boolean.TRUE;
@@ -1413,6 +1444,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IExecFileInfo#getExecFile()
 	 */
+	@Override
 	public IBinaryObject getExecFile() {
 		return getBinaryFile();
 	}
@@ -1436,6 +1468,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IExecFileInfo#getGlobals()
 	 */
+	@Override
 	public IGlobalVariableDescriptor[] getGlobals() throws DebugException {
 		ICDITarget cdiTarget = getCDITarget();
 		// If the backend can give us the globals...
@@ -1519,6 +1552,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IResumeWithoutSignal#canResumeWithoutSignal()
 	 */
+	@Override
 	public boolean canResumeWithoutSignal() {
 		// Check if the configuration supports this!!!
 		return (canResume() && getCurrentStateInfo() instanceof ICDISignalReceived);
@@ -1527,6 +1561,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IResumeWithoutSignal#resumeWithoutSignal()
 	 */
+	@Override
 	public void resumeWithoutSignal() throws DebugException {
 		if (!canResume())
 			return;
@@ -1618,7 +1653,8 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICDebugTarget#getDisassembly()
 	 */
-    public IDisassembly getDisassembly() throws DebugException {
+    @Override
+	public IDisassembly getDisassembly() throws DebugException {
         return fDisassembly;
     }
 
@@ -1629,6 +1665,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICDebugTarget#getSignals()
 	 */
+	@Override
 	public ICSignal[] getSignals() throws DebugException {
 		CSignalManager sm = getSignalManager();
 		if (sm != null) {
@@ -1640,6 +1677,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICDebugTarget#hasSignals()
 	 */
+	@Override
 	public boolean hasSignals() throws DebugException {
 		CSignalManager sm = getSignalManager();
 		if (sm != null) {
@@ -1665,6 +1703,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IBreakpointTarget#getBreakpointAddress(org.eclipse.cdt.debug.core.model.ICLineBreakpoint)
 	 */
+	@Override
 	public IAddress getBreakpointAddress(ICLineBreakpoint breakpoint) throws DebugException {
 		return (getBreakpointManager() != null) ? getBreakpointManager().getBreakpointAddress(breakpoint) : getAddressFactory().getZero();
 	}
@@ -1672,6 +1711,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ISteppingModeTarget#enableInstructionStepping(boolean)
 	 */
+	@Override
 	public void enableInstructionStepping(boolean enabled) {
 		fPreferences.setValue(PREF_INSTRUCTION_STEPPING_MODE, enabled);
 	}
@@ -1679,6 +1719,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ISteppingModeTarget#isInstructionSteppingEnabled()
 	 */
+	@Override
 	public boolean isInstructionSteppingEnabled() {
 		return fPreferences.getBoolean(PREF_INSTRUCTION_STEPPING_MODE);
 	}
@@ -1686,6 +1727,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ISteppingModeTarget#supportsInstructionStepping()
 	 */
+	@Override
 	public boolean supportsInstructionStepping() {
 		return getConfiguration().supportsInstructionStepping();
 	}
@@ -1707,6 +1749,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ITargetProperties#addPropertyChangeListener(org.eclipse.core.runtime.Preferences.IPropertyChangeListener)
 	 */
+	@Override
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
 		if (fPreferences != null)
 			fPreferences.addPropertyChangeListener(listener);
@@ -1715,6 +1758,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ITargetProperties#removePropertyChangeListener(org.eclipse.core.runtime.Preferences.IPropertyChangeListener)
 	 */
+	@Override
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 		if (fPreferences != null)
 			fPreferences.removePropertyChangeListener(listener);
@@ -1739,6 +1783,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICDebugTarget#isPostMortem()
 	 */
+	@Override
 	public boolean isPostMortem() {
 		return false;
 	}
@@ -1805,6 +1850,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		return CVariableFactory.createGlobalVariable(this, info, vo);
 	}
 
+	@Override
 	public void sourceContainersChanged(ISourceLookupDirector director) {
 		setSourceLookupPath(director.getSourceContainers());
 	}
@@ -1872,6 +1918,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICDebugTarget#getRegisterDescriptors()
 	 */
+	@Override
 	public IRegisterDescriptor[] getRegisterDescriptors() throws DebugException {
 		return getRegisterManager().getAllRegisterDescriptors();
 	}
@@ -1879,6 +1926,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICDebugTarget#addUserDefinedRegisterGroup(java.lang.String, org.eclipse.cdt.debug.core.model.IRegisterDescriptor[])
 	 */
+	@Override
 	public void addRegisterGroup(String name, IRegisterDescriptor[] descriptors) {
 		getRegisterManager().addRegisterGroup(name, descriptors);
 	}
@@ -1886,6 +1934,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICDebugTarget#removeRegisterGroups(org.eclipse.debug.core.model.IRegisterGroup[])
 	 */
+	@Override
 	public void removeRegisterGroups(IRegisterGroup[] groups) {
 		getRegisterManager().removeRegisterGroups(groups);
 	}
@@ -1893,6 +1942,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICDebugTarget#modifyRegisterGroup(org.eclipse.cdt.debug.core.model.IPersistableRegisterGroup, org.eclipse.cdt.debug.core.model.IRegisterDescriptor[])
 	 */
+	@Override
 	public void modifyRegisterGroup(IPersistableRegisterGroup group, IRegisterDescriptor[] descriptors) {
 		getRegisterManager().modifyRegisterGroup(group, descriptors);
 	}
@@ -1900,6 +1950,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICDebugTarget#restoreDefaultRegisterGroups()
 	 */
+	@Override
 	public void restoreDefaultRegisterGroups() {
 		getRegisterManager().restoreDefaults();
 	}
@@ -1968,6 +2019,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		}
 	}
 
+	@Override
 	public boolean hasModules() throws DebugException {
 		CModuleManager mm = getModuleManager();
 		if (mm != null)
@@ -1975,6 +2027,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		return false;
 	}
 
+	@Override
 	public ICModule[] getModules() throws DebugException {
 		CModuleManager mm = getModuleManager();
 		if (mm != null)
@@ -1982,6 +2035,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		return new ICModule[0];
 	}
 
+	@Override
 	public void loadSymbolsForAllModules() throws DebugException {
 		CModuleManager mm = getModuleManager();
 		if (mm != null)

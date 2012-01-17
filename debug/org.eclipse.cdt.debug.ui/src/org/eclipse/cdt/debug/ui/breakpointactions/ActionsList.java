@@ -44,6 +44,7 @@ public class ActionsList extends Composite {
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
 		table.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateButtons();
 			}
@@ -65,6 +66,7 @@ public class ActionsList extends Composite {
 		removeButton.setText(Messages.getString("ActionsList.3")); //$NON-NLS-1$
 
 		removeButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				HandleRemoveButton();
 			}
@@ -72,6 +74,7 @@ public class ActionsList extends Composite {
 
 		final Button upButton = new Button(this, SWT.NONE);
 		upButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				HandleUpButton();
 			}
@@ -81,6 +84,7 @@ public class ActionsList extends Composite {
 
 		final Button downButton = new Button(this, SWT.NONE);
 		downButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				HandleDownButton();
 			}

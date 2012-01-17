@@ -34,6 +34,7 @@ public class MIGDBShowExitCode extends MIDataEvaluateExpression {
 		return (MIGDBShowExitCodeInfo)getMIInfo();
 	}
 
+	@Override
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

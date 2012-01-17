@@ -289,6 +289,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsAdded(org.eclipse.debug.core.model.IBreakpoint[])
 	 */
+	@Override
 	public void breakpointsAdded( IBreakpoint[] breakpoints ) {
 		if ( !isTargetAvailable() )
 			return;
@@ -298,6 +299,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsRemoved(org.eclipse.debug.core.model.IBreakpoint[], org.eclipse.core.resources.IMarkerDelta[])
 	 */
+	@Override
 	public void breakpointsRemoved( IBreakpoint[] breakpoints, IMarkerDelta[] deltas ) {
 		if ( !isTargetAvailable() )
 			return;
@@ -327,6 +329,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 		final ICDIBreakpoint[] cdiBreakpoints = (ICDIBreakpoint[])list.toArray( new ICDIBreakpoint[list.size()] );
 		final ICDITarget cdiTarget = getCDITarget();
 		DebugPlugin.getDefault().asyncExec( new Runnable() {				
+			@Override
 			public void run() {
 				try {
 					cdiTarget.deleteBreakpoints( cdiBreakpoints );
@@ -340,6 +343,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsChanged(org.eclipse.debug.core.model.IBreakpoint[], org.eclipse.core.resources.IMarkerDelta[])
 	 */
+	@Override
 	public void breakpointsChanged( IBreakpoint[] breakpoints, IMarkerDelta[] deltas ) {
 		ArrayList removeList = new ArrayList( breakpoints.length );
 		ArrayList installList = new ArrayList( breakpoints.length );
@@ -373,10 +377,12 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 		}
 	}
 
+	@Override
 	public void breakpointManagerEnablementChanged( boolean enabled ) {
 		doSkipBreakpoints( !enabled );
 	}
 
+	@Override
 	public void handleDebugEvents( ICDIEvent[] events ) {
 		for( int i = 0; i < events.length; i++ ) {
 			ICDIEvent event = events[i];
@@ -410,6 +416,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 		}
 	}
 
+	@Override
 	public Object getAdapter( Class adapter ) {
 		if ( CBreakpointManager.class.equals( adapter ) )
 			return this;
@@ -816,6 +823,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 		}
 			
 		DebugPlugin.getDefault().asyncExec( new Runnable() {				
+			@Override
 			public void run() {
 				try {
 					cdiTarget.deleteBreakpoints( cdiBreakpoints );
@@ -845,6 +853,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 		final ICBreakpoint[] bkpts = register( breakpoints );
 		if ( bkpts.length > 0 ) {
 			DebugPlugin.getDefault().asyncExec( new Runnable() {				
+				@Override
 				public void run() {
 					setBreakpointsOnTarget0( bkpts );
 				}
@@ -1230,6 +1239,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 
 	private void changeBreakpointPropertiesOnTarget( final ICDIBreakpoint breakpoint, final Boolean enabled, final ICDICondition condition ) {
 		DebugPlugin.getDefault().asyncExec( new Runnable() {				
+			@Override
 			public void run() {
 				if ( enabled != null ) {
 					try {

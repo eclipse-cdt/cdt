@@ -109,8 +109,10 @@ public final class ViewIDCounterManager {
 			// add a workbench listener to listen to preShutdown and ignore view part close event
 			IWorkbench wb = PlatformUI.getWorkbench();
 			wb.addWorkbenchListener(new IWorkbenchListener() {
+				@Override
 				public void postShutdown(IWorkbench workbench) {}
 				
+				@Override
 				public boolean preShutdown(IWorkbench workbench, boolean forced) {
 					fShuttingDown = true;
 					return true;
@@ -118,13 +120,20 @@ public final class ViewIDCounterManager {
 			});
 			
 			final IPartListener2 partListener = new IPartListener2() {
+				@Override
 				public void partVisible(IWorkbenchPartReference partRef) {}					
+				@Override
 				public void partInputChanged(IWorkbenchPartReference partRef) {}						
+				@Override
 				public void partHidden(IWorkbenchPartReference partRef) {}						
+				@Override
 				public void partDeactivated(IWorkbenchPartReference partRef) {}																		
+				@Override
 				public void partBroughtToTop(IWorkbenchPartReference partRef) {}						
+				@Override
 				public void partActivated(IWorkbenchPartReference partRef) {}
 
+				@Override
 				public void partOpened(IWorkbenchPartReference partRef) {
 					if (partRef instanceof IViewReference) {
 						IViewPart part = ((IViewReference) partRef).getView(false);
@@ -134,6 +143,7 @@ public final class ViewIDCounterManager {
 					}					
 				}
 				
+				@Override
 				public void partClosed(IWorkbenchPartReference partRef) {
 					if (!fShuttingDown)
 						recycleCounterId(partRef);
@@ -147,10 +157,14 @@ public final class ViewIDCounterManager {
 			
 			// subscribe to new workbench window listener
 			wb.addWindowListener(new IWindowListener() {					
+				@Override
 				public void windowDeactivated(IWorkbenchWindow window) {}												
+				@Override
 				public void windowActivated(IWorkbenchWindow window) {}				
+				@Override
 				public void windowClosed(IWorkbenchWindow window) {}
 				
+				@Override
 				public void windowOpened(IWorkbenchWindow window) {
 					window.getPartService().addPartListener(partListener);
 				}		

@@ -82,6 +82,7 @@ abstract public class CDebugElement extends PlatformObject implements ICDebugEle
 	 * 
 	 * @see org.eclipse.debug.core.model.IDebugElement#getModelIdentifier()
 	 */
+	@Override
 	public String getModelIdentifier() {
 		return CDIDebugModel.getPluginIdentifier();
 	}
@@ -91,6 +92,7 @@ abstract public class CDebugElement extends PlatformObject implements ICDebugEle
 	 * 
 	 * @see org.eclipse.debug.core.model.IDebugElement#getDebugTarget()
 	 */
+	@Override
 	public IDebugTarget getDebugTarget() {
 		return fDebugTarget;
 	}
@@ -100,6 +102,7 @@ abstract public class CDebugElement extends PlatformObject implements ICDebugEle
 	 * 
 	 * @see org.eclipse.debug.core.model.IDebugElement#getLaunch()
 	 */
+	@Override
 	public ILaunch getLaunch() {
 		return getDebugTarget().getLaunch();
 	}
@@ -302,6 +305,7 @@ abstract public class CDebugElement extends PlatformObject implements ICDebugEle
 	 * 
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(Class)
 	 */
+	@Override
 	public Object getAdapter( Class adapter ) {
 		if ( adapter.equals( IDebugElement.class ) )
 			return this;
@@ -342,6 +346,7 @@ abstract public class CDebugElement extends PlatformObject implements ICDebugEle
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICDebugElementStatus#isOK()
 	 */
+	@Override
 	public boolean isOK() {
 		return (fSeverity == ICDebugElementStatus.OK);
 	}
@@ -349,6 +354,7 @@ abstract public class CDebugElement extends PlatformObject implements ICDebugEle
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICDebugElementStatus#getSeverity()
 	 */
+	@Override
 	public int getSeverity() {
 		return fSeverity;
 	}
@@ -356,6 +362,7 @@ abstract public class CDebugElement extends PlatformObject implements ICDebugEle
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICDebugElementStatus#getMessage()
 	 */
+	@Override
 	public String getMessage() {
 		return fMessage;
 	}
@@ -363,6 +370,7 @@ abstract public class CDebugElement extends PlatformObject implements ICDebugEle
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICDebugElement#getState()
 	 */
+	@Override
 	public CDebugElementState getState() {
 		return fState;
 	}
@@ -379,6 +387,7 @@ abstract public class CDebugElement extends PlatformObject implements ICDebugEle
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICDebugElement#getCurrentStateInfo()
 	 */
+	@Override
 	public Object getCurrentStateInfo() {
 		return fCurrentStateInfo;
 	}

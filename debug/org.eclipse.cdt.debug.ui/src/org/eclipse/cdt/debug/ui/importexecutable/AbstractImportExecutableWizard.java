@@ -94,6 +94,7 @@ public abstract class AbstractImportExecutableWizard extends Wizard implements I
 		}
 	}
 
+	@Override
 	public void addPages() {
 		super.addPages();
 		pageOne = new ImportExecutablePageOne(this);
@@ -128,6 +129,7 @@ public abstract class AbstractImportExecutableWizard extends Wizard implements I
 
 		UIJob openLaunchConfigJob = new UIJob(Messages.AbstractImportExecutableWizard_CreateLaunchConfiguration) {
 
+			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				DebugUITools.openLaunchConfigurationDialogOnGroup(CUIPlugin.getActiveWorkbenchShell(), selection, identifier);
 				return Status.OK_STATUS;
@@ -146,6 +148,7 @@ public abstract class AbstractImportExecutableWizard extends Wizard implements I
 		return pageTwo;
 	}
 
+	@Override
 	public IWizardPage getNextPage(IWizardPage page) {
 		if (page == pageOne) {
 			pageTwo.checkExecutableSettings();
@@ -165,11 +168,13 @@ public abstract class AbstractImportExecutableWizard extends Wizard implements I
 		return Messages.AbstractImportExecutableWizard_windowTitle;
 	}
 
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		setWindowTitle(getDefaultWindowTitle());
 		setNeedsProgressMonitor(true);
 	}
 	
+	@Override
 	public boolean performFinish() {
 
 		ICProject targetProject = null;

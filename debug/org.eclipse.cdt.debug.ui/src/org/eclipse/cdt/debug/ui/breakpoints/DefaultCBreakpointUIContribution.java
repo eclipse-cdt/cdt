@@ -33,14 +33,17 @@ class DefaultCBreakpointUIContribution implements ICBreakpointsUIContribution {
 	private Map<String, String> valueLabels = new LinkedHashMap<String, String>();
 	private Map<String, String> conditions = new HashMap<String, String>();
 
+	@Override
 	public String getId() {
 		return attId;
 	}
 
+	@Override
 	public String getLabel() {
 		return attLabel;
 	}
 
+	@Override
 	public String getDebugModelId() {
 		return modelId;
 	}
@@ -48,6 +51,7 @@ class DefaultCBreakpointUIContribution implements ICBreakpointsUIContribution {
 	static private Class[] fieldSignature = new Class[] { String.class, String.class,
 			Composite.class };
 
+	@Override
 	public FieldEditor getFieldEditor(String name, String labelText, Composite parent) {
 		String className = fieldEditorClassName;
 		if (fieldEditorClassName == null) {
@@ -68,25 +72,30 @@ class DefaultCBreakpointUIContribution implements ICBreakpointsUIContribution {
 		}
 	}
 
+	@Override
 	public String getLabelForValue(String value) {
 		if (valueLabels.containsKey(value))
 			return valueLabels.get(value);
 		return value;
 	}
 
+	@Override
 	public String getMarkerType() {
 		return markerType;
 	}
 
+	@Override
 	public String[] getPossibleValues() {
 		Set<String> set = valueLabels.keySet();
 		return set.toArray(new String[set.size()]);
 	}
 
+	@Override
 	public String getType() {
 		return attType;
 	}
 
+	@Override
 	public boolean isApplicable(Map properties) {
 		for (Object key : properties.keySet()) {
 			String value = conditions.get(key);
@@ -150,6 +159,7 @@ class DefaultCBreakpointUIContribution implements ICBreakpointsUIContribution {
 		return attId + " " + attLabel; //$NON-NLS-1$
 	}
 
+	@Override
 	public String getFieldEditorClassName() {
 		return fieldEditorClassName;
 	}

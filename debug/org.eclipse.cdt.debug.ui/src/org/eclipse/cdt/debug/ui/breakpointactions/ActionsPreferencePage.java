@@ -34,6 +34,7 @@ public class ActionsPreferencePage extends PreferencePage implements IWorkbenchP
 		setPreferenceStore(CDebugUIPlugin.getDefault().getPreferenceStore());
 	}
 
+	@Override
 	public Control createContents(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		final GridLayout gridLayout = new GridLayout();
@@ -45,6 +46,7 @@ public class ActionsPreferencePage extends PreferencePage implements IWorkbenchP
 		actionsList.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 
 		actionsList.getDeleteButton().addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				actionsList.HandleDeleteButton();
 			}
@@ -56,14 +58,17 @@ public class ActionsPreferencePage extends PreferencePage implements IWorkbenchP
 		return container;
 	}
 
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 
+	@Override
 	public boolean performCancel() {
 		CDebugCorePlugin.getDefault().getBreakpointActionManager().revertActionData();
 		return super.performCancel();
 	}
 
+	@Override
 	public boolean performOk() {
 		CDebugCorePlugin.getDefault().getBreakpointActionManager().saveActionData();
 		return super.performOk();

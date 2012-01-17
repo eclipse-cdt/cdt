@@ -97,7 +97,8 @@ public class FormattedValueVMUtil {
 
      * @deprecated Replaced by {@link #getPropertyForFormatId(String, String)}
      */
-    public static String getPropertyForFormatId(String formatId) {
+    @Deprecated
+	public static String getPropertyForFormatId(String formatId) {
         return getPropertyForFormatId(formatId, ""); //$NON-NLS-1$
     }    
 
@@ -147,7 +148,8 @@ public class FormattedValueVMUtil {
      * 
      * @deprecated Replaced by {@link #getFormatFromProperty(String, String)}
      */
-    public static String getFormatFromProperty(String property) {
+    @Deprecated
+	public static String getFormatFromProperty(String property) {
         return getFormatFromProperty(property, ""); //$NON-NLS-1$
     }    
 
@@ -225,7 +227,8 @@ public class FormattedValueVMUtil {
      * @deprecated This method has been replaced by the {@link FormattedValueRetriever}
      * utility.
      */
-    @ConfinedToDsfExecutor("service.getExecutor()")
+    @Deprecated
+	@ConfinedToDsfExecutor("service.getExecutor()")
     public static void updateFormattedValues(
         final IPropertiesUpdate updates[],
         final IFormattedValues service,

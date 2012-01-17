@@ -26,7 +26,8 @@ public class AddressPane extends AbstractPane
         super(parent);
     }
 
-    protected BigInteger getViewportAddress(int col, int row)
+    @Override
+	protected BigInteger getViewportAddress(int col, int row)
         throws DebugException
     {
         BigInteger address = fRendering.getViewportStartAddress();
@@ -37,7 +38,8 @@ public class AddressPane extends AbstractPane
         return address;
     }
 
-    protected void appendSelection(int x, int y)
+    @Override
+	protected void appendSelection(int x, int y)
     {
         try
         {
@@ -66,12 +68,14 @@ public class AddressPane extends AbstractPane
         }
     }
 
-    public Point computeSize(int wHint, int hHint)
+    @Override
+	public Point computeSize(int wHint, int hHint)
     {
         return new Point(getCellWidth() + fRendering.getRenderSpacing(), 100);
     }
 
-    protected int getCellCharacterCount()
+    @Override
+	protected int getCellCharacterCount()
     {
         // two characters per byte of hex address
         
@@ -79,7 +83,8 @@ public class AddressPane extends AbstractPane
             + 2; // 0x
     }
 
-    protected int getCellWidth()
+    @Override
+	protected int getCellWidth()
     {     
     	GC gc = new GC(this);
         StringBuffer buf = new StringBuffer();
@@ -115,7 +120,8 @@ public class AddressPane extends AbstractPane
         return address;
     }
 
-    protected Point getCellLocation(BigInteger cellAddress)
+    @Override
+	protected Point getCellLocation(BigInteger cellAddress)
     {
         try
         {
@@ -154,12 +160,14 @@ public class AddressPane extends AbstractPane
         }
     }
 
-    protected int getNumberOfBytesRepresentedByColumn()
+    @Override
+	protected int getNumberOfBytesRepresentedByColumn()
     {
         return fRendering.getBytesPerRow();
     } 
     
-    protected void positionCaret(int x, int y)
+    @Override
+	protected void positionCaret(int x, int y)
     {
         try
         {
@@ -196,7 +204,8 @@ public class AddressPane extends AbstractPane
         }
     }
 
-    protected void paint(PaintEvent pe)
+    @Override
+	protected void paint(PaintEvent pe)
     {
         super.paint(pe);
 

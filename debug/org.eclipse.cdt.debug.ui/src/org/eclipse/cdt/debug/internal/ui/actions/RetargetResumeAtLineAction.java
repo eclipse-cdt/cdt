@@ -49,6 +49,7 @@ public class RetargetResumeAtLineAction extends RetargetAction {
 			}
 		}
 
+		@Override
 		public void debugContextChanged(DebugContextEvent event) {
 			contextActivated(event.getContext());
 		}
@@ -57,6 +58,7 @@ public class RetargetResumeAtLineAction extends RetargetAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
+	@Override
 	public void dispose() {
 		DebugUITools.getDebugContextManager().getContextService(fWindow).removeDebugContextListener(fContextListener);
 		super.dispose();
@@ -64,6 +66,7 @@ public class RetargetResumeAtLineAction extends RetargetAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void init(IWorkbenchWindow window) {
 		super.init(window);
 		IDebugContextService service = DebugUITools.getDebugContextManager().getContextService(window);
@@ -75,6 +78,7 @@ public class RetargetResumeAtLineAction extends RetargetAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.RetargetAction#canPerformAction(java.lang.Object, org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
 	 */
+	@Override
 	protected boolean canPerformAction(Object target, ISelection selection,	IWorkbenchPart part) {
 		return fTargetElement != null &&
 			((IResumeAtLineTarget)target).canResumeAtLine(part, selection, fTargetElement);
@@ -83,12 +87,14 @@ public class RetargetResumeAtLineAction extends RetargetAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.RetargetAction#getAdapterClass()
 	 */
+	@Override
 	protected Class getAdapterClass() {
 		return IResumeAtLineTarget.class;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.RetargetAction#performAction(java.lang.Object, org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
 	 */
+	@Override
 	protected void performAction(Object target, ISelection selection, IWorkbenchPart part) throws CoreException {
 		((IResumeAtLineTarget)target).resumeAtLine(part, selection, fTargetElement);
 	}
@@ -96,6 +102,7 @@ public class RetargetResumeAtLineAction extends RetargetAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.RetargetAction#getOperationUnavailableMessage()
 	 */
+	@Override
 	protected String getOperationUnavailableMessage() {
 		return ActionMessages.getString("RetargetResumeAtLineAction.0"); //$NON-NLS-1$
 	}	
@@ -103,6 +110,7 @@ public class RetargetResumeAtLineAction extends RetargetAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		if (fTargetElement == null) {
 			action.setEnabled(false);

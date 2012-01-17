@@ -45,6 +45,7 @@ public class MIInfo {
 		return isResultClass(MIResultRecord.EXIT);
 	}
 
+	@Override
 	public String toString() {
 		if (miOutput != null) {
 			return miOutput.toString();

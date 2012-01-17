@@ -239,6 +239,7 @@ public class FindReplaceDialog extends SelectionDialog
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		
 		fFindButton = createButton(parent, 10, Messages.getString("FindReplaceDialog.ButtonFind"), true); //$NON-NLS-1$
@@ -306,6 +307,7 @@ public class FindReplaceDialog extends SelectionDialog
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.SelectionDialog#getResult()
 	 */
+	@Override
 	public Object[] getResult() {
 		
 		Object[] results = super.getResult();
@@ -320,6 +322,7 @@ public class FindReplaceDialog extends SelectionDialog
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#cancelPressed()
 	 */
+	@Override
 	protected void cancelPressed() {
 		
 		fProperties.setProperty(SEARCH_FIND, fFindText.getText());
@@ -355,6 +358,7 @@ public class FindReplaceDialog extends SelectionDialog
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
+	@Override
 	protected void okPressed() {
 		setSelectionResult(new Object[]{ fProperties });
 		
@@ -436,7 +440,7 @@ public class FindReplaceDialog extends SelectionDialog
 		for(String string : strings)
 			if(string != null)
 				nonNullStrings.addElement(string);
-		return (String[]) nonNullStrings.toArray(new String[0]);	
+		return nonNullStrings.toArray(new String[0]);	
 	}
 	
 	private String getMemoryBlockBaseAddress()
@@ -532,6 +536,7 @@ public class FindReplaceDialog extends SelectionDialog
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, MemorySearchPlugin.getUniqueIdentifier() + ".FindReplaceDialog_context"); //$NON-NLS-1$
@@ -1245,6 +1250,7 @@ public class FindReplaceDialog extends SelectionDialog
 		else
 		{
 			Job job = new Job("Searching memory for " + searchPhrase){ //$NON-NLS-1$
+				@Override
 				public IStatus run(IProgressMonitor monitor) {
 					return query.run(monitor);
 				}
@@ -1277,6 +1283,7 @@ public class FindReplaceDialog extends SelectionDialog
 			return fPhrase.length();
 		}
 		
+		@Override
 		public String toString()
 		{
 			return fPhrase;
@@ -1320,6 +1327,7 @@ public class FindReplaceDialog extends SelectionDialog
 			}
 		}
 		
+		@Override
 		public String toString()
 		{
 			if(fBytes == null)
@@ -1357,6 +1365,7 @@ public class FindReplaceDialog extends SelectionDialog
 			return removeZeroPrefixByte(fPhrase.toByteArray()).length;
 		}
 		
+		@Override
 		public String toString()
 		{
 			return fPhrase.toString(fRadix);

@@ -75,7 +75,8 @@ public class MIRunControlTargetAvailableTest extends BaseTestCase {
 		final DsfSession session = getGDBLaunch().getSession();
 		
         Runnable runnable = new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
            	fServicesTracker = 
             		new DsfServicesTracker(TestsPlugin.getBundleContext(), 
             				session.getId());

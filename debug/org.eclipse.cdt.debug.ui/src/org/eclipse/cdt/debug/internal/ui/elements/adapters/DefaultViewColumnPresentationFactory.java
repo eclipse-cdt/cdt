@@ -19,13 +19,15 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 
 public class DefaultViewColumnPresentationFactory implements IColumnPresentationFactory {
 
-    public IColumnPresentation createColumnPresentation( IPresentationContext context, Object element ) {
+    @Override
+	public IColumnPresentation createColumnPresentation( IPresentationContext context, Object element ) {
         if ( context.getId().equals( ICDebugUIConstants.ID_SIGNALS_VIEW ) )
             return new SignalsViewColumnPresentation();
         return null;
     }
 
-    public String getColumnPresentationId( IPresentationContext context, Object element ) {
+    @Override
+	public String getColumnPresentationId( IPresentationContext context, Object element ) {
         if ( context.getId().equals( ICDebugUIConstants.ID_SIGNALS_VIEW ) )
             return SignalsViewColumnPresentation.ID;
         return null;

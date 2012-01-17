@@ -130,6 +130,7 @@ public abstract class SourceContainerAction extends SelectionListenerAction {
 	public void setButton(Button button) {
 		fButton = button;
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				run();
 			}
@@ -139,6 +140,7 @@ public abstract class SourceContainerAction extends SelectionListenerAction {
 	/**
 	 * @see IAction#setEnabled(boolean)
 	 */
+	@Override
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
 		if (fButton != null) {

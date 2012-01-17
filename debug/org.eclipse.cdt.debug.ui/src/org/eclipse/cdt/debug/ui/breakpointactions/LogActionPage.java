@@ -23,14 +23,17 @@ public class LogActionPage extends PlatformObject implements IBreakpointActionPa
 		return logAction;
 	}
 
+	@Override
 	public void actionDialogCanceled() {
 	}
 
+	@Override
 	public void actionDialogOK() {
 		logAction.setMessage(editor.getMessage());
 		logAction.setEvaluateExpression(editor.getIsExpression());
 	}
 
+	@Override
 	public Composite createComposite(IBreakpointAction action, Composite composite, int style) {
 		logAction = (LogAction) action;
 		editor = new LogActionComposite(composite, style, this);

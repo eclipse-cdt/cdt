@@ -97,6 +97,7 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame#getThread()
 	 */
+	@Override
 	public ICDIThread getThread() {
 		return cthread;
 	}
@@ -104,6 +105,7 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame#getArgumentDescriptors()
 	 */
+	@Override
 	public ICDIArgumentDescriptor[] getArgumentDescriptors() throws CDIException {
 		if (argDescs == null) {
 			Session session = (Session)getTarget().getSession();
@@ -116,6 +118,7 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame#getLocalVariableDescriptors()
 	 */
+	@Override
 	public ICDILocalVariableDescriptor[] getLocalVariableDescriptors() throws CDIException {
 		if (localDescs == null) {
 			Session session = (Session)getTarget().getSession();
@@ -128,6 +131,7 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame#createArgument(org.eclipse.cdt.debug.core.cdi.model.ICDIArgumentDescriptor)
 	 */
+	@Override
 	public ICDIArgument createArgument(ICDIArgumentDescriptor varDesc) throws CDIException {
 		if (varDesc instanceof ArgumentDescriptor) {
 			Session session = (Session)getTarget().getSession();
@@ -140,6 +144,7 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame#createLocalVariable(org.eclipse.cdt.debug.core.cdi.model.ICDILocalVariableDescriptor)
 	 */
+	@Override
 	public ICDILocalVariable createLocalVariable(ICDILocalVariableDescriptor varDesc) throws CDIException {
 		if (varDesc instanceof ArgumentDescriptor) {
 			return createArgument((ICDIArgumentDescriptor)varDesc);
@@ -154,6 +159,7 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame#getLocation()
 	 */
+	@Override
 	public ICDILocator getLocator() {
 		BigInteger addr = BigInteger.ZERO;
 		if (frame != null) {
@@ -175,6 +181,7 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame#getLevel()
 	 */
+	@Override
 	public int getLevel() {
 		return level;
 	}
@@ -182,6 +189,7 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame#equals(ICDIStackFrame)
 	 */
+	@Override
 	public boolean equals(ICDIStackFrame stackframe) {
 		if (stackframe instanceof StackFrame) {
 			StackFrame stack = (StackFrame)stackframe;
@@ -204,6 +212,7 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExecuteStepReturn#stepReturn()
 	 */
+	@Override
 	public void stepReturn() throws CDIException {
 		finish();
 	}
@@ -211,6 +220,7 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExecuteStepReturn#stepReturn(org.eclipse.cdt.debug.core.cdi.model.ICDIValue)
 	 */
+	@Override
 	public void stepReturn(ICDIValue value) throws CDIException {
 		execReturn(value.toString());
 	}

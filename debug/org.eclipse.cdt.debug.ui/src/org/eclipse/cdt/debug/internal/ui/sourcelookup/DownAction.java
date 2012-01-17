@@ -27,6 +27,7 @@ public class DownAction	extends SourceContainerAction {
 	/**
 	 * @see IAction#run()
 	 */
+	@Override
 	public void run() {
 		List<ISourceContainer> targets = getOrderedSelection();
 		if (targets.isEmpty()) {
@@ -52,6 +53,7 @@ public class DownAction	extends SourceContainerAction {
 	/**
 	 * @see SelectionListenerAction#updateSelection(IStructuredSelection)
 	 */
+	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
 		return !selection.isEmpty() && !isIndexSelected(selection, getEntriesAsList().size() - 1) &&
 				getViewer().getTree().getSelection()[0].getParentItem() == null;	

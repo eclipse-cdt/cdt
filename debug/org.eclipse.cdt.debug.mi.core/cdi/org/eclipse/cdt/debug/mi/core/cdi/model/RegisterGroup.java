@@ -35,6 +35,7 @@ public class RegisterGroup extends CObject implements ICDIRegisterGroup {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterGroup#getRegisterDescriptors()
 	 */
+	@Override
 	public ICDIRegisterDescriptor[] getRegisterDescriptors() throws CDIException {
 		Target target = (Target)getTarget();
 		Session session = (Session)target.getSession();
@@ -45,6 +46,7 @@ public class RegisterGroup extends CObject implements ICDIRegisterGroup {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterGroup#getName()
 	 */
+	@Override
 	public String getName() {
 		return fName;
 	}
@@ -52,6 +54,7 @@ public class RegisterGroup extends CObject implements ICDIRegisterGroup {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterGroup#hasRegisters()
 	 */
+	@Override
 	public boolean hasRegisters() throws CDIException {
 		return true;
 	}

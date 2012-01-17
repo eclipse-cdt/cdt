@@ -37,6 +37,7 @@ public class EnableDisableBreakpointRulerAction extends AbstractBreakpointRulerA
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void run() {
 		if ( fBreakpoint != null ) {
 			try {
@@ -53,6 +54,7 @@ public class EnableDisableBreakpointRulerAction extends AbstractBreakpointRulerA
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
+	@Override
 	public void update() {
 		fBreakpoint = getBreakpoint();
 		setEnabled( fBreakpoint != null );

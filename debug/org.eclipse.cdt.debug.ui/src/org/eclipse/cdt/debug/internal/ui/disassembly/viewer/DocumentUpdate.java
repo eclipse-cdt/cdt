@@ -38,28 +38,32 @@ public abstract class DocumentUpdate extends Request implements IDocumentUpdate 
     /* (non-Javadoc)
      * @see com.arm.eclipse.rvd.ui.disassembly.IDocumentUpdate#getBaseElement()
      */
-    public Object getBaseElement() {
+    @Override
+	public Object getBaseElement() {
         return fBaseElement;
     }
 
     /* (non-Javadoc)
      * @see com.arm.eclipse.rvd.ui.disassembly.IDocumentUpdate#getRootElement()
      */
-    public Object getRootElement() {
+    @Override
+	public Object getRootElement() {
         return fRootElement;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getElement()
      */
-    public Object getElement() {
+    @Override
+	public Object getElement() {
         return fElement;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getElementPath()
      */
-    public TreePath getElementPath() {
+    @Override
+	public TreePath getElementPath() {
         // TODO Auto-generated method stub
         return null;
     }
@@ -67,7 +71,8 @@ public abstract class DocumentUpdate extends Request implements IDocumentUpdate 
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getPresentationContext()
      */
-    public IPresentationContext getPresentationContext() {
+    @Override
+	public IPresentationContext getPresentationContext() {
         return fPresentationContext;
     }
 
@@ -122,7 +127,8 @@ public abstract class DocumentUpdate extends Request implements IDocumentUpdate 
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getViewerInput()
      */
-    public Object getViewerInput() {
+    @Override
+	public Object getViewerInput() {
         return null;
     }
 }

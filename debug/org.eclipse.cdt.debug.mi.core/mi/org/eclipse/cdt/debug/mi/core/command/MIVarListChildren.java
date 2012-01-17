@@ -36,6 +36,7 @@ public class MIVarListChildren extends MICommand
 		return (MIVarListChildrenInfo)getMIInfo();
 	}
 
+	@Override
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

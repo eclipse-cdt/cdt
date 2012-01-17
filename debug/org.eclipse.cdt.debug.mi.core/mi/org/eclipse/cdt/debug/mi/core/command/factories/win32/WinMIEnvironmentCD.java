@@ -24,6 +24,7 @@ public class WinMIEnvironmentCD extends MIEnvironmentCD {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.core.command.MICommand#parametersToString()
 	 */
+	@Override
 	protected String parametersToString() {
 		String[] params = getParameters();
 		if ( params != null && params.length == 1 ) {

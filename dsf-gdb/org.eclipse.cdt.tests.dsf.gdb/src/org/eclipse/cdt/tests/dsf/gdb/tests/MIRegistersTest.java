@@ -103,7 +103,8 @@ public class MIRegistersTest extends BaseTestCase {
 	    fSession = getGDBLaunch().getSession();
 	    
         Runnable runnable = new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
 	    		// We obtain the services we need after the new
 	    		// launch has been performed
 	    		fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
@@ -153,7 +154,8 @@ public class MIRegistersTest extends BaseTestCase {
         };
         
         fRegService.getExecutor().submit(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
             	fRegService.getRegisterGroups(fContainerDmc, regGroupDone);
             }
         });
@@ -178,7 +180,8 @@ public class MIRegistersTest extends BaseTestCase {
     	final IRegisterGroupDMContext regGroupsDMC = getRegisterGroup();
 
    		fRegService.getExecutor().submit(new Runnable() {
-   			public void run() {
+   			@Override
+			public void run() {
    				fRegService.getRegisters(
    				    new CompositeDMContext(new IDMContext[] { regGroupsDMC, frameDmc} ), 
    		            new DataRequestMonitor<IRegisterDMContext[]>(fRegService.getExecutor(), null) {
@@ -298,7 +301,8 @@ public class MIRegistersTest extends BaseTestCase {
         };
         
         fRegService.getExecutor().submit(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
             	fRegService.getFormattedExpressionValue(valueDmc, regRm);
             }
         });
@@ -364,7 +368,8 @@ public class MIRegistersTest extends BaseTestCase {
         };
     	    	
     	fRegService.getExecutor().submit(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
             	fRunControl.getExecutionContexts(containerDmc, drm);
             }
     	});
@@ -420,6 +425,7 @@ public class MIRegistersTest extends BaseTestCase {
     	final IRegisterDMContext[] regDMCs = getRegisters(frameDmc);
 
 		fRegService.getExecutor().submit(new Runnable() {
+			@Override
 			public void run() {
 			    fRegService.writeRegister(
 	                regDMCs[regIndex], 

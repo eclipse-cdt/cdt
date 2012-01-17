@@ -31,21 +31,24 @@ public class DisassemblyContextService implements IDisassemblyContextService {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.debug.core.disassembly.IDisassemblyContextService#addDisassemblyContextListener(org.eclipse.cdt.debug.core.disassembly.IDisassemblyContextListener)
      */
-    public void addDisassemblyContextListener( IDisassemblyContextListener listener ) {
+    @Override
+	public void addDisassemblyContextListener( IDisassemblyContextListener listener ) {
         fListeners.add( listener );
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.debug.core.disassembly.IDisassemblyContextService#removeDisassemblyContextListener(org.eclipse.cdt.debug.core.disassembly.IDisassemblyContextListener)
      */
-    public void removeDisassemblyContextListener( IDisassemblyContextListener listener ) {
+    @Override
+	public void removeDisassemblyContextListener( IDisassemblyContextListener listener ) {
         fListeners.remove( listener );
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.debug.core.disassembly.IDisassemblyContextService#register(java.lang.Object)
      */
-    public void register( Object context ) {
+    @Override
+	public void register( Object context ) {
         fContexts.add( context );
         for( Object listener : fListeners.getListeners() ) {
             ((IDisassemblyContextListener)listener).contextAdded( context );
@@ -55,7 +58,8 @@ public class DisassemblyContextService implements IDisassemblyContextService {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.debug.core.disassembly.IDisassemblyContextService#unregister(java.lang.Object)
      */
-    public void unregister( Object context ) {
+    @Override
+	public void unregister( Object context ) {
         fContexts.remove( context );
         for( Object listener : fListeners.getListeners() ) {
             ((IDisassemblyContextListener)listener).contextRemoved( context );

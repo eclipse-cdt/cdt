@@ -23,6 +23,7 @@ public class LogActionEnabler implements ILogActionEnabler {
 		this.thread = thread;
 	}
 
+	@Override
 	public String evaluateExpression(String expression) throws Exception {
 		List frames = thread.computeStackFrames();
 		CStackFrame frame = (CStackFrame) frames.get(0);

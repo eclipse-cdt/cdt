@@ -48,6 +48,7 @@ public class AsmSourceLine implements IAsmSourceLine {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IAsmSourceLine#getLineNumber()
 	 */
+	@Override
 	public int getLineNumber() {
 		return fLineNumber;
 	}
@@ -55,10 +56,12 @@ public class AsmSourceLine implements IAsmSourceLine {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IAsmSourceLine#getInstructions()
 	 */
+	@Override
 	public IAsmInstruction[] getInstructions() {
 		return fInstructions;
 	}
 
+	@Override
 	public String toString() {
 		return fText;
 	}

@@ -50,6 +50,7 @@ public class CastToTypeActionHandler extends AbstractHandler {
 		public CastToTypeInputValidator() {
 		}
 
+		@Override
 		public String isValid( String newText ) {
 			if ( newText.trim().length() == 0 ) {
 				return ActionMessages.getString( "CastToTypeActionDelegate.0" ); //$NON-NLS-1$
@@ -72,6 +73,7 @@ public class CastToTypeActionHandler extends AbstractHandler {
 		 * 
 		 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 		 */
+		@Override
 		protected void configureShell( Shell shell ) {
 			super.configureShell( shell );
 			shell.setImage( CDebugImages.get( CDebugImages.IMG_LCL_CAST_TO_TYPE ) );
@@ -88,6 +90,7 @@ public class CastToTypeActionHandler extends AbstractHandler {
 		super();
 	}
 
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 	    fTargetPart = HandlerUtil.getActivePartChecked(event);
 	    
@@ -96,6 +99,7 @@ public class CastToTypeActionHandler extends AbstractHandler {
 		
 		BusyIndicator.showWhile( Display.getCurrent(), new Runnable() {
 
+			@Override
 			public void run() {
 				try {
 					doAction( getCastToType() );

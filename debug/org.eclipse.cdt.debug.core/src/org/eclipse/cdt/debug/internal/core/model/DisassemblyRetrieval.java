@@ -66,7 +66,8 @@ public class DisassemblyRetrieval extends CDebugElement implements ICDIEventList
     /* (non-Javadoc)
      * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvents(org.eclipse.cdt.debug.core.cdi.event.ICDIEvent[])
      */
-    public void handleDebugEvents( ICDIEvent[] events ) {
+    @Override
+	public void handleDebugEvents( ICDIEvent[] events ) {
         for ( ICDIEvent event : events ) {
             Object source = event.getSource();
             if ( (event instanceof ICDICreatedEvent

@@ -36,6 +36,7 @@ public class LocalVariable extends Variable implements ICDILocalVariable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.core.cdi.model.Variable#createVariable(org.eclipse.cdt.debug.mi.core.cdi.model.Target, java.lang.String, java.lang.String, org.eclipse.cdt.debug.core.cdi.model.ICDIThread, org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame, int, int, org.eclipse.cdt.debug.mi.core.output.MIVar)
 	 */
+	@Override
 	protected Variable createVariable(Target target, Thread thread, StackFrame frame, String name,
 			String fullName, int pos, int depth, MIVar miVar) {
 		return new LocalVariable(target, thread, frame, name, fullName, pos, depth, miVar);
@@ -44,6 +45,7 @@ public class LocalVariable extends Variable implements ICDILocalVariable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.core.cdi.model.Variable#createDescriptor(org.eclipse.cdt.debug.mi.core.cdi.model.Target, org.eclipse.cdt.debug.mi.core.cdi.model.Thread, org.eclipse.cdt.debug.mi.core.cdi.model.StackFrame, java.lang.String, java.lang.String, int, int)
 	 */
+	@Override
 	protected VariableDescriptor createDescriptor(Target target, Thread thread, StackFrame frame, String n, String fn, int pos, int depth) {
 		return new LocalVariableDescriptor(target, thread, frame, n, fn, pos, depth);
 	}

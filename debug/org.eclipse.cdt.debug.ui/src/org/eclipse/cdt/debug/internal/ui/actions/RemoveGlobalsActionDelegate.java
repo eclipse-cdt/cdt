@@ -34,12 +34,14 @@ public class RemoveGlobalsActionDelegate extends ActionDelegate implements IView
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
+	@Override
 	public void init( IViewPart view ) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void init( IAction action ) {
 		setAction( action );
 		update();
@@ -48,6 +50,7 @@ public class RemoveGlobalsActionDelegate extends ActionDelegate implements IView
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run( IAction action ) {
 		ISelection selection = getSelection();
 		if ( !(selection instanceof IStructuredSelection) )
@@ -67,6 +70,7 @@ public class RemoveGlobalsActionDelegate extends ActionDelegate implements IView
 		if ( gvm == null )
 			return;
 		Runnable r = new Runnable() {
+							@Override
 							public void run() {
 								gvm.removeGlobals( globals );
 							}
@@ -79,6 +83,7 @@ public class RemoveGlobalsActionDelegate extends ActionDelegate implements IView
 	 * 
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged( IAction action, ISelection selection ) {
 		setSelection( selection );
 		update();

@@ -54,6 +54,7 @@ public class GDBCDIDebugger implements ICDIDebugger {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.ICDIDebugger#createDebuggerSession(org.eclipse.debug.core.ILaunch, org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public ICDISession createDebuggerSession(ILaunch launch, IBinaryObject exe, IProgressMonitor monitor)
 			throws CoreException {
 		fLaunch = launch;

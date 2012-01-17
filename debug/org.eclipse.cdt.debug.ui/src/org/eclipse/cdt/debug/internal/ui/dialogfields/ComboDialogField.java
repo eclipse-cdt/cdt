@@ -45,6 +45,7 @@ public class ComboDialogField extends DialogField {
 	/*
 	 * @see DialogField#doFillIntoGrid
 	 */
+	@Override
 	public Control[] doFillIntoGrid(Composite parent, int nColumns) {
 		assertEnoughColumns(nColumns);
 		
@@ -59,6 +60,7 @@ public class ComboDialogField extends DialogField {
 	/*
 	 * @see DialogField#getNumberOfControls
 	 */
+	@Override
 	public int getNumberOfControls() {
 		return 2;	
 	}
@@ -76,6 +78,7 @@ public class ComboDialogField extends DialogField {
 	/*
 	 * @see DialogField#setFocus
 	 */
+	@Override
 	public boolean setFocus() {
 		if (isOkToUse(fComboControl)) {
 			fComboControl.setFocus();
@@ -94,15 +97,18 @@ public class ComboDialogField extends DialogField {
 		if (fComboControl == null) {
 			assertCompositeNotNull(parent);
 			fModifyListener= new ModifyListener() {
+				@Override
 				public void modifyText(ModifyEvent e) {
 					doModifyText(e);
 				}
 			};
 			SelectionListener selectionListener= new SelectionListener() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					doSelectionChanged(e);
 				}
 				
+				@Override
 				public void widgetDefaultSelected(SelectionEvent e) {	
 				}
 			};
@@ -145,6 +151,7 @@ public class ComboDialogField extends DialogField {
 	/*
 	 * @see DialogField#updateEnableState
 	 */		
+	@Override
 	protected void updateEnableState() {
 		super.updateEnableState();		
 		if (isOkToUse(fComboControl)) {

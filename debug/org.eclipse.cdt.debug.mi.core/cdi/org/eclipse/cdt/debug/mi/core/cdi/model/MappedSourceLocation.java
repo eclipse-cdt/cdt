@@ -28,30 +28,37 @@ public class MappedSourceLocation implements ICDIAddressToSource.IMappedSourceLo
 		this.executable = executable;
 	}
 
+	@Override
 	public IAddress getAddress() {
 		return address;
 	}
 
+	@Override
 	public IPath getExecutable() {
 		return Path.fromOSString(executable);
 	}
 
+	@Override
 	public String getFunctionName() {
 		return lineInfo.getStartLocation();
 	}
 
+	@Override
 	public int getLineNumber() {
 		return lineInfo.getLineNumber();
 	}
 
+	@Override
 	public IPath getSourceFile() {
 		return Path.fromOSString(lineInfo.getFileName());
 	}
 
+	@Override
 	public String getUnmangledFunctionName() {
 		return lineInfo.getStartLocation();
 	}
 
+	@Override
 	public int compareTo(Object arg0) {
 		return address.compareTo(arg0);
 	}

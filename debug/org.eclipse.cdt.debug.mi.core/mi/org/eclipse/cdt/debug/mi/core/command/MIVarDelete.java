@@ -35,6 +35,7 @@ public class MIVarDelete extends MICommand
 		return (MIVarDeleteInfo)getMIInfo();
 	}
 
+	@Override
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

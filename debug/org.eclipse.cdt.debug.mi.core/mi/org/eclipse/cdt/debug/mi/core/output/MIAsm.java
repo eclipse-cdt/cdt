@@ -40,6 +40,7 @@ public class MIAsm {
 		return opcode + " " + args; //$NON-NLS-1$
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append('{');

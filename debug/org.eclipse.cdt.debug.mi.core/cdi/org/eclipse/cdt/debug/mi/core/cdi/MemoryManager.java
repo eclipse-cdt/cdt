@@ -61,6 +61,7 @@ public class MemoryManager extends Manager {
 	 * Note: Frozen blocks are not updated.
 	 *
 	 */
+	@Override
 	public void update(Target target) {
 		MISession miSession = target.getMISession();
 		List blockList = getMemoryBlockList(target);

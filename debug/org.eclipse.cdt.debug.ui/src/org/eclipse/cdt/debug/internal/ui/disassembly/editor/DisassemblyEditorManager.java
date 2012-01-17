@@ -136,19 +136,22 @@ public class DisassemblyEditorManager implements IWindowListener, IDisassemblyCo
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
      */
-    public void partActivated( IWorkbenchPartReference partRef ) {
+    @Override
+	public void partActivated( IWorkbenchPartReference partRef ) {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPartListener2#partBroughtToTop(org.eclipse.ui.IWorkbenchPartReference)
      */
-    public void partBroughtToTop( IWorkbenchPartReference partRef ) {
+    @Override
+	public void partBroughtToTop( IWorkbenchPartReference partRef ) {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
      */
-    public void partClosed( IWorkbenchPartReference partRef ) {
+    @Override
+	public void partClosed( IWorkbenchPartReference partRef ) {
         if ( isDisassemblyEditorPart( partRef ) ) {
             IWorkbenchPart part = partRef.getPart( false );
             if ( part instanceof IEditorPart ) {
@@ -169,7 +172,8 @@ public class DisassemblyEditorManager implements IWindowListener, IDisassemblyCo
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPartListener2#partDeactivated(org.eclipse.ui.IWorkbenchPartReference)
      */
-    public void partDeactivated( IWorkbenchPartReference partRef ) {
+    @Override
+	public void partDeactivated( IWorkbenchPartReference partRef ) {
         // TODO Auto-generated method stub
         
     }
@@ -177,7 +181,8 @@ public class DisassemblyEditorManager implements IWindowListener, IDisassemblyCo
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPartListener2#partHidden(org.eclipse.ui.IWorkbenchPartReference)
      */
-    public void partHidden( IWorkbenchPartReference partRef ) {
+    @Override
+	public void partHidden( IWorkbenchPartReference partRef ) {
         // TODO Auto-generated method stub
         
     }
@@ -185,7 +190,8 @@ public class DisassemblyEditorManager implements IWindowListener, IDisassemblyCo
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPartListener2#partInputChanged(org.eclipse.ui.IWorkbenchPartReference)
      */
-    public void partInputChanged( IWorkbenchPartReference partRef ) {
+    @Override
+	public void partInputChanged( IWorkbenchPartReference partRef ) {
         // TODO Auto-generated method stub
         
     }
@@ -193,7 +199,8 @@ public class DisassemblyEditorManager implements IWindowListener, IDisassemblyCo
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPartListener2#partOpened(org.eclipse.ui.IWorkbenchPartReference)
      */
-    public void partOpened( IWorkbenchPartReference partRef ) {
+    @Override
+	public void partOpened( IWorkbenchPartReference partRef ) {
         if ( isDisassemblyEditorPart( partRef ) ) {
             IWorkbenchPart part = partRef.getPart( false );
             if ( part instanceof IEditorPart ) {
@@ -209,7 +216,8 @@ public class DisassemblyEditorManager implements IWindowListener, IDisassemblyCo
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPartListener2#partVisible(org.eclipse.ui.IWorkbenchPartReference)
      */
-    public void partVisible( IWorkbenchPartReference partRef ) {
+    @Override
+	public void partVisible( IWorkbenchPartReference partRef ) {
         // TODO Auto-generated method stub
         
     }
@@ -217,20 +225,23 @@ public class DisassemblyEditorManager implements IWindowListener, IDisassemblyCo
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWindowListener#windowActivated(org.eclipse.ui.IWorkbenchWindow)
      */
-    public void windowActivated( IWorkbenchWindow window ) {
+    @Override
+	public void windowActivated( IWorkbenchWindow window ) {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWindowListener#windowClosed(org.eclipse.ui.IWorkbenchWindow)
      */
-    public void windowClosed( IWorkbenchWindow window ) {
+    @Override
+	public void windowClosed( IWorkbenchWindow window ) {
         window.getPartService().removePartListener( this );
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWindowListener#windowDeactivated(org.eclipse.ui.IWorkbenchWindow)
      */
-    public void windowDeactivated( IWorkbenchWindow window ) {
+    @Override
+	public void windowDeactivated( IWorkbenchWindow window ) {
         // TODO Auto-generated method stub
         
     }
@@ -238,14 +249,16 @@ public class DisassemblyEditorManager implements IWindowListener, IDisassemblyCo
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWindowListener#windowOpened(org.eclipse.ui.IWorkbenchWindow)
      */
-    public void windowOpened( IWorkbenchWindow window ) {
+    @Override
+	public void windowOpened( IWorkbenchWindow window ) {
         window.getPartService().addPartListener( this );
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.debug.core.disassembly.IDisassemblyContextListener#contextAdded(java.lang.Object)
      */
-    public void contextAdded( Object context ) {
+    @Override
+	public void contextAdded( Object context ) {
         // TODO Auto-generated method stub
         
     }
@@ -253,7 +266,8 @@ public class DisassemblyEditorManager implements IWindowListener, IDisassemblyCo
     /* (non-Javadoc)
      * @see org.eclipse.cdt.debug.core.disassembly.IDisassemblyContextListener#contextRemoved(java.lang.Object)
      */
-    public void contextRemoved( Object context ) {
+    @Override
+	public void contextRemoved( Object context ) {
         final IEditorPart editor = fEditorParts.remove( context );
         if ( editor != null ) {
             UIJob job = new UIJob( editor.getSite().getShell().getDisplay(), "Closing disassembly" ) { //$NON-NLS-1$
@@ -285,12 +299,14 @@ public class DisassemblyEditorManager implements IWindowListener, IDisassemblyCo
 
         return new ISourcePresentation() {
 
-            public IEditorInput getEditorInput( Object element ) {
+            @Override
+			public IEditorInput getEditorInput( Object element ) {
                 Object disassemblyContext = getDiassemblyContext( element );
                 return new DisassemblyEditorInput( element, disassemblyContext );
             }
 
-            public String getEditorId( IEditorInput input, Object element ) {
+            @Override
+			public String getEditorId( IEditorInput input, Object element ) {
                 return ICDebugUIConstants.ID_DEFAULT_DISASSEMBLY_EDITOR;
             }
         };

@@ -124,6 +124,7 @@ public class MIArg {
 		return arg;
 	}
 
+	@Override
 	public String toString() {
 		return name + "=" + value; //$NON-NLS-1$
 	}

@@ -123,6 +123,7 @@ public class MIBreakInsert extends MICommand
 		return (MIBreakInsertInfo)getMIInfo();
 	}
 
+	@Override
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

@@ -29,7 +29,8 @@ public class DisassemblyElementContentProvider implements IDocumentElementConten
     /* (non-Javadoc)
      * @see org.eclipse.cdt.debug.ui.disassembly.IDocumentElementContentProvider#updateContent(org.eclipse.cdt.debug.ui.disassembly.IDocumentElementContentUpdate)
      */
-    public void updateContent( final IDocumentElementContentUpdate update ) {
+    @Override
+	public void updateContent( final IDocumentElementContentUpdate update ) {
         Job job = new Job( "Source content update" ) { //$NON-NLS-1$
 
             /* (non-Javadoc)
@@ -51,7 +52,8 @@ public class DisassemblyElementContentProvider implements IDocumentElementConten
     /* (non-Javadoc)
      * @see org.eclipse.cdt.debug.ui.disassembly.IDocumentElementContentProvider#updateInput(org.eclipse.cdt.debug.ui.disassembly.IDocumentBaseChangeUpdate)
      */
-    public void updateInput( final IDocumentBaseChangeUpdate update ) {
+    @Override
+	public void updateInput( final IDocumentBaseChangeUpdate update ) {
         Job job = new Job( "Input update" ) { //$NON-NLS-1$
 
             /* (non-Javadoc)

@@ -32,6 +32,7 @@ public interface ICDebugTarget extends IDebugTarget,
 	 * 
 	 * @return whether this target is little endian
 	 */
+	@Override
 	public boolean isLittleEndian();
 	
 	/**

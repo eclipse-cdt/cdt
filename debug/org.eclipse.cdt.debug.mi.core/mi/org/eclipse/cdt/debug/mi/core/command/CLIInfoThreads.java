@@ -31,6 +31,7 @@ public class CLIInfoThreads extends CLICommand
 		return (CLIInfoThreadsInfo)getMIInfo();
 	}
 
+	@Override
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

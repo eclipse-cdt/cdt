@@ -24,6 +24,7 @@ public class MIGDBShowAddressSize extends MIGDBShow {
 		super(miVersion, new String[] { "remoteaddresssize" }); //$NON-NLS-1$
 	}
 	
+	@Override
 	public MIInfo getMIInfo() throws MIException {
 		MIGDBShowAddressSizeInfo info = null;
 		MIOutput out = getMIOutput();

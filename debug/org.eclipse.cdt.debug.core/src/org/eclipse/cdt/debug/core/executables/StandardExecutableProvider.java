@@ -47,10 +47,12 @@ public class StandardExecutableProvider implements IProjectExecutablesProvider {
 		supportedNatureIds.add(CCProjectNature.CC_NATURE_ID);
 	}
 	
+	@Override
 	public List<String> getProjectNatures() {
 		return supportedNatureIds;
 	}
 
+	@Override
 	public List<Executable> getExecutables(IProject project, IProgressMonitor monitor) {
 		List<Executable> executables = new ArrayList<Executable>();
 		
@@ -122,6 +124,7 @@ public class StandardExecutableProvider implements IProjectExecutablesProvider {
 		return executables;
 	}
 
+	@Override
 	public IStatus removeExecutable(Executable executable, IProgressMonitor monitor) {
 		IResource exeResource = executable.getResource();
 		if (exeResource != null) {

@@ -68,6 +68,7 @@ public class CDebugElementAdapterFactory implements IAdapterFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
 	 */
+	@Override
 	@SuppressWarnings( "rawtypes" )
     public Object getAdapter( Object adaptableObject, Class adapterType ) {
 	    if ( adapterType.isInstance( adaptableObject ) ) {
@@ -171,6 +172,7 @@ public class CDebugElementAdapterFactory implements IAdapterFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
+	@Override
 	@SuppressWarnings( "rawtypes" )
     public Class[] getAdapterList() {
 		return new Class[] {

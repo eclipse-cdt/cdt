@@ -34,6 +34,7 @@ public interface ICDIMemorySpaceManagement extends ICDIObject {
 	 * @return the encoded string representation of the address or null
 	 * @deprecated CDI clients should implement ICDIMemorySpaceEncoder
 	 */
+	@Deprecated
 	String addressToString(BigInteger address, String memorySpaceID);
 
 	/**
@@ -54,6 +55,7 @@ public interface ICDIMemorySpaceManagement extends ICDIObject {
 	 *             if string is not in the expected format
 	 * @deprecated CDI clients should implement ICDIMemorySpaceEncoder 
 	 */
+	@Deprecated
 	BigInteger stringToAddress(String str, StringBuffer memorySpaceID_out) throws CDIException;
 	
 	/**

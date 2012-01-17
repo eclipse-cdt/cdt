@@ -68,6 +68,7 @@ public class MIConst extends MIValue {
 		return buffer.toString();
 	}
 
+	@Override
 	public String toString() {
 		return getCString();
 	}

@@ -26,6 +26,7 @@ public class SessionObject implements ICDISessionObject {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISessionObject#getSession()
 	 */
+	@Override
 	public ICDISession getSession() {
 		return fSession;
 	}

@@ -36,6 +36,7 @@ public class MIOutput {
 		oobs = bands;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		for (int i = 0; i < oobs.length; i++) {

@@ -18,11 +18,13 @@ public abstract class SingleCharReader extends Reader {
 	/**
 	 * @see Reader#read()
 	 */
+	@Override
 	public abstract int read() throws IOException;
 
 	/**
 	 * @see Reader#read(char[],int,int)
 	 */
+	@Override
 	public int read(char cbuf[], int off, int len) throws IOException {
 		int end= off + len;
 		for (int i= off; i < end; i++) {
@@ -38,7 +40,8 @@ public abstract class SingleCharReader extends Reader {
 	/**
 	 * @see Reader#ready()
 	 */		
-    public boolean ready() throws IOException {
+    @Override
+	public boolean ready() throws IOException {
 		return true;
 	}
 	

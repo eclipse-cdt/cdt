@@ -23,13 +23,16 @@ public class ResumeActionPage extends PlatformObject implements IBreakpointActio
 		return resumeAction;
 	}
 
+	@Override
 	public void actionDialogCanceled() {
 	}
 
+	@Override
 	public void actionDialogOK() {
 		resumeAction.setPauseTime(resumeComposite.getPauseTime());
 	}
 
+	@Override
 	public Composite createComposite(IBreakpointAction action, Composite composite, int style) {
 		resumeAction = (ResumeAction) action;
 		resumeComposite = new ResumeActionComposite(composite, style, this);

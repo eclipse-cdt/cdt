@@ -106,6 +106,7 @@ public class ImportMemoryDialog extends SelectionDialog
 	public void scrollRenderings(final BigInteger address)
 	{
 		UIJob job = new UIJob("repositionRenderings"){ //$NON-NLS-1$
+			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				for (IMemoryRenderingContainer container : fMemoryView.getMemoryRenderingContainers()) {
 					IMemoryRendering rendering = container.getActiveRendering();
@@ -132,6 +133,7 @@ public class ImportMemoryDialog extends SelectionDialog
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		super.createButtonsForButtonBar(parent);
 	}
@@ -139,6 +141,7 @@ public class ImportMemoryDialog extends SelectionDialog
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.SelectionDialog#getResult()
 	 */
+	@Override
 	public Object[] getResult() {
 		
 		Object[] results = super.getResult();
@@ -153,6 +156,7 @@ public class ImportMemoryDialog extends SelectionDialog
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#cancelPressed()
 	 */
+	@Override
 	protected void cancelPressed() {
 		
 		setResult(null);
@@ -163,6 +167,7 @@ public class ImportMemoryDialog extends SelectionDialog
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
+	@Override
 	protected void okPressed() {
 		if(fCurrentControl != null)
 			fCurrentControl.dispose();
@@ -176,6 +181,7 @@ public class ImportMemoryDialog extends SelectionDialog
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, MemoryTransportPlugin.getUniqueIdentifier() + ".ImportMemoryDialog_context"); //$NON-NLS-1$
@@ -241,6 +247,7 @@ public class ImportMemoryDialog extends SelectionDialog
 		fFormatCombo.setItems(fFormatNames);
 		
 		fFormatCombo.addSelectionListener(new SelectionAdapter(){
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if(fCurrentControl != null) {
 					fCurrentControl.dispose();

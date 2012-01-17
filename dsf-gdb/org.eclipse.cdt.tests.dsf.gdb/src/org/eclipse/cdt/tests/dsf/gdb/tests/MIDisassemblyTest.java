@@ -92,7 +92,8 @@ public class MIDisassemblyTest extends BaseTestCase {
     public void testCaseInitialization() throws Exception {
         fSession = getGDBLaunch().getSession();
         Runnable runnable = new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                // Get a reference to the memory service
                 fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
                 assert(fServicesTracker != null);
@@ -160,7 +161,8 @@ public class MIDisassemblyTest extends BaseTestCase {
 
         // Evaluate the expression (asynchronously)
         fSession.getExecutor().submit(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 fExpressionService.getFormattedExpressionValue(formattedValueDMC, drm);
             }
         });
@@ -211,7 +213,8 @@ public class MIDisassemblyTest extends BaseTestCase {
 
         // Issue the get memory request
         fSession.getExecutor().submit(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 fDisassembly.getInstructions(dmc, startAddress, endAddress, drm);
             }
         });
@@ -252,7 +255,8 @@ public class MIDisassemblyTest extends BaseTestCase {
 
         // Issue the get memory request
         fSession.getExecutor().submit(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 fDisassembly.getInstructions(dmc, function, linenum, count, drm);
             }
         });
@@ -292,7 +296,8 @@ public class MIDisassemblyTest extends BaseTestCase {
 
         // Issue the get memory request
         fSession.getExecutor().submit(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 fDisassembly.getMixedInstructions(dmc, startAddress, endAddress, drm);
             }
         });
@@ -333,7 +338,8 @@ public class MIDisassemblyTest extends BaseTestCase {
 
         // Issue the get memory request
         fSession.getExecutor().submit(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 fDisassembly.getMixedInstructions(dmc, function, linenum, count, drm);
             }
         });

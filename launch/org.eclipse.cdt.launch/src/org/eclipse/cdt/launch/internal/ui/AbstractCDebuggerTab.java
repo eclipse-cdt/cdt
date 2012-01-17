@@ -54,7 +54,8 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
         /* (non-Javadoc)
          * @see org.eclipse.cdt.debug.ui.ICDebuggerPageExtension.IContentChangeListener#contentChanged()
          */
-        public void contentChanged() {
+        @Override
+		public void contentChanged() {
             contentsChanged();
         }
     };
@@ -110,6 +111,7 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 	 * 
 	 * @see ILaunchConfigurationTab#getErrorMessage()
 	 */
+	@Override
 	public String getErrorMessage() {
 		ICDebuggerPage tab = getDynamicTab();
 		if ( (super.getErrorMessage() != null) || (tab == null)) {
@@ -203,8 +205,10 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 	protected void contentsChanged() {
 	}
 	
+	@Override
 	abstract public void createControl(Composite parent);
 
+	@Override
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 		ICDebuggerPage dynamicTab = getDynamicTab();
 		if (dynamicTab != null) {
@@ -212,6 +216,7 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 		}
 	}
 
+	@Override
 	public void initializeFrom(ILaunchConfiguration config) {
 		setLaunchConfiguration(config);
 		ICDebuggerPage dynamicTab = getDynamicTab();
@@ -220,6 +225,7 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 		}
 	}
 
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		if (getDebugConfig() != null) {
 			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, getDebugConfig().getID());
@@ -232,6 +238,7 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 		}
 	}
 
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		setLaunchConfigurationWorkingCopy(config);
 		ICDebuggerPage dynamicTab = getDynamicTab();
@@ -241,6 +248,7 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 		}
 	}
 
+	@Override
 	public boolean isValid(ILaunchConfiguration config) {
 		setErrorMessage(null);
 		setMessage(null);
@@ -264,10 +272,12 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 		return fInitDefaults;
 	}
 
+	@Override
 	public Image getImage() {
 		return LaunchImages.get(LaunchImages.IMG_VIEW_DEBUGGER_TAB);
 	}
 
+	@Override
 	public String getName() {
 		return LaunchMessages.AbstractCDebuggerTab_Debugger; 
 	}
@@ -284,14 +294,16 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 		fDCombo = new Combo(comboComp, SWT.READ_ONLY | SWT.DROP_DOWN);
 		fDCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fDCombo.addSelectionListener(new SelectionListener() {
-		    public void widgetSelected(SelectionEvent e) {
+		    @Override
+			public void widgetSelected(SelectionEvent e) {
 		        if (!isInitializing()) {
 		            setInitializeDefault(true);
 		            updateComboFromSelection();
 		        }
 		    }
 
-		    public void widgetDefaultSelected(SelectionEvent e) {
+		    @Override
+			public void widgetDefaultSelected(SelectionEvent e) {
 		    }
 		});
 	}

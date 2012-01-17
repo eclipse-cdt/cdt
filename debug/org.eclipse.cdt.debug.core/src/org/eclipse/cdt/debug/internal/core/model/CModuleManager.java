@@ -51,14 +51,17 @@ public class CModuleManager extends PlatformObject implements IModuleRetrieval {
 		fModules = new ArrayList( 5 );
 	}
 
+	@Override
 	public boolean hasModules() throws DebugException {
 		return !fModules.isEmpty();
 	}
 
+	@Override
 	public ICModule[] getModules() throws DebugException {
 		return (ICModule[])fModules.toArray( new ICModule[fModules.size()] );
 	}
 
+	@Override
 	public void loadSymbolsForAllModules() throws DebugException {
 		MultiStatus ms = new MultiStatus( CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, CoreModelMessages.getString( "CModuleManager.0" ), null ); //$NON-NLS-1$
 		Iterator it = fModules.iterator();
@@ -157,6 +160,7 @@ public class CModuleManager extends PlatformObject implements IModuleRetrieval {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter( Class adapter ) {
 		if ( adapter.equals( ICDebugTarget.class ) )
 			return getDebugTarget();

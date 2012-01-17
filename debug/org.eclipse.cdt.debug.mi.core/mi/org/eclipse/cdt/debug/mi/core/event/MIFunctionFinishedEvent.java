@@ -50,6 +50,7 @@ public class MIFunctionFinishedEvent extends MIStoppedEvent {
 		return returnType;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("gdb-result-var=" + gdbResult + "\n");  //$NON-NLS-1$//$NON-NLS-2$
@@ -63,6 +64,7 @@ public class MIFunctionFinishedEvent extends MIStoppedEvent {
 		return buffer.toString();
 	}
 
+	@Override
 	void parse () {
 		MIExecAsyncOutput exec = getMIExecAsyncOutput();
 		MIResultRecord rr = getMIResultRecord();

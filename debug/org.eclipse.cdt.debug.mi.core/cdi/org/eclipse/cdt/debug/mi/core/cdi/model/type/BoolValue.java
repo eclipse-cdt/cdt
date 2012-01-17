@@ -29,6 +29,7 @@ public class BoolValue extends IntegralValue implements ICDIBoolValue {
 		super(v);
 	}
 
+	@Override
 	public BigInteger bigIntegerValue() throws CDIException {
 		String valueString = getValueString();
 		if (valueString.equalsIgnoreCase("false"))//$NON-NLS-1$

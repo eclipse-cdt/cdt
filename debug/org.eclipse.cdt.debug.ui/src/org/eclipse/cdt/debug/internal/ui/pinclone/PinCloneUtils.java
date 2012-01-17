@@ -40,9 +40,11 @@ public class PinCloneUtils {
 	 * Default pin element color descriptor.
 	 */
 	private static class DefaultPinElementColorDescriptor implements IPinElementColorDescriptor {
+		@Override
 		public int getOverlayColor() {
 			return GREEN;
 		}
+		@Override
 		public ImageDescriptor getToolbarIconDescriptor() {
 			return null;
 		}		

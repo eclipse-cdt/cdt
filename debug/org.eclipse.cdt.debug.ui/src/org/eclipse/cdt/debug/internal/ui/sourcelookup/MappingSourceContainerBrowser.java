@@ -26,6 +26,7 @@ public class MappingSourceContainerBrowser extends AbstractSourceContainerBrowse
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.sourcelookup.AbstractSourceContainerBrowser#addSourceContainers(org.eclipse.swt.widgets.Shell, org.eclipse.debug.core.sourcelookup.ISourceLookupDirector)
 	 */
+	@Override
 	public ISourceContainer[] addSourceContainers(Shell shell, ISourceLookupDirector director) {
 		return new ISourceContainer[] { new MappingSourceContainer(generateName(director)) };
 	}
@@ -33,6 +34,7 @@ public class MappingSourceContainerBrowser extends AbstractSourceContainerBrowse
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.sourcelookup.AbstractSourceContainerBrowser#canAddSourceContainers(org.eclipse.debug.core.sourcelookup.ISourceLookupDirector)
 	 */
+	@Override
 	public boolean canAddSourceContainers(ISourceLookupDirector director) {
 		return true;
 	}
@@ -40,6 +42,7 @@ public class MappingSourceContainerBrowser extends AbstractSourceContainerBrowse
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.sourcelookup.AbstractSourceContainerBrowser#canEditSourceContainers(org.eclipse.debug.core.sourcelookup.ISourceLookupDirector, org.eclipse.debug.core.sourcelookup.ISourceContainer[])
 	 */
+	@Override
 	public boolean canEditSourceContainers(ISourceLookupDirector director, ISourceContainer[] containers) {
 		return (containers.length == 1 && containers[0] instanceof MappingSourceContainer);
 	}
@@ -47,6 +50,7 @@ public class MappingSourceContainerBrowser extends AbstractSourceContainerBrowse
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.sourcelookup.AbstractSourceContainerBrowser#editSourceContainers(org.eclipse.swt.widgets.Shell, org.eclipse.debug.core.sourcelookup.ISourceLookupDirector, org.eclipse.debug.core.sourcelookup.ISourceContainer[])
 	 */
+	@Override
 	public ISourceContainer[] editSourceContainers(Shell shell, ISourceLookupDirector director, ISourceContainer[] containers) {
 		if (containers.length == 1 && containers[0] instanceof MappingSourceContainer) {
 			PathMappingDialog dialog = new PathMappingDialog(shell, (MappingSourceContainer)containers[0]);

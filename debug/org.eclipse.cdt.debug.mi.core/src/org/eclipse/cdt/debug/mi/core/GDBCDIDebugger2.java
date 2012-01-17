@@ -42,6 +42,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  */
 public class GDBCDIDebugger2 extends AbstractGDBCDIDebugger {
 
+	@Override
 	protected String[] getExtraArguments( ILaunchConfiguration config ) throws CoreException {
 		String debugMode = config.getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE, ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN );
 		if ( ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN.equals( debugMode ) )
@@ -66,6 +67,7 @@ public class GDBCDIDebugger2 extends AbstractGDBCDIDebugger {
 		return new String[]{ getWorkingDirectory( config ), getCommandFile( config ), "-c", coreFile.toFile().getAbsolutePath() };  //$NON-NLS-1$
 	}
 
+	@Override
 	protected CommandFactory getCommandFactory( ILaunchConfiguration config ) throws CoreException {
 		String factoryID = MIPlugin.getCommandFactory( config );
 		CommandFactory factory = MIPlugin.getDefault().getCommandFactoryManager().getCommandFactory( factoryID );
@@ -102,6 +104,7 @@ public class GDBCDIDebugger2 extends AbstractGDBCDIDebugger {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.core.AbstractGDBCDIDebugger#doStartSession(org.eclipse.debug.core.ILaunch, org.eclipse.cdt.debug.mi.core.cdi.Session, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected void doStartSession( ILaunch launch, Session session, IProgressMonitor monitor ) throws CoreException {
 		ILaunchConfiguration config = launch.getLaunchConfiguration();
 		initializeLibraries( config, session );

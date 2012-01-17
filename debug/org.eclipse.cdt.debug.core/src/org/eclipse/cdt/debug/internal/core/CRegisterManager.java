@@ -93,6 +93,7 @@ public class CRegisterManager {
 	public void dispose() {
 		DebugPlugin.getDefault().asyncExec( 
 				new Runnable() {
+					@Override
 					public void run() {
 						synchronized( fRegisterGroups ) {
 							Iterator it = fRegisterGroups.iterator();
@@ -167,6 +168,7 @@ public class CRegisterManager {
 	public void addRegisterGroup( final String name, final IRegisterDescriptor[] descriptors ) {
 		DebugPlugin.getDefault().asyncExec( 
 			new Runnable() {
+				@Override
 				public void run() {
 					fRegisterGroups.add( new CRegisterGroup( getDebugTarget(), name, descriptors ) );
 					setUseDefaultRegisterGroups( false );
@@ -178,6 +180,7 @@ public class CRegisterManager {
 	public void removeAllRegisterGroups() {
 		DebugPlugin.getDefault().asyncExec( 
 			new Runnable() {
+				@Override
 				public void run() {
 					synchronized( fRegisterGroups ) {
 						Iterator it = fRegisterGroups.iterator();
@@ -195,6 +198,7 @@ public class CRegisterManager {
 	public void removeRegisterGroups( final IRegisterGroup[] groups ) {
 		DebugPlugin.getDefault().asyncExec( 
 			new Runnable() {
+				@Override
 				public void run() {
 					for ( int i = 0; i < groups.length; ++i ) {
 						((CRegisterGroup)groups[i]).dispose();
@@ -209,6 +213,7 @@ public class CRegisterManager {
 	public void restoreDefaults() {
 		DebugPlugin.getDefault().asyncExec( 
 				new Runnable() {
+					@Override
 					public void run() {
 						synchronized( fRegisterGroups ) {
 							Iterator it = fRegisterGroups.iterator();
@@ -349,6 +354,7 @@ public class CRegisterManager {
 	public void modifyRegisterGroup( final IPersistableRegisterGroup group, final IRegisterDescriptor[] descriptors ) {
 		DebugPlugin.getDefault().asyncExec( 
 				new Runnable() {
+					@Override
 					public void run() {
 						group.setRegisterDescriptors( descriptors );					
 						((CRegisterGroup)group).fireChangeEvent( DebugEvent.CONTENT );

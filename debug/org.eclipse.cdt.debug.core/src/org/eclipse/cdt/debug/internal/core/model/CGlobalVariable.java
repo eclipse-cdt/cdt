@@ -80,6 +80,7 @@ public class CGlobalVariable extends CVariable implements ICGlobalVariable {
 			setCDIVariable( (varObject instanceof ICDIVariable) ? (ICDIVariable)varObject : null );
 		}
 
+		@Override
 		public IInternalVariable createShadow( int start, int length ) throws DebugException {
 			IInternalVariable iv = null;
 			try {
@@ -91,6 +92,7 @@ public class CGlobalVariable extends CVariable implements ICGlobalVariable {
 			return iv;
 		}
 
+		@Override
 		public IInternalVariable createShadow( String type ) throws DebugException {
 			IInternalVariable iv = null;
 			try {
@@ -129,6 +131,7 @@ public class CGlobalVariable extends CVariable implements ICGlobalVariable {
 			fCDIVariableObject = variableObject;
 		}
 
+		@Override
 		public String getQualifiedName() throws DebugException {
 			if ( fQualifiedName == null ) {
 				try {
@@ -141,6 +144,7 @@ public class CGlobalVariable extends CVariable implements ICGlobalVariable {
 			return fQualifiedName;
 		}
 
+		@Override
 		public CType getType() throws DebugException {
 			if ( fType == null ) {
 				ICDIVariableDescriptor varObject = getCDIVariableObject();
@@ -175,14 +179,17 @@ public class CGlobalVariable extends CVariable implements ICGlobalVariable {
 			fType = null;
 		}
 
+		@Override
 		public void dispose( boolean destroy ) {
 			invalidate( destroy );
 		}
 
+		@Override
 		public boolean isSameVariable( ICDIVariable cdiVar ) {
 			return ( fCDIVariable != null ) ? fCDIVariable.equals( cdiVar ) : false;
 		}
 
+		@Override
 		public int sizeof() {
 			if ( getCDIVariableObject() != null ) {
 				try {
@@ -194,10 +201,12 @@ public class CGlobalVariable extends CVariable implements ICGlobalVariable {
 			return 0;
 		}
 
+		@Override
 		public boolean isArgument() {
 			return ( getCDIVariableObject() instanceof ICDIArgumentDescriptor );
 		}
 
+		@Override
 		public void setValue( String expression ) throws DebugException {
 			ICDIVariable cdiVariable = null;
 			try {
@@ -212,6 +221,7 @@ public class CGlobalVariable extends CVariable implements ICGlobalVariable {
 			}
 		}
 
+		@Override
 		public synchronized ICValue getValue() throws DebugException {
 			if ( fValue.equals( CValueFactory.NULL_VALUE ) ) {
 				ICDIVariable var = getCDIVariable();
@@ -244,6 +254,7 @@ public class CGlobalVariable extends CVariable implements ICGlobalVariable {
 			return fValue;
 		}
 		
+		@Override
 		public void invalidateValue() {
 			if ( fValue instanceof AbstractCValue ) {
 				((AbstractCValue)fValue).dispose();
@@ -251,10 +262,12 @@ public class CGlobalVariable extends CVariable implements ICGlobalVariable {
 			}
 		}
 
+		@Override
 		public boolean isChanged() {
 			return fChanged;
 		}
 
+		@Override
 		public synchronized void setChanged( boolean changed ) {
 			if ( changed ) {
 				invalidateValue();
@@ -265,6 +278,7 @@ public class CGlobalVariable extends CVariable implements ICGlobalVariable {
 			fChanged = changed;
 		}
 
+		@Override
 		public synchronized void preserve() {
 			setChanged( false );
 			if ( fValue instanceof AbstractCValue ) {
@@ -280,12 +294,14 @@ public class CGlobalVariable extends CVariable implements ICGlobalVariable {
 			fVariable = variable;
 		}
 
+		@Override
 		public void resetValue() {
 			if ( fValue instanceof AbstractCValue ) {
 				((AbstractCValue)fValue).reset();
 			}
 		}
 
+		@Override
 		public boolean isEditable() throws DebugException {
 			ICDIVariable var = getCDIVariable();
 			if ( var != null ) {
@@ -302,6 +318,7 @@ public class CGlobalVariable extends CVariable implements ICGlobalVariable {
 		 * Compares the underlying variable objects.
 		 * @see java.lang.Object#equals(java.lang.Object)
 		 */
+		@Override
 		public boolean equals( Object obj ) {
 			if ( obj instanceof InternalVariable ) {
 				return getCDIVariableObject().equals( ((InternalVariable)obj).getCDIVariableObject() );
@@ -309,10 +326,12 @@ public class CGlobalVariable extends CVariable implements ICGlobalVariable {
 			return false;
 		}
 
+		@Override
 		public boolean isSameDescriptor( ICDIVariableDescriptor desc ) {
 			return getCDIVariableObject().equals( desc );
 		}
 		
+		@Override
 		public ICDIObject getCdiObject() {
 			return fCDIVariable;
 		}
@@ -342,6 +361,7 @@ public class CGlobalVariable extends CVariable implements ICGlobalVariable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICVariable#canEnableDisable()
 	 */
+	@Override
 	public boolean canEnableDisable() {
 		return true;
 	}
@@ -349,6 +369,7 @@ public class CGlobalVariable extends CVariable implements ICGlobalVariable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvents(org.eclipse.cdt.debug.core.cdi.event.ICDIEvent[])
 	 */
+	@Override
 	public void handleDebugEvents( ICDIEvent[] events ) {
 		for( int i = 0; i < events.length; i++ ) {
 			ICDIEvent event = events[i];
@@ -368,6 +389,7 @@ public class CGlobalVariable extends CVariable implements ICGlobalVariable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICGlobalVariable#getDescriptor()
 	 */
+	@Override
 	public IGlobalVariableDescriptor getDescriptor() {
 		return fDescriptor;
 	}
@@ -375,11 +397,13 @@ public class CGlobalVariable extends CVariable implements ICGlobalVariable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.core.model.AbstractCVariable#dispose()
 	 */
+	@Override
 	public void dispose() {
 		internalDispose( true );
 		setDisposed( true );
 	}
 
+	@Override
 	protected void createOriginal( ICDIVariableDescriptor vo ) {
 		if ( vo != null ) {
 			setName( vo.getName() );

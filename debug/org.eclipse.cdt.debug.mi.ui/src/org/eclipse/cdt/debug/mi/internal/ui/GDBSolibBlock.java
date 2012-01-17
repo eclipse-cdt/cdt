@@ -55,6 +55,7 @@ public class GDBSolibBlock extends Observable implements IMILaunchConfigurationC
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.internal.ui.IMILaunchConfigurationComponent#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl( Composite parent ) {
 		Composite subComp = ControlFactory.createCompositeEx( parent, 1, GridData.FILL_HORIZONTAL );
 		((GridLayout)subComp.getLayout()).makeColumnsEqualWidth = false;
@@ -69,6 +70,7 @@ public class GDBSolibBlock extends Observable implements IMILaunchConfigurationC
 			fAutoSoLibButton = ControlFactory.createCheckBox( subComp, MIUIMessages.getString( "GDBSolibBlock.0" ) ); //$NON-NLS-1$
 			fAutoSoLibButton.addSelectionListener( new SelectionAdapter() {
 
+				@Override
 				public void widgetSelected( SelectionEvent e ) {
 					updateButtons();
 					changed();
@@ -79,6 +81,7 @@ public class GDBSolibBlock extends Observable implements IMILaunchConfigurationC
 			fStopOnSolibEventsButton = ControlFactory.createCheckBox( subComp, MIUIMessages.getString( "GDBSolibBlock.1" ) ); //$NON-NLS-1$
 			fStopOnSolibEventsButton.addSelectionListener( new SelectionAdapter() {
 
+				@Override
 				public void widgetSelected( SelectionEvent e ) {
 					updateButtons();
 					changed();
@@ -91,6 +94,7 @@ public class GDBSolibBlock extends Observable implements IMILaunchConfigurationC
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.internal.ui.IMILaunchConfigurationComponent#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom( ILaunchConfiguration configuration ) {
 		if ( fSolibSearchPathBlock != null )
 			fSolibSearchPathBlock.initializeFrom( configuration );
@@ -109,6 +113,7 @@ public class GDBSolibBlock extends Observable implements IMILaunchConfigurationC
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.internal.ui.IMILaunchConfigurationComponent#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void performApply( ILaunchConfigurationWorkingCopy configuration ) {
 		if ( fSolibSearchPathBlock != null )
 			fSolibSearchPathBlock.performApply( configuration );
@@ -127,6 +132,7 @@ public class GDBSolibBlock extends Observable implements IMILaunchConfigurationC
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.internal.ui.IMILaunchConfigurationComponent#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void setDefaults( ILaunchConfigurationWorkingCopy configuration ) {
 		if ( fSolibSearchPathBlock != null )
 			fSolibSearchPathBlock.setDefaults( configuration );
@@ -140,6 +146,7 @@ public class GDBSolibBlock extends Observable implements IMILaunchConfigurationC
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.internal.ui.IMILaunchConfigurationComponent#dispose()
 	 */
+	@Override
 	public void dispose() {
 		deleteObservers();
 		if ( fSolibSearchPathBlock != null ) {
@@ -154,6 +161,7 @@ public class GDBSolibBlock extends Observable implements IMILaunchConfigurationC
 	 * 
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */
+	@Override
 	public void update( Observable o, Object arg ) {
 		changed();
 	}
@@ -178,6 +186,7 @@ public class GDBSolibBlock extends Observable implements IMILaunchConfigurationC
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.internal.ui.IMILaunchConfigurationComponent#getControl()
 	 */
+	@Override
 	public Control getControl() {
 		return fControl;
 	}
@@ -185,6 +194,7 @@ public class GDBSolibBlock extends Observable implements IMILaunchConfigurationC
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.internal.ui.IMILaunchConfigurationComponent#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public boolean isValid( ILaunchConfiguration launchConfig ) {
 		// TODO Auto-generated method stub
 		return false;

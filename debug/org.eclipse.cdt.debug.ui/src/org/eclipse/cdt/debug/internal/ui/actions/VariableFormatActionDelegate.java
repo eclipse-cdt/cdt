@@ -50,17 +50,20 @@ public class VariableFormatActionDelegate implements IObjectActionDelegate {
 	/**
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
 	 */
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 	}
 
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#run(IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		ICVariable[] vars = getVariables();
 		if (vars != null && vars.length > 0) {
 			final MultiStatus ms = new MultiStatus(CDebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, "", null); //$NON-NLS-1$
 			BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
+				@Override
 				public void run() {
 					try {
 						doAction(getVariables());
@@ -83,6 +86,7 @@ public class VariableFormatActionDelegate implements IObjectActionDelegate {
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		
 		if (selection instanceof IStructuredSelection) {

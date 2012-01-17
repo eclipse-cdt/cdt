@@ -116,6 +116,7 @@ public class MIDataDisassemble extends MICommand
 		return (MIDataDisassembleInfo)getMIInfo();
 	}
 
+	@Override
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();
@@ -132,6 +133,7 @@ public class MIDataDisassemble extends MICommand
 	 * GDB the -data-disassemble uses "--" as a separator wit only the MODE
 	 * So override the MICommand
 	 */
+	@Override
 	protected String parametersToString() {
 		String[] parameters = getParameters();
 		if (parameters != null && parameters.length > 0) {

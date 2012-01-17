@@ -53,6 +53,7 @@ public class Disassembly extends CDebugElement implements IDisassembly, ICDIEven
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IDisassembly#getDisassemblyBlock(org.eclipse.cdt.debug.core.model.ICStackFrame)
 	 */
+	@Override
 	public IDisassemblyBlock getDisassemblyBlock( ICStackFrame frame ) throws DebugException {
 		if ( fBlocks[0] == null || !fBlocks[0].contains( frame ) ) {
 			fBlocks[0] = createBlock( frame );
@@ -98,6 +99,7 @@ public class Disassembly extends CDebugElement implements IDisassembly, ICDIEven
 		return null;
 	}
 	
+	@Override
 	public IDisassemblyBlock getDisassemblyBlock( IAddress address ) throws DebugException {
 		fBlocks[0] = createBlock( address, null);
 		return fBlocks[0];		
@@ -195,6 +197,7 @@ public class Disassembly extends CDebugElement implements IDisassembly, ICDIEven
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IDisassembly#getAddressFactory()
 	 */
+	@Override
 	public IAddressFactory getAddressFactory() {
 		return ((CDebugTarget)getDebugTarget()).getAddressFactory();
 	}
@@ -202,6 +205,7 @@ public class Disassembly extends CDebugElement implements IDisassembly, ICDIEven
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvents(org.eclipse.cdt.debug.core.cdi.event.ICDIEvent[])
 	 */
+	@Override
 	public void handleDebugEvents( ICDIEvent[] events ) {
 		boolean update = false;
 		for ( int i = 0; i < events.length; ++i ) {

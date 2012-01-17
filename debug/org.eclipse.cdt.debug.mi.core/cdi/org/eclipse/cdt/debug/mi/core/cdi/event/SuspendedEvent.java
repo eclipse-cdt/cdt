@@ -52,6 +52,7 @@ public class SuspendedEvent implements ICDISuspendedEvent {
 		event = e;
 	}
 
+	@Override
 	public ICDISessionObject getReason() {
 		if (event instanceof MIBreakpointHitEvent) {
 			// A Catchpoint hit is reported by gdb as a breakpoint hit. We can
@@ -88,6 +89,7 @@ public class SuspendedEvent implements ICDISuspendedEvent {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEvent#getSource()
 	 */
+	@Override
 	public ICDIObject getSource() {
 		Target target = session.getTarget(event.getMISession()); 
 		// We can send the target as the Source.  CDI

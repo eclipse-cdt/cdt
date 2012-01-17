@@ -37,6 +37,7 @@ public class MIVarEvaluateExpression extends MICommand {
 		return (MIVarEvaluateExpressionInfo) getMIInfo();
 	}
 
+	@Override
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

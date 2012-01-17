@@ -45,6 +45,7 @@ public class ExecutablesViewCopyHandler extends AbstractHandler {
 			clipboard.dispose();
 	}
 
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		ISelection selection = HandlerUtil.getCurrentSelection(event);
 

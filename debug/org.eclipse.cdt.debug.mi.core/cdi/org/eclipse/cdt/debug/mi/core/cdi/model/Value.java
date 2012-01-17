@@ -48,6 +48,7 @@ public class Value extends CObject implements ICDIValue {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIValue#getTypeName()
 	 */
+	@Override
 	public String getTypeName() throws CDIException {
 		return getVariable().getTypeName();
 	}
@@ -55,6 +56,7 @@ public class Value extends CObject implements ICDIValue {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIValue#getValueString()
 	 */
+	@Override
 	public String getValueString() throws CDIException {
 		// make sure the variable is updated.
 		if (! getVariable().isUpdated()) {
@@ -95,6 +97,7 @@ public class Value extends CObject implements ICDIValue {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIValue#getVariables()
 	 */	
+	@Override
 	public int getChildrenNumber() throws CDIException {
 		return getVariable().getMIVar().getNumChild();
 	}
@@ -102,6 +105,7 @@ public class Value extends CObject implements ICDIValue {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIValue#getVariables()
 	 */
+	@Override
 	public boolean hasChildren() throws CDIException {
 	/*
 		int number = 0;
@@ -127,6 +131,7 @@ public class Value extends CObject implements ICDIValue {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIValue#getVariables()
 	 */
+	@Override
 	public ICDIVariable[] getVariables() throws CDIException {
 		return getVariable().getChildren();
 	}
@@ -134,6 +139,7 @@ public class Value extends CObject implements ICDIValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIValue#getType()
 	 */
+	@Override
 	public ICDIType getType() throws CDIException {
 		return getVariable().getType();
 	}

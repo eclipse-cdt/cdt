@@ -80,6 +80,7 @@ public class SelectionButtonDialogFieldGroup extends DialogField {
 	/*
 	 * @see DialogField#doFillIntoGrid
 	 */
+	@Override
 	public Control[] doFillIntoGrid(Composite parent, int nColumns) {
 		assertEnoughColumns(nColumns);
 				
@@ -105,6 +106,7 @@ public class SelectionButtonDialogFieldGroup extends DialogField {
 	/*
 	 * @see DialogField#doFillIntoGrid
 	 */	
+	@Override
 	public int getNumberOfControls() {
 		return (fGroupBorderStyle == SWT.NONE) ? 2 : 1;
 	}
@@ -150,9 +152,11 @@ public class SelectionButtonDialogFieldGroup extends DialogField {
 			fButtonComposite.setLayout(layout);
 			
 			SelectionListener listener= new SelectionListener() {
+				@Override
 				public void widgetDefaultSelected(SelectionEvent e) {
 					doWidgetSelected(e);
 				}
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					doWidgetSelected(e);
 				}
@@ -224,6 +228,7 @@ public class SelectionButtonDialogFieldGroup extends DialogField {
 
 	// ------ enable / disable management
 	
+	@Override
 	protected void updateEnableState() {
 		super.updateEnableState();
 		if (fButtons != null) {

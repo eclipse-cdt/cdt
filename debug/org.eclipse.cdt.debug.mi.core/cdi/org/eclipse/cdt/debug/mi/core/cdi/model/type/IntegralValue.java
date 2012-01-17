@@ -35,6 +35,7 @@ public abstract class IntegralValue extends Value implements ICDIIntegralValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIIntegralValue#biIntegerValue()
 	 */
+	@Override
 	public BigInteger bigIntegerValue() throws CDIException {
 		return bigIntegerValue(getValueString());
 	}
@@ -64,6 +65,7 @@ public abstract class IntegralValue extends Value implements ICDIIntegralValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIIntegralValue#longValue()
 	 */
+	@Override
 	public long longValue() throws CDIException {
 		return bigIntegerValue().longValue();
 	}
@@ -71,6 +73,7 @@ public abstract class IntegralValue extends Value implements ICDIIntegralValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIIntegralValue#longValue()
 	 */
+	@Override
 	public int intValue() throws CDIException {
 		return bigIntegerValue().intValue();
 	}
@@ -78,6 +81,7 @@ public abstract class IntegralValue extends Value implements ICDIIntegralValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIIntegralValue#shortValue()
 	 */
+	@Override
 	public short shortValue() throws CDIException {
 		return bigIntegerValue().shortValue();
 	}
@@ -85,6 +89,7 @@ public abstract class IntegralValue extends Value implements ICDIIntegralValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIIntegralValue#byteValue()
 	 */
+	@Override
 	public int byteValue() throws CDIException {
 		return bigIntegerValue().byteValue();
 	}

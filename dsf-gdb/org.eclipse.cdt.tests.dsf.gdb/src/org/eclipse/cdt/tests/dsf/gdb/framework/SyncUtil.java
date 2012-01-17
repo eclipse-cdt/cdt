@@ -80,7 +80,8 @@ public class SyncUtil {
     	fSession = session;
     	
         Runnable runnable = new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
 	        	DsfServicesTracker tracker = 
 	        		new DsfServicesTracker(TestsPlugin.getBundleContext(), 
 	        				fSession.getId());
@@ -135,6 +136,7 @@ public class SyncUtil {
 					MIStoppedEvent.class);
 
 		fRunControl.getExecutor().submit(new Runnable() {
+			@Override
 			public void run() {
 				// No need for a RequestMonitor since we will wait for the
 				// ServiceEvent telling us the program has been suspended again
@@ -172,6 +174,7 @@ public class SyncUtil {
                     MIStoppedEvent.class);
 		
 		fRunControl.getExecutor().submit(new Runnable() {
+			@Override
 			public void run() {
 				// No need for a RequestMonitor since we will wait for the
 				// ServiceEvent telling us the program has been suspended again
@@ -289,6 +292,7 @@ public class SyncUtil {
                     MIStoppedEvent.class);
 
 		fRunControl.getExecutor().submit(new Runnable() {
+			@Override
 			public void run() {
 				// No need for a RequestMonitor since we will wait for the
 				// ServiceEvent telling us the program has been suspended again
@@ -318,6 +322,7 @@ public class SyncUtil {
                     MIRunningEvent.class);
 
 		fRunControl.getExecutor().submit(new Runnable() {
+			@Override
 			public void run() {
 				// No need for a RequestMonitor since we will wait for the
 				// ServiceEvent telling us the program has been resumed
@@ -419,7 +424,8 @@ public class SyncUtil {
     public static IExpressionDMContext createExpression(final IDMContext parentCtx, final String expression)
         throws Throwable {
         Callable<IExpressionDMContext> callable = new Callable<IExpressionDMContext>() {
-            public IExpressionDMContext call() throws Exception {
+            @Override
+			public IExpressionDMContext call() throws Exception {
                 return fExpressions.createExpression(parentCtx, expression);
             }
         };
@@ -430,7 +436,8 @@ public class SyncUtil {
         final IFormattedValues service, final IFormattedDataDMContext dmc, final String formatId) throws Throwable 
     {
         Callable<FormattedValueDMContext> callable = new Callable<FormattedValueDMContext>() {
-            public FormattedValueDMContext call() throws Exception {
+            @Override
+			public FormattedValueDMContext call() throws Exception {
                 return service.getFormattedValueContext(dmc, formatId);
             }
         };
@@ -439,7 +446,8 @@ public class SyncUtil {
     
     public static IMIExecutionDMContext createExecutionContext(final IContainerDMContext parentCtx, final int threadId) throws Throwable {
 	    Callable<IMIExecutionDMContext> callable = new Callable<IMIExecutionDMContext>() {
-	        public IMIExecutionDMContext call() throws Exception {
+	        @Override
+			public IMIExecutionDMContext call() throws Exception {
 	        	String threadIdStr = Integer.toString(threadId);
 	        	IProcessDMContext processDmc = DMContexts.getAncestorOfType(parentCtx, IProcessDMContext.class);
 	        	IThreadDMContext threadDmc = fProcessesService.createThreadContext(processDmc, threadIdStr);

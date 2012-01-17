@@ -65,7 +65,8 @@ public class TargetTests extends TestCase {
      * Example code test the packages in the project 
      *  "com.qnx.tools.ide.cdt.core"
      */
-    protected void setUp() throws CoreException,FileNotFoundException {
+    @Override
+	protected void setUp() throws CoreException,FileNotFoundException {
             
         /***
          * Setup the various files, paths and projects that are needed by the
@@ -81,7 +82,8 @@ public class TargetTests extends TestCase {
      *
      * Called after every test case method.
      */
-    protected void tearDown() throws CoreException {
+    @Override
+	protected void tearDown() throws CoreException {
         CProjectHelper.delete(testProject);
     }
     

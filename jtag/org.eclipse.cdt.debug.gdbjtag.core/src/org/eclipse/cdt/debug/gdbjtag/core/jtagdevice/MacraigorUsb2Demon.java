@@ -23,6 +23,7 @@ public class MacraigorUsb2Demon extends DefaultGDBJtagDeviceImpl {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.DefaultGDBJtagDeviceImpl#getDefaultPortNumber()
 	 */
+	@Override
 	public String getDefaultPortNumber() {
 		return "8888";
 	}
@@ -30,6 +31,7 @@ public class MacraigorUsb2Demon extends DefaultGDBJtagDeviceImpl {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.DefaultGDBJtagDeviceImpl#doDelay(int, java.util.Collection)
 	 */
+	@Override
 	public void doDelay(int delay, Collection<String> commands) {
 		super.addCmd(commands, "monitor sleep " + String.valueOf(delay));
 	}
@@ -37,6 +39,7 @@ public class MacraigorUsb2Demon extends DefaultGDBJtagDeviceImpl {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.DefaultGDBJtagDeviceImpl#doReset(java.util.Collection)
 	 */
+	@Override
 	public void doReset(Collection<String> commands) {
 		super.addCmd(commands, "monitor resetrun");
 	}

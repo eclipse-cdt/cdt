@@ -34,6 +34,7 @@ public class MIThreadListIds extends MICommand
 		return (MIThreadListIdsInfo)getMIInfo();
 	}
 
+	@Override
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

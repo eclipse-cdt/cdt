@@ -47,14 +47,17 @@ public class TestMIBreakInsertCommand {
 
 	private class TestContext implements IBreakpointsTargetDMContext {
 
+		@Override
 		public IDMContext[] getParents() {
 			return null;
 		}
 
+		@Override
 		public String getSessionId() {
 			return null;
 		}
 
+		@Override
 		@SuppressWarnings("rawtypes")
 		public Object getAdapter(Class adapter) {
 			return null;

@@ -35,6 +35,7 @@ public class AbsolutePathSourceContainer extends AbstractSourceContainer {
 		return file.isAbsolute() && file.exists() && file.isFile();	
 	}
 	
+	@Override
 	public Object[] findSourceElements(String name) throws CoreException {
 		if (name != null) {
 			File file = new File(name);
@@ -45,6 +46,7 @@ public class AbsolutePathSourceContainer extends AbstractSourceContainer {
 		return new Object[0];
 	}
 
+	@Override
 	public String getName() {
 		return SourceLookupMessages.AbsolutePathSourceContainer_0;
 	}
@@ -52,6 +54,7 @@ public class AbsolutePathSourceContainer extends AbstractSourceContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getType()
 	 */
+	@Override
 	public ISourceContainerType getType() {
 		return getSourceContainerType(TYPE_ID);
 	}

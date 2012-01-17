@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IAdapterFactory;
 
 public class BreakpointActionAdapterFactory implements IAdapterFactory {
 
+	@Override
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (adapterType.equals(ILogActionEnabler.class)) {
 			if (adaptableObject instanceof CThread) {
@@ -29,6 +30,7 @@ public class BreakpointActionAdapterFactory implements IAdapterFactory {
 		return null;
 	}
 
+	@Override
 	public Class[] getAdapterList() {
 		return new Class[] { ILogActionEnabler.class, IResumeActionEnabler.class, };
 	}

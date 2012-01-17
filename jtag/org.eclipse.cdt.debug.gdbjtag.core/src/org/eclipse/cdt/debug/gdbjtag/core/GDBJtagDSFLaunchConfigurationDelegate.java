@@ -44,6 +44,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 @ThreadSafe
 public class GDBJtagDSFLaunchConfigurationDelegate extends GdbLaunchDelegate {
 
+	@Override
 	protected IDsfDebugServicesFactory newServiceFactory(ILaunchConfiguration config, String version) {
 		if (version.contains(LaunchUtils.MACOS_GDB_MARKER)) {
 			// The version string at this point should look like

@@ -105,6 +105,7 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.ISourceFinder#toLocalPath(java.lang.String)
 	 */
+	@Override
 	synchronized public String toLocalPath(String compilationPath) {
 		try {
 			Object foundElement = null;
@@ -191,6 +192,7 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.ISourceFinder#toLocalPath(org.eclipse.core.runtime.IAdaptable, java.lang.String)
 	 */
+	@Override
 	public String toLocalPath(IAdaptable _launch, String compilationPath) {
 		Object foundElement = null;
 		
@@ -326,6 +328,7 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationAdded(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void launchConfigurationAdded(ILaunchConfiguration config) {
 		// Don't care.  
 	}
@@ -333,6 +336,7 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationChanged(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	synchronized public void launchConfigurationChanged(ILaunchConfiguration config) {
 		// We don't care if it's a working copy.
 		if (config.isWorkingCopy()) {
@@ -349,6 +353,7 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationRemoved(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	synchronized public void launchConfigurationRemoved(ILaunchConfiguration config) {
 		// We don't care if it's a working copy.
 		if (config.isWorkingCopy()) {
@@ -364,6 +369,7 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.debug.core.ILaunch[])
 	 */
+	@Override
 	synchronized public void launchesRemoved(ILaunch[] launches) {
 		for (ILaunch launch : launches) {
 			if (launch.getSourceLocator() == fLaunchLocator) {
@@ -376,6 +382,7 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesAdded(org.eclipse.debug.core.ILaunch[])
 	 */
+	@Override
 	public void launchesAdded(ILaunch[] launches) {
 		// If there's a new launch in town, we need to take it into
 		// consideration. E.g., if it targets our binary, and we're currently
@@ -394,6 +401,7 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(org.eclipse.debug.core.ILaunch[])
 	 */
+	@Override
 	public void launchesChanged(ILaunch[] launches) {
 		// don't care. I don't think setting a new locator in a launch would result in us getting notified
 	}
@@ -401,6 +409,7 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.ISourceFinder#dispose()
 	 */
+	@Override
 	public void dispose() {
 		ILaunchManager lmgr = DebugPlugin.getDefault().getLaunchManager();
 		lmgr.removeLaunchConfigurationListener(this);

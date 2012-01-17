@@ -103,6 +103,7 @@ public class Thread extends CObject implements ICDIThread, ICDIExecuteMoveInstru
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#getStackFrames()
 	 */
+	@Override
 	public ICDIStackFrame[] getStackFrames() throws CDIException {
 
 		// get the frames depth
@@ -154,6 +155,7 @@ public class Thread extends CObject implements ICDIThread, ICDIExecuteMoveInstru
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#getStackFrames()
 	 */
+	@Override
 	public int getStackFrameCount() throws CDIException {
 		if (stackdepth == 0) {
 			Target target = (Target)getTarget();
@@ -208,6 +210,7 @@ public class Thread extends CObject implements ICDIThread, ICDIExecuteMoveInstru
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#getStackFrames()
 	 */
+	@Override
 	public ICDIStackFrame[] getStackFrames(int low, int high) throws CDIException {
 		if (currentFrames == null || currentFrames.size() < high) {
 			currentFrames = new ArrayList();
@@ -326,6 +329,7 @@ public class Thread extends CObject implements ICDIThread, ICDIExecuteMoveInstru
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#stepInto()
 	 */
+	@Override
 	public void stepInto() throws CDIException {
 		stepInto(1);
 	}
@@ -333,6 +337,7 @@ public class Thread extends CObject implements ICDIThread, ICDIExecuteMoveInstru
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExecuteStep#stepInto(int)
 	 */
+	@Override
 	public void stepInto(int count) throws CDIException {
 		Target target = (Target)getTarget();
 		synchronized(target.getLock()) {
@@ -344,6 +349,7 @@ public class Thread extends CObject implements ICDIThread, ICDIExecuteMoveInstru
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#stepIntoInstruction()
 	 */
+	@Override
 	public void stepIntoInstruction() throws CDIException {
 		stepIntoInstruction(1);
 	}
@@ -351,6 +357,7 @@ public class Thread extends CObject implements ICDIThread, ICDIExecuteMoveInstru
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExecuteStep#stepIntoInstruction(int)
 	 */
+	@Override
 	public void stepIntoInstruction(int count) throws CDIException {
 		Target target = (Target)getTarget();
 		synchronized(target.getLock()) {
@@ -362,6 +369,7 @@ public class Thread extends CObject implements ICDIThread, ICDIExecuteMoveInstru
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#stepOver()
 	 */
+	@Override
 	public void stepOver() throws CDIException {
 		stepOver(1);
 	}
@@ -369,6 +377,7 @@ public class Thread extends CObject implements ICDIThread, ICDIExecuteMoveInstru
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExecuteStep#stepOver(int)
 	 */
+	@Override
 	public void stepOver(int count) throws CDIException {
 		Target target = (Target)getTarget();
 		synchronized(target.getLock()) {
@@ -380,6 +389,7 @@ public class Thread extends CObject implements ICDIThread, ICDIExecuteMoveInstru
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#stepOverInstruction()
 	 */
+	@Override
 	public void stepOverInstruction() throws CDIException {
 		stepOverInstruction(1);
 	}
@@ -387,6 +397,7 @@ public class Thread extends CObject implements ICDIThread, ICDIExecuteMoveInstru
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExecuteStep#stepOverInstruction(int)
 	 */
+	@Override
 	public void stepOverInstruction(int count) throws CDIException {
 		Target target = (Target)getTarget();
 		synchronized(target.getLock()) {
@@ -398,6 +409,7 @@ public class Thread extends CObject implements ICDIThread, ICDIExecuteMoveInstru
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#stepReturn()
 	 */
+	@Override
 	public void stepReturn() throws CDIException {
 		getCurrentStackFrame().stepReturn();
 	}
@@ -405,6 +417,7 @@ public class Thread extends CObject implements ICDIThread, ICDIExecuteMoveInstru
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#runUntil(ICDILocation)
 	 */
+	@Override
 	public void runUntil(ICDILocation location) throws CDIException {
 		stepUntil(location);
 	}
@@ -412,6 +425,7 @@ public class Thread extends CObject implements ICDIThread, ICDIExecuteMoveInstru
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExecuteStep#stepUntil(org.eclipse.cdt.debug.core.cdi.ICDILocation)
 	 */
+	@Override
 	public void stepUntil(ICDILocation location) throws CDIException {
 		Target target = (Target)getTarget();
 		synchronized(target.getLock()) {
@@ -423,6 +437,7 @@ public class Thread extends CObject implements ICDIThread, ICDIExecuteMoveInstru
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#isSuspended()
 	 */
+	@Override
 	public boolean isSuspended() {
 		return getTarget().isSuspended();
 	}
@@ -430,6 +445,7 @@ public class Thread extends CObject implements ICDIThread, ICDIExecuteMoveInstru
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#suspend()
 	 */
+	@Override
 	public void suspend() throws CDIException {
 		getTarget().suspend();
 	}
@@ -437,6 +453,7 @@ public class Thread extends CObject implements ICDIThread, ICDIExecuteMoveInstru
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#resume()
 	 */
+	@Override
 	public void resume() throws CDIException {
 		resume(false);
 	}
@@ -445,6 +462,7 @@ public class Thread extends CObject implements ICDIThread, ICDIExecuteMoveInstru
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExecuteResume#resume(boolean)
 	 */
 
+	@Override
 	public void resume(boolean passSignal) throws CDIException {
 		Target target = (Target)getTarget();
 		synchronized(target.getLock()) {
@@ -455,6 +473,7 @@ public class Thread extends CObject implements ICDIThread, ICDIExecuteMoveInstru
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExecuteResume#resume(org.eclipse.cdt.debug.core.cdi.ICDILocation)
 	 */
+	@Override
 	public void resume(ICDILocation location) throws CDIException {
 		Target target = (Target)getTarget();
 		synchronized(target.getLock()) {
@@ -466,6 +485,7 @@ public class Thread extends CObject implements ICDIThread, ICDIExecuteMoveInstru
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExecuteResume#resume(org.eclipse.cdt.debug.core.cdi.model.ICDISignal)
 	 */
+	@Override
 	public void resume(ICDISignal signal) throws CDIException {
 		Target target = (Target)getTarget();
 		synchronized(target.getLock()) {
@@ -477,6 +497,7 @@ public class Thread extends CObject implements ICDIThread, ICDIExecuteMoveInstru
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#jump(org.eclipse.cdt.debug.core.cdi.ICDILocation)
 	 */
+	@Override
 	public void jump(ICDILocation location) throws CDIException {
 		resume(location);
 	}
@@ -484,6 +505,7 @@ public class Thread extends CObject implements ICDIThread, ICDIExecuteMoveInstru
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#signal()
 	 */
+	@Override
 	public void signal() throws CDIException {
 		resume(false);
 	}
@@ -491,6 +513,7 @@ public class Thread extends CObject implements ICDIThread, ICDIExecuteMoveInstru
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#signal(org.eclipse.cdt.debug.core.cdi.model.ICDISignal)
 	 */
+	@Override
 	public void signal(ICDISignal signal) throws CDIException {
 		resume(signal);
 	}
@@ -499,6 +522,7 @@ public class Thread extends CObject implements ICDIThread, ICDIExecuteMoveInstru
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#equals(ICDIThread)
 	 */
+	@Override
 	public boolean equals(ICDIThread thread) {
 		if (thread instanceof Thread) {
 			Thread cthread = (Thread) thread;
@@ -535,6 +559,7 @@ public class Thread extends CObject implements ICDIThread, ICDIExecuteMoveInstru
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#getThreadStorageDescriptors()
 	 */
+	@Override
 	public ICDIThreadStorageDescriptor[] getThreadStorageDescriptors() throws CDIException {
 		Session session = (Session)getTarget().getSession();
 		VariableManager varMgr = session.getVariableManager();
@@ -544,6 +569,7 @@ public class Thread extends CObject implements ICDIThread, ICDIExecuteMoveInstru
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#createThreadStorage(org.eclipse.cdt.debug.core.cdi.model.ICDIThreadStorageDescriptor)
 	 */
+	@Override
 	public ICDIThreadStorage createThreadStorage(ICDIThreadStorageDescriptor varDesc) throws CDIException {
 		if (varDesc instanceof ThreadStorageDescriptor) {
 			Session session = (Session)getTarget().getSession();
@@ -559,6 +585,7 @@ public class Thread extends CObject implements ICDIThread, ICDIExecuteMoveInstru
 	/**
 	 * @since 6.0
 	 */
+	@Override
 	public void moveInstructionPointer(ICDILocation location) throws CDIException {
 		Target target = (Target)getTarget();
 		synchronized(target.getLock()) {

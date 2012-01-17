@@ -60,6 +60,7 @@ public class TraditionalRenderingPreferencePage
 	 * of preferences. Each field editor knows how to save and
 	 * restore itself.
 	 */
+	@Override
 	public void createFieldEditors() {
 		addField(new BooleanFieldEditor(TraditionalRenderingPreferenceConstants.MEM_USE_GLOBAL_TEXT,
 				TraditionalRenderingMessages.getString("TraditionalRenderingPreferencePage_UseGlobalTextColor"), getFieldEditorParent())); //$NON-NLS-1$

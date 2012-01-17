@@ -63,22 +63,26 @@ public class GDBJtagDebugger extends AbstractGDBCDIDebugger {
 
 	private String miVersion;
 	
+	@Override
 	public ICDISession createSession(ILaunch launch, File executable,
 			IProgressMonitor monitor) throws CoreException {
 		return super.createSession(launch, executable, monitor);
 	}
 
+	@Override
 	public ICDISession createDebuggerSession(ILaunch launch, IBinaryObject exe,
 			IProgressMonitor monitor) throws CoreException {
 		return super.createDebuggerSession(launch, exe, monitor);
 	}
 	
+	@Override
 	protected CommandFactory getCommandFactory(ILaunchConfiguration config)
 			throws CoreException {
 		miVersion = MIPlugin.getMIVersion(config);
 		return new GDBJtagCommandFactory(miVersion);
 	}
 	
+	@Override
 	@SuppressWarnings("deprecation")
 	protected void doStartSession(ILaunch launch, Session session, IProgressMonitor monitor) throws CoreException {
 		SubMonitor submonitor = SubMonitor.convert(monitor, 100);
@@ -292,7 +296,7 @@ public class GDBJtagDebugger extends AbstractGDBCDIDebugger {
 			// Set program counter
 			boolean setPc = config.getAttribute(IGDBJtagConstants.ATTR_SET_PC_REGISTER, IGDBJtagConstants.DEFAULT_SET_PC_REGISTER);
 			if (setPc) {
-				String pcRegister = config.getAttribute(IGDBJtagConstants.ATTR_PC_REGISTER, config.getAttribute(IGDBJtagConstants.ATTR_IMAGE_OFFSET, IGDBJtagConstants.DEFAULT_PC_REGISTER)); //$NON-NLS-1$
+				String pcRegister = config.getAttribute(IGDBJtagConstants.ATTR_PC_REGISTER, config.getAttribute(IGDBJtagConstants.ATTR_IMAGE_OFFSET, IGDBJtagConstants.DEFAULT_PC_REGISTER)); 
 				gdbJtagDevice.doSetPC(pcRegister, commands);
 				executeGDBScript(getGDBScript(commands), miSession, submonitor.newChild(20));
 			}
@@ -302,7 +306,7 @@ public class GDBJtagDebugger extends AbstractGDBCDIDebugger {
 			monitor.beginTask(Messages.getString("GDBJtagDebugger.18"), 1); //$NON-NLS-1$
 			boolean setStopAt = config.getAttribute(IGDBJtagConstants.ATTR_SET_STOP_AT, IGDBJtagConstants.DEFAULT_SET_STOP_AT);
 			if (setStopAt) {
-				String stopAt = config.getAttribute(IGDBJtagConstants.ATTR_STOP_AT, IGDBJtagConstants.DEFAULT_STOP_AT); //$NON-NLS-1$
+				String stopAt = config.getAttribute(IGDBJtagConstants.ATTR_STOP_AT, IGDBJtagConstants.DEFAULT_STOP_AT); 
 				commands.clear();
 				gdbJtagDevice.doStopAt(stopAt, commands);
 				executeGDBScript(getGDBScript(commands), miSession, submonitor.newChild(20));
@@ -377,7 +381,7 @@ public class GDBJtagDebugger extends AbstractGDBCDIDebugger {
 	private IGDBJtagDevice getGDBJtagDevice (ILaunchConfiguration config) 
 		throws CoreException, NullPointerException {
 		IGDBJtagDevice gdbJtagDevice = null;
-		String jtagDeviceName = config.getAttribute(IGDBJtagConstants.ATTR_JTAG_DEVICE, IGDBJtagConstants.DEFAULT_JTAG_DEVICE); //$NON-NLS-1$
+		String jtagDeviceName = config.getAttribute(IGDBJtagConstants.ATTR_JTAG_DEVICE, IGDBJtagConstants.DEFAULT_JTAG_DEVICE); 
 		GDBJtagDeviceContribution[] availableDevices = GDBJtagDeviceContributionFactory.
 			getInstance().getGDBJtagDeviceContribution();
 		for (int i = 0; i < availableDevices.length; i++) {

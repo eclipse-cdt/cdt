@@ -34,6 +34,7 @@ public class CLIJump extends CLICommand {
 	 *  it does not return so we have to fake
 	 *  a return value. We return "^running"
 	 */
+	@Override
 	public MIOutput getMIOutput() {
 		if (out == null) {
 			out =  new MIOutput();

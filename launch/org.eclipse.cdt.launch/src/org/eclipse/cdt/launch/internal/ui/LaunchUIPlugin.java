@@ -197,25 +197,29 @@ public class LaunchUIPlugin extends AbstractUIPlugin implements ILaunchesListene
 	/* (non-Javadoc)
      * @see org.eclipse.debug.core.ILaunchesListener#launchesAdded(org.eclipse.debug.core.ILaunch[])
      */
-    public void launchesAdded(ILaunch[] launches) {
+    @Override
+	public void launchesAdded(ILaunch[] launches) {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(org.eclipse.debug.core.ILaunch[])
      */
-    public void launchesChanged(ILaunch[] launches) {
+    @Override
+	public void launchesChanged(ILaunch[] launches) {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.debug.core.ILaunch[])
      */
-    public void launchesRemoved(ILaunch[] launches) {
+    @Override
+	public void launchesRemoved(ILaunch[] launches) {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.ILaunchesListener2#launchesTerminated(org.eclipse.debug.core.ILaunch[])
      */
-    public void launchesTerminated(ILaunch[] launches) {
+    @Override
+	public void launchesTerminated(ILaunch[] launches) {
         for (ILaunch l : launches) {
             if (l instanceof CLaunch) {
                 ((CLaunch)l).refresh();

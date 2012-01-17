@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class ProgramRelativePathSourceContainerBrowser extends AbstractSourceContainerBrowser {
 
+	@Override
 	public ISourceContainer[] addSourceContainers(Shell shell, ISourceLookupDirector director) {
 		return new ISourceContainer[] { new ProgramRelativePathSourceContainer() };
 	}

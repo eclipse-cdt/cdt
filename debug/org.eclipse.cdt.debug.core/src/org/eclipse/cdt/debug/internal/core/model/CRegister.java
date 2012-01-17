@@ -90,6 +90,7 @@ public class CRegister extends CVariable implements ICRegister {
 			setCDIRegister( (varObject instanceof ICDIRegister) ? (ICDIRegister)varObject : null );
 		}
 
+		@Override
 		public IInternalVariable createShadow( int start, int length ) throws DebugException {
 			IInternalVariable iv = null;
 			try {
@@ -101,6 +102,7 @@ public class CRegister extends CVariable implements ICRegister {
 			return iv;
 		}
 
+		@Override
 		public IInternalVariable createShadow( String type ) throws DebugException {
 			IInternalVariable iv = null;
 			try {
@@ -139,6 +141,7 @@ public class CRegister extends CVariable implements ICRegister {
 			fCDIVariableObject = variableObject;
 		}
 
+		@Override
 		public String getQualifiedName() throws DebugException {
 			if ( fQualifiedName == null ) {
 				try {
@@ -151,6 +154,7 @@ public class CRegister extends CVariable implements ICRegister {
 			return fQualifiedName;
 		}
 
+		@Override
 		public CType getType() throws DebugException {
 			if ( fType == null ) {
 				ICDIVariableDescriptor varObject = getCDIVariableObject();
@@ -185,14 +189,17 @@ public class CRegister extends CVariable implements ICRegister {
 			fType = null;
 		}
 
+		@Override
 		public void dispose( boolean destroy ) {
 			invalidate( destroy );
 		}
 
+		@Override
 		public boolean isSameVariable( ICDIVariable cdiVar ) {
 			return ( fCDIRegister != null ) ? fCDIRegister.equals( cdiVar ) : false;
 		}
 
+		@Override
 		public int sizeof() {
 			if ( getCDIVariableObject() != null ) {
 				try {
@@ -204,10 +211,12 @@ public class CRegister extends CVariable implements ICRegister {
 			return 0;
 		}
 
+		@Override
 		public boolean isArgument() {
 			return ( getCDIVariableObject() instanceof ICDIArgumentDescriptor );
 		}
 
+		@Override
 		public void setValue( String expression ) throws DebugException {
 			ICDIRegister cdiRegister = null;
 			try {
@@ -222,6 +231,7 @@ public class CRegister extends CVariable implements ICRegister {
 			}
 		}
 
+		@Override
 		public synchronized ICValue getValue() throws DebugException {
 		    CStackFrame frame = getCurrentStackFrame();
 		    if ( frame == null || frame.isDisposed() )
@@ -254,6 +264,7 @@ public class CRegister extends CVariable implements ICRegister {
 			return fValue;
 		}
 		
+		@Override
 		public void invalidateValue() {
 			if ( fValue instanceof AbstractCValue ) {
 				((AbstractCValue)fValue).dispose();
@@ -261,10 +272,12 @@ public class CRegister extends CVariable implements ICRegister {
 			}
 		}
 
+		@Override
 		public boolean isChanged() {
 			return fChanged;
 		}
 
+		@Override
 		public synchronized void setChanged( boolean changed ) {
 			if ( changed ) {
 				invalidateValue();
@@ -275,6 +288,7 @@ public class CRegister extends CVariable implements ICRegister {
 			fChanged = changed;
 		}
 
+		@Override
 		public synchronized void preserve() {
 			setChanged( false );
 			if ( fValue instanceof AbstractCValue ) {
@@ -290,12 +304,14 @@ public class CRegister extends CVariable implements ICRegister {
 			fVariable = variable;
 		}
 
+		@Override
 		public void resetValue() {
 			if ( fValue instanceof AbstractCValue ) {
 				((AbstractCValue)fValue).reset();
 			}
 		}
 
+		@Override
 		public boolean isEditable() throws DebugException {
 			ICDIRegister reg = getCDIRegister();
 			if ( reg != null && reg.getTarget().getConfiguration().supportsRegisterModification() ) {
@@ -311,6 +327,7 @@ public class CRegister extends CVariable implements ICRegister {
 		 * Compares the underlying variable objects.
 		 * @see java.lang.Object#equals(java.lang.Object)
 		 */
+		@Override
 		public boolean equals( Object obj ) {
 			if ( obj instanceof InternalVariable ) {
 				return getCDIVariableObject().equals( ((InternalVariable)obj).getCDIVariableObject() );
@@ -318,10 +335,12 @@ public class CRegister extends CVariable implements ICRegister {
 			return false;
 		}
 
+		@Override
 		public boolean isSameDescriptor( ICDIVariableDescriptor desc ) {
 			return getCDIVariableObject().equals( desc );
 		}
 		
+		@Override
 		public ICDIObject getCdiObject() {
 			return fCDIRegister;
 		}		
@@ -348,6 +367,7 @@ public class CRegister extends CVariable implements ICRegister {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IRegister#getRegisterGroup()
 	 */
+	@Override
 	public IRegisterGroup getRegisterGroup() throws DebugException {
 		return (IRegisterGroup)getParent();
 	}
@@ -355,6 +375,7 @@ public class CRegister extends CVariable implements ICRegister {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.core.model.CVariable#isBookkeepingEnabled()
 	 */
+	@Override
 	protected boolean isBookkeepingEnabled() {
 		boolean result = false;
 		try {
@@ -368,6 +389,7 @@ public class CRegister extends CVariable implements ICRegister {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICVariable#canEnableDisable()
 	 */
+	@Override
 	public boolean canEnableDisable() {
 		return true;
 	}
@@ -375,6 +397,7 @@ public class CRegister extends CVariable implements ICRegister {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvents(org.eclipse.cdt.debug.core.cdi.event.ICDIEvent[])
 	 */
+	@Override
 	public void handleDebugEvents( ICDIEvent[] events ) {
 		for( int i = 0; i < events.length; i++ ) {
 			ICDIEvent event = events[i];
@@ -400,11 +423,13 @@ public class CRegister extends CVariable implements ICRegister {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.core.model.AbstractCVariable#dispose()
 	 */
+	@Override
 	public void dispose() {
 		internalDispose( true );
 		setDisposed( true );
 	}
 
+	@Override
 	protected ICStackFrame getStackFrame() {
 		ICStackFrame frame = super.getStackFrame();
 		if (frame == null)
@@ -416,6 +441,7 @@ public class CRegister extends CVariable implements ICRegister {
 		return ((CDebugTarget)getDebugTarget()).getRegisterManager().getCurrentFrame();
 	}
 
+	@Override
 	protected void createOriginal( ICDIVariableDescriptor vo ) {
 		if ( vo != null ) {
 			setName( vo.getName() );

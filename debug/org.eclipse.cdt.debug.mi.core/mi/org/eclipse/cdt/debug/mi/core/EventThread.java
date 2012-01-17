@@ -27,6 +27,7 @@ public class EventThread extends Thread {
 		session = s;
 	}
 
+	@Override
 	public void run() {
 		// Signal by the session of time to die.
 		while (session.getChannelOutputStream() != null) {

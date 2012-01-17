@@ -37,6 +37,7 @@ public class ActionsPropertyPage extends PropertyPage {
 		super();
 	}
 
+	@Override
 	public Control createContents(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
 
@@ -80,12 +81,14 @@ public class ActionsPropertyPage extends PropertyPage {
 		actionsList.setNames(actionNames);
 
 		globalActionsList.getAttachButton().addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				HandleAttachButton();
 			}
 		});
 
 		globalActionsList.getDeleteButton().addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				HandleDeleteButton();
 			}
@@ -118,6 +121,7 @@ public class ActionsPropertyPage extends PropertyPage {
 		globalActionsList.HandleDeleteButton();
 	}
 
+	@Override
 	protected void performDefaults() {
 		try {
 			breakpointMarker.setAttribute(BreakpointActionManager.BREAKPOINT_ACTION_ATTRIBUTE, ""); //$NON-NLS-1$
@@ -127,6 +131,7 @@ public class ActionsPropertyPage extends PropertyPage {
 		super.performDefaults();
 	}
 
+	@Override
 	public boolean performCancel() {
 		try {
 			breakpointMarker.setAttribute(BreakpointActionManager.BREAKPOINT_ACTION_ATTRIBUTE, savedActionNames);
@@ -136,6 +141,7 @@ public class ActionsPropertyPage extends PropertyPage {
 		return super.performCancel();
 	}
 
+	@Override
 	public boolean performOk() {
 		try {
 			CDebugCorePlugin.getDefault().getBreakpointActionManager().saveActionData();

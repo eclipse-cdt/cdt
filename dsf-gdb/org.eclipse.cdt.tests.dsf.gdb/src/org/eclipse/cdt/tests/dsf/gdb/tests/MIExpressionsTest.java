@@ -80,7 +80,8 @@ public class MIExpressionsTest extends BaseTestCase {
     public void init() throws Exception {
         fSession = getGDBLaunch().getSession();
         Runnable runnable = new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
            	fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
             	
             	fExpService = fServicesTracker.getService(IExpressions.class);
@@ -94,7 +95,8 @@ public class MIExpressionsTest extends BaseTestCase {
     @After
     public void shutdown() throws Exception {
         Runnable runnable = new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
             	fSession.removeServiceEventListener(MIExpressionsTest.this);
             }
         };
@@ -324,7 +326,8 @@ public class MIExpressionsTest extends BaseTestCase {
         final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, "f");
 
         fExpService.getExecutor().submit(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 fExpService.getSubExpressionCount(
                 		exprDmc, 
                 		new DataRequestMonitor<Integer>(fExpService.getExecutor(), null) {
@@ -367,7 +370,8 @@ public class MIExpressionsTest extends BaseTestCase {
         final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, "f");
 
         fExpService.getExecutor().submit(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 fExpService.getExpressionData(
                 		exprDmc, 
                 		new DataRequestMonitor<IExpressionDMData>(fExpService.getExecutor(), null) {
@@ -437,7 +441,8 @@ public class MIExpressionsTest extends BaseTestCase {
 	    final IExpressionDMContext[] children = getChildren(exprDmc, new String[] {"Base", "Base"});
 
         fExpService.getExecutor().submit(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 fExpService.getFormattedExpressionValue(
                 		fExpService.getFormattedValueContext(children[0], MIExpressions.DETAILS_FORMAT),
                 		new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
@@ -457,7 +462,8 @@ public class MIExpressionsTest extends BaseTestCase {
         // This second child is testing the fact that we could have the child named
         // the same as its type and we still want to be able to get the details without error.
         fExpService.getExecutor().submit(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 fExpService.getFormattedExpressionValue(
                 		fExpService.getFormattedValueContext(children[1], MIExpressions.DETAILS_FORMAT),
                 		new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
@@ -495,7 +501,8 @@ public class MIExpressionsTest extends BaseTestCase {
 	    final IExpressionDMContext[] childOfPointer = getChildren(children[1], new String[] {"*pNested"});
 
         fExpService.getExecutor().submit(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 fExpService.getFormattedExpressionValue(
                 		fExpService.getFormattedValueContext(children[0], MIExpressions.DETAILS_FORMAT),
                 		new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
@@ -513,7 +520,8 @@ public class MIExpressionsTest extends BaseTestCase {
         wait.waitReset();
         
         fExpService.getExecutor().submit(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 fExpService.getFormattedExpressionValue(
                 		fExpService.getFormattedValueContext(children[1], MIExpressions.DETAILS_FORMAT),
                 		new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
@@ -531,7 +539,8 @@ public class MIExpressionsTest extends BaseTestCase {
         wait.waitReset();
         
         fExpService.getExecutor().submit(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 fExpService.getFormattedExpressionValue(
                 		fExpService.getFormattedValueContext(childOfPointer[0], MIExpressions.DETAILS_FORMAT),
                 		new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
@@ -580,7 +589,8 @@ public class MIExpressionsTest extends BaseTestCase {
 
         // Write the new value using its formatted value
         fExpService.getExecutor().submit(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 fExpService.writeExpression(
                 		exprDmc, 
                 		newValueFormatted, 
@@ -605,7 +615,8 @@ public class MIExpressionsTest extends BaseTestCase {
 
         // Read the new value in decimal and check that it is what we expected
         fExpService.getExecutor().submit(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 fExpService.getFormattedExpressionValue(fExpService.getFormattedValueContext(exprDmc,
                     IFormattedValues.DECIMAL_FORMAT), new DataRequestMonitor<FormattedValueDMData>(fExpService
                     .getExecutor(), null) {
@@ -666,7 +677,8 @@ public class MIExpressionsTest extends BaseTestCase {
 
         // Write the new value using its formatted value
         fExpService.getExecutor().submit(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 fExpService.writeExpression(exprDmc, invalidValueFormatted, format, new RequestMonitor(fExpService
                     .getExecutor(), null) {
                     @Override
@@ -703,7 +715,8 @@ public class MIExpressionsTest extends BaseTestCase {
         final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
         fExpService.getExecutor().submit(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 IExpressionDMContext exprDmc = fExpService.createExpression(frameDmc, "a[0]");
                 
                 wait.increment();
@@ -774,7 +787,8 @@ public class MIExpressionsTest extends BaseTestCase {
         final IExpressionDMContext addrDmc = SyncUtil.createExpression(frameDmc, "&a");
 
         fExpService.getExecutor().submit(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 fExpService.getFormattedExpressionValue(
                 		fExpService.getFormattedValueContext(addrDmc, IFormattedValues.NATURAL_FORMAT), 
                 		new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
@@ -799,7 +813,8 @@ public class MIExpressionsTest extends BaseTestCase {
 
         // Now perform the test
         fExpService.getExecutor().submit(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 IExpressionDMContext exprDmc = fExpService.createExpression(frameDmc, "a");
                 
                 wait.increment();
@@ -896,7 +911,8 @@ public class MIExpressionsTest extends BaseTestCase {
         final IExpressionDMContext addrDmc = SyncUtil.createExpression(frameDmc, "&a");
 
         fExpService.getExecutor().submit(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 fExpService.getFormattedExpressionValue(
                 		fExpService.getFormattedValueContext(addrDmc, IFormattedValues.NATURAL_FORMAT), 
                 		new DataRequestMonitor<FormattedValueDMData>(fExpService.getExecutor(), null) {
@@ -920,7 +936,8 @@ public class MIExpressionsTest extends BaseTestCase {
         wait.waitReset();
 
         fExpService.getExecutor().submit(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 wait.increment();
                 IExpressionDMContext exprDmc = fExpService.createExpression(frameDmc, "a");
 
@@ -1010,7 +1027,8 @@ public class MIExpressionsTest extends BaseTestCase {
         final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
         fExpService.getExecutor().submit(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
 
                 wait.increment();
                 fExpService.getFormattedExpressionValue(fExpService.getFormattedValueContext(exprDmc,
@@ -1099,7 +1117,8 @@ public class MIExpressionsTest extends BaseTestCase {
         final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
         fExpService.getExecutor().submit(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
 
                 wait.increment();
                 fExpService.getFormattedExpressionValue(fExpService.getFormattedValueContext(exprDmc,
@@ -1235,7 +1254,8 @@ public class MIExpressionsTest extends BaseTestCase {
         final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
         fExpService.getExecutor().submit(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
 
                 wait.increment();
                 fExpService.getFormattedExpressionValue(fExpService.getFormattedValueContext(exprDmc,
@@ -1329,7 +1349,8 @@ public class MIExpressionsTest extends BaseTestCase {
         // request as above to see that the cache has indeed been reset
         wait.waitReset();
         fExpService.getExecutor().submit(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
 
                 wait.increment();
                 fExpService.getFormattedExpressionValue(fExpService.getFormattedValueContext(exprDmc,
@@ -1382,7 +1403,8 @@ public class MIExpressionsTest extends BaseTestCase {
 
         // First get the address of 'a' through 'a_ptr'
         fExpService.getExecutor().submit(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 fExpService.getFormattedExpressionValue(fExpService.getFormattedValueContext(exprDmc2,
                     IFormattedValues.NATURAL_FORMAT), new DataRequestMonitor<FormattedValueDMData>(fExpService
                     .getExecutor(), null) {
@@ -1554,7 +1576,8 @@ public class MIExpressionsTest extends BaseTestCase {
     	final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
     	fExpService.getExecutor().submit(new Runnable() {
-    		public void run() {
+    		@Override
+			public void run() {
 
     			// First create the var object and all its children
     			IExpressionDMContext parentDmc = fExpService.createExpression(frameDmc, "z");
@@ -1606,7 +1629,8 @@ public class MIExpressionsTest extends BaseTestCase {
     	stoppedEvent = SyncUtil.step(4, StepType.STEP_INTO);
     	final IFrameDMContext frameDmc2 = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
     	fExpService.getExecutor().submit(new Runnable() {
-    		public void run() {
+    		@Override
+			public void run() {
 
     			// First create the var object and all its children
     			IExpressionDMContext parentDmc = fExpService.createExpression(frameDmc2, "z");
@@ -1658,7 +1682,8 @@ public class MIExpressionsTest extends BaseTestCase {
     	stoppedEvent = SyncUtil.step(4, StepType.STEP_INTO);
     	final IFrameDMContext frameDmc3 = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
     	fExpService.getExecutor().submit(new Runnable() {
-    		public void run() {
+    		@Override
+			public void run() {
 
     			// First create the var object and all its children
     			IExpressionDMContext parentDmc = fExpService.createExpression(frameDmc3, "z");
@@ -1738,7 +1763,8 @@ public class MIExpressionsTest extends BaseTestCase {
     	final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
     	fExpService.getExecutor().submit(new Runnable() {
-    		public void run() {
+    		@Override
+			public void run() {
 
     			// First create the var object and all its children
     			IExpressionDMContext parentDmc = fExpService.createExpression(frameDmc, "a");
@@ -1814,7 +1840,8 @@ public class MIExpressionsTest extends BaseTestCase {
     	final IFrameDMContext frameDmc2 = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
     	fExpService.getExecutor().submit(new Runnable() {
-    		public void run() {
+    		@Override
+			public void run() {
 
     			// First create the var object and all its children
     			IExpressionDMContext parentDmc = fExpService.createExpression(frameDmc2, "a");
@@ -1899,7 +1926,8 @@ public class MIExpressionsTest extends BaseTestCase {
         final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
         
         fExpService.getExecutor().submit(new Runnable() {
-        	public void run() {
+        	@Override
+			public void run() {
 
         		// First create the var object and all its children
         		IExpressionDMContext parentDmc = fExpService.createExpression(frameDmc, "f");
@@ -1961,7 +1989,8 @@ public class MIExpressionsTest extends BaseTestCase {
         wait.waitReset();
         
         fExpService.getExecutor().submit(new Runnable() {
-        	public void run() {
+        	@Override
+			public void run() {
 
         		// Now create more than 1000 expressions to trigger the deletion of the children
         		// that were created above
@@ -1990,7 +2019,8 @@ public class MIExpressionsTest extends BaseTestCase {
         wait.waitReset();
         
         fExpService.getExecutor().submit(new Runnable() {
-        	public void run() {
+        	@Override
+			public void run() {
 
         		// Evaluate the expression of a child that we know is deleted to make sure
         		// the expression service can handle that
@@ -2036,7 +2066,8 @@ public class MIExpressionsTest extends BaseTestCase {
         final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
         
         fExpService.getExecutor().submit(new Runnable() {
-        	public void run() {
+        	@Override
+			public void run() {
         		// First create the var object and all its children
         		IExpressionDMContext exprDmc = fExpService.createExpression(frameDmc, "a");
 
@@ -2072,7 +2103,8 @@ public class MIExpressionsTest extends BaseTestCase {
         final IFrameDMContext frameDmc2 = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
         fExpService.getExecutor().submit(new Runnable() {
-        	public void run() {
+        	@Override
+			public void run() {
         		// First create the var object and all its children
         		IExpressionDMContext exprDmc = fExpService.createExpression(frameDmc2, "a");
 
@@ -2135,7 +2167,8 @@ public class MIExpressionsTest extends BaseTestCase {
         final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
         
         fExpService.getExecutor().submit(new Runnable() {
-        	public void run() {
+        	@Override
+			public void run() {
         		// First create the var object and all its children
         		IExpressionDMContext exprDmc = fExpService.createExpression(frameDmc, "a");
 
@@ -2192,7 +2225,8 @@ public class MIExpressionsTest extends BaseTestCase {
         final IFrameDMContext frameDmc2 = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
         fExpService.getExecutor().submit(new Runnable() {
-        	public void run() {
+        	@Override
+			public void run() {
         		// First create the var object and all its children
         		IExpressionDMContext exprDmc = fExpService.createExpression(frameDmc2, "a");
 
@@ -2254,7 +2288,8 @@ public class MIExpressionsTest extends BaseTestCase {
         final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
         
         fExpService.getExecutor().submit(new Runnable() {
-        	public void run() {
+        	@Override
+			public void run() {
         		
         		IExpressionDMContext parentDmc = fExpService.createExpression(frameDmc, "z");
 
@@ -2327,7 +2362,8 @@ public class MIExpressionsTest extends BaseTestCase {
         SyncUtil.step(1, StepType.STEP_OVER);
 
         fExpService.getExecutor().submit(new Runnable() {
-        	public void run() {
+        	@Override
+			public void run() {
 
         		// trigger the var-update in the last format (decimal)
         		// then request the actual value in natural which should not be taken from the cache 
@@ -2373,7 +2409,8 @@ public class MIExpressionsTest extends BaseTestCase {
         
         // Ask for one value to create the var object
         fExpService.getExecutor().submit(new Runnable() {
-        	public void run() {
+        	@Override
+			public void run() {
         		// First create the var object and all its children
         		IExpressionDMContext parentDmc = fExpService.createExpression(frameDmc, "z");
 
@@ -2422,7 +2459,8 @@ public class MIExpressionsTest extends BaseTestCase {
         // We need to make sure that the locking properly works although we are calling
         // the internal update method, which does affect the state of the object
         fExpService.getExecutor().submit(new Runnable() {
-        	public void run() {
+        	@Override
+			public void run() {
         		wait.increment();
         		fExpService.getFormattedExpressionValue(
         				fExpService.getFormattedValueContext(globalExpressionCtx1, IFormattedValues.BINARY_FORMAT), 
@@ -2488,7 +2526,8 @@ public class MIExpressionsTest extends BaseTestCase {
         final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
         
         fExpService.getExecutor().submit(new Runnable() {
-        	public void run() {
+        	@Override
+			public void run() {
         		// First create the var object and its child
         		globalExpressionCtx1 = fExpService.createExpression(frameDmc, "z");
 
@@ -2539,7 +2578,8 @@ public class MIExpressionsTest extends BaseTestCase {
         // Now step to another method to make the previous variable objects out-of-scope
         // then first request the child and then the parent.  We want to test this order
         fExpService.getExecutor().submit(new Runnable() {
-        	public void run() {
+        	@Override
+			public void run() {
         		wait.increment();
         		fExpService.getFormattedExpressionValue(
         				fExpService.getFormattedValueContext(globalExpressionCtx2, IFormattedValues.NATURAL_FORMAT), 
@@ -2566,7 +2606,8 @@ public class MIExpressionsTest extends BaseTestCase {
         wait.waitReset();
 
         fExpService.getExecutor().submit(new Runnable() {
-        	public void run() {
+        	@Override
+			public void run() {
         		wait.increment();
         		fExpService.getFormattedExpressionValue(
         				fExpService.getFormattedValueContext(globalExpressionCtx1, IFormattedValues.NATURAL_FORMAT), 
@@ -2634,7 +2675,8 @@ public class MIExpressionsTest extends BaseTestCase {
         final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
         
         fExpService.getExecutor().submit(new Runnable() {
-        	public void run() {
+        	@Override
+			public void run() {
         		
         		IExpressionDMContext parentDmc = fExpService.createExpression(frameDmc, "z");
 
@@ -2699,7 +2741,8 @@ public class MIExpressionsTest extends BaseTestCase {
         wait.waitReset();
 
         fExpService.getExecutor().submit(new Runnable() {
-        	public void run() {
+        	@Override
+			public void run() {
 
         		// also get the child of the pointer
         		fExpService.getSubExpressions(
@@ -2746,7 +2789,8 @@ public class MIExpressionsTest extends BaseTestCase {
         final IFrameDMContext frameDmc2 = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
         
         fExpService.getExecutor().submit(new Runnable() {
-        	public void run() {
+        	@Override
+			public void run() {
         		
         		IExpressionDMContext parentDmc = fExpService.createExpression(frameDmc2, "z");
 
@@ -2814,7 +2858,8 @@ public class MIExpressionsTest extends BaseTestCase {
         wait.waitReset();
 
         fExpService.getExecutor().submit(new Runnable() {
-        	public void run() {
+        	@Override
+			public void run() {
 
         		// also get the child of the pointer
         		fExpService.getSubExpressions(
@@ -2868,7 +2913,8 @@ public class MIExpressionsTest extends BaseTestCase {
     	final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
     	fExpService.getExecutor().submit(new Runnable() {
-    		public void run() {
+    		@Override
+			public void run() {
 
     			final int exprCount = 5;
     			final IExpressionDMContext dmcs[] = new IExpressionDMContext[exprCount];
@@ -2933,7 +2979,8 @@ public class MIExpressionsTest extends BaseTestCase {
     	final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
     	fExpService.getExecutor().submit(new Runnable() {
-    		public void run() {
+    		@Override
+			public void run() {
 
     			final int exprCount = 2;
     			final IExpressionDMContext dmcs[] = new IExpressionDMContext[exprCount];
@@ -3016,7 +3063,8 @@ public class MIExpressionsTest extends BaseTestCase {
             // each one,
             // get the value of the expression
             fExpService.getExecutor().submit(new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
                     fExpService.getAvailableFormats(exprDMC, new DataRequestMonitor<String[]>(
                         fExpService.getExecutor(), null) {
                         @Override
@@ -3128,7 +3176,8 @@ public class MIExpressionsTest extends BaseTestCase {
         final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
         fExpService.getExecutor().submit(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 fExpService.getExpressionAddressData(dmc, new DataRequestMonitor<IExpressionDMAddress>(fExpService
                     .getExecutor(), null) {
                     @Override
@@ -3221,7 +3270,8 @@ public class MIExpressionsTest extends BaseTestCase {
         final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
         fExpService.getExecutor().submit(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
 
                 fExpService.getSubExpressions(parentDmc,
                     new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {

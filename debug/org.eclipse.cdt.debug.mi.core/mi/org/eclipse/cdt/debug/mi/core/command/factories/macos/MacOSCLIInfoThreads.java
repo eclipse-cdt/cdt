@@ -27,10 +27,12 @@ class MacOSCLIInfoThreads extends CLIInfoThreads {
 
 	// MI doesn't work with a space between the token and the
 	// operation, so we override CLICommmand's toString
+	@Override
 	public String toString() {
 		return getToken() + getOperation() + "\n"; //$NON-NLS-1$
 	}
 
+	@Override
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();
@@ -43,6 +45,7 @@ class MacOSCLIInfoThreads extends CLIInfoThreads {
 		return info;
 	}
 
+	@Override
 	public CLIInfoThreadsInfo getMIInfoThreadsInfo() throws MIException {
 		return (CLIInfoThreadsInfo) getMIInfo();
 	}

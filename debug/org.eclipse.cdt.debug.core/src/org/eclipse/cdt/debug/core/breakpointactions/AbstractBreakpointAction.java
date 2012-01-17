@@ -16,10 +16,12 @@ public abstract class AbstractBreakpointAction extends PlatformObject implements
 
 	private String actionName;
 
+	@Override
 	public String getName() {
 		return actionName;
 	}
 
+	@Override
 	public void setName(String name) {
 		actionName = name;
 	}

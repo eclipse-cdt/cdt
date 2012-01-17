@@ -46,20 +46,25 @@ public class CBreakpointPropertiesRulerAction extends AbstractBreakpointRulerAct
 	/* (non-Javadoc)
 	 * @see Action#run()
 	 */
+	@Override
 	public void run() {
 		if ( fContext != null ) {
 			PropertyDialogAction action = new PropertyDialogAction( getTargetPart().getSite(), new ISelectionProvider() {
 
+				@Override
 				public void addSelectionChangedListener( ISelectionChangedListener listener ) {
 				}
 
+				@Override
 				public ISelection getSelection() {
 					return new StructuredSelection( fContext );
 				}
 
+				@Override
 				public void removeSelectionChangedListener( ISelectionChangedListener listener ) {
 				}
 
+				@Override
 				public void setSelection( ISelection selection ) {
 				}
 			} );
@@ -71,6 +76,7 @@ public class CBreakpointPropertiesRulerAction extends AbstractBreakpointRulerAct
 	/* (non-Javadoc)
 	 * @see IUpdate#update()
 	 */
+	@Override
 	public void update() {
 	    IBreakpoint breakpoint = getBreakpoint();
 	    if (breakpoint instanceof ICBreakpoint) {

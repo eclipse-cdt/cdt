@@ -56,6 +56,7 @@ public class LayoutUtil {
 	 * @param marginHeight The margin height to be used by the composite
 	 * @deprecated
 	 */	
+	@Deprecated
 	public static void doDefaultLayout(Composite parent, DialogField[] editors, boolean labelOnTop, int minWidth, int minHeight, int marginWidth, int marginHeight) {
 		int nCulumns= getNumberOfColumns(editors);
 		Control[][] controls= new Control[editors.length][];

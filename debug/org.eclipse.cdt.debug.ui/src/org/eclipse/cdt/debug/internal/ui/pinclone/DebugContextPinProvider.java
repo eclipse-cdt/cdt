@@ -54,6 +54,7 @@ public class DebugContextPinProvider extends AbstractDebugContextProvider implem
 		
 		fActiveContext = activeContext;
 		fPinHandles = pin(part, activeContext, new IPinModelListener() {
+			@Override
 			public void modelChanged(ISelection selection) {
 				// send a change notification for the view to update			
 				delegateEvent(new DebugContextEvent(DebugContextPinProvider.this, 
@@ -76,6 +77,7 @@ public class DebugContextPinProvider extends AbstractDebugContextProvider implem
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.contexts.IDebugContextProvider2#isWindowContextProvider()
 	 */
+	@Override
 	public boolean isWindowContextProvider() {
 		return false;
 	}
@@ -84,6 +86,7 @@ public class DebugContextPinProvider extends AbstractDebugContextProvider implem
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.contexts.IDebugContextProvider#getActiveContext()
 	 */
+	@Override
 	public ISelection getActiveContext() {
 		return fActiveContext;
 	}
@@ -144,6 +147,7 @@ public class DebugContextPinProvider extends AbstractDebugContextProvider implem
 	 */
 	public void delegateEvent(final DebugContextEvent event) {
 		Display.getDefault().syncExec(new Runnable() {			
+			@Override
 			public void run() {
 				fActiveContext = event.getContext();
 				fire(event);

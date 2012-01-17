@@ -26,6 +26,7 @@ public class PointerType extends DerivedType implements ICDIPointerType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.type.ICDIDerivedType#getComponentType()
 	 */
+	@Override
 	public ICDIType getComponentType() {
 		if (derivedType == null) {
 			String orig = getTypeName();

@@ -21,18 +21,22 @@ import org.eclipse.jface.viewers.StructuredSelection;
 
 public class RestoreDefaultRegisterGroupsActionDelegate extends AbstractViewActionDelegate {
 
+	@Override
 	protected String getErrorDialogTitle() {
 		return ActionMessages.getString( "RestoreDefaultRegisterGroupsActionDelegate.0" ); //$NON-NLS-1$
 	}
 
+	@Override
 	protected String getErrorDialogMessage() {
 		return ActionMessages.getString( "RestoreDefaultRegisterGroupsActionDelegate.1" ); //$NON-NLS-1$
 	}
 
+	@Override
 	protected void doAction() throws DebugException {
 		getDebugTarget().restoreDefaultRegisterGroups();
 	}
 
+	@Override
 	protected void update() {
 		IAction action = getAction();
 		if ( action != null ) {
@@ -41,6 +45,7 @@ public class RestoreDefaultRegisterGroupsActionDelegate extends AbstractViewActi
 		}
 	}
 
+	@Override
 	protected void doHandleDebugEvent( DebugEvent event ) {
 	}
 
@@ -55,6 +60,7 @@ public class RestoreDefaultRegisterGroupsActionDelegate extends AbstractViewActi
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.actions.AbstractViewActionDelegate#init(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void init( IAction action ) {
 		super.init( action );
 		Object element = DebugUITools.getDebugContext();

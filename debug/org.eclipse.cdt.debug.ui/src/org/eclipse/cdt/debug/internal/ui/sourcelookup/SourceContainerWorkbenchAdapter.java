@@ -32,6 +32,7 @@ public class SourceContainerWorkbenchAdapter implements IWorkbenchAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
 	 */
+	@Override
 	public Object[] getChildren(Object o) {
 		return null;
 	}
@@ -39,6 +40,7 @@ public class SourceContainerWorkbenchAdapter implements IWorkbenchAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
 	 */
+	@Override
 	public ImageDescriptor getImageDescriptor(Object o) {
 		if (o instanceof MappingSourceContainer) {
 			return CDebugImages.DESC_OBJS_PATH_MAPPING;
@@ -73,6 +75,7 @@ public class SourceContainerWorkbenchAdapter implements IWorkbenchAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
 	 */
+	@Override
 	public String getLabel(Object o) {
 		if (o instanceof MappingSourceContainer) {
 			return SourceLookupUIMessages.SourceContainerWorkbenchAdapter_0 + ((MappingSourceContainer)o).getName();
@@ -86,6 +89,7 @@ public class SourceContainerWorkbenchAdapter implements IWorkbenchAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
 	 */
+	@Override
 	public Object getParent(Object o) {
 		return null;
 	}

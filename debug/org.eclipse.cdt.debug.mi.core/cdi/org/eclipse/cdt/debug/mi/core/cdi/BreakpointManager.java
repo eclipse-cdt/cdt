@@ -388,6 +388,7 @@ public class BreakpointManager extends Manager {
 		}
 	}
 
+	@Override
 	public void update(Target target) throws CDIException {
 		update(target, null);
 	}

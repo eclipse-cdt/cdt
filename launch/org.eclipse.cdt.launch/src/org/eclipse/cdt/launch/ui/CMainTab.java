@@ -103,6 +103,7 @@ public class CMainTab extends CAbstractMainTab {
 	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
@@ -157,6 +158,7 @@ public class CMainTab extends CAbstractMainTab {
 	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration config) {
 		filterPlatform = getPlatform(config);
 		updateProjectFromConfig(config);
@@ -196,6 +198,7 @@ public class CMainTab extends CAbstractMainTab {
 	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		super.performApply(config);
 		ICProject cProject = this.getCProject();
@@ -221,6 +224,7 @@ public class CMainTab extends CAbstractMainTab {
 	/**
 	 * Show a dialog that lists all main types
 	 */
+	@Override
 	protected void handleSearchButtonSelected() {
 		if (getCProject() == null) {
 			MessageDialog.openInformation(getShell(), LaunchMessages.CMainTab_Project_required, 
@@ -292,6 +296,7 @@ public class CMainTab extends CAbstractMainTab {
 	/**
 	 * @since 6.0
 	 */
+	@Override
 	protected void createProjectGroup(Composite parent, int colSpan) {
 		Composite projComp = new Composite(parent, SWT.NONE);
 		GridLayout projLayout = new GridLayout();
@@ -314,6 +319,7 @@ public class CMainTab extends CAbstractMainTab {
 		fProjText.setLayoutData(gd);
 		fProjText.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(ModifyEvent evt) {
 				// if project changes, invalidate program name cache
 				fPreviouslyCheckedProgram = null;
@@ -353,6 +359,7 @@ public class CMainTab extends CAbstractMainTab {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fProgText.setLayoutData(gd);
 		fProgText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent evt) {
 				updateLaunchConfigurationDialog();
 			}
@@ -504,6 +511,7 @@ public class CMainTab extends CAbstractMainTab {
 	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		// We set empty attributes for project & program so that when one config
 		// is
@@ -602,6 +610,7 @@ public class CMainTab extends CAbstractMainTab {
 	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
+	@Override
 	public String getName() {
 		return LaunchMessages.CMainTab_Main; 
 	}

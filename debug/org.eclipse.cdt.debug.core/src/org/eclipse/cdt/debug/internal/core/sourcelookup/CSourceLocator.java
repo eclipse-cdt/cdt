@@ -99,6 +99,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 	 * 
 	 * @see org.eclipse.debug.core.model.ISourceLocator#getSourceElement(IStackFrame)
 	 */
+	@Override
 	public Object getSourceElement(IStackFrame stackFrame) {
 		return getInput(stackFrame);
 	}
@@ -108,6 +109,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 	 * 
 	 * @see org.eclipse.cdt.debug.core.ICSourceLocator#getLineNumber(IStackFrameInfo)
 	 */
+	@Override
 	public int getLineNumber(IStackFrame frame) {
 		return (frame instanceof ICStackFrame) ? ((ICStackFrame)frame).getFrameLineNumber() : 0;
 	}
@@ -146,6 +148,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 	 * 
 	 * @see org.eclipse.cdt.debug.core.ICSourceLocator#contains(IResource)
 	 */
+	@Override
 	public boolean contains(IResource resource) {
 		ICSourceLocation[] locations = getSourceLocations();
 		for (int i = 0; i < locations.length; ++i) {
@@ -173,6 +176,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 	 * 
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#getSourceLocations()
 	 */
+	@Override
 	public ICSourceLocation[] getSourceLocations() {
 		return fSourceLocations;
 	}
@@ -181,6 +185,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#setSourceLocations(ICSourceLocation[])
 	 */
+	@Override
 	public void setSourceLocations(ICSourceLocation[] locations) {
 		fSourceLocations = locations;
 	}
@@ -234,6 +239,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 	 * 
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#findSourceElement(String)
 	 */
+	@Override
 	public Object findSourceElement(String fileName) {
 		Object result = null;
 		if (fileName != null && fileName.length() > 0) {
@@ -256,6 +262,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 	 * 
 	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#getMemento()
 	 */
+	@Override
 	public String getMemento() throws CoreException {
 		Document document = null;
 		Throwable ex = null;
@@ -285,6 +292,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 	 * 
 	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#initializeDefaults(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeDefaults(ILaunchConfiguration configuration) throws CoreException {
 		setSourceLocations(getDefaultSourceLocations());
 	}
@@ -294,6 +302,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 	 * 
 	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#initializeFromMemento(java.lang.String)
 	 */
+	@Override
 	public void initializeFromMemento(String memento) throws CoreException {
 		Exception ex = null;
 		try {
@@ -457,6 +466,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 		return string == null || string.trim().length() == 0;
 	}
 
+	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		if (event.getSource() instanceof IWorkspace && event.getDelta() != null) {
 			IResourceDelta[] deltas = event.getDelta().getAffectedChildren();
@@ -511,6 +521,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#getProject()
 	 */
+	@Override
 	public IProject getProject() {
 		return fProject;
 	}
@@ -597,10 +608,12 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 	 * 
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#searchForDuplicateFiles()
 	 */
+	@Override
 	public boolean searchForDuplicateFiles() {
 		return fDuplicateFiles;
 	}
 
+	@Override
 	public void setSearchForDuplicateFiles(boolean search) {
 		fDuplicateFiles = search;
 		ICSourceLocation[] locations = getSourceLocations();

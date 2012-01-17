@@ -85,6 +85,7 @@ public class CSignalManager implements IAdaptable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter( Class adapter ) {
 		if ( adapter.equals( CSignalManager.class ) ) {
 			return this;

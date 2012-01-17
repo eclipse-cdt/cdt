@@ -31,42 +31,48 @@ public class DisassemblyInstruction extends CDebugElement implements IDisassembl
     /* (non-Javadoc)
      * @see org.eclipse.cdt.debug.core.model.IAsmInstruction#getAdress()
      */
-    public IAddress getAdress() {
+    @Override
+	public IAddress getAdress() {
         return fAddress;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.debug.core.model.IAsmInstruction#getArguments()
      */
-    public String getArguments() {
+    @Override
+	public String getArguments() {
         return fCDIInstruction.getArgs();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.debug.core.model.IAsmInstruction#getFunctionName()
      */
-    public String getFunctionName() {
+    @Override
+	public String getFunctionName() {
         return fCDIInstruction.getFuntionName();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.debug.core.model.IAsmInstruction#getInstructionText()
      */
-    public String getInstructionText() {
+    @Override
+	public String getInstructionText() {
         return fCDIInstruction.getInstruction();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.debug.core.model.IAsmInstruction#getOffset()
      */
-    public long getOffset() {
+    @Override
+	public long getOffset() {
         return fCDIInstruction.getOffset();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.debug.core.model.IAsmInstruction#getOpcode()
      */
-    public String getOpcode() {
+    @Override
+	public String getOpcode() {
         return fCDIInstruction.getOpcode();
     }
 

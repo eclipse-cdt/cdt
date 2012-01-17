@@ -35,6 +35,7 @@ public class MIRegisterValue {
 		return value;
 	} 
 
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("number=\"").append(number).append('"'); //$NON-NLS-1$

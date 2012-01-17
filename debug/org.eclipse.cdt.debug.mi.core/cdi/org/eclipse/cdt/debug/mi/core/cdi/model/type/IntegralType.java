@@ -28,6 +28,7 @@ public abstract class IntegralType extends Type implements ICDIIntegralType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIIntegralType#isUnsigned()
 	 */
+	@Override
 	public boolean isUnsigned() {
 		return unSigned;
 	}

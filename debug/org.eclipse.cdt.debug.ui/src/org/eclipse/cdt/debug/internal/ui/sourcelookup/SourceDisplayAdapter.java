@@ -43,91 +43,104 @@ public class SourceDisplayAdapter implements ISourceDisplay {
         /* (non-Javadoc)
          * @see org.eclipse.debug.core.model.IStackFrame#getCharEnd()
          */
-        public int getCharEnd() throws DebugException {
+        @Override
+		public int getCharEnd() throws DebugException {
             return fDelegate.getCharEnd();
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.debug.core.model.IStackFrame#getCharStart()
          */
-        public int getCharStart() throws DebugException {
+        @Override
+		public int getCharStart() throws DebugException {
             return fDelegate.getCharStart();
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.debug.core.model.IStackFrame#getLineNumber()
          */
-        public int getLineNumber() throws DebugException {
+        @Override
+		public int getLineNumber() throws DebugException {
             return fDelegate.getLineNumber();
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.debug.core.model.IStackFrame#getName()
          */
-        public String getName() throws DebugException {
+        @Override
+		public String getName() throws DebugException {
             return fDelegate.getName();
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.debug.core.model.IStackFrame#getRegisterGroups()
          */
-        public IRegisterGroup[] getRegisterGroups() throws DebugException {
+        @Override
+		public IRegisterGroup[] getRegisterGroups() throws DebugException {
             return fDelegate.getRegisterGroups();
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.debug.core.model.IStackFrame#getThread()
          */
-        public IThread getThread() {
+        @Override
+		public IThread getThread() {
             return fDelegate.getThread();
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.debug.core.model.IStackFrame#getVariables()
          */
-        public IVariable[] getVariables() throws DebugException {
+        @Override
+		public IVariable[] getVariables() throws DebugException {
             return fDelegate.getVariables();
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.debug.core.model.IStackFrame#hasRegisterGroups()
          */
-        public boolean hasRegisterGroups() throws DebugException {
+        @Override
+		public boolean hasRegisterGroups() throws DebugException {
             return fDelegate.hasRegisterGroups();
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.debug.core.model.IStackFrame#hasVariables()
          */
-        public boolean hasVariables() throws DebugException {
+        @Override
+		public boolean hasVariables() throws DebugException {
             return fDelegate.hasVariables();
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.debug.core.model.IDebugElement#getDebugTarget()
          */
-        public IDebugTarget getDebugTarget() {
+        @Override
+		public IDebugTarget getDebugTarget() {
             return fDelegate.getDebugTarget();
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.debug.core.model.IDebugElement#getLaunch()
          */
-        public ILaunch getLaunch() {
+        @Override
+		public ILaunch getLaunch() {
             return fDelegate.getLaunch();
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.debug.core.model.IDebugElement#getModelIdentifier()
          */
-        public String getModelIdentifier() {
+        @Override
+		public String getModelIdentifier() {
             return fDelegate.getModelIdentifier();
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
          */
-        public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
+        @Override
+		public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
             if (ICStackFrame.class.equals(adapter))
                 return fDelegate;
             return fDelegate.getAdapter(adapter);
@@ -136,105 +149,120 @@ public class SourceDisplayAdapter implements ISourceDisplay {
         /* (non-Javadoc)
          * @see org.eclipse.debug.core.model.IStep#canStepInto()
          */
-        public boolean canStepInto() {
+        @Override
+		public boolean canStepInto() {
             return fDelegate.canStepInto();
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.debug.core.model.IStep#canStepOver()
          */
-        public boolean canStepOver() {
+        @Override
+		public boolean canStepOver() {
             return fDelegate.canStepOver();
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.debug.core.model.IStep#canStepReturn()
          */
-        public boolean canStepReturn() {
+        @Override
+		public boolean canStepReturn() {
             return fDelegate.canStepReturn();
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.debug.core.model.IStep#isStepping()
          */
-        public boolean isStepping() {
+        @Override
+		public boolean isStepping() {
             return fDelegate.isStepping();
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.debug.core.model.IStep#stepInto()
          */
-        public void stepInto() throws DebugException {
+        @Override
+		public void stepInto() throws DebugException {
             fDelegate.stepInto();
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.debug.core.model.IStep#stepOver()
          */
-        public void stepOver() throws DebugException {
+        @Override
+		public void stepOver() throws DebugException {
             fDelegate.stepOver();
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.debug.core.model.IStep#stepReturn()
          */
-        public void stepReturn() throws DebugException {
+        @Override
+		public void stepReturn() throws DebugException {
             fDelegate.stepReturn();
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.debug.core.model.ISuspendResume#canResume()
          */
-        public boolean canResume() {
+        @Override
+		public boolean canResume() {
             return fDelegate.canResume();
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.debug.core.model.ISuspendResume#canSuspend()
          */
-        public boolean canSuspend() {
+        @Override
+		public boolean canSuspend() {
             return fDelegate.canSuspend();
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.debug.core.model.ISuspendResume#isSuspended()
          */
-        public boolean isSuspended() {
+        @Override
+		public boolean isSuspended() {
             return fDelegate.isSuspended();
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.debug.core.model.ISuspendResume#resume()
          */
-        public void resume() throws DebugException {
+        @Override
+		public void resume() throws DebugException {
             fDelegate.resume();
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.debug.core.model.ISuspendResume#suspend()
          */
-        public void suspend() throws DebugException {
+        @Override
+		public void suspend() throws DebugException {
             fDelegate.suspend();
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.debug.core.model.ITerminate#canTerminate()
          */
-        public boolean canTerminate() {
+        @Override
+		public boolean canTerminate() {
             return fDelegate.canTerminate();
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.debug.core.model.ITerminate#isTerminated()
          */
-        public boolean isTerminated() {
+        @Override
+		public boolean isTerminated() {
             return fDelegate.isTerminated();
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.debug.core.model.ITerminate#terminate()
          */
-        public void terminate() throws DebugException {
+        @Override
+		public void terminate() throws DebugException {
             fDelegate.terminate();
         }
     }
@@ -242,7 +270,8 @@ public class SourceDisplayAdapter implements ISourceDisplay {
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.sourcelookup.ISourceDisplay#displaySource(java.lang.Object, org.eclipse.ui.IWorkbenchPage, boolean)
      */
-    public void displaySource(Object element, IWorkbenchPage page, boolean forceSourceLookup) {
+    @Override
+	public void displaySource(Object element, IWorkbenchPage page, boolean forceSourceLookup) {
         if (element instanceof ICStackFrame) {
             ICStackFrame frame = (ICStackFrame)element; 
             if (isDisplayDisassembly(frame, page)) {

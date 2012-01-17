@@ -34,10 +34,12 @@ public class EventBreakpoint extends Breakpoint implements ICDIEventBreakpoint {
 		this.arg = arg==null?"":arg; //$NON-NLS-1$
 	}
 
+	@Override
 	public String getEventType()  {
 		return eventType;
 	}
 
+	@Override
 	public String getExtraArgument() {
 		return arg;
 	}

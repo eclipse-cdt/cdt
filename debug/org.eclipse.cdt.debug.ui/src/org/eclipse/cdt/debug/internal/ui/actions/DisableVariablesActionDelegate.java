@@ -21,6 +21,7 @@ public class DisableVariablesActionDelegate extends EnableVariablesActionDelegat
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.actions.EnableVariablesActionDelegate#isEnableAction()
 	 */
+	@Override
 	protected boolean isEnableAction()
 	{
 		return false;

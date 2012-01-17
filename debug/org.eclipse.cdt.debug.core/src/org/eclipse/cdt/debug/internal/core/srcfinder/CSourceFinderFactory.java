@@ -22,6 +22,7 @@ public class CSourceFinderFactory implements IAdapterFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
 	 */
+	@Override
 	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (adaptableObject instanceof IBinary) {
@@ -35,6 +36,7 @@ public class CSourceFinderFactory implements IAdapterFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
+	@Override
 	@SuppressWarnings("rawtypes")
 	public Class[] getAdapterList() {
 		return new Class[] { ISourceFinder.class };

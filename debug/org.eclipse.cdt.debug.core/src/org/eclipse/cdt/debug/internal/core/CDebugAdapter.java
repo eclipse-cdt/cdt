@@ -55,6 +55,7 @@ public class CDebugAdapter implements ICDIDebugger {
 	 *      org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable,
 	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public ICDISession createDebuggerSession(ILaunch launch, IBinaryObject exe, IProgressMonitor monitor) throws CoreException {
 		ILaunchConfiguration config = launch.getLaunchConfiguration();
 		if (exe == null) {

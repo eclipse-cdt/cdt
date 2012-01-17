@@ -59,6 +59,7 @@ public class GDBServerDebugger implements ICDebugger {
 		}
 	}
 
+	@Override
 	public ICDISession createLaunchSession(ILaunchConfiguration config, IFile exe) throws CDIException {
 		Session session = null;
 		boolean failed = false;
@@ -125,10 +126,12 @@ public class GDBServerDebugger implements ICDebugger {
 		}
 	}
 
+	@Override
 	public ICDISession createAttachSession(ILaunchConfiguration config, IFile exe, int pid) throws CDIException {
 		throw new CDIException(MIPlugin.getResourceString("src.GDBServerDebugger.GDBServer_attaching_unsupported")); //$NON-NLS-1$
 	}
 
+	@Override
 	public ICDISession createCoreSession(ILaunchConfiguration config, IFile exe, IPath corefile) throws CDIException {
 		throw new CDIException(MIPlugin.getResourceString("src.GDBServerDebugger.GDBServer_corefiles_unsupported")); //$NON-NLS-1$
 	}

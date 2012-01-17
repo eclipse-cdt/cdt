@@ -32,6 +32,7 @@ class MacOSMIVarUpdate extends MIVarUpdate {
 		super(miVersion, name);
 	}
 
+	@Override
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

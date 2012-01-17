@@ -66,13 +66,21 @@ public class Trace {
 	 * clients; no need to check for null.
 	 */
 	private static final DebugTrace NULL_TRACE = new DebugTrace() {
+		@Override
 		public void trace(String option, String message) {}
+		@Override
 		public void trace(String option, String message, Throwable error) {}
+		@Override
 		public void traceDumpStack(String option) {}
+		@Override
 		public void traceEntry(String option) {}
+		@Override
 		public void traceEntry(String option, Object methodArgument) {}
+		@Override
 		public void traceEntry(String option, Object[] methodArguments) {}
+		@Override
 		public void traceExit(String option) {}
+		@Override
 		public void traceExit(String option, Object result) {}
 	};
 

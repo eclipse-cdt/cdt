@@ -29,6 +29,7 @@ public class WatchpointScope extends SessionObject implements ICDIWatchpointScop
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIWatchpointScope#getWatchpoint()
 	 */
+	@Override
 	public ICDIWatchpoint getWatchpoint() {
 		int number = watchEvent.getNumber();
 		// Ask the breakpointManager for the breakpoint

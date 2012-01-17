@@ -61,6 +61,7 @@ public class MIBreakpointHitEvent extends MIStoppedEvent {
 		return frame;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("number=").append(bkptno).append('\n'); //$NON-NLS-1$
@@ -69,6 +70,7 @@ public class MIBreakpointHitEvent extends MIStoppedEvent {
 		return buffer.toString();
 	}
 
+	@Override
 	void parse () {
 		MIResult[] results = null;
 		MIExecAsyncOutput exec = getMIExecAsyncOutput();

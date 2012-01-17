@@ -41,6 +41,7 @@ public class MIWatchpointScopeEvent extends MIStoppedEvent {
 		return number;
 	}
 
+	@Override
 	void parse() {
 		MIExecAsyncOutput exec = getMIExecAsyncOutput();
 		MIResultRecord rr = getMIResultRecord();

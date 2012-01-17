@@ -41,14 +41,16 @@ public class ToggleCBreakpointsTargetFactory implements IToggleBreakpointsTarget
     
     private ToggleBreakpointAdapter fCToggleBreakpointTarget = new ToggleBreakpointAdapter();
     
-    public IToggleBreakpointsTarget createToggleTarget(String targetID) {
+    @Override
+	public IToggleBreakpointsTarget createToggleTarget(String targetID) {
         if (TOGGLE_C_BREAKPOINT_TARGET_ID.equals(targetID)) {
             return fCToggleBreakpointTarget;
         }
         return null;
     }
     
-    public String getDefaultToggleTarget(IWorkbenchPart part, ISelection selection) {
+    @Override
+	public String getDefaultToggleTarget(IWorkbenchPart part, ISelection selection) {
         // Return the debug context as a default if the currently selected context
         // is a CDT element.  Otherwise return null.
         Object element = getDebugContext(part).getFirstElement();
@@ -73,15 +75,18 @@ public class ToggleCBreakpointsTargetFactory implements IToggleBreakpointsTarget
         return null;
     }
     
-    public String getToggleTargetDescription(String targetID) {
+    @Override
+	public String getToggleTargetDescription(String targetID) {
         return ActionMessages.getString("ToggleCBreakpointsTargetFactory.CBreakpointDescription"); //$NON-NLS-1$
     }
     
-    public String getToggleTargetName(String targetID) {
+    @Override
+	public String getToggleTargetName(String targetID) {
         return ActionMessages.getString("ToggleCBreakpointsTargetFactory.CBreakpointName"); //$NON-NLS-1$
     }
     
-    @SuppressWarnings("unchecked")
+    @Override
+	@SuppressWarnings("unchecked")
     public Set getToggleTargets(IWorkbenchPart part, ISelection selection) {
         return TOGGLE_TARGET_IDS;
     }

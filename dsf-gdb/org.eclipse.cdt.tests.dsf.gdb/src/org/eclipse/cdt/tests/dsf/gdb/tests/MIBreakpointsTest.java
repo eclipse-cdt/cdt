@@ -183,7 +183,8 @@ public class MIBreakpointsTest extends BaseTestCase {
         // Get a reference to the breakpoint service
         fSession = getGDBLaunch().getSession();
         Runnable runnable = new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
                 assert(fServicesTracker != null);
         		    
@@ -214,7 +215,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 
 		// Clear the references (not strictly necessary)
         Runnable runnable = new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
             	fRunControl.getSession().removeServiceEventListener(MIBreakpointsTest.this);
             }
         };
@@ -396,6 +398,7 @@ public class MIBreakpointsTest extends BaseTestCase {
 		// Evaluate the expression (asynchronously)
 		fWait.waitReset();
 		fSession.getExecutor().submit(new Runnable() {
+			@Override
 			public void run() {
 				fExpressionService.getFormattedExpressionValue(formattedValueDMC, drm);
 			}
@@ -441,7 +444,8 @@ public class MIBreakpointsTest extends BaseTestCase {
         // Issue the breakpoint request
         fWait.waitReset();
         fBreakpointService.getExecutor().submit(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 fBreakpointService.getBreakpoints(context, drm);
             }
         });
@@ -483,7 +487,8 @@ public class MIBreakpointsTest extends BaseTestCase {
         // Issue the breakpoint request
         fWait.waitReset();
         fBreakpointService.getExecutor().submit(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 fBreakpointService.getBreakpointDMData(breakpoint, drm);
             }
         });
@@ -562,7 +567,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 
         // Issue the remove insertion request
         fBreakpointService.getExecutor().submit(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 fBreakpointService.insertBreakpoint(context, attributes, drm);
             }
         });
@@ -601,7 +607,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 
         // Issue the add breakpoint request
         fBreakpointService.getExecutor().submit(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 fBreakpointService.removeBreakpoint(breakpoint, rm);
             }
         });
@@ -640,7 +647,8 @@ public class MIBreakpointsTest extends BaseTestCase {
 
         // Issue the update breakpoint request
         fBreakpointService.getExecutor().submit(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 fBreakpointService.updateBreakpoint(breakpoint, delta, rm);
             }
         });

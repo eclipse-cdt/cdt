@@ -46,6 +46,7 @@ import org.eclipse.debug.core.model.IProcess;
 
 public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate {
 
+	@Override
 	public void launch(ILaunchConfiguration config, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		IBinaryObject exeFile = null;
 		if (monitor == null) {
@@ -196,6 +197,7 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate {
 		return p;
 	}
 
+	@Override
 	protected String getPluginID() {
 		return LaunchUIPlugin.getUniqueIdentifier();
 	}

@@ -32,22 +32,27 @@ import org.eclipse.cdt.debug.core.model.ICBreakpointType;
  */
 public interface ICDIBreakpoint extends ICDIObject {
 	/** @deprecated use ICBreakpointTyped.REGULAR */
+	@Deprecated
 	final static public int REGULAR =  ICBreakpointType.REGULAR;
 	/** @deprecated use ICBreakpointTyped.TEMPORARY */
+	@Deprecated
 	final static public int TEMPORARY = ICBreakpointType.TEMPORARY;
 	/** @deprecated use ICBreakpointTyped.HARDWARE */
+	@Deprecated
 	final static public int HARDWARE = ICBreakpointType.HARDWARE;
 	
 	/**
 	 * @return whether this breakpoint is temporary
 	 * @deprecated by {@link ICDIBreakpoint2#getType()} 
 	 */
+	@Deprecated
 	boolean isTemporary();
 	
 	/**
 	 * @return whether this breakpoint is hardware-assisted
 	 * @deprecated by {@link ICDIBreakpoint2#getType()} 
 	 */
+	@Deprecated
 	boolean isHardware();
 
 	/**

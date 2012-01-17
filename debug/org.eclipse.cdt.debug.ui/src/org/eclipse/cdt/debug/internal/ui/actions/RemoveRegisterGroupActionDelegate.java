@@ -40,12 +40,14 @@ public class RemoveRegisterGroupActionDelegate extends ActionDelegate implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
 	 */
+	@Override
 	public void setActivePart( IAction action, IWorkbenchPart targetPart ) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.ActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged( IAction action, ISelection selection ) {
 		ArrayList list = new ArrayList();
 		if ( selection instanceof IStructuredSelection ) {
@@ -72,6 +74,7 @@ public class RemoveRegisterGroupActionDelegate extends ActionDelegate implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.ActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run( IAction action ) {
 		IRegisterGroup[] groups = getRegisterGroups();
 		if ( groups.length > 0 ) {

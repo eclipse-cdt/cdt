@@ -39,6 +39,7 @@ public class SourceContainerViewer extends TreeViewer {
 		/**
 		 * @see IStructuredContentProvider#getElements(Object)
 		 */
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return getEntries();
 		}
@@ -46,18 +47,21 @@ public class SourceContainerViewer extends TreeViewer {
 		/**
 		 * @see IContentProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 		}
 		
 		/**
 		 * @see IContentProvider#inputChanged(Viewer, Object, Object)
 		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 		
 		/** 
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 		 */
+		@Override
 		public Object[] getChildren(Object parentElement) {
 			try {
 				return ((ISourceContainer)parentElement).getSourceContainers();
@@ -69,6 +73,7 @@ public class SourceContainerViewer extends TreeViewer {
 		/**
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 		 */
+		@Override
 		public Object getParent(Object element) {
 			return null;
 		}
@@ -76,6 +81,7 @@ public class SourceContainerViewer extends TreeViewer {
 		/**
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 		 */
+		@Override
 		public boolean hasChildren(Object element) {
 			return ((ISourceContainer)element).isComposite();				
 		}

@@ -62,6 +62,7 @@ public class GDBDebuggerPage extends AbstractCDebuggerPage implements Observer {
 	
 	private Button fBreakpointsFullPath;
 
+	@Override
 	public void createControl( Composite parent ) {
 		Composite comp = new Composite( parent, SWT.NONE );
 		comp.setLayout( new GridLayout() );
@@ -73,6 +74,7 @@ public class GDBDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		setControl( parent );
 	}
 
+	@Override
 	public void setDefaults( ILaunchConfigurationWorkingCopy configuration ) {
 		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb" ); //$NON-NLS-1$
 		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_GDB_INIT, IMILaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT );
@@ -81,6 +83,7 @@ public class GDBDebuggerPage extends AbstractCDebuggerPage implements Observer {
 			fSolibBlock.setDefaults( configuration );
 	}
 
+	@Override
 	public boolean isValid( ILaunchConfiguration launchConfig ) {
 		boolean valid = fGDBCommandText.getText().length() != 0;
 		if ( valid ) {
@@ -94,6 +97,7 @@ public class GDBDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		return valid;
 	}
 
+	@Override
 	public void initializeFrom( ILaunchConfiguration configuration ) {
 		setInitializing( true );
 		String gdbCommand = "gdb"; //$NON-NLS-1$
@@ -137,6 +141,7 @@ public class GDBDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		setInitializing( false ); 
 	}
 
+	@Override
 	public void performApply( ILaunchConfigurationWorkingCopy configuration ) {
 		String str = fGDBCommandText.getText();
 		str.trim();
@@ -154,6 +159,7 @@ public class GDBDebuggerPage extends AbstractCDebuggerPage implements Observer {
 			fSolibBlock.performApply( configuration );
 	}
 
+	@Override
 	public String getName() {
 		return MIUIMessages.getString( "GDBDebuggerPage.1" ); //$NON-NLS-1$
 	}
@@ -161,6 +167,7 @@ public class GDBDebuggerPage extends AbstractCDebuggerPage implements Observer {
 	/**
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getShell()
 	 */
+	@Override
 	protected Shell getShell() {
 		return super.getShell();
 	}
@@ -168,6 +175,7 @@ public class GDBDebuggerPage extends AbstractCDebuggerPage implements Observer {
 	/**
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#updateLaunchConfigurationDialog()
 	 */
+	@Override
 	protected void updateLaunchConfigurationDialog() {
 		super.updateLaunchConfigurationDialog();
 	}
@@ -177,6 +185,7 @@ public class GDBDebuggerPage extends AbstractCDebuggerPage implements Observer {
 	 * 
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */
+	@Override
 	public void update( Observable o, Object arg ) {
 		if ( !isInitializing() )
 			updateLaunchConfigurationDialog();
@@ -210,6 +219,7 @@ public class GDBDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		fGDBCommandText = ControlFactory.createTextField( subComp, SWT.SINGLE | SWT.BORDER );
 		fGDBCommandText.addModifyListener( new ModifyListener() {
 
+			@Override
 			public void modifyText( ModifyEvent evt ) {
 				if ( !isInitializing() )
 					updateLaunchConfigurationDialog();
@@ -218,6 +228,7 @@ public class GDBDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		Button button = createPushButton( subComp, MIUIMessages.getString( "GDBDebuggerPage.4" ), null ); //$NON-NLS-1$
 		button.addSelectionListener( new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected( SelectionEvent evt ) {
 				handleGDBButtonSelected();
 				updateLaunchConfigurationDialog();
@@ -247,6 +258,7 @@ public class GDBDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		fGDBInitText.setLayoutData( gd );
 		fGDBInitText.addModifyListener( new ModifyListener() {
 
+			@Override
 			public void modifyText( ModifyEvent evt ) {
 				if ( !isInitializing() )
 					updateLaunchConfigurationDialog();
@@ -255,6 +267,7 @@ public class GDBDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		button = createPushButton( subComp, MIUIMessages.getString( "GDBDebuggerPage.7" ), null ); //$NON-NLS-1$
 		button.addSelectionListener( new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected( SelectionEvent evt ) {
 				handleGDBInitButtonSelected();
 				updateLaunchConfigurationDialog();
@@ -306,6 +319,7 @@ public class GDBDebuggerPage extends AbstractCDebuggerPage implements Observer {
 	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if ( fSolibBlock != null ) {
 			if ( fSolibBlock instanceof Observable )
@@ -318,6 +332,7 @@ public class GDBDebuggerPage extends AbstractCDebuggerPage implements Observer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void activated( ILaunchConfigurationWorkingCopy workingCopy ) {
 		// Override the default behavior
 	}
@@ -337,11 +352,13 @@ public class GDBDebuggerPage extends AbstractCDebuggerPage implements Observer {
 		fProtocolCombo.setItems( protocolItems );
 		fProtocolCombo.addSelectionListener( new SelectionListener() {
 
+			@Override
 			public void widgetDefaultSelected( SelectionEvent e ) {
 				if ( !isInitializing() )
 					updateLaunchConfigurationDialog();
 			}
 			
+			@Override
 			public void widgetSelected( SelectionEvent e ) {
 				if ( !isInitializing() )
 					updateLaunchConfigurationDialog();
@@ -352,10 +369,12 @@ public class GDBDebuggerPage extends AbstractCDebuggerPage implements Observer {
 	protected void createBreakpointFullPathName( Composite parent ) {
 		fBreakpointsFullPath = createCheckButton( parent, MIUIMessages.getString( "StandardGDBDebuggerPage.14" ) ); //$NON-NLS-1$
 		fBreakpointsFullPath.addSelectionListener( new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected( SelectionEvent e ) {
 				if ( !isInitializing() )
 					updateLaunchConfigurationDialog();
 			}
+			@Override
 			public void widgetSelected( SelectionEvent e ) {
 				if ( !isInitializing() )
 					updateLaunchConfigurationDialog();

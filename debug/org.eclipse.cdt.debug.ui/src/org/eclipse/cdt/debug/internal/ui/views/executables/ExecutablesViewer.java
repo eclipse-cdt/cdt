@@ -91,6 +91,7 @@ public class ExecutablesViewer extends BaseViewer {
 
 		MenuManager popupMenuManager = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		IMenuListener listener = new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 				manager.add(ExecutablesViewer.this.getExecutablesView().refreshAction);
 				manager.add(ExecutablesViewer.this.getExecutablesView().importAction);

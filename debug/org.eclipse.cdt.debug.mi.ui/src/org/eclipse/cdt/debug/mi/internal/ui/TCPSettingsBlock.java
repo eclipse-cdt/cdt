@@ -97,6 +97,7 @@ public class TCPSettingsBlock extends Observable {
 		field.setLabelText( MIUIMessages.getString( "TCPSettingsBlock.0" ) ); //$NON-NLS-1$
 		field.setDialogFieldListener( new IDialogFieldListener() {
 
+			@Override
 			public void dialogFieldChanged( DialogField f ) {
 				hostNameFieldChanged();
 			}
@@ -109,6 +110,7 @@ public class TCPSettingsBlock extends Observable {
 		field.setLabelText( MIUIMessages.getString( "TCPSettingsBlock.1" ) ); //$NON-NLS-1$
 		field.setDialogFieldListener( new IDialogFieldListener() {
 
+			@Override
 			public void dialogFieldChanged( DialogField f ) {
 				portNumberFieldChanged();
 			}

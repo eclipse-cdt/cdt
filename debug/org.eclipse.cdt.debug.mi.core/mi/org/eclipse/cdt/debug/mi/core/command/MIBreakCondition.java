@@ -30,6 +30,7 @@ public class MIBreakCondition extends MICommand {
 	 * Do not do any munging on the string i.e. quoting spaces
 	 * etc .. doing this will break the command -break-condition.
 	 */
+	@Override
 	protected String parametersToString() {
 		String[] parameters = getParameters();
 		StringBuffer buffer = new StringBuffer();

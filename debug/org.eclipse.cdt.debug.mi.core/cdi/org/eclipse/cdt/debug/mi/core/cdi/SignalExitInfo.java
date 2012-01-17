@@ -27,6 +27,7 @@ public class SignalExitInfo extends SessionObject implements ICDISignalExitInfo 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISignalExitInfo#getName()
 	 */
+	@Override
 	public String getName() {
 		return event.getName();
 	}
@@ -34,6 +35,7 @@ public class SignalExitInfo extends SessionObject implements ICDISignalExitInfo 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISignalExitInfo#getDescription()
 	 */
+	@Override
 	public String getDescription() {
 		return event.getMeaning();
 	}

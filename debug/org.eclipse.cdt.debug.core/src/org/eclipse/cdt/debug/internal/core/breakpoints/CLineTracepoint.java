@@ -51,6 +51,7 @@ public class CLineTracepoint extends AbstractTracepoint implements ICTracepoint 
 	/*(non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint#getMarkerMessage()
 	 */
+	@Override
 	protected String getMarkerMessage() throws CoreException {
 		return MessageFormat.format( BreakpointMessages.getString( "CLineTracepoint.0" ), new String[] { CDebugUtils.getBreakpointText( this, false ) } ); //$NON-NLS-1$
 	}

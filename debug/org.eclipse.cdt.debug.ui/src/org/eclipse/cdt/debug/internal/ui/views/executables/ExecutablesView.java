@@ -151,6 +151,7 @@ public class ExecutablesView extends ViewPart {
 			 * 
 			 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 			 */
+			@Override
 			public Object[] getElements(Object inputElement) {
 				return columnNames;
 			}
@@ -160,6 +161,7 @@ public class ExecutablesView extends ViewPart {
 			 * 
 			 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 			 */
+			@Override
 			public void dispose() {
 			}
 
@@ -169,6 +171,7 @@ public class ExecutablesView extends ViewPart {
 			 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
 			 *      java.lang.Object, java.lang.Object)
 			 */
+			@Override
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			}
 
@@ -256,8 +259,10 @@ public class ExecutablesView extends ViewPart {
 
 		executablesViewer.getTree().addFocusListener(new FocusListener() {
 			
+			@Override
 			public void focusLost(FocusEvent e) {}
 			
+			@Override
 			public void focusGained(FocusEvent e) {
 				focusedViewer = executablesViewer;
 			}
@@ -265,8 +270,10 @@ public class ExecutablesView extends ViewPart {
 
 		sourceFilesViewer.getTree().addFocusListener(new FocusListener() {
 			
+			@Override
 			public void focusLost(FocusEvent e) {}
 			
+			@Override
 			public void focusGained(FocusEvent e) {
 				focusedViewer = sourceFilesViewer;
 			}
@@ -274,20 +281,24 @@ public class ExecutablesView extends ViewPart {
 		
 		ExecutablesView.this.getViewSite().setSelectionProvider(new ISelectionProvider() {
 			
+			@Override
 			public void setSelection(ISelection selection) {
 				getFocusedViewer().setSelection(selection);
 			}
 			
+			@Override
 			public void removeSelectionChangedListener(
 					ISelectionChangedListener listener) {
 				executablesViewer.removeSelectionChangedListener(listener);
 				sourceFilesViewer.removeSelectionChangedListener(listener);
 			}
 			
+			@Override
 			public ISelection getSelection() {
 				return getFocusedViewer().getSelection();
 			}
 			
+			@Override
 			public void addSelectionChangedListener(ISelectionChangedListener listener) {
 				executablesViewer.addSelectionChangedListener(listener);
 				sourceFilesViewer.addSelectionChangedListener(listener);
@@ -319,6 +330,7 @@ public class ExecutablesView extends ViewPart {
 		// update the source files viewer
 		executablesViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				ISelection newSelection = event.getSelection();
 				if (newSelection instanceof IStructuredSelection) {

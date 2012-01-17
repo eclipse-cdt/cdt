@@ -48,6 +48,7 @@ public abstract class AbstractLineBreakpoint extends CBreakpoint implements ICLi
 	/*(non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ILineBreakpoint#getLineNumber()
 	 */
+	@Override
 	public int getLineNumber() throws CoreException {
 		return ensureMarker().getAttribute( IMarker.LINE_NUMBER, -1 );
 	}
@@ -55,6 +56,7 @@ public abstract class AbstractLineBreakpoint extends CBreakpoint implements ICLi
 	/*(non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ILineBreakpoint#getCharStart()
 	 */
+	@Override
 	public int getCharStart() throws CoreException {
 		return ensureMarker().getAttribute( IMarker.CHAR_START, -1 );
 	}
@@ -62,6 +64,7 @@ public abstract class AbstractLineBreakpoint extends CBreakpoint implements ICLi
 	/*(non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ILineBreakpoint#getCharEnd()
 	 */
+	@Override
 	public int getCharEnd() throws CoreException {
 		return ensureMarker().getAttribute( IMarker.CHAR_END, -1 );
 	}
@@ -69,6 +72,7 @@ public abstract class AbstractLineBreakpoint extends CBreakpoint implements ICLi
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICLineBreakpoint#getAddress()
 	 */
+	@Override
 	public String getAddress() throws CoreException {
 		return ensureMarker().getAttribute( ICLineBreakpoint.ADDRESS, "" ); //$NON-NLS-1$
 	}
@@ -76,6 +80,7 @@ public abstract class AbstractLineBreakpoint extends CBreakpoint implements ICLi
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICLineBreakpoint#getFileName()
 	 */
+	@Override
 	public String getFileName() throws CoreException {
 		String fileName = ensureMarker().getAttribute( ICBreakpoint.SOURCE_HANDLE, "" ); //$NON-NLS-1$
 		IPath path = new Path( fileName );
@@ -85,6 +90,7 @@ public abstract class AbstractLineBreakpoint extends CBreakpoint implements ICLi
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICLineBreakpoint#getFunction()
 	 */
+	@Override
 	public String getFunction() throws CoreException {
 		return ensureMarker().getAttribute( ICLineBreakpoint.FUNCTION, "" ); //$NON-NLS-1$
 	}
@@ -92,6 +98,7 @@ public abstract class AbstractLineBreakpoint extends CBreakpoint implements ICLi
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICLineBreakpoint#setAddress(java.lang.String)
 	 */
+	@Override
 	public void setAddress( String address ) throws CoreException {
 		setAttribute( ICLineBreakpoint.ADDRESS, address );
 	}
@@ -99,6 +106,7 @@ public abstract class AbstractLineBreakpoint extends CBreakpoint implements ICLi
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICLineBreakpoint#setFunction(java.lang.String)
 	 */
+	@Override
 	public void setFunction( String function ) throws CoreException {
 		setAttribute( ICLineBreakpoint.FUNCTION, function );
 	}

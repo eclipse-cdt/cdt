@@ -27,6 +27,7 @@ public class AddRegisterGroupActionDelegate extends AbstractViewActionDelegate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.actions.AbstractViewActionDelegate#getErrorDialogTitle()
 	 */
+	@Override
 	protected String getErrorDialogTitle() {
 		return ActionMessages.getString( "AddRegisterGroupActionDelegate.0" ); //$NON-NLS-1$
 	}
@@ -34,6 +35,7 @@ public class AddRegisterGroupActionDelegate extends AbstractViewActionDelegate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.actions.AbstractViewActionDelegate#getErrorDialogMessage()
 	 */
+	@Override
 	protected String getErrorDialogMessage() {
 		return ActionMessages.getString( "AddRegisterGroupActionDelegate.1" ); //$NON-NLS-1$
 	}
@@ -41,6 +43,7 @@ public class AddRegisterGroupActionDelegate extends AbstractViewActionDelegate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.actions.AbstractViewActionDelegate#doAction()
 	 */
+	@Override
 	protected void doAction() throws DebugException {
 		RegisterGroupDialog dialog = new RegisterGroupDialog( getView().getSite().getShell(), getDebugTarget().getRegisterDescriptors() );
 		if ( dialog.open() == Window.OK ) {
@@ -51,6 +54,7 @@ public class AddRegisterGroupActionDelegate extends AbstractViewActionDelegate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.actions.AbstractViewActionDelegate#update()
 	 */
+	@Override
 	protected void update() {
 		IAction action = getAction();
 		if ( action != null ) {
@@ -62,12 +66,14 @@ public class AddRegisterGroupActionDelegate extends AbstractViewActionDelegate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.actions.AbstractViewActionDelegate#doHandleDebugEvent(org.eclipse.debug.core.DebugEvent)
 	 */
+	@Override
 	protected void doHandleDebugEvent( DebugEvent event ) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.actions.AbstractViewActionDelegate#init(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void init( IAction action ) {
 		super.init( action );
 		Object element = DebugUITools.getDebugContext();

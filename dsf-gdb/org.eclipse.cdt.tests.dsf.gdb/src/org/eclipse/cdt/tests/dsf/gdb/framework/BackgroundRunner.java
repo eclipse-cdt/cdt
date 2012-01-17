@@ -84,11 +84,13 @@ public class BackgroundRunner extends BlockJUnit4ClassRunner {
 			this.job = job;
 		}
 
+		@Override
 		public boolean isTrue() {
 			// Interrupt the wait method if the job signaled that it has finished.
 			return ((Boolean)job.getProperty(BACKGROUND_TEST_EXECUTION_FINISHED)).booleanValue();
 		}
 		
+		@Override
 		public void dispose() { 
 			// nothing to do
 		}

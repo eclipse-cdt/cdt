@@ -48,6 +48,7 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
+	@Override
 	public void init(IViewPart view) {
 		fView = view;
 		fAction.setChecked(getPreferenceValue(view));
@@ -57,6 +58,7 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void init(IAction action) {
 		fAction = action;
 	}
@@ -64,12 +66,14 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */
+	@Override
 	public void dispose() {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
 	 */
+	@Override
 	public void runWithEvent(IAction action, Event event) {
 		run(action);
 	}
@@ -77,6 +81,7 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		StructuredViewer viewer = getStructuredViewer();
 		ViewerFilter[] filters = viewer.getFilters();
@@ -116,6 +121,7 @@ public abstract class ViewFilterAction extends ViewerFilter implements IViewActi
 	 *  @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction,
 	 *      org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		boolean enable = false;
 		IDebugView view = (IDebugView)getView().getAdapter(IDebugView.class);

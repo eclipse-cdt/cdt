@@ -40,7 +40,8 @@ public class DisassemblyDisplayModeHandler extends AbstractHandler implements IE
     /* (non-Javadoc)
      * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
      */
-    public Object execute( ExecutionEvent event ) throws ExecutionException {
+    @Override
+	public Object execute( ExecutionEvent event ) throws ExecutionException {
         DisassemblyEditorPresentation presentation = getEditorPresentation( event );
         if ( presentation != null ) {
             String param = event.getParameter( ID_PARAMETER_MODE );
@@ -57,7 +58,8 @@ public class DisassemblyDisplayModeHandler extends AbstractHandler implements IE
     /* (non-Javadoc)
      * @see org.eclipse.ui.commands.IElementUpdater#updateElement(org.eclipse.ui.menus.UIElement, java.util.Map)
      */
-    @SuppressWarnings("unchecked")
+    @Override
+	@SuppressWarnings("unchecked")
     public void updateElement( UIElement element, Map parameters ) {
         IWorkbenchPartSite site = (IWorkbenchPartSite)element.getServiceLocator().getService( IWorkbenchPartSite.class );
         if ( site != null ) {

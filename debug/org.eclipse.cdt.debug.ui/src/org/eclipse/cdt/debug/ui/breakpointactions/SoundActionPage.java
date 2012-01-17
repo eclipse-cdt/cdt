@@ -66,9 +66,11 @@ public class SoundActionPage extends PlatformObject implements IBreakpointAction
 		loadRecentSounds();
 	}
 
+	@Override
 	public void actionDialogCanceled() {
 	}
 
+	@Override
 	public void actionDialogOK() {
 		saveRecentSounds();
 		soundAction.setSoundFile(editor.getSoundFile());
@@ -92,6 +94,7 @@ public class SoundActionPage extends PlatformObject implements IBreakpointAction
 
 	}
 
+	@Override
 	public Composite createComposite(IBreakpointAction action, Composite composite, int style) {
 		this.soundAction = (SoundAction) action;
 		loadRecentSounds();

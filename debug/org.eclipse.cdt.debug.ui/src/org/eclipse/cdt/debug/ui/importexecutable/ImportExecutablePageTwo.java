@@ -150,6 +150,7 @@ public class ImportExecutablePageTwo extends WizardPage {
 		return null;
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		
 		Composite container = new Composite(parent, SWT.NULL);
@@ -166,6 +167,7 @@ public class ImportExecutablePageTwo extends WizardPage {
 		newProjectButton = new Button(composite, SWT.RADIO);
 		newProjectButton.setText(Messages.ImportExecutablePageTwo_NewProjectName);
 		newProjectButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				isCreateNewProjectSelected = newProjectButton.getSelection();
 				updateControls();
@@ -178,6 +180,7 @@ public class ImportExecutablePageTwo extends WizardPage {
 		newProjectName.setLayoutData(gridData);
 		newProjectName.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(ModifyEvent e) {
 				updateControls();
 			}
@@ -201,6 +204,7 @@ public class ImportExecutablePageTwo extends WizardPage {
 		existingProjectButton = new Button(composite, SWT.RADIO);
 		existingProjectButton.setText(Messages.ImportExecutablePageTwo_ExistingProject);
 		existingProjectButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				isCreateNewProjectSelected = !newProjectButton.getSelection();
 				updateControls();
@@ -213,6 +217,7 @@ public class ImportExecutablePageTwo extends WizardPage {
 		existingProjectName.setLayoutData(gridData_3);
 		existingProjectName.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(ModifyEvent e) {
 				updateControls();
 			}
@@ -223,6 +228,7 @@ public class ImportExecutablePageTwo extends WizardPage {
 		searchButton.setLayoutData(new GridData());
 		searchButton.setText(Messages.ImportExecutablePageTwo_Search);
 		searchButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				ICProject project = chooseCProject();
 				if (project == null) {
@@ -253,6 +259,7 @@ public class ImportExecutablePageTwo extends WizardPage {
 		createLaunch.setText(Messages.ImportExecutablePageTwo_CreateLaunch);
 		createLaunch.setSelection(true);
 		createLaunch.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				isCreateLaunchConfigurationSelected = createLaunch
 						.getSelection();
@@ -267,6 +274,7 @@ public class ImportExecutablePageTwo extends WizardPage {
 		configTypes.setLayoutData(gridData_6);
 		configTypes.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(ModifyEvent e) {
 				setLaunchConfigurationName(configurationName.getText().trim());
 			}
@@ -284,6 +292,7 @@ public class ImportExecutablePageTwo extends WizardPage {
 		configurationName.setLayoutData(gridData_7);
 		configurationName.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(ModifyEvent e) {
 				updateControls();
 			}
@@ -388,7 +397,8 @@ public class ImportExecutablePageTwo extends WizardPage {
 			getContainer().updateButtons();
 	}
 	
-    public boolean isPageComplete() {
+    @Override
+	public boolean isPageComplete() {
     	setErrorMessage(null);
 		if (isCreateNewProjectSelected()) {
 			if (getNewProjectName().length() == 0) {

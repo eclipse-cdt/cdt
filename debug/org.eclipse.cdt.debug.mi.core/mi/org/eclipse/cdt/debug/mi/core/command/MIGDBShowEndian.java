@@ -26,6 +26,7 @@ public class MIGDBShowEndian extends MIGDBShow {
 		return (MIGDBShowEndianInfo)getMIInfo();
 	}
 
+	@Override
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

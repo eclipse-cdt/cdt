@@ -19,6 +19,7 @@ public class StandardSourceFileRemappingFactory implements ISourceFileRemappingF
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.executables.ISourceFileRemappingFactory#createRemapper(org.eclipse.cdt.core.model.IBinary)
 	 */
+	@Override
 	public ISourceFileRemapping createRemapper(IBinary binary) {
 		return new StandardSourceFileRemapping(binary);
 	}

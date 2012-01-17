@@ -26,6 +26,7 @@ public class CRequest implements IRequest {
 	/*
 	 * @see org.eclipse.debug.core.IRequest#cancel()
 	 */
+	@Override
 	public void cancel() {
 		fCanceled= true;
 	}
@@ -33,12 +34,14 @@ public class CRequest implements IRequest {
 	/*
 	 * @see org.eclipse.debug.core.IRequest#done()
 	 */
+	@Override
 	public void done() {
 	}
 
 	/*
 	 * @see org.eclipse.debug.core.IRequest#getStatus()
 	 */
+	@Override
 	public IStatus getStatus() {
 		return fStatus;
 	}
@@ -46,6 +49,7 @@ public class CRequest implements IRequest {
 	/*
 	 * @see org.eclipse.debug.core.IRequest#isCanceled()
 	 */
+	@Override
 	public boolean isCanceled() {
 		return fCanceled;
 	}
@@ -53,6 +57,7 @@ public class CRequest implements IRequest {
 	/*
 	 * @see org.eclipse.debug.core.IRequest#setStatus(org.eclipse.core.runtime.IStatus)
 	 */
+	@Override
 	public void setStatus(IStatus status) {
 		fStatus= status;
 	}

@@ -29,6 +29,7 @@ public abstract class CForEachCommand extends AbstractDebugCommand {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.commands.DebugCommand#doExecute(java.lang.Object[], org.eclipse.core.runtime.IProgressMonitor, org.eclipse.debug.core.IRequest)
 	 */
+	@Override
 	protected void doExecute(Object[] targets, IProgressMonitor monitor, IRequest request) throws CoreException {
 		for (int i = 0; i < targets.length; i++) {
 			execute(targets[i]);
@@ -41,6 +42,7 @@ public abstract class CForEachCommand extends AbstractDebugCommand {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.commands.DebugCommand#isExecutable(java.lang.Object[], org.eclipse.core.runtime.IProgressMonitor, org.eclipse.debug.core.commands.IEnabledStateRequest)
 	 */
+	@Override
 	protected boolean isExecutable(Object[] targets, IProgressMonitor monitor, IEnabledStateRequest request) throws CoreException {
 		for (int i = 0; i < targets.length; i++) {
 			if (!isExecutable(targets[i])) {

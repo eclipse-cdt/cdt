@@ -37,6 +37,7 @@ public class MISrcAsm {
 		return asm;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("src_and_asm_line={"); //$NON-NLS-1$

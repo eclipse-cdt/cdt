@@ -24,6 +24,7 @@ public class CWatchExpressionDelegate implements IWatchExpressionDelegate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IWatchExpressionDelegate#evaluateExpression(java.lang.String, org.eclipse.debug.core.model.IDebugElement, org.eclipse.debug.core.model.IWatchExpressionListener)
 	 */
+	@Override
 	public void evaluateExpression( final String expression, IDebugElement context, final IWatchExpressionListener listener ) {
 		if ( !(context instanceof ICStackFrame) ) {
 			listener.watchEvaluationFinished( null );
@@ -31,6 +32,7 @@ public class CWatchExpressionDelegate implements IWatchExpressionDelegate {
 		}
 		final ICStackFrame frame = (ICStackFrame)context;
 		Runnable runnable = new Runnable() {
+			@Override
 			public void run() {
 				IValue value = null;
 				DebugException de = null;
@@ -50,14 +52,17 @@ public class CWatchExpressionDelegate implements IWatchExpressionDelegate {
 	protected IWatchExpressionResult evaluationComplete( final String expression, final IValue value, final DebugException de ) {
 		return new IWatchExpressionResult() {
 			
+			@Override
 			public IValue getValue() {
 				return value;
 			}
 			
+			@Override
 			public boolean hasErrors() {
 				return ( de != null );
 			}
 			
+			@Override
 			public String getExpressionText() {
 				return expression;
 			}
@@ -65,10 +70,12 @@ public class CWatchExpressionDelegate implements IWatchExpressionDelegate {
 			/* (non-Javadoc)
 			 * @see org.eclipse.debug.core.model.IWatchExpressionResult#getException()
 			 */
+			@Override
 			public DebugException getException() {
 				return de;
 			}
 
+			@Override
 			public String[] getErrorMessages() {
 				return ( de != null ) ? new String[] { de.getMessage() } : new String[0];
 			}

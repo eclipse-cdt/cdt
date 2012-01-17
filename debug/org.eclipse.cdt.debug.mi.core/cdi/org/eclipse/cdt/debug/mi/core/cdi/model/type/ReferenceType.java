@@ -29,6 +29,7 @@ public class ReferenceType extends DerivedType implements ICDIReferenceType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.type.ICDIDerivedType#getComponentType()
 	 */
+	@Override
 	public ICDIType getComponentType() {
 		if (derivedType == null) {
 			String orig = getTypeName();

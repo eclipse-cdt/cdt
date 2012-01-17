@@ -50,7 +50,8 @@ public class CRegisterManagerProxy implements IDebugEventSetListener, IDebugCont
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.contexts.IDebugContextListener#debugContextChanged(org.eclipse.debug.ui.contexts.DebugContextEvent)
      */
-    public void debugContextChanged( DebugContextEvent event ) {
+    @Override
+	public void debugContextChanged( DebugContextEvent event ) {
         ICDebugElement context = null;
         ISelection s = event.getContext();
         if ( s instanceof IStructuredSelection ) {
@@ -67,7 +68,8 @@ public class CRegisterManagerProxy implements IDebugEventSetListener, IDebugCont
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
      */
-    public void handleDebugEvents( DebugEvent[] events ) {
+    @Override
+	public void handleDebugEvents( DebugEvent[] events ) {
         CRegisterManagerModelProxy modelProxy = getModelProxy();
         for( int i = 0; i < events.length; i++ ) {
             DebugEvent event = events[i];

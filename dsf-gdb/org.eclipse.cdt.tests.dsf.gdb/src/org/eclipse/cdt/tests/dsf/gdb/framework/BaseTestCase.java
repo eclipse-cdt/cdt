@@ -191,6 +191,7 @@ public class BaseTestCase {
 		// register ourselves with that particular session before any events
 		// occur. We want to find out when the break on main() occurs.
  		SessionStartedListener sessionStartedListener = new SessionStartedListener() {
+			@Override
 			public void sessionStarted(DsfSession session) {
 				session.addServiceEventListener(new SessionEventListener(session), null);
 			}

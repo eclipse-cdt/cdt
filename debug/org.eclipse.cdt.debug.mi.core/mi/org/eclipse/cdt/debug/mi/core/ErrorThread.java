@@ -33,6 +33,7 @@ public class ErrorThread extends Thread {
 	/*
 	 * Sit on the error stream output, and append to the GDB console
 	 */
+	@Override
 	public void run() {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(session.getChannelErrorStream()));
 		try {

@@ -36,6 +36,7 @@ public class LoadModuleSymbolsActionDelegate extends ActionDelegate implements I
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
 	 */
+	@Override
 	public void setActivePart( IAction action, IWorkbenchPart targetPart ) {
 	}
 
@@ -50,12 +51,14 @@ public class LoadModuleSymbolsActionDelegate extends ActionDelegate implements I
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run( IAction action ) {
 		final ICModule module = getModule(); 
 		if ( module != null ) {
 			
 			DebugPlugin.getDefault().asyncExec( 
 					new Runnable() {
+						@Override
 						public void run() {
 							try {
 								doAction( module );
@@ -75,6 +78,7 @@ public class LoadModuleSymbolsActionDelegate extends ActionDelegate implements I
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged( IAction action, ISelection selection ) {
 		if ( selection instanceof IStructuredSelection ) {
 			if ( ((IStructuredSelection)selection).size() == 1 ) {

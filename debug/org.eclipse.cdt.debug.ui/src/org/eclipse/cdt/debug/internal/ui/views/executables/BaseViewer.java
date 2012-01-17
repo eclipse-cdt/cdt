@@ -46,6 +46,7 @@ abstract class BaseViewer extends TreeViewer {
 			this.selector = selector;
 		}
 
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			setComparator(getViewerComparator(selector));
 			getTree().setSortColumn((TreeColumn) e.getSource());
@@ -83,7 +84,7 @@ abstract class BaseViewer extends TreeViewer {
 		Tree tree = getTree();
 		
 		// save the column order
-		StringBuilder columnOrder = new StringBuilder(); //$NON-NLS-1$
+		StringBuilder columnOrder = new StringBuilder(); 
 		for (int index : tree.getColumnOrder()) {
 			columnOrder.append(","); //$NON-NLS-1$
 			columnOrder.append(Integer.toString(index));

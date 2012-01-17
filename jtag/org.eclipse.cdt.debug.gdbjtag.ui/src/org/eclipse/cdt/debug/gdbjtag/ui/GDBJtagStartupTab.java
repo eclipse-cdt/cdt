@@ -94,14 +94,17 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 	private Label projBinaryLabel1;
 	private Label projBinaryLabel2;
 
+	@Override
 	public String getName() {
 		return TAB_NAME;
 	}
 
+	@Override
 	public Image getImage() {
 		return GDBJtagImages.getStartupTabImage();
 	}
 	
+	@Override
 	public void createControl(Composite parent) {
 		ScrolledComposite sc = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
 		sc.setExpandHorizontal(true);
@@ -164,6 +167,7 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		doReset = new Button(comp, SWT.CHECK);
 		doReset.setText(Messages.getString("GDBJtagStartupTab.doReset_Text"));
 		doReset.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				doResetChanged();
 				updateLaunchConfigurationDialog();
@@ -175,11 +179,13 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		gd.widthHint = 60;
 		delay.setLayoutData(gd);
 		delay.addVerifyListener(new VerifyListener() {
+			@Override
 			public void verifyText(VerifyEvent e) {
 				e.doit = (Character.isDigit(e.character) || Character.isISOControl(e.character));
 			}
 		});
 		delay.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				scheduleUpdateJob();
 			}
@@ -197,6 +203,7 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		gd.horizontalSpan = 1;
 		doHalt.setLayoutData(gd);
 		doHalt.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
 			}
@@ -207,6 +214,7 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		gd.heightHint = 60;
 		initCommands.setLayoutData(gd);
 		initCommands.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent evt) {
 				scheduleUpdateJob();
 			}
@@ -230,6 +238,7 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		gd.horizontalSpan = 4;
 		loadImage.setLayoutData(gd);
 		loadImage.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				loadImageChanged();
 				updateLaunchConfigurationDialog();
@@ -243,10 +252,12 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		comp.setLayout(layout);
 		
 		SelectionListener radioButtonListener = new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
 				updateUseFileEnablement();
 			}
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		};
@@ -276,6 +287,7 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		gd.horizontalSpan = 1;
 		imageFileName.setLayoutData(gd);
 		imageFileName.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				scheduleUpdateJob();
 			}
@@ -283,13 +295,15 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		
         imageFileBrowseWs = createPushButton(comp, Messages.getString("GDBJtagStartupTab.FileBrowseWs_Label"), null); 
         imageFileBrowseWs.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
             	browseWsButtonSelected(Messages.getString("GDBJtagStartupTab.imageFileBrowseWs_Title"), imageFileName);
             }
         });
         
 		imageFileBrowse = createPushButton(comp, Messages.getString("GDBJtagStartupTab.FileBrowse_Label"), null);
 		imageFileBrowse.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				browseButtonSelected(Messages.getString("GDBJtagStartupTab.imageFileBrowse_Title"), imageFileName);
 			}
@@ -303,11 +317,13 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		gd.widthHint = 100;
 		imageOffset.setLayoutData(gd);
 		imageOffset.addVerifyListener(new VerifyListener() {
+			@Override
 			public void verifyText(VerifyEvent e) {
 				e.doit = (Character.isDigit(e.character) || Character.isISOControl(e.character) || "abcdef".contains(String.valueOf(e.character).toLowerCase()));
 			}
 		});
 		imageOffset.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				scheduleUpdateJob();
 			}
@@ -320,6 +336,7 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		gd.horizontalSpan = 4;
 		loadSymbols.setLayoutData(gd);
 		loadSymbols.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				loadSymbolsChanged();
 				updateLaunchConfigurationDialog();
@@ -357,6 +374,7 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		gd.horizontalSpan = 1;
 		symbolsFileName.setLayoutData(gd);
 		symbolsFileName.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				scheduleUpdateJob();
 			}
@@ -364,13 +382,15 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		
         symbolsFileBrowseWs = createPushButton(comp, Messages.getString("GDBJtagStartupTab.FileBrowseWs_Label"), null); 
         symbolsFileBrowseWs.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
             	browseWsButtonSelected(Messages.getString("GDBJtagStartupTab.symbolsFileBrowseWs_Title"), symbolsFileName);
             }
         });
         
 		symbolsFileBrowse = createPushButton(comp, Messages.getString("GDBJtagStartupTab.FileBrowse_Label"), null);
 		symbolsFileBrowse.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				browseButtonSelected(Messages.getString("GDBJtagStartupTab.symbolsFileBrowse_Title"), symbolsFileName);
 			}
@@ -384,11 +404,13 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		gd.widthHint = 100;
 		symbolsOffset.setLayoutData(gd);
 		symbolsOffset.addVerifyListener(new VerifyListener() {
+			@Override
 			public void verifyText(VerifyEvent e) {
 				e.doit = (Character.isDigit(e.character) || Character.isISOControl(e.character) || "abcdef".contains(String.valueOf(e.character).toLowerCase()));
 			}
 		});
 		symbolsOffset.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				scheduleUpdateJob();
 			}
@@ -424,6 +446,7 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		gd.horizontalSpan = 1;
 		setPcRegister.setLayoutData(gd);
 		setPcRegister.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				pcRegisterChanged();
 				updateLaunchConfigurationDialog();
@@ -436,11 +459,13 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		gd.widthHint = 100;
 		pcRegister.setLayoutData(gd);
 		pcRegister.addVerifyListener(new VerifyListener() {
+			@Override
 			public void verifyText(VerifyEvent e) {
 				e.doit = (Character.isDigit(e.character) || Character.isISOControl(e.character) || "abcdef".contains(String.valueOf(e.character).toLowerCase()));
 			}
 		});
 		pcRegister.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				scheduleUpdateJob();
 			}
@@ -452,6 +477,7 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		gd.horizontalSpan = 1;
 		setStopAt.setLayoutData(gd);
 		setStopAt.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				stopAtChanged();
 				updateLaunchConfigurationDialog();
@@ -464,6 +490,7 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		gd.widthHint = 100;
 		stopAt.setLayoutData(gd);
 		stopAt.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				scheduleUpdateJob();
 			}
@@ -475,6 +502,7 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		gd.horizontalSpan = 1;
 		setResume.setLayoutData(gd);
 		setResume.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				resumeChanged();
 				updateLaunchConfigurationDialog();
@@ -529,6 +557,7 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		gd.heightHint = 60;
 		runCommands.setLayoutData(gd);
 		runCommands.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent evt) {
 				scheduleUpdateJob();
 			}
@@ -538,6 +567,7 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		if (!super.isValid(launchConfig))
 			return false;
@@ -618,6 +648,7 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
 			// Initialization Commands
@@ -680,6 +711,7 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		
 		// Initialization Commands
@@ -716,6 +748,7 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		// Initialization Commands
 		configuration.setAttribute(IGDBJtagConstants.ATTR_DO_RESET, IGDBJtagConstants.DEFAULT_DO_RESET);

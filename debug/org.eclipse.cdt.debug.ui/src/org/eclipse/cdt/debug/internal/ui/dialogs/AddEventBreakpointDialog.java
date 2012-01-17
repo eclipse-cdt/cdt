@@ -134,6 +134,7 @@ public class AddEventBreakpointDialog extends Dialog implements ModifyListener, 
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		// The button bar will work better if we make the parent composite
 		// a single column grid layout. For the widgets we add, we want a
@@ -227,6 +228,7 @@ public class AddEventBreakpointDialog extends Dialog implements ModifyListener, 
 	 * 
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText(DialogMessages.getString("AddEventBreakpointDialog.2")); //$NON-NLS-1$
@@ -237,6 +239,7 @@ public class AddEventBreakpointDialog extends Dialog implements ModifyListener, 
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
+	@Override
 	protected void okPressed() {
 		if (fEventTypeInput != null) {
 			updateEventType();
@@ -269,6 +272,7 @@ public class AddEventBreakpointDialog extends Dialog implements ModifyListener, 
 	 * 
 	 * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
 	 */
+	@Override
 	public void modifyText(ModifyEvent e) {
 		if (e.getSource() == fEventTypeInput) {
 			updateArgumentsControl();
@@ -281,6 +285,7 @@ public class AddEventBreakpointDialog extends Dialog implements ModifyListener, 
 	 * 
 	 * @see org.eclipse.jface.dialogs.TrayDialog#createButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createButtonBar(Composite parent) {
 		return super.createButtonBar(parent);
 	}
@@ -290,6 +295,7 @@ public class AddEventBreakpointDialog extends Dialog implements ModifyListener, 
 	 * 
 	 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
 	 */
+	@Override
 	public void widgetDefaultSelected(SelectionEvent e) {
 		// ignore
 	}
@@ -299,6 +305,7 @@ public class AddEventBreakpointDialog extends Dialog implements ModifyListener, 
 	 * 
 	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 	 */
+	@Override
 	public void widgetSelected(SelectionEvent e) {
 		if (e.getSource() == fEventTypeInput) {
 			updateArgumentsControl();
@@ -326,6 +333,7 @@ public class AddEventBreakpointDialog extends Dialog implements ModifyListener, 
 		return true;
 	}
 
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		// override so we can change the initial okay enabled state
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true).setEnabled(

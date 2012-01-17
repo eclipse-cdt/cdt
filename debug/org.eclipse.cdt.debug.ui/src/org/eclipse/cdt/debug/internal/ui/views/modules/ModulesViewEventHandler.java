@@ -37,6 +37,7 @@ public class ModulesViewEventHandler extends DebugEventHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler#handlesEvent(org.eclipse.debug.core.DebugEvent)
 	 */
+	@Override
 	protected boolean handlesEvent( DebugEvent event ) {
 		if ( event.getKind() == DebugEvent.CREATE || 
 			 event.getKind() == DebugEvent.TERMINATE || 
@@ -48,6 +49,7 @@ public class ModulesViewEventHandler extends DebugEventHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler#handleChange(org.eclipse.debug.core.DebugEvent)
 	 */
+	@Override
 	protected void handleChange( DebugEvent event ) {
 		if ( event.getSource() instanceof ICModule )
 			fireDelta( (ICModule)event.getSource(), IModelDelta.STATE );
@@ -56,6 +58,7 @@ public class ModulesViewEventHandler extends DebugEventHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler#handleCreate(org.eclipse.debug.core.DebugEvent)
 	 */
+	@Override
 	protected void handleCreate( DebugEvent event ) {
 		Object source = event.getSource();
 		if ( source instanceof IDebugTarget ) {
@@ -72,6 +75,7 @@ public class ModulesViewEventHandler extends DebugEventHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler#handleTerminate(org.eclipse.debug.core.DebugEvent)
 	 */
+	@Override
 	protected void handleTerminate( DebugEvent event ) {
 		Object source = event.getSource();
 		if ( source instanceof IDebugTarget ) {
@@ -91,6 +95,7 @@ public class ModulesViewEventHandler extends DebugEventHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler#dispose()
 	 */
+	@Override
 	public synchronized void dispose() {
 		super.dispose();
 		fModuleRetrieval = null;

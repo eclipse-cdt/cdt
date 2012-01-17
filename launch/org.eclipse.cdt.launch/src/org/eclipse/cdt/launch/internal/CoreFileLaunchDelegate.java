@@ -42,6 +42,7 @@ import org.eclipse.debug.core.model.IProcess;
 
 public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 
+	@Override
 	public void launch(ILaunchConfiguration config, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
@@ -126,6 +127,7 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 		return null;
 	}
 
+	@Override
 	public String getPluginID() {
 		return LaunchUIPlugin.getUniqueIdentifier();
 	}
@@ -136,6 +138,7 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 	 * @see org.eclipse.cdt.launch.AbstractCLaunchConfigurationDelegate#preLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration,
 	 *      java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public boolean preLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) {
 		return true; // no pre launch check for core file
 	}

@@ -22,6 +22,7 @@ public class DebugMarkerAnnotationModelFactory extends ResourceMarkerAnnotationM
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.ResourceMarkerAnnotationModelFactory#createAnnotationModel(org.eclipse.core.runtime.IPath)
 	 */
+	@Override
 	public IAnnotationModel createAnnotationModel( IPath location ) {
 		IFile file = FileBuffers.getWorkspaceFileAtLocation( location );
 		if ( file != null ) {

@@ -63,6 +63,7 @@ public class ExternalToolActionComposite extends Composite {
 		 * 
 		 * @see org.eclipse.ui.IPluginContribution#getLocalId()
 		 */
+		@Override
 		public String getLocalId() {
 			return type.getIdentifier();
 		}
@@ -72,6 +73,7 @@ public class ExternalToolActionComposite extends Composite {
 		 * 
 		 * @see org.eclipse.ui.IPluginContribution#getPluginId()
 		 */
+		@Override
 		public String getPluginId() {
 			return type.getPluginIdentifier();
 		}
@@ -90,12 +92,15 @@ public class ExternalToolActionComposite extends Composite {
 			this.setInput(composite);
 			this.setContentProvider(new IStructuredContentProvider() {
 
+				@Override
 				public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 				}
 
+				@Override
 				public void dispose() {
 				}
 
+				@Override
 				public Object[] getElements(Object parent) {
 					return launchConfigs;
 				}
@@ -103,6 +108,7 @@ public class ExternalToolActionComposite extends Composite {
 
 			this.setLabelProvider(new LabelProvider() {
 
+				@Override
 				public String getText(Object element) {
 					return ((ILaunchConfiguration) element).getName();
 				}
@@ -138,6 +144,7 @@ public class ExternalToolActionComposite extends Composite {
 
 		final Button browseButton = new Button(this, SWT.NONE);
 		browseButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 
 				ILaunchConfiguration[] lcs = getLaunchConfigurations();
@@ -174,6 +181,7 @@ public class ExternalToolActionComposite extends Composite {
 
 		final Button externalToolsButton = new Button(this, SWT.NONE);
 		externalToolsButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				DebugUITools.openLaunchConfigurationDialogOnGroup(externalToolActionComposite.getShell(), new StructuredSelection(), "org.eclipse.ui.externaltools.launchGroup"); //$NON-NLS-1$
 				browseButton.setEnabled(getLaunchConfigurations().length > 0);
@@ -221,10 +229,12 @@ public class ExternalToolActionComposite extends Composite {
 		return (ILaunchConfiguration[]) onlyExternalTools.toArray(new ILaunchConfiguration[onlyExternalTools.size()]);
 	}
 
+	@Override
 	public void dispose() {
 		super.dispose();
 	}
 
+	@Override
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components
 	}

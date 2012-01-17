@@ -28,6 +28,7 @@ public class ErrorInfo extends SessionObject implements ICDIErrorInfo {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIErrorInfo#getMessage()
 	 */
+	@Override
 	public String getMessage() {
 		return event.getMessage();
 	}
@@ -35,6 +36,7 @@ public class ErrorInfo extends SessionObject implements ICDIErrorInfo {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIErrorInfo#getDetailMessage()
 	 */
+	@Override
 	public String getDetailMessage() {
 		return event.getLogMessage();
 	}

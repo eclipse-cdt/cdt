@@ -31,6 +31,7 @@ public class ResumedEvent implements ICDIResumedEvent {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEvent#getSource()
 	 */
+	@Override
 	public ICDIObject getSource() {
 		// We can send the target as the Source.  CDI
 		// Will assume that all threads are supended for this.
@@ -43,6 +44,7 @@ public class ResumedEvent implements ICDIResumedEvent {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent#getType()
 	 */
+	@Override
 	public int getType() {
 		MIRunningEvent running = event;
 		int type = running.getType();

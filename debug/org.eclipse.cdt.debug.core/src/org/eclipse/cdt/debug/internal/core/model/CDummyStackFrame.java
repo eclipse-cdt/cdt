@@ -42,6 +42,7 @@ public class CDummyStackFrame extends CDebugElement implements IStackFrame, IDum
 	 * 
 	 * @see org.eclipse.debug.core.model.IStackFrame#getThread()
 	 */
+	@Override
 	public IThread getThread() {
 		return fThread;
 	}
@@ -51,6 +52,7 @@ public class CDummyStackFrame extends CDebugElement implements IStackFrame, IDum
 	 * 
 	 * @see org.eclipse.debug.core.model.IStackFrame#getVariables()
 	 */
+	@Override
 	public IVariable[] getVariables() throws DebugException {
 		return new IVariable[0];
 	}
@@ -60,6 +62,7 @@ public class CDummyStackFrame extends CDebugElement implements IStackFrame, IDum
 	 * 
 	 * @see org.eclipse.debug.core.model.IStackFrame#hasVariables()
 	 */
+	@Override
 	public boolean hasVariables() throws DebugException {
 		return false;
 	}
@@ -69,6 +72,7 @@ public class CDummyStackFrame extends CDebugElement implements IStackFrame, IDum
 	 * 
 	 * @see org.eclipse.debug.core.model.IStackFrame#getLineNumber()
 	 */
+	@Override
 	public int getLineNumber() throws DebugException {
 		return 0;
 	}
@@ -78,6 +82,7 @@ public class CDummyStackFrame extends CDebugElement implements IStackFrame, IDum
 	 * 
 	 * @see org.eclipse.debug.core.model.IStackFrame#getCharStart()
 	 */
+	@Override
 	public int getCharStart() throws DebugException {
 		return 0;
 	}
@@ -87,6 +92,7 @@ public class CDummyStackFrame extends CDebugElement implements IStackFrame, IDum
 	 * 
 	 * @see org.eclipse.debug.core.model.IStackFrame#getCharEnd()
 	 */
+	@Override
 	public int getCharEnd() throws DebugException {
 		return 0;
 	}
@@ -96,6 +102,7 @@ public class CDummyStackFrame extends CDebugElement implements IStackFrame, IDum
 	 * 
 	 * @see org.eclipse.debug.core.model.IStackFrame#getName()
 	 */
+	@Override
 	public String getName() throws DebugException {
 		return "..."; //$NON-NLS-1$
 	}
@@ -105,6 +112,7 @@ public class CDummyStackFrame extends CDebugElement implements IStackFrame, IDum
 	 * 
 	 * @see org.eclipse.debug.core.model.IStackFrame#getRegisterGroups()
 	 */
+	@Override
 	public IRegisterGroup[] getRegisterGroups() throws DebugException {
 		return new IRegisterGroup[0];
 	}
@@ -114,6 +122,7 @@ public class CDummyStackFrame extends CDebugElement implements IStackFrame, IDum
 	 * 
 	 * @see org.eclipse.debug.core.model.IStackFrame#hasRegisterGroups()
 	 */
+	@Override
 	public boolean hasRegisterGroups() throws DebugException {
 		return false;
 	}
@@ -123,6 +132,7 @@ public class CDummyStackFrame extends CDebugElement implements IStackFrame, IDum
 	 * 
 	 * @see org.eclipse.debug.core.model.IStep#canStepInto()
 	 */
+	@Override
 	public boolean canStepInto() {
 		return false;
 	}
@@ -132,6 +142,7 @@ public class CDummyStackFrame extends CDebugElement implements IStackFrame, IDum
 	 * 
 	 * @see org.eclipse.debug.core.model.IStep#canStepOver()
 	 */
+	@Override
 	public boolean canStepOver() {
 		return false;
 	}
@@ -141,6 +152,7 @@ public class CDummyStackFrame extends CDebugElement implements IStackFrame, IDum
 	 * 
 	 * @see org.eclipse.debug.core.model.IStep#canStepReturn()
 	 */
+	@Override
 	public boolean canStepReturn() {
 		return false;
 	}
@@ -150,6 +162,7 @@ public class CDummyStackFrame extends CDebugElement implements IStackFrame, IDum
 	 * 
 	 * @see org.eclipse.debug.core.model.IStep#isStepping()
 	 */
+	@Override
 	public boolean isStepping() {
 		return false;
 	}
@@ -159,6 +172,7 @@ public class CDummyStackFrame extends CDebugElement implements IStackFrame, IDum
 	 * 
 	 * @see org.eclipse.debug.core.model.IStep#stepInto()
 	 */
+	@Override
 	public void stepInto() throws DebugException {
 	}
 
@@ -167,6 +181,7 @@ public class CDummyStackFrame extends CDebugElement implements IStackFrame, IDum
 	 * 
 	 * @see org.eclipse.debug.core.model.IStep#stepOver()
 	 */
+	@Override
 	public void stepOver() throws DebugException {
 	}
 
@@ -175,6 +190,7 @@ public class CDummyStackFrame extends CDebugElement implements IStackFrame, IDum
 	 * 
 	 * @see org.eclipse.debug.core.model.IStep#stepReturn()
 	 */
+	@Override
 	public void stepReturn() throws DebugException {
 	}
 
@@ -183,6 +199,7 @@ public class CDummyStackFrame extends CDebugElement implements IStackFrame, IDum
 	 * 
 	 * @see org.eclipse.debug.core.model.ISuspendResume#canResume()
 	 */
+	@Override
 	public boolean canResume() {
 		return false;
 	}
@@ -192,6 +209,7 @@ public class CDummyStackFrame extends CDebugElement implements IStackFrame, IDum
 	 * 
 	 * @see org.eclipse.debug.core.model.ISuspendResume#canSuspend()
 	 */
+	@Override
 	public boolean canSuspend() {
 		return false;
 	}
@@ -201,6 +219,7 @@ public class CDummyStackFrame extends CDebugElement implements IStackFrame, IDum
 	 * 
 	 * @see org.eclipse.debug.core.model.ISuspendResume#isSuspended()
 	 */
+	@Override
 	public boolean isSuspended() {
 		return false;
 	}
@@ -210,6 +229,7 @@ public class CDummyStackFrame extends CDebugElement implements IStackFrame, IDum
 	 * 
 	 * @see org.eclipse.debug.core.model.ISuspendResume#resume()
 	 */
+	@Override
 	public void resume() throws DebugException {
 	}
 
@@ -218,6 +238,7 @@ public class CDummyStackFrame extends CDebugElement implements IStackFrame, IDum
 	 * 
 	 * @see org.eclipse.debug.core.model.ISuspendResume#suspend()
 	 */
+	@Override
 	public void suspend() throws DebugException {
 	}
 
@@ -226,6 +247,7 @@ public class CDummyStackFrame extends CDebugElement implements IStackFrame, IDum
 	 * 
 	 * @see org.eclipse.debug.core.model.ITerminate#canTerminate()
 	 */
+	@Override
 	public boolean canTerminate() {
 		return false;
 	}
@@ -235,6 +257,7 @@ public class CDummyStackFrame extends CDebugElement implements IStackFrame, IDum
 	 * 
 	 * @see org.eclipse.debug.core.model.ITerminate#isTerminated()
 	 */
+	@Override
 	public boolean isTerminated() {
 		return false;
 	}
@@ -244,6 +267,7 @@ public class CDummyStackFrame extends CDebugElement implements IStackFrame, IDum
 	 * 
 	 * @see org.eclipse.debug.core.model.ITerminate#terminate()
 	 */
+	@Override
 	public void terminate() throws DebugException {
 	}
 
@@ -261,6 +285,7 @@ public class CDummyStackFrame extends CDebugElement implements IStackFrame, IDum
 	 * 
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(Class)
 	 */
+	@Override
 	public Object getAdapter( Class adapter ) {
 		if ( adapter.equals( IDummyStackFrame.class ) )
 			return this;

@@ -66,7 +66,8 @@ public class GDBProcessesTest extends BaseTestCase {
 	public void init() throws Exception {
 	    fSession = getGDBLaunch().getSession();
         Runnable runnable = new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
             	fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
             	fProcService = fServicesTracker.getService(IMIProcesses.class);
             }
@@ -112,7 +113,8 @@ public class GDBProcessesTest extends BaseTestCase {
          */
 		final IProcessDMContext processContext = DMContexts.getAncestorOfType(SyncUtil.getContainerContext(), IProcessDMContext.class);
         fSession.getExecutor().submit(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
 				fProcService.getExecutionData(processContext, rm);
             }
         });
@@ -152,7 +154,8 @@ public class GDBProcessesTest extends BaseTestCase {
 
 		final IProcessDMContext processContext = DMContexts.getAncestorOfType(SyncUtil.getContainerContext(), IProcessDMContext.class);
         fProcService.getExecutor().submit(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
             	IThreadDMContext threadDmc = fProcService.createThreadContext(processContext, THREAD_ID);
 				fProcService.getExecutionData(threadDmc, rm);
             }

@@ -43,6 +43,7 @@ public class MiConsoleVerboseModeAction extends Action {
 		}
     }
 
+	@Override
 	public void run() {
 		GDBProcess fProcess = (GDBProcess) fConsole.getProcess();
 		fProcess.getTarget().enableVerboseMode(isChecked());

@@ -46,6 +46,7 @@ public class ThreadStorage extends Variable implements ICDIThreadStorage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.core.cdi.model.Variable#createVariable(org.eclipse.cdt.debug.mi.core.cdi.model.Target, org.eclipse.cdt.debug.mi.core.cdi.model.Thread, org.eclipse.cdt.debug.mi.core.cdi.model.StackFrame, java.lang.String, java.lang.String, int, int, org.eclipse.cdt.debug.mi.core.output.MIVar)
 	 */
+	@Override
 	protected Variable createVariable(Target target, Thread thread,
 			StackFrame frame, String name, String fullName, int pos, int depth,
 			MIVar miVar) {
@@ -55,6 +56,7 @@ public class ThreadStorage extends Variable implements ICDIThreadStorage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.core.cdi.model.Variable#createDescriptor(org.eclipse.cdt.debug.mi.core.cdi.model.Target, org.eclipse.cdt.debug.mi.core.cdi.model.Thread, org.eclipse.cdt.debug.mi.core.cdi.model.StackFrame, java.lang.String, java.lang.String, int, int)
 	 */
+	@Override
 	protected VariableDescriptor createDescriptor( Target target, Thread thread, StackFrame frame, String n, String fn, int pos, int depth ) {
 		return new ThreadStorageDescriptor(target, thread, frame, n, fn, pos, depth);
 	}

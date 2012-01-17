@@ -116,6 +116,7 @@ public class MIPlugin extends Plugin {
 	 * 
 	 * @deprecated
 	 */
+	@Deprecated
 	public MISession createMISession(MIProcess process, IMITTY pty, int timeout, int type, int launchTimeout, String miVersion, IProgressMonitor monitor) throws MIException {
 		return new MISession(process, pty, type, timeout, launchTimeout, miVersion, monitor);
 	}
@@ -130,6 +131,7 @@ public class MIPlugin extends Plugin {
 	 * 
 	 * @deprecated
 	 */
+	@Deprecated
 	public MISession createMISession(MIProcess process, IMITTY pty, int type, String miVersion, IProgressMonitor monitor) throws MIException {
 		MIPlugin miPlugin = getDefault();
 		Preferences prefs = miPlugin.getPluginPreferences();
@@ -151,6 +153,7 @@ public class MIPlugin extends Plugin {
 	 * 
 	 * @deprecated use <code>createSession</code>
 	 */
+	@Deprecated
 	public Session createCSession(String gdb, String miVersion, File program, File cwd, String gdbinit, IProgressMonitor monitor) throws IOException, MIException {
 		IMITTY pty = null;
 		boolean failed = false;
@@ -198,6 +201,7 @@ public class MIPlugin extends Plugin {
 	 * 
 	 * @deprecated use <code>createSession</code>
 	 */
+	@Deprecated
 	public Session createCSession(String gdb, String miVersion, File program, File cwd, String gdbinit, IMITTY pty, IProgressMonitor monitor) throws IOException, MIException {
 		if (gdb == null || gdb.length() == 0) {
 			gdb =  GDB;
@@ -273,6 +277,7 @@ public class MIPlugin extends Plugin {
 	 *
 	 * @deprecated use <code>createSession</code>
 	 */
+	@Deprecated
 	public Session createCSession(String gdb, String miVersion, File program, File core, File cwd, String gdbinit, IProgressMonitor monitor) throws IOException, MIException {
 		if (gdb == null || gdb.length() == 0) {
 			gdb =  GDB;
@@ -324,6 +329,7 @@ public class MIPlugin extends Plugin {
 	 * 
 	 * @deprecated use <code>createSession</code>
 	 */
+	@Deprecated
 	public Session createCSession(String gdb, String miVersion, File program, int pid, String[] targetParams, File cwd, String gdbinit, IProgressMonitor monitor) throws IOException, MIException {
 		if (gdb == null || gdb.length() == 0) {
 			gdb =  GDB;
@@ -542,6 +548,7 @@ public class MIPlugin extends Plugin {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Plugin#startup()
 	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		ICDebugConfiguration dc = CDebugCorePlugin.getDefault().getDefaultDefaultDebugConfiguration();
@@ -553,6 +560,7 @@ public class MIPlugin extends Plugin {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Plugin#shutdown()
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		savePluginPreferences();
 		super.stop(context);

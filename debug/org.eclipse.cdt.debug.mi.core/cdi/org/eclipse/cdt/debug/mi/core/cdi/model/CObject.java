@@ -26,6 +26,7 @@ public class CObject implements ICDIObject {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIObject#getTarget()
 	 */
+	@Override
 	public ICDITarget getTarget() {
 		return fTarget;
 	}

@@ -64,6 +64,7 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 	/**
 	 * Creates the dialog area to display source container types that are "browseable"
 	 */
+	@Override
 	protected Control createDialogArea(Composite ancestor) {			
 		getShell().setText(SourceLookupUIMessages.AddSourceContainerDialog_0);
 		setTitle(SourceLookupUIMessages.AddSourceContainerDialog_1);
@@ -84,6 +85,7 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 
 		if (fDoubleClickSelects) {
 			table.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetDefaultSelected(SelectionEvent e) {
 					if (table.getSelectionCount() == 1)
 						okPressed();
@@ -95,6 +97,7 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 		fViewer.setContentProvider(new ArrayContentProvider());			
 		fViewer.setSorter(new ViewerSorter());
 		fViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				ISelection selection = event.getSelection();
 				String desc = null;
@@ -135,6 +138,7 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
+	@Override
 	protected void okPressed() {
 		// Single selection dialog, so take first item in array
 		// there will always be a selected item since we set it with viewer.setSelection

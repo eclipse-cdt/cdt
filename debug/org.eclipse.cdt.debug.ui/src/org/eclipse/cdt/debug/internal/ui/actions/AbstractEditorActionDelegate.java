@@ -55,6 +55,7 @@ public abstract class AbstractEditorActionDelegate extends ActionDelegate
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
+	@Override
 	public void dispose()
 	{
 		IWorkbenchWindow win = getWorkbenchWindow();
@@ -68,6 +69,7 @@ public abstract class AbstractEditorActionDelegate extends ActionDelegate
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
 	 */
+	@Override
 	public void init( IWorkbenchWindow window )
 	{
 		setWorkbenchWindow( window );
@@ -85,6 +87,7 @@ public abstract class AbstractEditorActionDelegate extends ActionDelegate
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(IAction, IEditorPart)
 	 */
+	@Override
 	public void setActiveEditor( IAction action, IEditorPart targetEditor )
 	{
 		setAction( action );
@@ -105,6 +108,7 @@ public abstract class AbstractEditorActionDelegate extends ActionDelegate
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener#partActivated(IWorkbenchPart)
 	 */
+	@Override
 	public void partActivated( IWorkbenchPart part )
 	{
 		setTargetPart( part );
@@ -113,6 +117,7 @@ public abstract class AbstractEditorActionDelegate extends ActionDelegate
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener#partBroughtToTop(IWorkbenchPart)
 	 */
+	@Override
 	public void partBroughtToTop( IWorkbenchPart part )
 	{
 	}
@@ -120,6 +125,7 @@ public abstract class AbstractEditorActionDelegate extends ActionDelegate
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener#partClosed(IWorkbenchPart)
 	 */
+	@Override
 	public void partClosed( IWorkbenchPart part )
 	{
 		if ( part == getTargetPart() )
@@ -131,6 +137,7 @@ public abstract class AbstractEditorActionDelegate extends ActionDelegate
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener#partDeactivated(IWorkbenchPart)
 	 */
+	@Override
 	public void partDeactivated(IWorkbenchPart part)
 	{
 	}
@@ -138,20 +145,24 @@ public abstract class AbstractEditorActionDelegate extends ActionDelegate
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener#partOpened(IWorkbenchPart)
 	 */
+	@Override
 	public void partOpened( IWorkbenchPart part )
 	{
 	}
 
+	@Override
 	public abstract void selectionChanged( IWorkbenchPart part, ISelection selection );
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(IAction)
 	 */
+	@Override
 	public abstract void run( IAction action );
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection)
 	{
 		setAction( action );

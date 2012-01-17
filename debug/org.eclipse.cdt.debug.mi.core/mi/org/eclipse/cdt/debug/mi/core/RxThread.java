@@ -83,6 +83,7 @@ public class RxThread extends Thread {
 	 * Get the response, parse the output, dispatch for OOB
 	 * search for the corresponding token in rxQueue for the ResultRecord.
 	 */
+	@Override
 	public void run() {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(session.getChannelInputStream()));
 		try {
@@ -108,6 +109,7 @@ public class RxThread extends Thread {
 		// session.terminate() will set the channelInputStream to null.
 		if (session.getChannelInputStream() != null) {
 			Runnable cleanup = new Runnable() {
+				@Override
 				public void run() {
 					// Change the state of the inferior.
 					session.getMIInferior().setTerminated();

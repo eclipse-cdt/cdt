@@ -43,10 +43,12 @@ public class RemoteGDBDebuggerPage extends GDBDebuggerPage {
 
 	protected Text fGDBServerPortNumberText;
 	
+	@Override
 	public String getName() {
 		return Messages.Remote_GDB_Debugger_Options;
 	}
 	
+	@Override
 	public void setDefaults( ILaunchConfigurationWorkingCopy configuration ) {
 		super.setDefaults(configuration);
 		configuration.setAttribute( IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_COMMAND, 
@@ -55,6 +57,7 @@ public class RemoteGDBDebuggerPage extends GDBDebuggerPage {
 									IRemoteConnectionConfigurationConstants.ATTR_GDBSERVER_PORT_DEFAULT );
 	}
 	
+	@Override
 	public void initializeFrom( ILaunchConfiguration configuration ) {
 		super.initializeFrom(configuration);
 		String gdbserverCommand = null;
@@ -75,6 +78,7 @@ public class RemoteGDBDebuggerPage extends GDBDebuggerPage {
 		fGDBServerPortNumberText.setText( gdbserverPortNumber );
 	}
 	
+	@Override
 	public void performApply( ILaunchConfigurationWorkingCopy configuration ) {
 		super.performApply(configuration);
 		String str = fGDBServerCommandText.getText();
@@ -136,6 +140,7 @@ public class RemoteGDBDebuggerPage extends GDBDebuggerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.internal.ui.GDBDebuggerPage#createTabs(org.eclipse.swt.widgets.TabFolder)
 	 */
+	@Override
 	public void createTabs( TabFolder tabFolder ) {
 		super.createTabs( tabFolder );
 		createGdbserverSettingsTab( tabFolder );

@@ -142,6 +142,7 @@ public class CModule extends CDebugElement implements ICModule {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICModule#getType()
 	 */
+	@Override
 	public int getType() {
 		return fType;
 	}
@@ -149,6 +150,7 @@ public class CModule extends CDebugElement implements ICModule {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICModule#getName()
 	 */
+	@Override
 	public String getName() {
 		return fImageName.lastSegment().toString();
 	}
@@ -156,6 +158,7 @@ public class CModule extends CDebugElement implements ICModule {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICModule#getImageName()
 	 */
+	@Override
 	public IPath getImageName() {
 		return fImageName;
 	}
@@ -163,6 +166,7 @@ public class CModule extends CDebugElement implements ICModule {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICModule#getSymbolsFileName()
 	 */
+	@Override
 	public IPath getSymbolsFileName() {
 		return fSymbolsFileName;
 	}
@@ -170,6 +174,7 @@ public class CModule extends CDebugElement implements ICModule {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICModule#setSymbolsFileName(org.eclipse.core.runtime.IPath)
 	 */
+	@Override
 	public void setSymbolsFileName( IPath symbolsFile ) throws DebugException {
 		loadSymbolsFromFile( symbolsFile );
 		fSymbolsFileName = symbolsFile;
@@ -178,6 +183,7 @@ public class CModule extends CDebugElement implements ICModule {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICModule#getBaseAddress()
 	 */
+	@Override
 	public IAddress getBaseAddress() {
 		return ( fCDIObject instanceof ICDISharedLibrary ) ? getAddressFactory().createAddress( ((ICDISharedLibrary)fCDIObject).getStartAddress() ) : getAddressFactory().getZero();
 	}
@@ -185,6 +191,7 @@ public class CModule extends CDebugElement implements ICModule {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICModule#getSize()
 	 */
+	@Override
 	public long getSize() {
 		long result = 0;
 		if ( fCDIObject instanceof ICDISharedLibrary ) { 
@@ -199,6 +206,7 @@ public class CModule extends CDebugElement implements ICModule {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICModule#areSymbolsLoaded()
 	 */
+	@Override
 	public boolean areSymbolsLoaded() {
 		if (fCDIObject instanceof ICDISharedLibrary)
 			return ((ICDISharedLibrary)fCDIObject).areSymbolsLoaded();
@@ -212,6 +220,7 @@ public class CModule extends CDebugElement implements ICModule {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICModule#canLoadSymbols()
 	 */
+	@Override
 	public boolean canLoadSymbols() {
 		return ( getDebugTarget().isSuspended() && !areSymbolsLoaded() );
 	}
@@ -219,6 +228,7 @@ public class CModule extends CDebugElement implements ICModule {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICModule#loadSymbols()
 	 */
+	@Override
 	public void loadSymbols() throws DebugException {
 		loadSymbolsFromFile( getSymbolsFileName() );
 	}
@@ -226,6 +236,7 @@ public class CModule extends CDebugElement implements ICModule {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICModule#getPlatform()
 	 */
+	@Override
 	public String getPlatform() {
 		return ( fBinary != null ) ? fBinary.getCPU() : CoreModelMessages.getString( "CModule.1" ); //$NON-NLS-1$
 	}
@@ -233,6 +244,7 @@ public class CModule extends CDebugElement implements ICModule {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICModule#isLittleEndian()
 	 */
+	@Override
 	public boolean isLittleEndian() {
 		return ( fBinary != null ) ? fBinary.isLittleEndian() : ((CDebugTarget)getDebugTarget()).isLittleEndian();
 	}
@@ -240,6 +252,7 @@ public class CModule extends CDebugElement implements ICModule {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICModule#getAddressFactory()
 	 */
+	@Override
 	public IAddressFactory getAddressFactory() {
 		return ((CDebugTarget)getDebugTarget()).getAddressFactory();
 	}
@@ -247,6 +260,7 @@ public class CModule extends CDebugElement implements ICModule {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICModule#getCPU()
 	 */
+	@Override
 	public String getCPU() {
 		return ( fBinary != null ) ? fBinary.getCPU() : null;
 	}
@@ -254,6 +268,7 @@ public class CModule extends CDebugElement implements ICModule {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter( Class adapter ) {
 		if ( ICElement.class.equals( adapter ) ) {
 			return getCElement();

@@ -33,6 +33,7 @@ public class ModuleLabelProvider extends ElementLabelProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementLabelProvider#getLabel(org.eclipse.jface.viewers.TreePath, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String)
 	 */
+	@Override
 	protected String getLabel( TreePath elementPath, IPresentationContext presentationContext, String columnId ) throws CoreException {
 		Object element = elementPath.getLastSegment();
 		if ( element instanceof ICModule && presentationContext instanceof DebugModelPresentationContext ) {
@@ -50,6 +51,7 @@ public class ModuleLabelProvider extends ElementLabelProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementLabelProvider#getImageDescriptor(org.eclipse.jface.viewers.TreePath, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String)
 	 */
+	@Override
 	protected ImageDescriptor getImageDescriptor( TreePath elementPath, IPresentationContext presentationContext, String columnId ) throws CoreException {
 		Object element = elementPath.getLastSegment();
 		if ( element instanceof ICModule ) {

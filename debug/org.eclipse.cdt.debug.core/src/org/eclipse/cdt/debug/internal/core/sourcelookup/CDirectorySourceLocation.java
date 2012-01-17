@@ -86,6 +86,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation#findSourceElement(String)
 	 */
+	@Override
 	public Object findSourceElement(String name) throws CoreException {
 		Object result = null;
 		if (!isEmpty(name) && getDirectory() != null) {
@@ -109,6 +110,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(Class)
 	 */
+	@Override
 	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
 		if (adapter.equals(ICSourceLocation.class))
 			return this;
@@ -133,6 +135,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation {
 	 * 
 	 * @return directory
 	 */
+	@Override
 	public IPath getDirectory() {
 		return fDirectory;
 	}
@@ -145,6 +148,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation {
 		fAssociation = association;
 	}
 
+	@Override
 	public IPath getAssociation() {
 		return fAssociation;
 	}
@@ -269,6 +273,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation#getMemento()
 	 */
+	@Override
 	public String getMemento() throws CoreException {
         Document document = null;
         Throwable ex = null;
@@ -296,6 +301,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation#initializeFrom(java.lang.String)
 	 */
+	@Override
 	public void initializeFrom(String memento) throws CoreException {
 		Exception ex = null;
 		try {
@@ -358,6 +364,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IDirectorySourceLocation) {
 			IPath dir = ((IDirectorySourceLocation)obj).getDirectory();
@@ -387,6 +394,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation#setSearchForDuplicateFiles(boolean)
 	 */
+	@Override
 	public void setSearchForDuplicateFiles(boolean search) {
 		fSearchForDuplicateFiles = search;
 	}
@@ -394,6 +402,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation#searchForDuplicateFiles()
 	 */
+	@Override
 	public boolean searchForDuplicateFiles() {
 		return fSearchForDuplicateFiles;
 	}
@@ -401,6 +410,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.IDirectorySourceLocation#searchSubfolders()
 	 */
+	@Override
 	public boolean searchSubfolders() {
 		return fSearchSubfolders;
 	}
@@ -435,6 +445,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation {
 		ArrayList<File> list = new ArrayList<File>();
 		File[] folders = file.listFiles(
 									new FileFilter() {
+											@Override
 											public boolean accept(File pathname) {
 												return pathname.isDirectory();
 											}
@@ -448,6 +459,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		return (getDirectory() != null) ? getDirectory().toOSString() : ""; //$NON-NLS-1$
 	}
@@ -455,6 +467,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation#dispose()
 	 */
+	@Override
 	public void dispose() {
 	}
 }

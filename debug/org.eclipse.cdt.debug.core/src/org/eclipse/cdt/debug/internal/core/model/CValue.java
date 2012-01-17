@@ -88,6 +88,7 @@ public class CValue extends AbstractCValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValue#getReferenceTypeName()
 	 */
+	@Override
 	public String getReferenceTypeName() throws DebugException {
 		return ( getParentVariable() != null ) ? getParentVariable().getReferenceTypeName() : null;
 	}
@@ -95,6 +96,7 @@ public class CValue extends AbstractCValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValue#getValueString()
 	 */
+	@Override
 	public String getValueString() throws DebugException {
 		if ( fValueString == null && getUnderlyingValue() != null ) {
 			resetStatus();
@@ -116,6 +118,7 @@ public class CValue extends AbstractCValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValue#isAllocated()
 	 */
+	@Override
 	public boolean isAllocated() throws DebugException {
 		return true;
 	}
@@ -123,6 +126,7 @@ public class CValue extends AbstractCValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValue#getVariables()
 	 */
+	@Override
 	public IVariable[] getVariables() throws DebugException {
 		List<AbstractCVariable> list = getVariables0();
 		return list.toArray( new IVariable[list.size()] );
@@ -157,6 +161,7 @@ public class CValue extends AbstractCValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValue#hasVariables()
 	 */
+	@Override
 	public boolean hasVariables() throws DebugException {
 		try {
 			ICDIValue value = getUnderlyingValue();
@@ -193,6 +198,7 @@ public class CValue extends AbstractCValue {
 		return Arrays.asList( vars );
 	}
 
+	@Override
 	protected synchronized void setChanged( boolean changed ) {
 		if ( changed ) {
 			fValueString = null;
@@ -212,6 +218,7 @@ public class CValue extends AbstractCValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.core.model.AbstractCValue#dispose()
 	 */
+	@Override
 	public void dispose() {
 		for (AbstractCVariable var : fVariables) {
 			var.dispose();
@@ -671,6 +678,7 @@ public class CValue extends AbstractCValue {
 	/**
 	 * Invalidates the string cache.
 	 */
+	@Override
 	protected void reset() {
 		resetStatus();
 		fValueString = null;
@@ -679,6 +687,7 @@ public class CValue extends AbstractCValue {
 		}
 	}
 
+	@Override
 	public ICType getType() throws DebugException {
 		ICDIValue cdiValue = getUnderlyingValue();
 		if ( fType == null ) {
@@ -703,6 +712,7 @@ public class CValue extends AbstractCValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.core.model.AbstractCValue#preserve()
 	 */
+	@Override
 	protected void preserve() {
 		setChanged( false );
 		resetStatus();

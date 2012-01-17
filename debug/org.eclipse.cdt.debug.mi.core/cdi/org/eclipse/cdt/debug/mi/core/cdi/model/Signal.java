@@ -38,6 +38,7 @@ public class Signal extends CObject implements ICDISignal {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISignal#getMeaning()
 	 */
+	@Override
 	public String getDescription() {
 		return sig.getDescription();
 	}
@@ -45,6 +46,7 @@ public class Signal extends CObject implements ICDISignal {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISignal#getName()
 	 */
+	@Override
 	public String getName() {
 		return sig.getName();
 	}
@@ -52,6 +54,7 @@ public class Signal extends CObject implements ICDISignal {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISignal#handle()
 	 */
+	@Override
 	public void handle(boolean ignore, boolean stop) throws CDIException {
 		SignalManager mgr = ((Session)getTarget().getSession()).getSignalManager();
 		mgr.handle(this, ignore, stop);
@@ -60,6 +63,7 @@ public class Signal extends CObject implements ICDISignal {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISignal#isIgnore()
 	 */
+	@Override
 	public boolean isIgnore() {
 		return !sig.isPass();
 	}
@@ -67,6 +71,7 @@ public class Signal extends CObject implements ICDISignal {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISignal#isStopSet()
 	 */
+	@Override
 	public boolean isStopSet() {
 		return sig.isStop();
 	}
@@ -74,6 +79,7 @@ public class Signal extends CObject implements ICDISignal {
 	/**
 	 * Continue program giving it signal specified by the argument.
 	 */
+	@Override
 	public void signal() throws CDIException {
 		getTarget().resume(this);
 	}

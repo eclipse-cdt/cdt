@@ -41,6 +41,7 @@ public class CBreakpointUpdater implements ICBreakpointListener {
 	 * @see org.eclipse.cdt.debug.core.ICBreakpointListener#installingBreakpoint(org.eclipse.debug.core.model.IDebugTarget,
 	 *      org.eclipse.debug.core.model.IBreakpoint)
 	 */
+	@Override
 	public boolean installingBreakpoint( IDebugTarget target, IBreakpoint breakpoint ) {
 		return true;
 	}
@@ -51,11 +52,13 @@ public class CBreakpointUpdater implements ICBreakpointListener {
 	 * @see org.eclipse.cdt.debug.core.ICBreakpointListener#breakpointInstalled(org.eclipse.debug.core.model.IDebugTarget,
 	 *      org.eclipse.debug.core.model.IBreakpoint)
 	 */
+	@Override
 	public void breakpointInstalled( final IDebugTarget target, IBreakpoint breakpoint ) {
 		if ( breakpoint instanceof ICBreakpoint && target instanceof ICDebugTarget ) {
 			final ICBreakpoint b = (ICBreakpoint)breakpoint;
 			asyncExec( new Runnable() {
 	
+				@Override
 				public void run() {
 						try {
 							if ( b.incrementInstallCount() == 1 )
@@ -75,9 +78,11 @@ public class CBreakpointUpdater implements ICBreakpointListener {
 	 * @see org.eclipse.cdt.debug.core.ICBreakpointListener#breakpointChanged(org.eclipse.debug.core.model.IDebugTarget,
 	 *      org.eclipse.debug.core.model.IBreakpoint, java.util.Map)
 	 */
+	@Override
 	public void breakpointChanged( IDebugTarget target, final IBreakpoint breakpoint, final Map attributes ) {
 		asyncExec( new Runnable() {
 
+			@Override
 			public void run() {
 				try {
 					Boolean enabled = (Boolean)attributes.get( IBreakpoint.ENABLED );
@@ -100,9 +105,11 @@ public class CBreakpointUpdater implements ICBreakpointListener {
 	 * @see org.eclipse.cdt.debug.core.ICBreakpointListener#breakpointRemoved(org.eclipse.debug.core.model.IDebugTarget,
 	 *      org.eclipse.debug.core.model.IBreakpoint[])
 	 */
+	@Override
 	public void breakpointsRemoved( IDebugTarget target, final IBreakpoint[] breakpoints ) {
 		asyncExec( new Runnable() {
 
+			@Override
 			public void run() {
 				for ( int i = 0; i < breakpoints.length; ++i ) {
 					try {

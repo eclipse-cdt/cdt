@@ -89,6 +89,7 @@ public class DisassemblyBlock implements IDisassemblyBlock, IAdaptable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IDisassemblyBlock#getDisassembly()
 	 */
+	@Override
 	public IDisassembly getDisassembly() {
 		return fDisassembly;
 	}
@@ -96,6 +97,7 @@ public class DisassemblyBlock implements IDisassemblyBlock, IAdaptable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IDisassemblyBlock#getModuleFile()
 	 */
+	@Override
 	public String getModuleFile() {
 		IDisassembly d = getDisassembly();
 		if ( d != null ) {
@@ -110,6 +112,7 @@ public class DisassemblyBlock implements IDisassemblyBlock, IAdaptable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IDisassemblyBlock#getSourceElement()
 	 */
+	@Override
 	public Object getSourceElement() {
 		return fSourceElement;
 	}
@@ -117,6 +120,7 @@ public class DisassemblyBlock implements IDisassemblyBlock, IAdaptable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IDisassemblyBlock#contains(org.eclipse.cdt.debug.core.model.ICStackFrame)
 	 */
+	@Override
 	public boolean contains( ICStackFrame frame ) {
 		if ( !getDisassembly().getDebugTarget().equals( frame.getDebugTarget() ) )
 			return false;
@@ -131,6 +135,7 @@ public class DisassemblyBlock implements IDisassemblyBlock, IAdaptable {
 	 * 
 	 * @see org.eclipse.cdt.debug.core.model.IDisassemblyBlock#getSourceLines()
 	 */
+	@Override
 	public IAsmSourceLine[] getSourceLines() {
 		return fSourceLines;
 	}
@@ -138,6 +143,7 @@ public class DisassemblyBlock implements IDisassemblyBlock, IAdaptable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter( Class adapter ) {
 		return null;
 	}
@@ -145,6 +151,7 @@ public class DisassemblyBlock implements IDisassemblyBlock, IAdaptable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IDisassemblyBlock#isMixedMode()
 	 */
+	@Override
 	public boolean isMixedMode() {
 		return fMixedMode;
 	}

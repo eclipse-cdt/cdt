@@ -47,6 +47,7 @@ public class ModuleProperties {
 			return fValue;
 		}
 
+		@Override
 		public String toString() {
 			String result = ""; //$NON-NLS-1$
 			if ( getKey() != null  )

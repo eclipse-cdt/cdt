@@ -68,6 +68,7 @@ public class OldDefaultSourceLocator implements IPersistableSourceLocator, IAdap
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#getMemento()
 	 */
+	@Override
 	public String getMemento() throws CoreException {
 		if ( getCSourceLocator() != null ) {
 			Document document = null;
@@ -100,6 +101,7 @@ public class OldDefaultSourceLocator implements IPersistableSourceLocator, IAdap
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#initializeFromMemento(java.lang.String)
 	 */
+	@Override
 	public void initializeFromMemento( String memento ) throws CoreException {
 		Exception ex = null;
 		try {
@@ -145,6 +147,7 @@ public class OldDefaultSourceLocator implements IPersistableSourceLocator, IAdap
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#initializeDefaults(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeDefaults( ILaunchConfiguration configuration ) throws CoreException {
 		setCSourceLocator( SourceLookupFactory.createSourceLocator( getProject( configuration ) ) );
 		String memento = configuration.getAttribute( ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, "" ); //$NON-NLS-1$
@@ -155,6 +158,7 @@ public class OldDefaultSourceLocator implements IPersistableSourceLocator, IAdap
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter( Class adapter ) {
 		if ( getCSourceLocator() instanceof IAdaptable ) {
 			if ( adapter.equals( ICSourceLocator.class ) ) {
@@ -170,6 +174,7 @@ public class OldDefaultSourceLocator implements IPersistableSourceLocator, IAdap
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISourceLocator#getSourceElement(org.eclipse.debug.core.model.IStackFrame)
 	 */
+	@Override
 	public Object getSourceElement( IStackFrame stackFrame ) {
 		return null;
 	}

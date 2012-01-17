@@ -400,7 +400,7 @@ public class BreakpointTests extends AbstractDebugTest {
 		int maxBreakpoints = 5;
 		for (int x = 0; x < maxBreakpoints; x++) {
 			ICDILineLocation lineLocation = cdiTarget.createLineLocation("main.c", x + lineStart);
-			ICDILocationBreakpoint bp = (ICDILocationBreakpoint) cdiTarget.setLineBreakpoint(0, lineLocation, null, false);
+			ICDILocationBreakpoint bp = cdiTarget.setLineBreakpoint(0, lineLocation, null, false);
 			assertNotNull(bp);
 			assertEquals(x + lineStart, (bp.getLocator().getLineNumber()));
 			savedbreakpoints[0] = bp;
@@ -598,7 +598,7 @@ public class BreakpointTests extends AbstractDebugTest {
 		 * Create a break point on first instruction
 		 **********************************************************************/
 
-		location = currentTarget.createAddressLocation(address); //$NON-NLS-1$
+		location = currentTarget.createAddressLocation(address); 
 		assertNotNull(location);
 		currentTarget.setAddressBreakpoint(0, location, null, false);
 		

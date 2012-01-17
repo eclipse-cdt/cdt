@@ -67,6 +67,7 @@ import org.eclipse.swt.widgets.Text;
 /**
  * @deprecated
  */
+@Deprecated
 public class CEnvironmentTab extends CLaunchConfigurationTab {
 	protected Properties fElements;
 	protected TableViewer fVariableList;
@@ -84,12 +85,15 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 	class ElementsContentProvider implements IStructuredContentProvider {
 		Object input = null;
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 
+		@Override
 		public void dispose() {
 		}
 
+		@Override
 		public Object[] getElements(Object parent) {
 			return fElements.entrySet().toArray();
 		}
@@ -97,10 +101,12 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 
 	class ElementsLabelProvider extends LabelProvider implements ITableLabelProvider {
 
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			return null;
 		}
 
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			if (element != null && element instanceof Map.Entry) {
 				return (columnIndex == 0) ? ((Map.Entry) element).getKey().toString() : ((Map.Entry) element).getValue().toString();
@@ -125,12 +131,14 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 			fEdit = edit;
 		}
 
+		@Override
 		protected Control createContents(Composite parent) {
 			Control result = super.createContents(parent);
 			updateButtonsState();
 			return result;
 		}
 
+		@Override
 		protected void configureShell(Shell shell) {
 			super.configureShell(shell);
 			String title = (fEdit) ?
@@ -138,6 +146,7 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 			shell.setText(title);
 		}
 
+		@Override
 		protected Control createDialogArea(Composite parent) {
 			Composite composite = new Composite(parent, SWT.NONE);
 			GridLayout layout = new GridLayout(2, false);
@@ -166,11 +175,13 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 			gd.widthHint = fieldWidthHint;
 			fTextValue.setLayoutData(gd);
 			fTextName.addModifyListener(new ModifyListener() {
+				@Override
 				public void modifyText(ModifyEvent e) {
 					updateButtonsState();
 				}
 			});
 			fTextValue.addModifyListener(new ModifyListener() {
+				@Override
 				public void modifyText(ModifyEvent e) {
 					updateButtonsState();
 				}
@@ -181,6 +192,7 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 			return composite;
 		}
 
+		@Override
 		protected void createButtonsForButtonBar(Composite parent) {
 			fBtnOk = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 			createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
@@ -199,6 +211,7 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 			return fValue;
 		}
 
+		@Override
 		protected void okPressed() {
 			fName = fTextName.getText().trim();
 			fValue = fTextValue.getText().trim();
@@ -207,6 +220,7 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 		}
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		fElements = new Properties();
 		Composite control = new Composite(parent, SWT.NONE);
@@ -284,11 +298,13 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 		tableLayout.addColumnData(new ColumnWeightData(30));
 
 		fVariableList.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent e) {
 				elementDoubleClicked((IStructuredSelection) e.getSelection());
 			}
 		});
 		fVariableList.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent e) {
 				updateButtons();
 			}
@@ -303,6 +319,7 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 		fBtnNew.setText(LaunchMessages.CEnvironmentTab_New); 
 		fBtnNew.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fBtnNew.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				newEntry();
 			}
@@ -311,6 +328,7 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 		fBtnImport.setText(LaunchMessages.CEnvironmentTab_Import); 
 		fBtnImport.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fBtnImport.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				importEntries();
 			}
@@ -319,6 +337,7 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 		fBtnEdit.setText(LaunchMessages.CEnvironmentTab_Edit); 
 		fBtnEdit.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fBtnEdit.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				edit();
 			}
@@ -327,6 +346,7 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 		fBtnRemove.setText(LaunchMessages.CEnvironmentTab_Remove); 
 		fBtnRemove.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fBtnRemove.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				remove();
 			}
@@ -439,11 +459,13 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 		updateLaunchConfigurationDialog();
 	}
 
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_MAP, (Map) null);
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_INHERIT, true);
 	}
 
+	@Override
 	public void initializeFrom(ILaunchConfiguration config) {
 		try {
 			Map env = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_MAP, (Map) null);
@@ -458,6 +480,7 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 		}
 	}
 
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_MAP, (Map) fElements.clone());
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_INHERIT, true);
@@ -466,6 +489,7 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
+	@Override
 	public String getName() {
 		return LaunchMessages.CEnvironmentTab_Environment; 
 	}
@@ -473,6 +497,7 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return LaunchImages.get(LaunchImages.IMG_VIEW_ENVIRONMENT_TAB);
 	}

@@ -40,6 +40,7 @@ public class MIStackListLocals extends MICommand
 		return (MIStackListLocalsInfo)getMIInfo();
 	}
 
+	@Override
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

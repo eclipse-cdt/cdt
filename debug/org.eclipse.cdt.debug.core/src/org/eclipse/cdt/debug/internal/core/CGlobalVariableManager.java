@@ -98,6 +98,7 @@ public class CGlobalVariableManager implements ICGlobalVariableManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.ICGlobalVariableManager#addGlobals(IGlobalVariableDescriptor[])
 	 */
+	@Override
 	public void addGlobals( IGlobalVariableDescriptor[] descriptors ) throws DebugException {
 		fGlobals = new ArrayList<ICGlobalVariable>( 10 );
 		MultiStatus ms = new MultiStatus( CDebugCorePlugin.getUniqueIdentifier(), 0, "", null ); //$NON-NLS-1$
@@ -124,6 +125,7 @@ public class CGlobalVariableManager implements ICGlobalVariableManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.ICGlobalVariableManager#removeGlobals(ICGlobalVariable[])
 	 */
+	@Override
 	public void removeGlobals( ICGlobalVariable[] globals ) {
 		synchronized( fGlobals ) {
 			fGlobals.removeAll( Arrays.asList( globals ) );
@@ -138,6 +140,7 @@ public class CGlobalVariableManager implements ICGlobalVariableManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.ICGlobalVariableManager#removeAllGlobals()
 	 */
+	@Override
 	public void removeAllGlobals() {
 		if (fGlobals == null ) {
 			return;
@@ -278,6 +281,7 @@ public class CGlobalVariableManager implements ICGlobalVariableManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.ICGlobalVariableManager#getDescriptors()
 	 */
+	@Override
 	public IGlobalVariableDescriptor[] getDescriptors() {
 		if ( fGlobals == null )
 			return getInitialDescriptors();

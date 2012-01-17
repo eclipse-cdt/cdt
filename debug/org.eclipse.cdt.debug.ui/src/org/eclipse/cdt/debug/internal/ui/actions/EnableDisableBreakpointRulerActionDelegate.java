@@ -20,6 +20,7 @@ public class EnableDisableBreakpointRulerActionDelegate extends AbstractRulerAct
 	/*
 	 * @see AbstractRulerActionDelegate#createAction(ITextEditor, IVerticalRulerInfo)
 	 */
+	@Override
 	protected IAction createAction( ITextEditor editor, IVerticalRulerInfo rulerInfo ) {
 		return new EnableDisableBreakpointRulerAction( editor, rulerInfo );
 	}

@@ -82,6 +82,7 @@ public class DisassemblyBackendCdi extends AbstractDisassemblyBackend implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#hasDebugContext()
 	 */
+	@Override
 	public boolean hasDebugContext() {
 		return fTargetContext != null;
 	}
@@ -101,6 +102,7 @@ public class DisassemblyBackendCdi extends AbstractDisassemblyBackend implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#setDebugContext(org.eclipse.core.runtime.IAdaptable)
 	 */
+	@Override
 	public SetDebugContextResult setDebugContext(IAdaptable context) {
 		assert supportsDebugContext(context) : "caller should not have invoked us"; //$NON-NLS-1$
 		
@@ -182,6 +184,7 @@ public class DisassemblyBackendCdi extends AbstractDisassemblyBackend implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#supportsDebugContext(org.eclipse.core.runtime.IAdaptable)
 	 */
+	@Override
 	public boolean supportsDebugContext(IAdaptable context) {
 		return supportsDebugContext_(context);
 	}
@@ -197,6 +200,7 @@ public class DisassemblyBackendCdi extends AbstractDisassemblyBackend implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#clearDebugContext()
 	 */
+	@Override
 	public void clearDebugContext() {
 		fTargetContext= null;
 		fCdiSessionId = null;
@@ -207,13 +211,16 @@ public class DisassemblyBackendCdi extends AbstractDisassemblyBackend implements
 
 	private class AddressRequest extends CRequest implements IDisassemblyRetrieval.AddressRequest {
 		private BigInteger fAddress;
+		@Override
 		public BigInteger getAddress() { return fAddress; }
+		@Override
 		public void setAddress(BigInteger address) { fAddress = address; }
 	};
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#retrieveFrameAddress(int)
 	 */
+	@Override
 	public void retrieveFrameAddress(final int targetFrame) {
 		try {
 			final IStackFrame[] stackFrames= fTargetContext.getStackFrames();
@@ -245,6 +252,7 @@ public class DisassemblyBackendCdi extends AbstractDisassemblyBackend implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#getFrameLevel()
 	 */
+	@Override
 	public int getFrameLevel() {
 		return fFrameLevel;
 	}
@@ -252,6 +260,7 @@ public class DisassemblyBackendCdi extends AbstractDisassemblyBackend implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#isSuspended()
 	 */
+	@Override
 	public boolean isSuspended() {
 		return fTargetContext != null && fTargetContext.isSuspended();
 	}
@@ -259,6 +268,7 @@ public class DisassemblyBackendCdi extends AbstractDisassemblyBackend implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#getFrameFile()
 	 */
+	@Override
 	public String getFrameFile() {
 		return fTargetFrameContext != null ? fTargetFrameContext.getFile() : null;
 	}
@@ -266,19 +276,23 @@ public class DisassemblyBackendCdi extends AbstractDisassemblyBackend implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#getFrameLine()
 	 */
+	@Override
 	public int getFrameLine() {
 		return fTargetFrameContext.getFrameLineNumber();		
 	}
 
 	private class DisassemblyRequest extends CRequest implements IDisassemblyRetrieval.DisassemblyRequest {
 		private IDisassemblyBlock fBlock;
+		@Override
 		public IDisassemblyBlock getDisassemblyBlock() { return fBlock;	}
+		@Override
 		public void setDisassemblyBlock(IDisassemblyBlock block) { fBlock = block; }
 	};
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.IDisassemblyBackend#retrieveDisassembly(java.math.BigInteger, java.math.BigInteger, java.lang.String, boolean, boolean, boolean, int, int, int)
 	 */
+	@Override
 	public void retrieveDisassembly(final BigInteger startAddress,
 			BigInteger endAddress, final String file, int lineNumber, final int lines, final boolean mixed,
 			final boolean showSymbols, final boolean showDisassembly, final int linesHint) {
@@ -310,6 +324,7 @@ public class DisassemblyBackendCdi extends AbstractDisassemblyBackend implements
 						} else {
 							// give up
 							fCallback.doScrollLocked(new Runnable() {
+								@Override
 								public void run() {
 									fCallback.insertError(startAddress, "Unable to retrieve disassembly data from backend."); //$NON-NLS-1$
 								}
@@ -320,6 +335,7 @@ public class DisassemblyBackendCdi extends AbstractDisassemblyBackend implements
 					final IStatus status= getStatus();
 					if (status != null && !status.isOK()) {
 						fCallback.doScrollLocked(new Runnable() {
+							@Override
 							public void run() {
 								fCallback.insertError(startAddress, status.getMessage());
 							}
@@ -336,6 +352,7 @@ public class DisassemblyBackendCdi extends AbstractDisassemblyBackend implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#insertSource(org.eclipse.jface.text.Position, java.math.BigInteger, java.lang.String, int)
 	 */
+	@Override
 	public Object insertSource(Position pos, BigInteger address,
 			String file, int lineNumber) {
 		ISourceLocator locator = fTargetContext.getLaunch().getSourceLocator();
@@ -348,6 +365,7 @@ public class DisassemblyBackendCdi extends AbstractDisassemblyBackend implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#hasFrameContext()
 	 */
+	@Override
 	public boolean hasFrameContext() {
 		return fTargetFrameContext != null;
 	}
@@ -355,10 +373,12 @@ public class DisassemblyBackendCdi extends AbstractDisassemblyBackend implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.IDisassemblyBackend#gotoSymbol(java.lang.String)
 	 */
+	@Override
 	public void gotoSymbol(String symbol) {
 		final BigInteger address = evaluateAddressExpression(symbol, false);
 		if (address != null) {
 			fCallback.asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					fCallback.gotoAddress(address);
 				}});
@@ -410,6 +430,7 @@ public class DisassemblyBackendCdi extends AbstractDisassemblyBackend implements
 			catch (final CDIException exc) {
 				if (!suppressError) {
 					fCallback.asyncExec(new Runnable() {
+						@Override
 						public void run() {
 			                ErrorDialog.openError(fCallback.getSite().getShell(), 
 			                		CDebugUIMessages.getString("DisassemblyBackendCdi_Error_Dlg_Title"),  //$NON-NLS-1$
@@ -420,6 +441,7 @@ public class DisassemblyBackendCdi extends AbstractDisassemblyBackend implements
 			catch (final DebugException exc) {
 				if (!suppressError) {
 					fCallback.asyncExec(new Runnable() {
+						@Override
 						public void run() {
 			                ErrorDialog.openError(fCallback.getSite().getShell(), 
 			                		CDebugUIMessages.getString("DisassemblyBackendCdi_Error_Dlg_Title"), //$NON-NLS-1$
@@ -434,6 +456,7 @@ public class DisassemblyBackendCdi extends AbstractDisassemblyBackend implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.dsf.debug.internal.ui.disassembly.IDisassemblyBackend#retrieveDisassembly(java.lang.String, int, java.math.BigInteger, boolean, boolean, boolean)
 	 */
+	@Override
 	public void retrieveDisassembly(String file, int lines,
 			final BigInteger endAddress, final boolean mixed, final boolean showSymbols,
 			final boolean showDisassembly) {
@@ -446,6 +469,7 @@ public class DisassemblyBackendCdi extends AbstractDisassemblyBackend implements
 					final IStatus status= getStatus();
 					if (status != null && !status.isOK()) {
 						fCallback.asyncExec(new Runnable() {
+							@Override
 							public void run() {
 				                ErrorDialog.openError(fCallback.getSite().getShell(), "Error", null, getStatus()); //$NON-NLS-1$
 							}
@@ -634,6 +658,7 @@ public class DisassemblyBackendCdi extends AbstractDisassemblyBackend implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
 	 */
+	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
 		for (DebugEvent event : events) {
 			if (event.getKind() == DebugEvent.TERMINATE) {
@@ -649,6 +674,7 @@ public class DisassemblyBackendCdi extends AbstractDisassemblyBackend implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#dispose()
 	 */
+	@Override
 	public void dispose() {
 		DebugPlugin.getDefault().removeDebugEventListener(this);
 	}
@@ -656,6 +682,7 @@ public class DisassemblyBackendCdi extends AbstractDisassemblyBackend implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#evaluateExpression(java.lang.String)
 	 */
+	@Override
 	public String evaluateExpression(String expression) {
 		// This is called to service text hovering. We either resolve the
 		// expression or we don't. No error reporting needed.

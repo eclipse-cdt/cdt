@@ -32,6 +32,7 @@ public class SessionConfiguration extends SessionObject implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISessionConfiguration#terminateSessionOnExit()
 	 */
+	@Override
 	public boolean terminateSessionOnExit() {
 		return true;
 	}

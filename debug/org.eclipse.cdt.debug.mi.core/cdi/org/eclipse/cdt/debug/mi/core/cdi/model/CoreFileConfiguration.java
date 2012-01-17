@@ -21,52 +21,64 @@ public class CoreFileConfiguration extends CObject implements ICDITargetConfigur
 		super(t);
 	}
 
+	@Override
 	public boolean supportsTerminate() {
 		return true;
 	}
 
+	@Override
 	public boolean supportsDisconnect() {
 		return false;
 	}
 
+	@Override
 	public boolean supportsRestart() {
 		return false;
 	}
 
+	@Override
 	public boolean supportsStepping() {
 		return false;
 	}
 
+	@Override
 	public boolean supportsInstructionStepping() {
 		return false;
 	}
 
+	@Override
 	public boolean supportsBreakpoints() {
 		return false;
 	}
 
+	@Override
 	public boolean supportsRegisters() {
 		return true;
 	}
 
+	@Override
 	public boolean supportsRegisterModification() {
 		return false;
 	}
 
+	@Override
 	public boolean supportsMemoryRetrieval() {
 		return true;
 	}
 
+	@Override
 	public boolean supportsMemoryModification() {
 		return false;
 	}
 
+	@Override
 	public boolean supportsExpressionEvaluation() {
 		return true;
 	}
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIConfiguration#supportsResume()
 	 */
+	@Override
 	public boolean supportsResume() {
 		return false;
 	}
@@ -74,6 +86,7 @@ public class CoreFileConfiguration extends CObject implements ICDITargetConfigur
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIConfiguration#supportsSuspend()
 	 */
+	@Override
 	public boolean supportsSuspend() {
 		return false;
 	}
@@ -81,6 +94,7 @@ public class CoreFileConfiguration extends CObject implements ICDITargetConfigur
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIConfiguration#supportsSharedLibrary()
 	 */
+	@Override
 	public boolean supportsSharedLibrary() {
 		return true;
 	}

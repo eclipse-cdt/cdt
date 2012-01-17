@@ -50,6 +50,7 @@ public class MIProcessAdapter implements MIProcess {
 	protected Process getGDBProcess(String[] args, int launchTimeout, IProgressMonitor monitor) throws IOException {
 		final Process pgdb = createGDBProcess(args);
 		Thread syncStartup = new Thread("GDB Start") { //$NON-NLS-1$
+			@Override
 			public void run() {
 				try {
 					PushbackInputStream pb = new PushbackInputStream(pgdb.getInputStream());
@@ -115,10 +116,12 @@ public class MIProcessAdapter implements MIProcess {
 		return ProcessFactory.getFactory().exec(args);
 	}
 	
+	@Override
 	public boolean canInterrupt(MIInferior inferior) {
 		return fGDBProcess instanceof Spawner;
 	}
 
+	@Override
 	public void interrupt(MIInferior inferior) {
 		if (fGDBProcess instanceof Spawner) {
 			if (inferior.isRunning()) {
@@ -163,14 +166,17 @@ public class MIProcessAdapter implements MIProcess {
 		}
 	}
 	
+	@Override
 	public int exitValue() {
 		return fGDBProcess.exitValue();
 	}
 
+	@Override
 	public int waitFor() throws InterruptedException {
 		return fGDBProcess.waitFor();
 	}
 
+	@Override
 	public void destroy() {
     	// We are responsible for closing the streams we have used or else
     	// we will leak pipes.  
@@ -188,14 +194,17 @@ public class MIProcessAdapter implements MIProcess {
 		fGDBProcess.destroy();
 	}
 
+	@Override
 	public InputStream getErrorStream() {
 		return fGDBProcess.getErrorStream();
 	}
 
+	@Override
 	public InputStream getInputStream() {
 		return gdbInputStream;
 	}
 
+	@Override
 	public OutputStream getOutputStream() {
 		return fGDBProcess.getOutputStream();
 	}

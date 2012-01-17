@@ -112,6 +112,7 @@ public class StandardSourceFilesProvider extends PlatformObject implements ISour
 		return null;
 	}
 
+	@Override
 	public String[] getSourceFiles(Executable executable, IProgressMonitor monitor) {
 
 		IBinaryFile bin = createBinaryFile(executable);
@@ -125,6 +126,7 @@ public class StandardSourceFilesProvider extends PlatformObject implements ISour
 		return new String[0];
 	}
 
+	@Override
 	public int getPriority(Executable executable) {
 		return ISourceFilesProvider.NORMAL_PRIORITY;
 	}

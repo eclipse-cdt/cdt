@@ -33,6 +33,7 @@ public class MIResult {
 		value = val;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(variable);

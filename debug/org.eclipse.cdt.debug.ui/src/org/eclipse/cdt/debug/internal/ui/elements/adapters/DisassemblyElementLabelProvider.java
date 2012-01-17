@@ -44,7 +44,8 @@ public class DisassemblyElementLabelProvider implements IDocumentElementLabelPro
     /* (non-Javadoc)
      * @see org.eclipse.cdt.debug.ui.disassembly.IDocumentElementLabelProvider#update(org.eclipse.cdt.debug.ui.disassembly.IDocumentElementLabelUpdate[])
      */
-    public void update( final IDocumentElementLabelUpdate[] updates ) {
+    @Override
+	public void update( final IDocumentElementLabelUpdate[] updates ) {
         Job job = new Job( "Label update" ) { //$NON-NLS-1$
 
             /* (non-Javadoc)

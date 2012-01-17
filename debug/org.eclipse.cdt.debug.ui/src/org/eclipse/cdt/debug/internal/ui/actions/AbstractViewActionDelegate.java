@@ -50,6 +50,7 @@ public abstract class AbstractViewActionDelegate extends ActionDelegate implemen
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
+	@Override
 	public void init( IViewPart view ) {
 		setView( view );
 		DebugPlugin.getDefault().addDebugEventListener( this );
@@ -65,6 +66,7 @@ public abstract class AbstractViewActionDelegate extends ActionDelegate implemen
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */
+	@Override
 	public void dispose() {
 		IWorkbenchWindow window = getWindow();
 		if ( window != null ) {
@@ -77,6 +79,7 @@ public abstract class AbstractViewActionDelegate extends ActionDelegate implemen
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void init( IAction action ) {
 		setAction( action );
 		action.setEnabled( false );
@@ -94,10 +97,12 @@ public abstract class AbstractViewActionDelegate extends ActionDelegate implemen
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run( IAction action ) {
 		final MultiStatus ms = new MultiStatus( CDebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, "", null ); //$NON-NLS-1$
 		BusyIndicator.showWhile( Display.getCurrent(), new Runnable() {
 
+			@Override
 			public void run() {
 				try {
 					doAction();
@@ -137,6 +142,7 @@ public abstract class AbstractViewActionDelegate extends ActionDelegate implemen
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged( IWorkbenchPart part, ISelection selection ) {
 		setSelection( selection );
 		update();
@@ -153,6 +159,7 @@ public abstract class AbstractViewActionDelegate extends ActionDelegate implemen
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
 	 */
+	@Override
 	public void handleDebugEvents( final DebugEvent[] events ) {
 		if ( getWindow() == null || getAction() == null ) {
 			return;
@@ -163,6 +170,7 @@ public abstract class AbstractViewActionDelegate extends ActionDelegate implemen
 		}
 		Runnable r = new Runnable() {
 
+			@Override
 			public void run() {
 				for( int i = 0; i < events.length; i++ ) {
 					if ( events[i].getSource() != null ) {
@@ -177,6 +185,7 @@ public abstract class AbstractViewActionDelegate extends ActionDelegate implemen
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.ActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged( IAction action, ISelection selection ) {
 		update();
 	}

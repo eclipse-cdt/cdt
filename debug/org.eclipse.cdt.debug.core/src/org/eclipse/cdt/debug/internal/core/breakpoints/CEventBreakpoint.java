@@ -47,6 +47,7 @@ public class CEventBreakpoint extends CBreakpoint implements ICEventBreakpoint {
 			final Map<String, Object> attributes, final boolean add) throws DebugException {
 		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
 
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				// create the marker
 				setMarker(resource.createMarker(markerType));
@@ -70,6 +71,7 @@ public class CEventBreakpoint extends CBreakpoint implements ICEventBreakpoint {
 	/**
 	 * @see ICEventBreakpoint#getEventType()
 	 */
+	@Override
 	public String getEventType() throws DebugException {
 		return ensureMarker().getAttribute(EVENT_TYPE_ID, ""); //$NON-NLS-1$
 	}
@@ -77,6 +79,7 @@ public class CEventBreakpoint extends CBreakpoint implements ICEventBreakpoint {
 	/**
 	 * @see ICEventBreakpoint#getEventArgument()
 	 */
+	@Override
 	public String  getEventArgument() throws CoreException {
 		return ensureMarker().getAttribute(EVENT_ARG, ""); //$NON-NLS-1$
 	}

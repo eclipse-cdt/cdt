@@ -47,6 +47,7 @@ public class MIErrorEvent extends MIStoppedEvent {
 		return log;
 	}
 
+	@Override
 	void parse () {
 		MIResultRecord rr = getMIResultRecord();
 		if (rr != null) {

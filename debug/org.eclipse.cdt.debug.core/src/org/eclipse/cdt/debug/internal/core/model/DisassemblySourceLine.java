@@ -32,7 +32,8 @@ public class DisassemblySourceLine extends CDebugElement implements IDisassembly
     /* (non-Javadoc)
      * @see org.eclipse.cdt.debug.core.model.IDisassemblySourceLine#getFile()
      */
-    public File getFile() {
+    @Override
+	public File getFile() {
         String name = fCDIMixedInstruction.getFileName();
         if ( name != null && name.length() > 0 ) {
             return new File( name );
@@ -43,14 +44,16 @@ public class DisassemblySourceLine extends CDebugElement implements IDisassembly
     /* (non-Javadoc)
      * @see org.eclipse.cdt.debug.core.model.IAsmSourceLine#getInstructions()
      */
-    public IAsmInstruction[] getInstructions() {
+    @Override
+	public IAsmInstruction[] getInstructions() {
         return null;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.debug.core.model.IAsmSourceLine#getLineNumber()
      */
-    public int getLineNumber() {
+    @Override
+	public int getLineNumber() {
         return fCDIMixedInstruction.getLineNumber();
     }
 

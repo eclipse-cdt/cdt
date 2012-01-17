@@ -57,7 +57,7 @@ public class MemorySearchResult implements ISearchResult
 	{
 		MemoryMatch matches[] = new MemoryMatch[fMatches.size()];
 		for(int i = 0; i < matches.length; i++)
-			matches[i] = (MemoryMatch) fMatches.elementAt(i);
+			matches[i] = fMatches.elementAt(i);
 		return matches;
 	}
 	
@@ -71,7 +71,7 @@ public class MemorySearchResult implements ISearchResult
 	{
 		Enumeration<ISearchResultListener> en = listeners.elements();
 		while(en.hasMoreElements()) {
-			((ISearchResultListener) en.nextElement()).searchResultChanged(new SearchResultEvent(this) {
+			en.nextElement().searchResultChanged(new SearchResultEvent(this) {
 					private static final long serialVersionUID = -1435449002760145835L;
 				} 
 			);

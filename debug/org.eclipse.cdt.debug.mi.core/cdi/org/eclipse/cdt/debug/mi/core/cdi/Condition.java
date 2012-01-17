@@ -29,6 +29,7 @@ public class Condition implements ICDICondition {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDICondition#getIgnoreCount()
 	 */
+	@Override
 	public int getIgnoreCount() {
 		return ignoreCount;
 	}
@@ -36,6 +37,7 @@ public class Condition implements ICDICondition {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDICondition#getExpression()
 	 */
+	@Override
 	public String getExpression() {
 		return expression;
 	}
@@ -43,6 +45,7 @@ public class Condition implements ICDICondition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDICondition#getThreadId()
 	 */
+	@Override
 	public String[] getThreadIds() {
 		return tids;
 	}
@@ -50,6 +53,7 @@ public class Condition implements ICDICondition {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(ICDICondition obj) {
 		if (obj instanceof Condition) {
 			Condition cond = (Condition)obj;

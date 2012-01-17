@@ -35,6 +35,7 @@ public class RemoveAllGlobalsActionDelegate extends ActionDelegate implements IV
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
+	@Override
 	public void init( IViewPart view ) {
 		DebugPlugin.getDefault().addDebugEventListener(this);
 	}
@@ -43,6 +44,7 @@ public class RemoveAllGlobalsActionDelegate extends ActionDelegate implements IV
 	 * (non-Javadoc)
 	 * @see org.eclipse.ui.actions.ActionDelegate#init(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void init( IAction action ) {
 		DebugPlugin.getDefault().addDebugEventListener(this);
 		fAction = action;
@@ -52,6 +54,7 @@ public class RemoveAllGlobalsActionDelegate extends ActionDelegate implements IV
 	 * (non-Javadoc)
 	 * @see org.eclipse.ui.actions.ActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		update();
 	}
@@ -60,6 +63,7 @@ public class RemoveAllGlobalsActionDelegate extends ActionDelegate implements IV
 	 * (non-Javadoc)
 	 * @see org.eclipse.ui.actions.ActionDelegate#dispose()
 	 */
+	@Override
 	public void dispose() {
 		DebugPlugin.getDefault().removeDebugEventListener(this);
 		fAction = null;
@@ -68,6 +72,7 @@ public class RemoveAllGlobalsActionDelegate extends ActionDelegate implements IV
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run( IAction action ) {
 		IAdaptable context = DebugUITools.getDebugContext();
 		if ( context instanceof IDebugElement ) {
@@ -75,6 +80,7 @@ public class RemoveAllGlobalsActionDelegate extends ActionDelegate implements IV
 			if ( gvm != null ) {
 				DebugPlugin.getDefault().asyncExec( 
 						new Runnable() {
+							@Override
 							public void run() {
 								gvm.removeAllGlobals();
 							}
@@ -110,6 +116,7 @@ public class RemoveAllGlobalsActionDelegate extends ActionDelegate implements IV
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
 	 */
+	@Override
 	public void handleDebugEvents( DebugEvent[] events ) {
 		// The ICGlobalVariableManager will fire a target content-changed 
 		// event when a global is added or removed. Update the enable/disable 

@@ -137,6 +137,7 @@ public class ResourceRenameParticipant extends RenameParticipant implements
 		return new RefactoringStatus();
 	}
 
+	@Override
 	public void setInitializationData(IConfigurationElement config,
 			String propertyName, Object data) throws CoreException {
 

@@ -58,6 +58,7 @@ public class PinDebugContextActionDelegate implements IViewActionDelegate, IActi
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
 	 */
+	@Override
 	public void runWithEvent(IAction action, Event event) {
 		run(action);
 	}
@@ -65,6 +66,7 @@ public class PinDebugContextActionDelegate implements IViewActionDelegate, IActi
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		if (action.isChecked()) {
 			fProvider = DebugEventFilterService.getInstance().addDebugEventFilter(fPart, getActiveDebugContext());
@@ -85,12 +87,14 @@ public class PinDebugContextActionDelegate implements IViewActionDelegate, IActi
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void init(IAction action) {
 		fAction = action;
 	}
@@ -98,6 +102,7 @@ public class PinDebugContextActionDelegate implements IViewActionDelegate, IActi
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
+	@Override
 	public void init(IViewPart view) {
 		fPart = view;
 
@@ -108,6 +113,7 @@ public class PinDebugContextActionDelegate implements IViewActionDelegate, IActi
 		}
 		
 		fPart.addPropertyListener(new IPropertyListener() {			
+			@Override
 			public void propertyChanged(Object source, int propId) {
 				if (IWorkbenchPartConstants.PROP_CONTENT_DESCRIPTION == propId) {
 					// if the content description is not the pinned context label,
@@ -133,7 +139,9 @@ public class PinDebugContextActionDelegate implements IViewActionDelegate, IActi
 		// in our case, we don't want this behavior.
 		// Listens to part close and set the check state off.
 		fPartListener = new IPartListener2() {					
+			@Override
 			public void partBroughtToTop(IWorkbenchPartReference partRef) {}
+			@Override
 			public void partClosed(IWorkbenchPartReference partRef) {
 				IWorkbenchPart part = partRef.getPart(false);
 				if (part.equals(fPart)) {
@@ -143,11 +151,17 @@ public class PinDebugContextActionDelegate implements IViewActionDelegate, IActi
 					}					
 				}
 			}
+			@Override
 			public void partDeactivated(IWorkbenchPartReference partRef) {}
+			@Override
 			public void partOpened(IWorkbenchPartReference partRef) {}
+			@Override
 			public void partHidden(IWorkbenchPartReference partRef) {}
+			@Override
 			public void partVisible(IWorkbenchPartReference partRef) {}
+			@Override
 			public void partInputChanged(IWorkbenchPartReference partRef) {}
+			@Override
 			public void partActivated(IWorkbenchPartReference partRef) {}
 		};
 		fPart.getSite().getWorkbenchWindow().getPartService().addPartListener(fPartListener);		
@@ -156,6 +170,7 @@ public class PinDebugContextActionDelegate implements IViewActionDelegate, IActi
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */
+	@Override
 	public void dispose() {
 		DebugUITools.removePartDebugContextListener(fPart.getSite(), this);
 		fPart.getSite().getWorkbenchWindow().getPartService().removePartListener(fPartListener);
@@ -268,11 +283,13 @@ public class PinDebugContextActionDelegate implements IViewActionDelegate, IActi
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.contexts.IDebugContextListener#debugContextChanged(org.eclipse.debug.ui.contexts.DebugContextEvent)
 	 */
+	@Override
 	public void debugContextChanged(DebugContextEvent event) {
 		if (fAction != null && !fAction.isChecked()) {
 			final boolean pinnable = PinCloneUtils.isPinnable(fPart, event.getContext());
 			if (pinnable != fAction.isEnabled()) {			
 				PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {				
+					@Override
 					public void run() {
 						fAction.setEnabled(pinnable);
 					}

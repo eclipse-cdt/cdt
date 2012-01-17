@@ -50,18 +50,21 @@ public class ExpressionDialog extends Dialog {
 			fExpression = expression;
 	}
 
+	@Override
 	protected void configureShell( Shell shell ) {
 		super.configureShell( shell );
 		shell.setText( ActionMessages.getString( "ExpressionDialog.0" ) ); //$NON-NLS-1$
 		shell.setImage( DebugUITools.getImage( IDebugUIConstants.IMG_OBJS_EXPRESSION ) );
 	}
 
+	@Override
 	protected Control createContents( Composite parent ) {
 		Control control = super.createContents( parent );
 		setOkButtonState();
 		return control;
 	}
 
+	@Override
 	protected Control createDialogArea( Composite parent ) {
 		Composite composite = new Composite( parent, SWT.NONE );
 		composite.setLayout( new GridLayout() );
@@ -72,6 +75,7 @@ public class ExpressionDialog extends Dialog {
 		return composite;
 	}
 
+	@Override
 	protected void createButtonsForButtonBar( Composite parent ) {
 		fBtnOk = createButton( parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true );
 		createButton( parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false );
@@ -112,6 +116,7 @@ public class ExpressionDialog extends Dialog {
 	private void addModifyListener( Text text ) {
 		text.addModifyListener( new ModifyListener() {
 
+			@Override
 			public void modifyText( ModifyEvent e ) {
 				setOkButtonState();
 			}
@@ -127,6 +132,7 @@ public class ExpressionDialog extends Dialog {
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
+	@Override
 	protected void okPressed() {
 		storeData();
 		super.okPressed();

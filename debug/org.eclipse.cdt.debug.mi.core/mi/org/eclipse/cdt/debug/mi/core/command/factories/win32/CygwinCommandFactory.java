@@ -36,10 +36,12 @@ public class CygwinCommandFactory extends StandardWinCommandFactory {
 		super( miVersion );
 	}
 
+	@Override
 	public MIEnvironmentDirectory createMIEnvironmentDirectory(boolean reset, String[] pathdirs) {
 		return new CygwinMIEnvironmentDirectory( getMIVersion(), reset, pathdirs );
 	}
 	
+	@Override
 	public MIProcess createMIProcess(String[] args, int launchTimeout,
 			IProgressMonitor monitor) throws IOException {
 		return new CygwinMIProcessAdapter(args, launchTimeout, monitor);

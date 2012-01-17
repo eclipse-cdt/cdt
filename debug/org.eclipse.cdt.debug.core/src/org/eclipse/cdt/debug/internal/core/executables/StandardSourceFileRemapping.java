@@ -24,6 +24,7 @@ public class StandardSourceFileRemapping implements ISourceFileRemapping {
 		srcFinder = (ISourceFinder) binary.getAdapter(ISourceFinder.class);
 	}
 	
+	@Override
 	public String remapSourceFile(IPath executable, String filePath) {
 		if (srcFinder != null) {
 			String mappedPath = srcFinder.toLocalPath(filePath);
@@ -37,6 +38,7 @@ public class StandardSourceFileRemapping implements ISourceFileRemapping {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#finalize()
 	 */
+	@Override
 	public void finalize(){
 		srcFinder.dispose();
 	}

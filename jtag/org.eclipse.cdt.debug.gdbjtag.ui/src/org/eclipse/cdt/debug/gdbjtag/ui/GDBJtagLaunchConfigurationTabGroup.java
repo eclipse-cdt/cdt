@@ -23,6 +23,7 @@ import org.eclipse.debug.ui.ILaunchConfigurationTab;
 public class GDBJtagLaunchConfigurationTabGroup extends
 		AbstractLaunchConfigurationTabGroup {
 
+	@Override
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		setTabs(new ILaunchConfigurationTab[0]);
 	}

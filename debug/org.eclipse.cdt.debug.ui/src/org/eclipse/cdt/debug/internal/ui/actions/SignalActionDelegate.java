@@ -36,6 +36,7 @@ public class SignalActionDelegate extends ActionDelegate implements IObjectActio
 	 * 
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
 	 */
+	@Override
 	public void setActivePart( IAction action, IWorkbenchPart targetPart ) {
 	}
 
@@ -44,11 +45,13 @@ public class SignalActionDelegate extends ActionDelegate implements IObjectActio
 	 * 
 	 * @see org.eclipse.ui.IActionDelegate#run(IAction)
 	 */
+	@Override
 	public void run( IAction action ) {
 		if ( getSignal() != null ) {
 			final MultiStatus ms = new MultiStatus( CDebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, ActionMessages.getString( "SignalActionDelegate.0" ), null ); //$NON-NLS-1$
 			BusyIndicator.showWhile( Display.getCurrent(), new Runnable() {
 
+				@Override
 				public void run() {
 					try {
 						doAction( getSignal() );
@@ -75,6 +78,7 @@ public class SignalActionDelegate extends ActionDelegate implements IObjectActio
 	 * 
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
+	@Override
 	public void selectionChanged( IAction action, ISelection selection ) {
 		if ( selection instanceof IStructuredSelection ) {
 			Object element = ((IStructuredSelection)selection).getFirstElement();

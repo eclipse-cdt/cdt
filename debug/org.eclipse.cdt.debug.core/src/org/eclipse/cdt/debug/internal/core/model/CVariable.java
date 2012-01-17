@@ -65,6 +65,7 @@ class VariableEventListener implements ICDIEventListener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvents(org.eclipse.cdt.debug.core.cdi.event.ICDIEvent[])
 	 */
+	@Override
 	public void handleDebugEvents(ICDIEvent[] events) {
 		fVar.handleDebugEvents(events);
 	}
@@ -174,6 +175,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 	 * 
 	 * @see org.eclipse.cdt.debug.core.model.ICVariable#getType()
 	 */
+	@Override
 	public ICType getType() throws DebugException {
 		if ( isDisposed() )
 			return null;
@@ -186,6 +188,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 	 * 
 	 * @see org.eclipse.cdt.debug.core.model.ICVariable#isEnabled()
 	 */
+	@Override
 	public boolean isEnabled() {
 		return fIsEnabled;
 	}
@@ -195,6 +198,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 	 * 
 	 * @see org.eclipse.cdt.debug.core.model.ICVariable#setEnabled(boolean)
 	 */
+	@Override
 	public void setEnabled( boolean enabled ) throws DebugException {
 		// Debugger engines that use active variable objects will benefit
 		// performance-wise if we dispose the internal variable when it's 
@@ -224,6 +228,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 	 * 
 	 * @see org.eclipse.cdt.debug.core.model.ICVariable#canEnableDisable()
 	 */
+	@Override
 	public boolean canEnableDisable() {
 		return !( getParent() instanceof IValue );
 	}
@@ -233,6 +238,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 	 * 
 	 * @see org.eclipse.cdt.debug.core.model.ICVariable#isArgument()
 	 */
+	@Override
 	public boolean isArgument() {
 		IInternalVariable iv = getOriginal();
 		return ( iv != null ) ? iv.isArgument() : false;
@@ -243,6 +249,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 	 * 
 	 * @see org.eclipse.debug.core.model.IVariable#getValue()
 	 */
+	@Override
 	public IValue getValue() throws DebugException {
 		if ( !isDisposed() && isEnabled() ) {
 			IInternalVariable iv = getCurrentInternalVariable();
@@ -263,6 +270,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 	 * 
 	 * @see org.eclipse.debug.core.model.IVariable#getName()
 	 */
+	@Override
 	public String getName() throws DebugException {
 		return fName;
 	}
@@ -272,6 +280,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 	 * 
 	 * @see org.eclipse.debug.core.model.IVariable#getReferenceTypeName()
 	 */
+	@Override
 	public String getReferenceTypeName() throws DebugException {
 		ICType type = getType();
 		return ( type != null ) ? type.getName() : ""; //$NON-NLS-1$
@@ -282,6 +291,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 	 * 
 	 * @see org.eclipse.debug.core.model.IVariable#hasValueChanged()
 	 */
+	@Override
 	public boolean hasValueChanged() throws DebugException {
 		if ( isDisposed() )
 			return false;
@@ -294,6 +304,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 	 * 
 	 * @see org.eclipse.cdt.debug.core.model.IFormatSupport#supportsFormatting()
 	 */
+	@Override
 	public boolean supportsFormatting() {
 		return true;
 	}
@@ -303,6 +314,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 	 * 
 	 * @see org.eclipse.cdt.debug.core.model.IFormatSupport#getFormat()
 	 */
+	@Override
 	public CVariableFormat getFormat() {
 		return fFormat;
 	}
@@ -312,6 +324,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 	 * 
 	 * @see org.eclipse.cdt.debug.core.model.IFormatSupport#changeFormat(org.eclipse.cdt.debug.core.model.CVariableFormat)
 	 */
+	@Override
 	public void changeFormat( CVariableFormat format ) throws DebugException {
 		setFormat( format );
 		storeFormat( format );
@@ -324,6 +337,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 	 * 
 	 * @see org.eclipse.cdt.debug.core.model.ICastToArray#canCastToArray()
 	 */
+	@Override
 	public boolean canCastToArray() {
 		ICType type;
 		try {
@@ -340,6 +354,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 	 * 
 	 * @see org.eclipse.cdt.debug.core.model.ICastToArray#castToArray(int, int)
 	 */
+	@Override
 	public void castToArray( int startIndex, int length ) throws DebugException {
 		IInternalVariable current = getCurrentInternalVariable();
 		if ( current != null ) {
@@ -359,6 +374,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 	 * 
 	 * @see org.eclipse.debug.core.model.IValueModification#setValue(java.lang.String)
 	 */
+	@Override
 	public void setValue( String expression ) throws DebugException {
 		IInternalVariable iv = getCurrentInternalVariable();
 		if ( iv != null ) {
@@ -372,6 +388,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 	 * 
 	 * @see org.eclipse.debug.core.model.IValueModification#setValue(org.eclipse.debug.core.model.IValue)
 	 */
+	@Override
 	public void setValue( IValue value ) throws DebugException {
 		notSupported( CoreModelMessages.getString( "CVariable.3" ) ); //$NON-NLS-1$
 	}
@@ -381,6 +398,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 	 * 
 	 * @see org.eclipse.debug.core.model.IValueModification#supportsValueModification()
 	 */
+	@Override
 	public boolean supportsValueModification() {
 		try {
 			return fIsEnabled ? getCurrentInternalVariable().isEditable() : false;
@@ -395,6 +413,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 	 * 
 	 * @see org.eclipse.debug.core.model.IValueModification#verifyValue(java.lang.String)
 	 */
+	@Override
 	public boolean verifyValue( String expression ) throws DebugException {
 		return true;
 	}
@@ -404,6 +423,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 	 * 
 	 * @see org.eclipse.debug.core.model.IValueModification#verifyValue(org.eclipse.debug.core.model.IValue)
 	 */
+	@Override
 	public boolean verifyValue( IValue value ) throws DebugException {
 		return value.getDebugTarget().equals( getDebugTarget() );
 	}
@@ -413,6 +433,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 	 * 
 	 * @see org.eclipse.cdt.debug.core.model.ICastToType#canCast()
 	 */
+	@Override
 	public boolean canCast() {
 		return ( getOriginal() != null && isEnabled() );
 	}
@@ -422,6 +443,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 	 * 
 	 * @see org.eclipse.cdt.debug.core.model.ICastToType#getCurrentType()
 	 */
+	@Override
 	public String getCurrentType() {
 		String typeName = ""; //$NON-NLS-1$
 		try {
@@ -437,6 +459,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 	 * 
 	 * @see org.eclipse.cdt.debug.core.model.ICastToType#cast(java.lang.String)
 	 */
+	@Override
 	public void cast( String type ) throws DebugException {
 		IInternalVariable current = getCurrentInternalVariable();
 		if ( current != null ) {
@@ -456,6 +479,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 	 * 
 	 * @see org.eclipse.cdt.debug.core.model.ICastToType#restoreOriginal()
 	 */
+	@Override
 	public void restoreOriginal() throws DebugException {
 		IInternalVariable oldVar = getShadow();
 		setShadow( null );
@@ -476,6 +500,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 	 * 
 	 * @see org.eclipse.cdt.debug.core.model.ICastToType#isCasted()
 	 */
+	@Override
 	public boolean isCasted() {
 		return ( getShadow() != null );
 	}
@@ -485,6 +510,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 	 * 
 	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvents(org.eclipse.cdt.debug.core.cdi.event.ICDIEvent[])
 	 */
+	@Override
 	public void handleDebugEvents( ICDIEvent[] events ) {
 		IInternalVariable iv = getCurrentInternalVariable();
 		if ( iv == null )
@@ -650,6 +676,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICVariable#getExpressionString()
 	 */
+	@Override
 	public String getExpressionString() throws DebugException {
 		IInternalVariable iv = getCurrentInternalVariable(); 
 		return ( iv != null ) ? iv.getQualifiedName() : null;
@@ -883,6 +910,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.core.IWatchpointTarget#getExpression()
 	 */
+	@Override
 	public String getExpression() {
 		try {
 			return getExpressionString();
@@ -894,6 +922,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.core.IWatchpointTarget#getSize()
 	 */
+	@Override
 	public void getSize(ICWatchpointTarget.GetSizeRequest request) {
 		// CDI has synchronous APIs, so this is easy...
 		request.setSize(sizeof());
@@ -903,6 +932,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.core.IWatchpointTarget#canCreateWatchpoint(org.eclipse.cdt.debug.internal.core.IWatchpointTarget.CanCreateWatchpointRequest)
 	 */
+	@Override
 	public void canSetWatchpoint(ICWatchpointTarget.CanCreateWatchpointRequest request) {
 		// CDI has synchronous APIs, so this is easy...
 		request.setCanCreate(sizeof() > 0);

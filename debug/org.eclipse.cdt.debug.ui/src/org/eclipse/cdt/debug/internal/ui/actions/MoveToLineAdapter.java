@@ -48,6 +48,7 @@ public class MoveToLineAdapter implements IMoveToLineTarget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.actions.IMoveToLineTarget#moveToLine(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection, org.eclipse.debug.core.model.ISuspendResume)
 	 */
+	@Override
 	public void moveToLine( IWorkbenchPart part, ISelection selection, ISuspendResume target ) throws CoreException {
 		String errorMessage = null;
 		if ( part instanceof ITextEditor ) {
@@ -75,6 +76,7 @@ public class MoveToLineAdapter implements IMoveToLineTarget {
 						final IMoveToLine moveToLine = (IMoveToLine)((IAdaptable)target).getAdapter( IMoveToLine.class );
 						if ( moveToLine != null && moveToLine.canMoveToLine( path.toPortableString(), lineNumber ) ) {
 							Runnable r = new Runnable() {
+								@Override
 								public void run() {
 									try {
 										moveToLine.moveToLine(path.toPortableString(), lineNumber );
@@ -100,6 +102,7 @@ public class MoveToLineAdapter implements IMoveToLineTarget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.actions.IMoveToLineTarget#canMoveToLine(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection, org.eclipse.debug.core.model.ISuspendResume)
 	 */
+	@Override
 	public boolean canMoveToLine( IWorkbenchPart part, ISelection selection, ISuspendResume target ) {
 		if ( target instanceof IAdaptable ) {
 			if ( part instanceof IEditorPart ) {

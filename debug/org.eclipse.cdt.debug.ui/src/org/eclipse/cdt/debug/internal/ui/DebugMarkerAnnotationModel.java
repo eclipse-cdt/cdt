@@ -30,6 +30,7 @@ public class DebugMarkerAnnotationModel extends AbstractMarkerAnnotationModel im
 		fFile = file;
 	}
 
+	@Override
 	protected IMarker[] retrieveMarkers() throws CoreException {
 		IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints();
 		IMarker[] markers = new IMarker[breakpoints.length];
@@ -39,9 +40,11 @@ public class DebugMarkerAnnotationModel extends AbstractMarkerAnnotationModel im
 		return markers;
 	}
 
+	@Override
 	protected void deleteMarkers( IMarker[] markers ) throws CoreException {
 	}
 
+	@Override
 	protected void listenToMarkerChanges( boolean listen ) {
 		if ( listen )
 			DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener( this );
@@ -49,6 +52,7 @@ public class DebugMarkerAnnotationModel extends AbstractMarkerAnnotationModel im
 			DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener( this );
 	}
 
+	@Override
 	protected boolean isAcceptable( IMarker marker ) {
 		String handle = marker.getAttribute(ICBreakpoint.SOURCE_HANDLE, null);
 		if (handle != null) {
@@ -62,6 +66,7 @@ public class DebugMarkerAnnotationModel extends AbstractMarkerAnnotationModel im
 		return fFile;
 	}
 
+	@Override
 	public void breakpointsAdded( IBreakpoint[] breakpoints ) {
 		for ( int i = 0; i < breakpoints.length; ++i ) {
 			addMarkerAnnotation( breakpoints[i].getMarker() );
@@ -69,6 +74,7 @@ public class DebugMarkerAnnotationModel extends AbstractMarkerAnnotationModel im
 		fireModelChanged();
 	}
 
+	@Override
 	public void breakpointsRemoved( IBreakpoint[] breakpoints, IMarkerDelta[] deltas ) {
 		for ( int i = 0; i < breakpoints.length; ++i ) {
 			removeMarkerAnnotation( breakpoints[i].getMarker() );
@@ -76,6 +82,7 @@ public class DebugMarkerAnnotationModel extends AbstractMarkerAnnotationModel im
 		fireModelChanged();
 	}
 
+	@Override
 	public void breakpointsChanged( IBreakpoint[] breakpoints, IMarkerDelta[] deltas ) {
 		for ( int i = 0; i < breakpoints.length; ++i ) {
 			modifyMarkerAnnotation( breakpoints[i].getMarker() );

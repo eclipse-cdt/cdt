@@ -29,6 +29,7 @@ public class CCommandAdapterFactory implements IAdapterFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (IRestartHandler.class.equals(adapterType)) {
 			if (adaptableObject instanceof IRestart) {
@@ -41,6 +42,7 @@ public class CCommandAdapterFactory implements IAdapterFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
+	@Override
 	public Class[] getAdapterList() {
 		return new Class[] {
 				IRestartHandler.class

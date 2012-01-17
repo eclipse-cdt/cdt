@@ -40,6 +40,7 @@ public class OptionsPropertyPage extends PropertyPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents( Composite parent ) {
 		Composite comp = ControlFactory.createComposite( parent, 1 );
 		fRefreshSolibsButton = createCheckButton( comp, PropertyMessages.getString( "OptionsPropertyPage.1" ) ); //$NON-NLS-1$
@@ -66,11 +67,13 @@ public class OptionsPropertyPage extends PropertyPage {
 		
 	}
 
+	@Override
 	protected void performApply() {
 		storeValues();
 		super.performApply();
 	}
 
+	@Override
 	public boolean performOk() {
 		storeValues();
 		return super.performOk();
@@ -86,6 +89,7 @@ public class OptionsPropertyPage extends PropertyPage {
 			if ( target.isSuspended() && solibUpdate ) {
 				DebugPlugin.getDefault().asyncExec( new Runnable() {
 					
+					@Override
 					public void run() {
 						if ( target.isSuspended() ) {
 							if ( solibUpdate ) {

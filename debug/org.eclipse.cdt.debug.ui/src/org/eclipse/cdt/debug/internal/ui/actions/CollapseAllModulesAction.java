@@ -29,6 +29,7 @@ public class CollapseAllModulesAction extends ActionDelegate implements IViewAct
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
+	@Override
 	public void init( IViewPart view ) {
 		Assert.isLegal( view instanceof IDebugView );
 		fView = (IDebugView)view;
@@ -37,6 +38,7 @@ public class CollapseAllModulesAction extends ActionDelegate implements IViewAct
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run( IAction action ) {
 		Viewer viewer = getView().getViewer();
 		if ( viewer instanceof TreeViewer ) {

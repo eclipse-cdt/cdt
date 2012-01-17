@@ -46,6 +46,7 @@ public abstract class Breakpoint extends CObject implements ICDIBreakpoint2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint2#getType()
 	 */
+	@Override
 	public int getType() {
 		return type;
 	}
@@ -65,6 +66,7 @@ public abstract class Breakpoint extends CObject implements ICDIBreakpoint2 {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint#getCondition()
 	 */
+	@Override
 	public ICDICondition getCondition() throws CDIException {
 		if (condition == null) {
 			if (miBreakpoints != null && miBreakpoints.length > 0) {
@@ -89,6 +91,7 @@ public abstract class Breakpoint extends CObject implements ICDIBreakpoint2 {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint#isEnabled()
 	 */
+	@Override
 	public boolean isEnabled() throws CDIException {
 		return enabled;
 	}
@@ -99,6 +102,7 @@ public abstract class Breakpoint extends CObject implements ICDIBreakpoint2 {
 	 * CDT 5.0 won't call this deprecated method (since we implement
 	 * ICDIBreakpoint2), but we use it ourselves.
 	 */
+	@Override
 	public boolean isHardware() {
 		// ignore the TEMPORARY bit qualifier
 		return ((type & ~ICBreakpointType.TEMPORARY) == ICBreakpointType.HARDWARE);
@@ -110,6 +114,7 @@ public abstract class Breakpoint extends CObject implements ICDIBreakpoint2 {
 	 * CDT 5.0 won't call this deprecated method (since we implement
 	 * ICDIBreakpoint2), but we use it ourselves.
 	 */
+	@Override
 	public boolean isTemporary() {
 		return (type & ICBreakpointType.TEMPORARY) != 0;
 	}
@@ -117,6 +122,7 @@ public abstract class Breakpoint extends CObject implements ICDIBreakpoint2 {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint#setCondition(ICDICondition)
 	 */
+	@Override
 	public void setCondition(ICDICondition newCondition) throws CDIException {
 		Session session = (Session)getTarget().getSession();
 		BreakpointManager mgr = session.getBreakpointManager();
@@ -131,6 +137,7 @@ public abstract class Breakpoint extends CObject implements ICDIBreakpoint2 {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint#setEnabled(boolean)
 	 */
+	@Override
 	public void setEnabled(boolean on) throws CDIException {
 		Session session = (Session)getTarget().getSession();
 		BreakpointManager mgr = session.getBreakpointManager();

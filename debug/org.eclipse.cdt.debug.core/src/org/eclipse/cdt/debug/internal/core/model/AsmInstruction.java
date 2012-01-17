@@ -35,6 +35,7 @@ public class AsmInstruction implements IAsmInstruction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IAsmInstruction#getAdress()
 	 */
+	@Override
 	public IAddress getAdress() {
 		return fAddress;
 	}
@@ -42,6 +43,7 @@ public class AsmInstruction implements IAsmInstruction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IAsmInstruction#getFunctionName()
 	 */
+	@Override
 	public String getFunctionName() {
 		return fCDIInstruction.getFuntionName();
 	}
@@ -49,6 +51,7 @@ public class AsmInstruction implements IAsmInstruction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IAsmInstruction#getInstructionText()
 	 */
+	@Override
 	public String getInstructionText() {
 		return fCDIInstruction.getInstruction();
 	}
@@ -56,6 +59,7 @@ public class AsmInstruction implements IAsmInstruction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IAsmInstruction#getOpcode()
 	 */
+	@Override
 	public String getOpcode() {
 		return fCDIInstruction.getOpcode();
 	}
@@ -63,6 +67,7 @@ public class AsmInstruction implements IAsmInstruction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IAsmInstruction#getArguments()
 	 */
+	@Override
 	public String getArguments() {
 		return fCDIInstruction.getArgs();
 	}
@@ -70,6 +75,7 @@ public class AsmInstruction implements IAsmInstruction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IAsmInstruction#getOffset()
 	 */
+	@Override
 	public long getOffset() {
 		return fCDIInstruction.getOffset();
 	}

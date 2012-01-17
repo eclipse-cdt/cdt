@@ -61,7 +61,8 @@ public class ServiceEventWaitor<V> {
 		fEventTypeClass = eventClass;
 		fEvent = null;
         Runnable runnable = new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
             	fSession.addServiceEventListener(ServiceEventWaitor.this, null);
             }
         };
@@ -79,6 +80,7 @@ public class ServiceEventWaitor<V> {
 		super.finalize();
 		if (fEventTypeClass != null) {
 			Runnable runnable = new Runnable() {
+				@Override
 				public void run() {
 					fSession.removeServiceEventListener(ServiceEventWaitor.this);
 				}

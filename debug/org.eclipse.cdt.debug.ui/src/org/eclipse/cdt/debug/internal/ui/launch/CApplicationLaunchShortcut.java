@@ -71,10 +71,12 @@ import org.eclipse.ui.dialogs.TwoPaneElementSelector;
 
 public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 
+	@Override
 	public void launch(IEditorPart editor, String mode) {
 		searchAndLaunch(new Object[] { editor.getEditorInput() }, mode);
 	}
 
+	@Override
 	public void launch(ISelection selection, String mode) {
 		if (selection instanceof IStructuredSelection) {
 			searchAndLaunch(((IStructuredSelection) selection).toArray(), mode);
@@ -253,6 +255,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 			 * <code>ILabelProvider</code> method returns the element's <code>toString</code>
 			 * string. Subclasses may override.
 			 */
+			@Override
 			public String getText(Object element) {
 				if (element == null) {
 					return ""; //$NON-NLS-1$
@@ -328,6 +331,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 	 */
 	protected IBinary chooseBinary(List<IBinary> binList, String mode) {
 		ILabelProvider programLabelProvider = new CElementLabelProvider() {
+			@Override
 			public String getText(Object element) {
 				if (element instanceof IBinary) {
 					IBinary bin = (IBinary)element;
@@ -340,6 +344,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 		};
 
 		ILabelProvider qualifierLabelProvider = new CElementLabelProvider() {
+			@Override
 			public String getText(Object element) {
 				if (element instanceof IBinary) {
 					IBinary bin = (IBinary)element;
@@ -394,6 +399,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 				final List<IBinary> results = new ArrayList<IBinary>();
 				ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
 				IRunnableWithProgress runnable = new IRunnableWithProgress() {
+					@Override
 					public void run(IProgressMonitor pm) throws InterruptedException {
 						int nElements = elements.length;
 						pm.beginTask("Looking for executables", nElements); //$NON-NLS-1$
@@ -453,18 +459,21 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 		}
 	}
 
+	@Override
 	public ILaunchConfiguration[] getLaunchConfigurations(ISelection selection) {
 		// This returns null so the platform will use the ILaunchShortcut behavior
 		// and get the configurations based on the project resource association.
 		return null;
 	}
 
+	@Override
 	public ILaunchConfiguration[] getLaunchConfigurations(IEditorPart editorpart) {
 		// This returns null so the platform will use the ILaunchShortcut behavior
 		// and get the configurations based on the project resource association.
 		return null;
 	}
 
+	@Override
 	public IResource getLaunchableResource(ISelection selection) {
 		// Take the selection and determine which project is intended to
 		// be used for the launch.
@@ -553,6 +562,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut2 {
 		return projects;
 	}
 
+	@Override
 	public IResource getLaunchableResource(IEditorPart editorpart) {
 		// This handles the case where the selection is text in an editor.
 		IEditorInput editorInput = editorpart.getEditorInput();

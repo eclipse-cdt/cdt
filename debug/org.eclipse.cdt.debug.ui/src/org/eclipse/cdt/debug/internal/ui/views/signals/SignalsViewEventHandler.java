@@ -37,6 +37,7 @@ public class SignalsViewEventHandler extends AbstractDebugEventHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandler#doHandleDebugEvents(org.eclipse.debug.core.DebugEvent[])
 	 */
+	@Override
 	protected void doHandleDebugEvents( DebugEvent[] events ) {
 		for( int i = 0; i < events.length; i++ ) {
 			DebugEvent event = events[i];

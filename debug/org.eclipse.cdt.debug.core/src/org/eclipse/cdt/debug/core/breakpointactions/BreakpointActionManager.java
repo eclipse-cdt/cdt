@@ -106,6 +106,7 @@ public class BreakpointActionManager {
 			final String[] actions = actionNames.split(","); //$NON-NLS-1$
 			if (actions.length > 0){
 				Job job = new Job("Execute breakpoint actions") { 
+					@Override
 					public IStatus run(final IProgressMonitor monitor) {
 						return doExecuteActions(breakpoint, context, actions, monitor);
 					}

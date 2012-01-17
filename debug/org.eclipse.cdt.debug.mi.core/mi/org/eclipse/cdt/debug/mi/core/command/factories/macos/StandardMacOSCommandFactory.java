@@ -31,6 +31,7 @@ public class StandardMacOSCommandFactory extends StandardCommandFactory {
 		super();
 	}
 
+	@Override
 	public String getWorkingDirectory(File cwd) {
 		return "--cd=" + '"' + cwd.getAbsolutePath() + '"'; //$NON-NLS-1$
 	}
@@ -42,34 +43,42 @@ public class StandardMacOSCommandFactory extends StandardCommandFactory {
 		super( miVersion );
 	}
 
+	@Override
 	public MIEnvironmentCD createMIEnvironmentCD(String pathdir) {
 		return new MacOSMIEnvironmentCD(getMIVersion(), pathdir);
 	}
 
+	@Override
 	public CLIPType createCLIPType(String name) {
 		return new MacOSCLIPtype(name);
 	}
 
+	@Override
 	public MIInfoSharedLibrary createMIInfoSharedLibrary() {
 		return new MIInfoSharedLibrary(getMIVersion());
 	}
 
+	@Override
 	public MIVarUpdate createMIVarUpdate() {
 		return new MacOSMIVarUpdate(getMIVersion());
 	}
 
+	@Override
 	public MIVarUpdate createMIVarUpdate(String name) {
 		return new MacOSMIVarUpdate(getMIVersion(), name);
 	}
 	
+	@Override
 	public CLIInfoProc createCLIInfoProc() {
 		return new MacOSCLIInfoPID();
 	}
 
+	@Override
 	public MIExecInterrupt createMIExecInterrupt() {
 		return new MIExecInterrupt(getMIVersion());
 	}
 
+	@Override
 	public CLIInfoThreads createCLIInfoThreads() {
 		return new MacOSCLIInfoThreads();
 	}

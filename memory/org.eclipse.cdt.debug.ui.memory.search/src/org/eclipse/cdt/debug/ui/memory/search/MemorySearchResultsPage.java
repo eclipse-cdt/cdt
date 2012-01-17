@@ -100,6 +100,7 @@ public class MemorySearchResultsPage extends Page implements ISearchResultPage, 
 		fPart = part;
 	}
 	
+	@Override
 	public void createControl(Composite parent) {
 		fViewerContainer = new Composite(parent, SWT.NULL);
 		fViewerContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -227,15 +228,19 @@ public class MemorySearchResultsPage extends Page implements ISearchResultPage, 
 		};
 	}
 	
+	@Override
 	public void dispose() {
 		fTreeViewer.getControl().dispose();
 		fViewerContainer.dispose();
 	}
 
+	@Override
 	public Control getControl() {
 		return fViewerContainer;
 	}
 
+	@Override
 	public void setActionBars(IActionBars actionBars) {}
+	@Override
 	public void setFocus() {}
 }

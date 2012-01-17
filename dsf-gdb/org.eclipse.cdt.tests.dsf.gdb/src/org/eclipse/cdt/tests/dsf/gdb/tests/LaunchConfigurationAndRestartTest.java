@@ -97,7 +97,8 @@ public class LaunchConfigurationAndRestartTest extends BaseTestCase {
  
         fSession = getGDBLaunch().getSession();
         Runnable runnable = new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
             	fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
             	
             	fExpService = fServicesTracker.getService(IExpressions.class);

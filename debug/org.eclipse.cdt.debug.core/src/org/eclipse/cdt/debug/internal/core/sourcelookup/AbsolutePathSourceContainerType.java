@@ -18,10 +18,12 @@ import org.eclipse.debug.core.sourcelookup.containers.AbstractSourceContainerTyp
 
 public class AbsolutePathSourceContainerType extends AbstractSourceContainerTypeDelegate {
 
+	@Override
 	public ISourceContainer createSourceContainer(String memento) throws CoreException {
 		return new AbsolutePathSourceContainer();
 	}
 
+	@Override
 	public String getMemento(ISourceContainer container) throws CoreException {
 		return "AbsolutePath"; //$NON-NLS-1$
 	}

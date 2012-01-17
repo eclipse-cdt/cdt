@@ -43,6 +43,7 @@ public class CRegisterDescriptor implements IRegisterDescriptor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IRegisterDescriptor#getName()
 	 */
+	@Override
 	public String getName() {
 		return fName;
 	}
@@ -50,6 +51,7 @@ public class CRegisterDescriptor implements IRegisterDescriptor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IRegisterDescriptor#getGroupName()
 	 */
+	@Override
 	public String getGroupName() {
 		return fGroupName;
 	}

@@ -76,7 +76,8 @@ class CBreakpointContextActionFilter implements IActionFilter {
 
     private static String[] EMPTY_IDENTIFIERS_ARRAY = new String[0];
     
-    public boolean testAttribute(Object target, String name, String value) {
+    @Override
+	public boolean testAttribute(Object target, String name, String value) {
         if (target instanceof CBreakpointContext) {
             if ("debugModelId".equals(name)) { //$NON-NLS-1$
                 String[] targetModelIds = getDebugModelIds( (CBreakpointContext)target );
@@ -120,7 +121,8 @@ class CBreakpointContextAdapterFactory implements IAdapterFactory {
 
     private static final IActionFilter fgActionFilter = new CBreakpointContextActionFilter();
     
-    public Object getAdapter(Object obj, Class adapterType) {
+    @Override
+	public Object getAdapter(Object obj, Class adapterType) {
         if (adapterType.isInstance( ((CBreakpointContext)obj).getBreakpoint() )) {
             return ((CBreakpointContext)obj).getBreakpoint();
         }
@@ -131,7 +133,8 @@ class CBreakpointContextAdapterFactory implements IAdapterFactory {
         return null;
     }
     
-    public Class[] getAdapterList() {
+    @Override
+	public Class[] getAdapterList() {
         return fgAdapterList;
     }
 }

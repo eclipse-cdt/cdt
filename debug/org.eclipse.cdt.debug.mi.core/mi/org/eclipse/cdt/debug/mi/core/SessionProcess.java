@@ -33,6 +33,7 @@ public class SessionProcess extends Process {
 	/**
 	 * @see java.lang.Process#destroy()
 	 */
+	@Override
 	public void destroy() {
 		session.terminate();
 	}
@@ -40,6 +41,7 @@ public class SessionProcess extends Process {
 	/**
 	 * @see java.lang.Process#exitValue()
 	 */
+	@Override
 	public int exitValue() {
 		return session.getGDBProcess().exitValue();
 	}
@@ -47,6 +49,7 @@ public class SessionProcess extends Process {
 	/**
 	 * @see java.lang.Process#getErrorStream()
 	 */
+	@Override
 	public InputStream getErrorStream() {
 		return session.getMILogStream();
 	}
@@ -54,6 +57,7 @@ public class SessionProcess extends Process {
 	/**
 	 * @see java.lang.Process#getInputStream()
 	 */
+	@Override
 	public InputStream getInputStream() {
 		return session.getMIConsoleStream();
 	}
@@ -61,10 +65,12 @@ public class SessionProcess extends Process {
 	/**
 	 * @see java.lang.Process#getOutputStream()
 	 */
+	@Override
 	public OutputStream getOutputStream() {
 		if (out == null) {
 			out = new OutputStream() {
 				StringBuffer buf = new StringBuffer();
+				@Override
 				public void write(int b) throws IOException {
 					buf.append((char)b);
 					if (b == '\n') {
@@ -113,6 +119,7 @@ public class SessionProcess extends Process {
 	/**
 	 * @see java.lang.Process#waitFor()
 	 */
+	@Override
 	public int waitFor() throws InterruptedException {
 		return session.getGDBProcess().waitFor();
 	}

@@ -38,6 +38,7 @@ class MacOSMIVarUpdateInfo extends MIVarUpdateInfo {
 		parse();
 	}
 	
+	@Override
 	public MIVarChange[] getMIVarChanges() {
 		return changeList;
 	}

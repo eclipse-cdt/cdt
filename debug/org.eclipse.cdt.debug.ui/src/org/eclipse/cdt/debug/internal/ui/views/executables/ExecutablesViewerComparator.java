@@ -30,12 +30,14 @@ class ExecutablesViewerComparator extends ViewerComparator {
 		this.columnOrder = columnOrder;
 	}
 
+	@Override
 	public int category(Object element) {
 		if (element instanceof ITranslationUnit || element instanceof Executable)
 			return 1;
 		return 0;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public int compare(Viewer viewer, Object e1, Object e2) {
 

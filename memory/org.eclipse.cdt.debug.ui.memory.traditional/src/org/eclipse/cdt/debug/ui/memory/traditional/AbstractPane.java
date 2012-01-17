@@ -786,7 +786,8 @@ public abstract class AbstractPane extends Canvas
 
     abstract protected int getCellCharacterCount();
 
-    public void setFont(Font font)
+    @Override
+	public void setFont(Font font)
     {
     	super.setFont(font);
     	fCharacterWidth = -1;

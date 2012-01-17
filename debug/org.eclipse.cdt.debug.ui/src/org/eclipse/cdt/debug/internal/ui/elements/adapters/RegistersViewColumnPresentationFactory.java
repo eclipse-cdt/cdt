@@ -21,7 +21,8 @@ public class RegistersViewColumnPresentationFactory implements IColumnPresentati
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory#createColumnPresentation(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.Object)
      */
-    public IColumnPresentation createColumnPresentation( IPresentationContext context, Object element ) {
+    @Override
+	public IColumnPresentation createColumnPresentation( IPresentationContext context, Object element ) {
         if ( context.getId().equals( IDebugUIConstants.ID_REGISTER_VIEW ) )
             return new RegistersViewColumnPresentation();
         return null;
@@ -30,7 +31,8 @@ public class RegistersViewColumnPresentationFactory implements IColumnPresentati
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory#getColumnPresentationId(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.Object)
      */
-    public String getColumnPresentationId( IPresentationContext context, Object element ) {
+    @Override
+	public String getColumnPresentationId( IPresentationContext context, Object element ) {
         if ( context.getId().equals( IDebugUIConstants.ID_REGISTER_VIEW ) )
             return RegistersViewColumnPresentation.ID;
         return null;

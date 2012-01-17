@@ -44,10 +44,12 @@ public class GlobalActionsList extends Composite {
 
 		table = new Table(this, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI);
 		table.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateButtons();
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				HandleEditButton();
 			}
@@ -92,6 +94,7 @@ public class GlobalActionsList extends Composite {
 		newButton = new Button(this, SWT.NONE);
 		newButton.setLayoutData(new GridData());
 		newButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 
 				try {
@@ -106,6 +109,7 @@ public class GlobalActionsList extends Composite {
 		editButton = new Button(this, SWT.NONE);
 		editButton.setText(Messages.getString("GlobalActionsList.5")); //$NON-NLS-1$
 		editButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 
 				HandleEditButton();

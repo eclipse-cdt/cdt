@@ -60,6 +60,7 @@ abstract public class AbstractToggleBreakpointAdapter implements IToggleBreakpoi
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#toggleLineBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void toggleLineBreakpoints( IWorkbenchPart part, ISelection selection ) throws CoreException {
 		String errorMessage = null;
 		if ( part instanceof ITextEditor ) {
@@ -109,6 +110,7 @@ abstract public class AbstractToggleBreakpointAdapter implements IToggleBreakpoi
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#canToggleLineBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public boolean canToggleLineBreakpoints( IWorkbenchPart part, ISelection selection ) {
 		return (selection instanceof ITextSelection);
 	}
@@ -116,6 +118,7 @@ abstract public class AbstractToggleBreakpointAdapter implements IToggleBreakpoi
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#toggleMethodBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void toggleMethodBreakpoints( IWorkbenchPart part, ISelection selection ) throws CoreException {
 		ICElement element = getCElementFromSelection( part, selection );
 		if ( element instanceof IFunction || element instanceof IMethod ) {
@@ -126,6 +129,7 @@ abstract public class AbstractToggleBreakpointAdapter implements IToggleBreakpoi
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#canToggleMethodBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public boolean canToggleMethodBreakpoints( IWorkbenchPart part, ISelection selection ) {
 		ICElement element = getCElementFromSelection( part, selection );
 		return (element instanceof IFunction || element instanceof IMethod);
@@ -184,6 +188,7 @@ abstract public class AbstractToggleBreakpointAdapter implements IToggleBreakpoi
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#toggleWatchpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void toggleWatchpoints( IWorkbenchPart part, ISelection selection ) throws CoreException {
 		IVariable variable = getVariableFromSelection( part, selection );
 		if ( variable != null ) {
@@ -194,6 +199,7 @@ abstract public class AbstractToggleBreakpointAdapter implements IToggleBreakpoi
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#canToggleWatchpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public boolean canToggleWatchpoints( IWorkbenchPart part, ISelection selection ) {
 		return getVariableFromSelection( part, selection ) != null;
 	}
@@ -201,6 +207,7 @@ abstract public class AbstractToggleBreakpointAdapter implements IToggleBreakpoi
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension#canToggleBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public boolean canToggleBreakpoints( IWorkbenchPart part, ISelection selection ) {
 		return ( canToggleLineBreakpoints( part, selection ) 
 				 || canToggleWatchpoints( part, selection ) 
@@ -210,6 +217,7 @@ abstract public class AbstractToggleBreakpointAdapter implements IToggleBreakpoi
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension#toggleBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void toggleBreakpoints( IWorkbenchPart part, ISelection selection ) throws CoreException {
 		if ( canToggleLineBreakpoints( part, selection ) ) {
 			toggleLineBreakpoints( part, selection );

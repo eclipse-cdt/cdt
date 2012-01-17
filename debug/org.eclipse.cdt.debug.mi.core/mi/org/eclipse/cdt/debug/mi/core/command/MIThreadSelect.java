@@ -34,6 +34,7 @@ public class MIThreadSelect extends MICommand
 		return (MIThreadSelectInfo)getMIInfo();
 	}
 
+	@Override
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

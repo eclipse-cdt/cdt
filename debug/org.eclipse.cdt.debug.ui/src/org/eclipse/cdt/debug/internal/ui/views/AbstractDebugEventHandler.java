@@ -61,11 +61,13 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	/**
 	 * @see IDebugEventSetListener#handleDebugEvents(DebugEvent[])
 	 */
+	@Override
 	public void handleDebugEvents(final DebugEvent[] events) {
 		if (!isAvailable()) {
 			return;
 		}
 		Runnable r= new Runnable() {
+			@Override
 			public void run() {
 				if (isAvailable()) {
 					if (isViewVisible()) {

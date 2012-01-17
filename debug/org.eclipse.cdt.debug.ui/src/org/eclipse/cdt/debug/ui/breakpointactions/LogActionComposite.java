@@ -43,6 +43,7 @@ public class LogActionComposite extends Composite {
 
 		expressionButton = new Button(this, SWT.CHECK);
 		expressionButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(final SelectionEvent e) {
 			}
 		});
@@ -53,10 +54,12 @@ public class LogActionComposite extends Composite {
 		expressionButton.setSelection(this.logActionPage.getLogAction().isEvaluateExpression());
 	}
 
+	@Override
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components
 	}
 
+	@Override
 	public void dispose() {
 		super.dispose();
 	}

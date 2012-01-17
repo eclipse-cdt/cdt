@@ -113,6 +113,7 @@ public class NumberFormatsContribution extends CompoundContributionItem implemen
 		return items;
 	}
 
+	@Override
 	public void initialize(IServiceLocator serviceLocator) {
 		fServiceLocator = serviceLocator;
 	}

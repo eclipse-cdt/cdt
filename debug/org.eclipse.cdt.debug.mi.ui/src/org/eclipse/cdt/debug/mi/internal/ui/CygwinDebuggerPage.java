@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.TabFolder;
  */
 public class CygwinDebuggerPage extends GDBDebuggerPage {
 
+	@Override
 	public String getName() {
 		return MIUIMessages.getString( "CygwinDebuggerPage.0" ); //$NON-NLS-1$
 	}
@@ -24,6 +25,7 @@ public class CygwinDebuggerPage extends GDBDebuggerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.internal.ui.GDBDebuggerPage#createTabs(org.eclipse.swt.widgets.TabFolder)
 	 */
+	@Override
 	public void createTabs( TabFolder tabFolder ) {
 		createMainTab( tabFolder );
 	}

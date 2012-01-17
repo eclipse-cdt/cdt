@@ -33,6 +33,7 @@ public class RemoteCDebuggerTab extends CDebuggerTab {
 		super(false);
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI
@@ -48,6 +49,7 @@ public class RemoteCDebuggerTab extends CDebuggerTab {
 		super(attachMode);
 	}
 
+	@Override
 	protected void loadDebuggerComboBox(ILaunchConfiguration config,
 			String selection) {
 		ICDebugConfiguration[] debugConfigs = CDebugCorePlugin.getDefault()

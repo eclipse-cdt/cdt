@@ -58,6 +58,7 @@ public class AddGlobalsActionDelegate extends ActionDelegate implements IViewAct
 			super( parentShell, input, contentProvider, labelProvider, message );
 		}
 
+		@Override
 		protected Control createDialogArea( Composite parent ) {
 			Control da = super.createDialogArea( parent );
 			getViewer().setSorter( new ViewerSorter() );
@@ -80,6 +81,7 @@ public class AddGlobalsActionDelegate extends ActionDelegate implements IViewAct
 	 * 
 	 * @see org.eclipse.ui.IViewActionDelegate#init(IViewPart)
 	 */
+	@Override
 	public void init( IViewPart view ) {
 		fView = view;
 		view.getSite().getPage().addPartListener( this );
@@ -91,6 +93,7 @@ public class AddGlobalsActionDelegate extends ActionDelegate implements IViewAct
 	 * 
 	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
 	 */
+	@Override
 	public void selectionChanged( IWorkbenchPart part, ISelection selection ) {
 		if ( part != null && part.getSite().getId().equals( IDebugUIConstants.ID_DEBUG_VIEW ) ) {
 			if ( selection instanceof IStructuredSelection ) {
@@ -108,12 +111,14 @@ public class AddGlobalsActionDelegate extends ActionDelegate implements IViewAct
 	 * 
 	 * @see org.eclipse.ui.IActionDelegate#run(IAction)
 	 */
+	@Override
 	public void run( IAction action ) {
 		final IStructuredSelection selection = getSelection();
 		if ( selection == null || selection.size() != 1 )
 			return;
 		BusyIndicator.showWhile( Display.getCurrent(), new Runnable() {
 
+			@Override
 			public void run() {
 				try {
 					doAction( selection.getFirstElement() );
@@ -144,6 +149,7 @@ public class AddGlobalsActionDelegate extends ActionDelegate implements IViewAct
 	 * 
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
+	@Override
 	public void selectionChanged( IAction action, ISelection selection ) {
 		setAction( action );
 		if ( getView() != null ) {
@@ -162,6 +168,7 @@ public class AddGlobalsActionDelegate extends ActionDelegate implements IViewAct
 	 * 
 	 * @see org.eclipse.ui.IPartListener#partActivated(IWorkbenchPart)
 	 */
+	@Override
 	public void partActivated( IWorkbenchPart part ) {
 	}
 
@@ -170,6 +177,7 @@ public class AddGlobalsActionDelegate extends ActionDelegate implements IViewAct
 	 * 
 	 * @see org.eclipse.ui.IPartListener#partBroughtToTop(IWorkbenchPart)
 	 */
+	@Override
 	public void partBroughtToTop( IWorkbenchPart part ) {
 	}
 
@@ -178,6 +186,7 @@ public class AddGlobalsActionDelegate extends ActionDelegate implements IViewAct
 	 * 
 	 * @see org.eclipse.ui.IPartListener#partClosed(IWorkbenchPart)
 	 */
+	@Override
 	public void partClosed( IWorkbenchPart part ) {
 		if ( part.equals( getView() ) ) {
 			dispose();
@@ -189,6 +198,7 @@ public class AddGlobalsActionDelegate extends ActionDelegate implements IViewAct
 	 * 
 	 * @see org.eclipse.ui.IPartListener#partDeactivated(IWorkbenchPart)
 	 */
+	@Override
 	public void partDeactivated( IWorkbenchPart part ) {
 	}
 
@@ -197,6 +207,7 @@ public class AddGlobalsActionDelegate extends ActionDelegate implements IViewAct
 	 * 
 	 * @see org.eclipse.ui.IPartListener#partOpened(IWorkbenchPart)
 	 */
+	@Override
 	public void partOpened( IWorkbenchPart part ) {
 	}
 
@@ -224,6 +235,7 @@ public class AddGlobalsActionDelegate extends ActionDelegate implements IViewAct
 		return fSelection;
 	}
 
+	@Override
 	public void dispose() {
 		if ( getView() != null ) {
 			getView().getViewSite().getPage().removeSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
@@ -242,17 +254,21 @@ public class AddGlobalsActionDelegate extends ActionDelegate implements IViewAct
 	private SortedListSelectionDialog createDialog() {
 		return new SortedListSelectionDialog( getView().getSite().getShell(), fGlobals, new IStructuredContentProvider() {
 
+			@Override
 			public void inputChanged( Viewer viewer, Object oldInput, Object newInput ) {
 			}
 
+			@Override
 			public void dispose() {
 			}
 
+			@Override
 			public Object[] getElements( Object parent ) {
 				return getGlobals();
 			}
 		}, new LabelProvider() {
 
+			@Override
 			public String getText( Object element ) {
 				if ( element instanceof IGlobalVariableDescriptor ) {
 					String path = ""; //$NON-NLS-1$
@@ -313,6 +329,7 @@ public class AddGlobalsActionDelegate extends ActionDelegate implements IViewAct
 	 * 
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void init( IAction action ) {
 		super.init( action );
 		Object element = DebugUITools.getDebugContext();

@@ -45,6 +45,7 @@ public class DebugConfiguration implements ICDebugConfiguration {
 		return fElement;
 	}
 
+	@Override
 	public ICDebugger getDebugger() throws CoreException {
 		Object debugger = getConfigurationElement().createExecutableExtension("class"); //$NON-NLS-1$
 		if (debugger instanceof ICDebugger) {
@@ -53,6 +54,7 @@ public class DebugConfiguration implements ICDebugConfiguration {
 		throw new CoreException(new Status(IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), -1, InternalDebugCoreMessages.getString("DebugConfiguration.0"), null)); //$NON-NLS-1$
 	}
 
+	@Override
 	public ICDIDebugger createDebugger() throws CoreException {
 		Object debugger = getConfigurationElement().createExecutableExtension("class"); //$NON-NLS-1$
 		if (debugger instanceof ICDIDebugger) {
@@ -61,15 +63,18 @@ public class DebugConfiguration implements ICDebugConfiguration {
 		return new CDebugAdapter((ICDebugger)debugger);
 	}
 
+	@Override
 	public String getName() {
 		String name = getConfigurationElement().getAttribute("name"); //$NON-NLS-1$
 		return name != null ? name : ""; //$NON-NLS-1$
 	}
 
+	@Override
 	public String getID() {
 		return getConfigurationElement().getAttribute("id"); //$NON-NLS-1$
 	}
 
+	@Override
 	public String getPlatform() {
 		String platform = getConfigurationElement().getAttribute("platform"); //$NON-NLS-1$
 		if (platform == null) {
@@ -78,18 +83,22 @@ public class DebugConfiguration implements ICDebugConfiguration {
 		return platform;
 	}
 
+	@Override
 	public String[] getCPUList() {
 		return (String[]) getCPUs().toArray(new String[0]);
 	}
 
+	@Override
 	public String[] getModeList() {
 		return (String[]) getModes().toArray(new String[0]);
 	}
 
+	@Override
 	public boolean supportsMode(String mode) {
 		return getModes().contains(mode);
 	}
 
+	@Override
 	public boolean supportsCPU(String cpu) {
 		String nativeCPU = Platform.getOSArch();
 		boolean ret = false;
@@ -149,6 +158,7 @@ public class DebugConfiguration implements ICDebugConfiguration {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.ICDebugConfiguration#getCoreFileExtensions()
 	 */
+	@Override
 	public String[] getCoreFileExtensions() {
 		if (fCoreExt == null) {
 			List exts = new ArrayList();
@@ -166,6 +176,7 @@ public class DebugConfiguration implements ICDebugConfiguration {
 		return fCoreExt;
 	}
 	
+	@Override
 	public String[] getSupportedBuildConfigPatterns() {
 		IConfigurationElement[] patternElems = fElement.getChildren("buildIdPattern"); //$NON-NLS-1$
 		String[] patterns = new String[patternElems.length];

@@ -35,6 +35,7 @@ public class ReadOnlyFieldEditor extends FieldEditor implements ICBreakpointsUIC
 	/* (non-Javadoc)
 	 * Method declared on FieldEditor.
 	 */
+	@Override
 	protected void adjustForNumColumns(int numColumns) {
 		GridData gd = (GridData) textField.getLayoutData();
 		gd.horizontalSpan = numColumns - 1;
@@ -52,6 +53,7 @@ public class ReadOnlyFieldEditor extends FieldEditor implements ICBreakpointsUIC
 	 * but must call <code>super.doFillIntoGrid</code>.
 	 * </p>
 	 */
+	@Override
 	protected void doFillIntoGrid(Composite parent, int numColumns) {
 		getLabelControl(parent);
 
@@ -68,6 +70,7 @@ public class ReadOnlyFieldEditor extends FieldEditor implements ICBreakpointsUIC
 	/* (non-Javadoc)
 	 * Method declared on FieldEditor.
 	 */
+	@Override
 	protected void doLoad() {
 		if (textField != null) {
 			String value = getPreferenceStore().getString(getPreferenceName());
@@ -83,6 +86,7 @@ public class ReadOnlyFieldEditor extends FieldEditor implements ICBreakpointsUIC
 	/* (non-Javadoc)
 	 * Method declared on FieldEditor.
 	 */
+	@Override
 	protected void doLoadDefault() {
 		if (textField != null) {
 			String value = getPreferenceStore().getDefaultString(getPreferenceName());
@@ -93,6 +97,7 @@ public class ReadOnlyFieldEditor extends FieldEditor implements ICBreakpointsUIC
 	/* (non-Javadoc)
 	 * Method declared on FieldEditor.
 	 */
+	@Override
 	public int getNumberOfControls() {
 		return 2;
 	}
@@ -134,6 +139,7 @@ public class ReadOnlyFieldEditor extends FieldEditor implements ICBreakpointsUIC
 			textField = new Label(parent, SWT.WRAP);
 			textField.setFont(parent.getFont());
 			textField.addDisposeListener(new DisposeListener() {
+				@Override
 				public void widgetDisposed(DisposeEvent event) {
 					textField = null;
 				}
@@ -147,6 +153,7 @@ public class ReadOnlyFieldEditor extends FieldEditor implements ICBreakpointsUIC
 	/* (non-Javadoc)
 	 * Method declared on FieldEditor.
 	 */
+	@Override
 	public boolean isValid() {
 		return true;
 	}
@@ -154,6 +161,7 @@ public class ReadOnlyFieldEditor extends FieldEditor implements ICBreakpointsUIC
 	/* (non-Javadoc)
 	 * Method declared on FieldEditor.
 	 */
+	@Override
 	public void setFocus() {
 		if (textField != null) {
 			textField.setFocus();
@@ -163,6 +171,7 @@ public class ReadOnlyFieldEditor extends FieldEditor implements ICBreakpointsUIC
 	/*
 	 * @see FieldEditor.setEnabled(boolean,Composite).
 	 */
+	@Override
 	public void setEnabled(boolean enabled, Composite parent) {
 		super.setEnabled(enabled, parent);
 		getTextControl(parent).setEnabled(enabled);
@@ -174,10 +183,12 @@ public class ReadOnlyFieldEditor extends FieldEditor implements ICBreakpointsUIC
 		// nothing
 	}
 
+	@Override
 	public ICBreakpointsUIContribution getContribution() {
 		return contribution;
 	}
 
+	@Override
 	public void setContribution(ICBreakpointsUIContribution contribution) {
 		this.contribution = contribution;
 	}

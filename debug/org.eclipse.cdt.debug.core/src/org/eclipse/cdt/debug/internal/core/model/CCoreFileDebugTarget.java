@@ -21,6 +21,7 @@ import org.eclipse.debug.core.model.IProcess;
  * A debug target for the postmortem debugging.
  * @deprecated
  */
+@Deprecated
 public class CCoreFileDebugTarget extends CDebugTarget {
 
 
@@ -42,6 +43,7 @@ public class CCoreFileDebugTarget extends CDebugTarget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICDebugTarget#isPostMortem()
 	 */
+	@Override
 	public boolean isPostMortem() {
 		return true;
 	}

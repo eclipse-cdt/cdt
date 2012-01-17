@@ -59,6 +59,7 @@ public class StandardExecutableImporter implements IExecutableImporter {
 	 * @see org.eclipse.cdt.debug.core.executables.IExecutableImporter#importExecutables(java.lang.String[],
 	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public boolean importExecutables(String[] fileNames, IProgressMonitor monitor) {
 		monitor.beginTask("Import Executables", fileNames.length); //$NON-NLS-1$
 
@@ -274,6 +275,7 @@ public class StandardExecutableImporter implements IExecutableImporter {
 			return false;
 	}
 
+	@Override
 	public int getPriority(String[] fileNames) {
 		return NORMAL_PRIORITY;
 	}

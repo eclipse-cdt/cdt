@@ -19,6 +19,7 @@ public class ExternalToolActionPage extends PlatformObject implements IBreakpoin
 	private ExternalToolAction externalToolAction;
 	private ExternalToolActionComposite runComposite;
 
+	@Override
 	public void actionDialogCanceled() {
 	}
 
@@ -26,10 +27,12 @@ public class ExternalToolActionPage extends PlatformObject implements IBreakpoin
 		return externalToolAction;
 	}
 
+	@Override
 	public void actionDialogOK() {
 		externalToolAction.setExternalToolName(runComposite.getLaunchConfigName());
 	}
 
+	@Override
 	public Composite createComposite(IBreakpointAction action, Composite composite, int style) {
 		externalToolAction = (ExternalToolAction) action;
 		runComposite = new ExternalToolActionComposite(composite, style, this);

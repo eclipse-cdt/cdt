@@ -28,7 +28,8 @@ import org.eclipse.debug.core.model.IDebugTarget;
  */
 public class CBreakpointFilterExtension implements ICBreakpointFilterExtension {
 
-    public void initialize(ICBreakpoint breakpoint) {
+    @Override
+	public void initialize(ICBreakpoint breakpoint) {
     }
     
     private Map fFilteredThreadsByTarget = new HashMap( 10 );
@@ -37,7 +38,8 @@ public class CBreakpointFilterExtension implements ICBreakpointFilterExtension {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.debug.core.model.ICBreakpoint#getTargetFilters()
      */
-    public ICDebugTarget[] getTargetFilters() throws CoreException {
+    @Override
+	public ICDebugTarget[] getTargetFilters() throws CoreException {
         Set set = fFilteredThreadsByTarget.keySet();
         return (ICDebugTarget[])set.toArray( new ICDebugTarget[set.size()] );
     }
@@ -45,7 +47,8 @@ public class CBreakpointFilterExtension implements ICBreakpointFilterExtension {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.debug.core.model.ICBreakpoint#getThreadFilters(org.eclipse.cdt.debug.core.model.ICDebugTarget)
      */
-    public ICThread[] getThreadFilters( ICDebugTarget target ) throws CoreException {
+    @Override
+	public ICThread[] getThreadFilters( ICDebugTarget target ) throws CoreException {
         Set set = (Set)fFilteredThreadsByTarget.get( target );
         return ( set != null ) ? (ICThread[])set.toArray( new ICThread[set.size()] ) : null;
     }
@@ -53,7 +56,8 @@ public class CBreakpointFilterExtension implements ICBreakpointFilterExtension {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.debug.core.model.ICBreakpoint#removeTargetFilter(org.eclipse.cdt.debug.core.model.ICDebugTarget)
      */
-    public void removeTargetFilter( ICDebugTarget target ) throws CoreException {
+    @Override
+	public void removeTargetFilter( ICDebugTarget target ) throws CoreException {
         if ( fFilteredThreadsByTarget.containsKey( target ) ) {
             fFilteredThreadsByTarget.remove( target );
         }
@@ -62,7 +66,8 @@ public class CBreakpointFilterExtension implements ICBreakpointFilterExtension {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.debug.core.model.ICBreakpoint#removeThreadFilters(org.eclipse.cdt.debug.core.model.ICThread[])
      */
-    public void removeThreadFilters( ICThread[] threads ) throws CoreException {
+    @Override
+	public void removeThreadFilters( ICThread[] threads ) throws CoreException {
         if ( threads != null && threads.length > 0 ) {
             IDebugTarget target = threads[0].getDebugTarget();
             if ( fFilteredThreadsByTarget.containsKey( target ) ) {
@@ -80,14 +85,16 @@ public class CBreakpointFilterExtension implements ICBreakpointFilterExtension {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.debug.core.model.ICBreakpoint#setTargetFilter(org.eclipse.cdt.debug.core.model.ICDebugTarget)
      */
-    public void setTargetFilter( ICDebugTarget target ) throws CoreException {
+    @Override
+	public void setTargetFilter( ICDebugTarget target ) throws CoreException {
         fFilteredThreadsByTarget.put( target, null );
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.debug.core.model.ICBreakpoint#setThreadFilters(org.eclipse.cdt.debug.core.model.ICThread[])
      */
-    public void setThreadFilters( ICThread[] threads ) throws CoreException {
+    @Override
+	public void setThreadFilters( ICThread[] threads ) throws CoreException {
         if ( threads != null && threads.length > 0 ) {
             fFilteredThreadsByTarget.put( threads[0].getDebugTarget(), new HashSet( Arrays.asList( threads ) ) );
         }

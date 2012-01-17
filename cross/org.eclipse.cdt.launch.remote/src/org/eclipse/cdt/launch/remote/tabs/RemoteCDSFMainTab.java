@@ -22,7 +22,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.launch.remote.tabs;
 
-import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.dsf.gdb.internal.ui.launching.CMainTab;
 import org.eclipse.cdt.internal.launch.remote.Messages;
 import org.eclipse.cdt.launch.remote.IRemoteConnectionConfigurationConstants;
@@ -127,6 +126,7 @@ public class RemoteCDSFMainTab extends CMainTab {
 	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid
 	 */
+	@Override
 	public boolean isValid(ILaunchConfiguration config) {
 		boolean retVal = super.isValid(config);
 		if (retVal == true) {
@@ -184,6 +184,7 @@ public class RemoteCDSFMainTab extends CMainTab {
 				Messages.RemoteCMainTab_New, null);
 		newRemoteConnectionButton.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				handleNewRemoteConnectionSelected();
 				updateLaunchConfigurationDialog();
@@ -196,6 +197,7 @@ public class RemoteCDSFMainTab extends CMainTab {
 		remoteConnectionPropertiesButton
 				.addSelectionListener(new SelectionAdapter() {
 
+					@Override
 					public void widgetSelected(SelectionEvent evt) {
 						handleRemoteConnectionPropertiesSelected();
 					}
@@ -239,6 +241,7 @@ public class RemoteCDSFMainTab extends CMainTab {
 				Messages.RemoteCMainTab_Remote_Path_Browse_Button, null);
 		remoteBrowseButton.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				handleRemoteBrowseSelected();
 				updateLaunchConfigurationDialog();
@@ -281,6 +284,7 @@ public class RemoteCDSFMainTab extends CMainTab {
 				SKIP_DOWNLOAD_BUTTON_TEXT);
 		skipDownloadButton.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				updateLaunchConfigurationDialog();
 			}
@@ -340,6 +344,7 @@ public class RemoteCDSFMainTab extends CMainTab {
 				fbLocalHost = fHost.getSystemType().isLocal();
 			}
 
+			@Override
 			protected Control createDialogArea(Composite parent) {
 				// create composite
 				Composite composite = (Composite) super
@@ -385,6 +390,7 @@ public class RemoteCDSFMainTab extends CMainTab {
 				return composite;
 			}
 
+			@Override
 			protected void buttonPressed(int buttonId) {
 				if (!fbLocalHost && (buttonId == IDialogConstants.OK_ID)) {
 					IPropertySet propertySet = fHost
@@ -646,6 +652,7 @@ public class RemoteCDSFMainTab extends CMainTab {
 	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply
 	 */
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 
 		int currentSelection = connectionCombo.getSelectionIndex();

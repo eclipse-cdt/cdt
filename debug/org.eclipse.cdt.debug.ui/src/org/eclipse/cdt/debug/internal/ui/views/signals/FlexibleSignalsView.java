@@ -59,6 +59,7 @@ public class FlexibleSignalsView extends AbstractDebugView implements IViewerUpd
 	 * resolved.
 	 */
 	private IViewerInputRequestor fRequester = new IViewerInputRequestor() {
+		@Override
 		public void viewerInputComplete(IViewerInputUpdate update) {
 			if (!update.isCanceled()) {
 			    viewerInputUpdateComplete(update);
@@ -96,6 +97,7 @@ public class FlexibleSignalsView extends AbstractDebugView implements IViewerUpd
 		
 		variablesViewer.getPresentationContext().addPropertyChangeListener(
 				new IPropertyChangeListener() {
+					@Override
 					public void propertyChange(PropertyChangeEvent event) {
 						if (IPresentationContext.PROPERTY_COLUMNS.equals(event.getProperty())) {
 							IAction action = getAction("ShowTypeNames"); //$NON-NLS-1$
@@ -173,6 +175,7 @@ public class FlexibleSignalsView extends AbstractDebugView implements IViewerUpd
 	/*
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener#viewerUpdatesBegin()
 	 */
+	@Override
 	public void viewerUpdatesBegin() {
         IWorkbenchSiteProgressService progressService = 
             (IWorkbenchSiteProgressService)getSite().getAdapter(IWorkbenchSiteProgressService.class);
@@ -184,6 +187,7 @@ public class FlexibleSignalsView extends AbstractDebugView implements IViewerUpd
 	/*
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener#viewerUpdatesComplete()
 	 */
+	@Override
 	public void viewerUpdatesComplete() {
         IWorkbenchSiteProgressService progressService = 
             (IWorkbenchSiteProgressService)getSite().getAdapter(IWorkbenchSiteProgressService.class);
@@ -195,12 +199,14 @@ public class FlexibleSignalsView extends AbstractDebugView implements IViewerUpd
 	/*
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener#updateStarted(org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate)
 	 */
+	@Override
 	public void updateStarted(IViewerUpdate update) {
 	}
 
 	/*
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener#updateComplete(org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate)
 	 */
+	@Override
 	public void updateComplete(IViewerUpdate update) {
 		IStatus status = update.getStatus();
 		if (!update.isCanceled()) {
@@ -215,6 +221,7 @@ public class FlexibleSignalsView extends AbstractDebugView implements IViewerUpd
 	/*
 	 * @see org.eclipse.debug.ui.contexts.IDebugContextListener#debugContextChanged(org.eclipse.debug.ui.contexts.DebugContextEvent)
 	 */
+	@Override
 	public void debugContextChanged(DebugContextEvent event) {
 		if ((event.getFlags() & DebugContextEvent.ACTIVATED) > 0) {
 			contextActivated(event.getContext());
@@ -238,6 +245,7 @@ public class FlexibleSignalsView extends AbstractDebugView implements IViewerUpd
 	/*
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener#modelChanged(org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta, org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy)
 	 */
+	@Override
 	public void modelChanged(IModelDelta delta, IModelProxy proxy) {
 	}
 

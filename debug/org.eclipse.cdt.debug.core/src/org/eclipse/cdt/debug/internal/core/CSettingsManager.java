@@ -105,6 +105,7 @@ public class CSettingsManager {
 	 */
 	private Map fContentMap = new LinkedHashMap(MAX_ELEMENT_COUNT, 0.75f, true) {
 		private static final long serialVersionUID = 1;
+		@Override
 		protected boolean removeEldestEntry(Map.Entry eldest) {
 			return size() > MAX_ELEMENT_COUNT;
 		}

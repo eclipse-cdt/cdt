@@ -89,7 +89,8 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
         /* (non-Javadoc)
          * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
          */
-        protected IStatus run(IProgressMonitor monitor) {
+        @Override
+		protected IStatus run(IProgressMonitor monitor) {
 		    MultiStatus status= 
 				new MultiStatus(CDebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, getStatusMessage(), null);
 		    for (int i = 0; i < fElements.length; i++) {
@@ -125,6 +126,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
+	@Override
 	public void dispose(){
 		if (getWindow() != null) {
 			getWindow().getSelectionService().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
@@ -136,6 +138,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void init(IWorkbenchWindow window){
 		// listen to selection changes in the debug view
 		setWindow(window);
@@ -145,6 +148,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action){
 	    if (action.isEnabled()) {
 			IStructuredSelection selection = getSelection();
@@ -177,6 +181,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	    final MultiStatus status= 
 			new MultiStatus(CDebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, getStatusMessage(), null); 	    
 		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
+			@Override
 			public void run() {
 			    Iterator selectionIter = selection.iterator();
 				while (selectionIter.hasNext()) {
@@ -230,6 +235,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	 * 
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection s) {
 		boolean wasInitialized= initialize(action, s);		
 		if (!wasInitialized) {
@@ -284,6 +290,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
+	@Override
 	public void init(IViewPart view) {
 		fViewPart = view;
 	}
@@ -348,6 +355,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		update(getAction(), selection);
 	}
@@ -404,6 +412,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
 	 */
+	@Override
 	public void runWithEvent(IAction action, Event event) {
 		run(action);
 	}
@@ -411,6 +420,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void init(IAction action) {
 	}
 }

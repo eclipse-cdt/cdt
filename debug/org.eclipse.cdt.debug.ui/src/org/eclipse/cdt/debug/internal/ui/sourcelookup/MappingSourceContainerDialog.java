@@ -68,14 +68,16 @@ public class MappingSourceContainerDialog extends TitleAreaDialog {
         /* (non-Javadoc)
          * @see org.eclipse.jface.viewers.ICellModifier#canModify(java.lang.Object, java.lang.String)
          */
-        public boolean canModify(Object element, String property) {
+        @Override
+		public boolean canModify(Object element, String property) {
             return (CP_COMPILATION_PATH.equals(property) || CP_FILE_SYSTEM_PATH.equals(property));
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.jface.viewers.ICellModifier#getValue(java.lang.Object, java.lang.String)
          */
-        public Object getValue(Object element, String property) {
+        @Override
+		public Object getValue(Object element, String property) {
             if (element instanceof MapEntrySourceContainer) {
                 MapEntrySourceContainer entry = (MapEntrySourceContainer)element;
                 if (CP_COMPILATION_PATH.equals(property))
@@ -89,7 +91,8 @@ public class MappingSourceContainerDialog extends TitleAreaDialog {
         /* (non-Javadoc)
          * @see org.eclipse.jface.viewers.ICellModifier#modify(java.lang.Object, java.lang.String, java.lang.Object)
          */
-        public void modify(Object element, String property, Object value) {
+        @Override
+		public void modify(Object element, String property, Object value) {
             MapEntrySourceContainer entry = 
                     (element instanceof Item) ? 
                         (MapEntrySourceContainer)((Item)element).getData() 
@@ -131,7 +134,8 @@ public class MappingSourceContainerDialog extends TitleAreaDialog {
         /* (non-Javadoc)
          * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
          */
-        public Image getColumnImage(Object element, int columnIndex) {
+        @Override
+		public Image getColumnImage(Object element, int columnIndex) {
             if (element instanceof MapEntrySourceContainer && columnIndex == 0) {
                 return CDebugImages.get(CDebugImages.IMG_OBJS_PATH_MAP_ENTRY);
             }
@@ -141,7 +145,8 @@ public class MappingSourceContainerDialog extends TitleAreaDialog {
         /* (non-Javadoc)
          * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
          */
-        public String getColumnText(Object element, int columnIndex) {
+        @Override
+		public String getColumnText(Object element, int columnIndex) {
             if (element instanceof MapEntrySourceContainer) {
                 MapEntrySourceContainer entry = (MapEntrySourceContainer)element;
                 if (columnIndex == 0)
@@ -179,14 +184,16 @@ public class MappingSourceContainerDialog extends TitleAreaDialog {
             /* (non-Javadoc)
              * @see org.eclipse.swt.events.ControlListener#controlMoved(org.eclipse.swt.events.ControlEvent)
              */
-            public void controlMoved(ControlEvent e) {
+            @Override
+			public void controlMoved(ControlEvent e) {
                 MappingSourceContainerDialog.this.controlMoved(e);
             }
 
             /* (non-Javadoc)
              * @see org.eclipse.swt.events.ControlListener#controlResized(org.eclipse.swt.events.ControlEvent)
              */
-            public void controlResized(ControlEvent e) {
+            @Override
+			public void controlResized(ControlEvent e) {
                 MappingSourceContainerDialog.this.controlResized(e);
             }            
         };
@@ -294,7 +301,8 @@ public class MappingSourceContainerDialog extends TitleAreaDialog {
             /* (non-Javadoc)
              * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
              */
-            public void modifyText(ModifyEvent e) {
+            @Override
+			public void modifyText(ModifyEvent e) {
             }
         });
     }
@@ -335,7 +343,8 @@ public class MappingSourceContainerDialog extends TitleAreaDialog {
             /* (non-Javadoc)
              * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
              */
-            public Object[] getElements(Object inputElement) {
+            @Override
+			public Object[] getElements(Object inputElement) {
                 if (inputElement instanceof MappingSourceContainer) {
                     try {
                         return ((MappingSourceContainer)inputElement).getSourceContainers();
@@ -348,13 +357,15 @@ public class MappingSourceContainerDialog extends TitleAreaDialog {
             /* (non-Javadoc)
              * @see org.eclipse.jface.viewers.IContentProvider#dispose()
              */
-            public void dispose() {
+            @Override
+			public void dispose() {
             }
 
             /* (non-Javadoc)
              * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
              */
-            public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+            @Override
+			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
             }
         });
 
@@ -371,7 +382,8 @@ public class MappingSourceContainerDialog extends TitleAreaDialog {
             /* (non-Javadoc)
              * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
              */
-            public void selectionChanged(SelectionChangedEvent event) {
+            @Override
+			public void selectionChanged(SelectionChangedEvent event) {
                 updateViewerButtons();
             }
         });

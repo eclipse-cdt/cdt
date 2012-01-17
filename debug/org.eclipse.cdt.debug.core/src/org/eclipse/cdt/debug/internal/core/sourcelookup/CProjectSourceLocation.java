@@ -80,6 +80,7 @@ public class CProjectSourceLocation implements IProjectSourceLocation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation#findSourceElement(String)
 	 */
+	@Override
 	public Object findSourceElement(String name) throws CoreException {
 		Object result = null;
 		if (!isEmpty(name) && getProject() != null && !notFoundCacheLookup(name)) {
@@ -100,6 +101,7 @@ public class CProjectSourceLocation implements IProjectSourceLocation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(Class)
 	 */
+	@Override
 	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
 		if (adapter.equals(ICSourceLocation.class))
 			return this;
@@ -124,6 +126,7 @@ public class CProjectSourceLocation implements IProjectSourceLocation {
 	 * 
 	 * @return project
 	 */
+	@Override
 	public IProject getProject() {
 		return fProject;
 	}
@@ -190,6 +193,7 @@ public class CProjectSourceLocation implements IProjectSourceLocation {
 		fNotFoundCache.add(name);
 	}
 
+	@Override
 	public void dispose() {
 		fCache.clear();
 		fNotFoundCache.clear();
@@ -198,6 +202,7 @@ public class CProjectSourceLocation implements IProjectSourceLocation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation#getMemento()
 	 */
+	@Override
 	public String getMemento() throws CoreException {
         Document document = null;
         Throwable ex = null;
@@ -224,6 +229,7 @@ public class CProjectSourceLocation implements IProjectSourceLocation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation#initializeFrom(java.lang.String)
 	 */
+	@Override
 	public void initializeFrom(String memento) throws CoreException {
 		Exception ex = null;
 		try {
@@ -271,6 +277,7 @@ public class CProjectSourceLocation implements IProjectSourceLocation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.IProjectSourceLocation#isGenerated()
 	 */
+	@Override
 	public boolean isGeneric() {
 		return fGenerated;
 	}
@@ -282,6 +289,7 @@ public class CProjectSourceLocation implements IProjectSourceLocation {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IProjectSourceLocation && getProject() != null)
 			return getProject().equals(((IProjectSourceLocation) obj).getProject());
@@ -295,6 +303,7 @@ public class CProjectSourceLocation implements IProjectSourceLocation {
 			try {
 				getProject().accept(
 						new IResourceProxyVisitor() {
+							@Override
 							public boolean visit(IResourceProxy proxy) throws CoreException {
 								switch (proxy.getType()) {
 									case IResource.FILE:
@@ -326,6 +335,7 @@ public class CProjectSourceLocation implements IProjectSourceLocation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation#searchForDuplicateFiles()
 	 */
+	@Override
 	public boolean searchForDuplicateFiles() {
 		return fSearchForDuplicateFiles;
 	}
@@ -333,12 +343,14 @@ public class CProjectSourceLocation implements IProjectSourceLocation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation#setSearchForDuplicateFiles(boolean)
 	 */
+	@Override
 	public void setSearchForDuplicateFiles(boolean search) {
 		fCache.clear();
 		fNotFoundCache.clear();
 		fSearchForDuplicateFiles = search;
 	}
 
+	@Override
 	public String toString() {
 		return getProject() != null ? fProject.toString() : ""; //$NON-NLS-1$
 	}

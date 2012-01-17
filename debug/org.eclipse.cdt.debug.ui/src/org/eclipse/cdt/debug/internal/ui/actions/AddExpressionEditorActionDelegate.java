@@ -42,6 +42,7 @@ public class AddExpressionEditorActionDelegate extends ActionDelegate implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
 	 */
+	@Override
 	public void setActiveEditor( IAction action, IEditorPart targetEditor ) {
 		setEditorPart( targetEditor );
 	}

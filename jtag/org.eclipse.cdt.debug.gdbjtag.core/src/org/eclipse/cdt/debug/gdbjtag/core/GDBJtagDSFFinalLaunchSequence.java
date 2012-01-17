@@ -292,7 +292,8 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
          * Tell GDB to automatically load or not the shared library symbols
          */
         new Step() { 
-            public void execute(RequestMonitor requestMonitor) {
+            @Override
+			public void execute(RequestMonitor requestMonitor) {
         		try {
         			boolean autolib = fLaunch.getLaunchConfiguration().getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB,
         					                                                        IGDBLaunchConfigurationConstants.DEBUGGER_AUTO_SOLIB_DEFAULT);
@@ -575,7 +576,7 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
 							}
 						}
 						else {
-							imageFileName = config.getAttribute(IGDBJtagConstants.ATTR_IMAGE_FILE_NAME, IGDBJtagConstants.DEFAULT_IMAGE_FILE_NAME); //$NON-NLS-1$
+							imageFileName = config.getAttribute(IGDBJtagConstants.ATTR_IMAGE_FILE_NAME, IGDBJtagConstants.DEFAULT_IMAGE_FILE_NAME); 
 							if (imageFileName.length() > 0) {
 								imageFileName = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(imageFileName);
 							} else {
@@ -594,7 +595,7 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
 
 						String imageOffset = config.getAttribute(IGDBJtagConstants.ATTR_IMAGE_OFFSET, IGDBJtagConstants.DEFAULT_IMAGE_OFFSET);
 						if (imageOffset.length() > 0) {
-							imageOffset = (imageFileName.endsWith(".elf")) ? "" : "0x" + config.getAttribute(IGDBJtagConstants.ATTR_IMAGE_OFFSET, IGDBJtagConstants.DEFAULT_IMAGE_OFFSET); //$NON-NLS-2$ //$NON-NLS-4$					
+							imageOffset = (imageFileName.endsWith(".elf")) ? "" : "0x" + config.getAttribute(IGDBJtagConstants.ATTR_IMAGE_OFFSET, IGDBJtagConstants.DEFAULT_IMAGE_OFFSET); //$NON-NLS-2$ 
 						}
 						List<String> commands = new ArrayList<String>();
 						fGdbJtagDevice.doLoadImage(imageFileName, imageOffset, commands);
@@ -633,7 +634,7 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
 				ILaunchConfiguration config = fLaunch.getLaunchConfiguration();
 				try {
 					if (config.getAttribute(IGDBJtagConstants.ATTR_SET_PC_REGISTER, IGDBJtagConstants.DEFAULT_SET_PC_REGISTER)) {
-						String pcRegister = config.getAttribute(IGDBJtagConstants.ATTR_PC_REGISTER, config.getAttribute(IGDBJtagConstants.ATTR_IMAGE_OFFSET, IGDBJtagConstants.DEFAULT_PC_REGISTER)); //$NON-NLS-1$
+						String pcRegister = config.getAttribute(IGDBJtagConstants.ATTR_PC_REGISTER, config.getAttribute(IGDBJtagConstants.ATTR_IMAGE_OFFSET, IGDBJtagConstants.DEFAULT_PC_REGISTER)); 
 						List<String> commands = new ArrayList<String>();
 						fGdbJtagDevice.doSetPC(pcRegister, commands);
 						queueCommands(commands, rm);								
@@ -654,7 +655,7 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
 				ILaunchConfiguration config = fLaunch.getLaunchConfiguration();
 				try {
 					if (config.getAttribute(IGDBJtagConstants.ATTR_SET_STOP_AT, IGDBJtagConstants.DEFAULT_SET_STOP_AT)) {
-						String stopAt = config.getAttribute(IGDBJtagConstants.ATTR_STOP_AT, IGDBJtagConstants.DEFAULT_STOP_AT); //$NON-NLS-1$
+						String stopAt = config.getAttribute(IGDBJtagConstants.ATTR_STOP_AT, IGDBJtagConstants.DEFAULT_STOP_AT); 
 						List<String> commands = new ArrayList<String>();
 						fGdbJtagDevice.doStopAt(stopAt, commands);
 						queueCommands(commands, rm);								
@@ -695,7 +696,7 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
 			public void execute(RequestMonitor rm) {
 				ILaunchConfiguration config = fLaunch.getLaunchConfiguration();
 				try {
-					String userCmd = config.getAttribute(IGDBJtagConstants.ATTR_RUN_COMMANDS, IGDBJtagConstants.DEFAULT_RUN_COMMANDS); //$NON-NLS-1$
+					String userCmd = config.getAttribute(IGDBJtagConstants.ATTR_RUN_COMMANDS, IGDBJtagConstants.DEFAULT_RUN_COMMANDS); 
 					if (userCmd.length() > 0) {
 						userCmd = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(userCmd);
 						String[] commands = userCmd.split("\\r?\\n"); //$NON-NLS-1$
@@ -778,7 +779,7 @@ public class GDBJtagDSFFinalLaunchSequence extends Sequence {
 	private IGDBJtagDevice getGDBJtagDevice (ILaunchConfiguration config) 
 	throws CoreException, NullPointerException {
 		IGDBJtagDevice gdbJtagDevice = null;
-		String jtagDeviceName = config.getAttribute(IGDBJtagConstants.ATTR_JTAG_DEVICE, IGDBJtagConstants.DEFAULT_JTAG_DEVICE); //$NON-NLS-1$
+		String jtagDeviceName = config.getAttribute(IGDBJtagConstants.ATTR_JTAG_DEVICE, IGDBJtagConstants.DEFAULT_JTAG_DEVICE); 
 		GDBJtagDeviceContribution[] availableDevices = GDBJtagDeviceContributionFactory.getInstance().getGDBJtagDeviceContribution();
 		for (GDBJtagDeviceContribution availableDevice : availableDevices) {
 			if (jtagDeviceName.equals(availableDevice.getDeviceName())) {

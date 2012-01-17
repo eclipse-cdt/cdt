@@ -111,6 +111,7 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#findSourceElements(java.lang.String)
 	 */
+	@Override
 	public Object[] findSourceElements(String name) throws CoreException {
 		if (fProject == null)
 			return EMPTY;
@@ -174,6 +175,7 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getName()
 	 */
+	@Override
 	public String getName() {		
 		return fProject != null ? fProject.getName() : InternalSourceLookupMessages.CProjectSourceContainer_0;
 	}
@@ -181,6 +183,7 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj != null && obj instanceof CProjectSourceContainer) {
 			CProjectSourceContainer loc = (CProjectSourceContainer) obj;
@@ -192,10 +195,12 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return TYPE_ID.hashCode() * 31 + (fProject == null ? 0 : fProject.hashCode());
 	}
 
+	@Override
 	public boolean isComposite() {
 		return true;
 	}
@@ -203,6 +208,7 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.containers.CompositeSourceContainer#createSourceContainers()
 	 */
+	@Override
 	protected ISourceContainer[] createSourceContainers() throws CoreException {
 		if (fProject != null && fProject.isOpen()) {
 			if (isSearchReferencedProjects()) {
@@ -263,6 +269,7 @@ public class CProjectSourceContainer extends CompositeSourceContainer {
 		return fSearchReferencedProjects;
 	}
 
+	@Override
 	public ISourceContainerType getType() {
 		return getSourceContainerType(TYPE_ID);
 	}

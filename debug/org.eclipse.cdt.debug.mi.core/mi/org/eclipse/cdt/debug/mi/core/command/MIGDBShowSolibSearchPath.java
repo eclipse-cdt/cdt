@@ -31,6 +31,7 @@ public class MIGDBShowSolibSearchPath extends MIGDBShow {
 	public MIGDBShowSolibSearchPathInfo getMIGDBShowSolibSearchPathInfo() throws MIException {
 		return (MIGDBShowSolibSearchPathInfo)getMIInfo();
 	}
+	@Override
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

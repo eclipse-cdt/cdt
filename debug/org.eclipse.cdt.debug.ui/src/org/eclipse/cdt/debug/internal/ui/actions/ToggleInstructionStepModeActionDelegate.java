@@ -46,6 +46,7 @@ public class ToggleInstructionStepModeActionDelegate extends ActionDelegate impl
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
 	 */
+	@Override
 	public void propertyChange( PropertyChangeEvent event ) {
 		IAction action = getAction();
 		if ( action != null ) {
@@ -60,6 +61,7 @@ public class ToggleInstructionStepModeActionDelegate extends ActionDelegate impl
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
+	@Override
 	public void init( IViewPart view ) {
 		fView = view;
 	}

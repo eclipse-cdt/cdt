@@ -42,6 +42,7 @@ public class DisassemblyEditorInput implements IEditorInput {
 
 	public static final IEditorInput PENDING_EDITOR_INPUT = 
 		new DisassemblyEditorInput() {
+				@Override
 				public String getContents() {
 					return DisassemblyMessages.getString( "DisassemblyDocumentProvider.Pending_1" ); //$NON-NLS-1$
 				}
@@ -76,6 +77,7 @@ public class DisassemblyEditorInput implements IEditorInput {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorInput#exists()
 	 */
+	@Override
 	public boolean exists() {
 		return true;
 	}
@@ -83,6 +85,7 @@ public class DisassemblyEditorInput implements IEditorInput {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorInput#getImageDescriptor()
 	 */
+	@Override
 	public ImageDescriptor getImageDescriptor() {
 		return null;
 	}
@@ -90,6 +93,7 @@ public class DisassemblyEditorInput implements IEditorInput {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorInput#getName()
 	 */
+	@Override
 	public String getName() {
 		return null;
 	}
@@ -97,6 +101,7 @@ public class DisassemblyEditorInput implements IEditorInput {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorInput#getPersistable()
 	 */
+	@Override
 	public IPersistableElement getPersistable() {
 		return null;
 	}
@@ -104,6 +109,7 @@ public class DisassemblyEditorInput implements IEditorInput {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorInput#getToolTipText()
 	 */
+	@Override
 	public String getToolTipText() {
 		return null;
 	}
@@ -111,6 +117,7 @@ public class DisassemblyEditorInput implements IEditorInput {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter( Class adapter ) {
 		return null;
 	}

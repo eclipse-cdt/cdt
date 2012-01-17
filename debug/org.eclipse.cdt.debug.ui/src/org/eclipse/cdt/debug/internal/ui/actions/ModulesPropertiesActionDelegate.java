@@ -49,6 +49,7 @@ public class ModulesPropertiesActionDelegate extends ActionDelegate implements I
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
 	 */
+	@Override
 	public void setActivePart( IAction action, IWorkbenchPart targetPart ) {
 		fTargetPart = targetPart;
 	}
@@ -56,19 +57,24 @@ public class ModulesPropertiesActionDelegate extends ActionDelegate implements I
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run( IAction action ) {
 		PropertyDialogAction propertyAction = new PropertyDialogAction( getActivePart().getSite(), new ISelectionProvider() {
 
+			@Override
 			public void addSelectionChangedListener( ISelectionChangedListener listener ) {
 			}
 
+			@Override
 			public ISelection getSelection() {
 				return new StructuredSelection( getModule() );
 			}
 
+			@Override
 			public void removeSelectionChangedListener( ISelectionChangedListener listener ) {
 			}
 
+			@Override
 			public void setSelection( ISelection selection ) {
 			}
 		} );
@@ -78,6 +84,7 @@ public class ModulesPropertiesActionDelegate extends ActionDelegate implements I
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged( IAction action, ISelection selection ) {
 		if ( selection instanceof IStructuredSelection ) {
 			Object element = ((IStructuredSelection)selection).getFirstElement();

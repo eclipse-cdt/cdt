@@ -27,6 +27,7 @@ public abstract class AbstractDisassemblyBackend implements IDisassemblyBackend 
 	protected AbstractDisassemblyBackend() {
 	}
 
+	@Override
 	public void init(IDisassemblyPartCallback callback) {
 		assert callback != null;
 		fCallback = callback;
@@ -44,11 +45,13 @@ public abstract class AbstractDisassemblyBackend implements IDisassemblyBackend 
 	public abstract BigInteger evaluateAddressExpression(String expression, boolean suppressError);
 
 
+	@Override
 	public String evaluateRegister(String register) {
 		return null;
 	}
 
-    public String getHoverInfoData(AddressRangePosition pos, String ident) {
+    @Override
+	public String getHoverInfoData(AddressRangePosition pos, String ident) {
     	return null;
 	}
 
@@ -69,6 +72,7 @@ public abstract class AbstractDisassemblyBackend implements IDisassemblyBackend 
 	/**
 	 * Do nothing, sub-class can override to update PC annotation.
 	 */
+	@Override
 	public void updateExtendedPCAnnotation(IAnnotationModel model) {
 	}
 }

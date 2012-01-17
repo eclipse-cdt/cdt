@@ -40,6 +40,7 @@ public class MIRunningEvent extends MIEvent {
 		return type;
 	}
 
+	@Override
 	public String toString() {
 		return "Running"; //$NON-NLS-1$
 	}

@@ -46,6 +46,7 @@ public abstract class AbstractDebugEventHandlerView extends AbstractDebugView {
 	/**
 	 * @see IWorkbenchPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		if (getEventHandler() != null) {
@@ -56,6 +57,7 @@ public abstract class AbstractDebugEventHandlerView extends AbstractDebugView {
 	/**
 	 * @see org.eclipse.debug.ui.AbstractDebugView#becomesHidden()
 	 */
+	@Override
 	protected void becomesHidden() {
 		super.becomesHidden();
 		getEventHandler().viewBecomesHidden();
@@ -64,6 +66,7 @@ public abstract class AbstractDebugEventHandlerView extends AbstractDebugView {
 	/**
 	 * @see org.eclipse.debug.ui.AbstractDebugView#becomesVisible()
 	 */
+	@Override
 	protected void becomesVisible() {
 		super.becomesVisible();
 		getEventHandler().viewBecomesVisible();

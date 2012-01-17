@@ -57,6 +57,7 @@ public class MIWatchpointTriggerEvent extends MIStoppedEvent {
 	}
 
 
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("number=").append(number).append('\n'); //$NON-NLS-1$
@@ -71,6 +72,7 @@ public class MIWatchpointTriggerEvent extends MIStoppedEvent {
 		return buffer.toString();
 	}
 
+	@Override
 	void parse() {
 		MIResult[] results = null;
 		MIExecAsyncOutput exec = getMIExecAsyncOutput();

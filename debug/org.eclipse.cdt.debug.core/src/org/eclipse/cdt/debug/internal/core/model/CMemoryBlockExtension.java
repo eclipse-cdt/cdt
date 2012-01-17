@@ -145,6 +145,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemorySpace
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getExpression()
 	 */
+	@Override
 	public String getExpression() {
 		return fExpression;
 	}
@@ -152,6 +153,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemorySpace
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getBigBaseAddress()
 	 */
+	@Override
 	public BigInteger getBigBaseAddress() {
 		return fBaseAddress;
 	}
@@ -159,6 +161,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemorySpace
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getAddressSize()
 	 */
+	@Override
 	public int getAddressSize() {
 		return ((CDebugTarget)getDebugTarget()).getAddressFactory().createAddress( getBigBaseAddress() ).getSize();
 	}
@@ -166,6 +169,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemorySpace
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getAddressableSize()
 	 */
+	@Override
 	public int getAddressableSize() throws DebugException {
 		if (!fHaveWordSize)	{
 			synchronized (this)	{
@@ -194,6 +198,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemorySpace
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#supportBaseAddressModification()
 	 */
+	@Override
 	public boolean supportBaseAddressModification() {
 		return true;
 	}
@@ -201,6 +206,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemorySpace
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#setBaseAddress(java.math.BigInteger)
 	 */
+	@Override
 	public void setBaseAddress( BigInteger address ) throws DebugException {
 		BigInteger current = fBaseAddress;
 		if (current == address || (current != null && current.equals(address))) {
@@ -213,6 +219,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemorySpace
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getBytesFromOffset(java.math.BigInteger, long)
 	 */
+	@Override
 	public MemoryByte[] getBytesFromOffset( BigInteger unitOffset, long addressableUnits ) throws DebugException {
 		return getBytesFromAddress(unitOffset.add(getBigBaseAddress()) , addressableUnits);
 	}
@@ -220,6 +227,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemorySpace
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getBytesFromAddress(java.math.BigInteger, long)
 	 */
+	@Override
 	public MemoryByte[] getBytesFromAddress( BigInteger address, long length ) throws DebugException {
 		ICDIMemoryBlock cdiBlock = getCDIBlock();
 		if ( fBytes == null || cdiBlock == null || 
@@ -278,6 +286,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemorySpace
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getMemoryBlockRetrieval()
 	 */
+	@Override
 	public IMemoryBlockRetrieval getMemoryBlockRetrieval() {
 		return (IMemoryBlockRetrieval)getDebugTarget().getAdapter( IMemoryBlockRetrieval.class );
 	}
@@ -285,6 +294,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemorySpace
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvents(org.eclipse.cdt.debug.core.cdi.event.ICDIEvent[])
 	 */
+	@Override
 	public void handleDebugEvents( ICDIEvent[] events ) {
 		for( int i = 0; i < events.length; i++ ) {
 			ICDIEvent event = events[i];
@@ -307,6 +317,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemorySpace
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlock#getStartAddress()
 	 */
+	@Override
 	public long getStartAddress() {
 		return 0;
 	}
@@ -314,6 +325,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemorySpace
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlock#getLength()
 	 */
+	@Override
 	public long getLength() {
 		return 0;
 	}
@@ -321,6 +333,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemorySpace
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlock#getBytes()
 	 */
+	@Override
 	public byte[] getBytes() throws DebugException {
 		return null;
 	}
@@ -328,6 +341,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemorySpace
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlock#supportsValueModification()
 	 */
+	@Override
 	public boolean supportsValueModification() {
 		return true;
 	}
@@ -335,6 +349,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemorySpace
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlock#setValue(long, byte[])
 	 */
+	@Override
 	public void setValue( long offset, byte[] bytes ) throws DebugException {
 		setValue( BigInteger.valueOf( offset ), bytes );
 	}
@@ -342,6 +357,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemorySpace
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#setValue(java.math.BigInteger, byte[])
 	 */
+	@Override
 	public void setValue( BigInteger offset, byte[] bytes ) throws DebugException {
 		ICDIMemoryBlock block = getCDIBlock();
 		if ( block != null ) {
@@ -466,6 +482,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemorySpace
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#supportsChangeManagement()
 	 */
+	@Override
 	public boolean supportsChangeManagement() {
 		return true;
 	}
@@ -473,6 +490,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemorySpace
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#connect(java.lang.Object)
 	 */
+	@Override
 	public void connect( Object object ) {
 		// TODO Auto-generated method stub
 	}
@@ -480,6 +498,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemorySpace
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#disconnect(java.lang.Object)
 	 */
+	@Override
 	public void disconnect( Object object ) {
 		// TODO Auto-generated method stub
 	}
@@ -487,6 +506,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemorySpace
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getConnections()
 	 */
+	@Override
 	public Object[] getConnections() {
 		// TODO Auto-generated method stub
 		return new Object[0];
@@ -495,6 +515,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemorySpace
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#dispose()
 	 */
+	@Override
 	public void dispose() {
 		fChanges.clear();
 		ICDIMemoryBlock cdiBlock = getCDIBlock();
@@ -516,6 +537,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemorySpace
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@Override
 	@SuppressWarnings("rawtypes")
 	public Object getAdapter( Class adapter ) {
 		if ( IMemoryBlockRetrieval.class.equals( adapter ) )
@@ -526,6 +548,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemorySpace
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getMemoryBlockStartAddress()
 	 */
+	@Override
 	public BigInteger getMemoryBlockStartAddress() throws DebugException {
 		return null; // return null to mean not bounded ... according to the spec
 	}
@@ -533,6 +556,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemorySpace
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getMemoryBlockEndAddress()
 	 */
+	@Override
 	public BigInteger getMemoryBlockEndAddress() throws DebugException {
 		return null;// return null to mean not bounded ... according to the spec
 	}
@@ -540,6 +564,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemorySpace
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getBigLength()
 	 */
+	@Override
 	public BigInteger getBigLength() throws DebugException {
 		ICDIMemoryBlock block = getCDIBlock();
 		if ( block != null ) {
@@ -572,6 +597,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemorySpace
 	/**
 	 * @see org.eclipse.cdt.debug.core.model.provisional.IMemorySpaceAwareMemoryBlock#getMemorySpaceID()
 	 */
+	@Override
 	public String getMemorySpaceID() {
 		return fMemorySpaceID;
 	}

@@ -106,6 +106,7 @@ public class ThreadManager extends Manager { //implements ICDIThreadManager {
 		return new ThreadSet(cthreads, currentThreadId);
 	}
 
+	@Override
 	public void update(Target target) throws CDIException {
 	}
 

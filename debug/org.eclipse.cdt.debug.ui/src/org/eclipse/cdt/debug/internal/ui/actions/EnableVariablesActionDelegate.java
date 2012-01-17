@@ -64,6 +64,7 @@ public class EnableVariablesActionDelegate implements IViewActionDelegate {
 	 * 
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
+	@Override
 	public void init( IViewPart view ) {
 		setView( view );
 	}
@@ -73,6 +74,7 @@ public class EnableVariablesActionDelegate implements IViewActionDelegate {
 	 * 
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run( IAction action ) {
 		IStructuredSelection selection = getSelection();
 		final int size = selection.size();
@@ -82,6 +84,7 @@ public class EnableVariablesActionDelegate implements IViewActionDelegate {
 		final MultiStatus ms = new MultiStatus( CDebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, ActionMessages.getString( "EnableVariablesActionDelegate.0" ), null ); //$NON-NLS-1$
 		BusyIndicator.showWhile( Display.getCurrent(), new Runnable() {
 
+			@Override
 			public void run() {
 				while( it.hasNext() ) {
 					IEnableDisableTarget target = getEnableDisableTarget( it.next() );
@@ -111,6 +114,7 @@ public class EnableVariablesActionDelegate implements IViewActionDelegate {
 	 * 
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged( IAction action, ISelection selection ) {
 		setAction( action );
 		if ( !(selection instanceof IStructuredSelection) )

@@ -81,6 +81,7 @@ public interface IGDBJtagDevice {
 	 *             implementing this method (implementation should throw
 	 *             UnsupportedOperationException)
 	 */
+	@Deprecated
 	public void doRemote(String ip, int port, Collection<String> commands);
 
 	/**
@@ -158,6 +159,7 @@ public interface IGDBJtagDevice {
 	 *             implementing this method (implementation should throw
 	 *             UnsupportedOperationException)
 	 */
+	@Deprecated
 	public String getDefaultIpAddress();
 
 	/**
@@ -168,5 +170,6 @@ public interface IGDBJtagDevice {
 	 *             implementing this method (implementation should throw
 	 *             UnsupportedOperationException)
 	 */
+	@Deprecated
 	public String getDefaultPortNumber();
 }

@@ -78,6 +78,7 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 	
 	private static boolean cachedGdb64Exists;
 
+	@Override
 	public void createControl( Composite parent ) {
 		Composite comp = new Composite( parent, SWT.NONE );
 		comp.setLayout( new GridLayout() );
@@ -89,6 +90,7 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 		setControl( parent );
 	}
 
+	@Override
 	public void setDefaults( ILaunchConfigurationWorkingCopy configuration ) {
 		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, defaultGdbCommand(configuration));
 		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_GDB_INIT, IMILaunchConfigurationConstants.DEBUGGER_GDB_INIT_DEFAULT );
@@ -144,6 +146,7 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 	}
 
 	
+	@Override
 	public boolean isValid( ILaunchConfiguration launchConfig ) {
 		boolean valid = fGDBCommandText.getText().length() != 0;
 		if ( valid ) {
@@ -157,6 +160,7 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 		return valid;
 	}
 
+	@Override
 	public void initializeFrom( ILaunchConfiguration configuration ) {
 		setInitializing( true );
 		String gdbCommand = defaultGdbCommand(configuration);
@@ -180,6 +184,7 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 		fCommandFactoryDescriptors = MIPlugin.getDefault().getCommandFactoryManager().getDescriptors( debuggerID );
 		Arrays.sort( fCommandFactoryDescriptors, 
 				new Comparator() { 
+					@Override
 					public int compare( Object arg0, Object arg1 ) {
 						return ((CommandFactoryDescriptor)arg0).getName().compareTo( ((CommandFactoryDescriptor)arg1).getName() );
 					}
@@ -250,6 +255,7 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 		}
 		return result;
 	}
+	@Override
 	public void performApply( ILaunchConfigurationWorkingCopy configuration ) {
 		String str = fGDBCommandText.getText();
 		str.trim();
@@ -269,6 +275,7 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_DEBUGGER_FULLPATH_BREAKPOINTS, fBreakpointsFullPath.getSelection() );
 	}
 
+	@Override
 	public String getName() {
 		return MIUIMessages.getString( "StandardGDBDebuggerPage.1" ); //$NON-NLS-1$
 	}
@@ -276,6 +283,7 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 	/**
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getShell()
 	 */
+	@Override
 	protected Shell getShell() {
 		return super.getShell();
 	}
@@ -283,6 +291,7 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 	/**
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#updateLaunchConfigurationDialog()
 	 */
+	@Override
 	protected void updateLaunchConfigurationDialog() {
 		super.updateLaunchConfigurationDialog();
 	}
@@ -292,6 +301,7 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 	 * 
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */
+	@Override
 	public void update( Observable o, Object arg ) {
 		if ( !isInitializing() )
 			updateLaunchConfigurationDialog();
@@ -325,6 +335,7 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 		fGDBCommandText = ControlFactory.createTextField( subComp, SWT.SINGLE | SWT.BORDER );
 		fGDBCommandText.addModifyListener( new ModifyListener() {
 
+			@Override
 			public void modifyText( ModifyEvent evt ) {
 				if ( !isInitializing() )
 					updateLaunchConfigurationDialog();
@@ -333,6 +344,7 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 		Button button = createPushButton( subComp, MIUIMessages.getString( "StandardGDBDebuggerPage.4" ), null ); //$NON-NLS-1$
 		button.addSelectionListener( new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected( SelectionEvent evt ) {
 				handleGDBButtonSelected();
 				updateLaunchConfigurationDialog();
@@ -362,6 +374,7 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 		fGDBInitText.setLayoutData( gd );
 		fGDBInitText.addModifyListener( new ModifyListener() {
 
+			@Override
 			public void modifyText( ModifyEvent evt ) {
 				if ( !isInitializing() )
 					updateLaunchConfigurationDialog();
@@ -370,6 +383,7 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 		button = createPushButton( subComp, MIUIMessages.getString( "StandardGDBDebuggerPage.7" ), null ); //$NON-NLS-1$
 		button.addSelectionListener( new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected( SelectionEvent evt ) {
 				handleGDBInitButtonSelected();
 				updateLaunchConfigurationDialog();
@@ -430,6 +444,7 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if ( fSolibBlock != null ) {
 			if ( fSolibBlock instanceof Observable )
@@ -442,6 +457,7 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void activated( ILaunchConfigurationWorkingCopy workingCopy ) {
 		// Override the default behavior
 	}
@@ -460,11 +476,13 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 		fCommandFactoryCombo = new Combo( parent, SWT.READ_ONLY | SWT.DROP_DOWN );
 		fCommandFactoryCombo.addSelectionListener( new SelectionListener() {
 
+			@Override
 			public void widgetDefaultSelected( SelectionEvent e ) {
 				if ( !isInitializing() )
 					updateLaunchConfigurationDialog();
 			}
 			
+			@Override
 			public void widgetSelected( SelectionEvent e ) {
 				if ( !isInitializing() )
 					updateLaunchConfigurationDialog();
@@ -478,11 +496,13 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 		fProtocolCombo = new Combo( parent, SWT.READ_ONLY | SWT.DROP_DOWN );
 		fProtocolCombo.addSelectionListener( new SelectionListener() {
 
+			@Override
 			public void widgetDefaultSelected( SelectionEvent e ) {
 				if ( !isInitializing() )
 					updateLaunchConfigurationDialog();
 			}
 			
+			@Override
 			public void widgetSelected( SelectionEvent e ) {
 				if ( !isInitializing() )
 					updateLaunchConfigurationDialog();
@@ -504,11 +524,13 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 		fVerboseModeButton = createCheckButton( parent, MIUIMessages.getString( "StandardGDBDebuggerPage.13" ) ); //$NON-NLS-1$
 		fVerboseModeButton.addSelectionListener( new SelectionListener() {
 
+			@Override
 			public void widgetDefaultSelected( SelectionEvent e ) {
 				if ( !isInitializing() )
 					updateLaunchConfigurationDialog();
 			}
 			
+			@Override
 			public void widgetSelected( SelectionEvent e ) {
 				if ( !isInitializing() )
 					updateLaunchConfigurationDialog();
@@ -520,11 +542,13 @@ public class StandardGDBDebuggerPage extends AbstractCDebuggerPage implements Ob
 
 		fBreakpointsFullPath.addSelectionListener( new SelectionListener() {
 
+			@Override
 			public void widgetDefaultSelected( SelectionEvent e ) {
 				if ( !isInitializing() )
 					updateLaunchConfigurationDialog();
 			}
 			
+			@Override
 			public void widgetSelected( SelectionEvent e ) {
 				if ( !isInitializing() )
 					updateLaunchConfigurationDialog();

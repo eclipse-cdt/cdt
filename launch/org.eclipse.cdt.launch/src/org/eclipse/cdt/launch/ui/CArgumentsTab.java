@@ -70,6 +70,7 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
 		Composite comp = new Composite(parent, SWT.NONE);
@@ -102,6 +103,7 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 		fPrgmArgumentsText = new Text(group, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
 		fPrgmArgumentsText.getAccessible().addAccessibleListener(
 			new AccessibleAdapter() {
+				@Override
 				public void getName(AccessibleEvent e) {
 					e.result = LaunchMessages.CArgumentsTab_C_Program_Arguments;
 				}
@@ -113,6 +115,7 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 		fPrgmArgumentsText.setLayoutData(gd);
 		fPrgmArgumentsText.setFont(font);
 		fPrgmArgumentsText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent evt) {
 				updateLaunchConfigurationDialog();
 			}
@@ -124,6 +127,7 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 			/* (non-Javadoc)
 			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
+			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				handleVariablesButtonSelected(fPrgmArgumentsText);
 			}
@@ -168,6 +172,7 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 		ControlAccessibleListener(String name) {
 			controlName = name;
 		}
+		@Override
 		public void getName(AccessibleEvent e) {
 			e.result = controlName;
 		}
@@ -176,6 +181,7 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public boolean isValid(ILaunchConfiguration config) {
 		return fWorkingDirectoryBlock.isValid(config);
 	}
@@ -183,6 +189,7 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, (String) null);
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String) null);
@@ -191,6 +198,7 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
 			fPrgmArgumentsText.setText(configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, "")); //$NON-NLS-1$
@@ -205,6 +213,7 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(
 				ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
@@ -236,6 +245,7 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
+	@Override
 	public String getName() {
 		return LaunchMessages.CArgumentsTab_Arguments; 
 	}
@@ -243,6 +253,7 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setLaunchConfigurationDialog(org.eclipse.debug.ui.ILaunchConfigurationDialog)
 	 */
+	@Override
 	public void setLaunchConfigurationDialog(ILaunchConfigurationDialog dialog) {
 		super.setLaunchConfigurationDialog(dialog);
 		fWorkingDirectoryBlock.setLaunchConfigurationDialog(dialog);
@@ -251,6 +262,7 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getErrorMessage()
 	 */
+	@Override
 	public String getErrorMessage() {
 		String m = super.getErrorMessage();
 		if (m == null) {
@@ -262,6 +274,7 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getMessage()
 	 */
+	@Override
 	public String getMessage() {
 		String m = super.getMessage();
 		if (m == null) {
@@ -273,6 +286,7 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return LaunchImages.get(LaunchImages.IMG_VIEW_ARGUMENTS_TAB);
 	}
@@ -280,6 +294,7 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#updateLaunchConfigurationDialog()
 	 */
+	@Override
 	protected void updateLaunchConfigurationDialog() {
 		super.updateLaunchConfigurationDialog();
 	}

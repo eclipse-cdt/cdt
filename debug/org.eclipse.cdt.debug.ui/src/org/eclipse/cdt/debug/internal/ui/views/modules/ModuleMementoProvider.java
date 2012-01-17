@@ -37,6 +37,7 @@ public class ModuleMementoProvider extends ElementMementoProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementMementoProvider#encodeElement(java.lang.Object, org.eclipse.ui.IMemento, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext)
 	 */
+	@Override
 	protected boolean encodeElement( Object element, IMemento memento, IPresentationContext context ) throws CoreException {
 		if ( element instanceof ICDebugTarget || element instanceof ICThread || element instanceof ICStackFrame ) {
 			IModuleRetrieval mr = (IModuleRetrieval)((IAdaptable)element).getAdapter( IModuleRetrieval.class );
@@ -63,6 +64,7 @@ public class ModuleMementoProvider extends ElementMementoProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementMementoProvider#isEqual(java.lang.Object, org.eclipse.ui.IMemento, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext)
 	 */
+	@Override
 	protected boolean isEqual( Object element, IMemento memento, IPresentationContext context ) throws CoreException {
 		String mementoName = memento.getString( ELEMENT_NAME );
 		if ( mementoName != null ) {

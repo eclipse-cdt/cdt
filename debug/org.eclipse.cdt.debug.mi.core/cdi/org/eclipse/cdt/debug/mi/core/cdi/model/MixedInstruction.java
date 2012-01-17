@@ -29,6 +29,7 @@ public class MixedInstruction extends CObject implements ICDIMixedInstruction {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIMixedInstruction#getFileName()
 	 */
+	@Override
 	public String getFileName() {
 		return srcAsm.getFile();
 	}
@@ -36,6 +37,7 @@ public class MixedInstruction extends CObject implements ICDIMixedInstruction {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIMixedInstruction#getInstructions()
 	 */
+	@Override
 	public ICDIInstruction[] getInstructions() {
 		MIAsm[] asms = srcAsm.getMIAsms();
 		ICDIInstruction[] instructions = new ICDIInstruction[asms.length];
@@ -48,6 +50,7 @@ public class MixedInstruction extends CObject implements ICDIMixedInstruction {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIMixedInstruction#getLineNumber()
 	 */
+	@Override
 	public int getLineNumber() {
 		return srcAsm.getLine();
 	}

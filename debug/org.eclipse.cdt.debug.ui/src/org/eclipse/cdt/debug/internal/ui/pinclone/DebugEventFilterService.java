@@ -45,6 +45,7 @@ public class DebugEventFilterService {
 		 * (non-Javadoc)
 		 * @see org.eclipse.debug.ui.contexts.IDebugContextListener#debugContextChanged(org.eclipse.debug.ui.contexts.DebugContextEvent)
 		 */
+		@Override
 		public void debugContextChanged(DebugContextEvent event) {
 			ISelection eventContext = event.getContext();
 			if (eventContext instanceof IStructuredSelection) {

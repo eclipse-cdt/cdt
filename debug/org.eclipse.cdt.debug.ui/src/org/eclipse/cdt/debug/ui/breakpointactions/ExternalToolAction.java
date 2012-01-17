@@ -45,6 +45,7 @@ public class ExternalToolAction extends AbstractBreakpointAction {
 
 	private String externalToolName = ""; //$NON-NLS-1$
 
+	@Override
 	public IStatus execute(IBreakpoint breakpoint, IAdaptable context, IProgressMonitor monitor) {
 		IStatus errorStatus = null;
 		ILaunchManager lcm = DebugPlugin.getDefault().getLaunchManager();
@@ -79,6 +80,7 @@ public class ExternalToolAction extends AbstractBreakpointAction {
 		return Status.OK_STATUS;
 	}
 
+	@Override
 	public String getDefaultName() {
 		return "Untitled External Tool Action"; //$NON-NLS-1$
 	}
@@ -91,10 +93,12 @@ public class ExternalToolAction extends AbstractBreakpointAction {
 		this.externalToolName = launchConfigName;
 	}
 
+	@Override
 	public String getIdentifier() {
 		return "org.eclipse.cdt.debug.ui.breakpointactions.ExternalToolAction"; //$NON-NLS-1$
 	}
 
+	@Override
 	public String getMemento() {
 		String executeData = ""; //$NON-NLS-1$
 		if (externalToolName != null) {
@@ -129,14 +133,17 @@ public class ExternalToolAction extends AbstractBreakpointAction {
 		return executeData;
 	}
 
+	@Override
 	public String getSummary() {
 		return MessageFormat.format(Messages.getString("ExternalToolAction.Summary"), new Object[] { externalToolName }); //$NON-NLS-1$
 	}
 
+	@Override
 	public String getTypeName() {
 		return Messages.getString("ExternalToolAction.TypeName"); //$NON-NLS-1$
 	}
 
+	@Override
 	public void initializeFromMemento(String data) {
 		Element root = null;
 		DocumentBuilder parser;

@@ -28,6 +28,7 @@ public class ModuleDetailPaneFactory implements IDetailPaneFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.variables.IDetailsFactory#createDetailsArea(java.lang.String)
 	 */
+	@Override
 	public IDetailPane createDetailPane(String id) {
 		return new ModuleDetailPane();
 	}
@@ -35,6 +36,7 @@ public class ModuleDetailPaneFactory implements IDetailPaneFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.variables.IDetailsFactory#getDetailsTypes(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	public Set getDetailPaneTypes(IStructuredSelection selection) {
 		Set possibleIDs = new HashSet(1);
 		possibleIDs.add(ModuleDetailPane.ID);
@@ -44,6 +46,7 @@ public class ModuleDetailPaneFactory implements IDetailPaneFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPaneFactory#getDefaultDetailPane(java.util.Set, org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	public String getDefaultDetailPane(IStructuredSelection selection) {
 		// Return null so that any contributed detail pane can override the default
 		return null;
@@ -52,6 +55,7 @@ public class ModuleDetailPaneFactory implements IDetailPaneFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.variables.IDetailsFactory#getName(java.lang.String)
 	 */
+	@Override
 	public String getDetailPaneName(String id) {
 		if (id.equals(ModuleDetailPane.ID)){
 			return ModuleDetailPane.NAME;
@@ -63,6 +67,7 @@ public class ModuleDetailPaneFactory implements IDetailPaneFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.variables.IDetailsFactory#getDescription(java.lang.String)
 	 */
+	@Override
 	public String getDetailPaneDescription(String id) {
 		if (id.equals(ModuleDetailPane.ID)){
 			return ModuleDetailPane.DESCRIPTION;

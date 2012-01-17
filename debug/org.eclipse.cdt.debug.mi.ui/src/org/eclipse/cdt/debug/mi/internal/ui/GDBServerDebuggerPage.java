@@ -85,6 +85,7 @@ public class GDBServerDebuggerPage extends StandardGDBDebuggerPage {
 		field.setItems( fConnections );
 		field.setDialogFieldListener( new IDialogFieldListener() {
 
+			@Override
 			public void dialogFieldChanged( DialogField f ) {
 				if ( !isInitializing() )
 					connectionTypeChanged();
@@ -111,6 +112,7 @@ public class GDBServerDebuggerPage extends StandardGDBDebuggerPage {
 		fConnectionStack.layout();
 	}
 
+	@Override
 	public boolean isValid( ILaunchConfiguration launchConfig ) {
 		if ( super.isValid( launchConfig ) ) {
 			setErrorMessage( null );
@@ -136,6 +138,7 @@ public class GDBServerDebuggerPage extends StandardGDBDebuggerPage {
 		return false;
 	}
 
+	@Override
 	public void initializeFrom( ILaunchConfiguration configuration ) {
 		setInitializing( true );
 		super.initializeFrom( configuration );
@@ -152,6 +155,7 @@ public class GDBServerDebuggerPage extends StandardGDBDebuggerPage {
 		setInitializing( false );
 	}
 
+	@Override
 	public void performApply( ILaunchConfigurationWorkingCopy configuration ) {
 		super.performApply( configuration );
 		if ( fConnectionField != null )
@@ -160,6 +164,7 @@ public class GDBServerDebuggerPage extends StandardGDBDebuggerPage {
 		fSerialBlock.performApply( configuration );
 	}
 
+	@Override
 	public void setDefaults( ILaunchConfigurationWorkingCopy configuration ) {
 		super.setDefaults( configuration );
 		configuration.setAttribute( IGDBServerMILaunchConfigurationConstants.ATTR_REMOTE_TCP, false );
@@ -167,6 +172,7 @@ public class GDBServerDebuggerPage extends StandardGDBDebuggerPage {
 		fSerialBlock.setDefaults( configuration );
 	}
 
+	@Override
 	protected boolean isInitializing() {
 		return fIsInitializing;
 	}
@@ -178,6 +184,7 @@ public class GDBServerDebuggerPage extends StandardGDBDebuggerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.internal.ui.GDBDebuggerPage#createTabs(org.eclipse.swt.widgets.TabFolder)
 	 */
+	@Override
 	public void createTabs( TabFolder tabFolder ) {
 		super.createTabs( tabFolder );
 		createConnectionTab( tabFolder );

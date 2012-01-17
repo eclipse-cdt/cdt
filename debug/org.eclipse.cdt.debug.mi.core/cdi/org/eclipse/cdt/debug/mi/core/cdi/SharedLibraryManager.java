@@ -130,6 +130,7 @@ public class SharedLibraryManager extends Manager {
 		return miLibs;
 	}
 
+	@Override
 	public void update(Target target) throws CDIException {
 		MISession miSession = target.getMISession();
 		Session session = (Session)target.getSession();

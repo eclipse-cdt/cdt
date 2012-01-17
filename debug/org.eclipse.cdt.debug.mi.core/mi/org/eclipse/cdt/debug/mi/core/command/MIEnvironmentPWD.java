@@ -29,6 +29,7 @@ public class MIEnvironmentPWD extends MICommand
 		super(miVersion, "-environment-pwd"); //$NON-NLS-1$
 	}
 
+	@Override
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

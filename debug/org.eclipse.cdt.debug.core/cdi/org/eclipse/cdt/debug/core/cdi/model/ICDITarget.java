@@ -155,6 +155,7 @@ public interface ICDITarget extends ICDIThreadGroup, ICDIExpressionManagement,
 	 * @deprecated 
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
+	@Deprecated
 	void resume() throws CDIException;
 
 	/**
@@ -164,6 +165,7 @@ public interface ICDITarget extends ICDIThreadGroup, ICDIExpressionManagement,
 	 * @see #stepOver(int)
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
+	@Deprecated
 	void stepOver() throws CDIException;
 
 	/**
@@ -173,6 +175,7 @@ public interface ICDITarget extends ICDIThreadGroup, ICDIExpressionManagement,
 	 * @see #stepInto(int) 
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
+	@Deprecated
 	void stepInto() throws CDIException;
 
 	/**
@@ -182,6 +185,7 @@ public interface ICDITarget extends ICDIThreadGroup, ICDIExpressionManagement,
 	 * @see stepOverInstruction(int) 
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
+	@Deprecated
 	void stepOverInstruction() throws CDIException;
 
 	/**
@@ -191,6 +195,7 @@ public interface ICDITarget extends ICDIThreadGroup, ICDIExpressionManagement,
 	 * @see #stepIntoInstruction(int) 
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
+	@Deprecated
 	void stepIntoInstruction() throws CDIException;
 
 	/**
@@ -200,6 +205,7 @@ public interface ICDITarget extends ICDIThreadGroup, ICDIExpressionManagement,
 	 * @see #stepUntil(ICDILocation) 
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
+	@Deprecated
 	void runUntil(ICDILocation location) throws CDIException;
 
 	/**
@@ -209,6 +215,7 @@ public interface ICDITarget extends ICDIThreadGroup, ICDIExpressionManagement,
 	 * @see #resume(ICDLocation) 
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
+	@Deprecated
 	void jump(ICDILocation location) throws CDIException;
 	
 	/**
@@ -217,6 +224,7 @@ public interface ICDITarget extends ICDIThreadGroup, ICDIExpressionManagement,
 	 * @deprecated
 	 * @throws CDIException
 	 */
+	@Deprecated
 	void signal() throws CDIException;
 
 	/**
@@ -227,6 +235,7 @@ public interface ICDITarget extends ICDIThreadGroup, ICDIExpressionManagement,
 	 * @param signal
 	 * @throws CDIException
 	 */
+	@Deprecated
 	void signal(ICDISignal signal) throws CDIException;
 
 	/**

@@ -40,6 +40,7 @@ public class CDebuggerPageAdapter implements ICDebuggerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.ui.ICDebuggerPage#init(java.lang.String)
 	 */
+	@Override
 	public void init( String debuggerID ) {
 		fDebuggerId = debuggerID;
 	}
@@ -47,6 +48,7 @@ public class CDebuggerPageAdapter implements ICDebuggerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.ui.ICDebuggerPage#getDebuggerIdentifier()
 	 */
+	@Override
 	public String getDebuggerIdentifier() {
 		return fDebuggerId;
 	}
@@ -54,6 +56,7 @@ public class CDebuggerPageAdapter implements ICDebuggerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl( Composite parent ) {
 		fDelegate.createControl( parent );
 	}
@@ -61,6 +64,7 @@ public class CDebuggerPageAdapter implements ICDebuggerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getControl()
 	 */
+	@Override
 	public Control getControl() {
 		return fDelegate.getControl();
 	}
@@ -68,6 +72,7 @@ public class CDebuggerPageAdapter implements ICDebuggerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void setDefaults( ILaunchConfigurationWorkingCopy configuration ) {
 		fDelegate.setDefaults( configuration );
 	}
@@ -75,6 +80,7 @@ public class CDebuggerPageAdapter implements ICDebuggerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom( ILaunchConfiguration configuration ) {
 		fDelegate.initializeFrom( configuration );
 	}
@@ -82,6 +88,7 @@ public class CDebuggerPageAdapter implements ICDebuggerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
 	 */
+	@Override
 	public void dispose() {
 		fDelegate.dispose();
 	}
@@ -89,6 +96,7 @@ public class CDebuggerPageAdapter implements ICDebuggerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void performApply( ILaunchConfigurationWorkingCopy configuration ) {
 		fDelegate.performApply( configuration );
 	}
@@ -96,6 +104,7 @@ public class CDebuggerPageAdapter implements ICDebuggerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getErrorMessage()
 	 */
+	@Override
 	public String getErrorMessage() {
 		return fDelegate.getErrorMessage();
 	}
@@ -103,6 +112,7 @@ public class CDebuggerPageAdapter implements ICDebuggerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getMessage()
 	 */
+	@Override
 	public String getMessage() {
 		return fDelegate.getMessage();
 	}
@@ -110,6 +120,7 @@ public class CDebuggerPageAdapter implements ICDebuggerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public boolean isValid( ILaunchConfiguration launchConfig ) {
 		return fDelegate.isValid( launchConfig );
 	}
@@ -117,6 +128,7 @@ public class CDebuggerPageAdapter implements ICDebuggerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#canSave()
 	 */
+	@Override
 	public boolean canSave() {
 		return fDelegate.canSave();
 	}
@@ -124,6 +136,7 @@ public class CDebuggerPageAdapter implements ICDebuggerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setLaunchConfigurationDialog(org.eclipse.debug.ui.ILaunchConfigurationDialog)
 	 */
+	@Override
 	public void setLaunchConfigurationDialog( ILaunchConfigurationDialog dialog ) {
 		fDelegate.setLaunchConfigurationDialog( dialog );
 	}
@@ -131,6 +144,7 @@ public class CDebuggerPageAdapter implements ICDebuggerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#launched(org.eclipse.debug.core.ILaunch)
 	 */
+	@Override
 	public void launched( ILaunch launch ) {
 		fDelegate.launched( launch );
 	}
@@ -138,6 +152,7 @@ public class CDebuggerPageAdapter implements ICDebuggerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
+	@Override
 	public String getName() {
 		return fDelegate.getName();
 	}
@@ -145,6 +160,7 @@ public class CDebuggerPageAdapter implements ICDebuggerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return fDelegate.getImage();
 	}
@@ -152,6 +168,7 @@ public class CDebuggerPageAdapter implements ICDebuggerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void activated( ILaunchConfigurationWorkingCopy workingCopy ) {
 		fDelegate.activated( workingCopy );
 	}
@@ -159,6 +176,7 @@ public class CDebuggerPageAdapter implements ICDebuggerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void deactivated( ILaunchConfigurationWorkingCopy workingCopy ) {
 		fDelegate.deactivated( workingCopy );
 	}

@@ -99,7 +99,8 @@ public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, 
         /* (non-Javadoc)
          * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
          */
-        protected IStatus run(IProgressMonitor monitor) {
+        @Override
+		protected IStatus run(IProgressMonitor monitor) {
             fMonitor = monitor;
             
             String detail = ""; //$NON-NLS-1$
@@ -117,7 +118,8 @@ public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, 
         private void detailComputed(final String result) {
             if (!fMonitor.isCanceled()) {
                 WorkbenchJob setDetail = new WorkbenchJob("set details") { //$NON-NLS-1$
-                    public IStatus runInUIThread(IProgressMonitor monitor) {
+                    @Override
+					public IStatus runInUIThread(IProgressMonitor monitor) {
                         if (!fMonitor.isCanceled()) {
                             getDetailDocument().set(result);
                         }
@@ -203,7 +205,8 @@ public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, 
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.IDetailPane#createControl(org.eclipse.swt.widgets.Composite)
      */
-    public Control createControl(Composite parent) {
+    @Override
+	public Control createControl(Composite parent) {
         
         createSourceViewer(parent);
         
@@ -243,22 +246,26 @@ public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, 
         
         // Add a document listener so actions get updated when the document changes
         getDetailDocument().addDocumentListener(new IDocumentListener() {
-            public void documentAboutToBeChanged(DocumentEvent event) {}
-            public void documentChanged(DocumentEvent event) {
+            @Override
+			public void documentAboutToBeChanged(DocumentEvent event) {}
+            @Override
+			public void documentChanged(DocumentEvent event) {
                 updateSelectionDependentActions();
             }
         });
         
         // Add the selection listener so selection dependent actions get updated.
         fSourceViewer.getSelectionProvider().addSelectionChangedListener(new ISelectionChangedListener() {
-            public void selectionChanged(SelectionChangedEvent event) {
+            @Override
+			public void selectionChanged(SelectionChangedEvent event) {
                 updateSelectionDependentActions();
             }
         });
         
         // Add a focus listener to update actions when details area gains focus
         fSourceViewer.getControl().addFocusListener(new FocusAdapter() {
-            public void focusGained(FocusEvent e) {
+            @Override
+			public void focusGained(FocusEvent e) {
                 
                 getViewSite().setSelectionProvider(fSourceViewer.getSelectionProvider());
                 
@@ -268,7 +275,8 @@ public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, 
                 getViewSite().getActionBars().updateActionBars();
             }
             
-            public void focusLost(FocusEvent e) {
+            @Override
+			public void focusLost(FocusEvent e) {
                 
                 getViewSite().setSelectionProvider(null);
                 
@@ -319,7 +327,8 @@ public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, 
         MenuManager menuMgr= new MenuManager(); 
         menuMgr.setRemoveAllWhenShown(true);
         menuMgr.addMenuListener(new IMenuListener() {
-            public void menuAboutToShow(IMenuManager mgr) {
+            @Override
+			public void menuAboutToShow(IMenuManager mgr) {
                 fillDetailContextMenu(mgr);
             }
         });
@@ -350,7 +359,8 @@ public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, 
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.IDetailPane#display(org.eclipse.jface.viewers.IStructuredSelection)
      */
-    public void display(IStructuredSelection selection) {
+    @Override
+	public void display(IStructuredSelection selection) {
         
         if (selection == null){
             clearSourceViewer();
@@ -384,7 +394,8 @@ public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, 
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.IDetailPane#setFocus()
      */
-    public boolean setFocus(){
+    @Override
+	public boolean setFocus(){
         if (fSourceViewer != null){
             fSourceViewer.getTextWidget().setFocus();
             return true;
@@ -395,7 +406,8 @@ public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, 
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.views.variables.details.AbstractDetailPane#dispose()
      */
-    public void dispose(){
+    @Override
+	public void dispose(){
         super.dispose();
         
         if (fDetailJob != null) fDetailJob.cancel();
@@ -410,28 +422,32 @@ public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, 
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.IDetailPane#getDescription()
      */
-    public String getDescription() {
+    @Override
+	public String getDescription() {
         return DESCRIPTION;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.IDetailPane#getID()
      */
-    public String getID() {
+    @Override
+	public String getID() {
         return ID;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.IDetailPane#getName()
      */
-    public String getName() {
+    @Override
+	public String getName() {
         return NAME;
     }
     
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
      */
-    public Object getAdapter(Class required) {
+    @Override
+	public Object getAdapter(Class required) {
         if (ITextViewer.class.equals(required)) {
             return fSourceViewer;
         }
@@ -462,7 +478,8 @@ public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, 
     /* (non-Javadoc)
      * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
      */
-    public void propertyChange(PropertyChangeEvent event) {
+    @Override
+	public void propertyChange(PropertyChangeEvent event) {
         String propertyName= event.getProperty();
         if (propertyName.equals(IInternalCDebugUIConstants.DETAIL_PANE_FONT)) {
             fSourceViewer.getTextWidget().setFont(JFaceResources.getFont(IInternalCDebugUIConstants.DETAIL_PANE_FONT));
@@ -492,14 +509,16 @@ public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, 
         /* (non-Javadoc)
          * @see org.eclipse.jface.text.IFindReplaceTarget#canPerformFind()
          */
-        public boolean canPerformFind() {
+        @Override
+		public boolean canPerformFind() {
             return fTarget.canPerformFind();
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.jface.text.IFindReplaceTarget#findAndSelect(int, java.lang.String, boolean, boolean, boolean)
          */
-        public int findAndSelect(int widgetOffset, String findString, boolean searchForward, boolean caseSensitive, boolean wholeWord) {
+        @Override
+		public int findAndSelect(int widgetOffset, String findString, boolean searchForward, boolean caseSensitive, boolean wholeWord) {
             int position = fTarget.findAndSelect(widgetOffset, findString, searchForward, caseSensitive, wholeWord);
             // Explicitly tell the widget to show the selection because the viewer thinks the text is all on one line, even if wrapping is turned on.
             if (fSourceViewer != null){
@@ -514,28 +533,32 @@ public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, 
         /* (non-Javadoc)
          * @see org.eclipse.jface.text.IFindReplaceTarget#getSelection()
          */
-        public Point getSelection() {
+        @Override
+		public Point getSelection() {
             return fTarget.getSelection();
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.jface.text.IFindReplaceTarget#getSelectionText()
          */
-        public String getSelectionText() {
+        @Override
+		public String getSelectionText() {
             return fTarget.getSelectionText();
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.jface.text.IFindReplaceTarget#isEditable()
          */
-        public boolean isEditable() {
+        @Override
+		public boolean isEditable() {
             return fTarget.isEditable();
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.jface.text.IFindReplaceTarget#replaceSelection(java.lang.String)
          */
-        public void replaceSelection(String text) {
+        @Override
+		public void replaceSelection(String text) {
             fTarget.replaceSelection(text);
         }
     }

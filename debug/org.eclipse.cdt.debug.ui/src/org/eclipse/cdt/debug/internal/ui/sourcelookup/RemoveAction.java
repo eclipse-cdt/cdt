@@ -28,6 +28,7 @@ public class RemoveAction extends SourceContainerAction {
 	 * 
 	 * @see IAction#run()
 	 */
+	@Override
 	public void run() {
 		List<ISourceContainer> targets = getOrderedSelection();
 		List<ISourceContainer> list = getEntriesAsList();
@@ -38,6 +39,7 @@ public class RemoveAction extends SourceContainerAction {
 	/**
 	 * @see SelectionListenerAction#updateSelection(IStructuredSelection)
 	 */
+	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
 		//check that something is selected and it is a root tree node.
 		return !selection.isEmpty() && getViewer().getTree().getSelection()[0].getParentItem() == null;

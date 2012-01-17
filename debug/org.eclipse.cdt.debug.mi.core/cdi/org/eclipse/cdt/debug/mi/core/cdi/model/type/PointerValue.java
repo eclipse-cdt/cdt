@@ -31,6 +31,7 @@ public class PointerValue extends DerivedValue implements ICDIPointerValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.type.ICDIPointerValue#pointerValue()
 	 */
+	@Override
 	public BigInteger pointerValue() throws CDIException {
 		return IntegralValue.bigIntegerValue(getValueString());
 	}

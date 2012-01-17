@@ -341,6 +341,7 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#getValue()
 	 */
+	@Override
 	public ICDIValue getValue() throws CDIException {
 		if (value == null) {
 			ICDIType t = getType();
@@ -384,6 +385,7 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#setValue(ICDIValue)
 	 */
+	@Override
 	public void setValue(ICDIValue value) throws CDIException {
 		setValue(value.getValueString());
 	}
@@ -391,6 +393,7 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#setValue(String)
 	 */
+	@Override
 	public void setValue(String expression) throws CDIException {
 		Target target = (Target)getTarget();
 		MISession miSession = target.getMISession();
@@ -446,6 +449,7 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 	 * handle it.
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#isEditable()
 	 */
+	@Override
 	public boolean isEditable() throws CDIException {
 		if (editable == null) {
 			MISession mi = ((Target) getTarget()).getMISession();
@@ -487,6 +491,7 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#equals()
 	 */
+	@Override
 	public boolean equals(ICDIVariable var) {
 		if (var instanceof Variable) {
 			Variable variable = (Variable) var;
@@ -511,6 +516,7 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#dispose()
 	 */
+	@Override
 	public void dispose() throws CDIException {
 		ICDITarget target = getTarget();
 		VariableManager varMgr = ((Session)target.getSession()).getVariableManager();

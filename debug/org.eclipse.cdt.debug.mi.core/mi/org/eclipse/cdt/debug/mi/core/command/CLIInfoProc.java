@@ -31,6 +31,7 @@ public class CLIInfoProc extends CLICommand
 		return (CLIInfoProcInfo)getMIInfo();
 	}
 
+	@Override
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

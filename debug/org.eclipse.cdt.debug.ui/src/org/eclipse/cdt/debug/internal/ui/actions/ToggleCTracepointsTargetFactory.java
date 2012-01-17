@@ -36,32 +36,37 @@ public class ToggleCTracepointsTargetFactory implements IToggleBreakpointsTarget
     
     private ToggleTracepointAdapter fCToggleTracepointTarget = new ToggleTracepointAdapter();
     
-    public IToggleBreakpointsTarget createToggleTarget(String targetID) {
+    @Override
+	public IToggleBreakpointsTarget createToggleTarget(String targetID) {
         if (TOGGLE_C_TRACEPOINT_TARGET_ID.equals(targetID)) {
             return fCToggleTracepointTarget;
         }
         return null;
     }
     
-    public String getDefaultToggleTarget(IWorkbenchPart part, ISelection selection) {
+    @Override
+	public String getDefaultToggleTarget(IWorkbenchPart part, ISelection selection) {
         return null;
     }
     
-    public String getToggleTargetDescription(String targetID) {
+    @Override
+	public String getToggleTargetDescription(String targetID) {
         if (TOGGLE_C_TRACEPOINT_TARGET_ID.equals(targetID)) {
             return ActionMessages.getString("ToggleCBreakpointsTargetFactory.CTracepointDescription"); //$NON-NLS-1$
         }
         return null;
     }
     
-    public String getToggleTargetName(String targetID) {
+    @Override
+	public String getToggleTargetName(String targetID) {
         if (TOGGLE_C_TRACEPOINT_TARGET_ID.equals(targetID)) {
             return ActionMessages.getString("ToggleCBreakpointsTargetFactory.CTracepointName"); //$NON-NLS-1$
         }
         return null;
     }
     
-    @SuppressWarnings("unchecked")
+    @Override
+	@SuppressWarnings("unchecked")
     public Set getToggleTargets(IWorkbenchPart part, ISelection selection) {
         return TOGGLE_TARGET_IDS;
     }

@@ -69,6 +69,7 @@ public class CProjectHelper {
 		/* Try to guess at the correct binary parser.. elf or pe at this point.. */
 		ICDescriptorOperation op = new ICDescriptorOperation() {
 			
+			@Override
 			public void execute(ICDescriptor descriptor, IProgressMonitor monitor) throws CoreException {
 				descriptor.remove(CCorePlugin.BINARY_PARSER_UNIQ_ID);
 				String os = System.getProperty("os.name");
@@ -226,6 +227,7 @@ public class CProjectHelper {
 	}
 	
 	private static class ImportOverwriteQuery implements IOverwriteQuery {
+		@Override
 		public String queryOverwrite(String file) {
 			return ALL;
 		}	

@@ -20,6 +20,7 @@ public class CWatchExpressionFactoryAdapter implements IWatchExpressionFactoryAd
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapterExtension#canCreateWatchExpression(org.eclipse.debug.core.model.IVariable)
 	 */
+	@Override
 	public boolean canCreateWatchExpression( IVariable variable ) {
 		return ( variable instanceof ICVariable );
 	}
@@ -27,6 +28,7 @@ public class CWatchExpressionFactoryAdapter implements IWatchExpressionFactoryAd
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapter#createWatchExpression(org.eclipse.debug.core.model.IVariable)
 	 */
+	@Override
 	public String createWatchExpression( IVariable variable ) throws CoreException {
 		return ( variable instanceof ICVariable ) ? ((ICVariable)variable).getExpressionString() : null; 
 	}

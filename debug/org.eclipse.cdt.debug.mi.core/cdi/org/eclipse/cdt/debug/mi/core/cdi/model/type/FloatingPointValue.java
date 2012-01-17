@@ -30,6 +30,7 @@ public abstract class FloatingPointValue extends Value implements ICDIFloatingPo
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.type.ICDIFloatingPointValue#doubleValue()
 	 */
+	@Override
 	public double doubleValue() throws CDIException {
 		double result = 0;
 		String valueString = getValueString();
@@ -51,6 +52,7 @@ public abstract class FloatingPointValue extends Value implements ICDIFloatingPo
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.type.ICDIFloatingPointValue#floatValue()
 	 */
+	@Override
 	public float floatValue() throws CDIException {
 		float result = 0;
 		String valueString = getValueString();

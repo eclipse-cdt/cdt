@@ -21,6 +21,7 @@ public class CWatchExpressionFactoryAdapterFactory implements IAdapterFactory {
     /* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter( Object adaptableObject, Class adapterType ) {
         if ( adapterType.equals( IWatchExpressionFactoryAdapter.class ) ) {
 			if ( adaptableObject instanceof ICVariable ) {
@@ -33,6 +34,7 @@ public class CWatchExpressionFactoryAdapterFactory implements IAdapterFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
+	@Override
 	public Class[] getAdapterList() {
 		return new Class[] {
         		IWatchExpressionFactoryAdapter.class,

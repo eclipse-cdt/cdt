@@ -34,6 +34,7 @@ public class GDBJtagControl extends GDBControl {
 		super(session, config, factory);
 	}
 
+	@Override
 	protected Sequence getCompleteInitializationSequence(Map<String,Object> attributes, RequestMonitorWithProgress rm) {
 		GdbLaunch launch = (GdbLaunch)getSession().getModelAdapter(ILaunch.class);
 		IGDBBackend backend = getServicesTracker().getService(IGDBBackend.class);

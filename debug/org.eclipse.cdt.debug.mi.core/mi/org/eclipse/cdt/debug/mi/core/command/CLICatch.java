@@ -32,6 +32,7 @@ public class CLICatch extends CLICommand {
 	/**
 	 * This command return breakpoint inserted
 	 */
+	@Override
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

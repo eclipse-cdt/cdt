@@ -26,6 +26,7 @@ public class ErrorStatusHandler implements IStatusHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus, java.lang.Object)
 	 */
+	@Override
 	public Object handleStatus( final IStatus status, Object source ) throws CoreException {
 		if ( status != null && source != null ) {
 			String title = ""; //$NON-NLS-1$
@@ -41,6 +42,7 @@ public class ErrorStatusHandler implements IStatusHandler {
 			final String title_f = title;
 			CDebugUIPlugin.getStandardDisplay().asyncExec( new Runnable() {
 
+				@Override
 				public void run() {
 					ErrorDialog.openError( CDebugUIPlugin.getActiveWorkbenchShell(), title_f, null, status );
 				}

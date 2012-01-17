@@ -72,6 +72,7 @@ public class CIndexedValue extends AbstractCValue implements IIndexedValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.core.model.AbstractCValue#setChanged(boolean)
 	 */
+	@Override
 	protected void setChanged( boolean changed ) {
 		for (IVariable var : fVariables.values()) {
 			((AbstractCVariable)var).setChanged( changed );
@@ -81,6 +82,7 @@ public class CIndexedValue extends AbstractCValue implements IIndexedValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.core.model.AbstractCValue#dispose()
 	 */
+	@Override
 	public void dispose() {
 		for (IVariable var : fVariables.values()) {
 			((AbstractCVariable)var).dispose();
@@ -90,6 +92,7 @@ public class CIndexedValue extends AbstractCValue implements IIndexedValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.core.model.AbstractCValue#reset()
 	 */
+	@Override
 	protected void reset() {
 		for (IVariable var : fVariables.values()) {
 			((AbstractCVariable)var).resetValue();
@@ -99,6 +102,7 @@ public class CIndexedValue extends AbstractCValue implements IIndexedValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.core.model.AbstractCValue#preserve()
 	 */
+	@Override
 	protected void preserve() {
 		resetStatus();
 		for (IVariable var : fVariables.values()) {
@@ -109,6 +113,7 @@ public class CIndexedValue extends AbstractCValue implements IIndexedValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICValue#getType()
 	 */
+	@Override
 	public ICType getType() throws DebugException {
 		if ( fType == null ) {
 			synchronized( this ) {
@@ -130,6 +135,7 @@ public class CIndexedValue extends AbstractCValue implements IIndexedValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValue#getReferenceTypeName()
 	 */
+	@Override
 	public String getReferenceTypeName() throws DebugException {
 		ICType type = getType(); 
 		return ( type != null ) ? type.getName() : ""; //$NON-NLS-1$
@@ -142,6 +148,7 @@ public class CIndexedValue extends AbstractCValue implements IIndexedValue {
 	 * 
 	 * @see org.eclipse.debug.core.model.IValue#getValueString()
 	 */
+	@Override
 	public String getValueString() throws DebugException {
 		if ( fCDIValue instanceof ICDIPointerValue ) {
 			try {
@@ -170,6 +177,7 @@ public class CIndexedValue extends AbstractCValue implements IIndexedValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValue#isAllocated()
 	 */
+	@Override
 	public boolean isAllocated() throws DebugException {
 		return true;
 	}
@@ -177,6 +185,7 @@ public class CIndexedValue extends AbstractCValue implements IIndexedValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValue#getVariables()
 	 */
+	@Override
 	public IVariable[] getVariables() throws DebugException {
 		return getVariables0( getInitialOffset(), getSize() );
 	}
@@ -184,6 +193,7 @@ public class CIndexedValue extends AbstractCValue implements IIndexedValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValue#hasVariables()
 	 */
+	@Override
 	public boolean hasVariables() throws DebugException {
 		return getSize() > 0;
 	}
@@ -191,6 +201,7 @@ public class CIndexedValue extends AbstractCValue implements IIndexedValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IIndexedValue#getVariable(int)
 	 */
+	@Override
 	public IVariable getVariable( int offset ) throws DebugException {
 		if ( offset >= getSize() ) {
 			requestFailed( CoreModelMessages.getString( "CIndexedValue.0" ), null ); //$NON-NLS-1$
@@ -201,6 +212,7 @@ public class CIndexedValue extends AbstractCValue implements IIndexedValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IIndexedValue#getVariables(int, int)
 	 */
+	@Override
 	public IVariable[] getVariables( int offset, int length ) throws DebugException {
 		if ( offset >= getSize() ) {
 			requestFailed( CoreModelMessages.getString( "CIndexedValue.1" ), null ); //$NON-NLS-1$
@@ -214,6 +226,7 @@ public class CIndexedValue extends AbstractCValue implements IIndexedValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IIndexedValue#getSize()
 	 */
+	@Override
 	public int getSize() throws DebugException {
 		return getSize0();
 	}
@@ -221,6 +234,7 @@ public class CIndexedValue extends AbstractCValue implements IIndexedValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IIndexedValue#getInitialOffset()
 	 */
+	@Override
 	public int getInitialOffset() {
 		return fOffset;
 	}

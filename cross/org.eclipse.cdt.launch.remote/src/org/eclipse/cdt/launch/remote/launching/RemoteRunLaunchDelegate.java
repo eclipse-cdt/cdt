@@ -61,6 +61,7 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 	 * 
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch
 	 */
+	@Override
 	public void launch(ILaunchConfiguration config, String mode,
 			ILaunch launch, IProgressMonitor monitor) throws CoreException {
 

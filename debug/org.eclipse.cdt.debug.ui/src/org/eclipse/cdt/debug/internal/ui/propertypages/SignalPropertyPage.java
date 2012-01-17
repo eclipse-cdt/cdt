@@ -42,6 +42,7 @@ public class SignalPropertyPage extends PropertyPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents( Composite parent ) {
 		noDefaultAndApplyButton();
 		Composite composite = new Composite( parent, SWT.NONE );
@@ -106,11 +107,13 @@ public class SignalPropertyPage extends PropertyPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		boolean result = super.performOk();
 		if ( result ) {
 			DebugPlugin.getDefault().asyncExec( 
 					new Runnable() {
+						@Override
 						public void run() {
 							if ( !getSignal().canModify() )
 								return;

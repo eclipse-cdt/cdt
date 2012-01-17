@@ -27,6 +27,7 @@ public class SourceContainerLabelProvider extends LabelProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
+	@Override
 	public Image getImage(Object element) {
 		Image image = getWorkbenchLabelProvider().getImage(element);
 		if (image == null) {
@@ -50,6 +51,7 @@ public class SourceContainerLabelProvider extends LabelProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
+	@Override
 	public String getText(Object element) {
 		// first, allo workbench adapter to provide label
 		String label = getWorkbenchLabelProvider().getText(element);
@@ -75,6 +77,7 @@ public class SourceContainerLabelProvider extends LabelProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		if (fLabelProvider != null) {

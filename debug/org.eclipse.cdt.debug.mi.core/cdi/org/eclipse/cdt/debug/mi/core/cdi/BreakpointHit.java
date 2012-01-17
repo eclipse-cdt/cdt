@@ -29,6 +29,7 @@ public class BreakpointHit extends SessionObject implements ICDIBreakpointHit {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpointHit#getBreakpoint()
 	 */
+	@Override
 	public ICDIBreakpoint getBreakpoint() {
 		int number = breakEvent.getNumber();
 		// Ask the breakpointManager for the breakpoint

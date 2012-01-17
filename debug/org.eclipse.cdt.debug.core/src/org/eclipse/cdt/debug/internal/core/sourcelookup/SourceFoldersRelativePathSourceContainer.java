@@ -88,6 +88,7 @@ public class SourceFoldersRelativePathSourceContainer extends CompositeSourceCon
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#isComposite()
 	 */
+	@Override
 	public boolean isComposite() {
 		return true;
 	}
@@ -104,6 +105,7 @@ public class SourceFoldersRelativePathSourceContainer extends CompositeSourceCon
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getName()
 	 */
+	@Override
 	public String getName() {
 		return fProject == null ?
 				InternalSourceLookupMessages.SourceFoldersRelativePathSourceContainer_0 :
@@ -113,6 +115,7 @@ public class SourceFoldersRelativePathSourceContainer extends CompositeSourceCon
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getType()
 	 */
+	@Override
 	public ISourceContainerType getType() {
 		return getSourceContainerType(TYPE_ID);
 	}
@@ -120,6 +123,7 @@ public class SourceFoldersRelativePathSourceContainer extends CompositeSourceCon
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj != null && obj instanceof SourceFoldersRelativePathSourceContainer) {
 			SourceFoldersRelativePathSourceContainer loc = (SourceFoldersRelativePathSourceContainer) obj;
@@ -131,6 +135,7 @@ public class SourceFoldersRelativePathSourceContainer extends CompositeSourceCon
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return TYPE_ID.hashCode() * 31 + (fProject == null ? 0 : fProject.hashCode());
 	}
@@ -138,6 +143,7 @@ public class SourceFoldersRelativePathSourceContainer extends CompositeSourceCon
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.IMappingSourceContainer#getCompilationPath(java.lang.String)
 	 */
+	@Override
 	public IPath getCompilationPath(String sourceName) {
 		if (fProject == null)
 			return null;

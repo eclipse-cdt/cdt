@@ -33,6 +33,7 @@ public class OpenNewViewActionDelegate implements IViewActionDelegate {
 	 * (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		IViewSite site = fView.getViewSite();
 		String viewId = site.getId();
@@ -66,6 +67,7 @@ public class OpenNewViewActionDelegate implements IViewActionDelegate {
 	 * (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 	}
 
@@ -73,6 +75,7 @@ public class OpenNewViewActionDelegate implements IViewActionDelegate {
 	 * (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
+	@Override
 	public void init(IViewPart view) {
 		fView = view;
 	}

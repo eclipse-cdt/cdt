@@ -90,16 +90,19 @@ public class SourceFilesViewer extends BaseViewer {
 
 		this.addOpenListener(new IOpenListener() {
 
+			@Override
 			public void open(OpenEvent event) {
 				openSourceFile(event);
 			}
 		});
 		
 		ExecutablesManager.getExecutablesManager().addExecutablesChangeListener(new IExecutablesChangeListener(){
+			@Override
 			public void executablesListChanged() {
 				// this doesn't directly affect us
 			}
 
+			@Override
 			public void executablesChanged(List<Executable> executables) {
 				// TODO: be more selective; we don't know what TUs go with which executables yet
 				flushTranslationUnitCache();

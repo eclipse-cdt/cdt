@@ -127,6 +127,7 @@ public class CreatedEvent implements ICDICreatedEvent {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEvent#getSource()
 	 */
+	@Override
 	public ICDIObject getSource() {
 		return source;
 	}

@@ -47,6 +47,7 @@ public class CWatchpoint extends CBreakpoint implements ICWatchpoint2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICWatchpoint#isWriteType()
 	 */
+	@Override
 	public boolean isWriteType() throws CoreException {
 		return ensureMarker().getAttribute( WRITE, true );
 	}
@@ -54,6 +55,7 @@ public class CWatchpoint extends CBreakpoint implements ICWatchpoint2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICWatchpoint#isReadType()
 	 */
+	@Override
 	public boolean isReadType() throws CoreException {
 		return ensureMarker().getAttribute( READ, false );
 	}
@@ -61,6 +63,7 @@ public class CWatchpoint extends CBreakpoint implements ICWatchpoint2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICWatchpoint#getExpression()
 	 */
+	@Override
 	public String getExpression() throws CoreException {
 		return ensureMarker().getAttribute( EXPRESSION, "" ); //$NON-NLS-1$
 	}
@@ -75,6 +78,7 @@ public class CWatchpoint extends CBreakpoint implements ICWatchpoint2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint#getMarkerMessage()
 	 */
+	@Override
 	protected String getMarkerMessage() throws CoreException {
 		String format = BreakpointMessages.getString( "CWatchpoint.3" ); //$NON-NLS-1$
 		if ( isWriteType() && !isReadType() )
@@ -89,6 +93,7 @@ public class CWatchpoint extends CBreakpoint implements ICWatchpoint2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ILineBreakpoint#getLineNumber()
 	 */
+	@Override
 	public int getLineNumber() throws CoreException {
 		return ensureMarker().getAttribute( IMarker.LINE_NUMBER, -1 );
 	}
@@ -96,6 +101,7 @@ public class CWatchpoint extends CBreakpoint implements ICWatchpoint2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ILineBreakpoint#getCharStart()
 	 */
+	@Override
 	public int getCharStart() throws CoreException {
 		return ensureMarker().getAttribute( IMarker.CHAR_START, -1 );
 	}
@@ -103,14 +109,17 @@ public class CWatchpoint extends CBreakpoint implements ICWatchpoint2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ILineBreakpoint#getCharEnd()
 	 */
+	@Override
 	public int getCharEnd() throws CoreException {
 		return ensureMarker().getAttribute( IMarker.CHAR_END, -1 );
 	}
 
+	@Override
 	public String getMemorySpace() throws CoreException {
 		return ensureMarker().getAttribute( MEMORYSPACE, "" ); //$NON-NLS-1$
 	}
 
+	@Override
 	public BigInteger getRange() throws CoreException {
 		String attr = ensureMarker().getAttribute( RANGE, "0" ); //$NON-NLS-1$
 		return new BigInteger( attr.length() > 0 ? attr : "0" ); //$NON-NLS-1$

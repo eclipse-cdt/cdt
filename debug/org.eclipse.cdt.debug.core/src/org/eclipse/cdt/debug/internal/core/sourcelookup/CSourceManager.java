@@ -47,6 +47,7 @@ public class CSourceManager implements ICSourceLocator, IPersistableSourceLocato
 	 * 
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#getLineNumber(IStackFrameInfo)
 	 */
+	@Override
 	public int getLineNumber(IStackFrame frame) {
 		if (getCSourceLocator() != null) {
 			return getCSourceLocator().getLineNumber(frame);
@@ -61,6 +62,7 @@ public class CSourceManager implements ICSourceLocator, IPersistableSourceLocato
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#getSourceLocations()
 	 */
+	@Override
 	public ICSourceLocation[] getSourceLocations() {
 		return (getCSourceLocator() != null) ? getCSourceLocator().getSourceLocations() : new ICSourceLocation[0];
 	}
@@ -69,6 +71,7 @@ public class CSourceManager implements ICSourceLocator, IPersistableSourceLocato
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#setSourceLocations(ICSourceLocation[])
 	 */
+	@Override
 	public void setSourceLocations(ICSourceLocation[] locations) {
 		if (getCSourceLocator() != null) {
 			getCSourceLocator().setSourceLocations(locations);
@@ -90,6 +93,7 @@ public class CSourceManager implements ICSourceLocator, IPersistableSourceLocato
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#contains(IResource)
 	 */
+	@Override
 	public boolean contains(IResource resource) {
 		return (getCSourceLocator() != null) ? getCSourceLocator().contains(resource) : false;
 	}
@@ -98,6 +102,7 @@ public class CSourceManager implements ICSourceLocator, IPersistableSourceLocato
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(Class)
 	 */
+	@Override
 	public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
 		if (adapter.equals(CSourceManager.class))
 			return this;
@@ -114,6 +119,7 @@ public class CSourceManager implements ICSourceLocator, IPersistableSourceLocato
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISourceLocator#getSourceElement(IStackFrame)
 	 */
+	@Override
 	public Object getSourceElement(IStackFrame stackFrame) {
 		Object result = null;
 		if (getSourceLocator() != null)
@@ -143,6 +149,7 @@ public class CSourceManager implements ICSourceLocator, IPersistableSourceLocato
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#findSourceElement(String)
 	 */
+	@Override
 	public Object findSourceElement(String fileName) {
 		if (getCSourceLocator() != null) {
 			return getCSourceLocator().findSourceElement(fileName);
@@ -154,6 +161,7 @@ public class CSourceManager implements ICSourceLocator, IPersistableSourceLocato
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#getMemento()
 	 */
+	@Override
 	public String getMemento() throws CoreException {
 		if (getPersistableSourceLocator() != null)
 			return getPersistableSourceLocator().getMemento();
@@ -164,6 +172,7 @@ public class CSourceManager implements ICSourceLocator, IPersistableSourceLocato
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#initializeDefaults(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeDefaults(ILaunchConfiguration configuration) throws CoreException {
 		if (getPersistableSourceLocator() != null)
 			getPersistableSourceLocator().initializeDefaults(configuration);
@@ -173,6 +182,7 @@ public class CSourceManager implements ICSourceLocator, IPersistableSourceLocato
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#initializeFromMemento(java.lang.String)
 	 */
+	@Override
 	public void initializeFromMemento(String memento) throws CoreException {
 		if (getPersistableSourceLocator() != null)
 			getPersistableSourceLocator().initializeFromMemento(memento);
@@ -188,6 +198,7 @@ public class CSourceManager implements ICSourceLocator, IPersistableSourceLocato
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#getProject()
 	 */
+	@Override
 	public IProject getProject() {
 		return (getCSourceLocator() != null) ? getCSourceLocator().getProject() : null;
 	}
@@ -204,6 +215,7 @@ public class CSourceManager implements ICSourceLocator, IPersistableSourceLocato
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#setSearchForDuplicateFiles(boolean)
 	 */
+	@Override
 	public void setSearchForDuplicateFiles(boolean search) {
 		if (getCSourceLocator() != null)
 			getCSourceLocator().setSearchForDuplicateFiles(search);
@@ -213,6 +225,7 @@ public class CSourceManager implements ICSourceLocator, IPersistableSourceLocato
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#searchForDuplicateFiles()
 	 */
+	@Override
 	public boolean searchForDuplicateFiles() {
 		return getCSourceLocator() != null && getCSourceLocator().searchForDuplicateFiles();
 	}

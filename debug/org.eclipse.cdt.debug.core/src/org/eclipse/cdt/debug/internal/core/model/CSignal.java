@@ -40,6 +40,7 @@ public class CSignal extends CDebugElement implements ICSignal, ICDIEventListene
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICSignal#getDescription()
 	 */
+	@Override
 	public String getDescription() throws DebugException
 	{
 		return getCDISignal().getDescription();
@@ -48,6 +49,7 @@ public class CSignal extends CDebugElement implements ICSignal, ICDIEventListene
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICSignal#getName()
 	 */
+	@Override
 	public String getName() throws DebugException
 	{
 		return getCDISignal().getName();
@@ -56,6 +58,7 @@ public class CSignal extends CDebugElement implements ICSignal, ICDIEventListene
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICSignal#isPassEnabled()
 	 */
+	@Override
 	public boolean isPassEnabled() throws DebugException
 	{
 		return !getCDISignal().isIgnore();
@@ -64,6 +67,7 @@ public class CSignal extends CDebugElement implements ICSignal, ICDIEventListene
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICSignal#isStopEnabled()
 	 */
+	@Override
 	public boolean isStopEnabled() throws DebugException
 	{
 		return getCDISignal().isStopSet();
@@ -72,6 +76,7 @@ public class CSignal extends CDebugElement implements ICSignal, ICDIEventListene
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICSignal#setPassEnabled(boolean)
 	 */
+	@Override
 	public void setPassEnabled( boolean enable ) throws DebugException
 	{
 		handle( enable, isStopEnabled() );
@@ -80,6 +85,7 @@ public class CSignal extends CDebugElement implements ICSignal, ICDIEventListene
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICSignal#setStopEnabled(boolean)
 	 */
+	@Override
 	public void setStopEnabled( boolean enable ) throws DebugException
 	{
 		handle( isPassEnabled(), enable );
@@ -88,6 +94,7 @@ public class CSignal extends CDebugElement implements ICSignal, ICDIEventListene
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvents(ICDIEvent)
 	 */
+	@Override
 	public void handleDebugEvents( ICDIEvent[] events )
 	{
 	}
@@ -103,6 +110,7 @@ public class CSignal extends CDebugElement implements ICSignal, ICDIEventListene
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICSignal#signal()
 	 */
+	@Override
 	public void signal() throws DebugException
 	{
 		try
@@ -132,6 +140,7 @@ public class CSignal extends CDebugElement implements ICSignal, ICDIEventListene
 		}
 	}	
 
+	@Override
 	public boolean canModify() {
 		// TODO add canModify method to ICDISignal
 		return true;

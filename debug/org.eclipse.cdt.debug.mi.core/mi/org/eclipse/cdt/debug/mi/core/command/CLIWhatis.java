@@ -31,6 +31,7 @@ public class CLIWhatis extends CLICommand
 		return (CLIWhatisInfo)getMIInfo();
 	}
 
+	@Override
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

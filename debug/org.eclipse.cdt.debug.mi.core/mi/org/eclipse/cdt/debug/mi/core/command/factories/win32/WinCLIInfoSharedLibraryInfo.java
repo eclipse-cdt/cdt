@@ -27,6 +27,7 @@ public class WinCLIInfoSharedLibraryInfo extends CLIInfoSharedLibraryInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.core.output.CLIInfoSharedLibraryInfo#parseShared(java.lang.String, java.util.List)
 	 */
+	@Override
 	protected void parseShared( String str, List aList ) {
 		// skip the header (DLL   Name)
 		if ( !str.startsWith( "DLL" ) ) { //$NON-NLS-1$

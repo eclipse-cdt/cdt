@@ -18,18 +18,21 @@ public class GenericDevice extends DefaultGDBJtagDeviceImpl {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.DefaultGDBJtagDeviceImpl#doDelay(int, java.util.Collection)
 	 */
+	@Override
 	public void doDelay(int delay, Collection <String>commands) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.DefaultGDBJtagDeviceImpl#doHalt(java.util.Collection)
 	 */
+	@Override
 	public void doHalt(Collection<String> commands) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.DefaultGDBJtagDeviceImpl#doReset(java.util.Collection)
 	 */
+	@Override
 	public void doReset(Collection<String> commands) {
 	}
 

@@ -547,6 +547,7 @@ public class MIParser {
 			return buf.substring(start + pos, end + pos);
 		}
 
+		@Override
 		public String toString() {
 			return buf.substring(pos, buf.length());
 		}

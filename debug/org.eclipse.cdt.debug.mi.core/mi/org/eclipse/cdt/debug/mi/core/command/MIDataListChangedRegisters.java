@@ -33,6 +33,7 @@ public class MIDataListChangedRegisters extends MICommand
 		return (MIDataListChangedRegistersInfo)getMIInfo();
 	}
 
+	@Override
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

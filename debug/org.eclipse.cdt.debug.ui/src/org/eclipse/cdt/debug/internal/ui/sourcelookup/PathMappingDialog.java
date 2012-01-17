@@ -85,6 +85,7 @@ public class PathMappingDialog extends TitleAreaDialog {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 		 */
+		@Override
 		protected Control createDialogArea(Composite parent) {
 			setTitle(SourceLookupUIMessages.PathMappingDialog_0);
 			setTitleImage(CDebugImages.get(CDebugImages.IMG_WIZBAN_PATH_MAP_ENTRY));
@@ -120,6 +121,7 @@ public class PathMappingDialog extends TitleAreaDialog {
 			fBackendPathText.setLayoutData(data);
 			fBackendPathText.setFont(font);
 			fBackendPathText.addModifyListener(new ModifyListener() {
+				@Override
 				public void modifyText(ModifyEvent e) {
 					update();
 				}
@@ -137,6 +139,7 @@ public class PathMappingDialog extends TitleAreaDialog {
 			fLocalPathText.setLayoutData(data);
 			fLocalPathText.setFont(font);
 			fLocalPathText.addModifyListener(new ModifyListener() {
+				@Override
 				public void modifyText(ModifyEvent e) {
 					update();
 				}
@@ -147,6 +150,7 @@ public class PathMappingDialog extends TitleAreaDialog {
 			button.setText(SourceLookupUIMessages.PathMappingDialog_3);
 			button.addSelectionListener(new SelectionListener() { 
 
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					DirectoryDialog dialog = new DirectoryDialog(MapEntryDialog.this.getShell());
 					String path = dialog.open();
@@ -155,6 +159,7 @@ public class PathMappingDialog extends TitleAreaDialog {
 					}
 				}
 
+				@Override
 				public void widgetDefaultSelected(SelectionEvent e) {
 				}
 			});
@@ -162,6 +167,7 @@ public class PathMappingDialog extends TitleAreaDialog {
 			return composite;
 		}
 
+		@Override
 		protected Control createContents(Composite parent) {
 			Control control = super.createContents(parent);
 			initialize();
@@ -169,6 +175,7 @@ public class PathMappingDialog extends TitleAreaDialog {
 			return control;
 		}
 
+		@Override
 		protected void configureShell(Shell newShell) {
 			newShell.setText(SourceLookupUIMessages.PathMappingDialog_4);
 			super.configureShell(newShell);
@@ -228,6 +235,7 @@ public class PathMappingDialog extends TitleAreaDialog {
 			return new Path(fLocalPathText.getText().trim());
 		}
 
+		@Override
 		protected void okPressed() {
 			if (fEntry == null) {
 				fEntry = new MapEntrySourceContainer();
@@ -245,6 +253,7 @@ public class PathMappingDialog extends TitleAreaDialog {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 		 */
+		@Override
 		public Image getImage(Object element) {
 			Image image = getWorkbenchLabelProvider().getImage(element);
 			if (image != null) {
@@ -256,6 +265,7 @@ public class PathMappingDialog extends TitleAreaDialog {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 		 */
+		@Override
 		public String getText(Object element) {
 			String label = getWorkbenchLabelProvider().getText(element);
 			if (label == null || label.length() == 0) {
@@ -278,6 +288,7 @@ public class PathMappingDialog extends TitleAreaDialog {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 			super.dispose();
 			if (fLabelProvider != null) {
@@ -290,6 +301,7 @@ public class PathMappingDialog extends TitleAreaDialog {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
+		@Override
 		public Object[] getElements(Object input) {
 			if (input instanceof MappingSourceContainer) {
 				try {
@@ -304,12 +316,14 @@ public class PathMappingDialog extends TitleAreaDialog {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}
@@ -332,6 +346,7 @@ public class PathMappingDialog extends TitleAreaDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		Control control = super.createContents(parent);
 		updateButtons();
@@ -341,6 +356,7 @@ public class PathMappingDialog extends TitleAreaDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		setTitle(SourceLookupUIMessages.PathMappingDialog_11);
 		setTitleImage(CDebugImages.get(CDebugImages.IMG_WIZBAN_PATH_MAPPING));
@@ -381,6 +397,7 @@ public class PathMappingDialog extends TitleAreaDialog {
 		fNameText.setFont(font);
 		fNameText.setText(getMapping().getName());
 		fNameText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 			}
 		});
@@ -390,6 +407,7 @@ public class PathMappingDialog extends TitleAreaDialog {
 		fViewer.getControl().setLayoutData(data);
 		fViewer.getControl().setFont(font);
 		fViewer.addSelectionChangedListener(new ISelectionChangedListener() { 
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateButtons();
 			}
@@ -411,6 +429,7 @@ public class PathMappingDialog extends TitleAreaDialog {
 
 		fAddButton = createPushButton(buttonComp, SourceLookupUIMessages.PathMappingDialog_13, fontMetrics);
 		fAddButton.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent evt) {
 					MapEntryDialog dialog = new MapEntryDialog(getShell());
 					if (dialog.open() == Window.OK) {
@@ -421,6 +440,7 @@ public class PathMappingDialog extends TitleAreaDialog {
 
 		fEditButton = createPushButton(buttonComp, SourceLookupUIMessages.PathMappingDialog_14, fontMetrics);
 		fEditButton.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent evt) {
 					MapEntrySourceContainer[] entries = getSelection();
 					if (entries.length > 0) {
@@ -434,6 +454,7 @@ public class PathMappingDialog extends TitleAreaDialog {
 
 		fRemoveButton = createPushButton(buttonComp, SourceLookupUIMessages.PathMappingDialog_15, fontMetrics);
 		fRemoveButton.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent evt) {
 					MapEntrySourceContainer[] entries = getSelection();
 						for (int i = 0; i < entries.length; ++i) {
@@ -479,6 +500,7 @@ public class PathMappingDialog extends TitleAreaDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
+	@Override
 	protected void configureShell(Shell newShell) {
 		newShell.setText(SourceLookupUIMessages.PathMappingDialog_16);
 		super.configureShell(newShell);
@@ -491,6 +513,7 @@ public class PathMappingDialog extends TitleAreaDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
+	@Override
 	protected void okPressed() {
 		fOriginalMapping.clear();
 		fOriginalMapping.setName(fNameText.getText().trim());

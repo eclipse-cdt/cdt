@@ -49,6 +49,7 @@ public class MIDataListRegisterNames extends MICommand
 		return (MIDataListRegisterNamesInfo)getMIInfo();
 	}
 
+	@Override
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

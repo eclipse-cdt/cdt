@@ -49,6 +49,7 @@ public class CoreFileDebuggerTab extends AbstractCDebuggerTab {
 	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
@@ -66,6 +67,7 @@ public class CoreFileDebuggerTab extends AbstractCDebuggerTab {
 	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
 							ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE);
@@ -87,6 +89,7 @@ public class CoreFileDebuggerTab extends AbstractCDebuggerTab {
 	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		if (getDebugConfig() != null) {
 			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, getDebugConfig().getID());
@@ -107,7 +110,8 @@ public class CoreFileDebuggerTab extends AbstractCDebuggerTab {
         return TAB_ID;
     }
 
-    public void initializeFrom(ILaunchConfiguration config) {
+    @Override
+	public void initializeFrom(ILaunchConfiguration config) {
 		setInitializing(true);
 		setLaunchConfiguration(config);
 		try {
@@ -122,6 +126,7 @@ public class CoreFileDebuggerTab extends AbstractCDebuggerTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.launch.internal.ui.AbstractCDebuggerTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 		setInitializing(true);
 		try {
@@ -133,6 +138,7 @@ public class CoreFileDebuggerTab extends AbstractCDebuggerTab {
 		super.activated(workingCopy);
 	}
 	
+	@Override
 	public boolean isValid(ILaunchConfiguration config) {
 		if (!validateDebuggerConfig(config)) {
 			return false;

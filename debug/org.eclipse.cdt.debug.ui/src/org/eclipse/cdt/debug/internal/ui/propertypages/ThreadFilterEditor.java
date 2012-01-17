@@ -48,6 +48,7 @@ public class ThreadFilterEditor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ICheckStateListener#checkStateChanged(org.eclipse.jface.viewers.CheckStateChangedEvent)
 		 */
+		@Override
 		public void checkStateChanged( CheckStateChangedEvent event ) {
 			Object element = event.getElement();
 			if ( element instanceof IDebugTarget ) {
@@ -134,6 +135,7 @@ public class ThreadFilterEditor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 		 */
+		@Override
 		public Object[] getChildren( Object parent ) {
 			if ( parent instanceof IDebugTarget ) {
 				ICDebugTarget target = (ICDebugTarget)((IDebugTarget)parent).getAdapter( ICDebugTarget.class );
@@ -168,6 +170,7 @@ public class ThreadFilterEditor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 		 */
+		@Override
 		public Object getParent( Object element ) {
 			if ( element instanceof IThread ) {
 				return ((IThread)element).getDebugTarget();
@@ -184,6 +187,7 @@ public class ThreadFilterEditor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 		 */
+		@Override
 		public boolean hasChildren( Object element ) {
 			if ( element instanceof IStackFrame ) {
 				return false;
@@ -203,6 +207,7 @@ public class ThreadFilterEditor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
+		@Override
 		public Object[] getElements( Object inputElement ) {
 			return getChildren( inputElement );
 		}
@@ -210,12 +215,14 @@ public class ThreadFilterEditor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public void inputChanged( Viewer viewer, Object oldInput, Object newInput ) {
 		}
 	}

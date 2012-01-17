@@ -28,7 +28,8 @@ public class DisassemblyEditorInput implements IEditorInput {
     /* (non-Javadoc)
      * @see org.eclipse.ui.IEditorInput#exists()
      */
-    public boolean exists() {
+    @Override
+	public boolean exists() {
         // TODO Auto-generated method stub
         return false;
     }
@@ -36,7 +37,8 @@ public class DisassemblyEditorInput implements IEditorInput {
     /* (non-Javadoc)
      * @see org.eclipse.ui.IEditorInput#getImageDescriptor()
      */
-    public ImageDescriptor getImageDescriptor() {
+    @Override
+	public ImageDescriptor getImageDescriptor() {
         // TODO Auto-generated method stub
         return null;
     }
@@ -44,7 +46,8 @@ public class DisassemblyEditorInput implements IEditorInput {
     /* (non-Javadoc)
      * @see org.eclipse.ui.IEditorInput#getName()
      */
-    public String getName() {
+    @Override
+	public String getName() {
         // TODO Auto-generated method stub
         return ""; //$NON-NLS-1$
     }
@@ -52,7 +55,8 @@ public class DisassemblyEditorInput implements IEditorInput {
     /* (non-Javadoc)
      * @see org.eclipse.ui.IEditorInput#getPersistable()
      */
-    public IPersistableElement getPersistable() {
+    @Override
+	public IPersistableElement getPersistable() {
         // TODO Auto-generated method stub
         return null;
     }
@@ -60,7 +64,8 @@ public class DisassemblyEditorInput implements IEditorInput {
     /* (non-Javadoc)
      * @see org.eclipse.ui.IEditorInput#getToolTipText()
      */
-    public String getToolTipText() {
+    @Override
+	public String getToolTipText() {
         // TODO Auto-generated method stub
         return ""; //$NON-NLS-1$
     }
@@ -68,7 +73,8 @@ public class DisassemblyEditorInput implements IEditorInput {
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
      */
-    @SuppressWarnings("unchecked")
+    @Override
+	@SuppressWarnings("unchecked")
     public Object getAdapter( Class adapter ) {
         // TODO Auto-generated method stub
         return null;

@@ -50,15 +50,18 @@ public class AddWatchpointOnVariableActionDelegate extends AddWatchpointActionDe
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
 	 */
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		fActivePart = targetPart;
 	}
 
 	private static class GetSizeRequest extends CRequest implements ICWatchpointTarget.GetSizeRequest {
 		int fSize = -1;
+		@Override
 		public int getSize() {
 			return fSize;
 		}
+		@Override
 		public void setSize(int size) {
 			fSize = size;
 		}
@@ -67,6 +70,7 @@ public class AddWatchpointOnVariableActionDelegate extends AddWatchpointActionDe
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.actions.AddWatchpointActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		if (fVar == null) {
 			return;
@@ -82,6 +86,7 @@ public class AddWatchpointOnVariableActionDelegate extends AddWatchpointActionDe
 		// operation...or at least the API is (the CDI implementation reacts
 		// synchronously)
 		final ICWatchpointTarget.GetSizeRequest request = new GetSizeRequest() {
+			@Override
 			public void done() {
 				if (isSuccess()) {
 					// Now that we have the size, put up a dialog to create the watchpoint
@@ -123,9 +128,11 @@ public class AddWatchpointOnVariableActionDelegate extends AddWatchpointActionDe
 	
 	private class CanCreateWatchpointRequest extends CRequest implements ICWatchpointTarget.CanCreateWatchpointRequest {
 		boolean fCanCreate;
+		@Override
 		public boolean getCanCreate() {
 			return fCanCreate;
 		}
+		@Override
 		public void setCanCreate(boolean value) {
 			fCanCreate = value;
 		}
@@ -137,6 +144,7 @@ public class AddWatchpointOnVariableActionDelegate extends AddWatchpointActionDe
 	 * @see org.eclipse.ui.actions.ActionDelegate#selectionChanged(org.eclipse.jface.action.IAction,
 	 *      org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(final IAction action, ISelection selection) {
 		fVar = null;
 		if (selection == null || selection.isEmpty()) {
@@ -148,6 +156,7 @@ public class AddWatchpointOnVariableActionDelegate extends AddWatchpointActionDe
 			fVar = (ICWatchpointTarget)DebugPlugin.getAdapter(obj, ICWatchpointTarget.class);
 			if (fVar != null) {
 				final ICWatchpointTarget.CanCreateWatchpointRequest request = new CanCreateWatchpointRequest() {
+					@Override
 					public void done() {
 						action.setEnabled(getCanCreate());
 					}

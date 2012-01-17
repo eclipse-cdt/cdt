@@ -45,6 +45,7 @@ public class SourceFilesLabelProvider extends TreeColumnViewerLabelProvider impl
 		// brute-force clear the cache when executables change
 		ExecutablesManager.getExecutablesManager().addExecutablesChangeListener(this);
 		viewer.getControl().addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				ExecutablesManager.getExecutablesManager().removeExecutablesChangeListener(SourceFilesLabelProvider.this);
 			}
@@ -127,6 +128,7 @@ public class SourceFilesLabelProvider extends TreeColumnViewerLabelProvider impl
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.executables.IExecutablesChangeListener#executablesListChanged()
 	 */
+	@Override
 	public void executablesListChanged() {
 		SourceFilesViewer.flushTranslationUnitCache();
 	}
@@ -134,6 +136,7 @@ public class SourceFilesLabelProvider extends TreeColumnViewerLabelProvider impl
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.executables.IExecutablesChangeListener#executablesChanged(java.util.List)
 	 */
+	@Override
 	public void executablesChanged(List<Executable> executables) {
 		// no mapping of executable -> TU maintained; just kill all for now
 		SourceFilesViewer.flushTranslationUnitCache();

@@ -31,6 +31,7 @@ public class MITTYAdapter implements IMITTY {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.core.IMITTY#getSlaveName()
 	 */
+	@Override
 	public String getSlaveName() {
 		return fPty.getSlaveName();
 	}
@@ -38,6 +39,7 @@ public class MITTYAdapter implements IMITTY {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.core.IMITTY#getOutputStream()
 	 */
+	@Override
 	public OutputStream getOutputStream() {
 		return fPty.getOutputStream();
 	}
@@ -45,6 +47,7 @@ public class MITTYAdapter implements IMITTY {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.core.IMITTY#getInputStream()
 	 */
+	@Override
 	public InputStream getInputStream() {
 		return fPty.getInputStream();
 	}

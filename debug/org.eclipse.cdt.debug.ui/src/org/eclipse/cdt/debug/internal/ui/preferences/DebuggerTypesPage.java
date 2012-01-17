@@ -52,14 +52,17 @@ public class DebuggerTypesPage extends PreferencePage implements IWorkbenchPrefe
 
 		public DebuggerTypesDialogField() {
 			super( new IListAdapter() {
+				@Override
 				public void customButtonPressed( DialogField field, int index ) {
 				}
 				
+				@Override
 				public void selectionChanged( DialogField field ) {
 				}
 			}, fgButtonLabels, new DebuggerTypeLabelProvider() );
 		}
 
+		@Override
 		public Control[] doFillIntoGrid( Composite parent, int nColumns ) {
 			PixelConverter converter = new PixelConverter( parent );
 			assertEnoughColumns( nColumns );
@@ -87,6 +90,7 @@ public class DebuggerTypesPage extends PreferencePage implements IWorkbenchPrefe
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.debug.internal.ui.dialogfields.CheckedListDialogField#getManagedButtonState(org.eclipse.jface.viewers.ISelection, int)
 		 */
+		@Override
 		protected boolean getManagedButtonState( ISelection sel, int index ) {
 			// Enable/disable the "Default" button
 			if ( index == 2 && sel instanceof IStructuredSelection ) {
@@ -99,6 +103,7 @@ public class DebuggerTypesPage extends PreferencePage implements IWorkbenchPrefe
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.debug.internal.ui.dialogfields.CheckedListDialogField#managedButtonPressed(int)
 		 */
+		@Override
 		protected boolean managedButtonPressed( int index ) {
 			if ( index == 2 ) {
 				List list = getSelectedElements();
@@ -114,6 +119,7 @@ public class DebuggerTypesPage extends PreferencePage implements IWorkbenchPrefe
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.debug.internal.ui.dialogfields.ListDialogField#getListStyle()
 		 */
+		@Override
 		protected int getListStyle() {
 			return SWT.BORDER + SWT.SINGLE + SWT.H_SCROLL + SWT.V_SCROLL;
 		}
@@ -121,6 +127,7 @@ public class DebuggerTypesPage extends PreferencePage implements IWorkbenchPrefe
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.debug.internal.ui.dialogfields.CheckedListDialogField#doCheckStateChanged(org.eclipse.jface.viewers.CheckStateChangedEvent)
 		 */
+		@Override
 		protected void doCheckStateChanged( CheckStateChangedEvent e ) {
 			super.doCheckStateChanged( e );
 			ICDebugConfiguration dc = (ICDebugConfiguration)e.getElement();
@@ -138,6 +145,7 @@ public class DebuggerTypesPage extends PreferencePage implements IWorkbenchPrefe
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.debug.internal.ui.dialogfields.CheckedListDialogField#checkAll(boolean)
 		 */
+		@Override
 		public void checkAll( boolean state ) {
 			super.checkAll( state );
 			List list = getCheckedElements();
@@ -151,6 +159,7 @@ public class DebuggerTypesPage extends PreferencePage implements IWorkbenchPrefe
 	 */
 	class DebuggerTypeLabelProvider extends LabelProvider {
 
+		@Override
 		public String getText( Object element ) {
 			if ( element instanceof ICDebugConfiguration ) {
 				ICDebugConfiguration dc = (ICDebugConfiguration)element;
@@ -170,6 +179,7 @@ public class DebuggerTypesPage extends PreferencePage implements IWorkbenchPrefe
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents( Composite parent ) {
 		Font font = parent.getFont();
 		Composite comp = new Composite( parent, SWT.NONE );
@@ -198,6 +208,7 @@ public class DebuggerTypesPage extends PreferencePage implements IWorkbenchPrefe
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
+	@Override
 	public void init( IWorkbench workbench ) {
 		fWorkbench = workbench;
 	}
@@ -216,6 +227,7 @@ public class DebuggerTypesPage extends PreferencePage implements IWorkbenchPrefe
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		CDebugCorePlugin.getDefault().saveDefaultDebugConfiguration( getDefault() );
 		List elements = fListField.getElements();
@@ -235,6 +247,7 @@ public class DebuggerTypesPage extends PreferencePage implements IWorkbenchPrefe
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
+	@Override
 	protected void performDefaults() {
 		fListField.setCheckedElements( Arrays.asList( CDebugCorePlugin.getDefault().getDefaultActiveDebugConfigurations() ) );
 		ICDebugConfiguration defaultConfiguration = CDebugCorePlugin.getDefault().getDefaultDefaultDebugConfiguration();

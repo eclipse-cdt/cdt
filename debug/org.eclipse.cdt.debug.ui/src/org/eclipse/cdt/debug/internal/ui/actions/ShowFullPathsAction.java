@@ -41,6 +41,7 @@ public class ShowFullPathsAction extends ViewFilterAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.actions.ViewFilterAction#getPreferenceKey()
 	 */
+	@Override
 	protected String getPreferenceKey() {
 		return ICDebugInternalConstants.SHOW_FULL_PATHS_PREF_KEY;
 	}
@@ -48,6 +49,7 @@ public class ShowFullPathsAction extends ViewFilterAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public boolean select( Viewer viewer, Object parentElement, Object element ) {
 		return true;
 	}
@@ -65,6 +67,7 @@ public class ShowFullPathsAction extends ViewFilterAction {
 				pres.setAttribute( CDebugModelPresentation.DISPLAY_FULL_PATHS, Boolean.valueOf( getValue() ) );
 				BusyIndicator.showWhile( viewer.getControl().getDisplay(), 
 										new Runnable() {
+											@Override
 											public void run() {
 												String key = getView().getSite().getId() + "." + getPreferenceKey(); //$NON-NLS-1$
 												getPreferenceStore().setValue( key, getValue() );

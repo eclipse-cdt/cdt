@@ -86,6 +86,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 	 * Process the event from MI, do any state work on the CDI,
 	 * and fire the corresponding CDI event.
 	 */
+	@Override
 	public void update(Observable o, Object arg) {
 		
 		MIEvent miEvent = (MIEvent)arg;
@@ -225,6 +226,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIEventManager#addEventListener(ICDIEventListener)
 	 */
+	@Override
 	public void addEventListener(ICDIEventListener listener) {
 		list.add(listener);
 	}
@@ -232,6 +234,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIEventManager#removeEventListener(ICDIEventListener)
 	 */
+	@Override
 	public void removeEventListener(ICDIEventListener listener) {
 		list.remove(listener);
 	}

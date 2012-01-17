@@ -26,6 +26,7 @@ public class RawCommand extends Command {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		if (fRaw == null) {
 			fRaw = "\n"; //$NON-NLS-1$;
@@ -38,6 +39,7 @@ public class RawCommand extends Command {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.core.command.Command#getMIOutput()
 	 */
+	@Override
 	public MIOutput getMIOutput() {
 		return new MIOutput();
 	}

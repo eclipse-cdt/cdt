@@ -44,33 +44,38 @@ public class RegistersViewColumnPresentation implements IColumnPresentation {
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation#init(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext)
      */
-    public void init( IPresentationContext context ) {
+    @Override
+	public void init( IPresentationContext context ) {
     } 
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation#dispose()
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation#getAvailableColumns()
      */
-    public String[] getAvailableColumns() {
+    @Override
+	public String[] getAvailableColumns() {
         return ALL_COLUMNS;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation#getInitialColumns()
      */
-    public String[] getInitialColumns() {
+    @Override
+	public String[] getInitialColumns() {
         return INITIAL_COLUMNS;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation#getHeader(java.lang.String)
      */
-    public String getHeader( String id ) {
+    @Override
+	public String getHeader( String id ) {
         if ( COLUMN_ID_TYPE.equals( id ) ) {
             return ElementAdapterMessages.RegistersViewColumnPresentation_0;
         }
@@ -86,21 +91,24 @@ public class RegistersViewColumnPresentation implements IColumnPresentation {
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation#getImageDescriptor(java.lang.String)
      */
-    public ImageDescriptor getImageDescriptor( String id ) {
+    @Override
+	public ImageDescriptor getImageDescriptor( String id ) {
         return null;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation#getId()
      */
-    public String getId() {
+    @Override
+	public String getId() {
         return ID;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation#isOptional()
      */
-    public boolean isOptional() {
+    @Override
+	public boolean isOptional() {
         return true;
     }
 }

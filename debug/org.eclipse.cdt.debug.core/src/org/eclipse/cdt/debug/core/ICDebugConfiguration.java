@@ -20,6 +20,7 @@ public interface ICDebugConfiguration {
 	 * @throws CoreException
 	 * @deprecated
 	 */
+	@Deprecated
 	ICDebugger getDebugger() throws CoreException;
 	
 	ICDIDebugger createDebugger() throws CoreException;

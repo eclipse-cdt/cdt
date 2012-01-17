@@ -54,6 +54,7 @@ public class ModulePropertyPage extends PropertyPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents( Composite parent ) {
 		noDefaultAndApplyButton();
 		Composite composite = new Composite( parent, SWT.NONE );
@@ -78,6 +79,7 @@ public class ModulePropertyPage extends PropertyPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		if ( getModuleProperties() != null && getModuleProperties().isDirty() ) {
 			final IPath path = (IPath)getModuleProperties().getProperty( ModuleProperties.SYMBOLS_FILE );
@@ -86,6 +88,7 @@ public class ModulePropertyPage extends PropertyPage {
 				
 				DebugPlugin.getDefault().asyncExec( 
 						new Runnable() {
+							@Override
 							public void run() {
 								try {
 									module.setSymbolsFileName( path );
@@ -171,6 +174,7 @@ public class ModulePropertyPage extends PropertyPage {
 		fBrowseButton.addSelectionListener( 
 			new SelectionListener() {
 
+				@Override
 				public void widgetSelected( SelectionEvent e ) {
 					FileDialog dialog = new FileDialog( fBrowseButton.getShell() );
 					dialog.setFileName( ((IPath)getModuleProperties().getProperty( ModuleProperties.SYMBOLS_FILE )).toOSString() );
@@ -182,6 +186,7 @@ public class ModulePropertyPage extends PropertyPage {
 					}
 				}
 
+				@Override
 				public void widgetDefaultSelected( SelectionEvent e ) {
 				}
 			} );
@@ -228,6 +233,7 @@ public class ModulePropertyPage extends PropertyPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if ( getModuleProperties() != null ) {
 			getModuleProperties().dispose();

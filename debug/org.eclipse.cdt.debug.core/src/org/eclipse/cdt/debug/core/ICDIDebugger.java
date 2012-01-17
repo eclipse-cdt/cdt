@@ -19,11 +19,13 @@ import org.eclipse.debug.core.ILaunch;
 /**
  * @deprecated use <code>ICDIDebugger2</code>.
  */
+@Deprecated
 public interface ICDIDebugger {
 
 	/**
 	 * @deprecated use <code>createSession</code> of <code>ICDIDebugger2</code>
 	 */
+	@Deprecated
 	public ICDISession createDebuggerSession(ILaunch launch, IBinaryObject exe, IProgressMonitor monitor) throws CoreException;
 
 }

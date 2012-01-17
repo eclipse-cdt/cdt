@@ -36,6 +36,7 @@ public class DefaultSourceLocator extends CSourceLookupDirector {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector#initializeFromMemento(java.lang.String, org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFromMemento(String memento, ILaunchConfiguration configuration) throws CoreException {
 		Element rootElement = DebugPlugin.parseDocument(memento);
 		if (rootElement.getNodeName().equalsIgnoreCase(OldDefaultSourceLocator.ELEMENT_NAME)) {

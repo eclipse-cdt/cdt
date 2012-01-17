@@ -22,22 +22,27 @@ import org.eclipse.swt.widgets.FileDialog;
  */
 public class ImportExecutableWizard extends AbstractImportExecutableWizard {
 	
+	@Override
 	public String getPageOneTitle() {
 		return Messages.ImportExecutableWizard_pageOneTitle;
 	}
 
+	@Override
 	public String getPageOneDescription() {
 		return Messages.ImportExecutableWizard_pageOneDescription;
 	}
 
+	@Override
 	public String getExecutableListLabel() {
 		return Messages.ImportExecutableWizard_executableListLabel;
 	}
 
+	@Override
 	public void setupFileDialog(FileDialog dialog) {
 		dialog.setText(Messages.ImportExecutableWizard_fileDialogTitle);
 	}
 
+	@Override
 	public boolean supportsConfigurationType(ILaunchConfigurationType type) {
 		return true;
 	}

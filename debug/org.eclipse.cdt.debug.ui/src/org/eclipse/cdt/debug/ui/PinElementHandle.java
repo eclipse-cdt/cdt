@@ -35,6 +35,7 @@ public class PinElementHandle extends PlatformObject implements IPinElementHandl
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.ui.IPinProvider.IPinElementHandle#getDebugContext()
 	 */
+	@Override
 	public synchronized Object getDebugContext() {
 		return fDebugContext;
 	}	
@@ -52,6 +53,7 @@ public class PinElementHandle extends PlatformObject implements IPinElementHandl
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.IPinProvider.IHandleLabelProvider#getLabel()
 	 */
+	@Override
 	public String getLabel() {
 		return fLabel;
 	}
@@ -60,6 +62,7 @@ public class PinElementHandle extends PlatformObject implements IPinElementHandl
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.ui.IPinProvider.IPinElementHandle#getPinElementColorDescriptor()
 	 */
+	@Override
 	public IPinElementColorDescriptor getPinElementColorDescriptor() {
 		return fColorDescriptor;
 	}

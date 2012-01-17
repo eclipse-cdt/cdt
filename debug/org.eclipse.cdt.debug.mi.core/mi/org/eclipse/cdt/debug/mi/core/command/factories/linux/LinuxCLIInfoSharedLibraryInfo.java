@@ -30,6 +30,7 @@ public class LinuxCLIInfoSharedLibraryInfo extends CLIInfoSharedLibraryInfo {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.core.output.CLIInfoSharedLibraryInfo#parseShared(java.lang.String, java.util.List)
 	 */
+	@Override
 	protected void parseShared( String str, List aList ) {
 		if ( str.length() > 0 && !str.startsWith( "From" ) ) { //$NON-NLS-1$
 			// Pass the header

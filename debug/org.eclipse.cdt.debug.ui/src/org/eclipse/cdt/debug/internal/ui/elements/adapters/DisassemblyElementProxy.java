@@ -48,7 +48,8 @@ public class DisassemblyElementProxy extends AbstractModelProxy implements IDebu
         fireModelChanged( new ModelDelta( fElement, IModelDelta.CONTENT ) );
     }
 
-    public void handleDebugEvents( DebugEvent[] events ) {
+    @Override
+	public void handleDebugEvents( DebugEvent[] events ) {
         for ( DebugEvent event : events ) {
             Object source = event.getSource();
             int kind = event.getKind();

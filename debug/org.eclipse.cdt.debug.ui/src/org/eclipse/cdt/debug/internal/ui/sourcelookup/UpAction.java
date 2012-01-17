@@ -29,6 +29,7 @@ public class UpAction extends SourceContainerAction {
 	 * 
 	 * @see IAction#run()
 	 */
+	@Override
 	public void run() {
 		List<ISourceContainer> targets = getOrderedSelection();
 		if (targets.isEmpty()) {
@@ -53,6 +54,7 @@ public class UpAction extends SourceContainerAction {
 	/**
 	 * @see SelectionListenerAction#updateSelection(IStructuredSelection)
 	 */
+	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
 		//check that something is selected, it's not first in the list, and it is a root tree node.
 		return !selection.isEmpty() && !isIndexSelected(selection, 0) && getViewer().getTree().getSelection()[0].getParentItem()==null;

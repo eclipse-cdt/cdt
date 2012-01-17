@@ -41,6 +41,7 @@ public class CType implements ICType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICType#getName()
 	 */
+	@Override
 	public String getName() {
 		return ( fCDIType != null ) ? fCDIType.getTypeName() : null;
 	}
@@ -52,6 +53,7 @@ public class CType implements ICType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICType#getArrayDimensions()
 	 */
+	@Override
 	public int[] getArrayDimensions() {
 		int length = 0;
 		ICDIType type = getCDIType();
@@ -71,6 +73,7 @@ public class CType implements ICType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICType#isArray()
 	 */
+	@Override
 	public boolean isArray() {
 		return ( getCDIType() instanceof ICDIArrayType );
 	}
@@ -78,6 +81,7 @@ public class CType implements ICType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICType#isCharacter()
 	 */
+	@Override
 	public boolean isCharacter() {
 		return ( getCDIType() instanceof ICDICharType );
 	}
@@ -85,6 +89,7 @@ public class CType implements ICType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICType#isFloatingPointType()
 	 */
+	@Override
 	public boolean isFloatingPointType() {
 		return ( getCDIType() instanceof ICDIFloatingPointType );
 	}
@@ -92,6 +97,7 @@ public class CType implements ICType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICType#isPointer()
 	 */
+	@Override
 	public boolean isPointer() {
 		return ( getCDIType() instanceof ICDIPointerType );
 	}
@@ -99,6 +105,7 @@ public class CType implements ICType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICType#isReference()
 	 */
+	@Override
 	public boolean isReference() {
 		return ( getCDIType() instanceof ICDIReferenceType );
 	}
@@ -106,6 +113,7 @@ public class CType implements ICType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICType#isStructure()
 	 */
+	@Override
 	public boolean isStructure() {
 		return ( getCDIType() instanceof ICDIStructType );
 	}
@@ -113,6 +121,7 @@ public class CType implements ICType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICType#isUnsigned()
 	 */
+	@Override
 	public boolean isUnsigned() {
 		return ( isIntegralType() ) ? ((ICDIIntegralType)getCDIType()).isUnsigned() : false;
 	}
@@ -120,6 +129,7 @@ public class CType implements ICType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICType#isIntegralType()
 	 */
+	@Override
 	public boolean isIntegralType() {
 		return ( getCDIType() instanceof ICDIIntegralType );
 	}

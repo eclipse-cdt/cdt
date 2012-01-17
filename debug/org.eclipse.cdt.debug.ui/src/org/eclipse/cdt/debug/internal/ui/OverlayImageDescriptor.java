@@ -79,6 +79,7 @@ public class OverlayImageDescriptor extends CompositeImageDescriptor {
 		}
 	}
 
+	@Override
 	public boolean equals( Object o ) {
 		if ( !(o instanceof OverlayImageDescriptor) )
 			return false;
@@ -86,6 +87,7 @@ public class OverlayImageDescriptor extends CompositeImageDescriptor {
 		return getBase().equals( other.getBase() ) && Arrays.equals( getOverlays(), other.getOverlays() );
 	}
 
+	@Override
 	public int hashCode() {
 		int code = getBase().hashCode();
 		for (int i = 0; i < getOverlays().length; i++) {
@@ -101,6 +103,7 @@ public class OverlayImageDescriptor extends CompositeImageDescriptor {
 	 * @see org.eclipse.jface.resource.CompositeImageDescriptor#drawCompositeImage(int,
 	 *      int)
 	 */
+	@Override
 	protected void drawCompositeImage( int width, int height ) {
 		drawImage( getBase().getImageData(), 0, 0 );
 		drawOverlays( getOverlays() );
@@ -111,6 +114,7 @@ public class OverlayImageDescriptor extends CompositeImageDescriptor {
 	 * 
 	 * @see org.eclipse.jface.resource.CompositeImageDescriptor#getSize()
 	 */
+	@Override
 	protected Point getSize() {
 		return this.fSize;
 	}

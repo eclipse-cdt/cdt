@@ -128,6 +128,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDebugModelPresentation#setAttribute(java.lang.String, java.lang.Object)
 	 */
+	@Override
 	public void setAttribute( String attribute, Object value ) {
 		if ( value == null )
 			return;
@@ -137,6 +138,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDebugModelPresentation#computeDetail(org.eclipse.debug.core.model.IValue, org.eclipse.debug.ui.IValueDetailListener)
 	 */
+	@Override
 	public void computeDetail( IValue value, IValueDetailListener listener ) {
 		CValueDetailProvider.getDefault().computeDetail( value, listener );
 	}
@@ -144,6 +146,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ISourcePresentation#getEditorInput(java.lang.Object)
 	 */
+	@Override
 	public IEditorInput getEditorInput( Object element ) {
 		if ( element instanceof IMarker ) {
 			IResource resource = ((IMarker)element).getResource();
@@ -209,6 +212,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ISourcePresentation#getEditorId(org.eclipse.ui.IEditorInput, java.lang.Object)
 	 */
+	@Override
 	public String getEditorId( IEditorInput input, Object element ) {
 		if (element instanceof CSourceNotFoundElement)
 			return ICDebugUIConstants.CSOURCENOTFOUND_EDITOR_ID;

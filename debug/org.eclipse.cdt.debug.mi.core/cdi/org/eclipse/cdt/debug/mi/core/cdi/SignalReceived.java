@@ -29,6 +29,7 @@ public class SignalReceived extends SessionObject implements ICDISignalReceived 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISignalReceived#getSignal()
 	 */
+	@Override
 	public ICDISignal getSignal() {
 		return signal;
 	}

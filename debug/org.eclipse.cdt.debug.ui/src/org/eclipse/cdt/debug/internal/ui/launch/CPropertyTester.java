@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.IAdaptable;
  */
 public class CPropertyTester extends PropertyTester {
 	
+	@Override
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
 		if ("isExecutable".equals(property)) //$NON-NLS-1$
 			return isExecutable(receiver);

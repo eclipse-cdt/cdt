@@ -41,14 +41,16 @@ public class DocumentBaseChangeUpdate extends DocumentUpdate implements IDocumen
     /* (non-Javadoc)
      * @see com.arm.eclipse.rvd.ui.disassembly.IDocumentBaseChangeUpdate#setOffset(int)
      */
-    public void setOffset( int offset ) {
+    @Override
+	public void setOffset( int offset ) {
         fOffset = offset;
     }
 
     /* (non-Javadoc)
      * @see com.arm.eclipse.rvd.ui.disassembly.IDocumentBaseChangeUpdate#getOriginalOffset()
      */
-    public int getOriginalOffset() {
+    @Override
+	public int getOriginalOffset() {
         return fOriginalOffset;
     }
 

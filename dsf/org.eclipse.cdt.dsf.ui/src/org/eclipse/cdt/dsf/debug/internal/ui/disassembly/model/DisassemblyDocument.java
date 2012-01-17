@@ -462,6 +462,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 	 * @return the address of the given document line number, -1 if no valid
 	 *         address can be computed
 	 */
+	@Override
 	public BigInteger getAddressOfLine(int line) {
 		try {
 			int offset = getLineOffset(line);
@@ -511,6 +512,7 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 	 * @param address
 	 * @return
 	 */
+	@Override
 	public AddressRangePosition getDisassemblyPosition(BigInteger address) {
 		return getPositionOfAddress(CATEGORY_DISASSEMBLY, address);
 	}

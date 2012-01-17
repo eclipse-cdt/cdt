@@ -20,6 +20,7 @@ public class ResumeActionEnabler implements IResumeActionEnabler {
 		thread = adaptableObject;
 	}
 
+	@Override
 	public void resume() throws Exception {
 		thread.resume();
 	}

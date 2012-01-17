@@ -86,14 +86,17 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 	private String savedJtagDevice;
 
 	
+	@Override
 	public String getName() {
 		return TAB_NAME;
 	}
 
+	@Override
 	public Image getImage() {
 		return GDBJtagImages.getDebuggerTabImage();
 	}
 	
+	@Override
 	public void createControl(Composite parent) {
 		ScrolledComposite sc = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
 		sc.setExpandHorizontal(true);
@@ -159,6 +162,7 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gdbCommand.setLayoutData(gd);
 		gdbCommand.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				scheduleUpdateJob();	// provides much better performance for Text listeners 
 			}
@@ -167,6 +171,7 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 		Button button = new Button(comp, SWT.NONE);
 		button.setText(Messages.getString("GDBJtagDebuggerTab.gdbCommandBrowse"));
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				browseButtonSelected(Messages.getString("GDBJtagDebuggerTab.gdbCommandBrowse_Title"), gdbCommand);
 			}
@@ -175,6 +180,7 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 		button = new Button(comp, SWT.NONE);
 		button.setText(Messages.getString("GDBJtagDebuggerTab.gdbCommandVariable"));
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				variablesButtonSelected(gdbCommand);
 			}
@@ -198,6 +204,7 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 		}
 		
 		commandFactory.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				commandFactoryChanged();
 				scheduleUpdateJob(); // provides much better performance for Text listeners
@@ -214,6 +221,7 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 		
 		miProtocol = new Combo(comp, SWT.READ_ONLY | SWT.DROP_DOWN);
 		miProtocol.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				scheduleUpdateJob(); // provides much better performance for Text listeners
 			}
@@ -243,6 +251,7 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 		verboseMode = new Button(parent, SWT.CHECK);
 		verboseMode.setText(Messages.getString("GDBJtagDebuggerTab.verboseModeLabel"));
 		verboseMode.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
 			}
@@ -260,6 +269,7 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 		useRemote = new Button(group, SWT.CHECK);
 		useRemote.setText(Messages.getString("GDBJtagDebuggerTab.useRemote_Text"));
 		useRemote.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				useRemoteChanged();
 				updateLaunchConfigurationDialog();
@@ -283,6 +293,7 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 		}
 		
 		jtagDevice.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				updateDeviceIpPort(jtagDevice.getText());
 				scheduleUpdateJob(); // provides much better performance for Text listeners
@@ -343,22 +354,26 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 		//
 
 		ipAddress.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				scheduleUpdateJob(); // provides much better performance for Text listeners
 			}
 		});
 		portNumber.addVerifyListener(new VerifyListener() {
+			@Override
 			public void verifyText(VerifyEvent e) {
 				e.doit = Character.isDigit(e.character) || Character.isISOControl(e.character);
 			}
 		});
 		portNumber.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				scheduleUpdateJob(); // provides much better performance for Text listeners
 			}
 		});
 
 		connection.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				scheduleUpdateJob(); // provides much better performance for Text listeners
 			}
@@ -429,6 +444,7 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 		return null;
 	}
 
+	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
 			String gdbCommandAttr = configuration.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, IMILaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT);
@@ -470,9 +486,9 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 				
 				for (int i = 0; i < jtagDevice.getItemCount(); i++) {
 					if (jtagDevice.getItem(i).equals(savedJtagDevice)) {
-						storedAddress = configuration.getAttribute(IGDBJtagConstants.ATTR_IP_ADDRESS, IGDBJtagConstants.DEFAULT_IP_ADDRESS); //$NON-NLS-1$
+						storedAddress = configuration.getAttribute(IGDBJtagConstants.ATTR_IP_ADDRESS, IGDBJtagConstants.DEFAULT_IP_ADDRESS); 
 						storedPort = configuration.getAttribute(IGDBJtagConstants.ATTR_PORT_NUMBER, IGDBJtagConstants.DEFAULT_PORT_NUMBER);
-						storedConnection = configuration.getAttribute(IGDBJtagConstants.ATTR_CONNECTION, IGDBJtagConstants.DEFAULT_CONNECTION); //$NON-NLS-1$
+						storedConnection = configuration.getAttribute(IGDBJtagConstants.ATTR_CONNECTION, IGDBJtagConstants.DEFAULT_CONNECTION); 
 						jtagDevice.select(i);
 						break;
 					}
@@ -504,6 +520,7 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 		return TAB_ID;
 	}
 
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, gdbCommand.getText().trim());
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, gdbCommand.getText().trim()); // DSF
@@ -534,6 +551,7 @@ public class GDBJtagDebuggerTab extends AbstractLaunchConfigurationTab {
 		}
 	}
 
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, IMILaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT);
 		CommandFactoryManager cfManager = MIPlugin.getDefault().getCommandFactoryManager();

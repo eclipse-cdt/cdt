@@ -24,6 +24,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	 * 
 	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
 	 */
+	@Override
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = CDebugUIPlugin.getDefault().getPreferenceStore();
 		store.setDefault(PreferenceConstants.P_BOOLEAN, true);

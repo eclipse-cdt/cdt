@@ -48,6 +48,7 @@ public class DisassemblyAnnotationModel extends AnnotationModel {
 			 DisassemblyEditorInput.PENDING_EDITOR_INPUT.equals( input ) )
 			 return;
 		asyncExec( new Runnable() {		
+			@Override
 			public void run() {
 				breakpointsAdded0( breakpoints, document );
 			}
@@ -60,6 +61,7 @@ public class DisassemblyAnnotationModel extends AnnotationModel {
 			 DisassemblyEditorInput.PENDING_EDITOR_INPUT.equals( input ) )
 			 return;
 		asyncExec( new Runnable() {		
+			@Override
 			public void run() {
 				breakpointsRemoved0( breakpoints, document );
 			}
@@ -72,6 +74,7 @@ public class DisassemblyAnnotationModel extends AnnotationModel {
 			 DisassemblyEditorInput.PENDING_EDITOR_INPUT.equals( input ) )
 			 return;
 		asyncExec( new Runnable() {		
+			@Override
 			public void run() {
 				breakpointsChanged0( breakpoints, document );
 			}
@@ -199,6 +202,7 @@ public class DisassemblyAnnotationModel extends AnnotationModel {
 
 	private void updateAnnotations( final IDocument document ) {
 		asyncExec( new Runnable() {		
+			@Override
 			public void run() {
 				doUpdateAnnotations( document );
 			}

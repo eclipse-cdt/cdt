@@ -55,6 +55,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		/**
 		 * @see org.eclipse.jface.preference.FieldEditor#refreshValidState()
 		 */
+		@Override
 		protected void refreshValidState() {
 			super.refreshValidState();
 		}
@@ -63,6 +64,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		 * Clears the error message from the message line if the error
 		 * message is the error message from this field editor.
 		 */
+		@Override
 		protected void clearErrorMessage() {
 			if (canClearErrorMessage()) {
 				super.clearErrorMessage();
@@ -82,9 +84,11 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.preference.IPreferenceStore#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
 		 */
+		@Override
 		public void addPropertyChangeListener( final IPropertyChangeListener listener ) {
 			Preferences.IPropertyChangeListener l = new Preferences.IPropertyChangeListener() {
 				
+				@Override
 				public void propertyChange( org.eclipse.core.runtime.Preferences.PropertyChangeEvent event ) {
 					listener.propertyChange( new PropertyChangeEvent( MIPreferenceStore.this, event.getProperty(), event.getNewValue(), event.getOldValue() ) );
 				}
@@ -95,6 +99,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.preference.IPreferenceStore#contains(java.lang.String)
 		 */
+		@Override
 		public boolean contains( String name ) {
 			return getPreferences().contains( name );
 		}
@@ -102,6 +107,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.preference.IPreferenceStore#firePropertyChangeEvent(java.lang.String, java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public void firePropertyChangeEvent( String name, Object oldValue, Object newValue ) {
 			Iterator it = fListeners.keySet().iterator();
 			while( it.hasNext() ) {
@@ -112,6 +118,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.preference.IPreferenceStore#getBoolean(java.lang.String)
 		 */
+		@Override
 		public boolean getBoolean( String name ) {
 			return fPreferences.getBoolean( name );
 		}
@@ -119,6 +126,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.preference.IPreferenceStore#getDefaultBoolean(java.lang.String)
 		 */
+		@Override
 		public boolean getDefaultBoolean( String name ) {
 			return fPreferences.getDefaultBoolean( name );
 		}
@@ -126,6 +134,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.preference.IPreferenceStore#getDefaultDouble(java.lang.String)
 		 */
+		@Override
 		public double getDefaultDouble( String name ) {
 			return fPreferences.getDefaultDouble( name );
 		}
@@ -133,6 +142,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.preference.IPreferenceStore#getDefaultFloat(java.lang.String)
 		 */
+		@Override
 		public float getDefaultFloat( String name ) {
 			return fPreferences.getDefaultFloat( name );
 		}
@@ -140,6 +150,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.preference.IPreferenceStore#getDefaultInt(java.lang.String)
 		 */
+		@Override
 		public int getDefaultInt( String name ) {
 			return fPreferences.getDefaultInt( name );
 		}
@@ -147,6 +158,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.preference.IPreferenceStore#getDefaultLong(java.lang.String)
 		 */
+		@Override
 		public long getDefaultLong( String name ) {
 			return fPreferences.getDefaultLong( name );
 		}
@@ -154,6 +166,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.preference.IPreferenceStore#getDefaultString(java.lang.String)
 		 */
+		@Override
 		public String getDefaultString( String name ) {
 			return fPreferences.getDefaultString( name );
 		}
@@ -161,6 +174,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.preference.IPreferenceStore#getDouble(java.lang.String)
 		 */
+		@Override
 		public double getDouble( String name ) {
 			return fPreferences.getDouble( name );
 		}
@@ -168,6 +182,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.preference.IPreferenceStore#getFloat(java.lang.String)
 		 */
+		@Override
 		public float getFloat( String name ) {
 			return fPreferences.getFloat( name );
 		}
@@ -175,6 +190,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.preference.IPreferenceStore#getInt(java.lang.String)
 		 */
+		@Override
 		public int getInt( String name ) {
 			return fPreferences.getInt( name );
 		}
@@ -182,6 +198,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.preference.IPreferenceStore#getLong(java.lang.String)
 		 */
+		@Override
 		public long getLong( String name ) {
 			return fPreferences.getLong( name );
 		}
@@ -189,6 +206,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.preference.IPreferenceStore#getString(java.lang.String)
 		 */
+		@Override
 		public String getString( String name ) {
 			return fPreferences.getString( name );
 		}
@@ -196,6 +214,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.preference.IPreferenceStore#isDefault(java.lang.String)
 		 */
+		@Override
 		public boolean isDefault( String name ) {
 			return fPreferences.isDefault( name );
 		}
@@ -203,6 +222,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.preference.IPreferenceStore#needsSaving()
 		 */
+		@Override
 		public boolean needsSaving() {
 			return getPreferences().needsSaving();
 		}
@@ -210,6 +230,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.preference.IPreferenceStore#putValue(java.lang.String, java.lang.String)
 		 */
+		@Override
 		public void putValue( String name, String value ) {
 			getPreferences().setValue( name, value );
 		}
@@ -217,6 +238,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.preference.IPreferenceStore#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
 		 */
+		@Override
 		public void removePropertyChangeListener( IPropertyChangeListener listener ) {
 			fListeners.remove( listener );
 		}
@@ -224,6 +246,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.preference.IPreferenceStore#setDefault(java.lang.String, double)
 		 */
+		@Override
 		public void setDefault( String name, double value ) {
 			getPreferences().setDefault( name, value );
 		}
@@ -231,6 +254,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.preference.IPreferenceStore#setDefault(java.lang.String, float)
 		 */
+		@Override
 		public void setDefault( String name, float value ) {
 			getPreferences().setDefault( name, value );
 		}
@@ -238,6 +262,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.preference.IPreferenceStore#setDefault(java.lang.String, int)
 		 */
+		@Override
 		public void setDefault( String name, int value ) {
 			getPreferences().setDefault( name, value );
 		}
@@ -245,6 +270,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.preference.IPreferenceStore#setDefault(java.lang.String, long)
 		 */
+		@Override
 		public void setDefault( String name, long value ) {
 			getPreferences().setDefault( name, value );
 		}
@@ -252,6 +278,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.preference.IPreferenceStore#setDefault(java.lang.String, java.lang.String)
 		 */
+		@Override
 		public void setDefault( String name, String defaultObject ) {
 			getPreferences().setDefault( name, defaultObject );
 		}
@@ -259,6 +286,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.preference.IPreferenceStore#setDefault(java.lang.String, boolean)
 		 */
+		@Override
 		public void setDefault( String name, boolean value ) {
 			getPreferences().setDefault( name, value );
 		}
@@ -266,6 +294,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.preference.IPreferenceStore#setToDefault(java.lang.String)
 		 */
+		@Override
 		public void setToDefault( String name ) {
 			getPreferences().setToDefault( name );
 		}
@@ -273,6 +302,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, double)
 		 */
+		@Override
 		public void setValue( String name, double value ) {
 			getPreferences().setValue( name, value );
 		}
@@ -280,6 +310,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, float)
 		 */
+		@Override
 		public void setValue( String name, float value ) {
 			getPreferences().setValue( name, value );
 		}
@@ -287,6 +318,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, int)
 		 */
+		@Override
 		public void setValue( String name, int value ) {
 			getPreferences().setValue( name, value );
 		}
@@ -294,6 +326,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, long)
 		 */
+		@Override
 		public void setValue( String name, long value ) {
 			getPreferences().setValue( name, value );
 		}
@@ -301,6 +334,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, java.lang.String)
 		 */
+		@Override
 		public void setValue( String name, String value ) {
 			getPreferences().setValue( name, value );
 		}
@@ -308,6 +342,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, boolean)
 		 */
+		@Override
 		public void setValue( String name, boolean value ) {
 			getPreferences().setValue( name, value );
 		}
@@ -343,6 +378,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 	 * 
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(Composite)
 	 */
+	@Override
 	protected Control createContents( Composite parent ) {
 		getWorkbench().getHelpSystem().setHelp( getControl(), IMIHelpContextIds.MI_PREFERENCE_PAGE );
 		//The main composite
@@ -376,6 +412,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 	/**
 	 * @see IPreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		boolean result = super.performOk();
 		storeValues();
@@ -389,6 +426,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 	 * 
 	 * @see PreferencePage#performDefaults()
 	 */
+	@Override
 	protected void performDefaults() {
 		setDefaultValues();
 		super.performDefaults();
@@ -405,6 +443,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 	 * 
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(IWorkbench)
 	 */
+	@Override
 	public void init( IWorkbench workbench ) {
 		fWorkbench = workbench;
 	}
@@ -472,6 +511,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
 	 */
+	@Override
 	public void dispose() {
 		fDebugTimeoutText.dispose();
 		fLaunchTimeoutText.dispose();
@@ -490,6 +530,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 	/**
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 
 		if (event.getProperty().equals(FieldEditor.IS_VALID)) {

@@ -83,6 +83,7 @@ public class AddWatchpointDialog extends Dialog implements ModifyListener, Selec
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea( Composite parent ) {
 		// The button bar will work better if we make the parent composite
 		// a single column grid layout. For the widgets we add, we want a 
@@ -257,6 +258,7 @@ public class AddWatchpointDialog extends Dialog implements ModifyListener, Selec
 		fRangeField.setLayoutData( gridData );
 		fRangeField.setText( fRange );
 		fRangeField.addVerifyListener( new VerifyListener() {
+			@Override
 			public void verifyText( VerifyEvent e ) {
 				e.doit = verifyIntegerTextAddition( fRangeField.getText(), e.character );
 			}
@@ -294,6 +296,7 @@ public class AddWatchpointDialog extends Dialog implements ModifyListener, Selec
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
+	@Override
 	protected void configureShell( Shell newShell ) {
 		super.configureShell( newShell );
 
@@ -304,6 +307,7 @@ public class AddWatchpointDialog extends Dialog implements ModifyListener, Selec
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
+	@Override
 	protected void okPressed() {
 		fExpression = fExpressionInput.getText().trim();
 		if ( fExpression.length() > 0 ) {
@@ -321,6 +325,7 @@ public class AddWatchpointDialog extends Dialog implements ModifyListener, Selec
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
 	 */
+	@Override
 	public void modifyText( ModifyEvent e ) {
 		updateUI();
 	}
@@ -328,6 +333,7 @@ public class AddWatchpointDialog extends Dialog implements ModifyListener, Selec
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.TrayDialog#createButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createButtonBar( Composite parent ) {
 		return super.createButtonBar( parent );
 	}
@@ -352,6 +358,7 @@ public class AddWatchpointDialog extends Dialog implements ModifyListener, Selec
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
 	 */
+	@Override
 	public void widgetDefaultSelected( SelectionEvent e ) {
 		// ignore
 	}
@@ -359,6 +366,7 @@ public class AddWatchpointDialog extends Dialog implements ModifyListener, Selec
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 	 */
+	@Override
 	public void widgetSelected( SelectionEvent e ) {
 		updateUI();
 	}
@@ -417,6 +425,7 @@ public class AddWatchpointDialog extends Dialog implements ModifyListener, Selec
 		fMemorySpace = memorySpace;
 	}
 
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		// override so we can change the initial okay enabled state
 		createButton( parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL,

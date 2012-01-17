@@ -88,6 +88,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		 * 
 		 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 		 */
+		@Override
 		protected Control createDialogArea(Composite parent) {
 			Composite composite = (Composite)super.createDialogArea(parent);
 			Group group = new Group(composite, SWT.NONE);
@@ -103,6 +104,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 			return composite;
 		}
 
+		@Override
 		protected void okPressed() {
 			saveValues();
 			super.okPressed();
@@ -130,6 +132,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		 * 
 		 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 		 */
+		@Override
 		protected void configureShell(Shell newShell) {
 			super.configureShell(newShell);
 			newShell.setText(LaunchMessages.CDebuggerTab_Advanced_Options_Dialog_Title); 
@@ -164,6 +167,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 	    return TAB_ID;
 	}
 	
+	@Override
 	public void createControl(Composite parent) {
 		fContainer = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
 		fContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -193,6 +197,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		String configPlatform = getPlatform(config);
 		debugConfigs = CDebugCorePlugin.getDefault().getActiveDebugConfigurations();
 		Arrays.sort(debugConfigs, new Comparator<ICDebugConfiguration>() {
+			@Override
 			public int compare(ICDebugConfiguration c1, ICDebugConfiguration c2) {
 				return Collator.getInstance().compare(c1.getName(), c2.getName());
 			}
@@ -233,11 +238,13 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		loadDebuggerCombo((ICDebugConfiguration[])list.toArray(new ICDebugConfiguration[list.size()]), defaultSelection);
 	}
 
+	@Override
 	protected void updateComboFromSelection() {
 		super.updateComboFromSelection();
 		initializeCommonControls(getLaunchConfiguration());
 	}
 
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		super.setDefaults(config);
 		if (fAttachMode) {
@@ -288,6 +295,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, defaultDebugger);
 	}
 
+	@Override
 	public void initializeFrom(ILaunchConfiguration config) {
 		setInitializing(true);
 		super.initializeFrom(config);
@@ -300,6 +308,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		setInitializing(false);
 	}
 
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		super.performApply(config);
 		if (fAttachMode) {
@@ -313,6 +322,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		applyAdvancedAttributes(config);
 	}
 
+	@Override
 	public boolean isValid(ILaunchConfiguration config) {
 		if (!validateDebuggerConfig(config)) {
 			return false;
@@ -403,6 +413,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		if (fAttachMode == false) {
 			fStopInMain = createCheckButton(optionsComp, LaunchMessages.CDebuggerTab_Stop_at_main_on_startup);
 			fStopInMain.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					fStopInMainSymbol.setEnabled(fStopInMain.getSelection());
 					update();
@@ -413,12 +424,14 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 			gridData.widthHint = 100;
 			fStopInMainSymbol.setLayoutData(gridData);
 			fStopInMainSymbol.addModifyListener(new ModifyListener() {
+				@Override
 				public void modifyText(ModifyEvent evt) {
 					update();
 				}
 			});
 			fStopInMainSymbol.getAccessible().addAccessibleListener(
 				new AccessibleAdapter() {                       
+					@Override
 					public void getName(AccessibleEvent e) {
 						e.result = LaunchMessages.CDebuggerTab_Stop_at_main_on_startup;
 					}
@@ -428,6 +441,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		fAdvancedButton = createPushButton(optionsComp, LaunchMessages.CDebuggerTab_Advanced, null); 
 		((GridData)fAdvancedButton.getLayoutData()).horizontalAlignment = GridData.END;
 		fAdvancedButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Dialog dialog = new AdvancedDebuggerOptionsDialog(getShell());
 				dialog.open();
@@ -471,6 +485,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 					((Boolean)regBookkeeping).booleanValue());
 	}
 
+	@Override
 	protected Shell getShell() {
 		return super.getShell();
 	}
@@ -480,6 +495,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
 	 */
+	@Override
 	public void dispose() {
 		getAdvancedAttributes().clear();
 		ICDebuggerPage debuggerPage = getDynamicTab();
@@ -507,10 +523,12 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 	 * 
 	 * @see org.eclipse.cdt.launch.internal.ui.AbstractCDebuggerTab#setInitializeDefault(boolean)
 	 */
+	@Override
 	protected void setInitializeDefault(boolean init) {
 		super.setInitializeDefault(init);
 	}
 	
+	@Override
 	protected void contentsChanged() {
 		fContainer.setMinSize(fContents.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}

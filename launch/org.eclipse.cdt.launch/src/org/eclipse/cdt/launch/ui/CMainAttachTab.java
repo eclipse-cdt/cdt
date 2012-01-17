@@ -19,6 +19,7 @@ public class CMainAttachTab extends CMainTab {
 		super(false);
 	}
 	
+	@Override
 	public boolean isValid(ILaunchConfiguration config) {
 		if (super.isValid(config) == false) {
 			String name = fProgText.getText().trim();

@@ -75,6 +75,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 
 		private boolean fHasStateChanged = false;
 
+		@Override
 		public void propertyChange( PropertyChangeEvent event ) {
 			if ( event.getProperty().equals( ICDebugPreferenceConstants.PREF_SHOW_HEX_VALUES ) ) {
 				fHasStateChanged = true;
@@ -157,6 +158,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	 * 
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(IWorkbench)
 	 */
+	@Override
 	public void init( IWorkbench workbench ) {
 		fWorkbench = workbench;
 	}
@@ -262,6 +264,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	private void refreshViews() {
 		BusyIndicator.showWhile( getShell().getDisplay(), new Runnable() {
 
+			@Override
 			public void run() {
 				// Refresh interested views
 				IWorkbenchWindow[] windows = CDebugUIPlugin.getDefault().getWorkbench().getWorkbenchWindows();

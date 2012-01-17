@@ -611,6 +611,7 @@ public class VariableManager extends Manager {
 	 * This ok, since the IDE only a frame at a time.
 	 *
 	 */
+	@Override
 	public void update(Target target) throws CDIException {
 		int highLevel = 0;
 		int lowLevel = 0;

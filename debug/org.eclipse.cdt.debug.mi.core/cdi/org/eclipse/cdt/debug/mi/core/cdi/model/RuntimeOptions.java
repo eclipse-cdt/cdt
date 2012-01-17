@@ -35,6 +35,7 @@ public class RuntimeOptions extends CObject implements ICDIRuntimeOptions {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIRuntimeOptions#setArguments(String)
 	 */
+	@Override
 	public void setArguments(String[] args) throws CDIException {
 		Target target = (Target)getTarget();
 		if (args == null || args.length == 0) {
@@ -57,6 +58,7 @@ public class RuntimeOptions extends CObject implements ICDIRuntimeOptions {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIRuntimeOptions#setEnvironment(Properties)
 	 */
+	@Override
 	public void setEnvironment(Properties props) throws CDIException {
 		Target target = (Target)getTarget();
 		if (props == null) {
@@ -90,6 +92,7 @@ public class RuntimeOptions extends CObject implements ICDIRuntimeOptions {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIRuntimeOptions#setWorkingDirectory(String)
 	 */
+	@Override
 	public void setWorkingDirectory(String wd) throws CDIException {
 		Target target = (Target)getTarget();
 		if (wd == null || wd.length() == 0) {

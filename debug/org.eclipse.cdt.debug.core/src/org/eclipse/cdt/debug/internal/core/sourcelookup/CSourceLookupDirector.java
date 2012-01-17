@@ -59,6 +59,7 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupDirector#initializeParticipants()
 	 */
+	@Override
 	public void initializeParticipants() {
 		addParticipants(new ISourceLookupParticipant[] { new CSourceLookupParticipant() });
 	}
@@ -66,6 +67,7 @@ public class CSourceLookupDirector extends AbstractSourceLookupDirector {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupDirector#supportsSourceContainerType(org.eclipse.debug.core.sourcelookup.ISourceContainerType)
 	 */
+	@Override
 	public boolean supportsSourceContainerType(ISourceContainerType type) {
 		readSupportedContainerTypes();
 		return fSupportedTypes.contains(type.getId());

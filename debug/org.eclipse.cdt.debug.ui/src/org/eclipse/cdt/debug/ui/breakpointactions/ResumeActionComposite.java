@@ -50,10 +50,12 @@ public class ResumeActionComposite extends Composite {
 		//
 	}
 
+	@Override
 	public void dispose() {
 		super.dispose();
 	}
 
+	@Override
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components
 	}

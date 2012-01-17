@@ -111,6 +111,7 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#findSourceElements(java.lang.String)
 	 */
+	@Override
 	public Object[] findSourceElements(String name) throws CoreException {
 		IPath path = createPath(name);
 		if (getBackendPath().isPrefixOf(path)) {
@@ -163,6 +164,7 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getName()
 	 */
+	@Override
 	public String getName() {
 		return MessageFormat.format("{0} - {1}", new String[] { getBackendPath().toOSString(), getLocalPath().toOSString() }); //$NON-NLS-1$
 	}
@@ -170,6 +172,7 @@ public class MapEntrySourceContainer extends AbstractSourceContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getType()
 	 */
+	@Override
 	public ISourceContainerType getType() {
 		return getSourceContainerType(TYPE_ID);
 	}

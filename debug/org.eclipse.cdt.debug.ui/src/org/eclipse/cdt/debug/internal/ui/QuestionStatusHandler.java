@@ -25,6 +25,7 @@ public class QuestionStatusHandler implements IStatusHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus, java.lang.Object)
 	 */
+	@Override
 	public Object handleStatus( IStatus status, Object source ) throws CoreException {
 		final boolean result[] = new boolean[1];
 		if ( status != null && source != null && source instanceof IDebugTarget ) {
@@ -32,6 +33,7 @@ public class QuestionStatusHandler implements IStatusHandler {
 			final String message = status.getMessage();
 			CDebugUIPlugin.getStandardDisplay().syncExec( new Runnable() {
 
+				@Override
 				public void run() {
 					result[0] = MessageDialog.openQuestion( CDebugUIPlugin.getActiveWorkbenchShell(), title, message );
 				}

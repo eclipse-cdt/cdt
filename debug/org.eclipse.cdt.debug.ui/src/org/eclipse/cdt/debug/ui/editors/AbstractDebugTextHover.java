@@ -152,6 +152,7 @@ public abstract class AbstractDebugTextHover implements ICEditorTextHover, IText
 	 */
 	protected abstract String evaluateExpression(String expression);
 	
+	@Override
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 		if (canEvaluate()) {
 			String expression = getExpressionText(textViewer, hoverRegion);
@@ -173,18 +174,21 @@ public abstract class AbstractDebugTextHover implements ICEditorTextHover, IText
 		return null;
 	}
 	
+	@Override
 	public IRegion getHoverRegion(ITextViewer viewer, int offset) {
 		if (viewer != null)
 			return CDebugUIUtils.findWord(viewer.getDocument(), offset);
 		return null;
 	}
 
+	@Override
 	public final void setEditor(IEditorPart editor) {
 		if (editor != null) {
 			fEditor = editor;
 		}
 	}
 
+	@Override
 	public IInformationControlCreator getHoverControlCreator() {
 		return null;
 	}

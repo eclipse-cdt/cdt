@@ -61,6 +61,7 @@ public class CExpression extends CLocalVariable implements IExpression {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IExpression#getExpressionText()
 	 */
+	@Override
 	public String getExpressionText() {
 		return fText;
 	}
@@ -68,6 +69,7 @@ public class CExpression extends CLocalVariable implements IExpression {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvents(org.eclipse.cdt.debug.core.cdi.event.ICDIEvent[])
 	 */
+	@Override
 	public void handleDebugEvents( ICDIEvent[] events ) {
 		for( int i = 0; i < events.length; i++ ) {
 			ICDIEvent event = events[i];
@@ -109,6 +111,7 @@ public class CExpression extends CLocalVariable implements IExpression {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICVariable#isEnabled()
 	 */
+	@Override
 	public boolean isEnabled() {
 		return true;
 	}
@@ -116,6 +119,7 @@ public class CExpression extends CLocalVariable implements IExpression {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICVariable#canEnableDisable()
 	 */
+	@Override
 	public boolean canEnableDisable() {
 		return true;
 	}
@@ -123,6 +127,7 @@ public class CExpression extends CLocalVariable implements IExpression {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.core.model.CVariable#isBookkeepingEnabled()
 	 */
+	@Override
 	protected boolean isBookkeepingEnabled() {
 		return false;
 	}
@@ -130,6 +135,7 @@ public class CExpression extends CLocalVariable implements IExpression {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IExpression#getValue()
 	 */
+	@Override
 	public IValue getValue() {
 		CStackFrame frame = (CStackFrame)getStackFrame();
 		try {
@@ -173,10 +179,12 @@ public class CExpression extends CLocalVariable implements IExpression {
 		return fValue;
 	}
 
+	@Override
 	protected ICStackFrame getStackFrame() {
 		return fStackFrame;
 	}
 
+	@Override
 	protected void resetValue() {
 		if ( fValue instanceof AbstractCValue ) {
 			((AbstractCValue)fValue).reset();
@@ -202,6 +210,7 @@ public class CExpression extends CLocalVariable implements IExpression {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.core.model.AbstractCVariable#getExpressionString()
 	 */
+	@Override
 	public String getExpressionString() throws DebugException {
 		return getExpressionText();
 	}
@@ -209,6 +218,7 @@ public class CExpression extends CLocalVariable implements IExpression {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.core.model.AbstractCVariable#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if ( fCDIExpression != null ) {
 			try {
@@ -229,6 +239,7 @@ public class CExpression extends CLocalVariable implements IExpression {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICVariable#getType()
 	 */
+	@Override
 	public ICType getType() throws DebugException {
 		if ( isDisposed() )
 			return null;
@@ -245,6 +256,7 @@ public class CExpression extends CLocalVariable implements IExpression {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IVariable#getReferenceTypeName()
 	 */
+	@Override
 	public String getReferenceTypeName() throws DebugException {
 		ICType type = getType();
 		return ( type != null ) ? type.getName() : ""; //$NON-NLS-1$

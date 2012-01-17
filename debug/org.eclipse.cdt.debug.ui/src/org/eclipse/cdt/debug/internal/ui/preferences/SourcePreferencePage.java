@@ -53,6 +53,7 @@ public class SourcePreferencePage extends PreferencePage implements IWorkbenchPr
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		Font font = parent.getFont();
 		Composite comp = new Composite(parent, SWT.NONE);
@@ -116,6 +117,7 @@ public class SourcePreferencePage extends PreferencePage implements IWorkbenchPr
 	 * 
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
+	@Override
 	public void init(IWorkbench workbench) {
 		fWorkbench = workbench;
 	}
@@ -167,6 +169,7 @@ public class SourcePreferencePage extends PreferencePage implements IWorkbenchPr
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
+	@Override
 	protected void performDefaults() {
 		fPathViewer.setEntries(new ISourceContainer[0]);
 		super.performDefaults();
@@ -175,6 +178,7 @@ public class SourcePreferencePage extends PreferencePage implements IWorkbenchPr
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		CDebugCorePlugin.getDefault().getCommonSourceLookupDirector().setSourceContainers(fPathViewer.getEntries());
 		CDebugCorePlugin.getDefault().savePluginPreferences();

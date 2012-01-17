@@ -183,7 +183,8 @@ public class DocumentContentProvider implements IModelChangedListener {
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener#modelChanged(org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta, org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy)
      */
-    public void modelChanged( final IModelDelta delta, final IModelProxy proxy ) {
+    @Override
+	public void modelChanged( final IModelDelta delta, final IModelProxy proxy ) {
         WorkbenchJob job = new WorkbenchJob( "process model delta" ) { //$NON-NLS-1$
             
             /* (non-Javadoc)

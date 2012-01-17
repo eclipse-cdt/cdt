@@ -59,6 +59,7 @@ public class SetAutoSolibActionDelegate implements IViewActionDelegate, ISelecti
 	 * 
 	 * @see org.eclipse.ui.IViewActionDelegate#init(IViewPart)
 	 */
+	@Override
 	public void init( IViewPart view ) {
 		fView = view;
 		view.getSite().getPage().addPartListener( this );
@@ -70,6 +71,7 @@ public class SetAutoSolibActionDelegate implements IViewActionDelegate, ISelecti
 	 * 
 	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
 	 */
+	@Override
 	public void selectionChanged( IWorkbenchPart part, ISelection selection ) {
 		if ( part.getSite().getId().equals( IDebugUIConstants.ID_DEBUG_VIEW ) ) {
 			update( getAction() );
@@ -81,9 +83,11 @@ public class SetAutoSolibActionDelegate implements IViewActionDelegate, ISelecti
 	 * 
 	 * @see org.eclipse.ui.IActionDelegate#run(IAction)
 	 */
+	@Override
 	public void run( IAction action ) {
 		BusyIndicator.showWhile( Display.getCurrent(), new Runnable() {
 
+			@Override
 			public void run() {
 				try {
 					doAction( DebugUITools.getDebugContext() );
@@ -111,6 +115,7 @@ public class SetAutoSolibActionDelegate implements IViewActionDelegate, ISelecti
 	 * 
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
+	@Override
 	public void selectionChanged( IAction action, ISelection selection ) {
 		setAction( action );
 		if ( getView() != null ) {
@@ -131,6 +136,7 @@ public class SetAutoSolibActionDelegate implements IViewActionDelegate, ISelecti
 	 * 
 	 * @see org.eclipse.ui.IPartListener#partActivated(IWorkbenchPart)
 	 */
+	@Override
 	public void partActivated( IWorkbenchPart part ) {
 	}
 
@@ -139,6 +145,7 @@ public class SetAutoSolibActionDelegate implements IViewActionDelegate, ISelecti
 	 * 
 	 * @see org.eclipse.ui.IPartListener#partBroughtToTop(IWorkbenchPart)
 	 */
+	@Override
 	public void partBroughtToTop( IWorkbenchPart part ) {
 	}
 
@@ -147,6 +154,7 @@ public class SetAutoSolibActionDelegate implements IViewActionDelegate, ISelecti
 	 * 
 	 * @see org.eclipse.ui.IPartListener#partClosed(IWorkbenchPart)
 	 */
+	@Override
 	public void partClosed( IWorkbenchPart part ) {
 		if ( part.equals( getView() ) ) {
 			dispose();
@@ -158,6 +166,7 @@ public class SetAutoSolibActionDelegate implements IViewActionDelegate, ISelecti
 	 * 
 	 * @see org.eclipse.ui.IPartListener#partDeactivated(IWorkbenchPart)
 	 */
+	@Override
 	public void partDeactivated( IWorkbenchPart part ) {
 	}
 
@@ -166,6 +175,7 @@ public class SetAutoSolibActionDelegate implements IViewActionDelegate, ISelecti
 	 * 
 	 * @see org.eclipse.ui.IPartListener#partOpened(IWorkbenchPart)
 	 */
+	@Override
 	public void partOpened( IWorkbenchPart part ) {
 	}
 

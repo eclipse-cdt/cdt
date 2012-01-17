@@ -39,7 +39,8 @@ public class DisassemblyMemoryRendering extends AbstractMemoryRendering {
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.memory.IMemoryRendering#createControl(org.eclipse.swt.widgets.Composite)
      */
-    public Control createControl( Composite parent ) {
+    @Override
+	public Control createControl( Composite parent ) {
         Composite composite = new Composite( parent, SWT.BORDER );
         GridLayout layout = new GridLayout();
         layout.marginHeight = 0;
@@ -54,7 +55,8 @@ public class DisassemblyMemoryRendering extends AbstractMemoryRendering {
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.memory.IMemoryRendering#getControl()
      */
-    public Control getControl() {
+    @Override
+	public Control getControl() {
         return fDisassemblyPane.getControl();
     }
 

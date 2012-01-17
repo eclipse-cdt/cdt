@@ -101,6 +101,7 @@ public class CompilationDirectorySourceContainerDialog extends TitleAreaDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Image image = fNewContainer ?
 				CDebugImages.get(IInternalCDebugUIConstants.IMG_ADD_COMP_DIR_WIZ) : 
@@ -139,6 +140,7 @@ public class CompilationDirectorySourceContainerDialog extends TitleAreaDialog {
         fDirText.setLayoutData(data);
         fDirText.setFont(font);
         fDirText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				validate();
 			}        	
@@ -153,7 +155,8 @@ public class CompilationDirectorySourceContainerDialog extends TitleAreaDialog {
         button.setLayoutData(data);
         button.setFont(JFaceResources.getDialogFont());
         button.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent event) {
+            @Override
+			public void widgetSelected(SelectionEvent event) {
             	browse();
             }
         });
@@ -171,6 +174,7 @@ public class CompilationDirectorySourceContainerDialog extends TitleAreaDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
+	@Override
 	protected void configureShell(Shell newShell) {
 		String title = null;
 		if (fNewContainer) {
@@ -185,6 +189,7 @@ public class CompilationDirectorySourceContainerDialog extends TitleAreaDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.TitleAreaDialog#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		Control c = super.createContents(parent);
 		fDirText.setText(fDirectory);
@@ -197,6 +202,7 @@ public class CompilationDirectorySourceContainerDialog extends TitleAreaDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
+	@Override
 	protected void okPressed() {
 		fDirectory = fDirText.getText().trim();
 		fCompilationSubfolders = fSubfoldersButton.getSelection();

@@ -49,6 +49,7 @@ public class ResumeAction extends AbstractBreakpointAction {
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.breakpointactions.IBreakpointAction#execute(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.runtime.IAdaptable, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public IStatus execute(IBreakpoint breakpoint, IAdaptable context, IProgressMonitor monitor) {
 		IStatus errorStatus = null;
 		long endTime = System.currentTimeMillis() + getPauseTime()*1000;
@@ -87,6 +88,7 @@ public class ResumeAction extends AbstractBreakpointAction {
 		return errorStatus;
 	}
 
+	@Override
 	public String getDefaultName() {
 		return Messages.getString("ResumeAction.UntitledName"); //$NON-NLS-1$
 	}
@@ -99,10 +101,12 @@ public class ResumeAction extends AbstractBreakpointAction {
 		this.pauseTime = pauseTime;
 	}
 
+	@Override
 	public String getIdentifier() {
 		return "org.eclipse.cdt.debug.ui.breakpointactions.ResumeAction"; //$NON-NLS-1$
 	}
 
+	@Override
 	public String getMemento() {
 		String resumeData = ""; //$NON-NLS-1$
 
@@ -136,16 +140,19 @@ public class ResumeAction extends AbstractBreakpointAction {
 		return resumeData;
 	}
 
+	@Override
 	public String getSummary() {
 		if (pauseTime == 0)
 			return Messages.getString("ResumeAction.SummaryImmediately"); //$NON-NLS-1$
 		return MessageFormat.format(Messages.getString("ResumeAction.SummaryResumeTime"), new Object[] { Integer.valueOf(pauseTime) }); //$NON-NLS-1$
 	}
 
+	@Override
 	public String getTypeName() {
 		return Messages.getString("ResumeAction.TypeName"); //$NON-NLS-1$
 	}
 
+	@Override
 	public void initializeFromMemento(String data) {
 		Element root = null;
 		DocumentBuilder parser;

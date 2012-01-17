@@ -58,6 +58,7 @@ public class MIStackListArguments extends MICommand
 		return (MIStackListArgumentsInfo)getMIInfo();
 	}
 
+	@Override
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

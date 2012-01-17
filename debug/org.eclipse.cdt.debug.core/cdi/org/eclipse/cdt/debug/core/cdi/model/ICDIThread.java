@@ -80,6 +80,7 @@ public interface ICDIThread extends ICDIExecuteStep, ICDIExecuteResume, ICDISusp
 	 * @deprecated 
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
+	@Deprecated
 	void resume() throws CDIException;
 
 	/**
@@ -88,6 +89,7 @@ public interface ICDIThread extends ICDIExecuteStep, ICDIExecuteResume, ICDISusp
 	 * @deprecated 
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
+	@Deprecated
 	void stepOver() throws CDIException;
 
 	/**
@@ -96,6 +98,7 @@ public interface ICDIThread extends ICDIExecuteStep, ICDIExecuteResume, ICDISusp
 	 * @deprecated 
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
+	@Deprecated
 	void stepInto() throws CDIException;
 
 	/**
@@ -104,6 +107,7 @@ public interface ICDIThread extends ICDIExecuteStep, ICDIExecuteResume, ICDISusp
 	 * @deprecated 
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
+	@Deprecated
 	void stepOverInstruction() throws CDIException;
 
 	/**
@@ -112,6 +116,7 @@ public interface ICDIThread extends ICDIExecuteStep, ICDIExecuteResume, ICDISusp
 	 * @deprecated 
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
+	@Deprecated
 	void stepIntoInstruction() throws CDIException;
 
 	/**
@@ -122,6 +127,7 @@ public interface ICDIThread extends ICDIExecuteStep, ICDIExecuteResume, ICDISusp
 	 * @see ICDIStackFrame.stepReturn()
 	 * @throws CDIException
 	 */
+	@Deprecated
 	void stepReturn() throws CDIException;
 
 	/**
@@ -131,6 +137,7 @@ public interface ICDIThread extends ICDIExecuteStep, ICDIExecuteResume, ICDISusp
 	 * @see #stepUntil(ICDILocation) 
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
+	@Deprecated
 	void runUntil(ICDILocation location) throws CDIException;
 
 	/**
@@ -140,6 +147,7 @@ public interface ICDIThread extends ICDIExecuteStep, ICDIExecuteResume, ICDISusp
 	 * @see #resume(ICDILocation) 
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
+	@Deprecated
 	void jump(ICDILocation location) throws CDIException;
 
 	/**
@@ -149,6 +157,7 @@ public interface ICDIThread extends ICDIExecuteStep, ICDIExecuteResume, ICDISusp
 	 * @see #resume(boolean)
 	 * @throws CDIException
 	 */
+	@Deprecated
 	void signal() throws CDIException;
 
 	/**
@@ -159,6 +168,7 @@ public interface ICDIThread extends ICDIExecuteStep, ICDIExecuteResume, ICDISusp
 	 * @param signal
 	 * @throws CDIException
 	 */
+	@Deprecated
 	void signal(ICDISignal signal) throws CDIException;
 
 	/**

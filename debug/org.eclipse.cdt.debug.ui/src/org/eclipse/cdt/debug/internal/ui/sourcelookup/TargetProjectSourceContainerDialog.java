@@ -37,6 +37,7 @@ public class TargetProjectSourceContainerDialog extends SelectionDialog {
 	/**
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Font font = parent.getFont();
 		
@@ -49,6 +50,7 @@ public class TargetProjectSourceContainerDialog extends SelectionDialog {
 		final Button addRequired = new Button(composite, SWT.CHECK);
 		addRequired.setText(SourceLookupUIMessages.TargetProjectSourceContainerDialog_referencedLabel);  
 		addRequired.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fAddReferencedProjects = addRequired.getSelection();
 			}

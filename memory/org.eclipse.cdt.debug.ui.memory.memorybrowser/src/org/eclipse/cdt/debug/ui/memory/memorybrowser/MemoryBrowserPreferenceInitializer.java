@@ -23,6 +23,7 @@ public class MemoryBrowserPreferenceInitializer extends AbstractPreferenceInitia
 	 * 
 	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
 	 */
+	@Override
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = MemoryBrowserPlugin.getDefault().getPreferenceStore();		
 		

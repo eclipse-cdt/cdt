@@ -31,6 +31,7 @@ public class CGlobalValue extends CValue
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValue#hasVariables()
 	 */
+	@Override
 	public boolean hasVariables() throws DebugException
 	{
 		if ( fHasChildren == null )

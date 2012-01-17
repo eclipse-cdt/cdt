@@ -52,6 +52,7 @@ public class MappingSourceContainer extends AbstractSourceContainer implements I
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getName()
 	 */
+	@Override
 	public String getName() {
 		return fName;
 	}
@@ -59,6 +60,7 @@ public class MappingSourceContainer extends AbstractSourceContainer implements I
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getType()
 	 */
+	@Override
 	public ISourceContainerType getType() {
 		return getSourceContainerType(TYPE_ID);
 	}
@@ -66,6 +68,7 @@ public class MappingSourceContainer extends AbstractSourceContainer implements I
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#isComposite()
 	 */
+	@Override
 	public boolean isComposite() {
 		return !fContainers.isEmpty();
 	}
@@ -73,6 +76,7 @@ public class MappingSourceContainer extends AbstractSourceContainer implements I
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#findSourceElements(java.lang.String)
 	 */
+	@Override
 	public Object[] findSourceElements(String name) throws CoreException {
 		return findSourceElements(name, getSourceContainers());
 	}
@@ -128,6 +132,7 @@ public class MappingSourceContainer extends AbstractSourceContainer implements I
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.containers.AbstractSourceContainer#getSourceContainers()
 	 */
+	@Override
 	public ISourceContainer[] getSourceContainers() throws CoreException {
 		return fContainers.toArray(new MapEntrySourceContainer[fContainers.size()]);
 	}
@@ -159,6 +164,7 @@ public class MappingSourceContainer extends AbstractSourceContainer implements I
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		Iterator<MapEntrySourceContainer> it = fContainers.iterator();
@@ -184,6 +190,7 @@ public class MappingSourceContainer extends AbstractSourceContainer implements I
 	/* (non-Javadoc)
 	 * @see IMappingSourceContainer#getCompilationPath(String)
 	 */
+	@Override
 	public IPath getCompilationPath(String sourceName) {
 		IPath path = new Path(sourceName);
 		IPath result = null;

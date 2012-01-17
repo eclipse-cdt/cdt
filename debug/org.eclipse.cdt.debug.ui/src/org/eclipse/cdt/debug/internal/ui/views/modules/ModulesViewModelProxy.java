@@ -32,6 +32,7 @@ public class ModulesViewModelProxy extends EventHandlerModelProxy {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.EventHandlerModelProxy#createEventHandlers()
 	 */
+	@Override
 	protected DebugEventHandler[] createEventHandlers() {
 		return new DebugEventHandler[] { new ModulesViewEventHandler( this, fModuleRetrieval ) };
 	}
@@ -39,6 +40,7 @@ public class ModulesViewModelProxy extends EventHandlerModelProxy {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.EventHandlerModelProxy#dispose()
 	 */
+	@Override
 	public synchronized void dispose() {
 		super.dispose();
 		fModuleRetrieval = null;

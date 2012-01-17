@@ -22,6 +22,7 @@ public class ActionFilterAdapterFactory implements IAdapterFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter( Object adaptableObject, Class adapterType ) {
 		if ( adapterType.isInstance( adaptableObject ) ) {
 			return adaptableObject;
@@ -37,6 +38,7 @@ public class ActionFilterAdapterFactory implements IAdapterFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
+	@Override
 	public Class[] getAdapterList() {
 		return new Class[] {
 				IActionFilter.class 

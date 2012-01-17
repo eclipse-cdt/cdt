@@ -164,6 +164,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 	public void initialTest() throws Exception {
 		fSession = getGDBLaunch().getSession();
 		Runnable runnable = new Runnable() {
+			@Override
 			public void run() {
 				fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
 
@@ -191,6 +192,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 	@After
 	public void shutdown() throws Exception {
 		Runnable runnable = new Runnable() {
+			@Override
 			public void run() {
 				fSession.removeServiceEventListener(GDBRemoteTracepointsTest_7_0.this);
 			}
@@ -288,6 +290,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
 		fBreakpointService.getExecutor().submit(new Runnable() {
+			@Override
 			public void run() {
 				fBreakpointService.insertBreakpoint(context, attributes,
 						new DataRequestMonitor<IBreakpointDMContext>(fBreakpointService.getExecutor(), null) {
@@ -312,6 +315,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
 		fBreakpointService.getExecutor().submit(new Runnable() {
+			@Override
 			public void run() {
 				fBreakpointService.removeBreakpoint(breakpoint, 
 						new RequestMonitor(fBreakpointService.getExecutor(), null) {
@@ -333,6 +337,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
 		fBreakpointService.getExecutor().submit(new Runnable() {
+			@Override
 			public void run() {
 				fBreakpointService.updateBreakpoint(breakpoint, delta,             
 						new RequestMonitor(fBreakpointService.getExecutor(), null) {
@@ -353,6 +358,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
 		fBreakpointService.getExecutor().submit(new Runnable() {
+			@Override
 			public void run() {
 				fBreakpointService.getBreakpointDMData(breakpoint, 
 						new DataRequestMonitor<IBreakpointDMData>(fBreakpointService.getExecutor(), null) {
@@ -376,6 +382,7 @@ public class GDBRemoteTracepointsTest_7_0 extends BaseTestCase {
 		final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
 
 		fBreakpointService.getExecutor().submit(new Runnable() {
+			@Override
 			public void run() {
 				fBreakpointService.getBreakpoints(context, new DataRequestMonitor<IBreakpointDMContext[]>(fBreakpointService.getExecutor(), null) {
 					@Override

@@ -63,6 +63,7 @@ public class SoundActionComposite extends Composite {
 		combo_1.setLayoutData(gridData);
 
 		comboModifyListener = new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				if (combo_1.getText().length() > 0) {
 					String filePath = combo_1.getText();
@@ -85,6 +86,7 @@ public class SoundActionComposite extends Composite {
 
 		final Button browseButton = new Button(this, SWT.NONE);
 		browseButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog dialog = new FileDialog(getShell(), SWT.NONE);
 				dialog.setText(Messages.getString("SoundActionComposite.5")); //$NON-NLS-1$
@@ -104,6 +106,7 @@ public class SoundActionComposite extends Composite {
 		tryItButton.setLayoutData(new GridData());
 		tryItButton.setText(Messages.getString("SoundActionComposite.7")); //$NON-NLS-1$
 		tryItButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				File soundFile = new File(soundFilePathLabel.getText());
 				playSoundFile(soundFile);
@@ -126,10 +129,12 @@ public class SoundActionComposite extends Composite {
 		rebuildRecentSoundsCombo();
 	}
 
+	@Override
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components
 	}
 
+	@Override
 	public void dispose() {
 		super.dispose();
 	}

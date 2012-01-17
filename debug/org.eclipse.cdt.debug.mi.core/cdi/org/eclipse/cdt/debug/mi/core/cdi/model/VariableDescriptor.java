@@ -172,6 +172,7 @@ public abstract class VariableDescriptor extends CObject implements ICDIVariable
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableDescriptor#getName()
 	 */
+	@Override
 	public String getName() {
 		return fName;
 	}
@@ -179,6 +180,7 @@ public abstract class VariableDescriptor extends CObject implements ICDIVariable
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#getType()
 	 */
+	@Override
 	public ICDIType getType() throws CDIException {
 		if (fType == null) {
 			String nametype = getTypeName();
@@ -234,6 +236,7 @@ public abstract class VariableDescriptor extends CObject implements ICDIVariable
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor#sizeof()
 	 */
+	@Override
 	public int sizeof() throws CDIException {
 		if (sizeof == null) {
 			Target target = (Target) getTarget();
@@ -296,6 +299,7 @@ public abstract class VariableDescriptor extends CObject implements ICDIVariable
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor#getTypeName()
 	 */
+	@Override
 	public String getTypeName() throws CDIException {
 		if (fTypename == null) {
 			Target target = (Target)getTarget();
@@ -322,6 +326,7 @@ public abstract class VariableDescriptor extends CObject implements ICDIVariable
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor#getQualifiedName()
 	 */
+	@Override
 	public String getQualifiedName() throws CDIException {
 		if (qualifiedName == null) {
 			qualifiedName = encodeVariable();
@@ -347,6 +352,7 @@ public abstract class VariableDescriptor extends CObject implements ICDIVariable
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor#equals(ICDIVariableDescriptor)
 	 */
+	@Override
 	public boolean equals(ICDIVariableDescriptor varDesc) {
 		if (varDesc instanceof VariableDescriptor) {
 			VariableDescriptor desc = (VariableDescriptor) varDesc;
@@ -395,6 +401,7 @@ public abstract class VariableDescriptor extends CObject implements ICDIVariable
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor#getVariableDescriptorAsArray(org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor, int, int)
 	 */
+	@Override
 	public ICDIVariableDescriptor getVariableDescriptorAsArray(int start, int length) throws CDIException {
 		Session session = (Session)getTarget().getSession();
 		VariableManager mgr = session.getVariableManager();
@@ -404,6 +411,7 @@ public abstract class VariableDescriptor extends CObject implements ICDIVariable
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor#getVariableDescriptorAsType(org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor, java.lang.String)
 	 */
+	@Override
 	public ICDIVariableDescriptor getVariableDescriptorAsType(String type) throws CDIException {
 		Session session = (Session)getTarget().getSession();
 		VariableManager mgr = session.getVariableManager();

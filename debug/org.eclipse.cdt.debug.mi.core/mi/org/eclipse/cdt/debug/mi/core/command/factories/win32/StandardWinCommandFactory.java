@@ -37,68 +37,83 @@ public class StandardWinCommandFactory extends StandardCommandFactory {
 		super( miVersion );
 	}
 
+	@Override
 	public MIEnvironmentCD createMIEnvironmentCD( String pathdir ) {
 		return new WinMIEnvironmentCD( getMIVersion(), pathdir );
 	}
 
+	@Override
 	public CLIInfoSharedLibrary createCLIInfoSharedLibrary() {
 		return new WinCLIInfoSharedLibrary();
 	}
 
+	@Override
 	public MIGDBSetAutoSolib createMIGDBSetAutoSolib( boolean set ) {
 		// Suppress "set auto-solib" - returns error on Windows
 		return new MIGDBSetAutoSolib( getMIVersion(), true ) {
 
+			@Override
 			public String getOperation() {
 				return ""; //$NON-NLS-1$
 			}
 
+			@Override
 			public String[] getOptions() {
 				return new String[0];
 			}
 
+			@Override
 			public String[] getParameters() {
 				return new String[0];
 			}			
 		};
 	}
 
+	@Override
 	public MIGDBShowSolibSearchPath createMIGDBShowSolibSearchPath() {
 		// Suppress "show solib-search-path" - returns error on Windows
 		return new MIGDBShowSolibSearchPath( getMIVersion() ) {
 
+			@Override
 			public String getOperation() {
 				return ""; //$NON-NLS-1$
 			}
 
+			@Override
 			public String[] getOptions() {
 				return new String[0];
 			}
 
+			@Override
 			public String[] getParameters() {
 				return new String[0];
 			}			
 		};
 	}
 
+	@Override
 	public MIGDBSetSolibSearchPath createMIGDBSetSolibSearchPath( String[] params ) {
 		// Suppress "set solib-search-path" - returns error on Windows
 		return new MIGDBSetSolibSearchPath( getMIVersion(), params ) {
 
+			@Override
 			public String getOperation() {
 				return ""; //$NON-NLS-1$
 			}
 
+			@Override
 			public String[] getOptions() {
 				return new String[0];
 			}
 
+			@Override
 			public String[] getParameters() {
 				return new String[0];
 			}			
 		};
 	}
 	
+	@Override
 	public MIGDBSetNewConsole createMIGDBSetNewConsole() {
 		// By default in Windows, turn off new console so that the
 		// Ctrl-C's get propogated automatically to the inferior.

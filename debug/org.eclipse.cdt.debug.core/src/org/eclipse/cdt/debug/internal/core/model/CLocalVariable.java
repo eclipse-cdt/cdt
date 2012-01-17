@@ -73,6 +73,7 @@ public class CLocalVariable extends CVariable {
 			setCDIVariable( (varObject instanceof ICDIVariable) ? (ICDIVariable)varObject : null );
 		}
 
+		@Override
 		public IInternalVariable createShadow( int start, int length ) throws DebugException {
 			IInternalVariable iv = null;
 			try {
@@ -84,6 +85,7 @@ public class CLocalVariable extends CVariable {
 			return iv;
 		}
 
+		@Override
 		public IInternalVariable createShadow( String type ) throws DebugException {
 			IInternalVariable iv = null;
 			try {
@@ -122,6 +124,7 @@ public class CLocalVariable extends CVariable {
 			fCDIVariableObject = variableObject;
 		}
 
+		@Override
 		public String getQualifiedName() throws DebugException {
 			if ( fQualifiedName == null ) {
 				try {
@@ -134,6 +137,7 @@ public class CLocalVariable extends CVariable {
 			return fQualifiedName;
 		}
 
+		@Override
 		public CType getType() throws DebugException {
 			if ( fType == null ) {
 				ICDIVariableDescriptor varObject = getCDIVariableObject();
@@ -168,14 +172,17 @@ public class CLocalVariable extends CVariable {
 			fType = null;
 		}
 
+		@Override
 		public void dispose( boolean destroy ) {
 			invalidate( destroy );
 		}
 
+		@Override
 		public boolean isSameVariable( ICDIVariable cdiVar ) {
 			return ( fCDIVariable != null ) ? fCDIVariable.equals( cdiVar ) : false;
 		}
 
+		@Override
 		public int sizeof() {
 			if ( getCDIVariableObject() != null ) {
 				try {
@@ -187,10 +194,12 @@ public class CLocalVariable extends CVariable {
 			return 0;
 		}
 
+		@Override
 		public boolean isArgument() {
 			return ( getCDIVariableObject() instanceof ICDIArgumentDescriptor );
 		}
 
+		@Override
 		public void setValue( String expression ) throws DebugException {
 			ICDIVariable cdiVariable = null;
 			try {
@@ -205,6 +214,7 @@ public class CLocalVariable extends CVariable {
 			}
 		}
 
+		@Override
 		public synchronized ICValue getValue() throws DebugException {
 			if ( fValue.equals( CValueFactory.NULL_VALUE ) ) {
 				ICDIVariable var = getCDIVariable();
@@ -237,6 +247,7 @@ public class CLocalVariable extends CVariable {
 			return fValue;
 		}
 		
+		@Override
 		public void invalidateValue() {
 			if ( fValue instanceof AbstractCValue ) {
 				((AbstractCValue)fValue).dispose();
@@ -244,10 +255,12 @@ public class CLocalVariable extends CVariable {
 			}
 		}
 
+		@Override
 		public boolean isChanged() {
 			return fChanged;
 		}
 
+		@Override
 		public synchronized void setChanged( boolean changed ) {
 			if ( changed ) {
 				invalidateValue();
@@ -258,6 +271,7 @@ public class CLocalVariable extends CVariable {
 			fChanged = changed;
 		}
 
+		@Override
 		public synchronized void preserve() {
 			setChanged( false );
 			if ( fValue instanceof AbstractCValue ) {
@@ -273,12 +287,14 @@ public class CLocalVariable extends CVariable {
 			fVariable = variable;
 		}
 
+		@Override
 		public void resetValue() {
 			if ( fValue instanceof AbstractCValue ) {
 				((AbstractCValue)fValue).reset();
 			}
 		}
 
+		@Override
 		public boolean isEditable() throws DebugException {
 			ICDIVariable var = getCDIVariable();
 			if ( var != null ) {
@@ -295,6 +311,7 @@ public class CLocalVariable extends CVariable {
 		 * Compares the underlying variable objects.
 		 * @see java.lang.Object#equals(java.lang.Object)
 		 */
+		@Override
 		public boolean equals( Object obj ) {
 			if ( obj instanceof InternalVariable ) {
 				return getCDIVariableObject().equals( ((InternalVariable)obj).getCDIVariableObject() );
@@ -302,9 +319,11 @@ public class CLocalVariable extends CVariable {
 			return false;
 		}
 
+		@Override
 		public boolean isSameDescriptor( ICDIVariableDescriptor desc ) {
 			return getCDIVariableObject().equals( desc );
 		}
+		@Override
 		public ICDIObject getCdiObject() {
 			return fCDIVariable;
 		}
@@ -324,6 +343,7 @@ public class CLocalVariable extends CVariable {
 		super( parent, cdiVariableObject );
 	}
 
+	@Override
 	protected void createOriginal( ICDIVariableDescriptor vo ) {
 		if ( vo != null ) {
 			setName( vo.getName() );

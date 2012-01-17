@@ -37,7 +37,8 @@ public class DocumentAnnotationUpdate extends DocumentUpdate implements IDocumen
     /* (non-Javadoc)
      * @see com.arm.eclipse.rvd.ui.disassembly.IDocumentElementAnnotationUpdate#addAnnotation(org.eclipse.jface.text.source.Annotation)
      */
-    public void addAnnotation( Annotation annotation ) {
+    @Override
+	public void addAnnotation( Annotation annotation ) {
         fAnnotations.add( annotation );
     }
 

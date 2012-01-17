@@ -23,6 +23,7 @@ public class CVariableFormat {
 		this.fNum= num;
 	}
 	
+	@Override
 	public String toString() {
 		return this.fName;
 	}

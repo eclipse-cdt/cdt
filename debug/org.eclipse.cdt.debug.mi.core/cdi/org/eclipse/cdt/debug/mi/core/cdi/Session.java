@@ -94,6 +94,7 @@ public class Session implements ICDISession, ICDISessionObject {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getAttribute(String)
 	 */
+	@Override
 	public String getAttribute(String key) {
 		return props.getProperty(key);
 	}
@@ -109,6 +110,7 @@ public class Session implements ICDISession, ICDISessionObject {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getEventManager()
 	 */
+	@Override
 	public ICDIEventManager getEventManager() {
 		return eventManager;
 	}
@@ -144,6 +146,7 @@ public class Session implements ICDISession, ICDISessionObject {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getTargets()
 	 */
+	@Override
 	public ICDITarget[] getTargets() {
 		ProcessManager pMgr = getProcessManager();
 		return pMgr.getCDITargets();
@@ -152,6 +155,7 @@ public class Session implements ICDISession, ICDISessionObject {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#setAttribute(String, String)
 	 */
+	@Override
 	public void setAttribute(String key, String value) {
 		props.setProperty(key, value);
 	}
@@ -159,6 +163,7 @@ public class Session implements ICDISession, ICDISessionObject {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getConfiguration()
 	 */
+	@Override
 	public ICDISessionConfiguration getConfiguration() {
 		return configuration;
 	}
@@ -170,6 +175,7 @@ public class Session implements ICDISession, ICDISessionObject {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISessionObject#getSession()
 	 */
+	@Override
 	public ICDISession getSession() {
 		return this;
 	}
@@ -177,6 +183,7 @@ public class Session implements ICDISession, ICDISessionObject {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#terminate(ICDITarget)
 	 */
+	@Override
 	public void terminate() throws CDIException {
 		ProcessManager pMgr = getProcessManager();
 		Target[] targets = pMgr.getTargets();
@@ -211,6 +218,8 @@ public class Session implements ICDISession, ICDISessionObject {
 	 * @deprecated
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getSessionProcess()
 	 */
+	@Deprecated
+	@Override
 	public Process getSessionProcess() throws CDIException {
 		ICDITarget[] targets = getTargets();
 		if (targets != null && targets.length > 0) {

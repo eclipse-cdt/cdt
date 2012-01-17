@@ -49,6 +49,7 @@ public class MIBreakWatch extends MICommand
 		return (MIBreakWatchInfo)getMIInfo();
 	}
 
+	@Override
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

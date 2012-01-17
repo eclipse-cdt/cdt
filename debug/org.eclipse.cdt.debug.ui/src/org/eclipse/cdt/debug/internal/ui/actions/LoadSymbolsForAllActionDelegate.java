@@ -32,6 +32,7 @@ public class LoadSymbolsForAllActionDelegate extends AbstractViewActionDelegate 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.actions.AbstractViewActionDelegate#getErrorDialogTitle()
 	 */
+	@Override
 	protected String getErrorDialogTitle() {
 		return ActionMessages.getString( "LoadSymbolsForAllActionDelegate.Error_1" ); //$NON-NLS-1$
 	}
@@ -39,6 +40,7 @@ public class LoadSymbolsForAllActionDelegate extends AbstractViewActionDelegate 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.actions.AbstractViewActionDelegate#getErrorDialogMessage()
 	 */
+	@Override
 	protected String getErrorDialogMessage() {
 		return ActionMessages.getString( "LoadSymbolsForAllActionDelegate.Error(s)_occurred_loading_the_symbols_1" ); //$NON-NLS-1$
 	}
@@ -46,6 +48,7 @@ public class LoadSymbolsForAllActionDelegate extends AbstractViewActionDelegate 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.actions.AbstractViewActionDelegate#doAction()
 	 */
+	@Override
 	protected void doAction() throws DebugException {
 		ICDebugTarget target = getDebugTarget( getView().getViewer().getInput() );
 		if ( target != null ) {
@@ -54,6 +57,7 @@ public class LoadSymbolsForAllActionDelegate extends AbstractViewActionDelegate 
 				DebugPlugin.getDefault().asyncExec( 
 					new Runnable() {
 						
+						@Override
 						public void run() {
 							try {
 								mr.loadSymbolsForAllModules();
@@ -70,6 +74,7 @@ public class LoadSymbolsForAllActionDelegate extends AbstractViewActionDelegate 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.actions.AbstractViewActionDelegate#update()
 	 */
+	@Override
 	protected void update() {
 		IAction action = getAction();
 		if ( getView() != null && getView().getViewer() != null && action != null ) {
@@ -81,6 +86,7 @@ public class LoadSymbolsForAllActionDelegate extends AbstractViewActionDelegate 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.actions.AbstractViewActionDelegate#doHandleDebugEvent(org.eclipse.debug.core.DebugEvent)
 	 */
+	@Override
 	protected void doHandleDebugEvent( DebugEvent event ) {
 	}
 

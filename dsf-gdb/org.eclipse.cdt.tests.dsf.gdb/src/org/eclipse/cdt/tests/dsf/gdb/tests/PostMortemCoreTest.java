@@ -84,7 +84,8 @@ public class PostMortemCoreTest extends BaseTestCase {
 	    assert(fMemoryDmc != null);
 
         Runnable runnable = new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
             	fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
             	fExpService = fServicesTracker.getService(IExpressions.class);
         		fMemoryService = fServicesTracker.getService(IMemory.class);
@@ -96,7 +97,8 @@ public class PostMortemCoreTest extends BaseTestCase {
     @After
     public void shutdown() throws Exception {
         Runnable runnable = new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
             	fSession.removeServiceEventListener(PostMortemCoreTest.this);
             }
         };
@@ -283,7 +285,8 @@ public class PostMortemCoreTest extends BaseTestCase {
             // each one,
             // get the value of the expression
             fExpService.getExecutor().submit(new Runnable() {
-                public void run() {
+                @Override
+				public void run() {
                     fExpService.getAvailableFormats(exprDMC, new DataRequestMonitor<String[]>(
                         fExpService.getExecutor(), null) {
                         @Override

@@ -47,6 +47,7 @@ public class ExitedEvent implements ICDIExitedEvent {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIExitedEvent#getExitInfo()
 	 */
+	@Override
 	public ICDISessionObject getReason() {
 		if (event instanceof MIInferiorExitEvent) {
 			return new ExitInfo(session, (MIInferiorExitEvent)event);
@@ -59,6 +60,7 @@ public class ExitedEvent implements ICDIExitedEvent {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEvent#getSource()
 	 */
+	@Override
 	public ICDIObject getSource() {
 		Target target = session.getTarget(event.getMISession());
 		return target;

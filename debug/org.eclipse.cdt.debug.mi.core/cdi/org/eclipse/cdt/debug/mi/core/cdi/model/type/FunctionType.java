@@ -28,6 +28,7 @@ public class FunctionType extends DerivedType implements ICDIFunctionType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.type.ICDIDerivedType#getComponentType()
 	 */
+	@Override
 	public ICDIType getComponentType() {
 		if (derivedType != null) {
 			String orig = getTypeName();

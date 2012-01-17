@@ -182,6 +182,7 @@ public class MICommand extends Command {
 		return buffer.toString().trim();
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer command = new StringBuffer(getToken() + getOperation());
 		String opt = optionsToString();

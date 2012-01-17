@@ -77,6 +77,7 @@ public class Watchpoint extends Breakpoint implements ICDIWatchpoint2 {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIWatchpoint#getWatchExpression()
 	 */
+	@Override
 	public String getWatchExpression() throws CDIException {
 		if (expression == null) {
 			MIBreakpoint[] miPoints = getMIBreakpoints();
@@ -90,6 +91,7 @@ public class Watchpoint extends Breakpoint implements ICDIWatchpoint2 {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIWatchpoint#isReadType()
 	 */
+	@Override
 	public boolean isReadType() {
 		return ((watchType & ICDIWatchpoint.READ) == ICDIWatchpoint.READ);
 //		MIBreakpoint miPoint = getMIBreakpoint();
@@ -101,6 +103,7 @@ public class Watchpoint extends Breakpoint implements ICDIWatchpoint2 {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIWatchpoint#isWriteType()
 	 */
+	@Override
 	public boolean isWriteType() {
 		return ((watchType & ICDIWatchpoint.WRITE) == ICDIWatchpoint.WRITE);
 //		MIBreakpoint miPoint = getMIBreakpoint();
@@ -109,10 +112,12 @@ public class Watchpoint extends Breakpoint implements ICDIWatchpoint2 {
 //		return ((watchType & ICDIWatchpoint.WRITE) == ICDIWatchpoint.WRITE);
 	}
 
+	@Override
 	public String getMemorySpace() throws CDIException {
 		return memorySpace;
 	}
 
+	@Override
 	public BigInteger getRange() throws CDIException {
 		return range;
 	}

@@ -25,6 +25,7 @@ public class TargetConfiguration extends CObject implements ICDITargetConfigurat
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIConfiguration#supportsBreakpoints()
 	 */
+	@Override
 	public boolean supportsBreakpoints() {
 		return true;
 	}
@@ -32,6 +33,7 @@ public class TargetConfiguration extends CObject implements ICDITargetConfigurat
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIConfiguration#supportsDisconnect()
 	 */
+	@Override
 	public boolean supportsDisconnect() {
 		MISession miSession = ((Target)getTarget()).getMISession();
 		return miSession.isAttachSession() ? true : false;
@@ -40,6 +42,7 @@ public class TargetConfiguration extends CObject implements ICDITargetConfigurat
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIConfiguration#supportsExpressionEvaluation()
 	 */
+	@Override
 	public boolean supportsExpressionEvaluation() {
 		return true;
 	}
@@ -47,6 +50,7 @@ public class TargetConfiguration extends CObject implements ICDITargetConfigurat
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIConfiguration#supportsInstructionStepping()
 	 */
+	@Override
 	public boolean supportsInstructionStepping() {
 		return true;
 	}
@@ -54,6 +58,7 @@ public class TargetConfiguration extends CObject implements ICDITargetConfigurat
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIConfiguration#supportsMemoryModification()
 	 */
+	@Override
 	public boolean supportsMemoryModification() {
 		return true;
 	}
@@ -61,6 +66,7 @@ public class TargetConfiguration extends CObject implements ICDITargetConfigurat
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIConfiguration#supportsMemoryRetrieval()
 	 */
+	@Override
 	public boolean supportsMemoryRetrieval() {
 		return true;
 	}
@@ -68,6 +74,7 @@ public class TargetConfiguration extends CObject implements ICDITargetConfigurat
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIConfiguration#supportsRegisterModification()
 	 */
+	@Override
 	public boolean supportsRegisterModification() {
 		return true;
 	}
@@ -75,6 +82,7 @@ public class TargetConfiguration extends CObject implements ICDITargetConfigurat
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIConfiguration#supportsRegisters()
 	 */
+	@Override
 	public boolean supportsRegisters() {
 		return true;
 	}
@@ -82,6 +90,7 @@ public class TargetConfiguration extends CObject implements ICDITargetConfigurat
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIConfiguration#supportsSharedLibrary()
 	 */
+	@Override
 	public boolean supportsSharedLibrary() {
 		return true;
 	}
@@ -89,6 +98,7 @@ public class TargetConfiguration extends CObject implements ICDITargetConfigurat
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIConfiguration#supportsRestart()
 	 */
+	@Override
 	public boolean supportsRestart() {
 		MISession miSession = ((Target)getTarget()).getMISession();
 		return miSession.isAttachSession() ? false : true;
@@ -97,6 +107,7 @@ public class TargetConfiguration extends CObject implements ICDITargetConfigurat
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIConfiguration#supportsStepping()
 	 */
+	@Override
 	public boolean supportsStepping() {
 		return true;
 	}
@@ -104,6 +115,7 @@ public class TargetConfiguration extends CObject implements ICDITargetConfigurat
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIConfiguration#supportsTerminate()
 	 */
+	@Override
 	public boolean supportsTerminate() {
 		return true;
 		
@@ -111,6 +123,7 @@ public class TargetConfiguration extends CObject implements ICDITargetConfigurat
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIConfiguration#supportsResume()
 	 */
+	@Override
 	public boolean supportsResume() {
 		return true;
 	}
@@ -118,6 +131,7 @@ public class TargetConfiguration extends CObject implements ICDITargetConfigurat
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIConfiguration#supportsSuspend()
 	 */
+	@Override
 	public boolean supportsSuspend() {
 		String os = null;
 		try {

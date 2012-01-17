@@ -30,6 +30,7 @@ public abstract class Type extends CObject implements ICDIType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIType#getTypeName()
 	 */
+	@Override
 	public String getTypeName() {
 		return typename;
 	}
@@ -41,6 +42,7 @@ public abstract class Type extends CObject implements ICDIType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIType#getDetailTypeName()
 	 */
+	@Override
 	public String getDetailTypeName() {
 		if (detailName == null) {
 			return getTypeName();

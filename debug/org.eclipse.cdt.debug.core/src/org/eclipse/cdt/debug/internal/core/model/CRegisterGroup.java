@@ -69,6 +69,7 @@ public class CRegisterGroup extends CDebugElement implements IPersistableRegiste
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IRegisterGroup#getName()
 	 */
+	@Override
 	public String getName() throws DebugException {
 		return fName;
 	}
@@ -76,6 +77,7 @@ public class CRegisterGroup extends CDebugElement implements IPersistableRegiste
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IRegisterGroup#getRegisters()
 	 */
+	@Override
 	public IRegister[] getRegisters() throws DebugException {
 		if ( fDisposed )
 			return new IRegister[0];
@@ -95,6 +97,7 @@ public class CRegisterGroup extends CDebugElement implements IPersistableRegiste
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IRegisterGroup#hasRegisters()
 	 */
+	@Override
 	public boolean hasRegisters() throws DebugException {
 		return ( fRegisterDescriptors.length > 0 );
 	}
@@ -118,6 +121,7 @@ public class CRegisterGroup extends CDebugElement implements IPersistableRegiste
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter( Class adapter ) {
 		if ( IEnableDisableTarget.class.equals( adapter ) )
 			return this;
@@ -127,6 +131,7 @@ public class CRegisterGroup extends CDebugElement implements IPersistableRegiste
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IEnableDisableTarget#canEnableDisable()
 	 */
+	@Override
 	public boolean canEnableDisable() {
 		return true;
 	}
@@ -134,6 +139,7 @@ public class CRegisterGroup extends CDebugElement implements IPersistableRegiste
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IEnableDisableTarget#isEnabled()
 	 */
+	@Override
 	public boolean isEnabled() {
 		return fIsEnabled;
 	}
@@ -141,6 +147,7 @@ public class CRegisterGroup extends CDebugElement implements IPersistableRegiste
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IEnableDisableTarget#setEnabled(boolean)
 	 */
+	@Override
 	public void setEnabled( boolean enabled ) throws DebugException {
 		if ( fRegisters != null ) {
 			synchronized( fRegisters ) {
@@ -157,6 +164,7 @@ public class CRegisterGroup extends CDebugElement implements IPersistableRegiste
 		fireChangeEvent( DebugEvent.CONTENT );
 	}
 
+	@Override
 	public String getMemento() throws CoreException {
 		Document document = DebugPlugin.newDocument();
 		Element element = document.createElement( ELEMENT_REGISTER_GROUP );
@@ -172,6 +180,7 @@ public class CRegisterGroup extends CDebugElement implements IPersistableRegiste
 		return DebugPlugin.serializeDocument( document );
 	}
 
+	@Override
 	public void initializeFromMemento( String memento ) throws CoreException {
 		Node node = DebugPlugin.parseDocument( memento );
 		if ( node.getNodeType() != Node.ELEMENT_NODE ) {
@@ -227,6 +236,7 @@ public class CRegisterGroup extends CDebugElement implements IPersistableRegiste
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IPersistableRegisterGroup#setRegisterDescriptors(org.eclipse.cdt.debug.core.model.IRegisterDescriptor[])
 	 */
+	@Override
 	public void setRegisterDescriptors( IRegisterDescriptor[] registerDescriptors ) {
 		invalidate();
 		fRegisterDescriptors = registerDescriptors;
@@ -235,6 +245,7 @@ public class CRegisterGroup extends CDebugElement implements IPersistableRegiste
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IPersistableRegisterGroup#getRegisterDescriptors()
 	 */
+	@Override
 	public IRegisterDescriptor[] getRegisterDescriptors() {
 		return fRegisterDescriptors;
 	}

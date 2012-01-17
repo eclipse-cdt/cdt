@@ -64,33 +64,40 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 	static class ContentProvider implements IStructuredContentProvider, ITreeContentProvider {
 		protected List<LaunchElement> input;
 
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return getChildren(inputElement);
 		}
 
+		@Override
 		public void dispose() {
 			input = null;
 		}
 
+		@Override
 		@SuppressWarnings("unchecked") // nothing we can do about this
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			if (newInput instanceof List<?>)
 				input = (List<LaunchElement>) newInput;
 		}
 
+		@Override
 		public Object[] getChildren(Object parentElement) {
 			return (parentElement == input) ? input.toArray() : null;
 		}
 
+		@Override
 		public Object getParent(Object element) {
 			return (element == input) ? null : input;
 		}
 
+		@Override
 		public boolean hasChildren(Object element) {
 			return (element == input) ? (input.size() > 0) : false;
 		}
 	}
 	static class LabelProvider extends BaseLabelProvider implements ITableLabelProvider {
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			if (!(element instanceof MultiLaunchConfigurationDelegate.LaunchElement))
 				return null;
@@ -112,6 +119,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 			return null;
 		}
 
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			if (!(element instanceof MultiLaunchConfigurationDelegate.LaunchElement))
 				return null;
@@ -156,6 +164,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ICheckStateProvider#isChecked(java.lang.Object)
 		 */
+		@Override
 		public boolean isChecked(Object element) {
 			if (element instanceof LaunchElement) {
 				return ((LaunchElement)element).enabled;
@@ -166,6 +175,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ICheckStateProvider#isGrayed(java.lang.Object)
 		 */
+		@Override
 		public boolean isGrayed(Object element) {
 			return false;
 		}
@@ -210,10 +220,12 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 			return button;
 		}
 
+		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
 			// nothing
 		}
 
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Widget widget = e.widget;
 			if (widget == upButton) {
@@ -248,6 +260,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 	        this.mode = mode;
         }
 
+		@Override
 		public void createControl(Composite parent) {
 			Composite comp = new Composite(parent, SWT.NONE);
 			setControl(comp);
@@ -273,6 +286,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 		
 			treeViewer.setInput(input);
 			final ButtonComposite buts = new ButtonComposite(comp, SWT.NONE) {
+				@Override
 				protected void addPressed() {
 					MultiLaunchConfigurationSelectionDialog dialog = 
 						MultiLaunchConfigurationSelectionDialog.createDialog(
@@ -298,6 +312,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 						updateLaunchConfigurationDialog();
 					}
 				}
+				@Override
 				protected void updateWidgetEnablement(){
 					downButton.setEnabled(isDownEnabled());
 					upButton.setEnabled(isUpEnabled());
@@ -308,6 +323,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 				}
 				
 
+				@Override
 				protected void editPressed() {
 					int index = getSingleSelectionIndex();
 					if (index < 0)
@@ -334,6 +350,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 						updateLaunchConfigurationDialog();
 					}
 				}
+				@Override
 				protected void deletePressed() {
 					int[] indices = getMultiSelectionIndices();
 					if (indices.length < 1)
@@ -386,6 +403,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 				}
 				
 
+				@Override
 				protected void downPressed() {
 					if (!isDownEnabled()) return;
 					int index = getSingleSelectionIndex();
@@ -407,6 +425,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 					return getSingleSelectionIndex() > 0;
 				}
 
+				@Override
 				protected void upPressed() {
 					if (!isUpEnabled()) return;
 					int index = getSingleSelectionIndex();
@@ -419,6 +438,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 				}
 			};
 			treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+				@Override
 				public void selectionChanged(SelectionChangedEvent event) {
 					buts.updateWidgetEnablement();
 				}
@@ -432,6 +452,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 			});
 			
 			treeViewer.addCheckStateListener(new ICheckStateListener(){
+				@Override
 				public void checkStateChanged(CheckStateChangedEvent event) {
 					((LaunchElement)event.getElement()).enabled = event.getChecked();
 					updateLaunchConfigurationDialog();
@@ -443,10 +464,12 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 			buts.setLayoutData(layoutData);
 		}
 
+		@Override
 		public String getName() {
 			return LaunchMessages.MultiLaunchConfigurationTabGroup_10; 
 		}
 
+		@Override
 		public void initializeFrom(ILaunchConfiguration configuration) {
 			// replace the input from previously shown launch configurations 
 			input = MultiLaunchConfigurationDelegate.createLaunchElements(configuration, new ArrayList<LaunchElement>());
@@ -455,10 +478,12 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 			}
 		}
 
+		@Override
 		public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 			MultiLaunchConfigurationDelegate.storeLaunchElements(configuration, input);
 		}
 
+		@Override
 		public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 			// defaults is empty list
 		}
@@ -501,6 +526,7 @@ public class MultiLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 		// nothing
 	}
 
+	@Override
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {//
 				new GroupLaunchTab(mode), //

@@ -50,6 +50,7 @@ public class SoundAction extends AbstractBreakpointAction {
 
 		class SoundPlayer extends Thread {
 
+			@Override
 			public void run() {
 				AudioInputStream soundStream;
 				try {
@@ -95,6 +96,7 @@ public class SoundAction extends AbstractBreakpointAction {
 	public SoundAction() {
 	}
 
+	@Override
 	public IStatus execute(IBreakpoint breakpoint, IAdaptable context, IProgressMonitor monitor) {
 		if (soundFile == null || !soundFile.exists()) {
 			String errorMsg = MessageFormat.format(Messages.getString("SoundAction.error.0"), new Object[] {getSummary()}); //$NON-NLS-1$
@@ -105,6 +107,7 @@ public class SoundAction extends AbstractBreakpointAction {
 		return Status.OK_STATUS;
 	}
 
+	@Override
 	public String getDefaultName() {
 		return Messages.getString("SoundAction.UntitledName"); //$NON-NLS-1$
 	}
@@ -113,16 +116,19 @@ public class SoundAction extends AbstractBreakpointAction {
 		return soundFile;
 	}
 
+	@Override
 	public String getSummary() {
 		if (soundFile == null)
 			return ""; //$NON-NLS-1$
 		return soundFile.getAbsolutePath();
 	}
 
+	@Override
 	public String getTypeName() {
 		return Messages.getString("SoundAction.ActionTypeName"); //$NON-NLS-1$
 	}
 
+	@Override
 	public String getMemento() {
 		String soundData = ""; //$NON-NLS-1$
 		if (soundFile != null) {
@@ -157,6 +163,7 @@ public class SoundAction extends AbstractBreakpointAction {
 		return soundData;
 	}
 
+	@Override
 	public void initializeFromMemento(String data) {
 		Element root = null;
 		DocumentBuilder parser;
@@ -173,6 +180,7 @@ public class SoundAction extends AbstractBreakpointAction {
 		}
 	}
 
+	@Override
 	public String getIdentifier() {
 		return "org.eclipse.cdt.debug.ui.breakpointactions.SoundAction"; //$NON-NLS-1$
 	}

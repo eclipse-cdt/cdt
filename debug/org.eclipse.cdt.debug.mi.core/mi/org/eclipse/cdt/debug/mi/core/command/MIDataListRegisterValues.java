@@ -80,6 +80,7 @@ public class MIDataListRegisterValues extends MICommand
 		return (MIDataListRegisterValuesInfo)getMIInfo();
 	}
 
+	@Override
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

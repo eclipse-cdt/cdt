@@ -36,6 +36,7 @@ public class AddEventBreakpointActionDelegate extends ActionDelegate implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
+	@Override
 	public void init(IViewPart view) {
 		setView(view);
 	}
@@ -51,6 +52,7 @@ public class AddEventBreakpointActionDelegate extends ActionDelegate implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		AddEventBreakpointDialog dlg = new AddEventBreakpointDialog(CDebugUIPlugin.getActiveWorkbenchShell());
 		if (dlg.isActive() == false) {

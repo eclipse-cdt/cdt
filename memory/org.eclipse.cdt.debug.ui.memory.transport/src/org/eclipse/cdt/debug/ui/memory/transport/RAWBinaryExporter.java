@@ -66,6 +66,7 @@ public class RAWBinaryExporter implements IMemoryExporter
 	
 		Composite composite = new Composite(parent, SWT.NONE)
 		{
+			@Override
 			public void dispose()
 			{
 				fProperties.put(TRANSFER_FILE, fFileText.getText());
@@ -374,6 +375,7 @@ public class RAWBinaryExporter implements IMemoryExporter
 	public void exportMemory() 
 	{
 		Job job = new Job("Memory Export to RAW Binary File"){ //$NON-NLS-1$
+			@Override
 			public IStatus run(IProgressMonitor monitor) {
 				try
 				{	

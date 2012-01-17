@@ -47,8 +47,10 @@ public class CDIDisassemblyRetrieval implements IDisassemblyRetrieval {
 	/*
 	 * @see org.eclipse.cdt.debug.ui.infinitedisassembly.views.IDisassemblyRetrieval#asyncGetDisassembly(java.math.BigInteger, java.math.BigInteger, java.lang.String, int, org.eclipse.cdt.debug.ui.infinitedisassembly.views.IDisassemblyRetrieval.DisassemblyRequest)
 	 */
+	@Override
 	public void asyncGetDisassembly(final BigInteger startAddress, final BigInteger endAddress, final String file, final int lineNumber, final int lines, final boolean mixed, final DisassemblyRequest disassemblyRequest) {
 		Runnable op= new Runnable() {
+			@Override
 			public void run() {
 				ICDITarget cdiTarget= (ICDITarget) fDebugTarget.getAdapter(ICDITarget.class);
 				try {
@@ -96,8 +98,10 @@ public class CDIDisassemblyRetrieval implements IDisassemblyRetrieval {
 	/*
 	 * @see org.eclipse.cdt.debug.ui.infinitedisassembly.views.IDisassemblyRetrieval#asyncGetFrameAddress(org.eclipse.debug.core.model.IStackFrame, org.eclipse.cdt.debug.ui.infinitedisassembly.views.IDisassemblyRetrieval.AddressRequest)
 	 */
+	@Override
 	public void asyncGetFrameAddress(final IStackFrame stackFrame, final AddressRequest addressRequest) {
 		Runnable op= new Runnable() {
+			@Override
 			public void run() {
 				if (stackFrame instanceof ICStackFrame) {
 					IAddress address = ((ICStackFrame)stackFrame).getAddress();

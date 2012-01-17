@@ -29,6 +29,7 @@ public abstract class MIStreamRecord extends MIOOBRecord {
 		return MIConst.getString(getCString());
 	}
 
+	@Override
 	public String toString() {
 		if (this instanceof MIConsoleStreamOutput) {
 			return "~\"" + cstring + "\"\n"; //$NON-NLS-1$ //$NON-NLS-2$

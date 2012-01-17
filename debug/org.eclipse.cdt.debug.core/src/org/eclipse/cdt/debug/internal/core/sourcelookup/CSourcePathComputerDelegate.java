@@ -35,6 +35,7 @@ public class CSourcePathComputerDelegate implements ISourcePathComputerDelegate 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourcePathComputerDelegate#computeSourceContainers(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public ISourceContainer[] computeSourceContainers(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
 		ISourceContainer[] common = CDebugCorePlugin.getDefault().getCommonSourceLookupDirector().getSourceContainers();
 		ISourceContainer[] containers = new ISourceContainer[common.length];

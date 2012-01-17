@@ -36,6 +36,7 @@ public class MIVarInfoType extends MICommand
 		return (MIVarInfoTypeInfo)getMIInfo();
 	}
 
+	@Override
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

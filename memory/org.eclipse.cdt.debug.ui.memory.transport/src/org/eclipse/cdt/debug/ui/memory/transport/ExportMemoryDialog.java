@@ -98,6 +98,7 @@ public class ExportMemoryDialog extends SelectionDialog
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		super.createButtonsForButtonBar(parent);
 	}
@@ -105,6 +106,7 @@ public class ExportMemoryDialog extends SelectionDialog
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.SelectionDialog#getResult()
 	 */
+	@Override
 	public Object[] getResult() {
 		
 		Object[] results = super.getResult();
@@ -119,6 +121,7 @@ public class ExportMemoryDialog extends SelectionDialog
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#cancelPressed()
 	 */
+	@Override
 	protected void cancelPressed() {
 		
 		setResult(null);
@@ -129,6 +132,7 @@ public class ExportMemoryDialog extends SelectionDialog
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
+	@Override
 	protected void okPressed() {
 		if(fCurrentControl != null)
 			fCurrentControl.dispose();
@@ -144,6 +148,7 @@ public class ExportMemoryDialog extends SelectionDialog
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, MemoryTransportPlugin.getUniqueIdentifier() + ".ExportMemoryDialog_context"); //$NON-NLS-1$
@@ -196,8 +201,8 @@ public class ExportMemoryDialog extends SelectionDialog
 		fFormatNames = new String[exporters.size()];
 		for(int i = 0; i < fFormatExporters.length; i++)
 		{
-			fFormatExporters[i] = (IMemoryExporter) exporters.elementAt(i);
-			fFormatNames[i] = ((IMemoryExporter) exporters.elementAt(i)).getName();
+			fFormatExporters[i] = exporters.elementAt(i);
+			fFormatNames[i] = exporters.elementAt(i).getName();
 		}
 		
 		final Composite container = new Composite(composite, SWT.NONE);
@@ -209,6 +214,7 @@ public class ExportMemoryDialog extends SelectionDialog
 		fFormatCombo.setItems(fFormatNames);
 		
 		fFormatCombo.addSelectionListener(new SelectionAdapter(){
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if(fCurrentControl != null) {
 					fCurrentControl.dispose();

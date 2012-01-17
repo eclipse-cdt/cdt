@@ -98,7 +98,8 @@ public class MIMemoryTest extends BaseTestCase {
 	    assert(fMemoryDmc != null);
 
 	    Runnable runnable = new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
        	    // Get a reference to the memory service
         		fServicesTracker = new DsfServicesTracker(TestsPlugin.getBundleContext(), fSession.getId());
         		assert(fServicesTracker != null);
@@ -124,7 +125,8 @@ public class MIMemoryTest extends BaseTestCase {
 	public void testCaseCleanup() throws Exception {
 		// Clear the references (not strictly necessary)
         Runnable runnable = new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
             	fSession.removeServiceEventListener(MIMemoryTest.this);
             }
         };
@@ -232,6 +234,7 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Evaluate the expression (asynchronously)
 		fSession.getExecutor().submit(new Runnable() {
+			@Override
 			public void run() {
 				fExpressionService.getFormattedExpressionValue(formattedValueDMC, drm);
 			}
@@ -284,6 +287,7 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Issue the get memory request
 		fSession.getExecutor().submit(new Runnable() {
+			@Override
 			public void run() {
 				fMemoryService.getMemory(dmc, address, offset, word_size, count, drm);
 			}
@@ -326,6 +330,7 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Issue the get memory request
 		fSession.getExecutor().submit(new Runnable() {
+			@Override
 			public void run() {
 				fMemoryService.getMemory(dmc, address, offset, word_size, count, drm);
 			}
@@ -365,6 +370,7 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Issue the get memory request
 		fSession.getExecutor().submit(new Runnable() {
+			@Override
 			public void run() {
 				fMemoryService.setMemory(dmc, address, offset, word_size, count, buffer, rm);
 			}
@@ -404,6 +410,7 @@ public class MIMemoryTest extends BaseTestCase {
 
 		// Issue the fill memory request
 		fSession.getExecutor().submit(new Runnable() {
+			@Override
 			public void run() {
 				fMemoryService.fillMemory(dmc, address, offset, word_size, count, pattern, rm);
 			}

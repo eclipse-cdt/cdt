@@ -20,7 +20,8 @@ public class DisassemblyRenderingTypeDelegate implements IMemoryRenderingTypeDel
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.memory.IMemoryRenderingTypeDelegate#createRendering(java.lang.String)
      */
-    public IMemoryRendering createRendering( String id ) throws CoreException {
+    @Override
+	public IMemoryRendering createRendering( String id ) throws CoreException {
         return new DisassemblyMemoryRendering( id );
     }
 }

@@ -30,6 +30,7 @@ public class AddContainerAction extends SourceContainerAction {
 	 * 
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */	
+	@Override
 	public void run() {
 		AddSourceContainerDialog dialog = new AddSourceContainerDialog(getShell(), getViewer(), fDirector);
 		dialog.open();			
@@ -42,6 +43,7 @@ public class AddContainerAction extends SourceContainerAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.BaseSelectionListenerAction#updateSelection(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
 		if (selection == null || selection.isEmpty()) {
 			return true;

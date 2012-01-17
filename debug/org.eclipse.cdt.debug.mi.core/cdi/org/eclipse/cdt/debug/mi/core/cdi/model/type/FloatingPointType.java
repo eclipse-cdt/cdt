@@ -32,6 +32,7 @@ public abstract class FloatingPointType extends Type implements ICDIFloatingPoin
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.type.ICDIFloatingPointType#isComplex()
 	 */
+	@Override
 	public boolean isComplex() {
 		return complex;
 	}
@@ -39,6 +40,7 @@ public abstract class FloatingPointType extends Type implements ICDIFloatingPoin
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.type.ICDIFloatingPointType#isImaginary()
 	 */
+	@Override
 	public boolean isImaginary() {
 		return imaginary;
 	}
@@ -46,6 +48,7 @@ public abstract class FloatingPointType extends Type implements ICDIFloatingPoin
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.type.ICDIFloatingPointType#isLong()
 	 */
+	@Override
 	public boolean isLong() {
 		return islong;
 	}

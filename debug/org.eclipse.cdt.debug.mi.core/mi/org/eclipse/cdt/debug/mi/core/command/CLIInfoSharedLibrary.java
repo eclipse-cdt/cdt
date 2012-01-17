@@ -31,6 +31,7 @@ public class CLIInfoSharedLibrary extends CLICommand
 		return (CLIInfoSharedLibraryInfo)getMIInfo();
 	}
 
+	@Override
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

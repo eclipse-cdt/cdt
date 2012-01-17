@@ -42,6 +42,7 @@ public class Expression extends CObject implements ICDIExpression {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExpression#getExpressionText()
 	 */
+	@Override
 	public String getExpressionText() {
 		return fExpression;
 	}
@@ -49,6 +50,7 @@ public class Expression extends CObject implements ICDIExpression {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExpression#equals(org.eclipse.cdt.debug.core.cdi.model.ICDIExpression)
 	 */
+	@Override
 	public boolean equals(ICDIExpression obj) {
 		if (obj instanceof Expression) {
 			Expression other = (Expression)obj;
@@ -95,6 +97,7 @@ public class Expression extends CObject implements ICDIExpression {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExpression#getValue(org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame)
 	 */
+	@Override
 	public ICDIValue getValue(ICDIStackFrame context) throws CDIException {
 		Session session = (Session)getTarget().getSession();
 		ExpressionManager mgr = session.getExpressionManager();
@@ -123,6 +126,7 @@ public class Expression extends CObject implements ICDIExpression {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExpression#dispose()
 	 */
+	@Override
 	public void dispose() throws CDIException {
 		Session session = (Session)getTarget().getSession();
 		ExpressionManager mgr = session.getExpressionManager();

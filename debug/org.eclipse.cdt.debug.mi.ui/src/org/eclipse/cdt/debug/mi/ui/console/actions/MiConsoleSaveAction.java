@@ -41,6 +41,7 @@ public class MiConsoleSaveAction extends Action{
         fConsole = console;
 	}
 	
+	@Override
 	public void run() {
 		
 		FileDialog fileDialog = new FileDialog(Display.getCurrent().getActiveShell(), SWT.SAVE);
@@ -50,6 +51,7 @@ public class MiConsoleSaveAction extends Action{
 		}
 
 		Runnable saveJob = new Runnable() {
+			@Override
 			public void run() {
 				saveContent();
 			}

@@ -31,6 +31,7 @@ abstract public class AbstractCDebuggerPage extends AbstractLaunchConfigurationT
     /* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.ui.ICDebuggerPage#init(java.lang.String)
 	 */
+	@Override
 	public void init(String debuggerID) {
 		fDebuggerID = debuggerID;
 	}
@@ -47,6 +48,7 @@ abstract public class AbstractCDebuggerPage extends AbstractLaunchConfigurationT
     /* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.ui.ICDebuggerPage#getDebuggerIdentifier()
 	 */
+	@Override
 	public String getDebuggerIdentifier() {
 		return fDebuggerID;
 	}
@@ -55,7 +57,8 @@ abstract public class AbstractCDebuggerPage extends AbstractLaunchConfigurationT
      * @see org.eclipse.cdt.debug.ui.ICDebuggerPageExtension#addContentChangeListener(org.eclipse.cdt.debug.ui.ICDebuggerPageExtension.IContentChangeListener)
      */
     /** @since 7.0 */
-    public void addContentChangeListener(IContentChangeListener listener) {
+    @Override
+	public void addContentChangeListener(IContentChangeListener listener) {
         fContentListeners.add(listener);
     }
 
@@ -63,7 +66,8 @@ abstract public class AbstractCDebuggerPage extends AbstractLaunchConfigurationT
      * @see org.eclipse.cdt.debug.ui.ICDebuggerPageExtension#removeContentChangeListener(org.eclipse.cdt.debug.ui.ICDebuggerPageExtension.IContentChangeListener)
      */
     /** @since 7.0 */
-    public void removeContentChangeListener(IContentChangeListener listener) {
+    @Override
+	public void removeContentChangeListener(IContentChangeListener listener) {
         fContentListeners.remove(listener);
     }
 

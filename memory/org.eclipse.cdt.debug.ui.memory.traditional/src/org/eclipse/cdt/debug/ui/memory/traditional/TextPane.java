@@ -26,19 +26,22 @@ public class TextPane extends AbstractPane
         super(parent);
     }
 
-    protected int getCellCharacterCount()
+    @Override
+	protected int getCellCharacterCount()
     {
         return fRendering.getBytesPerColumn()
             / fRendering.getBytesPerCharacter();
     }
 
-    protected String getCellText(MemoryByte bytes[])
+    @Override
+	protected String getCellText(MemoryByte bytes[])
     {
         return fRendering.formatText(bytes, fRendering
             .isTargetLittleEndian(), fRendering.getTextMode());
     }
 
-    protected void editCell(BigInteger address, int subCellPosition,
+    @Override
+	protected void editCell(BigInteger address, int subCellPosition,
         char character)
     {
         try
@@ -85,7 +88,8 @@ public class TextPane extends AbstractPane
         }
     }
 
-    protected int getCellWidth()
+    @Override
+	protected int getCellWidth()
     {
         GC gc = new GC(this);
         gc.setFont(fRendering.getFont());
@@ -96,14 +100,16 @@ public class TextPane extends AbstractPane
             / fRendering.getBytesPerCharacter() * width;
     }
 
-    public Point computeSize(int wHint, int hHint)
+    @Override
+	public Point computeSize(int wHint, int hHint)
     {
         return new Point(fRendering.getColumnCount() * getCellWidth()
             + fRendering.getRenderSpacing(), 100);
 
     }
 
-    protected Point getCellLocation(BigInteger cellAddress)
+    @Override
+	protected Point getCellLocation(BigInteger cellAddress)
     {
         try
         {
@@ -157,7 +163,8 @@ public class TextPane extends AbstractPane
         return address;
     }
 
-    protected void positionCaret(int x, int y)
+    @Override
+	protected void positionCaret(int x, int y)
     {
         try
         {
@@ -195,7 +202,8 @@ public class TextPane extends AbstractPane
         }
     }
 
-    protected BigInteger getViewportAddress(int col, int row)
+    @Override
+	protected BigInteger getViewportAddress(int col, int row)
         throws DebugException
     {
         BigInteger address = fRendering.getViewportStartAddress();
@@ -207,7 +215,8 @@ public class TextPane extends AbstractPane
         return address;
     }
 
-    protected void paint(PaintEvent pe)
+    @Override
+	protected void paint(PaintEvent pe)
     {
         super.paint(pe);
 
@@ -288,7 +297,7 @@ public class TextPane extends AbstractPane
         boolean anyByteEditing = false;
         for(int n = 0; n < bytes.length && !anyByteEditing; n++)
         	if(bytes[n] instanceof TraditionalMemoryByte)
-        		if(((TraditionalMemoryByte) bytes[n]).isEdited())
+        		if(bytes[n].isEdited())
         			anyByteEditing = true;
          
          if(isOdd(col))

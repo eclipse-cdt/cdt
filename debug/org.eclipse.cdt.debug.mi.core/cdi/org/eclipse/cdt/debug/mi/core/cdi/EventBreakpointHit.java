@@ -37,6 +37,7 @@ public class EventBreakpointHit extends SessionObject implements ICDIEventBreakp
 		fEventType = eventType;
 	}
 
+	@Override
 	public String getEventBreakpointType() {
 		return fEventType;
 	}

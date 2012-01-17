@@ -26,8 +26,6 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.MemoryByte;
-import org.eclipse.debug.internal.ui.DebugPluginImages;
-import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.memory.IMemoryBlockConnection;
@@ -190,7 +188,8 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
     private int fAddressableSize;
     private int fAddressSize;
     
-    public void init(IMemoryRenderingContainer container, IMemoryBlock block)
+    @Override
+	public void init(IMemoryRenderingContainer container, IMemoryBlock block)
     {
     	super.init(container, block);
     	
@@ -308,7 +307,8 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
     private AbstractHandler fGoToAddressHandler;
 	private IAction fSavedActionHandler; // When we set the global copy action handler we save off the existing so we can restore it.
     
-    public void activated() 
+    @Override
+	public void activated() 
     {
 		super.activated();
 		
@@ -348,6 +348,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 
 	}
 
+	@Override
 	public void deactivated() 
 	{
 		IWorkbench workbench = PlatformUI.getWorkbench();
@@ -388,6 +389,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
     public void updateRenderingLabels()
 	{
 		UIJob job = new UIJob("updateLabels"){ //$NON-NLS-1$
+			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				
 				// update tab labels
@@ -434,7 +436,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
     	int green = textColor.getGreen();
     	int blue = textColor.getBlue();
     	
-    	float scale = (float) store.getInt(
+    	float scale = store.getInt(
     			TraditionalRenderingPreferenceConstants.MEM_LIGHTEN_DARKEN_ALTERNATE_CELLS);
     	
 		red = (int) Math.min(red + ((255 - red) / 10) * scale, 255);
@@ -594,7 +596,8 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
             TraditionalRenderingMessages
                 .getString("TraditionalRendering.RESET_TO_BASE_ADDRESS")) //$NON-NLS-1$
         {
-            public void run()
+            @Override
+			public void run()
             {
                 Display.getDefault().asyncExec(new Runnable()
                 {
@@ -614,7 +617,8 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
             TraditionalRenderingMessages
                 .getString("TraditionalRendering.REFRESH")) //$NON-NLS-1$
         {
-            public void run()
+            @Override
+			public void run()
             {
                 Display.getDefault().asyncExec(new Runnable()
                 {
@@ -644,7 +648,8 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                 .getString("TraditionalRendering.ADDRESS"), //$NON-NLS-1$
             IAction.AS_CHECK_BOX)
         {
-            public void run()
+            @Override
+			public void run()
             {
                 TraditionalRendering.this.fRendering.setPaneVisible(
                     Rendering.PANE_ADDRESS, isChecked());
@@ -660,7 +665,8 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                 .getString("TraditionalRendering.BINARY"), //$NON-NLS-1$
             IAction.AS_CHECK_BOX)
         {
-            public void run()
+            @Override
+			public void run()
             {
                 TraditionalRendering.this.fRendering.setPaneVisible(
                     Rendering.PANE_BINARY, isChecked());
@@ -676,7 +682,8 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                 .getString("TraditionalRendering.TEXT"), //$NON-NLS-1$
             IAction.AS_CHECK_BOX)
         {
-            public void run()
+            @Override
+			public void run()
             {
                 TraditionalRendering.this.fRendering.setPaneVisible(
                     Rendering.PANE_TEXT, isChecked());
@@ -692,7 +699,8 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                 .getString("TraditionalRendering.1_BYTE"), //$NON-NLS-1$
             IAction.AS_RADIO_BUTTON)
         {
-            public void run()
+            @Override
+			public void run()
             {
                 TraditionalRendering.this.fRendering.setBytesPerColumn(1);
             }
@@ -704,7 +712,8 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
             TraditionalRenderingMessages
                 .getString("TraditionalRendering.2_BYTES"), IAction.AS_RADIO_BUTTON) //$NON-NLS-1$
         {
-            public void run()
+            @Override
+			public void run()
             {
                 TraditionalRendering.this.fRendering.setBytesPerColumn(2);
             }
@@ -716,7 +725,8 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
             TraditionalRenderingMessages
                 .getString("TraditionalRendering.4_BYTES"), IAction.AS_RADIO_BUTTON) //$NON-NLS-1$
         {
-            public void run()
+            @Override
+			public void run()
             {
                 TraditionalRendering.this.fRendering.setBytesPerColumn(4);
             }
@@ -728,7 +738,8 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
             TraditionalRenderingMessages
                 .getString("TraditionalRendering.8_BYTES"), IAction.AS_RADIO_BUTTON) //$NON-NLS-1$
         {
-            public void run()
+            @Override
+			public void run()
             {
                 TraditionalRendering.this.fRendering.setBytesPerColumn(8);
             }
@@ -743,7 +754,8 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                     .getString("TraditionalRendering.ISO-8859-1"), //$NON-NLS-1$
                 IAction.AS_RADIO_BUTTON)
         {
-            public void run()
+            @Override
+			public void run()
             {
                 TraditionalRendering.this.fRendering
                     .setTextMode(Rendering.TEXT_ISO_8859_1);
@@ -757,7 +769,8 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                 .getString("TraditionalRendering.USASCII"), //$NON-NLS-1$
             IAction.AS_RADIO_BUTTON)
         {
-            public void run()
+            @Override
+			public void run()
             {
                 TraditionalRendering.this.fRendering
                     .setTextMode(Rendering.TEXT_USASCII);
@@ -770,7 +783,8 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
             TraditionalRenderingMessages
                 .getString("TraditionalRendering.UTF8"), IAction.AS_RADIO_BUTTON) //$NON-NLS-1$
         {
-            public void run()
+            @Override
+			public void run()
             {
                 TraditionalRendering.this.fRendering
                 .setTextMode(Rendering.TEXT_UTF8);
@@ -800,7 +814,8 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                 .getString("TraditionalRendering.BIG"), //$NON-NLS-1$
             IAction.AS_RADIO_BUTTON)
         {
-            public void run()
+            @Override
+			public void run()
             {
                 TraditionalRendering.this.fRendering
 	                    .setDisplayLittleEndian(false);
@@ -813,7 +828,8 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                 .getString("TraditionalRendering.LITTLE"), //$NON-NLS-1$
             IAction.AS_RADIO_BUTTON)
         {
-            public void run()
+            @Override
+			public void run()
             {
                 TraditionalRendering.this.fRendering
                     .setDisplayLittleEndian(true);
@@ -828,7 +844,8 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                 .getString("TraditionalRendering.HEX"), //$NON-NLS-1$
             IAction.AS_RADIO_BUTTON)
         {
-            public void run()
+            @Override
+			public void run()
             {
                 TraditionalRendering.this.fRendering
                     .setRadix(Rendering.RADIX_HEX);
@@ -841,7 +858,8 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
             TraditionalRenderingMessages
                 .getString("TraditionalRendering.DECIMAL_SIGNED"), IAction.AS_RADIO_BUTTON) //$NON-NLS-1$
         {
-            public void run()
+            @Override
+			public void run()
             {
                 TraditionalRendering.this.fRendering
                     .setRadix(Rendering.RADIX_DECIMAL_SIGNED);
@@ -854,7 +872,8 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
             TraditionalRenderingMessages
                 .getString("TraditionalRendering.DECIMAL_UNSIGNED"), IAction.AS_RADIO_BUTTON) //$NON-NLS-1$
         {
-            public void run()
+            @Override
+			public void run()
             {
                 TraditionalRendering.this.fRendering
                     .setRadix(Rendering.RADIX_DECIMAL_UNSIGNED);
@@ -868,7 +887,8 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                 .getString("TraditionalRendering.OCTAL"), //$NON-NLS-1$
             IAction.AS_RADIO_BUTTON)
         {
-            public void run()
+            @Override
+			public void run()
             {
                 TraditionalRendering.this.fRendering
                     .setRadix(Rendering.RADIX_OCTAL);
@@ -882,7 +902,8 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                 .getString("TraditionalRendering.BINARY"), //$NON-NLS-1$
             IAction.AS_RADIO_BUTTON)
         {
-            public void run()
+            @Override
+			public void run()
             {
                 TraditionalRendering.this.fRendering
                     .setRadix(Rendering.RADIX_BINARY);
@@ -896,7 +917,8 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                 .getString("TraditionalRendering.COLUMN_COUNT_AUTO"), //$NON-NLS-1$
             IAction.AS_RADIO_BUTTON)
         {
-            public void run()
+            @Override
+			public void run()
             {
                TraditionalRendering.this.fRendering.setColumnsSetting(Rendering.COLUMNS_AUTO_SIZE_TO_FIT);
             }
@@ -912,7 +934,8 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                     .getString("TraditionalRendering.COLUMN_COUNT_" + finali), //$NON-NLS-1$
                 IAction.AS_RADIO_BUTTON)
             {
-                public void run()
+                @Override
+				public void run()
                 {
                 	TraditionalRendering.this.fRendering.setColumnsSetting(finali);  
                 }
@@ -922,7 +945,8 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 
         final Action displayColumnCountCustomValue = new Action("", IAction.AS_RADIO_BUTTON) //$NON-NLS-1$
         {
-            public void run()
+            @Override
+			public void run()
             {
             }
         };
@@ -932,7 +956,8 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                 .getString("TraditionalRendering.COLUMN_COUNT_CUSTOM"), //$NON-NLS-1$
             IAction.AS_RADIO_BUTTON)
         {
-            public void run()
+            @Override
+			public void run()
             {
             	InputDialog inputDialog = new InputDialog(
                     fRendering.getShell(), 
@@ -1072,7 +1097,8 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                         .getString("TraditionalRendering.UPDATE_ALWAYS"), //$NON-NLS-1$
                     IAction.AS_RADIO_BUTTON)
                 {
-                    public void run()
+                    @Override
+					public void run()
                     {
                     	fRendering.setUpdateMode(Rendering.UPDATE_ALWAYS);
                     }
@@ -1084,7 +1110,8 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                         .getString("TraditionalRendering.UPDATE_ON_BREAKPOINT"), //$NON-NLS-1$
                     IAction.AS_RADIO_BUTTON)
                 {
-                    public void run()
+                    @Override
+					public void run()
                     {
                     	fRendering.setUpdateMode(Rendering.UPDATE_ON_BREAKPOINT);
                     }
@@ -1096,7 +1123,8 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                         .getString("TraditionalRendering.UPDATE_MANUAL"), //$NON-NLS-1$
                     IAction.AS_RADIO_BUTTON)
                 {
-                    public void run()
+                    @Override
+					public void run()
                     {
                     	fRendering.setUpdateMode(Rendering.UPDATE_MANUAL);
                     }
@@ -1208,7 +1236,8 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
         fRendering.setDisplayLittleEndian(littleEndian);
     }
     
-    public void dispose()
+    @Override
+	public void dispose()
     {
         if(this.fRendering != null)
             this.fRendering.dispose();
@@ -1219,6 +1248,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
      */
+	@Override
 	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class adapter)
     {
@@ -1390,7 +1420,8 @@ abstract class CopyAction extends Action
         setChecked(fDefaultCopyType == fCopyType);
 	}
     
-    public void run()
+    @Override
+	public void run()
     {
         final String PANE_SPACING = "  "; //$NON-NLS-1$
 

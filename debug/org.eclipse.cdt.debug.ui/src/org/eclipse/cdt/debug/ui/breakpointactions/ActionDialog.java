@@ -70,11 +70,13 @@ public class ActionDialog extends Dialog {
 		lastSelectedActionTypeIndex = 0;
 	}
 
+	@Override
 	protected void cancelPressed() {
 		actionPage.actionDialogCanceled();
 		super.cancelPressed();
 	}
 
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		if (originalAction == null)
@@ -88,6 +90,7 @@ public class ActionDialog extends Dialog {
 	 * 
 	 * @param parent
 	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
@@ -98,6 +101,7 @@ public class ActionDialog extends Dialog {
 	 * 
 	 * @param parent
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		dialogArea = (Composite) super.createDialogArea(parent);
 		final GridLayout gridLayout = new GridLayout();
@@ -115,6 +119,7 @@ public class ActionDialog extends Dialog {
 
 		combo = new Combo(dialogArea, SWT.READ_ONLY);
 		combo.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				try {
 					showActionComposite();
@@ -185,10 +190,12 @@ public class ActionDialog extends Dialog {
 	/**
 	 * Return the initial size of the dialog
 	 */
+	@Override
 	protected Point getInitialSize() {
 		return new Point(500, 375);
 	}
 
+	@Override
 	protected void okPressed() {
 		if (originalAction == null)
 			CDebugUIPlugin.getDefault().getPreferenceStore().setValue(ACTION_DIALOG_LAST_SELECTED, breakpointAction.getTypeName());

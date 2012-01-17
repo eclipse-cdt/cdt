@@ -195,6 +195,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
 		{
 			button.addSelectionListener(new SelectionAdapter() {
 
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					doGoToAddress();
 				}
@@ -204,6 +205,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
 			if (button != null)
 			{
 				button.addSelectionListener(new SelectionAdapter() {
+					@Override
 					public void widgetSelected(SelectionEvent e) {
 						setVisibleAddressBar(false);
 					}});
@@ -211,12 +213,14 @@ public class Rendering extends Composite implements IDebugEventSetListener
 		}
 		
 		fAddressBar.getExpressionWidget().addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				doGoToAddress();
 			}});
 		
 		fAddressBar.getExpressionWidget().addKeyListener(new KeyAdapter() {
 
+			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.keyCode == SWT.ESC)
 					setVisibleAddressBar(false);
@@ -261,7 +265,8 @@ public class Rendering extends Composite implements IDebugEventSetListener
     {
 	    this.setLayout(new Layout()
 	    {
-	        public void layout(Composite composite, boolean changed)
+	        @Override
+			public void layout(Composite composite, boolean changed)
 	        {
 	        	int xOffset = 0;
 	        	if(Rendering.this.getHorizontalBar().isVisible())
@@ -323,7 +328,8 @@ public class Rendering extends Composite implements IDebugEventSetListener
 	            }
 	        }
 	
-	        protected Point computeSize(Composite composite, int wHint,
+	        @Override
+			protected Point computeSize(Composite composite, int wHint,
 	            int hHint, boolean flushCache)
 	        {
 	            return new Point(100, 100); // dummy data
@@ -729,7 +735,8 @@ public class Rendering extends Composite implements IDebugEventSetListener
 
             TraditionalMemoryByte[] bytes;
 
-            public MemoryUnit clone()
+            @Override
+			public MemoryUnit clone()
             {
                 MemoryUnit b = new MemoryUnit();
 
@@ -837,6 +844,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
             }
         }
 
+		@Override
 		public void run()
         {
             while(!fDisposed)
@@ -1076,7 +1084,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
                 Display.getDefault().getThread()) : TraditionalRenderingMessages
                 .getString("TraditionalRendering.CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
 
-            return (TraditionalMemoryByte[]) fEditBuffer.get(address);
+            return fEditBuffer.get(address);
         }
 
         public void clearEditBuffer()
@@ -1100,8 +1108,8 @@ public class Rendering extends Composite implements IDebugEventSetListener
 
             while(iterator.hasNext())
                 {
-                    BigInteger address = (BigInteger) iterator.next();
-                    TraditionalMemoryByte[] bytes = (TraditionalMemoryByte[]) fEditBuffer
+                    BigInteger address = iterator.next();
+                    TraditionalMemoryByte[] bytes = fEditBuffer
                         .get(address);
 
                     byte byteValue[] = new byte[bytes.length];
@@ -1164,7 +1172,8 @@ public class Rendering extends Composite implements IDebugEventSetListener
     	return fCacheDirty; 	
     }
 
-    public void dispose()
+    @Override
+	public void dispose()
     {
         DebugPlugin.getDefault().removeDebugEventListener(this);
         if(fViewportCache != null)

@@ -58,6 +58,7 @@ public class SignalsView extends AbstractDebugEventHandlerView
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
 		 */
+		@Override
 		public Image getColumnImage( Object element, int columnIndex ) {
 			if ( columnIndex == 0 )
 				return getModelPresentation().getImage( element );
@@ -67,6 +68,7 @@ public class SignalsView extends AbstractDebugEventHandlerView
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
 		 */
+		@Override
 		public String getColumnText( Object element, int columnIndex ) {
 			if ( element instanceof ICSignal ) {
 				try {
@@ -94,6 +96,7 @@ public class SignalsView extends AbstractDebugEventHandlerView
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractDebugView#createViewer(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Viewer createViewer( Composite parent ) {
 
 		// add tree viewer
@@ -115,12 +118,14 @@ public class SignalsView extends AbstractDebugEventHandlerView
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractDebugView#createActions()
 	 */
+	@Override
 	protected void createActions() {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractDebugView#getHelpContextId()
 	 */
+	@Override
 	protected String getHelpContextId() {
 		return ICDebugHelpContextIds.SIGNALS_VIEW;
 	}
@@ -128,6 +133,7 @@ public class SignalsView extends AbstractDebugEventHandlerView
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractDebugView#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
+	@Override
 	protected void fillContextMenu( IMenuManager menu ) {
 		menu.add( new Separator( IWorkbenchActionConstants.MB_ADDITIONS ) );
 		updateObjects();
@@ -136,12 +142,14 @@ public class SignalsView extends AbstractDebugEventHandlerView
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractDebugView#configureToolBar(org.eclipse.jface.action.IToolBarManager)
 	 */
+	@Override
 	protected void configureToolBar( IToolBarManager tbm ) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged( IWorkbenchPart part, ISelection selection ) {
 		if ( !isAvailable() || !isVisible() )
 			return;
@@ -154,12 +162,14 @@ public class SignalsView extends AbstractDebugEventHandlerView
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
+	@Override
 	public void propertyChange( PropertyChangeEvent event ) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.views.IDebugExceptionHandler#handleException(org.eclipse.debug.core.DebugException)
 	 */
+	@Override
 	public void handleException( DebugException e ) {
 		showMessage( e.getMessage() );
 	}
@@ -200,6 +210,7 @@ public class SignalsView extends AbstractDebugEventHandlerView
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractDebugView#becomesHidden()
 	 */
+	@Override
 	protected void becomesHidden() {
 		setViewerInput( new StructuredSelection() );
 		super.becomesHidden();
@@ -208,6 +219,7 @@ public class SignalsView extends AbstractDebugEventHandlerView
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractDebugView#becomesVisible()
 	 */
+	@Override
 	protected void becomesVisible() {
 		super.becomesVisible();
 		IViewPart part = getSite().getPage().findView( IDebugUIConstants.ID_DEBUG_VIEW );
@@ -220,6 +232,7 @@ public class SignalsView extends AbstractDebugEventHandlerView
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		getSite().getPage().removeSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
 		CDebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener( this );

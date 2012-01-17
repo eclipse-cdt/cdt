@@ -34,6 +34,7 @@ public class DelegatingDebugTextHover implements ICEditorTextHover, ITextHoverEx
 	/*
 	 * @see org.eclipse.jface.text.ITextHover#getHoverRegion(org.eclipse.jface.text.ITextViewer, int)
 	 */
+	@Override
 	public IRegion getHoverRegion(ITextViewer viewer, int offset) {
 		fDelegate = getDelegate();
 		if (fDelegate != null) {
@@ -45,7 +46,8 @@ public class DelegatingDebugTextHover implements ICEditorTextHover, ITextHoverEx
     /*
      * @see org.eclipse.jface.text.ITextHover#getHoverInfo(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
      */
-    @SuppressWarnings("deprecation")
+    @Override
+	@SuppressWarnings("deprecation")
     public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
         fDelegate = getDelegate();
         if (fDelegate != null) {
@@ -57,7 +59,8 @@ public class DelegatingDebugTextHover implements ICEditorTextHover, ITextHoverEx
     /*
      * @see org.eclipse.jface.text.ITextHoverExtension2#getHoverInfo2(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
      */
-    @SuppressWarnings("deprecation")
+    @Override
+	@SuppressWarnings("deprecation")
     public Object getHoverInfo2(ITextViewer textViewer, IRegion hoverRegion) {
         fDelegate = getDelegate();
         if (fDelegate instanceof ITextHoverExtension2) {
@@ -73,7 +76,8 @@ public class DelegatingDebugTextHover implements ICEditorTextHover, ITextHoverEx
     /*
      * @see org.eclipse.jface.text.ITextHoverExtension#getHoverControlCreator()
      */
-    public IInformationControlCreator getHoverControlCreator() {
+    @Override
+	public IInformationControlCreator getHoverControlCreator() {
         if (fDelegate instanceof ITextHoverExtension) {
             return ((ITextHoverExtension) fDelegate).getHoverControlCreator();
         }
@@ -83,7 +87,8 @@ public class DelegatingDebugTextHover implements ICEditorTextHover, ITextHoverEx
     /*
      * @see org.eclipse.cdt.ui.text.c.hover.ICEditorTextHover#setEditor(org.eclipse.ui.IEditorPart)
      */
-    public final void setEditor(IEditorPart editor) {
+    @Override
+	public final void setEditor(IEditorPart editor) {
         fEditor = editor;
     }
 

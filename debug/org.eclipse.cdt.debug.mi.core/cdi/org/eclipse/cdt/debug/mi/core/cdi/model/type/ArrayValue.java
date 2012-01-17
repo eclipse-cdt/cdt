@@ -96,6 +96,7 @@ public class ArrayValue extends DerivedValue implements ICDIArrayValue, ICDIPoin
 	 * 
 	 * an Array of range[index, index + length - 1]
 	 */
+	@Override
 	public ICDIVariable[] getVariables(int index, int length) throws CDIException {
 		//int children = getChildrenNumber();
 		//if (index >= children || index + length >= children) {
@@ -125,6 +126,7 @@ public class ArrayValue extends DerivedValue implements ICDIArrayValue, ICDIPoin
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.type.ICDIPointerValue#pointerValue()
 	 */
+	@Override
 	public BigInteger pointerValue() throws CDIException {
 		String address = getAddressString();
 		if (address.length() > 0 ){

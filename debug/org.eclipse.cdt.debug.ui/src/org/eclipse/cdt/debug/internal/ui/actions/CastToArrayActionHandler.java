@@ -96,6 +96,7 @@ public class CastToArrayActionHandler extends AbstractHandler {
 		 * 
 		 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 		 */
+		@Override
 		protected void configureShell( Shell newShell ) {
 			super.configureShell( newShell );
 			newShell.setText( ActionMessages.getString( "CastToArrayActionDelegate.0" ) ); //$NON-NLS-1$
@@ -107,6 +108,7 @@ public class CastToArrayActionHandler extends AbstractHandler {
 		 * 
 		 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 		 */
+		@Override
 		protected void createButtonsForButtonBar( Composite parent ) {
 			// create OK and Cancel buttons by default
 			fOkButton = createButton( parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true );
@@ -129,6 +131,7 @@ public class CastToArrayActionHandler extends AbstractHandler {
 		 * 
 		 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 		 */
+		@Override
 		protected Control createDialogArea( Composite parent ) {
 			Composite composite = (Composite)super.createDialogArea( parent );
 			createDialogFields( composite );
@@ -147,6 +150,7 @@ public class CastToArrayActionHandler extends AbstractHandler {
 			fFirstIndexText = ControlFactory.createTextField( composite );
 			fFirstIndexText.addModifyListener( new ModifyListener() {
 
+				@Override
 				public void modifyText( ModifyEvent e ) {
 					validateInput();
 				}
@@ -156,6 +160,7 @@ public class CastToArrayActionHandler extends AbstractHandler {
 			fLengthText = ControlFactory.createTextField( composite );
 			fLengthText.addModifyListener( new ModifyListener() {
 
+				@Override
 				public void modifyText( ModifyEvent e ) {
 					validateInput();
 				}
@@ -209,6 +214,7 @@ public class CastToArrayActionHandler extends AbstractHandler {
 		 * 
 		 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
 		 */
+		@Override
 		protected void buttonPressed( int buttonId ) {
 			if ( buttonId == IDialogConstants.OK_ID ) {
 				String firstIndex = fFirstIndexText.getText().trim();
@@ -239,6 +245,7 @@ public class CastToArrayActionHandler extends AbstractHandler {
 		super();
 	}
 
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 	    fTargetPart = HandlerUtil.getActivePartChecked(event);
 		if ( getCastToArray() == null || getCastToArray().length == 0  )
@@ -246,6 +253,7 @@ public class CastToArrayActionHandler extends AbstractHandler {
 		
 		BusyIndicator.showWhile( Display.getCurrent(), new Runnable() {
 
+			@Override
 			public void run() {
 				try {
 					doAction( getCastToArray() );

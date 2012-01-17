@@ -65,6 +65,7 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 	/**
 	 * @return the size of each memory word in bytes. 
 	 */
+	@Override
 	public int getWordSize() {
 		return fWordSize;
 	}
@@ -186,6 +187,7 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 		return offsets;
 	}
 
+	@Override
 	public byte[] getBytes() throws CDIException {
 		return cBytes;
 	}
@@ -193,6 +195,7 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock#refresh()
 	 */
+	@Override
 	public void refresh() throws CDIException {
 		Target target = (Target)getTarget();
 		MemoryManager mgr = ((Session)target.getSession()).getMemoryManager();
@@ -214,6 +217,7 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock#getLength()
 	 */
+	@Override
 	public long getLength() {
 		try {
 			// use this instead.  If the wordSize
@@ -229,6 +233,7 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock#getStartAddress()
 	 */
+	@Override
 	public BigInteger getStartAddress() {
 		return cStartAddress;
 	}
@@ -236,6 +241,7 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock#isFrozen()
 	 */
+	@Override
 	public boolean isFrozen() {
 		return frozen;
 	}
@@ -243,6 +249,7 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock#setFrozen(boolean)
 	 */
+	@Override
 	public void setFrozen(boolean frozen) {
 		this.frozen = frozen;
 	}
@@ -250,6 +257,7 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock#setValue(long, byte[])
 	 */
+	@Override
 	public void setValue(long offset, byte[] bytes) throws CDIException {
 		if (offset >= getLength() || offset + bytes.length > getLength()) {
 			throw new CDIException(CdiResources.getString("cdi.model.MemoryBlock.Bad_Offset")); //$NON-NLS-1$
@@ -298,6 +306,7 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock#getFlags(int)
 	 */
+	@Override
 	public synchronized byte getFlags(int offset) {
 		if (offset < 0 || offset >= getLength()) {
 			throw new IndexOutOfBoundsException();

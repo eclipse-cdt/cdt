@@ -46,6 +46,7 @@ public class EvaluationContextManager implements IWindowListener, IPageListener,
 
 	public static void startup() {
 		Runnable r = new Runnable() {
+			@Override
 			public void run() {
 				if (fgManager == null) {
 					fgManager = new EvaluationContextManager();
@@ -64,6 +65,7 @@ public class EvaluationContextManager implements IWindowListener, IPageListener,
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWindowListener#windowActivated(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void windowActivated(IWorkbenchWindow window) {
 		windowOpened(window);
 	}
@@ -71,12 +73,14 @@ public class EvaluationContextManager implements IWindowListener, IPageListener,
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWindowListener#windowDeactivated(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void windowDeactivated(IWorkbenchWindow window) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWindowListener#windowClosed(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void windowClosed(IWorkbenchWindow window) {
 		window.removePageListener(this);
 	}
@@ -84,6 +88,7 @@ public class EvaluationContextManager implements IWindowListener, IPageListener,
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWindowListener#windowOpened(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void windowOpened(IWorkbenchWindow window) {
 		IWorkbenchPage[] pages = window.getPages();
 		for(int i = 0; i < pages.length; i++) {
@@ -95,6 +100,7 @@ public class EvaluationContextManager implements IWindowListener, IPageListener,
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPageListener#pageActivated(org.eclipse.ui.IWorkbenchPage)
 	 */
+	@Override
 	public void pageActivated(IWorkbenchPage page) {
 		pageOpened(page);
 	}
@@ -102,6 +108,7 @@ public class EvaluationContextManager implements IWindowListener, IPageListener,
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPageListener#pageClosed(org.eclipse.ui.IWorkbenchPage)
 	 */
+	@Override
 	public void pageClosed(IWorkbenchPage page) {
 		page.removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 		page.removePartListener(this);
@@ -110,6 +117,7 @@ public class EvaluationContextManager implements IWindowListener, IPageListener,
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPageListener#pageOpened(org.eclipse.ui.IWorkbenchPage)
 	 */
+	@Override
 	public void pageOpened(IWorkbenchPage page) {
 		page.addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 		page.addPartListener(this);
@@ -122,6 +130,7 @@ public class EvaluationContextManager implements IWindowListener, IPageListener,
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		IWorkbenchPage page = part.getSite().getPage();
 		if (selection instanceof IStructuredSelection) {
@@ -144,18 +153,21 @@ public class EvaluationContextManager implements IWindowListener, IPageListener,
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
 	 */
+	@Override
 	public void partActivated(IWorkbenchPartReference partRef) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener2#partBroughtToTop(org.eclipse.ui.IWorkbenchPartReference)
 	 */
+	@Override
 	public void partBroughtToTop(IWorkbenchPartReference partRef) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
 	 */
+	@Override
 	public void partClosed(IWorkbenchPartReference partRef) {
 		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(partRef.getId())) {
 			removeContext(partRef.getPage());
@@ -165,30 +177,35 @@ public class EvaluationContextManager implements IWindowListener, IPageListener,
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener2#partDeactivated(org.eclipse.ui.IWorkbenchPartReference)
 	 */
+	@Override
 	public void partDeactivated(IWorkbenchPartReference partRef) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener2#partOpened(org.eclipse.ui.IWorkbenchPartReference)
 	 */
+	@Override
 	public void partOpened(IWorkbenchPartReference partRef) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener2#partHidden(org.eclipse.ui.IWorkbenchPartReference)
 	 */
+	@Override
 	public void partHidden(IWorkbenchPartReference partRef) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener2#partVisible(org.eclipse.ui.IWorkbenchPartReference)
 	 */
+	@Override
 	public void partVisible(IWorkbenchPartReference partRef) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener2#partInputChanged(org.eclipse.ui.IWorkbenchPartReference)
 	 */
+	@Override
 	public void partInputChanged(IWorkbenchPartReference partRef) {
 	}
 

@@ -26,6 +26,7 @@ public class CompilationDirectorySourceContainerType extends AbstractSourceConta
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType#getMemento(org.eclipse.debug.internal.core.sourcelookup.ISourceContainer)
 	 */
+	@Override
 	public String getMemento(ISourceContainer container) throws CoreException {
 		CompilationDirectorySourceContainer folder = (CompilationDirectorySourceContainer) container;
 		Document document = newDocument();
@@ -43,6 +44,7 @@ public class CompilationDirectorySourceContainerType extends AbstractSourceConta
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType#createSourceContainer(java.lang.String)
 	 */
+	@Override
 	public ISourceContainer createSourceContainer(String memento) throws CoreException {
 		Node node = parseDocument(memento);
 		if (node.getNodeType() == Node.ELEMENT_NODE) {

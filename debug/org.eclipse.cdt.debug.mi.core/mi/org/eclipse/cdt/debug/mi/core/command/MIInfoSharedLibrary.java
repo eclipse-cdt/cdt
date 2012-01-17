@@ -21,6 +21,7 @@ public class MIInfoSharedLibrary extends MICommand {
 		super(miVersion, "info sharedlibrary"); //$NON-NLS-1$
 	}
 
+	@Override
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

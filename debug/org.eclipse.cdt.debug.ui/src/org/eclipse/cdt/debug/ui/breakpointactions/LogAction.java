@@ -58,6 +58,7 @@ public class LogAction extends AbstractBreakpointAction {
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.breakpointactions.IBreakpointAction#execute(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.runtime.IAdaptable, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public IStatus execute(IBreakpoint breakpoint, IAdaptable context, IProgressMonitor monitor) {
 		IStatus result = Status.OK_STATUS;
 		try {
@@ -101,14 +102,17 @@ public class LogAction extends AbstractBreakpointAction {
 		ConsolePlugin.getDefault().getConsoleManager().showConsoleView(console);
 	}
 
+	@Override
 	public String getDefaultName() {
 		return Messages.getString("LogAction.UntitledName"); //$NON-NLS-1$
 	}
 
+	@Override
 	public String getIdentifier() {
 		return "org.eclipse.cdt.debug.ui.breakpointactions.LogAction"; //$NON-NLS-1$
 	}
 
+	@Override
 	public String getMemento() {
 		String logData = ""; //$NON-NLS-1$
 
@@ -151,6 +155,7 @@ public class LogAction extends AbstractBreakpointAction {
 		this.message = message;
 	}
 
+	@Override
 	public String getSummary() {
 		String summary = getMessage();
 		if (summary.length() > 32)
@@ -158,10 +163,12 @@ public class LogAction extends AbstractBreakpointAction {
 		return summary;
 	}
 
+	@Override
 	public String getTypeName() {
 		return Messages.getString("LogAction.TypeName"); //$NON-NLS-1$
 	}
 
+	@Override
 	public void initializeFromMemento(String data) {
 		Element root = null;
 		DocumentBuilder parser;

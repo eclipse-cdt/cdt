@@ -21,6 +21,7 @@ public class CDebugElementState {
 		this.fName = name;
 	}
 	
+	@Override
 	public String toString() {
 		return this.fName;
 	}

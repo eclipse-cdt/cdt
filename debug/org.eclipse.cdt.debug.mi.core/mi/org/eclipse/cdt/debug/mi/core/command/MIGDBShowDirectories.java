@@ -31,6 +31,7 @@ public class MIGDBShowDirectories extends MIGDBShow {
 	public MIGDBShowDirectoriesInfo getMIGDBShowDirectoriesInfo() throws MIException {
 		return (MIGDBShowDirectoriesInfo)getMIInfo();
 	}
+	@Override
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

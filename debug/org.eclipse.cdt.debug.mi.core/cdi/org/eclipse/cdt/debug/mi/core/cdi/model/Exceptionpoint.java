@@ -40,6 +40,7 @@ public class Exceptionpoint extends Breakpoint implements ICDIExceptionpoint {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExceptionpoint#isStopOnThrow()
 	 */
+	@Override
 	public boolean isStopOnThrow() {
 		return fStopOnThrow;
 	}
@@ -47,6 +48,7 @@ public class Exceptionpoint extends Breakpoint implements ICDIExceptionpoint {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExceptionpoint#isStopOnCatch()
 	 */
+	@Override
 	public boolean isStopOnCatch() {
 		return fStopOnCatch;
 	}

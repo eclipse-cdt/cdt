@@ -89,7 +89,8 @@ public class ReverseToggleCommandHandler extends DebugCommandHandler implements 
         super.dispose();
     }
 
-    public void debugContextChanged(DebugContextEvent event) {
+    @Override
+	public void debugContextChanged(DebugContextEvent event) {
         refresh(event.getContext());
     }
 
@@ -139,7 +140,8 @@ public class ReverseToggleCommandHandler extends DebugCommandHandler implements 
 		}.schedule();
     }
 
-    public void updateElement(UIElement element,
+    @Override
+	public void updateElement(UIElement element,
                               @SuppressWarnings("rawtypes") Map parameters) {
        // Make sure the toggle state reflects the actual state
        // We must check this, in case we have multiple launches

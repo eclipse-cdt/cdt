@@ -26,6 +26,7 @@ public class CLIInfoLine extends CLICommand {
 		return (CLIInfoLineInfo)getMIInfo();
 	}
 
+	@Override
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

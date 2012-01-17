@@ -43,6 +43,7 @@ public class SharedLibrary extends CObject implements ICDISharedLibrary {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary#getFileName()
 	 */
+	@Override
 	public String getFileName() {
 		return miShared.getName();
 	}
@@ -50,6 +51,7 @@ public class SharedLibrary extends CObject implements ICDISharedLibrary {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary#getStartAddress()
 	 */
+	@Override
 	public BigInteger getStartAddress() {
 		return MIFormat.getBigInteger(miShared.getFrom());
 	}
@@ -57,6 +59,7 @@ public class SharedLibrary extends CObject implements ICDISharedLibrary {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary#getEndAddress()
 	 */
+	@Override
 	public BigInteger getEndAddress() {
 		return MIFormat.getBigInteger(miShared.getTo());
 	}
@@ -64,6 +67,7 @@ public class SharedLibrary extends CObject implements ICDISharedLibrary {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary#areSymbolsLoaded()
 	 */
+	@Override
 	public boolean areSymbolsLoaded() {
 		return miShared.isRead();
 	}
@@ -71,6 +75,7 @@ public class SharedLibrary extends CObject implements ICDISharedLibrary {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary#loadSymbols()
 	 */
+	@Override
 	public void loadSymbols() throws CDIException {
 		Target target = (Target)getTarget();
 		SharedLibraryManager mgr = ((Session)target.getSession()).getSharedLibraryManager();

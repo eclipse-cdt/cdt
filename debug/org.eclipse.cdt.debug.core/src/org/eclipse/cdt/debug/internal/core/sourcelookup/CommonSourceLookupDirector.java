@@ -24,6 +24,7 @@ public class CommonSourceLookupDirector extends CSourceLookupDirector {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector#setSourceContainers(org.eclipse.debug.core.sourcelookup.ISourceContainer[])
 	 */
+	@Override
 	public void setSourceContainers(ISourceContainer[] containers) {
 		try {
 			super.setSourceContainers(containers);

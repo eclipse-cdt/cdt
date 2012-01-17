@@ -39,6 +39,7 @@ public class FunctionFinished extends EndSteppingRange implements ICDIFunctionFi
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIFunctionFinished#getReturnType()
 	 */
+	@Override
 	public ICDIType getReturnType() throws CDIException {
 		Session session = (Session)getSession();
 		Target target = session.getTarget(fMIEvent.getMISession());
@@ -53,6 +54,7 @@ public class FunctionFinished extends EndSteppingRange implements ICDIFunctionFi
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIFunctionFinished#getReturnValue()
 	 */
+	@Override
 	public ICDIValue getReturnValue() throws CDIException {
 		Session session = (Session)getSession();
 		Target target = session.getTarget(fMIEvent.getMISession());

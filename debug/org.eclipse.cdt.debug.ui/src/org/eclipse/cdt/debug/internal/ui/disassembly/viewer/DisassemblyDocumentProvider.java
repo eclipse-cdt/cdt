@@ -73,13 +73,15 @@ public class DisassemblyDocumentProvider implements IDocumentProvider {
     /* (non-Javadoc)
      * @see org.eclipse.ui.texteditor.IDocumentProvider#aboutToChange(java.lang.Object)
      */
-    public void aboutToChange( Object element ) {
+    @Override
+	public void aboutToChange( Object element ) {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.texteditor.IDocumentProvider#addElementStateListener(org.eclipse.ui.texteditor.IElementStateListener)
      */
-    public void addElementStateListener( IElementStateListener listener ) {
+    @Override
+	public void addElementStateListener( IElementStateListener listener ) {
         // TODO Auto-generated method stub
 
     }
@@ -87,20 +89,23 @@ public class DisassemblyDocumentProvider implements IDocumentProvider {
     /* (non-Javadoc)
      * @see org.eclipse.ui.texteditor.IDocumentProvider#canSaveDocument(java.lang.Object)
      */
-    public boolean canSaveDocument( Object element ) {
+    @Override
+	public boolean canSaveDocument( Object element ) {
         return false;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.texteditor.IDocumentProvider#changed(java.lang.Object)
      */
-    public void changed( Object element ) {
+    @Override
+	public void changed( Object element ) {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.texteditor.IDocumentProvider#connect(java.lang.Object)
      */
-    public synchronized void connect( Object element ) throws CoreException {
+    @Override
+	public synchronized void connect( Object element ) throws CoreException {
         Object disassemblyContext = ((DisassemblyEditorInput)element).getDisassemblyContext();
         if ( fDocumentInfos.get( disassemblyContext ) == null ) {
             IDocumentPresentation presentation = createDocumentPresentation( disassemblyContext );
@@ -113,7 +118,8 @@ public class DisassemblyDocumentProvider implements IDocumentProvider {
     /* (non-Javadoc)
      * @see org.eclipse.ui.texteditor.IDocumentProvider#disconnect(java.lang.Object)
      */
-    public synchronized void disconnect( Object element ) {
+    @Override
+	public synchronized void disconnect( Object element ) {
         Object disassemblyContext = ((DisassemblyEditorInput)element).getDisassemblyContext();
         DocumentInfo info = fDocumentInfos.remove( disassemblyContext );
         if ( info != null ) {
@@ -124,7 +130,8 @@ public class DisassemblyDocumentProvider implements IDocumentProvider {
     /* (non-Javadoc)
      * @see org.eclipse.ui.texteditor.IDocumentProvider#getAnnotationModel(java.lang.Object)
      */
-    public IAnnotationModel getAnnotationModel( Object element ) {
+    @Override
+	public IAnnotationModel getAnnotationModel( Object element ) {
         Object disassemblyContext = ((DisassemblyEditorInput)element).getDisassemblyContext();
         DocumentInfo info = fDocumentInfos.get( disassemblyContext );
         return ( info != null ) ? info.getAnnotationModel() : null;
@@ -133,7 +140,8 @@ public class DisassemblyDocumentProvider implements IDocumentProvider {
     /* (non-Javadoc)
      * @see org.eclipse.ui.texteditor.IDocumentProvider#getDocument(java.lang.Object)
      */
-    public IDocument getDocument( Object element ) {
+    @Override
+	public IDocument getDocument( Object element ) {
         Object disassemblyContext = ((DisassemblyEditorInput)element).getDisassemblyContext();        
         DocumentInfo info = fDocumentInfos.get( disassemblyContext );
         return ( info != null ) ? info.getDocument() : null;
@@ -142,7 +150,8 @@ public class DisassemblyDocumentProvider implements IDocumentProvider {
     /* (non-Javadoc)
      * @see org.eclipse.ui.texteditor.IDocumentProvider#getModificationStamp(java.lang.Object)
      */
-    public long getModificationStamp( Object element ) {
+    @Override
+	public long getModificationStamp( Object element ) {
         // TODO Auto-generated method stub
         return 0;
     }
@@ -150,7 +159,8 @@ public class DisassemblyDocumentProvider implements IDocumentProvider {
     /* (non-Javadoc)
      * @see org.eclipse.ui.texteditor.IDocumentProvider#getSynchronizationStamp(java.lang.Object)
      */
-    public long getSynchronizationStamp( Object element ) {
+    @Override
+	public long getSynchronizationStamp( Object element ) {
         // TODO Auto-generated method stub
         return 0;
     }
@@ -158,21 +168,24 @@ public class DisassemblyDocumentProvider implements IDocumentProvider {
     /* (non-Javadoc)
      * @see org.eclipse.ui.texteditor.IDocumentProvider#isDeleted(java.lang.Object)
      */
-    public boolean isDeleted( Object element ) {
+    @Override
+	public boolean isDeleted( Object element ) {
         return false;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.texteditor.IDocumentProvider#mustSaveDocument(java.lang.Object)
      */
-    public boolean mustSaveDocument( Object element ) {
+    @Override
+	public boolean mustSaveDocument( Object element ) {
         return false;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.texteditor.IDocumentProvider#removeElementStateListener(org.eclipse.ui.texteditor.IElementStateListener)
      */
-    public void removeElementStateListener( IElementStateListener listener ) {
+    @Override
+	public void removeElementStateListener( IElementStateListener listener ) {
         // TODO Auto-generated method stub
 
     }
@@ -180,7 +193,8 @@ public class DisassemblyDocumentProvider implements IDocumentProvider {
     /* (non-Javadoc)
      * @see org.eclipse.ui.texteditor.IDocumentProvider#resetDocument(java.lang.Object)
      */
-    public void resetDocument( Object element ) throws CoreException {
+    @Override
+	public void resetDocument( Object element ) throws CoreException {
         // TODO Auto-generated method stub
 
     }
@@ -188,7 +202,8 @@ public class DisassemblyDocumentProvider implements IDocumentProvider {
     /* (non-Javadoc)
      * @see org.eclipse.ui.texteditor.IDocumentProvider#saveDocument(org.eclipse.core.runtime.IProgressMonitor, java.lang.Object, org.eclipse.jface.text.IDocument, boolean)
      */
-    public void saveDocument( IProgressMonitor monitor, Object element, IDocument document, boolean overwrite ) throws CoreException {
+    @Override
+	public void saveDocument( IProgressMonitor monitor, Object element, IDocument document, boolean overwrite ) throws CoreException {
         // TODO Auto-generated method stub
 
     }

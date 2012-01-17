@@ -25,7 +25,8 @@ public class CDisassemblyContextProvider implements IDisassemblyContextProvider 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.debug.core.disassembly.IDisassemblyContextProvider#getDisassemblyContext(java.lang.Object)
      */
-    public Object getDisassemblyContext( Object element ) {
+    @Override
+	public Object getDisassemblyContext( Object element ) {
         if ( element instanceof ICDebugElement ) {
             IDebugTarget target = ((ICDebugElement)element).getDebugTarget();
             return ((CDebugTarget)target).getDisassemblyRetrieval();

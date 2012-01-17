@@ -75,7 +75,8 @@ public class DebugTests extends TestCase {
      * Example code test the packages in the project 
      *  "com.qnx.tools.ide.cdt.core"
      */
-    protected void setUp() throws CoreException, InvocationTargetException, IOException {
+    @Override
+	protected void setUp() throws CoreException, InvocationTargetException, IOException {
 		ResourcesPlugin.getWorkspace().getDescription().setAutoBuilding(false);
 		/***
 		 * Create a new project and import the test source.
@@ -95,7 +96,8 @@ public class DebugTests extends TestCase {
      *
      * Called after every test case method.
      */
-    protected void tearDown() throws CoreException, CDIException {
+    @Override
+	protected void tearDown() throws CoreException, CDIException {
     	if (session!=null) {
     		session.terminate();
     		session=null;

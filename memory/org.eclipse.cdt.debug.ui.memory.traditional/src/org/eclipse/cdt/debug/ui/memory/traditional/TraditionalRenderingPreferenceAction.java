@@ -29,6 +29,7 @@ public class TraditionalRenderingPreferenceAction extends ActionDelegate impleme
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		IPreferencePage page = new TraditionalRenderingPreferencePage();
 		showPreferencePage("org.eclipse.cdt.debug.ui.memory.traditional.TraditionalRenderingPreferencePage", page);	 //$NON-NLS-1$

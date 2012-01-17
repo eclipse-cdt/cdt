@@ -159,6 +159,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	/** Flag set to true if build before launch failed, or was cancelled. */
 	private boolean buildFailed;
 	
+	@Override
 	abstract public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor)
 			throws CoreException;
 
@@ -429,6 +430,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	/**
 	 * @deprecated use {@link CDebugUtils#verifyCProject(ILaunchConfiguration)}
 	 */
+	@Deprecated
 	protected ICProject verifyCProject(ILaunchConfiguration config) throws CoreException {
 		return CDebugUtils.verifyCProject(config);
 	}
@@ -436,6 +438,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	/**
 	 * @deprecated use {@link CDebugUtils#verifyProgramPath(ILaunchConfiguration)
 	 */
+	@Deprecated
 	protected IPath verifyProgramPath(ILaunchConfiguration config) throws CoreException {
 		return CDebugUtils.verifyProgramPath(config);
 	}

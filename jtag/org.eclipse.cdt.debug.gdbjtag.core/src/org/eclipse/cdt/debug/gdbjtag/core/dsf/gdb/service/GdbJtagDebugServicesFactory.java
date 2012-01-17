@@ -27,6 +27,7 @@ public class GdbJtagDebugServicesFactory extends GdbDebugServicesFactory {
 		super(version);
 	}
 
+	@Override
 	protected ICommandControl createCommandControl(DsfSession session, ILaunchConfiguration config) {
 		if (GDB_7_2_VERSION.compareTo(getVersion()) <= 0) {
 			return new GDBJtagControl_7_2(session, config, new CommandFactory_6_8());

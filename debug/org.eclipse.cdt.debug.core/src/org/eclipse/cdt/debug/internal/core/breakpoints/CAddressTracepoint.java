@@ -54,6 +54,7 @@ public class CAddressTracepoint extends AbstractTracepoint implements ICAddressB
 	 * 
 	 * @see org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint#getMarkerMessage()
 	 */
+	@Override
 	protected String getMarkerMessage() throws CoreException {
 		return MessageFormat.format( BreakpointMessages.getString( "CAddressTracepoint.0" ), new String[] { CDebugUtils.getBreakpointText( this, false ) } ); //$NON-NLS-1$
 	}

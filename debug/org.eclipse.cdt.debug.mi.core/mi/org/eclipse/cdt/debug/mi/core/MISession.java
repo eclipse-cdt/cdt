@@ -111,6 +111,7 @@ public class MISession extends Observable {
 	 * @throws MIException
 	 * @deprecated
 	 */
+	@Deprecated
 	public MISession(MIProcess process, IMITTY tty, int type, int commandTimeout, int launchTimeout, String miVersion, IProgressMonitor monitor) throws MIException {
 		this(process, tty, type, new CommandFactory(miVersion), commandTimeout, launchTimeout, monitor);
 	}
@@ -126,6 +127,7 @@ public class MISession extends Observable {
 	 * @param type the type of debugin session.
 	 * @deprecated
 	 */
+	@Deprecated
 	public MISession(MIProcess process, IMITTY tty, int commandTimeout, int type, int launchTimeout) throws MIException {
 		this(process, tty, type, commandTimeout, launchTimeout, MIVersion.MI1, new NullProgressMonitor());
 		if (useExecConsole()) {
@@ -144,6 +146,7 @@ public class MISession extends Observable {
 	 * @param timeout time in milliseconds to wait for command response.
 	 * @deprecated
 	 */
+	@Deprecated
 	public MISession(MIProcess process, IMITTY tty, int type, CommandFactory commandFactory, int commandTimeout, int launchTimeout, IProgressMonitor monitor) throws MIException {
 		gdbProcess = process;
 		inChannel = process.getInputStream();
@@ -274,6 +277,7 @@ public class MISession extends Observable {
 	/**
 	 * @deprecated use <code>setup()</code> without parameters
 	 */
+	@Deprecated
 	protected void setup(int launchTimeout, IProgressMonitor monitor) throws MIException {
 		// The Process may have terminated earlier because
 		// of bad arguments etc .. check this here and bail out.
@@ -364,6 +368,7 @@ public class MISession extends Observable {
 	/**
 	 * @deprecated use <code>initialize()</code> without parameters
 	 */
+	@Deprecated
 	protected void initialize(int launchTimeout, IProgressMonitor monitor) throws MIException {
 		// Disable a certain number of irritations from gdb.
 		// Like confirmation and screen size.
@@ -786,6 +791,7 @@ public class MISession extends Observable {
 	/**
 	 * Notify the observers of new MI OOB events.
 	 */
+	@Override
 	public void notifyObservers(Object arg) {
 		setChanged();
 		super.notifyObservers(arg);

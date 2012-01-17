@@ -190,6 +190,7 @@ public class SignalManager extends Manager  {
 		return EMPTY_SIGNALS;
 	}
 
+	@Override
 	public void update(Target target) throws CDIException {
 		MISession miSession = target.getMISession();
 		MISigHandle[] miSigs = getMISignals(miSession);

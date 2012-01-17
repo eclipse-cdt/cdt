@@ -28,6 +28,7 @@ public class CanFormatObjectTester extends PropertyTester {
 
 	}
 
+	@Override
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
 		if (property.equals("canFormatObject")) { //$NON-NLS-1$
 			if (receiver instanceof ICVariable) { return expectedValue == Boolean.TRUE; }

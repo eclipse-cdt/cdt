@@ -49,6 +49,7 @@ public class LocalAttachLaunchDelegate extends AbstractCLaunchDelegate {
 	 *      java.lang.String, org.eclipse.debug.core.ILaunch,
 	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void launch(ILaunchConfiguration config, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		IBinaryObject exeFile = null;
 		
@@ -145,6 +146,7 @@ public class LocalAttachLaunchDelegate extends AbstractCLaunchDelegate {
 	 * 
 	 * @see org.eclipse.cdt.launch.AbstractCLaunchConfigurationDelegate#getPluginID()
 	 */
+	@Override
 	protected String getPluginID() {
 		return LaunchUIPlugin.getUniqueIdentifier();
 	}

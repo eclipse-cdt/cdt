@@ -84,11 +84,13 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 		super();
 	}
 
+	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, ICDebugHelpContextIds.SOURCE_NOT_FOUND);
 	}
 
+	@Override
 	public void setInput(IEditorInput input) {
 		if (input instanceof CSourceNotFoundEditorInput) {
 			isDebugElement = false;
@@ -121,6 +123,7 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 			editLookupButton.setVisible(missingFile.length() > 0);
 	}
 
+	@Override
 	protected String getText() {
 		if (missingFile.length() > 0) {
 			return NLS.bind(SourceLookupUIMessages.CSourceNotFoundEditor_0, missingFile);
@@ -137,6 +140,7 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 		}
 	}
 
+	@Override
 	protected void createButtons(Composite parent) {
 		if (isDebugElement) {
 			GridData data;
@@ -147,6 +151,7 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 			disassemblyButton.setLayoutData(data);
 			disassemblyButton.setText(SourceLookupUIMessages.CSourceNotFoundEditor_4);
 			disassemblyButton.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent evt) {
 					viewDisassembly();
 				}
@@ -163,6 +168,7 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 			locateFileButton.setLayoutData(data);
 			locateFileButton.setText(SourceLookupUIMessages.CSourceNotFoundEditor_1);
 			locateFileButton.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent evt) {
 					locateFile();
 				}
@@ -179,6 +185,7 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 			editLookupButton.setLayoutData(data);
 			editLookupButton.setText(SourceLookupUIMessages.CSourceNotFoundEditor_5);
 			editLookupButton.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent evt) {
 					editSourceLookupPath();
 				}
@@ -332,6 +339,7 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 	 * @Override
 	 * @see org.eclipse.debug.ui.sourcelookup.CommonSourceNotFoundEditor#getArtifact()
 	 */
+	@Override
 	protected Object getArtifact() {
 		Object o = super.getArtifact();
 		if (o instanceof CSourceNotFoundElement) {

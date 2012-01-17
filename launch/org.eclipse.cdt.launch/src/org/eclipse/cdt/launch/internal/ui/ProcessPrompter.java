@@ -36,6 +36,7 @@ public class ProcessPrompter implements IStatusHandler {
 	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus,
 	 *      java.lang.Object)
 	 */
+	@Override
 	public Object handleStatus(IStatus status, Object source) throws CoreException {
 		Shell shell = LaunchUIPlugin.getShell();
 		if (shell == null) {
@@ -52,6 +53,7 @@ public class ProcessPrompter implements IStatusHandler {
 			 * 
 			 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
 			 */
+			@Override
 			public String getText(Object element) {
 				IProcessInfo info = (IProcessInfo)element;
 				IPath path = new Path(info.getName());
@@ -62,12 +64,14 @@ public class ProcessPrompter implements IStatusHandler {
 			 * 
 			 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
 			 */
+			@Override
 			public Image getImage(Object element) {
 				return LaunchImages.get(LaunchImages.IMG_OBJS_EXEC);
 			}
 		};
 		ILabelProvider qprovider = new LabelProvider() {
 
+			@Override
 			public String getText(Object element) {
 				IProcessInfo info = (IProcessInfo)element;
 				return info.getName();
@@ -77,6 +81,7 @@ public class ProcessPrompter implements IStatusHandler {
 			 * 
 			 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
 			 */
+			@Override
 			public Image getImage(Object element) {
 				return LaunchImages.get(LaunchImages.IMG_OBJS_EXEC);
 			}

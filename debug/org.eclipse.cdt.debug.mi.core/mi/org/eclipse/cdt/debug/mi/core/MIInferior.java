@@ -72,9 +72,11 @@ public class MIInferior extends Process {
 	/**
 	 * @see java.lang.Process#getOutputStream()
 	 */
+	@Override
 	public OutputStream getOutputStream() {
 		if (out == null) {
 			out = new OutputStream() {
+				@Override
 				public void write(int b) throws IOException {
 					if (!isRunning()) {
 						throw new IOException(MIPlugin.getResourceString("src.MIInferior.target_is_suspended")); //$NON-NLS-1$
@@ -93,6 +95,7 @@ public class MIInferior extends Process {
 	/**
 	 * @see java.lang.Process#getInputStream()
 	 */
+	@Override
 	public InputStream getInputStream() {
 		if (in == null) {
 			try {
@@ -107,6 +110,7 @@ public class MIInferior extends Process {
 	/**
 	 * @see java.lang.Process#getErrorStream()
 	 */
+	@Override
 	public InputStream getErrorStream() {
 		// FIXME: We do not have any err stream from gdb/mi
 		// so this gdb err channel instead.
@@ -129,6 +133,7 @@ public class MIInferior extends Process {
 	/**
 	 * @see java.lang.Process#waitFor()
 	 */
+	@Override
 	public int waitFor() throws InterruptedException {
 		waitForSync();
 		return exitValue();
@@ -137,6 +142,7 @@ public class MIInferior extends Process {
 	/**
 	 * @see java.lang.Process#exitValue()
 	 */
+	@Override
 	public int exitValue() {
 		if (isTerminated()) {
 			if (!session.isTerminated()) {
@@ -161,6 +167,7 @@ public class MIInferior extends Process {
 	/**
 	 * @see java.lang.Process#destroy()
 	 */
+	@Override
 	public void destroy() {
 		try {
 			terminate();

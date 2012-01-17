@@ -31,7 +31,8 @@ public class DocumentLabelUpdate extends DocumentUpdate implements IDocumentElem
     /* (non-Javadoc)
      * @see com.arm.eclipse.rvd.ui.disassembly.IDocumentElementLabelUpdate#setLabel(java.lang.String, java.lang.String)
      */
-    public void setLabel( String attribute, String text ) {
+    @Override
+	public void setLabel( String attribute, String text ) {
         fLabels.put( attribute, text );
     }
 

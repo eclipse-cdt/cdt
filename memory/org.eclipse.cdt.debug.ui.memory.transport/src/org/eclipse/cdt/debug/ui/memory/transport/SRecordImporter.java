@@ -73,6 +73,7 @@ public class SRecordImporter implements IMemoryImporter {
 	
 		Composite composite = new Composite(parent, SWT.NONE)
 		{
+			@Override
 			public void dispose()
 			{
 				fProperties.put(TRANSFER_FILE, fFileText.getText());
@@ -296,6 +297,7 @@ public class SRecordImporter implements IMemoryImporter {
 	public void importMemory() {
 		Job job = new Job("Memory Import from S-Record File"){ //$NON-NLS-1$
 			
+			@Override
 			public IStatus run(IProgressMonitor monitor) {
 				
 				try

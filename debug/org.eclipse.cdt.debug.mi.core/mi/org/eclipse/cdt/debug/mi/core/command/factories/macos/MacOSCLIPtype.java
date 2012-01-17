@@ -23,6 +23,7 @@ class MacOSCLIPtype extends CLIPType {
 
 	// MI doesn't work with a space between the token and the
 	// operation, so we override CLICommmand's toString
+	@Override
 	public String toString() {
 		return getToken() + getOperation() + "\n"; //$NON-NLS-1$
 	}

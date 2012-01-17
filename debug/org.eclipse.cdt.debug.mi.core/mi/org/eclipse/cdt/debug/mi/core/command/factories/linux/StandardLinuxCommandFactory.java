@@ -36,6 +36,7 @@ public class StandardLinuxCommandFactory extends StandardCommandFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.core.command.CommandFactory#createCLIInfoSharedLibrary()
 	 */
+	@Override
 	public CLIInfoSharedLibrary createCLIInfoSharedLibrary() {
 		return new LinuxCLIInfoSharedLibrary();
 	}
@@ -43,6 +44,7 @@ public class StandardLinuxCommandFactory extends StandardCommandFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.core.command.CommandFactory#createMIGDBSetNewConsole()
 	 */
+	@Override
 	public MIGDBSetNewConsole createMIGDBSetNewConsole() {
 		// Suppress "set new-console" - returns error on Linux
 		return new MIGDBSetNewConsole( getMIVersion() ) {
@@ -50,6 +52,7 @@ public class StandardLinuxCommandFactory extends StandardCommandFactory {
 			/* (non-Javadoc)
 			 * @see org.eclipse.cdt.debug.mi.core.command.MICommand#getOperation()
 			 */
+			@Override
 			public String getOperation() {
 				return ""; //$NON-NLS-1$
 			}
@@ -57,6 +60,7 @@ public class StandardLinuxCommandFactory extends StandardCommandFactory {
 			/* (non-Javadoc)
 			 * @see org.eclipse.cdt.debug.mi.core.command.MICommand#getOptions()
 			 */
+			@Override
 			public String[] getOptions() {
 				return new String[0];
 			}
@@ -64,6 +68,7 @@ public class StandardLinuxCommandFactory extends StandardCommandFactory {
 			/* (non-Javadoc)
 			 * @see org.eclipse.cdt.debug.mi.core.command.MICommand#getParameters()
 			 */
+			@Override
 			public String[] getParameters() {
 				return new String[0];
 			}			

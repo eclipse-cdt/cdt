@@ -157,6 +157,7 @@ public interface ICDTLaunchConfigurationConstants {
 	 * is launched.
 	 * @deprecated - see ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES
 	 */
+	@Deprecated
 	public static final String ATTR_PROGRAM_ENVIROMENT_INHERIT = CDT_LAUNCH_ID + ".ENVIRONMENT_INHERIT"; //$NON-NLS-1$
 
 	/**
@@ -165,6 +166,7 @@ public interface ICDTLaunchConfigurationConstants {
 	 * 
 	 * @deprecated - see ILaunchManager.ATTR_ENVIRONMENT_VARIABLES
 	 */
+	@Deprecated
 	public static final String ATTR_PROGRAM_ENVIROMENT_MAP = CDT_LAUNCH_ID + ".ENVIRONMENT_MAP"; //$NON-NLS-1$
 
 	/**
@@ -254,6 +256,7 @@ public interface ICDTLaunchConfigurationConstants {
 	 * use.  For now only "mi", "mi1", "m2", "mi3" are supported.
 	 * @deprecated
 	 */
+	@Deprecated
 	public static final String ATTR_DEBUGGER_PROTOCOL = CDT_LAUNCH_ID + ".protocol"; //$NON-NLS-1$
 
 	/**

@@ -30,54 +30,67 @@ public class CValueFactory {
 
 	static public final ICValue NULL_VALUE = new ICValue() {
 
+		@Override
 		public String getReferenceTypeName() throws DebugException {
 			return ""; //$NON-NLS-1$
 		}
 
+		@Override
 		public String getValueString() throws DebugException {
 			return ""; //$NON-NLS-1$
 		}
 
+		@Override
 		public boolean isAllocated() throws DebugException {
 			return true;
 		}
 
+		@Override
 		public IVariable[] getVariables() throws DebugException {
 			return new IVariable[0];
 		}
 
+		@Override
 		public boolean hasVariables() throws DebugException {
 			return false;
 		}
 
+		@Override
 		public String getModelIdentifier() {
 			return CDebugCorePlugin.getUniqueIdentifier();
 		}
 
+		@Override
 		public IDebugTarget getDebugTarget() {
 			return null;
 		}
 
+		@Override
 		public ILaunch getLaunch() {
 			return null;
 		}
 
+		@Override
 		public Object getAdapter( Class adapter ) {
 			return null;
 		}
 
+		@Override
 		public ICType getType() throws DebugException {
 			return null;
 		}
 
+		@Override
 		public String evaluateAsExpression( ICStackFrame frame ) {
 			return ""; //$NON-NLS-1$
 		}
 
+		@Override
 		public CDebugElementState getState() {
 			return CDebugElementState.UNDEFINED;
 		}
 
+		@Override
 		public Object getCurrentStateInfo() {
 			return null;
 		}

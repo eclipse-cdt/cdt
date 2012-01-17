@@ -247,6 +247,7 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.core.Launch#launchChanged(org.eclipse.debug.core.ILaunch)
 		 */
+		@Override
 		public void launchChanged(ILaunch launch) {
 			if (this == launch) return;
 			
@@ -293,6 +294,7 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.core.ILaunchesListener2#launchesTerminated(org.eclipse.debug.core.ILaunch[])
 		 */
+		@Override
 		public void launchesTerminated(ILaunch[] launches) {
 			for (ILaunch launch : launches) {
 				launchTerminated(launch);
@@ -302,6 +304,7 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.core.ILaunchesListener#launchesAdded(org.eclipse.debug.core.ILaunch[])
 		 */
+		@Override
 		public void launchesAdded(ILaunch[] launches) {
 			for (ILaunch launch : launches) {
 				launchAdded(launch);
@@ -311,6 +314,7 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(org.eclipse.debug.core.ILaunch[])
 		 */
+		@Override
 		public void launchesChanged(ILaunch[] launches) {
 			for (ILaunch launch : launches) {
 				launchChanged(launch);
@@ -320,6 +324,7 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.debug.core.ILaunch[])
 		 */
+		@Override
 		public void launchesRemoved(ILaunch[] launches) {
 			for (ILaunch launch : launches) {
 				launchRemoved(launch);
@@ -339,6 +344,7 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void launch(ILaunchConfiguration configuration, String mode, final ILaunch launch, IProgressMonitor monitor)
 			throws CoreException {
 		
@@ -370,6 +376,7 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 				}
 				if (!conf.supportsMode(localMode)) {
 					PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+						@Override
 						public void run() {
 							MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
 									LaunchMessages.LaunchUIPlugin_Error,  
@@ -397,6 +404,7 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 
 				} catch (StackOverflowError e) {
 					PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+						@Override
 						public void run() {
 							MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
 									LaunchMessages.LaunchUIPlugin_Error, 
@@ -451,6 +459,7 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#buildProjects(org.eclipse.core.resources.IProject[], org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected void buildProjects(IProject[] projects, IProgressMonitor monitor) throws CoreException {
 		// do nothing, project can be rebuild for each launch individually
 	}
@@ -458,6 +467,7 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#buildForLaunch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor)
 			throws CoreException {
 		// not build for this one

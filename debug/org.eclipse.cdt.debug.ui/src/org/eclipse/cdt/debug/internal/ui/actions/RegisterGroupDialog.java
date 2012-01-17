@@ -46,6 +46,7 @@ public class RegisterGroupDialog extends TitleAreaDialog {
 
 	public class RegisterLabelProvider extends LabelProvider {
 
+		@Override
 		public Image getImage( Object element ) {
 			if ( element instanceof IRegisterDescriptor ) {
 				return CDebugImages.get( CDebugImages.IMG_OBJS_REGISTER );
@@ -53,6 +54,7 @@ public class RegisterGroupDialog extends TitleAreaDialog {
 			return super.getImage( element );
 		}
 
+		@Override
 		public String getText( Object element ) {
 			if ( element instanceof IRegisterDescriptor ) {
 				IRegisterDescriptor rd = (IRegisterDescriptor)element;
@@ -80,17 +82,20 @@ public class RegisterGroupDialog extends TitleAreaDialog {
 		fNameField.setLabelText( ActionMessages.getString( "RegisterGroupDialog.3" ) ); //$NON-NLS-1$
 		fNameField.setTextWithoutUpdate( groupName );
 		fNameField.setDialogFieldListener( new IDialogFieldListener() {
+			@Override
 			public void dialogFieldChanged( DialogField field ) {
 				update();
 			}
 		} );
 		fListField = new CheckedListDialogField( new IListAdapter() {
 			
+			@Override
 			public void customButtonPressed( DialogField field, int index ) {
 				// TODO Auto-generated method stub
 				
 			}
 
+			@Override
 			public void selectionChanged( DialogField field ) {
 				// TODO Auto-generated method stub
 				
@@ -106,6 +111,7 @@ public class RegisterGroupDialog extends TitleAreaDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea( Composite parent ) {
 		getShell().setText( ActionMessages.getString( "RegisterGroupDialog.5" ) ); //$NON-NLS-1$
 		setTitle( ActionMessages.getString( "RegisterGroupDialog.6" ) ); //$NON-NLS-1$
@@ -144,6 +150,7 @@ public class RegisterGroupDialog extends TitleAreaDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
+	@Override
 	protected void okPressed() {
 		super.okPressed();
 		fName = fNameField.getText().trim();

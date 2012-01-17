@@ -50,21 +50,26 @@ public class SignalsViewColumnPresentation implements IColumnPresentation {
         COLUMN_ID_DESC
     };
 
-    public void init( IPresentationContext context ) {
+    @Override
+	public void init( IPresentationContext context ) {
     } 
 
-    public void dispose() {
+    @Override
+	public void dispose() {
     }
 
-    public String[] getAvailableColumns() {
+    @Override
+	public String[] getAvailableColumns() {
         return ALL_COLUMNS;
     }
 
-    public String[] getInitialColumns() {
+    @Override
+	public String[] getInitialColumns() {
         return INITIAL_COLUMNS;
     }
 
-    public String getHeader( String id ) {
+    @Override
+	public String getHeader( String id ) {
         if ( COLUMN_ID_NAME.equals( id ) ) {
             return CL_NAME;
         }
@@ -80,15 +85,18 @@ public class SignalsViewColumnPresentation implements IColumnPresentation {
         return null;
     }
 
-    public ImageDescriptor getImageDescriptor( String id ) {
+    @Override
+	public ImageDescriptor getImageDescriptor( String id ) {
         return null;
     }
 
-    public String getId() {
+    @Override
+	public String getId() {
         return ID;
     }
 
-    public boolean isOptional() {
+    @Override
+	public boolean isOptional() {
         return true;
     }
 }

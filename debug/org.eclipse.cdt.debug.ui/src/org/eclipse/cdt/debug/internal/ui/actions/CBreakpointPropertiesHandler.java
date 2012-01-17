@@ -41,6 +41,7 @@ public class CBreakpointPropertiesHandler extends AbstractHandler {
 		super();
 	}
 
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 	    IWorkbenchPart part = HandlerUtil.getActivePartChecked(event);
         ICBreakpoint bp = getBreakpoint(event.getApplicationContext());
@@ -53,17 +54,21 @@ public class CBreakpointPropertiesHandler extends AbstractHandler {
 	        
             PropertyDialogAction propertyAction = new PropertyDialogAction( part.getSite(), new ISelectionProvider() {
     
-                public void addSelectionChangedListener( ISelectionChangedListener listener ) {
+                @Override
+				public void addSelectionChangedListener( ISelectionChangedListener listener ) {
                 }
     
-                public ISelection getSelection() {
+                @Override
+				public ISelection getSelection() {
                     return new StructuredSelection( bpContext );
                 }
     
-                public void removeSelectionChangedListener( ISelectionChangedListener listener ) {
+                @Override
+				public void removeSelectionChangedListener( ISelectionChangedListener listener ) {
                 }
     
-                public void setSelection( ISelection selection ) {
+                @Override
+				public void setSelection( ISelection selection ) {
                     assert false; // Not supported
                 }
             } );

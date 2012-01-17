@@ -57,6 +57,7 @@ public class MIFrame {
 		return level;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("level=\"" + level + "\"");  //$NON-NLS-1$//$NON-NLS-2$

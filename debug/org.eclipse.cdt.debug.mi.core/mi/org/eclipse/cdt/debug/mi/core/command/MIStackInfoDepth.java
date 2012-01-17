@@ -38,6 +38,7 @@ public class MIStackInfoDepth extends MICommand
 		return (MIStackInfoDepthInfo)getMIInfo();
 	}
 
+	@Override
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

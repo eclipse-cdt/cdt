@@ -26,6 +26,7 @@ public abstract class AbstractListenerActionDelegate extends AbstractDebugAction
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		DebugPlugin.getDefault().removeDebugEventListener(this);
@@ -34,6 +35,7 @@ public abstract class AbstractListenerActionDelegate extends AbstractDebugAction
 	/**
 	 * @see IDebugEventSetListener#handleDebugEvents(DebugEvent[])
 	 */
+	@Override
 	public void handleDebugEvents(final DebugEvent[] events) {
 		if (getWindow() == null || getAction() == null) {
 			return;
@@ -43,6 +45,7 @@ public abstract class AbstractListenerActionDelegate extends AbstractDebugAction
 			return;
 		}
 		Runnable r= new Runnable() {
+			@Override
 			public void run() {
 				for (int i = 0; i < events.length; i++) {
 					if (events[i].getSource() != null) {
@@ -80,6 +83,7 @@ public abstract class AbstractListenerActionDelegate extends AbstractDebugAction
 	/**
 	 * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
 	 */
+	@Override
 	public void init(IWorkbenchWindow window){
 		super.init(window);
 		DebugPlugin.getDefault().addDebugEventListener(this);
@@ -88,6 +92,7 @@ public abstract class AbstractListenerActionDelegate extends AbstractDebugAction
 	/**
 	 * @see IViewActionDelegate#init(IViewPart)
 	 */
+	@Override
 	public void init(IViewPart view) {
 		super.init(view);
 		DebugPlugin.getDefault().addDebugEventListener(this);
@@ -97,12 +102,14 @@ public abstract class AbstractListenerActionDelegate extends AbstractDebugAction
 	/**
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void init(IAction action) {
 	}
 
 	/**
 	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
 	 */
+	@Override
 	public void runWithEvent(IAction action, Event event) {
 		run(action);
 	}

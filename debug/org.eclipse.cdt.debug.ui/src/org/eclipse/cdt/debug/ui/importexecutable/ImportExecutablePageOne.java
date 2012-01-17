@@ -171,6 +171,7 @@ public class ImportExecutablePageOne extends WizardPage {
 		return true;
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		
 		initializeDialogUnits(parent);
@@ -233,26 +234,32 @@ public class ImportExecutablePageOne extends WizardPage {
 
 		executablesViewer.setContentProvider(new ITreeContentProvider() {
 
+			@Override
 			public void dispose() {
 
 			}
 
+			@Override
 			public Object[] getChildren(Object parentElement) {
 				return null;
 			}
 
+			@Override
 			public Object[] getElements(Object inputElement) {
 				return executables;
 			}
 
+			@Override
 			public Object getParent(Object element) {
 				return null;
 			}
 
+			@Override
 			public boolean hasChildren(Object element) {
 				return false;
 			}
 
+			@Override
 			public void inputChanged(Viewer viewer, Object oldInput,
 					Object newInput) {
 			}
@@ -260,6 +267,7 @@ public class ImportExecutablePageOne extends WizardPage {
 		});
 
 		executablesViewer.setLabelProvider(new LabelProvider() {
+			@Override
 			public String getText(Object element) {
 				return ((File) element).getName();
 			}
@@ -267,6 +275,7 @@ public class ImportExecutablePageOne extends WizardPage {
 
 		executablesViewer.addCheckStateListener(new ICheckStateListener() {
 
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				setPageComplete(executablesViewer.getCheckedElements().length > 0);
 			}
@@ -275,7 +284,8 @@ public class ImportExecutablePageOne extends WizardPage {
 		executablesViewer.setInput(this);
 		executablesViewer.getTree().getAccessible().addAccessibleListener(
 	            new AccessibleAdapter() {                       
-	                public void getName(AccessibleEvent e) {
+	                @Override
+					public void getName(AccessibleEvent e) {
 	                        e.result = wizard.getExecutableListLabel();
 	                }
 	            }
@@ -290,6 +300,7 @@ public class ImportExecutablePageOne extends WizardPage {
 		selectMultipleButton.setText(Messages.ImportExecutablePageOne_SearchDirectory);
 		selectMultipleButton.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				checkControlState();
 				String selectedDirectory = multipleExecutablePathField
@@ -308,7 +319,8 @@ public class ImportExecutablePageOne extends WizardPage {
 		this.multipleExecutablePathField = new Text(workArea, SWT.BORDER);
 		multipleExecutablePathField.getAccessible().addAccessibleListener(
             new AccessibleAdapter() {                       
-                public void getName(AccessibleEvent e) {
+                @Override
+				public void getName(AccessibleEvent e) {
                         e.result = Messages.ImportExecutablePageOne_SearchDirectory;
                 }
             }
@@ -320,6 +332,7 @@ public class ImportExecutablePageOne extends WizardPage {
 		setButtonLayoutData(selectMultipleBrowseButton);
 
 		selectMultipleBrowseButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleLocationBrowseButtonPressed();
 			}
@@ -327,6 +340,7 @@ public class ImportExecutablePageOne extends WizardPage {
 		});
 
 		multipleExecutablePathField.addFocusListener(new FocusAdapter() {
+			@Override
 			public void focusLost(FocusEvent e) {
 				updateExecutablesList(multipleExecutablePathField.getText()
 						.trim());
@@ -353,8 +367,10 @@ public class ImportExecutablePageOne extends WizardPage {
 		
 		
 		binaryParserCombo.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				supportedBinaryParsers[0] = instantiateBinaryParser(exts[binaryParserCombo.getSelectionIndex()]);
 				supportedBinaryParserIds[0] = exts[binaryParserCombo.getSelectionIndex()].getUniqueIdentifier();
@@ -413,6 +429,7 @@ public class ImportExecutablePageOne extends WizardPage {
 		selectSingleButton = new Button(workArea, SWT.RADIO);
 		selectSingleButton.setText(Messages.ImportExecutablePageOne_SelectExecutable);
 		selectSingleButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				checkControlState();
 				if (selectSingleFile) {
@@ -428,7 +445,8 @@ public class ImportExecutablePageOne extends WizardPage {
 		this.singleExecutablePathField = new Text(workArea, SWT.BORDER);
 		singleExecutablePathField.getAccessible().addAccessibleListener(
             new AccessibleAdapter() {                       
-                public void getName(AccessibleEvent e) {
+                @Override
+				public void getName(AccessibleEvent e) {
                         e.result = Messages.ImportExecutablePageOne_SelectExecutable;
                 }
             }
@@ -437,6 +455,7 @@ public class ImportExecutablePageOne extends WizardPage {
 		singleExecutablePathField.setData("name", "singleExecutablePathField"); //$NON-NLS-1$ //$NON-NLS-2$
 		singleExecutablePathField.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(ModifyEvent e) {
 				validateExe(singleExecutablePathField.getText());
 			}
@@ -450,6 +469,7 @@ public class ImportExecutablePageOne extends WizardPage {
 		setButtonLayoutData(selectSingleBrowseButton);
 
 		selectSingleBrowseButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog dialog = new FileDialog(getShell(), SWT.NONE);
 				wizard.setupFileDialog(dialog);
@@ -483,6 +503,7 @@ public class ImportExecutablePageOne extends WizardPage {
 		selectAll = new Button(buttonsComposite, SWT.PUSH);
 		selectAll.setText(Messages.ImportExecutablePageOne_SelectAll);
 		selectAll.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				executablesViewer.setAllChecked(true);
 				setPageComplete(executables.length > 0);
@@ -494,6 +515,7 @@ public class ImportExecutablePageOne extends WizardPage {
 		deselectAll = new Button(buttonsComposite, SWT.PUSH);
 		deselectAll.setText(Messages.ImportExecutablePageOne_DeselectAll);
 		deselectAll.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 
 				executablesViewer.setAllChecked(false);
@@ -570,6 +592,7 @@ public class ImportExecutablePageOne extends WizardPage {
 		previouslySearchedDirectory = path;
 		try {
 			getContainer().run(true, true, new IRunnableWithProgress() {
+				@Override
 				public void run(IProgressMonitor monitor) {
 
 					monitor.beginTask(Messages.ImportExecutablePageOne_Searching, IProgressMonitor.UNKNOWN);

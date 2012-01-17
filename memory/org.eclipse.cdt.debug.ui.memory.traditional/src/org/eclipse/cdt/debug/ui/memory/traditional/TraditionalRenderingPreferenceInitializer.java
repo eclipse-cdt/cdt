@@ -28,6 +28,7 @@ public class TraditionalRenderingPreferenceInitializer extends AbstractPreferenc
 	 * 
 	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
 	 */
+	@Override
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = TraditionalRenderingPlugin.getDefault()
 				.getPreferenceStore();

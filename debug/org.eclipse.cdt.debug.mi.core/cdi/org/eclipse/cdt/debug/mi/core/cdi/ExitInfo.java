@@ -27,6 +27,7 @@ public class ExitInfo extends SessionObject implements ICDIExitInfo {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExitInfo#getCode()
 	 */
+	@Override
 	public int getCode() {
 		return event.getExitCode();
 	}

@@ -37,7 +37,8 @@ public class DisassemblyToggleBreakpointAdapter implements IElementToggleBreakpo
     /* (non-Javadoc)
      * @see com.arm.eclipse.rvd.ui.disassembly.IElementToggleBreakpointAdapter#canToggleLineBreakpoints(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.Object)
      */
-    public boolean canToggleLineBreakpoints( IPresentationContext presentationContext, Object element ) {
+    @Override
+	public boolean canToggleLineBreakpoints( IPresentationContext presentationContext, Object element ) {
         if ( element instanceof IDisassemblyInstruction ) {
             return true;
         }
@@ -47,7 +48,8 @@ public class DisassemblyToggleBreakpointAdapter implements IElementToggleBreakpo
     /* (non-Javadoc)
      * @see com.arm.eclipse.rvd.ui.disassembly.IElementToggleBreakpointAdapter#toggleLineBreakpoints(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.Object)
      */
-    public void toggleLineBreakpoints( IPresentationContext presentationContext, Object element ) throws CoreException {
+    @Override
+	public void toggleLineBreakpoints( IPresentationContext presentationContext, Object element ) throws CoreException {
         if ( element instanceof IDisassemblyInstruction ) {
             IDisassemblyInstruction instruction = (IDisassemblyInstruction)element;
             IBreakpoint breakpoint = findBreakpoint( instruction );

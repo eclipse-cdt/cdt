@@ -64,6 +64,7 @@ public class BuildErrPrompter implements IStatusHandler {
 	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus,
 	 *      java.lang.Object)
 	 */
+	@Override
 	public Object handleStatus(IStatus status, Object source) throws CoreException {
 
 		if (!(source instanceof Object[])) {

@@ -38,6 +38,7 @@ public class CLICommand extends Command
 	 * 
 	 * @return the text representation of this command
 	 */
+	@Override
 	public String toString(){
 		String str = getToken() + " " + operation; //$NON-NLS-1$
 		if (str.endsWith("\n")) //$NON-NLS-1$

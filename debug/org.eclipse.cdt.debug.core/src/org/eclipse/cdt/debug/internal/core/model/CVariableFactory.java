@@ -37,19 +37,23 @@ public class CVariableFactory {
 		
 		return new IGlobalVariableDescriptor() {
 
+			@Override
 			public String getName() {
 				return name;
 			}
 
+			@Override
 			public IPath getPath() {
 				return ( path != null ) ? path : new Path( "" ); //$NON-NLS-1$
 			}
 
+			@Override
 			public String toString() {
 				return MessageFormat.format( "{0}::{1}", new String[] { getPath().toOSString(), getName() } ); //$NON-NLS-1$
 			}
 
-		    public boolean equals( Object obj ) {
+		    @Override
+			public boolean equals( Object obj ) {
 		    	if ( !(obj instanceof IGlobalVariableDescriptor) )
 		    		return false;
 		    	IGlobalVariableDescriptor d = (IGlobalVariableDescriptor)obj;

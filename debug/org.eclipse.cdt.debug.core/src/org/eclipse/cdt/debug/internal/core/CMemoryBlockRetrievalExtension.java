@@ -221,6 +221,7 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtensionRetrieval#getExtendedMemoryBlock(java.lang.String, org.eclipse.debug.core.model.IDebugElement)
 	 */
+	@Override
 	public IMemoryBlockExtension getExtendedMemoryBlock( String expression, Object selected ) throws DebugException {
 		return getMemoryBlock(expression, selected,  null);
 	}
@@ -228,6 +229,7 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.core.model.provisional.IMemorySpaceAwareMemoryBlockRetrieval#getExtendedMemoryBlock(java.lang.String, java.lang.Object, java.lang.String)
 	 */
+	@Override
 	public IMemorySpaceAwareMemoryBlock getMemoryBlock( String expression, Object selected, String memorySpaceID ) throws DebugException {
 		String address = null;
 		CExpression exp = null;
@@ -305,6 +307,7 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockRetrieval#supportsStorageRetrieval()
 	 */
+	@Override
 	public boolean supportsStorageRetrieval() {
 		return true;
 	}
@@ -312,6 +315,7 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockRetrieval#getMemoryBlock(long, long)
 	 */
+	@Override
 	public IMemoryBlock getMemoryBlock( long startAddress, long length ) throws DebugException {
 		String expression = Long.toHexString(startAddress);
 		BigInteger address = new BigInteger(expression, 16);
@@ -372,6 +376,7 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 	/**
 	 * @see org.eclipse.cdt.debug.core.model.provisional.IMemorySpaceAwareMemoryBlockRetrieval#getMemorySpaces(java.lang.Object, org.eclipse.cdt.debug.internal.core.model.provisional.IRequestListener)
 	 */
+	@Override
 	public void getMemorySpaces(final Object context, GetMemorySpacesRequest request) {
 		// We're not very asynchronous in CDI. DSF is another story. Also, note
 		// that we ignore the context. That's because we know that there's only
@@ -411,6 +416,7 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.core.model.provisional.IMemorySpaceAwareMemoryBlockRetrieval#encodeAddress(java.math.BigInteger, java.lang.String)
 	 */
+	@Override
 	public String encodeAddress(final String expression, final String memorySpaceID) {
 		// See if the CDI client provides customized encoding/decoding
 		if (fDebugTarget != null) {
@@ -441,7 +447,9 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 		final String expression = str.substring(index+1);
 
 		return new DecodeResult() {
+			@Override
 			public String getMemorySpaceId() { return memorySpaceID; }
+			@Override
 			public String getExpression() { return expression; }
 		};
 	}
@@ -449,6 +457,7 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.core.model.provisional.IMemorySpaceAwareMemoryBlockRetrieval#decodeAddress(java.lang.String, java.lang.StringBuffer)
 	 */
+	@Override
 	public DecodeResult decodeAddress(final String str) throws CoreException {
 		
 		// See if the CDI client provides customized encoding/decoding
@@ -458,7 +467,9 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 				try {
 					final ICDIMemorySpaceEncoder.DecodeResult result = ((ICDIMemorySpaceEncoder)cdiTarget).decodeAddress(str);
 					return new DecodeResult() {
+						@Override
 						public String getMemorySpaceId() { return result.getMemorySpaceId(); }
+						@Override
 						public String getExpression() { return result.getExpression(); }
 					};
 				}
@@ -477,6 +488,7 @@ public class CMemoryBlockRetrievalExtension extends PlatformObject implements IM
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.provisional.IMemorySpaceAwareMemoryBlockRetrieval#creatingBlockRequiresMemorySpaceID()
 	 */
+	@Override
 	public boolean creatingBlockRequiresMemorySpaceID() {
 		// A behavioral control we're not extending to CDI clients, but is being
 		// extended to DSF ones.

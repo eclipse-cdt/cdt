@@ -66,7 +66,7 @@ public class FindAction implements IViewActionDelegate {
 			
 			Shell shell = CDebugUIPlugin.getActiveWorkbenchShell();
 			FindReplaceDialog dialog = new FindReplaceDialog(shell, (IMemoryBlockExtension) memBlock, 
-				fView, (Properties) fSearchDialogProperties, fAction);
+				fView, fSearchDialogProperties, fAction);
 			if(action.getId().equals(FIND_NEXT_ID))
 			{
 				if(Boolean.valueOf(fSearchDialogProperties.getProperty(FindReplaceDialog.SEARCH_ENABLE_FIND_NEXT, Boolean.FALSE.toString())))

@@ -36,14 +36,16 @@ public class NewMappingSourceContainerBrowser extends AbstractSourceContainerBro
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.sourcelookup.AbstractSourceContainerBrowser#canEditSourceContainers(org.eclipse.debug.core.sourcelookup.ISourceLookupDirector, org.eclipse.debug.core.sourcelookup.ISourceContainer[])
      */
-    public boolean canEditSourceContainers(ISourceLookupDirector director, ISourceContainer[] containers) {
+    @Override
+	public boolean canEditSourceContainers(ISourceLookupDirector director, ISourceContainer[] containers) {
         return (containers.length == 1 && containers[0] instanceof MappingSourceContainer);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.sourcelookup.AbstractSourceContainerBrowser#editSourceContainers(org.eclipse.swt.widgets.Shell, org.eclipse.debug.core.sourcelookup.ISourceLookupDirector, org.eclipse.debug.core.sourcelookup.ISourceContainer[])
      */
-    public ISourceContainer[] editSourceContainers(Shell shell, ISourceLookupDirector director, ISourceContainer[] containers) {
+    @Override
+	public ISourceContainer[] editSourceContainers(Shell shell, ISourceLookupDirector director, ISourceContainer[] containers) {
         if (containers.length == 1 && containers[0] instanceof MappingSourceContainer) {
             MappingSourceContainerDialog dialog = 
                 	new MappingSourceContainerDialog(shell, (MappingSourceContainer)containers[0]);

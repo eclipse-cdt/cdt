@@ -32,6 +32,7 @@ public class GDBServerCDIDebugger2 extends GDBCDIDebugger2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.core.GDBCDIDebugger2#doStartSession(org.eclipse.debug.core.ILaunch, org.eclipse.cdt.debug.mi.core.cdi.Session, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected void doStartSession( ILaunch launch, Session session, IProgressMonitor monitor ) throws CoreException {
 		ILaunchConfiguration config = launch.getLaunchConfiguration();
 		initializeLibraries( config, session );
@@ -129,6 +130,7 @@ public class GDBServerCDIDebugger2 extends GDBCDIDebugger2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.core.AbstractGDBCDIDebugger#usePty(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	protected boolean usePty( ILaunchConfiguration config ) throws CoreException {
 		return false;
 	}

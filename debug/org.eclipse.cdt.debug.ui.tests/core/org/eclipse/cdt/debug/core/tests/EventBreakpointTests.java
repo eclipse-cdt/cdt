@@ -29,14 +29,17 @@ public class EventBreakpointTests extends AbstractDebugTest {
 		return new DebugTestWrapper(EventBreakpointTests.class){};
 	}
 
+	@Override
 	protected String getProjectName() {
 		return "catchpoints";
 	}
 
+	@Override
 	protected String getProjectZip() {
 		return "resources/debugCxxTest.zip";
 	}
 
+	@Override
 	protected String getProjectBinary() {
 		return "catchpoints.exe";
 	}

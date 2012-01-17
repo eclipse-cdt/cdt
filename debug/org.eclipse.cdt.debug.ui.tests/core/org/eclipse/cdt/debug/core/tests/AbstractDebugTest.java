@@ -94,8 +94,8 @@ public abstract class AbstractDebugTest extends TestCase {
 		/***********************************************************************
 		 * Create a new project and import the test source.
 		 */
-		Path imputFile = new Path(getProjectZip()); //$NON-NLS-1$
-		testProject = CProjectHelper.createCProjectWithImport(getProjectName(), imputFile); //$NON-NLS-1$
+		Path imputFile = new Path(getProjectZip()); 
+		testProject = CProjectHelper.createCProjectWithImport(getProjectName(), imputFile); 
 		if (testProject == null)
 			fail("Unable to create project"); //$NON-NLS-1$
 		/* Build the test project.. */
@@ -181,11 +181,13 @@ public abstract class AbstractDebugTest extends TestCase {
 			}
 		}
 
+		@Override
 		protected void setUp() throws FileNotFoundException, IOException, InterruptedException,
 				InvocationTargetException, CoreException {
 			newInstance.oneTimeSetUp();
 		}
 
+		@Override
 		protected void tearDown() throws FileNotFoundException, IOException, CoreException {
 			newInstance.oneTimeTearDown();
 		}

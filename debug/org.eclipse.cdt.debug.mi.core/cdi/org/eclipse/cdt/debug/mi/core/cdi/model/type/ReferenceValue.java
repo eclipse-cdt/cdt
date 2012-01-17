@@ -52,6 +52,7 @@ public class ReferenceValue extends DerivedValue implements ICDIReferenceValue {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.type.ICDIReferenceValue#referenceValue()
 	 */
+	@Override
 	public ICDIValue referenceValue() throws CDIException {
 		Value value = null;
 		ICDIReferenceType rt = (ICDIReferenceType)getType();

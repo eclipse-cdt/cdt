@@ -23,14 +23,17 @@ import org.eclipse.debug.core.commands.IRestartHandler;
  */
 public class RestartCommand extends CForEachCommand implements IRestartHandler {
 
+	@Override
 	protected Object getTarget(Object element) {
 		return getAdapter(element, IRestart.class);
 	}
 
+	@Override
 	protected void execute(Object target) throws CoreException {
 		((IRestart)target).restart();
 	}
 	
+	@Override
 	protected boolean isExecutable(Object target) {
 		return ((IRestart)target).canRestart();
 	}
@@ -38,6 +41,7 @@ public class RestartCommand extends CForEachCommand implements IRestartHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.commands.AbstractDebugCommand#getEnabledStateJobFamily(org.eclipse.debug.core.commands.IDebugCommandRequest)
 	 */
+	@Override
 	protected Object getEnabledStateJobFamily(IDebugCommandRequest request) {
 		return IRestart.class;
 	}

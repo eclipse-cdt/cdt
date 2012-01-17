@@ -35,6 +35,7 @@ public class MappingSourceContainerType extends AbstractSourceContainerTypeDeleg
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainerTypeDelegate#createSourceContainer(java.lang.String)
 	 */
+	@Override
 	public ISourceContainer createSourceContainer(String memento) throws CoreException {
 		Node node = parseDocument(memento);
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
@@ -75,6 +76,7 @@ public class MappingSourceContainerType extends AbstractSourceContainerTypeDeleg
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainerTypeDelegate#getMemento(org.eclipse.debug.core.sourcelookup.ISourceContainer)
 	 */
+	@Override
 	public String getMemento(ISourceContainer container) throws CoreException {
 		Document document = newDocument();
 		Element element = document.createElement(ELEMENT_MAPPING);

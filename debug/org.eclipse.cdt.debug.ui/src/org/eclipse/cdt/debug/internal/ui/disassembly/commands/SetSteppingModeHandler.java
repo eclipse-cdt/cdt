@@ -48,7 +48,8 @@ public class SetSteppingModeHandler extends AbstractHandler implements IElementU
     /* (non-Javadoc)
      * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
      */
-    public Object execute( ExecutionEvent event ) throws ExecutionException {
+    @Override
+	public Object execute( ExecutionEvent event ) throws ExecutionException {
         String param = event.getParameter( ID_PARAMETER_MODE );
         if ( param == null || param.equals( fCurrentValue ) )
             return null;
@@ -66,7 +67,8 @@ public class SetSteppingModeHandler extends AbstractHandler implements IElementU
     /* (non-Javadoc)
      * @see org.eclipse.ui.commands.IElementUpdater#updateElement(org.eclipse.ui.menus.UIElement, java.util.Map)
      */
-    @SuppressWarnings("unchecked")
+    @Override
+	@SuppressWarnings("unchecked")
     public void updateElement( UIElement element, Map parameters ) {
         String param = (String)parameters.get( ID_PARAMETER_MODE );
         if ( param != null ) {

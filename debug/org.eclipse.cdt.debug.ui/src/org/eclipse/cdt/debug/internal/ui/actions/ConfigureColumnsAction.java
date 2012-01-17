@@ -45,20 +45,23 @@ public class ConfigureColumnsAction extends Action implements IUpdate {
         /* (non-Javadoc)
          * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
          */
-        public Object[] getElements( Object inputElement ) {
+        @Override
+		public Object[] getElements( Object inputElement ) {
             return ((IColumnPresentation)inputElement).getAvailableColumns();
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.jface.viewers.IContentProvider#dispose()
          */
-        public void dispose() {
+        @Override
+		public void dispose() {
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
          */
-        public void inputChanged( Viewer viewer, Object oldInput, Object newInput ) {
+        @Override
+		public void inputChanged( Viewer viewer, Object oldInput, Object newInput ) {
         }
     }
 
@@ -66,7 +69,8 @@ public class ConfigureColumnsAction extends Action implements IUpdate {
 
         private Map fImages = new HashMap();
 
-        public Image getImage( Object element ) {
+        @Override
+		public Image getImage( Object element ) {
             ImageDescriptor imageDescriptor = fViewer.getColumnPresentation().getImageDescriptor( (String)element );
             if ( imageDescriptor != null ) {
                 Image image = (Image)fImages.get( imageDescriptor );
@@ -79,11 +83,13 @@ public class ConfigureColumnsAction extends Action implements IUpdate {
             return null;
         }
 
-        public String getText( Object element ) {
+        @Override
+		public String getText( Object element ) {
             return fViewer.getColumnPresentation().getHeader( (String)element );
         }
 
-        public void dispose() {
+        @Override
+		public void dispose() {
             super.dispose();
             Iterator iterator = fImages.values().iterator();
             while( iterator.hasNext() ) {
@@ -104,14 +110,16 @@ public class ConfigureColumnsAction extends Action implements IUpdate {
     /* (non-Javadoc)
      * @see org.eclipse.ui.texteditor.IUpdate#update()
      */
-    public void update() {
+    @Override
+	public void update() {
         setEnabled( fViewer.isShowColumns() );
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.action.Action#run()
      */
-    public void run() {
+    @Override
+	public void run() {
         ListSelectionDialog dialog = new ListSelectionDialog( fViewer.getControl().getShell(), fViewer.getColumnPresentation(), new ColumnContentProvider(),
                 new ColumnLabelProvider(), "Select the &columns to display:" );
         PlatformUI.getWorkbench().getHelpSystem().setHelp( this, ICDebugHelpContextIds.CONFIGURE_COLUMNS_DIALOG );

@@ -40,12 +40,15 @@ public class MiConsolePageParticipant implements IConsolePageParticipant, IDebug
 	private org.eclipse.debug.ui.console.IConsole fConsole = null;
 	private org.eclipse.cdt.debug.mi.core.GDBProcess GDBProcess = null;
 
+	@Override
 	public void activated() {
 	}
 
+	@Override
 	public void deactivated() {
 	}
 
+	@Override
 	public void dispose() {
 		if (GDBProcess != null) {
 			DebugPlugin.getDefault().removeDebugEventListener(this);
@@ -56,6 +59,7 @@ public class MiConsolePageParticipant implements IConsolePageParticipant, IDebug
 		fConsole = null;
 	}
 
+	@Override
 	public void init(IPageBookViewPage page, IConsole console) {
 
 		if(console instanceof org.eclipse.debug.ui.console.IConsole)
@@ -87,11 +91,13 @@ public class MiConsolePageParticipant implements IConsolePageParticipant, IDebug
 		}
 	}
 
+	@Override
 	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class adapter) {
 		return null;
 	}
 
+	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
 		for (int i = 0; i < events.length; i++) {
 			DebugEvent event = events[i];
@@ -111,7 +117,8 @@ public class MiConsolePageParticipant implements IConsolePageParticipant, IDebug
 	/** 
 	 * Handle MISession notification
 	 */
-	 public void update(Observable arg0, Object arg1) {
+	 @Override
+	public void update(Observable arg0, Object arg1) {
 		 if((arg1!=null) && (arg1 instanceof VerboseModeChangedEvent) && (fVerboseMode != null)) {
 			 try {
 				fVerboseMode.updateStateAndEnablement();

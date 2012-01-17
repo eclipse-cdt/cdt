@@ -64,6 +64,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 		/**
 		 * @see IntegerFieldEditor#checkState()
 		 */
+		@Override
 		protected boolean checkState() {
 			Text control = getTextControl();
 			if ( !control.isEnabled() ) {
@@ -76,6 +77,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 		/**
 		 * Overrode here to be package visible.
 		 */
+		@Override
 		protected void refreshValidState() {
 			super.refreshValidState();
 		}
@@ -85,6 +87,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 		 * 
 		 * @see FieldEditor#doStore()
 		 */
+		@Override
 		protected void doStore() {
 			Text text = getTextControl();
 			if ( text.isEnabled() ) {
@@ -95,6 +98,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 		/**
 		 * Clears the error message from the message line if the error message is the error message from this field editor.
 		 */
+		@Override
 		protected void clearErrorMessage() {
 			if ( getPage() != null ) {
 				String message = getPage().getErrorMessage();
@@ -119,6 +123,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 		/**
 		 * @see StringFieldEditor#checkState()
 		 */
+		@Override
 		protected boolean checkState() {
 			Text control = getTextControl();
 			if ( !control.isEnabled() ) {
@@ -128,6 +133,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 			return super.checkState();
 		}
 
+		@Override
 		protected void doStore() {
 			Text text = getTextControl();
 			if ( text.isEnabled() ) {
@@ -138,6 +144,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 		/**
 		 * @see FieldEditor#refreshValidState()
 		 */
+		@Override
 		protected void refreshValidState() {
 			super.refreshValidState();
 		}
@@ -145,6 +152,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 		/**
 		 * Clears the error message from the message line if the error message is the error message from this field editor.
 		 */
+		@Override
 		protected void clearErrorMessage() {
 			if ( getPage() != null ) {
 				String message = getPage().getErrorMessage();
@@ -213,6 +221,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 	 * 
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
 	 */
+	@Override
 	protected void createFieldEditors() {
 		ICBreakpoint breakpoint = getBreakpoint();
 		createMainLabel(breakpoint);
@@ -402,6 +411,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPropertyPage#getElement()
 	 */
+	@Override
 	public IAdaptable getElement() {
 		return fElement;
 	}
@@ -409,14 +419,17 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPropertyPage#setElement(org.eclipse.core.runtime.IAdaptable)
 	 */
+	@Override
 	public void setElement( IAdaptable element ) {
 		fElement = element;
 	}
 
+	@Override
 	public IPreferenceStore getPreferenceStore() {
 		return fCBreakpointPreferenceStore;
 	}
 
+	@Override
 	public boolean performOk() {
 		final List changedProperties = new ArrayList( 5 );
 		getPreferenceStore().addPropertyChangeListener( new IPropertyChangeListener() {
@@ -424,6 +437,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 			/**
 			 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
 			 */
+			@Override
 			public void propertyChange( PropertyChangeEvent event ) {
 				changedProperties.add( event.getProperty() );
 			}
@@ -436,6 +450,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 	protected void setBreakpointProperties( final List changedProperties ) {
 		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
 
+			@Override
 			public void run( IProgressMonitor monitor ) throws CoreException {
 				ICBreakpoint breakpoint = getBreakpoint();
 				Iterator changed = changedProperties.iterator();

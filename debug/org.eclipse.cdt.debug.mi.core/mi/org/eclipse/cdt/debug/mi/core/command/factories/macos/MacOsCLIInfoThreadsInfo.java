@@ -31,6 +31,7 @@ class MacOsCLIInfoThreadsInfo extends CLIInfoThreadsInfo {
 		super(out);
 	}
 
+	@Override
 	protected void parse() {
 		if (isDone()) {
 			MIOutput out = getMIOutput();

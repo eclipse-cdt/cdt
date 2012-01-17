@@ -14,9 +14,6 @@ package org.eclipse.cdt.launch.remote.tabs;
 
 import org.eclipse.cdt.debug.ui.ICDebuggerPage;
 import org.eclipse.cdt.dsf.gdb.internal.ui.launching.CDebuggerTab;
-import org.eclipse.cdt.dsf.gdb.internal.ui.launching.GdbCoreDebuggerPage;
-import org.eclipse.cdt.dsf.gdb.internal.ui.launching.GdbDebuggerPage;
-import org.eclipse.cdt.dsf.gdb.internal.ui.launching.GdbServerDebuggerPage;
 import org.eclipse.cdt.dsf.gdb.service.SessionType;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -62,6 +59,7 @@ public class RemoteCDSFDebuggerTab extends CDebuggerTab {
 		super.initializeFrom(config);
 	}
 
+	@Override
 	protected void loadDynamicDebugArea() {
 		Composite dynamicTabHolder = getDynamicTabHolder();
 		// Dispose of any current child widgets in the tab holder area

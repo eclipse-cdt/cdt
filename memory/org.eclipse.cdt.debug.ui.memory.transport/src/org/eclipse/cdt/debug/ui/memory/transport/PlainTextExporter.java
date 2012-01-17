@@ -66,6 +66,7 @@ public class PlainTextExporter implements IMemoryExporter {
 	
 		Composite composite = new Composite(parent, SWT.NONE)
 		{
+			@Override
 			public void dispose()
 			{
 				fProperties.put(TRANSFER_FILE, fFileText.getText());
@@ -166,6 +167,7 @@ public class PlainTextExporter implements IMemoryExporter {
 		
 		fileButton.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog dialog = new FileDialog(parent.getShell(), SWT.SAVE);
 				dialog.setText(Messages.getString("PlainTextExporter.ChooseFile")); //$NON-NLS-1$
@@ -355,6 +357,7 @@ public class PlainTextExporter implements IMemoryExporter {
 	
 	public void exportMemory() {
 		Job job = new Job("Memory Export to Plain Text File"){ //$NON-NLS-1$
+			@Override
 			public IStatus run(IProgressMonitor monitor) {
 				try
 				{	

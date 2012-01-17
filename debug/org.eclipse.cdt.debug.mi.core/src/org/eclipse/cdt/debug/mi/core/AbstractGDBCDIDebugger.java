@@ -48,6 +48,7 @@ abstract public class AbstractGDBCDIDebugger implements ICDIDebugger2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.ICDIDebugger#createDebuggerSession(org.eclipse.debug.core.ILaunch, org.eclipse.cdt.core.IBinaryParser.IBinaryObject, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public ICDISession createDebuggerSession( ILaunch launch, IBinaryObject exe, IProgressMonitor monitor ) throws CoreException {
 		return createSession( launch, exe.getPath().toFile(), monitor );
 	}
@@ -55,6 +56,7 @@ abstract public class AbstractGDBCDIDebugger implements ICDIDebugger2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.ICDIDebugger2#createSession(org.eclipse.debug.core.ILaunch, java.io.File, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public ICDISession createSession( ILaunch launch, File executable, IProgressMonitor monitor ) throws CoreException {
 		boolean failed = false;
 		if ( monitor == null ) {

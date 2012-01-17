@@ -81,6 +81,7 @@ public class ProgramRelativePathSourceContainer extends AbstractSourceContainer{
 	 * 
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#findSourceElements(java.lang.String)
 	 */
+	@Override
 	public Object[] findSourceElements(String sourceName) throws CoreException {
 		if (sourceName == null) {
 			return new Object[0];
@@ -115,6 +116,7 @@ public class ProgramRelativePathSourceContainer extends AbstractSourceContainer{
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getName()
 	 */
+	@Override
 	public String getName() {
 		return SourceLookupMessages.ProgramRelativePathSourceContainer_0;
 	}
@@ -122,6 +124,7 @@ public class ProgramRelativePathSourceContainer extends AbstractSourceContainer{
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#getType()
 	 */
+	@Override
 	public ISourceContainerType getType() {
 		return getSourceContainerType(TYPE_ID);
 	}

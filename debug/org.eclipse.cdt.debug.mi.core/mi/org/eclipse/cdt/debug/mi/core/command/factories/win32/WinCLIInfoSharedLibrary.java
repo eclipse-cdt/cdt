@@ -23,6 +23,7 @@ public class WinCLIInfoSharedLibrary extends CLIInfoSharedLibrary {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.core.command.CLIInfoSharedLibrary#getMIInfo()
 	 */
+	@Override
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

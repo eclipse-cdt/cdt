@@ -72,9 +72,11 @@ public class AddMemoryBlocks implements IAddMemoryBlocksTarget {
 	/** Request object used to get the memory spaces */
 	private static class GetMemorySpacesRequest extends CRequest implements IMemorySpaceAwareMemoryBlockRetrieval.GetMemorySpacesRequest  {
 		String [] fMemorySpaces = new String[0];
+		@Override
 		public String[] getMemorySpaces() {
 			return fMemorySpaces;
 		}
+		@Override
 		public void setMemorySpaces(String[] memorySpaceIds) {
 			fMemorySpaces = memorySpaceIds;
 		}
@@ -83,6 +85,7 @@ public class AddMemoryBlocks implements IAddMemoryBlocksTarget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IAddMemoryBlocksTarget#addMemoryBlocks(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void addMemoryBlocks(final IWorkbenchPart part, final ISelection selection) throws CoreException {
 
 		if (!(part instanceof IMemoryRenderingSite)) {
@@ -116,8 +119,10 @@ public class AddMemoryBlocks implements IAddMemoryBlocksTarget {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				msRetrieval.getMemorySpaces(context, new GetMemorySpacesRequest(){
+					@Override
 					public void done() {
 						runOnUIThread(new Runnable(){
+							@Override
 							public void run() {
 								if (isSuccess()) {
 									String[] memorySpaces = getMemorySpaces();
@@ -209,11 +214,13 @@ public class AddMemoryBlocks implements IAddMemoryBlocksTarget {
 
 	}
 
+	@Override
 	public boolean canAddMemoryBlocks(IWorkbenchPart part, ISelection selection)
 	throws CoreException {
 		return true;
 	}
 
+	@Override
 	public boolean supportsAddMemoryBlocks(IWorkbenchPart part) {
 		return (IDebugUIConstants.ID_MEMORY_VIEW.equals(part.getSite().getId()));
 	}
@@ -387,6 +394,7 @@ public class AddMemoryBlocks implements IAddMemoryBlocksTarget {
 		final ParamHolder params_f = params;
 		final IMemoryRenderingSite memRendSite = memSite;
 		Job job = new Job("Add Memory Block") { //$NON-NLS-1$
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				addMemoryBlocks(debugViewElement_f, retrieval_f, params_f,
 						memRendSite);
@@ -463,6 +471,7 @@ public class AddMemoryBlocks implements IAddMemoryBlocksTarget {
 		}
 		else {
 			UIJob job = new UIJob("Memory Browser UI Job"){ //$NON-NLS-1$
+				@Override
 				public IStatus runInUIThread(IProgressMonitor monitor) {
 					runnable.run();
 					return Status.OK_STATUS;

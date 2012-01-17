@@ -37,6 +37,7 @@ public class CValueDetailProvider {
 			if ( frame != null ) {
 				DebugPlugin.getDefault().asyncExec( new Runnable() {
 	
+					@Override
 					public void run() {
 						listener.detailComputed( value, ((ICValue)value).evaluateAsExpression( frame ) );
 					}

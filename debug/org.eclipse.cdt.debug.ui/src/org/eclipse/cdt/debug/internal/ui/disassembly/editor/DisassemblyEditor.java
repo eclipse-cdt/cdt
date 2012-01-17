@@ -184,7 +184,8 @@ public class DisassemblyEditor extends EditorPart implements ITextEditor, IReusa
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.contexts.IDebugContextListener#debugContextChanged(org.eclipse.debug.ui.contexts.DebugContextEvent)
      */
-    public void debugContextChanged( DebugContextEvent event ) {
+    @Override
+	public void debugContextChanged( DebugContextEvent event ) {
         ISelection selection = event.getContext();
         if ( selection instanceof IStructuredSelection ) {
             IStructuredSelection ss = (IStructuredSelection)selection;
@@ -223,7 +224,8 @@ public class DisassemblyEditor extends EditorPart implements ITextEditor, IReusa
     /* (non-Javadoc)
      * @see org.eclipse.ui.texteditor.ITextEditor#close(boolean)
      */
-    public void close( boolean save ) {
+    @Override
+	public void close( boolean save ) {
         // TODO Auto-generated method stub
         
     }
@@ -231,7 +233,8 @@ public class DisassemblyEditor extends EditorPart implements ITextEditor, IReusa
     /* (non-Javadoc)
      * @see org.eclipse.ui.texteditor.ITextEditor#doRevertToSaved()
      */
-    public void doRevertToSaved() {
+    @Override
+	public void doRevertToSaved() {
         // TODO Auto-generated method stub
         
     }
@@ -239,7 +242,8 @@ public class DisassemblyEditor extends EditorPart implements ITextEditor, IReusa
     /* (non-Javadoc)
      * @see org.eclipse.ui.texteditor.ITextEditor#getAction(java.lang.String)
      */
-    public IAction getAction( String actionId ) {
+    @Override
+	public IAction getAction( String actionId ) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -247,14 +251,16 @@ public class DisassemblyEditor extends EditorPart implements ITextEditor, IReusa
     /* (non-Javadoc)
      * @see org.eclipse.ui.texteditor.ITextEditor#getDocumentProvider()
      */
-    public IDocumentProvider getDocumentProvider() {
+    @Override
+	public IDocumentProvider getDocumentProvider() {
         return CDebugUIPlugin.getDefault().getDisassemblyEditorManager().getDocumentProvider();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.texteditor.ITextEditor#getHighlightRange()
      */
-    public IRegion getHighlightRange() {
+    @Override
+	public IRegion getHighlightRange() {
         // TODO Auto-generated method stub
         return null;
     }
@@ -262,7 +268,8 @@ public class DisassemblyEditor extends EditorPart implements ITextEditor, IReusa
     /* (non-Javadoc)
      * @see org.eclipse.ui.texteditor.ITextEditor#getSelectionProvider()
      */
-    public ISelectionProvider getSelectionProvider() {
+    @Override
+	public ISelectionProvider getSelectionProvider() {
         VirtualSourceViewer viewer = getViewer();
         return ( viewer != null ) ? viewer.getSelectionProvider() : null;
     }
@@ -270,14 +277,16 @@ public class DisassemblyEditor extends EditorPart implements ITextEditor, IReusa
     /* (non-Javadoc)
      * @see org.eclipse.ui.texteditor.ITextEditor#isEditable()
      */
-    public boolean isEditable() {
+    @Override
+	public boolean isEditable() {
         return false;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.texteditor.ITextEditor#removeActionActivationCode(java.lang.String)
      */
-    public void removeActionActivationCode( String actionId ) {
+    @Override
+	public void removeActionActivationCode( String actionId ) {
         // TODO Auto-generated method stub
         
     }
@@ -285,7 +294,8 @@ public class DisassemblyEditor extends EditorPart implements ITextEditor, IReusa
     /* (non-Javadoc)
      * @see org.eclipse.ui.texteditor.ITextEditor#resetHighlightRange()
      */
-    public void resetHighlightRange() {
+    @Override
+	public void resetHighlightRange() {
         // TODO Auto-generated method stub
         
     }
@@ -293,7 +303,8 @@ public class DisassemblyEditor extends EditorPart implements ITextEditor, IReusa
     /* (non-Javadoc)
      * @see org.eclipse.ui.texteditor.ITextEditor#selectAndReveal(int, int)
      */
-    public void selectAndReveal( int offset, int length ) {
+    @Override
+	public void selectAndReveal( int offset, int length ) {
         // TODO Auto-generated method stub
         
     }
@@ -301,14 +312,16 @@ public class DisassemblyEditor extends EditorPart implements ITextEditor, IReusa
     /* (non-Javadoc)
      * @see org.eclipse.ui.texteditor.ITextEditor#setAction(java.lang.String, org.eclipse.jface.action.IAction)
      */
-    public void setAction( String actionID, IAction action ) {
+    @Override
+	public void setAction( String actionID, IAction action ) {
         fDisassemblyPane.setAction( actionID, action );
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.texteditor.ITextEditor#setActionActivationCode(java.lang.String, char, int, int)
      */
-    public void setActionActivationCode( String actionId, char activationCharacter, int activationKeyCode, int activationStateMask ) {
+    @Override
+	public void setActionActivationCode( String actionId, char activationCharacter, int activationKeyCode, int activationStateMask ) {
         // TODO Auto-generated method stub
         
     }
@@ -316,7 +329,8 @@ public class DisassemblyEditor extends EditorPart implements ITextEditor, IReusa
     /* (non-Javadoc)
      * @see org.eclipse.ui.texteditor.ITextEditor#setHighlightRange(int, int, boolean)
      */
-    public void setHighlightRange( int offset, int length, boolean moveCursor ) {
+    @Override
+	public void setHighlightRange( int offset, int length, boolean moveCursor ) {
         // TODO Auto-generated method stub
         
     }
@@ -324,7 +338,8 @@ public class DisassemblyEditor extends EditorPart implements ITextEditor, IReusa
     /* (non-Javadoc)
      * @see org.eclipse.ui.texteditor.ITextEditor#showHighlightRangeOnly(boolean)
      */
-    public void showHighlightRangeOnly( boolean showHighlightRangeOnly ) {
+    @Override
+	public void showHighlightRangeOnly( boolean showHighlightRangeOnly ) {
         // TODO Auto-generated method stub
         
     }
@@ -332,7 +347,8 @@ public class DisassemblyEditor extends EditorPart implements ITextEditor, IReusa
     /* (non-Javadoc)
      * @see org.eclipse.ui.texteditor.ITextEditor#showsHighlightRangeOnly()
      */
-    public boolean showsHighlightRangeOnly() {
+    @Override
+	public boolean showsHighlightRangeOnly() {
         // TODO Auto-generated method stub
         return false;
     }
@@ -350,7 +366,8 @@ public class DisassemblyEditor extends EditorPart implements ITextEditor, IReusa
     /* (non-Javadoc)
      * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
      */
-    public void propertyChange( PropertyChangeEvent event ) {
+    @Override
+	public void propertyChange( PropertyChangeEvent event ) {
         getViewer().refresh();
     }
     

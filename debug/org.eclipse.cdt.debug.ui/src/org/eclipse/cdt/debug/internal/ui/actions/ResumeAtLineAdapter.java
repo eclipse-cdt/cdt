@@ -48,6 +48,7 @@ public class ResumeAtLineAdapter implements IResumeAtLineTarget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.actions.IResumeAtLineTarget#resumeAtLine(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection, org.eclipse.debug.core.model.ISuspendResume)
 	 */
+	@Override
 	public void resumeAtLine( IWorkbenchPart part, ISelection selection, ISuspendResume target ) throws CoreException {
 		String errorMessage = null;
 		if ( part instanceof ITextEditor ) {
@@ -74,6 +75,7 @@ public class ResumeAtLineAdapter implements IResumeAtLineTarget {
 						final IResumeAtLine resumeAtLine = (IResumeAtLine)((IAdaptable)target).getAdapter( IResumeAtLine.class );
 						if ( resumeAtLine != null && resumeAtLine.canResumeAtLine( path.toPortableString(), lineNumber ) ) {
 							Runnable r = new Runnable() {
+								@Override
 								public void run() {
 									try {
 										resumeAtLine.resumeAtLine( path.toPortableString(), lineNumber );
@@ -99,6 +101,7 @@ public class ResumeAtLineAdapter implements IResumeAtLineTarget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.actions.IResumeAtLineTarget#canResumeAtLine(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection, org.eclipse.debug.core.model.ISuspendResume)
 	 */
+	@Override
 	public boolean canResumeAtLine( IWorkbenchPart part, ISelection selection, ISuspendResume target ) {
 		if ( target instanceof IAdaptable ) {			
 			if ( part instanceof IEditorPart ) {

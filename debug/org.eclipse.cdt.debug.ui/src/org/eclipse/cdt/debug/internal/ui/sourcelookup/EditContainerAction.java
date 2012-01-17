@@ -35,6 +35,7 @@ public class EditContainerAction extends SourceContainerAction {
 	 * 
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */	
+	@Override
 	public void run() {
 		ISourceContainer[] replacements = fBrowser.editSourceContainers(getShell(), fDirector, fContainers);
 		int j = 0;
@@ -57,6 +58,7 @@ public class EditContainerAction extends SourceContainerAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.BaseSelectionListenerAction#updateSelection(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
 		if (selection == null || selection.isEmpty()) {
 			return false;

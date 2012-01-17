@@ -40,6 +40,7 @@ class ExecutablesContentProvider extends ColumnLabelProvider implements IStructu
 		ExecutablesManager.getExecutablesManager().addExecutablesChangeListener(this);
 	}
 
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 	}
 
@@ -51,6 +52,7 @@ class ExecutablesContentProvider extends ColumnLabelProvider implements IStructu
 		ExecutablesManager.getExecutablesManager().removeExecutablesChangeListener(this);
 	}
 
+	@Override
 	public Object[] getElements(final Object inputElement) {
 		if (inputElement instanceof ExecutablesManager) {
 			ExecutablesManager em = (ExecutablesManager) inputElement;
@@ -59,10 +61,12 @@ class ExecutablesContentProvider extends ColumnLabelProvider implements IStructu
 		return new Object[] {};
 	}
 
+	@Override
 	public Object getParent(Object element) {
 		return null;
 	}
 
+	@Override
 	public boolean hasChildren(Object element) {
 		return false;
 	}
@@ -112,6 +116,7 @@ class ExecutablesContentProvider extends ColumnLabelProvider implements IStructu
 			return super.getText(element);
 	}
 
+	@Override
 	public Object[] getChildren(Object parentElement) {
 		return new Object[] {};
 	}
@@ -119,6 +124,7 @@ class ExecutablesContentProvider extends ColumnLabelProvider implements IStructu
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.executables.IExecutablesChangeListener#executablesListChanged()
 	 */
+	@Override
 	public void executablesListChanged() {
 		new WorkbenchJob("execs list changed") { //$NON-NLS-1$
 			@Override
@@ -135,6 +141,7 @@ class ExecutablesContentProvider extends ColumnLabelProvider implements IStructu
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.executables.IExecutablesChangeListener#executablesChanged(java.util.List)
 	 */
+	@Override
 	public void executablesChanged(List<Executable> executables) {
 		// Our concern is only if the list of executables changed. The 
 		// content provider for the source files viewer will care about 

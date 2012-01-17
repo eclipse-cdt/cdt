@@ -46,6 +46,7 @@ public class MISignalEvent extends MIStoppedEvent {
 		return sigMeaning;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("signal-name=" + sigName + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -58,6 +59,7 @@ public class MISignalEvent extends MIStoppedEvent {
 		return buffer.toString();
 	}
 
+	@Override
 	void parse () {
 		MIExecAsyncOutput exec = getMIExecAsyncOutput();
 		MIResultRecord rr = getMIResultRecord();

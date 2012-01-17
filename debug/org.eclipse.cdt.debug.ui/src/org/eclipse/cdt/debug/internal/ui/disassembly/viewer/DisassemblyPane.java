@@ -197,7 +197,8 @@ public class DisassemblyPane implements IPropertyChangeListener {
         if ( fMenuListener == null ) {
             fMenuListener = new IMenuListener() {
 
-                public void menuAboutToShow( IMenuManager menu ) {
+                @Override
+				public void menuAboutToShow( IMenuManager menu ) {
                     String id = menu.getId();
                     if ( getRulerContextMenuId().equals( id ) ) {
 //                        setFocus();
@@ -229,21 +230,24 @@ public class DisassemblyPane implements IPropertyChangeListener {
                     }
                 }
 
-                public void mouseUp( MouseEvent e ) {
+                @Override
+				public void mouseUp( MouseEvent e ) {
 //                    setFocus();
                     if ( 1 == e.button && !fDoubleClicked )
                         triggerAction( ITextEditorActionConstants.RULER_CLICK );
                     fDoubleClicked = false;
                 }
 
-                public void mouseDoubleClick( MouseEvent e ) {
+                @Override
+				public void mouseDoubleClick( MouseEvent e ) {
                     if ( 1 == e.button ) {
                         fDoubleClicked = true;
                         triggerAction( IInternalCDebugUIConstants.ACTION_TOGGLE_BREAKPOINT );
                     }
                 }
 
-                public void mouseDown( MouseEvent e ) {
+                @Override
+				public void mouseDown( MouseEvent e ) {
                     StyledText text = getViewer().getTextWidget();
                     if ( text != null && !text.isDisposed() ) {
                         Display display = text.getDisplay();
@@ -393,7 +397,8 @@ public class DisassemblyPane implements IPropertyChangeListener {
     /* (non-Javadoc)
      * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
      */
-    public void propertyChange( PropertyChangeEvent event ) {
+    @Override
+	public void propertyChange( PropertyChangeEvent event ) {
         // TODO Auto-generated method stub
         
     }

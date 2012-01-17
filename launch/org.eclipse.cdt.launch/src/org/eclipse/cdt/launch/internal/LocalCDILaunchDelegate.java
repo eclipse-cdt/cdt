@@ -62,6 +62,7 @@ public class LocalCDILaunchDelegate extends AbstractCLaunchDelegate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.launch.AbstractCLaunchDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void launch(ILaunchConfiguration config, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
@@ -336,6 +337,7 @@ public class LocalCDILaunchDelegate extends AbstractCLaunchDelegate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.launch.AbstractCLaunchDelegate#getPluginID()
 	 */
+	@Override
 	protected String getPluginID() {
 		return LaunchUIPlugin.getUniqueIdentifier();
 	}
@@ -423,6 +425,7 @@ public class LocalCDILaunchDelegate extends AbstractCLaunchDelegate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.launch.AbstractCLaunchDelegate#preLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public boolean preLaunchCheck(ILaunchConfiguration config, String mode, IProgressMonitor monitor) throws CoreException {
 		// no pre launch check for core file
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {

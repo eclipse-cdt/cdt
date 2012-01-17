@@ -101,6 +101,7 @@ public class CDIDebugModel {
 		final IDebugTarget[] target = new IDebugTarget[1];
 		IWorkspaceRunnable r = new IWorkspaceRunnable() {
 
+			@Override
 			public void run( IProgressMonitor m ) throws CoreException {
 				target[0] = new CDebugTarget( launch, project, cdiTarget, name, debuggeeProcess, file, allowTerminate, allowDisconnect );
 				((CDebugTarget)target[0]).start( stopSymbol, resumeTarget );
@@ -139,6 +140,7 @@ public class CDIDebugModel {
 		final IDebugTarget[] target = new IDebugTarget[1];
 		IWorkspaceRunnable r = new IWorkspaceRunnable() {
 
+			@Override
 			public void run( IProgressMonitor m ) throws CoreException {
 				String stopSymbol = null;
 				if ( stopInMain )

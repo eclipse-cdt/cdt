@@ -51,6 +51,7 @@ public class RunToLineAdapter implements IRunToLineTarget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IRunToLineTarget#runToLine(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection, org.eclipse.debug.core.model.ISuspendResume)
 	 */
+	@Override
 	public void runToLine( IWorkbenchPart part, ISelection selection, ISuspendResume target ) throws CoreException {
 		String errorMessage = null;
 		if ( part instanceof ITextEditor ) {
@@ -78,6 +79,7 @@ public class RunToLineAdapter implements IRunToLineTarget {
 						if ( runToLine != null && runToLine.canRunToLine( path.toPortableString(), lineNumber ) ) {
 							Runnable r = new Runnable() {
 								
+								@Override
 								public void run() {
 									try {
 										runToLine.runToLine( path.toPortableString(), lineNumber, DebugUITools.getPreferenceStore().getBoolean( IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE ) );
@@ -103,6 +105,7 @@ public class RunToLineAdapter implements IRunToLineTarget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IRunToLineTarget#canRunToLine(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection, org.eclipse.debug.core.model.ISuspendResume)
 	 */
+	@Override
 	public boolean canRunToLine( IWorkbenchPart part, ISelection selection, ISuspendResume target ) {
 		if ( target instanceof IAdaptable ) {			
 			if ( part instanceof IEditorPart ) {

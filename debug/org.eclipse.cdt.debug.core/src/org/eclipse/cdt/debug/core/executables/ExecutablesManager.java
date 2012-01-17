@@ -295,10 +295,15 @@ public class ExecutablesManager extends PlatformObject implements ICProjectDescr
 		// flush those caches when applicable locators change.
 		CDebugCorePlugin.getDefault().getCommonSourceLookupDirector().addParticipants(new ISourceLookupParticipant[] { new ISourceLookupParticipant(){
 
+			@Override
 			public void init(ISourceLookupDirector director) {}
+			@Override
 			public Object[] findSourceElements(Object object) { return new Object[0]; }
+			@Override
 			public String getSourceName(Object object) throws CoreException { return ""; } //$NON-NLS-1$
+			@Override
 			public void dispose() {}
+			@Override
 			public void sourceContainersChanged(ISourceLookupDirector director) {
 				// Unfortunately, it would be extremely difficult/costly to 
 				// determine which binaries are effected by the source locator 
@@ -311,6 +316,7 @@ public class ExecutablesManager extends PlatformObject implements ICProjectDescr
 		// into play when an Executable looks for a source file locally. So,
 		// listen for changes in those locators, too.
 		DebugPlugin.getDefault().getLaunchManager().addLaunchConfigurationListener(new ILaunchConfigurationListener() {
+			@Override
 			public void launchConfigurationChanged(ILaunchConfiguration configuration) {
 				// Expect lots of noise for working copies. We only care about 
 				// changes to actual configs
@@ -336,7 +342,9 @@ public class ExecutablesManager extends PlatformObject implements ICProjectDescr
 				// with so we can flush only that Executable
 				flushExecutablesSourceMappings();
 			}
+			@Override
 			public void launchConfigurationRemoved(ILaunchConfiguration configuration) { configAddedOrRemoved(configuration); }
+			@Override
 			public void launchConfigurationAdded(ILaunchConfiguration configuration)  { configAddedOrRemoved(configuration); }
 			private void configAddedOrRemoved(ILaunchConfiguration configuration) {
 				// Expect lots of noise for working copies. We only care about 
@@ -478,6 +486,7 @@ public class ExecutablesManager extends PlatformObject implements ICProjectDescr
 		synchronized (executableImporters) {
 			Collections.sort(executableImporters, new Comparator<IExecutableImporter>() {
 
+				@Override
 				public int compare(IExecutableImporter arg0, IExecutableImporter arg1) {
 					int p0 = arg0.getPriority(fileNames);
 					int p1 = arg1.getPriority(fileNames);
@@ -533,6 +542,7 @@ public class ExecutablesManager extends PlatformObject implements ICProjectDescr
 		synchronized (sourceFileProviders) {
 			Collections.sort(sourceFileProviders, new Comparator<ISourceFilesProvider>() {
 
+				@Override
 				public int compare(ISourceFilesProvider arg0, ISourceFilesProvider arg1) {
 					int p0 = arg0.getPriority(executable);
 					int p1 = arg1.getPriority(executable);
@@ -621,12 +631,14 @@ public class ExecutablesManager extends PlatformObject implements ICProjectDescr
 	 * @deprecated we no longer listen directly for platform resource changes
 	 *             but rather C model changes
 	 */
+	@Override
 	@Deprecated
 	public void resourceChanged(IResourceChangeEvent event) {}
 
 	/**
 	 * @since 7.0
 	 */
+	@Override
 	public void handleEvent(CProjectDescriptionEvent event) {
 		if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().traceEntry(null, event);
 		
@@ -862,6 +874,7 @@ public class ExecutablesManager extends PlatformObject implements ICProjectDescr
 	 * 
 	 * @since 7.1
 	 */
+	@Override
 	public void elementChanged(ElementChangedEvent event) {
 		if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().traceEntry(null);
 		if (Trace.DEBUG_EXECUTABLES) Trace.getTrace().trace(null, "event = \n" + event); // must be done separately because of traceEntry() limitation //$NON-NLS-1$ 

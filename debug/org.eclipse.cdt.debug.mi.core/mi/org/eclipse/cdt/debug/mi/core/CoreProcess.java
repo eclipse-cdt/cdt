@@ -22,6 +22,7 @@ public class CoreProcess extends Process {
 	/* (non-Javadoc)
 	 * @see java.lang.Process#exitValue()
 	 */
+	@Override
 	public int exitValue() {
 		return 0;
 	}
@@ -29,6 +30,7 @@ public class CoreProcess extends Process {
 	/* (non-Javadoc)
 	 * @see java.lang.Process#waitFor()
 	 */
+	@Override
 	public int waitFor() throws InterruptedException {
 		return 0;
 	}
@@ -36,14 +38,17 @@ public class CoreProcess extends Process {
 	/* (non-Javadoc)
 	 * @see java.lang.Process#destroy()
 	 */
+	@Override
 	public void destroy() {
 	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Process#getErrorStream()
 	 */
+	@Override
 	public InputStream getErrorStream() {
 		return new InputStream() {
+			@Override
 			public int read() throws IOException {
 				return -1;
 			}
@@ -53,8 +58,10 @@ public class CoreProcess extends Process {
 	/* (non-Javadoc)
 	 * @see java.lang.Process#getInputStream()
 	 */
+	@Override
 	public InputStream getInputStream() {
 		return new InputStream() {
+			@Override
 			public int read() throws IOException {
 				return -1;
 			}
@@ -64,8 +71,10 @@ public class CoreProcess extends Process {
 	/* (non-Javadoc)
 	 * @see java.lang.Process#getOutputStream()
 	 */
+	@Override
 	public OutputStream getOutputStream() {
 		return new OutputStream() {
+			@Override
 			public void write(int b) throws IOException {				
 			}
 		};

@@ -31,6 +31,7 @@ public class DisconnectedEvent implements ICDIDisconnectedEvent {
 	/**
 	 * @see org.eclipse.cdt.debug.core..ICDIEvent#getSource()
 	 */
+	@Override
 	public ICDIObject getSource() {
 		return source;
 	}

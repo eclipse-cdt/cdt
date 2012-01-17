@@ -24,6 +24,7 @@ public class MIDetachedEvent extends MIDestroyedEvent {
 		super(source, token);
 	}
 
+	@Override
 	public String toString() {
 		return "Detached"; //$NON-NLS-1$
 	}

@@ -151,6 +151,7 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fProjText.setLayoutData(gd);
 		fProjText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent evt) {
 				// if project changes, invalidate program name cache
 				fPreviouslyCheckedProgram = null;
@@ -314,11 +315,13 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 		fBuildConfigCombo = new Combo(comboComp, SWT.READ_ONLY | SWT.DROP_DOWN);
 		fBuildConfigCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fBuildConfigCombo.addSelectionListener(new SelectionListener() {
-		    public void widgetSelected(SelectionEvent e) {
+		    @Override
+			public void widgetSelected(SelectionEvent e) {
 		    	updateLaunchConfigurationDialog();
 		    }
 	
-		    public void widgetDefaultSelected(SelectionEvent e) {
+		    @Override
+			public void widgetDefaultSelected(SelectionEvent e) {
 		    	updateLaunchConfigurationDialog();
 		    }
 		});
@@ -329,13 +332,15 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 		fBuildConfigAuto.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fBuildConfigAuto.setText(LaunchMessages.CMainTab_Build_Config_Auto); 
 		fBuildConfigAuto.addSelectionListener(new SelectionListener() {
-		    public void widgetSelected(SelectionEvent e) {
+		    @Override
+			public void widgetSelected(SelectionEvent e) {
 		    	fBuildConfigAutoChanged = true;
 		    	fBuildConfigCombo.setEnabled(false);
 		    	updateBuildConfigCombo(EMPTY_STRING);
 		    	updateLaunchConfigurationDialog();
 		    }
-		    public void widgetDefaultSelected(SelectionEvent e) {
+		    @Override
+			public void widgetDefaultSelected(SelectionEvent e) {
 		    	fBuildConfigAutoChanged = true;
 		    	fBuildConfigCombo.setEnabled(true);
 				updateBuildConfigCombo(EMPTY_STRING);
@@ -365,6 +370,7 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 		fEnableBuildButton.setToolTipText(LaunchMessages.CMainTab_Enable_build_button_tooltip); 
 		fEnableBuildButton.addSelectionListener(new SelectionAdapter() {
 	
+			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				updateLaunchConfigurationDialog();
 			}
@@ -375,6 +381,7 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 		fDisableBuildButton.setToolTipText(LaunchMessages.CMainTab_Disable_build_button_tooltip); 
 		fDisableBuildButton.addSelectionListener(new SelectionAdapter() {
 	
+			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				updateLaunchConfigurationDialog();
 			}
@@ -385,6 +392,7 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 		fWorkspaceSettingsButton.setToolTipText(LaunchMessages.CMainTab_Workspace_settings_button_tooltip); 
 		fWorkspaceSettingsButton.addSelectionListener(new SelectionAdapter() {
 	
+			@Override
 			public void widgetSelected(SelectionEvent evt) {
 				updateLaunchConfigurationDialog();
 			}
@@ -393,6 +401,7 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 		fWorkpsaceSettingsLink = new Link(buildGroup, SWT.NONE);
 		fWorkpsaceSettingsLink.setText(LaunchMessages.CMainTab_Workspace_settings_link_label); 
 		fWorkpsaceSettingsLink.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				PreferencesUtil.createPreferenceDialogOn(
 						parent.getShell(), 
@@ -458,6 +467,7 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fCoreText.setLayoutData(gd);
 		fCoreText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent evt) {
 				updateLaunchConfigurationDialog();
 			}
@@ -515,6 +525,7 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 		}
 		final IBinary[][] ret = new IBinary[1][];
 		BusyIndicator.showWhile(display, new Runnable() {
+			@Override
 			public void run() {
 				try {
 					ret[0] = cproject.getBinaryContainer().getBinaries();
@@ -532,6 +543,7 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 	 * 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		if (fBuildConfigCombo != null) {
 			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, (String)fBuildConfigCombo.getData(Integer.toString(fBuildConfigCombo.getSelectionIndex())));

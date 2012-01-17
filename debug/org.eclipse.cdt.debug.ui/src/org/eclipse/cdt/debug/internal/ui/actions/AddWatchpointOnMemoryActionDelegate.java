@@ -47,6 +47,7 @@ public class AddWatchpointOnMemoryActionDelegate extends AddWatchpointActionDele
 	/**
 	 * @see IActionDelegate#run(IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		IStructuredSelection selection = getSelection();
 		
@@ -119,6 +120,7 @@ public class AddWatchpointOnMemoryActionDelegate extends AddWatchpointActionDele
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {}
 
 	private IStructuredSelection getSelection() {

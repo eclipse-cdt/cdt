@@ -23,6 +23,7 @@ public class GDBTargetActionFilter implements IActionFilter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionFilter#testAttribute(java.lang.Object, java.lang.String, java.lang.String)
 	 */
+	@Override
 	public boolean testAttribute( Object target, String name, String value ) {
 		if ( target instanceof ICDebugTarget ) {
 			if ( name.equals( "GDBTargetActionFilter" ) && value.equals( "isGDBTarget" ) ) {  //$NON-NLS-1$//$NON-NLS-2$

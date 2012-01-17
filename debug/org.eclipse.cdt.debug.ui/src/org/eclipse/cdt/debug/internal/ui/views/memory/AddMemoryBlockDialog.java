@@ -165,6 +165,7 @@ public class AddMemoryBlockDialog extends TrayDialog implements ModifyListener, 
 		fAddressInput.addModifyListener(this);
 		fAddressInput.addVerifyListener(new VerifyListener() {
 			// limit entry to hex or decimal 
+			@Override
 			public void verifyText(VerifyEvent e) {
 				e.doit = false;
 				final char c = e.character; 
@@ -235,6 +236,7 @@ public class AddMemoryBlockDialog extends TrayDialog implements ModifyListener, 
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
 	 */
+	@Override
 	public void modifyText(ModifyEvent e) {
 		// if user enters text into either the address field or the expression one, automatically
 		// select its associated radio button (and deselect the other, these are mutually exclusive) 
@@ -286,6 +288,7 @@ public class AddMemoryBlockDialog extends TrayDialog implements ModifyListener, 
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
 	 */
+	@Override
 	public void widgetDefaultSelected(SelectionEvent e) {
 		// TODO Auto-generated method stub
 		
@@ -294,6 +297,7 @@ public class AddMemoryBlockDialog extends TrayDialog implements ModifyListener, 
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 	 */
+	@Override
 	public void widgetSelected(SelectionEvent e) {
 		// if user selects a memory space, select its associated radio button (and deselect the 
 		// other, these are mutually exclusive) 

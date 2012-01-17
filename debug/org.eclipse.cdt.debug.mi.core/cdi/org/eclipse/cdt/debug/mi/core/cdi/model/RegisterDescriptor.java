@@ -25,6 +25,7 @@ public class RegisterDescriptor extends VariableDescriptor implements ICDIRegist
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.mi.core.cdi.model.VariableDescriptor#getFullName()
 	 */
+	@Override
 	public String getFullName() {
 		if (fFullName == null) {
 			String n = getName();

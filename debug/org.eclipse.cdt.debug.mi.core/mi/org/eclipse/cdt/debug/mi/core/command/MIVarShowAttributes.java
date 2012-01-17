@@ -37,6 +37,7 @@ public class MIVarShowAttributes extends MICommand
 		return (MIVarShowAttributesInfo)getMIInfo();
 	}
 
+	@Override
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

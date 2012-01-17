@@ -37,6 +37,7 @@ public class MemoryChangedEvent implements ICDIMemoryChangedEvent {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEvent#getAddresses()
 	 */
+	@Override
 	public BigInteger[] getAddresses() {
 	 	/* But only returns the address that are in the block.  */
 		BigInteger[] mi_addresses = miMem.getAddresses();
@@ -52,6 +53,7 @@ public class MemoryChangedEvent implements ICDIMemoryChangedEvent {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEvent#getSource()
 	 */
+	@Override
 	public ICDIObject getSource() {
 		return source;
 	}

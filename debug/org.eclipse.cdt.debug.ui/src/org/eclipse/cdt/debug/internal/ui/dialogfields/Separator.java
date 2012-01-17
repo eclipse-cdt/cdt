@@ -55,6 +55,7 @@ public class Separator extends DialogField {
 	/*
 	 * @see DialogField#doFillIntoGrid
 	 */	
+	@Override
 	public Control[] doFillIntoGrid(Composite parent, int nColumns) {
 		return doFillIntoGrid(parent, nColumns, 4);
 	}
@@ -62,6 +63,7 @@ public class Separator extends DialogField {
 	/*
 	 * @see DialogField#getNumberOfControls
 	 */	
+	@Override
 	public int getNumberOfControls() {
 		return 1;	
 	}

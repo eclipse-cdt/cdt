@@ -29,6 +29,7 @@ public class WatchpointTrigger extends SessionObject implements ICDIWatchpointTr
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIWatchpointTrigger#getNewValue()
 	 */
+	@Override
 	public String getNewValue() {
 		return watchEvent.getNewValue();
 	}
@@ -36,6 +37,7 @@ public class WatchpointTrigger extends SessionObject implements ICDIWatchpointTr
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIWatchpointTrigger#getOldValue()
 	 */
+	@Override
 	public String getOldValue() {
 		return watchEvent.getOldValue();
 	}
@@ -43,6 +45,7 @@ public class WatchpointTrigger extends SessionObject implements ICDIWatchpointTr
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIWatchpointTrigger#getWatchpoint()
 	 */
+	@Override
 	public ICDIWatchpoint getWatchpoint() {
 		int number = watchEvent.getNumber();
 		// Ask the breakpointManager for the breakpoint

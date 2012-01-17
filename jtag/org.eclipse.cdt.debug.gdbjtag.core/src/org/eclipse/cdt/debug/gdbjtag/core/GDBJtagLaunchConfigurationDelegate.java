@@ -35,10 +35,12 @@ import org.eclipse.debug.core.model.IProcess;
  */
 public class GDBJtagLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 
+	@Override
 	protected String getPluginID() {
 		return Activator.PLUGIN_ID;
 	};
 
+	@Override
 	public void launch(ILaunchConfiguration configuration, String mode,
 			ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		SubMonitor submonitor = SubMonitor.convert(monitor, 2);

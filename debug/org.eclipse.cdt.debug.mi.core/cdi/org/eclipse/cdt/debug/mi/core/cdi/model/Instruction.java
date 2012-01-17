@@ -29,6 +29,7 @@ public class Instruction extends CObject implements ICDIInstruction  {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction#getAdress()
 	 */
+	@Override
 	public BigInteger getAdress() {
 		return MIFormat.getBigInteger(asm.getAddress());
 	}
@@ -36,6 +37,7 @@ public class Instruction extends CObject implements ICDIInstruction  {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction#getFuntionName()
 	 */
+	@Override
 	public String getFuntionName() {
 		return asm.getFunction();
 	}
@@ -43,6 +45,7 @@ public class Instruction extends CObject implements ICDIInstruction  {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction#getInstruction()
 	 */
+	@Override
 	public String getInstruction() {
 		return asm.getInstruction();
 	}
@@ -50,6 +53,7 @@ public class Instruction extends CObject implements ICDIInstruction  {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction#getOffset()
 	 */
+	@Override
 	public long getOffset() {
 		return asm.getOffset();
 	}
@@ -57,6 +61,7 @@ public class Instruction extends CObject implements ICDIInstruction  {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction#getArgs()
 	 */
+	@Override
 	public String getArgs() {
 		return asm.getArgs();
 	}
@@ -64,6 +69,7 @@ public class Instruction extends CObject implements ICDIInstruction  {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction#getOpcode()
 	 */
+	@Override
 	public String getOpcode() {
 		return asm.getOpcode();
 	}

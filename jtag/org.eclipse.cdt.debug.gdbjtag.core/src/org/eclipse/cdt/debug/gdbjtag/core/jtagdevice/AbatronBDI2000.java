@@ -16,6 +16,7 @@ public class AbatronBDI2000 extends DefaultGDBJtagDeviceImpl {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.DefaultGDBJtagDeviceImpl#getDefaultIpAddress()
 	 */
+	@Override
 	public String getDefaultIpAddress() {
 		return "bdi2000";
 	}
@@ -23,6 +24,7 @@ public class AbatronBDI2000 extends DefaultGDBJtagDeviceImpl {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.DefaultGDBJtagDeviceImpl#getDefaultPortNumber()
 	 */
+	@Override
 	public String getDefaultPortNumber() {
 		return "2001";
 	}

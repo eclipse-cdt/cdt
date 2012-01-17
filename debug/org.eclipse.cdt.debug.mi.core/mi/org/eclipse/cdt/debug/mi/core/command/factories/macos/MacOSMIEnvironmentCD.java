@@ -20,6 +20,7 @@ public class MacOSMIEnvironmentCD extends MIEnvironmentCD {
 		this.setOperation("-environment-cd");//$NON-NLS-1$
 	}
 	
+	@Override
 	protected String parametersToString() {
 		String[] parameters = getParameters();
 		if (parameters != null && parameters.length == 1) {

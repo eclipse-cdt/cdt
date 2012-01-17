@@ -50,6 +50,7 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ISelection#isEmpty()
 		 */
+		@Override
 		public boolean isEmpty() {
 			return true;
 		}
@@ -79,6 +80,7 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
+	@Override
 	public void dispose() {
 		fWindow.getPartService().removePartListener(this);
 		fActivePart = null;
@@ -88,6 +90,7 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
+	@Override
 	public void init(IWorkbenchWindow window) {
 		this.fWindow = window;
 		IPartService partService = window.getPartService();
@@ -100,6 +103,7 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		if (fTargetAdapter != null) {
 			try {
@@ -137,6 +141,7 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		// if the active part did not provide an adapter, see if the selection does
 		if (fTargetAdapter == null && selection instanceof IStructuredSelection) {
@@ -158,6 +163,7 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener#partActivated(org.eclipse.ui.IWorkbenchPart)
 	 */
+	@Override
 	public void partActivated(IWorkbenchPart part) {
 		fActivePart = part;
 		IResource resource = (IResource) part.getAdapter(IResource.class);
@@ -196,11 +202,13 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener#partBroughtToTop(org.eclipse.ui.IWorkbenchPart)
 	 */
+	@Override
 	public void partBroughtToTop(IWorkbenchPart part) {		
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener#partClosed(org.eclipse.ui.IWorkbenchPart)
 	 */
+	@Override
 	public void partClosed(IWorkbenchPart part) {
 		clearPart(part);
 	}
@@ -220,12 +228,14 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener#partDeactivated(org.eclipse.ui.IWorkbenchPart)
 	 */
+	@Override
 	public void partDeactivated(IWorkbenchPart part) {
 		clearPart(part);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener#partOpened(org.eclipse.ui.IWorkbenchPart)
 	 */
+	@Override
 	public void partOpened(IWorkbenchPart part) {		
 	}
 
@@ -256,6 +266,7 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void init(IAction action) {
 		fAction = action;
 	}
@@ -263,6 +274,7 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
 	 */
+	@Override
 	public void runWithEvent(IAction action, Event event) {
 		run(action);
 	}

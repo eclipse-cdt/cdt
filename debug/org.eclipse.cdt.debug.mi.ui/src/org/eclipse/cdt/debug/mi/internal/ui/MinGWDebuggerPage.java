@@ -35,6 +35,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  */
 public class MinGWDebuggerPage extends StandardGDBDebuggerPage {
 
+	@Override
 	protected String defaultGdbCommand(ILaunchConfiguration configuration) {
 		// Lets look it up in the project
 		try {

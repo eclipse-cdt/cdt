@@ -123,6 +123,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IThread#getStackFrames()
 	 */
+	@Override
 	public IStackFrame[] getStackFrames() throws DebugException {
 		List list = Collections.EMPTY_LIST;
 		try {
@@ -138,6 +139,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IThread#hasStackFrames()
 	 */
+	@Override
 	public boolean hasStackFrames() throws DebugException {
 		// Always return true to postpone the stack frames request.
 		// But not if the thread is already resumed. This fixes flickering in the Debug View.
@@ -361,6 +363,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IThread#getPriority()
 	 */
+	@Override
 	public int getPriority() throws DebugException {
 		return 0;
 	}
@@ -368,6 +371,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IThread#getTopStackFrame()
 	 */
+	@Override
 	public IStackFrame getTopStackFrame() throws DebugException {
 		List c = computeStackFrames();
 		return (c.isEmpty()) ? null : (IStackFrame)c.get( 0 );
@@ -376,6 +380,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IThread#getName()
 	 */
+	@Override
 	public String getName() throws DebugException {
 		final ICDIThread cdiThread = getCDIThread();
 		return cdiThread != null ? cdiThread.toString() : ""; //$NON-NLS-1$
@@ -384,6 +389,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IThread#getBreakpoints()
 	 */
+	@Override
 	public IBreakpoint[] getBreakpoints() {
 		List list = new ArrayList( 1 );
 		if ( isSuspended() ) {
@@ -401,6 +407,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvents(org.eclipse.cdt.debug.core.cdi.event.ICDIEvent[])
 	 */
+	@Override
 	public void handleDebugEvents( ICDIEvent[] events ) {
 		if ( isDisposed() )
 			return;
@@ -431,6 +438,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISuspendResume#canResume()
 	 */
+	@Override
 	public boolean canResume() {
 		return ( fConfig.supportsResume() && isSuspended() );
 	}
@@ -438,6 +446,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IRunToLine#canRunToLine(org.eclipse.core.resources.IFile, int)
 	 */
+	@Override
 	public boolean canRunToLine( IFile file, int lineNumber ) {
 		return canRunToLine( file.getLocation().lastSegment(), lineNumber );
 	}
@@ -445,6 +454,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IRunToLine#canRunToLine(java.lang.String, int)
 	 */
+	@Override
 	public boolean canRunToLine( String fileName, int lineNumber ) {
 		return canResume();		
 	}
@@ -452,6 +462,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISuspendResume#canSuspend()
 	 */
+	@Override
 	public boolean canSuspend() {
 		CDebugElementState state = getState();
 		return ( fConfig.supportsSuspend() && (state.equals( CDebugElementState.RESUMED ) || state.equals( CDebugElementState.STEPPED )) );
@@ -460,6 +471,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISuspendResume#isSuspended()
 	 */
+	@Override
 	public boolean isSuspended() {
 		return getState().equals( CDebugElementState.SUSPENDED );
 	}
@@ -467,6 +479,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISuspendResume#resume()
 	 */
+	@Override
 	public void resume() throws DebugException {
 		if ( !canResume() )
 			return;
@@ -487,6 +500,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IRunToLine#runToLine(org.eclipse.core.resources.IFile, int, boolean)
 	 */
+	@Override
 	public void runToLine( IFile file, int lineNumber, boolean skipBreakpoints ) throws DebugException {
 		runToLine( file.getLocation().lastSegment(), lineNumber, skipBreakpoints );
 	}
@@ -494,6 +508,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IRunToLine#runToLine(java.lang.String, int, boolean)
 	 */
+	@Override
 	public void runToLine( String fileName, int lineNumber, boolean skipBreakpoints ) throws DebugException {
 		if ( !canRunToLine( fileName, lineNumber ) )
 			return;
@@ -522,6 +537,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISuspendResume#suspend()
 	 */
+	@Override
 	public void suspend() throws DebugException {
 		if ( !canSuspend() )
 			return;
@@ -542,6 +558,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#canStepInto()
 	 */
+	@Override
 	public boolean canStepInto() {
 		return canStep();
 	}
@@ -549,6 +566,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#canStepOver()
 	 */
+	@Override
 	public boolean canStepOver() {
 		return canStep();
 	}
@@ -556,6 +574,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#canStepReturn()
 	 */
+	@Override
 	public boolean canStepReturn() {
 		if ( !fConfig.supportsStepping() || !canResume() ) {
 			return false;
@@ -578,6 +597,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#isStepping()
 	 */
+	@Override
 	public boolean isStepping() {
 		return ( getState().equals( CDebugElementState.STEPPING ) ) || ( getState().equals( CDebugElementState.STEPPED ) );
 	}
@@ -585,6 +605,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#stepInto()
 	 */
+	@Override
 	public void stepInto() throws DebugException {
 		if ( !canStepInto() )
 			return;
@@ -610,6 +631,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#stepOver()
 	 */
+	@Override
 	public void stepOver() throws DebugException {
 		if ( !canStepOver() )
 			return;
@@ -635,6 +657,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#stepReturn()
 	 */
+	@Override
 	public void stepReturn() throws DebugException {
 		if ( !canStepReturn() )
 			return;
@@ -656,6 +679,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ITerminate#canTerminate()
 	 */
+	@Override
 	public boolean canTerminate() {
 		return getDebugTarget().canTerminate();
 	}
@@ -663,6 +687,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ITerminate#isTerminated()
 	 */
+	@Override
 	public boolean isTerminated() {
 		return getDebugTarget().isTerminated();
 	}
@@ -670,6 +695,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ITerminate#terminate()
 	 */
+	@Override
 	public void terminate() throws DebugException {
 		getDebugTarget().terminate();
 	}
@@ -867,6 +893,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IRestart#canRestart()
 	 */
+	@Override
 	public boolean canRestart() {
 		return getDebugTarget() instanceof IRestart && ((IRestart)getDebugTarget()).canRestart();
 	}
@@ -874,6 +901,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IRestart#restart()
 	 */
+	@Override
 	public void restart() throws DebugException {
 		if ( canRestart() ) {
 			((IRestart)getDebugTarget()).restart();
@@ -924,6 +952,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@Override
 	public Object getAdapter( Class adapter ) {
 		if ( adapter.equals( IRunToLine.class ) || 
 			 adapter.equals( IRunToAddress.class ) ||
@@ -977,6 +1006,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IResumeWithoutSignal#canResumeWithoutSignal()
 	 */
+	@Override
 	public boolean canResumeWithoutSignal() {
 		return (getDebugTarget() instanceof IResumeWithoutSignal && ((IResumeWithoutSignal)getDebugTarget()).canResumeWithoutSignal());
 	}
@@ -984,6 +1014,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IResumeWithoutSignal#resumeWithoutSignal()
 	 */
+	@Override
 	public void resumeWithoutSignal() throws DebugException {
 		if ( canResumeWithoutSignal() ) {
 			((IResumeWithoutSignal)getDebugTarget()).resumeWithoutSignal();
@@ -993,6 +1024,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		String result = ""; //$NON-NLS-1$
 		try {

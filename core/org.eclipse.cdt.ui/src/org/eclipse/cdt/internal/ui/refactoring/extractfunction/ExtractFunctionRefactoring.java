@@ -165,15 +165,14 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 				if (isProgressMonitorCanceld(sm, initStatus))
 					return initStatus;
 
-				container.findAllNames();
 				markWriteAccess();
 				sm.worked(1);
 
 				if (isProgressMonitorCanceld(sm, initStatus))
 					return initStatus;
 
-				container.getAllAfterUsedNames();
-				info.setAllUsedNames(container.getUsedNamesUnique());
+				container.getNamesUsedAfter();
+				info.setParameterCandidates(container.getUsedNamesUnique());
 
 				if (container.size() < 1) {
 					initStatus.addFatalError(Messages.ExtractFunctionRefactoring_NoStmtSelected);
@@ -181,10 +180,11 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 					return initStatus;
 				}
 
-				if (container.getAllDeclaredInScope().size() > 1) {
+				List<NameInformation> returnValueCandidates = container.getReturnValueCandidates();
+				if (returnValueCandidates.size() > 1) {
 					initStatus.addFatalError(Messages.ExtractFunctionRefactoring_TooManySelected);
-				} else if (container.getAllDeclaredInScope().size() == 1) {
-					info.setInScopeDeclaredVariable(container.getAllDeclaredInScope().get(0));
+				} else if (returnValueCandidates.size() == 1) {
+					info.setMandatoryReturnVariable(returnValueCandidates.get(0));
 				}
 
 				extractedFunctionConstructionHelper =
@@ -197,14 +197,14 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 				MethodContext context = NodeHelper.findMethodContext(container.getNodesToWrite().get(0), getIndex());
 				info.setMethodContext(context);
 
-				if (info.getInScopeDeclaredVariable() != null) {
-					info.getInScopeDeclaredVariable().setUserSetIsReturnValue(true);
+				if (info.getMandatoryReturnVariable() != null) {
+					info.getMandatoryReturnVariable().setUserSetIsReturnValue(true);
 				}
-				for (int i = 0; i < info.getAllUsedNames().size(); i++) {
-					if (!info.getAllUsedNames().get(i).isDeclarationExtracted()) {
-						NameInformation name = info.getAllUsedNames().get(i);
+				for (int i = 0; i < info.getParameterCandidates().size(); i++) {
+					if (!info.getParameterCandidates().get(i).isDeclaredInSelection()) {
+						NameInformation name = info.getParameterCandidates().get(i);
 						if (!name.isReturnValue()) {
-							name.setUserSetIsReference(name.isReference());
+							name.setUserSetIsReference(name.isOutput());
 						}
 					}
 				}
@@ -219,9 +219,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 	}
 
 	private void markWriteAccess() throws CoreException {
-		List<NameInformation> paras = container.getNames();
-
-		for (NameInformation name : paras) {
+		for (NameInformation name : container.getNames()) {
 			int flag = CPPVariableReadWriteFlags.getReadWriteFlags(name.getName());
 			if ((flag & PDOMName.WRITE_ACCESS) != 0) {
 				name.setWriteAccess(true);
@@ -230,22 +228,22 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 	}
 
 	private void checkForNonExtractableStatements(NodeContainer cont, RefactoringStatus status) {
-		NonExtractableStmtFinder vis = new NonExtractableStmtFinder();
+		NonExtractableStmtFinder finder = new NonExtractableStmtFinder();
 		for (IASTNode node : cont.getNodesToWrite()) {
-			node.accept(vis);
-			if (vis.containsContinue()) {
+			node.accept(finder);
+			if (finder.containsContinue()) {
 				initStatus.addFatalError(Messages.ExtractFunctionRefactoring_Error_Continue);
 				break;
-			} else if (vis.containsBreak()) {
+			} else if (finder.containsBreak()) {
 				initStatus.addFatalError(Messages.ExtractFunctionRefactoring_Error_Break);
 				break;
 			}
 		}
 
-		ReturnStatementFinder rFinder = new ReturnStatementFinder();
+		ReturnStatementFinder returnFinder = new ReturnStatementFinder();
 		for (IASTNode node : cont.getNodesToWrite()) {
-			node.accept(rFinder);
-			if (rFinder.containsReturn()) {
+			node.accept(returnFinder);
+			if (returnFinder.containsReturn()) {
 				initStatus.addFatalError(Messages.ExtractFunctionRefactoring_Error_Return);
 				break;
 			}
@@ -287,7 +285,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 						return finalConditions;
 					}
 				}
-				for (NameInformation name : info.getAllUsedNames()) {
+				for (NameInformation name : info.getParameterCandidates()) {
 					if (name.isUserSetIsReturnValue()) {
 						info.setReturnVariable(name);
 					}
@@ -611,7 +609,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		IASTStandardFunctionDeclarator createdFunctionDeclarator =
 				extractedFunctionConstructionHelper.createFunctionDeclarator(qname,
 						info.getDeclarator(), info.getReturnVariable(), container.getNodesToWrite(),
-						info.getAllUsedNames(), ast.getASTNodeFactory());
+						info.getParameterCandidates(), ast.getASTNodeFactory());
 		func.setDeclarator(createdFunctionDeclarator);
 
 		IASTCompoundStatement compound = new CPPASTCompoundStatement();
@@ -752,7 +750,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 
 	private IASTNode getReturnAssignment(IASTExpressionStatement stmt,
 			IASTFunctionCallExpression callExpression, IASTName retname) {
-		if (info.getReturnVariable().equals(info.getInScopeDeclaredVariable())) {
+		if (info.getReturnVariable().equals(info.getMandatoryReturnVariable())) {
 			IASTSimpleDeclaration orgDecl = NodeHelper.findSimpleDeclarationInParents(info
 					.getReturnVariable().getDeclaration());
 			IASTSimpleDeclaration decl = new CPPASTSimpleDeclaration();
@@ -796,7 +794,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		IASTStandardFunctionDeclarator declarator =
 				extractedFunctionConstructionHelper.createFunctionDeclarator(name,
 						info.getDeclarator(), info.getReturnVariable(), container.getNodesToWrite(),
-						info.getAllUsedNames(), ast.getASTNodeFactory());
+						info.getParameterCandidates(), ast.getASTNodeFactory());
 		simpleDecl.addDeclarator(declarator);
 		return simpleDecl;
 	}
@@ -811,7 +809,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 		IASTStandardFunctionDeclarator declarator =
 				extractedFunctionConstructionHelper.createFunctionDeclarator(name,
 						info.getDeclarator(), info.getReturnVariable(), container.getNodesToWrite(),
-						info.getAllUsedNames(), ast.getASTNodeFactory());
+						info.getParameterCandidates(), ast.getASTNodeFactory());
 		simpleDecl.addDeclarator(declarator);
 		return simpleDecl;
 	}
@@ -855,9 +853,9 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 	}
 
 	private void addParameterIfPossible(List<IASTInitializerClause> args,
-			List<IASTName> declarations, NameInformation nameInfo) {
-		if (!nameInfo.isDeclarationExtracted()) {
-			IASTName declaration = nameInfo.getDeclaration();
+			List<IASTName> declarations, NameInformation nameInfо) {
+		if (!nameInfо.isDeclaredInSelection()) {
+			IASTName declaration = nameInfо.getDeclaration();
 			if (!declarations.contains(declaration)) {
 				declarations.add(declaration);
 				IASTIdExpression expression = new CPPASTIdExpression();

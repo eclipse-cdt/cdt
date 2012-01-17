@@ -95,7 +95,7 @@ public abstract class ExtractedFunctionConstructionHelper {
 			Collection<NameInformation> allUsedNames, INodeFactory nodeFactory) {
 		List<IASTParameterDeclaration> result = new ArrayList<IASTParameterDeclaration>();		
 		for (NameInformation name : allUsedNames) {
-			if (!name.isDeclarationExtracted()) {
+			if (!name.isDeclaredInSelection()) {
 				result.add(name.getParameterDeclaration(name.isUserSetIsReference(), nodeFactory));
 			}
 		}

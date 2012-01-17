@@ -73,20 +73,20 @@ public class ExtractFunctionRefactoringTest extends RefactoringTest {
 	private void setValues(ExtractFunctionInformation info) {
 		info.setMethodName(methodName);
 		info.setReplaceDuplicates(replaceDuplicates);
-		if (info.getInScopeDeclaredVariable() == null) {
+		if (info.getMandatoryReturnVariable() == null) {
 			if (returnValue) {
-				info.setReturnVariable(info.getAllAfterUsedNames().get(returnParameterIndex));
-				info.getAllAfterUsedNames().get(returnParameterIndex).setUserSetIsReference(false);
+				info.setReturnVariable(info.getNamesUsedAfter().get(returnParameterIndex));
+				info.getNamesUsedAfter().get(returnParameterIndex).setUserSetIsReference(false);
 			}
 		} else {
-			info.setReturnVariable(info.getInScopeDeclaredVariable());
+			info.setReturnVariable(info.getMandatoryReturnVariable());
 		}
 		info.setVisibility(visibility);
 		info.setVirtual(virtual);
 		
-		for (NameInformation name : info.getAllAfterUsedNames()) {
+		for (NameInformation name : info.getNamesUsedAfter()) {
 			if (!name.isUserSetIsReturnValue()) {
-				name.setUserSetIsReference(name.isReference());
+				name.setUserSetIsReference(name.isOutput());
 			}
 		}
 	}

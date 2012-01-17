@@ -51,7 +51,7 @@ public class ChooserComposite extends Composite {
 		setLayout(layout);
 
 		boolean hasNoPredefinedReturnValue = true;
-		if (info.getInScopeDeclaredVariable() != null) {
+		if (info.getMandatoryReturnVariable() != null) {
 			hasNoPredefinedReturnValue = false;
 		}
 
@@ -75,14 +75,14 @@ public class ChooserComposite extends Composite {
 		}
 		addColumnToTable(table, ""); //$NON-NLS-1$
 		
-		for (int i = 0; i < info.getAllUsedNames().size(); i++) {
-			if (!info.getAllUsedNames().get(i).isDeclarationExtracted()) {
+		for (int i = 0; i < info.getParameterCandidates().size(); i++) {
+			if (!info.getParameterCandidates().get(i).isDeclaredInSelection()) {
 				TableItem item = new TableItem(table, SWT.NONE);
 
 				TableEditor editor = new TableEditor(table);
 				int columnIndex = 0;
 
-				final NameInformation name = info.getAllUsedNames().get(i);
+				final NameInformation name = info.getParameterCandidates().get(i);
 
 				// Text
 				item.setText(columnIndex++, name.getType());
@@ -95,14 +95,14 @@ public class ChooserComposite extends Composite {
 					referenceButton.setSelection(true);
 					referenceButton.setEnabled(false);
 				} else {
-					referenceButton.setSelection(name.isReference());
+					referenceButton.setSelection(name.isOutput());
 				}
 				referenceButton.setBackground(table.getBackground());
 				referenceButton.addSelectionListener(new SelectionListener() {
 					@Override
 					public void widgetDefaultSelected(SelectionEvent e) {
 						name.setUserSetIsReference(referenceButton.getSelection());
-						onVisibilityOrReturnChange(info.getAllUsedNames());
+						onVisibilityOrReturnChange(info.getParameterCandidates());
 					}
 
 					@Override
@@ -128,7 +128,7 @@ public class ChooserComposite extends Composite {
 					@Override
 					public void widgetDefaultSelected(SelectionEvent e) {
 						name.setConst(constButton.getSelection());
-						onVisibilityOrReturnChange(info.getAllUsedNames());
+						onVisibilityOrReturnChange(info.getParameterCandidates());
 					}
 
 					@Override
@@ -149,7 +149,7 @@ public class ChooserComposite extends Composite {
 				editor = new TableEditor(table);
 				final Button returnButton = new Button(table, SWT.RADIO);
 				returnButton.setSelection(name.isReturnValue());
-				name.setUserSetIsReference(name.isReference());
+				name.setUserSetIsReference(name.isOutput());
 				returnButton.setEnabled(hasNoPredefinedReturnValue);
 				returnButton.setBackground(table.getBackground());
 				returnButton.addSelectionListener(new SelectionListener() {
@@ -159,11 +159,11 @@ public class ChooserComposite extends Composite {
 						if (returnButton.getSelection()) {
 							referenceButton.setSelection(false);
 							referenceButton.notifyListeners(SWT.Selection, new Event());
-						} else if (name.isReference()) {
+						} else if (name.isOutput()) {
 							referenceButton.setSelection(true);
 							referenceButton.notifyListeners(SWT.Selection, new Event());
 						}
-						onVisibilityOrReturnChange(info.getAllUsedNames());
+						onVisibilityOrReturnChange(info.getParameterCandidates());
 					}
 
 					@Override
@@ -216,7 +216,7 @@ public class ChooserComposite extends Composite {
 	void onVisibilityOrReturnChange(List<NameInformation> name) {
 		String variableUsedAfterBlock = null;
 		for (NameInformation information : name) {
-			if (information.isUsedAfterReferences() &&
+			if (information.isReferencedAfterSelection() &&
 					!(information.isUserSetIsReference() || information.isUserSetIsReturnValue())) {
 				variableUsedAfterBlock = information.getName().toString();
 			}

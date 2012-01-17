@@ -32,7 +32,7 @@ public class ExtractFunctionComposite extends Composite {
 	private final ExtractFunctionInformation info;
 	
 	public ExtractFunctionComposite(Composite parent, ExtractFunctionInformation info,
-			ExtractFunctionInputPage ip) {
+			ExtractFunctionInputPage page) {
 		super(parent, SWT.NONE);
 		this.info = info;
 		setLayout(new GridLayout());
@@ -40,7 +40,7 @@ public class ExtractFunctionComposite extends Composite {
 		createNewMethodNameComposite(this);
 
 		Group returnGroup = createReturnGroup(nameVisiComp);
-		createReturnValueChooser(returnGroup, info, ip);		
+		createReturnValueChooser(returnGroup, info, page);		
 
 		createReplaceCheckBox(nameVisiComp);
 		
@@ -65,11 +65,11 @@ public class ExtractFunctionComposite extends Composite {
 	}
 
 	private void createReturnValueChooser(Composite parent, ExtractFunctionInformation info,
-			ExtractFunctionInputPage ip) {
+			ExtractFunctionInputPage page) {
 		GridData gridData = new GridData();
 		gridData.horizontalAlignment = GridData.FILL;
 		gridData.grabExcessHorizontalSpace = true;
-		comp = new ChooserComposite(parent, info, ip);
+		comp = new ChooserComposite(parent, info, page);
 		comp.setLayoutData(gridData);
 		comp.redraw();
 	}

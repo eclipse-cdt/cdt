@@ -12,7 +12,9 @@
 package org.eclipse.cdt.internal.ui.refactoring;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
@@ -51,7 +53,7 @@ public class NodeContainer {
 	public final NameInformation NULL_NAME_INFORMATION = new NameInformation(new CPPASTName());
 
 	private final List<IASTNode> nodes;
-	private final List<NameInformation> names;
+	private List<NameInformation> names;
 
 	public class NameInformation {
 		private IASTName name;
@@ -59,7 +61,7 @@ public class NodeContainer {
 		private final List<IASTName> references;
 		private List<IASTName> referencesAfterCached;
 		private int lastCachedReferencesHash;
-		private boolean isReference;
+		private boolean isOutput;
 		private boolean isReturnValue;
 		private boolean isConst;
 		private boolean isWriteAccess;
@@ -117,8 +119,8 @@ public class NodeContainer {
 			return referencesAfterCached;
 		}
 
-		public boolean isUsedAfterReferences() {
-			return getReferencesAfterSelection().size() > 0;
+		public boolean isReferencedAfterSelection() {
+			return !getReferencesAfterSelection().isEmpty();
 		}
 
 		public IASTParameterDeclaration getParameterDeclaration(boolean isReference,
@@ -195,7 +197,7 @@ public class NodeContainer {
 			return writer.write(declSpec);
 		}
 
-		public boolean isDeclarationExtracted() {
+		public boolean isDeclaredInSelection() {
 			if (declaration != null && declaration.toCharArray().length > 0) {
 				int declOffset = declaration.getFileLocation().getNodeOffset();
 				return declOffset >= getStartOffset() && declOffset <= getEndOffset();
@@ -205,15 +207,15 @@ public class NodeContainer {
 
 		@Override
 		public String toString() {
-			return name.toString() + ": " + (isDeclarationExtracted() ? "with declaration" : "without declaration");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+			return name.toString() + (isDeclaredInSelection() ? " (declared inside)" : "");  //$NON-NLS-1$//$NON-NLS-2$
 		}
 
-		public boolean isReference() {
-			return isReference;
+		public boolean isOutput() {
+			return isOutput;
 		}
 
-		public void setReference(boolean isReference) {
-			this.isReference = isReference;
+		public void setOutput(boolean output) {
+			this.isOutput = output;
 		}
 
 		public boolean isReturnValue() {
@@ -268,7 +270,6 @@ public class NodeContainer {
 	public NodeContainer() {
 		super();
 		nodes = new ArrayList<IASTNode>();
-		names = new ArrayList<NameInformation>();
 	}
 
 	public final int size() {
@@ -283,7 +284,11 @@ public class NodeContainer {
 		nodes.add(node);
 	}
 
-	public void findAllNames() {
+	private void findAllNames() {
+		if (names != null) {
+			return;
+		}
+		names = new ArrayList<NameInformation>();
 		for (IASTNode node : nodes) {
 			node.accept(new ASTVisitor() {
 				{
@@ -294,8 +299,7 @@ public class NodeContainer {
 				public int visit(IASTName name) {
 					IBinding bind = name.resolveBinding();
 
-					if (bind instanceof ICPPBinding
-							&& !(bind instanceof ICPPTemplateTypeParameter)) {
+					if (bind instanceof ICPPBinding	&& !(bind instanceof ICPPTemplateTypeParameter)) {
 						ICPPBinding cppBind = (ICPPBinding) bind;
 						try {
 							if (!cppBind.isGloballyQualified()) {
@@ -326,35 +330,33 @@ public class NodeContainer {
 			});
 		}
 
-		for (NameInformation nameInf : names) {
-			IASTName name = nameInf.getName();
+		for (NameInformation nameInfo : names) {
+			IASTName name = nameInfo.getName();
 
 			IASTTranslationUnit unit = name.getTranslationUnit();
 			IASTName[] decls = unit.getDeclarationsInAST(name.resolveBinding());
 			for (IASTName declaration : decls) {
-				nameInf.setDeclaration(declaration);
+				nameInfo.setDeclaration(declaration);
+			}
+			if (nameInfo.isReferencedAfterSelection()) {
+				nameInfo.setOutput(true);
 			}
 		}
 	}
 
 	/*
-	 * Returns all local names in the selection which will be used after the
-	 * selection expected the ones which are pointers
+	 * Returns all local names in the selection which are referenced after the selection.
 	 */
-	public List<NameInformation> getAllAfterUsedNames() {
-		ArrayList<IASTName> declarations = new ArrayList<IASTName>();
-		ArrayList<NameInformation> usedAfter = new ArrayList<NameInformation>();
+	public List<NameInformation> getNamesUsedAfter() {
+		findAllNames();
 
-		if (names.size() <= 0) {
-			findAllNames();
-		}
+		Set<IASTName> declarations = new HashSet<IASTName>();
+		List<NameInformation> usedAfter = new ArrayList<NameInformation>();
 
-		for (NameInformation nameInf : names) {
-			if (!declarations.contains(nameInf.getDeclaration())) {
-				declarations.add(nameInf.getDeclaration());
-				if (nameInf.isUsedAfterReferences()) {
-					usedAfter.add(nameInf);
-					nameInf.setReference(true);
+		for (NameInformation nameInfo : names) {
+			if (declarations.add(nameInfo.getDeclaration())) {
+				if (nameInfo.isReferencedAfterSelection()) {
+					usedAfter.add(nameInfo);
 				}
 			}
 		}
@@ -362,15 +364,16 @@ public class NodeContainer {
 		return usedAfter;
 	}
 
-	public List<NameInformation> getAllAfterUsedNamesChoosenByUser() {
-		ArrayList<IASTName> declarations = new ArrayList<IASTName>();
-		ArrayList<NameInformation> usedAfter = new ArrayList<NameInformation>();
+	public List<NameInformation> getNamesUsedAfterChoosenByUser() {
+		findAllNames();
 
-		for (NameInformation nameInf : names) {
-			if (!declarations.contains(nameInf.getDeclaration())) {
-				declarations.add(nameInf.getDeclaration());
-				if (nameInf.isUserSetIsReference() || nameInf.isUserSetIsReturnValue()) {
-					usedAfter.add(nameInf);
+		Set<IASTName> declarations = new HashSet<IASTName>();
+		List<NameInformation> usedAfter = new ArrayList<NameInformation>();
+
+		for (NameInformation nameInfo : names) {
+			if (declarations.add(nameInfo.getDeclaration())) {
+				if (nameInfo.isUserSetIsReference() || nameInfo.isUserSetIsReturnValue()) {
+					usedAfter.add(nameInfo);
 				}
 			}
 		}
@@ -379,21 +382,18 @@ public class NodeContainer {
 	}
 
 	public List<NameInformation> getUsedNamesUnique() {
-		ArrayList<IASTName> declarations = new ArrayList<IASTName>();
-		ArrayList<NameInformation> usedAfter = new ArrayList<NameInformation>();
+		findAllNames();
 
-		if (names.size() <= 0) {
-			findAllNames();
-		}
+		Set<IASTName> declarations = new HashSet<IASTName>();
+		List<NameInformation> usedAfter = new ArrayList<NameInformation>();
 
-		for (NameInformation nameInf : names) {
-			if (!declarations.contains(nameInf.getDeclaration())) {
-				declarations.add(nameInf.getDeclaration());
-				usedAfter.add(nameInf);
+		for (NameInformation nameInfo : names) {
+			if (declarations.add(nameInfo.getDeclaration())) {
+				usedAfter.add(nameInfo);
 			} else {
 				for (NameInformation nameInformation : usedAfter) {
-					if (nameInf.isWriteAccess()
-							&& nameInf.getDeclaration() == nameInformation.getDeclaration()) {
+					if (nameInfo.isWriteAccess() &&
+							nameInfo.getDeclaration() == nameInformation.getDeclaration()) {
 						nameInformation.setWriteAccess(true);
 					}
 				}
@@ -403,24 +403,21 @@ public class NodeContainer {
 		return usedAfter;
 	}
 
-	/*
-	 * Returns all local names in the selection which will be used after the
-	 * selection expected the ones which are pointers
-	 * XXX Was soll dieser Kommentar aussagen? --Mirko
+	/**
+	 * Returns all variables declared in the selection, which will are referenced after
+	 * the selection.
 	 */
-	public List<NameInformation> getAllDeclaredInScope() {
-		ArrayList<IASTName> declarations = new ArrayList<IASTName>();
-		ArrayList<NameInformation> usedAfter = new ArrayList<NameInformation>();
+	public List<NameInformation> getReturnValueCandidates() {
+		Set<IASTName> declarations = new HashSet<IASTName>();
+		List<NameInformation> usedAfter = new ArrayList<NameInformation>();
 
 		for (NameInformation nameInfo : names) {
-			if (nameInfo.isDeclarationExtracted() &&
-					!declarations.contains(nameInfo.getDeclaration()) &&
-					nameInfo.isUsedAfterReferences()) {
-				declarations.add(nameInfo.getDeclaration());
+			if (nameInfo.isDeclaredInSelection() &&	nameInfo.isReferencedAfterSelection() &&
+					declarations.add(nameInfo.getDeclaration())) {
 				usedAfter.add(nameInfo);
-				// Is return value candidate, set return value to true and reference to false
+				// It's a return value candidate, set return value to true and reference to false
 				nameInfo.setReturnValue(true);
-				nameInfo.setReference(false);
+				nameInfo.setOutput(false);
 			}
 		}
 
@@ -516,6 +513,7 @@ public class NodeContainer {
 	}
 
 	public List<NameInformation> getNames() {
+		findAllNames();
 		return names;
 	}
 }

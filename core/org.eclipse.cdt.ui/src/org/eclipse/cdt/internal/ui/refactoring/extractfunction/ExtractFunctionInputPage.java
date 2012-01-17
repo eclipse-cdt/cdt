@@ -53,7 +53,6 @@ public class ExtractFunctionInputPage extends UserInputWizardPage {
 		
 		for (Control buttons : comp.getVisibiltyGroup().getChildren()) {
 			buttons.addMouseListener(new MouseAdapter() {
-
 				@Override
 				public void mouseUp(MouseEvent e) {
 					String text = ((Button)e.getSource()).getText();

@@ -1884,10 +1884,10 @@ public class PreferenceConstants {
 	 * @since 5.3
 	 */
 	public static final int NAME_STYLE_CAPITALIZATION_LOWER_CAMEL_CASE = 4;
-	
+
 	/**
-	 * A named preference that controls order of private/protected/public class members in generated
-	 * code.
+	 * A named preference that controls the order of private/protected/public class members in
+	 * generated code.
 	 * <p>
 	 * Value is of type <code>Boolean</code>. The <code>true</code> value means that private members
 	 * are before public ones. The default is to put public members before private ones.
@@ -1895,6 +1895,28 @@ public class PreferenceConstants {
 	 * @since 5.4
 	 */
 	public static final String CLASS_MEMBER_ASCENDING_VISIBILITY_ORDER = "class_member_ascending_visibility_order"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls the order of parameters of generated functions.
+	 * <p>
+	 * Value is of type <code>Boolean</code>. The <code>true</code> value means that output
+	 * parameters are before the input ones. The default is to put outputparameters after the input
+	 * ones.
+	 * 
+	 * @since 5.4
+	 */
+	public static final String FUNCTION_OUTPUT_PARAMETERS_BEFORE_INPUT = "function_output_parameters_before_input"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls whether output parameters of generated functions are passed
+	 * by pointer or by reference.
+	 * <p>
+	 * Value is of type <code>Boolean</code>. The <code>true</code> value means that output
+	 * parameters are passed by pointer. The default is to pass output parameters by reference.
+	 * 
+	 * @since 5.4
+	 */
+	public static final String FUNCTION_PASS_OUTPUT_PARAMETERS_BY_POINTER = "function_pass_output_parameters_by_pointer"; //$NON-NLS-1$
 
 
 	/**
@@ -2103,6 +2125,8 @@ public class PreferenceConstants {
 
 		// Code style
 		store.setDefault(CLASS_MEMBER_ASCENDING_VISIBILITY_ORDER, false);
+		store.setDefault(FUNCTION_OUTPUT_PARAMETERS_BEFORE_INPUT, false);
+		store.setDefault(FUNCTION_PASS_OUTPUT_PARAMETERS_BY_POINTER, false);
 
 		// Colors that are set by the current theme
 		CUIPreferenceInitializer.setThemeBasedPreferences(store, false);

@@ -63,7 +63,7 @@ final class SimilarFinderVisitor extends ASTVisitor {
 			if (statementCount == statements.size()) {
 				// Found similar code
 				boolean similarOnReturnWays = true;
-				for (NameInformation nameInfo : similarContainer.getAllAfterUsedNames()) {
+				for (NameInformation nameInfo : similarContainer.getNamesUsedAfter()) {
 					if (refactoring.names.containsKey(nameInfo.getDeclaration().getRawSignature())) {
 						Integer nameOrderNumber = refactoring.names.get(nameInfo.getDeclaration().getRawSignature());
 						if (refactoring.nameTrail.containsValue(nameOrderNumber)) {
@@ -75,7 +75,7 @@ final class SimilarFinderVisitor extends ASTVisitor {
 								}
 							}
 							if (orgName != null) {
-								for (NameInformation orgNameInfo : refactoring.container.getAllAfterUsedNamesChoosenByUser()) {
+								for (NameInformation orgNameInfo : refactoring.container.getNamesUsedAfterChoosenByUser()) {
 									if (orgName.equals(orgNameInfo.getDeclaration().getRawSignature())) {
 										found = true;
 									}

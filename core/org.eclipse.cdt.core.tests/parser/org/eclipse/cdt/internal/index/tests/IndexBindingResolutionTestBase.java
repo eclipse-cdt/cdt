@@ -256,7 +256,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		private ICProject cproject;
 		private StringBuilder[] testData;
 		private IASTTranslationUnit ast;
-		private boolean cpp;
+		private final boolean cpp;
 
 		public SinglePDOMTestFirstASTStrategy(boolean cpp) {
 			this.cpp = cpp;
@@ -342,7 +342,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		private ICProject cproject;
 		private StringBuilder[] testData;
 		private IASTTranslationUnit ast;
-		private boolean cpp;
+		private final boolean cpp;
 
 		public SinglePDOMTestStrategy(boolean cpp) {
 			this.cpp = cpp;
@@ -392,7 +392,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 			assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
 			
 			if (DEBUG) {
-				System.out.println("Project PDOM: "+getName());
+				System.out.println("Project PDOM: " + getName());
 				((PDOM)CCoreInternals.getPDOMManager().getPDOM(cproject)).accept(new PDOMPrettyPrinter());
 			}
 
@@ -501,7 +501,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 			assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
 			
 			if (DEBUG) {
-				System.out.println("Project PDOM: "+getName());
+				System.out.println("Project PDOM: " + getName());
 				((PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject)).accept(new PDOMPrettyPrinter());
 			}
 
@@ -539,7 +539,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		private ICProject cproject, referenced;
 		private StringBuilder[] testData;
 		private IASTTranslationUnit ast;
-		private boolean cpp;
+		private final boolean cpp;
 
 		public ReferencedProject(boolean cpp) {
 			this.cpp = cpp;

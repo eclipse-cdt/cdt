@@ -17,7 +17,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.eclipse.cdt.core.tests.BaseTestFramework;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
@@ -25,10 +24,12 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.TextSelection;
 
+import org.eclipse.cdt.core.tests.BaseTestFramework;
+
 /**
  * @author Guido Zgraggen IFS
  */
-public abstract class RefactoringBaseTest extends BaseTestFramework implements ILogListener{
+public abstract class RefactoringBaseTest extends BaseTestFramework implements ILogListener {
 	protected static final NullProgressMonitor NULL_PROGRESS_MONITOR = new NullProgressMonitor();
 	
 	protected TreeMap<String, TestSourceFile> fileMap = new TreeMap<String, TestSourceFile>();
@@ -48,7 +49,6 @@ public abstract class RefactoringBaseTest extends BaseTestFramework implements I
 
 	@Override
 	protected abstract void runTest() throws Throwable;
-	
 
 	@Override
 	protected void setUp() throws Exception {
@@ -96,14 +96,14 @@ public abstract class RefactoringBaseTest extends BaseTestFramework implements I
 	@Override
 	public void logging(IStatus status, String plugin) {
 		Throwable ex = status.getException();
-		StringBuffer stackTrace = new StringBuffer();
-		if(ex != null) {
+		StringBuilder stackTrace = new StringBuilder();
+		if (ex != null) {
 			stackTrace.append('\n');
-			for(StackTraceElement ste : ex.getStackTrace()) {
+			for (StackTraceElement ste : ex.getStackTrace()) {
 				stackTrace.append(ste.toString());
 			}
 		}
-		fail("Log-Message: " + status.getMessage() + stackTrace.toString());		 //$NON-NLS-1$
+		fail("Log-Message: " + status.getMessage() + stackTrace.toString());  //$NON-NLS-1$
 	}
 
 	public void setFileWithSelection(String fileWithSelection) {

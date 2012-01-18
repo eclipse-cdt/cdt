@@ -840,9 +840,9 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 	}
 
 	private void addParameterIfPossible(List<IASTInitializerClause> args,
-			List<IASTName> declarations, NameInformation nameInfо) {
-		if (!nameInfо.isDeclaredInSelection()) {
-			IASTName declaration = nameInfо.getDeclaration();
+			List<IASTName> declarations, NameInformation nameInfo) {
+		if (!nameInfo.isDeclaredInSelection()) {
+			IASTName declaration = nameInfo.getDeclaration();
 			if (!declarations.contains(declaration)) {
 				declarations.add(declaration);
 				IASTIdExpression expression = new CPPASTIdExpression();

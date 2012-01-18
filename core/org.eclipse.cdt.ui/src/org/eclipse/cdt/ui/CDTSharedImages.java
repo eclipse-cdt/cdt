@@ -210,6 +210,37 @@ public class CDTSharedImages {
     public static final String IMG_VIEW_PIN_ACTION_B = "icons/obj16/toolbar_pinned_b.gif"; //$NON-NLS-1$
     public static final String IMG_VIEW_PIN_ACTION_MULTI = "icons/obj16/toolbar_pinned_multi.gif"; //$NON-NLS-1$
 
+	// Language Settings Images
+	/** @since 5.4 */
+	public static final String IMG_OBJS_LANG_SETTINGS_PROVIDER = "icons/obj16/ls_entries_provider.gif"; //$NON-NLS-1$
+	/** @since 5.4 */
+	public static final String IMG_ETOOL_PROJECT = "icons/etool16/prj_obj.gif"; //$NON-NLS-1$
+
+	/** @since 5.4 */
+	public static final String IMG_OVR_GLOBAL = "icons/ovr16/global_ovr.gif"; //$NON-NLS-1$
+	/** @since 5.4 */
+	public static final String IMG_OVR_IMPORT = "icons/ovr16/import_co.gif"; //$NON-NLS-1$
+	/** @since 5.4 */
+	public static final String IMG_OVR_LINK = "icons/ovr16/link_ovr.gif"; //$NON-NLS-1$
+	/** @since 5.4 */
+	public static final String IMG_OVR_CONFIGURATION = "icons/ovr16/cfg_ovr.gif"; //$NON-NLS-1$
+	/** @since 5.4 */
+	public static final String IMG_OVR_PARENT = "icons/ovr16/path_inherit_co.gif"; //$NON-NLS-1$
+	/** @since 5.4 */
+	public static final String IMG_OVR_INDEXED = "icons/ovr16/indexedFile.gif"; //$NON-NLS-1$
+	/** @since 5.4 */
+	public static final String IMG_OVR_REFERENCE = "icons/ovr16/referencedby_co.gif"; //$NON-NLS-1$
+	/** @since 5.4 */
+	public static final String IMG_OVR_PROJECT = "icons/ovr16/project_co.gif"; //$NON-NLS-1$
+	/** @since 5.4 */
+	public static final String IMG_OVR_CONTEXT = "icons/ovr16/overlay-has-context.gif"; //$NON-NLS-1$
+	/** @since 5.4 */
+	public static final String IMG_OVR_LOCK = "icons/ovr16/lock_ovr.gif"; //$NON-NLS-1$
+	/** @since 5.4 */
+	public static final String IMG_OVR_EDITED = "icons/ovr16/edited_ov.gif"; //$NON-NLS-1$
+	/** @since 5.4 */
+	public static final String IMG_OVR_EMPTY = "icons/ovr16/empty_ovr.png"; //$NON-NLS-1$
+
 	/**
 	 * The method finds URL of the image corresponding to the key which could be project-relative path
 	 * of the image in org.eclipse.cdt.ui plugin or a (previously registered) string representation of URL

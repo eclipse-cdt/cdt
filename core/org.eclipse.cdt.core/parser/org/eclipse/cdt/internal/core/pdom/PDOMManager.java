@@ -48,6 +48,7 @@ import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.index.IIndexerStateListener;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.index.IndexerSetupParticipant;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICContainer;
@@ -168,6 +169,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 	private CModelListener fCModelListener= new CModelListener(this);
 	private ILanguageMappingChangeListener fLanguageChangeListener = new LanguageMappingChangeListener(this);
+	private LanguageSettingsChangeListener fLanguageSettingsChangeListener = new LanguageSettingsChangeListener(this);
 	private final ICProjectDescriptionListener fProjectDescriptionListener;
 	private final JobChangeListener fJobChangeListener;
 	private final IPreferenceChangeListener fPreferenceChangeListener;
@@ -241,6 +243,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(fCModelListener, IResourceChangeEvent.POST_BUILD);
 		model.addElementChangedListener(fCModelListener);
 		LanguageManager.getInstance().registerLanguageChangeListener(fLanguageChangeListener);
+		LanguageSettingsManager.registerLanguageSettingsChangeListener(fLanguageSettingsChangeListener);
 		final int types= CProjectDescriptionEvent.DATA_APPLIED;
 		CCorePlugin.getDefault().getProjectDescriptionManager().addCProjectDescriptionListener(fProjectDescriptionListener, types);
 
@@ -261,6 +264,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		final CoreModel model = CoreModel.getDefault();
 		model.removeElementChangedListener(fCModelListener);
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(fCModelListener);
+		LanguageSettingsManager.unregisterLanguageSettingsChangeListener(fLanguageSettingsChangeListener);
 		LanguageManager.getInstance().unregisterLanguageChangeListener(fLanguageChangeListener);
 		PDOMIndexerJob jobToCancel= null;
 		synchronized (fTaskQueue) {

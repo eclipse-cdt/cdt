@@ -655,6 +655,7 @@
    <extension-point id="ScannerInfoProvider2" name="%scannerInfoProvider2.name" schema="schema/ScannerInfoProvider2.exsd"/>
    <extension-point id="EFSExtensionProvider" name="%efsExtensionProvider.name" schema="schema/EFSExtensionProvider.exsd"/>
    <extension-point id="RefreshExclusionFactory" name="%refreshExclusionFactory.name" schema="schema/RefreshExclusionFactory.exsd"/>
+   <extension-point id="LanguageSettingsProvider" name="%LanguageSettingsProvider.name" schema="schema/LanguageSettingsProvider.exsd"/>
    <extension-point id="UNCPathConverter" name="%uncPathConverter.name" schema="schema/UNCPathConverter.exsd"/>
 
    <extension
@@ -764,6 +765,13 @@
             exclusionClass="org.eclipse.cdt.internal.core.resources.ResourceExclusion"
             factoryClass="org.eclipse.cdt.internal.core.resources.ResourceExclusionFactory">
       </exclusionFactory>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.core.EFSExtensionProvider">
+      <EFSExtensionProvider
+            class="org.eclipse.cdt.internal.core.resources.CygwinEFSExtensionProvider"
+            scheme="cygwin">
+      </EFSExtensionProvider>
    </extension>
 
 </plugin>

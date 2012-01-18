@@ -23,12 +23,17 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
+import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.templateengine.process.ProcessFailureException;
+import org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProviderAssociationManager;
 import org.eclipse.cdt.internal.ui.wizards.ICDTCommonProjectWizard;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildProperty;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
@@ -41,8 +46,8 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
-import org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIPlugin;
 import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
+import org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIPlugin;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.cdt.ui.templateengine.IWizardDataPage;
 import org.eclipse.cdt.ui.templateengine.Template;
@@ -73,10 +78,10 @@ import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 
 /**
  * This object is created per each Project type
- *  
+ *
  * It is responsible for:
  * - corresponding line in left pane of 1st wizard page
- * - whole view of right pane, including 
+ * - whole view of right pane, including
  *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
@@ -84,16 +89,22 @@ import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 public class MBSWizardHandler extends CWizardHandler {
 	public static final String ARTIFACT = "org.eclipse.cdt.build.core.buildArtefactType";  //$NON-NLS-1$
 	public static final String EMPTY_STR = "";  //$NON-NLS-1$
-	
+
 	private static final String PROPERTY = "org.eclipse.cdt.build.core.buildType"; //$NON-NLS-1$
 	private static final String PROP_VAL = PROPERTY + ".debug"; //$NON-NLS-1$
-	private static final String tooltip = 
-		Messages.CWizardHandler_1 + 
-		Messages.CWizardHandler_2 + 
-		Messages.CWizardHandler_3 + 
-		Messages.CWizardHandler_4 + 
-		Messages.CWizardHandler_5; 
-	
+
+	private static final String UI_USER_LANGUAGE_SETTINGS_PROVIDER = "org.eclipse.cdt.ui.user.LanguageSettingsProvider";
+	/** @since 8.1 */
+	public static final String MBS_LANGUAGE_SETTINGS_PROVIDER = "org.eclipse.cdt.managedbuilder.core.LanguageSettingsProvider";
+	private static final String LANGUAGE_SETTINGS_PROVIDER_DELIMITER = ";";
+
+	private static final String tooltip =
+		Messages.CWizardHandler_1 +
+		Messages.CWizardHandler_2 +
+		Messages.CWizardHandler_3 +
+		Messages.CWizardHandler_4 +
+		Messages.CWizardHandler_5;
+
 	protected SortedMap<String, IToolChain> full_tcs = new TreeMap<String, IToolChain>();
 	private String propertyId = null;
 	private IProjectType pt = null;
@@ -106,12 +117,12 @@ public class MBSWizardHandler extends CWizardHandler {
 	private EntryInfo entryInfo;
 	protected CfgHolder[] cfgs = null;
 	protected IWizardPage[] customPages;
-	
+
 	/**
 	 * Current list of preferred toolchains
 	 */
 	private List<String> preferredTCs = new ArrayList<String>();
-		
+
 	protected static final class EntryInfo {
 		private SortedMap<String, IToolChain> tcs;
 		private EntryDescriptor entryDescriptor;
@@ -124,12 +135,12 @@ public class MBSWizardHandler extends CWizardHandler {
 		private IWizardPage predatingPage;
 		private IWizardPage followingPage;
 		private IWizard wizard;
-		
+
 		public EntryInfo(EntryDescriptor dr, SortedMap<String, IToolChain> _tcs){
 			entryDescriptor = dr;
 			tcs = _tcs;
 		}
-	
+
 		/**
 		 * @since 5.1
 		 */
@@ -137,7 +148,7 @@ public class MBSWizardHandler extends CWizardHandler {
 			this(dr, _tcs);
 			wizard = w;
 		}
-		
+
 		public boolean isValid(){
 			initialize();
 			return isValid;
@@ -147,7 +158,7 @@ public class MBSWizardHandler extends CWizardHandler {
 			initialize();
 			return template;
 		}
-		
+
 		public EntryDescriptor getDescriptor(){
 			return entryDescriptor;
 		}
@@ -155,19 +166,19 @@ public class MBSWizardHandler extends CWizardHandler {
 		private void initialize(){
 			if(initialized)
 				return;
-			
+
 			do {
 				if(entryDescriptor == null)
 					break;
 				String path[] = entryDescriptor.getPathArray();
 				if(path == null || path.length == 0)
 					break;
-			
+
 				projectTypeId = path[0];
-				if(!entryDescriptor.isDefaultForCategory() && 
+				if(!entryDescriptor.isDefaultForCategory() &&
 						path.length > 1 && (!path[0].equals(ManagedBuildWizard.OTHERS_LABEL))){
-					templateId = path[path.length - 1]; 
-					Template templates[] = null; 
+					templateId = path[path.length - 1];
+					Template templates[] = null;
 					if(wizard instanceof ICDTCommonProjectWizard) {
 						ICDTCommonProjectWizard wz = (ICDTCommonProjectWizard)wizard;
 						String[] langIDs = wz.getLanguageIDs();
@@ -176,38 +187,38 @@ public class MBSWizardHandler extends CWizardHandler {
 							for (String id : langIDs) {
 								lstTemplates.addAll(Arrays.asList(TemplateEngineUI.getDefault().
 									getTemplates(projectTypeId, null, id)));
-							} 
+							}
 							templates = lstTemplates.toArray(new Template[lstTemplates.size()]);
 						}
-					} 
+					}
 					if(null == templates) {
 						 templates = TemplateEngineUI.getDefault().getTemplates(projectTypeId);
 					}
 					if((null == templates) || (templates.length == 0))
 						break;
-					
+
 					for (Template t : templates) {
 						if(t.getTemplateId().equals(templateId)){
 							template = t;
 							break;
 						}
 					}
-					
+
 					if(template == null)
 						break;
 				}
-				
+
 				isValid = true;
 			} while(false);
 
 			initialized = true;
 		}
-		
+
 		public Template getInitializedTemplate(IWizardPage predatingPage, IWizardPage followingPage, Map<String, String> map){
 			getNextPage(predatingPage, followingPage);
-			
+
 			Template template = getTemplate();
-			
+
 			if(template != null){
 				Map<String, String> valueStore = template.getValueStore();
 //				valueStore.clear();
@@ -223,11 +234,11 @@ public class MBSWizardHandler extends CWizardHandler {
 			}
 			return template;
 		}
-		
+
 		public IWizardPage getNextPage(IWizardPage predatingPage, IWizardPage followingPage) {
 			initialize();
-			if(this.templatePages == null 
-					|| this.predatingPage != predatingPage 
+			if(this.templatePages == null
+					|| this.predatingPage != predatingPage
 					|| this.followingPage != followingPage){
 				this.predatingPage = predatingPage;
 				this.followingPage = followingPage;
@@ -238,12 +249,12 @@ public class MBSWizardHandler extends CWizardHandler {
 					followingPage.setPreviousPage(predatingPage);
 				}
 			}
-			
+
 			if(templatePages.length != 0)
 				return templatePages[0];
 			return followingPage;
 		}
-		
+
 		private boolean canFinish(IWizardPage predatingPage, IWizardPage followingPage){
 			getNextPage(predatingPage, followingPage);
 			for(int i = 0; i < templatePages.length; i++){
@@ -252,47 +263,47 @@ public class MBSWizardHandler extends CWizardHandler {
 			}
 			return true;
 		}
-		
+
 		/**
-		 * Filters toolchains   
-		 * 
+		 * Filters toolchains
+		 *
 		 * @return - set of compatible toolchain's IDs
 		 */
 		protected Set<String> tc_filter() {
 			Set<String> full = tcs.keySet();
-			if (entryDescriptor == null) 
+			if (entryDescriptor == null)
 				return full;
 			Set<String> out = new LinkedHashSet<String>(full.size());
 			for (String s : full)
-				if (isToolChainAcceptable(s)) 
+				if (isToolChainAcceptable(s))
 					out.add(s);
 			return out;
 		}
 
 		/**
 		 * Checks whether given toolchain can be displayed
-		 * 
+		 *
 		 * @param tcId - toolchain _NAME_ to check
 		 * @return - true if toolchain can be displayed
 		 */
 		public boolean isToolChainAcceptable(String tcId) {
-			if (template == null || template.getTemplateInfo() == null) 
+			if (template == null || template.getTemplateInfo() == null)
 				return true;
-			
+
 			String[] toolChainIds = template.getTemplateInfo().getToolChainIds();
-			if (toolChainIds == null || toolChainIds.length == 0) 
+			if (toolChainIds == null || toolChainIds.length == 0)
 				return true;
-			
+
 			Object ob = tcs.get(tcId);
 			if (ob == null)
 				return true; // sic ! This can occur with Other Toolchain only
 			if (!(ob instanceof IToolChain))
 				return false;
-			
+
 			String id1 = ((IToolChain)ob).getId();
 			IToolChain sup = ((IToolChain)ob).getSuperClass();
 			String id2 = sup == null ? null : sup.getId();
-			
+
 			for (String id : toolChainIds) {
 				if ((id != null && id.equals(id1)) ||
 					(id != null && id.equals(id2)))
@@ -305,20 +316,20 @@ public class MBSWizardHandler extends CWizardHandler {
 			return tc_filter().size();
 		}
 	}
-	
+
 	public MBSWizardHandler(IProjectType _pt, Composite p, IWizard w) {
-		super(p, Messages.CWizardHandler_0, _pt.getName()); 
+		super(p, Messages.CWizardHandler_0, _pt.getName());
 		pt = _pt;
 		setWizard(w);
 	}
 
 	public MBSWizardHandler(String name, Composite p, IWizard w) {
-		super(p, Messages.CWizardHandler_0, name); 
+		super(p, Messages.CWizardHandler_0, name);
 		setWizard(w);
 	}
 
 	public MBSWizardHandler(IBuildPropertyValue val, Composite p, IWizard w) {
-		super(p, Messages.CWizardHandler_0, val.getName()); 
+		super(p, Messages.CWizardHandler_0, val.getName());
 		propertyId = val.getId();
 		setWizard(w);
 	}
@@ -330,16 +341,16 @@ public class MBSWizardHandler extends CWizardHandler {
 			startingPage = w.getStartingPage();
 		}
 	}
-	
+
 	protected IWizardPage getStartingPage(){
 		return startingPage;
 	}
-	
+
 	public Map<String, String> getMainPageData() {
 		WizardNewProjectCreationPage page = (WizardNewProjectCreationPage)getStartingPage();
 		Map<String, String> data = new HashMap<String, String>();
 		String projName = page.getProjectName();
-		projName = projName != null ? projName.trim() : EMPTY_STR; 
+		projName = projName != null ? projName.trim() : EMPTY_STR;
 		data.put("projectName", projName); //$NON-NLS-1$
 		data.put("baseName", getBaseName(projName)); //$NON-NLS-1$
 		data.put("baseNameUpper", getBaseName(projName).toUpperCase() ); //$NON-NLS-1$
@@ -350,7 +361,7 @@ public class MBSWizardHandler extends CWizardHandler {
 		data.put("location", location); //getProjectLocation().toPortableString()); //$NON-NLS-1$
 		return data;
 	}
-	
+
 	private String getBaseName(String name) {
 		String baseName = name;
 		int dot = baseName.lastIndexOf('.');
@@ -363,11 +374,11 @@ public class MBSWizardHandler extends CWizardHandler {
 		}
 		return baseName;
 	}
-	
+
 	@Override
 	public void handleSelection() {
 		List<String> preferred = CDTPrefUtil.getPreferredTCs();
-		
+
 		if (table == null) {
 			table = new Table(parent, SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
 			table.getAccessible().addAccessibleListener(
@@ -400,7 +411,7 @@ public class MBSWizardHandler extends CWizardHandler {
 					counter++;
 				}
 				if (counter > 0) table.select(position);
-			}			
+			}
 			table.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -421,11 +432,11 @@ public class MBSWizardHandler extends CWizardHandler {
 		if (listener != null)
 			listener.toolChainListChanged(table.getSelectionCount());
 	}
-	
+
 	private void loadCustomPages() {
-		if (! (getWizard() instanceof ICDTCommonProjectWizard)) 
-			return; // not probable 
-		
+		if (! (getWizard() instanceof ICDTCommonProjectWizard))
+			return; // not probable
+
 		ICDTCommonProjectWizard wz = (ICDTCommonProjectWizard)getWizard();
 		MBSCustomPageManager.init();
 		MBSCustomPageManager.addStockPage(getStartingPage(), CDTMainWizardPage.PAGE_ID);
@@ -438,9 +449,9 @@ public class MBSWizardHandler extends CWizardHandler {
 
 		customPages = MBSCustomPageManager.getCustomPages();
 
-		if (customPages == null) 
+		if (customPages == null)
 			customPages = new IWizardPage[0];
-		
+
 		for (IWizardPage customPage : customPages)
 			customPage.setWizard(wz);
 		setCustomPagesFilter(wz);
@@ -463,13 +474,13 @@ public class MBSWizardHandler extends CWizardHandler {
 		boolean ptIsNull = (getProjectType() == null);
 		if (!ptIsNull)
 			MBSCustomPageManager.addPageProperty(
-					MBSCustomPageManager.PAGE_ID, 
-					MBSCustomPageManager.PROJECT_TYPE, 
+					MBSCustomPageManager.PAGE_ID,
+					MBSCustomPageManager.PROJECT_TYPE,
 					getProjectType().getId()
 				);
 
 		IToolChain[] tcs = getSelectedToolChains();
-		ArrayList<IToolChain> x = new ArrayList<IToolChain>();			
+		ArrayList<IToolChain> x = new ArrayList<IToolChain>();
 		TreeSet<String> y = new TreeSet<String>();
 		if (tcs!=null) {
 			int n = tcs.length;
@@ -477,7 +488,7 @@ public class MBSWizardHandler extends CWizardHandler {
 				if (tcs[i] == null) // --- NO TOOLCHAIN ---
 					continue;       // has no custom pages.
 				x.add(tcs[i]);
-	
+
 				IConfiguration cfg = tcs[i].getParent();
 				if (cfg == null)
 					continue;
@@ -487,24 +498,24 @@ public class MBSWizardHandler extends CWizardHandler {
 			}
 		}
 		MBSCustomPageManager.addPageProperty(
-				MBSCustomPageManager.PAGE_ID, 
-				MBSCustomPageManager.TOOLCHAIN, 
+				MBSCustomPageManager.PAGE_ID,
+				MBSCustomPageManager.TOOLCHAIN,
 				x);
-		
+
 		if (ptIsNull) {
 			if (y.size() > 0)
 				MBSCustomPageManager.addPageProperty(
-						MBSCustomPageManager.PAGE_ID, 
-						MBSCustomPageManager.PROJECT_TYPE, 
+						MBSCustomPageManager.PAGE_ID,
+						MBSCustomPageManager.PROJECT_TYPE,
 						y);
 			else
 				MBSCustomPageManager.addPageProperty(
-						MBSCustomPageManager.PAGE_ID, 
-						MBSCustomPageManager.PROJECT_TYPE, 
+						MBSCustomPageManager.PAGE_ID,
+						MBSCustomPageManager.PROJECT_TYPE,
 						null);
 		}
 	}
-	
+
 	@Override
 	public void handleUnSelection() {
 		if (table != null) {
@@ -517,16 +528,16 @@ public class MBSWizardHandler extends CWizardHandler {
 		if (tc.isAbstract() || tc.isSystemObject()) return;
 		IConfiguration[] cfgs = null;
 		// New style managed project type. Configurations are referenced via propertyId.
-		if (propertyId != null) { 
+		if (propertyId != null) {
 			cfgs = ManagedBuildManager.getExtensionConfigurations(tc, ARTIFACT, propertyId);
 		// Old style managewd project type. Configs are obtained via projectType
 		} else if (pt != null) {
 			cfgs = ManagedBuildManager.getExtensionConfigurations(tc, pt);
-		} 
+		}
 		if (cfgs == null || cfgs.length == 0) return;
 		full_tcs.put(tc.getUniqueRealName(), tc);
 	}
-		
+
 	@Override
 	public void createProject(IProject project, boolean defaults, boolean onFinish, IProgressMonitor monitor) throws CoreException {
 		try {
@@ -544,20 +555,20 @@ public class MBSWizardHandler extends CWizardHandler {
 	public void convertProject(IProject proj, IProgressMonitor monitor) throws CoreException {
 		setProjectDescription(proj, true, true, monitor);
 	}
-	
+
 	private void setProjectDescription(IProject project, boolean defaults, boolean onFinish, IProgressMonitor monitor) throws CoreException {
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
 		ICProjectDescription des = mngr.createProjectDescription(project, false, !onFinish);
 		ManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
 		monitor.worked(10);
 		cfgs = getCfgItems(false);
-		if (cfgs == null || cfgs.length == 0) 
+		if (cfgs == null || cfgs.length == 0)
 			cfgs = CDTConfigWizardPage.getDefaultCfgs(this);
-		
+
 		if (cfgs == null || cfgs.length == 0 || cfgs[0].getConfiguration() == null) {
-			throw new CoreException(new Status(IStatus.ERROR, 
+			throw new CoreException(new Status(IStatus.ERROR,
 					ManagedBuilderUIPlugin.getUniqueIdentifier(),
-					Messages.CWizardHandler_6)); 
+					Messages.CWizardHandler_6));
 		}
 		Configuration cf = (Configuration)cfgs[0].getConfiguration();
 		ManagedProject mProj = new ManagedProject(project, cf.getProjectType());
@@ -565,12 +576,12 @@ public class MBSWizardHandler extends CWizardHandler {
 		monitor.worked(10);
 		cfgs = CfgHolder.unique(cfgs);
 		cfgs = CfgHolder.reorder(cfgs);
-		
+
 		ICConfigurationDescription cfgDebug = null;
 		ICConfigurationDescription cfgFirst = null;
-		
+
 		int work = 50/cfgs.length;
-		
+
 		for (CfgHolder cfg : cfgs) {
 			cf = (Configuration)cfg.getConfiguration();
 			String id = ManagedBuildManager.calculateChildId(cf.getId(), null);
@@ -582,32 +593,53 @@ public class MBSWizardHandler extends CWizardHandler {
 
 			IBuilder bld = config.getEditableBuilder();
 			if (bld != null) { 	bld.setManagedBuildOn(true); }
-			
+
 			config.setName(cfg.getName());
 			config.setArtifactName(mProj.getDefaultArtifactName());
-			
+
 			IBuildProperty b = config.getBuildProperties().getProperty(PROPERTY);
 			if (cfgDebug == null && b != null && b.getValue() != null && PROP_VAL.equals(b.getValue().getId()))
 				cfgDebug = cfgDes;
-			if (cfgFirst == null) // select at least first configuration 
-				cfgFirst = cfgDes; 
+			if (cfgFirst == null) // select at least first configuration
+				cfgFirst = cfgDes;
+
+			if (cfgDes instanceof ILanguageSettingsProvidersKeeper) {
+				boolean isTryingNewSD = false;
+				IWizardPage page = getStartingPage();
+				if (page instanceof CDTMainWizardPage) {
+					isTryingNewSD = ((CDTMainWizardPage)page).isTryingNewSD();
+				}
+
+				ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, isTryingNewSD);
+				List<ILanguageSettingsProvider> providers;
+				if (isTryingNewSD) {
+					providers = MBSWizardHandler.getLanguageSettingsProviders(config);
+				} else {
+					providers = new ArrayList<ILanguageSettingsProvider>();
+					providers.add(LanguageSettingsManager.getWorkspaceProvider(MBSWizardHandler.MBS_LANGUAGE_SETTINGS_PROVIDER));
+				}
+				((ILanguageSettingsProvidersKeeper) cfgDes).setLanguageSettingProviders(providers);
+			} else {
+				ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, false);
+			}
+
 			monitor.worked(work);
 		}
 		mngr.setProjectDescription(project, des);
 	}
-	
+
 	@Override
 	protected void doTemplatesPostProcess(IProject prj) {
 		if(entryInfo == null)
 			return;
-		
+
 		Template template = entryInfo.getInitializedTemplate(getStartingPage(), getConfigPage(), getMainPageData());
 		if(template == null)
 			return;
 
 		List<IConfiguration> configs = new ArrayList<IConfiguration>();
 		for (CfgHolder cfg : cfgs) {
-			configs.add((IConfiguration)cfg.getConfiguration());
+			configs.add(cfg.getConfiguration());
 		}
 		template.getTemplateInfo().setConfigurations(configs);
 
@@ -616,19 +648,19 @@ public class MBSWizardHandler extends CWizardHandler {
 			TemplateEngineUIUtil.showError(statuses[0].getMessage(), statuses[0].getException());
 		}
 	}
-	
+
 	protected CDTConfigWizardPage getConfigPage() {
 		if (fConfigPage == null) {
 			fConfigPage = new CDTConfigWizardPage(this);
 		}
 		return fConfigPage;
 	}
-	
+
 	@Override
 	public IWizardPage getSpecificPage() {
 		return entryInfo.getNextPage(getStartingPage(), getConfigPage());
 	}
-	
+
 	/**
 	 * Mark preferred toolchains with specific images
 	 */
@@ -647,11 +679,11 @@ public class MBSWizardHandler extends CWizardHandler {
 			}
 		}
 	}
-	
+
 	public List<String> getPreferredTCNames() {
 		return preferredTCs;
 	}
-	
+
 	@Override
 	public String getHeader() { return head; }
 	public boolean isDummy() { return false; }
@@ -659,11 +691,11 @@ public class MBSWizardHandler extends CWizardHandler {
 	public boolean supportsPreferred() { return true; }
 
 	@Override
-	public boolean isChanged() { 
+	public boolean isChanged() {
 		if (savedToolChains == null)
 			return true;
 		IToolChain[] tcs = getSelectedToolChains();
-		if (savedToolChains.length != tcs.length) 
+		if (savedToolChains.length != tcs.length)
 			return true;
 		for (IToolChain savedToolChain : savedToolChains) {
 			boolean found = false;
@@ -678,12 +710,12 @@ public class MBSWizardHandler extends CWizardHandler {
 		}
 		return false;
 	}
-	
+
 	@Override
 	public void saveState() {
 		savedToolChains = getSelectedToolChains();
 	}
-	
+
 	// Methods specific for MBSWizardHandler
 
 	public IToolChain[] getSelectedToolChains() {
@@ -699,7 +731,7 @@ public class MBSWizardHandler extends CWizardHandler {
 	public int getToolChainsCount() {
 		if (entryInfo == null)
 			return full_tcs.size();
-		else 
+		else
 			return entryInfo.tc_filter().size();
 	}
 	public String getPropertyId() {
@@ -716,13 +748,13 @@ public class MBSWizardHandler extends CWizardHandler {
 		return fConfigPage.getCfgItems(defaults);
 	}
 	@Override
-	public String getErrorMessage() { 
+	public String getErrorMessage() {
 		TableItem[] tis = table.getSelection();
 		if (tis == null || tis.length == 0)
-			return Messages.MBSWizardHandler_0; 
+			return Messages.MBSWizardHandler_0;
 		return null;
 	}
-	
+
 	@Override
 	protected void doCustom(IProject newProject) {
 		IRunnableWithProgress[] operations = MBSCustomPageManager.getOperations();
@@ -736,7 +768,7 @@ public class MBSWizardHandler extends CWizardHandler {
 					ManagedBuilderUIPlugin.log(e);
 				}
 	}
-	
+
 	@Override
 	public void postProcess(IProject newProject, boolean created) {
 		deleteExtraConfigs(newProject);
@@ -747,17 +779,17 @@ public class MBSWizardHandler extends CWizardHandler {
 			doCustom(newProject);
 		}
 	}
-	
+
 	/**
-	 * Deletes configurations 
-	 * 
+	 * Deletes configurations
+	 *
 	 * @param newProject - affected project
 	 */
 	private void deleteExtraConfigs(IProject newProject) {
-		if (isChanged()) return; // no need to delete 
+		if (isChanged()) return; // no need to delete
 		if (listener != null && listener.isCurrent()) return; // nothing to delete
 		if (fConfigPage == null || !fConfigPage.pagesLoaded) return;
-		
+
 		ICProjectDescription prjd = CoreModel.getDefault().getProjectDescription(newProject, true);
 		if (prjd == null) return;
 		ICConfigurationDescription[] all = prjd.getConfigurations();
@@ -781,19 +813,19 @@ public class MBSWizardHandler extends CWizardHandler {
 			CoreModel.getDefault().setProjectDescription(newProject, prjd);
 		} catch (CoreException e) {}
 	}
-	
+
 	@Override
-	public boolean isApplicable(EntryDescriptor data) { 
+	public boolean isApplicable(EntryDescriptor data) {
 		EntryInfo info = new EntryInfo(data, full_tcs, wizard);
 		return info.isValid() && (info.getToolChainsCount() > 0);
 	}
-	
+
 	@Override
 	public void initialize(EntryDescriptor data) throws CoreException {
 		EntryInfo info = new EntryInfo(data, full_tcs, wizard);
 		if(!info.isValid())
 			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderUIPlugin.getUniqueIdentifier(), "inappropriate descriptor")); //$NON-NLS-1$
-		
+
 		entryInfo = info;
 	}
 
@@ -819,20 +851,108 @@ public class MBSWizardHandler extends CWizardHandler {
 	public boolean canFinish() {
 		if(entryInfo == null)
 			return false;
-		
+
 		if (!getConfigPage().isCustomPageComplete())
 			return false;
-		
+
 		if(!entryInfo.canFinish(startingPage, getConfigPage()))
 			return false;
-		
+
 		if (customPages != null)
 			for (int i=0; i<customPages.length; i++)
 				if (!customPages[i].isPageComplete())
 					return false;
-		
+
 		return super.canFinish();
 	}
-	
-	
+
+	private static String getLanguageSettingsProvidersStr(IToolChain toolchain) {
+		for (;toolchain!=null;toolchain=toolchain.getSuperClass()) {
+			String providersIdsStr = toolchain.getDefaultLanguageSettingsProvidersIds();
+			if (providersIdsStr!=null) {
+				return providersIdsStr;
+			}
+		}
+		return "";
+	}
+
+	private static String getLanguageSettingsProvidersStr(IConfiguration cfg) {
+		for (;cfg!=null;cfg=cfg.getParent()) {
+			String providersIdsStr = cfg.getDefaultLanguageSettingsProvidersIds();
+			if (providersIdsStr!=null) {
+				return providersIdsStr;
+			}
+		}
+		return "";
+	}
+
+	/**
+	 * @since 8.1
+	 */
+	public static List<ILanguageSettingsProvider> getLanguageSettingsProviders(IConfiguration cfg) {
+		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+
+		String providersIdsStr = getLanguageSettingsProvidersStr(cfg);
+		if (providersIdsStr!=null) {
+			if (providersIdsStr.contains("${Toolchain}")) {
+				IToolChain toolchain = cfg.getToolChain();
+				String toolchainProvidersIds = getLanguageSettingsProvidersStr(toolchain);
+				if (toolchainProvidersIds==null) {
+					toolchainProvidersIds="";
+				}
+				providersIdsStr = providersIdsStr.replaceAll("\\$\\{Toolchain\\}", toolchainProvidersIds);
+			}
+			List<String> providersIds = Arrays.asList(providersIdsStr.split(LANGUAGE_SETTINGS_PROVIDER_DELIMITER));
+			for (String id : providersIds) {
+				id = id.trim();
+				ILanguageSettingsProvider provider = null;
+				if (id.startsWith("-")) {
+					id = id.substring(1);
+					for (ILanguageSettingsProvider pr : providers) {
+						if (pr.getId().equals(id)) {
+							providers.remove(pr);
+							// Has to break as the collection is invalidated
+							// TODO: remove all elements or better use unique list
+							break;
+						}
+					}
+				} else if (id.length()>0) {
+					ILanguageSettingsProvider providerExt = LanguageSettingsManager.getExtensionProviderCopy(id, false);
+					if (providerExt == null || LanguageSettingsProviderAssociationManager.shouldBeShared(providerExt)) {
+						provider = LanguageSettingsManager.getWorkspaceProvider(id);
+					} else {
+						provider = providerExt;
+					}
+				}
+				if (provider!=null) {
+					providers.add(provider);
+				}
+			}
+		}
+
+
+		if (providers.isEmpty()) {
+			// Add MBS provider for unsuspecting toolchains (backward compatibility)
+			ILanguageSettingsProvider provider = LanguageSettingsManager.getWorkspaceProvider(MBS_LANGUAGE_SETTINGS_PROVIDER);
+			providers.add(provider);
+		}
+
+		if (!isProviderThere(providers, UI_USER_LANGUAGE_SETTINGS_PROVIDER)) {
+			ILanguageSettingsProvider provider = LanguageSettingsManager.getExtensionProviderCopy(UI_USER_LANGUAGE_SETTINGS_PROVIDER, true);
+			providers.add(0, provider);
+		}
+
+		return providers;
+	}
+
+	private static boolean isProviderThere(List<ILanguageSettingsProvider> providers, String id) {
+		for (ILanguageSettingsProvider provider : providers) {
+			if (provider.getId().equals(id)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@
  * David McKnight   (IBM)        - [231126] [dstore] status monitor needs to reset WaitThreshold on nudge
  * David McKnight   (IBM)        - [261644] [dstore] remote search improvements
  * David McKnight   (IBM)        - [283157] [dstore] Remote search didn't end when the dstore server crashed
+ * David McKnight   (IBM)        - [368980] [dstore] default wait threshold for DStoreStatusMonitor is too large
  *******************************************************************************/
 
 package org.eclipse.rse.services.dstore.util;
@@ -155,9 +156,12 @@ public class DStoreStatusMonitor implements IDomainListener
      */
     public boolean determineStatusDone(DataElement status)
     {
-        return status.getAttribute(DE.A_VALUE).equals("done") ||  //$NON-NLS-1$
-        status.getAttribute(DE.A_NAME).equals("done") ||//$NON-NLS-1$
-        status.getAttribute(DE.A_NAME).equals("cancelled"); //$NON-NLS-1$
+        boolean statusDone =         
+        	status.getAttribute(DE.A_VALUE).equals("done") ||  //$NON-NLS-1$
+        	status.getAttribute(DE.A_NAME).equals("done") ||//$NON-NLS-1$
+        	status.getAttribute(DE.A_NAME).equals("cancelled"); //$NON-NLS-1$
+            
+        return statusDone;
     }
 
 	/**
@@ -226,14 +230,14 @@ public class DStoreStatusMonitor implements IDomainListener
 		return _networkDown;
 	}
 
-	 public DataElement waitForUpdate(DataElement status) throws InterruptedException
-		{
-	        return waitForUpdate(status, null, 1000);
-		}
+	public DataElement waitForUpdate(DataElement status) throws InterruptedException
+	{
+		return waitForUpdate(status, null, 100);
+	}
 
     public DataElement waitForUpdate(DataElement status, IProgressMonitor monitor) throws InterruptedException
 	{
-        return waitForUpdate(status, monitor, 1000);
+        return waitForUpdate(status, monitor, 100);
 	}
 
     public DataElement waitForUpdate(DataElement status, int wait) throws InterruptedException
@@ -286,7 +290,6 @@ public class DStoreStatusMonitor implements IDomainListener
 					}
 
 					waitForUpdate();
-                    //Thread.sleep(200);
 					if (!status.getDataStore().isConnected()){
 						// not connected anymore!
 						_networkDown = true;

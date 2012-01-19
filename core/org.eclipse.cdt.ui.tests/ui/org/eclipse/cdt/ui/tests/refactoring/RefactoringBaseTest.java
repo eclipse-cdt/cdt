@@ -27,6 +27,8 @@ import org.eclipse.jface.text.TextSelection;
 import org.eclipse.cdt.core.tests.BaseTestFramework;
 
 /**
+ * Don't create new tests based on this class. Use RefactoringTestBase instead.
+ * 
  * @author Guido Zgraggen IFS
  */
 public abstract class RefactoringBaseTest extends BaseTestFramework implements ILogListener {

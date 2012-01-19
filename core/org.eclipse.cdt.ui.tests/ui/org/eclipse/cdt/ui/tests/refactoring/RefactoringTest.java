@@ -35,6 +35,7 @@ public abstract class RefactoringTest extends RefactoringBaseTest {
 
 	protected String fileName;
 	protected RefactoringASTCache astCache;
+	protected boolean fatalError;
 
 	public RefactoringTest(String name, Collection<TestSourceFile> files) {
 		super(name, files);

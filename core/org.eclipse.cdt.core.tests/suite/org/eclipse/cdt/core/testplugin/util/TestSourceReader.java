@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -45,8 +46,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.osgi.framework.Bundle;
 
 /**
@@ -247,17 +250,23 @@ public class TestSourceReader {
 	 * @throws CoreException 
 	 * @since 4.0
 	 */    
-	public static IFile createFile(final IContainer container, final IPath filePath, final String contents) throws CoreException {
+	public static IFile createFile(final IContainer container, final IPath filePath,
+			final CharSequence contents) throws CoreException {
 		final IWorkspace ws = ResourcesPlugin.getWorkspace();
 		final IFile result[] = new IFile[1];
 		ws.run(new IWorkspaceRunnable() {
 			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
-				//Obtain file handle
+				// Obtain file handle
 				IFile file = container.getFile(filePath);
 
-				InputStream stream = new ByteArrayInputStream(contents.getBytes());
-				//Create file input stream
+				InputStream stream;
+				try {
+					stream = new ByteArrayInputStream(contents.toString().getBytes("UTF-8"));
+				} catch (UnsupportedEncodingException e) {
+					throw new CoreException(new Status(IStatus.ERROR, CTestPlugin.PLUGIN_ID, null, e));
+				}
+				// Create file input stream
 				if (file.exists()) {
 					long timestamp= file.getLocalTimeStamp();
 					file.setContents(stream, false, false, new NullProgressMonitor());
@@ -290,11 +299,11 @@ public class TestSourceReader {
 	 * @param contents the content for the file
 	 * @return a file object.
 	 * @since 4.0
-	 */    
+	 */
 	public static IFile createFile(IContainer container, String filePath, String contents) throws CoreException {
 		return createFile(container, new Path(filePath), contents);
 	}
-	
+
 	/**
 	 * Waits until the given file is indexed. Fails if this does not happen within the
 	 * given time. 

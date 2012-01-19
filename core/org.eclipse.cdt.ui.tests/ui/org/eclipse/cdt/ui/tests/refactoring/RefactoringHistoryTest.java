@@ -7,7 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- *     Institute for Software (IFS)- initial API and implementation 
+ *     Institute for Software (IFS)- initial API and implementation
+ *     Sergey Prigogin (Google) 
  ******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring;
 
@@ -18,18 +19,18 @@ import java.util.Properties;
 
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
 
-import org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest;
 
 /**
  * @author Emanuel Graf IFS
  */
-public class RefactoringHistoryTest extends	ExtractFunctionRefactoringTest {
+public class RefactoringHistoryTest extends	RefactoringTest {
 	private TestSourceFile scriptFile;
 
 	public RefactoringHistoryTest(String name, Collection<TestSourceFile> files) {
@@ -63,5 +64,13 @@ public class RefactoringHistoryTest extends	ExtractFunctionRefactoringTest {
 				executeRefactoring(ref);
 			}
 		}
+	}
+
+	protected void executeRefactoring(Refactoring refactoring) throws Exception {
+		RefactoringStatus finalConditions = refactoring.checkFinalConditions(NULL_PROGRESS_MONITOR);
+		assertConditionsOk(finalConditions);
+		Change createChange = refactoring.createChange(NULL_PROGRESS_MONITOR);
+		createChange.perform(NULL_PROGRESS_MONITOR);
+		compareFiles(fileMap);
 	}
 }

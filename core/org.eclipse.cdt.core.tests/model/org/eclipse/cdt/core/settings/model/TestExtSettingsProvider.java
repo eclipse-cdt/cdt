@@ -7,9 +7,9 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
- * Christian Walther (Indel AG) - [335344] test for changing language IDs
- * Raphael Zulliger (Indel AG) - [284699][237771] test having macros with same 
- *                               name but different values in same project 
+ * Christian Walther (Indel AG) - bug 335344: test for changing language IDs
+ * Raphael Zulliger (Indel AG) - bug 284699: test having macros with same
+ *                               name but different values in same project
  *                               configuration
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.core.resources.IProject;
 
 public class TestExtSettingsProvider extends CExternalSettingProvider {
-	
+
 	public static final String TEST_EXTERNAL_PROVIDER_ID = CTestPlugin.PLUGIN_ID + ".testExtSettingsProvider";
 
 	private static CExternalSetting[] SETTINGS_1 = new CExternalSetting[]{
@@ -42,7 +42,7 @@ public class TestExtSettingsProvider extends CExternalSettingProvider {
 				new COutputEntry("op_b", null, 0),
 		})
 	};
-	
+
 	private static CExternalSetting[] SETTINGS_2 = new CExternalSetting[]{
 		new CExternalSetting(null, null, null, new ICSettingEntry[]{
 				new CIncludePathEntry("ip_a2", 0),
@@ -75,7 +75,7 @@ public class TestExtSettingsProvider extends CExternalSettingProvider {
 				}
 		)
 	};
-	
+
 	private static CExternalSetting[] SETTINGS_4 = new CExternalSetting[]{
 		new CExternalSetting(
 				new String[]{
@@ -109,28 +109,28 @@ public class TestExtSettingsProvider extends CExternalSettingProvider {
 				}
 		)
 	};
-		
+
 	public static final CExternalSetting[][] SETTINGS_VARIANTS = new CExternalSetting[][]{
-								SETTINGS_1, 
+								SETTINGS_1,
 								SETTINGS_2,
 								SETTINGS_3,
 								SETTINGS_4,
 								SETTINGS_5};
 
 	private static int variantNum;
-	
+
 	@Override
 	public CExternalSetting[] getSettings(IProject project,
 			ICConfigurationDescription cfg) {
 		return SETTINGS_VARIANTS[variantNum].clone();
 	}
-	
+
 	public static void setVariantNum(int num){
 		if(num < 0 || num >= SETTINGS_VARIANTS.length)
 			throw new IllegalArgumentException();
 		variantNum = num;
 	}
-	
+
 	public static int getVariantNum(){
 		return variantNum;
 	}

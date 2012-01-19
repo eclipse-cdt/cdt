@@ -66,12 +66,12 @@ public abstract class RefactoringTestBase extends BaseTestCase {
     protected RefactoringTestBase(String name) {
 		super(name);
 	}
-	
+
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
 		cproject = cpp ?
-				CProjectHelper.createCCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER) : 
+				CProjectHelper.createCCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER) :
 				CProjectHelper.createCProject(getName() + System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);
 		Bundle bundle = CTestPlugin.getDefault().getBundle();
 		CharSequence[] testData = TestSourceReader.getContentsForTest(bundle, "ui", getClass(), getName(), 0);
@@ -94,9 +94,11 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 				}
 			}
 			reader.close();
-			
-			TestSourceReader.createFile(cproject.getProject(), new Path(testFile.getName()),
-					testFile.getSource());
+
+			if (!testFile.getSource().isEmpty()) {
+				TestSourceReader.createFile(cproject.getProject(), new Path(testFile.getName()),
+						testFile.getSource());
+			}
 			testFiles.add(testFile);
 			if (testFile.getName().endsWith(".xml")) {
 				historyScript = testFile;
@@ -292,7 +294,7 @@ public abstract class RefactoringTestBase extends BaseTestCase {
 		String actualSource = getFileContents(file);
 		assertEquals(testFile.getExpectedSource(), actualSource);
 	}
-	
+
 	protected void compareFiles() throws Exception {
 		for (TestSourceFile testFile : testFiles) {
 			String expectedSource = testFile.getExpectedSource();

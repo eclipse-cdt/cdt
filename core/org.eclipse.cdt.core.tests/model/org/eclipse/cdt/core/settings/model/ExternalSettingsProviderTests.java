@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Intel Corporation and others.
+ * Copyright (c) 2007, 2012 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,9 @@
  * Intel Corporation - Initial API and implementation
  * James Blackburn (Broadcom Corp.)
  * Christian Walther (Indel AG) - [335344] test for changing language IDs
+ * Raphael Zulliger (Indel AG) - [284699][237771] test having macros with same 
+ *                               name but different values in same project 
+ *                               configuration
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
@@ -29,7 +32,7 @@ import org.eclipse.core.runtime.Path;
 
 public class ExternalSettingsProviderTests extends BaseTestCase{
 	private static final String PROJ_NAME_PREFIX = "espt_";
-	ICProject p1, p2, p3, p4, p5;
+	ICProject p1, p2, p3, p4, p5, p6;
 	
 	public static TestSuite suite() {
 		return suite(ExternalSettingsProviderTests.class, "_");
@@ -41,6 +44,7 @@ public class ExternalSettingsProviderTests extends BaseTestCase{
 		p3 = CProjectHelper.createNewStileCProject(PROJ_NAME_PREFIX + "c", IPDOMManager.ID_NO_INDEXER);
 		p4 = CProjectHelper.createNewStileCProject(PROJ_NAME_PREFIX + "d", IPDOMManager.ID_NO_INDEXER);
 		p5 = CProjectHelper.createNewStileCProject(PROJ_NAME_PREFIX + "e", IPDOMManager.ID_NO_INDEXER);
+		p6 = CProjectHelper.createNewStileCProject(PROJ_NAME_PREFIX + "f", IPDOMManager.ID_NO_INDEXER);
 	}
 	
 	/**
@@ -425,6 +429,40 @@ public class ExternalSettingsProviderTests extends BaseTestCase{
 		assertTrue(Arrays.equals(expectedEntriesSet, entries));
 	}
 
+	/**
+	 * Test if macros with the same name but different values can coexist when
+	 * they belong to different language ids
+	 */
+	public void testSameMacroWithDifferentValuesAndDifferentLanguageIds() throws CoreException {
+		TestExtSettingsProvider.setVariantNum(4);
+
+		CoreModel model = CoreModel.getDefault();
+		ICProjectDescriptionManager mngr = model.getProjectDescriptionManager();
+		IProject project = p6.getProject();
+		
+		// add external settings provider
+		ICProjectDescription des = model.getProjectDescription(project);
+		ICConfigurationDescription cfgDes = des.getConfigurations()[0];
+		String[] extPIds = new String[]{TestExtSettingsProvider.TEST_EXTERNAL_PROVIDER_ID};
+		cfgDes.setExternalSettingsProviderIds(extPIds);
+		ICFolderDescription root = cfgDes.getRootFolderDescription();
+		model.setProjectDescription(project, des);
+		
+		// read out the settings it caused
+		des = model.getProjectDescription(project, false);
+		cfgDes = des.getConfigurations()[0];
+		root = cfgDes.getRootFolderDescription();
+		for (ICLanguageSetting s: root.getLanguageSettings()) {
+			if( s.getLanguageId().equals("org.eclipse.cdt.core.assembly") ) {
+				assertEquals(1, s.getSettingEntries(ICSettingEntry.MACRO).length);
+				assertEquals("TheValue", s.getSettingEntries(4)[0].getValue());
+			} if( s.getLanguageId().equals("org.eclipse.cdt.core.g++") ) {
+				assertEquals(1, s.getSettingEntries(ICSettingEntry.MACRO).length);
+				assertEquals("", s.getSettingEntries(ICSettingEntry.MACRO)[0].getValue());
+			}
+		}
+	}
+
 	protected void tearDown() throws Exception {
 		try {
 			p1.getProject().delete(true, null);
@@ -444,6 +482,10 @@ public class ExternalSettingsProviderTests extends BaseTestCase{
 		}
 		try {
 			p5.getProject().delete(true, null);
+		} catch (CoreException e){
+		}
+		try {
+			p6.getProject().delete(true, null);
 		} catch (CoreException e){
 		}
 	}

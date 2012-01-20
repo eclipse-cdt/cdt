@@ -119,6 +119,7 @@ public class MIThread {
     private static Pattern fgOsIdPattern1 = Pattern.compile("([Tt][Hh][Rr][Ee][Aa][Dd]\\s*)(0x[0-9a-fA-F]+|-?\\d+)(\\s*\\([Ll][Ww][Pp]\\s*)(\\d*)", 0); //$NON-NLS-1$
     private static Pattern fgOsIdPattern2 = Pattern.compile("[Tt][Hh][Rr][Ee][Aa][Dd]\\s*\\d+\\.(\\d+)", 0); //$NON-NLS-1$
     private static Pattern fgOsIdPattern3 = Pattern.compile("[Tt][Hh][Rr][Ee][Aa][Dd]\\s*(\\S+)", 0); //$NON-NLS-1$
+    private static Pattern fgOsIdPattern4 = Pattern.compile("[Pp][Rr][Oo][Cc][Ee][Ss][Ss]\\s*(\\S+)", 0); //$NON-NLS-1$
 
     static String parseOsId(String str) {
         // General format:
@@ -127,6 +128,8 @@ public class MIThread {
         //      "Thread 162.32942"
     	//                  ^^^^^
         //      "thread abc123"
+    	//
+    	//      "process 12345"    => Linux without pthread.  The process as one thread, the process thread.
     	//              ^^^^^^
     	// PLEASE UPDATE MIThreadTests.java IF YOU TWEAK THIS CODE
 
@@ -141,6 +144,11 @@ public class MIThread {
         }
         
         matcher = fgOsIdPattern3.matcher(str);
+        if (matcher.find()) {
+        	return matcher.group(1);
+        }
+
+        matcher = fgOsIdPattern4.matcher(str);
         if (matcher.find()) {
         	return matcher.group(1);
         }

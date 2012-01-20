@@ -12,6 +12,7 @@ public class MIThreadTests {
 		assertEquals("abc123", MIThread.parseOsId("Thread abc123"));
 		assertEquals("abc123", MIThread.parseOsId("thread abc123"));
 		assertEquals("abc123", MIThread.parseOsId("THREAD abc123"));		
+		assertEquals("abc123", MIThread.parseOsId("process abc123"));		
 	}
 	
 	@Test

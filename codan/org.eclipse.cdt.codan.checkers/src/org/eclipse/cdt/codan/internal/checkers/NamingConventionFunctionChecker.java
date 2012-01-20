@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Alena Laskavaia  - initial API and implementation
+ *     Alena Laskavaia  - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers;
 
@@ -29,7 +29,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 /**
  * This is style checker for function name code style. Pattern parameter is
  * regular expression defining the style.
- * 
  */
 public class NamingConventionFunctionChecker extends AbstractIndexAstChecker implements ICheckerWithPreferences {
 	private static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.NamingConventionFunctionChecker"; //$NON-NLS-1$
@@ -50,7 +49,7 @@ public class NamingConventionFunctionChecker extends AbstractIndexAstChecker imp
 				public int visit(IASTDeclaration element) {
 					if (element instanceof IASTFunctionDefinition) {
 						IASTName astName = ((IASTFunctionDefinition) element).getDeclarator().getName();
-						String name = getSearchibleName(astName);
+						String name = getSearchableName(astName);
 						if (name != null) {
 							for (Iterator<IProblem> iterator = pts.iterator(); iterator.hasNext();) {
 								IProblem pt = iterator.next();
@@ -68,18 +67,14 @@ public class NamingConventionFunctionChecker extends AbstractIndexAstChecker imp
 					return PROCESS_SKIP;
 				}
 
-				public boolean shouldReport(IASTName astName, IProblem pt) {
+				private boolean shouldReport(IASTName astName, IProblem pt) {
 					if (astName instanceof ICPPASTQualifiedName) {
 						return shouldReportCppMethods(pt);
 					}
 					return true;
 				}
 
-				/**
-				 * @param astName
-				 * @return
-				 */
-				public String getSearchibleName(IASTName astName) {
+				private String getSearchableName(IASTName astName) {
 					String name = astName.toString();
 					if (astName instanceof ICPPASTQualifiedName) {
 						ICPPASTQualifiedName cppAstName = (ICPPASTQualifiedName) astName;
@@ -104,13 +99,6 @@ public class NamingConventionFunctionChecker extends AbstractIndexAstChecker imp
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.cdt.codan.core.model.ICheckerWithPreferences#initParameters
-	 * (org.eclipse.cdt.codan.core.model.IProblemWorkingCopy)
-	 */
 	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);

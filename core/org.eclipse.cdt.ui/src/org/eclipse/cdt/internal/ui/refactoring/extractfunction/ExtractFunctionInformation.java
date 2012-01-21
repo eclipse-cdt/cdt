@@ -64,11 +64,11 @@ public class ExtractFunctionInformation {
 		return returnVariable;
 	}
 
-	public void setReturnVariable(NameInformation returnVariable) {
-		if (returnVariable != null) {
-			returnVariable.setUserSetIsReturnValue(true);
+	public void setReturnVariable(NameInformation variable) {
+		if (variable != null) {
+			variable.setReturnValue(true);
 		}
-		this.returnVariable = returnVariable;
+		this.returnVariable = variable;
 	}
 
 	public NameInformation getMandatoryReturnVariable() {
@@ -76,6 +76,9 @@ public class ExtractFunctionInformation {
 	}
 
 	public void setMandatoryReturnVariable(NameInformation variable) {
+		if (variable != null) {
+			variable.setMustBeReturnValue(true);
+		}
 		this.mandatoryReturnVariable = variable;
 		this.returnVariable = variable;
 	}

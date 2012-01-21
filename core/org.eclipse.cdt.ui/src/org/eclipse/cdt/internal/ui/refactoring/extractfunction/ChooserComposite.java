@@ -12,7 +12,6 @@
 package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
@@ -37,16 +36,12 @@ public class ChooserComposite extends Composite {
 	private static final String COLUMN_NAME = Messages.ChooserComposite_Name;
 	private static final String COLUMN_TYPE = Messages.ChooserComposite_Type;
 
-	private Button voidReturn;
-
-	private final ExtractFunctionInputPage page;
+	private Button checkboxVoidReturn;
 
 	public ChooserComposite(Composite parent, final ExtractFunctionInformation info,
 			ExtractFunctionInputPage page) {
 		super(parent, SWT.NONE);
 
-		this.page = page;
-		
 		GridLayout layout = new GridLayout();		
 		setLayout(layout);
 
@@ -85,116 +80,115 @@ public class ChooserComposite extends Composite {
 
 				// Button
 				editor = new TableEditor(table);
-				final Button referenceButton = new Button(table, SWT.CHECK);
-				if (name.hasReferenceOperartor((IASTDeclarator) name.getDeclaration().getParent())) {
-					referenceButton.setSelection(true);
-					referenceButton.setEnabled(false);
+				final Button buttonOutput = new Button(table, SWT.CHECK);
+				if (name.hasReferenceOperator((IASTDeclarator) name.getDeclaration().getParent())) {
+					buttonOutput.setSelection(true);
+					buttonOutput.setEnabled(false);
 				} else {
-					referenceButton.setSelection(name.isOutput());
+					buttonOutput.setSelection(name.isOutput() && !name.isReturnValue());
+					buttonOutput.setEnabled(!name.mustBeOutput() && !name.isReturnValue());
 				}
-				referenceButton.setBackground(table.getBackground());
-				referenceButton.addSelectionListener(new SelectionListener() {
+				buttonOutput.setBackground(table.getBackground());
+				buttonOutput.addSelectionListener(new SelectionListener() {
 					@Override
 					public void widgetDefaultSelected(SelectionEvent e) {
-						name.setUserSetIsReference(referenceButton.getSelection());
-						onVisibilityOrReturnChange(info.getParameterCandidates());
+						widgetSelected(e);
 					}
 
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						widgetDefaultSelected(e);
+						if (buttonOutput.isEnabled()) {
+							name.setIsOutput(buttonOutput.getSelection());
+						}
 					}
 				});
-				referenceButton.pack();
-				editor.minimumWidth = referenceButton.getSize().x;
+				buttonOutput.pack();
+				editor.minimumWidth = buttonOutput.getSize().x;
 				editor.horizontalAlignment = SWT.CENTER;
-				referenceButtons.add(referenceButton);
-				editor.setEditor(referenceButton, item, columnIndex++);
+				referenceButtons.add(buttonOutput);
+				editor.setEditor(buttonOutput, item, columnIndex++);
 				
-				// Cosnt Button
+				// Const button
 				editor = new TableEditor(table);
-				final Button constButton = new Button(table, SWT.CHECK);
+				final Button buttonConst = new Button(table, SWT.CHECK);
 				
-				constButton.setSelection(name.isConst());
-				constButton.setEnabled(!name.isWriteAccess());
+				buttonConst.setSelection(name.isConst());
+				buttonConst.setEnabled(!name.isWriteAccess());
 
-				constButton.setBackground(table.getBackground());
-				constButton.addSelectionListener(new SelectionListener() {
+				buttonConst.setBackground(table.getBackground());
+				buttonConst.addSelectionListener(new SelectionListener() {
 					@Override
 					public void widgetDefaultSelected(SelectionEvent e) {
-						name.setConst(constButton.getSelection());
-						onVisibilityOrReturnChange(info.getParameterCandidates());
+						widgetSelected(e);
 					}
 
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						widgetDefaultSelected(e);
+						name.setConst(buttonConst.getSelection());
 					}
 				});
-				constButton.pack();
-				editor.minimumWidth = constButton.getSize().x;
+				buttonConst.pack();
+				editor.minimumWidth = buttonConst.getSize().x;
 				editor.horizontalAlignment = SWT.CENTER;
 //				referenceButtons.add(referenceButton);
-				editor.setEditor(constButton, item, columnIndex++);
+				editor.setEditor(buttonConst, item, columnIndex++);
 
 				if (info.isExtractExpression())
 					continue; // Skip the return radiobutton
 					
 				// Button
 				editor = new TableEditor(table);
-				final Button returnButton = new Button(table, SWT.RADIO);
-				returnButton.setSelection(name.isReturnValue());
-				name.setUserSetIsReference(name.isOutput());
-				returnButton.setEnabled(info.getMandatoryReturnVariable() == null);
-				returnButton.setBackground(table.getBackground());
-				returnButton.addSelectionListener(new SelectionListener() {
+				final Button buttonReturn = new Button(table, SWT.RADIO);
+				buttonReturn.setSelection(name.mustBeReturnValue());
+				buttonReturn.setEnabled(info.getMandatoryReturnVariable() == null);
+				buttonReturn.setBackground(table.getBackground());
+				buttonReturn.addSelectionListener(new SelectionListener() {
 					@Override
 					public void widgetDefaultSelected(SelectionEvent e) {
-						name.setUserSetIsReturnValue(returnButton.getSelection());
-						if (returnButton.getSelection()) {
-							referenceButton.setSelection(false);
-							referenceButton.notifyListeners(SWT.Selection, new Event());
-						} else if (name.isOutput()) {
-							referenceButton.setSelection(true);
-							referenceButton.notifyListeners(SWT.Selection, new Event());
-						}
-						onVisibilityOrReturnChange(info.getParameterCandidates());
+						widgetSelected(e);
 					}
 
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						widgetDefaultSelected(e);
+						name.setReturnValue(buttonReturn.getSelection());
+						if (buttonReturn.getSelection()) {
+							buttonOutput.setSelection(false);
+							buttonOutput.notifyListeners(SWT.Selection, new Event());
+						} else if (name.mustBeOutput()) {
+							buttonOutput.setSelection(true);
+							buttonOutput.notifyListeners(SWT.Selection, new Event());
+						}
 					}
 				});
-				returnButton.pack();
-				editor.minimumWidth = returnButton.getSize().x;
+				buttonReturn.pack();
+				editor.minimumWidth = buttonReturn.getSize().x;
 				editor.horizontalAlignment = SWT.CENTER;
-				returnButtons.add(returnButton);
-				editor.setEditor(returnButton, item, columnIndex++);
+				returnButtons.add(buttonReturn);
+				editor.setEditor(buttonReturn, item, columnIndex++);
 			}
 		}
 		
 		if (!info.isExtractExpression()) {
-			voidReturn = new Button(parent, SWT.CHECK | SWT.LEFT);
-			voidReturn.setText(Messages.ChooserComposite_NoReturnValue);
-			voidReturn.setEnabled(info.getMandatoryReturnVariable() == null);
-			voidReturn.addSelectionListener(new SelectionListener() {
+			checkboxVoidReturn = new Button(parent, SWT.CHECK | SWT.LEFT);
+			checkboxVoidReturn.setText(Messages.ChooserComposite_NoReturnValue);
+			checkboxVoidReturn.setEnabled(info.getMandatoryReturnVariable() == null);
+			checkboxVoidReturn.addSelectionListener(new SelectionListener() {
 				@Override
 				public void widgetDefaultSelected(SelectionEvent e) {
-					info.setReturnVariable(null);
-	
-					for (Button button : returnButtons) {
-						if (voidReturn.getSelection()) {
-							button.setSelection(false);
-							button.notifyListeners(SWT.Selection, new Event());
-						}
-						button.setEnabled(!voidReturn.getSelection());
-					}
+					widgetSelected(e);
 				}
 	
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					widgetDefaultSelected(e);
+					info.setReturnVariable(null);
+					
+					for (Button button : returnButtons) {
+						if (checkboxVoidReturn.getSelection()) {
+							button.setSelection(false);
+							button.notifyListeners(SWT.Selection, new Event());
+						}
+						button.setEnabled(!checkboxVoidReturn.getSelection());
+					}
 				}
 			});
 		}
@@ -206,17 +200,5 @@ public class ChooserComposite extends Composite {
 		TableColumn column = new TableColumn(table, SWT.NONE);
 		column.setText(string);
 		column.setWidth(100);
-	}
-	
-	void onVisibilityOrReturnChange(List<NameInformation> names) {
-		String variableUsedAfterBlock = null;
-		for (NameInformation information : names) {
-			if (information.isReferencedAfterSelection() &&
-					!(information.isUserSetIsReference() || information.isUserSetIsReturnValue())) {
-				variableUsedAfterBlock = information.getName().toString();
-			}
-		}
-		
-		page.errorWithAfterUsedVariable(variableUsedAfterBlock);
 	}
 }

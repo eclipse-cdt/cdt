@@ -194,12 +194,6 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 						NodeHelper.findMethodContext(container.getNodesToWrite().get(0), getIndex());
 				info.setMethodContext(context);
 
-				if (info.getMandatoryReturnVariable() != null) {
-					info.getMandatoryReturnVariable().setUserSetIsReturnValue(true);
-				}
-				for (NameInformation name : info.getParameterCandidates()) {
-					name.setUserSetIsReference(name.isOutput());
-				}
 				sm.done();
 			} finally {
 				unlockIndex();
@@ -270,7 +264,7 @@ public class ExtractFunctionRefactoring extends CRefactoring {
 					}
 				}
 				for (NameInformation name : info.getParameterCandidates()) {
-					if (name.isUserSetIsReturnValue()) {
+					if (name.isReturnValue()) {
 						info.setReturnVariable(name);
 					}
 				}

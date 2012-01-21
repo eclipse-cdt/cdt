@@ -79,7 +79,7 @@ final class SimilarFinderVisitor extends ASTVisitor {
 							if (orgName != null) {
 								for (NameInformation orgNameInfo : refactoring.container.getParameterCandidates()) {
 									if (orgName.equals(orgNameInfo.getDeclaration().getRawSignature()) &&
-											(orgNameInfo.isOutput() || !nameInfo.isOutput())) {
+											(orgNameInfo.mustBeOutput() || !nameInfo.mustBeOutput())) {
 										found = true;
 										break;
 									}

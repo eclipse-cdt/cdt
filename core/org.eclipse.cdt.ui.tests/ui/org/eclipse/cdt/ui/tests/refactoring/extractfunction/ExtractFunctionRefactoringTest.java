@@ -62,7 +62,6 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 				for (NameInformation nameInfo : refactoringInfo.getParameterCandidates()) {
 					if (returnValue.equals(String.valueOf(nameInfo.getName().getSimpleID()))) {
 						refactoringInfo.setReturnVariable(nameInfo);
-						nameInfo.setUserSetIsReference(false);
 						break;
 					}
 				}

@@ -91,13 +91,4 @@ public class ExtractFunctionInputPage extends UserInputWizardPage {
 			setPageComplete(false);
 		}
 	}
-	
-	public void errorWithAfterUsedVariable(String variableUsedAfterBlock ) {
-		if (variableUsedAfterBlock == null) {
-			setErrorMessage(null);
-			checkName();	
-		} else {
-			setErrorMessage("The parameter '" + variableUsedAfterBlock + "' " + Messages.ExtractFunctionInputPage_1);  //$NON-NLS-1$ //$NON-NLS-2$
-		}
-	}
 }

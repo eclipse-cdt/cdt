@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -66,13 +67,13 @@ public class NodeContainer {
 		private final List<IASTName> references;
 		private List<IASTName> referencesAfterCached;
 		private int lastCachedReferencesHash;
-		private boolean isOutput;
-		private boolean isReturnValue;
+		private boolean mustBeOutput;
+		private boolean mustBeReturnValue;
 		private boolean isConst;
 		private boolean isWriteAccess;
 
-		private boolean userSetIsReference;
-		private boolean userSetIsReturnValue;
+		private boolean isOutput;
+		private boolean isReturnValue;
 		private String userSetName;
 		private int userOrder;
 
@@ -128,8 +129,7 @@ public class NodeContainer {
 			return !getReferencesAfterSelection().isEmpty();
 		}
 
-		public IASTParameterDeclaration getParameterDeclaration(boolean isReference,
-				INodeFactory nodeFactory) {
+		public IASTParameterDeclaration getParameterDeclaration(INodeFactory nodeFactory) {
 			IASTDeclarator sourceDeclarator = (IASTDeclarator) getDeclaration().getParent();
 
 			IASTDeclSpecifier declSpec= null;
@@ -159,7 +159,8 @@ public class NodeContainer {
 				declarator.addPointerOperator(pointerOp.copy(CopyStyle.withLocations));
 			}
 
-			if (isReference && !hasReferenceOperartor(declarator)) {
+			boolean output = isOutput() && !isReturnValue();
+			if (output && !hasReferenceOperator(declarator)) {
 				if (nodeFactory instanceof ICPPNodeFactory) {
 					declarator.addPointerOperator(((ICPPNodeFactory) nodeFactory).newReferenceOperator(false));
 				} else {
@@ -172,7 +173,7 @@ public class NodeContainer {
 			return nodeFactory.newParameterDeclaration(declSpec, declarator);
 		}
 
-		public boolean hasReferenceOperartor(IASTDeclarator declarator) {
+		public boolean hasReferenceOperator(IASTDeclarator declarator) {
 			for (IASTPointerOperator pOp : declarator.getPointerOperators()) {
 				if (pOp instanceof ICPPASTReferenceOperator) {
 					return true;
@@ -215,36 +216,38 @@ public class NodeContainer {
 			return name.toString() + (isDeclaredInSelection() ? " (declared inside)" : "");  //$NON-NLS-1$//$NON-NLS-2$
 		}
 
-		public boolean isOutput() {
-			return isOutput;
+		public boolean mustBeOutput() {
+			return mustBeOutput;
 		}
 
-		public void setOutput(boolean isOutput) {
+		public void setMustBeOutput(boolean mustBeOutput) {
+			this.mustBeOutput = mustBeOutput;
+		}
+
+		public boolean isOutput() {
+			return mustBeOutput || isOutput;
+		}
+
+		public void setIsOutput(boolean isOutput) {
+			Assert.isTrue(isOutput || !mustBeOutput);
 			this.isOutput = isOutput;
 		}
 
+		public boolean mustBeReturnValue() {
+			return mustBeReturnValue;
+		}
+
+		public void setMustBeReturnValue(boolean mustBeReturnValue) {
+			this.mustBeReturnValue = mustBeReturnValue;
+		}
+
 		public boolean isReturnValue() {
-			return isReturnValue;
+			return mustBeReturnValue || isReturnValue;
 		}
 
 		public void setReturnValue(boolean isReturnValue) {
+			Assert.isTrue(isReturnValue || !mustBeReturnValue);
 			this.isReturnValue = isReturnValue;
-		}
-
-		public boolean isUserSetIsReference() {
-			return userSetIsReference;
-		}
-
-		public void setUserSetIsReference(boolean userSetIsReference) {
-			this.userSetIsReference = userSetIsReference;
-		}
-
-		public boolean isUserSetIsReturnValue() {
-			return userSetIsReturnValue;
-		}
-
-		public void setUserSetIsReturnValue(boolean userSetIsReturnValue) {
-			this.userSetIsReturnValue = userSetIsReturnValue;
 		}
 
 		public String getUserSetName() {
@@ -360,7 +363,7 @@ public class NodeContainer {
 				if (declarations.add(nameInfo.getDeclaration())) {
 					if (nameInfo.isDeclaredInSelection()) {
 						if (nameInfo.isReferencedAfterSelection()) {
-							nameInfo.setReturnValue(true);
+							nameInfo.setMustBeReturnValue(true);
 							interfaceNames.add(nameInfo);
 						}
 					} else {
@@ -374,7 +377,7 @@ public class NodeContainer {
 							}
 						}
 						if (nameInfo.isWriteAccess() && nameInfo.isReferencedAfterSelection()) {
-							nameInfo.setOutput(true);
+							nameInfo.setMustBeOutput(true);
 						}
 						interfaceNames.add(nameInfo);
 					}
@@ -389,7 +392,7 @@ public class NodeContainer {
 		List<NameInformation> selectedNames = null;
 
 		for (NameInformation nameInfo : getInterfaceNames()) {
-			if (nameInfo.isReturnValue() == isReturnValue) {
+			if (nameInfo.mustBeReturnValue() == isReturnValue) {
 				if (selectedNames == null) {
 					selectedNames = new ArrayList<NameInformation>();
 				}

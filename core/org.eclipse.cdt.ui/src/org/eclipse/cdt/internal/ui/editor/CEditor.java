@@ -1229,7 +1229,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 			if (IndexerPreferences.KEY_INDEX_ON_OPEN.equals(event.getKey())) {
 				ICElement element= getInputCElement();
 				ITranslationUnit tu = element != null ? (ITranslationUnit) element : null;
-				updateIndexInclusion(tu, false);
+				updateIndexInclusion(tu);
 			}
 		}
 
@@ -1510,32 +1510,25 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 
 		if (element instanceof ITranslationUnit) {
 			ITranslationUnit tu = (ITranslationUnit) element;
-			updateIndexInclusion(tu, false);
+			updateIndexInclusion(tu);
 			fBracketMatcher.configure(tu.getLanguage());
 		} else {
-			updateIndexInclusion(null, false);
+			updateIndexInclusion(null);
 			fBracketMatcher.configure(null);
 		}
 	}
 
-	private void updateIndexInclusion(ITranslationUnit tu, boolean synchronous) {
-		if (tu!= null) {
+	private void updateIndexInclusion(ITranslationUnit tu) {
+		if (tu != null) {
 			IProject project = tu.getCProject().getProject();
 			if (!String.valueOf(true).equals(IndexerPreferences.get(project, IndexerPreferences.KEY_INDEX_ON_OPEN, null))) {
 				tu = null;
 			}
 		}
-		if (tu != null || fTuAddedToIndex != null) {
+		if ((tu != null || fTuAddedToIndex != null) && tu != fTuAddedToIndex) {
 			IndexUpdateRequestorJob job = new IndexUpdateRequestorJob(tu, fTuAddedToIndex);
 			fTuAddedToIndex = tu;
 			job.schedule();
-			if (synchronous) {
-				try {
-					job.join();
-				} catch (InterruptedException e) {
-					// Ignore.
-				}
-			}
 		}
 	}
 
@@ -2201,7 +2194,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
     @Override
 	public void dispose() {
 		fIndexerPreferenceListener.unregister();
-    	updateIndexInclusion(null, true);
+    	updateIndexInclusion(null);
 
 		ISourceViewer sourceViewer = getSourceViewer();
 		if (sourceViewer instanceof ITextViewerExtension)

@@ -33,7 +33,6 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.templateengine.process.ProcessFailureException;
-import org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProviderAssociationManager;
 import org.eclipse.cdt.internal.ui.wizards.ICDTCommonProjectWizard;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildProperty;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
@@ -46,6 +45,7 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
+import org.eclipse.cdt.managedbuilder.internal.dataprovider.ConfigurationDataProvider;
 import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIPlugin;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
@@ -92,11 +92,6 @@ public class MBSWizardHandler extends CWizardHandler {
 
 	private static final String PROPERTY = "org.eclipse.cdt.build.core.buildType"; //$NON-NLS-1$
 	private static final String PROP_VAL = PROPERTY + ".debug"; //$NON-NLS-1$
-
-	private static final String UI_USER_LANGUAGE_SETTINGS_PROVIDER = "org.eclipse.cdt.ui.user.LanguageSettingsProvider";
-	/** @since 8.1 */
-	public static final String MBS_LANGUAGE_SETTINGS_PROVIDER = "org.eclipse.cdt.managedbuilder.core.LanguageSettingsProvider";
-	private static final String LANGUAGE_SETTINGS_PROVIDER_DELIMITER = ";";
 
 	private static final String tooltip =
 		Messages.CWizardHandler_1 +
@@ -613,12 +608,12 @@ public class MBSWizardHandler extends CWizardHandler {
 				ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, isTryingNewSD);
 				List<ILanguageSettingsProvider> providers;
 				if (isTryingNewSD) {
-					providers = MBSWizardHandler.getLanguageSettingsProviders(config);
+					ConfigurationDataProvider.setDefaultLanguageSettingsProviders(config, cfgDes);
 				} else {
 					providers = new ArrayList<ILanguageSettingsProvider>();
-					providers.add(LanguageSettingsManager.getWorkspaceProvider(MBSWizardHandler.MBS_LANGUAGE_SETTINGS_PROVIDER));
+					providers.add(LanguageSettingsManager.getWorkspaceProvider(ScannerDiscoveryLegacySupport.MBS_LANGUAGE_SETTINGS_PROVIDER_ID));
+					((ILanguageSettingsProvidersKeeper) cfgDes).setLanguageSettingProviders(providers);
 				}
-				((ILanguageSettingsProvidersKeeper) cfgDes).setLanguageSettingProviders(providers);
 			} else {
 				ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, false);
 			}
@@ -865,94 +860,5 @@ public class MBSWizardHandler extends CWizardHandler {
 
 		return super.canFinish();
 	}
-
-	private static String getLanguageSettingsProvidersStr(IToolChain toolchain) {
-		for (;toolchain!=null;toolchain=toolchain.getSuperClass()) {
-			String providersIdsStr = toolchain.getDefaultLanguageSettingsProvidersIds();
-			if (providersIdsStr!=null) {
-				return providersIdsStr;
-			}
-		}
-		return "";
-	}
-
-	private static String getLanguageSettingsProvidersStr(IConfiguration cfg) {
-		for (;cfg!=null;cfg=cfg.getParent()) {
-			String providersIdsStr = cfg.getDefaultLanguageSettingsProvidersIds();
-			if (providersIdsStr!=null) {
-				return providersIdsStr;
-			}
-		}
-		return "";
-	}
-
-	/**
-	 * @since 8.1
-	 */
-	public static List<ILanguageSettingsProvider> getLanguageSettingsProviders(IConfiguration cfg) {
-		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
-
-		String providersIdsStr = getLanguageSettingsProvidersStr(cfg);
-		if (providersIdsStr!=null) {
-			if (providersIdsStr.contains("${Toolchain}")) {
-				IToolChain toolchain = cfg.getToolChain();
-				String toolchainProvidersIds = getLanguageSettingsProvidersStr(toolchain);
-				if (toolchainProvidersIds==null) {
-					toolchainProvidersIds="";
-				}
-				providersIdsStr = providersIdsStr.replaceAll("\\$\\{Toolchain\\}", toolchainProvidersIds);
-			}
-			List<String> providersIds = Arrays.asList(providersIdsStr.split(LANGUAGE_SETTINGS_PROVIDER_DELIMITER));
-			for (String id : providersIds) {
-				id = id.trim();
-				ILanguageSettingsProvider provider = null;
-				if (id.startsWith("-")) {
-					id = id.substring(1);
-					for (ILanguageSettingsProvider pr : providers) {
-						if (pr.getId().equals(id)) {
-							providers.remove(pr);
-							// Has to break as the collection is invalidated
-							// TODO: remove all elements or better use unique list
-							break;
-						}
-					}
-				} else if (id.length()>0) {
-					ILanguageSettingsProvider providerExt = LanguageSettingsManager.getExtensionProviderCopy(id, false);
-					if (providerExt == null || LanguageSettingsProviderAssociationManager.shouldBeShared(providerExt)) {
-						provider = LanguageSettingsManager.getWorkspaceProvider(id);
-					} else {
-						provider = providerExt;
-					}
-				}
-				if (provider!=null) {
-					providers.add(provider);
-				}
-			}
-		}
-
-
-		if (providers.isEmpty()) {
-			// Add MBS provider for unsuspecting toolchains (backward compatibility)
-			ILanguageSettingsProvider provider = LanguageSettingsManager.getWorkspaceProvider(MBS_LANGUAGE_SETTINGS_PROVIDER);
-			providers.add(provider);
-		}
-
-		if (!isProviderThere(providers, UI_USER_LANGUAGE_SETTINGS_PROVIDER)) {
-			ILanguageSettingsProvider provider = LanguageSettingsManager.getExtensionProviderCopy(UI_USER_LANGUAGE_SETTINGS_PROVIDER, true);
-			providers.add(0, provider);
-		}
-
-		return providers;
-	}
-
-	private static boolean isProviderThere(List<ILanguageSettingsProvider> providers, String id) {
-		for (ILanguageSettingsProvider provider : providers) {
-			if (provider.getId().equals(id)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 
 }

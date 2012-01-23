@@ -208,7 +208,7 @@ public class TestConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public String getDefaultLanguageSettingsProvidersIds() {
+	public String[] getDefaultLanguageSettingsProvidersIds() {
 		// TODO Auto-generated method stub
 		return null;
 	}

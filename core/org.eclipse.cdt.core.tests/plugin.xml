@@ -192,7 +192,8 @@
    </extension>
    <extension
          point="org.eclipse.cdt.core.LanguageSettingsProvider">
-<!-- uncomment to test message about missing class in the log
+<!-- uncomment to test message about missing class in the log -->
+<!--
       <provider
             class="org.eclipse.cdt.core.language.settings.providers.MissingClass"
             id="org.eclipse.cdt.core.tests.missing.language.settings.provider"
@@ -265,7 +266,8 @@
       <provider
             class="org.eclipse.cdt.core.language.settings.providers.MockLanguageSettingsEditableProvider"
             id="org.eclipse.cdt.core.tests.custom.editable.language.settings.provider"
-            name="Test Plugin Mock Editable Language Settings Provider">
+            name="Test Plugin Mock Editable Language Settings Provider"
+            prefer-non-shared="true">
          <entry
                kind="macro"
                name="MACRO"

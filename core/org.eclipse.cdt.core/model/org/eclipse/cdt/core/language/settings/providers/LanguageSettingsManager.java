@@ -57,12 +57,13 @@ public class LanguageSettingsManager {
 		return LanguageSettingsProvidersSerializer.getSettingEntriesUpResourceTree(provider, cfgDescription, rc, languageId);
 	}
 
-/**
+	/**
 	 * Get Language Settings Provider from the list of workspace providers,
 	 * see {@link #getWorkspaceProviders()}.
 	 *
 	 * @param id - id of provider to find.
-	 * @return the provider or {@code null} if provider is not defined.
+	 * @return the workspace provider. If workspace provider is not defined
+	 *    a new instance is created and returned.
 	 */
 	public static ILanguageSettingsProvider getWorkspaceProvider(String id) {
 		return LanguageSettingsProvidersSerializer.getWorkspaceProvider(id);
@@ -174,7 +175,7 @@ public class LanguageSettingsManager {
 	 * @return - {@code true} if the provider matches the extension or {@code false} otherwise.
 	 */
 	public static boolean isEqualExtensionProvider(ILanguageSettingsProvider provider, boolean deep) {
-		return LanguageSettingsExtensionManager.isEqualsExtensionProvider(provider, deep);
+		return LanguageSettingsExtensionManager.isEqualExtensionProvider(provider, deep);
 	}
 
 	/**
@@ -276,6 +277,21 @@ public class LanguageSettingsManager {
 	 */
 	public static void unregisterLanguageSettingsChangeListener(ILanguageSettingsChangeListener listener) {
 		LanguageSettingsProvidersSerializer.unregisterLanguageSettingsChangeListener(listener);
+	}
+
+	/**
+	 * Tells if the provider is meant to be shared between projects in workspace
+	 * or belong to a specific configuration. This attribute is defined in
+	 * {@code org.eclipse.cdt.core.LanguageSettingsProvider} extension point.
+	 * <br>Note that only {@link ILanguageSettingsEditableProvider} can be owned by
+	 * a configuration.
+	 *
+	 * @param id - ID of the provider to inquire.
+	 * @return {@code true} if the provider is designed to be shared,
+	 *    {@code false} if configuration-owned.
+	 */
+	public static boolean isPreferShared(String id) {
+		return LanguageSettingsExtensionManager.isPreferShared(id);
 	}
 
 	/**

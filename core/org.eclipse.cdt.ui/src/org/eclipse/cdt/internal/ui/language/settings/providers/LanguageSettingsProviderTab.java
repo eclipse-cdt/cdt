@@ -315,9 +315,9 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 				tableProviders.setSelection(pos);
 
 				if (event.getChecked() && LanguageSettingsManager.isWorkspaceProvider(provider)) {
-					ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(provider);
-					if (!LanguageSettingsProviderAssociationManager.shouldBeShared(rawProvider)) {
-						// Switch to local provider instance
+					if (!LanguageSettingsManager.isPreferShared(provider.getId())) {
+						// Switch to non-shared provider instance
+						ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(provider);
 						if (rawProvider instanceof ILanguageSettingsEditableProvider) {
 							ILanguageSettingsEditableProvider newProvider = LanguageSettingsManager.getProviderCopy((ILanguageSettingsEditableProvider) rawProvider, false);
 							if (newProvider != null) {

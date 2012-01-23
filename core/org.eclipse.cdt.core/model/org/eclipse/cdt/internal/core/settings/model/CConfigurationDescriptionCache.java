@@ -628,4 +628,16 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 	public List<ILanguageSettingsProvider> getLanguageSettingProviders() {
 		return fSpecSettings.getLanguageSettingProviders();
 	}
+
+	@Override
+	public void setDefaultLanguageSettingsProvidersIds(String[] ids) {
+		if(!fInitializing)
+			throw ExceptionFactory.createIsReadOnlyException();
+		fSpecSettings.setDefaultLanguageSettingsProvidersIds(ids);
+	}
+
+	@Override
+	public String[] getDefaultLanguageSettingsProvidersIds() {
+		return fSpecSettings.getDefaultLanguageSettingsProvidersIds();
+	}
 }

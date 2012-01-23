@@ -29,7 +29,6 @@ public class LanguageSettingsProviderAssociationManager {
 	private static final String ATTR_CLASS = "class"; //$NON-NLS-1$
 	private static final String ATTR_ICON = "icon"; //$NON-NLS-1$
 	private static final String ATTR_PAGE = "page"; //$NON-NLS-1$
-	private static final String ATTR_SHARED = "shared"; //$NON-NLS-1$
 	private static final String ATTR_UI_CLEAR_ENTRIES = "ui-clear-entries"; //$NON-NLS-1$
 	private static final String ATTR_UI_EDIT_ENTRIES = "ui-edit-entries"; //$NON-NLS-1$
 
@@ -71,7 +70,6 @@ public class LanguageSettingsProviderAssociationManager {
 
 						Map<String, String> properties = new HashMap<String, String>();
 						sensiblePut(properties, ATTR_PAGE, cfgEl.getAttribute(ATTR_PAGE));
-						sensiblePut(properties, ATTR_SHARED, cfgEl.getAttribute(ATTR_SHARED));
 						sensiblePut(properties, ATTR_UI_CLEAR_ENTRIES, cfgEl.getAttribute(ATTR_UI_CLEAR_ENTRIES));
 						sensiblePut(properties, ATTR_UI_EDIT_ENTRIES, cfgEl.getAttribute(ATTR_UI_EDIT_ENTRIES));
 						fAssociationsById.put(id, properties);
@@ -86,7 +84,6 @@ public class LanguageSettingsProviderAssociationManager {
 
 						Map<String, String> properties = new HashMap<String, String>();
 						sensiblePut(properties, ATTR_PAGE, cfgEl.getAttribute(ATTR_PAGE));
-						sensiblePut(properties, ATTR_SHARED, cfgEl.getAttribute(ATTR_SHARED));
 						sensiblePut(properties, ATTR_UI_CLEAR_ENTRIES, cfgEl.getAttribute(ATTR_UI_CLEAR_ENTRIES));
 						sensiblePut(properties, ATTR_UI_EDIT_ENTRIES, cfgEl.getAttribute(ATTR_UI_EDIT_ENTRIES));
 						fAssociationsByClass.put(className, properties);
@@ -302,16 +299,6 @@ public class LanguageSettingsProviderAssociationManager {
 			}
 		}
 		return false;
-	}
-
-
-	/**
-	 * Returns TODO for id or closest superclass.
-	 * @param provider TODO
-	 * @return TODO
-	 */
-	public static boolean shouldBeShared(ILanguageSettingsProvider provider) {
-		return getBooleanAttribute(provider, ATTR_SHARED);
 	}
 
 	/**

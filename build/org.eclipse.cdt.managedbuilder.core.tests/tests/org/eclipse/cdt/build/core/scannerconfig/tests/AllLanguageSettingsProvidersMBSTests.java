@@ -11,8 +11,6 @@
 
 package org.eclipse.cdt.build.core.scannerconfig.tests;
 
-import org.eclipse.cdt.build.core.scannerconfig.tests.GCCBuiltinSpecsDetectorTest;
-
 import junit.framework.TestSuite;
 
 public class AllLanguageSettingsProvidersMBSTests extends TestSuite {
@@ -24,6 +22,7 @@ public class AllLanguageSettingsProvidersMBSTests extends TestSuite {
 	public AllLanguageSettingsProvidersMBSTests() {
 		super(AllLanguageSettingsProvidersMBSTests.class.getName());
 
+		addTestSuite(LanguageSettingsProvidersMBSTest.class);
 		addTestSuite(GCCBuiltinSpecsDetectorTest.class);
 	}
 }

@@ -77,13 +77,6 @@
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="shared" type="boolean">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
          <attribute name="ui-edit-entries" type="boolean">
             <annotation>
                <documentation>
@@ -131,13 +124,6 @@
                <appInfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.cdt.ui.dialogs.ICOptionPage"/>
                </appInfo>
-            </annotation>
-         </attribute>
-         <attribute name="shared" type="boolean">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
             </annotation>
          </attribute>
          <attribute name="ui-clear-entries" type="boolean">

@@ -94,6 +94,14 @@ Default constructor (constructor without arguments) of this class must be public
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="prefer-non-shared" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  A flag indicating that the provider should be owned by a configuration rather than be global in workspace and shared between projects (when the choice has not been indicated yet by other means).  This preference is consulted in order to initially set the &quot;shared&quot; attribute, for example when a user adds a provider from the list of extension providers.
+The value &quot;true&quot; of this attribute is meaningful only for providers capable of being non-shared, i.e. providers extending ILanguageSettingsEditableProvider.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

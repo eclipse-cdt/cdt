@@ -60,6 +60,8 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 
 	class MockConfigurationDescription extends CModelMock.DummyCConfigurationDescription implements ILanguageSettingsProvidersKeeper {
 		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+		String[] defaultProvidersIds = null;
+
 		public MockConfigurationDescription(String id) {
 			super(id);
 		}
@@ -72,6 +74,16 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 		@Override
 		public List<ILanguageSettingsProvider> getLanguageSettingProviders() {
 			return providers;
+		}
+
+		@Override
+		public void setDefaultLanguageSettingsProvidersIds(String[] ids) {
+			defaultProvidersIds = ids;
+		}
+
+		@Override
+		public String[] getDefaultLanguageSettingsProvidersIds() {
+			return defaultProvidersIds;
 		}
 	}
 
@@ -127,7 +139,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 	}
 
 	/**
-	 * Test ICConfigurationDescription API (getters and setters).
+	 * Test ILanguageSettingsProvidersKeeper API (getters and setters).
 	 */
 	public void testConfigurationDescription_Providers() throws Exception {
 		MockConfigurationDescription cfgDescription = new MockConfigurationDescription(CFG_ID);
@@ -146,6 +158,13 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 		assertEquals(provider2, actual.get(1));
 		assertEquals(providers.size(), actual.size());
 		assertNotSame(actual, providers);
+
+		// set default providers
+		String[] defaultProviders = { PROVIDER_0, PROVIDER_1 };
+		cfgDescription.setDefaultLanguageSettingsProvidersIds(defaultProviders);
+
+		// get default providers
+		assertEquals(defaultProviders, cfgDescription.getDefaultLanguageSettingsProvidersIds());
 	}
 
 	/**

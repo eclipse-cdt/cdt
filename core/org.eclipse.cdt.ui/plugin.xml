@@ -4306,14 +4306,14 @@
 		<provider
 			class="org.eclipse.cdt.core.language.settings.providers.LanguageSettingsGenericProvider"
 			id="org.eclipse.cdt.ui.user.LanguageSettingsProvider"
-			name="CDT User Setting Entries">
+			name="CDT User Setting Entries"
+			prefer-non-shared="true">
 		</provider>
 	</extension>
 	<extension point="org.eclipse.cdt.ui.LanguageSettingsProviderAssociation">
 		<id-association
 			id="org.eclipse.cdt.ui.user.LanguageSettingsProvider"
 			icon="icons/obj16/person-me.gif"
-			shared="false"
 			ui-clear-entries="true"
 			ui-edit-entries="true">
 		</id-association>

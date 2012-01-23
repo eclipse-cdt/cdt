@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2011 IBM Corporation and others.
+ * Copyright (c) 2003, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ import java.util.Vector;
 
 import org.eclipse.cdt.build.core.scannerconfig.ICfgScannerConfigBuilderInfo2Set;
 import org.eclipse.cdt.build.internal.core.scannerconfig.CfgDiscoveredPathManager.PathInfoCache;
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
 import org.eclipse.cdt.core.settings.model.CLibraryFileEntry;
@@ -86,8 +87,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.Version;
 
@@ -95,6 +98,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 
 	private static final String EMPTY_STRING = "";	//$NON-NLS-1$
 	private static final String EMPTY_CFG_ID = "org.eclipse.cdt.build.core.emptycfg";	//$NON-NLS-1$
+	private static final String LANGUAGE_SETTINGS_PROVIDER_DELIMITER = ";"; //$NON-NLS-1$
 
 	//  Parent and children
 	private String parentId;
@@ -105,7 +109,8 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	private String cleanCommand;
 	private String artifactExtension;
 	private String errorParserIds;
-	private String defaultLanguageSettingsProvidersIds;
+	private String defaultLanguageSettingsProvidersAttribute;
+	private String[] defaultLanguageSettingsProvidersIds;
     private String prebuildStep;
     private String postbuildStep;
     private String preannouncebuildStep;
@@ -338,8 +343,8 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 
 		if (parentConfig != null) {
 			name = parentConfig.getName();
-			// If this constructor is called to clone an existing 
-			// configuration, the parent of the parent should be stored. 
+			// If this constructor is called to clone an existing
+			// configuration, the parent of the parent should be stored.
 			// As of 2.1, there is still one single level of inheritance to
 			// worry about
 			parent = parentConfig.getParent() == null ? parentConfig : parentConfig.getParent();
@@ -486,8 +491,8 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 
 	//		if(!baseCfg.isExtensionConfig)
 	//			cloneChildren = true;
-			// If this constructor is called to clone an existing 
-			// configuration, the parent of the cloning config should be stored. 
+			// If this constructor is called to clone an existing
+			// configuration, the parent of the cloning config should be stored.
 			parent = baseCfg.isExtensionConfig || baseCfg.getParent() == null ? baseCfg : baseCfg.getParent();
 
 			//  Copy the remaining attributes
@@ -634,8 +639,8 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 
 		if(!cloneConfig.isExtensionConfig)
 			cloneChildren = true;
-		// If this constructor is called to clone an existing 
-		// configuration, the parent of the cloning config should be stored. 
+		// If this constructor is called to clone an existing
+		// configuration, the parent of the cloning config should be stored.
 		parent = cloneConfig.isExtensionConfig || cloneConfig.getParent() == null ? cloneConfig : cloneConfig.getParent();
 		parentId = parent.getId();
 
@@ -786,7 +791,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		errorParserIds = SafeStringInterner.safeIntern(element.getAttribute(ERROR_PARSERS));
 
 		// Get the initial/default language setttings providers IDs
-		defaultLanguageSettingsProvidersIds = SafeStringInterner.safeIntern(element.getAttribute(LANGUAGE_SETTINGS_PROVIDERS));
+		defaultLanguageSettingsProvidersAttribute = SafeStringInterner.safeIntern(element.getAttribute(LANGUAGE_SETTINGS_PROVIDERS));
 
 		// Get the artifact extension
 		artifactExtension = SafeStringInterner.safeIntern(element.getAttribute(EXTENSION));
@@ -1460,8 +1465,52 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		return set;
 	}
 
+	private String getDefaultLanguageSettingsProvidersAttribute() {
+		if (defaultLanguageSettingsProvidersAttribute == null && parent instanceof Configuration) {
+			defaultLanguageSettingsProvidersAttribute = ((Configuration) parent).getDefaultLanguageSettingsProvidersAttribute();
+		}
+
+		return defaultLanguageSettingsProvidersAttribute;
+	}
+
 	@Override
-	public String getDefaultLanguageSettingsProvidersIds() {
+	public String[] getDefaultLanguageSettingsProvidersIds() {
+		defaultLanguageSettingsProvidersIds = null;
+		if (defaultLanguageSettingsProvidersIds == null) {
+			getDefaultLanguageSettingsProvidersAttribute();
+			if (defaultLanguageSettingsProvidersAttribute != null) {
+				List<String> ids = new ArrayList<String>();
+				String[] defaultIds = defaultLanguageSettingsProvidersAttribute.split(LANGUAGE_SETTINGS_PROVIDER_DELIMITER);
+				for (String id : defaultIds) {
+					if (id != null && !id.isEmpty()) {
+						if (id.startsWith("-")) {
+							id = id.substring(1);
+							ids.remove(id);
+						} else if (!ids.contains(id)){
+							if (id.contains("${Toolchain}")) {
+								IToolChain toolchain = getToolChain();
+								if (toolchain != null) {
+									String toolchainProvidersIds = toolchain.getDefaultLanguageSettingsProvidersIds();
+									if (toolchainProvidersIds != null) {
+										ids.addAll(Arrays.asList(toolchainProvidersIds.split(LANGUAGE_SETTINGS_PROVIDER_DELIMITER)));
+									} else {
+										String message = "Invalid use of ${Toolchain} tag, toolchain does not specify language settings providers. cfg=" + getId();
+										ManagedBuilderCorePlugin.log(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, IStatus.ERROR, message, new Exception()));
+									}
+								}
+							} else {
+								ids.add(id);
+							}
+						}
+					}
+
+				}
+				defaultLanguageSettingsProvidersIds = ids.toArray(new String[ids.size()]);
+			} else if (parent != null) {
+				defaultLanguageSettingsProvidersIds = parent.getDefaultLanguageSettingsProvidersIds();
+			}
+		}
+
 		return defaultLanguageSettingsProvidersIds;
 	}
 

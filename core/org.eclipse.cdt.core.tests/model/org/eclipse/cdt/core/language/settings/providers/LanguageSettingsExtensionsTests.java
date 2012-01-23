@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.settings.model.CMacroFileEntry;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsExtensionManager;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -356,6 +357,7 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 			ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(providerExt);
 			assertTrue(rawProvider instanceof LanguageSettingsSerializableProvider);
 			assertTrue(LanguageSettingsManager.isEqualExtensionProvider(rawProvider, true));
+			assertEquals(true, LanguageSettingsExtensionManager.isPreferShared(EXTENSION_SERIALIZABLE_PROVIDER_ID));
 		}
 
 		// Editable providers are retrieved by copy
@@ -365,6 +367,7 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 			assertFalse(LanguageSettingsManager.isWorkspaceProvider(providerExt));
 			assertTrue(providerExt instanceof ILanguageSettingsEditableProvider);
 			assertTrue(LanguageSettingsManager.isEqualExtensionProvider(providerExt, true));
+			assertEquals(LanguageSettingsExtensionManager.isPreferShared(EXTENSION_EDITABLE_PROVIDER_ID), false);
 
 			// test that different copies are not same
 			ILanguageSettingsProvider providerExt2 = LanguageSettingsManager.getExtensionProviderCopy(EXTENSION_EDITABLE_PROVIDER_ID, true);

@@ -188,7 +188,8 @@
             class="org.eclipse.cdt.make.internal.core.scannerconfig.GCCBuildCommandParser"
             id="org.eclipse.cdt.make.core.build.command.parser.gcc"
             name="CDT GCC Build Output Parser"
-            parameter="(gcc)|([gc]\+\+)">
+            parameter="(gcc)|([gc]\+\+)"
+            prefer-non-shared="true">
       </provider>
    </extension>
 

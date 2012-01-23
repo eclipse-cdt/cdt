@@ -306,9 +306,9 @@ public class LanguageSettingsSerializableProvider extends LanguageSettingsBasePr
 				if (!key.equals(ATTR_ID) && !key.equals(ATTR_NAME) && !key.equals(ATTR_CLASS)) {
 					String value = attr.getNodeValue();
 					properties.put(key, value);
-					}
 				}
 			}
+		}
 
 		this.setId(providerId);
 		this.setName(providerName);

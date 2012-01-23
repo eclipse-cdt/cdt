@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2011 Andrew Gvozdev and others.
+ * Copyright (c) 2011, 2012 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,5 +46,24 @@ public interface ILanguageSettingsProvidersKeeper {
 	 *    This method does not return {@code null}.
 	 */
 	public List<ILanguageSettingsProvider> getLanguageSettingProviders();
+
+	/**
+	 * Sets the list of IDs of default language settings providers.
+	 * <br><br>
+	 * The method is intended to be used by MBS to set the list from tool-chain definition.
+	 * The default list from the tool-chain is used, for example, while resetting
+	 * configuration providers to default in UI.
+	 *
+	 * @param ids - default provider IDs specified in the tool-chain.
+	 */
+	public void setDefaultLanguageSettingsProvidersIds(String[] ids);
+
+	/**
+	 * Retrieve the list of IDs of default language settings providers.
+	 * Normally the list would come from the tool-chain definition.
+	 *
+	 * @return default provider IDs or {@code null} if default providers are not defined.
+	 */
+	public String[] getDefaultLanguageSettingsProvidersIds();
 
 }

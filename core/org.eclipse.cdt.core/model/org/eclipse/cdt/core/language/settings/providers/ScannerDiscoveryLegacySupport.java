@@ -33,8 +33,10 @@ import org.osgi.service.prefs.Preferences;
  * @since 5.4
  */
 public class ScannerDiscoveryLegacySupport {
-	/** Name of MBS language settings provider (from org.eclipse.cdt.managedbuilder.core) */
-	public static final String MBS_LANGUAGE_SETTINGS_PROVIDER = "org.eclipse.cdt.managedbuilder.core.LanguageSettingsProvider"; //$NON-NLS-1$
+	/** ID of User language settings provider (from org.eclipse.cdt.ui) */
+	public static final String USER_LANGUAGE_SETTINGS_PROVIDER_ID = "org.eclipse.cdt.ui.user.LanguageSettingsProvider"; //$NON-NLS-1$
+	/** ID of MBS language settings provider (from org.eclipse.cdt.managedbuilder.core) */
+	public static final String MBS_LANGUAGE_SETTINGS_PROVIDER_ID = "org.eclipse.cdt.managedbuilder.core.LanguageSettingsProvider"; //$NON-NLS-1$
 
 	private static String USE_LANGUAGE_SETTINGS_PROVIDERS_PREFERENCE = "enabled"; //$NON-NLS-1$
 //	the default needs to be "false" for legacy projects to be open with old SD enabled for MBS provider
@@ -91,7 +93,7 @@ public class ScannerDiscoveryLegacySupport {
 		if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
 			List<ILanguageSettingsProvider> lsProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
 			for (ILanguageSettingsProvider lsp : lsProviders) {
-				if (MBS_LANGUAGE_SETTINGS_PROVIDER.equals(lsp.getId())) {
+				if (MBS_LANGUAGE_SETTINGS_PROVIDER_ID.equals(lsp.getId())) {
 					return true;
 				}
 			}

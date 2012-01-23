@@ -172,8 +172,13 @@ public interface IConfiguration extends IBuildObject, IBuildObjectPropertiesCont
 	 */
 	public String[] getErrorParserList();
 
-	/** @since 8.1 */
-	public String getDefaultLanguageSettingsProvidersIds();
+	/**
+	 * Returns default language settings providers IDs specified for the configuration.
+	 * @return default language settings providers IDs.
+	 *
+	 * @since 8.1
+	 */
+	public String[] getDefaultLanguageSettingsProvidersIds();
 
 	/**
 	 * Projects have C or CC natures. Tools can specify a filter so they are not

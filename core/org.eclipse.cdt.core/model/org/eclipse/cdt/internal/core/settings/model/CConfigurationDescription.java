@@ -832,8 +832,7 @@ public class CConfigurationDescription extends CDataProxyContainer
 	@Override
 	public void setLanguageSettingProviders(List<ILanguageSettingsProvider> providers) {
 		try {
-			CConfigurationSpecSettings specSettings = getSpecSettings();
-			specSettings.setLanguageSettingProviders(providers);
+			getSpecSettings().setLanguageSettingProviders(providers);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
@@ -843,6 +842,25 @@ public class CConfigurationDescription extends CDataProxyContainer
 	public List<ILanguageSettingsProvider> getLanguageSettingProviders() {
 		try {
 			return getSpecSettings().getLanguageSettingProviders();
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+		return null;
+	}
+
+	@Override
+	public void setDefaultLanguageSettingsProvidersIds(String[] ids) {
+		try {
+			getSpecSettings().setDefaultLanguageSettingsProvidersIds(ids);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+	}
+
+	@Override
+	public String[] getDefaultLanguageSettingsProvidersIds() {
+		try {
+			return getSpecSettings().getDefaultLanguageSettingsProvidersIds();
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}

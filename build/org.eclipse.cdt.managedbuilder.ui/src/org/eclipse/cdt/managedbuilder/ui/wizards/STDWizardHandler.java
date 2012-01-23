@@ -31,6 +31,7 @@ import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
 import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
+import org.eclipse.cdt.managedbuilder.internal.dataprovider.ConfigurationDataProvider;
 import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.cdt.ui.wizards.CDTMainWizardPage;
 import org.eclipse.core.resources.IProject;
@@ -120,14 +121,13 @@ public class STDWizardHandler extends MBSWizardHandler {
 				}
 
 				ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, isTryingNewSD);
-				List<ILanguageSettingsProvider> providers;
 				if (isTryingNewSD) {
-					providers = MBSWizardHandler.getLanguageSettingsProviders(cfg);
+					ConfigurationDataProvider.setDefaultLanguageSettingsProviders(cfg, cfgDes);
 				} else {
-					providers = new ArrayList<ILanguageSettingsProvider>();
-					providers.add(LanguageSettingsManager.getWorkspaceProvider(MBSWizardHandler.MBS_LANGUAGE_SETTINGS_PROVIDER));
+					List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+					providers.add(LanguageSettingsManager.getWorkspaceProvider(ScannerDiscoveryLegacySupport.MBS_LANGUAGE_SETTINGS_PROVIDER_ID));
+					((ILanguageSettingsProvidersKeeper) cfgDes).setLanguageSettingProviders(providers);
 				}
-				((ILanguageSettingsProvidersKeeper) cfgDes).setLanguageSettingProviders(providers);
 			} else {
 				ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, false);
 			}
@@ -136,7 +136,10 @@ public class STDWizardHandler extends MBSWizardHandler {
 	    }
 	    mngr.setProjectDescription(project, des);
     }
-	public boolean canCreateWithoutToolchain() { return true; }
+
+	public boolean canCreateWithoutToolchain() {
+		return true;
+	}
 
 	@Override
 	public void convertProject(IProject proj, IProgressMonitor monitor) throws CoreException {

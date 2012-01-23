@@ -15,11 +15,14 @@ package org.eclipse.cdt.core.testplugin;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -66,7 +69,7 @@ import org.eclipse.core.runtime.jobs.Job;
 public class ResourceHelper {
 	private final static IProgressMonitor NULL_MONITOR = new NullProgressMonitor();
 	private static final int MAX_RETRY= 5;
-	
+
 	private final static Set<String> externalFilesCreated = new HashSet<String>();
 	private final static Set<IResource> resourcesCreated = new HashSet<IResource>();
 
@@ -190,7 +193,7 @@ public class ResourceHelper {
 
 	/**
 	 * Create a plain Eclipse project.
-	 * 
+	 *
 	 * @param projectName
 	 * @return  the project handle
 	 * @throws CoreException  if project could not be created
@@ -202,17 +205,17 @@ public class ResourceHelper {
 			project.create(NULL_MONITOR);
 		else
 			project.refreshLocal(IResource.DEPTH_INFINITE, null);
-		
+
 		if (!project.isOpen())
 			project.open(NULL_MONITOR);
-		
+
 		resourcesCreated.add(project);
 		return project;
 	}
-	
+
 	/**
 	 * Delete project by name.
-	 * 
+	 *
 	 * @param projectName
 	 * @throws CoreException
 	 */
@@ -222,20 +225,20 @@ public class ResourceHelper {
 		if (project.exists())
 			delete(project);
 	}
-	
+
 	/**
 	 * Delete given project with content.
-	 * 
+	 *
 	 * @param project
 	 * @throws CoreException
 	 */
 	public static void delete(final IProject project) throws CoreException {
 		delete(project, true);
 	}
-	
+
 	/**
 	 * Delete project.
-	 * 
+	 *
 	 * @param project
 	 * @param deleteContent  whether to delete project content
 	 * @throws CoreException
@@ -252,7 +255,7 @@ public class ResourceHelper {
 				try {
 					Thread.sleep(1000); // sleep a second
 				} catch (InterruptedException e) {
-				} 
+				}
 			}
 		}
 	}
@@ -297,7 +300,7 @@ public class ResourceHelper {
 	 * can include relative path as a part of the name but the the path
 	 * has to be present on disk.
 	 * The intention of the method is to create files which do not belong to any project.
-	 * 
+	 *
 	 * @param name - filename.
 	 * @return full path of the created file.
 	 *
@@ -375,7 +378,7 @@ public class ResourceHelper {
 	public static IPath createTemporaryFolder() throws CoreException, IOException {
 		return ResourceHelper.createWorkspaceFolder("tmp/"+System.currentTimeMillis()+'.'+UUID.randomUUID());
 	}
-	
+
 	/**
 	 * Creates new eclipse file-link from project root to file system file. The filename
 	 * can include relative path as a part of the name but the the path
@@ -514,7 +517,7 @@ public class ResourceHelper {
 	 * Checks if symbolic links are supported on the system.
 	 * Used in particular by method {@link #createSymbolicLink(IPath, IPath)}
 	 * and other flavors to create symbolic links.
-	 * 
+	 *
 	 * Note that Windows links .lnk are not supported here.
 	 * @return {@code true} if symbolic links are suppoted, {@code false} otherwise.
 	 */
@@ -673,6 +676,42 @@ public class ResourceHelper {
 			throw new UnsupportedOperationException("Cygwin utility cygpath is not available.");
 		}
 		return windowsPath.trim();
+	}
+
+	/**
+	 * Get contents of file on file-system.
+	 *
+	 * @param fullPath - full path to the file on the file-system.
+	 * @return contents of the file.
+	 * @throws IOException on IO problem.
+	 */
+	public static String getContents(IPath fullPath) throws IOException {
+		FileInputStream stream = new FileInputStream(fullPath.toFile());
+		try {
+			// Avoid using java.nio.channels.FileChannel,
+			// see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4715154
+			Reader reader = new BufferedReader(new InputStreamReader(stream, Charset.defaultCharset()));
+			StringBuilder builder = new StringBuilder();
+			char[] buffer = new char[8192];
+			int read;
+			while ((read = reader.read(buffer, 0, buffer.length)) > 0) {
+				builder.append(buffer, 0, read);
+			}
+			return builder.toString();
+		} finally {
+			stream.close();
+		}
+	}
+
+	/**
+	 * Get contents of file on file-system.
+	 *
+	 * @param fullPath - full path to the file on the file-system.
+	 * @return contents of the file.
+	 * @throws IOException on IO problem.
+	 */
+	public static String getContents(String fullPath) throws IOException {
+		return getContents(new Path(fullPath));
 	}
 
 	/**

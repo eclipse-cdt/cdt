@@ -49,6 +49,7 @@ public class LanguageSettingsExtensionManager {
 	static final String ATTR_ID = "id"; //$NON-NLS-1$
 	static final String ATTR_NAME = "name"; //$NON-NLS-1$
 	static final String ATTR_CLASS = "class"; //$NON-NLS-1$
+	static final String ATTR_PREFER_NON_SHARED = "prefer-non-shared"; //$NON-NLS-1$
 
 	static final String ELEM_PROVIDER = "provider"; //$NON-NLS-1$
 	static final String ELEM_LANGUAGE_SCOPE = "language-scope"; //$NON-NLS-1$
@@ -359,7 +360,7 @@ public class LanguageSettingsExtensionManager {
 	 *    Shallow equality is applicable only for {@link ILanguageSettingsEditableProvider}.
 	 * @return - {@code true} if the provider matches the extension or {@code false} otherwise.
 	 */
-	public static boolean isEqualsExtensionProvider(ILanguageSettingsProvider provider, boolean deep) {
+	public static boolean isEqualExtensionProvider(ILanguageSettingsProvider provider, boolean deep) {
 		String id = provider.getId();
 		if (deep || !(provider instanceof ILanguageSettingsEditableProvider)) {
 			ILanguageSettingsProvider extensionProvider = fExtensionProviders.get(id);
@@ -372,4 +373,22 @@ public class LanguageSettingsExtensionManager {
 		}
 	}
 
+	/**
+	 * Tells if the provider is meant to be shared between projects in workspace
+	 * or belong to a specific configuration. This attribute is defined in
+	 * {@code org.eclipse.cdt.core.LanguageSettingsProvider} extension point.
+	 * <br>Note that only {@link ILanguageSettingsEditableProvider} can be owned by
+	 * a configuration.
+	 *
+	 * @param id - ID of the provider to inquire.
+	 * @return {@code true} if the provider is designed to be shared,
+	 *    {@code false} if configuration-owned.
+	 */
+	public static boolean isPreferShared(String id) {
+		ILanguageSettingsProvider provider = fExtensionProviders.get(id);
+		if (provider instanceof LanguageSettingsBaseProvider && provider instanceof ILanguageSettingsEditableProvider) {
+			return ! ((LanguageSettingsBaseProvider) provider).getPropertyBool(ATTR_PREFER_NON_SHARED);
+		}
+		return true;
+	}
 }

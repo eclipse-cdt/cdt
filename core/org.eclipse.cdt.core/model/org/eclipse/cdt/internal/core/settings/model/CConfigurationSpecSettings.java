@@ -25,6 +25,7 @@ import java.util.Set;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsBroadcastingProvider;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsStorage;
 import org.eclipse.cdt.core.settings.model.CExternalSetting;
@@ -57,7 +58,7 @@ import org.eclipse.core.runtime.QualifiedName;
  * This corresponds to the <cconfiguration id="....> elements within
  * the org.eclipse.cdt.core.settings storageModule in the project xml file
  */
-public class CConfigurationSpecSettings implements ICSettingsStorage{
+public class CConfigurationSpecSettings implements ICSettingsStorage, ILanguageSettingsProvidersKeeper {
 	static final String BUILD_SYSTEM_ID = "buildSystemId";	//$NON-NLS-1$
 //	private final static String ELEMENT_REFERENCES = "references";  //$NON-NLS-1$
 	private static final String PROJECT_EXTENSION_ATTR_POINT = "point"; //$NON-NLS-1$
@@ -98,6 +99,7 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 
 	private List<ILanguageSettingsProvider> fLanguageSettingsProviders = new ArrayList<ILanguageSettingsProvider>(0);
 	private LinkedHashMap<String /*provider*/, LanguageSettingsStorage> lspPersistedState = new LinkedHashMap<String, LanguageSettingsStorage>();
+	private String[] defaultLanguageSettingsProvidersIds = null;
 
 
 	private class DeltaSet {
@@ -201,6 +203,11 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 			} catch (CloneNotSupportedException e) {
 				CCorePlugin.log("Not able to clone language settings storage:" + e); //$NON-NLS-1$
 			}
+		}
+		if (base.defaultLanguageSettingsProvidersIds != null) {
+			defaultLanguageSettingsProvidersIds = base.defaultLanguageSettingsProvidersIds.clone();
+		} else {
+			defaultLanguageSettingsProvidersIds = null;
 		}
 	}
 
@@ -1007,6 +1014,7 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 	 *
 	 * @param providers - list of providers to keep in the specs.
 	 */
+	@Override
 	public void setLanguageSettingProviders(List<ILanguageSettingsProvider> providers) {
 		fLanguageSettingsProviders = new ArrayList<ILanguageSettingsProvider>(0);
 		Set<String> ids = new HashSet<String>();
@@ -1025,8 +1033,19 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 		fIsModified = true;
 	}
 
+	@Override
 	public List<ILanguageSettingsProvider> getLanguageSettingProviders() {
 		return Collections.unmodifiableList(fLanguageSettingsProviders);
+	}
+
+	@Override
+	public void setDefaultLanguageSettingsProvidersIds(String[] ids) {
+		defaultLanguageSettingsProvidersIds = ids;
+	}
+
+	@Override
+	public String[] getDefaultLanguageSettingsProvidersIds() {
+		return defaultLanguageSettingsProvidersIds;
 	}
 
 	/**

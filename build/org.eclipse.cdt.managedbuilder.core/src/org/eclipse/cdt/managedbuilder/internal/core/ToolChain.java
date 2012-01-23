@@ -1538,6 +1538,11 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 
 	@Override
 	public String getDefaultLanguageSettingsProvidersIds() {
+		if (defaultLanguageSettingsProvidersIds == null) {
+			if (superClass instanceof IToolChain) {
+				defaultLanguageSettingsProvidersIds = ((IToolChain) superClass).getDefaultLanguageSettingsProvidersIds();
+			}
+		}
 		return defaultLanguageSettingsProvidersIds;
 	}
 
@@ -1577,7 +1582,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.managedbuilder.core.IToolChain#getScannerConfigDiscoveryProfileId()
 	 */
 	@Override
@@ -1597,7 +1602,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IMatchKeyProv
 		}
 		return scannerConfigDiscoveryProfileId;
 	}
-	
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.managedbuilder.core.IToolChain#setScannerConfigDiscoveryProfileId(java.lang.String)
      */

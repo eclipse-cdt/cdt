@@ -172,9 +172,9 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 				}, null, IWorkspace.AVOID_UPDATE, null);
 				// end Bug 249951 & Bug 310007
 				serializingLock.acquire();
+				LanguageSettingsManager.serializeLanguageSettings(fDes);
 				projectModificaitonStamp = serialize(fDes.getProject(), ICProjectDescriptionStorageType.STORAGE_FILE_NAME, fElement);
 				((ContributedEnvironment) CCorePlugin.getDefault().getBuildEnvironmentManager().getContributedEnvironment()).serialize(fDes);
-				LanguageSettingsManager.serializeLanguageSettings(fDes);
 			} finally {
 				serializingLock.release();
 				Job.getJobManager().removeJobChangeListener(notifyJobCanceller);

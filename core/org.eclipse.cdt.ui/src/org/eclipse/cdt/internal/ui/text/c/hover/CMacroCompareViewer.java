@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -199,20 +199,21 @@ class CMacroCompareViewer extends CMergeViewer {
 			fLeftViewer.setRedraw(false);
 			fRightViewer.setRedraw(false);
 		}
-		final ReplaceEdit[] edits;
+		ReplaceEdit[] edits = null;
 		
 		try {
-			final IMacroExpansionStep step;
-			if (fStepIndex < fInput.fExplorer.getExpansionStepCount()) {
-				step= fInput.fExplorer.getExpansionStep(fStepIndex);
-			} else {
-				step= fInput.fExplorer.getFullExpansion();
-			}
-			edits= step.getReplacements();
-
-			fLeftHighlighter.setReplaceEdits(fPrefixLength, edits);
-			fRightHighlighter.setReplaceEdits(fPrefixLength, edits);
+			if (fInput != null) {
+				final IMacroExpansionStep step;
+				if (fStepIndex < fInput.fExplorer.getExpansionStepCount()) {
+					step= fInput.fExplorer.getExpansionStep(fStepIndex);
+				} else {
+					step= fInput.fExplorer.getFullExpansion();
+				}
+				edits= step.getReplacements();
 	
+				fLeftHighlighter.setReplaceEdits(fPrefixLength, edits);
+				fRightHighlighter.setReplaceEdits(fPrefixLength, edits);
+			}	
 			super.setInput(input);
 			
 		} finally {
@@ -221,7 +222,7 @@ class CMacroCompareViewer extends CMergeViewer {
 				fRightViewer.setRedraw(true);
 			}
 		}
-		if (edits.length > 0) {
+		if (edits != null && edits.length > 0) {
 			if (fLeftViewer != null && fRightViewer != null) {
 				final int firstDiffOffset= fPrefixLength + edits[0].getOffset();
 				fLeftViewer.revealRange(firstDiffOffset, edits[0].getLength());

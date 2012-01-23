@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,7 +64,16 @@ public class CMacroExpansionControl extends AbstractSourceViewerInformationContr
 			fInput= macroExpansionInput;
 			updateStatusText();
 		} else {
+			fInput = null;
 			super.setInput(input);
+		}
+	}
+
+	@Override
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		if (!visible) {
+			setInput(null);
 		}
 	}
 

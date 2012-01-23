@@ -51,7 +51,7 @@ public class GCCBuildCommandParser extends AbstractBuildCommandParser implements
 
 	public static class GCCBuildCommandPatternHighlighter extends AbstractBuildCommandParser.AbstractBuildCommandPatternHighlighter {
 		// ID of the parser taken from the existing extension point
-		private static final String GCC_BUILD_COMMAND_PARSER_EXT = "org.eclipse.cdt.make.core.build.command.parser.gcc"; //$NON-NLS-1$
+		private static final String GCC_BUILD_COMMAND_PARSER_EXT = "org.eclipse.cdt.make.core.GCCBuildCommandParser"; //$NON-NLS-1$
 
 		public GCCBuildCommandPatternHighlighter() {
 			super(GCC_BUILD_COMMAND_PARSER_EXT);

@@ -526,7 +526,7 @@
                cleanCommand="rm -rf"
                errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
                id="cdt.managedbuild.config.xlc.exe.debug"
-               languageSettingsProviders="org.eclipse.cdt.ui.user.LanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.LanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.xlc.core.xlc.build.command.parser"
+               languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.xlc.core.XlcBuildCommandParser"
                name="%ConfigName.Dbg">
             <toolChain
                archList="all"
@@ -534,7 +534,7 @@
                id="cdt.managedbuild.toolchain.xlc.exe.debug"
                name="%ToolChainName.Dbg"
                osList="all"
-               languageSettingsProviders="org.eclipse.cdt.managedbuilder.xlc.core.xlc.build.command.parser;org.eclipse.cdt.managedbuilder.xlc.core.xlc.specs.detector"
+               languageSettingsProviders="org.eclipse.cdt.managedbuilder.xlc.core.XlcBuildCommandParser;org.eclipse.cdt.managedbuilder.xlc.core.XlcBuiltinSpecsDetector"
                targetTool="cdt.managedbuild.tool.xlc.c.linker.exe.debug;cdt.managedbuild.tool.xlc.cpp.linker.exe.debug">
                <targetPlatform
                   id="cdt.managedbuild.target.xlc.platform.exe.debug"
@@ -593,14 +593,14 @@
                artifactExtension="exe"
                cleanCommand="rm -rf"
                errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
-               languageSettingsProviders="org.eclipse.cdt.ui.user.LanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.LanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.xlc.core.xlc.build.command.parser"
+               languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.xlc.core.XlcBuildCommandParser"
                id="cdt.managedbuild.config.xlc.exe.release">
             <toolChain
                archList="all"
                id="cdt.managedbuild.toolchain.xlc.exe.release"
                name="%ToolChainName.Rel"
                osList="all"
-               languageSettingsProviders="org.eclipse.cdt.managedbuilder.xlc.core.xlc.build.command.parser;org.eclipse.cdt.managedbuilder.xlc.core.xlc.specs.detector"
+               languageSettingsProviders="org.eclipse.cdt.managedbuilder.xlc.core.XlcBuildCommandParser;org.eclipse.cdt.managedbuilder.xlc.core.XlcBuiltinSpecsDetector"
                targetTool="cdt.managedbuild.tool.xlc.c.linker.exe.release;cdt.managedbuild.tool.xlc.cpp.linker.exe.release">
                <targetPlatform
                   id="cdt.managedbuild.target.xlc.platform.exe.release"
@@ -667,11 +667,11 @@
                cleanCommand="rm -rf"
                artifactExtension="so"
                errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
-               languageSettingsProviders="org.eclipse.cdt.ui.user.LanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.LanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.xlc.core.xlc.build.command.parser"
+               languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.xlc.core.XlcBuildCommandParser"
                id="cdt.managedbuild.config.xlc.so.debug">
             <toolChain
                   id="cdt.managedbuild.toolchain.xlc.so.debug"
-                  languageSettingsProviders="org.eclipse.cdt.managedbuilder.xlc.core.xlc.build.command.parser;org.eclipse.cdt.managedbuilder.xlc.core.xlc.specs.detector"
+                  languageSettingsProviders="org.eclipse.cdt.managedbuilder.xlc.core.XlcBuildCommandParser;org.eclipse.cdt.managedbuilder.xlc.core.XlcBuiltinSpecsDetector"
                   name="%ToolChainName.Dbg"
                   targetTool="cdt.managedbuild.tool.xlc.c.linker.so.debug;cdt.managedbuild.tool.xlc.cpp.linker.so.debug">
                <targetPlatform
@@ -731,11 +731,11 @@
                cleanCommand="rm -rf"
                artifactExtension="so"
                errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
-               languageSettingsProviders="org.eclipse.cdt.ui.user.LanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.LanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.xlc.core.xlc.build.command.parser"
+               languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.xlc.core.XlcBuildCommandParser"
                id="cdt.managedbuild.config.xlc.so.release">
             <toolChain
                   id="cdt.managedbuild.toolchain.xlc.so.release"
-                  languageSettingsProviders="org.eclipse.cdt.managedbuilder.xlc.core.xlc.build.command.parser;org.eclipse.cdt.managedbuilder.xlc.core.xlc.specs.detector"
+                  languageSettingsProviders="org.eclipse.cdt.managedbuilder.xlc.core.XlcBuildCommandParser;org.eclipse.cdt.managedbuilder.xlc.core.XlcBuiltinSpecsDetector"
                   name="%ToolChainName.Rel"
                   targetTool="cdt.managedbuild.tool.xlc.c.linker.so.release;cdt.managedbuild.tool.xlc.cpp.linker.so.release">
                <targetPlatform
@@ -803,11 +803,11 @@
                cleanCommand="rm -rf"
                artifactExtension="lib"
                errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
-               languageSettingsProviders="org.eclipse.cdt.ui.user.LanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.LanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.xlc.core.xlc.build.command.parser"
+               languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.xlc.core.XlcBuildCommandParser"
                id="cdt.managedbuild.config.xlc.lib.debug">
             <toolChain
                   id="cdt.managedbuild.toolchain.xlc.lib.debug"
-                  languageSettingsProviders="org.eclipse.cdt.managedbuilder.xlc.core.xlc.build.command.parser;org.eclipse.cdt.managedbuilder.xlc.core.xlc.specs.detector"
+                  languageSettingsProviders="org.eclipse.cdt.managedbuilder.xlc.core.XlcBuildCommandParser;org.eclipse.cdt.managedbuilder.xlc.core.XlcBuiltinSpecsDetector"
                   name="%ToolChainName.Dbg"
                   targetTool="cdt.managedbuild.tool.xlc.archiver.lib.debug">
                <targetPlatform
@@ -863,11 +863,11 @@
                cleanCommand="rm -rf"
                artifactExtension="lib"
                errorParsers="org.eclipse.cdt.errorparsers.xlc.XlcErrorParser"
-               languageSettingsProviders="org.eclipse.cdt.ui.user.LanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.LanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.xlc.core.xlc.build.command.parser"
+               languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.managedbuilder.xlc.core.XlcBuildCommandParser"
                id="cdt.managedbuild.config.xlc.lib.release">
             <toolChain
                   id="cdt.managedbuild.toolchain.xlc.lib.release"
-                  languageSettingsProviders="org.eclipse.cdt.managedbuilder.xlc.core.xlc.build.command.parser;org.eclipse.cdt.managedbuilder.xlc.core.xlc.specs.detector"
+                  languageSettingsProviders="org.eclipse.cdt.managedbuilder.xlc.core.XlcBuildCommandParser;org.eclipse.cdt.managedbuilder.xlc.core.XlcBuiltinSpecsDetector"
                   name="%ToolChainName.Rel"
                   targetTool="cdt.managedbuild.tool.xlc.archiver.lib.release">
                <targetPlatform

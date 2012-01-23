@@ -80,7 +80,7 @@
          point="org.eclipse.cdt.core.LanguageSettingsProvider">
       <provider
             class="org.eclipse.cdt.managedbuilder.xlc.core.XlcBuiltinSpecsDetector"
-            id="org.eclipse.cdt.managedbuilder.xlc.core.xlc.specs.detector"
+            id="org.eclipse.cdt.managedbuilder.xlc.core.XlcBuiltinSpecsDetector"
             name="%XlcBuiltinSpecsDetectorName"
             parameter="${COMMAND} -E -V -P -w ${INPUTS}">
          <language-scope id="org.eclipse.cdt.core.gcc"/>
@@ -88,7 +88,7 @@
       </provider>
       <provider
             class="org.eclipse.cdt.make.internal.core.scannerconfig.GCCBuildCommandParser"
-            id="org.eclipse.cdt.managedbuilder.xlc.core.xlc.build.command.parser"
+            id="org.eclipse.cdt.managedbuilder.xlc.core.XlcBuildCommandParser"
             name="%XlcBuildCommandParserName"
             parameter="xl[cC]"
             prefer-non-shared="true">

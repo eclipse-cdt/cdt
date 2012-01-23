@@ -1704,7 +1704,7 @@
       <toolChain
           archList="all"
             id="cdt.managedbuild.toolchain.gnu.base"
-            languageSettingsProviders="org.eclipse.cdt.make.core.build.command.parser.gcc;org.eclipse.cdt.managedbuilder.core.gcc.specs.detector"
+            languageSettingsProviders="org.eclipse.cdt.make.core.GCCBuildCommandParser;org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetector"
           name="%ToolChainName.Linux"
             osList="linux,hpux,aix,qnx"
             targetTool="cdt.managedbuild.tool.gnu.c.linker;cdt.managedbuild.tool.gnu.cpp.linker;cdt.managedbuild.tool.gnu.archiver">
@@ -1772,7 +1772,7 @@
                     configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.gnu.cygwin.GnuCygwinConfigurationEnvironmentSupplier"
                     id="cdt.managedbuild.toolchain.gnu.cygwin.base"
                     isToolChainSupported="org.eclipse.cdt.managedbuilder.gnu.cygwin.IsGnuCygwinToolChainSupported"
-                    languageSettingsProviders="org.eclipse.cdt.make.core.build.command.parser.gcc;org.eclipse.cdt.managedbuilder.core.cygwin.gcc.specs.detector"
+                    languageSettingsProviders="org.eclipse.cdt.make.core.GCCBuildCommandParser;org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetectorCygwin"
                     name="%ToolChainName.Cygwin"
                     osList="win32"
                     targetTool="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.base;cdt.managedbuild.tool.gnu.c.linker.cygwin.base;cdt.managedbuild.tool.gnu.archiver">
@@ -1842,7 +1842,7 @@
                     configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.gnu.mingw.MingwEnvironmentVariableSupplier"
                     id="cdt.managedbuild.toolchain.gnu.mingw.base"
                     isToolChainSupported="org.eclipse.cdt.managedbuilder.gnu.mingw.MingwIsToolChainSupported"
-                    languageSettingsProviders="org.eclipse.cdt.make.core.build.command.parser.gcc;org.eclipse.cdt.managedbuilder.core.gcc.specs.detector"
+                    languageSettingsProviders="org.eclipse.cdt.make.core.GCCBuildCommandParser;org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetector"
                     name="%ToolChainName.MinGW"
                     osList="win32"
                     targetTool="cdt.managedbuild.tool.gnu.cpp.linker.mingw.base;cdt.managedbuild.tool.gnu.c.linker.mingw.base;cdt.managedbuild.tool.gnu.archiver">
@@ -2086,7 +2086,7 @@
          <configuration
                cleanCommand="rm -rf"
                id="cdt.managedbuild.config.gnu.base"
-               languageSettingsProviders="org.eclipse.cdt.ui.user.LanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.LanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.make.core.build.command.parser.gcc">
+               languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.make.core.GCCBuildCommandParser">
 		    <enablement type="CONTAINER_ATTRIBUTE" 
               	attribute="artifactExtension"
               	value="so"
@@ -2484,7 +2484,7 @@
                artifactExtension="exe"
             cleanCommand="rm -rf"
             id="cdt.managedbuild.config.gnu.cygwin.base"
-            languageSettingsProviders="org.eclipse.cdt.ui.user.LanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.LanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.make.core.build.command.parser.gcc">
+            languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.make.core.GCCBuildCommandParser">
 		    <enablement type="CONTAINER_ATTRIBUTE" 
               	attribute="artifactExtension" 
               	value="dll"
@@ -2882,7 +2882,7 @@
                artifactExtension="exe"
             cleanCommand="rm -rf"
             id="cdt.managedbuild.config.gnu.mingw.base"
-            languageSettingsProviders="org.eclipse.cdt.ui.user.LanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.LanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.make.core.build.command.parser.gcc">
+            languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider;${Toolchain};-org.eclipse.cdt.make.core.GCCBuildCommandParser">
 		    <enablement type="CONTAINER_ATTRIBUTE" 
               	attribute="artifactExtension" 
               	value="dll"

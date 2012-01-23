@@ -56,7 +56,7 @@ import org.w3c.dom.Element;
 
 public class GCCBuildCommandParserTest extends BaseTestCase {
 	// ID of the parser taken from the extension point
-	private static final String GCC_BUILD_COMMAND_PARSER_EXT = "org.eclipse.cdt.make.core.build.command.parser.gcc"; //$NON-NLS-1$
+	private static final String GCC_BUILD_COMMAND_PARSER_EXT = "org.eclipse.cdt.make.core.GCCBuildCommandParser"; //$NON-NLS-1$
 
 	private static final String PROVIDER_ID = "provider.id";
 	private static final String PROVIDER_NAME = "provider name";

@@ -34,9 +34,9 @@ import org.osgi.service.prefs.Preferences;
  */
 public class ScannerDiscoveryLegacySupport {
 	/** ID of User language settings provider (from org.eclipse.cdt.ui) */
-	public static final String USER_LANGUAGE_SETTINGS_PROVIDER_ID = "org.eclipse.cdt.ui.user.LanguageSettingsProvider"; //$NON-NLS-1$
+	public static final String USER_LANGUAGE_SETTINGS_PROVIDER_ID = "org.eclipse.cdt.ui.UserLanguageSettingsProvider"; //$NON-NLS-1$
 	/** ID of MBS language settings provider (from org.eclipse.cdt.managedbuilder.core) */
-	public static final String MBS_LANGUAGE_SETTINGS_PROVIDER_ID = "org.eclipse.cdt.managedbuilder.core.LanguageSettingsProvider"; //$NON-NLS-1$
+	public static final String MBS_LANGUAGE_SETTINGS_PROVIDER_ID = "org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider"; //$NON-NLS-1$
 
 	private static String USE_LANGUAGE_SETTINGS_PROVIDERS_PREFERENCE = "enabled"; //$NON-NLS-1$
 //	the default needs to be "false" for legacy projects to be open with old SD enabled for MBS provider

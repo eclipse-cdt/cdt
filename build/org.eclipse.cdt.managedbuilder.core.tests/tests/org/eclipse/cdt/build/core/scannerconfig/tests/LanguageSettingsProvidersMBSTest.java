@@ -33,7 +33,7 @@ import org.eclipse.core.runtime.CoreException;
 public class LanguageSettingsProvidersMBSTest extends BaseTestCase {
 	private static final String MBS_LANGUAGE_SETTINGS_PROVIDER_ID = ScannerDiscoveryLegacySupport.MBS_LANGUAGE_SETTINGS_PROVIDER_ID;
 	private static final String USER_LANGUAGE_SETTINGS_PROVIDER_ID = ScannerDiscoveryLegacySupport.USER_LANGUAGE_SETTINGS_PROVIDER_ID;
-	private static final String GCC_SPECS_DETECTOR_ID = "org.eclipse.cdt.managedbuilder.core.gcc.specs.detector";
+	private static final String GCC_SPECS_DETECTOR_ID = "org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetector";
 	private static final String PROJECT_TYPE_EXECUTABLE_GNU = "cdt.managedbuild.target.gnu.exe";
 	private static final String LANGUAGE_SETTINGS_PROJECT_XML = LanguageSettingsPersistenceProjectTests.LANGUAGE_SETTINGS_PROJECT_XML;
 	private static final String LANGUAGE_SETTINGS_WORKSPACE_XML = LanguageSettingsPersistenceProjectTests.LANGUAGE_SETTINGS_WORKSPACE_XML;

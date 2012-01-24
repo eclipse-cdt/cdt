@@ -254,9 +254,9 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 
 				int itemCount = 0;
 				if (viewer instanceof TreeViewer) {
-					((TreeViewer) viewer).getTree().getItemCount();
+					itemCount = ((TreeViewer) viewer).getTree().getItemCount();
 				} else if (viewer instanceof TableViewer) {
-					((TableViewer) viewer).getTable().getItemCount();
+					itemCount = ((TableViewer) viewer).getTable().getItemCount();
 				}
 				if (itemCount <= 0) {
 					return;

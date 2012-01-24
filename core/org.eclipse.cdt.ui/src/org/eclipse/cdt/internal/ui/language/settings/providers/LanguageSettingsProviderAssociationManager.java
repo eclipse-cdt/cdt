@@ -306,7 +306,7 @@ public class LanguageSettingsProviderAssociationManager {
 	 * @param provider TODO
 	 * @return TODO
 	 */
-	public static boolean isToClear(ILanguageSettingsProvider provider) {
+	public static boolean isAllowedToClear(ILanguageSettingsProvider provider) {
 		return getBooleanAttribute(provider, ATTR_UI_CLEAR_ENTRIES);
 	}
 
@@ -315,7 +315,7 @@ public class LanguageSettingsProviderAssociationManager {
 	 * @param provider TODO
 	 * @return TODO
 	 */
-	public static boolean isToEditEntries(ILanguageSettingsProvider provider) {
+	public static boolean isAllowedToEditEntries(ILanguageSettingsProvider provider) {
 		return getBooleanAttribute(provider, ATTR_UI_EDIT_ENTRIES);
 	}
 

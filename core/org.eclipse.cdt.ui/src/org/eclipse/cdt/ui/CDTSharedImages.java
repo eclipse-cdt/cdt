@@ -240,6 +240,8 @@ public class CDTSharedImages {
 	public static final String IMG_OVR_EDITED = "icons/ovr16/edited_ov.gif"; //$NON-NLS-1$
 	/** @since 5.4 */
 	public static final String IMG_OVR_EMPTY = "icons/ovr16/empty_ovr.png"; //$NON-NLS-1$
+	/** @since 5.4 */
+	public static final String IMG_OVR_USER = "icons/ovr16/person_ovr.gif"; //$NON-NLS-1$
 
 	/**
 	 * The method finds URL of the image corresponding to the key which could be project-relative path

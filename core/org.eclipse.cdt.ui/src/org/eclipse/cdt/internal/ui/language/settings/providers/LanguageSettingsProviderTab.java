@@ -19,8 +19,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
@@ -209,24 +207,32 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 	private class ProvidersTableLabelProvider extends LanguageSettingsProvidersLabelProvider {
 		@Override
 		protected String[] getOverlayKeys(ILanguageSettingsProvider provider) {
+			if (provider.getName() == null) {
+				String[] overlayKeys = new String[5];
+				overlayKeys[IDecoration.TOP_RIGHT] = CDTSharedImages.IMG_OVR_ERROR;
+				return overlayKeys;
+			}
+
+
 			String[] overlayKeys = super.getOverlayKeys(provider);
 
 			if (page.isForProject()) {
-				if (isReconfiguredForProject(provider)) {
-					overlayKeys[IDecoration.TOP_RIGHT] = CDTSharedImages.IMG_OVR_SETTING;
-				}
 				if (isEditedForProject(provider)) {
 					overlayKeys[IDecoration.TOP_RIGHT] = CDTSharedImages.IMG_OVR_EDITED;
-				}
-			} else if (page.isForPrefs()) {
-				ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(provider);
-				if (rawProvider instanceof ILanguageSettingsEditableProvider && !LanguageSettingsManager.isEqualExtensionProvider(rawProvider, false)) {
+				} else if (!LanguageSettingsManager.getExtensionProviderIds().contains(provider.getId())) {
+					overlayKeys[IDecoration.TOP_RIGHT] = CDTSharedImages.IMG_OVR_USER;
+				} else if (isReconfiguredForProject(provider)) {
 					overlayKeys[IDecoration.TOP_RIGHT] = CDTSharedImages.IMG_OVR_SETTING;
 				}
-				if (isWorkingCopy(provider)) {
-					ILanguageSettingsProvider rawInitialProvider = LanguageSettingsManager.getRawProvider(LanguageSettingsManager.getWorkspaceProvider(provider.getId()));
-					if (!provider.equals(rawInitialProvider)) {
-						overlayKeys[IDecoration.TOP_RIGHT] = CDTSharedImages.IMG_OVR_EDITED;
+			} else if (page.isForPrefs()) {
+				if (isWorkingCopy(provider) && !provider.equals(LanguageSettingsManager.getRawProvider(LanguageSettingsManager.getWorkspaceProvider(provider.getId())))) {
+					overlayKeys[IDecoration.TOP_RIGHT] = CDTSharedImages.IMG_OVR_EDITED;
+				} else if (!LanguageSettingsManager.getExtensionProviderIds().contains(provider.getId())) {
+					overlayKeys[IDecoration.TOP_RIGHT] = CDTSharedImages.IMG_OVR_USER;
+				} else {
+					ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(provider);
+					if (rawProvider instanceof ILanguageSettingsEditableProvider && !LanguageSettingsManager.isEqualExtensionProvider(rawProvider, false)) {
+						overlayKeys[IDecoration.TOP_RIGHT] = CDTSharedImages.IMG_OVR_SETTING;
 					}
 				}
 			}
@@ -633,21 +639,25 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 			providers =  new ArrayList<ILanguageSettingsProvider>();
 		}
 
-		List<ILanguageSettingsProvider> workspaceProviders = LanguageSettingsManager.getWorkspaceProviders();
+		List<ILanguageSettingsProvider> allAvailableProvidersSet = LanguageSettingsManager.getWorkspaceProviders();
 
 		// ensure sorting by name all unchecked providers
-		Set<ILanguageSettingsProvider> allAvailableProvidersSet = new TreeSet<ILanguageSettingsProvider>(new Comparator<ILanguageSettingsProvider>() {
+		Collections.sort(allAvailableProvidersSet, new Comparator<ILanguageSettingsProvider>() {
 			@Override
 			public int compare(ILanguageSettingsProvider prov1, ILanguageSettingsProvider prov2) {
 				Boolean isTest1 = prov1.getId().matches(TEST_PLUGIN_ID_PATTERN);
 				Boolean isTest2 = prov2.getId().matches(TEST_PLUGIN_ID_PATTERN);
 				int result = isTest1.compareTo(isTest2);
-				if (result==0)
-					result = prov1.getName().compareTo(prov2.getName());
+				if (result == 0) {
+					String name1 = prov1.getName();
+					String name2 = prov2.getName();
+					if (name1 != null && name2 != null) {
+						result = name1.compareTo(name2);
+					}
+				}
 				return result;
 			}
 		});
-		allAvailableProvidersSet.addAll(workspaceProviders);
 
 		for (ILanguageSettingsProvider provider : allAvailableProvidersSet) {
 			String id = provider.getId();
@@ -809,13 +819,20 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 		boolean isRangeOk = pos >= 0 && pos <= last;
 
 		ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(provider);
-		boolean isAllowedClearing = rawProvider instanceof ILanguageSettingsEditableProvider
-				&& LanguageSettingsProviderAssociationManager.isToClear(rawProvider);
+		boolean isAllowedClearing = rawProvider instanceof ILanguageSettingsEditableProvider && rawProvider instanceof LanguageSettingsSerializableProvider
+				&& LanguageSettingsProviderAssociationManager.isAllowedToClear(rawProvider);
 
 		boolean canClear = isAllowedClearing && (canForWorkspace || (canForProject && !LanguageSettingsManager.isWorkspaceProvider(provider)));
+		if (rawProvider instanceof LanguageSettingsSerializableProvider) {
+			canClear = canClear && !((LanguageSettingsSerializableProvider)rawProvider).isEmpty();
+		}
 
 		boolean canReset = (canForProject && isReconfiguredForProject(provider)) ||
-				(canForWorkspace && (rawProvider instanceof ILanguageSettingsEditableProvider && !LanguageSettingsManager.isEqualExtensionProvider(rawProvider, false)));
+				(canForWorkspace &&
+						(rawProvider instanceof ILanguageSettingsEditableProvider
+								&& !LanguageSettingsManager.isEqualExtensionProvider(rawProvider, false))
+								&& ( LanguageSettingsManager.getExtensionProviderIds().contains(rawProvider.getId()) )
+						);
 
 		boolean canMoveUp = canForProject && isRangeOk && pos!=0;
 		boolean canMoveDown = canForProject && isRangeOk && pos!=last;

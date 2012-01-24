@@ -512,10 +512,10 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 		boolean isProviderSelected = !isEntrySelected && (provider!=null);
 
 		boolean isAllowedEditing = provider instanceof ILanguageSettingsEditableProvider
-				&& LanguageSettingsProviderAssociationManager.isToEditEntries(provider);
+				&& LanguageSettingsProviderAssociationManager.isAllowedToEditEntries(provider);
 
 		boolean isAllowedClearing = provider instanceof ILanguageSettingsEditableProvider
-				&& LanguageSettingsProviderAssociationManager.isToClear(provider);
+				&& LanguageSettingsProviderAssociationManager.isAllowedToClear(provider);
 
 		boolean canAdd = isAllowedEditing;
 		boolean canEdit = isAllowedEditing && isEntrySelected;
@@ -557,7 +557,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 		if (status==null || status==Status.OK_STATUS) {
 			ILanguageSettingsProvider provider = getSelectedProvider();
 			boolean isAllowedEditing = provider instanceof ILanguageSettingsEditableProvider
-					&& LanguageSettingsProviderAssociationManager.isToEditEntries(provider);
+					&& LanguageSettingsProviderAssociationManager.isAllowedToEditEntries(provider);
 			if (!isAllowedEditing) {
 				String msg = "Setting entries for this provider are supplied by system and are not editable.";
 				status = new Status(IStatus.INFO, CUIPlugin.PLUGIN_ID, msg);

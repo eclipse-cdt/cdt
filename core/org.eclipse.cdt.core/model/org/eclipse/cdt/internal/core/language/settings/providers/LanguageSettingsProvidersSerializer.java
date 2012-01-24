@@ -101,6 +101,28 @@ public class LanguageSettingsProvidersSerializer {
 	private static ILock serializingLock = Job.getJobManager().newLock();
 
 	/**
+	 * Dummy class to represent ill-defined provider.
+	 */
+	private static class NotAccessibleProvider implements ILanguageSettingsProvider {
+		private final String id;
+		private NotAccessibleProvider(String providerId) {
+			this.id = providerId;
+		}
+		@Override
+		public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId) {
+			return null;
+		}
+		@Override
+		public String getName() {
+			return null;
+		}
+		@Override
+		public String getId() {
+			return id;
+		}
+	}
+
+	/**
 	 * language settings provider listener-cfgDescription association
 	 */
 	private static class ListenerAssociation {
@@ -518,7 +540,7 @@ public class LanguageSettingsProvidersSerializer {
 	/**
 	 * Load language settings for workspace.
 	 */
-	public static void loadLanguageSettingsWorkspace() throws CoreException {
+	public static void loadLanguageSettingsWorkspace() {
 		List <ILanguageSettingsProvider> providers = null;
 
 		URI uriStoreWsp = getStoreInWorkspaceArea(STORAGE_WORKSPACE_LANGUAGE_SETTINGS);
@@ -542,7 +564,7 @@ public class LanguageSettingsProvidersSerializer {
 
 			for (int i = 0; i < providerNodes.getLength(); i++) {
 				Node providerNode = providerNodes.item(i);
-				String providerId = XmlUtil.determineAttributeValue(providerNode, ATTR_ID);
+				final String providerId = XmlUtil.determineAttributeValue(providerNode, ATTR_ID);
 				if (userDefinedProvidersIds.contains(providerId)) {
 					String msg = "Ignored an attempt to persist duplicate language settings provider, id=" + providerId; //$NON-NLS-1$
 					CCorePlugin.log(new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, msg, new Exception()));
@@ -550,10 +572,16 @@ public class LanguageSettingsProvidersSerializer {
 				}
 				userDefinedProvidersIds.add(providerId);
 
-				ILanguageSettingsProvider provider = loadProvider(providerNode);
-				if (provider != null) {
-					providers.add(provider);
+				ILanguageSettingsProvider provider = null;
+				try {
+					provider = loadProvider(providerNode);
+				} catch (Exception e) {
+					CCorePlugin.log("Error initializing workspace language settings providers", e); //$NON-NLS-1$
 				}
+				if (provider == null) {
+					provider = new NotAccessibleProvider(providerId);
+				}
+				providers.add(provider);
 			}
 		}
 		setWorkspaceProvidersInternal(providers);
@@ -838,8 +866,8 @@ public class LanguageSettingsProvidersSerializer {
 							provider = LanguageSettingsManager.getExtensionProviderCopy(providerId, true);
 
 							if (provider == null) {
-								String msg = "Internal Error trying to copy extension provider id=" + providerId; //$NON-NLS-1$
-								CCorePlugin.log(new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, msg, new Exception(msg)));
+								String msg = "Internal Error trying to retrieve copy of extension provider id=" + providerId; //$NON-NLS-1$
+								CCorePlugin.log(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, msg, new Exception(msg)));
 
 								provider = LanguageSettingsManager.getWorkspaceProvider(providerId);
 							}

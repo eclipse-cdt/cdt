@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Intel Corporation and others.
+ * Copyright (c) 2007, 2012 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,8 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * Raphael Zulliger (Indel AG) - bug 284699: fixing issues when using same
+ *                               macro names with different values
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model.util;
 
@@ -19,14 +21,18 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.core.runtime.IPath;
 
+/**
+ * Cache of setting entries stored with multidimentional maps.
+ * See bug 284699 comment 7 for a possible insight into it.
+ */
 public class CSettingEntryFactory {
 	private static final HashSet<IPath> EMPTY_SET = new HashSet<IPath>(0);
-	
+
 	private KindBasedStore<HashMap<String, ?>> fStore = new KindBasedStore<HashMap<String, ?>>(false);
-	
-	private <K, V> HashMap<String, HashMap<K, V>> getNameMap(int kind, boolean create, HashMap<K, V> type){
+
+	private <K, V> HashMap<String, HashMap<K, V>> getNameMap(int kind, boolean create){
 		@SuppressWarnings("unchecked")
-		HashMap<String, HashMap<K, V>> map = (HashMap<String, HashMap<K, V>>) fStore.get(kind);
+		HashMap<String/*name*/, HashMap<K, V>> map = (HashMap<String, HashMap<K, V>>) fStore.get(kind);
 		if(map == null && create){
 			map = new HashMap<String, HashMap<K, V>>();
 			fStore.put(kind, map);
@@ -34,47 +40,47 @@ public class CSettingEntryFactory {
 		return map;
 	}
 
-	private <K, V> HashMap<K, V> getValueMap(String name, boolean create, HashMap<K, V> type){
-		HashMap<String, HashMap<K, V>> nameMap = getNameMap(ICSettingEntry.MACRO, create, (HashMap<K, V>)null);
+	private HashMap<String, HashMap<Integer, ICSettingEntry>> getValueMap(String name, boolean create){
+		HashMap<String/*name*/, HashMap<String/*value*/, HashMap<Integer/*flags*/, ICSettingEntry>>> nameMap = getNameMap(ICSettingEntry.MACRO, create);
 		if(nameMap != null){
 			return getMap(nameMap, name, create);
 		}
 		return null;
 	}
 
-	private HashMap<Integer, ICSettingEntry> getFlagMap(int kind, String name, String value, IPath[] exclusionPatters, boolean create){
+	private HashMap<Integer, ICSettingEntry> getFlagMap(int kind, String name, String value, IPath[] exclusionPatterns, boolean create){
 		switch(kind){
 		case ICSettingEntry.MACRO:
-			HashMap<String, HashMap<Integer, ICSettingEntry>> valueMap = getValueMap(name, create, (HashMap<String, HashMap<Integer, ICSettingEntry>>)null);
+			HashMap<String, HashMap<Integer, ICSettingEntry>> valueMap = getValueMap(name, create);
 			if(valueMap != null){
-				return getMap(valueMap, name, create);
+				return getMap(valueMap, value, create);
 			}
 			return null;
 		case ICSettingEntry.SOURCE_PATH:
 		case ICSettingEntry.OUTPUT_PATH:
 			HashMap<HashSet<IPath>, HashMap<Integer, ICSettingEntry>> excPatternMap = getExclusionPatternsMap(kind, name, create);
 			if(excPatternMap != null){
-				HashSet<IPath> setKey = exclusionPatters == null || exclusionPatters.length == 0 ? EMPTY_SET : new HashSet<IPath>(Arrays.asList(exclusionPatters)); 
+				HashSet<IPath> setKey = exclusionPatterns == null || exclusionPatterns.length == 0 ? EMPTY_SET : new HashSet<IPath>(Arrays.asList(exclusionPatterns));
 				return getMap(excPatternMap, setKey, create);
 			}
 			return null;
 		default:
-			HashMap<String, HashMap<Integer, ICSettingEntry>> nameMap = getNameMap(kind, create, (HashMap<Integer, ICSettingEntry>)null);
+			HashMap<String, HashMap<Integer, ICSettingEntry>> nameMap = getNameMap(kind, create);
 			if(nameMap != null){
 				return getMap(nameMap, name, create);
 			}
 			return null;
 		}
 	}
-	
+
 	private HashMap<HashSet<IPath>, HashMap<Integer, ICSettingEntry>> getExclusionPatternsMap(int kind, String name, boolean create){
-		HashMap<String, HashMap<HashSet<IPath>, HashMap<Integer, ICSettingEntry>>> nameMap = getNameMap(kind, create, (HashMap<HashSet<IPath>, HashMap<Integer, ICSettingEntry>>)null);
+		HashMap<String/*name*/, HashMap<HashSet<IPath>/*exclusionPatterns*/, HashMap<Integer/*flags*/, ICSettingEntry>>> nameMap = getNameMap(kind, create);
 		if(nameMap != null){
 			return getMap(nameMap, name, create);
 		}
 		return null;
 	}
-	
+
 	private static <Key, K, V> HashMap<K, V> getMap(HashMap<Key, HashMap<K, V>> container, Key key, boolean create){
 		HashMap<K, V> map = container.get(key);
 		if(map == null && create){
@@ -90,10 +96,10 @@ public class CSettingEntryFactory {
 		case ICSettingEntry.SOURCE_PATH:
 			return getEntry(entry.getKind(), entry.getName(), null, ((ICExclusionPatternPathEntry)entry).getExclusionPatterns(), entry.getFlags(), entry, true);
 		default:
-			return getLanguageSettingEntry((ICLanguageSettingEntry)entry); 
+			return getLanguageSettingEntry((ICLanguageSettingEntry)entry);
 		}
 	}
-	
+
 	public ICLanguageSettingEntry getLanguageSettingEntry(ICLanguageSettingEntry lEntry){
 		return (ICLanguageSettingEntry)getEntry(lEntry.getKind(), lEntry.getName(), lEntry.getValue(), null, lEntry.getFlags(), lEntry, true);
 	}
@@ -115,7 +121,7 @@ public class CSettingEntryFactory {
 		}
 		return null;
 	}
-	
+
 	public void clear(){
 		fStore.clear();
 	}

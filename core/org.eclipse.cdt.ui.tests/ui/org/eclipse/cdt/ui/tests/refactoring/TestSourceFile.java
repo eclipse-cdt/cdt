@@ -7,7 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring;
 
@@ -18,71 +19,77 @@ import org.eclipse.jface.text.TextSelection;
 
 /**
  * @author Emanuel Graf
- *
  */
 public class TestSourceFile {
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	private static final String LINE_SEPARATOR = "\n"; //$NON-NLS-1$
+	private static final Pattern SELECTION_START = Pattern.compile("/\\*\\$\\*/"); //$NON-NLS-1$
+	private static final Pattern SELECTION_END = Pattern.compile("/\\*\\$\\$\\*/"); //$NON-NLS-1$
 	
-	private static final String REPLACEMENT = ""; //$NON-NLS-1$
-	private String name;
-	private StringBuffer source = new StringBuffer();
-	private StringBuffer expectedSource = new StringBuffer();
-	private String separator = "\n"; //$NON-NLS-1$
+	private final String name;
+	private final StringBuilder source = new StringBuilder();
+	private final StringBuilder expectedSource = new StringBuilder();
 	private int selectionStart = -1;
 	private int selectionEnd = -1;
-	
-	protected static final String selectionStartRegex = "/\\*\\$\\*/"; //$NON-NLS-1$
-	protected static final String selectionEndRegex = "/\\*\\$\\$\\*/"; //$NON-NLS-1$
-	protected static final String selectionStartLineRegex = "(.*)(" + selectionStartRegex + ")(.*)"; //$NON-NLS-1$ //$NON-NLS-2$
-	protected static final String selectionEndLineRegex = "(.*)("+ selectionEndRegex + ")(.*)"; //$NON-NLS-1$ //$NON-NLS-2$
 	
 	public TestSourceFile(String name) {
 		super();
 		this.name = name;
 	}
-	public String getExpectedSource() {
-		String exp = expectedSource.toString();
-		if(exp.length() == 0) {
-			return getSource();
-		}else {
-			return exp;
-		}
-	}
+
 	public String getName() {
 		return name;
 	}
+
 	public String getSource() {
 		return source.toString();
 	}
 	
-	public void addLineToSource(String code) {
-		Matcher start = createMatcherFromString(selectionStartLineRegex, code);
-		if(start.matches()) {
-			selectionStart = start.start(2) + source.length();
-			code = code.replaceAll(selectionStartRegex, REPLACEMENT);
+	public String getExpectedSource() {
+		if (expectedSource.length() == 0) {
+			return getSource();
 		}
-		Matcher end = createMatcherFromString(selectionEndLineRegex, code);
-		if(end.matches()) {
-			selectionEnd = end.start(2) + source.length();
-			code = code.replaceAll(selectionEndRegex, REPLACEMENT);
+		return expectedSource.toString();
+	}
+
+	public void addLineToSource(String code) {
+		Matcher start = SELECTION_START.matcher(code);
+		if (start.find()) {
+			selectionStart = start.start() + source.length();
+			code = start.replaceAll(EMPTY_STRING);
+		}
+		Matcher end = SELECTION_END.matcher(code);
+		if (end.find()) {
+			selectionEnd = end.start() + source.length();
+			code = end.replaceAll(EMPTY_STRING);
 		}
 		source.append(code);
-		source.append(separator);
+		source.append(LINE_SEPARATOR);
 	}
 	
 	public void addLineToExpectedSource(String code) {
 		expectedSource.append(code);
-		expectedSource.append(separator);
+		expectedSource.append(LINE_SEPARATOR);
 	}
 	
 	public TextSelection getSelection() {
-		if(selectionStart < 0 || selectionEnd <0 ) {
+		if (selectionStart < 0 || selectionEnd < selectionStart)
 			return null;
-		}else {
-			return new TextSelection(selectionStart, selectionEnd -selectionStart);
-		}
+		return new TextSelection(selectionStart, selectionEnd - selectionStart);
 	}
 
-	protected static Matcher createMatcherFromString(String pattern, String line) {
-		return Pattern.compile(pattern).matcher(line);
+	@Override
+	public int hashCode() {
+		return name.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null || getClass() != obj.getClass())
+			return false;
+		TestSourceFile other = (TestSourceFile) obj;
+		return name.equals(other.name);
 	}
 }

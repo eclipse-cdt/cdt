@@ -21,9 +21,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 
-
 public class CTestPlugin extends Plugin {
-	
 	public static final String PLUGIN_ID = "org.eclipse.cdt.core.tests";
 	private static CTestPlugin fgDefault;
 	
@@ -55,7 +53,4 @@ public class CTestPlugin extends Plugin {
 			return null;
 		}
 	}
-	
-		
-
 }

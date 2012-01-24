@@ -67,8 +67,9 @@ public class IndexNamesTests extends BaseTestCase {
 	}
 
 	public String getComment() throws IOException {
-		return TestSourceReader.getContentsForTest(
-		CTestPlugin.getDefault().getBundle(), "parser", getClass(), getName(), 1)[0].toString();
+		CharSequence[] contents = TestSourceReader.getContentsForTest(
+				CTestPlugin.getDefault().getBundle(), "parser", getClass(), getName(), 1);
+		return contents[0].toString();
 	}
 
 	protected IFile createFile(IContainer container, String fileName, String contents) throws Exception {

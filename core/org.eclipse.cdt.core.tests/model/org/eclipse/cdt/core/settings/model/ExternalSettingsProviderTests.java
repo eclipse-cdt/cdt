@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Intel Corporation and others.
+ * Copyright (c) 2007, 2012 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,16 @@
  * Contributors:
  * Intel Corporation - Initial API and implementation
  * James Blackburn (Broadcom Corp.)
- * Christian Walther (Indel AG) - [335344] test for changing language IDs
+ * Christian Walther (Indel AG) - bug 335344: test for changing language IDs
+ * Raphael Zulliger (Indel AG) - bug 284699: test having macros with same
+ *                               name but different values in same project
+ *                               configuration
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
 import java.util.Arrays;
 import java.util.HashMap;
+
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.IPDOMManager;
@@ -29,12 +33,12 @@ import org.eclipse.core.runtime.Path;
 
 public class ExternalSettingsProviderTests extends BaseTestCase{
 	private static final String PROJ_NAME_PREFIX = "espt_";
-	ICProject p1, p2, p3, p4, p5;
-	
+	ICProject p1, p2, p3, p4, p5, p6;
+
 	public static TestSuite suite() {
 		return suite(ExternalSettingsProviderTests.class, "_");
 	}
-	
+
 	@Override
 	protected void setUp() throws Exception {
 		p1 = CProjectHelper.createNewStileCProject(PROJ_NAME_PREFIX + "a", IPDOMManager.ID_NO_INDEXER);
@@ -42,8 +46,9 @@ public class ExternalSettingsProviderTests extends BaseTestCase{
 		p3 = CProjectHelper.createNewStileCProject(PROJ_NAME_PREFIX + "c", IPDOMManager.ID_NO_INDEXER);
 		p4 = CProjectHelper.createNewStileCProject(PROJ_NAME_PREFIX + "d", IPDOMManager.ID_NO_INDEXER);
 		p5 = CProjectHelper.createNewStileCProject(PROJ_NAME_PREFIX + "e", IPDOMManager.ID_NO_INDEXER);
+		p6 = CProjectHelper.createNewStileCProject(PROJ_NAME_PREFIX + "f", IPDOMManager.ID_NO_INDEXER);
 	}
-	
+
 	/**
 	 * Test adding a external setting provider to p1 -- the contributed paths should appear
 	 * @throws Exception
@@ -52,7 +57,7 @@ public class ExternalSettingsProviderTests extends BaseTestCase{
 		TestExtSettingsProvider.setVariantNum(0);
 		CoreModel model = CoreModel.getDefault();
 		IProject project = p1.getProject();
-		
+
 		ICProjectDescription des = model.getProjectDescription(project);
 		ICConfigurationDescription cfgDes = des.getConfigurations()[0];
 		ICLanguageSetting ls = cfgDes.getLanguageSettingForFile(new Path("a.c"), true);
@@ -83,44 +88,44 @@ public class ExternalSettingsProviderTests extends BaseTestCase{
 				new CSourceEntry(project.getFullPath().append("sp_b"), null, 0),
 		};
 		assertTrue(Arrays.equals(newExpectedSourceEntries, sourceEntries));
-		
+
 		// insert entry into the mix; check that the new entry appears
 		ICLanguageSettingEntry[] newEntries = new ICLanguageSettingEntry[3];
 		newEntries[0] = expectedEntries[1];
 		newEntries[1] = new CIncludePathEntry("added", 0);
 		newEntries[2] = expectedEntries[0];
-		
+
 		ls.setSettingEntries(ICSettingEntry.INCLUDE_PATH, newEntries);
 		entries = ls.getSettingEntries(ICSettingEntry.INCLUDE_PATH);
-		
+
 		assertEquals(3, entries.length);
 		assertTrue(Arrays.equals(newEntries, entries));
-		
+
 		newEntries = new ICLanguageSettingEntry[1];
 		newEntries[0] = expectedEntries[0];
 		ls.setSettingEntries(ICSettingEntry.INCLUDE_PATH, newEntries);
 		entries = ls.getSettingEntries(ICSettingEntry.INCLUDE_PATH);
-		
+
 		assertEquals(1, entries.length);
 		assertTrue(Arrays.equals(newEntries, entries));
-		
+
 		newEntries = new ICLanguageSettingEntry[0];
 		ls.setSettingEntries(ICSettingEntry.INCLUDE_PATH, newEntries);
 		entries = ls.getSettingEntries(ICSettingEntry.INCLUDE_PATH);
-		
+
 		assertEquals(0, entries.length);
-		
+
 		ls.setSettingEntries(ICSettingEntry.INCLUDE_PATH, (ICLanguageSettingEntry[])null);
 		entries = ls.getSettingEntries(ICSettingEntry.INCLUDE_PATH);
 		assertEquals(2, entries.length);
 		assertTrue(Arrays.equals(expectedEntries, entries));
 	}
-	
+
 	public void testCreateCfg() throws Exception {
 		TestExtSettingsProvider.setVariantNum(0);
 		CoreModel model = CoreModel.getDefault();
 		IProject project = p2.getProject();
-		
+
 		ICProjectDescription des = model.getProjectDescription(project);
 		ICConfigurationDescription cfgDes = des.getConfigurations()[0];
 		ICLanguageSetting ls = cfgDes.getLanguageSettingForFile(new Path("a.c"), true);
@@ -134,24 +139,24 @@ public class ExternalSettingsProviderTests extends BaseTestCase{
 		assertTrue(Arrays.equals(expectedSourceEntries, sourceEntries));
 		String[] extPIds = new String[]{CTestPlugin.PLUGIN_ID + ".testExtSettingsProvider"};
 		cfgDes.setExternalSettingsProviderIds(extPIds);
-		
+
 		model.setProjectDescription(project, des);
-		
+
 		des = model.getProjectDescription(project, false);
 		cfgDes = des.getConfigurations()[0];
 		assertEquals(extPIds.length, cfgDes.getExternalSettingsProviderIds().length);
 		assertTrue(Arrays.equals(extPIds, cfgDes.getExternalSettingsProviderIds()));
-		
+
 		des = model.getProjectDescription(project);
 		cfgDes = des.getConfigurations()[0];
 		assertEquals(extPIds.length, cfgDes.getExternalSettingsProviderIds().length);
 		assertTrue(Arrays.equals(extPIds, cfgDes.getExternalSettingsProviderIds()));
-		
+
 		String newCfgId = CDataUtil.genId(null);
 		ICConfigurationDescription cfgDes2 = des.createConfiguration(newCfgId, "cfg2", cfgDes);
 		assertEquals(extPIds.length, cfgDes2.getExternalSettingsProviderIds().length);
 		assertTrue(Arrays.equals(extPIds, cfgDes2.getExternalSettingsProviderIds()));
-		
+
 		ls = cfgDes2.getLanguageSettingForFile(new Path("a.c"), true);
 		entries = ls.getSettingEntries(ICSettingEntry.INCLUDE_PATH);
 		ICLanguageSettingEntry[] expectedEntries = new ICLanguageSettingEntry[]{
@@ -161,14 +166,14 @@ public class ExternalSettingsProviderTests extends BaseTestCase{
 		assertTrue(Arrays.equals(expectedEntries, entries));
 
 	}
-	
+
 	public void testProviderUpdate() throws Exception {
 		TestExtSettingsProvider.setVariantNum(0);
 
 		CoreModel model = CoreModel.getDefault();
 		ICProjectDescriptionManager mngr = model.getProjectDescriptionManager();
 		IProject project = p2.getProject();
-		
+
 		ICProjectDescription des = model.getProjectDescription(project);
 		ICConfigurationDescription cfgDes = des.getConfigurations()[0];
 		ICLanguageSetting ls = cfgDes.getLanguageSettingForFile(new Path("a.c"), true);
@@ -182,7 +187,7 @@ public class ExternalSettingsProviderTests extends BaseTestCase{
 		assertTrue(Arrays.equals(expectedSourceEntries, sourceEntries));
 		String[] extPIds = new String[]{CTestPlugin.PLUGIN_ID + ".testExtSettingsProvider"};
 		cfgDes.setExternalSettingsProviderIds(extPIds);
-		
+
 
 		ls = cfgDes.getLanguageSettingForFile(new Path("a.c"), true);
 		entries = ls.getSettingEntries(ICSettingEntry.INCLUDE_PATH);
@@ -193,19 +198,19 @@ public class ExternalSettingsProviderTests extends BaseTestCase{
 		assertTrue(Arrays.equals(expectedEntries, entries));
 
 		model.setProjectDescription(project, des);
-		
+
 		des = model.getProjectDescription(project);
 		cfgDes = des.getConfigurations()[0];
 		ls = cfgDes.getLanguageSettingForFile(new Path("a.c"), true);
 		entries = ls.getSettingEntries(ICSettingEntry.INCLUDE_PATH);
 		assertTrue(Arrays.equals(expectedEntries, entries));
-		
+
 		ICLanguageSettingEntry[] expectedEntries2 = new ICLanguageSettingEntry[]{
 				new CIncludePathEntry("ip_a2", 0),
 				new CIncludePathEntry("ip_b2", 0),
 		};
 		TestExtSettingsProvider.setVariantNum(1);
-		
+
 		mngr.updateExternalSettingsProviders(extPIds, null);
 		des = model.getProjectDescription(project);
 		cfgDes = des.getConfigurations()[0];
@@ -213,14 +218,14 @@ public class ExternalSettingsProviderTests extends BaseTestCase{
 		entries = ls.getSettingEntries(ICSettingEntry.INCLUDE_PATH);
 		assertTrue(Arrays.equals(expectedEntries2, entries));
 	}
-	
+
 	public void testRestoreDefaults() throws Exception {
 		TestExtSettingsProvider.setVariantNum(0);
 
 		CoreModel model = CoreModel.getDefault();
 		ICProjectDescriptionManager mngr = model.getProjectDescriptionManager();
 		IProject project = p4.getProject();
-		
+
 		ICProjectDescription des = model.getProjectDescription(project);
 		ICConfigurationDescription cfgDes = des.getConfigurations()[0];
 		ICLanguageSetting ls = cfgDes.getLanguageSettingForFile(new Path("a.c"), true);
@@ -234,7 +239,7 @@ public class ExternalSettingsProviderTests extends BaseTestCase{
 		assertTrue(Arrays.equals(expectedSourceEntries, sourceEntries));
 		String[] extPIds = new String[]{CTestPlugin.PLUGIN_ID + ".testExtSettingsProvider"};
 		cfgDes.setExternalSettingsProviderIds(extPIds);
-		
+
 
 		ls = cfgDes.getLanguageSettingForFile(new Path("a.c"), true);
 		entries = ls.getSettingEntries(ICSettingEntry.INCLUDE_PATH);
@@ -245,7 +250,7 @@ public class ExternalSettingsProviderTests extends BaseTestCase{
 		assertTrue(Arrays.equals(expectedEntries, entries));
 
 		model.setProjectDescription(project, des);
-		
+
 		des = model.getProjectDescription(project);
 		cfgDes = des.getConfigurations()[0];
 		ls = cfgDes.getLanguageSettingForFile(new Path("a.c"), true);
@@ -259,7 +264,7 @@ public class ExternalSettingsProviderTests extends BaseTestCase{
 		cfgDes.setSourceEntries(null);
 		expectedSourceEntries = new ICSourceEntry[]{
 				new CSourceEntry(project.getFullPath().append("sp_a"), null, 0),
-				new CSourceEntry(project.getFullPath().append("sp_b"), null, 0),	
+				new CSourceEntry(project.getFullPath().append("sp_b"), null, 0),
 		};
 		sourceEntries = cfgDes.getSourceEntries();
 		assertEquals(2, sourceEntries.length);
@@ -325,7 +330,7 @@ public class ExternalSettingsProviderTests extends BaseTestCase{
 				assertTrue(Arrays.equals(cfgDes.getSourceEntries(), makeProjectRelativePath(project, provided)));
 				break;
 			default:
-				fail("Unhandled entry_kind: " + kind);			
+				fail("Unhandled entry_kind: " + kind);
 			}
 		}
 	}
@@ -341,11 +346,11 @@ public class ExternalSettingsProviderTests extends BaseTestCase{
 		for (int i = 0; i < input.length; i ++) {
 			switch (input[i].getKind()) {
 			case ICSettingEntry.OUTPUT_PATH:
-				out[i] = new COutputEntry(project.getFullPath().append(input[i].getValue()), 
+				out[i] = new COutputEntry(project.getFullPath().append(input[i].getValue()),
 						((ICOutputEntry)input[i]).getExclusionPatterns(), input[i].getFlags());
 				break;
 			case ICSettingEntry.SOURCE_PATH:
-				out[i] = new CSourceEntry(project.getFullPath().append(input[i].getValue()), 
+				out[i] = new CSourceEntry(project.getFullPath().append(input[i].getValue()),
 						((ICSourceEntry)input[i]).getExclusionPatterns(), input[i].getFlags());
 				break;
 			}
@@ -362,14 +367,14 @@ public class ExternalSettingsProviderTests extends BaseTestCase{
 		CoreModel model = CoreModel.getDefault();
 		ICProjectDescriptionManager mngr = model.getProjectDescriptionManager();
 		IProject project = p5.getProject();
-		
+
 		// add external settings provider
 		ICProjectDescription des = model.getProjectDescription(project);
 		ICConfigurationDescription cfgDes = des.getConfigurations()[0];
 		String[] extPIds = new String[]{TestExtSettingsProvider.TEST_EXTERNAL_PROVIDER_ID};
 		cfgDes.setExternalSettingsProviderIds(extPIds);
 		model.setProjectDescription(project, des);
-		
+
 		// read out the settings it caused
 		des = model.getProjectDescription(project, false);
 		cfgDes = des.getConfigurations()[0];
@@ -378,31 +383,31 @@ public class ExternalSettingsProviderTests extends BaseTestCase{
 		for (ICLanguageSetting s: root.getLanguageSettings()) {
 			languageSettingsById.put(s.getLanguageId(), s);
 		}
-		
+
 		ICLanguageSetting ls;
 		ICLanguageSettingEntry[] entries;
 		ICLanguageSettingEntry[] expectedEntriesSet = new ICLanguageSettingEntry[]{
 				new CMacroEntry("m_c", "mv_c", 0)
 		};
 		ICLanguageSettingEntry[] expectedEntriesUnset = new ICLanguageSettingEntry[] {};
-		
+
 		// setting should be present for assembly but not for C
 		ls = languageSettingsById.get("org.eclipse.cdt.core.assembly");
 		assertNotNull(ls);
 		entries = ls.getSettingEntries(ICSettingEntry.MACRO);
 		assertEquals(1, entries.length);
 		assertTrue(Arrays.equals(expectedEntriesSet, entries));
-		
+
 		ls = languageSettingsById.get("org.eclipse.cdt.core.gcc");
 		assertNotNull(ls);
 		entries = ls.getSettingEntries(ICSettingEntry.MACRO);
 		assertEquals(0, entries.length);
 		assertTrue(Arrays.equals(expectedEntriesUnset, entries));
-		
+
 		// update settings provider
 		TestExtSettingsProvider.setVariantNum(3);
 		mngr.updateExternalSettingsProviders(extPIds, null);
-		
+
 		// read out the settings it caused
 		des = model.getProjectDescription(project, false);
 		cfgDes = des.getConfigurations()[0];
@@ -411,19 +416,53 @@ public class ExternalSettingsProviderTests extends BaseTestCase{
 		for (ICLanguageSetting s: root.getLanguageSettings()) {
 			languageSettingsById.put(s.getLanguageId(), s);
 		}
-		
+
 		// setting should be present for both now
 		ls = languageSettingsById.get("org.eclipse.cdt.core.gcc");
 		assertNotNull(ls);
 		entries = ls.getSettingEntries(ICSettingEntry.MACRO);
 		assertEquals(1, entries.length);
 		assertTrue(Arrays.equals(expectedEntriesSet, entries));
-		
+
 		ls = languageSettingsById.get("org.eclipse.cdt.core.assembly");
 		assertNotNull(ls);
 		entries = ls.getSettingEntries(ICSettingEntry.MACRO);
 		assertEquals(1, entries.length);
 		assertTrue(Arrays.equals(expectedEntriesSet, entries));
+	}
+
+	/**
+	 * Test if macros with the same name but different values can coexist when
+	 * they belong to different language ids
+	 */
+	public void testSameMacroWithDifferentValuesAndDifferentLanguageIds() throws CoreException {
+		TestExtSettingsProvider.setVariantNum(4);
+
+		CoreModel model = CoreModel.getDefault();
+		ICProjectDescriptionManager mngr = model.getProjectDescriptionManager();
+		IProject project = p6.getProject();
+
+		// add external settings provider
+		ICProjectDescription des = model.getProjectDescription(project);
+		ICConfigurationDescription cfgDes = des.getConfigurations()[0];
+		String[] extPIds = new String[]{TestExtSettingsProvider.TEST_EXTERNAL_PROVIDER_ID};
+		cfgDes.setExternalSettingsProviderIds(extPIds);
+		ICFolderDescription root = cfgDes.getRootFolderDescription();
+		model.setProjectDescription(project, des);
+
+		// read out the settings it caused
+		des = model.getProjectDescription(project, false);
+		cfgDes = des.getConfigurations()[0];
+		root = cfgDes.getRootFolderDescription();
+		for (ICLanguageSetting s: root.getLanguageSettings()) {
+			if( s.getLanguageId().equals("org.eclipse.cdt.core.assembly") ) {
+				assertEquals(1, s.getSettingEntries(ICSettingEntry.MACRO).length);
+				assertEquals("TheValue", s.getSettingEntries(4)[0].getValue());
+			} if( s.getLanguageId().equals("org.eclipse.cdt.core.g++") ) {
+				assertEquals(1, s.getSettingEntries(ICSettingEntry.MACRO).length);
+				assertEquals("", s.getSettingEntries(ICSettingEntry.MACRO)[0].getValue());
+			}
+		}
 	}
 
 	@Override
@@ -446,6 +485,10 @@ public class ExternalSettingsProviderTests extends BaseTestCase{
 		}
 		try {
 			p5.getProject().delete(true, null);
+		} catch (CoreException e){
+		}
+		try {
+			p6.getProject().delete(true, null);
 		} catch (CoreException e){
 		}
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -450,10 +450,13 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 	public void setInput(Object input) {
 		if (input instanceof CMacroExpansionInput) {
 			setMacroExpansionInput((CMacroExpansionInput) input);
-		} else {
+		} else if (input != null) {
 			if (fMacroCompareViewer != null) {
 				fMacroCompareViewer.setMacroExpansionStep(fIndex);
 			}
+			super.setInput(input);
+		} else {
+			setMacroExpansionInput(null);
 			super.setInput(input);
 		}
 	}
@@ -507,6 +510,9 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 	 */
 	private void setMacroExpansionInput(CMacroExpansionInput input) {
 		fInput= input;
+		if (fMacroCompareViewer != null) {
+			fMacroCompareViewer.setMacroExpansionInput(input);
+		}
 		if (fInput != null) {
 			fIndex= fixIndex(input.fStartWithFullExpansion ? getStepCount() : 0);
 			showExpansion();

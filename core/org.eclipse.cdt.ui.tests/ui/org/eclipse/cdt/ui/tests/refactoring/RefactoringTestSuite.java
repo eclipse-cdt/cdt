@@ -9,6 +9,7 @@
  * Contributors:
  *     Institute for Software - initial API and implementation
  *     Tom Ball (Google)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring;
 
@@ -16,7 +17,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.ui.tests.refactoring.extractconstant.ExtractConstantTestSuite;
-import org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionTestSuite;
+import org.eclipse.cdt.ui.tests.refactoring.extractfunction.ExtractFunctionRefactoringTest;
 import org.eclipse.cdt.ui.tests.refactoring.extractlocalvariable.ExtractLocalVariableTestSuite;
 import org.eclipse.cdt.ui.tests.refactoring.gettersandsetters.GenerateGettersAndSettersTestSuite;
 import org.eclipse.cdt.ui.tests.refactoring.hidemethod.HideMethodTestSuite;
@@ -34,7 +35,7 @@ public class RefactoringTestSuite extends TestSuite {
 		TestSuite suite = new RefactoringTestSuite();
 		suite.addTest(UtilTestSuite.suite());
 		suite.addTest(RenameRegressionTests.suite());
-		suite.addTest(ExtractFunctionTestSuite.suite());
+		suite.addTest(ExtractFunctionRefactoringTest.suite());
 		suite.addTest(ExtractConstantTestSuite.suite());
 		suite.addTest(HideMethodTestSuite.suite());
 		suite.addTest(GenerateGettersAndSettersTestSuite.suite());

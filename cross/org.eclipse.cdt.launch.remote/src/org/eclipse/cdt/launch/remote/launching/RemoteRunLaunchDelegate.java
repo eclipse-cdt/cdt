@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 PalmSource, Inc. and others.
+ * Copyright (c) 2006, 2012 PalmSource, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@
  * Anna Dushistova  (MontaVista)      - [267951][remotecdt] Support systemTypes without files subsystem
  * Anna Dushistova  (Mentor Graphics) - [314659]Fixed deprecated methods
  * Anna Dushistova  (Mentor Graphics) - moved to org.eclipse.cdt.launch.remote.launching
+ * Anna Dushistova  (MontaVista)      - [318051][remote debug] Terminating when "Remote shell" process is selected doesn't work
  *******************************************************************************/
 
 package org.eclipse.cdt.launch.remote.launching;
@@ -53,8 +54,12 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.services.shells.HostShellProcessAdapter;
+import org.eclipse.rse.services.shells.IHostShell;
 
 public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
+
+	private ICDISession dsession;
 
 	/*
 	 * (non-Javadoc)
@@ -103,7 +108,7 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 				if (debugMode
 						.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN)) {
 					Process remoteShellProcess = null;
-					ICDISession dsession = null;
+					dsession = null;
 					try {
 						// Download the binary to the remote before debugging.
 						monitor.setTaskName(Messages.RemoteRunLaunchDelegate_2);
@@ -127,10 +132,38 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 						if (arguments != null && !arguments.equals("")) //$NON-NLS-1$
 							command_arguments += " " + arguments; //$NON-NLS-1$
 						monitor.setTaskName(Messages.RemoteRunLaunchDelegate_9);
-						remoteShellProcess = RSEHelper.remoteShellExec(config,
-								prelaunchCmd, gdbserver_command,
-								command_arguments, new SubProgressMonitor(
-										monitor, 5));
+						IHostShell remoteShell = null;
+						try {
+							remoteShell = RSEHelper.execCmdInRemoteShell(config, prelaunchCmd,
+									gdbserver_command, command_arguments,
+									new SubProgressMonitor(monitor, 5));
+						} catch (Exception e1) {
+							RSEHelper.abort(e1.getMessage(), e1,
+									ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+						}
+						
+						try {
+							remoteShellProcess = new HostShellProcessAdapter(remoteShell) {
+
+								@Override
+								public synchronized void destroy() {
+									ICDISession session = getSession();
+									if (session != null) {
+										try {
+											session.terminate();
+										} catch (CDIException e) {
+										}
+									}
+									super.destroy();
+								}
+							};
+						} catch (Exception e) {
+							if (remoteShellProcess != null) {
+								remoteShellProcess.destroy();
+							}
+							RSEHelper.abort(Messages.RemoteRunLaunchDelegate_7, e,
+									ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+						}
 						DebugPlugin.newProcess(launch, remoteShellProcess,
 								Messages.RemoteRunLaunchDelegate_RemoteShell);
 
@@ -238,5 +271,9 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 	@Override
 	protected String getPluginID() {
 		return Activator.PLUGIN_ID;
+	}
+	
+	ICDISession getSession(){
+		return dsession;
 	}
 }

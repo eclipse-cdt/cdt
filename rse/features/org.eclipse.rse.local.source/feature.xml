@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature id="org.eclipse.rse.local.source" version="2.1.300.qualifier" label="%featureName" provider-name="%providerName"     >
+	<description >
+		%description
+	</description>
+	<copyright url="http://www.eclipse.org/legal/epl-v10.html">
+		%copyright
+	</copyright>
+	<license url="%licenseURL">
+		%license
+	</license>
+	<url>
+		<update url="http://download.eclipse.org/tm/updates/3.3" label="%tmUpdateSiteName"/>
+		<discovery url="http://download.eclipse.org/tm/updates/3.3" label="%tmUpdateSiteName"/>
+	</url>
+	<plugin id="org.eclipse.rse.services.local.source" version="0.0.0"     unpack="false"/>
+	<plugin id="org.eclipse.rse.subsystems.files.local.source" version="0.0.0"     unpack="false"/>
+	<plugin id="org.eclipse.rse.subsystems.processes.local.source" version="0.0.0"     unpack="false"/>
+	<plugin id="org.eclipse.rse.subsystems.shells.local.source" version="0.0.0"     unpack="false"/>
+	<plugin id="org.eclipse.rse.connectorservice.local.source" version="0.0.0"     unpack="false"/>
+</feature>

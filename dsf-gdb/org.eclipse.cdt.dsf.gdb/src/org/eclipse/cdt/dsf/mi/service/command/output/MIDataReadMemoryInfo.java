@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 QNX Software Systems and others.
+ * Copyright (c) 2000, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Ericsson AB - Modified for new DSF Reference Implementation
  *     Ericsson AB - Reverted to byte[] and processed multi-line results
+ *     Harish Dewan (Tensilica Inc) - Bug 369377: Output for command should include value of 'nr-bytes' field
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command.output;
@@ -139,7 +140,7 @@ public class MIDataReadMemoryInfo extends MIInfo {
     			}
 
     			// Parse 'nr-bytes="x"', the number of bytes read
-    			if (var.equals("total-bytes")) { //$NON-NLS-1$
+    			if (var.equals("nr-bytes")) { //$NON-NLS-1$
     				MIValue value = results[i].getMIValue();
     				if (value instanceof MIConst) {
     					String size = ((MIConst) value).getCString();

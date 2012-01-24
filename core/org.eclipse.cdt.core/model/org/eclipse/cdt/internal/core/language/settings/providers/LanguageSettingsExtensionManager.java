@@ -259,8 +259,10 @@ public class LanguageSettingsExtensionManager {
 	 *
 	 * @param className - class name to instantiate.
 	 * @return new instance of language settings provider.
+	 *
+	 * @throws CoreException if not able to create a new instance.
 	 */
-	/*package*/ static ILanguageSettingsProvider instantiateProviderClass(String className) {
+	/*package*/ static ILanguageSettingsProvider instantiateProviderClass(String className) throws CoreException {
 		if (className==null || className.equals(LanguageSettingsSerializableProvider.class.getName())) {
 			return new LanguageSettingsSerializableProvider();
 		}
@@ -272,7 +274,7 @@ public class LanguageSettingsExtensionManager {
 		ILanguageSettingsProvider provider = loadProviderFromRegistry(ATTR_CLASS, className, Platform.getExtensionRegistry(), false);
 		if (provider == null) {
 			String msg = "Not able to load provider class=" + className; //$NON-NLS-1$
-			CCorePlugin.log(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, msg, new Exception(msg)));
+			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, msg));
 		}
 		return provider;
 	}

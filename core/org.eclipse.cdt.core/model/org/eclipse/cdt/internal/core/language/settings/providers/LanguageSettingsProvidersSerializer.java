@@ -844,7 +844,14 @@ public class LanguageSettingsProvidersSerializer {
 								provider = LanguageSettingsManager.getWorkspaceProvider(providerId);
 							}
 						} else {
-							provider = loadProvider(providerNode);
+							try {
+								provider = loadProvider(providerNode);
+							} catch (CoreException e) {
+								@SuppressWarnings("nls")
+								String msg = "Error loading provider class=[" + providerClass + "] "
+										+ "in project=" + prjDescription.getProject().getName() + ", cfg=[" + cfgId + "]";
+								CCorePlugin.log(msg, e);
+							}
 							if (provider instanceof LanguageSettingsSerializableProvider) {
 								LanguageSettingsSerializableProvider lss = (LanguageSettingsSerializableProvider) provider;
 								if (!isStoringEntriesInProjectArea(lss) && projectElementWsp != null) {
@@ -941,7 +948,7 @@ public class LanguageSettingsProvidersSerializer {
 	/**
 	 * Load provider from provider node.
 	 */
-	private static ILanguageSettingsProvider loadProvider(Node providerNode) {
+	private static ILanguageSettingsProvider loadProvider(Node providerNode) throws CoreException {
 		String attrClass = XmlUtil.determineAttributeValue(providerNode, ATTR_CLASS);
 		ILanguageSettingsProvider provider = LanguageSettingsExtensionManager.instantiateProviderClass(attrClass);
 

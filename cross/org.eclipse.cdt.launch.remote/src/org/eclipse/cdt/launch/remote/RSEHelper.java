@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009, 2010 MontaVista Software, Inc. and others.
+ * Copyright (c) 2009, 2012 MontaVista Software, Inc. and others.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -8,6 +8,7 @@
  * Anna Dushistova (MontaVista)      - initial API and implementation
  * Anna Dushistova (Mentor Graphics) - [314659] moved common methods for DSF and CDI launches to this class
  * Anna Dushistova (Mentor Graphics) - changed spaceEscapify visibility
+ * Anna Dushistova (MontaVista)      - [318051][remote debug] Terminating when "Remote shell" process is selected doesn't work
  ********************************************************************************/
 
 package org.eclipse.cdt.launch.remote;
@@ -281,6 +282,42 @@ public class RSEHelper {
 
 		monitor.done();
 		return p;
+	}
+
+	public static IHostShell execCmdInRemoteShell(ILaunchConfiguration config,
+			String prelaunchCmd, String remoteCommandPath, String arguments,
+			IProgressMonitor monitor) throws Exception {
+		// The exit command is called to force the remote shell to close after
+		// our command
+		// is executed. This is to prevent a running process at the end of the
+		// debug session.
+		// See Bug 158786.
+		monitor.beginTask(NLS.bind(Messages.RemoteRunLaunchDelegate_8,
+				remoteCommandPath, arguments), 10);
+		String realRemoteCommand = arguments == null ? spaceEscapify(remoteCommandPath)
+				: spaceEscapify(remoteCommandPath) + " " + arguments; //$NON-NLS-1$
+
+		String remoteCommand = realRemoteCommand + CMD_DELIMITER + EXIT_CMD;
+
+		if (!prelaunchCmd.trim().equals("")) //$NON-NLS-1$
+			remoteCommand = prelaunchCmd + CMD_DELIMITER + remoteCommand;
+
+		IShellService shellService = null;
+		shellService = (IShellService) RSEHelper
+				.getConnectedRemoteShellService(getCurrentConnection(config),
+						new SubProgressMonitor(monitor, 7));
+
+		// This is necessary because runCommand does not actually run the
+		// command right now.
+		String env[] = new String[0];
+		IHostShell hostShell = null;
+		if (shellService != null) {
+			hostShell = shellService.launchShell(
+					"", env, new SubProgressMonitor(monitor, 3)); //$NON-NLS-1$
+			hostShell.writeToShell(remoteCommand);
+		}
+		monitor.done();
+		return hostShell;
 	}
 
 	public static String getRemoteHostname(ILaunchConfiguration config)

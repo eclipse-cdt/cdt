@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Mentor Graphics Corporation and others.
+ * Copyright (c) 2010, 2012 Mentor Graphics Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,21 @@
  * Contributors:
  * Anna Dushistova (Mentor Graphics) - initial API and implementation
  * Anna Dushistova (Mentor Graphics) - moved to org.eclipse.cdt.launch.remote.launching
+ * Anna Dushistova (MontaVista)      - [318051][remote debug] Terminating when "Remote shell" process is selected doesn't work
  *******************************************************************************/
 package org.eclipse.cdt.launch.remote.launching;
 
+import java.util.concurrent.RejectedExecutionException;
+
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
+import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
+import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
+import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate;
+import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
+import org.eclipse.cdt.dsf.service.DsfServicesTracker;
+import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.internal.launch.remote.Activator;
 import org.eclipse.cdt.internal.launch.remote.Messages;
 import org.eclipse.cdt.launch.remote.IRemoteConnectionConfigurationConstants;
@@ -30,6 +39,8 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.services.shells.HostShellProcessAdapter;
+import org.eclipse.rse.services.shells.IHostShell;
 
 public class RemoteGdbLaunchDelegate extends GdbLaunchDelegate {
 
@@ -77,13 +88,56 @@ public class RemoteGdbLaunchDelegate extends GdbLaunchDelegate {
 			if (arguments != null && !arguments.equals("")) //$NON-NLS-1$
 				commandArguments += " " + arguments; //$NON-NLS-1$
 			monitor.setTaskName(Messages.RemoteRunLaunchDelegate_9);
-			remoteShellProcess = RSEHelper.remoteShellExec(config,
-					prelaunchCmd, gdbserverCommand, commandArguments,
-					new SubProgressMonitor(monitor, 5));
+			// extending HostShellProcessAdapter here
+	        final GdbLaunch l = (GdbLaunch)launch;
+			IHostShell remoteShell = null;
+			try {
+				remoteShell = RSEHelper.execCmdInRemoteShell(config, prelaunchCmd,
+						gdbserverCommand, commandArguments,
+						new SubProgressMonitor(monitor, 5));
+			} catch (Exception e1) {
+				RSEHelper.abort(e1.getMessage(), e1,
+						ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+
+			}
+			try {
+				remoteShellProcess = new HostShellProcessAdapter(remoteShell) {
+
+					@Override
+					public synchronized void destroy() {
+						final DsfSession session = l.getSession();
+						if (session != null) {
+					        try {
+					            session.getExecutor().execute(new DsfRunnable() {
+					                public void run() {
+										DsfServicesTracker tracker = new DsfServicesTracker(
+												Activator.getBundleContext(),
+												session.getId());
+										IGDBControl control = tracker
+												.getService(IGDBControl.class);
+										if (control != null) {
+											control.terminate(new ImmediateRequestMonitor());
+										}
+										tracker.dispose();
+					                }
+					            });
+					        } catch (RejectedExecutionException e) {
+					            // Session disposed.
+					        }
+						}
+						super.destroy();
+					}
+				};
+			} catch (Exception e) {
+				if (remoteShellProcess != null) {
+					remoteShellProcess.destroy();
+				}
+				RSEHelper.abort(Messages.RemoteRunLaunchDelegate_7, e,
+						ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+			}
 
 			DebugPlugin.newProcess(launch, remoteShellProcess,
 					Messages.RemoteRunLaunchDelegate_RemoteShell);
-
 			
 			// 3. Let debugger know how gdbserver was started on the remote
 			ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();

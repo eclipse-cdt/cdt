@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Mentor Graphics Corporation and others.
+ * Copyright (c) 2009, 2012 Mentor Graphics Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -9,6 +9,7 @@
  * Nikita Shulga - initial API and implementation 
  * Nikita Shulga   (Mentor Graphics) - [331109] Added long-iso time format support
  * Anna Dushistova (Mentor Graphics) - [331213][scp] Provide UI-less scp IFileService in org.eclipse.rse.services.ssh
+ * Anna Dushistova  (MontaVista)     - [331213] [scp] Provide UI-less scp IFileService in org.eclipse.rse.services.ssh
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.files.scp;
@@ -21,6 +22,7 @@ import java.util.Stack;
 import java.util.regex.Pattern;
 
 import org.eclipse.rse.internal.services.ssh.Activator;
+import org.eclipse.rse.internal.services.ssh.files.SshFileUtils;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.HostFilePermissions;
 import org.eclipse.rse.services.files.IHostFilePermissions;
@@ -133,7 +135,7 @@ public class ScpFileAttr {
 			SplitAux();
 		} catch (Exception e) {
 			Activator.warn(
-					"ScpFileAttr:Exception occured while splitting  string "
+					"ScpFileAttr:Exception occured while splitting  string " //$NON-NLS-1$
 							+ lsString, e);
 		}
 	}
@@ -260,8 +262,8 @@ public class ScpFileAttr {
 
 	public static ScpFileAttr getAttr(Session sess, String path)
 			throws SystemMessageException {
-		String attr = ScpFileUtils.execCommandSafe(sess, "ls -land " //$NON-NLS-1$
-				+ ScpFileUtils.escapePath(path));
+		String attr = SshFileUtils.execCommandSafe(sess, "ls -land " //$NON-NLS-1$
+				+ SshFileUtils.escapePath(path));
 		if (attr == null || attr.length() < 9)
 			return null;
 		return new ScpFileAttr(attr);

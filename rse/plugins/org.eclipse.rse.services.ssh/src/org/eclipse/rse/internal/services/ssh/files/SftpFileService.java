@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,9 +39,10 @@
  * David McKnight   (IBM)        - [271244] [sftp files] "My Home" filter not working
  * David McKnight   (IBM)        - [272882] [api] Handle exceptions in IService.initService()
  * Martin Oberhuber (Wind River) - [274568] Dont use SftpMonitor for Streams transfer
- * Patrick Tassé    (Ericsson)   - [285226] Empty directory shown as an error message
+ * Patrick Tassï¿½    (Ericsson)   - [285226] Empty directory shown as an error message
  * Martin Oberhuber (Wind River) - [286129][api] RemoteFileException(String) violates API contract
  * Martin Tauber				 - [256581][performance] Re-use Sftp channels
+ * Anna Dushistova  (MontaVista) - [331213] [scp] Provide UI-less scp IFileService in org.eclipse.rse.services.ssh
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.files;
@@ -607,18 +608,7 @@ public class SftpFileService extends AbstractFileService implements ISshService,
 	 *
 	 */
 	protected String concat(String parentDir, String fileName) {
-		// See also {@link SftpHostFile#getAbsolutePath()}
-		if (parentDir == null || parentDir.length() == 0) {
-			// Looking at a Root
-			return fileName;
-		}
-		StringBuffer path = new StringBuffer(parentDir);
-		if (!parentDir.endsWith("/")) //$NON-NLS-1$
-		{
-			path.append('/');
-		}
-		path.append(fileName);
-		return path.toString();
+		return SshFileUtils.concat(parentDir, fileName);
 	}
 
 	public IHostFile getFile(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException

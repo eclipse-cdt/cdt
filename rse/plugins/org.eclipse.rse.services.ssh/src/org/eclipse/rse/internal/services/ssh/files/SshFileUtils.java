@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Mentor Graphics Corporation and others.
+ * Copyright (c) 2009, 2012 Mentor Graphics Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -8,19 +8,24 @@
  * Contributors: 
  * Nikita Shulga                     - initial API and implementation 
  * Anna Dushistova (Mentor Graphics) - [331213][scp] Provide UI-less scp IFileService in org.eclipse.rse.services.ssh
+ * Anna Dushistova  (MontaVista)     - [331213][scp] Provide UI-less scp IFileService in org.eclipse.rse.services.ssh
  *******************************************************************************/
 
-package org.eclipse.rse.internal.services.ssh.files.scp;
+package org.eclipse.rse.internal.services.ssh.files;
 
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.eclipse.core.runtime.IStatus;
+
+import org.eclipse.rse.internal.services.ssh.Activator;
+import org.eclipse.rse.services.clientserver.messages.SimpleSystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.Session;
 
-public class ScpFileUtils {
+public class SshFileUtils {
 	public static final String EOL_STRING = "\n"; //$NON-NLS-1$
 	public static final String TARGET_SEPARATOR = "/"; //$NON-NLS-1$
 	public static final String EXEC_CHANNEL = "exec"; //$NON-NLS-1$
@@ -33,10 +38,10 @@ public class ScpFileUtils {
 	 * Concatenate a parent directory with a file name to form a new proper path
 	 * name.
 	 * 
-	 * This method was cloned from
+	 * This method was moved from
 	 * org.eclipse.rse.services.ssh / SftpFileService#concat()
 	 */
-	protected static String concat(String parentDir, String fileName) {
+	public static String concat(String parentDir, String fileName) {
 		// See also {@link SftpHostFile#getAbsolutePath()}
 		if (parentDir == null || parentDir.length() == 0) {
 			// Looking at a Root
@@ -83,7 +88,7 @@ public class ScpFileUtils {
 		try {
 			rc = execCommand(session, command);
 		} catch (Exception e) {
-			ScpFileService.throwSystemException(e);
+			throwSystemException(e);
 		}
 		return rc;
 	}
@@ -104,7 +109,7 @@ public class ScpFileUtils {
 	 *            file name
 	 * @return escaped concatenated path to the file
 	 */
-	protected static String concatEscape(String parentDir, String fileName) {
+	public static String concatEscape(String parentDir, String fileName) {
 		return escapePath(concat(parentDir, fileName));
 	}
 
@@ -131,6 +136,16 @@ public class ScpFileUtils {
 			rc += new String(buf, 0, cnt);
 		}
 		return rc;
+	}
+
+	public static void throwSystemException(Exception e)
+	throws SystemMessageException {
+		Activator.warn("SshFileUtils.throwSystemException", e); //$NON-NLS-1$
+
+		if (e instanceof SystemMessageException)
+			throw (SystemMessageException) e;
+		throw new SystemMessageException(new SimpleSystemMessage(
+				Activator.PLUGIN_ID, IStatus.ERROR, e.getMessage(), e));
 	}
 
 }

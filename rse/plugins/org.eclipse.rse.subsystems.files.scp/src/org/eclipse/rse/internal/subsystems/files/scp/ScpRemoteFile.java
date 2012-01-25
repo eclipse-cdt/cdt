@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,13 +14,14 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - Adapted from FTPRemoteFile.
  * Martin Oberhuber (Wind River) - [216343] immediate link targets and canonical paths for Sftp
- * Nikita Shulga (Mentor Graphics) - Adapted from SftpRemoteFile.
+ * Nikita Shulga (Mentor Graphics)- Adapted from SftpRemoteFile.
+ * Anna Dushistova  (MontaVista)  - [331213][scp] Provide UI-less scp IFileService in org.eclipse.rse.services.ssh
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.scp;
 
+import org.eclipse.rse.internal.services.ssh.files.SshFileUtils;
 import org.eclipse.rse.internal.services.ssh.files.SftpHostFile;
-import org.eclipse.rse.internal.services.ssh.files.scp.ScpFileUtils;
 import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.AbstractRemoteFile;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem;
@@ -44,8 +45,8 @@ public class ScpRemoteFile extends AbstractRemoteFile {
 		if (canonicalPath.equals(getAbsolutePath()) && _parentFile != null) {
 			String parentCanonicalPath = _parentFile.getCanonicalPath();
 			StringBuffer path = new StringBuffer(parentCanonicalPath);
-			if (!parentCanonicalPath.endsWith(ScpFileUtils.TARGET_SEPARATOR))
-				path.append(ScpFileUtils.TARGET_SEPARATOR);
+			if (!parentCanonicalPath.endsWith(SshFileUtils.TARGET_SEPARATOR))
+				path.append(SshFileUtils.TARGET_SEPARATOR);
 
 			path.append(getName());
 			canonicalPath = path.toString();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Mentor Graphics Corporation and others.
+ * Copyright (c) 2009, 2012 Mentor Graphics Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -10,6 +10,7 @@
  * Anna Dushistova (Mentor Graphics) - [331213][scp] Provide UI-less scp IFileService in org.eclipse.rse.services.ssh
  * Anna Dushistova (Mentor Graphics) - [331249][scp] incorrect home while logging in as root
  * Simon Bernard   (Sierra Wireless) - [349947][scp] with scp IRemoteFile.exist() returns always true
+ * Anna Dushistova (MontaVista)      - [331213] [scp] Provide UI-less scp IFileService in org.eclipse.rse.services.ssh
  *******************************************************************************/
 package org.eclipse.rse.internal.services.ssh.files.scp;
 
@@ -24,9 +25,12 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.osgi.util.NLS;
 
 import org.eclipse.rse.internal.services.ssh.Activator;
 import org.eclipse.rse.internal.services.ssh.ISshSessionProvider;
+import org.eclipse.rse.internal.services.ssh.SshServiceResources;
+import org.eclipse.rse.internal.services.ssh.files.SshFileUtils;
 import org.eclipse.rse.internal.services.ssh.files.SftpHostFile;
 import org.eclipse.rse.services.clientserver.FileTypeMatcher;
 import org.eclipse.rse.services.clientserver.IMatcher;
@@ -67,16 +71,6 @@ public class ScpFileService extends AbstractFileService implements
 				Activator.PLUGIN_ID, IStatus.ERROR, msg));
 	}
 
-	protected static void throwSystemException(Exception e)
-			throws SystemMessageException {
-		Activator.warn("ScpFileServie.throwSystemExcpeption", e);
-
-		if (e instanceof SystemMessageException)
-			throw (SystemMessageException) e;
-		throw new SystemMessageException(new SimpleSystemMessage(
-				Activator.PLUGIN_ID, IStatus.ERROR, e.getMessage(), e));
-	}
-
 	protected IHostFile[] internalFetch(String parentPath, String fileFilter,
 			int fileType, IProgressMonitor monitor)
 			throws SystemMessageException {
@@ -93,17 +87,17 @@ public class ScpFileService extends AbstractFileService implements
 
 		List results = new ArrayList();
 		Session sess = getSession();
-		String cmd = "ls -lAn " + ScpFileUtils.escapePath(parentPath); //$NON-NLS-1$
+		String cmd = "ls -lAn " + SshFileUtils.escapePath(parentPath); //$NON-NLS-1$
 
-		String rc = ScpFileUtils.execCommandSafe(sess, cmd);
-		String[] lsStrings = rc.split(ScpFileUtils.EOL_STRING);
+		String rc = SshFileUtils.execCommandSafe(sess, cmd);
+		String[] lsStrings = rc.split(SshFileUtils.EOL_STRING);
 		for (int i=0;i<lsStrings.length;i++){
 			if (lsStrings[i].length() == 0 || lsStrings[i].startsWith("total")) //$NON-NLS-1$
 				continue;
 			ScpFileAttr attr = new ScpFileAttr(lsStrings[i]);
 			if (attr.getName() == null) {
-				Activator.warn("internalFetch(parentPath='" + parentPath
-						+ "'): Can't get name of " + lsStrings[i], null);
+				Activator.warn("internalFetch(parentPath='" + parentPath //$NON-NLS-1$
+						+ "'): Can't get name of " + lsStrings[i], null); //$NON-NLS-1$
 				continue;
 			}
 			if (!filematcher.matches(attr.getName()))
@@ -132,13 +126,13 @@ public class ScpFileService extends AbstractFileService implements
 			IHostFilePermissions permissions, IProgressMonitor monitor)
 			throws SystemMessageException {
 		Session session = getSession();
-		String path = ScpFileUtils.escapePath(file.getAbsolutePath());
+		String path = SshFileUtils.escapePath(file.getAbsolutePath());
 		int permBits = permissions.getPermissionBits();
 		String ownStr = permissions.getUserOwner() + ':'
 				+ permissions.getGroupOwner();
 		String cmd = "chmod " + Integer.toOctalString(permBits) + " " + path; //$NON-NLS-1$ //$NON-NLS-2$
-		ScpFileUtils.execCommandSafe(session, cmd);
-		ScpFileUtils.execCommandSafe(session, "chown " + ownStr + " " + path); //$NON-NLS-1$ //$NON-NLS-2$
+		SshFileUtils.execCommandSafe(session, cmd);
+		SshFileUtils.execCommandSafe(session, "chown " + ownStr + " " + path); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public void copy(String arg0, String arg1, String arg2, String arg3,
@@ -156,10 +150,10 @@ public class ScpFileService extends AbstractFileService implements
 	public IHostFile createFile(String remotePath, String fileName,
 			IProgressMonitor arg2) throws SystemMessageException {
 		Session session = getSession();
-		String fullPath = ScpFileUtils.concat(remotePath, fileName);
+		String fullPath = SshFileUtils.concat(remotePath, fileName);
 
-		ScpFileUtils.execCommandSafe(session,
-				"touch " + ScpFileUtils.escapePath(fullPath)); //$NON-NLS-1$
+		SshFileUtils.execCommandSafe(session,
+				"touch " + SshFileUtils.escapePath(fullPath)); //$NON-NLS-1$
 		ScpFileAttr attr = ScpFileAttr.getAttr(session, fullPath);
 
 		return makeHostFile(remotePath, fileName, attr);
@@ -168,10 +162,10 @@ public class ScpFileService extends AbstractFileService implements
 	public IHostFile createFolder(String remotePath, String fileName,
 			IProgressMonitor arg2) throws SystemMessageException {
 		Session session = getSession();
-		String fullPath = ScpFileUtils.concat(remotePath, fileName);
+		String fullPath = SshFileUtils.concat(remotePath, fileName);
 
-		ScpFileUtils.execCommandSafe(session,
-				"mkdir " + ScpFileUtils.escapePath(fullPath)); //$NON-NLS-1$
+		SshFileUtils.execCommandSafe(session,
+				"mkdir " + SshFileUtils.escapePath(fullPath)); //$NON-NLS-1$
 		ScpFileAttr attr = ScpFileAttr.getAttr(session, fullPath);
 
 		return makeHostFile(remotePath, fileName, attr);
@@ -180,9 +174,9 @@ public class ScpFileService extends AbstractFileService implements
 	public void delete(String remotePath, String fileName, IProgressMonitor arg2)
 			throws SystemMessageException {
 		Session session = getSession();
-		String fullPathEsc = ScpFileUtils.concatEscape(remotePath, fileName);
+		String fullPathEsc = SshFileUtils.concatEscape(remotePath, fileName);
 
-		ScpFileUtils.execCommandSafe(session, "rm -rf " + fullPathEsc); //$NON-NLS-1$
+		SshFileUtils.execCommandSafe(session, "rm -rf " + fullPathEsc); //$NON-NLS-1$
 
 	}
 
@@ -207,7 +201,7 @@ public class ScpFileService extends AbstractFileService implements
 		do {
 			ch = is.read();
 			sb.append((char) ch);
-		} while (ch != ScpFileUtils.EOL_CHAR);
+		} while (ch != SshFileUtils.EOL_CHAR);
 		setErrorMessage(sb.toString());
 		return rc;
 	}
@@ -227,7 +221,7 @@ public class ScpFileService extends AbstractFileService implements
 			internalDownload(remoteParent, fileName, localFile, monitor);
 
 		} catch (Exception e) {
-			throwSystemException(e);
+			SshFileUtils.throwSystemException(e);
 		}
 
 	}
@@ -235,7 +229,7 @@ public class ScpFileService extends AbstractFileService implements
 	public IHostFile getFile(String remotePath, String fileName,
 			IProgressMonitor monitor) throws SystemMessageException {
 		Session session = getSession();
-		String fullPath = ScpFileUtils.concat(remotePath, fileName);
+		String fullPath = SshFileUtils.concat(remotePath, fileName);
 		ScpFileAttr attr = ScpFileAttr.getAttr(session, fullPath);
 
 		return makeHostFile(remotePath, fileName, attr);
@@ -245,12 +239,12 @@ public class ScpFileService extends AbstractFileService implements
 			throws SystemMessageException {
 		IHostFile root = null;
 		try {
-			root = getFile(null, ScpFileUtils.TARGET_SEPARATOR, monitor);
+			root = getFile(null, SshFileUtils.TARGET_SEPARATOR, monitor);
 		} catch (SystemMessageException e) {
-			Activator.warn("Failed to get root file", e);
+			Activator.warn("Failed to get root file", e); //$NON-NLS-1$
 		}
 		if (root == null)
-			root = new SftpHostFile(null, ScpFileUtils.TARGET_SEPARATOR, true,
+			root = new SftpHostFile(null, SshFileUtils.TARGET_SEPARATOR, true,
 					true, false, 0, 0);
 
 		return new IHostFile[] { root };
@@ -261,24 +255,24 @@ public class ScpFileService extends AbstractFileService implements
 		if (fUserHome == null) {
 			try {
 				Session sess = getSession();
-				fUserHome = ScpFileUtils.execCommand(sess, "cd ;pwd").split( //$NON-NLS-1$
-						ScpFileUtils.EOL_STRING)[0];
+				fUserHome = SshFileUtils.execCommand(sess, "cd ;pwd").split( //$NON-NLS-1$
+						SshFileUtils.EOL_STRING)[0];
 			} catch (Exception e) {
-				Activator.warn("Failed to execute pwd", e);
+				Activator.warn("Failed to execute pwd", e); //$NON-NLS-1$
 				return null;
 			}
 		}
 		if (fUserHome == null)
 			return null;
 		int lastSlash = fUserHome
-				.lastIndexOf(ScpFileUtils.TARGET_SEPARATOR_CHAR);
+				.lastIndexOf(SshFileUtils.TARGET_SEPARATOR_CHAR);
 		String name = fUserHome.substring(lastSlash + 1);
 		String parent = fUserHome.substring(0, lastSlash+1);
 		IHostFile rc = null;
 		try {
 			rc = getFile(parent, name, null);
 		} catch (SystemMessageException e) {
-			Activator.warn("Failed to get user home file ", e);
+			Activator.warn("Failed to get user home file ", e); //$NON-NLS-1$
 		}
 		if (rc == null)
 			rc = new SftpHostFile(null, fUserHome, true, true, false, 0, 0);
@@ -293,20 +287,20 @@ public class ScpFileService extends AbstractFileService implements
 			String newName, IProgressMonitor arg4)
 			throws SystemMessageException {
 		Session session = getSession();
-		String oldFullPathEsc = ScpFileUtils.concatEscape(newPath, oldName);
-		String newFullPathEsc = ScpFileUtils.concatEscape(newPath, newName);
+		String oldFullPathEsc = SshFileUtils.concatEscape(newPath, oldName);
+		String newFullPathEsc = SshFileUtils.concatEscape(newPath, newName);
 
-		ScpFileUtils.execCommandSafe(session, "mv " + oldFullPathEsc + " " //$NON-NLS-1$ //$NON-NLS-2$
+		SshFileUtils.execCommandSafe(session, "mv " + oldFullPathEsc + " " //$NON-NLS-1$ //$NON-NLS-2$
 				+ newFullPathEsc);
 	}
 
 	public void rename(String remotePath, String oldName, String newName,
 			IProgressMonitor monitor) throws SystemMessageException {
 		Session session = getSession();
-		String oldFullPathEsc = ScpFileUtils.concatEscape(remotePath, oldName);
-		String newFullPathEsc = ScpFileUtils.concatEscape(remotePath, newName);
+		String oldFullPathEsc = SshFileUtils.concatEscape(remotePath, oldName);
+		String newFullPathEsc = SshFileUtils.concatEscape(remotePath, newName);
 
-		ScpFileUtils.execCommandSafe(session, "mv " + oldFullPathEsc + " " //$NON-NLS-1$ //$NON-NLS-2$
+		SshFileUtils.execCommandSafe(session, "mv " + oldFullPathEsc + " " //$NON-NLS-1$ //$NON-NLS-2$
 				+ newFullPathEsc);
 
 	}
@@ -320,27 +314,27 @@ public class ScpFileService extends AbstractFileService implements
 
 	public void setLastModified(String arg0, String arg1, long arg2,
 			IProgressMonitor arg3) throws SystemMessageException {
-		throwSystemException("setLastModified() not supported");
+		throwSystemException(SshServiceResources.ScpFileService_LastModifiedNotSupportedError);
 	}
 
 	public void setReadOnly(String remotePath, String fileName,
 			boolean disableWrite, IProgressMonitor monitor)
 			throws SystemMessageException {
 		Session session = getSession();
-		String fullPath = ScpFileUtils.concat(remotePath, fileName);
+		String fullPath = SshFileUtils.concat(remotePath, fileName);
 		ScpFileAttr attr = ScpFileAttr.getAttr(session, fullPath);
 		if (attr == null)
-			throwSystemException("Can't get attribute of file " + fullPath);
+			throwSystemException(SshServiceResources.ScpFileService_AttributesError + fullPath);
 		int perm = new HostFilePermissions(attr.getAttrs(), "", "") //$NON-NLS-1$ //$NON-NLS-2$
 				.getPermissionBits();
 		if (disableWrite)
 			perm &= ~0222;
 		else
 			perm |= 0200;
-		ScpFileUtils.execCommandSafe(
+		SshFileUtils.execCommandSafe(
 				session,
 				"chmod " + Integer.toOctalString(perm) + " "  //$NON-NLS-1$//$NON-NLS-2$
-						+ ScpFileUtils.escapePath(fullPath));
+						+ SshFileUtils.escapePath(fullPath));
 	}
 
 	public void upload(InputStream stream, String remotePath,
@@ -351,10 +345,10 @@ public class ScpFileService extends AbstractFileService implements
 
 	private void internalDownload(String remoteParent, String fileName,
 			File localFile, IProgressMonitor monitor) throws Exception {
-		String remotePath = ScpFileUtils.concat(remoteParent, fileName);
-		String cmd = "scp -f " + ScpFileUtils.escapePath(remotePath); //$NON-NLS-1$
+		String remotePath = SshFileUtils.concat(remoteParent, fileName);
+		String cmd = "scp -f " + SshFileUtils.escapePath(remotePath); //$NON-NLS-1$
 
-		ChannelExec ch = ScpFileUtils.openExecChannel(getSession(), cmd);
+		ChannelExec ch = SshFileUtils.openExecChannel(getSession(), cmd);
 		InputStream is = ch.getInputStream();
 		OutputStream os = ch.getOutputStream();
 		ch.connect();
@@ -367,13 +361,12 @@ public class ScpFileService extends AbstractFileService implements
 
 		int c = is.read();
 		if (c == 1) {
-			String errmsg = ScpFileUtils.readString(is);
-			throw new Exception("Error while downloading " + remotePath + " :"
-					+ errmsg);
+			String errmsg = SshFileUtils.readString(is);
+			throw new Exception(NLS.bind(SshServiceResources.ScpFileService_DownloadException,remotePath,
+					errmsg));
 		}
 		if (c != 'C')
-			throw new Exception("Error while downloading " + remotePath
-					+ ": Can't download file of type" + c);
+			throw new Exception(NLS.bind(SshServiceResources.ScpFileService_DownloadException1,remotePath, ""+c)); //$NON-NLS-1$
 
 		// read '0644'
 		is.read(buf, 0, 5);
@@ -387,9 +380,9 @@ public class ScpFileService extends AbstractFileService implements
 				break;
 			filesize = filesize * 10 + (buf[0] - '0');
 		}
-		String fname = ScpFileUtils.readString(is);
+		String fname = SshFileUtils.readString(is);
 
-		Activator.log("filesize=" + filesize + " fname=" + fname);
+		Activator.log("filesize=" + filesize + " fname=" + fname);  //$NON-NLS-1$//$NON-NLS-2$
 
 		// Confirm that file description is read by sending '0'
 		buf[0] = 0;
@@ -397,7 +390,7 @@ public class ScpFileService extends AbstractFileService implements
 		os.flush();
 
 		FileOutputStream fos = new FileOutputStream(localFile);
-		monitor.beginTask("Downloading file", (int) filesize);
+		monitor.beginTask(SshServiceResources.ScpFileService_DownloadFileTaskName, (int) filesize);
 		long bytesDownloaded = 0;
 		while (true) {
 			int len = buf.length;
@@ -433,11 +426,11 @@ public class ScpFileService extends AbstractFileService implements
 	private void internalUpload(File localFile, String remotePath,
 			String remoteFile, IProgressMonitor monitor) throws Exception {
 
-		monitor.beginTask("Uploading file", (int) localFile.length() + 10);
+		monitor.beginTask(SshServiceResources.ScpFileService_UploadFileTaskName, (int) localFile.length() + 10);
 
 		Session session = getSession();
-		String cmd = "scp -p -t " + ScpFileUtils.escapePath(remotePath); //$NON-NLS-1$
-		ChannelExec ch = ScpFileUtils.openExecChannel(session, cmd);
+		String cmd = "scp -p -t " + SshFileUtils.escapePath(remotePath); //$NON-NLS-1$
+		ChannelExec ch = SshFileUtils.openExecChannel(session, cmd);
 		InputStream is = ch.getInputStream();
 		OutputStream os = ch.getOutputStream();
 		ch.connect();
@@ -446,7 +439,7 @@ public class ScpFileService extends AbstractFileService implements
 		String fileHeader = "C0644" + " " + localFile.length() + " "  //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
 				+ remoteFile + "\n"; //$NON-NLS-1$
 		if (readAck(is) != 0)
-			throw new Exception("upload: wrong Ack! Last error:"
+			throw new Exception(SshServiceResources.ScpFileService_ReadAckError
 					+ getLastError());
 
 		os.write(fileHeader.getBytes());
@@ -470,8 +463,8 @@ public class ScpFileService extends AbstractFileService implements
 		os.write(buf, 0, 1);
 		os.flush();
 		if (readAck(is) != 0)
-			throw new Exception("Error happened while uploading "
-					+ localFile.getAbsolutePath() + ":" + getLastError());
+			throw new Exception(NLS.bind(SshServiceResources.ScpFileService_UploadException
+					,localFile.getAbsolutePath(),getLastError()));
 		monitor.internalWorked(1);
 
 		os.close();
@@ -487,7 +480,7 @@ public class ScpFileService extends AbstractFileService implements
 		try {
 			internalUpload(localFile, remotePath, remoteFile, monitor);
 		} catch (Exception e) {
-			throwSystemException(e);
+			SshFileUtils.throwSystemException(e);
 		}
 
 	}
@@ -516,11 +509,11 @@ public class ScpFileService extends AbstractFileService implements
 	}
 
 	public String getDescription() {
-		return "SSH/SCP File Service can be used to connect to embedded sshd implementations, which often lacks sftp service";
+		return SshServiceResources.ScpFileService_Description;
 	}
 
 	public String getName() {
-		return "SCP File Service";
+		return SshServiceResources.ScpFileService_Name;
 	}
 
 }

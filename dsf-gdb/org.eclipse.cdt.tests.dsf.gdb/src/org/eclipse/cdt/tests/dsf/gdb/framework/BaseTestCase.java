@@ -18,7 +18,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.datamodel.IDMEvent;
-import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
+import org.eclipse.cdt.dsf.debug.service.IBreakpointsExtension.IBreakpointHitDMEvent;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
@@ -122,7 +122,11 @@ public class BaseTestCase {
     				fInitialStoppedEvent = (MIStoppedEvent)event;
     			}
     		}
-    		else if (event instanceof ISuspendedDMEvent) {
+    		else if (event instanceof IBreakpointHitDMEvent) {
+    			// We need to wait for a breakpoint event, not just a suspended event,
+    			// this is because for remote tests, there is a suspended event when
+    			// we connect, and then, there is the breakpoint event at main()
+    			
     			// We get this higher level event shortly thereafter. We don't want
     			// to consider the session suspended until we get it. Set the event
     			// semaphore that will allow the test to proceed

@@ -111,11 +111,12 @@ public class CViewLabelProvider extends AppearanceAwareLabelProvider {
 		String imageKey = null;
 		if (element instanceof IncludeReferenceProxy) {
 			IIncludeReference reference = ((IncludeReferenceProxy)element).getReference();
-			IContainer container = ResourcesPlugin.getWorkspace().getRoot().getContainerForLocation(reference.getPath());
-			if (container != null) {
+			IContainer containerInclude = ResourcesPlugin.getWorkspace().getRoot().getContainerForLocation(reference.getPath());
+			if (containerInclude != null) {
 				ICProject cproject = reference.getCProject();
 				IProject project = (cproject != null) ? cproject.getProject() : null;
-				boolean isProjectRelative = container.getProject().equals(project);
+				IProject projectInclude = containerInclude.getProject();
+				boolean isProjectRelative = projectInclude != null && projectInclude.equals(project);
 				imageKey = LanguageSettingsImages.getImageKey(ICSettingEntry.INCLUDE_PATH, ICSettingEntry.VALUE_WORKSPACE_PATH, isProjectRelative);
 			} else {
 				imageKey = CDTSharedImages.IMG_OBJS_INCLUDES_FOLDER;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Ericsson and others.
+ * Copyright (c) 2008, 2012 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,14 +7,20 @@
  * 
  * Contributors:
  *     Ericsson			  - Initial Implementation
+ *     Marc Khouzam (Ericsson) - Fix NPE (bug 369583)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command.commands;
 
 import static org.junit.Assert.assertEquals;
 
+import org.eclipse.cdt.dsf.concurrent.DefaultDsfExecutor;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
+import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
+import org.eclipse.cdt.dsf.gdb.service.command.GDBControlDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MICommand;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
+import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.junit.Test;
 
 /**
@@ -46,16 +52,21 @@ public class TestMICommandConstructCommand {
 				result);
 	}
 
-	private class TestContext implements IDMContext {
+	private class TestContext implements IBreakpointsTargetDMContext {
+		private DsfSession session = null;
 
+		public TestContext() {
+			session = DsfSession.startSession(new DefaultDsfExecutor(TestsPlugin.PLUGIN_ID), TestsPlugin.PLUGIN_ID);
+		}
+		
 		@Override
 		public IDMContext[] getParents() {
-			return null;
+			return new IDMContext[] {new GDBControlDMContext(getSessionId(), "1")};
 		}
 
 		@Override
 		public String getSessionId() {
-			return null;
+			return session.getId();
 		}
 
 		@Override
@@ -63,7 +74,6 @@ public class TestMICommandConstructCommand {
 		public Object getAdapter(Class adapter) {
 			return null;
 		}
-
 	}
 
 }

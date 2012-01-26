@@ -20,6 +20,7 @@ import org.eclipse.cdt.build.internal.core.scannerconfig2.CfgScannerConfigProfil
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariableManager;
+import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.resources.ACBuilder;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -180,7 +181,11 @@ public class ScannerConfigBuilder extends ACBuilder {
 	public static SCProfileInstance build(CfgInfoContext context, IScannerConfigBuilderInfo2 buildInfo2, int flags, Properties env, IProgressMonitor monitor) throws CoreException{
 		IConfiguration cfg = context.getConfiguration();
 		IProject project = cfg.getOwner().getProject();
-        boolean autodiscoveryEnabled2 = buildInfo2.isAutoDiscoveryEnabled();
+		boolean autodiscoveryEnabled2 = buildInfo2.isAutoDiscoveryEnabled();
+		if (autodiscoveryEnabled2) {
+			ICConfigurationDescription cfgDescription = ManagedBuildManager.getDescriptionForConfiguration(cfg);
+			autodiscoveryEnabled2 = ScannerDiscoveryLegacySupport.isMbsLanguageSettingsProviderOn(cfgDescription);
+		}
 
         if (autodiscoveryEnabled2 || ((flags & FORCE_DISCOVERY) != 0)) {
             monitor.beginTask(MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder"), 100); //$NON-NLS-1$

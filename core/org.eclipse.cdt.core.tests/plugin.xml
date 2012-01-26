@@ -160,6 +160,13 @@
       </filesystem>
    </extension>
    <extension
+         point="org.eclipse.cdt.core.EFSExtensionProvider">
+      <EFSExtensionProvider
+            class="org.eclipse.cdt.core.internal.tests.filesystem.ram.MemoryEFSExtensionProvider"
+            scheme="mem">
+      </EFSExtensionProvider>
+   </extension>
+   <extension
          id="RegexErrorParserId"
          name="Test Plugin RegexErrorParser"
          point="org.eclipse.cdt.core.ErrorParser">

@@ -37,6 +37,7 @@ import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMAddress;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMData;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMLocation;
+import org.eclipse.cdt.dsf.debug.service.IExpressions.IIndexedPartitionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IExpressions2;
 import org.eclipse.cdt.dsf.debug.service.IExpressions3;
 import org.eclipse.cdt.dsf.debug.service.IExpressions3.IExpressionDMDataExtension;
@@ -135,6 +136,11 @@ public class VariableVMNode extends AbstractExpressionVMNode
      */    
     public static final String PROP_VARIABLE_ADDRESS_CHANGED = ICachingVMProvider.PROP_IS_CHANGED_PREFIX + PROP_VARIABLE_ADDRESS;
 
+    /**
+     * 'PROP_VARIABLE_BASIC_TYPE' property value for indexed partitions
+     */
+    private static final String INDEXED_PARTITION_TYPE = "indexed_partition_type"; //$NON-NLS-1$
+    
     private final SyncVariableDataAccess fSyncVariableDataAccess;
     
     /**
@@ -330,6 +336,16 @@ public class VariableVMNode extends AbstractExpressionVMNode
         };
     };
     
+    public final static  LabelImage PARTITION_LABEL_IMAGE = new LabelImage(CDebugImages.DESC_OBJS_ARRAY_PARTITION) {
+        { setPropertyNames(new String[] { PROP_VARIABLE_BASIC_TYPE }); }
+        
+        @Override
+        public boolean isEnabled(IStatus status, java.util.Map<String,Object> properties) {
+            String type = (String)properties.get(PROP_VARIABLE_BASIC_TYPE);
+            return INDEXED_PARTITION_TYPE.equals(type);
+        };
+    };
+    
     protected IElementLabelProvider createLabelProvider() {
     	
     	//
@@ -407,6 +423,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
                     new String[] { PROP_NAME }),
                 POINTER_LABEL_IMAGE,
                 AGGREGATE_LABEL_IMAGE, 
+                PARTITION_LABEL_IMAGE,
                 SIMPLE_LABEL_IMAGE,
                 new StaleDataLabelForeground(),
                 new VariableLabelFont(),
@@ -422,6 +439,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
                     new String[] { PROP_ELEMENT_EXPRESSION }),
                 POINTER_LABEL_IMAGE,
                 AGGREGATE_LABEL_IMAGE, 
+                PARTITION_LABEL_IMAGE,
                 SIMPLE_LABEL_IMAGE,
                 new StaleDataLabelForeground(),
                 new VariableLabelFont(),
@@ -770,10 +788,13 @@ public class VariableVMNode extends AbstractExpressionVMNode
                                 // In case of an error fill in the expression text in the name column and expressions columns.
                                 IExpressionDMContext dmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IExpressions.IExpressionDMContext.class);
                                 if (dmc != null && dmc.getExpression() != null) {
-                                    update.setProperty(PROP_NAME, dmc.getExpression());
+                                	String displayName = getExpressionDisplayName(dmc, dmc.getExpression());
+                                    update.setProperty(PROP_NAME, displayName);
                                     if (expression == null) {
-                                        update.setProperty(PROP_ELEMENT_EXPRESSION, dmc.getExpression());
+                                        update.setProperty(PROP_ELEMENT_EXPRESSION, displayName);
                                     }
+                                    if (dmc instanceof IIndexedPartitionDMContext)
+                                    	update.setProperty(PROP_VARIABLE_BASIC_TYPE, INDEXED_PARTITION_TYPE);
                                 }
                                 update.setStatus(getStatus());
                             }
@@ -814,11 +835,23 @@ public class VariableVMNode extends AbstractExpressionVMNode
     @ConfinedToDsfExecutor("getSession().getExecutor()")
     protected void fillExpressionDataProperties(IPropertiesUpdate update, IExpressionDMData data) 
     {
-        update.setProperty(PROP_NAME, data.getName());
+        IExpressionDMContext dmc = findDmcInPath(update.getViewerInput(), update.getElementPath(), IExpressions.IExpressionDMContext.class);
+        String displayName = data.getName();
+        if (dmc != null) {
+        	displayName = getExpressionDisplayName(dmc, displayName);
+        }
+        update.setProperty(PROP_NAME, displayName);
         update.setProperty(PROP_VARIABLE_TYPE_NAME, data.getTypeName());
-        IExpressionDMData.BasicType type = data.getBasicType();
-        if (type != null) {
-            update.setProperty(PROP_VARIABLE_BASIC_TYPE, type.name());
+        String typeValue = null;
+        if (dmc instanceof IIndexedPartitionDMContext)
+        	typeValue = INDEXED_PARTITION_TYPE;
+        else {
+            IExpressionDMData.BasicType type = data.getBasicType();
+            if (type != null)
+            	typeValue = type.name();
+        }
+        if (typeValue != null) {
+            update.setProperty(PROP_VARIABLE_BASIC_TYPE, typeValue);
         }
         
         //
@@ -828,7 +861,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
         //
         IExpression expression = (IExpression)DebugPlugin.getAdapter(update.getElement(), IExpression.class);
         if (expression == null) {
-            update.setProperty(AbstractExpressionVMNode.PROP_ELEMENT_EXPRESSION, data.getName());
+            update.setProperty(AbstractExpressionVMNode.PROP_ELEMENT_EXPRESSION, displayName);
         }
     }
 
@@ -1343,5 +1376,19 @@ public class VariableVMNode extends AbstractExpressionVMNode
             }
             request.done();
         }
+    }
+
+    /**
+     * Returns the label for the element with the given context.
+     */
+    protected String getExpressionDisplayName(IExpressionDMContext dmc, String name) {
+    	if (dmc instanceof IIndexedPartitionDMContext) {
+    		IIndexedPartitionDMContext ipDmc = (IIndexedPartitionDMContext)dmc;
+    		name = String.format(
+    				"[%d...%d]",  //$NON-NLS-1$
+    				ipDmc.getIndex(), 
+    				ipDmc.getIndex() + ipDmc.getLength() - 1);
+    	}
+    	return name;
     }
 }

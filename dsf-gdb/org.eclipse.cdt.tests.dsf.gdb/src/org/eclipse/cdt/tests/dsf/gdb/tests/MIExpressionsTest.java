@@ -26,6 +26,7 @@ import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionChangedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMAddress;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMData;
+import org.eclipse.cdt.dsf.debug.service.IExpressions.IIndexedPartitionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IExpressions3.IExpressionDMDataExtension;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
@@ -320,37 +321,10 @@ public class MIExpressionsTest extends BaseTestCase {
 
         final IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
-        final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
-        
     	// First we get the expected value of the array pointer.
         final IExpressionDMContext exprDmc = SyncUtil.createExpression(frameDmc, "f");
 
-        fExpService.getExecutor().submit(new Runnable() {
-            @Override
-			public void run() {
-                fExpService.getSubExpressionCount(
-                		exprDmc, 
-                		new DataRequestMonitor<Integer>(fExpService.getExecutor(), null) {
-                			@Override
-                			protected void handleCompleted() {
-                				if (!isSuccess()) {
-                					wait.waitFinished(getStatus());
-                				} else {
-                					int count = getData();
-                					if (count != 5) {
-                						wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-                								"Failed getting count for children.  Got " + count + " instead of 5", null));
-                					} else {
-                						wait.waitFinished();
-                					}
-                				}
-                			}
-                		});
-            }
-        });
-
-        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
-        assertTrue(wait.getMessage(), wait.isOK());
+        getChildrenCount(exprDmc, 5);
     }
 
     /**
@@ -3263,8 +3237,14 @@ public class MIExpressionsTest extends BaseTestCase {
 	        getExprChangedCount() == 0);
 	}
 
+	private IExpressionDMContext[] getChildren(IExpressionDMContext parentDmc, String[] expectedValues) throws Throwable {
+    	return getChildren(parentDmc, -1, -1, expectedValues );
+    }
+
     private IExpressionDMContext[] getChildren(
-    		final IExpressionDMContext parentDmc, 
+    		final IExpressionDMContext parentDmc,
+    		final int startIndex,
+    		final int length,
     		String[] expectedValues) throws Throwable {
 
         final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
@@ -3273,7 +3253,10 @@ public class MIExpressionsTest extends BaseTestCase {
             @Override
 			public void run() {
 
-                fExpService.getSubExpressions(parentDmc,
+                fExpService.getSubExpressions(
+                	parentDmc,
+                	startIndex,
+                	length,
                     new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
                         @Override
                         protected void handleCompleted() {
@@ -3310,5 +3293,131 @@ public class MIExpressionsTest extends BaseTestCase {
         }
         
         return childDmcs;
+    }
+
+    /**
+     * This test verifies that large arrays are properly partitioned and 
+     * the handling of "small" arrays is not affected.
+     */
+    @Test
+    public void testArrays() throws Throwable {
+    	MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("testArrays");
+
+        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+	    
+        // int array_simple[10];
+	    IExpressionDMContext arraySimpleExprDMC = SyncUtil.createExpression(frameDmc, "array_simple");
+	    
+	    getChildrenCount(arraySimpleExprDMC, 10);
+
+	    // get all children
+	    String[] expectedValues = new String[10];
+	    for (int i = 0; i < expectedValues.length; ++i) {
+	    	expectedValues[i] = String.format("array_simple[%d]", i);
+	    }
+	    IExpressionDMContext[] arraySimpleChildren = getChildren(arraySimpleExprDMC, expectedValues);
+	    for (IExpressionDMContext ctx : arraySimpleChildren)
+	    	getChildren(ctx, new String[0]);
+	    
+	    // get some parts of the children array
+	    getChildren(arraySimpleExprDMC, 3, 2, new String[] { "array_simple[3]", "array_simple[4]" });
+	    getChildren(arraySimpleExprDMC, 9, 3, new String[] { "array_simple[9]" });
+
+	    // int array_int[24321];
+	    IExpressionDMContext arrayIntExprDMC = SyncUtil.createExpression(frameDmc, "array_int");
+	    getChildrenCount(arrayIntExprDMC, 3);
+	    
+	    // get top level partitions: [0-9999], [10000-19999], [20000-24321]
+	    IExpressionDMContext[] arrayIntPartitions =
+		    	getChildren(arrayIntExprDMC, new String[] {"*((array_int)+0)@10000", "*((array_int)+10000)@10000", "*((array_int)+20000)@4321"});
+	    assertTrue(String.format("Invalid number of partition: expected 3 got %d", arrayIntPartitions.length), arrayIntPartitions.length == 3);
+
+	    // get children of the last partition: [20000-24321] 
+	    expectedValues = new String[44];
+	    for(int i = 0; i < expectedValues.length - 1; ++i) {
+	    	expectedValues[i] = String.format("*((array_int)+%d)@100", 20000 + i*100);
+	    }
+	    expectedValues[expectedValues.length - 1] = "*((array_int)+24300)@21";
+	    IExpressionDMContext[] arrayIntPartitions1 = getChildren(arrayIntPartitions[2], expectedValues);
+	    expectedValues = new String[21];
+	    for(int i = 0; i < expectedValues.length; ++i) {
+	    	expectedValues[i] = String.format("array_int[%d]", 24300 + i);
+	    }
+	    getChildren(arrayIntPartitions1[arrayIntPartitions1.length - 1], expectedValues);
+
+	    // foo array_foo[1200];
+	    IExpressionDMContext arrayFooExprDMC = SyncUtil.createExpression(frameDmc, "array_foo");	    
+	    getChildrenCount(arrayFooExprDMC, 12);
+	    expectedValues = new String[12];
+	    for (int i = 0; i < expectedValues.length; ++i) {
+	    	expectedValues[i] = String.format("*((array_foo)+%d)@%d", i*100, 100);
+	    }
+	    IExpressionDMContext[] arrayFooPartitions =	getChildren(arrayFooExprDMC, expectedValues);
+	    for (int i = 0; i < arrayFooPartitions.length; ++i) {
+	    	IExpressionDMContext ctx = arrayFooPartitions[i];
+	    	assertTrue(String.format("Invalid DM context type: expected '%s' got '%s'", 
+	    			IIndexedPartitionDMContext.class.getName(), ctx.getClass().getName()), 
+	    			ctx instanceof IIndexedPartitionDMContext);
+		    expectedValues = new String[100];
+		    for (int j = 0; j < expectedValues.length; ++j) {
+		    	expectedValues[j] = String.format("array_foo[%d]", i*100 + j);
+		    }
+		    IExpressionDMContext[] arrayFooChildren = getChildren(ctx, expectedValues);
+		    for (IExpressionDMContext fooCtx : arrayFooChildren) {
+		    	getChildren(fooCtx, new String[] {"bar", "bar2", "a", "b", "c"});
+		    }
+		    
+		    // get parts of the children array
+		    expectedValues = new String[] { String.format("array_foo[%d]", i*100 + 3), String.format("array_foo[%d]", i*100 + 4) };
+		    getChildren(ctx, 3, 2, expectedValues);
+		    getChildren(ctx, 99, 3, new String[] { String.format("array_foo[%d]", i*100 + 99) });
+	    }
+    }
+
+    private int getChildrenCount(final IExpressionDMContext parentDmc, final int expectedCount) throws Throwable {
+
+        final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
+
+        fExpService.getExecutor().submit(new Runnable() {
+            @Override
+			public void run() {
+
+                fExpService.getSubExpressionCount(
+                	parentDmc,
+                    new DataRequestMonitor<Integer>(fExpService.getExecutor(), null) {
+                        @Override
+                        protected void handleCompleted() {
+                            if (isSuccess()) {
+                            	wait.setReturnInfo(getData());
+                            	if (getData() != expectedCount) {
+	        						wait.waitFinished(
+	        							new Status(
+		        							IStatus.ERROR, 
+		        							TestsPlugin.PLUGIN_ID,
+		        							String.format(
+		        									"Failed getting count for children.  Got %d instead of %d.", 
+		        									getData(), 
+		        									expectedCount)));
+                            	}
+                            	else {
+                            		wait.waitFinished(getStatus());
+                            	}
+                            }
+                            else {
+                        		wait.waitFinished(getStatus());
+                            }
+                        }
+                    });
+            }
+        });
+
+        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        assertTrue(wait.getMessage(), wait.isOK());
+
+        int count = ((Integer)wait.getReturnInfo()).intValue();
+
+		assertTrue(String.format("Expected %d but got %d", expectedCount, count), count == expectedCount);
+        
+        return count;
     }
 }

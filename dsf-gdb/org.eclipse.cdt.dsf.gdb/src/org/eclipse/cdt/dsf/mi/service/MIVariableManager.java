@@ -31,6 +31,7 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
+import org.eclipse.cdt.dsf.debug.service.IExpressions.IIndexedPartitionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IExpressions2.ICastedExpressionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
@@ -1273,6 +1274,9 @@ public class MIVariableManager implements ICommandControl {
 	        		// it with parenthesis before we subscript it.
 	        		exprName = '(' + exprName + ')';
 	        		castingIndex = ((ICastedExpressionDMContext)exprDmc).getCastInfo().getArrayStartIndex();
+	        	}
+	        	if (exprDmc instanceof IIndexedPartitionDMContext) {
+	        		castingIndex = ((IIndexedPartitionDMContext)exprDmc).getIndex();
 	        	}
 	        	for (int i= 0; i < childrenOfArray.length; i++) {
 	        		String fullExpr = exprName + "[" + i + "]";//$NON-NLS-1$//$NON-NLS-2$

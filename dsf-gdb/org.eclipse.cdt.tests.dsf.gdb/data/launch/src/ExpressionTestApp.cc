@@ -293,6 +293,14 @@ int testCanWrite() {
 	return 1;
 }
 
+int testArrays() {
+	int array_simple[10];
+	int array_int[24321];
+	foo array_foo[1200];
+
+	return 1;
+}
+
 int main() {
     printf("Running ExpressionTest App\n");
 
@@ -317,6 +325,7 @@ int main() {
     testConcurrentUpdateOutOfScopeChildThenParent();
     testUpdateOfPointer();
     testCanWrite();
+    testArrays();
     
     // For bug 320277
     BaseTest b; b.test();

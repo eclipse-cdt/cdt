@@ -44,6 +44,30 @@ public interface IExpressions extends IFormattedValues {
     }
 
     /**
+     * To avoid SWT performance issues large arrays are divided into partitions. 
+     * This interface represents the context of such a partition.
+     * 
+     * @since 2.3
+     */
+    public interface IIndexedPartitionDMContext extends IExpressionDMContext {
+
+		/**
+		 * Returns the expression string of the parent array.
+		 */
+		public String getParentExpression();
+
+		/**
+		 * Returns the index of the partition's first element in the parent array. 
+		 */
+		public int getIndex();
+		
+		/**
+		 * Returns the number of array's elements in the partition.
+		 */
+		public int getLength();
+	}
+
+    /**
      * The address and size of an expression.
      */
     public interface IExpressionDMAddress {

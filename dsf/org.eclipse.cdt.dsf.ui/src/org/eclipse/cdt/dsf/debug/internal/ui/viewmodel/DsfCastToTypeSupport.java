@@ -25,6 +25,7 @@ import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionChangedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMData;
+import org.eclipse.cdt.dsf.debug.service.IExpressions.IIndexedPartitionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IExpressions2;
 import org.eclipse.cdt.dsf.debug.service.IExpressions2.CastInfo;
 import org.eclipse.cdt.dsf.debug.service.IExpressions2.ICastedExpressionDMContext;
@@ -90,6 +91,9 @@ public class DsfCastToTypeSupport  {
 	    }
 
 		private boolean isValid() {
+			if (exprDMC instanceof IIndexedPartitionDMContext)
+				return false;
+
 	        TestExpressions2Query query = new TestExpressions2Query();
 	        dmvmProvider.getSession().getExecutor().execute(query);
 

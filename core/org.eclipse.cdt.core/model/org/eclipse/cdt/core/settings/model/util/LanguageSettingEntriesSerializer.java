@@ -40,10 +40,10 @@ public class LanguageSettingEntriesSerializer {
 	public static final String ATTRIBUTE_SOURCE_ATTACHMENT_PATH = "srcPath"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_SOURCE_ATTACHMENT_ROOT_PATH = "srcRootPath"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_SOURCE_ATTACHMENT_PREFIX_MAPPING = "srcPrefixMapping"; //$NON-NLS-1$
-	
+
 //	public static final String ATTRIBUTE_FULL_PATH = "fullPath"; //$NON-NLS-1$
 //	public static final String ATTRIBUTE_LOCATION = "location"; //$NON-NLS-1$
-	
+
 
 	public static final String INCLUDE_PATH = "includePath"; //$NON-NLS-1$
 	public static final String INCLUDE_FILE = "includeFile"; //$NON-NLS-1$
@@ -59,7 +59,9 @@ public class LanguageSettingEntriesSerializer {
 	public static final String LOCAL = "LOCAL"; //$NON-NLS-1$
 	public static final String VALUE_WORKSPACE_PATH = "VALUE_WORKSPACE_PATH"; //$NON-NLS-1$
 	public static final String RESOLVED = "RESOLVED"; //$NON-NLS-1$
-	
+	private static final String UNDEFINED = "UNDEFINED"; //$NON-NLS-1$
+	private static final String FRAMEWORK = "FRAMEWORK"; //$NON-NLS-1$
+
 	public static final String FLAGS_SEPARATOR = "|"; //$NON-NLS-1$
 
 	public static ICSettingEntry[] loadEntries(ICStorageElement el){
@@ -84,7 +86,7 @@ public class LanguageSettingEntriesSerializer {
 			child = children[i];
 			if(ELEMENT_ENTRY.equals(child.getName())){
 				entry = loadEntry(child);
-				if(entry != null 
+				if(entry != null
 						&& (kindFilter == 0
 								|| (kindFilter & entry.getKind()) != 0))
 					list.add(entry);
@@ -97,11 +99,11 @@ public class LanguageSettingEntriesSerializer {
 		int kind = stringToKind(el.getAttribute(ATTRIBUTE_KIND));
 		if(kind == 0)
 			return null;
-		
+
 		int flags = composeFlags(el.getAttribute(ATTRIBUTE_FLAGS));
 		String name = el.getAttribute(ATTRIBUTE_NAME);
 
-		
+
 		switch(kind){
 		case ICSettingEntry.INCLUDE_PATH:
 			return new CIncludePathEntry(name, flags);
@@ -126,7 +128,7 @@ public class LanguageSettingEntriesSerializer {
 		}
 		return null;
 	}
-	
+
 	private static IPath loadPath(ICStorageElement el, String attr){
 		String value = el.getAttribute(attr);
 		if(value != null)
@@ -149,18 +151,18 @@ public class LanguageSettingEntriesSerializer {
 			}
 			return paths;
 		}
-		return null; 
+		return null;
 	}
 
 	private static void storeExclusions(ICStorageElement el, IPath[] paths){
 		if(paths == null || paths.length == 0)
 			return;
-			
+
 		String[] strs = new String[paths.length];
 		for(int i = 0; i < strs.length; i++){
 			strs[i] = paths[i].toString();
 		}
-		
+
 		String attr = CDataUtil.arrayToString(strs, FLAGS_SEPARATOR);
 		el.setAttribute(ATTRIBUTE_EXCLUDING, attr);
 	}
@@ -174,7 +176,7 @@ public class LanguageSettingEntriesSerializer {
 			}
 		}
 	}
-	
+
 	public static void serializeEntry(ICSettingEntry entry, ICStorageElement element){
 		String kind = kindToString(entry.getKind());
 		String flags = composeFlagsString(entry.getFlags());
@@ -197,7 +199,7 @@ public class LanguageSettingEntriesSerializer {
 			IPath path = libFile.getSourceAttachmentPath();
 			if(path != null)
 				element.setAttribute(ATTRIBUTE_SOURCE_ATTACHMENT_PATH, path.toString());
-			
+
 			path = libFile.getSourceAttachmentRootPath();
 			if(path != null)
 				element.setAttribute(ATTRIBUTE_SOURCE_ATTACHMENT_ROOT_PATH, path.toString());
@@ -207,7 +209,7 @@ public class LanguageSettingEntriesSerializer {
 				element.setAttribute(ATTRIBUTE_SOURCE_ATTACHMENT_PREFIX_MAPPING, path.toString());
 		}
 	}
-	
+
 	public static String kindToString(int kind){
 		switch(kind){
 		case ICSettingEntry.INCLUDE_PATH:
@@ -259,34 +261,49 @@ public class LanguageSettingEntriesSerializer {
 		if((flags & ICSettingEntry.READONLY) != 0){
 			if(buf.length() != 0)
 				buf.append(FLAGS_SEPARATOR);
-			
+
 			buf.append(READONLY);
 		}
 		if((flags & ICSettingEntry.LOCAL) != 0){
 			if(buf.length() != 0)
 				buf.append(FLAGS_SEPARATOR);
-			
+
 			buf.append(LOCAL);
 		}
 		if((flags & ICSettingEntry.VALUE_WORKSPACE_PATH) != 0){
 			if(buf.length() != 0)
 				buf.append(FLAGS_SEPARATOR);
-			
+
 			buf.append(VALUE_WORKSPACE_PATH);
 		}
 		if((flags & ICSettingEntry.RESOLVED) != 0){
 			if(buf.length() != 0)
 				buf.append(FLAGS_SEPARATOR);
-			
+
 			buf.append(RESOLVED);
+		}
+		if((flags & ICLanguageSettingEntry.UNDEFINED) != 0){
+			if(buf.length() != 0)
+				buf.append(FLAGS_SEPARATOR);
+
+			buf.append(UNDEFINED);
+		}
+		if((flags & ICLanguageSettingEntry.FRAMEWORKS_MAC) != 0){
+			if(buf.length() != 0)
+				buf.append(FLAGS_SEPARATOR);
+
+			buf.append(FRAMEWORK);
 		}
 		return buf.toString();
 	}
-	
-	private static int composeFlags(String flagsString){
+
+	/**
+	 * @since 5.4
+	 */
+	public static int composeFlags(String flagsString){
 		if(flagsString == null || flagsString.length() == 0)
 			return 0;
-		
+
 		StringTokenizer tokenizer = new StringTokenizer(flagsString, FLAGS_SEPARATOR);
 		int flags = 0;
 		String f;
@@ -301,9 +318,13 @@ public class LanguageSettingEntriesSerializer {
 			if(VALUE_WORKSPACE_PATH.equals(f))
 				flags |= ICSettingEntry.VALUE_WORKSPACE_PATH; 
 			if(RESOLVED.equals(f))
-				flags |= ICSettingEntry.RESOLVED; 
+				flags |= ICSettingEntry.RESOLVED;
+			if(UNDEFINED.equals(f))
+				flags |= ICSettingEntry.UNDEFINED;
+			if(FRAMEWORK.equals(f))
+				flags |= ICSettingEntry.FRAMEWORKS_MAC;
 		}
-		
+
 		return flags;
 	}
 

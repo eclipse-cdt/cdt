@@ -14,6 +14,7 @@ package org.eclipse.cdt.core.model.tests;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.language.settings.providers.AllLanguageSettingsProvidersCoreTests;
 import org.eclipse.cdt.core.settings.model.AllCProjectDescriptionTests;
 import org.eclipse.cdt.core.settings.model.PathSettingsContainerTests;
 
@@ -60,6 +61,8 @@ public class AllCoreTests {
 		suite.addTest(AsmModelBuilderTest.suite());
 		suite.addTest(CModelBuilderBugsTest.suite());
 		suite.addTest(Bug311189.suite());
+
+		suite.addTest(AllLanguageSettingsProvidersCoreTests.suite());
         return suite;
 
     }

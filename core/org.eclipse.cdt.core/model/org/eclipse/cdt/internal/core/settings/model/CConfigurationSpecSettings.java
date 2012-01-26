@@ -11,15 +11,21 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.settings.model;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsBroadcastingProvider;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsStorage;
 import org.eclipse.cdt.core.settings.model.CExternalSetting;
 import org.eclipse.cdt.core.settings.model.ICBuildSetting;
 import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
@@ -37,6 +43,7 @@ import org.eclipse.cdt.internal.core.COwner;
 import org.eclipse.cdt.internal.core.COwnerConfiguration;
 import org.eclipse.cdt.internal.core.cdtvariables.StorableCdtVariables;
 import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
+import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsDelta;
 import org.eclipse.cdt.utils.envvar.StorableEnvironment;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
@@ -86,6 +93,10 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 	private COwner fOwner;
 //	private CConfigBasedDescriptor fDescriptor;
 //	private Map fExternalSettingsProviderMap;
+
+	private List<ILanguageSettingsProvider> fLanguageSettingsProviders = new ArrayList<ILanguageSettingsProvider>(0);
+	private LinkedHashMap<String /*provider*/, LanguageSettingsStorage> lspPersistedState = new LinkedHashMap<String, LanguageSettingsStorage>();
+
 
 	private class DeltaSet {
 		public Set<ICConfigExtensionReference> extSet;
@@ -977,4 +988,33 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 	public void updateExternalSettingsProviders(String[] ids){
 		ExtensionContainerFactory.updateReferencedProviderIds(fCfg, ids);
 	}
+
+	/**
+	 * Returns delta and updates last persisted state to the new state.
+	 * That implies that the delta needs to be used to fire an event of it will
+	 * be lost.
+	 */
+	public LanguageSettingsDelta dropDelta() {
+		LanguageSettingsDelta languageSettingsDelta = null;
+		LinkedHashMap<String, LanguageSettingsStorage> newState = new LinkedHashMap<String, LanguageSettingsStorage>();
+		for (ILanguageSettingsProvider provider : fLanguageSettingsProviders) {
+			if (LanguageSettingsManager.isWorkspaceProvider(provider)) {
+				provider = LanguageSettingsManager.getRawProvider(provider);
+			}
+			if (provider instanceof ILanguageSettingsBroadcastingProvider) {
+				LanguageSettingsStorage store = ((ILanguageSettingsBroadcastingProvider) provider).copyStorage();
+				// avoid triggering event if empty provider was added
+				if (store != null && !store.isEmpty()) {
+					newState.put(provider.getId(), store);
+				}
+			}
+		}
+		if (!newState.equals(lspPersistedState)) {
+			languageSettingsDelta = new LanguageSettingsDelta(lspPersistedState, newState);
+			lspPersistedState = newState;
+		}
+
+		return languageSettingsDelta;
+	}
+
 }

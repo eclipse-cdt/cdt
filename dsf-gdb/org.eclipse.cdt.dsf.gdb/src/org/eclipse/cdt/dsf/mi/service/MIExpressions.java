@@ -485,7 +485,7 @@ public class MIExpressions extends AbstractDsfService implements IMIExpressions,
 
         @Override
         public String toString() {
-            return String.format( "%s[%d-%d]", baseToString(), Integer.valueOf( getIndex() ), Integer.valueOf( getIndex() + getLength() ) ); //$NON-NLS-1$
+            return String.format( "%s.expr[%s][%d-%d]", baseToString(), getParentExpression(), getIndex(), getIndex() + getLength() - 1); //$NON-NLS-1$
         }
 
         private static ExpressionInfo createExpressionInfo(ExpressionInfo parentInfo, int index, int length) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2011 IBM Corporation and others.
+ * Copyright (c) 2003, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,7 @@
  *  David McKnight   (IBM)     [323262] [dstore] zos shell does not display [ ]  brackets properly
  *  David McKnight   (IBM) - [283613] [dstore] Create a Constants File for all System Properties we support
  *  David McKnight   (IBM)     [339741] [dstore][shells] consecutive prompt line is ignored
+ *  Noriaki Takatsu  (IBM)     [369767] [multithread][dstore] Invalid Default directory in shell Launch
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.command;
@@ -190,8 +191,8 @@ public class CommandMinerThread extends MinerThread
 			String userHome = null;			
 			Client client = _dataStore.getClient();
 			
-			if (client != null && !theOS.equals("z/OS")){ //$NON-NLS-1$
-				String clientActualUserId = client.getProperty("user.name");//$NON-NLS-1$
+			if (client != null && theOS.equals("z/OS")){ //$NON-NLS-1$
+				String clientActualUserId = client.getProperty("client.username");//$NON-NLS-1$
 				String clientUserId = client.getUserid();
 				
 				userHome = client.getProperty("user.home");//$NON-NLS-1$							

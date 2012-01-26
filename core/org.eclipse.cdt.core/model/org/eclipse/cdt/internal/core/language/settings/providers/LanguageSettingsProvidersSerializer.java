@@ -236,7 +236,7 @@ public class LanguageSettingsProvidersSerializer {
 	 */
 	private static class LanguageSettingsChangeEvent implements ILanguageSettingsChangeEvent {
 		private String projectName = null;
-		private Map<String /*cfg*/, LanguageSettingsDelta> deltaMap = new HashMap<String, LanguageSettingsDelta>();
+		private Map<String/*cfg*/, LanguageSettingsDelta> deltaMap = new HashMap<String, LanguageSettingsDelta>();
 
 		/**
 		 * The act of creating event resets internal delta count in configuration state.
@@ -732,7 +732,6 @@ public class LanguageSettingsProvidersSerializer {
 		return true;
 	}
 
-
 	/**
 	 * Save language settings providers of a project to persistent storage.
 	 *
@@ -750,7 +749,6 @@ public class LanguageSettingsProvidersSerializer {
 		} catch (CoreException e) {
 			CCorePlugin.log("Internal error while trying to serialize language settings", e); //$NON-NLS-1$
 		}
-
 
 		try {
 			// The storage could be split in two, one for provider properties, another one for entries,
@@ -1177,8 +1175,8 @@ public class LanguageSettingsProvidersSerializer {
 	 * Check that this particular element is in the association list.
 	 */
 	private static boolean isListenerInTheListOfAssociations(Collection<ListenerAssociation> list, ICListenerAgent element) {
-		// list.contains(element) won't do it as we are interested in exact object, not in equal object
 		for (ListenerAssociation la : list) {
+			// we are interested in exact object, not in equal object
 			if (la.listener == element)
 				return true;
 		}

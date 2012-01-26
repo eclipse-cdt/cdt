@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Andrew Gvozdev and others.
+ * Copyright (c) 2010, 2012 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
+import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.settings.model.ACPathEntry;
@@ -45,8 +46,12 @@ import org.eclipse.osgi.util.NLS;
  * language settings providers of "default settings configuration"
  * (see {@link ICProjectDescription#getDefaultSettingConfiguration()}).
  *
+ * @see IScannerInfo#getIncludePaths()
+ *
  */
 public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider {
+	private static final String FRAMEWORK_PRIVATE_HEADERS_INCLUDE = "/__framework__.framework/PrivateHeaders/__header__"; //$NON-NLS-1$
+	private static final String FRAMEWORK_HEADERS_INCLUDE = "/__framework__.framework/Headers/__header__"; //$NON-NLS-1$
 	private static final ExtendedScannerInfo DUMMY_SCANNER_INFO = new ExtendedScannerInfo();
 
 	@Override
@@ -143,9 +148,11 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 		} else {
 			ICdtVariableManager mngr = CCorePlugin.getDefault().getCdtVariableManager();
 			try {
-				// FIXME IPath buildCWD can hold variables i.e. ${workspace_loc:/path}
+				// Note that IPath buildCWD holding variables is mis-constructed,
+				// i.e. ${workspace_loc:/path} gets split into 2 path segments
+				// still, MBS does that and we need to handle that
 				String buildPathString = buildCWD.toString();
-				buildPathString = mngr.resolveValue(buildPathString, "", null, cfgDescription);
+				buildPathString = mngr.resolveValue(buildPathString, "", null, cfgDescription); //$NON-NLS-1$
 				buildCWD = new Path(buildPathString);
 			} catch (CdtVariableException e) {
 				CCorePlugin.log(e);
@@ -212,8 +219,9 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 				IPath loc = entryPath.getLocation();
 				if (loc!=null) {
 					if (checkBit(entryPath.getFlags(), ICSettingEntry.FRAMEWORKS_MAC)) {
-						locations.add(loc.append("/__framework__.framework/Headers/__header__").toOSString());
-						locations.add(loc.append("/__framework__.framework/PrivateHeaders/__header__").toOSString());
+						// handle frameworks, see IScannerInfo.getIncludePaths()
+						locations.add(loc.append(FRAMEWORK_HEADERS_INCLUDE).toOSString());
+						locations.add(loc.append(FRAMEWORK_PRIVATE_HEADERS_INCLUDE).toOSString());
 					} else {
 						locations.add(loc.toOSString());
 					}
@@ -226,8 +234,9 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 					locStr = resolveEntry(locStr, cfgDescription);
 					if (locStr!=null) {
 						if (checkBit(entryPath.getFlags(), ICSettingEntry.FRAMEWORKS_MAC)) {
-							locations.add(locStr+"/__framework__.framework/Headers/__header__");
-							locations.add(locStr+"/__framework__.framework/PrivateHeaders/__header__");
+							// handle frameworks, see IScannerInfo.getIncludePaths()
+							locations.add(locStr+FRAMEWORK_HEADERS_INCLUDE);
+							locations.add(locStr+FRAMEWORK_PRIVATE_HEADERS_INCLUDE);
 						} else {
 							locations.add(locStr);
 							// add relative paths again for indexer to resolve from source file location

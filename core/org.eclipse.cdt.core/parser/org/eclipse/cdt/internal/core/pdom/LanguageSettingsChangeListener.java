@@ -53,7 +53,5 @@ public class LanguageSettingsChangeListener implements ILanguageSettingsChangeLi
 				}
 			}
 		}
-
 	}
-
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Andrew Gvozdev and others.
+ * Copyright (c) 2009, 2012 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.language.settings.providers;
 
+/**
+ * Mock of {@link LanguageSettingsBaseProvider} for testing.
+ */
 public class MockLanguageSettingsBaseProvider extends LanguageSettingsBaseProvider {
 	private static final String ATTR_PARAMETER = "parameter"; //$NON-NLS-1$
 

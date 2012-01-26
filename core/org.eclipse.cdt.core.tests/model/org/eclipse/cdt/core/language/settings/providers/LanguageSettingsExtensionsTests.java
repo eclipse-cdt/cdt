@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Andrew Gvozdev and others.
+ * Copyright (c) 2009, 2012 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,7 +34,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
 
 /**
- * Test cases testing LanguageSettingsProvider functionality
+ * Test cases testing LanguageSettingsProvider extensions
  */
 public class LanguageSettingsExtensionsTests extends BaseTestCase {
 	// These should match corresponding entries defined in plugin.xml
@@ -57,7 +57,7 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 	/*package*/ static final String EXTENSION_REGISTERER_PROVIDER_ID = "org.eclipse.cdt.core.tests.language.settings.listener.registerer.provider";
 	/*package*/ static final String EXTENSION_USER_PROVIDER_ID = "org.eclipse.cdt.ui.UserLanguageSettingsProvider";
 
-	// These are made up
+	// Arbitrary sample parameters used by the test
 	private static final String PROVIDER_0 = "test.provider.0.id";
 	private static final String PROVIDER_NAME_0 = "test.provider.0.name";
 	private static final String LANG_ID = "test.lang.id";
@@ -104,10 +104,11 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 	}
 
 	/**
-	 * Check that regular ICLanguageSettingsProvider extension defined in plugin.xml is accessible.
+	 * Check that regular {@link ICLanguageSettingsProvider} extension defined in plugin.xml is accessible.
 	 */
 	public void testExtension() throws Exception {
 		{
+			// test provider defined as an extension
 			List<ILanguageSettingsProvider> providers = LanguageSettingsManager.getWorkspaceProviders();
 			List<String> ids = new ArrayList<String>();
 			for (ILanguageSettingsProvider provider : providers) {
@@ -117,7 +118,7 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 		}
 
 		{
-			// test provider not in the list
+			// test provider that is not in the list
 			ILanguageSettingsProvider providerExt = LanguageSettingsManager.getExtensionProviderCopy("missing.povider", true);
 			assertNull(providerExt);
 		}
@@ -126,7 +127,7 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 		ILanguageSettingsProvider providerExtCopy = LanguageSettingsManager.getExtensionProviderCopy(EXTENSION_BASE_PROVIDER_ID, true);
 		assertNull(providerExtCopy);
 
-		// get raw extension provider - retrieve the only instance via workspace provider
+		// test raw workspace provider defined as an extension
 		ILanguageSettingsProvider providerExt = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_BASE_PROVIDER_ID);
 		assertTrue(LanguageSettingsManager.isWorkspaceProvider(providerExt));
 		ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(providerExt);
@@ -167,7 +168,7 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 	}
 
 	/**
-	 * Check that subclassed LanguageSettingsBaseProvider extension defined in plugin.xml is accessible.
+	 * Check that subclassed {@link LanguageSettingsBaseProvider} extension defined in plugin.xml is accessible.
 	 */
 	public void testExtensionBaseProviderSubclass() throws Exception {
 		// get test plugin extension provider
@@ -217,18 +218,18 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 	}
 
 	/**
-	 * Basic test for LanguageSettingsBaseProvider.
+	 * Basic test for {@link LanguageSettingsBaseProvider}.
 	 */
 	public void testBaseProvider() throws Exception {
+		// define benchmarks
 		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
 		entries.add(new CIncludePathEntry("path0", 0));
 		List<String> languages = new ArrayList<String>(2);
 		languages.add("bogus.language.id");
 		languages.add(LANG_ID);
 
-		// add default provider
-		LanguageSettingsBaseProvider provider = new LanguageSettingsBaseProvider(
-				PROVIDER_0, PROVIDER_NAME_0, languages, entries);
+		// create base provider
+		LanguageSettingsBaseProvider provider = new LanguageSettingsBaseProvider(PROVIDER_0, PROVIDER_NAME_0, languages, entries);
 
 		{
 			// attempt to get entries for wrong language
@@ -251,7 +252,7 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 	}
 
 	/**
-	 * TODO
+	 * Test ability to configure {@link LanguageSettingsBaseProvider}.
 	 */
 	public void testBaseProviderConfigure() throws Exception {
 		// sample entries
@@ -300,7 +301,7 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 	}
 
 	/**
-	 * LanguageSettingsBaseProvider is not allowed to be configured twice.
+	 * {@link LanguageSettingsBaseProvider} is not allowed to be configured twice.
 	 */
 	public void testBaseProviderCantReconfigure() throws Exception {
 		// create LanguageSettingsBaseProvider
@@ -319,7 +320,7 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 	}
 
 	/**
-	 * TODO
+	 * Test {@link LanguageSettingsSerializableProvider} defined via extension point.
 	 */
 	public void testSerializableProvider() throws Exception {
 		// get test plugin extension for serializable provider
@@ -342,7 +343,7 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 	}
 
 	/**
-	 * TODO
+	 * Test {@link ILanguageSettingsEditableProvider} defined via extension point.
 	 */
 	public void testEditableProvider() throws Exception {
 		// Non-editable providers cannot be copied so they are singletons

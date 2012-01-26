@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Andrew Gvozdev and others.
+ * Copyright (c) 2009, 2012 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,9 +39,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * Test cases testing LanguageSettingsProvider functionality
+ * Test cases testing serialization of LanguageSettingsProviders.
  */
-public class LanguageSettingsSerializableTests extends BaseTestCase {
+public class LanguageSettingsSerializableProviderTests extends BaseTestCase {
+	// Arbitrary sample parameters used by the test
 	private static final String CFG_ID = "test.configuration.id";
 	private static final ICConfigurationDescription MOCK_CFG = new CModelMock.DummyCConfigurationDescription(CFG_ID);
 	private static final IResource MOCK_RC = ResourcesPlugin.getWorkspace().getRoot();
@@ -68,7 +69,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	 * Constructor.
 	 * @param name - name of the test.
 	 */
-	public LanguageSettingsSerializableTests(String name) {
+	public LanguageSettingsSerializableProviderTests(String name) {
 		super(name);
 
 	}
@@ -80,14 +81,14 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 
 	@Override
 	protected void tearDown() throws Exception {
-		super.tearDown();
+		super.tearDown(); // includes ResourceHelper cleanup
 	}
 
 	/**
 	 * @return - new TestSuite.
 	 */
 	public static TestSuite suite() {
-		return new TestSuite(LanguageSettingsSerializableTests.class);
+		return new TestSuite(LanguageSettingsSerializableProviderTests.class);
 	}
 
 	/**
@@ -100,6 +101,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	}
 
 	/**
+	 * Test basic methods, getters and setters.
 	 */
 	public void testProvider_SettersGetters() throws Exception {
 		// benchmark data
@@ -138,6 +140,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	}
 
 	/**
+	 * Test property defining whether to store entries in project or workspace area.
 	 */
 	public void testProvider_SetStoringEntriesInProjectArea() throws Exception {
 		// create a provider
@@ -151,6 +154,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	}
 
 	/**
+	 * Check basic serialization.
 	 */
 	public void testProvider_RegularDOM() throws Exception {
 		Element elementProvider;
@@ -198,6 +202,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	}
 
 	/**
+	 * Test serialization of properties of the provider.
 	 */
 	public void testProvider_serializeAttributesDOM() throws Exception {
 		Element elementProvider;
@@ -245,6 +250,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	}
 
 	/**
+	 * Test serialization of entries.
 	 */
 	public void testProvider_serializeEntriesDOM() throws Exception {
 		Element rootElement;
@@ -297,6 +303,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	}
 
 	/**
+	 * Test serialization of empty provider.
 	 */
 	public void testProvider_EmptyDOM() throws Exception {
 		Element elementProvider;
@@ -324,6 +331,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	}
 
 	/**
+	 * Test serialization of custom parameter.
 	 */
 	public void testCustomParameterDOM() throws Exception {
 		Element elementProvider;
@@ -347,6 +355,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	}
 
 	/**
+	 * Test serialization to project area storage.
 	 */
 	public void testStoreEntriesWithProjectDOM() throws Exception {
 		Element elementProvider;
@@ -372,6 +381,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	}
 
 	/**
+	 * Test serialization of language scope.
 	 */
 	public void testLanguagesDOM() throws Exception {
 		List<String> expectedLanguageIds = new ArrayList<String>();
@@ -406,6 +416,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	}
 
 	/**
+	 * Edge cases for language scope.
 	 */
 	public void testLanguageScopeDOM() throws Exception {
 		// benchmark entries
@@ -491,6 +502,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	}
 
 	/**
+	 * Test serialization of entries when configuration description is null.
 	 */
 	public void testNullConfigurationDOM() throws Exception {
 		// provider/configuration/language/resource/settingEntry
@@ -520,6 +532,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	}
 
 	/**
+	 * Test serialization of entries when language is null.
 	 */
 	public void testNullLanguageDOM() throws Exception {
 		// provider/configuration/language/resource/settingEntry
@@ -550,6 +563,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 
 
 	/**
+	 * Test serialization of entries when language scope is null.
 	 */
 	public void testNullLanguageScopeDOM() throws Exception {
 		// define benchmark entries
@@ -625,6 +639,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	}
 
 	/**
+	 * Test serialization of entries when resource is null.
 	 */
 	public void testNullResourceDOM() throws Exception {
 		// provider/configuration/language/resource/settingEntry
@@ -654,6 +669,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	}
 
 	/**
+	 * Test serialization of entries when configuration and language are both null.
 	 */
 	public void testNullConfigurationLanguageDOM() throws Exception {
 		// provider/configuration/language/resource/settingEntry
@@ -684,6 +700,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	}
 
 	/**
+	 * Test serialization of entries when configuration and resource are both null.
 	 */
 	public void testNullConfigurationResourceDOM() throws Exception {
 		// provider/configuration/language/resource/settingEntry
@@ -714,6 +731,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	}
 
 	/**
+	 * Test serialization of entries when language and resource are both null.
 	 */
 	public void testNullLanguageResourceDOM() throws Exception {
 		// provider/configuration/language/resource/settingEntry
@@ -744,6 +762,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	}
 
 	/**
+	 * Test serialization of entries when configuration, language and resource are all null.
 	 */
 	public void testNullConfigurationLanguageResourceFlagDOM() throws Exception {
 		// provider/configuration/language/resource/settingEntry
@@ -777,6 +796,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	}
 
 	/**
+	 * Serialization of include path.
 	 */
 	public void testCIncludePathEntryDOM() throws Exception {
 		Element elementProvider;
@@ -810,6 +830,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	}
 
 	/**
+	 * Serialization of include file.
 	 */
 	public void testCIncludeFileEntryDOM() throws Exception {
 		Element elementProvider;
@@ -842,6 +863,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	}
 
 	/**
+	 * Serialization of macro.
 	 */
 	public void testCMacroEntryDOM() throws Exception {
 		Element elementProvider;
@@ -874,6 +896,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	}
 
 	/**
+	 * Serialization of macro file.
 	 */
 	public void testCMacroFileEntryDOM() throws Exception {
 		Element elementProvider;
@@ -906,6 +929,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	}
 
 	/**
+	 * Serialization of library path.
 	 */
 	public void testCLibraryPathEntryDOM() throws Exception {
 		Element elementProvider;
@@ -938,6 +962,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	}
 
 	/**
+	 * Serialization of library file.
 	 */
 	public void testCLibraryFileEntryDOM() throws Exception {
 		Element elementProvider;
@@ -970,6 +995,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	}
 
 	/**
+	 * Serialization of entries of different types.
 	 */
 	public void testMixedSettingEntriesDOM() throws Exception {
 		Element elementProvider;
@@ -1000,6 +1026,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	}
 
 	/**
+	 * Serialization of entries for default and specific languages together.
 	 */
 	public void testLanguageAndNullDOM() throws Exception {
 		Element elementProvider = null;
@@ -1036,6 +1063,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	}
 
 	/**
+	 * Serialization of entries for 2 languages.
 	 */
 	public void testTwoLanguagesDOM() throws Exception {
 		Element elementProvider = null;
@@ -1074,6 +1102,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	}
 
 	/**
+	 * Serialization of entries for different resources.
 	 */
 	public void testTwoResourcesDOM() throws Exception {
 		// Create resources
@@ -1120,6 +1149,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	}
 
 	/**
+	 * Serialization of entries for resource hierarchy.
 	 */
 	public void testParentFolder() throws Exception {
 		// Create model project and accompanied descriptions
@@ -1171,8 +1201,10 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	}
 
 	/**
+	 * Test equals() and hashCode().
 	 */
 	public void testEquals() throws Exception {
+		// create sample entries
 		List<ICLanguageSettingEntry> sampleEntries_1 = new ArrayList<ICLanguageSettingEntry>();
 		sampleEntries_1.add(new CMacroEntry("MACRO0", "value0",1));
 		sampleEntries_1.add(new CIncludePathEntry("path0", 1));
@@ -1181,6 +1213,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 		List<ICLanguageSettingEntry> sampleEntries_2 = new ArrayList<ICLanguageSettingEntry>();
 		sampleEntries_2.add(new CIncludePathEntry("path0", 1));
 
+		// create sample languages
 		List<String> sampleLanguages = new ArrayList<String>();
 		sampleLanguages.add(LANG_ID);
 
@@ -1289,6 +1322,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	}
 
 	/**
+	 * Test equality for properties.
 	 */
 	public void testEquals_DefaultProperties() throws Exception {
 		// create model providers
@@ -1335,6 +1369,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	}
 
 	/**
+	 * Test cloning of provider.
 	 */
 	public void testClone() throws Exception {
 		// define sample data
@@ -1400,6 +1435,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	}
 
 	/**
+	 * Test shallow clone.
 	 */
 	public void testCloneShallow() throws Exception {
 		// define sample data
@@ -1441,6 +1477,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	}
 
 	/**
+	 * Verify that entries are sorted by kinds.
 	 */
 	public void testSort_Kinds() throws Exception {
 		// create sample entries
@@ -1496,6 +1533,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	}
 
 	/**
+	 * Check how entries are sorted inside a kind.
 	 */
 	public void testSort_Entries() throws Exception {
 		// create sample entries
@@ -1553,6 +1591,7 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	}
 
 	/**
+	 * Sorting including undefined entries.
 	 */
 	public void testSort_Undef() throws Exception {
 		// create sample entries
@@ -1588,5 +1627,3 @@ public class LanguageSettingsSerializableTests extends BaseTestCase {
 	}
 
 }
-
-

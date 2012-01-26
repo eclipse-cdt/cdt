@@ -76,7 +76,7 @@ Default constructor (constructor without arguments) of this class must be public
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  Unique ID of the provider
+                  Unique ID of the provider.
                </documentation>
             </annotation>
          </attribute>
@@ -139,7 +139,7 @@ The value &quot;true&quot; of this attribute is meaningful only for providers ca
                <documentation>
                   Kind of language settings entry which maps to compiler options. For example, following mapping is used for gcc options:
 
-&lt;br&gt;&lt;samp&gt;&quot;-I&quot;&lt;/samp&gt; : includePath
+&lt;br&gt;&quot;&lt;samp&gt;-I&lt;/samp&gt;&quot; : includePath
 &lt;br&gt;&quot;&lt;samp&gt;-D&lt;/samp&gt;&quot; : macro
 &lt;br&gt;&quot;&lt;samp&gt;-include&lt;/samp&gt;&quot; : includeFile
 &lt;br&gt;&quot;&lt;samp&gt;-L&lt;/samp&gt;&quot; : libraryPath

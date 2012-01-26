@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Andrew Gvozdev and others.
+ * Copyright (c) 2009, 2012 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,7 +86,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 
 	@Override
 	protected void tearDown() throws Exception {
-		super.tearDown();
+		super.tearDown(); // includes ResourceHelper cleanup
 	}
 
 	/**
@@ -852,8 +852,10 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 		assertEquals(1, actualIncludePaths.length);
 	}
 
+	/**
+	 * Get languages for the folder.
+	 */
 	private List<String> getLanguages(IFolder folder, ICConfigurationDescription cfgDescription) {
-		// Get first 2 languages
 		IPath rcPath = folder.getProjectRelativePath();
 		ICFolderDescription rcDes = (ICFolderDescription) cfgDescription.getResourceDescription(rcPath, false);
 		ICLanguageSetting[] langSettings = rcDes.getLanguageSettings();

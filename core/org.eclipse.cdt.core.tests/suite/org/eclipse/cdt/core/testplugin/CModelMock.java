@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Andrew Gvozdev and others.
+ * Copyright (c) 2010, 2012 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,12 +37,13 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.QualifiedName;
 
+/**
+ * Collection of mock classes for testing
+ */
 public class CModelMock {
-
 	/**
 	 * Dummy implementation of ICProjectDescription for testing.
 	 * Feel free to override the methods you are interested to mock.
-	 *
 	 */
 	public static class DummyCProjectDescription implements ICProjectDescription {
 
@@ -217,7 +218,6 @@ public class CModelMock {
 	/**
 	 * Dummy implementation of ICConfigurationDescription for testing.
 	 * Feel free to override the methods you are interested to mock.
-	 *
 	 */
 	public static class DummyCConfigurationDescription implements ICConfigurationDescription {
 		private String id;

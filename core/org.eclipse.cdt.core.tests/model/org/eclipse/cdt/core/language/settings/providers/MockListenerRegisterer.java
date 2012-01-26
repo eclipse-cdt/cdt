@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2011 Andrew Gvozdev and others.
+ * Copyright (c) 2011, 2012 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,11 +18,11 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.core.runtime.Assert;
 
 /**
- * Language Settings Provider that keeps count how many times it has been registered.
+ * Mock Language Settings Provider that keeps count how many times it has been registered.
  */
 public class MockListenerRegisterer extends LanguageSettingsSerializableProvider implements ILanguageSettingsEditableProvider, ICListenerAgent {
 	private static MockListenerManager mockListenerManager = new MockListenerManager();
-	
+
 	private static class MockListenerManager {
 		private class ListenerCount {
 			private MockListenerRegisterer listener;
@@ -33,7 +33,7 @@ public class MockListenerRegisterer extends LanguageSettingsSerializableProvider
 			}
 		}
 		private List<ListenerCount> register = new ArrayList<ListenerCount>();
-		
+
 		public void registerListener(MockListenerRegisterer listener) {
 			for (ListenerCount lc : register) {
 				if (lc.listener == listener) {
@@ -41,10 +41,10 @@ public class MockListenerRegisterer extends LanguageSettingsSerializableProvider
 					return;
 				}
 			}
-			
+
 			register.add(new ListenerCount(listener, 1));
 		}
-		
+
 		public void unregisterListener(MockListenerRegisterer listener) {
 			for (ListenerCount lc : register) {
 				if (lc.listener == listener) {
@@ -53,11 +53,11 @@ public class MockListenerRegisterer extends LanguageSettingsSerializableProvider
 					return;
 				}
 			}
-			
+
 			// attempt to unregister non-registered listener
 			Assert.isTrue(false);
 		}
-		
+
 		/**
 		 * Note that that count includes all listeners with that id.
 		 */
@@ -69,7 +69,7 @@ public class MockListenerRegisterer extends LanguageSettingsSerializableProvider
 					count = count + lc.count;
 				}
 			}
-			
+
 			return count;
 		}
 	}
@@ -80,10 +80,12 @@ public class MockListenerRegisterer extends LanguageSettingsSerializableProvider
 	public MockListenerRegisterer(String id, String name) {
 		super(id, name);
 	}
+	@Override
 	public void registerListener(ICConfigurationDescription cfgDescription) {
 		mockListenerManager.registerListener(this);
 	}
-	
+
+	@Override
 	public void unregisterListener() {
 		mockListenerManager.unregisterListener(this);
 	}
@@ -95,7 +97,7 @@ public class MockListenerRegisterer extends LanguageSettingsSerializableProvider
 	public MockListenerRegisterer clone() throws CloneNotSupportedException {
 		return (MockListenerRegisterer) super.clone();
 	}
-	
+
 	public static int getCount(String id) {
 		return mockListenerManager.getCount(id);
 	}

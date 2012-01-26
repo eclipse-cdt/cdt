@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2011 Andrew Gvozdev and others.
+ * Copyright (c) 2011, 2012 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,11 +35,9 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 public class LanguageSettingsDelta {
 	// maps need to be ordered by providers
 	@SuppressWarnings("unused")
-	private LinkedHashMap<String, // providerId
-			LanguageSettingsStorage> oldLanguageSettingsState;
+	private LinkedHashMap<String/*providerId*/, LanguageSettingsStorage> oldLanguageSettingsState;
 	@SuppressWarnings("unused")
-	private LinkedHashMap<String, // providerId
-			LanguageSettingsStorage> newLanguageSettingsState;
+	private LinkedHashMap<String/*providerId*/, LanguageSettingsStorage> newLanguageSettingsState;
 
 	/**
 	 * Constructor.

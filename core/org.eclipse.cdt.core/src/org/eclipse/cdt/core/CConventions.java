@@ -291,8 +291,8 @@ public class CConventions {
 		if (!isValidIdentifier(id)) {
 			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, NLS.bind(Messages.convention_invalid, id), null); 
 		}
-		
-		if (isReservedKeyword(id, language)) {
+
+		if (isReservedKeyword(id, language) || isBuiltinType(id, language)) {
 			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, NLS.bind(Messages.convention_reservedKeyword, id), null);
 		}
 
@@ -369,7 +369,16 @@ public class CConventions {
 		}
 		return false;
 	}
-	
+
+	private static boolean isBuiltinType(String name, AbstractCLikeLanguage language) {
+		String[] types = language.getBuiltinTypes();
+		for (String type : types) {
+			if (type.equals(name))
+				return true;
+		}
+		return false;
+	}
+
 	private static boolean isLegalFilename(String name) {
 		if (name == null || name.length() == 0) {
 			return false;

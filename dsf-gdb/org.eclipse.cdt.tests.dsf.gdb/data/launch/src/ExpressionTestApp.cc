@@ -297,6 +297,8 @@ int testArrays() {
 	int array_simple[10];
 	int array_int[24321];
 	foo array_foo[1200];
+	int array_double_small[11][21];
+	char array_double_large[111][210];
 
 	return 1;
 }

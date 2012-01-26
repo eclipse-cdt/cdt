@@ -3237,10 +3237,57 @@ public class MIExpressionsTest extends BaseTestCase {
 	        getExprChangedCount() == 0);
 	}
 
-	private IExpressionDMContext[] getChildren(IExpressionDMContext parentDmc, String[] expectedValues) throws Throwable {
-    	return getChildren(parentDmc, -1, -1, expectedValues );
+    // This method tests IExspressions.getSubExpressions(IExpressionDMC, DRM);
+    private IExpressionDMContext[] getChildren(
+    		final IExpressionDMContext parentDmc, 
+    		String[] expectedValues) throws Throwable {
+
+        final AsyncCompletionWaitor wait = new AsyncCompletionWaitor();
+
+        fExpService.getExecutor().submit(new Runnable() {
+            @Override
+			public void run() {
+
+                fExpService.getSubExpressions(parentDmc,
+                    new DataRequestMonitor<IExpressionDMContext[]>(fExpService.getExecutor(), null) {
+                        @Override
+                        protected void handleCompleted() {
+                            if (isSuccess()) {
+                            	wait.setReturnInfo(getData());
+                            }
+                            wait.waitFinished(getStatus());
+                        }
+                    });
+            }
+        });
+
+        wait.waitUntilDone(AsyncCompletionWaitor.WAIT_FOREVER);
+        assertTrue(wait.getMessage(), wait.isOK());
+
+        IExpressionDMContext[] childDmcs = 
+        	(IExpressionDMContext[]) wait.getReturnInfo();
+
+        String[] childExpressions = new String[childDmcs.length];
+        MIExpressionDMCAccessor[] childDmcsAccessor = new MIExpressionDMCAccessor[childDmcs.length];
+        
+        // Convert to a MIExpressionDMCAccessor to be able to call getRelativeExpression
+        // Also convert to String[] to be able to use Arrays.toString()
+        for (int i = 0; i < childExpressions.length; i++) {
+        	childDmcsAccessor[i] = new MIExpressionDMCAccessor(childDmcs[i]);
+        	childExpressions[i] = childDmcsAccessor[i].getRelativeExpression();
+        }        
+        assertTrue("Expected " + Arrays.toString(expectedValues) + " but got " + Arrays.toString(childExpressions),
+        		expectedValues.length == childExpressions.length);
+
+        for (int i = 0; i < childDmcsAccessor.length; i++) {
+            assertTrue("Expected: " + expectedValues[i] + " got: " + childDmcsAccessor[i].getRelativeExpression(),
+            		childDmcsAccessor[i].getRelativeExpression().equals(expectedValues[i]));
+        }
+        
+        return childDmcs;
     }
 
+    // This method tests IExpressions.getSubExpressions(IExpressionDMC, int, int, DRM);
     private IExpressionDMContext[] getChildren(
     		final IExpressionDMContext parentDmc,
     		final int startIndex,
@@ -3363,15 +3410,117 @@ public class MIExpressionsTest extends BaseTestCase {
 		    	expectedValues[j] = String.format("array_foo[%d]", i*100 + j);
 		    }
 		    IExpressionDMContext[] arrayFooChildren = getChildren(ctx, expectedValues);
-		    for (IExpressionDMContext fooCtx : arrayFooChildren) {
-		    	getChildren(fooCtx, new String[] {"bar", "bar2", "a", "b", "c"});
-		    }
+		    // check the children of a couple of children
+	    	getChildren(arrayFooChildren[0], new String[] {"bar", "bar2", "a", "b", "c"});
+	    	getChildren(arrayFooChildren[80], new String[] {"bar", "bar2", "a", "b", "c"});
 		    
 		    // get parts of the children array
 		    expectedValues = new String[] { String.format("array_foo[%d]", i*100 + 3), String.format("array_foo[%d]", i*100 + 4) };
 		    getChildren(ctx, 3, 2, expectedValues);
 		    getChildren(ctx, 99, 3, new String[] { String.format("array_foo[%d]", i*100 + 99) });
 	    }
+    }
+
+    /**
+     * This test verifies that large double arrays are properly partitioned
+     */
+    @Test
+    public void testLargeDoubleArray() throws Throwable {
+    	MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("testArrays");
+    	
+        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+        
+        // char array_double_large[111][210]
+	    IExpressionDMContext arrayDoubleLargeExprDMC = SyncUtil.createExpression(frameDmc, "array_double_large");
+	    
+	    getChildrenCount(arrayDoubleLargeExprDMC, 2);
+
+	    // get top level partitions: [0-99], [100-110]
+	    IExpressionDMContext[] arrayTopPartitions =
+		    	getChildren(arrayDoubleLargeExprDMC, new String[] {"*((array_double_large)+0)@100", "*((array_double_large)+100)@11"});
+	    assertTrue(String.format("Invalid number of partition: expected 2 got %d", arrayTopPartitions.length), arrayTopPartitions.length == 2);
+
+	    // get children child array_double_large[100-110]
+	    IExpressionDMContext arrayDoubleLargeChildExprDMC = arrayTopPartitions[1];
+	    
+	    getChildrenCount(arrayDoubleLargeChildExprDMC, 11);
+
+	    String[] expectedValues = new String[11];
+	    for(int i = 0; i < expectedValues.length; ++i) {
+	    	expectedValues[i] = String.format("array_double_large[%d]", 100 +i);
+	    }
+	    IExpressionDMContext[] arrayChild = getChildren(arrayDoubleLargeChildExprDMC, expectedValues);
+
+	    // get second level partitions: array_double_large[101][0-99], [100-199], [200-209]
+	    IExpressionDMContext arrayDoubleLargeChildExprDMC2 = arrayChild[1];
+
+	    getChildrenCount(arrayDoubleLargeChildExprDMC2, 3);
+
+	    IExpressionDMContext[] arraySecondLevelPartitions =
+		    	getChildren(arrayDoubleLargeChildExprDMC2, new String[] {"*((array_double_large[101])+0)@100", 
+		    			                                           "*((array_double_large[101])+100)@100",
+		    			                                           "*((array_double_large[101])+200)@10"});
+	    assertTrue(String.format("Invalid number of partition: expected 3 got %d", arraySecondLevelPartitions.length), arraySecondLevelPartitions.length == 3);
+
+	    // get children of array_double_large[101][0-99]
+	    IExpressionDMContext arrayDoubleLargeChildExprDMC3 = arraySecondLevelPartitions[0];
+	    
+	    getChildrenCount(arrayDoubleLargeChildExprDMC3, 100);
+
+	    expectedValues = new String[100];
+	    for(int i = 0; i < expectedValues.length; ++i) {
+	    	expectedValues[i] = String.format("array_double_large[101][%d]", i);
+	    }
+	    IExpressionDMContext[] arrayChild2 = getChildren(arrayDoubleLargeChildExprDMC3, expectedValues);
+
+	    // No more children for array_double_large[101][*]	    
+	    for (IExpressionDMContext ctx : arrayChild2)
+	    	getChildren(ctx, new String[0]);
+	    
+	    // get some parts of the children array
+	    getChildren(arrayDoubleLargeChildExprDMC3, 3, 2, new String[] { "array_double_large[101][3]", "array_double_large[101][4]" });
+	    getChildren(arrayDoubleLargeChildExprDMC3, 98, 3, new String[] { "array_double_large[101][98]","array_double_large[101][99]" });
+    }
+
+    /**
+     * This test verifies that "small" double arrays is not affected by partitions.
+     */
+    @Test
+    public void testSmallDoubleArray() throws Throwable {
+    	MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("testArrays");
+    	
+        IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
+        
+        // int array_double_small[11][21];
+	    IExpressionDMContext arrayDoubleSmallExprDMC = SyncUtil.createExpression(frameDmc, "array_double_small");
+	    
+	    getChildrenCount(arrayDoubleSmallExprDMC, 11);
+
+	    // get all children of array_double_small
+	    String[] expectedValues = new String[11];
+	    for (int i = 0; i < expectedValues.length; ++i) {
+	    	expectedValues[i] = String.format("array_double_small[%d]", i);
+	    }
+	    IExpressionDMContext[] arrayDoubleSmallChildren = getChildren(arrayDoubleSmallExprDMC, expectedValues);
+	    
+	    // get all children of array_double_small[3]
+	    IExpressionDMContext arrayDoubleSmallChildExprDMC = arrayDoubleSmallChildren[3];
+	    
+	    getChildrenCount(arrayDoubleSmallChildExprDMC, 21);
+
+	    expectedValues = new String[21];
+	    for (int i = 0; i < expectedValues.length; ++i) {
+	    	expectedValues[i] = arrayDoubleSmallChildExprDMC.getExpression() + "[" + i +"]";
+	    }
+	    IExpressionDMContext[] arrayDoubleSmallGrandChildren = getChildren(arrayDoubleSmallChildExprDMC, expectedValues);
+
+	    // No more children for array_double_small[3][*]	    
+	    for (IExpressionDMContext ctx : arrayDoubleSmallGrandChildren)
+	    	getChildren(ctx, new String[0]);
+	    
+	    // get some parts of the children array
+	    getChildren(arrayDoubleSmallChildExprDMC, 3, 2, new String[] { "array_double_small[3][3]", "array_double_small[3][4]" });
+	    getChildren(arrayDoubleSmallChildExprDMC, 19, 3, new String[] { "array_double_small[3][19]","array_double_small[3][20]" });
     }
 
     private int getChildrenCount(final IExpressionDMContext parentDmc, final int expectedCount) throws Throwable {

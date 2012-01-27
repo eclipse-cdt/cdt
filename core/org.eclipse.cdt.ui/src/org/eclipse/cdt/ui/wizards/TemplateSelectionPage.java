@@ -89,6 +89,7 @@ public class TemplateSelectionPage extends WizardPage {
 	private final TemplateEngineUI uiEngine = TemplateEngineUI.getDefault();
 	
 	private TreeViewer templateTree;
+	private Template selectedTemplate;
 	private IWizardPage[] nextPages;
 	
 	public TemplateSelectionPage() {
@@ -177,21 +178,22 @@ public class TemplateSelectionPage extends WizardPage {
 		templateTree.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
+				selectedTemplate = null;
+				nextPages = null;
 				IStructuredSelection selection = (IStructuredSelection)templateTree.getSelection();
 				Object selObj = selection.getFirstElement();
 				if (selObj instanceof Node) {
 					Object object = ((Node)selObj).getObject();
 					if (object instanceof Template) {
 						IWizard wizard = getWizard();
-						nextPages = ((Template)object).getTemplateWizardPages(TemplateSelectionPage.this,
+						selectedTemplate = (Template)object;
+						nextPages = selectedTemplate.getTemplateWizardPages(TemplateSelectionPage.this,
 								wizard.getNextPage(TemplateSelectionPage.this), wizard);
 						setPageComplete(true);
 					} else {
-						nextPages = null;
 						setPageComplete(false);
 					}
 				} else {
-					nextPages = null;
 					setPageComplete(false);
 				}
 			}
@@ -202,9 +204,13 @@ public class TemplateSelectionPage extends WizardPage {
 		setControl(comp);
 	}
 
+	public Template getSelectedTemplate() {
+		return selectedTemplate;
+	}
+	
 	@Override
 	public boolean isPageComplete() {
-		return true;
+		return selectedTemplate != null;
 	}
 	
 	@Override

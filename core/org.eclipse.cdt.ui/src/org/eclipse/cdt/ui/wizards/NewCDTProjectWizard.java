@@ -3,6 +3,7 @@ package org.eclipse.cdt.ui.wizards;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.INewWizard;
@@ -77,8 +78,13 @@ public class NewCDTProjectWizard extends Wizard implements INewWizard {
 	
 	@Override
 	public boolean canFinish() {
-		// TODO make sure we have everything in place first.
-		return false;
+		IWizardPage page = mainPage;
+		while (page != null) {
+			if (!page.isPageComplete())
+				return false;
+			page = page.getNextPage();
+		}
+		return true;
 	}
 	
 }

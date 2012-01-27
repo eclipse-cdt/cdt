@@ -139,7 +139,8 @@ public class Template extends TemplateCore {
 			e.printStackTrace();
 		}
 		
-		followingPage.setPreviousPage(predatingPage);	
+		if (followingPage != null)
+			followingPage.setPreviousPage(predatingPage);	
 		
 		return pages.toArray(new IWizardPage[pages.size()]);
 	}

@@ -18,9 +18,14 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -78,9 +83,13 @@ public class TemplateSelectionPage extends WizardPage {
 		}
 	}
 	
-	private final Node tree = new Node(null, null);
+	private static Node tree;
+	
 	private final TemplateEngine2 coreEngine = TemplateEngine2.getDefault();
 	private final TemplateEngineUI uiEngine = TemplateEngineUI.getDefault();
+	
+	private TreeViewer templateTree;
+	private IWizardPage[] nextPages;
 	
 	public TemplateSelectionPage() {
 		super("templateSelection"); //$NON-NLS-1$
@@ -91,7 +100,7 @@ public class TemplateSelectionPage extends WizardPage {
 		Composite comp = new Composite(parent, SWT.NONE);
 		comp.setLayout(new GridLayout(1, false));
 		
-		TreeViewer templateTree = new TreeViewer(comp);
+		templateTree = new TreeViewer(comp);
 		templateTree.getTree().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		templateTree.setContentProvider(new ITreeContentProvider() {
 			@Override
@@ -165,6 +174,28 @@ public class TemplateSelectionPage extends WizardPage {
 				return null;
 			}
 		});
+		templateTree.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				IStructuredSelection selection = (IStructuredSelection)templateTree.getSelection();
+				Object selObj = selection.getFirstElement();
+				if (selObj instanceof Node) {
+					Object object = ((Node)selObj).getObject();
+					if (object instanceof Template) {
+						IWizard wizard = getWizard();
+						nextPages = ((Template)object).getTemplateWizardPages(TemplateSelectionPage.this,
+								wizard.getNextPage(TemplateSelectionPage.this), wizard);
+						setPageComplete(true);
+					} else {
+						nextPages = null;
+						setPageComplete(false);
+					}
+				} else {
+					nextPages = null;
+					setPageComplete(false);
+				}
+			}
+		});
 		buildTree();
 		templateTree.setInput(tree);
 		
@@ -176,7 +207,18 @@ public class TemplateSelectionPage extends WizardPage {
 		return true;
 	}
 	
+	@Override
+	public IWizardPage getNextPage() {
+		if (nextPages != null && nextPages.length > 0)
+			return nextPages[0];
+		return super.getNextPage();
+	}
+	
 	private void buildTree() {
+		if (tree != null)
+			return;
+		tree = new Node(null, null);
+		
 		Template[] templates = uiEngine.getTemplates();
 		for (Template template : templates) {
 			List<String> parentCategoryIds = ((TemplateInfo2)template.getTemplateInfo()).getParentCategoryIds();

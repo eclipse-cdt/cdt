@@ -87,7 +87,7 @@ public class XLCBuildOutputParserUtility {
     private IProject project;
 
     private int workingDirsN = 0;
-    
+
 	/*
 	 * For tracking the location of files being compiled
 	 */
@@ -102,10 +102,10 @@ public class XLCBuildOutputParserUtility {
         if (workingDirectory != null) {
             pushDirectory(workingDirectory);
         }
-        
+
 	}
 	/**
-     * 
+     *
      */
     public XLCBuildOutputParserUtility(IProject project, IPath workingDirectory,
                                               IMarkerGenerator markerGenerator) {
@@ -136,7 +136,7 @@ public class XLCBuildOutputParserUtility {
         if (compiledFileList.contains(longFileName))
             return;
         compiledFileList.add(longFileName);
-        
+
         String workingDir = getWorkingDirectory().toString();
         List directoryCommandList = (List) directoryCommandListMap.get(workingDir);
         if (directoryCommandList == null) {
@@ -219,7 +219,7 @@ public class XLCBuildOutputParserUtility {
     }
 
     /**
-     * 
+     *
      */
     void generateReport() {
         TraceUtil.metricsTrace("Stats for directory ", //$NON-NLS-1$
@@ -227,7 +227,7 @@ public class XLCBuildOutputParserUtility {
                    directoryCommandListMap);
         TraceUtil.summaryTrace("Discovery summary", workingDirsN, commandsN, filesN); //$NON-NLS-1$
     }
-    
+
     /**
      * @param filePath : String
      * @return filePath : IPath - not <code>null</code>
@@ -239,7 +239,7 @@ public class XLCBuildOutputParserUtility {
         }
         else if (filePath.startsWith("\\") || //$NON-NLS-1$
             (!filePath.startsWith(".") && //$NON-NLS-1$
-             filePath.length() > 2 && filePath.charAt(1) == ':' && 
+             filePath.length() > 2 && filePath.charAt(1) == ':' &&
              (filePath.charAt(2) == '\\' || filePath.charAt(2) == '/'))) {
             // absolute path
             pFilePath = new Path(filePath);
@@ -268,7 +268,7 @@ public class XLCBuildOutputParserUtility {
     public IPath getBaseDirectory() {
         return fBaseDirectory;
     }
-    
+
     /**
      * Returns all CCommandDSC collected so far.
      * Currently this list is not filled, so it will always return an empty list.
@@ -277,7 +277,7 @@ public class XLCBuildOutputParserUtility {
     public List getCCommandDSCList() {
         return new ArrayList(commandsList2);
     }
-    
+
     protected int getDirectoryLevel() {
         return fDirectoryStack.size();
     }
@@ -303,7 +303,7 @@ public class XLCBuildOutputParserUtility {
     /**
      * @param genericLine
      * @param cppFileType
-     * @return CCommandDSC compile command description 
+     * @return CCommandDSC compile command description
      */
     public CCommandDSC getNewCCommandDSC(String[] tokens, final int idxOfCompilerCommand, boolean cppFileType) {
 		ArrayList dirafter = new ArrayList();
@@ -327,7 +327,7 @@ public class XLCBuildOutputParserUtility {
 				token.equals("-fno-signed-char") ||	//$NON-NLS-1$
 				token.equals("-fsigned-char") ||	//$NON-NLS-1$
 				token.startsWith("-fabi-version=")	//$NON-NLS-1$
-			) {		
+			) {
 		        command.addSCOption(new KVStringPair(SCDOptionsEnum.COMMAND.toString(), token));
 				continue;
         	}
@@ -343,7 +343,7 @@ public class XLCBuildOutputParserUtility {
                     	for (Iterator iter=includes.iterator(); iter.hasNext(); ) {
                     		option = (String)iter.next();
                             KVStringPair pair = new KVStringPair(SCDOptionsEnum.IQUOTE.toString(), option);
-                        	command.addSCOption(pair);                    		
+                        	command.addSCOption(pair);
                     	}
                     	includes = new ArrayList();
                         // -I- has no parameter
@@ -356,17 +356,17 @@ public class XLCBuildOutputParserUtility {
                         }
                         else break;
                     }
-                    
+
                     if (option.length() > 0 && (
                             optionKind.equals(SCDOptionsEnum.INCLUDE) ||
                             optionKind.equals(SCDOptionsEnum.INCLUDE_FILE) ||
                             optionKind.equals(SCDOptionsEnum.IMACROS_FILE) ||
                             optionKind.equals(SCDOptionsEnum.IDIRAFTER) ||
-                            optionKind.equals(SCDOptionsEnum.ISYSTEM) || 
+                            optionKind.equals(SCDOptionsEnum.ISYSTEM) ||
                             optionKind.equals(SCDOptionsEnum.IQUOTE) )) {
                         option = (getAbsolutePath(option)).toString();
                     }
-                    
+
                     if (optionKind.equals(SCDOptionsEnum.IDIRAFTER)) {
                         KVStringPair pair = new KVStringPair(SCDOptionsEnum.INCLUDE.toString(), option);
                     	dirafter.add(pair);
@@ -391,10 +391,10 @@ public class XLCBuildOutputParserUtility {
     	for (Iterator iter=includes.iterator(); iter.hasNext(); ) {
     		option = (String)iter.next();
             KVStringPair pair = new KVStringPair(SCDOptionsEnum.INCLUDE.toString(), option);
-        	command.addSCOption(pair);                    		
+        	command.addSCOption(pair);
     	}
     	for (Iterator iter=dirafter.iterator(); iter.hasNext(); ) {
-        	command.addSCOption((KVStringPair)iter.next());                    		
+        	command.addSCOption((KVStringPair)iter.next());
     	}
         return command;
     }
@@ -470,11 +470,11 @@ public class XLCBuildOutputParserUtility {
     		fDefaultMacroDefinitionValue= val;
     	}
 	}
-    
+
     public String getDefaultMacroDefinitionValue() {
     	return fDefaultMacroDefinitionValue;
     }
-    
+
 	public String normalizePath(String path) {
 		int column = path.indexOf(':');
 		if (column > 0) {
@@ -534,12 +534,12 @@ public class XLCBuildOutputParserUtility {
 			}
 		}
 		newBuf.append(buf.substring(scp, len));
-					 
+
 		IPath orgPath = new Path(newBuf.toString());
 		return orgPath.toString();
 	}
 
-	
+
 	/**
 	 * Called by the console line parsers to find a file with a given name.
 	 * @param fileName
@@ -554,7 +554,7 @@ public class XLCBuildOutputParserUtility {
 				// If there is a conflict then try all files in the project.
 				if (isConflictingName(fileName)) {
 					file = null;
-					
+
 					// Create a problem marker
 					final String error = MakeMessages.getString("ConsoleParser.Ambiguous_Filepath_Error_Message"); //$NON-NLS-1$
 					TraceUtil.outputError(error, fileName);
@@ -564,7 +564,7 @@ public class XLCBuildOutputParserUtility {
 		}
 		return file;
 	}
-	
+
 	/**
 	 * @param filePath
 	 * @return
@@ -611,7 +611,7 @@ public class XLCBuildOutputParserUtility {
 	 */
 	protected IFile findFileName(String fileName) {
 		IPath path = new Path(fileName);
-		return (IFile) fFilesInProject.get(path.lastSegment());
+		return fFilesInProject.get(path.lastSegment());
 	}
 
 	protected IFile findFileInWorkspace(IPath path) {
@@ -672,7 +672,7 @@ public class XLCBuildOutputParserUtility {
 				if (!cwd.isAbsolute()) {
 					cwd = getBaseDirectory().append(cwd);
 				}
-				
+
 				IPath filePath = new Path(fileName);
 				if (!filePath.isAbsolute()) {
 					// check if the cwd is the right one
@@ -686,11 +686,11 @@ public class XLCBuildOutputParserUtility {
 						// probably multiple choices for cwd, hopeless
 						final String error = MakeMessages.getString("ConsoleParser.Working_Directory_Error_Message"); //$NON-NLS-1$
 						TraceUtil.outputError(error, fileName);
-						generateMarker(file, -1, error,	 IMarkerGenerator.SEVERITY_WARNING, fileName);				
+						generateMarker(file, -1, error,	 IMarkerGenerator.SEVERITY_WARNING, fileName);
 						break;
 					}
 					else {
-						// remove common segments at the end 
+						// remove common segments at the end
 						IPath tPath = new Path(fileName);
 						if (fileName.startsWith(".")) {	//$NON-NLS-1$
 							tPath = tPath.removeFirstSegments(1);
@@ -703,14 +703,14 @@ public class XLCBuildOutputParserUtility {
 						}
 					}
 				}
-				
+
 				IPath candidatePath = cwd.append(includePath);
 				File dir = candidatePath.toFile();
 				include = candidatePath.toString();
 				if (!dir.exists()) {
 					final String error = MakeMessages.getString("ConsoleParser.Nonexistent_Include_Path_Error_Message"); //$NON-NLS-1$
 					TraceUtil.outputError(error, include);
-//					generateMarker(file, -1, error+include, IMarkerGenerator.SEVERITY_WARNING, fileName);				
+//					generateMarker(file, -1, error+include, IMarkerGenerator.SEVERITY_WARNING, fileName);
 				}
 			}
 			// TODO VMIR for now add unresolved paths as well

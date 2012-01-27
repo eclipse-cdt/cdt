@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,7 +18,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.ResourceBundle;
 import java.util.Set;
 
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
@@ -37,30 +36,30 @@ import org.eclipse.jface.preference.IPreferenceStore;
 
 /**
  * @author rkerimov
- * 
+ *
  * This applicability calculator hides/shows options that are specific to the XL compiler versions
  *
  */
 
-public class XLCApplicabilityCalculator implements IOptionApplicability 
+public class XLCApplicabilityCalculator implements IOptionApplicability
 {
 	private static final String BUNDLE_NAME = "org/eclipse/cdt/managedbuilder/xlc/ui/properties/applicability.properties";
 	private static final String PROP_NAME_VERSION_ORDER = "xlc.applicability.version.order";
 	private static final String PROP_VALUE_PLUS = "+";
-	
+
 	private static boolean initialized;
 	private static List versionOrder;
 	private static Map applicabilityMap;
-	
+
 	public XLCApplicabilityCalculator()
 	{
 		if (!initialized)
 		{
 			Properties props = null;
-			
+
 			ClassLoader loader = this.getClass().getClassLoader();
-			InputStream input = null; 
-				
+			InputStream input = null;
+
 			if (loader != null)
 				input = loader.getResourceAsStream(BUNDLE_NAME);
 
@@ -73,24 +72,24 @@ public class XLCApplicabilityCalculator implements IOptionApplicability
 				{
 					props = new Properties();
 					props.load(input);
-					
+
 					Set entrySet = props.entrySet();
 					Iterator iterator = entrySet.iterator();
 					while (iterator.hasNext())
 					{
 						Map.Entry entry = (Map.Entry) iterator.next();
-						
+
 						String key = (String) entry.getKey();
 						String value = (String) entry.getValue();
-						
+
 						if (value == null)
 							value = "";
-						
+
 						if (key.equals(PROP_NAME_VERSION_ORDER))
 						{
 							versionOrder = new ArrayList();
 							String[] versions = value.split(",");
-							
+
 							if (versions != null)
 							{
 								for (int i = 0; i < versions.length; i ++)
@@ -103,14 +102,14 @@ public class XLCApplicabilityCalculator implements IOptionApplicability
 						{
 							if (applicabilityMap == null)
 								applicabilityMap = new HashMap();
-							
+
 							List applicList = (List) applicabilityMap.get(key);
 							if (applicList == null)
 							{
 								applicList = new ArrayList();
 								applicabilityMap.put(key, applicList);
 							}
-							
+
 							boolean hasGreaterOption = false;
 							//find if ends with + and set as separate option
 							if (value.endsWith(PROP_VALUE_PLUS))
@@ -118,16 +117,16 @@ public class XLCApplicabilityCalculator implements IOptionApplicability
 								hasGreaterOption = true;
 								value = value.substring(0, value.length() - PROP_VALUE_PLUS.length());
 							}
-							
+
 							String[] versions = value.split(",");
-							
+
 							if (versions != null)
 							{
 								for (int i = 0; i < versions.length; i ++)
 								{
 									applicList.add(versions[i].trim());
 								}
-								
+
 							}
 
 							if (hasGreaterOption)
@@ -140,49 +139,49 @@ public class XLCApplicabilityCalculator implements IOptionApplicability
 			{
 				e.printStackTrace();
 			}
-			finally 
+			finally
 			{
 				if (input != null)
 				{
-					try 
+					try
 					{
 						input.close();
-					} 
-					catch (IOException e) 
+					}
+					catch (IOException e)
 					{
 						// ignore
 					}
 				}
 			}
-			
+
 			initialized = true;
-			
+
 		}
 	}
-	
-	private boolean isApplicable(IBuildObject configuration, IHoldsOptions holder, IOption option) 
+
+	private boolean isApplicable(IBuildObject configuration, IHoldsOptions holder, IOption option)
 	{
 		// first we check the preference for this project, if it exists
 		IProject project = null;
-		if(configuration instanceof IConfiguration) 
+		if(configuration instanceof IConfiguration)
 		{
 			IConfiguration config = (IConfiguration) configuration;
 			IManagedProject managedProject = config.getManagedProject();
-			
+
 			project = (IProject) managedProject.getOwner();
 		}
-		else if(configuration instanceof IFolderInfo) 
+		else if(configuration instanceof IFolderInfo)
 		{
 			IFolderInfo folderInfo = (IFolderInfo) configuration;
-			
+
 			IConfiguration config = folderInfo.getParent();
-			
+
 			IManagedProject managedProject = config.getManagedProject();
-			
+
 			project = (IProject) managedProject.getOwner();
-			
+
 		}
-		
+
 		if (project == null)
 			return false;
 
@@ -193,8 +192,8 @@ public class XLCApplicabilityCalculator implements IOptionApplicability
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}
-		
-		if(currentVersion == null) 
+
+		if(currentVersion == null)
 		{
 			// if the property isn't set, then use the workbench preference
 			IPreferenceStore prefStore = XLCUIPlugin.getDefault().getPreferenceStore();
@@ -204,20 +203,20 @@ public class XLCApplicabilityCalculator implements IOptionApplicability
 		//if applicability list is empty that means all options applicable to all versions
 		if (applicabilityMap == null)
 			return true;
-		
-		//if applicability list for this option is not defined then option has no applicability restrictions 
+
+		//if applicability list for this option is not defined then option has no applicability restrictions
 		List applicList = (List) applicabilityMap.get(option.getId());
 		if (applicList == null || applicList.isEmpty())
 			return true;
-		
+
 		//if version is defined in the list - perfect match
 		if (applicList.contains(currentVersion))
 			return true;
-		
+
 		//if applicability is defined as 'starting from this version and greater', i.e. 'v8.0+',
-		//then we need to find out if current version is greater than the last valid in the list  
+		//then we need to find out if current version is greater than the last valid in the list
 		String lastOption = (String) applicList.get(applicList.size() - 1);
-		
+
 		if (lastOption != null && lastOption.equals(PROP_VALUE_PLUS))
 		{
 			//if 'greater than' option is specified but no version order exists, consider config error and return false
@@ -230,31 +229,32 @@ public class XLCApplicabilityCalculator implements IOptionApplicability
 			for (int k = applicList.size() - 2; k >= 0; k --)
 			{
 				String version = (String) applicList.get(k);
-				
+
 				if (versionOrder.contains(version))
 				{
 					validVersion = version;
 					break;
 				}
 			}
-			
+
 			//if version that applicability starts with doesn't exist - config error
 			if (validVersion == null)
 				return false;
-			
+
 			//compare if current compiler version is greater than the applicability version
 			if (versionOrder.indexOf(currentVersion) > versionOrder.indexOf(validVersion))
 				return true;
 		}
-		
-		
+
+
 		return false;
-		
+
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOptionApplicability#isOptionEnabled(org.eclipse.cdt.managedbuilder.core.IBuildObject, org.eclipse.cdt.managedbuilder.core.IHoldsOptions, org.eclipse.cdt.managedbuilder.core.IOption)
 	 */
+	@Override
 	public boolean isOptionEnabled(IBuildObject configuration,
 			IHoldsOptions holder, IOption option) {
 		return isApplicable(configuration, holder, option);
@@ -263,6 +263,7 @@ public class XLCApplicabilityCalculator implements IOptionApplicability
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOptionApplicability#isOptionUsedInCommandLine(org.eclipse.cdt.managedbuilder.core.IBuildObject, org.eclipse.cdt.managedbuilder.core.IHoldsOptions, org.eclipse.cdt.managedbuilder.core.IOption)
 	 */
+	@Override
 	public boolean isOptionUsedInCommandLine(IBuildObject configuration,
 			IHoldsOptions holder, IOption option) {
 		return isApplicable(configuration, holder, option);
@@ -271,6 +272,7 @@ public class XLCApplicabilityCalculator implements IOptionApplicability
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOptionApplicability#isOptionVisible(org.eclipse.cdt.managedbuilder.core.IBuildObject, org.eclipse.cdt.managedbuilder.core.IHoldsOptions, org.eclipse.cdt.managedbuilder.core.IOption)
 	 */
+	@Override
 	public boolean isOptionVisible(IBuildObject configuration,
 			IHoldsOptions holder, IOption option) {
 		return isApplicable(configuration, holder, option);

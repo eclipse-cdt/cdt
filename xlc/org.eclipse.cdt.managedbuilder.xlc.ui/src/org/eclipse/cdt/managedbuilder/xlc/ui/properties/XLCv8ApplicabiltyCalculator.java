@@ -35,9 +35,9 @@ public class XLCv8ApplicabiltyCalculator implements IOptionApplicability {
 		if(configuration instanceof IConfiguration) {
 			IConfiguration config = (IConfiguration) configuration;
 			IManagedProject managedProject = config.getManagedProject();
-			
+
 			IProject project = (IProject) managedProject.getOwner();
-			
+
 			String currentVersion = null;
 			try {
 				currentVersion = project.getPersistentProperty(new QualifiedName("",
@@ -46,26 +46,26 @@ public class XLCv8ApplicabiltyCalculator implements IOptionApplicability {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 			if(currentVersion == null) {
 				// if the property isn't set, then use the workbench preference
 				IPreferenceStore prefStore = XLCUIPlugin.getDefault().getPreferenceStore();
 				currentVersion = prefStore.getString(PreferenceConstants.P_XLC_COMPILER_VERSION);
 			}
-			
+
 		  if(currentVersion.equals(PreferenceConstants.P_XL_COMPILER_VERSION_8))
 			  return true;
 		}
-		
+
 		if(configuration instanceof IFolderInfo) {
 			IFolderInfo folderInfo = (IFolderInfo) configuration;
-			
+
 			IConfiguration config = folderInfo.getParent();
-			
+
 			IManagedProject managedProject = config.getManagedProject();
-			
+
 			IProject project = (IProject) managedProject.getOwner();
-			
+
 			String currentVersion = null;
 			try {
 				currentVersion = project.getPersistentProperty(new QualifiedName("",
@@ -74,25 +74,26 @@ public class XLCv8ApplicabiltyCalculator implements IOptionApplicability {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 			if(currentVersion == null) {
 				// if the property isn't set, then use the workbench preference
 				IPreferenceStore prefStore = XLCUIPlugin.getDefault().getPreferenceStore();
 				currentVersion = prefStore.getString(PreferenceConstants.P_XLC_COMPILER_VERSION);
 			}
-			
+
 		  if(currentVersion.equals(PreferenceConstants.P_XL_COMPILER_VERSION_8))
 			  return true;
-			
+
 		}
-		
+
 		return false;
-		
+
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOptionApplicability#isOptionEnabled(org.eclipse.cdt.managedbuilder.core.IBuildObject, org.eclipse.cdt.managedbuilder.core.IHoldsOptions, org.eclipse.cdt.managedbuilder.core.IOption)
 	 */
+	@Override
 	public boolean isOptionEnabled(IBuildObject configuration,
 			IHoldsOptions holder, IOption option) {
 		return isVersion8(configuration);
@@ -101,6 +102,7 @@ public class XLCv8ApplicabiltyCalculator implements IOptionApplicability {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOptionApplicability#isOptionUsedInCommandLine(org.eclipse.cdt.managedbuilder.core.IBuildObject, org.eclipse.cdt.managedbuilder.core.IHoldsOptions, org.eclipse.cdt.managedbuilder.core.IOption)
 	 */
+	@Override
 	public boolean isOptionUsedInCommandLine(IBuildObject configuration,
 			IHoldsOptions holder, IOption option) {
 		return isVersion8(configuration);
@@ -109,6 +111,7 @@ public class XLCv8ApplicabiltyCalculator implements IOptionApplicability {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOptionApplicability#isOptionVisible(org.eclipse.cdt.managedbuilder.core.IBuildObject, org.eclipse.cdt.managedbuilder.core.IHoldsOptions, org.eclipse.cdt.managedbuilder.core.IOption)
 	 */
+	@Override
 	public boolean isOptionVisible(IBuildObject configuration,
 			IHoldsOptions holder, IOption option) {
 		return isVersion8(configuration);

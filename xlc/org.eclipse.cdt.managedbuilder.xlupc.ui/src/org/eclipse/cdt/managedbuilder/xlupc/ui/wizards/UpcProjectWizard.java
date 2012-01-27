@@ -31,17 +31,17 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 public class UpcProjectWizard extends CDTCommonProjectWizard {
 
 	private static final String ARTIFACT_TYPE_UPC_EXE = "org.eclipse.cdt.build.core.buildArtefactType.xlupc.exe";
-	private static final String ARTIFACT_TYPE_UPC_EXE_DEFAULT = ARTIFACT_TYPE_UPC_EXE + ".default"; 
-	
-	private static final String ARTIFACT_TYPE_UPC_SO = "org.eclipse.cdt.build.core.buildArtefactType.xlupc.sharedLib"; 
+	private static final String ARTIFACT_TYPE_UPC_EXE_DEFAULT = ARTIFACT_TYPE_UPC_EXE + ".default";
+
+	private static final String ARTIFACT_TYPE_UPC_SO = "org.eclipse.cdt.build.core.buildArtefactType.xlupc.sharedLib";
 	private static final String ARTIFACT_TYPE_UPC_SO_DEFAULT = ARTIFACT_TYPE_UPC_SO + ".default";
-	
-	private static final String ARTIFACT_TYPE_UPC_LIB = "org.eclipse.cdt.build.core.buildArtefactType.xlupc.staticLib"; 
-	private static final String ARTIFACT_TYPE_UPC_LIB_DEFAULT = ARTIFACT_TYPE_UPC_LIB + ".default"; 
-	
+
+	private static final String ARTIFACT_TYPE_UPC_LIB = "org.eclipse.cdt.build.core.buildArtefactType.xlupc.staticLib";
+	private static final String ARTIFACT_TYPE_UPC_LIB_DEFAULT = ARTIFACT_TYPE_UPC_LIB + ".default";
+
 	private final static String PAGE_NAME = "org.eclipse.cdt.managedbuilder.xlupc.ui.mainpage";
-	
-	
+
+
 	private static final Set<String> ALL_TYPES = new HashSet<String>() {{
 		add(ARTIFACT_TYPE_UPC_EXE);
 		add(ARTIFACT_TYPE_UPC_EXE_DEFAULT);
@@ -50,17 +50,19 @@ public class UpcProjectWizard extends CDTCommonProjectWizard {
 		add(ARTIFACT_TYPE_UPC_LIB);
 		add(ARTIFACT_TYPE_UPC_LIB_DEFAULT);
 	}};
-	
-	
+
+
 
 	public UpcProjectWizard() {
-		super(Messages.UpcProjectWizard_0, Messages.UpcProjectWizard_1); 
+		super(Messages.UpcProjectWizard_0, Messages.UpcProjectWizard_1);
 	}
 
-	
+
+	@Override
 	public void addPages()  {
 		fMainPage = new CDTMainWizardPage(PAGE_NAME) {
-			
+
+			@Override
 			@SuppressWarnings("unchecked")
 			public List filterItems(List items)  {
 				// filter out all non-UPC project types
@@ -75,13 +77,14 @@ public class UpcProjectWizard extends CDTCommonProjectWizard {
 				return items;
 			}
 		};
-		
-		fMainPage.setTitle(Messages.UpcProjectWizard_0); 
-		fMainPage.setDescription(Messages.UpcProjectWizard_1);   
+
+		fMainPage.setTitle(Messages.UpcProjectWizard_0);
+		fMainPage.setDescription(Messages.UpcProjectWizard_1);
 		addPage(fMainPage);
 	}
 
 
+	@Override
 	protected IProject continueCreation(IProject prj) {
 		try {
 			CProjectNature.addCNature(prj, new NullProgressMonitor());
@@ -90,6 +93,7 @@ public class UpcProjectWizard extends CDTCommonProjectWizard {
 	}
 
 
+	@Override
 	public String[] getNatures() {
 		return new String[] { CProjectNature.C_NATURE_ID/*, CCProjectNature.CC_NATURE_ID, RemoteNature.REMOTE_NATURE_ID*/};
 	}

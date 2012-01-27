@@ -12,14 +12,13 @@ package org.eclipse.cdt.make.xlc.core.scannerconfig;
 
 import org.eclipse.cdt.make.internal.core.scannerconfig2.GCCSpecsRunSIProvider;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.core.runtime.Path;
 
 /**
  * @author laggarcia
- * 
+ *
  */
 public class XlCSpecsRunSIProvider extends GCCSpecsRunSIProvider {
 
@@ -27,9 +26,10 @@ public class XlCSpecsRunSIProvider extends GCCSpecsRunSIProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.make.internal.core.scannerconfig2.GCCSpecsRunSIProvider#initialize()
 	 */
+	@Override
 	protected boolean initialize() {
 
 		boolean rc = super.initialize();

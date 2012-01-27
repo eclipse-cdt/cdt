@@ -33,14 +33,15 @@ import org.eclipse.jface.wizard.IWizardPage;
 
 public class XLUpcSettingsWizardRunnable extends XLCSettingsWizardRunnable {
 
-	
+
 	// now add UPC language mapping to the project
 	private static final String[] CONTENT_TYPE_IDS = { CCorePlugin.CONTENT_TYPE_CHEADER, CCorePlugin.CONTENT_TYPE_CSOURCE };
-	
+
 	public XLUpcSettingsWizardRunnable() {
 		pageId = XLUpcSettingsWizardPage.PAGE_ID;
 	}
 
+	@Override
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		super.run(monitor);
 		// get a handle to the wizard
@@ -51,10 +52,10 @@ public class XLUpcSettingsWizardRunnable extends XLCSettingsWizardRunnable {
 			CDTCommonProjectWizard wizard = (CDTCommonProjectWizard) pages[0].getWizard();
 			IProject project = wizard.getLastProject();
 			LanguageManager langManager = LanguageManager.getInstance();
-				
+
 			try {
 				ProjectLanguageConfiguration langConfig = langManager.getLanguageConfiguration(project);
-				
+
 				ICProjectDescription projectDescription = CoreModel.getDefault().getProjectDescription(project, false);
 				ICConfigurationDescription configDescription = projectDescription.getActiveConfiguration();
 
@@ -65,9 +66,9 @@ public class XLUpcSettingsWizardRunnable extends XLCSettingsWizardRunnable {
 						langConfig.addContentTypeMapping(configDescription, id, UPCLanguage.ID);
 					}
 				}
-				
+
 				langManager.storeLanguageMappingConfiguration(project, new IContentType[0]);
-				
+
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
 			}

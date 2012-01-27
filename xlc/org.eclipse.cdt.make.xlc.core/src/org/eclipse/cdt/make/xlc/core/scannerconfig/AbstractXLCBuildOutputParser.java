@@ -21,8 +21,8 @@ import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector2;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.SCProfileInstance;
-import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfile.BuildOutputProvider;
+import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
 import org.eclipse.cdt.make.xlc.core.activator.Activator;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -33,7 +33,7 @@ import org.eclipse.core.runtime.content.IContentTypeManager;
 
 /**
  * @author crecoskie
- * 
+ *
  */
 public abstract class AbstractXLCBuildOutputParser implements IScannerInfoConsoleParser {
 
@@ -76,7 +76,7 @@ public abstract class AbstractXLCBuildOutputParser implements IScannerInfoConsol
 
 	/**
 	 * Returns array of additional compiler commands to look for
-	 * 
+	 *
 	 * @return String[]
 	 */
 	protected String[] computeCompilerCommands() {
@@ -103,11 +103,12 @@ public abstract class AbstractXLCBuildOutputParser implements IScannerInfoConsol
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser#processLine
 	 * (java.lang.String)
 	 */
+	@Override
 	public boolean processLine(String line) {
 		boolean rc = false;
 		int lineBreakPos = line.length() - 1;
@@ -183,16 +184,17 @@ public abstract class AbstractXLCBuildOutputParser implements IScannerInfoConsol
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser#shutdown
 	 * ()
 	 */
+	@Override
 	public void shutdown() {
 		if (getUtility() != null) {
 			getUtility().reportProblems();
 		}
-		
+
 		if(fCollector != null && fCollector instanceof IScannerInfoCollector2) {
 			IScannerInfoCollector2 collector = (IScannerInfoCollector2) fCollector;
 			try {
@@ -211,7 +213,7 @@ public abstract class AbstractXLCBuildOutputParser implements IScannerInfoConsol
 	 * back-quotes a backslash escapes white-spaces, all quotes, the backslash,
 	 * '&' and '|'. A backslash used for escaping is removed. Quotes other than
 	 * the back-quote plus '&&', '||', ';' are removed, also.
-	 * 
+	 *
 	 * @param line
 	 *            to tokenize
 	 * @return array of commands
@@ -365,6 +367,7 @@ public abstract class AbstractXLCBuildOutputParser implements IScannerInfoConsol
 		return -1;
 	}
 
+	@Override
 	public void startup(IProject project, IPath workingDirectory, IScannerInfoCollector collector,
 			IMarkerGenerator markerGenerator) {
 		fProject = project;

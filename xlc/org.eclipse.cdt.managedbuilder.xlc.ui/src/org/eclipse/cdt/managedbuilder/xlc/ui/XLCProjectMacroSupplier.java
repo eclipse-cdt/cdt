@@ -31,14 +31,15 @@ public class XLCProjectMacroSupplier implements IProjectBuildMacroSupplier {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.macros.IProjectBuildMacroSupplier#getMacro(java.lang.String, org.eclipse.cdt.managedbuilder.core.IManagedProject, org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider)
 	 */
+	@Override
 	public IBuildMacro getMacro(String macroName, IManagedProject project,
 			IBuildMacroProvider provider) {
-		
+
 		if(macroName.equals(PreferenceConstants.P_XL_COMPILER_ROOT)) {
 			String compilerPath = null;
-			
+
 			// figure out compiler path from properties and preferences
-			
+
 			// search for property first
 			IProject theProject = (IProject) project.getOwner();
 			try {
@@ -48,19 +49,19 @@ public class XLCProjectMacroSupplier implements IProjectBuildMacroSupplier {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 			if(compilerPath == null) {
 				// use the workbench preference
 				IPreferenceStore prefStore = XLCUIPlugin.getDefault().getPreferenceStore();
 				compilerPath = prefStore.getString(PreferenceConstants.P_XL_COMPILER_ROOT);
 			}
-			
-			BuildMacro macro = new BuildMacro(macroName, ICdtVariable.VALUE_PATH_DIR, 
+
+			BuildMacro macro = new BuildMacro(macroName, ICdtVariable.VALUE_PATH_DIR,
 					compilerPath);
-			
+
 			return macro;
 		}
-		
+
 		else
 			return provider.getMacro(macroName, IBuildMacroProvider.CONTEXT_PROJECT, project, true);
 	}
@@ -68,15 +69,16 @@ public class XLCProjectMacroSupplier implements IProjectBuildMacroSupplier {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.macros.IProjectBuildMacroSupplier#getMacros(org.eclipse.cdt.managedbuilder.core.IManagedProject, org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider)
 	 */
+	@Override
 	public IBuildMacro[] getMacros(IManagedProject project,
 			IBuildMacroProvider provider) {
-		
+
 		String macroName = PreferenceConstants.P_XL_COMPILER_ROOT;
-		
+
 		String compilerPath = null;
-		
+
 		// figure out compiler path from properties and preferences
-		
+
 		// search for property first
 		IProject theProject = (IProject) project.getOwner();
 		try {
@@ -86,31 +88,31 @@ public class XLCProjectMacroSupplier implements IProjectBuildMacroSupplier {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		if(compilerPath == null) {
 			// use the workbench preference
 			IPreferenceStore prefStore = XLCUIPlugin.getDefault().getPreferenceStore();
 			compilerPath = prefStore.getString(PreferenceConstants.P_XL_COMPILER_ROOT);
 		}
-		
-		BuildMacro macro = new BuildMacro(macroName, ICdtVariable.VALUE_PATH_DIR, 
+
+		BuildMacro macro = new BuildMacro(macroName, ICdtVariable.VALUE_PATH_DIR,
 				compilerPath);
-		
+
 		// our array consists of our macro, plus all the macros from our parent
 		IBuildMacro[] parentMacros = provider.getMacros(IBuildMacroProvider.CONTEXT_PROJECT, project, true);
-		
+
 		int numMacros = parentMacros.length + 1; // +1 for our macro
-		
+
 		IBuildMacro[] macros = new IBuildMacro[numMacros];
-		
+
 		macros[0] = macro;
-		
+
 		for(int k = 1; k < macros.length; k++) {
 			macros[k] = parentMacros[k-1];
 		}
-		
+
 		return macros;
-		
+
 	}
 
 }

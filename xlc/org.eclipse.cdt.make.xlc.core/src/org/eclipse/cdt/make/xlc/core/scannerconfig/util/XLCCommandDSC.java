@@ -18,14 +18,14 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.Path;
 
 /**
- * Class that represents a XL C/C++ compiler command and related scanner configuration 
+ * Class that represents a XL C/C++ compiler command and related scanner configuration
  */
 public class XLCCommandDSC extends CCommandDSC {
 
 	public XLCCommandDSC(boolean cppFileType) {
 		super(cppFileType);
 	}
-	
+
 	public XLCCommandDSC(boolean cppFileType, IProject project) {
 		super(cppFileType, project);
 	}

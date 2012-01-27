@@ -25,7 +25,7 @@ public class Activator extends Plugin {
 	private static Activator fInstance;
 
 	/**
-	 * 
+	 *
 	 */
 	public Activator() {
 		super();
@@ -33,18 +33,18 @@ public class Activator extends Plugin {
 			fInstance = this;
 		}
 	}
-	
+
 	public static void log(String e) {
 		log(createStatus(e));
 	}
-	
+
 	public static void log(Throwable e) {
 		log("Error", e); //$NON-NLS-1$
 	}
-	
+
 	public static void log(String message, Throwable e) {
 		Throwable nestedException;
-		if (e instanceof CModelException 
+		if (e instanceof CModelException
 				&& (nestedException = ((CModelException)e).getException()) != null) {
 			e = nestedException;
 		}
@@ -58,7 +58,7 @@ public class Activator extends Plugin {
 	public static IStatus createStatus(String msg, Throwable e) {
 		return new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, msg, e);
 	}
-	
+
 	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
 	}

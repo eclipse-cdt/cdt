@@ -24,30 +24,33 @@ public class HiddenOptionApplicabilityCalculator implements
 		IOptionApplicability {
 
 	/**
-	 * This function decides if the option for which this class 
+	 * This function decides if the option for which this class
 	 * is option applicability calculator is enabled or not.
 	 */
+	@Override
 	public boolean isOptionEnabled(IBuildObject configuration,
 			IHoldsOptions holder, IOption option) {
 		return false;
 	}
 
 	/**
-	 * This function decides if the option for which this class 
-	 * is option applicability calculator is used in command line 
+	 * This function decides if the option for which this class
+	 * is option applicability calculator is used in command line
 	 * or not.
 	 */
 
+	@Override
 	public boolean isOptionUsedInCommandLine(IBuildObject configuration,
 			IHoldsOptions holder, IOption option) {
 		return true;
 	}
 
 	/**
-	 * This function decides if the option for which this class 
+	 * This function decides if the option for which this class
 	 * is option applicability calculator is visible or not.
 	 */
 
+	@Override
 	public boolean isOptionVisible(IBuildObject configuration,
 			IHoldsOptions holder, IOption option) {
 

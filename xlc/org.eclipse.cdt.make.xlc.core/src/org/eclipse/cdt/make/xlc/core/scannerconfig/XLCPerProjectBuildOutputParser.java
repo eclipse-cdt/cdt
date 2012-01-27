@@ -31,7 +31,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class XLCPerProjectBuildOutputParser extends
 		AbstractXLCBuildOutputParser {
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.make.xlc.core.scannerconfig.AbstractXLCBuildOutputParser#processCommand(java.lang.String[])
 	 */
@@ -41,7 +41,7 @@ public class XLCPerProjectBuildOutputParser extends
         if (compilerInvocationIdx<0) {
         	return false;
         }
-        
+
         if (compilerInvocationIdx+1 >= tokens.length) {
         	return false;
         }
@@ -102,14 +102,14 @@ public class XLCPerProjectBuildOutputParser extends
         			}
         		}
         	}
-			
+
         	else if (fileName == null) {
         		int extIndex = token.lastIndexOf('.');
         		String extension=null;
-        		
+
         		if(extIndex != -1)
         			extension = token.substring(extIndex);
-        		
+
         		List<String> extensions = getFileExtensionsList();
         		if(extension != null && extensions.contains(extension))
         			fileName = token;
@@ -120,7 +120,7 @@ public class XLCPerProjectBuildOutputParser extends
         	return false;  // return when no file was given (analogous to GCCPerFileBOPConsoleParser)
         }
 
-        IProject project = getProject();   
+        IProject project = getProject();
         IFile file = null;
         List<String> translatedIncludes = includes;
         if (includes.size() > 0) {
@@ -139,7 +139,7 @@ public class XLCPerProjectBuildOutputParser extends
 					line.append(tokens[j]);
 					line.append(' ');
 				}
-        		final String error = MakeMessages.getString("ConsoleParser.Filename_Missing_Error_Message"); //$NON-NLS-1$ 
+        		final String error = MakeMessages.getString("ConsoleParser.Filename_Missing_Error_Message"); //$NON-NLS-1$
         		TraceUtil.outputError(error, line.toString());
         		if (getUtility() != null) {
         			getUtility().generateMarker(getProject(), -1, error + line.toString(), IMarkerGenerator.SEVERITY_WARNING, null);
@@ -175,5 +175,5 @@ public class XLCPerProjectBuildOutputParser extends
 }
 
 
-	
+
 }

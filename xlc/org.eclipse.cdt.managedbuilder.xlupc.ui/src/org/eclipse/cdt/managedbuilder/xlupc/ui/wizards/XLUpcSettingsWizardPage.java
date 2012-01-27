@@ -29,10 +29,12 @@ public class XLUpcSettingsWizardPage extends XLCSettingsWizardPage {
 		pageID = PAGE_ID;
 	}
 
+	@Override
 	public String getName() {
 		return Messages.XLUpcSettingsWizardPage_0;
 	}
 
+	@Override
 	public String getTitle() {
 		return Messages.XLUpcSettingsWizardPage_1;
 	}

@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -37,6 +37,7 @@ public class XLCompilerPropertyPage extends FieldEditorPreferencePage implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
 	 */
+	@Override
 	protected void createFieldEditors() {
 		createPathEditor();
 		createVersionEditor();
@@ -45,7 +46,7 @@ public class XLCompilerPropertyPage extends FieldEditorPreferencePage implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors
 	 * ()
@@ -56,6 +57,7 @@ public class XLCompilerPropertyPage extends FieldEditorPreferencePage implements
 
 		fPathEditor = new DirectoryFieldEditor(PreferenceConstants.P_XL_COMPILER_ROOT,
 				Messages.XLCompilerPropertyPage_0, parent) {
+			@Override
 			protected boolean doCheckState() {
 				// always return true, as we don't want to fail cases when
 				// compiler is installed remotely
@@ -69,6 +71,7 @@ public class XLCompilerPropertyPage extends FieldEditorPreferencePage implements
 				return true;
 			}
 
+			@Override
 			protected boolean checkState() {
 				return doCheckState();
 			}
@@ -147,6 +150,7 @@ public class XLCompilerPropertyPage extends FieldEditorPreferencePage implements
 		originalMessage = getMessage();
 	}
 
+	@Override
 	protected void performDefaults() {
 		// default to whatever is set on the workbench preference
 		IPreferenceStore prefStore = XLCUIPlugin.getDefault().getPreferenceStore();
@@ -168,9 +172,10 @@ public class XLCompilerPropertyPage extends FieldEditorPreferencePage implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		// store the value in the owner text field
 		try {
@@ -200,19 +205,21 @@ public class XLCompilerPropertyPage extends FieldEditorPreferencePage implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IWorkbenchPropertyPage#getElement()
 	 */
+	@Override
 	public IAdaptable getElement() {
 		return element;
 	}
 
 	/**
 	 * Sets the element that owns properties shown on this page.
-	 * 
+	 *
 	 * @param element
 	 *            the element
 	 */
+	@Override
 	public void setElement(IAdaptable element) {
 		this.element = element;
 	}

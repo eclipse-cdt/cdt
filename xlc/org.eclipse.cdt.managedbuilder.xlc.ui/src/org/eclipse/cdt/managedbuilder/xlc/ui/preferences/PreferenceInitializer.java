@@ -11,10 +11,9 @@
 
 package org.eclipse.cdt.managedbuilder.xlc.ui.preferences;
 
+import org.eclipse.cdt.managedbuilder.xlc.ui.XLCUIPlugin;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
-
-import org.eclipse.cdt.managedbuilder.xlc.ui.XLCUIPlugin;
 
 /**
  * Class used to initialize default preference values.
@@ -23,9 +22,10 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
 	 */
+	@Override
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = XLCUIPlugin.getDefault().getPreferenceStore();
 		store.setDefault(PreferenceConstants.P_XL_COMPILER_ROOT, "/usr/vacpp/bin");  //$NON-NLS-1$

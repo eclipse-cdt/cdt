@@ -19,7 +19,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 public class XLCCorePlugin extends AbstractUIPlugin {
 
 	/**
-	 * 
+	 *
 	 */
 	public XLCCorePlugin() {
 		// TODO Auto-generated constructor stub

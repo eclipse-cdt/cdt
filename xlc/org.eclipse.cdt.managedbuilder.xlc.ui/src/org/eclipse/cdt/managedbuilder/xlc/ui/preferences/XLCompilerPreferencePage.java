@@ -11,19 +11,21 @@
 
 package org.eclipse.cdt.managedbuilder.xlc.ui.preferences;
 
-import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.jface.preference.*;
-import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.cdt.managedbuilder.xlc.ui.Messages;
 import org.eclipse.cdt.managedbuilder.xlc.ui.XLCUIPlugin;
+import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.preference.ComboFieldEditor;
+import org.eclipse.jface.preference.DirectoryFieldEditor;
+import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferencePage;
 
 /**
  * This class represents a preference page that
- * is contributed to the Preferences dialog. By 
+ * is contributed to the Preferences dialog. By
  * subclassing <samp>FieldEditorPreferencePage</samp>, we
  * can use the field support built into JFace that allows
- * us to create a page that is small and knows how to 
+ * us to create a page that is small and knows how to
  * save, restore and apply itself.
  * <p>
  * This page is used to modify preferences only. They
@@ -43,18 +45,20 @@ public class XLCompilerPreferencePage
 		setPreferenceStore(XLCUIPlugin.getDefault().getPreferenceStore());
 		setDescription(Messages.XLCompilerPreferencePage_0);
 	}
-	
+
 	/**
 	 * Creates the field editors. Field editors are abstractions of
 	 * the common GUI blocks needed to manipulate various types
 	 * of preferences. Each field editor knows how to save and
 	 * restore itself.
 	 */
+	@Override
 	public void createFieldEditors() {
 
-		DirectoryFieldEditor pathEditor = new DirectoryFieldEditor(PreferenceConstants.P_XL_COMPILER_ROOT, Messages.XLCompilerPreferencePage_1, getFieldEditorParent()) 
+		DirectoryFieldEditor pathEditor = new DirectoryFieldEditor(PreferenceConstants.P_XL_COMPILER_ROOT, Messages.XLCompilerPreferencePage_1, getFieldEditorParent())
 		{
-			protected boolean doCheckState() 
+			@Override
+			protected boolean doCheckState()
 			{
 				// always return true, as we don't want to fail cases when compiler is installed remotely
 				// just warn user
@@ -66,35 +70,37 @@ public class XLCompilerPreferencePage
 				{
 					setMessage(originalMessage);
 				}
-				
+
 				return true;
 			}
 
-			protected boolean checkState() 
+			@Override
+			protected boolean checkState()
 			{
 				return doCheckState();
 			}
-			
+
 		};
 
 		addField(pathEditor);
-		
+
 		String[][] versionEntries = {{PreferenceConstants.P_XL_COMPILER_VERSION_8_NAME, PreferenceConstants.P_XL_COMPILER_VERSION_8},
 									   {PreferenceConstants.P_XL_COMPILER_VERSION_9_NAME, PreferenceConstants.P_XL_COMPILER_VERSION_9},
 									   {PreferenceConstants.P_XL_COMPILER_VERSION_10_NAME, PreferenceConstants.P_XL_COMPILER_VERSION_10},
 									   {PreferenceConstants.P_XL_COMPILER_VERSION_11_NAME, PreferenceConstants.P_XL_COMPILER_VERSION_11}};
-		
+
 		addField(new ComboFieldEditor(PreferenceConstants.P_XLC_COMPILER_VERSION,
 				Messages.XLCompilerPreferencePage_2, versionEntries, getFieldEditorParent()));
-		
+
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
-	public void init(IWorkbench workbench) 
+	@Override
+	public void init(IWorkbench workbench)
 	{
 		originalMessage = getMessage();
 	}
-	
+
 }

@@ -36,7 +36,7 @@ public class XLCPerFileBuildOutputParser extends AbstractXLCBuildOutputParser {
 	@Override
 	protected boolean processCommand(String[] tokens) {
 		try {
-			
+
 		// GCC C/C++ compiler invocation
 		int compilerInvocationIndex = findCompilerInvocation(tokens);
 		if (compilerInvocationIndex < 0) {
@@ -47,7 +47,7 @@ public class XLCPerFileBuildOutputParser extends AbstractXLCBuildOutputParser {
 		int extensionsIndex = -1;
 		boolean found = false;
 		String filePath = null;
-		
+
 		// check for automake format first
 		// e.g. line will start with
 		// source='/some/path/source.cpp'
@@ -63,7 +63,7 @@ public class XLCPerFileBuildOutputParser extends AbstractXLCBuildOutputParser {
 				}
 			}
 		}
-		
+
 		if (!found) {
 			for (int i = compilerInvocationIndex + 1; i < tokens.length; i++) {
 				String token = tokens[i];
@@ -79,7 +79,7 @@ public class XLCPerFileBuildOutputParser extends AbstractXLCBuildOutputParser {
 				}
 			}
 		}
-		
+
 		if (!found) {
 			TraceUtil.outputTrace("Error identifying file name :1", tokens, TraceUtil.EOL); //$NON-NLS-1$
 			return false;
@@ -150,12 +150,12 @@ public class XLCPerFileBuildOutputParser extends AbstractXLCBuildOutputParser {
 //				cmdList.add(cmd);
 				Map<ScannerInfoTypes, List<?>> sc = new HashMap<ScannerInfoTypes, List<?>>();
 //				sc.put(ScannerInfoTypes.COMPILER_COMMAND, cmdList);
-				
-				
+
+
 				// put in empty info for the other types
 				sc.put(ScannerInfoTypes.INCLUDE_PATHS, new LinkedList<String>());
 				sc.put(ScannerInfoTypes.SYMBOL_DEFINITIONS, new LinkedList<String>());
-				
+
 				getCollector().contributeToScannerConfig(getProject(), sc);
 				if (fCollector != null && fCollector instanceof IScannerInfoCollector2) {
 					IScannerInfoCollector2 collector = (IScannerInfoCollector2) fCollector;
@@ -166,12 +166,12 @@ public class XLCPerFileBuildOutputParser extends AbstractXLCBuildOutputParser {
 						Activator.log(e);
 					}
 				}
-				
+
 				*/
 			}
 		}
  		return true;
-		
+
 		}
 		catch(Throwable e) {
 			e.printStackTrace();
@@ -190,7 +190,7 @@ public class XLCPerFileBuildOutputParser extends AbstractXLCBuildOutputParser {
 			int equalsIndex = string.indexOf('=');
 			if(equalsIndex != -1 && equalsIndex < string.length())
 				return string.substring(equalsIndex+1);
-			
+
 		}
 		return null;
 	}

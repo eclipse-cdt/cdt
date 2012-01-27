@@ -14,15 +14,15 @@ package org.eclipse.cdt.managedbuilder.xlupc.ui;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	
+
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.managedbuilder.xlupc.ui.messages"; //$NON-NLS-1$
-	
+
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}
 
 	private Messages() {}
-	
+
 	public static String UpcProjectWizard_0;
 	public static String UpcProjectWizard_1;
 	public static String XLUpcSettingsWizardPage_0;

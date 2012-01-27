@@ -13,11 +13,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.launch.remote.launching;
 
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
+import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
+import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate;
@@ -178,6 +181,19 @@ public class RemoteGdbLaunchDelegate extends GdbLaunchDelegate {
 							if (remoteShellProcess != null) {
 								remoteShellProcess.destroy();
 							}
+
+							// Need to shutdown the DSF launch session because it is
+							// partially started already.
+							try {
+								l.getSession().getExecutor().execute(new DsfRunnable() {
+									public void run() {
+				                        l.shutdownSession(new ImmediateRequestMonitor());
+									}
+								});
+							} catch (RejectedExecutionException e) {
+								// Session disposed.
+							}
+
 							RSEHelper.abort(Messages.RemoteGdbLaunchDelegate_gdbserverFailedToStartErrorMessage, null,
 									ICDTLaunchConfigurationConstants.ERR_DEBUGGER_NOT_INSTALLED);
 						}

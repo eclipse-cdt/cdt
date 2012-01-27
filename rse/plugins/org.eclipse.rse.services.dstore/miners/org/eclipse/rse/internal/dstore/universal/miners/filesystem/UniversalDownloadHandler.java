@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  * Contributors:
  * Xuan Chen (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
  * Noriaki Takatsu (IBM)  - [220126] [dstore][api][breaking] Single process server for multiple clients
+ * David McKnight  (IBM)  - [dstore] cancelable threads not removed fast enough from Hashmap, resulting in OOM
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
@@ -24,6 +25,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
 
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
@@ -62,8 +64,29 @@ public class UniversalDownloadHandler extends SecuredThread implements ICancella
 	{
 		super.run();
 		
-		handleDownload(_cmdElement, _status);
+		handleDownload(_cmdElement, _status);				
 		_isDone = true;
+		removeFromCancellableList();
+	}
+	
+	private void removeFromCancellableList(){
+		Class clazz = _miner.getClass();
+
+		try {
+			Method[] methods = clazz.getDeclaredMethods();
+			for (int i = 0; i < methods.length; i++){
+				Method method = methods[i];
+				if (method.getName().equals("updateCancellableThreads")){ //$NON-NLS-1$
+					method.setAccessible(true);					
+					Object[] args = { _status.getParent(), this };					
+					method.invoke(_miner, args);
+					return;
+				}
+			}
+			
+		} catch (Exception e) {
+			_dataStore.trace(e);
+		}
 	}
 	
 	public boolean isDone()

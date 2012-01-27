@@ -82,6 +82,9 @@
             isCategory="true"
             location="resources/templateengine/AddFile.xml"
             projectType="org.eclipse.cdt.core.tests.projectType">
+         <parentCategory
+               id="org.eclipse.cdt.core.tests.coreTests">
+         </parentCategory>
       </template>
       <template
             id="org.eclipse.cdt.core.tests.templates.AddFiles"
@@ -90,38 +93,68 @@
             projectType="org.eclipse.cdt.core.tests.projectType">
          <toolChain id="org.eclipse.cdt.core.tests.toolChain1"/>
          <toolChain id="org.eclipse.cdt.core.tests.toolChain2"/>
+         <parentCategory
+               id="org.eclipse.cdt.core.tests.coreTests">
+         </parentCategory>
       </template>
       <template
             id="org.eclipse.cdt.core.tests.templates.AddLink"
             filterPattern=".*AddLink"
             location="resources/templateengine/AddLink.xml"
             projectType="org.eclipse.cdt.core.tests.projectType">
+         <parentCategory
+               id="org.eclipse.cdt.core.tests.coreTests">
+         </parentCategory>
       </template>
       <template
-            id="org.eclipse.cdt.core.tests.templates.Append"
             filterPattern=".*Append"
+            id="org.eclipse.cdt.core.tests.templates.Append"
             location="resources/templateengine/Append.xml"
-            projectType="org.eclipse.cdt.core.tests.projectType"/>
+            projectType="org.eclipse.cdt.core.tests.projectType">
+         <parentCategory
+               id="org.eclipse.cdt.core.tests.coreTests">
+         </parentCategory>
+      </template>
       <template
-            id="org.eclipse.cdt.core.tests.templates.AppendCreate"
             filterPattern=".*AppendCreate"
+            id="org.eclipse.cdt.core.tests.templates.AppendCreate"
             location="resources/templateengine/AppendCreate.xml"
-            projectType="org.eclipse.cdt.core.tests.projectType"/>
+            projectType="org.eclipse.cdt.core.tests.projectType">
+         <parentCategory
+               id="org.eclipse.cdt.core.tests.coreTests">
+         </parentCategory>
+      </template>
       <template
-            id="org.eclipse.cdt.core.tests.templates.Copy"
             filterPattern=".*Copy"
+            id="org.eclipse.cdt.core.tests.templates.Copy"
             location="resources/templateengine/Copy.xml"
-            projectType="org.eclipse.cdt.core.tests.projectType"/>
+            projectType="org.eclipse.cdt.core.tests.projectType">
+         <parentCategory
+               id="org.eclipse.cdt.core.tests.coreTests">
+         </parentCategory>
+      </template>
       <template
-            id="org.eclipse.cdt.core.tests.templates.CreateResourceIdentifier"
             filterPattern=".*CreateResourceIdentifier"
+            id="org.eclipse.cdt.core.tests.templates.CreateResourceIdentifier"
             location="resources/templateengine/CreateResourceIdentifier.xml"
-            projectType="org.eclipse.cdt.core.tests.projectType"/>
+            projectType="org.eclipse.cdt.core.tests.projectType">
+         <parentCategory
+               id="org.eclipse.cdt.core.tests.coreTests">
+         </parentCategory>
+      </template>
       <template
-            id="org.eclipse.cdt.core.tests.templates.CreateSourceFolder"
             filterPattern=".*CreateSourceFolder"
+            id="org.eclipse.cdt.core.tests.templates.CreateSourceFolder"
             location="resources/templateengine/CreateSourceFolder.xml"
-            projectType="org.eclipse.cdt.core.tests.projectType"/>
+            projectType="org.eclipse.cdt.core.tests.projectType">
+         <parentCategory
+               id="org.eclipse.cdt.core.tests.coreTests">
+         </parentCategory>
+      </template>
+      <category
+            id="org.eclipse.cdt.core.tests.coreTests"
+            label="Core Tests">
+      </category>
    </extension>
    <extension
          point="org.eclipse.cdt.core.templateAssociations">

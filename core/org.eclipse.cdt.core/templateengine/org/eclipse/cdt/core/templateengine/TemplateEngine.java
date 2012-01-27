@@ -53,13 +53,15 @@ public class TemplateEngine {
 	/**
 	 * This is a Map <WizardID, TemplateInfo>.
 	 */
-	private Map<String, List<TemplateInfo>> templateInfoMap;
+	private Map<String, List<TemplateInfo>> templateInfoMap = new LinkedHashMap<String, List<TemplateInfo>>();
+	
+	Map<String, TemplateCategory> categoryMap = new HashMap<String, TemplateCategory>();
+	
 
 	/**
 	 * TemplateEngine constructor, create and initialise SharedDefaults.
 	 */
-	private TemplateEngine() {
-		templateInfoMap = new LinkedHashMap<String, List<TemplateInfo>>();
+	TemplateEngine() {
 		initializeTemplateInfoMap();
 	}
 
@@ -190,7 +192,7 @@ public class TemplateEngine {
 	 */
 	public static TemplateEngine getDefault() {
 		if(TEMPLATE_ENGINE==null) {
-			TEMPLATE_ENGINE = new TemplateEngine();
+			TEMPLATE_ENGINE = new TemplateEngine2();
 		}
 		return TEMPLATE_ENGINE;
 	}
@@ -201,48 +203,62 @@ public class TemplateEngine {
 	 * extension point "templates"
 	 */
 	private void initializeTemplateInfoMap() {
-		String templateId = null;
-		String location = null;
-		String pluginId = null;
-		String projectType = null;
-		String filterPattern = null;
-		boolean isCategory = false;
-		
 		IExtension[] extensions = Platform.getExtensionRegistry().getExtensionPoint(TEMPLATES_EXTENSION_ID).getExtensions();
 		for(int i=0; i<extensions.length; i++) {
 			IExtension extension = extensions[i];
 			IConfigurationElement[] configElements = extension.getConfigurationElements();
-			pluginId = extension.getNamespaceIdentifier(); // Plug-in id of the extending plug-in.
+			String pluginId = extension.getNamespaceIdentifier(); // Plug-in id of the extending plug-in.
 			for(int j=0; j<configElements.length; j++) {
-				Object /*IPagesAfterTemplateSelectionProvider*/ extraPagesProvider = null;
 				IConfigurationElement config = configElements[j];
-				templateId = config.getAttribute(TemplateEngineHelper.ID);
-				location = config.getAttribute(TemplateEngineHelper.LOCATION);
-				projectType = config.getAttribute(TemplateEngineHelper.PROJECT_TYPE);
-				filterPattern = config.getAttribute(TemplateEngineHelper.FILTER_PATTERN);
-				isCategory = Boolean.valueOf(config.getAttribute(TemplateEngineHelper.IS_CATEGORY)).booleanValue();
-				String providerAttribute = config.getAttribute(TemplateEngineHelper.EXTRA_PAGES_PROVIDER);
-				if (providerAttribute != null) {
-					try {
-						extraPagesProvider = config.createExecutableExtension(TemplateEngineHelper.EXTRA_PAGES_PROVIDER);
-					} catch (CoreException e) {
-						CCorePlugin.log(CCorePlugin.createStatus("Unable to create extra pages for "+providerAttribute,e)); //$NON-NLS-1$
-					}				
-				}
+				String configName = config.getName();
+				if (configName.equals("template")) { //$NON-NLS-1$
+					Object /*IPagesAfterTemplateSelectionProvider*/ extraPagesProvider = null;
+					String templateId = config.getAttribute(TemplateEngineHelper.ID);
+					String location = config.getAttribute(TemplateEngineHelper.LOCATION);
+					String projectType = config.getAttribute(TemplateEngineHelper.PROJECT_TYPE);
+					if (projectType == null || projectType.isEmpty())
+						projectType = TemplateEngine2.NEW_TEMPLATE;
+					String filterPattern = config.getAttribute(TemplateEngineHelper.FILTER_PATTERN);
+					boolean isCategory = Boolean.valueOf(config.getAttribute(TemplateEngineHelper.IS_CATEGORY)).booleanValue();
+					String providerAttribute = config.getAttribute(TemplateEngineHelper.EXTRA_PAGES_PROVIDER);
+					if (providerAttribute != null) {
+						try {
+							extraPagesProvider = config.createExecutableExtension(TemplateEngineHelper.EXTRA_PAGES_PROVIDER);
+						} catch (CoreException e) {
+							CCorePlugin.log(CCorePlugin.createStatus("Unable to create extra pages for "+providerAttribute,e)); //$NON-NLS-1$
+						}				
+					}
+	
+					IConfigurationElement[] toolChainConfigs = config.getChildren(TemplateEngineHelper.TOOL_CHAIN);
+					Set<String> toolChainIdSet = new LinkedHashSet<String>();
+					for (IConfigurationElement toolChainConfig : toolChainConfigs)
+						toolChainIdSet.add(toolChainConfig.getAttribute(TemplateEngineHelper.ID));
+					
+					IConfigurationElement[] parentCategoryConfigs = config.getChildren("parentCategory"); //$NON-NLS-1$
+					List<String> parentCategoryIds = new ArrayList<String>();
+					for (IConfigurationElement parentCategoryConfig : parentCategoryConfigs)
+						parentCategoryIds.add(parentCategoryConfig.getAttribute("id")); //$NON-NLS-1$
+					
+					TemplateInfo templateInfo = new TemplateInfo2(templateId, projectType, filterPattern, location, 
+																  pluginId, toolChainIdSet,
+															      extraPagesProvider, isCategory, parentCategoryIds);
+					if (!templateInfoMap.containsKey(projectType)) {
+						templateInfoMap.put(projectType, new ArrayList<TemplateInfo>());
+					}
+					(templateInfoMap.get(projectType)).add(templateInfo);
+				} else if (configName.equals("category"))  { //$NON-NLS-1$
+					String id = config.getAttribute("id"); //$NON-NLS-1$
+					if (!id.contains(".")) //$NON-NLS-1$
+						id = pluginId + "." + id; //$NON-NLS-1$
+					String label = config.getAttribute("label"); //$NON-NLS-1$
+					
+					IConfigurationElement[] parentCategoryConfigs = config.getChildren("parentCategory"); //$NON-NLS-1$
+					List<String> parentCategoryIds = new ArrayList<String>();
+					for (IConfigurationElement parentCategoryConfig : parentCategoryConfigs)
+						parentCategoryIds.add(parentCategoryConfig.getAttribute("id")); //$NON-NLS-1$
 
-				IConfigurationElement[] toolChainConfigs = config.getChildren(TemplateEngineHelper.TOOL_CHAIN);
-				Set<String> toolChainIdSet = new LinkedHashSet<String>();
-				for (int k=0; k < toolChainConfigs.length; k++) {
-					toolChainIdSet.add(toolChainConfigs[k].getAttribute(TemplateEngineHelper.ID));
+					categoryMap.put(id, new TemplateCategory(id, label, parentCategoryIds));
 				}
-				
-				TemplateInfo templateInfo = new TemplateInfo(templateId, projectType, filterPattern, location, 
-														pluginId, toolChainIdSet,
-														extraPagesProvider, isCategory);
-				if (!templateInfoMap.containsKey(projectType)) {
-					templateInfoMap.put(projectType, new ArrayList<TemplateInfo>());
-				}
-				(templateInfoMap.get(projectType)).add(templateInfo);
 			}
 		}
 		// Check for tool Chains added to the templates outside template info definition

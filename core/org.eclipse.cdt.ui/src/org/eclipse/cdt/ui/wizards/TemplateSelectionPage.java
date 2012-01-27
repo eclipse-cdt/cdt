@@ -11,22 +11,77 @@
 
 package org.eclipse.cdt.ui.wizards;
 
+import java.util.LinkedList;
+import java.util.List;
+
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.List;
 
+import org.eclipse.cdt.core.templateengine.TemplateCategory;
+import org.eclipse.cdt.core.templateengine.TemplateEngine2;
+import org.eclipse.cdt.core.templateengine.TemplateInfo2;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.templateengine.Template;
 import org.eclipse.cdt.ui.templateengine.TemplateEngineUI;
 
 /**
- * @author Dad
+ * @author Doug Schaefer
  * @since 5.4
  */
 public class TemplateSelectionPage extends WizardPage {
 
+	private static class Node {
+		private final Object object;
+		private final Node parent;
+		private final List<Node> children = new LinkedList<Node>();
+		
+		public Node(Node parent, Object object) {
+			this.parent = parent;
+			this.object = object;
+			
+			if (parent != null)
+				parent.addChild(this);
+		}
+
+		private void addChild(Node child) {
+			children.add(child);
+		}
+		
+		public Node getChild(Object child) {
+			for (Node childNode : children)
+				if (childNode.getObject().equals(child))
+					return childNode;
+			return null;
+		}
+		
+		public Object getObject() {
+			return object;
+		}
+		
+		public Node getParent() {
+			return parent;
+		}
+		
+		public List<Node> getChildren() {
+			return children;
+		}
+	}
+	
+	private final Node tree = new Node(null, null);
+	private final TemplateEngine2 coreEngine = TemplateEngine2.getDefault();
+	private final TemplateEngineUI uiEngine = TemplateEngineUI.getDefault();
+	
 	public TemplateSelectionPage() {
 		super("templateSelection"); //$NON-NLS-1$
 	}
@@ -36,13 +91,82 @@ public class TemplateSelectionPage extends WizardPage {
 		Composite comp = new Composite(parent, SWT.NONE);
 		comp.setLayout(new GridLayout(1, false));
 		
-		List templateList = new List(comp, SWT.BORDER);
-		templateList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		
-		Template[] templates = TemplateEngineUI.getDefault().getTemplates();
-		for (Template template : templates) {
-			templateList.add(template.getLabel());
-		}
+		TreeViewer templateTree = new TreeViewer(comp);
+		templateTree.getTree().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		templateTree.setContentProvider(new ITreeContentProvider() {
+			@Override
+			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			}
+			
+			@Override
+			public void dispose() {
+			}
+			
+			@Override
+			public boolean hasChildren(Object element) {
+				if (element instanceof Node)
+					return !((Node)element).getChildren().isEmpty();
+				return false;
+			}
+			
+			@Override
+			public Object getParent(Object element) {
+				if (element instanceof Node)
+					return ((Node)element).getParent();
+				return null;
+			}
+			
+			@Override
+			public Object[] getElements(Object inputElement) {
+				if (inputElement instanceof Node)
+					return ((Node)inputElement).getChildren().toArray();
+				return null;
+			}
+			
+			@Override
+			public Object[] getChildren(Object parentElement) {
+				if (parentElement instanceof Node)
+					return ((Node)parentElement).getChildren().toArray();
+				return null;
+			}
+		});
+		templateTree.setLabelProvider(new ILabelProvider() {
+			@Override
+			public void removeListener(ILabelProviderListener listener) {
+			}
+			
+			@Override
+			public boolean isLabelProperty(Object element, String property) {
+				return false;
+			}
+			
+			@Override
+			public void dispose() {
+			}
+			
+			@Override
+			public void addListener(ILabelProviderListener listener) {
+			}
+			
+			@Override
+			public String getText(Object element) {
+				if (element instanceof Node) {
+					Object object = ((Node)element).getObject();
+					if (object instanceof TemplateCategory)
+						return ((TemplateCategory)object).getLabel();
+					else if (object instanceof Template)
+						return ((Template)object).getLabel();
+				}
+				return element.toString();
+			}
+			
+			@Override
+			public Image getImage(Object element) {
+				return null;
+			}
+		});
+		buildTree();
+		templateTree.setInput(tree);
 		
 		setControl(comp);
 	}
@@ -50,6 +174,70 @@ public class TemplateSelectionPage extends WizardPage {
 	@Override
 	public boolean isPageComplete() {
 		return true;
+	}
+	
+	private void buildTree() {
+		Template[] templates = uiEngine.getTemplates();
+		for (Template template : templates) {
+			List<String> parentCategoryIds = ((TemplateInfo2)template.getTemplateInfo()).getParentCategoryIds();
+			boolean inTree = false;
+			if (!parentCategoryIds.isEmpty()) {
+				for (String parentCategoryId : parentCategoryIds) {
+					List<Node> parents = getParents(parentCategoryId);
+					if (!parents.isEmpty()) {
+						for (Node parent : parents)
+							new Node(parent, template);
+						inTree = true;
+					}
+				}
+			}
+			
+			if (!inTree) {
+				// no parents
+				new Node(tree, template);
+			}
+		}
+	}
+	
+	private List<Node> getParents(String parentCategoryId) {
+		List<Node> nodes = new LinkedList<Node>();
+		
+		TemplateCategory category = coreEngine.getCategory(parentCategoryId);
+		if (category == null) {
+			// undefined, log it
+			CUIPlugin.log(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, "Undefined parent category " + parentCategoryId)); //$NON-NLS-1$
+			return nodes;
+		}
+		
+		// Hook me up to my parents
+		List<String> parentCategoryIds = category.getParentCategoryIds();
+		boolean inTree = false;
+		if (!parentCategoryIds.isEmpty()) {
+			for (String myParentId : parentCategoryIds) {
+				List<Node> parents = getParents(myParentId);
+				if (!parents.isEmpty()) {
+					for (Node parent : parents) {
+						Node node = parent.getChild(category);
+						if (node == null)
+							nodes.add(new Node(parent, category));
+						else
+							nodes.add(node);
+					}
+					inTree = true;
+				}
+			}
+		}
+		
+		if (!inTree) {
+			// parents not found, I'm an orphan
+			Node node = tree.getChild(category);
+			if (node == null)
+				nodes.add(new Node(tree, category));
+			else
+				nodes.add(node);
+		}
+
+		return nodes;
 	}
 	
 }

@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.cdt.core">
+<schema targetNamespace="org.eclipse.cdt.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.cdt.core" id="templates" name="Template Extension point"/>
@@ -12,14 +12,17 @@
 
    <element name="extension">
       <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
          <documentation>
             Extension point added to Template Engine plugin. Any plugin, which intends to contribute XML templates to the Template Engine must extend this extension point, and add the template element.
-
          </documentation>
       </annotation>
       <complexType>
          <sequence>
             <element ref="template" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="category" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -57,6 +60,7 @@
       <complexType>
          <sequence>
             <element ref="toolChain" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="parentCategory" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -75,7 +79,7 @@
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="projectType" type="string" use="required">
+         <attribute name="projectType" type="string">
             <annotation>
                <documentation>
                   This attribute is a project type id referring to the cdt project type that the template will be associated with. Project types are contributed to the org.eclipse.cdt.managedbuilder.core.buildDefinitions extension-point.
@@ -86,6 +90,7 @@ This attribute is mandatory. CDT pre-defines the following values of the build a
 &lt;li&gt;&quot;org.eclipse.cdt.build.core.buildArtefactType.sharedLib&quot; - to represent shared library 
 &lt;li&gt;ISVs can define their own custom build artifact values by contributing to the org.eclipse.cdt.managedbuilder.core.buildProperties extension point. 
 &lt;/ul&gt;
+It&apos;s no longer manditory since templates are no longer organized by project type. Template catogories replace that functionality.
                </documentation>
             </annotation>
          </attribute>
@@ -133,6 +138,54 @@ This attribute is mandatory. CDT pre-defines the following values of the build a
       </complexType>
    </element>
 
+   <element name="category">
+      <annotation>
+         <documentation>
+            Used to arrange templates in a hierarchy in the UI.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="parentCategory" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="label" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="parentCategory">
+      <annotation>
+         <documentation>
+            id of parent category.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+
    <annotation>
       <appInfo>
          <meta.section type="since"/>
@@ -161,15 +214,6 @@ This attribute is mandatory. CDT pre-defines the following values of the build a
 &lt;/pre&gt;            
 
 For more details on how to define your own templates, please check examples provided under &lt;samp&gt;org.eclipse.cdt.ui.templateengine&lt;/samp&gt;
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         
       </documentation>
    </annotation>
 

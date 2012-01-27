@@ -113,12 +113,22 @@
             location="resources/projectTemplates/testExtraPages/template.xml"
             pagesAfterTemplateSelectionProvider="org.eclipse.cdt.ui.tests.templateengine.TestExtraPagesProvider"
             projectType="org.eclipse.cdt.build.core.buildArtefactType.exe">
+         <parentCategory
+               id="org.eclipse.cdt.ui.tests.uiTests">
+         </parentCategory>
       </template>
       <template
             id="org.eclipse.cdt.ui.tests.testWidgets"
             location="resources/projectTemplates/testWidgets/template.xml"
             projectType="org.eclipse.cdt.build.core.buildArtefactType.exe">
+         <parentCategory
+               id="org.eclipse.cdt.ui.tests.uiTests">
+         </parentCategory>
       </template>
+      <category
+            id="org.eclipse.cdt.ui.tests.uiTests"
+            label="UI Tests">
+      </category>
    </extension>
    
    

@@ -27,6 +27,8 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -39,9 +41,13 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IObjectActionDelegate;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.ide.IDE;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
@@ -61,9 +67,11 @@ import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModelUtil;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -78,6 +86,7 @@ import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.indexer.ProjectIndexerInputAdapter;
 
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
 
 @SuppressWarnings("nls")
 public class CreateParserLogAction implements IObjectActionDelegate {
@@ -143,6 +152,16 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 		if (!(fSelection instanceof IStructuredSelection))
 			return;
 
+		List<IWorkingCopy> workingCopies = new ArrayList<IWorkingCopy>();
+		final IWorkbenchPage activePage = fSite.getWorkbenchWindow().getActivePage();
+		for (IEditorReference eref : activePage.getEditorReferences()) {
+			IEditorPart editor = eref.getEditor(false);
+			if (editor instanceof CEditor) {
+				ICElement inputElement = ((CEditor) editor).getInputCElement();
+				if (inputElement instanceof IWorkingCopy)
+					workingCopies.add((IWorkingCopy) inputElement);
+			}
+		}
 		final String title= action.getText().replace("&", "");
 		IStructuredSelection cElements= SelectionConverter.convertSelectionToCElements(fSelection);
 		Iterator<?> i= cElements.iterator();
@@ -150,7 +169,7 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 		while (i.hasNext()) {
 			Object o= i.next();
 			if (o instanceof ITranslationUnit) {
-				tuSelection.add((ITranslationUnit) o);
+				tuSelection.add(convertToWorkingCopy((ITranslationUnit) o, workingCopies));
 			}
 		}
 		ITranslationUnit[] tuArray= tuSelection.toArray(new ITranslationUnit[tuSelection.size()]);
@@ -197,9 +216,22 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 			finally {
 				out.close();
 			}
+			try {
+				IDE.openEditorOnFileStore(activePage, EFS.getStore(URIUtil.toURI(path)));
+			} catch (Exception e) {
+			}
 		} catch (IOException e) {
 			MessageDialog.openError(fSite.getShell(), action.getText(), e.getMessage());
 		}
+		
+	}
+
+	private ITranslationUnit convertToWorkingCopy(ITranslationUnit tu, List<IWorkingCopy> workingCopies) {
+		for (IWorkingCopy wc : workingCopies) {
+			if (tu.equals(wc.getOriginalElement())) 
+				return wc;
+		}
+		return tu;
 	}
 
 	private void createLog(final PrintStream out, final ITranslationUnit tu, IProgressMonitor pm) {
@@ -265,7 +297,10 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 			IIndexFile[] versions= index.getFiles(IndexLocationFactory.getIFL(tu));
 			out.println("Versions in Index:     " + versions.length);
 			for (IIndexFile f : versions) {
-				out.println(INDENT + getLinkageName(f.getLinkageID()) + ": " + f.getSignificantMacros());
+				int[] count= countNames(f);
+				out.println(INDENT + getLinkageName(f.getLinkageID()) + ": " 
+				+ f.getSignificantMacros() + "; " + count[0] + " macros, "
+				+ count[1] + " includes, " + count[2] + " names;");
 			}
 		} catch (CoreException e) {
 			status= e.getStatus();
@@ -293,6 +328,17 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 		output(out, "Exceptions in name resolution:", visitor.fExceptions);
 		out.println("Written on " + new Date().toString());
 		return status;
+	}
+
+	private int[] countNames(IIndexFile f) {
+		int[] result= {0,0,0};
+		try {
+			result[0]= f.getMacros().length;
+			result[1]= f.getIncludes().length;
+			result[2]= f.findNames(0, Integer.MAX_VALUE).length;
+		} catch (CoreException e) {
+		}
+		return result;
 	}
 
 	private String getLinkageName(int linkageID) {

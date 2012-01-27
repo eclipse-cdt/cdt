@@ -23,4 +23,11 @@ public class GDBRemoteTracepointsTest_7_4 extends GDBRemoteTracepointsTest_7_3 {
 	public static void beforeClassMethod_7_4() {
 		setGdbProgramNamesLaunchAttributes(ITestConstants.SUFFIX_GDB_7_4);		
 	}
+	
+	@Override
+	protected boolean acceptsFastTpOnFourBytes() {
+		// With GDB 7.4, fast tracepoints only need an
+		// instruction of 4 bytes or more, instead of 5.
+		return true;
+	}
 }

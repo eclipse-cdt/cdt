@@ -131,44 +131,44 @@ public class RemoteGdbLaunchDelegate extends GdbLaunchDelegate {
 					}
 				});
 
-			try {
-				remoteShellProcess = new HostShellProcessAdapter(remoteShell) {
+				try {
+					remoteShellProcess = new HostShellProcessAdapter(remoteShell) {
 
-					@Override
-					public synchronized void destroy() {
-						final DsfSession session = l.getSession();
-						if (session != null) {
-					        try {
-					            session.getExecutor().execute(new DsfRunnable() {
-					                public void run() {
-										DsfServicesTracker tracker = new DsfServicesTracker(
-												Activator.getBundleContext(),
-												session.getId());
-										IGDBControl control = tracker
-												.getService(IGDBControl.class);
-										if (control != null) {
-											control.terminate(new ImmediateRequestMonitor());
+						@Override
+						public synchronized void destroy() {
+							final DsfSession session = l.getSession();
+							if (session != null) {
+								try {
+									session.getExecutor().execute(new DsfRunnable() {
+										public void run() {
+											DsfServicesTracker tracker = new DsfServicesTracker(
+													Activator.getBundleContext(),
+													session.getId());
+											IGDBControl control = tracker
+													.getService(IGDBControl.class);
+											if (control != null) {
+												control.terminate(new ImmediateRequestMonitor());
+											}
+											tracker.dispose();
 										}
-										tracker.dispose();
-					                }
-					            });
-					        } catch (RejectedExecutionException e) {
-					            // Session disposed.
-					        }
+									});
+								} catch (RejectedExecutionException e) {
+									// Session disposed.
+								}
+							}
+							super.destroy();
 						}
-						super.destroy();
+					};
+				} catch (Exception e) {
+					if (remoteShellProcess != null) {
+						remoteShellProcess.destroy();
 					}
-				};
-			} catch (Exception e) {
-				if (remoteShellProcess != null) {
-					remoteShellProcess.destroy();
+					RSEHelper.abort(Messages.RemoteRunLaunchDelegate_7, e,
+							ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 				}
-				RSEHelper.abort(Messages.RemoteRunLaunchDelegate_7, e,
-						ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
-			}
 
-			IProcess iProcess = DebugPlugin.newProcess(launch, remoteShellProcess,
-					Messages.RemoteRunLaunchDelegate_RemoteShell);
+				IProcess iProcess = DebugPlugin.newProcess(launch, remoteShellProcess,
+						Messages.RemoteRunLaunchDelegate_RemoteShell);
 
 				// Now wait until gdbserver is up and running on the remote host
 				synchronized (lock) {
@@ -188,30 +188,30 @@ public class RemoteGdbLaunchDelegate extends GdbLaunchDelegate {
 					}
 				}
 
-			// 3. Let debugger know how gdbserver was started on the remote
-			ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
-			wc.setAttribute(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP,
-					true);
-			wc.setAttribute(IGDBLaunchConfigurationConstants.ATTR_HOST,
-					RSEHelper.getRemoteHostname(config));
-			wc.setAttribute(IGDBLaunchConfigurationConstants.ATTR_PORT,
-					gdbserverPortNumber);
-			wc.doSave();
+				// 3. Let debugger know how gdbserver was started on the remote
+				ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
+				wc.setAttribute(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP,
+						true);
+				wc.setAttribute(IGDBLaunchConfigurationConstants.ATTR_HOST,
+						RSEHelper.getRemoteHostname(config));
+				wc.setAttribute(IGDBLaunchConfigurationConstants.ATTR_PORT,
+						gdbserverPortNumber);
+				wc.doSave();
 
-		}
-		try{
-			super.launch(config, mode, launch, monitor);
-		} catch(CoreException ex) {
-			//launch failed, need to kill gdbserver
-			if (remoteShellProcess != null) {
-				remoteShellProcess.destroy();
 			}
-			
-			//report failure further	
-			throw ex;
-		} finally {
-			monitor.done();
-		}
+			try{
+				super.launch(config, mode, launch, monitor);
+			} catch(CoreException ex) {
+				//launch failed, need to kill gdbserver
+				if (remoteShellProcess != null) {
+					remoteShellProcess.destroy();
+				}
+
+				//report failure further	
+				throw ex;
+			} finally {
+				monitor.done();
+			}
 		}
 	}
 

@@ -156,46 +156,46 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 						final Object lock = new Object();
 						if (remoteShell != null) {
 							remoteShell
-									.addOutputListener(new IHostShellOutputListener() {
+							.addOutputListener(new IHostShellOutputListener() {
 
-										public void shellOutputChanged(
-												IHostShellChangeEvent event) {
-											for (IHostOutput line : event
-													.getLines()) {
-												if (line.getString().contains(
-														"Listening on port")) { //$NON-NLS-1$
-													synchronized (lock) {
-														gdbServerReady[0] = true;
-														lock.notifyAll();
-													}
-													break;
-												}
+								public void shellOutputChanged(
+										IHostShellChangeEvent event) {
+									for (IHostOutput line : event
+											.getLines()) {
+										if (line.getString().contains(
+												"Listening on port")) { //$NON-NLS-1$
+											synchronized (lock) {
+												gdbServerReady[0] = true;
+												lock.notifyAll();
 											}
-										}
-									});
-
-						try {
-							remoteShellProcess = new HostShellProcessAdapter(remoteShell) {
-
-								@Override
-								public synchronized void destroy() {
-									ICDISession session = getSession();
-									if (session != null) {
-										try {
-											session.terminate();
-										} catch (CDIException e) {
+											break;
 										}
 									}
-									super.destroy();
 								}
-							};
-						} catch (Exception e) {
-							if (remoteShellProcess != null) {
-								remoteShellProcess.destroy();
+							});
+
+							try {
+								remoteShellProcess = new HostShellProcessAdapter(remoteShell) {
+
+									@Override
+									public synchronized void destroy() {
+										ICDISession session = getSession();
+										if (session != null) {
+											try {
+												session.terminate();
+											} catch (CDIException e) {
+											}
+										}
+										super.destroy();
+									}
+								};
+							} catch (Exception e) {
+								if (remoteShellProcess != null) {
+									remoteShellProcess.destroy();
+								}
+								RSEHelper.abort(Messages.RemoteRunLaunchDelegate_7, e,
+										ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 							}
-							RSEHelper.abort(Messages.RemoteRunLaunchDelegate_7, e,
-									ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
-						}
 							IProcess rsProcess = DebugPlugin
 									.newProcess(
 											launch,
@@ -218,62 +218,62 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 								}
 							}
 
-						// Pre-set configuration constants for the
-						// GDBSERVERCDIDebugger to indicate how the gdbserver
-						// was automatically started on the remote.
-						// GDBServerCDIDebugger uses these to figure out how
-						// to connect to the remote gdbserver.
-						ILaunchConfigurationWorkingCopy wc = config
-								.getWorkingCopy();
-						wc
-								.setAttribute(
-										IGDBServerMILaunchConfigurationConstants.ATTR_REMOTE_TCP,
-										true);
-						wc
-								.setAttribute(
-										IGDBServerMILaunchConfigurationConstants.ATTR_HOST,
-										RSEHelper.getRemoteHostname(config));
-						wc
-								.setAttribute(
-										IGDBServerMILaunchConfigurationConstants.ATTR_PORT,
-										gdbserver_port_number);
-						wc.doSave();
-
-						// Default to using the GDBServerCDIDebugger.
-						GDBServerCDIDebugger2 debugger = new GDBServerCDIDebugger2();
-						dsession = ((ICDIDebugger2) debugger).createSession(
-								launch, exePath.toFile(),
-								new SubProgressMonitor(monitor, 15));
-
-						boolean stopInMain = config
-								.getAttribute(
-										ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN,
-										false);
-						String stopSymbol = null;
-						if (stopInMain)
-							stopSymbol = launch
-									.getLaunchConfiguration()
-									.getAttribute(
-											ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL,
-											ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT);
-
-						ICDITarget[] targets = dsession.getTargets();
-						for (int i = 0; i < targets.length; i++) {
-							Process process = targets[i].getProcess();
-							IProcess iprocess = null;
-							if (process != null) {
-								iprocess = DebugPlugin.newProcess(launch,
-										process, renderProcessLabel(exePath
-												.toOSString()),
-										getDefaultProcessMap());
-							}
-							CDIDebugModel.newDebugTarget(launch, project
-									.getProject(),
-									targets[i],
-									renderProcessLabel("gdbserver debugger"), //$NON-NLS-1$
-									iprocess, exeFile, true, false, stopSymbol,
+							// Pre-set configuration constants for the
+							// GDBSERVERCDIDebugger to indicate how the gdbserver
+							// was automatically started on the remote.
+							// GDBServerCDIDebugger uses these to figure out how
+							// to connect to the remote gdbserver.
+							ILaunchConfigurationWorkingCopy wc = config
+									.getWorkingCopy();
+							wc
+							.setAttribute(
+									IGDBServerMILaunchConfigurationConstants.ATTR_REMOTE_TCP,
 									true);
-						}
+							wc
+							.setAttribute(
+									IGDBServerMILaunchConfigurationConstants.ATTR_HOST,
+									RSEHelper.getRemoteHostname(config));
+							wc
+							.setAttribute(
+									IGDBServerMILaunchConfigurationConstants.ATTR_PORT,
+									gdbserver_port_number);
+							wc.doSave();
+
+							// Default to using the GDBServerCDIDebugger.
+							GDBServerCDIDebugger2 debugger = new GDBServerCDIDebugger2();
+							dsession = ((ICDIDebugger2) debugger).createSession(
+									launch, exePath.toFile(),
+									new SubProgressMonitor(monitor, 15));
+
+							boolean stopInMain = config
+									.getAttribute(
+											ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN,
+											false);
+							String stopSymbol = null;
+							if (stopInMain)
+								stopSymbol = launch
+								.getLaunchConfiguration()
+								.getAttribute(
+										ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL,
+										ICDTLaunchConfigurationConstants.DEBUGGER_STOP_AT_MAIN_SYMBOL_DEFAULT);
+
+							ICDITarget[] targets = dsession.getTargets();
+							for (int i = 0; i < targets.length; i++) {
+								Process process = targets[i].getProcess();
+								IProcess iprocess = null;
+								if (process != null) {
+									iprocess = DebugPlugin.newProcess(launch,
+											process, renderProcessLabel(exePath
+													.toOSString()),
+													getDefaultProcessMap());
+								}
+								CDIDebugModel.newDebugTarget(launch, project
+										.getProject(),
+										targets[i],
+										renderProcessLabel("gdbserver debugger"), //$NON-NLS-1$
+										iprocess, exeFile, true, false, stopSymbol,
+										true);
+							}
 						}
 					} catch (CoreException e) {
 						try {

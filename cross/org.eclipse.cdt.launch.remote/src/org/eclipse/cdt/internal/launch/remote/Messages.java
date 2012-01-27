@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  * Anna Dushistova       (MontaVista) - [244173][remotecdt][nls] Externalize Strings in RemoteRunLaunchDelegate
  * Anna Dushistova       (MontaVista) - [181517][usability] Specify commands to be run before remote application launch
  * Nikita Shulga      (EmbeddedAlley) - [265236][remotecdt] Wait for RSE to initialize before querying it for host list
+ * Anna Dushistova       (MontaVista) - [368597][remote debug] if gdbserver fails to launch on target, launch doesn't get terminated
  *******************************************************************************/
 package org.eclipse.cdt.internal.launch.remote;
 
@@ -44,6 +45,8 @@ public class Messages extends NLS {
 	public static String RemoteCMainTab_Properties_title;
 	public static String RemoteCMainTab_Properties_Location;
 	public static String RemoteCMainTab_Properties_Skip_default;
+
+	public static String RemoteGdbLaunchDelegate_gdbserverFailedToStartErrorMessage;
 
 	public static String RemoteRunLaunchDelegate_0;
 

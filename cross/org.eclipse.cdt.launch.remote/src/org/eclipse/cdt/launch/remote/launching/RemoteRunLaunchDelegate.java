@@ -19,6 +19,7 @@
  * Anna Dushistova  (Mentor Graphics) - [314659]Fixed deprecated methods
  * Anna Dushistova  (Mentor Graphics) - moved to org.eclipse.cdt.launch.remote.launching
  * Anna Dushistova  (MontaVista)      - [318051][remote debug] Terminating when "Remote shell" process is selected doesn't work
+ * Anna Dushistova  (MontaVista)      - [368597][remote debug] if gdbserver fails to launch on target, launch doesn't get terminated
  *******************************************************************************/
 
 package org.eclipse.cdt.launch.remote.launching;
@@ -55,11 +56,15 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.services.shells.HostShellProcessAdapter;
+import org.eclipse.rse.services.shells.IHostOutput;
 import org.eclipse.rse.services.shells.IHostShell;
+import org.eclipse.rse.services.shells.IHostShellChangeEvent;
+import org.eclipse.rse.services.shells.IHostShellOutputListener;
 
 public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 
 	private ICDISession dsession;
+	private boolean gdbserverReady;
 
 	/*
 	 * (non-Javadoc)
@@ -141,7 +146,28 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 							RSEHelper.abort(e1.getMessage(), e1,
 									ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 						}
-						
+
+						final Object lock = new Object();
+						if (remoteShell != null) {
+							remoteShell
+									.addOutputListener(new IHostShellOutputListener() {
+
+										public void shellOutputChanged(
+												IHostShellChangeEvent event) {
+											for (IHostOutput line : event
+													.getLines()) {
+												if (line.getString().contains(
+														"Listening on port")) { //$NON-NLS-1$
+													synchronized (lock) {
+														setGdbserverReady(true);
+														lock.notifyAll();
+													}
+													break;
+												}
+											}
+										}
+									});
+
 						try {
 							remoteShellProcess = new HostShellProcessAdapter(remoteShell) {
 
@@ -164,8 +190,28 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 							RSEHelper.abort(Messages.RemoteRunLaunchDelegate_7, e,
 									ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 						}
-						DebugPlugin.newProcess(launch, remoteShellProcess,
-								Messages.RemoteRunLaunchDelegate_RemoteShell);
+							IProcess rsProcess = DebugPlugin
+									.newProcess(
+											launch,
+											remoteShellProcess,
+											Messages.RemoteRunLaunchDelegate_RemoteShell);
+
+							// Now wait until gdbserver is up and running on the
+							// remote host
+							synchronized (lock) {
+								while (!isGdbserverReady()) {
+									if (monitor.isCanceled()
+											|| rsProcess.isTerminated()) {
+										abort(Messages.RemoteGdbLaunchDelegate_gdbserverFailedToStartErrorMessage,
+												null,
+												ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+									}
+									try {
+										lock.wait(300);
+									} catch (InterruptedException e) {
+									}
+								}
+							}
 
 						// Pre-set configuration constants for the
 						// GDBSERVERCDIDebugger to indicate how the gdbserver
@@ -223,6 +269,7 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 									iprocess, exeFile, true, false, stopSymbol,
 									true);
 						}
+						}
 					} catch (CoreException e) {
 						try {
 							if (dsession != null)
@@ -276,4 +323,13 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 	ICDISession getSession(){
 		return dsession;
 	}
+	
+	protected boolean isGdbserverReady() {
+		return gdbserverReady;
+	}
+
+	protected void setGdbserverReady(boolean gdbserverReady) {
+		this.gdbserverReady = gdbserverReady;
+	}
+
 }

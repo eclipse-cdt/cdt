@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
-import org.eclipse.cdt.core.settings.model.CMacroEntry;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.
@@ -22,14 +22,14 @@ public class ExpSymbolTab extends AbstractExportTab {
 	// isWsp is ignored for symbols
 	@Override
 	public ICLanguageSettingEntry doAdd(String s1, String s2, boolean isWsp) {
-		return new CMacroEntry(s1, s2, 0);
+		return CDataUtil.createCMacroEntry(s1, s2, 0);
 	}
 
 	@Override
 	public ICLanguageSettingEntry doEdit(String s1, String s2, boolean isWsp) {
 		return doAdd(s1, s2, isWsp);
 	}
-	
+
 	@Override
 	public int getKind() { return ICSettingEntry.MACRO; }
 	@Override

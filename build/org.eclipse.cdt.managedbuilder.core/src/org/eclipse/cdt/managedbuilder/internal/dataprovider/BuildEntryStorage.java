@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
-import org.eclipse.cdt.core.settings.model.CMacroEntry;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingPathEntry;
 import org.eclipse.cdt.core.settings.model.ICLibraryFileEntry;
@@ -221,8 +220,8 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 	}
 
 	/**
-	 * Return user entries (level 0) 
-	 * 
+	 * Return user entries (level 0)
+	 *
 	 * The UserEntryInfo[] is an array of all user entries from all the options
 	 * applicable to the language setting entry kind.
 	 * @param emptyValuesInfos list to which unresolved entries are added
@@ -302,7 +301,7 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 	}
 
 	/**
-	 * Makes non-absolute paths relative to the build directory 
+	 * Makes non-absolute paths relative to the build directory
 	 */
 	private PathInfo fromBuildToProj(PathInfo info) {
 		if (info.isAbsolute())
@@ -397,7 +396,7 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 
 		if (kind == ICSettingEntry.MACRO) {
 			String nv[] = macroNameValueFromValue(optionValue.getValue());
-			return new CMacroEntry(nv[0], nv[1], flags);
+			return CDataUtil.createCMacroEntry(nv[0], nv[1], flags);
 		}
 
 		IPath srcPath = null, srcRootPath = null, srcPrefixMapping = null;
@@ -659,7 +658,7 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 	 * This method iterates over the passed in UserEntryInfo[].  The point of it is
 	 * to collapse entries which are contained in a given UserEntry's sequence into a single
 	 * UserEntryInfo.
-	 * 
+	 *
 	 * FIXME: As far as I can see info.fSequense only ever has a single entry in it...
 	 * 		see UserEntryInfo constructor => this method doesn't accomplish anything useful
 	 */

@@ -40,11 +40,6 @@ import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.ISourceEntry;
 import org.eclipse.cdt.core.resources.IPathEntryVariableManager;
 import org.eclipse.cdt.core.settings.model.CExternalSetting;
-import org.eclipse.cdt.core.settings.model.CIncludeFileEntry;
-import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
-import org.eclipse.cdt.core.settings.model.CLibraryFileEntry;
-import org.eclipse.cdt.core.settings.model.CMacroEntry;
-import org.eclipse.cdt.core.settings.model.CMacroFileEntry;
 import org.eclipse.cdt.core.settings.model.COutputEntry;
 import org.eclipse.cdt.core.settings.model.CSourceEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -301,25 +296,28 @@ public class PathEntryTranslator {
 	}
 
 	private static ICLanguageSettingEntry createLangEntry(ResolvedEntry entry) {
-		PathEntryValueInfo value = entry.getResolvedValue();
+		PathEntryValueInfo pathEntryValue = entry.getResolvedValue();
+		String name = pathEntryValue.getName();
+
 		int flags = ICSettingEntry.RESOLVED;
 		if (entry.isReadOnly())
 			flags |= ICSettingEntry.READONLY;
 		if (entry.isBuiltIn())
 			flags |= ICSettingEntry.BUILTIN;
 
-		switch (entry.fEntry.getEntryKind()) {
-			case IPathEntry.CDT_LIBRARY:{
-				ILibraryEntry libEntry = (ILibraryEntry)entry.fEntry;
-				IPath path = value.getFullPath();
-				if (path != null) {
-					flags |= ICSettingEntry.VALUE_WORKSPACE_PATH;
-				} else {
-					path = value.getLocation();
-				}
+		IPath path = pathEntryValue.getFullPath();
+		if (path != null) {
+			flags |= ICSettingEntry.VALUE_WORKSPACE_PATH;
+		} else {
+			path = pathEntryValue.getLocation();
+		}
 
+		int kind = entry.fEntry.getEntryKind();
+		switch (kind) {
+			case IPathEntry.CDT_LIBRARY:{
 				if (path != null) {
-					return new CLibraryFileEntry(value.getName(), flags,
+					ILibraryEntry libEntry = (ILibraryEntry)entry.fEntry;
+					return (ICLanguageSettingEntry) CDataUtil.createEntry(ICSettingEntry.LIBRARY_FILE, name, null, null, flags,
 							libEntry.getSourceAttachmentPath(),
 							libEntry.getSourceAttachmentRootPath(),
 							libEntry.getSourceAttachmentPrefixMapping());
@@ -331,52 +329,30 @@ public class PathEntryTranslator {
 //			case IPathEntry.CDT_SOURCE:
 //				return INDEX_CDT_SOURCE;
 			case IPathEntry.CDT_INCLUDE:{
-				IPath path = value.getFullPath();
 				if (path != null) {
-					flags |= ICSettingEntry.VALUE_WORKSPACE_PATH;
-				} else {
-					path = value.getLocation();
-				}
-
-				if (path != null) {
-					return new CIncludePathEntry(value.getName(), flags);
+					return CDataUtil.createCIncludePathEntry(name, flags);
 				}
 				break;
 			}
 //			case IPathEntry.CDT_CONTAINER:
 //				return INDEX_CDT_CONTAINER;
 			case IPathEntry.CDT_MACRO:
-				String name = value.getName();
 				if (name.length() != 0) {
-					String mValue = value.getValue();
-					return new CMacroEntry(name, mValue, flags);
+					String value = pathEntryValue.getValue();
+					return CDataUtil.createCMacroEntry(name, value, flags);
 				}
 				break;
 //			case IPathEntry.CDT_OUTPUT:
 //				return INDEX_CDT_OUTPUT;
 			case IPathEntry.CDT_INCLUDE_FILE:{
-				IPath path = value.getFullPath();
 				if (path != null) {
-					flags |= ICSettingEntry.VALUE_WORKSPACE_PATH;
-				} else {
-					path = value.getLocation();
-				}
-
-				if (path != null) {
-					return new CIncludeFileEntry(value.getName(), flags);
+					return CDataUtil.createCIncludeFileEntry(name, flags);
 				}
 				break;
 			}
 			case IPathEntry.CDT_MACRO_FILE:{
-				IPath path = value.getFullPath();
 				if (path != null) {
-					flags |= ICSettingEntry.VALUE_WORKSPACE_PATH;
-				} else {
-					path = value.getLocation();
-				}
-
-				if (path != null) {
-					return new CMacroFileEntry(value.getName(), flags);
+					return CDataUtil.createCMacroFileEntry(name, flags);
 				}
 				break;
 			}

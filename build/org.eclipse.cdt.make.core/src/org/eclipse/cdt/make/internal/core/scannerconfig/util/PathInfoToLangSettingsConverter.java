@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.eclipse.cdt.core.settings.model.CMacroEntry;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICMacroEntry;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
@@ -31,14 +30,14 @@ public class PathInfoToLangSettingsConverter {
 		return ICLanguageSettingEntry.INCLUDE_PATH
 			| ICLanguageSettingEntry.MACRO;
 	}
-	
+
 	public static int getSupportedEntryKinds(IPerFileDiscoveredPathInfo info){
 		return ICLanguageSettingEntry.INCLUDE_FILE
 			| ICLanguageSettingEntry.INCLUDE_PATH
 			| ICLanguageSettingEntry.MACRO
 			| ICLanguageSettingEntry.MACRO_FILE;
 	}
-	
+
 	public static ICLanguageSettingEntry[] entriesForKind(int kind, int flags, PathInfo info){
 		switch (kind) {
 		case ICLanguageSettingEntry.INCLUDE_PATH:
@@ -73,7 +72,7 @@ public class PathInfoToLangSettingsConverter {
 		}
 		return entries;
 	}
-	
+
 	private static ICMacroEntry[] calculateEntries(int flags, Map<String, String> map){
 		ICMacroEntry entries[] = new ICMacroEntry[map.size()];
 		int num = 0;
@@ -81,7 +80,7 @@ public class PathInfoToLangSettingsConverter {
 		for (Entry<String, String> entry : entrySet) {
 			String name = entry.getKey();
 			String value = entry.getValue();
-			entries[num++] = new CMacroEntry(name, value, flags);
+			entries[num++] = CDataUtil.createCMacroEntry(name, value, flags);
 		}
 		return entries;
 	}

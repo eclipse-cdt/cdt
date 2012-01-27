@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo;
@@ -196,7 +197,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 				// if we didn't find the path, add it
 				if(!symbolFound) {
 					entriesChanged = true;
-					CMacroEntry newEntry = new CMacroEntry(symbol, discSymbols.get(symbol), ICSettingEntry.BUILTIN | ICSettingEntry.READONLY | ICSettingEntry.RESOLVED);
+					CMacroEntry newEntry = CDataUtil.createCMacroEntry(symbol, discSymbols.get(symbol), ICSettingEntry.BUILTIN | ICSettingEntry.READONLY | ICSettingEntry.RESOLVED);
 					newEntries.add(newEntry);
 				}
 			}
@@ -216,7 +217,6 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 				newEntries.add(entry);
 			}
 
-
 			boolean entriesChanged = false;
 
 			// look for settings corresponding to each path we discovered
@@ -234,7 +234,7 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 				// if we didn't find the path, add it
 				if(!pathFound) {
 					entriesChanged = true;
-					CIncludePathEntry newEntry = new CIncludePathEntry(path, ICSettingEntry.BUILTIN | ICSettingEntry.READONLY | ICSettingEntry.RESOLVED);
+					CIncludePathEntry newEntry = CDataUtil.createCIncludePathEntry(path.toString(), ICSettingEntry.BUILTIN | ICSettingEntry.READONLY | ICSettingEntry.RESOLVED);
 					newEntries.add(newEntry);
 				}
 			}

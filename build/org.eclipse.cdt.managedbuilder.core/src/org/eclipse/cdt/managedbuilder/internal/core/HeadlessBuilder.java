@@ -33,11 +33,9 @@ import java.util.regex.PatternSyntaxException;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.resources.ACBuilder;
-import org.eclipse.cdt.core.settings.model.CIncludeFileEntry;
-import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
-import org.eclipse.cdt.core.settings.model.CMacroEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -611,11 +609,11 @@ public class HeadlessBuilder implements IApplication {
 						macroVal = macro.substring(macro.indexOf('=') + 1);
 						macro = macro.substring(0, macro.indexOf('='));
 					}
-					HeadlessBuilderExternalSettingsProvider.additionalSettings.add(new CMacroEntry(macro, macroVal, 0));
+					HeadlessBuilderExternalSettingsProvider.additionalSettings.add(CDataUtil.createCMacroEntry(macro, macroVal, 0));
 				} else if ("-I".equals(args[i])) { //$NON-NLS-1$
-					HeadlessBuilderExternalSettingsProvider.additionalSettings.add(new CIncludePathEntry(args[++i], 0));
+					HeadlessBuilderExternalSettingsProvider.additionalSettings.add(CDataUtil.createCIncludePathEntry(args[++i], 0));
 				} else if ("-include".equals(args[i])) { //$NON-NLS-1$
-					HeadlessBuilderExternalSettingsProvider.additionalSettings.add(new CIncludeFileEntry(args[++i], 0));
+					HeadlessBuilderExternalSettingsProvider.additionalSettings.add(CDataUtil.createCIncludeFileEntry(args[++i], 0));
 				} else if ("-E".equals(args[i])) { //$NON-NLS-1$
 					addEnvironmentVariable(args[++i], IEnvironmentVariable.ENVVAR_REPLACE);
 				} else if ("-Ea".equals(args[i])) { //$NON-NLS-1$

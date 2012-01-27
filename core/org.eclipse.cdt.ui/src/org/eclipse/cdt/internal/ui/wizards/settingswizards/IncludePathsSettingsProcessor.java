@@ -19,28 +19,28 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
-import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
 import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 
 /**
  * A settings processor that imports and exports include paths.
- * 
+ *
  * @author Mike Kucera
  * @since 5.1
- * 
+ *
  */
-public class IncludePathsSettingsProcessor extends SettingsProcessor {	
+public class IncludePathsSettingsProcessor extends SettingsProcessor {
 
 	private static final String SECTION_NAME = "org.eclipse.cdt.internal.ui.wizards.settingswizards.IncludePaths"; //$NON-NLS-1$
 	private static final String INCLUDE_PATH_ELEMENT = "includepath"; //$NON-NLS-1$
 	private static final String WORKSPACE_PATH_ATTR = "workspace_path"; //$NON-NLS-1$
-	
-	
+
+
 	@Override
 	public Image getIcon() {
 		return CUIPlugin.getImageDescriptorRegistry().get(CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_INCLUDES_FOLDER));
@@ -50,7 +50,7 @@ public class IncludePathsSettingsProcessor extends SettingsProcessor {
 	public String getDisplayName() {
 		return Messages.ProjectSettingsWizardPage_Processor_Includes;
 	}
-	
+
 	@Override
 	public String getSectionName() {
 		return SECTION_NAME;
@@ -60,11 +60,11 @@ public class IncludePathsSettingsProcessor extends SettingsProcessor {
 	protected int getSettingsType() {
 		return ICSettingEntry.INCLUDE_PATH;
 	}
-	
+
 	@Override
 	protected void writeSettings(ContentHandler content, ICLanguageSettingEntry setting) throws SettingsImportExportException {
 		char[] value = setting.getValue().toCharArray();
-		
+
 		try {
 			AttributesImpl attrib = null;
 			if( (setting.getFlags() & ICSettingEntry.VALUE_WORKSPACE_PATH) > 0 ) {
@@ -75,17 +75,17 @@ public class IncludePathsSettingsProcessor extends SettingsProcessor {
 			content.characters(value, 0, value.length);
 			content.endElement(NONE, NONE, INCLUDE_PATH_ELEMENT);
 			newline(content);
-			
+
 		} catch (SAXException e) {
 			throw new SettingsImportExportException(e);
 		}
 	}
 
-	
+
 	@Override
 	protected void readSettings(ICLanguageSetting setting, Element language) throws SettingsImportExportException {
 		List<ICLanguageSettingEntry> includes = new ArrayList<ICLanguageSettingEntry>();
-		
+
 		List<Element> includeNodes = XMLUtils.extractChildElements(language, INCLUDE_PATH_ELEMENT);
 		for(Element includeElement : includeNodes) {
 			String include = includeElement.getTextContent();
@@ -93,13 +93,13 @@ public class IncludePathsSettingsProcessor extends SettingsProcessor {
 			if(include != null && include.length() > 0) {
 				if( includeElement.getAttribute(WORKSPACE_PATH_ATTR).equalsIgnoreCase(Boolean.TRUE.toString()) )
 					flags |= ICSettingEntry.VALUE_WORKSPACE_PATH;
-				includes.add(new CIncludePathEntry(include, flags));
+				includes.add(CDataUtil.createCIncludePathEntry(include, flags));
 			}
 		}
 
 		if(includes.isEmpty())
 			return;
-		
+
 		// need to do this or existing settings will disappear
 		includes.addAll(setting.getSettingEntriesList(ICSettingEntry.INCLUDE_PATH));
 		setting.setSettingEntries(ICSettingEntry.INCLUDE_PATH, includes);

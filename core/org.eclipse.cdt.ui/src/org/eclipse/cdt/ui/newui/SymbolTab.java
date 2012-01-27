@@ -20,9 +20,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableColumn;
 
 import org.eclipse.cdt.core.model.util.CDTListComparator;
-import org.eclipse.cdt.core.settings.model.CMacroEntry;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 
 import org.eclipse.cdt.internal.ui.newui.Messages;
 
@@ -33,18 +33,18 @@ public class SymbolTab extends AbstractLangsListTab {
     @Override
 	public void additionalTableSet() {
     	TableColumn tc = new TableColumn(table, SWT.LEFT);
-    	tc.setText(Messages.SymbolTab_0); 
+    	tc.setText(Messages.SymbolTab_0);
     	tc.setWidth(80);
-    	tc.setToolTipText(Messages.SymbolTab_0); 
+    	tc.setToolTipText(Messages.SymbolTab_0);
     	tc = new TableColumn(table, SWT.LEFT);
-    	tc.setText(Messages.SymbolTab_1); 
+    	tc.setText(Messages.SymbolTab_1);
     	tc.setWidth(130);
-    	tc.setToolTipText(Messages.SymbolTab_1); 
+    	tc.setToolTipText(Messages.SymbolTab_1);
     	table.getAccessible().addAccessibleListener(
-				new AccessibleAdapter() {                       
+				new AccessibleAdapter() {
                     @Override
 					public void getName(AccessibleEvent e) {
-                            e.result = Messages.SymbolTab_0; 
+                            e.result = Messages.SymbolTab_0;
                     }
                 }
 		  );
@@ -54,11 +54,11 @@ public class SymbolTab extends AbstractLangsListTab {
 	public ICLanguageSettingEntry doAdd() {
 		SymbolDialog dlg = new SymbolDialog(
 				usercomp.getShell(), true,
-				Messages.SymbolTab_2, EMPTY_STR, EMPTY_STR, getResDesc()); 
+				Messages.SymbolTab_2, EMPTY_STR, EMPTY_STR, getResDesc());
 		if (dlg.open() && dlg.text1.trim().length() > 0 ) {
 			toAllCfgs = dlg.check1;
 			toAllLang = dlg.check3;
-			return new CMacroEntry(dlg.text1, dlg.text2, 0);
+			return CDataUtil.createCMacroEntry(dlg.text1, dlg.text2, 0);
 		}
 		return null;
 	}
@@ -67,16 +67,16 @@ public class SymbolTab extends AbstractLangsListTab {
 	public ICLanguageSettingEntry doEdit(ICLanguageSettingEntry ent) {
 		SymbolDialog dlg = new SymbolDialog(
 				usercomp.getShell(), false,
-				Messages.SymbolTab_3, ent.getName(),  
+				Messages.SymbolTab_3, ent.getName(),
 				ent.getValue(), getResDesc());
 		if (dlg.open())
-			return new CMacroEntry(dlg.text1, dlg.text2, 0);
+			return CDataUtil.createCMacroEntry(dlg.text1, dlg.text2, 0);
 		return null;
 	}
-	
+
 	@Override
-	public int getKind() { 
-		return ICSettingEntry.MACRO; 
+	public int getKind() {
+		return ICSettingEntry.MACRO;
 	}
 
 	// Specific version of "update()" for Symbols tab only
@@ -84,21 +84,21 @@ public class SymbolTab extends AbstractLangsListTab {
 	public void update() {
 		if (lang != null) {
 			int x = table.getSelectionIndex();
-			if (x == -1) 
+			if (x == -1)
 				x = 0;
 			shownEntries = getIncs();
 			Collections.sort(shownEntries, CDTListComparator.getInstance());
 			tv.setInput(shownEntries.toArray(new Object[shownEntries.size()]));
 			if (table.getItemCount() > x)
 				table.setSelection(x);
-			else if (table.getItemCount() > 0) 
+			else if (table.getItemCount() > 0)
 				table.setSelection(0);
-		}		
+		}
 		updateStringListModeControl();
 		updateButtons();
 	}
-	
-	
+
+
 	@Override
 	public void createControls(final Composite parent) {
 		super.createControls(parent);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Intel Corporation and others.
+ * Copyright (c) 2007, 2012 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,6 +57,7 @@ import org.eclipse.cdt.core.settings.model.extension.CResourceData;
 import org.eclipse.cdt.core.settings.model.extension.CTargetPlatformData;
 import org.eclipse.cdt.core.settings.model.extension.impl.CDataFactory;
 import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultLanguageData;
+import org.eclipse.cdt.internal.core.parser.util.WeakHashSet;
 import org.eclipse.cdt.internal.core.settings.model.ExceptionFactory;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
@@ -75,6 +76,18 @@ public class CDataUtil {
 
 	private static Random randomNumber;
 	public static final String[] EMPTY_STRING_ARRAY = new String[0];
+
+	/**
+	 * Pool of setting entries implemented as WeakHashSet. That allows to gain memory savings
+	 * at the expense of CPU time. WeakHashSet handles garbage collection when a list is not
+	 * referenced anywhere else. See JavaDoc {@link java.lang.ref.WeakReference} about weak reference objects.
+	 */
+	private static WeakHashSet<ICSettingEntry> settingEntriesPool = new WeakHashSet<ICSettingEntry>() {
+		@Override
+		public synchronized ICSettingEntry add(ICSettingEntry entry) {
+			return super.add(entry);
+		}
+	};
 
 	public static int genRandomNumber(){
 		if (randomNumber == null) {
@@ -262,12 +275,39 @@ public class CDataUtil {
 		return path;
 	}
 
-	public static ICLanguageSettingEntry createEntry(ICLanguageSettingEntry entry, int flagsToAdd, int flafsToClear){
+	/**
+	 * Return entry cached in setting entries pool to optimize for memory usage.
+	 * Note that the pool will handle garbage collection for unreferenced entries.
+	 *
+	 * @since 5.4
+	 */
+	public static ICSettingEntry getPooledEntry(ICSettingEntry entry) {
+		return settingEntriesPool.add(entry);
+	}
+
+	/**
+	 * Convenience method to clone {@link ICLanguageSettingEntry} with modified flags.
+	 * Note that this method keeps the entries in the pool to avoid proliferation of duplicates.
+	 *
+	 * @param entry - source entry.
+	 * @param flagsToAdd - binary combination of bits to add to the flags.
+	 * @param flafsToClear -  binary combination of bits to clear in the flags.
+	 * @return new entry with the modified flags.
+	 */
+	public static ICLanguageSettingEntry createEntry(ICLanguageSettingEntry entry, int flagsToAdd, int flafsToClear) {
 		return createEntry(entry, (entry.getFlags() | flagsToAdd) & (~flafsToClear));
 	}
 
-	public static ICLanguageSettingEntry createEntry(ICLanguageSettingEntry entry, int flags){
-		switch (entry.getKind()){
+	/**
+	 * Convenience method to clone {@link ICLanguageSettingEntry} with different flags.
+	 * Note that this method keeps the entries in the pool to avoid proliferation of duplicates.
+	 *
+	 * @param entry - source entry.
+	 * @param flags - new flags.
+	 * @return new entry with the specified flags.
+	 */
+	public static ICLanguageSettingEntry createEntry(ICLanguageSettingEntry entry, int flags) {
+		switch (entry.getKind()) {
 		case ICSettingEntry.INCLUDE_PATH:
 			entry = new CIncludePathEntry(entry.getName(), flags);
 			break;
@@ -293,34 +333,94 @@ public class CDataUtil {
 					);
 			break;
 		}
-		return entry;
+		return (ICLanguageSettingEntry) getPooledEntry(entry);
 	}
 
-	public static ICSettingEntry createEntry(int kind, String name, String value, IPath[] exclusionPatterns, int flags){
+	/**
+	 * Convenience method to create {@link ICLanguageSettingEntry} depending on kind.
+	 * Note that this method keeps the entries in the pool to avoid proliferation of duplicates.
+	 *
+	 * Note that the method always returns {@link ICLanguageSettingEntry}.
+	 */
+	public static ICSettingEntry createEntry(int kind, String name, String value, IPath[] exclusionPatterns, int flags) {
 		return createEntry(kind, name, value, exclusionPatterns, flags, null, null, null);
 	}
 
-
-	public static ICSettingEntry createEntry(int kind, String name, String value, IPath[] exclusionPatterns, int flags, IPath srcPath, IPath srcRootPath, IPath srcPrefixMapping){
+	/**
+	 * Convenience method to create {@link ICSettingEntry} depending on kind.
+	 * Note that this method keeps the entries in the pool to avoid proliferation of duplicates.
+	 */
+	public static ICSettingEntry createEntry(int kind, String name, String value, IPath[] exclusionPatterns, int flags, IPath sourceAttachmentPath, IPath sourceAttachmentRootPath, IPath sourceAttachmentPrefixMapping) {
+		ICSettingEntry entry = null;
 		switch (kind){
-		case ICSettingEntry.INCLUDE_PATH:
-			return new CIncludePathEntry(name, flags);
-		case ICSettingEntry.MACRO:
-			return new CMacroEntry(name, value, flags);
-		case ICSettingEntry.INCLUDE_FILE:
-			return new CIncludeFileEntry(name, flags);
-		case ICSettingEntry.MACRO_FILE:
-			return new CMacroFileEntry(name, flags);
-		case ICSettingEntry.LIBRARY_PATH:
-			return new CLibraryPathEntry(name, flags);
-		case ICSettingEntry.LIBRARY_FILE:
-			return new CLibraryFileEntry(name, flags, srcPath, srcRootPath, srcPrefixMapping);
-		case ICSettingEntry.OUTPUT_PATH:
-			return new COutputEntry(name, exclusionPatterns, flags);
-		case ICSettingEntry.SOURCE_PATH:
-			return new CSourceEntry(name, exclusionPatterns, flags);
+		case ICLanguageSettingEntry.INCLUDE_PATH:
+			entry = new CIncludePathEntry(name, flags);
+			break;
+		case ICLanguageSettingEntry.MACRO:
+			entry = new CMacroEntry(name, value, flags);
+			break;
+		case ICLanguageSettingEntry.INCLUDE_FILE:
+			entry = new CIncludeFileEntry(name, flags);
+			break;
+		case ICLanguageSettingEntry.MACRO_FILE:
+			entry = new CMacroFileEntry(name, flags);
+			break;
+		case ICLanguageSettingEntry.LIBRARY_PATH:
+			entry = new CLibraryPathEntry(name, flags);
+			break;
+		case ICLanguageSettingEntry.LIBRARY_FILE:
+			entry = new CLibraryFileEntry(name, flags, sourceAttachmentPath, sourceAttachmentRootPath, sourceAttachmentPrefixMapping);
+			break;
+		case ICLanguageSettingEntry.OUTPUT_PATH:
+			entry = new COutputEntry(name, exclusionPatterns, flags);
+			break;
+		case ICLanguageSettingEntry.SOURCE_PATH:
+			entry = new CSourceEntry(name, exclusionPatterns, flags);
+			break;
+		default:
+			throw new IllegalArgumentException();
 		}
-		throw new IllegalArgumentException();
+		return getPooledEntry(entry);
+	}
+
+	/**
+	 * Utility method to create {@link CIncludePathEntry}.
+	 * Note that this method keeps the entries in the pool to avoid proliferation of duplicates.
+	 *
+	 * @since 5.4
+	 */
+	public static CIncludePathEntry createCIncludePathEntry(String name, int flags) {
+		return (CIncludePathEntry) getPooledEntry(new CIncludePathEntry(name, flags));
+	}
+
+	/**
+	 * Utility method to create {@link CIncludeFileEntry}.
+	 * Note that this method keeps the entries in the pool to avoid proliferation of duplicates.
+	 *
+	 * @since 5.4
+	 */
+	public static CIncludeFileEntry createCIncludeFileEntry(String name, int flags) {
+		return (CIncludeFileEntry) getPooledEntry(new CIncludeFileEntry(name, flags));
+	}
+
+	/**
+	 * Utility method to create {@link CMacroEntry}.
+	 * Note that this method keeps the entries in the pool to avoid proliferation of duplicates.
+	 *
+	 * @since 5.4
+	 */
+	public static CMacroEntry createCMacroEntry(String name, String value, int flags) {
+		return (CMacroEntry) getPooledEntry(new CMacroEntry(name, value, flags));
+	}
+
+	/**
+	 * Utility method to create {@link CMacroFileEntry}.
+	 * Note that this method keeps the entries in the pool to avoid proliferation of duplicates.
+	 *
+	 * @since 5.4
+	 */
+	public static CMacroFileEntry createCMacroFileEntry(String name, int flags) {
+		return (CMacroFileEntry) getPooledEntry(new CMacroFileEntry(name, flags));
 	}
 
 	public static String[] getSourceExtensions(IProject project, CLanguageData data) {

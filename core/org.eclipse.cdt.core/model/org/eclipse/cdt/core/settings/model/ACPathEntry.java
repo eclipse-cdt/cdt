@@ -20,6 +20,13 @@ public abstract class ACPathEntry extends ACSettingEntry implements ICPathEntry 
 //	IPath fLocation;
 //	private IPath fPath;
 
+	/**
+	 * Constructor.
+	 *
+	 * @param rc - a resource in the workspace.
+	 * @param flags - bitwise combination of {@link ICSettingEntry} flags.
+	 *    If {@link #VALUE_WORKSPACE_PATH} is missing it will be supplied.
+	 */
 	ACPathEntry(IResource rc, int flags) {
 		super(rc.getFullPath().toString(), flags | RESOLVED | VALUE_WORKSPACE_PATH);
 //		fFullPath = rc.getFullPath();
@@ -33,10 +40,25 @@ public abstract class ACPathEntry extends ACSettingEntry implements ICPathEntry 
 		fFullPath = fullPath;
 	}
 */
-	ACPathEntry(String value, int flags) {
-		super(value, flags);
+
+	/**
+	 * Constructor.
+	 *
+	 * @param name - resource path. The path can be an absolute location on the local file-system
+	 *    or with flag {@link #VALUE_WORKSPACE_PATH} it is treated as workspace full path.
+	 * @param flags - bitwise combination of {@link ICSettingEntry} flags.
+	 */
+	ACPathEntry(String name, int flags) {
+		super(name, flags);
 	}
 
+	/**
+	 * Constructor.
+	 *
+	 * @param path - resource path. The path can be an absolute location on the local
+	 *    file-system or with flag {@link #VALUE_WORKSPACE_PATH} it is treated as workspace full path.
+	 * @param flags - bitwise combination of {@link ICSettingEntry} flags.
+	 */
 	ACPathEntry(IPath path, int flags) {
 		super(path.toString(), flags /*| RESOLVED*/);
 //		fPath = path;

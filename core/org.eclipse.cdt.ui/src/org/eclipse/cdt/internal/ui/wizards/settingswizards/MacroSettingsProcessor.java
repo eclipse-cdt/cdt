@@ -22,29 +22,29 @@ import org.w3c.dom.Text;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
-import org.eclipse.cdt.core.settings.model.CMacroEntry;
 import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * A settings processor that imports and exports symbols.
- * 
+ *
  * @author Mike Kucera
  * @since 5.1
- * 
+ *
  */
 public class MacroSettingsProcessor extends SettingsProcessor {
 
 	public static final String SECTION_NAME = "org.eclipse.cdt.internal.ui.wizards.settingswizards.Macros"; //$NON-NLS-1$
-	
+
 	private static final String MACRO_ELEMENT = "macro"; //$NON-NLS-1$
 	private static final String NAME_ELEMENT = "name";   //$NON-NLS-1$
 	private static final String VALUE_ELEMENT = "value"; //$NON-NLS-1$
-	
-	
+
+
 	@Override
 	public Image getIcon() {
 		return CUIPlugin.getImageDescriptorRegistry().get(CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_MACRO));
@@ -64,44 +64,44 @@ public class MacroSettingsProcessor extends SettingsProcessor {
 	protected int getSettingsType() {
 		return ICSettingEntry.MACRO;
 	}
-	
+
 	@Override
 	protected void writeSettings(ContentHandler content, ICLanguageSettingEntry setting) throws SettingsImportExportException {
 		char[] name = setting.getName().toCharArray();
 		char[] value = setting.getValue().toCharArray();
-		
+
 		try {
 			content.startElement(NONE, NONE, MACRO_ELEMENT, null);
 			newline(content);
-			
+
 			content.startElement(NONE, NONE, NAME_ELEMENT, null);
 			content.characters(name, 0, name.length);
 			content.endElement(NONE, NONE, NAME_ELEMENT);
-			
+
 			content.startElement(NONE, NONE, VALUE_ELEMENT, null);
 			content.characters(value, 0, value.length);
 			content.endElement(NONE, NONE, VALUE_ELEMENT);
 			newline(content);
-			
+
 			content.endElement(NONE, NONE, MACRO_ELEMENT);
 			newline(content);
-			
+
 		} catch(SAXException e) {
 			throw new SettingsImportExportException(e);
 		}
 	}
-	
-	
+
+
 	@Override
 	protected void readSettings(ICLanguageSetting setting, Element language) throws SettingsImportExportException {
 		List<ICLanguageSettingEntry> macros = new ArrayList<ICLanguageSettingEntry>();
-		
+
 		List<Element> macrosNodes = XMLUtils.extractChildElements(language, MACRO_ELEMENT);
-		
+
 		for(Element macroElement : macrosNodes) {
 			String name = null;
 			String value = null;
-			
+
 			NodeList nodeList = macroElement.getChildNodes();
 			for(int i = 0; i < nodeList.getLength(); i++) {
 				Node node = nodeList.item(i);
@@ -125,21 +125,21 @@ public class MacroSettingsProcessor extends SettingsProcessor {
 					throw new SettingsImportExportException("Unknown node: " + node.getNodeName()); //$NON-NLS-1$
 				}
 			}
-			
+
 			if(name == null)
 				throw new SettingsImportExportException("There must be one <name> element"); //$NON-NLS-1$
 			if(value == null)
 				throw new SettingsImportExportException("There must be one <value> element"); //$NON-NLS-1$
-			
-			macros.add(new CMacroEntry(name, value, 0));
+
+			macros.add(CDataUtil.createCMacroEntry(name, value, 0));
 		}
-		
+
 		if(macros.isEmpty())
 			return;
-		
+
 		// need to do this or existing settings will disappear
 		macros.addAll(setting.getSettingEntriesList(ICSettingEntry.MACRO));
 		setting.setSettingEntries(ICSettingEntry.MACRO, macros);
 	}
-	
+
 }

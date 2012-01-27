@@ -18,9 +18,9 @@ import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableColumn;
 
-import org.eclipse.cdt.core.settings.model.CIncludeFileEntry;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 
 import org.eclipse.cdt.internal.ui.newui.Messages;
 
@@ -40,13 +40,13 @@ public class IncludeFileTab extends AbstractLangsListTab {
 	@Override
 	public void additionalTableSet() {
 		columnToFit = new TableColumn(table, SWT.NONE);
-		columnToFit.setText(Messages.IncludeFileTab_0); 
-		columnToFit.setToolTipText(Messages.IncludeFileTab_0); 
+		columnToFit.setText(Messages.IncludeFileTab_0);
+		columnToFit.setToolTipText(Messages.IncludeFileTab_0);
 		showBIButton.setSelection(true);
 		table.getAccessible().addAccessibleListener(new AccessibleAdapter() {
 			@Override
 			public void getName(AccessibleEvent e) {
-				e.result = Messages.IncludeFileTab_0; 
+				e.result = Messages.IncludeFileTab_0;
 			}
 		});
 	}
@@ -68,7 +68,7 @@ public class IncludeFileTab extends AbstractLangsListTab {
 			if (dlg.check2) { // isWsp
 				flags = ICSettingEntry.VALUE_WORKSPACE_PATH;
 			}
-			return new CIncludeFileEntry(dlg.text1, flags);
+			return CDataUtil.createCIncludeFileEntry(dlg.text1, flags);
 		}
 		return null;
 	}
@@ -78,7 +78,7 @@ public class IncludeFileTab extends AbstractLangsListTab {
 		IncludeDialog dlg = new IncludeDialog(
 				usercomp.getShell(),
 				IncludeDialog.OLD_FILE,
-				Messages.IncludeFileTab_2, 
+				Messages.IncludeFileTab_2,
 				ent.getValue(),
 				getResDesc().getConfiguration(),
 				ent.getFlags() & ICSettingEntry.VALUE_WORKSPACE_PATH,
@@ -87,7 +87,7 @@ public class IncludeFileTab extends AbstractLangsListTab {
 			int flags = 0;
 			if (dlg.check2)
 				flags = ICSettingEntry.VALUE_WORKSPACE_PATH;
-			return new CIncludeFileEntry(dlg.text1, flags);
+			return CDataUtil.createCIncludeFileEntry(dlg.text1, flags);
 		}
 		return null;
 	}

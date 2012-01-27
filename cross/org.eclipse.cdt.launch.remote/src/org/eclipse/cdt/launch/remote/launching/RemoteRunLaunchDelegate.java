@@ -64,7 +64,6 @@ import org.eclipse.rse.services.shells.IHostShellOutputListener;
 public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 
 	private ICDISession dsession;
-	private boolean gdbserverReady;
 
 	/*
 	 * (non-Javadoc)
@@ -147,6 +146,13 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 									ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 						}
 
+						// We cannot use a global variable because multiple launches
+						// could access them at the same time.  We need a different
+						// variable for each launch, but we also need it be final.
+						// Use a final array to do that.
+						final boolean gdbServerReady[] = new boolean[1];
+						gdbServerReady[0] = false;
+						
 						final Object lock = new Object();
 						if (remoteShell != null) {
 							remoteShell
@@ -159,7 +165,7 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 												if (line.getString().contains(
 														"Listening on port")) { //$NON-NLS-1$
 													synchronized (lock) {
-														setGdbserverReady(true);
+														gdbServerReady[0] = true;
 														lock.notifyAll();
 													}
 													break;
@@ -199,12 +205,11 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 							// Now wait until gdbserver is up and running on the
 							// remote host
 							synchronized (lock) {
-								while (!isGdbserverReady()) {
+								while (gdbServerReady[0] == false) {
 									if (monitor.isCanceled()
 											|| rsProcess.isTerminated()) {
-										abort(Messages.RemoteGdbLaunchDelegate_gdbserverFailedToStartErrorMessage,
-												null,
-												ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+										RSEHelper.abort(Messages.RemoteGdbLaunchDelegate_gdbserverFailedToStartErrorMessage, null,
+												ICDTLaunchConfigurationConstants.ERR_DEBUGGER_NOT_INSTALLED);
 									}
 									try {
 										lock.wait(300);
@@ -323,13 +328,4 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 	ICDISession getSession(){
 		return dsession;
 	}
-	
-	protected boolean isGdbserverReady() {
-		return gdbserverReady;
-	}
-
-	protected void setGdbserverReady(boolean gdbserverReady) {
-		this.gdbserverReady = gdbserverReady;
-	}
-
 }

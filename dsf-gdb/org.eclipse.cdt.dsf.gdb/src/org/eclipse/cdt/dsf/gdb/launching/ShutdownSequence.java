@@ -84,6 +84,8 @@ public class ShutdownSequence extends Sequence {
 			ServiceReference<?>[] serviceRefs = GdbPlugin.getBundleContext().getServiceReferences( 
 					IDsfService.class.getName(),
 					String.format( "(%s=%s)", IDsfService.PROP_SESSION_ID, fSessionId ).intern() ); //$NON-NLS-1$
+			
+			if (serviceRefs != null) {
 			List<IDsfService> services = new ArrayList<IDsfService>( serviceRefs.length );
 			for ( ServiceReference<?> ref : serviceRefs ) {
 				Object serviceObj = GdbPlugin.getBundleContext().getService( ref );
@@ -99,6 +101,7 @@ public class ShutdownSequence extends Sequence {
 				}
 			} );
 			result = services.toArray( new IDsfService[services.size()] );
+		}
 		}
 		catch( InvalidSyntaxException e ) {
 			// Shouldn't happen

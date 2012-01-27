@@ -49,8 +49,6 @@ import org.eclipse.rse.services.shells.IHostShellOutputListener;
 
 public class RemoteGdbLaunchDelegate extends GdbLaunchDelegate {
 	
-	private boolean gdbserverReady = false;
-
 	@Override
 	public void launch(ILaunchConfiguration config, String mode,
 			ILaunch launch, IProgressMonitor monitor) throws CoreException {
@@ -95,6 +93,7 @@ public class RemoteGdbLaunchDelegate extends GdbLaunchDelegate {
 			if (arguments != null && !arguments.equals("")) //$NON-NLS-1$
 				commandArguments += " " + arguments; //$NON-NLS-1$
 			monitor.setTaskName(Messages.RemoteRunLaunchDelegate_9);
+			
 			// extending HostShellProcessAdapter here
 	        final GdbLaunch l = (GdbLaunch)launch;
 			IHostShell remoteShell = null;
@@ -107,6 +106,14 @@ public class RemoteGdbLaunchDelegate extends GdbLaunchDelegate {
 						ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 
 			}
+			
+			// We cannot use a global variable because multiple launches
+			// could access them at the same time.  We need a different
+			// variable for each launch, but we also need it be final.
+			// Use a final array to do that.
+			final boolean gdbServerReady[] = new boolean[1];
+			gdbServerReady[0] = false;
+			
 			final Object lock = new Object();
 			if (remoteShell != null) {
 				remoteShell.addOutputListener(new IHostShellOutputListener() {
@@ -115,7 +122,7 @@ public class RemoteGdbLaunchDelegate extends GdbLaunchDelegate {
 						for (IHostOutput line : event.getLines()) {
 							if (line.getString().contains("Listening on port")) { //$NON-NLS-1$
 								synchronized (lock) {
-									setGdbserverReady(true);
+									gdbServerReady[0] = true;
 									lock.notifyAll();
 								}
 								break;
@@ -165,15 +172,14 @@ public class RemoteGdbLaunchDelegate extends GdbLaunchDelegate {
 
 				// Now wait until gdbserver is up and running on the remote host
 				synchronized (lock) {
-					while (!isGdbserverReady()) {
+					while (gdbServerReady[0] == false) {
 						if (monitor.isCanceled() || iProcess.isTerminated()) {
 							//gdbserver launch failed
 							if (remoteShellProcess != null) {
 								remoteShellProcess.destroy();
 							}
-							abort(Messages.RemoteGdbLaunchDelegate_gdbserverFailedToStartErrorMessage,
-									null,
-									ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+							RSEHelper.abort(Messages.RemoteGdbLaunchDelegate_gdbserverFailedToStartErrorMessage, null,
+									ICDTLaunchConfigurationConstants.ERR_DEBUGGER_NOT_INSTALLED);
 						}
 						try {
 							lock.wait(300);
@@ -224,13 +230,5 @@ public class RemoteGdbLaunchDelegate extends GdbLaunchDelegate {
 	@Override
 	protected String getPluginID() {
 		return Activator.PLUGIN_ID;
-	}
-
-	protected boolean isGdbserverReady() {
-		return gdbserverReady;
-	}
-
-	protected void setGdbserverReady(boolean gdbserverReady) {
-		this.gdbserverReady = gdbserverReady;
 	}
 }

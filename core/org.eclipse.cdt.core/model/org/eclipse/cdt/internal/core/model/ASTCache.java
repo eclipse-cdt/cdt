@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others. All rights reserved.
+ * Copyright (c) 2007, 2012 Wind River Systems, Inc. and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,7 +14,6 @@ package org.eclipse.cdt.internal.core.model;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
@@ -205,7 +204,7 @@ public class ASTCache {
 			ASTRunnable astRunnable) {
 		IIndex index;
 		try {
-			index = CCorePlugin.getIndexManager().getIndex(tUnit.getCProject(), IIndexManager.ADD_DEPENDENCIES);
+			index = CCorePlugin.getIndexManager().getIndex(tUnit.getCProject());
 			index.acquireReadLock();
 		} catch (CoreException e) {
 			return e.getStatus();

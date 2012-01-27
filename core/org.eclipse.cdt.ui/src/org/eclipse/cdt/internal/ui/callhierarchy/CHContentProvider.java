@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -112,7 +112,7 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 	}
 	
 	private Object[] asyncComputeRoot(final ICElement input) throws CoreException, InterruptedException {
-		IIndex index= CCorePlugin.getIndexManager().getIndex(input.getCProject());
+		IIndex index= CCorePlugin.getIndexManager().getIndex(input.getCProject(), CallHierarchyUI.INDEX_SEARCH_OPTION);
 		index.acquireReadLock();
 		try {
 			ICElement element= input;
@@ -154,7 +154,7 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 
 	private Object[] asyncronouslyComputeReferencedBy(CHNode parent) throws CoreException, InterruptedException {
 		ICProject[] scope= CoreModel.getDefault().getCModel().getCProjects();
-		IIndex index= CCorePlugin.getIndexManager().getIndex(scope, IIndexManager.ADD_EXTENSION_FRAGMENTS);
+		IIndex index= CCorePlugin.getIndexManager().getIndex(scope, IIndexManager.ADD_EXTENSION_FRAGMENTS_CALL_HIERARCHY);
 		index.acquireReadLock();
 		try {
 			return CHQueries.findCalledBy(this, parent, index, NPM);
@@ -165,7 +165,7 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 
 	private Object[] asyncronouslyComputeRefersTo(CHNode parent) throws CoreException, InterruptedException {
 		ICProject[] scope= CoreModel.getDefault().getCModel().getCProjects();
-		IIndex index= CCorePlugin.getIndexManager().getIndex(scope, IIndexManager.ADD_EXTENSION_FRAGMENTS);
+		IIndex index= CCorePlugin.getIndexManager().getIndex(scope, IIndexManager.ADD_EXTENSION_FRAGMENTS_CALL_HIERARCHY);
 		index.acquireReadLock();
 		try {
 			return CHQueries.findCalls(this, parent, index, NPM);

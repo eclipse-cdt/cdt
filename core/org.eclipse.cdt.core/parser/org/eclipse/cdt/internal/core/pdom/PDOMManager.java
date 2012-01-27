@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 QNX Software Systems and others.
+ * Copyright (c) 2005, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -672,45 +671,20 @@ public class PDOMManager implements IWritableIndexManager, IListener {
     }
 
 	public void enqueue(IPDOMIndexerTask subjob) {
-		final HashSet<IProject> referencing= new HashSet<IProject>();
-		final IPDOMIndexer indexer = subjob.getIndexer();
-		if (indexer != null) {
-			getReferencingProjects(indexer.getProject().getProject(), referencing);
-		}
     	synchronized (fTaskQueue) {
     		if (fCurrentTask != null && fCurrentTask.acceptUrgentTask(subjob)) {
     			return;
     		}
-    		int i= 0;
     		for (IPDOMIndexerTask task : fTaskQueue) {
 				if (task.acceptUrgentTask(subjob)) {
 					return;
 				}
-				final IPDOMIndexer ti = task.getIndexer();
-				if (ti != null && referencing.contains(ti.getProject().getProject())) {
-					fTaskQueue.add(i, subjob);
-					break;
-				}
-				i++;
 			}
-    		if (i == fTaskQueue.size()) {
-        		fTaskQueue.addLast(subjob);
-    		}
+    		fTaskQueue.addLast(subjob);
     		fIndexerJob.schedule();
 		}
     }
     
-	private void getReferencingProjects(IProject prj, HashSet<IProject> result) {
-		LinkedList<IProject> projectsToSearch= new LinkedList<IProject>();
-		projectsToSearch.add(prj);
-		while (!projectsToSearch.isEmpty()) {
-			prj= projectsToSearch.removeFirst();
-			if (result.add(prj)) {
-				projectsToSearch.addAll(Arrays.asList(prj.getReferencingProjects()));
-			}
-		}
-	}
-
 	IPDOMIndexerTask getNextTask() {
 		IPDOMIndexerTask result= null;
     	synchronized (fTaskQueue) {

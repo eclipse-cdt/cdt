@@ -159,6 +159,9 @@ public class AcmeSDKProvider implements IReadOnlyPDOMProvider {
          </documentation>
       </annotation>
       <complexType>
+         <sequence minOccurs="0" maxOccurs="1">
+            <element ref="FragmentProviderUsage"/>
+         </sequence>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
@@ -183,6 +186,9 @@ The only information needed for this extension point is the fully qualified name
          </documentation>
       </annotation>
       <complexType>
+         <sequence minOccurs="0" maxOccurs="1">
+            <element ref="FragmentProviderUsage"/>
+         </sequence>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
@@ -191,6 +197,65 @@ The only information needed for this extension point is the fully qualified name
                <appInfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.cdt.internal.core.index.provider.IIndexFragmentProvider"/>
                </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="FragmentProviderUsage">
+      <annotation>
+         <documentation>
+            Defines for which tools  the fragment provider shall be used.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="navigation" type="boolean" use="required">
+            <annotation>
+               <documentation>
+                  Whether the fragment provider shall be used for performing &apos;Open Declaration&apos; and &apos;Open Element&apos;.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="content_assist" type="boolean" use="required">
+            <annotation>
+               <documentation>
+                  Whether the fragment provider shall be used for performing content-assist.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="add_import" type="boolean" use="required">
+            <annotation>
+               <documentation>
+                  Whether the fragment provider shall be used for performing &apos;Add Import&apos;.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="call_hierarchy" type="boolean" use="required">
+            <annotation>
+               <documentation>
+                  Whether the fragment provider shall be used for populating the call hierarchy.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="type_hierarchy" type="boolean" use="required">
+            <annotation>
+               <documentation>
+                  Whether the fragment provider shall be used for populating the type hierarchy.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="include_browser" type="boolean" use="required">
+            <annotation>
+               <documentation>
+                  Whether the fragment provider shall be used for populating the include browser.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="search" type="boolean" use="required">
+            <annotation>
+               <documentation>
+                  Whether the fragment provider shall be used for C/C++ searches.
+               </documentation>
             </annotation>
          </attribute>
       </complexType>

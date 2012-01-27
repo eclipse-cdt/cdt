@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,21 +43,74 @@ public interface IIndexManager extends IPDOMManager {
 	public final static int ADD_DEPENDENT    = 0x2;
 	
 	/**
-	 * Constant for passing to getIndex methods. This constant, when set, indicates that the index
-	 * content provided via the CIndex extension point should not be included in the resulting
-	 * index, as it would have done otherwise.
+	 * @deprecated Extension fragments are now used depending on their configuration. 
+	 * Use one of the ADD_EXTENSION_XX flags instead.
 	 */
+	@Deprecated
 	public final static int SKIP_PROVIDED    = 0x4;
 	
 	/**
-	 * Constant for passing to getIndex methods. This constant, when set, indicates that the index
-	 * content provided via the ReadOnlyIndexFragmentProvider element of the CIndex extension point
-	 * should be included in the resulting index. By default such index content is not included.
-	 * This flag is ignored if SKIP_PROVIDED flag is set.
+	 * Constant for passing to getIndex methods. This constant, when set, indicates that each index
+	 * content provided via the ReadOnlyIndexFragmentProvider or ReadOnlyPDOMProvider, which is not 
+	 * disabled for navigation shall be included in the resulting index. 
 	 *
 	 * @since 5.4
 	 */
-	public final static int ADD_EXTENSION_FRAGMENTS = 0x8;
+	public final static int ADD_EXTENSION_FRAGMENTS_NAVIGATION = 0x8;
+
+	/**
+	 * Constant for passing to getIndex methods. This constant, when set, indicates that the each index
+	 * content provided via the ReadOnlyIndexFragmentProvider or ReadOnlyPDOMProvider, which is not 
+	 * disabled for content assist shall be included in the resulting index. 
+	 *
+	 * @since 5.4
+	 */
+	public final static int ADD_EXTENSION_FRAGMENTS_CONTENT_ASSIST = 0x10;
+
+	/**
+	 * Constant for passing to getIndex methods. This constant, when set, indicates that each index
+	 * content provided via the ReadOnlyIndexFragmentProvider or ReadOnlyPDOMProvider, which is not 
+	 * disabled for add import shall be included in the resulting index. 
+	 *
+	 * @since 5.4
+	 */
+	public final static int ADD_EXTENSION_FRAGMENTS_ADD_IMPORT = 0x20;
+
+	/**
+	 * Constant for passing to getIndex methods. This constant, when set, indicates that each index
+	 * content provided via the ReadOnlyIndexFragmentProvider or ReadOnlyPDOMProvider, which is not 
+	 * disabled for the call hierarchy shall be included in the resulting index. 
+	 *
+	 * @since 5.4
+	 */
+	public final static int ADD_EXTENSION_FRAGMENTS_CALL_HIERARCHY = 0x40;
+
+	/**
+	 * Constant for passing to getIndex methods. This constant, when set, indicates that each index
+	 * content provided via the ReadOnlyIndexFragmentProvider or ReadOnlyPDOMProvider, which is not 
+	 * disabled for the type hierarchy shall be included in the resulting index. 
+	 *
+	 * @since 5.4
+	 */
+	public final static int ADD_EXTENSION_FRAGMENTS_TYPE_HIERARCHY = 0x80;
+
+	/**
+	 * Constant for passing to getIndex methods. This constant, when set, indicates that each index
+	 * content provided via the ReadOnlyIndexFragmentProvider or ReadOnlyPDOMProvider, which is not 
+	 * disabled for the include browser shall be included in the resulting index. 
+	 *
+	 * @since 5.4
+	 */
+	public final static int ADD_EXTENSION_FRAGMENTS_INCLUDE_BROWSER = 0x100;
+
+	/**
+	 * Constant for passing to getIndex methods. This constant, when set, indicates that each index
+	 * content provided via the ReadOnlyIndexFragmentProvider or ReadOnlyPDOMProvider, which is not 
+	 * disabled for the search shall be included in the resulting index. 
+	 *
+	 * @since 5.4
+	 */
+	public final static int ADD_EXTENSION_FRAGMENTS_SEARCH = 0x200;
 
 	/**
 	 * Constant for indicating there is no time out period for joining the indexer job. 

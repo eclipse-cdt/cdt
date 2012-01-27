@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Symbian Software Systems and others.
+ * Copyright (c) 2006, 2012 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,7 +63,7 @@ public class PDOMPrettyPrinter implements IPDOMVisitor {
 	 */
 	public static void dumpLinkage(IIndex index, final int linkageID) {
 		final IPDOMVisitor v= new PDOMPrettyPrinter();
-		IIndexFragment[] frg= ((CIndex) index).getPrimaryFragments();
+		IIndexFragment[] frg= ((CIndex) index).getFragments();
 		for (IIndexFragment element : frg) {
 			final PDOM pdom = (PDOM) element;
 			dumpLinkage(pdom, linkageID, v);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -119,7 +119,7 @@ class IndexedFilesCache implements IIndexChangeListener, IIndexerStateListener, 
 	}
 
 	final protected void initialize(ICProject prj) throws CoreException, InterruptedException {
-		IIndex index= CCorePlugin.getIndexManager().getIndex(prj, 0);
+		IIndex index= CCorePlugin.getIndexManager().getIndex(prj);
 		List<IIndexFileLocation> list= new ArrayList<IIndexFileLocation>();
 		index.acquireReadLock();
 		try {

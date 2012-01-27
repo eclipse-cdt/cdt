@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -287,7 +287,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	private boolean fIndexFilesWithoutConfiguration= true;
 	private List<LinkageTask> fRequestsPerLinkage= new ArrayList<LinkageTask>();
 	private Map<IIndexFile, IndexFileContent> fIndexContentCache= new LRUCache<IIndexFile, IndexFileContent>(500);
-	private Map<IIndexFileLocation, IIndexFile[]> fIndexFilesCache= new LRUCache<IIndexFileLocation, IIndexFile[]>(5000);
+	private Map<IIndexFileLocation, IIndexFragmentFile[]> fIndexFilesCache= new LRUCache<IIndexFileLocation, IIndexFragmentFile[]>(5000);
 	private Map<IIndexFileLocation, LocationTask> fOneLinkageTasks= new HashMap<IIndexFileLocation, AbstractIndexerTask.LocationTask>();
 	
 	private Object[] fFilesToUpdate;
@@ -951,8 +951,8 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 				return ctxFile;
 
 			IIndexFragmentFile nextCtx= (IIndexFragmentFile) ctxInclude.getIncludedBy();
-			if (!fIndex.isWritableFile(nextCtx)) 
-				return ctxFile;
+			if (nextCtx == null) 
+				return nextCtx;
 
 			// Found a recursion
 			if (!safeGuard.add(nextCtx)) 
@@ -1148,13 +1148,11 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			collectOrderedFileKeys(linkageID, inclusion, enteredFiles, orderedFileKeys);
 		}
 		
-		IIndexFile newFile= selectIndexFile(linkageID, topIfl, ast.getSignificantMacros());
+		IIndexFragmentFile newFile= selectIndexFile(linkageID, topIfl, ast.getSignificantMacros());
 		if (ctx != null) {
 			orderedFileKeys.add(new FileInAST(null, topKey, fileContentsHash));
-			if (newFile != null && fIndex.isWritableFile(newFile)) {
-				// File can be reused
-				ctx.fNewFile= (IIndexFragmentFile) newFile;
-			} 
+			// File can be reused
+			ctx.fNewFile= newFile;
 		} else if (newFile == null) {
 			orderedFileKeys.add(new FileInAST(null, topKey, fileContentsHash));
 		}
@@ -1233,7 +1231,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		return fc;
 	}
 	
-	IIndexFile selectIndexFile(int linkageID, IIndexFileLocation ifl, ISignificantMacros sigMacros) throws CoreException {
+	IIndexFragmentFile selectIndexFile(int linkageID, IIndexFileLocation ifl, ISignificantMacros sigMacros) throws CoreException {
 		LinkageTask map = findRequestMap(linkageID);
 		if (map != null) {
 			LocationTask locTask= map.find(ifl);
@@ -1245,8 +1243,8 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			}
 		}
 		
-		IIndexFile[] files = getAvailableIndexFiles(linkageID, ifl);
-		for (IIndexFile file : files) {
+		IIndexFragmentFile[] files = getAvailableIndexFiles(linkageID, ifl);
+		for (IIndexFragmentFile file : files) {
 			if (sigMacros.equals(file.getSignificantMacros()))
 				return file;
 		}
@@ -1278,30 +1276,25 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		return null;
 	}
 
-	public IIndexFile[] getAvailableIndexFiles(int linkageID, IIndexFileLocation ifl)
+	public IIndexFragmentFile[] getAvailableIndexFiles(int linkageID, IIndexFileLocation ifl)
 			throws CoreException {
-		IIndexFile[] files= fIndexFilesCache.get(ifl);
+		IIndexFragmentFile[] files= fIndexFilesCache.get(ifl);
 		if (files == null) {
-			if (fResolver.canBePartOfSDK(ifl)) {
-				// Check for a version in potentially another pdom.
-				files= fIndex.getFiles(linkageID, ifl);
-			} else {
-				IIndexFragmentFile[] fragFiles = fIndex.getWritableFiles(linkageID, ifl);
-				int j= 0;
-				for (int i = 0; i < fragFiles.length; i++) {
-					if (fragFiles[i].hasContent()) {
-						if (j != i)
-							fragFiles[j]= fragFiles[i];
-						j++;
-					}
+			IIndexFragmentFile[] fragFiles = fIndex.getWritableFiles(linkageID, ifl);
+			int j= 0;
+			for (int i = 0; i < fragFiles.length; i++) {
+				if (fragFiles[i].hasContent()) {
+					if (j != i)
+						fragFiles[j]= fragFiles[i];
+					j++;
 				}
-				if (j == fragFiles.length) {
-					files= fragFiles;
-				} else {
-					files= new IIndexFile[j];
-					System.arraycopy(fragFiles, 0, files, 0, j);
-				} 
 			}
+			if (j == fragFiles.length) {
+				files= fragFiles;
+			} else {
+				files= new IIndexFragmentFile[j];
+				System.arraycopy(fragFiles, 0, files, 0, j);
+			} 
 			fIndexFilesCache.put(ifl, files);
 		}
 		return files;

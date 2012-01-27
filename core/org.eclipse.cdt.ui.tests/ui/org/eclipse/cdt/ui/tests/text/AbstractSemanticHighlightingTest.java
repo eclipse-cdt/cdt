@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,16 +12,13 @@
 package org.eclipse.cdt.ui.tests.text;
 
 import java.io.File;
-import java.net.URI;
+import java.io.FileOutputStream;
 
 import junit.extensions.TestSetup;
 import junit.framework.Test;
 import junit.framework.TestCase;
 
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
@@ -30,26 +27,15 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.SourceViewer;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.IPDOMManager;
-import org.eclipse.cdt.core.index.IIndexLocationConverter;
-import org.eclipse.cdt.core.index.ResourceContainerRelativeLocationConverter;
-import org.eclipse.cdt.core.index.URIRelativeLocationConverter;
-import org.eclipse.cdt.core.index.provider.IPDOMDescriptor;
-import org.eclipse.cdt.core.index.provider.IReadOnlyPDOMProvider;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
+import org.eclipse.cdt.core.testplugin.TestScannerProvider;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.testplugin.Accessor;
 import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
 import org.eclipse.cdt.ui.testplugin.ResourceTestHelper;
-
-import org.eclipse.cdt.internal.core.CCoreInternals;
-import org.eclipse.cdt.internal.core.index.provider.IndexProviderManager;
-import org.eclipse.cdt.internal.core.index.provider.ReadOnlyPDOMProviderBridge;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlighting;
@@ -68,7 +54,7 @@ public class AbstractSemanticHighlightingTest extends TestCase {
 
 		private ICProject fCProject;
 		private final String fTestFilename;
-		private File fSdkFile;
+		private File fExternalFile;
 		
 		public SemanticHighlightingTestSetup(Test test, String testFilename) {
 			super(test);
@@ -83,65 +69,25 @@ public class AbstractSemanticHighlightingTest extends TestCase {
 				"void SDKFunction();\n"+
 				"class SDKClass { public: void SDKMethod(); };\n\n";
 			
-			fSdkFile= createExternalSDK(sdkCode);
-			assertNotNull(fSdkFile);
-			fSdkFile.deleteOnExit();
+			fExternalFile= createExternalFile(sdkCode);
+			assertNotNull(fExternalFile);
+			// Load the file using option -include to make it part of the index.
+			TestScannerProvider.sIncludeFiles= new String[] {fExternalFile.getAbsolutePath()};
 
-			fCProject= EditorTestHelper.createCProject(PROJECT, LINKED_FOLDER);
-
-			importExternalSDK(fSdkFile, fCProject);
-
+			fCProject= EditorTestHelper.createCProject(PROJECT, LINKED_FOLDER, false, true);
+			BaseTestCase.waitForIndexer(fCProject);
 			fEditor= (CEditor) EditorTestHelper.openInEditor(ResourceTestHelper.findFile(fTestFilename), true);
 			fSourceViewer= EditorTestHelper.getSourceViewer(fEditor);
 			assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 500, 10000, 100));
 			EditorTestHelper.joinBackgroundActivities();
 		}
 
-		private static void importExternalSDK(final File sdk, final ICProject associatedProject) {
-			final URI baseURI= new File("c:/ExternalSDK/").toURI();
-			IndexProviderManager ipm= CCoreInternals.getPDOMManager().getIndexProviderManager();
-			ipm.addIndexProvider(new ReadOnlyPDOMProviderBridge(
-					new IReadOnlyPDOMProvider() {
-						@Override
-						public IPDOMDescriptor[] getDescriptors(
-								ICConfigurationDescription config) {
-							return new IPDOMDescriptor[] {
-									new IPDOMDescriptor() {
-										@Override
-										public IIndexLocationConverter getIndexLocationConverter() {
-											return new URIRelativeLocationConverter(baseURI);
-										}
-
-										@Override
-										public IPath getLocation() {
-											return new Path(sdk.getAbsolutePath());
-										}
-
-									}
-							};
-						}
-						@Override
-						public boolean providesFor(ICProject project)
-						throws CoreException {
-							return associatedProject.equals(project);
-						}
-					}
-			));
-		}
-
-		private static File createExternalSDK(final String code) throws Exception {
-			final File sdk= File.createTempFile("foo", "bar");
-
-			ICProject cproject= CProjectHelper.createCCProject("foo"+System.currentTimeMillis(), null, IPDOMManager.ID_FAST_INDEXER);
-			TestSourceReader.createFile(cproject.getProject(), new Path("/this.h"), code);
-			CCorePlugin.getIndexManager().joinIndexer(5000, new NullProgressMonitor());
-
-			ResourceContainerRelativeLocationConverter cvr= new ResourceContainerRelativeLocationConverter(cproject.getProject());
-			CCoreInternals.getPDOMManager().exportProjectPDOM(cproject, sdk, cvr);
-			assertTrue(sdk.exists());
-
-			CProjectHelper.delete(cproject);
-			return sdk;
+		private static File createExternalFile(final String code) throws Exception {
+			File dest = File.createTempFile("external", ".h");
+			FileOutputStream fos = new FileOutputStream(dest);
+			fos.write(code.getBytes());
+			fos.close();
+			return dest;
 		}
 
 		protected String getTestFilename() {
@@ -165,9 +111,11 @@ public class AbstractSemanticHighlightingTest extends TestCase {
 			if (fCProject != null)
 				CProjectHelper.delete(fCProject);
 			
-			if (fSdkFile != null) {
-				fSdkFile.delete();
+			if (fExternalFile != null) {
+				fExternalFile.delete();
 			}
+			
+			TestScannerProvider.sIncludeFiles= null;
 			super.tearDown();
 		}
 	}

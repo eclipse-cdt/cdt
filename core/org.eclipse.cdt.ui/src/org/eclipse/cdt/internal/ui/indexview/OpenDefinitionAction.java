@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 QNX Software Systems and others.
+ * Copyright (c) 2006, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.CModelException;
@@ -72,7 +73,7 @@ public class OpenDefinitionAction extends IndexAction {
 			if (cproject != null) {
 				IIndex index= CCorePlugin.getIndexManager().getIndex(cproject);
 				if (!openDefinition(cproject, bindingNode, index)) {
-					index= CCorePlugin.getIndexManager().getIndex(CoreModel.getDefault().getCModel().getCProjects());
+					index= CCorePlugin.getIndexManager().getIndex(CoreModel.getDefault().getCModel().getCProjects(), IIndexManager.ADD_EXTENSION_FRAGMENTS_NAVIGATION);
 					openDefinition(cproject, bindingNode, index);
 				}
 			}

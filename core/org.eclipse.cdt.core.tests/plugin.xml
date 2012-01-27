@@ -149,6 +149,54 @@
       <ReadOnlyPDOMProvider
             class="org.eclipse.cdt.core.internal.index.provider.test.Providers$Dummy5">
       </ReadOnlyPDOMProvider>
+      <ReadOnlyPDOMProvider
+            class="org.eclipse.cdt.core.internal.index.provider.test.Providers$Counter">
+            <FragmentProviderUsage 
+            	add_import="true" call_hierarchy="true" content_assist="true" include_browser="true" 
+            	navigation="true" search="true" type_hierarchy="true"  />
+      </ReadOnlyPDOMProvider>
+      <ReadOnlyPDOMProvider
+            class="org.eclipse.cdt.core.internal.index.provider.test.Providers$Counter">
+            <FragmentProviderUsage 
+            	add_import="true" call_hierarchy="true" content_assist="true" include_browser="true" 
+            	navigation="true" search="true" type_hierarchy="false"  />
+      </ReadOnlyPDOMProvider>
+      <ReadOnlyPDOMProvider
+            class="org.eclipse.cdt.core.internal.index.provider.test.Providers$Counter">
+            <FragmentProviderUsage 
+            	add_import="true" call_hierarchy="true" content_assist="true" include_browser="true" 
+            	navigation="true" search="false" type_hierarchy="false"  />
+      </ReadOnlyPDOMProvider>
+      <ReadOnlyPDOMProvider
+            class="org.eclipse.cdt.core.internal.index.provider.test.Providers$Counter">
+            <FragmentProviderUsage 
+            	add_import="true" call_hierarchy="true" content_assist="true" include_browser="true" 
+            	navigation="false" search="false" type_hierarchy="false"  />
+      </ReadOnlyPDOMProvider>
+      <ReadOnlyPDOMProvider
+            class="org.eclipse.cdt.core.internal.index.provider.test.Providers$Counter">
+            <FragmentProviderUsage 
+            	add_import="true" call_hierarchy="true" content_assist="true" include_browser="false" 
+            	navigation="false" search="false" type_hierarchy="false"  />
+      </ReadOnlyPDOMProvider>
+      <ReadOnlyPDOMProvider
+            class="org.eclipse.cdt.core.internal.index.provider.test.Providers$Counter">
+            <FragmentProviderUsage 
+            	add_import="true" call_hierarchy="true" content_assist="false" include_browser="false" 
+            	navigation="false" search="false" type_hierarchy="false"  />
+      </ReadOnlyPDOMProvider>
+      <ReadOnlyPDOMProvider
+            class="org.eclipse.cdt.core.internal.index.provider.test.Providers$Counter">
+            <FragmentProviderUsage 
+            	add_import="true" call_hierarchy="false" content_assist="false" include_browser="false" 
+            	navigation="false" search="false" type_hierarchy="false"  />
+      </ReadOnlyPDOMProvider>
+      <ReadOnlyPDOMProvider
+            class="org.eclipse.cdt.core.internal.index.provider.test.Providers$Counter">
+            <FragmentProviderUsage 
+            	add_import="false" call_hierarchy="false" content_assist="false" include_browser="false" 
+            	navigation="false" search="false" type_hierarchy="false"  />
+      </ReadOnlyPDOMProvider>
    </extension>
    <extension
          point="org.eclipse.core.filesystem.filesystems">

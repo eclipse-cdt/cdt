@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 QNX Software Systems and others.
+ * Copyright (c) 2006, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,6 @@ import org.eclipse.cdt.core.index.IIndexLocationConverter;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.internal.core.dom.AbstractCodeReaderFactory;
-import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.WritableCIndex;
 import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
@@ -61,7 +60,7 @@ public class StandaloneFullIndexer extends StandaloneIndexer{
 	@Deprecated
 	public StandaloneFullIndexer(File writableIndexFile, IIndexLocationConverter converter, Map<String, IPDOMLinkageFactory> linkageFactoryMappings,
 			IScannerInfo scanner, FileEncodingRegistry fileEncodingRegistry, ILanguageMapper mapper, IParserLogService log, AbstractCodeReaderFactory codeReaderFactory) throws CoreException {
-		super(new WritableCIndex(new WritablePDOM(writableIndexFile, converter, linkageFactoryMappings),new IIndexFragment[0]), 
+		super(new WritableCIndex(new WritablePDOM(writableIndexFile, converter, linkageFactoryMappings)), 
 				false, mapper, log, scanner, fileEncodingRegistry);
 		fCodeReaderFactory = codeReaderFactory;
 	}
@@ -80,7 +79,7 @@ public class StandaloneFullIndexer extends StandaloneIndexer{
 	 */
 	public StandaloneFullIndexer(File writableIndexFile, IIndexLocationConverter converter, Map<String, IPDOMLinkageFactory> linkageFactoryMappings,
 			IStandaloneScannerInfoProvider scannerProvider, FileEncodingRegistry fileEncodingRegistry, ILanguageMapper mapper, IParserLogService log, AbstractCodeReaderFactory codeReaderFactory) throws CoreException {
-		super(new WritableCIndex(new WritablePDOM(writableIndexFile, converter, linkageFactoryMappings),new IIndexFragment[0]), 
+		super(new WritableCIndex(new WritablePDOM(writableIndexFile, converter, linkageFactoryMappings)), 
 				false, mapper, log, scannerProvider, fileEncodingRegistry);
 		fCodeReaderFactory = codeReaderFactory;
 	}

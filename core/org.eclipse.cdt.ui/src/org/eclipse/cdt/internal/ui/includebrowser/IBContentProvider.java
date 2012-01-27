@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexInclude;
+import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -84,7 +85,7 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 			IIndex index;
 			try {
 				ICProject[] scope= CoreModel.getDefault().getCModel().getCProjects();
-				index= CCorePlugin.getIndexManager().getIndex(scope);
+				index= CCorePlugin.getIndexManager().getIndex(scope, IIndexManager.ADD_EXTENSION_FRAGMENTS_INCLUDE_BROWSER);
 				index.acquireReadLock();
 			} catch (CoreException e) {
 				CUIPlugin.log(e);
@@ -105,8 +106,7 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 				}
 				if (includes.length > 0) {
 					Set<IBNode> result= new LinkedHashSet<IBNode>(includes.length);
-					for (int i = 0; i < includes.length; i++) {
-						IIndexInclude include = includes[i];
+					for (IIndexInclude include : includes) {
 						try {
 							if (fComputeIncludedBy) {
 								directiveFile= targetFile= new IBFile(project, include.getIncludedByLocation());
@@ -158,10 +158,9 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 				if (files.length > 0) {
 					ArrayList<IIndexInclude> list= new ArrayList<IIndexInclude>();
 					HashSet<IIndexFileLocation> handled= new HashSet<IIndexFileLocation>();
-					for (int i = 0; i < files.length; i++) {
-						final IIndexInclude[] includes = index.findIncludedBy(files[i]);
-						for (int j = 0; j < includes.length; j++) {
-							IIndexInclude indexInclude = includes[j];
+					for (IIndexFile file : files) {
+						final IIndexInclude[] includes = index.findIncludedBy(file);
+						for (IIndexInclude indexInclude : includes) {
 							if (handled.add(indexInclude.getIncludedByLocation())) {
 								list.add(indexInclude);
 							}
@@ -186,10 +185,9 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 				if (files.length > 0) {
 					ArrayList<IIndexInclude> list= new ArrayList<IIndexInclude>();
 					HashSet<IIndexFileLocation> handled= new HashSet<IIndexFileLocation>();
-					for (int i = 0; i < files.length; i++) {
-						final IIndexInclude[] includes = index.findIncludes(files[i]);
-						for (int j = 0; j < includes.length; j++) {
-							IIndexInclude indexInclude = includes[j];
+					for (IIndexFile file : files) {
+						final IIndexInclude[] includes = index.findIncludes(file);
+						for (IIndexInclude indexInclude : includes) {
 							if (handled.add(indexInclude.getIncludesLocation())) {
 								list.add(indexInclude);
 							}

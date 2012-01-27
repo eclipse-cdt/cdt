@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 QNX Software Systems and others.
+ * Copyright (c) 2006, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -493,8 +493,8 @@ public abstract class CSearchQuery implements ISearchQuery {
 		result.setIndexerBusy(!CCorePlugin.getIndexManager().isIndexerIdle());
 
 		try {
-			IIndex index= CCorePlugin.getIndexManager().getIndex(projects,
-					IIndexManager.ADD_EXTENSION_FRAGMENTS);
+			IIndex index = CCorePlugin.getIndexManager().getIndex(projects,
+					IIndexManager.ADD_EXTENSION_FRAGMENTS_SEARCH);
 			try {
 				index.acquireReadLock();
 			} catch (InterruptedException e) {

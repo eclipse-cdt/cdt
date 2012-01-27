@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,6 +50,9 @@ import org.eclipse.cdt.internal.ui.util.StatusLineHandler;
 import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 
 public class TypeHierarchyUI {
+	private static final int INDEX_SEARCH_OPTION = IIndexManager.ADD_DEPENDENCIES
+			| IIndexManager.ADD_DEPENDENT | IIndexManager.ADD_EXTENSION_FRAGMENTS_TYPE_HIERARCHY;
+
 	public static THViewPart open(ICElement input, IWorkbenchWindow window) {
         if (!isValidInput(input)) {
         	return null;
@@ -141,7 +144,7 @@ public class TypeHierarchyUI {
     
 	private static ICElement[] findInput(ICProject project, IEditorInput editorInput, IRegion sel) throws CoreException {
 		try {
-			IIndex index= CCorePlugin.getIndexManager().getIndex(project, IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_DEPENDENT);
+			IIndex index= CCorePlugin.getIndexManager().getIndex(project, INDEX_SEARCH_OPTION);
 
 			index.acquireReadLock();
 			try {
@@ -180,7 +183,7 @@ public class TypeHierarchyUI {
 	private static ICElement[] findInput(ICElement member)  {
 		ICProject project= member.getCProject();
 		try {
-			IIndex index= CCorePlugin.getIndexManager().getIndex(project, IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_DEPENDENT);
+			IIndex index= CCorePlugin.getIndexManager().getIndex(project, INDEX_SEARCH_OPTION);
 			index.acquireReadLock();
 			try {
 				IIndexName name= IndexUI.elementToName(index, member);

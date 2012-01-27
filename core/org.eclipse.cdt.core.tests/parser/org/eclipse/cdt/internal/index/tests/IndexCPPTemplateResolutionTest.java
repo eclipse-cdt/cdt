@@ -240,6 +240,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	  void m2(const StrT<T> s) {}
 	//	};
 
+    // #include "header.h"
 	//  void main() {
 	//     C1<char> c1;
 	//	   c1.m1("aaa");  // OK
@@ -274,6 +275,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//   public: void assign(const T* s) {}
 	// };
 	
+    // #include "header.h"
 	// void main() {
 	//   StrT<char> x;
 	//   x.assign("aaa");
@@ -355,6 +357,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	  void m3();
 	//	};
 
+    // #include "header.h"
 	//  void C1::m3() {
 	//	   m1("aaa");  // OK
 	//	   m2("aaa");  // problem
@@ -565,11 +568,10 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	// template<typename T3>
 	// class D<A, T3> {};
 	
+    // #include "header.h"
 	// template<typename T3> class D<A, T3>; // harmless declaration for test purposes
-	// template<typename T3>
-	// class D<B, T3> {};
-	// template<typename T3>
-	// class D<C, T3> {};
+	// template<typename T3> class D<B, T3> {};
+	// template<typename T3> class D<C, T3> {};
 	public void testClassPartialSpecializations() throws Exception {
 		IBinding b0= getBindingFromASTName("D<A, T3>", 8);
 		IBinding b1= getBindingFromASTName("D<B, T3>", 8);
@@ -1170,6 +1172,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
     //   class B {};
     // };
     
+    // #include "header.h"
     // void refs() {
     //    A<C>::B acb;
     //    A<D>::B adb;

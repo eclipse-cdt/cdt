@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2012 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexLocationConverter;
+import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.index.ResourceContainerRelativeLocationConverter;
 import org.eclipse.cdt.core.index.URIRelativeLocationConverter;
@@ -44,6 +45,7 @@ import org.eclipse.core.runtime.Path;
  * Tests addition of external pdom's into the logical index
  */
 public class PDOMProviderTests extends PDOMTestBase {
+	private static final int A_FRAGMENT_OPTIONS = IIndexManager.ADD_EXTENSION_FRAGMENTS_ADD_IMPORT;
 
 	public static Test suite() {
 		return suite(PDOMProviderTests.class);
@@ -57,7 +59,7 @@ public class PDOMProviderTests extends PDOMTestBase {
 			TestSourceReader.createFile(cproject.getProject(), new Path("/this.h"), "class A {};\n\n");
 			CCorePlugin.getIndexManager().joinIndexer(3000, npm());
 
-			IIndex index= CCorePlugin.getIndexManager().getIndex(cproject);
+			IIndex index= CCorePlugin.getIndexManager().getIndex(cproject, A_FRAGMENT_OPTIONS);
 			index.acquireReadLock();
 			try {
 				IBinding[] bindings= index.findBindings("A".toCharArray(), IndexFilter.ALL, npm());
@@ -108,7 +110,7 @@ public class PDOMProviderTests extends PDOMTestBase {
 
 				}
 		));
-		IIndex index= CCorePlugin.getIndexManager().getIndex(cproject2);
+		IIndex index= CCorePlugin.getIndexManager().getIndex(cproject2, A_FRAGMENT_OPTIONS);
 		index.acquireReadLock();
 		try {
 			IBinding[] bindings= index.findBindings("A".toCharArray(), IndexFilter.ALL, npm());
@@ -135,7 +137,7 @@ public class PDOMProviderTests extends PDOMTestBase {
 			TestSourceReader.createFile(cproject.getProject(), new Path("/this.h"), "class A {};\n\n");
 			CCorePlugin.getIndexManager().joinIndexer(3000, npm());
 
-			IIndex index= CCorePlugin.getIndexManager().getIndex(cproject);
+			IIndex index= CCorePlugin.getIndexManager().getIndex(cproject, A_FRAGMENT_OPTIONS);
 			index.acquireReadLock();
 			try {
 				IBinding[] bindings= index.findBindings("A".toCharArray(), IndexFilter.ALL, npm());
@@ -192,7 +194,7 @@ public class PDOMProviderTests extends PDOMTestBase {
 		));
 
 		{
-			IIndex index= CCorePlugin.getIndexManager().getIndex(cproject2);
+			IIndex index= CCorePlugin.getIndexManager().getIndex(cproject2, A_FRAGMENT_OPTIONS);
 			index.acquireReadLock();
 			try {
 				IBinding[] bindings= index.findBindings("A".toCharArray(), IndexFilter.ALL, npm());
@@ -212,7 +214,7 @@ public class PDOMProviderTests extends PDOMTestBase {
 		}
 
 		{
-			IIndex index= CCorePlugin.getIndexManager().getIndex(cproject3);
+			IIndex index= CCorePlugin.getIndexManager().getIndex(cproject3, A_FRAGMENT_OPTIONS);
 			index.acquireReadLock();
 			try {
 				IBinding[] bindings= index.findBindings("A".toCharArray(), IndexFilter.ALL, npm());
@@ -232,7 +234,7 @@ public class PDOMProviderTests extends PDOMTestBase {
 		}
 		
 		{
-			IIndex index= CCorePlugin.getIndexManager().getIndex(new ICProject[]{cproject2, cproject3});
+			IIndex index= CCorePlugin.getIndexManager().getIndex(new ICProject[]{cproject2, cproject3}, A_FRAGMENT_OPTIONS);
 			index.acquireReadLock();
 			try {
 				IBinding[] bindings= index.findBindings("A".toCharArray(), IndexFilter.ALL, npm());
@@ -317,7 +319,7 @@ public class PDOMProviderTests extends PDOMTestBase {
 		for(int i=0; i<3; i++) {
 			// try several times in order to test the status is logged only once
 			ICProjectDescription pd= CCorePlugin.getDefault().getProjectDescription(cproject2.getProject(), false);
-			assertEquals(0, ipm.getProvidedIndexFragments(pd.getActiveConfiguration(), true).length);
+			assertEquals(0, ipm.getProvidedIndexFragments(pd.getActiveConfiguration(), -1).length);
 		}
 
 	}

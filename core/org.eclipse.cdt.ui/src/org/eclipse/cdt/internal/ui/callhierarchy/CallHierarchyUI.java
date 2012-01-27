@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,6 +60,8 @@ import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 
 public class CallHierarchyUI {
+	static final int INDEX_SEARCH_OPTION = IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_DEPENDENT
+			| IIndexManager.ADD_EXTENSION_FRAGMENTS_CALL_HIERARCHY;
 	private static final ICElement[] NO_ELEMENTS = {};
 	private static boolean sIsJUnitTest= false;
 
@@ -187,9 +189,7 @@ public class CallHierarchyUI {
 	private static ICElement[] findDefinitions(ICProject project, IEditorInput editorInput, ITextSelection sel)
 			throws CoreException {
 		try {
-			IIndex index= CCorePlugin.getIndexManager().getIndex(project,
-					IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_DEPENDENT);
-
+			IIndex index= CCorePlugin.getIndexManager().getIndex(project, INDEX_SEARCH_OPTION);
 			index.acquireReadLock();
 			try {
 				IASTName name= IndexUI.getSelectedName(editorInput, sel);
@@ -275,8 +275,7 @@ public class CallHierarchyUI {
 			final ITranslationUnit tu= CModelUtil.getTranslationUnit(input);
 			if (tu != null) {
 				final ICProject project= tu.getCProject();
-				final IIndex index= CCorePlugin.getIndexManager().getIndex(project,
-						IIndexManager.ADD_DEPENDENCIES | IIndexManager.ADD_DEPENDENT);
+				final IIndex index = CCorePlugin.getIndexManager().getIndex(project, INDEX_SEARCH_OPTION);
 
 				index.acquireReadLock();
 				try {

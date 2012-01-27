@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2012 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.provider;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.index.provider.IIndexProvider;
 import org.eclipse.cdt.core.index.provider.IReadOnlyPDOMProvider;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -21,7 +29,6 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IElementChangedListener;
-import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -37,13 +44,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.Version;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * The IndexProviderManager is responsible for maintaining the set of index
@@ -66,10 +66,21 @@ import java.util.Set;
 public final class IndexProviderManager implements IElementChangedListener {
 	private static final String ELEMENT_RO_PDOM_PROVIDER= "ReadOnlyPDOMProvider"; //$NON-NLS-1$
     private static final String ELEMENT_RO_INDEX_FRAGMENT_PROVIDER= "ReadOnlyIndexFragmentProvider"; //$NON-NLS-1$
-	private static final String ATTRIBUTE_CLASS = "class"; //$NON-NLS-1$
+    private static final String ELEMENT_PROVIDER_USAGE= "FragmentProviderUsage"; //$NON-NLS-1$
+	@SuppressWarnings("nls")
+	private static final String 
+		ATTRIBUTE_CLASS = "class",
+		ATTRIBUTE_NAVIGATION = "navigation",
+		ATTRIBUTE_CONTENT_ASSIST = "content_assist",
+		ATTRIBUTE_ADD_IMPORT = "add_import",
+		ATTRIBUTE_CALL_HIERARCHY = "call_hierarchy",
+		ATTRIBUTE_TYPE_HIERARCHY = "type_hierarchy",
+		ATTRIBUTE_INCLUDE_BROWSER = "include_browser",
+		ATTRIBUTE_SEARCH = "search";
 
-	private IIndexFragmentProvider[] pdomFragmentProviders;
-	private IIndexFragmentProvider[] nonPDOMFragmentProviders;
+
+	private IIndexFragmentProvider[] fragmentProviders;
+	private int[] fragmentProviderUsage;
 	private Map<ProvisionMapKey, Boolean> provisionMap;
 	private Set<String> compatibleFragmentUnavailable;
 	private VersionRange pdomVersionRange;
@@ -92,15 +103,15 @@ public final class IndexProviderManager implements IElementChangedListener {
 	 * @param pdomVersionRange
 	 */
 	public void reset(VersionRange pdomVersionRange) {
-		this.pdomFragmentProviders= new IIndexFragmentProvider[0];
+		this.fragmentProviders= new IIndexFragmentProvider[0];
 		this.provisionMap= new HashMap<ProvisionMapKey, Boolean>();
 		this.pdomVersionRange= pdomVersionRange;
 		this.compatibleFragmentUnavailable= new HashSet<String>();
 	}
 
 	public void startup() {
-		List<IIndexFragmentProvider> pdomProviders = new ArrayList<IIndexFragmentProvider>();
-		List<IIndexFragmentProvider> nonPDOMProviders = new ArrayList<IIndexFragmentProvider>();
+		List<IIndexFragmentProvider> providers = new ArrayList<IIndexFragmentProvider>();
+		List<IConfigurationElement[]> usageSpecifications= new ArrayList<IConfigurationElement[]>();
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IExtensionPoint indexProviders = registry.getExtensionPoint(CCorePlugin.INDEX_UNIQ_ID);
 		for (IExtension extension : indexProviders.getExtensions()) {
@@ -108,9 +119,9 @@ public final class IndexProviderManager implements IElementChangedListener {
 				for (IConfigurationElement element : extension.getConfigurationElements()) {
 					if (ELEMENT_RO_PDOM_PROVIDER.equals(element.getName())) {
 						Object provider = element.createExecutableExtension(ATTRIBUTE_CLASS);
-
 						if (provider instanceof IReadOnlyPDOMProvider) {
-							pdomProviders.add(new ReadOnlyPDOMProviderBridge((IReadOnlyPDOMProvider) provider));
+							providers.add(new ReadOnlyPDOMProviderBridge((IReadOnlyPDOMProvider) provider));
+							usageSpecifications.add(element.getChildren(ELEMENT_PROVIDER_USAGE));
 						} else {
 							CCorePlugin.log(NLS.bind(Messages.IndexProviderManager_0,
 									extension.getContributor().getName()));
@@ -119,12 +130,13 @@ public final class IndexProviderManager implements IElementChangedListener {
                         Object provider = element.createExecutableExtension(ATTRIBUTE_CLASS);
 
                         if (provider instanceof IIndexFragmentProvider) {
-                            nonPDOMProviders.add((IIndexFragmentProvider) provider);
+                        	providers.add((IIndexFragmentProvider) provider);
+							usageSpecifications.add(element.getChildren(ELEMENT_PROVIDER_USAGE));
                         } else {
                             CCorePlugin.log(NLS.bind(Messages.IndexProviderManager_0,
                                     extension.getContributor().getName()));
                         }
-                    }
+                    } 
 				}
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
@@ -132,8 +144,41 @@ public final class IndexProviderManager implements IElementChangedListener {
 		}
 
 		CoreModel.getDefault().addElementChangedListener(this);
-		this.pdomFragmentProviders = pdomProviders.toArray(new IIndexFragmentProvider[pdomProviders.size()]);
-		this.nonPDOMFragmentProviders = nonPDOMProviders.toArray(new IIndexFragmentProvider[nonPDOMProviders.size()]);
+		this.fragmentProviders = providers.toArray(new IIndexFragmentProvider[providers.size()]);
+		this.fragmentProviderUsage= computeProviderUsage(usageSpecifications);
+		assert fragmentProviders.length == fragmentProviderUsage.length;
+	}
+
+	private int[] computeProviderUsage(List<IConfigurationElement[]> usageFilters) {
+		int[] usage= new int[usageFilters.size()];
+		for (int i = 0; i < usage.length; i++) {
+			IConfigurationElement[] usageFilter= usageFilters.get(i);
+			usage[i]= computeProviderUsage(usageFilter);
+		}
+		return usage;
+	}
+
+	private int computeProviderUsage(IConfigurationElement[] usageFilter) {
+		if (usageFilter == null || usageFilter.length == 0)
+			return -1; // Allow usage for all tools.
+
+		int result = 0;
+		IConfigurationElement elem= usageFilter[0];
+		result |= getOption(elem, ATTRIBUTE_ADD_IMPORT, IIndexManager.ADD_EXTENSION_FRAGMENTS_ADD_IMPORT);
+		result |= getOption(elem, ATTRIBUTE_CALL_HIERARCHY, IIndexManager.ADD_EXTENSION_FRAGMENTS_CALL_HIERARCHY);
+		result |= getOption(elem, ATTRIBUTE_CONTENT_ASSIST, IIndexManager.ADD_EXTENSION_FRAGMENTS_CONTENT_ASSIST);
+		result |= getOption(elem, ATTRIBUTE_INCLUDE_BROWSER, IIndexManager.ADD_EXTENSION_FRAGMENTS_INCLUDE_BROWSER);
+		result |= getOption(elem, ATTRIBUTE_NAVIGATION, IIndexManager.ADD_EXTENSION_FRAGMENTS_NAVIGATION);
+		result |= getOption(elem, ATTRIBUTE_SEARCH, IIndexManager.ADD_EXTENSION_FRAGMENTS_SEARCH);
+		result |= getOption(elem, ATTRIBUTE_TYPE_HIERARCHY, IIndexManager.ADD_EXTENSION_FRAGMENTS_TYPE_HIERARCHY);
+		
+		return result;
+	}
+
+	public int getOption(IConfigurationElement elem, String attributeName, int option) {
+		if ("true".equals(elem.getAttribute(attributeName))) //$NON-NLS-1$
+			return option;
+		return 0;
 	}
 
 	/**
@@ -144,16 +189,13 @@ public final class IndexProviderManager implements IElementChangedListener {
 	 * @param config
 	 * @return the array of IIndexFragment objects for the current state
 	 */
-	public IIndexFragment[] getProvidedIndexFragments(ICConfigurationDescription config,
-			boolean includeNonPDOMFragments) throws CoreException {
+	public IIndexFragment[] getProvidedIndexFragments(ICConfigurationDescription config, int usage) throws CoreException {
 		Map<String, IIndexFragment> id2fragment = new HashMap<String, IIndexFragment>();
 
 		IProject project= config.getProjectDescription().getProject();
-		IIndexFragmentProvider[][] groups = includeNonPDOMFragments ?
-				new IIndexFragmentProvider[][] { pdomFragmentProviders, nonPDOMFragmentProviders } :
-				new IIndexFragmentProvider[][] { pdomFragmentProviders };
-		for (IIndexFragmentProvider[] group : groups) {
-			for (IIndexFragmentProvider provider : group) {
+		for (int i = 0; i < fragmentProviders.length; i++) {
+			if ((fragmentProviderUsage[i] & usage) != 0) {
+				IIndexFragmentProvider provider= fragmentProviders[i];
 				try {
 					if (providesForProject(provider, project)) {
 						IIndexFragment[] fragments= provider.getIndexFragments(config);
@@ -180,7 +222,8 @@ public final class IndexProviderManager implements IElementChangedListener {
 				String key= entry.getKey();
 				if (!compatibleFragmentUnavailable.contains(key)) {
 					String msg= NLS.bind(
-							Messages.IndexProviderManager_NoCompatibleFragmentsAvailable, key);
+							Messages.IndexProviderManager_NoCompatibleFragmentsAvailable, key,
+							collectVersions(config, project, usage, key));
 					CCorePlugin.log(new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, msg));
 					compatibleFragmentUnavailable.add(key);
 				}
@@ -189,6 +232,45 @@ public final class IndexProviderManager implements IElementChangedListener {
 			}
 		}
 		return preresult.toArray(new IIndexFragment[preresult.size()]);
+	}
+
+	/**
+	 * Used for logging a problem.
+	 */
+	private String collectVersions(ICConfigurationDescription config, IProject project, int usage, String fragid) {
+		StringBuilder result= new StringBuilder();
+		for (int i = 0; i < fragmentProviders.length; i++) {
+			if ((fragmentProviderUsage[i] & usage) != 0) {
+				IIndexFragmentProvider provider= fragmentProviders[i];
+				try {
+					if (providesForProject(provider, project)) {
+						IIndexFragment[] fragments= provider.getIndexFragments(config);
+						for (IIndexFragment fragment : fragments) {
+							try {
+								fragment.acquireReadLock();
+								try {
+									if (fragid.equals(fragment.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID))){
+										String csver = fragment.getProperty(IIndexFragment.PROPERTY_FRAGMENT_FORMAT_VERSION);
+										if (csver != null) {
+											if (result.length() > 0)
+												result.append(", "); //$NON-NLS-1$
+											result.append(csver);
+										}
+									}
+								} finally {
+									fragment.releaseReadLock();
+								}
+							} catch (Exception e) {
+								// No logging, we are generating a msg for the log.
+							} 
+						}
+					}
+				} catch (CoreException e) {
+					// No logging, we are generating a msg for the log.
+				}
+			}
+		}
+		return result.toString();
 	}
 
 	/**
@@ -276,10 +358,17 @@ public final class IndexProviderManager implements IElementChangedListener {
 			return;
 		}
 
-		IIndexFragmentProvider[] newAllProviders = new IIndexFragmentProvider[pdomFragmentProviders.length + 1];
-		System.arraycopy(pdomFragmentProviders, 0, newAllProviders, 0, pdomFragmentProviders.length);
-		newAllProviders[pdomFragmentProviders.length] = (IIndexFragmentProvider) provider;
-		pdomFragmentProviders = newAllProviders;
+		final int length = fragmentProviders.length;
+		
+		IIndexFragmentProvider[] newProviders = new IIndexFragmentProvider[length + 1];
+		System.arraycopy(fragmentProviders, 0, newProviders, 0, length);
+		newProviders[length] = (IIndexFragmentProvider) provider;
+		fragmentProviders = newProviders;
+
+		int[] newFilters = new int[length + 1];
+		System.arraycopy(fragmentProviderUsage, 0, newFilters, 0, length);
+		newFilters[length] = -1;
+		fragmentProviderUsage = newFilters;
 	}
 
 	/**
@@ -290,11 +379,20 @@ public final class IndexProviderManager implements IElementChangedListener {
 	 * @param provider
 	 */
 	public void removeIndexProvider(IIndexProvider provider) {
-		ArrayUtil.remove(pdomFragmentProviders, provider);
-		if (pdomFragmentProviders[pdomFragmentProviders.length - 1] == null) {
-			IIndexFragmentProvider[] newAllProviders = new IIndexFragmentProvider[pdomFragmentProviders.length - 1];
-			System.arraycopy(pdomFragmentProviders, 0, newAllProviders, 0, pdomFragmentProviders.length - 1);
-			pdomFragmentProviders= newAllProviders;
+		for (int i = 0; i < fragmentProviders.length; i++) {
+			if (fragmentProviders[i] == provider) {
+				final int length = fragmentProviders.length;
+				IIndexFragmentProvider[] newProviders = new IIndexFragmentProvider[length - 1];
+				System.arraycopy(fragmentProviders, 0, newProviders, 0, i);
+				System.arraycopy(fragmentProviders, i+1, newProviders, i, length-i-1);
+				fragmentProviders = newProviders;
+
+				int[] newFilters = new int[length - 1];
+				System.arraycopy(fragmentProviderUsage, 0, newFilters, 0, i);
+				System.arraycopy(fragmentProviderUsage, i+1, newFilters, i, length-i-1);
+				fragmentProviderUsage = newFilters;
+				return;
+			}
 		}
 	}
 

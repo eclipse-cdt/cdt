@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@
  * Xuan Chen (IBM) - [220999] [api] Need to change class SystemSelectRemoteFileAction to use SystemRemoteFileDialog
  * David McKnight   (IBM)        - [225506] [api][breaking] RSE UI leaks non-API types
  * David McKnight   (IBM)        - [267061] resource dialog/form to allow custom host combo label
+ * David McKnight   (IBM)        - [370007] potential NPEs in table-tree provider and remote resource dialog
  *******************************************************************************/
 
 package org.eclipse.rse.ui.dialogs;
@@ -64,7 +65,9 @@ public abstract class SystemRemoteResourceDialog extends SystemPromptDialog
 	{
 		_form = new SystemResourceSelectionForm(getShell(), parent, this, _inputProvider, getVerbiage(), _multipleSelectionMode, getMessageLine());
 		initForm();
-		_form.setPreSelection(_preSelection);
+		if (_preSelection != null){
+			_form.setPreSelection(_preSelection);
+		}
 		createMessageLine(parent);
 		return _form.getInitialFocusControl();
 	}
@@ -91,7 +94,9 @@ public abstract class SystemRemoteResourceDialog extends SystemPromptDialog
 			_form.applyViewerFilter(getViewerFilter());
 		}
 		_form.setSelectionValidator(_selectionValidator);
-		_form.setPreSelection(_preSelection);
+		if (_preSelection != null){
+			_form.setPreSelection(_preSelection);
+		}
 	 	_form.setShowPropertySheet(_showPropertySheet);
 	 	_form.setSelectionTreeToolTipText(getTreeTip());
 	 	if (_message != null)

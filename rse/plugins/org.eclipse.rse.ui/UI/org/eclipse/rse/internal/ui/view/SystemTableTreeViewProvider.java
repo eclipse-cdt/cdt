@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2011 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2012 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * David McKnight   (IBM)        - [362700] SystemTableTreeViewProvider should not use context object in adapter call to get subsystem
+ * David McKnight   (IBM)        - [370007] potential NPEs in table-tree provider and remote resource dialog
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -199,13 +200,12 @@ public class SystemTableTreeViewProvider implements ILabelProvider, ITableLabelP
 	    	{
 	    		element = ((IContextObject)object).getModelObject();
 	    	}
+				
+			ISystemViewElementAdapter adapter = getAdapterFor(element);
+			if (adapter != null)
 			{
-				
-				ISystemViewElementAdapter adapter = getAdapterFor(element);
 				adapter.setViewer(_viewer);
-				
-		
-				
+						
 				if (adapter.hasChildren((IAdaptable)element))
 				{
 					if (supportsDeferredQueries())

@@ -13,6 +13,8 @@ package org.eclipse.cdt.make.core.scannerconfig;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.resources.ACBuilder;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
@@ -75,6 +77,11 @@ public class ScannerConfigBuilder extends ACBuilder {
             
             buildInfo2 = ScannerConfigProfileManager.createScannerConfigBuildInfo2(getProject());
             autodiscoveryEnabled2 = buildInfo2.isAutoDiscoveryEnabled();
+			if (autodiscoveryEnabled2) {
+				ICProjectDescription projDesc = CoreModel.getDefault().getProjectDescription(getProject());
+				ICConfigurationDescription cfgDescription = projDesc.getActiveConfiguration();
+				autodiscoveryEnabled2 = ScannerDiscoveryLegacySupport.isMbsLanguageSettingsProviderOn(cfgDescription);
+			}
 
             if (autodiscoveryEnabled2) {
                 monitor.beginTask(MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder"), 100); //$NON-NLS-1$
@@ -129,6 +136,11 @@ public class ScannerConfigBuilder extends ACBuilder {
 	
 	protected boolean build(IProject project, InfoContext context, IScannerConfigBuilderInfo2 buildInfo2, IProgressMonitor monitor){
             boolean autodiscoveryEnabled2 = buildInfo2.isAutoDiscoveryEnabled();
+			if (autodiscoveryEnabled2) {
+				ICProjectDescription projDesc = CoreModel.getDefault().getProjectDescription(getProject());
+				ICConfigurationDescription cfgDescription = projDesc.getActiveConfiguration();
+				autodiscoveryEnabled2 = ScannerDiscoveryLegacySupport.isMbsLanguageSettingsProviderOn(cfgDescription);
+			}
 
             if (autodiscoveryEnabled2) {
                 monitor.beginTask(MakeMessages.getString("ScannerConfigBuilder.Invoking_Builder"), 100); //$NON-NLS-1$

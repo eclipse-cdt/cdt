@@ -34,6 +34,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.ICSettingsStorage;
@@ -42,6 +43,7 @@ import org.eclipse.cdt.core.settings.model.extension.ICProjectConverter;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.cdt.internal.core.envvar.ContributedEnvironment;
+import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.cdt.internal.core.settings.model.AbstractCProjectDescriptionStorage;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescription;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
@@ -170,6 +172,7 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 				}, null, IWorkspace.AVOID_UPDATE, null);
 				// end Bug 249951 & Bug 310007
 				serializingLock.acquire();
+				LanguageSettingsManager.serializeLanguageSettings(fDes);
 				projectModificaitonStamp = serialize(fDes.getProject(), ICProjectDescriptionStorageType.STORAGE_FILE_NAME, fElement);
 				((ContributedEnvironment) CCorePlugin.getDefault().getBuildEnvironmentManager().getContributedEnvironment()).serialize(fDes);
 			} finally {
@@ -364,6 +367,7 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 		if (!overwriteIfExists && fProjectDescription.get() != null)
 			return false;
 
+		ICProjectDescription oldDes = fProjectDescription.get();
 		if (des != null) {
 			if (project.exists() && project.isOpen()) {
 				fProjectDescription = new SoftReference<ICProjectDescription>(des);
@@ -374,6 +378,8 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 		} else {
 			fProjectDescription = new SoftReference<ICProjectDescription>(null);
 		}
+
+		LanguageSettingsProvidersSerializer.reRegisterListeners(oldDes, fProjectDescription.get());
 		return true;
 	}
 
@@ -486,6 +492,8 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 				try {
 					setThreadLocalProjectDesc(des);
 					des.loadDatas();
+
+					LanguageSettingsProvidersSerializer.loadLanguageSettings(des);
 					des.doneLoading();
 				} finally {
 					setThreadLocalProjectDesc(null);

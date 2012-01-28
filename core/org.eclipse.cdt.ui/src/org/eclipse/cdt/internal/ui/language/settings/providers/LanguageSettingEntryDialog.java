@@ -28,8 +28,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import org.eclipse.cdt.core.settings.model.CLibraryFileEntry;
-import org.eclipse.cdt.core.settings.model.CLibraryPathEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
@@ -555,10 +553,10 @@ public class LanguageSettingEntryDialog extends AbstractPropertyDialog {
 				entry = CDataUtil.createCMacroFileEntry(name, flags);
 				break;
 			case COMBO_INDEX_LIBRARY_PATH:
-				entry = new CLibraryPathEntry(name, flags);
+				entry = CDataUtil.createCLibraryPathEntry(name, flags);
 				break;
 			case COMBO_INDEX_LIBRARY_FILE:
-				entry = new CLibraryFileEntry(name, flags);
+				entry = CDataUtil.createCLibraryFileEntry(name, flags);
 				break;
 			default:
 				result = false;

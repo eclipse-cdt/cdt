@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.parser.util;
+package org.eclipse.cdt.internal.core;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 

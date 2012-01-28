@@ -57,7 +57,7 @@ import org.eclipse.cdt.core.settings.model.extension.CResourceData;
 import org.eclipse.cdt.core.settings.model.extension.CTargetPlatformData;
 import org.eclipse.cdt.core.settings.model.extension.impl.CDataFactory;
 import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultLanguageData;
-import org.eclipse.cdt.internal.core.parser.util.WeakHashSet;
+import org.eclipse.cdt.internal.core.WeakHashSet;
 import org.eclipse.cdt.internal.core.settings.model.ExceptionFactory;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;

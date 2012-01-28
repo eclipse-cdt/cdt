@@ -21,7 +21,7 @@ import java.util.Set;
 
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
-import org.eclipse.cdt.internal.core.parser.util.WeakHashSet;
+import org.eclipse.cdt.internal.core.WeakHashSet;
 
 /**
  * The class representing the (in-memory) storage for language settings entries {@link ICLanguageSettingEntry}.

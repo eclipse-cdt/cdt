@@ -4,7 +4,7 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *      IBM Corporation - initial API and implementation
  *      Markus Schorn (Wind River Systems)
@@ -35,6 +35,7 @@ import org.eclipse.cdt.internal.pdom.tests.PDOMTests;
 import org.eclipse.cdt.utils.CdtVariableResolverTest;
 import org.eclipse.cdt.utils.CommandLineUtilTest;
 import org.eclipse.cdt.utils.FindProgramLocationTest;
+import org.eclipse.cdt.utils.WeakHashSetTest;
 
 /**
  * @author vhirsl
@@ -75,13 +76,14 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTest(RewriteTests.suite());
 		suite.addTest(CdtVariableResolverTest.suite());
 		suite.addTest(CommandLineUtilTest.suite());
+		suite.addTest(WeakHashSetTest.suite());
 		suite.addTest(FindProgramLocationTest.suite());
 		suite.addTest(EFSExtensionTests.suite());
 
 		// Add in PDOM tests
 		suite.addTest(PDOMTests.suite());
 		suite.addTest(IndexTests.suite());
-		
+
 		suite.addTest(RefreshScopeTests.suite());
 
 		return suite;

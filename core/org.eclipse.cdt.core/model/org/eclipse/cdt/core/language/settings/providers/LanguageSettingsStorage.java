@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2011 Andrew Gvozdev and others.
+ * Copyright (c) 2011, 2012 Andrew Gvozdev and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import java.util.Set;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.internal.core.WeakHashSet;
+import org.eclipse.cdt.internal.core.WeakHashSetSynchronized;
 
 /**
  * The class representing the (in-memory) storage for language settings entries {@link ICLanguageSettingEntry}.
@@ -39,12 +40,7 @@ public class LanguageSettingsStorage implements Cloneable {
 	 * at the expense of CPU time. WeakHashSet handles garbage collection when a list is not
 	 * referenced anywhere else. See JavaDoc {@link java.lang.ref.WeakReference} about weak reference objects.
 	 */
-	private static WeakHashSet<List<ICLanguageSettingEntry>> listPool = new WeakHashSet<List<ICLanguageSettingEntry>>() {
-		@Override
-		public synchronized List<ICLanguageSettingEntry> add(List<ICLanguageSettingEntry> list) {
-			return super.add(list);
-		}
-	};
+	private static WeakHashSet<List<ICLanguageSettingEntry>> listPool = new WeakHashSetSynchronized<List<ICLanguageSettingEntry>>();
 
 	/**
 	 * Returns the list of setting entries for the given resource and language.

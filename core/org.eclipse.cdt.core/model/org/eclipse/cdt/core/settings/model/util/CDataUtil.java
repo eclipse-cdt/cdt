@@ -58,6 +58,7 @@ import org.eclipse.cdt.core.settings.model.extension.CTargetPlatformData;
 import org.eclipse.cdt.core.settings.model.extension.impl.CDataFactory;
 import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultLanguageData;
 import org.eclipse.cdt.internal.core.WeakHashSet;
+import org.eclipse.cdt.internal.core.WeakHashSetSynchronized;
 import org.eclipse.cdt.internal.core.settings.model.ExceptionFactory;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
@@ -82,12 +83,7 @@ public class CDataUtil {
 	 * at the expense of CPU time. WeakHashSet handles garbage collection when a list is not
 	 * referenced anywhere else. See JavaDoc {@link java.lang.ref.WeakReference} about weak reference objects.
 	 */
-	private static WeakHashSet<ICSettingEntry> settingEntriesPool = new WeakHashSet<ICSettingEntry>() {
-		@Override
-		public synchronized ICSettingEntry add(ICSettingEntry entry) {
-			return super.add(entry);
-		}
-	};
+	private static WeakHashSet<ICSettingEntry> settingEntriesPool = new WeakHashSetSynchronized<ICSettingEntry>();
 
 	public static int genRandomNumber(){
 		if (randomNumber == null) {

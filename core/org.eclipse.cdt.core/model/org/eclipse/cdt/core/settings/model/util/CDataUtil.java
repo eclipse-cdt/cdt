@@ -419,6 +419,26 @@ public class CDataUtil {
 		return (CMacroFileEntry) getPooledEntry(new CMacroFileEntry(name, flags));
 	}
 
+	/**
+	 * Utility method to create {@link CLibraryPathEntry}.
+	 * Note that this method keeps the entries in the pool to avoid proliferation of duplicates.
+	 *
+	 * @since 5.4
+	 */
+	public static CLibraryPathEntry createCLibraryPathEntry(String name, int flags) {
+		return (CLibraryPathEntry) getPooledEntry(new CLibraryPathEntry(name, flags));
+	}
+
+	/**
+	 * Utility method to create {@link CLibraryFileEntry}.
+	 * Note that this method keeps the entries in the pool to avoid proliferation of duplicates.
+	 *
+	 * @since 5.4
+	 */
+	public static CLibraryFileEntry createCLibraryFileEntry(String name, int flags) {
+		return (CLibraryFileEntry) getPooledEntry(new CLibraryFileEntry(name, flags));
+	}
+
 	public static String[] getSourceExtensions(IProject project, CLanguageData data) {
 		String[] exts = null;
 		String[] typeIds = data.getSourceContentTypeIds();

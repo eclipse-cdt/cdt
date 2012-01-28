@@ -27,8 +27,6 @@ import java.util.Vector;
 import org.eclipse.cdt.build.core.scannerconfig.ICfgScannerConfigBuilderInfo2Set;
 import org.eclipse.cdt.build.internal.core.scannerconfig.CfgDiscoveredPathManager.PathInfoCache;
 import org.eclipse.cdt.core.ErrorParserManager;
-import org.eclipse.cdt.core.settings.model.CLibraryFileEntry;
-import org.eclipse.cdt.core.settings.model.CLibraryPathEntry;
 import org.eclipse.cdt.core.settings.model.CSourceEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICExternalSetting;
@@ -1487,8 +1485,8 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			if (canExportedArtifactInfo()) {
 				// Remove existing exported library, if it exists
 				ICConfigurationDescription des = ManagedBuildManager.getDescriptionForConfiguration(this);
-				ICSettingEntry[] libs = CDataUtil.resolveEntries(new ICSettingEntry[] {
-														new CLibraryFileEntry(getArtifactName(), 0)}, des);
+				ICSettingEntry[] unresolved = new ICSettingEntry[] {CDataUtil.createCLibraryFileEntry(getArtifactName(), 0)};
+				ICSettingEntry[] libs = CDataUtil.resolveEntries(unresolved, des);
 				if (libs.length > 0) {
 					for (ICExternalSetting setting : des.getExternalSettings()) {
 						Set<ICSettingEntry> entries = new LinkedHashSet<ICSettingEntry>(Arrays.asList(setting.getEntries()));
@@ -2807,14 +2805,14 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 				IPath p = new Path(value);
 				if(!p.isAbsolute())
 					value = getOwner().getFullPath().append(value).toString();
-				ICLibraryPathEntry lib = new CLibraryPathEntry(value, out.getFlags() & (~ICSettingEntry.RESOLVED));
+				ICLibraryPathEntry lib = CDataUtil.createCLibraryPathEntry(value, out.getFlags() & (~ICSettingEntry.RESOLVED));
 				list.add(lib);
 			}
 
 			// Add 'libs' artifact names themselves
-			ICSettingEntry[] libFile = new ICSettingEntry[] {new CLibraryFileEntry(getArtifactName(), 0)};
-			libFile = CDataUtil.resolveEntries(libFile, des);
-			list.add(libFile[0]);
+			ICSettingEntry[] unresolved = new ICSettingEntry[] {CDataUtil.createCLibraryFileEntry(getArtifactName(), 0)};
+			ICSettingEntry[] libFiles = CDataUtil.resolveEntries(unresolved, des);
+			list.add(libFiles[0]);
 
 			// Contribute the settings back as 'exported'
 			des.createExternalSetting(null, null, null, list.toArray(new ICSettingEntry[list.size()]));

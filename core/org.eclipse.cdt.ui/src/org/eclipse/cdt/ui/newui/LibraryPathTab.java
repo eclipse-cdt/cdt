@@ -17,9 +17,9 @@ import org.eclipse.swt.widgets.TableColumn;
 
 import org.eclipse.cdt.core.resources.IPathEntryStoreListener;
 import org.eclipse.cdt.core.resources.PathEntryStoreChangedEvent;
-import org.eclipse.cdt.core.settings.model.CLibraryPathEntry;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 
 import org.eclipse.cdt.internal.ui.newui.Messages;
 
@@ -57,7 +57,7 @@ public class LibraryPathTab extends AbstractLangsListTab implements IPathEntrySt
 			toAllLang = dlg.check3;
 			int flags = 0;
 			if (dlg.check2) flags = ICSettingEntry.VALUE_WORKSPACE_PATH;
-			return new CLibraryPathEntry(dlg.text1, flags);
+			return CDataUtil.createCLibraryPathEntry(dlg.text1, flags);
 		}
 		return null;
 	}
@@ -72,7 +72,7 @@ public class LibraryPathTab extends AbstractLangsListTab implements IPathEntrySt
 		if (dlg.open() && dlg.text1.trim().length() > 0 ) {
 			int flags = 0;
 			if (dlg.check2) flags = ICSettingEntry.VALUE_WORKSPACE_PATH;
-			return new CLibraryPathEntry(dlg.text1, flags);
+			return CDataUtil.createCLibraryPathEntry(dlg.text1, flags);
 		}
 		return null;
 	}

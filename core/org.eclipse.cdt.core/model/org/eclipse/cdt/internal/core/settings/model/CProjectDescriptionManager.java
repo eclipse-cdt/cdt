@@ -84,7 +84,6 @@ import org.eclipse.cdt.core.settings.model.extension.CResourceData;
 import org.eclipse.cdt.core.settings.model.extension.ICProjectConverter;
 import org.eclipse.cdt.core.settings.model.extension.impl.CDataFactory;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
-import org.eclipse.cdt.core.settings.model.util.CSettingEntryFactory;
 import org.eclipse.cdt.core.settings.model.util.KindBasedStore;
 import org.eclipse.cdt.core.settings.model.util.ListComparator;
 import org.eclipse.cdt.core.settings.model.util.PathSettingsContainer;
@@ -2315,11 +2314,9 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		ICStorageElement baseRootEl = settings.getRootStorageElement();
 		rootEl = rootParent.importChild(baseRootEl);
 		CConfigurationDescriptionCache cache = new CConfigurationDescriptionCache(des, baseData, baseCache, cfgDes.getSpecSettings(), null, rootEl);
-		CSettingEntryFactory factory = new CSettingEntryFactory();
 		SettingsContext context = new SettingsContext(null);
-		cache.applyData(factory, context);
+		cache.applyData(context);
 		cache.doneInitialization();
-		factory.clear();
 		runContextOperations(context, null);
 		return cache;
 	}
@@ -2394,10 +2391,8 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 
 		}
 		CConfigurationDescriptionCache cache = new CConfigurationDescriptionCache(cfgEl, null);
-		CSettingEntryFactory factory = new CSettingEntryFactory();
-		cache.loadData(factory);
+		cache.loadData();
 		cache.doneInitialization();
-		factory.clear();
 		return cache;
 	}
 

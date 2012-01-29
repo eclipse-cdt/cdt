@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Intel Corporation and others.
+ * Copyright (c) 2007, 2012 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,11 +13,9 @@ package org.eclipse.cdt.core.settings.model;
 import org.eclipse.cdt.core.settings.model.util.LanguageSettingEntriesSerializer;
 import org.eclipse.cdt.internal.core.SafeStringInterner;
 
-
-
 public abstract class ACSettingEntry implements ICSettingEntry {
-	int fFlags;
-	String fName;
+	private final int fFlags;
+	private final String fName;
 
 	ACSettingEntry(String name, int flags){
 		fName = SafeStringInterner.safeIntern(name);

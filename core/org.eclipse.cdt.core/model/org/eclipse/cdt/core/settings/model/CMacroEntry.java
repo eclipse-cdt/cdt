@@ -17,7 +17,7 @@ import org.eclipse.cdt.internal.core.SafeStringInterner;
  * As an example, those are supplied by a gcc compiler with option "-D".
  */
 public final class CMacroEntry extends ACSettingEntry implements ICMacroEntry {
-	private String fValue;
+	private final String fValue;
 
 	/**
 	 * This constructor is discouraged to be referenced by clients.
@@ -30,9 +30,8 @@ public final class CMacroEntry extends ACSettingEntry implements ICMacroEntry {
 	 */
 	public CMacroEntry(String name, String value, int flags) {
 		super(name, flags);
-		fValue = SafeStringInterner.safeIntern(value);
-		if(fValue == null)
-			fValue = "";	//$NON-NLS-1$
+		String val = SafeStringInterner.safeIntern(value);
+		fValue = val != null ? val : ""; //$NON-NLS-1$
 	}
 
 	@Override
@@ -80,7 +79,7 @@ public final class CMacroEntry extends ACSettingEntry implements ICMacroEntry {
 
 	@Override
 	protected String contentsToString() {
-		return new StringBuffer().append(fName).append('=').append(fValue).toString();
+		return new StringBuffer().append(getName()).append('=').append(fValue).toString();
 	}
 
 }

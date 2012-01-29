@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.settings.model.ICSettingContainer;
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
 import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultLanguageData;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
-import org.eclipse.cdt.core.settings.model.util.CSettingEntryFactory;
 import org.eclipse.cdt.core.settings.model.util.EntryStore;
 import org.eclipse.core.resources.IProject;
 
@@ -177,16 +176,9 @@ public class CLanguageSettingCache extends CDefaultLanguageData implements
 	}
 
 	@Override
-	protected ICLanguageSettingEntry[] processStoredEntries(
-			ICLanguageSettingEntry[] entries, int op) {
-		if(entries.length != 0){
-			CConfigurationDescriptionCache cfgCache = (CConfigurationDescriptionCache)getConfiguration();
-			CSettingEntryFactory factory = cfgCache.getSettingsFactory();
-			if(factory != null){
-				for(int i = 0; i < entries.length; i++){
-					entries[i] = factory.getLanguageSettingEntry(entries[i]);
-				}
-			}
+	protected ICLanguageSettingEntry[] processStoredEntries(ICLanguageSettingEntry[] entries, int op) {
+		for(int i = 0; i < entries.length; i++) {
+			entries[i] = CDataUtil.getPooledEntry(entries[i]);
 		}
 		return entries;
 	}

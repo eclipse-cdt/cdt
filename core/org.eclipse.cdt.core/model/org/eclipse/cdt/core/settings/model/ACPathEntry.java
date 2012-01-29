@@ -114,6 +114,6 @@ public abstract class ACPathEntry extends ACSettingEntry implements ICPathEntry 
 
 	@Override
 	protected String contentsToString() {
-		return fName;
+		return getName();
 	}
 }

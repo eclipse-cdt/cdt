@@ -44,7 +44,6 @@ import org.eclipse.cdt.core.settings.model.extension.CResourceData;
 import org.eclipse.cdt.core.settings.model.extension.CTargetPlatformData;
 import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultConfigurationData;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
-import org.eclipse.cdt.core.settings.model.util.CSettingEntryFactory;
 import org.eclipse.cdt.core.settings.model.util.PathSettingsContainer;
 import org.eclipse.cdt.internal.core.cdtvariables.CdtVariableManager;
 import org.eclipse.cdt.internal.core.cdtvariables.StorableCdtVariables;
@@ -67,7 +66,6 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 	private boolean fDataLoadded;
 	private boolean fInitializing;
 	private ICConfigurationDescription fBaseDescription;
-	private CSettingEntryFactory fSettingsFactory;
 	private ICSourceEntry[] fResolvedSourceEntries;
 
 	CConfigurationDescriptionCache(ICStorageElement storage, CProjectDescription parent) throws CoreException{
@@ -86,7 +84,7 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		return fInitializing;
 	}
 
-	void loadData(CSettingEntryFactory factory) throws CoreException{
+	void loadData() throws CoreException{
 		if(fDataLoadded)
 			return;
 
@@ -94,11 +92,7 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 
 		fData = CProjectDescriptionManager.getInstance().loadData(this, null);
 
-		fSettingsFactory = factory;
-
 		copySettingsFrom(fData, true);
-
-		fSettingsFactory = null;
 
 		fSpecSettings.reconcileExtensionSettings(true);
 		((CBuildSettingCache)fBuildData).initEnvironmentCache();
@@ -130,7 +124,7 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		return fBaseCache;
 	}
 
-	boolean applyData(CSettingEntryFactory factory, SettingsContext context) throws CoreException{
+	boolean applyData(SettingsContext context) throws CoreException{
 		boolean modified = true;
 		if(fBaseDescription != null){
 
@@ -138,7 +132,6 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 			fDataLoadded = true;
 			fName = fData.getName();
 			fId = fData.getId();
-			fSettingsFactory = factory;
 
 			if((context.getAllConfigurationSettingsFlags() & IModificationContext.CFG_DATA_SETTINGS_UNMODIFIED) == 0  || fBaseCache == null){
 				copySettingsFrom(fData, true);
@@ -148,8 +141,6 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 				if(!modified)
 					modified = (context.getAllConfigurationSettingsFlags() & IModificationContext.CFG_DATA_STORAGE_UNMODIFIED) == 0;
 			}
-
-			fSettingsFactory = null;
 
 			ICdtVariable vars[] = CdtVariableManager.getDefault().getVariables(this);
 			fMacros = new StorableCdtVariables(vars, true);
@@ -162,10 +153,6 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		fBaseCache = null;
 
 		return modified;
-	}
-
-	CSettingEntryFactory getSettingsFactory(){
-		return fSettingsFactory;
 	}
 
 	public StorableCdtVariables getCachedVariables(){

@@ -277,8 +277,9 @@ public class CDataUtil {
 	 *
 	 * @since 5.4
 	 */
-	public static ICSettingEntry getPooledEntry(ICSettingEntry entry) {
-		return settingEntriesPool.add(entry);
+	@SuppressWarnings("unchecked")
+	public static <T extends ICSettingEntry> T getPooledEntry(T entry) {
+		return (T) settingEntriesPool.add(entry);
 	}
 
 	/**
@@ -329,7 +330,7 @@ public class CDataUtil {
 					);
 			break;
 		}
-		return (ICLanguageSettingEntry) getPooledEntry(entry);
+		return getPooledEntry(entry);
 	}
 
 	/**
@@ -386,7 +387,7 @@ public class CDataUtil {
 	 * @since 5.4
 	 */
 	public static CIncludePathEntry createCIncludePathEntry(String name, int flags) {
-		return (CIncludePathEntry) getPooledEntry(new CIncludePathEntry(name, flags));
+		return getPooledEntry(new CIncludePathEntry(name, flags));
 	}
 
 	/**
@@ -396,7 +397,7 @@ public class CDataUtil {
 	 * @since 5.4
 	 */
 	public static CIncludeFileEntry createCIncludeFileEntry(String name, int flags) {
-		return (CIncludeFileEntry) getPooledEntry(new CIncludeFileEntry(name, flags));
+		return getPooledEntry(new CIncludeFileEntry(name, flags));
 	}
 
 	/**
@@ -406,7 +407,7 @@ public class CDataUtil {
 	 * @since 5.4
 	 */
 	public static CMacroEntry createCMacroEntry(String name, String value, int flags) {
-		return (CMacroEntry) getPooledEntry(new CMacroEntry(name, value, flags));
+		return getPooledEntry(new CMacroEntry(name, value, flags));
 	}
 
 	/**
@@ -416,7 +417,7 @@ public class CDataUtil {
 	 * @since 5.4
 	 */
 	public static CMacroFileEntry createCMacroFileEntry(String name, int flags) {
-		return (CMacroFileEntry) getPooledEntry(new CMacroFileEntry(name, flags));
+		return getPooledEntry(new CMacroFileEntry(name, flags));
 	}
 
 	/**
@@ -426,7 +427,7 @@ public class CDataUtil {
 	 * @since 5.4
 	 */
 	public static CLibraryPathEntry createCLibraryPathEntry(String name, int flags) {
-		return (CLibraryPathEntry) getPooledEntry(new CLibraryPathEntry(name, flags));
+		return getPooledEntry(new CLibraryPathEntry(name, flags));
 	}
 
 	/**
@@ -436,7 +437,7 @@ public class CDataUtil {
 	 * @since 5.4
 	 */
 	public static CLibraryFileEntry createCLibraryFileEntry(String name, int flags) {
-		return (CLibraryFileEntry) getPooledEntry(new CLibraryFileEntry(name, flags));
+		return getPooledEntry(new CLibraryFileEntry(name, flags));
 	}
 
 	public static String[] getSourceExtensions(IProject project, CLanguageData data) {

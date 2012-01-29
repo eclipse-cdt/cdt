@@ -16,9 +16,10 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IPath;
 
 public abstract class ACExclusionFilterEntry extends ACPathEntry implements ICExclusionPatternPathEntry {
-	private IPath[] exclusionPatterns;
+	private final IPath[] exclusionPatterns;
 	private final static char[][] UNINIT_PATTERNS = new char[][] { "Non-initialized yet".toCharArray() }; //$NON-NLS-1$
-	char[][]fullCharExclusionPatterns = UNINIT_PATTERNS;
+	/** calculated value, does not have to be final */
+	char[][] fullCharExclusionPatterns = UNINIT_PATTERNS;
 
 
 	ACExclusionFilterEntry(IPath path, IPath exclusionPatterns[] , int flags) {
@@ -74,17 +75,25 @@ public abstract class ACExclusionFilterEntry extends ACPathEntry implements ICEx
 	}
 
 	@Override
-	public boolean equals(Object other) {
-		if(!super.equals(other))
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
 			return false;
-
-		ACExclusionFilterEntry otherEntry = (ACExclusionFilterEntry)other;
-		return Arrays.equals(exclusionPatterns, otherEntry.exclusionPatterns);
+		if (getClass() != obj.getClass())
+			return false;
+		ACExclusionFilterEntry other = (ACExclusionFilterEntry) obj;
+		if (!Arrays.equals(exclusionPatterns, other.exclusionPatterns))
+			return false;
+		return true;
 	}
 
 	@Override
 	public int hashCode() {
-		return super.hashCode() + exclusionPatterns.hashCode();
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Arrays.hashCode(exclusionPatterns);
+		return result;
 	}
 
 	@Override

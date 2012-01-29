@@ -11,10 +11,16 @@
 package org.eclipse.cdt.core.settings.model;
 
 import org.eclipse.cdt.core.model.IIncludeEntry;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 
 /**
+ * An interface representing setting entries.
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
+ *
+ * Any class implementing this interface should be immutable so the setting
+ * entries could be safely pooled by {@link CDataUtil#getPooledEntry(ICSettingEntry)}.
  */
 public interface ICSettingEntry {
 	/**

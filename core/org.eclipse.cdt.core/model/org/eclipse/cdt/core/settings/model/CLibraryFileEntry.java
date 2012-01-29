@@ -20,9 +20,9 @@ import org.eclipse.core.runtime.Path;
  * As an example, those are supplied by a gcc compiler with option "-l".
  */
 public final class CLibraryFileEntry extends ACPathEntry implements ICLibraryFileEntry {
-	private IPath fSourceAttachmentPath;
-	private IPath fSourceAttachmentRootPath;
-	private IPath fSourceAttachmentPrefixMapping;
+	private final IPath fSourceAttachmentPath;
+	private final IPath fSourceAttachmentRootPath;
+	private final IPath fSourceAttachmentPrefixMapping;
 
 	/**
 	 * This constructor is discouraged to be referenced by clients.
@@ -64,38 +64,33 @@ public final class CLibraryFileEntry extends ACPathEntry implements ICLibraryFil
 		this(rc, flags, null, null, null);
 	}
 
-	public CLibraryFileEntry(String value,
-			int flags,
+	public CLibraryFileEntry(String name, int flags,
 			IPath sourceAttachmentPath,
 			IPath sourceAttachmentRootPath,
 			IPath sourceAttachmentPrefixMapping) {
-		super(value, flags);
-		setSourceAttachmentSettings(sourceAttachmentPath, sourceAttachmentRootPath, sourceAttachmentPrefixMapping);
+		super(name, flags);
+
+		fSourceAttachmentPath = sourceAttachmentPath;
+		fSourceAttachmentRootPath = sourceAttachmentRootPath != null ? sourceAttachmentRootPath : Path.EMPTY;
+		fSourceAttachmentPrefixMapping = sourceAttachmentPrefixMapping != null ? sourceAttachmentPrefixMapping : Path.EMPTY;
 	}
 
-	public CLibraryFileEntry(IPath location,
-			int flags,
+	public CLibraryFileEntry(IPath location, int flags,
 			IPath sourceAttachmentPath,
 			IPath sourceAttachmentRootPath,
 			IPath sourceAttachmentPrefixMapping) {
 		super(location, flags);
-		setSourceAttachmentSettings(sourceAttachmentPath, sourceAttachmentRootPath, sourceAttachmentPrefixMapping);
+
+		fSourceAttachmentPath = sourceAttachmentPath;
+		fSourceAttachmentRootPath = sourceAttachmentRootPath != null ? sourceAttachmentRootPath : Path.EMPTY;
+		fSourceAttachmentPrefixMapping = sourceAttachmentPrefixMapping != null ? sourceAttachmentPrefixMapping : Path.EMPTY;
 	}
 
-	public CLibraryFileEntry(IFile rc,
-			int flags,
+	public CLibraryFileEntry(IFile rc, int flags,
 			IPath sourceAttachmentPath,
 			IPath sourceAttachmentRootPath,
 			IPath sourceAttachmentPrefixMapping) {
 		super(rc, flags);
-		setSourceAttachmentSettings(sourceAttachmentPath, sourceAttachmentRootPath, sourceAttachmentPrefixMapping);
-	}
-
-	private void setSourceAttachmentSettings(IPath sourceAttachmentPath,
-			IPath sourceAttachmentRootPath,
-			IPath sourceAttachmentPrefixMapping){
-		if(sourceAttachmentPath == null)
-			return;
 
 		fSourceAttachmentPath = sourceAttachmentPath;
 		fSourceAttachmentRootPath = sourceAttachmentRootPath != null ? sourceAttachmentRootPath : Path.EMPTY;
@@ -132,10 +127,8 @@ public final class CLibraryFileEntry extends ACPathEntry implements ICLibraryFil
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + ((fSourceAttachmentPath == null) ? 0 : fSourceAttachmentPath.hashCode());
-		result = prime * result
-				+ ((fSourceAttachmentPrefixMapping == null) ? 0 : fSourceAttachmentPrefixMapping.hashCode());
-		result = prime * result
-				+ ((fSourceAttachmentRootPath == null) ? 0 : fSourceAttachmentRootPath.hashCode());
+		result = prime * result + ((fSourceAttachmentPrefixMapping == null) ? 0 : fSourceAttachmentPrefixMapping.hashCode());
+		result = prime * result + ((fSourceAttachmentRootPath == null) ? 0 : fSourceAttachmentRootPath.hashCode());
 		return result;
 	}
 

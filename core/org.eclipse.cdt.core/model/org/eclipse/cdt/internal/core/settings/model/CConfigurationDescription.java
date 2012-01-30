@@ -19,6 +19,7 @@ import java.util.Map;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariablesContributor;
 import org.eclipse.cdt.core.settings.model.CConfigurationStatus;
+import org.eclipse.cdt.core.settings.model.CProjectDescriptionEvent;
 import org.eclipse.cdt.core.settings.model.ICBuildSetting;
 import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -50,6 +51,13 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.QualifiedName;
 
+/**
+ * The writable configuration description.
+ *
+ * @see ICConfigurationDescription
+ * @see CConfigurationDescriptionCache
+ * @see CProjectDescriptionEvent
+ */
 public class CConfigurationDescription extends CDataProxyContainer implements ICConfigurationDescription, IProxyFactory, IInternalCCfgInfo {
 	private CfgProxyCache fCache;
 //	private ProxyProvider fFileProxyProvider;

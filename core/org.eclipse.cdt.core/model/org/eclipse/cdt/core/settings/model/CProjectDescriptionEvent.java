@@ -10,27 +10,29 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
+import org.eclipse.cdt.internal.core.settings.model.CConfigurationDescription;
+import org.eclipse.cdt.internal.core.settings.model.CConfigurationDescriptionCache;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionDelta;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.core.resources.IProject;
 
 /**
- * Events fired for the project delats.
- * The ProjectDescription lifecycle looks like:
+ * Events fired for the project deltas.
+ * The ProjectDescription life-cycle looks like:
  * <ul>
- * <li>
- *   - {@link #LOADED} - configuration is loaded and read-only
- * <li>
- *   - {@link #COPY_CREATED} - Indicates new writable description has been created from
- *                     the read-only description backing store
- * <li>
- *   - {@link #ABOUT_TO_APPLY} - First event in the setProjectDescription flow. New description
- *                      writable, old description represents the cache
- * <li>
- *   - {@link #DATA_APPLIED} - Event indicating that configuration data has been applied by the build system
- * <li>
- *   - {@link #APPLIED} - setProjectDescription finished, newDescription is read-only
+ * <li> {@link #LOADED} - configuration is loaded and read-only.
+ * <li> {@link #COPY_CREATED} - Indicates new writable description has been created
+ *         from the read-only description backing store.
+ * <li> {@link #ABOUT_TO_APPLY} - First event in the setProjectDescription flow.
+ *         New description writable, old description represents the cache.
+ * <li> {@link #DATA_APPLIED} - Event indicating that configuration data has been applied
+ *         by the build system.
+ * <li> {@link #APPLIED} - setProjectDescription finished, newDescription is read-only.
  * </ul>
+ *
+ * @see ICConfigurationDescription
+ * @see CConfigurationDescription
+ * @see CConfigurationDescriptionCache
  */
 
 public final class CProjectDescriptionEvent {
@@ -44,8 +46,8 @@ public final class CProjectDescriptionEvent {
 	public static final int DATA_APPLIED = 1 << 4;
 	/** Event kind encapsulated ALL events */
 	public static final int ALL = LOADED | ABOUT_TO_APPLY | APPLIED | COPY_CREATED | DATA_APPLIED;
-	
-	/** The type of event this corresponds to */ 
+
+	/** The type of event this corresponds to */
 	private final int fType;
 	/** A *writable* new description */
 	private final ICProjectDescription fNewDescription;
@@ -56,7 +58,7 @@ public final class CProjectDescriptionEvent {
 	private ICDescriptionDelta fActiveCfgDelta;
 	private ICDescriptionDelta fIndexCfgDelta;
 	private final IProject fProject;
-	
+
 	public CProjectDescriptionEvent(int type,
 			ICDescriptionDelta delta,
 			ICProjectDescription newDes,
@@ -75,7 +77,7 @@ public final class CProjectDescriptionEvent {
 			fProject = null;
 		}
 	}
-	
+
 	public IProject getProject() {
 		return fProject;
 	}
@@ -83,11 +85,11 @@ public final class CProjectDescriptionEvent {
 	public int getEventType() {
 		return fType;
 	}
-	
+
 	public ICDescriptionDelta getProjectDelta() {
 		return fProjDelta;
 	}
-	
+
 	public ICDescriptionDelta getActiveCfgDelta() {
 		if (fActiveCfgDelta == null) {
 			fActiveCfgDelta = getDelta(true);
@@ -101,7 +103,7 @@ public final class CProjectDescriptionEvent {
 		}
 		return fIndexCfgDelta;
 	}
-	
+
 	private ICDescriptionDelta getDelta(boolean active) {
 		ICDescriptionDelta delta = null;
 		switch(getEventType()) {
@@ -139,17 +141,17 @@ public final class CProjectDescriptionEvent {
 				}
 			}
 			break;
-			
+
 		case COPY_CREATED:
 			break;
 		}
 		return delta;
 	}
-	
+
 	private ICConfigurationDescription getCfg(ICProjectDescription des, boolean active) {
-		return active ? des.getActiveConfiguration() : des.getDefaultSettingConfiguration(); 
+		return active ? des.getActiveConfiguration() : des.getDefaultSettingConfiguration();
 	}
-	
+
 	private ICDescriptionDelta findCfgDelta(ICDescriptionDelta delta, String id) {
 		if (delta == null)
 			return null;

@@ -17,15 +17,22 @@ import java.util.List;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.AbstractExecutableExtensionBase;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
 import org.eclipse.cdt.core.settings.model.CMacroEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.testplugin.CModelMock;
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
+import org.eclipse.cdt.internal.core.settings.model.CConfigurationDescription;
+import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
@@ -35,6 +42,7 @@ import org.eclipse.core.runtime.Path;
  */
 public class LanguageSettingsManagerTests extends BaseTestCase {
 	// Those should match ids of plugin extensions defined in plugin.xml
+	private static final String EXTENSION_BASE_PROVIDER_ID = LanguageSettingsExtensionsTests.EXTENSION_BASE_PROVIDER_ID;
 	private static final String EXTENSION_SERIALIZABLE_PROVIDER_ID = LanguageSettingsExtensionsTests.EXTENSION_SERIALIZABLE_PROVIDER_ID;
 	private static final String EXTENSION_SERIALIZABLE_PROVIDER_NAME = LanguageSettingsExtensionsTests.EXTENSION_SERIALIZABLE_PROVIDER_NAME;
 	private static final String EXTENSION_EDITABLE_PROVIDER_ID = LanguageSettingsExtensionsTests.EXTENSION_EDITABLE_PROVIDER_ID;
@@ -48,6 +56,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 	private static final String PROVIDER_NAME_2 = "test.provider.2.name";
 	private static final String CFG_ID = "test.configuration.id";
 	private static final String LANG_ID = "test.lang.id";
+	private static final String LANG_CPP = GPPLanguage.ID;
 	private static final IFile FILE_0 = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path("/project/path0"));
 
 	/**
@@ -156,6 +165,35 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 
 		// get default providers
 		assertEquals(defaultProviders, cfgDescription.getDefaultLanguageSettingsProvidersIds());
+	}
+
+	/**
+	 * Test to ensure uniqueness of ids for providers kept in configuration description.
+	 */
+	public void testConfigurationDescription_ProvidersUniqueId() throws Exception {
+		// Create model project and accompanied descriptions
+		String projectName = getName();
+		IProject project = ResourceHelper.createCDTProjectWithConfig(projectName);
+		ICProjectDescription prjDescriptionWritable = CProjectDescriptionManager.getInstance().getProjectDescription(project, true);
+
+		ICConfigurationDescription[] cfgDescriptions = prjDescriptionWritable.getConfigurations();
+		ICConfigurationDescription cfgDescriptionWritable = cfgDescriptions[0];
+		assertTrue(cfgDescriptionWritable instanceof CConfigurationDescription);
+
+		// attempt to add duplicate providers
+		MockProvider dupe1 = new MockProvider(PROVIDER_0, PROVIDER_NAME_1, null);
+		MockProvider dupe2 = new MockProvider(PROVIDER_0, PROVIDER_NAME_2, null);
+
+		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+		providers.add(dupe1);
+		providers.add(dupe2);
+
+		try {
+			((ILanguageSettingsProvidersKeeper) cfgDescriptionWritable).setLanguageSettingProviders(providers);
+			fail("cfgDescription.setLanguageSettingProviders() should not accept duplicate providers");
+		} catch (Exception e) {
+			// Exception is welcome here
+		}
 	}
 
 	/**
@@ -339,6 +377,117 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 	}
 
 	/**
+	 * Test getting entries from resource hierarchy.
+	 */
+	public void testProvider_ParentFolder() throws Exception {
+		// Create model project and accompanied descriptions
+		String projectName = getName();
+		IProject project = ResourceHelper.createCDTProjectWithConfig(projectName);
+		ICProjectDescription prjDescriptionWritable = CProjectDescriptionManager.getInstance().getProjectDescription(project, true);
+		ICConfigurationDescription[] cfgDescriptions = prjDescriptionWritable.getConfigurations();
+
+		ICConfigurationDescription cfgDescriptionWritable = cfgDescriptions[0];
+		assertTrue(cfgDescriptionWritable instanceof CConfigurationDescription);
+
+		final IFolder parentFolder = ResourceHelper.createFolder(project, "/ParentFolder/");
+		assertNotNull(parentFolder);
+		final IFile emptySettingsPath = ResourceHelper.createFile(project, "/ParentFolder/Subfolder/empty");
+		assertNotNull(emptySettingsPath);
+
+		// store the entries in parent folder
+		final List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		entries.add(new CIncludePathEntry("path0", 0));
+		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+		ILanguageSettingsProvider provider = new MockProvider(PROVIDER_0, PROVIDER_NAME_0, null)  {
+			@Override
+			public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId) {
+				if (rc!=null && rc.equals(parentFolder)) {
+					return entries;
+				}
+				if (rc!=null && rc.equals(emptySettingsPath)) {
+					return new ArrayList<ICLanguageSettingEntry>(0);
+				}
+				return null;
+			}
+
+		};
+		providers.add(provider);
+		((ILanguageSettingsProvidersKeeper) cfgDescriptionWritable).setLanguageSettingProviders(providers);
+
+		{
+			// retrieve entries for a derived resource (in a subfolder)
+			IFile derived = ResourceHelper.createFile(project, "/ParentFolder/Subfolder/resource");
+			List<ICLanguageSettingEntry> actual = LanguageSettingsManager
+				.getSettingEntriesUpResourceTree(provider, cfgDescriptionWritable, derived, LANG_ID);
+			// taken from parent folder
+			assertEquals(entries.get(0),actual.get(0));
+			assertEquals(entries.size(), actual.size());
+		}
+
+		{
+			// retrieve entries for not related resource
+			IFile notRelated = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path("/AnotherFolder/Subfolder/resource"));
+			List<ICLanguageSettingEntry> actual = LanguageSettingsManager
+				.getSettingEntriesUpResourceTree(provider, cfgDescriptionWritable, notRelated, LANG_ID);
+			assertEquals(0, actual.size());
+		}
+
+		{
+			// test distinction between no settings and empty settings
+			List<ICLanguageSettingEntry> actual = LanguageSettingsManager
+				.getSettingEntriesUpResourceTree(provider, cfgDescriptionWritable, emptySettingsPath, LANG_ID);
+			// NOT taken from parent folder
+			assertEquals(0, actual.size());
+		}
+	}
+
+	/**
+	 * Test getting entries from resource hierarchy up to default entries.
+	 */
+	public void testProvider_DefaultEntries() throws Exception {
+		// Create model project and accompanied descriptions
+		String projectName = getName();
+		IProject project = ResourceHelper.createCDTProjectWithConfig(projectName);
+		ICProjectDescription prjDescriptionWritable = CProjectDescriptionManager.getInstance().getProjectDescription(project, true);
+		ICConfigurationDescription[] cfgDescriptions = prjDescriptionWritable.getConfigurations();
+
+		ICConfigurationDescription cfgDescriptionWritable = cfgDescriptions[0];
+		assertTrue(cfgDescriptionWritable instanceof CConfigurationDescription);
+
+		final IFolder parentFolder = ResourceHelper.createFolder(project, "/ParentFolder/");
+		assertNotNull(parentFolder);
+		final IFile emptySettingsPath = ResourceHelper.createFile(project, "/ParentFolder/Subfolder/empty");
+		assertNotNull(emptySettingsPath);
+
+		// store the entries as default entries
+		final List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		entries.add(new CIncludePathEntry("path0", 0));
+		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+		ILanguageSettingsProvider provider = new MockProvider(PROVIDER_0, PROVIDER_NAME_0, null)  {
+			@Override
+			public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId) {
+				if (cfgDescription==null && rc==null) {
+					return entries;
+				}
+				return null;
+			}
+
+		};
+		providers.add(provider);
+		((ILanguageSettingsProvidersKeeper) cfgDescriptionWritable).setLanguageSettingProviders(providers);
+
+		{
+			// retrieve entries for a resource
+			IFile derived = ResourceHelper.createFile(project, "/ParentFolder/Subfolder/resource");
+			List<ICLanguageSettingEntry> actual = LanguageSettingsManager
+					.getSettingEntriesUpResourceTree(provider, cfgDescriptionWritable, derived, LANG_ID);
+			// default entries given
+			assertEquals(entries.get(0),actual.get(0));
+			assertEquals(entries.size(), actual.size());
+		}
+	}
+
+	/**
 	 * Test ability to get entries by kind.
 	 */
 	public void testEntriesByKind_Regular() throws Exception {
@@ -503,6 +652,59 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 	}
 
 	/**
+	 * Test ability to serialize providers for a configuration.
+	 */
+	public void testConfigurationDescription_SerializeProviders() throws Exception {
+		// Create model project and accompanied descriptions
+		String projectName = getName();
+		IProject project = ResourceHelper.createCDTProjectWithConfig(projectName);
+		ICProjectDescription prjDescriptionWritable = CProjectDescriptionManager.getInstance().getProjectDescription(project, true);
+
+		ICConfigurationDescription[] cfgDescriptions = prjDescriptionWritable.getConfigurations();
+		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
+		assertTrue(cfgDescription instanceof CConfigurationDescription);
+
+		ILanguageSettingsProvider workspaceProvider = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_BASE_PROVIDER_ID);
+		assertNotNull(workspaceProvider);
+		{
+			// ensure no test provider is set yet
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+			assertEquals(0, providers.size());
+		}
+		{
+			// set test provider
+			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+			providers.add(workspaceProvider);
+			((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
+		}
+		{
+			// check that test provider got there
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+			assertEquals(workspaceProvider, providers.get(0));
+		}
+
+		{
+			// serialize
+			CProjectDescriptionManager.getInstance().setProjectDescription(project, prjDescriptionWritable);
+			// close and reopen the project
+			project.close(null);
+			project.open(null);
+		}
+
+		{
+			// check that test provider got loaded
+			ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
+			ICConfigurationDescription[] loadedCfgDescriptions = prjDescription.getConfigurations();
+			ICConfigurationDescription loadedCfgDescription = loadedCfgDescriptions[0];
+			assertTrue(cfgDescription instanceof CConfigurationDescription);
+
+			List<ILanguageSettingsProvider> loadedProviders = ((ILanguageSettingsProvidersKeeper) loadedCfgDescription).getLanguageSettingProviders();
+			assertTrue(LanguageSettingsManager.isWorkspaceProvider(loadedProviders.get(0)));
+		}
+
+	}
+
+	/**
 	 * Test a workspace provider basics.
 	 */
 	public void testWorkspaceProvider_Basic() throws Exception {
@@ -603,6 +805,158 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 
 		// check for no side effect
 		assertSame(provider, providers.get(0));
+	}
+
+	/**
+	 * TODO - YAGNI?
+	 */
+	public void testBuildResourceTree_FileInFolder() throws Exception {
+		// sample entries
+		CMacroEntry entry = new CMacroEntry("MACRO", null, 0);
+		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		entries.add(entry);
+
+		// create resources
+		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
+		IFile file = ResourceHelper.createFile(project, "file.cpp");
+		assertNotNull(file);
+
+		// create a provider and set the entries
+		LanguageSettingsSerializableProvider provider = new LanguageSettingsSerializableProvider(PROVIDER_1, PROVIDER_NAME_1);
+		provider.setSettingEntries(null, file, null, entries);
+		// build the hierarchy
+		LanguageSettingsProvidersSerializer.buildResourceTree(provider, null, null, project);
+
+		// check that entries go to highest possible level
+		assertEquals(entries, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, file, null));
+		assertEquals(entries, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, project, null));
+	}
+
+	/**
+	 * TODO - YAGNI?
+	 */
+	public void testBuildResourceTree_FileInSubFolder() throws Exception {
+		// sample entries
+		CMacroEntry entry = new CMacroEntry("MACRO", null, 0);
+		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		entries.add(entry);
+
+		// create resources
+		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
+		IFolder folder = ResourceHelper.createFolder(project, "Folder");
+		IFile file = ResourceHelper.createFile(project, "Folder/file.cpp");
+
+		// create a provider and set the entries
+		LanguageSettingsSerializableProvider provider = new LanguageSettingsSerializableProvider(PROVIDER_1, PROVIDER_NAME_1);
+		provider.setSettingEntries(null, file, null, entries);
+		// build the hierarchy
+		LanguageSettingsProvidersSerializer.buildResourceTree(provider, null, null, project);
+
+		// check that entries go to highest possible level
+		assertEquals(entries, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, file, null));
+		assertEquals(entries, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, folder, null));
+		assertEquals(entries, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, project, null));
+	}
+
+	/**
+	 * TODO - YAGNI?
+	 */
+	public void testBuildResourceTree_TwoSubFolders() throws Exception {
+		// sample entries
+		List<ICLanguageSettingEntry> entries1 = new ArrayList<ICLanguageSettingEntry>();
+		entries1.add(new CMacroEntry("MACRO_1", null, 0));
+		List<ICLanguageSettingEntry> entries2 = new ArrayList<ICLanguageSettingEntry>();
+		entries2.add(new CMacroEntry("MACRO_2", null, 0));
+
+		// create resources
+		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
+		IFolder folder1 = ResourceHelper.createFolder(project, "Folder1");
+		IFolder folder2 = ResourceHelper.createFolder(project, "Folder2");
+		IFile file1 = ResourceHelper.createFile(project, "Folder1/file1.cpp");
+		IFile file2 = ResourceHelper.createFile(project, "Folder2/file2.cpp");
+
+		// create a provider and set the entries
+		LanguageSettingsSerializableProvider provider = new LanguageSettingsSerializableProvider(PROVIDER_1, PROVIDER_NAME_1);
+		provider.setSettingEntries(null, file1, null, entries1);
+		provider.setSettingEntries(null, file2, null, entries2);
+		// build the hierarchy
+		LanguageSettingsProvidersSerializer.buildResourceTree(provider, null, null, project);
+
+		// check that entries go to highest possible level
+		assertEquals(entries1, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, file1, null));
+		assertEquals(entries1, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, folder1, null));
+
+		assertEquals(entries2, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, file2, null));
+		assertEquals(entries2, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, folder2, null));
+
+		assertEquals(0, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, project, null).size());
+	}
+
+	/**
+	 * TODO - YAGNI?
+	 */
+	public void testBuildResourceTree_FlippingSettings() throws Exception {
+		// sample entries
+		List<ICLanguageSettingEntry> entries1 = new ArrayList<ICLanguageSettingEntry>();
+		entries1.add(new CMacroEntry("MACRO_1", null, 0));
+		List<ICLanguageSettingEntry> entries2 = new ArrayList<ICLanguageSettingEntry>();
+		entries2.add(new CMacroEntry("MACRO_2", null, 0));
+
+		// create resources
+		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
+		IFile file1 = ResourceHelper.createFile(project, "file1.cpp");
+		IFile file2 = ResourceHelper.createFile(project, "file2.cpp");
+		IFile file3 = ResourceHelper.createFile(project, "file3.cpp");
+
+		// create a provider
+		LanguageSettingsSerializableProvider provider = new LanguageSettingsSerializableProvider(PROVIDER_1, PROVIDER_NAME_1);
+
+		// set the entries for the first 2 files
+		provider.setSettingEntries(null, file1, null, entries1);
+		provider.setSettingEntries(null, file2, null, entries1);
+		// build the hierarchy
+		LanguageSettingsProvidersSerializer.buildResourceTree(provider, null, null, project);
+		// double-check where the entries go
+		assertEquals(entries1, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, file1, null));
+		assertEquals(entries1, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, file2, null));
+		assertEquals(entries1, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, project, null));
+
+		// set the entries for the second+third files (second file flips the settings)
+		provider.setSettingEntries(null, file2, null, entries2);
+		provider.setSettingEntries(null, file3, null, entries2);
+		// build the hierarchy
+		LanguageSettingsProvidersSerializer.buildResourceTree(provider, null, null, project);
+		// check where the entries go, it should not lose entries for the first file
+		assertEquals(entries1, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, file1, null));
+		assertEquals(entries2, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, file2, null));
+		assertEquals(entries2, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, file3, null));
+		assertEquals(entries2, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, project, null));
+	}
+
+	/**
+	 * TODO - YAGNI?
+	 */
+	public void testBuildResourceTree_WithLanguage() throws Exception {
+		// sample entries
+		CMacroEntry entry = new CMacroEntry("MACRO", null, 0);
+		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		entries.add(entry);
+
+		// create resources
+		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
+		IFolder folder = ResourceHelper.createFolder(project, "Folder");
+		IFile file = ResourceHelper.createFile(project, "Folder/file.cpp");
+
+		// create a provider and set the entries
+		LanguageSettingsSerializableProvider provider = new LanguageSettingsSerializableProvider(PROVIDER_1, PROVIDER_NAME_1);
+		provider.setSettingEntries(null, file, LANG_CPP, entries);
+		// build the hierarchy
+		LanguageSettingsProvidersSerializer.buildResourceTree(provider, null, LANG_CPP, project);
+
+		// check that entries go to highest possible level
+		assertEquals(entries, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, file, LANG_CPP));
+		assertEquals(entries, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, folder, LANG_CPP));
+		assertEquals(entries, LanguageSettingsManager.getSettingEntriesUpResourceTree(provider, null, project, LANG_CPP));
 	}
 
 }

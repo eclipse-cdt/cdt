@@ -18,6 +18,8 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariablesContributor;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
 import org.eclipse.cdt.core.settings.model.CConfigurationStatus;
 import org.eclipse.cdt.core.settings.model.CProjectDescriptionEvent;
 import org.eclipse.cdt.core.settings.model.ICBuildSetting;
@@ -58,7 +60,8 @@ import org.eclipse.core.runtime.QualifiedName;
  * @see CConfigurationDescriptionCache
  * @see CProjectDescriptionEvent
  */
-public class CConfigurationDescription extends CDataProxyContainer implements ICConfigurationDescription, IProxyFactory, IInternalCCfgInfo {
+public class CConfigurationDescription extends CDataProxyContainer
+		implements ICConfigurationDescription, IProxyFactory, IInternalCCfgInfo, ILanguageSettingsProvidersKeeper {
 	private CfgProxyCache fCache;
 //	private ProxyProvider fFileProxyProvider;
 //	private ProxyProvider fFolderProxyProvider;
@@ -824,5 +827,43 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 		CConfigurationData data = getConfigurationData(false);
 		CConfigurationStatus status = data.getStatus();
 		return status != null ? status : CConfigurationStatus.CFG_STATUS_OK;
+	}
+
+	@Override
+	public void setLanguageSettingProviders(List<ILanguageSettingsProvider> providers) {
+		try {
+			getSpecSettings().setLanguageSettingProviders(providers);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+}
+
+	@Override
+	public List<ILanguageSettingsProvider> getLanguageSettingProviders() {
+		try {
+			return getSpecSettings().getLanguageSettingProviders();
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+		return null;
+	}
+
+	@Override
+	public void setDefaultLanguageSettingsProvidersIds(String[] ids) {
+		try {
+			getSpecSettings().setDefaultLanguageSettingsProvidersIds(ids);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+	}
+
+	@Override
+	public String[] getDefaultLanguageSettingsProvidersIds() {
+		try {
+			return getSpecSettings().getDefaultLanguageSettingsProvidersIds();
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+		return null;
 	}
 }

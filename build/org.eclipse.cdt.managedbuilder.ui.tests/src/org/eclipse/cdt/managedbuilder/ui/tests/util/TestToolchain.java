@@ -363,7 +363,11 @@ public class TestToolchain extends HoldsOptions implements IToolChain {
 		// TODO Auto-generated method stub
 		return false;
 	}
-
-
+	
+	@Override
+	public String getDefaultLanguageSettingsProvidersIds() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

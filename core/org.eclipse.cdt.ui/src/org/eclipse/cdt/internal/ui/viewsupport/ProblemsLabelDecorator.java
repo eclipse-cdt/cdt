@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.viewsupport;
 
+import java.util.List;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
@@ -29,6 +30,10 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
+import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
@@ -36,6 +41,7 @@ import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.ui.CElementImageDescriptor;
@@ -379,6 +385,31 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 		}
 	}
 
+	public static boolean isCustomizedResource(ICConfigurationDescription cfgDescription, IResource rc) {
+		if (rc instanceof IProject)
+			return false;
+
+		if (!ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(rc.getProject())) {
+			ICResourceDescription rcDescription = cfgDescription.getResourceDescription(rc.getProjectRelativePath(), true);
+			return rcDescription != null;
+		}
+
+		if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+			for (ILanguageSettingsProvider provider: ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders()) {
+				for (String languageId : LanguageSettingsManager.getLanguages(rc, cfgDescription)) {
+					List<ICLanguageSettingEntry> list = provider.getSettingEntries(cfgDescription, rc, languageId);
+					if (list!=null) {
+						List<ICLanguageSettingEntry> listDefault = provider.getSettingEntries(cfgDescription, rc.getParent(), languageId);
+						// != is OK here due as the equal lists will have the same reference in WeakHashSet
+						if (list != listDefault)
+							return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
 	/**
 	 * @param rc - resource to check
 	 * @return flags {@link TICK_CONFIGURATION} if the resource has custom settings and possibly needs
@@ -393,9 +424,7 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 		if (prjDescription != null) {
 			ICConfigurationDescription cfgDescription = prjDescription.getDefaultSettingConfiguration();
 			if (cfgDescription != null) {
-				IPath path = rc.getProjectRelativePath();
-				ICResourceDescription rcDescription = cfgDescription.getResourceDescription(path, true);
-				if (rcDescription != null)
+				if (isCustomizedResource(cfgDescription, rc))
 					result |= TICK_CONFIGURATION;
 			}
 		}

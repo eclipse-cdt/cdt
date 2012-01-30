@@ -19,6 +19,7 @@ import java.util.Map.Entry;
 import org.eclipse.cdt.build.core.scannerconfig.CfgInfoContext;
 import org.eclipse.cdt.build.core.scannerconfig.ICfgScannerConfigBuilderInfo2Set;
 import org.eclipse.cdt.build.internal.core.scannerconfig.CfgScannerConfigUtil;
+import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
@@ -36,6 +37,7 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.dataprovider.BuildConfigurationData;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.QualifiedName;
@@ -213,7 +215,12 @@ public class CfgScannerConfigInfoFactory2 {
 												}
 											}
 											if (id == null) {
-												id = CfgScannerConfigUtil.getDefaultProfileId(context, true);
+												// Language Settings Providers are meant to replace legacy scanner discovery
+												// so do not try to find default profile
+												IProject project = cfg.getOwner().getProject();
+												if (!ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(project)) {
+													id = CfgScannerConfigUtil.getDefaultProfileId(context, true);
+												}
 											}
 
 											InfoContext baseContext = context.toInfoContext();

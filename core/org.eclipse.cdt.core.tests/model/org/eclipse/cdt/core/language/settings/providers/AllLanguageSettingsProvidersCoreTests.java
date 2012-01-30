@@ -28,6 +28,8 @@ public class AllLanguageSettingsProvidersCoreTests {
 		suite.addTest(LanguageSettingsManagerTests.suite());
 		suite.addTest(LanguageSettingsSerializableProviderTests.suite());
 		suite.addTest(LanguageSettingsPersistenceProjectTests.suite());
+		suite.addTest(LanguageSettingsListenersTests.suite());
+		suite.addTest(LanguageSettingsScannerInfoProviderTests.suite());
 		return suite;
 	}
 }

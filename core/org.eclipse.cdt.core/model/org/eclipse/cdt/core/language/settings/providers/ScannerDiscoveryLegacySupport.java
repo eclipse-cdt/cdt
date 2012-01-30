@@ -11,7 +11,9 @@
 
 package org.eclipse.cdt.core.language.settings.providers;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -41,6 +43,9 @@ public class ScannerDiscoveryLegacySupport {
 	private static boolean USE_LANGUAGE_SETTINGS_PROVIDERS_DEFAULT = false;
 	private static final String PREFERENCES_QUALIFIER = CCorePlugin.PLUGIN_ID;
 	private static final String LANGUAGE_SETTINGS_PROVIDERS_NODE = "languageSettingsProviders"; //$NON-NLS-1$
+
+	private static Map<String, String> legacyProfiles = null;
+
 
 	private static Preferences getPreferences(IProject project) {
 		if (project == null)
@@ -94,6 +99,39 @@ public class ScannerDiscoveryLegacySupport {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Returns the values of scanner discovery profiles (scannerConfigDiscoveryProfileId) which were deprecated
+	 * and replaced with language settings providers in plugin.xml.
+	 * This (temporary) function serves as fail-safe switch during the transition.
+	 *
+	 * @param id - can be id of either org.eclipse.cdt.managedbuilder.internal.core.InputType
+	 * or org.eclipse.cdt.managedbuilder.internal.core.ToolChain.
+	 * @return legacy scannerConfigDiscoveryProfileId.
+	 */
+	@SuppressWarnings("nls")
+	public static String getDeprecatedLegacyProfiles(String id) {
+		if (legacyProfiles == null) {
+			legacyProfiles = new HashMap<String, String>();
+
+			// InputTypes
+			// TODO -doublecheck
+//			legacyProfiles.put(inputTypeId, scannerConfigDiscoveryProfileId);
+			legacyProfiles.put("cdt.managedbuild.tool.gnu.c.compiler.input", "org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC|org.eclipse.cdt.make.core.GCCStandardMakePerFileProfile");
+			legacyProfiles.put("cdt.managedbuild.tool.gnu.cpp.compiler.input", "org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileCPP|org.eclipse.cdt.make.core.GCCStandardMakePerFileProfile");
+			legacyProfiles.put("cdt.managedbuild.tool.gnu.c.compiler.input.cygwin", "org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfileC");
+			legacyProfiles.put("cdt.managedbuild.tool.gnu.cpp.compiler.input.cygwin", "org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfileCPP");
+			legacyProfiles.put("cdt.managedbuild.tool.xlc.c.compiler.input", "org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfile");
+			legacyProfiles.put("cdt.managedbuild.tool.xlc.cpp.c.compiler.input", "org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfile");
+			legacyProfiles.put("cdt.managedbuild.tool.xlc.cpp.compiler.input", "org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfileCPP");
+
+			// Toolchains
+			// TODO -doublecheck
+//			legacyProfiles.put(toolchainId, scannerConfigDiscoveryProfileId);
+		}
+
+		return legacyProfiles.get(id);
 	}
 
 }

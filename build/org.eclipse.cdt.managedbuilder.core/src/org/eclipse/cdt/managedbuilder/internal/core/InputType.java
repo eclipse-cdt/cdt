@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
@@ -24,6 +25,7 @@ import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.internal.core.SafeStringInterner;
 import org.eclipse.cdt.managedbuilder.core.IAdditionalInput;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IFileInfo;
 import org.eclipse.cdt.managedbuilder.core.IInputOrder;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
@@ -37,6 +39,7 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.enablement.OptionEnablementExpression;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGeneratorType;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
@@ -1838,9 +1841,56 @@ public class InputType extends BuildObject implements IInputType {
 		return id;
 	}
 
+	/**
+	 * Temporary method to support compatibility during SD transition.
+	 */
+	private boolean isLanguageSettingsProvidersFunctionalityEnabled() {
+		boolean isLanguageSettingsProvidersEnabled = false;
+		ITool tool = getParent();
+		if (tool!=null) {
+			IBuildObject bo = tool.getParent();
+			if (bo instanceof IToolChain) {
+				IConfiguration cfg = ((IToolChain) bo).getParent();
+				if (cfg!=null) {
+					IResource rc = cfg.getOwner();
+					if (rc!=null) {
+						IProject project = rc.getProject();
+						isLanguageSettingsProvidersEnabled = ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(project);
+					}
+				}
+			}
+		}
+		return isLanguageSettingsProvidersEnabled;
+	}
+
+	/**
+	 * Temporary method to support compatibility during SD transition.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public String getLegacyDiscoveryProfileIdAttribute(){
+		String profileId = buildInfoDicsoveryProfileId;
+		if (profileId == null) {
+			profileId = ScannerDiscoveryLegacySupport.getDeprecatedLegacyProfiles(id);
+			if (profileId == null && superClass instanceof InputType) {
+				profileId = ((InputType)superClass).getLegacyDiscoveryProfileIdAttribute();
+			}
+		}
+		return profileId;
+	}
+
 	public String getDiscoveryProfileIdAttribute(){
-		if(buildInfoDicsoveryProfileId == null && superClass != null)
-			return ((InputType)superClass).getDiscoveryProfileIdAttribute();
+		if (!isLanguageSettingsProvidersFunctionalityEnabled())
+			return getLegacyDiscoveryProfileIdAttribute();
+		
+		return getDiscoveryProfileIdAttributeInternal();
+	}
+
+	/**
+	 * Method extracted temporarily to support compatibility during SD transition.
+	 */
+	private String getDiscoveryProfileIdAttributeInternal(){
+		if(buildInfoDicsoveryProfileId == null && superClass instanceof InputType)
+			return ((InputType)superClass).getDiscoveryProfileIdAttributeInternal();
 		return buildInfoDicsoveryProfileId;
 	}
 

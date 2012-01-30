@@ -50,6 +50,8 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
@@ -1569,6 +1571,14 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 				CCorePlugin.log(e);
 			}
 
+			List<ILanguageSettingsProvider> newLSProviders = null;
+			if (newCfg instanceof ILanguageSettingsProvidersKeeper)
+				newLSProviders = ((ILanguageSettingsProvidersKeeper) newCfg).getLanguageSettingProviders();
+			List<ILanguageSettingsProvider> oldLSProviders = null;
+			if (oldCfg instanceof ILanguageSettingsProvidersKeeper)
+				oldLSProviders = ((ILanguageSettingsProvidersKeeper) oldCfg).getLanguageSettingProviders();
+			if(newLSProviders != oldLSProviders && (newLSProviders == null || !newLSProviders.equals(oldLSProviders)))
+				delta.addChangeFlags(ICDescriptionDelta.LANGUAGE_SETTINGS_PROVIDERS);
 
 			calculateCfgExtSettingsDelta(delta);
 

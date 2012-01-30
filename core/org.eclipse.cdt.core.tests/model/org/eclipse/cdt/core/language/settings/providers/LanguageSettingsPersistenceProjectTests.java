@@ -12,6 +12,7 @@
 package org.eclipse.cdt.core.language.settings.providers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import junit.framework.TestSuite;
@@ -20,11 +21,14 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.WriteAccessException;
 import org.eclipse.cdt.core.testplugin.CModelMock;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
+import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
@@ -50,8 +54,10 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	private static final String CFG_ID = "test.configuration.id.0";
 	private static final String CFG_ID_2 = "test.configuration.id.2";
 	private static final String PROVIDER_0 = "test.provider.0.id";
+	private static final String PROVIDER_1 = "test.provider.1.id";
 	private static final String PROVIDER_2 = "test.provider.2.id";
 	private static final String PROVIDER_NAME_0 = "test.provider.0.name";
+	private static final String PROVIDER_NAME_1 = "test.provider.1.name";
 	private static final String PROVIDER_NAME_2 = "test.provider.2.name";
 	private static final String ATTR_PARAMETER = "parameter";
 	private static final String CUSTOM_PARAMETER = "custom parameter";
@@ -146,6 +152,32 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	}
 
 	/**
+	 * Get read-only configuration descriptions.
+	 */
+	private ICConfigurationDescription[] getConfigurationDescriptions(IProject project) {
+		// project description
+		ICProjectDescription projectDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
+		assertNotNull(projectDescription);
+		assertEquals(1, projectDescription.getConfigurations().length);
+		// configuration description
+		ICConfigurationDescription[] cfgDescriptions = projectDescription.getConfigurations();
+		assertNotNull(cfgDescriptions);
+		return cfgDescriptions;
+	}
+
+	/**
+	 * Get first read-only configuration description.
+	 */
+	private ICConfigurationDescription getFirstConfigurationDescription(IProject project) {
+		ICConfigurationDescription[] cfgDescriptions = getConfigurationDescriptions(project);
+
+		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
+		assertNotNull(cfgDescription);
+
+		return cfgDescription;
+	}
+
+	/**
 	 * Persist and reload when no customized providers are defined in the workspace.
 	 */
 	public void testWorkspacePersistence_NoProviders() throws Exception {
@@ -154,6 +186,152 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 		LanguageSettingsProvidersSerializer.loadLanguageSettingsWorkspace();
 
 		// test passes if no exception was thrown
+	}
+
+	/**
+	 * Make sure providers in configuration cannot be modified accidentally outside of API.
+	 */
+	public void testProjectDescription_PreventBackDoorAccess() throws Exception {
+		// create a project
+		IProject project = ResourceHelper.createCDTProjectWithConfig(getName());
+
+		// get project descriptions
+		ICProjectDescription prjDescriptionWritable = CProjectDescriptionManager.getInstance().getProjectDescription(project, true);
+		assertNotNull(prjDescriptionWritable);
+		ICConfigurationDescription[] cfgDescriptions = prjDescriptionWritable.getConfigurations();
+		assertEquals(1, cfgDescriptions.length);
+		ICConfigurationDescription cfgDescriptionWritable = cfgDescriptions[0];
+		assertNotNull(cfgDescriptionWritable);
+		assertTrue(cfgDescriptionWritable instanceof ILanguageSettingsProvidersKeeper);
+
+		List<ILanguageSettingsProvider> originalProviders = ((ILanguageSettingsProvidersKeeper) cfgDescriptionWritable).getLanguageSettingProviders();
+		int originalSize = originalProviders.size();
+
+		// create new provider list
+		LanguageSettingsSerializableProvider mockProvider = new MockLanguageSettingsEditableProvider(PROVIDER_0, PROVIDER_NAME_0);
+		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>(originalProviders);
+		providers.add(mockProvider);
+		assertTrue(originalSize != providers.size());
+
+		// changing providers shouldn't affect the original list
+		((ILanguageSettingsProvidersKeeper) cfgDescriptionWritable).setLanguageSettingProviders(providers);
+		assertEquals(originalSize, originalProviders.size());
+	}
+
+	/**
+	 * Test assigning providers to read-only vs. writable configuration descriptions.
+	 */
+	public void testProjectDescription_ReadWriteDescription() throws Exception {
+		// create a project
+		IProject project = ResourceHelper.createCDTProjectWithConfig(getName());
+
+		{
+			// get read-only description
+			ICProjectDescription prjDescriptionReadOnly = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
+			assertNotNull(prjDescriptionReadOnly);
+			ICConfigurationDescription cfgDescriptionReadOnly = prjDescriptionReadOnly.getDefaultSettingConfiguration();
+			assertNotNull(cfgDescriptionReadOnly);
+			assertTrue(cfgDescriptionReadOnly instanceof ILanguageSettingsProvidersKeeper);
+
+			// try to write to it providers
+			try {
+				List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+				((ILanguageSettingsProvidersKeeper) cfgDescriptionReadOnly).setLanguageSettingProviders(providers);
+				fail("WriteAccessException was expected but it was not throw.");
+			} catch (WriteAccessException e) {
+				// exception is expected
+			}
+
+			// try to write to it default providers ids
+			try {
+				((ILanguageSettingsProvidersKeeper) cfgDescriptionReadOnly).setDefaultLanguageSettingsProvidersIds(new String[] { PROVIDER_0 });
+				fail("WriteAccessException was expected but it was not throw.");
+			} catch (WriteAccessException e) {
+				// exception is expected
+			}
+		}
+
+		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		entries.add(new CIncludePathEntry("path0", 0));
+
+		{
+			// get project descriptions
+			ICProjectDescription prjDescriptionWritable = CProjectDescriptionManager.getInstance().getProjectDescription(project, true);
+			assertNotNull(prjDescriptionWritable);
+			ICConfigurationDescription[] cfgDescriptions = prjDescriptionWritable.getConfigurations();
+			assertEquals(1, cfgDescriptions.length);
+			ICConfigurationDescription cfgDescriptionWritable = cfgDescriptions[0];
+			assertNotNull(cfgDescriptionWritable);
+			assertTrue(cfgDescriptionWritable instanceof ILanguageSettingsProvidersKeeper);
+
+			// create a provider and write to cfgDescription
+			LanguageSettingsSerializableProvider mockProvider = new MockLanguageSettingsEditableProvider(PROVIDER_1, PROVIDER_NAME_1);
+			LanguageSettingsManager.setStoringEntriesInProjectArea(mockProvider, true);
+			mockProvider.setSettingEntries(cfgDescriptionWritable, null, null, entries);
+			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+			providers.add(mockProvider);
+			((ILanguageSettingsProvidersKeeper) cfgDescriptionWritable).setLanguageSettingProviders(providers);
+			List<ILanguageSettingsProvider> storedProviders = ((ILanguageSettingsProvidersKeeper) cfgDescriptionWritable).getLanguageSettingProviders();
+			assertEquals(1, storedProviders.size());
+
+			// write to cfgDescription default providers ids
+			((ILanguageSettingsProvidersKeeper) cfgDescriptionWritable).setDefaultLanguageSettingsProvidersIds(new String[] { PROVIDER_0 });
+
+			// apply new project description to the project model
+			CProjectDescriptionManager.getInstance().setProjectDescription(project, prjDescriptionWritable);
+		}
+		{
+			// get read-only project descriptions
+			ICProjectDescription prjDescriptionReadOnly = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
+			assertNotNull(prjDescriptionReadOnly);
+			ICConfigurationDescription[] cfgDescriptions = prjDescriptionReadOnly.getConfigurations();
+			assertEquals(1, cfgDescriptions.length);
+			ICConfigurationDescription cfgDescriptionReadOnly = cfgDescriptions[0];
+			assertNotNull(cfgDescriptionReadOnly);
+			assertTrue(cfgDescriptionReadOnly instanceof ILanguageSettingsProvidersKeeper);
+
+			// double-check providers
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescriptionReadOnly).getLanguageSettingProviders();
+			assertEquals(1, providers.size());
+			ILanguageSettingsProvider loadedProvider = providers.get(0);
+			assertTrue(loadedProvider instanceof MockLanguageSettingsEditableProvider);
+			assertEquals(PROVIDER_1, loadedProvider.getId());
+			assertEquals(PROVIDER_NAME_1, loadedProvider.getName());
+			// double-check provider's setting entries
+			List<ICLanguageSettingEntry> actual = loadedProvider.getSettingEntries(cfgDescriptionReadOnly, null, null);
+			assertEquals(entries.get(0), actual.get(0));
+			assertEquals(entries.size(), actual.size());
+
+			// double-check default providers ids
+			String[] actualDefaultProvidersIds = ((ILanguageSettingsProvidersKeeper) cfgDescriptionReadOnly).getDefaultLanguageSettingsProvidersIds();
+			assertTrue(Arrays.equals(new String[] { PROVIDER_0 }, actualDefaultProvidersIds));
+		}
+		{
+			// get writable project descriptions
+			ICProjectDescription prjDescriptionWritable = CProjectDescriptionManager.getInstance().getProjectDescription(project, true);
+			assertNotNull(prjDescriptionWritable);
+			ICConfigurationDescription[] cfgDescriptions = prjDescriptionWritable.getConfigurations();
+			assertEquals(1, cfgDescriptions.length);
+			ICConfigurationDescription cfgDescriptionWritable = cfgDescriptions[0];
+			assertNotNull(cfgDescriptionWritable);
+			assertTrue(cfgDescriptionWritable instanceof ILanguageSettingsProvidersKeeper);
+
+			// check providers
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescriptionWritable).getLanguageSettingProviders();
+			assertEquals(1, providers.size());
+			ILanguageSettingsProvider loadedProvider = providers.get(0);
+			assertTrue(loadedProvider instanceof MockLanguageSettingsEditableProvider);
+			assertEquals(PROVIDER_1, loadedProvider.getId());
+			assertEquals(PROVIDER_NAME_1, loadedProvider.getName());
+			// check provider's setting entries
+			List<ICLanguageSettingEntry> actual = loadedProvider.getSettingEntries(cfgDescriptionWritable, null, null);
+			assertEquals(entries.get(0), actual.get(0));
+			assertEquals(entries.size(), actual.size());
+
+			// check default providers ids
+			String[] actualDefaultProvidersIds = ((ILanguageSettingsProvidersKeeper) cfgDescriptionWritable).getDefaultLanguageSettingsProvidersIds();
+			assertTrue(Arrays.equals(new String[] { PROVIDER_0 }, actualDefaultProvidersIds));
+		}
 	}
 
 	/**
@@ -390,6 +568,65 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 			assertEquals(1, providers.size());
 			ILanguageSettingsProvider provider = providers.get(0);
 			assertTrue(provider instanceof LanguageSettingsSerializableProvider);
+
+			List<ICLanguageSettingEntry> actual = provider.getSettingEntries(null, null, null);
+			assertEquals(entries.get(0), actual.get(0));
+			assertEquals(entries.size(), actual.size());
+		}
+	}
+
+	/**
+	 * Test User language settings provider defined as extension in cdt.ui.
+	 */
+	public void testProjectPersistence_UserProviderDOM() throws Exception {
+		Element rootElement = null;
+
+		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		entries.add(new CIncludePathEntry("path0", 0));
+
+		{
+			// create a provider
+			MockProjectDescription mockPrjDescription = new MockProjectDescription(new MockConfigurationDescription(CFG_ID));
+			ICConfigurationDescription[] cfgDescriptions = mockPrjDescription.getConfigurations();
+			ICConfigurationDescription cfgDescription = cfgDescriptions[0];
+			assertNotNull(cfgDescription);
+			assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
+
+			ILanguageSettingsProvider provider = LanguageSettingsManager.getExtensionProviderCopy(EXTENSION_EDITABLE_PROVIDER_ID, false);
+			assertTrue(provider instanceof MockLanguageSettingsEditableProvider);
+			MockLanguageSettingsEditableProvider serializableProvider = (MockLanguageSettingsEditableProvider) provider;
+			serializableProvider.setSettingEntries(null, null, null, entries);
+			LanguageSettingsManager.setStoringEntriesInProjectArea(serializableProvider, true);
+
+			ArrayList<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+			providers.add(serializableProvider);
+			((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
+
+			// prepare DOM storage
+			Document doc = XmlUtil.newDocument();
+			rootElement = XmlUtil.appendElement(doc, ELEM_TEST);
+			// serialize language settings to the DOM
+			LanguageSettingsProvidersSerializer.serializeLanguageSettingsInternal(rootElement, null, mockPrjDescription);
+			assertTrue(XmlUtil.toString(doc).contains(EXTENSION_EDITABLE_PROVIDER_ID));
+			assertTrue(XmlUtil.toString(doc).contains(MockLanguageSettingsEditableProvider.class.getName()));
+		}
+		{
+			// re-load and check language settings of the newly loaded provider
+			MockProjectDescription mockPrjDescription = new MockProjectDescription(new MockConfigurationDescription(CFG_ID));
+			LanguageSettingsProvidersSerializer.loadLanguageSettingsInternal(rootElement, null, mockPrjDescription);
+
+			ICConfigurationDescription[] cfgDescriptions = mockPrjDescription.getConfigurations();
+			assertNotNull(cfgDescriptions);
+			assertEquals(1, cfgDescriptions.length);
+			ICConfigurationDescription cfgDescription = cfgDescriptions[0];
+			assertNotNull(cfgDescription);
+			assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
+
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+			assertNotNull(providers);
+			assertEquals(1, providers.size());
+			ILanguageSettingsProvider provider = providers.get(0);
+			assertTrue(provider instanceof MockLanguageSettingsEditableProvider);
 
 			List<ICLanguageSettingEntry> actual = provider.getSettingEntries(null, null, null);
 			assertEquals(entries.get(0), actual.get(0));
@@ -790,6 +1027,148 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	}
 
 	/**
+	 * Test serialization of real project.
+	 */
+	public void testProjectPersistence_RealProject() throws Exception {
+		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
+		String xmlStorageFileLocation;
+		String xmlOutOfTheWay;
+
+		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		entries.add(new CIncludePathEntry("path0", 0));
+
+		{
+			// get project descriptions
+			ICProjectDescription prjDescriptionWritable = CProjectDescriptionManager.getInstance().getProjectDescription(project, true);
+			assertNotNull(prjDescriptionWritable);
+			ICConfigurationDescription[] cfgDescriptions = prjDescriptionWritable.getConfigurations();
+			assertEquals(1, cfgDescriptions.length);
+			ICConfigurationDescription cfgDescriptionWritable = cfgDescriptions[0];
+			assertNotNull(cfgDescriptionWritable);
+			assertTrue(cfgDescriptionWritable instanceof ILanguageSettingsProvidersKeeper);
+
+			// create a provider
+			LanguageSettingsSerializableProvider mockProvider = new LanguageSettingsSerializableProvider(PROVIDER_0, PROVIDER_NAME_0);
+			LanguageSettingsManager.setStoringEntriesInProjectArea(mockProvider, true);
+			mockProvider.setSettingEntries(cfgDescriptionWritable, null, null, entries);
+			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+			providers.add(mockProvider);
+			((ILanguageSettingsProvidersKeeper) cfgDescriptionWritable).setLanguageSettingProviders(providers);
+			List<ILanguageSettingsProvider> storedProviders = ((ILanguageSettingsProvidersKeeper) cfgDescriptionWritable).getLanguageSettingProviders();
+			assertEquals(1, storedProviders.size());
+
+			// write to project description
+			CProjectDescriptionManager.getInstance().setProjectDescription(project, prjDescriptionWritable);
+			IFile xmlStorageFile = project.getFile(LANGUAGE_SETTINGS_PROJECT_XML);
+			assertTrue(xmlStorageFile.exists());
+			xmlStorageFileLocation = xmlStorageFile.getLocation().toOSString();
+		}
+		{
+			ICConfigurationDescription cfgDescription = getFirstConfigurationDescription(project);
+			assertNotNull(cfgDescription);
+			assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
+
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+			assertEquals(1, providers.size());
+			ILanguageSettingsProvider provider = providers.get(0);
+			assertTrue(provider instanceof LanguageSettingsSerializableProvider);
+			assertEquals(PROVIDER_0, provider.getId());
+			assertEquals(PROVIDER_NAME_0, provider.getName());
+
+			List<ICLanguageSettingEntry> actual = provider.getSettingEntries(cfgDescription, null, null);
+			assertEquals(entries.get(0), actual.get(0));
+			assertEquals(entries.size(), actual.size());
+		}
+		{
+			// Move storage out of the way
+			java.io.File xmlFile = new java.io.File(xmlStorageFileLocation);
+			xmlOutOfTheWay = xmlStorageFileLocation+".out-of-the-way";
+			java.io.File xmlFileOut = new java.io.File(xmlOutOfTheWay);
+			xmlFile.renameTo(xmlFileOut);
+			assertFalse(xmlFile.exists());
+			assertTrue(xmlFileOut.exists());
+		}
+		{
+			// Should not pollute workspace area with file with no meaningful data
+			String xmlWspStorageFileLocation = getStoreLocationInWorkspaceArea(project.getName()+'.'+LANGUAGE_SETTINGS_WORKSPACE_XML);
+			java.io.File xmlStorageFileWsp = new java.io.File(xmlWspStorageFileLocation);
+			assertFalse(xmlStorageFileWsp.exists());
+		}
+
+		{
+			// clear configuration
+			ICProjectDescription prjDescriptionWritable = CProjectDescriptionManager.getInstance().getProjectDescription(project, true);
+			ICConfigurationDescription[] cfgDescriptions = prjDescriptionWritable.getConfigurations();
+			assertEquals(1, cfgDescriptions.length);
+			ICConfigurationDescription cfgDescriptionWritable = cfgDescriptions[0];
+			assertNotNull(cfgDescriptionWritable);
+			assertTrue(cfgDescriptionWritable instanceof ILanguageSettingsProvidersKeeper);
+
+			((ILanguageSettingsProvidersKeeper) cfgDescriptionWritable).setLanguageSettingProviders(new ArrayList<ILanguageSettingsProvider>());
+			CProjectDescriptionManager.getInstance().setProjectDescription(project, prjDescriptionWritable);
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescriptionWritable).getLanguageSettingProviders();
+			assertEquals(0, providers.size());
+		}
+		{
+			// re-check if it really took it
+			ICConfigurationDescription cfgDescription = getFirstConfigurationDescription(project);
+			assertNotNull(cfgDescription);
+			assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
+
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+			assertEquals(0, providers.size());
+		}
+		{
+			// close the project
+			project.close(null);
+		}
+		{
+			// open to double-check the data is not kept in some other kind of cache
+			project.open(null);
+			ICConfigurationDescription cfgDescription = getFirstConfigurationDescription(project);
+			assertNotNull(cfgDescription);
+			assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
+
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+			assertEquals(0, providers.size());
+			// and close
+			project.close(null);
+		}
+
+		{
+			// Move storage back
+			java.io.File xmlFile = new java.io.File(xmlStorageFileLocation);
+			xmlFile.delete();
+			assertFalse("File "+xmlFile+ " still exist", xmlFile.exists());
+			java.io.File xmlFileOut = new java.io.File(xmlOutOfTheWay);
+			xmlFileOut.renameTo(xmlFile);
+			assertTrue("File "+xmlFile+ " does not exist", xmlFile.exists());
+			assertFalse("File "+xmlFileOut+ " still exist", xmlFileOut.exists());
+		}
+
+		{
+			// Remove project from internal cache
+			CProjectDescriptionManager.getInstance().projectClosedRemove(project);
+			// open project and check if providers are loaded
+			project.open(null);
+			ICConfigurationDescription cfgDescription = getFirstConfigurationDescription(project);
+			assertNotNull(cfgDescription);
+			assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
+
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+			assertEquals(1, providers.size());
+			ILanguageSettingsProvider loadedProvider = providers.get(0);
+			assertTrue(loadedProvider instanceof LanguageSettingsSerializableProvider);
+			assertEquals(PROVIDER_0, loadedProvider.getId());
+			assertEquals(PROVIDER_NAME_0, loadedProvider.getName());
+
+			List<ICLanguageSettingEntry> actual = loadedProvider.getSettingEntries(cfgDescription, null, null);
+			assertEquals(entries.get(0), actual.get(0));
+			assertEquals(entries.size(), actual.size());
+		}
+	}
+
+	/**
 	 * Test case when the storage is split between project and workspace area.
 	 */
 	public void testProjectPersistence_SplitStorageDOM() throws Exception {
@@ -850,12 +1229,179 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	}
 
 	/**
+	 * TODO: refactor with ErrorParserManager
+	 *
 	 * @param store - name of the store
 	 * @return location of the store in the plug-in state area
 	 */
 	public static String getStoreLocationInWorkspaceArea(String store) {
 		IPath location = CCorePlugin.getDefault().getStateLocation().append(store);
 		return location.toString();
+	}
+
+	/**
+	 * Test split storage in a real project.
+	 */
+	public void testProjectPersistence_RealProjectSplitStorage() throws Exception {
+		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
+		String xmlStorageFileLocation;
+		String xmlOutOfTheWay;
+		String xmlWspStorageFileLocation;
+		String xmlWspOutOfTheWay;
+
+		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		entries.add(new CIncludePathEntry("path0", 0));
+
+		{
+			// get project descriptions
+			ICProjectDescription prjDescriptionWritable = CProjectDescriptionManager.getInstance().getProjectDescription(project, true);
+			assertNotNull(prjDescriptionWritable);
+			ICConfigurationDescription[] cfgDescriptions = prjDescriptionWritable.getConfigurations();
+			assertEquals(1, cfgDescriptions.length);
+			ICConfigurationDescription cfgDescriptionWritable = cfgDescriptions[0];
+			assertNotNull(cfgDescriptionWritable);
+			assertTrue(cfgDescriptionWritable instanceof ILanguageSettingsProvidersKeeper);
+
+			// create a provider
+			LanguageSettingsSerializableProvider mockProvider = new LanguageSettingsSerializableProvider(PROVIDER_0, PROVIDER_NAME_0);
+			LanguageSettingsManager.setStoringEntriesInProjectArea(mockProvider, false);
+			mockProvider.setSettingEntries(cfgDescriptionWritable, null, null, entries);
+			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+			providers.add(mockProvider);
+			((ILanguageSettingsProvidersKeeper) cfgDescriptionWritable).setLanguageSettingProviders(providers);
+			List<ILanguageSettingsProvider> storedProviders = ((ILanguageSettingsProvidersKeeper) cfgDescriptionWritable).getLanguageSettingProviders();
+			assertEquals(1, storedProviders.size());
+
+			// write to project description
+			CProjectDescriptionManager.getInstance().setProjectDescription(project, prjDescriptionWritable);
+			IFile xmlStorageFile = project.getFile(LANGUAGE_SETTINGS_PROJECT_XML);
+			assertTrue(xmlStorageFile.exists());
+			xmlStorageFileLocation = xmlStorageFile.getLocation().toOSString();
+			// TODO - cleanup names
+			xmlWspStorageFileLocation = getStoreLocationInWorkspaceArea(project.getName()+'.'+LANGUAGE_SETTINGS_WORKSPACE_XML);
+			java.io.File xmlStorageFileWsp = new java.io.File(xmlWspStorageFileLocation);
+			assertTrue(xmlStorageFileWsp.exists());
+		}
+		{
+			ICConfigurationDescription cfgDescription = getFirstConfigurationDescription(project);
+			assertNotNull(cfgDescription);
+			assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
+
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+			assertEquals(1, providers.size());
+			ILanguageSettingsProvider provider = providers.get(0);
+			assertTrue(provider instanceof LanguageSettingsSerializableProvider);
+			assertEquals(PROVIDER_0, provider.getId());
+			assertEquals(PROVIDER_NAME_0, provider.getName());
+
+			List<ICLanguageSettingEntry> actual = provider.getSettingEntries(cfgDescription, null, null);
+			assertEquals(entries.get(0), actual.get(0));
+			assertEquals(entries.size(), actual.size());
+		}
+			// Move storages out of the way
+		{
+			java.io.File xmlFile = new java.io.File(xmlStorageFileLocation);
+			xmlOutOfTheWay = xmlStorageFileLocation+".out-of-the-way";
+			java.io.File xmlFileOut = new java.io.File(xmlOutOfTheWay);
+			xmlFile.renameTo(xmlFileOut);
+			assertFalse(xmlFile.exists());
+			assertTrue(xmlFileOut.exists());
+		}
+		{
+			// TODO - workspace file
+			java.io.File xmlStorageFileWsp = new java.io.File(xmlWspStorageFileLocation);
+			assertTrue(xmlStorageFileWsp.exists());
+			xmlWspOutOfTheWay = xmlWspStorageFileLocation+".out-of-the-way";
+			java.io.File xmlWspFileOut = new java.io.File(xmlWspOutOfTheWay);
+			boolean result = xmlStorageFileWsp.renameTo(xmlWspFileOut);
+			assertTrue(result);
+			assertFalse(xmlStorageFileWsp.exists());
+			assertTrue(xmlWspFileOut.exists());
+		}
+
+		{
+			// clear configuration
+			ICProjectDescription prjDescriptionWritable = CProjectDescriptionManager.getInstance().getProjectDescription(project, true);
+			ICConfigurationDescription[] cfgDescriptions = prjDescriptionWritable.getConfigurations();
+			assertEquals(1, cfgDescriptions.length);
+			ICConfigurationDescription cfgDescriptionWritable = cfgDescriptions[0];
+			assertNotNull(cfgDescriptionWritable);
+			assertTrue(cfgDescriptionWritable instanceof ILanguageSettingsProvidersKeeper);
+
+			((ILanguageSettingsProvidersKeeper) cfgDescriptionWritable).setLanguageSettingProviders(new ArrayList<ILanguageSettingsProvider>());
+			CProjectDescriptionManager.getInstance().setProjectDescription(project, prjDescriptionWritable);
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescriptionWritable).getLanguageSettingProviders();
+			assertEquals(0, providers.size());
+		}
+		{
+			// re-check if it really took it
+			ICConfigurationDescription cfgDescription = getFirstConfigurationDescription(project);
+			assertNotNull(cfgDescription);
+			assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
+
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+			assertEquals(0, providers.size());
+		}
+		{
+			// close the project
+			project.close(null);
+		}
+		{
+			// open to double-check the data is not kept in some other kind of cache
+			project.open(null);
+			ICConfigurationDescription cfgDescription = getFirstConfigurationDescription(project);
+			assertNotNull(cfgDescription);
+			assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
+
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+			assertEquals(0, providers.size());
+			// and close
+			project.close(null);
+		}
+
+		{
+			// Move storage back
+			java.io.File xmlFile = new java.io.File(xmlStorageFileLocation);
+			xmlFile.delete();
+			assertFalse("File "+xmlFile+ " still exist", xmlFile.exists());
+			java.io.File xmlFileOut = new java.io.File(xmlOutOfTheWay);
+			xmlFileOut.renameTo(xmlFile);
+			assertTrue("File "+xmlFile+ " does not exist", xmlFile.exists());
+			assertFalse("File "+xmlFileOut+ " still exist", xmlFileOut.exists());
+		}
+
+		{
+			// TODO
+			// Move storage back
+			java.io.File xmlWspFile = new java.io.File(xmlWspStorageFileLocation);
+			xmlWspFile.delete();
+			assertFalse("File "+xmlWspFile+ " still exist", xmlWspFile.exists());
+			java.io.File xmlWspFileOut = new java.io.File(xmlWspOutOfTheWay);
+			xmlWspFileOut.renameTo(xmlWspFile);
+			assertTrue("File "+xmlWspFile+ " does not exist", xmlWspFile.exists());
+			assertFalse("File "+xmlWspFileOut+ " still exist", xmlWspFileOut.exists());
+		}
+
+		{
+			// Remove project from internal cache
+			CProjectDescriptionManager.getInstance().projectClosedRemove(project);
+			// open project and check if providers are loaded
+			project.open(null);
+			ICConfigurationDescription cfgDescription = getFirstConfigurationDescription(project);
+			assertNotNull(cfgDescription);
+			assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
+
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+			assertEquals(1, providers.size());
+			ILanguageSettingsProvider loadedProvider = providers.get(0);
+			assertTrue(loadedProvider instanceof LanguageSettingsSerializableProvider);
+			assertEquals(PROVIDER_0, loadedProvider.getId());
+			assertEquals(PROVIDER_NAME_0, loadedProvider.getName());
+
+			List<ICLanguageSettingEntry> actual = loadedProvider.getSettingEntries(cfgDescription, null, null);
+			assertEquals(entries.get(0), actual.get(0));
+			assertEquals(entries.size(), actual.size());
+		}
 	}
 
 	/**

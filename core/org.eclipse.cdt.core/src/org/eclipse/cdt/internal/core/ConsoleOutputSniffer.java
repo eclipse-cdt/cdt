@@ -13,7 +13,10 @@ package org.eclipse.cdt.internal.core;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.IConsoleParser;
+import org.eclipse.cdt.core.IErrorParser;
 
 
 /**
@@ -127,6 +130,8 @@ public class ConsoleOutputSniffer {
 	private OutputStream consoleErrorStream;
 	private IConsoleParser[] parsers;
 	
+	private ErrorParserManager errorParserManager = null;
+
 	public ConsoleOutputSniffer(IConsoleParser[] parsers) {
 		this.parsers = parsers;
 	}
@@ -137,6 +142,11 @@ public class ConsoleOutputSniffer {
 		this.consoleErrorStream = errorStream;
 	}
 	
+	public ConsoleOutputSniffer(OutputStream outputStream, OutputStream errorStream, IConsoleParser[] parsers, ErrorParserManager epm) {
+		this(outputStream, errorStream, parsers);
+		this.errorParserManager = epm;
+	}
+
 	/**
 	 * Returns an output stream that will be sniffed.
 	 * This stream should be hooked up so the command
@@ -166,7 +176,13 @@ public class ConsoleOutputSniffer {
 	public synchronized void closeConsoleOutputStream() throws IOException {
 		if (nOpens > 0 && --nOpens == 0) {
 			for (int i = 0; i < parsers.length; ++i) {
-				parsers[i].shutdown();
+				try {
+					parsers[i].shutdown();
+				} catch (Throwable e) {
+					// Report exception if any but let all the parsers chance to shutdown.
+					CCorePlugin.log(e);
+				} finally {
+				}
 			}
 		}
 	}
@@ -177,8 +193,18 @@ public class ConsoleOutputSniffer {
 	 * @param line
 	 */
 	private synchronized void processLine(String line) {
-		for (int i = 0; i < parsers.length; ++i) {
-			parsers[i].processLine(line);
+		for (IConsoleParser parser : parsers) {
+			try {
+				if (parser instanceof IErrorParser) {
+					// IErrorParser interface is used here only with purpose to pass ErrorParserManager
+					// which keeps track of CWD and provides useful methods for locating files
+					((IErrorParser)parser).processLine(line, errorParserManager);
+				} else {
+					parser.processLine(line);
+				}
+			} catch (Throwable e) {
+				CCorePlugin.log(e);
+			}
 		}
 	}
 	

@@ -44,7 +44,6 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	private static final String EXTENSION_BASE_PROVIDER_NAME = LanguageSettingsExtensionsTests.EXTENSION_BASE_PROVIDER_NAME;
 	private static final String EXTENSION_SERIALIZABLE_PROVIDER_ID = LanguageSettingsExtensionsTests.EXTENSION_SERIALIZABLE_PROVIDER_ID;
 	private static final String EXTENSION_EDITABLE_PROVIDER_ID = LanguageSettingsExtensionsTests.EXTENSION_EDITABLE_PROVIDER_ID;
-	private static final String EXTENSION_USER_PROVIDER_ID = LanguageSettingsExtensionsTests.EXTENSION_USER_PROVIDER_ID;
 	private static final ICLanguageSettingEntry EXTENSION_SERIALIZABLE_PROVIDER_ENTRY = LanguageSettingsExtensionsTests.EXTENSION_SERIALIZABLE_PROVIDER_ENTRY;
 
 	// Constants from LanguageSettingsProvidersSerializer
@@ -593,9 +592,9 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 			assertNotNull(cfgDescription);
 			assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
 
-			ILanguageSettingsProvider provider = LanguageSettingsManager.getExtensionProviderCopy(EXTENSION_USER_PROVIDER_ID, false);
-			assertTrue(provider instanceof LanguageSettingsGenericProvider);
-			LanguageSettingsGenericProvider serializableProvider = (LanguageSettingsGenericProvider) provider;
+			ILanguageSettingsProvider provider = LanguageSettingsManager.getExtensionProviderCopy(EXTENSION_EDITABLE_PROVIDER_ID, false);
+			assertTrue(provider instanceof MockLanguageSettingsEditableProvider);
+			MockLanguageSettingsEditableProvider serializableProvider = (MockLanguageSettingsEditableProvider) provider;
 			serializableProvider.setSettingEntries(null, null, null, entries);
 			LanguageSettingsManager.setStoringEntriesInProjectArea(serializableProvider, true);
 
@@ -608,8 +607,8 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 			rootElement = XmlUtil.appendElement(doc, ELEM_TEST);
 			// serialize language settings to the DOM
 			LanguageSettingsProvidersSerializer.serializeLanguageSettingsInternal(rootElement, null, mockPrjDescription);
-			assertTrue(XmlUtil.toString(doc).contains(EXTENSION_USER_PROVIDER_ID));
-			assertTrue(XmlUtil.toString(doc).contains(LanguageSettingsGenericProvider.class.getName()));
+			assertTrue(XmlUtil.toString(doc).contains(EXTENSION_EDITABLE_PROVIDER_ID));
+			assertTrue(XmlUtil.toString(doc).contains(MockLanguageSettingsEditableProvider.class.getName()));
 		}
 		{
 			// re-load and check language settings of the newly loaded provider
@@ -627,7 +626,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 			assertNotNull(providers);
 			assertEquals(1, providers.size());
 			ILanguageSettingsProvider provider = providers.get(0);
-			assertTrue(provider instanceof LanguageSettingsGenericProvider);
+			assertTrue(provider instanceof MockLanguageSettingsEditableProvider);
 
 			List<ICLanguageSettingEntry> actual = provider.getSettingEntries(null, null, null);
 			assertEquals(entries.get(0), actual.get(0));

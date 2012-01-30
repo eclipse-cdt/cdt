@@ -55,7 +55,6 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 	/*package*/ static final ICLanguageSettingEntry EXTENSION_SERIALIZABLE_PROVIDER_ENTRY = new CMacroEntry("MACRO", "value", 0);
 	/*package*/ static final ICLanguageSettingEntry EXTENSION_EDITABLE_PROVIDER_ENTRY = new CMacroEntry("MACRO", "value", 0);
 	/*package*/ static final String EXTENSION_REGISTERER_PROVIDER_ID = "org.eclipse.cdt.core.tests.language.settings.listener.registerer.provider";
-	/*package*/ static final String EXTENSION_USER_PROVIDER_ID = "org.eclipse.cdt.ui.UserLanguageSettingsProvider";
 
 	// Arbitrary sample parameters used by the test
 	private static final String PROVIDER_0 = "test.provider.0.id";
@@ -397,15 +396,6 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 			assertFalse(LanguageSettingsManager.isEqualExtensionProvider(providerShallow, true));
 			assertTrue(LanguageSettingsManager.isEqualExtensionProvider(providerShallow, false));
 		}
-	}
-
-	/**
-	 * Check that LanguageSettingsGenericProvider extension defined in plugin.xml is accessible.
-	 */
-	public void testExtensionGenericProvider() throws Exception {
-		ILanguageSettingsProvider provider = LanguageSettingsManager.getExtensionProviderCopy(EXTENSION_USER_PROVIDER_ID, true);
-		assertNotNull("extension " + EXTENSION_USER_PROVIDER_ID + " not found", provider);
-		assertTrue(provider instanceof LanguageSettingsGenericProvider);
 	}
 
 }

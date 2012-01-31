@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2010 Wind River Systems, Inc. and others.
+ * Copyright (c) 2003, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@
  * Michael Scharf (Wind River) - [241096] Secondary terminals in same view do not observe the "invert colors" Preference 
  * Michael Scharf (Wind River) - [262996] get rid of TerminalState.OPENED
  * Martin Oberhuber (Wind River) - [205486] Enable ScrollLock
+ * Ahmet Alptekin (Tubitak) - [244405] Add a UI Control for setting the Terminal's encoding
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
@@ -291,6 +292,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 			return;
 		if(fCtlTerminal.getTerminalConnector()==null)
 			setConnector(showSettingsDialog(ViewMessages.TERMINALSETTINGS));
+		setEncoding(getActiveConnection().getEncoding());
 		fCtlTerminal.connectTerminal();
 	}
 
@@ -351,6 +353,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 			c=fCtlTerminal.getTerminalConnector();
 		TerminalSettingsDlg dlgTerminalSettings = new TerminalSettingsDlg(getViewSite().getShell(),connectors,c);
 		dlgTerminalSettings.setTerminalTitle(getActiveConnection().getPartName());
+		dlgTerminalSettings.setEncoding(getActiveConnection().getEncoding());
 		if(title!=null)
 			dlgTerminalSettings.setTitle(title);
 		Logger.log("opening Settings dialog."); //$NON-NLS-1$
@@ -369,9 +372,15 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalVi
 		saveSettings(getPreferenceSettingsStore(), dlgTerminalSettings.getConnector());
 
 		setViewTitle(dlgTerminalSettings.getTerminalTitle());
+		setEncoding(dlgTerminalSettings.getEncoding());
 		return dlgTerminalSettings.getConnector();
 	}
-
+	
+	private void setEncoding(String encoding) {
+		getActiveConnection().setEncoding(encoding);
+		updateSummary();
+	}
+	
 	private void setConnector(ITerminalConnector connector) {
 		fCtlTerminal.setConnector(connector);
 	}

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-     Copyright (c) 2006, 2011 Wind River Systems, Inc. and others.
+     Copyright (c) 2006, 2012 Wind River Systems, Inc. and others.
      All rights reserved. This program and the accompanying materials
      are made available under the terms of the Eclipse Public License v1.0
      which accompanies this distribution, and is available at
@@ -13,7 +13,7 @@
 <feature
       id="org.eclipse.tm.terminal.view"
       label="%featureName"
-      version="2.2.0.qualifier"
+      version="2.3.0.qualifier"
       provider-name="%providerName">
 
    <description>
@@ -29,8 +29,8 @@
    </license>
 
    <url>
-      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.3"/>
-      <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.3"/>
+      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.4"/>
+      <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/tm/updates/3.4"/>
    </url>
 
    <requires>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,14 @@
  * Michael Scharf (Wind River) - [240097] Allow paste with the middle mouse button
  * Michael Scharf (Wind River) - [262996] get rid of TerminalState.OPENED
  * Anton Leherbauer (Wind River) - [335021] Middle mouse button copy/paste does not work with the terminal
+ * Ahmet Alptekin (Tubitak) - [244405] Add a UI Control for setting the Terminal's encoding
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
+import java.io.UnsupportedEncodingException;
+
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -23,6 +27,7 @@ import org.eclipse.tm.internal.terminal.control.CommandInputFieldWithHistory;
 import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
+import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 
 /**
@@ -36,14 +41,15 @@ class TerminalViewConnection implements ITerminalViewConnection {
 	private static final String STORE_CONNECTION_TYPE = "ConnectionType"; //$NON-NLS-1$
     private static final String STORE_HAS_COMMAND_INPUT_FIELD = "HasCommandInputField"; //$NON-NLS-1$
 	private static final String STORE_COMMAND_INPUT_FIELD_HISTORY = "CommandInputFieldHistory"; //$NON-NLS-1$
-
+	private static final String STORE_ENCODING="Encoding"; //$NON-NLS-1$
 	final private ITerminalViewControl fCtlTerminal;
 	private String fTitle;
 	private String fSummary;
 	private String fHistory;
 	private CommandInputFieldWithHistory fCommandInputField;
 	private String fPartName;
-
+	private String fEncoding;
+	
 	public TerminalViewConnection(ITerminalViewControl ctl) {
 		fCtlTerminal = ctl;
 		fCtlTerminal.getControl().addMouseListener(new MouseAdapter(){
@@ -90,7 +96,7 @@ class TerminalViewConnection implements ITerminalViewConnection {
 		fPartName=store.get(STORE_PART_NAME);
 		fSummary=store.get(STORE_SUMMARY);
 		fHistory=store.get(STORE_COMMAND_INPUT_FIELD_HISTORY);
-
+		fEncoding=store.get(STORE_ENCODING);
 		// load the state of the connection types
 		ITerminalConnector[] connectors=fCtlTerminal.getConnectors();
 		String connectionType=store.get(STORE_CONNECTION_TYPE);
@@ -109,6 +115,7 @@ class TerminalViewConnection implements ITerminalViewConnection {
 		store.put(STORE_PART_NAME, fPartName);
 		store.put(STORE_SUMMARY,fSummary);
 		store.put(STORE_COMMAND_INPUT_FIELD_HISTORY, fHistory);
+		store.put(STORE_ENCODING, fEncoding);
 		if(fCommandInputField!=null)
 			store.put(STORE_COMMAND_INPUT_FIELD_HISTORY, fCommandInputField.getHistory());
 		else
@@ -173,6 +180,7 @@ class TerminalViewConnection implements ITerminalViewConnection {
 			// display in the content description line.
 			String strConnected = getStateDisplayName(fCtlTerminal.getState());
 			String summary = getSettingsSummary();
+			String encoding=getEncoding();
 			//TODO Title should use an NLS String and com.ibm.icu.MessageFormat
 			//In order to make the logic of assembling, and the separators, better adapt to foreign languages
 			if(summary.length()>0)
@@ -181,7 +189,11 @@ class TerminalViewConnection implements ITerminalViewConnection {
 			if(name.length()>0) {
 				name+=": "; //$NON-NLS-1$
 			}
-			strTitle = name + "("+ summary + strConnected + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+			if (encoding.length()>0) {
+				encoding = NLS.bind(ViewMessages.ENCODING_WITH_PARENTHESES, encoding);
+				//encoding=ViewMessages.ENCODING+" "+"("+encoding+")";  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+			}
+			strTitle = name + "("+ summary + strConnected + ")"+" - "+encoding; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		return strTitle;
 	}
@@ -209,5 +221,17 @@ class TerminalViewConnection implements ITerminalViewConnection {
 		fPartName=name;
 
 	}
+	public String getEncoding() {
+		return fEncoding==null?fCtlTerminal.getEncoding():fEncoding;
+	}
 
+	public void setEncoding(String fEncoding) {
+		 try {
+				fCtlTerminal.setEncoding(fEncoding);
+				this.fEncoding = fEncoding;
+			} catch (UnsupportedEncodingException uex) {
+				Logger.logException(uex);
+			}
+		
+	}
 }

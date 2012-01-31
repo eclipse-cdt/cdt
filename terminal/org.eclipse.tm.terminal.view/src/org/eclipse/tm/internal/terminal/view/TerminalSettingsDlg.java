@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2003, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,14 +19,17 @@
  * Michael Scharf (Wind River) - [240023] Get rid of the terminal's "Pin" button
  * Martin Oberhuber (Wind River) - [206917] Add validation for Terminal Settings
  * Uwe Stieber (Wind River) - [282996] [terminal][api] Add "hidden" attribute to terminal connector extension point
+ * Ahmet Alptekin (Tubitak) - [244405] Add a UI Control for setting the Terminal's encoding
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
+
+import java.nio.charset.Charset;
+import java.nio.charset.IllegalCharsetNameException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -51,6 +54,7 @@ import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.ui.PlatformUI;
 
 class TerminalSettingsDlg extends Dialog {
+	private Combo fEncodingCombo;
 	private Combo fCtlConnTypeCombo;
 	private Text fTerminalTitleText;
 	private final ITerminalConnector[] fConnectors;
@@ -65,6 +69,7 @@ class TerminalSettingsDlg extends Dialog {
 	private IDialogSettings fDialogSettings;
 	private String fTerminalTitle;
 	private String fTitle=ViewMessages.TERMINALSETTINGS;
+	private String fEncoding;
 
 	public TerminalSettingsDlg(Shell shell, ITerminalConnector[] connectors, ITerminalConnector connector) {
 		super(shell);
@@ -151,17 +156,18 @@ class TerminalSettingsDlg extends Dialog {
 
 	protected void okPressed() {
 		if (!validateSettings()) {
-			String strTitle = ViewMessages.TERMINALSETTINGS;
-			MessageBox mb = new MessageBox(getShell(), SWT.ICON_ERROR | SWT.OK);
-			mb.setText(strTitle);
-			mb.setMessage(ViewMessages.INVALID_SETTINGS);
-			mb.open();
+			showErrorMessage(ViewMessages.INVALID_SETTINGS);
+			return;
+		}
+		if (!updateValidState()) {
+			showErrorMessage(ViewMessages.ENCODING_NOT_AVAILABLE);
 			return;
 		}
 		if(fSelectedConnector>=0) {
 			getPage(fSelectedConnector).saveSettings();
 		}
 		fTerminalTitle=fTerminalTitleText.getText();
+		fEncoding = fEncodingCombo.getText();
 		super.okPressed();
 	}
 	protected void cancelPressed() {
@@ -202,6 +208,8 @@ class TerminalSettingsDlg extends Dialog {
 			fCtlConnTypeCombo.select(selectedConnector);
 			selectPage(selectedConnector);
 		}
+		doLoad();
+	    setCombo(fEncodingCombo, fEncoding);
 	}
 	/**
 	 * @return the connector to show when the dialog opens
@@ -227,6 +235,7 @@ class TerminalSettingsDlg extends Dialog {
 	}
 	private void setupPanel(Composite wndParent) {
 		setupSettingsTypePanel(wndParent);
+		//setupEncodingPanel(wndParent);
 		if(fConnectors.length>0) {
 			setupConnTypePanel(wndParent);
 			setupSettingsGroup(wndParent);
@@ -250,6 +259,13 @@ class TerminalSettingsDlg extends Dialog {
 		fTerminalTitleText = new Text(wndGroup, SWT.BORDER);
 		fTerminalTitleText.setText(fTerminalTitle);
 		fTerminalTitleText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		Label encodingLabel=new Label(wndGroup,SWT.NONE);
+		encodingLabel.setText(ViewMessages.ENCODING);
+		encodingLabel.setLayoutData(new GridData(GridData.BEGINNING));
+		
+		fEncodingCombo = new Combo(wndGroup, SWT.DROP_DOWN);
+		fEncodingCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
 	private void setupConnTypePanel(Composite wndParent) {
 		Group wndGroup;
@@ -278,6 +294,7 @@ class TerminalSettingsDlg extends Dialog {
 		fPageBook=new PageBook(group,SWT.NONE);
 		fPageBook.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
+	
 	private void setupListeners() {
 		if(fCtlConnTypeCombo==null)
 			return;
@@ -330,5 +347,74 @@ class TerminalSettingsDlg extends Dialog {
 	}
 	public String getTerminalTitle() {
 		return fTerminalTitle;
+	}
+	private void doLoad() {
+		if (fEncodingCombo != null) {
+			List encodings = new ArrayList();
+			encodings.add("ISO-8859-1"); //$NON-NLS-1$
+			encodings.add("UTF-8"); //$NON-NLS-1$
+			//TODO when moving to J2SE-1.5, restore the simpler way getting the default encoding
+			//String hostEncoding =Charset.defaultCharset().displayName();
+			String hostEncoding = new java.io.InputStreamReader(new java.io.ByteArrayInputStream(new byte[0])).getEncoding();
+			if (!encodings.contains(hostEncoding)) 
+				encodings.add(hostEncoding);
+			populateEncodingsCombo(encodings);
+	       
+		}
+	}
+	private void populateEncodingsCombo(List encodings) {
+		String[] encodingStrings = new String[encodings.size()];
+		encodings.toArray(encodingStrings);
+		fEncodingCombo.setItems(encodingStrings);
+	}
+	private boolean isEncodingValid() {
+		return isValidEncoding(fEncodingCombo.getText());
+	}
+	private boolean isValidEncoding(String enc) {
+		try {
+			return Charset.isSupported(enc);
+		} catch (IllegalCharsetNameException e) {
+			return false;
+		}
+
+	}
+	private boolean updateValidState() {
+		boolean isValid = true;
+		boolean isValidNow = isEncodingValid();
+		if (isValidNow != isValid) {
+			isValid = isValidNow;
+		}
+		return isValid;
+	}
+	private void showErrorMessage(String message) {
+		String strTitle = ViewMessages.TERMINALSETTINGS;
+		MessageBox mb = new MessageBox(getShell(), SWT.ICON_ERROR | SWT.OK);
+		mb.setText(strTitle);
+		mb.setMessage(message);
+		mb.open();
+		return;
+	}
+	
+	private void setCombo(Combo combo,String value) {
+		if(value==null)
+			return;
+		int nIndex = combo.indexOf(value);
+		if (nIndex == -1) {
+			if((combo.getStyle() & SWT.READ_ONLY)==0) {
+				combo.add(value);
+				nIndex = combo.indexOf(value);
+			} else {
+				return;
+			}
+		}
+
+		combo.select(nIndex);
+
+	}
+	public String getEncoding() {
+		return fEncoding;
+	}
+	public void setEncoding(String fEncoding) {
+		this.fEncoding = fEncoding;
 	}
 }

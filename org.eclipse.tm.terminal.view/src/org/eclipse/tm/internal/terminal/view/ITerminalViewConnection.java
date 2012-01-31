@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -7,6 +7,7 @@
  * 
  * Contributors: 
  * Michael Scharf (Wind River) - initial API and implementation
+ * Ahmet Alptekin (Tubitak) - [244405] Add a UI Control for setting the Terminal's encoding
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
@@ -75,4 +76,13 @@ public interface ITerminalViewConnection {
 	 * @param summary
 	 */
 	void setSummary(String summary);
+	/**
+	 * @param encoding  the encoding of this connection
+	 */
+	void setEncoding(String encoding);
+	
+	/**
+	 * @return the encoding of this connection
+	 */
+	String getEncoding();
 }

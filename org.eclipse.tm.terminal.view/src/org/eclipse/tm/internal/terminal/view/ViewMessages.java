@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2003, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@
  * Michael Scharf (Wind River) - [240023] Get rid of the terminal's "Pin" button
  * Martin Oberhuber (Wind River) - [206917] Add validation for Terminal Settings
  * Martin Oberhuber (Wind River) - [262996] get rid of TerminalState.OPENED
+ * Ahmet Alptekin (Tubitak) - [244405] Add a UI Control for setting the Terminal's encoding
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
@@ -36,6 +37,8 @@ public class ViewMessages extends NLS {
 	public static String VIEW_TITLE;
 	public static String VIEW_SETTINGS;
 	public static String INVALID_SETTINGS;
+	public static String ENCODING;
+	public static String ENCODING_WITH_PARENTHESES;
 
     public static String INVERT_COLORS;
     public static String BUFFERLINES;
@@ -48,5 +51,5 @@ public class ViewMessages extends NLS {
 
 	public static String CANNOT_INITIALIZE;
 	public static String CONNECTOR_NOT_AVAILABLE;
-
+	public static String ENCODING_NOT_AVAILABLE;
 }

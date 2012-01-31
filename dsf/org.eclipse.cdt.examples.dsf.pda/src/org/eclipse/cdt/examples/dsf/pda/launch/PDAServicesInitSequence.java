@@ -13,7 +13,7 @@ package org.eclipse.cdt.examples.dsf.pda.launch;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.datamodel.DataModelInitializedEvent;
-import org.eclipse.cdt.dsf.debug.service.BreakpointsMediator;
+import org.eclipse.cdt.dsf.debug.service.BreakpointsMediator2;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.examples.dsf.pda.service.PDABackend;
 import org.eclipse.cdt.examples.dsf.pda.service.PDABreakpointAttributeTranslator;
@@ -75,7 +75,7 @@ public class PDAServicesInitSequence extends Sequence {
             public void execute(final RequestMonitor requestMonitor) {
                 // Create the breakpoint mediator and start tracking PDA breakpoints.
 
-                final BreakpointsMediator bpmService = new BreakpointsMediator(
+                final BreakpointsMediator2 bpmService = new BreakpointsMediator2(
                     fSession, new PDABreakpointAttributeTranslator());
                 bpmService.initialize(new RequestMonitor(getExecutor(), requestMonitor) {
                     @Override

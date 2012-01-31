@@ -105,17 +105,17 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		}
 
 	}
-	static BuildConfigurationData writeConfiguration(ICConfigurationDescription des,
+	static BuildConfigurationData writeConfiguration(ICConfigurationDescription cfgDescription,
 			BuildConfigurationData base) throws CoreException {
 		BuildConfigurationData appliedCfg = base;
-		ICStorageElement rootElement = des.getStorage(BUILD_SYSTEM_DATA_MODULE_NAME, true);
+		ICStorageElement rootElement = cfgDescription.getStorage(BUILD_SYSTEM_DATA_MODULE_NAME, true);
 		rootElement.clear();
 		rootElement.setAttribute(VERSION_ATTRIBUTE, ManagedBuildManager.getVersion().toString());
 		ICStorageElement cfgElemen = rootElement.createChild(IConfiguration.CONFIGURATION_ELEMENT_NAME);
 		Configuration cfg = (Configuration)appliedCfg.getConfiguration();
 		Builder b = (Builder)cfg.getEditableBuilder();
 		// Need to ensure that build macro supplier can get the description for this configuration during the write...
-		cfg.setConfigurationDescription(des);
+		cfg.setConfigurationDescription(cfgDescription);
 		if(b != null && b.isManagedBuildOn() && b.getBuildPathAttribute(false) == null){
 			String bPath = b.getDefaultBuildPath();
 			b.setBuildPathAttribute(bPath);
@@ -128,9 +128,9 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 	}
 
 	protected CConfigurationData applyPreferences(
-			ICConfigurationDescription des, CConfigurationData base) throws CoreException{
+			ICConfigurationDescription cfgDescription, CConfigurationData base) throws CoreException{
 
-		BuildConfigurationData appliedCfg = writeConfiguration(des, (BuildConfigurationData)base);
+		BuildConfigurationData appliedCfg = writeConfiguration(cfgDescription, (BuildConfigurationData)base);
 
 		IConfiguration cfg = ((BuildConfigurationData)base).getConfiguration();
 		try {
@@ -144,14 +144,14 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 
 	@Override
 	public CConfigurationData applyConfiguration(
-			ICConfigurationDescription des,
-			ICConfigurationDescription baseDescription,
+			ICConfigurationDescription cfgDescription,
+			ICConfigurationDescription baseCfgDescription,
 			CConfigurationData base,
 			IModificationContext context,
 			IProgressMonitor monitor)
 			throws CoreException {
-		if(des.isPreferenceConfiguration())
-			return applyPreferences(des, base);
+		if(cfgDescription.isPreferenceConfiguration())
+			return applyPreferences(cfgDescription, base);
 
 		BuildConfigurationData baseCfgData = (BuildConfigurationData)base;
 		IConfiguration baseCfg = baseCfgData.getConfiguration();
@@ -160,26 +160,26 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 			appliedCfg = baseCfgData;
 			context.setConfigurationSettingsFlags(IModificationContext.CFG_DATA_STORAGE_UNMODIFIED | IModificationContext.CFG_DATA_SETTINGS_UNMODIFIED);
 		} else {
-			appliedCfg = writeConfiguration(des, baseCfgData);
+			appliedCfg = writeConfiguration(cfgDescription, baseCfgData);
 
-			IManagedBuildInfo info = getBuildInfo(des);
+			IManagedBuildInfo info = getBuildInfo(cfgDescription);
 			ManagedProject mProj = (ManagedProject)info.getManagedProject();
 			mProj.applyConfiguration((Configuration)appliedCfg.getConfiguration());
-			writeManagedProjectInfo(des.getProjectDescription(), mProj);
+			writeManagedProjectInfo(cfgDescription.getProjectDescription(), mProj);
 			try {
-				CfgScannerConfigInfoFactory2.save(appliedCfg, des.getProjectDescription(), baseDescription.getProjectDescription(), !isPersistedCfg(des));
+				CfgScannerConfigInfoFactory2.save(appliedCfg, cfgDescription.getProjectDescription(), baseCfgDescription.getProjectDescription(), !isPersistedCfg(cfgDescription));
 			} catch (CoreException e){
 				ManagedBuilderCorePlugin.log(e);
 			}
 			info.setValid(true);
 			// Update the ManagedBuildInfo in the ManagedBuildManager map. Doing this creates a barrier for subsequent
 			// ManagedBuildManager#getBuildInfo(...) see Bug 305146 for more
-			ManagedBuildManager.setLoaddedBuildInfo(des.getProjectDescription().getProject(), info);
+			ManagedBuildManager.setLoaddedBuildInfo(cfgDescription.getProjectDescription().getProject(), info);
 
-			setPersistedFlag(des);
-			cacheNaturesIdsUsedOnCache(des);
+			setPersistedFlag(cfgDescription);
+			cacheNaturesIdsUsedOnCache(cfgDescription);
 
-			if(des.isActive()){
+			if(cfgDescription.isActive()){
 				IConfiguration cfg = appliedCfg.getConfiguration();
 				IBuilder builder = cfg.getEditableBuilder();
 				IProject project = context.getProject();
@@ -198,8 +198,8 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		return appliedCfg;
 	}
 
-	private void setPersistedFlag(ICConfigurationDescription cfg){
-		cfg.setSessionProperty(CFG_PERSISTED_PROPERTY, Boolean.TRUE);
+	private void setPersistedFlag(ICConfigurationDescription cfgDescription){
+		cfgDescription.setSessionProperty(CFG_PERSISTED_PROPERTY, Boolean.TRUE);
 	}
 
 	private static void writeManagedProjectInfo(ICProjectDescription des,
@@ -213,12 +213,12 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 
 
 	protected CConfigurationData createPreferences(
-			ICConfigurationDescription des, CConfigurationData base)
+			ICConfigurationDescription cfgDescription, CConfigurationData base)
 			throws CoreException {
 		Configuration cfg = (Configuration)((BuildConfigurationData)base).getConfiguration();
-		Configuration newCfg = new Configuration((ManagedProject)cfg.getManagedProject(), cfg, des.getId(), true, true, true);
-		newCfg.setConfigurationDescription(des);
-		newCfg.setName(des.getName());
+		Configuration newCfg = new Configuration((ManagedProject)cfg.getManagedProject(), cfg, cfgDescription.getId(), true, true, true);
+		newCfg.setConfigurationDescription(cfgDescription);
+		newCfg.setName(cfgDescription.getName());
 //		if(!newCfg.getId().equals(cfg.getId())){
 //			newCfg.exportArtifactInfo();
 //		}
@@ -229,16 +229,16 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 
 	@Override
 	public CConfigurationData createConfiguration(
-			ICConfigurationDescription des,
-			ICConfigurationDescription baseDescription,
+			ICConfigurationDescription cfgDescription,
+			ICConfigurationDescription baseCfgDescription,
 			CConfigurationData base, boolean clone,
 			IProgressMonitor monitor)
 			throws CoreException {
-		if(des.isPreferenceConfiguration())
-			return createPreferences(des, base);
+		if(cfgDescription.isPreferenceConfiguration())
+			return createPreferences(cfgDescription, base);
 
 		Configuration cfg = (Configuration)((BuildConfigurationData)base).getConfiguration();
-		Configuration newCfg = copyCfg(cfg, des);
+		Configuration newCfg = copyCfg(cfg, cfgDescription);
 
 		if(!newCfg.getId().equals(cfg.getId()) && newCfg.canExportedArtifactInfo()){
 			// Bug 335001: Remove existing exported settings as they point at this configuration
@@ -248,20 +248,20 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 			newCfg.exportArtifactInfo();
 		}
 
-		setPersistedFlag(des);
+		setPersistedFlag(cfgDescription);
 
 		return newCfg.getConfigurationData();
 	}
 
-	public static Configuration copyCfg(Configuration cfg, ICConfigurationDescription des){
-		IManagedBuildInfo info = getBuildInfo(des);
+	public static Configuration copyCfg(Configuration cfg, ICConfigurationDescription cfgDescription){
+		IManagedBuildInfo info = getBuildInfo(cfgDescription);
 		ManagedProject mProj = (ManagedProject)info.getManagedProject();
 
-		Configuration newCfg = new Configuration(mProj, cfg, des.getId(), true, true, false);
-		newCfg.setConfigurationDescription(des);
-		newCfg.setName(des.getName());
+		Configuration newCfg = new Configuration(mProj, cfg, cfgDescription.getId(), true, true, false);
+		newCfg.setConfigurationDescription(cfgDescription);
+		newCfg.setName(cfgDescription.getName());
 
-		des.setConfigurationData(ManagedBuildManager.CFG_DATA_PROVIDER_ID, newCfg.getConfigurationData());
+		cfgDescription.setConfigurationData(ManagedBuildManager.CFG_DATA_PROVIDER_ID, newCfg.getConfigurationData());
 
 		ManagedBuildManager.performValueHandlerEvent(newCfg, IManagedOptionValueHandler.EVENT_OPEN);
 
@@ -272,8 +272,8 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		return newCfg;
 	}
 
-	private static IManagedBuildInfo getBuildInfo(ICConfigurationDescription des){
-		ICProjectDescription projDes = des.getProjectDescription();
+	private static IManagedBuildInfo getBuildInfo(ICConfigurationDescription cfgDescription){
+		ICProjectDescription projDes = cfgDescription.getProjectDescription();
 		IProject project = projDes.getProject();
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project, false);
 		if(info == null)
@@ -281,7 +281,7 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 
 		setLoaddedBuildInfo(projDes, info);
 
-		getManagedProject(des, info);
+		getManagedProject(cfgDescription, info);
 
 		return info;
 	}
@@ -294,10 +294,10 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		return (ManagedBuildInfo)des.getSessionProperty(BUILD_INFO_PROPERTY);
 	}
 
-	private static IManagedProject getManagedProject(ICConfigurationDescription des, IManagedBuildInfo info){
+	private static IManagedProject getManagedProject(ICConfigurationDescription cfgDescription, IManagedBuildInfo info){
 		IManagedProject mProj = info.getManagedProject();
 		if(mProj == null){
-			mProj = createManagedProject(info, des.getProjectDescription());
+			mProj = createManagedProject(info, cfgDescription.getProjectDescription());
 		}
 		return mProj;
 	}
@@ -329,35 +329,35 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 	}
 
 	public static String[] getNaturesIdsUsedOnCache(IConfiguration cfg){
-		ICConfigurationDescription cfgDes = ManagedBuildManager.getDescriptionForConfiguration(cfg);
-		if(cfgDes != null)
-			return getNaturesIdsUsedOnCache(cfgDes);
+		ICConfigurationDescription cfgDescription = ManagedBuildManager.getDescriptionForConfiguration(cfg);
+		if(cfgDescription != null)
+			return getNaturesIdsUsedOnCache(cfgDescription);
 		return null;
 	}
 
-	public static String[] getNaturesIdsUsedOnCache(ICConfigurationDescription cfg){
-		String[] strs = (String[])cfg.getSessionProperty(NATURES_USED_ON_CACHE_PROPERTY);
+	public static String[] getNaturesIdsUsedOnCache(ICConfigurationDescription cfgDescription){
+		String[] strs = (String[])cfgDescription.getSessionProperty(NATURES_USED_ON_CACHE_PROPERTY);
 		return strs != null && strs.length != 0 ? (String[])strs.clone() : strs;
 	}
 
-	public static void cacheNaturesIdsUsedOnCache(ICConfigurationDescription des){
-		IProject project = des.getProjectDescription().getProject();
+	public static void cacheNaturesIdsUsedOnCache(ICConfigurationDescription cfgDescription){
+		IProject project = cfgDescription.getProjectDescription().getProject();
 		try {
 			IProjectDescription eDes = project.getDescription();
 			String[] natures = eDes.getNatureIds();
-			setNaturesIdsUsedOnCache(des, natures);
+			setNaturesIdsUsedOnCache(cfgDescription, natures);
 		} catch (CoreException e) {
 			ManagedBuilderCorePlugin.log(e);
 		}
 	}
 
-	private static void setNaturesIdsUsedOnCache(ICConfigurationDescription cfg, String ids[]){
+	private static void setNaturesIdsUsedOnCache(ICConfigurationDescription cfgDescription, String ids[]){
 		ids = ids != null && ids.length != 0 ? (String[])ids.clone() : ids;
-		cfg.setSessionProperty(NATURES_USED_ON_CACHE_PROPERTY, ids);
+		cfgDescription.setSessionProperty(NATURES_USED_ON_CACHE_PROPERTY, ids);
 	}
 
-	private Configuration load(ICConfigurationDescription des, ManagedProject mProj, boolean isPreference) throws CoreException{
-		ICStorageElement rootElement = des.getStorage(BUILD_SYSTEM_DATA_MODULE_NAME, true);
+	private Configuration load(ICConfigurationDescription cfgDescription, ManagedProject mProj, boolean isPreference) throws CoreException{
+		ICStorageElement rootElement = cfgDescription.getStorage(BUILD_SYSTEM_DATA_MODULE_NAME, true);
 		ICStorageElement children[] = rootElement.getChildren();
 		String version = rootElement.getAttribute(VERSION_ATTRIBUTE);
 		Configuration cfg = null;
@@ -372,14 +372,14 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		return cfg;
 	}
 
-	protected CConfigurationData loadPreferences(ICConfigurationDescription des)
+	protected CConfigurationData loadPreferences(ICConfigurationDescription cfgDescription)
 								throws CoreException {
 
-		Configuration cfg = load(des, null, true);
+		Configuration cfg = load(cfgDescription, null, true);
 
-		cfg = updatePreferenceOnLoad(cfg, des);
+		cfg = updatePreferenceOnLoad(cfg, cfgDescription);
 
-		cfg.setConfigurationDescription(des);
+		cfg.setConfigurationDescription(cfgDescription);
 
 		return cfg.getConfigurationData();
 	}
@@ -392,9 +392,9 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		return cfg;
 	}
 
-	private static Configuration updatePreferenceOnLoad(Configuration cfg, ICConfigurationDescription des){
+	private static Configuration updatePreferenceOnLoad(Configuration cfg, ICConfigurationDescription cfgDescription){
 		if(cfg == null)
-			cfg = createEmptyPrefConfiguration(des.getId(), des.getName());
+			cfg = createEmptyPrefConfiguration(cfgDescription.getId(), cfgDescription.getName());
 
 		cfg = adjustPreferenceConfig(cfg);
 
@@ -532,30 +532,30 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 	}
 
 	@Override
-	public CConfigurationData loadConfiguration(ICConfigurationDescription des,
+	public CConfigurationData loadConfiguration(ICConfigurationDescription cfgDescription,
 			IProgressMonitor monitor)
 			throws CoreException {
-		if(des.isPreferenceConfiguration())
-			return loadPreferences(des);
+		if(cfgDescription.isPreferenceConfiguration())
+			return loadPreferences(cfgDescription);
 
-		IManagedBuildInfo info = getBuildInfo(des);
-		Configuration cfg = load(des, (ManagedProject)info.getManagedProject(), false);
+		IManagedBuildInfo info = getBuildInfo(cfgDescription);
+		Configuration cfg = load(cfgDescription, (ManagedProject)info.getManagedProject(), false);
 
 		if(cfg != null){
-			cfg.setConfigurationDescription(des);
+			cfg.setConfigurationDescription(cfgDescription);
 			info.setValid(true);
-			setPersistedFlag(des);
-			cacheNaturesIdsUsedOnCache(des);
+			setPersistedFlag(cfgDescription);
+			cacheNaturesIdsUsedOnCache(cfgDescription);
 			// Update the ManagedBuildInfo in the ManagedBuildManager map. Doing this creates a barrier for subsequent
 			// ManagedBuildManager#getBuildInfo(...) see Bug 305146 for more
-			ManagedBuildManager.setLoaddedBuildInfo(des.getProjectDescription().getProject(), info);
+			ManagedBuildManager.setLoaddedBuildInfo(cfgDescription.getProjectDescription().getProject(), info);
 			return cfg.getConfigurationData();
 		}
 		return null;
 	}
 
-	private boolean isPersistedCfg(ICConfigurationDescription cfgDes){
-		return cfgDes.getSessionProperty(CFG_PERSISTED_PROPERTY) != null;
+	private boolean isPersistedCfg(ICConfigurationDescription cfgDescription){
+		return cfgDescription.getSessionProperty(CFG_PERSISTED_PROPERTY) != null;
 	}
 
 	@Override
@@ -574,22 +574,22 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 	}
 
 	@Override
-	public void removeConfiguration(ICConfigurationDescription des,
+	public void removeConfiguration(ICConfigurationDescription cfgDescription,
 			CConfigurationData data,
 			IProgressMonitor monitor) {
 		IConfiguration cfg = ((BuildConfigurationData)data).getConfiguration();
 		ManagedBuildManager.performValueHandlerEvent(cfg, IManagedOptionValueHandler.EVENT_CLOSE);
-		IManagedBuildInfo info = getBuildInfo(des);
+		IManagedBuildInfo info = getBuildInfo(cfgDescription);
 		IManagedProject mProj = info.getManagedProject();
 		mProj.removeConfiguration(cfg.getId());
 	}
 
 	@Override
-	public void dataCached(ICConfigurationDescription cfgDes,
+	public void dataCached(ICConfigurationDescription cfgDescription,
 			CConfigurationData data,
 			IProgressMonitor monitor) {
 		BuildConfigurationData cfgData = (BuildConfigurationData)data;
-		((Configuration)cfgData.getConfiguration()).setConfigurationDescription(cfgDes);
+		((Configuration)cfgData.getConfiguration()).setConfigurationDescription(cfgDescription);
 		cfgData.clearCachedData();
 	}
 

@@ -16,6 +16,8 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariablesContributor;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
 import org.eclipse.cdt.core.settings.model.CConfigurationStatus;
 import org.eclipse.cdt.core.settings.model.CProjectDescriptionEvent;
 import org.eclipse.cdt.core.settings.model.ICBuildSetting;
@@ -88,7 +90,7 @@ import org.eclipse.core.runtime.QualifiedName;
  * @see CProjectDescriptionEvent
  */
 public class CConfigurationDescriptionCache extends CDefaultConfigurationData
-		implements ICConfigurationDescription, IInternalCCfgInfo, ICachedData {
+		implements ICConfigurationDescription, IInternalCCfgInfo, ILanguageSettingsProvidersKeeper, ICachedData {
 	private CProjectDescription fParent;
 	private PathSettingsContainer fPathSettingContainer = PathSettingsContainer.createRootContainer();
 	private ResourceDescriptionHolder fRcHolder = new ResourceDescriptionHolder(fPathSettingContainer, true);
@@ -602,4 +604,27 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		return status != null ? status : CConfigurationStatus.CFG_STATUS_OK;
 	}
 
+	@Override
+	public void setLanguageSettingProviders(List<ILanguageSettingsProvider> providers) {
+		if(!fInitializing)
+			throw ExceptionFactory.createIsReadOnlyException();
+		fSpecSettings.setLanguageSettingProviders(providers);
+	}
+
+	@Override
+	public List<ILanguageSettingsProvider> getLanguageSettingProviders() {
+		return fSpecSettings.getLanguageSettingProviders();
+	}
+
+	@Override
+	public void setDefaultLanguageSettingsProvidersIds(String[] ids) {
+		if(!fInitializing)
+			throw ExceptionFactory.createIsReadOnlyException();
+		fSpecSettings.setDefaultLanguageSettingsProvidersIds(ids);
+	}
+
+	@Override
+	public String[] getDefaultLanguageSettingsProvidersIds() {
+		return fSpecSettings.getDefaultLanguageSettingsProvidersIds();
+	}
 }

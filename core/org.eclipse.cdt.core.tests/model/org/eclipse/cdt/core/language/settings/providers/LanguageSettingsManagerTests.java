@@ -21,11 +21,17 @@ import org.eclipse.cdt.core.settings.model.CIncludePathEntry;
 import org.eclipse.cdt.core.settings.model.CMacroEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.testplugin.CModelMock;
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
+import org.eclipse.cdt.internal.core.settings.model.CConfigurationDescription;
+import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
@@ -35,6 +41,7 @@ import org.eclipse.core.runtime.Path;
  */
 public class LanguageSettingsManagerTests extends BaseTestCase {
 	// Those should match ids of plugin extensions defined in plugin.xml
+	private static final String EXTENSION_BASE_PROVIDER_ID = LanguageSettingsExtensionsTests.EXTENSION_BASE_PROVIDER_ID;
 	private static final String EXTENSION_SERIALIZABLE_PROVIDER_ID = LanguageSettingsExtensionsTests.EXTENSION_SERIALIZABLE_PROVIDER_ID;
 	private static final String EXTENSION_SERIALIZABLE_PROVIDER_NAME = LanguageSettingsExtensionsTests.EXTENSION_SERIALIZABLE_PROVIDER_NAME;
 	private static final String EXTENSION_EDITABLE_PROVIDER_ID = LanguageSettingsExtensionsTests.EXTENSION_EDITABLE_PROVIDER_ID;
@@ -156,6 +163,35 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 
 		// get default providers
 		assertEquals(defaultProviders, cfgDescription.getDefaultLanguageSettingsProvidersIds());
+	}
+
+	/**
+	 * Test to ensure uniqueness of ids for providers kept in configuration description.
+	 */
+	public void testConfigurationDescription_ProvidersUniqueId() throws Exception {
+		// Create model project and accompanied descriptions
+		String projectName = getName();
+		IProject project = ResourceHelper.createCDTProjectWithConfig(projectName);
+		ICProjectDescription prjDescriptionWritable = CProjectDescriptionManager.getInstance().getProjectDescription(project, true);
+
+		ICConfigurationDescription[] cfgDescriptions = prjDescriptionWritable.getConfigurations();
+		ICConfigurationDescription cfgDescriptionWritable = cfgDescriptions[0];
+		assertTrue(cfgDescriptionWritable instanceof CConfigurationDescription);
+
+		// attempt to add duplicate providers
+		MockProvider dupe1 = new MockProvider(PROVIDER_0, PROVIDER_NAME_1, null);
+		MockProvider dupe2 = new MockProvider(PROVIDER_0, PROVIDER_NAME_2, null);
+
+		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+		providers.add(dupe1);
+		providers.add(dupe2);
+
+		try {
+			((ILanguageSettingsProvidersKeeper) cfgDescriptionWritable).setLanguageSettingProviders(providers);
+			fail("cfgDescription.setLanguageSettingProviders() should not accept duplicate providers");
+		} catch (Exception e) {
+			// Exception is welcome here
+		}
 	}
 
 	/**
@@ -335,6 +371,117 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 				assertEquals("i="+i, entriesArray[i], actualArray[i]);
 			}
 			assertEquals(entries2.size(), actual.size());
+		}
+	}
+
+	/**
+	 * Test getting entries from resource hierarchy.
+	 */
+	public void testProvider_ParentFolder() throws Exception {
+		// Create model project and accompanied descriptions
+		String projectName = getName();
+		IProject project = ResourceHelper.createCDTProjectWithConfig(projectName);
+		ICProjectDescription prjDescriptionWritable = CProjectDescriptionManager.getInstance().getProjectDescription(project, true);
+		ICConfigurationDescription[] cfgDescriptions = prjDescriptionWritable.getConfigurations();
+
+		ICConfigurationDescription cfgDescriptionWritable = cfgDescriptions[0];
+		assertTrue(cfgDescriptionWritable instanceof CConfigurationDescription);
+
+		final IFolder parentFolder = ResourceHelper.createFolder(project, "/ParentFolder/");
+		assertNotNull(parentFolder);
+		final IFile emptySettingsPath = ResourceHelper.createFile(project, "/ParentFolder/Subfolder/empty");
+		assertNotNull(emptySettingsPath);
+
+		// store the entries in parent folder
+		final List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		entries.add(new CIncludePathEntry("path0", 0));
+		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+		ILanguageSettingsProvider provider = new MockProvider(PROVIDER_0, PROVIDER_NAME_0, null)  {
+			@Override
+			public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId) {
+				if (rc!=null && rc.equals(parentFolder)) {
+					return entries;
+				}
+				if (rc!=null && rc.equals(emptySettingsPath)) {
+					return new ArrayList<ICLanguageSettingEntry>(0);
+				}
+				return null;
+			}
+
+		};
+		providers.add(provider);
+		((ILanguageSettingsProvidersKeeper) cfgDescriptionWritable).setLanguageSettingProviders(providers);
+
+		{
+			// retrieve entries for a derived resource (in a subfolder)
+			IFile derived = ResourceHelper.createFile(project, "/ParentFolder/Subfolder/resource");
+			List<ICLanguageSettingEntry> actual = LanguageSettingsManager
+				.getSettingEntriesUpResourceTree(provider, cfgDescriptionWritable, derived, LANG_ID);
+			// taken from parent folder
+			assertEquals(entries.get(0),actual.get(0));
+			assertEquals(entries.size(), actual.size());
+		}
+
+		{
+			// retrieve entries for not related resource
+			IFile notRelated = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path("/AnotherFolder/Subfolder/resource"));
+			List<ICLanguageSettingEntry> actual = LanguageSettingsManager
+				.getSettingEntriesUpResourceTree(provider, cfgDescriptionWritable, notRelated, LANG_ID);
+			assertEquals(0, actual.size());
+		}
+
+		{
+			// test distinction between no settings and empty settings
+			List<ICLanguageSettingEntry> actual = LanguageSettingsManager
+				.getSettingEntriesUpResourceTree(provider, cfgDescriptionWritable, emptySettingsPath, LANG_ID);
+			// NOT taken from parent folder
+			assertEquals(0, actual.size());
+		}
+	}
+
+	/**
+	 * Test getting entries from resource hierarchy up to default entries.
+	 */
+	public void testProvider_DefaultEntries() throws Exception {
+		// Create model project and accompanied descriptions
+		String projectName = getName();
+		IProject project = ResourceHelper.createCDTProjectWithConfig(projectName);
+		ICProjectDescription prjDescriptionWritable = CProjectDescriptionManager.getInstance().getProjectDescription(project, true);
+		ICConfigurationDescription[] cfgDescriptions = prjDescriptionWritable.getConfigurations();
+
+		ICConfigurationDescription cfgDescriptionWritable = cfgDescriptions[0];
+		assertTrue(cfgDescriptionWritable instanceof CConfigurationDescription);
+
+		final IFolder parentFolder = ResourceHelper.createFolder(project, "/ParentFolder/");
+		assertNotNull(parentFolder);
+		final IFile emptySettingsPath = ResourceHelper.createFile(project, "/ParentFolder/Subfolder/empty");
+		assertNotNull(emptySettingsPath);
+
+		// store the entries as default entries
+		final List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		entries.add(new CIncludePathEntry("path0", 0));
+		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+		ILanguageSettingsProvider provider = new MockProvider(PROVIDER_0, PROVIDER_NAME_0, null)  {
+			@Override
+			public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc, String languageId) {
+				if (cfgDescription==null && rc==null) {
+					return entries;
+				}
+				return null;
+			}
+
+		};
+		providers.add(provider);
+		((ILanguageSettingsProvidersKeeper) cfgDescriptionWritable).setLanguageSettingProviders(providers);
+
+		{
+			// retrieve entries for a resource
+			IFile derived = ResourceHelper.createFile(project, "/ParentFolder/Subfolder/resource");
+			List<ICLanguageSettingEntry> actual = LanguageSettingsManager
+					.getSettingEntriesUpResourceTree(provider, cfgDescriptionWritable, derived, LANG_ID);
+			// default entries given
+			assertEquals(entries.get(0),actual.get(0));
+			assertEquals(entries.size(), actual.size());
 		}
 	}
 

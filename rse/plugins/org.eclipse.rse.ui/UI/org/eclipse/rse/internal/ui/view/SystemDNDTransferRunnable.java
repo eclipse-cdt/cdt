@@ -28,6 +28,7 @@
  * Radoslav Gerganov (ProSyst)   - [231428] [files] NPE on canceling copy operation from remote host
  * David McKnight   (IBM)        - [328148] Dropping resource onto Eclipse IFile causes RSEG1003U unexpected exception
  * David McKnight   (IBM)        - [231971] [dnd] Drag and Drop Filter Displays Error
+ * Martin Oberhuber (Wind River) - [357667] [dnd] Allow copy-onto-myself semantics
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -162,7 +163,7 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 				showErrorMessage((SystemMessage) srcObject);
 				return _ok;
 			}
-			else if (srcObject != null && srcObject != target)
+			else if (srcObject != null)
 			{
 				ISystemDragDropAdapter srcAdapter = (ISystemDragDropAdapter) ((IAdaptable) srcObject).getAdapter(ISystemDragDropAdapter.class);
 

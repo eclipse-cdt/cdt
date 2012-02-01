@@ -33,6 +33,7 @@ import org.eclipse.cdt.debug.core.model.ICBreakpointType;
 import org.eclipse.cdt.debug.core.model.ICEventBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICLineBreakpoint2;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint2;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CAddressBreakpoint;
@@ -269,6 +270,24 @@ public class CDIDebugModel {
 		attributes.put( ICBreakpoint.CONDITION, condition );
 		attributes.put( ICBreakpoint.SOURCE_HANDLE, sourceHandle );
 		attributes.put( ICBreakpointType.TYPE, type );
+		
+		// Added for source relocated breakpoints.
+		if (!attributes.containsKey(ICLineBreakpoint2.REQUESTED_SOURCE_HANDLE)) {
+			attributes.put( ICLineBreakpoint2.REQUESTED_SOURCE_HANDLE, sourceHandle );
+		}
+		if (!attributes.containsKey( ICLineBreakpoint2.REQUESTED_LINE )) {
+			attributes.put( ICLineBreakpoint2.REQUESTED_LINE, new Integer( lineNumber ));
+		}
+        if (attributes.containsKey(IMarker.CHAR_START) && 
+            !attributes.containsKey( ICLineBreakpoint2.REQUESTED_CHAR_START )) 
+        {
+            attributes.put( ICLineBreakpoint2.REQUESTED_CHAR_START, attributes.get(IMarker.CHAR_START));
+        }
+        if (attributes.containsKey(IMarker.CHAR_END) && 
+            !attributes.containsKey( ICLineBreakpoint2.REQUESTED_CHAR_END )) 
+        {
+            attributes.put( ICLineBreakpoint2.REQUESTED_CHAR_END, attributes.get(IMarker.CHAR_END));
+        }
 	}
 
 	/**

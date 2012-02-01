@@ -236,5 +236,5 @@ public interface ICBreakpoint extends IBreakpoint {
 	 * @return Extension instance.
 	 * @throws CoreException Throws exception in case the extension doesn't exist or cannot be initialized.
 	 */
-    public ICBreakpointExtension getExtension(String debugModelId, Class extensionType) throws CoreException ;
+    public <V extends ICBreakpointExtension> V getExtension(String debugModelId, Class<V> extensionType) throws CoreException;
 }

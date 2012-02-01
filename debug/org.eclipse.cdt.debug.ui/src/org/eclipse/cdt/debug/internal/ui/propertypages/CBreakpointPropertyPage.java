@@ -21,6 +21,7 @@ import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICEventBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICLineBreakpoint2;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.breakpoints.CBreakpointUIContributionFactory;
@@ -424,12 +425,12 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 		fElement = element;
 	}
 
-	@Override
+    @Override
 	public IPreferenceStore getPreferenceStore() {
 		return fCBreakpointPreferenceStore;
 	}
 
-	@Override
+    @Override
 	public boolean performOk() {
 		final List changedProperties = new ArrayList( 5 );
 		getPreferenceStore().addPropertyChangeListener( new IPropertyChangeListener() {
@@ -437,7 +438,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 			/**
 			 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
 			 */
-			@Override
+		    @Override
 			public void propertyChange( PropertyChangeEvent event ) {
 				changedProperties.add( event.getProperty() );
 			}
@@ -450,7 +451,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 	protected void setBreakpointProperties( final List changedProperties ) {
 		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
 
-			@Override
+		    @Override
 			public void run( IProgressMonitor monitor ) throws CoreException {
 				ICBreakpoint breakpoint = getBreakpoint();
 				Iterator changed = changedProperties.iterator();
@@ -468,6 +469,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 					else if ( property.equals( CBreakpointPreferenceStore.LINE ) ) {
 						// already workspace runnable, setting markers are safe
 						breakpoint.getMarker().setAttribute(IMarker.LINE_NUMBER, getPreferenceStore().getInt(CBreakpointPreferenceStore.LINE));
+                        breakpoint.getMarker().setAttribute(ICLineBreakpoint2.REQUESTED_LINE, getPreferenceStore().getInt(CBreakpointPreferenceStore.LINE));
 					} else {
 					    // this allow set attributes contributed by other plugins
 						String value = getPropertyAsString(property);
@@ -483,6 +485,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 			CDebugUIPlugin.log( ce );
 		}
 	}
+
 	/**
 	 * Creates field editors contributed using breakpointUIContribution extension point
 	 * @param breakpoint

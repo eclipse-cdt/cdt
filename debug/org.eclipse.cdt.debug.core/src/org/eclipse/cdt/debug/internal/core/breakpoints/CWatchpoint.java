@@ -36,11 +36,11 @@ public class CWatchpoint extends CBreakpoint implements ICWatchpoint2 {
 	/**
 	 * Constructor for CWatchpoint.
 	 */
-	public CWatchpoint( IResource resource, Map attributes, boolean add ) throws CoreException {
+	public CWatchpoint( IResource resource, Map<String, Object> attributes, boolean add ) throws CoreException {
 		super( resource, getMarkerType(), attributes, add );
 	}
 
-	protected CWatchpoint( IResource resource, String marker, Map attributes, boolean add ) throws CoreException {
+	protected CWatchpoint( IResource resource, String marker, Map<String, Object> attributes, boolean add ) throws CoreException {
 		super( resource, marker, attributes, add );
 	}
 
@@ -87,7 +87,7 @@ public class CWatchpoint extends CBreakpoint implements ICWatchpoint2 {
 			format = BreakpointMessages.getString( "CWatchpoint.1" ); //$NON-NLS-1$
 		else if ( isWriteType() && isReadType() )
 			format = BreakpointMessages.getString( "CWatchpoint.2" ); //$NON-NLS-1$
-		return MessageFormat.format( format, new String[] { CDebugUtils.getBreakpointText( this, false ) } );
+		return MessageFormat.format( format, new Object[] { CDebugUtils.getBreakpointText( this, false ) } );
 	}
 
 	/* (non-Javadoc)

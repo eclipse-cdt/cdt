@@ -54,6 +54,6 @@ public class CFunctionTracepoint extends AbstractTracepoint implements ICFunctio
 	 */
 	@Override
 	protected String getMarkerMessage() throws CoreException {
-		return MessageFormat.format( BreakpointMessages.getString( "CFunctionTracepoint.0" ), new String[] { CDebugUtils.getBreakpointText( this, false ) } ); //$NON-NLS-1$
+		return MessageFormat.format( BreakpointMessages.getString( "CFunctionTracepoint.0" ), (Object[])new String[] { CDebugUtils.getBreakpointText( this, false ) } ); //$NON-NLS-1$
 	}
 }

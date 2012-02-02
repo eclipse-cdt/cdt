@@ -449,7 +449,10 @@ public class UniversalFileSystemMiner extends Miner {
 		updateCancellableThreads(status.getParent(), queryThread);
 	}
 
-	private void updateCancellableThreads(DataElement command, ICancellableHandler thread)
+	/**
+	 * @since 3.2
+	 */
+	public void updateCancellableThreads(DataElement command, ICancellableHandler thread)
 	{
 		//First Check to make sure that there are no "zombie" threads
 		Iterator iter = _cancellableThreads.keySet().iterator();

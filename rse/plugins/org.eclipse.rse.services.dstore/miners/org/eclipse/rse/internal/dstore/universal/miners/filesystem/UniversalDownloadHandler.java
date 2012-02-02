@@ -70,23 +70,7 @@ public class UniversalDownloadHandler extends SecuredThread implements ICancella
 	}
 	
 	private void removeFromCancellableList(){
-		Class clazz = _miner.getClass();
-
-		try {
-			Method[] methods = clazz.getDeclaredMethods();
-			for (int i = 0; i < methods.length; i++){
-				Method method = methods[i];
-				if (method.getName().equals("updateCancellableThreads")){ //$NON-NLS-1$
-					method.setAccessible(true);					
-					Object[] args = { _status.getParent(), this };					
-					method.invoke(_miner, args);
-					return;
-				}
-			}
-			
-		} catch (Exception e) {
-			_dataStore.trace(e);
-		}
+		_miner.updateCancellableThreads(_status.getParent(), this);
 	}
 	
 	public boolean isDone()

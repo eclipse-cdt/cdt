@@ -1154,10 +1154,9 @@ public class FileServiceSubSystem extends RemoteFileSubSystem implements IFileSe
 		if (newConfig instanceof IFileServiceSubSystemConfiguration) {
 			IHost host = getHost();
 			IFileServiceSubSystemConfiguration config = (IFileServiceSubSystemConfiguration) newConfig;
-			// file subsystem specific bits
-			synchronized (_cachedRemoteFiles){
-				_cachedRemoteFiles.clear();
-			}
+
+			clearRemoteFileCache();
+			
 			_languageUtilityFactory = null;
 			setFileService(config.getFileService(host));
 			setHostFileToRemoteFileAdapter(config.getHostFileAdapter());

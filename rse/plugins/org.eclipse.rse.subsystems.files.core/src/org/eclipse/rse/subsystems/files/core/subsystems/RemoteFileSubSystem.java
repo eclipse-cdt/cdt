@@ -124,9 +124,20 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	protected ArrayList _searchHistory;
 
 	/**
-	 *  All created IRemoteFiles are mapped in a cache for quick retrieval.
-	 *  This is a HashMap so any access to it needs to be synchronized otherwise
-	 *  thread-safety could be compromised.
+	 * The _cachedRemoteFiles map is used to store queried IRemoteFiles 
+	 * for quick retrieval.  This is a HashMap so any access to it needs 
+	 * to be synchronized; otherwise thread-safety could be compromised.
+	 * 
+	 * The _cachedRemoteFiles HashMap should be synchronized on like this:
+	 * <code>
+	 * 			synchronized (_cachedRemoteFiles){
+	 * 				// call to _cachedRemoteFiles
+	 *  			...
+	 *          }
+	 * </code>
+	 * @deprecated going forward, this field will be non-API.  A new 
+	 *      protected clearRemoteFileCache() method allows cache
+	 *      clearing.
 	 */
 	protected HashMap _cachedRemoteFiles = new HashMap();
 
@@ -1392,6 +1403,15 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	{
 		synchronized (_cachedRemoteFiles){
 			_cachedRemoteFiles.remove(path);
+		}
+	}
+	
+	/**
+	 * @since 3.3
+	 */
+	protected void clearRemoteFileCache(){
+		synchronized (_cachedRemoteFiles){
+			_cachedRemoteFiles.clear();
 		}
 	}
 

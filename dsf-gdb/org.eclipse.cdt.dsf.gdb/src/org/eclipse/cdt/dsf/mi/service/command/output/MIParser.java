@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 QNX Software Systems and others.
+ * Copyright (c) 2000, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Wind River Systems   - Modified for new DSF Reference Implementation
+ *     Mathias Kunter       - Don't always parse backslashes (Bug 367456, Bug 307311)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command.output;
@@ -216,7 +217,9 @@ public class MIParser {
             if (buffer.length() > 0 && buffer.charAt(0) == '"') {
                 buffer.deleteCharAt(0);
             }
-            stream.setCString(translateCString(new FSB(buffer)));
+            // Don't parse any backslashes - backslashes within stream records
+            // aren't escaped.
+            stream.setCString(translateCString(new FSB(buffer), false));
             oob = stream;
         } else {
             // Badly format MI line, just pass it to the user as target stream
@@ -306,7 +309,9 @@ public class MIParser {
             } else if (buffer.charAt(0) == '"') {
                 buffer.deleteCharAt(0);
                 MIConst cnst = new MIConst();
-                cnst.setCString(translateCString(buffer));
+                // Parse backslashes - backslashes within result
+                // and out of band records are escaped.
+                cnst.setCString(translateCString(buffer, true));
                 value = cnst;
             }
         }
@@ -382,15 +387,20 @@ public class MIParser {
         return list;
     }
 
-    /*
-     * MI C-String rather MICOnst values are enclose in double quotes
-     * and any double quotes or backslash in the string are escaped.
-     * Assuming the starting double quote was removed.
-     * This method will stop at the closing double quote remove the extra
-     * backslach escaping and return the string __without__ the enclosing double quotes
-     * The orignal StringBuffer will move forward.
+    /**
+     * MI C-String rather MIConst values are enclosed in double quotes
+     * and any double quotes or backslashes in the string are escaped.
+     * Assuming the starting double quote was removed. This method will
+     * stop at the closing double quote, remove the extra backslash escaping
+     * and return the string __without__ the enclosing double quotes. The
+     * original string buffer will move forward.
+     * @param buffer The string buffer to read from.
+     * @param parseBackslashes Defines whether backslashes should be parsed.
+     * This parameter is necessary to differentiate between records which
+     * contain escaped backslashes and records which do not.
+     * @return The translated C string.
      */
-    private String translateCString(FSB buffer) {
+    private String translateCString(FSB buffer, boolean parseBackslashes) {
         boolean escape = false;
         boolean closingQuotes = false;
 
@@ -402,7 +412,9 @@ public class MIParser {
             if (c == '\\') {
                 if (escape) {
                     sb.append(c);
-                    sb.append(c);
+                    if (!parseBackslashes) {
+                        sb.append(c);
+                    }
                     escape = false;
                 } else {
                     escape = true;

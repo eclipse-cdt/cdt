@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2011 IBM Corporation and others.
+ * Copyright (c) 2002, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,6 +40,7 @@
  * David McKnight  (IBM)  - [351993] [dstore] not able to connect to server if .eclipse folder not available
  * David McKnight   (IBM) - [366070] [dstore] fix for bug 351993 won't allow tracing if .dstoreTrace doesn't exist
  * David McKnight   (IBM) - [367096] [dstore] DataElement.isSpirit() may return true for newly created DStore objects
+ * David McKnight   (IBM) - [370260] [dstore] log the RSE version in server traces
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -185,6 +186,15 @@ public final class DataStore
 	private List _lastCreatedElements;
 	private Client _client;
 
+	/**
+	 * Indicates the RSE plugin version that corresponds with this DataStore.  This is only used
+	 * for tracing so that users can determine which version of the org.eclipse.dstore.core plugin
+	 * this came from. 
+	 * 
+	 *  This needs to be updated for each major release.
+	 */
+	private String _RSE_version = "3.3.1"; //$NON-NLS-1$
+	
 	/**
 	 * Creates a new <code>DataStore</code> instance
 	 *
@@ -4099,6 +4109,7 @@ public final class DataStore
 
 			trace("-----------------------------------------"); //$NON-NLS-1$
 			trace("Start Tracing at " + System.currentTimeMillis()); //$NON-NLS-1$
+			trace("DataStore version: "+ _RSE_version); //$NON-NLS-1$
 		}
 	}
 

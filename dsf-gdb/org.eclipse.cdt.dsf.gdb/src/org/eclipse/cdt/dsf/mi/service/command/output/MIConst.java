@@ -38,6 +38,10 @@ public class MIConst extends MIValue {
         return MIStringHandler.translateCString(cstring, true);
     }
     
+    public static String getString(String str) {
+    	return MIStringHandler.translateCString(str, true);
+    }
+    
     @Override
     public String toString() {
         return getCString();

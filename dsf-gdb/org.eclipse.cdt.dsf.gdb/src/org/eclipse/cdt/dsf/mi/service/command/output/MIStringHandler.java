@@ -17,6 +17,9 @@ import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CharsetEncoder;
 import java.text.ParseException;
 import java.util.EnumSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * The MIStringHandler class provides several static functions to handle C and / or MI strings.
@@ -25,47 +28,27 @@ import java.util.EnumSet;
 public class MIStringHandler {
     
     /**
-     * Defines special characters which are used within escape notations to represent a
-     * corresponding Unicode code point (i.e. character code). See the specialCodePoints
-     * list below on the same index for the corresponding code point.
+     * A map of special characters which are used within escape notations to represent a
+     * corresponding Unicode code point (i.e. character code).
      */
-    private static char[] specialChars = new char[] {
-        'a',    // Alert (bell) character
-        'b',    // Backspace character
-        'e',    // GNU extension: Escape character
-        'E',    // same as 'e'
-        'f',    // Form feed character
-        'n',    // New line character
-        'r',    // Carriage return character
-        't',    // Horizontal tabulation character
-        'v',    // Vertical tabulation character
-        '\'',   // Single quotation mark
-        '"',    // Double quotation mark
-        '\\',   // Backslash
-        '?'     // Literal question mark
-    };
-    
-    /**
-     * Defines special Unicode code points (i.e. character codes) which can be escaped by a
-     * corresponding special character. See the specialChars list above on the same index
-     * for the corresponding special character.
-     */
-    private static int[] specialCodePoints = new int[] {
-        0x07,    // corresponds to \a
-        0x08,    // corresponds to \b
-        0x1B,    // corresponds to \e
-        0x1B,    // corresponds to \E
-        0x0C,    // corresponds to \f
-        0x0A,    // corresponds to \n
-        0x0D,    // corresponds to \r
-        0x09,    // corresponds to \t
-        0x0B,    // corresponds to \v
-        0x27,    // corresponds to \'
-        0x22,    // corresponds to \"
-        0x5C,    // corresponds to \\
-        0x3F     // corresponds to \?
-    };
-    
+	// Use a LinkedHashMap to preserve order, so as to get 'e' and not 'E'
+    private static Map<Character,Integer> fSpecialCharactersToCodePointMap = new LinkedHashMap<Character,Integer>();
+    static {
+    	fSpecialCharactersToCodePointMap.put('a',  0x07);    // Alert (bell) character
+    	fSpecialCharactersToCodePointMap.put('b',  0x08);    // Backspace character
+    	fSpecialCharactersToCodePointMap.put('e',  0x1B);    // GNU extension: Escape character
+    	fSpecialCharactersToCodePointMap.put('E',  0x1B);    // same as 'e'
+    	fSpecialCharactersToCodePointMap.put('f',  0x0C);    // Form feed character
+    	fSpecialCharactersToCodePointMap.put('n',  0x0A);    // New line character
+    	fSpecialCharactersToCodePointMap.put('r',  0x0D);    // Carriage return character
+    	fSpecialCharactersToCodePointMap.put('t',  0x09);    // Horizontal tabulation character
+    	fSpecialCharactersToCodePointMap.put('v',  0x0B);    // Vertical tabulation character
+    	fSpecialCharactersToCodePointMap.put('\'', 0x27);    // Single quotation mark
+    	fSpecialCharactersToCodePointMap.put('"',  0x22);    // Double quotation mark
+    	fSpecialCharactersToCodePointMap.put('\\', 0x5C);    // Backslash
+    	fSpecialCharactersToCodePointMap.put('?',  0x3F);    // Literal question mark
+    }
+
     /**
      * An internal helper enumeration which holds the current status while parsing an escaped
      * text sequence.
@@ -139,12 +122,7 @@ public class MIStringHandler {
      * @return The test result.
      */
     public static boolean isSpecialChar(char c) {
-        for (int i = 0; i < specialChars.length; i++) {
-            if (specialChars[i] == c) {
-                return true;
-            }
-        }
-        return false;
+    	return fSpecialCharactersToCodePointMap.containsKey(c);
     }
     
     /**
@@ -153,12 +131,7 @@ public class MIStringHandler {
      * @return The test result.
      */
     public static boolean isSpecialCodePoint(int codePoint) {
-        for (int i = 0; i < specialCodePoints.length; i++) {
-            if (specialCodePoints[i] == codePoint) {
-                return true;
-            }
-        }
-        return false;
+    	return fSpecialCharactersToCodePointMap.containsValue(codePoint);
     }
     
     /**
@@ -169,11 +142,10 @@ public class MIStringHandler {
      * not a special character.
      */
     public static int parseSpecialChar(char c) throws ParseException {
-        for (int i = 0; i < specialChars.length; i++) {
-            if (specialChars[i] == c) {
-                return specialCodePoints[i];
-            }
-        }
+    	Integer codePoint = fSpecialCharactersToCodePointMap.get(c);
+    	if (codePoint != null) {
+    		return codePoint;
+    	}
         throw new ParseException("The given character '" + c + "' is not a special character.", 0); //$NON-NLS-1$ //$NON-NLS-2$
     }
     
@@ -185,9 +157,9 @@ public class MIStringHandler {
      * when it's not a special code point.
      */
     public static char parseSpecialCodePoint(int codePoint) throws ParseException {
-        for (int i = 0; i < specialCodePoints.length; i++) {
-            if (specialCodePoints[i] == codePoint) {
-                return specialChars[i];
+    	for (Entry<Character, Integer> entry : fSpecialCharactersToCodePointMap.entrySet()) {
+            if (entry.getValue().equals(codePoint)) {
+                return entry.getKey();
             }
         }
         throw new ParseException("The given Unicode code point " + codePoint + " is not a special code point.", 0); //$NON-NLS-1$ //$NON-NLS-2$

@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.text.ParseException;
 
-import org.junit.Test;
-
-import static org.junit.Assert.*;
 import junit.framework.JUnit4TestAdapter;
+
+import org.junit.Test;
 
 public class MIStringHandlerTests {
     @Test
@@ -101,12 +103,20 @@ public class MIStringHandlerTests {
         assertEquals(MIStringHandler.isSpecialChar('i'), false);
         assertEquals(MIStringHandler.isSpecialChar('w'), false);
         
-        // Testing special chars.
-        assertEquals(MIStringHandler.isSpecialChar('a'), true);
-        assertEquals(MIStringHandler.isSpecialChar('n'), true);
-        assertEquals(MIStringHandler.isSpecialChar('t'), true);
+        // Testing special chars.        
+        assertEquals(MIStringHandler.isSpecialChar('a'),  true);
+        assertEquals(MIStringHandler.isSpecialChar('b'),  true);
+        assertEquals(MIStringHandler.isSpecialChar('e'),  true);
+        assertEquals(MIStringHandler.isSpecialChar('E'),  true);
+        assertEquals(MIStringHandler.isSpecialChar('f'),  true);
+        assertEquals(MIStringHandler.isSpecialChar('n'),  true);
+        assertEquals(MIStringHandler.isSpecialChar('r'),  true);
+        assertEquals(MIStringHandler.isSpecialChar('t'),  true);
+        assertEquals(MIStringHandler.isSpecialChar('v'),  true);
         assertEquals(MIStringHandler.isSpecialChar('\''), true);
+        assertEquals(MIStringHandler.isSpecialChar('"'),  true);
         assertEquals(MIStringHandler.isSpecialChar('\\'), true);
+        assertEquals(MIStringHandler.isSpecialChar('?'),  true);
     }
     
     @Test
@@ -118,12 +128,20 @@ public class MIStringHandlerTests {
         assertEquals(MIStringHandler.isSpecialCodePoint(0x6E), false); // 'n' character
         
         // Testing special Unicode code points.
-        assertEquals(MIStringHandler.isSpecialCodePoint(0x07), true);  // '\a' character
-        assertEquals(MIStringHandler.isSpecialCodePoint(0x0A), true);  // '\n' character
-        assertEquals(MIStringHandler.isSpecialCodePoint(0x09), true);  // '\t' character
+        assertEquals(MIStringHandler.isSpecialCodePoint(0x07), true);  // 'a' character
+        assertEquals(MIStringHandler.isSpecialCodePoint(0x08), true);  // 'b' character
+        assertEquals(MIStringHandler.isSpecialCodePoint(0x1B), true);  // 'e' character
+        assertEquals(MIStringHandler.isSpecialCodePoint(0x1B), true);  // 'E' character
+        assertEquals(MIStringHandler.isSpecialCodePoint(0x0C), true);  // 'f' character
+        assertEquals(MIStringHandler.isSpecialCodePoint(0x0A), true);  // 'n' character
+        assertEquals(MIStringHandler.isSpecialCodePoint(0x0D), true);  // 'r' character
+        assertEquals(MIStringHandler.isSpecialCodePoint(0x09), true);  // 't' character
+        assertEquals(MIStringHandler.isSpecialCodePoint(0x0B), true);  // 'v' character
         assertEquals(MIStringHandler.isSpecialCodePoint(0x27), true);  // '\'' character
+        assertEquals(MIStringHandler.isSpecialCodePoint(0x22), true);  // '"' character
         assertEquals(MIStringHandler.isSpecialCodePoint(0x5C), true);  // '\\' character
-    }
+        assertEquals(MIStringHandler.isSpecialCodePoint(0x3F), true);  // '?' character
+   }
     
     @Test
     public void testParseSpecialChar() {
@@ -142,11 +160,20 @@ public class MIStringHandlerTests {
         
         try {
             // Testing special chars.
-            assertEquals(MIStringHandler.parseSpecialChar('a'), 0x07);
-            assertEquals(MIStringHandler.parseSpecialChar('n'), 0x0A);
-            assertEquals(MIStringHandler.parseSpecialChar('t'), 0x09);
+            assertEquals(MIStringHandler.parseSpecialChar('a'),  0x07);
+            assertEquals(MIStringHandler.parseSpecialChar('b'),  0x08);
+            assertEquals(MIStringHandler.parseSpecialChar('e'),  0x1B);
+            assertEquals(MIStringHandler.parseSpecialChar('E'),  0x1B);
+            assertEquals(MIStringHandler.parseSpecialChar('f'),  0x0C);
+            assertEquals(MIStringHandler.parseSpecialChar('n'),  0x0A);
+            assertEquals(MIStringHandler.parseSpecialChar('r'),  0x0D);
+            assertEquals(MIStringHandler.parseSpecialChar('t'),  0x09);
+            assertEquals(MIStringHandler.parseSpecialChar('v'),  0x0B);
             assertEquals(MIStringHandler.parseSpecialChar('\''), 0x27);
+            assertEquals(MIStringHandler.parseSpecialChar('"'),  0x22);
             assertEquals(MIStringHandler.parseSpecialChar('\\'), 0x5C);
+            assertEquals(MIStringHandler.parseSpecialChar('?'),  0x3F);
+
         } catch (ParseException e) {
             fail("Parsing exception thrown."); //$NON-NLS-1$
         }
@@ -170,10 +197,18 @@ public class MIStringHandlerTests {
             
             // Testing special Unicode code points.
             assertEquals(MIStringHandler.parseSpecialCodePoint(0x07), 'a');
+            assertEquals(MIStringHandler.parseSpecialCodePoint(0x08), 'b');           
+            assertEquals(MIStringHandler.parseSpecialCodePoint(0x1B), 'e');
+            assertEquals(MIStringHandler.parseSpecialCodePoint(0x0C), 'f');
             assertEquals(MIStringHandler.parseSpecialCodePoint(0x0A), 'n');
+            assertEquals(MIStringHandler.parseSpecialCodePoint(0x0D), 'r');
             assertEquals(MIStringHandler.parseSpecialCodePoint(0x09), 't');
+            assertEquals(MIStringHandler.parseSpecialCodePoint(0x0B), 'v');
             assertEquals(MIStringHandler.parseSpecialCodePoint(0x27), '\'');
+            assertEquals(MIStringHandler.parseSpecialCodePoint(0x22), '"');
             assertEquals(MIStringHandler.parseSpecialCodePoint(0x5C), '\\');
+            assertEquals(MIStringHandler.parseSpecialCodePoint(0x3F), '?');
+
         } catch (ParseException e) {
             fail("Parsing exception thrown."); //$NON-NLS-1$
         }

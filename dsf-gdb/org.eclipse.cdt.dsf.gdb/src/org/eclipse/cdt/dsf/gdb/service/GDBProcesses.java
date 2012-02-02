@@ -505,6 +505,13 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 	 * @since 4.0
 	 */
 	protected void createConsole(final IContainerDMContext containerDmc, final boolean restart, final RequestMonitor rm) {
+    	if (fBackend.getSessionType() == SessionType.REMOTE || fBackend.getIsAttachSession()) {
+    		// Remote or attach sessions shouldn't have a console, since the inferior is not started
+    		// by eclipse but by gdbserver
+    		rm.done();
+    		return;
+    	}
+    	
 		initializeInputOutput(containerDmc, new ImmediateRequestMonitor(rm) {
 			@Override
 			protected void handleSuccess() {

@@ -650,6 +650,59 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 	}
 
 	/**
+	 * Test ability to serialize providers for a configuration.
+	 */
+	public void testConfigurationDescription_SerializeProviders() throws Exception {
+		// Create model project and accompanied descriptions
+		String projectName = getName();
+		IProject project = ResourceHelper.createCDTProjectWithConfig(projectName);
+		ICProjectDescription prjDescriptionWritable = CProjectDescriptionManager.getInstance().getProjectDescription(project, true);
+
+		ICConfigurationDescription[] cfgDescriptions = prjDescriptionWritable.getConfigurations();
+		ICConfigurationDescription cfgDescription = cfgDescriptions[0];
+		assertTrue(cfgDescription instanceof CConfigurationDescription);
+
+		ILanguageSettingsProvider workspaceProvider = LanguageSettingsManager.getWorkspaceProvider(EXTENSION_BASE_PROVIDER_ID);
+		assertNotNull(workspaceProvider);
+		{
+			// ensure no test provider is set yet
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+			assertEquals(0, providers.size());
+		}
+		{
+			// set test provider
+			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
+			providers.add(workspaceProvider);
+			((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
+		}
+		{
+			// check that test provider got there
+			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+			assertEquals(workspaceProvider, providers.get(0));
+		}
+
+		{
+			// serialize
+			CProjectDescriptionManager.getInstance().setProjectDescription(project, prjDescriptionWritable);
+			// close and reopen the project
+			project.close(null);
+			project.open(null);
+		}
+
+		{
+			// check that test provider got loaded
+			ICProjectDescription prjDescription = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
+			ICConfigurationDescription[] loadedCfgDescriptions = prjDescription.getConfigurations();
+			ICConfigurationDescription loadedCfgDescription = loadedCfgDescriptions[0];
+			assertTrue(cfgDescription instanceof CConfigurationDescription);
+
+			List<ILanguageSettingsProvider> loadedProviders = ((ILanguageSettingsProvidersKeeper) loadedCfgDescription).getLanguageSettingProviders();
+			assertTrue(LanguageSettingsManager.isWorkspaceProvider(loadedProviders.get(0)));
+		}
+
+	}
+
+	/**
 	 * Test a workspace provider basics.
 	 */
 	public void testWorkspaceProvider_Basic() throws Exception {

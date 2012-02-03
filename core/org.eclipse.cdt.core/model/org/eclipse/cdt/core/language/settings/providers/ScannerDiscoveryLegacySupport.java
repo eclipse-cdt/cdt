@@ -11,11 +11,13 @@
 
 package org.eclipse.cdt.core.language.settings.providers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.internal.core.LocalProjectScope;
+import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsExtensionManager;
+import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.prefs.BackingStoreException;
@@ -81,19 +83,16 @@ public class ScannerDiscoveryLegacySupport {
 	}
 
 	/**
-	 * @noreference This is internal helper method to support compatibility with previous versions
-	 * which is not intended to be referenced by clients.
+	 * Return list containing MBS and User provider. Used to initialize for unaware tool-chains (backward compatibility).
 	 */
-	public static boolean isMbsLanguageSettingsProviderOn(ICConfigurationDescription cfgDescription) {
-		if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
-			List<ILanguageSettingsProvider> lsProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
-			for (ILanguageSettingsProvider lsp : lsProviders) {
-				if (MBS_LANGUAGE_SETTINGS_PROVIDER_ID.equals(lsp.getId())) {
-					return true;
-				}
-			}
+	public static List<ILanguageSettingsProvider> getDefaultProvidersLegacy() {
+		List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>(2);
+		ILanguageSettingsProvider provider = LanguageSettingsExtensionManager.getExtensionProviderCopy((ScannerDiscoveryLegacySupport.USER_LANGUAGE_SETTINGS_PROVIDER_ID), false);
+		if (provider != null) {
+			providers.add(provider);
 		}
-		return false;
+		providers.add(LanguageSettingsProvidersSerializer.getWorkspaceProvider(ScannerDiscoveryLegacySupport.MBS_LANGUAGE_SETTINGS_PROVIDER_ID));
+		return providers;
 	}
 
 }

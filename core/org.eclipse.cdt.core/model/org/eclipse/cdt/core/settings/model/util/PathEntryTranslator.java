@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
+import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.CoreModelUtil;
@@ -63,6 +64,7 @@ import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.cdtvariables.CoreVariableSubstitutor;
 import org.eclipse.cdt.internal.core.cdtvariables.DefaultVariableContextInfo;
 import org.eclipse.cdt.internal.core.cdtvariables.ICoreVariableContextInfo;
+import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.cdt.internal.core.model.APathEntry;
 import org.eclipse.cdt.internal.core.model.CModelStatus;
 import org.eclipse.cdt.internal.core.model.PathEntry;
@@ -2046,6 +2048,16 @@ public class PathEntryTranslator {
 			return false;
 		}
 
+		IProject project = cfgDescription.getProjectDescription().getProject();
+		if (ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(project)) {
+			IResource rc = findResourceInWorkspace(project, rcData.getPath());
+			for (CLanguageData lData : lDatas) {
+				list.addAll(LanguageSettingsProvidersSerializer.getSettingEntriesByKind(cfgDescription, rc, lData.getLanguageId(), kind));
+			}
+			return list.size()>0;
+
+		}
+		// Legacy logic
 		boolean supported = false;
 		for (CLanguageData lData : lDatas) {
 			if (collectLanguageDataEntries(kind, lData, list))
@@ -2069,5 +2081,15 @@ public class PathEntryTranslator {
 	public static IPathEntry[] getPathEntries(IProject project, ICConfigurationDescription cfgDescription, int flags) {
 		PathEntryCollector cr = collectEntries(project, cfgDescription);
 		return cr.getEntries(flags, cfgDescription);
+	}
+
+	private static IResource findResourceInWorkspace(IProject project, IPath workspacePath) {
+		IResource rc;
+		if (project != null) {
+			rc = project.findMember(workspacePath);
+		} else {
+			rc = ResourcesPlugin.getWorkspace().getRoot().findMember(workspacePath);
+		}
+		return rc;
 	}
 }

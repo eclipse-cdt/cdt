@@ -259,9 +259,15 @@ public class LanguageSettingsProvidersSerializer {
 						CCorePlugin.log(e);
 					}
 					if (specSettings != null) {
-						LanguageSettingsDelta delta = specSettings.dropDelta();
-						if (delta != null)
-							deltaMap.put(cfgDescription.getId(), delta);
+						String cfgId = cfgDescription.getId();
+						if (ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(prjDescription.getProject())) {
+							LanguageSettingsDelta delta = specSettings.dropDelta();
+							if (delta != null) {
+								deltaMap.put(cfgId, delta);
+							}
+						} else {
+							deltaMap.remove(cfgId);
+						}
 					} else {
 						IStatus ss = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "Internal error: Missing specSettings for " //$NON-NLS-1$
 								+ cfgDescription.getClass().getSimpleName());
@@ -1051,10 +1057,7 @@ public class LanguageSettingsProvidersSerializer {
 				ICConfigurationDescription[] cfgDescriptions = prjDescription.getConfigurations();
 				for (ICConfigurationDescription cfgDescription : cfgDescriptions) {
 					if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
-						List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>(2);
-						providers.add(LanguageSettingsExtensionManager.getExtensionProviderCopy((ScannerDiscoveryLegacySupport.USER_LANGUAGE_SETTINGS_PROVIDER_ID), true));
-						providers.add(getWorkspaceProvider(ScannerDiscoveryLegacySupport.MBS_LANGUAGE_SETTINGS_PROVIDER_ID));
-						((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(providers);
+						((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(ScannerDiscoveryLegacySupport.getDefaultProvidersLegacy());
 					}
 				}
 			}

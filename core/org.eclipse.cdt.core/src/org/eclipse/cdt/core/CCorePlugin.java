@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.cdtvariables.IUserVarSupplier;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariableManager;
 import org.eclipse.cdt.core.index.IIndexManager;
+import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ILanguage;
@@ -50,6 +51,7 @@ import org.eclipse.cdt.internal.core.PositionTrackerManager;
 import org.eclipse.cdt.internal.core.cdtvariables.CdtVariableManager;
 import org.eclipse.cdt.internal.core.cdtvariables.UserVarSupplier;
 import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
+import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsScannerInfoProvider;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.core.model.Util;
 import org.eclipse.cdt.internal.core.pdom.PDOMManager;
@@ -1025,28 +1027,17 @@ public class CCorePlugin extends Plugin {
 				return provider;
 
 			// Next search the extension registry to see if a provider is registered with a build command
-			IExtensionRegistry registry = Platform.getExtensionRegistry();
-			IExtensionPoint point = registry.getExtensionPoint(SCANNER_INFO_PROVIDER2);
-			if (point != null) {
-				IExtension[] exts = point.getExtensions();
-				for (IExtension ext : exts) {
-					IConfigurationElement[] elems = ext.getConfigurationElements();
-					for (IConfigurationElement elem : elems) {
-						String builder = elem.getAttribute("builder"); //$NON-NLS-1$
-						if (builder != null) {
-							IProjectDescription desc = project.getDescription();
-							ICommand[] commands = desc.getBuildSpec();
-							for (ICommand command : commands)
-								if (builder.equals(command.getBuilderName()))
-									provider = (IScannerInfoProvider)elem.createExecutableExtension("class"); //$NON-NLS-1$
-						}
-					}
-				}
+			provider = getExtensionScannerInfoProvider2(project);
+
+			// Regular usage is where Language Settings Providers are employed
+			if (provider == null && ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(project)) {
+				provider = new LanguageSettingsScannerInfoProvider();
 			}
 
-			// Default to the proxy
+			// Fall back to the MBS legacy
 			if (provider == null)
 				provider = fNewCProjectDescriptionManager.getScannerInfoProviderProxy(project);
+
 			project.setSessionProperty(scannerInfoProviderName, provider);
 		} catch (CoreException e) {
 			// Bug 313725: When project is being closed, don't report an error.
@@ -1056,6 +1047,33 @@ public class CCorePlugin extends Plugin {
 			log(e);
  		}
 
+		return provider;
+	}
+
+	/**
+	 * Find {@link IScannerInfoProvider} registered as extension via extension point
+	 * org.eclipse.cdt.core.ScannerInfoProvider2.
+	 */
+	private IScannerInfoProvider getExtensionScannerInfoProvider2(IProject project) throws CoreException {
+		IScannerInfoProvider provider = null;
+		IExtensionRegistry registry = Platform.getExtensionRegistry();
+		IExtensionPoint point = registry.getExtensionPoint(SCANNER_INFO_PROVIDER2);
+		if (point != null) {
+			IExtension[] exts = point.getExtensions();
+			for (IExtension ext : exts) {
+				IConfigurationElement[] elems = ext.getConfigurationElements();
+				for (IConfigurationElement elem : elems) {
+					String builder = elem.getAttribute("builder"); //$NON-NLS-1$
+					if (builder != null) {
+						IProjectDescription desc = project.getDescription();
+						ICommand[] commands = desc.getBuildSpec();
+						for (ICommand command : commands)
+							if (builder.equals(command.getBuilderName()))
+								provider = (IScannerInfoProvider)elem.createExecutableExtension("class"); //$NON-NLS-1$
+					}
+				}
+			}
+		}
 		return provider;
 	}
 

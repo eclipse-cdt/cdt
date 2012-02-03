@@ -12,14 +12,19 @@
 package org.eclipse.cdt.internal.core.language.settings.providers;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Vector;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsChangeEvent;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsChangeListener;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfo;
@@ -35,6 +40,7 @@ import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.cdt.internal.core.settings.model.SettingsModelMessages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -49,10 +55,12 @@ import org.eclipse.osgi.util.NLS;
  * @see IScannerInfo#getIncludePaths()
  *
  */
-public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider {
+public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider, ILanguageSettingsChangeListener {
 	private static final String FRAMEWORK_PRIVATE_HEADERS_INCLUDE = "/__framework__.framework/PrivateHeaders/__header__"; //$NON-NLS-1$
 	private static final String FRAMEWORK_HEADERS_INCLUDE = "/__framework__.framework/Headers/__header__"; //$NON-NLS-1$
 	private static final ExtendedScannerInfo DUMMY_SCANNER_INFO = new ExtendedScannerInfo();
+
+	private Map<IResource, List<IScannerInfoChangeListener>> listenersMap = null;
 
 	@Override
 	public ExtendedScannerInfo getScannerInformation(IResource rc) {
@@ -259,12 +267,70 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 
 	@Override
 	public void subscribe(IResource resource, IScannerInfoChangeListener listener) {
-		// Handled by ScannerInfoProviderProxy for the moment
+		if (resource == null || listener == null) {
+			return;
+		}
+
+		if (listenersMap == null) {
+			listenersMap = Collections.synchronizedMap(new HashMap<IResource, List<IScannerInfoChangeListener>>());
+		}
+
+		IProject project = resource.getProject();
+		List<IScannerInfoChangeListener> list = listenersMap.get(project);
+		if (list == null) {
+			list = new Vector<IScannerInfoChangeListener>();
+			listenersMap.put(project, list);
+		}
+		if (!list.contains(listener)) {
+			list.add(listener);
+		}
 	}
 
 	@Override
 	public void unsubscribe(IResource resource, IScannerInfoChangeListener listener) {
-		// Handled by ScannerInfoProviderProxy for the moment
+		if (resource == null || listener == null) {
+			return;
+		}
+
+		IProject project = resource.getProject();
+		if (listenersMap != null) {
+			List<IScannerInfoChangeListener> list = listenersMap.get(project);
+			if (list != null) {
+				list.remove(listener);
+			}
+		}
 	}
 
+	@Override
+	public void handleEvent(ILanguageSettingsChangeEvent event) {
+		if (listenersMap == null || listenersMap.isEmpty()) {
+			return;
+		}
+
+		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(event.getProjectName());
+		if (project != null) {
+			ICProjectDescription prjDescription = CCorePlugin.getDefault().getProjectDescription(project);
+			if (prjDescription != null) {
+				ICConfigurationDescription indexedCfgDescription = prjDescription.getDefaultSettingConfiguration();
+				String indexedCfgId = indexedCfgDescription.getId();
+
+				for (String cfgId : event.getConfigurationDescriptionIds()) {
+					if (cfgId.equals(indexedCfgId)) {
+						for (Entry<IResource, List<IScannerInfoChangeListener>> entry : listenersMap.entrySet()) {
+							IResource rc = entry.getKey();
+							List<IScannerInfoChangeListener> listeners = listenersMap.get(rc);
+							if (listeners != null && !listeners.isEmpty()) {
+								IScannerInfo info = getScannerInformation(rc);
+								for (IScannerInfoChangeListener listener : listeners) {
+									listener.changeNotification(rc, info);
+								}
+							}
+						}
+						break;
+					}
+				}
+
+			}
+		}
+	}
 }

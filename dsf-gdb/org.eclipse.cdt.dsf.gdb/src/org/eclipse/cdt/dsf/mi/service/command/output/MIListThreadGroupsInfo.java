@@ -232,8 +232,31 @@ public class MIListThreadGroupsInfo extends MIInfo {
         		name = matcher.group(1);
         	} else {
         		// If we didn't get the form "name: " then we expect to have the form
-        		// "/usr/sbin/dhcdbd --system"
-        		name = desc.split("\\s", 2)[0]; //$NON-NLS-1$
+        		//   "/usr/sbin/dhcdbd --system"
+        		// or (starting with GDB 7.4)
+        		//   "[migration/0]"  where the integer represents the core, if the process 
+        		//                    has an instance of many cores
+        		//   "[kacpid]"       when the process only runs on one core
+        		//   "[async/mgr]"          
+        	    //   "[jbd2/dm-1-8]"
+        		//   The brackets indicate that the startup parameters are not available
+        		//   We handle this case by removing the brackets and the core indicator
+        		//   since GDB already tells us the core separately.
+        		if (desc.length() > 0 && desc.charAt(0) == '[') {
+        			// Remove brackets
+        			name = desc.substring(1, desc.length()-1);
+        			
+        			// Look for [name/coreNum] pattern to remove /coreNum
+        			pattern = Pattern.compile("(.+?)(/\\d+)", Pattern.MULTILINE); //$NON-NLS-1$
+                	matcher = pattern.matcher(name);
+                	if (matcher.find()) {
+                		// Found a pattern /coreNum, so ignore it
+                		name = matcher.group(1);
+                	}
+                	// else, no /coreNum pattern, so the name is correct already
+        		} else {
+        			name = desc.split("\\s", 2)[0]; //$NON-NLS-1$
+        		}
         	}
 
 			return name;

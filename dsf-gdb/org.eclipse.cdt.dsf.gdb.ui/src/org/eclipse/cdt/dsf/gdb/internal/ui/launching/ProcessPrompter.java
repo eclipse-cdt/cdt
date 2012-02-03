@@ -91,7 +91,15 @@ public class ProcessPrompter implements IStatusHandler {
 				@Override
 				public String getText(Object element) {
 					IProcessExtendedInfo info = (IProcessExtendedInfo)element;
-					IPath path = new Path(info.getName());
+					// Sometimes, if we are not getting the list of processes from GDB,
+					// we use CCorePlugin.getDefault().getProcessList(); which returns
+					// the process and its arguments.  If the arguments contain a /
+					// we will get confused when using path.lastSegment(), so,
+					// let's only keep the name to be sure
+					String name = info.getName();
+					name = name.split("\\s", 2)[0]; //$NON-NLS-1$
+					
+					IPath path = new Path(name);
 					StringBuffer text = new StringBuffer(path.lastSegment());
 					
 					String owner = info.getOwner();

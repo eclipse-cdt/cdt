@@ -28,6 +28,8 @@ import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializableProvider;
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsStorage;
 import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
@@ -486,6 +488,9 @@ public class LanguageSettingsProvidersSerializer {
 	 * @throws CoreException
 	 */
 	public static void serializeLanguageSettingsWorkspace() throws CoreException {
+		// AG FIXME - temporary log to remove before CDT Juno release
+		LanguageSettingsLogger.logWarning("LanguageSettingsProvidersSerializer.serializeLanguageSettingsWorkspace()");
+
 		URI uriStoreWsp = getStoreInWorkspaceArea(STORAGE_WORKSPACE_LANGUAGE_SETTINGS);
 		List<LanguageSettingsSerializableProvider> serializableWorkspaceProviders = new ArrayList<LanguageSettingsSerializableProvider>();
 		for (ILanguageSettingsProvider provider : rawGlobalWorkspaceProviders.values()) {
@@ -741,6 +746,9 @@ public class LanguageSettingsProvidersSerializer {
 	 */
 	public static void serializeLanguageSettings(ICProjectDescription prjDescription) throws CoreException {
 		IProject project = prjDescription.getProject();
+		// AG FIXME - temporary log to remove before CDT Juno release
+		LanguageSettingsLogger.logWarning("LanguageSettingsProvidersSerializer.serializeLanguageSettings() for " + project);
+
 		try {
 			// Using side effect of adding the module to the storage
 			prjDescription.getStorage(CPROJECT_STORAGE_MODULE, true);
@@ -1126,6 +1134,35 @@ public class LanguageSettingsProvidersSerializer {
 	}
 
 	/**
+	 * Reports inconsistency in log.
+	 * AG FIXME - temporary method to remove before CDT Juno release
+	 */
+	@SuppressWarnings("nls")
+	@Deprecated
+	public static void assertConsistency(ICProjectDescription prjDescription) {
+		if (prjDescription != null) {
+			List<ILanguageSettingsProvider> prjProviders = new ArrayList<ILanguageSettingsProvider>();
+			for (ICConfigurationDescription cfgDescription : prjDescription.getConfigurations()) {
+				if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+					List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
+					for (ILanguageSettingsProvider provider : providers) {
+						if (!LanguageSettingsManager.isWorkspaceProvider(provider)) {
+							if (isInList(prjProviders, provider)) {
+								IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, "Inconsistent state, duplicate LSP in project description "
+										+ "[" + System.identityHashCode(provider) + "] "
+										+ provider);
+								CoreException e = new CoreException(status);
+								CCorePlugin.log(e);
+							}
+							prjProviders.add(provider);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/**
 	 * Check that this particular element is in the list.
 	 */
 	private static <T> boolean isInList(Collection<T> list, T element) {
@@ -1216,8 +1253,12 @@ public class LanguageSettingsProvidersSerializer {
 	 */
 	public static void reRegisterListeners(ICProjectDescription oldPrjDescription, ICProjectDescription newPrjDescription) {
 		if (oldPrjDescription == newPrjDescription) {
+			assertConsistency(oldPrjDescription);
 			return;
 		}
+
+		assertConsistency(oldPrjDescription);
+		assertConsistency(newPrjDescription);
 
 		List<ICListenerAgent> oldListeners = getListeners(oldPrjDescription);
 		List<ListenerAssociation> newAssociations = getListenersAssociations(newPrjDescription);
@@ -1285,6 +1326,9 @@ public class LanguageSettingsProvidersSerializer {
 	 * @param event - the {@link ILanguageSettingsChangeEvent} event to be broadcast.
 	 */
 	private static void notifyLanguageSettingsChangeListeners(ILanguageSettingsChangeEvent event) {
+		// AG FIXME - temporary log to remove before CDT Juno release
+		LanguageSettingsLogger.logWarning("Firing " + event);
+
 		for (Object listener : fLanguageSettingsChangeListeners.getListeners()) {
 			((ILanguageSettingsChangeListener) listener).handleEvent(event);
 		}
@@ -1486,6 +1530,111 @@ public class LanguageSettingsProvidersSerializer {
 			newProviders.add(provider);
 		}
 		return new ArrayList<ILanguageSettingsProvider>(newProviders);
+	}
+
+	/**
+	 * Check if the language is applicable for the file.
+	 */
+	private static boolean isLanguageInScope(IResource rc, ICConfigurationDescription cfgDescription, String languageId) {
+		if (rc instanceof IFile) {
+			ILanguage lang = null;
+			try {
+				lang = LanguageManager.getInstance().getLanguageForFile((IFile) rc, cfgDescription);
+			} catch (CoreException e) {
+				CCorePlugin.log("Error while determining language for a file", e); //$NON-NLS-1$
+			}
+			if (lang == null || (languageId != null && !languageId.equals(lang.getId()))) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Builds for the provider a nicer-looking resource tree to present hierarchical view to the user.
+	 *
+	 * Note that it is not advisable to "compact" the tree because of potential loss of information
+	 * which is especially important during partial or incremental builds.
+	 *
+	 * Note also that after using this method for a while for BOP parsers it appears that disadvantages
+	 * outweigh benefits. In particular, it doesn't result in saving memory as the language settings
+	 * (and the lists itself) are not duplicated in memory anyway but optimized with using WeakHashSet
+	 * and SafeStringInterner.
+	 *
+	 * This method is a candidate for removal.
+	 *
+	 * @param provider - language settings provider to build the tree for.
+	 * @param cfgDescription - configuration description.
+	 * @param languageId - language ID.
+	 * @param folder - container where the tree roots.
+	 */
+	public static void buildResourceTree(LanguageSettingsSerializableProvider provider,
+			ICConfigurationDescription cfgDescription, String languageId, IContainer folder) {
+		IResource[] members = null;
+		try {
+			members = folder.members();
+		} catch (Exception e) {
+			CCorePlugin.log(e);
+		}
+		if (members==null)
+			return;
+
+		for (IResource rc : members) {
+			if (rc instanceof IContainer) {
+				buildResourceTree(provider, cfgDescription, languageId, (IContainer) rc);
+			}
+		}
+
+		int rcNumber = members.length;
+
+		Map<List<ICLanguageSettingEntry>, Integer> listMap = new HashMap<List<ICLanguageSettingEntry>, Integer>();
+
+		// on the first pass find majority entry list, i.e. list present most often
+		List<ICLanguageSettingEntry> majorityEntries = null;
+		List<ICLanguageSettingEntry> candidate = null;
+		int candidateCount = 0;
+		for (IResource rc : members) {
+			if (!isLanguageInScope(rc, cfgDescription, languageId)) {
+				rcNumber--;
+			} else {
+				List<ICLanguageSettingEntry> entries = provider.getSettingEntries(null, rc, languageId);
+				if (entries==null && rc instanceof IContainer) {
+					rcNumber--;
+				} else {
+					Integer count = listMap.get(entries);
+					if (count==null) {
+						count = 0;
+					}
+					count++;
+
+					if (count>candidateCount) {
+						candidateCount = count;
+						candidate = entries;
+					}
+
+					listMap.put(entries, count);
+				}
+			}
+
+			if (candidateCount > rcNumber/2) {
+				majorityEntries = candidate;
+				break;
+			}
+		}
+
+		if (majorityEntries!=null) {
+			provider.setSettingEntries(cfgDescription, folder, languageId, majorityEntries);
+		}
+
+		// second pass - assign the entries to the folders
+		for (IResource rc : members) {
+			List<ICLanguageSettingEntry> entries = provider.getSettingEntries(null, rc, languageId);
+			if (entries!=null && entries==majorityEntries) {
+				if (!(rc instanceof IFile)) { // preserve information which files were collected
+					provider.setSettingEntries(cfgDescription, rc, languageId, null);
+				}
+			}
+		}
 	}
 
 }

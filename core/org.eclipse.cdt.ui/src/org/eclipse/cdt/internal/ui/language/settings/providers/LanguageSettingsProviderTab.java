@@ -164,7 +164,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 		ICConfigurationDescription cfgDescription = getConfigurationDescription();
 		String[] defaultIds = ((ILanguageSettingsProvidersKeeper) cfgDescription).getDefaultLanguageSettingsProvidersIds();
 		List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
-		if (Arrays.asList(defaultIds).contains(id) != providers.contains(provider)) {
+		if (defaultIds != null && Arrays.asList(defaultIds).contains(id) != providers.contains(provider)) {
 			return true;
 		}
 
@@ -339,6 +339,16 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 					boolean enabled = enableProvidersCheckBox.getSelection();
 					if (masterPropertyPage!=null)
 						masterPropertyPage.setLanguageSettingsProvidersEnabled(enabled);
+
+					// AG TODO - if not enabled reset providers to MBS provider only
+					if (!enabled) {
+						ICConfigurationDescription cfgDescription = getConfigurationDescription();
+						if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+							((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(ScannerDiscoveryLegacySupport.getDefaultProvidersLegacy());
+							updateData(getResDesc());
+						}
+
+					}
 					enableControls(enabled);
 					updateStatusLine();
 				}

@@ -573,12 +573,9 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 			}
 		}
 
+		// AG TODO - should it be when empty or when ids==null?
 		if (providers.isEmpty()) {
-			// Add MBS and User provider for unsuspecting toolchains (backward compatibility)
-			ILanguageSettingsProvider userProvider = LanguageSettingsManager.getExtensionProviderCopy(ScannerDiscoveryLegacySupport.USER_LANGUAGE_SETTINGS_PROVIDER_ID, true);
-			ILanguageSettingsProvider mbsProvider = LanguageSettingsManager.getWorkspaceProvider(ScannerDiscoveryLegacySupport.MBS_LANGUAGE_SETTINGS_PROVIDER_ID);
-			providers.add(userProvider);
-			providers.add(mbsProvider);
+			providers = ScannerDiscoveryLegacySupport.getDefaultProvidersLegacy();
 		}
 
 		return providers;

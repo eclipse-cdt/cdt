@@ -187,7 +187,7 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
 		if (autodiscoveryEnabled2) {
 			ICProjectDescription projDesc = CoreModel.getDefault().getProjectDescription(getProject());
 			ICConfigurationDescription cfgDescription = projDesc.getActiveConfiguration();
-			autodiscoveryEnabled2 = ScannerDiscoveryLegacySupport.isMbsLanguageSettingsProviderOn(cfgDescription);
+			autodiscoveryEnabled2 = ScannerDiscoveryLegacySupport.isLegacyScannerDiscoveryOn(cfgDescription);
 		}
 		scEnabledButton.setSelection(needsSCNature ? false
                 : (autodiscoveryEnabled2

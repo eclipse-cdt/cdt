@@ -127,7 +127,7 @@ public class ScannerInfoConsoleParserFactory {
 					if (autodiscoveryEnabled2) {
 						ICProjectDescription projDesc = CoreModel.getDefault().getProjectDescription(currentProject);
 						ICConfigurationDescription cfgDescription = projDesc.getActiveConfiguration();
-						autodiscoveryEnabled2 = ScannerDiscoveryLegacySupport.isMbsLanguageSettingsProviderOn(cfgDescription);
+						autodiscoveryEnabled2 = ScannerDiscoveryLegacySupport.isLegacyScannerDiscoveryOn(cfgDescription);
 					}
 					if (autodiscoveryEnabled2 && scBuildInfo.isBuildOutputParserEnabled()) {
 						// get the make builder console parser 

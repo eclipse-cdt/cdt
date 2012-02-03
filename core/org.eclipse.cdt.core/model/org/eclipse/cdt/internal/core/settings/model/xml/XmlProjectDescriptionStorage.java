@@ -34,7 +34,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.ICSettingsStorage;
@@ -172,7 +171,7 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 				}, null, IWorkspace.AVOID_UPDATE, null);
 				// end Bug 249951 & Bug 310007
 				serializingLock.acquire();
-				LanguageSettingsManager.serializeLanguageSettings(fDes);
+				LanguageSettingsProvidersSerializer.serializeLanguageSettings(fDes);
 				projectModificaitonStamp = serialize(fDes.getProject(), ICProjectDescriptionStorageType.STORAGE_FILE_NAME, fElement);
 				((ContributedEnvironment) CCorePlugin.getDefault().getBuildEnvironmentManager().getContributedEnvironment()).serialize(fDes);
 			} finally {

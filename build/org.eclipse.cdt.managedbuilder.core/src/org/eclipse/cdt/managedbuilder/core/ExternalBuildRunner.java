@@ -426,7 +426,7 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 			if (autodiscoveryEnabled2) {
 				IConfiguration cfg = context.getConfiguration();
 				ICConfigurationDescription cfgDescription = ManagedBuildManager.getDescriptionForConfiguration(cfg);
-				autodiscoveryEnabled2 = ScannerDiscoveryLegacySupport.isMbsLanguageSettingsProviderOn(cfgDescription);
+				autodiscoveryEnabled2 = ScannerDiscoveryLegacySupport.isLegacyScannerDiscoveryOn(cfgDescription);
 			}
 			if (autodiscoveryEnabled2 && info.isBuildOutputParserEnabled()) {
 

@@ -441,6 +441,15 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 				boolean enabled = enableProvidersCheckBox.getSelection();
 				if (masterPropertyPage!=null)
 					masterPropertyPage.setLanguageSettingsProvidersEnabled(enabled);
+
+				if (!enabled) {
+					ICConfigurationDescription cfgDescription = getConfigurationDescription();
+					if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
+						((ILanguageSettingsProvidersKeeper) cfgDescription).setLanguageSettingProviders(ScannerDiscoveryLegacySupport.getDefaultProvidersLegacy());
+						updateData(getResDesc());
+					}
+				}
+
 				enableControls(enabled);
 				updateStatusLine();
 			}

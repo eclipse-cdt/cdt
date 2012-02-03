@@ -351,7 +351,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 	private void setEnablement() {
 		IStatus status = null;
 		ICConfigurationDescription cfgDescription = page.getResDesc().getConfiguration();
-		boolean isEnabled = ScannerDiscoveryLegacySupport.isMbsLanguageSettingsProviderOn(cfgDescription);
+		boolean isEnabled = ScannerDiscoveryLegacySupport.isLegacyScannerDiscoveryOn(cfgDescription);
 		if (!isEnabled) {
 			status = new Status(IStatus.INFO, CUIPlugin.PLUGIN_ID, "Managed Build language settings provider is not enabled.");
 		}
@@ -407,7 +407,7 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 		if (autodiscoveryEnabled2) {
 			IConfiguration cfg = iContext.getConfiguration();
 			ICConfigurationDescription cfgDescription = ManagedBuildManager.getDescriptionForConfiguration(cfg);
-			autodiscoveryEnabled2 = ScannerDiscoveryLegacySupport.isMbsLanguageSettingsProviderOn(cfgDescription);
+			autodiscoveryEnabled2 = ScannerDiscoveryLegacySupport.isLegacyScannerDiscoveryOn(cfgDescription);
 		}
 		autoDiscoveryCheckBox.setSelection(autodiscoveryEnabled2
 				&& !selectedProfileId.equals(ScannerConfigProfileManager.NULL_PROFILE_ID));

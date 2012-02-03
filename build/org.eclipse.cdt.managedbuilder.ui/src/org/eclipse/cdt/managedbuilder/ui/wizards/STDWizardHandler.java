@@ -11,12 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.wizards;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
-import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -124,9 +119,9 @@ public class STDWizardHandler extends MBSWizardHandler {
 				if (isTryingNewSD) {
 					ConfigurationDataProvider.setDefaultLanguageSettingsProviders(cfg, cfgDes);
 				} else {
-					List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>();
-					providers.add(LanguageSettingsManager.getWorkspaceProvider(ScannerDiscoveryLegacySupport.MBS_LANGUAGE_SETTINGS_PROVIDER_ID));
-					((ILanguageSettingsProvidersKeeper) cfgDes).setLanguageSettingProviders(providers);
+					if (cfgDes instanceof ILanguageSettingsProvidersKeeper) {
+						((ILanguageSettingsProvidersKeeper) cfgDes).setLanguageSettingProviders(ScannerDiscoveryLegacySupport.getDefaultProvidersLegacy());
+					}
 				}
 			} else {
 				ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, false);

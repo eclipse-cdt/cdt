@@ -64,11 +64,7 @@ public class CheckedListDialogField<T> extends ListDialogField<T> {
 		Assert.isTrue(uncheckButtonIndex < fButtonLabels.length);
 		fUncheckAllButtonIndex= uncheckButtonIndex;
 	}
-	
 
-	/*
-	 * @see ListDialogField#createTableViewer
-	 */
 	@Override
 	protected TableViewer createTableViewer(Composite parent) {
 		Table table= new Table(parent, SWT.CHECK + getListStyle());
@@ -81,11 +77,7 @@ public class CheckedListDialogField<T> extends ListDialogField<T> {
 		});
 		return tableViewer;
 	}		
-	
-	
-	/*
-	 * @see ListDialogField#getListControl
-	 */
+
 	@Override
 	public Control getListControl(Composite parent) {
 		Control control= super.getListControl(parent);
@@ -110,7 +102,7 @@ public class CheckedListDialogField<T> extends ListDialogField<T> {
 	}	
 	
 	private void checkStateChanged() {
-		//call super and do not update check model
+		// Call super and do not update check model
 		super.dialogFieldChanged();
 	}		
 
@@ -166,7 +158,7 @@ public class CheckedListDialogField<T> extends ListDialogField<T> {
 			fCheckElements.remove(object);
 		}
 		if (fTable != null) {
-			((CheckboxTableViewer)fTable).setChecked(object, state);
+			((CheckboxTableViewer) fTable).setChecked(object, state);
 		}
 	}
 
@@ -196,9 +188,6 @@ public class CheckedListDialogField<T> extends ListDialogField<T> {
 		checkStateChanged();
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.ui.wizards.dialogfields.ListDialogField#replaceElement(java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	public void replaceElement(T oldElement, T newElement) throws IllegalArgumentException {
 		boolean wasChecked= isChecked(oldElement);

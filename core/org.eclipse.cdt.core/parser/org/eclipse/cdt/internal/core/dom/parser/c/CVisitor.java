@@ -1207,14 +1207,15 @@ public class CVisitor extends ASTQueries {
 			node = node.getParent();
 		}
 		
-		if (node instanceof IASTParameterDeclaration)
-			declSpec = ((IASTParameterDeclaration) node).getDeclSpecifier();
-		else if (node instanceof IASTSimpleDeclaration)
+		if (node instanceof IASTSimpleDeclaration) {
 			declSpec = ((IASTSimpleDeclaration) node).getDeclSpecifier();
-		else if (node instanceof IASTFunctionDefinition)
+		} else if (node instanceof IASTParameterDeclaration) {
+			declSpec = ((IASTParameterDeclaration) node).getDeclSpecifier();
+		} else if (node instanceof IASTFunctionDefinition) {
 			declSpec = ((IASTFunctionDefinition) node).getDeclSpecifier();
-		else if (node instanceof IASTTypeId)
+		} else if (node instanceof IASTTypeId) {
 		    declSpec = ((IASTTypeId) node).getDeclSpecifier();
+		}
 	
 		boolean isParameter = (node instanceof IASTParameterDeclaration || node.getParent() instanceof ICASTKnRFunctionDeclarator); 
 		

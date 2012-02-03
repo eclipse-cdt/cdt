@@ -22,14 +22,12 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
 
 /**
- * 3 radio buttons in a group, labeled according to the corresponding visibility name (public, private, protected).
+ * Three radio buttons in a group, labeled according to the corresponding visibility name
+ * (public, private, protected).
  * 
  * @author Thomas Corbat
- *
  */
 public class VisibilitySelectionPanel extends Composite {
-
-
 	private Button publicAccessRadioButton;
 	private Button protectedAccessRadioButton;
 	private Button privateAccessRadioButton;
@@ -46,12 +44,10 @@ public class VisibilitySelectionPanel extends Composite {
 		
 		createAccessModifierComposite(this);
 		setSelected(defaultVisibility);
-		
 	}
 
 	private void createAccessModifierComposite(Composite control) {
-
-		accessModifierGroup = new Group(this, SWT.SHADOW_NONE );
+		accessModifierGroup = new Group(this, SWT.SHADOW_NONE);
 		RowLayout groupLayout = new RowLayout(SWT.HORIZONTAL);
 		groupLayout.fill = true;
 		accessModifierGroup.setLayout(groupLayout);
@@ -65,11 +61,10 @@ public class VisibilitySelectionPanel extends Composite {
 		
 		privateAccessRadioButton = new Button(accessModifierGroup, SWT.RADIO | SWT.LEFT);
 		privateAccessRadioButton.setText(VisibilityEnum.v_private.toString());
-		
 	}
 
 	private void setSelected(VisibilityEnum defaultVisibility) {
-		switch (defaultVisibility){
+		switch (defaultVisibility) {
 		case v_public:
 			publicAccessRadioButton.setSelection(true);
 			break;
@@ -79,7 +74,7 @@ public class VisibilitySelectionPanel extends Composite {
 		case v_private:
 			privateAccessRadioButton.setSelection(true);
 			break;
-		}		
+		}
 	}
 
 	public Group getGroup() {
@@ -87,12 +82,11 @@ public class VisibilitySelectionPanel extends Composite {
 	}	
 	
 	@Override
-	public void setEnabled(boolean enabled){
+	public void setEnabled(boolean enabled) {
 		accessModifierGroup.setEnabled(enabled);
 		publicAccessRadioButton.setEnabled(enabled);
 		protectedAccessRadioButton.setEnabled(enabled);
 		privateAccessRadioButton.setEnabled(enabled);
 		super.setEnabled(enabled);
 	}
-	
 }

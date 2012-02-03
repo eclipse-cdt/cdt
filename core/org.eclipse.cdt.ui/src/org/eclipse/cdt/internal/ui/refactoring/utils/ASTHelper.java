@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.utils;
 
@@ -78,7 +78,8 @@ public class ASTHelper {
 		return null;
 	}
 
-	public static boolean samePointers(IASTPointerOperator[] pointerOperators1, IASTPointerOperator[] pointerOperators2, TrailNodeEqualityChecker checker) {
+	public static boolean samePointers(IASTPointerOperator[] pointerOperators1,
+			IASTPointerOperator[] pointerOperators2, TrailNodeEqualityChecker checker) {
 		if (pointerOperators2.length == pointerOperators1.length) {
 			for (int i = 0; i < pointerOperators2.length; i++) {
 				IASTPointerOperator operator1 = pointerOperators1[i];
@@ -110,7 +111,7 @@ public class ASTHelper {
 		for (IASTNode aktNode = node; aktNode != null; aktNode = aktNode.getParent()) {
 			if (aktNode instanceof ICPPASTNamespaceDefinition) {
 				namespaces.add(0, (ICPPASTNamespaceDefinition) aktNode);
-			} else if(aktNode instanceof ICPPASTQualifiedName) {
+			} else if (aktNode instanceof ICPPASTQualifiedName) {
 				namespaces.addAll(getNamespaces((ICPPASTQualifiedName) aktNode));
 			}
 		}
@@ -119,10 +120,10 @@ public class ASTHelper {
 	
 	public static ArrayList<ICPPASTNamespaceDefinition> getNamespaces(ICPPASTQualifiedName qualifiedName) {
 		ArrayList<ICPPASTNamespaceDefinition> namespaces = new ArrayList<ICPPASTNamespaceDefinition>();
-		for(IASTName aktQualifiedPartName : qualifiedName.getNames()) {
+		for (IASTName aktQualifiedPartName : qualifiedName.getNames()) {
 			IBinding binding = aktQualifiedPartName.resolveBinding();
-			for(IASTName aktResolvedName : qualifiedName.getTranslationUnit().getDefinitionsInAST(binding)) {
-				if(aktResolvedName.getParent() instanceof ICPPASTNamespaceDefinition) {
+			for (IASTName aktResolvedName : qualifiedName.getTranslationUnit().getDefinitionsInAST(binding)) {
+				if (aktResolvedName.getParent() instanceof ICPPASTNamespaceDefinition) {
 					namespaces.add((ICPPASTNamespaceDefinition) aktResolvedName.getParent());
 					break;
 				}
@@ -146,10 +147,11 @@ public class ASTHelper {
 		return specifiers;
 	}
 	
-	public static Collection<IASTPreprocessorStatement> getAllInFilePreprocessorStatements(IASTTranslationUnit unit, String aktFileName) {
+	public static Collection<IASTPreprocessorStatement> getAllInFilePreprocessorStatements(
+			IASTTranslationUnit unit, String aktFileName) {
 		Collection<IASTPreprocessorStatement> statements = new ArrayList<IASTPreprocessorStatement>();
-		for(IASTPreprocessorStatement aktStatement : unit.getAllPreprocessorStatements()) {
-			if(aktStatement.getFileLocation() == null) {
+		for (IASTPreprocessorStatement aktStatement : unit.getAllPreprocessorStatements()) {
+			if (aktStatement.getFileLocation() == null) {
 				continue;
 			} else if (aktStatement.getFileLocation().getFileName().equals(aktFileName)) {
 				statements.add(aktStatement);
@@ -160,10 +162,10 @@ public class ASTHelper {
 	
 	public static Collection<IASTDeclaration> getAllInFileDeclarations(IASTTranslationUnit unit, String aktFileName) {
 		Collection<IASTDeclaration> decls = new ArrayList<IASTDeclaration>();
-		for(IASTDeclaration aktDecl: unit.getDeclarations()) {
-			if(aktDecl.getFileLocation() == null) {
+		for (IASTDeclaration aktDecl: unit.getDeclarations()) {
+			if (aktDecl.getFileLocation() == null) {
 				continue;
-			} else if(aktDecl.getFileLocation().getFileName().equals(aktFileName)) {
+			} else if (aktDecl.getFileLocation().getFileName().equals(aktFileName)) {
 				decls.add(aktDecl);
 			}
 		}
@@ -172,11 +174,11 @@ public class ASTHelper {
 	
 	public static ICPPASTUsingDirective getActiveUsingDirecitveForNode(IASTNode node, IASTTranslationUnit unit) {
 		ICPPASTUsingDirective activeDirective = null;
-		for(IASTDeclaration aktDeclaration : getAllInFileDeclarations(unit, node.getFileLocation().getFileName())) {
-			if(aktDeclaration.getFileLocation().getNodeOffset() >= node.getFileLocation().getNodeOffset()) {
+		for (IASTDeclaration aktDeclaration : getAllInFileDeclarations(unit, node.getFileLocation().getFileName())) {
+			if (aktDeclaration.getFileLocation().getNodeOffset() >= node.getFileLocation().getNodeOffset()) {
 				break;
 			}
-			if(aktDeclaration instanceof ICPPASTUsingDirective) {
+			if (aktDeclaration instanceof ICPPASTUsingDirective) {
 				activeDirective = (ICPPASTUsingDirective) aktDeclaration;
 			}
 		} 
@@ -185,7 +187,7 @@ public class ASTHelper {
 
 	public static Collection<ICPPASTUsingDeclaration> getUsingDeclarations(IASTTranslationUnit unit) {
 		Collection<ICPPASTUsingDeclaration> usingDecls = new ArrayList<ICPPASTUsingDeclaration>();
-		for(IASTDeclaration aktDecl : unit.getDeclarations()) {
+		for (IASTDeclaration aktDecl : unit.getDeclarations()) {
 			if (aktDecl instanceof ICPPASTUsingDeclaration) {
 				usingDecls.add((ICPPASTUsingDeclaration) aktDecl);
 			}
@@ -193,33 +195,10 @@ public class ASTHelper {
 		return usingDecls;
 	}
 
-	public static boolean isClassDefinitionName(IASTName name) {
-		try {
-			if(!(name.getParent().getParent().getParent() instanceof IASTFunctionDefinition)) {
-				return false;
-			}
-			ICPPASTQualifiedName qName = (ICPPASTQualifiedName) name.getParent();
-			IASTName secondLastName = qName.getNames()[qName.getNames().length-2];
-			if(!(name.equals(secondLastName))) {
-				return false;
-			}
-			IBinding binding = name.resolveBinding();
-			for(IASTName aktName : name.getTranslationUnit().getDeclarationsInAST(binding)) {
-				if(!isClassDeclarationName(aktName)) {
-					return false;
-				}
-			}
-			
-		} catch (NullPointerException e) {
-			return false;
-		}
-		return true;
-	}
-	
 	public static IASTCompositeTypeSpecifier getCompositeTypeSpecifierForName(IASTName name) {
 		IBinding binding = name.resolveBinding();
-		for(IASTName aktName : name.getTranslationUnit().getDefinitionsInAST(binding)) {
-			if(aktName.getParent() instanceof IASTCompositeTypeSpecifier) {
+		for (IASTName aktName : name.getTranslationUnit().getDefinitionsInAST(binding)) {
+			if (aktName.getParent() instanceof IASTCompositeTypeSpecifier) {
 				return (IASTCompositeTypeSpecifier) aktName.getParent();
 			}
 		}
@@ -228,10 +207,10 @@ public class ASTHelper {
 	
 	public static Collection<IASTFunctionDeclarator> getFunctionDeclaratorsForClass(IASTCompositeTypeSpecifier klass) {
 		Collection<IASTFunctionDeclarator> declarators = new ArrayList<IASTFunctionDeclarator>();
-		for(IASTDeclaration aktDeclaration : klass.getMembers()) {
-			if(aktDeclaration instanceof IASTSimpleDeclaration) {
-				for(IASTDeclarator aktDeclarator : ((IASTSimpleDeclaration) aktDeclaration).getDeclarators()) {
-					if(aktDeclarator instanceof IASTFunctionDeclarator) {
+		for (IASTDeclaration aktDeclaration : klass.getMembers()) {
+			if (aktDeclaration instanceof IASTSimpleDeclaration) {
+				for (IASTDeclarator aktDeclarator : ((IASTSimpleDeclaration) aktDeclaration).getDeclarators()) {
+					if (aktDeclarator instanceof IASTFunctionDeclarator) {
 						declarators.add((IASTFunctionDeclarator) aktDeclarator);
 					}
 				}
@@ -239,13 +218,13 @@ public class ASTHelper {
 		}
 		return declarators;
 	}
-	
+
 	public static Collection<IASTFunctionDefinition> getFunctionDefinitionsForClass(IASTCompositeTypeSpecifier klass) {
 		Collection<IASTFunctionDefinition> definitions = new ArrayList<IASTFunctionDefinition>();
-		for(IASTFunctionDeclarator aktDeclarator : getFunctionDeclaratorsForClass(klass)) {
+		for (IASTFunctionDeclarator aktDeclarator : getFunctionDeclaratorsForClass(klass)) {
 			IBinding binding = aktDeclarator.getName().resolveBinding();
-			for(IASTName aktName : aktDeclarator.getTranslationUnit().getDefinitionsInAST(binding)) {
-				if(aktName.getParent().getParent().getParent() instanceof IASTFunctionDefinition) {
+			for (IASTName aktName : aktDeclarator.getTranslationUnit().getDefinitionsInAST(binding)) {
+				if (aktName.getParent().getParent().getParent() instanceof IASTFunctionDefinition) {
 					definitions.add((IASTFunctionDefinition) aktName.getParent().getParent().getParent());
 				}
 			}

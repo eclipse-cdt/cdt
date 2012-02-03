@@ -26,7 +26,7 @@ public interface IASTName extends IASTNode, IName {
 	/**
 	 * Constant sentinel.
 	 */
-	public static final IASTName[] EMPTY_NAME_ARRAY = new IASTName[0];
+	public static final IASTName[] EMPTY_NAME_ARRAY = {};
 
 	/**
 	 * Returns the name including qualification and template arguments. 

@@ -24,7 +24,7 @@ public interface IName {
 	/**
 	 * @since 5.2
 	 */
-	IName[] EMPTY_ARRAY= {};
+	public static final IName[] EMPTY_ARRAY= {};
 
 	/**
 	 * Returns the name without qualification and without template arguments.

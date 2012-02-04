@@ -66,6 +66,7 @@ public abstract class CRefactoring extends Refactoring {
 
 	protected String name = Messages.Refactoring_name; 
 	protected IFile file;
+	protected final ITranslationUnit tu;
 	protected Region region;
 	protected RefactoringStatus initStatus;
 	protected IASTTranslationUnit ast;
@@ -76,11 +77,10 @@ public abstract class CRefactoring extends Refactoring {
 		project = proj;
 		if (element instanceof ISourceReference) {
 			ISourceReference sourceRef= (ISourceReference) element;
-			ITranslationUnit tu = sourceRef.getTranslationUnit();
+			this.tu = sourceRef.getTranslationUnit();
 			IResource res= tu.getResource();
 			if (res instanceof IFile) 
 				this.file= (IFile) res;
-		
 			try {
 				final ISourceRange sourceRange = sourceRef.getSourceRange();
 				this.region = new Region(sourceRange.getIdStartPos(), sourceRange.getIdLength());
@@ -89,6 +89,7 @@ public abstract class CRefactoring extends Refactoring {
 			}
 		} else {
 			this.file = file;
+			this.tu = (ITranslationUnit) CCorePlugin.getDefault().getCoreModel().create(file);
 			this.region = SelectionHelper.getRegion(selection);
 		}
 
@@ -235,10 +236,10 @@ public abstract class CRefactoring extends Refactoring {
 
 	protected boolean loadTranslationUnit(RefactoringStatus status, IProgressMonitor mon) {
 		SubMonitor subMonitor = SubMonitor.convert(mon, 10);
-		if (file != null) {
+		if (tu != null) {
 			try {
 				subMonitor.subTask(Messages.Refactoring_PM_ParseTU);
-				ast = loadTranslationUnit(file);
+				ast = tu.getAST(fIndex, AST_STYLE);
 				if (ast == null) {
 					subMonitor.done();
 					return false;
@@ -256,21 +257,12 @@ public abstract class CRefactoring extends Refactoring {
 				return false;
 			}
 		} else {
-			status.addFatalError(Messages.NO_FILE); 
+			status.addFatalError(NLS.bind(Messages.CRefactoring_FileNotFound, tu.getPath().toString()));
 			subMonitor.done();
 			return false;
 		}
 		subMonitor.done();
 		return true;
-	}
-
-	protected IASTTranslationUnit loadTranslationUnit(IFile file) throws CoreException {
-		ITranslationUnit tu = (ITranslationUnit) CCorePlugin.getDefault().getCoreModel().create(file);
-		if (tu == null) {
-			initStatus.addFatalError(NLS.bind(Messages.CRefactoring_FileNotFound, file.getName()));
-			return null;
-		}
-		return tu.getAST(fIndex, AST_STYLE);
 	}
 
 	protected boolean translationUnitHasProblem() {
@@ -305,6 +297,13 @@ public abstract class CRefactoring extends Refactoring {
 		return fIndex;
 	}
 	
+	/**
+	 * Returns the translation unit where the refactoring started.
+	 */
+	public ITranslationUnit getTranslationUnit() {
+		return tu;
+	}
+
 	public IASTTranslationUnit getUnit() {
 		return ast;
 	}

@@ -146,46 +146,4 @@ public class NameComposer {
 					Character.toUpperCase(word.charAt(i)) : Character.toLowerCase(word.charAt(i)));
 		}
 	}
-
-	/**
-	 * Returns the trimmed field name. Leading and trailing non-alphanumeric characters are trimmed.
-	 * If the first word of the name consists of a single letter and the name contains more than
-	 * one word, the first word is removed.
-	 * 
-	 * @param fieldName a field name to trim
-	 * @return the trimmed field name
-	 */
-	public static String trimFieldName(String fieldName){
-		CBreakIterator iterator = new CBreakIterator();
-		iterator.setText(fieldName);
-		int firstWordStart = -1;
-		int firstWordEnd = -1;
-		int secondWordStart = -1;
-		int lastWordEnd = -1;
-		int end;
-		for (int start = iterator.first(); (end = iterator.next()) != BreakIterator.DONE; start = end) {
-			if (Character.isLetterOrDigit(fieldName.charAt(start))) {
-				int pos = end;
-				while (--pos >= start && !Character.isLetterOrDigit(fieldName.charAt(pos))) {
-				}
-				lastWordEnd = pos + 1;
-				if (firstWordStart < 0) {
-					firstWordStart = start;
-					firstWordEnd = lastWordEnd;
-				} else if (secondWordStart < 0) {
-					secondWordStart = start;
-				}
-			}
-		}
-		// Skip the first word if it consists of a single letter and the name contains more than
-		// one word.
-		if (firstWordStart >= 0 && firstWordStart + 1 == firstWordEnd && secondWordStart >= 0) {
-			firstWordStart = secondWordStart;
-		}
-		if (firstWordStart < 0) {
-			return fieldName;
-		} else {
-			return fieldName.substring(firstWordStart, lastWordEnd);
-		}
-	}
 }

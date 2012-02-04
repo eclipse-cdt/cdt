@@ -12,6 +12,8 @@ package org.eclipse.cdt.ui.tests.refactoring.utils;
 
 import org.eclipse.cdt.ui.PreferenceConstants;
 
+import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
+
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.internal.ui.util.NameComposer;
@@ -46,42 +48,42 @@ public class NameComposerTest extends TestCase {
 	}
 	
 	public void testTrimFieldName() {
-		assertEquals("f", NameComposer.trimFieldName("f_"));
-		assertEquals("F", NameComposer.trimFieldName("F_"));
-		assertEquals("oo", NameComposer.trimFieldName("F_oo"));
-		assertEquals("o", NameComposer.trimFieldName("f_o"));
+		assertEquals("f", StubUtility.trimFieldName("f_"));
+		assertEquals("F", StubUtility.trimFieldName("F_"));
+		assertEquals("oo", StubUtility.trimFieldName("F_oo"));
+		assertEquals("o", StubUtility.trimFieldName("f_o"));
 		
-		assertEquals("M", NameComposer.trimFieldName("a_M_"));
-		assertEquals("bs", NameComposer.trimFieldName("a_bs_"));
-		assertEquals("foo_bar", NameComposer.trimFieldName("foo_bar"));
-		assertEquals("foo_bar", NameComposer.trimFieldName("foo_bar_"));
+		assertEquals("M", StubUtility.trimFieldName("a_M_"));
+		assertEquals("bs", StubUtility.trimFieldName("a_bs_"));
+		assertEquals("foo_bar", StubUtility.trimFieldName("foo_bar"));
+		assertEquals("foo_bar", StubUtility.trimFieldName("foo_bar_"));
 		
-		assertEquals("foo_b", NameComposer.trimFieldName("foo_b_"));
+		assertEquals("foo_b", StubUtility.trimFieldName("foo_b_"));
 		
-		assertEquals("foo", NameComposer.trimFieldName("foo"));
-		assertEquals("foo", NameComposer.trimFieldName("_foo"));
-		assertEquals("bar", NameComposer.trimFieldName("_f_bar"));
+		assertEquals("foo", StubUtility.trimFieldName("foo"));
+		assertEquals("foo", StubUtility.trimFieldName("_foo"));
+		assertEquals("bar", StubUtility.trimFieldName("_f_bar"));
 		
-		assertEquals("f", NameComposer.trimFieldName("f__"));
-		assertEquals("f", NameComposer.trimFieldName("__f"));
-		assertEquals("O__b", NameComposer.trimFieldName("fO__b"));
-		assertEquals("Oo", NameComposer.trimFieldName("fOo"));
-		assertEquals("O", NameComposer.trimFieldName("fO"));
-		assertEquals("MyStatic", NameComposer.trimFieldName("sMyStatic"));
-		assertEquals("MyMember", NameComposer.trimFieldName("mMyMember"));
+		assertEquals("f", StubUtility.trimFieldName("f__"));
+		assertEquals("f", StubUtility.trimFieldName("__f"));
+		assertEquals("O__b", StubUtility.trimFieldName("fO__b"));
+		assertEquals("Oo", StubUtility.trimFieldName("fOo"));
+		assertEquals("O", StubUtility.trimFieldName("fO"));
+		assertEquals("MyStatic", StubUtility.trimFieldName("sMyStatic"));
+		assertEquals("MyMember", StubUtility.trimFieldName("mMyMember"));
 		
-		assertEquals("8", NameComposer.trimFieldName("_8"));
+		assertEquals("8", StubUtility.trimFieldName("_8"));
 		
-		assertEquals("8bar", NameComposer.trimFieldName("_8bar_"));
-		assertEquals("8bar_8", NameComposer.trimFieldName("_8bar_8"));
-		assertEquals("8bAr", NameComposer.trimFieldName("_8bAr"));
-		assertEquals("b8Ar", NameComposer.trimFieldName("_b8Ar"));
+		assertEquals("8bar", StubUtility.trimFieldName("_8bar_"));
+		assertEquals("8bar_8", StubUtility.trimFieldName("_8bar_8"));
+		assertEquals("8bAr", StubUtility.trimFieldName("_8bAr"));
+		assertEquals("b8Ar", StubUtility.trimFieldName("_b8Ar"));
 		
-		assertEquals("Id", NameComposer.trimFieldName("Id"));
-		assertEquals("ID", NameComposer.trimFieldName("ID"));
-		assertEquals("IDS", NameComposer.trimFieldName("IDS"));
-		assertEquals("ID", NameComposer.trimFieldName("bID"));
-		assertEquals("Id", NameComposer.trimFieldName("MId"));
-		assertEquals("IdA", NameComposer.trimFieldName("IdA"));
+		assertEquals("Id", StubUtility.trimFieldName("Id"));
+		assertEquals("ID", StubUtility.trimFieldName("ID"));
+		assertEquals("IDS", StubUtility.trimFieldName("IDS"));
+		assertEquals("ID", StubUtility.trimFieldName("bID"));
+		assertEquals("Id", StubUtility.trimFieldName("MId"));
+		assertEquals("IdA", StubUtility.trimFieldName("IdA"));
 	}
 }

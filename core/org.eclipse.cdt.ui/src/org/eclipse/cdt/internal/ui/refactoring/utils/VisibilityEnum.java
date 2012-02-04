@@ -8,11 +8,12 @@
  *  
  * Contributors: 
  *     Institute for Software - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.utils;
 
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 
 /**
  * Enum that represents C++ visibilities, with methods to convert to
@@ -20,9 +21,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBas
  */
 public enum VisibilityEnum {
 	// The values are ordered by increasing visibility.
-	v_private(Messages.VisibilityEnum_private, ICPPASTVisibilityLabel.v_private, ICPPASTBaseSpecifier.v_private), 
-	v_protected(Messages.VisibilityEnum_protected, ICPPASTVisibilityLabel.v_protected, ICPPASTBaseSpecifier.v_protected),  
-	v_public(Messages.VisibilityEnum_public, ICPPASTVisibilityLabel.v_public, ICPPASTBaseSpecifier.v_public);
+	v_private("private", ICPPASTVisibilityLabel.v_private, ICPPASTBaseSpecifier.v_private),  //$NON-NLS-1$
+	v_protected("protected", ICPPASTVisibilityLabel.v_protected, ICPPASTBaseSpecifier.v_protected),   //$NON-NLS-1$
+	v_public("public", ICPPASTVisibilityLabel.v_public, ICPPASTBaseSpecifier.v_public); //$NON-NLS-1$
 
 	private final String stringRepresentation;
 	private final int visibilityLabelValue;

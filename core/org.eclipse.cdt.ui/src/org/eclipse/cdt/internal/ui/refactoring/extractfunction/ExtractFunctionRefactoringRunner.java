@@ -8,6 +8,7 @@
  *  
  * Contributors: 
  *     Institute for Software - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 
@@ -18,7 +19,6 @@ import org.eclipse.ltk.ui.refactoring.RefactoringWizardOpenOperation;
 
 import org.eclipse.cdt.core.model.ICProject;
 
-import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.RefactoringRunner;
 
 /**
@@ -35,8 +35,8 @@ public class ExtractFunctionRefactoringRunner extends RefactoringRunner  {
 	public void run() {
 		ExtractFunctionInformation info = new ExtractFunctionInformation();
 		
-		CRefactoring refactoring = new ExtractFunctionRefactoring(file,selection,info, project);
-		ExtractFunctionRefactoringWizard wizard = new ExtractFunctionRefactoringWizard(refactoring,info);
+		ExtractFunctionRefactoring refactoring = new ExtractFunctionRefactoring(file, selection, info, project);
+		ExtractFunctionWizard wizard = new ExtractFunctionWizard(refactoring);
 		RefactoringWizardOpenOperation operator = new RefactoringWizardOpenOperation(wizard);
 		
 		try {

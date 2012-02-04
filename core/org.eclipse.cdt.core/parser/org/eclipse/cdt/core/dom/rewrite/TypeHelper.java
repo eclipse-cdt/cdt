@@ -10,14 +10,18 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.rewrite;
 
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator;
 import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator.SizeAndAlignment;
+import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 /**
@@ -58,5 +62,13 @@ public class TypeHelper {
 				return true;
 		}
 		return false;
+	}
+
+	public static IType createType(IASTDeclarator declarator) {
+		if (declarator.getTranslationUnit() instanceof ICPPASTTranslationUnit) {
+			return CPPVisitor.createType(declarator);
+		} else {
+			return CVisitor.createType(declarator);
+		}
 	}
 }

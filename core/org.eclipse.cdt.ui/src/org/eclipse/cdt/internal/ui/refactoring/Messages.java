@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
  * Rapperswil, University of applied sciences and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
@@ -35,7 +35,6 @@ public final class Messages extends NLS {
 	public static String Refactoring_CantLoadTU;
 	public static String Refactoring_Ambiguity;
 	public static String Refactoring_ParsingError;
-	public static String NO_FILE;
 	public static String RefactoringSaveHelper_unexpected_exception;
 	public static String RefactoringSaveHelper_saving;
 	public static String RefactoringSaveHelper_always_save;
@@ -49,6 +48,28 @@ public final class Messages extends NLS {
 	public static String ChangeExceptionHandler_undo_button;
 	public static String ChangeExceptionHandler_undo_dialog_message;
 	public static String ChangeExceptionHandler_undo_dialog_title;
+	public static String ChangeParametersControl_table_type;
+	public static String ChangeParametersControl_table_direction;
+	public static String ChangeParametersControl_table_name;
+	public static String ChangeParametersControl_table_default_value;
+	public static String ChangeParametersControl_input;
+	public static String ChangeParametersControl_output;
+	public static String ChangeParametersControl_return;
+	public static String ChangeParametersControl_buttons_move_up;
+	public static String ChangeParametersControl_buttons_move_down;
+	public static String ChangeParametersControl_buttons_edit;
+	public static String ChangeParametersControl_buttons_add;
+	public static String ChangeParametersControl_buttons_remove;
+	public static String ParameterEditDialog_title;
+	public static String ParameterEditDialog_message_new;
+	public static String ParameterEditDialog_message;
+	public static String ParameterEditDialog_type;
+	public static String ParameterEditDialog_name;
+	public static String ParameterEditDialog_name_error;
+	public static String ParameterEditDialog_default_value;
+	public static String ParameterEditDialog_default_value_error;
+	public static String ParameterEditDialog_default_value_invalid;
+	public static String ParameterEditDialog_use_as_return;
 	public static String RefactoringExecutionHelper_cannot_execute;
 
 	static {

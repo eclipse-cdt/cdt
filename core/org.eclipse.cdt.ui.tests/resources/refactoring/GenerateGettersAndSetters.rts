@@ -1502,8 +1502,8 @@ public:
 		return mClass;
 	}
 
-	void setClass(int _class) {
-		mClass = _class;
+	void setClass(int clazz) {
+		mClass = clazz;
 	}
 
 private:

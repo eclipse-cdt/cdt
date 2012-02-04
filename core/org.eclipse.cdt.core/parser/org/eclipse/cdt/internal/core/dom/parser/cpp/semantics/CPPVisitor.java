@@ -13,7 +13,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.ALLCVQ;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateTypeUptoPointers;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -1864,6 +1868,8 @@ public class CPPVisitor extends ASTQueries {
 		boolean isPackExpansion= false;
 		if (parent instanceof IASTSimpleDeclaration) {
 			declSpec = ((IASTSimpleDeclaration) parent).getDeclSpecifier();
+		} else if (parent instanceof IASTParameterDeclaration) {
+			declSpec = ((IASTParameterDeclaration) parent).getDeclSpecifier();
 		} else if (parent instanceof IASTFunctionDefinition) {
 			declSpec = ((IASTFunctionDefinition) parent).getDeclSpecifier();
 		} else if (parent instanceof ICPPASTTypeId) {
@@ -2505,5 +2511,22 @@ public class CPPVisitor extends ASTQueries {
 	
 	public static ICPPASTDeclarator findInnermostDeclarator(ICPPASTDeclarator dtor) {
 		return (ICPPASTDeclarator) ASTQueries.findInnermostDeclarator(dtor);
+	}
+
+	/**
+	 * Traverses parent chain of the given node and returns the first node of the given type.
+	 * @param node the start node
+	 * @param type the type to look for
+	 * @return the node itself or its closest ancestor that has the given type, or {@code null}
+	 *     if no such node is found.
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T extends IASTNode> T findAncestorWithType(IASTNode node, Class<T> type) {
+		do {
+			if (type.isInstance(node)) {
+				return (T) node;
+			}
+		} while ((node = node.getParent()) != null);
+		return null;
 	}
 }

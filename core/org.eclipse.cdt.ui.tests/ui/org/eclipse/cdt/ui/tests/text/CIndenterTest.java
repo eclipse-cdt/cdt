@@ -22,9 +22,9 @@ import org.eclipse.jface.text.source.LineRange;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterOptions;
 import org.eclipse.cdt.ui.tests.BaseUITestCase;
 
-import org.eclipse.cdt.internal.formatter.DefaultCodeFormatterOptions;
 
 import org.eclipse.cdt.internal.ui.editor.CDocumentSetupParticipant;
 import org.eclipse.cdt.internal.ui.editor.IndentUtil;

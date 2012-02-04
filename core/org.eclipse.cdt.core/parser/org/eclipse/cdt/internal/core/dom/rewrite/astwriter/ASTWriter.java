@@ -39,7 +39,7 @@ import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
  * @author Emanuel Graf
  */
 public class ASTWriter {
-	private ASTModificationStore modificationStore = new ASTModificationStore();
+	private final ASTModificationStore modificationStore = new ASTModificationStore();
 
 	/**
 	 * Creates a <code>ASTWriter</code>.
@@ -63,7 +63,7 @@ public class ASTWriter {
 	 * Generates the source code representing this node including comments.
 	 *
 	 * @param rootNode Node to write.
-	 * @param commentMap Node Comment Map <code>ASTCommenter</code>
+	 * @param commentMap comments for the translation unit
 	 * @return A <code>String</code> representing the source code for the node.
 	 * @throws ProblemRuntimeException if the node or one of it's children is
 	 *     an <code>IASTProblemNode</code>.
@@ -77,10 +77,6 @@ public class ASTWriter {
 			rootNode.accept(writer);
 		}
 		return writer.toString();
-	}
-
-	public void setModificationStore(ASTModificationStore modificationStore) {
-		this.modificationStore = modificationStore;
 	}
 
 	/**

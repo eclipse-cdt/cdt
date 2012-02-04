@@ -133,10 +133,6 @@ public class ExtractFunctionInformation {
 				return out1 == out2 ? 0 : out1 == outFirst ? -1 : 1;
 			}
 		});
-//		int i = 0;
-//		for (NameInformation param : parameterCandidates) {
-//			param.setNewOrder(i++);
-//		}
 	}
 
 	public static boolean hasNonConstPointerOrReference(NameInformation param) {

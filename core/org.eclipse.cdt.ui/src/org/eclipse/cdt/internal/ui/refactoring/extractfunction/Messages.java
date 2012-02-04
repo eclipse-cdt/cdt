@@ -23,8 +23,13 @@ public final class Messages extends NLS {
 	public static String ExtractFunctionRefactoring_parameter_name_in_use;
 	public static String ExtractFunctionRefactoring_duplicate_parameter;
 	public static String ExtractFunctionRefactoring_invalid_type;
-	public static String ExtractFunctionComposite_MethodName;
-	public static String ExtractFunctionComposite_FunctionName;
+	public static String ExtractFunctionRefactoring_CreateMethodDef;
+	public static String ExtractFunctionRefactoring_CreateFunctionDef;
+	public static String ExtractFunctionRefactoring_CreateMethodCall;
+	public static String ExtractFunctionRefactoring_CreateFunctionCall;
+	public static String ExtractFunctionRefactoring_Error_Return;
+	public static String ExtractFunctionRefactoring_Error_Continue;
+	public static String ExtractFunctionRefactoring_Error_Break;
 	public static String ExtractFunctionInputPage_description;
 	public static String ExtractFunctionInputPage_access_modifier;
 	public static String ExtractFunctionInputPage_public;
@@ -38,13 +43,6 @@ public final class Messages extends NLS {
 	public static String ExtractFunctionInputPage_duplicates_none;
 	public static String ExtractFunctionInputPage_duplicates_single;
 	public static String ExtractFunctionInputPage_duplicates_multi;
-	public static String ExtractFunctionRefactoring_CreateMethodDef;
-	public static String ExtractFunctionRefactoring_CreateFunctionDef;
-	public static String ExtractFunctionRefactoring_CreateMethodCall;
-	public static String ExtractFunctionRefactoring_CreateFunctionCall;
-	public static String ExtractFunctionRefactoring_Error_Return;
-	public static String ExtractFunctionRefactoring_Error_Continue;
-	public static String ExtractFunctionRefactoring_Error_Break;
 	public static String SimilarFinderVisitor_replaceDuplicateCode;
 
 	static {

@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  *  
  * Contributors: 
- * Institute for Software - initial API and implementation
+ *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.implementmethod;
 
@@ -21,16 +21,15 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.NameHelper;
 
 /**
  * @author Lukas Felber
- * 
  */
 public class ParameterInfo {
 	private IASTParameterDeclaration parameter;
 	private boolean hasNewName;
 	private String parameterName;
 	
-	public ParameterInfo(IASTParameterDeclaration parameter, String parameterName, boolean HasNewName) {
+	public ParameterInfo(IASTParameterDeclaration parameter, String parameterName, boolean hasNewName) {
 		this.parameter = parameter;
-		this.hasNewName = HasNewName;
+		this.hasNewName = hasNewName;
 		this.parameterName = parameterName;
 	}
 	

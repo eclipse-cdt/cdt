@@ -141,6 +141,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterOptions;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.internal.formatter.align.Alignment;
 import org.eclipse.cdt.internal.formatter.align.AlignmentException;

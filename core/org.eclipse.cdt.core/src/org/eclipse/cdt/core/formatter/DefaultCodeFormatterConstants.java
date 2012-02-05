@@ -15,7 +15,6 @@ package org.eclipse.cdt.core.formatter;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.internal.formatter.DefaultCodeFormatterOptions;
 import org.eclipse.cdt.internal.formatter.align.Alignment;
 
 

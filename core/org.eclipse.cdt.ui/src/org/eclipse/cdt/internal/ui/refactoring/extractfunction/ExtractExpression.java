@@ -50,7 +50,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 
-import org.eclipse.cdt.internal.ui.refactoring.NodeContainer.NameInformation;
+import org.eclipse.cdt.internal.ui.refactoring.NameInformation;
 
 /**
  * Handles the extraction of expression nodes, for example, return type determination.

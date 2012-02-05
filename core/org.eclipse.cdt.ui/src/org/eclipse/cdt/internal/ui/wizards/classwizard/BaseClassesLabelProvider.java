@@ -10,15 +10,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.classwizard;
 
-import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
-import org.eclipse.cdt.ui.browser.typeinfo.TypeInfoLabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.swt.graphics.Image;
 
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+import org.eclipse.cdt.ui.browser.typeinfo.TypeInfoLabelProvider;
 
 public final class BaseClassesLabelProvider implements ITableLabelProvider {
-
 	private static final String YES_VALUE = NewClassWizardMessages.BaseClassesLabelProvider_boolean_yes_label; 
 	private static final String NO_VALUE = NewClassWizardMessages.BaseClassesLabelProvider_boolean_no_label; 
 	private static final String ACCESS_PUBLIC = NewClassWizardMessages.BaseClassesLabelProvider_access_public_label; 
@@ -34,7 +33,7 @@ public final class BaseClassesLabelProvider implements ITableLabelProvider {
             return ACCESS_PRIVATE;
         if (access == ASTAccessVisibility.PROTECTED)
             return ACCESS_PROTECTED;
-           return ACCESS_PUBLIC;
+        return ACCESS_PUBLIC;
     }
 
     private static TypeInfoLabelProvider fTypeInfoLabelProvider = new TypeInfoLabelProvider(TypeInfoLabelProvider.SHOW_FULLY_QUALIFIED);
@@ -59,42 +58,30 @@ public final class BaseClassesLabelProvider implements ITableLabelProvider {
 	    IBaseClassInfo info = (IBaseClassInfo) element;
 		
 		switch (columnIndex) {
-			case 0:
-			    return fTypeInfoLabelProvider.getText(info.getType());
-			case 1:
-			    return getAccessText(info.getAccess());
-			case 2:
-				return getYesNoText(info.isVirtual());
-			default:
-				return null;
+		case 0:
+		    return fTypeInfoLabelProvider.getText(info.getType());
+		case 1:
+		    return getAccessText(info.getAccess());
+		case 2:
+			return getYesNoText(info.isVirtual());
+		default:
+			return null;
 		}
 	}
 
-	/*
-	 * @see IBaseLabelProvider#addListener(ILabelProviderListener)
-	 */
 	@Override
 	public void addListener(ILabelProviderListener listener) {
 	}
 
-	/*
-	 * @see IBaseLabelProvider#dispose()
-	 */
 	@Override
 	public void dispose() {
 	}
 
-	/*
-	 * @see IBaseLabelProvider#isLabelProperty(Object, String)
-	 */
 	@Override
 	public boolean isLabelProperty(Object element, String property) {
 		return false;
 	}
 
-	/*
-	 * @see IBaseLabelProvider#removeListener(ILabelProviderListener)
-	 */
 	@Override
 	public void removeListener(ILabelProviderListener listener) {
 	}

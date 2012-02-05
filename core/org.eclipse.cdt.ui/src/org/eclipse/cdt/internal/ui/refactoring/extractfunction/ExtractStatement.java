@@ -26,7 +26,7 @@ import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclSpecifier;
 
-import org.eclipse.cdt.internal.ui.refactoring.NodeContainer.NameInformation;
+import org.eclipse.cdt.internal.ui.refactoring.NameInformation;
 import org.eclipse.cdt.internal.ui.refactoring.utils.ASTHelper;
 
 /**
@@ -45,7 +45,7 @@ public class ExtractStatement extends ExtractedFunctionConstructionHelper {
 	public IASTDeclSpecifier determineReturnType(IASTNode extractedNode,
 			NameInformation returnVariable) {
 		if (returnVariable != null) {
-			IASTNode decl = ASTHelper.getDeclarationForNode(returnVariable.getDeclaration());
+			IASTNode decl = ASTHelper.getDeclarationForNode(returnVariable.getDeclarationName());
 			return ASTHelper.getDeclarationSpecifier(decl).copy(CopyStyle.withLocations);
 		}
 		IASTDeclSpecifier declSpec = new CPPASTSimpleDeclSpecifier();

@@ -63,13 +63,13 @@ public abstract class ChangeGeneratorTest extends BaseTestFramework {
 		assertTrue("The indexing operation of the test CProject has not finished jet. This should not happen...", joined);
 
 		IASTTranslationUnit unit = CoreModelUtil.findTranslationUnit(testFile).getAST();
-		final ChangeGenerator changegenartor = new ChangeGenerator(modStore,
+		final ChangeGenerator changeGenerator = new ChangeGenerator(modStore,
 				ASTCommenter.getCommentedNodeMap(unit));
 		unit.accept(visitor);
 
-		changegenartor.generateChange(unit);
+		changeGenerator.generateChange(unit);
 		Document doc = new Document(source);
-		for (Change curChange : ((CompositeChange) changegenartor.getChange()).getChildren()) {
+		for (Change curChange : ((CompositeChange) changeGenerator.getChange()).getChildren()) {
 			if (curChange instanceof TextFileChange) {
 				TextFileChange textChange = (TextFileChange) curChange;
 				textChange.getEdit().apply(doc);

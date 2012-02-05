@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
- *     Sergey Prigogin, Google
+ *     Sergey Prigogin (Google)
  *     Anton Leherbauer (Wind River Systems)
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
@@ -43,19 +43,23 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.CSourceViewerConfiguration;
+import org.eclipse.cdt.ui.text.ICColorConstants;
+import org.eclipse.cdt.ui.text.IColorManager;
 
+import org.eclipse.cdt.internal.ui.text.CTextTools;
 
 /**
  * Source viewer for C/C++ et al.
  */
 public class CSourceViewer extends ProjectionViewer implements IPropertyChangeListener {
-
     /** Show outline operation id. */
     public static final int SHOW_OUTLINE= 101;
     /** Show type hierarchy operation id. */
@@ -620,4 +624,32 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
         cmd.event= null;
         cmd.text= null;
     }
+
+	/**
+	 * Sets the viewer's background color to the given control's background color.
+	 * The background color is <em>only</em> set if it's visibly distinct from the
+	 * default Java source text color.
+	 * 
+	 * @param control the control with the default background color
+	 */
+	public void adaptBackgroundColor(Control control) {
+		// Workaround for dark editor background color, see https://bugs.eclipse.org/330680
+		Color defaultColor= control.getBackground();
+		float[] defaultBgHSB= defaultColor.getRGB().getHSB();
+
+		CTextTools textTools= CUIPlugin.getDefault().getTextTools();
+		IColorManager manager= textTools.getColorManager();
+		Color cDefaultColor= manager.getColor(ICColorConstants.C_DEFAULT);
+		RGB cDefaultRGB= cDefaultColor != null ?
+				cDefaultColor.getRGB() : new RGB(255, 255, 255);
+		float[] javaDefaultHSB= cDefaultRGB.getHSB();
+		
+		if (Math.abs(defaultBgHSB[2] - javaDefaultHSB[2]) >= 0.5f) {
+			getTextWidget().setBackground(defaultColor);
+			if (fBackgroundColor != null) {
+				fBackgroundColor.dispose();
+				fBackgroundColor= null;
+			}
+		}
+	}
 }

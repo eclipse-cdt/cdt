@@ -32,7 +32,7 @@ import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 
-import org.eclipse.cdt.internal.ui.refactoring.NodeContainer.NameInformation;
+import org.eclipse.cdt.internal.ui.refactoring.NameInformation;
 
 /**
  * @author Mirko Stocker
@@ -73,7 +73,7 @@ public abstract class ExtractedFunctionConstructionHelper {
 		}
 		
 		if (returnVariable != null) {
-			IASTDeclarator decl = (IASTDeclarator) returnVariable.getDeclaration().getParent();
+			IASTDeclarator decl = returnVariable.getDeclarator();
 			IASTPointerOperator[] pointers = decl.getPointerOperators();
 			for (IASTPointerOperator operator : pointers) {
 				declarator.addPointerOperator(operator.copy(CopyStyle.withLocations));
@@ -94,8 +94,8 @@ public abstract class ExtractedFunctionConstructionHelper {
 	public List<IASTParameterDeclaration> getParameterDeclarations(
 			Collection<NameInformation> parameterNames, INodeFactory nodeFactory) {
 		List<IASTParameterDeclaration> result = new ArrayList<IASTParameterDeclaration>(parameterNames.size());		
-		for (NameInformation name : parameterNames) {
-			result.add(name.getParameterDeclaration(name.isUserSetIsReference(), nodeFactory));
+		for (NameInformation param : parameterNames) {
+			result.add(param.getParameterDeclaration(nodeFactory));
 		}
 		return result;
 	}

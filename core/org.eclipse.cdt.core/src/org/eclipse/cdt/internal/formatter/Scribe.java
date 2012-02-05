@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterOptions;
 import org.eclipse.cdt.internal.formatter.align.Alignment;
 import org.eclipse.cdt.internal.formatter.align.AlignmentException;
 import org.eclipse.cdt.internal.formatter.scanner.Scanner;

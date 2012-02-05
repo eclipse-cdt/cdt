@@ -31,6 +31,7 @@ import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSetting
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -1031,8 +1032,8 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	 */
 	public void testProjectPersistence_RealProject() throws Exception {
 		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
-		String xmlStorageFileLocation;
-		String xmlOutOfTheWay;
+		IFile xmlStorageFilePrj = project.getFile(LANGUAGE_SETTINGS_PROJECT_XML);
+		String xmlPrjOutOfTheWay;
 
 		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
 		entries.add(new CIncludePathEntry("path0", 0));
@@ -1059,9 +1060,7 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 
 			// write to project description
 			CProjectDescriptionManager.getInstance().setProjectDescription(project, prjDescriptionWritable);
-			IFile xmlStorageFile = project.getFile(LANGUAGE_SETTINGS_PROJECT_XML);
-			assertTrue(xmlStorageFile.exists());
-			xmlStorageFileLocation = xmlStorageFile.getLocation().toOSString();
+			assertTrue(xmlStorageFilePrj.exists());
 		}
 		{
 			ICConfigurationDescription cfgDescription = getFirstConfigurationDescription(project);
@@ -1081,17 +1080,18 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 		}
 		{
 			// Move storage out of the way
+			String xmlStorageFileLocation = xmlStorageFilePrj.getLocation().toOSString();
 			java.io.File xmlFile = new java.io.File(xmlStorageFileLocation);
-			xmlOutOfTheWay = xmlStorageFileLocation+".out-of-the-way";
-			java.io.File xmlFileOut = new java.io.File(xmlOutOfTheWay);
+			xmlPrjOutOfTheWay = xmlStorageFileLocation+".out-of-the-way";
+			java.io.File xmlFileOut = new java.io.File(xmlPrjOutOfTheWay);
 			xmlFile.renameTo(xmlFileOut);
 			assertFalse(xmlFile.exists());
 			assertTrue(xmlFileOut.exists());
 		}
 		{
 			// Should not pollute workspace area with file with no meaningful data
-			String xmlWspStorageFileLocation = getStoreLocationInWorkspaceArea(project.getName()+'.'+LANGUAGE_SETTINGS_WORKSPACE_XML);
-			java.io.File xmlStorageFileWsp = new java.io.File(xmlWspStorageFileLocation);
+			String xmlStorageFileWspLocation = getStoreLocationInWorkspaceArea(project.getName()+'.'+LANGUAGE_SETTINGS_WORKSPACE_XML);
+			java.io.File xmlStorageFileWsp = new java.io.File(xmlStorageFileWspLocation);
 			assertFalse(xmlStorageFileWsp.exists());
 		}
 
@@ -1125,25 +1125,30 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 		{
 			// open to double-check the data is not kept in some other kind of cache
 			project.open(null);
+
+			// check that list of providers is empty
 			ICConfigurationDescription cfgDescription = getFirstConfigurationDescription(project);
 			assertNotNull(cfgDescription);
 			assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
-
 			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
 			assertEquals(0, providers.size());
-			// and close
-			project.close(null);
-		}
 
-		{
 			// Move storage back
+			String xmlStorageFileLocation = xmlStorageFilePrj.getLocation().toOSString();
 			java.io.File xmlFile = new java.io.File(xmlStorageFileLocation);
 			xmlFile.delete();
 			assertFalse("File "+xmlFile+ " still exist", xmlFile.exists());
-			java.io.File xmlFileOut = new java.io.File(xmlOutOfTheWay);
+			java.io.File xmlFileOut = new java.io.File(xmlPrjOutOfTheWay);
 			xmlFileOut.renameTo(xmlFile);
 			assertTrue("File "+xmlFile+ " does not exist", xmlFile.exists());
 			assertFalse("File "+xmlFileOut+ " still exist", xmlFileOut.exists());
+
+			// Refresh storage in workspace
+			xmlStorageFilePrj.refreshLocal(IResource.DEPTH_ZERO, null);
+			assertTrue("File "+xmlStorageFilePrj+ " does not exist", xmlStorageFilePrj.exists());
+
+			// and close
+			project.close(null);
 		}
 
 		{
@@ -1244,9 +1249,9 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	 */
 	public void testProjectPersistence_RealProjectSplitStorage() throws Exception {
 		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
-		String xmlStorageFileLocation;
-		String xmlOutOfTheWay;
-		String xmlWspStorageFileLocation;
+		IFile xmlStorageFilePrj;
+		String xmlPrjOutOfTheWay;
+		String xmlStorageFileWspLocation;
 		String xmlWspOutOfTheWay;
 
 		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
@@ -1274,12 +1279,10 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 
 			// write to project description
 			CProjectDescriptionManager.getInstance().setProjectDescription(project, prjDescriptionWritable);
-			IFile xmlStorageFile = project.getFile(LANGUAGE_SETTINGS_PROJECT_XML);
-			assertTrue(xmlStorageFile.exists());
-			xmlStorageFileLocation = xmlStorageFile.getLocation().toOSString();
-			// TODO - cleanup names
-			xmlWspStorageFileLocation = getStoreLocationInWorkspaceArea(project.getName()+'.'+LANGUAGE_SETTINGS_WORKSPACE_XML);
-			java.io.File xmlStorageFileWsp = new java.io.File(xmlWspStorageFileLocation);
+			xmlStorageFilePrj = project.getFile(LANGUAGE_SETTINGS_PROJECT_XML);
+			assertTrue(xmlStorageFilePrj.exists());
+			xmlStorageFileWspLocation = getStoreLocationInWorkspaceArea(project.getName()+'.'+LANGUAGE_SETTINGS_WORKSPACE_XML);
+			java.io.File xmlStorageFileWsp = new java.io.File(xmlStorageFileWspLocation);
 			assertTrue(xmlStorageFileWsp.exists());
 		}
 		{
@@ -1298,20 +1301,21 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 			assertEquals(entries.get(0), actual.get(0));
 			assertEquals(entries.size(), actual.size());
 		}
-			// Move storages out of the way
 		{
-			java.io.File xmlFile = new java.io.File(xmlStorageFileLocation);
-			xmlOutOfTheWay = xmlStorageFileLocation+".out-of-the-way";
-			java.io.File xmlFileOut = new java.io.File(xmlOutOfTheWay);
+			// Move storages out of the way
+			// project storage
+			String xmlStorageFilePrjLocation = xmlStorageFilePrj.getLocation().toOSString();
+			java.io.File xmlFile = new java.io.File(xmlStorageFilePrjLocation);
+			xmlPrjOutOfTheWay = xmlStorageFilePrjLocation+".out-of-the-way";
+			java.io.File xmlFileOut = new java.io.File(xmlPrjOutOfTheWay);
 			xmlFile.renameTo(xmlFileOut);
 			assertFalse(xmlFile.exists());
 			assertTrue(xmlFileOut.exists());
-		}
-		{
-			// TODO - workspace file
-			java.io.File xmlStorageFileWsp = new java.io.File(xmlWspStorageFileLocation);
+
+			// workspace storage
+			java.io.File xmlStorageFileWsp = new java.io.File(xmlStorageFileWspLocation);
 			assertTrue(xmlStorageFileWsp.exists());
-			xmlWspOutOfTheWay = xmlWspStorageFileLocation+".out-of-the-way";
+			xmlWspOutOfTheWay = xmlStorageFileWspLocation+".out-of-the-way";
 			java.io.File xmlWspFileOut = new java.io.File(xmlWspOutOfTheWay);
 			boolean result = xmlStorageFileWsp.renameTo(xmlWspFileOut);
 			assertTrue(result);
@@ -1349,31 +1353,36 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 		{
 			// open to double-check the data is not kept in some other kind of cache
 			project.open(null);
+
+			// check that list of providers is empty
 			ICConfigurationDescription cfgDescription = getFirstConfigurationDescription(project);
 			assertNotNull(cfgDescription);
 			assertTrue(cfgDescription instanceof ILanguageSettingsProvidersKeeper);
-
 			List<ILanguageSettingsProvider> providers = ((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders();
 			assertEquals(0, providers.size());
+
+			// Move project storage back
+			project.open(null);
+			String xmlStorageFilePrjLocation = xmlStorageFilePrj.getLocation().toOSString();
+			java.io.File xmlFile = new java.io.File(xmlStorageFilePrjLocation);
+			xmlFile.delete();
+			assertFalse("File "+xmlFile+ " still exist", xmlFile.exists());
+			java.io.File xmlFileOut = new java.io.File(xmlPrjOutOfTheWay);
+			xmlFileOut.renameTo(xmlFile);
+			assertTrue("File "+xmlFile+ " does not exist", xmlFile.exists());
+			assertFalse("File "+xmlFileOut+ " still exist", xmlFileOut.exists());
+
+			// Refresh storage in workspace
+			xmlStorageFilePrj.refreshLocal(IResource.DEPTH_ZERO, null);
+			assertTrue("File "+xmlStorageFilePrj+ " does not exist", xmlStorageFilePrj.exists());
+
 			// and close
 			project.close(null);
 		}
 
 		{
-			// Move storage back
-			java.io.File xmlFile = new java.io.File(xmlStorageFileLocation);
-			xmlFile.delete();
-			assertFalse("File "+xmlFile+ " still exist", xmlFile.exists());
-			java.io.File xmlFileOut = new java.io.File(xmlOutOfTheWay);
-			xmlFileOut.renameTo(xmlFile);
-			assertTrue("File "+xmlFile+ " does not exist", xmlFile.exists());
-			assertFalse("File "+xmlFileOut+ " still exist", xmlFileOut.exists());
-		}
-
-		{
-			// TODO
-			// Move storage back
-			java.io.File xmlWspFile = new java.io.File(xmlWspStorageFileLocation);
+			// Move workspace storage back
+			java.io.File xmlWspFile = new java.io.File(xmlStorageFileWspLocation);
 			xmlWspFile.delete();
 			assertFalse("File "+xmlWspFile+ " still exist", xmlWspFile.exists());
 			java.io.File xmlWspFileOut = new java.io.File(xmlWspOutOfTheWay);
@@ -1515,8 +1524,8 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 	 */
 	public void testProjectPersistence_Defaults() throws Exception {
 		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
-		IFile xmlStorageFile = project.getFile(LANGUAGE_SETTINGS_PROJECT_XML);
-		assertFalse(xmlStorageFile.exists());
+		IFile xmlStorageFilePrj = project.getFile(LANGUAGE_SETTINGS_PROJECT_XML);
+		assertFalse(xmlStorageFilePrj.exists());
 
 		String xmlPrjWspStorageFileLocation = getStoreLocationInWorkspaceArea(project.getName()+'.'+LANGUAGE_SETTINGS_WORKSPACE_XML);
 		java.io.File xmlStorageFilePrjWsp = new java.io.File(xmlPrjWspStorageFileLocation);
@@ -1555,8 +1564,8 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 			LanguageSettingsManager.serializeLanguageSettingsWorkspace();
 		}
 		{
-			String xmlWspStorageFileLocation = getStoreLocationInWorkspaceArea(LANGUAGE_SETTINGS_WORKSPACE_XML);
-			String xml = ResourceHelper.getContents(xmlWspStorageFileLocation);
+			String xmlStorageFileWspLocation = getStoreLocationInWorkspaceArea(LANGUAGE_SETTINGS_WORKSPACE_XML);
+			String xml = ResourceHelper.getContents(xmlStorageFileWspLocation);
 			// provider matching extension is not saved (extensions added automatically during loading providers)
 			assertFalse(xml.contains(EXTENSION_EDITABLE_PROVIDER_ID));
 			// provider that differs is saved
@@ -1573,8 +1582,8 @@ public class LanguageSettingsPersistenceProjectTests extends BaseTestCase {
 		LanguageSettingsManager.serializeLanguageSettingsWorkspace();
 
 		// check that XML file is not created
-		String xmlWspStorageFileLocation = getStoreLocationInWorkspaceArea(LANGUAGE_SETTINGS_WORKSPACE_XML);
-		java.io.File xmlStorageFileWsp = new java.io.File(xmlWspStorageFileLocation);
+		String xmlStorageFileWspLocation = getStoreLocationInWorkspaceArea(LANGUAGE_SETTINGS_WORKSPACE_XML);
+		java.io.File xmlStorageFileWsp = new java.io.File(xmlStorageFileWspLocation);
 		assertFalse(xmlStorageFileWsp.exists());
 	}
 

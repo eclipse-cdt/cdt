@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.eclipse.core.resources.IFile;
@@ -27,6 +28,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.text.BadLocationException;
@@ -45,13 +47,19 @@ import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
 
+import com.ibm.icu.text.BreakIterator;
+
+import org.eclipse.cdt.core.CConventions;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
+import org.eclipse.cdt.core.dom.parser.AbstractCLikeLanguage;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -64,6 +72,8 @@ import org.eclipse.cdt.internal.corext.template.c.FileTemplateContext;
 import org.eclipse.cdt.internal.corext.template.c.FileTemplateContextType;
 import org.eclipse.cdt.internal.corext.util.Strings;
 
+import org.eclipse.cdt.internal.ui.text.CBreakIterator;
+import org.eclipse.cdt.internal.ui.util.NameComposer;
 import org.eclipse.cdt.internal.ui.viewsupport.ProjectTemplateStore;
 
 public class StubUtility {
@@ -746,5 +756,206 @@ public class StubUtility {
 			}
 		}
 		return result.toArray(new Template[result.size()]);
+	}
+
+	/**
+	 * Returns a suggested name for a getter that is guaranteed to be a valid identifier
+	 * and not collide with a set of given names.
+	 *  
+	 * @param baseName the name used as an inspiration
+	 * @param bool <code>true</code> if the getter is for a boolean field
+	 * @param excluded the set of excluded names, can be {@code null}
+	 * @param context the translation unit for which the code is intended, can be {@code null}
+	 * @return the suggested name, or {@code null} if all possible names are taken
+	 */
+	public static String suggestGetterName(String baseName, boolean bool, Set<String> excluded, ITranslationUnit context) {
+		IPreferencesService preferences = Platform.getPreferencesService();
+    	int capitalization = preferences.getInt(CUIPlugin.PLUGIN_ID,
+    			PreferenceConstants.NAME_STYLE_GETTER_CAPITALIZATION,
+    			PreferenceConstants.NAME_STYLE_CAPITALIZATION_CAMEL_CASE, null);
+    	String wordDelimiter = preferences.getString(CUIPlugin.PLUGIN_ID,
+    			PreferenceConstants.NAME_STYLE_GETTER_WORD_DELIMITER, "", null); //$NON-NLS-1$
+    	String prefix = bool ?
+    			preferences.getString(CUIPlugin.PLUGIN_ID,
+    					PreferenceConstants.NAME_STYLE_GETTER_PREFIX_FOR_BOOLEAN, "is", null) : //$NON-NLS-1$
+				preferences.getString(CUIPlugin.PLUGIN_ID,
+						PreferenceConstants.NAME_STYLE_GETTER_PREFIX, "get", null); //$NON-NLS-1$
+    	String suffix = preferences.getString(CUIPlugin.PLUGIN_ID,
+    			PreferenceConstants.NAME_STYLE_GETTER_SUFFIX, "", null); //$NON-NLS-1$
+		NameComposer composer = new NameComposer(capitalization, wordDelimiter, prefix, suffix);
+		return adjustName(composer.compose(baseName), excluded, context);
+	}
+
+	/**
+	 * Returns a suggested name for a setter that is guaranteed to be a valid identifier
+	 * and not collide with a set of given names.
+	 *  
+	 * @param baseName the name used as an inspiration
+	 * @param excluded the set of excluded names, can be {@code null}
+	 * @param context the translation unit for which the code is intended, can be {@code null}
+	 * @return the suggested name, or {@code null} if all possible names are taken
+	 */
+	public static String suggestSetterName(String baseName, Set<String> excluded, ITranslationUnit context) {
+		IPreferencesService preferences = Platform.getPreferencesService();
+		int capitalization = preferences.getInt(CUIPlugin.PLUGIN_ID,
+				PreferenceConstants.NAME_STYLE_SETTER_CAPITALIZATION,
+				PreferenceConstants.NAME_STYLE_CAPITALIZATION_CAMEL_CASE, null);
+		String wordDelimiter = preferences.getString(CUIPlugin.PLUGIN_ID,
+				PreferenceConstants.NAME_STYLE_SETTER_WORD_DELIMITER, "", null); //$NON-NLS-1$
+		String prefix = preferences.getString(CUIPlugin.PLUGIN_ID,
+				PreferenceConstants.NAME_STYLE_SETTER_PREFIX, "set", null); //$NON-NLS-1$
+		String suffix = preferences.getString(CUIPlugin.PLUGIN_ID,
+				PreferenceConstants.NAME_STYLE_SETTER_SUFFIX, "", null); //$NON-NLS-1$
+		NameComposer composer = new NameComposer(capitalization, wordDelimiter, prefix, suffix);
+		return adjustName(composer.compose(baseName), excluded, context);
+	}
+
+	/**
+	 * Returns a suggested name for a function parameter that is guaranteed to be a valid identifier
+	 * and not collide with a set of given names.
+	 *  
+	 * @param baseName the name used as an inspiration
+	 * @param excluded the set of excluded names, can be {@code null}
+	 * @param context the translation unit for which the code is intended, can be {@code null}
+	 * @return the suggested name, or {@code null} if all possible names are taken
+	 */
+	public static String suggestParameterName(String baseName, Set<String> excluded, ITranslationUnit context) {
+		IPreferencesService preferences = Platform.getPreferencesService();
+		int capitalization = preferences.getInt(CUIPlugin.PLUGIN_ID,
+				PreferenceConstants.NAME_STYLE_VARIABLE_CAPITALIZATION,
+				PreferenceConstants.NAME_STYLE_CAPITALIZATION_ORIGINAL, null);
+		String wordDelimiter = preferences.getString(CUIPlugin.PLUGIN_ID,
+				PreferenceConstants.NAME_STYLE_VARIABLE_WORD_DELIMITER, "", null); //$NON-NLS-1$
+		String prefix = preferences.getString(CUIPlugin.PLUGIN_ID,
+				PreferenceConstants.NAME_STYLE_VARIABLE_PREFIX, "", null); //$NON-NLS-1$
+		String suffix = preferences.getString(CUIPlugin.PLUGIN_ID,
+				PreferenceConstants.NAME_STYLE_VARIABLE_SUFFIX, "", null); //$NON-NLS-1$
+		NameComposer composer = new NameComposer(capitalization, wordDelimiter, prefix, suffix);
+		return adjustName(composer.compose(baseName), excluded, context);
+	}
+
+	/**
+	 * Returns a suggested name for a method that is guaranteed to be a valid identifier
+	 * and not collide with a set of given names.
+	 *  
+	 * @param baseName the name used as an inspiration
+	 * @param excluded the set of excluded names, can be {@code null}
+	 * @param context the translation unit for which the code is intended, can be {@code null}
+	 * @return the suggested name, or {@code null} if all possible names are taken
+	 */
+	public static String suggestMethodName(String baseName, Set<String> excluded, ITranslationUnit context) {
+		IPreferencesService preferences = Platform.getPreferencesService();
+		int capitalization = preferences.getInt(CUIPlugin.PLUGIN_ID,
+				PreferenceConstants.NAME_STYLE_METHOD_CAPITALIZATION,
+				PreferenceConstants.NAME_STYLE_CAPITALIZATION_ORIGINAL, null);
+		String wordDelimiter = preferences.getString(CUIPlugin.PLUGIN_ID,
+				PreferenceConstants.NAME_STYLE_METHOD_WORD_DELIMITER, "", null); //$NON-NLS-1$
+		String prefix = preferences.getString(CUIPlugin.PLUGIN_ID,
+				PreferenceConstants.NAME_STYLE_METHOD_PREFIX, "", null); //$NON-NLS-1$
+		String suffix = preferences.getString(CUIPlugin.PLUGIN_ID,
+				PreferenceConstants.NAME_STYLE_METHOD_SUFFIX, "", null); //$NON-NLS-1$
+		NameComposer composer = new NameComposer(capitalization, wordDelimiter, prefix, suffix);
+		return adjustName(composer.compose(baseName), excluded, context);
+	}
+
+	/**
+	 * Checks is the given name is valid and, if not, tries to adjust it by adding a numeric suffix
+	 * to it.
+	 * 
+	 * @param name the name to check and, possibly, adjust
+	 * @param namesToAvoid the set of names to avoid
+	 * @param context the translation unit, can be {@code null}
+	 * @return the adjusted name, or <code>null</code> if a valid name could not be generated. 
+	 */
+	private static String adjustName(String name, Set<String> namesToAvoid, ITranslationUnit context) {
+		ILanguage language = null;
+		try {
+			if (context != null)
+				language = context.getLanguage();
+		} catch (CoreException e) {
+			// Ignore
+		}
+		return adjustName(name, namesToAvoid, language);
+	}
+
+	/**
+	 * Checks is the given name is valid and, if not, tries to adjust it by adding a numeric suffix
+	 * to it.
+	 * 
+	 * @param name the name to check and, possibly, adjust
+	 * @param namesToAvoid the set of names to avoid
+	 * @param language the language of the translation unit, can be {@code null}
+	 * @return the adjusted name, or <code>null</code> if a valid name could not be generated. 
+	 */
+	private static String adjustName(String name, Set<String> namesToAvoid, ILanguage language) {
+		if (language == null) {
+			language = GPPLanguage.getDefault();
+		}
+		String originalName = name;
+		if (!isValidIdentifier(name, language)) {
+			if ("class".equals(name)) { //$NON-NLS-1$
+				name = "clazz"; //$NON-NLS-1$
+			} else {
+				name = '_' + name;
+			}
+		}
+		int numTries = namesToAvoid != null ? namesToAvoid.size() + 1 : 1;
+		for (int i = 1; i <= numTries; i++) {
+			if ((namesToAvoid == null || !namesToAvoid.contains(name)) &&
+					isValidIdentifier(name, language)) {
+				return name;
+			}
+			name = originalName + i;
+		}
+		return null;
+	}
+
+	private static boolean isValidIdentifier(String name, ILanguage language) {
+		if (language instanceof AbstractCLikeLanguage) {
+			return CConventions.validateIdentifier(name, (AbstractCLikeLanguage) language).isOK();
+		}
+		return true;
+	}
+
+	/**
+	 * Returns the trimmed field name. Leading and trailing non-alphanumeric characters are trimmed.
+	 * If the first word of the name consists of a single letter and the name contains more than
+	 * one word, the first word is removed.
+	 * 
+	 * @param fieldName a field name to trim
+	 * @return the trimmed field name
+	 */
+	public static String trimFieldName(String fieldName) {
+		CBreakIterator iterator = new CBreakIterator();
+		iterator.setText(fieldName);
+		int firstWordStart = -1;
+		int firstWordEnd = -1;
+		int secondWordStart = -1;
+		int lastWordEnd = -1;
+		int end;
+		for (int start = iterator.first(); (end = iterator.next()) != BreakIterator.DONE; start = end) {
+			if (Character.isLetterOrDigit(fieldName.charAt(start))) {
+				int pos = end;
+				while (--pos >= start && !Character.isLetterOrDigit(fieldName.charAt(pos))) {
+				}
+				lastWordEnd = pos + 1;
+				if (firstWordStart < 0) {
+					firstWordStart = start;
+					firstWordEnd = lastWordEnd;
+				} else if (secondWordStart < 0) {
+					secondWordStart = start;
+				}
+			}
+		}
+		// Skip the first word if it consists of a single letter and the name contains more than
+		// one word.
+		if (firstWordStart >= 0 && firstWordStart + 1 == firstWordEnd && secondWordStart >= 0) {
+			firstWordStart = secondWordStart;
+		}
+		if (firstWordStart < 0) {
+			return fieldName;
+		} else {
+			return fieldName.substring(firstWordStart, lastWordEnd);
+		}
 	}
 }

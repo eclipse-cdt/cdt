@@ -417,9 +417,10 @@ public class CPluginImages {
 	/** @deprecated as of CDT 8.0. Use {@link CDTSharedImages#getImageDescriptor(String)}. */
 	@Deprecated public static final ImageDescriptor DESC_REFACTORING_INFO= createManaged ( T_OBJ, IMG_OBJS_REFACTORING_INFO); 	
 		
-	public static final ImageDescriptor DESC_WIZBAN_REFACTOR_FIELD= createUnManaged(T_WIZBAN, "fieldrefact_wiz.gif");	//$NON-NLS-1$
-	public static final ImageDescriptor DESC_WIZBAN_REFACTOR_METHOD= createUnManaged(T_WIZBAN, "methrefact_wiz.gif");	//$NON-NLS-1$
-	public static final ImageDescriptor DESC_WIZBAN_REFACTOR_TYPE= createUnManaged(T_WIZBAN, "typerefact_wiz.gif"); 	//$NON-NLS-1$
+	public static final ImageDescriptor DESC_WIZBAN_REFACTOR_TU= createUnManaged(T_WIZBAN, "refactor_tu_wiz.png");	//$NON-NLS-1$
+	public static final ImageDescriptor DESC_WIZBAN_REFACTOR_FIELD= createUnManaged(T_WIZBAN, "refactor_field_wiz.png");	//$NON-NLS-1$
+	public static final ImageDescriptor DESC_WIZBAN_REFACTOR_METHOD= createUnManaged(T_WIZBAN, "refactor_method_wiz.png");	//$NON-NLS-1$
+	public static final ImageDescriptor DESC_WIZBAN_REFACTOR_TYPE= createUnManaged(T_WIZBAN, "refactor_type_wiz.png"); 	//$NON-NLS-1$
 
 	public static final ImageDescriptor DESC_OBJS_DEFAULT_CHANGE= createUnManaged(T_OBJ, "change.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OBJS_COMPOSITE_CHANGE= createUnManaged(T_OBJ, "composite_change.gif"); //$NON-NLS-1$

@@ -80,6 +80,13 @@ public class ASTWriterVisitor extends ASTVisitor {
 		shouldVisitTypeIds = true;
 	}
 
+	/**
+	 * Creates a writer with an empty comment map.
+	 */
+	public ASTWriterVisitor() {
+		this(new NodeCommentMap());
+	}
+
 	public ASTWriterVisitor(NodeCommentMap commentMap) {
 		super();
 		init(commentMap);

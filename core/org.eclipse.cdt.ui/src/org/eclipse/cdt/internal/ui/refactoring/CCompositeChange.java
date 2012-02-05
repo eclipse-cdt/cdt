@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- * Institute for Software (IFS)- initial API and implementation 
+ *     Institute for Software (IFS)- initial API and implementation 
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring;
 
@@ -18,10 +18,8 @@ import org.eclipse.ltk.core.refactoring.RefactoringChangeDescriptor;
 
 /**
  * @author Emanuel Graf IFS
- *
  */
 public class CCompositeChange extends CompositeChange {
-	
 	private RefactoringChangeDescriptor desc;
 	
 	public CCompositeChange(String name, Change[] children) {
@@ -38,12 +36,9 @@ public class CCompositeChange extends CompositeChange {
 
 	@Override
 	public ChangeDescriptor getDescriptor() {
-		if(desc == null) {
-			return super.getDescriptor();
-		}else {
+		if (desc != null) {
 			return desc;
 		}
+		return super.getDescriptor();
 	}
-	
-
 }

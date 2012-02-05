@@ -24,7 +24,6 @@ import org.eclipse.cdt.core.parser.IToken;
  * @noextend This interface is not intended to be extended by clients.
  */
 public interface IASTNode {
-
 	/**
 	 * @since 5.3
 	 */
@@ -42,7 +41,7 @@ public interface IASTNode {
 		withLocations
 	}
 	
-	public static final IASTNode[] EMPTY_NODE_ARRAY = new IASTNode[0];
+	public static final IASTNode[] EMPTY_NODE_ARRAY = {};
 	
 	/**
 	 * Get the translation unit (master) node that is the ancestor of all nodes

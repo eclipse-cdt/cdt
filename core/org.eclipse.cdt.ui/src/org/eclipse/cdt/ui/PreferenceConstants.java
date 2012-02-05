@@ -1662,8 +1662,42 @@ public class PreferenceConstants {
 	public static final String NAME_STYLE_FIELD_WORD_DELIMITER = "nameStyle.field.wordDelimiter"; //$NON-NLS-1$
 
 	/**
+	 * A named preference that controls how capitalization of a method name.
+	 * <p>
+	 * Value is of type <code>Integer</code>.
+	 * 
+	 * @since 5.4
+	 */
+	public static final String NAME_STYLE_METHOD_CAPITALIZATION = "nameStyle.method.capitalization"; //$NON-NLS-1$
+	/**
+	 * A named preference that controls prefix of a method name.
+	 * <p>
+	 * Value is of type <code>String</code>.
+	 * 
+	 * @since 5.4
+	 */
+	public static final String NAME_STYLE_METHOD_PREFIX = "nameStyle.method.prefix"; //$NON-NLS-1$
+	/**
+	 * A named preference that controls suffix of a method name.
+	 * <p>
+	 * Value is of type <code>String</code>.
+	 * 
+	 * @since 5.4
+	 */
+	public static final String NAME_STYLE_METHOD_SUFFIX = "nameStyle.method.suffix"; //$NON-NLS-1$
+	/**
+	 * A named preference that controls delimiter that is inserted between words
+	 * of a method name.
+	 * <p>
+	 * Value is of type <code>String</code>.
+	 * 
+	 * @since 5.4
+	 */
+	public static final String NAME_STYLE_METHOD_WORD_DELIMITER = "nameStyle.method.wordDelimiter"; //$NON-NLS-1$
+
+	/**
 	 * A named preference that controls how capitalization of the getter name
-	 * depends on capitalization of the field name.
+	 * depends on capitalization of the method name.
 	 * <p>
 	 * Value is of type <code>Integer</code>.
 	 * 
@@ -2101,6 +2135,10 @@ public class PreferenceConstants {
 		store.setDefault(NAME_STYLE_FIELD_PREFIX, ""); //$NON-NLS-1$
 		store.setDefault(NAME_STYLE_FIELD_SUFFIX, ""); //$NON-NLS-1$
 		store.setDefault(NAME_STYLE_FIELD_WORD_DELIMITER, ""); //$NON-NLS-1$
+		store.setDefault(NAME_STYLE_METHOD_CAPITALIZATION, NAME_STYLE_CAPITALIZATION_LOWER_CAMEL_CASE);
+		store.setDefault(NAME_STYLE_METHOD_PREFIX, ""); //$NON-NLS-1$
+		store.setDefault(NAME_STYLE_METHOD_SUFFIX, ""); //$NON-NLS-1$
+		store.setDefault(NAME_STYLE_METHOD_WORD_DELIMITER, ""); //$NON-NLS-1$
 		store.setDefault(NAME_STYLE_GETTER_CAPITALIZATION, NAME_STYLE_CAPITALIZATION_CAMEL_CASE);
 		store.setDefault(NAME_STYLE_GETTER_PREFIX, "get"); //$NON-NLS-1$
 		store.setDefault(NAME_STYLE_GETTER_PREFIX_FOR_BOOLEAN, "is"); //$NON-NLS-1$

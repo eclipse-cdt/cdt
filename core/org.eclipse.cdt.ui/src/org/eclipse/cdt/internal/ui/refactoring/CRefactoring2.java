@@ -239,6 +239,13 @@ public abstract class CRefactoring2 extends Refactoring {
 		return name;
 	}
 
+	/**
+	 * Returns the translation unit where the refactoring started.
+	 */
+	public ITranslationUnit getTranslationUnit() {
+		return tu;
+	}
+
 	protected IASTTranslationUnit getAST(ITranslationUnit tu, IProgressMonitor pm)
 			throws CoreException, OperationCanceledException {
 		return astCache.getAST(tu, pm);

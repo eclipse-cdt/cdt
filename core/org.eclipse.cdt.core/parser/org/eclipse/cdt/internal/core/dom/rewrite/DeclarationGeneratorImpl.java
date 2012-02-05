@@ -105,13 +105,13 @@ public class DeclarationGeneratorImpl extends DeclarationGenerator {
 			returnedDeclSpec = declSpec;
 		} else if (type instanceof ICPPTemplateInstance) {
 			returnedDeclSpec = getDeclSpecForTemplate((ICPPTemplateInstance) type);
-
 		} else if (type instanceof IBinding) { /* ITypedef, ICompositeType... */
 			// BTW - we need to distinguish (and fail explicitly) on literal composites like:
 			// struct { } aSingleInstance;
 			returnedDeclSpec = getDeclSpecForBinding((IBinding) type);
 		}
 
+		// TODO(sprigogin): Be honest and return null instead of void.
 		// Fallback...
 		if (returnedDeclSpec == null) {
 			IASTSimpleDeclSpecifier specifier = factory.newSimpleDeclSpecifier();
@@ -129,7 +129,7 @@ public class DeclarationGeneratorImpl extends DeclarationGenerator {
 			// Addition of pointer operators has to be in reverse order, so it's deferred until the end
 			Map<IASTDeclarator, LinkedList<IASTPointerOperator>> pointerOperatorMap = new HashMap<IASTDeclarator, LinkedList<IASTPointerOperator>>();
 
-			IASTName newName = (name != null) ? factory.newName(name) : factory.newName();
+			IASTName newName = name != null ? factory.newName(name) : factory.newName();
 
 			// If the type is an array of something, create a declaration of a pointer to something instead
 			// (to allow assignment, etc)
@@ -311,8 +311,8 @@ public class DeclarationGeneratorImpl extends DeclarationGenerator {
 		ICPPNodeFactory cppFactory = (ICPPNodeFactory) factory;
 		ICPPASTTemplateId tempId = cppFactory.newTemplateId(templateName.copy());
 		for (ICPPTemplateArgument arg : type.getTemplateArguments()) {
-			IASTDeclSpecifier argDeclSpec = createDeclSpecFromType(arg.isTypeValue() ? arg
-					.getTypeValue() : arg.getTypeOfNonTypeValue());
+			IASTDeclSpecifier argDeclSpec = createDeclSpecFromType(arg.isTypeValue() ?
+					arg.getTypeValue() : arg.getTypeOfNonTypeValue());
 			IASTTypeId typeId = cppFactory.newTypeId(argDeclSpec, null);
 			tempId.addTemplateArgument(typeId);
 		}

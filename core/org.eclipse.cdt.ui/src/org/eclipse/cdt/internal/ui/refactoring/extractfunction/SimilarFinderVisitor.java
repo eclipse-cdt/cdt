@@ -16,39 +16,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.text.edits.TextEditGroup;
-
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
-import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 
-import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
+import org.eclipse.cdt.internal.ui.refactoring.NameInformation;
 import org.eclipse.cdt.internal.ui.refactoring.NodeContainer;
-import org.eclipse.cdt.internal.ui.refactoring.NodeContainer.NameInformation;
 
-final class SimilarFinderVisitor extends ASTVisitor {
-	private final ExtractFunctionRefactoring refactoring;
-
+abstract class SimilarFinderVisitor extends ASTVisitor {
+	protected final ExtractFunctionRefactoring refactoring;
+	protected final NodeContainer extractedNodes;
+	protected NodeContainer similarContainer;
+	protected final List<IASTStatement> stmtToReplace = new ArrayList<IASTStatement>();
 	private final List<IASTNode> trail;
-	private final IASTName name;
 	private final List<IASTNode> statements;
 	private int statementCount;
-	private NodeContainer similarContainer;
-	private final List<IASTStatement> stmtToReplace = new ArrayList<IASTStatement>();
 
-	private final ModificationCollector collector;
-
-	SimilarFinderVisitor(ExtractFunctionRefactoring refactoring, ModificationCollector collector,
-			List<IASTNode> trail, IFile file, IASTName name, List<IASTNode> statements,
-			String title) {
+	SimilarFinderVisitor(ExtractFunctionRefactoring refactoring, NodeContainer extractedNodes,
+			List<IASTNode> trail, List<IASTNode> statements) {
 		this.refactoring = refactoring;
+		this.extractedNodes = extractedNodes;
 		this.trail = trail;
-		this.name = name;
 		this.statements = statements;
-		this.collector = collector;
 		this.similarContainer = new NodeContainer();
 		shouldVisitStatements = true;
 	}
@@ -65,8 +54,8 @@ final class SimilarFinderVisitor extends ASTVisitor {
 				// Found similar code
 				boolean similarOnReturnWays = true;
 				for (NameInformation nameInfo : similarContainer.getParameterCandidates()) {
-					if (refactoring.names.containsKey(nameInfo.getDeclaration().getRawSignature())) {
-						Integer nameOrderNumber = refactoring.names.get(nameInfo.getDeclaration().getRawSignature());
+					if (refactoring.names.containsKey(nameInfo.getDeclarationName().getRawSignature())) {
+						Integer nameOrderNumber = refactoring.names.get(nameInfo.getDeclarationName().getRawSignature());
 						if (refactoring.nameTrail.containsValue(nameOrderNumber)) {
 							String orgName = null;
 							boolean found = false;
@@ -77,8 +66,8 @@ final class SimilarFinderVisitor extends ASTVisitor {
 								}
 							}
 							if (orgName != null) {
-								for (NameInformation orgNameInfo : refactoring.container.getParameterCandidates()) {
-									if (orgName.equals(orgNameInfo.getDeclaration().getRawSignature()) &&
+								for (NameInformation orgNameInfo : extractedNodes.getParameterCandidates()) {
+									if (orgName.equals(orgNameInfo.getDeclarationName().getRawSignature()) &&
 											(orgNameInfo.isOutput() || !nameInfo.isOutput())) {
 										found = true;
 										break;
@@ -94,17 +83,7 @@ final class SimilarFinderVisitor extends ASTVisitor {
 				}
 
 				if (similarOnReturnWays) {
-					IASTNode call = refactoring.getMethodCall(name,	refactoring.nameTrail,
-							refactoring.names, refactoring.container, similarContainer);
-					ASTRewrite rewrite =
-							collector.rewriterForTranslationUnit(stmtToReplace.get(0).getTranslationUnit());
-					TextEditGroup editGroup = new TextEditGroup(Messages.SimilarFinderVisitor_replaceDuplicateCode);
-					rewrite.replace(stmtToReplace.get(0), call, editGroup);
-					if (stmtToReplace.size() > 1) {
-						for (int i = 1; i < stmtToReplace.size(); ++i) {
-							rewrite.remove(stmtToReplace.get(i), editGroup);
-						}
-					}
+					foundSimilar();
 				}
 				clear();
 			}
@@ -115,8 +94,10 @@ final class SimilarFinderVisitor extends ASTVisitor {
 		}
 	}
 
+	protected abstract void foundSimilar();
+
 	private boolean isInSelection(IASTStatement stmt) {
-		List<IASTNode>nodes = refactoring.container.getNodesToWrite();
+		List<IASTNode>nodes = extractedNodes.getNodesToWrite();
 		for (IASTNode node : nodes) {
 			if (node.equals(stmt)) {
 				return true;

@@ -33,7 +33,6 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
 
 public class MethodStubsListDialogField extends CheckedListDialogField<IMethodStub> {
-    
     // column properties
     private static final String CP_NAME = "name"; //$NON-NLS-1$
     private static final String CP_ACCESS = "access"; //$NON-NLS-1$
@@ -154,7 +153,7 @@ public class MethodStubsListDialogField extends CheckedListDialogField<IMethodSt
             new AccessibleAdapter() {                       
                 @Override
 				public void getName(AccessibleEvent e) {
-                        e.result = NewClassWizardMessages.NewClassCreationWizardPage_methodStubs_label; 
+                	e.result = NewClassWizardMessages.NewClassCreationWizardPage_methodStubs_label; 
                 }
             }
         );

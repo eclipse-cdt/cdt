@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.formatter.CodeFormatter;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterOptions;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ILanguage;

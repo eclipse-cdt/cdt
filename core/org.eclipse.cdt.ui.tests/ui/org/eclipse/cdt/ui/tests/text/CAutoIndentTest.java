@@ -34,12 +34,12 @@ import org.eclipse.jface.text.TabsToSpacesConverter;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterOptions;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.ui.text.doctools.DefaultMultilineCommentAutoEditStrategy;
 
-import org.eclipse.cdt.internal.formatter.DefaultCodeFormatterOptions;
 
 import org.eclipse.cdt.internal.ui.text.CAutoIndentStrategy;
 import org.eclipse.cdt.internal.ui.text.CTextTools;

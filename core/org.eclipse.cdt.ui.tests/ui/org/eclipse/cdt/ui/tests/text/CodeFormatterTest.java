@@ -27,10 +27,10 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
 import org.eclipse.cdt.core.formatter.CodeFormatter;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterOptions;
 import org.eclipse.cdt.ui.tests.BaseUITestCase;
 
 import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
-import org.eclipse.cdt.internal.formatter.DefaultCodeFormatterOptions;
 import org.eclipse.cdt.internal.formatter.align.Alignment;
 
 /**

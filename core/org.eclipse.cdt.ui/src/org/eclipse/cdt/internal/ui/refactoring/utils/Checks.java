@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,12 +21,17 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 import org.eclipse.ltk.core.refactoring.participants.ResourceChangeChecker;
 
+import org.eclipse.cdt.core.CConventions;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
+import org.eclipse.cdt.core.dom.parser.AbstractCLikeLanguage;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 
 import org.eclipse.cdt.internal.corext.util.CModelUtil;
@@ -65,6 +70,63 @@ public class Checks {
 		}
 	}
 
+	/**
+	 * Checks if the given name is a valid Java identifier.
+	 *
+	 * @param name the java identifier.
+	 * @param context an {@link ITranslationUnit} or <code>null</code>
+	 * @return a refactoring status containing the error message if the
+	 *  name is not a valid java identifier.
+	 */
+	public static RefactoringStatus checkIdentifier(String name, ITranslationUnit context) {
+		return checkName(name, validateIdentifier(name, context));
+	}
+
+	public static IStatus validateIdentifier(String name, ITranslationUnit context) {
+		ILanguage language = null;
+		try {
+			if (context != null)
+				language = context.getLanguage();
+		} catch (CoreException e) {
+			// Ignore
+		}
+		if (language == null) {
+			language = GPPLanguage.getDefault();
+		}
+		if (language instanceof AbstractCLikeLanguage) {
+			return CConventions.validateIdentifier(name, (AbstractCLikeLanguage) language);
+		}
+		return Status.OK_STATUS;
+	}
+
+	/**
+	 * Returns a fatal error in case the name is empty. In all other cases, an
+	 * error based on the given status is returned.
+	 *
+	 * @param name a name
+	 * @param status a status
+	 * @return RefactoringStatus based on the given status or the name, if empty.
+	 */
+	public static RefactoringStatus checkName(String name, IStatus status) {
+		RefactoringStatus result= new RefactoringStatus();
+		if (name.isEmpty())
+			return RefactoringStatus.createFatalErrorStatus(Messages.Checks_choose_name);
+
+		if (status.isOK())
+			return result;
+
+		switch (status.getSeverity()){
+			case IStatus.ERROR:
+				return RefactoringStatus.createFatalErrorStatus(status.getMessage());
+			case IStatus.WARNING:
+				return RefactoringStatus.createWarningStatus(status.getMessage());
+			case IStatus.INFO:
+				return RefactoringStatus.createInfoStatus(status.getMessage());
+			default: // Nothing
+				return new RefactoringStatus();
+		}
+	}
+
 	public static boolean resourceExists(IPath resourcePath){
 		return ResourcesPlugin.getWorkspace().getRoot().findMember(resourcePath) != null;
 	}
@@ -86,7 +148,7 @@ public class Checks {
 		if (attributes != null && attributes.isReadOnly())
 			return true;
 
-		if (! (res instanceof IContainer))
+		if (!(res instanceof IContainer))
 			return false;
 
 		IContainer container= (IContainer)res;
@@ -116,7 +178,7 @@ public class Checks {
 		if (!status.isOK()) {
 			result.merge(RefactoringStatus.create(status));
 			if (!result.hasFatalError()) {
-				result.addFatalError(Messages.Checks_validateEdit);
+				result.addFatalError(Messages.Checks_validate_edit);
 			}
 		}
 		return result;
@@ -143,7 +205,7 @@ public class Checks {
 		if (!status.isOK()) {
 			result.merge(RefactoringStatus.create(status));
 			if (!result.hasFatalError()) {
-				result.addFatalError(Messages.Checks_validateEdit);
+				result.addFatalError(Messages.Checks_validate_edit);
 			}
 		}
 		return result;

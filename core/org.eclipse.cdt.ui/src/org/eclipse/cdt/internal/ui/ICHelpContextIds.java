@@ -120,6 +120,7 @@ public interface ICHelpContextIds {
 	public static final String RENAME_TYPE_WIZARD_PAGE= 	PREFIX + "rename_type_wizard_page_context"; //$NON-NLS-1$
 	public static final String RENAME_FIELD_WIZARD_PAGE=	PREFIX + "rename_field_wizard_page_context"; //$NON-NLS-1$
 	public static final String RENAME_RESOURCE_WIZARD_PAGE=	PREFIX + "rename_resource_wizard_page_context"; //$NON-NLS-1$
+	public static final String EXTRACT_FUNCTION_WIZARD_PAGE= PREFIX + "extract_function_wizard_page_context"; //$NON-NLS-1$
 
 	// Dialogs
 	public static final String EDIT_TEMPLATE_DIALOG = PREFIX + "edit_template_dialog_context"; //$NON-NLS-1$

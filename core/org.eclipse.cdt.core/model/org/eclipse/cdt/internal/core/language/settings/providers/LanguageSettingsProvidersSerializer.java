@@ -51,7 +51,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ILock;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -989,16 +988,6 @@ public class LanguageSettingsProvidersSerializer {
 	public static void loadLanguageSettings(ICProjectDescription prjDescription) {
 		IProject project = prjDescription.getProject();
 		IFile storeInPrjArea = getStoreInProjectArea(project);
-		try {
-			Job currentJob = Job.getJobManager().currentJob();
-			ISchedulingRule currentRule = (currentJob != null) ? currentJob.getRule() : null;
-			if ((currentRule == null || currentRule.contains(storeInPrjArea)) && !ResourcesPlugin.getWorkspace().isTreeLocked()) {
-				storeInPrjArea.refreshLocal(IResource.DEPTH_ZERO, null);
-			}
-		} catch (Throwable e) {
-			// ignore failure
-			CCorePlugin.log("Internal Error trying to call IResourse.refreshLocal()", e); //$NON-NLS-1$
-		}
 		if (storeInPrjArea.exists()) {
 			Document doc = null;
 			try {

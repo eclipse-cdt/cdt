@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.master"
       label="%featureName"
-      version="8.0.0"
+      version="8.0.2"
       provider-name="%providerName">
 
    <description>

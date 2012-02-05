@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.build.crossgcc"
       label="%featureName"
-      version="1.0.0.qualifier"
+      version="1.1.0.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.cdt.build.crossgcc"
       license-feature="org.eclipse.cdt.license"

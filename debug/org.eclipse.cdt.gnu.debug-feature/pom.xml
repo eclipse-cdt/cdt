@@ -14,5 +14,5 @@
 	<groupId>org.eclipse.cdt.feature</groupId>
 	<artifactId>org.eclipse.cdt.gnu.debug</artifactId>
 	<packaging>eclipse-feature</packaging>
-	<version>7.1.0-SNAPSHOT</version>
+	<version>7.1.1-SNAPSHOT</version>
 </project>

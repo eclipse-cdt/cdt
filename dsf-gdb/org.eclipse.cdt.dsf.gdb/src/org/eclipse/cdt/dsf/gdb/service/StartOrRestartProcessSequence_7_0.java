@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Ericsson and others.
+ * Copyright (c) 2011, 2012 Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Ericsson - initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Anton Gorenkov - Need to use a process factory (Bug 210366)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -363,9 +364,16 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 				}
 
 				// Add the inferior
-				InferiorRuntimeProcess runtimeInferior = new InferiorRuntimeProcess(launch, inferior, label, null);
+				// Need to go through DebugPlugin.newProcess so that we can use 
+				// the overrideable process factory to allow others to override.
+				// First set attribute to specify we want to create an inferior process.
+				// Bug 210366
+				Map<String, String> attributes = new HashMap<String, String>();
+			    attributes.put(IGdbDebugConstants.PROCESS_TYPE_CREATION_ATTR, 
+			    		       IGdbDebugConstants.INFERIOR_PROCESS_CREATION_VALUE);
+			    IProcess runtimeInferior = DebugPlugin.newProcess(launch, inferior, label, attributes);
+			    // Now set the inferior groupId
 				runtimeInferior.setAttribute(IGdbDebugConstants.INFERIOR_GROUPID_ATTR, groupId);
-				launch.addProcess(runtimeInferior);
 
 				rm.done();
 			}

@@ -67,4 +67,11 @@
             class="org.eclipse.cdt.dsf.gdb.internal.GdbPreferenceInitializer">
       </initializer>
    </extension>
+   <extension
+         point="org.eclipse.debug.core.processFactories">
+      <processFactory
+            class="org.eclipse.cdt.dsf.gdb.launching.GdbProcessFactory"
+            id="org.eclipse.cdt.dsf.gdb.GdbProcessFactory">
+      </processFactory>
+   </extension>
 </plugin>

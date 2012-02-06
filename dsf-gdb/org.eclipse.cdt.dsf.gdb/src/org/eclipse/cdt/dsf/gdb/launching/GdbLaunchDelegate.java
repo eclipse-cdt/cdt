@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 QNX Software Systems and others.
+ * Copyright (c) 2008, 2012 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  * Ericsson               - Added support for Mac OS
  * Ericsson               - Added support for post-mortem trace files
  * Abeer Bagul (Tensilica) - Allow to better override GdbLaunch (bug 339550)
+ * Anton Gorenkov         - Need to use a process factory (Bug 210366)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching; 
 
@@ -44,6 +45,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -274,6 +276,10 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 
 	@Override
     public boolean preLaunchCheck(ILaunchConfiguration config, String mode, IProgressMonitor monitor) throws CoreException {
+    	// Setup default GDB Process Factory
+    	// Bug 210366
+		setDefaultProcessFactory(config);
+
 		// Forcibly turn off non-stop for post-mortem sessions.
 		// Non-stop does not apply to post-mortem sessions.
 		// Now that we can have non-stop defaulting to enabled, it will prevent
@@ -292,6 +298,25 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2
 		
 		return super.preLaunchCheck(config, mode, monitor);
 	}
+
+	
+    /**
+     * Modify the ILaunchConfiguration to set the DebugPlugin.ATTR_PROCESS_FACTORY_ID attribute,
+     * so as to specify the process factory to use.
+     * 
+     * This attribute should only be set if it is not part of the configuration already, to allow
+     * other code to set it to something else.
+	 * @since 4.1
+	 */
+    protected void setDefaultProcessFactory(ILaunchConfiguration config) throws CoreException {
+    	// Bug 210366
+        if (!config.hasAttribute(DebugPlugin.ATTR_PROCESS_FACTORY_ID)) {
+            ILaunchConfigurationWorkingCopy wc = config.getWorkingCopy();
+            wc.setAttribute(DebugPlugin.ATTR_PROCESS_FACTORY_ID, 
+            		        IGDBLaunchConfigurationConstants.DEBUGGER_ATTR_PROCESS_FACTORY_ID_DEFAULT);
+            wc.doSave();
+        }
+    }
 
     @Override
     public ILaunch getLaunch(ILaunchConfiguration configuration, String mode) throws CoreException {

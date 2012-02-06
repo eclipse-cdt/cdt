@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %fragmentName.aix
 Bundle-SymbolicName: org.eclipse.cdt.core.aix; singleton:=true
-Bundle-Version: 5.1.0.qualifier
+Bundle-Version: 5.1.1.qualifier
 Bundle-ClassPath: cdtaix.jar
 Bundle-Vendor: %providerName
 Fragment-Host: org.eclipse.cdt.core;bundle-version="[5.0.0,6.0.0)"

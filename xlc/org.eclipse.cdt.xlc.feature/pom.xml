@@ -11,7 +11,7 @@
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
-	<version>6.3.0-SNAPSHOT</version>
+	<version>6.3.1-SNAPSHOT</version>
 	<artifactId>org.eclipse.cdt.xlc.feature</artifactId>
 	<packaging>eclipse-feature</packaging>
 </project>

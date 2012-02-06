@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.cdt.debug.ui.memory"
       label="%featureName"
-      version="2.1.2.qualifier"
+      version="2.1.200.qualifier"
       provider-name="%providerName">
 
    <description>

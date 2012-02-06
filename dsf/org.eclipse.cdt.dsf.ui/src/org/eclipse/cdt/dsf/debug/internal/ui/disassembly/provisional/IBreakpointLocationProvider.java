@@ -1,5 +1,5 @@
 /*****************************************************************
- * Copyright (c) 2010 Texas Instruments and others
+ * Copyright (c) 2010, 2012 Texas Instruments and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,13 @@
  *
  * Contributors:
  *     Patrick Chuong (Texas Instruments) - Initial API and implementation (Bug 300053)
+ *     Patrick Chuong (Texas Instruments) - Bug 369998
  *****************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.ILineBreakpoint;
 
@@ -46,31 +48,31 @@ public interface IBreakpointLocationProvider {
 	 * Returns the line number of the breakpoint or -1 if no line number is
 	 * available.
 	 * 
-	 * @param breakpoint
-	 *            the breakpoint
+	 * @param breakpoint the breakpoint
+	 * @param debugContext the debug context of the view
 	 * @return the line number or -1
 	 */
-	int getLineNumber(IBreakpoint breakpoint);
+	int getLineNumber(IBreakpoint breakpoint, IAdaptable debugContext);
 
 	/**
 	 * Returns the source file path of the breakpoint or <code>null</code> if no
 	 * source file is associated with this breakpoint.
 	 * 
-	 * @param breakpoint
-	 *            the breakpoint
+	 * @param breakpoint the breakpoint
+	 * @param debugContext the debug context of the view
 	 * @return the file path, can be <code>null</code>
 	 */
-	String getSourceFile(IBreakpoint breakpoint);
+	String getSourceFile(IBreakpoint breakpoint, IAdaptable debugContext);
 
 	/**
 	 * Returns the label address of the breakpoint or <code>null</code> if no
 	 * label is associated with this breakpoint.
 	 * 
-	 * @param breakpoint
-	 *            the breakpoint
+	 * @param breakpoint the breakpoint
+	 * @param debugContext the debug context of the view
 	 * @return the label address, can be <code>null</code>
 	 */
-	IAddress getLabelAddress(IBreakpoint breakpoint);
+	IAddress getLabelAddress(IBreakpoint breakpoint, IAdaptable debugContext);
 
 	/**
 	 * Returns the addresses of the breakpoint.
@@ -81,9 +83,9 @@ public interface IBreakpointLocationProvider {
 	 * multiple annotations per breakpoint is up for future enhancements. </i>
 	 * </p>
 	 * 
-	 * @param breakpoint
-	 *            the breakpoint
+	 * @param breakpoint the breakpoint
+	 * @param debugContext the debug context of the view
 	 * @return the addresses, can be <code>null</code>
 	 */
-	IAddress[] getAddresses(IBreakpoint breakpoint);
+	IAddress[] getAddresses(IBreakpoint breakpoint, IAdaptable debugContext);
 }

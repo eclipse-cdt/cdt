@@ -8,9 +8,12 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Marc Khouzam (Ericsson) - Fix NPE for partial launches (Bug 368597)
+ *     Marc Khouzam (Ericsson) - Create the gdb process through the process factory (Bug 210366)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
@@ -33,6 +36,7 @@ import org.eclipse.cdt.dsf.debug.service.IMemory.IMemoryDMContext;
 import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
+import org.eclipse.cdt.dsf.gdb.IGdbDebugConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.internal.memory.GdbMemoryBlockRetrieval;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
@@ -173,8 +177,14 @@ public class GdbLaunch extends DsfLaunch
     				}
     			}).get();
 
-            GDBProcess gdbProcess = new GDBProcess(this, cliProc, label, null);
-            addProcess(gdbProcess);
+			// Need to go through DebugPlugin.newProcess so that we can use 
+			// the overrideable process factory to allow others to override.
+			// First set attribute to specify we want to create the gdb process.
+			// Bug 210366
+			Map<String, String> attributes = new HashMap<String, String>();
+		    attributes.put(IGdbDebugConstants.PROCESS_TYPE_CREATION_ATTR, 
+		    		       IGdbDebugConstants.GDB_PROCESS_CREATION_VALUE);
+		    DebugPlugin.newProcess(this, cliProc, label, attributes);
         } catch (InterruptedException e) {
             throw new CoreException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, 0, "Interrupted while waiting for get process callable.", e)); //$NON-NLS-1$
         } catch (ExecutionException e) {

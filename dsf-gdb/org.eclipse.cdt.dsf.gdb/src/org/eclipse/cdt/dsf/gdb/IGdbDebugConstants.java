@@ -8,6 +8,7 @@
  * Contributors:
  *     Ericsson - initial implementation
  *     Anton Gorenkov - Need to use a process factory (Bug 210366)
+ *     Marc Khouzam (Ericsson) - Support for factory to create the gdb process (Bug 210366)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb;
 
@@ -43,7 +44,16 @@ public interface IGdbDebugConstants {
      * (which is used by default).
      * @since 4.1
      */
-    public static final String INFERIOR_CREATION_VALUE = PREFIX + "inferiorProcess"; //$NON-NLS-1$
+    public static final String INFERIOR_PROCESS_CREATION_VALUE = PREFIX + "inferiorProcess"; //$NON-NLS-1$
+    
+    /**
+     * Attribute value of PROCESS_TYPE_CREATION_ATTR to be passed to DebugPlugin.newProcess to 
+     * require the creation of an GdbProcess instead of a RuntimeProcess
+     * (which is used by default).
+     * @since 4.1
+     */
+    public static final String GDB_PROCESS_CREATION_VALUE = PREFIX + "gdbProcess"; //$NON-NLS-1$
+    
 
 }
 

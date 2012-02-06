@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Anton Gorenkov - initial API and implementation (Bug 210366)
+ *     Marc Khouzam (Ericsson) - Add support to create the gdb process as well (Bug 210366)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching;
 
@@ -29,10 +30,15 @@ public class GdbProcessFactory implements IProcessFactory {
 	@Override
 	public IProcess newProcess(ILaunch launch, Process process, String label, Map attributes) {
 		if (attributes != null) {
-			if (IGdbDebugConstants.INFERIOR_CREATION_VALUE.equals(attributes.get(IGdbDebugConstants.PROCESS_TYPE_CREATION_ATTR))) {
+			if (IGdbDebugConstants.GDB_PROCESS_CREATION_VALUE.equals(attributes.get(IGdbDebugConstants.PROCESS_TYPE_CREATION_ATTR))) {
+				return new GDBProcess(launch, process, label, attributes);
+			}
+
+			if (IGdbDebugConstants.INFERIOR_PROCESS_CREATION_VALUE.equals(attributes.get(IGdbDebugConstants.PROCESS_TYPE_CREATION_ATTR))) {
 				return new InferiorRuntimeProcess(launch, process, label, attributes);
 			}
-		}		 
+		}	
+		
 		return new RuntimeProcess(launch, process, label, attributes);
 	}
 }

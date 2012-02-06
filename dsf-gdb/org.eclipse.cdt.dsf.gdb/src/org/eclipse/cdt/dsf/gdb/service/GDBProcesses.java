@@ -552,7 +552,7 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 						// Bug 210366
 						Map<String, String> attributes = new HashMap<String, String>();
 					    attributes.put(IGdbDebugConstants.PROCESS_TYPE_CREATION_ATTR, 
-					    		       IGdbDebugConstants.INFERIOR_CREATION_VALUE);
+					    		       IGdbDebugConstants.INFERIOR_PROCESS_CREATION_VALUE);
 					    IProcess runtimeInferior = DebugPlugin.newProcess(launch, inferior, label, attributes);
 					    // Now set the inferior groupId
 			            runtimeInferior.setAttribute(IGdbDebugConstants.INFERIOR_GROUPID_ATTR, MIProcesses.UNIQUE_GROUP_ID);

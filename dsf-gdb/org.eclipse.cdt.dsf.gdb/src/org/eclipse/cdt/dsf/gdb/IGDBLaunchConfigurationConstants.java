@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010  Ericsson and others.
+ * Copyright (c) 2008, 2012  Ericsson and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Ericsson - initial API and implementation
  *     Marc Khouzam (Ericsson) - Support for fast tracepoints (Bug 346320)
+ *     Anton Gorenkov - Need to use a process factory (Bug 210366)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb;
 
@@ -210,4 +211,11 @@ public class IGDBLaunchConfigurationConstants {
 	 */
 	public static final String DEBUGGER_TRACEPOINT_MODE_DEFAULT = DEBUGGER_TRACEPOINT_SLOW_ONLY;
 
+	/**  
+	 * The default value of DebugPlugin.ATTR_PROCESS_FACTORY_ID.
+	 * @since 4.1
+	 */
+	 // Bug 210366
+	public static final String DEBUGGER_ATTR_PROCESS_FACTORY_ID_DEFAULT = "org.eclipse.cdt.dsf.gdb.GdbProcessFactory"; //$NON-NLS-1$
+	
 }

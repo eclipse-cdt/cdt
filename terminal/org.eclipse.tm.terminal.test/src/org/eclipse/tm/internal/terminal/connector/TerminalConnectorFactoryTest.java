@@ -74,6 +74,8 @@ public class TerminalConnectorFactoryTest extends TestCase {
 		public void setTerminalTitle(String title) {
 		}
 
+		public void setupTerminal(Composite parent) {
+		}
 	}
 	static class ConnectorMock extends TerminalConnectorImpl {
 

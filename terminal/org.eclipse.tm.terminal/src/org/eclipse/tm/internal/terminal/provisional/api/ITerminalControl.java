@@ -16,6 +16,7 @@ package org.eclipse.tm.internal.terminal.provisional.api;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -42,6 +43,13 @@ public interface ITerminalControl {
 	 * @param state
 	 */
 	void setState(TerminalState state);
+
+	/**
+	 * Setup the terminal control within the given parent composite.
+	 *
+	 * @param parent The parent composite. Must not be <code>null</code>.
+	 */
+	void setupTerminal(Composite parent);
 
 	/**
 	 * A shell to show dialogs.

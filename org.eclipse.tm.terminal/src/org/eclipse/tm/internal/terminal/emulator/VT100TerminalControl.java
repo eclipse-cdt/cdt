@@ -39,6 +39,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.SocketException;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -212,7 +213,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		String strText = (String) fClipboard.getContents(textTransfer, clipboardType);
 		pasteString(strText);
 	}
-	
+
 	/**
 	 * @param strText the text to paste
 	 */
@@ -355,7 +356,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 				getTerminalConnector().disconnect();
 			}
 		}
-		
+
         //Ensure that a new Job can be started; then clean up old Job.
         Job job;
         synchronized(this) {
@@ -545,9 +546,10 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#setupTerminal()
+	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#setupTerminal(org.eclipse.swt.widgets.Composite)
 	 */
 	public void setupTerminal(Composite parent) {
+		Assert.isNotNull(parent);
 		fState=TerminalState.CLOSED;
 		setupControls(parent);
 		setupListeners();
@@ -781,9 +783,9 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 				event.doit = true;
 				return;
 			}
-			
+
 			// Manage the Del key
-			if (event.keyCode == 0x000007f) 
+			if (event.keyCode == 0x000007f)
 				{
 				sendString("\u001b[3~"); //$NON-NLS-1$
 				return;
@@ -838,11 +840,11 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 				case 0x1000008: // End key.
 					sendString("\u001b[F"); //$NON-NLS-1$
 					break;
-				
+
 				case 0x1000009: // Insert.
 					sendString("\u001b[2~"); //$NON-NLS-1$
 					break;
-					
+
 				case 0x100000a: // F1 key.
 					if ( (event.stateMask & SWT.CTRL)!=0 ) {
 						//Allow Ctrl+F1 to act locally as well as on the remote, because it is

@@ -6,10 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    John Camelon (IBM Rational Software) - Initial API and implementation
- *    Yuan Zhang / Beth Tibbitts (IBM Research)
- *    Bryan Wilkinson (QNX)
- *    Markus Schorn (Wind River Systems)
+ *     John Camelon (IBM Rational Software) - Initial API and implementation
+ *     Yuan Zhang / Beth Tibbitts (IBM Research)
+ *     Bryan Wilkinson (QNX)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -30,20 +30,18 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 /**
  * Field reference in C.
  */
-public class CASTFieldReference extends ASTNode implements IASTFieldReference, IASTAmbiguityParent, IASTCompletionContext {
-
+public class CASTFieldReference extends ASTNode
+		implements IASTFieldReference, IASTAmbiguityParent, IASTCompletionContext {
     private IASTExpression owner;
     private IASTName name;
     private boolean ptr;
 
     public CASTFieldReference() {
 	}
-
     
 	public CASTFieldReference(IASTName name, IASTExpression owner) {
 		this(name, owner, false);
 	}
-
 
 	public CASTFieldReference(IASTName name, IASTExpression owner, boolean ptr) {
 		setFieldOwner(owner);
@@ -111,41 +109,40 @@ public class CASTFieldReference extends ASTNode implements IASTFieldReference, I
     }
 
     @Override
-	public boolean accept( ASTVisitor action ){
-        if( action.shouldVisitExpressions ){
-		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+	public boolean accept(ASTVisitor action) {
+        if (action.shouldVisitExpressions) {
+		    switch (action.visit(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
       
-        if( owner != null ) if( !owner.accept( action ) ) return false;
-        if( name != null )  if( !name.accept( action ) ) return false;
+        if (owner != null && !owner.accept(action)) return false;
+        if (name != null && !name.accept(action)) return false;
 
-        if( action.shouldVisitExpressions ){
-		    switch( action.leave( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+        if (action.shouldVisitExpressions) {
+		    switch (action.leave(this)) {
+	            case ASTVisitor.PROCESS_ABORT: return false;
+	            case ASTVisitor.PROCESS_SKIP: return true;
+	            default: break;
 	        }
 		}
         return true;
     }
 
 	@Override
-	public int getRoleForName(IASTName n ) {
-		if( n  == this.name )
+	public int getRoleForName(IASTName n) {
+		if (n  == this.name)
 			return r_reference;
 		return r_unclear;
 	}
 
     @Override
 	public void replace(IASTNode child, IASTNode other) {
-        if( child == owner)
-        {
-            other.setPropertyInParent( child.getPropertyInParent() );
-            other.setParent( child.getParent() );
+        if (child == owner) {
+            other.setPropertyInParent(child.getPropertyInParent());
+            other.setParent(child.getParent());
             owner = (IASTExpression) other;
         }
     }
@@ -159,7 +156,6 @@ public class CASTFieldReference extends ASTNode implements IASTFieldReference, I
     	return new ProblemType(ISemanticProblem.TYPE_UNKNOWN_FOR_EXPRESSION);
     }
 
-    
 	@Override
 	public boolean isLValue() {
 		if (isPointerDereference())

@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.dom.parser;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.ExpansionOverlapsBoundaryException;
+import org.eclipse.cdt.core.dom.ast.IASTCopyLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -372,5 +373,20 @@ public abstract class ASTNode implements IASTNode {
 
 	protected void setCopyLocation(IASTNode originalNode) {
 		locations = new IASTNodeLocation[] { new ASTCopyLocation(originalNode) };
+	}
+
+	/**
+	 * If the node is a copy of some other node, returns the original node.
+	 * Otherwise returns the node itself.
+	 */
+	public IASTNode getOriginalNode() {
+		IASTNode node = this;
+		while (true) {
+			IASTNodeLocation[] locations = node.getNodeLocations();
+			if (locations.length == 0 || !(locations[0] instanceof IASTCopyLocation))
+				break;
+			node = ((IASTCopyLocation) locations[0]).getOriginalNode();
+		}
+		return node;
 	}
 }

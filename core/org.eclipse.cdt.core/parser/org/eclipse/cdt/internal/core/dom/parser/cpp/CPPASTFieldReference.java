@@ -18,7 +18,11 @@ import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.glvalueType;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.prvalueType;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.typeFromFunctionCall;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.*;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.ALLCVQ;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getUltimateTypeUptoPointers;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -53,15 +57,13 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CVQualifier;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
-public class CPPASTFieldReference extends ASTNode implements ICPPASTFieldReference, IASTAmbiguityParent,
-		ICPPASTCompletionContext {
-
+public class CPPASTFieldReference extends ASTNode
+		implements ICPPASTFieldReference, IASTAmbiguityParent, ICPPASTCompletionContext {
     private boolean isTemplate;
     private IASTExpression owner;
     private IASTName name;
     private boolean isDeref;
-    
-    private IASTImplicitName[] implicitNames = null;
+    private IASTImplicitName[] implicitNames;
     
     public CPPASTFieldReference() {
 	}
@@ -148,15 +150,15 @@ public class CPPASTFieldReference extends ASTNode implements ICPPASTFieldReferen
     		if (!isDeref)
     			return implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
 			
-    		// collect the function bindings
+    		// Collect the function bindings
 			List<ICPPFunction> functionBindings = new ArrayList<ICPPFunction>();
 			getFieldOwnerType(functionBindings);
 			if (functionBindings.isEmpty())
 				return implicitNames = IASTImplicitName.EMPTY_NAME_ARRAY;
 			
-			// create a name to wrap each binding
+			// Create a name to wrap each binding
 			implicitNames = new IASTImplicitName[functionBindings.size()];
-			int i=-1;
+			int i= -1;
 			for (ICPPFunction op : functionBindings) {
 				if (op != null && !(op instanceof CPPImplicitFunction)) {
 					CPPASTImplicitName operatorName = new CPPASTImplicitName(OverloadableOperator.ARROW, this);
@@ -280,7 +282,6 @@ public class CPPASTFieldReference extends ASTNode implements ICPPASTFieldReferen
 		}
 		return fieldType;
 	}
-
     
 	@Override
 	public ValueCategory getValueCategory() {

@@ -21,7 +21,6 @@ import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNode.CopyStyle;
@@ -30,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNodeFactory;
 import org.eclipse.cdt.core.dom.rewrite.TypeHelper;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -40,13 +40,16 @@ import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ASTWriterVisitor;
  * Additional information about an IASTName in code being refactored. 
  */
 public class NameInformation {
+	public static enum Indirection { NONE, POINTER, REFERENCE }
+
 	public static final int INDEX_FOR_ADDED = -1;
 
 	private final IASTName name;
 	private IASTName declarationName;
 	private final List<IASTName> references;
-	private List<IASTName> referencesAfterCached;
-	private int lastCachedReferencesHash;
+	private final List<IASTName> referencesBeforeSelection;
+	private final List<IASTName> referencesInSelection;
+	private final List<IASTName> referencesAfterSelection;
 	private boolean isOutput;
 	private boolean mustBeReturnValue;
 	private boolean isWriteAccess;
@@ -57,11 +60,15 @@ public class NameInformation {
 	private boolean isDeleted;
 	private String defaultValue;
 	private String newTypeName;
+	private Indirection indirection;
 
 	public NameInformation(IASTName name) {
 		this.name = name;
 		this.newName = String.valueOf(name.getSimpleID());
 		references = new ArrayList<IASTName>();
+		referencesBeforeSelection = new ArrayList<IASTName>();
+		referencesInSelection = new ArrayList<IASTName>();
+		referencesAfterSelection = new ArrayList<IASTName>();
 	}
 
 	public static NameInformation createInfoForAddedParameter(String type, String name,
@@ -99,6 +106,7 @@ public class NameInformation {
 
 	void setOutput(boolean isOutput) {
 		this.isOutput = isOutput;
+		indirection = null;
 	}
 
 	public boolean isOutputParameter() {
@@ -111,6 +119,7 @@ public class NameInformation {
 
 	public void setMustBeReturnValue(boolean mustBeReturnValue) {
 		this.mustBeReturnValue = mustBeReturnValue;
+		indirection = null;
 	}
 
 	public boolean isReturnValue() {
@@ -120,6 +129,7 @@ public class NameInformation {
 	public void setReturnValue(boolean isReturnValue) {
 		Assert.isTrue(isReturnValue || !mustBeReturnValue);
 		this.isReturnValue = isReturnValue;
+		indirection = null;
 	}
 
 	public String getNewName() {
@@ -136,6 +146,7 @@ public class NameInformation {
 
 	void setWriteAccess(boolean isWriteAceess) {
 		this.isWriteAccess = isWriteAceess;
+		indirection = null;
 	}
 
 	public boolean isDeleted() {
@@ -182,6 +193,7 @@ public class NameInformation {
 	void setDeclarationName(IASTName declarationName) {
 		Assert.isTrue(declarationName.getParent() instanceof IASTDeclarator);
 		this.declarationName = declarationName;
+		indirection = null;
 	}
 
 	public IASTName getName() {
@@ -189,11 +201,19 @@ public class NameInformation {
 	}
 
 	public boolean isRenamed() {
-		return name == null ? newName != null : String.valueOf(name.getSimpleID()).equals(name); 
+		return name == null ? newName != null : !String.valueOf(name.getSimpleID()).equals(newName); 
 	}
 
-	void addReference(IASTName name) {
+	void addReference(IASTName name, int startOffset, int endOffset) {
 		references.add(name);
+		int nodeOffset = name.getFileLocation().getNodeOffset();
+		if (nodeOffset >= endOffset) {
+			referencesAfterSelection.add(name);
+		} else if (nodeOffset >= startOffset) {
+			referencesInSelection.add(name);
+		} else {
+			referencesBeforeSelection.add(name);
+		}
 	}
 
 	public String getTypeName() {
@@ -224,22 +244,20 @@ public class NameInformation {
 		return writer.toString();
 	}
 
-	public List<IASTName> getReferencesAfterSelection(int endOffset) {
-		if (referencesAfterCached == null || lastCachedReferencesHash != references.hashCode()) {
-			lastCachedReferencesHash = references.hashCode();
-			referencesAfterCached = new ArrayList<IASTName>();
-			for (IASTName ref : references) {
-				IASTFileLocation loc = ref.getFileLocation();
-				if (loc.getNodeOffset() >= endOffset) {
-					referencesAfterCached.add(ref);
-				}
-			}
-		}
-		return referencesAfterCached;
+	public List<IASTName> getReferencesBeforeSelection() {
+		return referencesBeforeSelection;
 	}
 
-	public boolean isReferencedAfterSelection(int endOffset) {
-		return !getReferencesAfterSelection(endOffset).isEmpty();
+	public List<IASTName> getReferencesInSelection() {
+		return referencesInSelection;
+	}
+
+	public List<IASTName> getReferencesAfterSelection() {
+		return referencesAfterSelection;
+	}
+
+	public boolean isReferencedAfterSelection() {
+		return !referencesAfterSelection.isEmpty();
 	}
 
 	public IASTParameterDeclaration getParameterDeclaration(INodeFactory nodeFactory) {
@@ -251,27 +269,45 @@ public class NameInformation {
 		IASTDeclSpecifier declSpec = safeCopy(getDeclSpecifier());
 		IASTDeclarator declarator = createDeclarator(nodeFactory, sourceDeclarator, paramName);
 
-		if (isOutputParameter()) {
-			if (nodeFactory instanceof ICPPNodeFactory && !passOutputByPointer) {
-				declarator.addPointerOperator(((ICPPNodeFactory) nodeFactory).newReferenceOperator(false));
-			} else {
-				declarator.addPointerOperator(nodeFactory.newPointer());
-			}
-		} else if (declSpec != null && !isWriteAccess) {
-			IType type = TypeHelper.createType(sourceDeclarator);
-			if (TypeHelper.shouldBePassedByReference(type, declarationName.getTranslationUnit())) {
-				if (nodeFactory instanceof ICPPNodeFactory) {
-					declarator.addPointerOperator(((ICPPNodeFactory) nodeFactory).newReferenceOperator(false));
-				} else {
-					declarator.addPointerOperator(nodeFactory.newPointer());
-				}
-				declSpec.setConst(true);
-			}
+		Indirection indirection = getIndirection();
+		if (indirection == Indirection.POINTER) {
+			declarator.addPointerOperator(nodeFactory.newPointer());
+		} else if (indirection == Indirection.REFERENCE) {
+			declarator.addPointerOperator(((ICPPNodeFactory) nodeFactory).newReferenceOperator(false));
+		}
+
+		if (indirection != Indirection.NONE && !isWriteAccess && declSpec != null) {
+			declSpec.setConst(true);
 		}
 
 		declarator.setNestedDeclarator(sourceDeclarator.getNestedDeclarator());
-
 		return nodeFactory.newParameterDeclaration(declSpec, declarator);
+	}
+
+	public Indirection getIndirection() {
+		if (indirection == null) {
+			indirection = Indirection.NONE;
+			boolean isCpp = declarationName.getTranslationUnit() instanceof ICPPASTTranslationUnit;
+			if (isOutputParameter()) {
+				if (isCpp && !passOutputByPointer) {
+					indirection = Indirection.REFERENCE;
+				} else {
+					indirection = Indirection.POINTER;
+				}
+			} else {
+				IType type = TypeHelper.createType(getDeclarator());
+				if (TypeHelper.shouldBePassedByReference(type, declarationName.getTranslationUnit())) {
+					if (isCpp) {
+						if (!isWriteAccess) {
+							indirection = Indirection.REFERENCE;
+						}
+					} else {
+						indirection = Indirection.POINTER;
+					}
+				}
+			}
+		}
+		return indirection;
 	}
 
 	private IASTDeclarator createDeclarator(INodeFactory nodeFactory, IASTDeclarator sourceDeclarator,
@@ -311,5 +347,6 @@ public class NameInformation {
 
 	public void setPassOutputByPointer(boolean passOutputByPointer) {
 		this.passOutputByPointer = passOutputByPointer;
+		indirection = null;
 	}
 }

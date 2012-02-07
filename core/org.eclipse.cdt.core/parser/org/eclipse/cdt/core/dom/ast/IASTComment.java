@@ -18,6 +18,10 @@ package org.eclipse.cdt.core.dom.ast;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTComment extends IASTNode {
+	/**
+	 * @since 5.4
+	 */
+	public final IASTComment[] EMPTY_COMMENT_ARRAY = {};
 	
 	/**
 	 * Set the comment.
@@ -39,5 +43,4 @@ public interface IASTComment extends IASTNode {
 	 * @return true if this is a blockcomment
 	 */
 	public boolean isBlockComment();
-
 }

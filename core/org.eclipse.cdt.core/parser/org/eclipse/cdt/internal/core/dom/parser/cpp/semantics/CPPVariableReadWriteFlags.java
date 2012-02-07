@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
- *    Patrick Hofer - [Bug 328528]
+ *     Markus Schorn - initial API and implementation
+ *     Patrick Hofer - [Bug 328528]
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
@@ -99,7 +99,7 @@ public final class CPPVariableReadWriteFlags extends VariableReadWriteFlags {
 			}
 			type= ((ICPPReferenceType) type).getType();
 		}
-		while(indirection > 0 && (type instanceof ITypeContainer)) {
+		while (indirection > 0 && (type instanceof ITypeContainer)) {
 			if (type instanceof IPointerType) {
 				indirection--;
 			}

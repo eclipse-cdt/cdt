@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn - initial API and implementation
+ *     Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.dom.parser;
 
@@ -159,7 +159,8 @@ public abstract class VariableReadWriteFlags {
 		return READ | WRITE;  // fall back
 	}
 
-	protected int rwArgumentForFunctionCall(final IASTFunctionCallExpression funcCall, IASTNode argument, int indirection) {
+	protected int rwArgumentForFunctionCall(final IASTFunctionCallExpression funcCall,
+			IASTNode argument, int indirection) {
 		final IASTInitializerClause[] args = funcCall.getArguments();
 		for (int i = 0; i < args.length; i++) {
 			if (args[i] == argument) {
@@ -192,13 +193,11 @@ public abstract class VariableReadWriteFlags {
 			if (node.getPropertyInParent() == IASTCaseStatement.EXPRESSION) {
 				return READ;
 			}
-		}
-		else if (stmt instanceof IASTDoStatement) {
+		} else if (stmt instanceof IASTDoStatement) {
 			if (node.getPropertyInParent() == IASTDoStatement.CONDITION) {
 				return READ;
 			}
-		}
-		else if (stmt instanceof IASTExpressionStatement) {
+		} else if (stmt instanceof IASTExpressionStatement) {
 			IASTNode parent= stmt.getParent();
 			while (parent instanceof IASTCompoundStatement) {
 				IASTCompoundStatement compound= (IASTCompoundStatement) parent;
@@ -220,24 +219,19 @@ public abstract class VariableReadWriteFlags {
 			if (node.getPropertyInParent() == ICPPASTRangeBasedForStatement.INITIALIZER) {
 				return READ;
 			}
-		}
-		else if (stmt instanceof IASTIfStatement) {
+		} else if (stmt instanceof IASTIfStatement) {
 			if (node.getPropertyInParent() == IASTIfStatement.CONDITION) {
 				return READ;
 			}
-		}
-		else if (stmt instanceof IASTProblemStatement) {
+		} else if (stmt instanceof IASTProblemStatement) {
 			return READ | WRITE;
-		}
-		else if (stmt instanceof IASTReturnStatement) {
+		} else if (stmt instanceof IASTReturnStatement) {
 			return indirection == 0 ? READ : WRITE;
-		}
-		else if (stmt instanceof IASTSwitchStatement) {
+		} else if (stmt instanceof IASTSwitchStatement) {
 			if (node.getPropertyInParent() == IASTSwitchStatement.CONTROLLER_EXP) {
 				return READ;
 			}
-		}
-		else if (stmt instanceof IASTWhileStatement) {
+		} else if (stmt instanceof IASTWhileStatement) {
 			if (node.getPropertyInParent() == IASTWhileStatement.CONDITIONEXPRESSION) {
 				return READ;
 			}

@@ -34,9 +34,9 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.ASTHelper;
  */
 public class ExtractStatement extends ExtractedFunctionConstructionHelper {
 	@Override
-	public void constructMethodBody(IASTCompoundStatement compound, List<IASTNode> list,
+	public void constructMethodBody(IASTCompoundStatement compound, List<IASTNode> nodes,
 			ASTRewrite rewrite, TextEditGroup group) {
-		for (IASTNode node : list) {
+		for (IASTNode node : nodes) {
 			rewrite.insertBefore(compound, null, node, group);
 		}
 	}
@@ -48,8 +48,8 @@ public class ExtractStatement extends ExtractedFunctionConstructionHelper {
 			IASTNode decl = ASTHelper.getDeclarationForNode(returnVariable.getDeclarationName());
 			return ASTHelper.getDeclarationSpecifier(decl).copy(CopyStyle.withLocations);
 		}
-		IASTDeclSpecifier declSpec = new CPPASTSimpleDeclSpecifier();
-		((IASTSimpleDeclSpecifier) declSpec).setType(IASTSimpleDeclSpecifier.t_void);
+		IASTSimpleDeclSpecifier declSpec = new CPPASTSimpleDeclSpecifier();
+		declSpec.setType(IASTSimpleDeclSpecifier.t_void);
 		return declSpec.copy(CopyStyle.withLocations);
 	}
 

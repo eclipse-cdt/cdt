@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Markus Schorn (Wind River Systems) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -25,7 +25,7 @@ public interface IASTBinaryTypeIdExpression extends IASTExpression {
 	public static enum Operator {__is_base_of}
 	
 	/**
-	 * Get the operator for the expression.
+	 * Returns the operator for the expression.
 	 */
 	public Operator getOperator();
 
@@ -40,22 +40,23 @@ public interface IASTBinaryTypeIdExpression extends IASTExpression {
 	public IASTTypeId getOperand2();
 	
 	/**
-	 * Set the operator for the expression.
+	 * Sets the operator for the expression.
 	 */
 	public void setOperator(Operator value);
 
 	/**
-	 * Set the first operand.
+	 * Sets the first operand.
 	 */
 	public void setOperand1(IASTTypeId typeId);
 
 	/**
-	 * Set the second operand.
+	 * Sets the second operand.
 	 */
 	public void setOperand2(IASTTypeId typeId);
 
 	@Override
 	public IASTBinaryTypeIdExpression copy();
+
 	@Override
 	public IASTBinaryTypeIdExpression copy(CopyStyle style);
 }

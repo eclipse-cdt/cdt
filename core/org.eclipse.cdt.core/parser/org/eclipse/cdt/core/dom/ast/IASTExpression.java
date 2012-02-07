@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
-
 /**
  * This is the root class of expressions.
  * 
@@ -28,7 +27,7 @@ public interface IASTExpression extends IASTInitializerClause {
 		 */
 		LVALUE,
 		/**
-		 * Expiring value as introduced by c++ 0x.
+		 * Expiring value as introduced by c++11.
 		 */
 		XVALUE,
 		/**
@@ -42,6 +41,7 @@ public interface IASTExpression extends IASTInitializerClause {
 		public boolean isRValue() {
 			return this != LVALUE;
 		}
+
 		/**
 		 * A generalized lvalue is either an lvalue or an xvalue.
 		 */
@@ -53,7 +53,7 @@ public interface IASTExpression extends IASTInitializerClause {
 	/**
 	 * Empty expression array.
 	 */
-	public static final IASTExpression[] EMPTY_EXPRESSION_ARRAY = new IASTExpression[0];
+	public static final IASTExpression[] EMPTY_EXPRESSION_ARRAY = {};
 	
 	public IType getExpressionType();
 	

@@ -58,7 +58,7 @@ import org.eclipse.cdt.internal.ui.refactoring.NameInformation;
  * @author Mirko Stocker
  */
 public class ExtractExpression extends ExtractedFunctionConstructionHelper {
-	final static char[] ZERO= { '0' };
+	private final static char[] ZERO= { '0' };
 
 	@Override
 	public void constructMethodBody(IASTCompoundStatement compound, List<IASTNode> list,
@@ -74,12 +74,12 @@ public class ExtractExpression extends ExtractedFunctionConstructionHelper {
 
 	private IASTExpression getExpression(List<IASTNode> list) {
 		if (list.size() > 1) {
-			CPPASTBinaryExpression bExp = new CPPASTBinaryExpression();
-			bExp.setParent(list.get(0).getParent());
-			bExp.setOperand1((IASTExpression) list.get(0).copy(CopyStyle.withLocations));
-			bExp.setOperator(((IASTBinaryExpression) list.get(1).getParent()).getOperator());
-			bExp.setOperand2(getExpression(list.subList(1, list.size())));
-			return bExp;
+			CPPASTBinaryExpression expression = new CPPASTBinaryExpression();
+			expression.setParent(list.get(0).getParent());
+			expression.setOperand1((IASTExpression) list.get(0).copy(CopyStyle.withLocations));
+			expression.setOperator(((IASTBinaryExpression) list.get(1).getParent()).getOperator());
+			expression.setOperand2(getExpression(list.subList(1, list.size())));
+			return expression;
 		} else {
 			return (IASTExpression) list.get(0).copy(CopyStyle.withLocations);
 		}

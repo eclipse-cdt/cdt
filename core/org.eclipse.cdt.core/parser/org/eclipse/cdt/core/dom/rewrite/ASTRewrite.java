@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2012 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -260,9 +260,10 @@ public final class ASTRewrite {
 	}
 
 	/**
+	 * Returns comments for the given node.
 	 * 
 	 * @param node the node
-	 * @param pos the position
+	 * @param pos the position of the comments
 	 * @return All comments assigned to the node at this position
 	 * @since 5.3
 	 */

@@ -259,7 +259,7 @@ public abstract class ASTNode implements IASTNode {
     		ASTNode astNode= (ASTNode) node;
     		final int offset = getOffset();
     		final int nodeOffset= astNode.getOffset();
-			return offset <= nodeOffset && nodeOffset+astNode.length <= offset+length;
+			return offset <= nodeOffset && nodeOffset + astNode.length <= offset + length;
     	}
     	return false;
     }
@@ -267,7 +267,7 @@ public abstract class ASTNode implements IASTNode {
 	@Override
 	public IToken getSyntax() throws ExpansionOverlapsBoundaryException {
 		final int offset = getOffset();
-		return getSyntax(offset, offset+length, 0);
+		return getSyntax(offset, offset + length, 0);
 	}
 
 	@Override
@@ -279,7 +279,7 @@ public abstract class ASTNode implements IASTNode {
 	@Override
 	public IToken getTrailingSyntax() throws ExpansionOverlapsBoundaryException {
     	int right= getBoundary(1);
-		return getSyntax(getOffset()+length, right, 1);
+		return getSyntax(getOffset() + length, right, 1);
 	}
     
 	/**
@@ -296,14 +296,13 @@ public abstract class ASTNode implements IASTNode {
 			ASTNode astNode= (ASTNode) sib;
 			int offset= astNode.getOffset();
 			if (direction < 0) {
-				offset+= astNode.getLength();
+				offset += astNode.getLength();
 			}
 			return offset;
 		}
-		// no parent
+		// No parent.
 		throw new UnsupportedOperationException();
 	}
-
 
 	private IToken getSyntax(int fromSequenceNumber, int nextSequenceNumber, int direction) throws ExpansionOverlapsBoundaryException {
     	final IASTTranslationUnit tu= getTranslationUnit();
@@ -315,7 +314,7 @@ public abstract class ASTNode implements IASTNode {
     		throw new UnsupportedOperationException();
 
     	int endSequenceNumber= lr.convertToSequenceEndNumber(nextSequenceNumber); 
-		IASTFileLocation total= lr.getMappedFileLocation(fromSequenceNumber, endSequenceNumber-fromSequenceNumber);
+		IASTFileLocation total= lr.getMappedFileLocation(fromSequenceNumber, endSequenceNumber - fromSequenceNumber);
     	IASTFileLocation myfloc= getFileLocation();
     	if (total == null || myfloc == null)
     		throw new UnsupportedOperationException();
@@ -324,13 +323,13 @@ public abstract class ASTNode implements IASTNode {
     		throw new ExpansionOverlapsBoundaryException();
 
     	if (fromSequenceNumber > 0) {
-    		IASTFileLocation fl= lr.getMappedFileLocation(fromSequenceNumber-1, endSequenceNumber-fromSequenceNumber+1);
+    		IASTFileLocation fl= lr.getMappedFileLocation(fromSequenceNumber-1, endSequenceNumber - fromSequenceNumber + 1);
     		if (fl.getFileName().equals(total.getFileName()) && fl.getNodeOffset() == total.getNodeOffset()) 
     			throw new ExpansionOverlapsBoundaryException();
     	}
     	
     	if (endSequenceNumber < ((ASTNode) tu).getOffset() + ((ASTNode) tu).getLength()) {
-    		IASTFileLocation fl= lr.getMappedFileLocation(fromSequenceNumber, nextSequenceNumber-fromSequenceNumber+1);
+    		IASTFileLocation fl= lr.getMappedFileLocation(fromSequenceNumber, nextSequenceNumber - fromSequenceNumber + 1);
     		if (fl.getFileName().equals(total.getFileName()) && fl.getNodeLength() == total.getNodeLength()) 
     			throw new ExpansionOverlapsBoundaryException();
     	}
@@ -345,7 +344,7 @@ public abstract class ASTNode implements IASTNode {
     	try {
 			Token result= null;	
 			Token last= null;
-			for (;;) {				
+			while (true) {				
 				Token t= lex.nextToken();
 				switch (t.getType()) {
 				case IToken.tEND_OF_INPUT:
@@ -366,12 +365,12 @@ public abstract class ASTNode implements IASTNode {
 				}
 			}
 		} catch (OffsetLimitReachedException e) {
-			// does not happen without using content assist limit
+			// Does not happen without using content assist limit.
 		}
 		return null;
 	}
 
 	protected void setCopyLocation(IASTNode originalNode) {
-		locations = new IASTNodeLocation[] {new ASTCopyLocation(originalNode)};
+		locations = new IASTNodeLocation[] { new ASTCopyLocation(originalNode) };
 	}
 }

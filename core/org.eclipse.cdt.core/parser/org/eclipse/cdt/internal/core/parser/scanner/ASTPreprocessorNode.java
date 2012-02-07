@@ -59,7 +59,7 @@ abstract class ASTPreprocessorNode extends ASTNode {
 		setParent(parent);
 		setPropertyInParent(property);
 		setOffset(startNumber);
-		setLength(endNumber-startNumber);
+		setLength(endNumber - startNumber);
 	}
 	
 	protected char[] getSource(int offset, int length) {
@@ -597,9 +597,9 @@ class ASTFunctionStyleMacroDefinition extends ASTMacroDefinition implements IAST
 	}
 }
 
-
 class ASTUndef extends ASTPreprocessorNode implements IASTPreprocessorUndefStatement {
 	private final ASTPreprocessorName fName;
+
 	public ASTUndef(IASTTranslationUnit parent, char[] name, int startNumber, int nameNumber, int nameEndNumber, IBinding binding, boolean isActive) {
 		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, startNumber, nameEndNumber);
 		fName= new ASTPreprocessorName(this, IASTPreprocessorStatement.MACRO_NAME, nameNumber, nameEndNumber, name, binding);
@@ -686,7 +686,7 @@ class ASTFileLocation implements IASTFileLocation {
 
 	@Override
 	public int getEndingLineNumber() {
-		int end= fLength > 0 ? fOffset+fLength-1 : fOffset;
+		int end= fLength > 0 ? fOffset + fLength - 1 : fOffset;
 		return fLocationCtx.getLineNumber(end);
 	}
 
@@ -701,7 +701,7 @@ class ASTFileLocation implements IASTFileLocation {
 	
 	@Override
 	public String toString() {
-		return getFileName() + "[" + fOffset + "," + (fOffset+fLength) + ")";    //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+		return getFileName() + "[" + fOffset + "," + (fOffset + fLength) + "]";  //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 	}
 
 	public int getSequenceNumber() {
@@ -709,7 +709,7 @@ class ASTFileLocation implements IASTFileLocation {
 	}
 	
 	public int getSequenceEndNumber() {
-		return fLocationCtx.getSequenceNumberForOffset(fOffset+fLength, true);
+		return fLocationCtx.getSequenceNumberForOffset(fOffset + fLength, true);
 	}
 	
 	public LocationCtxFile getLocationContext() {
@@ -723,7 +723,6 @@ class ASTFileLocation implements IASTFileLocation {
 }
 
 class ASTMacroExpansion extends ASTPreprocessorNode implements IASTPreprocessorMacroExpansion {
-
 	private LocationCtxMacroExpansion fContext;
 
 	public ASTMacroExpansion(IASTNode parent, int startNumber, int endNumber) {
@@ -765,7 +764,6 @@ class ASTMacroExpansion extends ASTPreprocessorNode implements IASTPreprocessorM
 
 @SuppressWarnings("deprecation")
 class ASTMacroExpansionLocation implements IASTMacroExpansionLocation, org.eclipse.cdt.core.dom.ast.IASTMacroExpansion {
-
 	private LocationCtxMacroExpansion fContext;
 	private int fOffset;
 	private int fLength;
@@ -817,7 +815,7 @@ class ASTMacroExpansionLocation implements IASTMacroExpansionLocation, org.eclip
 
 	@Override
 	public String toString() {
-		return fContext.getMacroDefinition().getName().toString() + "[" + fOffset + "," + (fOffset+fLength) + ")";    //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+		return fContext.getMacroDefinition().getName().toString() + "[" + fOffset + "," + (fOffset+fLength) + "]";    //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 	}
 
 	public IASTImageLocation getImageLocation() {
@@ -871,7 +869,6 @@ class ASTFileLocationForBuiltins implements IASTFileLocation {
 		return null;
 	}
 }
-
 
 class ASTImageLocation extends ASTFileLocationForBuiltins implements IASTImageLocation {
 	private final int fKind;

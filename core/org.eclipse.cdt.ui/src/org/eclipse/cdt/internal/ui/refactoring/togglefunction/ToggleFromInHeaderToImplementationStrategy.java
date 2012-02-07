@@ -57,10 +57,10 @@ import org.eclipse.cdt.internal.ui.refactoring.Container;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
 
 public class ToggleFromInHeaderToImplementationStrategy implements IToggleRefactoringStrategy {
-	private IASTTranslationUnit impl_unit;
+	private IASTTranslationUnit implUnit;
 	private ToggleRefactoringContext context;
 	private TextEditGroup infoText;
-	private ASTLiteralNode includenode;
+	private ASTLiteralNode includeNode;
 
 	public ToggleFromInHeaderToImplementationStrategy(final ToggleRefactoringContext context) {
 		this.infoText = new TextEditGroup(Messages.EditGroupName);
@@ -80,9 +80,9 @@ public class ToggleFromInHeaderToImplementationStrategy implements IToggleRefact
 			replaceDefinitionWithDeclaration(collector);
 		}
 
-		ASTRewrite implRewrite = collector.rewriterForTranslationUnit(impl_unit);
-		if (includenode != null) {
-			implRewrite.insertBefore(impl_unit, null, includenode, infoText);
+		ASTRewrite implRewrite = collector.rewriterForTranslationUnit(implUnit);
+		if (includeNode != null) {
+			implRewrite.insertBefore(implUnit, null, includeNode, infoText);
 		}
 		
 		IASTNode insertionParent = null;
@@ -93,11 +93,11 @@ public class ToggleFromInHeaderToImplementationStrategy implements IToggleRefact
 			insertionParent = searchNamespaceInImplementation(parent.getName());
 			if (insertionParent == null) {
 				insertionParent = createNamespace(parent);
-				implRewrite = implRewrite.insertBefore(impl_unit.getTranslationUnit(), 
+				implRewrite = implRewrite.insertBefore(implUnit.getTranslationUnit(), 
 						null, insertionParent, infoText);
 			}
 		} else {
-			insertionParent = impl_unit.getTranslationUnit();
+			insertionParent = implUnit.getTranslationUnit();
 		}
 		
 		newDefinition.setParent(insertionParent);
@@ -241,13 +241,13 @@ public class ToggleFromInHeaderToImplementationStrategy implements IToggleRefact
 	}
 
 	private boolean newFileCheck() {
-		impl_unit = context.getTUForSiblingFile();
-		if (impl_unit == null) {
+		implUnit = context.getTUForSiblingFile();
+		if (implUnit == null) {
 			ToggleFileCreator filecreator = new ToggleFileCreator(context, ".cpp"); //$NON-NLS-1$
 			if (filecreator.askUserForFileCreation(context)) {
 				filecreator.createNewFile();
-				impl_unit = filecreator.loadTranslationUnit();
-				includenode = new ASTLiteralNode(filecreator.getIncludeStatement());
+				implUnit = filecreator.loadTranslationUnit();
+				includeNode = new ASTLiteralNode(filecreator.getIncludeStatement());
 				return true;
 			} else {
 				return false;
@@ -342,7 +342,7 @@ public class ToggleFromInHeaderToImplementationStrategy implements IToggleRefact
 	private CPPASTNamespaceDefinition createNamespace(ICPPASTNamespaceDefinition parent_namespace) {
 		CPPASTNamespaceDefinition insertionParent = new CPPASTNamespaceDefinition(
 				parent_namespace.getName().copy(CopyStyle.withLocations));
-		insertionParent.setParent(impl_unit);
+		insertionParent.setParent(implUnit);
 		return insertionParent;
 	}
 
@@ -354,7 +354,7 @@ public class ToggleFromInHeaderToImplementationStrategy implements IToggleRefact
 
 	private IASTNode searchNamespaceInImplementation(final IASTName name) {
 		final Container<IASTNode> result = new Container<IASTNode>();
-		this.impl_unit.accept(new ASTVisitor() {
+		this.implUnit.accept(new ASTVisitor() {
 			{
 				shouldVisitNamespaces = true;
 			}

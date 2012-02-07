@@ -9,12 +9,12 @@
  *     Andrew Gvozdev - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.managedbuilder.scannerconfig;
+package org.eclipse.cdt.managedbuilder.language.settings.providers;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.cdt.make.core.scannerconfig.AbstractBuiltinSpecsDetector;
+import org.eclipse.cdt.make.core.language.settings.providers.AbstractBuiltinSpecsDetector;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;

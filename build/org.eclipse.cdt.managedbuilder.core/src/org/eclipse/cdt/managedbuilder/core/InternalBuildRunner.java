@@ -26,7 +26,7 @@ import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvide
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.make.core.scannerconfig.AbstractBuildCommandParser;
+import org.eclipse.cdt.make.core.language.settings.providers.AbstractBuildCommandParser;
 import org.eclipse.cdt.managedbuilder.buildmodel.BuildDescriptionManager;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildDescription;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.BuildDescription;

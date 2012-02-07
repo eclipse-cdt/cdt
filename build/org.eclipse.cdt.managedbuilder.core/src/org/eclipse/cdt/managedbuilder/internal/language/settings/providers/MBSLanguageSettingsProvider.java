@@ -9,7 +9,7 @@
  *     Andrew Gvozdev - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.managedbuilder.internal.scannerconfig;
+package org.eclipse.cdt.managedbuilder.internal.language.settings.providers;
 
 import java.util.ArrayList;
 import java.util.List;

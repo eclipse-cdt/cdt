@@ -8,14 +8,16 @@
  * Contributors:
  *     Andrew Gvozdev - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.make.internal.core.scannerconfig;
+package org.eclipse.cdt.make.core.language.settings.providers;
 
 
 import org.eclipse.cdt.core.errorparsers.RegexErrorPattern;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditableProvider;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
-import org.eclipse.cdt.make.core.scannerconfig.AbstractBuildCommandParser;
 
+/**
+ * @since 7.2
+ */
 public class GCCBuildCommandParser extends AbstractBuildCommandParser implements ILanguageSettingsEditableProvider {
 	@SuppressWarnings("nls")
 	static final AbstractOptionParser[] optionParsers = {
@@ -38,7 +40,7 @@ public class GCCBuildCommandParser extends AbstractBuildCommandParser implements
 	protected AbstractOptionParser[] getOptionParsers() {
 		return optionParsers;
 	}
-	
+
 	@Override
 	public GCCBuildCommandParser cloneShallow() throws CloneNotSupportedException {
 		return (GCCBuildCommandParser) super.cloneShallow();

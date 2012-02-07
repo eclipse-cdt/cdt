@@ -543,16 +543,16 @@
    <extension
          point="org.eclipse.cdt.ui.LanguageSettingsProviderAssociation">
       <class-association
-            class="org.eclipse.cdt.make.core.scannerconfig.AbstractBuildCommandParser"
+            class="org.eclipse.cdt.make.core.language.settings.providers.AbstractBuildCommandParser"
             icon="icons/obj16/log_obj.gif"
-            page="org.eclipse.cdt.make.internal.ui.preferences.GCCBuildCommandParserOptionPage"
+            page="org.eclipse.cdt.make.internal.ui.language.settings.providers.GCCBuildCommandParserOptionPage"
             ui-clear-entries="true"
             ui-edit-entries="false">
       </class-association>
       <class-association
-            class="org.eclipse.cdt.make.core.scannerconfig.AbstractBuiltinSpecsDetector"
+            class="org.eclipse.cdt.make.core.language.settings.providers.AbstractBuiltinSpecsDetector"
             icon="icons/obj16/inspect_system.gif"
-            page="org.eclipse.cdt.make.internal.ui.scannerconfig.BuiltinSpecsDetectorOptionPage"
+            page="org.eclipse.cdt.make.internal.ui.language.settings.providers.BuiltinSpecsDetectorOptionPage"
             ui-clear-entries="true"
             ui-edit-entries="false">
       </class-association>
@@ -561,14 +561,14 @@
          point="org.eclipse.cdt.core.CBuildConsole">
       <CBuildConsole
             id="org.eclipse.cdt.make.internal.ui.scannerconfig.ScannerDiscoveryConsole"
-            class="org.eclipse.cdt.make.internal.ui.scannerconfig.ScannerDiscoveryConsole">
+            class="org.eclipse.cdt.make.internal.ui.language.settings.providers.ScannerDiscoveryConsole">
       </CBuildConsole>
    </extension>
    <extension
          point="org.eclipse.cdt.core.CBuildConsole">
       <CBuildConsole
             id="org.eclipse.cdt.make.internal.ui.scannerconfig.ScannerDiscoveryGlobalConsole"
-            class="org.eclipse.cdt.make.internal.ui.scannerconfig.ScannerDiscoveryGlobalConsole">
+            class="org.eclipse.cdt.make.internal.ui.language.settings.providers.ScannerDiscoveryGlobalConsole">
       </CBuildConsole>
    </extension>
 </plugin>

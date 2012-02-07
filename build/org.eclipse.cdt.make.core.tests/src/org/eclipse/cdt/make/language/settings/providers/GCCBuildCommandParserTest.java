@@ -8,7 +8,7 @@
  * Contributors:
  *     Andrew Gvozdev - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.make.scannerdiscovery;
+package org.eclipse.cdt.make.language.settings.providers;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -38,8 +38,8 @@ import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
-import org.eclipse.cdt.make.core.scannerconfig.AbstractBuildCommandParser;
-import org.eclipse.cdt.make.internal.core.scannerconfig.GCCBuildCommandParser;
+import org.eclipse.cdt.make.core.language.settings.providers.AbstractBuildCommandParser;
+import org.eclipse.cdt.make.core.language.settings.providers.GCCBuildCommandParser;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;

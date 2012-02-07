@@ -8,7 +8,7 @@
  * Contributors:
  *     Andrew Gvozdev - Initial API and implementation
  *******************************************************************************/
- package org.eclipse.cdt.make.scannerdiscovery;
+ package org.eclipse.cdt.make.language.settings.providers;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -33,7 +33,7 @@ import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.XmlUtil;
-import org.eclipse.cdt.make.core.scannerconfig.AbstractBuiltinSpecsDetector;
+import org.eclipse.cdt.make.core.language.settings.providers.AbstractBuiltinSpecsDetector;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;

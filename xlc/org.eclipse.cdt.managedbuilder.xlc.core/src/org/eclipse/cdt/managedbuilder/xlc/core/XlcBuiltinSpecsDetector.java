@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditableProvider;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
-import org.eclipse.cdt.managedbuilder.scannerconfig.ToolchainBuiltinSpecsDetector;
+import org.eclipse.cdt.managedbuilder.language.settings.providers.ToolchainBuiltinSpecsDetector;
 
 
 

@@ -9,7 +9,7 @@
  *     Andrew Gvozdev - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.make.internal.ui.scannerconfig;
+package org.eclipse.cdt.make.internal.ui.language.settings.providers;
 
 import java.io.IOException;
 import java.net.URL;

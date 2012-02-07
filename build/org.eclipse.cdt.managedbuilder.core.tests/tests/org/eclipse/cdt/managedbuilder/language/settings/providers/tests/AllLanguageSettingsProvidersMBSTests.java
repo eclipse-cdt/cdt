@@ -8,20 +8,21 @@
  * Contributors:
  *    Andrew Gvozdev - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.make.scannerdiscovery;
+
+package org.eclipse.cdt.managedbuilder.language.settings.providers.tests;
 
 import junit.framework.TestSuite;
 
-public class AllLanguageSettingsProvidersMakeCoreTests extends TestSuite {
+public class AllLanguageSettingsProvidersMBSTests extends TestSuite {
 
 	public static TestSuite suite() {
-		return new AllLanguageSettingsProvidersMakeCoreTests();
+		return new AllLanguageSettingsProvidersMBSTests();
 	}
 
-	public AllLanguageSettingsProvidersMakeCoreTests() {
-		super(AllLanguageSettingsProvidersMakeCoreTests.class.getName());
+	public AllLanguageSettingsProvidersMBSTests() {
+		super(AllLanguageSettingsProvidersMBSTests.class.getName());
 
-		addTestSuite(GCCBuildCommandParserTest.class);
-		addTestSuite(BuiltinSpecsDetectorTest.class);
+		addTestSuite(LanguageSettingsProvidersMBSTest.class);
+		addTestSuite(GCCBuiltinSpecsDetectorTest.class);
 	}
 }

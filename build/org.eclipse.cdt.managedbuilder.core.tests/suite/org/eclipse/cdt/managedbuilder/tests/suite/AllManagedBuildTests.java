@@ -15,7 +15,6 @@ package org.eclipse.cdt.managedbuilder.tests.suite;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.cdt.build.core.scannerconfig.tests.AllLanguageSettingsProvidersMBSTests;
 import org.eclipse.cdt.build.core.scannerconfig.tests.CfgScannerConfigProfileManagerTests;
 import org.eclipse.cdt.build.core.scannerconfig.tests.GCCSpecsConsoleParserTest;
 import org.eclipse.cdt.core.CCorePlugin;
@@ -40,6 +39,7 @@ import org.eclipse.cdt.managedbuilder.core.tests.OptionCategoryEnablementTests;
 import org.eclipse.cdt.managedbuilder.core.tests.OptionEnablementTests;
 import org.eclipse.cdt.managedbuilder.core.tests.PathConverterTest;
 import org.eclipse.cdt.managedbuilder.core.tests.ResourceBuildCoreTests;
+import org.eclipse.cdt.managedbuilder.language.settings.providers.tests.AllLanguageSettingsProvidersMBSTests;
 import org.eclipse.cdt.managedbuilder.templateengine.tests.AllTemplateEngineTests;
 import org.eclipse.cdt.projectmodel.tests.BackwardCompatiblityTests;
 import org.eclipse.cdt.projectmodel.tests.CProjectDescriptionSerializationTests;

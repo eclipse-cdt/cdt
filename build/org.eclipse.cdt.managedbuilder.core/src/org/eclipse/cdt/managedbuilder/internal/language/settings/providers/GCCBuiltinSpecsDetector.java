@@ -9,7 +9,7 @@
  *     Andrew Gvozdev - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.managedbuilder.internal.scannerconfig;
+package org.eclipse.cdt.managedbuilder.internal.language.settings.providers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +17,7 @@ import java.util.List;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditableProvider;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
-import org.eclipse.cdt.managedbuilder.scannerconfig.ToolchainBuiltinSpecsDetector;
+import org.eclipse.cdt.managedbuilder.language.settings.providers.ToolchainBuiltinSpecsDetector;
 import org.eclipse.core.runtime.CoreException;
 
 /**

@@ -8,7 +8,7 @@
  * Contributors:
  *     Andrew Gvozdev - Initial API and implementation
  *******************************************************************************/
- package org.eclipse.cdt.build.core.scannerconfig.tests;
+ package org.eclipse.cdt.managedbuilder.language.settings.providers.tests;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +24,8 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
-import org.eclipse.cdt.managedbuilder.internal.scannerconfig.GCCBuiltinSpecsDetector;
-import org.eclipse.cdt.managedbuilder.internal.scannerconfig.GCCBuiltinSpecsDetectorCygwin;
+import org.eclipse.cdt.managedbuilder.internal.language.settings.providers.GCCBuiltinSpecsDetector;
+import org.eclipse.cdt.managedbuilder.internal.language.settings.providers.GCCBuiltinSpecsDetectorCygwin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;

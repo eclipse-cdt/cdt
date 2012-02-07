@@ -8,7 +8,7 @@
  * Contributors:
  *     Andrew Gvozdev - Initial API and implementation
  *******************************************************************************/
- package org.eclipse.cdt.build.core.scannerconfig.tests;
+ package org.eclipse.cdt.managedbuilder.language.settings.providers.tests;
 
 import java.util.ArrayList;
 import java.util.List;
